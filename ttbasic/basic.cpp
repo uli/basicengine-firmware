@@ -442,7 +442,7 @@ short getsize() {
 short getlineno(unsigned char *lp) {
   if(*lp == 0) //もし末尾だったら
     return 32767; //行番号の最大値を持ち帰る
-  return *(short*)(lp + 1); //行番号を持ち帰る
+  return *(lp + 1) | *(lp + 2) << 8; //行番号を持ち帰る
 }
 
 // Search line by line number
@@ -526,7 +526,7 @@ void putlist(unsigned char* ip) {
     //定数の処理
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
-      putnum(*(short*)ip, 0); //値を取得して表示
+      putnum(*ip | *(ip + 1) << 8, 0); //値を取得して表示
       ip += 2; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
         c_putch(' '); //空白を表示
@@ -604,7 +604,7 @@ short ivalue() {
   //定数の取得
   case I_NUM: //定数の場合
     cip++; //中間コードポインタを次へ進める
-    value = *(short*)cip; //定数を取得
+    value = *cip | *(cip + 1) << 8; //定数を取得
     cip += 2; //中間コードポインタを定数の次へ進める
     break; //ここで打ち切る
 
