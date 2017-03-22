@@ -36,6 +36,8 @@ class tscreen {
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     void putch(uint8_t c);                            // 文字の出力
+    uint8_t get_ch();                                 // 文字の取得
+    uint8_t isKeyIn();                                // キー入力チェック
     void Insert_char(uint8_t c);                      // 現在のカーソル位置に文字を挿入
     void movePosNextNewChar();                        // カーソルを１文字分次に移動
     void movePosPrevChar();                           // カーソルを1文字分前に移動
@@ -58,4 +60,3 @@ class tscreen {
 };
 
 #endif
-

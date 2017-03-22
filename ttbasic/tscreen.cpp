@@ -58,6 +58,17 @@ void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
   flgIns = false;
 }
 
+// キー入力チェック
+uint8_t tscreen::isKeyIn() {
+  return Serial.available();
+}
+
+// 文字入力
+uint8_t tscreen::get_ch() {
+  move(pos_y, pos_x);
+  return getch ();
+}
+
 // 指定行の1行分クリア
 void tscreen::clerLine(uint16_t l) {
   memset(screen+width*l, 0, width);

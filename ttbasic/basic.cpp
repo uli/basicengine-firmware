@@ -26,10 +26,8 @@
 #define STR_EDITION "ARDUINO"
 
 // Terminal control
-//#define c_putch(c) Serial.write(c)
-#define c_getch( ) Serial.read()
-#define c_kbhit( ) Serial.available()
-
+#define c_getch( ) sc.get_ch()
+#define c_kbhit( ) sc.isKeyIn()
 #define c_putch(c) sc.putch(c)
 
 tscreen sc; // スクリーン制御
