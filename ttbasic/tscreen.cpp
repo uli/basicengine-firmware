@@ -352,13 +352,16 @@ uint8_t tscreen::edit() {
       
       if (IS_PRINT(ch)) {
         Insert_char(ch);
-      } else {
+      }
+/*
+      else {
           move(23,0);
           clrtoeol();
           addstr("[KEY]");
           Serial.print(ch, DEC); 
           move(c_y(), c_x());
       }
+*/    
       break;
     }
   } while(1);
