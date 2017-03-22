@@ -259,7 +259,9 @@ short getnum() {
     //［BackSpace］キーが押された場合の処理（行頭ではないこと）
     if (((c == 8) || (c == 127)) && (len > 0)) {
       len--; //文字数を1減らす
-      c_putch(8); c_putch(' '); c_putch(8); //文字を消す
+      //c_putch(8); c_putch(' '); c_putch(8); //文字を消す
+      sc.movePosPrevChar();
+      sc.delete_char();
     } else
     //行頭の符号および数字が入力された場合の処理（符号込みで6桁を超えないこと）
     if ((len == 0 && (c == '+' || c == '-')) ||
