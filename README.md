@@ -1,7 +1,9 @@
 ## 豊四季タイニーBASIC for Arduino Stm32 修正版 V0.1
 
-本プログラムは、下記オリジナル版の修正版です.  
-- オリジナル版配布サイト  
+本プログラムは、下記オリジナル版の修正版です.   
+※現状、input文の処理に不具合あり  
+
+- オリジナル版配布サイト  
  https://github.com/vintagechips/ttbasic_arduino  
  関連情報 [電脳伝説 Vintagechips - 豊四季タイニーBASIC確定版](https://vintagechips.wordpress.com/2015/12/06/%E8%B1%8A%E5%9B%9B%E5%AD%A3%E3%82%BF%E3%82%A4%E3%83%8B%E3%83%BCbasic%E7%A2%BA%E5%AE%9A%E7%89%88/)
 
