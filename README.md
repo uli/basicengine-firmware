@@ -16,7 +16,7 @@
  ターミナル上で昔のBASICっぽい編集操作を出来るようにしました.  
 
 本スケッチの利用には、  
-別途、mcursesライブラリ(https://github.com/ChrisMicro/mcurses)が必要です。  
+別途、mcursesライブラリ(https://github.com/ChrisMicro/mcurses) が必要です。  
 
 ## フルスリーンテキストエディタの機能
 ※利用にはTeraTerm用のシリアル接続可能なターミナルソフトが必要です.  
