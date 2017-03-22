@@ -18,7 +18,10 @@
 本スケッチの利用には、  
 別途、mcursesライブラリ(https://github.com/ChrisMicro/mcurses) が必要です。  
 
-※Arduinoではメモリ不足のため、動きません.
+※Arduinoではメモリ不足のため、動きません.  
+
+Blue Pillボードでの動作を確認しました.  
+
 
 ## フルスリーンテキストエディタの機能
 ※利用にはTeraTerm用のシリアル接続可能なターミナルソフトが必要です.  
