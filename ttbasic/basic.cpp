@@ -4,8 +4,13 @@
  GNU General Public License
  */
 
+//
+// 2017/03/22 修正, Arduino STM32、フルスクリーン対応, by たま吉さん
+//
+
 #include <Arduino.h>
 #include <stdlib.h>
+#include "tscreen.h"
 
 // TOYOSHIKI TinyBASIC symbols
 // TO-DO Rewrite defined values to fit your machine as needed
@@ -21,14 +26,21 @@
 #define STR_EDITION "ARDUINO"
 
 // Terminal control
-#define c_putch(c) Serial.write(c)
+//#define c_putch(c) Serial.write(c)
 #define c_getch( ) Serial.read()
 #define c_kbhit( ) Serial.available()
 
+#define c_putch(c) sc.putch(c)
+
+tscreen sc; // スクリーン制御
+
 #define KEY_ENTER 13
 void newline(void) {
+/*
   c_putch(13); //CR
   c_putch(10); //LF
+*/
+ sc.newLine();
 }
 
 // Return random number
@@ -1318,9 +1330,13 @@ void error() {
 
 void basic() {
   unsigned char len; //中間コードの長さ
-
+  uint8_t rc;
+  
   inew(); //実行環境を初期化
-
+  
+  sc.init(80,22,80); // スクリーン初期設定
+  sc.cls();
+  
   //起動メッセージ
   c_puts("TOYOSHIKI TINY BASIC"); //「TOYOSHIKI TINY BASIC」を表示
   newline(); //改行
@@ -1331,9 +1347,20 @@ void basic() {
 
   //端末から1行を入力して実行
   while (1) { //無限ループ
-    c_putch('>'); //プロンプトを表示
-    c_gets(); //1行を入力
-
+    //c_putch('>'); //プロンプトを表示
+    //c_gets(); //1行を入力
+    rc = sc.edit();
+    if (rc) {
+      if (!strlen((char*)sc.getText()) ) {
+        newline();
+        continue;
+      }
+      strcpy(lbuf, (char*)sc.getText());
+      newline();
+    } else {
+      continue;
+    }
+    
     //1行の文字列を中間コードの並びに変換
     len = toktoi(); //文字列を中間コードに変換して長さを取得
     if (err) { //もしエラーが発生したら

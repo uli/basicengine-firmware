@@ -3,11 +3,16 @@
  (C)2012 Tetsuya Suzuki
  */
 
+//
+// 2017/03/22 修正, Arduino STM32、フルスクリーン対応 v0.1 by たま吉さん
+// 
+
 void basic(void);
 
 void setup(void){
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
+  while (!Serial.isConnected()) delay(100);
   randomSeed(analogRead(0));
 }
 
