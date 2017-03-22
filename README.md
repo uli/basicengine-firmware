@@ -1,7 +1,9 @@
-## 豊四季タイニーBASIC for Arduino Stm32 修正版 V0.1
+## 豊四季タイニーBASIC for Arduino 修正版 V0.1
 
 本プログラムは、下記オリジナル版の修正版です.   
-※現状、input文の処理に不具合あり  
+Arduino MEGA 2560、Blue Pillボードでの動作を確認しました.  
+Arduinoではメモリ不足のため動きません.   
+※現状、input文の処理に若干問題あるかもしれません.  
 
 - オリジナル版配布サイト  
  https://github.com/vintagechips/ttbasic_arduino  
@@ -19,11 +21,6 @@
 
 本スケッチの利用には、  
 別途、mcursesライブラリ(https://github.com/ChrisMicro/mcurses) が必要です。  
-
-※Arduinoではメモリ不足のため、動きません.  
-
-Blue Pillボードでの動作を確認しました.  
-
 
 ## フルスリーンテキストエディタの機能
 ※利用にはTeraTerm用のシリアル接続可能なターミナルソフトが必要です.  
