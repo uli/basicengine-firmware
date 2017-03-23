@@ -52,7 +52,12 @@ class tscreen {
     inline uint8_t *getScreen() { return screen; };   // スクリーン用バッファアドレス参照
     inline uint16_t c_x() { return pos_x;};           // 現在のカーソル横位置参照
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
+    inline uint16_t getWidth() { return width;};      // スクリーン横幅取得
+    inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
 
+    void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
+    void setAttr(uint16_t attr);                      // 文字属性
+    
    private:
     inline uint8_t IS_PRINT(uint8_t ch) {
       return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 

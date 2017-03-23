@@ -69,6 +69,26 @@ uint8_t tscreen::get_ch() {
   return getch ();
 }
 
+// 文字色指定
+void tscreen::setColor(uint16_t fc, uint16_t bc) {
+  static const uint16_t tbl_fcolor[]  =
+     { F_BLACK,F_RED,F_GREEN,F_BROWN,F_BLUE,F_MAGENTA,F_CYAN,F_WHITE,F_YELLOW,F_COLOR };
+  static const uint16_t tbl_bcolor[]  =
+     { B_BLACK,B_RED,B_GREEN,B_BROWN,B_BLUE,B_MAGENTA,B_CYAN,B_WHITE,B_YELLOW,B_COLOR };
+
+  if ( (fc >= 0 && fc <= 9) && (bc >= 0 && bc <= 9) )
+     attrset(tbl_fcolor[fc]|tbl_bcolor[bc]);
+}
+
+// 文字属性
+void tscreen::setAttr(uint16_t attr) {
+  static const uint16_t tbl_attr[]  =
+    { A_NORMAL, A_UNDERLINE, A_REVERSE, A_BLINK, A_BOLD, A_DIM };
+  
+  if (attr >= 0 && attr <= 5)
+     attrset(tbl_attr[attr]);
+}
+
 // 指定行の1行分クリア
 void tscreen::clerLine(uint16_t l) {
   memset(screen+width*l, 0, width);

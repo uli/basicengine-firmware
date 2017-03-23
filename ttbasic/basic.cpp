@@ -32,6 +32,13 @@
 
 tscreen sc; // スクリーン制御
 
+// 追加コマンドの宣言
+void icls();
+void iwait(uint16_t tm);
+void ilocate();
+void icolor();
+void iattr();
+
 #define KEY_ENTER 13
 void newline(void) {
 /*
@@ -55,6 +62,7 @@ const char *kwtbl[] = {
   "FOR", "TO", "STEP", "NEXT",
   "IF", "REM", "STOP",
   "INPUT", "PRINT", "LET",
+  "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,
   ",", ";",
   "-", "+", "*", "/", "(", ")",
   ">=", "#", ">", "=", "<=", "<",
@@ -71,6 +79,7 @@ enum {
   I_FOR, I_TO, I_STEP, I_NEXT,
   I_IF, I_REM, I_STOP,
   I_INPUT, I_PRINT, I_LET,
+  I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR,
   I_COMMA, I_SEMI,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_LT,
@@ -83,7 +92,9 @@ enum {
 // List formatting condition
 // 後ろに空白を入れない中間コード
 const unsigned char i_nsa[] = {
-  I_RETURN, I_STOP, I_COMMA,
+  I_RETURN, I_STOP, 
+  I_CLS,
+  I_COMMA,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_LT,
   I_ARRAY, I_RND, I_ABS, I_SIZE
@@ -992,7 +1003,9 @@ unsigned char* iexe() {
   unsigned char* lp; //未確定の（エラーかもしれない）行ポインタ
   short index, vto, vstep; //FOR文の変数番号、終了値、増分
   short condition; //IF文の条件値
-
+  
+  uint16_t prm; // コマンド引数
+  
   while (*cip != I_EOL) { //行末まで繰り返す
   
   //強制的な中断の判定
@@ -1158,6 +1171,31 @@ unsigned char* iexe() {
         clp += *clp; //行ポインタを次へ進める
       return clp; //行ポインタを持ち帰る
 
+    case I_CLS: //CLSの場合
+        cip++;
+        icls();
+        break;
+
+    case I_WAIT: // WAITの場合
+      cip++;
+      prm = iexp();
+      if(err) return NULL;
+      if(prm < 0) prm = 0;
+      iwait(prm);
+      break;    
+    case I_LOCATE: // LOCATEの場合
+      cip++;
+      ilocate();
+      break;    
+     case I_COLOR: // COLORの場合
+      cip++;
+      icolor();
+      break;    
+     case I_ATTR: // ATTRの場合
+      cip++;
+      iattr();
+      break;    
+
     //一般の文に相当する中間コードの照合と処理
     case I_VAR: //変数の場合（LETを省略した代入文）
       cip++; //中間コードポインタを次へ進める
@@ -1294,6 +1332,84 @@ void icom() {
     iexe(); //中間コードを実行
     break; //打ち切る
   }
+}
+
+// 画面クリア
+void icls() {
+  sc.cls();
+  sc.locate(0,0);
+}
+
+// 時間待ち
+void iwait(uint16_t tm) {
+  delay(tm);
+}
+
+// カーソル移動
+void ilocate() {
+  int16_t x,  y;
+
+  x = iexp();
+  if(err) return ;
+
+  if(*cip != I_COMMA){
+    err = ERR_SYNTAX;
+    return;
+  }
+  
+  cip++;
+  y = iexp();
+  if(err) return ;
+
+  if ( x >= sc.getWidth() )
+     x = sc.getWidth() - 1;
+  else if
+     (x < 0)  x = 0;
+  
+  if( y >= sc.getHeight() ) 
+     y = sc.getHeight() - 1;
+  if(y < 0) 
+     y = 0;
+   sc.locate((uint16_t)x, (uint16_t)y);
+}
+
+// 文字色の指定
+void icolor() {
+int16_t fc,  bc;
+
+  fc = iexp();
+  if(err) return ;
+
+  if(*cip != I_COMMA){
+    //err = ERR_SYNTAX;
+    //return;
+    bc = 0;
+  } else {  
+    cip++;
+    bc = iexp();
+    if(err) return ;
+  }
+
+  if ( fc > 9 )  fc = 9; 
+  else if ( fc < 0)  fc = 0;
+  
+  if( bc > 9 ) bc = 9;
+  else if( bc < 0)  bc = 0;
+
+  sc.setColor((uint16_t)fc, (uint16_t)bc);  
+}
+
+// 文字属性の指定
+void iattr() {
+ int16_t attr;
+  attr = iexp();
+  if(err) return ;
+
+  if ( attr > 5 )  attr = 5; 
+  else if ( attr < 0)  attr = 0;
+
+  sc.setAttr(attr);
+
 }
 
 // Print OK or error message
