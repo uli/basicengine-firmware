@@ -1342,6 +1342,7 @@ void icls() {
 
 // 時間待ち
 void iwait(uint16_t tm) {
+  
   delay(tm);
 }
 
