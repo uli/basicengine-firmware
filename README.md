@@ -1,6 +1,6 @@
 ## 豊四季タイニーBASIC for Arduino 修正版 V0.1
 
-![サンプル画像](./image/top.jpg)
+![サンプル画像](./image/sample.jpg)
 
 本プログラムは、下記オリジナル版の修正版です.   
 Arduino MEGA 2560、Blue Pillボードでの動作を確認しました.  
