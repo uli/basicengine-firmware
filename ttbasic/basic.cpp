@@ -6,6 +6,14 @@
 
 //
 // 2017/03/22 修正, Arduino STM32、フルスクリーン対応, by たま吉さん
+// 2017/03/25 修正, INKEY()関数の追加, 中断キーを[ESC]から[CTRL-C]に変更
+// 2017/03/26 修正, 文法において下記の変更・追加
+// 1)変更: 命令文区切りを';'から':'に変更
+// 2)追加: PRINTの行継続を';'でも可能とする
+// 3)追加: IF文の不一致判定を"<>"でも可能とする
+// 4)追加: 演算子 剰余計算 '%' の追加
+// 5)追加: VPEEK() スクリーン位置の文字コード参照
+// 6)追加: CHR$(),ASC()関数の追加
 //
 
 #include <Arduino.h>
@@ -16,7 +24,7 @@
 // TO-DO Rewrite defined values to fit your machine as needed
 #define SIZE_LINE 80 //Command line buffer length + NULL
 #define SIZE_IBUF 80 //i-code conversion buffer size
-#define SIZE_LIST 256 //List buffer size
+#define SIZE_LIST 2560 //List buffer size
 #define SIZE_ARRY 32 //Array area size
 #define SIZE_GSTK 6 //GOSUB stack size(2/nest)
 #define SIZE_LSTK 15 //FOR stack size(5/nest)
@@ -38,6 +46,8 @@ void iwait(uint16_t tm);
 void ilocate();
 void icolor();
 void iattr();
+int16_t iinkey();
+int16_t ivpeek();
 
 #define KEY_ENTER 13
 void newline(void) {
@@ -60,12 +70,12 @@ short iexp(void);
 const char *kwtbl[] = {
   "GOTO", "GOSUB", "RETURN",
   "FOR", "TO", "STEP", "NEXT",
-  "IF", "REM", "STOP",
+  "IF", "REM", "END",
   "INPUT", "PRINT", "LET",
-  "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,
-  ",", ";",
-  "-", "+", "*", "/", "(", ")",
-  ">=", "#", ">", "=", "<=", "<",
+  "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,"INKEY", "?", "VPEEK", "CHR$" , "ASC", 
+  ",", ";", ":",
+  "-", "+", "*", "/", "%", "(", ")",
+  ">=", "#", ">", "=", "<=", "<>", "<", 
   "@", "RND", "ABS", "SIZE",
   "LIST", "RUN", "NEW"
 };
@@ -77,12 +87,12 @@ const char *kwtbl[] = {
 enum {
   I_GOTO, I_GOSUB, I_RETURN,
   I_FOR, I_TO, I_STEP, I_NEXT,
-  I_IF, I_REM, I_STOP,
+  I_IF, I_REM, I_END,
   I_INPUT, I_PRINT, I_LET,
-  I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR,
-  I_COMMA, I_SEMI,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_LT,
+  I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC,
+  I_COMMA, I_SEMI, I_COLON,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, 
   I_ARRAY, I_RND, I_ABS, I_SIZE,
   I_LIST, I_RUN, I_NEW,
   I_NUM, I_VAR, I_STR,
@@ -92,19 +102,20 @@ enum {
 // List formatting condition
 // 後ろに空白を入れない中間コード
 const unsigned char i_nsa[] = {
-  I_RETURN, I_STOP, 
+  I_RETURN, I_END, 
   I_CLS,
+  I_INKEY,I_VPEEK, I_CHR, I_ASC,
   I_COMMA,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_LT,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT,  
   I_ARRAY, I_RND, I_ABS, I_SIZE
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
 const unsigned char i_nsb[] = {
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_LT,
-  I_COMMA, I_SEMI, I_EOL
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, 
+  I_COMMA, I_SEMI, I_COLON, I_EOL
 };
 
 // exception search function
@@ -145,7 +156,7 @@ const char* errmsg[] = {
   "Illegal command",
   "Syntax error",
   "Internal error",
-  "Abort by [ESC]"
+  "Abort by [CTRL-C]"
 };
 
 // Error code assignment
@@ -164,7 +175,7 @@ enum {
   ERR_COM,
   ERR_SYNTAX,
   ERR_SYS,
-  ERR_ESC
+  ERR_CTR_C
 };
 
 // RAM mapping
@@ -621,7 +632,8 @@ short getparam() {
 // Get value
 short ivalue() {
   short value; //値
-
+  uint8_t i;   //文字数
+  
   switch (*cip) { //中間コードで分岐
 
   //定数の取得
@@ -696,6 +708,53 @@ short ivalue() {
     value = getsize(); //プログラム保存領域の空きを取得
     break; //ここで打ち切る
 
+  case I_INKEY: //関数INKEYの場合
+    cip++; //中間コードポインタを次へ進める
+    //もし後ろに「()」がなかったら
+    if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {
+      err = ERR_PAREN; //エラー番号をセット
+      break; //ここで打ち切る
+    }
+    cip += 2; //中間コードポインタを「()」の次へ進める
+    value = iinkey(); // キー入力値の取得
+    break; //ここで打ち切る
+
+  case I_VPEEK: //関数VPEEKの場合
+    cip++; //中間コードポインタを次へ進める
+    value = ivpeek();
+    break; //ここで打ち切る
+
+  case I_ASC:  {//関数ASCの場合
+    cip++; //中間コードポインタを次へ進める
+    if (*cip != I_OPEN) {
+      err = ERR_PAREN; //エラー番号をセット
+      break; //ここで打ち切る
+    }
+
+    cip++; //中間コードポインタを次へ進める
+    if ( I_STR != *cip ) {
+      err = ERR_SYNTAX; //エラー番号をセット
+      break; //ここで打ち切る
+    } 
+    
+    cip++; //中間コードポインタを次へ進める    
+    i = (uint8_t)*cip; //文字数を取得
+    if (i != 1) {   
+      err = ERR_SYNTAX; //エラー番号をセット
+      break; //ここで打ち切る      
+    }
+    cip++; //中間コードポインタを次へ進める    
+    
+    value = *cip;
+    //Serial.println(value,DEC);
+    cip++; //中間コードポインタを次へ進める    
+    if (*cip != I_CLOSE) {
+      err = ERR_PAREN; //エラー番号をセット
+      break; //ここで打ち切る
+    }
+    cip++; //中間コードポインタを次へ進める    
+    break;
+  }     
   default: //以上のいずれにも該当しなかった場合
     err = ERR_SYNTAX; //エラー番号をセット
     break; //ここで打ち切る
@@ -728,6 +787,16 @@ short imul() {
       return -1; //終了
     }
     value /= tmp; //割り算を実行
+    break; //ここで打ち切る
+
+  case I_DIVR: //割り算の場合
+    cip++; //中間コードポインタを次へ進める
+    tmp = ivalue(); //演算値を取得
+    if (tmp == 0) { //もし演算値が0なら
+      err = ERR_DIVBY0; //エラー番号をセット
+      return -1; //終了
+    }
+    value %= tmp; //割り算を実行
     break; //ここで打ち切る
 
   default: //以上のいずれにも該当しなかった場合
@@ -780,6 +849,8 @@ short iexp() {
     tmp = iplus(); //演算値を取得
     value = (value == tmp); //真偽を判定
     break; //ここで打ち切る
+
+  case I_NEQ: //「<>」の場合
   case I_SHARP: //「#」の場合
     cip++; //中間コードポインタを次へ進める
     tmp = iplus(); //演算値を取得
@@ -818,7 +889,8 @@ void iprint() {
   unsigned char i; //文字数
 
   len = 0; //桁数を初期化
-  while (*cip != I_SEMI && *cip != I_EOL) { //文末まで繰り返す
+//  while (*cip != I_SEMI && *cip != I_EOL) { //文末まで繰り返す
+  while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
     switch (*cip) { //中間コードで分岐
 
     case I_STR: //文字列の場合
@@ -835,6 +907,16 @@ void iprint() {
         return; //終了
       break; //打ち切る
 
+    case I_CHR: // CHR()関数の場合
+      cip++; //中間コードポインタを次へ進める
+      value = getparam(); //括弧の値を取得
+     if (err) //もしエラーが生じたら
+        break; //ここで打ち切る
+     if(!sc.IS_PRINT(value))
+        value = 32;
+     c_putch(value);
+      break; //打ち切る
+    
     default: //以上のいずれにも該当しなかった場合（式とみなす）
       value = iexp(); //値を取得
       if (err) //もしエラーが生じたら
@@ -843,12 +925,15 @@ void iprint() {
       break; //打ち切る
     } //中間コードで分岐の末尾
 
-    if (*cip == I_COMMA) { //もしコンマがあったら
+    if (*cip == I_COMMA|*cip == I_SEMI) { //もしコンマがあったら
+    //if (*cip == I_SEMI) { //もしセミコロン';'があったら
       cip++; //中間コードポインタを次へ進める
-      if (*cip == I_SEMI || *cip == I_EOL) //もし文末なら
+      //if (*cip == I_SEMI || *cip == I_EOL) //もし文末なら
+      if (*cip == I_COLON || *cip == I_EOL) //もし文末なら
         return; //終了
     } else { //コンマがなければ
-      if (*cip != I_SEMI && *cip != I_EOL) { //もし文末でなければ
+//     if (*cip != I_SEMI && *cip != I_EOL) { //もし文末でなければ
+      if (*cip != I_COLON && *cip != I_EOL) { //もし文末でなければ
         err = ERR_SYNTAX; //エラー番号をセット
         return; //終了
       }
@@ -921,7 +1006,8 @@ void iinput() {
     case I_COMMA: //コンマの場合
       cip++; //中間コードポインタを次へ進める
       break; //打ち切る
-    case I_SEMI: //「;」の場合
+//    case I_SEMI: //「;」の場合
+    case I_COLON: //「;」の場合
     case I_EOL: //行末の場合
       return; //終了
     default: //以上のいずれにも該当しなかった場合
@@ -1009,9 +1095,16 @@ unsigned char* iexe() {
   while (*cip != I_EOL) { //行末まで繰り返す
   
   //強制的な中断の判定
+/*
     if (c_kbhit()) //もし未読文字があったら
       if (c_getch() == 27) { //読み込んでもし［ESC］キーだったら
         err = ERR_ESC; //エラー番号をセット
+        break; //打ち切る
+      }
+*/
+    if ( sc.peek_ch() == SC_KEY_CTRL_C ) { //もし未読文字［CTR_C］キーだったら
+        c_getch();
+        err = ERR_CTR_C; //エラー番号をセット
         break; //打ち切る
       }
 
@@ -1166,7 +1259,7 @@ unsigned char* iexe() {
         cip++; //中間コードポインタを次へ進める
       break; //打ち切る
 
-    case I_STOP: //STOPの場合
+    case I_END: //ENDの場合
       while (*clp) //行の終端まで繰り返す
         clp += *clp; //行ポインタを次へ進める
       return clp; //行ポインタを持ち帰る
@@ -1209,6 +1302,7 @@ unsigned char* iexe() {
       cip++; //中間コードポインタを次へ進める
       ilet(); //LET文を実行
       break; //打ち切る
+    case I_QUEST:
     case I_PRINT: //PRINTの場合
       cip++; //中間コードポインタを次へ進める
       iprint(); //PRINT文を実行
@@ -1223,7 +1317,8 @@ unsigned char* iexe() {
     case I_RUN: //中間コードがRUNの場合
       err = ERR_COM; //エラー番号をセット
       return NULL; //終了
-    case I_SEMI: //中間コードが「;」の場合
+//    case I_SEMI: //中間コードが「;」の場合
+      case I_COLON: //中間コードが「;」の場合
       cip++; //中間コードポインタを次へ進める
       break; //打ち切る
     default: //以上のいずれにも該当しない場合
@@ -1244,7 +1339,6 @@ void irun() {
   gstki = 0; //GOSUBスタックインデクスを0に初期化
   lstki = 0; //FORスタックインデクスを0に初期化
   clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
-
   while (*clp) { //行ポインタが末尾を指すまで繰り返す
     cip = clp + 3; //中間コードポインタを行番号の後ろに設定
     lp = iexe(); //中間コードを実行して次の行の位置を得る
@@ -1325,11 +1419,15 @@ void icom() {
 
   case I_RUN: //I_RUNの場合（RUN命令）
     cip++; //中間コードポインタを次へ進める
+    sc.show_curs(0);
     irun(); //RUN命令を実行
+    sc.show_curs(1);
     break; //打ち切る
 
   default: //どれにも該当しない場合
+    sc.show_curs(0);
     iexe(); //中間コードを実行
+    sc.show_curs(1);
     break; //打ち切る
   }
 }
@@ -1411,6 +1509,61 @@ void iattr() {
 
   sc.setAttr(attr);
 
+}
+
+// キー入力文字コードの取得
+int16_t iinkey() {
+int16_t rc;
+  if (sc.isKeyIn()) {
+    rc = sc.get_ch();
+  } else {
+    rc = 0;
+  }
+  return rc;
+}
+
+// スクリーン座標の文字コードの取得
+// "VPEEK(X,Y)"
+int16_t ivpeek() {
+  int16_t rc;
+  short value; //値
+  short x; //値
+  short y; //値
+  
+  if (*cip != I_OPEN) { //もし「(」でなければ
+    err = ERR_PAREN; //エラー番号をセット
+    return 0; //終了
+  }
+
+  cip++; //中間コードポインタを次へ進める
+  x = iexp(); //式を計算
+  if (err) //もしエラーが生じたら
+    return 0; //終了
+
+  //cip++; //中間コードポインタを次へ進める
+  if (*cip != I_COMMA) { //もし「,」でなければ
+    err = ERR_SYNTAX; //エラー番号をセット
+    return 0; //終了
+  }
+  
+  cip++; //中間コードポインタを次へ進める
+  y = iexp(); //式を計算
+  if (err) //もしエラーが生じたら
+    return 0; //終了
+
+  if (*cip != I_CLOSE) { //もし「)」でなければ
+    err = ERR_PAREN; //エラー番号をセット
+    return 0; //終了
+  }
+
+  cip++; //中間コードポインタを次へ進める
+
+  if (x < 0 || y < 0)
+    value = 0;  
+  else 
+    value = sc.vpeek(x, y);
+
+  return value; //値を持ち帰る
 }
 
 // Print OK or error message

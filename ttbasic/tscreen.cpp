@@ -2,13 +2,11 @@
 // file:tscreen.h
 // ターミナルスクリーン制御ライブラリ for Arduino STM32
 //  V1.0 作成日 2017/03/22 by たま吉さん
+//  修正日 2017/03/26, 色制御関連関数の追加
 //
 
 #include <string.h>
 #include "tscreen.h"
-
-#define SC_KEY_CTRL_L   12  // 画面を再表示
-#define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
 
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
@@ -55,7 +53,7 @@ void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
   move(pos_y, pos_x);
 
   // 編集機能の設定
-  flgIns = false;
+  flgIns = true;
 }
 
 // キー入力チェック
@@ -65,14 +63,25 @@ uint8_t tscreen::isKeyIn() {
 
 // 文字入力
 uint8_t tscreen::get_ch() {
-  move(pos_y, pos_x);
+  //move(pos_y, pos_x);
   return getch ();
+}
+
+// キー入力チェック(文字参照)
+int16_t tscreen::peek_ch() {
+  return Serial.peek();
+}
+
+// カーソルの表示/非表示
+// flg: カーソル非表示 0、表示 1、強調表示 2
+void tscreen::show_curs(uint8_t flg) {
+    curs_set(flg);  
 }
 
 // 文字色指定
 void tscreen::setColor(uint16_t fc, uint16_t bc) {
   static const uint16_t tbl_fcolor[]  =
-     { F_BLACK,F_RED,F_GREEN,F_BROWN,F_BLUE,F_MAGENTA,F_CYAN,F_WHITE,F_YELLOW};
+     { F_BLACK,F_RED,F_GREEN,F_BROWN,F_BLUE,F_MAGENTA,F_CYAN,A_NORMAL,F_YELLOW};
   static const uint16_t tbl_bcolor[]  =
      { B_BLACK,B_RED,B_GREEN,B_BROWN,B_BLUE,B_MAGENTA,B_CYAN,B_WHITE,B_YELLOW};
 
@@ -297,6 +306,13 @@ void tscreen::locate(uint16_t x, uint16_t y) {
   move(y, x);
 }
 
+// カーソル位置の文字コード取得
+uint16_t tscreen::vpeek(uint16_t x, uint16_t y) {
+  if (x >= width || y >= height) 
+     return 0;
+  return VPEEK(x,y);
+}
+
 // 行データの入力確定
 uint8_t tscreen::enter_text() {
   memset(text, 0, SC_TEXTNUM);
@@ -334,12 +350,19 @@ uint8_t tscreen::edit() {
         return enter_text();
         break;
 
-      case KEY_HOME:
-      case SC_KEY_CTRL_L:
+      case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
+        cls();
+        locate(0,0);
+        break;
+ 
+      case KEY_HOME:      // [HOMEキー] 画面再表示
+      case SC_KEY_CTRL_R:
         refresh();  break;
 
       case KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
+        if (flgIns) curs_set(2);
+        else  curs_set(1);
         break;        
 
       case KEY_BACKSPACE:  // [BS]キー

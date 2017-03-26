@@ -2,6 +2,7 @@
 // file: tscreen.h
 // ターミナルスクリーン制御ライブラリ ヘッダファイル for Arduino STM32
 // V1.0 作成日 2017/03/22 by たま吉さん
+//  修正日 2017/03/26, 色制御関連関数の追加
 //
 
 #ifndef __tscreen_h__
@@ -9,6 +10,11 @@
 
 #include <Arduino.h>
 #include <mcurses.h>
+
+#define SC_KEY_CTRL_L   12  // 画面を消去
+#define SC_KEY_CTRL_R   18  // 画面を再表示
+#define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
+#define SC_KEY_CTRL_C    3  // break
 
 // スクリーン定義
 #define SC_FIRST_LINE  0  // スクロール先頭行
@@ -38,6 +44,7 @@ class tscreen {
     void putch(uint8_t c);                            // 文字の出力
     uint8_t get_ch();                                 // 文字の取得
     uint8_t isKeyIn();                                // キー入力チェック
+    int16_t peek_ch();                                // キー入力チェック(文字参照)
     void Insert_char(uint8_t c);                      // 現在のカーソル位置に文字を挿入
     void movePosNextNewChar();                        // カーソルを１文字分次に移動
     void movePosPrevChar();                           // カーソルを1文字分前に移動
@@ -48,6 +55,9 @@ class tscreen {
     uint8_t edit();                                   // スクリーン編集
     uint8_t enter_text();                             // 行入力確定ハンドラ
     void newLine();                                   // 改行出力
+    void show_curs(uint8_t flg);                      // カーソルの表示/非表示
+    uint16_t vpeek(uint16_t x, uint16_t y);           // カーソル位置の文字コード取得
+    
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
     inline uint8_t *getScreen() { return screen; };   // スクリーン用バッファアドレス参照
     inline uint16_t c_x() { return pos_x;};           // 現在のカーソル横位置参照
@@ -58,7 +68,6 @@ class tscreen {
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性
     
-   private:
     inline uint8_t IS_PRINT(uint8_t ch) {
       return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
     };
