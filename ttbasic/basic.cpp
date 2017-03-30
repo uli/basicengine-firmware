@@ -14,7 +14,15 @@
 // 4)追加: 演算子 剰余計算 '%' の追加
 // 5)追加: VPEEK() スクリーン位置の文字コード参照
 // 6)追加: CHR$(),ASC()関数の追加
-//
+// 2017/03/29 修正, 文法において下記の変更・追加
+// 1)追加: RENUMコマンドの追加
+// 2)追加: 定数 HIGH、LOW,ピン番号、ピンモード設定の追加
+// 2017/03/30 修正, 文法において下記の変更・追加
+// 1)追加: GPIO, OUT,IN,ANAコマンドの追加
+// 2)変更: SIZE() をFREE()に変更
+// 3)変更: OKをエラーとしない対応
+// 4)変更: プログラム中断を[ESC]でも可能とする、INKEY()の処理修正
+// 5)追加: エラーメッセージ"Illegal value"の追加
 
 #include <Arduino.h>
 #include <stdlib.h>
@@ -24,19 +32,23 @@
 // TO-DO Rewrite defined values to fit your machine as needed
 #define SIZE_LINE 80 //Command line buffer length + NULL
 #define SIZE_IBUF 80 //i-code conversion buffer size
-#define SIZE_LIST 2560 //List buffer size
+#define SIZE_LIST 2048 //List buffer size
 #define SIZE_ARRY 32 //Array area size
 #define SIZE_GSTK 6 //GOSUB stack size(2/nest)
 #define SIZE_LSTK 15 //FOR stack size(5/nest)
 
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
-#define STR_EDITION "ARDUINO"
+#define STR_EDITION "ARDUINO STM32"
 
 // Terminal control
 #define c_getch( ) sc.get_ch()
 #define c_kbhit( ) sc.isKeyIn()
 #define c_putch(c) sc.putch(c)
+
+// 定数
+#define CONST_HIGH   1
+#define CONST_LOW    0
 
 tscreen sc; // スクリーン制御
 
@@ -48,6 +60,8 @@ void icolor();
 void iattr();
 int16_t iinkey();
 int16_t ivpeek();
+void ipmode();
+void idwrite();
 
 #define KEY_ENTER 13
 void newline(void) {
@@ -66,18 +80,33 @@ short getrnd(short value) {
 // Prototypes (necessity minimum)
 short iexp(void);
 
+// ピンモード
+const WiringPinMode pinType[] = {
+  OUTPUT_OPEN_DRAIN, OUTPUT, INPUT_PULLUP, INPUT_PULLDOWN, INPUT_ANALOG, INPUT, 
+};
+
 // Keyword table
 const char *kwtbl[] = {
   "GOTO", "GOSUB", "RETURN",
   "FOR", "TO", "STEP", "NEXT",
   "IF", "REM", "END",
-  "INPUT", "PRINT", "LET",
-  "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,"INKEY", "?", "VPEEK", "CHR$" , "ASC", 
+  "PRINT", "LET",
+  "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,"INKEY", "?", "VPEEK", "CHR$" , "ASC", "RENUM",
+  "HIGH", "LOW",
   ",", ";", ":",
   "-", "+", "*", "/", "%", "(", ")",
   ">=", "#", ">", "=", "<=", "<>", "<", 
-  "@", "RND", "ABS", "SIZE",
-  "LIST", "RUN", "NEW"
+  "@", "RND", "ABS", "FREE",
+
+  "OUTPUT_OD", "OUTPUT", "INPUT_PU", "INPUT_PD", "ANALOG", "INPUT_FL",
+  "INPUT", "GPIO", "OUT", "IN", "ANA", 
+  "PA00", "PA01", "PA02", "PA03", "PA04", "PA05", "PA06", "PA07", "PA08", 
+  "PA09", "PA10", "PA11", "PA12", "PA13","PA14","PA15",
+  "PB00", "PB01", "PB02", "PB03", "PB04", "PB05", "PB06", "PB07", "PB08", 
+  "PB09", "PB10", "PB11", "PB12", "PB13","PB14","PB15",
+  "PC13", "PC14","PC15",
+
+  "LIST", "RUN", "NEW", "OK",
 };
 
 // Keyword count
@@ -88,13 +117,25 @@ enum {
   I_GOTO, I_GOSUB, I_RETURN,
   I_FOR, I_TO, I_STEP, I_NEXT,
   I_IF, I_REM, I_END,
-  I_INPUT, I_PRINT, I_LET,
-  I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC,
+  I_PRINT, I_LET,
+  I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC, I_RENUM,
+  I_HIGH, I_LOW, 
   I_COMMA, I_SEMI, I_COLON,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, 
-  I_ARRAY, I_RND, I_ABS, I_SIZE,
-  I_LIST, I_RUN, I_NEW,
+  I_ARRAY, I_RND, I_ABS, I_FREE,
+  
+  I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,
+  
+  I_INPUT, I_GPIO, I_DOUT, I_DIN, I_ANA,
+  
+  I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, 
+  I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
+  I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
+  I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
+  I_PC13, I_PC14,I_PC15,
+
+  I_LIST, I_RUN, I_NEW, I_OK,
   I_NUM, I_VAR, I_STR,
   I_EOL
 };
@@ -104,11 +145,19 @@ enum {
 const unsigned char i_nsa[] = {
   I_RETURN, I_END, 
   I_CLS,
+  I_HIGH, I_LOW, 
   I_INKEY,I_VPEEK, I_CHR, I_ASC,
   I_COMMA,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT,  
-  I_ARRAY, I_RND, I_ABS, I_SIZE
+  I_ARRAY, I_RND, I_ABS, I_FREE,
+  I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,
+  I_DIN, I_ANA, 
+  I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, 
+  I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
+  I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
+  I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
+  I_PC13, I_PC14,I_PC15,
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
@@ -154,9 +203,10 @@ const char* errmsg[] = {
   "\'(\' or \')\' expected",
   "\'=\' expected",
   "Illegal command",
+  "Illegal value", // 追加
   "Syntax error",
   "Internal error",
-  "Abort by [CTRL-C]"
+  "Abort by [CTRL-C] or [ESC]"
 };
 
 // Error code assignment
@@ -173,6 +223,7 @@ enum {
   ERR_ULN,
   ERR_PAREN, ERR_VWOEQ,
   ERR_COM,
+  ERR_VALUE, // 追加
   ERR_SYNTAX,
   ERR_SYS,
   ERR_CTR_C
@@ -190,6 +241,8 @@ unsigned char* gstk[SIZE_GSTK]; //GOSUB stack
 unsigned char gstki; //GOSUB stack index
 unsigned char* lstk[SIZE_LSTK]; //FOR stack
 unsigned char lstki; //FOR stack index
+
+uint8_t prevPressKey = 0; // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 
 // Standard C libraly (about) same functions
 char c_toupper(char c) {
@@ -490,6 +543,21 @@ unsigned char* getlp(short lineno) {
   return lp; //ポインタを持ち帰る
 }
 
+// 行番号から行インデックスを取得する
+uint16_t getlineIndex(uint16_t lineno) {
+  unsigned char *lp; //ポインタ
+  uint16_t index = 0;	
+  uint16_t rc = 32767;
+  for (lp = listbuf; *lp; lp += *lp) { // 先頭から末尾まで繰り返す
+  	if (getlineno(lp) >= lineno) {     // もし指定の行番号以上なら
+        rc = index;
+  		break;                         // 繰り返しを打ち切る
+  	}
+  	index++;
+  }
+  return rc; 
+}	
+
 // Insert i-code to the list
 void inslist() {
   unsigned char *insp; //挿入位置
@@ -633,7 +701,7 @@ short getparam() {
 short ivalue() {
   short value; //値
   uint8_t i;   //文字数
-  
+
   switch (*cip) { //中間コードで分岐
 
   //定数の取得
@@ -697,7 +765,7 @@ short ivalue() {
       value *= -1; //正負を反転
     break; //ここで打ち切る
 
-  case I_SIZE: //関数SIZEの場合
+  case I_FREE: //関数FREEの場合
     cip++; //中間コードポインタを次へ進める
     //もし後ろに「()」がなかったら
     if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {
@@ -709,9 +777,7 @@ short ivalue() {
     break; //ここで打ち切る
 
   case I_INKEY: //関数INKEYの場合
-    cip++; //中間コードポインタを次へ進める
-    //もし後ろに「()」がなかったら
-    if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {
+    cip++;  if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {
       err = ERR_PAREN; //エラー番号をセット
       break; //ここで打ち切る
     }
@@ -720,42 +786,56 @@ short ivalue() {
     break; //ここで打ち切る
 
   case I_VPEEK: //関数VPEEKの場合
-    cip++; //中間コードポインタを次へ進める
-    value = ivpeek();
-    break; //ここで打ち切る
-
-  case I_ASC:  {//関数ASCの場合
-    cip++; //中間コードポインタを次へ進める
-    if (*cip != I_OPEN) {
-      err = ERR_PAREN; //エラー番号をセット
-      break; //ここで打ち切る
-    }
-
-    cip++; //中間コードポインタを次へ進める
-    if ( I_STR != *cip ) {
-      err = ERR_SYNTAX; //エラー番号をセット
-      break; //ここで打ち切る
-    } 
+    cip++; value = ivpeek();
+    break; 
     
-    cip++; //中間コードポインタを次へ進める    
-    i = (uint8_t)*cip; //文字数を取得
-    if (i != 1) {   
-      err = ERR_SYNTAX; //エラー番号をセット
-      break; //ここで打ち切る      
-    }
-    cip++; //中間コードポインタを次へ進める    
-    
-    value = *cip;
-    //Serial.println(value,DEC);
-    cip++; //中間コードポインタを次へ進める    
-    if (*cip != I_CLOSE) {
-      err = ERR_PAREN; //エラー番号をセット
-      break; //ここで打ち切る
-    }
-    cip++; //中間コードポインタを次へ進める    
+  case I_ASC:  // 関数ASC(文字列)の場合
+    cip++; if (*cip != I_OPEN) { err = ERR_PAREN; break; }            // '('チェック
+    cip++; if ( I_STR != *cip ) { err = ERR_SYNTAX; break; }          // 文字列引数チェック   
+    cip++; i = (uint8_t)*cip; if (i != 1) { err = ERR_VALUE; break; } // 文字列長さチェック
+    cip++; value = *cip;                                              // 値取得
+    cip++; if (*cip != I_CLOSE) { err = ERR_PAREN;break; }            // ')'チェック
+    cip++; 
     break;
-  }     
+
+  // 定数HIGH/LOWの場合
+  case I_HIGH: 
+   cip++; value = CONST_HIGH;  break;
+  case I_LOW:
+   cip++;  value = CONST_LOW;  break;
+
+  case I_DIN: // DIN(ピン番号)の場合
+    cip++; if (*cip != I_OPEN) { err = ERR_PAREN; break; }      // '('チェック
+    cip++; value = iexp(); if (err) break;                      // ピン番号取得
+    if (*cip != I_CLOSE) { err = ERR_PAREN; break; }            // ')'チェック
+    if( value < 0 || value > I_PC15 - I_PA0 )                   // 有効性のチェック
+        { err = ERR_VALUE; break; }
+    value = digitalRead(value);                                 // 入力値取得
+    cip++; 
+    break;
+
+  case I_ANA: // ANA(ピン番号)の場合
+    cip++; if (*cip != I_OPEN) { err = ERR_PAREN; break; }      // '('チェック
+    cip++; value = iexp(); if (err) break;                      // ピン番号取得
+    if (*cip != I_CLOSE) { err = ERR_PAREN; break; }            // ')'チェック
+    if( value < 0 || value > I_PC15 - I_PA0 )                   // 有効性のチェック
+        { err = ERR_VALUE; break; }
+    value = analogRead(value);                                  // 入力値取得
+    cip++; 
+    break;
+  
   default: //以上のいずれにも該当しなかった場合
+    // 定数ピン番号
+    if (*cip >= I_PA0 && *cip <= I_PC15) {
+      value = *cip - I_PA0; 
+      cip++;
+      return value;
+    // 定数GPIOモード
+    } else  if (*cip >= I_OUTPUT_OPEN_DRAIN && *cip <= I_INPUT_F) {
+      value = pinType[*cip - I_OUTPUT_OPEN_DRAIN]; 
+      cip++;
+      return value;  
+    }
     err = ERR_SYNTAX; //エラー番号をセット
     break; //ここで打ち切る
   }
@@ -889,7 +969,6 @@ void iprint() {
   unsigned char i; //文字数
 
   len = 0; //桁数を初期化
-//  while (*cip != I_SEMI && *cip != I_EOL) { //文末まで繰り返す
   while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
     switch (*cip) { //中間コードで分岐
 
@@ -919,22 +998,23 @@ void iprint() {
     
     default: //以上のいずれにも該当しなかった場合（式とみなす）
       value = iexp(); //値を取得
-      if (err) //もしエラーが生じたら
+      if (err) { //もしエラーが生じたら
+        newline(); //改行        
         return; //終了
+      }
       putnum(value, len); //値を表示
       break; //打ち切る
     } //中間コードで分岐の末尾
 
     if (*cip == I_COMMA|*cip == I_SEMI) { //もしコンマがあったら
-    //if (*cip == I_SEMI) { //もしセミコロン';'があったら
       cip++; //中間コードポインタを次へ進める
-      //if (*cip == I_SEMI || *cip == I_EOL) //もし文末なら
       if (*cip == I_COLON || *cip == I_EOL) //もし文末なら
+        //newline(); //改行        
         return; //終了
     } else { //コンマがなければ
-//     if (*cip != I_SEMI && *cip != I_EOL) { //もし文末でなければ
       if (*cip != I_COLON && *cip != I_EOL) { //もし文末でなければ
         err = ERR_SYNTAX; //エラー番号をセット
+        newline(); //改行        
         return; //終了
       }
     }
@@ -1091,23 +1171,29 @@ unsigned char* iexe() {
   short condition; //IF文の条件値
   
   uint16_t prm; // コマンド引数
+  uint8_t c;    // 入力キー
   
   while (*cip != I_EOL) { //行末まで繰り返す
   
   //強制的な中断の判定
-/*
-    if (c_kbhit()) //もし未読文字があったら
-      if (c_getch() == 27) { //読み込んでもし［ESC］キーだったら
-        err = ERR_ESC; //エラー番号をセット
+
+    if (c_kbhit()) { //もし未読文字があったら
+      c = c_getch();
+      if (c == SC_KEY_CTRL_C || c==27 ) { //読み込んでもし［CTRL_C］キーだったら
+        err = ERR_CTR_C; //エラー番号をセット
+        prevPressKey = 0;
         break; //打ち切る
+      } else {
+        prevPressKey = c;
       }
-*/
-    if ( sc.peek_ch() == SC_KEY_CTRL_C ) { //もし未読文字［CTR_C］キーだったら
+    }
+/*
+    if ( sc.peek_ch() == SC_KEY_CTRL_C ) { //もし未読文字［CTRL_C］キーだったら
         c_getch();
         err = ERR_CTR_C; //エラー番号をセット
         break; //打ち切る
       }
-
+*/
     //中間コードを実行
     switch (*cip) { //中間コードで分岐
 
@@ -1312,13 +1398,23 @@ unsigned char* iexe() {
       iinput(); //INPUT文を実行
       break; //打ち切る
 
-    case I_NEW: //中間コードがNEWの場合
-    case I_LIST: //中間コードがLISTの場合
-    case I_RUN: //中間コードがRUNの場合
+    case I_GPIO:
+      cip++;
+      ipmode();
+      break;    
+      
+    case I_DOUT:
+      cip++;
+      idwrite();
+      break;    
+
+    case I_NEW:   //中間コードがNEWの場合
+    case I_LIST:  //中間コードがLISTの場合
+    case I_RUN:   //中間コードがRUNの場合
+    case I_RENUM: //中間コードがRENUMの場合
       err = ERR_COM; //エラー番号をセット
       return NULL; //終了
-//    case I_SEMI: //中間コードが「;」の場合
-      case I_COLON: //中間コードが「;」の場合
+    case I_COLON: //中間コードが「;」の場合
       cip++; //中間コードポインタを次へ進める
       break; //打ち切る
     default: //以上のいずれにも該当しない場合
@@ -1394,12 +1490,102 @@ void inew(void) {
   clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
 }
 
+	
+// RENUME command handler
+void irenum() {
+  uint16_t startLineNo = 10;  // 開始行番号
+  uint16_t increase = 10;     // 増分
+  uint8_t* ptr;               // プログラム領域参照ポインタ
+  uint16_t len;               // 行長さ
+  uint16_t i;                 // 中間コード参照位置
+  uint16_t newnum;            // 新しい行番号
+  uint16_t num;               // 現在の行番号
+  uint16_t index;             // 行インデックス
+	
+  // 開始行番号、増分引数チェック
+  if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
+    startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
+    cip+=3;
+	  if (*cip == I_COMMA) {
+		    cip++;                        // カンマをスキップ
+		    if (*cip == I_NUM) {          // 増分指定があったら
+	         increase = getlineno(cip); // 引数を読み取って増分とする
+		    } else {
+		       err = ERR_SYNTAX;          // カンマありで引数なしの場合はエラーとする
+		       return;
+		   }
+ 	  }
+  }
+
+  // 引数の有効性チェック
+  if (startLineNo <= 0 || increase <= 0 || increase >=1000) {
+	  err = ERR_SYNTAX;
+	  return;		
+  }
+
+  // ブログラム中のGOTOの飛び先行番号を付け直す
+  for (  clp = listbuf; *clp ; clp += *clp) {
+     ptr = clp;
+     len = *ptr;
+     ptr++;
+     i=0;
+     // 行内検索
+  	 while( i < len-1 ) {
+  	    switch(ptr[i]) {
+  	    case I_GOTO:  // GOTO命令
+  	    case I_GOSUB: // GOSUB命令
+  	      i++;
+  	      if (ptr[i] == I_NUM) {
+  	    		num = getlineno(&ptr[i]);    // 現在の行番号を取得する
+  	    		index = getlineIndex(num);   // 行番号の行インデックスを取得する
+  	    		if (index == 32767) {
+                     // 該当する行が見つからないため、変更は行わない
+  	    		   i+=3;
+  	    		   continue;
+  	    		} else {
+  	    		   // とび先行番号を付け替える
+  	    		   newnum = startLineNo + increase*index;
+  	    		   ptr[i+2] = newnum>>8;
+  	    		   ptr[i+1] = newnum&0xff;
+  	    		   i+=3;
+  	    		   continue;
+  	    		}
+  	      }	
+  	      break;
+  		case I_STR:  // 文字列
+  		  i++;
+  		  i+=ptr[i]; // 文字列長分移動
+  		  break;
+  		case I_NUM:  // 定数
+  		  i+=3;      // 整数2バイト+中間コード1バイト分移動
+  		  break;
+  		case I_VAR:  // 変数
+  		  i+=2;      // 変数名+
+  		  break;
+  		default:     // その他
+  		  i++;
+  		  break;
+  	  }
+  	}
+  }
+  
+  // 各行の行番号の付け替え
+  index = 0;
+  for (  clp = listbuf; *clp ; clp += *clp ) {
+     newnum = startLineNo + increase * index;
+  	 *(clp+1)  = newnum&0xff;
+   	 *(clp+2)  = newnum>>8;
+     index++;
+  }
+}
+	
+	
 //Command precessor
-void icom() {
+uint8_t icom() {
+  uint8_t rc = 1;
   cip = ibuf; //中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip) { //中間コードポインタが指し示す中間コードによって分岐
-
   case I_NEW: //I_NEWの場合（NEW命令）
     cip++; //中間コードポインタを次へ進める
     if (*cip == I_EOL) //もし行末だったら
@@ -1407,7 +1593,6 @@ void icom() {
     else //行末でなければ
       err = ERR_SYNTAX; //エラー番号をセット
     break; //打ち切る
-
   case I_LIST: //I_LISTの場合（LIST命令）
     cip++; //中間コードポインタを次へ進める
     if (*cip == I_EOL || //もし行末か、あるいは
@@ -1416,20 +1601,30 @@ void icom() {
     else //そうでなければ
       err = ERR_SYNTAX; //エラー番号をセット
     break; //打ち切る
-
   case I_RUN: //I_RUNの場合（RUN命令）
     cip++; //中間コードポインタを次へ進める
     sc.show_curs(0);
     irun(); //RUN命令を実行
     sc.show_curs(1);
     break; //打ち切る
-
+  case I_RENUM: // I_RENUMの場合
+    cip++;
+    if (*cip == I_EOL || *(cip + 3) == I_EOL || *(cip + 7) == I_EOL)
+  	   irenum(); 
+    else
+       err = ERR_SYNTAX;
+  	break;
+  case I_OK: // I_OKの場合
+    cip++;    
+    rc = 0;
+    break;
   default: //どれにも該当しない場合
     sc.show_curs(0);
     iexe(); //中間コードを実行
     sc.show_curs(1);
     break; //打ち切る
   }
+  return rc;
 }
 
 // 画面クリア
@@ -1513,11 +1708,12 @@ void iattr() {
 
 // キー入力文字コードの取得
 int16_t iinkey() {
-int16_t rc;
-  if (sc.isKeyIn()) {
+int16_t rc = 0;
+  if (prevPressKey) {
+    rc = prevPressKey;
+    prevPressKey = 0;
+  } else if (sc.isKeyIn()) {
     rc = sc.get_ch();
-  } else {
-    rc = 0;
   }
   return rc;
 }
@@ -1566,28 +1762,62 @@ int16_t ivpeek() {
   return value; //値を持ち帰る
 }
 
+// GPIO ピン機能設定
+void ipmode() {
+  int16_t pinno;
+  WiringPinMode pmode;
+
+  // 入出力ピンの指定
+  pinno = iexp(); if(err) return ; 
+  if (pinno < 0 || pinno >= I_PC15-I_PA0) { err = ERR_VALUE; return; }
+  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+ 
+  // 入出力モードの指定
+  cip++;
+  pmode = (WiringPinMode)iexp();  if(err) return ; // 出力モードの指定
+  // ピンモードの設定
+  pinMode(pinno, pmode);
+}
+
+// GPIO ピンデジタル出力
+void idwrite() {
+  int16_t pinno,  data;
+
+  // 出力ピンの指定
+  pinno = iexp(); if(err) return ; 
+  if (pinno < 0 || pinno >= I_PC15-I_PA0) { err = ERR_VALUE; return; }
+  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+ 
+  // 入出力モードの指定
+  cip++;
+  data = iexp();  if(err) return ;
+  data = data ? HIGH: LOW;
+  
+  // ピンモードの設定
+  digitalWrite(pinno, data);
+}
+
+
 // Print OK or error message
 void error() {
   if (err) { //もし「OK」ではなかったら
-
     //もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
-    if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp)
-    {
+    if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp) {
       newline(); //改行
       c_puts("LINE:"); //「LINE:」を表示
       putnum(getlineno(clp), 0); //行番号を調べて表示
       c_putch(' '); //空白を表示
       putlist(clp + 3); //リストの該当行を表示
-    }
-    else //指示の実行中なら
-    {
       newline(); //改行
+    } else { //指示の実行中なら
+      //newline(); //改行
       c_puts("YOU TYPE: "); //「YOU TYPE:」を表示
       c_puts(lbuf); //文字列バッファの内容を表示
+      newline(); //改行
     }
   } //もし「OK」ではなかったらの末尾
 
-  newline(); //改行
+  //newline(); //改行
   c_puts(errmsg[err]); //「OK」またはエラーメッセージを表示
   newline(); //改行
   err = 0; //エラー番号をクリア
@@ -1648,8 +1878,8 @@ void basic() {
     }
 
     //中間コードの並びが命令と判断される場合
-    icom(); //実行する
-    error(); //エラーメッセージを表示してエラー番号をクリア
+    if (icom())  // 実行する
+        error(); // エラーメッセージを表示してエラー番号をクリア
 
   } //無限ループの末尾
 }

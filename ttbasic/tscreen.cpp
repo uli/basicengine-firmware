@@ -3,6 +3,7 @@
 // ターミナルスクリーン制御ライブラリ for Arduino STM32
 //  V1.0 作成日 2017/03/22 by たま吉さん
 //  修正日 2017/03/26, 色制御関連関数の追加
+//  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
 //
 
 #include <string.h>
@@ -294,6 +295,20 @@ void tscreen::movePosPrevLineChar() {
   }  
 }
 
+// カーソルを行末に移動
+void tscreen::moveLineEnd() {
+  pos_x = width-1;
+  while(1) {
+    if (IS_PRINT(VPEEK(pos_x, pos_y)) ) 
+       break;  
+    if (pos_x > 0)
+      pos_x--;
+    else
+      break;
+  }        
+  move(pos_y, pos_x);      
+}
+
 // カーソルを指定位置に移動
 void tscreen::locate(uint16_t x, uint16_t y) {
   if (x >= width)
@@ -355,9 +370,18 @@ uint8_t tscreen::edit() {
         locate(0,0);
         break;
  
-      case KEY_HOME:      // [HOMEキー] 画面再表示
-      case SC_KEY_CTRL_R:
+      case KEY_HOME:      // [HOMEキー] 行先頭移動
+        locate(0, pos_y);
+        break;
+        
+      case KEY_NPAGE:     // [CTRL_R][PageUP][PageDown] 画面更新
+      case KEY_PPAGE:
+      case SC_KEY_CTRL_R: 
         refresh();  break;
+
+      case KEY_END:       // [ENDキー] 行の右端移動
+         moveLineEnd();
+         break;
 
       case KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
