@@ -38,6 +38,7 @@
 // 11)追加: BIN$()の追加
 // 12)追加: 論理積、論理和 '|'、'&'演算子の追加
 // 13)追加: TICK() 起動から現在までの時間の取得
+// 2017/04/1 BIN$()の不具合修正
 // 
 
 #include <Arduino.h>
@@ -389,7 +390,7 @@ void putBinnum(short value, uint8_t d) {
   uint16_t  dig = 0;
   
   for (uint8_t i = 0; i < 16; i++) {
-    b = bin>>(15-i);
+    b =(bin>>(15-i)) & 1;
     lbuf[i] = b ? '1':'0';
     if (!dig && b) 
       dig = 16-i;
