@@ -355,6 +355,38 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
 40 LOCATE 5,5: ? A; "     "
 50 GOTO 30
 ```
+### 配列の連続設定
+```
+10 @(1)=1,2,3,4,5,6,7,8
+20 FOR I=1 TO 8
+30 ? "@(";I;")=";@(I)
+40 NEXT I
+```
+
+### シフト演算
+```
+10 A=1
+20 FOR I=0 TO 16
+30 ? HEX$(A<<I,4)
+40 NEXT I
+```
+
+### ラベルの利用
+```
+100 GOSUB "SUB01"
+110 GOSUB "SUB02"
+120 N=0
+130 "LOOP"
+140 PRINT "N=";N
+150 N=N+1:IF N<5 GOTO "LOOP"
+160 END
+170 "SUB01"
+180 PRINT "SUB01"
+190 RETURN
+200 "SUB02"
+210 PRINT "SUB02"
+220 RETURN
+```
 
 ## 以降はオリジナルのドキュメントです
 
