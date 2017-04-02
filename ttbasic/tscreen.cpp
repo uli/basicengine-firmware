@@ -50,7 +50,7 @@ void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
   setFunction_getchar(Arduino_getchar); 
   initscr();
   clear();
-  setscrreg (SC_FIRST_LINE, SC_LAST_LINE);
+  setscrreg (SC_FIRST_LINE, height-1);
   move(pos_y, pos_x);
 
   // 編集機能の設定

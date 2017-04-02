@@ -4,7 +4,7 @@
 // V1.0 作成日 2017/03/22 by たま吉さん
 //  修正日 2017/03/26, 色制御関連関数の追加
 //  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
-//
+//  修正日 2017/04/02, getScreenByteSize()の追加
 
 #ifndef __tscreen_h__
 #define __tscreen_h__
@@ -19,7 +19,7 @@
 
 // スクリーン定義
 #define SC_FIRST_LINE  0  // スクロール先頭行
-#define SC_LAST_LINE  22  // スクロール最終行
+//#define SC_LAST_LINE  24  // スクロール最終行
 
 #define SC_TEXTNUM   256  // 1行確定文字列長さ
 
@@ -66,6 +66,7 @@ class tscreen {
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
     inline uint16_t getWidth() { return width;};      // スクリーン横幅取得
     inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
+    inline uint16_t getScreenByteSize() {width*height;} // スクリーン領域バイトサイズ
 
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性
