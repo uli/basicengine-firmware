@@ -1,4 +1,4 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.2
+## 豊四季タイニーBASIC for Arduino STM32 V0.3
 
 ![サンプル画像](./image/sample.jpg)
 
@@ -32,12 +32,17 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
   - **CHR$()**、**HEX$()**、**BIN$()**、**ASC()**、**INKEY()** 関数の追加  
   - **TICK()** 関数の追加  
   - **?**：**PRINT**文の省略系を追加  
-  - **GPIO**、**OUT**、**IN**、**ANA**、**SHIFTOUT**：GPIO利用コマンドの追加  
-- 文法の変更  
+  - **GPIO**、**OUT**、**IN**、**ANA**、**SHIFTOUT**、**SHIFTIN**：GPIO利用コマンドの追加  
+  - **I2CW**、**I2CR**：I2C利用コマンドの追加  
+  - **POKE**、**PEEK**：メモリ領域参照コマンドの追加  
+  - **DATE**、**SETDATE**、**GETTIME**: 内蔵RTC利用コマンド追加  
+  - **SAVE**、**LOAD**： 内部フラッシュメモリへのプログラム保存機能の追加  
+- 文法の変更  
   - 定数の16進数表記対応(例 $1234,$AB)  
   - 命令文区切りを';'から':'に変更  
   - **PRINT**文の行継続を';'でも可能に変更  
-  - **IF**文の不一致判定を"<>"でも可能に変更  
+  - **PRINT**文の数値桁指定#nのnにマイナス値指定時、空白ではなく0埋め出来るように追加  
+  - **IF**文の不一致判定を"<>"でも可能に変更  
   - 演算子 剰余計算'%'、シフト演算子 '>>'、'<<'を追加  
   - 論理積・論理和 '|'、'&'ビット演算子を追加  
   - **STOP**命令を**END**に変更    
@@ -52,11 +57,15 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
   - プログラム領域を256バイトから2048バイトに拡大  
   - 配列サイズを32から100に拡大  
   - エラーメッセージ**Illegal value**の追加  
+  - エラーメッセージ**Out of range value**の追加  
+  - エラーメッセージ**Program not found**の追加  
   - 定数:HIGH、LOW、PA00、PA01、..、PC15のピン名の追加  
 
-本スケッチの利用には、  
-別途、mcursesライブラリ(https://github.com/ChrisMicro/mcurses) が必要です。  
-
+**※本スケッチの利用には別途、下記のライブラリが必要です.**  
+ - mcursesライブラリ  
+   https://github.com/ChrisMicro/mcurses  
+ - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
+   https://github.com/Tamakichi/ArduinoSTM32_TFlash  
 
 ## フルスリーンテキストエディタの機能
 ※利用にはTeraTerm用のシリアル接続可能なターミナルソフトが必要です.  
