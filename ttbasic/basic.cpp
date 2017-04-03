@@ -56,6 +56,8 @@
 // 内蔵RTCの利用指定
 #define USE_INNERRTC   1  // 0:利用しない 1:利用する
 
+#define SRAM_SIZE      20480
+
 #include <Arduino.h>
 #include <stdlib.h>
 #if I2C_USE_HWIRE == 0
@@ -233,7 +235,7 @@ const unsigned char i_nsa[] = {
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
-  I_LSB, I_MSB, I_MEM, I_VRAM, 
+  I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
@@ -1036,7 +1038,12 @@ short ivalue() {
     value = getparam(); // 括弧の値を取得
     if (err)            // もしエラーが生じたら
       break;            // ここで打ち切る
+    if (value >= SRAM_SIZE) {
+      err = ERR_RANGE;  // SRAMの範囲外を参照した
+      break;
+    }
     value = *((uint8_t*)((uint32_t)SRAM_TOP +(uint32_t)value));
+   
     break; //ここで打ち切る
 
   case I_ISND: // I2CW()関数の場合
@@ -2272,7 +2279,7 @@ void ipoke() {
   if (value < 0 ) { err = ERR_VALUE; return; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
   adr = SRAM_TOP + value;
-
+    
   // メモリ保護対応
   if ( (adr >= (uint32_t)mem) && (adr < (uint32_t)mem + sizeof(mem)) ||
        (adr >= (uint32_t)var) && (adr < (uint32_t)var + sizeof(var)) ||

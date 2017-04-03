@@ -5,6 +5,7 @@
 //  修正日 2017/03/26, 色制御関連関数の追加
 //  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
 //  修正日 2017/04/02, getScreenByteSize()の追加
+//  修正日 2017/04/03, getScreenByteSize()の不具合対応
 
 #ifndef __tscreen_h__
 #define __tscreen_h__
@@ -66,7 +67,7 @@ class tscreen {
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
     inline uint16_t getWidth() { return width;};      // スクリーン横幅取得
     inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
-    inline uint16_t getScreenByteSize() {width*height;} // スクリーン領域バイトサイズ
+    inline uint16_t getScreenByteSize() {return width*height;} // スクリーン領域バイトサイズ
 
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性
