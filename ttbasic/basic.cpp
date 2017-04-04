@@ -36,7 +36,7 @@
 //  9)追加: SHIFTOUTコマンドの追加
 // 10)追加: シフト演算子 ">>","<<"の追加(負号考慮なし)
 // 11)追加: BIN$()の追加
-// 12)追加: 論理積、論理和 '|'、'&'演算子の追加
+// 12)追加: 算術積、算術和 '|'、'&'演算子の追加
 // 13)追加: TICK() 起動から現在までの時間の取得
 // 2017/04/1  修正, 文法において下記の変更・追加
 //  1)修正: BIN$()の不具合修正
@@ -53,7 +53,9 @@
 //  2)修正: RENUMの引数の有効性チェックを追加
 //  3)追加: RESTTICKの追加
 //  4)修正: コマンド入力ラインの右空白文字のトリム処理の追加(スペース打ち文法エラー対策)
-//
+//  5)追加: REDRAWの追加（コンソール画面再表示）
+//  6)修正: LISTの第2引数で表示終了行の指定を可能にした
+//  7)追加：DELETEコマンドで指定行のプログラムを削除出来るようにしたい
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -190,7 +192,7 @@ const char *kwtbl[] = {
   "PB09", "PB10", "PB11", "PB12", "PB13","PB14","PB15",
   "PC13", "PC14","PC15", 
   "LSB", "MSB", "MEM", "VRAM", "VAR", "ARRAY",
-  "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK",
+  "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK", "REDRAW",
 };
 
 // Keyword count
@@ -220,7 +222,7 @@ enum {
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
-  I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK,
+  I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK, I_REFLESH,
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
 };
@@ -1804,7 +1806,12 @@ unsigned char* iexe() {
       cip++;
       resetTick();
       break;
-    
+
+    case I_REFLESH:  // REFLESHコマンド 画面再表示
+      cip++;
+      sc.refresh();
+      break;
+         
     case I_NEW:   // 中間コードがNEWの場合
     case I_LIST:  // 中間コードがLISTの場合
     case I_RUN:   // 中間コードがRUNの場合
@@ -1844,32 +1851,51 @@ void irun() {
   }
 }
 
-// LIST command handler
+// LISTコマンド
 void ilist() {
-  short lineno; //表示開始行番号
+  short lineno = 0;          // 表示開始行番号
+  short endlineno = 32767;   // 表示終了行番号
+  short prnlineno;           // 出力対象行番号
 
   //表示開始行番号の設定
-  if (*cip == I_NUM) //もしLIST命令に引数があったら
-    lineno = getlineno(cip); //引数を読み取って表示開始行番号とする
-  else //引数がなければ
-    lineno = 0; //表示開始行番号を0とする
+  if (*cip == I_NUM) {         // もしLIST命令に引数があったら
+    lineno = getlineno(cip);   // 引数を読み取って表示開始行番号とする
+    cip+=3;
+    if (*cip == I_COMMA) {
+        cip++;                         // カンマをスキップ
+        if (*cip == I_NUM) {           // 表示終了行番号の指定がある
+           endlineno = getlineno(cip); // 引数を読み取って表示終了行番号とする
+           cip+=3;
+        } else {
+           err = ERR_SYNTAX;           // カンマありで引数なしの場合はエラーとする
+           return;
+       }
+    }
+  } else if (*cip != I_EOL) {
+     err = ERR_SYNTAX;           // 不当な引数を指定している
+     return;      
+  }
 
+  if ( endlineno < lineno ) {
+     err = ERR_VALUE;           // 表示終了行番号が表示開始行番号より小さい場合はエラーとする
+     return;     
+  }
+  
   //行ポインタを表示開始行番号へ進める
-  for ( //次の手順で繰り返す
-    clp = listbuf; //行ポインタを先頭行へ設定
-    //末尾ではなくて表示開始行より前なら繰り返す
-    *clp && (getlineno(clp) < lineno);
-    clp += *clp); //行ポインタを次の行へ進める
-
+  for ( clp = listbuf; *clp && (getlineno(clp) < lineno); clp += *clp); 
+  
   //リストを表示する
-  while (*clp) { //行ポインタが末尾を指すまで繰り返す
-    putnum(getlineno(clp), 0); //行番号を表示
-    c_putch(' '); //空白を入れる
-    putlist(clp + 3); //行番号より後ろを文字列に変換して表示
-    if (err) //もしエラーが生じたら
-      break; //繰り返しを打ち切る
-    newline(); //改行
-    clp += *clp; //行ポインタを次の行へ進める
+  while (*clp) {               // 行ポインタが末尾を指すまで繰り返す
+    prnlineno = getlineno(clp);// 行番号取得
+    if (prnlineno > endlineno) // 表示終了行番号に達したら抜ける
+       break; 
+    putnum(prnlineno, 0);      // 行番号を表示
+    c_putch(' ');              // 空白を入れる
+    putlist(clp + 3);          // 行番号より後ろを文字列に変換して表示
+    if (err)                   // もしエラーが生じたら
+      break;                   // 繰り返しを打ち切る
+    newline();                 // 改行
+    clp += *clp;               // 行ポインタを次の行へ進める
   }
 }
 
@@ -2076,11 +2102,7 @@ uint8_t icom() {
     break;
   case I_LIST:         // I_LISTの場合（LIST命令）
     cip++;             // 中間コードポインタを次へ進める
-    if (*cip == I_EOL || //もし行末か、あるいは
-      *(cip + 3) == I_EOL) //続いて引数があれば
-      ilist();             // LIST命令を実行
-    else //そうでなければ
-      err = ERR_SYNTAX; //エラー番号をセット
+      ilist();         // LIST命令を実行
     break;
   case I_RUN: //I_RUNの場合（RUN命令）
     cip++;         // 中間コードポインタを次へ進める
