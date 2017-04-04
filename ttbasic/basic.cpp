@@ -47,19 +47,26 @@
 //  5)追加: SHIFTIN()コマンドの追加
 //  6)追加: SAVE,LOADコマンドの追加
 //  7)追加: SETDATE,GETDATE,GETTIME,DATEコマンドの追加
-//  8)追加: PRINT文の桁指定 #で-数値で0サブレス表示
+//  8)追加: PRINT文の桁指定 #で-数値に0埋め表示
+// 2017/04/4  修正, 文法において下記の変更・追加
+//  1)修正: LOAD,SAVEの引数エラーチェックの修正(省略or定数値のみ可能とする)
+//  2)修正: RENUMの引数の有効性チェックを追加
+//  3)追加: RESTTICKの追加
+//  4)修正: コマンド入力ラインの右空白文字のトリム処理の追加(スペース打ち文法エラー対策)
 //
 
 // I2Cライブラリの選択
-#define I2C_USE_HWIRE  1  // 1:HWire 0:Wire(ソフトエミュレーション)
+#define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
 
 // 内蔵RTCの利用指定
-#define USE_INNERRTC   1  // 0:利用しない 1:利用する
+#define USE_INNERRTC   1     // 0:利用しない 1:利用する
 
-#define SRAM_SIZE      20480
+// SRAMの物理サイズ(バイト)
+#define SRAM_SIZE      20480 // STM32F103C8T6
 
 #include <Arduino.h>
 #include <stdlib.h>
+
 #if I2C_USE_HWIRE == 0
   #include <Wire.h>
   #define I2C_WIRE  Wire
@@ -111,7 +118,9 @@
 #define CONST_MSB    MSBFIRST
 #define SRAM_TOP     0x20000000
 
-tscreen sc; // スクリーン制御
+// スクリーン制御
+tscreen sc; 
+#define KEY_ENTER 13
 
 // 追加コマンドの宣言
 void icls();
@@ -138,13 +147,12 @@ void idate();
 void isave();
 void iload();
 
+// tick用支援関数
+void resetTick() {
+  systick_uptime_millis = 0;
+}
 
-#define KEY_ENTER 13
 void newline(void) {
-/*
-  c_putch(13); //CR
-  c_putch(10); //LF
-*/
  sc.newLine();
 }
 
@@ -182,7 +190,7 @@ const char *kwtbl[] = {
   "PB09", "PB10", "PB11", "PB12", "PB13","PB14","PB15",
   "PC13", "PC14","PC15", 
   "LSB", "MSB", "MEM", "VRAM", "VAR", "ARRAY",
-  "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES",
+  "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK",
 };
 
 // Keyword count
@@ -212,7 +220,7 @@ enum {
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
-  I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES,
+  I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK,
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
 };
@@ -348,6 +356,19 @@ char c_isalpha(char c) {
 // 16進数文字チェック
 char c_ishex(char c) {
   return( (c <= '9' && c >= '0') || (c <= 'f' && c >= 'a') || (c <= 'F' && c >= 'A') );
+}
+
+// 文字列の右側の空白文字を削除する
+char* tlimR(char* str) {
+  uint16_t len = strlen(str);
+  for (uint16_t i = len - 1; i>0 ; i--) {
+    if (str[i] == ' ') {
+      str[i] = 0;
+    } else {
+      break;
+    }
+  }
+  return str;
 }
 
 // 1桁16進数文字を整数に変換する
@@ -754,6 +775,15 @@ uint16_t getlineIndex(uint16_t lineno) {
   }
   return rc; 
 }	
+
+// プログラム行数を取得する
+uint16_t countLines() {
+  unsigned char *lp; //ポインタ
+  uint16_t cnt = 0;  
+  
+  for (lp = listbuf; *lp; lp += *lp)  cnt++;
+  return cnt;   
+}
 
 // Insert i-code to the list
 // [listbuf]に[ibuf]を挿入
@@ -1487,7 +1517,7 @@ unsigned char* iexe() {
   unsigned char* lp;       // 未確定の（エラーかもしれない）行ポインタ
   short index, vto, vstep; // FOR文の変数番号、終了値、増分
   short condition;         // IF文の条件値
-  uint16_t prm;            // コマンド引数
+  int16_t prm;             // コマンド引数
   uint8_t c;               // 入力キー
   
   while (*cip != I_EOL) { //行末まで繰り返す
@@ -1687,7 +1717,10 @@ unsigned char* iexe() {
       cip++;
       prm = iexp();
       if(err) return NULL;
-      if(prm < 0) prm = 0;
+      if(prm < 0) {
+        err = ERR_VALUE;
+        break;
+      }
       iwait(prm);
       break;    
 
@@ -1766,7 +1799,12 @@ unsigned char* iexe() {
       cip++;
       idate();
       break;
-       
+
+    case I_RESETTICK: // RESETTICKコマンド
+      cip++;
+      resetTick();
+      break;
+    
     case I_NEW:   // 中間コードがNEWの場合
     case I_LIST:  // 中間コードがLISTの場合
     case I_RUN:   // 中間コードがRUNの場合
@@ -1863,7 +1901,8 @@ void irenum() {
   uint16_t newnum;            // 新しい行番号
   uint16_t num;               // 現在の行番号
   uint16_t index;             // 行インデックス
-	
+  uint16_t cnt;               // プログラム行数
+  
   // 開始行番号、増分引数チェック
   if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
     startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
@@ -1880,9 +1919,14 @@ void irenum() {
   }
 
   // 引数の有効性チェック
-  if (startLineNo <= 0 || increase <= 0 || increase >=1000) {
-	  err = ERR_SOR;
+  cnt = countLines()-1;
+  if (startLineNo <= 0 || increase <= 0) {
+	  err = ERR_VALUE;
 	  return;		
+  }
+  if (startLineNo + increase * cnt > 32767) {
+    err = ERR_VALUE;
+    return;       
   }
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
@@ -1949,18 +1993,20 @@ void isave() {
   uint8_t* sram_adr;
   
   // 引数の取得
-  if (*clp != 0 && *clp != I_EOL ) {
-     prgno = iexp();    // 引数を読み取ってプログラム番号とする
-     if (err)
-       return;
+  if (*cip == I_EOL) {
+    prgno = 0;    
+  } else if (*cip == I_NUM) {
+    prgno = getlineno(cip);
+  } else {
+    err = ERR_SYNTAX;
+    return;
   }
-  
+
   // 引数の範囲チェック
   if (prgno < 0 || prgno > 3) {
     err = ERR_VALUE;
     return;
   }
-
 
   flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2);
   flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2+1);
@@ -1981,14 +2027,16 @@ void iload() {
   int16_t prgno = 0;
   uint32_t flash_adr;
   uint8_t* sram_adr;
-  
+
   // 引数の取得
-  if (*clp != 0 && *clp != I_EOL ) {
-     prgno = iexp();    // 引数を読み取ってプログラム番号とする
-     if (err)
-       return;
+  if (*cip == I_EOL) {
+    prgno = 0;    
+  } else if (*cip == I_NUM) {
+    prgno = getlineno(cip);
+  } else {
+    err = ERR_SYNTAX;
+    return;
   }
-  
   // 引数の範囲チェック
   if (prgno < 0 || prgno > 3) {
     err = ERR_VALUE;
@@ -2115,11 +2163,12 @@ int16_t fc,  bc;
     cip++; bc = iexp(); if(err) return ;
   }
 
-  if ( fc > 9 )  fc = 9;         // 文字色範囲チェック
-  else if ( fc < 0)  fc = 0;
+  // 文字色範囲チェック
+  if (fc < 0 || fc > 8 || bc < 0 || bc > 8) {
+    err = ERR_VALUE;
+    return;
+  }
   
-  if( bc > 9 ) bc = 9;          // 背景色範囲ッチェック
-  else if( bc < 0)  bc = 0;
   // 文字色の設定
   sc.setColor((uint16_t)fc, (uint16_t)bc);  
 }
@@ -2128,10 +2177,14 @@ int16_t fc,  bc;
 void iattr() {
  int16_t attr;
 
-  attr = iexp(); if(err) return ; // 文字属性の取得
+  // 文字属性の取得
+  attr = iexp(); if(err) return ; 
 
-  if ( attr > 5 )  attr = 5;      // 有効性のチェク
-  else if ( attr < 0)  attr = 0;
+  // 文字属性の有効性チェック
+  if (attr < 0 || attr > 4) {
+    err = ERR_VALUE;
+    return;
+  }
   sc.setAttr(attr);               // 文字属性のセット
 }
 
@@ -2311,7 +2364,7 @@ int16_t iisnd() {
 
   // I2Cアドレスの取得
   cip++; i2cAdr = iexp(); if(err) return 0; 
-  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_VALUE; return 0; }
+  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_RANGE; return 0; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
 
   // コマンドアドレスの取得
@@ -2326,6 +2379,7 @@ int16_t iisnd() {
   clen = iexp(); if(err) return 0; 
   if (clen < 0 ) { err = ERR_VALUE; return 0; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
+  if (ctop+clen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
     
   // データアドレスの取得
   cip++;
@@ -2338,6 +2392,7 @@ int16_t iisnd() {
   cip++;
   len = iexp(); if(err) return 0; 
   if (len < 0 ) { err = ERR_VALUE; return 0; }
+  if (top+len >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
   if(*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }
   cip++; 
   
@@ -2365,7 +2420,7 @@ int16_t iircv() {
 
   // I2Cアドレスの取得
   cip++; i2cAdr = iexp(); if(err) return 0; 
-  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_VALUE; return 0; }
+  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_RANGE; return 0; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
 
   // 送信データアドレスの取得
@@ -2379,6 +2434,7 @@ int16_t iircv() {
   cip++;
   sdlen = iexp(); if(err) return 0; 
   if (sdlen < 0 ) { err = ERR_VALUE; return 0; }
+  if (sdtop+sdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
 
   // 受信データアドレスの取得
@@ -2392,6 +2448,7 @@ int16_t iircv() {
   cip++;
   rdlen = iexp(); if(err) return 0; 
   if (rdlen < 0 ) { err = ERR_VALUE; return 0; }
+  if (rdtop+rdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
 
   if(*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }
   cip++; 
@@ -2674,10 +2731,13 @@ void error() {
 void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
-  I2C_WIRE.begin();
+
+  I2C_WIRE.begin();  // I2C利用開始
+  
   inew();            // 実行環境を初期化
   sc.init(80,25,80); // スクリーン初期設定
   sc.cls();
+  char* textline;    // 入力行
   
   // 起動メッセージ
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
@@ -2691,11 +2751,13 @@ void basic() {
   while (1) { //無限ループ
     rc = sc.edit();
     if (rc) {
-      if (!strlen((char*)sc.getText()) ) {
+      textline = (char*)sc.getText();
+      if (!strlen(textline) ) {
         newline();
         continue;
       }
-      strcpy(lbuf, (char*)sc.getText());
+      strcpy(lbuf, textline);
+      tlimR((char*)lbuf);
       newline();
     } else {
       continue;
@@ -2722,3 +2784,6 @@ void basic() {
         error(); // エラーメッセージを表示してエラー番号をクリア
   } // 無限ループの末尾
 }
+
+
+
