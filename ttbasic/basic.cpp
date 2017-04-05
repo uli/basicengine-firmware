@@ -56,6 +56,10 @@
 //  5)追加: REDRAWの追加（コンソール画面再表示）
 //  6)修正: LISTの第2引数で表示終了行の指定を可能にした
 //  7)追加：DELETEコマンドで指定行のプログラムを削除出来るようにしたい
+// 2017/04/5 修正, 文法において下記の変更・追加
+//  1)追加: IF文のELSE対応
+//  2)修正: LIST出力時のIF文の実行文前のスペースが詰まる不具合対応
+//
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -175,7 +179,7 @@ const WiringPinMode pinType[] = {
 const char *kwtbl[] = {
   "GOTO", "GOSUB", "RETURN",
   "FOR", "TO", "STEP", "NEXT",
-  "IF", "REM", "END",
+  "IF", "REM", "END", "ELSE",
   "PRINT", "LET",
   "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,"INKEY", "?", "VPEEK", "CHR$" , "ASC", "RENUM", "HEX$", "BIN$",
   "HIGH", "LOW",
@@ -201,8 +205,8 @@ const char *kwtbl[] = {
 // i-code(Intermediate code) assignment
 enum {
   I_GOTO, I_GOSUB, I_RETURN,
-  I_FOR, I_TO, I_STEP, I_NEXT,
-  I_IF, I_REM, I_END,
+  I_FOR, I_TO, I_STEP, I_NEXT, 
+  I_IF, I_REM, I_END, I_ELSE, 
   I_PRINT, I_LET,
   I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC, I_RENUM, I_HEX, I_BIN,
   I_HIGH, I_LOW, 
@@ -232,7 +236,7 @@ enum {
 const unsigned char i_nsa[] = {
   I_RETURN, I_END, 
   I_CLS,
-  I_HIGH, I_LOW, 
+  I_HIGH, I_LOW,
   I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_LOR, I_LAND,
@@ -240,6 +244,7 @@ const unsigned char i_nsa[] = {
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_ISND, I_IRCV,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,
   I_DIN, I_ANA, I_SHIFTIN,
+
   I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, 
   I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
@@ -255,6 +260,14 @@ const unsigned char i_nsb[] = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
 
+// 必ず前に空白を入れる中間コード
+const unsigned char i_sf[] = {
+  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES,
+  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,
+  I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_RESETTICK,
+  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,
+};
+
 // exception search function
 char sstyle(unsigned char code,
   const unsigned char *table, unsigned char count) {
@@ -267,6 +280,7 @@ char sstyle(unsigned char code,
 // exception search macro
 #define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa))
 #define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb))
+#define spacef(c) sstyle(c, i_sf, sizeof(i_sf))
 
 // Error messages
 unsigned char err;// Error message index
@@ -778,6 +792,46 @@ uint16_t getlineIndex(uint16_t lineno) {
   return rc; 
 }	
 
+// ELSE中間コードをサーチする
+// 引数   : 中間コードプログラムポインタ
+// 戻り値 : NULL 見つからない
+//          NULL以外 LESEの次のポインタ
+//
+uint8_t* getELSEptr(uint8_t* p) {
+ uint8_t* rc = NULL;
+ uint8_t* lp;
+ 
+ // ブログラム中のGOTOの飛び先行番号を付け直す
+  for (lp = p; *lp != I_EOL ; ) {
+    switch(*lp) {
+    case I_IF:    // IF命令
+      goto DONE;
+        break;
+    case I_ELSE:  // ELSE命令
+      rc = lp+1;
+      goto DONE;
+        break;
+      break;
+    case I_STR:     // 文字列
+      lp += lp[1]+1;            
+      break;
+    case I_NUM:     // 定数
+    case I_HEXNUM: 
+      lp+=3;        // 整数2バイト+中間コード1バイト分移動
+      break;
+    case I_VAR:     // 変数
+      lp+=2;        // 変数名
+      break;
+    default:        // その他
+      lp++;
+      break;
+    }
+  }  
+DONE:
+  return rc;
+}
+
+
 // プログラム行数を取得する
 uint16_t countLines() {
   unsigned char *lp; //ポインタ
@@ -844,7 +898,7 @@ void putlist(unsigned char* ip) {
     //キーワードの処理
     if (*ip < SIZE_KWTBL) { //もしキーワードなら
       c_puts(kwtbl[*ip]); //キーワードテーブルの文字列を表示
-      if (!nospacea(*ip)) //もし例外にあたらなければ
+      if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) ) //もし例外にあたらなければ
         c_putch(' '); //空白を表示
 
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
@@ -908,7 +962,7 @@ void putlist(unsigned char* ip) {
       while (i--) //文字数だけ繰り返す
         c_putch(*ip++); //ポインタを進めながら文字を表示
       c_putch(c); //文字列の括りを表示
-      if (*ip == I_VAR) //もし次の中間コードが変数だったら
+      if (*ip == I_VAR || *ip ==I_ELSE) //もし次の中間コードが変数だったら
         c_putch(' '); //空白を表示
     }
 
@@ -1300,7 +1354,7 @@ void iprint() {
   short value; //値
   short len; //桁数
   unsigned char i; //文字数
-
+  
   len = 0; //桁数を初期化
   while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
     switch (*cip) { //中間コードで分岐
@@ -1338,31 +1392,36 @@ void iprint() {
       cip++;    // 中間コードポインタを次へ進める
       ibin();
       break; //打ち切る
-
+    case I_ELSE:   // ELSE文がある場合は打ち切る
+       newline();  // 改行        
+       return;
+       break;
+       
     default: //以上のいずれにも該当しなかった場合（式とみなす）
-      value = iexp(); //値を取得
-      if (err) { //もしエラーが生じたら
-        newline(); //改行        
-        return; //終了
+      value = iexp(); // 値を取得
+      if (err) {      // もしエラーが生じたら
+        newline();    // 改行        
+        return;       // 終了
       }
-      putnum(value, len); //値を表示
-      break; //打ち切る
+      putnum(value, len); // 値を表示
+      break;              // 打ち切る
     } //中間コードで分岐の末尾
 
-    if (*cip == I_COMMA|*cip == I_SEMI) { //もしコンマがあったら
-      cip++; //中間コードポインタを次へ進める
-      if (*cip == I_COLON || *cip == I_EOL) //もし文末なら
-        //newline(); //改行        
+    if (*cip == I_ELSE) {
+        newline();        // 改行        
+        return;           // 終了       
+    } else if (*cip == I_COMMA|*cip == I_SEMI) { // もし',' ';'があったら
+      cip++;                              // 中間コードポインタを次へ進める
+      if (*cip == I_COLON || *cip == I_EOL || *cip == I_ELSE) //もし文末なら      
         return; //終了
-    } else { //コンマがなければ
+    } else {    //',' ';'がなければ
       if (*cip != I_COLON && *cip != I_EOL) { //もし文末でなければ
-        err = ERR_SYNTAX; //エラー番号をセット
-        newline(); //改行        
-        return; //終了
+        err = ERR_SYNTAX; // エラー番号をセット
+        newline();        // 改行        
+        return;           // 終了
       }
     }
   } //文末まで繰り返すの末尾
-
   newline(); //改行
 }
 
@@ -1517,6 +1576,7 @@ void ilet() {
 unsigned char* iexe() {
   short lineno;            // 行番号
   unsigned char* lp;       // 未確定の（エラーかもしれない）行ポインタ
+  uint8_t* newip;          // ELSE文以降の処理対象ポインタ
   short index, vto, vstep; // FOR文の変数番号、終了値、増分
   short condition;         // IF文の条件値
   int16_t prm;             // コマンド引数
@@ -1695,10 +1755,23 @@ unsigned char* iexe() {
         err = ERR_IFWOC;  // エラー番号をセット
         break; 
       }
-      if (condition) // もし真なら
-        break;       // 打ち切る（次の文を実行する）
-      //偽の場合の処理はREMと同じ
-
+      if (condition) {    // もし真なら
+        break;            // 打ち切る（次の文を実行する）
+      } else { 
+        // 偽の場合の処理
+        // ELSEがあるかチェックする
+        // もしELSEより先にIFが見つかったらELSE無しとする        
+        // ELSE文が無い場合の処理はREMと同じ
+        newip = getELSEptr(cip);
+        if (newip != NULL) {
+          cip = newip;
+          break;
+        }
+        while (*cip != I_EOL) // I_EOLに達するまで繰り返す
+        cip++;                // 中間コードポインタを次へ進める        
+      }
+      break;
+    case I_ELSE:  // 単独のELSEの場合     
     case I_SQUOT: // 'の場合
     case I_REM:   // REMの場合
       while (*cip != I_EOL) // I_EOLに達するまで繰り返す
@@ -1989,6 +2062,7 @@ void irenum() {
   		  i+=ptr[i]; // 文字列長分移動
   		  break;
   		case I_NUM:  // 定数
+      case I_HEXNUM: 
   		  i+=3;      // 整数2バイト+中間コード1バイト分移動
   		  break;
   		case I_VAR:  // 変数
