@@ -6,7 +6,8 @@
 //  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
 //  修正日 2017/04/02, getScreenByteSize()の追加
 //  修正日 2017/04/03, getScreenByteSize()の不具合対応
-
+//  修正日 2017/04/06, beep()の追加
+//
 #ifndef __tscreen_h__
 #define __tscreen_h__
 
@@ -71,7 +72,7 @@ class tscreen {
 
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性
-    
+    void beep() {addch(0x07);};
     inline uint8_t IS_PRINT(uint8_t ch) {
       return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
     };

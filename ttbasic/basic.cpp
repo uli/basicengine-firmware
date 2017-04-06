@@ -55,10 +55,14 @@
 //  4)修正: コマンド入力ラインの右空白文字のトリム処理の追加(スペース打ち文法エラー対策)
 //  5)追加: REDRAWの追加（コンソール画面再表示）
 //  6)修正: LISTの第2引数で表示終了行の指定を可能にした
-//  7)追加：DELETEコマンドで指定行のプログラムを削除出来るようにしたい
 // 2017/04/5 修正, 文法において下記の変更・追加
 //  1)追加: IF文のELSE対応
 //  2)修正: LIST出力時のIF文の実行文前のスペースが詰まる不具合対応
+// 2017/04/6 修正, 文法において下記の変更・追加
+//  1)追加: EEPROM(エミュレーション対応) EEPFORMAT,EEPWRITE,EEPREADの追加
+//  2)修正: EEPROM対応に伴う、プログラム保存領域のアドレス変更
+//  3)追加：DELETEコマンドで指定行のプログラムを削除出来るようにしたい
+//  4)修正: INPUT文でカーソルを表示,数値以外でBEEPを鳴らすように修正
 //
 
 // I2Cライブラリの選択
@@ -73,6 +77,7 @@
 #include <Arduino.h>
 #include <stdlib.h>
 
+// I2Cライブラリの利用設定
 #if I2C_USE_HWIRE == 0
   #include <Wire.h>
   #define I2C_WIRE  Wire
@@ -86,9 +91,17 @@
 #include <TFlash.h>
 #define FLASH_PAGE_SIZE        1024
 #define FLASH_START_ADDRESS    ((uint32_t)(0x8000000))
-#define FLASH_PAGE_NUM         128 // 全ページ数
-#define FLATH_USE_PAGE_NUM      
+#define FLASH_PAGE_NUM         128     // 全ページ数
+#define FLATH_USE_PAGE_NUM     (4*2)   // 利用ページ数(1プログラム2ページ利用)
+#define FLASH_PRG_START_PAGE   118     // 利用開始ページ
 
+// EEPROMエミュレーション
+#include <EEPROM.h>
+extern EEPROMClass EEPROM;
+#define EEPROM_PAGE0 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-2))
+#define EEPROM_PAGE1 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-1))
+
+// スクリーン管理
 #include "tscreen.h"
 
 // RTC用宣言
@@ -152,6 +165,9 @@ void igetTime();
 void idate();
 void isave();
 void iload();
+void ieepformat();
+void ieepwrite();
+int16_t ieepread(uint16_t addr);
 
 // tick用支援関数
 void resetTick() {
@@ -197,6 +213,7 @@ const char *kwtbl[] = {
   "PC13", "PC14","PC15", 
   "LSB", "MSB", "MEM", "VRAM", "VAR", "ARRAY",
   "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK", "REDRAW",
+  "EEPFORMAT", "EEPWRITE", "EEPREAD",
 };
 
 // Keyword count
@@ -227,6 +244,8 @@ enum {
   I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
   I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK, I_REFLESH,
+  I_EEPFORMAT, I_EEPWRITE, I_EEPREAD,
+  
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
 };
@@ -250,7 +269,7 @@ const unsigned char i_nsa[] = {
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
-  I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
+  I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY, I_EEPREAD,
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
@@ -265,7 +284,7 @@ const unsigned char i_sf[] = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_RESETTICK,
-  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,
+  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
 };
 
 // exception search function
@@ -310,7 +329,13 @@ const char* errmsg[] = {
   "Program not found",  // 追加
   "Syntax error",
   "Internal error",
-  "Abort by [CTRL-C] or [ESC]"
+  "Abort by [CTRL-C] or [ESC]",
+
+  "EEPROM out size",     // 追加
+  "EEPROM bad address",  // 追加
+  "EEPROM bad FLASH",    // 追加
+  "EEPROM not INIT",     // 追加
+  "EEPROM not vaid page",// 追加
 };
 
 // Error code assignment
@@ -332,7 +357,12 @@ enum {
   ERR_NOPRG, // 追加
   ERR_SYNTAX,
   ERR_SYS,
-  ERR_CTR_C
+  ERR_CTR_C,
+  ERR_EEPROM_OUT_SIZE,      // 追加
+  ERR_EEPROM_BAD_ADDRESS,   // 追加
+  ERR_EEPROM_BAD_FLASH,     // 追加
+  ERR_EEPROM_NOT_INIT,      // 追加
+  ERR_EEPROM_NO_VALID_PAGE, // 追加
 };
 
 // RAM mapping
@@ -527,6 +557,8 @@ short getnum() {
       (len < 6 && c_isdigit(c))) {
       lbuf[len++] = c; //バッファへ入れて文字数を1増やす
       c_putch(c); //表示
+    } else {
+      sc.beep();
     }
   }
   newline(); //改行
@@ -1186,7 +1218,15 @@ short ivalue() {
     value = analogRead(value);                                  // 入力値取得
     cip++; 
     break;
-  
+
+  case I_EEPREAD: // EEPREAD(アドレス)の場合
+    cip++; if (*cip != I_OPEN) { err = ERR_PAREN; break; }      // '('チェック
+    cip++; value = iexp(); if (err) break;                      // アドレス取得
+    if (*cip != I_CLOSE) { err = ERR_PAREN; break; }            //  ')'チェック
+    value = ieepread(value);                                    // 入力値取得
+    cip++; 
+    break;
+    
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号
     if (*cip >= I_PA0 && *cip <= I_PC15) {
@@ -1832,7 +1872,9 @@ unsigned char* iexe() {
       break; 
     case I_INPUT: // INPUTの場合
       cip++;      // 中間コードポインタを次へ進める
+      sc.show_curs(1);
       iinput();   // INPUT文を実行
+      sc.show_curs(0);
       break;
 
     case I_GPIO:  // GPIO
@@ -1884,7 +1926,17 @@ unsigned char* iexe() {
       cip++;
       sc.refresh();
       break;
-         
+
+    case I_EEPFORMAT: // EPPFORMAT EEPROM(エミュレーション)の初期化
+      cip++;
+      ieepformat();
+      break;
+
+    case I_EEPWRITE:  // EEPWRITE コマンド
+      cip++;
+      ieepwrite();
+      break;
+             
     case I_NEW:   // 中間コードがNEWの場合
     case I_LIST:  // 中間コードがLISTの場合
     case I_RUN:   // 中間コードがRUNの場合
@@ -2107,9 +2159,12 @@ void isave() {
     err = ERR_VALUE;
     return;
   }
-
+/*
   flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2);
   flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2+1);
+*/
+  flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2);
+  flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2+1);
 
   sram_adr  = listbuf;
 
@@ -2142,8 +2197,11 @@ void iload() {
     err = ERR_VALUE;
     return;
   }
-
+/*
   flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 - 8 + prgno*2);
+*/
+  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2);
+
   // 指定領域に保存されているかチェックする
   if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
     err = ERR_NOPRG;
@@ -2781,6 +2839,83 @@ void idate() {
 #endif  
  }
 
+// EEPFORMAT コマンド
+void ieepformat() {
+  uint16_t Status;
+  
+  Status = EEPROM.init();  
+  if (Status == EEPROM_OK)
+     Status = EEPROM.format();
+  if (Status != EEPROM_OK) {
+    switch(Status) {
+      case EEPROM_OUT_SIZE:      err = ERR_EEPROM_OUT_SIZE;break;
+      case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS;break;
+      case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT;break;
+      case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE;break;
+      case EEPROM_BAD_FLASH:     
+      default:                   err = ERR_EEPROM_BAD_FLASH;break;
+    }
+  } 
+}
+
+// EEPWRITE アドレス,データ コマンド
+void ieepwrite() {
+  uint16_t adr;    // 書込みアドレス
+  uint16_t data;   // 書込みアドレス
+  uint16_t Status;
+  
+  // アドレス
+  adr = iexp(); if(err) return ; 
+  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+ 
+  //データの指定
+  cip++;
+  data = iexp();  if(err) return ;
+  
+  // データの書込み
+  Status = EEPROM.write(adr, data);
+  if (Status != EEPROM_OK) {
+    switch(Status) {
+      case EEPROM_OUT_SIZE:      err = ERR_EEPROM_OUT_SIZE;break;
+      case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS;break;
+      case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT;break;
+      case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE;break;
+      case EEPROM_BAD_FLASH:     
+      default:                   err = ERR_EEPROM_BAD_FLASH;break;
+    }
+  }  
+}
+
+// EEPREAD(アドレス) 関数
+int16_t ieepread(uint16_t addr) {
+  uint16_t Status;
+  uint16_t data;
+  
+  Status = EEPROM.read(addr, &data);  
+  if (Status != EEPROM_OK) {
+    switch(Status) {
+      case EEPROM_OUT_SIZE:
+        err = ERR_EEPROM_OUT_SIZE;
+        break;
+      case EEPROM_BAD_ADDRESS:   
+        //err = ERR_EEPROM_BAD_ADDRESS;
+        data = 0; // 保存データが無い場合は0を返す
+        break;
+      case EEPROM_NOT_INIT:
+        err = ERR_EEPROM_NOT_INIT;
+        break;
+      case EEPROM_NO_VALID_PAGE:
+        err = ERR_EEPROM_NO_VALID_PAGE;
+        break;
+      case EEPROM_BAD_FLASH:     
+        default:
+        err = ERR_EEPROM_BAD_FLASH;
+        break;
+    }
+  }  
+  return data;
+}
+
 // Print OK or error message
 void error() {
   if (err) {                   //もし「OK」ではなかったら
@@ -2829,7 +2964,12 @@ void basic() {
   uint8_t rc;
 
   I2C_WIRE.begin();  // I2C利用開始
-  
+
+  // EEPROM(エミュレーション)の利用設定
+  EEPROM.PageBase0 = EEPROM_PAGE0;
+  EEPROM.PageBase1 = EEPROM_PAGE1;
+  EEPROM.PageSize  = FLASH_PAGE_SIZE;  
+
   inew();            // 実行環境を初期化
   sc.init(80,25,80); // スクリーン初期設定
   sc.cls();
@@ -2839,7 +2979,7 @@ void basic() {
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
   //newline();                    // 改行
   c_puts(STR_EDITION);            // 版を区別する文字列を表示
-  c_puts(" Edition V0.3");        //「 EDITION」を表示
+  c_puts(" Edition V0.4");        //「 EDITION」を表示
   newline();                      // 改行
   error();                        //「OK」またはエラーメッセージを表示してエラー番号をクリア
 
