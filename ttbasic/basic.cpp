@@ -63,7 +63,11 @@
 //  2)修正: EEPROM対応に伴う、プログラム保存領域のアドレス変更
 //  3)追加：DELETEコマンドで指定行のプログラムを削除出来るようにしたい
 //  4)修正: INPUT文でカーソルを表示,数値以外でBEEPを鳴らすように修正
-//
+// 2017/04/7 修正, 文法において下記の変更・追加
+//  1)修正: INPUT文のオーバーフロー時発生時の既定値設定機能追加
+//  2)修正: RNDの引数範囲チェック追加、仕様を0～指定値未満に変更
+//  3)追加: 論理積AND、論理和ORの追加,NOTの追加、ビット反転~、XOR^の追加
+//  4)修正: <>を!=に変更
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -180,7 +184,7 @@ void newline(void) {
 
 // Return random number
 short getrnd(short value) {
-  return random(value) + 1;
+  return random(value);
 }
 
 // Prototypes (necessity minimum)
@@ -201,7 +205,7 @@ const char *kwtbl[] = {
   "HIGH", "LOW",
   ",", ";", ":", "\'",
   "-", "+", "*", "/", "%", "(", ")", "$", "<<", ">>", "|", "&", 
-  ">=", "#", ">", "=", "<=", "<>", "<", 
+  ">=", "#", ">", "=", "<=", "!=", "<", "AND", "OR", "!", "~", "^",
   "@", "RND", "ABS", "FREE", "TICK", "POKE", "PEEK", "I2CW", "I2CR",
   "SETDATE", "GETDATE", "GETTIME", "DATE",
   "OUTPUT_OD", "OUTPUT", "INPUT_PU", "INPUT_PD", "ANALOG", "INPUT_FL",
@@ -228,8 +232,8 @@ enum {
   I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC, I_RENUM, I_HEX, I_BIN,
   I_HIGH, I_LOW, 
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_LOR, I_LAND,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, 
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LAND, I_LOR, I_LNOT, I_BITREV, I_XOR,
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_POKE, I_PEEK, I_ISND, I_IRCV,
 
   I_SETDATE, I_GETDATE, I_GETTIME, I_DATE, 
@@ -258,8 +262,8 @@ const unsigned char i_nsa[] = {
   I_HIGH, I_LOW,
   I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_LOR, I_LAND,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT,  
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LNOT, I_BITREV, I_XOR,
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_ISND, I_IRCV,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,
   I_DIN, I_ANA, I_SHIFTIN,
@@ -274,8 +278,8 @@ const unsigned char i_nsa[] = {
 
 // 前が定数か変数のとき前の空白をなくす中間コード
 const unsigned char i_nsb[] = {
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_LOR, I_LAND,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, 
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LNOT, I_BITREV, I_XOR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
 
@@ -1054,6 +1058,16 @@ short ivalue() {
     value = 0 - ivalue(); //値を取得して負の値に変換
     break; //ここで打ち切る
 
+  case I_LNOT: //「!」の場合
+    cip++; //中間コードポインタを次へ進める
+    value = !ivalue(); //値を取得してNOT演算
+    break; //ここで打ち切る
+
+  case I_BITREV: // 「~」 ビット反転
+    cip++; //中間コードポインタを次へ進める
+    value = ~((uint16_t)ivalue()); //値を取得してNOT演算
+    break; //ここで打ち切る
+  
   //変数の値の取得
   case I_VAR: //変数の場合
     cip++; //中間コードポインタを次へ進める
@@ -1084,6 +1098,10 @@ short ivalue() {
     value = getparam(); //括弧の値を取得
     if (err) //もしエラーが生じたら
       break; //ここで打ち切る
+    if (value <0) {
+      err = ERR_VALUE;
+      break;
+    }
     value = getrnd(value); //乱数を取得
     break; //ここで打ち切る
 
@@ -1294,18 +1312,23 @@ short imul() {
     value =((uint16_t)value)>>tmp;
     break; //ここで打ち切る
 
-   case I_LAND:  // 論理積(ビット演算)
+   case I_AND:  // 算術積(ビット演算)
     cip++; //中間コードポインタを次へ進める
     tmp = ivalue(); //演算値を取得
     value =((uint16_t)value)&((uint16_t)tmp);
     break; //ここで打ち切る
 
-   case I_LOR:   //論理和(ビット演算)
+   case I_OR:   //算術和(ビット演算)
     cip++; //中間コードポインタを次へ進める
     tmp = ivalue(); //演算値を取得
     value =((uint16_t)value)|((uint16_t)tmp);
     break; //ここで打ち切る
 
+   case I_XOR: //非排他OR(ビット演算)
+    cip++; //中間コードポインタを次へ進める
+    tmp = ivalue(); //演算値を取得
+    value =((uint16_t)value)^((uint16_t)tmp);
+   
   default: //以上のいずれにも該当しなかった場合
     return value; //値を持ち帰る
   } //中間コードで分岐の末尾
@@ -1383,7 +1406,17 @@ short iexp() {
     tmp = iplus(); //演算値を取得
     value = (value >= tmp); //真偽を判定
     break; //ここで打ち切る
-
+ case I_LAND: // AND (論理積)
+    cip++; //中間コードポインタを次へ進める
+    tmp = iplus(); //演算値を取得
+    value = (value && tmp); //真偽を判定
+    break; //ここで打ち切る
+ case I_LOR: // OR (論理和)
+    cip++; //中間コードポインタを次へ進める
+    tmp = iplus(); //演算値を取得
+    value = (value || tmp); //真偽を判定
+    break; //ここで打ち切る
+ 
   default: //以上のいずれにも該当しなかった場合
     return value; //値を持ち帰る
   } //中間コードで分岐の末尾
@@ -1468,9 +1501,11 @@ void iprint() {
 // INPUT handler
 void iinput() {
   short value;          // 値
-  short index;          // 配列の添え字
+  short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
-  unsigned char prompt; //プロンプト表示フラグ
+  unsigned char prompt; // プロンプト表示フラグ
+  short ofvalue;        // オーバーフロー時の設定値
+  uint8_t flgofset =0;  // オーバーフロ時の設定値指定あり
 
   while (1) {           // 無限に繰り返す
     prompt = 1;         // まだプロンプトを表示していない
@@ -1486,35 +1521,73 @@ void iinput() {
 
     // 値を入力する処理
     switch (*cip) {         // 中間コードで分岐
-    case I_VAR:              // 変数の場合
-      cip++;                 // 中間コードポインタを次へ進める
+    case I_VAR:             // 変数の場合
+      cip++;                // 中間コードポインタを次へ進める
+      index = *cip;         // 変数番号の取得
+      cip++;
+     
+      // オーバーフロー時の設定値
+      if (*cip == I_COMMA) {
+        cip++;
+        ofvalue = iexp();
+        if (err) {
+          return;
+        }
+        flgofset = 1;
+      }
+      
       if (prompt) {          // もしまだプロンプトを表示していなければ
-        c_putch(*cip + 'A'); // 変数名を表示
+        c_putch('A'+index);  // 変数名を表示
         c_putch(':');        //「:」を表示
       }
-      value = getnum();    // 値を入力
-      if (err)             // もしエラーが生じたら
-        return;            // 終了
-      var[*cip++] = value; // 変数へ代入
+      
+      value = getnum();     // 値を入力
+      if (err) {            // もしエラーが生じたら
+        if (err == ERR_VOF && flgofset) {
+          err = ERR_OK;
+          value = ofvalue;
+        } else {
+          return;            // 終了
+        }
+      }
+      var[index] = value;  // 変数へ代入
       break;               // 打ち切る
 
     case I_ARRAY: // 配列の場合
-      cip++;               // 中間コードポインタを次へ進める
-      index = getparam();  // 配列の添え字を取得
-      if (err)             // もしエラーが生じたら
-        return;            // 終了
+      cip++;                    // 中間コードポインタを次へ進める
+      index = getparam();       // 配列の添え字を取得
+      if (err)                  // もしエラーが生じたら
+        return;                 // 終了
+
       if (index >= SIZE_ARRY) { // もし添え字が上限を超えたら
         err = ERR_SOR;          // エラー番号をセット
         return;                 // 終了
       }
+
+      // オーバーフロー時の設定値
+      if (*cip == I_COMMA) {
+        cip++;
+        ofvalue = iexp();
+        if (err) {
+          return;
+        }
+        flgofset = 1;
+      }
+
       if (prompt) { // もしまだプロンプトを表示していなければ
         c_puts("@(");     //「@(」を表示
         putnum(index, 0); // 添え字を表示
         c_puts("):");     //「):」を表示
       }
       value = getnum(); // 値を入力
-      if (err)            // もしエラーが生じたら
-        return;           // 終了
+      if (err) {           // もしエラーが生じたら
+        if (err == ERR_VOF && flgofset) {
+          err = ERR_OK;
+          value = ofvalue;
+        } else {
+          return;            // 終了
+        }
+      }
       arr[index] = value; //配列へ代入
       break;              // 打ち切る
 
@@ -2979,7 +3052,7 @@ void basic() {
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
   //newline();                    // 改行
   c_puts(STR_EDITION);            // 版を区別する文字列を表示
-  c_puts(" Edition V0.4");        //「 EDITION」を表示
+  c_puts(" Edition V0.5");        //「 EDITION」を表示
   newline();                      // 改行
   error();                        //「OK」またはエラーメッセージを表示してエラー番号をクリア
 
