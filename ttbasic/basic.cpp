@@ -68,6 +68,8 @@
 //  2)修正: RNDの引数範囲チェック追加、仕様を0～指定値未満に変更
 //  3)追加: 論理積AND、論理和ORの追加,NOTの追加、ビット反転~、XOR^の追加
 //  4)修正: <>を!=に変更
+// 2027/04/12 配列変数利用可能数を100に変更
+//
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -120,7 +122,7 @@ extern EEPROMClass EEPROM;
 #define SIZE_LINE 80     // Command line buffer length + NULL
 #define SIZE_IBUF 80     // i-code conversion buffer size
 #define SIZE_LIST 2048   // List buffer size
-#define SIZE_ARRY 32     // Array area size
+#define SIZE_ARRY 100    // Array area size
 #define SIZE_GSTK 6      // GOSUB stack size(2/nest)
 #define SIZE_LSTK 15     // FOR stack size(5/nest)
 #define SIZE_MEM  1024   // 自由利用データ領域
