@@ -68,7 +68,12 @@
 //  2)修正: RNDの引数範囲チェック追加、仕様を0～指定値未満に変更
 //  3)追加: 論理積AND、論理和ORの追加,NOTの追加、ビット反転~、XOR^の追加
 //  4)修正: <>を!=に変更
-// 2027/04/12 配列変数利用可能数を100に変更
+// 2017/04/12 
+//  1)修正: プログラム実行中断のメッセージの変更(Break in xx)
+//  2)追加: Line too longのエラーメッセージ追加
+// 2017/04/13
+//  1)追加: PSET,LINE,RECT,CIRCLEの追加
+//  2)追加: SOPEN,SCLOSE,SERITE,SREAD,SREADY,SPRINTの追加
 //
 
 // I2Cライブラリの選択
@@ -82,6 +87,12 @@
 
 #include <Arduino.h>
 #include <stdlib.h>
+
+// スクリーン管理
+#include "tscreen.h"
+// スクリーン制御
+tscreen sc; 
+#define KEY_ENTER 13
 
 // I2Cライブラリの利用設定
 #if I2C_USE_HWIRE == 0
@@ -107,9 +118,6 @@ extern EEPROMClass EEPROM;
 #define EEPROM_PAGE0 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-2))
 #define EEPROM_PAGE1 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-1))
 
-// スクリーン管理
-#include "tscreen.h"
-
 // RTC用宣言
 #if USE_INNERRTC == 1
   #include <RTClock.h>
@@ -131,10 +139,19 @@ extern EEPROMClass EEPROM;
 // TO-DO Rewrite these functions to fit your machine
 #define STR_EDITION "Arduino STM32"
 
+void tv_write(uint8_t c) ;
+
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
 #define c_getch( ) sc.get_ch()
 #define c_kbhit( ) sc.isKeyIn()
-#define c_putch(c) sc.putch(c)
+
+// 文字の出力
+inline void c_putch(uint8_t c, uint8_t devno = 0) {
+  if (devno == 0)
+    sc.putch(c);
+  else if (devno == 1)
+    Serial1.write(c);
+} 
 
 // 定数
 #define CONST_HIGH   1
@@ -142,10 +159,6 @@ extern EEPROMClass EEPROM;
 #define CONST_LSB    LSBFIRST
 #define CONST_MSB    MSBFIRST
 #define SRAM_TOP     0x20000000
-
-// スクリーン制御
-tscreen sc; 
-#define KEY_ENTER 13
 
 // 追加コマンドの宣言
 void icls();
@@ -157,8 +170,8 @@ int16_t iinkey();
 int16_t ivpeek();
 void ipmode();
 void idwrite();
-void ihex();
-void ibin();
+void ihex(uint8_t devno);
+void ibin(uint8_t devno);
 void idec();
 void ishiftOut();
 int16_t ishiftIn();
@@ -175,13 +188,25 @@ void ieepformat();
 void ieepwrite();
 int16_t ieepread(uint16_t addr);
 
+void ipset();
+void iline();
+void icircle();
+void irect();
+
+void iswrite();
+void isopen();
+void isclose();
+
 // tick用支援関数
 void resetTick() {
   systick_uptime_millis = 0;
 }
 
-void newline(void) {
- sc.newLine();
+void newline(uint8_t devno=0) {
+ if (devno==0)
+   sc.newLine();
+  else if (devno == 1)
+    Serial1.println();
 }
 
 // Return random number
@@ -220,6 +245,8 @@ const char *kwtbl[] = {
   "LSB", "MSB", "MEM", "VRAM", "VAR", "ARRAY",
   "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK", "REDRAW",
   "EEPFORMAT", "EEPWRITE", "EEPREAD",
+  "PSET","LINE","RECT","CIRCLE",
+  "SWRITE", "SREADY", "SREAD", "SPRINT", "SOPEN", "SCLOSE",
 };
 
 // Keyword count
@@ -251,7 +278,9 @@ enum {
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
   I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK, I_REFLESH,
   I_EEPFORMAT, I_EEPWRITE, I_EEPREAD,
-  
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, 
+  I_SWRITE, I_SREADY, I_SREAD, I_SPRINT, I_SOPEN, I_SCLOSE,
+
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
 };
@@ -276,6 +305,7 @@ const unsigned char i_nsa[] = {
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY, I_EEPREAD,
+  I_SREAD, I_SREADY, 
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
@@ -290,7 +320,8 @@ const unsigned char i_sf[] = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_RESETTICK,
-  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
+  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE, 
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,
 };
 
 // exception search function
@@ -335,8 +366,8 @@ const char* errmsg[] = {
   "Program not found",  // 追加
   "Syntax error",
   "Internal error",
-  "Abort by [CTRL-C] or [ESC]",
-
+  "Break",
+  "Line too long",
   "EEPROM out size",     // 追加
   "EEPROM bad address",  // 追加
   "EEPROM bad FLASH",    // 追加
@@ -364,6 +395,7 @@ enum {
   ERR_SYNTAX,
   ERR_SYS,
   ERR_CTR_C,
+  ERR_LONG,                 // 追加
   ERR_EEPROM_OUT_SIZE,      // 追加
   ERR_EEPROM_BAD_ADDRESS,   // 追加
   ERR_EEPROM_BAD_FLASH,     // 追加
@@ -387,6 +419,7 @@ unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
 uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
+uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
 
 // Standard C libraly (about) same functions
 char c_toupper(char c) {
@@ -434,8 +467,8 @@ uint16_t hex2value(char c) {
   return 0;
 }
 
-void c_puts(const char *s) {
-  while (*s) c_putch(*s++); //終端でなければ出力して繰り返す
+void c_puts(const char *s, uint8_t devno=0) {
+  while (*s) c_putch(*s++, devno); //終端でなければ出力して繰り返す
 }
 
 // Print numeric specified columns
@@ -446,7 +479,7 @@ void c_puts(const char *s) {
 // 'SNNNNN' S:符号 N:数値 or 空白 
 //  dで桁指定時は空白補完する
 //
-void putnum(short value, short d) {
+void putnum(short value, short d, uint8_t devno=0) {
   unsigned char dig;  // 桁位置
   unsigned char sign; // 負号の有無（値を絶対値に変換した印）
   char c = ' ';
@@ -473,10 +506,10 @@ void putnum(short value, short d) {
     lbuf[--dig] = '-'; // 負号を保存
 
   while (6 - dig < d) { // 指定の桁数を下回っていれば繰り返す
-    c_putch(c);         // 桁の不足を空白で埋める
+    c_putch(c,devno);   // 桁の不足を空白で埋める
     d--;                // 指定の桁数を1減らす
   }
-  c_puts(&lbuf[dig]);   // 桁位置からバッファの文字列を表示
+  c_puts(&lbuf[dig],devno);   // 桁位置からバッファの文字列を表示
 }
 
 // 16進数の出力
@@ -488,7 +521,7 @@ void putnum(short value, short d) {
 //  dで桁指定時は0補完する
 //  符号は考慮しない
 // 
-void putHexnum(short value, uint8_t d) {
+void putHexnum(short value, uint8_t d, uint8_t devno=0) {
   uint16_t  hex = (uint16_t)value; // 符号なし16進数として参照利用する
   uint16_t  h;
   uint16_t dig;
@@ -511,7 +544,7 @@ void putHexnum(short value, uint8_t d) {
     lbuf[i] = (h >= 0 && h <= 9) ? h + '0': h + 'A' - 10;
   }
   lbuf[4] = 0;
-  c_puts(&lbuf[4-dig]);
+  c_puts(&lbuf[4-dig],devno);
 }
 
 // 2進数の出力
@@ -523,7 +556,7 @@ void putHexnum(short value, uint8_t d) {
 //  dで桁指定時は0補完する
 //  符号は考慮しない
 // 
-void putBinnum(short value, uint8_t d) {
+void putBinnum(short value, uint8_t d, uint8_t devno=0) {
   uint16_t  bin = (uint16_t)value; // 符号なし16進数として参照利用する
   uint16_t  b;
   uint16_t  dig = 0;
@@ -538,7 +571,7 @@ void putBinnum(short value, uint8_t d) {
 
   if (d > dig)
     dig = d;
-  c_puts(&lbuf[16-dig]);
+  c_puts(&lbuf[16-dig],devno);
 }
 
 // Input numeric and return value
@@ -1246,6 +1279,24 @@ short ivalue() {
     value = ieepread(value);                                    // 入力値取得
     cip++; 
     break;
+
+  case I_SREAD: // SREAD() シリアルデータ1バイト受信
+    cip++;  if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {    // '()'のチェック
+      err = ERR_PAREN; //エラー番号をセット
+      break; //ここで打ち切る
+    }
+    cip += 2; //中間コードポインタを「()」の次へ進める
+    value = Serial1.read();
+    break; //ここで打ち切る
+  
+  case I_SREADY:// SREADY() シリアルデータデータチェック
+    cip++;  if ((*cip != I_OPEN) || (*(cip + 1) != I_CLOSE)) {    // '()'のチェック
+      err = ERR_PAREN; //エラー番号をセット
+      break; //ここで打ち切る
+    }
+    cip += 2; //中間コードポインタを「()」の次へ進める
+    value = Serial1.available();
+    break; //ここで打ち切る
     
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号
@@ -1425,7 +1476,7 @@ short iexp() {
 }
 
 // PRINT handler
-void iprint() {
+void iprint(uint8_t devno=0) {
   short value; //値
   short len; //桁数
   unsigned char i; //文字数
@@ -1438,7 +1489,7 @@ void iprint() {
       cip++; //中間コードポインタを次へ進める
       i = *cip++; //文字数を取得
       while (i--) //文字数だけ繰り返す
-        c_putch(*cip++); //文字を表示
+        c_putch(*cip++, devno); //文字を表示
       break; //打ち切る
 
     case I_SHARP: //「#」の場合
@@ -1455,35 +1506,35 @@ void iprint() {
         break;            // ここで打ち切る
      if(!sc.IS_PRINT(value))
         value = 32;
-     c_putch(value);
+     c_putch(value, devno);
       break; // 打ち切る
 
     case I_HEX: // HEX$()関数の場合
       cip++;    // 中間コードポインタを次へ進める
-      ihex();
+      ihex(devno);
       break; //打ち切る
 
     case I_BIN: // BIN$()関数の場合
       cip++;    // 中間コードポインタを次へ進める
-      ibin();
+      ibin(devno);
       break; //打ち切る
-    case I_ELSE:   // ELSE文がある場合は打ち切る
-       newline();  // 改行        
+    case I_ELSE:        // ELSE文がある場合は打ち切る
+       newline(devno);  // 改行        
        return;
        break;
        
     default: //以上のいずれにも該当しなかった場合（式とみなす）
-      value = iexp(); // 値を取得
-      if (err) {      // もしエラーが生じたら
-        newline();    // 改行        
-        return;       // 終了
+      value = iexp();   // 値を取得
+      if (err) {        // もしエラーが生じたら
+        newline();      // 改行        
+        return;         // 終了
       }
-      putnum(value, len); // 値を表示
-      break;              // 打ち切る
+      putnum(value, len,devno); // 値を表示
+      break;                    // 打ち切る
     } //中間コードで分岐の末尾
 
     if (*cip == I_ELSE) {
-        newline();        // 改行        
+        newline(devno);   // 改行        
         return;           // 終了       
     } else if (*cip == I_COMMA|*cip == I_SEMI) { // もし',' ';'があったら
       cip++;                              // 中間コードポインタを次へ進める
@@ -1492,12 +1543,12 @@ void iprint() {
     } else {    //',' ';'がなければ
       if (*cip != I_COLON && *cip != I_EOL) { //もし文末でなければ
         err = ERR_SYNTAX; // エラー番号をセット
-        newline();        // 改行        
+        newline(devno);   // 改行        
         return;           // 終了
       }
     }
   } //文末まで繰り返すの末尾
-  newline(); //改行
+  newline(devno); //改行
 }
 
 // INPUT handler
@@ -1700,8 +1751,8 @@ unsigned char* iexe() {
   while (*cip != I_EOL) { //行末まで繰り返す
   
   //強制的な中断の判定
-  if (c_kbhit()) { // もし未読文字があったら
-      c = c_getch();
+  c = c_kbhit();
+  if (c) { // もし未読文字があったら
       if (c == SC_KEY_CTRL_C || c==27 ) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
         err = ERR_CTR_C;                  // エラー番号をセット
         prevPressKey = 0;
@@ -2011,7 +2062,47 @@ unsigned char* iexe() {
       cip++;
       ieepwrite();
       break;
-             
+
+   case I_PSET:       // PSETコマンド ドットの描画
+      cip++;
+      ipset();
+      break;
+
+   case I_LINE:       // LINEコマンド 直線の描画
+      cip++;
+      iline();
+      break;
+
+   case I_CIRCLE:     // CIRCLEコマンド 円の描画
+      cip++;
+      icircle();
+      break;
+
+   case I_RECT:       // 四角の表示
+      cip++;
+      irect();
+      break;
+
+   case I_SWRITE:     // シリアル1バイト出力
+      cip++;
+      iswrite();
+      break;
+
+   case I_SPRINT:
+      cip++;
+      iprint(1);
+      break;
+
+   case I_SOPEN:
+      cip++;
+      isopen();
+      break;
+
+   case I_SCLOSE:
+      cip++;
+      isclose();
+      break;
+
     case I_NEW:   // 中間コードがNEWの場合
     case I_LIST:  // 中間コードがLISTの場合
     case I_RUN:   // 中間コードがRUNの場合
@@ -2234,10 +2325,7 @@ void isave() {
     err = ERR_VALUE;
     return;
   }
-/*
-  flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2);
-  flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 -8 + prgno*2+1);
-*/
+
   flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2);
   flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2+1);
 
@@ -2512,7 +2600,7 @@ void ishiftOut() {
 }
 
 // 16進文字出力 'HEX$(数値,桁数)' or 'HEX$(数値)'
-void ihex() {
+void ihex(uint8_t devno=0) {
   short value; // 値
   short d = 0; // 桁数(0で桁数指定なし)
   if (*cip != I_OPEN)  { err = ERR_PAREN; return; }  // '('のチェック
@@ -2528,11 +2616,11 @@ void ihex() {
     err = ERR_VALUE;
     return;
   }
-  putHexnum(value, d);    
+  putHexnum(value, d, devno);    
 }
 
 // 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
-void ibin() {
+void ibin(uint8_t devno=0) {
   short value; // 値
   short d = 0; // 桁数(0で桁数指定なし)
   if (*cip != I_OPEN)  { err = ERR_PAREN; return; }  // '('のチェック
@@ -2548,7 +2636,7 @@ void ibin() {
     err = ERR_VALUE;
     return;
   }
-  putBinnum(value, d);    
+  putBinnum(value, d, devno);    
 }
 
 // POKEコマンド POKE ADR,データ[,データ,..データ]
@@ -2991,6 +3079,159 @@ int16_t ieepread(uint16_t addr) {
   return data;
 }
 
+// ドットの描画 PSET X,Y,C
+void ipset() {
+ int16_t x;
+ int16_t y;
+ int16_t c;
+
+  // x
+  x = iexp(); if(err) return ; 
+  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+  //y
+  cip++;
+  y = iexp();  if(err) return ;
+  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+  //c
+  cip++;
+  c = iexp();  if(err) return ;
+
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
+  if (y >= sc.getGHeight()) y = sc.getGHeight()-1;
+  if (c < 0 || c > 2) c = 1;
+  sc.pset(x,y,c);
+}
+
+// 直線の描画 LINE X1,Y1,X2,Y2,C
+void iline() {
+ int16_t x1,x2,y1,y2;
+ int16_t c;
+  
+  x1 = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x1  
+  cip++;
+  y1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y1
+  cip++;
+  x2 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x2
+  cip++;
+  y2 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y2
+  cip++;
+  c = iexp();  if(err) return ;  //c
+
+  if (x1 < 0) x1 =0;
+  if (y1 < 0) y1 =0;
+  if (x2 < 0) x1 =0;
+  if (y2 < 0) y1 =0;
+  if (x1 >= sc.getGWidth())  x1 = sc.getGWidth()-1;
+  if (y1 >= sc.getGHeight()) y1 = sc.getGHeight()-1;
+  if (x2 >= sc.getGWidth())  x2 = sc.getGWidth()-1;
+  if (y2 >= sc.getGHeight()) y2 = sc.getGHeight()-1;
+  if (c < 0 || c > 2) c = 1;
+  sc.line(x1, y1, x2, y2, c);
+}
+
+// 円の描画 CIRCLE X,Y,R,C,F
+void icircle() {
+ int16_t x,y,r;
+ int16_t c;
+ int16_t f;
+
+  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x
+  cip++;
+  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y
+  cip++;
+  r = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // r
+  cip++;
+  c = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // c
+  cip++;
+  f = iexp();  if(err) return ;  //f
+
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
+  if (y >= sc.getGHeight()) y = sc.getGHeight()-1;
+  if (c < 0 || c > 2) c = 1;
+  if (r < 0) r = 1;
+  sc.circle(x, y, r, c, f);
+  
+}
+
+// 四角の描画 RECT X,Y,W,H,C,F
+void irect() {
+ int16_t x,y,w,h;
+ int16_t c;
+ int16_t f;
+
+  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x
+  cip++;
+  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y
+  cip++;
+  w= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // w
+  cip++;
+  h= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // h
+  cip++;
+  c= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // c
+  cip++;
+  f = iexp();  if(err) return ;  //f
+
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
+  if (y >= sc.getGHeight()) y = sc.getGHeight()-1;
+  if (h < 0) h =1;
+  if (w < 0) w =1;
+  if (c < 0 || c > 2) c = 1;
+  sc.rect(x, y, w, h, c, f);
+}
+
+// シリアル1バイト出力
+void iswrite() {
+  int16_t c;
+ 
+  c = iexp();  if(err) return ;
+  Serial1.write( (uint8_t)c);
+}
+
+// シリアル1オープン
+void isopen() {
+  uint16_t ln;
+  uint32_t baud = 0;
+
+  if(lfgSerial1Opened) {
+    isclose();
+  }
+
+  if (*cip != I_STR) {
+    err = ERR_VALUE;
+    return;
+  }
+  
+  cip++;        //中間コードポインタを次へ進める
+  ln = *cip++;  //文字数を取得
+
+  // 引数のチェック
+  for (uint16_t i=0; i < ln; i++) {
+     if (*cip >='0' && *cip <= '9') {
+        baud = baud*10 + *cip - '0';
+     } else {
+        err = ERR_VALUE;
+        return;
+     }
+     cip++;
+  }
+  Serial1.begin(baud);
+  lfgSerial1Opened = true;
+}
+
+// シリアル1クローズ
+void isclose() {
+  delay(500);
+  if(lfgSerial1Opened == true)
+    Serial1.end();
+  lfgSerial1Opened = false;    
+}
+
 // Print OK or error message
 void error() {
   if (err) {                   //もし「OK」ではなかったら
@@ -3046,18 +3287,24 @@ void basic() {
   EEPROM.PageSize  = FLASH_PAGE_SIZE;  
 
   inew();            // 実行環境を初期化
-  sc.init(80,25,80); // スクリーン初期設定
-  sc.cls();
+  //sc.init(80,25,80); // スクリーン初期設定
+  //sc.init(28,27,80); // スクリーン初期設定
+  sc.init(80);         // スクリーン初期設定
+  sc.setSerial(true);  // USBシリアル出力許可
+  //sc.cls();
+  //sc.locate(0,0);
+  icls();
   char* textline;    // 入力行
   
   // 起動メッセージ
+  
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
-  //newline();                    // 改行
+  newline();                    // 改行
   c_puts(STR_EDITION);            // 版を区別する文字列を表示
-  c_puts(" Edition V0.5");        //「 EDITION」を表示
+  c_puts(" Edition V0.6");        //「 EDITION」を表示
   newline();                      // 改行
   error();                        //「OK」またはエラーメッセージを表示してエラー番号をクリア
-
+  sc.refresh();
   // 端末から1行を入力して実行
   while (1) { //無限ループ
     rc = sc.edit();
@@ -3067,6 +3314,13 @@ void basic() {
         newline();
         continue;
       }
+      if (strlen(textline) >= SIZE_LINE) {
+         err = ERR_LONG;
+         newline();
+         error();
+         continue;  
+      }
+      
       strcpy(lbuf, textline);
       tlimR((char*)lbuf);
       newline();

@@ -4,24 +4,49 @@
 //  V1.0 作成日 2017/03/22 by たま吉さん
 //  修正日 2017/03/26, 色制御関連関数の追加
 //  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
+//  修正日 2017/04/09, PS/2キーボードとの併用可能
+//  修正日 2017/04/11, TVout版に移行
 //
 
 #include <string.h>
 #include "tscreen.h"
 
+void    tv_init();
+void    tv_write(uint8_t x, uint8_t y, uint8_t c);
+uint8_t tv_drawCurs(uint8_t x, uint8_t y);
+void    tv_clerLine(uint16_t l) ;
+void    tv_cls();
+void    tv_scroll_up();
+uint8_t tv_get_cwidth();
+uint8_t tv_get_cheight();
+uint8_t tv_get_gwidth();
+uint8_t tv_get_gheight();
+void    tv_pset(int16_t x, int16_t y, uint8_t c);
+void    tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
+void    tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
+void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) ;
+void    setupPS2();
+uint8_t ps2read();
+
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
 
-// シリアル経由1文字出力
-static void Arduino_putchar(uint8_t c) {
-  Serial.write(c);
+// USBシリアル利用設定
+void tscreen::setSerial(uint8_t flg) {
+  flgSirialout = flg;
 }
 
-// シリアル経由1文字入力
-static char Arduino_getchar() {
-  char c;
-  while (!Serial.available());
-  return Serial.read();
+// カーソルの移動
+// ※pos_x,pos_yは本関数のみでのみ変更可能
+void tscreen::MOVE(uint8_t y, uint8_t x) {
+  uint8_t c;
+  if (flgCur) {
+    c = VPEEK(pos_x,pos_y);
+    tv_write(pos_x, pos_y, c?c:32);  
+    tv_drawCurs(x, y);  
+  }
+  pos_x = x;
+  pos_y = y;
 }
 
 // スクリーンの初期設定
@@ -31,56 +56,81 @@ static char Arduino_getchar() {
 //  l  : 1行の最大長
 // 戻り値
 //  なし
-void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
-    
-  width   = w;
-  height  = h;
-  maxllen = l;
-  pos_x = 0;
-  pos_y = 0;
+//void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
+void tscreen::init(uint16_t l) {
 
+  // ビデオ出力設定
+  tv_init();
+    
+  width   = tv_get_cwidth();
+  height  = tv_get_cheight();
+  gwidth   = tv_get_gwidth();
+  gheight  = tv_get_gheight();
+  maxllen = l;
+  
+  setupPS2();
   if (screen != NULL) 
     free(screen);
   screen = (uint8_t*)malloc( width * height );
 
+  delay(200);
   cls();
-  
-  // mcursesの設定
-  setFunction_putchar(Arduino_putchar); 
-  setFunction_getchar(Arduino_getchar); 
-  initscr();
-  clear();
-  setscrreg (SC_FIRST_LINE, height-1);
-  move(pos_y, pos_x);
+  show_curs(true);
+  MOVE(0, 0);
 
   // 編集機能の設定
   flgIns = true;
 }
 
-// キー入力チェック
+// キー入力チェック&キーの取得
 uint8_t tscreen::isKeyIn() {
-  return Serial.available();
+  if (flgSirialout) {
+    if (Serial.available())
+      return Serial.read();
+  }  
+  return ps2read();  
 }
 
 // 文字入力
 uint8_t tscreen::get_ch() {
-  //move(pos_y, pos_x);
-  return getch ();
+  char c;
+  while(1) {
+    if (flgSirialout) {
+      if (Serial.available()) {
+        c = Serial.read();
+        break;
+      }
+    }
+    c = ps2read();
+    if (c)
+      break;
+  }
+  return c;  
 }
-
+/*
 // キー入力チェック(文字参照)
 int16_t tscreen::peek_ch() {
   return Serial.peek();
 }
-
+*/
 // カーソルの表示/非表示
 // flg: カーソル非表示 0、表示 1、強調表示 2
 void tscreen::show_curs(uint8_t flg) {
-    curs_set(flg);  
+    flgCur = flg;
+    if(!flgCur)
+      dwaw_cls_curs();
+    
+}
+
+// カーソルの消去
+void tscreen::dwaw_cls_curs() {
+  uint8_t c = VPEEK(pos_x,pos_y);
+  tv_write(pos_x, pos_y, c?c:32);
 }
 
 // 文字色指定
 void tscreen::setColor(uint16_t fc, uint16_t bc) {
+/*  
   static const uint16_t tbl_fcolor[]  =
      { F_BLACK,F_RED,F_GREEN,F_BROWN,F_BLUE,F_MAGENTA,F_CYAN,A_NORMAL,F_YELLOW};
   static const uint16_t tbl_bcolor[]  =
@@ -88,50 +138,61 @@ void tscreen::setColor(uint16_t fc, uint16_t bc) {
 
   if ( (fc >= 0 && fc <= 8) && (bc >= 0 && bc <= 8) )
      attrset(tbl_fcolor[fc]|tbl_bcolor[bc]);
+*/
 }
 
 // 文字属性
 void tscreen::setAttr(uint16_t attr) {
+ /*
   static const uint16_t tbl_attr[]  =
     { A_NORMAL, A_UNDERLINE, A_REVERSE, A_BLINK, A_BOLD };
   
   if (attr >= 0 && attr <= 4)
      attrset(tbl_attr[attr]);
+ */    
 }
 
 // 指定行の1行分クリア
 void tscreen::clerLine(uint16_t l) {
   memset(screen+width*l, 0, width);
-  move(l,0);
-  clrtoeol();
-  move(pos_y, pos_x);
+  tv_clerLine(l);
+  MOVE(pos_y, pos_x);
 }
 
 // スクリーンのクリア
 void tscreen::cls() {
-  clear(); 
+  tv_cls();
   memset(screen, 0, width*height);
 }
 
 // スクリーンリフレッシュ表示
 void tscreen::refresh() {
-  clear(); 
+  uint8_t c;
   for (uint16_t i = 0; i < height; i++) {
-    for (uint16_t j = 0; j < width; j++) {
-        if( IS_PRINT( VPEEK(j,i) )) { 
-        move(i,j);
-        addch( VPEEK(j,i) ); 
-      }
+    for (uint16_t j = 0; j < width; j++) { 
+      c = VPEEK(j,i);
+      tv_write(j,i,c?c:32);
     }
   }
-  move(pos_y, pos_x);
+  MOVE(pos_y, pos_x);
+}
+
+// 行のリフレッシュ表示
+void tscreen::refresh_line(uint8_t l) {
+  uint8_t c;
+  for (uint16_t x = 0; x < width; x++) {
+    c = VPEEK(x,l);
+    tv_write(x,l,c?c:32);
+  } 
 }
 
 // 1行分スクリーンのスクロールアップ
 void tscreen::scroll_up() {
   memmove(screen, screen + width, (height-1)*width);
-  scroll();
+  dwaw_cls_curs();
+  tv_scroll_up();
   clerLine(height-1);
+  MOVE(pos_y, pos_x);
 }
 
 // 現在のカーソル位置の文字削除
@@ -140,26 +201,26 @@ void tscreen::delete_char() {
   uint8_t* top = start_adr;
   uint16_t ln = 0;
 
-  if (!*top) 
+  if (!*top) // 0文字削除不能
     return;
   
-  while( *top ) {
-    ln++;
-    top++;
+  while( *top ) { ln++; top++; } // 行端,長さ調査
+  if ( ln > 1 ) {
+    memmove(start_adr, start_adr + 1, ln-1); // 1文字詰める
   }
-  if ( ln > 1 )
-    memmove(start_adr, start_adr + 1, ln-1);
-  *(top-1) = 0;
-  refresh();
-  //delch();
+  *(top-1) = 0; 
+  for (uint8_t i=0; i < (pos_x+ln)/width+1; i++)
+    refresh_line(pos_y+i);   
+  MOVE(pos_y,pos_x);
   return;
 }
 
 // 文字の出力
 void tscreen::putch(uint8_t c) {
- VPOKE(pos_x, pos_y, c);
- move(pos_y, pos_x);
- addch(c);
+ VPOKE(pos_x, pos_y, c);    // VRAMに文字セット
+ if(flgSirialout)
+    Serial.write(c);       // シリアル出力
+ tv_write(pos_x, pos_y, c); // 画面表示
  movePosNextNewChar();
 }
 
@@ -180,52 +241,59 @@ void tscreen::Insert_char(uint8_t c) {
      putch(c);
   } else {
      // 挿入処理が必要の場合  
+    if (pos_y + (pos_x+ln)/width >= height) {
+      scroll_up();
+      start_adr-=width;
+      MOVE(pos_y-1, pos_x);
+    }
     memmove(start_adr+1, start_adr, ln);
     *start_adr=c;
-    insch(c);
     movePosNextNewChar();
-    refresh();
+    for (uint8_t i=0; i < (pos_x+ln)/width+1; i++)
+       refresh_line(pos_y+i);   
+    MOVE(pos_y,pos_x);
   }
 }
 
 // 改行
-void tscreen::newLine() {
-  pos_x = 0;
-  pos_y++;
- if (pos_y >= height) {
+void tscreen::newLine() {  
+  int16_t x = 0;
+  int16_t y = pos_y+1;
+ if (y >= height) {
     scroll_up();
-    pos_y--;
+    y--;
   }    
-  move(pos_y, pos_x);  
+  MOVE(y, x);
+  if(flgSirialout)
+    Serial.println();
 }
 
 // カーソルを１文字分次に移動
 void tscreen::movePosNextNewChar() {
- pos_x++;
- if (pos_x >= width) {
-    pos_x = 0;
-    pos_y++;
-   if (pos_y >= height) {
+ int16_t x = pos_x;
+ int16_t y = pos_y; 
+ x++;
+ if (x >= width) {
+    x = 0;
+    y++;        
+   if (y >= height) {
       scroll_up();
-      pos_y--;
+      y--;
     }    
-    move(pos_y, pos_x);
  }
+ MOVE(y, x);
 }
 
 // カーソルを1文字分前に移動
 void tscreen::movePosPrevChar() {
   if (pos_x > 0) {
     if ( IS_PRINT(VPEEK(pos_x-1 , pos_y))) {
-       pos_x--;
-       move(pos_y, pos_x);
+       MOVE(pos_y, pos_x-1);
     }
   } else {
    if(pos_y > 0) {
       if (IS_PRINT(VPEEK(width-1, pos_y-1))) {
-         pos_x = width - 1;
-         pos_y--;
-         move(pos_y, pos_x);
+         MOVE(pos_y-1, width - 1);
       } 
    }    
   }
@@ -235,16 +303,13 @@ void tscreen::movePosPrevChar() {
 void tscreen::movePosNextChar() {
   if (pos_x+1 < width) {
     if ( IS_PRINT( VPEEK(pos_x ,pos_y)) ) {
-      pos_x++;
-      move(pos_y, pos_x);
+      MOVE(pos_y, pos_x+1);
     }
   } else {
     if (pos_y+1 < height) {
         if ( IS_PRINT( VPEEK(0, pos_y + 1)) ) {
-          pos_x = 0;
-          pos_y++;
+          MOVE(pos_y+1, 0);
         }
-        move(pos_y, pos_x);
     }
   }
 }
@@ -254,20 +319,19 @@ void tscreen::movePosNextLineChar() {
   if (pos_y+1 < height) {
     if ( IS_PRINT(VPEEK(pos_x, pos_y + 1)) ) {
       // カーソルを真下に移動
-      pos_y++;
-      move(pos_y, pos_x);
+      MOVE(pos_y+1, pos_x);
     } else {
       // カーソルを次行の行末文字に移動
+      int16_t x = pos_x;
       while(1) {
-        if (IS_PRINT(VPEEK(pos_x, pos_y + 1)) ) 
+        if (IS_PRINT(VPEEK(x, pos_y + 1)) ) 
            break;  
-        if (pos_x > 0)
-          pos_x--;
+        if (x > 0)
+          x--;
         else
           break;
       }      
-      pos_y++;
-      move(pos_y, pos_x);      
+      MOVE(pos_y+1, x);      
     }
   }
 }
@@ -277,48 +341,53 @@ void tscreen::movePosPrevLineChar() {
   if (pos_y > 0) {
     if ( IS_PRINT(VPEEK(pos_x, pos_y-1)) ) {
       // カーソルを真上に移動
-      pos_y--;
-      move(pos_y, pos_x);
+      MOVE(pos_y-1, pos_x);
     } else {
       // カーソルを前行の行末文字に移動
+      int16_t x = pos_x;
       while(1) {
-        if (IS_PRINT(VPEEK(pos_x, pos_y - 1)) ) 
+        if (IS_PRINT(VPEEK(x, pos_y - 1)) ) 
            break;  
-        if (pos_x > 0)
-          pos_x--;
+        if (x > 0)
+          x--;
         else
           break;
       }      
-      pos_y--;
-      move(pos_y, pos_x);      
+      MOVE(pos_y-1, x);      
     }
   }  
 }
 
 // カーソルを行末に移動
 void tscreen::moveLineEnd() {
-  pos_x = width-1;
+  int16_t x = width-1;
   while(1) {
-    if (IS_PRINT(VPEEK(pos_x, pos_y)) ) 
+    if (IS_PRINT(VPEEK(x, pos_y)) ) 
        break;  
-    if (pos_x > 0)
-      pos_x--;
+    if (x > 0)
+      x--;
     else
       break;
   }        
-  move(pos_y, pos_x);      
+  MOVE(pos_y, x);      
+}
+
+// スクリーン表示の最終表示の行先頭に移動
+void tscreen::moveBottom() {
+  int16_t y = height-1;
+  while(y) {
+    if (IS_PRINT(VPEEK(0, y)) ) 
+       break;
+    y--;
+  }
+  MOVE(y,0);
 }
 
 // カーソルを指定位置に移動
 void tscreen::locate(uint16_t x, uint16_t y) {
-  if (x >= width)
-    x = width-1;
-  if (y >= height)
-    y = height;
-
-  pos_x = x;
-  pos_y = y;
-  move(y, x);
+  if ( x >= width )  x = width-1;
+  if ( y >= height)  y = height;
+  MOVE(y, x);
 }
 
 // カーソル位置の文字コード取得
@@ -330,7 +399,7 @@ uint16_t tscreen::vpeek(uint16_t x, uint16_t y) {
 
 // 行データの入力確定
 uint8_t tscreen::enter_text() {
-  memset(text, 0, SC_TEXTNUM);
+  //memset(text, 0, SC_TEXTNUM);
 
   // 現在のカーソル位置の行先頭アドレス取得
   uint8_t *ptr = &VPEEK(0, pos_y); 
@@ -341,14 +410,7 @@ uint8_t tscreen::enter_text() {
   while (top > screen && *top != 0 )
     top--;
   if ( top != screen ) top++;
-    
-  // 文字列長の有効性のチェック  
-  if (strlen((char*)top) >= maxllen) {
-     return false;  // 文字列オーバー
-  }
-
-  // 確定した文字列を一時バッファに保持する
-  strcpy((char*)text, (char*)top);
+ text = top;
   return true;
 }
 
@@ -357,8 +419,8 @@ uint8_t tscreen::edit() {
   uint8_t ch;  // 入力文字
 
   do {
-    move(pos_y, pos_x);
-    ch = getch ();
+    //MOVE(pos_y, pos_x);
+    ch = get_ch ();
     switch(ch) {
       case KEY_CR:         // [Enter]キー
       case KEY_ESCAPE:
@@ -374,9 +436,15 @@ uint8_t tscreen::edit() {
         locate(0, pos_y);
         break;
         
-      case KEY_NPAGE:     // [CTRL_R][PageUP][PageDown] 画面更新
-      case KEY_PPAGE:
-      case SC_KEY_CTRL_R: 
+      case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
+        moveBottom();
+        break;
+        
+      case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
+        locate(0, 0);
+        break;
+
+      case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
         refresh();  break;
 
       case KEY_END:       // [ENDキー] 行の右端移動
@@ -385,8 +453,6 @@ uint8_t tscreen::edit() {
 
       case KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
-        if (flgIns) curs_set(2);
-        else  curs_set(1);
         break;        
 
       case KEY_BACKSPACE:  // [BS]キー
@@ -419,17 +485,29 @@ uint8_t tscreen::edit() {
       
       if (IS_PRINT(ch)) {
         Insert_char(ch);
-      }
-/*
-      else {
-          move(23,0);
-          clrtoeol();
-          addstr("[KEY]");
-          Serial.print(ch, DEC); 
-          move(c_y(), c_x());
-      }
-*/    
+      }   
       break;
     }
   } while(1);
 }
+
+// ドット描画
+void tscreen::pset(int16_t x, int16_t y, uint8_t c) {
+  tv_pset(x,y,c);
+}
+
+// 線の描画
+void tscreen::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
+ tv_line(x1,y1,x2,y2,c);
+}
+
+// 円の描画
+void tscreen::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
+  tv_circle(x, y, r, c, f);
+}
+
+// 四角の描画
+void tscreen::rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) {
+  tv_rect(x, y, h, w, c, f);
+}
+
