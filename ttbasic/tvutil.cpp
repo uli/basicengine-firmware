@@ -1,25 +1,25 @@
 //
 // NTSC TV表示デバイスの管理
-//
-//
+// 作成日 2017/04/11 by たま吉さん
+// 修正日 2017/04/13, 横文字数算出ミス修正(48MHz対応)
 
 #include <TTVout.h>
 #include "tscreen.h"
 
 // NTSC TVout画面表示用フォントの設定
 
-
+/*
 #define TV_DISPLAY_FONT font6x8
 #include <font6x8.h>
-
+*/
 /*
 #define TV_DISPLAY_FONT font8x8
 #include <font8x8.h>
 */
-/*
+
 #define TV_DISPLAY_FONT ichigoFont8x8 
 #include <ichigoFont8x8.h>
-*/
+
 
 // 1文字表示
 #define ESC_CMD_INIT     0 // 初期
@@ -45,10 +45,11 @@ void tv_init() {
   tvfont   = (uint8_t*)TV_DISPLAY_FONT;
   f_width  = *(tvfont+0);
   f_height = *(tvfont+1);
-  TV.begin();
+  TV.begin(SC_256x216);
   TV.select_font(tvfont);
 
-  c_width  = TV.hres() / f_width;   // 横文字数
+//  c_width  = TV.hres() / f_width;   // 横文字数
+  c_width  = TNTSC.width() / f_width; // 横文字数
   c_height = TV.vres() / f_height;  // 縦文字数
   vram = TV.VRAM();                 // VRAM先頭
 }
