@@ -8,18 +8,18 @@
 
 // NTSC TVout画面表示用フォントの設定
 
-/*
+
 #define TV_DISPLAY_FONT font6x8
 #include <font6x8.h>
-*/
+
 /*
 #define TV_DISPLAY_FONT font8x8
 #include <font8x8.h>
 */
-
+/*
 #define TV_DISPLAY_FONT ichigoFont8x8 
 #include <ichigoFont8x8.h>
-
+*/
 
 // 1文字表示
 #define ESC_CMD_INIT     0 // 初期
