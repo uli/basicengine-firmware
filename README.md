@@ -1,11 +1,14 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.5
+## 豊四季タイニーBASIC for Arduino STM32 V0.6
 
 ![サンプル画像](./image/sample.jpg)
 
+NTSC・PS/2キーボード対応ブランチ版  
+(ドキュメント修正中）  
 
-本プログラムは、下記オリジナル版をArduino STM32向けに移植・機能版です.  
-STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確認しています.  
+本プログラムは、下記オリジナル版をArduino STM32向けに移植・機能版です.  
+STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確認しています.  
 ※機能の大幅追加のため、Arduino MEGEは非対応となりました.  
+※NTSCビデオ出力対応のため、ターミナル画面制御は非対応にしました(2017/04/13)  
 
 - オリジナル版配布サイト  
  https://github.com/vintagechips/ttbasic_arduino  
@@ -65,44 +68,40 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
   - 定数:HIGH、LOW、PA00、PA01、..、PC15のピン名の追加  
 
 **※本スケッチの利用には別途、下記のライブラリが必要です.**  
- - mcursesライブラリ  
-   https://github.com/ChrisMicro/mcurses  
  - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
    https://github.com/Tamakichi/ArduinoSTM32_TFlash  
+ - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_TNTSC  
+ - Arduino STM32 TVoutライブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_TVout    
+ - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard      
 
 ## フルスリーンテキストエディタの機能
-※利用にはTeraTerm用のシリアル接続可能なターミナルソフトが必要です.  
+※利用にはNTSC対応のTVモニターデスプレイが必要です。
 
 **スクリーンサイス**  
-80列ｘ25行  
+224ｘ216ドット  
+6x8ドットフォント利用時 37x27文字  
+8x8ドットフォント利用時 28x27文字  
 
 **利用可能キー**  
 - [←][→][↑][↓] ： カーソル移動 カーソルキー  
 - [Delete]、[CTRL-X] ：カーソル位置の文字削除  
 - [BackSpace]：カーソル前の文字削除と前に移動  
-- [PageUP]、[PageDown]、[CTRL-R]：画面の再表示  
+- [PageUP]、[PageDown]：カーソルを画面の上端、下端に移動  
+- [F5]、[CTRL-R]：画面の再表示  
 - [HOME]、[END]：行内でカーソルを左端、右端に移動  
 - [INS]：挿入・上書きのトグル切り替え  
 - [Enter]：行入力確定  
-- [ESC]2回押し、[CTRL-C]：実行プログラムの中断
-- [CTRL-L]：画面のクリア
+- [ESC]、[CTRL-C]：実行プログラムの中断
+- [F1]、[CTRL-L]：画面のクリア
 
 ## 追加・修正コマンドの説明
 [リファレンスマニュアル(nmanual.pdf)](./manual.pdf)に記載しています(ただし追加・修正中)  
 (リンクを直接クリックして閲覧すると表示が遅いです。ダウンロードして閲覧して下さい)  
 
 ## サンプルプログラム
-### 画面に色付き文字表示
-```
-10 FOR I=0 TO 10
-20 FOR J=0 TO 10
-30 COLOR RND(8): ? "*";
-35 WAIT 100
-40 NEXT J
-50 ?
-60 NEXT I
-```
-
 ### ボード上のLEDの点滅  
 ```
 10 P=PC13
