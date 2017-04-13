@@ -1,6 +1,6 @@
 ## 豊四季タイニーBASIC for Arduino STM32 V0.6
 
-![サンプル画像](./image/sample.jpg)
+![サンプル画像](./image/01.jpg)
 
 NTSC・PS/2キーボード対応ブランチ版  
 (ドキュメント修正中）  
