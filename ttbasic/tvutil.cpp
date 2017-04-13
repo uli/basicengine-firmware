@@ -45,7 +45,7 @@ void tv_init() {
   tvfont   = (uint8_t*)TV_DISPLAY_FONT;
   f_width  = *(tvfont+0);
   f_height = *(tvfont+1);
-  TV.begin(SC_256x216);
+  TV.begin();
   TV.select_font(tvfont);
 
 //  c_width  = TV.hres() / f_width;   // 横文字数
