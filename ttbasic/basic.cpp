@@ -73,8 +73,8 @@
 //  2)追加: Line too longのエラーメッセージ追加
 // 2017/04/13
 //  1)追加: PSET,LINE,RECT,CIRCLEの追加
-//  2)追加: SOPEN,SCLOSE,SERITE,SREAD,SREADY,SPRINTの追加
-//
+//  2)追加: SOPEN,SCLOSE,SWRITE,SREAD,SREADY,SPRINTの追加
+/// 2017/04/24 修正 ELSEの前は必ず空白にする設定
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -197,6 +197,9 @@ void iswrite();
 void isopen();
 void isclose();
 
+void itone();
+void inotone();
+
 // tick用支援関数
 void resetTick() {
   systick_uptime_millis = 0;
@@ -224,7 +227,7 @@ const WiringPinMode pinType[] = {
 
 // Keyword table
 const char *kwtbl[] = {
-  "GOTO", "GOSUB", "RETURN",
+  "GOTO", "GOSUB", "RETURN","TONE", "NOTONE",
   "FOR", "TO", "STEP", "NEXT",
   "IF", "REM", "END", "ELSE",
   "PRINT", "LET",
@@ -246,7 +249,7 @@ const char *kwtbl[] = {
   "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK", "REDRAW",
   "EEPFORMAT", "EEPWRITE", "EEPREAD",
   "PSET","LINE","RECT","CIRCLE",
-  "SWRITE", "SREADY", "SREAD", "SPRINT", "SOPEN", "SCLOSE",
+  "SWRITE", "SREADY", "SREAD", "SPRINT", "SOPEN", "SCLOSE", 
 };
 
 // Keyword count
@@ -254,7 +257,7 @@ const char *kwtbl[] = {
 
 // i-code(Intermediate code) assignment
 enum {
-  I_GOTO, I_GOSUB, I_RETURN,
+  I_GOTO, I_GOSUB, I_RETURN, I_TONE, I_NOTONE,
   I_FOR, I_TO, I_STEP, I_NEXT, 
   I_IF, I_REM, I_END, I_ELSE, 
   I_PRINT, I_LET,
@@ -279,7 +282,7 @@ enum {
   I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK, I_REFLESH,
   I_EEPFORMAT, I_EEPWRITE, I_EEPREAD,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, 
-  I_SWRITE, I_SREADY, I_SREAD, I_SPRINT, I_SOPEN, I_SCLOSE,
+  I_SWRITE, I_SREADY, I_SREAD, I_SPRINT, I_SOPEN, I_SCLOSE, 
 
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
@@ -317,11 +320,12 @@ const unsigned char i_nsb[] = {
 
 // 必ず前に空白を入れる中間コード
 const unsigned char i_sf[] = {
-  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES,
-  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,
+  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,
+  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_RESETTICK,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE, 
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,
+  I_TONE, I_NOTONE,
 };
 
 // exception search function
@@ -2103,6 +2107,16 @@ unsigned char* iexe() {
       isclose();
       break;
 
+   case I_TONE:
+      cip++;
+      itone();
+      break;
+   
+   case I_NOTONE:
+      cip++;
+      inotone();
+      break;
+
     case I_NEW:   // 中間コードがNEWの場合
     case I_LIST:  // 中間コードがLISTの場合
     case I_RUN:   // 中間コードがRUNの場合
@@ -3232,6 +3246,32 @@ void isclose() {
   lfgSerial1Opened = false;    
 }
 
+// TONE 周波数, 音出し時間
+void itone() {
+ int16_t freq;   // 周波数
+ int16_t tm = 0; // 音出し時間
+
+  // 周波数
+  freq = iexp(); if(err) return ; 
+
+  if(*cip == I_COMMA) {
+    // 音出し時間
+    cip++;
+    tm = iexp();  if(err) return ;
+  }
+  
+  if (freq < 0 || tm < 0) {
+    err = ERR_VALUE;
+    return;
+  }
+  sc.tone(freq, tm);
+}
+
+//　NOTONE
+void inotone() {
+  sc.notone();  
+}
+
 // Print OK or error message
 void error() {
   if (err) {                   //もし「OK」ではなかったら
@@ -3279,8 +3319,6 @@ void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
-  I2C_WIRE.begin();  // I2C利用開始
-
   // EEPROM(エミュレーション)の利用設定
   EEPROM.PageBase0 = EEPROM_PAGE0;
   EEPROM.PageBase1 = EEPROM_PAGE1;
@@ -3293,6 +3331,9 @@ void basic() {
   sc.setSerial(true);  // USBシリアル出力許可
   //sc.cls();
   //sc.locate(0,0);
+
+  I2C_WIRE.begin();  // I2C利用開始
+
   icls();
   char* textline;    // 入力行
   

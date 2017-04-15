@@ -6,6 +6,7 @@
 //  修正日 2017/03/30, moveLineEnd()の追加,[HOME],[END]の編集キーの仕様変更
 //  修正日 2017/04/09, PS/2キーボードとの併用可能
 //  修正日 2017/04/11, TVout版に移行
+//  修正日 2017/04/15, 行挿入の追加(次行上書き防止対策）
 //
 
 #include <string.h>
@@ -15,6 +16,7 @@ void    tv_init();
 void    tv_write(uint8_t x, uint8_t y, uint8_t c);
 uint8_t tv_drawCurs(uint8_t x, uint8_t y);
 void    tv_clerLine(uint16_t l) ;
+void    tv_insLine(uint16_t l);
 void    tv_cls();
 void    tv_scroll_up();
 uint8_t tv_get_cwidth();
@@ -25,6 +27,9 @@ void    tv_pset(int16_t x, int16_t y, uint8_t c);
 void    tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
 void    tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
 void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) ;
+void    tv_tone(int16_t freq, int16_t tm);
+void    tv_notone();
+
 void    setupPS2();
 uint8_t ps2read();
 
@@ -67,7 +72,6 @@ void tscreen::init(uint16_t l) {
   gwidth   = tv_get_gwidth();
   gheight  = tv_get_gheight();
   maxllen = l;
-  
   setupPS2();
   if (screen != NULL) 
     free(screen);
@@ -178,7 +182,7 @@ void tscreen::refresh() {
 }
 
 // 行のリフレッシュ表示
-void tscreen::refresh_line(uint8_t l) {
+void tscreen::refresh_line(uint16_t l) {
   uint8_t c;
   for (uint16_t x = 0; x < width; x++) {
     c = VPEEK(x,l);
@@ -193,6 +197,15 @@ void tscreen::scroll_up() {
   tv_scroll_up();
   clerLine(height-1);
   MOVE(pos_y, pos_x);
+}
+
+// 指定行に空白行挿入
+void tscreen::Insert_newLine(uint16_t l) {
+  if (l < height-1) {
+    memmove(screen+(l+2)*width, screen+(l+1)*width, width*(height-1-l-1));
+  }
+  memset(screen+(l+1)*width, 0, width);
+  tv_insLine(l+1);
 }
 
 // 現在のカーソル位置の文字削除
@@ -230,25 +243,35 @@ void tscreen::Insert_char(uint8_t c) {
   uint8_t* last = start_adr;
   uint16_t ln = 0;  
 
-  // 入力位置の既存文字列長の参照
+  // 入力位置の既存文字列長(カーソル位置からの長さ)の参照
   while( *last ) {
     ln++;
     last++;
   }
-
   if (ln == 0 || flgIns == false) {
-     // 文字列長さが0または上書きモードの場合
-     putch(c);
+     // 文字列長さが0または上書きモードの場合、そのまま1文字表示
+    if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
+       // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
+       Insert_newLine(pos_y+(pos_x+ln)/width);       
+    }
+    putch(c);
   } else {
      // 挿入処理が必要の場合  
-    if (pos_y + (pos_x+ln)/width >= height) {
+    if (pos_y + (pos_x+ln+1)/width >= height) {
+      // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
       scroll_up();
       start_adr-=width;
       MOVE(pos_y-1, pos_x);
+    } else  if ( ((pos_x + ln +1)%width == width-1) && !VPEEK(pos_x + ln , pos_y) ) {
+       // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
+          Insert_newLine(pos_y+(pos_x+ln)/width);
     }
+    // 1文字挿入のために1文字分のスペースを確保
     memmove(start_adr+1, start_adr, ln);
-    *start_adr=c;
+    *start_adr=c; // 確保したスペースに1文字表示
     movePosNextNewChar();
+    
+    // 挿入した行の再表示
     for (uint8_t i=0; i < (pos_x+ln)/width+1; i++)
        refresh_line(pos_y+i);   
     MOVE(pos_y,pos_x);
@@ -481,6 +504,14 @@ uint8_t tscreen::edit() {
         movePosPrevLineChar();
         break;
 
+      case SC_KEY_CTRL_N:  // 行挿入 
+        Insert_newLine(pos_y);       
+        break;
+
+      case SC_KEY_CTRL_D:  // 行削除
+        clerLine(pos_y);
+        break;
+      
       default:             // その他
       
       if (IS_PRINT(ch)) {
@@ -509,5 +540,13 @@ void tscreen::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
 // 四角の描画
 void tscreen::rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) {
   tv_rect(x, y, h, w, c, f);
+}
+
+void tscreen::tone(int16_t freq, int16_t tm) {
+  tv_tone(freq, tm);  
+}
+
+void tscreen::notone() {
+  tv_notone();    
 }
 

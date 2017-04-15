@@ -8,6 +8,7 @@
 //  修正日 2017/04/03, getScreenByteSize()の不具合対応
 //  修正日 2017/04/06, beep()の追加
 //  修正日 2017/04/11, TVout版に移行
+//  修正日 2017/04/15, 行挿入の追加
 //
 
 #ifndef __tscreen_h__
@@ -36,6 +37,8 @@
 #define SC_KEY_CTRL_R   18  // 画面を再表示
 #define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
 #define SC_KEY_CTRL_C    3  // break
+#define SC_KEY_CTRL_D    4  // 行削除
+#define SC_KEY_CTRL_N   14  // 行挿入
 
 // スクリーン定義
 #define SC_FIRST_LINE  0  // スクロール先頭行
@@ -70,7 +73,7 @@ class tscreen {
     void clerLine(uint16_t l);                        // 1行分クリア
     void cls();                                       // スクリーンのクリア
     void refresh();                                   // スクリーンリフレッシュ表示
-    void refresh_line(uint8_t l);                     // 行の再表示
+    void refresh_line(uint16_t l);                    // 行の再表示
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     void putch(uint8_t c);                            // 文字の出力
@@ -89,6 +92,7 @@ class tscreen {
     uint8_t edit();                                   // スクリーン編集
     uint8_t enter_text();                             // 行入力確定ハンドラ
     void newLine();                                   // 改行出力
+    void Insert_newLine(uint16_t l);                  // 指定行に空白挿入
 
     void MOVE(uint8_t y, uint8_t x);                  // キャラクタカーソル移動
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
@@ -111,6 +115,9 @@ class tscreen {
 
     void setSerial(uint8_t flg);                      // USBシリアル利用設定
     void beep() {/*addch(0x07);*/};
+    void tone(int16_t freq, int16_t tm);
+    void notone();
+    
     inline uint8_t IS_PRINT(uint8_t ch) {
       //return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
       return (ch >= 32); 

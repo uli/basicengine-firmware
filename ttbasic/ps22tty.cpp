@@ -1,12 +1,16 @@
 //
 // PS/2キー入力をtty入力コードにコンバートする
-// 2017/04/09
+// 作成 2017/04/09
+// 修正 2017/04/15, 利用ピンの変更(I2Cとの競合のため)
 
 #include <TKeyboard.h>
 #include "tscreen.h"
-
+/*
 const int IRQpin =  PB7;  // CLK(D+)
 const int DataPin = PB8;  // Data(D-) 
+*/
+const int IRQpin =  PB4;  // CLK(D+)
+const int DataPin = PB5;  // Data(D-) 
 
 TKeyboard kb;
 
