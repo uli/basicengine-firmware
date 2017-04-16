@@ -19,6 +19,7 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
 著作権者の同意なしに経済的な利益を得てはいけません.  
 この条件のもとで、利用、複写、改編、再配布を認めます.  
 
+Blue Pillボード利用構成図  
 ![構成図](./image/02.png)
 
 ![ピン割り付け](./image/03_1.png)
@@ -84,7 +85,18 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
    https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard      
 
 ## フルスリーンテキストエディタの機能
-※利用にはNTSC対応のTVモニターデスプレイが必要です。
+※利用にはNTSC対応のTVモニターデスプレイが必要です.  
+
+※現状、利用しているNTSC対応のモニターデスプレイとの相性問題が発生しています.  
+　TNTSCビデオ出力ライブラリの下記の設定を調整することで改善できる場合があります.  
+　TNTSC/src/TNTSC.cpp の57行近辺の下記の設定を変更して下さい.  
+
+  `#define NTSC_LINE (262+2)  // 画面構成走査線数(一部のモニタ対応用に2本に追加)`  
+　を  
+  `#define NTSC_LINE (262+0)`  
+  `#define NTSC_LINE (262+1)`  
+  `#define NTSC_LINE (262+2)`  
+  の何れかにして修正して映りが改善する設定にする.  
 
 **スクリーンサイス**  
 224ｘ216ドット  
