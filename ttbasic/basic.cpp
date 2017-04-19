@@ -74,7 +74,8 @@
 // 2017/04/13
 //  1)追加: PSET,LINE,RECT,CIRCLEの追加
 //  2)追加: SOPEN,SCLOSE,SWRITE,SREAD,SREADY,SPRINTの追加
-/// 2017/04/24 修正 ELSEの前は必ず空白にする設定
+/// 2017/04/14 修正 ELSEの前は必ず空白にする設定
+//  修正日 2017/04/19, 行バッファのサイズ拡張
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -127,8 +128,8 @@ extern EEPROMClass EEPROM;
 
 // TOYOSHIKI TinyBASIC symbols
 // TO-DO Rewrite defined values to fit your machine as needed
-#define SIZE_LINE 80     // Command line buffer length + NULL
-#define SIZE_IBUF 80     // i-code conversion buffer size
+#define SIZE_LINE 255     // Command line buffer length + NULL
+#define SIZE_IBUF 255     // i-code conversion buffer size
 #define SIZE_LIST 2048   // List buffer size
 #define SIZE_ARRY 100    // Array area size
 #define SIZE_GSTK 6      // GOSUB stack size(2/nest)
