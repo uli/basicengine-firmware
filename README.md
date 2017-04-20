@@ -1,6 +1,6 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.6
+## 豊四季タイニーBASIC for Arduino STM32 V0.7(2017/04/20)
 
-![サンプル画像](./image/01.jpg)
+![サンプル画像](./image/02.jpg)
 
 NTSC・PS/2キーボード対応ブランチ版  
 (ドキュメント修正中）  
@@ -37,8 +37,8 @@ Blue Pillボード利用構成図
   - **ATTR**：文字装飾の指定  
   - **WAIT**：時間待ち  
   - **VPEEK**：スクリーン位置の文字コード参照  
-  - **CHR$()**、**HEX$()**、**BIN$()**、**ASC()**、**INKEY()** 関数の追加  
-  - **TICK()** 関数、**RESETTIK**の追加  
+  - **CHR$()**、**HEX$()**、**BIN$()**、**ASC()**、**INKEY()** 関数の追加  
+  - **TICK()** 関数、**RESETTIK**の追加  
   - **?**：**PRINT**文の省略系を追加  
   - **GPIO**、**OUT**、**IN**、**ANA**、**SHIFTOUT**、**SHIFTIN**：GPIO利用コマンドの追加  
   - **I2CW**、**I2CR**：I2C利用コマンドの追加  
@@ -48,7 +48,8 @@ Blue Pillボード利用構成図
   - **EEPFORMAT**,**EEPWRITE**,**EEPREAD**コマンドの追加(仮想EEPROM機能)  
   - **AND**、**OR**、!、~、!の追加  
   - **PSET**,**LINE**,**RECT**,**CIRCLE**のグラフィック描画コマンド追加  
-  - **SOPEN**,**SCLOSE**,**SERITE**,**SREAD**,**SREADY**,**SPRINT**のシリアル通信コマンドの追加  
+  - **SMODE**,**SOPEN**,**SCLOSE**,**SERITE**,**SREAD**,**SREADY**,**SPRINT**のシリアル通信コマンドの追加  
+  - **BITMAP**,**CSCROLL**,**GSCROLL**,コマンドの追加  
 - 文法の変更  
   - 定数の16進数表記対応(例 $1234,$AB)  
   - 命令文区切りを';'から':'に変更  
@@ -67,8 +68,9 @@ Blue Pillボード利用構成図
 - 編集機能の変更  
   - 実行中プログラムの中断を**[ESC]**を2回押し、**[CTRL-C]**に変更  
 - その他  
-  - プログラム領域を256バイトから2048バイトに拡大  
-  - 配列サイズを32から100に拡大  
+  - プログラム領域を4096バイトに拡大  
+  - プログラム保存数を10個に拡大  
+  - 配列サイズを32から100に拡大  
   - エラーメッセージ**Illegal value**の追加  
   - エラーメッセージ**Out of range value**の追加  
   - エラーメッセージ**Program not found**の追加  
