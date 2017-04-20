@@ -80,7 +80,6 @@ uint8_t cnv2tty(keyEvent k) {
   return rc;
 }
 
-
 uint8_t ps2read() {
   keyEvent k; // キー入力情報
   k = kb.read(); 

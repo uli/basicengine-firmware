@@ -75,7 +75,12 @@
 //  1)追加: PSET,LINE,RECT,CIRCLEの追加
 //  2)追加: SOPEN,SCLOSE,SWRITE,SREAD,SREADY,SPRINTの追加
 /// 2017/04/14 修正 ELSEの前は必ず空白にする設定
-//  修正日 2017/04/19, 行バッファのサイズ拡張
+//  修正日 2017/04/17, BITMAPコマンドの追加
+//  修正日 2017/04/18, SMODEコマンド(シリアルポート設定機能の追加)
+//                     FILEコマンドの追加、プログラムサイズを4kバイトに修正
+//                     プログラム保存最大数を10個に修正
+//                     GSCROLL,CSCROLLコマンドの追加
+//
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -110,8 +115,9 @@ tscreen sc;
 #define FLASH_PAGE_SIZE        1024
 #define FLASH_START_ADDRESS    ((uint32_t)(0x8000000))
 #define FLASH_PAGE_NUM         128     // 全ページ数
-#define FLATH_USE_PAGE_NUM     (4*2)   // 利用ページ数(1プログラム2ページ利用)
-#define FLASH_PRG_START_PAGE   118     // 利用開始ページ
+#define FLASH_PRG_START_PAGE   (FLASH_PAGE_NUM-FLASH_PAGE_PAR_PRG*FLASH_SAVE_NUM)  // 利用開始ページ
+#define FLASH_PAGE_PAR_PRG     4       // 1プログラム当たりの利用ページ数
+#define FLASH_SAVE_NUM         10      // 保存可能数
 
 // EEPROMエミュレーション
 #include <EEPROM.h>
@@ -128,13 +134,13 @@ extern EEPROMClass EEPROM;
 
 // TOYOSHIKI TinyBASIC symbols
 // TO-DO Rewrite defined values to fit your machine as needed
-#define SIZE_LINE 255     // Command line buffer length + NULL
-#define SIZE_IBUF 255     // i-code conversion buffer size
-#define SIZE_LIST 2048   // List buffer size
-#define SIZE_ARRY 100    // Array area size
+#define SIZE_LINE 255    // コマンドライン入力バッファサイズ + NULL
+#define SIZE_IBUF 255    // 中間コード変換バッファサイズ
+#define SIZE_LIST 4096   // プログラム領域サイズ(4kバイト)
+#define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 6      // GOSUB stack size(2/nest)
 #define SIZE_LSTK 15     // FOR stack size(5/nest)
-#define SIZE_MEM  1024   // 自由利用データ領域
+#define SIZE_MEM  2048   // 自由利用データ領域
 
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -151,7 +157,8 @@ inline void c_putch(uint8_t c, uint8_t devno = 0) {
   if (devno == 0)
     sc.putch(c);
   else if (devno == 1)
-    Serial1.write(c);
+    //Serial1.write(c);
+    sc.Serial_write(c);
 } 
 
 // 定数
@@ -193,10 +200,14 @@ void ipset();
 void iline();
 void icircle();
 void irect();
+void ibitmap();
+void icscroll();
+void igscroll();
 
 void iswrite();
 void isopen();
 void isclose();
+void ismode();
 
 void itone();
 void inotone();
@@ -210,7 +221,8 @@ void newline(uint8_t devno=0) {
  if (devno==0)
    sc.newLine();
   else if (devno == 1)
-    Serial1.println();
+    //Serial1.println();
+    sc.Serial_newLine();
 }
 
 // Return random number
@@ -231,9 +243,9 @@ const char *kwtbl[] = {
   "GOTO", "GOSUB", "RETURN","TONE", "NOTONE",
   "FOR", "TO", "STEP", "NEXT",
   "IF", "REM", "END", "ELSE",
-  "PRINT", "LET",
+  "PRINT", "LET", 
   "CLS", "WAIT", "LOCATE", "COLOR", "ATTR" ,"INKEY", "?", "VPEEK", "CHR$" , "ASC", "RENUM", "HEX$", "BIN$",
-  "HIGH", "LOW",
+  "HIGH", "LOW", 
   ",", ";", ":", "\'",
   "-", "+", "*", "/", "%", "(", ")", "$", "<<", ">>", "|", "&", 
   ">=", "#", ">", "=", "<=", "!=", "<", "AND", "OR", "!", "~", "^",
@@ -245,12 +257,12 @@ const char *kwtbl[] = {
   "PA09", "PA10", "PA11", "PA12", "PA13","PA14","PA15",
   "PB00", "PB01", "PB02", "PB03", "PB04", "PB05", "PB06", "PB07", "PB08", 
   "PB09", "PB10", "PB11", "PB12", "PB13","PB14","PB15",
-  "PC13", "PC14","PC15", 
+  "PC13", "PC14","PC15", "CW", "CH","GW","GH",
   "LSB", "MSB", "MEM", "VRAM", "VAR", "ARRAY",
   "LIST", "RUN", "NEW", "OK", "SAVE", "LOAD", "FILES","RESETTICK", "REDRAW",
   "EEPFORMAT", "EEPWRITE", "EEPREAD",
-  "PSET","LINE","RECT","CIRCLE",
-  "SWRITE", "SREADY", "SREAD", "SPRINT", "SOPEN", "SCLOSE", 
+  "PSET","LINE","RECT","CIRCLE", "BITMAP", "CSCROLL", "GSCROLL",
+  "SWRITE", "SREADY", "SREAD", "SPRINT", "SOPEN", "SCLOSE", "SMODE",
 };
 
 // Keyword count
@@ -261,9 +273,9 @@ enum {
   I_GOTO, I_GOSUB, I_RETURN, I_TONE, I_NOTONE,
   I_FOR, I_TO, I_STEP, I_NEXT, 
   I_IF, I_REM, I_END, I_ELSE, 
-  I_PRINT, I_LET,
+  I_PRINT, I_LET,  
   I_CLS, I_WAIT, I_LOCATE, I_COLOR, I_ATTR, I_INKEY, I_QUEST, I_VPEEK, I_CHR, I_ASC, I_RENUM, I_HEX, I_BIN,
-  I_HIGH, I_LOW, 
+  I_HIGH, I_LOW,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LAND, I_LOR, I_LNOT, I_BITREV, I_XOR,
@@ -278,12 +290,12 @@ enum {
   I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
-  I_PC13, I_PC14,I_PC15,
+  I_PC13, I_PC14,I_PC15,I_CW, I_CH, I_GW, I_GH,
   I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY,
   I_LIST, I_RUN, I_NEW, I_OK, I_SAVE, I_LOAD, I_FILES, I_RESETTICK, I_REFLESH,
   I_EEPFORMAT, I_EEPWRITE, I_EEPREAD,
-  I_PSET, I_LINE, I_RECT, I_CIRCLE, 
-  I_SWRITE, I_SREADY, I_SREAD, I_SPRINT, I_SOPEN, I_SCLOSE, 
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_CSCROLL, I_GSCROLL,
+  I_SWRITE, I_SREADY, I_SREAD, I_SPRINT, I_SOPEN, I_SCLOSE, I_SMODE,
 
   I_NUM, I_VAR, I_STR, I_HEXNUM, 
   I_EOL
@@ -294,15 +306,14 @@ enum {
 const unsigned char i_nsa[] = {
   I_RETURN, I_END, 
   I_CLS,
-  I_HIGH, I_LOW,
+  I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH, 
   I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,
-  I_COMMA, I_SEMI, I_COLON, I_SQUOT,
+  I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LNOT, I_BITREV, I_XOR,
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_ISND, I_IRCV,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,
   I_DIN, I_ANA, I_SHIFTIN,
-
   I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, 
   I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, 
@@ -321,12 +332,12 @@ const unsigned char i_nsb[] = {
 
 // 必ず前に空白を入れる中間コード
 const unsigned char i_sf[] = {
-  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,
+  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_RESETTICK,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE, 
-  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,
-  I_TONE, I_NOTONE,
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,I_SMODE,
+  I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,
 };
 
 // exception search function
@@ -974,7 +985,7 @@ void putlist(unsigned char* ip) {
     //キーワードの処理
     if (*ip < SIZE_KWTBL) { //もしキーワードなら
       c_puts(kwtbl[*ip]); //キーワードテーブルの文字列を表示
-      if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) ) //もし例外にあたらなければ
+      if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
         c_putch(' '); //空白を表示
 
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
@@ -1291,7 +1302,8 @@ short ivalue() {
       break; //ここで打ち切る
     }
     cip += 2; //中間コードポインタを「()」の次へ進める
-    value = Serial1.read();
+    //value = Serial1.read();
+    value = sc.Serial_read();
     break; //ここで打ち切る
   
   case I_SREADY:// SREADY() シリアルデータデータチェック
@@ -1300,9 +1312,16 @@ short ivalue() {
       break; //ここで打ち切る
     }
     cip += 2; //中間コードポインタを「()」の次へ進める
-    value = Serial1.available();
+    //value = Serial1.available();
+    value = sc.Serial_available();
     break; //ここで打ち切る
-    
+
+  // 画面サイズ定数の参照
+  case I_CW: value = sc.getWidth()   ;cip++; break;
+  case I_CH: value = sc.getHeight()  ;cip++; break;
+  case I_GW: value = sc.getGWidth()  ;cip++; break;
+  case I_GH: value = sc.getGHeight() ;cip++; break;
+
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号
     if (*cip >= I_PA0 && *cip <= I_PC15) {
@@ -2088,6 +2107,21 @@ unsigned char* iexe() {
       irect();
       break;
 
+   case I_BITMAP:     // ビットマップの描画
+      cip++;
+      ibitmap();
+      break;
+
+   case I_CSCROLL:    // キャラクタスクロール
+      cip++;
+      icscroll();
+      break;
+
+   case I_GSCROLL:    // グラフィックスクロール
+      cip++;
+      igscroll();
+      break;
+      
    case I_SWRITE:     // シリアル1バイト出力
       cip++;
       iswrite();
@@ -2108,6 +2142,11 @@ unsigned char* iexe() {
       isclose();
       break;
 
+   case I_SMODE:
+      cip++;
+      ismode();
+      break;
+   
    case I_TONE:
       cip++;
       itone();
@@ -2321,8 +2360,7 @@ void irenum() {
 // プログラム保存 SAVE 保存領域番号
 void isave() {
   int16_t prgno = 0;
-  uint32_t flash_adr1;
-  uint32_t flash_adr2;
+  uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
   uint8_t* sram_adr;
   
   // 引数の取得
@@ -2336,22 +2374,21 @@ void isave() {
   }
 
   // 引数の範囲チェック
-  if (prgno < 0 || prgno > 3) {
+  if (prgno < 0 || prgno >= FLASH_SAVE_NUM) {
     err = ERR_VALUE;
     return;
   }
 
-  flash_adr1 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2);
-  flash_adr2 = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2+1);
+  for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) {
+    flash_adr[i] = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG+i);
+  }
 
-  sram_adr  = listbuf;
-
-  // 2ページ分(2048)の保存
+  // 4ページ分(4096)の保存
   TFlash.unlock();
-  TFlash.eracePage(flash_adr1);
-  TFlash.write((uint16_t*)flash_adr1, listbuf, FLASH_PAGE_SIZE);
-  TFlash.eracePage(flash_adr2);
-  TFlash.write((uint16_t*)flash_adr2, listbuf+FLASH_PAGE_SIZE, FLASH_PAGE_SIZE);  
+  for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) {
+    TFlash.eracePage(flash_adr[i]);
+    TFlash.write((uint16_t*)flash_adr[i], listbuf+FLASH_PAGE_SIZE*i, FLASH_PAGE_SIZE);
+  }
   TFlash.lock();
 }
 
@@ -2371,14 +2408,12 @@ void iload() {
     return;
   }
   // 引数の範囲チェック
-  if (prgno < 0 || prgno > 3) {
+  if (prgno < 0 || prgno >= FLASH_SAVE_NUM) {
     err = ERR_VALUE;
     return;
   }
-/*
-  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PAGE_NUM -1 - 8 + prgno*2);
-*/
-  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*2);
+
+  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
 
   // 指定領域に保存されているかチェックする
   if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
@@ -2388,13 +2423,34 @@ void iload() {
 
   // 現在のプログラムの削除
   inew();
-  memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*2);
-  
+  memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
 }
 
 // プログラム保存 LOAD 保存領域番号
 void ifiles() {
-  
+  uint32_t flash_adr;
+  uint8_t* save_clp;
+
+  save_clp = clp;
+  for (uint8_t i=0 ; i < FLASH_SAVE_NUM; i++) {    
+    flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ i*FLASH_PAGE_PAR_PRG);
+    putnum(i,1);
+    c_puts(":");
+    if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
+      c_puts("(none)");        
+    } else {
+      clp = (uint8_t*)flash_adr;
+      if (*clp) {
+        putnum(getlineno(clp), 0); // 行番号を表示
+        c_puts(" ");
+        putlist(clp + 3);          // 行番号より後ろを文字列に変換して表示
+      } else {
+        c_puts("(none)");        
+      }
+    } 
+    newline();
+  }
+  clp = save_clp;
 }
 
 //Command precessor
@@ -3200,12 +3256,102 @@ void irect() {
   sc.rect(x, y, w, h, c, f);
 }
 
+// ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]
+void ibitmap() {
+ int16_t  x,y,w,h,d = 1;
+ int16_t  index;
+ int16_t  value;
+ uint32_t adr;
+
+  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x
+  cip++;
+  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y
+  cip++;
+  value = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }  // adr
+  adr = (uint32_t)SRAM_TOP +(uint32_t)value;
+  cip++;
+  index = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // index
+  cip++;
+  w= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }      // w
+  cip++;
+  h = iexp();  if(err) return ;  //h 
+
+  if (*cip == I_COMMA) {
+    cip++;
+    d = iexp();  if(err) return ;  //d
+  }
+
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
+  if (y >= sc.getGHeight()) y = sc.getGHeight()-1;
+  if (index < 0) index = 0;
+  if (w < 0) w =1;
+  if (h < 0) h =1; 
+  if (d < 0) d = 1;
+  sc.bitmap(x, y, (uint8_t*)adr, index, w, h, d);
+}
+
+// キャラクタスクロール CSCROLL X,Y,W,H,方向
+// 方向 0: 上, 1: 下, 2: 右, 3: 左
+void  icscroll() {
+int16_t  x,y,w,h,d;
+
+  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x
+  cip++;
+  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y
+  cip++;
+  w= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // w
+  cip++;
+  h= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // h
+  cip++;
+  d = iexp();  if(err) return ;  // d
+
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc.getWidth())  x = sc.getWidth()-1;
+  if (y >= sc.getHeight()) y = sc.getHeight()-1;
+  if (w < 0) w =1;
+  if (h < 0) h =1; 
+  if (d < 0 || d > 3) d = 0;
+  
+  sc.cscroll(x, y, w, h, d);
+}
+
+void igscroll() {
+int16_t  y,h,d;
+
+  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y
+  cip++;
+  h= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // h
+  cip++;
+  d = iexp();  if(err) return ;  // d
+
+  if (y < 0) y =0;
+  if (y >= sc.getHeight()) y = sc.getHeight()-1;
+  if (h < 0) h =1; 
+  if (d < 0 || d > 3) d = 0;
+  
+  sc.gscroll(y, h, d);
+}
+
 // シリアル1バイト出力
 void iswrite() {
   int16_t c;
  
   c = iexp();  if(err) return ;
-  Serial1.write( (uint8_t)c);
+  //Serial1.write( (uint8_t)c);
+  sc.Serial_write((uint8_t)c);
+}
+
+// シリアルモード設定
+void ismode() {
+  int16_t c;
+ 
+  c = iexp();  if(err) return ;
+  //Serial1.write( (uint8_t)c);
+  sc.Serial_mode((uint8_t)c);
+  
 }
 
 // シリアル1オープン
@@ -3235,7 +3381,8 @@ void isopen() {
      }
      cip++;
   }
-  Serial1.begin(baud);
+  //Serial1.begin(baud);
+  sc.Serial_open(baud);
   lfgSerial1Opened = true;
 }
 
@@ -3243,7 +3390,8 @@ void isopen() {
 void isclose() {
   delay(500);
   if(lfgSerial1Opened == true)
-    Serial1.end();
+    //Serial1.end();
+    sc.Serial_close();
   lfgSerial1Opened = false;    
 }
 
@@ -3326,12 +3474,7 @@ void basic() {
   EEPROM.PageSize  = FLASH_PAGE_SIZE;  
 
   inew();            // 実行環境を初期化
-  //sc.init(80,25,80); // スクリーン初期設定
-  //sc.init(28,27,80); // スクリーン初期設定
-  sc.init(80);         // スクリーン初期設定
-  sc.setSerial(true);  // USBシリアル出力許可
-  //sc.cls();
-  //sc.locate(0,0);
+  sc.init(80);       // スクリーン初期設定
 
   I2C_WIRE.begin();  // I2C利用開始
 
@@ -3343,7 +3486,7 @@ void basic() {
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
   newline();                    // 改行
   c_puts(STR_EDITION);            // 版を区別する文字列を表示
-  c_puts(" Edition V0.6");        //「 EDITION」を表示
+  c_puts(" Edition V0.7");        //「 EDITION」を表示
   newline();                      // 改行
   error();                        //「OK」またはエラーメッセージを表示してエラー番号をクリア
   sc.refresh();

@@ -9,6 +9,8 @@
 //  修正日 2017/04/06, beep()の追加
 //  修正日 2017/04/11, TVout版に移行
 //  修正日 2017/04/15, 行挿入の追加
+//  修正日 2017/04/17, bitmaph表示処理の追加
+//  修正日 2017/04/18, シリアルポート設定機能の追加
 //
 
 #ifndef __tscreen_h__
@@ -58,7 +60,8 @@ class tscreen {
     uint8_t flgIns;             // 編集モード
 
     uint8_t flgCur;             // カーソル表示設定
-    uint8_t flgSirialout;       // SUBシリアル入出力指定フラグ
+    //uint8_t flgSirialout;       // SUBシリアル入出力指定フラグ
+    uint8_t serialMode;         // シリアルポートモード
 
   public:
     uint16_t pos_x;             // カーソル横位置
@@ -67,7 +70,6 @@ class tscreen {
     uint16_t prev_pos_x;        // カーソル横位置
     uint16_t prev_pos_y;        // カーソル縦位置
  
-
     //void init(uint16_t w,uint16_t h,uint16_t ln=256); // スクリーンの初期設定
     void init(uint16_t ln=256);                       // スクリーンの初期設定
     void clerLine(uint16_t l);                        // 1行分クリア
@@ -113,7 +115,6 @@ class tscreen {
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性
 
-    void setSerial(uint8_t flg);                      // USBシリアル利用設定
     void beep() {/*addch(0x07);*/};
     void tone(int16_t freq, int16_t tm);
     void notone();
@@ -127,7 +128,19 @@ class tscreen {
     void pset(int16_t x, int16_t y, uint8_t c);
     void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
     void circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
-    void rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f);
+    void rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f);
+    void bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
+    void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
+    void gscroll(int16_t y, int16_t h, uint8_t mode);
+    
+    // シリアルポート制御
+    void    Serial_open(uint32_t baud) ;  // シリアルポートオープン
+    void    Serial_close();               // シリアルポートクローズ
+    void    Serial_write(uint8_t c);      // シリアル1バイト出力
+    int16_t Serial_read();                // シリアル1バイト入力
+    uint8_t Serial_available();           // シリアルデータ着信チェック
+    void    Serial_newLine();             // シリアル改行出力
+    void    Serial_mode(uint8_t c);       // シリアルポートモード設定 
 };
 
 #endif

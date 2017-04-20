@@ -10,6 +10,8 @@
 void basic(void);
 
 void setup(void){
+
+
   // put your setup code here, to run once:
   Serial.begin(115200);
 #if defined (__STM32F1__)   
@@ -17,7 +19,7 @@ void setup(void){
   delay(3000);
 #endif
   //randomSeed(analogRead(0));
-  
+
 }
 
 void loop(void){

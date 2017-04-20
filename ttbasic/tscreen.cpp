@@ -7,6 +7,8 @@
 //  修正日 2017/04/09, PS/2キーボードとの併用可能
 //  修正日 2017/04/11, TVout版に移行
 //  修正日 2017/04/15, 行挿入の追加(次行上書き防止対策）
+//  修正日 2017/04/17, bitmaph表示処理の追加
+//  修正日 2017/04/18, シリアルポート設定機能の追加
 //  修正日 2017/04/19, 行確定時の不具合対応
 //
 
@@ -28,6 +30,8 @@ void    tv_pset(int16_t x, int16_t y, uint8_t c);
 void    tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
 void    tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
 void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) ;
+void    tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
+void    tv_gscroll(int16_t y, int16_t h, uint8_t mode);
 void    tv_tone(int16_t freq, int16_t tm);
 void    tv_notone();
 
@@ -37,9 +41,61 @@ uint8_t ps2read();
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
 
-// USBシリアル利用設定
-void tscreen::setSerial(uint8_t flg) {
-  flgSirialout = flg;
+// シリアルポートオープン
+void tscreen::Serial_open(uint32_t baud) {
+  if (serialMode == 0) 
+    Serial1.begin(baud);
+//  else if (serialMode == 1) 
+//    Serial.begin(baud);  
+}
+
+// シリアルポートクローズ
+void tscreen::Serial_close() {
+  if (serialMode == 0) 
+    Serial1.end();  
+//  else if (serialMode == 1) 
+//    Serial.end();  
+}
+
+// シリアル1バイト出力
+void tscreen::Serial_write(uint8_t c) {
+  if (serialMode == 0) 
+     Serial1.write( (uint8_t)c);
+  else if (serialMode == 1) 
+     Serial.write( (uint8_t)c);  
+}
+
+// シリアル1バイト入力
+int16_t tscreen::Serial_read() {
+  if (serialMode == 0) 
+    return Serial1.read();
+  else if (serialMode == 1) 
+    return Serial.read();
+}
+
+// シリアル改行出力 
+void tscreen::Serial_newLine() {
+  if (serialMode == 0) 
+    Serial1.println();
+  else if (serialMode == 1) 
+    Serial.println();
+}
+
+// シリアルデータ着信チェック
+uint8_t tscreen::Serial_available() {
+  if (serialMode == 0) 
+     return Serial1.available();
+  else if (serialMode == 1) 
+     return Serial.available();
+}
+// シリアルポートモード設定 
+void tscreen::Serial_mode(uint8_t c) {
+  serialMode = c;
+  if (serialMode == 1) {
+    Serial1.begin(115200);
+  } else {
+    Serial1.end();
+  }
 }
 
 // カーソルの移動
@@ -64,7 +120,8 @@ void tscreen::MOVE(uint8_t y, uint8_t x) {
 //  なし
 //void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
 void tscreen::init(uint16_t l) {
-
+  serialMode = 0;
+  
   // ビデオ出力設定
   tv_init();
     
@@ -89,10 +146,13 @@ void tscreen::init(uint16_t l) {
 
 // キー入力チェック&キーの取得
 uint8_t tscreen::isKeyIn() {
-  if (flgSirialout) {
+  if(serialMode == 0) {
     if (Serial.available())
       return Serial.read();
-  }  
+  } else if (serialMode == 1) {
+    if (Serial1.available())
+      return Serial1.read();
+  }
   return ps2read();  
 }
 
@@ -100,9 +160,14 @@ uint8_t tscreen::isKeyIn() {
 uint8_t tscreen::get_ch() {
   char c;
   while(1) {
-    if (flgSirialout) {
+    if(serialMode == 0) {
       if (Serial.available()) {
         c = Serial.read();
+        break;
+      }
+    } else if (serialMode == 1) {
+      if (Serial1.available()) {
+        c = Serial1.read();
         break;
       }
     }
@@ -232,8 +297,12 @@ void tscreen::delete_char() {
 // 文字の出力
 void tscreen::putch(uint8_t c) {
  VPOKE(pos_x, pos_y, c);    // VRAMに文字セット
- if(flgSirialout)
+
+ if(serialMode == 0) {
     Serial.write(c);       // シリアル出力
+ } else if (serialMode == 1) {
+    Serial1.write(c);     // シリアル出力  
+ }
  tv_write(pos_x, pos_y, c); // 画面表示
  movePosNextNewChar();
 }
@@ -288,8 +357,11 @@ void tscreen::newLine() {
     y--;
   }    
   MOVE(y, x);
-  if(flgSirialout)
+  if (serialMode == 0) {
     Serial.println();
+  } else if (serialMode == 1) {
+    Serial1.println();    
+  }
 }
 
 // カーソルを１文字分次に移動
@@ -423,13 +495,12 @@ uint16_t tscreen::vpeek(uint16_t x, uint16_t y) {
 
 // 行データの入力確定
 uint8_t tscreen::enter_text() {
-  //memset(text, 0, SC_TEXTNUM);
 
   // 現在のカーソル位置の行先頭アドレス取得
   uint8_t *ptr = &VPEEK(0, pos_y); 
   if (pos_x == 0 && pos_y)
     ptr--;
-    
+
   // ポインタをさかのぼって、前行からの文字列の連続性を調べる
   // その文字列先頭アドレスをtopにセットする
   uint8_t *top = ptr;
@@ -541,8 +612,57 @@ void tscreen::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
 }
 
 // 四角の描画
-void tscreen::rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) {
-  tv_rect(x, y, h, w, c, f);
+void tscreen::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
+  tv_rect(x, y, w, h, c, f);
+}
+
+// ビットマップの描画
+void tscreen::bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d) {
+  tv_bitmap(x, y, adr, index, w, h, d);
+}
+
+// キャラクタ画面スクロール
+void tscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
+  switch(d) {
+    case 0: // 上
+      for (uint16_t i= 0; i < h-1; i++) {
+        memcpy(&VPEEK(x,y+i), &VPEEK(x,y+i+1), w);
+      }
+      memset(&VPEEK(x, y + h - 1), 0, w);
+      break;            
+
+    case 1: // 下
+      for (uint16_t i= 0; i < h-1; i++) {
+        memcpy(&VPEEK(x,y + h-1-i), &VPEEK(x,y+h-1-i-1), h);
+      }
+      memset(&VPEEK(x, y), 0, w);
+      break;            
+
+    case 2: // 右
+      for (uint8_t i=0; i < h; i++) {
+        memmove(&VPEEK(x+1, y+i) ,&VPEEK(x,y+i), w-1);
+        VPOKE(x,y+i,0);
+      }
+      break;
+      
+    case 3: // 左
+      for (uint8_t i=0; i < h; i++) {
+        memmove(&VPEEK(x,y+i) ,&VPEEK(x+1,y+i), w-1);
+        VPOKE(x+w-1,y+i,0);
+      }
+      break;
+  }
+  uint8_t c;
+  for (uint8_t i = 0; i < h; i++) 
+    for (uint8_t j=0; j < w; j++) {
+      c = VPEEK(x+j,y+i);
+      tv_write(x+j,y+i, c?c:32);
+    }
+}
+
+// グラフィックスクロール
+void tscreen::gscroll(int16_t y, int16_t h, uint8_t mode) {
+  tv_gscroll(y, h, mode);
 }
 
 void tscreen::tone(int16_t freq, int16_t tm) {
