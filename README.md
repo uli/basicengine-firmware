@@ -27,9 +27,10 @@ Blue Pillボード利用構成図
   aitendo PS/2モジュール [ML-PS2-4P] http://www.aitendo.com/product/11377  
   秋月電子 USBコネクタDIP化キット(Aメス) http://akizukidenshi.com/catalog/g/gK-07429/  
   - NTSC用 RCAコネクタ  
- aitendo TVOUTモジュールキット [K-TVOUT2R] http://www.aitendo.com/product/11740  
- aitendo RCAモジュールキット [brebo.jam.rca] http://www.aitendo.com/product/12125  
- ※付属抵抗を使うと若干出力電圧が上がりますが、許容範囲です。そのまま利用できます。  
+  aitendo TVOUTモジュールキット [K-TVOUT2R] http://www.aitendo.com/product/11740  
+  aitendo RCAモジュールキット [brebo.jam.rca] http://www.aitendo.com/product/12125  
+  秋月電子 RCAジャックDIP化キット(黄) http://akizukidenshi.com/catalog/g/gK-06522/  
+  ※aitendo製品は付属抵抗を使うと若干出力電圧が上がりますが、許容範囲です。そのまま利用できます。  
 
 
 ![ピン割り付け](./image/03_1.png)
