@@ -2,6 +2,8 @@
 
 ![サンプル画像](./image/sample.jpg)
 
+※本ソースにはビデオ出力・PS/2キーボード対応のブランチ版があります(最終的に合流予定)。  
+https://github.com/Tamakichi/ttbasic_arduino/tree/ttbasic_arduino_ps2_ntsc  
 
 本プログラムは、下記オリジナル版をArduino STM32向けに移植・機能版です.  
 STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確認しています.  
