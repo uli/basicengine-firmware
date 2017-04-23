@@ -10,6 +10,7 @@
 //  修正日 2017/04/17, bitmaph表示処理の追加
 //  修正日 2017/04/18, シリアルポート設定機能の追加
 //  修正日 2017/04/19, 行確定時の不具合対応
+//  修正日 2017/04/24, cscroll()関数 キャラクタ下スクロール不具合修正
 //
 
 #include <string.h>
@@ -633,7 +634,7 @@ void tscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
 
     case 1: // 下
       for (uint16_t i= 0; i < h-1; i++) {
-        memcpy(&VPEEK(x,y + h-1-i), &VPEEK(x,y+h-1-i-1), h);
+        memcpy(&VPEEK(x,y + h-1-i), &VPEEK(x,y+h-1-i-1), w);
       }
       memset(&VPEEK(x, y), 0, w);
       break;            
