@@ -3845,11 +3845,16 @@ void ismode() {
   
   c = iexp();  if(err) return ;
   if (c == 1) {
+    if(*cip != I_COMMA) {
+      err = ERR_SYNTAX;
+      return;      
+    }
+    cip++;
     if (*cip != I_STR) {
       err = ERR_VALUE;
       return;
     }
-    
+
     cip++;        //中間コードポインタを次へ進める
     ln = *cip++;  //文字数を取得
   
@@ -4138,7 +4143,8 @@ void basic() {
     sc.show_curs(1);
     newline();     // 改行
     c_puts("Autorun No.");putnum(CONFIG.STARTPRG,0);c_puts(" stopped.");
-    newline();     // 改行    
+    newline();     // 改行
+    err = 0; 
   }
   
   // 端末から1行を入力して実行
