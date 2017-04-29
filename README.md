@@ -1,5 +1,5 @@
 ## 豊四季タイニーBASIC for Arduino STM32 V0.8(2017/04/29)
-※V0.8はまだテスト不十分です。下記より以前のバージョンV0.7を使って下さい。  
+※V0.8はまだテスト不十分です。下記より以前のバージョンV0.7を使って下さい。  
 https://github.com/Tamakichi/ttbasic_arduino/releases  
 
 ![サンプル画像](./image/03.jpg)
