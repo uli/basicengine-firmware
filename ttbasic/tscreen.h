@@ -9,8 +9,10 @@
 //  修正日 2017/04/06, beep()の追加
 //  修正日 2017/04/11, TVout版に移行
 //  修正日 2017/04/15, 行挿入の追加
-//  修正日 2017/04/17, bitmaph表示処理の追加
-//  修正日 2017/04/18, シリアルポート設定機能の追加
+//  修正日 2017/04/17, bitmap表示処理の追加
+//  修正日 2017/04/18, シリアルポート設定機能の追加,cscroll,gscroll表示処理の追加
+//  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
+//  修正日 2017/04/29, キーボード、NTSCの補正対応
 //
 
 #ifndef __tscreen_h__
@@ -71,7 +73,9 @@ class tscreen {
     uint16_t prev_pos_y;        // カーソル縦位置
  
     //void init(uint16_t w,uint16_t h,uint16_t ln=256); // スクリーンの初期設定
-    void init(uint16_t ln=256);                       // スクリーンの初期設定
+    void init(uint16_t ln=256, uint8_t kbd_type=false, int16_t NTSCajst=0); // スクリーンの初期設定
+
+    void reset_kbd(uint8_t kbd_type=false);
     void clerLine(uint16_t l);                        // 1行分クリア
     void cls();                                       // スクリーンのクリア
     void refresh();                                   // スクリーンリフレッシュ表示
@@ -131,7 +135,11 @@ class tscreen {
     void rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f);
     void bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
     void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
-    void gscroll(int16_t y, int16_t h, uint8_t mode);
+    void gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode);
+    int16_t gpeek(int16_t x, int16_t y);
+    int16_t ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c);
+    void set_gcursor(uint16_t, uint16_t);
+    void gputch(uint8_t c);
     
     // シリアルポート制御
     void    Serial_open(uint32_t baud) ;  // シリアルポートオープン
@@ -140,7 +148,11 @@ class tscreen {
     int16_t Serial_read();                // シリアル1バイト入力
     uint8_t Serial_available();           // シリアルデータ着信チェック
     void    Serial_newLine();             // シリアル改行出力
-    void    Serial_mode(uint8_t c);       // シリアルポートモード設定 
+    void    Serial_mode(uint8_t c, uint32_t b);  // シリアルポートモード設定 
+
+    // システム設定
+    void  adjustNTSC(int16_t ajst);
+    
 };
 
 #endif

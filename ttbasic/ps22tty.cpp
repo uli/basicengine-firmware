@@ -2,26 +2,28 @@
 // PS/2キー入力をtty入力コードにコンバートする
 // 作成 2017/04/09
 // 修正 2017/04/15, 利用ピンの変更(I2Cとの競合のため)
+//  修正日 2017/04/29, キーボード、NTSCの補正対応
 
 #include <TKeyboard.h>
 #include "tscreen.h"
-/*
-const int IRQpin =  PB7;  // CLK(D+)
-const int DataPin = PB8;  // Data(D-) 
-*/
+
 const int IRQpin =  PB4;  // CLK(D+)
 const int DataPin = PB5;  // Data(D-) 
 
 TKeyboard kb;
 
 // PS/2キーボードのセットアップ
-void setupPS2() {
+void setupPS2(uint8_t kb_type = false) {
   // PS/2 キーボードの利用開始
   // begin()の引数： CLKピンNo、DATAピンNo、LED制御あり/なし、USキーボードを利用する/しない
-  if ( kb.begin(IRQpin, DataPin, true, false) ) {
+  if ( kb.begin(IRQpin, DataPin, true, kb_type) ) {
     // 初期化に失敗時はエラーメッセージ表示
     //Serial.println("PS/2 Keyboard initialize error.");
   }  
+}
+
+void endPS2() {
+  kb.end();
 }
 
 uint8_t cnv2tty(keyEvent k) {

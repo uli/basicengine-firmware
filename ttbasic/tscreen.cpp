@@ -10,13 +10,17 @@
 //  修正日 2017/04/17, bitmaph表示処理の追加
 //  修正日 2017/04/18, シリアルポート設定機能の追加
 //  修正日 2017/04/19, 行確定時の不具合対応
+//  修正日 2017/04/18, シリアルポート設定機能の追加,cscroll,gscroll表示処理の追加
 //  修正日 2017/04/24, cscroll()関数 キャラクタ下スクロール不具合修正
+//  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
+//  修正日 2017/04/29, キーボード、NTSCの補正対応
 //
 
 #include <string.h>
 #include "tscreen.h"
 
-void    tv_init();
+void tv_init(int16_t ajst);
+void    endPS2();
 void    tv_write(uint8_t x, uint8_t y, uint8_t c);
 uint8_t tv_drawCurs(uint8_t x, uint8_t y);
 void    tv_clerLine(uint16_t l) ;
@@ -32,11 +36,16 @@ void    tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
 void    tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
 void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f) ;
 void    tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
-void    tv_gscroll(int16_t y, int16_t h, uint8_t mode);
+void    tv_set_gcursor(uint16_t x, uint16_t y);
+void    tv_write(uint8_t c);
+void    tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) ;
+int16_t tv_gpeek(int16_t x, int16_t y);
+int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) ;
 void    tv_tone(int16_t freq, int16_t tm);
 void    tv_notone();
+void    tv_NTSC_adjust(int16_t ajst);
 
-void    setupPS2();
+void setupPS2(uint8_t kb_type);
 uint8_t ps2read();
 
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
@@ -90,10 +99,10 @@ uint8_t tscreen::Serial_available() {
      return Serial.available();
 }
 // シリアルポートモード設定 
-void tscreen::Serial_mode(uint8_t c) {
+void tscreen::Serial_mode(uint8_t c, uint32_t b) {
   serialMode = c;
   if (serialMode == 1) {
-    Serial1.begin(115200);
+    Serial1.begin(b);
   } else {
     Serial1.end();
   }
@@ -120,18 +129,18 @@ void tscreen::MOVE(uint8_t y, uint8_t x) {
 // 戻り値
 //  なし
 //void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
-void tscreen::init(uint16_t l) {
+void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
   serialMode = 0;
   
   // ビデオ出力設定
-  tv_init();
+  tv_init(NTSCajst);
     
   width   = tv_get_cwidth();
   height  = tv_get_cheight();
   gwidth   = tv_get_gwidth();
   gheight  = tv_get_gheight();
-  maxllen = l;
-  setupPS2();
+  maxllen = ln;
+  setupPS2(kbd_type);
   if (screen != NULL) 
     free(screen);
   screen = (uint8_t*)malloc( width * height );
@@ -143,6 +152,11 @@ void tscreen::init(uint16_t l) {
 
   // 編集機能の設定
   flgIns = true;
+}
+
+void tscreen::reset_kbd(uint8_t kbd_type) {
+  endPS2();
+  setupPS2(kbd_type);
 }
 
 // キー入力チェック&キーの取得
@@ -521,7 +535,8 @@ uint8_t tscreen::edit() {
     ch = get_ch ();
     switch(ch) {
       case KEY_CR:         // [Enter]キー
-      case KEY_ESCAPE:
+      //case KEY_ESCAPE:
+      
         return enter_text();
         break;
 
@@ -640,14 +655,14 @@ void tscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
       break;            
 
     case 2: // 右
-      for (uint8_t i=0; i < h; i++) {
+      for (uint16_t i=0; i < h; i++) {
         memmove(&VPEEK(x+1, y+i) ,&VPEEK(x,y+i), w-1);
         VPOKE(x,y+i,0);
       }
       break;
       
     case 3: // 左
-      for (uint8_t i=0; i < h; i++) {
+      for (uint16_t i=0; i < h; i++) {
         memmove(&VPEEK(x,y+i) ,&VPEEK(x+1,y+i), w-1);
         VPOKE(x+w-1,y+i,0);
       }
@@ -662,9 +677,28 @@ void tscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
 }
 
 // グラフィックスクロール
-void tscreen::gscroll(int16_t y, int16_t h, uint8_t mode) {
-  tv_gscroll(y, h, mode);
+void tscreen::gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
+  tv_gscroll(x, y, w, h, mode);
 }
+
+// 指定位置のピクセル情報取得
+int16_t tscreen::gpeek(int16_t x, int16_t y) {
+  return tv_gpeek(x,y);
+}
+
+// 指定領域のピクセル有無チェック
+int16_t tscreen::ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) {
+  return tv_ginp(x, y, w, h, c);
+}
+
+void tscreen::set_gcursor(uint16_t x, uint16_t y) {
+  tv_set_gcursor(x,y);
+}
+
+void tscreen::gputch(uint8_t c) {
+ tv_write(c); 
+}
+
 
 void tscreen::tone(int16_t freq, int16_t tm) {
   tv_tone(freq, tm);  
@@ -672,5 +706,9 @@ void tscreen::tone(int16_t freq, int16_t tm) {
 
 void tscreen::notone() {
   tv_notone();    
+}
+
+void tscreen::adjustNTSC(int16_t ajst) {
+  tv_NTSC_adjust(ajst);
 }
 
