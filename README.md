@@ -1,4 +1,6 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.7(2017/04/20)
+## 豊四季タイニーBASIC for Arduino STM32 V0.8(2017/04/29)
+※V0.8はまだテスト不十分です。下記より以前のバージョンV0.7を使って下さい。  
+https://github.com/Tamakichi/ttbasic_arduino/releases  
 
 ![サンプル画像](./image/03.jpg)
 
@@ -43,24 +45,24 @@ Blue Pillボード利用構成図
 - コマンドの追加  
   - **RENUM** ：行番号再割り当て  
   - **CLS** ：画面クリア  
-  - **LOCATE**：カーソル移動  
-  - **COLOR**： 文字色の指定  
-  - **ATTR**：文字装飾の指定  
+  - **LOCATE**：カーソル移動    
   - **WAIT**：時間待ち  
   - **VPEEK**：スクリーン位置の文字コード参照  
   - **CHR$()**、**HEX$()**、**BIN$()**、**ASC()**、**INKEY()** 関数の追加  
   - **TICK()** 関数、**RESETTIK**の追加  
   - **?**：**PRINT**文の省略系を追加  
-  - **GPIO**、**OUT**、**IN**、**ANA**、**SHIFTOUT**、**SHIFTIN**：GPIO利用コマンドの追加  
+  - **GPIO**、**OUT**、**IN**、**ANA**、**POUT**,**SHIFTOUT**、**SHIFTIN** 、**PWM**：GPIO利用コマンドの追加  
   - **I2CW**、**I2CR**：I2C利用コマンドの追加  
   - **POKE**、**PEEK**：メモリ領域参照コマンドの追加  
   - **DATE**、**SETDATE**、**GETTIME**: 内蔵RTC利用コマンド追加  
   - **SAVE**、**LOAD**： 内部フラッシュメモリへのプログラム保存機能の追加  
   - **EEPFORMAT**,**EEPWRITE**,**EEPREAD**コマンドの追加(仮想EEPROM機能)  
   - **AND**、**OR**、!、~、!の追加  
-  - **PSET**,**LINE**,**RECT**,**CIRCLE**のグラフィック描画コマンド追加  
+  - **PSET**,**LINE**,**RECT**,**CIRCLE**,**GPRINT**のグラフィック描画コマンド追加  
   - **SMODE**,**SOPEN**,**SCLOSE**,**SERITE**,**SREAD**,**SREADY**,**SPRINT**のシリアル通信コマンドの追加  
   - **BITMAP**,**CSCROLL**,**GSCROLL**,コマンドの追加  
+  - **DELETE**,**EXPORT**,**CONFIG**,**SAVECONFIG**,**LRUN**の追加  
+  - **MAP()**,**DMP$()**の追加
 - 文法の変更  
   - 定数の16進数表記対応(例 $1234,$AB)  
   - 命令文区切りを';'から':'に変更  
