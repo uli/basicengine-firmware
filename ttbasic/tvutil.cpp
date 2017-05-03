@@ -11,17 +11,19 @@
 #include <TTVout.h>
 #include "tscreen.h"
 
+/*
 #define TV_DISPLAY_FONT font6x8
 #include <font6x8.h>
+*/
 
-/*
 #define TV_DISPLAY_FONT font6x8tt
 #include <font6x8tt.h>
-*/
+
 /*
 #define TV_DISPLAY_FONT font8x8
 #include <font8x8.h>
 */
+
 /*
 #define TV_DISPLAY_FONT ichigoFont8x8 
 #include <ichigoFont8x8.h>
@@ -52,7 +54,7 @@ void tv_init(int16_t ajst) {
   f_height = *(tvfont+1);             // 縦フォントドット数
   
   TNTSC.adjust(ajst);
-  TV.begin();
+  TV.begin(SC_DEFAULT);
   TV.select_font(tvfont);
   g_width  = TNTSC.width();           // 横ドット数
   g_height = TNTSC.height();          // 縦ドット数

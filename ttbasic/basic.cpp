@@ -88,6 +88,7 @@
 //  修正日 2017/04/27, PWM対応(GPIOコマンド修正、POUTコマンド追加)の仕様変更
 //  修正日 2017/04/28, CONFIGコマンドの追加(NTSC補正対応),SAVECONFIGの追加
 //  修正日 2017/04/29, MAP(),DMP$()の追加（スケール変換、小数表示補助),LRUNの追加
+//  修正日 2017/05/02, MAP(),SAVECONFIGの不具合対応
 
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -3989,15 +3990,15 @@ int16_t imap() {
 
   if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
   cip++;
-  value = iexp(); if(err) return 0;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // x
+  value = iexp(); if(err) return 0;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // v
   cip++;
-  l1 = iexp();  if(err) return 0 ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // y
+  l1 = iexp();  if(err) return 0 ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // l1
   cip++;
-  h1= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // w
+  h1= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // h1
   cip++;
-  l2= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // h
+  l2= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // l2
   cip++;
-  h2= iexp();  if(err) return 0; // c
+  h2= iexp();  if(err) return 0; // h2
   if (*cip != I_CLOSE) { err = ERR_PAREN;  return 0; } // ')'のチェック
   cip++; 
 
@@ -4005,7 +4006,8 @@ int16_t imap() {
     err = ERR_VALUE;
     return 0;
   }
-  rc = value*(h2-l2)/(h1-l1);
+
+  rc = (value-l2)*(h2-l2)/(h1-l1)+l2;
   return rc;
   
 }
@@ -4204,7 +4206,6 @@ uint8_t loadConfig() {
   rc = EEPROM.read(CONFIG_NTSC, &data);
   if (rc == EEPROM_OK) {
     CONFIG.NTSC = data;
-    Serial.println("[CONFIG_NTSC]");
   }
   // キーボード設定の参照
   rc = EEPROM.read(CONFIG_KBD, &data);
@@ -4246,10 +4247,12 @@ ERR_EEPROM:
       case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS;break;
       case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT;break;
       case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE;break;
+      case EEPROM_OK: err = 0;break;
       case EEPROM_BAD_FLASH:     
       default:                   err = ERR_EEPROM_BAD_FLASH;break;
     }
     return -1;
+
 DONE:  
   return 0;
 }
