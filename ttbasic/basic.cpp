@@ -4007,7 +4007,7 @@ int16_t imap() {
     return 0;
   }
 
-  rc = (value-l2)*(h2-l2)/(h1-l1)+l2;
+  rc = (value-l1)*(h2-l2)/(h1-l1)+l2;
   return rc;
   
 }
