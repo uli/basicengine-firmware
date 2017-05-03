@@ -94,9 +94,15 @@ Blue Pillボード利用構成図
    https://github.com/Tamakichi/ArduinoSTM32_TFlash  
  - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
    https://github.com/Tamakichi/ArduinoSTM32_TNTSC  
- - Arduino STM32 TVoutライブラリ(最新版)  
-   https://github.com/Tamakichi/ArduinoSTM32_TVout    
- - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
+ - Arduino STM32 TTVoutライブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_TVout    
+ - TTVoutfont TVout用フォント
+   https://github.com/Tamakichi/TTVoutfont  
+   ※フォントはtvutil.cppの#define TV_DISPLAY_FONTにて変更可能です。  
+     TVoutfontのfont6x8がデフォルトにしていますが、上記のフォントを利用する場合は、  
+     #define TV_DISPLAY_FONT font6x8tt  
+     を修正して下さい。  
+ - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
    https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard      
 
 ## フルスリーンテキストエディタの機能
