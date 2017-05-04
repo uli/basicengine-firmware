@@ -89,7 +89,8 @@
 //  修正日 2017/04/28, CONFIGコマンドの追加(NTSC補正対応),SAVECONFIGの追加
 //  修正日 2017/04/29, MAP(),DMP$()の追加（スケール変換、小数表示補助),LRUNの追加
 //  修正日 2017/05/02, MAP(),SAVECONFIGの不具合対応
-
+//  修正日 2017/05/03, 文字コード(32～126,128～255)がシリアル経由で入力可能に修正
+//
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
 #define STR_EDITION "Arduino STM32"
@@ -175,7 +176,7 @@ uint8_t saveConfig();
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 6      // GOSUB stack size(2/nest)
 #define SIZE_LSTK 15     // FOR stack size(5/nest)
-#define SIZE_MEM  1024   // 自由利用データ領域
+#define SIZE_MEM  2048   // 自由利用データ領域
 
 void tv_write(uint8_t c) ;
 
@@ -493,7 +494,8 @@ char c_toupper(char c) {
   return(c <= 'z' && c >= 'a' ? c - 32 : c);
 }
 char c_isprint(char c) {
-  return(c >= 32 && c <= 126);
+  //return(c >= 32 && c <= 126);
+  return(c >= 32 && c!=127 );
 }
 char c_isspace(char c) {
   return(c == ' ' || (c <= 13 && c >= 9));
