@@ -16,8 +16,8 @@ void setup(void){
   // USBのジッター低減
   nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
   nvic_irq_set_priority(NVIC_USB_LP_CAN_RX0,7);  // USB割り込み優先レベル設定
-  //nvic_irq_set_priority((nvic_irq_num)14,4);
-  //nvic_irq_set_priority(NVIC_TIMER2,2);
+  nvic_irq_set_priority((nvic_irq_num)14,4);
+  nvic_irq_set_priority(NVIC_TIMER2,2);
 #if defined (__STM32F1__)   
   //while (!Serial.isConnected()) delay(100);
   //delay(3000);

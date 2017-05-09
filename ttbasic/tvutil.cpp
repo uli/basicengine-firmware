@@ -55,6 +55,7 @@ void tv_init(int16_t ajst) {
   
   TNTSC.adjust(ajst);
   TV.begin(SC_DEFAULT);
+//  TV.begin(SC_112x108);
   TV.select_font(tvfont);
   g_width  = TNTSC.width();           // 横ドット数
   g_height = TNTSC.height();          // 縦ドット数

@@ -94,7 +94,7 @@
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
 #define STR_EDITION "Arduino STM32"
-#define STR_VARSION "Edition V0.8"
+#define STR_VARSION "Edition V0.81"
 
 // I2Cライブラリの選択
 #define I2C_USE_HWIRE  1     // 1:HWire 0:Wire(ソフトエミュレーション)
@@ -179,6 +179,7 @@ uint8_t saveConfig();
 #define SIZE_MEM  2048   // 自由利用データ領域
 
 void tv_write(uint8_t c) ;
+//void mprint(uint8_t x, uint8_t y, char* str);
 
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
 #define c_getch( ) sc.get_ch()
@@ -1599,8 +1600,8 @@ void iprint(uint8_t devno=0) {
       value = getparam(); // 括弧の値を取得
      if (err)             // もしエラーが生じたら
         break;            // ここで打ち切る
-     if(!sc.IS_PRINT(value))
-        value = 32;
+     //if(!sc.IS_PRINT(value))
+     //   value = 32;
      c_putch(value, devno);
       break; // 打ち切る
 
@@ -4138,7 +4139,7 @@ void basic() {
   c_puts(" " STR_VARSION);      // バージョンの表示
   newline();                    // 改行
   error();                      //「OK」またはエラーメッセージを表示してエラー番号をクリア
-  sc.refresh();
+  //sc.refresh();
 
   // プログラム自動起動
   if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
