@@ -371,9 +371,19 @@ uint8_t ps2read() {
         rb_insert(&kbuf, ptr[i]);        
       }
     } else {
-      if (romaji_sts == _romaji_top)
+      if (romaji_sts == _romaji_top) {
+        switch(c) {
+          case '[': c = 0xa2;break;
+          case ']': c = 0xa3;break;
+          case ',': c = 0xa4;break;
+          case '.': c = 0xa1;break;
+          case '@': c = 0xde;break;
+          case '{': c = 0xdf;break;
+          case '-': c = 0xb0;break;
+        }
         return c;
-      else 
+        
+      } else 
         return 0;
     }
     
