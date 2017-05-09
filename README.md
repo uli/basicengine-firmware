@@ -1,6 +1,6 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.8(2017/04/29)
-※V0.8はまだテスト不十分です。下記より以前のバージョンV0.7を使って下さい。  
-https://github.com/Tamakichi/ttbasic_arduino/releases  
+## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/09)
+(NEW) 半角カタカナを利用可能にしました.  
+https://github.com/Tamakichi/ttbasic_arduino/releases  
 
 ![サンプル画像](./image/03.jpg)
 
@@ -113,7 +113,8 @@ Blue Pillボード利用構成図
 8x8ドットフォント利用時 28x27文字  
 
 **利用可能キー**  
-- [←][→][↑][↓] ： カーソル移動 カーソルキー  
+- [カタカナ/ひらがな/ローマ字]、[CTRL-K]: 半角カタカナローマ字入力のON/OFF  
+- [←][→][↑][↓] ： カーソル移動 カーソルキー  
 - [Delete]、[CTRL-X] ：カーソル位置の文字削除  
 - [BackSpace]：カーソル前の文字削除と前に移動  
 - [PageUP]、[PageDown]：カーソルを画面の上端、下端に移動  
