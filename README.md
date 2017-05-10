@@ -1,6 +1,5 @@
 ## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/09)
-(NEW) 半角カタカナを利用可能にしました.  
-https://github.com/Tamakichi/ttbasic_arduino/releases  
+(NEW) 半角カタカナを利用可能にしました.  フォントも要差し換え  
 
 ![サンプル画像](./image/03.jpg)
 
