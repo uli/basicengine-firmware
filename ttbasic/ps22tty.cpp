@@ -16,7 +16,7 @@ const int DataPin = PB5;  // Data(D-)
 TKeyboard kb;               // PS/2キーボードドライバ
 uint8_t  flgKana = false;    // カナ入力モード
 struct   ring_buffer kbuf;   // キーバッファ
-uint8_t  kdata[64];  
+uint8_t  kdata[16];  
 
 #define RK_ENTRY_NUM (sizeof(RomaKama)/sizeof(RomaKama[0]))
 

@@ -14,6 +14,7 @@
 //  修正日 2017/04/24, cscroll()関数 キャラクタ下スクロール不具合修正
 //  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
+//  修正日 2017/05/10, システムクロック48MHz時のtv_get_gwidth()不具合対応
 //
 
 #include <string.h>
@@ -29,8 +30,8 @@ void    tv_cls();
 void    tv_scroll_up();
 uint8_t tv_get_cwidth();
 uint8_t tv_get_cheight();
-uint8_t tv_get_gwidth();
-uint8_t tv_get_gheight();
+uint16_t tv_get_gwidth();
+uint16_t tv_get_gheight();
 void    tv_pset(int16_t x, int16_t y, uint8_t c);
 void    tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
 void    tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
@@ -139,6 +140,7 @@ void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
   height  = tv_get_cheight();
   gwidth   = tv_get_gwidth();
   gheight  = tv_get_gheight();
+
   maxllen = ln;
   setupPS2(kbd_type);
   if (screen != NULL) 

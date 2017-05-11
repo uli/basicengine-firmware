@@ -90,6 +90,7 @@
 //  修正日 2017/04/29, MAP(),DMP$()の追加（スケール変換、小数表示補助),LRUNの追加
 //  修正日 2017/05/02, MAP(),SAVECONFIGの不具合対応
 //  修正日 2017/05/03, 文字コード(32～126,128～255)がシリアル経由で入力可能に修正
+//  修正日 2017/05/10, RECTの不具合対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -524,6 +525,31 @@ char* tlimR(char* str) {
     }
   }
   return str;
+}
+
+// コマンド引数取得
+/*inline*/ uint8_t getParam(int16_t& prm, int16_t  v_min,  int16_t  v_max, uint8_t flgCmma) {
+  prm = iexp(); 
+  if (!err &&  (prm < v_min || prm > v_max))
+    err = ERR_VALUE;
+ if (flgCmma && *cip++ != I_COMMA) {
+   err = ERR_SYNTAX;
+ }
+  return err;
+}
+/*inline*/ uint8_t getParam(uint16_t& prm, uint8_t flgCmma) {
+  prm = iexp(); 
+  if (!err && flgCmma && *cip++ != I_COMMA) {
+   err = ERR_SYNTAX;
+  }
+  return err;
+}
+/*inline*/ uint8_t getParam(int16_t& prm, uint8_t flgCmma) {
+  prm = iexp(); 
+  if (!err && flgCmma && *cip++ != I_COMMA) {
+   err = ERR_SYNTAX;
+  }
+  return err;
 }
 
 // 1桁16進数文字を整数に変換する
@@ -1672,6 +1698,12 @@ void iinput() {
       while (i--)        // 文字数だけ繰り返す
         c_putch(*cip++); // 文字を表示
       prompt = 0;        // プロンプトを表示した
+
+      if (*cip != I_COMMA) {
+        err = ERR_SYNTAX;
+        return;
+      }
+      cip++;
     }
 
     // 値を入力する処理
@@ -1849,7 +1881,7 @@ unsigned char* iexe() {
   short condition;         // IF文の条件値
   int16_t prm;             // コマンド引数
   uint8_t c;               // 入力キー
-  
+  err = 0;
   while (*cip != I_EOL) { //行末まで繰り返す
   
   //強制的な中断の判定
@@ -2942,14 +2974,9 @@ void igpio() {
   uint8_t flgok = false;
 
   // 入出力ピンの指定
-  pinno = iexp(); if(err) return ;                                     // ピン番号取得
-  if (pinno < 0 || pinno > I_PC15-I_PA0) { err = ERR_VALUE; return; }  // 範囲チェック
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }                    // ','のチャック
- 
-  // 入出力モードの指定
-  cip++;  pmode = (WiringPinMode)iexp();  if(err) return ;             // 入出力モードの取得
+  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return; // ピン番号取得
+  pmode = (WiringPinMode)iexp();  if(err) return ;      // 入出力モードの取得
 
-  
   // ピンモードの設定
   if (pmode == PWM) {
     for (uint8_t i=0; i < sizeof(pwmpins); i++) {
@@ -2973,14 +3000,8 @@ void igpio() {
 void idwrite() {
   int16_t pinno,  data;
 
-  // 出力ピンの指定
-  pinno = iexp(); if(err) return ; 
-  if (pinno < 0 || pinno > I_PC15-I_PA0) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
- 
-  //データの指定
-  cip++;
-  data = iexp();  if(err) return ;
+  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return; // ピン番号取得
+  if ( getParam(data, false) ) return;                  // データ指定取得
   data = data ? HIGH: LOW;
   
   // ピンモードの設定
@@ -3014,36 +3035,22 @@ uint8_t pwm_out(uint8_t pin, uint16_t freq, uint16_t duty) {
 }
 
 // PWMコマンド
-// PWM ピン番号, DutyCycle, [周波数] (周波数設定は未サポート)
+// PWM ピン番号, DutyCycle, [周波数]
 void ipwm() {
   int16_t pinno;      // ピン番号
-  int32_t duty;       // デューティー値 0～4095
+  int16_t duty;       // デューティー値 0～4095
   int16_t freq = 490; // 周波数
   uint8_t flgok = false;
 
-  // 出力ピンの指定
-  pinno = iexp(); if(err) return ; 
-  if (pinno < 0 || pinno > I_PC15-I_PA0) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // デューティー値
-  cip++;
-  duty = iexp();  if(err) return ;
-  if (duty < 0 || duty > 4095) {
-    err = ERR_VALUE;
-    return;
-  }
+  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return;  // ピン番号取得
+  if ( getParam(duty,  0, 4095, false) ) return;         // デューティー値
 
   if (*cip == I_COMMA) {
-    // 周波数の取得
     cip++;
-    freq  = iexp(); if(err) return ; 
-    if (freq < 0) {
-      err = ERR_VALUE;
-      return;        
-    }
+    if ( getParam(freq,  0, 32767, false) ) return;      // 周波数の取得
   }
- 
+
+  // PWMピンとして利用可能かチェック
   for (uint8_t i=0; i < sizeof(pwmpins); i++) {
     if (pinno == pwmpins[i]) {
       flgok = true;
@@ -3055,11 +3062,8 @@ void ipwm() {
     return;
   }  
  
-  if (pwm_out(pinno, freq, duty)) {
+  if (pwm_out(pinno, freq, duty))
       err = ERR_VALUE; 
-  }
-
-  //pwmWrite(pinno,duty*16);
 }
 
 // shiftOutコマンド SHIFTOUT dataPin, clockPin, bitOrder, value 
@@ -3374,39 +3378,12 @@ void isetDate() {
   int16_t p_year, p_mon, p_day;
   int16_t p_hour, p_min, p_sec;
 
-  // 年の指定(1900～2036)
-  p_year = iexp(); if(err) return ; 
-  if (p_year < 1900 || p_year > 2036) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // 月の指定(1～12)
-  cip++;
-  p_mon = iexp(); if(err) return ; 
-  if (p_mon < 1 || p_mon > 12) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // 日の指定(1～31)
-  cip++;
-  p_day = iexp(); if(err) return ; 
-  if (p_day < 1 || p_day > 31) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // 時の指定(0～23)
-  cip++;
-  p_hour = iexp(); if(err) return ; 
-  if (p_hour < 0 || p_hour > 23) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // 分の指定(0～59)
-  cip++;
-  p_min = iexp(); if(err) return ; 
-  if (p_min < 0 || p_min > 59) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-
-  // 秒の指定(0～61:うるう秒考慮)
-  cip++;
-  p_sec = iexp(); if(err) return ; 
-  if (p_sec < 0 || p_sec > 61) { err = ERR_VALUE; return; }
+  if ( getParam(p_year, 1900,2036, true) ) return; // 年 
+  if ( getParam(p_mon,     1,  12, true) ) return; // 月
+  if ( getParam(p_day,     1,  31, true) ) return; // 日
+  if ( getParam(p_hour,    0,  23, true) ) return; // 時
+  if ( getParam(p_min,     0,  59, true) ) return; // 分
+  if ( getParam(p_sec,     0,  61, false)) return; // 秒
 
   // RTCの設定
   t.tm_isdst = 0;             // サーマータイム [1:あり 、0:なし]
@@ -3565,23 +3542,15 @@ void ieepformat() {
 
 // EEPWRITE アドレス,データ コマンド
 void ieepwrite() {
-  uint16_t adr;    // 書込みアドレス
+  int16_t adr;     // 書込みアドレス
   uint16_t data;   // 書込みアドレス
   uint16_t Status;
   
-  // アドレス
-  adr = iexp(); if(err) return ; 
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
- 
-  //データの指定
-  cip++;
-  data = iexp();  if(err) return ;
+  if ( getParam(adr, 0, 32767, true) ) return; // アドレス
+  if ( getParam(data, false) ) return;         // アドレス
 
-  if (adr < 0 || adr > 32767) {
-    err = ERR_VALUE;
-    return;
-  }
-      
+  //data = iexp();  if(err) return ;             //データの指定
+     
   // データの書込み
   Status = EEPROM.write(adr, data);
   if (Status != EEPROM_OK) {
@@ -3732,7 +3701,7 @@ void irect() {
     return;      
   }
   if (c < 0 || c > 2) c = 1;
-  sc.rect(x1, y1, x2-x1, y2-y1, c, f);
+  sc.rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
 }
 
 // ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]

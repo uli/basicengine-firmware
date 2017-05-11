@@ -55,10 +55,10 @@ void tv_init(int16_t ajst) {
   
   TNTSC.adjust(ajst);
   TV.begin(SC_DEFAULT);
-//  TV.begin(SC_112x108);
   TV.select_font(tvfont);
   g_width  = TNTSC.width();           // 横ドット数
   g_height = TNTSC.height();          // 縦ドット数
+  
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
   vram = TV.VRAM();                    // VRAM先頭
@@ -77,12 +77,12 @@ uint8_t tv_get_cheight() {
 }
 
 // 画面グラフィック横ドット数
-uint8_t tv_get_gwidth() {
+uint16_t tv_get_gwidth() {
   return g_width;
 }
 
 // 画面グラフィック縦ドット数
-uint8_t tv_get_gheight() {
+uint16_t tv_get_gheight() {
   return g_height;
 }
 
