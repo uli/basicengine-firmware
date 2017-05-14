@@ -1,5 +1,5 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/11)
-(NEW) 半角カタカナを利用可能にしました.  フォントも要差し換え  
+## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/14)
+(NEW) SHIFTIN()関数に引数追加  
 
 ![サンプル画像](./image/03.jpg)
 
