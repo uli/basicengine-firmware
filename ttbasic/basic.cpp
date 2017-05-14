@@ -7,7 +7,7 @@
 
 //
 // 2017/03/22 修正, Arduino STM32、フルスクリーン対応, by たま吉さん
-// 2017/03/25 修正, INKEY()関数の追加, 中断キーを[ESC]から[CTRL-C]に変更
+// 2017/03/25 修正, INKEY()関数の追加, 中断キーiを[ESC]から[CTRL-C]に変更
 // 2017/03/26 修正, 文法において下記の変更・追加
 // 1)変更: 命令文区切りを';'から':'に変更
 // 2)追加: PRINTの行継続を';'でも可能とする
@@ -91,6 +91,8 @@
 //  修正日 2017/05/02, MAP(),SAVECONFIGの不具合対応
 //  修正日 2017/05/03, 文字コード(32～126,128～255)がシリアル経由で入力可能に修正
 //  修正日 2017/05/10, RECTの不具合対応
+//  修正日 2017/05/13, エラーメッセージ出力の不具合対応
+//  修正日 2017/05/14, SHIFTIN()の引数追加(CD4021対応)
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -528,7 +530,7 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得
-/*inline*/ uint8_t getParam(int16_t& prm, int16_t  v_min,  int16_t  v_max, uint8_t flgCmma) {
+inline uint8_t getParam(int16_t& prm, int16_t  v_min,  int16_t  v_max, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
@@ -537,18 +539,36 @@ char* tlimR(char* str) {
  }
   return err;
 }
-/*inline*/ uint8_t getParam(uint16_t& prm, uint8_t flgCmma) {
+inline uint8_t getParam(uint16_t& prm, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err && flgCmma && *cip++ != I_COMMA) {
    err = ERR_SYNTAX;
   }
   return err;
 }
-/*inline*/ uint8_t getParam(int16_t& prm, uint8_t flgCmma) {
+inline uint8_t getParam(int16_t& prm, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err && flgCmma && *cip++ != I_COMMA) {
    err = ERR_SYNTAX;
   }
+  return err;
+}
+inline uint8_t getParam(int32_t& prm, uint8_t flgCmma) {
+  prm = iexp(); 
+  if (!err && flgCmma && *cip++ != I_COMMA) {
+   err = ERR_SYNTAX;
+  }
+  return err;
+}
+
+inline uint8_t checkOpen() {
+  if (*cip != I_OPEN)  err = ERR_PAREN;
+  else cip++;
+  return err;
+}
+inline uint8_t checkClose() {
+  if (*cip != I_CLOSE)  err = ERR_PAREN;
+  else cip++;
   return err;
 }
 
@@ -1872,7 +1892,8 @@ void ilet() {
   }
 }
 
-// Execute a series of i-code
+// 中間コードの実行
+// 戻り値      : 次のプログラム実行位置(行の先頭)
 unsigned char* iexe() {
   short lineno;            // 行番号
   unsigned char* lp;       // 未確定の（エラーかもしれない）行ポインタ
@@ -2309,7 +2330,7 @@ unsigned char* iexe() {
     if (err) //もしエラーが生じたら
       return NULL; //終了
   } //行末まで繰り返すの末尾
-  return clp + *clp; //次に実行するべき行のポインタを持ち帰る
+  return clp + *clp;
 }
 
 // RUN command handler
@@ -2792,6 +2813,7 @@ void ifiles() {
 //Command precessor
 uint8_t icom() {
   uint8_t rc = 1;
+  uint8_t v;
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip) {      // 中間コードポインタが指し示す中間コードによって分岐
@@ -2814,10 +2836,14 @@ uint8_t icom() {
 
   case I_LRUN:
     cip++;             // 中間コードポインタを次へ進める
-    ilrun();
-    sc.show_curs(0);
-    irun();        // RUN命令を実行
-    sc.show_curs(1);
+    v = ilrun();
+    if (v) {
+      sc.show_curs(0);
+      irun();           // RUN命令を実行
+      sc.show_curs(1);
+    } else {
+      err = ERR_VALUE;
+    }
     break;
    
   case I_RUN: //I_RUNの場合（RUN命令）
@@ -3277,6 +3303,7 @@ int16_t iircv() {
   int8_t  rc;
   uint8_t c;
 
+/*
   if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
 
   // I2Cアドレスの取得
@@ -3313,6 +3340,19 @@ int16_t iircv() {
 
   if(*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }
   cip++; 
+*/
+
+  if (checkOpen()) return 0;
+  if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
+  if (getParam(sdtop, 0, 32767, true)) return 0;
+  if (getParam(sdlen, 0, 32767, true)) return 0;
+  if (getParam(rdtop, 0, 32767, true)) return 0;
+  if (getParam(rdlen, 0, 32767,false)) return 0;
+
+  if (sdtop+sdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
+  sdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)sdtop);
+  rdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)rdtop);
+
  
   // I2Cデータ送受信
   //Wire.begin();
@@ -3337,37 +3377,35 @@ int16_t iircv() {
   return rc;
 }
 
-// SHIFTIN関数 SHIFTIN(データピン, クロックピン, オーダ)
+uint8_t _shiftIn( uint8_t ulDataPin, uint8_t ulClockPin, uint8_t ulBitOrder, uint8_t lgc){
+  uint8_t value = 0 ;
+  uint8_t i ;
+  for ( i=0 ; i < 8 ; ++i ) {
+    digitalWrite( ulClockPin, lgc ) ;
+    if ( ulBitOrder == LSBFIRST )  value |= digitalRead( ulDataPin ) << i ;
+    else  value |= digitalRead( ulDataPin ) << (7 - i) ;
+    digitalWrite( ulClockPin, !lgc ) ;
+  }
+  return value ;
+}
+
+// SHIFTIN関数 SHIFTIN(データピン, クロックピン, オーダ[,ロジック])
 int16_t ishiftIn() {
-  int8_t  rc;
+  int16_t rc;
   int16_t dataPin, clockPin;
   int16_t bitOrder;
-  uint8_t data;
+  int16_t lgc = HIGH;
 
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
-  cip++; 
-
-  // データピンの指定
-  dataPin = iexp(); if(err) return  0; 
-  if (dataPin < 0 || dataPin > I_PC15-I_PA0) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-
-  // クロックピンの指定
-  cip++;
-  clockPin = iexp(); if(err) return  0; 
-  if (clockPin < 0 || clockPin > I_PC15-I_PA0) { err = ERR_VALUE; return  0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return  0; }
-
-  // ビットオーダの指定
-  cip++;
-  bitOrder = iexp(); if(err) return  0; 
-  if (bitOrder < 0 || bitOrder > 1) { err = ERR_VALUE; return  0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return  0; }
-
-  if (*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }  // ')'のチェック
-  cip++; 
-  //rc = shiftIn(dataPin, clockPin, bitOrder);
-  rc = shiftIn((uint32_t)dataPin, (uint32_t)clockPin, (uint32_t)bitOrder);
+  if (checkOpen()) return 0;
+  if (getParam(dataPin, 0,I_PC15-I_PA0, true)) return 0;
+  if (getParam(clockPin,0,I_PC15-I_PA0, true)) return 0;
+  if (getParam(bitOrder,0,1, false)) return 0;
+  if (*cip == I_COMMA) {
+    cip++;
+    if (getParam(lgc,LOW, HIGH, false)) return 0;
+  }
+  if (checkClose()) return 0;
+  rc = _shiftIn((uint8_t)dataPin, (uint8_t)clockPin, (uint8_t)bitOrder, lgc);
   return rc;
 }
 
@@ -3543,13 +3581,13 @@ void ieepformat() {
 // EEPWRITE アドレス,データ コマンド
 void ieepwrite() {
   int16_t adr;     // 書込みアドレス
-  uint16_t data;   // 書込みアドレス
+  uint16_t data;   // データ
   uint16_t Status;
   
   if ( getParam(adr, 0, 32767, true) ) return; // アドレス
-  if ( getParam(data, false) ) return;         // アドレス
+  if ( getParam(data, false) ) return;         // データ
 
-  //data = iexp();  if(err) return ;             //データの指定
+  //data = iexp();  if(err) return ;           //データの指定
      
   // データの書込み
   Status = EEPROM.write(adr, data);
@@ -3602,21 +3640,8 @@ int16_t ieepread(uint16_t addr) {
 
 // ドットの描画 PSET X,Y,C
 void ipset() {
- int16_t x;
- int16_t y;
- int16_t c;
-
-  // x
-  x = iexp(); if(err) return ; 
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-  //y
-  cip++;
-  y = iexp();  if(err) return ;
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-  //c
-  cip++;
-  c = iexp();  if(err) return ;
-
+ int16_t x,y,c;
+  if (getParam(x,true)||getParam(y,true)||getParam(c,false)) 
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
@@ -3627,19 +3652,8 @@ void ipset() {
 
 // 直線の描画 LINE X1,Y1,X2,Y2,C
 void iline() {
- int16_t x1,x2,y1,y2;
- int16_t c;
-  
-  x1 = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x1  
-  cip++;
-  y1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y1
-  cip++;
-  x2 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x2
-  cip++;
-  y2 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y2
-  cip++;
-  c = iexp();  if(err) return ;  //c
-
+ int16_t x1,x2,y1,y2,c;
+  if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(c,false)) 
   if (x1 < 0) x1 =0;
   if (y1 < 0) y1 =0;
   if (x2 < 0) x1 =0;
@@ -3654,20 +3668,8 @@ void iline() {
 
 // 円の描画 CIRCLE X,Y,R,C,F
 void icircle() {
- int16_t x,y,r;
- int16_t c;
- int16_t f;
-
-  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x
-  cip++;
-  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y
-  cip++;
-  r = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // r
-  cip++;
-  c = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // c
-  cip++;
-  f = iexp();  if(err) return ;  //f
-
+  int16_t x,y,r,c,f;
+  if (getParam(x,true)||getParam(y,true)||getParam(r,true)||getParam(c,true)||getParam(f,false)) 
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
@@ -3675,27 +3677,13 @@ void icircle() {
   if (c < 0 || c > 2) c = 1;
   if (r < 0) r = 1;
   sc.circle(x, y, r, c, f);
-  
 }
 
 // 四角の描画 RECT X1,Y1,X2,Y2,C,F
 void irect() {
- int16_t x1,y1,x2,y2;
- int16_t c;
- int16_t f;
-
-  x1 = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // x
-  cip++;
-  y1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // y
-  cip++;
-  x2= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // w
-  cip++;
-  y2= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // h
-  cip++;
-  c= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // c
-  cip++;
-  f = iexp();  if(err) return ;  // f
-
+  int16_t x1,y1,x2,y2,c,f;
+  if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(c,true)||getParam(f,false)) 
+    return;
   if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc.getGWidth() || y2 >= sc.getGHeight())  {
     err = ERR_VALUE;
     return;      
@@ -3706,29 +3694,18 @@ void irect() {
 
 // ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]
 void ibitmap() {
- int16_t  x,y,w,h,d = 1;
- int16_t  index;
- int16_t  value;
- uint32_t adr;
+  int16_t  x,y,w,h,d = 1;
+  int16_t  index;
+  int16_t  value;
+  uint32_t adr;
 
-  x = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x
-  cip++;
-  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y
-  cip++;
-  value = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }  // adr
-  adr = (uint32_t)SRAM_TOP +(uint32_t)value;
-  cip++;
-  index = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; } // index
-  cip++;
-  w= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }      // w
-  cip++;
-  h = iexp();  if(err) return ;  //h 
-
+  if (getParam(x,true)||getParam(y,true)||getParam(value,true)||getParam(index,true)||getParam(w,true)||getParam(h,false)) 
+    return;
   if (*cip == I_COMMA) {
     cip++;
-    d = iexp();  if(err) return ;  //d
+    if (getParam(d,false)) return;
   }
-
+  adr = (uint32_t)SRAM_TOP +(uint32_t)value;
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc.getGWidth())  x = sc.getGWidth()-1;
@@ -3743,18 +3720,10 @@ void ibitmap() {
 // キャラクタスクロール CSCROLL X1,Y1,X2,Y2,方向
 // 方向 0: 上, 1: 下, 2: 右, 3: 左
 void  icscroll() {
-int16_t  x1,y1,x2,y2,d;
+  int16_t  x1,y1,x2,y2,d;
 
-  x1 = iexp(); if(err) return ;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x1
-  cip++;
-  y1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y1
-  cip++;
-  x2 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // x2
-  cip++;
-  y2= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // y2
-  cip++;
-  d = iexp();  if(err) return ;  // d
-
+  if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(d,false))
+    return;
   if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc.getWidth() || y2 >= sc.getHeight())  {
     err = ERR_VALUE;
     return;      
@@ -3763,21 +3732,13 @@ int16_t  x1,y1,x2,y2,d;
   sc.cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
 }
 
-// グラフィックスクロール CSCROLL X1,Y1,X2,Y2,方向
-// GSCROLL X, Y,W,H,方向 
+// グラフィックスクロール GSCROLL X1,Y1,X2,Y2,方向
 void igscroll() {
-int16_t  x1,y1,x2,y2,d;
-  x1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x1
-  cip++;
-  y1 = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y1
-  cip++;
-  x2= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // x2
-  cip++;
-  y2= iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }     // y2
-  cip++;
-  d = iexp();  if(err) return ;  // d
+  int16_t  x1,y1,x2,y2,d;
 
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc.getGWidth() || y2 >= sc.getGHeight())  {
+  if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(d,false))
+    return;
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc.getGWidth() || y2 >= sc.getGHeight()) {
     err = ERR_VALUE;
     return;      
   }
@@ -3787,30 +3748,21 @@ int16_t  x1,y1,x2,y2,d;
 
 // GPRINT x,y,..
 void igprint() {
- int16_t x,y;
-  x = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // x
-  cip++;
-  y = iexp();  if(err) return ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }    // y
-  cip++;
-
-  if (x < 0 || y < 0 || x >= sc.getGWidth() || y >= sc.getGHeight())  {
-    err = ERR_VALUE;
-    return;      
-  }
+  int16_t x,y;
+  if ( getParam(x, 0, sc.getGWidth(), true) )  return;
+  if ( getParam(y, 0, sc.getGHeight(),true) )  return;
   sc.set_gcursor(x,y);
   iprint(2);
 }
 
-
-// シリアル1バイト出力
+// シリアル1バイト出力 : SWRITE データ
 void iswrite() {
-  int16_t c;
- 
-  c = iexp();  if(err) return ;
+  int16_t c; 
+  if ( getParam(c, false) ) return;
   sc.Serial_write((uint8_t)c);
 }
 
-// シリアルモード設定
+// シリアルモード設定: SMODE MODE [,"通信速度"]
 void ismode() {
   int16_t c;
   uint16_t ln;
@@ -3885,23 +3837,15 @@ void isclose() {
   lfgSerial1Opened = false;    
 }
 
-// TONE 周波数, 音出し時間
+// TONE 周波数 [,音出し時間]
 void itone() {
- int16_t freq;   // 周波数
- int16_t tm = 0; // 音出し時間
+  int16_t freq;   // 周波数
+  int16_t tm = 0; // 音出し時間
 
-  // 周波数
-  freq = iexp(); if(err) return ; 
-
+  if ( getParam(freq, 0, 32767, false) ) return;
   if(*cip == I_COMMA) {
-    // 音出し時間
     cip++;
-    tm = iexp();  if(err) return ;
-  }
-  
-  if (freq < 0 || tm < 0) {
-    err = ERR_VALUE;
-    return;
+    if ( getParam(tm, 0, 32767, false) ) return;
   }
   sc.tone(freq, tm);
 }
@@ -3913,75 +3857,42 @@ void inotone() {
 
 // GPEEK(X,Y)関数の処理
 int16_t igpeek() {
- short value; // 値
+  short value; // 値
   short x, y;  // 座標
   
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
-  cip++; x = iexp(); if (err) return 0;                // x座標取得
-  if (*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // ','のチェック
-  cip++; y = iexp();if (err) return 0;                 // y座標取得
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return 0; } // ')'のチェック
-  cip++; 
-  if (x < 0 || y < 0 || x >= sc.getGWidth()-1 || y >= sc.getGHeight()-1) 
-    return 0;
+  if (checkOpen()) return 0;
+  if ( getParam(x,true) || getParam(y,false) ) return 0; 
+  if (checkClose()) return 0;
+  if (x < 0 || y < 0 || x >= sc.getGWidth()-1 || y >= sc.getGHeight()-1) return 0;
   return sc.gpeek(x,y);  
 }
 
 // GINP(X,Y,H,W,C)関数の処理
 int16_t iginp() {
- int16_t x,y,w,h;
- int16_t c;
- int16_t f;
+  int16_t x,y,w,h,c;
 
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
-  cip++;
-  x = iexp(); if(err) return 0;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // x
-  cip++;
-  y = iexp();  if(err) return 0 ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // y
-  cip++;
-  w= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // w
-  cip++;
-  h= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // h
-  cip++;
-  c= iexp();  if(err) return 0; // c
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return 0; } // ')'のチェック
-  cip++; 
-
-  if (x < 0 || y < 0 || x >= sc.getGWidth() || y >= sc.getGHeight() || h < 0 || w < 0) 
-    return 0;    
-  if (x+w >= sc.getGWidth() || y+h >= sc.getGHeight() )
-    return 0;     
+  if (checkOpen())  return 0;
+  if ( getParam(x,true)||getParam(y,true)||getParam(w,true)||getParam(h,true)||getParam(c,false) ) return 0; 
+  if (checkClose()) return 0;
+  if (x < 0 || y < 0 || x >= sc.getGWidth() || y >= sc.getGHeight() || h < 0 || w < 0) return 0;    
+  if (x+w >= sc.getGWidth() || y+h >= sc.getGHeight() ) return 0;     
   return sc.ginp(x, y, w, h, c);  
 }
 
 // MAP(V,L1,H1,L2,H2)関数の処理
 int16_t imap() {
-  int32_t value;
-  int32_t l1,h1,l2,h2;
-  int32_t rc;
+  int32_t value,l1,h1,l2,h2,rc;
 
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
-  cip++;
-  value = iexp(); if(err) return 0;  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // v
-  cip++;
-  l1 = iexp();  if(err) return 0 ; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // l1
-  cip++;
-  h1= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // h1
-  cip++;
-  l2= iexp();  if(err) return 0; if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; } // l2
-  cip++;
-  h2= iexp();  if(err) return 0; // h2
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return 0; } // ')'のチェック
-  cip++; 
-
+  if (checkOpen()) return 0;
+  if ( getParam(value,true)||getParam(l1,true)||getParam(h1,true)||getParam(l2,true)||getParam(h2,false) ) 
+    return 0;
+  if (checkClose()) return 0;
   if (l1 >= h1 || l2 >= h2 || value < l1 || value > h1) {
     err = ERR_VALUE;
     return 0;
   }
-
   rc = (value-l1)*(h2-l2)/(h1-l1)+l2;
-  return rc;
-  
+  return rc;  
 }
 
 //
@@ -3995,21 +3906,12 @@ uint8_t ilrun() {
   int16_t mode = 0;
   uint32_t flash_adr;
   uint8_t* tmpcip;
-  
-  prgno = iexp(); if(err) return 0;
-  if (prgno < 0 || prgno >9) {
-    err = ERR_VALUE;
-    return 1;
-  }
+
+ if ( getParam(prgno, 0, 9, false) ) return 0;
   if(*cip == I_COMMA) {
     cip++;
-    mode = iexp();  if(err) return 0;
-    if (mode < 0 || mode >1) {
-      err = ERR_VALUE;
-      return 0;      
-    }
+    if ( getParam(mode, 0, 1, false) ) return 0;
   }
-  
   flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
 
   // 指定領域に保存されているかチェックする
@@ -4017,7 +3919,7 @@ uint8_t ilrun() {
     err = ERR_NOPRG;
     return 0;
   }
-  
+ 
   // 現在のプログラムの削除とロード
   inew(mode);
   memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
@@ -4025,12 +3927,13 @@ uint8_t ilrun() {
   return 1;
 }
 
-// Print OK or error message
-void error() {
-  if (err) {                   //もし「OK」ではなかったら
+// エラーメッセージ出力
+// 引数: dlfCmd プログラム実行時 false、コマンド実行時 true
+void error(uint8_t flgCmd = false) {
+  if (err) {  //もし「OK」ではなかったら
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
-    if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp) {
-
+    if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp && !flgCmd) {
+      //if ( !(cip >= ibuf && cip <ibuf+SIZE_IBUF) ) {
       // エラーメッセージを表示
       c_puts(errmsg[err]);       
       c_puts(" in ");
@@ -4045,22 +3948,15 @@ void error() {
       err = 0;
       return;
     } else {                   // 指示の実行中なら
-      //newline();               // 改行
-      //c_puts("YOU TYPE: ");    //「YOU TYPE:」を表示
-      //c_puts(lbuf);            // 文字列バッファの内容を表示
-      //newline();               // 改行
       c_puts(errmsg[err]);     // エラーメッセージを表示
       newline();               // 改行
       err = 0;                 // エラー番号をクリア
       return;
     }
   } 
-
-  //newline(); //改行
-  c_puts(errmsg[err]);           //「OK」またはエラーメッセージを表示
-  newline();                     // 改行
-  err = 0;                       // エラー番号をクリア
-
+  c_puts(errmsg[err]);         //「OK」またはエラーメッセージを表示
+  newline();                   // 改行
+  err = 0;                     // エラー番号をクリア
 }
 
 void DEBUG_info() {
@@ -4147,7 +4043,8 @@ void basic() {
     // 1行の文字列を中間コードの並びに変換
     len = toktoi(); // 文字列を中間コードに変換して長さを取得
     if (err) {      // もしエラーが発生したら
-      error();      // エラーメッセージを表示してエラー番号をクリア
+      Serial.println("[DEBUG:tpktoi() error]");
+      error(true);  // エラーメッセージを表示してエラー番号をクリア
       continue;     // 繰り返しの先頭へ戻ってやり直し
     }
 
@@ -4162,7 +4059,7 @@ void basic() {
 
     // 中間コードの並びが命令と判断される場合
     if (icom())  // 実行する
-        error(); // エラーメッセージを表示してエラー番号をクリア
+        error(false); // エラーメッセージを表示してエラー番号をクリア
   } // 無限ループの末尾
 }
 
