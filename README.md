@@ -1,5 +1,5 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/14)
-(NEW) SHIFTIN()関数に引数追加  
+## 豊四季タイニーBASIC for Arduino STM32 V0.81(2017/05/16)
+(NEW) プログラムの最適化の修正中  
 
 ![サンプル画像](./image/03.jpg)
 
