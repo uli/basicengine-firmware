@@ -93,6 +93,7 @@
 //  修正日 2017/05/10, RECTの不具合対応
 //  修正日 2017/05/13, エラーメッセージ出力の不具合対応
 //  修正日 2017/05/14, SHIFTIN()の引数追加(CD4021対応)
+//  修正日 2017/05/16, POKEの不具合修正,PRINTでのエラー時のメッセージ出力処理の修正
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -532,10 +533,10 @@ char* tlimR(char* str) {
 // コマンド引数取得
 inline uint8_t getParam(int16_t& prm, int16_t  v_min,  int16_t  v_max, uint8_t flgCmma) {
   prm = iexp(); 
-  if (!err &&  (prm < v_min || prm > v_max))
+  if (!err &&  (prm < v_min || prm > v_max)) 
     err = ERR_VALUE;
- if (flgCmma && *cip++ != I_COMMA) {
-   err = ERR_SYNTAX;
+  else if (flgCmma && *cip++ != I_COMMA) {
+    err = ERR_SYNTAX;
  }
   return err;
 }
@@ -1680,7 +1681,11 @@ void iprint(uint8_t devno=0) {
       putnum(value, len,devno); // 値を表示
       break;                    // 打ち切る
     } //中間コードで分岐の末尾
-
+    if (err)  {
+        newline(devno);   // 改行        
+        return;           // 終了      
+    }
+      
     if (*cip == I_ELSE) {
         newline(devno);   // 改行        
         return;           // 終了       
@@ -2913,6 +2918,7 @@ void ilocate() {
 
   x = iexp(); if(err) return ;                      // xの取得
   if(*cip != I_COMMA){ err = ERR_SYNTAX; return; }  // ','のチェック
+  
   cip++; y = iexp();  if(err) return ;              // yの取得
 
   if ( x >= sc.getWidth() )   // xの有効範囲チェック
@@ -3096,8 +3102,14 @@ void ipwm() {
 void ishiftOut() {
   int16_t dataPin, clockPin;
   int16_t bitOrder;
-  uint8_t data;
+  int16_t data;
 
+  if (getParam(dataPin, 0,I_PC15-I_PA0, true)) return;
+  if (getParam(clockPin,0,I_PC15-I_PA0, true)) return;
+  if (getParam(bitOrder,0,1, true)) return;
+  if (getParam(data, 0,255,false)) return;
+
+/*
   // データピンの指定
   dataPin = iexp(); if(err) return ; 
   if (dataPin < 0 || dataPin > I_PC15-I_PA0) { err = ERR_VALUE; return; }
@@ -3118,6 +3130,8 @@ void ishiftOut() {
   // データの指定
   cip++;
   data = (uint8_t)iexp(); if(err) return ; 
+*/
+  
   shiftOut(dataPin, clockPin, bitOrder, data);
 }
 
@@ -3125,39 +3139,29 @@ void ishiftOut() {
 void ihex(uint8_t devno=0) {
   short value; // 値
   short d = 0; // 桁数(0で桁数指定なし)
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return; }  // '('のチェック
-  cip++; value = iexp(); if (err) return;            // 値の取得
-  if (*cip == I_COMMA) {                            
-      cip++; d = iexp();if (err) return;             // 桁数の取得
-  }
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return; } // ')'のチェック
-  cip++; 
 
-   // 桁数指定の有効性チェック
-  if (d < 0 || d > 4) {
-    err = ERR_VALUE;
-    return;
+  if (checkOpen()) return;
+  if (getParam(value,false)) return;  
+  if (*cip == I_COMMA) {
+     cip++;
+     if (getParam(d,0,4,false)) return;  
   }
+  if (checkClose()) return;  
   putHexnum(value, d, devno);    
 }
 
 // 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
 void ibin(uint8_t devno=0) {
-  short value; // 値
-  short d = 0; // 桁数(0で桁数指定なし)
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return; }  // '('のチェック
-  cip++; value = iexp(); if (err) return;            // 値の取得
-  if (*cip == I_COMMA) {                            
-      cip++; d = iexp();if (err) return;             // 桁数の取得
-  }
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return; } // ')'のチェック
-  cip++; 
+  int16_t value; // 値
+  int16_t d = 0; // 桁数(0で桁数指定なし)
 
-   // 桁数指定の有効性チェック
-  if (d < 0 || d > 16) {
-    err = ERR_VALUE;
-    return;
+  if (checkOpen()) return;
+  if (getParam(value,false)) return;  
+  if (*cip == I_COMMA) {
+     cip++;
+     if (getParam(d,0,16,false)) return;  
   }
+  if (checkClose()) return;
   putBinnum(value, d, devno);    
 }
 
@@ -3169,31 +3173,17 @@ void idmp(uint8_t devno=0) {
   int16_t dn = 0;   // 整数部桁指定
   int32_t base=1;
   
-  
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return; }  // '('のチェック
-  cip++; 
-  value = iexp(); if (err) return;            // 値の取得
-  if (*cip == I_COMMA) {                            
+  if (checkOpen()) return;
+  if (getParam(value, false)) return;
+  if (*cip == I_COMMA) { 
     cip++; 
-    n = iexp();if (err) return;               // 小数部桁数の取得
-    if (*cip == I_COMMA) {                            
-        cip++; 
-        dn = iexp();if (err) return;          // 整数桁数の取得  
-    }
+    if (getParam(n, 0,4,false)) return;
+    if (*cip == I_COMMA) { 
+       cip++; 
+      if (getParam(dn,-6,6,false)) return;
+    }  
   }
-  
-  if (*cip != I_CLOSE) { err = ERR_PAREN;  return; } // ')'のチェック
-  cip++; 
-
-   // 桁数指定の有効性チェック
-  if (n < 0 || n > 4) {
-    err = ERR_VALUE;
-    return;
-  }
-  if (dn < -6 || dn > 6) {
-    err = ERR_VALUE;
-    return;
-  }
+  if (checkClose()) return;
   
   for (uint16_t i=0; i<n;i++) {
     base*=10;
@@ -3233,7 +3223,7 @@ void ipoke() {
       if (err)        // もしエラーが生じたら
         return;       // 終了
   
-      *((uint32_t*)adr) = value;
+      *((uint8_t*)adr) = (uint8_t)value;
       adr++;
     } while(*cip == I_COMMA);
   } else {
@@ -3924,7 +3914,6 @@ void basic() {
   icls();
   char* textline;    // 入力行
 
-  
   // 起動メッセージ  
   c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
   newline();                    // 改行
