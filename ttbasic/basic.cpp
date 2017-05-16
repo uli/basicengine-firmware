@@ -222,8 +222,8 @@ void idec();
 void ishiftOut();
 int16_t ishiftIn();
 void ipoke();
-int16_t iisnd();
-int16_t iircv();
+int16_t ii2cw();
+int16_t ii2cr();
 void isetDate();
 void igetDate();
 void igetTime();
@@ -1346,11 +1346,11 @@ int16_t ivalue() {
     break; //ここで打ち切る
 
   case I_ISND: // I2CW()関数の場合
-    cip++; value = iisnd();
+    cip++; value = ii2cw();
     break; 
 
   case I_IRCV: // I2CW()関数の場合
-    cip++; value = iircv();
+    cip++; value = ii2cr();
     break; 
 
   case I_SHIFTIN:
@@ -3241,106 +3241,41 @@ void ipoke() {
   }
 }
 // I2CW関数  I2CW(I2Cアドレス, コマンドアドレス, コマンドサイズ, データアドレス, データサイズ)
-int16_t iisnd() {
+int16_t ii2cw() {
   int16_t  i2cAdr, ctop, clen, top, len;
   uint8_t* ptr;
   uint8_t* cptr;
   int8_t  rc;
 
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
+  if (checkOpen()) return 0;
+  if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
+  if (getParam(ctop, 0, 32767, true)) return 0;
+  if (getParam(clen, 0, 32767, true)) return 0;
+  if (getParam(top, 0, 32767, true)) return 0;
+  if (getParam(len, 0, 32767,false)) return 0;
+  if (checkClose()) return 0;
 
-  // I2Cアドレスの取得
-  cip++; i2cAdr = iexp(); if(err) return 0; 
-  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_RANGE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-
-  // コマンドアドレスの取得
-  cip++;
-  ctop = iexp(); if(err) return 0; 
-  if (ctop < 0 ) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-  cptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)ctop);
-
-  // コマンドサイズの取得
-  cip++;
-  clen = iexp(); if(err) return 0; 
-  if (clen < 0 ) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-  if (ctop+clen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
-    
-  // データアドレスの取得
-  cip++;
-  top = iexp(); if(err) return 0; 
-  if (top < 0 ) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
   ptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)top);
-
-  // データサイズの取得
-  cip++;
-  len = iexp(); if(err) return 0; 
-  if (len < 0 ) { err = ERR_VALUE; return 0; }
+  cptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)ctop);
+  if (ctop+clen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
   if (top+len >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
-  if(*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }
-  cip++; 
   
   // I2Cデータ送信
-  //Wire.begin();
   I2C_WIRE.beginTransmission(i2cAdr);
   if (clen)
     I2C_WIRE.write(cptr, clen);
   if (len)
     I2C_WIRE.write(ptr, len);
   rc =  I2C_WIRE.endTransmission();
-  //i2c_disable(I2C1);
   return rc;
 }
 
 // I2CR関数  ISND(I2Cアドレス, 送信データアドレス, 送信データサイズ,受信データアドレス,受信データサイズ)
-int16_t iircv() {
+int16_t ii2cr() {
   int16_t  i2cAdr, sdtop, sdlen,rdtop,rdlen;
   uint8_t* sdptr;
   uint8_t* rdptr;
   int8_t  rc;
-  uint8_t c;
-
-/*
-  if (*cip != I_OPEN)  { err = ERR_PAREN; return 0; }  // '('のチェック
-
-  // I2Cアドレスの取得
-  cip++; i2cAdr = iexp(); if(err) return 0; 
-  if (i2cAdr < 0 || i2cAdr > 0x7f) { err = ERR_RANGE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-
-  // 送信データアドレスの取得
-  cip++;
-  sdtop = iexp(); if(err) return 0; 
-  if (sdtop < 0 ) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-  sdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)sdtop);
-
-  // 送信データサイズの取得
-  cip++;
-  sdlen = iexp(); if(err) return 0; 
-  if (sdlen < 0 ) { err = ERR_VALUE; return 0; }
-  if (sdtop+sdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-
-  // 受信データアドレスの取得
-  cip++;
-  rdtop = iexp(); if(err) return 0; 
-  if (rdtop < 0 ) { err = ERR_VALUE; return 0; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return 0; }
-  rdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)rdtop);
-
-  // 受信データサイズの取得
-  cip++;
-  rdlen = iexp(); if(err) return 0; 
-  if (rdlen < 0 ) { err = ERR_VALUE; return 0; }
-  if (rdtop+rdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
-
-  if(*cip != I_CLOSE) { err = ERR_SYNTAX; return 0; }
-  cip++; 
-*/
 
   if (checkOpen()) return 0;
   if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
@@ -3348,14 +3283,14 @@ int16_t iircv() {
   if (getParam(sdlen, 0, 32767, true)) return 0;
   if (getParam(rdtop, 0, 32767, true)) return 0;
   if (getParam(rdlen, 0, 32767,false)) return 0;
+  if (checkClose()) return 0;
 
-  if (sdtop+sdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
   sdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)sdtop);
   rdptr = (uint8_t*)((uint32_t)SRAM_TOP + (uint32_t)rdtop);
-
+  if (sdtop+sdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
+  if (rdtop+rdlen >= SRAM_SIZE) { err = ERR_RANGE; return 0; }
  
   // I2Cデータ送受信
-  //Wire.begin();
   I2C_WIRE.beginTransmission(i2cAdr);
   
   // 送信
@@ -3373,7 +3308,6 @@ int16_t iircv() {
     }
   }  
   rc =  I2C_WIRE.endTransmission();
-  //i2c_disable(I2C1);
   return rc;
 }
 
@@ -3586,8 +3520,6 @@ void ieepwrite() {
   
   if ( getParam(adr, 0, 32767, true) ) return; // アドレス
   if ( getParam(data, false) ) return;         // データ
-
-  //data = iexp();  if(err) return ;           //データの指定
      
   // データの書込み
   Status = EEPROM.write(adr, data);
@@ -3767,8 +3699,8 @@ void ismode() {
   int16_t c;
   uint16_t ln;
   uint32_t baud = 0;
-  
-  c = iexp();  if(err) return ;
+
+  if ( getParam(c, 0, 2, false) ) return;  
   if (c == 1) {
     if(*cip != I_COMMA) {
       err = ERR_SYNTAX;
@@ -3933,7 +3865,6 @@ void error(uint8_t flgCmd = false) {
   if (err) {  //もし「OK」ではなかったら
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
     if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp && !flgCmd) {
-      //if ( !(cip >= ibuf && cip <ibuf+SIZE_IBUF) ) {
       // エラーメッセージを表示
       c_puts(errmsg[err]);       
       c_puts(" in ");
@@ -3973,8 +3904,6 @@ void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
-  //DEBUG_info();
-
   // EEPROM(エミュレーション)の利用設定
   EEPROM.PageBase0 = EEPROM_PAGE0;
   EEPROM.PageBase1 = EEPROM_PAGE1;
@@ -3988,7 +3917,6 @@ void basic() {
   inew();              
 
   // スクリーン初期設定
-  //sc.adjustNTSC(CONFIG.NTSC);
   sc.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC);
   
   I2C_WIRE.begin();  // I2C利用開始
@@ -4004,7 +3932,6 @@ void basic() {
   c_puts(" " STR_VARSION);      // バージョンの表示
   newline();                    // 改行
   error();                      //「OK」またはエラーメッセージを表示してエラー番号をクリア
-  //sc.refresh();
 
   // プログラム自動起動
   if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
@@ -4043,7 +3970,6 @@ void basic() {
     // 1行の文字列を中間コードの並びに変換
     len = toktoi(); // 文字列を中間コードに変換して長さを取得
     if (err) {      // もしエラーが発生したら
-      Serial.println("[DEBUG:tpktoi() error]");
       error(true);  // エラーメッセージを表示してエラー番号をクリア
       continue;     // 繰り返しの先頭へ戻ってやり直し
     }
