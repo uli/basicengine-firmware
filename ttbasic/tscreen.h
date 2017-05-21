@@ -13,6 +13,7 @@
 //  修正日 2017/04/18, シリアルポート設定機能の追加,cscroll,gscroll表示処理の追加
 //  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
+//  修正日 2017/06/19, getfontadr()の追加
 //
 
 #ifndef __tscreen_h__
@@ -43,6 +44,8 @@
 #define SC_KEY_CTRL_C    3  // break
 #define SC_KEY_CTRL_D    4  // 行削除
 #define SC_KEY_CTRL_N   14  // 行挿入
+
+uint8_t* tv_getFontAdr() ;
 
 // スクリーン定義
 #define SC_FIRST_LINE  0  // スクロール先頭行
@@ -107,6 +110,8 @@ class tscreen {
     uint16_t vpeek(uint16_t x, uint16_t y);           // カーソル位置の文字コード取得
   
     inline uint8_t *getText() { return text; };       // 確定入力の行データアドレス参照
+    inline uint8_t *getfontadr() { return tv_getFontAdr()+3; };   // フォントアドレスの参照
+
     inline uint8_t *getScreen() { return screen; };   // スクリーン用バッファアドレス参照
     inline uint16_t c_x() { return pos_x;};           // 現在のカーソル横位置参照
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
@@ -114,7 +119,7 @@ class tscreen {
     inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
     inline uint16_t getGWidth() { return gwidth;};      // グラフックスクリーン横幅取得
     inline uint16_t getGHeight() { return gheight;};    // グラフックスクリーン縦幅取得
-    inline uint16_t getScreenByteSize() {return width*height;} // スクリーン領域バイトサイズ
+    inline uint16_t getScreenByteSize() {return width * height ;} // スクリーン領域バイトサイズ
 
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     void setAttr(uint16_t attr);                      // 文字属性

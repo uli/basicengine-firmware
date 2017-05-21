@@ -7,6 +7,7 @@
 // 修正日 2017/04/18, cscroll,gscroll表示処理の追加
 // 修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 // 修正日 2017/04/28, tv_NTSC_adjustの追加
+// 修正日 2017/05/19, tv_getFontAdr()の追加
 
 #include <TTVout.h>
 #include "tscreen.h"
@@ -66,6 +67,10 @@ void tv_init(int16_t ajst) {
   b_adr =  (uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
 }
 
+// フォントアドレス取得
+uint8_t* tv_getFontAdr() {
+  return tvfont;
+}
 // 画面文字数横
 uint8_t tv_get_cwidth() {
   return c_width;
@@ -233,188 +238,6 @@ void tv_tone(int16_t freq, int16_t tm) {
 void tv_notone() {
   TV.noTone();    
 }
-
-/*
-// 任意サイズバッファのスクロール
-//  bmp: スクロール対象バッファ
-//  w:   バッファの幅(ドット)
-//  h:   バッファの高さ(ドット)
-//  mode: B0001 左 ,B0010 右, B0100 上, B1000 下 … OR で同時指定可能
-// 
-void scrollBitmap(uint8_t *bmp, uint16_t w, uint16_t h, uint8_t mode) {
-
-  uint16_t bl = (w+7)>>3;           // 横バイト数
-  uint16_t addr;                    // データアドレス
-  uint8_t prv_bit;
-  uint8_t d;
-
-  // 横
-  if ((mode & B11) == B01) {  // 左スクロール
-    addr=0;
-    for (uint8_t i=0; i < h;i++) {
-      prv_bit = 0;
-      for (int8_t j=0; j < bl; j++) {
-        d = bmp[addr+bl-1-j];
-        bmp[addr+bl-1-j]<<=1;
-        if (j>0)
-          bmp[addr+bl-1-j] |= prv_bit;
-        prv_bit=d>>7;
-      }
-      addr+=bl;
-    }
-  } else if ((mode & B11) == B10) { // 右スクロール
-    addr=0;
-    for (uint8_t i=0; i < h;i++) {
-      prv_bit = 0;
-      for (int8_t j=0; j < bl; j++) {
-        d = bmp[addr+j];
-        bmp[addr+j]>>=1;
-        if (j>0)
-          bmp[addr+j] |= prv_bit;
-        prv_bit=d<<7;
-        
-       // Serial.print("addr+j=");
-       // Serial.println(addr+j,DEC);
-      }
-      addr+=bl;
-    } 
-  }
-
-  // 縦
-  if ((mode & B1100) == B0100) {  // 上スクロール
-    addr=0;   
-    for (uint8_t i=0; i<h-1;i++) {
-      for (int8_t j=0; j < bl; j++) {
-        bmp[addr+j] = bmp[addr+j+bl];
-      }
-      addr+=bl;
-    }
-    for (int8_t j=0; j < bl; j++) {
-      bmp[addr+j] = 0;
-    }
-  } else if ((mode & B1100) == B1000) { // 下スクロール
-    addr=bl*(h-1);
-    for (uint8_t i=0; i<h-1;i++) {
-      for (int8_t j=0; j < bl; j++) {
-        bmp[addr+j] = bmp[addr-bl+j];
-      }
-      addr-=bl;
-    }
-    for (int8_t j=0; j < bl; j++) {
-      bmp[j] = 0;
-    } 
-  }
-}
-
-// 任意サイズバッファのスクロール(v2 2017/04/24)
-//  bmp: スクロール対象バッファ
-//  w:   バッファの幅(ドット)
-//  h:   バッファの高さ(ドット)
-//  sx:  スクロール開始横位置(ドット ※8の倍数であること)
-//  sw:  スクロール幅(ドット ※8の倍数であること)
-//  mode: B0001 左 ,B0010 右, B0100 上, B1000 下 … OR で同時指定可能
-// 
-void scrollBitmap(uint8_t *bmp, uint16_t w, uint16_t h, uint16_t sx, uint16_t sw, uint8_t mode) {
-
-  uint16_t bl = (w+7)>>3;           // 横バイト数
-  uint16_t sl = (sw+7)>>3;          // 横スクロールバイト数
-  uint16_t xl = (sx+7)>>3;          // 横スクロール開始オフセット(バイト)
-
-  uint16_t addr;                    // データアドレス
-  uint8_t prv_bit;                  // 直前のドット
-  uint8_t d;                        // 取り出しデータ
-
-  // 横
-  if ((mode & B11) == B01) {  // 左スクロール
-    addr=xl;
-    for (int16_t i=0; i < h;i++) {
-      prv_bit = 0;
-      for (int16_t j=0; j < sl; j++) {
-        d = bmp[addr+sl-1-j];
-        bmp[addr+sl-1-j]<<=1;
-        if (j>0)
-          bmp[addr+sl-1-j] |= prv_bit;
-        prv_bit=d>>7;
-      }
-      addr+=bl;
-    }
-  } else if ((mode & B11) == B10) { // 右スクロール
-    addr=xl;
-    for (int16_t i=0; i < h;i++) {
-      prv_bit = 0;
-      for (int16_t j=0; j < sl; j++) {
-        d = bmp[addr+j];
-        bmp[addr+j]>>=1;
-        if (j>0)
-          bmp[addr+j] |= prv_bit;
-        prv_bit=d<<7;        
-      }
-      addr+=bl;
-    } 
-  }
-
-  // 縦
-  if ((mode & B1100) == B0100) {  // 上スクロール
-    addr=xl;   
-    for (int16_t i=0; i<h-1;i++) {
-      memcpy(&bmp[addr],&bmp[addr+bl], sl);
-      addr+=bl;
-    }
-    for (int16_t j=0; j < sl; j++) {
-      bmp[addr+j] = 0;
-    }
-  } else if ((mode & B1100) == B1000) { // 下スクロール
-    addr=bl*(h-1)+xl;
-    for (int16_t i=0; i<h-1;i++) {
-      memcpy(&bmp[addr],&bmp[addr-bl], sl);
-      addr-=bl;
-    }
-    for (int16_t j=0; j < sl; j++) {
-      bmp[addr+j] = 0;
-    } 
-  }
-}
-
-
-// グラフィック横スクロール
-void tv_gscroll(int16_t y, int16_t h, uint8_t mode) {
-   uint8_t* bmp = vram + g_width/8*y;
-   switch(mode) {
-     case 0: // 上
-       scrollBitmap(bmp, g_width, h, 4); 
-       break;                   
-     case 1: // 下
-       scrollBitmap(bmp, g_width, h, 8); 
-       break;                          
-     case 2: // 右
-       scrollBitmap(bmp, g_width, h, 2); 
-       break;                              
-     case 3: // 左
-       scrollBitmap(bmp, g_width, h, 1); 
-       break;              
-   }
-}
-
-
-// グラフィック横スクロール
-void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
-   uint8_t* bmp = vram + g_width/8*y;
-   switch(mode) {
-     case 0: // 上
-       scrollBitmap(bmp, g_width, h, x, w, 4); 
-       break;                   
-     case 1: // 下
-       scrollBitmap(bmp, g_width, h, x, w, 8); 
-       break;                          
-     case 2: // 右
-       scrollBitmap(bmp, g_width, h, x, w, 2) ;
-       break;                              
-     case 3: // 左
-       scrollBitmap(bmp, g_width, h, x, w, 1) ;
-       break;              
-   }
-}
-*/
 
 // グラフィック横スクロール
 void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {

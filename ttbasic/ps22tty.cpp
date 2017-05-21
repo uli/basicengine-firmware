@@ -4,6 +4,7 @@
 // 修正 2017/04/15, 利用ピンの変更(I2Cとの競合のため)
 // 修正 2017/04/29, キーボード、NTSCの補正対応
 // 修正 2017/05/09, カナ入力対応
+// 修正 2017/05/18, ltu(ﾂ)が利用出来ない不具合の対応
 
 #include <string.h>
 #include <libmaple/ring_buffer.h>
@@ -26,9 +27,9 @@ enum {
   _romaji_b, _romaji_c, _romaji_d, _romaji_f, _romaji_g,  _romaji_h, _romaji_j, _romaji_k, _romaji_l, _romaji_m,
   _romaji_n, _romaji_p, _romaji_q, _romaji_r, _romaji_s,  _romaji_t, _romaji_v, _romaji_w, _romaji_x, _romaji_y,
   _romaji_z, _romaji_by,_romaji_ch,_romaji_cy,_romaji_dh, _romaji_dw,_romaji_dy,_romaji_fw,_romaji_fy,_romaji_gw,
-  _romaji_gy,_romaji_hy,_romaji_jy,_romaji_kw,_romaji_ky, _romaji_ly,_romaji_my,_romaji_ny,_romaji_py,_romaji_qw,
-  _romaji_qy,_romaji_ry,_romaji_sh,_romaji_sw,_romaji_sy, _romaji_th,_romaji_ts,_romaji_tw,_romaji_ty,_romaji_vy,
-  _romaji_wh,_romaji_xt,_romaji_xy,_romaji_zy,  
+  _romaji_gy,_romaji_hy,_romaji_jy,_romaji_kw,_romaji_ky, _romaji_lt,_romaji_ly,_romaji_my,_romaji_ny,_romaji_py,
+  _romaji_qw,_romaji_qy,_romaji_ry,_romaji_sh,_romaji_sw,_romaji_sy, _romaji_th,_romaji_ts,_romaji_tw,_romaji_ty,
+  _romaji_vy,_romaji_wh,_romaji_xt,_romaji_xy,_romaji_zy,  
 };
 
 // カタカタ文字列変換テーブル
@@ -70,6 +71,7 @@ enum {
   { "\xbc\xde\xac", "\xbc\xde\xaa", "\xbc\xde\xa8", "\xbc\xde\xae", "\xbc\xde\xad", },  //[jy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
   { "\xb8\xa7", "\x00", "\x00", "\x00", "\x00", },                                      //[kw] : ｸｧ NG NG NG NG
   { "\xb7\xac", "\xb7\xaa", "\xb7\xa8", "\xb7\xae", "\xb7\xad", },                      //[ky] : ｷｬ ｷｪ ｷｨ ｷｮ ｷｭ
+  { "\x00", "\x00", "\x00", "\x00", "\xaf", },                                          //[lt] : NG NG NG NG ｯ
   { "\xac", "\xaa", "\xa8", "\xae", "\xad", },                                          //[ly] : ｬ ｪ ｨ ｮ ｭ
   { "\xd0\xac", "\xd0\xaa", "\xd0\xa8", "\xd0\xae", "\xd0\xad", },                      //[my] : ﾐｬ ﾐｪ ﾐｨ ﾐｮ ﾐｭ
   { "\xc6\xac", "\xc6\xaa", "\xc6\xa8", "\xc6\xae", "\xc6\xad", },                      //[ny] : ﾆｬ ﾆｪ ﾆｨ ﾆｮ ﾆｭ
@@ -118,7 +120,7 @@ const char Shion_Xw_Table[][2] __FLASH__ = {
 
 // 2文字子音テーブル Xt系列
 const char Shion_Xt_Table[][2] __FLASH__ = {
-  {  _romaji_x, _romaji_xt } ,
+  {  _romaji_x, _romaji_xt } ,  {  _romaji_l, _romaji_lt } ,
 };
 
 // 2文字子音テーブル Xy系列
