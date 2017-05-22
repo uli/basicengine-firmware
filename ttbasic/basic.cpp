@@ -98,6 +98,7 @@
 //  修正日 2017/05/19, PEEK()でフォント格納アドレス参照対応(バンク指定を可能にした)
 //  修正日 2017/05/19, 変数に文字列アドレスを設定出来るように修正,STR$(),LEN()もサポート
 //  修正日 2017/05/20, LRUNの仕様変更、CLVの追加,ERASEコマンドの追加,ASC()の機能追加
+//  修正日 2017/05/22, LEN(),STR$(),ASC()の配列変数対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -1292,7 +1293,6 @@ void ivar() {
   cip++; //中間コードポインタを次へ進める
   if (*cip == I_STR) {
     cip++;
-    //value = (int16_t)((uint32_t)cip - (uint32_t)SRAM_TOP);
     value = (int16_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
     cip += *cip+1;
   } else {
@@ -1328,7 +1328,7 @@ void iarray() {
     cip++; 
     if (*cip == I_STR) {
       cip++;
-      value = (int16_t)((uint32_t)cip - (uint32_t)SRAM_TOP);
+      value = (int16_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
       cip += *cip+1;
     } else {
       value = iexp(); // 式の値を取得
@@ -2059,6 +2059,7 @@ void istrref(uint8_t devno=0) {
   int16_t len;
   int16_t top;
   int16_t n;
+  int16_t index;
   uint8_t *ptr;
   if (checkOpen()) return;
   if (*cip == I_VAR) {
@@ -2067,6 +2068,12 @@ void istrref(uint8_t devno=0) {
     len = *ptr;
     ptr++;
     cip++;
+  } else if (*cip == I_ARRAY) {
+    cip++; 
+    if (getParam(index, 0, SIZE_ARRY-1, false)) return;
+    ptr = v2realAddr(arr[index]);
+    len = *ptr;
+    ptr++;    
   } else if (*cip == I_STR) {
     cip++;
     len = *cip;
@@ -2703,21 +2710,28 @@ int16_t iasc() {
   int16_t value =0;
   int16_t len;     // 文字列長
   int16_t pos =1;  // 文字位置
+  int16_t index;   // 配列添え字
   uint8_t* str;    // 文字列先頭位置
   
   if (checkOpen()) return 0;
-  if ( *cip == I_STR) { // 文字列定数の場合
-     cip++;
-     len = *cip;        // 文字列長の取得  
-     cip++;
-     str = cip;         // 文字列先頭の取得
-     cip+=len;          // 次の中間コード位置に移動
-  } else if ( *cip == I_VAR) { // 変数の場合
-     cip++;
-     str = v2realAddr(var[*cip]);
+  if ( *cip == I_STR) {  // 文字列定数の場合
+     cip++;  len = *cip; // 文字列長の取得  
+     cip++;  str = cip;  // 文字列先頭の取得
+     cip+=len;
+  } else if ( *cip == I_VAR) {   // 変数の場合
+     cip++;   str = v2realAddr(var[*cip]);
      len = *str;
      str++;
      cip++;     
+  } else if ( *cip == I_ARRAY) { // 配列変数の場合
+     cip++; 
+     if (getParam(index, 0, SIZE_ARRY-1, false)) return 0;
+     str = v2realAddr(arr[index]);
+     len = *str;
+     str++;
+  } else {
+    err = ERR_SYNTAX;
+    return 0;
   }
   if ( *cip == I_COMMA) {
     cip++;
@@ -2726,16 +2740,6 @@ int16_t iasc() {
   value = str[pos-1];
   checkClose();
   return value;
-
-/*
-    if ( I_STR != *cip ) { err = ERR_SYNTAX; break; }                 // 文字列引数チェック 
-    cip++; i = (uint8_t)*cip; if (i != 1) { err = ERR_VALUE; break; } // 文字列長さチェック
-    cip++; value = *cip;                                              // 値取得
-    cip++;
-    checkClose();
-    break;
-*/
-  
 }
 
 // PRINT handler
@@ -3036,14 +3040,17 @@ int16_t ivalue() {
       cip++;
       value = *v2realAddr(var[*cip]);
       cip++;
-      if (checkClose()) break;
+    } else if ( *cip == I_ARRAY) {
+      cip++;
+      if (getParam(value, 0, SIZE_ARRY-1, false)) return 0;
+      value = *v2realAddr(arr[value]);
     } else if ( *cip == I_STR) {
       cip++;
       value = *cip;
       cip+=*cip+1;
-      if (checkClose()) break;
     } else
       err = ERR_SYNTAX;
+    checkClose();
     break;
    
   case I_TICK: // 関数TICK()
