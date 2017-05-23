@@ -99,6 +99,7 @@
 //  修正日 2017/05/19, 変数に文字列アドレスを設定出来るように修正,STR$(),LEN()もサポート
 //  修正日 2017/05/20, LRUNの仕様変更、CLVの追加,ERASEコマンドの追加,ASC()の機能追加
 //  修正日 2017/05/22, LEN(),STR$(),ASC()の配列変数対応
+//  修正日 2017/05/23, pinMode()のTimer
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -1878,6 +1879,49 @@ int16_t ivpeek() {
   return value;
 }
 
+// ピンモード設定(タイマー操作回避版)
+void alt_pinMode(uint8 pin, WiringPinMode mode) {
+    gpio_pin_mode outputMode;
+    bool pwm = false;
+
+    if (pin >= BOARD_NR_GPIO_PINS) {
+        return;
+    }
+
+    switch(mode) {
+    case OUTPUT:
+        outputMode = GPIO_OUTPUT_PP;
+        break;
+    case OUTPUT_OPEN_DRAIN:
+        outputMode = GPIO_OUTPUT_OD;
+        break;
+    case INPUT:
+    case INPUT_FLOATING:
+        outputMode = GPIO_INPUT_FLOATING;
+        break;
+    case INPUT_ANALOG:
+        outputMode = GPIO_INPUT_ANALOG;
+        break;
+    case INPUT_PULLUP:
+        outputMode = GPIO_INPUT_PU;
+        break;
+    case INPUT_PULLDOWN:
+        outputMode = GPIO_INPUT_PD;
+        break;
+    case PWM:
+        outputMode = GPIO_AF_OUTPUT_PP;
+        pwm = true;
+        break;
+    case PWM_OPEN_DRAIN:
+        outputMode = GPIO_AF_OUTPUT_OD;
+        pwm = true;
+        break;
+    default:
+        return;
+    }
+    gpio_set_mode(PIN_MAP[pin].gpio_device, PIN_MAP[pin].gpio_bit, outputMode);
+}
+
 // GPIO ピン機能設定
 void igpio() {
   int16_t pinno;       // ピン番号
@@ -1903,7 +1947,7 @@ void igpio() {
     pinMode(pinno, pmode);
     pwmWrite(pinno,0);
   } else {
-    pinMode(pinno, pmode);    
+    alt_pinMode(pinno, pmode);
   }
 }
 
