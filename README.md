@@ -114,20 +114,23 @@ Blue Pillボード利用構成図
 - [F1]、[CTRL-L]：画面のクリア
 
 ## コマンドの説明
-[リファレンスマニュアル(nmanual.pdf)](./manual.pdf)に記載しています(ただし追加・修正中)  
+[リファレンスマニュアル(nmanual.pdf)](./manual.pdf)に記載しています(ただし追加・修正中)  
 (リンクを直接クリックして閲覧すると表示が遅いです。ダウンロードして閲覧して下さい)  
 
 ## スケッチの書込み手順
 1)ライブラリの配置  
-プロジェクト一式をダウンロードし、解凍した中の、フォルダ**libraries**を  
-各自のArduino環境のライブラリ配置ディレクトリ(フォルダ）に配置して下さい.  
+プロジェクト一式をダウンロードし、解凍した中の、フォルダ**libraries**内のフォルダを  
+各自のArduino環境のライブラリ配置ディレクトリ**libraries**に配置して下さい.  
+![ディレクトリ構成](./image/06.png)  
+
 Arduino STM32環境に依存するライブラリのため、下記のディレクトリの配置でも良いです.  
 (古いバージョンのArduino IDEと共存利用している環境では競合等回避のためここへの配置を推奨）  
 \hardware\Arduino_STM32\STM32F1\libraries  
 
 添付ライブラリの個別利用・入手は下記のリンクを参照して下さい.  
-**ライブラリ一覧 **  
- - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
+
+**ライブラリ一覧**  
+ - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
    https://github.com/Tamakichi/ArduinoSTM32_TFlash  
  - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
    https://github.com/Tamakichi/ArduinoSTM32_TNTSC  
