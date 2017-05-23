@@ -99,7 +99,8 @@
 //  修正日 2017/05/19, 変数に文字列アドレスを設定出来るように修正,STR$(),LEN()もサポート
 //  修正日 2017/05/20, LRUNの仕様変更、CLVの追加,ERASEコマンドの追加,ASC()の機能追加
 //  修正日 2017/05/22, LEN(),STR$(),ASC()の配列変数対応
-//  修正日 2017/05/23, pinMode()のTimer
+//  修正日 2017/05/23, pinMode()のTimer不具合対策
+//    http://www.stm32duino.com/viewtopic.php?f=49&t=2079&start=20
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -1880,7 +1881,7 @@ int16_t ivpeek() {
 }
 
 // ピンモード設定(タイマー操作回避版)
-void alt_pinMode(uint8 pin, WiringPinMode mode) {
+void Fixed_pinMode(uint8 pin, WiringPinMode mode) {
     gpio_pin_mode outputMode;
     bool pwm = false;
 
@@ -1918,8 +1919,19 @@ void alt_pinMode(uint8 pin, WiringPinMode mode) {
         break;
     default:
         return;
-    }
+    }    
     gpio_set_mode(PIN_MAP[pin].gpio_device, PIN_MAP[pin].gpio_bit, outputMode);
+   
+    if (PIN_MAP[pin].timer_device != NULL) {
+        if ( pwm ) { // we're switching into PWM, enable timer channels
+        timer_set_mode(PIN_MAP[pin].timer_device,
+                       PIN_MAP[pin].timer_channel,
+                       TIMER_PWM );
+        } else {  // disable channel output in non pwm-Mode             
+            timer_cc_disable(PIN_MAP[pin].timer_device, 
+                            PIN_MAP[pin].timer_channel); 
+        }
+    }
 }
 
 // GPIO ピン機能設定
@@ -1944,10 +1956,10 @@ void igpio() {
       err = ERR_VALUE;
       return;
     } 
-    pinMode(pinno, pmode);
+    Fixed_pinMode(pinno, pmode);
     pwmWrite(pinno,0);
   } else {
-    alt_pinMode(pinno, pmode);
+    Fixed_pinMode(pinno, pmode);
   }
 }
 
