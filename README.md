@@ -92,21 +92,6 @@ Blue Pillボード利用構成図
   - エラーメッセージ**Program not found**の追加  
   - 定数:HIGH、LOW、PA00、PA01、..、PC15のピン名の追加  
 
-**※本スケッチの利用には別途、下記のライブラリが必要です.**  
- - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
-   https://github.com/Tamakichi/ArduinoSTM32_TFlash  
- - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
-   https://github.com/Tamakichi/ArduinoSTM32_TNTSC  
- - Arduino STM32 TTVoutライブラリ(最新版)  
-   https://github.com/Tamakichi/ArduinoSTM32_TVout  
- - TTVoutfont TVout用フォント  
-   https://github.com/Tamakichi/TTVoutfont  
-   ※フォントはtvutil.cppの#define TV_DISPLAY_FONTにて別のフォントに変更可能です。   
-     #define TV_DISPLAY_FONT font6x8tt  
-     変更の際は上記を修正して下さい。  
- - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
-   https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard  
-
 ## フルスリーンテキストエディタの機能
 ※利用にはNTSC対応のTVモニターデスプレイが必要です.  
 
@@ -128,9 +113,35 @@ Blue Pillボード利用構成図
 - [ESC]、[CTRL-C]：実行プログラムの中断
 - [F1]、[CTRL-L]：画面のクリア
 
-## 追加・修正コマンドの説明
+## コマンドの説明
 [リファレンスマニュアル(nmanual.pdf)](./manual.pdf)に記載しています(ただし追加・修正中)  
 (リンクを直接クリックして閲覧すると表示が遅いです。ダウンロードして閲覧して下さい)  
+
+## スケッチの書込み手順
+1)ライブラリの配置  
+プロジェクト一式をダウンロードし、解凍した中の、フォルダ**libraries**を  
+各自のArduino環境のライブラリ配置ディレクトリ(フォルダ）に配置して下さい.  
+Arduino STM32環境に依存するライブラリのため、下記のディレクトリの配置でも良いです.  
+(古いバージョンのArduino IDEと共存利用している環境では競合等回避のためここへの配置を推奨）  
+\hardware\Arduino_STM32\STM32F1\libraries  
+
+添付ライブラリの個別利用・入手は下記のリンクを参照して下さい.  
+**ライブラリ一覧 **  
+ - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
+   https://github.com/Tamakichi/ArduinoSTM32_TFlash  
+ - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_TNTSC  
+ - Arduino STM32 TTVoutライブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_TVout  
+ - TTVoutfont TVout用フォント  
+   https://github.com/Tamakichi/TTVoutfont  
+ - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
+   https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard  
+
+2)スケッチ本体のフォルダ**ttbasic**を各自のスケッチ配置フォルダの配置  
+3)Arduino IDE(Arduino STM32環境インストール済み)の起動  
+4)ボート選択  
+5)コンパイル&スケッチ書込み  
 
 ## サンプルプログラム
 ### ボード上のLEDの点滅  
