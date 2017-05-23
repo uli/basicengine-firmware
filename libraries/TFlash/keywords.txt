@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map TFlash
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TFlash	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+waitOperation		KEYWORD2
+eracePage		KEYWORD2
+write			KEYWORD2
+read			KEYWORD2
+lock			KEYWORD2
+unlock			KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+TFLASH_BUSY		LITERAL1
+TFLASH_ERROR_PG		LITERAL1
+TFLASH_ERROR_WRP	LITERAL1
+TFLASH_ERROR_OPT	LITERAL1
+TFLASH_COMPLETE		LITERAL1
+TFLASH_TIMEOUT		LITERAL1
+TFLASH_BAD_ADDRESS	LITERAL1
+TFLASH_Status		LITERAL1

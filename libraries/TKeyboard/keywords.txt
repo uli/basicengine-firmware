@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map RTClock
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+TKeyboard	KEYWORD1
+
+
+keyEvent		KEYWORD2
+begin			KEYWORD2
+end			KEYWORD2
+init			KEYWORD2
+scanToKeycode		KEYWORD2
+read			KEYWORD2
+ctrl_LED		KEYWORD2
+enableInterrupts	KEYWORD2
+disableInterrupts	KEYWORD2
+mode_idole		KEYWORD2
+mode_stop		KEYWORD2
+mode_send		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
