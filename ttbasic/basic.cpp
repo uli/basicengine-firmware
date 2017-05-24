@@ -101,6 +101,8 @@
 //  修正日 2017/05/22, LEN(),STR$(),ASC()の配列変数対応
 //  修正日 2017/05/23, pinMode()のTimer不具合対策
 //    http://www.stm32duino.com/viewtopic.php?f=49&t=2079&start=20
+//  修正日 2017/05/24, SWD、JTAGの禁止(PA15,PB3が利用出来ない問題対応)
+//    http://stm32duino.com/viewtopic.php?f=35&t=1130&p=13919&hilit=PA15#p13919
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -1651,10 +1653,12 @@ void isave() {
   int16_t prgno = 0;
   uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
   uint8_t* sram_adr;
-  if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
-  for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) {
+  if (*cip == I_EOL) 
+    prgno = 0;
+  else 
+    if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
+  for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) 
     flash_adr[i] = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG+i);
-  }
 
   // 4ページ分(4096)の保存
   TFlash.unlock();
@@ -1706,7 +1710,10 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
 // プログラム保存 LOAD 保存領域番号
 void iload() {
   int16_t prgno = 0;
-  if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
+  if (*cip == I_EOL) 
+    prgno = 0;
+  else
+    if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
   loadPrg(prgno);
 }
 
@@ -3732,6 +3739,10 @@ uint8_t icom() {
 void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
+
+  // disable SWD and JTAG.
+  // http://stm32duino.com/viewtopic.php?f=35&t=1130&p=13919&hilit=PA15#p13919
+  afio_cfg_debug_ports(AFIO_DEBUG_NONE);
 
   // EEPROM(エミュレーション)の利用設定
   EEPROM.PageBase0 = EEPROM_PAGE0;
