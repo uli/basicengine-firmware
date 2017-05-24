@@ -114,7 +114,7 @@ Blue Pillボード利用構成図
 - [F1]、[CTRL-L]：画面のクリア
 
 ## コマンドの説明
-[リファレンスマニュアル(nmanual.pdf)](./manual.pdf)に記載しています(ただし追加・修正中)  
+[リファレンスマニュアル(nmanual.pdf)](https://github.com/Tamakichi/ttbasic_arduino/raw/ttbasic_arduino_ps2_ntsc/manual.pdf)に記載しています(ただし追加・修正中)  
 (リンクを直接クリックして閲覧すると表示が遅いです。ダウンロードして閲覧して下さい)  
 
 ## スケッチの書込み手順
