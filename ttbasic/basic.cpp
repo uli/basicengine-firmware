@@ -103,6 +103,8 @@
 //    http://www.stm32duino.com/viewtopic.php?f=49&t=2079&start=20
 //  修正日 2017/05/24, SWD、JTAGの禁止(PA15,PB3が利用出来ない問題対応)
 //    http://stm32duino.com/viewtopic.php?f=35&t=1130&p=13919&hilit=PA15#p13919
+//  修正日 2017/05/28, 上下スクロール編集対応,LRUN不具合対応,システムコマンドの一部を一般コマンドに移行
+//  修正日 2017/05/28, GPIOの記述無しにピン設定を可能とする対応(例:10 PB13,OUTPUT)
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -168,6 +170,7 @@ SystemConfig CONFIG;
 
 uint8_t loadConfig();
 uint8_t saveConfig();
+void mem_putch(uint8_t c);
 
 // **** RTC用宣言 ********************
 #if USE_INNERRTC == 1
@@ -225,6 +228,8 @@ inline void c_putch(uint8_t c, uint8_t devno = 0) {
     sc.Serial_write(c);
   else if (devno == 2)
     sc.gputch(c);  
+  else if (devno == 3)
+   mem_putch(c);
 } 
 
 // tick用支援関数
@@ -240,6 +245,8 @@ void newline(uint8_t devno=0) {
     sc.Serial_newLine();
   else if (devno == 2)
     sc.gputch('\n');
+  else if (devno == 3)
+    mem_putch('\n');
 }
 
 // 乱数
@@ -441,6 +448,8 @@ enum {
 
 // RAM mapping
 char lbuf[SIZE_LINE];             // コマンド入力バッファ
+char tbuf[SIZE_LINE];          // テキスト表示用バッファ
+int16_t tbuf_pos = 0;
 unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 short var[28];                    // 変数領域(2個分は境界調整用)
 short arr[SIZE_ARRY];             // 配列領域
@@ -457,6 +466,21 @@ unsigned char lstki;              // FOR stack index
 uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
 
+// メモリへの文字出力
+inline void mem_putch(uint8_t c) {
+  if (tbuf_pos < SIZE_LINE) {
+   tbuf[tbuf_pos] = c;
+   tbuf_pos++;
+  }
+}
+
+// メモリ書き込みポインタのクリア
+inline void clearlbuf() {
+  tbuf_pos=0;
+  memset(tbuf,0,SIZE_LINE);
+}
+
+// 仮想アドレスを実アドレスに変換
 uint8_t* v2realAddr(uint16_t vadr) {
   uint8_t* radr; 
   if ( (vadr >= 0) && (vadr < sc.getScreenByteSize())) {     // VRAM領域
@@ -925,7 +949,8 @@ short getsize() {
 // Get line numbere by line pointer
 short getlineno(unsigned char *lp) {
   if(*lp == 0) //もし末尾だったら
-    return 32767; //行番号の最大値を持ち帰る
+    //return 32767; //行番号の最大値を持ち帰る
+    return -1;
   return *(lp + 1) | *(lp + 2) << 8; //行番号を持ち帰る
 }
 
@@ -1015,7 +1040,6 @@ DONE:
   return rc;
 }
 
-
 // プログラム行数を取得する
 uint16_t countLines() {
   unsigned char *lp; //ポインタ
@@ -1074,22 +1098,23 @@ void inslist() {
 }
 
 //Listing 1 line of i-code
-void putlist(unsigned char* ip) {
+void putlist(unsigned char* ip, uint8_t devno=0) {
   unsigned char i; //ループカウンタ
 
   while (*ip != I_EOL) { //行末でなければ繰り返す
 
     //キーワードの処理
     if (*ip < SIZE_KWTBL) { //もしキーワードなら
-      c_puts(kwtbl[*ip]); //キーワードテーブルの文字列を表示
-      if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
-        c_putch(' '); //空白を表示
+      c_puts(kwtbl[*ip],devno); //キーワードテーブルの文字列を表示
+      if (*(ip+1) != I_COLON) 
+        if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
+          c_putch(' ',devno); //空白を表示
 
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
         ip++; //ポインタを文字数へ進める
         i = *ip++; //文字数を取得してポインタをコメントへ進める
         while (i--) //文字数だけ繰り返す
-          c_putch(*ip++); //ポインタを進めながら文字を表示
+          c_putch(*ip++,devno); //ポインタを進めながら文字を表示
         return; //終了する
       }
 
@@ -1100,30 +1125,30 @@ void putlist(unsigned char* ip) {
     //定数の処理
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
-      putnum(*ip | *(ip + 1) << 8, 0); //値を取得して表示
+      putnum(*ip | *(ip + 1) << 8, 0,devno); //値を取得して表示
       ip += 2; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
-        c_putch(' '); //空白を表示
+        c_putch(' ',devno); //空白を表示
     }
     else
 
     //16進定数の処理
     if (*ip == I_HEXNUM) { //もし16進定数なら
       ip++; //ポインタを値へ進める
-      c_putch('$'); //空白を表示
-      putHexnum(*ip | *(ip + 1) << 8, 2); //値を取得して表示
+      c_putch('$',devno); //空白を表示
+      putHexnum(*ip | *(ip + 1) << 8, 2,devno); //値を取得して表示
       ip += 2; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
-        c_putch(' '); //空白を表示
+        c_putch(' ',devno); //空白を表示
     }
     else
     
     //変数の処理
     if (*ip == I_VAR) { //もし定数なら
       ip++; //ポインタを変数番号へ進める
-      c_putch(*ip++ + 'A'); //変数名を取得して表示
+      c_putch(*ip++ + 'A',devno); //変数名を取得して表示
       if (!nospaceb(*ip)) //もし例外にあたらなければ
-        c_putch(' '); //空白を表示
+        c_putch(' ',devno); //空白を表示
     }
     else
 
@@ -1141,13 +1166,13 @@ void putlist(unsigned char* ip) {
         }
 
       //文字列を表示する
-      c_putch(c); //文字列の括りを表示
+      c_putch(c,devno); //文字列の括りを表示
       i = *ip++; //文字数を取得してポインタを文字列へ進める
       while (i--) //文字数だけ繰り返す
-        c_putch(*ip++); //ポインタを進めながら文字を表示
-      c_putch(c); //文字列の括りを表示
+        c_putch(*ip++,devno); //ポインタを進めながら文字を表示
+      c_putch(c,devno); //文字列の括りを表示
       if (*ip == I_VAR || *ip ==I_ELSE) //もし次の中間コードが変数だったら
-        c_putch(' '); //空白を表示
+        c_putch(' ',devno); //空白を表示
     }
 
     else { //どれにも当てはまらなかった場合
@@ -1390,34 +1415,20 @@ void irun(uint8_t* start_clp = NULL) {
 
 // LISTコマンド
 void ilist() {
-  short lineno = 0;          // 表示開始行番号
-  short endlineno = 32767;   // 表示終了行番号
-  short prnlineno;           // 出力対象行番号
+  int16_t lineno = 0;          // 表示開始行番号
+  int16_t endlineno = 32767;   // 表示終了行番号
+  int16_t prnlineno;           // 出力対象行番号
 
   //表示開始行番号の設定
-  if (*cip == I_NUM) {         // もしLIST命令に引数があったら
-    lineno = getlineno(cip);   // 引数を読み取って表示開始行番号とする
-    cip+=3;
+  if (*cip != I_EOL && *cip != I_COLON) {
+    // 引数あり
+    if (getParam(lineno,0,32767,false)) return;
     if (*cip == I_COMMA) {
-        cip++;                         // カンマをスキップ
-        if (*cip == I_NUM) {           // 表示終了行番号の指定がある
-           endlineno = getlineno(cip); // 引数を読み取って表示終了行番号とする
-           cip+=3;
-        } else {
-           err = ERR_SYNTAX;           // カンマありで引数なしの場合はエラーとする
-           return;
-       }
-    }
-  } else if (*cip != I_EOL) {
-     err = ERR_SYNTAX;           // 不当な引数を指定している
-     return;      
-  }
-
-  if ( endlineno < lineno ) {
-     err = ERR_VALUE;           // 表示終了行番号が表示開始行番号より小さい場合はエラーとする
-     return;     
-  }
-  
+      cip++;                         // カンマをスキップ
+      if (getParam(endlineno,lineno,32767,false)) return;
+     }
+   }
+ 
   //行ポインタを表示開始行番号へ進める
   for ( clp = listbuf; *clp && (getlineno(clp) < lineno); clp += *clp); 
   
@@ -1437,6 +1448,7 @@ void ilist() {
 }
 
 // フラッシュメモリ内保存プログラムのエクスポート
+// EXPORT [sno[,eno]]
 void iexport() {
   uint8_t* exclp;
   int16_t endlineno = 32767;   // 表示終了行番号
@@ -1444,17 +1456,14 @@ void iexport() {
   int16_t s_pno = 0;
   int16_t e_pno = FLASH_SAVE_NUM-1;
 
-  //表示開始番号の設定
-  if (*cip == I_NUM) {         // もしLIST命令に引数があったら
-    if (getParam(s_pno,false)) return;
+  if (*cip != I_EOL && *cip != I_COLON) {
+    // 引数あり
+    if (getParam(s_pno,0,FLASH_SAVE_NUM-1,false)) return;
     e_pno = s_pno;
     if (*cip == I_COMMA) {
       cip++;                         // カンマをスキップ
       if (getParam(e_pno,s_pno,FLASH_SAVE_NUM-1,false)) return;        
     }
-  } else if (*cip != I_EOL) {
-     err = ERR_SYNTAX;           // 不当な引数を指定している
-     return;      
   }
   
   for (uint16_t i =s_pno; i <= e_pno;i++) {
@@ -1490,7 +1499,7 @@ void inew(uint8_t mode = 0) {
   unsigned char i; //ループカウンタ
 
   //変数と配列の初期化
-  if (mode == 0||mode == 2) {
+  if (mode == 0|| mode == 2) {
     for (i = 0; i < 26; i++) //変数の数だけ繰り返す
       var[i] = 0; //変数を0に初期化
     for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
@@ -2943,33 +2952,7 @@ uint8_t ilrun() {
   return 1;
 }
 
-/*
-uint8_t ilrun() {
-  int16_t prgno;
-  int16_t mode = 0;
-  uint32_t flash_adr;
-  uint8_t* tmpcip;
 
- if ( getParam(prgno, 0, 9, false) ) return 0;
-  if(*cip == I_COMMA) {
-    cip++;
-    if ( getParam(mode, 0, 1, false) ) return 0;
-  }
-  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
-
-  // 指定領域に保存されているかチェックする
-  if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
-    err = ERR_NOPRG;
-    return 0;
-  }
- 
-  // 現在のプログラムの削除とロード
-  inew(mode);
-  memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
-  cip = listbuf;
-  return 1;
-}
-*/
 // エラーメッセージ出力
 // 引数: dlfCmd プログラム実行時 false、コマンド実行時 true
 void error(uint8_t flgCmd = false) {
@@ -3088,14 +3071,6 @@ int16_t ivalue() {
   case I_GINP:  value = iginp();   break; //関数GINP(X,Y,W,H,C)
   case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
   case I_ASC:   value = iasc();    break;// 関数ASC(文字列)
-/*
-    if ( I_STR != *cip ) { err = ERR_SYNTAX; break; }                 // 文字列引数チェック 
-    cip++; i = (uint8_t)*cip; if (i != 1) { err = ERR_VALUE; break; } // 文字列長さチェック
-    cip++; value = *cip;                                              // 値取得
-    cip++;
-    checkClose();
-    break;
-*/
 
   case I_LEN:  // 関数LEN(変数)
     if (checkOpen()) break;
@@ -3147,12 +3122,7 @@ int16_t ivalue() {
   case I_LOW:   value = CONST_LOW;  break;
   case I_LSB:   value = CONST_LSB;  break;
   case I_MSB:   value = CONST_MSB;  break;
-/*  
-  case I_MEM:   value = (uint16_t)((uint32_t)mem - (uint32_t)SRAM_TOP);  break; 
-  case I_VRAM:  value = (uint16_t)((uint32_t)sc.getScreen() - (uint32_t)SRAM_TOP);  break;
-  case I_MVAR:  value = (uint16_t)((uint32_t)var - (uint32_t)SRAM_TOP);  break;
-  case I_MARRAY:value = (uint16_t)((uint32_t)arr - (uint32_t)SRAM_TOP);  break;
-*/
+
   case I_VRAM:  value = V_VRAM_TOP;  break;
   case I_MVAR:  value = V_VAR_TOP;   break;
   case I_MARRAY:value = V_ARRAY_TOP; break; 
@@ -3369,25 +3339,96 @@ short iexp() {
   } //中間コードで分岐の末尾
 }
 
+// 左上の行番号の取得
+int16_t getTopLineNum() {
+  uint8_t* ptr = sc.getScreen();
+  uint32_t n = 0;
+  int rc = -1;  
+  while (c_isdigit(*ptr)) {
+    n *= 10;
+    n+= *ptr-'0';
+    if (n>32767) {
+      n = 0;
+      break;
+    }
+    ptr++;
+  }
+  if (!n)
+    rc = -1;
+  else
+    rc = n;
+  return rc;
+}
+
+// 左下の行番号の取得
+int16_t getBottomLineNum() {
+  uint8_t* ptr = sc.getScreen()+sc.getWidth()*(sc.getHeight()-1);
+  uint32_t n = 0;
+  int rc = -1;  
+  while (c_isdigit(*ptr)) {
+    n *= 10;
+    n+= *ptr-'0';
+    if (n>32767) {
+      n = 0;
+      break;
+    }
+    ptr++;
+  }
+  if (!n)
+    rc = -1;
+  else
+    rc = n;
+  return rc;  
+}
+
+// 指定した行の前の行番号を取得する
+int16_t getPrevLineNo(int16_t lineno) {
+  uint8_t* lp, *prv_lp = NULL;
+  int16_t rc = -1;
+  for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
+    prv_lp = lp;
+  }
+  if (prv_lp)
+    rc = getlineno(prv_lp);
+  return rc;
+}
+
+// 指定した行の次の行番号を取得する
+int16_t getNextLineNo(int16_t lineno) {
+  uint8_t* lp, *prv_lp = NULL;
+  int16_t rc = -1;
+  
+  lp = getlp(lineno); 
+  if (lineno == getlineno(lp)) { 
+    // 次の行に移動
+    lp+=*lp;
+    rc = getlineno(lp);
+  }
+  return rc;
+}
+
+// 指定した行のプログラムテキストを取得する
+char* getLineStr(int16_t lineno) {
+    uint8_t* lp = getlp(lineno);
+    if (lineno != getlineno(lp)) 
+      return NULL;
+    
+    // 行バッファへの指定行テキストの出力
+    clearlbuf();
+    putnum(lineno, 0,3); // 行番号を表示
+    c_putch(' ',3);    // 空白を入れる
+    putlist(lp+3,3);   // 行番号より後ろを文字列に変換して表示        
+    c_putch(0,3);      // \0を入れる
+    return tbuf;
+}
+
 void iinfo() {
   char top = 't';
-  //uint32_t adr =  (uint32_t)reinterpret_cast<char*>(sbrk(0));
   uint32_t adr = (uint32_t)&top;
   uint8_t* tmp = (uint8_t*)malloc(1);
   uint32_t hadr = (uint32_t)tmp;
   free(tmp);
-/*  
-  Serial.print("command entry:");
-  Serial.println(I_EOL, DEC);
-  Serial.print("Stack top:");
-  Serial.println(adr, HEX);
-  Serial.print("Heap top:");
-  Serial.println((uint32_t)tmp, HEX);
-  Serial.print("free:");
-  Serial.println(adr-(uint32_t)tmp, DEC);
-*/
-  c_puts("cmd entry:");
-  putnum(I_EOL,0);
+  
   newline();
   c_puts("stack top:");
   putHexnum((int16_t)(adr>>16),4);putHexnum((int16_t)(adr&0xffff),4);
@@ -3645,26 +3686,34 @@ unsigned char* iexe() {
     case I_CLV:       inew(2);       break;  // CLV 変数領域消去
     case I_INFO:      iinfo();       break;  // システム情報の表示(デバッグ用)
     
-    case I_LRUN: if(ilrun()) {  return cip; }  break;   
+    case I_LRUN: if(ilrun()) {  return clp; }  break;   
+    case I_LIST:   ilist();     break; // LIST
+    case I_EXPORT: iexport();   break; // EXPORTコマンド
 
-    case I_NEW:   // NEW
-    case I_LIST:  // LIST
+    case I_FILES:      ifiles();      break;
+    case I_CONFIG:     iconfig();     break;
+    case I_SAVECONFIG: isaveconfig(); break;
+    case I_ERASE:      ierase();      break; 
+    case I_NEW:        inew();        break;   // NEW
+
     case I_RUN:   // RUN
     case I_RENUM: // RENUM
     case I_LOAD:
     case I_SAVE:
-    case I_FILES:
-    case I_EXPORT:
-    case I_CONFIG:
-    case I_SAVECONFIG:
     case I_DELETE:
-    case I_ERASE:
       err = ERR_COM; //エラー番号をセット
       return NULL; //終了
 
     case I_COLON: // 中間コードが「:」の場合
       break; 
-    default: // 以上のいずれにも該当しない場合
+    default: 
+     cip--;
+     if (*cip >= I_PA0 && *cip <= I_PC15) {
+       igpio();
+       break; 
+     }
+      
+      // 以上のいずれにも該当しない場合
       err = ERR_SYNTAX; //エラー番号をセット
       break;
     } //中間コードで分岐の末尾
@@ -3681,29 +3730,7 @@ uint8_t icom() {
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
-  case I_NEW:          // I_NEWの場合（NEW命令）
-    if (*cip == I_EOL) // もし行末だったら
-      inew();          // NEW命令を実行
-    else               // 行末でなければ
-      err = ERR_SYNTAX;// エラー番号をセット
-    break;
-  case I_LIST:         // I_LISTの場合（LIST命令）
-      ilist();         // LIST命令を実行
-    break;
 
-  case I_EXPORT:  iexport();   break;// EXPORTコマンド
- 
-  case I_LRUN:
-    v = ilrun();
-    if (v) {
-      sc.show_curs(0);
-        irun(clp);     // RUN命令を実行
-      sc.show_curs(1);
-    } else {
-      //err = ERR_VALUE;
-    }
-    break;
-   
   case I_RUN:   sc.show_curs(0); irun();  sc.show_curs(1);   break; // RUN命令
   case I_RENUM: // I_RENUMの場合
     if (*cip == I_EOL || *(cip + 3) == I_EOL || *(cip + 7) == I_EOL)
@@ -3714,10 +3741,6 @@ uint8_t icom() {
   case I_DELETE:     idelete();     break;    
   case I_SAVE:       isave();       break;
   case I_LOAD:       iload();       break;
-  case I_FILES:      ifiles();      break;
-  case I_CONFIG:     iconfig();     break;
-  case I_SAVECONFIG: isaveconfig(); break;
-  case I_ERASE:      ierase();      break;
   
   case I_OK:   rc = 0;  break;// I_OKの場合
 

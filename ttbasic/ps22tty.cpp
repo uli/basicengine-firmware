@@ -297,7 +297,7 @@ uint8_t cnv2tty(keyEvent k) {
           case KEY_Pipe2:      rc = 0x1c; break;
           case KEY_R_brackets: rc = 0x1d; break;  
           case KEY_Hat:        rc = 0x1e; break;  
-          case KEY_Ro:         rc = 0x1f; break;  
+          case KEY_Ro:         rc = 0x1f; break;
         }
       }
       if (rc == 11) {

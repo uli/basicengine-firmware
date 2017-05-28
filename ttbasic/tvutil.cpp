@@ -144,6 +144,12 @@ void tv_scroll_up() {
   tv_clerLine(c_height-1);
 }
 
+// 1行分スクリーンのスクロールダウン
+void tv_scroll_down() {
+  TV.shift(*(tvfont+1), DOWN);
+  tv_clerLine(0);
+}
+
 // 点の描画
 void tv_pset(int16_t x, int16_t y, uint8_t c) {
   TV.set_pixel(x,y,c);

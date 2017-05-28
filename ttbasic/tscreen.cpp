@@ -15,6 +15,7 @@
 //  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
 //  修正日 2017/05/10, システムクロック48MHz時のtv_get_gwidth()不具合対応
+//  修正日 2017/05/28, 上下スクロール編集対応
 //
 
 #include <string.h>
@@ -28,6 +29,7 @@ void    tv_clerLine(uint16_t l) ;
 void    tv_insLine(uint16_t l);
 void    tv_cls();
 void    tv_scroll_up();
+void    tv_scroll_down();
 uint8_t tv_get_cwidth();
 uint8_t tv_get_cheight();
 uint16_t tv_get_gwidth();
@@ -48,6 +50,12 @@ void    tv_NTSC_adjust(int16_t ajst);
 
 void setupPS2(uint8_t kb_type);
 uint8_t ps2read();
+
+int16_t getPrevLineNo(int16_t lineno);
+int16_t getNextLineNo(int16_t lineno);
+char* getLineStr(int16_t lineno);
+int16_t getTopLineNum();
+int16_t getBottomLineNum();
 
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
@@ -282,6 +290,15 @@ void tscreen::scroll_up() {
   MOVE(pos_y, pos_x);
 }
 
+// 1行分スクリーンのスクロールダウン
+void tscreen::scroll_down() {
+  memmove(screen + width, screen, (height-1)*width);
+  dwaw_cls_curs();
+  tv_scroll_down();
+  clerLine(0);
+  MOVE(pos_y, pos_x);
+}
+
 // 指定行に空白行挿入
 void tscreen::Insert_newLine(uint16_t l) {
   if (l < height-1) {
@@ -446,6 +463,8 @@ void tscreen::movePosNextLineChar() {
       }      
       MOVE(pos_y+1, x);      
     }
+  } else if (pos_y+1 == height) {
+    edit_scrollUp();    
   }
 }
 
@@ -468,7 +487,9 @@ void tscreen::movePosPrevLineChar() {
       }      
       MOVE(pos_y-1, x);      
     }
-  }  
+  } else if (pos_y == 0){
+    edit_scrollDown();
+  }
 }
 
 // カーソルを行末に移動
@@ -528,6 +549,59 @@ uint8_t tscreen::enter_text() {
   return true;
 }
 
+// 編集中画面をスクロールダウンする
+uint8_t tscreen::edit_scrollDown() {
+  // 1行分スクロールダウンを試みる
+  int16_t lineno,prv_nm,len;
+  char* text;
+  lineno = getTopLineNum();
+  if (lineno > 0) {
+    prv_nm = getPrevLineNo(lineno);
+    if (prv_nm > 0) {
+      text = getLineStr(prv_nm);
+      len = strlen(text);
+      for (uint8_t i=0; i < len/width+1; i++) {
+        scroll_down();
+      }
+      strcpy((char*)&VPEEK(0,0),text);
+      //refresh();
+      for (uint8_t i=0; i < len/width+1; i++)
+         refresh_line(0+i);
+    } else {
+      scroll_down();      
+    }
+  } else {
+    scroll_down();
+  }
+   MOVE(pos_y, pos_x);
+}
+
+// 編集中画面をスクロールアップする
+uint8_t tscreen::edit_scrollUp() {
+  // 1行分スクロールアップを試みる
+  int16_t lineno,nm,len;
+  char* text;
+  lineno = getBottomLineNum();
+  if (lineno > 0) {
+    nm = getNextLineNo(lineno);
+    if (nm > 0) {
+      text = getLineStr(nm);
+      len = strlen(text);
+      for (uint8_t i=0; i < len/width+1; i++) {
+        scroll_up();
+      }
+      strcpy((char*)&VPEEK(0,height-1-(len/width)),text);
+      for (uint8_t i=0; i < len/width+1; i++)
+         refresh_line(height-1-i);
+    } else {
+      scroll_up();      
+    }
+  } else {
+    scroll_up();    
+  }
+   MOVE(pos_y, pos_x);
+}
+
 // スクリーン編集
 uint8_t tscreen::edit() {
   uint8_t ch;  // 入力文字
@@ -552,11 +626,19 @@ uint8_t tscreen::edit() {
         break;
         
       case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
-        moveBottom();
+        if (pos_x == 0 && pos_y == height-1) {
+          edit_scrollUp();
+        } else {
+          moveBottom();
+        }
         break;
         
       case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
-        locate(0, 0);
+        if (pos_x == 0 && pos_y == 0) {
+          edit_scrollDown();
+        } else {
+          locate(0, 0);
+        }  
         break;
 
       case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新

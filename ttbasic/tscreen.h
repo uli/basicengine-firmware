@@ -13,7 +13,8 @@
 //  修正日 2017/04/18, シリアルポート設定機能の追加,cscroll,gscroll表示処理の追加
 //  修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
-//  修正日 2017/06/19, getfontadr()の追加
+//  修正日 2017/05/19, getfontadr()の追加
+//  修正日 2017/05/28, 上下スクロール編集対応
 //
 
 #ifndef __tscreen_h__
@@ -84,6 +85,7 @@ class tscreen {
     void refresh();                                   // スクリーンリフレッシュ表示
     void refresh_line(uint16_t l);                    // 行の再表示
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ
+    void scroll_down();                               // 1行分スクリーンのスクロールダウン
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     void putch(uint8_t c);                            // 文字の出力
     uint8_t get_ch();                                 // 文字の取得
@@ -102,6 +104,8 @@ class tscreen {
     uint8_t enter_text();                             // 行入力確定ハンドラ
     void newLine();                                   // 改行出力
     void Insert_newLine(uint16_t l);                  // 指定行に空白挿入
+    uint8_t edit_scrollUp();                          // スクロールして前行の表示
+    uint8_t edit_scrollDown();                        // スクロールして次行の表示
 
     void MOVE(uint8_t y, uint8_t x);                  // キャラクタカーソル移動
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
