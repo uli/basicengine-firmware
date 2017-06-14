@@ -15,6 +15,7 @@
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
 //  修正日 2017/05/19, getfontadr()の追加
 //  修正日 2017/05/28, 上下スクロール編集対応
+//  修正日 2017/06/09, シリアルからは全てもコードを通すように修正
 //
 
 #ifndef __tscreen_h__
@@ -64,7 +65,7 @@ class tscreen {
     uint16_t maxllen;           // 1行最大長さ
     uint8_t*  text;             // 行確定文字列
     uint8_t flgIns;             // 編集モード
-
+    uint8_t dev;                // 文字入力デバイス
     uint8_t flgCur;             // カーソル表示設定
     //uint8_t flgSirialout;       // SUBシリアル入出力指定フラグ
     uint8_t serialMode;         // シリアルポートモード
@@ -89,6 +90,7 @@ class tscreen {
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     void putch(uint8_t c);                            // 文字の出力
     uint8_t get_ch();                                 // 文字の取得
+    inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得
     uint8_t isKeyIn();                                // キー入力チェック
     //int16_t peek_ch();                              // キー入力チェック(文字参照)
     void Insert_char(uint8_t c);                      // 現在のカーソル位置に文字を挿入
@@ -138,6 +140,8 @@ class tscreen {
     };
 
     // グラフィック描画
+    uint8_t* getGRAM();
+    int16_t getGRAMsize();
     void pset(int16_t x, int16_t y, uint8_t c);
     void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
     void circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);

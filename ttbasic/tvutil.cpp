@@ -8,10 +8,12 @@
 // 修正日 2017/04/25, gscrollの機能修正, gpeek,ginpの追加
 // 修正日 2017/04/28, tv_NTSC_adjustの追加
 // 修正日 2017/05/19, tv_getFontAdr()の追加
+// 修正日 2017/05/30, SPI2(PA7 => PB15)に変更
+// 修正日 2017/06/14, SPI2時のPB13ピンのHIGH設定対策
 
 #include <TTVout.h>
 #include "tscreen.h"
-
+#define NTSC_VIDEO_SPI 2
 /*
 #define TV_DISPLAY_FONT font6x8
 #include <font6x8.h>
@@ -55,7 +57,13 @@ void tv_init(int16_t ajst) {
   f_height = *(tvfont+1);             // 縦フォントドット数
   
   TNTSC.adjust(ajst);
-  TV.begin(SC_DEFAULT);
+  TV.begin(SC_DEFAULT,NTSC_VIDEO_SPI); // SPI2を利用
+
+#if NTSC_VIDEO_SPI == 2
+  // SPI2 SCK2(PB13ピン)が起動直後にHIGHになっている修正
+   pinMode(PB13, INPUT);  
+#endif
+
   TV.select_font(tvfont);
   g_width  = TNTSC.width();           // 横ドット数
   g_height = TNTSC.height();          // 縦ドット数
@@ -71,6 +79,17 @@ void tv_init(int16_t ajst) {
 uint8_t* tv_getFontAdr() {
   return tvfont;
 }
+
+// GVRAMアドレス取得
+uint8_t* tv_getGVRAM() {
+  return vram;
+}
+
+// GVRAMサイズ取得
+uint16_t tv_getGVRAMSize() {
+  return (g_width>>3)*g_height;
+}
+
 // 画面文字数横
 uint8_t tv_get_cwidth() {
   return c_width;

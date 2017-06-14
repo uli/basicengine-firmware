@@ -23,7 +23,7 @@ void setup(void){
   //while (!Serial.isConnected()) delay(100);
   //delay(3000);
 #endif
-  //randomSeed(analogRead(0));
+  randomSeed(analogRead(PA0));
 }
 
 void loop(void){

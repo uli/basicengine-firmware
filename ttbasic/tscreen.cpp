@@ -16,6 +16,7 @@
 //  修正日 2017/04/29, キーボード、NTSCの補正対応
 //  修正日 2017/05/10, システムクロック48MHz時のtv_get_gwidth()不具合対応
 //  修正日 2017/05/28, 上下スクロール編集対応
+//  修正日 2017/06/09, シリアルからは全てもコードを通すように修正
 //
 
 #include <string.h>
@@ -56,6 +57,10 @@ int16_t getNextLineNo(int16_t lineno);
 char* getLineStr(int16_t lineno);
 int16_t getTopLineNum();
 int16_t getBottomLineNum();
+
+uint8_t* tv_getFontAdr() ;
+uint8_t* tv_getGVRAM();
+uint16_t* tv_getGVRAMSize();
 
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
@@ -142,6 +147,7 @@ void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
   serialMode = 0;
   
   // ビデオ出力設定
+
   tv_init(NTSCajst);
     
   width   = tv_get_cwidth();
@@ -188,20 +194,25 @@ uint8_t tscreen::get_ch() {
     if(serialMode == 0) {
       if (Serial.available()) {
         c = Serial.read();
+        dev = 1;
         break;
       }
     } else if (serialMode == 1) {
       if (Serial1.available()) {
         c = Serial1.read();
+        dev = 2;
         break;
       }
     }
     c = ps2read();
-    if (c)
+    if (c) {
+      dev = 0;
       break;
+    }
   }
   return c;  
 }
+
 /*
 // キー入力チェック(文字参照)
 int16_t tscreen::peek_ch() {
@@ -609,91 +620,109 @@ uint8_t tscreen::edit() {
   do {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
-    switch(ch) {
-      case KEY_CR:         // [Enter]キー
-      //case KEY_ESCAPE:
-      
-        return enter_text();
-        break;
-
-      case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
-        cls();
-        locate(0,0);
-        break;
- 
-      case KEY_HOME:      // [HOMEキー] 行先頭移動
-        locate(0, pos_y);
-        break;
+    if (dev != 1) { // USB-Serial(dev=1)は入力コードのキー解釈を行わない
+      switch(ch) {
+        case KEY_CR:         // [Enter]キー
+          return enter_text();
+          break;
+  
+        case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
+          cls();
+          locate(0,0);
+          break;
+   
+        case KEY_HOME:      // [HOMEキー] 行先頭移動
+          locate(0, pos_y);
+          break;
+          
+        case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
+          if (pos_x == 0 && pos_y == height-1) {
+            edit_scrollUp();
+          } else {
+            moveBottom();
+          }
+          break;
+          
+        case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
+          if (pos_x == 0 && pos_y == 0) {
+            edit_scrollDown();
+          } else {
+            locate(0, 0);
+          }  
+          break;
+  
+        case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
+          refresh();  break;
+  
+        case KEY_END:       // [ENDキー] 行の右端移動
+           moveLineEnd();
+           break;
+  
+        case KEY_IC:         // [Insert]キー
+          flgIns = !flgIns;
+          break;        
+  
+        case KEY_BACKSPACE:  // [BS]キー
+            movePosPrevChar();
+            delete_char();
+          break;        
+  
+        case KEY_DC:         // [Del]キー
+        case SC_KEY_CTRL_X:
+          delete_char();
+          break;        
         
-      case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
-        if (pos_x == 0 && pos_y == height-1) {
-          edit_scrollUp();
-        } else {
-          moveBottom();
+        case KEY_RIGHT:      // [→]キー
+          movePosNextChar();
+          break;
+  
+        case KEY_LEFT:       // [←]キー
+          movePosPrevChar();
+          break;
+  
+        case KEY_DOWN:       // [↓]キー
+          movePosNextLineChar();
+          break;
+        
+        case KEY_UP:         // [↑]キー
+          movePosPrevLineChar();
+          break;
+  
+        case SC_KEY_CTRL_N:  // 行挿入 
+          Insert_newLine(pos_y);       
+          break;
+  
+        case SC_KEY_CTRL_D:  // 行削除
+          clerLine(pos_y);
+          break;
+        
+        default:             // その他
+        
+        if (IS_PRINT(ch)) {
+          Insert_char(ch);
         }
-        break;
         
-      case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
-        if (pos_x == 0 && pos_y == 0) {
-          edit_scrollDown();
-        } else {
-          locate(0, 0);
-        }  
         break;
-
-      case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
-        refresh();  break;
-
-      case KEY_END:       // [ENDキー] 行の右端移動
-         moveLineEnd();
-         break;
-
-      case KEY_IC:         // [Insert]キー
-        flgIns = !flgIns;
-        break;        
-
-      case KEY_BACKSPACE:  // [BS]キー
-        movePosPrevChar();
-        delete_char();
-        break;        
-
-      case KEY_DC:         // [Del]キー
-      case SC_KEY_CTRL_X:
-        delete_char();
-        break;        
-      
-      case KEY_RIGHT:      // [→]キー
-        movePosNextChar();
-        break;
-
-      case KEY_LEFT:       // [←]キー
-        movePosPrevChar();
-        break;
-
-      case KEY_DOWN:       // [↓]キー
-        movePosNextLineChar();
-        break;
-      
-      case KEY_UP:         // [↑]キー
-        movePosPrevLineChar();
-        break;
-
-      case SC_KEY_CTRL_N:  // 行挿入 
-        Insert_newLine(pos_y);       
-        break;
-
-      case SC_KEY_CTRL_D:  // 行削除
-        clerLine(pos_y);
-        break;
-      
-      default:             // その他
-      
-      if (IS_PRINT(ch)) {
-        Insert_char(ch);
-      }   
-      break;
+      }
+    } else {
+      // PS/2キーボード以外からの入力
+      if (ch == KEY_CR) {
+        return enter_text(); 
+      } else {
+        Insert_char(ch);      
+      }
     }
   } while(1);
+}
+
+// グラフィク表示用メモリアドレス参照
+uint8_t* tscreen::getGRAM() {
+  return tv_getGVRAM();
+}
+
+// グラフィク表示用メモリサイズ取得
+int16_t tscreen::getGRAMsize() {
+  return getGRAMsize();
 }
 
 // ドット描画
