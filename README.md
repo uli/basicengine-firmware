@@ -49,82 +49,15 @@ RTC用バックアップ電池
 
 ![ピン割り付け](./image/03_1.png)
 
-**修正内容**
-- ラインエディタ部の差し換え  
- オリジナルのラインエディタ部分をフルスリーンテキストエディタに差し換えました.  
- 昔のBASICっぽい編集操作を出来るようにしました.  
+**オリジナル版からの拡張機能**
+ NTSCビデオ出力対応  
+ PS/2キーボード対応  
+ フルスリーンテキストエディタ編集対応  
+ GPIO、I2C、シリアル通信対応  
+ コマンド・関数の追加
 
-- コマンドの追加  
-  - **RENUM** ：行番号再割り当て  
-  - **CLS** ：画面クリア  
-  - **LOCATE**：カーソル移動    
-  - **WAIT**：時間待ち  
-  - **VPEEK**：スクリーン位置の文字コード参照  
-  - **CHR$()**、**HEX$()**、**BIN$()**、**ASC()**、**INKEY()** 関数の追加  
-  - **TICK()** 関数、**RESETTIK**の追加  
-  - **?**：**PRINT**文の省略系を追加  
-  - **GPIO**、**OUT**、**IN**、**ANA**、**POUT**,**SHIFTOUT**、**SHIFTIN** 、**PWM**：GPIO利用コマンドの追加  
-  - **I2CW**、**I2CR**：I2C利用コマンドの追加  
-  - **POKE**、**PEEK**：メモリ領域参照コマンドの追加  
-  - **DATE**、**SETDATE**、**GETTIME**: 内蔵RTC利用コマンド追加  
-  - **SAVE**、**LOAD**： 内部フラッシュメモリへのプログラム保存機能の追加  
-  - **EEPFORMAT**,**EEPWRITE**,**EEPREAD**コマンドの追加(仮想EEPROM機能)  
-  - **AND**、**OR**、!、~、!の追加  
-  - **PSET**,**LINE**,**RECT**,**CIRCLE**,**GPRINT**のグラフィック描画コマンド追加  
-  - **SMODE**,**SOPEN**,**SCLOSE**,**SERITE**,**SREAD**,**SREADY**,**SPRINT**のシリアル通信コマンドの追加  
-  - **BITMAP**,**CSCROLL**,**GSCROLL**,コマンドの追加  
-  - **DELETE**,**EXPORT**,**CONFIG**,**SAVECONFIG**,**LRUN**の追加  
-  - **MAP()**,**DMP$()**の追加
-- 文法の変更  
-  - 定数の16進数表記対応(例 $1234,$AB)  
-  - 命令文区切りを';'から':'に変更  
-  - **PRINT**文の行継続を';'でも可能に変更  
-  - **PRINT**文の数値桁指定#nのnにマイナス値指定時、空白ではなく0埋め出来るように追加  
-  - **IF**文の不一致判定を"!="でも可能に変更、ELSE文対応    
-  - 演算子 剰余計算'%'、シフト演算子 '>>'、'<<'を追加  
-  - AND・OR・NOT、ビットOR'|'、ビットAND'&'ビット反転~、XOR'^'を追加  
-  - **STOP**命令を**END**に変更    
-  - **SIZE**を**FREE**に変更  
-  - 文字列囲みにシングルクォーテーションを利用出来ないように変更  
-  - コメントをシングルクォーテーション(')での記述出来るように修正  
-  - 配列の連続値設定を可能した(例: @(0)=1,2,3,4,5)    
-  - GOTO,GOSUBをラベル対応(例: GOTO "ラベル" ダブルクォーテーション囲み)  
-  - INPUT文の入力改善、オーバーフローエラー回避対策追加    
-- 編集機能の変更  
-  - 実行中プログラムの中断を**[ESC]**を2回押し、**[CTRL-C]**に変更  
-- その他  
-  - プログラム領域を4096バイトに拡大  
-  - プログラム保存数を10個に拡大  
-  - 配列サイズを32から100に拡大  
-  - エラーメッセージ**Illegal value**の追加  
-  - エラーメッセージ**Out of range value**の追加  
-  - エラーメッセージ**Program not found**の追加  
-  - 定数:HIGH、LOW、PA00、PA01、..、PC15のピン名の追加  
-
-## フルスリーンテキストエディタの機能
-※利用にはNTSC対応のTVモニターデスプレイが必要です.  
-
-**スクリーンサイス**  
-224ｘ216ドット  
-6x8ドットフォント利用時 37x27文字  
-8x8ドットフォント利用時 28x27文字  
-
-**利用可能キー**  
-- [カタカナ/ひらがな/ローマ字]、[CTRL-K]: 半角カタカナローマ字入力のON/OFF  
-- [←][→][↑][↓] ： カーソル移動 カーソルキー  
-- [Delete]、[CTRL-X] ：カーソル位置の文字削除  
-- [BackSpace]：カーソル前の文字削除と前に移動  
-- [PageUP]、[PageDown]：カーソルを画面の上端、下端に移動  
-- [F5]、[CTRL-R]：画面の再表示  
-- [HOME]、[END]：行内でカーソルを左端、右端に移動  
-- [INS]：挿入・上書きのトグル切り替え  
-- [Enter]：行入力確定  
-- [ESC]、[CTRL-C]：実行プログラムの中断
-- [F1]、[CTRL-L]：画面のクリア
-
-## コマンドの説明
-[リファレンスマニュアル(nmanual.pdf)](https://github.com/Tamakichi/ttbasic_arduino/raw/ttbasic_arduino_ps2_ntsc/manual.pdf)に記載しています(ただし追加・修正中)  
-(リンクを直接クリックして閲覧すると表示が遅いです。ダウンロードして閲覧して下さい)  
+詳細は[リファレンスマニュアル(nmanual.pdf)](https://github.com/Tamakichi/ttbasic_arduino/raw/ttbasic_arduino_ps2_ntsc/manual.pdf)に  
+記載しています(ただし追加・修正中)  
 
 ## スケッチの書込み手順
 1)ライブラリの配置  
@@ -149,6 +82,10 @@ Arduino STM32環境に依存するライブラリのため、下記のディレ�
    https://github.com/Tamakichi/TTVoutfont  
  - Arduino STM32用 PS/2 キーボードライブラリ(最新版)  
    https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard  
+ - Arduino SDライブラリ(修正版)  
+   https://github.com/Tamakichi/SD  
+- Arduino用Bitmap画像ロードライブラリ    
+   https://github.com/Tamakichi/Arduino-SD-Bitmap      
 
 2)スケッチ本体のフォルダ**ttbasic**を各自のスケッチ配置フォルダの配置  
 3)Arduino IDE(Arduino STM32環境インストール済み)の起動  
