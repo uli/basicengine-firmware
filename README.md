@@ -24,6 +24,12 @@ STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確
 Blue Pillボード利用構成図  
 ![構成図](./image/02.png)  
 
+SDカードモジュール接続  
+![SDカード](./image/02_2.png)  
+
+RTC用バックアップ電池  
+![RTC用電池](./image/02_1.png)  
+
 ピン利用構成  
 ![ピン割り付け](./image/05.png)  
 
