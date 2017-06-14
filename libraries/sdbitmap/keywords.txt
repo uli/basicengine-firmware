@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map For sdbitmap
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+sdbitmap	KEYWORD1
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+init	KEYWORD2
+setFilename	KEYWORD2
+open	KEYWORD2
+close	KEYWORD2
+getWidth	KEYWORD2
+getHeight	KEYWORD2
+getImageSize	KEYWORD2
+getByte	KEYWORD2
+getBitmap	KEYWORD2
+getBitmapEx	KEYWORD2
+getRowLength	KEYWORD2
+getWidth	KEYWORD2 
+getHeight	KEYWORD2
+getLength	KEYWORD2
+open	KEYWORD2
+close	KEYWORD2
+getCode	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+
