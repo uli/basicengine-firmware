@@ -76,13 +76,15 @@ DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/st
 
 2)コマンドプロンプト上でコマンド実行  
 上記のフォルダ**bin**に移動し、次のコマンドを実行します.  
-**ttwrite COM9**  
+**ttwrite COM9** **C:\arduino\arduino-1.8.1**  
 
-これで書き込みを行います.  
-
-COM9はBlue PillボードのUSB-シリアルのポートを指定します.  
+COM9はBlue PillボードのUSB-シリアルのポートを指定します.  
 各自の環境に合わせて指定して下さい.  
 コマンドプロンプト上で、MODE[ENter]でも調べられます.  
+
+2番目の引数**C:\arduino\arduino-1.8.1**は、
+Arduino IDEがインストールされているディレクトリを指定します.  
+Javaをインストールしている場合は省略可能です.  
 
 ![コマンドプロンプト](./image/09.png)  
 
