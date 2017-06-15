@@ -568,7 +568,7 @@ uint8_t* v2realAddr(uint16_t vadr) {
     radr = vadr - V_PRG_TOP + (uint8_t*)listbuf;
   } else if ((vadr >= V_MEM_TOP) && (vadr < V_FNT_TOP)) {   // ユーザーワーク領域
     radr = vadr - V_MEM_TOP + mem;    
-  } else if ((vadr >= V_FNT_TOP) && (vadr < V_FNT_TOP+SIZE_MEM)) { // フォント領域
+  } else if ((vadr >= V_FNT_TOP) && (vadr < V_GRAM_TOP)) {  // フォント領域
     radr = vadr - V_FNT_TOP + sc.getfontadr();
   } else if ((vadr >= V_GRAM_TOP) && (vadr < V_GRAM_TOP+6048)) { // グラフィク表示用メモリ領域
     radr = vadr - V_GRAM_TOP + sc.getGRAM();
