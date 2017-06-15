@@ -59,9 +59,38 @@ RTC用バックアップ電池
 詳細は[リファレンスマニュアル(nmanual.pdf)](https://github.com/Tamakichi/ttbasic_arduino/raw/ttbasic_arduino_ps2_ntsc/manual.pdf)に  
 記載しています(ただし追加・修正中)  
 
+## ファームウェア書込み手順(Windows 10の場合)  
+V0.83からはバイナリー形式のファームウェアを添付しました.  
+この書き込み方法について説明します.  
+(事前準備)  
+「豊四季Tiny BASIC for Arduino STM32」ファームウェアの書込みには、  
+事前にArduino STM32環境を導入し、付随するUSBドラーバーをインストール等が必要です.  
+また、Blue Pillボード(または他のSTM32F103C8T6ボード)ブートローダを書きこんでおく必要があります.  
+このあたりの設定は、DEKOさんがまとめました記事が参考になると思います(素晴らしいまとめの公開に感謝!!)  
+DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/stm32f103c8t6.html  
+
+1)ブロジェクト一式のダウンロード  
+プロジェクト一式をダウンロードし、解凍した中のフォルダ**bin**内のフォルダを開いて下さい.  
+![binフォルダ](./image/08.png)  
+
+2)コマンドプロンプト上でコマンド実行  
+上記のフォルダ**bin**に移動し、次のコマンドを実行します.  
+>ttwrite COM9  
+これで書き込みを行います.  
+
+COM9はBlue PillボードのUSB-シリアルのポートを指定します.  
+各自の環境に合わせて指定して下さい.  
+コマンドプロンプト上で、MODE[ENter]でも調べられます.  
+
+![コマンドプロンプト](./image/9.png)  
+
+
 ## スケッチの書込み手順
+Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for Arduino STM32」  
+スケッチ本体の他に、ライブラリが必要になります.  
+
 1)ライブラリの配置  
-プロジェクト一式をダウンロードし、解凍した中の、フォルダ**libraries**内のフォルダを  
+プロジェクト一式をダウンロードし、解凍した中の、フォルダ**libraries**内のフォルダを  
 各自のArduino環境のライブラリ配置ディレクトリ**libraries**に配置して下さい.  
 ![ディレクトリ構成](./image/06.png)  
 
@@ -86,6 +115,8 @@ Arduino STM32環境に依存するライブラリのため、下記のディレ�
    https://github.com/Tamakichi/SD  
 - Arduino用Bitmap画像ロードライブラリ    
    https://github.com/Tamakichi/Arduino-SD-Bitmap      
+- ビットマップ操作ライブラリ V 0.1  
+   https://github.com/Tamakichi/libBitmap       
 
 2)スケッチ本体のフォルダ**ttbasic**を各自のスケッチ配置フォルダの配置  
 3)Arduino IDE(Arduino STM32環境インストール済み)の起動  
