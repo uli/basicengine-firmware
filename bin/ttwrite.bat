@@ -1,4 +1,5 @@
 @echo off
+PATH=%PATH%;%2\java\bin;
 set driverLetter=%~dp0
 set driverLetter=%driverLetter:~0,2%
 %driverLetter%
