@@ -13,7 +13,7 @@
 #include <string.h>
 #include <libBitmap.h>
 
-#define SD_BEGIN() SD.begin(F_CPU/2,cs)
+#define SD_BEGIN() SD.begin(F_CPU/4,cs)
 extern RTClock rtc;
 void c_puts(const char *s, uint8_t devno=0);
 void newline(uint8_t devno=0);
