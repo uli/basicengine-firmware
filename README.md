@@ -75,7 +75,8 @@ DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/st
 
 2)コマンドプロンプト上でコマンド実行  
 上記のフォルダ**bin**に移動し、次のコマンドを実行します.  
->ttwrite COM9  
+**ttwrite COM9**  
+
 これで書き込みを行います.  
 
 COM9はBlue PillボードのUSB-シリアルのポートを指定します.  
