@@ -1,4 +1,4 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/06/16)
+## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/06/18)
 (NEW) SDカード対応  
 　(旧版はreleasesの方からダウンロードできます)  
 
