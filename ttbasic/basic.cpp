@@ -111,7 +111,7 @@
 //  修正日 2017/06/7,  BLOAD,BSAVE,DWBMP,CATの追加
 //  修正日 2017/06/10, toktoi()内のキーワード検索処理の修正(定義順による優先度制約除去)
 //  修正日 2017/06/11, INPUTにて入力中にESC,CTRL-Cで中断出来るように修正
-//  修正日 2017/06/18, LOADの引数なし時エラーとなる不具合の対応
+//  修正日 2017/06/18, LOADの引数なし時エラーとなる不具合の対応,I2Cの不具合対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -368,7 +368,7 @@ enum {
  I_CHR, I_BIN, I_HEX, I_DMP, I_STRREF,   // 文字列関数(5)
  I_ABS, I_MAP, I_ASC, I_FREE, I_RND, I_INKEY, I_LEN,   // 数値関数(20)
  I_TICK, I_PEEK, I_VPEEK, I_GPEEK, I_GINP,
- I_IRCV, I_ISND, I_DIN, I_ANA, I_SHIFTIN,
+ I_I2CW, I_I2CR, I_DIN, I_ANA, I_SHIFTIN,
  I_SREADY, I_SREAD, I_EEPREAD,
  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_GPRINT, I_GSCROLL, // グラフィック表示コマンド(7)
  I_GPIO, I_DOUT, I_POUT, I_SHIFTOUT,  // GPIO・入出力関連コマンド(4)
@@ -407,7 +407,7 @@ const uint8_t i_nsa[] = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_LT, I_LNOT, I_BITREV, I_XOR,
-  I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_ISND, I_IRCV,
+  I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F, I_PWM,
   I_DIN, I_ANA, I_SHIFTIN, I_MAP, I_DMP,
   I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, 
@@ -2489,7 +2489,7 @@ int16_t ii2cw() {
   return rc;
 }
 
-// I2CR関数  ISND(I2Cアドレス, 送信データアドレス, 送信データサイズ,受信データアドレス,受信データサイズ)
+// I2CR関数  I2CR(I2Cアドレス, 送信データアドレス, 送信データサイズ,受信データアドレス,受信データサイズ)
 int16_t ii2cr() {
   int16_t  i2cAdr, sdtop, sdlen,rdtop,rdlen;
   uint8_t* sdptr;
@@ -3920,8 +3920,8 @@ int16_t ivalue() {
     break;
 
   case I_PEEK: value = ipeek();   break;     // PEEK()関数
-  case I_ISND:  value = ii2cw();   break;    // I2CW()関数
-  case I_IRCV:  value = ii2cr();   break;    // I2CW()関数
+  case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
+  case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
   case I_SHIFTIN: value = ishiftIn(); break; // SHIFTIN()関数
   
   // 定数
