@@ -2464,7 +2464,7 @@ int16_t ii2cw() {
   int16_t  i2cAdr, ctop, clen, top, len;
   uint8_t* ptr;
   uint8_t* cptr;
-  int8_t  rc;
+  int16_t  rc;
 
   if (checkOpen()) return 0;
   if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
@@ -2481,10 +2481,14 @@ int16_t ii2cw() {
 
   // I2Cデータ送信
   I2C_WIRE.beginTransmission(i2cAdr);
-  if (clen)
-    I2C_WIRE.write(cptr, clen);
-  if (len)
-    I2C_WIRE.write(ptr, len);
+  if (clen) {
+    for (uint16_t i = 0; i < clen; i++)
+      I2C_WIRE.write(cptr++, 1);
+  }
+  if (len) {
+    for (uint16_t i = 0; i < len; i++)
+      I2C_WIRE.write(ptr++, 1);
+  }
   rc =  I2C_WIRE.endTransmission();
   return rc;
 }
