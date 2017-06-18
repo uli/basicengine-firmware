@@ -262,8 +262,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
 //  SDカード利用失敗     : SD_ERR_INIT
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  
-uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
- if (SD_BEGIN() == false) 
+uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
+if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
   if(mode) {
     if (SD.exists(tfname))

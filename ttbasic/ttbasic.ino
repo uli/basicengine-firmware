@@ -14,6 +14,7 @@ void setup(void){
   // put your setup code here, to run once:
   
   //Serial.begin(115200);
+  //Serial.end();
   // USBのジッター低減
   //nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
   //nvic_irq_set_priority(NVIC_USB_LP_CAN_RX0,7);  // USB割り込み優先レベル設定

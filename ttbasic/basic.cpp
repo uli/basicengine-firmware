@@ -111,6 +111,7 @@
 //  修正日 2017/06/7,  BLOAD,BSAVE,DWBMP,CATの追加
 //  修正日 2017/06/10, toktoi()内のキーワード検索処理の修正(定義順による優先度制約除去)
 //  修正日 2017/06/11, INPUTにて入力中にESC,CTRL-Cで中断出来るように修正
+//  修正日 2017/06/18, LOADの引数なし時エラーとなる不具合の対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -132,8 +133,10 @@
 #define SIZE_LSTK 15     // FOR stack size(5/nest)
 #define SIZE_MEM  1024   // 自由利用データ領域
 
-// I2Cライブラリの選択
-#define I2C_USE_HWIRE  1 // 1:HWire 0:Wire(ソフトエミュレーション)
+
+#define I2C_USE_HWIRE  1 // I2Cライブラリの選択 0:Wire(ソフトエミュレーション) 1:HWire 
+#define USE_INNERRTC   1 // 内蔵RTCの利用指定  0:利用しない 1:利用する
+#define USE_SD_CARD    1 // SDカードの利用 
 
 // SRAMの物理サイズ(バイト)
 #define SRAM_SIZE      20480 // STM32F103C8T6
@@ -156,7 +159,9 @@ tscreen sc;
 
 // *** SDカード管理 ****************
 #include "sdfiles.h"
+#if USE_SD_CARD == 1
 sdfiles fs;
+#endif 
 
 // **** プロフラム保存用定義 ********
 #include <TFlash.h>
@@ -192,7 +197,6 @@ uint8_t saveConfig();
 void mem_putch(uint8_t c);
 
 // **** RTC用宣言 ********************
-#define USE_INNERRTC   1  // 内蔵RTCの利用指定 0:利用しない 1:利用する
 #if USE_INNERRTC == 1
   #include <RTClock.h>
   #include <time.h>
@@ -281,8 +285,10 @@ inline void c_putch(uint8_t c, uint8_t devno = 0) {
     sc.gputch(c);  
   else if (devno == 3)
    mem_putch(c);
+#if USE_SD_CARD == 1
   else if (devno == 4)
     fs.putch(c);
+#endif
 } 
 
 // 改行
@@ -295,10 +301,12 @@ void newline(uint8_t devno=0) {
     sc.gputch('\n');
   else if (devno == 3)
     mem_putch('\n');
+#if USE_SD_CARD == 1
   else if (devno == 4) {
     fs.putch('\x0d'); 
     fs.putch('\x0a'); 
   }
+#endif
 }
 
 // tick用支援関数
@@ -1806,6 +1814,7 @@ void isave() {
     }
   } else if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
   if (mode == 1) {
+#if USE_SD_CARD == 1
     // SDカードへの保存
     if (ascii) {
       rc = fs.tmpOpen(fname,1);
@@ -1824,6 +1833,7 @@ void isave() {
         err = ERR_FILE_WRITE;
       }
     }
+#endif
   } else {
     // 内部フラッシュメモリへの保存
     for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) 
@@ -1872,7 +1882,7 @@ void ierase() {
 uint8_t loadPrgText(char* fname, uint8_t newmode = 0) {
   int16_t rc;
   int16_t len;
-
+#if USE_SD_CARD == 1
   rc = fs.tmpOpen(fname,0);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
@@ -1900,6 +1910,7 @@ uint8_t loadPrgText(char* fname, uint8_t newmode = 0) {
      }
   }
   fs.tmpClose();
+#endif
   return 0;
 }
 
@@ -2024,12 +2035,14 @@ void ifiles() {
          strcpy(fname,"/");
       }
     }
+#if USE_SD_CARD == 1
     rc = fs.flist(fname, wcard);
     if (rc == SD_ERR_INIT) {
       err = ERR_SD_NOT_READY;
     } else if (rc == SD_ERR_OPEN_FILE) { 
       err = ERR_FILE_OPEN;
     }    
+#endif
   } else if (*cip == I_EOL || *cip == I_COLON) {  
     // フラッシュメモリのプログラムリスト
     save_clp = clp;
@@ -3194,6 +3207,7 @@ void ildbmp() {
     return;
   }
   // 画像のロード
+#if USE_SD_CARD == 1
   rc = fs.loadBitmap(fname, ptr, x, y, w, h, mode);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
@@ -3202,6 +3216,7 @@ void ildbmp() {
   } else if (rc == SD_ERR_READ_FILE) {
     err =  ERR_FILE_READ;
   }
+#endif
 }
 
 // DWBMP  "ファイル名" ,X,Y,BX,BY,W,H[,mode]
@@ -3255,6 +3270,7 @@ void idwbmp() {
   // 画像のロード
   bw = sc.getGWidth()/8;
   ptr = sc.getGRAM() + bw*y + x/8;
+#if USE_SD_CARD == 1
   rc = fs.loadBitmapToGVRAM(fname, ptr, bw, bx, by, w, h, mode);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
@@ -3263,6 +3279,7 @@ void idwbmp() {
   } else if (rc == SD_ERR_READ_FILE) {
     err =  ERR_FILE_READ;
   }
+#endif
 }
 
 // MKDIR "ファイル名"
@@ -3286,13 +3303,14 @@ void imkdir() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
-
+#if USE_SD_CARD == 1
   rc = fs.mkdir(fname);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
     err = ERR_BAD_FNAME;
   }
+#endif
 }
 
 // RMDIR "ファイル名"
@@ -3317,13 +3335,14 @@ void irmdir() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
-
+#if USE_SD_CARD == 1
   rc = fs.rmdir(fname);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
     err = ERR_BAD_FNAME;
   }
+#endif
 }
 /****
 // RENAME "現在のファイル名","新しいファイル名"
@@ -3404,12 +3423,13 @@ void iremove() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
-
+#if USE_SD_CARD == 1
   rc = fs.remove(fname);
   if (rc) {
     err = ERR_FILE_WRITE;
     return;    
   }
+#endif
 }
 
 // BSAVE "ファイル名", アドレス
@@ -3450,6 +3470,7 @@ void ibsave() {
   }
 
   // ファイルオープン
+#if USE_SD_CARD == 1
   rc = fs.tmpOpen(fname,1);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
@@ -3474,6 +3495,7 @@ void ibsave() {
 
 DONE:
   fs.tmpClose();
+#endif
   return;
 }
 
@@ -3511,7 +3533,7 @@ void ibload() {
     err = ERR_RANGE;
     return;
   }
-
+#if USE_SD_CARD == 1
   // ファイルオープン
   rc = fs.tmpOpen(fname,0);
   if (rc == SD_ERR_INIT) {
@@ -3539,6 +3561,7 @@ void ibload() {
 
 DONE:
   fs.tmpClose();
+#endif  
   return;
 }
 
@@ -3564,7 +3587,7 @@ void  icat() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
-
+#if USE_SD_CARD == 1
   while(1) {
     rc = fs.textOut(fname, line, sc.getHeight()); 
     if (rc < 0) {
@@ -3588,6 +3611,7 @@ void  icat() {
       break;      
     line += sc.getHeight();
   }
+#endif
 }
 
 //
@@ -3635,9 +3659,12 @@ uint8_t ilrun() {
     mode = 1;
     cip++;
   } else {
-   // 内部フラッシュメモリからの読込＆実行
-   if ( getParam(prgno, 0, 9, false) )
-     return 0; // プログラム番号   
+    // 内部フラッシュメモリからの読込＆実行
+    if (*cip == I_EOL) {
+     prgno = 0;
+    } else { if ( getParam(prgno, 0, 9, false) )
+     return 0; // プログラム番号
+    }
   }
  
  if (islrun) {
@@ -3669,6 +3696,7 @@ uint8_t ilrun() {
       return 0;
     }
   } else {
+#if USE_SD_CARD == 1
     // SDカードからプログラムのロード
     // SDカードからのロード
     fg = fs.IsText(fname); // 形式チェック
@@ -3703,6 +3731,7 @@ uint8_t ilrun() {
     }
     if (err)
       return 0;  
+#endif
   }
 
   // 行番号・ラベル指定の処理
@@ -4204,10 +4233,14 @@ char* getLineStr(int16_t lineno) {
 void iinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
+Serial.println("STEP1");  
   uint8_t* tmp = (uint8_t*)malloc(1);
+Serial.println("STEP2");  
   uint32_t hadr = (uint32_t)tmp;
+Serial.println("STEP3");  
   free(tmp);
-  
+Serial.println("STEP4");
+
   c_puts("stack top:");
   putHexnum((int16_t)(adr>>16),4);putHexnum((int16_t)(adr&0xffff),4);
   newline();
@@ -4608,9 +4641,10 @@ void basic() {
 
   I2C_WIRE.begin();  // I2C利用開始
 
+#if USE_SD_CARD == 1
   // SDカード利用
   fs.init(); // この処理ではGPIOの操作なし
-
+#endif
   icls();
   char* textline;    // 入力行
 

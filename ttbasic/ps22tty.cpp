@@ -268,7 +268,7 @@ void setupPS2(uint8_t kb_type = false) {
   } 
   
   rb_init(&kbuf, sizeof(kdata), kdata);
-  
+  //kb.setPriority(0);
 }
 
 void endPS2() {

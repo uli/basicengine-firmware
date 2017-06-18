@@ -23,6 +23,8 @@
 
 #include <Arduino.h>
 //#include <mcurses.h>
+#define PS2DEV                   1     // PS/2キーボードの利用 0:利用しない 1:利用する
+
 #define KEY_TAB                 '\t'   // TAB key
 #define KEY_CR                  '\r'   // RETURN key
 #define KEY_BACKSPACE           '\b'   // Backspace key

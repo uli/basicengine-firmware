@@ -17,6 +17,7 @@
 //  修正日 2017/05/10, システムクロック48MHz時のtv_get_gwidth()不具合対応
 //  修正日 2017/05/28, 上下スクロール編集対応
 //  修正日 2017/06/09, シリアルからは全てもコードを通すように修正
+//  修正日 2017/06/18, Insert_char()のメモリ領域外アクセスの不具合対応
 //
 
 #include <string.h>
@@ -143,6 +144,7 @@ void tscreen::MOVE(uint8_t y, uint8_t x) {
 // 戻り値
 //  なし
 //void tscreen::init(uint16_t w, uint16_t h, uint16_t l) {
+//static uint8_t _screen[37*27+1];
 void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
   serialMode = 0;
   
@@ -156,11 +158,15 @@ void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
   gheight  = tv_get_gheight();
 
   maxllen = ln;
+#if PS2DEV == 1
   setupPS2(kbd_type);
+#endif
+
   if (screen != NULL) 
     free(screen);
-  screen = (uint8_t*)malloc( width * height );
+  screen = (uint8_t*)malloc( width * (height+8) ); 
 
+ // screen = _screen;
   delay(200);
   cls();
   show_curs(true);
@@ -184,7 +190,9 @@ uint8_t tscreen::isKeyIn() {
     if (Serial1.available())
       return Serial1.read();
   }
-  return ps2read();  
+#if PS2DEV == 1
+ return ps2read();
+#endif
 }
 
 // 文字入力
@@ -204,11 +212,13 @@ uint8_t tscreen::get_ch() {
         break;
       }
     }
+#if PS2DEV == 1
     c = ps2read();
     if (c) {
       dev = 0;
       break;
     }
+#endif
   }
   return c;  
 }
@@ -348,6 +358,7 @@ void tscreen::putch(uint8_t c) {
  } else if (serialMode == 1) {
     Serial1.write(c);     // シリアル出力  
  }
+
  tv_write(pos_x, pos_y, c); // 画面表示
  movePosNextNewChar();
 }
@@ -365,7 +376,12 @@ void tscreen::Insert_char(uint8_t c) {
   }
   if (ln == 0 || flgIns == false) {
      // 文字列長さが0または上書きモードの場合、そのまま1文字表示
-    if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
+    if (pos_y + (pos_x+ln+1)/width >= height) {
+      // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
+      scroll_up();
+      start_adr-=width;
+      MOVE(pos_y-1, pos_x);
+    } else  if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
        Insert_newLine(pos_y+(pos_x+ln)/width);       
     }
