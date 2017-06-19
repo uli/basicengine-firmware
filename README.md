@@ -1,4 +1,5 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/06/18)
+## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/06/20)
+※2017/06/20 V0.83でI2CR関数の不具合対応しました  
 (NEW) SDカード対応  
 　(旧版はreleasesの方からダウンロードできます)  
 
