@@ -112,6 +112,7 @@
 //  修正日 2017/06/10, toktoi()内のキーワード検索処理の修正(定義順による優先度制約除去)
 //  修正日 2017/06/11, INPUTにて入力中にESC,CTRL-Cで中断出来るように修正
 //  修正日 2017/06/18, LOADの引数なし時エラーとなる不具合の対応,I2Cの不具合対応
+//  修正日 2017/06/19, I2CRのendTransmission()のミス対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -2483,11 +2484,11 @@ int16_t ii2cw() {
   I2C_WIRE.beginTransmission(i2cAdr);
   if (clen) {
     for (uint16_t i = 0; i < clen; i++)
-      I2C_WIRE.write(cptr++, 1);
+      I2C_WIRE.write(*cptr++);
   }
   if (len) {
     for (uint16_t i = 0; i < len; i++)
-      I2C_WIRE.write(ptr++, 1);
+      I2C_WIRE.write(*ptr++);
   }
   rc =  I2C_WIRE.endTransmission();
   return rc;
@@ -2498,7 +2499,8 @@ int16_t ii2cr() {
   int16_t  i2cAdr, sdtop, sdlen,rdtop,rdlen;
   uint8_t* sdptr;
   uint8_t* rdptr;
-  int8_t  rc;
+  int16_t  rc;
+  int16_t  n;
 
   if (checkOpen()) return 0;
   if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
@@ -2520,17 +2522,15 @@ int16_t ii2cr() {
   if (sdlen) {
     I2C_WIRE.write(sdptr, sdlen);
   }
-
+  rc = I2C_WIRE.endTransmission();
   if (rdlen) {
-    rc = I2C_WIRE.endTransmission();
     if (rc!=0)
       return rc;
-    I2C_WIRE.requestFrom(i2cAdr, rdlen);
+    n = I2C_WIRE.requestFrom(i2cAdr, rdlen);
     while (I2C_WIRE.available()) {
       *(rdptr++) = I2C_WIRE.read();
     }
   }  
-  rc =  I2C_WIRE.endTransmission();
   return rc;
 }
 
@@ -4643,12 +4643,13 @@ void basic() {
   // スクリーン初期設定
   sc.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC);
 
-  I2C_WIRE.begin();  // I2C利用開始
-
 #if USE_SD_CARD == 1
   // SDカード利用
   fs.init(); // この処理ではGPIOの操作なし
 #endif
+
+  I2C_WIRE.begin();  // I2C利用開始
+  
   icls();
   char* textline;    // 入力行
 
