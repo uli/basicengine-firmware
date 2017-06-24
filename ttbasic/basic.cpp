@@ -113,6 +113,8 @@
 //  修正日 2017/06/11, INPUTにて入力中にESC,CTRL-Cで中断出来るように修正
 //  修正日 2017/06/18, LOADの引数なし時エラーとなる不具合の対応,I2Cの不具合対応
 //  修正日 2017/06/19, I2CRのendTransmission()のミス対応
+//  修正日 2017/06/22, ファイル名指定に文字列関数利用可能とする対応
+//                     SMODE 3,0|1 でターミナル上で[BS]利用可能(デフォルトは1)
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -121,6 +123,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <wirish.h>
+#include "ttconfig.h"
 
 #define STR_EDITION "Arduino STM32"
 #define STR_VARSION "Edition V0.83"
@@ -130,14 +133,9 @@
 #define SIZE_IBUF 255    // 中間コード変換バッファサイズ
 #define SIZE_LIST 4096   // プログラム領域サイズ(4kバイト)
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
-#define SIZE_GSTK 6      // GOSUB stack size(2/nest)
-#define SIZE_LSTK 15     // FOR stack size(5/nest)
+#define SIZE_GSTK 12      // GOSUB stack size(2/nest)
+#define SIZE_LSTK 30     // FOR stack size(5/nest)
 #define SIZE_MEM  1024   // 自由利用データ領域
-
-
-#define I2C_USE_HWIRE  1 // I2Cライブラリの選択 0:Wire(ソフトエミュレーション) 1:HWire 
-#define USE_INNERRTC   1 // 内蔵RTCの利用指定  0:利用しない 1:利用する
-#define USE_SD_CARD    1 // SDカードの利用 
 
 // SRAMの物理サイズ(バイト)
 #define SRAM_SIZE      20480 // STM32F103C8T6
@@ -176,8 +174,6 @@ sdfiles fs;
 // **** EEPROMエミュレーション ******
 #include <EEPROM.h>
 extern EEPROMClass EEPROM;
-//#define EEPROM_PAGE0 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-2))
-//#define EEPROM_PAGE1 (((uint32_t)(0x8000000))+FLASH_PAGE_SIZE*(FLASH_PAGE_NUM-1))
 #define EEPROM_PAGE0 (((uint32_t)(0x8000000))+(FLASH_PRG_START_PAGE-2)*FLASH_PAGE_SIZE)
 #define EEPROM_PAGE1 (((uint32_t)(0x8000000))+(FLASH_PRG_START_PAGE-1)*FLASH_PAGE_SIZE)
 
@@ -195,6 +191,7 @@ SystemConfig CONFIG;
 
 uint8_t loadConfig();
 uint8_t saveConfig();
+char* getParamFname();
 void mem_putch(uint8_t c);
 
 // **** RTC用宣言 ********************
@@ -559,7 +556,7 @@ inline void mem_putch(uint8_t c) {
 }
 
 // メモリ書き込みポインタのクリア
-inline void clearlbuf() {
+inline void cleartbuf() {
   tbuf_pos=0;
   memset(tbuf,0,SIZE_LINE);
 }
@@ -1795,20 +1792,22 @@ void isave() {
   int16_t ascii = 1;
   uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
   uint8_t* sram_adr;
-  char fname[64];
+  //char fname[64];
+  char* fname;
   uint8_t mode = 0;
   int8_t rc;
   
   if (*cip == I_EOL) {
     prgno = 0;
-  } else if (*cip == I_STR) { 
-    // ファイル名指定
-    cip++;
-    strncpy(fname, (char*)(cip+1), *cip);
-    fname[*cip]=0;
-    cip+=*cip;
+  } else 
+  // ファイル名またはプログラム番号の取得
+  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
+       *cip == I_HEX || *cip == I_BIN || *cip == I_DMP
+  ) {
+    if(!(fname = getParamFname())) {
+      return;
+    }  
     mode = 1;
-    cip++;    
     if (*cip == I_COMMA) {
       cip++;
       if ( getParam(ascii, 0, 1, false) ) return;       
@@ -1993,24 +1992,21 @@ void idelete() {
 void ifiles() {
   uint32_t flash_adr;
   uint8_t* save_clp;
-   char fname[SD_PATH_LEN];
+//   char fname[SD_PATH_LEN];
+   char* fname;
    char wildcard[SD_PATH_LEN];
    char* wcard = NULL;
    char* ptr = NULL;
    uint8_t flgwildcard = 0;
    int16_t rc;
-   
-  if (*cip == I_STR) {
-    cip++;
-    // ファイル名指定
-    if (*cip >= SD_PATH_LEN) {
-      err = ERR_LONGPATH;
+
+  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
+       *cip == I_HEX || *cip == I_BIN || *cip == I_DMP
+  ) {
+    if(!(fname = getParamFname())) {
       return;
     }  
-    strncpy(fname, (char*)(cip+1), *cip);
-    fname[*cip]=0;
-    cip+=*cip;
-    cip++;
+
    for (int8_t i = 0; i < strlen(fname); i++) {
       if (fname[i] >='a' && fname[i] <= 'z') {
          fname[i] = fname[i] - 'a' + 'A';
@@ -2393,6 +2389,13 @@ void idmp(uint8_t devno=0) {
 }
 
 // 文字列参照 STR$(変数)
+// STR(文字列参照変数|文字列参照配列変数|文字列定数,[pos,n])
+// ※変数,配列は　[LEN][文字列]への参照とする
+// 引数
+//  devno: 出力先デバイス番号
+// 戻り値
+//  なし
+//
 void istrref(uint8_t devno=0) {
   int16_t len;
   int16_t top;
@@ -2425,15 +2428,15 @@ void istrref(uint8_t devno=0) {
   top = 1;
   n = len;
   if (*cip == I_COMMA) { 
-    cip++; 
+    cip++;
     if (getParam(top, 1,len,true)) return;
     if (getParam(n,1,len-top+1,false)) return;
   }
-  if (checkClose()) return;  
-
+  if (checkClose()) return;
   for (uint16_t i = top-1; i <top-1+n; i++) {
     c_putch(ptr[i], devno);
   }
+  return;
 }
 
 // POKEコマンド POKE ADR,データ[,データ,..データ]
@@ -2916,11 +2919,11 @@ void iswrite() {
 
 // シリアルモード設定: SMODE MODE [,"通信速度"]
 void ismode() {
-  int16_t c;
+  int16_t c,flg;
   uint16_t ln;
   uint32_t baud = 0;
 
-  if ( getParam(c, 0, 2, false) ) return;  
+  if ( getParam(c, 0, 3, false) ) return;  
   if (c == 1) {
     if(*cip != I_COMMA) {
       err = ERR_SYNTAX;
@@ -2945,6 +2948,12 @@ void ismode() {
        }
        cip++;
     }
+  } else if (c == 3) {
+    // シリアルからの制御入力許可設定
+    cip++;
+    if ( getParam(flg, 0, 1, false) ) return;  
+    sc.set_allowCtrl(flg);
+    return;
   }
   sc.Serial_mode((uint8_t)c, baud);
 }
@@ -3084,7 +3093,7 @@ int16_t iasc() {
 }
 
 // PRINT handler
-void iprint(uint8_t devno=0) {
+void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   short value;     //値
   short len;       //桁数
   unsigned char i; //文字数
@@ -3135,7 +3144,9 @@ void iprint(uint8_t devno=0) {
         newline(devno);
         return;
     }
-      
+    if (nonewln && *cip == I_COMMA) // 文字列引数流用時はここで終了
+        return;
+    
     if (*cip == I_ELSE) {
         newline(devno); 
         return;
@@ -3150,8 +3161,9 @@ void iprint(uint8_t devno=0) {
         return;
       }
     }
-  } //文末まで繰り返すの末尾
-  newline(devno); 
+  }
+  if (!nonewln)
+    newline(devno); 
 }
 
 // GPRINT x,y,..
@@ -3163,31 +3175,32 @@ void igprint() {
   iprint(2);
 }
 
+
+// ファイル名引数の取得
+char* getParamFname() {
+  cleartbuf(); // メモリバッファのクリア
+  iprint(3,1);
+  if (strlen(tbuf) >= SD_PATH_LEN)
+      err = ERR_LONGPATH;   
+  if (err) {
+    if (err == ERR_RANGE)
+      err = ERR_LONGPATH;
+      return NULL;
+  }
+  return tbuf;
+}
+
 // LDBMP "ファイル名" ,アドレス, X, Y, W, H [,Mode]
 void ildbmp() {
-  char fname[SD_PATH_LEN];
+  char* fname;
   int16_t adr;
   int16_t x =0,y = 0,w = 0, h = 0,mode = 0;
   uint8_t* ptr;
   uint8_t rc;
-  
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+
+  if(!(fname = getParamFname())) {
     return;
   }
-
-  cip++;
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  } 
-  
-  // ファイル名の取得  
-  strncpy(fname, (char*)(cip+1), *cip);
-  fname[*cip]=0;
-  cip+=*cip;
-  cip++;
-
   if (*cip != I_COMMA) {
     err = ERR_SYNTAX;
     return;    
@@ -3225,28 +3238,15 @@ void ildbmp() {
 
 // DWBMP  "ファイル名" ,X,Y,BX,BY,W,H[,mode]
 void idwbmp() {
-  char fname[SD_PATH_LEN];
   int16_t x,y,bx,by,w, h, mode;
   uint8_t* ptr;
   uint8_t rc; 
   int16_t bw;
+  char* fname;
 
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+  if(!(fname = getParamFname())) {
     return;
   }
-
-  cip++;
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  } 
-  
-  // ファイル名の取得  
-  strncpy(fname, (char*)(cip+1), *cip);
-  fname[*cip]=0;
-  cip+=*cip;
-  cip++;
 
   if (*cip != I_COMMA) {
     err = ERR_SYNTAX;
@@ -3288,25 +3288,13 @@ void idwbmp() {
 
 // MKDIR "ファイル名"
 void imkdir() {
-  char fname[SD_PATH_LEN];
   uint8_t rc;
-  
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+  char* fname;
+
+  if(!(fname = getParamFname())) {
     return;
   }
-
-  cip++;
-  // ファイル名指定
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  }  
-  // ファイル名の取得
-  strncpy(fname, (char*)(cip+1), *cip);
-  fname[*cip]=0;
-  cip+=*cip;
-  cip++;
+  
 #if USE_SD_CARD == 1
   rc = fs.mkdir(fname);
   if (rc == SD_ERR_INIT) {
@@ -3319,26 +3307,13 @@ void imkdir() {
 
 // RMDIR "ファイル名"
 void irmdir() {
-  char fname[SD_PATH_LEN];
+  char* fname;
   uint8_t rc;
-  
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+
+  if(!(fname = getParamFname())) {
     return;
   }
 
-  cip++;
-  // ファイル名指定
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  }  
-
-  // ファイル名の取得
-  strncpy(fname, (char*)(cip+1), *cip);
-  fname[*cip]=0;
-  cip+=*cip;
-  cip++;
 #if USE_SD_CARD == 1
   rc = fs.rmdir(fname);
   if (rc == SD_ERR_INIT) {
@@ -3407,26 +3382,13 @@ void irename() {
 **/
 // REMOVE "ファイル名"
 void iremove() {
-  char fname[SD_PATH_LEN];
+  char* fname;
   uint8_t rc;
- 
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+
+  if(!(fname = getParamFname())) {
     return;
   }
 
-  cip++;
-
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  }  
-
-  // ファイル名の取得
-  strncpy(fname, (char*)(cip+1), *cip);
-  fname[*cip]=0;
-  cip+=*cip;
-  cip++;
 #if USE_SD_CARD == 1
   rc = fs.remove(fname);
   if (rc) {
@@ -3438,11 +3400,17 @@ void iremove() {
 
 // BSAVE "ファイル名", アドレス
 void ibsave() {
-  char fname[SD_PATH_LEN];
+  //char fname[SD_PATH_LEN];
   uint8_t*radr; 
-  int16_t vadr, len;
+  int16_t vadr, len; 
+  char* fname;
   uint8_t rc;
 
+  if(!(fname = getParamFname())) {
+    return;
+  }
+  
+/*
   if (*cip!= I_STR) {
     err = ERR_SYNTAX;
     return;
@@ -3459,6 +3427,8 @@ void ibsave() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
+*/
+
   if (*cip != I_COMMA) {
     err = ERR_SYNTAX;
     return;    
@@ -3504,11 +3474,16 @@ DONE:
 }
 
 void ibload() {
-  char fname[SD_PATH_LEN];
+//  char fname[SD_PATH_LEN];
   uint8_t*radr; 
   int16_t vadr, len ,c;
+  char* fname;
   uint8_t rc;
 
+  if(!(fname = getParamFname())) {
+    return;
+  }
+/*
   if (*cip!= I_STR) {
     err = ERR_SYNTAX;
     return;
@@ -3524,6 +3499,7 @@ void ibload() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
+*/
   if (*cip != I_COMMA) {
     err = ERR_SYNTAX;
     return;    
@@ -3571,11 +3547,18 @@ DONE:
 
 // TYPE "ファイル名"
 void  icat() {
-  char fname[SD_PATH_LEN];
-  uint8_t rc;
+  //char fname[SD_PATH_LEN];
+  //uint8_t rc;
   int16_t line = 0;
   uint8_t c;
-  
+
+  char* fname;
+  uint8_t rc;
+
+  if(!(fname = getParamFname())) {
+    return;
+  }
+/*  
   if (*cip!= I_STR) {
     err = ERR_SYNTAX;
     return;
@@ -3591,6 +3574,8 @@ void  icat() {
   fname[*cip]=0;
   cip+=*cip;
   cip++;
+*/
+
 #if USE_SD_CARD == 1
   while(1) {
     rc = fs.textOut(fname, line, sc.getHeight()); 
@@ -3635,7 +3620,7 @@ void  icat() {
 uint8_t ilrun() {
   int16_t prgno, lineno = -1;
   uint8_t* tmpcip, *lp;
-  char fname[SD_PATH_LEN];  // ファイル名
+  //char fname[SD_PATH_LEN];  // ファイル名
   uint8_t label[34];
   uint8_t len;
   uint8_t mode = 0;        // ロードモード 0:フラッシュメモリ 1:SDカード
@@ -3643,6 +3628,7 @@ uint8_t ilrun() {
   uint8_t rc;
   uint8_t islrun = 1;
   uint8_t newmode = 1;
+  char* fname;
 
   // コマンド識別
   if (*(cip-1) == I_LOAD) {
@@ -3650,18 +3636,13 @@ uint8_t ilrun() {
      islrun = 0;
   }
   // ファイル名またはプログラム番号の取得
-  if (*cip == I_STR) {
-    cip++;
-    if (*cip >= SD_PATH_LEN) {
-      err = ERR_LONGPATH;
+  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
+       *cip == I_HEX || *cip == I_BIN || *cip ==I_DMP
+  ) {
+    if(!(fname = getParamFname())) {
       return 0;
-    }      
-    // ファイル名指定
-    strncpy(fname, (char*)(cip+1), *cip);
-    fname[*cip]=0;
-    cip+=*cip;
+    }
     mode = 1;
-    cip++;
   } else {
     // 内部フラッシュメモリからの読込＆実行
     if (*cip == I_EOL) {
@@ -4226,7 +4207,7 @@ char* getLineStr(int16_t lineno) {
       return NULL;
     
     // 行バッファへの指定行テキストの出力
-    clearlbuf();
+    cleartbuf();
     putnum(lineno, 0,3); // 行番号を表示
     c_putch(' ',3);    // 空白を入れる
     putlist(lp+3,3);   // 行番号より後ろを文字列に変換して表示        
@@ -4237,13 +4218,9 @@ char* getLineStr(int16_t lineno) {
 void iinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
-Serial.println("STEP1");  
   uint8_t* tmp = (uint8_t*)malloc(1);
-Serial.println("STEP2");  
   uint32_t hadr = (uint32_t)tmp;
-Serial.println("STEP3");  
   free(tmp);
-Serial.println("STEP4");
 
   c_puts("stack top:");
   putHexnum((int16_t)(adr>>16),4);putHexnum((int16_t)(adr&0xffff),4);

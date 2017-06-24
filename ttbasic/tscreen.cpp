@@ -18,10 +18,12 @@
 //  修正日 2017/05/28, 上下スクロール編集対応
 //  修正日 2017/06/09, シリアルからは全てもコードを通すように修正
 //  修正日 2017/06/18, Insert_char()のメモリ領域外アクセスの不具合対応
+//  修正日 2017/06/22, シリアル上でBSキー、CTRL-Lが利用可能対応
 //
 
 #include <string.h>
 #include "tscreen.h"
+#include "ttconfig.h"
 
 void tv_init(int16_t ajst);
 void    endPS2();
@@ -174,6 +176,9 @@ void tscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst) {
 
   // 編集機能の設定
   flgIns = true;
+
+  // シリアルからの制御文字許可
+  allowCtrl = true;
 }
 
 void tscreen::reset_kbd(uint8_t kbd_type) {
@@ -636,7 +641,7 @@ uint8_t tscreen::edit() {
   do {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
-    if (dev != 1) { // USB-Serial(dev=1)は入力コードのキー解釈を行わない
+    if (dev != 1|allowCtrl) { // USB-Serial(dev=1)は入力コードのキー解釈を行わない
       switch(ch) {
         case KEY_CR:         // [Enter]キー
           return enter_text();
@@ -645,6 +650,7 @@ uint8_t tscreen::edit() {
         case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
           cls();
           locate(0,0);
+          Serial_Ctrl(SC_KEY_CTRL_L);
           break;
    
         case KEY_HOME:      // [HOMEキー] 行先頭移動
@@ -681,6 +687,7 @@ uint8_t tscreen::edit() {
         case KEY_BACKSPACE:  // [BS]キー
             movePosPrevChar();
             delete_char();
+           Serial_Ctrl(KEY_BACKSPACE);
           break;        
   
         case KEY_DC:         // [Del]キー
@@ -716,11 +723,11 @@ uint8_t tscreen::edit() {
         
         if (IS_PRINT(ch)) {
           Insert_char(ch);
-        }
-        
+        }        
         break;
       }
-    } else {
+    }
+    else {
       // PS/2キーボード以外からの入力
       if (ch == KEY_CR) {
         return enter_text(); 
@@ -730,6 +737,28 @@ uint8_t tscreen::edit() {
     }
   } while(1);
 }
+
+
+// シリアルポートスクリーン制御出力
+void tscreen::Serial_Ctrl(int16_t ch) {
+  char* s=NULL;
+  switch(ch) {
+    case KEY_BACKSPACE:
+     s = "\x08\x1b[P";
+     break;
+    case SC_KEY_CTRL_L:
+     s = "\x1b[2J\x1b[H";
+     break;
+  }
+  if(s) {
+    if(serialMode == 0) {
+       Serial.print(s);     // USBシリアル出力
+    } else if (serialMode == 1) {
+      Serial1.print(s);     // シリアル出力  
+    }  
+  }
+}
+
 
 // グラフィク表示用メモリアドレス参照
 uint8_t* tscreen::getGRAM() {

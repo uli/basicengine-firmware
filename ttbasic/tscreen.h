@@ -16,6 +16,7 @@
 //  修正日 2017/05/19, getfontadr()の追加
 //  修正日 2017/05/28, 上下スクロール編集対応
 //  修正日 2017/06/09, シリアルからは全てもコードを通すように修正
+//  修正日 2017/06/22, シリアルからは全てもコードを通す切り替え機能の追加
 //
 
 #ifndef __tscreen_h__
@@ -23,7 +24,6 @@
 
 #include <Arduino.h>
 //#include <mcurses.h>
-#define PS2DEV                   1     // PS/2キーボードの利用 0:利用しない 1:利用する
 
 #define KEY_TAB                 '\t'   // TAB key
 #define KEY_CR                  '\r'   // RETURN key
@@ -71,6 +71,7 @@ class tscreen {
     uint8_t flgCur;             // カーソル表示設定
     //uint8_t flgSirialout;       // SUBシリアル入出力指定フラグ
     uint8_t serialMode;         // シリアルポートモード
+    uint8_t allowCtrl;          // シリアルからの入力制御許可
 
   public:
     uint16_t pos_x;             // カーソル横位置
@@ -81,7 +82,9 @@ class tscreen {
  
     //void init(uint16_t w,uint16_t h,uint16_t ln=256); // スクリーンの初期設定
     void init(uint16_t ln=256, uint8_t kbd_type=false, int16_t NTSCajst=0); // スクリーンの初期設定
-
+    void set_allowCtrl(uint8_t flg) { allowCtrl = flg;}; // シリアルからの入力制御許可設定
+    void Serial_Ctrl(int16_t ch);
+    
     void reset_kbd(uint8_t kbd_type=false);
     void clerLine(uint16_t l);                        // 1行分クリア
     void cls();                                       // スクリーンのクリア

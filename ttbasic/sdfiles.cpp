@@ -7,14 +7,16 @@
 //
 
 #include "sdfiles.h"
-#include <RTClock.h>
-#include <time.h>
 #include <sdbitmap.h>
 #include <string.h>
 #include <libBitmap.h>
+#if USE_INNERRTC == 1
+  #include <RTClock.h>
+  #include <time.h>
+  extern RTClock rtc;
+#endif
 
 #define SD_BEGIN() SD.begin(F_CPU/4,cs)
-extern RTClock rtc;
 void c_puts(const char *s, uint8_t devno=0);
 void newline(uint8_t devno=0);
 
@@ -46,6 +48,7 @@ uint8_t wildcard_match(char *wildcard, char *target) {
     }
 }
 
+#if USE_INNERRTC == 1
 // ファイルタイムスタンプコールバック関数
 void dateTime(uint16_t* date, uint16_t* time) {
    time_t tt; 
@@ -55,6 +58,7 @@ void dateTime(uint16_t* date, uint16_t* time) {
   *date = FAT_DATE(st->tm_year+1900, st->tm_mon+1, st->tm_mday);
   *time = FAT_TIME(st->tm_hour, st->tm_min, st->tm_sec);
 }
+#endif 
 
 //
 // 初期設定
@@ -65,7 +69,9 @@ void dateTime(uint16_t* date, uint16_t* time) {
 uint8_t  sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
+#if USE_INNERRTC == 1
   SdFile::dateTimeCallback( &dateTime );
+#endif
   return 0;
 }
 
