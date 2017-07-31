@@ -156,8 +156,8 @@ V0.82からの変更点
 ### アナログ値表示
 ```
 10 CLS
-20 GPIO PB01,ANALOG
-30 A=ANA(PB01)
+20 GPIO PB1,ANALOG
+30 A=ANA(PB1)
 40 LOCATE 5,5: ? A; "     "
 50 GOTO 30
 ```
