@@ -115,6 +115,7 @@
 //  修正日 2017/06/19, I2CRのendTransmission()のミス対応
 //  修正日 2017/06/22, ファイル名指定に文字列関数利用可能とする対応
 //                     SMODE 3,0|1 でターミナル上で[BS]利用可能(デフォルトは1)
+//  修正日 2017/07/31, SDカードからテキスト形式プログラムロード時の中間コード変換不具合の対応(loadPrgText)
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -426,7 +427,7 @@ static const uint8_t  i_nsb[] = {
 
 // 必ず前に空白を入れる中間コード
 static const uint8_t i_sf[]  = {
-  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,
+  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_LAND, I_LOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE, 
@@ -1894,6 +1895,7 @@ uint8_t loadPrgText(char* fname, uint8_t newmode = 0) {
  
   inew(newmode);
   while(fs.readLine(lbuf)) {
+     tlimR(lbuf); // 2017/07/31 追記
      len = toktoi();
      if (err) {
        c_puts(lbuf);
