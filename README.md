@@ -15,7 +15,6 @@ NTSC・PS/2キーボード対応ブランチ版
 本プログラムは、下記オリジナル版をArduino STM32向けに移植・機能版です.  
 ※Arduino Arduino STM32のサイト：https://github.com/rogerclarkmelbourne/Arduino_STM32  
 STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確認しています.  
-※機能の大幅追加のため、Arduino MEGEは非対応となりました.  
 ※NTSCビデオ出力対応のため、ターミナル画面制御は非対応にしました(2017/04/13)  
 
 - オリジナル版配布サイト  
