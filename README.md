@@ -1,8 +1,12 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/08/01)
+## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/08/06)
 ※2017/06/24 LDBMP等のファイル名指定部に文字列関数が利用出来るようにしました.  
 ※2017/07/15 マルチメディアカード（MMC）対応しました.  
 ※2017/08/01 SD カードからの保存ファイルロード時のエラー発生不具合の対応しました.  
-
+※2017/08/06 最新版のArduino STM32ではコンパイルエラーが発生します
+  下記の安定バージョンを利用して下さい  
+  https://github.com/rogerclarkmelbourne/Arduino_STM32/releases/tag/R20170323  
+  
+    
 V0.83 「MMCまたは互換カード対応」(SDカードも利用可能)  
 　(旧版はreleasesの方からダウンロードできます)  
 
@@ -72,7 +76,10 @@ V0.83からはバイナリー形式のファームウェアを添付しました
 事前にArduino STM32環境を導入し、付随するUSBドラーバーをインストール等が必要です.  
 また、Blue Pillボード(または他のSTM32F103C8T6ボード)ブートローダを書きこんでおく必要があります.  
 このあたりの設定は、DEKOさんがまとめました記事が参考になると思います(素晴らしいまとめの公開に感謝!!)  
-DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/stm32f103c8t6.html  
+DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/stm32f103c8t6.html  
+
+**※ Arduino STM32モジュールは下記の安定版 を使って下さい**  
+https://github.com/rogerclarkmelbourne/Arduino_STM32/releases/tag/R20170323  
 
 1)ブロジェクト一式のダウンロード  
 プロジェクト一式をダウンロードし、解凍した中のフォルダ**bin**内のフォルダを開いて下さい.  
