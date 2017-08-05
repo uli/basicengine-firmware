@@ -2,11 +2,8 @@
 ※2017/06/24 LDBMP等のファイル名指定部に文字列関数が利用出来るようにしました.  
 ※2017/07/15 マルチメディアカード（MMC）対応しました.  
 ※2017/08/01 SD カードからの保存ファイルロード時のエラー発生不具合の対応しました.  
-※2017/08/06 最新版のArduino STM32ではコンパイルエラーが発生します
-  下記の安定バージョンを利用して下さい  
-  https://github.com/rogerclarkmelbourne/Arduino_STM32/releases/tag/R20170323  
+※2017/08/06 最新版のArduino STM32の新旧Wireライブラリ  
   
-    
 V0.83 「MMCまたは互換カード対応」(SDカードも利用可能)  
 　(旧版はreleasesの方からダウンロードできます)  
 
@@ -80,6 +77,11 @@ DEKOのアヤシいお部屋-「STM32F103C8T6」 - http://ht-deko.com/arduino/st
 
 **※ Arduino STM32モジュールは下記の安定版 を使って下さい**  
 https://github.com/rogerclarkmelbourne/Arduino_STM32/releases/tag/R20170323  
+Arduino STM32環境に2017/08/04以降の更新バージョンを利用する場合、tconfig.hのOLD_WIRE_LIBを0に変更して下さい  
+```
+ // Wireライブラリ新旧指定対応 0:新 1:旧(R20170323相当)  
+ #define OLD_WIRE_LIB   1  
+```
 
 1)ブロジェクト一式のダウンロード  
 プロジェクト一式をダウンロードし、解凍した中のフォルダ**bin**内のフォルダを開いて下さい.  
