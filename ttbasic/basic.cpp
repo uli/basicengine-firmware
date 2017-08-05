@@ -116,6 +116,7 @@
 //  修正日 2017/06/22, ファイル名指定に文字列関数利用可能とする対応
 //                     SMODE 3,0|1 でターミナル上で[BS]利用可能(デフォルトは1)
 //  修正日 2017/07/31, SDカードからテキスト形式プログラムロード時の中間コード変換不具合の対応(loadPrgText)
+//  修正日 2017/08/06, たま吉さん, Wireライブラリ新旧対応
 //
 // Depending on device functions
 // TO-DO Rewrite these functions to fit your machine
@@ -148,13 +149,26 @@ tscreen sc;
 #define KEY_ENTER 13
 
 // **** I2Cライブラリの利用設定 ****
-#if I2C_USE_HWIRE == 0
-  #include <Wire.h>
-  #define I2C_WIRE  Wire
-#else
-  #include <HardWire.h>
-  HardWire HWire(1, I2C_FAST_MODE); // I2C1を利用
-  #define I2C_WIRE  HWire
+#if OLD_WIRE_LIB == 1
+  // Wireライブラリ変更前の場合
+  #if I2C_USE_HWIRE == 0
+    #include <Wire.h>
+    #define I2C_WIRE  Wire
+  #else
+    #include <HardWire.h>
+    HardWire HWire(1, I2C_FAST_MODE); // I2C1を利用
+    #define I2C_WIRE  HWire
+  #endif
+#else 
+  // Wireライブラリ変更ありの場合
+  #if I2C_USE_HWIRE == 0
+    #include <SoftWire.h>
+    TwoWire SWire(SCL, SDA, SOFT_STANDARD);
+    #define I2C_WIRE  SWire
+  #else
+    #include <Wire.h>
+    #define I2C_WIRE  Wire
+  #endif
 #endif
 
 // *** SDカード管理 ****************
