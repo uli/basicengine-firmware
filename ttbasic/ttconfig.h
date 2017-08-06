@@ -11,7 +11,7 @@
 #define OLD_WIRE_LIB   1
 
 // I2Cライブラリの選択 0:Wire(ソフトエミュレーション) 1:HWire 
-#define I2C_USE_HWIRE  0
+#define I2C_USE_HWIRE  1
 
 // 内蔵RTCの利用指定   0:利用しない 1:利用する
 #define USE_INNERRTC   1 
