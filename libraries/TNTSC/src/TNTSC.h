@@ -7,6 +7,7 @@
 // 更新日 2017/04/05, クロック48MHz対応
 // 更新日 2017/04/27, NTSC走査線数補正関数adjust()追加
 // 更新日 2017/04/30, SPI1,SPI2の選択指定を可能に修正
+// 更新日 2017/06/25, 外部確保VRAMの指定を可能に修正
 //
 
 #ifndef __TNTSC_H__
@@ -21,8 +22,7 @@
 	#define SC_448x108  3 // 448x108
 	#define SC_448x216  4 // 448x216
     #define SC_DEFAULT  SC_224x216
-
-#else if  F_CPU == 48000000L
+#elif F_CPU == 48000000L
 	#define SC_128x96   0 // 128x96
 	#define SC_256x96   1 // 256x96
 	#define SC_256x192  2 // 256x192
@@ -38,8 +38,10 @@
 
 // ntscビデオ表示クラス定義
 class TNTSC_class {    
+  private:
+	uint8_t flgExtVram; // 外部確保メモリ利用(0:利用なり 1:利用あり)
   public:
-    void begin(uint8_t mode=SC_DEFAULT,uint8_t spino = 1);  // NTSCビデオ表示開始
+    void begin(uint8_t mode=SC_DEFAULT,uint8_t spino = 1, uint8_t* extram=NULL);  // NTSCビデオ表示開始
     void end();                            // NTSCビデオ表示終了 
     uint8_t*  VRAM();                      // VRAMアドレス取得
     void cls();                            // 画面クリア

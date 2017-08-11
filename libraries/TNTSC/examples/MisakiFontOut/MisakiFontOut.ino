@@ -7,11 +7,14 @@
 //    2017/02/17 水平・垂直同期信号をPWM出力で行うように変更,解像度を224x216に変更
 //    2017/02/20 NTSCビデオ表示部をライブラリ化
 //    2017/03/03 解像度モード追加
+//    2017/06/25 オブジェクトを動的に生成する仕様変更対応
 //
 
 #include <TNTSC.h>
+TNTSC_class TNTSC;
+
 #include <misakiUTF16.h>  // 美咲フォントライブラリ
-   
+
 // フォント描画
 void drawFont(int x, int y, uint8_t* font) {
   uint8_t* ptr = &TNTSC.VRAM()[y*(TNTSC.width()/8)*8+x];
@@ -44,7 +47,8 @@ void setup(){
 void loop(){
   char str[32];
   for (uint8_t i = 0; i <=4; i++) {
-    TNTSC.begin(i);
+    TNTSC.begin(i,2); // 第2引数でSPI 1,2を指定(デフォルト 1))
+    TNTSC.adjust(0);  // 垂直同期信号補正(デフォルト 0)
   
     // 画面表示
     TNTSC.cls();
