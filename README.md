@@ -1,17 +1,14 @@
 ## 豊四季タイニーBASIC for Arduino STM32 V0.84(2017/08/11)
 
-New V0.84: ターミナル版との統合(旧版はreleasesの方からダウンロードできます)  
+New V0.84: ターミナル版との統合(旧版はreleasesの方からダウンロードできます)   
+※現在、動作確認中です。古版の方が安定動作します。  
 
 ![サンプル画像](./image/03.jpg) ![サンプル画像](./image/10.jpg)  
 ![サンプル画像](./image/11.jpg)  
 
-NTSC・PS/2キーボード対応ブランチ版  
-(ドキュメント修正中）  
-
 本プログラムは、下記オリジナル版をArduino STM32向けに移植・機能版です.  
 ※Arduino Arduino STM32のサイト：https://github.com/rogerclarkmelbourne/Arduino_STM32  
 STM32F103C8T6搭載のBlue Pillボード、Black Pillボードでの動作を確認しています.  
-※NTSCビデオ出力対応のため、ターミナル画面制御は非対応にしました(2017/04/13)  
 
 - オリジナル版配布サイト  
  https://github.com/vintagechips/ttbasic_arduino  
