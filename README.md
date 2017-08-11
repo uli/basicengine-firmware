@@ -1,11 +1,6 @@
-## 豊四季タイニーBASIC for Arduino STM32 V0.83(2017/08/06)
-※2017/06/24 LDBMP等のファイル名指定部に文字列関数が利用出来るようにしました.  
-※2017/07/15 マルチメディアカード（MMC）対応しました.  
-※2017/08/01 SD カードからの保存ファイルロード時のエラー発生不具合の対応しました.  
-※2017/08/06 最新版のArduino STM32の新旧Wireライブラリ  
-  
-V0.83 「MMCまたは互換カード対応」(SDカードも利用可能)  
-　(旧版はreleasesの方からダウンロードできます)  
+## 豊四季タイニーBASIC for Arduino STM32 V0.84(2017/08/11)
+
+New V0.84: ターミナル版との統合(旧版はreleasesの方からダウンロードできます)  
 
 ![サンプル画像](./image/03.jpg) ![サンプル画像](./image/10.jpg)  
 ![サンプル画像](./image/11.jpg)  
@@ -89,7 +84,7 @@ Arduino STM32環境に2017/08/04以降の更新バージョンを利用する場
 
 2)コマンドプロンプト上でコマンド実行  
 上記のフォルダ**bin**に移動し、次のコマンドを実行します.  
-**ttwrite COM9** **C:\arduino\arduino-1.8.1**  
+**ttwrite COM9** **C:\arduino\arduino-1.8.3**  
 
 COM9はBlue PillボードのUSB-シリアルのポートを指定します.  
 各自の環境に合わせて指定して下さい.  
@@ -103,7 +98,19 @@ Javaをインストールしている場合は省略可能です.
 
 
 ## スケッチの書込み手順
-Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for Arduino STM32」  
+
+**※ Arduino STM32モジュールは下記の安定版 を使って下さい**  
+https://github.com/rogerclarkmelbourne/Arduino_STM32/releases/tag/R20170323  
+Arduino STM32環境に2017/08/04以降の更新バージョンを利用する場合、tconfig.hのOLD_WIRE_LIBを0に変更して下さい.  
+
+Arduino IDEのターゲットボード設定  
+- ボード指定:"Generic STM32F103C series"  
+- Variant:"STM32F103CB(20k RAM, 128k Flash)"  
+- CPU Speed(MHz): "72Mhz(Normal)"  
+- Upload method: "STM32duino bootloader" ※各自環境に合わせて任意  
+- シリアルポート: ※各自環境に合わせて任意  
+  
+Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for Arduino STM32」  
 スケッチ本体の他に、ライブラリが必要になります.  
 
 1)ライブラリの配置  
@@ -111,8 +118,8 @@ Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for 
 各自のArduino環境のライブラリ配置ディレクトリ**libraries**に配置して下さい.  
 ![ディレクトリ構成](./image/06.png)  
 
-添付のSDライブラリは既存のSDライブラリの修正版です.  
-上書き（差し換え）したくない場合は、STM32F1\librariesの方に配置して下さい.  
+添付のSDライブラリは既存のSDライブラリの修正版です.  
+上書き（差し換え）したくない場合は、STM32F1\librariesの方に配置して下さい.  
 
 添付ライブラリは、Arduino STM32環境に依存するライブラリを含むため、  
 下記のディレクトリの配置でも良いです.  
@@ -122,6 +129,8 @@ Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for 
 添付ライブラリの個別利用・入手は下記のリンクを参照して下さい.  
 
 **ライブラリ一覧**  
+ - mcursuss(修正版)  
+   https://github.com/Tamakichi/mcurses  
  - Arduino STM32 内部フラッシュメモリ書き込みライブラリ  
    https://github.com/Tamakichi/ArduinoSTM32_TFlash  
  - Arduino STM32 NTSCビデオ出力ラブラリ(最新版)  
@@ -134,8 +143,8 @@ Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for 
    https://github.com/Tamakichi/ArduinoSTM32_PS2Keyboard  
  - Arduino SDライブラリ(修正版)  
    https://github.com/Tamakichi/SD  
-- Arduino用Bitmap画像ロードライブラリ    
-   https://github.com/Tamakichi/Arduino-SD-Bitmap      
+- Arduino用Bitmap画像ロードライブラリ  
+   https://github.com/Tamakichi/Arduino-SD-Bitmap  
 - ビットマップ操作ライブラリ V 0.1  
    https://github.com/Tamakichi/libBitmap       
 
@@ -144,8 +153,8 @@ Arduino IDE経由で書き込みを行う場合は、「豊四季Tiny BASIC for 
 4)ボート選択  
 5)コンパイル&スケッチ書込み  
 
-V0.82からの変更点  
-![変更点](./image/07.png)  
+V0.83からの変更点  
+![変更点](./image/07_1.png)  
 
 ## サンプルプログラム
 ### ボード上のLEDの点滅  
