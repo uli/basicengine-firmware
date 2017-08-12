@@ -62,13 +62,14 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 	void set_allowCtrl(uint8_t flg) { allowCtrl = flg;}; // シリアルからの入力制御許可設定
     void Serial_Ctrl(int16_t ch);
     void reset_kbd(uint8_t kbd_type=false);
-
     void putch(uint8_t c);                            // 文字の出力
     uint8_t get_ch();                                 // 文字の取得
     inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得
     uint8_t isKeyIn();                                // キー入力チェック 
     uint8_t edit();                                   // スクリーン編集
     void newLine();                                   // 改行出力
+    void refresh_line(uint16_t l);                    // 行の再表示
+	
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
     void draw_cls_curs();                             // カーソルの消去
 
