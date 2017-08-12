@@ -9,7 +9,7 @@
 #ifndef __SDBITMAP_H__
 #define __SDBITMAP_H__
 
-#include <arduino.h>
+#include <Arduino.h>
 #include <SD.h>
 #include <SPI.h>
 
