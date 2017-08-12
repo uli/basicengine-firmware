@@ -2,6 +2,7 @@
 // スクリーン制御基本クラス ヘッダーファイル
 // 作成日 2017/06/27 by たま吉さん
 // 修正日 2017/08/05 ファンクションキーをNTSC版同様に利用可能対応
+// 修正日 2017/08/12 edit_scrollUp() で最終行が2行以上の場合の処理ミス修正
 
 #include "tscreenBase.h"
 
@@ -412,7 +413,7 @@ int16_t tscreenBase::getLineNum(int16_t l) {
 
 // 編集中画面をスクロールアップする
 uint8_t tscreenBase::edit_scrollUp() {
-  static uint8_t prvlineNum = 0; // 直前の処理行の行数
+  static uint16_t prvlineNum = 0; // 直前の処理行の行数
 #if DEPEND_TTBASIC == 0
    scroll_up();
 #else
@@ -421,7 +422,7 @@ uint8_t tscreenBase::edit_scrollUp() {
   char* text;
   lineno = getLineNum(height-1); // 最終行の表示行番号の取得
   if (lineno <= 0) {
-    lineno = prvlineNum;  
+    lineno = prvlineNum;
    }
   if (lineno > 0) {
     // 取得出来た場合、次の行番号を取得する
