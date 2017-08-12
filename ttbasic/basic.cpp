@@ -13,6 +13,7 @@
 // 2017/08/03 比較演算子 "<>"の追加("!="と同じ)
 // 2017/08/04 RENUMで振り直しする行範囲を指定可能機能追加、行番号0,1は除外に修正
 // 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
+// 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
 //
 
 #include <Arduino.h>
@@ -1607,6 +1608,9 @@ void inew(uint8_t mode = 0) {
   }
 }
 
+/********
+ 2017/08/12 不具合ありのため一旦凍結し、V0.83版の内容に差し換え
+
 // RENUMコマンド
 // RENUM [開始番号 [,増分 [,振り直し開始番号,振り直し終了番号]]
 void irenum() {
@@ -1629,10 +1633,10 @@ void irenum() {
   if (*cip == I_NUM) {                // 引数チェック
     startLineNo = getlineno(cip);     // 開始行番号取得
     cip+=3;
-	  if (*cip == I_COMMA) {            // 次の引数の処理
-		    cip++;                        // カンマをスキップ
-		    if (*cip == I_NUM) {          // 引数チェック
-	         increase = getlineno(cip); // 増分の取得
+    if (*cip == I_COMMA) {            // 次の引数の処理
+        cip++;                        // カンマをスキップ
+        if (*cip == I_NUM) {          // 引数チェック
+           increase = getlineno(cip); // 増分の取得
            cip+=3;
            if (*cip == I_COMMA) {             // 次の引数の処理
              cip++;                          // カンマをスキップ
@@ -1656,19 +1660,19 @@ void irenum() {
                return;
              }
            }
-		     } else {
-	        err = ERR_SYNTAX;                 // カンマありで引数なしの場合はエラーとする
-	        return;
-		    }
- 	  }
+         } else {
+          err = ERR_SYNTAX;                 // カンマありで引数なしの場合はエラーとする
+          return;
+        }
+    }
   }
 
   // 引数の有効性チェック
   cnt = countLines()-1;
   //Serial.print("cnt=");Serial.println(cnt,DEC);
   if (startLineNo < 0 || increase <= 0) {
-	  err = ERR_VALUE;
-	  return;		
+    err = ERR_VALUE;
+    return;   
   }
   if (startLineNo + increase * cnt > 32767) {
     err = ERR_VALUE;
@@ -1711,49 +1715,49 @@ void irenum() {
      ptr++;
      i=0;
      // 行内検索
-  	 while( i < len-1 ) {
-  	    switch(ptr[i]) {
-  	    case I_GOTO:  // GOTO命令
-  	    case I_GOSUB: // GOSUB命令
-  	      i++;
-  	      if (ptr[i] == I_NUM) {
-  	    		num = getlineno(&ptr[i]);    // 現在の行番号を取得する
+     while( i < len-1 ) {
+        switch(ptr[i]) {
+        case I_GOTO:  // GOTO命令
+        case I_GOSUB: // GOSUB命令
+          i++;
+          if (ptr[i] == I_NUM) {
+            num = getlineno(&ptr[i]);    // 現在の行番号を取得する
             if ( (num == 0) || (num == 1) || (num < prvStLineNo) || (num > prvEdLineNo) ) {
                // 行番号0,1は変更を行わない
                i+=3;
                continue;              
             }
-  	    		index = getlineIndex(num);   // 行番号の行インデックスを取得する
-  	    		if (index == 32767) {
+            index = getlineIndex(num);   // 行番号の行インデックスを取得する
+            if (index == 32767) {
                // 該当する行が見つからないため、変更は行わない
-  	    		   i+=3;
-  	    		   continue;
-  	    		} else {
-  	    		   // とび先行番号を付け替える
-  	    		   newnum = startLineNo + increase*index;
-  	    		   ptr[i+2] = newnum>>8;
-  	    		   ptr[i+1] = newnum&0xff;
-  	    		   i+=3;
-  	    		   continue;
-  	    		}
-  	      }	
-  	      break;
-  		case I_STR:  // 文字列
-  		  i++;
-  		  i+=ptr[i]; // 文字列長分移動
-  		  break;
-  		case I_NUM:  // 定数
+               i+=3;
+               continue;
+            } else {
+               // とび先行番号を付け替える
+               newnum = startLineNo + increase*index;
+               ptr[i+2] = newnum>>8;
+               ptr[i+1] = newnum&0xff;
+               i+=3;
+               continue;
+            }
+          } 
+          break;
+      case I_STR:  // 文字列
+        i++;
+        i+=ptr[i]; // 文字列長分移動
+        break;
+      case I_NUM:  // 定数
       case I_HEXNUM: 
-  		  i+=3;      // 整数2バイト+中間コード1バイト分移動
-  		  break;
-  		case I_VAR:  // 変数
-  		  i+=2;      // 変数名
-  		  break;
-  		default:     // その他
-  		  i++;
-  		  break;
-  	  }
-  	}
+        i+=3;      // 整数2バイト+中間コード1バイト分移動
+        break;
+      case I_VAR:  // 変数
+        i+=2;      // 変数名
+        break;
+      default:     // その他
+        i++;
+        break;
+      }
+    }
   }
   
   // 各行の行番号の付け替え
@@ -1762,10 +1766,106 @@ void irenum() {
     if ( (getlineno(clp) != 0 && getlineno(clp) != 1) && 
          (!prvEdLineNo || ((getlineno(clp) >= prvStLineNo) && (getlineno(clp) <= prvEdLineNo))) ) {
        newnum = startLineNo + increase * index;
-    	 *(clp+1)  = newnum&0xff;
-     	 *(clp+2)  = newnum>>8;
+       *(clp+1)  = newnum&0xff;
+       *(clp+2)  = newnum>>8;
        index++;
     }
+  }
+}
+*/
+
+// RENUME command handler
+void irenum() {
+  uint16_t startLineNo = 10;  // 開始行番号
+  uint16_t increase = 10;     // 増分
+  uint8_t* ptr;               // プログラム領域参照ポインタ
+  uint16_t len;               // 行長さ
+  uint16_t i;                 // 中間コード参照位置
+  uint16_t newnum;            // 新しい行番号
+  uint16_t num;               // 現在の行番号
+  uint16_t index;             // 行インデックス
+  uint16_t cnt;               // プログラム行数
+  
+  // 開始行番号、増分引数チェック
+  if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
+    startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
+    cip+=3;
+    if (*cip == I_COMMA) {
+        cip++;                        // カンマをスキップ
+        if (*cip == I_NUM) {          // 増分指定があったら
+           increase = getlineno(cip); // 引数を読み取って増分とする
+        } else {
+           err = ERR_SYNTAX;          // カンマありで引数なしの場合はエラーとする
+           return;
+       }
+    }
+  }
+
+  // 引数の有効性チェック
+  cnt = countLines()-1;
+  if (startLineNo <= 0 || increase <= 0) {
+    err = ERR_VALUE;
+    return;   
+  }
+  if (startLineNo + increase * cnt > 32767) {
+    err = ERR_VALUE;
+    return;       
+  }
+
+  // ブログラム中のGOTOの飛び先行番号を付け直す
+  for (  clp = listbuf; *clp ; clp += *clp) {
+     ptr = clp;
+     len = *ptr;
+     ptr++;
+     i=0;
+     // 行内検索
+     while( i < len-1 ) {
+        switch(ptr[i]) {
+        case I_GOTO:  // GOTO命令
+        case I_GOSUB: // GOSUB命令
+          i++;
+          if (ptr[i] == I_NUM) {
+            num = getlineno(&ptr[i]);    // 現在の行番号を取得する
+            index = getlineIndex(num);   // 行番号の行インデックスを取得する
+            if (index == 32767) {
+               // 該当する行が見つからないため、変更は行わない
+               i+=3;
+               continue;
+            } else {
+               // とび先行番号を付け替える
+               newnum = startLineNo + increase*index;
+               ptr[i+2] = newnum>>8;
+               ptr[i+1] = newnum&0xff;
+               i+=3;
+               continue;
+            }
+          } 
+          break;
+      case I_STR:  // 文字列
+        i++;
+        i+=ptr[i]; // 文字列長分移動
+        break;
+      case I_NUM:  // 定数
+      case I_HEXNUM: 
+        i+=3;      // 整数2バイト+中間コード1バイト分移動
+        break;
+      case I_VAR:  // 変数
+        i+=2;      // 変数名
+        break;
+      default:     // その他
+        i++;
+        break;
+      }
+    }
+  }
+  
+  // 各行の行番号の付け替え
+  index = 0;
+  for (  clp = listbuf; *clp ; clp += *clp ) {
+     newnum = startLineNo + increase * index;
+     *(clp+1)  = newnum&0xff;
+     *(clp+2)  = newnum>>8;
+     index++;
   }
 }
 
