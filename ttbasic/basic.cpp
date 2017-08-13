@@ -14,6 +14,7 @@
 // 2017/08/04 RENUMで振り直しする行範囲を指定可能機能追加、行番号0,1は除外に修正
 // 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
 // 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
+// 2017/08/13 TFT(ILI9341)モジュールの暫定対応
 //
 
 #include <Arduino.h>
@@ -180,13 +181,21 @@ const WiringPinMode pinType[] = {
 #define IsIO_PIN(N)  IsUseablePin(N,FNC_IN_OUT)
 
 // ピン機能チェックテーブル
+#if USE_TFT == 1
+const uint8_t pinFunc[]  = {
+  5,5,5,5,5,5,7,7,3,3,  //  0 -  9: PA0,PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,
+  3,0,0,1,1,1,7,7,1,1,  // 10 - 19: PA10,PA11,PA12,PA13,PA14,PA15,PB0,PB1,PB2,PB3, 
+  0,0,0,0,1,0,1,0,0,0,  // 20 - 29: PB4,PB5,PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,
+  0,0,1,0,0,            // 30 - 34: PB14,PB15,PC13,PC14,PC15,
+};
+#else
 const uint8_t pinFunc[]  = {
   5,0,5,5,5,5,7,7,3,3,  //  0 -  9: PA0,PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,
   3,0,0,1,1,1,7,7,1,1,  // 10 - 19: PA10,PA11,PA12,PA13,PA14,PA15,PB0,PB1,PB2,PB3, 
   0,0,0,0,1,0,1,1,1,1,  // 20 - 29: PB4,PB5,PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,
   1,0,1,0,0,            // 30 - 34: PB14,PB15,PC13,PC14,PC15,
 };
-
+#endif
 // ピン利用可能チェック
 inline uint8_t IsUseablePin(uint8_t pinno, uint8_t fnc) {
   return pinFunc[pinno] & fnc;
@@ -3779,9 +3788,13 @@ void iwidth() {
   int16_t w, h ;
 
   // 引数チェック
+#if USE_TFT == 1
+  if ( getParam(w,  16, SIZE_LINE, true) ) return;   // w
+  if ( getParam(h,  10,  35, false) ) return;        // h
+#else
   if ( getParam(w,  16, SIZE_LINE, true) ) return;   // w
   if ( getParam(h,  10,  50, false) ) return;        // h
-
+#endif
   if (scmode == 0) {
     // 現在、ターミナルモードの場合は画面をクリアして、再設定する
     sc->cls();
@@ -3828,6 +3841,27 @@ void iscreen() {
   sc->draw_cls_curs();
   sc->locate(0,0);
   sc->refresh();
+#elif USE_TFT == 1
+  // 引数チェック
+  if ( getParam(m,  0, 6, false) ) return;   // m
+  if (scmode == m) 
+    return;
+  
+  prv_m = sc->getSerialMode(); 
+  if (m>0) {
+      sc = &sc2;
+      ((tTFTScreen*)sc)->setScreen(m);
+      sc->cls();
+      sc->show_curs(false);
+      sc->draw_cls_curs();
+      sc->locate(0,0);
+      sc->refresh();    
+      scmode = m;
+    } else {
+      sc->cls();
+      sc = &sc1;
+      ((tTermscreen*)sc)->init(TERM_W,TERM_H,SIZE_LINE, workarea); // スクリーン初期設定            
+    }
 #else
    err = ERR_NOT_SUPPORTED;
 #endif
@@ -4911,9 +4945,11 @@ void basic() {
   inew();              
   // スクリーン初期設定
 #if USE_NTSC == 1
-  workarea = (uint8_t*)malloc(7048);
+  workarea = (uint8_t*)malloc(7048); // SCREEN0で128x50まで
+#elif USE_TFT == 1
+  workarea = (uint8_t*)malloc(4480); // SCREEN0で128x35まで
 #else
-  workarea = (uint8_t*)malloc(6400);
+  workarea = (uint8_t*)malloc(6400); // SCREEN0で128x50まで
 #endif
   
   if (scmode == 0) {
