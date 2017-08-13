@@ -84,7 +84,7 @@ void tTFTScreen::INIT_DEV() {
   //tft = &_tft;
 
   tft->begin();
-  tft->setRotation(1);
+  tft->setRotation(3);
   tft->setCursor(0, 0);
   tft->fillScreen(ILI9341_BLACK);
 
