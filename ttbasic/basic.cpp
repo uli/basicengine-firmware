@@ -15,6 +15,7 @@
 // 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
 // 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
 // 2017/08/13 TFT(ILI9341)モジュールの暫定対応
+// 2017/08/19 SAVEコマンドのプログラム番号範囲チェックミス不具合対応
 //
 
 #include <Arduino.h>
@@ -1952,7 +1953,7 @@ void isave() {
       cip++;
       if ( getParam(ascii, 0, 1, false) ) return;       
     }
-  } else if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
+  } else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) ) return;  
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
@@ -1995,11 +1996,11 @@ void ierase() {
   uint8_t* sram_adr;
   uint32_t flash_adr;
 
-  if ( getParam(s_prgno, 0, FLASH_SAVE_NUM, false) ) return;
+  if ( getParam(s_prgno, 0, FLASH_SAVE_NUM-1, false) ) return;
   e_prgno = s_prgno;
   if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(e_prgno, 0, FLASH_SAVE_NUM, false) ) return;
+    if ( getParam(e_prgno, 0, FLASH_SAVE_NUM-1, false) ) return;
   }
 
   TFlash.unlock();
