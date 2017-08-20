@@ -15,7 +15,7 @@
 // 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
 // 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
 // 2017/08/13 TFT(ILI9341)モジュールの暫定対応
-// 2017/08/19 SAVE,ERASE,LOAD,LRUNコマンドのプログラム番号範囲チェックミス不具合対応
+// 2017/08/19 SAVE,ERASE,LOAD,LRUN,CONFIGコマンドのプログラム番号範囲チェックミス不具合対応
 //
 
 #include <Arduino.h>
@@ -1907,7 +1907,7 @@ void iconfig() {
     break;
 #endif
   case 2: // プログラム自動起動番号設定
-    if (value < -1 || value >9)  {
+    if (value < -1 || value >FLASH_SAVE_NUM-1)  {
       err = ERR_VALUE;
     } else {
       CONFIG.STARTPRG = value;
