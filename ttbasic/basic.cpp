@@ -15,7 +15,7 @@
 // 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
 // 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
 // 2017/08/13 TFT(ILI9341)モジュールの暫定対応
-// 2017/08/19 SAVEコマンドのプログラム番号範囲チェックミス不具合対応
+// 2017/08/19 SAVE,ERASE,LOAD,LRUNコマンドのプログラム番号範囲チェックミス不具合対応
 //
 
 #include <Arduino.h>
@@ -3919,7 +3919,7 @@ uint8_t ilrun() {
     // 内部フラッシュメモリからの読込＆実行
     if (*cip == I_EOL) {
      prgno = 0;
-    } else { if ( getParam(prgno, 0, 9, false) )
+    } else { if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) )
      return 0; // プログラム番号
     }
   }

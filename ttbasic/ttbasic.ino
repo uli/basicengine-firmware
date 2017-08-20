@@ -23,7 +23,7 @@ void setup(void){
   nvic_irq_set_priority(NVIC_TIMER2,2);
 
 #if defined (__STM32F1__)   
-  for(uint8_t tm=0; tm <15 && !Serial; tm++) {
+  for(uint8_t tm=0; tm <15 && !Serial.isConnected(); tm++) {
     delay(100);
   }
 #endif
