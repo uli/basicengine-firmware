@@ -8,10 +8,10 @@
 //
 
 #include <TPS2.h>
-#include <io.h>
-#include <libmaple/gpio.h>
-#include <libmaple/timer.h>
-#include <libmaple/exti.h>
+//#include <io.h>
+//#include <libmaple/gpio.h>
+//#include <libmaple/timer.h>
+//#include <libmaple/exti.h>
 
 volatile static uint8_t _clkPin; // CLKピン
 volatile static uint8_t _datPin; // DATピン
@@ -30,6 +30,8 @@ volatile static uint8_t _flg_rs;   // 送受信モード 0:受信 1:送信
 volatile static uint8_t _sendState = 0;   // ビット処理状態
 volatile static uint8_t _sendData  = 0;   // 送信データ
 volatile static uint8_t _sendParity = 1;  // パリティビット  
+typedef int nvic_irq_num;
+typedef int exti_num;
 volatile static nvic_irq_num  _irq_num;   // 割り込みベクター番号
   
 //
@@ -38,6 +40,7 @@ volatile static nvic_irq_num  _irq_num;   // 割り込みベクター番号
 // 戻り値 割り込み番号
 //
 static nvic_irq_num exti2irqNum(exti_num n) {
+#if 0
   nvic_irq_num irqnum;
   switch(n) {
     case EXTI0: irqnum = NVIC_EXTI0; break;
@@ -58,21 +61,26 @@ static nvic_irq_num exti2irqNum(exti_num n) {
     case EXTI15: irqnum = NVIC_EXTI_15_10; break;
     }
   return irqnum;
+#else
+  return n;
+#endif
 }
 
 // CLK変化割り込み許可
 void TPS2::enableInterrupts() {
-  nvic_irq_enable(_irq_num);
+  interrupts();
+//  nvic_irq_enable(_irq_num);
 }
 
 // CLK変化割り込み禁止
 void TPS2::disableInterrupts() {
-  nvic_irq_disable(_irq_num);
+  noInterrupts();
+//  nvic_irq_disable(_irq_num);
 }
 
 // 割り込み優先レベルの設定
 void TPS2::setPriority(uint8_t n) {
-  nvic_irq_set_priority(exti2irqNum((exti_num)PIN_MAP[_clkPin].gpio_bit), n); 
+//  nvic_irq_set_priority(exti2irqNum((exti_num)PIN_MAP[_clkPin].gpio_bit), n); 
 }
 
 // ポート番号の設定
@@ -105,7 +113,7 @@ uint8_t TPS2::error() {return _err; } ;
 
 void TPS2::begin(uint8_t clk, uint8_t dat) {
   setPort(clk,dat);
-  _irq_num = exti2irqNum((exti_num)PIN_MAP[_clkPin].gpio_bit);
+  _irq_num = _clkPin;//exti2irqNum((exti_num)PIN_MAP[_clkPin].gpio_bit);
   
   // バスを停止状態に設定
   clkSet_Out();
@@ -129,25 +137,29 @@ void TPS2::end() {
 
 // CLKを出力モードに設定
 void  TPS2::clkSet_Out() {
-  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_OUTPUT_OD);
+//  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_OUTPUT_OD);
+  pinMode(_clkPin, OUTPUT_OPEN_DRAIN);
   _clkDir = D_OUT;  
 }
 
 // CLKを入力モードに設定
 void  TPS2::clkSet_In() {
-  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_INPUT_FLOATING);
+//  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_INPUT_FLOATING);
+  pinMode(_clkPin, INPUT);
   _clkDir = D_IN;
 }
 
 // DATを出力モードに設定
 void  TPS2::datSet_Out() {
-  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_OUTPUT_OD);
+//  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_OUTPUT_OD);
+  pinMode(_datPin, OUTPUT_OPEN_DRAIN);
   _datDir = D_OUT;    
 }
 
 // DATを入力モードに設定
 void  TPS2::datSet_In() {
-  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_INPUT_FLOATING);
+//  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_INPUT_FLOATING);
+  pinMode(_datPin, INPUT);
   _datDir = D_IN;
 }
 
@@ -155,28 +167,31 @@ void  TPS2::datSet_In() {
 void  TPS2::Clk_Out(uint8_t val) {
   if (_clkDir == D_IN)
     clkSet_Out();    
-  gpio_write_bit(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit,val);
+//  gpio_write_bit(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit,val);
+  digitalWrite(_clkPin, val);
 }
 
 // CLKから入力
 uint8_t TPS2::Clk_In() {
   if (_clkDir == D_OUT)
     clkSet_In();
-  return (gpio_read_bit(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit)?HIGH:LOW);
+  return digitalRead(_clkPin) ? HIGH : LOW;
 }
 
 // DATから出力
 void  TPS2::Dat_Out(uint8_t val) {
   if (_datDir == D_IN)
     datSet_Out();    
-  gpio_write_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit,val);  
+//  gpio_write_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit,val);  
+  digitalWrite(_datPin, val);
 }
 
 // データから入力
 uint8_t TPS2::Dat_In() {
   if (_datDir == D_OUT)
     datSet_In();    
-  return (gpio_read_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit)?HIGH:LOW);  
+//  return (gpio_read_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit)?HIGH:LOW);  
+  return digitalRead(_datPin) ? HIGH : LOW;
 }
 
 // アイドル状態に設定
@@ -195,7 +210,7 @@ void TPS2::mode_idole(uint8_t dir){
 void TPS2::mode_stop() {
   Clk_Out(LOW);
   Dat_Out(HIGH);    
-  delay_us(100);
+  delayMicroseconds(100);
 }
 
 // ホスト送信モード
@@ -215,7 +230,7 @@ uint8_t TPS2::wait_Clk(uint8_t val, uint32_t tm) {
     tm--;
     if (!tm)
       break;
-    delay_us(1);
+    delayMicroseconds(1);
   }
   return err;
 }
@@ -231,7 +246,7 @@ uint8_t TPS2::wait_Dat(uint8_t val, uint32_t tm) {
     tm--;
     if (!tm)
       break;
-    delay_us(1);
+    delayMicroseconds(1);
   }
   _err =err;
   return err;  
@@ -252,20 +267,20 @@ uint8_t TPS2::hostSend(uint8_t data) {
   // データ8ビット送信
   for (uint8_t i = 0; i < 8; i++) {
     // 1ビット送信
-    delay_us(15);
+    delayMicroseconds(15);
     if ( bitRead(data,i) ) {  parity = !parity; Dat_Out(HIGH); } else { Dat_Out(LOW); }
     if (wait_Clk(HIGH,50)) { err = 2;  goto ERROR; } // デバイスがクロックをHIGHにするまで待つ
     if (wait_Clk(LOW, 50)) { err = 3;  goto ERROR; } // デバイスがクロックをLOWにするまで待つ    
   }
   
   // パリティビットの送信
-  delay_us(15);
+  delayMicroseconds(15);
   if (parity) Dat_Out(HIGH); else Dat_Out(LOW);
   if (wait_Clk(HIGH,50)) { err = 4; goto ERROR; } // デバイスがクロックをHIGHにするまで待つ
   if (wait_Clk(LOW, 50)){ err = 6; goto ERROR; }  // デバイスがクロックをLOWにするまで待つ    
 
   // STOPビットの送信
-  delay_us(15);
+  delayMicroseconds(15);
   Dat_Out(HIGH);
     
   // デバイスからのACK確認
@@ -295,7 +310,7 @@ uint8_t TPS2::rcev(uint8_t* rcv) {
       err = 0;
       break;
     }
-    delay_us(1);
+    delayMicroseconds(1);
     tm--;
   } while(tm);
   return err;
@@ -393,7 +408,7 @@ void TPS2::clkPinHandleSend() {
   _sendState++;
   if ( _sendState >=1 && _sendState <= 8 ) {
     // データの送信
-    delay_us(15);
+    delayMicroseconds(15);
     if (_sendData & 1) {
       Dat_Out(HIGH);
       _sendParity++;
@@ -404,12 +419,12 @@ void TPS2::clkPinHandleSend() {
     goto END;
   } else if ( _sendState == 9 ) {
     // パリティ送信
-    delay_us(15);
+    delayMicroseconds(15);
     Dat_Out(_sendParity & 1);
     goto END;
   } else if ( _sendState == 10 ) {
     // ストップビット送信
-    delay_us(15);
+    delayMicroseconds(15);
     Dat_Out(HIGH); 
     goto END;
   } else if ( _sendState == 11 ) {

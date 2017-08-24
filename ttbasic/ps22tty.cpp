@@ -7,12 +7,16 @@
 // 修正 2017/05/18, ltu(ﾂ)が利用出来ない不具合の対応
 
 #include <string.h>
-#include <libmaple/ring_buffer.h>
+#include "ring_buffer.h"
 #include <TKeyboard.h>
 #include "tscreen.h"
 
-const int IRQpin =  PB4;  // CLK(D+)
-const int DataPin = PB5;  // Data(D-) 
+#ifdef ESP8266
+#define __FLASH__ //ICACHE_RODATA_ATTR
+#endif
+
+const int IRQpin =  D2;//PB4;  // CLK(D+)
+const int DataPin = D1;//PB5;  // Data(D-) 
 
 TKeyboard kb;               // PS/2キーボードドライバ
 uint8_t  flgKana = false;    // カナ入力モード
@@ -33,7 +37,7 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
- const char RomaKama[][5][4] __FLASH__ =  {
+ const char RomaKama[][5][4] /*__FLASH__*/ =  {
   //  a       e       i       o        u
   { "\xb1", "\xb4", "\xb2", "\xb5", "\xb3", },                                          //[]  : ｱ ｴ ｲ ｵ ｳ
   { "\xca\xde", "\xcd\xde", "\xcb\xde", "\xce\xde", "\xcc\xde", },                      //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ

@@ -15,7 +15,7 @@
 static TPS2 pb; // PS/2 I/F オブジェクト
 volatile static uint8_t _flgLED; // LED制御利用フラグ(true:利用する false:利用しない)
 volatile static uint8_t _flgUS;  // USキーボードの利用
-volatile static uint8_t (*key_ascii)[2];
+volatile static const uint8_t (*key_ascii)[2];
    
 // スキャンコード解析状態遷移コード
 #define STS_SYOKI          0  // 初期
@@ -41,7 +41,7 @@ volatile static uint8_t (*key_ascii)[2];
 
 // スキャンコード 0x00-0x83 => キーコード変換テーブル
 // 132バイト分
-static uint8_t keycode1[] __FLASH__ = {
+static const uint8_t keycode1[] __FLASH__ = {
  0            , KEY_F9      , 0           , KEY_F5         , KEY_F3        , KEY_F1         , KEY_F2        , KEY_F12,       // 0x00-0x07
  KEY_F13      , KEY_F10     , KEY_F8      , KEY_F6         , KEY_F4        , KEY_Tab        , KEY_HanZen    , KEY_PAD_Equal, // 0x08-0x0F
  KEY_F14      , KEY_L_Alt   , KEY_L_Shift , KEY_Romaji     , KEY_L_Ctrl    , KEY_Q          , KEY_1         , 0,             // 0x10-0x17
@@ -63,7 +63,7 @@ static uint8_t keycode1[] __FLASH__ = {
 
 // スキャンコード 0xE010-0xE07D => キーコード変換テーブル
 // 2バイト(スキャンコード下位1バイト, キーコード) x 38
-static uint8_t keycode2[][2] __FLASH__ = {
+static const uint8_t keycode2[][2] __FLASH__ = {
  { 0x10 , KEY_WWW_Search },    { 0x11 , KEY_R_Alt },      { 0x14 , KEY_R_Ctrl },      { 0x15 , KEY_PrevTrack },
  { 0x18 , KEY_WWW_Favorites }, { 0x1F , KEY_L_GUI },      { 0x20 , LEY_WWW_Refresh }, { 0x21 , KEY_VolumeDown },
  { 0x23 , KEY_Mute },          { 0x27 , KEY_R_GUI },      { 0x28 , KEY_WWW_Stop },    { 0x2B , KEY_Calc },
@@ -77,17 +77,17 @@ static uint8_t keycode2[][2] __FLASH__ = {
 };
 
 // Pause Key スキャンコード
-static uint8_t pausescode[] __FLASH__ =  {0xE1,0x14,0x77,0xE1,0xF0,0x14,0xF0,0x77};
+static const uint8_t pausescode[] __FLASH__ =  {0xE1,0x14,0x77,0xE1,0xF0,0x14,0xF0,0x77};
 
 // PrintScreen Key スキャンコード(break);
-static uint8_t prnScrncode2[] __FLASH__ = {0xE0,0xF0,0x7C,0xE0,0xF0,0x12};   // Break用
+static const uint8_t prnScrncode2[] __FLASH__ = {0xE0,0xF0,0x7C,0xE0,0xF0,0x12};   // Break用
 
 
 // キーコード・ASCIIコード変換テーブル
 // {シフト無しコード, シフトありコード }
 
 // USキーボード
-static uint8_t key_ascii_us[][2] __FLASH__ = {
+static const uint8_t key_ascii_us[][2] __FLASH__ = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ ',','\"'},{ ';', ':'},{ ',', '<'},{ '-', '_'},{ '.', '>'},{ '/', '?'},{ '[', '{'},
   { ']', '}'},{ '\\','|'},{'\\', '|'},{ '=', '+'},{ '\\','_'},{ '0', ')'},{ '1', '!'},{ '2', '@'},
@@ -99,7 +99,7 @@ static uint8_t key_ascii_us[][2] __FLASH__ = {
 };
 
 //（日本語キーボード)
-static uint8_t key_ascii_jp[][2] __FLASH__ = {
+static const uint8_t key_ascii_jp[][2] __FLASH__ = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ ':', '*'},{ ';', '+'},{ ',', '<'},{ '-', '='},{ '.', '>'},{ '/', '?'},{ '@', '`'},
   { '[', '{'},{ '\\','|'},{ ']', '}'},{ '^', '~'},{ '\\','_'},{ '0', 0  },{ '1', '!'},{ '2','\"'},
@@ -112,7 +112,7 @@ static uint8_t key_ascii_jp[][2] __FLASH__ = {
 
 // テンキー用変換テーブル 94～111
 // {通常コード, NumLock/Shift時コード, KEYコード(=1)/ASCII(=0)区分 }
-static uint8_t tenkey[][3]  __FLASH__ = {
+static const uint8_t tenkey[][3]  __FLASH__ = {
   { '=',  '='            ,0},
   { 0x0D, 0x0D           ,0},
   { '0',  KEY_Insert     ,1},
@@ -170,7 +170,7 @@ uint8_t TKeyboard::init() {
           
   // リセット命令:FF 応答がFA,AAなら
   if ( (err = pb.hostSend(0xff)) )    goto ERROR;
-  err = pb.response(&c);  if (err || (c != 0xFA)) goto ERROR;  
+  err = pb.response(&c);  if (err || (c != 0xFA)) goto ERROR;
   err = pb.response(&c);  if (err || (c != 0xAA)) goto ERROR;   
 
   // 識別情報チェック:F2 応答がキーボード識別のFA,AB,83ならOK

@@ -11,6 +11,10 @@
 #include <TPS2.h>
 #include <Arduino.h>
 
+#ifdef ESP8266
+#define __FLASH__ //ICACHE_RODATA_ATTR
+#endif
+
 // 状態管理用
 #define BREAK_CODE       0x0100  // BREAKコード
 #define KEY_CODE         0x0200  // KEYコード

@@ -124,7 +124,7 @@
 #include <Arduino.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <wirish.h>
+//#include <wirish.h>
 #include "ttconfig.h"
 
 #define STR_EDITION "Arduino STM32"
@@ -178,6 +178,7 @@ sdfiles fs;
 #endif 
 
 // **** プロフラム保存用定義 ********
+#if 0
 #include <TFlash.h>
 #define FLASH_PAGE_SIZE        1024
 #define FLASH_START_ADDRESS    ((uint32_t)(0x8000000))
@@ -185,6 +186,7 @@ sdfiles fs;
 #define FLASH_PRG_START_PAGE   (FLASH_PAGE_NUM-FLASH_PAGE_PAR_PRG*FLASH_SAVE_NUM)  // 利用開始ページ
 #define FLASH_PAGE_PAR_PRG     4       // 1プログラム当たりの利用ページ数
 #define FLASH_SAVE_NUM         10      // 保存可能数
+#endif
 
 // **** EEPROMエミュレーション ******
 #include <EEPROM.h>
@@ -245,25 +247,25 @@ void mem_putch(uint8_t c);
 // **** GPIOピンに関する定義 **********
 
 // GPIOピンモードの設定
-const WiringPinMode pinType[] = {
-  OUTPUT_OPEN_DRAIN, OUTPUT, INPUT_PULLUP, INPUT_PULLDOWN, INPUT_ANALOG, INPUT, PWM,
+const uint8_t pinType[] = {
+  OUTPUT_OPEN_DRAIN, OUTPUT, INPUT_PULLUP, /*INPUT_PULLDOWN, INPUT_ANALOG,*/ INPUT, /*PWM,*/
 };
 
 // PWM割り当て可能ピン
 const uint8_t pwmpins[] = {
-  PA6,PA7,PA8,PA9,PA10,PB1,PB0
+//  PA6,PA7,PA8,PA9,PA10,PB1,PB0
 };
 
 // ANAROG割り当て可能ピン
 const uint8_t analogpins[] = { 
-  PA0,PA2,PA3,PA4,PA5,PA6,PA7,PB0,PB1
+//  PA0,PA2,PA3,PA4,PA5,PA6,PA7,PB0,PB1
 };
 
 // IN/OUT割り当て可能ピン
 const uint8_t iogpins[] = { 
- PA0,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,PA10,PA13,PA14,PA15,
- PB0,PB1,PB3,PB8,PB10,PB11,PB12,PB13,PB14,
- PC13,
+// PA0,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,PA10,PA13,PA14,PA15,
+// PB0,PB1,PB3,PB8,PB10,PB11,PB12,PB13,PB14,
+// PC13,
 };
 
 // ピン利用可能チェック
@@ -324,7 +326,7 @@ void newline(uint8_t devno=0) {
 
 // tick用支援関数
 void iclt() {
-  systick_uptime_millis = 0;
+//  systick_uptime_millis = 0;
 }
 
 // 乱数
@@ -332,8 +334,12 @@ short getrnd(short value) {
   return random(value);
 }
 
+#ifdef ESP8266
+#define __FLASH__ ICACHE_RODATA_ATTR
+#endif
+
 // キーワードテーブル
-const char *kwtbl[] __FLASH__  = {
+const char * const kwtbl[] __FLASH__ = {
  "GOTO", "GOSUB", "RETURN", "FOR", "TO", "STEP", "NEXT", "IF", "END", "ELSE",       // 制御命令(10)
  ",", ";", ":", "\'","-", "+", "*", "/", "%", "(", ")", "$", "<<", ">>", "|", "&",  // 演算子・記号(29)
  ">=", "#", ">", "=", "<=", "!=", "<", "AND", "OR", "!", "~", "^", "@",     
@@ -465,7 +471,7 @@ char sstyle(uint8_t code,
 
 // エラーメッセージ定義
 uint8_t err;// Error message index
-const char* errmsg[] __FLASH__ = {
+const char* const errmsg[] __FLASH__ = {
   "OK",
   "Devision by zero",
   "Overflow",
@@ -888,7 +894,7 @@ int16_t lookup(char* str, uint16_t len) {
   for (uint16_t j = 1; j <= len; j++) {
     fd_id = -1;
     for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if (!strnicmp(kwtbl[i], str, j)) {
+      if (!strncasecmp(kwtbl[i], str, j)) {
         fd_id = i;
         fd_len = j;        
         break;
@@ -904,7 +910,7 @@ int16_t lookup(char* str, uint16_t len) {
   if (prv_fd_id >= 0) {
     prv_fd_id = -1;
     for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if ( (strlen(kwtbl[i]) == prv_len) && !strnicmp(kwtbl[i], str, prv_len) ) {
+      if ( (strlen(kwtbl[i]) == prv_len) && !strncasecmp(kwtbl[i], str, prv_len) ) {
         prv_fd_id = i;
         break;
       }
@@ -1595,6 +1601,7 @@ void ilist(uint8_t devno=0) {
 // フラッシュメモリ内保存プログラムのエクスポート
 // EXPORT [sno[,eno]]
 void iexport() {
+#if 0
   uint8_t* exclp;
   int16_t endlineno = 32767;   // 表示終了行番号
   int16_t prnlineno;           // 出力対象行番号
@@ -1636,6 +1643,7 @@ void iexport() {
     c_puts("SAVE "); putnum(i, 0); newline(); // "SAVE XX"の表示
     newline();
   }
+#endif
 }
 
 // プログラム消去
@@ -1803,6 +1811,7 @@ void iloadconfig() {
 
 // プログラム保存 SAVE 保存領域番号|"ファイル名"
 void isave() {
+#if 0
   int16_t prgno = 0;
   int16_t ascii = 1;
   uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
@@ -1827,7 +1836,7 @@ void isave() {
       cip++;
       if ( getParam(ascii, 0, 1, false) ) return;       
     }
-  } else if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) ) return;  
+  } else /*if ( getParam(prgno, 0, FLASH_SAVE_NUM, false) )*/ return;  
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
@@ -1862,10 +1871,12 @@ void isave() {
     }
     TFlash.lock();
   }
+#endif
 }
 
 // フラッシュメモリ上のプログラム消去 ERASE[プログラム番号[,プログラム番号]
 void ierase() {
+#if 0
   int16_t  s_prgno, e_prgno;
   uint8_t* sram_adr;
   uint32_t flash_adr;
@@ -1885,6 +1896,7 @@ void ierase() {
     }
   }
   TFlash.lock();  
+#endif
 }
 
 // テキスト形式のプログラムのロード
@@ -1939,6 +1951,7 @@ uint8_t loadPrgText(char* fname, uint8_t newmode = 0) {
 //  1:異常終了
 
 uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
+#if 0
   uint32_t flash_adr;
   flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
 
@@ -1950,6 +1963,7 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
   // 現在のプログラムの削除とロード
   inew(newmode);
   memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
+#endif
   return 0;
 }
 
@@ -2059,6 +2073,7 @@ void ifiles() {
   } else if (*cip == I_EOL || *cip == I_COLON) {  
     // フラッシュメモリのプログラムリスト
     save_clp = clp;
+#if 0
     for (uint8_t i=0 ; i < FLASH_SAVE_NUM; i++) {    
       flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ i*FLASH_PAGE_PAR_PRG);
       putnum(i,1);
@@ -2077,6 +2092,7 @@ void ifiles() {
       } 
       newline();
     }
+#endif
     clp = save_clp;
   }  
 }
@@ -2174,7 +2190,8 @@ int16_t ivpeek() {
 }
 
 // ピンモード設定(タイマー操作回避版)
-void Fixed_pinMode(uint8 pin, WiringPinMode mode) {
+void Fixed_pinMode(uint8 pin, uint8_t mode) {
+#if 0
     gpio_pin_mode outputMode;
     bool pwm = false;
 
@@ -2199,13 +2216,13 @@ void Fixed_pinMode(uint8 pin, WiringPinMode mode) {
     case INPUT_PULLUP:
         outputMode = GPIO_INPUT_PU;
         break;
-    case INPUT_PULLDOWN:
-        outputMode = GPIO_INPUT_PD;
-        break;
-    case PWM:
-        outputMode = GPIO_AF_OUTPUT_PP;
-        pwm = true;
-        break;
+//    case INPUT_PULLDOWN:
+//        outputMode = GPIO_INPUT_PD;
+//        break;
+//    case PWM:
+//        outputMode = GPIO_AF_OUTPUT_PP;
+//        pwm = true;
+//        break;
     case PWM_OPEN_DRAIN:
         outputMode = GPIO_AF_OUTPUT_OD;
         pwm = true;
@@ -2225,10 +2242,14 @@ void Fixed_pinMode(uint8 pin, WiringPinMode mode) {
                             PIN_MAP[pin].timer_channel); 
         }
     }
+#else
+    pinMode(pin, mode);
+#endif
 }
 
 // GPIO ピン機能設定
 void igpio() {
+#if 0
   int16_t pinno;       // ピン番号
   WiringPinMode pmode; // 入出力モード
   uint8_t flgok = false;
@@ -2262,6 +2283,7 @@ void igpio() {
     }    
     Fixed_pinMode(pinno, pmode);    
   }
+#endif
 }
 
 // GPIO ピンデジタル出力
@@ -2287,6 +2309,7 @@ void idwrite() {
 //   1 異常(PWMを利用出来ないピンを利用した)
 //
 uint8_t pwm_out(uint8_t pin, uint16_t freq, uint16_t duty) {
+#if 0
   uint32_t dc;
   timer_dev *dev = PIN_MAP[pin].timer_device;     // ピン対応のタイマーデバイスの取得 
   uint8 cc_channel = PIN_MAP[pin].timer_channel;  // ピン対応のタイマーチャンネルの取得
@@ -2299,6 +2322,7 @@ uint8_t pwm_out(uint8_t pin, uint16_t freq, uint16_t duty) {
   timer_set_reload(dev, f);             // リセットカウント値を設定 
   timer_set_mode(dev, cc_channel,TIMER_PWM);
   timer_set_compare(dev,cc_channel,dc);    // 比較レジスタの初期値指定(デューティ比 0)
+#endif
   return 0;
 }
 
@@ -2736,6 +2760,7 @@ void idate() {
 
 // EEPFORMAT コマンド
 void ieepformat() {
+#if 0
   uint16_t Status;
   
   //Status = EEPROM.init();  
@@ -2752,10 +2777,12 @@ void ieepformat() {
       default:                   err = ERR_EEPROM_BAD_FLASH;break;
     }
   } 
+#endif
 }
 
 // EEPWRITE アドレス,データ コマンド
 void ieepwrite() {
+#if 0
   int16_t adr;     // 書込みアドレス
   uint16_t data;   // データ
   uint16_t Status;
@@ -2775,10 +2802,12 @@ void ieepwrite() {
       default:                   err = ERR_EEPROM_BAD_FLASH;break;
     }
   }  
+#endif
 }
 
 // EEPREAD(アドレス) 関数
 int16_t ieepread(uint16_t addr) {
+#if 0
   uint16_t Status;
   uint16_t data;
 
@@ -2810,6 +2839,9 @@ int16_t ieepread(uint16_t addr) {
     }
   }  
   return data;
+#else
+  return 0;
+#endif
 }
 
 // ドットの描画 PSET X,Y,C
@@ -3950,7 +3982,7 @@ int16_t ivalue() {
     if (checkOpen()) break;
     if (getParam(value,0,I_PC15 - I_PA0, false)) break;
     if (checkClose()) break;
-    value = analogRead(value);    // 入力値取得
+    value = -1;//analogRead(value);    // 入力値取得
     break;
 
   case I_EEPREAD: // EEPREAD(アドレス)の場合
@@ -4617,6 +4649,7 @@ void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
+#if 0
   // SWD・JTAGの利用禁止
   // http://stm32duino.com/viewtopic.php?f=35&t=1130&p=13919&hilit=PA15#p13919
   afio_cfg_debug_ports(AFIO_DEBUG_NONE);
@@ -4626,6 +4659,7 @@ void basic() {
   EEPROM.PageBase1 = EEPROM_PAGE1;
   EEPROM.PageSize  = FLASH_PAGE_SIZE;
   //EEPROM.init();
+#endif
   
   // 環境設定
   loadConfig();
@@ -4641,7 +4675,7 @@ void basic() {
   fs.init(); // この処理ではGPIOの操作なし
 #endif
 
-  I2C_WIRE.begin();  // I2C利用開始
+//  I2C_WIRE.begin();  // I2C利用開始
   
   icls();
   char* textline;    // 入力行
@@ -4712,6 +4746,7 @@ void basic() {
 
 // システム環境設定のロード
 uint8_t loadConfig() {
+#if 0
   int16_t rc;
   uint16_t data;
   CONFIG.NTSC      =  0;
@@ -4733,11 +4768,13 @@ uint8_t loadConfig() {
   if (rc == EEPROM_OK) {
     CONFIG.STARTPRG = data;  
   }
+#endif
   return 0;
 }
 
 // システム環境設定の保存
 uint8_t saveConfig() {
+#if 0
   int16_t  rc;
   uint16_t data;
   uint16_t Status;
@@ -4770,5 +4807,7 @@ ERR_EEPROM:
     return -1;
 
 DONE:  
+#endif
   return 0;
 }
+

@@ -1,6 +1,6 @@
 #include "font6x8tt.h"
 
-PROGMEM const unsigned char font6x8tt[] = {
+/*PROGMEM*/ const unsigned char font6x8tt[] = {
 	6,8,0,
 	//0
 	0b00000000,

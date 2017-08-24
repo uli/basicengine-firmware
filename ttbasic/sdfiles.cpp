@@ -88,6 +88,7 @@ uint8_t  sdfiles::init(uint8_t _cs) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 //
 uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
+#if 0
   File myFile;
   uint8_t rc;
   char head[2];  // ヘッダ
@@ -110,6 +111,9 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   }
   SD.end();
   return rc;
+#else
+  return SD_ERR_INIT;
+#endif
 }
 
 //
@@ -149,7 +153,7 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -167,6 +171,7 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
 //  継続可能              : 1
 // 
 int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
+#if 0
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
   uint16_t len;
@@ -202,6 +207,9 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
 DONE:
   SD.end();
   return rc; 
+#else
+  return -SD_ERR_NOT_FILE;
+#endif
 }
 
 //
@@ -253,7 +261,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  SD.end();
+//  SD.end();
   newline();
   return rc;
 }
@@ -269,7 +277,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-if (SD_BEGIN() == false) 
+#if 0
+  if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
   if(mode) {
     if (SD.exists(tfname))
@@ -279,39 +288,52 @@ if (SD_BEGIN() == false)
     tfile = SD.open(tfname, FILE_READ);   
   }
   return tfile ? 0:SD_ERR_OPEN_FILE;
+#else
+  return SD_ERR_INIT;
+#endif
 }
 
 // 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
+#if 0
   if (tfile)
     tfile.close();
   SD.end();
+#endif
   return 0;
 }
 
 // 文字列出力
 uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
+#if 0
   if( tfile && s ) {
     n = tfile.write(s);
   }
+#endif
   return !n;    
 }
 
 // 1バイト出力 
 uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
+#if 0
   if(tfile) {
     n = tfile.write(c);
   }
+#endif
   return !n;   
 }
 
 // 1バイト読込
 int16_t sdfiles::read() {
+#if 0
   if(!tfile) 
     return -1;
   return tfile.read();
+#else
+  return -1;
+#endif
 }
 
 //
@@ -324,6 +346,7 @@ int16_t sdfiles::read() {
 //
 int16_t sdfiles::readLine(char* str) {
   int16_t len = 0;
+#if 0
   int16_t rc;
   
   while(1) {
@@ -340,6 +363,7 @@ int16_t sdfiles::readLine(char* str) {
     if (len == SD_TEXT_LEN)
       break;
   }
+#endif
   *str = 0;
   return len;
 }
@@ -383,7 +407,7 @@ int8_t sdfiles::IsText(char* fname) {
   } else {
     rc = -SD_ERR_OPEN_FILE;    
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -420,7 +444,7 @@ uint8_t sdfiles::loadBitmap(char* fname, uint8_t* ptr, int16_t x, int16_t y, int
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -455,7 +479,7 @@ uint8_t sdfiles::loadBitmapToGVRAM(char* fname, uint8_t* ptr,int16_t bw, int16_t
   } else {
     rc = SD_ERR_OPEN_FILE;    
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -484,7 +508,7 @@ uint8_t sdfiles::mkdir(char* fname) {
       rc = SD_ERR_OPEN_FILE;
     }
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -507,7 +531,7 @@ uint8_t sdfiles::rmdir(char* fname) {
   } else {
     rc =  SD_ERR_OPEN_FILE;
   }
-  SD.end();
+//  SD.end();
   return rc;
 }
 
@@ -533,7 +557,7 @@ uint8_t sdfiles::remove(char* fname) {
     return 1;
   if(SD.remove(fname) == true)
     rc = 0;
-  SD.end();
+//  SD.end();
   return rc;  
 }
 

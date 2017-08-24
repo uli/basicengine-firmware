@@ -71,17 +71,17 @@
 //
 */
 
-#include <libmaple/bitband.h>
+//#include <libmaple/bitband.h>
 #include <TTVout.h>
-#define BITBAND 1
+//#define BITBAND 1
 
-const int pwmOutPin = PB9;      // tone用 PWM出力ピン
+const int pwmOutPin = 2;//PB9;      // tone用 PWM出力ピン
 static uint8_t* _screen;        // フレームバッファアドレス
 static uint16_t _width;         // 画面横ドット数
 static uint16_t _height;        // 画面縦ドット数
 static uint16_t _hres;          // 横バイト数
 static uint16_t _vres;          // 縦ドット数
-static volatile uint32_t*_adr;  // フレームバッファビットバンドアドレス
+static volatile uint8_t*_adr;  // フレームバッファビットバンドアドレス
 
 // tone用
 short tone_pin = -1;        // pin for outputting sound
@@ -97,7 +97,7 @@ void TTVout::begin(uint8_t mode, uint8_t spino) {
      );
 	
 	// tone用出力ピンの設定
-	pinMode(pwmOutPin, PWM);
+	//pinMode(pwmOutPin, PWM);
 	noTone();
 }
 
@@ -110,7 +110,7 @@ void TTVout::init(uint8_t* vram, uint16_t width, uint16_t height) {
   _height = height;
   _hres   = _width/8;
   _vres   = _height;
-  _adr = (volatile uint32_t*)(BB_SRAM_BASE + ((uint32_t)_screen - BB_SRAM_REF) * 32);
+  _adr = _screen;//(volatile uint32_t*)(BB_SRAM_BASE + ((uint32_t)_screen - BB_SRAM_REF) * 32);
 }
 
 
@@ -170,7 +170,7 @@ void TTVout::delay_frame(uint16_t x) {
 }
 
 // 起動からの時間（ミリ秒)取得
-uint32_t TTVout::millis() {
+unsigned long TTVout::millis() {
   return ::millis();
 }
 
@@ -862,6 +862,7 @@ void TTVout::tone(uint16_t freq, uint16_t duration) {
   if (freq < 15 || freq > 50000 ) {
     noTone();
   } else {
+#if 0
     uint32_t f =1000000/(uint16_t)freq;
 #if F_CPU == 72000000L
   	Timer4.setPrescaleFactor(72); // システムクロックを1/72に分周
@@ -877,6 +878,7 @@ void TTVout::tone(uint16_t freq, uint16_t duration) {
       Timer4.pause(); 
       Timer4.setCount(0xffff);
     }
+#endif
   }
 }
 
@@ -886,7 +888,9 @@ void TTVout::tone(uint16_t freq, uint16_t duration) {
 // pin     : PWM出力ピン (現状はPB9固定)
 //
 void TTVout::noTone() {
+#if 0
     Timer4.pause();
 	Timer4.setCount(0xffff);
+#endif
 }
 

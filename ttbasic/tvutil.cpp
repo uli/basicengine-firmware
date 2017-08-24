@@ -11,6 +11,8 @@
 // 修正日 2017/05/30, SPI2(PA7 => PB15)に変更
 // 修正日 2017/06/14, SPI2時のPB13ピンのHIGH設定対策
 
+#include <stdint.h>
+#include <string.h>
 #include <TTVout.h>
 #include "tscreen.h"
 #define NTSC_VIDEO_SPI 2
@@ -41,7 +43,7 @@ uint16_t f_width;    // フォント幅(ドット)
 uint16_t f_height;   // フォント高さ(ドット)
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
-uint32_t *b_adr;     // フレームバッファビットバンドアドレ
+uint8_t *b_adr;     // フレームバッファビットバンドアドレ
 
 // NTSC 垂直同期信号補正
 void tv_NTSC_adjust(int16_t ajst) {
@@ -61,7 +63,9 @@ void tv_init(int16_t ajst) {
 
 #if NTSC_VIDEO_SPI == 2
   // SPI2 SCK2(PB13ピン)が起動直後にHIGHになっている修正
-   pinMode(PB13, INPUT);  
+  // Correction that SPI2 SCK2 (PB13 pin) is HIGH immediately after startup
+//   pinMode(PB13, INPUT);  
+//   pinMode(PA5, INPUT);
 #endif
 
   TV.select_font(tvfont);
@@ -72,7 +76,7 @@ void tv_init(int16_t ajst) {
   c_height = g_height / f_height;      // 縦文字数
   vram = TV.VRAM();                    // VRAM先頭
   
-  b_adr =  (uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
+  b_adr =  vram;//(uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
 }
 
 // フォントアドレス取得
@@ -193,16 +197,25 @@ void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
 
 // 指定サイズのドットの描画
 inline void tv_dot(int16_t x, int16_t y, int16_t n, uint8_t c) {
+  uint8_t *adr;
+  uint8_t bipo;
   for (int16_t i = y ; i < y+n; i++) {
     for (int16_t j= x; j < x+n; j++) {
-      b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] = c;
+      bipo = (j & 0xf8) + 7 - (j & 7);
+      adr = b_adr + g_width*i/8 + bipo/8;
+      *adr = (*adr & ~(1 << bipo)) | (c << bipo);
+      //b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] = c;
     }
   }
 }
 
 // 指定座標のピクセル取得
 int16_t tv_gpeek(int16_t x, int16_t y) {
-   return b_adr[g_width*y+ (x&0xf8) +7 -(x&7)];
+  uint8_t *adr;
+  uint8_t bipo;
+      bipo = (x & 0xf8) + 7 - (x & 7);
+      adr = b_adr + g_width*y/8 + bipo/8;
+   return (*adr >> bipo) & 1;//b_adr[g_width*y+ (x&0xf8) +7 -(x&7)];
 }
 
 // 指定座標のピクセル有無のチェック
