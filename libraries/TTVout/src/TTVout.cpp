@@ -91,8 +91,10 @@ short tone_freq = 444;      // tone frequency (0=pause)
 
 // コンストラクタ
 TTVout::TTVout() {
+#if USE_NTSC == 1
 	//TNTSC= new TNTSC_class();
 	TNTSC= &::TNTSC;
+#endif
 }
 
 // ディストラクタ
@@ -103,11 +105,13 @@ TTVout::~TTVout() {
 
 // TTVout利用開始
 void TTVout::begin(uint8_t mode, uint8_t spino, uint8_t* extram) {
+#if USE_NTSC == 1
     TNTSC->begin(mode, spino,extram);   // NTSCビデオ出力開始
     init( TNTSC->VRAM(),  // フレームバッファ指定
     	TNTSC->width(),   // 画面横サイズ指定
     	TNTSC->height()   // 画面縦サイズ指定
      );
+#endif
 	
 	// tone用出力ピンの設定
 	//pinMode(pwmOutPin, PWM);
@@ -129,7 +133,9 @@ void TTVout::init(uint8_t* vram, uint16_t width, uint16_t height) {
 
 // 利用終了
 void TTVout::end() {
+#if USE_NTSC == 1
 	TNTSC->end();
+#endif
 }
 
 
@@ -185,7 +191,9 @@ uint8_t* TTVout::VRAM() {
 
 // フレーム間待ち
 void TTVout::delay_frame(uint16_t x) {
+#if USE_NTSC == 1
   TNTSC->delay_frame(x);
+#endif
 }
 
 // 起動からの時間（ミリ秒)取得
@@ -195,12 +203,16 @@ unsigned long TTVout::millis() {
 
 // ブランキング期間開始フック設定
 void TTVout::setBktmStartHook(void (*func)()) {
+#if USE_NTSC == 1
   TNTSC->setBktmStartHook(func);
+#endif
 }
 
 // ブランキング期間終了フック設定
 void TTVout::setBktmEndHook(void (*func)()) {
+#if USE_NTSC == 1
   TNTSC->setBktmEndHook(func);
+#endif
 }
 
 // 点を描画する

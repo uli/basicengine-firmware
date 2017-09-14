@@ -62,7 +62,9 @@ void tv_fontInit() {
 
 // NTSC 垂直同期信号補正
 void tv_NTSC_adjust(int16_t ajst) {
+#if USE_NTSC == 1
   TV.TNTSC->adjust(ajst);  
+#endif
 }
 
 //
@@ -70,7 +72,9 @@ void tv_NTSC_adjust(int16_t ajst) {
 // 
 void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) { 
   tv_fontInit();
+#if USE_NTSC == 1
   TV.TNTSC->adjust(ajst);
+#endif
   TV.begin(vmode, NTSC_VIDEO_SPI, extmem); // SPI2を利用
 	
 #if NTSC_VIDEO_SPI == 2
@@ -81,8 +85,13 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) {
 #endif
 
   TV.select_font(tvfont);
+#if USE_NTSC == 1
   g_width  = TV.TNTSC->width();           // 横ドット数
   g_height = TV.TNTSC->height();          // 縦ドット数
+#else
+  g_width = 320;
+  g_height = 200;
+#endif
 	
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
