@@ -15,6 +15,10 @@ extern "C" {
 #include <eagle_soc.h>
 #endif
 };
+#include <Time.h>
+
+#include <eboot_command.h>
+
 #ifndef ESP8266_NOWIFI
 extern "C" {
 #include <user_interface.h>
@@ -37,7 +41,6 @@ void basic(void);
 void setup(void){
   // put your setup code here, to run once:
   
-  //Serial.begin(115200);
   //Serial.end();
   // USBのジッター低減
   //nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
@@ -49,6 +52,8 @@ void setup(void){
   //delay(3000);
 #endif
   //randomSeed(analogRead(PA0));
+  delay(2000);
+  Serial.begin(115200);
 #ifndef ESP8266_NOWIFI
   timer0_isr_init();
   timer0_attachInterrupt(&shut_up_dog);
@@ -59,6 +64,32 @@ void loop(void){
 #ifdef ESP8266_NOWIFI
   ets_wdt_disable();
 #endif
+  //pinMode(D2, OUTPUT_OPEN_DRAIN);
+  //pinMode(D1, OUTPUT);
+  delay(3000);
+  Serial.println("Wir sind da, wo unten ist.");
+  eboot_command ebcmd;
+  ebcmd.action = ACTION_LOAD_APP;
+  ebcmd.args[0] = 0x80000;
+  //eboot_command_write(&ebcmd);
+  //digitalWrite(D1, LOW);
+  //digitalWrite(D2, LOW);
+  Serial.println("\nStarting");Serial.flush();
+  //delayMicroseconds(1000000);
+  delay(500);
+  //digitalWrite(D1, HIGH);
+  //digitalWrite(D2, HIGH);
+  Serial.println("2");Serial.flush();
+  delay(1000);
+  for (int i=0; i < 3; ++i) {
+    Serial.println("tick");Serial.flush();
+    Serial.println(millis());
+    //delayMicroseconds(10000000);
+    delay(1000);
+    //for (int j=0;j<1000;++j)
+    //  delayMicroseconds(500);
+  }
+
   // put your main code here, to run repeatedly:
   basic();
 }
