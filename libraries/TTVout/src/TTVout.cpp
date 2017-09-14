@@ -38,7 +38,7 @@
 // 修正日 2017/02/04 SPIのSPI2.dmaSend()を自作関数に置き換え, by たま吉さん
 // 修正日 2017/02/27 描画処理にビットバンドを利用するように修正
 // 修正日 2017/02/28 draw_circle()のオリジナルの不具合修正
-// 修正日 2017/03/03 TNTSC v2.2対応
+// 修正日 2017/03/03 TNTSC->v2.2対応
 // 修正日 2017/03/24 tone()の初期化不具合修正,PWM初期化処理追加
 // 修正日 2017/04/13 draw_rect,draw_circleの引数の型の変更,48MHz対応のための修正
 // 修正日 2017/04/26 draw_rectのオリジナル版の不具合対応
@@ -48,6 +48,8 @@
 // 更新日 2017/05/10 toneのクロック48MHz対応
 // 更新日 2017/05/10 draw_circleの不具合対応
 // 更新日 2017/05/16 toneの停止時、HIGHとなる不具合を対応
+// 更新日 2017/06/25, NTSCオブジェクトを動的生成に修正,NTSCの外部メモリ領域指定対応
+// 更新日 2017/07/29,shift()のUP処理の不具合（VRAM外への書込み)対応
 //
 //
 // ※このプログラムソースの一部は、 Myles Metzers氏作成が作成、Avamanderが修正公開している
@@ -87,13 +89,24 @@ static volatile uint8_t*_adr;  // フレームバッファビットバンドア�
 short tone_pin = -1;        // pin for outputting sound
 short tone_freq = 444;      // tone frequency (0=pause)
 
+// コンストラクタ
+TTVout::TTVout() {
+	//TNTSC= new TNTSC_class();
+	TNTSC= &::TNTSC;
+}
+
+// ディストラクタ
+TTVout::~TTVout() {
+   //delete TNTSC;
+}
+
 
 // TTVout利用開始
-void TTVout::begin(uint8_t mode, uint8_t spino) {
-    TNTSC.begin(mode, spino);   // NTSCビデオ出力開始
-    init( TNTSC.VRAM(),  // フレームバッファ指定
-    	TNTSC.width(),   // 画面横サイズ指定
-    	TNTSC.height()   // 画面縦サイズ指定
+void TTVout::begin(uint8_t mode, uint8_t spino, uint8_t* extram) {
+    TNTSC->begin(mode, spino,extram);   // NTSCビデオ出力開始
+    init( TNTSC->VRAM(),  // フレームバッファ指定
+    	TNTSC->width(),   // 画面横サイズ指定
+    	TNTSC->height()   // 画面縦サイズ指定
      );
 	
 	// tone用出力ピンの設定
@@ -111,6 +124,12 @@ void TTVout::init(uint8_t* vram, uint16_t width, uint16_t height) {
   _hres   = _width/8;
   _vres   = _height;
   _adr = _screen;//(volatile uint32_t*)(BB_SRAM_BASE + ((uint32_t)_screen - BB_SRAM_REF) * 32);
+}
+
+
+// 利用終了
+void TTVout::end() {
+	TNTSC->end();
 }
 
 
@@ -166,7 +185,7 @@ uint8_t* TTVout::VRAM() {
 
 // フレーム間待ち
 void TTVout::delay_frame(uint16_t x) {
-  TNTSC.delay_frame(x);
+  TNTSC->delay_frame(x);
 }
 
 // 起動からの時間（ミリ秒)取得
@@ -176,12 +195,12 @@ unsigned long TTVout::millis() {
 
 // ブランキング期間開始フック設定
 void TTVout::setBktmStartHook(void (*func)()) {
-  TNTSC.setBktmStartHook(func);
+  TNTSC->setBktmStartHook(func);
 }
 
 // ブランキング期間終了フック設定
 void TTVout::setBktmEndHook(void (*func)()) {
-  TNTSC.setBktmEndHook(func);
+  TNTSC->setBktmEndHook(func);
 }
 
 // 点を描画する
@@ -480,7 +499,8 @@ void TTVout::shift(uint8_t distance, uint8_t direction) {
       src = _screen + distance*_hres;
       end = _screen + _vres*_hres;
         
-      while (src <= end) {
+//      while (src <= end) { 2017/07/29 修正
+      while (src <  end) {
         *dst = *src;
         *src = 0;
         dst++;

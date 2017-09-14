@@ -5,16 +5,19 @@
 // 参考情報
 // - Topic: SD Timestamp read? (Read 1 time) http://forum.arduino.cc/index.php?topic=114181.0
 //
+// 修正履歴
+//  2017/07/27, flist()で列数を指定可能
+//
+
 
 #include "sdfiles.h"
 #include <sdbitmap.h>
 #include <string.h>
 #include <libBitmap.h>
-#if USE_INNERRTC == 1
-  #include <RTClock.h>
-  #include <time.h>
-  extern RTClock rtc;
-#endif
+
+#include <RTClock.h>
+#include <time.h>
+extern RTClock rtc;
 
 SdFat SD;
 
@@ -58,7 +61,6 @@ uint8_t wildcard_match(const char *wildcard, const char *target) {
     }
 }
 
-#if USE_INNERRTC == 1
 // ファイルタイムスタンプコールバック関数
 void dateTime(uint16_t* date, uint16_t* time) {
    time_t tt; 
@@ -67,8 +69,7 @@ void dateTime(uint16_t* date, uint16_t* time) {
    st = localtime(&tt);  // 時刻型変換
   *date = FAT_DATE(st->tm_year+1900, st->tm_mon+1, st->tm_mday);
   *time = FAT_TIME(st->tm_hour, st->tm_min, st->tm_sec);
-}
-#endif 
+} 
 
 //
 // 初期設定
@@ -79,9 +80,7 @@ void dateTime(uint16_t* date, uint16_t* time) {
 uint8_t  sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
-#if USE_INNERRTC == 1
   SdFile::dateTimeCallback( &dateTime );
-#endif
   return 0;
 }
 
@@ -236,7 +235,7 @@ DONE:
 //  SDカード利用失敗 : SD_ERR_INIT
 //  SD_ERR_OPEN_FILE : ファイルオープンエラー 
 //
-uint8_t sdfiles::flist(char* _dir, char* wildcard) {
+uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 #if 1
   uint16_t cnt = 0;
   uint16_t len;
@@ -262,7 +261,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
         } else {
           c_puts(entry.name());
         }
-        if (cnt % 2) {
+        if (!((cnt+1) % clmnum)) {
           newline();
         } else {
           for (uint8_t i = len; i < 14; i++)

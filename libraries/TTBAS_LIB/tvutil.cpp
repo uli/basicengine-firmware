@@ -10,20 +10,25 @@
 // 修正日 2017/05/19, tv_getFontAdr()の追加
 // 修正日 2017/05/30, SPI2(PA7 => PB15)に変更
 // 修正日 2017/06/14, SPI2時のPB13ピンのHIGH設定対策
+// 修正日 2017/07/25, tv_init()の追加
+// 修正日 2017/07/29, スクリーンモード変更対応
 
 #include <stdint.h>
 #include <string.h>
 #include <TTVout.h>
-#include "tscreen.h"
+#include "tTVscreen.h"
 #define NTSC_VIDEO_SPI 2
+
+const int pwmOutPin = PB9;      // tone用 PWM出力ピン
+
 /*
 #define TV_DISPLAY_FONT font6x8
 #include <font6x8.h>
 */
-
+/*
 #define TV_DISPLAY_FONT font6x8tt
 #include <font6x8tt.h>
-
+*/
 /*
 #define TV_DISPLAY_FONT font8x8
 #include <font8x8.h>
@@ -34,6 +39,7 @@
 #include <ichigoFont8x8.h>
 */
 
+extern uint8_t* ttbasic_font;
 TTVout TV;
 uint8_t* tvfont;     // 利用フォント
 uint16_t c_width;    // 横文字数
@@ -45,22 +51,28 @@ uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
 uint8_t *b_adr;     // フレームバッファビットバンドアドレ
 
+
+// フォント利用設定
+void tv_fontInit() {
+//  tvfont   = (uint8_t*)TV_DISPLAY_FONT;
+  tvfont = ttbasic_font;
+  f_width  = *(tvfont+0);             // 横フォントドット数
+  f_height = *(tvfont+1);             // 縦フォントドット数  
+}
+
 // NTSC 垂直同期信号補正
 void tv_NTSC_adjust(int16_t ajst) {
-  TNTSC.adjust(ajst);  
+  TV.TNTSC->adjust(ajst);  
 }
 
 //
 // NTSC表示の初期設定
 // 
-void tv_init(int16_t ajst) {
-  tvfont   = (uint8_t*)TV_DISPLAY_FONT;
-  f_width  = *(tvfont+0);             // 横フォントドット数
-  f_height = *(tvfont+1);             // 縦フォントドット数
-  
-  TNTSC.adjust(ajst);
-  TV.begin(SC_DEFAULT,NTSC_VIDEO_SPI); // SPI2を利用
-
+void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) { 
+  tv_fontInit();
+  TV.TNTSC->adjust(ajst);
+  TV.begin(vmode, NTSC_VIDEO_SPI, extmem); // SPI2を利用
+	
 #if NTSC_VIDEO_SPI == 2
   // SPI2 SCK2(PB13ピン)が起動直後にHIGHになっている修正
   // Correction that SPI2 SCK2 (PB13 pin) is HIGH immediately after startup
@@ -69,14 +81,21 @@ void tv_init(int16_t ajst) {
 #endif
 
   TV.select_font(tvfont);
-  g_width  = TNTSC.width();           // 横ドット数
-  g_height = TNTSC.height();          // 縦ドット数
-  
+  g_width  = TV.TNTSC->width();           // 横ドット数
+  g_height = TV.TNTSC->height();          // 縦ドット数
+	
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
   vram = TV.VRAM();                    // VRAM先頭
   
   b_adr =  vram;//(uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
+}
+
+//
+// NTSC表示の終了
+// 
+void tv_end() {
+  TV.end();
 }
 
 // フォントアドレス取得
@@ -169,8 +188,14 @@ void tv_scroll_up() {
 
 // 1行分スクリーンのスクロールダウン
 void tv_scroll_down() {
-  TV.shift(*(tvfont+1), DOWN);
+  uint8_t h = *(tvfont+1);
+  TV.shift(h, DOWN);
+  h = g_height % h;
+  if (h) {
+    TV.draw_rect(0, g_height-h, g_width, h, 0, 0); 
+  }
   tv_clerLine(0);
+  
 }
 
 // 点の描画
@@ -267,14 +292,63 @@ void tv_write(uint8_t c) {
   TV.write(c);
 }
 
+//
+// 音の停止
+// 引数
+// pin     : PWM出力ピン (現状はPB9固定)
+//
+void tv_noToneEx() {
+    Timer4.pause();
+  Timer4.setCount(0xffff);
+}
+
+//
+// PWM単音出力初期設定
+//
+void tv_toneInit() {
+  pinMode(pwmOutPin, PWM);
+  tv_noToneEx();
+}
+
+//
+// 音出し
+// 引数
+//  pin     : PWM出力ピン (現状はPB9固定)
+//  freq    : 出力周波数 (Hz) 15～ 50000
+//  duration: 出力時間(msec)
+//
+void tv_toneEx(uint16_t freq, uint16_t duration) {
+  if (freq < 15 || freq > 50000 ) {
+    tv_noToneEx();
+  } else {
+    uint32_t f =1000000/(uint16_t)freq;
+#if F_CPU == 72000000L
+    Timer4.setPrescaleFactor(72); // システムクロックを1/72に分周
+#else if  F_CPU == 48000000L
+    Timer4.setPrescaleFactor(48); // システムクロックを1/48に分周
+#endif
+    Timer4.setOverflow(f);
+    Timer4.refresh();
+    Timer4.resume(); 
+    pwmWrite(pwmOutPin, f/2);  
+    if (duration) {
+      delay(duration);
+      Timer4.pause(); 
+      Timer4.setCount(0xffff);
+    }
+  }
+}
+
 // 音の再生
 void tv_tone(int16_t freq, int16_t tm) {
-  TV.tone(freq, tm);  
+  //TV.tone(freq, tm);
+  tv_toneEx(freq, tm);
 }
 
 // 音の停止
 void tv_notone() {
-  TV.noTone();    
+  //TV.noTone();
+  tv_noToneEx();    
 }
 
 // グラフィック横スクロール
@@ -335,4 +409,5 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
        break;              
    }
 }
+
 

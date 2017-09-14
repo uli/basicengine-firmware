@@ -8,6 +8,7 @@
 // 更新日 2017/04/18, SPI割り込みの廃止(動作確認中)
 // 更新日 2017/04/27, NTSC走査線数補正関数追加
 // 更新日 2017/04/30, SPI1,SPI2の選択指定を可能に修正
+// 更新日 2017/06/25, 外部確保VRAMの指定を可能に修正
 
 #include <TNTSC.h>
 #include <SPI.h>
@@ -36,17 +37,16 @@ typedef struct  {
 
 #if F_CPU == 72000000L
 #define NTSC_TIMER_DIV 3 // システムクロック分周 1/3
-const SCREEN_SETUP screen_type[] {
+const SCREEN_SETUP screen_type[] __FLASH__ {
   { 112, 108, 216, 14, 1, SPI_CLOCK_DIV32 }, // 112x108
   { 224, 108, 216, 28, 1, SPI_CLOCK_DIV16 }, // 224x108 
   { 224, 216, 216, 28, 0, SPI_CLOCK_DIV16 }, // 224x216
   { 448, 108, 216, 56, 1, SPI_CLOCK_DIV8  }, // 448x108 
   { 448, 216, 216, 56, 0, SPI_CLOCK_DIV8  }, // 448x216 
 };
-
-#else if  F_CPU == 48000000L
+#elif  F_CPU == 48000000L
 #define NTSC_TIMER_DIV 2 // システムクロック分周 1/2
-const SCREEN_SETUP screen_type[] {
+const SCREEN_SETUP screen_type[] __FLASH__ {
   { 128,  96, 192, 16, 1, SPI_CLOCK_DIV16 }, // 128x96
   { 256,  96, 192, 32, 1, SPI_CLOCK_DIV8  }, // 256x96 
   { 256, 192, 192, 32, 0, SPI_CLOCK_DIV8  }, // 256x192
@@ -157,7 +157,7 @@ void TNTSC_class::adjust(int16_t cnt) {
 	
 // NTSCビデオ表示開始
 //void TNTSC_class::begin(uint8_t mode) {
-void TNTSC_class::begin(uint8_t mode, uint8_t spino) {
+void TNTSC_class::begin(uint8_t mode, uint8_t spino, uint8_t* extram) {
    // スクリーン設定
    _screen = mode <=4 ? mode: SC_DEFAULT;
    _width  = screen_type[_screen].width;
@@ -165,8 +165,14 @@ void TNTSC_class::begin(uint8_t mode, uint8_t spino) {
    _vram_size  = screen_type[_screen].hsize * _height;
    _ntscHeight = screen_type[_screen].ntscH;
    _spino = spino;
-	
-  vram = (uint8_t*)malloc(_vram_size);  // ビデオ表示フレームバッファ
+   flgExtVram = false;
+  
+   if (extram) {
+     vram = extram;
+     flgExtVram = true;
+   } else {
+     vram = (uint8_t*)malloc(_vram_size);  // ビデオ表示フレームバッファ
+   }
    cls();
    ptr = vram;  // ビデオ表示用フレームバッファ参照ポインタ
    count = 1;
@@ -224,9 +230,11 @@ void TNTSC_class::end() {
   spi_tx_dma_disable(pSPI->dev());  
   dma_detach_interrupt(_spi_dma, _spi_dma_ch);
   pSPI->end();
-  free(vram);
+  if (!flgExtVram)
+     free(vram);
   if (_spino == 2) {
-  	pSPI->~SPIClass();
+  	delete pSPI;
+  	//pSPI->~SPIClass();
   }	
 }
 

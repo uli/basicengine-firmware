@@ -4,9 +4,7 @@
   2017/03/22 Modified by Tamakichi、for Arduino STM32
  */
 
-//
-// 2017/03/22 修正, Arduino STM32、フルスクリーン対応 v0.1 by たま吉さん
-// 
+#include "ttconfig.h"
 
 #include <SPI.h>
 extern "C" {
@@ -38,23 +36,29 @@ void ICACHE_RAM_ATTR shut_up_dog(void)
 }
 #endif
 
-void basic(void);
+void basic();
+uint8_t serialMode;
 
 extern "C" void setSample(uint8_t s);
 void SpiRamVideoInit();
 
 void setup(void){
-  // put your setup code here, to run once:
-  
-  //Serial.end();
+//  Serial.begin(115200);
+//  Serial1.begin(GPIO_S1_BAUD);
+
   // USBのジッター低減
-  //nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
-  //nvic_irq_set_priority(NVIC_USB_LP_CAN_RX0,7);  // USB割り込み優先レベル設定
-  //nvic_irq_set_priority((nvic_irq_num)14,4);
+/*
+  //Serial.end();
+  nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
+  nvic_irq_set_priority(NVIC_USB_LP_CAN_RX0,7);  // USB割り込み優先レベル設定
+  nvic_irq_set_priority((nvic_irq_num)14,4);
+*/
 //  nvic_irq_set_priority(NVIC_TIMER2,2);
+
 #if defined (__STM32F1__)   
-  //while (!Serial.isConnected()) delay(100);
-  //delay(3000);
+  for(uint8_t tm=0; tm <15 && !Serial.isConnected(); tm++) {
+    delay(100);
+  }
 #endif
   //randomSeed(analogRead(PA0));
   delay(2000);

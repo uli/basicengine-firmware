@@ -5,6 +5,9 @@
 // 参考情報
 // - Topic: SD Timestamp read? (Read 1 time) http://forum.arduino.cc/index.php?topic=114181.0
 //
+// 修正履歴
+//  2017/07/27, flist()で列数を指定可能
+//
 
 #ifndef __sdfiles_h__
 #define __sdfiles_h__
@@ -33,10 +36,10 @@ class sdfiles {
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
   uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
   uint8_t save(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのセーブ
-  uint8_t flist(char* _dir, char* wildcard=NULL);       // ファイルリスト出力
+  uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
   uint8_t mkdir(char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
-  //uint8_t rename(char* old_fname,char* new_fname);      // ファイル名の変更
+  //uint8_t rename(char* old_fname,char* new_fname);    // ファイル名の変更
   uint8_t remove(char* fname);                          // ファイルの削除
   uint8_t fcopy(char* old_fname,char* new_fname);       // ファイルのコピー
 

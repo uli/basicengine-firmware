@@ -9,7 +9,7 @@
 #include <string.h>
 #include "ring_buffer.h"
 #include <TKeyboard.h>
-#include "tscreen.h"
+#include "tTVscreen.h"
 
 #ifdef ESP8266
 #define __FLASH__ //ICACHE_RODATA_ATTR
@@ -340,6 +340,8 @@ uint8_t cnv2tty(keyEvent k) {
     case KEY_Delete:     rc = KEY_DC;       break;
     case KEY_Enter:      rc = KEY_CR;       break;
     case 112:            rc = SC_KEY_CTRL_L;break;
+    case KEY_F2:         rc = SC_KEY_CTRL_D;break;
+    case KEY_F3:         rc = SC_KEY_CTRL_N;break;
     case KEY_F5:         rc = SC_KEY_CTRL_R;break;
     case KEY_Romaji: 
       if (flgKana) {
