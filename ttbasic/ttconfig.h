@@ -15,13 +15,14 @@
                      // ※ 、SDカード併用でフリーズ発生
                      
 // ** NTSCビデオ出力利用有無 *************************************************
-#define USE_NTSC  0  // 0:利用しない 1:利用する (デフォルト:1)
+#define USE_NTSC  1  // 0:利用しない 1:利用する (デフォルト:1)
+#define USE_VS23 1
 
 // ** デフォルトスクリーンモードの指定 0:ターミナルモード 1:NTSCビデオ 224x216
 #define USE_SCREEN_MODE 1  // USE_NTSC=0の場合、0を指定すること (デフォルト:1)
 
 #if USE_NTSC == 0 && USE_SCREEN_MODE == 1
-// #define USE_SCREEN_MODE 0
+#define USE_SCREEN_MODE 0
 #endif
 
 // ** ターミナルモード時のデフォルト スクリーンサイズ  ***********************
