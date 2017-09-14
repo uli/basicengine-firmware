@@ -1914,6 +1914,7 @@ void iconfig() {
     }
     break;
 #endif
+#if 0
   case 2: // プログラム自動起動番号設定
     if (value < -1 || value >FLASH_SAVE_NUM-1)  {
       err = ERR_VALUE;
@@ -1921,6 +1922,7 @@ void iconfig() {
       CONFIG.STARTPRG = value;
     }
     break;
+#endif
   default:
     err = ERR_VALUE;
     break;     
@@ -3951,7 +3953,7 @@ uint8_t ilrun() {
     // 内部フラッシュメモリからの読込＆実行
     if (*cip == I_EOL) {
      prgno = 0;
-    } else { if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) )
+    } else { //if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) )
      return 0; // プログラム番号
     }
   }

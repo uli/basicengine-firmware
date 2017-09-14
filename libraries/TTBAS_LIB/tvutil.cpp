@@ -19,7 +19,7 @@
 #include "tTVscreen.h"
 #define NTSC_VIDEO_SPI 2
 
-const int pwmOutPin = PB9;      // tone用 PWM出力ピン
+//const int pwmOutPin = PB9;      // tone用 PWM出力ピン
 
 /*
 #define TV_DISPLAY_FONT font6x8
@@ -298,15 +298,15 @@ void tv_write(uint8_t c) {
 // pin     : PWM出力ピン (現状はPB9固定)
 //
 void tv_noToneEx() {
-    Timer4.pause();
-  Timer4.setCount(0xffff);
+//    Timer4.pause();
+//  Timer4.setCount(0xffff);
 }
 
 //
 // PWM単音出力初期設定
 //
 void tv_toneInit() {
-  pinMode(pwmOutPin, PWM);
+//  pinMode(pwmOutPin, PWM);
   tv_noToneEx();
 }
 
@@ -322,6 +322,7 @@ void tv_toneEx(uint16_t freq, uint16_t duration) {
     tv_noToneEx();
   } else {
     uint32_t f =1000000/(uint16_t)freq;
+#if 0
 #if F_CPU == 72000000L
     Timer4.setPrescaleFactor(72); // システムクロックを1/72に分周
 #else if  F_CPU == 48000000L
@@ -330,12 +331,13 @@ void tv_toneEx(uint16_t freq, uint16_t duration) {
     Timer4.setOverflow(f);
     Timer4.refresh();
     Timer4.resume(); 
-    pwmWrite(pwmOutPin, f/2);  
+//    pwmWrite(pwmOutPin, f/2);  
     if (duration) {
       delay(duration);
       Timer4.pause(); 
       Timer4.setCount(0xffff);
     }
+#endif
   }
 }
 
