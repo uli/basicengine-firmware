@@ -17,7 +17,7 @@ void VS23S010::adjust(int16_t cnt)
 }
 
 uint16_t VS23S010::width() {
-  return 318;
+  return 319;
 }
 
 uint16_t VS23S010::height() {
