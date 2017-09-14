@@ -61,7 +61,7 @@ void setup(void){
   }
 #endif
   //randomSeed(analogRead(PA0));
-  delay(2000);
+  delay(1000);
   Serial.begin(115200);
 #ifndef ESP8266_NOWIFI
   timer0_isr_init();
@@ -75,7 +75,7 @@ void loop(void){
 #endif
   //pinMode(D2, OUTPUT_OPEN_DRAIN);
   //pinMode(D1, OUTPUT);
-  delay(3000);
+  //delay(3000);
   Serial.println("Wir sind da, wo unten ist.");
   eboot_command ebcmd;
   ebcmd.action = ACTION_LOAD_APP;
@@ -94,7 +94,7 @@ void loop(void){
     Serial.println("tick");Serial.flush();
     Serial.println(millis());
     //delayMicroseconds(10000000);
-    delay(1000);
+    //delay(1000);
     //for (int j=0;j<1000;++j)
     //  delayMicroseconds(500);
   }
@@ -112,7 +112,7 @@ void loop(void){
     Serial.print(SPI.transfer(0), HEX);
     Serial.println(SPI.transfer(0), HEX);
     digitalWrite(15, HIGH);
-    delay(200);
+    //delay(200);
   }
   SpiRamVideoInit();
 
@@ -121,7 +121,7 @@ void loop(void){
   SendI2S();
   for (int i=0; i < 256; ++i) {
     setSample(i);
-    delay(50);
+    //delay(50);
   }
   // put your main code here, to run repeatedly:
   basic();
