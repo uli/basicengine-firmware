@@ -230,11 +230,11 @@
 /// one LSB is 5.1724137mV
 #define SYNC_LEVEL  0x0000
 /// 285 mV to 75 ohm load
-#define BLANK_LEVEL 0x0037
+#define BLANK_LEVEL 0x0066
 /// 339 mV to 75 ohm load
-#define BLACK_LEVEL 0x0042
+#define BLACK_LEVEL 0x0066
 /// 285 mV burst
-#define BURST_LEVEL 0xb537
+#define BURST_LEVEL 0x0d66
 #define WHITE_LEVEL 0x00ff
 
 
