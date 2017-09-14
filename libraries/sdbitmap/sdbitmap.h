@@ -10,7 +10,7 @@
 #define __SDBITMAP_H__
 
 #include <Arduino.h>
-#include <SD.h>
+#include <SdFat.h>
 #include <SPI.h>
 
 // クラス定義

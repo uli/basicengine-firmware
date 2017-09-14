@@ -9,6 +9,8 @@
 #include "sdbitmap.h"
 #define DEBUG_BMPLOAD 0
 
+extern SdFat SD;
+
 //
 // コンストラクタ
 //

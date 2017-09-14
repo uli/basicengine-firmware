@@ -16,7 +16,17 @@
   extern RTClock rtc;
 #endif
 
-#define SD_BEGIN() SD.begin(F_CPU/4,cs)
+SdFat SD;
+
+static bool sdfat_initialized = false;
+
+inline bool sdfiles::SD_BEGIN(void)
+{
+  if (!sdfat_initialized)
+    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(F_CPU/4));
+  return sdfat_initialized;
+}
+
 void c_puts(const char *s, uint8_t devno=0);
 void newline(uint8_t devno=0);
 
@@ -30,8 +40,8 @@ void newline(uint8_t devno=0);
 // 一致     : 0
 // 不一致   : 0以外
 // 
-uint8_t wildcard_match(char *wildcard, char *target) {
-    char *pw = wildcard, *pt = target;
+uint8_t wildcard_match(const char *wildcard, const char *target) {
+    const char *pw = wildcard, *pt = target;
     while(1){
         if(*pt == 0) return *pw == 0;
         else if(*pw == 0) return 0;
@@ -88,7 +98,7 @@ uint8_t  sdfiles::init(uint8_t _cs) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 //
 uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
-#if 0
+#if 1
   File myFile;
   uint8_t rc;
   char head[2];  // ヘッダ
@@ -109,7 +119,7 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE ; // ファイルオープン失敗
   }
-  SD.end();
+//  SD.end();
   return rc;
 #else
   return SD_ERR_INIT;
@@ -129,6 +139,7 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
 //  ファイル書き込み失敗 : SD_ERR_WRITE_FILE
 //
 uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
+#if 1
   File myFile;
   char head[2] = {0,0};
   uint8_t rc = 1;
@@ -155,6 +166,9 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   }
 //  SD.end();
   return rc;
+#else
+  return SD_ERR_INIT;
+#endif
 }
 
 //
@@ -171,7 +185,7 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
 //  継続可能              : 1
 // 
 int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
-#if 0
+#if 1
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
   uint16_t len;
@@ -205,7 +219,7 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
   }
   tmpClose();
 DONE:
-  SD.end();
+  //SD.end();
   return rc; 
 #else
   return -SD_ERR_NOT_FILE;
@@ -223,6 +237,7 @@ DONE:
 //  SD_ERR_OPEN_FILE : ファイルオープンエラー 
 //
 uint8_t sdfiles::flist(char* _dir, char* wildcard) {
+#if 1
   uint16_t cnt = 0;
   uint16_t len;
   uint8_t rc = 0;
@@ -264,6 +279,9 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
 //  SD.end();
   newline();
   return rc;
+#else
+  return SD_ERR_INIT;
+#endif
 }
 
 //
@@ -277,7 +295,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-#if 0
+#if 1
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
   if(mode) {
@@ -295,10 +313,10 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
 
 // 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
-#if 0
+#if 1
   if (tfile)
     tfile.close();
-  SD.end();
+  //SD.end();
 #endif
   return 0;
 }
@@ -306,7 +324,7 @@ uint8_t sdfiles::tmpClose() {
 // 文字列出力
 uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
-#if 0
+#if 1
   if( tfile && s ) {
     n = tfile.write(s);
   }
@@ -317,7 +335,7 @@ uint8_t sdfiles::puts(char*s) {
 // 1バイト出力 
 uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
-#if 0
+#if 1
   if(tfile) {
     n = tfile.write(c);
   }
@@ -327,7 +345,7 @@ uint8_t sdfiles::putch(char c) {
 
 // 1バイト読込
 int16_t sdfiles::read() {
-#if 0
+#if 1
   if(!tfile) 
     return -1;
   return tfile.read();
@@ -346,7 +364,7 @@ int16_t sdfiles::read() {
 //
 int16_t sdfiles::readLine(char* str) {
   int16_t len = 0;
-#if 0
+#if 1
   int16_t rc;
   
   while(1) {
@@ -380,6 +398,7 @@ int16_t sdfiles::readLine(char* str) {
 //  ファイルでない       : - SD_ERR_NOT_FILE
 //
 int8_t sdfiles::IsText(char* fname) {
+#if 1
   File myFile;
   char head[2];   // ヘッダー
   int8_t rc = -1;
@@ -409,6 +428,9 @@ int8_t sdfiles::IsText(char* fname) {
   }
 //  SD.end();
   return rc;
+#else
+  return -SD_ERR_INIT;
+#endif
 }
 
 //

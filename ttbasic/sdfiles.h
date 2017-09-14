@@ -10,7 +10,7 @@
 #define __sdfiles_h__
 
 #include <Arduino.h>
-//#include <SD.h>
+#include <SdFat.h>
 
 #define SD_CS       (4)   // SDカードモジュールCS
 #define SD_PATH_LEN 64      // ディレクトリパス長
@@ -24,9 +24,11 @@
 class sdfiles {
  private:
 
-//  File tfile;
+  File tfile;
   uint8_t flgtmpOlen;
   uint8_t cs;   
+  inline bool SD_BEGIN(void);
+
  public:
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
   uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
