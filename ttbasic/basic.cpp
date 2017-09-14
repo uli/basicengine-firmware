@@ -140,7 +140,7 @@
 #define SIZE_MEM  1024   // 自由利用データ領域
 
 // SRAMの物理サイズ(バイト)
-#define SRAM_SIZE      20480 // STM32F103C8T6
+// not used #define SRAM_SIZE      20480 // STM32F103C8T6
 
 // **** スクリーン管理 *************
 #include "tscreen.h"
@@ -239,7 +239,7 @@ void mem_putch(uint8_t c);
 #define CONST_LOW    0
 #define CONST_LSB    LSBFIRST
 #define CONST_MSB    MSBFIRST
-#define SRAM_TOP     0x20000000
+// not used #define SRAM_TOP     0x20000000
 #define IsPWM_PIN(N) IsUseablePin(N,pwmpins,sizeof(pwmpins))
 #define IsADC_PIN(N) IsUseablePin(N,analogpins,sizeof(analogpins))
 #define IsIO_PIN(N)  IsUseablePin(N,iogpins,sizeof(iogpins))
