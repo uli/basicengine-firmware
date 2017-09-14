@@ -3,6 +3,8 @@
 // 2017/07/19 by たま吉さん
 //
 
+#include "../../../ttbasic/ttconfig.h"
+
 #include "tGraphicDev.h"
 
 uint16_t tv_get_gwidth();
@@ -17,8 +19,10 @@ void    tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) ;
 int16_t tv_gpeek(int16_t x, int16_t y);
 int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) ;
 uint8_t* tv_getFontAdr() ;
+#if USE_VS23 == 0
 uint8_t* tv_getGVRAM();
 uint16_t tv_getGVRAMSize();
+#endif
 void    tv_write(uint8_t c);
 
 // 初期化
@@ -27,6 +31,7 @@ void tGraphicDev::init() {
   gheight  = tv_get_gheight();  
 }
 
+#if USE_VS23 == 0
 // グラフィク表示用メモリアドレス参照
 uint8_t* tGraphicDev::getGRAM() {
   return tv_getGVRAM();
@@ -36,6 +41,7 @@ uint8_t* tGraphicDev::getGRAM() {
 int16_t tGraphicDev::getGRAMsize() {
   return tv_getGVRAMSize();
 }
+#endif
 
 // グラフックスクリーン横幅取得
 uint16_t tGraphicDev::getGWidth() {

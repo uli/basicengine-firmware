@@ -528,7 +528,7 @@ uint8_t* v2realAddr(uint16_t vadr) {
     radr = vadr - V_FNT_TOP + tv_getFontAdr()+3;
   } else if ((vadr >= V_GRAM_TOP) && (vadr < V_GRAM_TOP+6048)) { // グラフィク表示用メモリ領域
     if ( (scmode >= 1) && (scmode <= 3) )
-#if USE_NTSC == 1
+#if USE_NTSC == 1 && USE_VS23 == 0
       radr = vadr - V_GRAM_TOP + ((tTVscreen*)sc)->getGRAM();
 #else
       radr = NULL;
@@ -3535,6 +3535,9 @@ void idwbmp() {
   
     // 画像のロード
     bw = ((tTVscreen*)sc)->getGWidth()/8;
+#if USE_VS23 == 1
+    Serial.println("unimp idwbmp");
+#else
     ptr = ((tTVscreen*)sc)->getGRAM() + bw*y + x/8;
    #if USE_SD_CARD == 1
     rc = fs.loadBitmapToGVRAM(fname, ptr, bw, bx, by, w, h, mode);
@@ -3546,6 +3549,7 @@ void idwbmp() {
       err =  ERR_FILE_READ;
     }
    #endif
+#endif
   } else {
    err = ERR_NOT_SUPPORTED;
   }

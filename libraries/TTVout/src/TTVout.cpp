@@ -82,12 +82,16 @@
 //#define BITBAND 1
 
 const int pwmOutPin = 2;//PB9;      // tone用 PWM出力ピン
+#if USE_VS23 == 0
 static uint8_t* _screen;        // フレームバッファアドレス
+#endif
 static uint16_t _width;         // 画面横ドット数
 static uint16_t _height;        // 画面縦ドット数
 static uint16_t _hres;          // 横バイト数
 static uint16_t _vres;          // 縦ドット数
+#if USE_VS23 == 0
 static volatile uint8_t*_adr;  // フレームバッファビットバンドアドレス
+#endif
 
 // tone用
 short tone_pin = -1;        // pin for outputting sound
@@ -126,12 +130,14 @@ void TTVout::begin(uint8_t mode, uint8_t spino, uint8_t* extram) {
 // 初期化
 //
 void TTVout::init(uint8_t* vram, uint16_t width, uint16_t height) {
+#if USE_VS23 == 0
   _screen = vram;  
+  _adr = _screen;//(volatile uint32_t*)(BB_SRAM_BASE + ((uint32_t)_screen - BB_SRAM_REF) * 32);
+#endif
   _width  = width;
   _height = height;
   _hres   = _width/8;
   _vres   = _height;
-  _adr = _screen;//(volatile uint32_t*)(BB_SRAM_BASE + ((uint32_t)_screen - BB_SRAM_REF) * 32);
 }
 
 

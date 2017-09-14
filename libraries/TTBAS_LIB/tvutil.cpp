@@ -44,12 +44,14 @@ TTVout TV;
 uint8_t* tvfont;     // 利用フォント
 uint16_t c_width;    // 横文字数
 uint16_t c_height;   // 縦文字数
+#if USE_VS23 == 0
 uint8_t* vram;       // VRAM先頭
+uint8_t *b_adr;     // フレームバッファビットバンドアドレ
+#endif
 uint16_t f_width;    // フォント幅(ドット)
 uint16_t f_height;   // フォント高さ(ドット)
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
-uint8_t *b_adr;     // フレームバッファビットバンドアドレ
 
 
 // フォント利用設定
@@ -95,9 +97,11 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) {
 	
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
+#if USE_VS23 == 0
   vram = TV.VRAM();                    // VRAM先頭
   
   b_adr =  vram;//(uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
+#endif
 }
 
 //
@@ -112,10 +116,12 @@ uint8_t* tv_getFontAdr() {
   return tvfont;
 }
 
+#if USE_VS23 == 0
 // GVRAMアドレス取得
 uint8_t* tv_getGVRAM() {
   return vram;
 }
+#endif
 
 // GVRAMサイズ取得
 uint16_t tv_getGVRAMSize() {
@@ -169,7 +175,11 @@ void tv_cls() {
 // 指定行の1行クリア
 //
 void tv_clerLine(uint16_t l) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_clerLine");
+#else
   memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
+#endif
 }
 
 //
@@ -181,10 +191,14 @@ void tv_insLine(uint16_t l) {
   } else if (l == c_height-1) {
     tv_clerLine(l);
   } else {
+#if USE_VS23 == 1
+    Serial.println("unimp tv_insLine");
+#else
     uint8_t* src = vram + f_height*g_width/8*l;      // 移動元
     uint8_t* dst = vram + f_height*g_width/8*(l+1) ; // 移動先
     uint16_t sz = f_height*g_width/8*(c_height-1-l);   // 移動量
     memmove(dst, src, sz);
+#endif
     tv_clerLine(l);
   }
 }
@@ -231,6 +245,9 @@ void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
 
 // 指定サイズのドットの描画
 inline void tv_dot(int16_t x, int16_t y, int16_t n, uint8_t c) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_dot");
+#else
   uint8_t *adr;
   uint8_t bipo;
   for (int16_t i = y ; i < y+n; i++) {
@@ -241,19 +258,29 @@ inline void tv_dot(int16_t x, int16_t y, int16_t n, uint8_t c) {
       //b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] = c;
     }
   }
+#endif
 }
 
 // 指定座標のピクセル取得
 int16_t tv_gpeek(int16_t x, int16_t y) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_gpeek");
+  return 0;
+#else
   uint8_t *adr;
   uint8_t bipo;
       bipo = (x & 0xf8) + 7 - (x & 7);
       adr = b_adr + g_width*y/8 + bipo/8;
    return (*adr >> bipo) & 1;//b_adr[g_width*y+ (x&0xf8) +7 -(x&7)];
+#endif
 }
 
 // 指定座標のピクセル有無のチェック
 int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_ginp");
+  return 0;
+#else
   for (int16_t i = y ; i < y+h; i++) {
     for (int16_t j= x; j < x+w; j++) {
       if (b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] == c) {
@@ -262,6 +289,7 @@ int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) {
     }
   }
   return 0;
+#endif
 }
 
 
@@ -364,6 +392,9 @@ void tv_notone() {
 
 // グラフィック横スクロール
 void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_gscroll");
+#else
   uint8_t* bmp = vram+(g_width>>3)*y; // フレームバッファ参照位置 
   uint16_t bl = (g_width+7)>>3;       // 横バイト数
   uint16_t sl = (w+7)>>3;             // 横スクロールバイト数
@@ -419,6 +450,7 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
         }
        break;              
    }
+#endif
 }
 
 

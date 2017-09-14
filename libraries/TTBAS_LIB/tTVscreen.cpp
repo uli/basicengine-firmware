@@ -21,6 +21,8 @@
 //  修正日 2017/06/22, シリアル上でBSキー、CTRL-Lが利用可能対応
 //
 
+#include "../../../ttbasic/ttconfig.h"
+
 #include <string.h>
 #include "tTVscreen.h"
 
@@ -120,7 +122,11 @@ void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* e
   if (extmem == NULL) {
     tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln);
   } else {
-    tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln, extmem+getGRAMsize());
+    tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln, extmem
+#if USE_VS23 == 0
+    + getGRAMsize()
+#endif
+    );
   }	
   tGraphicDev::init();
 
