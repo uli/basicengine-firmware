@@ -15,6 +15,7 @@ extern "C" {
 #else
 #include <eagle_soc.h>
 #endif
+#include "nosdki2s.h"
 };
 #include <Time.h>
 
@@ -39,6 +40,7 @@ void ICACHE_RAM_ATTR shut_up_dog(void)
 
 void basic(void);
 
+extern "C" void setSample(uint8_t s);
 void SpiRamVideoInit();
 
 void setup(void){
@@ -110,6 +112,13 @@ void loop(void){
   }
   SpiRamVideoInit();
 
+  Serial.println("I2S");Serial.flush();
+  InitI2S();
+  SendI2S();
+  for (int i=0; i < 256; ++i) {
+    setSample(i);
+    delay(50);
+  }
   // put your main code here, to run repeatedly:
   basic();
 }
