@@ -242,6 +242,7 @@
 
 void SpiRamInit();
 void SpiRamWriteByte(register uint32_t address, uint8_t data);
+void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len);
 uint16_t SpiRamReadByte(register uint32_t address);
 uint16_t SpiRamReadRegister(register uint16_t opcode);
 void SpiRamWriteWord(uint16_t waddress, uint16_t data);

@@ -40,6 +40,19 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   //  Serial.printf("mismatch: %02X should be %02X\n", SpiRamReadByte(address), data);
 }
 
+void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len)
+{
+  uint8_t req[4];
+  digitalWrite(15, LOW);
+  req[0] = 2;
+  req[1] = address >> 16;
+  req[2] = address >> 8;
+  req[3] = address;
+  SPI.writeBytes(req, 4);
+  SPI.writeBytes(data, len);
+  digitalWrite(15, HIGH);
+}
+
 void SpiRamWriteRegister(uint16_t opcode, uint16_t data)
 {
   digitalWrite(15, LOW);
