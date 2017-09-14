@@ -73,6 +73,10 @@
 //
 */
 
+#include "../../../ttbasic/ttconfig.h"
+
+#if USE_VS23 == 0
+
 //#include <libmaple/bitband.h>
 #include <TTVout.h>
 //#define BITBAND 1
@@ -925,4 +929,5 @@ void TTVout::noTone() {
 	Timer4.setCount(0xffff);
 #endif
 }
+#endif // USE_VS23 == 0
 

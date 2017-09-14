@@ -10,6 +10,9 @@
 // 更新日 2017/04/30, SPI1,SPI2の選択指定を可能に修正
 // 更新日 2017/06/25, 外部確保VRAMの指定を可能に修正
 
+#include "../../../ttbasic/ttconfig.h"
+
+#if USE_NTSC == 1 && USE_VS23 == 0
 #include <TNTSC.h>
 #include <SPI.h>
 
@@ -260,3 +263,5 @@ void TNTSC_class::delay_frame(uint16_t x) {
 	
 TNTSC_class TNTSC;
 
+
+#endif // USE_NTSC ==1 && USE_VS23 == 0

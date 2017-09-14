@@ -15,6 +15,8 @@
 
 #include <Arduino.h>
 
+#if USE_VS23 == 0
+
 #if F_CPU == 72000000L
 	#define SC_112x108  0 // 112x108
 	#define SC_224x108  1 // 224x108
@@ -62,5 +64,7 @@ class TNTSC_class {
 };
 
 extern TNTSC_class TNTSC; // グローバルオブジェクト利用宣言
+
+#endif // USE_VS23 == 0
 
 #endif

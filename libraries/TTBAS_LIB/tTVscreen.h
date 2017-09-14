@@ -22,8 +22,12 @@
 #ifndef __tTVscreen_h__
 #define __tTVscreen_h__
 
+#include "../../ttbasic/ttconfig.h"
+
 #include <Arduino.h>
+#if USE_VS23 == 0
 #include <TTVout.h>
+#endif
 #include "tscreenBase.h"
 //#include "tSerialDev.h"
 #include "tGraphicDev.h"
