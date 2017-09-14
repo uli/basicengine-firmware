@@ -51,7 +51,7 @@ uint8_t scmode = USE_SCREEN_MODE;
 tscreenBase* sc;
 tTermscreen sc1; 
 
-#if USE_NTSC == 1
+#if USE_NTSC == 1 || USE_VS23 == 1
   #include "tTVscreen.h"
   tTVscreen   sc0; 
 #elif USE_TFT == 1
@@ -3869,10 +3869,12 @@ void iscreen() {
     sc = &sc0;
     if (m == 1) 
       ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
+#if 0
     else if (m == 2)
       ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_224x108);
     else  if (m == 3) 
       ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_112x108);
+#endif
   }  
   sc->Serial_mode(prv_m, GPIO_S1_BAUD);
   sc->cls();

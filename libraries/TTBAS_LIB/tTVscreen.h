@@ -28,6 +28,9 @@
 #if USE_VS23 == 0
 #include <TTVout.h>
 #endif
+#if USE_VS23 == 1
+#include "../../ttbasic/vs23s010.h"
+#endif
 #include "tscreenBase.h"
 //#include "tSerialDev.h"
 #include "tGraphicDev.h"

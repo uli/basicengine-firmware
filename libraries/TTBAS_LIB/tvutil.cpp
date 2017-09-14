@@ -13,9 +13,16 @@
 // 修正日 2017/07/25, tv_init()の追加
 // 修正日 2017/07/29, スクリーンモード変更対応
 
+#include "../../../ttbasic/ttconfig.h"
+
 #include <stdint.h>
 #include <string.h>
+#if USE_VS23 == 0
 #include <TTVout.h>
+#else
+#include "../../../ttbasic/ntsc.h"
+#include "../../../ttbasic/vs23s010.h"
+#endif
 #include "tTVscreen.h"
 #define NTSC_VIDEO_SPI 2
 
@@ -40,7 +47,13 @@
 */
 
 extern uint8_t* ttbasic_font;
+#if USE_VS23 == 0
 TTVout TV;
+#define TV_TNTSC TV.TNTSC
+#else
+#define TV_TNTSC (&vs23)
+#endif
+
 uint8_t* tvfont;     // 利用フォント
 uint16_t c_width;    // 横文字数
 uint16_t c_height;   // 縦文字数
@@ -65,7 +78,7 @@ void tv_fontInit() {
 // NTSC 垂直同期信号補正
 void tv_NTSC_adjust(int16_t ajst) {
 #if USE_NTSC == 1
-  TV.TNTSC->adjust(ajst);  
+  TV_TNTSC->adjust(ajst);  
 #endif
 }
 
@@ -75,9 +88,11 @@ void tv_NTSC_adjust(int16_t ajst) {
 void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) { 
   tv_fontInit();
 #if USE_NTSC == 1
-  TV.TNTSC->adjust(ajst);
+  TV_TNTSC->adjust(ajst);
 #endif
+#if USE_VS23 == 0
   TV.begin(vmode, NTSC_VIDEO_SPI, extmem); // SPI2を利用
+#endif
 	
 #if NTSC_VIDEO_SPI == 2
   // SPI2 SCK2(PB13ピン)が起動直後にHIGHになっている修正
@@ -86,10 +101,13 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) {
 //   pinMode(PA5, INPUT);
 #endif
 
+#if USE_VS23 == 0
   TV.select_font(tvfont);
+#endif
+
 #if USE_NTSC == 1
-  g_width  = TV.TNTSC->width();           // 横ドット数
-  g_height = TV.TNTSC->height();          // 縦ドット数
+  g_width  = TV_TNTSC->width();           // 横ドット数
+  g_height = TV_TNTSC->height();          // 縦ドット数
 #else
   g_width = 320;
   g_height = 200;
@@ -108,7 +126,9 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) {
 // NTSC表示の終了
 // 
 void tv_end() {
+#if USE_VS23 == 0
   TV.end();
+#endif
 }
 
 // フォントアドレス取得
@@ -152,23 +172,50 @@ uint16_t tv_get_gheight() {
 // カーソル表示
 //
 uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
+#if USE_VS23 == 1
+  uint8_t pix[f_width];
+  memset(pix, 255, f_width);
+  for (int i = 0; i < f_height; ++i) {
+    uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
+    SpiRamWriteBytes(byteaddress, pix, f_width);
+  }
+#else
   for (uint16_t i = 0; i < f_height; i++)
      for (uint16_t j = 0; j < f_width; j++)
        TV.set_pixel(x*f_width+j, y*f_height+i,2);
+#endif
 }
 
 //
 // 文字の表示
 //
 void tv_write(uint8_t x, uint8_t y, uint8_t c) {
+#if USE_VS23 == 1
+  uint8_t *chp = tvfont+3+c*f_height;
+  for (int i=0;i<f_height;++i) {
+    uint8_t pix[f_width];
+    uint8_t ch = chp[i];
+    for (int j=0;j<f_width;++j) {
+      pix[j] = (!!(ch & 0x80))*255;
+      ch <<= 1;
+    }
+    uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
+    SpiRamWriteBytes(byteaddress, pix, f_width);
+  }
+#else
   TV.print_char(x * f_width, y * f_height ,c);  
+#endif
 }
 
 //
 // 画面のクリア
 //
 void tv_cls() {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_cls");
+#else
   TV.cls();
+#endif
 }
 
 //
@@ -205,42 +252,66 @@ void tv_insLine(uint16_t l) {
 
 // 1行分スクリーンのスクロールアップ
 void tv_scroll_up() {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_scroll_up");
+#else
   TV.shift(*(tvfont+1), UP);
+#endif
   tv_clerLine(c_height-1);
 }
 
 // 1行分スクリーンのスクロールダウン
 void tv_scroll_down() {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_scroll_down");
+#else
   uint8_t h = *(tvfont+1);
   TV.shift(h, DOWN);
   h = g_height % h;
   if (h) {
     TV.draw_rect(0, g_height-h, g_width, h, 0, 0); 
   }
+#endif
   tv_clerLine(0);
   
 }
 
 // 点の描画
 void tv_pset(int16_t x, int16_t y, uint8_t c) {
+#if USE_VS23 == 1
+  vs23.setPixel(x, y, c);
+#else
   TV.set_pixel(x,y,c);
+#endif
 }
   
 // 線の描画
 void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
+#if USE_VS23 == 1
+  Serial.println("unimp tv_line");
+#else
   TV.draw_line(x1,y1,x2,y2,c);
+#endif
 }
 
 // 円の描画
 void tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
   if (f==0) f=-1;
+#if USE_VS23 == 1
+  Serial.println("unimp tv_circle");
+#else
   TV.draw_circle(x, y, r, c, f);
+#endif
 }
 
 // 四角の描画
 void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
   if (f==0) f=-1;
+#if USE_VS23 == 1
+  Serial.println("unimp tv_rect");
+#else
   TV.draw_rect(x, y, w, h, c, f);
+#endif
 }
 
 // 指定サイズのドットの描画
@@ -302,7 +373,11 @@ void tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, u
   
   if (n == 1) {
     // 1倍の場合
+#if USE_VS23 == 1
+    Serial.println("unimp tv_bitmap n==1");
+#else
     TV.bitmap(x, y, adr  , 0, w, h);
+#endif
   } else {
     // N倍の場合
     yy = y;
@@ -322,11 +397,19 @@ void tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, u
 }
 
 void tv_set_gcursor(uint16_t x, uint16_t y) {
+#if USE_VS23 == 1
+    Serial.println("unimp tv_set_gcursor");
+#else
   TV.set_cursor(x,y);
+#endif
 }
 
 void tv_write(uint8_t c) {
+#if USE_VS23 == 1
+    Serial.println("unimp tv_write");
+#else
   TV.write(c);
+#endif
 }
 
 //
