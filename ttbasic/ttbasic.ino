@@ -8,6 +8,7 @@
 // 2017/03/22 修正, Arduino STM32、フルスクリーン対応 v0.1 by たま吉さん
 // 
 
+#include <SPI.h>
 extern "C" {
 #ifdef ESP8266_NOWIFI
 #include <hw/pin_mux_register.h>
@@ -37,6 +38,8 @@ void ICACHE_RAM_ATTR shut_up_dog(void)
 #endif
 
 void basic(void);
+
+void SpiRamVideoInit();
 
 void setup(void){
   // put your setup code here, to run once:
@@ -89,6 +92,23 @@ void loop(void){
     //for (int j=0;j<1000;++j)
     //  delayMicroseconds(500);
   }
+
+  SPI.pins(14, 12, 13, 15);
+  SPI.setDataMode(SPI_MODE0);
+  digitalWrite(15, HIGH);
+  pinMode(15, OUTPUT);
+  SPI.begin();
+  SPI.setFrequency(10000000);
+  delay(500);
+  for (int i=0; i < 10; ++i) {
+    digitalWrite(15, LOW);
+    SPI.transfer(0x9f);
+    Serial.print(SPI.transfer(0), HEX);
+    Serial.println(SPI.transfer(0), HEX);
+    digitalWrite(15, HIGH);
+    delay(200);
+  }
+  SpiRamVideoInit();
 
   // put your main code here, to run repeatedly:
   basic();
