@@ -37,7 +37,7 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
- const char RomaKama[][5][4] /*__FLASH__*/ =  {
+ const char RomaKama[][5][4] ICACHE_RODATA_ATTR =  {
   //  a       e       i       o        u
   { "\xb1", "\xb4", "\xb2", "\xb5", "\xb3", },                                          //[]  : ｱ ｴ ｲ ｵ ｳ
   { "\xca\xde", "\xcd\xde", "\xcb\xde", "\xce\xde", "\xcc\xde", },                      //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
