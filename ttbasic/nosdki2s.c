@@ -1,7 +1,12 @@
 #include "nosdki2s.h"
+#ifdef ESP8266_NOWIFI
 #include <hw/pin_mux_register.h>
 #include <hw/esp8266.h>
 #include <hw/eagle_soc.h>
+#else
+#include <eagle_soc.h>
+#define IOMUX_BASE ((volatile uint32_t *)PERIPHS_IO_MUX)
+#endif
 
 #define USE_I2S
 
