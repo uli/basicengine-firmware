@@ -61,7 +61,7 @@ void setup(void){
   }
 #endif
   //randomSeed(analogRead(PA0));
-  delay(1000);
+  delay(500);
   Serial.begin(115200);
 #ifndef ESP8266_NOWIFI
   timer0_isr_init();
@@ -85,11 +85,11 @@ void loop(void){
   //digitalWrite(D2, LOW);
   Serial.println("\nStarting");Serial.flush();
   //delayMicroseconds(1000000);
-  delay(500);
+//  delay(500);
   //digitalWrite(D1, HIGH);
   //digitalWrite(D2, HIGH);
-  Serial.println("2");Serial.flush();
-  delay(1000);
+//  Serial.println("2");Serial.flush();
+//  delay(1000);
   for (int i=0; i < 3; ++i) {
     Serial.println("tick");Serial.flush();
     Serial.println(millis());
@@ -105,7 +105,7 @@ void loop(void){
   pinMode(15, OUTPUT);
   SPI.begin();
   SPI.setFrequency(10000000);
-  delay(500);
+//  delay(500);
   for (int i=0; i < 10; ++i) {
     digitalWrite(15, LOW);
     SPI.transfer(0x9f);
