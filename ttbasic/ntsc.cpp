@@ -116,6 +116,18 @@ uint16_t SpiRamReadRegister(uint16_t opcode)
   return result;
 }
 
+void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
+	Serial.printf("%02x <= %04x%04x%xh\n",opcode,data1,data2,data3);
+	digitalWrite(15, LOW);
+	SPI.transfer(opcode);
+	SPI.transfer(data1>>8);
+	SPI.transfer(data1);
+	SPI.transfer(data2>>8);
+	SPI.transfer(data2);
+	SPI.transfer(data3);
+	digitalWrite(15, HIGH);
+}
+
 /// Set proto type picture line indexes	
 void SetLineIndex(uint16_t line, uint16_t wordAddress) {
 	uint32_t indexAddr = INDEX_START_BYTES + line*3;
@@ -755,4 +767,6 @@ void SpiRamVideoInit() {
 				}
 			}
 		}
+//	SpiRamWriteBMCtrl(0x34, 0, 0, 0x10);
+	SpiRamWriteBMCtrl(0x34, 0, 0, 0x00);
 	}
