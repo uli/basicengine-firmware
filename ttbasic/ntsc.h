@@ -20,7 +20,7 @@
 #define TOTAL_LINES 525
 #define FIELD1START 261
 #else
-#define TOTAL_LINES 263
+#define TOTAL_LINES 262
 #endif
 		
 /// Number of lines used after the VSYNC but before visible area.
