@@ -117,7 +117,7 @@ uint16_t SpiRamReadRegister(uint16_t opcode)
 }
 
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
-	Serial.printf("%02x <= %04x%04x%xh\n",opcode,data1,data2,data3);
+	Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
 	digitalWrite(15, LOW);
 	SPI.transfer(opcode);
 	SPI.transfer(data1>>8);
@@ -125,6 +125,24 @@ void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t
 	SPI.transfer(data2>>8);
 	SPI.transfer(data2);
 	SPI.transfer(data3);
+	digitalWrite(15, HIGH);
+}
+
+void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
+	Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
+	digitalWrite(15, LOW);
+	SPI.transfer(opcode);
+	SPI.transfer(data1>>8);
+	SPI.transfer(data1);
+	SPI.transfer(data2);
+	SPI.transfer(data3);
+	digitalWrite(15, HIGH);
+}
+
+void SpiRamWriteBM3Ctrl(uint16_t opcode) {
+	Serial.printf("%02x\n",opcode);
+	digitalWrite(15, LOW);
+	SPI.transfer(opcode);
 	digitalWrite(15, HIGH);
 }
 
@@ -770,3 +788,12 @@ void SpiRamVideoInit() {
 //	SpiRamWriteBMCtrl(0x34, 0, 0, 0x10);
 	SpiRamWriteBMCtrl(0x34, 0, 0, 0x00);
 	}
+
+void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
+{
+  uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
+  uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
+  SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2) | dir);
+  SpiRamWriteBM2Ctrl(0x35, PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
+  SpiRamWriteBM3Ctrl(0x36);
+}
