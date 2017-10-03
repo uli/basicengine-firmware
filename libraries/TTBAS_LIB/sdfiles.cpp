@@ -26,7 +26,7 @@ static bool sdfat_initialized = false;
 inline bool sdfiles::SD_BEGIN(void)
 {
   if (!sdfat_initialized)
-    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(F_CPU/4));
+    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(10));
   return sdfat_initialized;
 }
 
@@ -236,10 +236,10 @@ DONE:
 //  SD_ERR_OPEN_FILE : ファイルオープンエラー 
 //
 uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
-#if 1
   uint16_t cnt = 0;
   uint16_t len;
   uint8_t rc = 0;
+  char name[32];
 
  if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
@@ -252,14 +252,15 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
       if (!entry) {
         break;
       }
-      len = strlen(entry.name());
-      if (!wildcard || (wildcard && wildcard_match(wildcard,entry.name()))) {
+      entry.getName(name, 32);
+      len = strlen(name);
+      if (!wildcard || (wildcard && wildcard_match(wildcard,name))) {
         if (entry.isDirectory()) {
-          c_puts(entry.name());
+          c_puts(name);
           c_puts("*");
           len++;
         } else {
-          c_puts(entry.name());
+          c_puts(name);
         }
         if (!((cnt+1) % clmnum)) {
           newline();
@@ -278,9 +279,6 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  SD.end();
   newline();
   return rc;
-#else
-  return SD_ERR_INIT;
-#endif
 }
 
 //

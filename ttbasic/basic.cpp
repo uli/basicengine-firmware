@@ -1939,10 +1939,12 @@ void iloadconfig() {
 
 // プログラム保存 SAVE 保存領域番号|"ファイル名"
 void isave() {
-#if 0
+#if 1
   int16_t prgno = 0;
   int16_t ascii = 1;
+#if 0
   uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
+#endif
   uint8_t* sram_adr;
   //char fname[64];
   char* fname;
@@ -1964,7 +1966,7 @@ void isave() {
       cip++;
       if ( getParam(ascii, 0, 1, false) ) return;       
     }
-  } else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) ) return;  
+  } //else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) ) return;  
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
@@ -1987,6 +1989,7 @@ void isave() {
     }
 #endif
   } else {
+#if 0
     // 内部フラッシュメモリへの保存
     for (uint8_t i=0;i < FLASH_PAGE_PAR_PRG; i++) 
       flash_adr[i] = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG+i);
@@ -1998,6 +2001,7 @@ void isave() {
       TFlash.write((uint16_t*)flash_adr[i], listbuf+FLASH_PAGE_SIZE*i, FLASH_PAGE_SIZE);
     }
     TFlash.lock();
+#endif
   }
 #endif
 }
@@ -5023,7 +5027,7 @@ void basic() {
   
 #if USE_SD_CARD == 1
   // SDカード利用
-  fs.init(); // この処理ではGPIOの操作なし
+  fs.init(16); // この処理ではGPIOの操作なし
 #endif
 
 //  I2C_WIRE.begin();  // I2C利用開始
