@@ -40,7 +40,7 @@
 //#define STARTLINE ((uint16_t)(TOTAL_LINES/4))
 #define STARTLINE (FRONT_PORCH_LINES+11)
 //#define YPIXELS 120
-#define YPIXELS 215
+#define YPIXELS 216
 /// The last picture area line
 #define ENDLINE STARTLINE+YPIXELS
 /// The first pixel of the picture area, the X direction.
@@ -48,7 +48,7 @@
 /// The last pixel of the picture area. Set PIXELS to wanted value and suitable 
 /// ENDPIX value is calculated.
 //#define XPIXELS 161
-#define XPIXELS 319
+#define XPIXELS 320
 #define ENDPIX ((uint16_t)(STARTPIX+PLLCLKS_PER_PIXEL*XPIXELS/8))
 //#define ENDPIX 195		
 
