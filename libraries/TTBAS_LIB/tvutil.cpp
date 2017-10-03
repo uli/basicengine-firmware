@@ -223,7 +223,9 @@ void tv_cls() {
 //
 void tv_clerLine(uint16_t l) {
 #if USE_VS23 == 1
-  Serial.println("unimp tv_clerLine");
+  // Assumption: Screen data is followed by empty line in memory.
+  MoveBlock(0, g_height, 0, l * f_height, g_width/2, f_height, 0);
+  MoveBlock(g_width/2, g_height, g_width/2, l * f_height, g_width/2, f_height, 0);
 #else
   memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
 #endif
@@ -253,17 +255,29 @@ void tv_insLine(uint16_t l) {
 // 1行分スクリーンのスクロールアップ
 void tv_scroll_up() {
 #if USE_VS23 == 1
-  Serial.println("unimp tv_scroll_up");
+  MoveBlock(0, f_height, 0, 0, g_width/2, g_height-f_height, 0);
+  delayMicroseconds(1500);
+  MoveBlock(g_width/2, f_height, g_width/2, 0, g_width/2, g_height-f_height, 0);
 #else
   TV.shift(*(tvfont+1), UP);
 #endif
+  delayMicroseconds(1500);
   tv_clerLine(c_height-1);
 }
 
 // 1行分スクリーンのスクロールダウン
 void tv_scroll_down() {
 #if USE_VS23 == 1
-  Serial.println("unimp tv_scroll_down");
+  MoveBlock(g_width-1, g_height-f_height-1,
+            g_width-1, g_height-1,
+            g_width/2, g_height-f_height,
+            1);
+  delayMicroseconds(1500);
+  MoveBlock(g_width/2-1, g_height-f_height-1,
+            g_width/2-1, g_height-1,
+            g_width/2, g_height-f_height,
+            1);
+  delayMicroseconds(1500);
 #else
   uint8_t h = *(tvfont+1);
   TV.shift(h, DOWN);
