@@ -26,6 +26,8 @@
 #include <string.h>
 #include "tTVscreen.h"
 
+//#define DEBUG
+
 void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT);
 void tv_end();
 void    endPS2();
@@ -156,16 +158,19 @@ void tTVscreen::reset_kbd(uint8_t kbd_type) {
 // 文字の出力
 void tTVscreen::putch(uint8_t c) {
   tscreenBase::putch(c);
+#ifdef DEBUG
  if(serialMode == 0) {
     Serial.write(c);       // シリアル出力
   } else if (serialMode == 1) {
     Serial1.write(c);     // シリアル出力  
   }
+#endif
 }
 
 // 改行
 void tTVscreen::newLine() {  
   tscreenBase::newLine();
+#ifdef DEBUG
   if (serialMode == 0) {
     Serial.write(0x0d);
     Serial.write(0x0a);
@@ -173,6 +178,7 @@ void tTVscreen::newLine() {
     Serial1.write(0x0d);
     Serial1.write(0x0a);
   }  
+#endif
 }
 
 // 行のリフレッシュ表示
@@ -188,6 +194,7 @@ void tTVscreen::refresh_line(uint16_t l) {
 	
 // キー入力チェック&キーの取得
 uint8_t tTVscreen::isKeyIn() {
+#ifdef DEBUG
   if(serialMode == 0) {
     if (Serial.available())
       return Serial.read();
@@ -195,6 +202,7 @@ uint8_t tTVscreen::isKeyIn() {
     if (Serial1.available())
       return Serial1.read();
   }
+#endif
 #if PS2DEV == 1
  return ps2read();
 #endif
@@ -204,6 +212,7 @@ uint8_t tTVscreen::isKeyIn() {
 uint8_t tTVscreen::get_ch() {
   char c;
   while(1) {
+#ifdef DEBUG
     if(serialMode == 0) {
       if (Serial.available()) {
         c = Serial.read();
@@ -217,6 +226,7 @@ uint8_t tTVscreen::get_ch() {
         break;
       }
     }
+#endif
 #if PS2DEV == 1
     c = ps2read();
     if (c) {
@@ -378,6 +388,7 @@ uint8_t tTVscreen::edit() {
 
 // シリアルポートスクリーン制御出力
 void tTVscreen::Serial_Ctrl(int16_t ch) {
+#ifdef DEBUG
   char* s=NULL;
   switch(ch) {
     case KEY_BACKSPACE:
@@ -402,6 +413,7 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
       }  
     }  
   }
+#endif
 }
 
 
