@@ -66,6 +66,20 @@ uint16_t f_height;   // フォント高さ(ドット)
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
 
+uint32_t char_addr(uint8_t c)
+{
+  uint32_t addr = PICLINE_BYTE_ADDRESS(g_height+f_height+(c/c_width * f_height))+(c%c_width)*f_width;
+  return addr;
+}
+
+static uint16_t char_x(uint8_t c)
+{
+  return c%c_width * f_width;
+}
+static uint16_t char_y(uint8_t c)
+{
+  return c/c_width * f_height;
+}
 
 // フォント利用設定
 void tv_fontInit() {
@@ -73,6 +87,25 @@ void tv_fontInit() {
   tvfont = ttbasic_font;
   f_width  = *(tvfont+0);             // 横フォントドット数
   f_height = *(tvfont+1);             // 縦フォントドット数  
+  c_width  = g_width  / f_width;       // 横文字数
+  c_height = g_height / f_height;      // 縦文字数
+#if USE_VS23 == 1
+  for (int c=0; c < 256; ++c) {
+    uint32_t dest = char_addr(c);
+    Serial.println(dest);
+    for (int l=0; l < f_height; ++l) {
+      uint8_t bits = *(tvfont+2+c*f_height+l);
+      uint8_t bytes[f_width];
+      memset(bytes, 0, f_width);
+      for (int b=0; b < f_width; ++b) {
+        bytes[b] = ((bits >> (7-b)) & 1)?0x0f:0;
+      }
+      //Serial.println(dest);
+      SpiRamWriteBytes(dest, bytes, f_width);
+      dest += PICLINE_LENGTH_BYTES + BEXTRA;
+    }
+  }
+#endif
 }
 
 // NTSC 垂直同期信号補正
@@ -86,6 +119,14 @@ void tv_NTSC_adjust(int16_t ajst) {
 // NTSC表示の初期設定
 // 
 void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) { 
+#if USE_NTSC == 1
+  g_width  = TV_TNTSC->width();           // 横ドット数
+  g_height = TV_TNTSC->height();          // 縦ドット数
+#else
+  g_width = 320;
+  g_height = 200;
+#endif
+	
   tv_fontInit();
 #if USE_NTSC == 1
   TV_TNTSC->adjust(ajst);
@@ -105,16 +146,6 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) {
   TV.select_font(tvfont);
 #endif
 
-#if USE_NTSC == 1
-  g_width  = TV_TNTSC->width();           // 横ドット数
-  g_height = TV_TNTSC->height();          // 縦ドット数
-#else
-  g_width = 320;
-  g_height = 200;
-#endif
-	
-  c_width  = g_width  / f_width;       // 横文字数
-  c_height = g_height / f_height;      // 縦文字数
 #if USE_VS23 == 0
   vram = TV.VRAM();                    // VRAM先頭
   
@@ -191,6 +222,7 @@ uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
 //
 void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 #if USE_VS23 == 1
+#if 0
   uint8_t *chp = tvfont+3+c*f_height;
   for (int i=0;i<f_height;++i) {
     uint8_t pix[f_width];
@@ -202,6 +234,9 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
     uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
     SpiRamWriteBytes(byteaddress, pix, f_width);
   }
+#else
+  MoveBlock(char_x(c), char_y(c)+g_height+f_height, x*f_width, y*f_height, f_width, f_height, 0);
+#endif
 #else
   TV.print_char(x * f_width, y * f_height ,c);  
 #endif
