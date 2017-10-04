@@ -801,9 +801,17 @@ void SpiRamVideoInit() {
 
 void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
+  static uint8_t last_dir = 0;
   uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
   uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
+  // If the last move was a reverse one, we have to wait until it's finished
+  // before we can set the new addresses.
+  if (last_dir)
+    while (!blockFinished()) {}
   SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2) | dir);
+  if (!last_dir)
+    while (!blockFinished()) {}
   SpiRamWriteBM2Ctrl(0x35, PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
   SpiRamWriteBM3Ctrl(0x36);
+  last_dir = dir;
 }
