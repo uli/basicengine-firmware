@@ -266,6 +266,12 @@ void tTVscreen::setAttr(uint16_t attr) {
 }
 */    
 
+void tv_setcolor(uint16_t fc, uint16_t bc);
+
+void tTVscreen::setColor(uint16_t fc, uint16_t bc)
+{
+  tv_setcolor(fc, bc);
+}
 
 // スクリーン編集
 uint8_t tTVscreen::edit() {

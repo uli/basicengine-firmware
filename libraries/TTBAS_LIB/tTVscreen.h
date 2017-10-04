@@ -80,7 +80,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
     void draw_cls_curs();                             // カーソルの消去
 
-    //void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
+    void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
     //void setAttr(uint16_t attr);                      // 文字属性
     void beep() {/*addch(0x07);*/};
 

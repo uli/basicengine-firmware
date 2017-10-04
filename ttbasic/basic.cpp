@@ -2261,10 +2261,10 @@ void ilocate() {
 // 文字色の指定 COLOLR fc,bc
 void icolor() {
  int16_t fc,  bc = 0;
- if ( getParam(fc, 0, 8, false) ) return;
+ if ( getParam(fc, 0, 255, false) ) return;
  if(*cip == I_COMMA) {
     cip++;
-    if ( getParam(bc, 0, 8, false) ) return;  
+    if ( getParam(bc, 0, 255, false) ) return;  
  }
   // 文字色の設定
   sc->setColor((uint16_t)fc, (uint16_t)bc);  

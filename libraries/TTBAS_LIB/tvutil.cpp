@@ -66,6 +66,9 @@ uint16_t f_height;   // フォント高さ(ドット)
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
 
+uint16_t fg_color = 0xf;
+uint16_t bg_color = 0;
+
 uint32_t char_addr(uint8_t c)
 {
   uint32_t addr = PICLINE_BYTE_ADDRESS(g_height+f_height+(c/c_width * f_height))+(c%c_width)*f_width;
@@ -98,7 +101,7 @@ void tv_fontInit() {
       uint8_t bytes[f_width];
       memset(bytes, 0, f_width);
       for (int b=0; b < f_width; ++b) {
-        bytes[b] = ((bits >> (7-b)) & 1)?0x0f:0;
+        bytes[b] = ((bits >> (7-b)) & 1)?fg_color:bg_color;
       }
       //Serial.println(dest);
       SpiRamWriteBytes(dest, bytes, f_width);
@@ -222,21 +225,21 @@ uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
 //
 void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 #if USE_VS23 == 1
-#if 0
-  uint8_t *chp = tvfont+3+c*f_height;
-  for (int i=0;i<f_height;++i) {
-    uint8_t pix[f_width];
-    uint8_t ch = chp[i];
-    for (int j=0;j<f_width;++j) {
-      pix[j] = (!!(ch & 0x80))*255;
-      ch <<= 1;
+  if (fg_color != 0x0f || bg_color != 0) {
+    uint8_t *chp = tvfont+3+c*f_height;
+    for (int i=0;i<f_height;++i) {
+      uint8_t pix[f_width];
+      uint8_t ch = chp[i];
+      for (int j=0;j<f_width;++j) {
+        pix[j] = ch&0x80 ? fg_color : bg_color;
+        ch <<= 1;
+      }
+      uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
+      SpiRamWriteBytes(byteaddress, pix, f_width);
     }
-    uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
-    SpiRamWriteBytes(byteaddress, pix, f_width);
+  } else {
+    MoveBlock(char_x(c), char_y(c)+g_height+f_height, x*f_width, y*f_height, f_width, f_height, 0);
   }
-#else
-  MoveBlock(char_x(c), char_y(c)+g_height+f_height, x*f_width, y*f_height, f_width, f_height, 0);
-#endif
 #else
   TV.print_char(x * f_width, y * f_height ,c);  
 #endif
@@ -581,4 +584,8 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
 #endif
 }
 
-
+void tv_setcolor(uint16_t fc, uint16_t bc)
+{
+  fg_color = fc;
+  bg_color = bc;
+}
