@@ -256,12 +256,10 @@ void tv_insLine(uint16_t l) {
 void tv_scroll_up() {
 #if USE_VS23 == 1
   MoveBlock(0, f_height, 0, 0, g_width/2, g_height-f_height, 0);
-  delayMicroseconds(1500);
   MoveBlock(g_width/2, f_height, g_width/2, 0, g_width/2, g_height-f_height, 0);
 #else
   TV.shift(*(tvfont+1), UP);
 #endif
-  delayMicroseconds(1500);
   tv_clerLine(c_height-1);
 }
 
@@ -272,12 +270,10 @@ void tv_scroll_down() {
             g_width-1, g_height-1,
             g_width/2, g_height-f_height,
             1);
-  delayMicroseconds(1500);
   MoveBlock(g_width/2-1, g_height-f_height-1,
             g_width/2-1, g_height-1,
             g_width/2, g_height-f_height,
             1);
-  delayMicroseconds(1500);
 #else
   uint8_t h = *(tvfont+1);
   TV.shift(h, DOWN);
