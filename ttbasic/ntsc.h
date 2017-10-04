@@ -245,6 +245,7 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data);
 void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len);
 uint16_t SpiRamReadByte(register uint32_t address);
 uint16_t SpiRamReadRegister(register uint16_t opcode);
+uint8_t SpiRamReadRegister8(uint16_t opcode);
 void SpiRamWriteWord(uint16_t waddress, uint16_t data);
 void SpiRamWriteRegister(register uint16_t opcode, register uint16_t data);
 void SpiRamVideoInit();
@@ -256,5 +257,6 @@ void SpiRamWriteBMCtrl(register uint16_t opcode, register uint16_t data1, uint16
 void SpiRamWriteBM2Ctrl(register uint16_t opcode, register uint16_t data1, uint16_t data2, uint16_t data3);
 void SpiRamWriteBM3Ctrl(register uint16_t opcode);
 void SpiRamWriteByteRegister(register uint16_t opcode, register uint16_t data);
-	
+
+static inline bool blockFinished(void) { return !(SpiRamReadRegister8(0x86) & 1); }
 #endif

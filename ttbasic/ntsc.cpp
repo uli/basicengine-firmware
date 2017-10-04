@@ -116,6 +116,16 @@ uint16_t SpiRamReadRegister(uint16_t opcode)
   return result;
 }
 
+uint8_t SpiRamReadRegister8(uint16_t opcode)
+{
+  uint16_t result;
+  digitalWrite(15, LOW);
+  SPI.transfer(opcode);
+  result = SPI.transfer(0);
+  digitalWrite(15, HIGH);
+  return result;
+}
+
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
 	Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
 	digitalWrite(15, LOW);
