@@ -16,14 +16,6 @@ void VS23S010::adjust(int16_t cnt)
   // XXX: Huh?
 }
 
-uint16_t VS23S010::width() {
-  return 320;
-}
-
-uint16_t VS23S010::height() {
-  return 216;
-}
-
 void VS23S010::begin(uint8_t mode, uint8_t spino, uint8_t *extram)
 {
 }

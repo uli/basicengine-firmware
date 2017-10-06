@@ -41,8 +41,12 @@ class VS23S010 {
 	void setBktmStartHook(void (*func)()); // ブランキング期間開始フック設定
     void setBktmEndHook(void (*func)());   // ブランキング期間終了フック設定
 
-    uint16_t width() ;
-    uint16_t height() ;
+    inline uint16_t width() {
+      return XPIXELS;
+    }
+    inline uint16_t height() {
+      return YPIXELS;
+    }
     uint16_t vram_size();
     uint16_t screen();
 	void adjust(int16_t cnt);
