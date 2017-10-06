@@ -51,6 +51,13 @@ class VS23S010 {
     uint16_t screen();
 	void adjust(int16_t cnt);
 
+    inline uint32_t piclineByteAddress(uint16_t line) {
+        return PICLINE_BYTE_ADDRESS(line);
+    }
+    inline uint16_t piclinePitch() {
+        return PICLINE_LENGTH_BYTES + BEXTRA;
+    }
+
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
 
     void setMode(uint8_t mode);
