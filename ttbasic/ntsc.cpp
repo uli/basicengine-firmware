@@ -12,7 +12,7 @@ const struct vs23_mode_t VS23S010::modes[] = {
   { 320, 216, 11, 15, 4, 1 },	// VS23 NTSC demo
   { 320, 200, 20, 15, 4, 1 },	// (M)CGA, Commodore et al.
   { 256, 224, 9, 15, 5, 0 },	// SNES
-  { 256, 192, 24, 15, 5, 0 },	// MSX, Spectrum, NDS
+  { 256, 192, 24, 15, 5, 0 },	// MSX, Spectrum, NDS	XXX: has artifacts
   { 160, 200, 20, 15, 8, 0 },	// Commodore/PCjr/CPC multi-color
   // overscan modes
   { 352, 240, 0, 8, 4, 1 },	// PCE overscan (is this useful?)
@@ -433,6 +433,7 @@ void VS23S010::SpiRamVideoInit() {
 	// 7. Set length of one complete line (unit: PLL clocks)
 	SpiRamWriteRegister(LINELEN, (PLLCLKS_PER_LINE));
 	// 8. Set microcode program for picture lines
+	// Use HROP1/HROP2/OP4/OP4 for 2 PLL clocks per pixel modes
 	SpiRamWriteProgram(PROGRAM,
 	(OP4 << 8) | OP3,
 	(OP2 << 8) | OP1);

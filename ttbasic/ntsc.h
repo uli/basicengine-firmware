@@ -188,7 +188,11 @@
 #define USHIFT 6
 #define VSHIFT 4
 #endif
-	
+
+// For 2 PLL clocks per pixel modes:
+#define HROP1 (PICK_Y + PICK_BITS(4) + SHIFT_BITS(4))
+#define HROP2 (PICK_A + PICK_BITS(4) + SHIFT_BITS(4))	
+
 /// General VS23 commands
 #define WRITE_STATUS 0x01
 #define WRITE_MULTIIC 0xb8
