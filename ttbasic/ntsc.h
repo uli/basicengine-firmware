@@ -250,7 +250,6 @@ uint16_t SpiRamReadRegister(register uint16_t opcode);
 uint8_t SpiRamReadRegister8(uint16_t opcode);
 void SpiRamWriteWord(uint16_t waddress, uint16_t data);
 void SpiRamWriteRegister(register uint16_t opcode, register uint16_t data);
-void SpiRamVideoInit();
 void SpiRamWrite7Words(uint16_t waddress, uint16_t *data);
 void SpiRamWrite8Words(uint16_t waddress, uint16_t *data);
 void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);

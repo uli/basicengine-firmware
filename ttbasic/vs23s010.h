@@ -53,7 +53,7 @@ class VS23S010 {
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
  
-  private:
+    void SpiRamVideoInit();
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
 };

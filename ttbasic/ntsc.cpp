@@ -390,7 +390,7 @@ void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint
 
 
 
-void SpiRamVideoInit() {
+void VS23S010::SpiRamVideoInit() {
 	uint16_t i,j,wi;
 	uint32_t w;
 	uint16_t linelen = PLLCLKS_PER_LINE;
