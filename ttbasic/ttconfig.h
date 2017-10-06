@@ -76,4 +76,6 @@
   #include <ichigoFont8x8.h>
 #endif
 
+#include "ati_6x8.h"
+
 #endif
