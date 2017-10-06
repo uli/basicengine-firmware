@@ -204,7 +204,7 @@ void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress) {
 }
 	
 /// Set picture pixel to a yuv value
-void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
+void VS23S010::SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
 #ifndef BYTEPIC
         {
                 uint16_t wordaddress;
@@ -222,7 +222,7 @@ void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
 
 	
 /// Set picture pixel to a RGB value 
-void SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b) {
+void VS23S010::SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b) {
 	uint16_t pixdata;
 	// this is for 4 bits U, 4 bits V and 8 bits Y
 	// Y/U/VRGB give out 8 bit values, Y positive, U&V signed integers
@@ -245,7 +245,7 @@ void SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b) 
 }
 
 /// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher than or equal to y1
-void DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, uint16_t g, uint16_t b) {
+void VS23S010::DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, uint16_t g, uint16_t b) {
 	int deltax, deltay, offset;
 	uint16_t i,j,ystart;
 	offset = 0;
@@ -269,7 +269,7 @@ void DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, ui
 }
 
 /// Fills a rectangle. Volor is given in RGB 565 format
-void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb) {
+void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb) {
 	uint16_t re;
 	uint16_t gr;
 	uint16_t bl;
@@ -287,7 +287,7 @@ void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rg
 }
 	
 /// Writes a 16-bit pixel stripe. This is used by VSOS display driver.
-uint16_t *SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
+uint16_t *VS23S010::SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
 #ifndef BYTEPIC
 	uint32_t address = ((uint32_t)(PICLINE_WORD_ADDRESS(y)) + x) * 2;
 #else	
@@ -307,7 +307,7 @@ uint16_t *SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pi
 }
 
 /// Writes a 8-bit pixel stripe. This is used by VSOS display driver.
-uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
+uint16_t *VS23S010::SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
 	uint32_t address = PICLINE_BYTE_ADDRESS(y) + x;
 	static uint16_t buf[2];
 #if 0
@@ -323,7 +323,7 @@ uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t
 }
 				
 /// Handler for VSOS standard LcdFilledRectangle calling convention
-void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color) {
+void VS23S010::TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color) {
 	uint16_t w;
 	static uint16_t buf[400]; //WAARALLISTA! 
 	uint16_t r,g,b;
@@ -830,7 +830,7 @@ void VS23S010::SpiRamVideoInit() {
 	SpiRamWriteBMCtrl(0x34, 0, 0, 0x00);
 	}
 
-void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
+void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
   static uint8_t last_dir = 0;
   uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;

@@ -63,6 +63,14 @@ class VS23S010 {
     void setMode(uint8_t mode);
  
     void SpiRamVideoInit();
+    void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv);
+    void SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b);
+    void DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, uint16_t g, uint16_t b);
+    void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb);
+    uint16_t *SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
+    uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
+    void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
+    void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
 
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
