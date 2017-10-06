@@ -180,6 +180,9 @@ uint8_t TKeyboard::init() {
   err = pb.response(&c);  if (err || (c != 0x83)) goto ERROR;  
 
 ERROR:
+  // USB/PS2 "DeLUX" keyboard works despite the error, but if we don't wait a
+  // little bit here we will lose the first key press.
+  delay(1);
   pb.mode_idole(TPS2::D_IN); 
   pb.enableInterrupts();
   return err;
