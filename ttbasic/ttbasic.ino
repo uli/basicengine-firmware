@@ -114,7 +114,6 @@ void loop(void){
     digitalWrite(15, HIGH);
     //delay(200);
   }
-  SpiRamVideoInit();
 
   Serial.println("I2S");Serial.flush();
   InitI2S();

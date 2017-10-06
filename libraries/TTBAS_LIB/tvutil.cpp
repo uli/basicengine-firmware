@@ -121,7 +121,10 @@ void tv_NTSC_adjust(int16_t ajst) {
 //
 // NTSC表示の初期設定
 // 
-void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT) { 
+void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=0) { 
+#if USE_VS23 == 1
+  vs23.setMode(vmode);
+#endif
 #if USE_NTSC == 1
   g_width  = TV_TNTSC->width();           // 横ドット数
   g_height = TV_TNTSC->height();          // 縦ドット数

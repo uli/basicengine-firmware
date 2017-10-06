@@ -52,8 +52,12 @@ class VS23S010 {
 	void adjust(int16_t cnt);
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
+
+    void setMode(uint8_t mode);
  
     void SpiRamVideoInit();
+
+    const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
 };

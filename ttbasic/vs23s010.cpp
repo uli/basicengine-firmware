@@ -18,10 +18,17 @@ void VS23S010::adjust(int16_t cnt)
 
 void VS23S010::begin(uint8_t mode, uint8_t spino, uint8_t *extram)
 {
+  setMode(mode);
 }
 
 void VS23S010::end()
 {
+}
+
+void VS23S010::setMode(uint8_t mode)
+{
+  currentMode = &modes[mode];
+  SpiRamVideoInit();
 }
 
 VS23S010 vs23;
