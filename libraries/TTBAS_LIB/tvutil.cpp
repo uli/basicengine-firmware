@@ -71,7 +71,7 @@ uint16_t bg_color = 0;
 
 uint32_t char_addr(uint8_t c)
 {
-  uint32_t addr = PICLINE_BYTE_ADDRESS(g_height+f_height+(c/c_width * f_height))+(c%c_width)*f_width;
+  uint32_t addr = vs23.piclineByteAddress(g_height+f_height+(c/c_width * f_height))+(c%c_width)*f_width;
   return addr;
 }
 
@@ -105,7 +105,7 @@ void tv_fontInit() {
       }
       //Serial.println(dest);
       SpiRamWriteBytes(dest, bytes, f_width);
-      dest += PICLINE_LENGTH_BYTES + BEXTRA;
+      dest += vs23.piclinePitch();
     }
   }
 #endif
@@ -213,7 +213,7 @@ uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
   uint8_t pix[f_width];
   memset(pix, 255, f_width);
   for (int i = 0; i < f_height; ++i) {
-    uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
+    uint32_t byteaddress = vs23.piclineByteAddress(y*f_height+i)+x*f_width;
     SpiRamWriteBytes(byteaddress, pix, f_width);
   }
 #else
@@ -237,11 +237,11 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
         pix[j] = ch&0x80 ? fg_color : bg_color;
         ch <<= 1;
       }
-      uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y*f_height+i)+x*f_width;
+      uint32_t byteaddress = vs23.piclineByteAddress(y*f_height+i)+x*f_width;
       SpiRamWriteBytes(byteaddress, pix, f_width);
     }
   } else {
-    MoveBlock(char_x(c), char_y(c)+g_height+f_height, x*f_width, y*f_height, f_width, f_height, 0);
+    vs23.MoveBlock(char_x(c), char_y(c)+g_height+f_height, x*f_width, y*f_height, f_width, f_height, 0);
   }
 #else
   TV.print_char(x * f_width, y * f_height ,c);  
@@ -265,8 +265,8 @@ void tv_cls() {
 void tv_clerLine(uint16_t l) {
 #if USE_VS23 == 1
   // Assumption: Screen data is followed by empty line in memory.
-  MoveBlock(0, g_height, 0, l * f_height, g_width/2, f_height, 0);
-  MoveBlock(g_width/2, g_height, g_width/2, l * f_height, g_width/2, f_height, 0);
+  vs23.MoveBlock(0, g_height, 0, l * f_height, g_width/2, f_height, 0);
+  vs23.MoveBlock(g_width/2, g_height, g_width/2, l * f_height, g_width/2, f_height, 0);
 #else
   memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
 #endif
@@ -296,8 +296,8 @@ void tv_insLine(uint16_t l) {
 // 1行分スクリーンのスクロールアップ
 void tv_scroll_up() {
 #if USE_VS23 == 1
-  MoveBlock(0, f_height, 0, 0, g_width/2, g_height-f_height, 0);
-  MoveBlock(g_width/2, f_height, g_width/2, 0, g_width/2, g_height-f_height, 0);
+  vs23.MoveBlock(0, f_height, 0, 0, g_width/2, g_height-f_height, 0);
+  vs23.MoveBlock(g_width/2, f_height, g_width/2, 0, g_width/2, g_height-f_height, 0);
 #else
   TV.shift(*(tvfont+1), UP);
 #endif
@@ -307,11 +307,11 @@ void tv_scroll_up() {
 // 1行分スクリーンのスクロールダウン
 void tv_scroll_down() {
 #if USE_VS23 == 1
-  MoveBlock(g_width-1, g_height-f_height-1,
+  vs23.MoveBlock(g_width-1, g_height-f_height-1,
             g_width-1, g_height-1,
             g_width/2, g_height-f_height,
             1);
-  MoveBlock(g_width/2-1, g_height-f_height-1,
+  vs23.MoveBlock(g_width/2-1, g_height-f_height-1,
             g_width/2-1, g_height-1,
             g_width/2, g_height-f_height,
             1);
