@@ -88,8 +88,8 @@ static uint16_t char_y(uint8_t c)
 void tv_fontInit() {
 //  tvfont   = (uint8_t*)TV_DISPLAY_FONT;
   tvfont = ttbasic_font;
-  f_width  = *(tvfont+0);             // 横フォントドット数
-  f_height = *(tvfont+1);             // 縦フォントドット数  
+  f_width  = pgm_read_byte(tvfont+0);             // 横フォントドット数
+  f_height = pgm_read_byte(tvfont+1);             // 縦フォントドット数  
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
 #if USE_VS23 == 1
@@ -97,7 +97,7 @@ void tv_fontInit() {
     uint32_t dest = char_addr(c);
     Serial.println(dest);
     for (int l=0; l < f_height; ++l) {
-      uint8_t bits = *(tvfont+2+c*f_height+l);
+      uint8_t bits = pgm_read_byte(tvfont+2+c*f_height+l);
       uint8_t bytes[f_width];
       memset(bytes, 0, f_width);
       for (int b=0; b < f_width; ++b) {
@@ -232,7 +232,7 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
     uint8_t *chp = tvfont+3+c*f_height;
     for (int i=0;i<f_height;++i) {
       uint8_t pix[f_width];
-      uint8_t ch = chp[i];
+      uint8_t ch = pgm_read_byte(chp+i);
       for (int j=0;j<f_width;++j) {
         pix[j] = ch&0x80 ? fg_color : bg_color;
         ch <<= 1;
