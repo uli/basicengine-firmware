@@ -26,8 +26,8 @@
 #include "tscreenBase.h"
 #include "tTermscreen.h"
 
-#define STR_EDITION "Arduino STM32"
-#define STR_VARSION "Edition V0.84"
+#define STR_EDITION "ESP8266"
+#define STR_VARSION "V0.84"
 
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
@@ -5042,9 +5042,10 @@ void basic() {
   char* textline;    // 入力行
 
   // 起動メッセージ  
-  c_puts("TOYOSHIKI TINY BASIC "); //「TOYOSHIKI TINY BASIC」を表示
-  newline();                    // 改行
-  c_puts(STR_EDITION);          // 版を区別する文字列「EDITION」を表示
+  sc->setColor(0x97, 0);
+  c_puts("DEVBASIC"); //「TOYOSHIKI TINY BASIC」を表示
+  sc->setColor(0x0f, 0);
+  c_puts(" " STR_EDITION);          // 版を区別する文字列「EDITION」を表示
   c_puts(" " STR_VARSION);      // バージョンの表示
   newline();                    // 改行
   error();                      //「OK」またはエラーメッセージを表示してエラー番号をクリア
