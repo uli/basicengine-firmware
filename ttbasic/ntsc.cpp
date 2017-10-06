@@ -55,15 +55,10 @@ struct bw {
 void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   uint8_t req[5];
   digitalWrite(15, LOW);
-  //SPI.transfer(2);
   req[0] = 2;
-  //SPI.transfer(address >> 16);
   req[1] = address >> 16;
-  //SPI.transfer((uint8_t)(address >> 8));
   req[2] = address >> 8;
-  //SPI.transfer((uint8_t)address);
   req[3] = address;
-  //SPI.transfer(data);
   req[4] = data;
   SPI.writeBytes(req, 5);
   digitalWrite(15, HIGH);
@@ -86,6 +81,7 @@ void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len)
 
 void SpiRamWriteRegister(uint16_t opcode, uint16_t data)
 {
+  //Serial.printf("%02x <= %04xh\n",opcode,data);
   digitalWrite(15, LOW);
   SPI.transfer(opcode);
   SPI.transfer(data >> 8);
@@ -95,6 +91,7 @@ void SpiRamWriteRegister(uint16_t opcode, uint16_t data)
 
 void SpiRamWriteByteRegister(uint16_t opcode, uint16_t data)
 {
+  //Serial.printf("%02x <= %02xh\n",opcode,data);
   digitalWrite(15, LOW);
   SPI.transfer(opcode);
   SPI.transfer((uint8_t)data);
@@ -106,14 +103,6 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data)
   uint8_t req[6];
   uint32_t address = (uint32_t)waddress * 2;
   digitalWrite(15, LOW);
-#if 0
-  SPI.transfer(2);
-  SPI.transfer(address >> 16);
-  SPI.transfer((uint8_t)(address >> 8));
-  SPI.transfer((uint8_t)address);
-  SPI.transfer(data >> 8);
-  SPI.transfer((uint8_t)data);
-#else
   req[0] = 2;
   req[1] = address >> 16;
   req[2] = address >> 8;
@@ -121,12 +110,12 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data)
   req[4] = data >> 8;
   req[5] = data;
   SPI.writeBytes(req, 6);
-#endif
   digitalWrite(15, HIGH);
 }
 
 void SpiRamWriteProgram(register uint16_t opcode, register uint16_t data1, uint16_t data2)
 {
+  //Serial.printf("PROG:%04x%04xh\n",data1,data2);
   digitalWrite(15, LOW);
   SPI.transfer(opcode);
   SPI.transfer(data1 >> 8);
@@ -158,7 +147,7 @@ uint8_t SpiRamReadRegister8(uint16_t opcode)
 }
 
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
-	Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
+	//Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
 	digitalWrite(15, LOW);
 	SPI.transfer(opcode);
 	SPI.transfer(data1>>8);
@@ -170,7 +159,7 @@ void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t
 }
 
 void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
-	Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
+	//Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
 	digitalWrite(15, LOW);
 	SPI.transfer(opcode);
 	SPI.transfer(data1>>8);
@@ -181,7 +170,7 @@ void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_
 }
 
 void SpiRamWriteBM3Ctrl(uint16_t opcode) {
-	Serial.printf("%02x\n",opcode);
+	//Serial.printf("%02x\n",opcode);
 	digitalWrite(15, LOW);
 	SPI.transfer(opcode);
 	digitalWrite(15, HIGH);
@@ -286,118 +275,11 @@ void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, u
 	}
 }
 	
-/// Writes a 16-bit pixel stripe. This is used by VSOS display driver.
-uint16_t *VS23S010::SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
-#ifndef BYTEPIC
-	uint32_t address = ((uint32_t)(PICLINE_WORD_ADDRESS(y)) + x) * 2;
-#else	
-	uint32_t address = ((uint32_t)(PICLINE_WORD_ADDRESS(y))* 2) + x;
-#endif
-	static uint16_t buf[2];
-#if 0
-	spi1.Ioctl(&spi1,IOCTL_START_FRAME,0);
-	buf[0] = (0x02 << 8) | (uint16_t)(address >> 16);
-	buf[1] = ((uint16_t)address & 0xffff);
-	spi1.Write(&spi1,buf,0,4);
-
-	spi1.Write(&spi1,pixels,0,width*2);
-	spi1.Ioctl(&spi1,IOCTL_END_FRAME,0);
-#endif
-	return pixels+width;
-}
-
-/// Writes a 8-bit pixel stripe. This is used by VSOS display driver.
-uint16_t *VS23S010::SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels) {
-	uint32_t address = PICLINE_BYTE_ADDRESS(y) + x;
-	static uint16_t buf[2];
-#if 0
-	spi1.Ioctl(&spi1,IOCTL_START_FRAME,0);
-	buf[0] = (0x02 << 8) | (uint16_t)(address >> 16);
-	buf[1] = ((uint16_t)address & 0xffff);
-	spi1.Write(&spi1,buf,0,4);
-	
-	spi1.Write(&spi1,pixels,0,width+1);
-	spi1.Ioctl(&spi1,IOCTL_END_FRAME,0);
-#endif
-	return pixels+width;
-}
-				
-/// Handler for VSOS standard LcdFilledRectangle calling convention
-void VS23S010::TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color) {
-	uint16_t w;
-	static uint16_t buf[400]; //WAARALLISTA! 
-	uint16_t r,g,b;
-	
-#if 0
-	if (x1 >= PICX) return;
-	if (x2 >= PICX) x2=PICX-1;
-#endif		
-	if (y1 >= PICY) return;
-	if (y2 >= PICY) y2=PICY-1;
-
-	w = (x2-x1)+1;
-	if (w>400) w=400;
-	if (!texture) {	
-		r = (color>>8)&0xf8;
-		g = (color>>3)&0xfc;
-		b = (color<<3)&0xf8;		
-		color = ((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS));
-#ifdef	BYTEPIC
-		color |= (color << 8);
-#endif
-		memset(buf,color,w);
-		while (y1 <= y2) {
-#ifndef BYTEPIC				
-			SpiRamWriteStripe(x1,y1,w,buf);
-#else
-			SpiRamWriteByteStripe(x1,y1,w,buf);
-#endif	
-			y1++;
-		}
-	} else {
-		while (y1 <= y2) {
-			uint16_t i;
-			uint16_t *t = texture;
-			uint16_t *out = texture;
-			for (i=0; i<w; i++)  {
-				r = (*t>>8)&0xf8;
-				g = (*t>>3)&0xfc;
-				b = (*t<<3)&0xf8;	
-#ifndef BYTEPIC
-				*t++ = ((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS));
-#else
-				*t ++;
-				if (i%2==0) {
-					*out = (((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS))) << 8;
-				} else {
-					*out++ |= (((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS)));
-				}
-				if (i==w-1) {
-					*out = (((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS))) << 8;
-					*out |= (((URGB(r,g,b)>>(8-UBITS))<<USHIFT) | ((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) | (YRGB(r,g,b)>>(8-YBITS)));
-				}
-#endif
-			}
-#ifndef BYTEPIC			
-			texture = SpiRamWriteStripe(x1,y1,w,texture);
-#else
-			texture = SpiRamWriteByteStripe(x1,y1,w,texture);
-#endif			
-			y1++;
-		}	
-	}
-}
-
-
-
 void VS23S010::SpiRamVideoInit() {
 	uint16_t i,j,wi;
 	uint32_t w;
 	uint16_t linelen = PLLCLKS_PER_LINE;
 	
-	// Init SPI of VS1005 and check VD23 id	
-	//SpiRamInit();
-			
 	Serial.printf("Linelen: %d PLL clks\n",linelen);
 	printf("Picture line area is %d x %d\n",PICX,PICY);
 	printf("Upper left corner is point (0,0) and lower right corner (%d,%d)\n",PICX-1,PICY-1);
@@ -417,11 +299,6 @@ void VS23S010::SpiRamVideoInit() {
 	// 2. Set SPI memory address autoincrement
 	SpiRamWriteByteRegister(WRITE_STATUS, 0x40);
 	
-	// 3. XReset & XCSPar pins of VS23 to high on the testcard
-/*	PERIP(GPIO2_MODE) &= ~(0x3);
-	PERIP(GPIO2_DDR) |= 0x3;
-	PERIP(GPIO2_SET_MASK) = 0x3; */
-		
 	// 4. Write picture start and end
 	SpiRamWriteRegister(PICSTART, (STARTPIX-1));
 	SpiRamWriteRegister(PICEND, (ENDPIX-1));
@@ -591,40 +468,6 @@ void VS23S010::SpiRamVideoInit() {
 	// Makes a black&white picture
 	//for (i=0; i<BURSTDUR; i++) SpiRamWriteWord(w++,BLANK_LEVEL);
 		
-	// For testing purposes, make some interesting pattern to proto 0
-#if 0	
-	w = PROTOLINE_WORD_ADDRESS(0)+BLANKEND;
-	SpiRamWriteWord(w++, 0x7F);
-	for (i=1; i<=50; i++) {
-		SpiRamWriteWord(w++, 0x797F+i*0x1300); //"Proto-maximum" green level + color carrier wave
-	}
-#endif	
-
-#if 0	
-	// To make red+blue strip
-	#define RED_BIT 0x0400
-	#define BLUE_BIT 0x0800
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 126, 0x7380 + RED_BIT);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 130, 0x7380 + RED_BIT + BLUE_BIT);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 134, 0x7380 + BLUE_BIT);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 138, 0x7380);
-	// Max V and min U levels
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 146, 0x79c1);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 147, 0x79c1);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 148, 0x79c1);
-	
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 156, 0xf54f+BLANK_LEVEL);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 157, 0xf54f+BLANK_LEVEL);
-	SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(0) + 158, 0xf54f+BLANK_LEVEL);
-
-	// Orangish color to the end of proto line
-	
-	w = PROTOLINE_WORD_ADDRESS(0)+FRPORCH-1; 
-	for (i=0; i<=90; i++) {
-		SpiRamWriteWord((uint16_t)w--, (WHITE_LEVEL-0x30)|0xc400);
-	}
-#endif	
-
 	// Now let's construct protoline 1, this will become our short+short VSYNC line
 	w = PROTOLINE_WORD_ADDRESS(1);
 	for (i=0; i<=COLORCLKS_PER_LINE; i++) {
@@ -730,23 +573,6 @@ void VS23S010::SpiRamVideoInit() {
 	| (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL-1))
 	| (VDCTRL2_ENABLE_VIDEO));
 		
-#if 0
-	// Set some random background color to picture area
-	for (i=0; i<ENDLINE-STARTLINE; i++) {
-		for (j=0; j<=PICLINE_LENGTH_BYTES;j++) {
-#ifndef BYTEPIC		
-			if (j%2==0){
-				SpiRamWriteByte(PICLINE_BYTE_ADDRESS(i)+j,0);
-			} else {
-				SpiRamWriteByte(PICLINE_BYTE_ADDRESS(i)+j,0x20); // Some random level, grey
-			}
-#else
-			SpiRamWriteByte(PICLINE_BYTE_ADDRESS(i)+j,0x2); // Some random level, grey
-#endif			
-		}
-	}
-#endif
-
 	// Draw some color bars
 	{
 		uint16_t re=0;
@@ -799,18 +625,6 @@ void VS23S010::SpiRamVideoInit() {
 #endif
 	}
 	
-	// Read video logic line pointer register
- for(int i=0; i < 10; ++i) {
-	Serial.printf("Current line: %04x\n",SpiRamReadRegister(CURLINE));
-  delayMicroseconds(42);
- }
- Serial.printf("ID%04X\n", SpiRamReadRegister(0x9f));
-	
-	// Init NTSC display as VSOS3 monitor
-#if 0
-	InitVODisplay();
-#endif
-		
 	// Fixes the picture to proto area border artifacts if BEXTRA > 0.
 	if (BEXTRA>0) {
 		for (i=0; i<ENDLINE-STARTLINE; i++) {
@@ -827,8 +641,6 @@ void VS23S010::SpiRamVideoInit() {
 				}
 			}
 		}
-//	SpiRamWriteBMCtrl(0x34, 0, 0, 0x10);
-	SpiRamWriteBMCtrl(0x34, 0, 0, 0x00);
 	}
 
 void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
@@ -840,6 +652,7 @@ void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16
   // before we can set the new addresses.
   if (last_dir)
     while (!blockFinished()) {}
+  // XXX: What about PYF?
   SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2) | dir);
   if (!last_dir)
     while (!blockFinished()) {}
