@@ -27,15 +27,11 @@ struct vs23_mode_t {
   uint8_t bextra;
 };
 
-
 // ntscビデオ表示クラス定義
 class VS23S010 {    
-  private:
-	uint8_t flgExtVram; // 外部確保メモリ利用(0:利用なり 1:利用あり)
   public:
     void begin(uint8_t mode=SC_DEFAULT,uint8_t spino = 1, uint8_t* extram=NULL);  // NTSCビデオ表示開始
     void end();                            // NTSCビデオ表示終了 
-    uint8_t*  VRAM();                      // VRAMアドレス取得
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち
 	void setBktmStartHook(void (*func)()); // ブランキング期間開始フック設定
@@ -49,7 +45,7 @@ class VS23S010 {
     }
     uint16_t vram_size();
     uint16_t screen();
-	void adjust(int16_t cnt);
+    void adjust(int16_t cnt);
 
     inline uint32_t piclineByteAddress(uint16_t line) {
         return PICLINE_BYTE_ADDRESS(line);
