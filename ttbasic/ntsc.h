@@ -180,9 +180,15 @@
 #define VSHIFT 8
 #else
 /// 8 bits per pixel, U2 V2 Y4
+#ifdef ALT_COLORS
+#define OP1 (PICK_B + PICK_BITS(6) + SHIFT_BITS(2))
+#define OP2 (PICK_A + PICK_BITS(6) + SHIFT_BITS(3))
+#define OP3 (PICK_Y + PICK_BITS(3) + SHIFT_BITS(3))
+#else
 #define OP1 (PICK_B + PICK_BITS(2) + SHIFT_BITS(2))
 #define OP2 (PICK_A + PICK_BITS(2) + SHIFT_BITS(2))
 #define OP3 (PICK_Y + PICK_BITS(4) + SHIFT_BITS(4))
+#endif
 #define OP4 (PICK_NOTHING)
 /// U & V data shift values in a 8-bit pixel are defined.
 #define USHIFT 6
