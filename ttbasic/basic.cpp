@@ -3853,7 +3853,11 @@ void iscreen() {
   int8_t prv_m;
 #if USE_NTSC == 1
   // 引数チェック
+#if USE_VS23 == 1
+  if ( getParam(m,  0, vs23.numModes, false) ) return;   // m
+#else
   if ( getParam(m,  0, 3, false) ) return;   // m
+#endif
   if (scmode == m) 
     return;
 
@@ -3871,9 +3875,11 @@ void iscreen() {
   } else {
     // NTSCスクリーン設定
     sc = &sc0;
+#if USE_VS23 == 1
+    ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, m - 1);
+#else
     if (m == 1) 
       ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
-#if 0
     else if (m == 2)
       ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_224x108);
     else  if (m == 3) 
