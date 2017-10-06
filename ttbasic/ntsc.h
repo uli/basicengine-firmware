@@ -1,6 +1,8 @@
 #ifndef NTSC_H
 #define NTSC_H
 
+#include <stdint.h>
+
 //#include <vsos.h>
 //#include "devHwSpi.h"
 #include <stdint.h>

@@ -2,6 +2,37 @@
 #include <string.h>
 #include <Arduino.h>
 #include <SPI.h>
+#include "vs23s010.h"
+
+const struct vs23_mode_t VS23S010::modes[] = {
+  // maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel chars
+  { 456, 224, 9, 10, 3, 1 },
+  // a bit smaller, may fit better on some TVs
+  { 432, 216, 13, 14, 3, 1 },
+  { 320, 216, 11, 15, 4, 1 },	// VS23 NTSC demo
+  { 320, 200, 20, 15, 4, 1 },	// (M)CGA, Commodore et al.
+  { 256, 224, 9, 15, 5, 0 },	// SNES
+  { 256, 192, 24, 15, 5, 0 },	// MSX, Spectrum, NDS
+  { 160, 200, 20, 15, 8, 0 },	// Commodore/PCjr/CPC multi-color
+  // overscan modes
+  { 352, 240, 0, 8, 4, 1 },	// PCE overscan (is this useful?)
+  { 282, 240, 0, 8, 5, 0 },	// PCE overscan (is this useful?)
+};
+
+// Common modes not included:
+// GBA (240x160): Lines do not scale evenly.
+// Apple ][ hires: Does not fill the screen well (too narrow).
+
+// Two-vclocks-per-pixel modes (>456 pixels wide are not included because of
+// two issues:
+// 1. At 8bpp, filling the entire screen would take more than 128k.
+// 2. Only two microprogram instructions can be executed per pixel, making
+//    it impossible to support the full color gamut.
+
+#define NUM_MODES (sizeof(VS23S010::modes)/sizeof(vs23_mode_t))
+const uint8_t VS23S010::numModes = NUM_MODES;
+
+const struct vs23_mode_t *vs23_current_mode = &VS23S010::modes[0];
 
 uint16_t SpiRamReadByte(uint32_t address)
 {

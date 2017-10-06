@@ -13,10 +13,20 @@
 #ifndef __VS23S010_H
 #define __VS23S010_H
 
+#include "ntsc.h"
 #include <Arduino.h>
 
-#define SC_318x215	0
-#define SC_DEFAULT	SC_318x215
+#define SC_DEFAULT 0
+
+struct vs23_mode_t {
+  uint16_t x;
+  uint16_t y;
+  uint8_t top;
+  uint8_t left;
+  uint8_t vclkpp;
+  uint8_t bextra;
+};
+
 
 // ntscビデオ表示クラス定義
 class VS23S010 {    
@@ -40,6 +50,8 @@ class VS23S010 {
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
  
   private:
+    static const uint8_t numModes;
+    static const struct vs23_mode_t modes[];
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
