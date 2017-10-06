@@ -5108,12 +5108,12 @@ void basic() {
 
 // システム環境設定のロード
 uint8_t loadConfig() {
-#if 0
   int16_t rc;
   uint16_t data;
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  0;
   CONFIG.STARTPRG  = -1;
+#if 0
 
   // NTSC設定の参照
   rc = EEPROM.read(CONFIG_NTSC, &data);
