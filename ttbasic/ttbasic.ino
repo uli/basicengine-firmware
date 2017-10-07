@@ -32,24 +32,9 @@ uint8_t serialMode;
 extern "C" void setSample(uint8_t s);
 void SpiRamVideoInit();
 
+
 void setup(void){
-//  Serial.begin(115200);
-//  Serial1.begin(GPIO_S1_BAUD);
-
-  // USBのジッター低減
-/*
-  //Serial.end();
-  nvic_irq_set_priority(NVIC_USB_HP_CAN_TX, 7);  // USB割り込み優先レベル設定
-  nvic_irq_set_priority(NVIC_USB_LP_CAN_RX0,7);  // USB割り込み優先レベル設定
-  nvic_irq_set_priority((nvic_irq_num)14,4);
-*/
-//  nvic_irq_set_priority(NVIC_TIMER2,2);
-
-#if defined (__STM32F1__)   
-  for(uint8_t tm=0; tm <15 && !Serial.isConnected(); tm++) {
-    delay(100);
-  }
-#endif
+  // That does not seem to be necessary on ESP8266.
   //randomSeed(analogRead(PA0));
   delay(500);
   Serial.begin(115200);
@@ -60,30 +45,15 @@ void loop(void){
 #ifdef ESP8266_NOWIFI
   ets_wdt_disable();
 #endif
-  //pinMode(D2, OUTPUT_OPEN_DRAIN);
-  //pinMode(D1, OUTPUT);
-  //delay(3000);
   Serial.println("Wir sind da, wo unten ist.");
   eboot_command ebcmd;
   ebcmd.action = ACTION_LOAD_APP;
   ebcmd.args[0] = 0x80000;
   //eboot_command_write(&ebcmd);
-  //digitalWrite(D1, LOW);
-  //digitalWrite(D2, LOW);
   Serial.println("\nStarting");Serial.flush();
-  //delayMicroseconds(1000000);
-//  delay(500);
-  //digitalWrite(D1, HIGH);
-  //digitalWrite(D2, HIGH);
-//  Serial.println("2");Serial.flush();
-//  delay(1000);
   for (int i=0; i < 3; ++i) {
     Serial.println("tick");Serial.flush();
     Serial.println(millis());
-    //delayMicroseconds(10000000);
-    //delay(1000);
-    //for (int j=0;j<1000;++j)
-    //  delayMicroseconds(500);
   }
 
   SPI.pins(14, 12, 13, 15);
@@ -92,14 +62,13 @@ void loop(void){
   pinMode(15, OUTPUT);
   SPI.begin();
   SPI.setFrequency(10000000);
-//  delay(500);
+
   for (int i=0; i < 10; ++i) {
     digitalWrite(15, LOW);
     SPI.transfer(0x9f);
     Serial.print(SPI.transfer(0), HEX);
     Serial.println(SPI.transfer(0), HEX);
     digitalWrite(15, HIGH);
-    //delay(200);
   }
   SpiUnlock();
 
