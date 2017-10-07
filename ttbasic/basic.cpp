@@ -5120,7 +5120,7 @@ uint8_t loadConfig() {
   int16_t rc;
   uint16_t data;
   CONFIG.NTSC      =  0;
-  CONFIG.KEYBOARD  =  0;
+  CONFIG.KEYBOARD  =  1;
   CONFIG.STARTPRG  = -1;
 #if 0
 
