@@ -11,6 +11,7 @@
 
 
 #include "sdfiles.h"
+#include "../../../ttbasic/lock.h"
 #include <sdbitmap.h>
 #include <string.h>
 #include <libBitmap.h>
@@ -23,11 +24,18 @@ SdFat SD;
 
 static bool sdfat_initialized = false;
 
-inline bool sdfiles::SD_BEGIN(void)
+bool sdfiles::SD_BEGIN(void)
 {
-  if (!sdfat_initialized)
+  SpiLock();
+  if (!sdfat_initialized) {
     sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(10));
+  }
   return sdfat_initialized;
+}
+
+bool sdfiles::SD_END(void)
+{
+  SpiUnlock();
 }
 
 void c_puts(const char *s, uint8_t devno=0);
@@ -118,7 +126,7 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE ; // ファイルオープン失敗
   }
-//  SD.end();
+  SD_END();
   return rc;
 #else
   return SD_ERR_INIT;
@@ -163,7 +171,7 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-//  SD.end();
+  SD_END();
   return rc;
 #else
   return SD_ERR_INIT;
@@ -218,7 +226,7 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
   }
   tmpClose();
 DONE:
-  //SD.end();
+  SD_END();
   return rc; 
 #else
   return -SD_ERR_NOT_FILE;
@@ -276,7 +284,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-//  SD.end();
+  SD_END();
   newline();
   return rc;
 }
@@ -313,7 +321,7 @@ uint8_t sdfiles::tmpClose() {
 #if 1
   if (tfile)
     tfile.close();
-  //SD.end();
+  SD_END();
 #endif
   return 0;
 }
@@ -423,7 +431,7 @@ int8_t sdfiles::IsText(char* fname) {
   } else {
     rc = -SD_ERR_OPEN_FILE;    
   }
-//  SD.end();
+  SD_END();
   return rc;
 #else
   return -SD_ERR_INIT;
@@ -463,7 +471,7 @@ uint8_t sdfiles::loadBitmap(char* fname, uint8_t* ptr, int16_t x, int16_t y, int
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-//  SD.end();
+  SD_END();
   return rc;
 }
 
@@ -498,7 +506,7 @@ uint8_t sdfiles::loadBitmapToGVRAM(char* fname, uint8_t* ptr,int16_t bw, int16_t
   } else {
     rc = SD_ERR_OPEN_FILE;    
   }
-//  SD.end();
+  SD_END();
   return rc;
 }
 
@@ -527,7 +535,7 @@ uint8_t sdfiles::mkdir(char* fname) {
       rc = SD_ERR_OPEN_FILE;
     }
   }
-//  SD.end();
+  SD_END();
   return rc;
 }
 
@@ -550,7 +558,7 @@ uint8_t sdfiles::rmdir(char* fname) {
   } else {
     rc =  SD_ERR_OPEN_FILE;
   }
-//  SD.end();
+  SD_END();
   return rc;
 }
 
@@ -576,7 +584,7 @@ uint8_t sdfiles::remove(char* fname) {
     return 1;
   if(SD.remove(fname) == true)
     rc = 0;
-//  SD.end();
+  SD_END();
   return rc;  
 }
 

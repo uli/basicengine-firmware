@@ -5,6 +5,9 @@
  */
 
 #include "ttconfig.h"
+#include "lock.h"
+
+volatile int spi_lock;
 
 #include <SPI.h>
 extern "C" {
@@ -63,6 +66,7 @@ void setup(void){
   //randomSeed(analogRead(PA0));
   delay(500);
   Serial.begin(115200);
+  SpiLock();
 #ifndef ESP8266_NOWIFI
   timer0_isr_init();
   timer0_attachInterrupt(&shut_up_dog);
@@ -114,6 +118,7 @@ void loop(void){
     digitalWrite(15, HIGH);
     //delay(200);
   }
+  SpiUnlock();
 
   Serial.println("I2S");Serial.flush();
   InitI2S();

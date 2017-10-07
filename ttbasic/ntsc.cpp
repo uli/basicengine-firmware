@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "vs23s010.h"
+#include "lock.h"
 
 const struct vs23_mode_t VS23S010::modes[] = {
   // maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel chars
@@ -34,16 +35,28 @@ const uint8_t VS23S010::numModes = NUM_MODES;
 
 const struct vs23_mode_t *vs23_current_mode = &VS23S010::modes[0];
 
+static inline void vs23Select()
+{
+  SpiLock();
+  digitalWrite(15, LOW);
+}
+
+static inline void vs23Deselect()
+{
+  digitalWrite(15, HIGH);
+  SpiUnlock();
+}
+
 uint16_t SpiRamReadByte(uint32_t address)
 {
   uint16_t result;
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(3);
   SPI.transfer(address >> 16);
   SPI.transfer((uint8_t)(address >> 8));
   SPI.transfer((uint8_t)address);
   result = SPI.transfer(0);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
   return result;  
 }
 
@@ -54,14 +67,14 @@ struct bw {
 
 void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   uint8_t req[5];
-  digitalWrite(15, LOW);
+  vs23Select();
   req[0] = 2;
   req[1] = address >> 16;
   req[2] = address >> 8;
   req[3] = address;
   req[4] = data;
   SPI.writeBytes(req, 5);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
   //if (SpiRamReadByte(address) != data)
   //  Serial.printf("mismatch: %02X should be %02X\n", SpiRamReadByte(address), data);
 }
@@ -69,40 +82,40 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data) {
 void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len)
 {
   uint8_t req[4];
-  digitalWrite(15, LOW);
+  vs23Select();
   req[0] = 2;
   req[1] = address >> 16;
   req[2] = address >> 8;
   req[3] = address;
   SPI.writeBytes(req, 4);
   SPI.writeBytes(data, len);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
 }
 
 void SpiRamWriteRegister(uint16_t opcode, uint16_t data)
 {
   //Serial.printf("%02x <= %04xh\n",opcode,data);
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(opcode);
   SPI.transfer(data >> 8);
   SPI.transfer((uint8_t)data);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
 }
 
 void SpiRamWriteByteRegister(uint16_t opcode, uint16_t data)
 {
   //Serial.printf("%02x <= %02xh\n",opcode,data);
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(opcode);
   SPI.transfer((uint8_t)data);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
 }
 
 void SpiRamWriteWord(uint16_t waddress, uint16_t data)
 {
   uint8_t req[6];
   uint32_t address = (uint32_t)waddress * 2;
-  digitalWrite(15, LOW);
+  vs23Select();
   req[0] = 2;
   req[1] = address >> 16;
   req[2] = address >> 8;
@@ -110,70 +123,70 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data)
   req[4] = data >> 8;
   req[5] = data;
   SPI.writeBytes(req, 6);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
 }
 
 void SpiRamWriteProgram(register uint16_t opcode, register uint16_t data1, uint16_t data2)
 {
   //Serial.printf("PROG:%04x%04xh\n",data1,data2);
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(opcode);
   SPI.transfer(data1 >> 8);
   SPI.transfer((uint8_t)data1);
   SPI.transfer(data2 >> 8);
   SPI.transfer((uint8_t)data2);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
 }
 
 uint16_t SpiRamReadRegister(uint16_t opcode)
 {
   uint16_t result;
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(opcode);
   result = SPI.transfer(0) << 8;
   result |= SPI.transfer(0);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
   return result;
 }
 
 uint8_t SpiRamReadRegister8(uint16_t opcode)
 {
   uint16_t result;
-  digitalWrite(15, LOW);
+  vs23Select();
   SPI.transfer(opcode);
   result = SPI.transfer(0);
-  digitalWrite(15, HIGH);
+  vs23Deselect();
   return result;
 }
 
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
 	//Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
-	digitalWrite(15, LOW);
+	vs23Select();
 	SPI.transfer(opcode);
 	SPI.transfer(data1>>8);
 	SPI.transfer(data1);
 	SPI.transfer(data2>>8);
 	SPI.transfer(data2);
 	SPI.transfer(data3);
-	digitalWrite(15, HIGH);
+	vs23Deselect();
 }
 
 void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
 	//Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
-	digitalWrite(15, LOW);
+	vs23Select();
 	SPI.transfer(opcode);
 	SPI.transfer(data1>>8);
 	SPI.transfer(data1);
 	SPI.transfer(data2);
 	SPI.transfer(data3);
-	digitalWrite(15, HIGH);
+	vs23Deselect();
 }
 
 void SpiRamWriteBM3Ctrl(uint16_t opcode) {
 	//Serial.printf("%02x\n",opcode);
-	digitalWrite(15, LOW);
+	vs23Select();
 	SPI.transfer(opcode);
-	digitalWrite(15, HIGH);
+	vs23Deselect();
 }
 
 /// Set proto type picture line indexes	

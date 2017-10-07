@@ -30,7 +30,8 @@ class sdfiles {
   File tfile;
   uint8_t flgtmpOlen;
   uint8_t cs;   
-  inline bool SD_BEGIN(void);
+  bool SD_BEGIN(void);
+  bool SD_END(void);
 
  public:
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
