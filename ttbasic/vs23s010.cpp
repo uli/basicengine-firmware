@@ -4,6 +4,7 @@
 
 #include "vs23s010.h"
 #include "ntsc.h"
+#include "lock.h"
 
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
@@ -29,6 +30,17 @@ void VS23S010::setMode(uint8_t mode)
 {
   currentMode = &modes[mode];
   SpiRamVideoInit();
+  calibrateVsync();
+}
+
+void VS23S010::calibrateVsync()
+{
+  uint32_t now;
+  while (currentLine() != 100) {};
+  now = ESP.getCycleCount();
+  while (currentLine() == 100) {};
+  while (currentLine() != 100) {};
+  cyclesPerFrame = ESP.getCycleCount() - now;
 }
 
 VS23S010 vs23;

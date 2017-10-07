@@ -61,6 +61,7 @@ class VS23S010 {
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
 
     void setMode(uint8_t mode);
+    void calibrateVsync();
  
     void SpiRamVideoInit();
     void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv);
@@ -75,6 +76,9 @@ class VS23S010 {
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
+    
+private:
+    uint32_t cyclesPerFrame;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
