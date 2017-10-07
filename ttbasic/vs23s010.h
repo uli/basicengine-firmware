@@ -62,6 +62,7 @@ class VS23S010 {
 
     void setMode(uint8_t mode);
     void calibrateVsync();
+    void setSyncLine(uint16_t line);
  
     void SpiRamVideoInit();
     void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv);
@@ -79,6 +80,8 @@ class VS23S010 {
     
 private:
     uint32_t cyclesPerFrame;
+    static void ICACHE_RAM_ATTR vsyncHandler(void);
+    uint16_t syncLine;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言

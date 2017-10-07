@@ -22,22 +22,9 @@ extern "C" {
 
 #include <eboot_command.h>
 
-#ifndef ESP8266_NOWIFI
 extern "C" {
 #include <user_interface.h>
 };
-
-void ICACHE_RAM_ATTR shut_up_dog(void)
-{
-  // Any attempt to disable the software watchdog is subverted by the SDK
-  // by re-enabling it as soon as it gets the chance. This is the only
-  // way to avoid watchdog resets if you actually want to do anything
-  // with your system that is not wireless bullshit.
-  system_soft_wdt_feed();
-  // See you in one second:
-  timer0_write(ESP.getCycleCount() + F_CPU);
-}
-#endif
 
 void basic();
 uint8_t serialMode;
@@ -67,10 +54,6 @@ void setup(void){
   delay(500);
   Serial.begin(115200);
   SpiLock();
-#ifndef ESP8266_NOWIFI
-  timer0_isr_init();
-  timer0_attachInterrupt(&shut_up_dog);
-#endif
 }
 
 void loop(void){
