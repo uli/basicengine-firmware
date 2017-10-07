@@ -95,9 +95,9 @@ void tv_fontInit() {
 #if USE_VS23 == 1
   for (int c=0; c < 256; ++c) {
     uint32_t dest = char_addr(c);
-    Serial.println(dest);
+    //Serial.println(dest);
     for (int l=0; l < f_height; ++l) {
-      uint8_t bits = pgm_read_byte(tvfont+2+c*f_height+l);
+      uint8_t bits = pgm_read_byte(tvfont+3+c*f_height+l);
       uint8_t bytes[f_width];
       memset(bytes, 0, f_width);
       for (int b=0; b < f_width; ++b) {

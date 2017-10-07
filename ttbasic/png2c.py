@@ -38,7 +38,7 @@ sys.stdout.write("""#include <Arduino.h>
 
 """)
 
-sys.stdout.write("""PROGMEM unsigned char console_font_%dx%d[] = { %d, %d, 
+sys.stdout.write("""PROGMEM unsigned char console_font_%dx%d[] = { %d, %d, 0,
 """ % (char_size[0], char_size[1], char_size[0], char_size[1]))
 
 raster = []
