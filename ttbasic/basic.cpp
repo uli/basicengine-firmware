@@ -343,7 +343,7 @@ enum {
 
 // List formatting condition
 // 後ろに空白を入れない中間コード
-const uint8_t i_nsa[] = {
+const uint8_t i_nsa[] __FLASH__ = {
   I_RETURN, I_END, 
   I_CLS,I_CLT,
   I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH, 
@@ -365,14 +365,14 @@ const uint8_t i_nsa[] = {
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
-const uint8_t  i_nsb[] = {
+const uint8_t  i_nsb[] __FLASH__ = {
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT, I_LNOT, I_BITREV, I_XOR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
 
 // 必ず前に空白を入れる中間コード
-const uint8_t i_sf[]  = {
+const uint8_t i_sf[] __FLASH__  = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_LAND, I_LOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
@@ -385,7 +385,7 @@ const uint8_t i_sf[]  = {
 char sstyle(uint8_t code,
   const uint8_t *table, uint8_t count) {
   while(count--) //中間コードの数だけ繰り返す
-    if (code == table[count]) //もし該当の中間コードがあったら
+    if (code == pgm_read_byte(&table[count])) //もし該当の中間コードがあったら
       return 1; //1を持ち帰る
   return 0; //（なければ）0を持ち帰る
 }
