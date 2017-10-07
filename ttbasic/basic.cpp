@@ -26,6 +26,8 @@
 #include "tscreenBase.h"
 #include "tTermscreen.h"
 
+#include "epigrams.h"
+
 #define STR_EDITION "ESP8266"
 #define STR_VARSION "V0.84"
 
@@ -5042,6 +5044,13 @@ void basic() {
   char* textline;    // 入力行
 
   // 起動メッセージ  
+  sc->setColor(0x05, 0);
+  {
+    char epi[80];
+    strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
+    c_puts(epi);
+  }
+  newline();
   sc->setColor(0x97, 0);
   c_puts("DEVBASIC"); //「TOYOSHIKI TINY BASIC」を表示
   sc->setColor(0x0f, 0);
