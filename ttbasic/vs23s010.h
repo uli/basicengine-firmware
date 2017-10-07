@@ -54,6 +54,10 @@ class VS23S010 {
         return PICLINE_LENGTH_BYTES + BEXTRA;
     }
 
+    inline uint16_t currentLine() {
+        return SpiRamReadRegister(CURLINE) & 0xfff;
+    }
+
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
 
     void setMode(uint8_t mode);
