@@ -222,15 +222,31 @@ void VS23S010::SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
 #endif
 }
 
+#include "palette.h"
+
+uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
+{
+        uint8_t pr, pg, pb;
+        int mindiff = 256*3;
+        int minidx = -1;
+        int diff;
+        for (int i=0; i < 256; ++i) {
+          pr = pgm_read_byte(&yuv_palette[i*3]);
+          pg = pgm_read_byte(&yuv_palette[i*3+1]);
+          pb = pgm_read_byte(&yuv_palette[i*3+2]);
+          diff = abs(r-pr)+abs(g-pg)+abs(b-pb);
+          if (diff < mindiff) {
+            mindiff = diff;
+            minidx = i;
+          }
+        }
+        return minidx;
+}
 	
 /// Set picture pixel to a RGB value 
 void VS23S010::SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b) {
-	uint16_t pixdata;
-	// this is for 4 bits U, 4 bits V and 8 bits Y
-	// Y/U/VRGB give out 8 bit values, Y positive, U&V signed integers
-	pixdata = 	((URGB(r,g,b)>>(8-UBITS))<<USHIFT) |
-				((VRGB(r,g,b)>>(8-VBITS))<<VSHIFT) |
-				((YRGB(r,g,b)>>(8-YBITS)));
+	uint16_t pixdata = colorFromRgb(r, g, b);
+
 #ifndef BYTEPIC
 	{	
 		uint16_t wordaddress;

@@ -59,6 +59,7 @@ class VS23S010 {
     }
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
+    uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
 
     void setMode(uint8_t mode);
     void calibrateVsync();
