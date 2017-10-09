@@ -3479,12 +3479,15 @@ void ildbmp() {
   if ( getParam(dx,  0, 32767, true) ) return;   // x
   if ( getParam(dy,  0, 32767, true) ) return;   // y
   if ( getParam(x,  0, 32767, true) ) return;   // x
-  if ( getParam(y,  0, 32767, true) ) return;   // y
-  if ( getParam(w,  0, 32767, true) ) return;   // w
-  if ( getParam(h,  0, 32767, false) ) return;  // h
+  if ( getParam(y,  0, 32767, false) ) return;   // y
   if (*cip == I_COMMA) {
-     cip++; 
-     if ( getParam(mode,  0, 1, false) ) return;  // mode 
+    ++cip;
+    if ( getParam(w,  0, 32767, true) ) return;   // w
+    if ( getParam(h,  0, 32767, false) )// return;  // h
+    if (*cip == I_COMMA) {
+       cip++; 
+       if ( getParam(mode,  0, 1, false) ) return;  // mode 
+    }
   }
   
   // 仮想アドレスから実アドレスへの変換
