@@ -454,19 +454,37 @@ int8_t sdfiles::IsText(char* fname) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 // 
+
+File pcx_file;
+
+#include "../../../ttbasic/vs23s010.h"
+#define DR_PCX_NO_STDIO
+#define DR_PCX_IMPLEMENTATION
+#include "../../../ttbasic/dr_pcx.h"
+
+static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
+{
+  return pcx_file.read(buf, bytesToRead);
+}
+
 uint8_t sdfiles::loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode) {
   uint8_t rc =1;
  
   if (SD_BEGIN() == false) 
-    return SD_ERR_INIT;
+    return -SD_ERR_INIT;
 
-  sdbitmap bitmap;
-  bitmap.setFilename(fname);
-  if (!bitmap.open()) {
-    bitmap.close(); 
-  } else {
-    rc = -SD_ERR_OPEN_FILE;    
-  }
+  pcx_file = SD.open(fname, FILE_READ);
+  if (!pcx_file)
+    return -SD_ERR_OPEN_FILE;
+
+  int width, height, components;
+  if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
+                 dst_x, dst_y, x, y, w, h))
+    rc = 0;
+  else
+    rc = -SD_ERR_READ_FILE;
+
+  pcx_file.close();
   SD_END();
   return rc;
 }
