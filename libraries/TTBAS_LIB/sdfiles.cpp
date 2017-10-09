@@ -454,22 +454,18 @@ int8_t sdfiles::IsText(char* fname) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 // 
-uint8_t sdfiles::loadBitmap(char* fname, uint8_t* ptr, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode) {
+uint8_t sdfiles::loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode) {
   uint8_t rc =1;
  
- if (SD_BEGIN() == false) 
+  if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
   sdbitmap bitmap;
   bitmap.setFilename(fname);
   if (!bitmap.open()) {
-    if (bitmap.getBitmapEx(ptr, x, y, w,h, mode))
-      rc = SD_ERR_READ_FILE;
-    else 
-      rc = 0;
     bitmap.close(); 
   } else {
-    rc = SD_ERR_OPEN_FILE;
+    rc = -SD_ERR_OPEN_FILE;    
   }
   SD_END();
   return rc;

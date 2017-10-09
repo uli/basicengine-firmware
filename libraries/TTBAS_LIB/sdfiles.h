@@ -54,7 +54,7 @@ class sdfiles {
   int8_t  textOut(char* fname, int16_t sline, int16_t ln); // テキストファイルの出力
     
   // ビットマップファイルのロード
-  uint8_t loadBitmap(char* fname, uint8_t* ptr, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode=0);
+  uint8_t loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode=0);
   uint8_t loadBitmapToGVRAM(char* fname, uint8_t* ptr, int16_t bw, int16_t bx, int16_t by, int16_t w, int16_t h,uint8_t mode=0);
 };
 #endif

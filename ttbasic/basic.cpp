@@ -3464,7 +3464,7 @@ void ildbmp() {
   char* fname;
   int16_t adr;
   int16_t x =0,y = 0,w = 0, h = 0,mode = 0;
-  uint8_t* ptr;
+  int16_t dx, dy;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3476,7 +3476,8 @@ void ildbmp() {
   }
   cip++;
   
-  if ( getParam(adr,0, 32767, true) ) return;   // アドレス
+  if ( getParam(dx,  0, 32767, true) ) return;   // x
+  if ( getParam(dy,  0, 32767, true) ) return;   // y
   if ( getParam(x,  0, 32767, true) ) return;   // x
   if ( getParam(y,  0, 32767, true) ) return;   // y
   if ( getParam(w,  0, 32767, true) ) return;   // w
@@ -3487,13 +3488,10 @@ void ildbmp() {
   }
   
   // 仮想アドレスから実アドレスへの変換
-  ptr = v2realAddr(adr);
-  if (ptr == NULL) {
-    err = ERR_RANGE;
-    return;
-  }
+  // XXX: range check for dx/dy/w/h; err=ERR_RANGE if outside VRAM
+
   // 画像のロード
-  rc = fs.loadBitmap(fname, ptr, x, y, w, h, mode);
+  rc = fs.loadBitmap(fname, dx, dy, x, y, w, h, mode);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
