@@ -46,11 +46,7 @@ application as possible.
 #define TTVOUT_H
 
 #include <Arduino.h>
-#if USE_NTSC == 1
-#include <TNTSC.h>
-#else
 #define SC_DEFAULT 0
-#endif
 
 #define WHITE         1
 #define BLACK         0
@@ -76,17 +72,15 @@ class TTVout {
     void init(uint8_t* vram, uint16_t width, uint16_t height) ;
 
   public:
-#if USE_NTSC == 1
-	TNTSC_class* TNTSC;
-#endif
-
-	TTVout();   // コンストラクタ
-	~TTVout();  // ディストラクタ
+    TTVout();   // コンストラクタ
+    ~TTVout();  // ディストラクタ
     void begin(uint8_t mode=SC_DEFAULT,uint8_t spino = 1,uint8_t* extram=NULL);
 	void end();
     uint8_t hres();
     uint8_t vres();
+#if USE_VS23 == 0
     uint8_t* VRAM();
+#endif
     
     char char_line();
 

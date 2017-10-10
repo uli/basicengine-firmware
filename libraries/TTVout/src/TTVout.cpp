@@ -74,6 +74,7 @@
 */
 
 #include "../../../ttbasic/ttconfig.h"
+#include "../../../ttbasic/vs23s010.h"
 
 #if USE_VS23 == 0
 
@@ -100,27 +101,16 @@ short tone_freq = 444;      // tone frequency (0=pause)
 // コンストラクタ
 TTVout::TTVout() {
 #if USE_NTSC == 1
-	//TNTSC= new TNTSC_class();
-	TNTSC= &::TNTSC;
 #endif
 }
 
 // ディストラクタ
 TTVout::~TTVout() {
-   //delete TNTSC;
 }
 
 
 // TTVout利用開始
 void TTVout::begin(uint8_t mode, uint8_t spino, uint8_t* extram) {
-#if USE_NTSC == 1
-    TNTSC->begin(mode, spino,extram);   // NTSCビデオ出力開始
-    init( TNTSC->VRAM(),  // フレームバッファ指定
-    	TNTSC->width(),   // 画面横サイズ指定
-    	TNTSC->height()   // 画面縦サイズ指定
-     );
-#endif
-	
 	// tone用出力ピンの設定
 	//pinMode(pwmOutPin, PWM);
 	noTone();
@@ -143,9 +133,6 @@ void TTVout::init(uint8_t* vram, uint16_t width, uint16_t height) {
 
 // 利用終了
 void TTVout::end() {
-#if USE_NTSC == 1
-	TNTSC->end();
-#endif
 }
 
 
@@ -157,21 +144,7 @@ void TTVout::end() {
 //  c:色 0:黒 1:白 それ以外:反転
 //
 static void inline sp(uint16_t x, uint16_t y, uint8_t c) {
-#if BITBAND==1
-  if (c==1)
-    _adr[_width*y+ (x&0xf8) +7 -(x&7)] = 1;
-  else if (c==0)
-    _adr[_width*y+ (x&0xf8) +7 -(x&7)] = 0;
-  else 
-    _adr[_width*y+ (x&0xf8) +7 -(x&7)] ^= 1;
-#else
-  if (c==1)
-    _screen[(x/8) + (y*_hres)] |= 0x80 >> (x&7);
-  else if (c==0)
-    _screen[(x/8) + (y*_hres)] &= ~0x80 >> (x&7);
-  else
-    _screen[(x/8) + (y*_hres)] ^= 0x80 >> (x&7);
-#endif
+  vs23.setPixel(x, y, c);
 }
 
 // 画面横ドット数の取得
@@ -195,15 +168,14 @@ void TTVout::delay(uint32_t x) {
   ::delay(x);
 }
 
+#if USE_VS23 == 0
 uint8_t* TTVout::VRAM() {
   return _screen;
 }
+#endif
 
 // フレーム間待ち
 void TTVout::delay_frame(uint16_t x) {
-#if USE_NTSC == 1
-  TNTSC->delay_frame(x);
-#endif
 }
 
 // 起動からの時間（ミリ秒)取得
@@ -213,16 +185,10 @@ unsigned long TTVout::millis() {
 
 // ブランキング期間開始フック設定
 void TTVout::setBktmStartHook(void (*func)()) {
-#if USE_NTSC == 1
-  TNTSC->setBktmStartHook(func);
-#endif
 }
 
 // ブランキング期間終了フック設定
 void TTVout::setBktmEndHook(void (*func)()) {
-#if USE_NTSC == 1
-  TNTSC->setBktmEndHook(func);
-#endif
 }
 
 // 点を描画する

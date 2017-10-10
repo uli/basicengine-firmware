@@ -17,12 +17,8 @@
 
 #include <stdint.h>
 #include <string.h>
-#if USE_VS23 == 0
-#include <TTVout.h>
-#else
 #include "../../../ttbasic/ntsc.h"
 #include "../../../ttbasic/vs23s010.h"
-#endif
 #include "tTVscreen.h"
 #define NTSC_VIDEO_SPI 2
 
