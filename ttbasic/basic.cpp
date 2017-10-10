@@ -267,7 +267,7 @@ const char * const kwtbl[] __FLASH__ = {
  "PSET","LINE","RECT","CIRCLE", "BITMAP", "GPRINT", "GSCROLL",  // グラフィック表示コマンド(7)
  "GPIO", "OUT", "POUT", "SHIFTOUT",                             // GPIO・入出力関連コマンド(4)
  "SMODE", "SOPEN", "SCLOSE", "SPRINT", "SWRITE",                // シリアル通信関連コマンド(5)
- "LDBMP","MKDIR","RMDIR",/*"RENAME",*/ "FCOPY","CAT", "DWBMP", "REMOVE", // SDカード関連コマンド
+ "LDBMP","MKDIR","RMDIR",/*"RENAME",*/ "FCOPY","CAT", "REMOVE", // SDカード関連コマンド
  "HIGH", "LOW",  // 定数
  "PA0", "PA1", "PA2", "PA3", "PA4", "PA5", "PA6", "PA7", "PA8", "PA9",
  "PA10","PA11", "PA12", "PA13","PA14","PA15",
@@ -306,7 +306,7 @@ enum {
  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_GPRINT, I_GSCROLL, // グラフィック表示コマンド(7)
  I_GPIO, I_DOUT, I_POUT, I_SHIFTOUT,  // GPIO・入出力関連コマンド(4)
  I_SMODE, I_SOPEN, I_SCLOSE, I_SPRINT, I_SWRITE,  // シリアル通信関連コマンド(5)
- I_LDBMP, I_MKDIR, I_RMDIR, /*I_RENAME,*/ I_FCOPY, I_CAT, I_DWBMP, I_REMOVE,  // SDカード関連コマンド
+ I_LDBMP, I_MKDIR, I_RMDIR, /*I_RENAME,*/ I_FCOPY, I_CAT, I_REMOVE,  // SDカード関連コマンド
  I_HIGH, I_LOW, // 定数
  I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, I_PA9,
  I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
@@ -3480,7 +3480,11 @@ void ildbmp() {
   }
   
   // 仮想アドレスから実アドレスへの変換
-  // XXX: range check for dx/dy/w/h; err=ERR_RANGE if outside VRAM
+  // サイズチェック
+  if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > ((tTVscreen*)sc)->getGHeight()) {
+    err = ERR_RANGE;
+    return;
+  }
 
   // 画像のロード
   rc = fs.loadBitmap(fname, dx, dy, x, y, w, h, mode);
@@ -3491,67 +3495,6 @@ void ildbmp() {
   } else if (rc == SD_ERR_READ_FILE) {
     err =  ERR_FILE_READ;
   }
-}
-
-// DWBMP  "ファイル名" ,X,Y,BX,BY,W,H[,mode]
-void idwbmp() {
-#if USE_NTSC == 1
-  int16_t x,y,bx,by,w, h, mode;
-  uint8_t* ptr;
-  uint8_t rc; 
-  int16_t bw;
-  char* fname;
-  if (scmode) {
-    if(!(fname = getParamFname())) {
-      return;
-    }
-  
-    if (*cip != I_COMMA) {
-      err = ERR_SYNTAX;
-      return;    
-    }
-    cip++;
-  
-    // 引数取得
-    if ( getParam(x,  0, ((tTVscreen*)sc)->getGWidth(), true) ) return;       // x
-    if ( getParam(y,  0, ((tTVscreen*)sc)->getGHeight(), true) ) return;      // y
-    if ( getParam(bx, 0, 32767, true) ) return;                // bx
-    if ( getParam(by, 0, 32767, true) ) return;                // by
-    if ( getParam(w,  0, ((tTVscreen*)sc)->getGWidth(), true) ) return;       // w
-    if ( getParam(h,  0, ((tTVscreen*)sc)->getGHeight(), false) ) return;     // h
-    if (*cip == I_COMMA) {
-       cip++; if ( getParam(mode,  0, 1, false) ) return;      // mode     
-    }
-  
-    // サイズチェック
-    if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > ((tTVscreen*)sc)->getGHeight()) {
-      err = ERR_RANGE;
-      return;
-    }
-  
-    // 画像のロード
-    bw = ((tTVscreen*)sc)->getGWidth()/8;
-#if USE_VS23 == 1
-    Serial.println("unimp idwbmp");
-#else
-    ptr = ((tTVscreen*)sc)->getGRAM() + bw*y + x/8;
-   #if USE_SD_CARD == 1
-    rc = fs.loadBitmapToGVRAM(fname, ptr, bw, bx, by, w, h, mode);
-    if (rc == SD_ERR_INIT) {
-      err = ERR_SD_NOT_READY;
-    } else if (rc == SD_ERR_OPEN_FILE) {
-      err =  ERR_FILE_OPEN;
-    } else if (rc == SD_ERR_READ_FILE) {
-      err =  ERR_FILE_READ;
-    }
-   #endif
-#endif
-  } else {
-   err = ERR_NOT_SUPPORTED;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
 }
 
 // MKDIR "ファイル名"
@@ -4856,7 +4799,6 @@ unsigned char* iexe() {
     case I_REMOVE:     iremove();     break;  // REMOVE ファイル削除
     case I_BSAVE:      ibsave();      break;  // BSAVE メモリ領域の保存
     case I_BLOAD:      ibload();      break;  // BLOAD メモリ領域へのロード
-    case I_DWBMP:      idwbmp();      break;  // DWBMP ビットマップファイルの直接描画
     case I_CAT:        icat();        break;  // CAT テキストファイル表示
     case I_LRUN:       ilrun();       break;   
     case I_LIST:       ilist();       break;  // LIST

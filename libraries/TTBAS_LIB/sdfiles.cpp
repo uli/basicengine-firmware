@@ -490,41 +490,6 @@ uint8_t sdfiles::loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t
 }
 
 //
-// ビットマップファイルのグラフィックVRAMへのロード
-//  fname : ターゲットファイル名
-//  ptr   : ロードデータの格納アドレス(VRAM)
-//  bw    : 次のライン先頭のオフセットバイト数
-//  bx    : ビットマップ画像の切り出し座標 x
-//  by    : ビットマップ画像の切り出し座標 y
-//  w     : ビットマップ画像の切り出し幅
-//  h     : ビットマップ画像の切り出し高さ
-//  mode  : 色モード 0:通常 1：反転
-//[戻り値]
-//  正常終了             : 0 
-//  SDカード利用失敗     : SD_ERR_INIT
-//  ファイルオープン失敗 : SD_ERR_OPEN_FILE
-//  ファイル読み込み失敗 : SD_ERR_READ_FILE
-uint8_t sdfiles::loadBitmapToGVRAM(char* fname, uint8_t* ptr,int16_t bw, int16_t bx, int16_t by, int16_t w, int16_t h,uint8_t mode) {
-  uint8_t rc =1;
-  
- if (SD_BEGIN() == false) 
-    return SD_ERR_INIT;
-  sdbitmap bitmap;
-  bitmap.setFilename(fname);
-  if (!bitmap.open()) {
-    if (bitmap.getBitmap(ptr, bx, by, w,h, mode, (uint16_t)bw))
-      rc = SD_ERR_READ_FILE;
-    else 
-      rc = 0;
-    bitmap.close(); 
-  } else {
-    rc = SD_ERR_OPEN_FILE;    
-  }
-  SD_END();
-  return rc;
-}
-
-//
 // ディレクトリの作成
 // [引数]
 //  fname                  : ファイル名
