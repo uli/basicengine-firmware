@@ -57,8 +57,8 @@ static uint16_t char_y(uint8_t c)
 
 // フォント利用設定
 void tv_fontInit() {
-//  tvfont   = (uint8_t*)TV_DISPLAY_FONT;
-  tvfont = console_font_6x8;//ttbasic_font;
+  if (!tvfont)
+    tvfont = console_font_6x8;
   f_width  = pgm_read_byte(tvfont+0);             // 横フォントドット数
   f_height = pgm_read_byte(tvfont+1);             // 縦フォントドット数  
   c_width  = g_width  / f_width;       // 横文字数
@@ -82,6 +82,12 @@ void tv_fontInit() {
     }
   }
 #endif
+}
+
+void tv_setFont(const uint8_t *font)
+{
+    tvfont = font;
+    tv_fontInit();
 }
 
 // NTSC 垂直同期信号補正

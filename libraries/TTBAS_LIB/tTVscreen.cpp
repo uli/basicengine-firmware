@@ -453,5 +453,13 @@ void tTVscreen::adjustNTSC(int16_t ajst) {
   tv_NTSC_adjust(ajst);
 }
 
-
-
+void tTVscreen::setFont(const uint8_t *font)
+{
+  tv_setFont(font);
+  width = tv_get_win_cwidth();
+  height = tv_get_win_cheight();
+  if (pos_x >= width)
+    pos_x = width-1;
+  if (pos_y >= height)
+    pos_y = height-1;
+}
