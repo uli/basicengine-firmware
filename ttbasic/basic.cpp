@@ -25,6 +25,7 @@
 #include "ttconfig.h"
 #include "tscreenBase.h"
 #include "tTermscreen.h"
+#include "vs23s010.h"
 
 #include "epigrams.h"
 
@@ -47,8 +48,11 @@
 // *** フォント参照 ***************
 const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
 
+#define MIN_FONT_SIZE_X 6
+#define MIN_FONT_SIZE_Y 8
+
 // **** スクリーン管理 *************
-uint8_t* workarea = NULL;
+uint8_t workarea[VS23_MAX_X/MIN_FONT_SIZE_X * VS23_MAX_Y/MIN_FONT_SIZE_Y];
 uint8_t scmode = USE_SCREEN_MODE;
 tscreenBase* sc;
 tTermscreen sc1; 
@@ -4912,12 +4916,6 @@ void basic() {
 
   // 実行環境を初期化
   inew();              
-  // スクリーン初期設定
-#if USE_NTSC == 1
-  workarea = (uint8_t*)malloc(7048); // SCREEN0で128x50まで
-#else
-  workarea = (uint8_t*)malloc(6400); // SCREEN0で128x50まで
-#endif
   
   if (scmode == 0) {
     sc = &sc1;

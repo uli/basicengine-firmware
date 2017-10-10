@@ -27,6 +27,9 @@ struct vs23_mode_t {
   uint8_t bextra;
 };
 
+#define VS23_MAX_X	456
+#define VS23_MAX_Y	224
+
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
@@ -78,7 +81,7 @@ class VS23S010 {
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
-    
+
 private:
     uint32_t cyclesPerFrame;
     static void ICACHE_RAM_ATTR vsyncHandler(void);

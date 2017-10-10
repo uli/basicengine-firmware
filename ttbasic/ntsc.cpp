@@ -5,6 +5,7 @@
 #include "vs23s010.h"
 #include "lock.h"
 
+// Remember to update VS23_MAX_X/Y!
 const struct vs23_mode_t VS23S010::modes[] = {
   // maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel chars
   { 456, 224, 9, 10, 3, 1 },
