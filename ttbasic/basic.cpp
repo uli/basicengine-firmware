@@ -293,7 +293,7 @@ const char * const kwtbl[] __FLASH__ = {
  "EEPFORMAT", "EEPWRITE",                  // 仮想EEPROM関連コマンド(2)
  "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
  "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
- "SCREEN", "WIDTH", // 表示切替
+ "SCREEN", "WINDOW", // 表示切替
  "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
 };
 
@@ -333,7 +333,7 @@ enum {
  I_EEPFORMAT, I_EEPWRITE,                   // 仮想EEPROM関連コマンド(2)
  I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
  I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
- I_SCREEN, I_WIDTH, // 表示切替
+ I_SCREEN, I_WINDOW, // 表示切替
   I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
 
 // 内部利用コード
@@ -3829,9 +3829,8 @@ void  icat() {
 #endif
 }
 
-// ターミナルスクリーンの画面サイズ指定 WIDTH W,H
-void iwidth() {
-  int16_t w, h ;
+// ターミナルスクリーンの画面サイズ指定 WINDOW X,Y,W,H
+void iwindow() {
 
   // 引数チェック
 #if USE_TFT == 1
@@ -4898,7 +4897,7 @@ unsigned char* iexe() {
     case I_NEW:        inew();        break;   // NEW
     case I_LOAD:       ilrun();       break;
     case I_SAVE:       isave();       break;
-    case I_WIDTH:      iwidth();      break;
+    case I_WINDOW:     iwindow();     break;
     case I_SCREEN:     iscreen();     break;
 
     case I_RUN:    // RUN
