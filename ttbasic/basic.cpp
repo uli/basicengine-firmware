@@ -4945,8 +4945,10 @@ void basic() {
   }
   newline();
   sc->setColor(0x97, 0);
-  c_puts("DEVBASIC"); //「TOYOSHIKI TINY BASIC」を表示
+  sc0.setFont(fonts[1]);
+  c_puts("DEVBASIC   "); //「TOYOSHIKI TINY BASIC」を表示
   sc->setColor(0x0f, 0);
+  sc0.setFont(fonts[0]);
   c_puts(" " STR_EDITION);          // 版を区別する文字列「EDITION」を表示
   c_puts(" " STR_VARSION);      // バージョンの表示
   newline();                    // 改行
