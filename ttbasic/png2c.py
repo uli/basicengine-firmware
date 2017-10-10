@@ -6,11 +6,13 @@ import curses.ascii
 if len(sys.argv) < 2:
     sys.stderr.write("Please specify the input PNG file\n")
     sys.exit(1)
+wc = int(sys.argv[2])
+hc = int(sys.argv[3])
 
 reader = png.Reader(filename=sys.argv[1])
 data = reader.asRGB()
 size = data[:2] # get image width and height
-char_size = (size[0] / 64, size[1] / 4) # 16 characters in a row, 16 rows of characters
+char_size = (size[0] / wc, size[1] / hc) # wc characters in a row, hc rows of characters
 bitmap = list(data[2]) # get image RGB values
 
 #sys.stdout.write("""#include "font.h"
@@ -48,10 +50,10 @@ for line in bitmap:
 # array of character bitmaps; each bitmap is an array of lines, each line
 # consists of 1 - bit is set and 0 - bit is not set
 char_bitmaps = [] 
-for c in range(256): # for each character
+for c in range(wc*hc): # for each character
     char_bitmap = []
-    raster_row = (c / 64) * char_size[1]
-    offset = (c % 64) * char_size[0]
+    raster_row = (c / wc) * char_size[1]
+    offset = (c % wc) * char_size[0]
     for y in range(char_size[1]): # for each scan line of the character
         char_bitmap.append(raster[raster_row + y][offset : offset + char_size[0]])
     char_bitmaps.append(char_bitmap)
