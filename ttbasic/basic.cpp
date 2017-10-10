@@ -4887,30 +4887,6 @@ void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
-#if 0
-  // SWD・JTAGの利用禁止
-  // http://stm32duino.com/viewtopic.php?f=35&t=1130&p=13919&hilit=PA15#p13919
-  afio_cfg_debug_ports(AFIO_DEBUG_NONE);
-
-// 起動時のモード指定チェック
-#if FLG_CHK_BOOT1 == 1
-  // BOOT1がHIGHの場合、シリアルコンソールモードで起動する
-  // さらに、SWCLKがLOWならUSBシリアル、HIGHならGPIOシリアルポートえを使う
-  if (digitalRead(PB2)) {
-      scmode = 0;
-     if (digitalRead(PA14)) {
-        serialMode = 1;
-     }
-  }
-#endif
-
-  // EEPROM(エミュレーション)の利用設定
-  EEPROM.PageBase0 = EEPROM_PAGE0;
-  EEPROM.PageBase1 = EEPROM_PAGE1;
-  EEPROM.PageSize  = FLASH_PAGE_SIZE;
-  //EEPROM.init();
-#endif
-  
   // 環境設定
   loadConfig();
 

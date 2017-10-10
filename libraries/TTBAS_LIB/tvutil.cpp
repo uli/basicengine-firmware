@@ -20,27 +20,6 @@
 #include "../../../ttbasic/ntsc.h"
 #include "../../../ttbasic/vs23s010.h"
 #include "tTVscreen.h"
-#define NTSC_VIDEO_SPI 2
-
-//const int pwmOutPin = PB9;      // tone用 PWM出力ピン
-
-/*
-#define TV_DISPLAY_FONT font6x8
-#include <font6x8.h>
-*/
-/*
-#define TV_DISPLAY_FONT font6x8tt
-#include <font6x8tt.h>
-*/
-/*
-#define TV_DISPLAY_FONT font8x8
-#include <font8x8.h>
-*/
-
-/*
-#define TV_DISPLAY_FONT ichigoFont8x8 
-#include <ichigoFont8x8.h>
-*/
 
 extern uint8_t* ttbasic_font;
 
