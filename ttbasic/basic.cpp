@@ -50,6 +50,12 @@ const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
 
 #define MIN_FONT_SIZE_X 6
 #define MIN_FONT_SIZE_Y 8
+#define NUM_FONTS 2
+static const uint8_t *fonts[] = {
+  console_font_6x8,
+  console_font_8x8,
+  font6x8tt,
+};
 
 // **** スクリーン管理 *************
 uint8_t workarea[VS23_MAX_X/MIN_FONT_SIZE_X * VS23_MAX_Y/MIN_FONT_SIZE_Y];
@@ -286,7 +292,7 @@ const char * const kwtbl[] __FLASH__ = {
  "EEPFORMAT", "EEPWRITE",                  // 仮想EEPROM関連コマンド(2)
  "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
  "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
- "SCREEN", "WINDOW", // 表示切替
+ "SCREEN", "WINDOW", "FONT", // 表示切替
  "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
 };
 
@@ -326,7 +332,7 @@ enum {
  I_EEPFORMAT, I_EEPWRITE,                   // 仮想EEPROM関連コマンド(2)
  I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
  I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
- I_SCREEN, I_WINDOW, // 表示切替
+ I_SCREEN, I_WINDOW, I_FONT, // 表示切替
   I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
 
 // 内部利用コード
@@ -3788,6 +3794,13 @@ void iwindow() {
   }
 }
 
+void ifont() {
+  int16_t idx;
+  if (getParam(idx, 0, NUM_FONTS, false))
+    return;
+  sc0.setFont(fonts[idx]);
+}
+
 // スクリーンモード指定 SCREEN M
 void iscreen() {
   int16_t m ;
@@ -4816,6 +4829,7 @@ unsigned char* iexe() {
     case I_SAVE:       isave();       break;
     case I_WINDOW:     iwindow();     break;
     case I_SCREEN:     iscreen();     break;
+    case I_FONT:       ifont();	      break;
 
     case I_RUN:    // RUN
     case I_RENUM:  // RENUM
