@@ -170,9 +170,9 @@ void tTVscreen::newLine() {
 void tTVscreen::refresh_line(uint16_t l) {
   CLEAR_LINE(l);
   for (uint16_t j = 0; j < width; j++) {
-//    if( IS_PRINT( VPEEK(j,l) )) { 
+    if( IS_PRINT( VPEEK(j,l) )) { 
       WRITE(j,l,VPEEK(j,l));
-//    }
+    }
   }
 }
 
