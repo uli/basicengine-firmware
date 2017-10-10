@@ -72,5 +72,6 @@
 #endif
 
 #include "ati_6x8.h"
+#include "amstrad_8x8.h"
 
 #endif
