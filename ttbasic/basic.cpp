@@ -131,7 +131,7 @@ uint8_t saveConfig();
 char* getParamFname();
 int16_t getNextLineNo(int16_t lineno);
 void mem_putch(uint8_t c);
-uint8_t* tv_getFontAdr();
+const uint8_t* tv_getFontAdr();
 void tv_fontInit();
 void tv_toneInit() ;
 void tv_tone(int16_t freq, int16_t duration) ;
@@ -520,7 +520,7 @@ uint8_t* v2realAddr(uint16_t vadr) {
   } else if ((vadr >= V_MEM_TOP) && (vadr < V_FNT_TOP)) {   // ユーザーワーク領域
     radr = vadr - V_MEM_TOP + mem;    
   } else if ((vadr >= V_FNT_TOP) && (vadr < V_GRAM_TOP)) {  // フォント領域
-    radr = vadr - V_FNT_TOP + tv_getFontAdr()+3;
+    radr = vadr - V_FNT_TOP + (uint8_t *)tv_getFontAdr()+3;
   } else if ((vadr >= V_GRAM_TOP) && (vadr < V_GRAM_TOP+6048)) { // グラフィク表示用メモリ領域
     if ( (scmode >= 1) && (scmode <= 3) )
 #if USE_NTSC == 1 && USE_VS23 == 0

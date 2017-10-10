@@ -18,7 +18,6 @@ void    tv_set_gcursor(uint16_t x, uint16_t y);
 void    tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) ;
 int16_t tv_gpeek(int16_t x, int16_t y);
 int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) ;
-uint8_t* tv_getFontAdr() ;
 #if USE_VS23 == 0
 uint8_t* tv_getGVRAM();
 uint16_t tv_getGVRAMSize();

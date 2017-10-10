@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 
-uint8_t* tv_getFontAdr() ;
+const uint8_t* tv_getFontAdr() ;
 
 class tGraphicDev {
   protected:
@@ -19,7 +19,7 @@ class tGraphicDev {
 
   public:
      void  init();
-    inline uint8_t *getfontadr() { return tv_getFontAdr()+3; };   // フォントアドレスの参照
+    inline const uint8_t *getfontadr() { return tv_getFontAdr()+3; };   // フォントアドレスの参照
     virtual uint16_t getGWidth();       // グラフックスクリーン横幅取得
     virtual uint16_t getGHeight();      // グラフックスクリーン縦幅取得
 

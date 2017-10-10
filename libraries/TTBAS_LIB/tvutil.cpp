@@ -44,7 +44,7 @@
 
 extern uint8_t* ttbasic_font;
 
-uint8_t* tvfont;     // 利用フォント
+const uint8_t* tvfont = 0;     // 利用フォント
 uint16_t c_width;    // 横文字数
 uint16_t c_height;   // 縦文字数
 #if USE_VS23 == 0
@@ -148,7 +148,7 @@ void tv_end() {
 }
 
 // フォントアドレス取得
-uint8_t* tv_getFontAdr() {
+const uint8_t* tv_getFontAdr() {
   return tvfont;
 }
 
@@ -208,7 +208,7 @@ uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
 void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 #if USE_VS23 == 1
   if (fg_color != 0x0f || bg_color != 0) {
-    uint8_t *chp = tvfont+3+c*f_height;
+    const uint8_t *chp = tvfont+3+c*f_height;
     for (int i=0;i<f_height;++i) {
       uint8_t pix[f_width];
       uint8_t ch = pgm_read_byte(chp+i);
