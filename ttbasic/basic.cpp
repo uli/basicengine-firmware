@@ -3831,21 +3831,24 @@ void  icat() {
 
 // ターミナルスクリーンの画面サイズ指定 WINDOW X,Y,W,H
 void iwindow() {
+  int16_t x, y, w, h ;
 
-  // 引数チェック
-#if USE_TFT == 1
-  if ( getParam(w,  16, SIZE_LINE, true) ) return;   // w
-  if ( getParam(h,  10,  35, false) ) return;        // h
-#else
-  if ( getParam(w,  16, SIZE_LINE, true) ) return;   // w
-  if ( getParam(h,  10,  50, false) ) return;        // h
-#endif
+  if ( getParam(x,  0, sc->getWidth() - 8, true) ) return;   // x
+  if ( getParam(y,  0, sc->getHeight() - 2, true) ) return;        // y
+  if ( getParam(w,  8, sc->getWidth(), true) ) return;   // w
+  if ( getParam(h,  2, sc->getHeight(), false) ) return;        // h
+
   if (scmode == 0) {
     // 現在、ターミナルモードの場合は画面をクリアして、再設定する
     sc->cls();
     sc->locate(0,0);
     sc->end();
     sc->init(w, h, SIZE_LINE, workarea); // スクリーン初期設定
+  } else if (scmode > 0) {
+    sc0.setWindow(x, y, w, h);
+    sc->init(w, h, SIZE_LINE, workarea);
+    sc->cls();
+    sc->locate(0,0);
   }
 }
 
