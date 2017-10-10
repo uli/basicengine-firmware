@@ -14,7 +14,6 @@
 #include "../../../ttbasic/lock.h"
 #include <sdbitmap.h>
 #include <string.h>
-#include <libBitmap.h>
 
 //#include <RTClock.h>
 #include <time.h>
