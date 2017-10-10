@@ -113,6 +113,12 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline void setWindow(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
       tv_window_set(x, y, w, h);
     }    
+    inline uint8_t getScreenWidth() {
+      return tv_get_cwidth();
+    }
+    inline uint8_t getScreenHeight() {
+      return tv_get_cheight();
+    }
 };
 
 #endif

@@ -3769,10 +3769,10 @@ void  icat() {
 void iwindow() {
   int16_t x, y, w, h ;
 
-  if ( getParam(x,  0, sc->getWidth() - 8, true) ) return;   // x
-  if ( getParam(y,  0, sc->getHeight() - 2, true) ) return;        // y
-  if ( getParam(w,  8, sc->getWidth(), true) ) return;   // w
-  if ( getParam(h,  2, sc->getHeight(), false) ) return;        // h
+  if ( getParam(x,  0, sc0.getScreenWidth() - 8, true) ) return;   // x
+  if ( getParam(y,  0, sc0.getScreenHeight() - 2, true) ) return;        // y
+  if ( getParam(w,  8, sc0.getScreenWidth() - x, true) ) return;   // w
+  if ( getParam(h,  2, sc0.getScreenHeight() - y, false) ) return;        // h
 
   if (scmode == 0) {
     // 現在、ターミナルモードの場合は画面をクリアして、再設定する
