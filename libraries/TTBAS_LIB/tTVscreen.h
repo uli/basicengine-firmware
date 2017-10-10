@@ -54,6 +54,8 @@ void    tv_scroll_up();
 void    tv_scroll_down();
 uint8_t tv_get_cwidth();
 uint8_t tv_get_cheight();
+uint8_t tv_get_win_cwidth();
+uint8_t tv_get_win_cheight();
 void    tv_write(uint8_t c);
 void    tv_tone(int16_t freq, int16_t tm);
 void    tv_notone();

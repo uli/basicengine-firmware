@@ -153,6 +153,14 @@ uint8_t tv_get_cheight() {
   return c_height;
 }
 
+uint8_t tv_get_win_cwidth() {
+  return win_c_width;
+}
+
+uint8_t tv_get_win_cheight() {
+  return win_c_height;
+}
+
 // 画面グラフィック横ドット数
 uint16_t tv_get_gwidth() {
   return g_width;
