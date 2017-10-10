@@ -56,9 +56,6 @@ tTermscreen sc1;
 #if USE_NTSC == 1 || USE_VS23 == 1
   #include "tTVscreen.h"
   tTVscreen   sc0; 
-#elif USE_TFT == 1
-  #include "tTFTScreen.h"
-  tTFTScreen sc2;
 #endif
 
 uint16_t tv_get_gwidth();
@@ -186,21 +183,13 @@ const uint8_t pinType[] = {
 #define IsIO_PIN(N)  IsUseablePin(N,FNC_IN_OUT)
 
 // ピン機能チェックテーブル
-#if USE_TFT == 1
-const uint8_t pinFunc[]  = {
-  5,5,5,5,5,5,7,7,3,3,  //  0 -  9: PA0,PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,
-  3,0,0,1,1,1,7,7,1,1,  // 10 - 19: PA10,PA11,PA12,PA13,PA14,PA15,PB0,PB1,PB2,PB3, 
-  0,0,0,0,1,0,1,0,0,0,  // 20 - 29: PB4,PB5,PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,
-  0,0,1,0,0,            // 30 - 34: PB14,PB15,PC13,PC14,PC15,
-};
-#else
 const uint8_t pinFunc[]  = {
   5,0,5,5,5,5,7,7,3,3,  //  0 -  9: PA0,PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,
   3,0,0,1,1,1,7,7,1,1,  // 10 - 19: PA10,PA11,PA12,PA13,PA14,PA15,PB0,PB1,PB2,PB3, 
   0,0,0,0,1,0,1,1,1,1,  // 20 - 29: PB4,PB5,PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,
   1,0,1,0,0,            // 30 - 34: PB14,PB15,PC13,PC14,PC15,
 };
-#endif
+
 // ピン利用可能チェック
 inline uint8_t IsUseablePin(uint8_t pinno, uint8_t fnc) {
   return pinFunc[pinno] & fnc;
@@ -3897,27 +3886,6 @@ void iscreen() {
   sc->draw_cls_curs();
   sc->locate(0,0);
   sc->refresh();
-#elif USE_TFT == 1
-  // 引数チェック
-  if ( getParam(m,  0, 6, false) ) return;   // m
-  if (scmode == m) 
-    return;
-  
-  prv_m = sc->getSerialMode(); 
-  if (m>0) {
-      sc = &sc2;
-      ((tTFTScreen*)sc)->setScreen(m);
-      sc->cls();
-      sc->show_curs(false);
-      sc->draw_cls_curs();
-      sc->locate(0,0);
-      sc->refresh();    
-      scmode = m;
-    } else {
-      sc->cls();
-      sc = &sc1;
-      ((tTermscreen*)sc)->init(TERM_W,TERM_H,SIZE_LINE, workarea); // スクリーン初期設定            
-    }
 #else
    err = ERR_NOT_SUPPORTED;
 #endif
@@ -5005,8 +4973,6 @@ void basic() {
   // スクリーン初期設定
 #if USE_NTSC == 1
   workarea = (uint8_t*)malloc(7048); // SCREEN0で128x50まで
-#elif USE_TFT == 1
-  workarea = (uint8_t*)malloc(4480); // SCREEN0で128x35まで
 #else
   workarea = (uint8_t*)malloc(6400); // SCREEN0で128x50まで
 #endif
@@ -5021,12 +4987,6 @@ void basic() {
     // NTSCスクリーン設定
     sc = &sc0;
     ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
-  }
-#elif USE_TFT == 1
-  else {
-    // TFTスクリーン設定
-    sc = &sc2;
-    ((tTFTScreen*)sc)->init();
   }
 #endif
   if (serialMode == 1) {
