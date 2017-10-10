@@ -47,12 +47,6 @@
 */
 
 extern uint8_t* ttbasic_font;
-#if USE_VS23 == 0
-TTVout TV;
-#define TV_TNTSC TV.TNTSC
-#else
-#define TV_TNTSC (&vs23)
-#endif
 
 uint8_t* tvfont;     // 利用フォント
 uint16_t c_width;    // 横文字数
@@ -117,54 +111,25 @@ void tv_fontInit() {
 
 // NTSC 垂直同期信号補正
 void tv_NTSC_adjust(int16_t ajst) {
-#if USE_NTSC == 1
-  TV_TNTSC->adjust(ajst);  
-#endif
+  Serial.println("unimp tv_NTSC_adjust");
 }
 
 //
 // NTSC表示の初期設定
 // 
 void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) { 
-#if USE_VS23 == 1
   vs23.setMode(vmode);
-#endif
-#if USE_NTSC == 1
-  g_width  = TV_TNTSC->width();           // 横ドット数
-  g_height = TV_TNTSC->height();          // 縦ドット数
-#else
-  g_width = 320;
-  g_height = 200;
-#endif
+  g_width  = vs23.width();           // 横ドット数
+  g_height = vs23.height();          // 縦ドット数
+
   win_x = 0;
   win_y = 0;
   win_width = g_width;
   win_height = g_height;
 	
   tv_fontInit();
-#if USE_NTSC == 1
-  TV_TNTSC->adjust(ajst);
-#endif
-#if USE_VS23 == 0
-  TV.begin(vmode, NTSC_VIDEO_SPI, extmem); // SPI2を利用
-#endif
-	
-#if NTSC_VIDEO_SPI == 2
-  // SPI2 SCK2(PB13ピン)が起動直後にHIGHになっている修正
-  // Correction that SPI2 SCK2 (PB13 pin) is HIGH immediately after startup
-//   pinMode(PB13, INPUT);  
-//   pinMode(PA5, INPUT);
-#endif
 
-#if USE_VS23 == 0
-  TV.select_font(tvfont);
-#endif
-
-#if USE_VS23 == 0
-  vram = TV.VRAM();                    // VRAM先頭
-  
-  b_adr =  vram;//(uint32_t*)(BB_SRAM_BASE + ((uint32_t)vram - BB_SRAM_REF) * 32);
-#endif
+  tv_NTSC_adjust(ajst);
 }
 
 void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
