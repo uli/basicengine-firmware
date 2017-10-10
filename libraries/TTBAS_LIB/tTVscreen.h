@@ -46,6 +46,21 @@
 
 #define SC_TEXTNUM   256  // 1行確定文字列長さ
 
+void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT);
+void tv_end();
+void    tv_write(uint8_t x, uint8_t y, uint8_t c);
+uint8_t tv_drawCurs(uint8_t x, uint8_t y);
+void    tv_clerLine(uint16_t l) ;
+void    tv_insLine(uint16_t l);
+void    tv_cls();
+void    tv_scroll_up();
+void    tv_scroll_down();
+uint8_t tv_get_cwidth();
+uint8_t tv_get_cheight();
+void    tv_write(uint8_t c);
+void    tv_tone(int16_t freq, int16_t tm);
+void    tv_notone();
+void    tv_NTSC_adjust(int16_t ajst);
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
   protected:

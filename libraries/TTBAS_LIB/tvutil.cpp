@@ -121,7 +121,7 @@ void tv_NTSC_adjust(int16_t ajst) {
 //
 // NTSC表示の初期設定
 // 
-void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=0) { 
+void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) { 
 #if USE_VS23 == 1
   vs23.setMode(vmode);
 #endif
