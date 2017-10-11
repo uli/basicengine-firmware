@@ -139,6 +139,7 @@ void VS23S010::disableBg(uint8_t bg)
   m_bg[bg].enabled = false;
 }
 
+#include <SPI.h>
 void VS23S010::updateBg()
 {
   if (!m_newFrame || SpiLocked())
