@@ -100,6 +100,45 @@ void VS23S010::setSyncLine(uint16_t line)
   }
 }
 
+bool VS23S010::setBg(uint8_t bg_idx, uint16_t width, uint16_t height,
+                     uint8_t tile_size_x, uint8_t tile_size_y,
+                     uint16_t pat_x, uint16_t pat_y, uint16_t pat_w)
+{
+  struct bg_t *bg = &m_bg[bg_idx];
+
+  bg->enabled = false;
+
+  if (bg->tiles)
+    free(bg->tiles);
+  bg->tiles = (uint8_t *)calloc(width * height, 1);
+  if (!bg->tiles)
+    return true;
+
+  bg->pat_x = pat_x;
+  bg->pat_y = pat_y;
+  bg->pat_w = pat_w;
+  bg->tile_size_x = tile_size_x;
+  bg->tile_size_y = tile_size_y;
+  bg->w = width;
+  bg->h = height;
+  bg->scroll_x = bg->scroll_y = 0;
+  bg->win_x = bg->win_y = 0;
+  bg->win_w = currentMode->x;
+  bg->win_h = currentMode->y;
+  return false;
+}
+
+void VS23S010::enableBg(uint8_t bg)
+{
+  if (m_bg[bg].tiles)
+    m_bg[bg].enabled = true;
+}
+
+void VS23S010::disableBg(uint8_t bg)
+{
+  m_bg[bg].enabled = false;
+}
+
 }
 
 VS23S010 vs23;

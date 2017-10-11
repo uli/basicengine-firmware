@@ -30,6 +30,8 @@ struct vs23_mode_t {
 #define VS23_MAX_X	456
 #define VS23_MAX_Y	224
 
+#define VS23_MAX_BG	2
+
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
@@ -78,6 +80,12 @@ class VS23S010 {
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
 
+    bool setBg(uint8_t bg, uint16_t width, uint16_t height,
+                     uint8_t tile_size_x, uint8_t tile_size_y,
+                     uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
+    void enableBg(uint8_t bg);
+    void disableBg(uint8_t bg);
+
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
@@ -87,6 +95,16 @@ private:
     uint32_t cyclesPerFrame;
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     uint16_t syncLine;
+
+    struct bg_t {
+      uint8_t *tiles;
+      uint16_t pat_x, pat_y, pat_w;
+      uint8_t w, h;
+      uint8_t tile_size_x, tile_size_y;
+      uint16_t scroll_x, scroll_y;
+      uint16_t win_x, win_y, win_w, win_h;
+      bool enabled;
+    } m_bg[VS23_MAX_BG];
     
     bool m_newFrame;
 };
