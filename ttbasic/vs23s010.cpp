@@ -176,8 +176,17 @@ void VS23S010::updateBg()
         tx = (tile % pw) * tsx;
         ty = (tile / pw) * tsy;
         byteaddress2 = pat_start_addr + ty*pitch + tx;
-        SpiRamWriteBMCtrlFast(0x34, byteaddress2 >> 1, dest_addr >> 1);
-        SpiRamWriteBM3Ctrl(0x36);
+
+        //SpiRamWriteBMCtrlFast(0x34, byteaddress2 >> 1, dest_addr >> 1);
+        uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
+        VS23_SELECT;
+        SPI.writeBytes(req, 5);
+        VS23_DESELECT;
+
+        //SpiRamWriteBM3Ctrl(0x36);
+        VS23_SELECT;
+        SPI.write(0x36);
+        VS23_DESELECT;
       }
     }
   }
