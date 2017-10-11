@@ -4901,6 +4901,8 @@ void basic() {
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
+  vs23.begin();
+
   // 環境設定
   loadConfig();
 

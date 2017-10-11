@@ -17,9 +17,9 @@ void VS23S010::adjust(int16_t cnt)
   // XXX: Huh?
 }
 
-void VS23S010::begin(uint8_t mode, uint8_t spino, uint8_t *extram)
+void VS23S010::begin()
 {
-  setMode(mode);
+  m_vsync_enabled = false;
 }
 
 void VS23S010::end()
@@ -28,7 +28,7 @@ void VS23S010::end()
 
 void VS23S010::setMode(uint8_t mode)
 {
-  timer0_detachInterrupt();
+  setSyncLine(0);
   currentMode = &modes[mode];
   SpiRamVideoInit();
   calibrateVsync();
@@ -85,10 +85,19 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 
 void VS23S010::setSyncLine(uint16_t line)
 {
-  syncLine = line;
-  timer0_isr_init();
-  timer0_write(ESP.getCycleCount()+100);
-  timer0_attachInterrupt(&vsyncHandler);
+  if (line == 0) {
+    if (m_vsync_enabled)
+      timer0_detachInterrupt();
+    m_vsync_enabled = false;
+  } else {
+    syncLine = line;
+    timer0_isr_init();
+    timer0_write(ESP.getCycleCount()+100);
+    m_vsync_enabled = true;
+    timer0_attachInterrupt(&vsyncHandler);
+  }
+}
+
 }
 
 VS23S010 vs23;

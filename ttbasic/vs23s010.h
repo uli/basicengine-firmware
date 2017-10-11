@@ -33,7 +33,7 @@ struct vs23_mode_t {
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
-    void begin(uint8_t mode=SC_DEFAULT,uint8_t spino = 1, uint8_t* extram=NULL);  // NTSCビデオ表示開始
+    void begin();  // NTSCビデオ表示開始
     void end();                            // NTSCビデオ表示終了 
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち
@@ -83,6 +83,7 @@ class VS23S010 {
     static const struct vs23_mode_t modes[];
 
 private:
+    bool m_vsync_enabled;
     uint32_t cyclesPerFrame;
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     uint16_t syncLine;
