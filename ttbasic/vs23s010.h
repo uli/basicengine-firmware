@@ -85,6 +85,7 @@ class VS23S010 {
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
     void enableBg(uint8_t bg);
     void disableBg(uint8_t bg);
+    void updateBg();
 
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;

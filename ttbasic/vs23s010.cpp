@@ -139,6 +139,49 @@ void VS23S010::disableBg(uint8_t bg)
   m_bg[bg].enabled = false;
 }
 
+void VS23S010::updateBg()
+{
+  if (!m_newFrame || SpiLocked())
+    return;
+  m_newFrame = false;
+
+  SpiLock();
+  for (int i = 0; i < VS23_MAX_BG; ++i) {
+    struct bg_t *bg = &m_bg[i];
+    if (!bg->enabled)
+      continue;
+
+    int tile_start_y = bg->scroll_y / bg->tile_size_y;
+    int tile_end_y = tile_start_y + bg->win_h / bg->tile_size_y;
+    int tile_start_x = bg->scroll_x / bg->tile_size_x;
+    int tile_end_x = tile_start_x + bg->win_w / bg->tile_size_x;
+
+    uint8_t *tt;
+    uint32_t tile;
+    uint32_t tx, ty;
+    uint32_t byteaddress2;
+    uint32_t dest_addr, pat_start_addr, win_start_addr;
+    uint32_t tsx = bg->tile_size_x;
+    uint32_t tsy = bg->tile_size_y;
+    uint32_t pw = bg->pat_w;
+    SpiRamWriteBM2Ctrl(0x35, PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-1);
+    uint16_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
+    pat_start_addr = PICLINE_BYTE_ADDRESS(bg->pat_y)+bg->pat_x;
+    win_start_addr = PICLINE_BYTE_ADDRESS(bg->win_y) + bg->win_x;
+    for (int yy = tile_start_y; yy < tile_end_y; ++yy) {
+      tt = &bg->tiles[yy*bg->w];
+      dest_addr = win_start_addr + (yy-tile_start_y) * tsy * pitch;
+      for (int xx = tile_start_x; xx < tile_end_x; ++xx, dest_addr += tsx) {
+        tile = tt[xx];
+        tx = (tile % pw) * tsx;
+        ty = (tile / pw) * tsy;
+        byteaddress2 = pat_start_addr + ty*pitch + tx;
+        SpiRamWriteBMCtrlFast(0x34, byteaddress2 >> 1, dest_addr >> 1);
+        SpiRamWriteBM3Ctrl(0x36);
+      }
+    }
+  }
+  SpiUnlock();
 }
 
 VS23S010 vs23;
