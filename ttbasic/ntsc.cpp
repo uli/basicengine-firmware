@@ -168,6 +168,13 @@ void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t
 	vs23Deselect();
 }
 
+void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2) {
+        uint8_t req[5] = { opcode, data1 >> 8, data1, data2 >> 8, data2 };
+        digitalWrite(15, LOW);
+        SPI.writeBytes(req, 5);
+        digitalWrite(15, HIGH);
+}
+
 void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
         uint8_t req[5] = { opcode, data1 >> 8, data1, data2, data3 };
 	//Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
