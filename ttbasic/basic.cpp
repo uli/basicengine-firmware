@@ -400,7 +400,7 @@ char sstyle(uint8_t code,
 uint8_t err;// Error message index
 const char* const errmsg[] __FLASH__ = {
   "OK",
-  "Devision by zero",
+  "Division by zero",
   "Overflow",
   "Subscript out of range",
   "Icode buffer full",
