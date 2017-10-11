@@ -39,12 +39,12 @@ const struct vs23_mode_t *vs23_current_mode = &VS23S010::modes[0];
 static inline void vs23Select()
 {
   SpiLock();
-  digitalWrite(15, LOW);
+  VS23_SELECT;
 }
 
 static inline void vs23Deselect()
 {
-  digitalWrite(15, HIGH);
+  VS23_DESELECT;
   SpiUnlock();
 }
 
@@ -170,9 +170,9 @@ void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t
 
 void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2) {
         uint8_t req[5] = { opcode, data1 >> 8, data1, data2 >> 8, data2 };
-        digitalWrite(15, LOW);
+        VS23_SELECT;
         SPI.writeBytes(req, 5);
-        digitalWrite(15, HIGH);
+        VS23_DESELECT;
 }
 
 void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {

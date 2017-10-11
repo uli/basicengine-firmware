@@ -249,8 +249,8 @@
 #define BURST_LEVEL 0x0d66
 #define WHITE_LEVEL 0x00ff
 
-
-//extern DEVICE spi1;
+#define VS23_SELECT do { GPOC = 1<<15; } while(0)
+#define VS23_DESELECT do { GPOS = 1<<15; } while(0)
 
 void SpiRamInit();
 void SpiRamWriteByte(register uint32_t address, uint8_t data);
