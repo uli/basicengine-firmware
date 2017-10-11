@@ -293,6 +293,7 @@ const char * const kwtbl[] __FLASH__ = {
  "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
  "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
  "SCREEN", "WINDOW", "FONT", // 表示切替
+ "BG", "BGON", "BGOFF",
  "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
 };
 
@@ -333,7 +334,8 @@ enum {
  I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
  I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
  I_SCREEN, I_WINDOW, I_FONT, // 表示切替
-  I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
+ I_BG, I_BGON, I_BGOFF,
+ I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
 
 // 内部利用コード
   I_NUM, I_STR, I_HEXNUM, I_VAR,
@@ -3851,7 +3853,43 @@ void iscreen() {
 #endif
 }
 
+void ibg() {
+  int16_t m;
+  int16_t w, h, px, py, pw, ph;
+  if (getParam(m, 0, VS23_MAX_BG, false)) return;
 
+  if (*cip != I_COMMA) {
+    err = ERR_SYNTAX;
+    return;    
+  }
+  cip++;
+
+  if (getParam(w, 0, 1023, true)) return;
+  if (getParam(h, 0, 1023, true)) return;
+  if (getParam(px, 0, sc0.getGWidth(), true)) return;
+  if (getParam(py, 0, 1023, true)) return;
+  if (getParam(pw, 0, sc0.getScreenWidth(), false)) return;
+  if (px + pw*8 >= sc0.getGWidth()) {
+    err = ERR_RANGE;
+    return;
+  }
+
+  if (vs23.setBg(m, w, h, 8, 8, px, py, pw))
+    err = ERR_LBUFOF;
+}
+
+void ibgoff() {
+  int16_t m;
+  if (getParam(m, 0, VS23_MAX_BG, false)) return;
+  vs23.disableBg(m);
+}
+
+void ibgon() {
+  int16_t m;
+  if (getParam(m, 0, VS23_MAX_BG, false)) return;
+  vs23.enableBg(m);
+}
+  
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
@@ -4830,6 +4868,9 @@ unsigned char* iexe() {
     case I_WINDOW:     iwindow();     break;
     case I_SCREEN:     iscreen();     break;
     case I_FONT:       ifont();	      break;
+    case I_BG:	       ibg();	      break;
+    case I_BGON:       ibgon();	      break;
+    case I_BGOFF:      ibgoff();      break;
 
     case I_RUN:    // RUN
     case I_RENUM:  // RENUM
