@@ -87,6 +87,8 @@ private:
     uint32_t cyclesPerFrame;
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     uint16_t syncLine;
+    
+    bool m_newFrame;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言

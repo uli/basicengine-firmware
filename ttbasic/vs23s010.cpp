@@ -72,6 +72,8 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   else
     Serial.println("spilocked");
 #endif
+  vs23.m_newFrame = true;
+
   // See you next frame:
   timer0_write(next);
 #ifndef ESP8266_NOWIFI
