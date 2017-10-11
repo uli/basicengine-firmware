@@ -4781,6 +4781,7 @@ unsigned char* iexe() {
 
   while (*cip != I_EOL) { //行末まで繰り返す
   
+  vs23.updateBg();
   //強制的な中断の判定
   c = c_kbhit();
   if (c) { // もし未読文字があったら

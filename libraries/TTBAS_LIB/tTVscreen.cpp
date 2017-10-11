@@ -197,6 +197,7 @@ uint8_t tTVscreen::isKeyIn() {
 uint8_t tTVscreen::get_ch() {
   char c;
   while(1) {
+    vs23.updateBg();
 #ifdef DEBUG
     if(serialMode == 0) {
       if (Serial.available()) {
