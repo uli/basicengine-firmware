@@ -161,25 +161,18 @@ uint8_t SpiRamReadRegister8(uint16_t opcode)
 }
 
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
+        uint8_t req[6] = { opcode, data1 >> 8, data1, data2 >> 8, data2, data3 };
 	//Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
 	vs23Select();
-	SPI.transfer(opcode);
-	SPI.transfer(data1>>8);
-	SPI.transfer(data1);
-	SPI.transfer(data2>>8);
-	SPI.transfer(data2);
-	SPI.transfer(data3);
+        SPI.writeBytes(req, 6);
 	vs23Deselect();
 }
 
 void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
+        uint8_t req[5] = { opcode, data1 >> 8, data1, data2, data3 };
 	//Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
 	vs23Select();
-	SPI.transfer(opcode);
-	SPI.transfer(data1>>8);
-	SPI.transfer(data1);
-	SPI.transfer(data2);
-	SPI.transfer(data3);
+        SPI.writeBytes(req, 5);
 	vs23Deselect();
 }
 
