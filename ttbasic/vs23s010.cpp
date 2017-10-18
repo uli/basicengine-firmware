@@ -153,9 +153,9 @@ void VS23S010::updateBg()
       continue;
 
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
-    int tile_end_y = tile_start_y + bg->win_h / bg->tile_size_y;
+    int tile_end_y = (tile_start_y + bg->win_h + bg->scroll_y + bg->tile_size_y-1) / bg->tile_size_y;
     int tile_start_x = bg->scroll_x / bg->tile_size_x;
-    int tile_end_x = tile_start_x + bg->win_w / bg->tile_size_x;
+    int tile_end_x = (tile_start_x + bg->win_w + bg->scroll_x + bg->tile_size_x-1) / bg->tile_size_x;
 
     uint8_t *tt;
     uint32_t tile;
@@ -165,31 +165,73 @@ void VS23S010::updateBg()
     uint32_t tsx = bg->tile_size_x;
     uint32_t tsy = bg->tile_size_y;
     uint32_t pw = bg->pat_w;
-    SpiRamWriteBM2Ctrl(0x35, PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-1);
-    uint16_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
+    uint32_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
     pat_start_addr = PICLINE_BYTE_ADDRESS(bg->pat_y)+bg->pat_x;
     win_start_addr = PICLINE_BYTE_ADDRESS(bg->win_y) + bg->win_x;
-    for (int yy = tile_start_y; yy < tile_end_y; ++yy) {
-      tt = &bg->tiles[yy*bg->w];
-      dest_addr = win_start_addr + (yy-tile_start_y) * tsy * pitch;
-      for (int xx = tile_start_x; xx < tile_end_x; ++xx, dest_addr += tsx) {
-        tile = tt[xx];
+    uint32_t xpoff = bg->scroll_x % tsx;
+    uint32_t ypoff = bg->scroll_y % tsy;
+
+    // Leftmost tile top line
+    tile = bg->tiles[tile_start_y*bg->w + tile_start_x];
+    tx = (tile % pw) * tsx + xpoff;
+    ty = (tile / pw) * tsy + ypoff;
+    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y, tsx-xpoff, tsy-ypoff, 0);
+    
+    // Middle top line
+    for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
+      tile = bg->tiles[tile_start_y*bg->w + xx];
+      tx = (tile % pw) * tsx;
+      ty = (tile / pw) * tsy + ypoff;
+      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y, tsx, tsy-ypoff, 0);
+    }
+
+    // Rightmost tile top line
+    tile = bg->tiles[tile_start_y*bg->w + tile_end_x-1];
+    tx = (tile % pw) * tsx;
+    ty = (tile / pw) * tsy + ypoff;
+    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y, xpoff, tsy-ypoff, 0);
+
+    for (int yy = tile_start_y+1; yy < tile_end_y-1; ++yy) {
+      // Leftmost tile
+      tile = bg->tiles[yy*bg->w + tile_start_x];
+      tx = (tile % pw) * tsx + xpoff;
+      ty = (tile / pw) * tsy;
+      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (yy - tile_start_y) * tsy - ypoff, tsx-xpoff, tsy, 0);
+      
+      // Middle tiles
+      for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
+        tile = bg->tiles[yy*bg->w + xx];
         tx = (tile % pw) * tsx;
         ty = (tile / pw) * tsy;
-        byteaddress2 = pat_start_addr + ty*pitch + tx;
-
-        //SpiRamWriteBMCtrlFast(0x34, byteaddress2 >> 1, dest_addr >> 1);
-        uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
-        VS23_SELECT;
-        SPI.writeBytes(req, 5);
-        VS23_DESELECT;
-
-        //SpiRamWriteBM3Ctrl(0x36);
-        VS23_SELECT;
-        SPI.write(0x36);
-        VS23_DESELECT;
+        MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + (yy - tile_start_y) * tsy - ypoff, tsx, tsy, 0);
       }
+
+      // Rightmost tile
+      tile = bg->tiles[yy*bg->w + tile_end_x-1];
+      tx = (tile % pw) * tsx;
+      ty = (tile / pw) * tsy;
+      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y + (yy - tile_start_y) * tsy - ypoff, xpoff, tsy, 0);
     }
+
+    // Leftmost tile bottom line
+    tile = bg->tiles[(tile_end_y-1)*bg->w + tile_start_x];
+    tx = (tile % pw) * tsx + xpoff;
+    ty = (tile / pw) * tsy;
+    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx-xpoff, ypoff, 0);
+    
+    // Middle bottom line
+    for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
+      tile = bg->tiles[(tile_end_y-1)*bg->w + xx];
+      tx = (tile % pw) * tsx;
+      ty = (tile / pw) * tsy;
+      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx, ypoff, 0);
+    }
+
+    // Rightmost tile bottom line
+    tile = bg->tiles[(tile_end_y-1)*bg->w + tile_end_x-1];
+    tx = (tile % pw) * tsx;
+    ty = (tile / pw) * tsy;
+    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, xpoff, ypoff, 0);
   }
   SpiUnlock();
 }
