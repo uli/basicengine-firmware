@@ -140,7 +140,7 @@ void VS23S010::disableBg(uint8_t bg)
 }
 
 #include <SPI.h>
-void VS23S010::updateBg()
+void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   if (!m_newFrame || SpiLocked())
     return;
