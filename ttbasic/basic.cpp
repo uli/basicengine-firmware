@@ -3869,7 +3869,7 @@ void ibg() {
   if (getParam(px, 0, sc0.getGWidth(), true)) return;
   if (getParam(py, 0, 1023, true)) return;
   if (getParam(pw, 0, sc0.getScreenWidth(), false)) return;
-  if (px + pw*8 >= sc0.getGWidth()) {
+  if (px + pw*8 > sc0.getGWidth()) {
     err = ERR_RANGE;
     return;
   }
