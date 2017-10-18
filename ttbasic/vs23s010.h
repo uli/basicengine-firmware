@@ -79,7 +79,8 @@ class VS23S010 {
     uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
-
+    void MoveBlockFast (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height);
+    
     bool setBg(uint8_t bg, uint16_t width, uint16_t height,
                      uint8_t tile_size_x, uint8_t tile_size_y,
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);

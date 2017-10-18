@@ -140,6 +140,20 @@ void VS23S010::disableBg(uint8_t bg)
 }
 
 #include <SPI.h>
+
+void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
+{
+  uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
+  uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
+  // XXX: What about PYF?
+  SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2));
+  SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
+  //SpiRamWriteBM3Ctrl(0x36);
+  VS23_SELECT;
+  SPI.write(0x36);
+  VS23_DESELECT;
+}
+
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   if (!m_newFrame || SpiLocked())
@@ -175,7 +189,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     tile = bg->tiles[tile_start_y*bg->w + tile_start_x];
     tx = (tile % pw) * tsx + xpoff;
     ty = (tile / pw) * tsy + ypoff;
-    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y, tsx-xpoff, tsy-ypoff, 0);
+    MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y, tsx-xpoff, tsy-ypoff);
     
     // Middle top line
     for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
@@ -189,14 +203,15 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     tile = bg->tiles[tile_start_y*bg->w + tile_end_x-1];
     tx = (tile % pw) * tsx;
     ty = (tile / pw) * tsy + ypoff;
-    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y, xpoff, tsy-ypoff, 0);
+    MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y, xpoff, tsy-ypoff);
 
     for (int yy = tile_start_y+1; yy < tile_end_y-1; ++yy) {
       // Leftmost tile
       tile = bg->tiles[yy*bg->w + tile_start_x];
       tx = (tile % pw) * tsx + xpoff;
       ty = (tile / pw) * tsy;
-      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (yy - tile_start_y) * tsy - ypoff, tsx-xpoff, tsy, 0);
+      // XXX: uneven horizontal size leads to artifacts
+      MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (yy - tile_start_y) * tsy - ypoff, tsx-xpoff, tsy);
       
       // Middle tiles
       for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
@@ -217,21 +232,21 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     tile = bg->tiles[(tile_end_y-1)*bg->w + tile_start_x];
     tx = (tile % pw) * tsx + xpoff;
     ty = (tile / pw) * tsy;
-    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx-xpoff, ypoff, 0);
+    MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx-xpoff, ypoff);
     
     // Middle bottom line
     for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
       tile = bg->tiles[(tile_end_y-1)*bg->w + xx];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy;
-      MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx, ypoff, 0);
+      MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx, ypoff);
     }
 
     // Rightmost tile bottom line
     tile = bg->tiles[(tile_end_y-1)*bg->w + tile_end_x-1];
     tx = (tile % pw) * tsx;
     ty = (tile / pw) * tsy;
-    MoveBlock(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, xpoff, ypoff, 0);
+    MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, xpoff, ypoff);
   }
   SpiUnlock();
 }
