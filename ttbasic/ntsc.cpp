@@ -175,8 +175,8 @@ void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2) {
         VS23_DESELECT;
 }
 
-void SpiRamWriteBM2Ctrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
-        uint8_t req[5] = { opcode, data1 >> 8, data1, data2, data3 };
+void ICACHE_RAM_ATTR SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2, uint16_t data3) {
+        uint8_t req[5] = { 0x35, data1 >> 8, data1, data2, data3 };
 	//Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
 	vs23Select();
         SPI.writeBytes(req, 5);
@@ -686,7 +686,7 @@ void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16
   SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2) | dir);
   if (!last_dir)
     while (!blockFinished()) {}
-  SpiRamWriteBM2Ctrl(0x35, PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
+  SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
   SpiRamWriteBM3Ctrl(0x36);
   last_dir = dir;
 }

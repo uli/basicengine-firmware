@@ -265,7 +265,7 @@ void SpiRamWrite8Words(uint16_t waddress, uint16_t *data);
 void SpiRamWriteProgram(register uint16_t opcode, register uint16_t data1, uint16_t data2);
 void SpiRamWriteBMCtrl(register uint16_t opcode, register uint16_t data1, uint16_t data2, uint16_t data3);
 void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2);
-void SpiRamWriteBM2Ctrl(register uint16_t opcode, register uint16_t data1, uint16_t data2, uint16_t data3);
+void SpiRamWriteBM2Ctrl(register uint16_t data1, uint16_t data2, uint16_t data3);
 void SpiRamWriteBM3Ctrl(register uint16_t opcode);
 void SpiRamWriteByteRegister(register uint16_t opcode, register uint16_t data);
 
