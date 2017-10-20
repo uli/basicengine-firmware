@@ -226,17 +226,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
       dest_addr = dest_addr_start + xx * tsx;
       byteaddress2 = pat_start_addr + ty * pitch + tx;
-      // XXX: What about PYF?
-      //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
-      uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
-      VS23_SELECT;
-      SPI.writeBytes(req, 5);
-      VS23_DESELECT;
-      //SpiRamWriteBM3Ctrl(0x36);
-      VS23_SELECT;
-      SPI.write(0x36);
-      VS23_DESELECT;
-
+      MoveBlockTimed(byteaddress2, dest_addr, 40);
     }
 
     SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-1);
@@ -251,22 +241,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         dest_addr = dest_addr_start + xx * tsx;
         byteaddress2 = pat_start_addr + ty*pitch + tx;
 
-        //SpiRamWriteBMCtrlFast(0x34, byteaddress2 >> 1, dest_addr >> 1);
-        uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
-        VS23_SELECT;
-        SPI.writeBytes(req, 5);
-        VS23_DESELECT;
-
-#ifdef TIMED
-        for (int i=0; i < 30; ++i)
-          asm("nop");
-#else
-        while (!blockFinished()) {}
-#endif
-        //SpiRamWriteBM3Ctrl(0x36);
-        VS23_SELECT;
-        SPI.write(0x36);
-        VS23_DESELECT;
+        MoveBlockTimed(byteaddress2, dest_addr, 60);
       }
     }
 
