@@ -141,7 +141,7 @@ void VS23S010::disableBg(uint8_t bg)
 
 #include <SPI.h>
 
-void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
+void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
 {
   uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
   uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
