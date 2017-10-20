@@ -2242,7 +2242,11 @@ void icls() {
 void iwait() {
   int16_t tm;
   if ( getParam(tm, 0, 32767, false) ) return;
-  delay(tm);
+  uint32_t end = tm + millis();
+  while (millis() < end) {
+    delay(1);
+    vs23.updateBg();
+  }
 }
 
 // カーソル移動 LOCATE x,y
