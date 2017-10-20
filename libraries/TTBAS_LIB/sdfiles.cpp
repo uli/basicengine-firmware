@@ -106,7 +106,6 @@ uint8_t  sdfiles::init(uint8_t _cs) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 //
 uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
-#if 1
   File myFile;
   uint8_t rc;
   char head[2];  // ヘッダ
@@ -129,9 +128,6 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   }
   SD_END();
   return rc;
-#else
-  return SD_ERR_INIT;
-#endif
 }
 
 //
@@ -147,7 +143,6 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
 //  ファイル書き込み失敗 : SD_ERR_WRITE_FILE
 //
 uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
-#if 1
   File myFile;
   char head[2] = {0,0};
   uint8_t rc = 1;
@@ -174,9 +169,6 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   }
   SD_END();
   return rc;
-#else
-  return SD_ERR_INIT;
-#endif
 }
 
 //
@@ -301,7 +293,6 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-#if 1
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
   if(mode) {
@@ -311,10 +302,12 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
   } else {
     tfile = SD.open(tfname, FILE_READ);   
   }
-  return tfile ? 0:SD_ERR_OPEN_FILE;
-#else
-  return SD_ERR_INIT;
-#endif
+
+  if (tfile)
+    return 0;
+
+  SD_END();
+  return SD_ERR_OPEN_FILE;
 }
 
 // 一時ファイルクローズ
