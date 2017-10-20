@@ -157,6 +157,26 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, in
 // use timed code instead of polling for block move completion
 #define TIMED
 
+static inline void MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint8_t wait)
+{
+      // XXX: What about PYF?
+      //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
+      uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
+      VS23_SELECT;
+      SPI.writeBytes(req, 5);
+      VS23_DESELECT;
+#ifdef TIMED
+      for (int i=0; i < wait; ++i)
+        asm("nop");
+#else
+      while (!blockFinished()) {}
+#endif
+      //SpiRamWriteBM3Ctrl(0x36);
+      VS23_SELECT;
+      SPI.write(0x36);
+      VS23_DESELECT;
+}
+
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   uint32_t tile;
@@ -298,6 +318,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   SPI.setFrequency(11000000);
   SpiUnlock();
 }
+
+#undef TIMED
 
 VS23S010 vs23;
 #endif
