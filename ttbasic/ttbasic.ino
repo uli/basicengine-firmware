@@ -61,7 +61,7 @@ void loop(void){
   digitalWrite(15, HIGH);
   pinMode(15, OUTPUT);
   SPI.begin();
-  SPI.setFrequency(10000000);
+  SPI.setFrequency(11000000);
 
   for (int i=0; i < 10; ++i) {
     digitalWrite(15, LOW);
