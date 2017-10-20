@@ -8,17 +8,17 @@
 // Remember to update VS23_MAX_X/Y!
 const struct vs23_mode_t VS23S010::modes[] = {
   // maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel chars
-  { 456, 224, 9, 10, 3, 1 },
+  { 456, 224, 9, 10, 3, 9 },
   // a bit smaller, may fit better on some TVs
-  { 432, 216, 13, 14, 3, 1 },
-  { 320, 216, 11, 15, 4, 1 },	// VS23 NTSC demo
-  { 320, 200, 20, 15, 4, 1 },	// (M)CGA, Commodore et al.
-  { 256, 224, 9, 15, 5, 0 },	// SNES
-  { 256, 192, 24, 15, 5, 0 },	// MSX, Spectrum, NDS	XXX: has artifacts
-  { 160, 200, 20, 15, 8, 0 },	// Commodore/PCjr/CPC multi-color
+  { 432, 216, 13, 14, 3, 9 },
+  { 320, 216, 11, 15, 4, 9 },	// VS23 NTSC demo
+  { 320, 200, 20, 15, 4, 9 },	// (M)CGA, Commodore et al.
+  { 256, 224, 9, 15, 5, 8 },	// SNES
+  { 256, 192, 24, 15, 5, 8 },	// MSX, Spectrum, NDS	XXX: has artifacts
+  { 160, 200, 20, 15, 8, 8 },	// Commodore/PCjr/CPC multi-color
   // overscan modes
-  { 352, 240, 0, 8, 4, 1 },	// PCE overscan (is this useful?)
-  { 282, 240, 0, 8, 5, 0 },	// PCE overscan (is this useful?)
+  { 352, 240, 0, 8, 4, 9 },	// PCE overscan (is this useful?)
+  { 282, 240, 0, 8, 5, 8 },	// PCE overscan (is this useful?)
 };
 
 // Common modes not included:
