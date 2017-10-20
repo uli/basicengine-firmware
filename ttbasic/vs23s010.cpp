@@ -154,6 +154,9 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, ui
   VS23_DESELECT;
 }
 
+// use timed code instead of polling for block move completion
+#define TIMED
+
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   if (!m_newFrame || SpiLocked())
@@ -161,6 +164,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   m_newFrame = false;
 
   SpiLock();
+  SPI.setFrequency(38000000);
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     if (!bg->enabled)
@@ -255,6 +259,12 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         SPI.writeBytes(req, 5);
         VS23_DESELECT;
 
+#ifdef TIMED
+        for (int i=0; i < 30; ++i)
+          asm("nop");
+#else
+        while (!blockFinished()) {}
+#endif
         //SpiRamWriteBM3Ctrl(0x36);
         VS23_SELECT;
         SPI.write(0x36);
@@ -282,6 +292,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     ty = (tile / pw) * tsy;
     MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (tile_end_x-1) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, xpoff, ypoff);
   }
+  SPI.setFrequency(11000000);
   SpiUnlock();
 }
 
