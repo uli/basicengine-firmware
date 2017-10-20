@@ -112,7 +112,7 @@ private:
       bool enabled;
     } m_bg[VS23_MAX_BG];
     
-    bool m_newFrame;
+    uint32_t m_frame;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言

@@ -72,7 +72,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   else
     Serial.println("spilocked");
 #endif
-  vs23.m_newFrame = true;
+  vs23.m_frame++;
 
   // See you next frame:
   timer0_write(next);
@@ -179,15 +179,16 @@ static inline void MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uin
 
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
+  static uint32_t last_frame = 0;
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t byteaddress2;
   int dest_addr_start;
   uint32_t dest_addr, pat_start_addr, win_start_addr;
 
-  if (!m_newFrame || SpiLocked())
+  if (m_frame == last_frame || SpiLocked())
     return;
-  m_newFrame = false;
+  last_frame = m_frame;
 
   SpiLock();
   SPI.setFrequency(38000000);
