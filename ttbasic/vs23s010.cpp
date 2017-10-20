@@ -212,14 +212,23 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     uint8_t bg_w = bg->w;    
     uint8_t bg_h = bg->h;
 
+    // This code draws into the "extra" bytes following each picture line.
+    // Doing so keeps us from having to give border tiles special treatment:
+    // their invisible parts are simply drawn where they cannot be seen.
+    // It also helps to avoid narrow block moves (less than 4 bytes wide),
+    // which often don't work as expected.
     
-    // Middle top line
+    // XXX: This means that window width must be a multiple of tile width.
+
+    // Top line
     dest_addr_start = win_start_addr - tile_start_x * tsx - xpoff;
+    // Set pitch, width and height; same for all tiles
     SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-ypoff-1);
     // Set up the LSB of the start/dest addresses; they don't change for
     // middle tiles, so we can omit the last byte of the request.
     SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
-    for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
+
+    for (int xx = tile_start_x; xx < tile_end_x; ++xx) {
       tile = bg->tiles[(tile_start_y % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy + ypoff;
@@ -230,10 +239,13 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     }
 
     SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-1);
+    // Set up the LSB of the start/dest addresses; they don't change for
+    // middle tiles, so we can omit the last byte of the request.
+    SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
     for (int yy = tile_start_y+1; yy < tile_end_y-1; ++yy) {
       // Middle tiles
       dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * pitch + bg->win_x - tile_start_x * tsx - xpoff;
-      for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
+      for (int xx = tile_start_x; xx < tile_end_x; ++xx) {
         tile = bg->tiles[(yy % bg_h) * bg_w + xx % bg_w];
         tx = (tile % pw) * tsx;
         ty = (tile / pw) * tsy;
@@ -245,13 +257,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
     }
 
-    // Middle bottom line
-    for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
-      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
-      tx = (tile % pw) * tsx;
-      ty = (tile / pw) * tsy;
-      MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + (tile_end_y-1) * tsy - ypoff, tsx, ypoff);
-    }
+    // Bottom line
+    if (ypoff)
+      for (int xx = tile_start_x; xx < tile_end_x; ++xx) {
+        tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
+        tx = (tile % pw) * tsx;
+        ty = (tile / pw) * tsy;
+        MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
+      }
 
   }
   SPI.setFrequency(11000000);
