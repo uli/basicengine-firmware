@@ -197,9 +197,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       continue;
 
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
-    int tile_end_y = (tile_start_y + bg->win_h + bg->scroll_y + bg->tile_size_y-1) / bg->tile_size_y;
+    int tile_end_y = tile_start_y + (bg->win_h + bg->tile_size_y-1) / bg->tile_size_y + 1;
     int tile_start_x = bg->scroll_x / bg->tile_size_x;
-    int tile_end_x = (tile_start_x + bg->win_w + bg->scroll_x + bg->tile_size_x-1) / bg->tile_size_x;
+    int tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
 
     uint32_t tsx = bg->tile_size_x;
     uint32_t tsy = bg->tile_size_y;
