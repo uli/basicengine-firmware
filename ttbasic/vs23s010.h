@@ -86,6 +86,10 @@ class VS23S010 {
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
     void enableBg(uint8_t bg);
     void disableBg(uint8_t bg);
+    inline void scroll(uint8_t bg, uint16_t x, uint16_t y) {
+      m_bg[bg].scroll_x = x;
+      m_bg[bg].scroll_y = y;
+    }
     void updateBg();
 
     const struct vs23_mode_t *currentMode;
