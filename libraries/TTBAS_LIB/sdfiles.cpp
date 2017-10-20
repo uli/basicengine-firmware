@@ -26,13 +26,16 @@ bool sdfiles::SD_BEGIN(void)
 {
   SpiLock();
   if (!sdfat_initialized) {
-    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(10));
+    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(40));
+  } else {
+    SPI.setFrequency(40000000);
   }
   return sdfat_initialized;
 }
 
 bool sdfiles::SD_END(void)
 {
+  SPI.setFrequency(11000000);
   SpiUnlock();
 }
 
