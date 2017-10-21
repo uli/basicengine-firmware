@@ -61,10 +61,18 @@ uint16_t SpiRamReadByte(uint32_t address)
   return result;  
 }
 
-struct bw {
-  uint32_t address;
-   
-};
+void ICACHE_RAM_ATTR SpiRamReadBytes(uint32_t address, uint8_t *data, uint32_t count)
+{
+  uint8_t req[4];
+  req[0] = 3;
+  req[1] = address >> 16;
+  req[2] = address >> 8;
+  req[3] = address;
+  vs23Select();
+  SPI.writeBytes(req, 4);
+  SPI.transferBytes(NULL, data, count);
+  vs23Deselect();
+}
 
 void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   uint8_t req[5];
