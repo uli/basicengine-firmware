@@ -151,6 +151,8 @@ private:
       uint16_t pat_x, pat_y;
       uint16_t pos_x, pos_y;
       bool enabled;
+      uint16_t old_pos_x, old_pos_y;
+      bool old_enabled;
       uint8_t w, h;
       uint8_t *pattern;
     } m_sprite[VS23_MAX_SPRITES];

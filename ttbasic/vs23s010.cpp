@@ -360,6 +360,26 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
       drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff);
     } else {
+      int old_tile_start_y = bg->old_scroll_y / tsy;
+      int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
+      int old_tile_start_x = bg->old_scroll_x / tsx;
+      int old_tile_end_x = old_tile_start_x + (bg->win_w + tsx-1) / tsx + 1;
+      uint32_t old_xpoff = bg->old_scroll_x % tsx;
+      uint32_t old_ypoff = bg->old_scroll_y % tsy;
+      int old_dest_addr_start = win_start_addr - old_tile_start_x * tsx - old_xpoff;
+
+      for (int sn = 0; sn < 7/*VS23_MAX_SPRITES*/; ++sn) {
+        struct sprite_t *s = &m_sprite[sn];
+        if (!s->old_enabled)
+          continue;
+        drawBg(bg, pitch, old_dest_addr_start, pat_start_addr, win_start_addr,
+               old_tile_start_x, old_tile_start_y,
+               min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
+               min(old_tile_start_y + (s->old_pos_y + s->h) / tsy + 2, old_tile_end_y),
+               old_xpoff, old_ypoff,
+               s->old_pos_x / tsx, s->old_pos_y / tsy);
+      }
+
       uint8_t x_dir, y_dir;
       uint32_t src_x, src_y, dst_x, dst_y;
       uint32_t w, h;
@@ -483,8 +503,8 @@ void VS23S010::sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_
   struct sprite_t *s = &m_sprite[num];
   s->pat_x = pat_x;
   s->pat_y = pat_y;
-  s->pos_x = pos_x;
-  s->pos_y = pos_y;
+  s->pos_x = s->old_pos_x = pos_x;
+  s->pos_y = s->old_pos_y = pos_y;
   s->w = w;
   s->h = h;
   if (!s->pattern) {
@@ -499,6 +519,7 @@ void VS23S010::sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_
     SpiUnlock();
   }
   s->enabled = true;
+  s->old_enabled = false;
 }
 
 #undef TIMED
