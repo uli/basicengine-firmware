@@ -31,6 +31,7 @@ struct vs23_mode_t {
 #define VS23_MAX_Y	224
 
 #define VS23_MAX_BG	2
+#define VS23_MAX_SPRITES 16
 
 // ntscビデオ表示クラス定義
 class VS23S010 {    
@@ -92,6 +93,8 @@ class VS23S010 {
     }
     void updateBg();
 
+    void sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_x, uint16_t pos_y, uint8_t w, uint8_t h);
+
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
     static const struct vs23_mode_t modes[];
@@ -111,6 +114,14 @@ private:
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
     } m_bg[VS23_MAX_BG];
+
+    struct sprite_t {
+      uint16_t pat_x, pat_y;
+      uint16_t pos_x, pos_y;
+      bool enabled;
+      uint8_t w, h;
+      uint8_t *pattern;
+    } m_sprite[VS23_MAX_SPRITES];
     
     uint32_t m_frame;
 };

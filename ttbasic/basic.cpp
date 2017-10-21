@@ -293,7 +293,7 @@ const char * const kwtbl[] __FLASH__ = {
  "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
  "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
  "SCREEN", "WINDOW", "FONT", // 表示切替
- "BG", "BGON", "BGOFF", "SCROLL",
+ "BG", "BGON", "BGOFF", "SCROLL", "SPRITE",
  "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
 };
 
@@ -334,7 +334,7 @@ enum {
  I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
  I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
  I_SCREEN, I_WINDOW, I_FONT, // 表示切替
- I_BG, I_BGON, I_BGOFF, I_SCROLL,
+ I_BG, I_BGON, I_BGOFF, I_SCROLL, I_SPRITE,
  I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
 
 // 内部利用コード
@@ -3904,6 +3904,19 @@ void iscroll() {
   vs23.scroll(bg, x, y);
 }
 
+void isprite() {
+  int16_t num, pat_x, pat_y, pos_x, pos_y, w, h;
+  if (getParam(num, 0, VS23_MAX_SPRITES, true)) return;
+  if (getParam(pat_x, 0, sc0.getGWidth(), true)) return;
+  if (getParam(pat_y, 0, 1023, true)) return;
+  if (getParam(pos_x, 0, sc0.getGWidth(), true)) return;
+  if (getParam(pos_y, 0, sc0.getGHeight(), true)) return;
+  if (getParam(w, 0, 16, true)) return;
+  if (getParam(h, 0, 16, false)) return;
+
+  vs23.sprite(num, pat_x, pat_y, pos_x, pos_y, w, h);
+}
+  
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
@@ -4887,6 +4900,7 @@ unsigned char* iexe() {
     case I_BGON:       ibgon();	      break;
     case I_BGOFF:      ibgoff();      break;
     case I_SCROLL:     iscroll();     break;
+    case I_SPRITE:     isprite();     break;
 
     case I_RUN:    // RUN
     case I_RENUM:  // RENUM

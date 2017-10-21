@@ -177,6 +177,29 @@ static inline void MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uin
       VS23_DESELECT;
 }
 
+static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
+{
+  
+  data[0] = 3;
+  data[1] = address >> 16;
+  data[2] = address >> 8;
+  data[3] = address;
+  VS23_SELECT;
+  SPI.transferBytes(data, data, count+4);
+  VS23_DESELECT;
+}
+
+static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
+{
+  data[0] = 2;
+  data[1] = address >> 16;
+  data[2] = address >> 8;
+  data[3] = address;
+  VS23_SELECT;
+  SPI.writeBytes(data, len+4);
+  VS23_DESELECT;
+}
+
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
@@ -191,12 +214,12 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   last_frame = m_frame;
 
   SpiLock();
-  SPI.setFrequency(38000000);
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     if (!bg->enabled)
       continue;
 
+    SPI.setFrequency(38000000);
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
     int tile_end_y = tile_start_y + (bg->win_h + bg->tile_size_y-1) / bg->tile_size_y + 1;
     int tile_start_x = bg->scroll_x / bg->tile_size_x;
@@ -267,9 +290,64 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
       }
 
+    while (!blockFinished()) {}
+
+    SpiRamWriteByteRegister(WRITE_STATUS, 0x50);
+    SPI.setFrequency(38000000);
+#if 1
+    uint8_t bbuf[16+4];
+    uint8_t sbuf[16+4];
+    //uint8_t *sbuf;
+    pat_start_addr = PICLINE_BYTE_ADDRESS(0);
+    for (int sn = 0; sn < 3/*VS23_MAX_SPRITES*/; ++sn) {
+      struct sprite_t *s = &m_sprite[sn];
+      if (!s->enabled)
+        continue;
+      int sx = s->pos_x;
+      uint32_t spr_addr = win_start_addr + s->pos_y*pitch + sx;
+      uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
+      for (int sy = 0; sy < s->h; ++sy) {
+        //sbuf = s->pattern + sy*s->w - 4;
+        SpiRamReadBytesFast(tile_addr + sy*pitch, sbuf, s->w);
+        SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, s->w);
+#if 1
+        for (int p = 4; p < s->w+4; ++p) {
+          if (!sbuf[p])
+            sbuf[p] = bbuf[p];
+        }
+#endif
+        SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, s->w);
+      }
+    }
+#endif
+    SpiRamWriteByteRegister(WRITE_STATUS, 0x40);
+    SPI.setFrequency(11000000);
   }
-  SPI.setFrequency(11000000);
+
   SpiUnlock();
+}
+
+void VS23S010::sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_x, uint16_t pos_y, uint8_t w, uint8_t h)
+{
+  struct sprite_t *s = &m_sprite[num];
+  s->pat_x = pat_x;
+  s->pat_y = pat_y;
+  s->pos_x = pos_x;
+  s->pos_y = pos_y;
+  s->w = w;
+  s->h = h;
+  if (!s->pattern) {
+    SpiLock();
+    s->pattern = (uint8_t *)malloc(w * h);
+    uint8_t *p = s->pattern;
+    uint32_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
+    uint32_t tile_addr = PICLINE_BYTE_ADDRESS(pat_y) + pat_x;
+    for (int sy = 0; sy < s->h; ++sy, p+=w) {
+      SpiRamReadBytesFast(tile_addr + sy*pitch, p, w);
+    }
+    SpiUnlock();
+  }
+  s->enabled = true;
 }
 
 #undef TIMED
