@@ -111,9 +111,41 @@ private:
       uint8_t w, h;
       uint8_t tile_size_x, tile_size_y;
       uint16_t scroll_x, scroll_y;
+      uint16_t old_scroll_x, old_scroll_y;
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
+      bool force_redraw;
     } m_bg[VS23_MAX_BG];
+
+    void inline ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
+                            uint32_t pitch,
+                            int dest_addr_start,
+                            uint32_t pat_start_addr,
+                            uint32_t win_start_addr,
+                            int tile_start_x,
+                            int tile_start_y,
+                            int tile_end_x,
+                            int tile_end_y,
+                            uint32_t xpoff,
+                            uint32_t ypoff,
+                            uint32_t skip_x,
+                            uint32_t skip_y);
+    void inline ICACHE_RAM_ATTR drawBgTop(struct bg_t *bg,
+                            uint32_t pitch,
+                            int dest_addr_start,
+                            uint32_t pat_start_addr,
+                            int tile_start_x,
+                            int tile_start_y,
+                            int tile_end_x,
+                            uint32_t xpoff,
+                            uint32_t ypoff);
+
+    void inline ICACHE_RAM_ATTR drawBgBottom(struct bg_t *bg,
+                                                   int tile_start_x,
+                                                   int tile_end_x,
+                                                   int tile_end_y,
+                                                   uint32_t xpoff,
+                                                   uint32_t ypoff);
 
     struct sprite_t {
       uint16_t pat_x, pat_y;
