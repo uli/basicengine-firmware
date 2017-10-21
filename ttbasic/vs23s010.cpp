@@ -463,15 +463,16 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     while (!blockFinished()) {}
 
-    SpiRamWriteByteRegister(WRITE_STATUS, 0x50);
-    SPI.setFrequency(38000000);
+    SPI.setFrequency(11000000);
 #if 1
     uint8_t bbuf[16+4];
     uint8_t sbuf[16+4];
-    //uint8_t *sbuf;
     pat_start_addr = PICLINE_BYTE_ADDRESS(0);
-    for (int sn = 0; sn < 3/*VS23_MAX_SPRITES*/; ++sn) {
+    for (int sn = 0; sn < 7/*VS23_MAX_SPRITES*/; ++sn) {
       struct sprite_t *s = &m_sprite[sn];
+      s->old_pos_x = s->pos_x;
+      s->old_pos_y = s->pos_y;
+      s->old_enabled = s->enabled;
       if (!s->enabled)
         continue;
       int sx = s->pos_x;
@@ -479,7 +480,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
       for (int sy = 0; sy < s->h; ++sy) {
         //sbuf = s->pattern + sy*s->w - 4;
-        SpiRamReadBytesFast(tile_addr + sy*pitch, sbuf, s->w);
+        memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
         SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, s->w);
 #if 1
         for (int p = 4; p < s->w+4; ++p) {
@@ -491,8 +492,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
     }
 #endif
-    SpiRamWriteByteRegister(WRITE_STATUS, 0x40);
-    SPI.setFrequency(11000000);
   }
 
   SpiUnlock();
