@@ -93,7 +93,8 @@ class VS23S010 {
     }
     void updateBg();
 
-    void sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_x, uint16_t pos_y, uint8_t w, uint8_t h);
+    void defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h);
+    void moveSprite(uint8_t num, int16_t x, int16_t y);
 
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
@@ -149,9 +150,9 @@ private:
 
     struct sprite_t {
       uint16_t pat_x, pat_y;
-      uint16_t pos_x, pos_y;
+      int16_t pos_x, pos_y;
       bool enabled;
-      uint16_t old_pos_x, old_pos_y;
+      int16_t old_pos_x, old_pos_y;
       bool old_enabled;
       uint8_t w, h;
       uint8_t *pattern;

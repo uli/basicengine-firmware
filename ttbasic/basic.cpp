@@ -3905,16 +3905,14 @@ void iscroll() {
 }
 
 void isprite() {
-  int16_t num, pat_x, pat_y, pos_x, pos_y, w, h;
+  int16_t num, pat_x, pat_y, w, h;
   if (getParam(num, 0, VS23_MAX_SPRITES, true)) return;
   if (getParam(pat_x, 0, sc0.getGWidth(), true)) return;
   if (getParam(pat_y, 0, 1023, true)) return;
-  if (getParam(pos_x, 0, sc0.getGWidth(), true)) return;
-  if (getParam(pos_y, 0, sc0.getGHeight(), true)) return;
   if (getParam(w, 0, 16, true)) return;
   if (getParam(h, 0, 16, false)) return;
 
-  vs23.sprite(num, pat_x, pat_y, pos_x, pos_y, w, h);
+  vs23.defineSprite(num, pat_x, pat_y, w, h);
 }
   
 //

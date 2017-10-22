@@ -498,13 +498,13 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   SpiUnlock();
 }
 
-void VS23S010::sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_x, uint16_t pos_y, uint8_t w, uint8_t h)
+void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h)
 {
   struct sprite_t *s = &m_sprite[num];
   s->pat_x = pat_x;
   s->pat_y = pat_y;
-  s->pos_x = s->old_pos_x = pos_x;
-  s->pos_y = s->old_pos_y = pos_y;
+  s->pos_x = s->old_pos_x = 0;
+  s->pos_y = s->old_pos_y = 0;
   s->w = w;
   s->h = h;
   if (!s->pattern) {
@@ -520,6 +520,12 @@ void VS23S010::sprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint16_t pos_
   }
   s->enabled = true;
   s->old_enabled = false;
+}
+
+void VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
+{
+  m_sprite[num].pos_x = x;
+  m_sprite[num].pos_y = y;
 }
 
 #undef TIMED
