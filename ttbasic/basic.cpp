@@ -293,7 +293,7 @@ const char * const kwtbl[] __FLASH__ = {
  "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
  "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
  "SCREEN", "WINDOW", "FONT", // 表示切替
- "BG", "BGON", "BGOFF", "SCROLL", "SPRITE",
+ "BG", "BGON", "BGOFF", "BGWIN", "SCROLL", "SPRITE", "MOVE",
  "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
 };
 
@@ -334,7 +334,7 @@ enum {
  I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
  I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
  I_SCREEN, I_WINDOW, I_FONT, // 表示切替
- I_BG, I_BGON, I_BGOFF, I_SCROLL, I_SPRITE,
+ I_BG, I_BGON, I_BGOFF, I_BGWIN, I_SCROLL, I_SPRITE, I_MOVE,
  I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
 
 // 内部利用コード
@@ -3896,6 +3896,16 @@ void ibgon() {
   if (getParam(m, 0, VS23_MAX_BG, false)) return;
   vs23.enableBg(m);
 }
+
+void ibgwin() {
+  int16_t m, x, y, w, h;
+  if (getParam(m, 0, VS23_MAX_BG, true)) return;
+  if (getParam(x, 0, sc0.getGWidth() - 1, true)) return;
+  if (getParam(y, 0, sc0.getGHeight() - 1, true)) return;
+  if (getParam(w, 0, sc0.getGWidth(), true)) return;
+  if (getParam(h, 0, sc0.getGHeight(), false)) return;
+  vs23.setBgWin(m, x, y, w, h);
+}
   
 void iscroll() {
   int16_t bg, x, y;
@@ -3917,7 +3927,15 @@ void isprite() {
 
   vs23.defineSprite(num, pat_x, pat_y, w, h);
 }
-  
+
+void imove() {
+  int16_t num, pos_x, pos_y;
+  if (getParam(num, 0, VS23_MAX_SPRITES, true)) return;
+  if (getParam(pos_x, -32768, 32767, true)) return;
+  if (getParam(pos_y, -32768, 32767, false)) return;
+  vs23.moveSprite(num, pos_x, pos_y);
+}  
+
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
@@ -4900,8 +4918,10 @@ unsigned char* iexe() {
     case I_BG:	       ibg();	      break;
     case I_BGON:       ibgon();	      break;
     case I_BGOFF:      ibgoff();      break;
+    case I_BGWIN:      ibgwin();      break;
     case I_SCROLL:     iscroll();     break;
     case I_SPRITE:     isprite();     break;
+    case I_MOVE:       imove();       break;
 
     case I_RUN:    // RUN
     case I_RENUM:  // RENUM
