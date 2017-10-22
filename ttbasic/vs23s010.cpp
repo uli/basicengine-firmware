@@ -392,12 +392,28 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         struct sprite_t *s = &m_sprite[sn];
         if (!s->old_enabled)
           continue;
+        if (s->old_pos_x > bg->win_w || s->old_pos_y > bg->win_h)
+          continue;
+        if (s->old_pos_x < -s->w || s->old_pos_y < -s->h)
+          continue;
+
+        if (s->old_pos_y < tsy)
+          drawBgTop(bg, pitch, old_dest_addr_start, pat_start_addr,
+                    old_tile_start_x + min(s->old_pos_x, 0) / tsx,
+                    old_tile_start_y,
+                    min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
+                    old_xpoff, old_ypoff);
+                    
         drawBg(bg, pitch, old_dest_addr_start, pat_start_addr, win_start_addr,
                old_tile_start_x, old_tile_start_y,
                min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
-               min(old_tile_start_y + (s->old_pos_y + s->h) / tsy + 2, old_tile_end_y),
+               min(old_tile_start_y + (s->old_pos_y + s->h) / tsy + 3, old_tile_end_y),
                old_xpoff, old_ypoff,
-               s->old_pos_x / tsx, s->old_pos_y / tsy);
+               max(s->old_pos_x, 0) / tsx, max(s->old_pos_y / tsy, 1));
+        if (s->old_pos_y > bg->win_h - tsy)
+          drawBgBottom(bg, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
+                       min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
+                       old_tile_end_y, old_xpoff, old_ypoff);
       }
 
       uint8_t x_dir, y_dir;
@@ -496,20 +512,39 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       s->old_enabled = s->enabled;
       if (!s->enabled)
         continue;
+      if (s->pos_x < -s->w || s->pos_y < -s->h)
+        continue;
+      if (s->pos_x >= bg->win_w || s->pos_y >= bg->win_h)
+        continue;
       int sx = s->pos_x;
-      uint32_t spr_addr = win_start_addr + s->pos_y*pitch + sx;
+      uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * pitch + max(0, sx);
       uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
-      for (int sy = 0; sy < s->h; ++sy) {
+
+      int draw_w = s->w;
+      int draw_h = s->h;
+
+      if (s->pos_y < 0)
+        draw_h += s->pos_y;
+      else if (s->pos_y + s->h > bg->win_h)
+        draw_h -= s->pos_y + s->h - bg->win_h;
+
+      if (s->pos_x < 0)
+        draw_w += s->pos_x;
+      else if (s->pos_x + s->w > bg->win_w)
+        draw_w -= s->pos_x + s->w - bg->win_w;
+
+      for (int sy = 0; sy < draw_h; ++sy) {
         //sbuf = s->pattern + sy*s->w - 4;
         memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
-        SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, s->w);
+        SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, draw_w);
+
 #if 1
-        for (int p = 4; p < s->w+4; ++p) {
+        for (int p = 4; p < draw_w+4; ++p) {
           if (!sbuf[p])
             sbuf[p] = bbuf[p];
         }
 #endif
-        SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, s->w);
+        SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, draw_w);
       }
     }
 #endif
