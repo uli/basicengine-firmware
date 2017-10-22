@@ -143,7 +143,7 @@ void VS23S010::disableBg(uint8_t bg)
 
 #include <SPI.h>
 
-void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
+void VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
 {
   uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
   uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
@@ -159,7 +159,7 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, in
 // use timed code instead of polling for block move completion
 #define TIMED
 
-static inline void MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint8_t wait)
+static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint8_t wait)
 {
       // XXX: What about PYF?
       //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
@@ -202,7 +202,7 @@ static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_
   VS23_DESELECT;
 }
 
-void inline ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
+void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
                             uint32_t pitch,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
@@ -245,7 +245,7 @@ void inline ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   }
 }
 
-void inline ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
+void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
                                                 uint32_t pitch,
                                                 int dest_addr_start,
                                                 uint32_t pat_start_addr,
@@ -281,7 +281,7 @@ void inline ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   }
 }
 
-void inline ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
+void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
                                                    int tile_start_x,
                                                    int tile_end_x,
                                                    int tile_end_y,

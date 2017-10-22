@@ -117,7 +117,7 @@ private:
       bool force_redraw;
     } m_bg[VS23_MAX_BG];
 
-    void inline ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
+    void ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
                             uint32_t pitch,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
@@ -130,7 +130,7 @@ private:
                             uint32_t ypoff,
                             uint32_t skip_x,
                             uint32_t skip_y);
-    void inline ICACHE_RAM_ATTR drawBgTop(struct bg_t *bg,
+    void ICACHE_RAM_ATTR drawBgTop(struct bg_t *bg,
                             uint32_t pitch,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
@@ -140,7 +140,7 @@ private:
                             uint32_t xpoff,
                             uint32_t ypoff);
 
-    void inline ICACHE_RAM_ATTR drawBgBottom(struct bg_t *bg,
+    void ICACHE_RAM_ATTR drawBgBottom(struct bg_t *bg,
                                                    int tile_start_x,
                                                    int tile_end_x,
                                                    int tile_end_y,
