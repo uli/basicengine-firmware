@@ -141,6 +141,16 @@ void VS23S010::disableBg(uint8_t bg)
   m_bg[bg].enabled = false;
 }
 
+void VS23S010::freeBg(uint8_t bg_idx)
+{
+  struct bg_t *bg = &m_bg[bg_idx];
+  bg->enabled = false;
+  if (bg->tiles) {
+    free(bg->tiles);
+    bg->tiles = NULL;
+  }
+}
+
 #include <SPI.h>
 
 void VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)

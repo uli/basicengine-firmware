@@ -3821,6 +3821,9 @@ void iscreen() {
   if (scmode == m) 
     return;
 
+  for (int i=0; i < VS23_MAX_BG; ++i)
+    vs23.freeBg(i);
+
   // 現在、ターミナルモードの場合は画面をクリア、終了、資源開放
   prv_m = sc->getSerialMode();
   sc->cls();
