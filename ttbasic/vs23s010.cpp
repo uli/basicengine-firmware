@@ -568,13 +568,15 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   s->h = h;
   if (!s->pattern) {
     s->pattern = (uint8_t *)malloc(w * h);
-    uint8_t *p = s->pattern;
-    uint32_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
-    uint32_t tile_addr = PICLINE_BYTE_ADDRESS(pat_y) + pat_x;
-    for (int sy = 0; sy < s->h; ++sy, p+=w) {
-      SpiRamReadBytes(tile_addr + sy*pitch, p, w);
-    }
   }
+
+  uint8_t *p = s->pattern;
+  uint32_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
+  uint32_t tile_addr = PICLINE_BYTE_ADDRESS(pat_y) + pat_x;
+  for (int sy = 0; sy < s->h; ++sy, p+=w) {
+    SpiRamReadBytes(tile_addr + sy*pitch, p, w);
+  }
+
   s->enabled = true;
   s->old_enabled = false;
 }
