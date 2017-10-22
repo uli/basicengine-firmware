@@ -82,7 +82,7 @@ class VS23S010 {
     void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
     void MoveBlockFast(uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height);
     
-    bool setBg(uint8_t bg, uint16_t width, uint16_t height,
+    bool defineBg(uint8_t bg, uint16_t width, uint16_t height,
                      uint8_t tile_size_x, uint8_t tile_size_y,
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
     void enableBg(uint8_t bg);

@@ -100,7 +100,7 @@ void VS23S010::setSyncLine(uint16_t line)
   }
 }
 
-bool VS23S010::setBg(uint8_t bg_idx, uint16_t width, uint16_t height,
+bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
                      uint8_t tile_size_x, uint8_t tile_size_y,
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w)
 {

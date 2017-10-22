@@ -3878,7 +3878,7 @@ void ibg() {
     return;
   }
 
-  if (vs23.setBg(m, w, h, 8, 8, px, py, pw))
+  if (vs23.defineBg(m, w, h, 8, 8, px, py, pw))
     err = ERR_LBUFOF;
 }
 
