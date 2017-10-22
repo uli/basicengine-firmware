@@ -525,18 +525,20 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   s->pat_y = pat_y;
   s->pos_x = s->old_pos_x = 0;
   s->pos_y = s->old_pos_y = 0;
+  if ((w != s->w || h != s->h) && s->pattern) {
+    free(s->pattern);
+    s->pattern = NULL;
+  }
   s->w = w;
   s->h = h;
   if (!s->pattern) {
-    SpiLock();
     s->pattern = (uint8_t *)malloc(w * h);
     uint8_t *p = s->pattern;
     uint32_t pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
     uint32_t tile_addr = PICLINE_BYTE_ADDRESS(pat_y) + pat_x;
     for (int sy = 0; sy < s->h; ++sy, p+=w) {
-      SpiRamReadBytesFast(tile_addr + sy*pitch, p, w);
+      SpiRamReadBytes(tile_addr + sy*pitch, p, w);
     }
-    SpiUnlock();
   }
   s->enabled = true;
   s->old_enabled = false;
