@@ -119,6 +119,12 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   bg->pat_w = pat_w;
   bg->tile_size_x = tile_size_x;
   bg->tile_size_y = tile_size_y;
+  if (tile_size_x * tile_size_y == 64)
+    bg->timed_delay = 60;
+  else if (tile_size_x * tile_size_y == 256)
+    bg->timed_delay = 350;
+  else
+    bg->timed_delay = 0;
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 0;
@@ -179,7 +185,7 @@ void VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uin
 // use timed code instead of polling for block move completion
 #define TIMED
 
-static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint8_t wait)
+static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint16_t timed_delay)
 {
       // XXX: What about PYF?
       //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
@@ -187,12 +193,12 @@ static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_
       VS23_SELECT;
       SPI.writeBytes(req, 5);
       VS23_DESELECT;
-#ifdef TIMED
-      for (int i=0; i < wait; ++i)
-        asm("nop");
-#else
-      while (!blockFinished()) {}
-#endif
+      if (timed_delay) {
+        for (int i=0; i < timed_delay; ++i)
+          asm("nop");
+      } else {
+        while (!blockFinished()) {}
+      }
       //SpiRamWriteBM3Ctrl(0x36);
       VS23_SELECT;
       SPI.write(0x36);
@@ -260,7 +266,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
       dest_addr = dest_addr_start + xx * tsx;
       byteaddress2 = pat_start_addr + ty*pitch + tx;
 
-      MoveBlockTimed(byteaddress2, dest_addr, 60);
+      MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
     }
   }
 }
@@ -297,7 +303,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
     dest_addr = dest_addr_start + xx * tsx;
     //Serial.printf("tstartx %d sx %d da %d das %d da-das %d\n", tile_start_x, bg->scroll_x, dest_addr, dest_addr_start, dest_addr - dest_addr_start);
     byteaddress2 = pat_start_addr + ty * pitch + tx;
-    MoveBlockTimed(byteaddress2, dest_addr, 60);
+    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
   }
 }
 
