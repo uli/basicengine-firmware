@@ -30,7 +30,7 @@ class sdfiles {
   File tfile;
   uint8_t flgtmpOlen;
   uint8_t cs;   
-  bool SD_BEGIN(void);
+  bool SD_BEGIN(int mhz = 40);
   bool SD_END(void);
 
  public:
@@ -55,5 +55,8 @@ class sdfiles {
     
   // ビットマップファイルのロード
   uint8_t loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode=0);
+
+private:
+  int m_mhz;
 };
 #endif

@@ -22,13 +22,17 @@ SdFat SD;
 
 static bool sdfat_initialized = false;
 
-bool sdfiles::SD_BEGIN(void)
+bool sdfiles::SD_BEGIN(int mhz)
 {
+  if (mhz != m_mhz) {
+    m_mhz = mhz;
+    sdfat_initialized = false;
+  }
   SpiLock();
   if (!sdfat_initialized) {
-    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(40));
+    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(mhz));
   } else {
-    SPI.setFrequency(40000000);
+    SPI.setFrequency(mhz * 1000000);
   }
   return sdfat_initialized;
 }
