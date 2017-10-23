@@ -462,7 +462,10 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
         case 1:
         {
             // Parse the whole file once to get to the palette.
-            dr_uint8 palette256[768];
+            dr_uint8 *palette256 = (dr_uint8 *)malloc(256 * 3);
+            if (!palette256)
+              return DR_FALSE;
+
             uint32_t position = pcx_file.position();
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
@@ -482,7 +485,8 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
             if (paletteMarker == 0x0C)
             {
                 // A palette is present - we need to do a second pass.
-                if (pPCX->onRead(pPCX->pUserData, palette256, sizeof(palette256)) != sizeof(palette256)) {
+                if (pPCX->onRead(pPCX->pUserData, palette256, 256 * 3) != 256 * 3) {
+                    free(palette256);
                     return DR_FALSE;
                 }
                 // Convert to YUV422
@@ -512,6 +516,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     }
                 }
             }
+            free(palette256);
 
             return DR_TRUE;
         }
@@ -519,7 +524,10 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
         case 3:
         case 4:
         {
-            dr_uint8 pRow_[stride];
+            dr_uint8 *pRow_ = (dr_uint8 *)malloc(stride);
+            if (!pRow_)
+              return DR_FALSE;
+
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
                 dr_uint8* pRow;
@@ -549,6 +557,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 }
             }
 
+            free(pRow_);
             return DR_TRUE;
         }
     }
