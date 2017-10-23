@@ -233,22 +233,61 @@ void VS23S010::SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
 
 #include "palette.h"
 
+static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b, int &h, int &s, int &v)
+{
+  v = max(max(r, g), b);
+  if (v == 0) {
+    s = 0;
+    h = 0;
+    return;
+  }
+  int m = min(min(r, g), b);
+  s = (v - m) / v;
+  if (v == m) {
+    h = 0;
+  } else {
+    int d = v - m;
+    if (v == r)
+      h = 60 * (g - b) / d;
+    else if (v == g)
+      h = 120 + 60 * (b-r) / d;
+    else
+      h = 240 + 60 * (r-g) / d;
+  }
+  if (h < 0)
+    h += 360;
+}
+
+#define H_WEIGHT 1
+#define S_WEIGHT 1
+#define V_WEIGHT 1
+
 uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 {
+        static uint8_t last_r, last_g, last_b;
+        static uint8_t last_yuv;
+        if (r == last_r && g == last_g && b == last_b)
+          return last_yuv;
+
         uint8_t pr, pg, pb;
-        int mindiff = 256*3;
+        int h, s, v, ph, ps, pv;
+        int mindiff = H_WEIGHT*360+(S_WEIGHT+V_WEIGHT)*256;
         int minidx = -1;
         int diff;
         for (int i=0; i < 256; ++i) {
           pr = pgm_read_byte(&yuv_palette[i*3]);
           pg = pgm_read_byte(&yuv_palette[i*3+1]);
           pb = pgm_read_byte(&yuv_palette[i*3+2]);
-          diff = abs(r-pr)+abs(g-pg)+abs(b-pb);
+          rgb_to_hsv(pr, pg, pb, ph, ps, pv);
+          rgb_to_hsv(r, g, b, h, s, v);
+          diff = H_WEIGHT*abs(h-ph)+S_WEIGHT*abs(s-ps)+V_WEIGHT*abs(v-pv);
           if (diff < mindiff) {
             mindiff = diff;
             minidx = i;
           }
         }
+        last_r = r; last_g = g; last_b = b;
+        last_yuv = minidx;
         return minidx;
 }
 	
