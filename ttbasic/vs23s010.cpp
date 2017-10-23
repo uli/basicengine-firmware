@@ -409,6 +409,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         if (s->old_pos_x < -s->w || s->old_pos_y < -s->h)
           continue;
 
+        // XXX: Needed because the timed wait is tuned for drawing tiles, and
+        // sprites may be bigger and thus take longer to blit...
+        while(!blockFinished());
+
         if (s->old_pos_y < tsy)
           drawBgTop(bg, pitch, old_dest_addr_start, pat_start_addr,
                     old_tile_start_x + min(s->old_pos_x, 0) / tsx,
