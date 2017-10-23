@@ -3862,7 +3862,7 @@ void iscreen() {
 
 void ibg() {
   int16_t m;
-  int16_t w, h, px, py, pw, ph;
+  int16_t w, h, px, py, pw, ph, tx, ty;
   if (getParam(m, 0, VS23_MAX_BG, false)) return;
 
   if (*cip != I_COMMA) {
@@ -3875,13 +3875,15 @@ void ibg() {
   if (getParam(h, 0, 1023, true)) return;
   if (getParam(px, 0, sc0.getGWidth(), true)) return;
   if (getParam(py, 0, 1023, true)) return;
-  if (getParam(pw, 0, sc0.getScreenWidth(), false)) return;
-  if (px + pw*8 > sc0.getGWidth()) {
+  if (getParam(pw, 0, sc0.getScreenWidth(), true)) return;
+  if (getParam(tx, 8, 32, true)) return;
+  if (getParam(ty, 8, 32, false)) return;
+  if (px + pw*tx > sc0.getGWidth()) {
     err = ERR_RANGE;
     return;
   }
 
-  if (vs23.defineBg(m, w, h, 8, 8, px, py, pw))
+  if (vs23.defineBg(m, w, h, tx, ty, px, py, pw))
     err = ERR_LBUFOF;
 }
 
