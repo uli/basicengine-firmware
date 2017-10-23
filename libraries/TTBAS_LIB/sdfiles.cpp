@@ -468,7 +468,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 uint8_t sdfiles::loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h, uint8_t mode) {
   uint8_t rc =1;
  
-  if (SD_BEGIN() == false) 
+  if (SD_BEGIN(11) == false) 
     return -SD_ERR_INIT;
 
   pcx_file = SD.open(fname, FILE_READ);
