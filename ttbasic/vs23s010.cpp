@@ -327,6 +327,12 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy;
+      if (bg->timed_delay) {
+        for (int i=0; i < bg->timed_delay; ++i)
+          asm("nop");
+      } else {
+        while (!blockFinished()) {}
+      }
 //      Serial.printf("%d, %d, %d, %d, %d, %d\n", bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
       MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
     }
