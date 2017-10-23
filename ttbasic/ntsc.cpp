@@ -13,7 +13,7 @@ const struct vs23_mode_t VS23S010::modes[] = {
   { 432, 216, 13, 14, 3, 9 },
   { 320, 216, 11, 15, 4, 9 },	// VS23 NTSC demo
   { 320, 200, 20, 15, 4, 9 },	// (M)CGA, Commodore et al.
-  { 256, 224, 9, 15, 5, 8 },	// SNES
+  { 256, 224, 9, 15, 5, 9 },	// SNES
   { 256, 192, 24, 15, 5, 8 },	// MSX, Spectrum, NDS	XXX: has artifacts
   { 160, 200, 20, 15, 8, 8 },	// Commodore/PCjr/CPC multi-color
   // overscan modes
