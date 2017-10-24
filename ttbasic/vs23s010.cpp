@@ -94,9 +94,10 @@ void VS23S010::setSyncLine(uint16_t line)
   } else {
     syncLine = line;
     timer0_isr_init();
+    timer0_attachInterrupt(&vsyncHandler);
+    // Make sure interrupt is triggered soon.
     timer0_write(ESP.getCycleCount()+100);
     m_vsync_enabled = true;
-    timer0_attachInterrupt(&vsyncHandler);
   }
 }
 
