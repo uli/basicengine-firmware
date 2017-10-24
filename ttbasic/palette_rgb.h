@@ -2,7 +2,7 @@
 Name: P-EE-A22-B22-Y44-N10
 Columns: 3
 #*/
-static const uint8_t yuv_palette[256*3] PROGMEM = {
+static const uint8_t yuv_palette_rgb[256*3] PROGMEM = {
   0,  0,  0,	// 00000
  16, 16, 16,	// 00001
  32, 32, 32,	// 00002
