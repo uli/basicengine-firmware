@@ -138,8 +138,8 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
 void VS23S010::enableBg(uint8_t bg)
 {
   if (m_bg[bg].tiles) {
-    m_bg[bg].enabled = true;
     m_bg[bg].force_redraw = true;
+    m_bg[bg].enabled = true;
   }
 }
 
