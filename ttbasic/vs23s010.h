@@ -115,8 +115,8 @@ private:
       uint8_t w, h;
       uint8_t tile_size_x, tile_size_y;
       uint16_t timed_delay;
-      uint16_t scroll_x, scroll_y;
-      uint16_t old_scroll_x, old_scroll_y;
+      int scroll_x, scroll_y;
+      int old_scroll_x, old_scroll_y;
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
       bool force_redraw;

@@ -129,6 +129,7 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 0;
+  bg->old_scroll_x = bg->old_scroll_y = 0;
   bg->win_x = bg->win_y = 0;
   bg->win_w = currentMode->x;
   bg->win_h = currentMode->y;

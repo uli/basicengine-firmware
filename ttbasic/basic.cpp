@@ -3913,8 +3913,8 @@ void iscroll() {
   int16_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, true)) return;
   // XXX: arbitrary limitation?
-  if (getParam(x, 0, 1023, true)) return;
-  if (getParam(y, 0, 1023, false)) return;
+  if (getParam(x, -32768, 32767, true)) return;
+  if (getParam(y, -32768, 32767, false)) return;
   
   vs23.scroll(bg, x, y);
 }
