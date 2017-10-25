@@ -314,7 +314,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
                                                    int tile_end_x,
                                                    int tile_end_y,
                                                    uint32_t xpoff,
-                                                   uint32_t ypoff)
+                                                   uint32_t ypoff,
+                                                   uint32_t skip_x)
 {
   uint32_t tile;
   uint32_t tx, ty;
@@ -325,7 +326,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   uint32_t pw = bg->pat_w;
   // Bottom line
   if (ypoff)
-    for (int xx = tile_start_x; xx < tile_end_x; ++xx) {
+    for (int xx = tile_start_x+skip_x; xx < tile_end_x; ++xx) {
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy;
@@ -392,7 +393,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
       drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, 1);
 
-      drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff);
+      drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
     } else {
       int old_tile_start_y = bg->old_scroll_y / tsy;
       int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
@@ -431,7 +432,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         if (s->old_pos_y > bg->win_h - tsy)
           drawBgBottom(bg, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
                        min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
-                       old_tile_end_y, old_xpoff, old_ypoff);
+                       old_tile_end_y, old_xpoff, old_ypoff, 0);
       }
 
       uint8_t x_dir, y_dir;
@@ -499,6 +500,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
       if (draw_left) {
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, tile_end_y, xpoff, ypoff, 0, 1);
+        drawBgBottom(bg, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
       if (draw_right) {
         drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
@@ -509,10 +511,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           while (!blockFinished()) {}
         }
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2, 1);
+        drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
       }
       if (draw_bottom) {
         if (ypoff)
-          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff);
+          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
         else
           drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
       }

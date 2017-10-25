@@ -150,7 +150,8 @@ private:
                                                    int tile_end_x,
                                                    int tile_end_y,
                                                    uint32_t xpoff,
-                                                   uint32_t ypoff);
+                                                   uint32_t ypoff,
+                                                   uint32_t skip_x);
 
     struct sprite_t {
       uint16_t pat_x, pat_y;
