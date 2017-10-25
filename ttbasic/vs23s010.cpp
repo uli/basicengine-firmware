@@ -420,18 +420,18 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           drawBgTop(bg, pitch, old_dest_addr_start, pat_start_addr,
                     old_tile_start_x + min(s->old_pos_x, 0) / tsx,
                     old_tile_start_y,
-                    min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
+                    min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
                     old_xpoff, old_ypoff);
                     
         drawBg(bg, pitch, old_dest_addr_start, pat_start_addr, win_start_addr,
                old_tile_start_x, old_tile_start_y,
-               min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
-               min(old_tile_start_y + (s->old_pos_y + s->h) / tsy + 3, old_tile_end_y),
+               min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
+               min(old_tile_start_y + (s->old_pos_y + s->h + tsy - 1) / tsy + 2, old_tile_end_y),
                old_xpoff, old_ypoff,
                max(s->old_pos_x, 0) / tsx, max(s->old_pos_y / tsy, 1));
         if (s->old_pos_y > bg->win_h - tsy)
           drawBgBottom(bg, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
-                       min(old_tile_start_x + (s->old_pos_x + s->w) / tsx + 1, old_tile_end_x),
+                       min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
                        old_tile_end_y, old_xpoff, old_ypoff, 0);
       }
 
