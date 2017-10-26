@@ -496,8 +496,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         
       while (!blockFinished()) {}
       if (draw_top) {
-        if (ypoff)
-          drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
+        drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
       }
       if (draw_left) {
         if (ypoff) {
