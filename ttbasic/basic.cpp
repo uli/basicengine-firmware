@@ -2244,7 +2244,6 @@ void iwait() {
   if ( getParam(tm, 0, 32767, false) ) return;
   uint32_t end = tm + millis();
   while (millis() < end) {
-    delay(1);
     vs23.updateBg();
   }
 }
