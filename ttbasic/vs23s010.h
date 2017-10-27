@@ -104,6 +104,7 @@ class VS23S010 {
     void moveSprite(uint8_t num, int16_t x, int16_t y);
 
     const struct vs23_mode_t *currentMode;
+    int lastLine;
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];
 

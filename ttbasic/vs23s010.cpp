@@ -49,6 +49,7 @@ void VS23S010::setMode(uint8_t mode)
   setSyncLine(0);
   currentMode = &modes[mode];
   SpiRamVideoInit();
+  lastLine = PICLINE_MAX;
   calibrateVsync();
   setSyncLine(currentMode->y + currentMode->top);
 }

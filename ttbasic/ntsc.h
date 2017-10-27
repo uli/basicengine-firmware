@@ -150,6 +150,8 @@
 #define PICLINE_WORD_ADDRESS(n) (PICLINE_START/2+(PICLINE_LENGTH_BYTES/2+BEXTRA/2)*(n))
 #define PICLINE_BYTE_ADDRESS(n) ((uint32_t)(PICLINE_START+((uint32_t)(PICLINE_LENGTH_BYTES)+BEXTRA)*(n)))
 
+#define PICLINE_MAX ((131072-PICLINE_START)/(PICLINE_LENGTH_BYTES+BEXTRA))
+
 /// 8-bit RGB to 8-bit YUV444 conversion
 #define YRGB(r,g,b) ((76*r+150*g+29*b)>>8)
 #define URGB(r,g,b) (((r<<7)-107*g-20*b)>>8)
