@@ -270,5 +270,15 @@ void SpiRamWriteBM2Ctrl(register uint16_t data1, uint16_t data2, uint16_t data3)
 void SpiRamWriteBM3Ctrl(register uint16_t opcode);
 void SpiRamWriteByteRegister(register uint16_t opcode, register uint16_t data);
 
+#include <Arduino.h>
+#ifdef SOFT_BLOCKMOVE
 static inline bool blockFinished(void) { return !(SpiRamReadRegister8(0x86) & 1); }
+#else
+#ifdef ESP8266
+static inline bool blockFinished(void) { return GPI & (1 << 2); }
+#else
+static inline bool blockFinished(void) { return digitalRead(2); }
+#endif
+#endif
+
 #endif
