@@ -376,7 +376,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     if (!bg->enabled)
       continue;
 
-    SPI.setFrequency(38000000);
+    SPI1CLK = absolute_min_spi_div;
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
     int tile_end_y = tile_start_y + (bg->win_h + bg->tile_size_y-1) / bg->tile_size_y + 1;
     int tile_start_x = bg->scroll_x / bg->tile_size_x;
@@ -554,7 +554,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     while (!blockFinished()) {}
 
-    SPI.setFrequency(11000000);
+    SPI1CLK = currentMode->max_spi_freq;
 #if 1
     uint8_t bbuf[16+4];
     uint8_t sbuf[16+4];
