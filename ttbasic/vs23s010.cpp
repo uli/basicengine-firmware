@@ -558,8 +558,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     SPI1CLK = currentMode->max_spi_freq;
 #if 1
-    uint8_t bbuf[16+4];
-    uint8_t sbuf[16+4];
+    uint8_t bbuf[VS23_MAX_SPRITE_W+4];
+    uint8_t sbuf[VS23_MAX_SPRITE_W+4];
     pat_start_addr = PICLINE_BYTE_ADDRESS(0);
     for (int sn = 0; sn < 7/*VS23_MAX_SPRITES*/; ++sn) {
       struct sprite_t *s = &m_sprite[sn];
