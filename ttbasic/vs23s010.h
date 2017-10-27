@@ -25,6 +25,9 @@ struct vs23_mode_t {
   uint8_t left;
   uint8_t vclkpp;
   uint8_t bextra;
+  // Maximum SPI frequency for this mode; translated to minimum clock
+  // divider on boot.
+  uint32_t max_spi_freq;
 };
 
 #define VS23_MAX_X	456
@@ -100,7 +103,7 @@ class VS23S010 {
 
     const struct vs23_mode_t *currentMode;
     static const uint8_t numModes;
-    static const struct vs23_mode_t modes[];
+    static struct vs23_mode_t modes[];
 
 private:
     bool m_vsync_enabled;

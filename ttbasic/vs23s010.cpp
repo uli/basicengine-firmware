@@ -17,9 +17,22 @@ void VS23S010::adjust(int16_t cnt)
   // XXX: Huh?
 }
 
+#include <SPI.h>
+
+static int absolute_max_spi_div;
 void VS23S010::begin()
 {
   m_vsync_enabled = false;
+
+  SpiLock();
+  for (int i = 0; i < numModes; ++i) {
+    SPI.setFrequency(modes[i].max_spi_freq);
+    modes[i].max_spi_freq = SPI1CLK;
+  }
+  SPI.setFrequency(38000000);
+  absolute_max_spi_div = SPI1CLK;
+  SPI.setFrequency(11000000);
+  SpiUnlock();
 }
 
 void VS23S010::end()
@@ -168,8 +181,6 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   bg->win_h = h;
   bg->force_redraw = true;
 }
-
-#include <SPI.h>
 
 // use timed code instead of polling for block move completion
 #define TIMED
