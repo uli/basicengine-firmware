@@ -171,19 +171,6 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
 
 #include <SPI.h>
 
-void VS23S010::MoveBlockFast (uint16_t x_src, uint16_t y_src, int16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height)
-{
-  uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
-  uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
-  // XXX: What about PYF?
-  SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2));
-  SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
-  //SpiRamWriteBM3Ctrl(0x36);
-  VS23_SELECT;
-  SPI.write(0x36);
-  VS23_DESELECT;
-}
-
 // use timed code instead of polling for block move completion
 #define TIMED
 
@@ -310,6 +297,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
+                                            uint32_t pitch,
                                                    int tile_start_x,
                                                    int tile_end_x,
                                                    int tile_end_y,
@@ -325,7 +313,15 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
   // Bottom line
-  if (ypoff)
+  if (ypoff) {
+    int ba1a = PICLINE_BYTE_ADDRESS(bg->win_y + bg->win_h - ypoff) + bg->win_x - xpoff;
+    int ba2a = PICLINE_BYTE_ADDRESS(bg->pat_y) + bg->pat_x;
+    while (!blockFinished()) {}
+    // Set pitch, width and height; same for all tiles
+    SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, ypoff-1);
+    // Set up the LSB of the start/dest addresses; they don't change for
+    // middle tiles, so we can omit the last byte of the request.
+    SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
     for (int xx = tile_start_x+skip_x; xx < tile_end_x; ++xx) {
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
@@ -337,8 +333,12 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
         while (!blockFinished()) {}
       }
 //      Serial.printf("%d, %d, %d, %d, %d, %d\n", bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
-      MoveBlockFast(bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
+      uint32_t byteaddress1 = ba1a + (xx - tile_start_x) * tsx;
+      uint32_t byteaddress2 = ba2a + ty * pitch + tx;
+      // XXX: What about PYF?
+      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
     }
+  }
 }
 
 void ICACHE_RAM_ATTR VS23S010::updateBg()
@@ -393,7 +393,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
       drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, 1);
 
-      drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+      drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
     } else {
       int old_tile_start_y = bg->old_scroll_y / tsy;
       int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
@@ -430,7 +430,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
                old_xpoff, old_ypoff,
                max(s->old_pos_x, 0) / tsx, max(s->old_pos_y / tsy, 1));
         if (s->old_pos_y + s->h >= bg->win_h - tsy)
-          drawBgBottom(bg, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
+          drawBgBottom(bg, pitch, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
                        min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
                        old_tile_end_y, old_xpoff, old_ypoff, 0);
       }
@@ -509,7 +509,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           }
         }
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, tile_end_y, xpoff, ypoff, 0, 1);
-        drawBgBottom(bg, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
+          drawBgBottom(bg, pitch, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
       if (draw_right) {
         if (ypoff) {
@@ -522,11 +522,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           }
         }
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2, 1);
-        drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
+          drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
       }
       if (draw_bottom) {
         if (ypoff)
-          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+          drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
         else
           drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
       }
