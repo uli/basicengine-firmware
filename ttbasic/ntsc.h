@@ -249,8 +249,13 @@
 #define BURST_LEVEL 0x0d66
 #define WHITE_LEVEL 0x00ff
 
+#ifdef ESP8266
 #define VS23_SELECT do { GPOC = 1<<15; } while(0)
 #define VS23_DESELECT do { GPOS = 1<<15; } while(0)
+#else
+#define VS23_SELECT digitalWrite(15, LOW)
+#define VS23_DESELECT digitalWrite(15, HIGH)
+#endif
 
 void SpiRamInit();
 void SpiRamWriteByte(register uint32_t address, uint8_t data);
