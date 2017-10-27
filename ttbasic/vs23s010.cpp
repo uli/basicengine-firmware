@@ -370,6 +370,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     return;
   last_frame = m_frame;
 
+  int spi_clock_default = SPI1CLK;
+
   SpiLock();
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
@@ -556,7 +558,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     while (!blockFinished()) {}
 
-    SPI1CLK = currentMode->max_spi_freq;
 #if 1
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
@@ -592,7 +593,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       for (int sy = 0; sy < draw_h; ++sy) {
         //sbuf = s->pattern + sy*s->w - 4;
         memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
+
+        // Playing fast and loose with data integrity here: we can use
+        // much higher SPI speeds than the stable 11 MHz if we accept
+        // that there is an occasional corrupted byte, which will
+        // be corrected in the next frame.
+        SPI1CLK = currentMode->max_spi_freq;
         SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, draw_w);
+        SPI1CLK = spi_clock_default;
 
 #if 1
         for (int p = 4; p < draw_w+4; ++p) {
@@ -606,6 +614,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #endif
   }
 
+  SPI1CLK = spi_clock_default;
   SpiUnlock();
 }
 
