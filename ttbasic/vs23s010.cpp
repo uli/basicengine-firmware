@@ -422,7 +422,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint32_t old_ypoff = bg->old_scroll_y % tsy;
       int old_dest_addr_start = win_start_addr - old_tile_start_x * tsx - old_xpoff;
 
-      for (int sn = 0; sn < 7/*VS23_MAX_SPRITES*/; ++sn) {
+      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
         struct sprite_t *s = &m_sprite[sn];
         if (!s->old_enabled)
           continue;
@@ -431,27 +431,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         if (s->old_pos_x < -s->w || s->old_pos_y < -s->h)
           continue;
 
-        // XXX: Needed because the timed wait is tuned for drawing tiles, and
-        // sprites may be bigger and thus take longer to blit...
-        while(!blockFinished());
-
-        if (s->old_pos_y < tsy)
-          drawBgTop(bg, pitch, old_dest_addr_start, pat_start_addr,
-                    old_tile_start_x + min(s->old_pos_x, 0) / tsx,
-                    old_tile_start_y,
-                    min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
-                    old_xpoff, old_ypoff);
-                    
-        drawBg(bg, pitch, old_dest_addr_start, pat_start_addr, win_start_addr,
-               old_tile_start_x, old_tile_start_y,
-               min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
-               min(old_tile_start_y + (s->old_pos_y + s->h + tsy - 1) / tsy + 2, old_tile_end_y),
-               old_xpoff, old_ypoff,
-               max(s->old_pos_x, 0) / tsx, max(s->old_pos_y / tsy, 1));
-        if (s->old_pos_y + s->h >= bg->win_h - tsy)
-          drawBgBottom(bg, pitch, old_tile_start_x + min(s->old_pos_x, 0) / tsx,
-                       min(old_tile_start_x + (s->old_pos_x + s->w + tsx - 1) / tsx + 1, old_tile_end_x),
-                       old_tile_end_y, old_xpoff, old_ypoff, 0);
+#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
+#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
+        MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
+                  s->old_pos_x, s->old_pos_y, s->w, s->h, 0);
       }
 
       uint8_t x_dir, y_dir;
@@ -563,8 +546,18 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
     pat_start_addr = PICLINE_BYTE_ADDRESS(0);
-    for (int sn = 0; sn < 7/*VS23_MAX_SPRITES*/; ++sn) {
+    for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
       struct sprite_t *s = &m_sprite[sn];
+      if (!s->enabled)
+        continue;
+      MoveBlock(s->pos_x, s->pos_y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), s->w, s->h, 0);
+    }
+
+    // Reduce speed for memory accesses.
+    SPI1CLK = spi_clock_default;
+    
+    for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
+      struct sprite_t *s = m_sprites_ordered[sn];
       s->old_pos_x = s->pos_x;
       s->old_pos_y = s->pos_y;
       s->old_enabled = s->enabled;
@@ -574,6 +567,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (s->pos_x >= bg->win_w || s->pos_y >= bg->win_h)
         continue;
+
       int sx = s->pos_x;
       uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * pitch + max(0, sx);
       uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
@@ -592,7 +586,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         draw_w -= s->pos_x + s->w - bg->win_w;
 
       for (int sy = 0; sy < draw_h; ++sy) {
-        //sbuf = s->pattern + sy*s->w - 4;
+        // Copy sprite data to SPI send buffer.
         memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
 
         // Playing fast and loose with data integrity here: we can use
