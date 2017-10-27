@@ -50,7 +50,7 @@ void VS23S010::setMode(uint8_t mode)
   currentMode = &modes[mode];
   SpiRamVideoInit();
   calibrateVsync();
-  setSyncLine(currentMode->y);
+  setSyncLine(currentMode->y + currentMode->top);
 }
 
 void VS23S010::calibrateVsync()
