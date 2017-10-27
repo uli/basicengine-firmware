@@ -19,7 +19,7 @@ void VS23S010::adjust(int16_t cnt)
 
 #include <SPI.h>
 
-static int absolute_max_spi_div;
+static int absolute_min_spi_div;
 void VS23S010::begin()
 {
   m_vsync_enabled = false;
@@ -35,7 +35,7 @@ void VS23S010::begin()
     modes[i].max_spi_freq = SPI1CLK;
   }
   SPI.setFrequency(38000000);
-  absolute_max_spi_div = SPI1CLK;
+  absolute_min_spi_div = SPI1CLK;
   SPI.setFrequency(11000000);
   SpiUnlock();
 }
