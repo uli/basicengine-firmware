@@ -423,20 +423,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint32_t old_ypoff = bg->old_scroll_y % tsy;
       int old_dest_addr_start = win_start_addr - old_tile_start_x * tsx - old_xpoff;
 
-      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-        struct sprite_t *s = &m_sprite[sn];
-        if (!s->old_enabled)
-          continue;
-        if (s->old_pos_x > bg->win_w || s->old_pos_y > bg->win_h)
-          continue;
-        if (s->old_pos_x < -s->w || s->old_pos_y < -s->h)
-          continue;
-
-#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
-#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
-        MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
-                  s->old_pos_x, s->old_pos_y, s->w, s->h, 0);
-      }
 
       uint8_t x_dir, y_dir;
       uint32_t src_x, src_y, dst_x, dst_y;
@@ -535,6 +521,27 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         else
           drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
       }
+
+      int scroll_dx = bg->scroll_x - bg->old_scroll_x;
+      int scroll_dy = bg->scroll_y - bg->old_scroll_y;
+
+      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
+        struct sprite_t *s = &m_sprite[sn];
+        int sx_adj = s->old_pos_x - scroll_dx;
+        int sy_adj = s->old_pos_y - scroll_dy;
+        if (!s->old_enabled)
+          continue;
+        if (sx_adj > bg->win_w || sy_adj > bg->win_h)
+          continue;
+        if (sx_adj < -s->w || sy_adj < -s->h)
+          continue;
+
+#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
+#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
+        MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
+                  sx_adj, sy_adj, s->w, s->h, 0);
+      }
+
     }
 
     bg->old_scroll_x = bg->scroll_x;
