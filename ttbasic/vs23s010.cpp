@@ -23,6 +23,11 @@ static int absolute_max_spi_div;
 void VS23S010::begin()
 {
   m_vsync_enabled = false;
+  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    m_sprites_ordered[i] = &m_sprite[i];
+    m_sprite[i].enabled = false;
+    m_sprite[i].old_enabled = false;
+  }
 
   SpiLock();
   for (int i = 0; i < numModes; ++i) {
@@ -630,10 +635,16 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   s->old_enabled = false;
 }
 
+int VS23S010::cmp_sprite_y(const void *one, const void *two)
+{
+  return (*(struct sprite_t**)one)->pos_y - (*(struct sprite_t **)two)->pos_y;
+}
+
 void VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
 {
   m_sprite[num].pos_x = x;
   m_sprite[num].pos_y = y;
+  qsort(m_sprites_ordered, VS23_MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
 }
 
 #undef TIMED

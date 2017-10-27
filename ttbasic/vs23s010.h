@@ -165,6 +165,8 @@ private:
       uint8_t w, h;
       uint8_t *pattern;
     } m_sprite[VS23_MAX_SPRITES];
+    struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
+    static int cmp_sprite_y(const void *one, const void *two);
     
     uint32_t m_frame;
 };
