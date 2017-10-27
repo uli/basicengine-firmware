@@ -27,6 +27,7 @@ void VS23S010::begin()
     m_sprites_ordered[i] = &m_sprite[i];
     m_sprite[i].enabled = false;
     m_sprite[i].old_enabled = false;
+    m_sprite[i].transparent = false;
   }
 
   SpiLock();
@@ -567,43 +568,44 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (s->pos_x >= bg->win_w || s->pos_y >= bg->win_h)
         continue;
+      if (s->transparent) {
+        int sx = s->pos_x;
+        uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * pitch + max(0, sx);
+        uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
 
-      int sx = s->pos_x;
-      uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * pitch + max(0, sx);
-      uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
+        int draw_w = s->w;
+        int draw_h = s->h;
 
-      int draw_w = s->w;
-      int draw_h = s->h;
+        if (s->pos_y < 0)
+          draw_h += s->pos_y;
+        else if (s->pos_y + s->h > bg->win_h)
+          draw_h -= s->pos_y + s->h - bg->win_h;
 
-      if (s->pos_y < 0)
-        draw_h += s->pos_y;
-      else if (s->pos_y + s->h > bg->win_h)
-        draw_h -= s->pos_y + s->h - bg->win_h;
+        if (s->pos_x < 0)
+          draw_w += s->pos_x;
+        else if (s->pos_x + s->w > bg->win_w)
+          draw_w -= s->pos_x + s->w - bg->win_w;
 
-      if (s->pos_x < 0)
-        draw_w += s->pos_x;
-      else if (s->pos_x + s->w > bg->win_w)
-        draw_w -= s->pos_x + s->w - bg->win_w;
+        for (int sy = 0; sy < draw_h; ++sy) {
+          // Copy sprite data to SPI send buffer.
+          memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
 
-      for (int sy = 0; sy < draw_h; ++sy) {
-        // Copy sprite data to SPI send buffer.
-        memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
+          // Playing fast and loose with data integrity here: we can use
+          // much higher SPI speeds than the stable 11 MHz if we accept
+          // that there is an occasional corrupted byte, which will
+          // be corrected in the next frame.
+          SPI1CLK = currentMode->max_spi_freq;
+          SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, draw_w);
+          SPI1CLK = spi_clock_default;
 
-        // Playing fast and loose with data integrity here: we can use
-        // much higher SPI speeds than the stable 11 MHz if we accept
-        // that there is an occasional corrupted byte, which will
-        // be corrected in the next frame.
-        SPI1CLK = currentMode->max_spi_freq;
-        SpiRamReadBytesFast(spr_addr + sy*pitch, bbuf, draw_w);
-        SPI1CLK = spi_clock_default;
-
-#if 1
-        for (int p = 4; p < draw_w+4; ++p) {
-          if (!sbuf[p])
-            sbuf[p] = bbuf[p];
+          for (int p = 4; p < draw_w+4; ++p) {
+            if (!sbuf[p])
+              sbuf[p] = bbuf[p];
+          }
+          SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, draw_w);
         }
-#endif
-        SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, draw_w);
+      } else {
+        MoveBlock(s->pat_x, s->pat_y, s->pos_x, s->pos_y, s->w, s->h, 0);
       }
     }
 #endif

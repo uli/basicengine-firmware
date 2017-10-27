@@ -160,13 +160,14 @@ private:
                                                    uint32_t skip_x);
 
     struct sprite_t {
+      uint8_t *pattern;
       uint16_t pat_x, pat_y;
       int16_t pos_x, pos_y;
-      bool enabled;
       int16_t old_pos_x, old_pos_y;
+      bool enabled;
       bool old_enabled;
+      bool transparent;
       uint8_t w, h;
-      uint8_t *pattern;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
