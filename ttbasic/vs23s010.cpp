@@ -572,8 +572,24 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
           continue;
 
-        MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
-                  sx_adj, sy_adj, s->w, s->h, 0);
+        int w = s->w;
+        int h = s->h;
+        if (sx_adj < 0) {
+          w += sx_adj;
+          sx_adj = 0;
+        } else if (sx_adj + w >= bg->win_w) {
+          w = bg->win_w - sx_adj;
+        }
+        if (sy_adj < 0) {
+          h += sy_adj;
+          sy_adj = 0;
+        } else if (sy_adj + h >= bg->win_h) {
+          h = bg->win_h - sy_adj;
+        }
+
+        if (w > 0 && h > 0)
+          MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
+                    sx_adj, sy_adj, w, h, 0);
       }
 
     }
@@ -592,7 +608,27 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
         continue;
-      MoveBlock(s->pos_x, s->pos_y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), s->w, s->h, 0);
+
+      int w = s->w;
+      int h = s->h;
+      int x = s->pos_x;
+      int y = s->pos_y;
+
+      if (x < 0) {
+        w += x;
+        x = 0;
+      } else if (x + w >= bg->win_w) {
+        w = bg->win_w - x;
+      }
+      if (y < 0) {
+        h += y;
+        y = 0;
+      } else if (y + h >= bg->win_h) {
+        h = bg->win_h - y;
+      }
+
+      if (w > 0 && h > 0)
+        MoveBlock(x, y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), w, h, 0);
     }
 
     // Reduce speed for memory accesses.
@@ -650,7 +686,26 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, draw_w);
         }
       } else {
-        MoveBlock(s->pat_x, s->pat_y, s->pos_x, s->pos_y, s->w, s->h, 0);
+        int w = s->w;
+        int h = s->h;
+        int x = s->pos_x;
+        int y = s->pos_y;
+
+        if (x < 0) {
+          w += x;
+          x = 0;
+        } else if (x + w >= bg->win_w) {
+          w = bg->win_w - x;
+        }
+        if (y < 0) {
+          h += y;
+          y = 0;
+        } else if (y + h >= bg->win_h) {
+          h = bg->win_h - y;
+        }
+
+        if (w > 0 && h > 0)
+          MoveBlock(s->pat_x, s->pat_y, x, y, w, h, 0);
       }
     }
 #endif
