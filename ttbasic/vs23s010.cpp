@@ -359,6 +359,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   }
 }
 
+#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
+#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
+
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
@@ -396,6 +399,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     win_start_addr = PICLINE_BYTE_ADDRESS(bg->win_y) + bg->win_x;
     uint8_t bg_w = bg->w;    
     uint8_t bg_h = bg->h;
+
+    int scroll_dx = bg->scroll_x - bg->old_scroll_x;
+    int scroll_dy = bg->scroll_y - bg->old_scroll_y;
 
     // This code draws into the "extra" bytes following each picture line.
     // Doing so keeps us from having to give border tiles special treatment:
@@ -522,9 +528,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
       }
 
-      int scroll_dx = bg->scroll_x - bg->old_scroll_x;
-      int scroll_dy = bg->scroll_y - bg->old_scroll_y;
-
       for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
         struct sprite_t *s = &m_sprite[sn];
         int sx_adj = s->old_pos_x - scroll_dx;
@@ -536,17 +539,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         if (sx_adj < -s->w || sy_adj < -s->h)
           continue;
 
-#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
-#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
         MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
                   sx_adj, sy_adj, s->w, s->h, 0);
       }
 
     }
-
-    bg->old_scroll_x = bg->scroll_x;
-    bg->old_scroll_y = bg->scroll_y;
-    bg->force_redraw = false;
 
     while (!blockFinished()) {}
 
@@ -616,6 +613,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
     }
 #endif
+    bg->old_scroll_x = bg->scroll_x;
+    bg->old_scroll_y = bg->scroll_y;
+    bg->force_redraw = false;
   }
 
   SPI1CLK = spi_clock_default;
