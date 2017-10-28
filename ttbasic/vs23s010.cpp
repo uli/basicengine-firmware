@@ -400,9 +400,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     uint8_t bg_w = bg->w;    
     uint8_t bg_h = bg->h;
 
+    // Find split point at a tile boundary
+    uint32_t tile_split_y = tile_start_y + (tile_end_y - tile_start_y) / 2;
+    uint32_t pix_split_y = ((tile_end_y - tile_start_y) / 2) * tsy - ypoff;
+
     int scroll_dx = bg->scroll_x - bg->old_scroll_x;
     int scroll_dy = bg->scroll_y - bg->old_scroll_y;
 
+    for (int pass = 0; pass < 2; ++pass) {
     // This code draws into the "extra" bytes following each picture line.
     // Doing so keeps us from having to give border tiles special treatment:
     // their invisible parts are simply drawn where they cannot be seen.
@@ -411,15 +416,20 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     
     // XXX: This means that window width must be a multiple of tile width.
 
-    dest_addr_start = win_start_addr - tile_start_x * tsx - xpoff;
+    dest_addr_start = win_start_addr + (pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
     if (bg->force_redraw || abs(bg->scroll_x - bg->old_scroll_x) > 8 || abs(bg->scroll_y - bg->old_scroll_y) > 8) {
       // Top line
+      if (pass == 0)
+        drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
-      drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
+      drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr,
+             tile_start_x, tile_start_y,
+             tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
 
-      drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, 1);
-
-      drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+      if (pass == 1)
+        drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+      
+      scroll_dy = 0;
     } else {
       int old_tile_start_y = bg->old_scroll_y / tsy;
       int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
@@ -480,21 +490,40 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       //Serial.printf("src_x %d, src_y %d, dst_x %d, dst_y %d, w %d, h %d, y_dir %d\n", src_x, src_y, dst_x, dst_y, w, h, y_dir);
       if (w > 256) {
         if (x_dir == 0) {
-          MoveBlock(src_x, src_y, dst_x, dst_y, w/2, h, y_dir);
-          MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y, w/2, h, y_dir);
+          if (pass == 0) {
+            MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+            MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+          } else {
+            MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x + w/2, src_y + pix_split_y, dst_x + w/2, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+          }
         } else {
-          MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y, w/2, h, y_dir);
-          MoveBlock(src_x, src_y, dst_x, dst_y, w/2, h, y_dir);
+          if (pass == 0) {
+            MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+            MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+          } else {
+            MoveBlock(src_x + w/2, src_y + pix_split_y, dst_x + w/2, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+          }
         }
-      } else
-        MoveBlock(src_x, src_y, dst_x, dst_y, w, h, y_dir);
+      } else {
+        if (pass == 0) {
+          if (y_dir)
+            MoveBlock(0, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, bg->win_w, -scroll_dy, 0);
+          MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w, pix_split_y, y_dir);
+        } else {
+          if (y_dir)
+            MoveBlock(0, SPRITE_BACKING_Y(0)-8, 0, pix_split_y, bg->win_w, -scroll_dy, 0);
+          MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w, h-pix_split_y, y_dir);
+        }
+      }
         
       while (!blockFinished()) {}
-      if (draw_top) {
+      if (pass == 0 && draw_top) {
         drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
       }
       if (draw_left) {
-        if (ypoff && !draw_top) {
+        if (ypoff && !draw_top && pass == 0) {
           drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, xpoff, ypoff);
           if (bg->timed_delay) {
             for (int i=0; i < bg->timed_delay; ++i)
@@ -504,11 +533,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           }
         }
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, tile_end_y, xpoff, ypoff, 0, 1);
-        if (!draw_bottom)
+        if (!draw_bottom && pass == 1)
           drawBgBottom(bg, pitch, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
       if (draw_right) {
-        if (!draw_top) {
+        if (!draw_top && pass == 0) {
           drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
           if (bg->timed_delay) {
             for (int i=0; i < bg->timed_delay; ++i)
@@ -518,10 +547,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           }
         }
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2, 1);
-        if (!draw_bottom)
+        if (!draw_bottom && pass == 1)
           drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
       }
-      if (draw_bottom) {
+      if (draw_bottom && pass == 1) {
         if (ypoff)
           drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
         else
@@ -538,6 +567,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           continue;
         if (sx_adj < -s->w || sy_adj < -s->h)
           continue;
+        if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+          continue;
+        if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
+          continue;
 
         MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
                   sx_adj, sy_adj, s->w, s->h, 0);
@@ -550,10 +583,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #if 1
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
-    pat_start_addr = PICLINE_BYTE_ADDRESS(0);
+    uint32_t sprite_pat_start_addr = PICLINE_BYTE_ADDRESS(0);
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
       struct sprite_t *s = &m_sprite[sn];
       if (!s->enabled)
+        continue;
+      if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+        continue;
+      if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
         continue;
       MoveBlock(s->pos_x, s->pos_y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), s->w, s->h, 0);
     }
@@ -572,10 +609,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (s->pos_x >= bg->win_w || s->pos_y >= bg->win_h)
         continue;
+      if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+        continue;
+      if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
+        continue;
       if (s->transparent) {
         int sx = s->pos_x;
         uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * pitch + max(0, sx);
-        uint32_t tile_addr = pat_start_addr + s->pat_y*pitch + s->pat_x;
+        uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*pitch + s->pat_x;
 
         int draw_w = s->w;
         int draw_h = s->h;
@@ -613,6 +654,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
     }
 #endif
+
+    } // pass
     bg->old_scroll_x = bg->scroll_x;
     bg->old_scroll_y = bg->scroll_y;
     bg->force_redraw = false;
