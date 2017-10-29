@@ -446,6 +446,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       bool draw_right = false;
       bool draw_top = false;
       bool draw_bottom = false;
+      if (scroll_dx == 0 && scroll_dy == 0)
+        goto restore_backing;
+
       if (bg->scroll_y > bg->old_scroll_y) {
         y_dir = 0;
         dst_y = 0;
@@ -556,6 +559,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
       }
 
+restore_backing:
       for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
         struct sprite_t *s = &m_sprite[sn];
         int sx_adj = s->old_pos_x - scroll_dx;
