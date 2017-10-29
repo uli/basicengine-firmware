@@ -598,30 +598,58 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       if (w > 255) {
         if (x_dir == 0) {
           if (pass == 0) {
-            MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
-            MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+            if (y_dir) {
+              MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
+              MoveBlock(bg->win_x+w/2, pix_split_y, w/2, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
+              // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
+              // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
+              while (!blockFinished()) {}
+            }
+            MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
+            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y - (y_dir ? (h - pix_split_y) : 0), dst_x + (y_dir ? -w/2 : w/2), dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
           } else {
-            MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
-            MoveBlock(src_x + w/2, src_y + pix_split_y, dst_x + w/2, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y + (y_dir ? 0 : pix_split_y), dst_x + (y_dir ? -w/2 : w/2), dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
+            if (y_dir) {
+              while (!blockFinished()) {}
+              MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
+              MoveBlock((scroll_dx > 0 ? scroll_dx : 0) + w/2, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0)+w/2, pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
+            }
           }
         } else {
           if (pass == 0) {
-            MoveBlock(src_x + w/2, src_y, dst_x + w/2, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
-            MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
+            if (y_dir) {
+              MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
+              MoveBlock(bg->win_x+w/2, pix_split_y, w/2, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
+              // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
+              // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
+              while (!blockFinished()) {}
+            }
+            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y - (y_dir ? (h - pix_split_y) : 0), dst_x + (y_dir ? -w/2 : w/2), dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
+            MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
           } else {
-            MoveBlock(src_x + w/2, src_y + pix_split_y, dst_x + w/2, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
-            MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y + (y_dir ? 0 : pix_split_y), dst_x + (y_dir ? -w/2 : w/2), dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
+            MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
+            if (y_dir) {
+              MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
+              MoveBlock((scroll_dx > 0 ? scroll_dx : 0) + w/2, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0)+w/2, pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
+            }
           }
         }
       } else {
         if (pass == 0) {
-          if (y_dir)
-            MoveBlock(0, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, bg->win_w, -scroll_dy, 0);
-          MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w, pix_split_y, y_dir);
+          if (y_dir) {
+            MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w, -scroll_dy, 0);
+            // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
+            // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
+            while (!blockFinished()) {}
+          }
+          MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w, pix_split_y, y_dir);
         } else {
-          if (y_dir)
-            MoveBlock(0, SPRITE_BACKING_Y(0)-8, 0, pix_split_y, bg->win_w, -scroll_dy, 0);
-          MoveBlock(src_x, src_y + pix_split_y, dst_x, dst_y + y_dir ? 0 : pix_split_y, w, h-pix_split_y, y_dir);
+          MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w, h-pix_split_y, y_dir);
+          if (y_dir) {
+            MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w, -scroll_dy, 0);
+          }
         }
       }
         
