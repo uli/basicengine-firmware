@@ -249,6 +249,14 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
                             uint32_t skip_x,
                             uint32_t skip_y)
 {
+  // This code draws into the "extra" bytes following each picture line.
+  // Doing so keeps us from having to give border tiles special treatment:
+  // their invisible parts are simply drawn where they cannot be seen.
+  // It also helps to avoid narrow block moves (less than 4 bytes wide),
+  // which often don't work as expected.
+  
+  // XXX: This means that window width must be a multiple of tile width.
+
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t byteaddress2, dest_addr;
@@ -408,17 +416,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     int scroll_dy = bg->scroll_y - bg->old_scroll_y;
 
     for (int pass = 0; pass < 2; ++pass) {
-    // This code draws into the "extra" bytes following each picture line.
-    // Doing so keeps us from having to give border tiles special treatment:
-    // their invisible parts are simply drawn where they cannot be seen.
-    // It also helps to avoid narrow block moves (less than 4 bytes wide),
-    // which often don't work as expected.
-    
-    // XXX: This means that window width must be a multiple of tile width.
-
     dest_addr_start = win_start_addr + (pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
     if (bg->force_redraw || abs(bg->scroll_x - bg->old_scroll_x) > 8 || abs(bg->scroll_y - bg->old_scroll_y) > 8) {
-      // Top line
       if (pass == 0)
         drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
