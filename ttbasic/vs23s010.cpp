@@ -534,7 +534,13 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             while (!blockFinished()) {}
           }
         }
-        drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, tile_end_y, xpoff, ypoff, 0, 1);
+
+        drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr,
+               tile_start_x, tile_start_y,
+               tile_start_x + 2, pass ? tile_end_y : tile_split_y+1,
+               xpoff, ypoff,
+               0, pass ? (tile_split_y-tile_start_y) : 1);
+
         if (!draw_bottom && pass == 1)
           drawBgBottom(bg, pitch, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
