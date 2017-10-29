@@ -266,14 +266,37 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
 
-  SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, tsy-1);
+  uint16_t bm2skip = PICLINE_LENGTH_BYTES+BEXTRA+1-1;
   // Set up the LSB of the start/dest addresses; they don't change for
   // middle tiles, so we can omit the last byte of the request.
+  while (!blockFinished()) {}
   SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
+
   for (int yy = tile_start_y+skip_y; yy < tile_end_y-1; ++yy) {
-    // Middle tiles
     dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * pitch + bg->win_x - tile_start_x * tsx - xpoff;
-    for (int xx = tile_start_x+skip_x; xx < tile_end_x; ++xx) {
+
+    // Left tile
+    tile = bg->tiles[(yy % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
+    tx = (tile % pw) * tsx;
+    ty = (tile / pw) * tsy;
+
+    dest_addr = dest_addr_start + (tile_start_x+skip_x) * tsx;
+    byteaddress2 = pat_start_addr + ty*pitch + tx;
+
+    int draw_w = tsx;
+    if (xpoff >= 8) {
+      draw_w -=8;
+      dest_addr += 8;
+      byteaddress2 += 8;
+    }
+    while (!blockFinished()) {}
+    SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-1);
+    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+
+    // Middle tiles
+    while (!blockFinished()) {}
+    SpiRamWriteBM2Ctrl(bm2skip-tsx, tsx, tsy-1);
+    for (int xx = tile_start_x+skip_x+1; xx < tile_end_x-1; ++xx) {
       tile = bg->tiles[(yy % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy;
@@ -283,6 +306,22 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 
       MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
     }
+
+    // Right tile
+    tile = bg->tiles[(yy % bg_h) * bg_w + (tile_end_x-1) % bg_w];
+    tx = (tile % pw) * tsx;
+    ty = (tile / pw) * tsy;
+
+    dest_addr = dest_addr_start + (tile_end_x-1) * tsx;
+    byteaddress2 = pat_start_addr + ty*pitch + tx;
+
+    draw_w = tsx;
+    if (xpoff < 8)
+      draw_w -=8;
+
+    while (!blockFinished()) {}
+    SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-1);
+    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
   }
 }
 
