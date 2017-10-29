@@ -545,7 +545,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           drawBgBottom(bg, pitch, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
       if (draw_right) {
-        if (!draw_top && pass == 0) {
+        if (ypoff && !draw_top && pass == 0) {
           drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
           if (bg->timed_delay) {
             for (int i=0; i < bg->timed_delay; ++i)
@@ -554,7 +554,13 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             while (!blockFinished()) {}
           }
         }
-        drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2, 1);
+
+        drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr,
+               tile_start_x, tile_start_y,
+               tile_end_x, pass ? tile_end_y : tile_split_y+1,
+               xpoff, ypoff,
+               tile_end_x - tile_start_x - 2, pass ? (tile_split_y-tile_start_y) : 1);
+
         if (!draw_bottom && pass == 1)
           drawBgBottom(bg, pitch, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
       }
