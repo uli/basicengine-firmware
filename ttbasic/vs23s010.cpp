@@ -595,7 +595,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
       
       //Serial.printf("src_x %d, src_y %d, dst_x %d, dst_y %d, w %d, h %d, y_dir %d\n", src_x, src_y, dst_x, dst_y, w, h, y_dir);
-      if (w > 256) {
+      if (w > 255) {
         if (x_dir == 0) {
           if (pass == 0) {
             MoveBlock(src_x, src_y, dst_x, dst_y - y_dir ? pix_split_y : 0, w/2, pix_split_y, y_dir);
