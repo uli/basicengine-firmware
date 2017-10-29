@@ -658,14 +658,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
       }
       if (draw_left) {
-        if (ypoff && !draw_top && pass == 0) {
+        if (!draw_top && pass == 0) {
           drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, xpoff, ypoff);
-          if (bg->timed_delay) {
-            for (int i=0; i < bg->timed_delay; ++i)
-              asm("nop");
-          } else {
-            while (!blockFinished()) {}
-          }
+          while (!blockFinished()) {}
         }
 
         drawBg(bg, pitch, dest_addr_start, pat_start_addr, win_start_addr,
@@ -678,7 +673,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           drawBgBottom(bg, pitch, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
       }
       if (draw_right) {
-        if (ypoff && !draw_top && pass == 0) {
+        if (!draw_top && pass == 0) {
           drawBgTop(bg, pitch, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
           if (bg->timed_delay) {
             for (int i=0; i < bg->timed_delay; ++i)
