@@ -410,29 +410,62 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   uint8_t bg_w = bg->w;    
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
+  uint32_t byteaddress1, byteaddress2;
+  int draw_w;
+
   // Bottom line
   if (ypoff) {
+    uint16_t bm2skip = PICLINE_LENGTH_BYTES+BEXTRA+1-1;
     int ba1a = PICLINE_BYTE_ADDRESS(bg->win_y + bg->win_h - ypoff) + bg->win_x - xpoff;
     int ba2a = PICLINE_BYTE_ADDRESS(bg->pat_y) + bg->pat_x;
+
     while (!blockFinished()) {}
+    SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
+
+    if (tile_start_x + skip_x < tile_end_x) {
+      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
+      tx = (tile % pw) * tsx;
+      ty = (tile / pw) * tsy;
+      byteaddress1 = ba1a + ((tile_start_x+skip_x) - tile_start_x) * tsx;
+      byteaddress2 = ba2a + ty * pitch + tx;
+      draw_w = tsx;
+      if (xpoff >= 8) {
+        draw_w -= 8;
+        byteaddress1 += 8;
+        byteaddress2 += 8;
+      }
+      SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, ypoff-1);
+      // XXX: What about PYF?
+      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
+    }
+
     // Set pitch, width and height; same for all tiles
-    SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-tsx-1, tsx, ypoff-1);
+    while (!blockFinished()) {}
+    SpiRamWriteBM2Ctrl(bm2skip-tsx, tsx, ypoff-1);
     // Set up the LSB of the start/dest addresses; they don't change for
     // middle tiles, so we can omit the last byte of the request.
-    SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
-    for (int xx = tile_start_x+skip_x; xx < tile_end_x; ++xx) {
+    for (int xx = tile_start_x+skip_x+1; xx < tile_end_x-1; ++xx) {
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
       tx = (tile % pw) * tsx;
       ty = (tile / pw) * tsy;
-      if (bg->timed_delay) {
-        for (int i=0; i < bg->timed_delay; ++i)
-          asm("nop");
-      } else {
-        while (!blockFinished()) {}
-      }
-//      Serial.printf("%d, %d, %d, %d, %d, %d\n", bg->pat_x + tx, bg->pat_y + ty, bg->win_x + (xx - tile_start_x) * tsx - xpoff, bg->win_y + bg->win_h - ypoff, tsx, ypoff);
-      uint32_t byteaddress1 = ba1a + (xx - tile_start_x) * tsx;
-      uint32_t byteaddress2 = ba2a + ty * pitch + tx;
+      byteaddress1 = ba1a + (xx - tile_start_x) * tsx;
+      byteaddress2 = ba2a + ty * pitch + tx;
+      while (!blockFinished()) {}
+      // XXX: What about PYF?
+      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
+    }
+
+    if (tile_start_x + skip_x < tile_end_x - 1) {
+      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_end_x - 1) % bg_w];
+      tx = (tile % pw) * tsx;
+      ty = (tile / pw) * tsy;
+      byteaddress1 = ba1a + ((tile_end_x - 1) - tile_start_x) * tsx;
+      byteaddress2 = ba2a + ty * pitch + tx;
+      draw_w = tsx;
+      if (xpoff < 8)
+        draw_w -= 8;
+      while (!blockFinished()) {}
+      SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, ypoff-1);
       // XXX: What about PYF?
       MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
     }
