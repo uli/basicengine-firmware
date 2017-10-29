@@ -572,8 +572,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
 
 restore_backing:
-      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-        struct sprite_t *s = &m_sprite[sn];
+      for (int sn = VS23_MAX_SPRITES-1; sn >= 0; --sn) {
+        struct sprite_t *s = m_sprites_ordered[sn];
         int sx_adj = s->old_pos_x - scroll_dx;
         int sy_adj = s->old_pos_y - scroll_dy;
         if (!s->old_enabled)
@@ -616,7 +616,7 @@ restore_backing:
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
     uint32_t sprite_pat_start_addr = PICLINE_BYTE_ADDRESS(0);
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-      struct sprite_t *s = &m_sprite[sn];
+      struct sprite_t *s = m_sprites_ordered[sn];
       if (!s->enabled)
         continue;
       if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
