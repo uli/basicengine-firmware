@@ -6,6 +6,14 @@
 #include "ntsc.h"
 #include "lock.h"
 
+//#define DISABLE_BG_LEFT_COL
+//#define DISABLE_BG_MIDDLE
+//#define DISABLE_BG_RIGHT_COL
+
+//#define DISABLE_SPRITE_SAVE
+//#define DISABLE_SPRITE_RESTORE
+//#define DISABLE_SPRITE_DRAW
+
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y) + x;
@@ -265,6 +273,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   uint8_t bg_w = bg->w;    
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
+  int draw_w;
 
   uint16_t bm2skip = PICLINE_LENGTH_BYTES+BEXTRA+1-1;
   // Set up the LSB of the start/dest addresses; they don't change for
@@ -275,6 +284,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   for (int yy = tile_start_y+skip_y; yy < tile_end_y-1; ++yy) {
     dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * pitch + bg->win_x - tile_start_x * tsx - xpoff;
 
+#ifndef DISABLE_BG_LEFT_COL
     // Left tile
     tile = bg->tiles[(yy % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
     tx = (tile % pw) * tsx;
@@ -283,7 +293,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     dest_addr = dest_addr_start + (tile_start_x+skip_x) * tsx;
     byteaddress2 = pat_start_addr + ty*pitch + tx;
 
-    int draw_w = tsx;
+    draw_w = tsx;
     if (xpoff >= 8) {
       draw_w -=8;
       dest_addr += 8;
@@ -292,7 +302,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-1);
     MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+#endif
 
+#ifndef DISABLE_BG_MIDDLE
     // Middle tiles
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(bm2skip-tsx, tsx, tsy-1);
@@ -306,7 +318,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 
       MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
     }
+#endif
 
+#ifndef DISABLE_BG_RIGHT_COL
     // Right tile
     tile = bg->tiles[(yy % bg_h) * bg_w + (tile_end_x-1) % bg_w];
     tx = (tile % pw) * tsx;
@@ -322,6 +336,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-1);
     MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+#endif
   }
 }
 
@@ -343,6 +358,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   uint8_t bg_w = bg->w;    
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
+  int draw_w;
+
   // Set pitch, width and height; same for all tiles
   uint16_t bm2skip = PICLINE_LENGTH_BYTES+BEXTRA+1-1;
   // Set up the LSB of the start/dest addresses; they don't change for
@@ -350,6 +367,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   while (!blockFinished()) {}
   SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
 
+#ifndef DISABLE_BG_LEFT_COL
   tile = bg->tiles[(tile_start_y % bg_h) * bg_w + tile_start_x % bg_w];
   tx = (tile % pw) * tsx;
   ty = (tile / pw) * tsy + ypoff;
@@ -357,15 +375,18 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   dest_addr = dest_addr_start + tile_start_x * tsx;
   byteaddress2 = pat_start_addr + ty * pitch + tx;
 
-  int draw_w = tsx;
+  draw_w = tsx;
   if (xpoff >= 8) {
     draw_w -=8;
     dest_addr += 8;
     byteaddress2 += 8;
   }
-  SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-ypoff-1);
 
+  SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-ypoff-1);
   MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+#endif
+
+#ifndef DISABLE_BG_MIDDLE
   while (!blockFinished()) {}
   SpiRamWriteBM2Ctrl(bm2skip-tsx, tsx, tsy-ypoff-1);
   for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
@@ -377,7 +398,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
     byteaddress2 = pat_start_addr + ty * pitch + tx;
     MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
   }
+#endif
 
+#ifndef DISABLE_BG_RIGHT_COL
   tile = bg->tiles[(tile_start_y % bg_h) * bg_w + (tile_end_x - 1) % bg_w];
   tx = (tile % pw) * tsx;
   ty = (tile / pw) * tsy + ypoff;
@@ -392,6 +415,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   while (!blockFinished()) {}
   SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, tsy-ypoff-1);
   MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+#endif
+
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
@@ -422,6 +447,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
     while (!blockFinished()) {}
     SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
 
+#ifndef DISABLE_BG_LEFT_COL
     if (tile_start_x + skip_x < tile_end_x) {
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
       tx = (tile % pw) * tsx;
@@ -438,7 +464,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       // XXX: What about PYF?
       MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
     }
+#endif
 
+#ifndef DISABLE_BG_MIDDLE
     // Set pitch, width and height; same for all tiles
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(bm2skip-tsx, tsx, ypoff-1);
@@ -454,7 +482,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       // XXX: What about PYF?
       MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
     }
+#endif
 
+#ifndef DISABLE_BG_RIGHT_COL
     if (tile_start_x + skip_x < tile_end_x - 1) {
       tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_end_x - 1) % bg_w];
       tx = (tile % pw) * tsx;
@@ -469,6 +499,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       // XXX: What about PYF?
       MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
     }
+#endif
   }
 }
 
@@ -701,6 +732,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
 restore_backing:
       for (int sn = VS23_MAX_SPRITES-1; sn >= 0; --sn) {
+#ifndef DISABLE_SPRITE_RESTORE
         struct sprite_t *s = m_sprites_ordered[sn];
         int sx_adj = s->old_pos_x - scroll_dx;
         int sy_adj = s->old_pos_y - scroll_dy;
@@ -733,16 +765,18 @@ restore_backing:
         if (w > 0 && h > 0)
           MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
                     sx_adj, sy_adj, w, h, 0);
+#endif
       }
 
     }
 
     while (!blockFinished()) {}
 
-#if 1
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
     uint32_t sprite_pat_start_addr = PICLINE_BYTE_ADDRESS(0);
+
+#ifndef DISABLE_SPRITE_SAVE
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
       struct sprite_t *s = m_sprites_ordered[sn];
       if (!s->enabled)
@@ -773,10 +807,12 @@ restore_backing:
       if (w > 0 && h > 0)
         MoveBlock(x, y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), w, h, 0);
     }
+#endif
 
     // Reduce speed for memory accesses.
     SPI1CLK = spi_clock_default;
     
+#ifndef DISABLE_SPRITE_DRAW
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
       struct sprite_t *s = m_sprites_ordered[sn];
       s->old_pos_x = s->pos_x;
@@ -826,6 +862,7 @@ restore_backing:
             if (!sbuf[p])
               sbuf[p] = bbuf[p];
           }
+
           SpiRamWriteBytesFast(spr_addr + sy*pitch, sbuf, draw_w);
         }
       } else {
