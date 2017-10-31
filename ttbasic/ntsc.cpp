@@ -214,23 +214,6 @@ void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress) {
 	SpiRamWriteByte(indexAddr,(uint16_t)(byteAddress >> 9));
 }
 	
-/// Set picture pixel to a yuv value
-void VS23S010::SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv) {
-#ifndef BYTEPIC
-        {
-                uint16_t wordaddress;
-                wordaddress = PICLINE_WORD_ADDRESS(ypos)+xpos;
-                SpiRamWriteWord(wordaddress,yuv);
-        }
-#else
-        {
-                uint32_t byteaddress;
-                byteaddress = PICLINE_BYTE_ADDRESS(ypos)+xpos;
-                SpiRamWriteByte(byteaddress,yuv);
-        }
-#endif
-}
-
 #include "rgb444_to_yuv422.h"
 
 uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
@@ -622,18 +605,6 @@ void VS23S010::SpiRamVideoInit() {
 			}
 		}
 
-		
-#if 0
-		DrawLine(50, 50, 100, 100, re, gr, bl);
-		DrawLine(50, 50, 50, 100, re, gr, bl);
-		DrawLine(50, 50, 100, 50, re, gr, bl);
-				
-		for (i=0;i<10;i++){
-			DrawLine(150+i, 50, 100+i, 100, re, gr, bl);
-			DrawLine(150, 50+i, 100, 100+i, re, gr, bl);
-		}
-#endif
-		
 		// Frame around the picture box
 		re=0;
 		gr=255;
@@ -642,15 +613,6 @@ void VS23S010::SpiRamVideoInit() {
 		drawLineRgb(0, 0, PICX-1, 0, re, gr, bl);		
 		drawLineRgb(PICX-1, 0, PICX-1, PICY-1, re, gr, bl);
 		drawLineRgb(0, PICY-1, PICX-1, PICY-1, re, gr, bl);
-#if 0
-		// Some rectangles
-		// 255 0 34  f8, 0 7
-		rgb565=0xf807;
-		FillRect565(100, 100, 215, 177, rgb565);
-		// 166 125 60 a0 3e 1
-		rgb565=0xa401;
-		FillRect565(150, 150, 216, 180, rgb565);
-#endif
 	}
 	
 	// Fixes the picture to proto area border artifacts if BEXTRA > 0.
