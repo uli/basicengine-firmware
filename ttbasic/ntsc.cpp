@@ -616,11 +616,9 @@ void VS23S010::SpiRamVideoInit() {
 	
 			for (j=0;j<16;j++){
 				xp=10+(i%16)*18+j;
-				if (xp > XPIXELS)
+				if (xp > XPIXELS - 10)
 					continue;
-				for (k=0;k<10;k++){
-					SetPixyuv(xp,6+(i/16)*12+k,i);				
-				}
+                                drawLine(xp, 6+(i/16)*12, xp, 16+(i/16)*12, i);
 			}
 		}
 
