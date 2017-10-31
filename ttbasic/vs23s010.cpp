@@ -330,7 +330,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     byteaddress2 = pat_start_addr + ty*pitch + tx;
 
     draw_w = tsx;
-    if (xpoff < 8)
+    if (xpoff < tsx - 8)
       draw_w -=8;
 
     while (!blockFinished()) {}
@@ -409,7 +409,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   byteaddress2 = pat_start_addr + ty * pitch + tx;
 
   draw_w = tsx;
-  if (xpoff < 8) {
+  if (xpoff < tsx - 8) {
     draw_w -=8;
   }
   while (!blockFinished()) {}
@@ -492,7 +492,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       byteaddress1 = ba1a + ((tile_end_x - 1) - tile_start_x) * tsx;
       byteaddress2 = ba2a + ty * pitch + tx;
       draw_w = tsx;
-      if (xpoff < 8)
+      if (xpoff < tsx - 8)
         draw_w -= 8;
       while (!blockFinished()) {}
       SpiRamWriteBM2Ctrl(bm2skip-draw_w, draw_w, ypoff-1);
