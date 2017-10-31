@@ -258,7 +258,7 @@ void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, u
 }
 
 /// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher than or equal to y1
-void VS23S010::DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, uint16_t g, uint16_t b) {
+void VS23S010::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t c) {
 	int deltax, deltay, offset;
 	uint16_t i,j,ystart;
 	offset = 0;
@@ -268,17 +268,23 @@ void VS23S010::DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint
 	if (deltax != 0 && deltay != 0){
 		offset = x1-deltax*y1/deltay;
 		for (i=0;i<deltay;i++){
-			setPixelRgb(deltax*(y1+i)/deltay+offset,y1+i,r,g,b);
+			setPixel(deltax*(y1+i)/deltay+offset,y1+i,c);
 		}
 	} else if (deltax==0) {
 		for (i=0;i<deltay;i++){
-			setPixelRgb(x1,y1+i,r,g,b);
+			setPixel(x1,y1+i,c);
 		}
 	} else {
 		for (i=0;i<deltax;i++){
-			setPixelRgb(x1+i,y1,r,g,b);
+			setPixel(x1+i,y1,c);
 		}
 	}
+}
+
+void VS23S010::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t r, uint8_t g, uint8_t b)
+{
+	int c = colorFromRgb(r, g, b);
+	drawLine(x1, y1, x2, y2, c);
 }
 
 /// Fills a rectangle. Volor is given in RGB 565 format
@@ -295,7 +301,7 @@ void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, u
 	bl = (rgb<<3)&0xf8;
 			
 	for (i=0;i<deltax;i++) {
-		DrawLine(x1+i,y1,x1+i,y2,re,gr, bl);
+		drawLineRgb(x1+i,y1,x1+i,y2,re,gr, bl);
 	}
 }
 	
@@ -634,10 +640,10 @@ void VS23S010::SpiRamVideoInit() {
 		re=0;
 		gr=255;
 		bl=0;
-		DrawLine(0, 0, 0, PICY-1, re, gr, bl);
-		DrawLine(0, 0, PICX-1, 0, re, gr, bl);		
-		DrawLine(PICX-1, 0, PICX-1, PICY-1, re, gr, bl);
-		DrawLine(0, PICY-1, PICX-1, PICY-1, re, gr, bl);
+		drawLineRgb(0, 0, 0, PICY-1, re, gr, bl);
+		drawLineRgb(0, 0, PICX-1, 0, re, gr, bl);		
+		drawLineRgb(PICX-1, 0, PICX-1, PICY-1, re, gr, bl);
+		drawLineRgb(0, PICY-1, PICX-1, PICY-1, re, gr, bl);
 #if 0
 		// Some rectangles
 		// 255 0 34  f8, 0 7
