@@ -552,7 +552,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
                   for (dr_uint32 x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                     // XXX: slooooow!
-                    vs23.SetPixel(dx + x-ox, dy + y-oy, pRow[0], pRow[1], pRow[2]);
+                    vs23.setPixelRgb(dx + x-ox, dy + y-oy, pRow[0], pRow[1], pRow[2]);
                   }
                 }
             }

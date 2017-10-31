@@ -70,6 +70,7 @@ class VS23S010 {
     }
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
+    void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
     uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
 
     void setMode(uint8_t mode);
@@ -78,7 +79,6 @@ class VS23S010 {
  
     void SpiRamVideoInit();
     void SetPixyuv(uint16_t xpos, uint16_t ypos, uint16_t yuv);
-    void SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b);
     void DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t r, uint16_t g, uint16_t b);
     void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb);
     uint16_t *SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);

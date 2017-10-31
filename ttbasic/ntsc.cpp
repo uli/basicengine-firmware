@@ -239,7 +239,7 @@ uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 }
 	
 /// Set picture pixel to a RGB value 
-void VS23S010::SetPixel(uint16_t xpos, uint16_t ypos, uint16_t r, uint16_t g, uint16_t b) {
+void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b) {
 	uint16_t pixdata = colorFromRgb(r, g, b);
 
 #ifndef BYTEPIC
@@ -268,15 +268,15 @@ void VS23S010::DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint
 	if (deltax != 0 && deltay != 0){
 		offset = x1-deltax*y1/deltay;
 		for (i=0;i<deltay;i++){
-			SetPixel(deltax*(y1+i)/deltay+offset,y1+i,r,g,b);
+			setPixelRgb(deltax*(y1+i)/deltay+offset,y1+i,r,g,b);
 		}
 	} else if (deltax==0) {
 		for (i=0;i<deltay;i++){
-			SetPixel(x1,y1+i,r,g,b);
+			setPixelRgb(x1,y1+i,r,g,b);
 		}
 	} else {
 		for (i=0;i<deltax;i++){
-			SetPixel(x1+i,y1,r,g,b);
+			setPixelRgb(x1+i,y1,r,g,b);
 		}
 	}
 }
