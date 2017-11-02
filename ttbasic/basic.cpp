@@ -3937,6 +3937,16 @@ void imove() {
   vs23.moveSprite(num, pos_x, pos_y);
 }  
 
+void iplot() {
+  int16_t bg, x, y, t;
+  if (getParam(bg, 0, VS23_MAX_BG, true)) return;
+  // XXX: check actual bg dimensions!
+  if (getParam(x, 0, 1023, true)) return;
+  if (getParam(y, 0, 1023, true)) return;
+  if (getParam(t, 0, 255, false)) return;
+  vs23.setBgTile(bg, x, y, t);  
+}
+
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
