@@ -16,7 +16,7 @@
 
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
-  uint32_t byteaddress = PICLINE_BYTE_ADDRESS(y) + x;
+  uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
@@ -436,8 +436,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 
   // Bottom line
   if (ypoff) {
-    int ba1a = PICLINE_BYTE_ADDRESS(bg->win_y + bg->win_h - ypoff) + bg->win_x - xpoff;
-    int ba2a = PICLINE_BYTE_ADDRESS(bg->pat_y) + bg->pat_x;
+    int ba1a = pixelAddr(bg->win_x - xpoff, bg->win_y + bg->win_h - ypoff);
+    int ba2a = pixelAddr(bg->pat_x, bg->pat_y);
 
     while (!blockFinished()) {}
     SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
@@ -533,8 +533,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     uint32_t xpoff = bg->scroll_x % tsx;
     uint32_t ypoff = bg->scroll_y % tsy;
     uint32_t pw = bg->pat_w;
-    pat_start_addr = PICLINE_BYTE_ADDRESS(bg->pat_y)+bg->pat_x;
-    win_start_addr = PICLINE_BYTE_ADDRESS(bg->win_y) + bg->win_x;
+    pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
+    win_start_addr = pixelAddr(bg->win_x, bg->win_y);
     uint8_t bg_w = bg->w;    
     uint8_t bg_h = bg->h;
 
@@ -911,7 +911,7 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   }
 
   uint8_t *p = s->pattern;
-  uint32_t tile_addr = PICLINE_BYTE_ADDRESS(pat_y) + pat_x;
+  uint32_t tile_addr = pixelAddr(pat_x, pat_y);
   for (int sy = 0; sy < s->h; ++sy, p+=w) {
     SpiRamReadBytes(tile_addr + sy*m_pitch, p, w);
   }
