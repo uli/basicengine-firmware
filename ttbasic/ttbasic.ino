@@ -12,6 +12,7 @@ volatile int spi_lock;
 #include <SPI.h>
 extern "C" {
 #ifdef ESP8266_NOWIFI
+#include <hw/esp8266.h>
 #include <hw/pin_mux_register.h>
 #else
 #include <eagle_soc.h>
@@ -39,6 +40,10 @@ void setup(void){
   delay(500);
   Serial.begin(115200);
   SpiLock();
+#ifdef ESP8266_NOWIFI
+  //Select_CLKx1();
+  //ets_update_cpu_frequency(80);
+#endif
 }
 
 void loop(void){
