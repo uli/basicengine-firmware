@@ -64,6 +64,9 @@ class VS23S010 {
     inline uint16_t piclinePitch() {
         return m_pitch;
     }
+    inline uint32_t pixelAddr(int x, int y) {
+        return m_first_line_addr + m_pitch * y + x;
+    }
 
     inline uint16_t currentLine() {
         return SpiRamReadRegister(CURLINE) & 0xfff;
