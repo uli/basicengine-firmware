@@ -262,85 +262,13 @@ short getrnd(short value) {
 #endif
 
 // キーワードテーブル
-const char * const kwtbl[] __FLASH__ = {
- "GOTO", "GOSUB", "RETURN", "FOR", "TO", "STEP", "NEXT", "IF", "END", "ELSE",       // 制御命令(10)
- ",", ";", ":", "\'","-", "+", "*", "/", "%", "(", ")", "$", "<<", ">>", "|", "&",  // 演算子・記号(29)
- ">=", "#", ">", "=", "<=", "!=", "<>","<", "AND", "OR", "!", "~", "^", "@",     
- "CLT", "WAIT",  // 時間待ち・時間計測コマンド(2) 
- "POKE",         // 記憶領域操作コマンド(1)
- "PRINT", "?", "INPUT", "CLS", "COLOR", "ATTR" ,"LOCATE", "REDRAW", "CSCROLL", // キャラクタ表示コマンド(9) 
- "CHR$", "BIN$", "HEX$", "DMP$", "STR$",               // 文字列関数(5)
- "ABS", "MAP", "ASC", "FREE", "RND",  "INKEY", "LEN",  // 数値関数(20)
- "TICK", "PEEK", "VPEEK", "GPEEK", "GINP", 
- "I2CW", "I2CR", "IN", "ANA", "SHIFTIN",
- "SREADY", "SREAD", "EEPREAD",
- "PSET","LINE","RECT","CIRCLE", "BITMAP", "GPRINT", "GSCROLL",  // グラフィック表示コマンド(7)
- "GPIO", "OUT", "POUT", "SHIFTOUT",                             // GPIO・入出力関連コマンド(4)
- "SMODE", "SOPEN", "SCLOSE", "SPRINT", "SWRITE",                // シリアル通信関連コマンド(5)
- "LDBMP","MKDIR","RMDIR",/*"RENAME",*/ "FCOPY","CAT", "REMOVE", // SDカード関連コマンド
- "HIGH", "LOW",  // 定数
- "PA0", "PA1", "PA2", "PA3", "PA4", "PA5", "PA6", "PA7", "PA8", "PA9",
- "PA10","PA11", "PA12", "PA13","PA14","PA15",
- "PB0", "PB1", "PB2", "PB3", "PB4", "PB5", "PB6", "PB7", "PB8", "PB9",
- "PB10","PB11", "PB12", "PB13","PB14","PB15", "PC13", "PC14","PC15", 
- "CW", "CH","GW","GH", "LSB", "MSB",
- "MEM", "VRAM", "VAR", "ARRAY","PRG","FNT","GRAM",
- "UP", "DOWN", "RIGHT", "LEFT",
- "OUTPUT_OD", "OUTPUT", "INPUT_PU", "INPUT_PD", "ANALOG", "INPUT_FL", "PWM",
- "TONE", "NOTONE",                         // サウンドコマンド(2)
- "DATE", "GETDATE", "GETTIME", "SETDATE",  // RTC関連コマンド(4)
- "EEPFORMAT", "EEPWRITE",                  // 仮想EEPROM関連コマンド(2)
- "LOAD", "SAVE", "BLOAD", "BSAVE", "LIST", "NEW", "REM", "LET", "CLV",  // プログラム関連 コマンド(16)
- "LRUN", "FILES","EXPORT", "CONFIG", "SAVECONFIG", "ERASE", "SYSINFO",
- "SCREEN", "WINDOW", "FONT", // 表示切替
- "BG", "BGON", "BGOFF", "BGWIN", "SCROLL", "SPRITE", "MOVE",
- "RENUM", "RUN", "DELETE", "OK",           // システムコマンド(4)
-};
+#include "kwtbl.h"
 
 // Keyword count
 #define SIZE_KWTBL (sizeof(kwtbl) / sizeof(const char*))
 
 // i-code(Intermediate code) assignment
-enum { 
- I_GOTO, I_GOSUB, I_RETURN, I_FOR, I_TO, I_STEP, I_NEXT, I_IF, I_END, I_ELSE,   // 制御命令(10)
- I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR,  // 演算子・記号(28)
- I_LSHIFT, I_RSHIFT, I_OR, I_AND, I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LAND, I_LOR, I_LNOT,
- I_BITREV, I_XOR,  I_ARRAY, 
- I_CLT, I_WAIT,  // 時間待ち・時間計測コマンド(2)
- I_POKE,         // 記憶領域操作コマンド(1)
- I_PRINT, I_QUEST, I_INPUT, I_CLS, I_COLOR, I_ATTR, I_LOCATE,  I_REFLESH, I_CSCROLL,  // キャラクタ表示コマンド(9)  
- I_CHR, I_BIN, I_HEX, I_DMP, I_STRREF,   // 文字列関数(5)
- I_ABS, I_MAP, I_ASC, I_FREE, I_RND, I_INKEY, I_LEN,   // 数値関数(20)
- I_TICK, I_PEEK, I_VPEEK, I_GPEEK, I_GINP,
- I_I2CW, I_I2CR, I_DIN, I_ANA, I_SHIFTIN,
- I_SREADY, I_SREAD, I_EEPREAD,
- I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_GPRINT, I_GSCROLL, // グラフィック表示コマンド(7)
- I_GPIO, I_DOUT, I_POUT, I_SHIFTOUT,  // GPIO・入出力関連コマンド(4)
- I_SMODE, I_SOPEN, I_SCLOSE, I_SPRINT, I_SWRITE,  // シリアル通信関連コマンド(5)
- I_LDBMP, I_MKDIR, I_RMDIR, /*I_RENAME,*/ I_FCOPY, I_CAT, I_REMOVE,  // SDカード関連コマンド
- I_HIGH, I_LOW, // 定数
- I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8, I_PA9,
- I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
- I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8, I_PB9, 
- I_PB10,  I_PB11, I_PB12, I_PB13,I_PB14,I_PB15, I_PC13, I_PC14,I_PC15,
- I_CW, I_CH, I_GW, I_GH,
- I_LSB, I_MSB, 
- I_MEM, I_VRAM, I_MVAR, I_MARRAY,I_MPRG,I_MFNT,I_GRAM,
- I_UP, I_DOWN, I_RIGHT, I_LEFT,
- I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F,  I_PWM,  
- I_TONE, I_NOTONE,                          // サウンドコマンド(2)
- I_DATE, I_GETDATE, I_GETTIME, I_SETDATE,   // RTC関連コマンド(4)
- I_EEPFORMAT, I_EEPWRITE,                   // 仮想EEPROM関連コマンド(2)
- I_LOAD, I_SAVE, I_BLOAD, I_BSAVE, I_LIST, I_NEW, I_REM, I_LET, I_CLV,  // プログラム関連 コマンド(16)
- I_LRUN, I_FILES, I_EXPORT, I_CONFIG, I_SAVECONFIG, I_ERASE, I_INFO,
- I_SCREEN, I_WINDOW, I_FONT, // 表示切替
- I_BG, I_BGON, I_BGOFF, I_BGWIN, I_SCROLL, I_SPRITE, I_MOVE,
- I_RENUM, I_RUN, I_DELETE, I_OK,  // システムコマンド(4)
-
-// 内部利用コード
-  I_NUM, I_STR, I_HEXNUM, I_VAR,
-  I_EOL, 
-};
+#include "kwenum.h"
 
 // List formatting condition
 // 後ろに空白を入れない中間コード
