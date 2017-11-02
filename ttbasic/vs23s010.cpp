@@ -145,6 +145,9 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   if (!bg->tiles)
     return true;
 
+  for (int i=0; i < width*height; ++i)
+    bg->tiles[i] = 64+(i&7);
+
   bg->pat_x = pat_x;
   bg->pat_y = pat_y;
   bg->pat_w = pat_w;
@@ -158,7 +161,7 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
     bg->timed_delay = 0;
   bg->w = width;
   bg->h = height;
-  bg->scroll_x = bg->scroll_y = 0;
+  bg->scroll_x = bg->scroll_y = 5;
   bg->old_scroll_x = bg->old_scroll_y = 0;
   bg->win_x = bg->win_y = 0;
   bg->win_w = currentMode->x;
@@ -338,6 +341,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
 #endif
   }
+  while (!blockFinished()) {}
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
@@ -414,6 +418,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
 #endif
 
+  while (!blockFinished()) {}
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
@@ -504,6 +509,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
+  uint32_t mxx;
+  int lines[6];
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t byteaddress2;
@@ -517,12 +524,15 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   int spi_clock_default = SPI1CLK;
 
   SpiLock();
+  lines[0] = currentLine();
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     if (!bg->enabled)
       continue;
 
     SPI1CLK = absolute_min_spi_div;
+    mxx = millis();
+
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
     int tile_end_y = tile_start_y + (bg->win_h + bg->tile_size_y-1) / bg->tile_size_y + 1;
     int tile_start_x = bg->scroll_x / bg->tile_size_x;
@@ -559,6 +569,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
       
       scroll_dy = 0;
+      lines[1] = currentLine();
+      lines[2] = 0;
     } else {
       int old_tile_start_y = bg->old_scroll_y / tsy;
       int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
@@ -568,6 +580,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint32_t old_ypoff = bg->old_scroll_y % tsy;
       int old_dest_addr_start = win_start_addr - old_tile_start_x * tsx - old_xpoff;
 
+      lines[1] = currentLine();
 
       uint8_t x_dir, y_dir;
       uint32_t src_x, src_y, dst_x, dst_y;
@@ -677,7 +690,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         }
       }
         
+      lines[2] = currentLine();
+
       while (!blockFinished()) {}
+
       if (pass == 0 && draw_top) {
         drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
       }
@@ -764,6 +780,7 @@ restore_backing:
     }
 
     while (!blockFinished()) {}
+    if (pass == 0) lines[3] = currentLine();
 
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
@@ -804,6 +821,7 @@ restore_backing:
 
     // Reduce speed for memory accesses.
     SPI1CLK = spi_clock_default;
+    lines[4] = currentLine();
     
 #ifndef DISABLE_SPRITE_DRAW
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
@@ -882,11 +900,13 @@ restore_backing:
       }
     }
 #endif
+    lines[5] = currentLine();
 
     } // pass
     bg->old_scroll_x = bg->scroll_x;
     bg->old_scroll_y = bg->scroll_y;
     bg->force_redraw = false;
+    Serial.println(millis() - mxx);
   }
 
   SPI1CLK = spi_clock_default;
