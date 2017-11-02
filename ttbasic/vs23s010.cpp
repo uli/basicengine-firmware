@@ -59,6 +59,7 @@ void VS23S010::setMode(uint8_t mode)
   currentMode = &modes[mode];
   SpiRamVideoInit();
   lastLine = PICLINE_MAX;
+  m_pitch = PICLINE_BYTE_ADDRESS(1) - PICLINE_BYTE_ADDRESS(0);
   calibrateVsync();
   setSyncLine(currentMode->y + currentMode->top);
 }

@@ -115,6 +115,8 @@ private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     uint16_t syncLine;
 
+    uint32_t m_pitch;	// Distance between piclines in bytes
+
     struct bg_t {
       uint8_t *tiles;
       uint16_t pat_x, pat_y, pat_w;
