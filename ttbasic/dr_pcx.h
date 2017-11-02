@@ -550,10 +550,10 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 if (y >= oy && y < oy+h) {
                   dr_uint32 x;
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
-                  for (dr_uint32 x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                    // XXX: slooooow!
-                    vs23.setPixelRgb(dx + x-ox, dy + y-oy, pRow[0], pRow[1], pRow[2]);
+                  for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
+                    pRow_[x-ox] = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                   }
+                  SpiRamWriteBytes(vs23.pixelAddr(dx-ox, dy+y-oy), pRow_, x-ox);
                 }
             }
 
