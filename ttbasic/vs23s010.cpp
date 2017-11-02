@@ -767,7 +767,7 @@ restore_backing:
 
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
-    uint32_t sprite_pat_start_addr = PICLINE_BYTE_ADDRESS(0);
+    uint32_t sprite_pat_start_addr = piclineByteAddress(0);
 
 #ifndef DISABLE_SPRITE_SAVE
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {

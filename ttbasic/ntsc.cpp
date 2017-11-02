@@ -304,7 +304,7 @@ void VS23S010::SpiRamVideoInit() {
 	printf("Start pixel %x\n",(STARTPIX-1));
 	printf("End pixel %x\n",(ENDPIX-1));
 	printf("Index start address %x\n",INDEX_START_BYTES);
-	printf("Picture line 0 address %lx\n",PICLINE_BYTE_ADDRESS(0));
+	printf("Picture line 0 address %lx\n",piclineByteAddress(0));
 
 	// 1. Select the first VS23 for following commands in case there
 	// are several VS23 ICs connected to same SPI bus.
@@ -572,12 +572,12 @@ void VS23S010::SpiRamVideoInit() {
 	
 	// 13. Set pic line indexes to point to protoline 0 and their individual picture line.
 	for (i=0; i<ENDLINE-STARTLINE; i++) {
-		SetPicIndex(i+STARTLINE, PICLINE_BYTE_ADDRESS(i),0);
+		SetPicIndex(i+STARTLINE, piclineByteAddress(i),0);
 		// All lines use picture line 0
 		//SetPicIndex(i+STARTLINE, PICLINE_BYTE_ADDRESS(0),0);
 #ifdef INTERLACE
 		// In interlaced case in both fields the same area is picture box area.
-		SetPicIndex(i+STARTLINE+FIELD1START, PICLINE_BYTE_ADDRESS(i),0);
+		SetPicIndex(i+STARTLINE+FIELD1START, piclineByteAddress(i),0);
 #endif
 	}
 	
