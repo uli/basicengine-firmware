@@ -107,19 +107,19 @@ class VS23S010 {
     void defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h);
     void moveSprite(uint8_t num, int16_t x, int16_t y);
 
-    const struct vs23_mode_t *currentMode;
-    int lastLine;
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];
 
 private:
-    bool m_vsync_enabled;
-    uint32_t cyclesPerFrame;
     static void ICACHE_RAM_ATTR vsyncHandler(void);
-    uint16_t syncLine;
+    bool m_vsync_enabled;
+    uint32_t m_cycles_per_frame;
 
+    const struct vs23_mode_t *m_current_mode;
     uint32_t m_pitch;	// Distance between piclines in bytes
     uint32_t m_first_line_addr;
+    int m_last_line;
+    uint16_t m_sync_line;
 
     struct bg_t {
       uint8_t *tiles;

@@ -30,27 +30,27 @@
 		
 /// Width, in PLL clocks, of each pixel
 /// Used 4 to 8 for 160x120 pics
-#define PLLCLKS_PER_PIXEL (currentMode->vclkpp)
+#define PLLCLKS_PER_PIXEL (m_current_mode->vclkpp)
 
 /// Extra bytes can be added to end of picture lines to prevent pic-to-proto 
 /// border artifacts. 8 is a good value. 0 can be tried to test, if there is 
 /// no need for extra bytes.		
-#define BEXTRA (currentMode->bextra)
+#define BEXTRA (m_current_mode->bextra)
 
 /// Definitions for picture lines
 /// On which line the picture area begins, the Y direction.
 //#define STARTLINE ((uint16_t)(TOTAL_LINES/4))
-#define STARTLINE (FRONT_PORCH_LINES+currentMode->top)
+#define STARTLINE (FRONT_PORCH_LINES+m_current_mode->top)
 //#define YPIXELS 120
-#define YPIXELS (currentMode->y)
+#define YPIXELS (m_current_mode->y)
 /// The last picture area line
 #define ENDLINE STARTLINE+YPIXELS
 /// The first pixel of the picture area, the X direction.
-#define STARTPIX (BLANKEND+currentMode->left)
+#define STARTPIX (BLANKEND+m_current_mode->left)
 /// The last pixel of the picture area. Set PIXELS to wanted value and suitable 
 /// ENDPIX value is calculated.
 //#define XPIXELS 161
-#define XPIXELS (currentMode->x)
+#define XPIXELS (m_current_mode->x)
 #define ENDPIX ((uint16_t)(STARTPIX+PLLCLKS_PER_PIXEL*XPIXELS/8))
 //#define ENDPIX 195		
 

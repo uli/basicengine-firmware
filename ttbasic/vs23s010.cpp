@@ -56,13 +56,13 @@ void VS23S010::end()
 void VS23S010::setMode(uint8_t mode)
 {
   setSyncLine(0);
-  currentMode = &modes[mode];
-  lastLine = PICLINE_MAX;
+  m_current_mode = &modes[mode];
+  m_last_line = PICLINE_MAX;
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
   SpiRamVideoInit();
   calibrateVsync();
-  setSyncLine(currentMode->y + currentMode->top);
+  setSyncLine(m_current_mode->y + m_current_mode->top + 16);
 }
 
 void VS23S010::calibrateVsync()
@@ -72,27 +72,27 @@ void VS23S010::calibrateVsync()
   now = ESP.getCycleCount();
   while (currentLine() == 100) {};
   while (currentLine() != 100) {};
-  cyclesPerFrame = ESP.getCycleCount() - now;
+  m_cycles_per_frame = ESP.getCycleCount() - now;
 }
 
 void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 {
   uint32_t now = ESP.getCycleCount();
-  uint32_t next = now + vs23.cyclesPerFrame;
+  uint32_t next = now + vs23.m_cycles_per_frame;
   uint16_t line;
   if (!SpiLocked()) {
     line = vs23.currentLine();
-    if (line < vs23.syncLine) {
-      next += (vs23.cyclesPerFrame / 262) * (vs23.syncLine-line);
-      vs23.cyclesPerFrame+=10;
-    } else if (line > vs23.syncLine) {
-      next -= (vs23.cyclesPerFrame / 262) * (line-vs23.syncLine);
-      vs23.cyclesPerFrame-=10;
+    if (line < vs23.m_sync_line) {
+      next += (vs23.m_cycles_per_frame / 262) * (vs23.m_sync_line-line);
+      vs23.m_cycles_per_frame += 10;
+    } else if (line > vs23.m_sync_line) {
+      next -= (vs23.m_cycles_per_frame / 262) * (line-vs23.m_sync_line);
+      vs23.m_cycles_per_frame -= 10;
     }
 #ifdef DEBUG
-    if (vs23.syncLine != line) {
+    if (vs23.m_sync_line != line) {
       Serial.print("deviation ");
-      Serial.print(line-vs23.syncLine);
+      Serial.print(line-vs23.m_sync_line);
       Serial.print(" at ");
       Serial.println(millis());
     }
@@ -122,7 +122,7 @@ void VS23S010::setSyncLine(uint16_t line)
       timer0_detachInterrupt();
     m_vsync_enabled = false;
   } else {
-    syncLine = line;
+    m_sync_line = line;
     timer0_isr_init();
     timer0_attachInterrupt(&vsyncHandler);
     // Make sure interrupt is triggered soon.
@@ -158,8 +158,8 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   bg->scroll_x = bg->scroll_y = 5;
   bg->old_scroll_x = bg->old_scroll_y = 0;
   bg->win_x = bg->win_y = 0;
-  bg->win_w = currentMode->x;
-  bg->win_h = currentMode->y;
+  bg->win_w = m_current_mode->x;
+  bg->win_h = m_current_mode->y;
   return false;
 }
 
@@ -489,8 +489,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   }
 }
 
-#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % currentMode->x)
-#define SPRITE_BACKING_Y(sn) (lastLine - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / currentMode->x + 1))
+#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % m_current_mode->x)
+#define SPRITE_BACKING_Y(sn) (m_last_line - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / m_current_mode->x + 1))
 
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
@@ -846,7 +846,7 @@ restore_backing:
           // much higher SPI speeds than the stable 11 MHz if we accept
           // that there is an occasional corrupted byte, which will
           // be corrected in the next frame.
-          SPI1CLK = currentMode->max_spi_freq;
+          SPI1CLK = m_current_mode->max_spi_freq;
           SpiRamReadBytesFast(spr_addr + sy*m_pitch, bbuf, draw_w);
           SPI1CLK = spi_clock_default;
 
