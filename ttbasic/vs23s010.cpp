@@ -728,7 +728,7 @@ restore_backing:
         int sy_adj = s->old_pos_y - scroll_dy;
         if (!s->old_enabled)
           continue;
-        if (sx_adj > bg->win_w || sy_adj > bg->win_h)
+        if (sx_adj > m_current_mode->x || sy_adj > m_current_mode->y)
           continue;
         if (sx_adj < -s->w || sy_adj < -s->h)
           continue;
@@ -742,14 +742,14 @@ restore_backing:
         if (sx_adj < 0) {
           w += sx_adj;
           sx_adj = 0;
-        } else if (sx_adj + w >= bg->win_w) {
-          w = bg->win_w - sx_adj;
+        } else if (sx_adj + w >= m_current_mode->x) {
+          w = m_current_mode->x - sx_adj;
         }
         if (sy_adj < 0) {
           h += sy_adj;
           sy_adj = 0;
-        } else if (sy_adj + h >= bg->win_h) {
-          h = bg->win_h - sy_adj;
+        } else if (sy_adj + h >= m_current_mode->y) {
+          h = m_current_mode->y - sy_adj;
         }
 
         if (w > 0 && h > 0)
@@ -785,14 +785,14 @@ restore_backing:
       if (x < 0) {
         w += x;
         x = 0;
-      } else if (x + w >= bg->win_w) {
-        w = bg->win_w - x;
+      } else if (x + w >= m_current_mode->x) {
+        w = m_current_mode->x - x;
       }
       if (y < 0) {
         h += y;
         y = 0;
-      } else if (y + h >= bg->win_h) {
-        h = bg->win_h - y;
+      } else if (y + h >= m_current_mode->y) {
+        h = m_current_mode->y - y;
       }
 
       if (w > 0 && h > 0)
@@ -814,7 +814,7 @@ restore_backing:
         continue;
       if (s->pos_x < -s->w || s->pos_y < -s->h)
         continue;
-      if (s->pos_x >= bg->win_w || s->pos_y >= bg->win_h)
+      if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
         continue;
       if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
         continue;
@@ -822,7 +822,7 @@ restore_backing:
         continue;
       if (s->transparent) {
         int sx = s->pos_x;
-        uint32_t spr_addr = win_start_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
+        uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
         uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
 
         int draw_w = s->w;
@@ -830,13 +830,13 @@ restore_backing:
 
         if (s->pos_y < 0)
           draw_h += s->pos_y;
-        else if (s->pos_y + s->h > bg->win_h)
-          draw_h -= s->pos_y + s->h - bg->win_h;
+        else if (s->pos_y + s->h > m_current_mode->y)
+          draw_h -= s->pos_y + s->h - m_current_mode->y;
 
         if (s->pos_x < 0)
           draw_w += s->pos_x;
-        else if (s->pos_x + s->w > bg->win_w)
-          draw_w -= s->pos_x + s->w - bg->win_w;
+        else if (s->pos_x + s->w > m_current_mode->x)
+          draw_w -= s->pos_x + s->w - m_current_mode->x;
 
         for (int sy = 0; sy < draw_h; ++sy) {
           // Copy sprite data to SPI send buffer.
@@ -866,14 +866,14 @@ restore_backing:
         if (x < 0) {
           w += x;
           x = 0;
-        } else if (x + w >= bg->win_w) {
-          w = bg->win_w - x;
+        } else if (x + w >= m_current_mode->x) {
+          w = m_current_mode->x - x;
         }
         if (y < 0) {
           h += y;
           y = 0;
-        } else if (y + h >= bg->win_h) {
-          h = bg->win_h - y;
+        } else if (y + h >= m_current_mode->y) {
+          h = m_current_mode->y - y;
         }
 
         if (w > 0 && h > 0)
