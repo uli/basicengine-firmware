@@ -4820,6 +4820,50 @@ void iend() {
     clp += *clp;  // 行ポインタを次へ進める  
 }
 
+void ecom() {
+  err = ERR_COM;
+}
+
+void esyntax() {
+  cip--;
+  err = ERR_SYNTAX;
+}
+
+void iprint_() {
+  iprint();
+}
+
+void irefresh() {
+  sc->refresh();
+}
+
+void isprint() {
+  iprint(1);
+}
+
+void inew_() {
+  inew();
+}
+
+void iclv() {
+  inew(2);
+}
+
+void inil() {
+}
+
+void eunimp() {
+  err = ERR_NOT_SUPPORTED;
+}
+
+void ilist_() {
+  ilist();
+}
+
+void ilrun_() {
+  ilrun();
+}
+
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
 unsigned char* iexe() {
