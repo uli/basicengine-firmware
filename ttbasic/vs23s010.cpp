@@ -153,12 +153,6 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   bg->pat_w = pat_w;
   bg->tile_size_x = tile_size_x;
   bg->tile_size_y = tile_size_y;
-  if (tile_size_x * tile_size_y == 64)
-    bg->timed_delay = 60;
-  else if (tile_size_x * tile_size_y == 256)
-    bg->timed_delay = 350;
-  else
-    bg->timed_delay = 0;
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 5;
@@ -202,10 +196,7 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   bg->force_redraw = true;
 }
 
-// use timed code instead of polling for block move completion
-#define TIMED
-
-static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_t dest_addr, uint16_t timed_delay)
+static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
       // XXX: What about PYF?
       //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
@@ -213,12 +204,7 @@ static inline void ICACHE_RAM_ATTR MoveBlockTimed(uint32_t byteaddress2, uint32_
       VS23_SELECT;
       SPI.writeBytes(req, 5);
       VS23_DESELECT;
-      if (timed_delay) {
-        for (int i=0; i < timed_delay; ++i)
-          asm("nop");
-      } else {
-        while (!blockFinished()) {}
-      }
+      while (!blockFinished()) {}
       //SpiRamWriteBM3Ctrl(0x36);
       VS23_SELECT;
       SPI.write(0x36);
@@ -304,7 +290,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
     }
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-1);
-    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+    MoveBlockAddr(byteaddress2, dest_addr);
 #endif
 
 #ifndef DISABLE_BG_MIDDLE
@@ -319,7 +305,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
       dest_addr = dest_addr_start + xx * tsx;
       byteaddress2 = pat_start_addr + ty*m_pitch + tx;
 
-      MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+      MoveBlockAddr(byteaddress2, dest_addr);
     }
 #endif
 
@@ -338,7 +324,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 
     while (!blockFinished()) {}
     SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-1);
-    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+    MoveBlockAddr(byteaddress2, dest_addr);
 #endif
   }
   while (!blockFinished()) {}
@@ -384,7 +370,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   }
 
   SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-ypoff-1);
-  MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+  MoveBlockAddr(byteaddress2, dest_addr);
 #endif
 
 #ifndef DISABLE_BG_MIDDLE
@@ -397,7 +383,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
 
     dest_addr = dest_addr_start + xx * tsx;
     byteaddress2 = pat_start_addr + ty * m_pitch + tx;
-    MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+    MoveBlockAddr(byteaddress2, dest_addr);
   }
 #endif
 
@@ -415,7 +401,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   }
   while (!blockFinished()) {}
   SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-ypoff-1);
-  MoveBlockTimed(byteaddress2, dest_addr, bg->timed_delay);
+  MoveBlockAddr(byteaddress2, dest_addr);
 #endif
 
   while (!blockFinished()) {}
@@ -462,7 +448,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       }
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
       // XXX: What about PYF?
-      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
+      MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
 
@@ -480,7 +466,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       byteaddress2 = ba2a + ty * m_pitch + tx;
       while (!blockFinished()) {}
       // XXX: What about PYF?
-      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
+      MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
 
@@ -497,7 +483,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       while (!blockFinished()) {}
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
       // XXX: What about PYF?
-      MoveBlockTimed(byteaddress2, byteaddress1, bg->timed_delay);
+      MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
   }
@@ -715,12 +701,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       if (draw_right) {
         if (!draw_top && pass == 0) {
           drawBgTop(bg, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
-          if (bg->timed_delay) {
-            for (int i=0; i < bg->timed_delay; ++i)
-              asm("nop");
-          } else {
-            while (!blockFinished()) {}
-          }
+          while (!blockFinished()) {}
         }
 
         drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
@@ -968,8 +949,6 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
     bg->force_redraw = true;
   }
 }
-
-#undef TIMED
 
 VS23S010 vs23;
 #endif
