@@ -116,6 +116,7 @@ private:
     uint16_t syncLine;
 
     uint32_t m_pitch;	// Distance between piclines in bytes
+    uint32_t m_first_line_addr;
 
     struct bg_t {
       uint8_t *tiles;
