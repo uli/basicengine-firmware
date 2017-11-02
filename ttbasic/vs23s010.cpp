@@ -733,9 +733,9 @@ restore_backing:
           continue;
         if (sx_adj < -s->w || sy_adj < -s->h)
           continue;
-        if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+        if (pass == 0 && sy_adj >= pix_split_y-scroll_dy)
           continue;
-        if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
+        if (pass == 1 && sy_adj + s->h <= pix_split_y-scroll_dy)
           continue;
 
         int w = s->w;
@@ -753,9 +753,24 @@ restore_backing:
           h = m_current_mode->y - sy_adj;
         }
 
+        // Restore sprites crossing the screen partition in two steps, top half
+        // in the first pass, bottom half in the second pass.
+
+        // Sprite restoring, saving and drawing have to agree on a common boundary;
+        // The position to which sprite saving can be done depends on the vertical
+        // scrolling delta, so the other two operations have to take it into
+        // account as well, even though they do not depend on it by themselves.
+        int offset_y = 0;
+        if (pass == 0 && sy_adj + h > pix_split_y-scroll_dy)
+          h = pix_split_y-scroll_dy - sy_adj;
+        if (pass == 1 && sy_adj < pix_split_y-scroll_dy && sy_adj + h > pix_split_y-scroll_dy) {
+          offset_y = pix_split_y-scroll_dy - sy_adj;
+          h -= offset_y;
+        }
+
         if (w > 0 && h > 0)
-          MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn),
-                    sx_adj, sy_adj, w, h, 0);
+          MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn) + offset_y,
+                    sx_adj, sy_adj + offset_y, w, h, 0);
 #endif
       }
 
@@ -773,9 +788,9 @@ restore_backing:
       struct sprite_t *s = m_sprites_ordered[sn];
       if (!s->enabled)
         continue;
-      if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+      if (pass == 0 && s->pos_y >= pix_split_y-scroll_dy)
         continue;
-      if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
+      if (pass == 1 && s->pos_y + s->h <= pix_split_y-scroll_dy)
         continue;
 
       int w = s->w;
@@ -796,8 +811,18 @@ restore_backing:
         h = m_current_mode->y - y;
       }
 
+      // Save sprites crossing the screen partition in two steps, top half
+      // in the first pass, bottom half in the second pass.
+      int offset_y = 0;
+      if (pass == 0 && y + s->h > pix_split_y-scroll_dy)
+        h = pix_split_y-scroll_dy - y;
+      if (pass == 1 && y < pix_split_y-scroll_dy && y + h > pix_split_y-scroll_dy) {
+        offset_y = pix_split_y-scroll_dy - y;
+        h -= offset_y;
+      }
+      
       if (w > 0 && h > 0)
-        MoveBlock(x, y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn), w, h, 0);
+        MoveBlock(x, y + offset_y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn) + offset_y, w, h, 0);
     }
 #endif
 
@@ -817,14 +842,14 @@ restore_backing:
         continue;
       if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
         continue;
-      if (pass == 0 && s->pos_y + s->h >= pix_split_y-scroll_dy)
+      if (pass == 0 && s->pos_y >= pix_split_y-scroll_dy)
         continue;
-      if (pass == 1 && s->pos_y + s->h < pix_split_y-scroll_dy)
+      if (pass == 1 && s->pos_y + s->h <= pix_split_y-scroll_dy)
         continue;
       if (s->transparent) {
         int sx = s->pos_x;
         uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
-        uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
+        //uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
 
         int draw_w = s->w;
         int draw_h = s->h;
@@ -839,9 +864,20 @@ restore_backing:
         else if (s->pos_x + s->w > m_current_mode->x)
           draw_w -= s->pos_x + s->w - m_current_mode->x;
 
+        // Draw sprites crossing the screen partition in two steps, top half
+        // in the first pass, bottom half in the second pass.
+        int offset_y = 0;
+        if (pass == 0 && s->pos_y + draw_h > pix_split_y-scroll_dy)
+          draw_h = pix_split_y-scroll_dy - s->pos_y;
+        if (pass == 1 && s->pos_y < pix_split_y-scroll_dy && s->pos_y + draw_h > pix_split_y-scroll_dy) {
+          draw_h -= pix_split_y-scroll_dy - s->pos_y;
+          offset_y = pix_split_y-scroll_dy - s->pos_y;
+          spr_addr += offset_y * m_pitch;
+        }
+
         for (int sy = 0; sy < draw_h; ++sy) {
           // Copy sprite data to SPI send buffer.
-          memcpy(sbuf+4, s->pattern + sy*s->w, s->w);
+          memcpy(sbuf+4, s->pattern + (sy+offset_y)*s->w, s->w);
 
           // Playing fast and loose with data integrity here: we can use
           // much higher SPI speeds than the stable 11 MHz if we accept
@@ -877,8 +913,17 @@ restore_backing:
           h = m_current_mode->y - y;
         }
 
+        // Draw sprites crossing the screen partition in two steps, top half
+        // in the first pass, bottom half in the second pass.
+        int offset_y = 0;
+        if (pass == 0 && y + h > pix_split_y-scroll_dy)
+          h = pix_split_y-scroll_dy - y;
+        if (pass == 1 && y < pix_split_y-scroll_dy && y + h > pix_split_y-scroll_dy) {
+          offset_y = pix_split_y-scroll_dy - y;
+          h -= offset_y;
+        }
         if (w > 0 && h > 0)
-          MoveBlock(s->pat_x, s->pat_y, x, y, w, h, 0);
+          MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
       }
     }
 #endif
