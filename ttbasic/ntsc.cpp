@@ -234,7 +234,7 @@ void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, u
 #else
 	{
 		uint32_t byteaddress;
-		byteaddress = PICLINE_BYTE_ADDRESS(ypos)+xpos;
+		byteaddress = pixelAddr(xpos, ypos);
 		SpiRamWriteByte(byteaddress,pixdata);
 	}
 #endif	
@@ -636,8 +636,8 @@ void VS23S010::SpiRamVideoInit() {
 void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
   static uint8_t last_dir = 0;
-  uint32_t byteaddress1 = PICLINE_BYTE_ADDRESS(y_dst)+x_dst;
-  uint32_t byteaddress2 = PICLINE_BYTE_ADDRESS(y_src)+x_src;
+  uint32_t byteaddress1 = pixelAddr(x_dst, y_dst);
+  uint32_t byteaddress2 = pixelAddr(x_src, y_src);
   // If the last move was a reverse one, we have to wait until it's finished
   // before we can set the new addresses.
   if (last_dir)
