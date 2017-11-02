@@ -4802,6 +4802,9 @@ void ilrun_() {
   ilrun();
 }
 
+typedef void (*cmd_t)();
+#include "funtbl.h"
+
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
 unsigned char* iexe() {
@@ -4823,113 +4826,21 @@ unsigned char* iexe() {
       }
     }
 
-    //中間コードを実行
-    switch (*cip++) {
-    case I_STR:    ilabel();          break;  // 文字列の場合(ラベル)
-    case I_GOTO:   igoto();           break;  // GOTOの場合
-    case I_GOSUB:  igosub();          break;  // GOSUBの場合
-    case I_RETURN: ireturn();         break;  // RETURNの場合
-    case I_FOR:    ifor();            break;  // FORの場合
-    case I_NEXT:   inext();           break;  // NEXTの場合
-    case I_IF:     iif();             break;  // IFの場合
-    case I_ELSE:   iskip();           break;  // 単独のELSEの場合     
-    case I_SQUOT:  iskip();           break;  // 'の場合
-    case I_REM:    iskip();           break;  // REMの場合
-    case I_END:    iend();            break;  // ENDの場合
-    case I_CLS:    icls();            break;  // CLS
-    case I_WAIT:   iwait();           break;  // WAIT
-    case I_LOCATE: ilocate();         break;  // LOCATE
-    case I_COLOR:  icolor();          break;  // COLOR
-    case I_ATTR:   iattr();           break;  // ATTR
-    case I_VAR:    ivar();            break;  // 変数（LETを省略した代入文）
-    case I_ARRAY:  iarray();          break;  // 配列（LETを省略した代入文）
-    case I_LET:    ilet();            break;  // LET
-    case I_QUEST:  iprint();          break;  // PRINT
-    case I_PRINT:   iprint();         break;  // PRINT
-    case I_INPUT:   iinput();         break;  // INPUT
-    case I_GPIO:    igpio();          break;  // GPIO
-    case I_DOUT:    idwrite();        break;  // OUT    
-    case I_POUT:    ipwm();           break;  // PWM   
-    case I_SHIFTOUT:ishiftOut();      break;  // ShiftOut
-    case I_POKE:    ipoke();          break;  // POKEコマンド
-    case I_SETDATE: isetDate();       break;  // SETDATEコマンド    
-    case I_GETDATE: igetDate();       break;  // GETDATEコマンド
-    case I_GETTIME: igetTime();       break;  // GETDATEコマンド
-    case I_DATE:    idate();          break;  // DATEコマンド
-    case I_CLT:     iclt();           break;  // CLTコマンド
-    case I_REFLESH:   sc->refresh();   break;  // REFLESHコマンド 画面再表示
-    case I_EEPFORMAT: ieepformat();   break;  // EPPFORMAT EEPROM(エミュレーション)の初期化
-    case I_EEPWRITE:  ieepwrite();    break;  // EEPWRITE コマンド
-    case I_PSET:      ipset();        break;  // PSETコマンド ドットの描画
-    case I_LINE:      iline();        break;  // LINEコマンド 直線の描画
-    case I_CIRCLE:    icircle();      break;  // CIRCLEコマンド 円の描画
-    case I_RECT:      irect();        break;  // RECT四角の表示
-    case I_BITMAP:    ibitmap();      break;  // BITMAPビットマップの描画
-    case I_CSCROLL:   icscroll();     break;  // CSCROLLキャラクタスクロール
-    case I_GSCROLL:   igscroll();     break;  // GSCROLLグラフィックスクロール    
-    case I_SWRITE:    iswrite();      break;  // シリアル1バイト出力
-    case I_SPRINT:    iprint(1);      break;  // SPRINT
-    case I_GPRINT:    igprint();      break;  // GPRINT
-    case I_SOPEN:     isopen();       break;  // SOPEN
-    case I_SCLOSE:    isclose();      break;  // SCLOSE
-    case I_SMODE:     ismode();       break;  // SMODE 
-    case I_TONE:      itone();        break;  // TONE
-    case I_NOTONE:    inotone();      break;  // NOTONE
-    case I_CLV:       inew(2);        break;  // CLV 変数領域消去
-    case I_INFO:      iinfo();        break;  // システム情報の表示(デバッグ用)
-    case I_LDBMP:      ildbmp();      break;  // LDBMP ビットマップファイルのロード
-    case I_MKDIR:      imkdir();      break;  // MKDIR ディレクトリの作成
-    case I_RMDIR:      irmdir();      break;  // RMDIR ディレクトリの削除
-    //case I_RENAME:   irename();     break;  // RENAME ファイル名の変更
-    case I_REMOVE:     iremove();     break;  // REMOVE ファイル削除
-    case I_BSAVE:      ibsave();      break;  // BSAVE メモリ領域の保存
-    case I_BLOAD:      ibload();      break;  // BLOAD メモリ領域へのロード
-    case I_CAT:        icat();        break;  // CAT テキストファイル表示
-    case I_LRUN:       ilrun();       break;   
-    case I_LIST:       ilist();       break;  // LIST
-    case I_EXPORT:     iexport();     break;  // EXPORTコマンド
-    case I_FILES:      ifiles();      break;
-    case I_CONFIG:     iconfig();     break;
-    case I_SAVECONFIG: isaveconfig(); break;
-    case I_ERASE:      ierase();      break; 
-    case I_NEW:        inew();        break;   // NEW
-    case I_LOAD:       ilrun();       break;
-    case I_SAVE:       isave();       break;
-    case I_WINDOW:     iwindow();     break;
-    case I_SCREEN:     iscreen();     break;
-    case I_FONT:       ifont();	      break;
-    case I_BG:	       ibg();	      break;
-    case I_BGON:       ibgon();	      break;
-    case I_BGOFF:      ibgoff();      break;
-    case I_BGWIN:      ibgwin();      break;
-    case I_SCROLL:     iscroll();     break;
-    case I_SPRITE:     isprite();     break;
-    case I_MOVE:       imove();       break;
-
-    case I_RUN:    // RUN
-    case I_RENUM:  // RENUM
-    case I_DELETE: // DELETE
-      err = ERR_COM; //エラー番号をセット
-      return NULL; //終了
-
-    case I_COLON: // 中間コードが「:」の場合
-      break; 
-
-    default:
-     cip--;
-     if (*cip >= I_PA0 && *cip <= I_PC15) {
-       igpio();
-       break; 
-     } 
-    
+  //中間コードを実行
+  if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
+    funtbl[*cip++]();
+  } else      
+    if (*cip >= I_PA0 && *cip <= I_PC15) {
+      igpio();
+    } else {
      // 以上のいずれにも該当しない場合
      err = ERR_SYNTAX; //エラー番号をセット
-     break;
-    }  //中間コードで分岐の末尾
-  
-    if (err)
-      return NULL;
+  }  //中間コードで分岐の末尾
+
+  if (err)
+    return NULL;
   }
+
   return clp + *clp;
 }
 
