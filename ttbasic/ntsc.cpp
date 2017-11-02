@@ -646,7 +646,7 @@ void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16
   SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1, ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2) | dir);
   if (!last_dir)
     while (!blockFinished()) {}
-  SpiRamWriteBM2Ctrl(PICLINE_LENGTH_BYTES+BEXTRA+1-width-1, width, height-1);
+  SpiRamWriteBM2Ctrl(m_pitch-width, width, height-1);
   SpiRamWriteBM3Ctrl(0x36);
   last_dir = dir;
 }
