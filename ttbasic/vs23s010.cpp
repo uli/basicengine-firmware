@@ -511,6 +511,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
   SpiLock();
   lines[0] = currentLine();
+  for (int pass = 0; pass < 2; ++pass) {
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     if (!bg->enabled)
@@ -541,7 +542,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     int scroll_dx = bg->scroll_x - bg->old_scroll_x;
     int scroll_dy = bg->scroll_y - bg->old_scroll_y;
 
-    for (int pass = 0; pass < 2; ++pass) {
     dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
     if (bg->force_redraw || abs(bg->scroll_x - bg->old_scroll_x) > 8 || abs(bg->scroll_y - bg->old_scroll_y) > 8) {
       if (pass == 0)
@@ -575,6 +575,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       bool draw_right = false;
       bool draw_top = false;
       bool draw_bottom = false;
+
       if (scroll_dx == 0 && scroll_dy == 0)
         goto restore_backing;
 
@@ -883,12 +884,14 @@ restore_backing:
 #endif
     lines[5] = currentLine();
 
-    } // pass
-    bg->old_scroll_x = bg->scroll_x;
-    bg->old_scroll_y = bg->scroll_y;
-    bg->force_redraw = false;
+    if (pass == 1) {
+      bg->old_scroll_x = bg->scroll_x;
+      bg->old_scroll_y = bg->scroll_y;
+      bg->force_redraw = false;
+    }
     Serial.println(millis() - mxx);
   }
+  } // pass
 
   SPI1CLK = spi_clock_default;
   SpiUnlock();
