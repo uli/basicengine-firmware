@@ -553,7 +553,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                     pRow_[x-ox] = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                   }
-                  SpiRamWriteBytes(vs23.pixelAddr(dx-ox, dy+y-oy), pRow_, x-ox);
+                  SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
                 }
             }
 
