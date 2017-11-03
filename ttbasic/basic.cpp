@@ -3245,7 +3245,7 @@ void load_bitmap(char *fname, int16_t dx, int16_t dy)
   
   // 仮想アドレスから実アドレスへの変換
   // サイズチェック
-  if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > ((tTVscreen*)sc)->getGHeight()) {
+  if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > vs23.lastLine()) {
     err = ERR_RANGE;
     return;
   }

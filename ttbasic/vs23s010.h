@@ -109,6 +109,8 @@ class VS23S010 {
 
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];
+    
+    inline uint16_t lastLine() { return m_last_line; }
 
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
