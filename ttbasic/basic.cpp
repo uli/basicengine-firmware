@@ -102,17 +102,6 @@ uint16_t tv_get_gheight();
 sdfiles fs;
 #endif 
 
-// **** プロフラム保存用定義 ********
-#if 0
-#include <TFlash.h>
-#define FLASH_PAGE_SIZE        1024
-#define FLASH_START_ADDRESS    ((uint32_t)(0x8000000))
-#define FLASH_PAGE_NUM         128     // 全ページ数
-#define FLASH_PRG_START_PAGE   (FLASH_PAGE_NUM-FLASH_PAGE_PAR_PRG*FLASH_SAVE_NUM)  // 利用開始ページ
-#define FLASH_PAGE_PAR_PRG     4       // 1プログラム当たりの利用ページ数
-#define FLASH_SAVE_NUM         8       // 保存可能数
-#endif
-
 // **** EEPROMエミュレーション ******
 #include <EEPROM.h>
 extern EEPROMClass EEPROM;
@@ -1557,172 +1546,6 @@ void inew(uint8_t mode = 0) {
   }
 }
 
-/********
- 2017/08/12 不具合ありのため一旦凍結し、V0.83版の内容に差し換え
-
-// RENUMコマンド
-// RENUM [開始番号 [,増分 [,振り直し開始番号,振り直し終了番号]]
-void irenum() {
-  uint16_t startLineNo = 10;   // 開始行番号
-  uint16_t increase = 10;      // 増分
-  int16_t prvStLineNo = 0;    // 振り直し開始番号
-  int16_t prvEdLineNo = 0;    // 振り直し終了番号
-  int16_t NewprvStLineNo;     // 振り直し終了番号の振り直し後の行番号
-  int16_t prvEdNextLineNo;    // 振り直し終了番号の次の行番号
-  int16_t prvCont = 0;        // 振り直し対象行数
-  uint8_t* ptr;               // プログラム領域参照ポインタ
-  uint16_t len;                // 行長さ
-  uint16_t i;                  // 中間コード参照位置
-  uint16_t newnum;             // 新しい行番号
-  uint16_t num;                // 現在の行番号
-  uint16_t index;              // 行インデックス
-  uint16_t cnt;                // プログラム行数
-  
-  // 開始行番号、増分引数チェック
-  if (*cip == I_NUM) {                // 引数チェック
-    startLineNo = getlineno(cip);     // 開始行番号取得
-    cip+=3;
-    if (*cip == I_COMMA) {            // 次の引数の処理
-        cip++;                        // カンマをスキップ
-        if (*cip == I_NUM) {          // 引数チェック
-           increase = getlineno(cip); // 増分の取得
-           cip+=3;
-           if (*cip == I_COMMA) {             // 次の引数の処理
-             cip++;                          // カンマをスキップ
-             if (*cip == I_NUM) {            // 引数チェック
-               prvStLineNo = getlineno(cip); // 振り直し開始番号の取得
-               cip+=3;
-             } else {
-               err = ERR_SYNTAX;             // カンマありで引数なしの場合はエラーとする
-               return;
-             }
-             if (*cip != I_COMMA) {            // 次の引数の処理
-               err = ERR_SYNTAX;             // カンマありで引数なしの場合はエラーとする
-               return;
-             }            
-             cip++;                          // カンマをスキップ           
-             if (*cip == I_NUM) {            // 引数チェック
-               prvEdLineNo = getlineno(cip); // 振り直し終了番号の取得
-               cip+=3;
-             } else {
-               err = ERR_SYNTAX;          // カンマありで引数なしの場合はエラーとする
-               return;
-             }
-           }
-         } else {
-          err = ERR_SYNTAX;                 // カンマありで引数なしの場合はエラーとする
-          return;
-        }
-    }
-  }
-
-  // 引数の有効性チェック
-  cnt = countLines()-1;
-  //Serial.print("cnt=");Serial.println(cnt,DEC);
-  if (startLineNo < 0 || increase <= 0) {
-    err = ERR_VALUE;
-    return;   
-  }
-  if (startLineNo + increase * cnt > 32767) {
-    err = ERR_VALUE;
-    return;       
-  }
-  if (prvStLineNo > prvEdLineNo) {
-    err = ERR_VALUE;
-    return;          
-  }
-
-  if ( prvEdLineNo ) {
-    // 範囲指定がある場合、不整合の発生の有無をチェックする
-    // 1)prvEdLineNoの次の行が、prvStLineNoからprvEdLineNoの付け替え後の行番号が、
-    //   付け替え前のprvEdLineNoの次の行の行番号より大きくならないこと
-    //    このチェックは次の手順で行う
-    //     ①prvEdLineNo～prvStLineNoまでの行数取得 => prvCont
-    //     ②prvStLineNoの付け替え後の行番号を計算で取得 => NewprvStLineNo=startLineNo + increase * (prvCont-1) 
-    //     ③prvEdLineNoの次の行の行番号の取得 => prvEdNextLineNo
-    //       次の行が無い場合は32767とする
-    //     ④NewprvStLineNoがprvEdNextLineNo以上ならNGとする
-    //
-    prvCont = countLines(prvStLineNo,prvEdLineNo);
-    NewprvStLineNo = startLineNo + increase * (prvCont-1);
-    prvEdNextLineNo = getNextLineNo(prvEdLineNo);
-    //Serial.print("prvCont=");Serial.println(prvCont,DEC);
-    //Serial.print("NewprvStLineNo=");Serial.println(NewprvStLineNo,DEC);
-    //Serial.print("prvEdNextLineNo=");Serial.println(prvEdNextLineNo,DEC);
-    if (prvEdNextLineNo<0)
-      prvEdNextLineNo = 32767;
-    if (NewprvStLineNo >= prvEdNextLineNo) {
-      err = ERR_VALUE;
-      return;                
-    }
-  }
-
-  // ブログラム中のGOTOの飛び先行番号を付け直す
-  for (  clp = listbuf; *clp ; clp += *clp) {
-     ptr = clp;
-     len = *ptr;
-     ptr++;
-     i=0;
-     // 行内検索
-     while( i < len-1 ) {
-        switch(ptr[i]) {
-        case I_GOTO:  // GOTO命令
-        case I_GOSUB: // GOSUB命令
-          i++;
-          if (ptr[i] == I_NUM) {
-            num = getlineno(&ptr[i]);    // 現在の行番号を取得する
-            if ( (num == 0) || (num == 1) || (num < prvStLineNo) || (num > prvEdLineNo) ) {
-               // 行番号0,1は変更を行わない
-               i+=3;
-               continue;              
-            }
-            index = getlineIndex(num);   // 行番号の行インデックスを取得する
-            if (index == 32767) {
-               // 該当する行が見つからないため、変更は行わない
-               i+=3;
-               continue;
-            } else {
-               // とび先行番号を付け替える
-               newnum = startLineNo + increase*index;
-               ptr[i+2] = newnum>>8;
-               ptr[i+1] = newnum&0xff;
-               i+=3;
-               continue;
-            }
-          } 
-          break;
-      case I_STR:  // 文字列
-        i++;
-        i+=ptr[i]; // 文字列長分移動
-        break;
-      case I_NUM:  // 定数
-      case I_HEXNUM: 
-        i+=3;      // 整数2バイト+中間コード1バイト分移動
-        break;
-      case I_VAR:  // 変数
-        i+=2;      // 変数名
-        break;
-      default:     // その他
-        i++;
-        break;
-      }
-    }
-  }
-  
-  // 各行の行番号の付け替え
-  index = 0;
-  for (  clp = listbuf; *clp ; clp += *clp ) {
-    if ( (getlineno(clp) != 0 && getlineno(clp) != 1) && 
-         (!prvEdLineNo || ((getlineno(clp) >= prvStLineNo) && (getlineno(clp) <= prvEdLineNo))) ) {
-       newnum = startLineNo + increase * index;
-       *(clp+1)  = newnum&0xff;
-       *(clp+2)  = newnum>>8;
-       index++;
-    }
-  }
-}
-*/
-
 // RENUME command handler
 void irenum() {
   uint16_t startLineNo = 10;  // 開始行番号
@@ -1870,7 +1693,6 @@ void iloadconfig() {
 
 // プログラム保存 SAVE 保存領域番号|"ファイル名"
 void isave() {
-#if 1
   int16_t prgno = 0;
   int16_t ascii = 1;
 #if 0
@@ -1934,7 +1756,6 @@ void isave() {
     TFlash.lock();
 #endif
   }
-#endif
 }
 
 // フラッシュメモリ上のプログラム消去 ERASE[プログラム番号[,プログラム番号]
