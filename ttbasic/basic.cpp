@@ -3227,31 +3227,20 @@ char* getParamFname() {
   return tbuf;
 }
 
-// LDBMP "ファイル名" ,アドレス, X, Y, W, H
-void ildbmp() {
-  char* fname;
-  int16_t adr;
-  int16_t x =0,y = 0,w = 0, h = 0;
-  int16_t dx, dy;
+void load_bitmap(char *fname, int16_t dx, int16_t dy)
+{
+  int16_t x = 0,y = 0,w = 0, h = 0;
   uint8_t rc;
 
-  if(!(fname = getParamFname())) {
-    return;
-  }
-  if (*cip != I_COMMA) {
-    err = ERR_SYNTAX;
-    return;    
-  }
-  cip++;
-  
-  if ( getParam(dx,  0, 32767, true) ) return;   // x
-  if ( getParam(dy,  0, 32767, true) ) return;   // y
-  if ( getParam(x,  0, 32767, true) ) return;   // x
-  if ( getParam(y,  0, 32767, false) ) return;   // y
   if (*cip == I_COMMA) {
     ++cip;
-    if ( getParam(w,  0, 32767, true) ) return;
-    if ( getParam(h,  0, 32767, false) ) return;
+    if ( getParam(x,  0, 32767, true) ) return;
+    if ( getParam(y,  0, 32767, false) ) return;
+    if (*cip == I_COMMA) {
+      ++cip;
+      if ( getParam(w,  0, 32767, true) ) return;
+      if ( getParam(h,  0, 32767, false) ) return;
+    }
   }
   
   // 仮想アドレスから実アドレスへの変換
@@ -3270,6 +3259,23 @@ void ildbmp() {
   } else if (rc == SD_ERR_READ_FILE) {
     err =  ERR_FILE_READ;
   }
+}
+
+// LDBMP "ファイル名" ,アドレス, X, Y, W, H
+void ildbmp() {
+  char* fname;
+  int16_t dx, dy;
+
+  if(!(fname = getParamFname())) {
+    return;
+  }
+  if (*cip == I_COMMA) {
+    ++cip;
+    if ( getParam(dx,  0, 32767, true) ) return;
+    if ( getParam(dy,  0, 32767, false) ) return;
+  }
+
+  load_bitmap(fname, dx, dy);
 }
 
 // MKDIR "ファイル名"
