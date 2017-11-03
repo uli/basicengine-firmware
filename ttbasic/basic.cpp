@@ -3278,6 +3278,24 @@ void ildbmp() {
   load_bitmap(fname, dx, dy);
 }
 
+void ildpat() {
+  char* fname;
+  int16_t dx, dy;
+
+  if(!(fname = getParamFname())) {
+    return;
+  }
+  
+  // XXX: allocate space off-screen
+  dx = 0;
+  dy = sc0.getGHeight() + 8;
+
+  retval[0] = dx;
+  retval[1] = dy;
+
+  load_bitmap(fname, dx, dy);
+}
+
 // MKDIR "ファイル名"
 void imkdir() {
   uint8_t rc;

@@ -93,6 +93,7 @@ SCLOSE	I_SCLOSE	isclose
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
 LDBMP	I_LDBMP		ildbmp
+LDPAT	I_LDPAT		ildpat
 MKDIR	I_MKDIR		imkdir
 RMDIR	I_RMDIR		irmdir
 RENAME	I_RENAME	irename
