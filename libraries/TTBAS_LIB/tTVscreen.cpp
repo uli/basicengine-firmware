@@ -33,11 +33,11 @@ void    endPS2();
 void setupPS2(uint8_t kb_type);
 uint8_t ps2read();
 
-int16_t getPrevLineNo(int16_t lineno);
-int16_t getNextLineNo(int16_t lineno);
-char* getLineStr(int16_t lineno);
-int16_t getTopLineNum();
-int16_t getBottomLineNum();
+int32_t getPrevLineNo(int32_t lineno);
+int32_t getNextLineNo(int32_t lineno);
+char* getLineStr(int32_t lineno);
+int32_t getTopLineNum();
+int32_t getBottomLineNum();
 
 
 

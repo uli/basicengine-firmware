@@ -7,9 +7,9 @@
 #include "tscreenBase.h"
 
 #if DEPEND_TTBASIC == 1
-  int16_t getPrevLineNo(int16_t lineno);
-  int16_t getNextLineNo(int16_t lineno);
-  char* getLineStr(int16_t lineno);
+  int32_t getPrevLineNo(int32_t lineno);
+  int32_t getNextLineNo(int32_t lineno);
+  char* getLineStr(int32_t lineno);
 #endif
 
 // スクリーンの初期設定
@@ -413,12 +413,12 @@ int16_t tscreenBase::getLineNum(int16_t l) {
 
 // 編集中画面をスクロールアップする
 uint8_t tscreenBase::edit_scrollUp() {
-  static uint16_t prvlineNum = 0; // 直前の処理行の行数
+  static uint32_t prvlineNum = 0; // 直前の処理行の行数
 #if DEPEND_TTBASIC == 0
    scroll_up();
 #else
   // 1行分スクロールアップを試みる
-  int16_t lineno,nm,len;
+  int32_t lineno,nm,len;
   char* text;
   lineno = getLineNum(height-1); // 最終行の表示行番号の取得
   if (lineno <= 0) {
@@ -455,7 +455,7 @@ uint8_t tscreenBase::edit_scrollDown() {
   scroll_down();
 #else
   // 1行分スクロールダウンを試みる
-  int16_t lineno,prv_nm,len;
+  int32_t lineno,prv_nm,len;
   char* text;
   lineno = getLineNum(0); // 最終行の表示行番号の取得
   if (lineno > 0) {
