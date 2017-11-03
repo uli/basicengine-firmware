@@ -94,7 +94,7 @@ SWRITE	I_SWRITE	iswrite
 LDBMP	I_LDBMP		ildbmp
 MKDIR	I_MKDIR		imkdir
 RMDIR	I_RMDIR		irmdir
-RENAME	I_RENAME	eunimp
+RENAME	I_RENAME	irename
 FCOPY	I_FCOPY		eunimp
 CAT	I_CAT		icat
 REMOVE	I_REMOVE	iremove

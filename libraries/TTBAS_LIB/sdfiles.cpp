@@ -539,7 +539,6 @@ uint8_t sdfiles::rmdir(char* fname) {
   return rc;
 }
 
-/***
 // ファイル名の変更
 uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
   uint8_t rc = 1;
@@ -549,10 +548,10 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 
   if(SD.rename(old_fname,new_fname) == true)
     rc = 0;
-  SD.end();
+  SD_END();
   return rc;
 }
-**/
+
 // ファイルの削除
 uint8_t sdfiles::remove(char* fname) {
   uint8_t rc = 1;

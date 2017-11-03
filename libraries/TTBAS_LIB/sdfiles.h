@@ -40,7 +40,7 @@ class sdfiles {
   uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
   uint8_t mkdir(char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
-  //uint8_t rename(char* old_fname,char* new_fname);    // ファイル名の変更
+  uint8_t rename(char* old_fname,char* new_fname);    // ファイル名の変更
   uint8_t remove(char* fname);                          // ファイルの削除
   uint8_t fcopy(char* old_fname,char* new_fname);       // ファイルのコピー
 

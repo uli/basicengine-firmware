@@ -3477,7 +3477,7 @@ void irmdir() {
   }
 #endif
 }
-/****
+
 // RENAME "現在のファイル名","新しいファイル名"
 void irename() {
   char old_fname[SD_PATH_LEN];
@@ -3533,7 +3533,7 @@ void irename() {
     return;    
   }
 }
-**/
+
 // REMOVE "ファイル名"
 void iremove() {
   char* fname;
