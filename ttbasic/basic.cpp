@@ -564,40 +564,11 @@ void c_puts(const char *s, uint8_t devno=0) {
 // 'SNNNNN' S:符号 N:数値 or 空白 
 //  dで桁指定時は空白補完する
 //
-void putnum(int16_t value, int16_t d, uint8_t devno=0) {
-  uint8_t dig;  // 桁位置
-  uint8_t sign; // 負号の有無（値を絶対値に変換した印）
-  uint16_t new_value;
-  char c = ' ';
-  if (d < 0) {
-    d = -d;
-    c = '0';
-  }
-
-  if (value < 0) {     // もし値が0未満なら
-    sign = 1;          // 負号あり
-    //value = -value;    // 値を絶対値に変換
-    new_value = -value;
-  } else {
-    sign = 0;          // 負号なし
-    new_value = value;
-  }
-
-  lbuf[6] = 0;         // 終端を置く
-  dig = 6;             // 桁位置の初期値を末尾に設定
-  do { //次の処理をやってみる
-    lbuf[--dig] = (new_value % 10) + '0'; // 1の位を文字に変換して保存
-    new_value /= 10;                      // 1桁落とす
-  } while (new_value > 0);                // 値が0でなければ繰り返す
-
-  if (sign) //もし負号ありなら
-    lbuf[--dig] = '-'; // 負号を保存
-
-  while (6 - dig < d) { // 指定の桁数を下回っていれば繰り返す
-    c_putch(c,devno);   // 桁の不足を空白で埋める
-    d--;                // 指定の桁数を1減らす
-  }
-  c_puts(&lbuf[dig],devno);   // 桁位置からバッファの文字列を表示
+void putnum(int32_t value, int8_t d, uint8_t devno=0) {
+  char f[] = "%.d";
+  f[1] = '0' + d;
+  sprintf(lbuf, f, value);
+  c_puts(lbuf, devno);
 }
 
 // 16進数の出力
@@ -610,30 +581,11 @@ void putnum(int16_t value, int16_t d, uint8_t devno=0) {
 //  dで桁指定時は0補完する
 //  符号は考慮しない
 // 
-void putHexnum(short value, uint8_t d, uint8_t devno=0) {
-  uint16_t  hex = (uint16_t)value; // 符号なし16進数として参照利用する
-  uint16_t  h;
-  uint16_t dig;
-
-  // 表示に必要な桁数を求める
-  if (hex >= 0x1000) 
-    dig = 4;
-  else if (hex >= 0x100) 
-    dig = 3;
-  else if (hex >= 0x10) 
-    dig = 2;
-  else 
-    dig = 1;
-
-  if (d != 0 && d > dig) 
-    dig = d;
-
-  for (uint8_t i = 0; i < 4; i++) {
-    h = ( hex >> (12 - i * 4) ) & 0x0f;
-    lbuf[i] = (h >= 0 && h <= 9) ? h + '0': h + 'A' - 10;
-  }
-  lbuf[4] = 0;
-  c_puts(&lbuf[4-dig],devno);
+void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0) {
+  char s[] = "%0.X";
+  s[2] = '0' + d;
+  sprintf(lbuf, s, value);
+  c_puts(lbuf,devno);
 }
 
 // 2進数の出力
