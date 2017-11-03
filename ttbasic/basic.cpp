@@ -739,7 +739,7 @@ int16_t lookup(char* str, uint16_t len) {
   for (uint16_t j = 1; j <= len; j++) {
     fd_id = -1;
     for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if (!strncasecmp(kwtbl[i], str, j)) {
+      if (!strncasecmp_P(str, kwtbl[i], j)) {
         fd_id = i;
         fd_len = j;        
         break;
@@ -755,7 +755,7 @@ int16_t lookup(char* str, uint16_t len) {
   if (prv_fd_id >= 0) {
     prv_fd_id = -1;
     for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if ( (strlen(kwtbl[i]) == prv_len) && !strncasecmp(kwtbl[i], str, prv_len) ) {
+      if ( (strlen_P(kwtbl[i]) == prv_len) && !strncasecmp_P(str, kwtbl[i], prv_len) ) {
         prv_fd_id = i;
         break;
       }
@@ -795,7 +795,7 @@ uint8_t toktoi() {
         return 0;                      // 0を持ち帰る
       }
       ibuf[len++] = key;                 // 中間コードを記録
-      s+= strlen(kwtbl[key]);
+      s+= strlen_P(kwtbl[key]);
 
     } else {
       //err = ERR_SYNTAX; //エラー番号をセット
@@ -1119,7 +1119,9 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
   while (*ip != I_EOL) { //行末でなければ繰り返す
     //キーワードの処理
     if (*ip < SIZE_KWTBL) { //もしキーワードなら    
-      c_puts(kwtbl[*ip],devno); //キーワードテーブルの文字列を表示
+      char kw[MAX_KW_LEN+1];
+      strcpy_P(kw, kwtbl[*ip]);
+      c_puts(kw, devno); //キーワードテーブルの文字列を表示
       if (*(ip+1) != I_COLON) 
         if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
           c_putch(' ',devno); //空白を表示
