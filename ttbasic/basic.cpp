@@ -3214,11 +3214,11 @@ char* getParamFname() {
   return tbuf;
 }
 
-// LDBMP "ファイル名" ,アドレス, X, Y, W, H [,Mode]
+// LDBMP "ファイル名" ,アドレス, X, Y, W, H
 void ildbmp() {
   char* fname;
   int16_t adr;
-  int16_t x =0,y = 0,w = 0, h = 0,mode = 0;
+  int16_t x =0,y = 0,w = 0, h = 0;
   int16_t dx, dy;
   uint8_t rc;
 
@@ -3237,12 +3237,8 @@ void ildbmp() {
   if ( getParam(y,  0, 32767, false) ) return;   // y
   if (*cip == I_COMMA) {
     ++cip;
-    if ( getParam(w,  0, 32767, true) ) return;   // w
-    if ( getParam(h,  0, 32767, false) )// return;  // h
-    if (*cip == I_COMMA) {
-       cip++; 
-       if ( getParam(mode,  0, 1, false) ) return;  // mode 
-    }
+    if ( getParam(w,  0, 32767, true) ) return;
+    if ( getParam(h,  0, 32767, false) ) return;
   }
   
   // 仮想アドレスから実アドレスへの変換
@@ -3253,7 +3249,7 @@ void ildbmp() {
   }
 
   // 画像のロード
-  rc = fs.loadBitmap(fname, dx, dy, x, y, w, h, mode);
+  rc = fs.loadBitmap(fname, dx, dy, x, y, w, h);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
