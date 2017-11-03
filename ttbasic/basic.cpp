@@ -411,6 +411,9 @@ unsigned char gstki;              // GOSUB stack index
 unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
+#define MAX_RETVALS 4
+int32_t retval[MAX_RETVALS];	  // multi-value returns
+
 uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
 
@@ -2063,6 +2066,16 @@ int16_t ipeek() {
   else 
     err = ERR_RANGE;
   return value;
+}
+
+int32_t iret() {
+  int16_t r;
+
+  if (checkOpen()) return 0;
+  if ( getParam(r, 0, MAX_RETVALS-1, false) ) return 0;
+  if (checkClose()) return 0;  
+
+  return retval[r];
 }
 
 // スクリーン座標の文字コードの取得 'VPEEK(X,Y)'
@@ -4032,6 +4045,8 @@ int16_t ivalue() {
   case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
   case I_SHIFTIN: value = ishiftIn(); break; // SHIFTIN()関数
   
+  case I_RET:   value = iret(); break;
+
   // 定数
   case I_HIGH:  value = CONST_HIGH; break;
   case I_LOW:   value = CONST_LOW;  break;

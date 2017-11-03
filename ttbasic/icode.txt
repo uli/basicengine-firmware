@@ -50,6 +50,7 @@ ATTR	I_ATTR		iattr
 LOCATE	I_LOCATE	ilocate
 REDRAW	I_REFLESH	irefresh
 CSCROLL	I_CSCROLL	icscroll
+RET	I_RET		esyntax
 CHR$	I_CHR		esyntax
 BIN$	I_BIN		esyntax
 HEX$	I_HEX		esyntax
