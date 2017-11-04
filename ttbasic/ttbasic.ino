@@ -37,7 +37,13 @@ void SpiRamVideoInit();
 void setup(void){
   // That does not seem to be necessary on ESP8266.
   //randomSeed(analogRead(PA0));
-  delay(500);
+  // Wait a moment before firing up everything.
+  // Not doing this causes undesirable effects when cold booting, such as
+  // the keyboard failing to initialize. This does not happen when resetting
+  // the powered system. This suggests a power issue, although scoping the
+  // supplies did not reveal anything suspicious.
+  delay(1000);	// 1s seems to always do the trick; 500ms is not reliable.
+
   Serial.begin(115200);
   SpiLock();
 #ifdef ESP8266_NOWIFI
