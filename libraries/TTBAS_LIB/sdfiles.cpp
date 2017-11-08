@@ -189,7 +189,6 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
 //  継続可能              : 1
 // 
 int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
-#if 1
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
   uint16_t len;
@@ -225,9 +224,6 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
 DONE:
   SD_END();
   return rc; 
-#else
-  return -SD_ERR_NOT_FILE;
-#endif
 }
 
 //
