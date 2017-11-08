@@ -19,11 +19,8 @@
 #define SD_PATH_LEN 64      // ディレクトリパス長
 #define SD_TEXT_LEN 255     // テキスト１行最大長さ
 
-#define SD_ERR_INIT       1    // SDカード初期化失敗
-#define SD_ERR_OPEN_FILE  2    // ファイルオープン失敗
-#define SD_ERR_READ_FILE  3    // ファイル読込失敗
-#define SD_ERR_NOT_FILE   4    // ファイルでない(ディレクトリ)
-#define SD_ERR_WRITE_FILE 5    //  ファイル書込み失敗
+#include "../../ttbasic/error.h"
+
 class sdfiles {
  private:
 
