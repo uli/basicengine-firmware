@@ -461,23 +461,49 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
   return pcx_file.read(buf, bytesToRead);
 }
 
-uint8_t sdfiles::loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h) {
+uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h) {
   uint8_t rc =1;
  
   if (SD_BEGIN(11) == false) 
-    return -SD_ERR_INIT;
+    return SD_ERR_INIT;
 
   pcx_file = SD.open(fname, FILE_READ);
   if (!pcx_file)
-    return -SD_ERR_OPEN_FILE;
+    return SD_ERR_OPEN_FILE;
 
   int width, height, components;
+
+  if (w == -1) {
+    if (h != -1) {
+      rc = ERR_RANGE;
+      goto out;
+    }
+    if (!drpcx_info(read_image_bytes, NULL, &width, &height, &components)) {
+      rc = SD_ERR_READ_FILE;
+      goto out;
+    }
+    pcx_file.seekSet(0);
+    w = width - x;
+    h = height - y;
+  }
+  if (dst_x == -1) {
+    if (dst_y != -1) {
+      rc = ERR_RANGE;
+      goto out;
+    }
+    if (!vs23.allocBacking(w, h, dst_x, dst_y)) {
+      rc = ERR_SCREEN_FULL;
+      goto out;
+    }
+  }
+
   if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
                  dst_x, dst_y, x, y, w, h))
     rc = 0;
   else
-    rc = -SD_ERR_READ_FILE;
+    rc = SD_ERR_READ_FILE;
 
+out:
   pcx_file.close();
   SD_END();
   return rc;

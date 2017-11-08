@@ -356,6 +356,7 @@ static const char* const errmsg[] __FLASH__ = {
   "SD I/O error",            // 追加
   "Bad file name",           // 追加
   "Not supported",           // 追加
+  "Out of video memory",
 };
 
 #include "error.h"
@@ -3144,9 +3145,9 @@ char* getParamFname() {
   return tbuf;
 }
 
-void load_bitmap(char *fname, int16_t dx, int16_t dy)
+void load_bitmap(char *fname, int32_t dx, int32_t dy)
 {
-  int32_t x = 0,y = 0,w = 0, h = 0;
+  int32_t x = 0,y = 0,w = -1, h = -1;
   uint8_t rc;
 
   if (*cip == I_COMMA) {
@@ -3168,20 +3169,19 @@ void load_bitmap(char *fname, int16_t dx, int16_t dy)
   }
 
   // 画像のロード
-  rc = fs.loadBitmap(fname, dx, dy, x, y, w, h);
-  if (rc == SD_ERR_INIT) {
-    err = ERR_SD_NOT_READY;
-  } else if (rc == SD_ERR_OPEN_FILE) {
-    err =  ERR_FILE_OPEN;
-  } else if (rc == SD_ERR_READ_FILE) {
-    err =  ERR_FILE_READ;
+  err = fs.loadBitmap(fname, dx, dy, x, y, w, h);
+  if (!err) {
+    retval[0] = dx;
+    retval[1] = dy;
+    retval[2] = w;
+    retval[3] = h;
   }
 }
 
 // LDBMP "ファイル名" ,アドレス, X, Y, W, H
 void ildbmp() {
   char* fname;
-  int32_t dx, dy;
+  int32_t dx = 0, dy = 0;
 
   if(!(fname = getParamFname())) {
     return;
@@ -3197,20 +3197,12 @@ void ildbmp() {
 
 void ildpat() {
   char* fname;
-  int32_t dx, dy;
 
   if(!(fname = getParamFname())) {
     return;
   }
   
-  // XXX: allocate space off-screen
-  dx = 0;
-  dy = sc0.getGHeight() + 8;
-
-  retval[0] = dx;
-  retval[1] = dy;
-
-  load_bitmap(fname, dx, dy);
+  load_bitmap(fname, -1, -1);
 }
 
 // MKDIR "ファイル名"

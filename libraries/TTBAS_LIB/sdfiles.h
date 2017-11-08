@@ -51,7 +51,7 @@ class sdfiles {
   int8_t  textOut(char* fname, int16_t sline, int16_t ln); // テキストファイルの出力
     
   // ビットマップファイルのロード
-  uint8_t loadBitmap(char* fname, uint16_t dst_x, uint16_t dst_y, int16_t x, int16_t y, int16_t w,int16_t  h);
+  uint8_t loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h);
 
 private:
   int m_mhz;

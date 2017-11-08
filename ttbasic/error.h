@@ -35,6 +35,7 @@ enum {
   ERR_SD_NOT_READY,          // 追加 V0.83
   ERR_BAD_FNAME,             // 追加 V0.83
   ERR_NOT_SUPPORTED,         // 追加 V0.84
+  ERR_SCREEN_FULL,
 };
 
 #define SD_ERR_INIT		ERR_SD_NOT_READY
