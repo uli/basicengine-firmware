@@ -32,39 +32,48 @@ uint8_t *b_adr;     // フレームバッファビットバンドアドレ
 #endif
 uint16_t f_width;    // フォント幅(ドット)
 uint16_t f_height;   // フォント高さ(ドット)
+int f_x = -1, f_y = -1;
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
 uint16_t win_x, win_y, win_width, win_height;
 uint16_t win_c_width, win_c_height;
+int clrline_x, clrline_y;
 
 uint16_t fg_color = 0xf;
 uint16_t bg_color = 0;
 
 uint32_t char_addr(uint8_t c)
 {
-  uint32_t addr = vs23.piclineByteAddress(g_height+f_height+(c/c_width * f_height))+(c%c_width)*f_width;
+  uint32_t addr = vs23.pixelAddr(f_x+(c%c_width)*f_width, f_y+(c/c_width * f_height));
   return addr;
 }
 
 static uint16_t char_x(uint8_t c)
 {
-  return c%c_width * f_width;
+  return f_x + c%c_width * f_width;
 }
 static uint16_t char_y(uint8_t c)
 {
-  return c/c_width * f_height;
+  return f_y + c/c_width * f_height;
 }
 
 // フォント利用設定
 void tv_fontInit() {
+  if (f_x >= 0)
+    vs23.freeBacking(f_x, f_y, c_width * f_width, (256 + c_width - 1) / c_width * f_height);
+
   if (!tvfont)
     tvfont = console_font_6x8;
+
   f_width  = pgm_read_byte(tvfont+0);             // 横フォントドット数
   f_height = pgm_read_byte(tvfont+1);             // 縦フォントドット数  
   c_width  = g_width  / f_width;       // 横文字数
   c_height = g_height / f_height;      // 縦文字数
   win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
+
+  vs23.allocBacking(c_width * f_width, (256 + c_width - 1) / c_width * f_height, f_x, f_y);
+
 #if USE_VS23 == 1
   for (int c=0; c < 256; ++c) {
     uint32_t dest = char_addr(c);
@@ -103,11 +112,17 @@ void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) {
   g_width  = vs23.width();           // 横ドット数
   g_height = vs23.height();          // 縦ドット数
 
+  // XXX: assumes font height == 8
+  // We don't want to allocate this last because it will be in the way when
+  // allocating a larger font later.
+  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+
   win_x = 0;
   win_y = 0;
   win_width = g_width;
   win_height = g_height;
 	
+  f_x = -1; f_y = -1;
   tv_fontInit();
 
   tv_NTSC_adjust(ajst);
@@ -213,7 +228,7 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
       SpiRamWriteBytes(byteaddress, pix, f_width);
     }
   } else {
-    vs23.MoveBlock(char_x(c), char_y(c)+g_height+f_height,
+    vs23.MoveBlock(char_x(c), char_y(c),
                    win_x + x*f_width, win_y + y*f_height, f_width, f_height, 0);
   }
 #else
@@ -238,8 +253,8 @@ void tv_cls() {
 void tv_clerLine(uint16_t l) {
 #if USE_VS23 == 1
   // Assumption: Screen data is followed by empty line in memory.
-  vs23.MoveBlock(0, g_height, win_x, win_y + l * f_height, win_width/2, f_height, 0);
-  vs23.MoveBlock(0, g_height, win_x + win_width/2, win_y + l * f_height, win_width/2, f_height, 0);
+  vs23.MoveBlock(clrline_x, clrline_y, win_x, win_y + l * f_height, win_width/2, f_height, 0);
+  vs23.MoveBlock(clrline_x, clrline_y, win_x + win_width/2, win_y + l * f_height, win_width/2, f_height, 0);
 #else
   memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
 #endif
