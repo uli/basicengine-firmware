@@ -565,6 +565,38 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
     return DR_TRUE;
 }
 
+bool drpcx_info(drpcx_read_proc onRead, void* pUserData, int* x, int* y, int* internalComponents)
+{
+    drpcx pcx;
+    pcx.onRead    = onRead;
+    pcx.pUserData = pUserData;
+    if (onRead(pUserData, &pcx.header, sizeof(pcx.header)) != sizeof(pcx.header)) {
+        return false;    // Failed to read the header.
+    }
+
+    if (pcx.header.header != 10) {
+        return false;    // Not a PCX file.
+    }
+
+    if (pcx.header.encoding != 1) {
+        return false;    // Not supporting non-RLE encoding. Would assume a value of 0 indicates raw, unencoded, but that is apparently never used.
+    }
+
+    if (pcx.header.bpp != 1 && pcx.header.bpp != 2 && pcx.header.bpp != 4 && pcx.header.bpp != 8) {
+        return false;    // Unsupported pixel format.
+    }
+
+    pcx.width = pcx.header.right - pcx.header.left + 1;
+    pcx.height = pcx.header.bottom - pcx.header.top + 1;
+    pcx.components = (pcx.header.bpp == 8 && pcx.header.bitPlanes == 4) ? 4 : 3;
+
+    if (x) *x = pcx.width;
+    if (y) *y = pcx.height;
+    if (internalComponents)	*internalComponents = pcx.components;
+    
+    return true;
+}
+
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y, int* internalComponents, int desiredComponents,
                      int dx, int dy, int ox, int oy, int w, int h)
 {
