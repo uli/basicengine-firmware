@@ -38,6 +38,8 @@ void VS23S010::begin()
     m_sprite[i].transparent = false;
   }
 
+  m_bin.Init(0, 0);
+
   SpiLock();
   for (int i = 0; i < numModes; ++i) {
     SPI.setFrequency(modes[i].max_spi_freq);
@@ -51,6 +53,7 @@ void VS23S010::begin()
 
 void VS23S010::end()
 {
+  m_bin.Init(0, 0);
 }
 
 void VS23S010::setMode(uint8_t mode)
@@ -60,6 +63,9 @@ void VS23S010::setMode(uint8_t mode)
   m_last_line = PICLINE_MAX;
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
+
+  m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);
+
   SpiRamVideoInit();
   calibrateVsync();
   setSyncLine(m_current_mode->y + m_current_mode->top + 16);
@@ -996,6 +1002,20 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
       y < tile_scroll_y + tile_h) {
     bg->force_redraw = true;
   }
+}
+
+bool VS23S010::allocBacking(int w, int h, int &x, int &y)
+{
+  Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::SplitMinimizeArea);
+  x = r.x; y = r.y + m_current_mode->y;
+  return r.height != 0;
+}
+
+void VS23S010::freeBacking(int x, int y, int w, int h)
+{
+  Rect r;
+  r.x = x; r.y = y - m_current_mode->y; r.width = w; r.height = h;
+  m_bin.Free(r, true);
 }
 
 VS23S010 vs23;

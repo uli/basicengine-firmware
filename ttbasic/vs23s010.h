@@ -15,6 +15,7 @@
 
 #include "ntsc.h"
 #include <Arduino.h>
+#include "GuillotineBinPack.h"
 
 #define SC_DEFAULT 0
 
@@ -112,6 +113,8 @@ class VS23S010 {
     
     inline uint16_t lastLine() { return m_last_line; }
 
+    bool allocBacking(int w, int h, int &x, int &y);
+    void freeBacking(int x, int y, int w, int h);
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
@@ -178,6 +181,8 @@ private:
     static int cmp_sprite_y(const void *one, const void *two);
     
     uint32_t m_frame;
+    
+    GuillotineBinPack m_bin;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
