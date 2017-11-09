@@ -147,7 +147,8 @@ void tscreenBase::delete_char() {
 // 文字の出力
 void tscreenBase::putch(uint8_t c) {
  VPOKE(pos_x, pos_y, c);
- WRITE(pos_x, pos_y, c);
+ if (!flgCur)
+   WRITE(pos_x, pos_y, c);
  movePosNextNewChar();
 }
 
