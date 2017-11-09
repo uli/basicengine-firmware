@@ -288,6 +288,7 @@ void VS23S010::SpiRamVideoInit() {
 	uint32_t w;
 	uint16_t linelen = PLLCLKS_PER_LINE;
 	
+#ifdef DEBUG
 	Serial.printf("Linelen: %d PLL clks\n",linelen);
 	printf("Picture line area is %d x %d\n",PICX,PICY);
 	printf("Upper left corner is point (0,0) and lower right corner (%d,%d)\n",PICX-1,PICY-1);
@@ -300,6 +301,8 @@ void VS23S010::SpiRamVideoInit() {
 	printf("End pixel %x\n",(ENDPIX-1));
 	printf("Index start address %x\n",INDEX_START_BYTES);
 	printf("Picture line 0 address %lx\n",piclineByteAddress(0));
+	printf("Last line %d\n", PICLINE_MAX);
+#endif
 
 	// 1. Select the first VS23 for following commands in case there
 	// are several VS23 ICs connected to same SPI bus.
