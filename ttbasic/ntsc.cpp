@@ -191,13 +191,6 @@ void ICACHE_RAM_ATTR SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2, uint16_t
 	vs23Deselect();
 }
 
-void SpiRamWriteBM3Ctrl(uint16_t opcode) {
-	//Serial.printf("%02x\n",opcode);
-	vs23Select();
-	SPI.transfer(opcode);
-	vs23Deselect();
-}
-
 /// Set proto type picture line indexes	
 void SetLineIndex(uint16_t line, uint16_t wordAddress) {
 	uint32_t indexAddr = INDEX_START_BYTES + line*3;
@@ -647,6 +640,6 @@ void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16
   if (!last_dir)
     while (!blockFinished()) {}
   SpiRamWriteBM2Ctrl(m_pitch-width, width, height-1);
-  SpiRamWriteBM3Ctrl(0x36);
+  startBlockMove();
   last_dir = dir;
 }

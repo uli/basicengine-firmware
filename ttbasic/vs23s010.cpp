@@ -211,10 +211,7 @@ static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t
       SPI.writeBytes(req, 5);
       VS23_DESELECT;
       while (!blockFinished()) {}
-      //SpiRamWriteBM3Ctrl(0x36);
-      VS23_SELECT;
-      SPI.write(0x36);
-      VS23_DESELECT;
+      VS23S010::startBlockMove();
 }
 
 static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)

@@ -15,6 +15,7 @@
 
 #include "ntsc.h"
 #include <Arduino.h>
+#include <SPI.h>
 #include "GuillotineBinPack.h"
 
 #define SC_DEFAULT 0
@@ -38,6 +39,8 @@ struct vs23_mode_t {
 #define VS23_MAX_SPRITES 16
 #define VS23_MAX_SPRITE_W 16
 #define VS23_MAX_SPRITE_H 16
+
+//#define DEBUG_BM
 
 // ntscビデオ表示クラス定義
 class VS23S010 {    
@@ -89,6 +92,17 @@ class VS23S010 {
     uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
+
+    static inline void startBlockMove() {
+#ifdef DEBUG_BM
+      if (!blockFinished()) {
+        Serial.println("overmove!!");
+      }
+#endif
+      VS23_SELECT;
+      SPI.write(0x36);
+      VS23_DESELECT;
+    }
     
     bool defineBg(uint8_t bg, uint16_t width, uint16_t height,
                      uint8_t tile_size_x, uint8_t tile_size_y,
