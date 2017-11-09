@@ -5,6 +5,8 @@
 #include "vs23s010.h"
 #include "lock.h"
 
+//#define DEBUG
+
 // Remember to update VS23_MAX_X/Y!
 struct vs23_mode_t VS23S010::modes[] = {
   // maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel chars
@@ -629,6 +631,12 @@ void VS23S010::SpiRamVideoInit() {
 void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
   static uint8_t last_dir = 0;
+#ifdef DEBUG
+  if (x_src < 0 || x_dst < 0 || x_src+width > m_current_mode->x || x_dst+width > m_current_mode->x ||
+      y_src < 0 || y_dst < 0 || y_src+height > lastLine() || y_dst+height > lastLine()) {
+      Serial.printf("BADMOV %dx%d %d,%d -> %d,%d\n", width, height, x_src, y_src, x_dst, y_dst);
+  }
+#endif
   uint32_t byteaddress1 = pixelAddr(x_dst, y_dst);
   uint32_t byteaddress2 = pixelAddr(x_src, y_src);
   // If the last move was a reverse one, we have to wait until it's finished
