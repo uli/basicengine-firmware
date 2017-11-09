@@ -14,6 +14,10 @@
 //#define DISABLE_SPRITE_RESTORE
 //#define DISABLE_SPRITE_DRAW
 
+//#define DISABLE_BG_TOP
+//#define DISABLE_BG_CENTER
+//#define DISABLE_BG_BOTTOM
+
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
@@ -264,6 +268,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
                             uint32_t skip_x,
                             uint32_t skip_y)
 {
+#ifndef DISABLE_BG_CENTER
   // This code draws into the "extra" bytes following each picture line.
   // Doing so keeps us from having to give border tiles special treatment:
   // their invisible parts are simply drawn where they cannot be seen.
@@ -345,6 +350,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 #endif
   }
   while (!blockFinished()) {}
+#endif
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
@@ -356,6 +362,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
                                                 uint32_t xpoff,
                                                 uint32_t ypoff)
 {
+#ifndef DISABLE_BG_TOP
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t byteaddress2, dest_addr;
@@ -422,6 +429,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
 #endif
 
   while (!blockFinished()) {}
+#endif
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
@@ -432,6 +440,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
                                                    uint32_t ypoff,
                                                    uint32_t skip_x)
 {
+#ifndef DISABLE_BG_BOTTOM
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t tsx = bg->tile_size_x;
@@ -504,6 +513,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
     }
 #endif
   }
+#endif
 }
 
 #define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % m_current_mode->x)
