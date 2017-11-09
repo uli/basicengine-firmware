@@ -119,6 +119,7 @@ class VS23S010 {
     }
     void updateBg();
 
+    void resetSprites();
     void defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h);
     void moveSprite(uint8_t num, int16_t x, int16_t y);
 

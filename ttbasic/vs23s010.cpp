@@ -27,16 +27,28 @@ void VS23S010::adjust(int16_t cnt)
 
 #include <SPI.h>
 
+void VS23S010::resetSprites()
+{
+  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    struct sprite_t *s = &m_sprite[i];
+    if (s->pattern) {
+      free(s->pattern);
+      s->pattern = NULL;
+    }
+    m_sprites_ordered[i] = s;
+    s->enabled = false;
+    s->old_enabled = false;
+    s->transparent = false;
+    s->pos_x = s->pos_y = 0;
+    s->old_pos_x = s->old_pos_y = 0;
+  }
+}
+
 static int absolute_min_spi_div;
 void VS23S010::begin()
 {
   m_vsync_enabled = false;
-  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
-    m_sprites_ordered[i] = &m_sprite[i];
-    m_sprite[i].enabled = false;
-    m_sprite[i].old_enabled = false;
-    m_sprite[i].transparent = false;
-  }
+  resetSprites();
 
   m_bin.Init(0, 0);
 
@@ -63,6 +75,8 @@ void VS23S010::setMode(uint8_t mode)
   m_last_line = PICLINE_MAX;
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
+
+  resetSprites();
 
   m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);
 
