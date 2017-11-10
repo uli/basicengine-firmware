@@ -234,24 +234,27 @@ static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t
 
 static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
 {
-  
-  data[0] = 3;
-  data[1] = address >> 16;
-  data[2] = address >> 8;
-  data[3] = address;
+  uint8_t cmd[count+4];  
+  cmd[0] = 3;
+  cmd[1] = address >> 16;
+  cmd[2] = address >> 8;
+  cmd[3] = address;
   VS23_SELECT;
-  SPI.transferBytes(data, data, count+4);
+  SPI.transferBytes(cmd, cmd, count+4);
   VS23_DESELECT;
+  memcpy(data, cmd+4, count);
 }
 
 static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
 {
-  data[0] = 2;
-  data[1] = address >> 16;
-  data[2] = address >> 8;
-  data[3] = address;
+  uint8_t cmd[len+4];
+  cmd[0] = 2;
+  cmd[1] = address >> 16;
+  cmd[2] = address >> 8;
+  cmd[3] = address;
+  memcpy(&cmd[4], data, len);
   VS23_SELECT;
-  SPI.writeBytes(data, len+4);
+  SPI.writeBytes(cmd, len+4);
   VS23_DESELECT;
 }
 
