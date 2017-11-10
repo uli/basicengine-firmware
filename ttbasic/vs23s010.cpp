@@ -34,13 +34,15 @@ void VS23S010::resetSprites()
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
     struct sprite_t *s = &m_sprite[i];
     if (s->pattern) {
+      for (i = 0; i < s->h; ++i)
+        free(s->pattern[i].pixels);
       free(s->pattern);
       s->pattern = NULL;
     }
     m_sprites_ordered[i] = s;
     s->enabled = false;
     s->old_enabled = false;
-    s->transparent = false;
+    s->transparent = true;
     s->pos_x = s->pos_y = 0;
     s->old_pos_x = s->old_pos_y = 0;
   }
@@ -902,23 +904,29 @@ restore_backing:
         }
 
         for (int sy = 0; sy < draw_h; ++sy) {
+          struct sprite_line *sl = &s->pattern[sy+offset_y];
           // Copy sprite data to SPI send buffer.
-          memcpy(sbuf+4, s->pattern + (sy+offset_y)*s->w, s->w);
+          memcpy(sbuf, sl->pixels, s->w);
 
-          // Playing fast and loose with data integrity here: we can use
-          // much higher SPI speeds than the stable 11 MHz if we accept
-          // that there is an occasional corrupted byte, which will
-          // be corrected in the next frame.
-          SPI1CLK = m_current_mode->max_spi_freq;
-          SpiRamReadBytesFast(spr_addr + sy*m_pitch, bbuf, draw_w);
-          SPI1CLK = spi_clock_default;
+          if (sl->type == LINE_BROKEN) {
+            // This line has inner transparent pixels; we read the screen
+            // to fill in the gaps.
 
-          for (int p = 4; p < draw_w+4; ++p) {
-            if (!sbuf[p])
-              sbuf[p] = bbuf[p];
+            // Playing fast and loose with data integrity here: we can use
+            // much higher SPI speeds than the stable 11 MHz if we accept
+            // that there is an occasional corrupted byte, which will
+            // be corrected in the next frame.
+            SPI1CLK = m_current_mode->max_spi_freq;
+            SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
+            SPI1CLK = spi_clock_default;
+            
+            for (int p = 0; p < sl->len; ++p) {
+              if (!sbuf[p + sl->off])
+                sbuf[p+sl->off] = bbuf[p];
+            }
           }
 
-          SpiRamWriteBytesFast(spr_addr + sy*m_pitch, sbuf, draw_w);
+          SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
         }
       } else {
         int w = s->w;
@@ -967,6 +975,24 @@ restore_backing:
   SpiUnlock();
 }
 
+void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
+{
+  struct sprite_t *s = &m_sprite[num];
+  if ((w != s->w || h != s->h) && s->pattern) {
+    for (int i = 0; i < s->h; ++i)
+      free(s->pattern[i].pixels);
+    free(s->pattern);
+    s->pattern = NULL;
+  }
+  s->w = w;
+  s->h = h;
+  if (!s->pattern) {
+    s->pattern = (struct sprite_line *)malloc(h * sizeof(struct sprite_line));
+    for (int i = 0; i < h; ++i)
+      s->pattern[i].pixels = (uint8_t *)malloc(w);
+  }
+}
+
 void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h)
 {
   struct sprite_t *s = &m_sprite[num];
@@ -974,24 +1000,57 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   s->pat_y = pat_y;
   s->pos_x = s->old_pos_x = 0;
   s->pos_y = s->old_pos_y = 0;
-  if ((w != s->w || h != s->h) && s->pattern) {
-    free(s->pattern);
-    s->pattern = NULL;
-  }
-  s->w = w;
-  s->h = h;
-  if (!s->pattern) {
-    s->pattern = (uint8_t *)malloc(w * h);
+
+  resizeSprite(num, w, h);
+
+  uint32_t tile_addr = pixelAddr(pat_x, pat_y);
+
+  bool solid_block = true;
+
+  for (int sy = 0; sy < s->h; ++sy) {
+    struct sprite_line *p = &s->pattern[sy];
+    SpiRamReadBytes(tile_addr + sy*m_pitch, p->pixels, w);
+
+    p->off = 0;
+    p->len = w;
+    p->type = LINE_SOLID;
+
+    uint8_t *pp = p->pixels;
+    while (*pp == 0 && p->len) {
+      solid_block = false;
+      ++pp;
+      ++p->off;
+      --p->len;
+    }
+
+    if (p->len) {
+      pp = p->pixels + w - 1;
+      while (*pp == 0) {
+        solid_block = false;
+        --pp;
+        --p->len;
+      }
+    }
+
+    for (int i = 0; i < p->len; ++i) {
+      if (p->pixels[p->off + i] == 0) {
+        p->type = LINE_BROKEN;
+        break;
+      }
+    }
+#ifdef DEBUG_SPRITES
+    Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
+#endif
   }
 
-  uint8_t *p = s->pattern;
-  uint32_t tile_addr = pixelAddr(pat_x, pat_y);
-  for (int sy = 0; sy < s->h; ++sy, p+=w) {
-    SpiRamReadBytes(tile_addr + sy*m_pitch, p, w);
-  }
+  if (solid_block)
+    s->transparent = false;
 
   s->enabled = true;
   s->old_enabled = false;
+#ifdef DEBUG_SPRITES
+  Serial.printf("defined %d\n", num);Serial.flush();
+#endif
 }
 
 int VS23S010::cmp_sprite_y(const void *one, const void *two)

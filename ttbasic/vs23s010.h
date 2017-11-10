@@ -42,6 +42,18 @@ struct vs23_mode_t {
 
 //#define DEBUG_BM
 
+enum {
+  LINE_BROKEN,
+  LINE_SOLID,
+};
+
+struct sprite_line {
+  uint8_t *pixels;
+  uint8_t off;
+  uint8_t len;
+  uint8_t type;
+};
+
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
@@ -121,6 +133,7 @@ class VS23S010 {
 
     void resetSprites();
     void defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h);
+    void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
     void moveSprite(uint8_t num, int16_t x, int16_t y);
 
     static const uint8_t numModes;
@@ -183,7 +196,7 @@ private:
                                                    uint32_t skip_x);
 
     struct sprite_t {
-      uint8_t *pattern;
+      struct sprite_line *pattern;
       uint16_t pat_x, pat_y;
       int16_t pos_x, pos_y;
       int16_t old_pos_x, old_pos_y;
