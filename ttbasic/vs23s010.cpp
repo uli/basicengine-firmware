@@ -10,8 +10,6 @@
 //#define DISABLE_BG_MIDDLE
 //#define DISABLE_BG_RIGHT_COL
 
-//#define DISABLE_SPRITE_SAVE
-//#define DISABLE_SPRITE_RESTORE
 //#define DISABLE_SPRITE_DRAW
 
 //#define DISABLE_BG_TOP
@@ -571,238 +569,20 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     int scroll_dy = bg->scroll_y - bg->old_scroll_y;
 
     dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
-    if (bg->force_redraw || abs(bg->scroll_x - bg->old_scroll_x) > 8 || abs(bg->scroll_y - bg->old_scroll_y) > 8) {
-      if (pass == 0)
-        drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
-      drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
-             tile_start_x, tile_start_y,
-             tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
+    if (pass == 0)
+      drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
-      if (pass == 1)
-        drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
-      
-      scroll_dy = 0;
-      lines[1] = currentLine();
-      lines[2] = 0;
-    } else {
-      int old_tile_start_y = bg->old_scroll_y / tsy;
-      int old_tile_end_y = old_tile_start_y + (bg->win_h + tsy-1) / tsy + 1;
-      int old_tile_start_x = bg->old_scroll_x / tsx;
-      int old_tile_end_x = old_tile_start_x + (bg->win_w + tsx-1) / tsx + 1;
-      uint32_t old_xpoff = bg->old_scroll_x % tsx;
-      uint32_t old_ypoff = bg->old_scroll_y % tsy;
-      int old_dest_addr_start = win_start_addr - old_tile_start_x * tsx - old_xpoff;
+    drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
+           tile_start_x, tile_start_y,
+           tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
 
-      lines[1] = currentLine();
-
-      uint8_t x_dir, y_dir;
-      uint32_t src_x, src_y, dst_x, dst_y;
-      uint32_t w, h;
-      bool draw_left = false;
-      bool draw_right = false;
-      bool draw_top = false;
-      bool draw_bottom = false;
-
-      if (scroll_dx == 0 && scroll_dy == 0)
-        goto restore_backing;
-
-      if (bg->scroll_y > bg->old_scroll_y) {
-        y_dir = 0;
-        dst_y = 0;
-        src_y = bg->scroll_y - bg->old_scroll_y;
-        h = bg->win_h - src_y;
-        draw_bottom = true;
-      } else {
-        if (bg->scroll_y != bg->old_scroll_y) {
-          draw_top = true;
-          y_dir = 1;
-        } else
-          y_dir = 0;
-        dst_y = bg->old_scroll_y - bg->scroll_y;
-        src_y = 0;
-        h = bg->win_h - dst_y;
-      }
-      if (bg->scroll_x > bg->old_scroll_x) {
-        x_dir = 0;
-        dst_x = 0;
-        src_x = bg->scroll_x - bg->old_scroll_x;
-        w = bg->win_w - src_x;
-        draw_right = true;
-      } else {
-        if (bg->scroll_x != bg->old_scroll_x) {
-          x_dir = 1;
-          draw_left = true;
-        } else
-          x_dir = 0;
-        dst_x = bg->old_scroll_x - bg->scroll_x;
-        src_x = 0;
-        w = bg->win_w - dst_x;
-      }
-      
-      if (y_dir) {
-        src_x += w - 1;
-        dst_x += w - 1;
-        src_y += h - 1;
-        dst_y += h - 1;
-      }
-      
-      if (w > 255) {
-        if (x_dir == 0) {
-          if (pass == 0) {
-            if (y_dir) {
-              MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
-              MoveBlock(bg->win_x+w/2, pix_split_y, w/2, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
-              // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
-              // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
-              while (!blockFinished()) {}
-            }
-            MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
-            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y - (y_dir ? (h - pix_split_y) : 0), dst_x + (y_dir ? -w/2 : w/2), dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
-          } else {
-            MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
-            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y + (y_dir ? 0 : pix_split_y), dst_x + (y_dir ? -w/2 : w/2), dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
-            if (y_dir) {
-              while (!blockFinished()) {}
-              MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
-              MoveBlock((scroll_dx > 0 ? scroll_dx : 0) + w/2, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0)+w/2, pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
-            }
-          }
-        } else {
-          if (pass == 0) {
-            if (y_dir) {
-              MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
-              MoveBlock(bg->win_x+w/2, pix_split_y, w/2, SPRITE_BACKING_Y(0)-8, w/2, -scroll_dy, 0);
-              // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
-              // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
-              while (!blockFinished()) {}
-            }
-            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y - (y_dir ? (h - pix_split_y) : 0), dst_x + (y_dir ? -w/2 : w/2), dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
-            MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w/2, pix_split_y, y_dir);
-          } else {
-            MoveBlock(src_x + (y_dir ? -w/2 : w/2), src_y + (y_dir ? 0 : pix_split_y), dst_x + (y_dir ? -w/2 : w/2), dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
-            MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w/2, h-pix_split_y, y_dir);
-            if (y_dir) {
-              MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
-              MoveBlock((scroll_dx > 0 ? scroll_dx : 0) + w/2, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0)+w/2, pix_split_y-scroll_dy, w/2, -scroll_dy, 0);
-            }
-          }
-        }
-      } else {
-        if (pass == 0) {
-          if (y_dir) {
-            MoveBlock(bg->win_x, pix_split_y, 0, SPRITE_BACKING_Y(0)-8, w, -scroll_dy, 0);
-            // XXX: Why is this necessary? In a "backwards after forwards" case, MoveBlock()
-            // rewrites 0x34, but then waits for completion. Shouldn't that be safe?
-            while (!blockFinished()) {}
-          }
-          MoveBlock(src_x, src_y - (y_dir ? (h - pix_split_y) : 0), dst_x, dst_y - (y_dir ? (h - pix_split_y) : 0), w, pix_split_y, y_dir);
-        } else {
-          MoveBlock(src_x, src_y + (y_dir ? 0 : pix_split_y), dst_x, dst_y + (y_dir ? 0 : pix_split_y), w, h-pix_split_y, y_dir);
-          if (y_dir) {
-            MoveBlock(scroll_dx > 0 ? scroll_dx : 0, SPRITE_BACKING_Y(0)-8, bg->win_x-(scroll_dx < 0 ? scroll_dx : 0), pix_split_y-scroll_dy, w, -scroll_dy, 0);
-          }
-        }
-      }
-        
-      lines[2] = currentLine();
-
-      while (!blockFinished()) {}
-
-      if (pass == 0 && draw_top) {
-        drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
-      }
-      if (draw_left) {
-        if (!draw_top && pass == 0) {
-          drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_start_x + 2, xpoff, ypoff);
-          while (!blockFinished()) {}
-        }
-
-        drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
-               tile_start_x, tile_start_y,
-               tile_start_x + 2, pass ? tile_end_y : tile_split_y+1,
-               xpoff, ypoff,
-               0, pass ? (tile_split_y-tile_start_y) : 1);
-
-        if (!draw_bottom && pass == 1)
-          drawBgBottom(bg, tile_start_x, tile_start_x + 1, tile_end_y, xpoff, ypoff, 0);
-      }
-      if (draw_right) {
-        if (!draw_top && pass == 0) {
-          drawBgTop(bg, dest_addr_start, pat_start_addr, tile_end_x - 2, tile_start_y, tile_end_x, xpoff, ypoff);
-          while (!blockFinished()) {}
-        }
-
-        drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
-               tile_start_x, tile_start_y,
-               tile_end_x, pass ? tile_end_y : tile_split_y+1,
-               xpoff, ypoff,
-               tile_end_x - tile_start_x - 2, pass ? (tile_split_y-tile_start_y) : 1);
-
-        if (!draw_bottom && pass == 1)
-          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, tile_end_x - tile_start_x - 2);
-      }
-      if (draw_bottom && pass == 1) {
-        if (ypoff)
-          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
-        else
-          drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr, tile_start_x, tile_start_y, tile_end_x, tile_end_y, xpoff, ypoff, 0, tile_end_y-tile_start_y-2);
-      }
-
-restore_backing:
-      for (int sn = VS23_MAX_SPRITES-1; sn >= 0; --sn) {
-#ifndef DISABLE_SPRITE_RESTORE
-        struct sprite_t *s = m_sprites_ordered[sn];
-        int sx_adj = s->old_pos_x - scroll_dx;
-        int sy_adj = s->old_pos_y - scroll_dy;
-        if (!s->old_enabled)
-          continue;
-        if (sx_adj > m_current_mode->x || sy_adj > m_current_mode->y)
-          continue;
-        if (sx_adj < -s->w || sy_adj < -s->h)
-          continue;
-        if (pass == 0 && sy_adj >= pix_split_y-scroll_dy)
-          continue;
-        if (pass == 1 && sy_adj + s->h <= pix_split_y-scroll_dy)
-          continue;
-
-        int w = s->w;
-        int h = s->h;
-        if (sx_adj < 0) {
-          w += sx_adj;
-          sx_adj = 0;
-        } else if (sx_adj + w >= m_current_mode->x) {
-          w = m_current_mode->x - sx_adj;
-        }
-        if (sy_adj < 0) {
-          h += sy_adj;
-          sy_adj = 0;
-        } else if (sy_adj + h >= m_current_mode->y) {
-          h = m_current_mode->y - sy_adj;
-        }
-
-        // Restore sprites crossing the screen partition in two steps, top half
-        // in the first pass, bottom half in the second pass.
-
-        // Sprite restoring, saving and drawing have to agree on a common boundary;
-        // The position to which sprite saving can be done depends on the vertical
-        // scrolling delta, so the other two operations have to take it into
-        // account as well, even though they do not depend on it by themselves.
-        int offset_y = 0;
-        if (pass == 0 && sy_adj + h > pix_split_y-scroll_dy)
-          h = pix_split_y-scroll_dy - sy_adj;
-        if (pass == 1 && sy_adj < pix_split_y-scroll_dy && sy_adj + h > pix_split_y-scroll_dy) {
-          offset_y = pix_split_y-scroll_dy - sy_adj;
-          h -= offset_y;
-        }
-
-        if (w > 0 && h > 0)
-          MoveBlock(SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn) + offset_y,
-                    sx_adj, sy_adj + offset_y, w, h, 0);
-#endif
-      }
-
-    }
+    if (pass == 1)
+      drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+    
+    scroll_dy = 0;
+    lines[1] = currentLine();
+    lines[2] = 0;
 
     while (!blockFinished()) {}
     if (pass == 0) lines[3] = currentLine();
@@ -810,49 +590,6 @@ restore_backing:
     uint8_t bbuf[VS23_MAX_SPRITE_W+4];
     uint8_t sbuf[VS23_MAX_SPRITE_W+4];
     uint32_t sprite_pat_start_addr = piclineByteAddress(0);
-
-#ifndef DISABLE_SPRITE_SAVE
-    for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-      struct sprite_t *s = m_sprites_ordered[sn];
-      if (!s->enabled)
-        continue;
-      if (pass == 0 && s->pos_y >= pix_split_y-scroll_dy)
-        continue;
-      if (pass == 1 && s->pos_y + s->h <= pix_split_y-scroll_dy)
-        continue;
-
-      int w = s->w;
-      int h = s->h;
-      int x = s->pos_x;
-      int y = s->pos_y;
-
-      if (x < 0) {
-        w += x;
-        x = 0;
-      } else if (x + w >= m_current_mode->x) {
-        w = m_current_mode->x - x;
-      }
-      if (y < 0) {
-        h += y;
-        y = 0;
-      } else if (y + h >= m_current_mode->y) {
-        h = m_current_mode->y - y;
-      }
-
-      // Save sprites crossing the screen partition in two steps, top half
-      // in the first pass, bottom half in the second pass.
-      int offset_y = 0;
-      if (pass == 0 && y + s->h > pix_split_y-scroll_dy)
-        h = pix_split_y-scroll_dy - y;
-      if (pass == 1 && y < pix_split_y-scroll_dy && y + h > pix_split_y-scroll_dy) {
-        offset_y = pix_split_y-scroll_dy - y;
-        h -= offset_y;
-      }
-      
-      if (w > 0 && h > 0)
-        MoveBlock(x, y + offset_y, SPRITE_BACKING_X(sn), SPRITE_BACKING_Y(sn) + offset_y, w, h, 0);
-    }
-#endif
 
     // Reduce speed for memory accesses.
     SPI1CLK = spi_clock_default;
