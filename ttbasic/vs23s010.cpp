@@ -451,6 +451,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
   uint32_t byteaddress1, byteaddress2;
   int draw_w;
 
+  ypoff = (ypoff + bg->win_h) % tsy;
   // Bottom line
   if (ypoff) {
     int ba1a = pixelAddr(bg->win_x - xpoff, bg->win_y + bg->win_h - ypoff);
