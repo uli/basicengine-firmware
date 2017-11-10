@@ -29,8 +29,6 @@ void VS23S010::adjust(int16_t cnt)
   // XXX: Huh?
 }
 
-#include <SPI.h>
-
 void VS23S010::resetSprites()
 {
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
@@ -223,7 +221,6 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
       // XXX: What about PYF?
-      //SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, dest_addr >> 1, ((dest_addr & 1) << 1) | ((byteaddress2 & 1) << 2));
       uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
       VS23_SELECT;
       SPI.writeBytes(req, 5);
@@ -477,7 +474,6 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
         byteaddress2 += 8;
       }
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
-      // XXX: What about PYF?
       MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
@@ -549,7 +545,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       continue;
 
     SPI1CLK = absolute_min_spi_div;
-    mxx = millis();
 
     int tile_start_y = bg->scroll_y / bg->tile_size_y;
     int tile_end_y = tile_start_y + (bg->win_h + bg->tile_size_y-1) / bg->tile_size_y + 1;
@@ -965,7 +960,6 @@ restore_backing:
       bg->old_scroll_y = bg->scroll_y;
       bg->force_redraw = false;
     }
-    Serial.println(millis() - mxx);
   }
   } // pass
 
