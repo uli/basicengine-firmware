@@ -36,7 +36,8 @@
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 128    // 中間コード変換バッファサイズ
 #define SIZE_LIST 4096   // プログラム領域サイズ(4kバイト)
-#define SIZE_VAR  208    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
+#define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
+#define MAX_VAR_NAME 32	 // maximum length of variable names
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 20     // GOSUB stack size(2/nest) :10ネストまでOK
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
@@ -366,7 +367,12 @@ char lbuf[SIZE_LINE];          // コマンド入力バッファ
 char tbuf[SIZE_LINE];          // テキスト表示用バッファ
 int32_t tbuf_pos = 0;
 unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
+
 int var[SIZE_VAR];              // 変数領域
+char *var_name[SIZE_VAR];	// assigned variable names
+int prg_var_top = 0;		// top variable assigned by program
+int var_top = 0;		// top variable overall (program and direct mode)
+
 int arr[SIZE_ARRY];             // 配列領域
 unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
 uint8_t mem[SIZE_MEM];            // 自由利用データ領域
@@ -677,6 +683,39 @@ int16_t lookup(char* str, uint16_t len) {
   return prv_fd_id;
 }
 
+//#define DEBUG_VAR
+
+int find_var(char *name)
+{
+  for (int i=0; i < var_top; ++i) {
+    if (!strcasecmp(name, var_name[i])) {
+#ifdef DEBUG_VAR
+      Serial.printf("found %d\n", i);
+#endif
+      return i;
+    }
+  }
+  return -1;
+}
+
+uint8_t assign_var(char *name, bool is_prg_text)
+{
+#ifdef DEBUG_VAR
+  Serial.printf("assign %s ", name);
+#endif
+  int v = find_var(name);
+  if (v >= 0)
+    return v;
+
+  var_name[var_top++] = strdup(name);
+  if (is_prg_text)
+    ++prg_var_top;
+#ifdef DEBUG_VAR
+  Serial.printf("got %d\n", var_top-1);
+#endif
+  return var_top-1;
+}
+
 //
 // テキストを中間コードに変換
 // [戻り値]
@@ -695,7 +734,9 @@ uint8_t toktoi() {
   uint16_t hex;           // 16進数定数
   uint16_t hcnt;          // 16進数桁数
   uint8_t var_len;        // 変数名長さ
-  char var_name[3];       // 変数名
+  char vname[MAX_VAR_NAME];       // 変数名
+
+  bool is_prg_text = false;
   
   while (*s) {                  //文字列1行分の終端まで繰り返す
     while (c_isspace(*s)) s++;  //空白を読み飛ばす
@@ -797,6 +838,7 @@ uint8_t toktoi() {
       ibuf[len++] = value >> 8; //定数の上位バイトを記録
       ibuf[len++] = value >> 16;
       ibuf[len++] = value >> 24;
+      is_prg_text = true;
     }
     else
 
@@ -828,16 +870,16 @@ uint8_t toktoi() {
         err = ERR_IBUFOF; 
         return 0;
       }
-      var_name[var_len] = c_toupper(*ptok) - 'A';
-      var_len++;
-
-      //  2文字目('0'～'6'までが有効)
-      if(isDigit(*(ptok+1)) && *(ptok+1) <='6' ) { //もしも文字が数字なら
-         var_name[var_len] = *(ptok+1) - '0' + 1;
-         var_len++;  
-       } else {
-         var_name[1] = 0;         
-       }
+      
+      uint8_t v;
+      char *p = ptok;
+      do {
+        v = vname[var_len++] = *p++;
+#ifdef DEBUG_VAR
+        Serial.printf("c %c (%d)\n", v, isAlphaNumeric(v));
+#endif
+      } while (isAlphaNumeric(v) && var_len < MAX_VAR_NAME-1);
+      vname[--var_len] = 0;	// terminate C string
 
       //もし変数が3個並んだら
       if (len >= 4 && ibuf[len - 2] == I_VAR && ibuf[len - 4] == I_VAR) {
@@ -847,7 +889,7 @@ uint8_t toktoi() {
 
       // 中間コードに変換
       ibuf[len++] = I_VAR; //中間コードを記録
-      ibuf[len++] = var_name[0]+var_name[1]*26;
+      ibuf[len++] = assign_var(vname, is_prg_text);
       s+=var_len; //次の文字へ進む
     }
     else
@@ -1078,10 +1120,8 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
     //変数の処理(2017/07/26 変数名 A～Z 9対応)
     if (*ip == I_VAR) { //もし定数なら
       ip++; //ポインタを変数番号へ進める
-      var_code = *ip++;      
-      c_putch( (var_code%26) + 'A',devno); //変数名を取得して表示
-      if (var_code/26)
-         c_putch( (var_code/26)+'0'-1, devno);
+      var_code = *ip++;
+      c_puts(var_name[var_code], devno);
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
         c_putch(' ',devno); //空白を表示
@@ -1174,7 +1214,7 @@ void iinput() {
       }
       
       if (prompt) {          // もしまだプロンプトを表示していなければ
-        c_putch('A'+index);  // 変数名を表示
+        c_puts(var_name[index]);
         c_putch(':');        //「:」を表示
       }
       
@@ -1447,17 +1487,35 @@ void iexport() {
 // プログラム消去
 // 引数 0:全消去、1:プログラムのみ消去、2:変数領域のみ消去
 void inew(uint8_t mode = 0) {
-  unsigned char i; //ループカウンタ
+  int i; //ループカウンタ
 
   //変数と配列の初期化
   if (mode == 0|| mode == 2) {
-    for (i = 0; i < 26; i++) //変数の数だけ繰り返す
+    // forget variables assigned in direct mode
+    for (i = prg_var_top; i < var_top; ++i) {
+      if (var_name[i]) {
+        free(var_name[i]);
+        var_name[i] = NULL;
+      }
+    }
+    var_top = prg_var_top;
+
+    for (i = 0; i < SIZE_VAR; i++) //変数の数だけ繰り返す
       var[i] = 0; //変数を0に初期化
     for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
       arr[i] = 0; //配列を0に初期化
   }
   //実行制御用の初期化
   if (mode !=2) {
+    // forget all variables
+    for (i = 0; i < prg_var_top; ++i) {
+      if (var_name[i]) {
+        free(var_name[i]);
+        var_name[i] = NULL;
+      }
+    }
+    prg_var_top = var_top = 0;
+
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
     *listbuf = 0; //プログラム保存領域の先頭に末尾の印を置く
