@@ -3828,7 +3828,7 @@ void error(uint8_t flgCmd = false) {
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
       c_puts(" ");
-      putlist(clp + 3);          
+      putlist(clp + 5);
       newline();
       //err = 0;
       //return;
