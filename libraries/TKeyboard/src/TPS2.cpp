@@ -172,14 +172,14 @@ void  TPS2::Clk_Out(uint8_t val) {
 }
 
 // CLKから入力
-uint8_t TPS2::Clk_In() {
+uint8_t ICACHE_RAM_ATTR TPS2::Clk_In() {
   if (_clkDir == D_OUT)
     clkSet_In();
   return digitalRead(_clkPin) ? HIGH : LOW;
 }
 
 // DATから出力
-void  TPS2::Dat_Out(uint8_t val) {
+void TPS2::Dat_Out(uint8_t val) {
   if (_datDir == D_IN)
     datSet_Out();    
 //  gpio_write_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit,val);  
@@ -187,7 +187,7 @@ void  TPS2::Dat_Out(uint8_t val) {
 }
 
 // データから入力
-uint8_t TPS2::Dat_In() {
+uint8_t ICACHE_RAM_ATTR TPS2::Dat_In() {
   if (_datDir == D_OUT)
     datSet_In();    
 //  return (gpio_read_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit)?HIGH:LOW);  
@@ -399,7 +399,7 @@ DONE:
 // 割り込みハンドラサブルーチン
 // データ送信用
 //
-void TPS2::clkPinHandleSend() {
+void ICACHE_RAM_ATTR TPS2::clkPinHandleSend() {
 
   if (Clk_In()) {
       goto END;
@@ -448,7 +448,7 @@ END:
 //
 // CLKピン状態変化 ハンドラ
 //
-void TPS2::clkPinHandle() {
+void ICACHE_RAM_ATTR TPS2::clkPinHandle() {
   volatile static uint8_t state = 0;  // ビット処理状態
   volatile static uint8_t data = 0;   // 受信データ
   volatile static uint8_t parity = 1; // パリティビット
@@ -513,7 +513,7 @@ void TPS2::clear_queue() {
 }
 
 // キューへの挿入
-uint8_t TPS2::enqueue(uint8_t data) {
+uint8_t ICACHE_RAM_ATTR TPS2::enqueue(uint8_t data) {
   _q_s = 1;
   uint16_t n = (_q_top + 1) % QUEUESIZE;
   if (_q_top+1 != _q_btm) {
