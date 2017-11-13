@@ -43,6 +43,13 @@
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_MEM  1024   // 自由利用データ領域
 
+//#define FLOAT_NUMS
+#ifdef FLOAT_NUMS
+typedef float num_t;
+#else
+typedef int32_t num_t;
+#endif
+
 // SRAMの物理サイズ(バイト)
 // not used #define SRAM_SIZE      20480 // STM32F103C8T6
 
@@ -134,7 +141,7 @@ void tv_tone(int16_t freq, int16_t duration) ;
 void tv_notone() ;
 void tv_write(uint8_t c) ;
 unsigned char* iexe();
-int iexp(void);
+num_t iexp(void);
 void error(uint8_t flgCmd);
 
 // **** RTC用宣言 ********************
@@ -368,12 +375,12 @@ char tbuf[SIZE_LINE];          // テキスト表示用バッファ
 int32_t tbuf_pos = 0;
 unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
-int var[SIZE_VAR];              // 変数領域
+num_t var[SIZE_VAR];              // 変数領域
 char *var_name[SIZE_VAR];	// assigned variable names
 int prg_var_top = 0;		// top variable assigned by program
 int var_top = 0;		// top variable overall (program and direct mode)
 
-int arr[SIZE_ARRY];             // 配列領域
+num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
 uint8_t mem[SIZE_MEM];            // 自由利用データ領域
 
@@ -385,7 +392,7 @@ unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
 #define MAX_RETVALS 4
-int32_t retval[MAX_RETVALS];	  // multi-value returns
+num_t retval[MAX_RETVALS];	  // multi-value returns
 
 uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
@@ -461,7 +468,7 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+inline uint8_t getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err &&  (prm < v_min || prm > v_max)) 
     err = ERR_VALUE;
@@ -470,6 +477,22 @@ inline uint8_t getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t f
  }
   return err;
 }
+
+#ifdef FLOAT_NUMS
+// コマンド引数取得(int32_t,引数チェックあり)
+inline uint8_t getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+  num_t p = iexp();
+  if (!err && (int)p != p)
+    err = ERR_VALUE;
+  prm = p;
+  if (!err &&  (prm < v_min || prm > v_max || ((int)prm) != prm)) 
+    err = ERR_VALUE;
+  else if (flgCmma && *cip++ != I_COMMA) {
+    err = ERR_SYNTAX;
+ }
+  return err;
+}
+#endif
 
 // コマンド引数取得(int32_t,引数チェックなし)
 inline uint8_t getParam(uint32_t& prm, uint8_t flgCmma) {
@@ -481,13 +504,27 @@ inline uint8_t getParam(uint32_t& prm, uint8_t flgCmma) {
 }
 
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t getParam(int32_t& prm, uint8_t flgCmma) {
+inline uint8_t getParam(num_t& prm, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err && flgCmma && *cip++ != I_COMMA) {
    err = ERR_SYNTAX;
   }
   return err;
 }
+
+#ifdef FLOAT_NUMS
+// コマンド引数取得(uint32_t,引数チェックなし)
+inline uint8_t getParam(int32_t& prm, uint8_t flgCmma) {
+  num_t p = iexp();
+  if (!err && ((int)p) != p)
+    err = ERR_SYNTAX;
+  prm = p;
+  if (!err && flgCmma && *cip++ != I_COMMA) {
+   err = ERR_SYNTAX;
+  }
+  return err;
+}
+#endif
 
 // '('チェック関数
 inline uint8_t checkOpen() {
@@ -528,8 +565,12 @@ void c_puts(const char *s, uint8_t devno=0) {
 // 'SNNNNN' S:符号 N:数値 or 空白 
 //  dで桁指定時は空白補完する
 //
-void putnum(int32_t value, int8_t d, uint8_t devno=0) {
+void putnum(num_t value, int8_t d, uint8_t devno=0) {
+#ifdef FLOAT_NUMS
+  char f[] = "%.g";
+#else
   char f[] = "%.d";
+#endif
   f[1] = '0' + d;
   sprintf(lbuf, f, value);
   c_puts(lbuf, devno);
@@ -581,8 +622,8 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
 }
 
 // 数値の入力
-int32_t getnum() {
-  int32_t value, tmp; //値と計算過程の値
+num_t getnum() {
+  num_t value, tmp; //値と計算過程の値
   char c; //文字
   uint8_t len; //文字数
   uint8_t sign; //負号
@@ -1299,7 +1340,7 @@ DONE:
 
 // Variable assignment handler
 void ivar() {
-  int value; //値
+  num_t value; //値
   short index; //変数番号
 
   index = *cip++; //変数番号を取得して次へ進む
@@ -1311,7 +1352,7 @@ void ivar() {
   cip++; //中間コードポインタを次へ進める
   if (*cip == I_STR) {
     cip++;
-    value = (int32_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
+    value = (num_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
     cip += *cip+1;
   } else {
   //値の取得と代入
@@ -1346,7 +1387,7 @@ void iarray() {
     cip++; 
     if (*cip == I_STR) {
       cip++;
-      value = (int32_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
+      value = (num_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
       cip += *cip+1;
     } else {
       value = iexp(); // 式の値を取得
@@ -3100,7 +3141,7 @@ int32_t iasc() {
 
 // PRINT handler
 void iprint(uint8_t devno=0,uint8_t nonewln=0) {
-  int value;     //値
+  num_t value;     //値
   int len;       //桁数
   unsigned char i; //文字数
   
@@ -3903,8 +3944,8 @@ void error(uint8_t flgCmd = false) {
 }
 
 // Get value
-int32_t ivalue() {
-  int32_t value; // 値
+num_t ivalue() {
+  num_t value; // 値
   uint8_t i;   // 文字数
 
   switch (*cip++) { //中間コードで分岐
@@ -3953,7 +3994,7 @@ int32_t ivalue() {
       if (value >= SIZE_ARRY)
          err = ERR_SOR;         // 添え字が範囲を超えた
       else 
-         value = arr[value];    // 配列の値を取得
+         value = arr[(int)value];    // 配列の値を取得
     }
     break;
   case I_RND: //関数RND
@@ -4001,7 +4042,7 @@ int32_t ivalue() {
     } else if ( *cip == I_ARRAY) {
       cip++;
       if (getParam(value, 0, SIZE_ARRY-1, false)) return 0;
-      value = *v2realAddr(arr[value]);
+      value = *v2realAddr(arr[(int)value]);
     } else if ( *cip == I_STR) {
       cip++;
       value = *cip;
@@ -4122,8 +4163,8 @@ int32_t ivalue() {
 }
 
 // multiply or divide calculation
-int imul() {
-  int value, tmp; //値と演算値
+num_t imul() {
+  num_t value, tmp; //値と演算値
 
   value = ivalue(); //値を取得
   if (err) 
@@ -4155,19 +4196,19 @@ int imul() {
       err = ERR_DIVBY0; //エラー番号をセット
       return -1; //終了
     }
-    value %= tmp; //割り算を実行
+    value = (int32_t)value % (int32_t)tmp; //割り算を実行
     break; 
 
   case I_LSHIFT: // シフト演算 "<<" の場合
     cip++; //中間コードポインタを次へ進める
     tmp = ivalue(); //演算値を取得
-    value =((uint32_t)value)<<tmp;
+    value =((uint32_t)value)<<(uint32_t)tmp;
     break;
 
   case I_RSHIFT: // シフト演算 ">>" の場合
     cip++; //中間コードポインタを次へ進める
     tmp = ivalue(); //演算値を取得
-    value =((uint32_t)value)>>tmp;
+    value =((uint32_t)value)>>(uint32_t)tmp;
     break; 
 
    case I_AND:  // 算術積(ビット演算)
@@ -4193,8 +4234,8 @@ int imul() {
 }
 
 // add or subtract calculation
-int iplus() {
-  int value, tmp; //値と演算値
+num_t iplus() {
+  num_t value, tmp; //値と演算値
   value = imul(); //値を取得
   if (err) 
     return -1;
@@ -4219,8 +4260,8 @@ int iplus() {
 }
 
 // The parser
-int iexp() {
-  int value, tmp; //値と演算値
+num_t iexp() {
+  num_t value, tmp; //値と演算値
 
   value = iplus(); //値を取得
   if (err) //もしエラーが生じたら
@@ -4546,7 +4587,7 @@ void inext() {
 
 // IF
 void iif() {
-  int32_t condition;    // IF文の条件値
+  num_t condition;    // IF文の条件値
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
 
   condition = iexp(); // 真偽を取得
