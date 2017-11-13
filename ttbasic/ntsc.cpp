@@ -149,7 +149,7 @@ void SpiRamWriteProgram(register uint16_t opcode, register uint16_t data1, uint1
   vs23Deselect();
 }
 
-uint16_t SpiRamReadRegister(uint16_t opcode)
+uint16_t ICACHE_RAM_ATTR SpiRamReadRegister(uint16_t opcode)
 {
   uint16_t result;
   vs23Select();
@@ -631,7 +631,7 @@ void VS23S010::SpiRamVideoInit() {
 		}
 	}
 
-void VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
+void ICACHE_RAM_ATTR VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
   static uint8_t last_dir = 0;
 #ifdef DEBUG
