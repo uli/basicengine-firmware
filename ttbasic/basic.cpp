@@ -468,7 +468,7 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err &&  (prm < v_min || prm > v_max)) 
     err = ERR_VALUE;
@@ -480,7 +480,7 @@ inline uint8_t getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flg
 
 #ifdef FLOAT_NUMS
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
   num_t p = iexp();
   if (!err && (int)p != p)
     err = ERR_VALUE;
@@ -495,7 +495,7 @@ inline uint8_t getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t f
 #endif
 
 // コマンド引数取得(int32_t,引数チェックなし)
-inline uint8_t getParam(uint32_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(uint32_t& prm, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err && flgCmma && *cip++ != I_COMMA) {
    err = ERR_SYNTAX;
@@ -504,7 +504,7 @@ inline uint8_t getParam(uint32_t& prm, uint8_t flgCmma) {
 }
 
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t getParam(num_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, uint8_t flgCmma) {
   prm = iexp(); 
   if (!err && flgCmma && *cip++ != I_COMMA) {
    err = ERR_SYNTAX;
@@ -514,7 +514,7 @@ inline uint8_t getParam(num_t& prm, uint8_t flgCmma) {
 
 #ifdef FLOAT_NUMS
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t getParam(int32_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, uint8_t flgCmma) {
   num_t p = iexp();
   if (!err && ((int)p) != p)
     err = ERR_SYNTAX;
