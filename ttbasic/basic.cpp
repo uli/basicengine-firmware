@@ -27,6 +27,10 @@
 #include "tTermscreen.h"
 #include "vs23s010.h"
 
+#ifndef os_memcpy
+#define os_memcpy memcpy
+#endif
+
 #include "epigrams.h"
 
 #define STR_EDITION "ESP8266"
@@ -861,7 +865,7 @@ uint8_t toktoi() {
 #endif
       s = ptok; //文字列の処理ずみの部分を詰める      
       ibuf[len++] = I_NUM; //中間コードを記録
-      memcpy(ibuf+len, &value, sizeof(num_t));
+      os_memcpy(ibuf+len, &value, sizeof(num_t));
       len += sizeof(num_t);
       is_prg_text = true;
     }
@@ -944,7 +948,7 @@ int getlineno(unsigned char *lp) {
   num_t l;
   if(*lp == 0) //もし末尾だったら
     return -1;
-  memcpy(&l, lp+1, sizeof(num_t));
+  os_memcpy(&l, lp+1, sizeof(num_t));
   return l;
 }
 
@@ -1127,7 +1131,7 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
       num_t n;
-      memcpy(&n, ip, sizeof(num_t));
+      os_memcpy(&n, ip, sizeof(num_t));
       putnum(n, 0,devno); //値を取得して表示
       ip += 4; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
@@ -1612,7 +1616,7 @@ void irenum() {
             } else {
                // とび先行番号を付け替える
                newnum = startLineNo + increase*index;
-               memcpy(ptr+i+1, &newnum, sizeof(num_t));
+               os_memcpy(ptr+i+1, &newnum, sizeof(num_t));
                i+=5;
                continue;
             }
@@ -1640,7 +1644,7 @@ void irenum() {
   index = 0;
   for (  clp = listbuf; *clp ; clp += *clp ) {
      newnum = startLineNo + increase * index;
-     memcpy(clp+1, &newnum, sizeof(num_t));
+     os_memcpy(clp+1, &newnum, sizeof(num_t));
      index++;
   }
 }
@@ -1851,7 +1855,7 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
   }
   // 現在のプログラムの削除とロード
   inew(newmode);
-  memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
+  os_memcpy(listbuf , (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
 #endif
   return 0;
 }
@@ -3934,7 +3938,7 @@ num_t ivalue() {
 
   //定数の取得
   case I_NUM:    // 定数
-    memcpy(&value, cip, sizeof(num_t));
+    os_memcpy(&value, cip, sizeof(num_t));
     cip += 4;
     break; 
 
