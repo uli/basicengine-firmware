@@ -770,7 +770,7 @@ uint8_t toktoi() {
   char* ptok;             // ひとつの単語の内部を指すポインタ
   char* s = lbuf;         // 文字列バッファの内部を指すポインタ
   char c;                 // 文字列の括りに使われている文字（「"」または「'」）
-  uint32_t value;            // 定数
+  num_t value;            // 定数
   uint32_t tmp;              // 変換過程の定数
   uint16_t hex;           // 16進数定数
   uint16_t hcnt;          // 16進数桁数
@@ -850,35 +850,19 @@ uint8_t toktoi() {
     //定数への変換を試みる
     ptok = s;                            // 単語の先頭を指す
     if (isDigit(*ptok)) {              // もし文字が数字なら
-      value = 0;                         // 定数をクリア
-      tmp = 0;                           // 変換過程の定数をクリア
-      do { //次の処理をやってみる
-        tmp = 10 * value + *ptok++ - '0'; // 数字を値に変換
-//      if (value > tmp) {                // もし前回の値より小さければ
-        if (tmp > INT32_MAX) {                // もし32768より大きければ          
-          err = ERR_VOF;                  // エラー番号をセット
-          return 0;                       // 0を持ち帰る
-        }      
-        value = tmp; //0を持ち帰る
-      } while (isDigit(*ptok)); //文字が数字である限り繰り返す
-
       if (len >= SIZE_IBUF - 3) { //もし中間コードが長すぎたら
         err = ERR_IBUFOF; //エラー番号をセット
         return 0; //0を持ち帰る
       }
-
-      if ( (value == INT32_MAX+1) && (len > 0) && (ibuf[len-1] != I_MINUS)) {
-        // valueがINT32_MAX+1のオーバーフローエラー☑
-        err = ERR_VOF;                  // エラー番号をセット
-        return 0;                       // 0を持ち帰る       
-      }
-
+#ifdef FLOAT_NUMS
+      value = strtof(ptok, &ptok);
+#else
+      value = strtol(ptok, &ptok);
+#endif
       s = ptok; //文字列の処理ずみの部分を詰める      
       ibuf[len++] = I_NUM; //中間コードを記録
-      ibuf[len++] = value & 255; //定数の下位バイトを記録
-      ibuf[len++] = value >> 8; //定数の上位バイトを記録
-      ibuf[len++] = value >> 16;
-      ibuf[len++] = value >> 24;
+      memcpy(ibuf+len, &value, sizeof(num_t));
+      len += sizeof(num_t);
       is_prg_text = true;
     }
     else
@@ -957,9 +941,11 @@ int getsize() {
 
 // Get line numbere by line pointer
 int getlineno(unsigned char *lp) {
+  num_t l;
   if(*lp == 0) //もし末尾だったら
     return -1;
-  return lp[1] | (lp[2] << 8) | (lp[3] << 16) | (lp[4] << 24); //行番号を持ち帰る
+  memcpy(&l, lp+1, sizeof(num_t));
+  return l;
 }
 
 // Search line by line number
@@ -1140,7 +1126,9 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
     //定数の処理
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
-      putnum(ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24), 0,devno); //値を取得して表示
+      num_t n;
+      memcpy(&n, ip, sizeof(num_t));
+      putnum(n, 0,devno); //値を取得して表示
       ip += 4; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
         c_putch(' ',devno); //空白を表示
@@ -1571,7 +1559,7 @@ void irenum() {
   uint8_t* ptr;               // プログラム領域参照ポインタ
   uint32_t len;               // 行長さ
   uint32_t i;                 // 中間コード参照位置
-  uint32_t newnum;            // 新しい行番号
+  num_t newnum;            // 新しい行番号
   uint32_t num;               // 現在の行番号
   uint32_t index;             // 行インデックス
   uint32_t cnt;               // プログラム行数
@@ -1624,10 +1612,7 @@ void irenum() {
             } else {
                // とび先行番号を付け替える
                newnum = startLineNo + increase*index;
-               ptr[i+4] = newnum>>24;
-               ptr[i+3] = newnum>>16;
-               ptr[i+2] = newnum>>8;
-               ptr[i+1] = newnum&0xff;
+               memcpy(ptr+i+1, &newnum, sizeof(num_t));
                i+=5;
                continue;
             }
@@ -1655,10 +1640,7 @@ void irenum() {
   index = 0;
   for (  clp = listbuf; *clp ; clp += *clp ) {
      newnum = startLineNo + increase * index;
-     *(clp+1)  = newnum&0xff;
-     *(clp+2)  = newnum>>8;
-     *(clp+3)  = newnum>>16;
-     *(clp+4)  = newnum>>24;
+     memcpy(clp+1, &newnum, sizeof(num_t));
      index++;
   }
 }
@@ -3952,6 +3934,10 @@ num_t ivalue() {
 
   //定数の取得
   case I_NUM:    // 定数
+    memcpy(&value, cip, sizeof(num_t));
+    cip += 4;
+    break; 
+
   case I_HEXNUM: // 16進定数
     value = cip[0] | (cip[1] << 8) | (cip[2] << 16) | (cip[3] << 24); //定数を取得
     cip += 4;
