@@ -6,6 +6,10 @@
 #include "ntsc.h"
 #include "lock.h"
 
+#ifndef os_memcpy
+#define os_memcpy memcpy
+#endif
+
 //#define DISABLE_BG_LEFT_COL
 //#define DISABLE_BG_MIDDLE
 //#define DISABLE_BG_RIGHT_COL
@@ -239,7 +243,7 @@ static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t
   VS23_SELECT;
   SPI.transferBytes(cmd, cmd, count+4);
   VS23_DESELECT;
-  memcpy(data, cmd+4, count);
+  os_memcpy(data, cmd+4, count);
 }
 
 static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
@@ -249,7 +253,7 @@ static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_
   cmd[1] = address >> 16;
   cmd[2] = address >> 8;
   cmd[3] = address;
-  memcpy(&cmd[4], data, len);
+  os_memcpy(&cmd[4], data, len);
   VS23_SELECT;
   SPI.writeBytes(cmd, len+4);
   VS23_DESELECT;
@@ -643,7 +647,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         for (int sy = 0; sy < draw_h; ++sy) {
           struct sprite_line *sl = &s->pattern[sy+offset_y];
           // Copy sprite data to SPI send buffer.
-          memcpy(sbuf, sl->pixels, s->w);
+          os_memcpy(sbuf, sl->pixels, s->w);
 
           if (sl->type == LINE_BROKEN) {
             // This line has inner transparent pixels; we read the screen
