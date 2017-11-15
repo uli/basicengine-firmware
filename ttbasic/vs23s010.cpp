@@ -174,11 +174,8 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   for (int i=0; i < width*height; ++i)
     bg->tiles[i] = 64+(i&7);
 
-  bg->pat_x = pat_x;
-  bg->pat_y = pat_y;
-  bg->pat_w = pat_w;
-  bg->tile_size_x = tile_size_x;
-  bg->tile_size_y = tile_size_y;
+  setBgPat(bg_idx, pat_x, pat_y, pat_w);
+  setBgTileSize(bg_idx, tile_size_x, tile_size_y);
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 5;

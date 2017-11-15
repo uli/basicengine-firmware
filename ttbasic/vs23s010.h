@@ -119,6 +119,33 @@ class VS23S010 {
     bool defineBg(uint8_t bg, uint16_t width, uint16_t height,
                      uint8_t tile_size_x, uint8_t tile_size_y,
                      uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
+
+    inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x, uint8_t tile_size_y) {
+      struct bg_t *bg = &m_bg[bg_idx];
+      bg->tile_size_x = tile_size_x;
+      bg->tile_size_y = tile_size_y;
+    }
+
+    inline void setBgPat(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y, uint16_t pat_w) {
+      struct bg_t *bg = &m_bg[bg_idx];
+      bg->pat_x = pat_x;
+      bg->pat_y = pat_y;
+      bg->pat_w = pat_w;
+    }
+
+    inline uint8_t bgTileSizeX(uint8_t bg) {
+      return m_bg[bg].tile_size_x;
+    }
+    inline uint8_t bgTileSizeY(uint8_t bg) {
+      return m_bg[bg].tile_size_y;
+    }
+
+    inline void getBgTileSize(uint8_t bg_idx, uint8_t &tsx, uint8_t &tsy) {
+      struct bg_t *bg = &m_bg[bg_idx];
+      tsx = bg->tile_size_x;
+      tsy = bg->tile_size_y;
+    }
+
     void enableBg(uint8_t bg);
     void disableBg(uint8_t bg);
     void freeBg(uint8_t bg);
