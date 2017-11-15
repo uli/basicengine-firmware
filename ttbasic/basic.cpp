@@ -344,50 +344,17 @@ char sstyle(uint8_t code,
 
 // エラーメッセージ定義
 uint8_t err;// Error message index
-static const char* const errmsg[] __FLASH__ = {
-  "OK",
-  "Division by zero",
-  "Overflow",
-  "Subscript out of range",
-  "Icode buffer full",
-  "List full",
-  "GOSUB too many nested",
-  "RETURN stack underflow",
-  "FOR too many nested",
-  "NEXT without FOR",
-  "NEXT without counter",
-  "NEXT mismatch FOR",
-  "FOR without variable",
-  "FOR without TO",
-  "LET without variable",
-  "IF without condition",
-  "Undefined line number or label",
-  "\'(\' or \')\' expected",
-  "\'=\' expected",
-  "Cannot use system command", // v0.83 メッセージ文変更
-  "Illegal value",      // 追加
-  "Out of range value", // 追加
-  "Program not found",  // 追加
-  "Syntax error",
-  "Internal error",
-  "Break",
-  "Line too long",
-  "EEPROM out size",         // 追加
-  "EEPROM bad address",      // 追加
-  "EEPROM bad FLASH",        // 追加
-  "EEPROM not INIT",         // 追加
-  "EEPROM not vaid page",    // 追加
-  "File write error",        // 追加
-  "File read error",         // 追加
-  "Cannot use GPIO function",// 追加
-  "Too long path",           // 追加
-  "File open error",         // 追加
-  "SD I/O error",            // 追加
-  "Bad file name",           // 追加
-  "Not supported",           // 追加
-  "Out of video memory",
-  "Out of memory",
+
+#define ESTR(n,s) static const char _errmsg_##n[] PROGMEM = s;
+#include "errdef.h"
+
+#undef ESTR
+#define ESTR(n,s) _errmsg_##n,
+static const char* const errmsg[] PROGMEM = {
+#include "errdef.h"
 };
+
+#undef ESTR
 
 #include "error.h"
 
@@ -4021,11 +3988,13 @@ uint8_t ilrun() {
 // エラーメッセージ出力
 // 引数: dlfCmd プログラム実行時 false、コマンド実行時 true
 void error(uint8_t flgCmd = false) {
+  char msg[40];
   if (err) { 
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
     if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp && !flgCmd) {
       // エラーメッセージを表示
-      c_puts(errmsg[err]);       
+      strcpy_P(msg, errmsg[err]);
+      c_puts(msg);
       c_puts(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       newline();
@@ -4038,13 +4007,15 @@ void error(uint8_t flgCmd = false) {
       //err = 0;
       //return;
     } else {                   // 指示の実行中なら
-      c_puts(errmsg[err]);     // エラーメッセージを表示
+      strcpy_P(msg, errmsg[err]);
+      c_puts(msg);     // エラーメッセージを表示
       newline();               // 改行
       //err = 0;               // エラー番号をクリア
       //return;
     }
   } 
-  c_puts(errmsg[0]);           //「OK」を表示
+  strcpy_P(msg, errmsg[0]);
+  c_puts(msg);           //「OK」を表示
   newline();                   // 改行
   err = 0;                     // エラー番号をクリア
 }
