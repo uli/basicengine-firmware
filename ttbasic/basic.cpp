@@ -47,7 +47,7 @@
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_MEM  1024   // 自由利用データ領域
 
-//#define FLOAT_NUMS
+#define FLOAT_NUMS
 #ifdef FLOAT_NUMS
 typedef float num_t;
 #else
