@@ -369,6 +369,7 @@ static const char* const errmsg[] __FLASH__ = {
   "Bad file name",           // 追加
   "Not supported",           // 追加
   "Out of video memory",
+  "Out of memory",
 };
 
 #include "error.h"
