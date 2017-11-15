@@ -14,7 +14,7 @@ struct vs23_mode_t VS23S010::modes[] = {
   // a bit smaller, may fit better on some TVs
   { 432, 216, 13, 14, 3, 9, 11000000 },
   { 320, 216, 11, 15, 4, 9, 11000000 },	// VS23 NTSC demo
-  { 320, 200, 20, 15, 4, 9, 13000000 },	// (M)CGA, Commodore et al.
+  { 320, 200, 20, 15, 4, 9, 14000000 },	// (M)CGA, Commodore et al.
   { 256, 224, 9,  15, 5, 9, 15000000 },	// SNES
   { 256, 192, 24, 15, 5, 8, 11000000 },	// MSX, Spectrum, NDS	XXX: has artifacts
   { 160, 200, 20, 15, 8, 8, 11000000 },	// Commodore/PCjr/CPC multi-color
