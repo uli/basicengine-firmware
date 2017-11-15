@@ -132,6 +132,22 @@ typedef struct {
 } SystemConfig;
 SystemConfig CONFIG;
 
+class BString : public String {
+public:
+  using String::operator=;
+
+  int fromBasic(unsigned char *s) {
+    if (!reserve(len)) {
+      invalidate();
+      return 0;
+    }
+    len = *s++;
+    os_memcpy(buffer, s, len);
+    buffer[len] = 0;
+    return len + 1;
+  }
+};
+
 // プロトタイプ宣言
 uint8_t loadConfig();
 uint8_t saveConfig();
@@ -146,6 +162,7 @@ void tv_notone() ;
 void tv_write(uint8_t c) ;
 unsigned char* iexe();
 num_t iexp(void);
+BString istrexp(void);
 void error(uint8_t flgCmd);
 
 // **** RTC用宣言 ********************
@@ -384,6 +401,11 @@ num_t var[SIZE_VAR];              // 変数領域
 char *var_name[SIZE_VAR];	// assigned variable names
 int prg_var_top = 0;		// top variable assigned by program
 int var_top = 0;		// top variable overall (program and direct mode)
+
+BString svar[SIZE_VAR];
+char *svar_name[SIZE_VAR];
+int prg_svar_top = 0;
+int svar_top = 0;
 
 num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
@@ -762,6 +784,37 @@ uint8_t assign_var(char *name, bool is_prg_text)
   return var_top-1;
 }
 
+int find_svar(char *name)
+{
+  for (int i=0; i < svar_top; ++i) {
+    if (!strcasecmp(name, svar_name[i])) {
+#ifdef DEBUG_VAR
+      Serial.printf("found %d\n", i);
+#endif
+      return i;
+    }
+  }
+  return -1;
+}
+
+uint8_t assign_svar(char *name, bool is_prg_text)
+{
+#ifdef DEBUG_VAR
+  Serial.printf("assign %s ", name);
+#endif
+  int v = find_svar(name);
+  if (v >= 0)
+    return v;
+
+  svar_name[svar_top++] = strdup(name);
+  if (is_prg_text)
+    ++prg_svar_top;
+#ifdef DEBUG_VAR
+  Serial.printf("got %d\n", svar_top-1);
+#endif
+  return svar_top-1;
+}
+
 //
 // テキストを中間コードに変換
 // [戻り値]
@@ -910,17 +963,25 @@ uint8_t toktoi() {
 #endif
       } while (isAlphaNumeric(v) && var_len < MAX_VAR_NAME-1);
       vname[--var_len] = 0;	// terminate C string
+      
+      p--;
+      if (*p == '$') {
+        ibuf[len++] = I_SVAR;
+        ibuf[len++] = assign_svar(vname, is_prg_text);
+        s += var_len + 1;
+        ptok++;
+      } else {
+        //もし変数が3個並んだら
+        if (len >= 4 && ibuf[len - 2] == I_VAR && ibuf[len - 4] == I_VAR) {
+           err = ERR_SYNTAX; //エラー番号をセット
+           return 0; //0を持ち帰る
+         }
 
-      //もし変数が3個並んだら
-      if (len >= 4 && ibuf[len - 2] == I_VAR && ibuf[len - 4] == I_VAR) {
-         err = ERR_SYNTAX; //エラー番号をセット
-         return 0; //0を持ち帰る
-       }
-
-      // 中間コードに変換
-      ibuf[len++] = I_VAR; //中間コードを記録
-      ibuf[len++] = assign_var(vname, is_prg_text);
-      s+=var_len; //次の文字へ進む
+        // 中間コードに変換
+        ibuf[len++] = I_VAR; //中間コードを記録
+        ibuf[len++] = assign_var(vname, is_prg_text);
+        s+=var_len; //次の文字へ進む
+      }
     }
     else
 
@@ -1162,6 +1223,17 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
     }
     else
 
+    if (*ip == I_SVAR) {
+      ip++; //ポインタを変数番号へ進める
+      var_code = *ip++;
+      c_puts(svar_name[var_code], devno);
+      c_putch('$', devno);
+
+      if (!nospaceb(*ip)) //もし例外にあたらなければ
+        c_putch(' ',devno); //空白を表示
+    }
+    else
+
     //文字列の処理
     if (*ip == I_STR) { //もし文字列なら
       char c; //文字列の括りに使われている文字（「"」または「'」）
@@ -1356,6 +1428,30 @@ void ivar() {
   var[index] = value; //変数へ代入
 }
 
+void isvar() {
+  BString value;
+  short index = *cip++;
+  int len;
+  if (*cip != I_EQ) {
+    err = ERR_VWOEQ;
+    return;
+  }
+  cip++;
+  if (*cip == I_STR) {
+    cip++;
+    len = svar[index].fromBasic(cip);
+    if (!len)
+      err = ERR_OOM;
+    else
+      cip += len;
+  } else {
+    value = istrexp();
+    if (err)
+      return;
+    svar[index] = value;
+  }
+}
+  
 // Array assignment handler
 void iarray() {
   int value; //値
@@ -1402,6 +1498,11 @@ void ilet() {
   case I_VAR: // 変数の場合
     cip++;     // 中間コードポインタを次へ進める
     ivar();    // 変数への代入を実行
+    break;
+
+  case I_SVAR:
+    cip++;
+    isvar();
     break;
 
   case I_ARRAY: // 配列の場合
@@ -1534,8 +1635,18 @@ void inew(uint8_t mode = 0) {
     }
     var_top = prg_var_top;
 
-    for (i = 0; i < SIZE_VAR; i++) //変数の数だけ繰り返す
+    for (i = prg_svar_top; i < svar_top; ++i) {
+      if (svar_name[i]) {
+        free(svar_name[i]);
+        svar_name[i] = NULL;
+      }
+    }
+    svar_top = prg_svar_top;
+
+    for (i = 0; i < SIZE_VAR; i++) { //変数の数だけ繰り返す 
+      svar[i] = "";	// BASIC semantics: uninitialized strings are empty
       var[i] = 0; //変数を0に初期化
+    }
     for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
       arr[i] = 0; //配列を0に初期化
   }
@@ -1549,6 +1660,14 @@ void inew(uint8_t mode = 0) {
       }
     }
     prg_var_top = var_top = 0;
+
+    for (i = 0; i < prg_svar_top; ++i) {
+      if (svar_name[i]) {
+        free(svar_name[i]);
+        svar_name[i] = NULL;
+      }
+    }
+    prg_svar_top = svar_top = 0;
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
@@ -3131,16 +3250,16 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   num_t value;     //値
   int len;       //桁数
   unsigned char i; //文字数
+  BString str;
   
   len = 0; //桁数を初期化
   while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
     switch (*cip) { //中間コードで分岐
     case I_STR:     //文字列
-      cip++;
-      i = *cip++; //文字数を取得
-      while (i--) //文字数だけ繰り返す
-        c_putch(*cip++, devno); //文字を表示
-      break; 
+    case I_SVAR:
+      str = istrexp();
+      c_puts(str.c_str(), devno);
+      break;
 
     case I_SHARP: //「#
       cip++;
@@ -4248,6 +4367,51 @@ num_t iplus() {
   default: //以上のいずれにも該当しなかった場合
     return value; //値を持ち帰る
   } //中間コードで分岐の末尾
+}
+
+BString istrvalue()
+{
+  BString value;
+  int len;
+
+  switch (*cip++) {
+  case I_STR:
+    len = value.fromBasic(cip);
+    cip += len;
+    if (!len)
+      err = ERR_OOM;
+    break;
+  case I_SVAR:
+    value = svar[*cip++];
+    break;
+  default:
+    cip--;
+    err = ERR_SYNTAX;
+    break;
+  }
+  if (err)
+    return BString();
+  else
+    return value;
+}
+
+BString istrexp()
+{
+  BString value, tmp;
+  
+  value = istrvalue();
+
+  for (;;) switch(*cip) {
+  case I_PLUS:
+    cip++;
+    tmp = istrvalue();
+    if (err)
+      return BString();
+    value += tmp;
+    break;
+  default:
+    return value;
+  }
 }
 
 // The parser

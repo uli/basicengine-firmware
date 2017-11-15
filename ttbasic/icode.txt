@@ -204,4 +204,5 @@ _none	I_NUM		esyntax
 _none	I_STR		esyntax
 _none	I_HEXNUM	esyntax
 _none	I_VAR		ivar
+_none	I_SVAR		isvar
 _none	I_EOL		esyntax
