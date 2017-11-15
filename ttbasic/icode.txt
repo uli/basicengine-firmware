@@ -92,8 +92,10 @@ SOPEN	I_SOPEN		isopen
 SCLOSE	I_SCLOSE	isclose
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
-LDBMP	I_LDBMP		ildbmp
-LDPAT	I_LDPAT		ildpat
+PCX	I_PCX		esyntax
+AS	I_AS		esyntax
+OFF	I_OFF		esyntax
+SIZE	I_SIZE		esyntax
 MKDIR	I_MKDIR		imkdir
 RMDIR	I_RMDIR		irmdir
 RENAME	I_RENAME	irename

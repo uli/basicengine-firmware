@@ -3311,22 +3311,50 @@ BString getParamFname() {
   return fname;
 }
 
-void load_bitmap(char *fname, int32_t dx, int32_t dy)
-{
+
+void ildbmp() {
+  BString fname;
+  int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
+  bool define_bg = false;
+  int bg;
   uint8_t rc;
 
-  if (*cip == I_COMMA) {
-    ++cip;
-    if ( getParam(x,  0, INT32_MAX, true) ) return;
-    if ( getParam(y,  0, INT32_MAX, false) ) return;
-    if (*cip == I_COMMA) {
-      ++cip;
+  if(!(fname = getParamFname())) {
+    return;
+  }
+
+  for (;;) {
+    if (*cip == I_AS) {
+      // AS BG bg
+      cip++;
+      if (*cip++ != I_BG) {
+        err = ERR_SYNTAX;
+        return;
+      }
+      dx = dy = -1;
+      if ( getParam(bg,  0, VS23_MAX_BG-1, false) ) return;
+      define_bg = true;
+    } else if (*cip == I_TO) {
+      // TO dx,dy
+      cip++;
+      if ( getParam(dx,  0, INT32_MAX, true) ) return;
+      if ( getParam(dy,  0, INT32_MAX, false) ) return;
+    } else if (*cip == I_OFF) {
+      // OFF x,y
+      cip++;
+      if ( getParam(x,  0, INT32_MAX, true) ) return;
+      if ( getParam(y,  0, INT32_MAX, false) ) return;
+    } else if (*cip == I_SIZE) {
+      // SIZE w,h
+      cip++;
       if ( getParam(w,  0, INT32_MAX, true) ) return;
       if ( getParam(h,  0, INT32_MAX, false) ) return;
+    } else {
+      break;
     }
   }
-  
+    
   // 仮想アドレスから実アドレスへの変換
   // サイズチェック
   if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > vs23.lastLine()) {
@@ -3335,40 +3363,15 @@ void load_bitmap(char *fname, int32_t dx, int32_t dy)
   }
 
   // 画像のロード
-  err = fs.loadBitmap(fname, dx, dy, x, y, w, h);
+  err = fs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
   if (!err) {
+    if (define_bg)
+      vs23.setBgPat(bg, dx, dy, w / vs23.bgTileSizeX(bg));
     retval[0] = dx;
     retval[1] = dy;
     retval[2] = w;
     retval[3] = h;
   }
-}
-
-// LDBMP "ファイル名" ,アドレス, X, Y, W, H
-void ildbmp() {
-  char* fname;
-  int32_t dx = 0, dy = 0;
-
-  if(!(fname = getParamFname())) {
-    return;
-  }
-  if (*cip == I_COMMA) {
-    ++cip;
-    if ( getParam(dx,  0, INT32_MAX, true) ) return;
-    if ( getParam(dy,  0, INT32_MAX, false) ) return;
-  }
-
-  load_bitmap(fname, dx, dy);
-}
-
-void ildpat() {
-  char* fname;
-
-  if(!(fname = getParamFname())) {
-    return;
-  }
-  
-  load_bitmap(fname, -1, -1);
 }
 
 // MKDIR "ファイル名"
@@ -4785,7 +4788,11 @@ void ilist_() {
 }
 
 void ilrun_() {
-  ilrun();
+  if (*cip == I_PCX) {
+    cip++;
+    ildbmp();
+  } else
+    ilrun();
 }
 
 typedef void (*cmd_t)();
@@ -4837,7 +4844,7 @@ uint8_t icom() {
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
-  case I_LOAD:  ilrun(); break; 
+  case I_LOAD:  ilrun_(); break; 
  
   case I_LRUN:  if(ilrun()) {
          sc->show_curs(0); irun(clp);  sc->show_curs(1);
