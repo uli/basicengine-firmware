@@ -50,6 +50,19 @@ void VS23S010::resetSprites()
   }
 }
 
+void VS23S010::resetBgs()
+{
+  for (int i=0; i < VS23_MAX_BG; ++i) {
+    struct bg_t *bg = &m_bg[i];
+    freeBg(i);
+    bg->tile_size_x = 8;
+    bg->tile_size_y = 8;
+    bg->pat_x = 0;
+    bg->pat_y = m_current_mode->y + 8;
+    bg->pat_w = m_current_mode->x / bg->tile_size_x;
+  }
+}
+
 static int absolute_min_spi_div;
 void VS23S010::begin()
 {
@@ -72,6 +85,9 @@ void VS23S010::begin()
 void VS23S010::end()
 {
   m_bin.Init(0, 0);
+  for (int i = 0; i < VS23_MAX_BG; ++i) {
+    freeBg(i);
+  }
 }
 
 void VS23S010::setMode(uint8_t mode)
@@ -82,6 +98,7 @@ void VS23S010::setMode(uint8_t mode)
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
 
+  resetBgs();
   resetSprites();
 
   m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);

@@ -146,6 +146,7 @@ class VS23S010 {
       tsy = bg->tile_size_y;
     }
 
+    void resetBgs();
     void enableBg(uint8_t bg);
     void disableBg(uint8_t bg);
     void freeBg(uint8_t bg);
