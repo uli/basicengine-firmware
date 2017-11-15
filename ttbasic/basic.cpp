@@ -151,7 +151,7 @@ public:
 // プロトタイプ宣言
 uint8_t loadConfig();
 uint8_t saveConfig();
-char* getParamFname();
+BString getParamFname();
 int32_t getNextLineNo(int32_t lineno);
 void mem_putch(uint8_t c);
 const uint8_t* tv_getFontAdr();
@@ -1795,7 +1795,7 @@ void isave() {
 #endif
   uint8_t* sram_adr;
   //char fname[64];
-  char* fname;
+  BString fname;
   uint8_t mode = 0;
   int8_t rc;
   
@@ -1819,7 +1819,7 @@ void isave() {
 #if USE_SD_CARD == 1
     // SDカードへの保存
     if (ascii) {
-      rc = fs.tmpOpen(fname,1);
+      rc = fs.tmpOpen((char *)fname.c_str(),1);
       if (rc == SD_ERR_INIT) {
         err = ERR_SD_NOT_READY;
         return;
@@ -1831,7 +1831,7 @@ void isave() {
       fs.tmpClose();
     } else {
       // 通常のバイナリー保存
-      if( fs.save(fname, listbuf, SIZE_LIST) ) {
+      if( fs.save((char *)fname.c_str(), listbuf, SIZE_LIST) ) {
         err = ERR_FILE_WRITE;
       }
     }
@@ -2002,7 +2002,7 @@ void idelete() {
 void ifiles() {
   uint32_t flash_adr;
   uint8_t* save_clp;
-  char* fname;
+  BString fname;
   char wildcard[SD_PATH_LEN];
   char* wcard = NULL;
   char* ptr = NULL;
@@ -2016,14 +2016,14 @@ void ifiles() {
       return;
     }  
 
-   for (int8_t i = 0; i < strlen(fname); i++) {
+   for (int8_t i = 0; i < fname.length(); i++) {
       if (fname[i] >='a' && fname[i] <= 'z') {
          fname[i] = fname[i] - 'a' + 'A';
       }
    }
     
-    if (strlen(fname) > 0) {
-      for (int8_t i = strlen(fname)-1; i >= 0; i--) {
+    if (fname.length() > 0) {
+      for (int8_t i = fname.length()-1; i >= 0; i--) {
         if (fname[i] == '/') {
           ptr = &fname[i];
           break;
@@ -2036,13 +2036,13 @@ void ifiles() {
          wcard = wildcard;
          *(ptr+1) = 0;
       } else if (ptr == NULL && flgwildcard == 1) {
-         strcpy(wildcard, fname);
+         strcpy(wildcard, fname.c_str());
          wcard = wildcard;
-         strcpy(fname,"/");
+         fname = "/";
       }
     }
 #if USE_SD_CARD == 1
-    rc = fs.flist(fname, wcard, sc->getWidth()/14);
+    rc = fs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
     if (rc == SD_ERR_INIT) {
       err = ERR_SD_NOT_READY;
     } else if (rc == SD_ERR_OPEN_FILE) { 
@@ -3304,17 +3304,11 @@ void igprint() {
 }
 
 // ファイル名引数の取得
-char* getParamFname() {
-  cleartbuf(); // メモリバッファのクリア
-  iprint(3,1);
-  if (strlen(tbuf) >= SD_PATH_LEN)
-      err = ERR_LONGPATH;   
-  if (err) {
-    if (err == ERR_RANGE)
-      err = ERR_LONGPATH;
-      return NULL;
-  }
-  return tbuf;
+BString getParamFname() {
+  BString fname = istrexp();
+  if (fname.length() >= SD_PATH_LEN)
+    err = ERR_LONGPATH;
+  return fname;
 }
 
 void load_bitmap(char *fname, int32_t dx, int32_t dy)
@@ -3380,14 +3374,14 @@ void ildpat() {
 // MKDIR "ファイル名"
 void imkdir() {
   uint8_t rc;
-  char* fname;
+  BString fname;
 
   if(!(fname = getParamFname())) {
     return;
   }
   
 #if USE_SD_CARD == 1
-  rc = fs.mkdir(fname);
+  rc = fs.mkdir((char *)fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3398,7 +3392,7 @@ void imkdir() {
 
 // RMDIR "ファイル名"
 void irmdir() {
-  char* fname;
+  BString fname;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3406,7 +3400,7 @@ void irmdir() {
   }
 
 #if USE_SD_CARD == 1
-  rc = fs.rmdir(fname);
+  rc = fs.rmdir((char *)fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3473,7 +3467,7 @@ void irename() {
 
 // REMOVE "ファイル名"
 void iremove() {
-  char* fname;
+  BString fname;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3481,7 +3475,7 @@ void iremove() {
   }
 
 #if USE_SD_CARD == 1
-  rc = fs.remove(fname);
+  rc = fs.remove((char *)fname.c_str());
   if (rc) {
     err = ERR_FILE_WRITE;
     return;    
@@ -3494,7 +3488,7 @@ void ibsave() {
   //char fname[SD_PATH_LEN];
   uint8_t*radr; 
   int32_t vadr, len; 
-  char* fname;
+  BString fname;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3517,7 +3511,7 @@ void ibsave() {
 
   // ファイルオープン
 #if USE_SD_CARD == 1
-  rc = fs.tmpOpen(fname,1);
+  rc = fs.tmpOpen((char *)fname.c_str(),1);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
@@ -3548,7 +3542,7 @@ DONE:
 void ibload() {
   uint8_t*radr; 
   int32_t vadr, len ,c;
-  char* fname;
+  BString fname;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3570,7 +3564,7 @@ void ibload() {
   }
 #if USE_SD_CARD == 1
   // ファイルオープン
-  rc = fs.tmpOpen(fname,0);
+  rc = fs.tmpOpen((char *)fname.c_str(),0);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
@@ -3607,7 +3601,7 @@ void  icat() {
   int32_t line = 0;
   uint8_t c;
 
-  char* fname;
+  BString fname;
   uint8_t rc;
 
   if(!(fname = getParamFname())) {
@@ -3616,7 +3610,7 @@ void  icat() {
 
 #if USE_SD_CARD == 1
   while(1) {
-    rc = fs.textOut(fname, line, sc->getHeight()); 
+    rc = fs.textOut((char *)fname.c_str(), line, sc->getHeight()); 
     if (rc < 0) {
       if (rc == -SD_ERR_OPEN_FILE) {
         err = ERR_FILE_OPEN;
@@ -3837,7 +3831,7 @@ uint8_t ilrun() {
   uint8_t rc;
   uint8_t islrun = 1;
   uint8_t newmode = 1;
-  char* fname;
+  BString fname;
   int32_t flgMerge = 0;    // マージモード
   uint8_t* ptr;
   uint32_t sz;
@@ -3914,7 +3908,7 @@ uint8_t ilrun() {
 #if USE_SD_CARD == 1
     // SDカードからプログラムのロード
     // SDカードからのロード
-    fg = fs.IsText(fname); // 形式チェック
+    fg = fs.IsText((char *)fname.c_str()); // 形式チェック
     if (fg < 0) {
       // 形式異常
       rc = -fg;
@@ -3939,7 +3933,7 @@ uint8_t ilrun() {
         for (ptr = listbuf; *ptr; ptr += *ptr); //ポインタをリストの末尾へ移動
         sz  = listbuf + SIZE_LIST - ptr - 1;
       }
-      rc = fs.load(fname, ptr, sz); 
+      rc = fs.load((char *)fname.c_str(), ptr, sz); 
       if( rc == SD_ERR_INIT ) {
         err = ERR_SD_NOT_READY;
       } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3949,7 +3943,7 @@ uint8_t ilrun() {
       }
     } else if (fg == 1) {
       // SDカードからのテキスト形式ロード
-      if( loadPrgText(fname,newmode)) {
+      if( loadPrgText((char *)fname.c_str(),newmode)) {
         err = ERR_FILE_READ;
       }
     }
