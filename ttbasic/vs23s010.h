@@ -227,9 +227,7 @@ private:
       struct sprite_line *pattern;
       uint16_t pat_x, pat_y;
       int16_t pos_x, pos_y;
-      int16_t old_pos_x, old_pos_y;
       bool enabled;
-      bool old_enabled;
       bool transparent;
       uint8_t w, h;
     } m_sprite[VS23_MAX_SPRITES];

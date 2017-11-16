@@ -43,10 +43,8 @@ void VS23S010::resetSprites()
     }
     m_sprites_ordered[i] = s;
     s->enabled = false;
-    s->old_enabled = false;
     s->transparent = true;
     s->pos_x = s->pos_y = 0;
-    s->old_pos_x = s->old_pos_y = 0;
   }
 }
 
@@ -616,9 +614,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #ifndef DISABLE_SPRITE_DRAW
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
       struct sprite_t *s = m_sprites_ordered[sn];
-      s->old_pos_x = s->pos_x;
-      s->old_pos_y = s->pos_y;
-      s->old_enabled = s->enabled;
       if (!s->enabled)
         continue;
       if (s->pos_x < -s->w || s->pos_y < -s->h)
@@ -753,8 +748,6 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
   struct sprite_t *s = &m_sprite[num];
   s->pat_x = pat_x;
   s->pat_y = pat_y;
-  s->pos_x = s->old_pos_x = 0;
-  s->pos_y = s->old_pos_y = 0;
 
   resizeSprite(num, w, h);
 
@@ -802,7 +795,6 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
     s->transparent = false;
 
   s->enabled = true;
-  s->old_enabled = false;
 #ifdef DEBUG_SPRITES
   Serial.printf("defined %d\n", num);Serial.flush();
 #endif
