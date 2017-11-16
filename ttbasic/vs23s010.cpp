@@ -86,7 +86,7 @@ void VS23S010::end()
   }
 }
 
-void VS23S010::setMode(uint8_t mode)
+void SMALL VS23S010::setMode(uint8_t mode)
 {
   setSyncLine(0);
   m_current_mode = &modes[mode];
