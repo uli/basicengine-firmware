@@ -754,6 +754,9 @@ void VS23S010::loadSpritePattern(uint8_t num)
   struct sprite_t *s = &m_sprite[num];
   uint32_t tile_addr = pixelAddr(s->pat_x + s->frame * s->w, s->pat_y);
 
+  if (!s->pattern)
+    allocateSpritePattern(s);
+
   bool solid_block = true;
 
   for (int sy = 0; sy < s->h; ++sy) {
@@ -818,7 +821,7 @@ void VS23S010::enableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
   if (!s->pattern)
-    resizeSprite(num, s->w, s->h);
+    loadSpritePattern(num);
   s->enabled = true;
 }
 
