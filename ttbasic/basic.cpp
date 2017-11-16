@@ -2299,59 +2299,6 @@ void idwrite() {
   digitalWrite(pinno, data);
 }
 
-//
-// PWM出力
-// 引数
-//   pin     PWM出力ピン
-//   freq    出力パルス周波数(0 ～ 65535)
-//   dcycle  デューティ比 (0～ 4095:4095で100%)
-// 戻り値
-//   0 正常
-//   1 異常(PWMを利用出来ないピンを利用した)
-//
-uint8_t pwm_out(uint8_t pin, uint32_t freq, uint32_t duty) {
-#if 0
-  uint32_t dc;
-  timer_dev *dev = PIN_MAP[pin].timer_device;     // ピン対応のタイマーデバイスの取得 
-  uint8 cc_channel = PIN_MAP[pin].timer_channel;  // ピン対応のタイマーチャンネルの取得
-  if (! (dev && cc_channel) ) 
-    return 1;  
-
-  uint32_t f =1000000/(uint32_t)freq;  // 周波数をカウント値に換算
-  dc = f*(uint32_t)duty/4095;
-  timer_set_prescaler(dev, TIMER_DIV);  // システムクロックを1MHzに分周
-  timer_set_reload(dev, f);             // リセットカウント値を設定 
-  timer_set_mode(dev, cc_channel,TIMER_PWM);
-  timer_set_compare(dev,cc_channel,dc);    // 比較レジスタの初期値指定(デューティ比 0)
-#endif
-  return 0;
-}
-
-// PWMコマンド
-// PWM ピン番号, DutyCycle, [周波数]
-void ipwm() {
-  int32_t pinno;      // ピン番号
-  int32_t duty;       // デューティー値 0～4095
-  int32_t freq = 490; // 周波数
-
-  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return;  // ピン番号取得
-  if ( getParam(duty,  0, 4095, I_NONE) ) return;         // デューティー値
-
-  if (*cip == I_COMMA) {
-    cip++;
-    if ( getParam(freq,  0, INT32_MAX, I_NONE) ) return;      // 周波数の取得
-  }
-
-  // PWMピンとして利用可能かチェック
-  if (!IsPWM_PIN(pinno)) {
-    err = ERR_GPIO;
-    return;    
-  }
-    
-  if (pwm_out(pinno, freq, duty))
-      err = ERR_VALUE; 
-}
-
 // shiftOutコマンド SHIFTOUT dataPin, clockPin, bitOrder, value 
 void ishiftOut() {
   int32_t dataPin, clockPin;

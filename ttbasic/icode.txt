@@ -85,7 +85,6 @@ GPRINT	I_GPRINT	igprint
 GSCROLL	I_GSCROLL	igscroll
 GPIO	I_GPIO		igpio
 OUT	I_DOUT		idwrite
-POUT	I_POUT		ipwm
 SHIFTOUT	I_SHIFTOUT	ishiftOut
 SMODE	I_SMODE		ismode
 SOPEN	I_SOPEN		isopen
