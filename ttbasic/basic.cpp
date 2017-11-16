@@ -787,7 +787,7 @@ uint8_t assign_svar(char *name, bool is_prg_text)
 // [戻り値]
 //   0 または 変換中間コードバイト数
 //
-uint8_t toktoi() {
+uint8_t SMALL toktoi() {
   int16_t i;
   int16_t key;
   uint8_t len = 0;  // 中間コードの並びの長さ
@@ -1133,7 +1133,7 @@ void inslist() {
 }
 
 //指定中間コード行レコードのテキスト出力
-void putlist(unsigned char* ip, uint8_t devno=0) {
+void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
   unsigned char i;  // ループカウンタ
   uint8_t var_code; // 変数コード
   
@@ -1243,7 +1243,7 @@ int getparam() {
 }
 
 // INPUT handler
-void iinput() {
+void SMALL iinput() {
   int value;          // 値
   short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
@@ -1507,7 +1507,7 @@ void irun(uint8_t* start_clp = NULL) {
 }
 
 // LISTコマンド
-void ilist(uint8_t devno=0) {
+void SMALL ilist(uint8_t devno=0) {
   int32_t lineno = 0;          // 表示開始行番号
   int32_t endlineno = INT32_MAX;   // 表示終了行番号
   int32_t prnlineno;           // 出力対象行番号
@@ -1646,7 +1646,7 @@ void inew(uint8_t mode = 0) {
 }
 
 // RENUME command handler
-void irenum() {
+void SMALL irenum() {
   uint32_t startLineNo = 10;  // 開始行番号
   uint32_t increase = 10;     // 増分
   uint8_t* ptr;               // プログラム領域参照ポインタ
@@ -1742,7 +1742,7 @@ void irenum() {
 
 // CONFIGコマンド
 // CONFIG 項目番号,設定値
-void iconfig() {
+void SMALL iconfig() {
   int32_t itemNo;
   int32_t value;
 
@@ -1889,7 +1889,7 @@ void ierase() {
 // 戻り値
 //   0:正常終了
 //   1:異常終了
-uint8_t loadPrgText(char* fname, uint8_t newmode = 0) {
+uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
   int16_t rc;
   int32_t len;
 #if USE_SD_CARD == 1
@@ -1954,7 +1954,7 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
 // 指定行の削除
 // DELETE 行番号
 // DELETE 開始行番号,終了行番号
-void idelete() {
+void SMALL idelete() {
   int32_t sNo;
   int32_t eNo;
   uint8_t  *lp;      // 削除位置ポインタ 
@@ -2390,7 +2390,7 @@ void idmp(uint8_t devno=0) {
 // 戻り値
 //  なし
 //
-void istrref(uint8_t devno=0) {
+void SMALL istrref(uint8_t devno=0) {
   int32_t len;
   int32_t top;
   int32_t n;
@@ -2970,7 +2970,7 @@ void iswrite() {
 }
 
 // シリアルモード設定: SMODE MODE [,"通信速度"]
-void ismode() {
+void SMALL ismode() {
   int32_t c,flg;
   uint16_t ln;
   uint32_t baud = 0;
@@ -3021,7 +3021,7 @@ void isclose() {
 }
 
 // シリアル1オープン
-void isopen() {
+void SMALL isopen() {
   uint16_t ln;
   uint32_t baud = 0;
 
@@ -3263,7 +3263,7 @@ BString getParamFname() {
 }
 
 
-void ildbmp() {
+void SMALL ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
@@ -3438,7 +3438,7 @@ void iremove() {
 }
 
 // BSAVE "ファイル名", アドレス
-void ibsave() {
+void SMALL ibsave() {
   //char fname[SD_PATH_LEN];
   uint8_t*radr; 
   int32_t vadr, len; 
@@ -3493,7 +3493,7 @@ DONE:
   return;
 }
 
-void ibload() {
+void SMALL ibload() {
   uint8_t*radr; 
   int32_t vadr, len ,c;
   BString fname;
@@ -3620,7 +3620,7 @@ void ifont() {
 }
 
 // スクリーンモード指定 SCREEN M
-void iscreen() {
+void SMALL iscreen() {
   int32_t m ;
   int8_t prv_m;
 #if USE_NTSC == 1
@@ -3808,7 +3808,7 @@ void iplot() {
 // 戻り値
 //  1:正常 0:異常
 //
-uint8_t ilrun() {
+uint8_t SMALL ilrun() {
   int32_t prgno, lineno = -1;
   uint8_t* tmpcip, *lp;
   //char fname[SD_PATH_LEN];  // ファイル名
@@ -3969,7 +3969,7 @@ uint8_t ilrun() {
 
 // エラーメッセージ出力
 // 引数: dlfCmd プログラム実行時 false、コマンド実行時 true
-void error(uint8_t flgCmd = false) {
+void SMALL error(uint8_t flgCmd = false) {
   char msg[40];
   if (err) { 
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
@@ -4503,7 +4503,7 @@ char* getLineStr(int32_t lineno) {
 }
 
 // システム情報の表示
-void iinfo() {
+void SMALL iinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
   uint8_t* tmp = (uint8_t*)malloc(1);
@@ -4823,7 +4823,7 @@ unsigned char* iexe() {
 }
 
 //Command precessor
-uint8_t icom() {
+uint8_t SMALL icom() {
   uint8_t rc = 1;
   uint8_t v;
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
@@ -4860,7 +4860,7 @@ uint8_t icom() {
   The BASIC entry point
 */
 
-void basic() {
+void SMALL basic() {
   uint8_t serialMode = DEF_SMODE;
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
