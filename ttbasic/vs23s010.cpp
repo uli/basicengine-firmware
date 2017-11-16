@@ -45,6 +45,7 @@ void VS23S010::resetSprites()
     s->enabled = false;
     s->transparent = true;
     s->pos_x = s->pos_y = 0;
+    s->frame = 0;
   }
 }
 
@@ -748,7 +749,7 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
 
   resizeSprite(num, w, h);
 
-  uint32_t tile_addr = pixelAddr(pat_x, pat_y);
+  uint32_t tile_addr = pixelAddr(s->pat_x + s->frame * s->w, s->pat_y);
 
   bool solid_block = true;
 

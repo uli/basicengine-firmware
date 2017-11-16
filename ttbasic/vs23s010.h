@@ -230,6 +230,7 @@ private:
       bool enabled;
       bool transparent;
       uint8_t w, h;
+      uint8_t frame;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
