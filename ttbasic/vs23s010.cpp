@@ -46,6 +46,7 @@ void VS23S010::resetSprites()
     s->transparent = true;
     s->pos_x = s->pos_y = 0;
     s->frame = 0;
+    s->w = s->h = 8;
   }
 }
 
@@ -811,7 +812,7 @@ void VS23S010::enableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
   if (!s->pattern)
-    loadSpritePattern(num);
+    resizeSprite(num, s->w, s->h);
   s->enabled = true;
 }
 
