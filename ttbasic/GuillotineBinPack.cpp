@@ -45,9 +45,6 @@ void GuillotineBinPack::Init(int width, int height)
 	disjointRects.Clear();
 #endif
 
-	// Clear any memory of previously packed rectangles.
-	usedRectangles.clear();
-
 	// We start with a single big free rectangle that spans the whole bin.
 	Rect n;
 	n.x = 0;
@@ -164,9 +161,6 @@ void GuillotineBinPack::Insert(QList<RectSize> &rects, bool merge,
 		if (merge)
 			MergeFreeList();
 
-		// Remember the new used rectangle.
-		usedRectangles.push_back(newNode);
-
 		// Check that we're really producing correct packings here.
 		debug_assert(disjointRects.Add(newNode) == true);
 	}
@@ -211,9 +205,6 @@ Rect GuillotineBinPack::Insert(int width, int height, bool merge, FreeRectChoice
 	if (merge)
 		MergeFreeList();
 
-	// Remember the new used rectangle.
-	usedRectangles.push_back(newRect);
-
 	// Check that we're really producing correct packings here.
 	debug_assert(disjointRects.Add(newRect) == true);
 
@@ -223,21 +214,8 @@ Rect GuillotineBinPack::Insert(int width, int height, bool merge, FreeRectChoice
 void GuillotineBinPack::Free(Rect &rect, bool merge)
 {
 	freeRectangles.push_back(rect);
-	// XXX: usedRectangles?
 	if (merge)
 		MergeFreeList();
-}
-
-/// Computes the ratio of used surface area to the total bin area.
-float GuillotineBinPack::Occupancy()
-{
-	///\todo The occupancy rate could be cached/tracked incrementally instead
-	///      of looping through the list of packed rectangles here.
-	unsigned long usedSurfaceArea = 0;
-	for(size_t i = 0; i < usedRectangles.size(); ++i)
-		usedSurfaceArea += usedRectangles[i].width * usedRectangles[i].height;
-
-	return (float)usedSurfaceArea / (binWidth * binHeight);
 }
 
 /// Returns the heuristic score value for placing a rectangle of size width*height into freeRect. Does not try to rotate.

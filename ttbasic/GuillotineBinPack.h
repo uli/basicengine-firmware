@@ -77,16 +77,9 @@ public:
 //	void InsertMaxFitting(std::vector<RectSize> &rects, std::vector<Rect> &dst, bool merge, 
 //		FreeRectChoiceHeuristic rectChoice, GuillotineSplitHeuristic splitMethod);
 
-	/// Computes the ratio of used/total surface area. 0.00 means no space is yet used, 1.00 means the whole bin is used.
-	float Occupancy();
-
 	/// Returns the internal list of disjoint rectangles that track the free area of the bin. You may alter this vector
 	/// any way desired, as long as the end result still is a list of disjoint rectangles.
 	QList<Rect> &GetFreeRectangles() { return freeRectangles; }
-
-	/// Returns the list of packed rectangles. You may alter this vector at will, for example, you can move a Rect from
-	/// this list to the Free Rectangles list to free up space on-the-fly, but notice that this causes fragmentation.
-	QList<Rect> &GetUsedRectangles() { return usedRectangles; }
 
 	/// Performs a Rectangle Merge operation. This procedure looks for adjacent free rectangles and merges them if they
 	/// can be represented with a single rectangle. Takes up Theta(|freeRectangles|^2) time.
@@ -95,10 +88,6 @@ public:
 private:
 	int binWidth;
 	int binHeight;
-
-	/// Stores a list of all the rectangles that we have packed so far. This is used only to compute the Occupancy ratio,
-	/// so if you want to have the packer consume less memory, this can be removed.
-	QList<Rect> usedRectangles;
 
 	/// Stores a list of rectangles that represents the free area of the bin. This rectangles in this list are disjoint.
 	QList<Rect> freeRectangles;
