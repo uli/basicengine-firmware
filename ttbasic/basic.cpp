@@ -3790,8 +3790,8 @@ void isprite() {
     vs23.setSpritePattern(num, pat_x, pat_y);
     break;
   case I_SIZE:
-    if (getParam(w, 0, VS23_MAX_SPRITE_W, I_COMMA)) return;
-    if (getParam(h, 0, VS23_MAX_SPRITE_H, I_NONE)) return;
+    if (getParam(w, 1, VS23_MAX_SPRITE_W, I_COMMA)) return;
+    if (getParam(h, 1, VS23_MAX_SPRITE_H, I_NONE)) return;
     vs23.resizeSprite(num, w, h);
     break;
   case I_ON:
