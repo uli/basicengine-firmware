@@ -3782,13 +3782,31 @@ void imovebg() {
 
 void isprite() {
   int32_t num, pat_x, pat_y, w, h;
-  if (getParam(num, 0, VS23_MAX_SPRITES, I_COMMA)) return;
-  if (getParam(pat_x, 0, sc0.getGWidth(), I_COMMA)) return;
-  if (getParam(pat_y, 0, 1023, I_COMMA)) return;
-  if (getParam(w, 0, VS23_MAX_SPRITE_W, I_COMMA)) return;
-  if (getParam(h, 0, VS23_MAX_SPRITE_H, I_NONE)) return;
-
-  vs23.defineSprite(num, pat_x, pat_y, w, h);
+  if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
+  for (;;) switch (*cip++) {
+  case I_PATTERN:
+    if (getParam(pat_x, 0, sc0.getGWidth(), I_COMMA)) return;
+    if (getParam(pat_y, 0, 1023, I_NONE)) return;
+    vs23.setSpritePattern(num, pat_x, pat_y);
+    break;
+  case I_SIZE:
+    if (getParam(w, 0, VS23_MAX_SPRITE_W, I_COMMA)) return;
+    if (getParam(h, 0, VS23_MAX_SPRITE_H, I_NONE)) return;
+    vs23.resizeSprite(num, w, h);
+    break;
+  case I_ON:
+    vs23.enableSprite(num);
+    break;
+  case I_OFF:
+    vs23.disableSprite(num);
+    break;
+  default:
+    // XXX: throw an error if nothing has been done
+    cip--;
+    if (*cip != I_EOL && *cip != I_COLON)
+      err = ERR_SYNTAX;
+    return;
+  }
 }
 
 void imovesprite() {
