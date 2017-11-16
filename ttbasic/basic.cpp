@@ -3781,7 +3781,7 @@ void imovebg() {
 }
 
 void isprite() {
-  int32_t num, pat_x, pat_y, w, h;
+  int32_t num, pat_x, pat_y, w, h, frame;
   if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
   for (;;) switch (*cip++) {
   case I_PATTERN:
@@ -3793,6 +3793,10 @@ void isprite() {
     if (getParam(w, 1, VS23_MAX_SPRITE_W, I_COMMA)) return;
     if (getParam(h, 1, VS23_MAX_SPRITE_H, I_NONE)) return;
     vs23.resizeSprite(num, w, h);
+    break;
+  case I_FRAME:
+    if (getParam(frame, 0, sc0.getGWidth(), I_NONE)) return;
+    vs23.setSpriteFrame(num, frame);
     break;
   case I_ON:
     vs23.enableSprite(num);

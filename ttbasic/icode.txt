@@ -196,6 +196,7 @@ BGOFF	I_BGOFF		ibgoff
 BGWIN	I_BGWIN		ibgwin
 SPRITE	I_SPRITE	isprite
 PATTERN I_PATTERN	esyntax
+FRAME	I_FRAME		esyntax
 ON	I_ON		esyntax
 MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
