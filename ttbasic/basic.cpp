@@ -1002,9 +1002,9 @@ unsigned char* getlpByLabel(uint8_t* pLabel) {
   pLabel++;      // ラベル格納位置
   
   for (lp = listbuf; *lp; lp += *lp)  { //先頭から末尾まで繰り返す
-    if ( *(lp+5) == I_STR ) {
-       if (len == *(lp+6)) {
-           if (strncmp((char*)pLabel, (char*)(lp+7), len) == 0) {
+    if ( *(lp+sizeof(num_t)+1) == I_STR ) {
+       if (len == *(lp+sizeof(num_t)+2)) {
+           if (strncmp((char*)pLabel, (char*)(lp+sizeof(num_t)+3), len) == 0) {
               return lp;
            }
        }
@@ -1052,6 +1052,8 @@ uint8_t* getELSEptr(uint8_t* p) {
       lp += lp[1]+1;            
       break;
     case I_NUM:     // 定数
+      lp += sizeof(num_t) + 1;
+      break;
     case I_HEXNUM: 
       lp+=5;        // 整数2バイト+中間コード1バイト分移動
       break;
@@ -1111,7 +1113,7 @@ void inslist() {
   }
 
   // 行番号だけが入力された場合はここで終わる
-  if (*ibuf == 6) // もし長さが4（[長さ][I_NUM][行番号]のみ）なら
+  if (*ibuf == sizeof(num_t)+2) // もし長さが4（[長さ][I_NUM][行番号]のみ）なら
     return;
 
   // 挿入のためのスペースを空ける
@@ -1162,7 +1164,7 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
       num_t n;
       os_memcpy(&n, ip, sizeof(num_t));
       putnum(n, 0,devno); //値を取得して表示
-      ip += 4; //ポインタを次の中間コードへ進める
+      ip += sizeof(num_t); //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
         c_putch(' ',devno); //空白を表示
     }
@@ -1496,7 +1498,7 @@ void irun(uint8_t* start_clp = NULL) {
   }
 
   while (*clp) {     // 行ポインタが末尾を指すまで繰り返す
-    cip = clp + 5;   // 中間コードポインタを行番号の後ろに設定
+    cip = clp + sizeof(num_t) + 1;   // 中間コードポインタを行番号の後ろに設定
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err)         // もしエラーを生じたら
       return;    
@@ -1530,7 +1532,7 @@ void ilist(uint8_t devno=0) {
        break; 
     putnum(prnlineno, 0,devno);// 行番号を表示
     c_putch(' ',devno);        // 空白を入れる
-    putlist(clp + 5,devno);    // 行番号より後ろを文字列に変換して表示
+    putlist(clp + sizeof(num_t) + 1,devno);    // 行番号より後ろを文字列に変換して表示
     if (err)                   // もしエラーが生じたら
       break;                   // 繰り返しを打ち切る
     newline(devno);            // 改行
@@ -1573,7 +1575,7 @@ void iexport() {
          break; 
       putnum(prnlineno, 0);         // 行番号を表示
       c_putch(' ');                 // 空白を入れる
-      putlist(exclp + 5);           // 行番号より後ろを文字列に変換して表示
+      putlist(exclp + sizeof(num_t) + 1);           // 行番号より後ろを文字列に変換して表示
       if (err)                      // もしエラーが生じたら
         break;                      // 繰り返しを打ち切る
       newline();                    // 改行
@@ -1658,7 +1660,7 @@ void irenum() {
   // 開始行番号、増分引数チェック
   if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
     startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
-    cip+=5;
+    cip += sizeof(num_t) + 1;
     if (*cip == I_COMMA) {
         cip++;                        // カンマをスキップ
         if (*cip == I_NUM) {          // 増分指定があったら
@@ -1698,13 +1700,13 @@ void irenum() {
             index = getlineIndex(num);   // 行番号の行インデックスを取得する
             if (index == INT32_MAX) {
                // 該当する行が見つからないため、変更は行わない
-               i+=5;
+               i += sizeof(num_t) + 1;
                continue;
             } else {
                // とび先行番号を付け替える
                newnum = startLineNo + increase*index;
                os_memcpy(ptr+i+1, &newnum, sizeof(num_t));
-               i+=5;
+               i += sizeof(num_t) + 1;
                continue;
             }
           } 
@@ -1714,6 +1716,8 @@ void irenum() {
         i+=ptr[i]; // 文字列長分移動
         break;
       case I_NUM:  // 定数
+        i += sizeof(num_t) + 1;
+        break;
       case I_HEXNUM: 
         i+=5;      // 整数2バイト+中間コード1バイト分移動
         break;
@@ -2064,7 +2068,7 @@ void ifiles() {
         if (*clp) {
           //putnum(getlineno(clp), 0); // 行番号を表示
           //c_puts(" ");
-          putlist(clp + 5);          // 行番号より後ろを文字列に変換して表示
+          putlist(clp + sizeof(num_t) + 1);          // 行番号より後ろを文字列に変換して表示
         } else {
           c_puts("(none)");        
         }
@@ -4010,7 +4014,7 @@ uint8_t ilrun() {
   }
   if (!err) {
     if (islrun || (cip >= listbuf && cip < listbuf+SIZE_LIST)) {
-       cip = clp+5;	// XXX: really? was 3
+       cip = clp+sizeof(num_t)+1;	// XXX: really? was 3
     }
   }
   return 1;
@@ -4061,7 +4065,7 @@ num_t ivalue() {
   //定数の取得
   case I_NUM:    // 定数
     os_memcpy(&value, cip, sizeof(num_t));
-    cip += 4;
+    cip += sizeof(num_t);
     break; 
 
   case I_HEXNUM: // 16進定数
@@ -4546,7 +4550,7 @@ char* getLineStr(int32_t lineno) {
     cleartbuf();
     putnum(lineno, 0,3); // 行番号を表示
     c_putch(' ',3);    // 空白を入れる
-    putlist(lp+5,3); // XXX: really lp+5? was lp+3.   // 行番号より後ろを文字列に変換して表示        
+    putlist(lp+sizeof(num_t)+1,3); // XXX: really lp+5? was lp+3.   // 行番号より後ろを文字列に変換して表示        
     c_putch(0,3);      // \0を入れる
     return tbuf;
 }
@@ -4603,7 +4607,7 @@ void igoto() {
     }
   }
   clp = lp;        // 行ポインタを分岐先へ更新
-  cip = clp + 5; // XXX: really? was 3.   // 中間コードポインタを先頭の中間コードに更新  
+  cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.   // 中間コードポインタを先頭の中間コードに更新  
 }
 
 // GOSUB
@@ -4640,7 +4644,7 @@ void igosub() {
   gstk[gstki++] = cip;                      // 中間コードポインタを退避
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
-  cip = clp + 5; // XXX: really? was 3.                            // 中間コードポインタを先頭の中間コードに更新
+  cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.                            // 中間コードポインタを先頭の中間コードに更新
 }
 
 // RETURN
