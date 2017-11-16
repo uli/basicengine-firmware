@@ -58,7 +58,7 @@ static uint16_t char_y(uint8_t c)
 }
 
 // フォント利用設定
-void tv_fontInit() {
+void SMALL tv_fontInit() {
   if (f_x >= 0)
     vs23.freeBacking(f_x, f_y, c_width * f_width, (256 + c_width - 1) / c_width * f_height);
 
