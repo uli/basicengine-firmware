@@ -4,6 +4,7 @@
 #include <SPI.h>
 #include "vs23s010.h"
 #include "lock.h"
+#include "ttconfig.h"
 
 //#define DEBUG
 
@@ -283,7 +284,7 @@ void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, u
 	}
 }
 	
-void VS23S010::SpiRamVideoInit() {
+void SMALL VS23S010::SpiRamVideoInit() {
 	uint16_t i,j,wi;
 	uint32_t w;
 	uint16_t linelen = PLLCLKS_PER_LINE;
