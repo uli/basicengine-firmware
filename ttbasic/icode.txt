@@ -208,3 +208,4 @@ _none	I_HEXNUM	esyntax
 _none	I_VAR		ivar
 _none	I_SVAR		isvar
 _none	I_EOL		esyntax
+_none	I_NONE		esyntax

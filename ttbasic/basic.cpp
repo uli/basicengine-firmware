@@ -462,11 +462,11 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, int32_t  v_min,  int32_t  v_max, token_t next_token) {
   prm = iexp(); 
   if (!err &&  (prm < v_min || prm > v_max)) 
     err = ERR_VALUE;
-  else if (flgCmma && *cip++ != I_COMMA) {
+  else if (next_token != I_NONE && *cip++ != next_token) {
     err = ERR_SYNTAX;
  }
   return err;
@@ -474,14 +474,14 @@ inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, int32_t  v_min,  int32_t  v_
 
 #ifdef FLOAT_NUMS
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, int32_t  v_min,  int32_t  v_max, token_t next_token) {
   num_t p = iexp();
   if (!err && (int)p != p)
     err = ERR_VALUE;
   prm = p;
   if (!err &&  (prm < v_min || prm > v_max || ((int)prm) != prm)) 
     err = ERR_VALUE;
-  else if (flgCmma && *cip++ != I_COMMA) {
+  else if (next_token != I_NONE && *cip++ != next_token) {
     err = ERR_SYNTAX;
  }
   return err;
@@ -489,18 +489,18 @@ inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, int32_t  v_min,  int32_t  
 #endif
 
 // コマンド引数取得(int32_t,引数チェックなし)
-inline uint8_t ICACHE_RAM_ATTR getParam(uint32_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(uint32_t& prm, token_t next_token) {
   prm = iexp(); 
-  if (!err && flgCmma && *cip++ != I_COMMA) {
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
    err = ERR_SYNTAX;
   }
   return err;
 }
 
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, token_t next_token) {
   prm = iexp(); 
-  if (!err && flgCmma && *cip++ != I_COMMA) {
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
    err = ERR_SYNTAX;
   }
   return err;
@@ -508,12 +508,12 @@ inline uint8_t ICACHE_RAM_ATTR getParam(num_t& prm, uint8_t flgCmma) {
 
 #ifdef FLOAT_NUMS
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, uint8_t flgCmma) {
+inline uint8_t ICACHE_RAM_ATTR getParam(int32_t& prm, token_t next_token) {
   num_t p = iexp();
   if (!err && ((int)p) != p)
     err = ERR_SYNTAX;
   prm = p;
-  if (!err && flgCmma && *cip++ != I_COMMA) {
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
    err = ERR_SYNTAX;
   }
   return err;
@@ -1235,7 +1235,7 @@ void putlist(unsigned char* ip, uint8_t devno=0) {
 int getparam() {
   int value; //値
   if (checkOpen()) return 0;
-  if (getParam(value,false) )  return 0;
+  if (getParam(value, I_NONE) )  return 0;
   if (checkClose()) return 0;
   return value; //値を持ち帰る
 }
@@ -1513,10 +1513,10 @@ void ilist(uint8_t devno=0) {
   //表示開始行番号の設定
   if (*cip != I_EOL && *cip != I_COLON) {
     // 引数あり
-    if (getParam(lineno,0,INT32_MAX,false)) return;
+    if (getParam(lineno,0,INT32_MAX, I_NONE)) return;
     if (*cip == I_COMMA) {
       cip++;                         // カンマをスキップ
-      if (getParam(endlineno,lineno,INT32_MAX,false)) return;
+      if (getParam(endlineno,lineno,INT32_MAX, I_NONE)) return;
      }
    }
  
@@ -1550,11 +1550,11 @@ void iexport() {
 
   if (*cip != I_EOL && *cip != I_COLON) {
     // 引数あり
-    if (getParam(s_pno,0,FLASH_SAVE_NUM-1,false)) return;
+    if (getParam(s_pno,0,FLASH_SAVE_NUM-1, I_NONE)) return;
     e_pno = s_pno;
     if (*cip == I_COMMA) {
       cip++;                         // カンマをスキップ
-      if (getParam(e_pno,s_pno,FLASH_SAVE_NUM-1,false)) return;        
+      if (getParam(e_pno,s_pno,FLASH_SAVE_NUM-1, I_NONE)) return;        
     }
   }
   
@@ -1742,8 +1742,8 @@ void iconfig() {
   int32_t itemNo;
   int32_t value;
 
-  if ( getParam(itemNo, true) ) return;  
-  if ( getParam(value, false) ) return;  
+  if ( getParam(itemNo, I_COMMA) ) return;  
+  if ( getParam(value, I_NONE) ) return;  
   switch(itemNo) {
 #if USE_NTSC == 1
   case 0: // NTSC補正
@@ -1812,9 +1812,9 @@ void isave() {
     mode = 1;
     if (*cip == I_COMMA) {
       cip++;
-      if ( getParam(ascii, 0, 1, false) ) return;       
+      if ( getParam(ascii, 0, 1, I_NONE) ) return;       
     }
-  } //else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) ) return;  
+  } //else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;  
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
@@ -1860,11 +1860,11 @@ void ierase() {
   uint8_t* sram_adr;
   uint32_t flash_adr;
 
-  if ( getParam(s_prgno, 0, FLASH_SAVE_NUM-1, false) ) return;
+  if ( getParam(s_prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
   e_prgno = s_prgno;
   if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(e_prgno, 0, FLASH_SAVE_NUM-1, false) ) return;
+    if ( getParam(e_prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
   }
 
   TFlash.unlock();
@@ -1957,10 +1957,10 @@ void idelete() {
   uint8_t *p1, *p2;  // 移動先と移動元ポインタ
   int32_t len;       // 移動の長さ
 
-  if ( getParam(sNo, false) ) return;
+  if ( getParam(sNo, I_NONE) ) return;
   if (*cip == I_COMMA) {
      cip++;
-     if ( getParam(eNo, false) ) return;  
+     if ( getParam(eNo, I_NONE) ) return;  
   } else {
      eNo = sNo;
   }
@@ -2085,7 +2085,7 @@ void icls() {
 // 時間待ち
 void iwait() {
   int32_t tm;
-  if ( getParam(tm, 0, INT32_MAX, false) ) return;
+  if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
   uint32_t end = tm + millis();
   while (millis() < end) {
     vs23.updateBg();
@@ -2095,8 +2095,8 @@ void iwait() {
 // カーソル移動 LOCATE x,y
 void ilocate() {
   int32_t x,  y;
-  if ( getParam(x, true) ) return;
-  if ( getParam(y, false) ) return;
+  if ( getParam(x, I_COMMA) ) return;
+  if ( getParam(y, I_NONE) ) return;
   if ( x >= sc->getWidth() )   // xの有効範囲チェック
      x = sc->getWidth() - 1;
   else if (x < 0)  x = 0;  
@@ -2111,10 +2111,10 @@ void ilocate() {
 // 文字色の指定 COLOLR fc,bc
 void icolor() {
  int32_t fc,  bc = 0;
- if ( getParam(fc, 0, 255, false) ) return;
+ if ( getParam(fc, 0, 255, I_NONE) ) return;
  if(*cip == I_COMMA) {
     cip++;
-    if ( getParam(bc, 0, 255, false) ) return;  
+    if ( getParam(bc, 0, 255, I_NONE) ) return;  
  }
   // 文字色の設定
   sc->setColor((uint16_t)fc, (uint16_t)bc);  
@@ -2123,7 +2123,7 @@ void icolor() {
 // 文字属性の指定 ATTRコマンド
 void iattr() {
   int32_t attr;
-  if ( getParam(attr, 0, 4, false) ) return;
+  if ( getParam(attr, 0, 4, I_NONE) ) return;
   sc->setAttr(attr); 
 }
 
@@ -2148,7 +2148,7 @@ int32_t ipeek() {
   uint8_t* radr;
 
   if (checkOpen()) return 0;
-  if ( getParam(vadr, false) )  return 0;
+  if ( getParam(vadr, I_NONE) )  return 0;
   if (checkClose()) return 0;  
   radr = v2realAddr(vadr);
   if (radr)
@@ -2162,7 +2162,7 @@ int32_t iret() {
   int32_t r;
 
   if (checkOpen()) return 0;
-  if ( getParam(r, 0, MAX_RETVALS-1, false) ) return 0;
+  if ( getParam(r, 0, MAX_RETVALS-1, I_NONE) ) return 0;
   if (checkClose()) return 0;  
 
   return retval[r];
@@ -2174,8 +2174,8 @@ int32_t ivpeek() {
   int32_t x, y;  // 座標
 
   if (checkOpen()) return 0;
-  if ( getParam(x, true) )  return 0;
-  if ( getParam(y, false) ) return 0;
+  if ( getParam(x, I_COMMA) )  return 0;
+  if ( getParam(y, I_NONE) ) return 0;
   if (checkClose()) return 0;
   value = (x < 0 || y < 0 || x >=sc->getWidth() || y >=sc->getHeight()) ? 0: sc->vpeek(x, y);
   return value;
@@ -2247,7 +2247,7 @@ void igpio() {
   uint8_t flgok = false;
 
   // 入出力ピンの指定
-  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return; // ピン番号取得
+  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return; // ピン番号取得
   pmode = (WiringPinMode)iexp();  if(err) return ;      // 入出力モードの取得
 
   // ピンモードの設定
@@ -2282,8 +2282,8 @@ void igpio() {
 void idwrite() {
   int32_t pinno,  data;
 
-  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return; // ピン番号取得
-  if ( getParam(data, false) ) return;                  // データ指定取得
+  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return; // ピン番号取得
+  if ( getParam(data, I_NONE) ) return;                  // データ指定取得
   data = data ? HIGH: LOW;
 
   if (! IsIO_PIN(pinno)) {
@@ -2330,12 +2330,12 @@ void ipwm() {
   int32_t duty;       // デューティー値 0～4095
   int32_t freq = 490; // 周波数
 
-  if ( getParam(pinno, 0, I_PC15-I_PA0, true) ) return;  // ピン番号取得
-  if ( getParam(duty,  0, 4095, false) ) return;         // デューティー値
+  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return;  // ピン番号取得
+  if ( getParam(duty,  0, 4095, I_NONE) ) return;         // デューティー値
 
   if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(freq,  0, INT32_MAX, false) ) return;      // 周波数の取得
+    if ( getParam(freq,  0, INT32_MAX, I_NONE) ) return;      // 周波数の取得
   }
 
   // PWMピンとして利用可能かチェック
@@ -2354,10 +2354,10 @@ void ishiftOut() {
   int32_t bitOrder;
   int32_t data;
 
-  if (getParam(dataPin, 0,I_PC15-I_PA0, true)) return;
-  if (getParam(clockPin,0,I_PC15-I_PA0, true)) return;
-  if (getParam(bitOrder,0,1, true)) return;
-  if (getParam(data, 0,255,false)) return;
+  if (getParam(dataPin, 0,I_PC15-I_PA0, I_COMMA)) return;
+  if (getParam(clockPin,0,I_PC15-I_PA0, I_COMMA)) return;
+  if (getParam(bitOrder,0,1, I_COMMA)) return;
+  if (getParam(data, 0,255, I_NONE)) return;
 
   if ( !IsIO_PIN(dataPin) ||  !IsIO_PIN(clockPin) ) {
     err = ERR_GPIO;
@@ -2373,10 +2373,10 @@ void ihex(uint8_t devno=0) {
   int d = 0; // 桁数(0で桁数指定なし)
 
   if (checkOpen()) return;
-  if (getParam(value,false)) return;  
+  if (getParam(value, I_NONE)) return;  
   if (*cip == I_COMMA) {
      cip++;
-     if (getParam(d,0,4,false)) return;  
+     if (getParam(d,0,4, I_NONE)) return;  
   }
   if (checkClose()) return;  
   putHexnum(value, d, devno);    
@@ -2388,10 +2388,10 @@ void ibin(uint8_t devno=0) {
   int32_t d = 0; // 桁数(0で桁数指定なし)
 
   if (checkOpen()) return;
-  if (getParam(value,false)) return;  
+  if (getParam(value, I_NONE)) return;  
   if (*cip == I_COMMA) {
      cip++;
-     if (getParam(d,0,16,false)) return;  
+     if (getParam(d,0,16, I_NONE)) return;  
   }
   if (checkClose()) return;
   putBinnum(value, d, devno);    
@@ -2406,13 +2406,13 @@ void idmp(uint8_t devno=0) {
   int32_t base=1;
   
   if (checkOpen()) return;
-  if (getParam(value, false)) return;
+  if (getParam(value, I_NONE)) return;
   if (*cip == I_COMMA) { 
     cip++; 
-    if (getParam(n, 0,4,false)) return;
+    if (getParam(n, 0,4, I_NONE)) return;
     if (*cip == I_COMMA) { 
        cip++; 
-      if (getParam(dn,-6,6,false)) return;
+      if (getParam(dn,-6,6, I_NONE)) return;
     }  
   }
   if (checkClose()) return;
@@ -2454,7 +2454,7 @@ void istrref(uint8_t devno=0) {
     cip++;
   } else if (*cip == I_ARRAY) {
     cip++; 
-    if (getParam(index, 0, SIZE_ARRY-1, false)) return;
+    if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return;
     ptr = v2realAddr(arr[index]);
     len = *ptr;
     ptr++;    
@@ -2472,8 +2472,8 @@ void istrref(uint8_t devno=0) {
   n = len;
   if (*cip == I_COMMA) { 
     cip++;
-    if (getParam(top, 1,len,true)) return;
-    if (getParam(n,1,len-top+1,false)) return;
+    if (getParam(top, 1,len, I_COMMA)) return;
+    if (getParam(n,1,len-top+1, I_NONE)) return;
   }
   if (checkClose()) return;
   for (uint32_t i = top-1; i <top-1+n; i++) {
@@ -2502,7 +2502,7 @@ void ipoke() {
       break;
     }
     cip++;          // 中間コードポインタを次へ進める
-    if (getParam(value,false)) return; 
+    if (getParam(value, I_NONE)) return; 
     *((uint8_t*)adr) = (uint8_t)value;
     vadr++;
   } while(*cip == I_COMMA);
@@ -2516,11 +2516,11 @@ int32_t ii2cw() {
   int16_t  rc;
 
   if (checkOpen()) return 0;
-  if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
-  if (getParam(ctop, 0, INT32_MAX, true)) return 0;
-  if (getParam(clen, 0, INT32_MAX, true)) return 0;
-  if (getParam(top, 0, INT32_MAX, true)) return 0;
-  if (getParam(len, 0, INT32_MAX,false)) return 0;
+  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
+  if (getParam(ctop, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(clen, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(top, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(len, 0, INT32_MAX, I_NONE)) return 0;
   if (checkClose()) return 0;
 
   ptr  = v2realAddr(top);
@@ -2551,11 +2551,11 @@ int32_t ii2cr() {
   int32_t  n;
 
   if (checkOpen()) return 0;
-  if (getParam(i2cAdr, 0, 0x7f, true)) return 0;
-  if (getParam(sdtop, 0, INT32_MAX, true)) return 0;
-  if (getParam(sdlen, 0, INT32_MAX, true)) return 0;
-  if (getParam(rdtop, 0, INT32_MAX, true)) return 0;
-  if (getParam(rdlen, 0, INT32_MAX,false)) return 0;
+  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
+  if (getParam(sdtop, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(sdlen, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(rdtop, 0, INT32_MAX, I_COMMA)) return 0;
+  if (getParam(rdlen, 0, INT32_MAX, I_NONE)) return 0;
   if (checkClose()) return 0;
 
   sdptr = v2realAddr(sdtop);
@@ -2602,12 +2602,12 @@ int32_t ishiftIn() {
   int32_t lgc = HIGH;
 
   if (checkOpen()) return 0;
-  if (getParam(dataPin, 0,I_PC15-I_PA0, true)) return 0;
-  if (getParam(clockPin,0,I_PC15-I_PA0, true)) return 0;
-  if (getParam(bitOrder,0,1, false)) return 0;
+  if (getParam(dataPin, 0,I_PC15-I_PA0, I_COMMA)) return 0;
+  if (getParam(clockPin,0,I_PC15-I_PA0, I_COMMA)) return 0;
+  if (getParam(bitOrder,0,1, I_NONE)) return 0;
   if (*cip == I_COMMA) {
     cip++;
-    if (getParam(lgc,LOW, HIGH, false)) return 0;
+    if (getParam(lgc,LOW, HIGH, I_NONE)) return 0;
   }
   if (checkClose()) return 0;
   rc = _shiftIn((uint8_t)dataPin, (uint8_t)clockPin, (uint8_t)bitOrder, lgc);
@@ -2621,12 +2621,12 @@ void isetDate() {
   int32_t p_year, p_mon, p_day;
   int32_t p_hour, p_min, p_sec;
 
-  if ( getParam(p_year, 1900,2036, true) ) return; // 年 
-  if ( getParam(p_mon,     1,  12, true) ) return; // 月
-  if ( getParam(p_day,     1,  31, true) ) return; // 日
-  if ( getParam(p_hour,    0,  23, true) ) return; // 時
-  if ( getParam(p_min,     0,  59, true) ) return; // 分
-  if ( getParam(p_sec,     0,  61, false)) return; // 秒
+  if ( getParam(p_year, 1900,2036, I_COMMA) ) return; // 年 
+  if ( getParam(p_mon,     1,  12, I_COMMA) ) return; // 月
+  if ( getParam(p_day,     1,  31, I_COMMA) ) return; // 日
+  if ( getParam(p_hour,    0,  23, I_COMMA) ) return; // 時
+  if ( getParam(p_min,     0,  59, I_COMMA) ) return; // 分
+  if ( getParam(p_sec,     0,  61, I_NONE)) return; // 秒
 
   // RTCの設定
   t.tm_isdst = 0;             // サーマータイム [1:あり 、0:なし]
@@ -2788,8 +2788,8 @@ void ieepwrite() {
   uint32_t data;   // データ
   uint16_t Status;
   
-  if ( getParam(adr, 0, INT32_MAX, true) ) return; // アドレス
-  if ( getParam(data, false) ) return;         // データ
+  if ( getParam(adr, 0, INT32_MAX, I_COMMA) ) return; // アドレス
+  if ( getParam(data, I_NONE) ) return;         // データ
      
   // データの書込み
   Status = EEPROM.write(adr, data);
@@ -2850,7 +2850,7 @@ void ipset() {
 #if USE_NTSC == 1
  int32_t x,y,c;
  if (scmode) {
-    if (getParam(x,true)||getParam(y,true)||getParam(c,false)) 
+    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE)) 
     if (x < 0) x =0;
     if (y < 0) y =0;
     if (x >= ((tTVscreen*)sc)->getGWidth())  x = ((tTVscreen*)sc)->getGWidth()-1;
@@ -2870,7 +2870,7 @@ void iline() {
 #if USE_NTSC == 1
  int32_t x1,x2,y1,y2,c;
   if (scmode) { 
-    if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(c,false)) 
+    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE)) 
     if (x1 < 0) x1 =0;
     if (y1 < 0) y1 =0;
     if (x2 < 0) x1 =0;
@@ -2894,7 +2894,7 @@ void icircle() {
 #if USE_NTSC == 1
   int32_t x,y,r,c,f;
   if (scmode) { 
-    if (getParam(x,true)||getParam(y,true)||getParam(r,true)||getParam(c,true)||getParam(f,false)) 
+    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE)) 
     if (x < 0) x =0;
     if (y < 0) y =0;
     if (x >= ((tTVscreen*)sc)->getGWidth())  x = ((tTVscreen*)sc)->getGWidth()-1;
@@ -2915,7 +2915,7 @@ void irect() {
 #if USE_NTSC == 1
   int32_t x1,y1,x2,y2,c,f;
   if (scmode) { 
-    if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(c,true)||getParam(f,false)) 
+    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE)) 
       return;
     if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= ((tTVscreen*)sc)->getGWidth() || y2 >= ((tTVscreen*)sc)->getGHeight())  {
       err = ERR_VALUE;
@@ -2939,11 +2939,11 @@ void ibitmap() {
   int32_t  vadr;
   uint8_t* adr;
   if (scmode) {   
-    if (getParam(x,true)||getParam(y,true)||getParam(vadr,true)||getParam(index,true)||getParam(w,true)||getParam(h,false)) 
+    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(vadr, I_COMMA)||getParam(index, I_COMMA)||getParam(w, I_COMMA)||getParam(h, I_NONE)) 
       return;
     if (*cip == I_COMMA) {
       cip++;
-      if (getParam(d,false)) return;
+      if (getParam(d, I_NONE)) return;
     }
     adr = v2realAddr(vadr);
     if (!adr) {
@@ -2974,7 +2974,7 @@ void  icscroll() {
 #if USE_NTSC == 1
   int32_t  x1,y1,x2,y2,d;
   if (scmode) {   
-    if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(d,false))
+    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
       return;
     if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc->getWidth() || y2 >= sc->getHeight())  {
       err = ERR_VALUE;
@@ -2995,7 +2995,7 @@ void igscroll() {
 #if USE_NTSC == 1
   int32_t  x1,y1,x2,y2,d;
   if (scmode) {   
-    if (getParam(x1,true)||getParam(y1,true)||getParam(x2,true)||getParam(y2,true)||getParam(d,false))
+    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
       return;
     if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= ((tTVscreen*)sc)->getGWidth() || y2 >= ((tTVscreen*)sc)->getGHeight()) {
       err = ERR_VALUE;
@@ -3014,7 +3014,7 @@ void igscroll() {
 // シリアル1バイト出力 : SWRITE データ
 void iswrite() {
   int32_t c; 
-  if ( getParam(c, false) ) return;
+  if ( getParam(c, I_NONE) ) return;
    sc->Serial_write((uint8_t)c);
 }
 
@@ -3024,7 +3024,7 @@ void ismode() {
   uint16_t ln;
   uint32_t baud = 0;
 
-  if ( getParam(c, 0, 3, false) ) return;  
+  if ( getParam(c, 0, 3, I_NONE) ) return;  
   if (c == 1) {
     if(*cip != I_COMMA) {
       err = ERR_SYNTAX;
@@ -3053,7 +3053,7 @@ void ismode() {
   else if (c == 3) {
     // シリアルからの制御入力許可設定
     cip++;
-    if ( getParam(flg, 0, 1, false) ) return;  
+    if ( getParam(flg, 0, 1, I_NONE) ) return;  
     sc->set_allowCtrl(flg);
     return;
   }
@@ -3105,10 +3105,10 @@ void itone() {
   int32_t freq;   // 周波数
   int32_t tm = 0; // 音出し時間
 
-  if ( getParam(freq, 0, INT32_MAX, false) ) return;
+  if ( getParam(freq, 0, INT32_MAX, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
-    if ( getParam(tm, 0, INT32_MAX, false) ) return;
+    if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
   }
   tv_tone(freq, tm);
 }
@@ -3125,7 +3125,7 @@ int32_t igpeek() {
   int x, y;  // 座標
   if (scmode) {
     if (checkOpen()) return 0;
-    if ( getParam(x,true) || getParam(y,false) ) return 0; 
+    if ( getParam(x, I_COMMA) || getParam(y, I_NONE) ) return 0; 
     if (checkClose()) return 0;
     if (x < 0 || y < 0 || x >= ((tTVscreen*)sc)->getGWidth()-1 || y >= ((tTVscreen*)sc)->getGHeight()-1) return 0;
     return ((tTVscreen*)sc)->gpeek(x,y);  
@@ -3144,7 +3144,7 @@ int32_t iginp() {
   int32_t x,y,w,h,c;
   if (scmode) {
     if (checkOpen())  return 0;
-    if ( getParam(x,true)||getParam(y,true)||getParam(w,true)||getParam(h,true)||getParam(c,false) ) return 0; 
+    if ( getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(w, I_COMMA)||getParam(h, I_COMMA)||getParam(c, I_NONE) ) return 0; 
     if (checkClose()) return 0;
     if (x < 0 || y < 0 || x >= ((tTVscreen*)sc)->getGWidth() || y >= ((tTVscreen*)sc)->getGHeight() || h < 0 || w < 0) return 0;    
     if (x+w >= ((tTVscreen*)sc)->getGWidth() || y+h >= ((tTVscreen*)sc)->getGHeight() ) return 0;     
@@ -3162,7 +3162,7 @@ int32_t iginp() {
 int32_t imap() {
   int32_t value,l1,h1,l2,h2,rc;
   if (checkOpen()) return 0;
-  if ( getParam(value,true)||getParam(l1,true)||getParam(h1,true)||getParam(l2,true)||getParam(h2,false) ) 
+  if ( getParam(value, I_COMMA)||getParam(l1, I_COMMA)||getParam(h1, I_COMMA)||getParam(l2, I_COMMA)||getParam(h2, I_NONE) ) 
     return 0;
   if (checkClose()) return 0;
   if (l1 >= h1 || l2 >= h2 || value < l1 || value > h1) {
@@ -3195,7 +3195,7 @@ int32_t iasc() {
      cip++;     
   } else if ( *cip == I_ARRAY) { // 配列変数の場合
      cip++; 
-     if (getParam(index, 0, SIZE_ARRY-1, false)) return 0;
+     if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return 0;
      str = v2realAddr(arr[index]);
      len = *str;
      str++;
@@ -3205,7 +3205,7 @@ int32_t iasc() {
   }
   if ( *cip == I_COMMA) {
     cip++;
-    if (getParam(pos,1,len,false)) return 0;
+    if (getParam(pos,1,len, I_NONE)) return 0;
   }
   value = str[pos-1];
   checkClose();
@@ -3237,7 +3237,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 
     case I_CHR: // CHR$()関数
       cip++;
-      if (getParam(value, 0,255,false)) break;   // 括弧の値を取得
+      if (getParam(value, 0,255, I_NONE)) break;   // 括弧の値を取得
 //     if (!err)
       c_putch(value, devno);
      break;
@@ -3291,8 +3291,8 @@ void igprint() {
 #if USE_NTSC == 1
   int32_t x,y;
   if (scmode) {
-    if ( getParam(x, 0, ((tTVscreen*)sc)->getGWidth(), true) )  return;
-    if ( getParam(y, 0, ((tTVscreen*)sc)->getGHeight(),true) )  return;
+    if ( getParam(x, 0, ((tTVscreen*)sc)->getGWidth(), I_COMMA) )  return;
+    if ( getParam(y, 0, ((tTVscreen*)sc)->getGHeight(), I_COMMA) )  return;
     ((tTVscreen*)sc)->set_gcursor(x,y);
     iprint(2);
   } else {
@@ -3333,23 +3333,23 @@ void ildbmp() {
         return;
       }
       dx = dy = -1;
-      if ( getParam(bg,  0, VS23_MAX_BG-1, false) ) return;
+      if ( getParam(bg,  0, VS23_MAX_BG-1, I_NONE) ) return;
       define_bg = true;
     } else if (*cip == I_TO) {
       // TO dx,dy
       cip++;
-      if ( getParam(dx,  0, INT32_MAX, true) ) return;
-      if ( getParam(dy,  0, INT32_MAX, false) ) return;
+      if ( getParam(dx,  0, INT32_MAX, I_COMMA) ) return;
+      if ( getParam(dy,  0, INT32_MAX, I_NONE) ) return;
     } else if (*cip == I_OFF) {
       // OFF x,y
       cip++;
-      if ( getParam(x,  0, INT32_MAX, true) ) return;
-      if ( getParam(y,  0, INT32_MAX, false) ) return;
+      if ( getParam(x,  0, INT32_MAX, I_COMMA) ) return;
+      if ( getParam(y,  0, INT32_MAX, I_NONE) ) return;
     } else if (*cip == I_SIZE) {
       // SIZE w,h
       cip++;
-      if ( getParam(w,  0, INT32_MAX, true) ) return;
-      if ( getParam(h,  0, INT32_MAX, false) ) return;
+      if ( getParam(w,  0, INT32_MAX, I_COMMA) ) return;
+      if ( getParam(h,  0, INT32_MAX, I_NONE) ) return;
     } else {
       break;
     }
@@ -3503,8 +3503,8 @@ void ibsave() {
     return;    
   }
   cip++;
-  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, true) ) return; // アドレスの取得
-  if ( getParam(len,  0, INT32_MAX, false) ) return;             // データ長の取得
+  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, I_COMMA) ) return; // アドレスの取得
+  if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;             // データ長の取得
 
   // アドレスの範囲チェック
   if ( (uint32_t)vadr+(uint32_t)len > (uint32_t)(V_GRAM_TOP+6048) ) {
@@ -3557,8 +3557,8 @@ void ibload() {
     return;    
   }
   cip++;
-  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, true) ) return;  // アドレスの取得
-  if ( getParam(len,  0, INT32_MAX, false) ) return;              // データ長の取得
+  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, I_COMMA) ) return;  // アドレスの取得
+  if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;              // データ長の取得
 
   // アドレスの範囲チェック
   if ( (uint32_t)vadr+(uint32_t)len > (uint32_t)(V_GRAM_TOP+6048) ) {
@@ -3642,10 +3642,10 @@ void  icat() {
 void iwindow() {
   int32_t x, y, w, h ;
 
-  if ( getParam(x,  0, sc0.getScreenWidth() - 8, true) ) return;   // x
-  if ( getParam(y,  0, sc0.getScreenHeight() - 2, true) ) return;        // y
-  if ( getParam(w,  8, sc0.getScreenWidth() - x, true) ) return;   // w
-  if ( getParam(h,  2, sc0.getScreenHeight() - y, false) ) return;        // h
+  if ( getParam(x,  0, sc0.getScreenWidth() - 8, I_COMMA) ) return;   // x
+  if ( getParam(y,  0, sc0.getScreenHeight() - 2, I_COMMA) ) return;        // y
+  if ( getParam(w,  8, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
+  if ( getParam(h,  2, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
 
   if (scmode == 0) {
     // 現在、ターミナルモードの場合は画面をクリアして、再設定する
@@ -3663,7 +3663,7 @@ void iwindow() {
 
 void ifont() {
   int32_t idx;
-  if (getParam(idx, 0, NUM_FONTS, false))
+  if (getParam(idx, 0, NUM_FONTS, I_NONE))
     return;
   sc0.setFont(fonts[idx]);
 }
@@ -3675,9 +3675,9 @@ void iscreen() {
 #if USE_NTSC == 1
   // 引数チェック
 #if USE_VS23 == 1
-  if ( getParam(m,  0, vs23.numModes, false) ) return;   // m
+  if ( getParam(m,  0, vs23.numModes, I_NONE) ) return;   // m
 #else
-  if ( getParam(m,  0, 3, false) ) return;   // m
+  if ( getParam(m,  0, 3, I_NONE) ) return;   // m
 #endif
   if (scmode == m) 
     return;
@@ -3724,7 +3724,7 @@ void iscreen() {
 void ibg() {
   int32_t m;
   int32_t w, h, px, py, pw, ph, tx, ty;
-  if (getParam(m, 0, VS23_MAX_BG, false)) return;
+  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
 
   if (*cip != I_COMMA) {
     err = ERR_SYNTAX;
@@ -3732,13 +3732,13 @@ void ibg() {
   }
   cip++;
 
-  if (getParam(w, 0, 1023, true)) return;
-  if (getParam(h, 0, 1023, true)) return;
-  if (getParam(px, 0, sc0.getGWidth(), true)) return;
-  if (getParam(py, 0, 1023, true)) return;
-  if (getParam(pw, 0, sc0.getScreenWidth(), true)) return;
-  if (getParam(tx, 8, 32, true)) return;
-  if (getParam(ty, 8, 32, false)) return;
+  if (getParam(w, 0, 1023, I_COMMA)) return;
+  if (getParam(h, 0, 1023, I_COMMA)) return;
+  if (getParam(px, 0, sc0.getGWidth(), I_COMMA)) return;
+  if (getParam(py, 0, 1023, I_COMMA)) return;
+  if (getParam(pw, 0, sc0.getScreenWidth(), I_COMMA)) return;
+  if (getParam(tx, 8, 32, I_COMMA)) return;
+  if (getParam(ty, 8, 32, I_NONE)) return;
   if (px + pw*tx > sc0.getGWidth()) {
     err = ERR_RANGE;
     return;
@@ -3750,62 +3750,62 @@ void ibg() {
 
 void ibgoff() {
   int32_t m;
-  if (getParam(m, 0, VS23_MAX_BG, false)) return;
+  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
   vs23.disableBg(m);
 }
 
 void ibgon() {
   int32_t m;
-  if (getParam(m, 0, VS23_MAX_BG, false)) return;
+  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
   vs23.enableBg(m);
 }
 
 void ibgwin() {
   int32_t m, x, y, w, h;
-  if (getParam(m, 0, VS23_MAX_BG, true)) return;
-  if (getParam(x, 0, sc0.getGWidth() - 1, true)) return;
-  if (getParam(y, 0, sc0.getGHeight() - 1, true)) return;
-  if (getParam(w, 0, sc0.getGWidth(), true)) return;
-  if (getParam(h, 0, sc0.getGHeight(), false)) return;
+  if (getParam(m, 0, VS23_MAX_BG, I_COMMA)) return;
+  if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
+  if (getParam(y, 0, sc0.getGHeight() - 1, I_COMMA)) return;
+  if (getParam(w, 0, sc0.getGWidth(), I_COMMA)) return;
+  if (getParam(h, 0, sc0.getGHeight(), I_NONE)) return;
   vs23.setBgWin(m, x, y, w, h);
 }
   
 void iscroll() {
   int32_t bg, x, y;
-  if (getParam(bg, 0, VS23_MAX_BG, true)) return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
   // XXX: arbitrary limitation?
-  if (getParam(x, INT32_MIN, INT32_MAX, true)) return;
-  if (getParam(y, INT32_MIN, INT32_MAX, false)) return;
+  if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA)) return;
+  if (getParam(y, INT32_MIN, INT32_MAX, I_NONE)) return;
   
   vs23.scroll(bg, x, y);
 }
 
 void isprite() {
   int32_t num, pat_x, pat_y, w, h;
-  if (getParam(num, 0, VS23_MAX_SPRITES, true)) return;
-  if (getParam(pat_x, 0, sc0.getGWidth(), true)) return;
-  if (getParam(pat_y, 0, 1023, true)) return;
-  if (getParam(w, 0, VS23_MAX_SPRITE_W, true)) return;
-  if (getParam(h, 0, VS23_MAX_SPRITE_H, false)) return;
+  if (getParam(num, 0, VS23_MAX_SPRITES, I_COMMA)) return;
+  if (getParam(pat_x, 0, sc0.getGWidth(), I_COMMA)) return;
+  if (getParam(pat_y, 0, 1023, I_COMMA)) return;
+  if (getParam(w, 0, VS23_MAX_SPRITE_W, I_COMMA)) return;
+  if (getParam(h, 0, VS23_MAX_SPRITE_H, I_NONE)) return;
 
   vs23.defineSprite(num, pat_x, pat_y, w, h);
 }
 
 void imove() {
   int32_t num, pos_x, pos_y;
-  if (getParam(num, 0, VS23_MAX_SPRITES, true)) return;
-  if (getParam(pos_x, INT32_MIN, INT32_MAX, true)) return;
-  if (getParam(pos_y, INT32_MIN, INT32_MAX, false)) return;
+  if (getParam(num, 0, VS23_MAX_SPRITES, I_COMMA)) return;
+  if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
+  if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE)) return;
   vs23.moveSprite(num, pos_x, pos_y);
 }  
 
 void iplot() {
   int32_t bg, x, y, t;
-  if (getParam(bg, 0, VS23_MAX_BG, true)) return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
   // XXX: check actual bg dimensions!
-  if (getParam(x, 0, 1023, true)) return;
-  if (getParam(y, 0, 1023, true)) return;
-  if (getParam(t, 0, 255, false)) return;
+  if (getParam(x, 0, 1023, I_COMMA)) return;
+  if (getParam(y, 0, 1023, I_COMMA)) return;
+  if (getParam(t, 0, 255, I_NONE)) return;
   vs23.setBgTile(bg, x, y, t);  
 }
 
@@ -3859,7 +3859,7 @@ uint8_t ilrun() {
     // 内部フラッシュメモリからの読込＆実行
     if (*cip == I_EOL) {
      prgno = 0;
-    } else { //if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, false) )
+    } else { //if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, I_NONE) )
      return 0; // プログラム番号
     }
   }
@@ -3877,7 +3877,7 @@ uint8_t ilrun() {
         strncpy((char*)label+2, (char*)cip+1, len); 
         cip+=*cip+1;
       } else {             // 行番号の場合
-        if ( getParam(lineno, 0, INT32_MAX, false) ) return 0;
+        if ( getParam(lineno, 0, INT32_MAX, I_NONE) ) return 0;
       }
     } else {
       lineno = 0;
@@ -3886,7 +3886,7 @@ uint8_t ilrun() {
    // LOAD
    if(*cip == I_COMMA) {   // 第2引数の処理
       cip++;
-      if ( getParam(flgMerge, 0, 1, false) ) return 0;
+      if ( getParam(flgMerge, 0, 1, I_NONE) ) return 0;
       flgPrm2 = 1;
       if (flgMerge == 0) {
         newmode = 0; // 上書きモード   
@@ -4119,7 +4119,7 @@ num_t ivalue() {
       cip++;
     } else if ( *cip == I_ARRAY) {
       cip++;
-      if (getParam(value, 0, SIZE_ARRY-1, false)) return 0;
+      if (getParam(value, 0, SIZE_ARRY-1, I_NONE)) return 0;
       value = *v2realAddr(arr[(int)value]);
     } else if ( *cip == I_STR) {
       cip++;
@@ -4173,7 +4173,7 @@ num_t ivalue() {
   
   case I_DIN: // DIN(ピン番号)
     if (checkOpen()) break;
-    if (getParam(value,0,I_PC15 - I_PA0, false)) break;
+    if (getParam(value,0,I_PC15 - I_PA0, I_NONE)) break;
     if (checkClose()) break;
     if ( !IsIO_PIN(value) ) {
       err = ERR_GPIO;
@@ -4184,7 +4184,7 @@ num_t ivalue() {
 
   case I_ANA: // ANA(ピン番号)
     if (checkOpen()) break;
-    if (getParam(value,0,I_PC15 - I_PA0, false)) break;
+    if (getParam(value,0,I_PC15 - I_PA0, I_NONE)) break;
     if (checkClose()) break;
     value = -1;//analogRead(value);    // 入力値取得
     break;

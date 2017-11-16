@@ -3,7 +3,7 @@ f = open('icode.txt', 'r')
 cmdf = open('kwtbl.h', 'w')
 enumf = open('kwenum.h', 'w')
 funf = open('funtbl.h', 'w')
-enumf.write('enum {\n')
+enumf.write('enum token_t {\n')
 funf.write('static const cmd_t funtbl[] __FLASH__ = {\n')
 count = 0
 max_kw_len = 0
