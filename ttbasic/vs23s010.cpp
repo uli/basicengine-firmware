@@ -600,8 +600,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     while (!blockFinished()) {}
     if (pass == 0) lines[3] = currentLine();
 
-    uint8_t bbuf[VS23_MAX_SPRITE_W+4];
-    uint8_t sbuf[VS23_MAX_SPRITE_W+4];
+    uint8_t bbuf[VS23_MAX_SPRITE_W];
+    uint8_t sbuf[VS23_MAX_SPRITE_W];
     uint32_t sprite_pat_start_addr = piclineByteAddress(0);
 
     // Reduce speed for memory accesses.
