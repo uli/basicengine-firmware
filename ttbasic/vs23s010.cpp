@@ -532,9 +532,6 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 #endif
 }
 
-#define SPRITE_BACKING_X(sn) ((sn) * VS23_MAX_SPRITE_W % m_current_mode->x)
-#define SPRITE_BACKING_Y(sn) (m_last_line - VS23_MAX_SPRITE_H * (VS23_MAX_SPRITES * VS23_MAX_SPRITE_W / m_current_mode->x + 1))
-
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
