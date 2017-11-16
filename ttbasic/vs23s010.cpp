@@ -739,26 +739,22 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
     for (int i = 0; i < h; ++i)
       s->pattern[i].pixels = (uint8_t *)malloc(w);
   }
+  loadSpritePattern(num);
 }
 
-void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h)
+void VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  s->pat_x = pat_x;
-  s->pat_y = pat_y;
-
-  resizeSprite(num, w, h);
-
   uint32_t tile_addr = pixelAddr(s->pat_x + s->frame * s->w, s->pat_y);
 
   bool solid_block = true;
 
   for (int sy = 0; sy < s->h; ++sy) {
     struct sprite_line *p = &s->pattern[sy];
-    SpiRamReadBytes(tile_addr + sy*m_pitch, p->pixels, w);
+    SpiRamReadBytes(tile_addr + sy*m_pitch, p->pixels, s->w);
 
     p->off = 0;
-    p->len = w;
+    p->len = s->w;
     p->type = LINE_SOLID;
 
     uint8_t *pp = p->pixels;
@@ -770,7 +766,7 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
     }
 
     if (p->len) {
-      pp = p->pixels + w - 1;
+      pp = p->pixels + s->w - 1;
       while (*pp == 0) {
         solid_block = false;
         --pp;
@@ -789,13 +785,40 @@ void VS23S010::defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t
 #endif
   }
 
-  if (solid_block)
-    s->transparent = false;
+  s->transparent = !solid_block;
+}
 
-  s->enabled = true;
+void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame)
+{
+  m_sprite[num].frame = frame;
+  loadSpritePattern(num);
+}
+
+void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
+{
+  struct sprite_t *s = &m_sprite[num];
+  s->pat_x = pat_x;
+  s->pat_y = pat_y;
+  s->frame = 0;
+
+  loadSpritePattern(num);
 #ifdef DEBUG_SPRITES
   Serial.printf("defined %d\n", num);Serial.flush();
 #endif
+}
+
+void VS23S010::enableSprite(uint8_t num)
+{
+  struct sprite_t *s = &m_sprite[num];
+  if (!s->pattern)
+    loadSpritePattern(num);
+  s->enabled = true;
+}
+
+void VS23S010::disableSprite(uint8_t num)
+{
+  struct sprite_t *s = &m_sprite[num];
+  s->enabled = false;
 }
 
 int VS23S010::cmp_sprite_y(const void *one, const void *two)

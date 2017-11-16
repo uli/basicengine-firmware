@@ -160,9 +160,12 @@ class VS23S010 {
     void updateBg();
 
     void resetSprites();
-    void defineSprite(uint8_t num, uint16_t pat_x, uint16_t pat_y, uint8_t w, uint8_t h);
+    void setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y);
     void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
     void moveSprite(uint8_t num, int16_t x, int16_t y);
+    void setSpriteFrame(uint8_t num, uint8_t frame);
+    void enableSprite(uint8_t num);
+    void disableSprite(uint8_t num);
 
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];
@@ -234,6 +237,8 @@ private:
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
+
+    void loadSpritePattern(uint8_t num);
     
     uint32_t m_frame;
     
