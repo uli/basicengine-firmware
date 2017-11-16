@@ -194,7 +194,6 @@ BG	I_BG		ibg
 BGON	I_BGON		ibgon
 BGOFF	I_BGOFF		ibgoff
 BGWIN	I_BGWIN		ibgwin
-SCROLL	I_SCROLL	iscroll
 SPRITE	I_SPRITE	isprite
 MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot

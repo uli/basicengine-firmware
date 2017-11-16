@@ -3770,9 +3770,9 @@ void ibgwin() {
   vs23.setBgWin(m, x, y, w, h);
 }
   
-void iscroll() {
+void imovebg() {
   int32_t bg, x, y;
-  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
   // XXX: arbitrary limitation?
   if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA)) return;
   if (getParam(y, INT32_MIN, INT32_MAX, I_NONE)) return;
@@ -3791,13 +3791,25 @@ void isprite() {
   vs23.defineSprite(num, pat_x, pat_y, w, h);
 }
 
-void imove() {
+void imovesprite() {
   int32_t num, pos_x, pos_y;
-  if (getParam(num, 0, VS23_MAX_SPRITES, I_COMMA)) return;
+  if (getParam(num, 0, VS23_MAX_SPRITES, I_TO)) return;
   if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
   if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE)) return;
   vs23.moveSprite(num, pos_x, pos_y);
 }  
+
+void imove()
+{
+  if (*cip == I_SPRITE) {
+    ++cip;
+    imovesprite();
+  } else if (*cip == I_BG) {
+    ++cip;
+    imovebg();
+  } else
+    err = ERR_SYNTAX;
+}
 
 void iplot() {
   int32_t bg, x, y, t;
