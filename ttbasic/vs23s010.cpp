@@ -35,12 +35,8 @@ void VS23S010::resetSprites()
 {
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
     struct sprite_t *s = &m_sprite[i];
-    if (s->pattern) {
-      for (i = 0; i < s->h; ++i)
-        free(s->pattern[i].pixels);
-      free(s->pattern);
-      s->pattern = NULL;
-    }
+    if (s->pattern)
+      freeSpritePattern(s);
     m_sprites_ordered[i] = s;
     s->enabled = false;
     s->transparent = true;
@@ -724,21 +720,31 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   SpiUnlock();
 }
 
+void VS23S010::allocateSpritePattern(struct sprite_t *s)
+{
+  s->pattern = (struct sprite_line *)malloc(s->h * sizeof(struct sprite_line));
+  for (int i = 0; i < s->h; ++i)
+    s->pattern[i].pixels = (uint8_t *)malloc(s->w);
+}
+
+void VS23S010::freeSpritePattern(struct sprite_t *s)
+{
+  for (int i = 0; i < s->h; ++i)
+    free(s->pattern[i].pixels);
+  free(s->pattern);
+  s->pattern = NULL;
+}
+
 void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
 {
   struct sprite_t *s = &m_sprite[num];
   if ((w != s->w || h != s->h) && s->pattern) {
-    for (int i = 0; i < s->h; ++i)
-      free(s->pattern[i].pixels);
-    free(s->pattern);
-    s->pattern = NULL;
+    freeSpritePattern(s);
   }
   s->w = w;
   s->h = h;
   if (!s->pattern) {
-    s->pattern = (struct sprite_line *)malloc(h * sizeof(struct sprite_line));
-    for (int i = 0; i < h; ++i)
-      s->pattern[i].pixels = (uint8_t *)malloc(w);
+    allocateSpritePattern(s);
   }
   loadSpritePattern(num);
 }

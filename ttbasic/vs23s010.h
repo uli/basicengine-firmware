@@ -239,6 +239,8 @@ private:
     static int cmp_sprite_y(const void *one, const void *two);
 
     void loadSpritePattern(uint8_t num);
+    void allocateSpritePattern(struct sprite_t *s);
+    void freeSpritePattern(struct sprite_t *s);
     
     uint32_t m_frame;
     
