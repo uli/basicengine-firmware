@@ -160,8 +160,8 @@ void tv_toneInit() ;
 void tv_tone(int16_t freq, int16_t duration) ;
 void tv_notone() ;
 void tv_write(uint8_t c) ;
-unsigned char* iexe();
-num_t iexp(void);
+unsigned char* GROUP(basic_core) iexe();
+num_t GROUP(basic_core) iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
 
@@ -1234,7 +1234,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
 }
 
 // Get argument in parenthesis
-num_t getparam() {
+num_t GROUP(basic_core) getparam() {
   num_t value; //値
   if (checkOpen()) return 0;
   if (getParam(value, I_NONE) )  return 0;
@@ -1373,7 +1373,7 @@ DONE:
 }
 
 // Variable assignment handler
-void ivar() {
+void GROUP(basic_core) ivar() {
   num_t value; //値
   short index; //変数番号
 
@@ -1486,7 +1486,7 @@ void ilet() {
 }
 
 // RUN command handler
-void irun(uint8_t* start_clp = NULL) {
+void GROUP(basic_core) irun(uint8_t* start_clp = NULL) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
@@ -4003,7 +4003,7 @@ void SMALL error(uint8_t flgCmd = false) {
 }
 
 // Get value
-num_t ivalue() {
+num_t GROUP(basic_core) ivalue() {
   num_t value; // 値
   uint8_t i;   // 文字数
 
@@ -4226,7 +4226,7 @@ num_t ivalue() {
 }
 
 // multiply or divide calculation
-num_t imul() {
+num_t GROUP(basic_core) imul() {
   num_t value, tmp; //値と演算値
 
   value = ivalue(); //値を取得
@@ -4297,7 +4297,7 @@ num_t imul() {
 }
 
 // add or subtract calculation
-num_t iplus() {
+num_t GROUP(basic_core) iplus() {
   num_t value, tmp; //値と演算値
   value = imul(); //値を取得
   if (err) 
@@ -4368,7 +4368,7 @@ BString istrexp()
 }
 
 // The parser
-num_t iexp() {
+num_t GROUP(basic_core) iexp() {
   num_t value, tmp; //値と演算値
 
   value = iplus(); //値を取得
@@ -4785,7 +4785,7 @@ typedef void (*cmd_t)();
 
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
-unsigned char* iexe() {
+unsigned char* GROUP(basic_core) iexe() {
   uint8_t c;               // 入力キー
   err = 0;
 
