@@ -76,4 +76,5 @@
 
 #define SMALL __attribute__((optimize("Os")))
 
+#define GROUP(g) __attribute__((section(".text." #g)))
 #endif
