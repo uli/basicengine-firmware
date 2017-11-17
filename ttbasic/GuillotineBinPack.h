@@ -51,7 +51,9 @@ public:
 		SplitMinimizeArea, ///< -MINAS, Try to make a single big rectangle at the expense of making the other small.
 		SplitMaximizeArea, ///< -MAXAS, Try to make both remaining rectangles as even-sized as possible.
 		SplitShorterAxis, ///< -SAS
-		SplitLongerAxis ///< -LAS
+		SplitLongerAxis, ///< -LAS
+		SplitHorizontal,
+		Split256,
 	};
 
 	/// Inserts a single rectangle into the bin. The packer might rotate the rectangle, in which case the returned

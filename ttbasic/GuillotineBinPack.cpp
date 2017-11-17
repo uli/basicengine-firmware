@@ -384,8 +384,16 @@ void GuillotineBinPack::SplitFreeRectByHeuristic(const Rect &freeRect, const Rec
 		// Split along the longer total axis.
 		splitHorizontal = (freeRect.width > freeRect.height);
 		break;
-	default:
+        case SplitHorizontal:
 		splitHorizontal = true;
+		break;
+        case Split256:
+                if (w < 256)
+                  splitHorizontal = true;
+                else
+                  splitHorizontal = (placedRect.width * h > w * placedRect.height);
+                break;
+	default:
 		assert(false);
 	}
 
