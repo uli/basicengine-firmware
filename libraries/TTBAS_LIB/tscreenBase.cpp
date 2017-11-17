@@ -332,7 +332,7 @@ void tscreenBase::movePosPrevLineChar() {
 
 // カーソルを行末に移動
 void tscreenBase::moveLineEnd() {
-  int16_t x = width-1;
+  int16_t x = width-2;
   while(1) {
     if (IS_PRINT(VPEEK(x, pos_y)) ) 
        break;  
@@ -341,7 +341,7 @@ void tscreenBase::moveLineEnd() {
     else
       break;
   }        
-  MOVE(pos_y, x);     
+  MOVE(pos_y, x+1);
 }
 
 // スクリーン表示の最終表示の行先頭に移動
