@@ -3674,50 +3674,54 @@ void SMALL iscreen() {
 
 void ibg() {
   int32_t m;
-  int32_t w, h, px, py, pw, ph, tx, ty;
+  int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh;
+
   if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
 
-  if (*cip != I_COMMA) {
-    err = ERR_SYNTAX;
-    return;    
-  }
-  cip++;
-
-  if (getParam(w, 0, 1023, I_COMMA)) return;
-  if (getParam(h, 0, 1023, I_COMMA)) return;
-  if (getParam(px, 0, sc0.getGWidth(), I_COMMA)) return;
-  if (getParam(py, 0, 1023, I_COMMA)) return;
-  if (getParam(pw, 0, sc0.getScreenWidth(), I_COMMA)) return;
-  if (getParam(tx, 8, 32, I_COMMA)) return;
-  if (getParam(ty, 8, 32, I_NONE)) return;
-  if (px + pw*tx > sc0.getGWidth()) {
-    err = ERR_RANGE;
+  for (;;) switch (*cip++) {
+  case I_TILES:
+    // XXX: valid range depends on tile size
+    if (getParam(w, 0, sc0.getGWidth(), I_COMMA)) return;
+    if (getParam(h, 0, sc0.getGWidth(), I_NONE)) return;
+    if (vs23.setBgSize(m, w, h)) {
+      err = ERR_OOM;
+      return;
+    }
+    break;
+  case I_PATTERN:
+    if (getParam(px, 0, sc0.getGWidth(), I_COMMA)) return;
+    if (getParam(py, 0, vs23.lastLine(), I_COMMA)) return;
+    // XXX: valid range depends on tile size
+    if (getParam(pw, 0, sc0.getGWidth(), I_NONE)) return;
+    vs23.setBgPattern(m, px, py, pw);
+    break;
+  case I_SIZE:
+    if (getParam(tx, 8, 32, I_COMMA)) return;
+    if (getParam(ty, 8, 32, I_NONE)) return;
+    vs23.setBgTileSize(m, tx, ty);
+    break;
+  case I_WINDOW:
+    if (getParam(wx, 0, sc0.getGWidth() - 1, I_COMMA)) return;
+    if (getParam(wy, 0, sc0.getGHeight() - 1, I_COMMA)) return;
+    if (getParam(ww, 0, sc0.getGWidth(), I_COMMA)) return;
+    if (getParam(wh, 0, sc0.getGHeight(), I_NONE)) return;
+    vs23.setBgWin(m, wx, wy, ww, wh);
+    break;
+  case I_ON:
+    // XXX: do sanity check before enabling
+    vs23.enableBg(m);
+    break;
+  case I_OFF:
+    vs23.disableBg(m);
+    break;
+  default:
+    cip--;
+    if (*cip != I_EOL && *cip != I_COLON)
+      err = ERR_SYNTAX;
     return;
   }
 }
 
-void ibgoff() {
-  int32_t m;
-  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
-  vs23.disableBg(m);
-}
-
-void ibgon() {
-  int32_t m;
-  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
-  vs23.enableBg(m);
-}
-
-void ibgwin() {
-  int32_t m, x, y, w, h;
-  if (getParam(m, 0, VS23_MAX_BG, I_COMMA)) return;
-  if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
-  if (getParam(y, 0, sc0.getGHeight() - 1, I_COMMA)) return;
-  if (getParam(w, 0, sc0.getGWidth(), I_COMMA)) return;
-  if (getParam(h, 0, sc0.getGHeight(), I_NONE)) return;
-  vs23.setBgWin(m, x, y, w, h);
-}
-  
 void imovebg() {
   int32_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;

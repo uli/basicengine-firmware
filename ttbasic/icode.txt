@@ -190,9 +190,7 @@ SCREEN	I_SCREEN	iscreen
 WINDOW	I_WINDOW	iwindow
 FONT	I_FONT		ifont
 BG	I_BG		ibg
-BGON	I_BGON		ibgon
-BGOFF	I_BGOFF		ibgoff
-BGWIN	I_BGWIN		ibgwin
+TILES	I_TILES		esyntax
 SPRITE	I_SPRITE	isprite
 PATTERN I_PATTERN	esyntax
 FRAME	I_FRAME		esyntax
