@@ -3317,7 +3317,7 @@ void SMALL ildbmp() {
   err = fs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
   if (!err) {
     if (define_bg)
-      vs23.setBgPat(bg, dx, dy, w / vs23.bgTileSizeX(bg));
+      vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
     retval[0] = dx;
     retval[1] = dy;
     retval[2] = w;

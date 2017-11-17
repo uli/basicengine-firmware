@@ -124,7 +124,7 @@ class VS23S010 {
       bg->tile_size_y = tile_size_y;
     }
 
-    inline void setBgPat(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y, uint16_t pat_w) {
+    inline void setBgPattern(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y, uint16_t pat_w) {
       struct bg_t *bg = &m_bg[bg_idx];
       bg->pat_x = pat_x;
       bg->pat_y = pat_y;
