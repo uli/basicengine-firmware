@@ -192,7 +192,6 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 5;
-  bg->old_scroll_x = bg->old_scroll_y = 0;
   bg->win_x = bg->win_y = 0;
   bg->win_w = m_current_mode->x;
   bg->win_h = m_current_mode->y;
@@ -202,7 +201,6 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
 void VS23S010::enableBg(uint8_t bg)
 {
   if (m_bg[bg].tiles) {
-    m_bg[bg].force_redraw = true;
     m_bg[bg].enabled = true;
   }
 }
@@ -229,7 +227,6 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   bg->win_y = y;
   bg->win_w = w;
   bg->win_h = h;
-  bg->force_redraw = true;
 }
 
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
@@ -577,9 +574,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     uint32_t tile_split_y = tile_start_y + (tile_end_y - tile_start_y) / 2;
     uint32_t pix_split_y = ((tile_end_y - tile_start_y) / 2) * tsy - ypoff;
 
-    int scroll_dx = bg->scroll_x - bg->old_scroll_x;
-    int scroll_dy = bg->scroll_y - bg->old_scroll_y;
-
     dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
 
     if (pass == 0)
@@ -592,7 +586,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     if (pass == 1)
       drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
     
-    scroll_dy = 0;
     lines[1] = currentLine();
     lines[2] = 0;
 
@@ -616,9 +609,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
         continue;
-      if (pass == 0 && s->pos_y >= pix_split_y-scroll_dy)
+      if (pass == 0 && s->pos_y >= pix_split_y)
         continue;
-      if (pass == 1 && s->pos_y + s->h <= pix_split_y-scroll_dy)
+      if (pass == 1 && s->pos_y + s->h <= pix_split_y)
         continue;
       if (s->transparent) {
         int sx = s->pos_x;
@@ -641,11 +634,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         // Draw sprites crossing the screen partition in two steps, top half
         // in the first pass, bottom half in the second pass.
         int offset_y = 0;
-        if (pass == 0 && s->pos_y + draw_h > pix_split_y-scroll_dy)
-          draw_h = pix_split_y-scroll_dy - s->pos_y;
-        if (pass == 1 && s->pos_y < pix_split_y-scroll_dy && s->pos_y + draw_h > pix_split_y-scroll_dy) {
-          draw_h -= pix_split_y-scroll_dy - s->pos_y;
-          offset_y = pix_split_y-scroll_dy - s->pos_y;
+        if (pass == 0 && s->pos_y + draw_h > pix_split_y)
+          draw_h = pix_split_y - s->pos_y;
+        if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
+          draw_h -= pix_split_y - s->pos_y;
+          offset_y = pix_split_y - s->pos_y;
           spr_addr += offset_y * m_pitch;
         }
 
@@ -696,10 +689,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         // Draw sprites crossing the screen partition in two steps, top half
         // in the first pass, bottom half in the second pass.
         int offset_y = 0;
-        if (pass == 0 && y + h > pix_split_y-scroll_dy)
-          h = pix_split_y-scroll_dy - y;
-        if (pass == 1 && y < pix_split_y-scroll_dy && y + h > pix_split_y-scroll_dy) {
-          offset_y = pix_split_y-scroll_dy - y;
+        if (pass == 0 && y + h > pix_split_y)
+          h = pix_split_y - y;
+        if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
+          offset_y = pix_split_y - y;
           h -= offset_y;
         }
         if (w > 0 && h > 0)
@@ -709,11 +702,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #endif
     lines[5] = currentLine();
 
-    if (pass == 1) {
-      bg->old_scroll_x = bg->scroll_x;
-      bg->old_scroll_y = bg->scroll_y;
-      bg->force_redraw = false;
-    }
   }
   } // pass
 
@@ -857,7 +845,6 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
       x < tile_scroll_x + tile_w &&
       y >= tile_scroll_y &&
       y < tile_scroll_y + tile_h) {
-    bg->force_redraw = true;
   }
 }
 

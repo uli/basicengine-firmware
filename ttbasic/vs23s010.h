@@ -191,10 +191,8 @@ private:
       uint8_t w, h;
       uint8_t tile_size_x, tile_size_y;
       int scroll_x, scroll_y;
-      int old_scroll_x, old_scroll_y;
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
-      bool force_redraw;
     } m_bg[VS23_MAX_BG];
 
     void ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
