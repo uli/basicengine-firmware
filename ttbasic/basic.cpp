@@ -1234,8 +1234,8 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
 }
 
 // Get argument in parenthesis
-int getparam() {
-  int value; //値
+num_t getparam() {
+  num_t value; //値
   if (checkOpen()) return 0;
   if (getParam(value, I_NONE) )  return 0;
   if (checkClose()) return 0;
@@ -1244,11 +1244,11 @@ int getparam() {
 
 // INPUT handler
 void SMALL iinput() {
-  int value;          // 値
+  num_t value;          // 値
   short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
   unsigned char prompt; // プロンプト表示フラグ
-  int ofvalue;        // オーバーフロー時の設定値
+  num_t ofvalue;        // オーバーフロー時の設定値
   uint8_t flgofset =0;  // オーバーフロ時の設定値指定あり
 
  sc->show_curs(1);
