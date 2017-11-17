@@ -49,7 +49,7 @@
 
 #define FLOAT_NUMS
 #ifdef FLOAT_NUMS
-typedef float num_t;
+typedef double num_t;
 #else
 typedef int32_t num_t;
 #endif
