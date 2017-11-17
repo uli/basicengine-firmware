@@ -59,7 +59,6 @@ void VS23S010::resetBgs()
   }
 }
 
-static int absolute_min_spi_div;
 void VS23S010::begin()
 {
   m_vsync_enabled = false;
@@ -73,7 +72,7 @@ void VS23S010::begin()
     modes[i].max_spi_freq = SPI1CLK;
   }
   SPI.setFrequency(38000000);
-  absolute_min_spi_div = SPI1CLK;
+  m_min_spi_div = SPI1CLK;
   SPI.setFrequency(11000000);
   SpiUnlock();
 }
@@ -548,7 +547,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     if (!bg->enabled)
       continue;
 
-    SPI1CLK = absolute_min_spi_div;
+      SPI1CLK = m_min_spi_div;
 
     uint32_t tsx = bg->tile_size_x;
     uint32_t tsy = bg->tile_size_y;

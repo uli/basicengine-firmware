@@ -288,7 +288,9 @@ void SMALL VS23S010::SpiRamVideoInit() {
 	uint16_t i,j,wi;
 	uint32_t w;
 	uint16_t linelen = PLLCLKS_PER_LINE;
-	
+	int original_spi_div = SPI1CLK;
+
+        SPI1CLK = m_min_spi_div;	
 #ifdef DEBUG
 	Serial.printf("Linelen: %d PLL clks\n",linelen);
 	printf("Picture line area is %d x %d\n",PICX,PICY);
@@ -304,6 +306,9 @@ void SMALL VS23S010::SpiRamVideoInit() {
 	printf("Picture line 0 address %lx\n",piclineByteAddress(0));
 	printf("Last line %d\n", PICLINE_MAX);
 #endif
+
+	// Disable video generation
+	SpiRamWriteRegister(VDCTRL2, 0);
 
 	// 1. Select the first VS23 for following commands in case there
 	// are several VS23 ICs connected to same SPI bus.
@@ -580,11 +585,6 @@ void SMALL VS23S010::SpiRamVideoInit() {
 #endif
 	}
 	
-	// 14. Set number of lines, length of pixel and enable video generation
-	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT*(TOTAL_LINES-1))
-	| (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL-1))
-	| (VDCTRL2_ENABLE_VIDEO));
-		
 	// Draw some color bars
 	{
 		uint16_t re=0;
@@ -630,6 +630,13 @@ void SMALL VS23S010::SpiRamVideoInit() {
 				}
 			}
 		}
+	SPI1CLK = original_spi_div;
+
+	// 14. Set number of lines, length of pixel and enable video generation
+	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT*(TOTAL_LINES-1))
+	| (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL-1))
+	| (VDCTRL2_ENABLE_VIDEO));
+		
 	}
 
 void ICACHE_RAM_ATTR VS23S010::MoveBlock (uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)

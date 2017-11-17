@@ -176,6 +176,7 @@ private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
     uint32_t m_cycles_per_frame;
+    int m_min_spi_div;	// smallest valid divider, i.e. max. frequency
 
     const struct vs23_mode_t *m_current_mode;
     uint32_t m_pitch;	// Distance between piclines in bytes
