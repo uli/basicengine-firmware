@@ -3694,9 +3694,6 @@ void ibg() {
     err = ERR_RANGE;
     return;
   }
-
-  if (vs23.defineBg(m, w, h, tx, ty, px, py, pw))
-    err = ERR_LBUFOF;
 }
 
 void ibgoff() {

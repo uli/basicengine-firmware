@@ -170,9 +170,7 @@ void VS23S010::setSyncLine(uint16_t line)
   }
 }
 
-bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
-                     uint8_t tile_size_x, uint8_t tile_size_y,
-                     uint16_t pat_x, uint16_t pat_y, uint16_t pat_w)
+bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
 {
   struct bg_t *bg = &m_bg[bg_idx];
 
@@ -187,11 +185,9 @@ bool VS23S010::defineBg(uint8_t bg_idx, uint16_t width, uint16_t height,
   for (int i=0; i < width*height; ++i)
     bg->tiles[i] = 64+(i&7);
 
-  setBgPat(bg_idx, pat_x, pat_y, pat_w);
-  setBgTileSize(bg_idx, tile_size_x, tile_size_y);
   bg->w = width;
   bg->h = height;
-  bg->scroll_x = bg->scroll_y = 5;
+  bg->scroll_x = bg->scroll_y = 0;
   bg->win_x = bg->win_y = 0;
   bg->win_w = m_current_mode->x;
   bg->win_h = m_current_mode->y;

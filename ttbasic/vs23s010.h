@@ -116,9 +116,7 @@ class VS23S010 {
       VS23_DESELECT;
     }
     
-    bool defineBg(uint8_t bg, uint16_t width, uint16_t height,
-                     uint8_t tile_size_x, uint8_t tile_size_y,
-                     uint16_t pat_x, uint16_t pat_y, uint16_t pat_w);
+    bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
 
     inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x, uint8_t tile_size_y) {
       struct bg_t *bg = &m_bg[bg_idx];
