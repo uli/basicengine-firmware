@@ -863,7 +863,7 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
 
 bool VS23S010::allocBacking(int w, int h, int &x, int &y)
 {
-  Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::SplitMinimizeArea);
+  Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::Split256);
   x = r.x; y = r.y + m_current_mode->y;
   return r.height != 0;
 }
