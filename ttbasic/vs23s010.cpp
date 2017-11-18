@@ -541,23 +541,82 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
   SpiLock();
   lines[0] = currentLine();
+
+  struct bg_t *bg;
+  uint32_t tsx, tsy;
+  uint32_t xpoff, ypoff;
+  int tile_start_x, tile_start_y;
+  int tile_end_x, tile_end_y;
+  uint32_t tile_split_y;
+  uint32_t last_pix_split_y, pix_split_y;
+
+  // Every layer needs to end the drawing the first half of the screen at
+  // or before the height the previous one did. This indicates the
+  // initial height. If an object cannot be drawn exactly up to the
+  // current partitioning point, that point will be raised to make sure
+  // that the next layer will not overshoot the previous one.
+  last_pix_split_y = m_current_mode->y / 2;
+
+  int bg_tile_start_y[VS23_MAX_BG];
+  int bg_tile_end_y[VS23_MAX_BG];
+  uint32_t bg_tile_split_y[VS23_MAX_BG];
+  uint32_t bg_pix_split_y[VS23_MAX_BG];
+  tsy = -1;
+  for (int i = 0; i < VS23_MAX_BG; ++i) {
+    bg = &m_bg[i];
+    if (!bg->enabled)
+      continue;
+    tsx = bg->tile_size_x;
+    tsy = bg->tile_size_y;
+    xpoff = bg->scroll_x % tsx;
+    ypoff = bg->scroll_y % tsy;
+
+    bg_tile_start_y[i] = bg->scroll_y / tsy;
+    bg_tile_end_y[i] = bg_tile_start_y[i] + (bg->win_h + ypoff) / tsy + 1;
+    bg_tile_split_y[i] = bg_tile_start_y[i] + last_pix_split_y / tsy;
+    bg_pix_split_y[i] = (bg_tile_split_y[i] - bg_tile_start_y[i]) * tsy - ypoff;
+#ifdef DEBUG
+    Serial.printf("bg %d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
+                  i, bg->scroll_x, bg->scroll_y, bg_tile_start_y[i], bg_tile_start_y[i]*tsy,
+                  bg_tile_end_y[i], bg_tile_end_y[i]*tsy, bg_tile_split_y[i], bg_tile_split_y[i]*tsy, bg_pix_split_y[i], ypoff);
+#endif
+    // XXX: make sure pix_split_y is less or equal than last_pix_split_y!
+    if (bg_pix_split_y[i] < last_pix_split_y)
+      last_pix_split_y = bg_pix_split_y[i];
+  }
+
+  // Drawing all backgrounds and sprites does not usually fit into the
+  // vertical blank period. The screen is therefore redrawn in two passes,
+  // top half and bottom half. That way, the top half can be finished
+  // before the frame starts and can be displayed while the bottom half is
+  // still being drawn.
   for (int pass = 0; pass < 2; ++pass) {
-    for (int i = 0; i < VS23_MAX_BG; ++i) {
-      struct bg_t *bg = &m_bg[i];
+
+    SPI1CLK = m_min_spi_div;
+
+    // Draw enabled backgrounds.
+    if (tsy != -1) for (int i = 0; i < VS23_MAX_BG; ++i) {
+      bg = &m_bg[i];
       if (!bg->enabled)
 	continue;
 
-      SPI1CLK = m_min_spi_div;
+      if (pass == 0 && bg->win_y >= last_pix_split_y)
+        continue;
+      if (pass == 1 && bg->win_y + bg->win_h <= last_pix_split_y)
+        continue;
 
-      uint32_t tsx = bg->tile_size_x;
-      uint32_t tsy = bg->tile_size_y;
-      uint32_t xpoff = bg->scroll_x % tsx;
-      uint32_t ypoff = bg->scroll_y % tsy;
+      tsx = bg->tile_size_x;
+      tsy = bg->tile_size_y;
+      xpoff = bg->scroll_x % tsx;
+      ypoff = bg->scroll_y % tsy;
 
-      int tile_start_y = bg->scroll_y / tsy;
-      int tile_end_y = tile_start_y + (bg->win_h + ypoff) / bg->tile_size_y + 1;
-      int tile_start_x = bg->scroll_x / bg->tile_size_x;
-      int tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
+      tile_start_y = bg_tile_start_y[i];
+      tile_end_y = bg_tile_end_y[i];
+      tile_split_y = bg_tile_split_y[i];
+      pix_split_y = bg_pix_split_y[i];
+
+      tile_start_x = bg->scroll_x / bg->tile_size_x;
+      tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
 
       uint32_t pw = bg->pat_w;
       pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
@@ -565,9 +624,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint8_t bg_w = bg->w;
       uint8_t bg_h = bg->h;
 
-      // Find split point at a tile boundary
-      uint32_t tile_split_y = tile_start_y + (tile_end_y - tile_start_y) / 2;
-      uint32_t pix_split_y = ((tile_end_y - tile_start_y) / 2) * tsy - ypoff;
 
       dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
 
@@ -584,121 +640,124 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       lines[1] = currentLine();
       lines[2] = 0;
 
-      while (!blockFinished()) {}
-      if (pass == 0)
-	lines[3] = currentLine();
+    }
 
-      uint8_t bbuf[VS23_MAX_SPRITE_W];
-      uint8_t sbuf[VS23_MAX_SPRITE_W];
-      uint32_t sprite_pat_start_addr = piclineByteAddress(0);
+    // Draw sprites.
 
-      // Reduce speed for memory accesses.
-      SPI1CLK = spi_clock_default;
-      lines[4] = currentLine();
+    // Reduce SPI speed for memory accesses.
+    SPI1CLK = spi_clock_default;
+    lines[4] = currentLine();
+
+    while (!blockFinished()) {}
+    if (pass == 0)
+      lines[3] = currentLine();
+
+    uint8_t bbuf[VS23_MAX_SPRITE_W];
+    uint8_t sbuf[VS23_MAX_SPRITE_W];
+    uint32_t sprite_pat_start_addr = piclineByteAddress(0);
+
 
 #ifndef DISABLE_SPRITE_DRAW
-      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-	struct sprite_t *s = m_sprites_ordered[sn];
-	if (!s->enabled)
-	  continue;
-	if (s->pos_x < -s->w || s->pos_y < -s->h)
-	  continue;
-	if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
-	  continue;
-	if (pass == 0 && s->pos_y >= pix_split_y)
-	  continue;
-	if (pass == 1 && s->pos_y + s->h <= pix_split_y)
-	  continue;
-	if (s->transparent) {
-	  int sx = s->pos_x;
-	  uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
-	  //uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
+    for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
+      struct sprite_t *s = m_sprites_ordered[sn];
+      if (!s->enabled)
+        continue;
+      if (s->pos_x < -s->w || s->pos_y < -s->h)
+        continue;
+      if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
+        continue;
+      if (pass == 0 && s->pos_y >= pix_split_y)
+        continue;
+      if (pass == 1 && s->pos_y + s->h <= pix_split_y)
+        continue;
+      if (s->transparent) {
+        int sx = s->pos_x;
+        uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
 
-	  int draw_w = s->w;
-	  int draw_h = s->h;
+        int draw_w = s->w;
+        int draw_h = s->h;
 
-	  if (s->pos_y < 0)
-	    draw_h += s->pos_y;
-	  else if (s->pos_y + s->h > m_current_mode->y)
-	    draw_h -= s->pos_y + s->h - m_current_mode->y;
+        if (s->pos_y < 0)
+          draw_h += s->pos_y;
+        else if (s->pos_y + s->h > m_current_mode->y)
+          draw_h -= s->pos_y + s->h - m_current_mode->y;
 
-	  if (s->pos_x < 0)
-	    draw_w += s->pos_x;
-	  else if (s->pos_x + s->w > m_current_mode->x)
-	    draw_w -= s->pos_x + s->w - m_current_mode->x;
+        if (s->pos_x < 0)
+          draw_w += s->pos_x;
+        else if (s->pos_x + s->w > m_current_mode->x)
+          draw_w -= s->pos_x + s->w - m_current_mode->x;
 
-	  // Draw sprites crossing the screen partition in two steps, top half
-	  // in the first pass, bottom half in the second pass.
-	  int offset_y = 0;
-	  if (pass == 0 && s->pos_y + draw_h > pix_split_y)
-	    draw_h = pix_split_y - s->pos_y;
-	  if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
-	    draw_h -= pix_split_y - s->pos_y;
-	    offset_y = pix_split_y - s->pos_y;
-	    spr_addr += offset_y * m_pitch;
-	  }
+        // Draw sprites crossing the screen partition in two steps, top half
+        // in the first pass, bottom half in the second pass.
+        int offset_y = 0;
+        if (pass == 0 && s->pos_y + draw_h > pix_split_y)
+          draw_h = pix_split_y - s->pos_y;
+        if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
+          draw_h -= pix_split_y - s->pos_y;
+          offset_y = pix_split_y - s->pos_y;
+          spr_addr += offset_y * m_pitch;
+        }
 
-	  for (int sy = 0; sy < draw_h; ++sy) {
-	    struct sprite_line *sl = &s->pattern[sy+offset_y];
-	    // Copy sprite data to SPI send buffer.
-	    os_memcpy(sbuf, sl->pixels, s->w);
+        for (int sy = 0; sy < draw_h; ++sy) {
+          struct sprite_line *sl = &s->pattern[sy+offset_y];
+          // Copy sprite data to SPI send buffer.
+          os_memcpy(sbuf, sl->pixels, s->w);
 
-	    if (sl->type == LINE_BROKEN) {
-	      // This line has inner transparent pixels; we read the screen
-	      // to fill in the gaps.
+          if (sl->type == LINE_BROKEN) {
+            // This line has inner transparent pixels; we read the screen
+            // to fill in the gaps.
 
-	      // Playing fast and loose with data integrity here: we can use
-	      // much higher SPI speeds than the stable 11 MHz if we accept
-	      // that there is an occasional corrupted byte, which will
-	      // be corrected in the next frame.
-	      SPI1CLK = m_current_mode->max_spi_freq;
-	      SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
-	      SPI1CLK = spi_clock_default;
+            // Playing fast and loose with data integrity here: we can use
+            // much higher SPI speeds than the stable 11 MHz if we accept
+            // that there is an occasional corrupted byte, which will
+            // be corrected in the next frame.
+            SPI1CLK = m_current_mode->max_spi_freq;
+            SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
+            SPI1CLK = spi_clock_default;
 
-	      for (int p = 0; p < sl->len; ++p) {
-		if (!sbuf[p + sl->off])
-		  sbuf[p+sl->off] = bbuf[p];
-	      }
-	    }
+            for (int p = 0; p < sl->len; ++p) {
+              if (!sbuf[p + sl->off])
+                sbuf[p+sl->off] = bbuf[p];
+            }
+          }
 
-	    SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
-	  }
-	} else {
-	  int w = s->w;
-	  int h = s->h;
-	  int x = s->pos_x;
-	  int y = s->pos_y;
+          SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
+        }
+      } else {
+        int w = s->w;
+        int h = s->h;
+        int x = s->pos_x;
+        int y = s->pos_y;
 
-	  if (x < 0) {
-	    w += x;
-	    x = 0;
-	  } else if (x + w >= m_current_mode->x) {
-	    w = m_current_mode->x - x;
-	  }
-	  if (y < 0) {
-	    h += y;
-	    y = 0;
-	  } else if (y + h >= m_current_mode->y) {
-	    h = m_current_mode->y - y;
-	  }
+        if (x < 0) {
+          w += x;
+          x = 0;
+        } else if (x + w >= m_current_mode->x) {
+          w = m_current_mode->x - x;
+        }
+        if (y < 0) {
+          h += y;
+          y = 0;
+        } else if (y + h >= m_current_mode->y) {
+          h = m_current_mode->y - y;
+        }
 
-	  // Draw sprites crossing the screen partition in two steps, top half
-	  // in the first pass, bottom half in the second pass.
-	  int offset_y = 0;
-	  if (pass == 0 && y + h > pix_split_y)
-	    h = pix_split_y - y;
-	  if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
-	    offset_y = pix_split_y - y;
-	    h -= offset_y;
-	  }
-	  if (w > 0 && h > 0)
-	    MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
-	}
+        // Draw sprites crossing the screen partition in two steps, top half
+        // in the first pass, bottom half in the second pass.
+        int offset_y = 0;
+        if (pass == 0 && y + h > pix_split_y)
+          h = pix_split_y - y;
+        if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
+          offset_y = pix_split_y - y;
+          h -= offset_y;
+        }
+        if (w > 0 && h > 0)
+          MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
       }
-#endif
-      lines[5] = currentLine();
-
     }
+#endif
+    lines[5] = currentLine();
+
   } // pass
 
   SPI1CLK = spi_clock_default;
