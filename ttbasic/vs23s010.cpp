@@ -299,7 +299,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
 
   for (int yy = tile_start_y+skip_y; yy < tile_end_y-1; ++yy) {
-    dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * m_pitch + bg->win_x - tile_start_x * tsx - xpoff;
+    dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * m_pitch - tile_start_x * tsx - xpoff;
 
 #ifndef DISABLE_BG_LEFT_COL
     // Left tile
