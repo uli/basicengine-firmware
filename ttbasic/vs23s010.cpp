@@ -543,12 +543,12 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   lines[0] = currentLine();
 
   struct bg_t *bg;
-  uint32_t tsx, tsy;
-  uint32_t xpoff, ypoff;
+  int tsx, tsy;
+  int xpoff, ypoff;
   int tile_start_x, tile_start_y;
   int tile_end_x, tile_end_y;
-  uint32_t tile_split_y;
-  uint32_t last_pix_split_y, pix_split_y;
+  int tile_split_y;
+  int last_pix_split_y, pix_split_y;
 
   // Every layer needs to end the drawing the first half of the screen at
   // or before the height the previous one did. This indicates the
@@ -559,8 +559,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
   int bg_tile_start_y[VS23_MAX_BG];
   int bg_tile_end_y[VS23_MAX_BG];
-  uint32_t bg_tile_split_y[VS23_MAX_BG];
-  uint32_t bg_pix_split_y[VS23_MAX_BG];
+  int bg_tile_split_y[VS23_MAX_BG];
+  int bg_pix_split_y[VS23_MAX_BG];
   tsy = -1;
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     bg = &m_bg[i];
@@ -573,11 +573,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     bg_tile_start_y[i] = bg->scroll_y / tsy;
     bg_tile_end_y[i] = bg_tile_start_y[i] + (bg->win_h + ypoff) / tsy + 1;
-    bg_tile_split_y[i] = bg_tile_start_y[i] + last_pix_split_y / tsy;
-    bg_pix_split_y[i] = (bg_tile_split_y[i] - bg_tile_start_y[i]) * tsy - ypoff;
+    bg_tile_split_y[i] = bg_tile_start_y[i] + (last_pix_split_y - bg->win_y) / tsy;
+    bg_pix_split_y[i] = (bg_tile_split_y[i] - bg_tile_start_y[i]) * tsy - ypoff + bg->win_y;
 #ifdef DEBUG
-    Serial.printf("bg %d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
-                  i, bg->scroll_x, bg->scroll_y, bg_tile_start_y[i], bg_tile_start_y[i]*tsy,
+    Serial.printf("bg %d win %d,%d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
+                  i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, bg_tile_start_y[i], bg_tile_start_y[i]*tsy,
                   bg_tile_end_y[i], bg_tile_end_y[i]*tsy, bg_tile_split_y[i], bg_tile_split_y[i]*tsy, bg_pix_split_y[i], ypoff);
 #endif
     // XXX: make sure pix_split_y is less or equal than last_pix_split_y!
@@ -600,9 +600,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       if (!bg->enabled)
 	continue;
 
-      if (pass == 0 && bg->win_y >= last_pix_split_y)
+      if (pass == 0 && bg->win_y >= bg_pix_split_y[i])
         continue;
-      if (pass == 1 && bg->win_y + bg->win_h <= last_pix_split_y)
+      if (pass == 1 && bg->win_y + bg->win_h <= bg_pix_split_y[i])
         continue;
 
       tsx = bg->tile_size_x;
