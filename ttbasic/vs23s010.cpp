@@ -226,18 +226,18 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
 
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
-      // XXX: What about PYF?
-      uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
-      VS23_SELECT;
-      SPI.writeBytes(req, 5);
-      VS23_DESELECT;
-      while (!blockFinished()) {}
-      VS23S010::startBlockMove();
+  // XXX: What about PYF?
+  uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
+  VS23_SELECT;
+  SPI.writeBytes(req, 5);
+  VS23_DESELECT;
+  while (!blockFinished()) {}
+  VS23S010::startBlockMove();
 }
 
 static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
 {
-  uint8_t cmd[count+4];  
+  uint8_t cmd[count+4];
   cmd[0] = 3;
   cmd[1] = address >> 16;
   cmd[2] = address >> 8;
@@ -262,17 +262,17 @@ static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
-                            int dest_addr_start,
-                            uint32_t pat_start_addr,
-                            uint32_t win_start_addr,
-                            int tile_start_x,
-                            int tile_start_y,
-                            int tile_end_x,
-                            int tile_end_y,
-                            uint32_t xpoff,
-                            uint32_t ypoff,
-                            uint32_t skip_x,
-                            uint32_t skip_y)
+                                      int dest_addr_start,
+                                      uint32_t pat_start_addr,
+                                      uint32_t win_start_addr,
+                                      int tile_start_x,
+                                      int tile_start_y,
+                                      int tile_end_x,
+                                      int tile_end_y,
+                                      uint32_t xpoff,
+                                      uint32_t ypoff,
+                                      uint32_t skip_x,
+                                      uint32_t skip_y)
 {
 #ifndef DISABLE_BG_CENTER
   // This code draws into the "extra" bytes following each picture line.
@@ -280,7 +280,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   // their invisible parts are simply drawn where they cannot be seen.
   // It also helps to avoid narrow block moves (less than 4 bytes wide),
   // which often don't work as expected.
-  
+
   // XXX: This means that window width must be a multiple of tile width.
 
   uint32_t tile;
@@ -288,7 +288,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   uint32_t byteaddress2, dest_addr;
   uint32_t tsx = bg->tile_size_x;
   uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;    
+  uint8_t bg_w = bg->w;
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
   int draw_w;
@@ -360,13 +360,13 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
-                                                int dest_addr_start,
-                                                uint32_t pat_start_addr,
-                                                int tile_start_x,
-                                                int tile_start_y,
-                                                int tile_end_x,
-                                                uint32_t xpoff,
-                                                uint32_t ypoff)
+                                         int dest_addr_start,
+                                         uint32_t pat_start_addr,
+                                         int tile_start_x,
+                                         int tile_start_y,
+                                         int tile_end_x,
+                                         uint32_t xpoff,
+                                         uint32_t ypoff)
 {
 #ifndef DISABLE_BG_TOP
   uint32_t tile;
@@ -374,7 +374,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   uint32_t byteaddress2, dest_addr;
   uint32_t tsx = bg->tile_size_x;
   uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;    
+  uint8_t bg_w = bg->w;
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
   int draw_w;
@@ -439,19 +439,19 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
 }
 
 void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
-                                                   int tile_start_x,
-                                                   int tile_end_x,
-                                                   int tile_end_y,
-                                                   uint32_t xpoff,
-                                                   uint32_t ypoff,
-                                                   uint32_t skip_x)
+                                            int tile_start_x,
+                                            int tile_end_x,
+                                            int tile_end_y,
+                                            uint32_t xpoff,
+                                            uint32_t ypoff,
+                                            uint32_t skip_x)
 {
 #ifndef DISABLE_BG_BOTTOM
   uint32_t tile;
   uint32_t tx, ty;
   uint32_t tsx = bg->tile_size_x;
   uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;    
+  uint8_t bg_w = bg->w;
   uint8_t bg_h = bg->h;
   uint32_t pw = bg->pat_w;
   uint32_t byteaddress1, byteaddress2;
@@ -475,9 +475,9 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       byteaddress2 = ba2a + ty * m_pitch + tx;
       draw_w = tsx;
       if (xpoff >= 8) {
-        draw_w -= 8;
-        byteaddress1 += 8;
-        byteaddress2 += 8;
+	draw_w -= 8;
+	byteaddress1 += 8;
+	byteaddress2 += 8;
       }
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
       MoveBlockAddr(byteaddress2, byteaddress1);
@@ -511,7 +511,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       byteaddress2 = ba2a + ty * m_pitch + tx;
       draw_w = tsx;
       if (xpoff < tsx - 8)
-        draw_w -= 8;
+	draw_w -= 8;
       while (!blockFinished()) {}
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
       // XXX: What about PYF?
@@ -542,162 +542,163 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   SpiLock();
   lines[0] = currentLine();
   for (int pass = 0; pass < 2; ++pass) {
-  for (int i = 0; i < VS23_MAX_BG; ++i) {
-    struct bg_t *bg = &m_bg[i];
-    if (!bg->enabled)
-      continue;
+    for (int i = 0; i < VS23_MAX_BG; ++i) {
+      struct bg_t *bg = &m_bg[i];
+      if (!bg->enabled)
+	continue;
 
       SPI1CLK = m_min_spi_div;
 
-    uint32_t tsx = bg->tile_size_x;
-    uint32_t tsy = bg->tile_size_y;
-    uint32_t xpoff = bg->scroll_x % tsx;
-    uint32_t ypoff = bg->scroll_y % tsy;
+      uint32_t tsx = bg->tile_size_x;
+      uint32_t tsy = bg->tile_size_y;
+      uint32_t xpoff = bg->scroll_x % tsx;
+      uint32_t ypoff = bg->scroll_y % tsy;
 
-    int tile_start_y = bg->scroll_y / tsy;
-    int tile_end_y = tile_start_y + (bg->win_h + ypoff) / bg->tile_size_y + 1;
-    int tile_start_x = bg->scroll_x / bg->tile_size_x;
-    int tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
+      int tile_start_y = bg->scroll_y / tsy;
+      int tile_end_y = tile_start_y + (bg->win_h + ypoff) / bg->tile_size_y + 1;
+      int tile_start_x = bg->scroll_x / bg->tile_size_x;
+      int tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
 
-    uint32_t pw = bg->pat_w;
-    pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
-    win_start_addr = pixelAddr(bg->win_x, bg->win_y);
-    uint8_t bg_w = bg->w;    
-    uint8_t bg_h = bg->h;
+      uint32_t pw = bg->pat_w;
+      pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
+      win_start_addr = pixelAddr(bg->win_x, bg->win_y);
+      uint8_t bg_w = bg->w;
+      uint8_t bg_h = bg->h;
 
-    // Find split point at a tile boundary
-    uint32_t tile_split_y = tile_start_y + (tile_end_y - tile_start_y) / 2;
-    uint32_t pix_split_y = ((tile_end_y - tile_start_y) / 2) * tsy - ypoff;
+      // Find split point at a tile boundary
+      uint32_t tile_split_y = tile_start_y + (tile_end_y - tile_start_y) / 2;
+      uint32_t pix_split_y = ((tile_end_y - tile_start_y) / 2) * tsy - ypoff;
 
-    dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
+      dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
 
-    if (pass == 0)
-      drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
+      if (pass == 0)
+	drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
-    drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
-           tile_start_x, tile_start_y,
-           tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
+      drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
+             tile_start_x, tile_start_y,
+             tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
 
-    if (pass == 1)
-      drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
-    
-    lines[1] = currentLine();
-    lines[2] = 0;
+      if (pass == 1)
+	drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
 
-    while (!blockFinished()) {}
-    if (pass == 0) lines[3] = currentLine();
+      lines[1] = currentLine();
+      lines[2] = 0;
 
-    uint8_t bbuf[VS23_MAX_SPRITE_W];
-    uint8_t sbuf[VS23_MAX_SPRITE_W];
-    uint32_t sprite_pat_start_addr = piclineByteAddress(0);
+      while (!blockFinished()) {}
+      if (pass == 0)
+	lines[3] = currentLine();
 
-    // Reduce speed for memory accesses.
-    SPI1CLK = spi_clock_default;
-    lines[4] = currentLine();
-    
+      uint8_t bbuf[VS23_MAX_SPRITE_W];
+      uint8_t sbuf[VS23_MAX_SPRITE_W];
+      uint32_t sprite_pat_start_addr = piclineByteAddress(0);
+
+      // Reduce speed for memory accesses.
+      SPI1CLK = spi_clock_default;
+      lines[4] = currentLine();
+
 #ifndef DISABLE_SPRITE_DRAW
-    for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
-      struct sprite_t *s = m_sprites_ordered[sn];
-      if (!s->enabled)
-        continue;
-      if (s->pos_x < -s->w || s->pos_y < -s->h)
-        continue;
-      if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
-        continue;
-      if (pass == 0 && s->pos_y >= pix_split_y)
-        continue;
-      if (pass == 1 && s->pos_y + s->h <= pix_split_y)
-        continue;
-      if (s->transparent) {
-        int sx = s->pos_x;
-        uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
-        //uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
+      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
+	struct sprite_t *s = m_sprites_ordered[sn];
+	if (!s->enabled)
+	  continue;
+	if (s->pos_x < -s->w || s->pos_y < -s->h)
+	  continue;
+	if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
+	  continue;
+	if (pass == 0 && s->pos_y >= pix_split_y)
+	  continue;
+	if (pass == 1 && s->pos_y + s->h <= pix_split_y)
+	  continue;
+	if (s->transparent) {
+	  int sx = s->pos_x;
+	  uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
+	  //uint32_t tile_addr = sprite_pat_start_addr + s->pat_y*m_pitch + s->pat_x;
 
-        int draw_w = s->w;
-        int draw_h = s->h;
+	  int draw_w = s->w;
+	  int draw_h = s->h;
 
-        if (s->pos_y < 0)
-          draw_h += s->pos_y;
-        else if (s->pos_y + s->h > m_current_mode->y)
-          draw_h -= s->pos_y + s->h - m_current_mode->y;
+	  if (s->pos_y < 0)
+	    draw_h += s->pos_y;
+	  else if (s->pos_y + s->h > m_current_mode->y)
+	    draw_h -= s->pos_y + s->h - m_current_mode->y;
 
-        if (s->pos_x < 0)
-          draw_w += s->pos_x;
-        else if (s->pos_x + s->w > m_current_mode->x)
-          draw_w -= s->pos_x + s->w - m_current_mode->x;
+	  if (s->pos_x < 0)
+	    draw_w += s->pos_x;
+	  else if (s->pos_x + s->w > m_current_mode->x)
+	    draw_w -= s->pos_x + s->w - m_current_mode->x;
 
-        // Draw sprites crossing the screen partition in two steps, top half
-        // in the first pass, bottom half in the second pass.
-        int offset_y = 0;
-        if (pass == 0 && s->pos_y + draw_h > pix_split_y)
-          draw_h = pix_split_y - s->pos_y;
-        if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
-          draw_h -= pix_split_y - s->pos_y;
-          offset_y = pix_split_y - s->pos_y;
-          spr_addr += offset_y * m_pitch;
-        }
+	  // Draw sprites crossing the screen partition in two steps, top half
+	  // in the first pass, bottom half in the second pass.
+	  int offset_y = 0;
+	  if (pass == 0 && s->pos_y + draw_h > pix_split_y)
+	    draw_h = pix_split_y - s->pos_y;
+	  if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
+	    draw_h -= pix_split_y - s->pos_y;
+	    offset_y = pix_split_y - s->pos_y;
+	    spr_addr += offset_y * m_pitch;
+	  }
 
-        for (int sy = 0; sy < draw_h; ++sy) {
-          struct sprite_line *sl = &s->pattern[sy+offset_y];
-          // Copy sprite data to SPI send buffer.
-          os_memcpy(sbuf, sl->pixels, s->w);
+	  for (int sy = 0; sy < draw_h; ++sy) {
+	    struct sprite_line *sl = &s->pattern[sy+offset_y];
+	    // Copy sprite data to SPI send buffer.
+	    os_memcpy(sbuf, sl->pixels, s->w);
 
-          if (sl->type == LINE_BROKEN) {
-            // This line has inner transparent pixels; we read the screen
-            // to fill in the gaps.
+	    if (sl->type == LINE_BROKEN) {
+	      // This line has inner transparent pixels; we read the screen
+	      // to fill in the gaps.
 
-            // Playing fast and loose with data integrity here: we can use
-            // much higher SPI speeds than the stable 11 MHz if we accept
-            // that there is an occasional corrupted byte, which will
-            // be corrected in the next frame.
-            SPI1CLK = m_current_mode->max_spi_freq;
-            SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
-            SPI1CLK = spi_clock_default;
-            
-            for (int p = 0; p < sl->len; ++p) {
-              if (!sbuf[p + sl->off])
-                sbuf[p+sl->off] = bbuf[p];
-            }
-          }
+	      // Playing fast and loose with data integrity here: we can use
+	      // much higher SPI speeds than the stable 11 MHz if we accept
+	      // that there is an occasional corrupted byte, which will
+	      // be corrected in the next frame.
+	      SPI1CLK = m_current_mode->max_spi_freq;
+	      SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
+	      SPI1CLK = spi_clock_default;
 
-          SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
-        }
-      } else {
-        int w = s->w;
-        int h = s->h;
-        int x = s->pos_x;
-        int y = s->pos_y;
+	      for (int p = 0; p < sl->len; ++p) {
+		if (!sbuf[p + sl->off])
+		  sbuf[p+sl->off] = bbuf[p];
+	      }
+	    }
 
-        if (x < 0) {
-          w += x;
-          x = 0;
-        } else if (x + w >= m_current_mode->x) {
-          w = m_current_mode->x - x;
-        }
-        if (y < 0) {
-          h += y;
-          y = 0;
-        } else if (y + h >= m_current_mode->y) {
-          h = m_current_mode->y - y;
-        }
+	    SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
+	  }
+	} else {
+	  int w = s->w;
+	  int h = s->h;
+	  int x = s->pos_x;
+	  int y = s->pos_y;
 
-        // Draw sprites crossing the screen partition in two steps, top half
-        // in the first pass, bottom half in the second pass.
-        int offset_y = 0;
-        if (pass == 0 && y + h > pix_split_y)
-          h = pix_split_y - y;
-        if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
-          offset_y = pix_split_y - y;
-          h -= offset_y;
-        }
-        if (w > 0 && h > 0)
-          MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
+	  if (x < 0) {
+	    w += x;
+	    x = 0;
+	  } else if (x + w >= m_current_mode->x) {
+	    w = m_current_mode->x - x;
+	  }
+	  if (y < 0) {
+	    h += y;
+	    y = 0;
+	  } else if (y + h >= m_current_mode->y) {
+	    h = m_current_mode->y - y;
+	  }
+
+	  // Draw sprites crossing the screen partition in two steps, top half
+	  // in the first pass, bottom half in the second pass.
+	  int offset_y = 0;
+	  if (pass == 0 && y + h > pix_split_y)
+	    h = pix_split_y - y;
+	  if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
+	    offset_y = pix_split_y - y;
+	    h -= offset_y;
+	  }
+	  if (w > 0 && h > 0)
+	    MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
+	}
       }
-    }
 #endif
-    lines[5] = currentLine();
+      lines[5] = currentLine();
 
-  }
+    }
   } // pass
 
   SPI1CLK = spi_clock_default;
@@ -762,16 +763,16 @@ void VS23S010::loadSpritePattern(uint8_t num)
     if (p->len) {
       pp = p->pixels + s->w - 1;
       while (*pp == 0) {
-        solid_block = false;
-        --pp;
-        --p->len;
+	solid_block = false;
+	--pp;
+	--p->len;
       }
     }
 
     for (int i = 0; i < p->len; ++i) {
       if (p->pixels[p->off + i] == 0) {
-        p->type = LINE_BROKEN;
-        break;
+	p->type = LINE_BROKEN;
+	break;
       }
     }
 #ifdef DEBUG_SPRITES
@@ -797,7 +798,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 
   loadSpritePattern(num);
 #ifdef DEBUG_SPRITES
-  Serial.printf("defined %d\n", num);Serial.flush();
+  Serial.printf("defined %d\n", num); Serial.flush();
 #endif
 }
 
@@ -834,7 +835,7 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
   int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
   int tile_w = bg->win_w / bg->tile_size_x;
   int tile_h = bg->win_h / bg->tile_size_y;
-  
+
   bg->tiles[y * bg->w + x] = t;
   if (x >= tile_scroll_x &&
       x < tile_scroll_x + tile_w &&
