@@ -571,18 +571,24 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     xpoff = bg->scroll_x % tsx;
     ypoff = bg->scroll_y % tsy;
 
-    bg_tile_start_y[i] = bg->scroll_y / tsy;
-    bg_tile_end_y[i] = bg_tile_start_y[i] + (bg->win_h + ypoff) / tsy + 1;
-    bg_tile_split_y[i] = bg_tile_start_y[i] + (last_pix_split_y - bg->win_y) / tsy;
-    bg_pix_split_y[i] = (bg_tile_split_y[i] - bg_tile_start_y[i]) * tsy - ypoff + bg->win_y;
+    tile_start_y = bg->scroll_y / tsy;
+    tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
+    tile_split_y = tile_start_y + (last_pix_split_y - bg->win_y) / tsy;
+    pix_split_y = (tile_split_y - tile_start_y) * tsy - ypoff + bg->win_y;
+
 #ifdef DEBUG
     Serial.printf("bg %d win %d,%d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
-                  i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, bg_tile_start_y[i], bg_tile_start_y[i]*tsy,
-                  bg_tile_end_y[i], bg_tile_end_y[i]*tsy, bg_tile_split_y[i], bg_tile_split_y[i]*tsy, bg_pix_split_y[i], ypoff);
+                  i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, tile_start_y, tile_start_y*tsy,
+                  tile_end_y, tile_end_y*tsy, tile_split_y, tile_split_y*tsy, pix_split_y, ypoff);
 #endif
     // XXX: make sure pix_split_y is less or equal than last_pix_split_y!
-    if (bg_pix_split_y[i] < last_pix_split_y)
-      last_pix_split_y = bg_pix_split_y[i];
+    if (pix_split_y < last_pix_split_y)
+      last_pix_split_y = pix_split_y;
+    
+    bg_tile_start_y[i] = tile_start_y;
+    bg_tile_end_y[i] = tile_end_y;
+    bg_tile_split_y[i] = tile_split_y;
+    bg_pix_split_y[i] = pix_split_y;
   }
 
   // Drawing all backgrounds and sprites does not usually fit into the
