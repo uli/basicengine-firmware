@@ -587,8 +587,15 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
                   i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, tile_start_y, tile_start_y*tsy,
                   tile_end_y, tile_end_y*tsy, tile_split_y, tile_split_y*tsy, pix_split_y, ypoff);
 #endif
+    // make sure next layer stops at or before this one
     if (pix_split_y < last_pix_split_y)
       last_pix_split_y = pix_split_y;
+
+    // make sure drawing does not start/end before/after the actual window
+    if (tile_split_y < tile_start_y)
+      tile_split_y = tile_start_y;
+    if (tile_split_y > tile_end_y)
+      tile_split_y = tile_end_y;
     
     bg_tile_start_y[i] = tile_start_y;
     bg_tile_end_y[i] = tile_end_y;
@@ -602,7 +609,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   // before the frame starts and can be displayed while the bottom half is
   // still being drawn.
   for (int pass = 0; pass < 2; ++pass) {
-
+    // Block move programming can be done at max SPI speed.
     SPI1CLK = m_min_spi_div;
 
     // Draw enabled backgrounds.
