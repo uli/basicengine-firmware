@@ -576,12 +576,17 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     tile_split_y = tile_start_y + (last_pix_split_y - bg->win_y) / tsy;
     pix_split_y = (tile_split_y - tile_start_y) * tsy - ypoff + bg->win_y;
 
+    // make sure pix_split_y is less or equal than last_pix_split_y
+    while (pix_split_y > last_pix_split_y) {
+      --tile_split_y;
+      pix_split_y -= tsy;
+    }
+
 #ifdef DEBUG
     Serial.printf("bg %d win %d,%d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
                   i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, tile_start_y, tile_start_y*tsy,
                   tile_end_y, tile_end_y*tsy, tile_split_y, tile_split_y*tsy, pix_split_y, ypoff);
 #endif
-    // XXX: make sure pix_split_y is less or equal than last_pix_split_y!
     if (pix_split_y < last_pix_split_y)
       last_pix_split_y = pix_split_y;
     
