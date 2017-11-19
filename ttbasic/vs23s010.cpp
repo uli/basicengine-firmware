@@ -684,9 +684,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         continue;
       if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
         continue;
-      if (pass == 0 && s->pos_y >= pix_split_y)
+      if (pass == 0 && s->pos_y >= last_pix_split_y)
         continue;
-      if (pass == 1 && s->pos_y + s->h <= pix_split_y)
+      if (pass == 1 && s->pos_y + s->h <= last_pix_split_y)
         continue;
       if (s->transparent) {
         int sx = s->pos_x;
@@ -708,11 +708,11 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         // Draw sprites crossing the screen partition in two steps, top half
         // in the first pass, bottom half in the second pass.
         int offset_y = 0;
-        if (pass == 0 && s->pos_y + draw_h > pix_split_y)
-          draw_h = pix_split_y - s->pos_y;
-        if (pass == 1 && s->pos_y < pix_split_y && s->pos_y + draw_h > pix_split_y) {
-          draw_h -= pix_split_y - s->pos_y;
-          offset_y = pix_split_y - s->pos_y;
+        if (pass == 0 && s->pos_y + draw_h > last_pix_split_y)
+          draw_h = last_pix_split_y - s->pos_y;
+        if (pass == 1 && s->pos_y < last_pix_split_y && s->pos_y + draw_h > last_pix_split_y) {
+          draw_h -= last_pix_split_y - s->pos_y;
+          offset_y = last_pix_split_y - s->pos_y;
           spr_addr += offset_y * m_pitch;
         }
 
@@ -763,10 +763,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         // Draw sprites crossing the screen partition in two steps, top half
         // in the first pass, bottom half in the second pass.
         int offset_y = 0;
-        if (pass == 0 && y + h > pix_split_y)
-          h = pix_split_y - y;
-        if (pass == 1 && y < pix_split_y && y + h > pix_split_y) {
-          offset_y = pix_split_y - y;
+        if (pass == 0 && y + h > last_pix_split_y)
+          h = last_pix_split_y - y;
+        if (pass == 1 && y < last_pix_split_y && y + h > last_pix_split_y) {
+          offset_y = last_pix_split_y - y;
           h -= offset_y;
         }
         if (w > 0 && h > 0)
