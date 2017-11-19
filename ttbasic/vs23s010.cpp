@@ -636,7 +636,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       uint8_t bg_h = bg->h;
 
 
-      dest_addr_start = win_start_addr + (m_pitch * pix_split_y * pass) - tile_start_x * tsx - xpoff;
+      dest_addr_start = win_start_addr + (m_pitch * (pix_split_y - bg->win_y) * pass) - tile_start_x * tsx - xpoff;
 
       if (pass == 0)
 	drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
