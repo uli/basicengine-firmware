@@ -3350,8 +3350,10 @@ void SMALL ildbmp() {
       } else if (*cip == I_SPRITE) {	// AS SPRITE ...
         ++cip;
         dx = dy = -1;
-        if (getParam(spr_from, 0, VS23_MAX_SPRITES-1, I_NONE)) return;
-        if (*cip == I_MINUS) {
+        if (getParam(spr_from, 0, VS23_MAX_SPRITES-1, I_NONE)) {
+          spr_from = 0;
+          spr_to = VS23_MAX_SPRITES - 1;
+        } else if (*cip == I_MINUS) {
           ++cip;
           if (getParam(spr_to, spr_from, VS23_MAX_SPRITES-1, I_NONE))
             return;
