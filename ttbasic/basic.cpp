@@ -3934,12 +3934,8 @@ uint8_t SMALL ilrun() {
     }
     mode = 1;
   } else {
-    // 内部フラッシュメモリからの読込＆実行
-    if (*cip == I_EOL) {
-      prgno = 0;
-    } else { //if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, I_NONE) )
-      return 0; // プログラム番号
-    }
+    err = ERR_SYNTAX;
+    return 0;
   }
 
   if (islrun) {
