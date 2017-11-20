@@ -115,12 +115,6 @@ uint16_t tv_get_gheight();
 sdfiles fs;
 #endif
 
-// **** EEPROMエミュレーション ******
-#include <EEPROM.h>
-extern EEPROMClass EEPROM;
-#define EEPROM_PAGE0 (((uint32_t)(0x8000000))+(FLASH_PRG_START_PAGE-2)*FLASH_PAGE_SIZE)
-#define EEPROM_PAGE1 (((uint32_t)(0x8000000))+(FLASH_PRG_START_PAGE-1)*FLASH_PAGE_SIZE)
-
 // *** システム設定関連 **************
 #define CONFIG_NTSC 65534  // EEPROM NTSC設定値保存番号
 #define CONFIG_KBD  65533  // EEPROM キーボード設定
@@ -171,13 +165,6 @@ void error(uint8_t flgCmd);
   #include <RTClock.h>
   #include <time.h>
   RTClock rtc(RTCSEL_LSE);
-#endif
-
-// **** PWM用設定 ********************
-#if F_CPU == 72000000L
-#define TIMER_DIV 72
-#else if  F_CPU == 48000000L
-#define TIMER_DIV 48
 #endif
 
 // **** 仮想メモリ定義 ***************
