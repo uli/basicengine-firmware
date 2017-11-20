@@ -42,38 +42,38 @@ static const uint8_t (*key_ascii)[2];
 // スキャンコード 0x00-0x83 => キーコード変換テーブル
 // 132バイト分
 static const uint8_t keycode1[] PROGMEM = {
- 0            , KEY_F9      , 0           , KEY_F5         , KEY_F3        , KEY_F1         , KEY_F2        , KEY_F12,       // 0x00-0x07
- KEY_F13      , KEY_F10     , KEY_F8      , KEY_F6         , KEY_F4        , KEY_Tab        , KEY_HanZen    , KEY_PAD_Equal, // 0x08-0x0F
- KEY_F14      , KEY_L_Alt   , KEY_L_Shift , KEY_Romaji     , KEY_L_Ctrl    , KEY_Q          , KEY_1         , 0,             // 0x10-0x17
- KEY_F15      , 0           , KEY_Z       , KEY_S          , KEY_A         , KEY_W          , KEY_2         , 0,             // 0x18-0x1F
- KEY_F16      , KEY_C       , KEY_X       , KEY_D          , KEY_E         , KEY_4          , KEY_3         , 0,             // 0x20-0x27
- KEY_F17      , KEY_Space   , KEY_V       , KEY_F          , KEY_T         , KEY_R          , KEY_5         , 0,             // 0x28-0x2F
- KEY_F18      , KEY_N       , KEY_B       , KEY_H          , KEY_G         , KEY_Y          , KEY_6         , 0,             // 0x30-0x37
- KEY_F19      , 0           , KEY_M       , KEY_J          , KEY_U         , KEY_7          , KEY_8         , 0,             // 0x38-0x3F
- KEY_F20      , KEY_Kamma   , KEY_K       , KEY_I          , KEY_O         , KEY_0          , KEY_9         , 0,             // 0x40-0x47
- KEY_F21      , KEY_Dot     , KEY_Question, KEY_L          , KEY_Semicolon , KEY_P          , KEY_minus     , 0,             // 0x48-0x4F
- KEY_F22      , KEY_Ro      , KEY_Colon   , 0              , KEY_AT        , KEY_Hat        , 0             , KEY_F23,       // 0x50-0x57
- KEY_CapsLock , KEY_R_Shift , KEY_Enter   , KEY_L_brackets , 0             , KEY_R_brackets , 0             , 0,             // 0x58-0x5F
- 0            , KEY_Pipe2   , 0           , 0              , KEY_Henkan    , 0              , KEY_Backspace , KEY_Muhenkan,  // 0x60-0x67
- 0            , KEY_PAD_1   , KEY_Pipe    , KEY_PAD_4      , KEY_PAD_7     , KEY_PAD_Kamma  , 0             , 0,             // 0x68-0x6F
- KEY_PAD_0    , KEY_PAD_DOT , KEY_PAD_2   , KEY_PAD_5      , KEY_PAD_6     , KEY_PAD_8      , KEY_ESC       , KEY_NumLock,   // 0x70-0x77
- KEY_F11      , KEY_PAD_Plus, KEY_PAD_3   , KEY_PAD_Minus  , KEY_PAD_Multi , KEY_PAD_9      , KEY_ScrollLock, 0,             // 0x78-0x7F
- 0            , 0           , 0           , KEY_F7         ,                                                                 // 0x80-0x83
+ 0            , PS2KEY_F9      , 0           , PS2KEY_F5         , PS2KEY_F3        , PS2KEY_F1         , PS2KEY_F2        , PS2KEY_F12,       // 0x00-0x07
+ PS2KEY_F13      , PS2KEY_F10     , PS2KEY_F8      , PS2KEY_F6         , PS2KEY_F4        , PS2KEY_Tab        , PS2KEY_HanZen    , PS2KEY_PAD_Equal, // 0x08-0x0F
+ PS2KEY_F14      , PS2KEY_L_Alt   , PS2KEY_L_Shift , PS2KEY_Romaji     , PS2KEY_L_Ctrl    , PS2KEY_Q          , PS2KEY_1         , 0,             // 0x10-0x17
+ PS2KEY_F15      , 0           , PS2KEY_Z       , PS2KEY_S          , PS2KEY_A         , PS2KEY_W          , PS2KEY_2         , 0,             // 0x18-0x1F
+ PS2KEY_F16      , PS2KEY_C       , PS2KEY_X       , PS2KEY_D          , PS2KEY_E         , PS2KEY_4          , PS2KEY_3         , 0,             // 0x20-0x27
+ PS2KEY_F17      , PS2KEY_Space   , PS2KEY_V       , PS2KEY_F          , PS2KEY_T         , PS2KEY_R          , PS2KEY_5         , 0,             // 0x28-0x2F
+ PS2KEY_F18      , PS2KEY_N       , PS2KEY_B       , PS2KEY_H          , PS2KEY_G         , PS2KEY_Y          , PS2KEY_6         , 0,             // 0x30-0x37
+ PS2KEY_F19      , 0           , PS2KEY_M       , PS2KEY_J          , PS2KEY_U         , PS2KEY_7          , PS2KEY_8         , 0,             // 0x38-0x3F
+ PS2KEY_F20      , PS2KEY_Kamma   , PS2KEY_K       , PS2KEY_I          , PS2KEY_O         , PS2KEY_0          , PS2KEY_9         , 0,             // 0x40-0x47
+ PS2KEY_F21      , PS2KEY_Dot     , PS2KEY_Question, PS2KEY_L          , PS2KEY_Semicolon , PS2KEY_P          , PS2KEY_minus     , 0,             // 0x48-0x4F
+ PS2KEY_F22      , PS2KEY_Ro      , PS2KEY_Colon   , 0              , PS2KEY_AT        , PS2KEY_Hat        , 0             , PS2KEY_F23,       // 0x50-0x57
+ PS2KEY_CapsLock , PS2KEY_R_Shift , PS2KEY_Enter   , PS2KEY_L_brackets , 0             , PS2KEY_R_brackets , 0             , 0,             // 0x58-0x5F
+ 0            , PS2KEY_Pipe2   , 0           , 0              , PS2KEY_Henkan    , 0              , PS2KEY_Backspace , PS2KEY_Muhenkan,  // 0x60-0x67
+ 0            , PS2KEY_PAD_1   , PS2KEY_Pipe    , PS2KEY_PAD_4      , PS2KEY_PAD_7     , PS2KEY_PAD_Kamma  , 0             , 0,             // 0x68-0x6F
+ PS2KEY_PAD_0    , PS2KEY_PAD_DOT , PS2KEY_PAD_2   , PS2KEY_PAD_5      , PS2KEY_PAD_6     , PS2KEY_PAD_8      , PS2KEY_ESC       , PS2KEY_NumLock,   // 0x70-0x77
+ PS2KEY_F11      , PS2KEY_PAD_Plus, PS2KEY_PAD_3   , PS2KEY_PAD_Minus  , PS2KEY_PAD_Multi , PS2KEY_PAD_9      , PS2KEY_ScrollLock, 0,             // 0x78-0x7F
+ 0            , 0           , 0           , PS2KEY_F7         ,                                                                 // 0x80-0x83
 }; 
 
 // スキャンコード 0xE010-0xE07D => キーコード変換テーブル
 // 2バイト(スキャンコード下位1バイト, キーコード) x 38
 static const uint8_t keycode2[][2] PROGMEM = {
- { 0x10 , KEY_WWW_Search },    { 0x11 , KEY_R_Alt },      { 0x14 , KEY_R_Ctrl },      { 0x15 , KEY_PrevTrack },
- { 0x18 , KEY_WWW_Favorites }, { 0x1F , KEY_L_GUI },      { 0x20 , LEY_WWW_Refresh }, { 0x21 , KEY_VolumeDown },
- { 0x23 , KEY_Mute },          { 0x27 , KEY_R_GUI },      { 0x28 , KEY_WWW_Stop },    { 0x2B , KEY_Calc },
- { 0x2F , KEY_APP },           { 0x30 , KEY_WWW_Forward },{ 0x32 , KEY_VolumeUp },    { 0x34 , KEY_PLAY },
- { 0x37 , KEY_POWER },         { 0x38 , KEY_WWW_Back },   { 0x3A , KEY_WWW_Home },    { 0x3B , KEY_Stop },
- { 0x3F , KEY_Sleep },         { 0x40 , KEY_Mycomputer }, { 0x48 , KEY_Mail },        { 0x4A , KEY_PAD_Slash },
- { 0x4D , KEY_NextTrack },     { 0x50 , KEY_MEdiaSelect },{ 0x5A , KEY_PAD_Enter },   { 0x5E , KEY_Wake },
- { 0x69 , KEY_End },           { 0x6B , KEY_L_Arrow },    { 0x6C , KEY_Home },        { 0x70 , KEY_Insert },
- { 0x71 , KEY_Delete },        { 0x72 , KEY_Down_Arrow }, { 0x74 , KEY_R_Arrow },     { 0x75 , KEY_Up_Arrow },
- { 0x7A , KEY_PageDown },      { 0x7D , KEY_PageUp },
+ { 0x10 , PS2KEY_WWW_Search },    { 0x11 , PS2KEY_R_Alt },      { 0x14 , PS2KEY_R_Ctrl },      { 0x15 , PS2KEY_PrevTrack },
+ { 0x18 , PS2KEY_WWW_Favorites }, { 0x1F , PS2KEY_L_GUI },      { 0x20 , PS2KEY_WWW_Refresh }, { 0x21 , PS2KEY_VolumeDown },
+ { 0x23 , PS2KEY_Mute },          { 0x27 , PS2KEY_R_GUI },      { 0x28 , PS2KEY_WWW_Stop },    { 0x2B , PS2KEY_Calc },
+ { 0x2F , PS2KEY_APP },           { 0x30 , PS2KEY_WWW_Forward },{ 0x32 , PS2KEY_VolumeUp },    { 0x34 , PS2KEY_PLAY },
+ { 0x37 , PS2KEY_POWER },         { 0x38 , PS2KEY_WWW_Back },   { 0x3A , PS2KEY_WWW_Home },    { 0x3B , PS2KEY_Stop },
+ { 0x3F , PS2KEY_Sleep },         { 0x40 , PS2KEY_Mycomputer }, { 0x48 , PS2KEY_Mail },        { 0x4A , PS2KEY_PAD_Slash },
+ { 0x4D , PS2KEY_NextTrack },     { 0x50 , PS2KEY_MEdiaSelect },{ 0x5A , PS2KEY_PAD_Enter },   { 0x5E , PS2KEY_Wake },
+ { 0x69 , PS2KEY_End },           { 0x6B , PS2KEY_L_Arrow },    { 0x6C , PS2KEY_Home },        { 0x70 , PS2KEY_Insert },
+ { 0x71 , PS2KEY_Delete },        { 0x72 , PS2KEY_Down_Arrow }, { 0x74 , PS2KEY_R_Arrow },     { 0x75 , PS2KEY_Up_Arrow },
+ { 0x7A , PS2KEY_PageDown },      { 0x7D , PS2KEY_PageUp },
 };
 
 // Pause Key スキャンコード
@@ -115,20 +115,20 @@ static const uint8_t key_ascii_jp[][2] PROGMEM = {
 static const uint8_t tenkey[][3] PROGMEM = {
   { '=',  '='            ,0},
   { 0x0D, 0x0D           ,0},
-  { '0',  KEY_Insert     ,1},
-  { '1',  KEY_End        ,1},
-  { '2',  KEY_Down_Arrow ,1},
-  { '3',  KEY_PageDown   ,1},
-  { '4',  KEY_L_Arrow    ,1},
+  { '0',  PS2KEY_Insert     ,1},
+  { '1',  PS2KEY_End        ,1},
+  { '2',  PS2KEY_Down_Arrow ,1},
+  { '3',  PS2KEY_PageDown   ,1},
+  { '4',  PS2KEY_L_Arrow    ,1},
   { '5',  '5'            ,0},
-  { '6',  KEY_R_Arrow    ,1},
-  { '7',  KEY_Home       ,1},
-  { '8',  KEY_Up_Arrow   ,1},
-  { '9',  KEY_PageUp     ,1},
+  { '6',  PS2KEY_R_Arrow    ,1},
+  { '7',  PS2KEY_Home       ,1},
+  { '8',  PS2KEY_Up_Arrow   ,1},
+  { '9',  PS2KEY_PageUp     ,1},
   { '*',  '*'            ,0},
   { '+',  '+'            ,0},
   { ',',  ','            ,1},
-  { '-',  KEY_PAD_Minus  ,1},
+  { '-',  PS2KEY_PAD_Minus  ,1},
   { '.',  0x7f           ,0},
   { '/',  '/'            ,0},
 };
@@ -335,7 +335,7 @@ uint16_t TKeyboard::scanToKeycode() {
         if (c == prnScrncode2[scIndex]) {
           if (scIndex == sizeof(prnScrncode2)-1) {
             // ->[3-2-2-1-1-1](END)
-            code = KEY_PrintScreen | BREAK_CODE; // BREAK+PrintScreen
+            code = PS2KEY_PrintScreen | BREAK_CODE; // BREAK+PrintScreen
             goto DONE;            
           } else {
             continue;
@@ -352,17 +352,17 @@ uint16_t TKeyboard::scanToKeycode() {
       
       case STS_MKEY_SC3:
     	switch(c) {
-    		case 0x70:code = KEY_Insert;      goto DONE;break; // [INS]
-    		case 0x71:code = KEY_Delete;      goto DONE;break; // [DEL]
-    	    case 0x6B:code = KEY_L_Arrow;     goto DONE;break; // [←]
-    	    case 0x6C:code = KEY_Home;        goto DONE;break; // [HOME]
-    	    case 0x69:code = KEY_End;         goto DONE;break; // [END]
-    	    case 0x75:code = KEY_Up_Arrow;    goto DONE;break; // [↑]
-    	    case 0x72:code = KEY_Down_Arrow;  goto DONE;break; // [↓]
-    	    case 0x7d:code = KEY_PageUp;      goto DONE;break; // [PageUp]
-    	    case 0x7a:code = KEY_PageDown;    goto DONE;break; // [PageDown]
-    	    case 0x74:code = KEY_R_Arrow;     goto DONE;break; // [→]
-    	    case 0x7C:code = KEY_PrintScreen; goto DONE;break; // [PrintScreen]
+    		case 0x70:code = PS2KEY_Insert;      goto DONE;break; // [INS]
+    		case 0x71:code = PS2KEY_Delete;      goto DONE;break; // [DEL]
+    	    case 0x6B:code = PS2KEY_L_Arrow;     goto DONE;break; // [←]
+    	    case 0x6C:code = PS2KEY_Home;        goto DONE;break; // [HOME]
+    	    case 0x69:code = PS2KEY_End;         goto DONE;break; // [END]
+    	    case 0x75:code = PS2KEY_Up_Arrow;    goto DONE;break; // [↑]
+    	    case 0x72:code = PS2KEY_Down_Arrow;  goto DONE;break; // [↓]
+    	    case 0x7d:code = PS2KEY_PageUp;      goto DONE;break; // [PageUp]
+    	    case 0x7a:code = PS2KEY_PageDown;    goto DONE;break; // [PageDown]
+    	    case 0x74:code = PS2KEY_R_Arrow;     goto DONE;break; // [→]
+    	    case 0x7C:code = PS2KEY_PrintScreen; goto DONE;break; // [PrintScreen]
     	    default:  goto STS_ERROR;break;  // -> ERROR
     	}
   	
@@ -376,7 +376,7 @@ uint16_t TKeyboard::scanToKeycode() {
         if (c == pgm_read_byte(&pausescode[scIndex])) {
           if (scIndex == sizeof(pausescode)-1) {
             // ->[4-1-1-1-1-1-1-1](END)
-            code = KEY_Pause; // Pause key
+            code = PS2KEY_Pause; // Pause key
             goto DONE;            
           } else {
             continue;
@@ -392,9 +392,9 @@ uint16_t TKeyboard::scanToKeycode() {
      }
   }
   NEXT:
-    return KEY_NONE;
+    return PS2KEY_NONE;
   STS_ERROR:
-    code = KEY_ERROR;
+    code = PS2KEY_ERROR;
   DONE:
     state = STS_SYOKI;
     scIndex = 0;
@@ -443,27 +443,27 @@ keyEvent TKeyboard::read() {
  	  goto DONE; // キー入力なし、またはエラー
 
   // 通常キー
-//  if (code >= KEY_ESC && code <= KEY_Z) {
-  if (code >= KEY_Space && code <= KEY_Z) {	
-     if (code >= KEY_A && code <= KEY_Z)  // A-ZのCapsLockキー状態に影響するキーの場合の処理
-        c.value = pgm_read_byte(&key_ascii[code-KEY_Space][((sts_CapsLock&1)&&sts_state.kevt.SHIFT)||(!(sts_CapsLock&1)&&!sts_state.kevt.SHIFT)?0:1]);
+//  if (code >= PS2KEY_ESC && code <= PS2KEY_Z) {
+  if (code >= PS2KEY_Space && code <= PS2KEY_Z) {	
+     if (code >= PS2KEY_A && code <= PS2KEY_Z)  // A-ZのCapsLockキー状態に影響するキーの場合の処理
+        c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][((sts_CapsLock&1)&&sts_state.kevt.SHIFT)||(!(sts_CapsLock&1)&&!sts_state.kevt.SHIFT)?0:1]);
       else 
-        c.value = pgm_read_byte(&key_ascii[code-KEY_Space][sts_state.kevt.SHIFT?1:0]);
+        c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][sts_state.kevt.SHIFT?1:0]);
      goto DONE;
      
-  } else if (code >= KEY_PAD_Equal && code <= KEY_PAD_Slash) {
+  } else if (code >= PS2KEY_PAD_Equal && code <= PS2KEY_PAD_Slash) {
    // テンキー
    if ( (sts_numlock & 1) &&  !sts_state.kevt.SHIFT ) {
       // NumLock有効でShiftが押させていない場合
-      c.value = pgm_read_byte(&tenkey[code-KEY_PAD_Equal][0]);
+      c.value = pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][0]);
       //Serial.println("[DEBUG:NumLock]");
    } else {
-      c.value = pgm_read_byte(&tenkey[code-KEY_PAD_Equal][1]);
-      if (pgm_read_byte(&tenkey[code-KEY_PAD_Equal][2])) c.value |= KEY_CODE;
+      c.value = pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][1]);
+      if (pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][2])) c.value |= PS2KEY_CODE;
   	}
   	goto DONE;
     
-  } else if (code >=KEY_L_Alt && code <= KEY_CapsLock) {
+  } else if (code >=PS2KEY_L_Alt && code <= PS2KEY_CapsLock) {
     // 入力制御キー
 
     // 操作前のLockキーの状態を保存
@@ -472,15 +472,15 @@ keyEvent TKeyboard::read() {
     uint8_t prv_ScrolLock = sts_ScrolLock & 1;
   
     switch(code) {
-  	  case KEY_L_Shift:  // Shiftキー
-  	  case KEY_R_Shift:  sts_state.kevt.SHIFT = bk?0:1; break;
-  	  case KEY_L_Ctrl:   // Ctrlキー
-  	  case KEY_R_Ctrl:   sts_state.kevt.CTRL = bk?0:1;  break;
-  	  case KEY_L_Alt:    // Altキー
-  	  case KEY_R_Alt:    sts_state.kevt.ALT = bk?0:1; break; 	 
-      case KEY_L_GUI:    // Windowsキー
-      case KEY_R_GUI:    sts_state.kevt.GUI = bk ? 0:1;  break; 
-  	  case KEY_CapsLock: // CapsLockキー(トグル動作)
+  	  case PS2KEY_L_Shift:  // Shiftキー
+  	  case PS2KEY_R_Shift:  sts_state.kevt.SHIFT = bk?0:1; break;
+  	  case PS2KEY_L_Ctrl:   // Ctrlキー
+  	  case PS2KEY_R_Ctrl:   sts_state.kevt.CTRL = bk?0:1;  break;
+  	  case PS2KEY_L_Alt:    // Altキー
+  	  case PS2KEY_R_Alt:    sts_state.kevt.ALT = bk?0:1; break; 	 
+      case PS2KEY_L_GUI:    // Windowsキー
+      case PS2KEY_R_GUI:    sts_state.kevt.GUI = bk ? 0:1;  break; 
+  	  case PS2KEY_CapsLock: // CapsLockキー(トグル動作)
     		switch (sts_CapsLock) {
           case LOCK_Start:	  if (!bk) sts_CapsLock = LOCK_ON_Make; break;  // 初期
   		    case LOCK_ON_Make:  if (bk)  sts_CapsLock = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
@@ -489,7 +489,7 @@ keyEvent TKeyboard::read() {
   		    default: sts_CapsLock = LOCK_Start; break;
   		  }
   		  break; 		
-  	  case KEY_ScrollLock: // ScrollLockキー(トグル動作)
+  	  case PS2KEY_ScrollLock: // ScrollLockキー(トグル動作)
         switch (sts_ScrolLock) {
           case LOCK_Start:    if (!bk) sts_ScrolLock = LOCK_ON_Make; break;  // 初期
           case LOCK_ON_Make:  if (bk)  sts_ScrolLock = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
@@ -498,7 +498,7 @@ keyEvent TKeyboard::read() {
           default: sts_ScrolLock = LOCK_Start; break;
         }
         break; 
-      case KEY_NumLock: // NumLockキー(トグル動作)
+      case PS2KEY_NumLock: // NumLockキー(トグル動作)
         switch (sts_numlock) {
           case LOCK_Start:    if (!bk) sts_numlock  = LOCK_ON_Make; break;  // 初期
           case LOCK_ON_Make:  if (bk)  sts_numlock  = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
@@ -509,14 +509,14 @@ keyEvent TKeyboard::read() {
         break; 
   	  default: goto ERROR; break;
   	}
-  	c.value = KEY_NONE; // 入力制御キーは入力なしとする
+  	c.value = PS2KEY_NONE; // 入力制御キーは入力なしとする
   
     // LEDの制御(各Lockキーの状態が変わったらLEDの制御を行う)
     if ((prv_numlock != (sts_numlock & 1)) || (prv_CapsLock  != (sts_CapsLock & 1)) || (prv_ScrolLock != (sts_ScrolLock & 1)))
        ctrl_LED(sts_CapsLock & 1, sts_numlock & 1, sts_ScrolLock & 1);
     goto DONE;
 
-  } else if (code == KEY_HanZen && _flgUS) {
+  } else if (code == PS2KEY_HanZen && _flgUS) {
     if (sts_state.kevt.SHIFT)
       c.value = '`';
     else
@@ -524,12 +524,12 @@ keyEvent TKeyboard::read() {
     goto DONE; 
   } else {
     // その他の文字(キーコードを文字コードとする)
-    c.value = code|KEY_CODE;
+    c.value = code|PS2KEY_CODE;
     goto DONE;
   }
 
 ERROR:
-  c.value = KEY_ERROR;
+  c.value = PS2KEY_ERROR;
   
 DONE: 
   c.value |= sts_state.value|bk ;

@@ -296,12 +296,12 @@ uint8_t cnv2tty(keyEvent k) {
         rc = k.code - 'A' + 1;
       } else {
         switch(k.code) {
-          case KEY_AT:         rc = 0;    break;
-          case KEY_L_brackets: rc = 0x1b; break;
-          case KEY_Pipe2:      rc = 0x1c; break;
-          case KEY_R_brackets: rc = 0x1d; break;  
-          case KEY_Hat:        rc = 0x1e; break;  
-          case KEY_Ro:         rc = 0x1f; break;
+          case PS2KEY_AT:         rc = 0;    break;
+          case PS2KEY_L_brackets: rc = 0x1b; break;
+          case PS2KEY_Pipe2:      rc = 0x1c; break;
+          case PS2KEY_R_brackets: rc = 0x1d; break;  
+          case PS2KEY_Hat:        rc = 0x1e; break;  
+          case PS2KEY_Ro:         rc = 0x1f; break;
         }
       }
       if (rc == 11) {
@@ -324,26 +324,26 @@ uint8_t cnv2tty(keyEvent k) {
   
   // 特殊キーの場合
   switch(k.code) {
-    case KEY_Insert:     rc = KEY_IC;       break;
-    case KEY_Home:       rc = KEY_HOME;     break;
-    case KEY_PageUp:     rc = KEY_PPAGE;    break;
-    case KEY_PageDown:   rc = KEY_NPAGE;    break;
-    case KEY_End:        rc = KEY_END;      break;
-    case KEY_L_Arrow:    rc = KEY_LEFT;     break;
-    case KEY_Up_Arrow:   rc = KEY_UP;       break;
-    case KEY_R_Arrow:    rc = KEY_RIGHT;    break;
-    case KEY_Down_Arrow: rc = KEY_DOWN;     break;
-    case KEY_ESC:        rc = KEY_ESCAPE;   break;
-    case KEY_Tab:        rc = KEY_TAB;      break;
-    case KEY_Space:      rc = 32;           break;
-    case KEY_Backspace:  rc = KEY_BACKSPACE;break;
-    case KEY_Delete:     rc = KEY_DC;       break;
-    case KEY_Enter:      rc = KEY_CR;       break;
+    case PS2KEY_Insert:     rc = KEY_IC;       break;
+    case PS2KEY_Home:       rc = KEY_HOME;     break;
+    case PS2KEY_PageUp:     rc = KEY_PPAGE;    break;
+    case PS2KEY_PageDown:   rc = KEY_NPAGE;    break;
+    case PS2KEY_End:        rc = KEY_END;      break;
+    case PS2KEY_L_Arrow:    rc = KEY_LEFT;     break;
+    case PS2KEY_Up_Arrow:   rc = KEY_UP;       break;
+    case PS2KEY_R_Arrow:    rc = KEY_RIGHT;    break;
+    case PS2KEY_Down_Arrow: rc = KEY_DOWN;     break;
+    case PS2KEY_ESC:        rc = KEY_ESCAPE;   break;
+    case PS2KEY_Tab:        rc = KEY_TAB;      break;
+    case PS2KEY_Space:      rc = 32;           break;
+    case PS2KEY_Backspace:  rc = KEY_BACKSPACE;break;
+    case PS2KEY_Delete:     rc = KEY_DC;       break;
+    case PS2KEY_Enter:      rc = KEY_CR;       break;
     case 112:            rc = SC_KEY_CTRL_L;break;
-    case KEY_F2:         rc = SC_KEY_CTRL_D;break;
-    case KEY_F3:         rc = SC_KEY_CTRL_N;break;
-    case KEY_F5:         rc = SC_KEY_CTRL_R;break;
-    case KEY_Romaji: 
+    case PS2KEY_F2:         rc = SC_KEY_CTRL_D;break;
+    case PS2KEY_F3:         rc = SC_KEY_CTRL_N;break;
+    case PS2KEY_F5:         rc = SC_KEY_CTRL_R;break;
+    case PS2KEY_Romaji: 
       if (flgKana) {
         flgKana = false;
       } else {
