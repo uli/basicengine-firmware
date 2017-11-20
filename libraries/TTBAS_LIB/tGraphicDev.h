@@ -32,7 +32,6 @@ class tGraphicDev {
     virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
     virtual void circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f);
     virtual void rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f);
-    virtual void bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
     //virtual void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
     virtual void gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode);
     virtual int16_t gpeek(int16_t x, int16_t y);

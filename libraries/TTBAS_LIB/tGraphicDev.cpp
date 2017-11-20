@@ -72,11 +72,6 @@ void tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, in
   tv_rect(x, y, w, h, c, f);
 }
 
-// ビットマップの描画
-void tGraphicDev::bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d) {
-  tv_bitmap(x, y, adr, index, w, h, d);
-}
-
 // グラフィックスクロール
 void tGraphicDev::gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   tv_gscroll(x, y, w, h, mode);

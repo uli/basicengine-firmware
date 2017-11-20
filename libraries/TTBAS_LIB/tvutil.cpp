@@ -402,39 +402,6 @@ int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) {
 #endif
 }
 
-
-// ビットマップ表示
-void tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t n) {
-    uint8_t  nb = (w+7)/8; // 横バイト数の取得
-    uint8_t  d;
-    int16_t xx, yy, b;
-    adr+= nb*h*index;
-  
-  if (n == 1) {
-    // 1倍の場合
-#if USE_VS23 == 1
-    Serial.println("unimp tv_bitmap n==1");
-#else
-    TV.bitmap(x, y, adr  , 0, w, h);
-#endif
-  } else {
-    // N倍の場合
-    yy = y;
-    for (uint16_t i = 0; i < h; i++) {
-      xx = x;
-      for (uint16_t j = 0; j < nb; j++) {
-        d = adr[nb*i+j];
-        b = (int16_t)w-8*j-8>=0 ? 8:w % 8;
-        for(uint8_t k = 0; k < b; k++) {
-          tv_dot(xx, yy, n, d>>(7-k) & 1);
-          xx+= n;
-        }
-      }
-      yy+=n;
-    }
-  }
-}
-
 void tv_set_gcursor(uint16_t x, uint16_t y) {
 #if USE_VS23 == 1
     Serial.println("unimp tv_set_gcursor");
