@@ -378,6 +378,27 @@ num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
 uint8_t mem[SIZE_MEM];            // 自由利用データ領域
 
+
+// macros for in/decrementing stack pointers with bounds checking
+#define inc_stk(idx, size, errnum, ret) \
+  do { \
+    idx++;	\
+    if (idx >= size) {	\
+      err = errnum;	\
+      return ret;	\
+    }	\
+  } while (0)
+
+#define dec_stk(idx, errnum, ret) \
+  do { \
+    if (!idx) {	\
+      err = errnum;	\
+      return ret;	\
+    }	\
+    idx--;	\
+  } while (0)
+
+
 unsigned char* clp;               // Pointer current line
 unsigned char* cip;               // Pointer current Intermediate code
 unsigned char* gstk[SIZE_GSTK];   // GOSUB stack
