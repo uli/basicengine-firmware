@@ -28,8 +28,8 @@
 void itox(uint8_t val);
 void itoxx(unsigned char i);
 uint8_t xtoi(uint8_t ch);
-void print_hex_line(uint8_t line, uint16_t off);
-void hexedit(uint16_t offset);
+void print_hex_line(uint8_t line, uint32_t off);
+void hexedit(uint32_t offset);
 
 //End of Auto generated function prototypes by Atmel Studio
 
@@ -107,7 +107,7 @@ uint8_t xtoi (uint8_t ch)
     return val;
 }
 
-void print_hex_line (uint8_t line, uint16_t off)
+void print_hex_line (uint8_t line, uint32_t off)
 {
     uint8_t         col;
     uint8_t         ch;
@@ -148,12 +148,12 @@ void print_hex_line (uint8_t line, uint16_t off)
  * hexdit: hex editor
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-void hexedit (uint16_t offset)
+void hexedit (uint32_t offset)
 {
     uint8_t         ch;
     uint8_t         line;
     uint8_t         col;
-    uint16_t        off;
+    uint32_t        off;
     uint8_t         byte;
     uint8_t         mode = MODE_HEX;
 
@@ -280,7 +280,7 @@ void hexedit (uint16_t offset)
                 {
                     if (IS_HEX(ch))
                     {
-                        uint16_t    addr  = off + byte;
+                        uint32_t    addr  = off + byte;
                         uint8_t     value = xtoi (ch) << 4;
 
                         ch = getch ();
@@ -306,7 +306,7 @@ void hexedit (uint16_t offset)
                 {
                     if (IS_PRINT(ch))
                     {
-                        uint16_t addr = off + byte;
+                        uint32_t addr = off + byte;
                         POKE(addr, ch);
                         addch (ch);
                         move (line, FIRST_HEX_COL + 3 * byte);
