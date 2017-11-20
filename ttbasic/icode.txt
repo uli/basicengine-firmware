@@ -82,7 +82,7 @@ PSET	I_PSET		ipset
 LINE	I_LINE		iline
 RECT	I_RECT		irect
 CIRCLE	I_CIRCLE	icircle
-BITMAP	I_BITMAP	ibitmap
+BLIT	I_BLIT		iblit
 GPRINT	I_GPRINT	igprint
 GSCROLL	I_GSCROLL	igscroll
 GPIO	I_GPIO		igpio

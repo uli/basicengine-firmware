@@ -319,13 +319,13 @@ const uint8_t i_nsb[] __FLASH__ = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
 
-// 必ず前に空白を入れる中間コード
+// insert a blank before intermediate code
 const uint8_t i_sf[] __FLASH__  = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_LAND, I_LOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
-  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BITMAP, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,I_SMODE,
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,I_SMODE,
   I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,I_EXPORT,
 };
 
@@ -2962,40 +2962,24 @@ void irect() {
 }
 
 // ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]
-void ibitmap() {
-#if USE_NTSC == 1
-  int32_t x,y,w,h,d = 1;
-  int32_t index;
-  int32_t vadr;
-  uint8_t* adr;
-  if (scmode) {
-    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(vadr, I_COMMA)||getParam(index, I_COMMA)||getParam(w, I_COMMA)||getParam(h, I_NONE))
-      return;
-    if (*cip == I_COMMA) {
-      cip++;
-      if (getParam(d, I_NONE)) return;
-    }
-    adr = v2realAddr(vadr);
-    if (!adr) {
-      err = ERR_RANGE;
-      return;
-    }
-
-    if (x < 0) x =0;
-    if (y < 0) y =0;
-    if (x >= ((tTVscreen*)sc)->getGWidth()) x = ((tTVscreen*)sc)->getGWidth()-1;
-    if (y >= ((tTVscreen*)sc)->getGHeight()) y = ((tTVscreen*)sc)->getGHeight()-1;
-    if (index < 0) index = 0;
-    if (w < 0) w =1;
-    if (h < 0) h =1;
-    if (d < 0) d = 1;
-    ((tTVscreen*)sc)->bitmap(x, y, (uint8_t*)adr, index, w, h, d);
-  } else {
-    err = ERR_NOT_SUPPORTED;
+void iblit() {
+  int32_t x,y,w,h,dx,dy;
+  int32_t dir = 0;
+  if (getParam(x, 0, sc0.getGWidth(), I_COMMA)) return;
+  if (getParam(y, 0, vs23.lastLine(), I_TO)) return;
+  if (getParam(dx, 0, sc0.getGWidth(), I_COMMA)) return;
+  if (getParam(dy, 0, vs23.lastLine(), I_SIZE)) return;
+  if (getParam(w, 0, sc0.getGWidth()-x, I_COMMA)) return;
+  if (getParam(h, 0, vs23.lastLine()-y, I_NONE)) return;
+  if (*cip == I_UP) {
+    ++cip;
+    dir = 1;
+  } else if (*cip == I_DOWN) {
+    ++cip;
+    dir = 0;
   }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+    
+  vs23.MoveBlock(x, y, dx, dy, w, h, dir);
 }
 
 // キャラクタスクロール CSCROLL X1,Y1,X2,Y2,方向
