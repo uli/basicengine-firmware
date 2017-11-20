@@ -53,7 +53,7 @@ class tscreenBase : public tSerialDev {
     uint8_t flgIns;             // 編集モード
     uint8_t dev;                // 文字入力デバイス
     uint8_t flgCur;             // カーソル表示設定
-    uint8_t flgExtMem = NULL;   // 外部確保メモリ利用フラグ
+    uint8_t flgExtMem = 0;      // 外部確保メモリ利用フラグ
 	
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
