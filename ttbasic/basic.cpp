@@ -4980,7 +4980,6 @@ uint8_t SMALL icom() {
     //  err = ERR_SYNTAX;
     break;
   case I_DELETE:     idelete();  break;
-  case I_OK:         rc = 0;     break; // I_OKの場合
 
   default:            // どれにも該当しない場合
     cip--;

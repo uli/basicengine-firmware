@@ -202,7 +202,7 @@ PLOT	I_PLOT		iplot
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 DELETE	I_DELETE	ecom
-OK	I_OK		ecom
+OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax
 _none	I_HEXNUM	esyntax
