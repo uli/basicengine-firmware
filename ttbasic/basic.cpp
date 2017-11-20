@@ -3760,6 +3760,7 @@ void ibg() {
   if (*cip == I_OFF) {
     ++cip;
     vs23.resetBgs();
+    return;
   }
 
   if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
@@ -3824,6 +3825,7 @@ void isprite() {
   if (*cip == I_OFF) {
     ++cip;
     vs23.resetSprites();
+    return;
   }
 
   if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
