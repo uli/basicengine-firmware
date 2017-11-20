@@ -532,6 +532,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   uint32_t byteaddress2;
   int dest_addr_start;
   uint32_t dest_addr, pat_start_addr, win_start_addr;
+  uint16_t pass0_end_line;
 
   if (m_frame == last_frame || SpiLocked())
     return;
@@ -774,8 +775,24 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       }
     }
 #endif
-    lines[5] = currentLine();
 
+    // Adjust sync line to avoid flicker due to either the bottom half
+    // being drawn too early or the top half being drawn too late.
+    if (pass == 0)
+      pass0_end_line = currentLine();
+    else {
+      bool pass0_wraparound = pass0_end_line < m_sync_line;
+      uint16_t cl = currentLine();
+      if (!(!pass0_wraparound && cl >= pass0_end_line) &&
+          cl > m_current_mode->y / 3 && 
+          m_sync_line > m_current_mode->y * 2 / 3) {
+        m_sync_line--;
+        Serial.printf("sync-- %d\n", m_sync_line);
+      } else if (!pass0_wraparound && pass0_end_line < m_current_mode->y + m_current_mode->top) {
+        m_sync_line++;
+        Serial.printf("sync++ %d\n", m_sync_line);
+      }
+    }
   } // pass
 
   SPI1CLK = spi_clock_default;
