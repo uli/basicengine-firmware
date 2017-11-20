@@ -23,31 +23,30 @@
 #error You cannot operate the I2S bus without the PLL enabled. Select another clock frequency.
 #endif
 
-
-//Change these if you need!
-#define WS_I2S_BCK 1	
-#define WS_I2S_DIV 1
-
+// I2S frequency dividers. Base clock appears to be 40 MHz.
+#define WS_I2S_BCK 2
+#define WS_I2S_DIV 56
 
 volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
+#define I2S_BUFLEN 256
 //static unsigned int i2sData[2][16];
-static unsigned int i2sData[8];
-struct sdio_queue i2sBufDesc[1] = {
-	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = 8*4,  .blocksize = 8*4, .buf_ptr = (uint32_t)i2sData, .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
-//	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = 16*4,  .blocksize = 16*4, .buf_ptr = (uint32_t)&i2sData[0], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
+static unsigned int i2sData[2][I2S_BUFLEN];
+struct sdio_queue i2sBufDesc[2] = {
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[0], .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[1], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
 //	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = 16*4,  .blocksize = 16*4, .buf_ptr = (uint32_t)&i2sData[1], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
 };
 
 volatile int isrs = 0;
 
-#define I2S_INTERRUPTS 0
+#define I2S_INTERRUPTS 1
 
 #if I2S_INTERRUPTS
 
-LOCAL void slc_isr(void) {
-	WRITE_PERI_REG(SLC_INT_CLR, 0xffffffff);//slc_intr_status);
+LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
+	SLC_INT_CLRL = 0xffffffff;
 
 	//This is a little wacky.  This function actually gets called twice.
 	//Once for the initial transfer, but by the time we tell it to stop
@@ -63,13 +62,13 @@ void setSample(uint8_t s)
 {
 	for (int i=0; i<8; ++i) {
 		if (s/32 < i)
-			i2sData[i] = 0;
+			i2sData[0][i] = 0;
 			//i2sData[i] = 0xffffffffUL;
 		else if (s/32 > i)
-			i2sData[i] = 0xffffffffUL;
+			i2sData[0][i] = 0xffffffffUL;
 			//i2sData[i] = 0;
 		else
-			i2sData[i] = 0xffffffffUL << (32 - s%32);
+			i2sData[0][i] = 0xffffffffUL << (32 - s%32);
 			//i2sData[i] = 0xffffffffUL >> s%32;
 		//printf("foomeier %08X\n", i2sData[i]);
 	}
@@ -83,9 +82,9 @@ void InitI2S()
 	SLC_CONF0L = (1<<SLC_MODE_S);		//Configure DMA
 	SLC_RX_DSCR_CONFL = SLC_INFOR_NO_REPLACE|SLC_TOKEN_NO_REPLACE;
 
-#if 0
+#if 1
 	//Initialize buffers
-	for( i = 0; i < 16; i++ )
+	for( i = 0; i < I2S_BUFLEN; i++ )
 	{
 		i2sData[0][i] = 0x0000ff00;
 		i2sData[1][i] = 0xffffffff;
@@ -103,7 +102,7 @@ void InitI2S()
 #if I2S_INTERRUPTS
 
 	//Attach the DMA interrupt
-	ets_isr_attach(ETS_SLC_INUM, slc_isr);
+	ets_isr_attach(ETS_SLC_INUM, slc_isr, NULL);
 	//Enable DMA operation intr
 		//WRITE_PERI_REG(SLC_INT_ENA,  SLC_RX_EOF_INT_ENA);
 	SLC_INT_ENAL = SLC_RX_EOF_INT_ENA; //Select the interrupt.
@@ -156,7 +155,6 @@ void InitI2S()
 	//Start transmission
 	//SET_PERI_REG_MASK(I2SCONF,I2S_I2S_TX_START);
 	I2SCONFL |= I2S_I2S_TX_START;
-
 }
 
 void SendI2S()
