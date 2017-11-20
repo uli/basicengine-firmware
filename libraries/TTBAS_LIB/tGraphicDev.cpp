@@ -3,7 +3,7 @@
 // 2017/07/19 by たま吉さん
 //
 
-#include "../../../ttbasic/ttconfig.h"
+#include "../../ttbasic/ttconfig.h"
 
 #include "tGraphicDev.h"
 

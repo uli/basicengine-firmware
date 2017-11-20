@@ -11,7 +11,7 @@
 
 
 #include "sdfiles.h"
-#include "../../../ttbasic/lock.h"
+#include "../../ttbasic/lock.h"
 #include <string.h>
 
 //#include <RTClock.h>
@@ -451,10 +451,10 @@ int8_t sdfiles::IsText(char* fname) {
 
 File pcx_file;
 
-#include "../../../ttbasic/vs23s010.h"
+#include "../../ttbasic/vs23s010.h"
 #define DR_PCX_NO_STDIO
 #define DR_PCX_IMPLEMENTATION
-#include "../../../ttbasic/dr_pcx.h"
+#include "../../ttbasic/dr_pcx.h"
 
 static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 {

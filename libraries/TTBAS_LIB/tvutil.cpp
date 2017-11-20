@@ -13,12 +13,12 @@
 // 修正日 2017/07/25, tv_init()の追加
 // 修正日 2017/07/29, スクリーンモード変更対応
 
-#include "../../../ttbasic/ttconfig.h"
+#include "../../ttbasic/ttconfig.h"
 
 #include <stdint.h>
 #include <string.h>
-#include "../../../ttbasic/ntsc.h"
-#include "../../../ttbasic/vs23s010.h"
+#include "../../ttbasic/ntsc.h"
+#include "../../ttbasic/vs23s010.h"
 #include "tTVscreen.h"
 
 extern uint8_t* ttbasic_font;

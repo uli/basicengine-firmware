@@ -21,7 +21,7 @@
 //  修正日 2017/06/22, シリアル上でBSキー、CTRL-Lが利用可能対応
 //
 
-#include "../../../ttbasic/ttconfig.h"
+#include "../../ttbasic/ttconfig.h"
 
 #include <string.h>
 #include "tTVscreen.h"
