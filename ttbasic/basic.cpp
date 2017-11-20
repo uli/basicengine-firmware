@@ -3676,6 +3676,11 @@ void ibg() {
   int32_t m;
   int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh;
 
+  if (*cip == I_OFF) {
+    ++cip;
+    vs23.resetBgs();
+  }
+
   if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
 
   for (;;) switch (*cip++) {
@@ -3734,6 +3739,12 @@ void imovebg() {
 
 void isprite() {
   int32_t num, pat_x, pat_y, w, h, frame;
+
+  if (*cip == I_OFF) {
+    ++cip;
+    vs23.resetSprites();
+  }
+
   if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
   for (;;) switch (*cip++) {
   case I_PATTERN:
