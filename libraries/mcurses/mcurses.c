@@ -62,7 +62,7 @@ uint_fast8_t                                    mcurses_curx = 0xff;            
 static void                                     mcurses_puts_P (const char *);
 
 char (*FunctionPointer_getchar)(void);
-void  (*FunctionPointer_putchar)(uint_fast8_t ch);
+void  (*FunctionPointer_putchar)(uint8_t ch);
 
 void setFunction_getchar(char (*functionPoitner)(void))
 {
