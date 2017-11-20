@@ -8,6 +8,8 @@ enum {
 #include "errdef.h"
 };
 
+#undef ESTR
+
 #define SD_ERR_INIT		ERR_SD_NOT_READY
 #define SD_ERR_OPEN_FILE	ERR_FILE_OPEN
 #define SD_ERR_NOT_FILE		ERR_BAD_FNAME
