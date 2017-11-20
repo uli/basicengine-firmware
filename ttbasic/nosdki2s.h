@@ -18,9 +18,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 
 
 
-#define I2STXFIFO  (DR_REG_I2S_BASE + 0x0000)
-#define I2SRXFIFO  (DR_REG_I2S_BASE + 0x0004)
-#define I2SCONF  (DR_REG_I2S_BASE + 0x0008)
 #define I2SCONFL  (DR_REG_I2S_BASEL[0x0008/4])
 #define I2S_BCK_DIV_NUM 0x0000003F
 #define I2S_BCK_DIV_NUM_S 22
@@ -42,7 +39,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_TX_RESET (BIT(0))
 #define I2S_I2S_RESET_MASK 0xf
 
-#define I2SINT_RAW (DR_REG_I2S_BASE + 0x000c)
 #define I2S_I2S_TX_REMPTY_INT_RAW (BIT(5))
 #define I2S_I2S_TX_WFULL_INT_RAW (BIT(4))
 #define I2S_I2S_RX_REMPTY_INT_RAW (BIT(3))
@@ -50,8 +46,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_TX_PUT_DATA_INT_RAW (BIT(1))
 #define I2S_I2S_RX_TAKE_DATA_INT_RAW (BIT(0))
 
-
-#define I2SINT_ST (DR_REG_I2S_BASE + 0x0010)
 #define I2S_I2S_TX_REMPTY_INT_ST (BIT(5))
 #define I2S_I2S_TX_WFULL_INT_ST (BIT(4))
 #define I2S_I2S_RX_REMPTY_INT_ST (BIT(3))
@@ -59,7 +53,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_TX_PUT_DATA_INT_ST (BIT(1))
 #define I2S_I2S_RX_TAKE_DATA_INT_ST (BIT(0))
 
-#define I2SINT_ENA (DR_REG_I2S_BASE + 0x0014)
 #define I2SINT_ENAL (DR_REG_I2S_BASEL[0x0014/4])
 #define I2S_I2S_TX_REMPTY_INT_ENA (BIT(5))
 #define I2S_I2S_TX_WFULL_INT_ENA (BIT(4))
@@ -68,7 +61,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_TX_PUT_DATA_INT_ENA (BIT(1))
 #define I2S_I2S_RX_TAKE_DATA_INT_ENA (BIT(0))
 
-#define I2SINT_CLR (DR_REG_I2S_BASE + 0x0018)
 #define I2SINT_CLRL (DR_REG_I2S_BASEL[0x0018/4])
 #define I2S_I2S_TX_REMPTY_INT_CLR (BIT(5))
 #define I2S_I2S_TX_WFULL_INT_CLR (BIT(4))
@@ -77,7 +69,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_PUT_DATA_INT_CLR (BIT(1))
 #define I2S_I2S_TAKE_DATA_INT_CLR (BIT(0))
 
-#define I2STIMING (DR_REG_I2S_BASE + 0x001c)
 #define I2S_TRANS_BCK_IN_INV (BIT(22))
 #define I2S_RECE_DSYNC_SW (BIT(21))
 #define I2S_TRANS_DSYNC_SW (BIT(20))
@@ -102,7 +93,6 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_TRANS_BCK_IN_DELAY 0x00000003
 #define I2S_TRANS_BCK_IN_DELAY_S 0
 
-#define I2S_FIFO_CONF (DR_REG_I2S_BASE + 0x0020)
 #define I2S_FIFO_CONFL (DR_REG_I2S_BASEL[0x0020/4])
 #define I2S_I2S_RX_FIFO_MOD 0x00000007
 #define I2S_I2S_RX_FIFO_MOD_S 16
@@ -114,16 +104,12 @@ extern volatile uint32_t * DR_REG_SLC_BASEL;
 #define I2S_I2S_RX_DATA_NUM 0x0000003F
 #define I2S_I2S_RX_DATA_NUM_S 0
 
-
-#define I2SRXEOF_NUM (DR_REG_I2S_BASE + 0x0024)
 #define I2S_I2S_RX_EOF_NUM 0xFFFFFFFF
 #define I2S_I2S_RX_EOF_NUM_S 0
 
-#define I2SCONF_SIGLE_DATA (DR_REG_I2S_BASE + 0x0028)
 #define I2S_I2S_SIGLE_DATA 0xFFFFFFFF
 #define I2S_I2S_SIGLE_DATA_S 0
 
-#define I2SCONF_CHAN (DR_REG_I2S_BASE + 0x002c)
 #define I2S_RX_CHAN_MOD 0x00000003
 #define I2S_RX_CHAN_MOD_S 3
 #define I2S_TX_CHAN_MOD 0x00000007
@@ -193,8 +179,6 @@ union sdio_slave_status
 
 //From SLC Register...
 
-
-#define SLC_CONF0                                (DR_REG_SLC_BASE + 0x0)
 #define SLC_CONF0L                               (DR_REG_SLC_BASEL[0])
 #ifndef ESP_MAC_5
 #define SLC_MODE 0x00000003
@@ -212,7 +196,6 @@ union sdio_slave_status
 #define SLC_RXLINK_RST (BIT(1))
 #define SLC_TXLINK_RST (BIT(0))
 
-#define SLC_INT_RAW                              (DR_REG_SLC_BASE + 0x4)
 #define SLC_INT_RAWL                              (DR_REG_SLC_BASEL[0x4/4])
 #define SLC_TX_DSCR_EMPTY_INT_RAW (BIT(21))
 #define SLC_RX_DSCR_ERR_INT_RAW (BIT(20))
@@ -237,7 +220,6 @@ union sdio_slave_status
 #define SLC_FRHOST_BIT1_INT_RAW (BIT(1))
 #define SLC_FRHOST_BIT0_INT_RAW (BIT(0))
 
-#define SLC_INT_STATUS                               (DR_REG_SLC_BASE + 0x8)
 #define SLC_INT_STATUSL                               (DR_REG_SLC_BASEL[0x8/4])
 #define SLC_TX_DSCR_EMPTY_INT_ST (BIT(21))
 #define SLC_RX_DSCR_ERR_INT_ST (BIT(20))
@@ -262,7 +244,6 @@ union sdio_slave_status
 #define SLC_FRHOST_BIT1_INT_ST (BIT(1))
 #define SLC_FRHOST_BIT0_INT_ST (BIT(0))
 
-#define SLC_INT_ENA                              (DR_REG_SLC_BASE + 0xC)
 #define SLC_INT_ENAL                              (DR_REG_SLC_BASEL[0xC/4])
 #define SLC_TX_DSCR_EMPTY_INT_ENA (BIT(21))
 #define SLC_RX_DSCR_ERR_INT_ENA (BIT(20))
@@ -289,7 +270,6 @@ union sdio_slave_status
 
 #define SLC_FRHOST_BIT_INT_ENA_ALL  0xff
 
-#define SLC_INT_CLR                              (DR_REG_SLC_BASE + 0x10)
 #define SLC_INT_CLRL                             (DR_REG_SLC_BASEL[4])
 #define SLC_TX_DSCR_EMPTY_INT_CLR (BIT(21))
 #define SLC_RX_DSCR_ERR_INT_CLR (BIT(20))
@@ -314,25 +294,20 @@ union sdio_slave_status
 #define SLC_FRHOST_BIT1_INT_CLR (BIT(1))
 #define SLC_FRHOST_BIT0_INT_CLR (BIT(0))
 
-#define SLC_RX_STATUS                            (DR_REG_SLC_BASE + 0x14)
 #define SLC_RX_EMPTY (BIT(1))
 #define SLC_RX_FULL (BIT(0))
 
-#define SLC_RX_FIFO_PUSH                          (DR_REG_SLC_BASE + 0x18)
 #define SLC_RXFIFO_PUSH (BIT(16))
 #define SLC_RXFIFO_WDATA 0x000001FF
 #define SLC_RXFIFO_WDATA_S 0
 
-#define SLC_TX_STATUS                            (DR_REG_SLC_BASE + 0x1C)
 #define SLC_TX_EMPTY (BIT(1))
 #define SLC_TX_FULL (BIT(0))
 
-#define SLC_TX_FIFO_POP                           (DR_REG_SLC_BASE + 0x20)
 #define SLC_TXFIFO_POP (BIT(16))
 #define SLC_TXFIFO_RDATA 0x000007FF
 #define SLC_TXFIFO_RDATA_S 0
 
-#define SLC_RX_LINK                              (DR_REG_SLC_BASE + 0x24)
 #define SLC_RX_LINKL                              (DR_REG_SLC_BASEL[0x24/4])
 #define SLC_RXLINK_PARK (BIT(31))
 #define SLC_RXLINK_RESTART (BIT(30))
@@ -341,7 +316,6 @@ union sdio_slave_status
 #define SLC_RXLINK_DESCADDR_MASK 0x000FFFFF
 #define SLC_RXLINK_ADDR_S 0
 
-#define SLC_TX_LINK                              (DR_REG_SLC_BASE + 0x28)
 #define SLC_TXLINK_PARK (BIT(31))
 #define SLC_TXLINK_RESTART (BIT(30))
 #define SLC_TXLINK_START  (BIT(29))
@@ -349,11 +323,9 @@ union sdio_slave_status
 #define SLC_TXLINK_DESCADDR_MASK 0x000FFFFF
 #define SLC_TXLINK_ADDR_S 0
 
-#define SLC_INTVEC_TOHOST                        (DR_REG_SLC_BASE + 0x2C)
 #define SLC_TOHOST_INTVEC 0x000000FF
 #define SLC_TOHOST_INTVEC_S 0
 
-#define SLC_TOKEN0                               (DR_REG_SLC_BASE + 0x30)
 #define SLC_TOKEN0_MASK 0x00000FFF
 #define SLC_TOKEN0_S 16
 #define SLC_TOKEN0_LOCAL_INC_MORE (BIT(14))
@@ -362,7 +334,6 @@ union sdio_slave_status
 #define SLC_TOKEN0_LOCAL_WDATA_MASK 0x00000FFF
 #define SLC_TOKEN0_LOCAL_WDATA_S 0
 
-#define SLC_TOKEN1                               (DR_REG_SLC_BASE + 0x34)
 #define SLC_TOKEN1_MASK 0x00000FFF
 #define SLC_TOKEN1_S 16
 #define SLC_TOKEN1_LOCAL_INC_MORE (BIT(14))
@@ -371,11 +342,6 @@ union sdio_slave_status
 #define SLC_TOKEN1_LOCAL_WDATA 0x00000FFF
 #define SLC_TOKEN1_LOCAL_WDATA_S 0
 
-#define SLC_CONF1                                (DR_REG_SLC_BASE + 0x38)
-#define SLC_STATE0                               (DR_REG_SLC_BASE + 0x3C)
-#define SLC_STATE1                               (DR_REG_SLC_BASE + 0x40)
-
-#define SLC_BRIDGE_CONF                          (DR_REG_SLC_BASE + 0x44)
 #ifndef ESP_MAC_5
 #define SLC_TX_PUSH_IDLE_NUM 0x0000FFFF
 #define SLC_TX_PUSH_IDLE_NUM_S 16
@@ -386,19 +352,14 @@ union sdio_slave_status
 #define SLC_TXEOF_ENA  0x0000003F
 #define SLC_TXEOF_ENA_S 0
 
-#define SLC_RX_EOF_DES_ADDR                       (DR_REG_SLC_BASE + 0x48)
-#define SLC_TX_EOF_DES_ADDR                       (DR_REG_SLC_BASE + 0x4C)
 #define SLC_FROM_HOST_LAST_DESC                   SLC_TX_EOF_DES_ADDR
 #define SLC_TO_HOST_LAST_DESC                     SLC_RX_EOF_DES_ADDR
 
-#define SLC_RX_EOF_BFR_DES_ADDR                 (DR_REG_SLC_BASE + 0x50)
-#define SLC_AHB_TEST                            (DR_REG_SLC_BASE + 0x54)
 #define SLC_AHB_TESTADDR 0x00000003
 #define SLC_AHB_TESTADDR_S 4
 #define SLC_AHB_TESTMODE 0x00000007
 #define SLC_AHB_TESTMODE_S 0
 
-#define SLC_SDIO_ST                             (DR_REG_SLC_BASE + 0x58)
 #define SLC_BUS_ST 0x00000007
 #define SLC_BUS_ST_S 12
 #define SLC_SDIO_WAKEUP (BIT(8))
@@ -407,7 +368,6 @@ union sdio_slave_status
 #define SLC_CMD_ST 0x00000007
 #define SLC_CMD_ST_S 0
 
-#define SLC_RX_DSCR_CONF                        (DR_REG_SLC_BASE + 0x5C)
 #define SLC_RX_DSCR_CONFL                       (DR_REG_SLC_BASEL[0x5C/4])
 #ifdef ESP_MAC_5
 #define SLC_INFOR_NO_REPLACE (BIT(9))
@@ -423,30 +383,10 @@ union sdio_slave_status
 #endif
 #define SLC_POP_IDLE_CNT_S 0
 
-#define SLC_TXLINK_DSCR                         (DR_REG_SLC_BASE + 0x60)
-#define SLC_TXLINK_DSCR_BF0                     (DR_REG_SLC_BASE + 0x64)
-#define SLC_TXLINK_DSCR_BF1                     (DR_REG_SLC_BASE + 0x68)
-#define SLC_RXLINK_DSCR                         (DR_REG_SLC_BASE + 0x6C)
-#define SLC_RXLINK_DSCR_BF0                     (DR_REG_SLC_BASE + 0x70)
-#define SLC_RXLINK_DSCR_BF1                     (DR_REG_SLC_BASE + 0x74)
-#define SLC_DATE                                 (DR_REG_SLC_BASE + 0x78)
-#define SLC_ID                                   (DR_REG_SLC_BASE + 0x7C)
-
-#define SLC_HOST_CONF_W0                         (DR_REG_SLC_BASE + 0x80 + 0x14)
-#define SLC_HOST_CONF_W1                         (DR_REG_SLC_BASE + 0x80 + 0x18)
-#define SLC_HOST_CONF_W2                         (DR_REG_SLC_BASE + 0x80 + 0x20)
-#define SLC_HOST_CONF_W3                         (DR_REG_SLC_BASE + 0x80 + 0x24)
-#define SLC_HOST_CONF_W4                         (DR_REG_SLC_BASE + 0x80 + 0x28)
-
-#define SLC_HOST_INTR_ST                         (DR_REG_SLC_BASE + 0x80 + 0x1c)
-#define SLC_HOST_INTR_CLR                         (DR_REG_SLC_BASE + 0x80 + 0x30)
 #define SLC_HOST_INTR_SOF_BIT                     (BIT(12))
 
-#define SLC_HOST_INTR_ENA                         (DR_REG_SLC_BASE + 0x80 + 0x34)
 #define SLC_RX_NEW_PACKET_INT_ENA 		(BIT23)
 #define SLC_HOST_TOHOST_BIT0_INT_ENA		(BIT0)
-#define SLC_HOST_CONF_W5                          (DR_REG_SLC_BASE + 0x80 + 0x3C)
-#define SLC_HOST_INTR_RAW                         (DR_REG_SLC_BASE + 0x80 + 0x8)
 #define SLC_HOST_INTR_ENA_BIT                      (BIT(23))
 //[15:12]: 0x3ff9xxxx -- 0b01  from_host
 //         0x3ffaxxxx -- 0b10  general
