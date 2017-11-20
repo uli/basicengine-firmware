@@ -45,6 +45,7 @@
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 20     // GOSUB stack size(2/nest) :10ネストまでOK
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
+#define SIZE_IFSTK 16	 // IF stack
 #define SIZE_MEM  1024   // 自由利用データ領域
 
 #define FLOAT_NUMS
@@ -405,6 +406,11 @@ unsigned char* gstk[SIZE_GSTK];   // GOSUB stack
 unsigned char gstki;              // GOSUB stack index
 unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
+
+bool ifstk[SIZE_IFSTK];		  // IF stack
+unsigned char ifstki;		  // IF stack index
+#define inc_ifstk(ret)	inc_stk(ifstki, SIZE_IFSTK, ERR_IFSTKOF, ret)
+#define dec_ifstk(ret)	dec_stk(ifstki,	ERR_IFSTKUF, ret)
 
 #define MAX_RETVALS 4
 num_t retval[MAX_RETVALS];        // multi-value returns
@@ -1055,19 +1061,39 @@ uint32_t getlineIndex(uint32_t lineno) {
 //          NULL以外 LESEの次のポインタ
 //
 uint8_t* getELSEptr(uint8_t* p) {
+#define inc_lifstk	inc_stk(lifstki, SIZE_IFSTK, ERR_IFSTKOF, NULL)
+#define dec_lifstk	dec_stk(lifstki, ERR_IFSTKUF, NULL)
   uint8_t* rc = NULL;
   uint8_t* lp;
+  bool lifstk[SIZE_IFSTK];
+  unsigned char lifstki = 1;
+  lifstk[0] = ifstk[ifstki-1];
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
-  for (lp = p; *lp != I_EOL; ) {
+  for (lp = p; ; ) {
     switch(*lp) {
     case I_IF:    // IF命令
-      goto DONE;
+      lp++;
+      lifstk[lifstki] = false;
+      if (*lp == I_THEN) {
+        lp++;
+        // If THEN is followed by EOL, it's a multiline IF.
+        if (*lp == I_EOL) {
+          lifstk[lifstki] = true;
+          // XXX: Shouldn't this be taken care of by the I_EOL handler?
+          clp += *clp;
+          lp = cip = clp + sizeof(num_t) + 1;
+        }
+      }
+      inc_lifstk;
       break;
     case I_ELSE:  // ELSE命令
-      rc = lp+1;
-      goto DONE;
-      break;
+      if (lifstki == 1) {
+        // Found the highest-level ELSE, we're done.
+        rc = lp+1;
+        goto DONE;
+      }
+      lp++;
       break;
     case I_STR:     // 文字列
       lp += lp[1]+1;
@@ -1081,6 +1107,36 @@ uint8_t* getELSEptr(uint8_t* p) {
     case I_VAR:     // 変数
       lp+=2;        // 変数名
       break;
+    case I_EOL:
+      if (lifstk[lifstki-1] == false) {
+        // Current IF is single-line, so it's finished here.
+        dec_lifstk;
+        if (!lifstki) {
+          // This is the end of the last IF, and we have not found a
+          // matching ELSE, meaning there is none. We're done.
+          goto DONE;
+        }
+      }
+      // Continue at next line.
+      clp += *clp;
+      // XXX: What about EOT?
+      lp = cip = clp + sizeof(num_t) + 1;
+      break;
+    case I_ENDIF:
+      dec_lifstk;
+      if (lifstk[lifstki] != true) {
+        // Encountered ENDIF while not in a multiline IF.
+        // Not sure what to do here; this could happen if someone
+        // jumped into an ELSE block with another IF inside.
+        // Probably screwed up enough to consider it an error.
+        err = ERR_IFSTKUF;
+        goto DONE;
+      }
+      lp++;
+      if (!lifstki) {
+        // End of the last IF, no ELSE found -> done.
+        goto DONE;
+      }
     default:        // その他
       lp++;
       break;
@@ -1511,6 +1567,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
+  ifstki = 0;
 
   if (start_clp != NULL) {
     clp = start_clp;
@@ -1661,6 +1718,7 @@ void inew(uint8_t mode = 0) {
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
+    ifstki = 0;
     *listbuf = 0; //プログラム保存領域の先頭に末尾の印を置く
     clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
   }
@@ -4754,6 +4812,17 @@ void iif() {
     err = ERR_IFWOC;  // エラー番号をセット
     return;
   }
+
+  ifstk[ifstki] = false;	// assume it's a single-line IF
+  if (*cip == I_THEN) {
+    ++cip;
+    if (*cip == I_EOL) {
+      // THEN followed by EOL indicates a multi-line IF.
+      ifstk[ifstki] = true;
+    }
+  }
+  inc_ifstk();
+
   if (condition) {    // もし真なら
     return;
   } else {
@@ -4766,6 +4835,38 @@ void iif() {
       cip = newip;
       return;
     }
+    while (*cip != I_EOL) // I_EOLに達するまで繰り返す
+      cip++;              // 中間コードポインタを次へ進める
+  }
+}
+
+void iendif()
+{
+  if (ifstki > 0) {
+    dec_ifstk();
+  }
+  // XXX: Do we want to consider it an error if we encounter an ENDIF
+  // outside an IF block?
+}
+
+void ielse()
+{
+  // When we encounter an ELSE in our normal instruction stream, we have
+  // to skip what follows.
+  dec_ifstk();
+  if (ifstk[ifstki]) {
+    // Multi-line IF, find ENDIF.
+    for (;;) {
+      while (*cip != I_EOL && *cip != I_ENDIF)
+        cip++;
+      if (*cip == I_EOL) {
+        clp += *clp;
+        cip = clp + sizeof(num_t) + 1;
+      } else
+        break;
+    }
+  } else {
+    // Single-line IF, skip to EOL.
     while (*cip != I_EOL) // I_EOLに達するまで繰り返す
       cip++;              // 中間コードポインタを次へ進める
   }
@@ -4868,6 +4969,11 @@ unsigned char* GROUP(basic_core) iexe() {
 
     if (err)
       return NULL;
+  }
+
+  // Last IF is single-line, so it ends here, at I_EOL.
+  if (ifstki > 0 && ifstk[ifstki-1] == false) {
+    dec_ifstk(NULL);
   }
 
   return clp + *clp;

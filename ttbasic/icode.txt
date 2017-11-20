@@ -6,8 +6,10 @@ TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 NEXT	I_NEXT		inext
 IF	I_IF		iif
+THEN	I_THEN		esyntax
 END	I_END		iend
-ELSE	I_ELSE		iskip
+ELSE	I_ELSE		ielse
+ENDIF	I_ENDIF		iendif
 ,	I_COMMA		esyntax
 ;	I_SEMI		esyntax
 :	I_COLON		inil
