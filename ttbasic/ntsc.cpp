@@ -190,8 +190,9 @@ uint8_t SpiRamReadRegister8(uint16_t opcode)
 void ICACHE_RAM_ATTR SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1,
 				       uint16_t data2, uint16_t data3)
 {
-	uint8_t req[6] =
-	    { opcode, data1 >> 8, data1, data2 >> 8, data2, data3 };
+	uint8_t req[6] = { (uint8_t)opcode, (uint8_t)(data1 >> 8),
+	                   (uint8_t)data1, (uint8_t)(data2 >> 8),
+	                   (uint8_t)data2, (uint8_t)data3 };
 	// Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
 	vs23Select();
 	SPI.writeBytes(req, 6);
@@ -200,7 +201,9 @@ void ICACHE_RAM_ATTR SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1,
 
 void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2)
 {
-	uint8_t req[5] = { opcode, data1 >> 8, data1, data2 >> 8, data2 };
+	uint8_t req[5] = { (uint8_t)opcode, (uint8_t)(data1 >> 8),
+	                   (uint8_t)data1, (uint8_t)(data2 >> 8),
+	                   (uint8_t)data2 };
 	VS23_SELECT;
 	SPI.writeBytes(req, 5);
 	VS23_DESELECT;
@@ -209,7 +212,8 @@ void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2)
 void ICACHE_RAM_ATTR SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2,
 					uint16_t data3)
 {
-	uint8_t req[5] = { 0x35, data1 >> 8, data1, data2, data3 };
+	uint8_t req[5] = { 0x35, (uint8_t)(data1 >> 8), (uint8_t)data1,
+	                   (uint8_t)data2, (uint8_t)data3 };
 	// Serial.printf("%02x <= %04x%02x%02xh\n",opcode,data1,data2,data3);
 	vs23Select();
 	SPI.writeBytes(req, 5);
