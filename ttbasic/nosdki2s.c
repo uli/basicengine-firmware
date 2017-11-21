@@ -30,7 +30,7 @@
 volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
-#define I2S_BUFLEN 256
+#define I2S_BUFLEN 128
 //static unsigned int i2sData[2][16];
 static unsigned int i2sData[2][I2S_BUFLEN];
 struct sdio_queue i2sBufDesc[2] = {
@@ -45,13 +45,19 @@ volatile int isrs = 0;
 
 #if I2S_INTERRUPTS
 
+extern void fill_audio_buffer(uint32_t *buf, int samples);
+
 LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
+	struct sdio_queue *finished;
 	SLC_INT_CLRL = 0xffffffff;
 
 	//This is a little wacky.  This function actually gets called twice.
 	//Once for the initial transfer, but by the time we tell it to stop
 	//The other zero transfer's already begun.
 //	SET_PERI_REG_MASK(SLC_RX_LINK, SLC_RXLINK_STOP);
+
+	finished = (struct sdio_queue*) SLC_RX_EOF_DES_ADDR;
+	fill_audio_buffer((uint32_t *)finished->buf_ptr, I2S_BUFLEN);
 
 	isrs++;
 }
