@@ -23,9 +23,9 @@
 #error You cannot operate the I2S bus without the PLL enabled. Select another clock frequency.
 #endif
 
-// I2S frequency dividers. Base clock appears to be 40 MHz.
-#define WS_I2S_BCK 2
-#define WS_I2S_DIV 56
+// I2S frequency dividers. Base clock appears to be 160 MHz.
+#define WS_I2S_BCK 6
+#define WS_I2S_DIV 52
 
 volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
