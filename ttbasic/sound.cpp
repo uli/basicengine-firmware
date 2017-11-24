@@ -1,5 +1,7 @@
 #include "ttconfig.h"
 #include <Arduino.h>
+#include "sound.h"
+#include "SID.h"
 
 // Array with 32-bit values which have one bit more set to '1' in every
 // consecutive array index value
@@ -14,12 +16,16 @@ const uint32_t ICACHE_RODATA_ATTR fakePwm[]={
         0xFFFFFFFB, 0xFFFFFFFF
 };
 
-extern "C" void fill_audio_buffer(uint32_t *buf, int samples)
+SID sid;
+void sound_init(void)
 {
-  static int count = 0;
-  while (samples) {
-    // Convert samples to PWM patterns
-    --samples;
-    ++count;
+  sid.begin();
+}
+
+extern "C" void ICACHE_RAM_ATTR fill_audio_buffer(uint32_t *buf, int samples)
+{
+  for (int i = 0; i < samples; ++i) {
+    uint8_t s = sid.getSample();
+    buf[i] = pgm_read_dword(&fakePwm[s >> 3]);
   }
 }
