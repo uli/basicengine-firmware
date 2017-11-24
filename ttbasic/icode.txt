@@ -166,6 +166,8 @@ INPUT_FL	I_INPUT_F		esyntax
 PWM	I_PWM		esyntax
 TONE	I_TONE		itone
 NOTONE	I_NOTONE	inotone
+MUSIC	I_MUSIC		imusic
+SOUND	I_SOUND		isound
 DATE	I_DATE		idate
 GETDATE	I_GETDATE	igetDate
 GETTIME	I_GETTIME	igetTime
