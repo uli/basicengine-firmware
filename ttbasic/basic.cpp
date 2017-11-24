@@ -132,11 +132,11 @@ public:
   using String::operator=;
 
   int fromBasic(unsigned char *s) {
+    len = *s++;
     if (!reserve(len)) {
       invalidate();
       return 0;
     }
-    len = *s++;
     os_memcpy(buffer, s, len);
     buffer[len] = 0;
     return len + 1;
