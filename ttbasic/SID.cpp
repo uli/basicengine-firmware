@@ -267,7 +267,7 @@ void SID::begin()
 	4.2007 ch
 
 ************************************************************************/
-uint8_t SID::set_register(uint8_t regnum, uint8_t value)
+uint8_t ICACHE_RAM_ATTR SID::set_register(uint8_t regnum, uint8_t value)
 {
 	if(regnum>NUMREGISTERS-1) 
 		return 0;
