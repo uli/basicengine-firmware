@@ -2152,9 +2152,12 @@ void icls() {
   sc->locate(0,0);
 }
 
+#include "sound.h"
+
 void ICACHE_RAM_ATTR pump_events(void)
 {
   vs23.updateBg();
+  sound_pump_events();
 }
 
 // 時間待ち
@@ -5023,6 +5026,8 @@ void SMALL basic() {
 
   // PWM単音出力初期化
   tv_toneInit();
+
+  sound_init();
 
 #if USE_SD_CARD == 1
   // SDカード利用
