@@ -193,11 +193,12 @@ uint8_t tTVscreen::isKeyIn() {
 #endif
 }
 
+void pump_events(void);
 // 文字入力
 uint8_t tTVscreen::get_ch() {
   char c;
   while(1) {
-    vs23.updateBg();
+    pump_events();
 #ifdef DEBUG
     if(serialMode == 0) {
       if (Serial.available()) {

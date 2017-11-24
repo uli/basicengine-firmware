@@ -2152,13 +2152,18 @@ void icls() {
   sc->locate(0,0);
 }
 
+void ICACHE_RAM_ATTR pump_events(void)
+{
+  vs23.updateBg();
+}
+
 // 時間待ち
 void iwait() {
   int32_t tm;
   if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
   uint32_t end = tm + millis();
   while (millis() < end) {
-    vs23.updateBg();
+    pump_events();
   }
 }
 
@@ -4914,7 +4919,7 @@ unsigned char* GROUP(basic_core) iexe() {
 
   while (*cip != I_EOL) { //行末まで繰り返す
 
-    vs23.updateBg();
+    pump_events();
     //強制的な中断の判定
     c = c_kbhit();
     if (c) { // もし未読文字があったら
