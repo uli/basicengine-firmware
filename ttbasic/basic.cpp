@@ -3903,6 +3903,9 @@ void iplot() {
   vs23.setBgTile(bg, x, y, t);
 }
 
+#include "Psx.h"
+Psx psx;
+
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
@@ -5011,13 +5014,13 @@ uint8_t SMALL icom() {
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
  */
-
 void SMALL basic() {
   uint8_t serialMode = DEF_SMODE;
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
   vs23.begin();
+  psx.setupPins(0, 1, 2, 3, 50);
 
   // 環境設定
   loadConfig();
