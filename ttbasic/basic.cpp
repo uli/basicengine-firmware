@@ -3905,6 +3905,12 @@ void iplot() {
 
 #include "Psx.h"
 Psx psx;
+int32_t ipad() {
+  int32_t num;
+  if (checkOpen()) return 0;
+  if (getParam(num, 0, 1, I_CLOSE)) return 0;
+  return psx.read();
+}
 
 //
 // プログラムのロード・実行 LRUN/LOAD
@@ -4313,6 +4319,8 @@ num_t GROUP(basic_core) ivalue() {
   case I_DOWN:  value = 1; break;
   case I_RIGHT: value = 2; break;
   case I_LEFT:  value = 3; break;
+
+  case I_PAD:	value = ipad(); break;
 
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号

@@ -78,6 +78,7 @@ SHIFTIN	I_SHIFTIN	esyntax
 SREADY	I_SREADY	esyntax
 SREAD	I_SREAD		esyntax
 EEPREAD	I_EEPREAD	esyntax
+PAD	I_PAD		esyntax
 PSET	I_PSET		ipset
 LINE	I_LINE		iline
 RECT	I_RECT		irect
