@@ -74,6 +74,10 @@ void VS23S010::begin()
   SPI.setFrequency(38000000);
   m_min_spi_div = SPI1CLK;
   SPI.setFrequency(11000000);
+
+  m_gpio_state = 0xf;
+  SpiRamWriteRegister(0x82, m_gpio_state);
+
   SpiUnlock();
 }
 

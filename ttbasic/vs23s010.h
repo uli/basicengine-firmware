@@ -116,6 +116,32 @@ class VS23S010 {
       VS23_DESELECT;
     }
     
+    void pinMode(uint8_t pin, uint8_t mode) {
+      uint8_t bit = (1 << (pin + 4));
+      if (mode == OUTPUT)
+        m_gpio_state |= bit;
+      else
+        m_gpio_state &= ~bit;
+      SpiRamWriteRegister(0x82, m_gpio_state);
+    }
+    
+    void digitalWrite(uint8_t pin, uint8_t val) {
+      uint8_t bit = (1 << pin);
+      if (val)
+        m_gpio_state |= bit;
+      else
+        m_gpio_state &= ~bit;
+      SpiRamWriteRegister(0x82, m_gpio_state);
+    }
+
+    int digitalRead(uint8_t pin) {
+      uint8_t bits = SpiRamReadRegister(0x86);
+      if (bits & (1 << (pin + 4)))
+        return HIGH;
+      else
+        return LOW;
+    }
+
     bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
 
     inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x, uint8_t tile_size_y) {
@@ -172,11 +198,14 @@ class VS23S010 {
 
     bool allocBacking(int w, int h, int &x, int &y);
     void freeBacking(int x, int y, int w, int h);
+
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
     uint32_t m_cycles_per_frame;
+    
     int m_min_spi_div;	// smallest valid divider, i.e. max. frequency
+    uint8_t m_gpio_state;
 
     const struct vs23_mode_t *m_current_mode;
     uint32_t m_pitch;	// Distance between piclines in bytes
