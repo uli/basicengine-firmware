@@ -61,7 +61,11 @@ byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and ou
 void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte delay)
 {
 	vs23.pinMode(dataPin, INPUT);
-	vs23.digitalWrite(dataPin, HIGH);	// Turn on internal pull-up
+
+	// We don't have an internal pull-up. (In fact, we have an internal
+	// pull-down which we override with a strong external pull-up...)
+	//vs23.digitalWrite(dataPin, HIGH);	// Turn on internal pull-up
+
 	_dataPin = dataPin;
 
 	vs23.pinMode(cmndPin, OUTPUT);
