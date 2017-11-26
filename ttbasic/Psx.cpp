@@ -82,21 +82,59 @@ void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte
 	_delay = delay;
 }
 
+#define MAX_RETRIES 3
+#define CONFIRMATIONS 2
 
-unsigned int Psx::read()
+int Psx::read()
 {
+    byte data1, data2;
+    int data_out;
+    int retries;
+    int last_read = -1;
+
+    // We want more than one consecutive read to yield the same data before
+    // we trust it to be correct.
+    for (int confirmations = 0; confirmations < CONFIRMATIONS; ) {
+      // If we don't get the right magic byte back, we retry a few times
+      // before giving up.
+      for (retries = 0; retries < MAX_RETRIES; ++retries) {
 	vs23.digitalWrite(_attPin, LOW);
 
 	shift(0x01);
-	shift(0x42);
-	shift(0xFF);
+	shift(0x42);	// returns report type
+	byte magic = shift(0xFF);
 
-	_data1 = ~shift(0xFF);
-	_data2 = ~shift(0xFF);
+	data1 = ~shift(0xFF);
+	data2 = ~shift(0xFF);
 
 	vs23.digitalWrite(_attPin, HIGH);
 
-	_dataOut = (_data2 << 8) | _data1;
+	data_out = (data2 << 8) | data1;
 
-	return _dataOut;
+        if (magic == 0x5a) {
+          if (data_out == last_read)
+            confirmations++;
+          last_read = data_out;
+          break;
+        }
+
+        // Not the right magic byte, try again.
+        last_read = -1;
+
+        // wait some time before doing another read
+        // XXX: wild guess
+	delayMicroseconds(_delay*2);
+      }
+
+      if (retries == 3)	{
+        // exhausted all retries, there might be no controller here
+        return -1;
+      }
+
+      // wait some time before doing another read
+      // XXX: wild guess
+      delayMicroseconds(_delay*2);
+    }
+
+    return data_out;
 }

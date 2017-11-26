@@ -58,7 +58,7 @@ class Psx
 															// keys spill over with false-positives. A regular PSX controller
 															// works fine at 50 uSeconds.
 															
-		unsigned int read();								// Returns the status of the button presses in an unsignd int.
+		int read();								// Returns the status of the button presses in an unsignd int.
 															// The value returned corresponds to each key as defined above.
 		
 	private:
@@ -73,10 +73,6 @@ class Psx
 		byte _i;
 		boolean _temp;
 		byte _dataIn;
-		
-		byte _data1;
-		byte _data2;
-		unsigned int _dataOut;
 };
 
 #endif
