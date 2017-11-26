@@ -332,15 +332,10 @@ char tbuf[SIZE_LINE];          // テキスト表示用バッファ
 int32_t tbuf_pos = 0;
 unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
-num_t var[SIZE_VAR];              // 変数領域
-char *var_name[SIZE_VAR];       // assigned variable names
-int prg_var_top = 0;            // top variable assigned by program
-int var_top = 0;                // top variable overall (program and direct mode)
-
-BString svar[SIZE_VAR];
-char *svar_name[SIZE_VAR];
-int prg_svar_top = 0;
-int svar_top = 0;
+NumVariables var;
+VarNames var_names;
+StringVariables svar;
+VarNames svar_names;
 
 num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
@@ -408,7 +403,7 @@ uint8_t* v2realAddr(uint32_t vadr) {
   if ( (vadr >= 0) && (vadr < sc->getScreenByteSize())) {   // VRAM領域
     radr = vadr+sc->getScreen();
   } else if ((vadr >= V_VAR_TOP) && (vadr < V_ARRAY_TOP)) { // 変数領域
-    radr = vadr-V_VAR_TOP+(uint8_t*)var;
+    radr = vadr-V_VAR_TOP+(uint8_t*)&var.var(0);
   } else if ((vadr >= V_ARRAY_TOP) && (vadr < V_PRG_TOP)) { // 配列領域
     radr = vadr - V_ARRAY_TOP+(uint8_t*)arr;
   } else if ((vadr >= V_PRG_TOP) && (vadr < V_MEM_TOP)) {   // プログラム領域
@@ -712,70 +707,6 @@ int16_t lookup(char* str, uint16_t len) {
   return prv_fd_id;
 }
 
-//#define DEBUG_VAR
-
-int find_var(char *name)
-{
-  for (int i=0; i < var_top; ++i) {
-    if (!strcasecmp(name, var_name[i])) {
-#ifdef DEBUG_VAR
-      Serial.printf("found %d\n", i);
-#endif
-      return i;
-    }
-  }
-  return -1;
-}
-
-uint8_t assign_var(char *name, bool is_prg_text)
-{
-#ifdef DEBUG_VAR
-  Serial.printf("assign %s ", name);
-#endif
-  int v = find_var(name);
-  if (v >= 0)
-    return v;
-
-  var_name[var_top++] = strdup(name);
-  if (is_prg_text)
-    ++prg_var_top;
-#ifdef DEBUG_VAR
-  Serial.printf("got %d\n", var_top-1);
-#endif
-  return var_top-1;
-}
-
-int find_svar(char *name)
-{
-  for (int i=0; i < svar_top; ++i) {
-    if (!strcasecmp(name, svar_name[i])) {
-#ifdef DEBUG_VAR
-      Serial.printf("found %d\n", i);
-#endif
-      return i;
-    }
-  }
-  return -1;
-}
-
-uint8_t assign_svar(char *name, bool is_prg_text)
-{
-#ifdef DEBUG_VAR
-  Serial.printf("assign %s ", name);
-#endif
-  int v = find_svar(name);
-  if (v >= 0)
-    return v;
-
-  svar_name[svar_top++] = strdup(name);
-  if (is_prg_text)
-    ++prg_svar_top;
-#ifdef DEBUG_VAR
-  Serial.printf("got %d\n", svar_top-1);
-#endif
-  return svar_top-1;
-}
-
 //
 // テキストを中間コードに変換
 // [戻り値]
@@ -928,7 +859,8 @@ uint8_t SMALL toktoi() {
       p--;
       if (*p == '$') {
 	ibuf[len++] = I_SVAR;
-	ibuf[len++] = assign_svar(vname, is_prg_text);
+	ibuf[len++] = svar_names.assign(vname, is_prg_text);
+	svar.reserve(svar_names.varTop());
 	s += var_len + 1;
 	ptok++;
       } else {
@@ -940,7 +872,8 @@ uint8_t SMALL toktoi() {
 
 	// 中間コードに変換
 	ibuf[len++] = I_VAR; //中間コードを記録
-	ibuf[len++] = assign_var(vname, is_prg_text);
+	ibuf[len++] = var_names.assign(vname, is_prg_text);
+	var.reserve(var_names.varTop());
 	s+=var_len; //次の文字へ進む
       }
     }
@@ -1229,7 +1162,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
     if (*ip == I_VAR) { //もし定数なら
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
-      c_puts(var_name[var_code], devno);
+      c_puts(var_names.name(var_code), devno);
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
@@ -1239,7 +1172,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
     if (*ip == I_SVAR) {
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
-      c_puts(svar_name[var_code], devno);
+      c_puts(svar_names.name(var_code), devno);
       c_putch('$', devno);
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
@@ -1333,7 +1266,7 @@ void SMALL iinput() {
       }
 
       if (prompt) {          // もしまだプロンプトを表示していなければ
-	c_puts(var_name[index]);
+	c_puts(var_names.name(index));
 	c_putch(':');        //「:」を表示
       }
 
@@ -1346,7 +1279,7 @@ void SMALL iinput() {
 	  return;            // 終了
 	}
       }
-      var[index] = value;  // 変数へ代入
+      var.var(index) = value;
       break;               // 打ち切る
 
     case I_ARRAY: // 配列の場合
@@ -1438,12 +1371,12 @@ void GROUP(basic_core) ivar() {
     if (err) //もしエラーが生じたら
       return;  //終了
   }
-  var[index] = value; //変数へ代入
+  var.var(index) = value;
 }
 
 void isvar() {
   BString value;
-  short index = *cip++;
+  uint8_t index = *cip++;
   int len;
   if (*cip != I_EQ) {
     err = ERR_VWOEQ;
@@ -1452,7 +1385,7 @@ void isvar() {
   cip++;
   if (*cip == I_STR) {
     cip++;
-    len = svar[index].fromBasic(cip);
+    len = svar.var(index).fromBasic(cip);
     if (!len)
       err = ERR_OOM;
     else
@@ -1461,7 +1394,7 @@ void isvar() {
     value = istrexp();
     if (err)
       return;
-    svar[index] = value;
+    svar.var(index) = value;
   }
 }
 
@@ -1641,47 +1574,21 @@ void inew(uint8_t mode = 0) {
   //変数と配列の初期化
   if (mode == 0|| mode == 2) {
     // forget variables assigned in direct mode
-    for (i = prg_var_top; i < var_top; ++i) {
-      if (var_name[i]) {
-	free(var_name[i]);
-	var_name[i] = NULL;
-      }
-    }
-    var_top = prg_var_top;
-
-    for (i = prg_svar_top; i < svar_top; ++i) {
-      if (svar_name[i]) {
-	free(svar_name[i]);
-	svar_name[i] = NULL;
-      }
-    }
-    svar_top = prg_svar_top;
-
-    for (i = 0; i < SIZE_VAR; i++) { //変数の数だけ繰り返す
-      svar[i] = "";     // BASIC semantics: uninitialized strings are empty
-      var[i] = 0; //変数を0に初期化
-    }
     for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
       arr[i] = 0;  //配列を0に初期化
+
+    svar_names.deleteDirect();
+    svar.reserve(svar_names.varTop());
+    var_names.deleteDirect();
+    var.reserve(var_names.varTop());
   }
   //実行制御用の初期化
   if (mode !=2) {
     // forget all variables
-    for (i = 0; i < prg_var_top; ++i) {
-      if (var_name[i]) {
-	free(var_name[i]);
-	var_name[i] = NULL;
-      }
-    }
-    prg_var_top = var_top = 0;
-
-    for (i = 0; i < prg_svar_top; ++i) {
-      if (svar_name[i]) {
-	free(svar_name[i]);
-	svar_name[i] = NULL;
-      }
-    }
-    prg_svar_top = svar_top = 0;
+    var_names.deleteAll();
+    var.reserve(0);
+    svar_names.deleteAll();
+    svar.reserve(0);
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
@@ -2453,7 +2360,7 @@ void SMALL istrref(uint8_t devno=0) {
   if (checkOpen()) return;
   if (*cip == I_VAR) {
     cip++;
-    ptr = v2realAddr(var[*cip]);
+    ptr = v2realAddr(var.var(*cip));
     len = *ptr;
     ptr++;
     cip++;
@@ -2666,7 +2573,7 @@ void igetDate() {
   for (uint8_t i=0; i <4; i++) {
     if (*cip == I_VAR) {          // 変数の場合
       cip++; index = *cip;        // 変数インデックスの取得
-      var[index] = v[i];          // 変数に格納
+      var.var(index) = v[i];
       cip++;
     } else if (*cip == I_ARRAY) { // 配列の場合
       cip++;
@@ -2712,7 +2619,7 @@ void igetTime() {
   for (uint8_t i=0; i <3; i++) {
     if (*cip == I_VAR) {          // 変数の場合
       cip++; index = *cip;        // 変数インデックスの取得
-      var[index] = v[i];          // 変数に格納
+      var.var(index) = v[i];
       cip++;
     } else if (*cip == I_ARRAY) { // 配列の場合
       cip++;
@@ -3195,7 +3102,7 @@ int32_t iasc() {
     cip++;  str = cip;   // 文字列先頭の取得
     cip+=len;
   } else if ( *cip == I_VAR) {   // 変数の場合
-    cip++;   str = v2realAddr(var[*cip]);
+    cip++;   str = v2realAddr(var.var(*cip));
     len = *str;
     str++;
     cip++;
@@ -4135,7 +4042,7 @@ num_t GROUP(basic_core) ivalue() {
 
   //変数の値の取得
   case I_VAR: //変数
-    value = var[*cip++]; //変数番号から変数の値を取得して次を指し示す
+    value = var.var(*cip++);
     break;
 
   //括弧の値の取得
@@ -4194,7 +4101,7 @@ num_t GROUP(basic_core) ivalue() {
     if (checkOpen()) break;
     if ( *cip == I_VAR)  {
       cip++;
-      value = *v2realAddr(var[*cip]);
+      value = *v2realAddr(var.var(*cip));
       cip++;
     } else if ( *cip == I_ARRAY) {
       cip++;
@@ -4431,7 +4338,7 @@ BString istrvalue()
       err = ERR_OOM;
     break;
   case I_SVAR:
-    value = svar[*cip++];
+    value = svar.var(*cip++);
     break;
   default:
     cip--;
@@ -4774,12 +4681,12 @@ void inext() {
   }
 
   vstep = (int)(uintptr_t)lstk[lstki - 2]; // 増分を復帰
-  var[index] += vstep;                       // 変数の値を最新の開始値に更新
+  var.var(index) += vstep;
   vto = (int)(uintptr_t)lstk[lstki - 3];   // 終了値を復帰
 
   // もし変数の値が終了値を超えていたら
-  if (((vstep < 0) && (var[index] < vto)) ||
-      ((vstep > 0) && (var[index] > vto))) {
+  if (((vstep < 0) && (var.var(index) < vto)) ||
+      ((vstep > 0) && (var.var(index) > vto))) {
     lstki -= 5;  // FORスタックを1ネスト分戻す
     return;
   }
