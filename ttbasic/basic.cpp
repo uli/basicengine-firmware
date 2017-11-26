@@ -4915,7 +4915,7 @@ void SMALL basic() {
   uint8_t rc;
 
   vs23.begin();
-  psx.setupPins(0, 1, 2, 3, 50);
+  psx.setupPins(0, 1, 2, 3, 3);
 
   // 環境設定
   loadConfig();
