@@ -48,12 +48,8 @@
 #define SIZE_IFSTK 16	 // IF stack
 #define SIZE_MEM  1024   // 自由利用データ領域
 
-#define FLOAT_NUMS
-#ifdef FLOAT_NUMS
-typedef double num_t;
-#else
-typedef int32_t num_t;
-#endif
+//#define DEBUG_VAR
+#include "variable.h"
 
 // SRAMの物理サイズ(バイト)
 // not used #define SRAM_SIZE      20480 // STM32F103C8T6
@@ -126,22 +122,6 @@ typedef struct {
   int16_t STARTPRG;    // 自動起動(-1,なし 0～9:保存プログラム番号)
 } SystemConfig;
 SystemConfig CONFIG;
-
-class BString : public String {
-public:
-  using String::operator=;
-
-  int fromBasic(unsigned char *s) {
-    len = *s++;
-    if (!reserve(len)) {
-      invalidate();
-      return 0;
-    }
-    os_memcpy(buffer, s, len);
-    buffer[len] = 0;
-    return len + 1;
-  }
-};
 
 // プロトタイプ宣言
 uint8_t loadConfig();
