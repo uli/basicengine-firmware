@@ -147,15 +147,6 @@ void error(uint8_t flgCmd);
   RTClock rtc(RTCSEL_LSE);
 #endif
 
-// **** 仮想メモリ定義 ***************
-#define V_VRAM_TOP  0x0000
-#define V_VAR_TOP   0x1900 // V0.84で変更
-#define V_ARRAY_TOP 0x1AA0 // V0.84で変更
-#define V_PRG_TOP   0x1BA0 // V0.84で変更
-#define V_MEM_TOP   0x2BA0 // V0.84で変更
-#define V_FNT_TOP   0x2FA0 // V0.84で変更
-#define V_GRAM_TOP  0x37A0 // V0.84で変更
-
 // 定数
 #define CONST_HIGH   1
 #define CONST_LOW    0
@@ -275,7 +266,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8,
   I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
   I_PC13, I_PC14,I_PC15,
-  I_LSB, I_MSB, I_MEM, I_VRAM, I_MVAR, I_MARRAY, I_EEPREAD, I_MPRG, I_MFNT,I_GRAM,
+  I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
 };
 
@@ -1343,16 +1334,10 @@ void GROUP(basic_core) ivar() {
     return;
   }
   cip++; //中間コードポインタを次へ進める
-  if (*cip == I_STR) {
-    cip++;
-    value = (num_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
-    cip += *cip+1;
-  } else {
-    //値の取得と代入
-    value = iexp(); //式の値を取得
-    if (err) //もしエラーが生じたら
-      return;  //終了
-  }
+  //値の取得と代入
+  value = iexp(); //式の値を取得
+  if (err) //もしエラーが生じたら
+    return;  //終了
   var.var(index) = value;
 }
 
@@ -1402,15 +1387,9 @@ void iarray() {
   // 例: @(n)=1,2,3,4,5 の連続設定処理
   do {
     cip++;
-    if (*cip == I_STR) {
-      cip++;
-      value = (num_t)((uint32_t)cip - (uint32_t)listbuf + V_PRG_TOP);
-      cip += *cip+1;
-    } else {
-      value = iexp(); // 式の値を取得
-      if (err)        // もしエラーが生じたら
-	return;       // 終了
-    }
+    value = iexp(); // 式の値を取得
+    if (err)        // もしエラーが生じたら
+      return;       // 終了
     if (index >= SIZE_ARRY) { // もし添え字が上限を超えたら
       err = ERR_SOR;          // エラー番号をセット
       return;
@@ -2390,9 +2369,8 @@ void ipoke() {
 
   // アドレスの指定
   vadr = iexp(); if(err) return;
-  if (vadr < 0 ) { err = ERR_VALUE; return; }
+  if (vadr <= 0 ) { err = ERR_VALUE; return; }
   if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
-  if(vadr>=V_FNT_TOP && vadr < V_GRAM_TOP) { err = ERR_RANGE; return; }
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
@@ -3432,11 +3410,11 @@ void SMALL ibsave() {
     return;
   }
   cip++;
-  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, I_COMMA) ) return;  // アドレスの取得
+  if ( getParam(vadr,  0, UINT32_MAX, I_COMMA) ) return;  // アドレスの取得
   if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;             // データ長の取得
 
   // アドレスの範囲チェック
-  if ( (uint32_t)vadr+(uint32_t)len > (uint32_t)(V_GRAM_TOP+6048) ) {
+  if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
     err = ERR_RANGE;
     return;
   }
@@ -3486,11 +3464,11 @@ void SMALL ibload() {
     return;
   }
   cip++;
-  if ( getParam(vadr,  0, V_GRAM_TOP+6048-1, I_COMMA) ) return;  // アドレスの取得
+  if ( getParam(vadr,  0, UINT32_MAX, I_COMMA) ) return;  // アドレスの取得
   if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;              // データ長の取得
 
   // アドレスの範囲チェック
-  if ( (uint32_t)vadr+(uint32_t)len > (uint32_t)(V_GRAM_TOP+6048) ) {
+  if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
     err = ERR_RANGE;
     return;
   }
@@ -4136,13 +4114,8 @@ num_t GROUP(basic_core) ivalue() {
   case I_LSB:   value = CONST_LSB;  break;
   case I_MSB:   value = CONST_MSB;  break;
 
-  case I_VRAM:  value = V_VRAM_TOP;  break;
-  case I_MVAR:  value = V_VAR_TOP;   break;
-  case I_MARRAY: value = V_ARRAY_TOP; break;
-  case I_MPRG:  value = V_PRG_TOP;   break;
-  case I_MEM:   value = V_MEM_TOP;   break;
-  case I_MFNT:  value = V_FNT_TOP;   break;
-  case I_GRAM:  value = V_GRAM_TOP;  break;
+  case I_MPRG:  value = (unsigned int)listbuf;   break;
+  case I_MFNT:  value = (unsigned int)sc0.getfontadr();   break;
 
   case I_DIN: // DIN(ピン番号)
     if (checkOpen()) break;

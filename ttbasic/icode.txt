@@ -147,13 +147,8 @@ GW	I_GW		esyntax
 GH	I_GH		esyntax
 LSB	I_LSB		esyntax
 MSB	I_MSB		esyntax
-MEM	I_MEM		esyntax
-VRAM	I_VRAM		esyntax
-VAR	I_MVAR		esyntax
-ARRAY	I_MARRAY	esyntax
 PRG	I_MPRG		esyntax
 FNT	I_MFNT		esyntax
-GRAM	I_GRAM		esyntax
 UP	I_UP		esyntax
 DOWN	I_DOWN		esyntax
 RIGHT	I_RIGHT		esyntax
