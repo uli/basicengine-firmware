@@ -4602,7 +4602,7 @@ void ireturn() {
 }
 
 // FOR
-void ifor() {
+void GROUP(basic_core) ifor() {
   int index, vto, vstep; // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
@@ -4654,7 +4654,7 @@ void ifor() {
 }
 
 // NEXT
-void inext() {
+void GROUP(basic_core) inext() {
   int index, vto, vstep; // FOR文の変数番号、終了値、増分
 
   if (lstki < 5) {    // もしFORスタックが空なら
