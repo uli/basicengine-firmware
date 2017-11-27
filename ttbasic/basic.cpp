@@ -1767,31 +1767,20 @@ void isave() {
       return;
     }
     mode = 1;
-    if (*cip == I_COMMA) {
-      cip++;
-      if ( getParam(ascii, 0, 1, I_NONE) ) return;
-    }
   } //else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
-    if (ascii) {
-      rc = fs.tmpOpen((char *)fname.c_str(),1);
-      if (rc == SD_ERR_INIT) {
-	err = ERR_SD_NOT_READY;
-	return;
-      } else if (rc == SD_ERR_OPEN_FILE) {
-	err =  ERR_FILE_OPEN;
-	return;
-      }
-      ilist(4);
-      fs.tmpClose();
-    } else {
-      // 通常のバイナリー保存
-      if( fs.save((char *)fname.c_str(), listbuf, SIZE_LIST) ) {
-	err = ERR_FILE_WRITE;
-      }
+    rc = fs.tmpOpen((char *)fname.c_str(),1);
+    if (rc == SD_ERR_INIT) {
+      err = ERR_SD_NOT_READY;
+      return;
+    } else if (rc == SD_ERR_OPEN_FILE) {
+      err =  ERR_FILE_OPEN;
+      return;
     }
+    ilist(4);
+    fs.tmpClose();
 #endif
   } else {
 #if 0
@@ -3899,7 +3888,7 @@ uint8_t SMALL ilrun() {
     // SDカードからのロード
     fg = fs.IsText((char *)fname.c_str()); // 形式チェック
     if (fg < 0) {
-      // 形式異常
+      // Abnormal form (形式異常)
       rc = -fg;
       if( rc == SD_ERR_INIT ) {
 	err = ERR_SD_NOT_READY;
@@ -3911,27 +3900,10 @@ uint8_t SMALL ilrun() {
 	err = ERR_BAD_FNAME;
       }
     } else if (fg == 0) {
-      // SDカードからのバイナリ形式ロード
-      ptr = listbuf;
-      sz  = SIZE_LIST;
-      if (newmode != 2) {
-	inew(newmode);
-      } else {
-	// ロード位置を追記開始位置に修正
-
-	for (ptr = listbuf; *ptr; ptr += *ptr) ;  //ポインタをリストの末尾へ移動
-	sz  = listbuf + SIZE_LIST - ptr - 1;
-      }
-      rc = fs.load((char *)fname.c_str(), ptr, sz);
-      if( rc == SD_ERR_INIT ) {
-	err = ERR_SD_NOT_READY;
-      } else if (rc == SD_ERR_OPEN_FILE) {
-	err = ERR_FILE_OPEN;
-      } else if (rc == SD_ERR_READ_FILE) {
-	err = ERR_FILE_READ;
-      }
+      // Binary format load from SD card
+      err = ERR_NOT_SUPPORTED;
     } else if (fg == 1) {
-      // SDカードからのテキスト形式ロード
+      // Text format load from SD card
       if( loadPrgText((char *)fname.c_str(),newmode)) {
 	err = ERR_FILE_READ;
       }
