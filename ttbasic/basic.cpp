@@ -39,7 +39,7 @@
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 128    // 中間コード変換バッファサイズ
-#define SIZE_LIST 4096   // プログラム領域サイズ(4kバイト)
+int size_list;
 #define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
@@ -338,7 +338,7 @@ StringVariables svar;
 VarNames svar_names;
 
 num_t arr[SIZE_ARRY];             // 配列領域
-unsigned char listbuf[SIZE_LIST]; // プログラムリスト領域
+unsigned char *listbuf; // Pointer to program list area
 uint8_t mem[SIZE_MEM];            // 自由利用データ領域
 
 
@@ -892,11 +892,11 @@ uint8_t SMALL toktoi() {
 
 
 // Return free memory size
-int getsize() {
-  unsigned char* lp; //ポインタ
+int list_free() {
+  unsigned char* lp;
 
-  for (lp = listbuf; *lp; lp += *lp) ;  //ポインタをリストの末尾へ移動
-  return listbuf + SIZE_LIST - lp - 1; //残りを計算して持ち帰る
+  for (lp = listbuf; *lp; lp += *lp) ;  // Move the pointer to the end of the list
+  return listbuf + size_list - lp - 1; // Calculate the rest and return it
 }
 
 // Get line numbere by line pointer
@@ -1062,18 +1062,25 @@ uint32_t countLines(int32_t st=0, int32_t ed=INT32_MAX) {
 }
 
 // Insert i-code to the list
-// [listbuf]に[ibuf]を挿入
-//  [ibuf] : [1:データ長][1:I_NUM][2:行番号][中間コード]
+// Insert [ibuf] in [listbuf]
+//  [ibuf]: [1: data length] [1: I_NUM] [2: line number] [intermediate code]
 //
 void inslist() {
   unsigned char *insp;     // 挿入位置ポインタ
   unsigned char *p1, *p2;  // 移動先と移動元ポインタ
   int len;               // 移動の長さ
 
-  // 空きチェク(これだと、空き不足時に行番号だけ入力時の行削除が出来ないかも.. @たま吉)
-  if (getsize() < *ibuf) { // もし空きが不足していたら
-    err = ERR_LBUFOF;      // エラー番号をセット
-    return;                // 処理を打ち切る
+  // Empty check (If this is the case, it may be impossible to delete lines
+  // when only line numbers are entered when there is insufficient space ..)
+  // @Tamakichi)
+  if (list_free() < *ibuf) { // If the vacancy is insufficient
+    listbuf = (unsigned char *)realloc(listbuf, size_list + *ibuf);
+    if (!listbuf) {
+      err = ERR_LBUFOF;
+      size_list = 0;
+      return;
+    }
+    size_list += *ibuf;
   }
 
   insp = getlp(getlineno(ibuf)); // 挿入位置ポインタを取得
@@ -1593,7 +1600,18 @@ void inew(uint8_t mode = 0) {
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
     ifstki = 0;
-    *listbuf = 0; //プログラム保存領域の先頭に末尾の印を置く
+
+    if (listbuf)
+      free(listbuf);
+    // XXX: Should we be more generous here to avoid fragmentation?
+    listbuf = (unsigned char *)malloc(1);
+    if (!listbuf) {
+      err = ERR_OOM;
+      // If this fails, we're in deep shit...
+      return;
+    }
+    *listbuf = 0;
+    size_list = 1;
     clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
   }
 }
@@ -3933,7 +3951,7 @@ uint8_t SMALL ilrun() {
     clp = lp;     // 行ポインタをプログラム保存領域の指定ラベル先頭に設定
   }
   if (!err) {
-    if (islrun || (cip >= listbuf && cip < listbuf+SIZE_LIST)) {
+    if (islrun || (cip >= listbuf && cip < listbuf+size_list)) {
       cip = clp+sizeof(num_t)+1;        // XXX: really? was 3
     }
   }
@@ -3946,7 +3964,7 @@ void SMALL error(uint8_t flgCmd = false) {
   char msg[40];
   if (err) {
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
-    if (cip >= listbuf && cip < listbuf + SIZE_LIST && *clp && !flgCmd) {
+    if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
       strcpy_P(msg, errmsg[err]);
       c_puts(msg);
@@ -4055,7 +4073,7 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;
-    value = getsize(); //プログラム保存領域の空きを取得
+    value = list_free(); //プログラム保存領域の空きを取得
     break;
 
   case I_INKEY: //関数INKEY
@@ -4888,6 +4906,9 @@ void SMALL basic() {
 
   vs23.begin();
   psx.setupPins(0, 1, 2, 3, 3);
+
+  size_list = 0;
+  listbuf = NULL;
 
   // 環境設定
   loadConfig();
