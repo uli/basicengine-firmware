@@ -1433,16 +1433,15 @@ void inew(uint8_t mode = 0);
 // RUN command handler
 void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
-  gstki = 0;         // GOSUBスタックインデクスを0に初期化
-  lstki = 0;         // FORスタックインデクスを0に初期化
-  ifstki = 0;
-
   if (cont) {
     clp = cont_clp;
     cip = cont_cip;
     goto resume;
   }
 
+  gstki = 0;         // GOSUBスタックインデクスを0に初期化
+  lstki = 0;         // FORスタックインデクスを0に初期化
+  ifstki = 0;
   inew(2);
 
   if (start_clp != NULL) {
