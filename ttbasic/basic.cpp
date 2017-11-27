@@ -339,8 +339,6 @@ VarNames svar_names;
 
 num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char *listbuf; // Pointer to program list area
-uint8_t mem[SIZE_MEM];            // 自由利用データ領域
-
 
 // macros for in/decrementing stack pointers with bounds checking
 #define inc_stk(idx, size, errnum, ret) \
@@ -394,35 +392,12 @@ inline void cleartbuf() {
   memset(tbuf,0,SIZE_LINE);
 }
 
-// 仮想アドレスを実アドレスに変換
-//  引数   :  vadr 仮想アドレス
-//  戻り値 :  NULL以外 実アドレス、NULL 範囲外
-//
-uint8_t* v2realAddr(uint32_t vadr) {
-  uint8_t* radr;
-  if ( (vadr >= 0) && (vadr < sc->getScreenByteSize())) {   // VRAM領域
-    radr = vadr+sc->getScreen();
-  } else if ((vadr >= V_VAR_TOP) && (vadr < V_ARRAY_TOP)) { // 変数領域
-    radr = vadr-V_VAR_TOP+(uint8_t*)&var.var(0);
-  } else if ((vadr >= V_ARRAY_TOP) && (vadr < V_PRG_TOP)) { // 配列領域
-    radr = vadr - V_ARRAY_TOP+(uint8_t*)arr;
-  } else if ((vadr >= V_PRG_TOP) && (vadr < V_MEM_TOP)) {   // プログラム領域
-    radr = vadr - V_PRG_TOP + (uint8_t*)listbuf;
-  } else if ((vadr >= V_MEM_TOP) && (vadr < V_FNT_TOP)) {   // ユーザーワーク領域
-    radr = vadr - V_MEM_TOP + mem;
-  } else if ((vadr >= V_FNT_TOP) && (vadr < V_GRAM_TOP)) {  // フォント領域
-    radr = vadr - V_FNT_TOP + (uint8_t *)tv_getFontAdr()+3;
-  } else if ((vadr >= V_GRAM_TOP) && (vadr < V_GRAM_TOP+6048)) { // グラフィク表示用メモリ領域
-    if ( (scmode >= 1) && (scmode <= 3) )
-#if USE_NTSC == 1 && USE_VS23 == 0
-      radr = vadr - V_GRAM_TOP + ((tTVscreen*)sc)->getGRAM();
-#else
-      radr = NULL;
-#endif
-    else
-      radr = NULL;
-  }
-  return radr;
+uint8_t* sanitize_addr(uint32_t vadr) {
+  // XXX: This needs to be a lot smarter if we want it to reliably prevent
+  // crashes from accidental memory accesses.
+  if (vadr < 0x30000000U)
+    return 0;
+  return (uint8_t *)vadr;
 }
 
 // Standard C libraly (about) same functions
@@ -2122,7 +2097,7 @@ int32_t ipeek() {
   if (checkOpen()) return 0;
   if ( getParam(vadr, I_NONE) ) return 0;
   if (checkClose()) return 0;
-  radr = v2realAddr(vadr);
+  radr = sanitize_addr(vadr);
   if (radr)
     value = *radr;
   else
@@ -2350,11 +2325,9 @@ void idmp(uint8_t devno=0) {
   }
 }
 
-// 文字列参照 STR$(変数)
-// STR(文字列参照変数|文字列参照配列変数|文字列定数,[pos,n])
-// ※変数,配列は　[LEN][文字列]への参照とする
-// 引数
-//  devno: 出力先デバイス番号
+// * Variables and arrays shall be references to [LEN] [character string]
+// Argument
+//  devno: Destination device number
 // 戻り値
 //  なし
 //
@@ -2367,14 +2340,22 @@ void SMALL istrref(uint8_t devno=0) {
   if (checkOpen()) return;
   if (*cip == I_VAR) {
     cip++;
-    ptr = v2realAddr(var.var(*cip));
+    ptr = sanitize_addr(var.var(*cip));
+    if (!ptr) {
+      err = ERR_RANGE;
+      return;
+    }
     len = *ptr;
     ptr++;
     cip++;
   } else if (*cip == I_ARRAY) {
     cip++;
     if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return;
-    ptr = v2realAddr(arr[index]);
+    ptr = sanitize_addr(arr[index]);
+    if (!ptr) {
+      err = ERR_RANGE;
+      return;
+    }
     len = *ptr;
     ptr++;
   } else if (*cip == I_STR) {
@@ -2415,7 +2396,7 @@ void ipoke() {
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
-    adr = v2realAddr(vadr);
+    adr = sanitize_addr(vadr);
     if (!adr) {
       err = ERR_RANGE;
       break;
@@ -2442,9 +2423,9 @@ int32_t ii2cw() {
   if (getParam(len, 0, INT32_MAX, I_NONE)) return 0;
   if (checkClose()) return 0;
 
-  ptr  = v2realAddr(top);
-  cptr = v2realAddr(ctop);
-  if (ptr == 0 || cptr == 0 || v2realAddr(top+len) == 0 || v2realAddr(ctop+clen) == 0)
+  ptr  = sanitize_addr(top);
+  cptr = sanitize_addr(ctop);
+  if (ptr == 0 || cptr == 0 || sanitize_addr(top+len) == 0 || sanitize_addr(ctop+clen) == 0)
   { err = ERR_RANGE; return 0; }
 
   // I2Cデータ送信
@@ -2477,9 +2458,9 @@ int32_t ii2cr() {
   if (getParam(rdlen, 0, INT32_MAX, I_NONE)) return 0;
   if (checkClose()) return 0;
 
-  sdptr = v2realAddr(sdtop);
-  rdptr = v2realAddr(rdtop);
-  if (sdptr == 0 || rdptr == 0 || v2realAddr(sdtop+sdlen) == 0 || v2realAddr(rdtop+rdlen) == 0)
+  sdptr = sanitize_addr(sdtop);
+  rdptr = sanitize_addr(rdtop);
+  if (sdptr == 0 || rdptr == 0 || sanitize_addr(sdtop+sdlen) == 0 || sanitize_addr(rdtop+rdlen) == 0)
   { err = ERR_RANGE; return 0; }
 
   // I2Cデータ送受信
@@ -3109,14 +3090,22 @@ int32_t iasc() {
     cip++;  str = cip;   // 文字列先頭の取得
     cip+=len;
   } else if ( *cip == I_VAR) {   // 変数の場合
-    cip++;   str = v2realAddr(var.var(*cip));
+    cip++;   str = sanitize_addr(var.var(*cip));
+    if (!str) {
+      err = ERR_RANGE;
+      return 0;
+    }
     len = *str;
     str++;
     cip++;
   } else if ( *cip == I_ARRAY) { // 配列変数の場合
     cip++;
     if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return 0;
-    str = v2realAddr(arr[index]);
+    str = sanitize_addr(arr[index]);
+    if (!str) {
+      err = ERR_RANGE;
+      return 0;
+    }
     len = *str;
     str++;
   } else {
@@ -3465,7 +3454,7 @@ void SMALL ibsave() {
 
   // データの書込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = v2realAddr(vadr);
+    radr = sanitize_addr(vadr);
     if (radr == NULL) {
       goto DONE;
     }
@@ -3518,7 +3507,7 @@ void SMALL ibload() {
 
   // データの読込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = v2realAddr(vadr);
+    radr = sanitize_addr(vadr);
     if (radr == NULL) {
       goto DONE;
     }
@@ -4091,12 +4080,20 @@ num_t GROUP(basic_core) ivalue() {
     if (checkOpen()) break;
     if ( *cip == I_VAR)  {
       cip++;
-      value = *v2realAddr(var.var(*cip));
+      uint8_t *a = sanitize_addr(var.var(*cip));
+      if (a)
+        value = *a;
+      else
+        err = ERR_RANGE;
       cip++;
     } else if ( *cip == I_ARRAY) {
       cip++;
       if (getParam(value, 0, SIZE_ARRY-1, I_NONE)) return 0;
-      value = *v2realAddr(arr[(int)value]);
+      uint8_t *a = sanitize_addr(arr[(int)value]);
+      if (a)
+        value = *a;
+      else
+        err = ERR_RANGE;
     } else if ( *cip == I_STR) {
       cip++;
       value = *cip;
