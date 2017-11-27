@@ -145,6 +145,11 @@ public:
     m_var = NULL;
   }
 
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      m_var[i] = 0;
+  }
+
   bool reserve(uint8_t count) {
     dbg_var("nv reserve %d\n", count);
     if (count == 0) {
@@ -182,6 +187,11 @@ public:
     m_var = NULL;
   }
   
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      *m_var[i] = "";
+  }
+
   bool reserve(uint8_t count) {
     dbg_var("sv reserve %d\n", count);
     if (count == 0) {

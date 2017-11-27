@@ -1430,6 +1430,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL) {
   lstki = 0;         // FORスタックインデクスを0に初期化
   ifstki = 0;
 
+  inew(2);
+
   if (start_clp != NULL) {
     clp = start_clp;
   } else {
@@ -1531,6 +1533,11 @@ void iexport() {
 // 引数 0:全消去、1:プログラムのみ消去、2:変数領域のみ消去
 void inew(uint8_t mode = 0) {
   int i; //ループカウンタ
+
+  if (mode != 1) {
+    var.reset();
+    svar.reset();
+  }
 
   //変数と配列の初期化
   if (mode == 0|| mode == 2) {
