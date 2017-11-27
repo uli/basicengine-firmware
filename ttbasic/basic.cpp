@@ -358,6 +358,9 @@ unsigned char gstki;              // GOSUB stack index
 unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
+uint8_t *cont_clp = NULL;
+uint8_t *cont_cip = NULL;
+
 bool ifstk[SIZE_IFSTK];		  // IF stack
 unsigned char ifstki;		  // IF stack index
 #define inc_ifstk(ret)	inc_stk(ifstki, SIZE_IFSTK, ERR_IFSTKOF, ret)
@@ -1036,6 +1039,8 @@ void inslist() {
   unsigned char *p1, *p2;  // 移動先と移動元ポインタ
   int len;               // 移動の長さ
 
+  cont_clp = cont_cip = NULL;
+
   // Empty check (If this is the case, it may be impossible to delete lines
   // when only line numbers are entered when there is insufficient space ..)
   // @Tamakichi)
@@ -1423,12 +1428,20 @@ void ilet() {
   }
 }
 
+void inew(uint8_t mode = 0);
+
 // RUN command handler
-void GROUP(basic_core) irun(uint8_t* start_clp = NULL) {
+void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
   ifstki = 0;
+
+  if (cont) {
+    clp = cont_clp;
+    cip = cont_cip;
+    goto resume;
+  }
 
   inew(2);
 
@@ -1440,9 +1453,17 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL) {
 
   while (*clp) {     // 行ポインタが末尾を指すまで繰り返す
     cip = clp + sizeof(num_t) + 1;   // 中間コードポインタを行番号の後ろに設定
+resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
-    if (err)         // もしエラーを生じたら
+    if (err) {         // もしエラーを生じたら
+      if (err == ERR_CTR_C) {
+        cont_cip = cip;
+        cont_clp = clp;
+      } else {
+        cont_cip = cont_clp = NULL;
+      }
       return;
+    }
     clp = lp;         // 行ポインタを次の行の位置へ移動
   }
 }
@@ -1529,9 +1550,8 @@ void iexport() {
 #endif
 }
 
-// プログラム消去
-// 引数 0:全消去、1:プログラムのみ消去、2:変数領域のみ消去
-void inew(uint8_t mode = 0) {
+// Argument 0: all erase, 1: erase only program, 2: erase variable area only
+void inew(uint8_t mode) {
   int i; //ループカウンタ
 
   if (mode != 1) {
@@ -1552,6 +1572,7 @@ void inew(uint8_t mode = 0) {
   }
   //実行制御用の初期化
   if (mode !=2) {
+    cont_cip = cont_clp = NULL;
     // forget all variables
     var_names.deleteAll();
     var.reserve(0);
@@ -1813,6 +1834,9 @@ void ierase() {
 uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
   int16_t rc;
   int32_t len;
+  
+  cont_clp = cont_cip = NULL;
+
 #if USE_SD_CARD == 1
   rc = fs.tmpOpen(fname,0);
   if (rc == SD_ERR_INIT) {
@@ -1872,15 +1896,17 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
   return 0;
 }
 
-// 指定行の削除
-// DELETE 行番号
-// DELETE 開始行番号,終了行番号
+// Delete specified line
+// DELETE line number
+// DELETE start line number, end line number
 void SMALL idelete() {
   int32_t sNo;
   int32_t eNo;
   uint8_t  *lp;      // 削除位置ポインタ
   uint8_t *p1, *p2;  // 移動先と移動元ポインタ
   int32_t len;       // 移動の長さ
+
+  cont_clp = cont_cip = NULL;
 
   if ( getParam(sNo, I_NONE) ) return;
   if (*cip == I_COMMA) {
@@ -4853,7 +4879,20 @@ uint8_t SMALL icom() {
       sc->show_curs(0); irun(clp);  sc->show_curs(1);
   }
     break;
-  case I_RUN:   sc->show_curs(0); irun();  sc->show_curs(1);   break; // RUN命令
+  case I_RUN:
+    sc->show_curs(0);
+    irun();
+    sc->show_curs(1);
+    break;
+  case I_CONT:
+    if (!cont_cip || !cont_clp) {
+      err = ERR_CONT;
+    } else {
+      sc->show_curs(0);
+      irun(NULL, true);
+      sc->show_curs(1);
+    }
+    break;
   case I_RENUM: // I_RENUMの場合
     //if (*cip == I_EOL || *(cip + 3) == I_EOL || *(cip + 7) == I_EOL)
     irenum();

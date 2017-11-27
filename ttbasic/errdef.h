@@ -42,3 +42,4 @@ ESTR(ERR_BAD_FNAME, "Bad file name") //  追加
 ESTR(ERR_NOT_SUPPORTED, "Not supported") //  追加
 ESTR(ERR_SCREEN_FULL, "Out of video memory")
 ESTR(ERR_OOM, "Out of memory")
+ESTR(ERR_CONT, "Can't continue")

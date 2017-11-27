@@ -199,6 +199,7 @@ MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
+CONT	I_CONT		ecom
 DELETE	I_DELETE	ecom
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
