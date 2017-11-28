@@ -1,6 +1,8 @@
 #ifndef _ERROR_H
 #define _ERROR_H
 
+extern uint8_t err;
+
 #define ESTR(n,s) n,
 
 // エラーコード

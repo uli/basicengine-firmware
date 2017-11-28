@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <stdlib.h>
+#include "error.h"
 
 #define FLOAT_NUMS
 #ifdef FLOAT_NUMS
@@ -178,6 +179,91 @@ public:
 private:
   int m_size;
   num_t *m_var;
+};
+
+template <typename T> class NumArray {
+public:
+  NumArray() {
+    m_dims = 0;
+    m_sizes = NULL;
+    m_var = NULL;
+    m_total = 0;
+  }
+  
+  ~NumArray() {
+    if (m_sizes)
+      free(m_sizes);
+    if (m_var)
+      free(m_var);
+  }
+
+  void reset() {
+    m_dims = 0;
+    m_total = 0;
+    if (m_sizes) {
+      free(m_sizes);
+      m_sizes = NULL;
+    }
+    if (m_var) {
+      free(m_var);
+      m_var = NULL;
+    }
+  }  
+
+  bool reserve(int dims, int *sizes) {
+    dbg_var("na reserve dims %d\n", dims);
+    m_dims = dims;
+    m_sizes = (int *)malloc(dims * sizeof(int));
+    if (!m_sizes) {
+      m_dims = 0;
+      return true;
+    }
+    memcpy(m_sizes, sizes, dims * sizeof(int));
+    m_total = 1;
+    for (int i = 0; i < dims; ++i) {
+      m_total *= sizes[i];
+    }
+    dbg_var("na total %d\n", m_total);
+    m_var = (T *)malloc(m_total * sizeof(T));
+    if (!m_var) {
+      free(m_sizes);
+      m_dims = 0;
+      m_sizes = NULL;
+      m_var = NULL;
+      return true;
+    }
+    for (int i = 0; i < m_total; ++i) {
+      m_var[i] = 0;
+    }
+    return false;
+  }
+
+  inline T& var(int *idxs) {
+    if (!m_sizes) {
+      err = ERR_UNDEFARR;
+      // XXX: Is it possible to return an invalid reference without crashing?
+      return bull;
+    }
+    int mul = 1;
+    int idx = 0;
+    for (int i = 0; i < m_dims; ++i) {
+      if (idxs[i] >= m_sizes[i]) {
+        err = ERR_SOR;
+        // XXX: Likewise.
+        return bull;
+      }
+      idx += idxs[i] * mul;
+      mul *= m_sizes[i];
+    }
+    return m_var[idx];
+  }
+
+private:
+  int m_dims;
+  int m_total;
+  int *m_sizes;
+  T *m_var;
+  T bull;
 };
 
 class StringVariables {
