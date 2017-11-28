@@ -266,6 +266,59 @@ private:
   T bull;
 };
 
+template <typename T> class NumArrayVariables {
+public:
+  NumArrayVariables() {
+    m_size = 0;
+    m_var = NULL;
+  }
+  
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      m_var[i]->reset();
+  }
+  
+  bool reserve(uint8_t count) {
+    dbg_var("na reserve %d\n", count);
+    if (count == 0) {
+      for (int i = 0; i < m_size; ++i) {
+        delete m_var[i];
+      }
+      free(m_var);
+      m_var = NULL;
+      m_size = 0;
+      return false;
+    }
+    
+    if (count < m_size) {
+      for (int i = count; i < m_size; ++i) {
+        delete m_var[i];
+      }
+    }
+    
+    m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> **));
+    if (!m_var)
+      return true;
+    for (int i = m_size; i < count; ++i) {
+      m_var[i] = new NumArray<T>();
+    }
+    m_size = count;
+    return false;
+  }
+  
+  inline int size() {
+    return m_size;
+  }
+  
+  inline NumArray<T>& var(uint8_t index) {
+    return *m_var[index];
+  }
+
+private:
+  int m_size;
+  NumArray<T> **m_var;
+};
+
 class StringVariables {
 public:
   StringVariables() {
