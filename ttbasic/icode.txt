@@ -197,6 +197,7 @@ FRAME	I_FRAME		esyntax
 ON	I_ON		esyntax
 MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
+DIM	I_DIM		idim
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom
@@ -206,6 +207,7 @@ _none	I_NUM		esyntax
 _none	I_STR		esyntax
 _none	I_HEXNUM	esyntax
 _none	I_VAR		ivar
+_none	I_VARARR	ivararr
 _none	I_SVAR		isvar
 _none	I_EOL		esyntax
 _none	I_NONE		esyntax

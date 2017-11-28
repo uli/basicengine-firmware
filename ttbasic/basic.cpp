@@ -328,6 +328,10 @@ VarNames var_names;
 StringVariables svar;
 VarNames svar_names;
 
+#define MAX_ARRAY_DIMS 4
+NumArrayVariables<num_t> num_arr;
+VarNames num_arr_names;
+
 num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char *listbuf; // Pointer to program list area
 
@@ -836,6 +840,16 @@ uint8_t SMALL toktoi() {
 	  goto oom;
 	s += var_len + 1;
 	ptok++;
+      } else if (*p == '(') {
+        ibuf[len++] = I_VARARR;
+        int idx = num_arr_names.assign(vname, is_prg_text);
+        if (idx < 0)
+          goto oom;
+        ibuf[len++] = idx;
+        if (num_arr.reserve(num_arr_names.varTop()))
+          goto oom;
+        s += var_len + 1;
+        ptok++;
       } else {
 	//もし変数が3個並んだら
 	if (len >= 4 && ibuf[len - 2] == I_VAR && ibuf[len - 4] == I_VAR) {
@@ -981,6 +995,7 @@ uint8_t* getELSEptr(uint8_t* p) {
       lp+=5;        // 整数2バイト+中間コード1バイト分移動
       break;
     case I_VAR:     // 変数
+    case I_VARARR:
       lp+=2;        // 変数名
       break;
     case I_EOL:
@@ -1151,10 +1166,14 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
-    }
-    else
-
-    if (*ip == I_SVAR) {
+    } else if (*ip == I_VARARR) {
+      ip++;
+      var_code = *ip++;
+      c_puts(num_arr_names.name(var_code), devno);
+      c_putch('(', devno);
+      if (!nospaceb(*ip)) //もし例外にあたらなければ
+	c_putch(' ',devno);  //空白を表示
+    } else if (*ip == I_SVAR) {
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(svar_names.name(var_code), devno);
@@ -1267,6 +1286,8 @@ void SMALL iinput() {
       var.var(index) = value;
       break;               // 打ち切る
 
+    // XXX: case I_VARARR missing!
+
     case I_ARRAY: // 配列の場合
       index = getparam();       // 配列の添え字を取得
       if (err)                  // もしエラーが生じたら
@@ -1353,6 +1374,74 @@ void GROUP(basic_core) ivar() {
   var.var(index) = value;
 }
 
+int get_array_dims(int *idxs) {
+  int dims = 0;
+  while (dims < MAX_ARRAY_DIMS) {
+    if (getParam(idxs[dims], 0, 255, I_NONE))
+      return -1;
+    dims++;
+    if (*cip == I_CLOSE)
+      break;
+    if (*cip != I_COMMA) {
+      err = ERR_SYNTAX;
+      return -1;
+    }
+    cip++;
+  }
+  cip++;
+  return dims;
+}
+
+void idim() {
+  int dims = 0;
+  int idxs[MAX_ARRAY_DIMS];
+  uint8_t index;
+
+  if (*cip++ != I_VARARR) {
+    err = ERR_SYNTAX;
+    return;
+  }
+
+  index = *cip++;
+
+  dims = get_array_dims(idxs);
+  if (dims < 0)
+    return;
+
+  if (num_arr.var(index).reserve(dims, idxs))
+    err = ERR_OOM;
+
+  return;
+}
+
+// Numeric array variable assignment handler
+void GROUP(basic_core) ivararr() {
+  num_t value;
+  int idxs[MAX_ARRAY_DIMS];
+  int dims = 0;
+  uint8_t index;
+  
+  index = *cip++; //変数番号を取得して次へ進む
+
+  dims = get_array_dims(idxs);
+  if (dims < 0)
+    return;
+
+  if (*cip != I_EQ) { //もし「=」でなければ
+    err = ERR_VWOEQ; //エラー番号をセット
+    return;
+  }
+  cip++; //中間コードポインタを次へ進める
+  //値の取得と代入
+  value = iexp(); //式の値を取得
+  if (err) //もしエラーが生じたら
+    return;  //終了
+  num_t &n = num_arr.var(index).var(idxs);
+  if (err)
+    return;
+  n = value;
+}
+
 void isvar() {
   BString value;
   uint8_t index = *cip++;
@@ -1418,6 +1507,8 @@ void ilet() {
     cip++;     // 中間コードポインタを次へ進める
     ivar();    // 変数への代入を実行
     break;
+
+  // XXX: case I_VARARR missing!
 
   case I_SVAR:
     cip++;
@@ -1563,6 +1654,7 @@ void inew(uint8_t mode) {
   if (mode != 1) {
     var.reset();
     svar.reset();
+    num_arr.reset();
   }
 
   //変数と配列の初期化
@@ -1571,10 +1663,14 @@ void inew(uint8_t mode) {
     for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
       arr[i] = 0;  //配列を0に初期化
 
+    // XXX: These reserve() calls always downsize (or same-size) the
+    // variable pools. Can they fail doing so?
     svar_names.deleteDirect();
     svar.reserve(svar_names.varTop());
     var_names.deleteDirect();
     var.reserve(var_names.varTop());
+    num_arr_names.deleteDirect();
+    num_arr.reserve(num_arr_names.varTop());
   }
   //実行制御用の初期化
   if (mode !=2) {
@@ -1584,6 +1680,8 @@ void inew(uint8_t mode) {
     var.reserve(0);
     svar_names.deleteAll();
     svar.reserve(0);
+    num_arr_names.deleteAll();
+    num_arr.reserve(0);
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
@@ -1681,6 +1779,7 @@ void SMALL irenum() {
 	i+=5;      // 整数2バイト+中間コード1バイト分移動
 	break;
       case I_VAR:  // 変数
+      case I_VARARR:
 	i+=2;      // 変数名
 	break;
       default:     // その他
@@ -3115,6 +3214,7 @@ int32_t iasc() {
     len = *str;
     str++;
     cip++;
+  // XXX: *cip == I_VARARR missing!
   } else if ( *cip == I_ARRAY) { // 配列変数の場合
     cip++;
     if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return 0;
@@ -4003,6 +4103,8 @@ void SMALL error(uint8_t flgCmd = false) {
 num_t GROUP(basic_core) ivalue() {
   num_t value; // 値
   uint8_t i;   // 文字数
+  int dims;
+  int idxs[MAX_ARRAY_DIMS];
 
   switch (*cip++) { //中間コードで分岐
 
@@ -4039,6 +4141,13 @@ num_t GROUP(basic_core) ivalue() {
   //変数の値の取得
   case I_VAR: //変数
     value = var.var(*cip++);
+    break;
+    
+  case I_VARARR:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    // XXX: check if dims matches array
+    value = num_arr.var(i).var(idxs);
     break;
 
   //括弧の値の取得
@@ -4612,6 +4721,7 @@ void GROUP(basic_core) ifor() {
   int index, vto, vstep; // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
+  // XXX: support for I_VARARR missing!
   if (*cip++ != I_VAR) { // もし変数がなかったら
     err = ERR_FORWOV;    // エラー番号をセット
     return;
@@ -4670,6 +4780,7 @@ void GROUP(basic_core) inext() {
 
   // 変数名を復帰
   index = (int)(uintptr_t)lstk[lstki - 1]; // 変数名を復帰
+  // XXX: support for I_VARARR missing!
   if (*cip++ != I_VAR) {                     // もしNEXTの後ろに変数がなかったら
     err = ERR_NEXTWOV;                       // エラー番号をセット
     return;
