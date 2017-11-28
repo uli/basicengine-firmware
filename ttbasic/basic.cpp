@@ -845,11 +845,7 @@ uint8_t SMALL toktoi() {
 	var.reserve(var_names.varTop());
 	s+=var_len; //次の文字へ進む
       }
-    }
-    else
-
-    //どれにも当てはまらなかった場合
-    {
+    } else { //どれにも当てはまらなかった場合
       err = ERR_SYNTAX; //エラー番号をセット
       return 0; //0を持ち帰る
     }
