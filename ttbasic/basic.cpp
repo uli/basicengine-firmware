@@ -828,8 +828,12 @@ uint8_t SMALL toktoi() {
       p--;
       if (*p == '$') {
 	ibuf[len++] = I_SVAR;
-	ibuf[len++] = svar_names.assign(vname, is_prg_text);
-	svar.reserve(svar_names.varTop());
+	int idx = svar_names.assign(vname, is_prg_text);
+	if (idx < 0)
+	  goto oom;
+	ibuf[len++] = idx;
+	if (svar.reserve(svar_names.varTop()))
+	  goto oom;
 	s += var_len + 1;
 	ptok++;
       } else {
@@ -841,8 +845,12 @@ uint8_t SMALL toktoi() {
 
 	// 中間コードに変換
 	ibuf[len++] = I_VAR; //中間コードを記録
-	ibuf[len++] = var_names.assign(vname, is_prg_text);
-	var.reserve(var_names.varTop());
+	int idx = var_names.assign(vname, is_prg_text);
+	if (idx < 0)
+	  goto oom;
+	ibuf[len++] = idx;
+	if (var.reserve(var_names.varTop()))
+	  goto oom;
 	s+=var_len; //次の文字へ進む
       }
     } else { //どれにも当てはまらなかった場合
@@ -853,6 +861,9 @@ uint8_t SMALL toktoi() {
 
   ibuf[len++] = I_EOL; //文字列1行分の終端を記録
   return len; //中間コードの長さを持ち帰る
+oom:
+  err = ERR_OOM;
+  return 0;
 }
 
 

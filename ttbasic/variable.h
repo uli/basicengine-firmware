@@ -86,7 +86,7 @@ public:
     return -1;
   }
 
-  uint8_t assign(char *name, bool is_prg_text)
+  int assign(char *name, bool is_prg_text)
   {
     dbg_var("vnames assign %s text %d\n", name, is_prg_text);
 #ifdef DEBUG_VAR
@@ -97,7 +97,7 @@ public:
       return v;
 
     if (reserve(m_var_top+1))
-      return 0xff;
+      return -1;
 
     m_var_name[m_var_top++] = strdup(name);
     if (is_prg_text)
