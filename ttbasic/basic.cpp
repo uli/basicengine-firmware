@@ -329,6 +329,9 @@ VarNames svar_names;
 NumArrayVariables<num_t> num_arr;
 VarNames num_arr_names;
 
+VarNames proc_names;
+Procedures proc;
+
 num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char *listbuf; // Pointer to program list area
 
@@ -681,6 +684,19 @@ int16_t lookup(char* str, uint16_t len) {
   return prv_fd_id;
 }
 
+uint8_t parse_identifier(char *ptok, char *vname) {
+  uint8_t var_len = 0;
+  uint8_t v;
+  char *p = ptok;
+  do {
+    v = vname[var_len++] = *p++;
+  } while (isAlphaNumeric(v) && var_len < MAX_VAR_NAME-1);
+  vname[--var_len] = 0;     // terminate C string
+  return var_len;
+}
+
+int getlineno(unsigned char *lp);
+
 //
 // テキストを中間コードに変換
 // [戻り値]
@@ -768,6 +784,26 @@ uint8_t SMALL toktoi() {
       break;                             // 文字列の処理を打ち切る（終端の処理へ進む）
     }
 
+    if (key == I_PROC) {
+      if (!is_prg_text) {
+        err = ERR_COM;
+        return 0;
+      }
+      if (len >= SIZE_IBUF - 1) { //もし中間コードが長すぎたら
+	err = ERR_IBUFOF;
+	return 0;
+      }
+
+      while (c_isspace(*s)) s++;
+      s += parse_identifier(s, vname);
+
+      int idx = proc_names.assign(vname, true);
+      ibuf[len++] = idx;
+      proc.reserve(proc_names.varTop());
+      
+      proc.proc(idx) = getlineno(ibuf);
+    }
+    
     if (key >= 0)                           // もしすでにキーワードで変換に成功していたら以降はスキップ
       continue;
 
@@ -1685,6 +1721,8 @@ void inew(uint8_t mode) {
     svar.reserve(0);
     num_arr_names.deleteAll();
     num_arr.reserve(0);
+    proc_names.deleteAll();
+    proc.reserve(0);
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
