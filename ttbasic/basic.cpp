@@ -265,6 +265,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
+  I_RET, I_ARG, I_ARGSTR,
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
