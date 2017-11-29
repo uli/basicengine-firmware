@@ -43,7 +43,7 @@ int size_list;
 #define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
-#define SIZE_GSTK 20     // GOSUB stack size(2/nest) :10ネストまでOK
+#define SIZE_GSTK 30     // GOSUB stack size(2/nest) :10ネストまでOK
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_IFSTK 16	 // IF stack
 
