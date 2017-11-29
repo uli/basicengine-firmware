@@ -53,6 +53,8 @@ LOCATE	I_LOCATE	ilocate
 REDRAW	I_REFLESH	irefresh
 CSCROLL	I_CSCROLL	icscroll
 RET	I_RET		esyntax
+ARG$	I_ARGSTR	esyntax
+ARG	I_ARG		esyntax
 CHR$	I_CHR		esyntax
 BIN$	I_BIN		esyntax
 HEX$	I_HEX		esyntax
@@ -179,6 +181,8 @@ NEW	I_NEW		inew_
 REM	I_REM		iskip
 LET	I_LET		ilet
 CLV	I_CLV		iclv
+PROC	I_PROC		iproc
+CALL	I_CALL		icall
 LRUN	I_LRUN		ilrun_
 FILES	I_FILES		ifiles
 EXPORT	I_EXPORT	iexport
