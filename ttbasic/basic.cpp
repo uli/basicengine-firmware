@@ -4737,12 +4737,13 @@ void igosub() {
   }
 
   //ポインタを退避
-  if (gstki > SIZE_GSTK - 2) {              // もしGOSUBスタックがいっぱいなら
+  if (gstki > SIZE_GSTK - 3) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
     return;
   }
   gstk[gstki++] = clp;                      // 行ポインタを退避
   gstk[gstki++] = cip;                      // 中間コードポインタを退避
+  gstk[gstki++] = 0;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
   cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.                            // 中間コードポインタを先頭の中間コードに更新
@@ -4750,10 +4751,14 @@ void igosub() {
 
 // RETURN
 void ireturn() {
-  if (gstki < 2) {    // もしGOSUBスタックが空なら
+  if (gstki < 3) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
   }
+
+  uint32_t a = (uint32_t)gstk[--gstki];
+  astk_num_i -= a & 0xffff;
+  astk_str_i -= a >> 16;
   cip = gstk[--gstki]; //行ポインタを復帰
   clp = gstk[--gstki]; //中間コードポインタを復帰
   return;
