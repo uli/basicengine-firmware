@@ -2289,6 +2289,36 @@ num_t iret() {
   return retval[r];
 }
 
+num_t iarg() {
+  int32_t a;
+  if (astk_num_i == 0) {
+    err = ERR_UNDEFARG;
+    return 0;
+  }
+  uint16_t argc = (uint32_t)(gstk[gstki-1]) & 0xffff;
+
+  if (checkOpen()) return 0;
+  if ( getParam(a, 0, argc-1, I_NONE) ) return 0;
+  if (checkClose()) return 0;
+
+  return astk_num[astk_num_i-argc+a];
+}
+
+BString *iargstr() {
+  int32_t a;
+  if (astk_str_i == 0) {
+    err = ERR_UNDEFARG;
+    return NULL;
+  }
+  uint16_t argc = (uint32_t)(gstk[gstki-1]) >> 16;
+
+  if (checkOpen()) return NULL;
+  if ( getParam(a, 0, argc-1, I_NONE) ) return NULL;
+  if (checkClose()) return NULL;
+
+  return &astk_str[astk_str_i-argc+a];
+}
+
 // スクリーン座標の文字コードの取得 'VPEEK(X,Y)'
 int32_t ivpeek() {
   int32_t value; // 値
@@ -3307,6 +3337,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     switch (*cip) { //中間コードで分岐
     case I_STR:     //文字列
     case I_SVAR:
+    case I_ARGSTR:
       str = istrexp();
       c_puts(str.c_str(), devno);
       break;
@@ -4312,6 +4343,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_SHIFTIN: value = ishiftIn(); break; // SHIFTIN()関数
 
   case I_RET:   value = iret(); break;
+  case I_ARG:	value = iarg(); break;
 
   // 定数
   case I_HIGH:  value = CONST_HIGH; break;
@@ -4493,6 +4525,7 @@ num_t GROUP(basic_core) iplus() {
 BString istrvalue()
 {
   BString value;
+  BString *bp;
   int len;
 
   switch (*cip++) {
@@ -4504,6 +4537,11 @@ BString istrvalue()
     break;
   case I_SVAR:
     value = svar.var(*cip++);
+    break;
+  case I_ARGSTR:
+    bp = iargstr();
+    if (!err)
+      value = *bp;
     break;
   default:
     cip--;
