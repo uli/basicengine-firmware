@@ -73,7 +73,7 @@ public:
     m_var_top = m_prg_var_top;
   }
 
-  int find(char *name)
+  int find(const char *name)
   {
     dbg_var("vnames find %s\n", name);
     for (int i=0; i < m_var_top; ++i) {
@@ -87,7 +87,7 @@ public:
     return -1;
   }
 
-  int assign(char *name, bool is_prg_text)
+  int assign(const char *name, bool is_prg_text)
   {
     dbg_var("vnames assign %s text %d\n", name, is_prg_text);
 #ifdef DEBUG_VAR
@@ -103,9 +103,7 @@ public:
     m_var_name[m_var_top++] = strdup(name);
     if (is_prg_text)
       ++m_prg_var_top;
-#ifdef DEBUG_VAR
-    Serial.printf("got %d\n", m_var_top-1);
-#endif
+    dbg_var("got %d\n", m_var_top-1);
     return m_var_top-1;
   }
 
@@ -168,7 +166,7 @@ public:
     return false;
   }
 
-  int size() {
+  inline int size() {
     return m_size;
   }
   
