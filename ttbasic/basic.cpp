@@ -2218,7 +2218,7 @@ int32_t ipeek() {
   return value;
 }
 
-int32_t iret() {
+num_t iret() {
   int32_t r;
 
   if (checkOpen()) return 0;
