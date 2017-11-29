@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <stdlib.h>
 #include "error.h"
+#include "kwenum.h"
 
 #define FLOAT_NUMS
 #ifdef FLOAT_NUMS
@@ -363,5 +364,46 @@ public:
 private:
   int m_size;
   BString **m_var;
+};
+
+class Procedures {
+public:
+  Procedures() {
+    m_size = 0;
+    m_proc = NULL;
+  }
+
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      m_proc[i] = -1;
+  }
+
+  bool reserve(uint8_t count) {
+    if (count == 0) {
+      free(m_proc);
+      m_proc = NULL;
+      m_size = 0;
+      return false;
+    }
+    m_proc = (num_t *)realloc(m_proc, count * sizeof(num_t));
+    if (!m_proc)
+      return true;
+    for (int i = m_size; i < count; ++i)
+      m_proc[i] = -1;
+    m_size = count;
+    return false;
+  }
+
+  inline int size() {
+    return m_size;
+  }
+  
+  inline num_t& proc(uint8_t index) {
+    return m_proc[index];
+  }
+  
+private:
+  int m_size;
+  num_t *m_proc;
 };
 
