@@ -804,6 +804,14 @@ uint8_t SMALL toktoi() {
       proc.proc(idx) = getlineno(ibuf);
     }
     
+    if (key == I_CALL) {
+      while (c_isspace(*s)) s++;
+      s += parse_identifier(s, vname);
+      int idx = proc_names.assign(vname, is_prg_text);
+      proc.reserve(proc_names.varTop());
+      ibuf[len++] = idx;
+    }
+    
     if (key >= 0)                           // もしすでにキーワードで変換に成功していたら以降はスキップ
       continue;
 
@@ -4747,6 +4755,69 @@ void igosub() {
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
   cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.                            // 中間コードポインタを先頭の中間コードに更新
+}
+
+void icall() {
+  num_t n;
+  uint8_t *lp;
+  uint8_t proc_idx = *cip++;
+  num_t lineno = proc.proc(proc_idx);
+
+  if (lineno < 0) {
+    err = ERR_UNDEFPROC;
+    return;
+  }
+  lp = getlp(lineno);
+  
+  if (gstki > SIZE_GSTK - 3) {              // もしGOSUBスタックがいっぱいなら
+    err = ERR_GSTKOF;                       // エラー番号をセット
+    return;
+  }
+
+  if (checkOpen())
+    return;
+
+  int num_args = 0;
+  int str_args = 0;
+  if (*cip != I_CLOSE) for(;;) {
+    n = iexp();
+    if (!err) {
+      if (astk_num_i >= SIZE_ASTK)
+        goto overflow;
+      astk_num[astk_num_i++] = n;
+      ++num_args;
+    } else {
+      err = 0;
+      BString b = istrexp();
+      if (err)
+        return;
+      if (astk_str_i >= SIZE_ASTK)
+        goto overflow;
+      astk_str[astk_str_i++] = b;
+      ++str_args;
+    }
+    if (*cip != I_COMMA)
+      break;
+    ++cip;
+  }
+
+  if (checkClose())
+    return;
+
+  gstk[gstki++] = clp;                      // 行ポインタを退避
+  gstk[gstki++] = cip;                      // 中間コードポインタを退避
+  gstk[gstki++] = (unsigned char *)(num_args | (str_args << 16));
+
+  clp = lp;
+  cip = clp + sizeof(num_t) + 1;
+  return;
+overflow:
+  err = ERR_ASTKOF;
+  return;
+}
+
+void iproc() {
+  ++cip;
 }
 
 // RETURN
