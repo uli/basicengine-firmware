@@ -46,13 +46,9 @@ int size_list;
 #define SIZE_GSTK 20     // GOSUB stack size(2/nest) :10ネストまでOK
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_IFSTK 16	 // IF stack
-#define SIZE_MEM  1024   // 自由利用データ領域
 
 //#define DEBUG_VAR
 #include "variable.h"
-
-// SRAMの物理サイズ(バイト)
-// not used #define SRAM_SIZE      20480 // STM32F103C8T6
 
 // *** フォント参照 ***************
 const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
