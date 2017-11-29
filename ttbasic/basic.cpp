@@ -1176,6 +1176,12 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
 	  c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
 	return;
       }
+      
+      if (*ip == I_PROC || *ip == I_CALL) {
+        ip++;
+        c_puts(proc_names.name(*ip), devno);
+      }
+
       ip++; //ポインタを次の中間コードへ進める
     }
     else
