@@ -46,6 +46,7 @@ int size_list;
 #define SIZE_GSTK 30     // GOSUB stack size(2/nest) :10ネストまでOK
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_IFSTK 16	 // IF stack
+#define SIZE_ASTK 16	// argument stack
 
 //#define DEBUG_VAR
 #include "variable.h"
@@ -355,6 +356,10 @@ unsigned char* clp;               // Pointer current line
 unsigned char* cip;               // Pointer current Intermediate code
 unsigned char* gstk[SIZE_GSTK];   // GOSUB stack
 unsigned char gstki;              // GOSUB stack index
+num_t astk_num[SIZE_ASTK];
+unsigned char astk_num_i;
+BString astk_str[SIZE_ASTK];
+unsigned char astk_str_i;
 unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
@@ -1536,6 +1541,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
   ifstki = 0;
+  astk_num_i = 0;
+  astk_str_i = 0;
   inew(2);
 
   if (start_clp != NULL) {
@@ -1682,6 +1689,8 @@ void inew(uint8_t mode) {
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
     ifstki = 0;
+    astk_num_i = 0;
+    astk_str_i = 0;
 
     if (listbuf)
       free(listbuf);
