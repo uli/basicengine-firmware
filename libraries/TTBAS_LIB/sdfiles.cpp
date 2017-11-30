@@ -147,7 +147,7 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
 //  ファイル書き込み失敗 : SD_ERR_WRITE_FILE
 //
 uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
-  File myFile;
+  Unifile myFile;
   char head[2] = {0,0};
   uint8_t rc = 1;
 
@@ -159,10 +159,10 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
      SD.remove(fname);
 
   // ファイルのオープン
-  myFile = SD.open(fname, FILE_WRITE);
+  myFile = Unifile::open(fname, FILE_WRITE);
   if (myFile) {
     // データの保存
-    if (myFile.write(head, 2) && myFile.write(ptr, sz)) {
+    if (myFile.write(head, 2) && myFile.write((char *)ptr, sz)) {
       rc = 0;
     } else {
       rc = SD_ERR_WRITE_FILE;
