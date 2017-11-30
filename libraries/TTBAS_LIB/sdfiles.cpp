@@ -399,8 +399,7 @@ int16_t sdfiles::readLine(char* str) {
 //  ファイルでない       : - SD_ERR_NOT_FILE
 //
 int8_t sdfiles::IsText(char* fname) {
-#if 1
-  File myFile;
+  Unifile myFile;
   char head[2];   // ヘッダー
   int8_t rc = -1;
  
@@ -408,7 +407,7 @@ int8_t sdfiles::IsText(char* fname) {
     return -SD_ERR_INIT;
     
   // ファイルのオープン
-  myFile = SD.open(fname, FILE_READ);
+  myFile = Unifile::open(fname, FILE_READ);
   if (myFile) {
     if (myFile.isDirectory()) {
       rc = - SD_ERR_NOT_FILE;
@@ -429,9 +428,6 @@ int8_t sdfiles::IsText(char* fname) {
   }
   SD_END();
   return rc;
-#else
-  return -SD_ERR_INIT;
-#endif
 }
 
 //
