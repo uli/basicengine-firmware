@@ -105,7 +105,7 @@ uint16_t tv_get_gheight();
 // *** SDカード管理 ****************
 #include "sdfiles.h"
 #if USE_SD_CARD == 1
-sdfiles fs;
+sdfiles bfs;
 #endif
 
 // *** システム設定関連 **************
@@ -197,7 +197,7 @@ inline void c_putch(uint8_t c, uint8_t devno = 0) {
     mem_putch(c);
 #if USE_SD_CARD == 1
   else if (devno == 4)
-    fs.putch(c);
+    bfs.putch(c);
 #endif
 }
 
@@ -215,8 +215,8 @@ void newline(uint8_t devno=0) {
     mem_putch('\n');
 #if USE_SD_CARD == 1
   else if (devno == 4) {
-    fs.putch('\x0d');
-    fs.putch('\x0a');
+    bfs.putch('\x0d');
+    bfs.putch('\x0a');
   }
 #endif
 }
@@ -1934,7 +1934,7 @@ void isave() {
   if (mode == 1) {
 #if USE_SD_CARD == 1
     // SDカードへの保存
-    rc = fs.tmpOpen((char *)fname.c_str(),1);
+    rc = bfs.tmpOpen((char *)fname.c_str(),1);
     if (rc == SD_ERR_INIT) {
       err = ERR_SD_NOT_READY;
       return;
@@ -1943,7 +1943,7 @@ void isave() {
       return;
     }
     ilist(4);
-    fs.tmpClose();
+    bfs.tmpClose();
 #endif
   } else {
 #if 0
@@ -2001,7 +2001,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
   cont_clp = cont_cip = NULL;
 
 #if USE_SD_CARD == 1
-  rc = fs.tmpOpen(fname,0);
+  rc = bfs.tmpOpen(fname,0);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return 1;
@@ -2012,7 +2012,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
 
   if (newmode != 2)
     inew(newmode);
-  while(fs.readLine(lbuf)) {
+  while(bfs.readLine(lbuf)) {
     tlimR(lbuf);  // 2017/07/31 追記
     len = toktoi();
     if (err) {
@@ -2029,7 +2029,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
       continue;
     }
   }
-  fs.tmpClose();
+  bfs.tmpClose();
 #endif
   return 0;
 }
@@ -2156,7 +2156,7 @@ void ifiles() {
       }
     }
 #if USE_SD_CARD == 1
-    rc = fs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
+    rc = bfs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
     if (rc == SD_ERR_INIT) {
       err = ERR_SD_NOT_READY;
     } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3493,7 +3493,7 @@ void SMALL ildbmp() {
   }
 
   // 画像のロード
-  err = fs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
+  err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
   if (!err) {
     if (define_bg)
       vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
@@ -3519,7 +3519,7 @@ void imkdir() {
   }
 
 #if USE_SD_CARD == 1
-  rc = fs.mkdir((char *)fname.c_str());
+  rc = bfs.mkdir((char *)fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3538,7 +3538,7 @@ void irmdir() {
   }
 
 #if USE_SD_CARD == 1
-  rc = fs.rmdir((char *)fname.c_str());
+  rc = bfs.rmdir((char *)fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -3596,7 +3596,7 @@ void irename() {
   cip+=*cip;
   cip++;
 
-  rc = fs.rename(old_fname,new_fname);
+  rc = bfs.rename(old_fname,new_fname);
   if (rc) {
     err = ERR_FILE_WRITE;
     return;
@@ -3613,7 +3613,7 @@ void iremove() {
   }
 
 #if USE_SD_CARD == 1
-  rc = fs.remove((char *)fname.c_str());
+  rc = bfs.remove((char *)fname.c_str());
   if (rc) {
     err = ERR_FILE_WRITE;
     return;
@@ -3649,7 +3649,7 @@ void SMALL ibsave() {
 
   // ファイルオープン
 #if USE_SD_CARD == 1
-  rc = fs.tmpOpen((char *)fname.c_str(),1);
+  rc = bfs.tmpOpen((char *)fname.c_str(),1);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
@@ -3664,7 +3664,7 @@ void SMALL ibsave() {
     if (radr == NULL) {
       goto DONE;
     }
-    if(fs.putch(*radr)) {
+    if(bfs.putch(*radr)) {
       err = ERR_FILE_WRITE;
       goto DONE;
     }
@@ -3672,7 +3672,7 @@ void SMALL ibsave() {
   }
 
 DONE:
-  fs.tmpClose();
+  bfs.tmpClose();
 #endif
   return;
 }
@@ -3702,7 +3702,7 @@ void SMALL ibload() {
   }
 #if USE_SD_CARD == 1
   // ファイルオープン
-  rc = fs.tmpOpen((char *)fname.c_str(),0);
+  rc = bfs.tmpOpen((char *)fname.c_str(),0);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
@@ -3717,7 +3717,7 @@ void SMALL ibload() {
     if (radr == NULL) {
       goto DONE;
     }
-    c = fs.read();
+    c = bfs.read();
     if (c <0 ) {
       err = ERR_FILE_READ;
       goto DONE;
@@ -3727,7 +3727,7 @@ void SMALL ibload() {
   }
 
 DONE:
-  fs.tmpClose();
+  bfs.tmpClose();
 #endif
   return;
 }
@@ -3748,7 +3748,7 @@ void  icat() {
 
 #if USE_SD_CARD == 1
   while(1) {
-    rc = fs.textOut((char *)fname.c_str(), line, sc->getHeight());
+    rc = bfs.textOut((char *)fname.c_str(), line, sc->getHeight());
     if (rc < 0) {
       if (rc == -SD_ERR_OPEN_FILE) {
 	err = ERR_FILE_OPEN;
@@ -4099,7 +4099,7 @@ uint8_t SMALL ilrun() {
 #if USE_SD_CARD == 1
     // SDカードからプログラムのロード
     // SDカードからのロード
-    fg = fs.IsText((char *)fname.c_str()); // 形式チェック
+    fg = bfs.IsText((char *)fname.c_str()); // 形式チェック
     if (fg < 0) {
       // Abnormal form (形式異常)
       rc = -fg;
@@ -5253,7 +5253,7 @@ void SMALL basic() {
 
 #if USE_SD_CARD == 1
   // SDカード利用
-  fs.init(16); // この処理ではGPIOの操作なし
+  bfs.init(16); // この処理ではGPIOの操作なし
 #endif
 
 //  I2C_WIRE.begin();  // I2C利用開始
