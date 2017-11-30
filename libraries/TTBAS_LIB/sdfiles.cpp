@@ -110,7 +110,7 @@ uint8_t  sdfiles::init(uint8_t _cs) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 //
 uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
-  File myFile;
+  Unifile myFile;
   uint8_t rc;
   char head[2];  // ヘッダ
 
@@ -118,10 +118,10 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;     // SDカードの利用失敗
 
-  myFile = SD.open(fname, FILE_READ);
+  myFile = Unifile::open(fname, FILE_READ);
   if (myFile) {
     // データのヘッダーとデータロード
-    if (myFile.read(head, 2) && myFile.read(ptr, sz)) {
+    if (myFile.read(head, 2) && myFile.read((char *)ptr, sz)) {
       rc = 0;
     } else {
       rc = SD_ERR_READ_FILE;
