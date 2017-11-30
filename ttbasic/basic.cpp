@@ -4190,7 +4190,7 @@ void SMALL error(uint8_t flgCmd = false) {
 
 // Get value
 num_t GROUP(basic_core) ivalue() {
-  num_t value; // 値
+  num_t value, value2; // 値
   uint8_t i;   // 文字数
   int dims;
   int idxs[MAX_ARRAY_DIMS];
@@ -4275,6 +4275,23 @@ num_t GROUP(basic_core) ivalue() {
       value *= -1;  //正負を反転
     break;
 
+  case I_SIN:	value = sin(getparam()); break;
+  case I_COS:	value = cos(getparam()); break;
+  case I_EXP:	value = exp(getparam()); break;
+  case I_ATN:	value = atan(getparam()); break;
+  case I_ATN2:
+    if (checkOpen() || getParam(value, I_COMMA) || getParam(value2, I_CLOSE))
+      return 0;
+    value = atan2(value, value2);
+    break;
+  case I_SQR:
+    value = getparam();
+    if (value < 0)
+      err = ERR_FP;
+    else
+      value = sqrt(value);
+    break;
+      
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;
     value = list_free(); //プログラム保存領域の空きを取得

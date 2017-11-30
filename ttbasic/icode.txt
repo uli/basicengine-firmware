@@ -61,6 +61,12 @@ HEX$	I_HEX		esyntax
 DMP$	I_DMP		esyntax
 STR$	I_STRREF	esyntax
 ABS	I_ABS		esyntax
+SIN	I_SIN		esyntax
+COS	I_COS		esyntax
+EXP	I_EXP		esyntax
+ATN2	I_ATN2		esyntax
+ATN	I_ATN		esyntax
+SQR	I_SQR		esyntax
 MAP	I_MAP		esyntax
 ASC	I_ASC		esyntax
 FREE	I_FREE		esyntax

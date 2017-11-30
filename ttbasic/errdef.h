@@ -1,5 +1,6 @@
 ESTR(ERR_OK, "OK")
 ESTR(ERR_DIVBY0, "Division by zero")
+ESTR(ERR_FP, "Floating point exception")
 ESTR(ERR_VOF, "Overflow")
 ESTR(ERR_SOR, "Subscript out of range")
 ESTR(ERR_IBUFOF, "Icode buffer full")
