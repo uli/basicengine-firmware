@@ -14,12 +14,142 @@
 
 #include <Arduino.h>
 #include <SdFat.h>
+#define FS_NO_GLOBALS
+#include <FS.h>
 
 #define SD_CS       (4)   // SDカードモジュールCS
 #define SD_PATH_LEN 64      // ディレクトリパス長
 #define SD_TEXT_LEN 255     // テキスト１行最大長さ
 
 #include "../../ttbasic/error.h"
+
+extern SdFat SD;
+
+class Unifile {
+public:
+  enum uni_type {
+    INVALID, SD, FS,
+  };
+
+  Unifile() {
+    m_type = INVALID;
+    m_sd_file = NULL;
+  }
+
+  Unifile(File f) {
+    newSdFile();
+    *m_sd_file = f;
+  }  
+  
+  Unifile(fs::File f) {
+    newSpiffsFile();
+    *m_fs_file = f;
+  }
+
+  void newSdFile() {
+    cullOldFile();
+    m_type = SD;
+    m_sd_file = new File();
+  }
+  
+  void newSpiffsFile() {
+    cullOldFile();
+    m_type = FS;
+    m_fs_file = new fs::File();
+  }
+
+  bool isDirectory() {
+    switch (m_type) {
+    case SD: return m_sd_file->isDirectory();
+    case FS: return false; /* no directories in SPIFFS */
+    default: return false;
+    }
+  }
+
+  void close() {
+    switch (m_type) {
+    case SD: m_sd_file->close(); return;
+    case FS: m_fs_file->close(); return;
+    default: return;
+    }
+  }
+
+  size_t write(char *s) {
+    switch (m_type) {
+    case SD: return m_sd_file->write(s);
+    case FS: return m_fs_file->write((uint8_t *)s, strlen(s));
+    default: return -1;
+    }
+  }
+
+  size_t write(char *s, size_t sz) {
+    switch (m_type) {
+    case SD: return m_sd_file->write(s, sz);
+    case FS: return m_fs_file->write((uint8_t *)s, sz);
+    default: return -1;
+    }
+  }
+
+  size_t write(uint8_t c) {
+    switch (m_type) {
+    case SD: return m_sd_file->write(c);
+    case FS: return m_fs_file->write(c);
+    default: return -1;
+    }
+  }
+
+  int read() {
+    switch (m_type) {
+    case SD: return m_sd_file->read();
+    case FS: return m_fs_file->read();
+    default: return -1;
+    }
+  }
+
+  size_t read(char* buf, size_t size) {
+    switch (m_type) {
+    case SD: return m_sd_file->read(buf, size);
+    case FS: return m_fs_file->read((uint8_t *)buf, size);
+    default: return -1;
+    }
+  }
+
+  operator bool() {
+    switch (m_type) {
+    case SD: return (bool)*m_sd_file;
+    case FS: return (bool)*m_fs_file;
+    default: return false;
+    }
+  }
+
+  static Unifile open(const char *name, uint8_t flags) {
+    if (toupper(name[0]) == 'F' && name[1] == ':') {
+      Unifile f(SPIFFS.open(name+2, flags == FILE_WRITE ? "w+" : "r"));
+      return f;
+    } else {
+      Unifile f(::SD.open(name, flags));
+      return f;
+    }
+  }
+
+private:
+  void cullOldFile() {
+    if (m_sd_file) {
+      if (m_type == SD)
+        delete m_sd_file;
+      else
+        delete m_fs_file;
+    }
+    m_type = INVALID;
+    m_sd_file = NULL;
+  }
+    
+  union {
+    File *m_sd_file;
+    fs::File *m_fs_file;
+  };
+  uni_type m_type;
+};
 
 class sdfiles {
  private:
