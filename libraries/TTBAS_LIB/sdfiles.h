@@ -154,7 +154,7 @@ private:
 class sdfiles {
  private:
 
-  File tfile;
+  Unifile tfile;
   uint8_t flgtmpOlen;
   uint8_t cs;   
   bool SD_BEGIN(int mhz = 40);

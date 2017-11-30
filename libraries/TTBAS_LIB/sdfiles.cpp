@@ -296,11 +296,13 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
   if(mode) {
+    // XXX: This is bogus for SPIFFS. I presume it's only here because SdFat's
+    // FILE_WRITE defaults to append mode.
     if (SD.exists(tfname))
       SD.remove(tfname);
-    tfile = SD.open(tfname, FILE_WRITE);
+    tfile = Unifile::open(tfname, FILE_WRITE);
   } else {
-    tfile = SD.open(tfname, FILE_READ);   
+    tfile = Unifile::open(tfname, FILE_READ);   
   }
 
   if (tfile)
