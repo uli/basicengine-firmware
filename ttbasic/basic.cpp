@@ -1277,6 +1277,8 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
   }
 }
 
+int get_array_dims(int *idxs);
+
 // Get argument in parenthesis
 num_t GROUP(basic_core) getparam() {
   num_t value; //値
@@ -1288,6 +1290,8 @@ num_t GROUP(basic_core) getparam() {
 
 // INPUT handler
 void SMALL iinput() {
+  int dims = 0;
+  int idxs[MAX_ARRAY_DIMS];
   num_t value;          // 値
   short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
@@ -1318,26 +1322,39 @@ void SMALL iinput() {
     // 値を入力する処理
     switch (*cip++) {         // 中間コードで分岐
     case I_VAR:             // 変数の場合
+    case I_VARARR:
       index = *cip;         // 変数番号の取得
+
+      if (cip[-1] == I_VARARR) {
+        dims = get_array_dims(idxs);
+        // XXX: check if dims matches array
+        value = num_arr.var(i).var(idxs);
+      }
+ 
       cip++;
 
-      // オーバーフロー時の設定値
+      // Setting value at overflow
+      // XXX: this is weird syntax; how does this look like in other BASICs?
+      // XXX: do we need it at all?
       if (*cip == I_COMMA) {
 	cip++;
 	ofvalue = iexp();
 	if (err) {
 	  goto DONE;
-	  //return;
 	}
 	flgofset = 1;
       }
 
-      if (prompt) {          // もしまだプロンプトを表示していなければ
-	c_puts(var_names.name(index));
-	c_putch(':');        //「:」を表示
+      // XXX: idiosyncrasy, never seen this in other BASICs
+      if (prompt) {          // If you are not prompted yet
+        if (dims)
+          c_puts(num_arr_names.name(index));
+        else
+	  c_puts(var_names.name(index));
+	c_putch(':');
       }
 
-      value = getnum();     // 値を入力
+      value = getnum();
       if (err) {            // もしエラーが生じたら
 	if (err == ERR_VOF && flgofset) {
 	  err = ERR_OK;
@@ -1346,10 +1363,13 @@ void SMALL iinput() {
 	  return;            // 終了
 	}
       }
-      var.var(index) = value;
+
+      if (dims)
+        num_arr.var(index).var(idxs) = value;
+      else
+        var.var(index) = value;
       break;               // 打ち切る
 
-    // XXX: case I_VARARR missing!
 
     case I_ARRAY: // 配列の場合
       index = getparam();       // 配列の添え字を取得
