@@ -582,12 +582,9 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
   c_puts(&lbuf[16-dig],devno);
 }
 
-// 数値の入力
-num_t getnum() {
-  num_t value, tmp; //値と計算過程の値
+void get_input(bool numeric = false) {
   char c; //文字
   uint8_t len; //文字数
-  uint8_t sign; //負号
 
   len = 0; //文字数をクリア
   while(1) {
@@ -606,7 +603,7 @@ num_t getnum() {
       sc->delete_char();
     } else
     //行頭の符号および数字が入力された場合の処理（符号込みで6桁を超えないこと）
-    if ((len == 0 && (c == '+' || c == '-')) ||
+    if (!numeric || (len == 0 && (c == '+' || c == '-')) ||
         (len < 6 && isDigit(c))) {
       lbuf[len++] = c; //バッファへ入れて文字数を1増やす
       c_putch(c); //表示
@@ -616,6 +613,15 @@ num_t getnum() {
   }
   newline(); //改行
   lbuf[len] = 0; //終端を置く
+}
+
+// 数値の入力
+num_t getnum() {
+  num_t value, tmp; //値と計算過程の値
+  uint8_t len; //文字数
+  uint8_t sign; //負号
+
+  get_input(true);
 
   switch (lbuf[0]) { //先頭の文字で分岐
   case '-': //「-」の場合
