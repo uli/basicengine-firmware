@@ -24,6 +24,10 @@
 #include "../../ttbasic/error.h"
 #include "../../ttbasic/bstring.h"
 
+#ifndef FILE_OVERWRITE
+#define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
+#endif
+
 extern SdFat SD;
 
 class Unifile {
@@ -125,7 +129,14 @@ public:
 
   static Unifile open(const char *name, uint8_t flags) {
     if (toupper(name[0]) == 'F' && name[1] == ':') {
-      Unifile f(SPIFFS.open(name+2, flags == FILE_WRITE ? "w+" : "r"));
+      const char *fl;
+      switch (flags) {
+      case FILE_WRITE:		fl = "a"; break;
+      case FILE_OVERWRITE:	fl = "w"; break;
+      case FILE_READ:		fl = "r"; break;
+      default:			return Unifile();
+      }
+      Unifile f(SPIFFS.open(name+2, fl));
       return f;
     } else {
       Unifile f(::SD.open(name, flags));
