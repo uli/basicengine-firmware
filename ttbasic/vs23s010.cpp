@@ -1,4 +1,5 @@
 #include "ttconfig.h"
+#include "Psx.h"
 
 #if USE_VS23 == 1
 
@@ -954,6 +955,70 @@ void VS23S010::freeBacking(int x, int y, int w, int h)
   Rect r;
   r.x = x; r.y = y - m_current_mode->y; r.width = w; r.height = h;
   m_bin.Free(r, true);
+}
+
+void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tiles, uint8_t num_tiles)
+{
+  sprite_t *spr = &m_sprite[sprite];
+  bg_t *bg = &m_bg[bg_idx];
+  int tsx = bg->tile_size_x;
+  int tsy = bg->tile_size_y;
+  uint8_t res[num_tiles];
+  
+  // Intialize results with "no collision".
+  memset(res, 0, num_tiles);
+  
+  // Check if sprite is overlapping with background at all.
+  if (spr->pos_x + spr->w <= bg->win_x ||
+      spr->pos_x >= bg->win_x + bg->win_w ||
+      spr->pos_y + spr->h <= bg->win_y ||
+      spr->pos_y >= bg->win_y + bg->win_h)
+    return;
+  
+  // Calculate pixel coordinates of top/left sprite corner in relation to
+  // the background's origin.
+  int bg_left_x = bg->scroll_x - bg->win_x + spr->pos_x;
+  int bg_top_y = bg->scroll_y - bg->win_y + spr->pos_y;
+
+  // Calculate offset, width and height in tiles.
+  // round down top/left
+  int bg_first_tile_off = bg_left_x / tsx + bg->w * (bg_top_y / tsy);
+  // round up width/height
+  int bg_tile_width = (spr->w + tsx - 1) / tsx;
+  int bg_tile_height =  (spr->h + tsy - 1) / tsy;
+  
+  int bg_last_tile_off = bg_first_tile_off + bg_tile_width + bg_tile_height * bg->w;
+  
+  // Iterate over all tiles overlapping the sprite and record in what way they are
+  // overlapping.
+  int tx, ty;	// Screen coordinate (pixels) of current tile
+  // For every line
+  for (int t = bg_first_tile_off, ty = bg_top_y; t < bg_last_tile_off; t += bg->w, ty += tsy) {
+    // For every column
+    for (int tt = t, tx = bg_left_x; tt < t + bg->w; ++tt, tx += tsx) {
+      // For every tile code to be checked
+      for (int m = 0; m < num_tiles; ++m) {
+        if (tiles[m] == bg->tiles[tt % (bg->w*bg->h)]) {
+          res[m] = psxX;	// indicates collision in general
+          if (tx < spr->pos_x)
+            res[m] |= psxLeft;
+          else if (tx + tsx > spr->pos_x + spr->w)
+            res[m] |= psxRight;
+          if (ty < spr->pos_y)
+            res[m] |= psxUp;
+          else if (ty + tsy > spr->pos_y + spr->h)
+            res[m] |= psxDown;
+        }
+      }
+    }
+  }
+  os_memcpy(tiles, res, num_tiles);
+}
+
+uint8_t VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile)
+{
+  spriteTileCollision(sprite, bg, &tile, 1);
+  return tile;
 }
 
 VS23S010 vs23;
