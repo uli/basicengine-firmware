@@ -1956,6 +1956,8 @@ void iloadconfig() {
   loadConfig();
 }
 
+void isavebg();
+
 // プログラム保存 SAVE 保存領域番号|"ファイル名"
 void isave() {
   int16_t prgno = 0;
@@ -1968,6 +1970,11 @@ void isave() {
   BString fname;
   uint8_t mode = 0;
   int8_t rc;
+
+  if (*cip == I_BG) {
+    isavebg();
+    return;
+  }
 
   if (*cip == I_EOL) {
     prgno = 0;
@@ -3962,6 +3969,77 @@ void ibg() {
   }
 }
 
+void iloadbg() {
+  int32_t bg;
+  uint8_t w, h, tsx, tsy;
+  BString filename;
+
+  cip++;
+
+  if (!(filename = getParamFname()))
+    return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_TO))
+    return;
+  
+  Unifile f = Unifile::open(filename, FILE_READ);
+  if (!f) {
+    err = ERR_FILE_OPEN;
+    return;
+  }
+  
+  w = f.read();
+  h = f.read();
+  tsx = f.read();
+  tsy = f.read();
+  
+  if (!w || !h || !tsx || !tsy) {
+    err = ERR_VALUE;
+    goto out;
+  }
+  
+  vs23.setBgTileSize(bg, tsx, tsy);
+  if (vs23.setBgSize(bg, w, h)) {
+    err = ERR_OOM;
+    goto out;
+  }
+
+  if (f.read((char *)vs23.bgTiles(bg), w*h) != w*h) {
+    err = ERR_FILE_READ;
+    goto out;
+  }
+
+out:
+  f.close();
+}
+
+void isavebg() {
+  int32_t bg;
+  uint8_t w, h, tsx, tsy;
+  BString filename;
+
+  cip++;
+
+  if (!(filename = getParamFname()))
+    return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_TO))
+    return;
+  
+  Unifile f = Unifile::open(filename, FILE_OVERWRITE);
+  if (!f) {
+    err = ERR_FILE_OPEN;
+    return;
+  }
+
+  w = vs23.bgWidth(bg); h = vs23.bgHeight(bg);
+  f.write(w); f.write(h);
+  f.write(vs23.bgTileSizeX(bg));
+  f.write(vs23.bgTileSizeY(bg));
+  
+  f.write((char *)vs23.bgTiles(bg), w*h);
+
+  f.close();
+}
+
 void imovebg() {
   int32_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
@@ -5174,6 +5252,8 @@ void ilrun_() {
   if (*cip == I_PCX) {
     cip++;
     ildbmp();
+  } else if (*cip == I_BG) {
+    iloadbg();
   } else
     ilrun();
 }
