@@ -4238,6 +4238,10 @@ void SMALL error(uint8_t flgCmd = false) {
   err = 0;                     // エラー番号をクリア
 }
 
+#ifdef ESP8266
+extern "C" size_t umm_free_heap_size( void );
+#endif
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
@@ -4344,7 +4348,11 @@ num_t GROUP(basic_core) ivalue() {
       
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;
-    value = list_free(); //プログラム保存領域の空きを取得
+#ifdef ESP8266
+    value = umm_free_heap_size();
+#else
+    value = -1;
+#endif
     break;
 
   case I_INKEY: //関数INKEY
