@@ -654,6 +654,11 @@ num_t getnum() {
   return value; //値を持ち帰る
 }
 
+BString getstr() {
+  get_input();
+  return BString(lbuf);
+}
+
 // キーワード検索
 //[戻り値]
 //  該当なし   : -1
