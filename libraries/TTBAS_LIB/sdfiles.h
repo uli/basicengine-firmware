@@ -143,6 +143,10 @@ public:
       return f;
     }
   }
+  
+  static Unifile open(BString &name, uint8_t flags) {
+    return open(name.c_str(), flags);
+  }
 
 private:
   void cullOldFile() {
