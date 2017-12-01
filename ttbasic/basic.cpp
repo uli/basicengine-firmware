@@ -4556,10 +4556,10 @@ num_t GROUP(basic_core) ivalue() {
   case I_GH: value = 0; break;
 #endif
   // カーソル・スクロール等の方向
-  case I_UP:    value = 0; break;
-  case I_DOWN:  value = 1; break;
-  case I_RIGHT: value = 2; break;
-  case I_LEFT:  value = 3; break;
+  case I_UP:    value = psxUp; break;
+  case I_DOWN:  value = psxDown; break;
+  case I_RIGHT: value = psxRight; break;
+  case I_LEFT:  value = psxLeft; break;
 
   case I_PAD:	value = ipad(); break;
 
