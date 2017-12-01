@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <stdlib.h>
+#include "bstring.h"
 #include "error.h"
 #include "kwenum.h"
 
@@ -9,22 +10,6 @@ typedef double num_t;
 #else
 typedef int32_t num_t;
 #endif
-
-class BString : public String {
-public:
-  using String::operator=;
-
-  int fromBasic(unsigned char *s) {
-    len = *s++;
-    if (!reserve(len)) {
-      invalidate();
-      return 0;
-    }
-    os_memcpy(buffer, s, len);
-    buffer[len] = 0;
-    return len + 1;
-  }
-};
 
 #ifdef DEBUG_VAR
 #define dbg_var(x...) do {Serial.printf(x);Serial.flush();} while(0)

@@ -22,6 +22,7 @@
 #define SD_TEXT_LEN 255     // テキスト１行最大長さ
 
 #include "../../ttbasic/error.h"
+#include "../../ttbasic/bstring.h"
 
 extern SdFat SD;
 
