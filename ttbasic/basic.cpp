@@ -4326,6 +4326,7 @@ num_t GROUP(basic_core) ivalue() {
   uint8_t i;   // 文字数
   int dims;
   int idxs[MAX_ARRAY_DIMS];
+  int32_t a, b, c;
 
   switch (*cip++) { //中間コードで分岐
 
@@ -4562,6 +4563,15 @@ num_t GROUP(basic_core) ivalue() {
   case I_LEFT:  value = psxLeft; break;
 
   case I_PAD:	value = ipad(); break;
+
+  case I_TILECOLL:
+    if (checkOpen()) return 0;
+    if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
+    if (getParam(b, 0, VS23_MAX_BG, I_COMMA)) return 0;
+    if (getParam(c, 0, 255, I_NONE)) return 0;
+    if (checkClose()) return 0;
+    value = vs23.spriteTileCollision(a, b, c);
+    break;
 
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号
