@@ -4345,6 +4345,9 @@ num_t GROUP(basic_core) ivalue() {
     else
       value = sqrt(value);
     break;
+  case I_TAN:
+    // XXX: check for +/-inf
+    value = tan(getparam()); break;
       
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;

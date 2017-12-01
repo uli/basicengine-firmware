@@ -67,6 +67,7 @@ EXP	I_EXP		esyntax
 ATN2	I_ATN2		esyntax
 ATN	I_ATN		esyntax
 SQR	I_SQR		esyntax
+TAN	I_TAN		esyntax
 MAP	I_MAP		esyntax
 ASC	I_ASC		esyntax
 FREE	I_FREE		esyntax
