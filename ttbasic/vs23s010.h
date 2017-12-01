@@ -144,6 +144,13 @@ class VS23S010 {
 
     bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
 
+    inline uint8_t bgWidth(uint8_t bg) {
+      return m_bg[bg].w;
+    }
+    inline uint8_t bgHeight(uint8_t bg) {
+      return m_bg[bg].h;
+    }
+
     inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x, uint8_t tile_size_y) {
       struct bg_t *bg = &m_bg[bg_idx];
       bg->tile_size_x = tile_size_x;
@@ -168,6 +175,10 @@ class VS23S010 {
       struct bg_t *bg = &m_bg[bg_idx];
       tsx = bg->tile_size_x;
       tsy = bg->tile_size_y;
+    }
+
+    inline uint8_t *bgTiles(uint8_t bg) {
+      return m_bg[bg].tiles;
     }
 
     void resetBgs();
