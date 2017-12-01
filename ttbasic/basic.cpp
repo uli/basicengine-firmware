@@ -1293,6 +1293,7 @@ void SMALL iinput() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
   num_t value;          // 値
+  BString str_value;
   short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
   unsigned char prompt; // プロンプト表示フラグ
@@ -1370,6 +1371,24 @@ void SMALL iinput() {
         var.var(index) = value;
       break;               // 打ち切る
 
+    case I_SVAR:
+      index = *cip;
+      
+      cip++;
+      
+      // XXX: idiosyncrasy, never seen this in other BASICs
+      if (prompt) {          // If you are not prompted yet
+        c_puts(svar_names.name(index));
+	c_putch(':');
+      }
+      
+      str_value = getstr();
+      if (err)
+        return;
+      
+      svar.var(index) = str_value;
+
+      break;
 
     case I_ARRAY: // 配列の場合
       index = getparam();       // 配列の添え字を取得
