@@ -516,6 +516,9 @@ uint16_t hex2value(char c) {
 void c_puts(const char *s, uint8_t devno=0) {
   while (*s) c_putch(*s++, devno);  //終端でなければ出力して繰り返す
 }
+void c_puts_P(const char *s, uint8_t devno=0) {
+  while (pgm_read_byte(s)) c_putch(pgm_read_byte(s++), devno);
+}
 
 // Print numeric specified columns
 // 引数
