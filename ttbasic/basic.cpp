@@ -2250,6 +2250,38 @@ void ifiles() {
   }
 }
 
+void iformat() {
+  static const char warn_spiffs[] PROGMEM =
+    "This will ERASE ALL DATA on the internal flash file system!\n";
+  static const char areyousure[] PROGMEM =
+    "ARE YOU SURE? (Y/N) ";
+  static const char aborted[] PROGMEM = "Aborted\n";
+  static const char formatting[] PROGMEM = "Formatting... ";
+  static const char success[] PROGMEM = "Success!";
+  static const char failed[] PROGMEM = "Failed\n";
+
+  BString target = getParamFname();
+  if (err)
+    return;
+
+  if (target == "f:" || target == "F:") {
+    c_puts_P(warn_spiffs);
+    c_puts_P(areyousure);
+    BString answer = getstr();
+    if (answer != "Y" && answer != "y") {
+      c_puts_P(aborted);
+      return;
+    }
+    c_puts_P(formatting);
+    if (SPIFFS.format())
+      c_puts_P(success);
+    else
+      c_puts_P(failed);
+  } else {
+    err = ERR_NOT_SUPPORTED;
+  }
+}
+
 // 画面クリア
 void icls() {
   sc->cls();
@@ -5360,6 +5392,7 @@ uint8_t SMALL icom() {
     //  err = ERR_SYNTAX;
     break;
   case I_DELETE:     idelete();  break;
+  case I_FORMAT:     iformat(); break;
 
   default:            // どれにも該当しない場合
     cip--;
