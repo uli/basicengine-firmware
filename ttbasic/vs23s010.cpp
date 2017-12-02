@@ -999,7 +999,7 @@ void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tile
       // For every tile code to be checked
       for (int m = 0; m < num_tiles; ++m) {
         if (tiles[m] == bg->tiles[tt % (bg->w*bg->h)]) {
-          res[m] = psxX;	// indicates collision in general
+          res[m] = 0x40;	// indicates collision in general
           if (tx < spr->pos_x)
             res[m] |= psxLeft;
           else if (tx + tsx > spr->pos_x + spr->w)
