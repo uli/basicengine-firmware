@@ -204,6 +204,7 @@ class VS23S010 {
 
     void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
     uint8_t spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile);
+    uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
 
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];

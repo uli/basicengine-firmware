@@ -1021,5 +1021,34 @@ uint8_t VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile)
   return tile;
 }
 
+uint8_t VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
+{
+  uint8_t dir = 0x40;	// indicates collision
+
+  sprite_t *us = &m_sprite[collidee];
+  sprite_t *them = &m_sprite[collider];
+  
+  if (us->pos_x + us->w < them->pos_x)
+    return 0;
+  if (them->pos_x + them->w < us->pos_x)
+    return 0;
+  if (us->pos_y + us->h < them->pos_y)
+    return 0;
+  if (them->pos_y + them->h < us->pos_y)
+    return 0;
+  
+  // sprite frame as bounding box; we may want something more flexible...
+  if (them->pos_x < us->pos_x)
+    dir |= psxLeft;
+  else if (them->pos_x + them->w > us->pos_x + us->w)
+    dir |= psxRight;
+  if (them->pos_y < us->pos_y)
+    dir |= psxUp;
+  else if (them->pos_y + them->h > us->pos_y + us->h)
+    dir |= psxDown;
+
+  return dir;
+}
+
 VS23S010 vs23;
 #endif
