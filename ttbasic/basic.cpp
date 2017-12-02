@@ -4573,6 +4573,14 @@ num_t GROUP(basic_core) ivalue() {
     value = vs23.spriteTileCollision(a, b, c);
     break;
 
+  case I_SPRCOLL:
+    if (checkOpen()) return 0;
+    if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
+    if (getParam(b, 0, VS23_MAX_SPRITES, I_NONE)) return 0;
+    if (checkClose()) return 0;
+    value = vs23.spriteCollision(a, b);
+    break;
+
   default: //以上のいずれにも該当しなかった場合
     // 定数ピン番号
     cip--;

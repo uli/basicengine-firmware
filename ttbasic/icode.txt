@@ -209,6 +209,7 @@ ON	I_ON		esyntax
 MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
 TILECOLL	I_TILECOLL	esyntax
+SPRCOLL	I_SPRCOLL	esyntax
 DIM	I_DIM		idim
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
