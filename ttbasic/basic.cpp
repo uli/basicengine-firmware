@@ -5089,6 +5089,18 @@ void ireturn() {
   return;
 }
 
+void GROUP(basic_core) ido() {
+  if (lstki > SIZE_LSTK - 5) {
+    err = ERR_LSTKOF;
+    return;
+  }
+  lstk[lstki++] = clp;
+  lstk[lstki++] = cip;
+  lstk[lstki++] = (unsigned char*)-1;
+  lstk[lstki++] = (unsigned char*)-1;
+  lstk[lstki++] = (unsigned char*)-1;
+}
+
 // FOR
 void GROUP(basic_core) ifor() {
   int index, vto, vstep; // FOR文の変数番号、終了値、増分
@@ -5140,6 +5152,45 @@ void GROUP(basic_core) ifor() {
   lstk[lstki++] = (unsigned char*)(uintptr_t)vto;
   lstk[lstki++] = (unsigned char*)(uintptr_t)vstep;
   lstk[lstki++] = (unsigned char*)(uintptr_t)index;
+}
+
+void GROUP(basic_core) iloop() {
+  uint8_t cond;
+
+  if (lstki < 5) {
+    err = ERR_LSTKUF;
+    return;
+  }
+
+  cond = *cip++;
+  if (cond != I_WHILE && cond != I_UNTIL) {
+    err = ERR_LOOPWOC;
+    return ;
+  }
+
+  // Look for nearest DO.
+  while (lstki) {
+    if ((uintptr_t)lstk[lstki - 1] == -1)
+      break;
+    lstki -= 5;
+  }
+  
+  if (!lstki) {
+    err = ERR_LSTKUF;
+    return;
+  }
+
+  num_t exp = iexp();
+  
+  if ((cond == I_WHILE && exp != 0) ||
+      (cond == I_UNTIL && exp == 0)) {
+    // Condition met, loop.
+    cip = lstk[lstki - 4];
+    clp = lstk[lstki - 5];
+  } else {
+    // Pop loop off stack.
+    lstki -= 5;
+  }
 }
 
 // NEXT

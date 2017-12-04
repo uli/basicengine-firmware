@@ -5,6 +5,10 @@ FOR	I_FOR		ifor
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 NEXT	I_NEXT		inext
+DO	I_DO		ido
+LOOP	I_LOOP		iloop
+WHILE	I_WHILE		esyntax
+UNTIL	I_UNTIL		esyntax
 IF	I_IF		iif
 THEN	I_THEN		esyntax
 END	I_END		iend
