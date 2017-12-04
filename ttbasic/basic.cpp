@@ -5195,22 +5195,34 @@ void GROUP(basic_core) iloop() {
 
 // NEXT
 void GROUP(basic_core) inext() {
-  int index, vto, vstep; // FOR文の変数番号、終了値、増分
+  int want_index, index, vto, vstep; // FOR文の変数番号、終了値、増分
 
   if (lstki < 5) {    // もしFORスタックが空なら
     err = ERR_LSTKUF; // エラー番号をセット
     return;
   }
 
-  // 変数名を復帰
-  index = (int)(uintptr_t)lstk[lstki - 1]; // 変数名を復帰
   // XXX: support for I_VARARR missing!
   if (*cip++ != I_VAR) {                     // もしNEXTの後ろに変数がなかったら
     err = ERR_NEXTWOV;                       // エラー番号をセット
     return;
   }
-  if (*cip++ != index) { // もし復帰した変数名と一致しなかったら
-    err = ERR_NEXTUM;    // エラー番号をセット
+  
+  want_index = *cip++;
+
+  while (lstki) {
+    // 変数名を復帰
+    index = (int)(uintptr_t)lstk[lstki - 1]; // 変数名を復帰
+    if (want_index == index)
+      break;
+    // If it does not match the returned variable name
+    // Assume we want to NEXT to a loop higher up the stack.
+    lstki -= 5;
+  }
+
+  if (!lstki) {
+    // Didn't find anything that matches the NEXT.
+    err = ERR_LSTKUF;	// XXX: have something more descriptive
     return;
   }
 
