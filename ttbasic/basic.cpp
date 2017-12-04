@@ -501,6 +501,17 @@ inline uint8_t checkClose() {
   return err;
 }
 
+inline bool is_strexp() {
+  return (*cip == I_STR ||
+          *cip == I_SVAR ||
+          *cip == I_ARGSTR ||
+          *cip == I_CHR ||
+          *cip == I_HEX ||
+          *cip == I_BIN ||
+          *cip == I_DMP
+         );
+}
+
 // 1桁16進数文字を整数に変換する
 uint16_t hex2value(char c) {
   if (c <= '9' && c >= '0')
