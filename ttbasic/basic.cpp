@@ -1900,6 +1900,7 @@ void SMALL irenum() {
       case I_HEXNUM:
 	i+=5;      // 整数2バイト+中間コード1バイト分移動
 	break;
+      case I_SVAR:
       case I_VAR:  // 変数
       case I_VARARR:
 	i+=2;      // 変数名
