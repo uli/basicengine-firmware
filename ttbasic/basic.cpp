@@ -1995,9 +1995,7 @@ void isave() {
     prgno = 0;
   } else
   // ファイル名またはプログラム番号の取得
-  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
-       *cip == I_HEX || *cip == I_BIN || *cip == I_DMP
-       ) {
+  if (is_strexp()) {
     if(!(fname = getParamFname())) {
       return;
     }
@@ -2195,9 +2193,7 @@ void ifiles() {
   uint8_t flgwildcard = 0;
   int16_t rc;
 
-  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
-       *cip == I_HEX || *cip == I_BIN || *cip == I_DMP
-       ) {
+  if (is_strexp()) {
     if(!(fname = getParamFname())) {
       return;
     }
@@ -4215,9 +4211,7 @@ uint8_t SMALL ilrun() {
   }
 
   // ファイル名またはプログラム番号の取得
-  if ( *cip == I_STR || *cip == I_STRREF || *cip == I_CHR ||
-       *cip == I_HEX || *cip == I_BIN || *cip ==I_DMP
-       ) {
+  if (is_strexp()) {
     if(!(fname = getParamFname())) {
       return 0;
     }
