@@ -738,7 +738,7 @@ uint8_t SMALL toktoi() {
   char c;                 // 文字列の括りに使われている文字（「"」または「'」）
   num_t value;            // 定数
   uint32_t tmp;              // 変換過程の定数
-  uint16_t hex;           // 16進数定数
+  uint32_t hex;           // 16進数定数
   uint16_t hcnt;          // 16進数桁数
   uint8_t var_len;        // 変数名長さ
   char vname[MAX_VAR_NAME];       // 変数名
@@ -773,7 +773,7 @@ uint8_t SMALL toktoi() {
 	  hcnt++;
 	} while (isHexadecimalDigit(*s)); //16進数文字がある限り繰り返す
 
-	if (hcnt > 4) {      // 桁溢れチェック
+	if (hcnt > 8) {      // 桁溢れチェック
 	  err = ERR_VOF;     // エラー番号オバーフローをセット
 	  return 0;          // 0を持ち帰る
 	}
