@@ -3327,45 +3327,26 @@ int32_t imap() {
 int32_t iasc() {
   int32_t value =0;
   int32_t len;     // 文字列長
-  int32_t pos =1;  // 文字位置
-  int32_t index;   // 配列添え字
-  uint8_t* str;    // 文字列先頭位置
+  int32_t pos = 0;  // 文字位置
+  BString str;    // 文字列先頭位置
 
   if (checkOpen()) return 0;
-  if ( *cip == I_STR) {  // 文字列定数の場合
-    cip++;  len = *cip;  // 文字列長の取得
-    cip++;  str = cip;   // 文字列先頭の取得
-    cip+=len;
-  } else if ( *cip == I_VAR) {   // 変数の場合
-    cip++;   str = sanitize_addr(var.var(*cip));
-    if (!str) {
-      err = ERR_RANGE;
-      return 0;
-    }
-    len = *str;
-    str++;
-    cip++;
-  // XXX: *cip == I_VARARR missing!
-  } else if ( *cip == I_ARRAY) { // 配列変数の場合
-    cip++;
-    if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return 0;
-    str = sanitize_addr(arr[index]);
-    if (!str) {
-      err = ERR_RANGE;
-      return 0;
-    }
-    len = *str;
-    str++;
+
+  str = istrexp();
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(pos, 0, str.length() - 1, I_NONE)) return 0;
+  }
+
+  if (pos < str.length()) {
+    value = str[pos];
   } else {
-    err = ERR_SYNTAX;
-    return 0;
+    err = ERR_RANGE;
   }
-  if ( *cip == I_COMMA) {
-    cip++;
-    if (getParam(pos,1,len, I_NONE)) return 0;
-  }
-  value = str[pos-1];
+
   checkClose();
+
   return value;
 }
 
