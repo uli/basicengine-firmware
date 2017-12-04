@@ -3435,14 +3435,10 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 
   len = 0; //桁数を初期化
   while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
-    switch (*cip) { //中間コードで分岐
-    case I_STR:     //文字列
-    case I_SVAR:
-    case I_ARGSTR:
+    if (is_strexp()) {
       str = istrexp();
       c_puts(str.c_str(), devno);
-      break;
-
+    } else  switch (*cip) { //中間コードで分岐
     case I_SHARP: //「#
       cip++;
       len = iexp(); //桁数を取得
