@@ -121,7 +121,7 @@ typedef struct {
 SystemConfig CONFIG;
 
 // プロトタイプ宣言
-uint8_t loadConfig();
+void loadConfig();
 void isaveconfig();
 BString getParamFname();
 int32_t getNextLineNo(int32_t lineno);
@@ -5519,31 +5519,16 @@ void SMALL basic() {
 }
 
 // システム環境設定のロード
-uint8_t loadConfig() {
-  int16_t rc;
-  uint16_t data;
+void loadConfig() {
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  1;
   CONFIG.STARTPRG  = -1;
-#if 0
-
-  // NTSC設定の参照
-  rc = EEPROM.read(CONFIG_NTSC, &data);
-  if (rc == EEPROM_OK) {
-    CONFIG.NTSC = data;
-  }
-  // キーボード設定の参照
-  rc = EEPROM.read(CONFIG_KBD, &data);
-  if (rc == EEPROM_OK) {
-    CONFIG.KEYBOARD = data;
-  }
-  // プログラム自動起動設定の参照
-  rc = EEPROM.read(CONFIG_PRG, &data);
-  if (rc == EEPROM_OK) {
-    CONFIG.STARTPRG = data;
-  }
-#endif
-  return 0;
+  
+  Unifile f = Unifile::open("f:.config", FILE_READ);
+  if (!f)
+    return;
+  f.read((char *)&CONFIG, sizeof(CONFIG));
+  f.close();
 }
 
 // システム環境設定の保存
