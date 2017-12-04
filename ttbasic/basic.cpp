@@ -849,7 +849,7 @@ uint8_t SMALL toktoi() {
 	return 0; //0を持ち帰る
       }
 #ifdef FLOAT_NUMS
-      value = strtof(ptok, &ptok);
+      value = strtod(ptok, &ptok);
 #else
       value = strtol(ptok, &ptok);
 #endif
