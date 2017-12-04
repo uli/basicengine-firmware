@@ -5040,14 +5040,7 @@ void icall() {
   int num_args = 0;
   int str_args = 0;
   if (*cip != I_CLOSE) for(;;) {
-    n = iexp();
-    if (!err) {
-      if (astk_num_i >= SIZE_ASTK)
-        goto overflow;
-      astk_num[astk_num_i++] = n;
-      ++num_args;
-    } else {
-      err = 0;
+    if (is_strexp()) {
       BString b = istrexp();
       if (err)
         return;
@@ -5055,6 +5048,14 @@ void icall() {
         goto overflow;
       astk_str[astk_str_i++] = b;
       ++str_args;
+    } else {
+      n = iexp();
+      if (err)
+        return;
+      if (astk_num_i >= SIZE_ASTK)
+        goto overflow;
+      astk_num[astk_num_i++] = n;
+      ++num_args;
     }
     if (*cip != I_COMMA)
       break;
