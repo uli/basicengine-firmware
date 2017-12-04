@@ -122,7 +122,7 @@ SystemConfig CONFIG;
 
 // プロトタイプ宣言
 uint8_t loadConfig();
-uint8_t saveConfig();
+void isaveconfig();
 BString getParamFname();
 int32_t getNextLineNo(int32_t lineno);
 void mem_putch(uint8_t c);
@@ -1961,10 +1961,6 @@ void SMALL iconfig() {
     err = ERR_VALUE;
     break;
   }
-}
-
-void isaveconfig() {
-  saveConfig();
 }
 
 void iloadconfig() {
@@ -5551,41 +5547,11 @@ uint8_t loadConfig() {
 }
 
 // システム環境設定の保存
-uint8_t saveConfig() {
-#if 0
-  int16_t rc;
-  uint16_t data;
-  uint16_t Status;
-
-  rc = EEPROM.count(&data);
-  if (rc != EEPROM_OK) {
-    ieepformat();
-    if (err)
-      return -1;
+void isaveconfig() {
+  Unifile f = Unifile::open("f:.config", FILE_OVERWRITE);
+  if (!f) {
+    err = ERR_FILE_OPEN;
   }
-
-  Status = EEPROM.write(CONFIG_NTSC, (uint16_t)CONFIG.NTSC);
-  if (Status != EEPROM_OK) goto ERR_EEPROM;
-  Status = EEPROM.write(CONFIG_KBD, (uint16_t)CONFIG.KEYBOARD);
-  if (Status != EEPROM_OK) goto ERR_EEPROM;
-  Status = EEPROM.write(CONFIG_PRG, (uint16_t)CONFIG.STARTPRG);
-  if (Status != EEPROM_OK) goto ERR_EEPROM;
-  goto DONE;
-
-ERR_EEPROM:
-  switch(Status) {
-  case EEPROM_OUT_SIZE:      err = ERR_EEPROM_OUT_SIZE; break;
-  case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS; break;
-  case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT; break;
-  case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE; break;
-  case EEPROM_OK: err = 0; break;
-  case EEPROM_BAD_FLASH:
-  default:                   err = ERR_EEPROM_BAD_FLASH; break;
-  }
-  return -1;
-
-DONE:
-#endif
-  return 0;
+  f.write((char *)&CONFIG, sizeof(CONFIG));
+  f.close();
 }
-
