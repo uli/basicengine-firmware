@@ -251,7 +251,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_CLS,I_CLT,
   I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH,
   I_UP, I_DOWN, I_RIGHT, I_LEFT,
-  I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRREF,
+  I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT, I_BITREV, I_XOR,
@@ -2630,63 +2630,6 @@ void idmp(uint8_t devno=0) {
   }
 }
 
-// * Variables and arrays shall be references to [LEN] [character string]
-// Argument
-//  devno: Destination device number
-// 戻り値
-//  なし
-//
-void SMALL istrref(uint8_t devno=0) {
-  int32_t len;
-  int32_t top;
-  int32_t n;
-  int32_t index;
-  uint8_t *ptr;
-  if (checkOpen()) return;
-  if (*cip == I_VAR) {
-    cip++;
-    ptr = sanitize_addr(var.var(*cip));
-    if (!ptr) {
-      err = ERR_RANGE;
-      return;
-    }
-    len = *ptr;
-    ptr++;
-    cip++;
-  } else if (*cip == I_ARRAY) {
-    cip++;
-    if (getParam(index, 0, SIZE_ARRY-1, I_NONE)) return;
-    ptr = sanitize_addr(arr[index]);
-    if (!ptr) {
-      err = ERR_RANGE;
-      return;
-    }
-    len = *ptr;
-    ptr++;
-  } else if (*cip == I_STR) {
-    cip++;
-    len = *cip;
-    cip++;
-    ptr = cip;
-    cip+=len;
-  } else {
-    err = ERR_SYNTAX;
-    return;
-  }
-  top = 1;
-  n = len;
-  if (*cip == I_COMMA) {
-    cip++;
-    if (getParam(top, 1,len, I_COMMA)) return;
-    if (getParam(n,1,len-top+1, I_NONE)) return;
-  }
-  if (checkClose()) return;
-  for (uint32_t i = top-1; i <top-1+n; i++) {
-    c_putch(ptr[i], devno);
-  }
-  return;
-}
-
 // POKEコマンド POKE ADR,データ[,データ,..データ]
 void ipoke() {
   uint8_t* adr;
@@ -3456,7 +3399,6 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     case I_HEX:  cip++; ihex(devno); break; // HEX$()関数
     case I_BIN:  cip++; ibin(devno); break; // BIN$()関数
     case I_DMP:  cip++; idmp(devno); break; // DMP$()関数
-    case I_STRREF: cip++; istrref(devno); break; // STR$()関数
     case I_ELSE:        // ELSE文がある場合は打ち切る
       newline(devno);
       return;
@@ -4754,6 +4696,9 @@ BString istrvalue()
     bp = iargstr();
     if (!err)
       value = *bp;
+    break;
+  case I_STRSTR:
+    svar.var(*cip++) = String(iexp());
     break;
   default:
     cip--;
