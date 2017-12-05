@@ -468,7 +468,10 @@ inline uint8_t getParam(uint32_t& prm, token_t next_token) {
 inline uint8_t getParam(num_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    if (next_token == I_OPEN || next_token == I_CLOSE)
+      err = ERR_PAREN;
+    else
+      err = ERR_SYNTAX;
   }
   return err;
 }
