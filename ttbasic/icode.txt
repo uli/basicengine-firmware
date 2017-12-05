@@ -40,7 +40,7 @@ $	I_DOLLAR	esyntax
 <	I_LT		esyntax
 AND	I_LAND		esyntax
 OR	I_LOR		esyntax
-!	I_LNOT		esyntax
+NOT	I_LNOT		esyntax
 ~	I_BITREV	esyntax
 ^	I_XOR		esyntax
 @	I_ARRAY		iarray
