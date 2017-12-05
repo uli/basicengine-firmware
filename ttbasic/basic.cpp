@@ -4656,6 +4656,51 @@ num_t GROUP(basic_core) iplus() {
     } //中間コードで分岐の末尾
 }
 
+BString ilrstr(bool right) {
+  BString value;
+  int len;
+
+  if (checkOpen()) goto out;
+
+  value = istrexp();
+  if (*cip++ != I_COMMA) {
+    err = ERR_SYNTAX;
+    goto out;
+  }
+
+  if (getParam(len, I_CLOSE)) goto out;
+
+  if (right)
+    value = value.substring(value.length() - len, value.length());
+  else
+    value = value.substring(0, len);
+
+out:
+  return value;
+}
+
+BString imidstr() {
+  BString value;
+  int32_t start;
+  int32_t len;
+
+  if (checkOpen()) goto out;
+
+  value = istrexp();
+  if (*cip++ != I_COMMA) {
+    err = ERR_SYNTAX;
+    goto out;
+  }
+
+  if (getParam(start, I_COMMA)) goto out;
+  if (getParam(len, I_CLOSE)) goto out;
+
+  value = value.substring(start, start + len);
+
+out:
+  return value;
+}
+
 BString istrvalue()
 {
   BString value;
@@ -4679,6 +4724,15 @@ BString istrvalue()
     break;
   case I_STRSTR:
     svar.var(*cip++) = String(iexp());
+    break;
+  case I_LEFTSTR:
+    value = ilrstr(false);
+    break;
+  case I_RIGHTSTR:
+    value = ilrstr(true);
+    break;
+  case I_MIDSTR:
+    value = imidstr();
     break;
   default:
     cip--;
