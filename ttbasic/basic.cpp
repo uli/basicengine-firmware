@@ -1070,6 +1070,8 @@ uint8_t* getELSEptr(uint8_t* p) {
       break;
     case I_VAR:     // 変数
     case I_VARARR:
+    case I_CALL:
+    case I_PROC:
       lp+=2;        // 変数名
       break;
     case I_EOL:
@@ -1082,6 +1084,9 @@ uint8_t* getELSEptr(uint8_t* p) {
           goto DONE;
         }
       }
+      // fallthrough
+    case I_REM:
+    case I_SQUOT:
       // Continue at next line.
       clp += *clp;
       // XXX: What about EOT?
