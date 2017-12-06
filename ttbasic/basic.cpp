@@ -1624,6 +1624,28 @@ void iarray() {
   } while(*cip == I_COMMA);
 }
 
+int GROUP(basic_core) token_size(uint8_t *code) {
+  switch (*code) {
+  case I_STR:
+    return code[1] + 1;
+  case I_NUM:
+    return sizeof(num_t) + 1;
+  case I_HEXNUM:
+    return 5;
+  case I_VAR:
+  case I_VARARR:
+  case I_CALL:
+  case I_PROC:
+    return 2;
+  case I_EOL:
+  case I_REM:
+  case I_SQUOT:
+    return -1;
+  default:
+    return 1;
+  }
+}
+
 // LET handler
 void ilet() {
   switch (*cip) { //中間コードで分岐
