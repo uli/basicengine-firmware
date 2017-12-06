@@ -4527,6 +4527,13 @@ num_t GROUP(basic_core) ivalue() {
   case I_TAN:
     // XXX: check for +/-inf
     value = tan(getparam()); break;
+  case I_LOG:
+    value = getparam();
+    if (value <= 0)
+      err = ERR_FP;
+    else
+      value = log(value);
+    break;
       
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;
