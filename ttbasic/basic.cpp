@@ -1763,7 +1763,10 @@ void ilet() {
     ivar();    // 変数への代入を実行
     break;
 
-  // XXX: case I_VARARR missing!
+  case I_VARARR:
+    cip++;
+    ivararr();
+    break;
 
   case I_SVAR:
     cip++;
