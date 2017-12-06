@@ -1646,6 +1646,115 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   }
 }
 
+unsigned char *data_ip;
+unsigned char *data_lp;
+
+bool find_next_data() {
+  unsigned char tok;
+  int next;
+
+  if (!data_lp) {
+    if (*listbuf)
+      data_lp = listbuf;
+    else
+      return false;
+  }
+  if (!data_ip) {
+    data_ip = data_lp + sizeof(num_t) + 1;
+  }
+  
+  while (*data_ip != I_DATA && *data_ip != I_COMMA) {
+    next = token_size(data_ip);
+    if (next < 0) {
+      data_lp += *data_lp;
+      if (!*data_lp)
+        return false;
+      data_ip = data_lp + sizeof(num_t) + 1;
+    } else
+      data_ip += next;
+  }
+  return true;
+}
+
+void idata() {
+  unsigned char tok;
+  int next;
+
+  // Skip over the DATA statement
+  while (*cip != I_EOL && *cip != I_COLON) {
+    next = token_size(cip);
+    if (next < 0) {
+      clp += *clp;
+      if (!*clp)
+        return;
+      cip = clp + sizeof(num_t) + 1;
+    } else
+      cip += next;
+  }
+}
+
+void iread() {
+  unsigned char *cip_save;
+  num_t value;
+  BString svalue;
+  uint8_t index;
+
+  if (!find_next_data()) {
+    err = ERR_OOD;
+    return;
+  }
+  ++cip;
+
+  switch (*cip++) {
+  case I_VAR:
+    ++cip;
+    cip_save = cip;
+    cip = data_ip;
+    value = iexp();
+    data_ip = cip;
+    cip = cip_save;
+    var.var(*cip++) = value;
+    break;
+    
+  case I_VARARR: {
+    ++cip;
+    int idxs[MAX_ARRAY_DIMS];
+    int dims = 0;
+    
+    index = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims < 0)
+      return;
+
+    cip_save = cip;
+    cip = data_ip;
+    value = iexp();
+    data_ip = cip;
+    cip = cip_save;
+
+    num_t &n = num_arr.var(index).var(idxs);
+    if (err)
+      return;
+    n = value;
+    break;
+    }
+
+  case I_SVAR:
+    ++cip;
+    cip_save = cip;
+    cip = data_ip;
+    svalue = istrexp();
+    data_ip = cip;
+    cip = cip_save;
+    svar.var(*cip++) = svalue;
+    break;
+    
+  default:
+    err = ERR_SYNTAX;
+    break;
+  }
+}
+
 // LET handler
 void ilet() {
   switch (*cip) { //中間コードで分岐
@@ -1798,6 +1907,8 @@ void iexport() {
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only
 void inew(uint8_t mode) {
   int i; //ループカウンタ
+
+  data_ip = data_lp = NULL;
 
   if (mode != 1) {
     var.reset();
