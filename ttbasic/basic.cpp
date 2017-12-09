@@ -5562,6 +5562,8 @@ void SMALL basic() {
   vs23.begin();
   psx.setupPins(0, 1, 2, 3, 3);
 
+  SPIFFS.begin();
+
   size_list = 0;
   listbuf = NULL;
 
