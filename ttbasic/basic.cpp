@@ -2069,9 +2069,6 @@ void isavebg();
 void isave() {
   int16_t prgno = 0;
   int32_t ascii = 1;
-#if 0
-  uint32_t flash_adr[FLASH_PAGE_PAR_PRG];
-#endif
   uint8_t* sram_adr;
   //char fname[64];
   BString fname;
@@ -2108,19 +2105,7 @@ void isave() {
     bfs.tmpClose();
 #endif
   } else {
-#if 0
-    // 内部フラッシュメモリへの保存
-    for (uint8_t i=0; i < FLASH_PAGE_PAR_PRG; i++)
-      flash_adr[i] = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG+i);
-
-    // 4ページ分(4096)の保存
-    TFlash.unlock();
-    for (uint8_t i=0; i < FLASH_PAGE_PAR_PRG; i++) {
-      TFlash.eracePage(flash_adr[i]);
-      TFlash.write((uint16_t*)flash_adr[i], listbuf+FLASH_PAGE_SIZE*i, FLASH_PAGE_SIZE);
-    }
-    TFlash.lock();
-#endif
+    err = ERR_NOT_SUPPORTED;
   }
 }
 
