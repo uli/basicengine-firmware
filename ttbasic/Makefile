@@ -1,4 +1,7 @@
 ARDUINO_DIR = /home/uli/devel/esp8266/arduino-1.8.3
+ESPTOOL = $(ARDUINO_DIR)/hardware/esp8266com/esp8266_nowifi/tools/esptool/esptool
+
+DEST_ADDR = 0x00000000
 
 all: elf
 
@@ -12,3 +15,6 @@ elf:
 
 clean:
 	rm -fr $(PWD)/build/*
+
+upload: elf
+	$(ESPTOOL) -cd ck -cb 460800 -cp /dev/ttyUSB0 -ca $(DEST_ADDR) -cf build/ttbasic.ino.bin
