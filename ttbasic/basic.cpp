@@ -282,7 +282,7 @@ const uint8_t i_sf[] __FLASH__  = {
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,I_SMODE,
-  I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,I_EXPORT,
+  I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,
 };
 
 // exception search function
@@ -1857,54 +1857,6 @@ void SMALL ilist(uint8_t devno=0) {
     newline(devno);            // 改行
     clp += *clp;               // 行ポインタを次の行へ進める
   }
-}
-
-// フラッシュメモリ内保存プログラムのエクスポート
-// EXPORT [sno[,eno]]
-void iexport() {
-#if 0
-  uint8_t* exclp;
-  int32_t endlineno = INT32_MAX;   // 表示終了行番号
-  int32_t prnlineno;           // 出力対象行番号
-  int32_t s_pno = 0;
-  int32_t e_pno = FLASH_SAVE_NUM-1;
-
-  if (*cip != I_EOL && *cip != I_COLON) {
-    // 引数あり
-    if (getParam(s_pno,0,FLASH_SAVE_NUM-1, I_NONE)) return;
-    e_pno = s_pno;
-    if (*cip == I_COMMA) {
-      cip++;                         // カンマをスキップ
-      if (getParam(e_pno,s_pno,FLASH_SAVE_NUM-1, I_NONE)) return;
-    }
-  }
-
-  for (uint32_t i =s_pno; i <= e_pno; i++) {
-    exclp = (uint8_t*)(FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ i*FLASH_PAGE_PAR_PRG));
-    if (*exclp == 0 || *exclp == 0xff) {
-      continue;
-    }
-    // リストの表示
-    c_puts("NEW"); newline();                 // "NEWの表示"
-
-    //リストを表示する
-    while (*exclp) {                // 行ポインタが末尾を指すまで繰り返す
-      prnlineno = getlineno(exclp); // 行番号取得
-      if (prnlineno > endlineno)    // 表示終了行番号に達したら抜ける
-	break;
-      putnum(prnlineno, 0);         // 行番号を表示
-      c_putch(' ');                 // 空白を入れる
-      putlist(exclp + sizeof(num_t) + 1);           // 行番号より後ろを文字列に変換して表示
-      if (err)                      // もしエラーが生じたら
-	break;                      // 繰り返しを打ち切る
-      newline();                    // 改行
-      exclp += *exclp;              // 行ポインタを次の行へ進める
-    }
-    err = 0;
-    c_puts("SAVE "); putnum(i, 0); newline(); // "SAVE XX"の表示
-    newline();
-  }
-#endif
 }
 
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only
