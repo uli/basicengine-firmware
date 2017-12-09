@@ -19,7 +19,6 @@ extern "C" {
 #endif
 #include "nosdki2s.h"
 };
-#include <Time.h>
 
 #include <eboot_command.h>
 
