@@ -129,6 +129,7 @@ public:
 
   static Unifile open(const char *name, uint8_t flags) {
     if (toupper(name[0]) == 'F' && name[1] == ':') {
+      char nam[strlen(name)];
       const char *fl;
       switch (flags) {
       case FILE_WRITE:		fl = "a"; break;
@@ -136,7 +137,9 @@ public:
       case FILE_READ:		fl = "r"; break;
       default:			return Unifile();
       }
-      Unifile f(SPIFFS.open(name+2, fl));
+      strcpy(nam + 1, name + 2);
+      nam[0] = '/';
+      Unifile f(SPIFFS.open(nam, fl));
       return f;
     } else {
       Unifile f(::SD.open(name, flags));
