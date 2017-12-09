@@ -511,7 +511,10 @@ inline bool is_strexp() {
           *cip == I_CHR ||
           *cip == I_HEX ||
           *cip == I_BIN ||
-          *cip == I_DMP
+          *cip == I_DMP ||
+          *cip == I_LEFTSTR ||
+          *cip == I_RIGHTSTR ||
+          *cip == I_MIDSTR
          );
 }
 
