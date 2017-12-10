@@ -685,7 +685,7 @@ BString getstr() {
 //  見つかった : キーワードコード
 int16_t lookup(char* str) {
   for (int i = 0; i < SIZE_KWTBL; ++i) {
-    if (!strncasecmp_P(str, kwtbl[i], strlen_P(kwtbl[i])))
+    if (kwtbl[i] && !strncasecmp_P(str, kwtbl[i], strlen_P(kwtbl[i])))
       return i;
   }
   return -1;
@@ -1173,7 +1173,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
 
   while (*ip != I_EOL) { //行末でなければ繰り返す
     //キーワードの処理
-    if (*ip < SIZE_KWTBL) { //もしキーワードなら
+    if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
       char kw[MAX_KW_LEN+1];
       strcpy_P(kw, kwtbl[*ip]);
       c_puts(kw, devno); //キーワードテーブルの文字列を表示
