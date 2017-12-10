@@ -8,6 +8,7 @@ funf.write('static const cmd_t funtbl[] __FLASH__ = {\n')
 count = 0
 max_kw_len = 0
 last_cmd = 0
+nulls = []
 for l in f.readlines():
   if len(l) == 0 or l.startswith('rem'):
     continue
@@ -15,35 +16,40 @@ for l in f.readlines():
     enumf.write('  ')
     funf.write('  ')
   cmd, enum, fun = l.split()
-  if cmd != '_none':
-    if last_cmd > 0:
-      print 'error: _none commands must be last'
-      exit(1)
-    cmdf.write('static const char __cmd' + str(count) + ' [] PROGMEM = "' + cmd + '";\n')
-    if len(cmd) > max_kw_len:
-      max_kw_len = len(cmd)
+
+  if cmd == '_none':
+    nulls += [count]
   else:
-    if last_cmd == 0:
-      last_cmd = count
+    cmdf.write('static const char __cmd' + str(count) + ' [] PROGMEM = "' + cmd + '";\n')
+  if len(cmd) > max_kw_len:
+    max_kw_len = len(cmd)
     
   enumf.write(enum + ',')
-  funf.write(fun + ',')
+  if fun != 'esyntax' and last_cmd > 0:
+    print 'esyntax tokens must be last'
+    exit(1)
+  if fun == 'esyntax' and last_cmd == 0:
+    last_cmd = count
+  if last_cmd == 0:
+    funf.write(fun + ',')
   if count % 8 == 7:
     enumf.write('\n')
-    funf.write('\n')
+    if last_cmd == 0:
+      funf.write('\n')
   else:
     enumf.write(' ')
-    funf.write(' ')
+    if last_cmd == 0:
+      funf.write(' ')
   count += 1
 
-if last_cmd == 0:
-  last_cmd = count
-
 cmdf.write('\nstatic const char * const kwtbl[] PROGMEM = {\n')
-for i in range(0, last_cmd):
+for i in range(0, count):
   if i % 8 == 0:
     cmdf.write('  ')
-  cmdf.write('__cmd' + str(i) + ', ')
+  if i in nulls:
+    cmdf.write('NULL, ')
+  else:
+    cmdf.write('__cmd' + str(i) + ', ')
   if i % 8 == 7:
     cmdf.write('\n')
   
