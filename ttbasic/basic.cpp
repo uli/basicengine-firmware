@@ -637,41 +637,13 @@ void get_input(bool numeric = false) {
 
 // 数値の入力
 num_t getnum() {
-  num_t value, tmp; //値と計算過程の値
-  uint8_t len; //文字数
-  uint8_t sign; //負号
+  num_t value;
 
   get_input(true);
+  value = strtonum(lbuf, NULL);
+  // XXX: say "EXTRA IGNORED" if there is unused input?
 
-  switch (lbuf[0]) { //先頭の文字で分岐
-  case '-': //「-」の場合
-    sign = 1; //負の値
-    len = 1;  //数字列はlbuf[1]以降
-    break;
-  case '+': //「+」の場合
-    sign = 0; //正の値
-    len = 1;  //数字列はlbuf[1]以降
-    break;
-  default:  //どれにも該当しない場合
-    sign = 0; //正の値
-    len = 0;  //数字列はlbuf[0]以降
-    break;
-  }
-
-  value = 0; //値をクリア
-  tmp = 0; //計算過程の値をクリア
-  while (lbuf[len]) { //終端でなければ繰り返す
-    tmp = 10 * value + lbuf[len++] - '0'; //数字を値に変換
-    if (value > tmp) { //もし計算過程の値が前回より小さければ
-      err = ERR_VOF; //オーバーフローを記録
-    }
-    value = tmp; //計算過程の値を記録
-  }
-
-  if (sign) //もし負の値なら
-    return -value;  //負の値に変換して持ち帰る
-
-  return value; //値を持ち帰る
+  return value;
 }
 
 BString getstr() {
