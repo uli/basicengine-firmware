@@ -683,37 +683,12 @@ BString getstr() {
 //[戻り値]
 //  該当なし   : -1
 //  見つかった : キーワードコード
-int16_t lookup(char* str, uint16_t len) {
-  int16_t fd_id;
-  int16_t prv_fd_id = -1;
-  int16_t fd_len,prv_len;
-
-  for (uint16_t j = 1; j <= len; j++) {
-    fd_id = -1;
-    for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if (!strncasecmp_P(str, kwtbl[i], j)) {
-	fd_id = i;
-	fd_len = j;
-	break;
-      }
-    }
-    if (fd_id >= 0) {
-      prv_fd_id = fd_id;
-      prv_len = fd_len;
-    } else {
-      break;
-    }
+int16_t lookup(char* str) {
+  for (int i = 0; i < SIZE_KWTBL; ++i) {
+    if (!strncasecmp_P(str, kwtbl[i], strlen_P(kwtbl[i])))
+      return i;
   }
-  if (prv_fd_id >= 0) {
-    prv_fd_id = -1;
-    for (uint16_t i = 0; i < SIZE_KWTBL; i++) {
-      if ( (strlen_P(kwtbl[i]) == prv_len) && !strncasecmp_P(str, kwtbl[i], prv_len) ) {
-	prv_fd_id = i;
-	break;
-      }
-    }
-  }
-  return prv_fd_id;
+  return -1;
 }
 
 uint8_t parse_identifier(char *ptok, char *vname) {
@@ -754,7 +729,7 @@ uint8_t SMALL toktoi() {
   while (*s) {                  //文字列1行分の終端まで繰り返す
     while (c_isspace(*s)) s++;  //空白を読み飛ばす
 
-    key = lookup(s, strlen(s));
+    key = lookup(s);
     if (key >= 0) {
       // 該当キーワードあり
       if (len >= SIZE_IBUF - 1) {      // もし中間コードが長すぎたら
