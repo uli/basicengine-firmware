@@ -623,8 +623,8 @@ void get_input(bool numeric = false) {
       sc->delete_char();
     } else
     //行頭の符号および数字が入力された場合の処理（符号込みで6桁を超えないこと）
-    if (!numeric || (len == 0 && (c == '+' || c == '-')) ||
-        (len < 6 && isDigit(c))) {
+    if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
+        (len == 0 && (c == '+' || c == '-')) || isDigit(c)) ) {
       lbuf[len++] = c; //バッファへ入れて文字数を1増やす
       c_putch(c); //表示
     } else {
