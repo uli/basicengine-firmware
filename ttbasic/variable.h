@@ -7,8 +7,10 @@
 #define FLOAT_NUMS
 #ifdef FLOAT_NUMS
 typedef double num_t;
+#define strtonum strtod
 #else
 typedef int32_t num_t;
+#define strtonum strtol
 #endif
 
 #ifdef DEBUG_VAR

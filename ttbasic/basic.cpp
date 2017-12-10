@@ -829,11 +829,7 @@ uint8_t SMALL toktoi() {
 	err = ERR_IBUFOF; //エラー番号をセット
 	return 0; //0を持ち帰る
       }
-#ifdef FLOAT_NUMS
-      value = strtod(ptok, &ptok);
-#else
-      value = strtol(ptok, &ptok);
-#endif
+      value = strtonum(ptok, &ptok);
       s = ptok; //文字列の処理ずみの部分を詰める
       ibuf[len++] = I_NUM; //中間コードを記録
       os_memcpy(ibuf+len, &value, sizeof(num_t));
