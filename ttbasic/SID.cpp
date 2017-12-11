@@ -214,7 +214,7 @@ static void ICACHE_RAM_ATTR envelopes()
 	- calculate attack decay release (1kHz)
 	
 ************************************************************************/
-uint8_t SID::getSample()
+uint8_t ICACHE_RAM_ATTR SID::getSample()
 {
 	static uint8_t mscounter = 0;
 	waveforms(); //~22us
