@@ -92,6 +92,8 @@ class VS23S010 {
     void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
     void drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t c);
     void drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t r, uint8_t g, uint8_t b);
+    void drawRect(int x0, int y0, int w, int h, uint8_t c, int fc);
+    void drawCircle(int x0, int y0, int radius, uint8_t c, int fc);
     uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
 
     void setMode(uint8_t mode);
