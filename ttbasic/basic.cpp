@@ -2254,30 +2254,6 @@ void ifiles() {
       err = ERR_FILE_OPEN;
     }
 #endif
-  } else if (*cip == I_EOL || *cip == I_COLON) {
-    // フラッシュメモリのプログラムリスト
-    save_clp = clp;
-#if 0
-    for (uint8_t i=0; i < FLASH_SAVE_NUM; i++) {
-      flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ i*FLASH_PAGE_PAR_PRG);
-      putnum(i,1);
-      c_puts(":");
-      if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
-	c_puts("(none)");
-      } else {
-	clp = (uint8_t*)flash_adr;
-	if (*clp) {
-	  //putnum(getlineno(clp), 0); // 行番号を表示
-	  //c_puts(" ");
-	  putlist(clp + sizeof(num_t) + 1);          // 行番号より後ろを文字列に変換して表示
-	} else {
-	  c_puts("(none)");
-	}
-      }
-      newline();
-    }
-#endif
-    clp = save_clp;
   }
 }
 
