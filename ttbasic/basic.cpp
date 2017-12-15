@@ -2216,45 +2216,44 @@ void ifiles() {
   uint8_t flgwildcard = 0;
   int16_t rc;
 
-  if (is_strexp()) {
-    if(!(fname = getParamFname())) {
-      return;
-    }
+  if (!is_strexp())
+    fname = "*";
+  else
+    fname = getParamFname();
 
-    for (int8_t i = 0; i < fname.length(); i++) {
-      if (fname[i] >='a' && fname[i] <= 'z') {
-	fname[i] = fname[i] - 'a' + 'A';
-      }
+  for (int8_t i = 0; i < fname.length(); i++) {
+    if (fname[i] >='a' && fname[i] <= 'z') {
+      fname[i] = fname[i] - 'a' + 'A';
     }
-
-    if (fname.length() > 0) {
-      for (int8_t i = fname.length()-1; i >= 0; i--) {
-	if (fname[i] == '/') {
-	  ptr = &fname[i];
-	  break;
-	}
-	if (fname[i] == '*' || fname[i] == '?' || fname[i] == '.')
-	  flgwildcard = 1;
-      }
-      if (ptr != NULL && flgwildcard == 1) {
-	strcpy(wildcard, ptr+1);
-	wcard = wildcard;
-	*(ptr+1) = 0;
-      } else if (ptr == NULL && flgwildcard == 1) {
-	strcpy(wildcard, fname.c_str());
-	wcard = wildcard;
-	fname = "/";
-      }
-    }
-#if USE_SD_CARD == 1
-    rc = bfs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
-    if (rc == SD_ERR_INIT) {
-      err = ERR_SD_NOT_READY;
-    } else if (rc == SD_ERR_OPEN_FILE) {
-      err = ERR_FILE_OPEN;
-    }
-#endif
   }
+
+  if (fname.length() > 0) {
+    for (int8_t i = fname.length()-1; i >= 0; i--) {
+      if (fname[i] == '/') {
+        ptr = &fname[i];
+        break;
+      }
+      if (fname[i] == '*' || fname[i] == '?' || fname[i] == '.')
+        flgwildcard = 1;
+    }
+    if (ptr != NULL && flgwildcard == 1) {
+      strcpy(wildcard, ptr+1);
+      wcard = wildcard;
+      *(ptr+1) = 0;
+    } else if (ptr == NULL && flgwildcard == 1) {
+      strcpy(wildcard, fname.c_str());
+      wcard = wildcard;
+      fname = "/";
+    }
+  }
+#if USE_SD_CARD == 1
+  rc = bfs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
+  if (rc == SD_ERR_INIT) {
+    err = ERR_SD_NOT_READY;
+  } else if (rc == SD_ERR_OPEN_FILE) {
+    err = ERR_FILE_OPEN;
+  }
+#endif
 }
 
 void iformat() {
