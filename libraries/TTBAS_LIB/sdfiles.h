@@ -30,6 +30,9 @@
 
 extern SdFat SD;
 
+bool SD_BEGIN(int mhz = 40);
+bool SD_END(void);
+
 class Unifile {
 public:
   enum uni_type {
@@ -171,15 +174,11 @@ private:
 };
 
 class sdfiles {
- private:
-
+private:
   Unifile tfile;
   uint8_t flgtmpOlen;
-  uint8_t cs;   
-  bool SD_BEGIN(int mhz = 40);
-  bool SD_END(void);
 
- public:
+public:
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
   uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
   uint8_t save(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのセーブ
@@ -201,8 +200,6 @@ class sdfiles {
     
   // ビットマップファイルのロード
   uint8_t loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h);
-
-private:
-  int m_mhz;
 };
+
 #endif

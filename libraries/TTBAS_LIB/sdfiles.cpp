@@ -21,8 +21,10 @@
 SdFat SD;
 
 static bool sdfat_initialized = false;
+static int m_mhz = 0;
+static uint8_t cs = 0;
 
-bool sdfiles::SD_BEGIN(int mhz)
+bool SD_BEGIN(int mhz)
 {
   if (mhz != m_mhz) {
     m_mhz = mhz;
@@ -37,7 +39,7 @@ bool sdfiles::SD_BEGIN(int mhz)
   return sdfat_initialized;
 }
 
-bool sdfiles::SD_END(void)
+bool SD_END(void)
 {
   SPI.setFrequency(11000000);
   SpiUnlock();
