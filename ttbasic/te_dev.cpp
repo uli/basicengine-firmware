@@ -23,6 +23,7 @@
 */
 
 #include "ttconfig.h"
+#include "basic.h"
 #include <tscreenBase.h>
 extern tscreenBase *sc;
 
@@ -101,6 +102,7 @@ static void CrtSetup()
 */
 static void CrtReset()
 {
+	err = 0;
 }
 
 static inline void CrtOut(int ch)

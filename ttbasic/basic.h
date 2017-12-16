@@ -1,3 +1,9 @@
+#ifndef __BASIC_H
+#define __BASIC_H
+
+#include <stdint.h>
+#include <string.h>
+
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 128    // 中間コード変換バッファサイズ
 
@@ -16,3 +22,5 @@ static inline void cleartbuf() {
   tbuf_pos=0;
   memset(tbuf,0,SIZE_LINE);
 }
+
+#endif
