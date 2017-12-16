@@ -240,11 +240,9 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 // 画面のクリア
 //
 void tv_cls() {
-#if USE_VS23 == 1
-  Serial.println("unimp tv_cls");
-#else
-  TV.cls();
-#endif
+  for (int i = 0; i < c_height; ++i) {
+    tv_clerLine(i);
+  }
 }
 
 //
