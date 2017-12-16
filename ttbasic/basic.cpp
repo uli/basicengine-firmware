@@ -36,9 +36,9 @@
 #define STR_EDITION "ESP8266"
 #define STR_VARSION "V0.84"
 
+#include "basic.h"
+
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
-#define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
-#define SIZE_IBUF 128    // 中間コード変換バッファサイズ
 int size_list;
 #define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
 #define MAX_VAR_NAME 32  // maximum length of variable names
@@ -387,12 +387,6 @@ inline void mem_putch(uint8_t c) {
     tbuf[tbuf_pos] = c;
     tbuf_pos++;
   }
-}
-
-// メモリ書き込みポインタのクリア
-inline void cleartbuf() {
-  tbuf_pos=0;
-  memset(tbuf,0,SIZE_LINE);
 }
 
 uint8_t* sanitize_addr(uint32_t vadr) {
@@ -1135,7 +1129,7 @@ void inslist() {
 }
 
 //指定中間コード行レコードのテキスト出力
-void SMALL putlist(unsigned char* ip, uint8_t devno=0) {
+void SMALL putlist(unsigned char* ip, uint8_t devno) {
   unsigned char i;  // ループカウンタ
   uint8_t var_code; // 変数コード
 
