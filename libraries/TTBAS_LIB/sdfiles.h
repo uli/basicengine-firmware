@@ -68,7 +68,7 @@ public:
 
   bool isDirectory() {
     switch (m_type) {
-    case SD: return m_sd_file->isDirectory();
+    case SD: { SD_BEGIN(); bool ret = m_sd_file->isDirectory(); SD_END(); return ret; }
     case FS: return false; /* no directories in SPIFFS */
     default: return false;
     }
@@ -76,7 +76,7 @@ public:
 
   void close() {
     switch (m_type) {
-    case SD: m_sd_file->close(); return;
+    case SD: { SD_BEGIN(); m_sd_file->close(); SD_END(); return; }
     case FS: m_fs_file->close(); return;
     default: return;
     }
@@ -84,7 +84,7 @@ public:
 
   size_t write(char *s) {
     switch (m_type) {
-    case SD: return m_sd_file->write(s);
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s); SD_END(); return ret; }
     case FS: return m_fs_file->write((uint8_t *)s, strlen(s));
     default: return -1;
     }
@@ -92,7 +92,7 @@ public:
 
   size_t write(char *s, size_t sz) {
     switch (m_type) {
-    case SD: return m_sd_file->write(s, sz);
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s, sz); SD_END(); return ret; }
     case FS: return m_fs_file->write((uint8_t *)s, sz);
     default: return -1;
     }
@@ -100,7 +100,7 @@ public:
 
   size_t write(uint8_t c) {
     switch (m_type) {
-    case SD: return m_sd_file->write(c);
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(c); SD_END(); return ret; }
     case FS: return m_fs_file->write(c);
     default: return -1;
     }
@@ -108,7 +108,7 @@ public:
 
   int read() {
     switch (m_type) {
-    case SD: return m_sd_file->read();
+    case SD: { SD_BEGIN(); int ret = m_sd_file->read(); SD_END(); return ret; }
     case FS: return m_fs_file->read();
     default: return -1;
     }
@@ -116,7 +116,7 @@ public:
 
   size_t read(char* buf, size_t size) {
     switch (m_type) {
-    case SD: return m_sd_file->read(buf, size);
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->read(buf, size); SD_END(); return ret; }
     case FS: return m_fs_file->read((uint8_t *)buf, size);
     default: return -1;
     }
@@ -145,7 +145,9 @@ public:
       Unifile f(SPIFFS.open(nam, fl));
       return f;
     } else {
+      SD_BEGIN();
       Unifile f(::SD.open(name, flags));
+      SD_END();
       return f;
     }
   }
