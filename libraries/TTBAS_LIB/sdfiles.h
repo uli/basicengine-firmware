@@ -122,6 +122,14 @@ public:
     }
   }
 
+  size_t fgets(char* str, int num) {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->fgets(str, num); SD_END(); return ret; }
+    case FS: return -1;
+    default: return -1;
+    }
+  }
+
   operator bool() {
     switch (m_type) {
     case SD: return (bool)*m_sd_file;
