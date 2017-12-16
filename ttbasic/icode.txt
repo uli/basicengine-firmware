@@ -83,6 +83,7 @@ SPRITE	I_SPRITE	isprite
 MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
 DIM	I_DIM		idim
+EDIT	I_EDIT		iedit
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom

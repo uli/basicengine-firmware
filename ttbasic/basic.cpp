@@ -4090,6 +4090,18 @@ int32_t ipad() {
   return psx.read();
 }
 
+int te_main(char argc, const char **argv);
+void iedit() {
+  BString fn;
+  const char *argv[2] = { NULL, NULL };
+  int argc = 1;
+  if ((fn = getParamFname())) {
+    ++argc;
+    argv[1] = fn.c_str();
+  }
+  te_main(argc, argv);
+}
+
 //
 // プログラムのロード・実行 LRUN/LOAD
 // LRUN プログラム番号
