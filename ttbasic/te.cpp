@@ -74,6 +74,8 @@
 
 #include "te_dev.cpp"
 
+#include "basic.h"
+
 /* Globals
    -------
 */
@@ -1228,6 +1230,16 @@ int ForceGetCh()
 	return 0;
 }
 
+int ParseBasic(const char *code)
+{
+	strcpy(lbuf, code);
+	toktoi();
+	cleartbuf();
+	putlist(ibuf, 3);
+	printf("-%s-\n", tbuf);
+	return err;
+}
+
 /* Edit current line
    -----------------
    Returns last character entered.
@@ -1541,7 +1553,14 @@ int BfEdit()
 	{
 		/* FIX-ME: May be we are just copying the same data if there were no changes */
 
-		strcpy(lp_arr[lp_cur], ln_dat);
+		if (ParseBasic(ln_dat) == 0) {
+			strcpy(lp_arr[lp_cur], tbuf);
+			if (strcmp(ln_dat, tbuf)) {
+				CrtClearLine(BOX_ROW + box_shr);
+				putstr(tbuf);
+			}
+		} else
+			strcpy(lp_arr[lp_cur], ln_dat);
 	}
 	else if((buf = (char *)malloc(len + 1)) == NULL)
 	{
@@ -1549,7 +1568,14 @@ int BfEdit()
 	}
 	else
 	{
-		strcpy(buf, ln_dat);
+		if (ParseBasic(ln_dat) == 0) {
+			strcpy(buf, tbuf);
+			if (strcmp(ln_dat, tbuf)) {
+				CrtClearLine(BOX_ROW + box_shr);
+				putstr(tbuf);
+			}
+		} else
+			strcpy(buf, ln_dat);
 
 		free(lp_arr[lp_cur]);
 
