@@ -2523,21 +2523,28 @@ void igpio() {
 #endif
 }
 
+uint16_t pcf_state = 0xffff;
+
 // GPIO ピンデジタル出力
 void idwrite() {
   int32_t pinno,  data;
 
-  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return;  // ピン番号取得
-  if ( getParam(data, I_NONE) ) return;                  // データ指定取得
-  data = data ? HIGH : LOW;
+  if ( getParam(pinno, 0, 15, I_COMMA) ) return;
+  if ( getParam(data, I_NONE) ) return;
+  data = !!data;
 
-  if (!IsIO_PIN(pinno)) {
-    err = ERR_GPIO;
-    return;
-  }
+  pcf_state = (pcf_state & ~(1 << pinno)) | (data << pinno);
 
-  // ピンモードの設定
-  digitalWrite(pinno, data);
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
+
+  // XXX: frequency is higher when running at 160 MHz because F_CPU is wrong
+  Wire.beginTransmission(0x20);
+  Wire.write(pcf_state & 0xff);
+  Wire.write(pcf_state >> 8);
+
+  int ret = Wire.endTransmission();
 }
 
 // shiftOutコマンド SHIFTOUT dataPin, clockPin, bitOrder, value
