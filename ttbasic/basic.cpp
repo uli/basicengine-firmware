@@ -4493,13 +4493,16 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_DIN: // DIN(ピン番号)
     if (checkOpen()) break;
-    if (getParam(value,0,I_PC15 - I_PA0, I_NONE)) break;
+    if (getParam(a, 0, 15, I_NONE)) break;
     if (checkClose()) break;
-    if ( !IsIO_PIN(value) ) {
-      err = ERR_GPIO;
-      break;
+    while (!blockFinished()) {}
+    if (Wire.requestFrom(0x20, 2) != 2)
+      err = ERR_IO;
+    else {
+      uint16_t state = Wire.read();
+      state |= Wire.read() << 8;
+      value = !!(state & (1 << a));
     }
-    value = digitalRead(value);  // 入力値取得
     break;
 
   case I_ANA: // ANA(ピン番号)
