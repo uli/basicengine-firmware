@@ -5511,7 +5511,11 @@ void SMALL basic() {
   bfs.init(16); // この処理ではGPIOの操作なし
 #endif
 
-//  I2C_WIRE.begin();  // I2C利用開始
+  Wire.begin(2, 0);
+  // ESP8266 Wire code assumes that SCL and SDA pins are set low, instead
+  // of taking care of that itself. WTF?!?
+  digitalWrite(0, LOW);
+  digitalWrite(2, LOW);
 
   icls();
   char* textline;    // 入力行
