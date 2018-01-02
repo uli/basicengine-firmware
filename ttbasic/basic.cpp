@@ -5562,9 +5562,9 @@ void SMALL basic() {
     c_puts(epi);
   }
   newline();
-  sc->setColor(0x97, 0);
+  sc->setColor(0xe7, 0);
   sc0.setFont(fonts[1]);
-  c_puts("DEVBASIC   "); //「TOYOSHIKI TINY BASIC」を表示
+  c_puts("Engine BASIC     ");
   sc->setColor(0x0f, 0);
   sc0.setFont(fonts[0]);
   c_puts(" " STR_EDITION);          // 版を区別する文字列「EDITION」を表示

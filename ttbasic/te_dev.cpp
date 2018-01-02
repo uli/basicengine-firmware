@@ -2,7 +2,7 @@
 
 	Text editor.
 
-	CRT module for DEVBASIC.
+	CRT module for Engine BASIC.
 
 	Copyright (c) 2015 Ulrich Hecht
 
@@ -32,7 +32,7 @@ extern tscreenBase *sc;
 /* Definitions
    -----------
 */
-#define CRT_NAME "DEVBASIC"
+#define CRT_NAME "Engine BASIC"
 
 #define CRT_ROWS (sc->getHeight()-1)        /* CRT rows: 24 - 1 (system line) */
 #define CRT_COLS (sc->getWidth())        /* CRT columns */
