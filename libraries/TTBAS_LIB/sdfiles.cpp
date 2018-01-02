@@ -458,7 +458,12 @@ File pcx_file;
 
 static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 {
-  return pcx_file.read(buf, bytesToRead);
+  if (buf == (void *)-1)
+    return pcx_file.position();
+  else if (buf == (void *)-2)
+    return pcx_file.seekSet(bytesToRead);
+  else
+    return pcx_file.read(buf, bytesToRead);
 }
 
 uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h) {

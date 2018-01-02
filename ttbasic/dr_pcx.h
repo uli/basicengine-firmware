@@ -466,7 +466,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
             if (!palette256)
               return DR_FALSE;
 
-            uint32_t position = pcx_file.position();
+            uint32_t position = pPCX->onRead(pPCX->pUserData, (void *)-1, 0);
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
@@ -496,7 +496,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
             }
 
             // Go back to the image data.
-            pcx_file.seekSet(position);
+            pPCX->onRead(pPCX->pUserData, (void *)-2, position);
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
