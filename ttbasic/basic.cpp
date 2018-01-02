@@ -5472,6 +5472,29 @@ uint8_t SMALL icom() {
   return rc;
 }
 
+#include "basic_engine_128x64_pcx.h"
+#include "dr_pcx.h"
+
+static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
+  unsigned char **ldp = (unsigned char **)user_data;
+
+  if (buf == (void *)-1)
+    return (size_t)*ldp;
+  else if (buf == (void *)-2)
+    return (size_t)(*ldp = (unsigned char *)bytesToRead);
+  else {
+    memcpy_P(buf, *ldp, bytesToRead);
+    *ldp += bytesToRead;
+    return bytesToRead;
+  }
+}
+
+static void show_logo() {
+  const unsigned char *ld = basic_engine_128x64_pcx;
+  drpcx_load(read_image_bytes, &ld, false, NULL, NULL, NULL, 0,
+             sc0.getGWidth() - 128 - 8, 8, 0, 0, 128, 64);
+}
+
 /*
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
@@ -5528,6 +5551,7 @@ void SMALL basic() {
   digitalWrite(2, LOW);
 
   icls();
+  show_logo();
   char* textline;    // 入力行
 
   // 起動メッセージ
