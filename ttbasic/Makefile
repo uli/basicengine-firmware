@@ -19,5 +19,6 @@ funtbl.h: icode.txt icode.py
 clean:
 	rm -fr $(PWD)/build/*
 
+SER ?= /dev/ttyUSB0
 upload: elf
-	$(ESPTOOL) -cd ck -cb 460800 -cp /dev/ttyUSB0 -ca $(DEST_ADDR) -cf build/ttbasic.ino.bin
+	$(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf build/ttbasic.ino.bin
