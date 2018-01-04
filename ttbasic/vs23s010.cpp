@@ -80,6 +80,8 @@ void VS23S010::begin()
   SpiRamWriteRegister(0x82, m_gpio_state);
 
   SpiUnlock();
+  
+  setColorConversion(0, 7, 3, 6, true);
 }
 
 void VS23S010::end()
