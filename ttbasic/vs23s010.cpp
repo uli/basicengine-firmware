@@ -70,10 +70,10 @@ void VS23S010::begin()
   SpiLock();
   for (int i = 0; i < numModes; ++i) {
     SPI.setFrequency(modes[i].max_spi_freq);
-    modes[i].max_spi_freq = SPI1CLK;
+    modes[i].max_spi_freq = getSpiClock();
   }
   SPI.setFrequency(38000000);
-  m_min_spi_div = SPI1CLK;
+  m_min_spi_div = getSpiClock();
   SPI.setFrequency(11000000);
 
   m_gpio_state = 0xf;
@@ -545,7 +545,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     return;
   last_frame = m_frame;
 
-  int spi_clock_default = SPI1CLK;
+  int spi_clock_default = getSpiClock();
 
   SpiLock();
   lines[0] = currentLine();
@@ -618,7 +618,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   // still being drawn.
   for (int pass = 0; pass < 2; ++pass) {
     // Block move programming can be done at max SPI speed.
-    SPI1CLK = m_min_spi_div;
+    setSpiClockMax();
 
     // Draw enabled backgrounds.
     if (tsy != -1) for (int i = 0; i < VS23_MAX_BG; ++i) {
@@ -671,7 +671,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     // Draw sprites.
 
     // Reduce SPI speed for memory accesses.
-    SPI1CLK = spi_clock_default;
+    setSpiClock(spi_clock_default);
     lines[4] = currentLine();
 
     while (!blockFinished()) {}
@@ -737,9 +737,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             // much higher SPI speeds than the stable 11 MHz if we accept
             // that there is an occasional corrupted byte, which will
             // be corrected in the next frame.
-            SPI1CLK = m_current_mode->max_spi_freq;
+            setSpiClockWrite();
             SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
-            SPI1CLK = spi_clock_default;
+            setSpiClock(spi_clock_default);
 
             for (int p = 0; p < sl->len; ++p) {
               if (!sbuf[p + sl->off])
@@ -802,7 +802,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
     }
   } // pass
 
-  SPI1CLK = spi_clock_default;
+  setSpiClock(spi_clock_default);
   SpiUnlock();
 }
 
