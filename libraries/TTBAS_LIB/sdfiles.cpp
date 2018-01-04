@@ -12,6 +12,7 @@
 
 #include "sdfiles.h"
 #include "../../ttbasic/lock.h"
+#include "../../ttbasic/vs23s010.h"
 #include <string.h>
 
 //#include <RTClock.h>
@@ -244,10 +245,11 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint8_t rc = 0;
   char name[32];
 
- if (SD_BEGIN() == false) 
+  if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
   File dir = SD.open(_dir);
+
   if (dir) {
     dir.rewindDirectory();
     while (true) {
@@ -258,6 +260,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
       entry.getName(name, 32);
       len = strlen(name);
       if (!wildcard || (wildcard && wildcard_match(wildcard,name))) {
+        // Reduce SPI clock while doing screen writes.
+        vs23.setSpiClockWrite();
         if (entry.isDirectory()) {
           c_puts(name);
           c_puts("*");
@@ -451,7 +455,6 @@ int8_t sdfiles::IsText(char* fname) {
 
 File pcx_file;
 
-#include "../../ttbasic/vs23s010.h"
 #define DR_PCX_NO_STDIO
 #define DR_PCX_IMPLEMENTATION
 #include "../../ttbasic/dr_pcx.h"
