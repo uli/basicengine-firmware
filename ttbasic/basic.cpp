@@ -3875,6 +3875,20 @@ void SMALL iscreen() {
 #endif
 }
 
+void ipalette() {
+  int32_t p, hw, sw, vw, f;
+  if (getParam(p, 0, VS23_NUM_COLORSPACES - 1, I_NONE)) return;
+  vs23.setColorSpace(p);
+  if (*cip == I_COMMA) {
+    cip++;
+    if (getParam(hw, 0, 7, I_COMMA) ) return;
+    if (getParam(sw, 0, 7, I_COMMA) ) return;
+    if (getParam(vw, 0, 7, I_COMMA) ) return;
+    if (getParam(f, 0, 1, I_NONE)) return;
+    vs23.setColorConversion(p, hw, sw, vw, !!f);
+  }
+}
+
 void ibg() {
   int32_t m;
   int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh;
