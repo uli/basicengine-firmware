@@ -450,15 +450,15 @@ uint8_t tscreenBase::edit_scrollUp() {
 #endif
 }
 
-// 編集中画面をスクロールダウンする
+// Scroll down the editing screen
 uint8_t tscreenBase::edit_scrollDown() {
 #if DEPEND_TTBASIC == 0
   scroll_down();
 #else
-  // 1行分スクロールダウンを試みる
+  // Try scrolling down by one line
   int32_t lineno,prv_nm,len;
   char* text;
-  lineno = getLineNum(0); // 最終行の表示行番号の取得
+  lineno = getLineNum(0); // Obtain display line number of the last line
   if (lineno > 0) {
     prv_nm = getPrevLineNo(lineno);
     if (prv_nm > 0) {
