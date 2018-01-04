@@ -3809,9 +3809,9 @@ void iwindow() {
     sc->init(w, h, SIZE_LINE, workarea); // スクリーン初期設定
   } else if (scmode > 0) {
     sc0.setWindow(x, y, w, h);
+    sc->locate(0,0);
     sc->init(w, h, SIZE_LINE, workarea);
     sc->cls();
-    sc->locate(0,0);
   }
 }
 
