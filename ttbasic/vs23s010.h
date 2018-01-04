@@ -111,6 +111,19 @@ class VS23S010 {
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
 
+    uint32_t getSpiClock() {
+      return SPI1CLK;
+    }
+    void setSpiClock(uint32_t div) {
+      SPI1CLK = div;
+    }
+    void setSpiClockWrite() {
+      SPI1CLK = m_current_mode->max_spi_freq;
+    }
+    void setSpiClockMax() {
+      SPI1CLK = m_min_spi_div;
+    }
+
     static inline void startBlockMove() {
 #ifdef DEBUG_BM
       if (!blockFinished()) {
