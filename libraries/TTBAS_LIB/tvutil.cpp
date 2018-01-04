@@ -32,7 +32,6 @@ uint8_t *b_adr;     // フレームバッファビットバンドアドレ
 #endif
 uint16_t f_width;    // フォント幅(ドット)
 uint16_t f_height;   // フォント高さ(ドット)
-int f_x = -1, f_y = -1;
 uint16_t g_width;    // 画面横ドット数(ドット)
 uint16_t g_height;   // 画面縦ドット数(ドット)
 uint16_t win_x, win_y, win_width, win_height;
@@ -42,26 +41,8 @@ int clrline_x, clrline_y;
 uint16_t fg_color = 0xf;
 uint16_t bg_color = 0;
 
-uint32_t char_addr(uint8_t c)
-{
-  uint32_t addr = vs23.pixelAddr(f_x+(c%c_width)*f_width, f_y+(c/c_width * f_height));
-  return addr;
-}
-
-static uint16_t char_x(uint8_t c)
-{
-  return f_x + c%c_width * f_width;
-}
-static uint16_t char_y(uint8_t c)
-{
-  return f_y + c/c_width * f_height;
-}
-
 // フォント利用設定
 void SMALL tv_fontInit() {
-  if (f_x >= 0)
-    vs23.freeBacking(f_x, f_y, c_width * f_width, (256 + c_width - 1) / c_width * f_height);
-
   if (!tvfont)
     tvfont = console_font_6x8;
 
@@ -71,26 +52,6 @@ void SMALL tv_fontInit() {
   c_height = g_height / f_height;      // 縦文字数
   win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
-
-  vs23.allocBacking(c_width * f_width, (256 + c_width - 1) / c_width * f_height, f_x, f_y);
-
-#if USE_VS23 == 1
-  for (int c=0; c < 256; ++c) {
-    uint32_t dest = char_addr(c);
-    //Serial.println(dest);
-    for (int l=0; l < f_height; ++l) {
-      uint8_t bits = pgm_read_byte(tvfont+3+c*f_height+l);
-      uint8_t bytes[f_width];
-      memset(bytes, 0, f_width);
-      for (int b=0; b < f_width; ++b) {
-        bytes[b] = ((bits >> (7-b)) & 1)?fg_color:bg_color;
-      }
-      //Serial.println(dest);
-      SpiRamWriteBytes(dest, bytes, f_width);
-      dest += vs23.piclinePitch();
-    }
-  }
-#endif
 }
 
 void tv_setFont(const uint8_t *font)
@@ -122,7 +83,6 @@ void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) {
   win_width = g_width;
   win_height = g_height;
 	
-  f_x = -1; f_y = -1;
   tv_fontInit();
 
   tv_NTSC_adjust(ajst);
@@ -215,21 +175,16 @@ uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
 //
 void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 #if USE_VS23 == 1
-  if (fg_color != 0x0f || bg_color != 0) {
-    const uint8_t *chp = tvfont+3+c*f_height;
-    for (int i=0;i<f_height;++i) {
-      uint8_t pix[f_width];
-      uint8_t ch = pgm_read_byte(chp+i);
-      for (int j=0;j<f_width;++j) {
-        pix[j] = ch&0x80 ? fg_color : bg_color;
-        ch <<= 1;
-      }
-      uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
-      SpiRamWriteBytes(byteaddress, pix, f_width);
+  const uint8_t *chp = tvfont+3+c*f_height;
+  for (int i=0;i<f_height;++i) {
+    uint8_t pix[f_width];
+    uint8_t ch = pgm_read_byte(chp+i);
+    for (int j=0;j<f_width;++j) {
+      pix[j] = ch&0x80 ? fg_color : bg_color;
+      ch <<= 1;
     }
-  } else {
-    vs23.MoveBlock(char_x(c), char_y(c),
-                   win_x + x*f_width, win_y + y*f_height, f_width, f_height, 0);
+    uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
+    SpiRamWriteBytes(byteaddress, pix, f_width);
   }
 #else
   TV.print_char(x * f_width, y * f_height ,c);  
