@@ -326,6 +326,26 @@ void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 	}
 }
 
+void VS23S010::setColorSpace(uint8_t palette)
+{
+	// 8. Set microcode program for picture lines
+	// Use HROP1/HROP2/OP4/OP4 for 2 PLL clocks per pixel modes
+	SpiRamWriteProgram(PROGRAM,
+          (vs23_ops[palette][3] << 8) | vs23_ops[palette][2],
+          (vs23_ops[palette][1] << 8) | vs23_ops[palette][0]
+        );
+	// Set color burst
+	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BURST;
+	for (int i = 0; i < BURSTDUR; i++)
+		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (vs23_ops[palette][4] << 8));
+
+        switch (palette) {
+        case 0: setColorConversion(0, 7, 3, 6, true); break;
+        case 1: setColorConversion(1, 7, 4, 7, true); break;
+        default: break;
+        }
+}
+
 void SMALL VS23S010::SpiRamVideoInit()
 {
 	uint16_t i, j, wi;
@@ -374,9 +394,6 @@ void SMALL VS23S010::SpiRamVideoInit()
 		SpiRamWriteWord((uint16_t)w, 0x0000);	// Clear memory
 	// 7. Set length of one complete line (unit: PLL clocks)
 	SpiRamWriteRegister(LINELEN, (PLLCLKS_PER_LINE));
-	// 8. Set microcode program for picture lines
-	// Use HROP1/HROP2/OP4/OP4 for 2 PLL clocks per pixel modes
-	SpiRamWriteProgram(PROGRAM, (OP4 << 8) | OP3, (OP2 << 8) | OP1);
 	// 9. Define where Line Indexes are stored in memory
 	SpiRamWriteRegister(INDEXSTART, INDEX_START_LONGWORDS);
 	// 10. Enable the PAL Y lowpass filter, not used in NTSC
@@ -572,10 +589,6 @@ void SMALL VS23S010::SpiRamVideoInit()
 	w = PROTOLINE_WORD_ADDRESS(0);
 	for (i = 0; i < SYNC; i++)
 		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	// Set color burst
-	w = PROTOLINE_WORD_ADDRESS(0) + BURST;
-	for (i = 0; i < BURSTDUR; i++)
-		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL);
 	// Makes a black&white picture
 	// for (i=0; i<BURSTDUR; i++) SpiRamWriteWord(w++,BLANK_LEVEL);
 
@@ -630,6 +643,8 @@ void SMALL VS23S010::SpiRamVideoInit()
 		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
 	}
 #endif
+
+	setColorSpace(0);
 
 	// 12. Now set first eight lines of frame to point to NTSC sync lines
 	// Here the frame starts, lines 1 and 2

@@ -40,6 +40,8 @@ struct vs23_mode_t {
 #define VS23_MAX_SPRITE_W 16
 #define VS23_MAX_SPRITE_H 16
 
+#define VS23_NUM_COLORSPACES	2
+
 //#define DEBUG_BM
 
 enum {
@@ -96,6 +98,7 @@ class VS23S010 {
     void drawCircle(int x0, int y0, int radius, uint8_t c, int fc);
     uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
     static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
+    void setColorSpace(uint8_t palette);
 
     void setMode(uint8_t mode);
     void calibrateVsync();

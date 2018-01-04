@@ -182,19 +182,24 @@
 #define VSHIFT 8
 #else
 /// 8 bits per pixel, U2 V2 Y4
-#ifdef ALT_COLORS
-#define OP1 (PICK_B + PICK_BITS(6) + SHIFT_BITS(2))
-#define OP2 (PICK_A + PICK_BITS(6) + SHIFT_BITS(3))
-#define OP3 (PICK_Y + PICK_BITS(3) + SHIFT_BITS(3))
-#else
-#define OP1 (PICK_B + PICK_BITS(2) + SHIFT_BITS(2))
-#define OP2 (PICK_A + PICK_BITS(2) + SHIFT_BITS(2))
-#define OP3 (PICK_Y + PICK_BITS(4) + SHIFT_BITS(4))
-#endif
-#define OP4 (PICK_NOTHING)
-/// U & V data shift values in a 8-bit pixel are defined.
-#define USHIFT 6
-#define VSHIFT 4
+const uint8_t vs23_ops[2][5] = {
+  {
+    /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
+    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
+    PICK_NOTHING,
+    0x0d,
+  },
+  {
+    /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
+    PICK_B + PICK_BITS(6) + SHIFT_BITS(2),
+    PICK_A + PICK_BITS(6) + SHIFT_BITS(3),
+    PICK_Y + PICK_BITS(3) + SHIFT_BITS(3),
+    PICK_NOTHING,
+    0x0c,
+  },
+};
 #endif
 
 // For 2 PLL clocks per pixel modes:
@@ -248,7 +253,7 @@
 /// 339 mV to 75 ohm load
 #define BLACK_LEVEL 0x0066
 /// 285 mV burst
-#define BURST_LEVEL 0x0d66
+#define BURST_LEVEL 0x66	// add (burst vector << 8) to this
 #define WHITE_LEVEL 0x00ff
 
 #ifdef ESP8266
