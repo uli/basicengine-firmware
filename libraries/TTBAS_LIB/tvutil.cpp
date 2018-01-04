@@ -240,7 +240,7 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
 // 画面のクリア
 //
 void tv_cls() {
-  for (int i = 0; i < c_height; ++i) {
+  for (int i = 0; i < win_c_height; ++i) {
     tv_clerLine(i);
   }
 }
