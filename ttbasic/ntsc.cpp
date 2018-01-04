@@ -246,13 +246,6 @@ void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress)
 	SpiRamWriteByte(indexAddr, (uint16_t)(byteAddress >> 9));
 }
 
-#include "rgb444_to_yuv422.h"
-
-uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
-{
-	return pgm_read_byte(&rgb444_to_yuv422[((r >> 4) << 8) | ((g >> 4) << 4) | (b >> 4)]);
-}
-
 // / Set picture pixel to a RGB value 
 void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
 			   uint8_t b)

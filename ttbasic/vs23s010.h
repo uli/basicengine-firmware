@@ -95,6 +95,7 @@ class VS23S010 {
     void drawRect(int x0, int y0, int w, int h, uint8_t c, int fc);
     void drawCircle(int x0, int y0, int radius, uint8_t c, int fc);
     uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
+    static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
 
     void setMode(uint8_t mode);
     void calibrateVsync();
