@@ -5486,7 +5486,7 @@ uint8_t SMALL icom() {
   return rc;
 }
 
-#include "basic_engine_128x64_pcx.h"
+#include "basic_engine_pcx.h"
 #include "dr_pcx.h"
 
 static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
@@ -5504,9 +5504,9 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
 }
 
 static void show_logo() {
-  const unsigned char *ld = basic_engine_128x64_pcx;
+  const unsigned char *ld = basic_engine_pcx;
   drpcx_load(read_image_bytes, &ld, false, NULL, NULL, NULL, 0,
-             sc0.getGWidth() - 128 - 8, 8, 0, 0, 128, 64);
+             sc0.getGWidth() - 160 - 0, 0, 0, 0, 160, 64);
 }
 
 /*
@@ -5565,26 +5565,48 @@ void SMALL basic() {
   digitalWrite(2, LOW);
 
   icls();
+  sc->show_curs(0);
+
+  // Want to make sure we get the right hue.
+  vs23.setColorSpace(1);
+  vs23.setColorConversion(1, 7, 3, 3, true);
   show_logo();
+  vs23.setColorSpace(1);	// reset color conversion
+
   char* textline;    // 入力行
 
-  // 起動メッセージ
-  sc->setColor(0x05, 0);
+  // Startup screen
+  // Epigram
+  sc0.setFont(fonts[1]);
+  sc->setColor(vs23.colorFromRgb(72,72,72), 0);
   {
     char epi[80];
     strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
     c_puts(epi);
   }
   newline();
-  sc->setColor(0xe7, 0);
-  sc0.setFont(fonts[1]);
-  c_puts("Engine BASIC     ");
-  sc->setColor(0x0f, 0);
+
+  // Banner
+  sc->setColor(vs23.colorFromRgb(192,0,0), 0);
+  c_puts("Engine BASIC");
   sc0.setFont(fonts[0]);
-  c_puts(" " STR_EDITION);          // 版を区別する文字列「EDITION」を表示
+
+  // Platform/version
+  sc->setColor(vs23.colorFromRgb(64,64,64), 0);
+  sc->locate(sc->getWidth() - 14, 8);
+  c_puts(STR_EDITION);          // 版を区別する文字列「EDITION」を表示
   c_puts(" " STR_VARSION);      // バージョンの表示
-  newline();                    // 改行
-  error();                      //「OK」またはエラーメッセージを表示してエラー番号をクリア
+
+  // Free memory
+  sc->setColor(vs23.colorFromRgb(255,255,255), 0);
+  sc->locate(0,2);
+#ifdef ESP8266
+  putnum(umm_free_heap_size(), 0);
+  c_puts(" bytes free"); newline();
+#endif
+
+  sc->show_curs(1);
+  error();          // "OK" or display an error message and clear the error number
 
   // プログラム自動起動
   if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
