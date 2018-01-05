@@ -5628,7 +5628,8 @@ void SMALL basic() {
 
   // Banner
   sc->setColor(vs23.colorFromRgb(192,0,0), 0);
-  c_puts("Engine BASIC");
+  static const char engine_basic[] PROGMEM = "Engine BASIC";
+  c_puts_P(engine_basic);
   sc0.setFont(fonts[0]);
 
   // Platform/version
@@ -5642,7 +5643,8 @@ void SMALL basic() {
   sc->locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
-  c_puts(" bytes free"); newline();
+  static const char bytes_free[] PROGMEM = " bytes free";
+  c_puts_P(bytes_free); newline();
 #endif
 
   sc->show_curs(1);
