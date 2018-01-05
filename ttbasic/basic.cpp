@@ -48,9 +48,6 @@ int size_list;
 #define SIZE_IFSTK 16	 // IF stack
 #define SIZE_ASTK 16	// argument stack
 
-//#define DEBUG_VAR
-#include "variable.h"
-
 // *** フォント参照 ***************
 const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
 
@@ -123,7 +120,6 @@ SystemConfig CONFIG;
 // プロトタイプ宣言
 void loadConfig();
 void isaveconfig();
-BString getParamFname();
 int32_t getNextLineNo(int32_t lineno);
 void mem_putch(uint8_t c);
 const uint8_t* tv_getFontAdr();
@@ -524,10 +520,10 @@ uint16_t hex2value(char c) {
 }
 
 // 1文字出力
-void c_puts(const char *s, uint8_t devno=0) {
+void c_puts(const char *s, uint8_t devno) {
   while (*s) c_putch(*s++, devno);  //終端でなければ出力して繰り返す
 }
-void c_puts_P(const char *s, uint8_t devno=0) {
+void c_puts_P(const char *s, uint8_t devno) {
   while (pgm_read_byte(s)) c_putch(pgm_read_byte(s++), devno);
 }
 
@@ -540,7 +536,7 @@ void c_puts_P(const char *s, uint8_t devno=0) {
 // 'SNNNNN' S:符号 N:数値 or 空白
 //  dで桁指定時は空白補完する
 //
-void putnum(num_t value, int8_t d, uint8_t devno=0) {
+void putnum(num_t value, int8_t d, uint8_t devno) {
 #ifdef FLOAT_NUMS
   char f[] = "%.g";
 #else
@@ -4347,10 +4343,6 @@ void SMALL error(uint8_t flgCmd = false) {
   newline();                   // 改行
   err = 0;                     // エラー番号をクリア
 }
-
-#ifdef ESP8266
-extern "C" size_t umm_free_heap_size( void );
-#endif
 
 // Get value
 num_t GROUP(basic_core) ivalue() {

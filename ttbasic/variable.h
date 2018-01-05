@@ -13,6 +13,7 @@ typedef int32_t num_t;
 #define strtonum strtol
 #endif
 
+//#define DEBUG_VAR
 #ifdef DEBUG_VAR
 #define dbg_var(x...) do {Serial.printf(x);Serial.flush();} while(0)
 #else
