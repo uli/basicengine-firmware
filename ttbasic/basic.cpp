@@ -5477,6 +5477,8 @@ unsigned char* GROUP(basic_core) iexe() {
   return clp + *clp;
 }
 
+void iflash();
+
 //Command precessor
 uint8_t SMALL icom() {
   uint8_t rc = 1;
@@ -5512,6 +5514,7 @@ uint8_t SMALL icom() {
     break;
   case I_DELETE:     idelete();  break;
   case I_FORMAT:     iformat(); break;
+  case I_FLASH:      iflash(); break;
 
   default:            // どれにも該当しない場合
     cip--;

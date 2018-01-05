@@ -89,6 +89,7 @@ RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom
 DELETE	I_DELETE	ecom
+FLASH	I_FLASH		ecom
 _none	I_VAR		ivar
 _none	I_VARARR	ivararr
 _none	I_SVAR		isvar
