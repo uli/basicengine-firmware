@@ -23,7 +23,6 @@
 #include <stdlib.h>
 //#include <wirish.h>
 #include "ttconfig.h"
-#include "tscreenBase.h"
 #include "tTermscreen.h"
 #include "vs23s010.h"
 
@@ -180,7 +179,7 @@ inline uint8_t IsUseablePin(uint8_t pinno, uint8_t fnc) {
 #define c_kbhit( ) sc->isKeyIn()
 
 // 文字の出力
-inline void c_putch(uint8_t c, uint8_t devno = 0) {
+inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0)
     sc->putch(c);
   else if (devno == 1)
@@ -198,7 +197,7 @@ inline void c_putch(uint8_t c, uint8_t devno = 0) {
 }
 
 // 改行
-void newline(uint8_t devno=0) {
+void newline(uint8_t devno) {
   if (devno==0)
     sc->newLine();
   else if (devno == 1)
@@ -592,7 +591,7 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
   c_puts(&lbuf[16-dig],devno);
 }
 
-void get_input(bool numeric = false) {
+void get_input(bool numeric) {
   char c; //文字
   uint8_t len; //文字数
 

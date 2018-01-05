@@ -27,15 +27,24 @@ static inline void cleartbuf() {
   memset(tbuf,0,SIZE_LINE);
 }
 
+void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
 
 void putnum(num_t value, int8_t d, uint8_t devno=0);
 
+void newline(uint8_t devno=0);
+
 BString getParamFname();
+
+void get_input(bool numeric = false);
 
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );
 #endif
+
+#include <tscreenBase.h>
+
+extern tscreenBase* sc;
 
 #endif
