@@ -130,6 +130,14 @@ public:
     }
   }
 
+  uint32_t fileSize() {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->fileSize(); SD_END(); return ret; }
+    case FS: return m_fs_file->size();
+    default: return -1;
+    }
+  }
+
   operator bool() {
     switch (m_type) {
     case SD: return (bool)*m_sd_file;
