@@ -353,6 +353,11 @@ private:
   BString **m_var;
 };
 
+struct basic_location {
+  unsigned char *lp;
+  unsigned char *ip;
+};
+
 class Procedures {
 public:
   Procedures() {
@@ -361,22 +366,27 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
-      m_proc[i] = -1;
+    for (int i = 0; i < m_size; ++i) {
+      m_proc[i].lp = NULL;
+      m_proc[i].ip = NULL;
+    }
   }
 
   bool reserve(uint8_t count) {
+    dbg_var("nv reserve %d\n", count);
     if (count == 0) {
       free(m_proc);
       m_proc = NULL;
       m_size = 0;
       return false;
     }
-    m_proc = (num_t *)realloc(m_proc, count * sizeof(num_t));
+    m_proc = (struct basic_location *)realloc(m_proc, count * sizeof(*m_proc));
     if (!m_proc)
       return true;
-    for (int i = m_size; i < count; ++i)
-      m_proc[i] = -1;
+    for (int i = m_size; i < count; ++i) {
+      m_proc[i].lp = NULL;
+      m_proc[i].ip = NULL;
+    }
     m_size = count;
     return false;
   }
@@ -385,12 +395,11 @@ public:
     return m_size;
   }
   
-  inline num_t& proc(uint8_t index) {
+  inline struct basic_location& proc(uint8_t index) {
     return m_proc[index];
   }
   
 private:
   int m_size;
-  num_t *m_proc;
+  struct basic_location *m_proc;
 };
-
