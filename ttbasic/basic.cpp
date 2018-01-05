@@ -1586,6 +1586,32 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   }
 }
 
+void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsigned char tok)
+{
+  unsigned char *sclp = *start_clp;
+  unsigned char *scip = *start_cip;
+  int next;
+
+  *start_clp = *start_cip = NULL;
+
+  if (!scip)
+    scip = sclp + sizeof(num_t) + 1;
+
+  while (*scip != tok) {
+    next = token_size(scip);
+    if (next < 0) {
+      sclp += *sclp;
+      if (!*sclp)
+        return;
+      scip = sclp + sizeof(num_t) + 1;
+    } else
+      scip += next;
+  }
+
+  *start_clp = sclp;
+  *start_cip = scip;
+}
+
 unsigned char *data_ip;
 unsigned char *data_lp;
 
