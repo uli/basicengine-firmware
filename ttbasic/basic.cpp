@@ -773,8 +773,6 @@ uint8_t SMALL toktoi() {
       int idx = proc_names.assign(vname, true);
       ibuf[len++] = idx;
       proc.reserve(proc_names.varTop());
-      
-      proc.proc(idx) = getlineno(ibuf);
     }
     
     if (key == I_CALL) {
@@ -1081,6 +1079,7 @@ void inslist() {
   int len;               // 移動の長さ
 
   cont_clp = cont_cip = NULL;
+  proc.reset();
 
   // Empty check (If this is the case, it may be impossible to delete lines
   // when only line numbers are entered when there is insufficient space ..)
@@ -1612,6 +1611,24 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
   *start_cip = scip;
 }
 
+void initialize_proc_pointers(void)
+{
+  unsigned char *lp, *ip;
+
+  lp = listbuf; ip = NULL;
+
+  for (;;) {
+    find_next_token(&lp, &ip, I_PROC);
+    if (!lp)
+      return;
+
+    proc.proc(ip[1]).lp = lp;
+    proc.proc(ip[1]).ip = ip + 2;
+
+    ip += 2;
+  }
+}
+
 unsigned char *data_ip;
 unsigned char *data_lp;
 
@@ -1760,6 +1777,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
     cip = cont_cip;
     goto resume;
   }
+  initialize_proc_pointers();
 
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
@@ -2112,6 +2130,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
   int32_t len;
   
   cont_clp = cont_cip = NULL;
+  proc.reset();
 
 #if USE_SD_CARD == 1
   rc = bfs.tmpOpen(fname,0);
@@ -2183,6 +2202,7 @@ void SMALL idelete() {
   int32_t len;       // 移動の長さ
 
   cont_clp = cont_cip = NULL;
+  proc.reset();
 
   if ( getParam(sNo, I_NONE) ) return;
   if (*cip == I_COMMA) {
@@ -5057,15 +5077,15 @@ void igosub() {
 
 void icall() {
   num_t n;
-  uint8_t *lp;
   uint8_t proc_idx = *cip++;
-  num_t lineno = proc.proc(proc_idx);
 
-  if (lineno < 0) {
+  struct basic_location proc_loc = proc.proc(proc_idx);  
+  dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
+
+  if (!proc_loc.lp || !proc_loc.ip) {
     err = ERR_UNDEFPROC;
     return;
   }
-  lp = getlp(lineno);
   
   if (gstki > SIZE_GSTK - 3) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
@@ -5107,8 +5127,8 @@ void icall() {
   gstk[gstki++] = cip;                      // 中間コードポインタを退避
   gstk[gstki++] = (unsigned char *)(num_args | (str_args << 16));
 
-  clp = lp;
-  cip = clp + sizeof(num_t) + 1;
+  clp = proc_loc.lp;
+  cip = proc_loc.ip;
   return;
 overflow:
   err = ERR_ASTKOF;
