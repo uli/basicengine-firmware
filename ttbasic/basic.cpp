@@ -5129,7 +5129,6 @@ void GROUP(basic_core) ifor() {
   int index, vto, vstep; // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
-  // XXX: support for I_VARARR missing!
   if (*cip++ != I_VAR) { // もし変数がなかったら
     err = ERR_FORWOV;    // エラー番号をセット
     return;
@@ -5225,7 +5224,6 @@ void GROUP(basic_core) inext() {
     return;
   }
 
-  // XXX: support for I_VARARR missing!
   if (*cip++ != I_VAR) {                     // もしNEXTの後ろに変数がなかったら
     err = ERR_NEXTWOV;                       // エラー番号をセット
     return;
