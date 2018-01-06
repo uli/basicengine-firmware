@@ -4469,29 +4469,7 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_LEN:  // 関数LEN(変数)
     if (checkOpen()) break;
-    if ( *cip == I_VAR)  {
-      cip++;
-      uint8_t *a = sanitize_addr(var.var(*cip));
-      if (a)
-        value = *a;
-      else
-        err = ERR_RANGE;
-      cip++;
-    } else if ( *cip == I_ARRAY) {
-      cip++;
-      if (getParam(value, 0, SIZE_ARRY-1, I_NONE)) return 0;
-      uint8_t *a = sanitize_addr(arr[(int)value]);
-      if (a)
-        value = *a;
-      else
-        err = ERR_RANGE;
-    } else if ( *cip == I_STR) {
-      cip++;
-      value = *cip;
-      cip+=*cip+1;
-    } else
-      err = ERR_SYNTAX;
-    checkClose();
+    value = istrexp().length();
     break;
 
   case I_TICK: // 関数TICK()
