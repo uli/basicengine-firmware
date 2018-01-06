@@ -1965,23 +1965,12 @@ void SMALL irenum() {
 	  }
 	}
 	break;
-      case I_STR:  // 文字列
-	i++;
-	i+=ptr[i]; // 文字列長分移動
-	break;
-      case I_NUM:  // 定数
-	i += sizeof(num_t) + 1;
-	break;
-      case I_HEXNUM:
-	i+=5;      // 整数2バイト+中間コード1バイト分移動
-	break;
-      case I_SVAR:
-      case I_VAR:  // 変数
-      case I_VARARR:
-	i+=2;      // 変数名
-	break;
-      default:     // その他
-	i++;
+      default:
+        num = token_size(ptr+i);
+        if (num < 0)
+          i = len + 1;	// skip rest of line
+        else
+          i += num;	// next token
 	break;
       }
     }
