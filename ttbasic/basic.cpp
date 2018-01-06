@@ -1222,8 +1222,8 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       while (i--) //文字数だけ繰り返す
 	c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
       c_putch(c,devno); //文字列の括りを表示
-      if (*ip == I_VAR || *ip ==I_ELSE) //もし次の中間コードが変数だったら
-	c_putch(' ',devno);  //空白を表示
+      if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO)
+	c_putch(' ',devno);
     }
 
     else { //どれにも当てはまらなかった場合
