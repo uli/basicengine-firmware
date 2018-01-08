@@ -227,11 +227,17 @@ uint8_t tTVscreen::get_ch() {
 
 // カーソルの表示/非表示
 // flg: カーソル非表示 0、表示 1、強調表示 2
-void tTVscreen::show_curs(uint8_t flg) {
+void tTVscreen::drawCursor(uint8_t flg) {
     flgCur = flg;
     if(!flgCur)
       draw_cls_curs();
-    
+    else
+      tv_drawCurs(pos_x, pos_y);  
+}
+
+void tTVscreen::show_curs(uint8_t flg) {
+  enableCursor = flg;
+  drawCursor(flg);
 }
 
 // カーソルの消去

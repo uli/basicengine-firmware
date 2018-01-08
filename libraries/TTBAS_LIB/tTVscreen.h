@@ -65,6 +65,9 @@ void	tv_setFont(const uint8_t *font);
 
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
+  private:
+    uint8_t enableCursor;
+
   protected:
     void INIT_DEV(){};                           // デバイスの初期化
     void MOVE(uint8_t y, uint8_t x);             // キャラクタカーソル移動 **
@@ -94,6 +97,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void newLine();                                   // 改行出力
     void refresh_line(uint16_t l);                    // 行の再表示
 	
+    void drawCursor(uint8_t flg);
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
     void draw_cls_curs();                             // カーソルの消去
 
