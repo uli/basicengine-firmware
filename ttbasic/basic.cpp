@@ -3826,6 +3826,12 @@ void  icat() {
 void iwindow() {
   int32_t x, y, w, h;
 
+  if (*cip == I_OFF) {
+    ++cip;
+    sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    return;
+  }
+
   if ( getParam(x,  0, sc0.getScreenWidth() - 8, I_COMMA) ) return;   // x
   if ( getParam(y,  0, sc0.getScreenHeight() - 2, I_COMMA) ) return;        // y
   if ( getParam(w,  8, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
