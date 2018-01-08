@@ -89,6 +89,10 @@ class VS23S010 {
     inline uint16_t currentLine() {
         return SpiRamReadRegister(CURLINE) & 0xfff;
     }
+    
+    inline uint32_t frame() {
+      return m_frame;
+    }
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
     void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
