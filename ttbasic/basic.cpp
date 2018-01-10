@@ -3073,6 +3073,7 @@ void iline() {
 void icircle() {
   int32_t x, y, r, c, f;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
+    return;
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
