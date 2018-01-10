@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <tTVscreen.h>
+
 #include "variable.h"
 
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
@@ -45,6 +47,6 @@ extern "C" size_t umm_free_heap_size( void );
 
 #include <tscreenBase.h>
 
-extern tscreenBase* sc;
+extern tTVscreen sc0;
 
 #endif

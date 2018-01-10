@@ -24,8 +24,6 @@
 
 #include "ttconfig.h"
 #include "basic.h"
-#include <tscreenBase.h>
-extern tscreenBase *sc;
 
 #define SIZEOF_PTR (sizeof(void *))
 
@@ -34,8 +32,8 @@ extern tscreenBase *sc;
 */
 #define CRT_NAME "Engine BASIC"
 
-#define CRT_ROWS (sc->getHeight()-1)        /* CRT rows: 24 - 1 (system line) */
-#define CRT_COLS (sc->getWidth())        /* CRT columns */
+#define CRT_ROWS (sc0.getHeight()-1)        /* CRT rows: 24 - 1 (system line) */
+#define CRT_COLS (sc0.getWidth())        /* CRT columns */
 
 #define RULER_TAB     '!' /* Ruler: Tab stop character - ie: ! */
 #define RULER_CHR     '.' /* Ruler: Character - ie: . */
@@ -107,16 +105,16 @@ static void CrtReset()
 
 static inline void CrtOut(int ch)
 {
-	sc->putch(ch);
+	sc0.putch(ch);
 }
 
 static inline int CrtIn(void)
 {
-  sc->show_curs(true);
-  int c = sc->get_ch();
+  sc0.show_curs(true);
+  int c = sc0.get_ch();
   if (c)
     Serial.printf("crtin %02X/%d/%c\n", c, c, c);
-//  sc->show_curs(false);
+//  sc0.show_curs(false);
   return c;
 }
 
@@ -126,7 +124,7 @@ static inline int CrtIn(void)
 */
 static inline void CrtClear()
 {
-	sc->cls();
+	sc0.cls();
 }
 
 /* Locate the cursor (HOME is 0,0)
@@ -135,7 +133,7 @@ static inline void CrtClear()
 */
 static inline void CrtLocate(int row, int col)
 {
-	sc->locate(col, row);
+	sc0.locate(col, row);
 }
 
 /* Erase line and cursor to row,0
@@ -144,8 +142,8 @@ static inline void CrtLocate(int row, int col)
 */
 static inline void CrtClearLine(int row)
 {
-	sc->clerLine(row);
-	sc->locate(0, row);
+	sc0.clerLine(row);
+	sc0.locate(0, row);
 }
 
 /* Erase from the cursor to the end of the line
@@ -153,7 +151,7 @@ static inline void CrtClearLine(int row)
 */
 static void CrtClearEol()
 {
-	int cnt = sc->getWidth() - sc->c_x();
+	int cnt = sc0.getWidth() - sc0.c_x();
 	for (int i = 0; i < cnt; ++i)
-		sc->putch(' ');
+		sc0.putch(' ');
 }
