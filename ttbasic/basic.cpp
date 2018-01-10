@@ -23,7 +23,6 @@
 #include <stdlib.h>
 //#include <wirish.h>
 #include "ttconfig.h"
-#include "tTermscreen.h"
 #include "vs23s010.h"
 
 #ifndef os_memcpy
@@ -62,8 +61,6 @@ static const uint8_t *fonts[] = {
 // **** スクリーン管理 *************
 uint8_t workarea[VS23_MAX_X/MIN_FONT_SIZE_X * VS23_MAX_Y/MIN_FONT_SIZE_Y];
 uint8_t scmode = USE_SCREEN_MODE;
-tscreenBase* sc;
-tTermscreen sc1;
 
 #if USE_NTSC == 1 || USE_VS23 == 1
   #include "tTVscreen.h"
@@ -5508,18 +5505,8 @@ void SMALL basic() {
   // 実行環境を初期化
   inew();
 
-  if (scmode == 0) {
-    sc = &sc1;
-    tv_fontInit(); // フォントデータ利用のための設定
-    ((tTermscreen*)sc)->init(TERM_W,TERM_H,SIZE_LINE, workarea); // スクリーン初期設定
-  }
-#if USE_NTSC == 1
-  else {
-    // NTSCスクリーン設定
-    sc = &sc0;
-    ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
-  }
-#endif
+  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
+
   if (serialMode == 1) {
     sc0.Serial_mode(1, GPIO_S1_BAUD);
   }
