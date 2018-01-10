@@ -9,7 +9,6 @@
 #define DEPEND_TTBASIC           1     // 豊四季TinyBASIC依存部利用の有無 0:利用しない 1:利用する
 
 #include <Arduino.h>
-#include "tSerialDev.h"
 
 // 編集キーの定義
 #define KEY_TAB       '\t'   // [TAB] key
@@ -41,7 +40,7 @@
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
 
-class tscreenBase : public tSerialDev {
+class tscreenBase {
   protected:
     uint8_t* screen = NULL;     // スクリーン用バッファ
     uint16_t width;             // スクリーン横サイズ
@@ -75,7 +74,6 @@ protected:
     virtual uint8_t isKeyIn() = 0;                           // キー入力チェック
 	virtual void setColor(uint16_t fc, uint16_t bc) {};  // 文字色指定
 	virtual void setAttr(uint16_t attr) {};              // 文字属性
-	virtual void set_allowCtrl(uint8_t flg) {};          // シリアルからの入力制御許可設定
 
 	//virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
     virtual inline uint8_t IS_PRINT(uint8_t ch) {
