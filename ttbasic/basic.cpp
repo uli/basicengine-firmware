@@ -143,34 +143,6 @@ void error(uint8_t flgCmd);
 #define CONST_MSB    MSBFIRST
 #define SRAM_TOP     0x20000000
 
-// **** GPIOピンに関する定義 **********
-
-// GPIOピンモードの設定
-const uint8_t pinType[] = {
-  OUTPUT_OPEN_DRAIN, OUTPUT, INPUT_PULLUP, /*INPUT_PULLDOWN, INPUT_ANALOG,*/ INPUT, /*PWM,*/
-};
-
-#define FNC_IN_OUT  1  // デジタルIN/OUT
-#define FNC_PWM     2  // PWM
-#define FNC_ANALOG  4  // アナログIN
-
-#define IsPWM_PIN(N) IsUseablePin(N,FNC_PWM)
-#define IsADC_PIN(N) IsUseablePin(N,FNC_ANALOG)
-#define IsIO_PIN(N)  IsUseablePin(N,FNC_IN_OUT)
-
-// ピン機能チェックテーブル
-const uint8_t pinFunc[]  = {
-  5,0,5,5,5,5,7,7,3,3,  //  0 -  9: PA0,PA1,PA2,PA3,PA4,PA5,PA6,PA7,PA8,PA9,
-  3,0,0,1,1,1,7,7,1,1,  // 10 - 19: PA10,PA11,PA12,PA13,PA14,PA15,PB0,PB1,PB2,PB3,
-  0,0,0,0,1,0,1,1,1,1,  // 20 - 29: PB4,PB5,PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,
-  1,0,1,0,0,            // 30 - 34: PB14,PB15,PC13,PC14,PC15,
-};
-
-// ピン利用可能チェック
-inline uint8_t IsUseablePin(uint8_t pinno, uint8_t fnc) {
-  return pinFunc[pinno] & fnc;
-}
-
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
 #define c_getch( ) sc0.get_ch()
 #define c_kbhit( ) sc0.isKeyIn()
@@ -250,11 +222,6 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F, I_PWM,
   I_DIN, I_ANA, I_MAP, I_DMP,
-  I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8,
-  I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
-  I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8,
-  I_PB9, I_PB10, I_PB11, I_PB12, I_PB13,I_PB14,I_PB15,
-  I_PC13, I_PC14,I_PC15,
   I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
   I_RET, I_ARG, I_ARGSTR,
@@ -270,7 +237,7 @@ const uint8_t i_nsb[] __FLASH__ = {
 // insert a blank before intermediate code
 const uint8_t i_sf[] __FLASH__  = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_LAND, I_LOR,
-  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
+  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
@@ -2459,103 +2426,6 @@ int32_t ivpeek() {
   return value;
 }
 
-// ピンモード設定(タイマー操作回避版)
-void Fixed_pinMode(uint8 pin, uint8_t mode) {
-#if 0
-  gpio_pin_mode outputMode;
-  bool pwm = false;
-
-  if (pin >= BOARD_NR_GPIO_PINS) {
-    return;
-  }
-
-  switch(mode) {
-  case OUTPUT:
-    outputMode = GPIO_OUTPUT_PP;
-    break;
-  case OUTPUT_OPEN_DRAIN:
-    outputMode = GPIO_OUTPUT_OD;
-    break;
-  case INPUT:
-  case INPUT_FLOATING:
-    outputMode = GPIO_INPUT_FLOATING;
-    break;
-  case INPUT_ANALOG:
-    outputMode = GPIO_INPUT_ANALOG;
-    break;
-  case INPUT_PULLUP:
-    outputMode = GPIO_INPUT_PU;
-    break;
-//    case INPUT_PULLDOWN:
-//        outputMode = GPIO_INPUT_PD;
-//        break;
-//    case PWM:
-//        outputMode = GPIO_AF_OUTPUT_PP;
-//        pwm = true;
-//        break;
-  case PWM_OPEN_DRAIN:
-    outputMode = GPIO_AF_OUTPUT_OD;
-    pwm = true;
-    break;
-  default:
-    return;
-  }
-  gpio_set_mode(PIN_MAP[pin].gpio_device, PIN_MAP[pin].gpio_bit, outputMode);
-
-  if (PIN_MAP[pin].timer_device != NULL) {
-    if ( pwm ) {     // we're switching into PWM, enable timer channels
-      timer_set_mode(PIN_MAP[pin].timer_device,
-                     PIN_MAP[pin].timer_channel,
-                     TIMER_PWM );
-    } else {      // disable channel output in non pwm-Mode
-      timer_cc_disable(PIN_MAP[pin].timer_device,
-                       PIN_MAP[pin].timer_channel);
-    }
-  }
-#else
-  pinMode(pin, mode);
-#endif
-}
-
-// GPIO ピン機能設定
-void igpio() {
-#if 0
-  int32_t pinno;       // ピン番号
-  WiringPinMode pmode; // 入出力モード
-  uint8_t flgok = false;
-
-  // 入出力ピンの指定
-  if ( getParam(pinno, 0, I_PC15-I_PA0, I_COMMA) ) return;  // ピン番号取得
-  pmode = (WiringPinMode)iexp();  if(err) return;       // 入出力モードの取得
-
-  // ピンモードの設定
-  if (pmode == PWM) {
-    // PWMピンとして利用可能かチェック
-    if (!IsPWM_PIN(pinno)) {
-      err = ERR_GPIO;
-      return;
-    }
-
-    Fixed_pinMode(pinno, pmode);
-    pwmWrite(pinno,0);
-  } else if (pmode == INPUT_ANALOG ) {
-    // アナログ入力として利用可能かチェック
-    if (!IsADC_PIN(pinno)) {
-      err = ERR_GPIO;
-      return;
-    }
-    Fixed_pinMode(pinno, pmode);
-  } else {
-    // デジタル入出力として利用可能かチェック
-    if (!IsIO_PIN(pinno)) {
-      err = ERR_GPIO;
-      return;
-    }
-    Fixed_pinMode(pinno, pmode);
-  }
-#endif
-}
-
 uint16_t pcf_state = 0xffff;
 
 // GPIO ピンデジタル出力
@@ -4429,21 +4299,10 @@ num_t GROUP(basic_core) ivalue() {
     value = vs23.spriteCollision(a, b);
     break;
 
-  default: //以上のいずれにも該当しなかった場合
-    // 定数ピン番号
+  default:
     cip--;
-    if (*cip >= I_PA0 && *cip <= I_PC15) {
-      value = *cip - I_PA0;
-      cip++;
-      return value;
-      // 定数GPIOモード
-    } else if (*cip >= I_OUTPUT_OPEN_DRAIN && *cip <= I_PWM) {
-      value = pinType[*cip - I_OUTPUT_OPEN_DRAIN];
-      cip++;
-      return value;
-    }
-    err = ERR_SYNTAX; //エラー番号をセット
-    break; //ここで打ち切る
+    err = ERR_SYNTAX;
+    break;
   }
   return value; //取得した値を持ち帰る
 }
@@ -5271,12 +5130,7 @@ unsigned char* GROUP(basic_core) iexe() {
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
       funtbl[*cip++]();
     } else
-    if (*cip >= I_PA0 && *cip <= I_PC15) {
-      igpio();
-    } else {
-      // 以上のいずれにも該当しない場合
-      err = ERR_SYNTAX; //エラー番号をセット
-    } //中間コードで分岐の末尾
+      err = ERR_SYNTAX;
 
     if (err)
       return NULL;
