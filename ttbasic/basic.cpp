@@ -4369,10 +4369,13 @@ num_t GROUP(basic_core) ivalue() {
     break;
 
   case I_ANA: // ANA(ピン番号)
+#ifdef ESP8266_NOWIFI
+    err = ERR_NOT_SUPPORTED;
+#else
     if (checkOpen()) break;
-    if (getParam(value,0,I_PC15 - I_PA0, I_NONE)) break;
     if (checkClose()) break;
-    value = -1; //analogRead(value);    // 入力値取得
+    value = analogRead(A0);    // 入力値取得
+#endif
     break;
 
   case I_EEPREAD: // EEPREAD(アドレス)の場合
