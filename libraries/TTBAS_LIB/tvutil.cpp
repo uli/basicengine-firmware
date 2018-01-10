@@ -288,12 +288,7 @@ void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
 
 // 円の描画
 void tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
-  if (f==0) f=-1;
-#if USE_VS23 == 1
-  Serial.println("unimp tv_circle");
-#else
-  TV.draw_circle(x, y, r, c, f);
-#endif
+  vs23.drawCircle(x, y, r, c, f);
 }
 
 // 四角の描画
