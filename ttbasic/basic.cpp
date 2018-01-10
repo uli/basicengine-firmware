@@ -5435,10 +5435,6 @@ void SMALL basic() {
 
   sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
 
-  if (serialMode == 1) {
-    sc0.Serial_mode(1, GPIO_S1_BAUD);
-  }
-
   // PWM単音出力初期化
   tv_toneInit();
 
