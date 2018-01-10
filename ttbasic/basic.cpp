@@ -3834,18 +3834,10 @@ void iwindow() {
   if ( getParam(w,  8, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
   if ( getParam(h,  2, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
 
-  if (scmode == 0) {
-    // 現在、ターミナルモードの場合は画面をクリアして、再設定する
-    sc->cls();
-    sc->locate(0,0);
-    sc->end();
-    sc->init(w, h, SIZE_LINE, workarea); // スクリーン初期設定
-  } else if (scmode > 0) {
-    sc0.setWindow(x, y, w, h);
-    sc->locate(0,0);
-    sc->init(w, h, SIZE_LINE, workarea);
-    sc->cls();
-  }
+  sc0.setWindow(x, y, w, h);
+  sc0.locate(0,0);
+  sc0.init(w, h, SIZE_LINE, workarea);
+  sc0.cls();
 }
 
 void ifont() {
