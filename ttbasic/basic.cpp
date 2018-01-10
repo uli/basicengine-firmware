@@ -175,18 +175,18 @@ inline uint8_t IsUseablePin(uint8_t pinno, uint8_t fnc) {
 }
 
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
-#define c_getch( ) sc->get_ch()
-#define c_kbhit( ) sc->isKeyIn()
+#define c_getch( ) sc0.get_ch()
+#define c_kbhit( ) sc0.isKeyIn()
 
 // 文字の出力
 inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0)
-    sc->putch(c);
+    sc0.putch(c);
   else if (devno == 1)
-    sc->Serial_write(c);
+    Serial.write(c);
 #if USE_NTSC == 1
   else if (devno == 2)
-    ((tTVscreen*)sc)->gputch(c);
+    sc0.gputch(c);
 #endif
   else if (devno == 3)
     mem_putch(c);
@@ -199,12 +199,12 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 // 改行
 void newline(uint8_t devno) {
   if (devno==0)
-    sc->newLine();
+    sc0.newLine();
   else if (devno == 1)
-    sc->Serial_newLine();
+    Serial.println("");
 #if USE_NTSC == 1
   else if (devno == 2)
-    ((tTVscreen*)sc)->gputch('\n');
+    sc0.gputch('\n');
 #endif
   else if (devno == 3)
     mem_putch('\n');
@@ -608,8 +608,8 @@ void get_input(bool numeric) {
     if (((c == 8) || (c == 127)) && (len > 0)) {
       len--; //文字数を1減らす
       //c_putch(8); c_putch(' '); c_putch(8); //文字を消す
-      sc->movePosPrevChar();
-      sc->delete_char();
+      sc0.movePosPrevChar();
+      sc0.delete_char();
     } else
     //行頭の符号および数字が入力された場合の処理（符号込みで6桁を超えないこと）
     if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
@@ -617,7 +617,7 @@ void get_input(bool numeric) {
       lbuf[len++] = c; //バッファへ入れて文字数を1増やす
       c_putch(c); //表示
     } else {
-      sc->beep();
+      sc0.beep();
     }
   }
   newline(); //改行
@@ -1256,7 +1256,7 @@ void SMALL iinput() {
   num_t ofvalue;        // オーバーフロー時の設定値
   uint8_t flgofset =0;  // オーバーフロ時の設定値指定あり
 
-  sc->show_curs(1);
+  sc0.show_curs(1);
   for(;; ) {           // 無限に繰り返す
     prompt = 1;       // まだプロンプトを表示していない
 
@@ -1410,7 +1410,7 @@ void SMALL iinput() {
   }   // 無限に繰り返すの末尾
 
 DONE:
-  sc->show_curs(0);
+  sc0.show_curs(0);
 }
 
 // Variable assignment handler
@@ -1999,7 +1999,7 @@ void SMALL iconfig() {
     if (value <0 || value >2)  {
       err = ERR_VALUE;
     } else {
-      ((tTVscreen*)sc)->adjustNTSC(value);
+      sc0.adjustNTSC(value);
       CONFIG.NTSC = value;
     }
     break;
@@ -2007,7 +2007,7 @@ void SMALL iconfig() {
     if (value <0 || value >1)  {
       err = ERR_VALUE;
     } else {
-      ((tTVscreen*)sc)->reset_kbd(value);
+      sc0.reset_kbd(value);
       CONFIG.KEYBOARD = value;
     }
     break;
@@ -2271,7 +2271,7 @@ void ifiles() {
     }
   }
 #if USE_SD_CARD == 1
-  rc = bfs.flist((char *)fname.c_str(), wcard, sc->getWidth()/14);
+  rc = bfs.flist((char *)fname.c_str(), wcard, sc0.getWidth()/14);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -2315,8 +2315,8 @@ void iformat() {
 
 // 画面クリア
 void icls() {
-  sc->cls();
-  sc->locate(0,0);
+  sc0.cls();
+  sc0.locate(0,0);
 }
 
 #include "sound.h"
@@ -2348,15 +2348,15 @@ void ilocate() {
   int32_t x,  y;
   if ( getParam(x, I_COMMA) ) return;
   if ( getParam(y, I_NONE) ) return;
-  if ( x >= sc->getWidth() )   // xの有効範囲チェック
-    x = sc->getWidth() - 1;
+  if ( x >= sc0.getWidth() )   // xの有効範囲チェック
+    x = sc0.getWidth() - 1;
   else if (x < 0) x = 0;
-  if( y >= sc->getHeight() )   // yの有効範囲チェック
-    y = sc->getHeight() - 1;
+  if( y >= sc0.getHeight() )   // yの有効範囲チェック
+    y = sc0.getHeight() - 1;
   else if(y < 0) y = 0;
 
   // カーソル移動
-  sc->locate((uint16_t)x, (uint16_t)y);
+  sc0.locate((uint16_t)x, (uint16_t)y);
 }
 
 // 文字色の指定 COLOLR fc,bc
@@ -2368,14 +2368,14 @@ void icolor() {
     if ( getParam(bc, 0, 255, I_NONE) ) return;
   }
   // 文字色の設定
-  sc->setColor((uint16_t)fc, (uint16_t)bc);
+  sc0.setColor((uint16_t)fc, (uint16_t)bc);
 }
 
 // 文字属性の指定 ATTRコマンド
 void iattr() {
   int32_t attr;
   if ( getParam(attr, 0, 4, I_NONE) ) return;
-  sc->setAttr(attr);
+  sc0.setAttr(attr);
 }
 
 // キー入力文字コードの取得 INKEY()関数
@@ -2458,7 +2458,7 @@ int32_t ivpeek() {
   if ( getParam(x, I_COMMA) ) return 0;
   if ( getParam(y, I_NONE) ) return 0;
   if (checkClose()) return 0;
-  value = (x < 0 || y < 0 || x >=sc->getWidth() || y >=sc->getHeight()) ? 0 : sc->vpeek(x, y);
+  value = (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
   return value;
 }
 
@@ -3036,10 +3036,10 @@ void ipset() {
     if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
       if (x < 0) x =0;
     if (y < 0) y =0;
-    if (x >= ((tTVscreen*)sc)->getGWidth()) x = ((tTVscreen*)sc)->getGWidth()-1;
-    if (y >= ((tTVscreen*)sc)->getGHeight()) y = ((tTVscreen*)sc)->getGHeight()-1;
+    if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
+    if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
     if (c < 0 || c > 2) c = 1;
-    ((tTVscreen*)sc)->pset(x,y,c);
+    sc0.pset(x,y,c);
   } else {
     err = ERR_NOT_SUPPORTED;
   }
@@ -3058,12 +3058,12 @@ void iline() {
     if (y1 < 0) y1 =0;
     if (x2 < 0) x1 =0;
     if (y2 < 0) y1 =0;
-    if (x1 >= ((tTVscreen*)sc)->getGWidth()) x1 = ((tTVscreen*)sc)->getGWidth()-1;
-    if (y1 >= ((tTVscreen*)sc)->getGHeight()) y1 = ((tTVscreen*)sc)->getGHeight()-1;
-    if (x2 >= ((tTVscreen*)sc)->getGWidth()) x2 = ((tTVscreen*)sc)->getGWidth()-1;
-    if (y2 >= ((tTVscreen*)sc)->getGHeight()) y2 = ((tTVscreen*)sc)->getGHeight()-1;
+    if (x1 >= sc0.getGWidth()) x1 = sc0.getGWidth()-1;
+    if (y1 >= sc0.getGHeight()) y1 = sc0.getGHeight()-1;
+    if (x2 >= sc0.getGWidth()) x2 = sc0.getGWidth()-1;
+    if (y2 >= sc0.getGHeight()) y2 = sc0.getGHeight()-1;
     if (c < 0 || c > 2) c = 1;
-    ((tTVscreen*)sc)->line(x1, y1, x2, y2, c);
+    sc0.line(x1, y1, x2, y2, c);
   } else {
     err = ERR_NOT_SUPPORTED;
   }
@@ -3100,12 +3100,12 @@ void irect() {
   if (scmode) {
     if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
       return;
-    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= ((tTVscreen*)sc)->getGWidth() || y2 >= ((tTVscreen*)sc)->getGHeight())  {
+    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight())  {
       err = ERR_VALUE;
       return;
     }
     if (c < 0 || c > 2) c = 1;
-    ((tTVscreen*)sc)->rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
+    sc0.rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
   }else {
     err = ERR_NOT_SUPPORTED;
   }
@@ -3143,12 +3143,12 @@ void  icscroll() {
   if (scmode) {
     if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
       return;
-    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc->getWidth() || y2 >= sc->getHeight())  {
+    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getWidth() || y2 >= sc0.getHeight())  {
       err = ERR_VALUE;
       return;
     }
     if (d < 0 || d > 3) d = 0;
-    ((tTVscreen*)sc)->cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
+    sc0.cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
   } else {
     err = ERR_NOT_SUPPORTED;
   }
@@ -3164,12 +3164,12 @@ void igscroll() {
   if (scmode) {
     if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
       return;
-    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= ((tTVscreen*)sc)->getGWidth() || y2 >= ((tTVscreen*)sc)->getGHeight()) {
+    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight()) {
       err = ERR_VALUE;
       return;
     }
     if (d < 0 || d > 3) d = 0;
-    ((tTVscreen*)sc)->gscroll(x1,y1,x2-x1+1, y2-y1+1, d);
+    sc0.gscroll(x1,y1,x2-x1+1, y2-y1+1, d);
   } else {
     err = ERR_NOT_SUPPORTED;
   }
@@ -3182,7 +3182,7 @@ void igscroll() {
 void iswrite() {
   int32_t c;
   if ( getParam(c, I_NONE) ) return;
-  sc->Serial_write((uint8_t)c);
+  Serial.write(c);
 }
 
 // シリアルモード設定: SMODE MODE [,"通信速度"]
@@ -3221,10 +3221,10 @@ void SMALL ismode() {
     // シリアルからの制御入力許可設定
     cip++;
     if ( getParam(flg, 0, 1, I_NONE) ) return;
-    sc->set_allowCtrl(flg);
+    sc0.set_allowCtrl(flg);
     return;
   }
-  sc->Serial_mode((uint8_t)c, baud);
+  sc0.Serial_mode((uint8_t)c, baud);
 }
 
 // シリアル1クローズ
@@ -3232,7 +3232,7 @@ void isclose() {
   delay(500);
   if(lfgSerial1Opened == true)
     //Serial1.end();
-    sc->Serial_close();
+    sc0.Serial_close();
   lfgSerial1Opened = false;
 }
 
@@ -3263,7 +3263,7 @@ void SMALL isopen() {
     }
     cip++;
   }
-  sc->Serial_open(baud);
+  sc0.Serial_open(baud);
   lfgSerial1Opened = true;
 }
 
@@ -3311,8 +3311,8 @@ int32_t igpeek() {
     if (checkOpen()) return 0;
     if ( getParam(x, I_COMMA) || getParam(y, I_NONE) ) return 0;
     if (checkClose()) return 0;
-    if (x < 0 || y < 0 || x >= ((tTVscreen*)sc)->getGWidth()-1 || y >= ((tTVscreen*)sc)->getGHeight()-1) return 0;
-    return ((tTVscreen*)sc)->gpeek(x,y);
+    if (x < 0 || y < 0 || x >= sc0.getGWidth()-1 || y >= sc0.getGHeight()-1) return 0;
+    return sc0.gpeek(x,y);
   } else {
     err = ERR_NOT_SUPPORTED;
     return 0;
@@ -3330,9 +3330,9 @@ int32_t iginp() {
     if (checkOpen()) return 0;
     if ( getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(w, I_COMMA)||getParam(h, I_COMMA)||getParam(c, I_NONE) ) return 0;
     if (checkClose()) return 0;
-    if (x < 0 || y < 0 || x >= ((tTVscreen*)sc)->getGWidth() || y >= ((tTVscreen*)sc)->getGHeight() || h < 0 || w < 0) return 0;
-    if (x+w >= ((tTVscreen*)sc)->getGWidth() || y+h >= ((tTVscreen*)sc)->getGHeight() ) return 0;
-    return ((tTVscreen*)sc)->ginp(x, y, w, h, c);
+    if (x < 0 || y < 0 || x >= sc0.getGWidth() || y >= sc0.getGHeight() || h < 0 || w < 0) return 0;
+    if (x+w >= sc0.getGWidth() || y+h >= sc0.getGHeight() ) return 0;
+    return sc0.ginp(x, y, w, h, c);
   } else {
     err = ERR_NOT_SUPPORTED;
     return 0;
@@ -3461,9 +3461,9 @@ void igprint() {
 #if USE_NTSC == 1
   int32_t x,y;
   if (scmode) {
-    if ( getParam(x, 0, ((tTVscreen*)sc)->getGWidth(), I_COMMA) ) return;
-    if ( getParam(y, 0, ((tTVscreen*)sc)->getGHeight(), I_COMMA) ) return;
-    ((tTVscreen*)sc)->set_gcursor(x,y);
+    if ( getParam(x, 0, sc0.getGWidth(), I_COMMA) ) return;
+    if ( getParam(y, 0, sc0.getGHeight(), I_COMMA) ) return;
+    sc0.set_gcursor(x,y);
     iprint(2);
   } else {
     err = ERR_NOT_SUPPORTED;
@@ -3542,7 +3542,7 @@ void SMALL ildbmp() {
 
   // 仮想アドレスから実アドレスへの変換
   // サイズチェック
-  if (x + w > ((tTVscreen*)sc)->getGWidth() || y + h > vs23.lastLine()) {
+  if (x + w > sc0.getGWidth() || y + h > vs23.lastLine()) {
     err = ERR_RANGE;
     return;
   }
@@ -3803,7 +3803,7 @@ void  icat() {
 
 #if USE_SD_CARD == 1
   while(1) {
-    rc = bfs.textOut((char *)fname.c_str(), line, sc->getHeight());
+    rc = bfs.textOut((char *)fname.c_str(), line, sc0.getHeight());
     if (rc < 0) {
       if (rc == -SD_ERR_OPEN_FILE) {
 	err = ERR_FILE_OPEN;
@@ -3823,7 +3823,7 @@ void  icat() {
     c = c_getch();
     if (c != 'y' && c!= 'Y' && c != 32)
       break;
-    line += sc->getHeight();
+    line += sc0.getHeight();
   }
 #endif
 }
@@ -4550,20 +4550,20 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_SREAD: // SREAD() シリアルデータ1バイト受信
     if (checkOpen()||checkClose()) break;
-    value =sc->Serial_read();
+    value = Serial.read();
     break; //ここで打ち切る
 
   case I_SREADY: // SREADY() シリアルデータデータチェック
     if (checkOpen()||checkClose()) break;
-    value =sc->Serial_available();
+    value = Serial.available();
     break; //ここで打ち切る
 
   // 画面サイズ定数の参照
-  case I_CW: value = sc->getWidth(); break;
-  case I_CH: value = sc->getHeight(); break;
+  case I_CW: value = sc0.getWidth(); break;
+  case I_CH: value = sc0.getHeight(); break;
 #if USE_NTSC == 1
-  case I_GW: value = scmode ? ((tTVscreen*)sc)->getGWidth() : 0; break;
-  case I_GH: value = scmode ? ((tTVscreen*)sc)->getGHeight() : 0; break;
+  case I_GW: value = scmode ? sc0.getGWidth() : 0; break;
+  case I_GH: value = scmode ? sc0.getGHeight() : 0; break;
 #else
   case I_GW: value = 0; break;
   case I_GH: value = 0; break;
@@ -4871,7 +4871,7 @@ num_t GROUP(basic_core) iexp() {
 
 // 左上の行番号の取得
 int32_t getTopLineNum() {
-  uint8_t* ptr = sc->getScreen();
+  uint8_t* ptr = sc0.getScreen();
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
@@ -4892,7 +4892,7 @@ int32_t getTopLineNum() {
 
 // 左下の行番号の取得
 int32_t getBottomLineNum() {
-  uint8_t* ptr = sc->getScreen()+sc->getWidth()*(sc->getHeight()-1);
+  uint8_t* ptr = sc0.getScreen()+sc0.getWidth()*(sc0.getHeight()-1);
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
@@ -5371,7 +5371,7 @@ void iprint_() {
 }
 
 void irefresh() {
-  sc->refresh();
+  sc0.refresh();
 }
 
 void isprint() {
@@ -5466,21 +5466,21 @@ uint8_t SMALL icom() {
   case I_LOAD:  ilrun_(); break;
 
   case I_LRUN:  if(ilrun()) {
-      sc->show_curs(0); irun(clp);  sc->show_curs(1);
+      sc0.show_curs(0); irun(clp);  sc0.show_curs(1);
   }
     break;
   case I_RUN:
-    sc->show_curs(0);
+    sc0.show_curs(0);
     irun();
-    sc->show_curs(1);
+    sc0.show_curs(1);
     break;
   case I_CONT:
     if (!cont_cip || !cont_clp) {
       err = ERR_CONT;
     } else {
-      sc->show_curs(0);
+      sc0.show_curs(0);
       irun(NULL, true);
-      sc->show_curs(1);
+      sc0.show_curs(1);
     }
     break;
   case I_RENUM: // I_RENUMの場合
@@ -5495,9 +5495,9 @@ uint8_t SMALL icom() {
 
   default:            // どれにも該当しない場合
     cip--;
-    sc->show_curs(0);
+    sc0.show_curs(0);
     iexe();           // 中間コードを実行
-    sc->show_curs(1);
+    sc0.show_curs(1);
     break;
   }
   return rc;
@@ -5562,7 +5562,7 @@ void SMALL basic() {
   }
 #endif
   if (serialMode == 1) {
-    sc->Serial_mode(1, GPIO_S1_BAUD);
+    sc0.Serial_mode(1, GPIO_S1_BAUD);
   }
 
   // PWM単音出力初期化
@@ -5582,7 +5582,7 @@ void SMALL basic() {
   digitalWrite(2, LOW);
 
   icls();
-  sc->show_curs(0);
+  sc0.show_curs(0);
 
   // Want to make sure we get the right hue.
   vs23.setColorSpace(1);
@@ -5595,7 +5595,7 @@ void SMALL basic() {
   // Startup screen
   // Epigram
   sc0.setFont(fonts[1]);
-  sc->setColor(vs23.colorFromRgb(72,72,72), 0);
+  sc0.setColor(vs23.colorFromRgb(72,72,72), 0);
   {
     char epi[80];
     strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
@@ -5604,34 +5604,34 @@ void SMALL basic() {
   newline();
 
   // Banner
-  sc->setColor(vs23.colorFromRgb(192,0,0), 0);
+  sc0.setColor(vs23.colorFromRgb(192,0,0), 0);
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
   sc0.setFont(fonts[0]);
 
   // Platform/version
-  sc->setColor(vs23.colorFromRgb(64,64,64), 0);
-  sc->locate(sc->getWidth() - 14, 8);
+  sc0.setColor(vs23.colorFromRgb(64,64,64), 0);
+  sc0.locate(sc0.getWidth() - 14, 8);
   c_puts(STR_EDITION);          // 版を区別する文字列「EDITION」を表示
   c_puts(" " STR_VARSION);      // バージョンの表示
 
   // Free memory
-  sc->setColor(vs23.colorFromRgb(255,255,255), 0);
-  sc->locate(0,2);
+  sc0.setColor(vs23.colorFromRgb(255,255,255), 0);
+  sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
   static const char bytes_free[] PROGMEM = " bytes free";
   c_puts_P(bytes_free); newline();
 #endif
 
-  sc->show_curs(1);
+  sc0.show_curs(1);
   error();          // "OK" or display an error message and clear the error number
 
   // プログラム自動起動
   if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
-    sc->show_curs(0);
+    sc0.show_curs(0);
     irun();        // RUN命令を実行
-    sc->show_curs(1);
+    sc0.show_curs(1);
     newline();     // 改行
     c_puts("Autorun No."); putnum(CONFIG.STARTPRG,0); c_puts(" stopped.");
     newline();     // 改行
@@ -5640,9 +5640,9 @@ void SMALL basic() {
 
   // 端末から1行を入力して実行
   while (1) { //無限ループ
-    rc = sc->edit();
+    rc = sc0.edit();
     if (rc) {
-      textline = (char*)sc->getText();
+      textline = (char*)sc0.getText();
       if (!strlen(textline) ) {
 	newline();
 	continue;
