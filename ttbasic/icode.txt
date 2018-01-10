@@ -157,7 +157,6 @@ I2CW	I_I2CW		esyntax
 I2CR	I_I2CR		esyntax
 IN	I_DIN		esyntax
 ANA	I_ANA		esyntax
-SHIFTIN	I_SHIFTIN	esyntax
 SREADY	I_SREADY	esyntax
 SREAD	I_SREAD		esyntax
 EEPREAD	I_EEPREAD	esyntax

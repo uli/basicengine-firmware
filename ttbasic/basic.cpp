@@ -249,7 +249,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT, I_BITREV, I_XOR,
   I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F, I_PWM,
-  I_DIN, I_ANA, I_SHIFTIN, I_MAP, I_DMP,
+  I_DIN, I_ANA, I_MAP, I_DMP,
   I_PA0, I_PA1, I_PA2, I_PA3, I_PA4, I_PA5, I_PA6, I_PA7, I_PA8,
   I_PA9, I_PA10, I_PA11, I_PA12, I_PA13,I_PA14,I_PA15,
   I_PB0, I_PB1, I_PB2, I_PB3, I_PB4, I_PB5, I_PB6, I_PB7, I_PB8,
@@ -2743,38 +2743,6 @@ int32_t ii2cr() {
   return rc;
 }
 
-uint8_t _shiftIn( uint8_t ulDataPin, uint8_t ulClockPin, uint8_t ulBitOrder, uint8_t lgc){
-  uint8_t value = 0;
-  uint8_t i;
-  for ( i=0; i < 8; ++i ) {
-    digitalWrite( ulClockPin, lgc );
-    if ( ulBitOrder == LSBFIRST ) value |= digitalRead( ulDataPin ) << i;
-    else value |= digitalRead( ulDataPin ) << (7 - i);
-    digitalWrite( ulClockPin, !lgc );
-  }
-  return value;
-}
-
-// SHIFTIN関数 SHIFTIN(データピン, クロックピン, オーダ[,ロジック])
-int32_t ishiftIn() {
-  int16_t rc;
-  int32_t dataPin, clockPin;
-  int32_t bitOrder;
-  int32_t lgc = HIGH;
-
-  if (checkOpen()) return 0;
-  if (getParam(dataPin, 0,I_PC15-I_PA0, I_COMMA)) return 0;
-  if (getParam(clockPin,0,I_PC15-I_PA0, I_COMMA)) return 0;
-  if (getParam(bitOrder,0,1, I_NONE)) return 0;
-  if (*cip == I_COMMA) {
-    cip++;
-    if (getParam(lgc,LOW, HIGH, I_NONE)) return 0;
-  }
-  if (checkClose()) return 0;
-  rc = _shiftIn((uint8_t)dataPin, (uint8_t)clockPin, (uint8_t)bitOrder, lgc);
-  return rc;
-}
-
 // SETDATEコマンド  SETDATE 年,月,日,時,分,秒
 void isetDate() {
 #if USE_INNERRTC == 1
@@ -4373,7 +4341,6 @@ num_t GROUP(basic_core) ivalue() {
   case I_PEEK: value = ipeek();   break;     // PEEK()関数
   case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
   case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
-  case I_SHIFTIN: value = ishiftIn(); break; // SHIFTIN()関数
 
   case I_RET:   value = iret(); break;
   case I_ARG:	value = iarg(); break;
