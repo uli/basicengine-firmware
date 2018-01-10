@@ -29,7 +29,6 @@
 #include "../../ttbasic/vs23s010.h"
 #endif
 #include "tscreenBase.h"
-//#include "tSerialDev.h"
 #include "tGraphicDev.h"
 
 // PS/2キーボードの利用 0:利用しない 1:利用する
@@ -86,7 +85,6 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     	       int16_t NTSCajst=0, uint8_t* extmem=NULL, 
                uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定
 	void end();                                          // スクリーンの利用の終了
-	void set_allowCtrl(uint8_t flg) { allowCtrl = flg;}; // シリアルからの入力制御許可設定
     void Serial_Ctrl(int16_t ch);
     void reset_kbd(uint8_t kbd_type=false);
     void putch(uint8_t c);                            // 文字の出力

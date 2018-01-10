@@ -104,7 +104,6 @@ void tTVscreen::INSLINE(uint8_t l) {
 void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* extmem, uint8_t vmode) {
   
   // ビデオ出力設定
-  serialMode = 0;
   tv_init(NTSCajst, extmem, vmode);
   if (extmem == NULL) {
     tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln);
@@ -120,9 +119,6 @@ void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* e
 #if PS2DEV == 1
   setupPS2(kbd_type);
 #endif
-
- // シリアルからの制御文字許可
-  allowCtrl = true;
 }
 
 // スクリーンの利用の終了
@@ -144,11 +140,7 @@ void tTVscreen::reset_kbd(uint8_t kbd_type) {
 void tTVscreen::putch(uint8_t c) {
   tscreenBase::putch(c);
 #ifdef DEBUG
- if(serialMode == 0) {
-    Serial.write(c);       // シリアル出力
-  } else if (serialMode == 1) {
-    Serial1.write(c);     // シリアル出力  
-  }
+  Serial.write(c);       // シリアル出力
 #endif
 }
 
@@ -156,13 +148,8 @@ void tTVscreen::putch(uint8_t c) {
 void tTVscreen::newLine() {  
   tscreenBase::newLine();
 #ifdef DEBUG
-  if (serialMode == 0) {
-    Serial.write(0x0d);
-    Serial.write(0x0a);
-  } else if (serialMode == 1) {
-    Serial1.write(0x0d);
-    Serial1.write(0x0a);
-  }  
+  Serial.write(0x0d);
+  Serial.write(0x0a);
 #endif
 }
 
@@ -180,13 +167,8 @@ void tTVscreen::refresh_line(uint16_t l) {
 // キー入力チェック&キーの取得
 uint8_t tTVscreen::isKeyIn() {
 #ifdef DEBUG
-  if(serialMode == 0) {
-    if (Serial.available())
-      return Serial.read();
-  } else if (serialMode == 1) {
-    if (Serial1.available())
-      return Serial1.read();
-  }
+  if (Serial.available())
+    return Serial.read();
 #endif
 #if PS2DEV == 1
  return ps2read();
@@ -200,18 +182,10 @@ uint8_t tTVscreen::get_ch() {
   while(1) {
     pump_events();
 #ifdef DEBUG
-    if(serialMode == 0) {
-      if (Serial.available()) {
-        c = Serial.read();
-        dev = 1;
-        break;
-      }
-    } else if (serialMode == 1) {
-      if (Serial1.available()) {
-        c = Serial1.read();
-        dev = 2;
-        break;
-      }
+    if (Serial.available()) {
+      c = Serial.read();
+      dev = 1;
+      break;
     }
 #endif
 #if PS2DEV == 1
@@ -283,98 +257,89 @@ uint8_t tTVscreen::edit() {
   do {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
-    if (dev != 1 || allowCtrl) { // USB-Serial(dev=1)は入力コードのキー解釈を行わない
-      switch(ch) {
-        case KEY_CR:         // [Enter]キー
-          return enter_text();
-          break;
-  
-        case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
-          cls();
-          locate(0,0);
-          Serial_Ctrl(SC_KEY_CTRL_L);
-          break;
-   
-        case KEY_HOME:      // [HOMEキー] 行先頭移動
-          locate(0, pos_y);
-          break;
-          
-        case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
-          if (pos_x == 0 && pos_y == height-1) {
-            edit_scrollUp();
-          } else {
-            moveBottom();
-          }
-          break;
-          
-        case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
-          if (pos_x == 0 && pos_y == 0) {
-            edit_scrollDown();
-          } else {
-            locate(0, 0);
-          }  
-          break;
-  
-        case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
-          refresh();  break;
-  
-        case KEY_END:       // [ENDキー] 行の右端移動
-           moveLineEnd();
-           break;
-  
-        case KEY_IC:         // [Insert]キー
-          flgIns = !flgIns;
-          break;        
-  
-        case KEY_BACKSPACE:  // [BS]キー
-            movePosPrevChar();
-            delete_char();
-           Serial_Ctrl(KEY_BACKSPACE);
-          break;        
-  
-        case KEY_DC:         // [Del]キー
-        case SC_KEY_CTRL_X:
-          delete_char();
-          break;        
-        
-        case KEY_RIGHT:      // [→]キー
-          movePosNextChar();
-          break;
-  
-        case KEY_LEFT:       // [←]キー
-          movePosPrevChar();
-          break;
-  
-        case KEY_DOWN:       // [↓]キー
-          movePosNextLineChar();
-          break;
-        
-        case KEY_UP:         // [↑]キー
-          movePosPrevLineChar();
-          break;
-  
-        case SC_KEY_CTRL_N:  // 行挿入 
-          Insert_newLine(pos_y);       
-          break;
-  
-        case SC_KEY_CTRL_D:  // 行削除
-          clerLine(pos_y);
-          break;
-        
-        default:             // その他
-        
-        if (IS_PRINT(ch)) {
-          Insert_char(ch);
-        }        
+    switch(ch) {
+      case KEY_CR:         // [Enter]キー
+        return enter_text();
         break;
-      }
-    } else {
-      // PS/2キーボード以外からの入力
-      if (ch == KEY_CR) {
-        return enter_text(); 
-      } else {
-        Insert_char(ch);      
-      }
+
+      case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
+        cls();
+        locate(0,0);
+        Serial_Ctrl(SC_KEY_CTRL_L);
+        break;
+ 
+      case KEY_HOME:      // [HOMEキー] 行先頭移動
+        locate(0, pos_y);
+        break;
+        
+      case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
+        if (pos_x == 0 && pos_y == height-1) {
+          edit_scrollUp();
+        } else {
+          moveBottom();
+        }
+        break;
+        
+      case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
+        if (pos_x == 0 && pos_y == 0) {
+          edit_scrollDown();
+        } else {
+          locate(0, 0);
+        }  
+        break;
+
+      case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
+        refresh();  break;
+
+      case KEY_END:       // [ENDキー] 行の右端移動
+         moveLineEnd();
+         break;
+
+      case KEY_IC:         // [Insert]キー
+        flgIns = !flgIns;
+        break;        
+
+      case KEY_BACKSPACE:  // [BS]キー
+          movePosPrevChar();
+          delete_char();
+         Serial_Ctrl(KEY_BACKSPACE);
+        break;        
+
+      case KEY_DC:         // [Del]キー
+      case SC_KEY_CTRL_X:
+        delete_char();
+        break;        
+      
+      case KEY_RIGHT:      // [→]キー
+        movePosNextChar();
+        break;
+
+      case KEY_LEFT:       // [←]キー
+        movePosPrevChar();
+        break;
+
+      case KEY_DOWN:       // [↓]キー
+        movePosNextLineChar();
+        break;
+      
+      case KEY_UP:         // [↑]キー
+        movePosPrevLineChar();
+        break;
+
+      case SC_KEY_CTRL_N:  // 行挿入 
+        Insert_newLine(pos_y);       
+        break;
+
+      case SC_KEY_CTRL_D:  // 行削除
+        clerLine(pos_y);
+        break;
+      
+      default:             // その他
+      
+      if (IS_PRINT(ch)) {
+        Insert_char(ch);
+      }        
+      break;
     }
   } while(1);
 }
@@ -392,18 +357,10 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
      break;
   }
   if(s) {
-    if(serialMode == 0) {
-      // Serial.print(s);     // USBシリアル出力
-      while(*s) {
-        Serial.write(*s);
-        s++;
-      }  
-    } else if (serialMode == 1) {
-      //Serial1.print(s);     // シリアル出力  
-      while(*s) {
-        Serial1.write(*s);
-        s++;
-      }  
+    // Serial.print(s);     // USBシリアル出力
+    while(*s) {
+      Serial.write(*s);
+      s++;
     }  
   }
 #endif
