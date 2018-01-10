@@ -35,7 +35,6 @@ GPRINT	I_GPRINT	igprint
 GSCROLL	I_GSCROLL	igscroll
 GPIO	I_GPIO		igpio
 OUT	I_DOUT		idwrite
-SHIFTOUT	I_SHIFTOUT	ishiftOut
 SMODE	I_SMODE		ismode
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite

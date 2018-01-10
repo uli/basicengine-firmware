@@ -272,7 +272,7 @@ const uint8_t i_sf[] __FLASH__  = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_LAND, I_LOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
-  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
+  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
   I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,
 };
@@ -2578,25 +2578,6 @@ void idwrite() {
   Wire.write(pcf_state >> 8);
 
   int ret = Wire.endTransmission();
-}
-
-// shiftOutコマンド SHIFTOUT dataPin, clockPin, bitOrder, value
-void ishiftOut() {
-  int32_t dataPin, clockPin;
-  int32_t bitOrder;
-  int32_t data;
-
-  if (getParam(dataPin, 0,I_PC15-I_PA0, I_COMMA)) return;
-  if (getParam(clockPin,0,I_PC15-I_PA0, I_COMMA)) return;
-  if (getParam(bitOrder,0,1, I_COMMA)) return;
-  if (getParam(data, 0,255, I_NONE)) return;
-
-  if ( !IsIO_PIN(dataPin) ||  !IsIO_PIN(clockPin) ) {
-    err = ERR_GPIO;
-    return;
-  }
-
-  shiftOut(dataPin, clockPin, bitOrder, data);
 }
 
 // 16進文字出力 'HEX$(数値,桁数)' or 'HEX$(数値)'
