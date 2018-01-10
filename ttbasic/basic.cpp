@@ -3850,14 +3850,9 @@ void ifont() {
 // スクリーンモード指定 SCREEN M
 void SMALL iscreen() {
   int32_t m;
-  int8_t prv_m;
-#if USE_NTSC == 1
-  // 引数チェック
-#if USE_VS23 == 1
+
   if ( getParam(m,  0, vs23.numModes, I_NONE) ) return;   // m
-#else
-  if ( getParam(m,  0, 3, I_NONE) ) return;   // m
-#endif
+
   if (scmode == m)
     return;
 
@@ -3865,39 +3860,20 @@ void SMALL iscreen() {
     vs23.freeBg(i);
 
   // 現在、ターミナルモードの場合は画面をクリア、終了、資源開放
-  prv_m = sc->getSerialMode();
-  sc->cls();
-  sc->show_curs(true);
-  sc->locate(0,0);
-  sc->end();
+  sc0.cls();
+  sc0.show_curs(true);
+  sc0.locate(0,0);
+  sc0.end();
   scmode = m;
-  if (m == 0) {
-    // USB-シリアルターミナルスクリーン設定
-    sc = &sc1;
-    ((tTermscreen*)sc)->init(TERM_W,TERM_H,SIZE_LINE, workarea); // スクリーン初期設定
-  } else {
-    // NTSCスクリーン設定
-    sc = &sc0;
-#if USE_VS23 == 1
-    ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, m - 1);
-#else
-    if (m == 1)
-      ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
-    else if (m == 2)
-      ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_224x108);
-    else if (m == 3)
-      ((tTVscreen*)sc)->init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_112x108);
-#endif
-  }
-  sc->Serial_mode(prv_m, GPIO_S1_BAUD);
-  sc->cls();
-  sc->show_curs(false);
-  sc->draw_cls_curs();
-  sc->locate(0,0);
-  sc->refresh();
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+
+  // NTSCスクリーン設定
+  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, m - 1);
+
+  sc0.cls();
+  sc0.show_curs(false);
+  sc0.draw_cls_curs();
+  sc0.locate(0,0);
+  sc0.refresh();
 }
 
 void ipalette() {
