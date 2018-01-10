@@ -37,7 +37,7 @@ void VS23S010::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
   
   //there is a fill color
   if (fc != -1)
-    drawLine(x0-radius, y0, x0+radius, y0, c);
+    drawLine(x0-radius, y0, x0+radius, y0, fc);
   
   setPixel(x0, y0 + radius,c);
   setPixel(x0, y0 - radius,c);
@@ -58,13 +58,13 @@ void VS23S010::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
     if (fc != -1) {
       //prevent double draws on the same rows
       if (pyy != y) {
-        drawLine(x0-x, y0+y, x0+x, y0+y, c);
-        drawLine(x0-x, y0-y, x0+x, y0-y, c);
+        drawLine(x0-x, y0+y, x0+x, y0+y, fc);
+        drawLine(x0-x, y0-y, x0+x, y0-y, fc);
       }
 
       if (pyx != x && x != y) {
-        drawLine(x0-y, y0+x, x0+y, y0+x, c);
-        drawLine(x0-y, y0-x, x0+y, y0-x, c);
+        drawLine(x0-y, y0+x, x0+y, y0+x, fc);
+        drawLine(x0-y, y0-x, x0+y, y0-x, fc);
       }
 
       pyy = y;
