@@ -39,9 +39,9 @@ void iflash()
   newline();
   static const char ays0[] PROGMEM =
     "FIRMWARE UPDATE";
-  sc->setColor(0, col_warn);
+  sc0.setColor(0, col_warn);
   c_puts_P(ays0); newline();
-  sc->setColor(col_normal, 0);
+  sc0.setColor(col_normal, 0);
 
   static const char ays0a[] PROGMEM =
     "Are you absolutely sure you want to overwrite";
@@ -53,9 +53,9 @@ void iflash()
 
   static const char ays2[] PROGMEM = "with ";
   c_puts_P(ays2);
-  sc->setColor(col_warn, 0);
+  sc0.setColor(col_warn, 0);
   c_puts(filename.c_str());
-  sc->setColor(col_normal, 0);
+  sc0.setColor(col_normal, 0);
   c_putch('?'); newline(); newline();
 
   static const char ays3[] PROGMEM =
@@ -83,19 +83,19 @@ void iflash()
     "a working firmware image.";
   c_puts_P(ays7); newline(); newline();
 
-  sc->setColor(col_warn, 0);
+  sc0.setColor(col_warn, 0);
   static const char ays8[] PROGMEM =
     "Enter YES to continue, anything else to abort: ";
   c_puts_P(ays8);
   get_input();
-  sc->setColor(col_normal, 0);
+  sc0.setColor(col_normal, 0);
   if (strcmp(lbuf, "YES")) {
     static const char aborting[] PROGMEM = "Aborting.";
     c_puts_P(aborting); newline();
     goto out;
   }
 
-  sc->show_curs(0);
+  sc0.show_curs(0);
 
   if (!Update.begin(f.fileSize())) {
     static const char update_start_fail_msg[] PROGMEM =
@@ -108,13 +108,13 @@ void iflash()
   static const char staging_update[] PROGMEM = "Staging update: ";
   c_puts_P(staging_update);
 
-  x = sc->c_x(); y = sc->c_y();
-  sc->locate(x + 7, y);
+  x = sc0.c_x(); y = sc0.c_y();
+  sc0.locate(x + 7, y);
   c_putch('/'); putnum(f.fileSize(), 6); c_puts(" bytes");
 
   count = 0;
   for (;;) {
-    sc->locate(x, y);
+    sc0.locate(x, y);
     putnum(count, 6);
 
     size_t redd = f.read((char *)buf, 4096);
@@ -141,9 +141,9 @@ void iflash()
     static const char now_msg[] PROGMEM = "Writing update to flash.";
     static const char warn_msg[] PROGMEM = "DO NOT RESET OR POWER OFF!";
     c_puts_P(success_msg); newline(); newline();
-    sc->setColor(col_warn, 0);
+    sc0.setColor(col_warn, 0);
     c_puts_P(now_msg); newline();
-    sc->setColor(0, col_warn);
+    sc0.setColor(0, col_warn);
     c_puts_P(warn_msg); newline();
 #ifdef ESP8266_NOWIFI
     // SDKnoWiFi does not have system_restart*(). The only working
@@ -156,7 +156,7 @@ void iflash()
   } else {
     static const char error_msg[] PROGMEM = "Staging error: ";
     c_puts_P(error_msg); putnum(Update.getError(), 0); newline();
-    sc->show_curs(1);
+    sc0.show_curs(1);
   }
   return;
 
@@ -164,5 +164,5 @@ out:
   free(buf);
   f.close();
   // XXX: clean up Updater?
-  sc->show_curs(1);
+  sc0.show_curs(1);
 }
