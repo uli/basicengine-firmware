@@ -37,8 +37,6 @@ GPIO	I_GPIO		igpio
 OUT	I_DOUT		idwrite
 SHIFTOUT	I_SHIFTOUT	ishiftOut
 SMODE	I_SMODE		ismode
-SOPEN	I_SOPEN		isopen
-SCLOSE	I_SCLOSE	isclose
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
 MKDIR	I_MKDIR		imkdir

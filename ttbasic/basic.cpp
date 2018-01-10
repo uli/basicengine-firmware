@@ -273,7 +273,7 @@ const uint8_t i_sf[] __FLASH__  = {
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_GPIO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_SHIFTOUT,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
-  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,  I_SOPEN, I_SCLOSE,I_SMODE,
+  I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
   I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL,
 };
 
@@ -3173,86 +3173,14 @@ void iswrite() {
   Serial.write(c);
 }
 
-// シリアルモード設定: SMODE MODE [,"通信速度"]
 void SMALL ismode() {
-  int32_t c,flg;
-  uint16_t ln;
-  uint32_t baud = 0;
-
-  if ( getParam(c, 0, 3, I_NONE) ) return;
-  if (c == 1) {
-    if(*cip != I_COMMA) {
-      err = ERR_SYNTAX;
-      return;
-    }
-    cip++;
-    if (*cip != I_STR) {
-      err = ERR_VALUE;
-      return;
-    }
-
-    cip++;        //中間コードポインタを次へ進める
-    ln = *cip++;  //文字数を取得
-
-    // 引数のチェック
-    for (uint32_t i=0; i < ln; i++) {
-      if (*cip >='0' && *cip <= '9') {
-	baud = baud*10 + *cip - '0';
-      } else {
-	err = ERR_VALUE;
-	return;
-      }
-      cip++;
-    }
+  int32_t baud, flags = SERIAL_8N1;
+  if ( getParam(baud, 0, 921600, I_NONE) ) return;
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(flags, 0, 0x3f, I_NONE)) return;
   }
-  else if (c == 3) {
-    // シリアルからの制御入力許可設定
-    cip++;
-    if ( getParam(flg, 0, 1, I_NONE) ) return;
-    sc0.set_allowCtrl(flg);
-    return;
-  }
-  sc0.Serial_mode((uint8_t)c, baud);
-}
-
-// シリアル1クローズ
-void isclose() {
-  delay(500);
-  if(lfgSerial1Opened == true)
-    //Serial1.end();
-    sc0.Serial_close();
-  lfgSerial1Opened = false;
-}
-
-// シリアル1オープン
-void SMALL isopen() {
-  uint16_t ln;
-  uint32_t baud = 0;
-
-  if(lfgSerial1Opened) {
-    isclose();
-  }
-
-  if (*cip != I_STR) {
-    err = ERR_VALUE;
-    return;
-  }
-
-  cip++;        //中間コードポインタを次へ進める
-  ln = *cip++;  //文字数を取得
-
-  // 引数のチェック
-  for (uint32_t i=0; i < ln; i++) {
-    if (*cip >='0' && *cip <= '9') {
-      baud = baud*10 + *cip - '0';
-    } else {
-      err = ERR_VALUE;
-      return;
-    }
-    cip++;
-  }
-  sc0.Serial_open(baud);
-  lfgSerial1Opened = true;
+  Serial.begin(baud, (enum SerialConfig)flags);
 }
 
 // TONE 周波数 [,音出し時間]
