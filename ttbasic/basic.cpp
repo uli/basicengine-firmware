@@ -3074,23 +3074,14 @@ void iline() {
 
 // 円の描画 CIRCLE X,Y,R,C,F
 void icircle() {
-#if USE_NTSC == 1
-  int32_t x,y,r,c,f;
-  if (scmode) {
-    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
-      if (x < 0) x =0;
-    if (y < 0) y =0;
-    if (x >= ((tTVscreen*)sc)->getGWidth()) x = ((tTVscreen*)sc)->getGWidth()-1;
-    if (y >= ((tTVscreen*)sc)->getGHeight()) y = ((tTVscreen*)sc)->getGHeight()-1;
-    if (c < 0 || c > 2) c = 1;
-    if (r < 0) r = 1;
-    ((tTVscreen*)sc)->circle(x, y, r, c, f);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  int32_t x, y, r, c, f;
+  if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
+  if (x < 0) x =0;
+  if (y < 0) y =0;
+  if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
+  if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
+  if (r < 0) r = -r;
+  sc0.circle(x, y, r, c, f);
 }
 
 // 四角の描画 RECT X1,Y1,X2,Y2,C,F
