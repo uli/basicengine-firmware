@@ -822,12 +822,6 @@ uint8_t SMALL toktoi() {
         s += var_len + 1;
         ptok++;
       } else {
-	//もし変数が3個並んだら
-	if (len >= 4 && ibuf[len - 2] == I_VAR && ibuf[len - 4] == I_VAR) {
-	  err = ERR_SYNTAX;  //エラー番号をセット
-	  return 0;  //0を持ち帰る
-	}
-
 	// 中間コードに変換
 	ibuf[len++] = I_VAR; //中間コードを記録
 	int idx = var_names.assign(vname, is_prg_text);
