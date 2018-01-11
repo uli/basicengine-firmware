@@ -2444,34 +2444,27 @@ void idwrite() {
   int ret = Wire.endTransmission();
 }
 
-// 16進文字出力 'HEX$(数値,桁数)' or 'HEX$(数値)'
-void ihex(uint8_t devno=0) {
+BString ihex() {
   int value; // 値
-  int d = 0; // 桁数(0で桁数指定なし)
 
-  if (checkOpen()) return;
-  if (getParam(value, I_NONE)) return;
-  if (*cip == I_COMMA) {
-    cip++;
-    if (getParam(d,0,4, I_NONE)) return;
-  }
-  if (checkClose()) return;
-  putHexnum(value, d, devno);
+  if (checkOpen()) goto out;
+  if (getParam(value, I_NONE)) goto out;
+  if (checkClose()) goto out;
+  return BString(value, 16);
+out:
+  return BString();
 }
 
 // 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
-void ibin(uint8_t devno=0) {
+BString ibin() {
   int32_t value; // 値
-  int32_t d = 0; // 桁数(0で桁数指定なし)
 
-  if (checkOpen()) return;
-  if (getParam(value, I_NONE)) return;
-  if (*cip == I_COMMA) {
-    cip++;
-    if (getParam(d,0,16, I_NONE)) return;
-  }
-  if (checkClose()) return;
-  putBinnum(value, d, devno);
+  if (checkOpen()) goto out;
+  if (getParam(value, I_NONE)) goto out;
+  if (checkClose()) goto out;
+  return BString(value, 2);
+out:
+  return BString();
 }
 
 // 小数点数値出力 DMP$(数値) or DMP(数値,小数部桁数) or DMP(数値,小数部桁数,整数部桁指定)
@@ -3143,8 +3136,6 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       c_putch(value, devno);
       break;
 
-    case I_HEX:  cip++; ihex(devno); break; // HEX$()関数
-    case I_BIN:  cip++; ibin(devno); break; // BIN$()関数
     case I_DMP:  cip++; idmp(devno); break; // DMP$()関数
     case I_ELSE:        // ELSE文がある場合は打ち切る
       newline(devno);
@@ -4496,6 +4487,12 @@ BString istrvalue()
     break;
   case I_MIDSTR:
     value = imidstr();
+    break;
+  case I_HEX:
+    value = ihex();
+    break;
+  case I_BIN:
+    value = ibin();
     break;
   default:
     cip--;
