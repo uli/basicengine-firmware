@@ -634,7 +634,10 @@ int getlineno(unsigned char *lp);
 // [Return value]
 // 0 or intermediate code number of bytes
 //
-uint8_t SMALL toktoi() {
+// If find_prg_text is true (default), variable and procedure names
+// are designated as belonging to the program; if not, they are considered
+// temporary, even if the input line starts with a number.
+uint8_t SMALL toktoi(bool find_prg_text) {
   int16_t i;
   int16_t key;
   uint8_t len = 0;	// length of sequence of intermediate code
@@ -743,8 +746,10 @@ uint8_t SMALL toktoi() {
     }
     
     // done if keyword parsed
-    if (key >= 0)
+    if (key >= 0) {
+      find_prg_text = false;
       continue;
+    }
 
     // Attempt to convert to constant
     ptok = s;                            // Points to the beginning of a word
@@ -758,7 +763,10 @@ uint8_t SMALL toktoi() {
       ibuf[len++] = I_NUM;	// Record intermediate code
       os_memcpy(ibuf+len, &value, sizeof(num_t));
       len += sizeof(num_t);
-      is_prg_text = true;
+      if (find_prg_text) {
+        is_prg_text = true;
+        find_prg_text = false;
+      }
     } else if (*s == '\"' ) {
       // Attempt to convert to a character string
 
