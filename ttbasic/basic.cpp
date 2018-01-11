@@ -4918,10 +4918,13 @@ void GROUP(basic_core) iloop() {
 
 // NEXT
 void GROUP(basic_core) inext() {
-  int want_index, index, vto, vstep; // FOR文の変数番号、終了値、増分
+  int want_index;	// variable we want to NEXT
+  int index;		// variable index
+  int vto;		// end of loop value
+  int vstep;		// increment value
 
-  if (lstki < 5) {    // もしFORスタックが空なら
-    err = ERR_LSTKUF; // エラー番号をセット
+  if (lstki < 5) {    // FOR stack is empty
+    err = ERR_LSTKUF;
     return;
   }
 
@@ -4933,12 +4936,14 @@ void GROUP(basic_core) inext() {
   want_index = *cip++;
 
   while (lstki) {
-    // 変数名を復帰
-    index = (int)(uintptr_t)lstk[lstki - 1]; // 変数名を復帰
+    // Get index of iterator on top of stack.
+    index = (int)(uintptr_t)lstk[lstki - 1];
+
     if (want_index == index)
       break;
-    // If it does not match the returned variable name
-    // Assume we want to NEXT to a loop higher up the stack.
+
+    // If it is not the specified variable, we assume we
+    // want to NEXT to a loop higher up the stack.
     lstki -= 5;
   }
 
@@ -4948,20 +4953,20 @@ void GROUP(basic_core) inext() {
     return;
   }
 
-  vstep = (int)(uintptr_t)lstk[lstki - 2]; // 増分を復帰
+  vstep = (int)(uintptr_t)lstk[lstki - 2];
   var.var(index) += vstep;
-  vto = (int)(uintptr_t)lstk[lstki - 3];   // 終了値を復帰
+  vto = (int)(uintptr_t)lstk[lstki - 3];
 
-  // もし変数の値が終了値を超えていたら
+  // Is this loop finished?
   if (((vstep < 0) && (var.var(index) < vto)) ||
       ((vstep > 0) && (var.var(index) > vto))) {
-    lstki -= 5;  // FORスタックを1ネスト分戻す
+    lstki -= 5;  // drop it from FOR stack
     return;
   }
 
-  // 開始値が終了値を超えていなかった場合
-  cip = lstk[lstki - 4]; //行ポインタを復帰
-  clp = lstk[lstki - 5]; //中間コードポインタを復帰
+  // Jump to the start of the loop.
+  cip = lstk[lstki - 4];
+  clp = lstk[lstki - 5];
 }
 
 // IF
