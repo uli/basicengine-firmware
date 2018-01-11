@@ -3,25 +3,13 @@
    (C)2012 Tetsuya Suzuki
    GNU General Public License
    2017/03/22, Modified by Tamakichi、for Arduino STM32
+   Modified for BASIC Engine by Ulrich Hecht
+   (C) 2017 Ulrich Hecht
  */
-
-// 2017/07/25 豊四季Tiny BASIC for Arduino STM32 V0.84 NTSC・ターミナル統合バージョン
-// 2017/07/26 変数名を英字1文字+数字0～9の2桁対応:例 X0,X1 ... X9
-// 2017/07/31 putnum()の値が-32768の場合の不具合対応(オリジナル版の不具合)
-// 2017/07/31 toktoi()の定数の変換仕様の変更(-32768はオーバーフローエラーとしない)
-// 2017/07/31 SDカードからテキスト形式プログラムロード時の中間コード変換不具合の対応(loadPrgText)
-// 2017/08/03 比較演算子 "<>"の追加("!="と同じ)
-// 2017/08/04 RENUMで振り直しする行範囲を指定可能機能追加、行番号0,1は除外に修正
-// 2017/08/04 LOADコマンドでSDカードからの読み込みで追記機能を追加
-// 2017/08/12 RENUMに重大な不具合あり、V0.83版の機能に一時差し換え
-// 2017/08/13 TFT(ILI9341)モジュールの暫定対応
-// 2017/08/19 SAVE,ERASE,LOAD,LRUN,CONFIGコマンドのプログラム番号範囲チェックミス不具合対応
-//
 
 #include <Arduino.h>
 #include <unistd.h>
 #include <stdlib.h>
-//#include <wirish.h>
 #include "ttconfig.h"
 #include "vs23s010.h"
 
