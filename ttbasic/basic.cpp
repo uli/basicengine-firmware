@@ -5216,7 +5216,6 @@ static void show_logo() {
    The BASIC entry point
  */
 void SMALL basic() {
-  uint8_t serialMode = DEF_SMODE;
   unsigned char len; // 中間コードの長さ
   uint8_t rc;
 
