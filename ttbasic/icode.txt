@@ -113,7 +113,7 @@ $	I_DOLLAR	esyntax
 >	I_GT		esyntax
 =	I_EQ		esyntax
 <=	I_LTE		esyntax
-!=	I_NEQ		esyntax
+><	I_NEQ		esyntax
 <>	I_NEQ2		esyntax
 <	I_LT		esyntax
 AND	I_LAND		esyntax

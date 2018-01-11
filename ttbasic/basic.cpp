@@ -4530,8 +4530,6 @@ num_t GROUP(basic_core) iexp() {
       break;
     case I_NEQ:
     case I_NEQ2:
-    case I_SHARP:
-    // XXX: too many aliases for not-equal...
       tmp = iplus();
       value = (value != tmp);
       break;
