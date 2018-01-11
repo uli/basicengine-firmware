@@ -4000,8 +4000,9 @@ uint8_t SMALL ilrun() {
   return 1;
 }
 
-// エラーメッセージ出力
-// 引数: dlfCmd プログラム実行時 false、コマンド実行時 true
+// output error message
+// Arguments:
+// flgCmd: set to false at program execution, true at command line
 void SMALL error(uint8_t flgCmd = false) {
   char msg[40];
   if (err) {
@@ -5216,7 +5217,8 @@ static void show_logo() {
    The BASIC entry point
  */
 void SMALL basic() {
-  unsigned char len; // 中間コードの長さ
+  unsigned char len; // Length of intermediate code
+  char* textline;    // input line
   uint8_t rc;
 
   vs23.begin();
@@ -5227,22 +5229,20 @@ void SMALL basic() {
   size_list = 0;
   listbuf = NULL;
 
-  // 環境設定
   loadConfig();
 
-  // 実行環境を初期化
+  // Initialize execution environment
   inew();
 
   sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
 
-  // PWM単音出力初期化
   tv_toneInit();
 
   sound_init();
 
 #if USE_SD_CARD == 1
-  // SDカード利用
-  bfs.init(16); // この処理ではGPIOの操作なし
+  // Initialize SD card file system
+  bfs.init(16);		// CS on GPIO16
 #endif
 
   Wire.begin(2, 0);
@@ -5259,8 +5259,6 @@ void SMALL basic() {
   vs23.setColorConversion(1, 7, 3, 3, true);
   show_logo();
   vs23.setColorSpace(1);	// reset color conversion
-
-  char* textline;    // 入力行
 
   // Startup screen
   // Epigram
@@ -5282,8 +5280,8 @@ void SMALL basic() {
   // Platform/version
   sc0.setColor(vs23.colorFromRgb(64,64,64), 0);
   sc0.locate(sc0.getWidth() - 14, 8);
-  c_puts(STR_EDITION);          // 版を区別する文字列「EDITION」を表示
-  c_puts(" " STR_VARSION);      // バージョンの表示
+  c_puts(STR_EDITION);
+  c_puts(" " STR_VARSION);
 
   // Free memory
   sc0.setColor(vs23.colorFromRgb(255,255,255), 0);
@@ -5297,19 +5295,19 @@ void SMALL basic() {
   sc0.show_curs(1);
   error();          // "OK" or display an error message and clear the error number
 
-  // プログラム自動起動
+  // Program auto-start
   if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
     sc0.show_curs(0);
-    irun();        // RUN命令を実行
+    irun();
     sc0.show_curs(1);
-    newline();     // 改行
+    newline();
     c_puts("Autorun No."); putnum(CONFIG.STARTPRG,0); c_puts(" stopped.");
-    newline();     // 改行
+    newline();
     err = 0;
   }
 
-  // 端末から1行を入力して実行
-  while (1) { //無限ループ
+  // Enter one line from the terminal and execute
+  while (1) {
     rc = sc0.edit();
     if (rc) {
       textline = (char*)sc0.getText();
@@ -5331,26 +5329,26 @@ void SMALL basic() {
       continue;
     }
 
-    // 1行の文字列を中間コードの並びに変換
-    len = toktoi(); // 文字列を中間コードに変換して長さを取得
-    if (err) {      // もしエラーが発生したら
-      error(true);  // エラーメッセージを表示してエラー番号をクリア
-      continue;     // 繰り返しの先頭へ戻ってやり直し
+    // Convert one line of text to a sequence of intermediate code
+    len = toktoi();
+    if (err) {
+      error(true);  // display direct mode error message
+      continue;
     }
 
-    //中間コードの並びがプログラムと判断される場合
-    if (*ibuf == I_NUM) { // もし中間コードバッファの先頭が行番号なら
-      *ibuf = len;        // 中間コードバッファの先頭を長さに書き換える
-      inslist();          // 中間コードの1行をリストへ挿入
-      if (err)            // もしエラーが発生したら
-	error();          // エラーメッセージを表示してエラー番号をクリア
-      continue;           // 繰り返しの先頭へ戻ってやり直し
+    // If the intermediate code is a program line
+    if (*ibuf == I_NUM) { // the beginning of the code buffer is a line number
+      *ibuf = len;        // overwrite the token with the length
+      inslist();          // Insert one line of intermediate code into the list
+      if (err)
+	error();          // display program mode error message
+      continue;
     }
 
-    // 中間コードの並びが命令と判断される場合
-    if (icom())  // 実行する
-      error(false);   // エラーメッセージを表示してエラー番号をクリア
-  } // 無限ループの末尾
+    // If the intermediate code is a direct mode command
+    if (icom())		// execute
+      error(false);	// display direct mode error message
+  }
 }
 
 // システム環境設定のロード
