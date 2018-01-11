@@ -239,6 +239,8 @@ class VS23S010 {
 
     void reset();
 
+    void setBorder(uint8_t y, uint8_t uv);
+
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;

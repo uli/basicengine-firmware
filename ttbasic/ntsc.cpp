@@ -346,6 +346,14 @@ void VS23S010::setColorSpace(uint8_t palette)
         }
 }
 
+void VS23S010::setBorder(uint8_t y, uint8_t uv)
+{
+	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND;
+	for (int i = BLANKEND; i < FRPORCH; i++) {
+		SpiRamWriteWord((uint16_t)w++, (uv << 8) | (y + 0x66));
+	}
+}
+
 void SMALL VS23S010::SpiRamVideoInit()
 {
 	uint16_t i, j, wi;
@@ -580,11 +588,10 @@ void SMALL VS23S010::SpiRamVideoInit()
 	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
 		SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
 	}
+
 	// Set the color level to black
-	w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND;
-	for (i = BLANKEND; i < FRPORCH; i++) {
-		SpiRamWriteWord((uint16_t)w++, BLACK_LEVEL);
-	}
+	setBorder(0, 0);
+
 	// Set HSYNC
 	w = PROTOLINE_WORD_ADDRESS(0);
 	for (i = 0; i < SYNC; i++)
