@@ -4035,6 +4035,18 @@ void SMALL error(uint8_t flgCmd = false) {
   err = 0;                     // エラー番号をクリア
 }
 
+num_t irgb() {
+  int32_t r, g, b;
+  if (checkOpen() ||
+      getParam(r, 0, 255, I_COMMA) ||
+      getParam(g, 0, 255, I_COMMA) ||
+      getParam(b, 0, 255, I_CLOSE)) {
+    err = ERR_SYNTAX;
+    return 0;
+  }
+  return vs23.colorFromRgb(r, g, b);
+}
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
@@ -4268,6 +4280,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_LEFT:  value = psxLeft; break;
 
   case I_PAD:	value = ipad(); break;
+  case I_RGB:	value = irgb(); break;
 
   case I_TILECOLL:
     if (checkOpen()) return 0;

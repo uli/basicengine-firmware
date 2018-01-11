@@ -160,6 +160,7 @@ SREADY	I_SREADY	esyntax
 SREAD	I_SREAD		esyntax
 EEPREAD	I_EEPREAD	esyntax
 PAD	I_PAD		esyntax
+RGB	I_RGB		esyntax
 PCX	I_PCX		esyntax
 AS	I_AS		esyntax
 OFF	I_OFF		esyntax
