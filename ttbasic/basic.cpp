@@ -742,50 +742,49 @@ uint8_t SMALL toktoi() {
       ibuf[len++] = idx;
     }
     
-    if (key >= 0)                           // もしすでにキーワードで変換に成功していたら以降はスキップ
+    // done if keyword parsed
+    if (key >= 0)
       continue;
 
-    //定数への変換を試みる
-    ptok = s;                            // 単語の先頭を指す
-    if (isDigit(*ptok)) {              // もし文字が数字なら
-      if (len >= SIZE_IBUF - 3) { //もし中間コードが長すぎたら
-	err = ERR_IBUFOF; //エラー番号をセット
-	return 0; //0を持ち帰る
+    // Attempt to convert to constant
+    ptok = s;                            // Points to the beginning of a word
+    if (isDigit(*ptok)) {
+      if (len >= SIZE_IBUF - 3) { // If the intermediate code is too long
+	err = ERR_IBUFOF;
+	return 0;
       }
       value = strtonum(ptok, &ptok);
-      s = ptok; //文字列の処理ずみの部分を詰める
-      ibuf[len++] = I_NUM; //中間コードを記録
+      s = ptok;			// Stuff the processed part of the character string
+      ibuf[len++] = I_NUM;	// Record intermediate code
       os_memcpy(ibuf+len, &value, sizeof(num_t));
       len += sizeof(num_t);
       is_prg_text = true;
-    }
-    else
+    } else if (*s == '\"' ) {
+      // Attempt to convert to a character string
 
-    //文字列への変換を試みる
-    if (*s == '\"' ) { //もし文字が '\"'
-      c = *s++; //「"」か「'」を記憶して次の文字へ進む
-      ptok = s; //文字列の先頭を指す
-      //文字列の文字数を得る
+      c = *s++;		// Remember " and go to the next character
+      ptok = s;		// Points to the beginning of the string
+
+      // Get the number of characters in a string
       for (i = 0; (*ptok != c) && c_isprint(*ptok); i++)
 	ptok++;
-      if (len >= SIZE_IBUF - 1 - i) { //もし中間コードが長すぎたら
-	err = ERR_IBUFOF; //エラー番号をセット
-	return 0; //0を持ち帰る
-      }
-      ibuf[len++] = I_STR; //中間コードを記録
-      ibuf[len++] = i; //文字列の文字数を記録
-      while (i--) { //文字列の文字数だけ繰り返す
-	ibuf[len++] = *s++; //文字列を記録
-      }
-      if (*s == c) s++;  //もし文字が「"」か「'」なら次の文字へ進む
-    }
-    else
 
-    //変数への変換を試みる(2017/07/26 A～Z9:対応)
-    //  1文字目
-    if (isAlpha(*ptok)) { //もし文字がアルファベットなら
+      if (len >= SIZE_IBUF - 1 - i) { // if the intermediate code is too long
+	err = ERR_IBUFOF;
+	return 0;
+      }
+
+      ibuf[len++] = I_STR;
+      ibuf[len++] = i; // record the number of characters in the string
+      while (i--) {
+	ibuf[len++] = *s++; // Record character
+      }
+      if (*s == c)	// If the character is ", go to the next character
+        s++;
+    } else if (isAlpha(*ptok)) {
+      // Try converting to variable
       var_len = 0;
-      if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
+      if (len >= SIZE_IBUF - 2) { // if the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
       }
@@ -822,7 +821,7 @@ uint8_t SMALL toktoi() {
         s += var_len + 1;
         ptok++;
       } else {
-	// 中間コードに変換
+	// Convert to intermediate code
 	ibuf[len++] = I_VAR; //中間コードを記録
 	int idx = var_names.assign(vname, is_prg_text);
 	if (idx < 0)
@@ -830,16 +829,17 @@ uint8_t SMALL toktoi() {
 	ibuf[len++] = idx;
 	if (var.reserve(var_names.varTop()))
 	  goto oom;
-	s+=var_len; //次の文字へ進む
+	s += var_len;
       }
-    } else { //どれにも当てはまらなかった場合
-      err = ERR_SYNTAX; //エラー番号をセット
-      return 0; //0を持ち帰る
+    } else { // if none apply
+      err = ERR_SYNTAX;
+      return 0;
     }
-  } //文字列1行分の終端まで繰り返すの末尾
+  }
 
-  ibuf[len++] = I_EOL; //文字列1行分の終端を記録
-  return len; //中間コードの長さを持ち帰る
+  ibuf[len++] = I_EOL;
+  return len;
+
 oom:
   err = ERR_OOM;
   return 0;
