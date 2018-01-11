@@ -630,24 +630,24 @@ uint8_t parse_identifier(char *ptok, char *vname) {
 int getlineno(unsigned char *lp);
 
 //
-// テキストを中間コードに変換
-// [戻り値]
-//   0 または 変換中間コードバイト数
+// Convert text to intermediate code
+// [Return value]
+// 0 or intermediate code number of bytes
 //
 uint8_t SMALL toktoi() {
   int16_t i;
   int16_t key;
-  uint8_t len = 0;  // 中間コードの並びの長さ
-  char* pkw = 0;          // ひとつのキーワードの内部を指すポインタ
-  char* ptok;             // ひとつの単語の内部を指すポインタ
-  char* s = lbuf;         // 文字列バッファの内部を指すポインタ
-  char c;                 // 文字列の括りに使われている文字（「"」または「'」）
-  num_t value;            // 定数
-  uint32_t tmp;              // 変換過程の定数
-  uint32_t hex;           // 16進数定数
-  uint16_t hcnt;          // 16進数桁数
-  uint8_t var_len;        // 変数名長さ
-  char vname[MAX_VAR_NAME];       // 変数名
+  uint8_t len = 0;	// length of sequence of intermediate code
+  char *pkw = 0;	// pointer to the inside of one keyword
+  char *ptok;		// pointer to the inside of one word
+  char *s = lbuf;	// pointer to the inside of the string buffer
+  char c;		// Character used to enclose string (")
+  num_t value;		// constant
+  uint32_t tmp;
+  uint32_t hex;		// hexadecimal constant
+  uint16_t hcnt;	// hexadecimal digit count
+  uint8_t var_len;	// variable name length
+  char vname [MAX_VAR_NAME];	// variable name
 
   bool is_prg_text = false;
 
