@@ -4928,18 +4928,19 @@ void GROUP(basic_core) inext() {
     return;
   }
 
-  if (*cip++ != I_VAR) {                     // もしNEXTの後ろに変数がなかったら
-    err = ERR_NEXTWOV;                       // エラー番号をセット
-    return;
+  if (*cip != I_VAR)
+    want_index = -1;		// just use whatever is TOS
+  else {
+    ++cip;
+    want_index = *cip++;	// NEXT a specific iterator
   }
-  
-  want_index = *cip++;
 
   while (lstki) {
     // Get index of iterator on top of stack.
     index = (int)(uintptr_t)lstk[lstki - 1];
 
-    if (want_index == index)
+    // Done if it's the one we want (or if none is specified).
+    if (want_index < 0 || want_index == index)
       break;
 
     // If it is not the specified variable, we assume we
