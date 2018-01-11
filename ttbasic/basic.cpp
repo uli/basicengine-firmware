@@ -5236,8 +5236,6 @@ void SMALL basic() {
 
   sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
 
-  tv_toneInit();
-
   sound_init();
 
 #if USE_SD_CARD == 1

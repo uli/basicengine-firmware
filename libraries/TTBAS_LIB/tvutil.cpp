@@ -366,65 +366,14 @@ void tv_write(uint8_t c) {
 #endif
 }
 
-//
-// 音の停止
-// 引数
-// pin     : PWM出力ピン (現状はPB9固定)
-//
-void tv_noToneEx() {
-//    Timer4.pause();
-//  Timer4.setCount(0xffff);
-}
-
-//
-// PWM単音出力初期設定
-//
-void tv_toneInit() {
-//  pinMode(pwmOutPin, PWM);
-  tv_noToneEx();
-}
-
-//
-// 音出し
-// 引数
-//  pin     : PWM出力ピン (現状はPB9固定)
-//  freq    : 出力周波数 (Hz) 15～ 50000
-//  duration: 出力時間(msec)
-//
-void tv_toneEx(uint16_t freq, uint16_t duration) {
-  if (freq < 15 || freq > 50000 ) {
-    tv_noToneEx();
-  } else {
-    uint32_t f =1000000/(uint16_t)freq;
-#if 0
-#if F_CPU == 72000000L
-    Timer4.setPrescaleFactor(72); // システムクロックを1/72に分周
-#else if  F_CPU == 48000000L
-    Timer4.setPrescaleFactor(48); // システムクロックを1/48に分周
-#endif
-    Timer4.setOverflow(f);
-    Timer4.refresh();
-    Timer4.resume(); 
-//    pwmWrite(pwmOutPin, f/2);  
-    if (duration) {
-      delay(duration);
-      Timer4.pause(); 
-      Timer4.setCount(0xffff);
-    }
-#endif
-  }
-}
-
 // 音の再生
 void tv_tone(int16_t freq, int16_t tm) {
-  //TV.tone(freq, tm);
-  tv_toneEx(freq, tm);
+  Serial.println("unimp tv_tone");
 }
 
 // 音の停止
 void tv_notone() {
-  //TV.noTone();
-  tv_noToneEx();    
+  Serial.println("unimp tv_notone");
 }
 
 // グラフィック横スクロール
