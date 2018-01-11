@@ -1233,7 +1233,7 @@ int ForceGetCh()
 int ParseBasic(const char *code)
 {
 	strcpy(lbuf, code);
-	toktoi();
+	toktoi(false);
 	cleartbuf();
 	putlist(ibuf, 3);
 	printf("-%s-\n", tbuf);
