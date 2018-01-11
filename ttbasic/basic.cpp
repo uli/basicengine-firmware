@@ -4502,59 +4502,59 @@ BString istrexp()
   }
 }
 
-// The parser
+// Numeric expression parser
 num_t GROUP(basic_core) iexp() {
-  num_t value, tmp; //値と演算値
+  num_t value, tmp;
 
-  value = iplus(); //値を取得
-  if (err) //もしエラーが生じたら
-    return -1;  //終了
+  value = iplus();
+  if (err)
+    return -1;
 
   // conditional expression
-  while (1) //無限に繰り返す
-    switch(*cip++) { //中間コードで分岐
-
-    case I_EQ: //「=」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value == tmp); //真偽を判定
+  while (1)
+    switch(*cip++) {
+    case I_EQ:
+      tmp = iplus();
+      value = (value == tmp);
       break;
-    case I_NEQ: //「!=」の場合
-    case I_NEQ2: //「<>」の場合
-    case I_SHARP: //「#」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value != tmp); //真偽を判定
+    case I_NEQ:
+    case I_NEQ2:
+    case I_SHARP:
+    // XXX: too many aliases for not-equal...
+      tmp = iplus();
+      value = (value != tmp);
       break;
-    case I_LT: //「<」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value < tmp); //真偽を判定
+    case I_LT:
+      tmp = iplus();
+      value = (value < tmp);
       break;
-    case I_LTE: //「<=」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value <= tmp); //真偽を判定
+    case I_LTE:
+      tmp = iplus();
+      value = (value <= tmp);
       break;
-    case I_GT: //「>」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value > tmp); //真偽を判定
+    case I_GT:
+      tmp = iplus();
+      value = (value > tmp);
       break;
-    case I_GTE: //「>=」の場合
-      tmp = iplus(); //演算値を取得
-      value = (value >= tmp); //真偽を判定
+    case I_GTE:
+      tmp = iplus();
+      value = (value >= tmp);
       break;
-    case I_LAND: // AND (論理積)
-      tmp = iplus(); //演算値を取得
-      value = (value && tmp); //真偽を判定
+    case I_LAND:
+      tmp = iplus();
+      value = (value && tmp);
       break;
-    case I_LOR: // OR (論理和)
-      tmp = iplus(); //演算値を取得
-      value = (value || tmp); //真偽を判定
+    case I_LOR:
+      tmp = iplus();
+      value = (value || tmp);
       break;
-    default: //以上のいずれにも該当しなかった場合
+    default:
       cip--;
-      return value; //値を持ち帰る
-    } //中間コードで分岐の末尾
+      return value;
+    }
 }
 
-// 左上の行番号の取得
+// Get number of line at top left of the screen
 int32_t getTopLineNum() {
   uint8_t* ptr = sc0.getScreen();
   uint32_t n = 0;
@@ -4575,7 +4575,7 @@ int32_t getTopLineNum() {
   return rc;
 }
 
-// 左下の行番号の取得
+// Get number of line at the bottom left of the screen
 int32_t getBottomLineNum() {
   uint8_t* ptr = sc0.getScreen()+sc0.getWidth()*(sc0.getHeight()-1);
   uint32_t n = 0;
@@ -4596,7 +4596,7 @@ int32_t getBottomLineNum() {
   return rc;
 }
 
-// 指定した行の前の行番号を取得する
+// Get the number of the line preceding the specified line
 int32_t getPrevLineNo(int32_t lineno) {
   uint8_t* lp, *prv_lp = NULL;
   int32_t rc = -1;
@@ -4608,32 +4608,32 @@ int32_t getPrevLineNo(int32_t lineno) {
   return rc;
 }
 
-// 指定した行の次の行番号を取得する
+// Get the number of the line succeeding the specified line
 int32_t getNextLineNo(int32_t lineno) {
   uint8_t* lp, *prv_lp = NULL;
   int32_t rc = -1;
 
   lp = getlp(lineno);
   if (lineno == getlineno(lp)) {
-    // 次の行に移動
+    // Move to the next line
     lp+=*lp;
     rc = getlineno(lp);
   }
   return rc;
 }
 
-// 指定した行のプログラムテキストを取得する
+// Get the program text of the specified line
 char* getLineStr(int32_t lineno) {
   uint8_t* lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;
 
-  // 行バッファへの指定行テキストの出力
+  // Output of specified line text to line buffer
   cleartbuf();
-  putnum(lineno, 0,3);   // 行番号を表示
-  c_putch(' ',3);      // 空白を入れる
-  putlist(lp+sizeof(num_t)+1,3);   // XXX: really lp+5? was lp+3.   // 行番号より後ろを文字列に変換して表示
-  c_putch(0,3);        // \0を入れる
+  putnum(lineno, 0, 3);
+  c_putch(' ', 3);
+  putlist(lp+sizeof(num_t)+1, 3);
+  c_putch(0,3);        // zero-terminate tbuf
   return tbuf;
 }
 
