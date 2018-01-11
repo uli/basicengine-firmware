@@ -2274,9 +2274,16 @@ void icls() {
 
 void ICACHE_RAM_ATTR pump_events(void)
 {
+  static uint32_t last_frame;
+  if (vs23.frame() == last_frame)
+    return;
+
+  last_frame = vs23.frame();
+
   vs23.updateBg();
   sound_pump_events();
-  uint8_t f = vs23.frame() & 0x3f;
+
+  uint8_t f = last_frame & 0x3f;
   if (f == 0) {
     sc0.drawCursor(0);
   } else if (f == 0x20) {
