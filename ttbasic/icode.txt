@@ -81,6 +81,7 @@ PLOT	I_PLOT		iplot
 DIM	I_DIM		idim
 PALETTE	I_PALETTE	ipalette
 EDIT	I_EDIT		iedit
+BORDER	I_BORDER	iborder
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom
