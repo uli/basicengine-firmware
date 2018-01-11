@@ -92,6 +92,14 @@ void VS23S010::end()
   }
 }
 
+void VS23S010::reset()
+{
+  resetSprites();
+  resetBgs();
+  m_bin.Init(0, 0);
+  setColorConversion(0, 7, 3, 6, true);
+}
+
 void SMALL VS23S010::setMode(uint8_t mode)
 {
   setSyncLine(0);

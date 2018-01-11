@@ -237,6 +237,8 @@ class VS23S010 {
     bool allocBacking(int w, int h, int &x, int &y);
     void freeBacking(int x, int y, int w, int h);
 
+    void reset();
+
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
