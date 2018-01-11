@@ -345,9 +345,6 @@ uint8_t* sanitize_addr(uint32_t vadr) {
 }
 
 // Standard C libraly (about) same functions
-char c_toupper(char c) {
-  return(c <= 'z' && c >= 'a' ? c - 32 : c);
-}
 char c_isprint(char c) {
   //return(c >= 32 && c <= 126);
   return(c >= 32 && c!=127 );
@@ -4659,11 +4656,6 @@ void SMALL iinfo() {
   c_puts("SRAM Free:");
   putnum(adr-hadr, 0);
   newline();
-}
-
-// ラベル
-void ilabel() {
-  cip+= *cip+1;
 }
 
 // GOTO
