@@ -3585,16 +3585,16 @@ void SMALL iscreen() {
 
   if ( getParam(m,  0, vs23.numModes, I_NONE) ) return;   // m
 
-  if (scmode == m)
-    return;
+  vs23.reset();
 
-  for (int i=0; i < VS23_MAX_BG; ++i)
-    vs23.freeBg(i);
-
-  // 現在、ターミナルモードの場合は画面をクリア、終了、資源開放
+  sc0.setFont(fonts[0]);
   sc0.cls();
   sc0.show_curs(true);
   sc0.locate(0,0);
+
+  if (scmode == m)
+    return;
+
   sc0.end();
   scmode = m;
 
