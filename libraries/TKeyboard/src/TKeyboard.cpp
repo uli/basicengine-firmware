@@ -1,46 +1,39 @@
 //
 // file: TKeyboard.h
-// Arduino STM32用 PS/2 キーボード制御 by たま吉さん
-// 作成日 2017/01/31
-// 修正日 2017/02/01, USキーボードの定義ミス修正
-// 修正日 2017/02/02, ctrl_LED()のバグ修正
-// 修正日 2017/02/03, ctrl_LED()のレスポンス受信処理の修正
-// 修正日 2017/02/05, setPriority()関数の追加、ctrl_LED()の処理方式変更
-// 修正日 2017/02/05, KEY_SPACEのキーコード変更(32=>35)対応
-// 修正日 2017/04/10, NumLock+編集キーの不具合暫定対応
+// PS/2 keyboard control for Arduino STM32 by Tamakichi-san (たま吉さん)
 //
 
 #include <TKeyboard.h>
 
-static TPS2 pb; // PS/2 I/F オブジェクト
-volatile static uint8_t _flgLED; // LED制御利用フラグ(true:利用する false:利用しない)
-volatile static uint8_t _flgUS;  // USキーボードの利用
+static TPS2 pb; // PS/2 interface object
+volatile static uint8_t _flgLED; // LED control use flag (true: use  false: don't)
+volatile static uint8_t _flgUS;  // US keyboard mode
 static const uint8_t (*key_ascii)[2];
    
-// スキャンコード解析状態遷移コード
-#define STS_SYOKI          0  // 初期
-#define STS_1KEY           1   // 1バイト(END) [1]
-#define STS_1KEY_BREAK     2   // BREAK[2]
-#define STS_1KEY_BREAK_1   3   // BREAK＋1バイト(END)[2-1]
-#define STS_MKEY_1         4   // マルチバイト1バイト目[3]
-#define STS_MKEY_2         5   // マルチバイト2バイト目(END)[3-1]
-#define STS_MKEY_BREAK     6   // マルチバイト1バイト目+BREAK[3-2]
-#define STS_MKEY_BREAK_1   7   // マルチバイト1バイト目＋BREAK+2バイト目(END)[3-2-1]
-#define STS_MKEY_BREAK_SC2 8   // マルチバイト1バイト目+BREAK+prnScrn2バイト目[3-2-2]
-#define STS_MKEY_SC2       9   // マルチバイト1バイト目+prnScrn2バイト目[3-3]
-#define STS_MKEY_SC3      10   // マルチバイト1バイト目+prnScrn3バイト目[3-3-1]
-#define STS_MKEY_PS       11   // pauseキー1バイト目[4]
+// Scan code analysis state transition codes
+#define STS_SYOKI          0  // initial
+#define STS_1KEY           1   // 1 byte (END) [1]
+#define STS_1KEY_BREAK     2   // BREAK [2]
+#define STS_1KEY_BREAK_1   3   // BREAK + 1 byte (END) [2-1]
+#define STS_MKEY_1         4   // multi-byte 1st byte [3]
+#define STS_MKEY_2         5   // multi-byte 2nd byte (END)[3-1]
+#define STS_MKEY_BREAK     6   // multi-byte 1st byte + BREAK [3-2]
+#define STS_MKEY_BREAK_1   7   // multi-byte 1st byte + BREAK + 2nd byte (END)[3-2-1]
+#define STS_MKEY_BREAK_SC2 8   // multi-byte 1st byte + BREAK + prnScrn 2nd byte [3-2-2]
+#define STS_MKEY_SC2       9   // multi-byte 1st byte + prnScrn 2nd byte [3-3]
+#define STS_MKEY_SC3      10   // multi-byte 1st byte + prnScrn 3rd byte [3-3-1]
+#define STS_MKEY_PS       11   // pause key 1st byte [4]
 
-// ロックキーの状態
-// ※0ビット目でLOCKのON/OFFを判定している
-#define LOCK_Start    B00 // 初期 
-#define LOCK_ON_Make  B01 // LOCK ON キーを押したままの状態
-#define LOCK_ON_Break B11 // LOCK ON キーを離した状態
-#define LOCK_OFF_Make B10 // LOCK OFF キーを押したままの状態
+// Lock key status
+// * ON/OFF state of LOCK is indicated by bit 0
+#define LOCK_Start    B00 // initial
+#define LOCK_ON_Make  B01 // Pressing and holding the LOCK ON key
+#define LOCK_ON_Break B11 // LOCK ON key released
+#define LOCK_OFF_Make B10 // Pressing and holding the LOCK OFF key
 
 
-// スキャンコード 0x00-0x83 => キーコード変換テーブル
-// 132バイト分
+// Scan code 0x00 - 0x83 => Key code conversion table
+// 132 bytes worth
 static const uint8_t keycode1[] PROGMEM = {
  0            , PS2KEY_F9      , 0           , PS2KEY_F5         , PS2KEY_F3        , PS2KEY_F1         , PS2KEY_F2        , PS2KEY_F12,       // 0x00-0x07
  PS2KEY_F13      , PS2KEY_F10     , PS2KEY_F8      , PS2KEY_F6         , PS2KEY_F4        , PS2KEY_Tab        , PS2KEY_HanZen    , PS2KEY_PAD_Equal, // 0x08-0x0F
@@ -61,8 +54,8 @@ static const uint8_t keycode1[] PROGMEM = {
  0            , 0           , 0           , PS2KEY_F7         ,                                                                 // 0x80-0x83
 }; 
 
-// スキャンコード 0xE010-0xE07D => キーコード変換テーブル
-// 2バイト(スキャンコード下位1バイト, キーコード) x 38
+// Scan code 0xE010-0xE07D => Key code conversion table
+// 2 bytes (scan code lower byte, key code) * 38
 static const uint8_t keycode2[][2] PROGMEM = {
  { 0x10 , PS2KEY_WWW_Search },    { 0x11 , PS2KEY_R_Alt },      { 0x14 , PS2KEY_R_Ctrl },      { 0x15 , PS2KEY_PrevTrack },
  { 0x18 , PS2KEY_WWW_Favorites }, { 0x1F , PS2KEY_L_GUI },      { 0x20 , PS2KEY_WWW_Refresh }, { 0x21 , PS2KEY_VolumeDown },
@@ -76,17 +69,17 @@ static const uint8_t keycode2[][2] PROGMEM = {
  { 0x7A , PS2KEY_PageDown },      { 0x7D , PS2KEY_PageUp },
 };
 
-// Pause Key スキャンコード
+// Pause Key scan codes
 static const uint8_t pausescode[] PROGMEM =  {0xE1,0x14,0x77,0xE1,0xF0,0x14,0xF0,0x77};
 
-// PrintScreen Key スキャンコード(break);
-static const uint8_t prnScrncode2[] __FLASH__ = {0xE0,0xF0,0x7C,0xE0,0xF0,0x12};   // Break用
+// PrintScreen Key scan codes (break);
+static const uint8_t prnScrncode2[] __FLASH__ = {0xE0,0xF0,0x7C,0xE0,0xF0,0x12};
 
 
-// キーコード・ASCIIコード変換テーブル
-// {シフト無しコード, シフトありコード }
+// Key code / ASCII code conversion table
+// { not shifted, shifted }
 
-// USキーボード
+// US keyboard
 static const uint8_t key_ascii_us[][2] PROGMEM = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ ',','\"'},{ ';', ':'},{ ',', '<'},{ '-', '_'},{ '.', '>'},{ '/', '?'},{ '[', '{'},
@@ -98,7 +91,7 @@ static const uint8_t key_ascii_us[][2] PROGMEM = {
   { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'w', 'W'},{ 'x', 'X'},{ 'y', 'Y'},{ 'z', 'Z'},
 };
 
-//（日本語キーボード)
+// Japanese keyboard
 static const uint8_t key_ascii_jp[][2] PROGMEM = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ ':', '*'},{ ';', '+'},{ ',', '<'},{ '-', '='},{ '.', '>'},{ '/', '?'},{ '@', '`'},
@@ -110,8 +103,8 @@ static const uint8_t key_ascii_jp[][2] PROGMEM = {
   { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'w', 'W'},{ 'x', 'X'},{ 'y', 'Y'},{ 'z', 'Z'},
 };
 
-// テンキー用変換テーブル 94～111
-// {通常コード, NumLock/Shift時コード, KEYコード(=1)/ASCII(=0)区分 }
+// Conversion table for numeric pad keys 94-111
+// { Normal code, NumLock/Shift code, 1: key code  0: ASCII code }
 static const uint8_t tenkey[][3] PROGMEM = {
   { '=',  '='            ,0},
   { 0x0D, 0x0D           ,0},
@@ -133,14 +126,13 @@ static const uint8_t tenkey[][3] PROGMEM = {
   { '/',  '/'            ,0},
 };
 
-//
-// 利用開始(初期化)
-// 引数
-//   clk    : PS/2 CLK
-//   dat    : PS/2 DATA
-//   flgLED : false LED制御をしない、true LED制御を行う
-// 戻り値
-//  0:正常終了 0以外: 異常終了
+// Start of use (initialization)
+// Arguments
+//   clk:	PS/2 CLK
+//   dat:	PS/2 DATA
+//   flgLED:	false: Do not control the LED, true: do LED control
+// Return value
+//   0: Normal termination 	Other than 0: Abnormal termination
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t flgUS) {
   uint8_t rc;
   _flgUS = flgUS;
@@ -149,31 +141,32 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t flgUS
   else
     key_ascii = key_ascii_jp;
   
-  _flgLED = flgLED;    // LED制御利用有無
-  pb.begin(clk, dat);  // PS/2インタフェースの初期化
-  rc = init();         // キーボードの初期化
+  _flgLED = flgLED;    // Availability of LED control
+  pb.begin(clk, dat);  // Initialization of PS/2 interface
+  rc = init();         // Initializing the keyboard
   return rc;
 }
 
-// 利用終了
+// End of use
 void TKeyboard::end() {
   pb.end();
 }
 
-// キーボード初期化
-// 戻り値 0:正常終了、 0以外:異常終了
+// Keyboard initialization
+// Return value:	0: Normal completion	not 0: Abnormal termination
 uint8_t TKeyboard::init() {
   uint8_t c,err;
   
   pb.disableInterrupts();
   pb.clear_queue();
           
-  // リセット命令:FF 応答がFA,AAなら
+  // Reset command: FF	response is FA, AA
   if ( (err = pb.hostSend(0xff)) )    goto ERROR;
   err = pb.response(&c);  if (err || (c != 0xFA)) goto ERROR;
   err = pb.response(&c);  if (err || (c != 0xAA)) goto ERROR;   
 
-  // 識別情報チェック:F2 応答がキーボード識別のFA,AB,83ならOK
+  // Identification information check: F2
+  // Response is FA, AB, 83 if keyboard identification OK
   if ( (err = pb.hostSend(0xf2)) )   goto ERROR;
   err = pb.response(&c);  if (err || (c != 0xFA)) goto ERROR;  
   err = pb.response(&c);  if (err || (c != 0xAB)) goto ERROR;  
@@ -188,41 +181,41 @@ ERROR:
   return err;
 }
 
-// CLK変化割り込み許可
+// Enable CLK change interrupt
 void TKeyboard::enableInterrupts() {
   pb.enableInterrupts();
 }
 
-// CLK変化割り込み禁止
+// Disable CLK change interrupt
 void TKeyboard::disableInterrupts() {
   pb.disableInterrupts();
 }
 
-// 割り込み優先度の設定
+// Interrupt priority setting
 void TKeyboard::setPriority(uint8_t n) {
   pb.setPriority(n);
 }
 
-// PS/2ラインをアイドル状態に設定
+// Set PS/2 line to idle state
 void TKeyboard::mode_idole() {
   pb.mode_idole(TPS2::D_IN);
 }
 
-// PS/2ラインを通信禁止
+// Prohibit communication on PS/2 line
 void TKeyboard::mode_stop() {
   pb.mode_stop();
 }
 
-// PS/2ラインをホスト送信モード設定
+// Set PS/2 line to host transmission mode
 void TKeyboard::mode_send() {
   pb.mode_send();
 }
     
-// スキャンコード検索
+// Scan code search
 uint8_t TKeyboard::findcode(uint8_t c)  {
- int  t_p = 0; //　検索範囲上限
- int  e_p = sizeof(keycode2)/sizeof(keycode2[0])-1; //  検索範囲下限
- int  pos;
+ int t_p = 0; // Search range upper limit
+ int e_p = sizeof(keycode2)/sizeof(keycode2[0])-1; // Search range lower limit
+ int pos;
  uint16_t  d = 0;
  int flg_stop = 0;
  
@@ -230,17 +223,14 @@ uint8_t TKeyboard::findcode(uint8_t c)  {
     pos = t_p + ((e_p - t_p+1)>>1);
     d = pgm_read_byte(&keycode2[pos][0]);
    if (d == c) {
-     // 等しい
      flg_stop = 1;
      break;
    } else if (c > d) {
-     // 大きい
      t_p = pos + 1;
      if (t_p > e_p) {
        break;
      }
    } else {
-     // 小さい
     e_p = pos -1;
     if (e_p < t_p) 
       break;
@@ -251,15 +241,15 @@ uint8_t TKeyboard::findcode(uint8_t c)  {
  return pgm_read_byte(&keycode2[pos][1]);
 }
 
-// 
-// スキャンコードからキーコードへの変換
-// 戻り値
-//   正常時
-//     下位8ビット: キーコード 
-//     上位1ビット: 0:MAKE 1:BREAK
-//   キー入力なし
+//
+// Convert scan code to key code
+// Return value
+//   Normal
+//     Lower 8 bits: Key code
+//     Upper 1 bit: 0: MAKE 1: BREAK
+//   No key input
 //     0
-//   エラー
+//   Error
 //     255
 //
 uint16_t TKeyboard::scanToKeycode() {
@@ -268,13 +258,13 @@ uint16_t TKeyboard::scanToKeycode() {
   uint16_t c,c2, code = 0;
 
   while(pb.available()) {
-    c = pb.dequeue();     // キューから1バイト取り出し
+    c = pb.dequeue();     // Retrieve 1 byte from queue
   	//Serial.print("S=");
   	//Serial.println(c,HEX);
     switch(state) {
     case STS_SYOKI: // [0]->
       if (c <= 0x83) {
-        // [0]->[1] 1バイト(END) 
+        // [0]->[1] 1 byte (END) 
         code = pgm_read_byte(keycode1+c);
         goto DONE;
       } else {
@@ -289,7 +279,7 @@ uint16_t TKeyboard::scanToKeycode() {
 
     case STS_1KEY_BREAK: // [2]->
       if (c <= 0x83) {
-        // [2]->[2-1] BREAK+1バイト(END) 
+        // [2]->[2-1] BREAK + 1 byte (END) 
         code = pgm_read_byte(keycode1+c) | BREAK_CODE;
         goto DONE;
       } else {
@@ -304,7 +294,7 @@ uint16_t TKeyboard::scanToKeycode() {
       default:
           code = findcode(c);
           if (code) {
-            // [3]->[3-1] マルチバイト2バイト目(END)
+            // [3]->[3-1] multi-byte 2nd byte (END)
             goto DONE; 
           } else {
             goto STS_ERROR; // -> ERROR
@@ -318,7 +308,7 @@ uint16_t TKeyboard::scanToKeycode() {
         } else {
           code = findcode(c);
           if (code) {
-            // [3-2]->[3-2-1] BREAK+マルチバイト2バイト目(END)
+            // [3-2]->[3-2-1] BREAK + multi-byte 2nd byte (END)
             code |= BREAK_CODE;
             goto DONE; 
           } else {
@@ -402,59 +392,60 @@ uint16_t TKeyboard::scanToKeycode() {
 }
 
 //
-// 入力キー情報の取得(CapsLock、NumLock、ScrollLockを考慮)
-// 仕様 
-//  ・入力したキーに対応するASCIIコード文字またはキーコードと付随する情報を返す。
-//    => keyEvent構造体(2バイト)
-//    (ASCIIコードを持たないキーはキーコード、持つ場合はASCIIコード)
-//    - 下位8ビット ASCIIコードまたはキーコード
-//    - 上位8ビットには下記の情報がセットされる
-//       B00000001 : Make/Break種別  0:Make(押した)　1:Break(離した)
-//       B00000010 : ASCIIコード/キーコード種別  0:ASCII 1:キーコード
-//       B00000100 : Shift有無(CapsLock考慮) 0:なし 1:あり
-//       B00001000 : Ctrl有無 0:なし 1:あり
-//       B00010000 : Alt有無  0:なし 1:あり
-//       B00100000 : GUIあり  0:なし 1:あり
+// Acquire input key information (consider CapsLock, NumLock, ScrollLock)
+// Specification
+//   - Return the ASCII code character or key code and associated information
+//     corresponding to the entered key.
+//     => keyEvent structure (2 bytes)
+//     (ASCII code if there is one, key code otherwise.)
+//     - Lower 8 bits ASCII code or key code
+//     - The following information is set in the upper 8 bits
+//       B00000001: Make/Break type  0: Make (pressed)  1: Break (released)
+//       B00000010: ASCII code/key code type  0: ASCII  1: key code
+//       B00000100: Shift held (CapsLock considered)  0: no  1: yes
+//       B00001000: Ctrl held  0: no  1: yes
+//       B00010000: Alt held  0: no 1: yes
+//       B00100000: GUI held  0: no 1: yes
 //
-//    - エラーまたは入力なしの場合、下位8ビットに以下の値を設定する
-//     0x00で入力なし、0xFFでエラー
+//     - In case of error or no input, set the following values in the lower 8 bits
+//       No input: 0x00, error: 0xFF
 //
-// 戻り値: 入力情報
+// Returned value: input information
 //
-
 keyEvent TKeyboard::read() {
   //static uint16_t sts_state     = 0;           // キーボード状態
   static keyinfo  sts_state = {.value = 0};
-  static uint8_t  sts_numlock   = LOCK_Start;  // NumLock状態
-  static uint8_t  sts_CapsLock  = LOCK_Start;  // CapsLock状態
-  static uint8_t  sts_ScrolLock = LOCK_Start;  // ScrollLock状態
+  static uint8_t  sts_numlock   = LOCK_Start;  // NumLock state
+  static uint8_t  sts_CapsLock  = LOCK_Start;  // CapsLock state
+  static uint8_t  sts_ScrolLock = LOCK_Start;  // ScrollLock state
 
   keyinfo c;
   uint16_t code;
   uint16_t bk;
 
-  // キーコードの取得
+  // Obtain key code
   c.value = 0;
   code = scanToKeycode();
   bk = code & BREAK_CODE;
   code &= 0xff;
   
   if (code == 0 || code == 0xff)
- 	  goto DONE; // キー入力なし、またはエラー
+ 	  goto DONE; // No key input or error
 
-  // 通常キー
+  // Normal key
 //  if (code >= PS2KEY_ESC && code <= PS2KEY_Z) {
   if (code >= PS2KEY_Space && code <= PS2KEY_Z) {	
-     if (code >= PS2KEY_A && code <= PS2KEY_Z)  // A-ZのCapsLockキー状態に影響するキーの場合の処理
+    // Keys affected by the state of CapsLock (A-Z)
+     if (code >= PS2KEY_A && code <= PS2KEY_Z)
         c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][((sts_CapsLock&1)&&sts_state.kevt.SHIFT)||(!(sts_CapsLock&1)&&!sts_state.kevt.SHIFT)?0:1]);
       else 
         c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][sts_state.kevt.SHIFT?1:0]);
      goto DONE;
      
   } else if (code >= PS2KEY_PAD_Equal && code <= PS2KEY_PAD_Slash) {
-   // テンキー
+   // Numeric keypad
    if ( (sts_numlock & 1) &&  !sts_state.kevt.SHIFT ) {
-      // NumLock有効でShiftが押させていない場合
+      // NumLock is enabled and Shift is not held
       c.value = pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][0]);
       //Serial.println("[DEBUG:NumLock]");
    } else {
@@ -464,54 +455,54 @@ keyEvent TKeyboard::read() {
   	goto DONE;
     
   } else if (code >=PS2KEY_L_Alt && code <= PS2KEY_CapsLock) {
-    // 入力制御キー
+    // Input control key
 
-    // 操作前のLockキーの状態を保存
+    // Save the state of Lock keys before operation
     uint8_t prv_numlock = sts_numlock & 1;
     uint8_t prv_CapsLock = sts_CapsLock & 1;
     uint8_t prv_ScrolLock = sts_ScrolLock & 1;
   
     switch(code) {
-  	  case PS2KEY_L_Shift:  // Shiftキー
+  	  case PS2KEY_L_Shift:
   	  case PS2KEY_R_Shift:  sts_state.kevt.SHIFT = bk?0:1; break;
-  	  case PS2KEY_L_Ctrl:   // Ctrlキー
+  	  case PS2KEY_L_Ctrl:
   	  case PS2KEY_R_Ctrl:   sts_state.kevt.CTRL = bk?0:1;  break;
-  	  case PS2KEY_L_Alt:    // Altキー
+  	  case PS2KEY_L_Alt:
   	  case PS2KEY_R_Alt:    sts_state.kevt.ALT = bk?0:1; break; 	 
-      case PS2KEY_L_GUI:    // Windowsキー
+      case PS2KEY_L_GUI:    // Windows keys
       case PS2KEY_R_GUI:    sts_state.kevt.GUI = bk ? 0:1;  break; 
-  	  case PS2KEY_CapsLock: // CapsLockキー(トグル動作)
+  	  case PS2KEY_CapsLock: // Toggle action
     		switch (sts_CapsLock) {
-          case LOCK_Start:	  if (!bk) sts_CapsLock = LOCK_ON_Make; break;  // 初期
-  		    case LOCK_ON_Make:  if (bk)  sts_CapsLock = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
-  		    case LOCK_ON_Break: if (!bk) sts_CapsLock = LOCK_OFF_Make;break;  // LOCK ON キーを離した状態
-  		    case LOCK_OFF_Make: if (bk)  sts_CapsLock = LOCK_Start;break;     // LOCK OFF キーを押したままの状態
+          case LOCK_Start:	  if (!bk) sts_CapsLock = LOCK_ON_Make; break;  // initial
+  		    case LOCK_ON_Make:  if (bk)  sts_CapsLock = LOCK_ON_Break; break; // Pressing and holding the LOCK ON key
+  		    case LOCK_ON_Break: if (!bk) sts_CapsLock = LOCK_OFF_Make;break;  // LOCK ON key released
+  		    case LOCK_OFF_Make: if (bk)  sts_CapsLock = LOCK_Start;break;     // Pressing and holding the LOCK OFF key
   		    default: sts_CapsLock = LOCK_Start; break;
   		  }
   		  break; 		
-  	  case PS2KEY_ScrollLock: // ScrollLockキー(トグル動作)
+  	  case PS2KEY_ScrollLock: // Toggle action
         switch (sts_ScrolLock) {
-          case LOCK_Start:    if (!bk) sts_ScrolLock = LOCK_ON_Make; break;  // 初期
-          case LOCK_ON_Make:  if (bk)  sts_ScrolLock = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
-          case LOCK_ON_Break: if (!bk) sts_ScrolLock = LOCK_OFF_Make;break;  // LOCK ON キーを離した状態
-          case LOCK_OFF_Make: if (bk)  sts_ScrolLock = LOCK_Start;break;     // LOCK OFF キーを押したままの状態
+          case LOCK_Start:    if (!bk) sts_ScrolLock = LOCK_ON_Make; break;  // initial
+          case LOCK_ON_Make:  if (bk)  sts_ScrolLock = LOCK_ON_Break; break; // Pressing and holding the LOCK ON key
+          case LOCK_ON_Break: if (!bk) sts_ScrolLock = LOCK_OFF_Make;break;  // LOCK ON key released
+          case LOCK_OFF_Make: if (bk)  sts_ScrolLock = LOCK_Start;break;     // Pressing and holding the LOCK OFF key
           default: sts_ScrolLock = LOCK_Start; break;
         }
         break; 
-      case PS2KEY_NumLock: // NumLockキー(トグル動作)
+      case PS2KEY_NumLock: // Toggle action
         switch (sts_numlock) {
-          case LOCK_Start:    if (!bk) sts_numlock  = LOCK_ON_Make; break;  // 初期
-          case LOCK_ON_Make:  if (bk)  sts_numlock  = LOCK_ON_Break; break; // LOCK ON キーを押したままの状態
-          case LOCK_ON_Break: if (!bk) sts_numlock  = LOCK_OFF_Make;break;  // LOCK ON キーを離した状態
-          case LOCK_OFF_Make: if (bk)  sts_numlock  = LOCK_Start;break;     // LOCK OFF キーを押したままの状態
+          case LOCK_Start:    if (!bk) sts_numlock  = LOCK_ON_Make; break;  // initial
+          case LOCK_ON_Make:  if (bk)  sts_numlock  = LOCK_ON_Break; break; // Pressing and holding the LOCK ON key
+          case LOCK_ON_Break: if (!bk) sts_numlock  = LOCK_OFF_Make;break;  // LOCK ON key released
+          case LOCK_OFF_Make: if (bk)  sts_numlock  = LOCK_Start;break;     // Pressing and holding the LOCK OFF key
           default: sts_numlock = LOCK_Start; break;
         }
         break; 
   	  default: goto ERROR; break;
   	}
-  	c.value = PS2KEY_NONE; // 入力制御キーは入力なしとする
+  	c.value = PS2KEY_NONE; // The input control key has no input
   
-    // LEDの制御(各Lockキーの状態が変わったらLEDの制御を行う)
+    // Control of LED (Control of LED when status of each Lock key is changed)
     if ((prv_numlock != (sts_numlock & 1)) || (prv_CapsLock  != (sts_CapsLock & 1)) || (prv_ScrolLock != (sts_ScrolLock & 1)))
        ctrl_LED(sts_CapsLock & 1, sts_numlock & 1, sts_ScrolLock & 1);
     goto DONE;
@@ -523,7 +514,7 @@ keyEvent TKeyboard::read() {
       c.value = '~';
     goto DONE; 
   } else {
-    // その他の文字(キーコードを文字コードとする)
+    // Other characters (key codes are assumed to be character codes)
     c.value = code|PS2KEY_CODE;
     goto DONE;
   }
@@ -536,13 +527,13 @@ DONE:
   return c.kevt;
 }
 
-// キーボードLED点灯設定
-// 引数
-//  swCaps : CapsLock   LED制御 0:off 1:on
-//  swNum  : NumLock    LED制御 0:off 1:on
-//  swScrol: ScrollLock LED制御 0:off 1:on
-// 戻り値
-//  0:正常 1:異常
+// keyboard LED lighting setting
+// Arguments
+//   swCaps:	CapsLock LED control	0: off 1: on
+//   swNum:	NumLock LED control	0: off 1: on
+//   swScrol:	ScrollLock LED control	0: off 1: on
+// Return value
+//   0: normal	1: abnormal
 //
 uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol) {
 
@@ -571,7 +562,7 @@ uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol) {
   goto DONE;
   
 ERROR:
-  // キーボードの初期化による復旧
+  // Restoration by keyboard initialization
   init();
 DONE:
   return err;  
