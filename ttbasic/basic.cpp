@@ -3835,12 +3835,31 @@ void iplot() {
 }
 
 #include "Psx.h"
+#include <TKeyboard.h>
+extern TKeyboard kb;
 Psx psx;
+
+static int cursor_pad_state()
+{
+  return kb.state(PS2KEY_L_Arrow) << psxLeftShift |
+         kb.state(PS2KEY_R_Arrow) << psxRightShift |
+         kb.state(PS2KEY_Down_Arrow) << psxDownShift |
+         kb.state(PS2KEY_Up_Arrow) << psxUpShift |
+         kb.state(PS2KEY_X) << psxXShift |
+         kb.state(PS2KEY_A) << psxTriShift |
+         kb.state(PS2KEY_S) << psxOShift |
+         kb.state(PS2KEY_Z) << psxSquShift;
+}
+
 int32_t ipad() {
   int32_t num;
   if (checkOpen()) return 0;
-  if (getParam(num, 0, 1, I_CLOSE)) return 0;
-  return psx.read();
+  if (getParam(num, 0, 2, I_CLOSE)) return 0;
+  switch (num) {
+  case 0:	return psx.read() | cursor_pad_state();
+  case 1:	return cursor_pad_state();
+  case 2:	return psx.read();
+  }
 }
 
 int te_main(char argc, const char **argv);
