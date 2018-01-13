@@ -146,6 +146,8 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t flgUS
   else
     key_ascii = key_ascii_jp;
 
+  memset(m_key_state, 0, sizeof(m_key_state));
+
   _flgLED = flgLED;    // Availability of LED control
   pb.begin(clk, dat);  // Initialization of PS/2 interface
   rc = init();         // Initializing the keyboard
@@ -423,6 +425,8 @@ DONE:
   return code;
 }
 
+uint8_t TKeyboard::m_key_state[256/8];
+
 //
 // Acquire input key information (consider CapsLock, NumLock, ScrollLock)
 // Specification
@@ -464,6 +468,11 @@ keyEvent TKeyboard::read()
 
   if (code == 0 || code == 0xff)
     goto DONE;  // No key input or error
+
+  if (bk)
+    m_key_state[code/8] &= ~(1 << code % 8);
+  else
+    m_key_state[code/8] |= 1 << code % 8;
 
   // Normal key
   if (code >= PS2KEY_Space && code <= PS2KEY_Z) {

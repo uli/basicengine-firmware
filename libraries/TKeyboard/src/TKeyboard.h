@@ -203,8 +203,10 @@ typedef union {
 class TKeyboard {
 
   private:
-   // キーコード検索
-   static uint8_t findcode(uint8_t c);
+     // キーコード検索
+     static uint8_t findcode(uint8_t c);
+   
+     static uint8_t m_key_state[256/8];
    
   public:
     // キーボード利用開始
@@ -234,6 +236,10 @@ class TKeyboard {
     inline static void  mode_idole();     // アイドル状態に設定
     inline static void  mode_stop();      // 通信禁止
     inline static void  mode_send();      // ホスト送信モード
+    
+    inline static bool state(uint8_t keycode) {
+      return !!(m_key_state[keycode/8] & (1 << keycode % 8));
+    }
 };
 
 #endif
