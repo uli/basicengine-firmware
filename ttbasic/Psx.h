@@ -30,22 +30,37 @@
 #include "Arduino.h"
 
 // Button Hex Representations:
-#define psxLeft		0x0001 
-#define psxDown		0x0002
-#define psxRight	0x0004
-#define psxUp		0x0008
-#define psxStrt		0x0010
-#define psxSlct		0x0080
+#define psxLeftShift	0
+#define psxDownShift	1
+#define psxRightShift	2
+#define psxUpShift	3
+#define psxStrtShift	4
+#define psxSlctShift	5
 
-#define psxSqu		0x0100
-#define psxX		0x0200
-#define psxO		0x0400
-#define psxTri		0x0800
-#define psxR1		0x1000
-#define psxL1		0x2000
-#define psxR2		0x4000
-#define psxL2		0x8000
+#define psxLeft		(1 << psxLeftShift)
+#define psxDown		(1 << psxDownShift)
+#define psxRight	(1 << psxRightShift)
+#define psxUp		(1 << psxUpShift)
+#define psxStrt		(1 << psxStrtShift)
+#define psxSlct		(1 << psxSlctShift)
 
+#define psxSquShift	8
+#define psxXShift	9
+#define psxOShift	10
+#define psxTriShift	11
+#define psxR1Shift	12
+#define psxL1Shift	13
+#define psxR2Shift	14
+#define psxL2Shift	15
+
+#define psxSqu		(1 << psxSquShift)
+#define psxX		(1 << psxXShift)
+#define psxO		(1 << psxOShift)
+#define psxTri		(1 << psxTriShift)
+#define psxR1		(1 << psxR1Shift)
+#define psxL1		(1 << psxL1Shift)
+#define psxR2		(1 << psxR2Shift)
+#define psxL2		(1 << psxL2Shift)
 
 class Psx
 {
