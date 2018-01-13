@@ -464,18 +464,18 @@ void ICACHE_RAM_ATTR TPS2::clkPinHandle() {
   
   state++;
   if (state == 1) {	
-    // [0]ストップビット(常にLOW)
+    // [0] Stop bit (always LOW)
     if (Dat_In()) 
        goto ERROR; 
   } else if (state >=2 && state <=9 ) {
-    // [1-8]データビット(8ビット分)
+    // [1-8] Data bits (for 8 bits)
     data >>=1;
     if (Dat_In()) {
       data |= 0x80;
       parity++;
     }	   
   } else if (state == 10) {
-    // パリティビット
+    // Parity bit
     if (Dat_In()) {
        if (!(parity & 0x01))
           goto ERROR;
@@ -484,7 +484,7 @@ void ICACHE_RAM_ATTR TPS2::clkPinHandle() {
           goto ERROR;
     }
   }	else if (state == 11) {
-    // ストップビット
+    // Stop bit
     if (!Dat_In())
       goto ERROR;
     enqueue(data);
