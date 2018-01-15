@@ -261,7 +261,10 @@ uint8_t tTVscreen::edit() {
     switch(ch) {
       case KEY_CR:         // [Enter]キー
         return enter_text();
-        break;
+      case KEY_SHIFT_CR:
+        ch = enter_text();
+        Insert_newLine(pos_y);
+        return ch;
 
       case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
       case KEY_F(1):       // F1

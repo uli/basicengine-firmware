@@ -29,6 +29,8 @@
 #define KEY_F1                  0x8B            // Function key F1
 #define KEY_F(n)                (KEY_F1+(n)-1)  // Space for additional 12 function keys
 
+#define KEY_SHIFT_CR	0xfe
+
 // コントロールキーコードの定義
 #define SC_KEY_CTRL_L   12  // 画面を消去
 #define SC_KEY_CTRL_R   18  // 画面を再表示

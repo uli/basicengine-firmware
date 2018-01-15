@@ -338,7 +338,12 @@ uint8_t cnv2tty(keyEvent k) {
     case PS2KEY_Space:      rc = 32;           break;
     case PS2KEY_Backspace:  rc = KEY_BACKSPACE;break;
     case PS2KEY_Delete:     rc = KEY_DC;       break;
-    case PS2KEY_Enter:      rc = KEY_CR;       break;
+    case PS2KEY_Enter:
+      if (k.SHIFT)
+        rc = KEY_SHIFT_CR;
+      else
+        rc = KEY_CR;
+      break;
     case 112:            rc = SC_KEY_CTRL_L;break;
     case PS2KEY_F2:         rc = SC_KEY_CTRL_D;break;
     case PS2KEY_F3:         rc = SC_KEY_CTRL_N;break;
