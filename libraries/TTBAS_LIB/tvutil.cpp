@@ -247,25 +247,15 @@ void tv_scroll_up() {
 
 // 1行分スクリーンのスクロールダウン
 void tv_scroll_down() {
-#if USE_VS23 == 1
-  vs23.MoveBlock(win_width-1, win_height-f_height-1,
-            win_width-1, win_height-1,
+  vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
+            win_x + win_width-1, win_y + win_height-1,
             win_width/2, win_height-f_height,
             1);
-  vs23.MoveBlock(win_width/2-1, win_height-f_height-1,
-            win_width/2-1, win_height-1,
+  vs23.MoveBlock(win_x + win_width/2-1, win_y + win_height-f_height-1,
+            win_x + win_width/2-1, win_y + win_height-1,
             win_width/2, win_height-f_height,
             1);
-#else
-  uint8_t h = *(tvfont+1);
-  TV.shift(h, DOWN);
-  h = g_height % h;
-  if (h) {
-    TV.draw_rect(0, g_height-h, g_width, h, 0, 0); 
-  }
-#endif
   tv_clerLine(0);
-  
 }
 
 // 点の描画
