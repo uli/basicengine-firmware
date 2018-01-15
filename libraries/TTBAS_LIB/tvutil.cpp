@@ -222,14 +222,14 @@ void tv_insLine(uint16_t l) {
   } else if (l == win_c_height-1) {
     tv_clerLine(l);
   } else {
-#if USE_VS23 == 1
-    Serial.println("unimp tv_insLine");
-#else
-    uint8_t* src = vram + f_height*g_width/8*l;      // 移動元
-    uint8_t* dst = vram + f_height*g_width/8*(l+1) ; // 移動先
-    uint16_t sz = f_height*g_width/8*(win_c_height-1-l);   // 移動量
-    memmove(dst, src, sz);
-#endif
+    vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
+              win_x + win_width-1, win_y + win_height-1,
+              win_width/2, win_height-f_height - l * f_height,
+              1);
+    vs23.MoveBlock(win_x + win_width/2-1, win_y + win_height-f_height-1,
+              win_x + win_width/2-1, win_y + win_height-1,
+              win_width/2, win_height-f_height - l * f_height,
+              1);
     tv_clerLine(l);
   }
 }
