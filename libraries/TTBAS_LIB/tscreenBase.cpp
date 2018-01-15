@@ -395,10 +395,6 @@ int16_t tscreenBase::getLineNum(int16_t l) {
   while (isDigit(*ptr)) {
     n *= 10;
     n+= *ptr-'0';
-    if (n>32767) {
-      n = 0;
-      break;
-    }
     ptr++;
   }
   if (!n)
