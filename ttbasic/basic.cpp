@@ -323,7 +323,7 @@ unsigned char ifstki;		  // IF stack index
 #define dec_ifstk(ret)	dec_stk(ifstki,	ERR_IFSTKUF, ret)
 
 #define MAX_RETVALS 4
-num_t retval[MAX_RETVALS];        // multi-value returns
+num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
 
 uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
@@ -4813,6 +4813,16 @@ void ireturn() {
   if (gstki < 3) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
+  }
+
+  // Set return values, if any.
+  // XXX: colon? what sense does that make?
+  if (*cip != I_EOL && *cip != I_COLON) {
+    int rcnt = 0;
+    do {
+      // XXX: implement return strings
+      retval[rcnt++] = iexp();
+    } while (*cip++ == I_COMMA && rcnt < MAX_RETVALS);
   }
 
   uint32_t a = (uint32_t)gstk[--gstki];
