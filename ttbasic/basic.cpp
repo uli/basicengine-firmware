@@ -2833,22 +2833,14 @@ int32_t ieepread(uint32_t addr) {
 
 // ドットの描画 PSET X,Y,C
 void ipset() {
-#if USE_NTSC == 1
   int32_t x,y,c;
-  if (scmode) {
-    if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
-      if (x < 0) x =0;
-    if (y < 0) y =0;
-    if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
-    if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
-    if (c < 0 || c > 2) c = 1;
-    sc0.pset(x,y,c);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
+    return;
+  if (x < 0) x = 0;
+  if (y < 0) y = 0;
+  if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
+  if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
+  sc0.pset(x,y,c);
 }
 
 // 直線の描画 LINE X1,Y1,X2,Y2,C

@@ -260,11 +260,7 @@ void tv_scroll_down() {
 
 // 点の描画
 void tv_pset(int16_t x, int16_t y, uint8_t c) {
-#if USE_VS23 == 1
   vs23.setPixel(x, y, c);
-#else
-  TV.set_pixel(x,y,c);
-#endif
 }
   
 // 線の描画
