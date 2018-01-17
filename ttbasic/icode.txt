@@ -191,6 +191,7 @@ TILES	I_TILES		esyntax
 PATTERN I_PATTERN	esyntax
 FRAME	I_FRAME		esyntax
 ON	I_ON		esyntax
+FLAGS	I_FLAGS		esyntax
 TILECOLL	I_TILECOLL	esyntax
 SPRCOLL	I_SPRCOLL	esyntax
 OK	I_OK		esyntax

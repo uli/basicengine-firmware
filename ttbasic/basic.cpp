@@ -3765,7 +3765,7 @@ void imovebg() {
 }
 
 void isprite() {
-  int32_t num, pat_x, pat_y, w, h, frame;
+  int32_t num, pat_x, pat_y, w, h, frame, flags;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -3794,6 +3794,11 @@ void isprite() {
     break;
   case I_OFF:
     vs23.disableSprite(num);
+    break;
+  case I_FLAGS:
+    if (getParam(flags, 0, 1, I_NONE)) return;
+    // Bit 0: sprite opaque
+    vs23.setSpriteOpaque(num, flags & 1);
     break;
   default:
     // XXX: throw an error if nothing has been done
