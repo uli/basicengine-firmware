@@ -269,11 +269,7 @@ void tv_pset(int16_t x, int16_t y, uint8_t c) {
   
 // 線の描画
 void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
-#if USE_VS23 == 1
-  Serial.println("unimp tv_line");
-#else
-  TV.draw_line(x1,y1,x2,y2,c);
-#endif
+  vs23.drawLine(x1, y1, x2, y2, c);
 }
 
 // 円の描画

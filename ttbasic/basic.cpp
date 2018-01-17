@@ -2853,26 +2853,18 @@ void ipset() {
 
 // 直線の描画 LINE X1,Y1,X2,Y2,C
 void iline() {
-#if USE_NTSC == 1
   int32_t x1,x2,y1,y2,c;
-  if (scmode) {
-    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
-      if (x1 < 0) x1 =0;
-    if (y1 < 0) y1 =0;
-    if (x2 < 0) x1 =0;
-    if (y2 < 0) y1 =0;
-    if (x1 >= sc0.getGWidth()) x1 = sc0.getGWidth()-1;
-    if (y1 >= sc0.getGHeight()) y1 = sc0.getGHeight()-1;
-    if (x2 >= sc0.getGWidth()) x2 = sc0.getGWidth()-1;
-    if (y2 >= sc0.getGHeight()) y2 = sc0.getGHeight()-1;
-    if (c < 0 || c > 2) c = 1;
-    sc0.line(x1, y1, x2, y2, c);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
+    return;
+  if (x1 < 0) x1 =0;
+  if (y1 < 0) y1 =0;
+  if (x2 < 0) x1 =0;
+  if (y2 < 0) y1 =0;
+  if (x1 >= sc0.getGWidth()) x1 = sc0.getGWidth()-1;
+  if (y1 >= sc0.getGHeight()) y1 = sc0.getGHeight()-1;
+  if (x2 >= sc0.getGWidth()) x2 = sc0.getGWidth()-1;
+  if (y2 >= sc0.getGHeight()) y2 = sc0.getGHeight()-1;
+  sc0.line(x1, y1, x2, y2, c);
 }
 
 // 円の描画 CIRCLE X,Y,R,C,F
