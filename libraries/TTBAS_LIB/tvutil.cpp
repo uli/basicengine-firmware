@@ -283,12 +283,7 @@ void tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
 
 // 四角の描画
 void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
-  if (f==0) f=-1;
-#if USE_VS23 == 1
-  Serial.println("unimp tv_rect");
-#else
-  TV.draw_rect(x, y, w, h, c, f);
-#endif
+  vs23.drawRect(x, y, w, h, c, f);
 }
 
 // 指定サイズのドットの描画

@@ -2890,23 +2890,14 @@ void icircle() {
 
 // 四角の描画 RECT X1,Y1,X2,Y2,C,F
 void irect() {
-#if USE_NTSC == 1
   int32_t x1,y1,x2,y2,c,f;
-  if (scmode) {
-    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
-      return;
-    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight())  {
-      err = ERR_VALUE;
-      return;
-    }
-    if (c < 0 || c > 2) c = 1;
-    sc0.rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
-  }else {
-    err = ERR_NOT_SUPPORTED;
+  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
+    return;
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight())  {
+    err = ERR_VALUE;
+    return;
   }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  sc0.rect(x1, y1, x2-x1, y2-y1, c, f);
 }
 
 // ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]
