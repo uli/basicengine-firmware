@@ -626,12 +626,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
   int16_t i;
   int16_t key;
   uint8_t len = 0;	// length of sequence of intermediate code
-  char *pkw = 0;	// pointer to the inside of one keyword
   char *ptok;		// pointer to the inside of one word
   char *s = lbuf;	// pointer to the inside of the string buffer
   char c;		// Character used to enclose string (")
   num_t value;		// constant
-  uint32_t tmp;
   uint32_t hex;		// hexadecimal constant
   uint16_t hcnt;	// hexadecimal digit count
   uint8_t var_len;	// variable name length
@@ -1579,7 +1577,6 @@ unsigned char *data_ip;
 unsigned char *data_lp;
 
 bool find_next_data() {
-  unsigned char tok;
   int next;
 
   if (!data_lp) {
@@ -1606,7 +1603,6 @@ bool find_next_data() {
 }
 
 void idata() {
-  unsigned char tok;
   int next;
 
   // Skip over the DATA statement
@@ -1987,9 +1983,6 @@ void isavebg();
 // プログラム保存 SAVE 保存領域番号|"ファイル名"
 void isave() {
   int16_t prgno = 0;
-  int32_t ascii = 1;
-  uint8_t* sram_adr;
-  //char fname[64];
   BString fname;
   uint8_t mode = 0;
   int8_t rc;
@@ -2182,8 +2175,6 @@ void SMALL idelete() {
 
 // プログラムファイル一覧表示 FILES ["ファイルパス"]
 void ifiles() {
-  uint32_t flash_adr;
-  uint8_t* save_clp;
   BString fname;
   char wildcard[SD_PATH_LEN];
   char* wcard = NULL;
@@ -2997,7 +2988,6 @@ void inotone() {
 // GPEEK(X,Y)関数の処理
 int32_t igpeek() {
 #if USE_NTSC == 1
-  int value; // 値
   int x, y;  // 座標
   if (scmode) {
     if (checkOpen()) return 0;
@@ -3054,7 +3044,6 @@ int32_t imap() {
 // ASC(変数,文字位置)
 int32_t iasc() {
   int32_t value =0;
-  int32_t len;     // 文字列長
   int32_t pos = 0;  // 文字位置
   BString str;    // 文字列先頭位置
 
@@ -3082,7 +3071,6 @@ int32_t iasc() {
 void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   num_t value;     //値
   int len;       //桁数
-  unsigned char i; //文字数
   BString str;
 
   len = 0; //桁数を初期化
@@ -3179,7 +3167,6 @@ void SMALL ildbmp() {
   int32_t spr_from = -1, spr_to = -1;
   bool define_bg = false;
   int bg;
-  uint8_t rc;
 
   if(!(fname = getParamFname())) {
     return;
@@ -3697,7 +3684,7 @@ out:
 
 void isavebg() {
   int32_t bg;
-  uint8_t w, h, tsx, tsy;
+  uint8_t w, h;
   BString filename;
 
   cip++;
@@ -3869,7 +3856,7 @@ void iedit() {
 //
 uint8_t SMALL ilrun() {
   int32_t prgno, lineno = -1;
-  uint8_t* tmpcip, *lp;
+  uint8_t *lp;
   //char fname[SD_PATH_LEN];  // ファイル名
   uint8_t label[34];
   uint8_t len;
@@ -3880,8 +3867,6 @@ uint8_t SMALL ilrun() {
   uint8_t newmode = 1;
   BString fname;
   int32_t flgMerge = 0;    // マージモード
-  uint8_t* ptr;
-  uint32_t sz;
   uint8_t flgPrm2 = 0;    // 第2引数の有無
 
   // コマンド識別
@@ -4628,7 +4613,7 @@ int32_t getPrevLineNo(int32_t lineno) {
 
 // Get the number of the line succeeding the specified line
 int32_t getNextLineNo(int32_t lineno) {
-  uint8_t* lp, *prv_lp = NULL;
+  uint8_t* lp;
   int32_t rc = -1;
 
   lp = getlp(lineno);
@@ -5168,7 +5153,6 @@ void iflash();
 //Command precessor
 uint8_t SMALL icom() {
   uint8_t rc = 1;
-  uint8_t v;
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
