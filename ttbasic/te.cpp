@@ -72,7 +72,7 @@
 */
 #include "te.h"
 
-#include "te_dev.cpp"
+#include "te_dev.h"
 
 #include "basic.h"
 
