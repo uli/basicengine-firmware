@@ -651,17 +651,17 @@ uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol)
   if(swScrol)
     c |= 0x01;  // ScrollLock LED
 
-  if (err = pb.send(0xed))
+  if ((err = pb.send(0xed)))
     goto ERROR;
-  if (err = pb.rcev(&tmp))
+  if ((err = pb.rcev(&tmp)))
     goto ERROR;
   if (tmp != 0xFA) {
     //Serial.println("Send Error 1");
     goto ERROR;
   }
-  if (err = pb.send(c))
+  if ((err = pb.send(c)))
     goto ERROR;
-  if (err = pb.rcev(&tmp))
+  if ((err = pb.rcev(&tmp)))
     goto ERROR;
   if (tmp != 0xFA) {
     //Serial.println("Send Error 2");
