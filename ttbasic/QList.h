@@ -220,6 +220,7 @@ public:
         tmp=tmp->next;
     }
     //TODO: Catch error when index is out of range
+    for (;;);
   }
 
 
@@ -234,6 +235,7 @@ public:
         tmp=tmp->next;
     }
     //TODO: Catch error when index is out of range
+    for (;;);
   }
 };
 #endif
