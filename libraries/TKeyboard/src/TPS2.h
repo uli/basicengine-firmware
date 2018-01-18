@@ -75,7 +75,7 @@ class TPS2 {
     
     // キーバッファ操作
     static void clear_queue();             // キューのクリア
-    static uint8_t enqueue(uint8_t data);  // キューへの挿入
+    static void enqueue(uint8_t data);     // キューへの挿入
     static uint8_t dequeue();              // キューからの取出し
     static uint8_t available();            // 取出し可能チェック
 

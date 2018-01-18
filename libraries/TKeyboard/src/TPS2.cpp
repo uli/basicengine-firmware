@@ -464,13 +464,11 @@ void TPS2::clear_queue() {
 }
 
 // キューへの挿入
-uint8_t ICACHE_RAM_ATTR TPS2::enqueue(uint8_t data) {
+void ICACHE_RAM_ATTR TPS2::enqueue(uint8_t data) {
   uint16_t n = (_q_top + 1) % QUEUESIZE;
   if (_q_top+1 != _q_btm) {
 	_queue[_q_top] = data;
 	_q_top = n;	
-  } else {
-    return 1;
   }
 }
 
