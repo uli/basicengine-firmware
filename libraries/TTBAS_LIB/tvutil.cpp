@@ -155,19 +155,13 @@ uint16_t tv_get_gheight() {
 //
 // カーソル表示
 //
-uint8_t tv_drawCurs(uint8_t x, uint8_t y) {
-#if USE_VS23 == 1
+void tv_drawCurs(uint8_t x, uint8_t y) {
   uint8_t pix[f_width];
   memset(pix, fg_color, f_width);
   for (int i = 0; i < f_height; ++i) {
     uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
     SpiRamWriteBytes(byteaddress, pix, f_width);
   }
-#else
-  for (uint16_t i = 0; i < f_height; i++)
-     for (uint16_t j = 0; j < f_width; j++)
-       TV.set_pixel(x*f_width+j, y*f_height+i,2);
-#endif
 }
 
 //
