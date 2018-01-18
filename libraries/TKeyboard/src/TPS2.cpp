@@ -23,7 +23,6 @@ volatile static uint8_t _err;    // 直前のAPIエラー
 static uint8_t  _queue[QUEUESIZE];  // 受信バッファ
 volatile static uint16_t _q_top; // バッファ取出し位置
 volatile static uint16_t _q_btm; // バッファ挿入位置
-volatile static uint8_t  _q_s;   // キュー操作排他セマフォ
 
 volatile static uint8_t _flg_rs;   // 送受信モード 0:受信 1:送信
 
@@ -460,46 +459,34 @@ END:
 
 // キューのクリア
 void TPS2::clear_queue() {
-	_q_s = 1;
   _q_top = 0;
   _q_btm = 0;
-	_q_s = 0;
 }
 
 // キューへの挿入
 uint8_t ICACHE_RAM_ATTR TPS2::enqueue(uint8_t data) {
-  _q_s = 1;
   uint16_t n = (_q_top + 1) % QUEUESIZE;
   if (_q_top+1 != _q_btm) {
 	_queue[_q_top] = data;
 	_q_top = n;	
   } else {
     return 1;
-    _q_s = 0;
-    return 0;
   }
 }
 
 // キューからの取出し
 uint8_t TPS2::dequeue() {
-  _q_s = 1;
   uint16_t val = 0;
 
   if ( _q_top != _q_btm ) {
      val =_queue[_q_btm];
      _q_btm = (_q_btm + 1) % QUEUESIZE;
   }
-  _q_s = 0;
   return val;	
 }
 
 // 取出し可能チェック
 uint8_t TPS2::available() {
-  _q_s = 1;
   uint8_t d = _q_top != _q_btm ? 1: 0; 
-  _q_s = 0; 
   return d;
 }
-
-// キュー操作排他セマフォ
-inline void  TPS2::q_s() { while(_q_s);}     

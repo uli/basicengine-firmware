@@ -78,7 +78,6 @@ class TPS2 {
     static uint8_t enqueue(uint8_t data);  // キューへの挿入
     static uint8_t dequeue();              // キューからの取出し
     static uint8_t available();            // 取出し可能チェック
-    static void  q_s();                    // キュー操作排他セマフォ
 
     // エラー情報取得
     inline static uint8_t error() ;
