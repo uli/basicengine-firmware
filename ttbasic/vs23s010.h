@@ -221,7 +221,7 @@ class VS23S010 {
     void setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y);
     void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
     void moveSprite(uint8_t num, int16_t x, int16_t y);
-    void setSpriteFrame(uint8_t num, uint8_t frame);
+    void setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y = 0);
     void enableSprite(uint8_t num);
     void disableSprite(uint8_t num);
 
@@ -305,7 +305,7 @@ private:
       bool enabled;
       bool transparent;
       uint8_t w, h;
-      uint8_t frame;
+      uint8_t frame_x, frame_y;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);

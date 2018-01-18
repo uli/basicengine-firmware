@@ -42,7 +42,7 @@ void VS23S010::resetSprites()
     s->enabled = false;
     s->transparent = true;
     s->pos_x = s->pos_y = 0;
-    s->frame = 0;
+    s->frame_x = s->frame_y = 0;
     s->w = s->h = 8;
   }
 }
@@ -846,7 +846,8 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
 void VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  uint32_t tile_addr = pixelAddr(s->pat_x + s->frame * s->w, s->pat_y);
+  uint32_t tile_addr = pixelAddr(s->pat_x + s->frame_x * s->w,
+                                 s->pat_y + s->frame_y * s->h);
 
   if (!s->pattern)
     allocateSpritePattern(s);
@@ -892,9 +893,10 @@ void VS23S010::loadSpritePattern(uint8_t num)
   s->transparent = !solid_block;
 }
 
-void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame)
+void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y)
 {
-  m_sprite[num].frame = frame;
+  m_sprite[num].frame_x = frame_x;
+  m_sprite[num].frame_y = frame_y;
   loadSpritePattern(num);
 }
 
@@ -903,7 +905,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
   struct sprite_t *s = &m_sprite[num];
   s->pat_x = pat_x;
   s->pat_y = pat_y;
-  s->frame = 0;
+  s->frame_x = s->frame_y = 0;
 
   loadSpritePattern(num);
 #ifdef DEBUG_SPRITES
