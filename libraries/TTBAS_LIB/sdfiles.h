@@ -45,11 +45,13 @@ public:
   }
 
   Unifile(File f) {
+    m_sd_file = NULL;
     newSdFile();
     *m_sd_file = f;
   }  
   
   Unifile(fs::File f) {
+    m_sd_file = NULL;
     newSpiffsFile();
     *m_fs_file = f;
   }
