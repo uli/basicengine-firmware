@@ -409,7 +409,7 @@ int16_t tscreenBase::getLineNum(int16_t l) {
 }
 
 // 編集中画面をスクロールアップする
-uint8_t tscreenBase::edit_scrollUp() {
+void tscreenBase::edit_scrollUp() {
   static uint32_t prvlineNum = 0; // 直前の処理行の行数
 #if DEPEND_TTBASIC == 0
    scroll_up();
@@ -447,7 +447,7 @@ uint8_t tscreenBase::edit_scrollUp() {
 }
 
 // Scroll down the editing screen
-uint8_t tscreenBase::edit_scrollDown() {
+void tscreenBase::edit_scrollDown() {
 #if DEPEND_TTBASIC == 0
   scroll_down();
 #else

@@ -103,8 +103,8 @@ protected:
     uint8_t enter_text();                             // 行入力確定ハンドラ
     virtual void newLine();                           // 改行出力
     void Insert_newLine(uint16_t l);                  // 指定行に空白挿入 
-    uint8_t edit_scrollUp();                          // スクロールして前行の表示
-    uint8_t edit_scrollDown();                        // スクロールして次行の表示
+    void edit_scrollUp();                             // スクロールして前行の表示
+    void edit_scrollDown();                           // スクロールして次行の表示
     uint16_t vpeek(uint16_t x, uint16_t y);           // カーソル位置の文字コード取得
     
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
