@@ -34,53 +34,18 @@ typedef int nvic_irq_num;
 typedef int exti_num;
 volatile static nvic_irq_num  _irq_num;   // 割り込みベクター番号
   
-//
-// exti_numを_exti_irq_numに変換
-// 引数   exti_num 外部割込みライン番号
-// 戻り値 割り込み番号
-//
-static nvic_irq_num exti2irqNum(exti_num n) {
-#if 0
-  nvic_irq_num irqnum;
-  switch(n) {
-    case EXTI0: irqnum = NVIC_EXTI0; break;
-    case EXTI1: irqnum = NVIC_EXTI1; break;
-    case EXTI2: irqnum = NVIC_EXTI2; break;
-    case EXTI3: irqnum = NVIC_EXTI3; break;
-    case EXTI4: irqnum = NVIC_EXTI4; break;
-    case EXTI5:
-    case EXTI6:
-    case EXTI7:
-    case EXTI8:
-    case EXTI9: irqnum = NVIC_EXTI_9_5; break;
-    case EXTI10:
-    case EXTI11:
-    case EXTI12:
-    case EXTI13:
-    case EXTI14:
-    case EXTI15: irqnum = NVIC_EXTI_15_10; break;
-    }
-  return irqnum;
-#else
-  return n;
-#endif
-}
-
 // CLK変化割り込み許可
 void TPS2::enableInterrupts() {
   interrupts();
-//  nvic_irq_enable(_irq_num);
 }
 
 // CLK変化割り込み禁止
 void TPS2::disableInterrupts() {
   noInterrupts();
-//  nvic_irq_disable(_irq_num);
 }
 
 // 割り込み優先レベルの設定
 void TPS2::setPriority(uint8_t n) {
-//  nvic_irq_set_priority(exti2irqNum((exti_num)PIN_MAP[_clkPin].gpio_bit), n); 
 }
 
 // ポート番号の設定
@@ -137,28 +102,24 @@ void TPS2::end() {
 
 // CLKを出力モードに設定
 void  TPS2::clkSet_Out() {
-//  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_OUTPUT_OD);
   pinMode(_clkPin, OUTPUT_OPEN_DRAIN);
   _clkDir = D_OUT;  
 }
 
 // CLKを入力モードに設定
 void  TPS2::clkSet_In() {
-//  gpio_set_mode(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit, GPIO_INPUT_FLOATING);
   pinMode(_clkPin, INPUT);
   _clkDir = D_IN;
 }
 
 // DATを出力モードに設定
 void  TPS2::datSet_Out() {
-//  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_OUTPUT_OD);
   pinMode(_datPin, OUTPUT_OPEN_DRAIN);
   _datDir = D_OUT;    
 }
 
 // DATを入力モードに設定
 void  TPS2::datSet_In() {
-//  gpio_set_mode(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit, GPIO_INPUT_FLOATING);
   pinMode(_datPin, INPUT);
   _datDir = D_IN;
 }
@@ -167,7 +128,6 @@ void  TPS2::datSet_In() {
 void  TPS2::Clk_Out(uint8_t val) {
   if (_clkDir == D_IN)
     clkSet_Out();    
-//  gpio_write_bit(PIN_MAP[_clkPin].gpio_device, PIN_MAP[_clkPin].gpio_bit,val);
   digitalWrite(_clkPin, val);
 }
 
@@ -182,7 +142,6 @@ uint8_t ICACHE_RAM_ATTR TPS2::Clk_In() {
 void TPS2::Dat_Out(uint8_t val) {
   if (_datDir == D_IN)
     datSet_Out();    
-//  gpio_write_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit,val);  
   digitalWrite(_datPin, val);
 }
 
@@ -190,7 +149,6 @@ void TPS2::Dat_Out(uint8_t val) {
 uint8_t ICACHE_RAM_ATTR TPS2::Dat_In() {
   if (_datDir == D_OUT)
     datSet_In();    
-//  return (gpio_read_bit(PIN_MAP[_datPin].gpio_device, PIN_MAP[_datPin].gpio_bit)?HIGH:LOW);  
   return digitalRead(_datPin) ? HIGH : LOW;
 }
 
@@ -385,14 +343,10 @@ uint8_t TPS2::send(uint8_t data) {
 
   while(_flg_rs);
 
-ERROR: // 終了処理
-
-DONE:  
   disableInterrupts();    // 割り込み禁止
   mode_idole(D_IN);        // バスをアイドル状態にする(2017/02/4)
   enableInterrupts();      // 割り込み許可
   return _err;  
-    
 }
 
 //
