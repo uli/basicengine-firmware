@@ -75,9 +75,9 @@ void GuillotineBinPack::Insert(QList<RectSize> &rects, bool merge,
 		// Stores the penalty score of the best rectangle placement - bigger=worse, smaller=better.
 		int bestScore = INT32_MAX;
 
-		for(size_t i = 0; i < freeRectangles.size(); ++i)
+		for(int i = 0; i < freeRectangles.size(); ++i)
 		{
-			for(size_t j = 0; j < rects.size(); ++j)
+			for(int j = 0; j < rects.size(); ++j)
 			{
 				// If this rectangle is a perfect match, we pick it instantly.
 				if (rects[j].width == freeRectangles[i].width && rects[j].height == freeRectangles[i].height)
@@ -277,7 +277,7 @@ Rect GuillotineBinPack::FindPositionForNewNode(int width, int height, FreeRectCh
 	int bestScore = INT32_MAX;
 
 	/// Try each free rectangle to find the best one for placement.
-	for(size_t i = 0; i < freeRectangles.size(); ++i)
+	for(int i = 0; i < freeRectangles.size(); ++i)
 	{
 		// If this is a perfect fit upright, choose it immediately.
 		if (width == freeRectangles[i].width && height == freeRectangles[i].height)
@@ -441,14 +441,14 @@ void GuillotineBinPack::MergeFreeList()
 {
 #ifdef _DEBUG
 	DisjointRectCollection test;
-	for(size_t i = 0; i < freeRectangles.size(); ++i)
+	for(int i = 0; i < freeRectangles.size(); ++i)
 		assert(test.Add(freeRectangles[i]) == true);
 #endif
 
 	// Do a Theta(n^2) loop to see if any pair of free rectangles could me merged into one.
 	// Note that we miss any opportunities to merge three rectangles into one. (should call this function again to detect that)
-	for(size_t i = 0; i < freeRectangles.size(); ++i)
-		for(size_t j = i+1; j < freeRectangles.size(); ++j)
+	for(int i = 0; i < freeRectangles.size(); ++i)
+		for(int j = i+1; j < freeRectangles.size(); ++j)
 		{
 			if (freeRectangles[i].width == freeRectangles[j].width && freeRectangles[i].x == freeRectangles[j].x)
 			{
@@ -486,7 +486,7 @@ void GuillotineBinPack::MergeFreeList()
 
 #ifdef _DEBUG
 	test.Clear();
-	for(size_t i = 0; i < freeRectangles.size(); ++i)
+	for(int i = 0; i < freeRectangles.size(); ++i)
 		assert(test.Add(freeRectangles[i]) == true);
 #endif
 }
