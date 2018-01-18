@@ -3740,7 +3740,7 @@ void imovebg() {
 }
 
 void isprite() {
-  int32_t num, pat_x, pat_y, w, h, frame, flags;
+  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -3761,8 +3761,13 @@ void isprite() {
     vs23.resizeSprite(num, w, h);
     break;
   case I_FRAME:
-    if (getParam(frame, 0, sc0.getGWidth(), I_NONE)) return;
-    vs23.setSpriteFrame(num, frame);
+    if (getParam(frame_x, 0, sc0.getGWidth(), I_NONE)) return;
+    if (*cip == I_COMMA) {
+      ++cip;
+      if (getParam(frame_y, 0, sc0.getGHeight(), I_NONE)) return;
+    } else
+      frame_y = 0;
+    vs23.setSpriteFrame(num, frame_x, frame_y);
     break;
   case I_ON:
     vs23.enableSprite(num);
