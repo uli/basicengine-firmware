@@ -1985,11 +1985,9 @@ void iloadconfig() {
 
 void isavebg();
 
-// プログラム保存 SAVE 保存領域番号|"ファイル名"
+// "SAVE <file name>" or "SAVE BG ..."
 void isave() {
-  int16_t prgno = 0;
   BString fname;
-  uint8_t mode = 0;
   int8_t rc;
 
   if (*cip == I_BG) {
@@ -1997,33 +1995,23 @@ void isave() {
     return;
   }
 
-  if (*cip == I_EOL) {
-    prgno = 0;
-  } else
-  // ファイル名またはプログラム番号の取得
-  if (is_strexp()) {
-    if(!(fname = getParamFname())) {
-      return;
-    }
-    mode = 1;
-  } //else if ( getParam(prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
-  if (mode == 1) {
-#if USE_SD_CARD == 1
-    // SDカードへの保存
-    rc = bfs.tmpOpen((char *)fname.c_str(),1);
-    if (rc == SD_ERR_INIT) {
-      err = ERR_SD_NOT_READY;
-      return;
-    } else if (rc == SD_ERR_OPEN_FILE) {
-      err =  ERR_FILE_OPEN;
-      return;
-    }
-    ilist(4);
-    bfs.tmpClose();
-#endif
-  } else {
-    err = ERR_NOT_SUPPORTED;
+  if(!(fname = getParamFname())) {
+    return;
   }
+
+#if USE_SD_CARD == 1
+  // SDカードへの保存
+  rc = bfs.tmpOpen((char *)fname.c_str(),1);
+  if (rc == SD_ERR_INIT) {
+    err = ERR_SD_NOT_READY;
+    return;
+  } else if (rc == SD_ERR_OPEN_FILE) {
+    err =  ERR_FILE_OPEN;
+    return;
+  }
+  ilist(4);
+  bfs.tmpClose();
+#endif
 }
 
 // フラッシュメモリ上のプログラム消去 ERASE[プログラム番号[,プログラム番号]
