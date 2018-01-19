@@ -555,7 +555,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #endif
   int dest_addr_start;
   uint32_t pat_start_addr, win_start_addr;
-  uint16_t pass0_end_line;
+  uint16_t pass0_end_line = 0;
 
   if (m_frame == last_frame || SpiLocked())
     return;
