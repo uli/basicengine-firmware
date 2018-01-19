@@ -542,11 +542,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   static uint32_t last_frame = 0;
   uint32_t mxx;
   int lines[6];
-  uint32_t tile;
-  uint32_t tx, ty;
-  uint32_t byteaddress2;
   int dest_addr_start;
-  uint32_t dest_addr, pat_start_addr, win_start_addr;
+  uint32_t pat_start_addr, win_start_addr;
   uint16_t pass0_end_line;
 
   if (m_frame == last_frame || SpiLocked())
@@ -652,12 +649,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       tile_start_x = bg->scroll_x / bg->tile_size_x;
       tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
 
-      uint32_t pw = bg->pat_w;
       pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
       win_start_addr = pixelAddr(bg->win_x, bg->win_y);
-      uint8_t bg_w = bg->w;
-      uint8_t bg_h = bg->h;
-
 
       dest_addr_start = win_start_addr + (m_pitch * (pix_split_y - bg->win_y) * pass) - tile_start_x * tsx - xpoff;
 
@@ -688,8 +681,6 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
     uint8_t bbuf[VS23_MAX_SPRITE_W];
     uint8_t sbuf[VS23_MAX_SPRITE_W];
-    uint32_t sprite_pat_start_addr = piclineByteAddress(0);
-
 
 #ifndef DISABLE_SPRITE_DRAW
     for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
@@ -1003,7 +994,6 @@ void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tile
   
   // Iterate over all tiles overlapping the sprite and record in what way they are
   // overlapping.
-  int tx, ty;	// Screen coordinate (pixels) of current tile
   // For every line
   for (int t = bg_first_tile_off, ty = bg_top_y; t < bg_last_tile_off; t += bg->w, ty += tsy) {
     // For every column
