@@ -893,7 +893,7 @@ int WriteFile(char *fn)
 
 	/* Open the file */
 
-	if((fp = Unifile::open(fn, FILE_OVERWRITE)) == NULL)
+	if(!(fp = Unifile::open(fn, FILE_OVERWRITE)))
 	{
 		ErrLineOpen(); return -1;
 	}
