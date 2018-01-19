@@ -612,7 +612,7 @@ uint8_t parse_identifier(char *ptok, char *vname) {
   return var_len;
 }
 
-int getlineno(unsigned char *lp);
+uint32_t getlineno(unsigned char *lp);
 
 //
 // Convert text to intermediate code
@@ -846,7 +846,7 @@ int list_free() {
 }
 
 // Get line numbere by line pointer
-int getlineno(unsigned char *lp) {
+uint32_t getlineno(unsigned char *lp) {
   num_t l;
   if(*lp == 0) //もし末尾だったら
     return -1;
@@ -999,7 +999,7 @@ DONE:
 }
 
 // プログラム行数を取得する
-uint32_t countLines(int32_t st=0, int32_t ed=INT32_MAX) {
+uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX) {
   unsigned char *lp; //ポインタ
   uint32_t cnt = 0;
   uint32_t lineno;
@@ -4551,7 +4551,7 @@ num_t GROUP(basic_core) iexp() {
 }
 
 // Get number of line at top left of the screen
-int32_t getTopLineNum() {
+uint32_t getTopLineNum() {
   uint8_t* ptr = sc0.getScreen();
   uint32_t n = 0;
   int rc = -1;
@@ -4572,7 +4572,7 @@ int32_t getTopLineNum() {
 }
 
 // Get number of line at the bottom left of the screen
-int32_t getBottomLineNum() {
+uint32_t getBottomLineNum() {
   uint8_t* ptr = sc0.getScreen()+sc0.getWidth()*(sc0.getHeight()-1);
   uint32_t n = 0;
   int rc = -1;
@@ -4593,7 +4593,7 @@ int32_t getBottomLineNum() {
 }
 
 // Get the number of the line preceding the specified line
-int32_t getPrevLineNo(int32_t lineno) {
+uint32_t getPrevLineNo(uint32_t lineno) {
   uint8_t* lp, *prv_lp = NULL;
   int32_t rc = -1;
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
@@ -4605,7 +4605,7 @@ int32_t getPrevLineNo(int32_t lineno) {
 }
 
 // Get the number of the line succeeding the specified line
-int32_t getNextLineNo(int32_t lineno) {
+uint32_t getNextLineNo(uint32_t lineno) {
   uint8_t* lp;
   int32_t rc = -1;
 
@@ -4619,7 +4619,7 @@ int32_t getNextLineNo(int32_t lineno) {
 }
 
 // Get the program text of the specified line
-char* getLineStr(int32_t lineno) {
+char* getLineStr(uint32_t lineno) {
   uint8_t* lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;

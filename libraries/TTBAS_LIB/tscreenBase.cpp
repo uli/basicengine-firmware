@@ -5,12 +5,7 @@
 // 修正日 2017/08/12 edit_scrollUp() で最終行が2行以上の場合の処理ミス修正
 
 #include "tscreenBase.h"
-
-#if DEPEND_TTBASIC == 1
-  int32_t getPrevLineNo(int32_t lineno);
-  int32_t getNextLineNo(int32_t lineno);
-  char* getLineStr(int32_t lineno);
-#endif
+#include "../../ttbasic/basic.h"
 
 // スクリーンの初期設定
 // 引数

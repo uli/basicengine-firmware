@@ -33,14 +33,6 @@ void    endPS2();
 void setupPS2(uint8_t kb_type);
 uint8_t ps2read();
 
-int32_t getPrevLineNo(int32_t lineno);
-int32_t getNextLineNo(int32_t lineno);
-char* getLineStr(int32_t lineno);
-int32_t getTopLineNum();
-int32_t getBottomLineNum();
-
-
-
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
 

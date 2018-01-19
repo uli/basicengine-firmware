@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <tTVscreen.h>
-
 #include "variable.h"
 
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
@@ -41,11 +39,18 @@ BString getParamFname();
 
 void get_input(bool numeric = false);
 
+uint32_t getPrevLineNo(uint32_t lineno);
+uint32_t getNextLineNo(uint32_t lineno);
+uint32_t getBottomLineNum();
+uint32_t getTopLineNum();
+char* getLineStr(uint32_t lineno);
+
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );
 #endif
 
 #include <tscreenBase.h>
+#include <tTVscreen.h>
 
 extern tTVscreen sc0;
 
