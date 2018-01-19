@@ -2192,12 +2192,6 @@ void ifiles() {
   else
     fname = getParamFname();
 
-  for (int8_t i = 0; i < fname.length(); i++) {
-    if (fname[i] >='a' && fname[i] <= 'z') {
-      fname[i] = fname[i] - 'a' + 'A';
-    }
-  }
-
   if (fname.length() > 0) {
     for (int8_t i = fname.length()-1; i >= 0; i--) {
       if (fname[i] == '/') {
