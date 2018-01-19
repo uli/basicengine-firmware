@@ -171,7 +171,7 @@ static inline void putstr(const char *s)
 /* Print string + '\n' on screen
    -----------------------------
 */
-static inline void putln(char *s)
+static inline void putln(const char *s)
 {
 	putstr(s); CrtOut('\n');
 }
@@ -179,7 +179,7 @@ static inline void putln(char *s)
 /* Print number on screen
    ----------------------
 */
-void putint(char *format, int value)
+void putint(const char *format, int value)
 {
 	char r[7]; /* -12345 + ZERO */
 
@@ -579,7 +579,7 @@ int ReadLine(char *buf, int width)
    ----------------------------
    Message can be NULL == blank line / clear system line.
 */
-void SysLine(char *s)
+void SysLine(const char *s)
 {
 	CrtClearLine(CRT_ROWS - 1);
 
@@ -596,7 +596,7 @@ void SysLine(char *s)
    ------------------------------------
    Message can be NULL.
 */
-void SysLineKey(char *s)
+void SysLineKey(const char *s)
 {
 	SysLine(s);
 
@@ -656,7 +656,7 @@ int SysLineFile(char *fn)
 /* Print error message and wait for a key press
    --------------------------------------------
 */
-void ErrLine(char *s)
+void ErrLine(const char *s)
 {
 	SysLineKey(s);
 }
@@ -853,7 +853,7 @@ int ReadFile(const char *fn)
 void BackupFile(char *fn)
 {
 	Unifile fp;
-	char *bkp;
+	const char *bkp;
 
 	/* Check if file exists */
 
