@@ -2474,7 +2474,7 @@ void idmp(uint8_t devno=0) {
   }
   if (checkClose()) return;
 
-  for (uint32_t i=0; i<n; i++) {
+  for (int32_t i=0; i<n; i++) {
     base*=10;
   }
   v1 = value / base;
