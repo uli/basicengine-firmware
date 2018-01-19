@@ -3079,7 +3079,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   BString str;
 
   len = 0; //桁数を初期化
-  while (*cip != I_COLON && *cip != I_EOL) { //文末まで繰り返す
+  while (!end_of_statement()) {
     if (is_strexp()) {
       str = istrexp();
       c_puts(str.c_str(), devno);
@@ -3094,41 +3094,43 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     case I_CHR: // CHR$()関数
       cip++;
       if (getParam(value, 0,255, I_NONE)) break;   // 括弧の値を取得
-//     if (!err)
       c_putch(value, devno);
       break;
 
     case I_DMP:  cip++; idmp(devno); break; // DMP$()関数
-    case I_ELSE:        // ELSE文がある場合は打ち切る
-      newline(devno);
-      return;
-      break;
 
-    default: //以上のいずれにも該当しなかった場合（式とみなす）
-      value = iexp();   // 値を取得
+    default:	// anything else is assumed to be a numeric expression
+      value = iexp();
       if (err) {
 	newline();
 	return;
       }
-      putnum(value, len,devno); // 値を表示
+      putnum(value, len,devno);
       break;
-    } //中間コードで分岐の末尾
+    }
+
     if (err)  {
       newline(devno);
       return;
     }
-    if (nonewln && *cip == I_COMMA) // 文字列引数流用時はここで終了
+
+    // 文字列引数流用時はここで終了
+    // "Ends here when diverting character string argument"
+    // WTF is that supposed to mean?
+    if (nonewln && *cip == I_COMMA) 
       return;
 
     if (*cip == I_ELSE) {
+      // XXX: Why newline() if it's ELSE, and not otherwise?
+      // And disregarding nonewln, for that matter.
       newline(devno);
       return;
-    } else if (*cip == I_COMMA|*cip == I_SEMI) { // もし',' ';'があったら
+    } else if (*cip == I_COMMA || *cip == I_SEMI) {
       cip++;
-      if (*cip == I_COLON || *cip == I_EOL || *cip == I_ELSE) //もし文末なら
+      if (end_of_statement())
 	return;
-    } else {    //',' ';'がなければ
-      if (*cip != I_COLON && *cip != I_EOL) { //もし文末でなければ
+    } else {
+      if (!end_of_statement()) {
 	err = ERR_SYNTAX;
 	newline(devno);
 	return;
