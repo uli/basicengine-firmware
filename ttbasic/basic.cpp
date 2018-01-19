@@ -2340,7 +2340,7 @@ int32_t iinkey() {
 
 // メモリ参照　PEEK(adr[,bnk])
 int32_t ipeek() {
-  int32_t value, vadr;
+  int32_t value = 0, vadr;
   uint8_t* radr;
 
   if (checkOpen()) return 0;
