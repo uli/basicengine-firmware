@@ -1766,37 +1766,53 @@ resume:
   }
 }
 
-// LISTコマンド
+// LIST command
 void SMALL ilist(uint8_t devno=0) {
-  int32_t lineno = 0;          // 表示開始行番号
-  int32_t endlineno = INT32_MAX;   // 表示終了行番号
-  int32_t prnlineno;           // 出力対象行番号
+  uint32_t lineno = 0;			// start line number
+  uint32_t endlineno = UINT32_MAX;	// end line number
+  uint32_t prnlineno;			// output line number
+  unsigned char *lp;
 
-  //表示開始行番号の設定
-  if (*cip != I_EOL && *cip != I_COLON) {
-    // 引数あり
-    if (getParam(lineno,0,INT32_MAX, I_NONE)) return;
-    if (*cip == I_COMMA) {
-      cip++;                         // カンマをスキップ
-      if (getParam(endlineno,lineno,INT32_MAX, I_NONE)) return;
+  // Determine range
+  if (!end_of_statement()) {
+    if (*cip == I_MINUS) {
+      // -<num> -> from start to line <num>
+      cip++;
+      if (getParam(endlineno, I_NONE)) return;
+    } else {
+      // <num>, <num>-, <num>-<num>
+      if (getParam(lineno, I_NONE)) return;
+      if (*cip == I_MINUS) {
+        // <num>-, <num>-<num>
+        cip++;
+        if (!end_of_statement()) {
+          // <num>-<num> -> list specified range
+          if (getParam(endlineno, lineno, UINT32_MAX, I_NONE)) return;
+        } else {
+          // <num>- -> list from line <num> to the end
+        }
+      } else {
+        // <num> -> only one line
+        endlineno = lineno;
+      }
     }
   }
 
-  //行ポインタを表示開始行番号へ進める
-  for ( clp = listbuf; *clp && (getlineno(clp) < lineno); clp += *clp) ;
+  // Skip until we reach the start line.
+  for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
 
   //リストを表示する
-  while (*clp) {               // 行ポインタが末尾を指すまで繰り返す
-    prnlineno = getlineno(clp); // 行番号取得
+  while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
+    prnlineno = getlineno(lp); // 行番号取得
     if (prnlineno > endlineno) // 表示終了行番号に達したら抜ける
       break;
     putnum(prnlineno, 0,devno); // 行番号を表示
     c_putch(' ',devno);        // 空白を入れる
-    putlist(clp + sizeof(num_t) + 1,devno);    // 行番号より後ろを文字列に変換して表示
+    putlist(lp + sizeof(num_t) + 1,devno);    // 行番号より後ろを文字列に変換して表示
     if (err)                   // もしエラーが生じたら
       break;                   // 繰り返しを打ち切る
     newline(devno);            // 改行
-    clp += *clp;               // 行ポインタを次の行へ進める
+    lp += *lp;               // 行ポインタを次の行へ進める
   }
 }
 
