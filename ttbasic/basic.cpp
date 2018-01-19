@@ -367,7 +367,7 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(num_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
+inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
