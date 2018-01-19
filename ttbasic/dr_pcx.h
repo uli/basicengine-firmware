@@ -634,8 +634,6 @@ bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int*
     pcx.w = w;
     pcx.h = h;
 
-    size_t dataSize = pcx.width * pcx.height * pcx.components;
-
     dr_bool32 result = DR_FALSE;
     switch (pcx.header.bpp)
     {
