@@ -269,13 +269,13 @@ void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
 #endif
 }
 
-// / Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
+// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
 // than or equal to y1
 void VS23S010::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			uint8_t c)
 {
 	int deltax, deltay, offset;
-	uint16_t i, j, ystart;
+	uint16_t i;
 
 	offset = 0;
 	deltax = x2 - x1;
@@ -356,13 +356,13 @@ void VS23S010::setBorder(uint8_t y, uint8_t uv)
 
 void SMALL VS23S010::SpiRamVideoInit()
 {
-	uint16_t i, j, wi;
+	uint16_t i, j;
 	uint32_t w;
-	uint16_t linelen = PLLCLKS_PER_LINE;
 	int original_spi_div = SPI1CLK;
 
 	SPI1CLK = m_min_spi_div;
 #ifdef DEBUG
+	uint16_t linelen = PLLCLKS_PER_LINE;
 	Serial.printf("Linelen: %d PLL clks\n", linelen);
 	printf("Picture line area is %d x %d\n", PICX, PICY);
 	printf("Upper left corner is point (0,0) and lower right corner (%d,%d)\n",
@@ -428,6 +428,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 	// VVVVUUUUYYYYYYYY.
 
 #ifdef INTERLACE
+	uint16_t wi;
 	// Construct protoline 0 and 1. Protoline 0 is used for most of the
 	// picture.  Protoline 1 has a similar first half than 0, but the
 	// end has a short sync pulse.  This is used for line 623. 
@@ -732,8 +733,6 @@ void SMALL VS23S010::SpiRamVideoInit()
 		uint16_t re = 0;
 		uint16_t gr = 0;
 		uint16_t bl = 0;
-		uint16_t rgb565 = 0;
-		uint16_t k;
 		uint16_t xp = 0;
 
 		for (i = 0; i < 256; i++) {
