@@ -4899,7 +4899,7 @@ void GROUP(basic_core) iloop() {
 
   // Look for nearest DO.
   while (lstki) {
-    if ((uintptr_t)lstk[lstki - 1] == -1)
+    if ((intptr_t)lstk[lstki - 1] == -1)
       break;
     lstki -= 5;
   }
