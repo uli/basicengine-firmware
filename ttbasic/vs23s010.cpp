@@ -21,6 +21,8 @@
 //#define DISABLE_BG_CENTER
 //#define DISABLE_BG_BOTTOM
 
+//#define PROFILE_BG
+
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
@@ -540,8 +542,10 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 void ICACHE_RAM_ATTR VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
+#ifdef PROFILE_BG
   uint32_t mxx;
   int lines[6];
+#endif
   int dest_addr_start;
   uint32_t pat_start_addr, win_start_addr;
   uint16_t pass0_end_line;
@@ -553,7 +557,10 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   int spi_clock_default = getSpiClock();
 
   SpiLock();
+#ifdef PROFILE_BG
   lines[0] = currentLine();
+  mxx = millis();
+#endif
 
   struct bg_t *bg;
   int tsx, tsy;
@@ -664,20 +671,25 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
       if (pass == 1)
 	drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
 
+#ifdef PROFILE_BG
       lines[1] = currentLine();
       lines[2] = 0;
-
+#endif
     }
 
     // Draw sprites.
 
     // Reduce SPI speed for memory accesses.
     setSpiClock(spi_clock_default);
+#ifdef PROFILE_BG
     lines[4] = currentLine();
+#endif
 
     while (!blockFinished()) {}
+#ifdef PROFILE_BG
     if (pass == 0)
       lines[3] = currentLine();
+#endif
 
     uint8_t bbuf[VS23_MAX_SPRITE_W];
     uint8_t sbuf[VS23_MAX_SPRITE_W];
@@ -799,7 +811,15 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
         Serial.printf("sync++ %d\n", m_sync_line);
       }
     }
+
+#ifdef PROFILE_BG
+    Serial.printf("%d %d %d %d %d %d\n", lines[0], lines[1], lines[2], lines[3], lines[4], cl);
+#endif
   } // pass
+#ifdef PROFILE_BG
+  if (millis() > mxx)
+    Serial.println(millis() - mxx);
+#endif
 
   setSpiClock(spi_clock_default);
   SpiUnlock();
