@@ -3641,7 +3641,7 @@ void ibg() {
     break;
   default:
     cip--;
-    if (*cip != I_EOL && *cip != I_COLON)
+    if (!end_of_statement())
       err = ERR_SYNTAX;
     return;
   }
