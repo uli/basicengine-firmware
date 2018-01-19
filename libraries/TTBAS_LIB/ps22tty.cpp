@@ -11,8 +11,8 @@
 #include <TKeyboard.h>
 #include "tTVscreen.h"
 
-#ifdef ESP8266
-#define __FLASH__ //ICACHE_RODATA_ATTR
+#if defined(ESP8266) && !defined(__FLASH__)
+#define __FLASH__ ICACHE_RODATA_ATTR
 #endif
 
 const int IRQpin =  D2;//PB4;  // CLK(D+)
