@@ -2515,17 +2515,18 @@ void ipoke() {
 
 // I2CW関数  I2CW(I2Cアドレス, コマンドアドレス, コマンドサイズ, データアドレス, データサイズ)
 int32_t ii2cw() {
-  int32_t i2cAdr, ctop, clen, top, len;
+  int32_t i2cAdr;
+  uint32_t ctop, clen, top, len;
   uint8_t* ptr;
   uint8_t* cptr;
   int16_t rc;
 
   if (checkOpen()) return 0;
   if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
-  if (getParam(ctop, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(clen, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(top, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(len, 0, INT32_MAX, I_NONE)) return 0;
+  if (getParam(ctop, I_COMMA)) return 0;
+  if (getParam(clen, I_COMMA)) return 0;
+  if (getParam(top, I_COMMA)) return 0;
+  if (getParam(len, I_NONE)) return 0;
   if (checkClose()) return 0;
 
   ptr  = sanitize_addr(top);
