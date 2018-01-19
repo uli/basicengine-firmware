@@ -244,7 +244,14 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
   // XXX: What about PYF?
-  uint8_t req[5] = { 0x34, byteaddress2 >> 9, byteaddress2 >> 1, dest_addr >> 9, dest_addr >> 1 };
+  uint8_t req[5] = {
+    0x34,
+    (uint8_t)(byteaddress2 >> 9),
+    (uint8_t)(byteaddress2 >> 1),
+    (uint8_t)(dest_addr >> 9),
+    (uint8_t)(dest_addr >> 1)
+  };
+
   VS23_SELECT;
   SPI.writeBytes(req, 5);
   VS23_DESELECT;
