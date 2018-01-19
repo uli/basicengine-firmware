@@ -3357,7 +3357,7 @@ void iremove() {
 void SMALL ibsave() {
   //char fname[SD_PATH_LEN];
   uint8_t*radr;
-  int32_t vadr, len;
+  uint32_t vadr, len;
   BString fname;
   uint8_t rc;
 
@@ -3370,8 +3370,8 @@ void SMALL ibsave() {
     return;
   }
   cip++;
-  if ( getParam(vadr,  0, UINT32_MAX, I_COMMA) ) return;  // アドレスの取得
-  if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;             // データ長の取得
+  if ( getParam(vadr, I_COMMA) ) return;  // アドレスの取得
+  if ( getParam(len, I_NONE) ) return;             // データ長の取得
 
   // アドレスの範囲チェック
   if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
@@ -3411,7 +3411,8 @@ DONE:
 
 void SMALL ibload() {
   uint8_t*radr;
-  int32_t vadr, len,c;
+  uint32_t vadr, len;
+  int32_t c;
   BString fname;
   uint8_t rc;
 
@@ -3424,8 +3425,8 @@ void SMALL ibload() {
     return;
   }
   cip++;
-  if ( getParam(vadr,  0, UINT32_MAX, I_COMMA) ) return;  // アドレスの取得
-  if ( getParam(len,  0, INT32_MAX, I_NONE) ) return;              // データ長の取得
+  if ( getParam(vadr, I_COMMA) ) return;  // アドレスの取得
+  if ( getParam(len, I_NONE) ) return;              // データ長の取得
 
   // アドレスの範囲チェック
   if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
