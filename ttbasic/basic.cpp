@@ -3052,7 +3052,7 @@ int32_t iasc() {
     if (getParam(pos, 0, str.length() - 1, I_NONE)) return 0;
   }
 
-  if (pos < str.length()) {
+  if ((uint32_t)pos < str.length()) {
     value = str[pos];
   } else {
     err = ERR_RANGE;
