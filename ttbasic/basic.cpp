@@ -3772,7 +3772,7 @@ void isprite() {
   default:
     // XXX: throw an error if nothing has been done
     cip--;
-    if (*cip != I_EOL && *cip != I_COLON)
+    if (!end_of_statement())
       err = ERR_SYNTAX;
     return;
   }
