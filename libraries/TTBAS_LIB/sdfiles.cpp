@@ -40,7 +40,7 @@ bool SD_BEGIN(int mhz)
   return sdfat_initialized;
 }
 
-bool SD_END(void)
+void SD_END(void)
 {
   SPI.setFrequency(11000000);
   SpiUnlock();

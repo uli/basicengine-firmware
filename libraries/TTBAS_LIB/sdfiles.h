@@ -31,7 +31,7 @@
 extern SdFat SD;
 
 bool SD_BEGIN(int mhz = 40);
-bool SD_END(void);
+void SD_END(void);
 
 class Unifile {
 public:
