@@ -3824,6 +3824,7 @@ int32_t ipad() {
   case 0:	return psx.read() | cursor_pad_state();
   case 1:	return cursor_pad_state();
   case 2:	return psx.read();
+  default:	return 0;
   }
 }
 
