@@ -603,8 +603,8 @@ BString getstr() {
 //[戻り値]
 //  該当なし   : -1
 //  見つかった : キーワードコード
-int16_t lookup(char* str) {
-  for (int i = 0; i < SIZE_KWTBL; ++i) {
+int lookup(char* str) {
+  for (uint8_t i = 0; i < SIZE_KWTBL; ++i) {
     if (kwtbl[i] && !strncasecmp_P(str, kwtbl[i], strlen_P(kwtbl[i])))
       return i;
   }
