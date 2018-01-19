@@ -194,7 +194,6 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
 int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
-  uint16_t len;
   uint8_t rc = 0;
 
   rc = tmpOpen(fname,0);
