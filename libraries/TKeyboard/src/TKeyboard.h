@@ -11,8 +11,8 @@
 #include <TPS2.h>
 #include <Arduino.h>
 
-#ifdef ESP8266
-#define __FLASH__ //ICACHE_RODATA_ATTR
+#if defined(ESP8266) && !defined(__FLASH__)
+#define __FLASH__ ICACHE_RODATA_ATTR
 #endif
 
 // 状態管理用
