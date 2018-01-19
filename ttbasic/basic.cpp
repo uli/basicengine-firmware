@@ -377,6 +377,16 @@ inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_toke
   return err;
 }
 
+inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
+  prm = iexp();
+  if (!err &&  (prm < v_min || prm > v_max))
+    err = ERR_VALUE;
+  else if (next_token != I_NONE && *cip++ != next_token) {
+    err = ERR_SYNTAX;
+  }
+  return err;
+}
+
 #ifdef FLOAT_NUMS
 // コマンド引数取得(int32_t,引数チェックあり)
 inline uint8_t getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
