@@ -4811,8 +4811,7 @@ void ireturn() {
   }
 
   // Set return values, if any.
-  // XXX: colon? what sense does that make?
-  if (*cip != I_EOL && *cip != I_COLON) {
+  if (!end_of_statement()) {
     int rcnt = 0;
     do {
       // XXX: implement return strings
