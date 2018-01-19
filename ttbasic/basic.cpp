@@ -865,7 +865,7 @@ uint32_t getlineno(unsigned char *lp) {
 }
 
 // Search line by line number
-unsigned char* getlp(int lineno) {
+unsigned char* getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
   for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
@@ -2126,8 +2126,7 @@ uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
 // DELETE line number
 // DELETE start line number, end line number
 void SMALL idelete() {
-  int32_t sNo;
-  int32_t eNo;
+  uint32_t sNo, eNo;
   uint8_t  *lp;      // 削除位置ポインタ
   uint8_t *p1, *p2;  // 移動先と移動元ポインタ
   int32_t len;       // 移動の長さ
@@ -3855,7 +3854,8 @@ void iedit() {
 //  1:正常 0:異常
 //
 uint8_t SMALL ilrun() {
-  int32_t prgno, lineno = -1;
+  int32_t prgno;
+  uint32_t lineno = (uint32_t)-1;
   uint8_t *lp;
   //char fname[SD_PATH_LEN];  // ファイル名
   uint8_t label[34];
@@ -3900,7 +3900,7 @@ uint8_t SMALL ilrun() {
 	strncpy((char*)label+2, (char*)cip+1, len);
 	cip+=*cip+1;
       } else {             // 行番号の場合
-	if ( getParam(lineno, 0, INT32_MAX, I_NONE) ) return 0;
+	if ( getParam(lineno, I_NONE) ) return 0;
       }
     } else {
       lineno = 0;
@@ -3964,7 +3964,7 @@ uint8_t SMALL ilrun() {
   // 行番号・ラベル指定の処理
   if (lineno == 0) {
     clp = listbuf; // 行ポインタをプログラム保存領域の先頭に設定
-  } else if (lineno == -1) {
+  } else if (lineno == (uint32_t)-1) {
     lp = getlpByLabel(label);
     if (lp == NULL) {
       err = ERR_ULN;
@@ -4670,7 +4670,7 @@ void SMALL iinfo() {
 // GOTO
 void igoto() {
   uint8_t* lp;       // 飛び先行ポインタ
-  int32_t lineno;    // 行番号
+  uint32_t lineno;    // 行番号
 
   if (*cip == I_STR) {
     // ラベル参照による分岐先取得
@@ -4696,7 +4696,7 @@ void igoto() {
 // GOSUB
 void igosub() {
   uint8_t* lp;       // 飛び先行ポインタ
-  int32_t lineno;    // 行番号
+  uint32_t lineno;    // 行番号
 
   if (*cip == I_STR) {
     // ラベル参照による分岐先取得
