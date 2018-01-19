@@ -279,8 +279,8 @@ private:
                             int tile_end_y,
                             uint32_t xpoff,
                             uint32_t ypoff,
-                            uint32_t skip_x,
-                            uint32_t skip_y);
+                            int skip_x,
+                            int skip_y);
     void ICACHE_RAM_ATTR drawBgTop(struct bg_t *bg,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
@@ -291,12 +291,12 @@ private:
                             uint32_t ypoff);
 
     void ICACHE_RAM_ATTR drawBgBottom(struct bg_t *bg,
-                                                   int tile_start_x,
-                                                   int tile_end_x,
-                                                   int tile_end_y,
-                                                   uint32_t xpoff,
-                                                   uint32_t ypoff,
-                                                   uint32_t skip_x);
+                                      int tile_start_x,
+                                      int tile_end_x,
+                                      int tile_end_y,
+                                      uint32_t xpoff,
+                                      uint32_t ypoff,
+                                      int skip_x);
 
     struct sprite_t {
       struct sprite_line *pattern;

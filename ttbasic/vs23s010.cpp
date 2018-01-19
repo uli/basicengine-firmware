@@ -288,8 +288,8 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
                                       int tile_end_y,
                                       uint32_t xpoff,
                                       uint32_t ypoff,
-                                      uint32_t skip_x,
-                                      uint32_t skip_y)
+                                      int skip_x,
+                                      int skip_y)
 {
 #ifndef DISABLE_BG_CENTER
   // This code draws into the "extra" bytes following each picture line.
@@ -461,7 +461,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
                                             int tile_end_y,
                                             uint32_t xpoff,
                                             uint32_t ypoff,
-                                            uint32_t skip_x)
+                                            int skip_x)
 {
 #ifndef DISABLE_BG_BOTTOM
   uint32_t tile;
