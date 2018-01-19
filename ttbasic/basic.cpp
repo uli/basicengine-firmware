@@ -4084,8 +4084,11 @@ num_t GROUP(basic_core) ivalue() {
   case I_VARARR:
     i = *cip++;
     dims = get_array_dims(idxs);
-    // XXX: check if dims matches array
-    value = num_arr.var(i).var(idxs);
+    if (dims != num_arr.var(i).dims()) {
+      err = ERR_OOB;
+    } else {
+      value = num_arr.var(i).var(idxs);
+    }
     break;
 
   //括弧の値の取得

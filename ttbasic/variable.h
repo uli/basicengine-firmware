@@ -244,6 +244,10 @@ public:
     }
     return m_var[idx];
   }
+  
+  inline int dims() {
+    return m_dims;
+  }
 
 private:
   int m_dims;
