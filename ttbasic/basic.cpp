@@ -1507,6 +1507,11 @@ void iarray() {
   } while(*cip == I_COMMA);
 }
 
+static inline bool end_of_statement()
+{
+  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE;
+}
+
 int GROUP(basic_core) token_size(uint8_t *code) {
   switch (*code) {
   case I_STR:
