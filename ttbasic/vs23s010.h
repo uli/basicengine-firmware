@@ -208,7 +208,21 @@ class VS23S010 {
     void enableBg(uint8_t bg);
     void disableBg(uint8_t bg);
     void freeBg(uint8_t bg);
+
     void setBgWin(uint8_t bg, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+    inline uint16_t bgWinX(uint8_t bg) {
+      return m_bg[bg].win_x;
+    }
+    inline uint16_t bgWinY(uint8_t bg) {
+      return m_bg[bg].win_y;
+    }
+    inline uint16_t bgWinWidth(uint8_t bg) {
+      return m_bg[bg].win_w;
+    }
+    inline uint16_t bgWinHeight(uint8_t bg) {
+      return m_bg[bg].win_h;
+    }
+    
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
 
     inline void scroll(uint8_t bg, uint16_t x, uint16_t y) {
