@@ -55,7 +55,7 @@ static void ICACHE_RAM_ATTR mml_callback(MML_INFO *p, void *extobj)
         MML_ARGS_NOTE *args = &(p->args.note);
         sid_off[0] = now + args->ticks/2;
         next_event += args->ticks;
-        if (args->number < sizeof(sidfreq)/sizeof(*sidfreq)) {
+        if ((unsigned int)args->number < sizeof(sidfreq)/sizeof(*sidfreq)) {
           int freq = pgm_read_word(&sidfreq[args->number]);
           sid.set_register(0, freq & 0xff);
           sid.set_register(1, freq >> 8);
