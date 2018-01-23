@@ -81,7 +81,7 @@ void VS23S010::setColorConversion(int yuvpal, int h_weight, int s_weight, int v_
 uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 {
   int h, s, v;
-  uint8_t best;
+  uint8_t best = 0;
 
   uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
   struct color_cache *cache_entry = &color_cache[cache_hash];
@@ -93,7 +93,7 @@ uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 #ifdef DEBUG
   int best_h, best_s, best_v;
 #endif
-  int mindiff = 100000000;
+  int mindiff = INT32_MAX;
   int adj_sw = 0, adj_hw = 0, adj_vw = 0;
 
   rgb_to_hsv(r, g, b, &h, &s, &v);
