@@ -84,7 +84,7 @@ public:
     }
   }
 
-  size_t write(char *s) {
+  ssize_t write(char *s) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s); SD_END(); return ret; }
     case FS: return m_fs_file->write((uint8_t *)s, strlen(s));
@@ -92,7 +92,7 @@ public:
     }
   }
 
-  size_t write(char *s, size_t sz) {
+  ssize_t write(char *s, size_t sz) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s, sz); SD_END(); return ret; }
     case FS: return m_fs_file->write((uint8_t *)s, sz);
@@ -100,7 +100,7 @@ public:
     }
   }
 
-  size_t write(uint8_t c) {
+  ssize_t write(uint8_t c) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(c); SD_END(); return ret; }
     case FS: return m_fs_file->write(c);
@@ -116,7 +116,7 @@ public:
     }
   }
 
-  size_t read(char* buf, size_t size) {
+  ssize_t read(char* buf, size_t size) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->read(buf, size); SD_END(); return ret; }
     case FS: return m_fs_file->read((uint8_t *)buf, size);
@@ -124,7 +124,7 @@ public:
     }
   }
 
-  size_t fgets(char* str, int num) {
+  ssize_t fgets(char* str, int num) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->fgets(str, num); SD_END(); return ret; }
     case FS: return -1;
