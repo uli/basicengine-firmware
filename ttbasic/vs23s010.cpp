@@ -965,11 +965,12 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
   int tile_w = bg->win_w / bg->tile_size_x;
   int tile_h = bg->win_h / bg->tile_size_y;
 
-  bg->tiles[y * bg->w + x] = t;
+  bg->tiles[(y % bg->h) * bg->w + (x % bg->w)] = t;
   if (x >= tile_scroll_x &&
       x < tile_scroll_x + tile_w &&
       y >= tile_scroll_y &&
       y < tile_scroll_y + tile_h) {
+    // force redraw
   }
 }
 
