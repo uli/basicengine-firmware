@@ -174,6 +174,15 @@ public:
     return open(name.c_str(), flags);
   }
 
+  static bool rename(const char *from, const char *to) {
+    if (isSPIFFS(from) != isSPIFFS(to))
+      return true;
+    if (isSPIFFS(from))
+      return SPIFFS.rename(from + 2, to + 2);
+    else
+      return ::SD.rename(from, to);
+  }
+
 private:
   void cullOldFile() {
     if (m_sd_file) {
@@ -186,6 +195,10 @@ private:
     m_sd_file = NULL;
   }
     
+  static inline bool isSPIFFS(const char *path) {
+    return toupper(path[0]) == 'F' && path[1] == ':';
+  }
+
   union {
     File *m_sd_file;
     fs::File *m_fs_file;
