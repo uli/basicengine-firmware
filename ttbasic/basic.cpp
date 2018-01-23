@@ -869,7 +869,7 @@ int list_free() {
 uint32_t getlineno(unsigned char *lp) {
   num_t l;
   if(*lp == 0) //もし末尾だったら
-    return -1;
+    return (uint32_t)-1;
   os_memcpy(&l, lp+1, sizeof(num_t));
   return l;
 }
@@ -1025,7 +1025,7 @@ uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX) {
   uint32_t lineno;
   for (lp = listbuf; *lp; lp += *lp)  {
     lineno = getlineno(lp);
-    if (lineno < 0)
+    if (lineno == (uint32_t)-1)
       break;
     if ( (lineno >= st) && (lineno <= ed))
       cnt++;
