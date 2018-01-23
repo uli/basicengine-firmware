@@ -1766,6 +1766,8 @@ resume:
   }
 }
 
+num_t GROUP(basic_core) imul();
+
 // LIST command
 void SMALL ilist(uint8_t devno=0) {
   uint32_t lineno = 0;			// start line number
@@ -1781,7 +1783,16 @@ void SMALL ilist(uint8_t devno=0) {
       if (getParam(endlineno, I_NONE)) return;
     } else {
       // <num>, <num>-, <num>-<num>
-      if (getParam(lineno, I_NONE)) return;
+
+      // Slight hack: We don't know how to disambiguate between range and
+      // minus operator. We therefore skip the +/- part of the expression
+      // parser.
+      // It is still possible to use an expression containing +/- by
+      // enclosing it in parentheses.
+      lineno = imul();
+      if (err)
+        return;
+
       if (*cip == I_MINUS) {
         // <num>-, <num>-<num>
         cip++;
