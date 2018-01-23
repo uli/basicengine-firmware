@@ -58,6 +58,16 @@ uint8_t scmode = USE_SCREEN_MODE;
 uint16_t tv_get_gwidth();
 uint16_t tv_get_gheight();
 
+// Saved background and text window dimensions.
+// These values are set when a program is interrupted and the text window is
+// forced to be visible at the bottom of the screen. That way, the original
+// geometries can be restored when the program is CONTinued.
+static int original_bg_height[VS23_MAX_BG];
+static bool turn_bg_back_on[VS23_MAX_BG];
+bool restore_bgs = false;
+static uint16_t original_text_pos[2];
+bool restore_text_window = false;
+
 #define KEY_ENTER 13
 
 // **** I2Cライブラリの利用設定 ****
@@ -3536,6 +3546,9 @@ void  icat() {
 void iwindow() {
   int32_t x, y, w, h;
 
+  // Discard the dimensions saved for CONTing.
+  restore_text_window = false;
+
   if (*cip == I_OFF) {
     ++cip;
     sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
@@ -3564,6 +3577,10 @@ void SMALL iscreen() {
   int32_t m;
 
   if ( getParam(m,  0, vs23.numModes, I_NONE) ) return;   // m
+
+  // Discard dimensions saved for CONTing.
+  restore_bgs = false;
+  restore_text_window = false;
 
   vs23.reset();
 
@@ -3620,6 +3637,10 @@ void ibg() {
   }
 
   if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
+
+  // Background modified, do not restore the saved values when CONTing.
+  original_bg_height[m] = -1;
+  turn_bg_back_on[m] = false;
 
   for (;;) switch (*cip++) {
   case I_TILES:
@@ -5180,6 +5201,70 @@ unsigned char* GROUP(basic_core) iexe() {
 
 void iflash();
 
+void SMALL resize_windows()
+{
+  int x, y, w, h;
+  sc0.getWindow(x, y, w, h);
+  restore_bgs = false;
+  restore_text_window = false;
+  // Default text window?
+  if (x == 0 && w == sc0.getScreenWidth() &&
+      y == 0 && h == sc0.getScreenHeight()) {
+    // If there are backgrounds enabled, they partially or fully obscure
+    // the text window. We adjust it to cover the bottom 5 lines only,
+    // and clip or disable any backgrounds that overlap the new text
+    // window.
+    bool obscured = false;
+    int top_y = (y + (sc0.getScreenHeight() - 5)) * sc0.getFontHeight();
+    for (int i = 0; i < VS23_MAX_BG; ++i) {
+      if (vs23.bgWinY(i) >= top_y) {
+        vs23.disableBg(i);
+        turn_bg_back_on[i] = true;
+        restore_bgs = true;
+      }
+      else if (vs23.bgWinY(i) + vs23.bgWinHeight(i) >= top_y) {
+        original_bg_height[i] = vs23.bgWinHeight(i);
+        vs23.setBgWin(i, vs23.bgWinX(i), vs23.bgWinY(i), vs23.bgWinWidth(i),
+                      vs23.bgWinHeight(i) - vs23.bgWinY(i) - vs23.bgWinHeight(i) + top_y);
+        obscured = true;
+        turn_bg_back_on[i] = false;
+        restore_bgs = true;
+      } else {
+        original_bg_height[i] = -1;
+        turn_bg_back_on[i] = false;
+      }
+    }
+    if (obscured) {
+      original_text_pos[0] = sc0.c_x();
+      original_text_pos[1] = sc0.c_y();
+      sc0.setWindow(x, y + sc0.getScreenHeight() - 5, w, 5);
+      sc0.locate(0,0);
+      sc0.cls();
+      restore_text_window = true;
+    }
+  }
+}
+
+void SMALL restore_windows()
+{
+  if (restore_text_window) {
+    restore_text_window = false;
+    sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    sc0.locate(original_text_pos[0], original_text_pos[1]);
+  }
+  if (restore_bgs) {
+    restore_bgs = false;
+    for (int i = 0; i < VS23_MAX_BG; ++i) {
+      if (turn_bg_back_on[i]) {
+        vs23.enableBg(i);
+      } else if (original_bg_height[i] >= 0) {
+        vs23.setBgWin(i, vs23.bgWinX(i), vs23.bgWinY(i), vs23.bgWinWidth(i),
+                      original_bg_height[i]);
+      }
+    }
+  }
+}
+
 //Command precessor
 uint8_t SMALL icom() {
   uint8_t rc = 1;
@@ -5201,6 +5286,7 @@ uint8_t SMALL icom() {
     if (!cont_cip || !cont_clp) {
       err = ERR_CONT;
     } else {
+      restore_windows();
       sc0.show_curs(0);
       irun(NULL, true);
       sc0.show_curs(1);
@@ -5223,6 +5309,10 @@ uint8_t SMALL icom() {
     sc0.show_curs(1);
     break;
   }
+  
+  if (err)
+    resize_windows();
+
   return rc;
 }
 
