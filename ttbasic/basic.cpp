@@ -3315,60 +3315,25 @@ void irmdir() {
 #endif
 }
 
-// RENAME "現在のファイル名","新しいファイル名"
+// RENAME <old$> TO <new$>
 void irename() {
-  char old_fname[SD_PATH_LEN];
-  char new_fname[SD_PATH_LEN];
   uint8_t rc;
 
-  if (*cip != I_STR) {
-    err = ERR_SYNTAX;
+  BString old_fname = getParamFname();
+  if (err)
     return;
-  }
-
-  cip++;
-
-  // ファイル名指定
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  }
-
-  // 現在のファイル名の取得
-  strncpy(old_fname, (char*)(cip+1), *cip);
-  old_fname[*cip]=0;
-  cip+=*cip;
-  cip++;
-
-  if (*cip != I_COMMA) {
+  if (*cip != I_TO) {
     err = ERR_SYNTAX;
     return;
   }
   cip++;
-  if (*cip!= I_STR) {
-    err = ERR_SYNTAX;
+  BString new_fname = getParamFname();
+  if (err)
     return;
-  }
 
-  cip++;
-
-  // ファイル名指定
-  if (*cip >= SD_PATH_LEN) {
-    err = ERR_LONGPATH;
-    return;
-  }
-
-  // 新しいのファイル名の取得
-  strncpy(new_fname, (char*)(cip+1), *cip);
-  new_fname[*cip]=0;
-  cip+=*cip;
-  cip++;
-
-  rc = bfs.rename(old_fname,new_fname);
-  if (rc) {
+  rc = Unifile::rename(old_fname.c_str(), new_fname.c_str());
+  if (rc)
     err = ERR_FILE_WRITE;
-    return;
-  }
 }
 
 // REMOVE "ファイル名"
