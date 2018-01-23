@@ -5249,9 +5249,8 @@ void SMALL basic() {
   uint8_t rc;
 
   vs23.begin();
-  psx.setupPins(0, 1, 2, 3, 3);
 
-  SPIFFS.begin();
+  psx.setupPins(0, 1, 2, 3, 3);
 
   size_list = 0;
   listbuf = NULL;
@@ -5264,11 +5263,6 @@ void SMALL basic() {
   sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
 
   sound_init();
-
-#if USE_SD_CARD == 1
-  // Initialize SD card file system
-  bfs.init(16);		// CS on GPIO16
-#endif
 
   Wire.begin(2, 0);
   // ESP8266 Wire code assumes that SCL and SDA pins are set low, instead
@@ -5307,6 +5301,13 @@ void SMALL basic() {
   sc0.locate(sc0.getWidth() - 14, 8);
   c_puts(STR_EDITION);
   c_puts(" " STR_VARSION);
+
+  // Initialize file systems
+  SPIFFS.begin();
+#if USE_SD_CARD == 1
+  // Initialize SD card file system
+  bfs.init(16);		// CS on GPIO16
+#endif
 
   // Free memory
   sc0.setColor(vs23.colorFromRgb(255,255,255), 0);
