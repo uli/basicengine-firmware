@@ -117,14 +117,14 @@ void iflash()
     sc0.locate(x, y);
     putnum(count, 6);
 
-    size_t redd = f.read((char *)buf, 4096);
+    ssize_t redd = f.read((char *)buf, 4096);
     if (redd < 0) {
       err = ERR_IO;
       goto out;
     }
     if (!redd)
       break;
-    if (Update.write(buf, redd) != redd) {
+    if (Update.write(buf, redd) != (size_t)redd) {
       err = ERR_IO;
       goto out;
     }
