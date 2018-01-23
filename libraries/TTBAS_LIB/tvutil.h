@@ -18,3 +18,16 @@ void    tv_NTSC_adjust(int16_t ajst);
 void	tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 void	tv_window_get(int &x, int &y, int &w, int &h);
 void	tv_setFont(const uint8_t *font);
+
+extern uint16_t f_width;
+extern uint16_t f_height;
+
+inline int tv_font_height()
+{
+  return f_height;
+}
+inline int tv_font_width()
+{
+  return f_width;
+}
+

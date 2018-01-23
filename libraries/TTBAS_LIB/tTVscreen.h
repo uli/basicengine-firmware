@@ -111,6 +111,12 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
       return tv_get_cheight();
     }
     void setFont(const uint8_t *font);
+    inline int getFontHeight() {
+      return tv_font_height();
+    }
+    inline int getFontWidth() {
+      return tv_font_width();
+    }
 };
 
 #endif
