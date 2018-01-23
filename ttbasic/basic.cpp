@@ -3549,7 +3549,6 @@ void iwindow() {
 
   sc0.setWindow(x, y, w, h);
   sc0.locate(0,0);
-  sc0.init(w, h, SIZE_LINE, workarea);
   sc0.cls();
 }
 

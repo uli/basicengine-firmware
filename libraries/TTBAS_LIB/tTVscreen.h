@@ -99,7 +99,8 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 
     inline void setWindow(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
       tv_window_set(x, y, w, h);
-    }    
+      tscreenBase::init(w, h, maxllen, screen);
+    }
     inline void getWindow(int &x, int &y, int &w, int &h) {
       tv_window_get(x, y, w, h);
     }
