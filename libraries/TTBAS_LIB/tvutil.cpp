@@ -98,6 +98,14 @@ void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
   win_c_height = win_height / f_height;
 }
 
+void tv_window_get(int &x, int &y, int &w, int &h)
+{
+  x = win_x / f_width;
+  y = win_y / f_height;
+  w = win_width / f_width;
+  h = win_height / f_height;
+}
+
 //
 // NTSC表示の終了
 // 

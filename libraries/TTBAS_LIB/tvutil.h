@@ -16,4 +16,5 @@ void    tv_tone(int16_t freq, int16_t tm);
 void    tv_notone();
 void    tv_NTSC_adjust(int16_t ajst);
 void	tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
+void	tv_window_get(int &x, int &y, int &w, int &h);
 void	tv_setFont(const uint8_t *font);
