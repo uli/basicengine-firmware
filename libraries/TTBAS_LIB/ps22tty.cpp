@@ -15,8 +15,8 @@
 #define __FLASH__ ICACHE_RODATA_ATTR
 #endif
 
-const int IRQpin =  D2;//PB4;  // CLK(D+)
-const int DataPin = D1;//PB5;  // Data(D-) 
+const int IRQpin =  PS2CLK;  // CLK(D+)
+const int DataPin = PS2DAT;  // Data(D-) 
 
 TKeyboard kb;               // PS/2キーボードドライバ
 uint8_t  flgKana = false;    // カナ入力モード
