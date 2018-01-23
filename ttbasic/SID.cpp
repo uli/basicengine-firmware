@@ -73,7 +73,7 @@ void initialize()
 
 static int8_t ICACHE_RAM_ATTR wave(Voice_t *voice, uint16_t phase)
 {
-	int8_t out;
+	int8_t out = 0;
 	uint8_t n = phase >> 8;
 	uint8_t wavetype = voice->ControlReg;
 	
