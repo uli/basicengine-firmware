@@ -1909,6 +1909,7 @@ void SMALL irenum() {
   uint32_t num;               // 現在の行番号
   uint32_t index;             // 行インデックス
   uint32_t cnt;               // プログラム行数
+  int toksize;
 
   // 開始行番号、増分引数チェック
   if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
@@ -1965,11 +1966,11 @@ void SMALL irenum() {
 	}
 	break;
       default:
-        num = token_size(ptr+i);
-        if (num < 0)
+        toksize = token_size(ptr+i);
+        if (toksize < 0)
           i = len + 1;	// skip rest of line
         else
-          i += num;	// next token
+          i += toksize;	// next token
 	break;
       }
     }
