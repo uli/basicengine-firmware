@@ -3806,9 +3806,13 @@ void imove()
 void iplot() {
   int32_t bg, x, y, t;
   if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
-  // XXX: check actual bg dimensions!
-  if (getParam(x, 0, 1023, I_COMMA)) return;
-  if (getParam(y, 0, 1023, I_COMMA)) return;
+  if (!vs23.bgTiles(bg)) {
+    // BG not defined
+    err = ERR_RANGE;
+    return;
+  }
+  if (getParam(x, 0, INT_MAX, I_COMMA)) return;
+  if (getParam(y, 0, INT_MAX, I_COMMA)) return;
   if (getParam(t, 0, 255, I_NONE)) return;
   vs23.setBgTile(bg, x, y, t);
 }
