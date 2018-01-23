@@ -4307,7 +4307,10 @@ num_t GROUP(basic_core) ivalue() {
 
   default:
     cip--;
-    err = ERR_SYNTAX;
+    if (is_strexp())
+      err = ERR_TYPE;
+    else
+      err = ERR_SYNTAX;
     break;
   }
   return value; //取得した値を持ち帰る
@@ -4496,7 +4499,14 @@ BString istrvalue()
     break;
   default:
     cip--;
-    err = ERR_SYNTAX;
+    // Check if a numeric expression follows, so we can give a more
+    // helpful error message.
+    err = 0;
+    iexp();
+    if (!err)
+      err = ERR_TYPE;
+    else
+      err = ERR_SYNTAX;
     break;
   }
   if (err)
