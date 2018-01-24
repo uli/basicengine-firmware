@@ -4750,6 +4750,46 @@ void igosub() {
   do_gosub(lineno);
 }
 
+// ON ... <GOTO|GOSUB> ...
+static void on_go(bool is_gosub, int cas)
+{
+  uint32_t line;
+  for (;;) {
+    line = iexp();
+    if (err)
+      return;
+
+    if (!cas)
+      break;
+
+    if (*cip != I_COMMA) {
+      err = ERR_ULN;
+      return;
+    }
+    ++cip;
+    --cas;
+  }
+
+  if (is_gosub)
+    do_gosub(line);
+  else
+    do_goto(line);
+}
+
+void ion()
+{
+  uint32_t cas = iexp();
+  if (*cip == I_GOTO) {
+    ++cip;
+    on_go(false, cas);
+  } else if (*cip == I_GOSUB) {
+    ++cip;
+    on_go(true, cas);
+  } else {
+    err = ERR_SYNTAX;
+  }
+}
+
 void icall() {
   num_t n;
   uint8_t proc_idx = *cip++;

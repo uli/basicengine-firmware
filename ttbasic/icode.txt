@@ -82,6 +82,7 @@ DIM	I_DIM		idim
 PALETTE	I_PALETTE	ipalette
 EDIT	I_EDIT		iedit
 BORDER	I_BORDER	iborder
+ON	I_ON		ion
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom
@@ -190,7 +191,6 @@ PWM	I_PWM		esyntax
 TILES	I_TILES		esyntax
 PATTERN I_PATTERN	esyntax
 FRAME	I_FRAME		esyntax
-ON	I_ON		esyntax
 FLAGS	I_FLAGS		esyntax
 TILECOLL	I_TILECOLL	esyntax
 SPRCOLL	I_SPRCOLL	esyntax
