@@ -4701,23 +4701,15 @@ void igoto() {
   uint8_t* lp;       // 飛び先行ポインタ
   uint32_t lineno;    // 行番号
 
-  if (*cip == I_STR) {
-    // ラベル参照による分岐先取得
-    lp = getlpByLabel(cip);
-    if (lp == NULL) {
-      err = ERR_ULN;                          // エラー番号をセット
-      return;
-    }
-  } else {
-    // 引数の行番号取得
-    lineno = iexp();
-    if (err) return;
-    lp = getlp(lineno);                       // 分岐先のポインタを取得
-    if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
-      err = ERR_ULN;                          // エラー番号をセット
-      return;
-    }
+  // 引数の行番号取得
+  lineno = iexp();
+  if (err) return;
+  lp = getlp(lineno);                       // 分岐先のポインタを取得
+  if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
+    err = ERR_ULN;                          // エラー番号をセット
+    return;
   }
+
   clp = lp;        // 行ポインタを分岐先へ更新
   cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.   // 中間コードポインタを先頭の中間コードに更新
 }
@@ -4727,24 +4719,15 @@ void igosub() {
   uint8_t* lp;       // 飛び先行ポインタ
   uint32_t lineno;    // 行番号
 
-  if (*cip == I_STR) {
-    // ラベル参照による分岐先取得
-    lp = getlpByLabel(cip);
-    if (lp == NULL) {
-      err = ERR_ULN;  // エラー番号をセット
-      return;
-    }
-  } else {
-    // 引数の行番号取得
-    lineno = iexp();
-    if (err)
-      return;
+  // 引数の行番号取得
+  lineno = iexp();
+  if (err)
+    return;
 
-    lp = getlp(lineno);                       // 分岐先のポインタを取得
-    if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
-      err = ERR_ULN;                          // エラー番号をセット
-      return;
-    }
+  lp = getlp(lineno);                       // 分岐先のポインタを取得
+  if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
+    err = ERR_ULN;                          // エラー番号をセット
+    return;
   }
 
   //ポインタを退避
