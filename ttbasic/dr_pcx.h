@@ -281,6 +281,11 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
     dr_uint8 rleCount = 0;
     dr_uint8 rleValue = 0;
 
+    dr_uint32 dx = pPCX->dst_x;
+    dr_uint32 dy = pPCX->dst_y;
+    dr_uint32 ox = pPCX->off_x;
+    dr_uint32 oy = pPCX->off_y;
+
     switch (pPCX->header.bitPlanes)
     {
         case 1:
@@ -310,7 +315,6 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
-                dr_uint8* pRow = drpcx__row_ptr(pPCX, y);
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
                     if (rleCount == 0) {
@@ -332,10 +336,11 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
                                 cgaIndex = (((paletteIndex << 1) + p) + (i << 3));
                             }
 
-                            pRow[0] = paletteCGA[cgaIndex*3 + 0];
-                            pRow[1] = paletteCGA[cgaIndex*3 + 1];
-                            pRow[2] = paletteCGA[cgaIndex*3 + 2];
-                            pRow += 3;
+                            vs23.setPixel(dx + x-ox, dy + y-oy, vs23.colorFromRgb(
+                              paletteCGA[cgaIndex*3 + 0],
+                              paletteCGA[cgaIndex*3 + 1],
+                              paletteCGA[cgaIndex*3 + 2]
+                            ));
                         }
                     }
                 }
