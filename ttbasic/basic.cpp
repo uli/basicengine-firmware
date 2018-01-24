@@ -4718,17 +4718,9 @@ void igoto() {
   do_goto(lineno);
 }
 
-// GOSUB
-void igosub() {
-  uint8_t* lp;       // 飛び先行ポインタ
-  uint32_t lineno;    // 行番号
-
-  // 引数の行番号取得
-  lineno = iexp();
-  if (err)
-    return;
-
-  lp = getlp(lineno);                       // 分岐先のポインタを取得
+static void do_gosub(uint32_t lineno)
+{
+  uint8_t *lp = getlp(lineno);                       // 分岐先のポインタを取得
   if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
     err = ERR_ULN;                          // エラー番号をセット
     return;
@@ -4744,7 +4736,18 @@ void igosub() {
   gstk[gstki++] = 0;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
-  cip = clp + sizeof(num_t) + 1; // XXX: really? was 3.                            // 中間コードポインタを先頭の中間コードに更新
+  cip = clp + sizeof(num_t) + 1;            // 中間コードポインタを先頭の中間コードに更新
+}
+
+// GOSUB
+void igosub() {
+  uint32_t lineno;    // 行番号
+
+  // 引数の行番号取得
+  lineno = iexp();
+  if (err)
+    return;
+  do_gosub(lineno);
 }
 
 void icall() {
