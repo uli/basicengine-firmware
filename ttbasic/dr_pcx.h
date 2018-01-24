@@ -189,13 +189,18 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
     dr_uint8 rleCount = 0;
     dr_uint8 rleValue = 0;
 
+    dr_uint32 stride = pPCX->width;
+    dr_uint32 dx = pPCX->dst_x;
+    dr_uint32 dy = pPCX->dst_y;
+    dr_uint32 ox = pPCX->off_x;
+    dr_uint32 oy = pPCX->off_y;
+
     switch (pPCX->header.bitPlanes)
     {
         case 1:
         {
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
-                dr_uint8* pRow = drpcx__row_ptr(pPCX, y);
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
                     if (rleCount == 0) {
@@ -208,10 +213,7 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                         dr_uint8 mask = (1 << (7 - bit));
                         dr_uint8 paletteIndex = (rleValue & mask) >> (7 - bit);
 
-                        pRow[0] = paletteIndex * 255;
-                        pRow[1] = paletteIndex * 255;
-                        pRow[2] = paletteIndex * 255;
-                        pRow += 3;
+                        vs23.setPixel(dx + x-ox, dy + y-oy, paletteIndex * 0x0f);
                     }
                 }
             }
@@ -224,11 +226,15 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
         case 3:
         case 4:
         {
+            dr_uint8 *pRow_ = (dr_uint8 *)malloc(stride);
+            if (!pRow_)
+              return DR_FALSE;
+
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
                 for (dr_uint32 c = 0; c < pPCX->header.bitPlanes; ++c)
                 {
-                    dr_uint8* pRow = drpcx__row_ptr(pPCX, y);
+                    dr_uint8* pRow = pRow_;
                     for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                     {
                         if (rleCount == 0) {
@@ -242,24 +248,27 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                             dr_uint8 paletteIndex = (rleValue & mask) >> (7 - bit);
 
                             pRow[0] |= ((paletteIndex & 0x01) << c);
-                            pRow += pPCX->components;
+                            pRow++;
                         }
                     }
                 }
 
 
-                dr_uint8* pRow = drpcx__row_ptr(pPCX, y);
+                dr_uint8* pRow = pRow_;
                 for (dr_uint32 x = 0; x < pPCX->width; ++x)
                 {
                     dr_uint8 paletteIndex = pRow[0];
-                    for (dr_uint32 c = 0; c < pPCX->components; ++c) {
-                        pRow[c] = pPCX->header.palette16[paletteIndex*3 + c];
-                    }
+                    vs23.setPixel(dx + x-ox, dy + y-oy, vs23.colorFromRgb(
+                      pPCX->header.palette16[paletteIndex*3 + 0],
+                      pPCX->header.palette16[paletteIndex*3 + 1],
+                      pPCX->header.palette16[paletteIndex*3 + 2]
+                    ));
                     
-                    pRow += pPCX->components;
+                    pRow++;
                 }
             }
 
+            free(pRow_);
             return DR_TRUE;
         }
 
