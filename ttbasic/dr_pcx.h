@@ -151,6 +151,7 @@ static dr_uint8 drpcx__read_byte(drpcx* pPCX)
     return byte;
 }
 
+#ifdef HAVE_UNTESTED
 static dr_uint8* drpcx__row_ptr(drpcx* pPCX, dr_uint32 row)
 {
     dr_uint32 stride = pPCX->width * pPCX->components;
@@ -164,6 +165,7 @@ static dr_uint8* drpcx__row_ptr(drpcx* pPCX, dr_uint32 row)
 
     return pRow;
 }
+#endif
 
 static dr_uint8 drpcx__rle(drpcx* pPCX, dr_uint8* pRLEValueOut)
 {
@@ -359,6 +361,7 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
             return DR_TRUE;
         };
 
+#ifdef HAVE_UNTESTED
         case 4:
         {
             // NOTE: This is completely untested. If anybody knows where I can get a test file please let me know or send it through to me!
@@ -402,11 +405,13 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
 
             return DR_TRUE;
         };
+#endif
 
         default: return DR_FALSE;
     }
 }
 
+#ifdef HAVE_UNTESTED
 dr_bool32 drpcx__decode_4bit(drpcx* pPCX)
 {
     // NOTE: This is completely untested. If anybody knows where I can get a test file please let me know or send it through to me!
@@ -457,6 +462,7 @@ dr_bool32 drpcx__decode_4bit(drpcx* pPCX)
 
     return DR_TRUE;
 }
+#endif
 
 dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
 {
@@ -661,10 +667,12 @@ bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int*
             result = drpcx__decode_2bit(&pcx);
         } break;
 
+#ifdef HAVE_UNTESTED
         case 4:
         {
             result = drpcx__decode_4bit(&pcx);
         } break;
+#endif
 
         case 8:
         {
