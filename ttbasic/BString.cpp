@@ -270,7 +270,8 @@ unsigned char BString::concat(const char *cstr, unsigned int length) {
         return 1;
     if(!reserve(newlen))
         return 0;
-    strcpy(buffer + len, cstr);
+    memcpy(buffer + len, cstr, length);
+    buffer[newlen] = 0;
     len = newlen;
     return 1;
 }
