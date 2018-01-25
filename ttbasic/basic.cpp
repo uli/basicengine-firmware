@@ -3009,7 +3009,7 @@ void isound() {
 }
 
 BString mml_text;
-void imusic() {
+void iplay() {
   sound_stop_mml();
   mml_text = istrexp();
   sound_play_mml(mml_text.c_str());

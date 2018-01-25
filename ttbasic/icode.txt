@@ -45,7 +45,7 @@ CAT	I_CAT		icat
 REMOVE	I_REMOVE	iremove
 TONE	I_TONE		itone
 NOTONE	I_NOTONE	inotone
-MUSIC	I_MUSIC		imusic
+PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate
 GETDATE	I_GETDATE	igetDate
