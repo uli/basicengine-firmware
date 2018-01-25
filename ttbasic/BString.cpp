@@ -560,7 +560,7 @@ int BString::indexOf(char c) const {
 int BString::indexOf(char ch, unsigned int fromIndex) const {
     if(fromIndex >= len)
         return -1;
-    const char* temp = strchr(buffer + fromIndex, ch);
+    const char* temp = (const char *)memchr(buffer + fromIndex, ch, len - fromIndex);
     if(temp == NULL)
         return -1;
     return temp - buffer;
