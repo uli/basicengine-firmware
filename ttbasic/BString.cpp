@@ -635,7 +635,8 @@ BString BString::substring(unsigned int left, unsigned int right) const {
 void BString::replace(char find, char replace) {
     if(!buffer)
         return;
-    for(char *p = buffer; *p; p++) {
+    unsigned int c = 0;
+    for(char *p = buffer; c < len; p++, c++) {
         if(*p == find)
             *p = replace;
     }
