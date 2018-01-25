@@ -624,10 +624,7 @@ BString BString::substring(unsigned int left, unsigned int right) const {
         return out;
     if(right > len)
         right = len;
-    char temp = buffer[right];  // save the replaced character
-    buffer[right] = '\0';
-    out = buffer + left;  // pointer arithmetic
-    buffer[right] = temp;  //restore character
+    out.copy(buffer + left, right - left);
     return out;
 }
 
