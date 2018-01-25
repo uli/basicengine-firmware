@@ -173,7 +173,8 @@ BString & BString::copy(const char *cstr, unsigned int length) {
         return *this;
     }
     len = length;
-    strcpy(buffer, cstr);
+    memcpy(buffer, cstr, length);
+    buffer[length] = 0;
     return *this;
 }
 
@@ -183,7 +184,8 @@ BString & BString::copy(const __FlashStringHelper *pstr, unsigned int length) {
         return *this;
     }
     len = length;
-    strcpy_P(buffer, (PGM_P)pstr);
+    memcpy_P(buffer, (PGM_P)pstr, length);
+    buffer[length] = 0;
     return *this;
 }
 
@@ -191,7 +193,8 @@ BString & BString::copy(const __FlashStringHelper *pstr, unsigned int length) {
 void BString::move(BString &rhs) {
     if(buffer) {
         if(capacity >= rhs.len) {
-            strcpy(buffer, rhs.buffer);
+            memcpy(buffer, rhs.buffer, rhs.len);
+            buffer[rhs.len] = 0;
             len = rhs.len;
             rhs.len = 0;
             return;
