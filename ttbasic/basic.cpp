@@ -4543,6 +4543,30 @@ BString istrexp()
 num_t GROUP(basic_core) iexp() {
   num_t value, tmp;
 
+  if (is_strexp()) {
+    // string comparison (or error)
+    BString lhs = istrexp();
+    BString rhs;
+    switch (*cip++) {
+    case I_EQ:
+      rhs = istrexp();
+      return lhs == rhs;
+    case I_NEQ:
+    case I_NEQ2:
+      rhs = istrexp();
+      return lhs != rhs;
+    case I_LT:
+      rhs = istrexp();
+      return lhs < rhs;
+    case I_GT:
+      rhs = istrexp();
+      return lhs > rhs;
+    default:
+      err = ERR_TYPE;
+      return -1;
+    }
+  }
+
   value = iplus();
   if (err)
     return -1;
