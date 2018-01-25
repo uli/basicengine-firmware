@@ -22,7 +22,7 @@
 #define SD_TEXT_LEN 255     // テキスト１行最大長さ
 
 #include "../../ttbasic/error.h"
-#include "../../ttbasic/bstring.h"
+#include "../../ttbasic/BString.h"
 
 #ifndef FILE_OVERWRITE
 #define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)

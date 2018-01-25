@@ -1,6 +1,6 @@
 #include "ttconfig.h"
 #include "basic.h"
-#include "bstring.h"
+#include "BString.h"
 #include "error.h"
 #include "vs23s010.h"
 #include <sdfiles.h>

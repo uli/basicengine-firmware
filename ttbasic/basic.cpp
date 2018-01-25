@@ -4485,7 +4485,7 @@ BString istrvalue()
       value = *bp;
     break;
   case I_STRSTR:
-    svar.var(*cip++) = String(iexp());
+    svar.var(*cip++) = BString(iexp());
     break;
   case I_LEFTSTR:
     value = ilrstr(false);

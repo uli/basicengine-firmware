@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <stdlib.h>
-#include "bstring.h"
+#include "BString.h"
 #include "error.h"
 #include "kwenum.h"
 
