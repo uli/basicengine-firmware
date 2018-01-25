@@ -713,7 +713,9 @@ void BString::remove(unsigned int index, unsigned int count) {
 void BString::toLowerCase(void) {
     if(!buffer)
         return;
-    for(char *p = buffer; *p; p++) {
+    char *p;
+    unsigned int c = 0;
+    for(p = buffer; c < len; p++, c++) {
         *p = tolower(*p);
     }
 }
@@ -721,7 +723,9 @@ void BString::toLowerCase(void) {
 void BString::toUpperCase(void) {
     if(!buffer)
         return;
-    for(char *p = buffer; *p; p++) {
+    char *p;
+    unsigned int c = 0;
+    for(p = buffer; c < len; p++, c++) {
         *p = toupper(*p);
     }
 }
