@@ -603,6 +603,7 @@ int BString::lastIndexOf(const BString &s2, unsigned int fromIndex) const {
     if(fromIndex >= len)
         fromIndex = len - 1;
     int found = -1;
+    // XXX: make binary-safe
     for(char *p = buffer; p <= buffer + fromIndex; p++) {
         p = strstr(p, s2.buffer);
         if(!p)
@@ -648,6 +649,7 @@ void BString::replace(const BString& find, const BString& replace) {
     int diff = replace.len - find.len;
     char *readFrom = buffer;
     char *foundAt;
+    // XXX: make binary-safe
     if(diff == 0) {
         while((foundAt = strstr(readFrom, find.buffer)) != NULL) {
             memcpy(foundAt, replace.buffer, replace.len);
