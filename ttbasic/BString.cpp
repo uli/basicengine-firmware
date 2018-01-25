@@ -481,7 +481,8 @@ unsigned char BString::equalsIgnoreCase(const BString &s2) const {
         return 1;
     const char *p1 = buffer;
     const char *p2 = s2.buffer;
-    while(*p1) {
+    int c = len;
+    while(c--) {
         if(tolower(*p1++) != tolower(*p2++))
             return 0;
     }
