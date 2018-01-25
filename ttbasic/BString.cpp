@@ -498,13 +498,13 @@ unsigned char BString::startsWith(const BString &s2) const {
 unsigned char BString::startsWith(const BString &s2, unsigned int offset) const {
     if(offset > len - s2.len || !buffer || !s2.buffer)
         return 0;
-    return strncmp(&buffer[offset], s2.buffer, s2.len) == 0;
+    return memcmp(&buffer[offset], s2.buffer, s2.len) == 0;
 }
 
 unsigned char BString::endsWith(const BString &s2) const {
     if(len < s2.len || !buffer || !s2.buffer)
         return 0;
-    return strcmp(&buffer[len - s2.len], s2.buffer) == 0;
+    return memcmp(&buffer[len - s2.len], s2.buffer, s2.len) == 0;
 }
 
 // /*********************************************/
