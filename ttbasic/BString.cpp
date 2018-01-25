@@ -706,7 +706,7 @@ void BString::remove(unsigned int index, unsigned int count) {
     }
     char *writeTo = buffer + index;
     len = len - count;
-    strncpy(writeTo, buffer + index + count, len - index);
+    memcpy(writeTo, buffer + index + count, len - index);
     buffer[len] = 0;
 }
 
