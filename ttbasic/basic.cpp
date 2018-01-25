@@ -463,9 +463,11 @@ inline uint8_t checkClose() {
 }
 
 inline bool is_strexp() {
+  // XXX: does not detect string comparisons (numeric)
   return (*cip == I_STR ||
           *cip == I_SVAR ||
           *cip == I_ARGSTR ||
+          *cip == I_STRSTR ||
           *cip == I_CHR ||
           *cip == I_HEX ||
           *cip == I_BIN ||
@@ -4485,7 +4487,13 @@ BString istrvalue()
       value = *bp;
     break;
   case I_STRSTR:
-    svar.var(*cip++) = BString(iexp());
+    if (checkOpen()) return value;
+    // The BString ctor for doubles is not helpful because it uses dtostrf()
+    // which can only do a fixed number of decimal places. That is not
+    // the BASIC Way(tm).
+    sprintf(lbuf, "%0g", iexp());
+    value = lbuf;
+    if (checkClose()) return value;
     break;
   case I_LEFTSTR:
     value = ilrstr(false);
