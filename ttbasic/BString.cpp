@@ -545,7 +545,7 @@ void BString::getBytes(unsigned char *buf, unsigned int bufsize, unsigned int in
     unsigned int n = bufsize - 1;
     if(n > len - index)
         n = len - index;
-    strncpy((char *) buf, buffer + index, n);
+    memcpy((char *) buf, buffer + index, n);
     buf[n] = 0;
 }
 
