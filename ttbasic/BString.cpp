@@ -435,7 +435,13 @@ int BString::compareTo(const BString &s) const {
             return *(unsigned char *) buffer;
         return 0;
     }
-    return strcmp(buffer, s.buffer);
+
+    if (len > s.len)
+      return buffer[s.len];
+    else if (s.len > len)
+      return -s.buffer[len];
+
+    return memcmp(buffer, s.buffer, len);
 }
 
 unsigned char BString::equals(const BString &s2) const {
