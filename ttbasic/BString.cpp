@@ -587,10 +587,7 @@ int BString::lastIndexOf(char theChar) const {
 int BString::lastIndexOf(char ch, unsigned int fromIndex) const {
     if(fromIndex >= len)
         return -1;
-    char tempchar = buffer[fromIndex + 1];
-    buffer[fromIndex + 1] = '\0';
-    char* temp = strrchr(buffer, ch);
-    buffer[fromIndex + 1] = tempchar;
+    char* temp = (char *)memrchr(buffer, ch, fromIndex);
     if(temp == NULL)
         return -1;
     return temp - buffer;
