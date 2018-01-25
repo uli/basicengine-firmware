@@ -83,6 +83,7 @@ PALETTE	I_PALETTE	ipalette
 EDIT	I_EDIT		iedit
 BORDER	I_BORDER	iborder
 ON	I_ON		ion
+STOP	I_STOP		istop
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom

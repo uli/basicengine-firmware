@@ -5199,6 +5199,10 @@ void ilrun_() {
     ilrun();
 }
 
+void istop() {
+  err = ERR_CTR_C;
+}
+
 typedef void (*cmd_t)();
 #include "funtbl.h"
 
