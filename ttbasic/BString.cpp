@@ -573,7 +573,8 @@ int BString::indexOf(const BString &s2) const {
 int BString::indexOf(const BString &s2, unsigned int fromIndex) const {
     if(fromIndex >= len)
         return -1;
-    const char *found = strstr(buffer + fromIndex, s2.buffer);
+    // At least for NOWIFI, memmem() does not exist, but memmem_P() does...
+    const char *found = (const char *)memmem_P(buffer + fromIndex, len - fromIndex, s2.buffer, s2.len);
     if(found == NULL)
         return -1;
     return found - buffer;
