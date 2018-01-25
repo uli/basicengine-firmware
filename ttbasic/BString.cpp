@@ -523,6 +523,7 @@ void BString::setCharAt(unsigned int loc, char c) {
 char & BString::operator[](unsigned int index) {
     static char dummy_writable_char;
     if(index >= len || !buffer) {
+        // XXX: extend buffer instead
         dummy_writable_char = 0;
         return dummy_writable_char;
     }
