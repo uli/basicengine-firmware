@@ -2273,7 +2273,7 @@ void iformat() {
   if (err)
     return;
 
-  if (target == "f:" || target == "F:") {
+  if (target == "/flash") {
     c_puts_P(warn_spiffs); newline();
     c_puts_P(areyousure);
     BString answer = getstr();
@@ -5542,7 +5542,7 @@ void loadConfig() {
   CONFIG.KEYBOARD  =  1;
   CONFIG.STARTPRG  = -1;
   
-  Unifile f = Unifile::open("f:.config", FILE_READ);
+  Unifile f = Unifile::open("/flash/.config", FILE_READ);
   if (!f)
     return;
   f.read((char *)&CONFIG, sizeof(CONFIG));
@@ -5551,7 +5551,7 @@ void loadConfig() {
 
 // システム環境設定の保存
 void isaveconfig() {
-  Unifile f = Unifile::open("f:.config", FILE_OVERWRITE);
+  Unifile f = Unifile::open("/flash/.config", FILE_OVERWRITE);
   if (!f) {
     err = ERR_FILE_OPEN;
   }
