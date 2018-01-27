@@ -179,8 +179,12 @@ public:
       return true;
     if (isSPIFFS(from))
       return SPIFFS.rename(from + 2, to + 2);
-    else
-      return ::SD.rename(from, to);
+    else {
+      SD_BEGIN();
+      bool ret = ::SD.rename(from, to);
+      SD_END();
+      return ret;
+    }
   }
   
   static inline bool isSPIFFS(const char *file) {
