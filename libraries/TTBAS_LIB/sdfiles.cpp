@@ -25,6 +25,8 @@ static bool sdfat_initialized = false;
 static int m_mhz = 0;
 static uint8_t cs = 0;
 
+BString Unifile::m_cwd;
+
 bool SD_BEGIN(int mhz)
 {
   if (mhz != m_mhz) {

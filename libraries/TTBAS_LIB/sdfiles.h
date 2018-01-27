@@ -33,6 +33,9 @@ extern SdFat SD;
 bool SD_BEGIN(int mhz = 40);
 void SD_END(void);
 
+#define FLASH_PREFIX "/flash"
+#define FLASH_PREFIX_LEN 6
+
 class Unifile {
 public:
   enum uni_type {
@@ -149,8 +152,9 @@ public:
   }
 
   static Unifile open(const char *name, uint8_t flags) {
-    if (isSPIFFS(name)) {
-      char nam[strlen(name)];
+    BString abs_name = path(name);
+    if (isSPIFFS(abs_name.c_str())) {
+      BString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
       const char *fl;
       switch (flags) {
       case FILE_WRITE:		fl = "a"; break;
@@ -158,9 +162,7 @@ public:
       case FILE_READ:		fl = "r"; break;
       default:			return Unifile();
       }
-      strcpy(nam + 1, name + 2);
-      nam[0] = '/';
-      Unifile f(SPIFFS.open(nam, fl));
+      Unifile f(SPIFFS.open(spiffs_name.c_str(), fl));
       return f;
     } else {
       SD_BEGIN();
@@ -175,20 +177,55 @@ public:
   }
 
   static bool rename(const char *from, const char *to) {
-    if (isSPIFFS(from) != isSPIFFS(to))
+    BString abs_from = path(from);
+    BString abs_to = path(to);
+    if (isSPIFFS(abs_from) != isSPIFFS(abs_to.c_str()))
       return true;
-    if (isSPIFFS(from))
-      return SPIFFS.rename(from + 2, to + 2);
+    if (isSPIFFS(abs_from))
+      return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
     else {
       SD_BEGIN();
-      bool ret = ::SD.rename(from, to);
+      bool ret = ::SD.rename(abs_from.c_str(), abs_to.c_str());
       SD_END();
       return ret;
     }
   }
   
-  static inline bool isSPIFFS(const char *file) {
-    return toupper(file[0]) == 'F' && file[1] == ':';
+  static inline bool isSPIFFS(BString file) {
+    return file.startsWith(FLASH_PREFIX);
+  }
+
+  static BString path(const char *rel) {
+    BString absolute;
+    if (rel[0] == '/') {
+      absolute = rel;
+    } else {
+      absolute = m_cwd + BString("/") + BString(rel);
+    }
+    return absolute;
+  }
+
+  static bool exists(const char *file) {
+    BString abs_file = path(file);
+    if (isSPIFFS(abs_file)) {
+      return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+    } else {
+      return ::SD.exists(abs_file.c_str());
+    }
+  }  
+
+  static bool chDir(const char *p) {
+    BString new_cwd = path(p);
+    if (new_cwd == "/")
+      new_cwd = "";
+    else if (!isSPIFFS(new_cwd) && !exists(new_cwd.c_str()))
+      return false;
+    m_cwd = new_cwd;
+    return true;
+  }
+  
+  static const char *cwd() {
+    return m_cwd.c_str();
   }
 
 private:
@@ -208,6 +245,8 @@ private:
     fs::File *m_fs_file;
   };
   uni_type m_type;
+
+  static BString m_cwd;
 };
 
 class sdfiles {
