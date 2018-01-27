@@ -447,6 +447,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h) {
   uint8_t rc =1;
  
+  // XXX: use Unifile!
   if (SD_BEGIN(11) == false) 
     return SD_ERR_INIT;
 
@@ -504,6 +505,8 @@ out:
 uint8_t sdfiles::mkdir(char* fname) {
   uint8_t rc = 1;
  
+  // XXX: use Unifile!
+  // (actually, this is a NOP for SPIFFS...)
   if (SD_BEGIN() == false) {
     return SD_ERR_INIT;
   }
@@ -532,6 +535,7 @@ uint8_t sdfiles::mkdir(char* fname) {
 uint8_t sdfiles::rmdir(char* fname) {
   uint8_t rc = 1;
  
+  // XXX: use Unifile
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
@@ -558,6 +562,7 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 uint8_t sdfiles::remove(char* fname) {
   uint8_t rc = 1;
 
+  // XXX: use Unifile
   if (SD_BEGIN() == false) 
     return 1;
   if(SD.remove(fname) == true)
