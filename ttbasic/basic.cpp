@@ -2226,7 +2226,7 @@ void ifiles() {
   int16_t rc;
 
   if (!is_strexp())
-    fname = "*";
+    fname = "";
   else
     fname = getParamFname();
 
@@ -2246,7 +2246,7 @@ void ifiles() {
     } else if (ptr == NULL && flgwildcard == 1) {
       strcpy(wildcard, fname.c_str());
       wcard = wildcard;
-      fname = "/";
+      fname = "";
     }
   }
 #if USE_SD_CARD == 1
