@@ -136,6 +136,7 @@ STR$	I_STRSTR	esyntax
 LEFT$	I_LEFTSTR	esyntax
 RIGHT$	I_RIGHTSTR	esyntax
 MID$	I_MIDSTR	esyntax
+CWD$	I_CWD		esyntax
 ABS	I_ABS		esyntax
 SIN	I_SIN		esyntax
 COS	I_COS		esyntax

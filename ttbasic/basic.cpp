@@ -474,7 +474,8 @@ inline bool is_strexp() {
           *cip == I_DMP ||
           *cip == I_LEFTSTR ||
           *cip == I_RIGHTSTR ||
-          *cip == I_MIDSTR
+          *cip == I_MIDSTR ||
+          *cip == I_CWD
          );
 }
 
@@ -4509,6 +4510,9 @@ BString istrvalue()
     break;
   case I_BIN:
     value = ibin();
+    break;
+  case I_CWD:
+    value = Unifile::cwd();
     break;
   default:
     cip--;
