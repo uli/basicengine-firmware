@@ -117,10 +117,6 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   uint8_t rc;
   char head[2];  // ヘッダ
 
-  // ファイルのオープン
-  if (SD_BEGIN() == false) 
-    return SD_ERR_INIT;     // SDカードの利用失敗
-
   myFile = Unifile::open(fname, FILE_READ);
   if (myFile) {
     // データのヘッダーとデータロード
@@ -133,7 +129,7 @@ uint8_t sdfiles::load(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE ; // ファイルオープン失敗
   }
-  SD_END();
+
   return rc;
 }
 
@@ -154,15 +150,8 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   char head[2] = {0,0};
   uint8_t rc = 1;
 
-  // 既存ファイルの削除
-  if (SD_BEGIN() == false) 
-    return SD_ERR_INIT;
-
-  if (SD.exists(fname))
-     SD.remove(fname);
-
   // ファイルのオープン
-  myFile = Unifile::open(fname, FILE_WRITE);
+  myFile = Unifile::open(fname, FILE_OVERWRITE);
   if (myFile) {
     // データの保存
     if (myFile.write(head, 2) && myFile.write((char *)ptr, sz)) {
@@ -174,7 +163,7 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  SD_END();
+
   return rc;
 }
 
@@ -223,8 +212,8 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
     }
   }
   tmpClose();
+
 DONE:
-  SD_END();
   return rc; 
 }
 
@@ -298,14 +287,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  ファイルオープン失敗 : SD_ERR_OPEN_FILE
 //  
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-  if (SD_BEGIN() == false) 
-    return SD_ERR_INIT;
   if(mode) {
-    // XXX: This is bogus for SPIFFS. I presume it's only here because SdFat's
-    // FILE_WRITE defaults to append mode.
-    if (SD.exists(tfname))
-      SD.remove(tfname);
-    tfile = Unifile::open(tfname, FILE_WRITE);
+    tfile = Unifile::open(tfname, FILE_OVERWRITE);
   } else {
     tfile = Unifile::open(tfname, FILE_READ);   
   }
@@ -313,17 +296,13 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
   if (tfile)
     return 0;
 
-  SD_END();
   return SD_ERR_OPEN_FILE;
 }
 
 // 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
-#if 1
   if (tfile)
     tfile.close();
-  SD_END();
-#endif
   return 0;
 }
 
@@ -408,9 +387,6 @@ int8_t sdfiles::IsText(char* fname) {
   char head[2];   // ヘッダー
   int8_t rc = -1;
  
-  if (SD_BEGIN() == false) 
-    return -SD_ERR_INIT;
-    
   // ファイルのオープン
   myFile = Unifile::open(fname, FILE_READ);
   if (myFile) {
@@ -431,7 +407,7 @@ int8_t sdfiles::IsText(char* fname) {
   } else {
     rc = -SD_ERR_OPEN_FILE;    
   }
-  SD_END();
+
   return rc;
 }
 
@@ -572,12 +548,9 @@ uint8_t sdfiles::rmdir(char* fname) {
 uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
   uint8_t rc = 1;
   
-  if (SD_BEGIN() == false) 
-    return 1;
-
-  if(SD.rename(old_fname,new_fname) == true)
+  if(Unifile::rename(old_fname,new_fname) == true)
     rc = 0;
-  SD_END();
+
   return rc;
 }
 
