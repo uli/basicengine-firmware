@@ -149,7 +149,7 @@ public:
   }
 
   static Unifile open(const char *name, uint8_t flags) {
-    if (toupper(name[0]) == 'F' && name[1] == ':') {
+    if (isSPIFFS(name)) {
       char nam[strlen(name)];
       const char *fl;
       switch (flags) {
@@ -182,6 +182,10 @@ public:
     else
       return ::SD.rename(from, to);
   }
+  
+  static inline bool isSPIFFS(const char *file) {
+    return toupper(file[0]) == 'F' && file[1] == ':';
+  }
 
 private:
   void cullOldFile() {
@@ -195,10 +199,6 @@ private:
     m_sd_file = NULL;
   }
     
-  static inline bool isSPIFFS(const char *path) {
-    return toupper(path[0]) == 'F' && path[1] == ':';
-  }
-
   union {
     File *m_sd_file;
     fs::File *m_fs_file;
