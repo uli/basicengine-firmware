@@ -2386,10 +2386,9 @@ int32_t iinkey() {
     // 一時バッファに入力済キーがあればそれを使う
     rc = prevPressKey;
     prevPressKey = 0;
-  } else if (c_kbhit( )) {
-    // キー入力
-    rc = c_getch();
-  }
+  } else
+    rc = c_kbhit();
+
   return rc;
 }
 
