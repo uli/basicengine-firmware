@@ -11,6 +11,7 @@
 
 
 #include "sdfiles.h"
+#include "../../ttbasic/basic.h"
 #include "../../ttbasic/lock.h"
 #include "../../ttbasic/vs23s010.h"
 #include <string.h>
@@ -47,9 +48,6 @@ void SD_END(void)
   SPI.setFrequency(11000000);
   SpiUnlock();
 }
-
-void c_puts(const char *s, uint8_t devno=0);
-void newline(uint8_t devno=0);
 
 // ワイルドカードでのマッチング(下記のリンク先のソースを利用)
 // http://qiita.com/gyu-don/items/5a640c6d2252a860c8cd
