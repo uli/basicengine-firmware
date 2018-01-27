@@ -150,6 +150,7 @@ MAP	I_MAP		esyntax
 ASC	I_ASC		esyntax
 FREE	I_FREE		esyntax
 RND	I_RND		esyntax
+INKEY$	I_INKEYSTR	esyntax
 INKEY	I_INKEY		esyntax
 LEN	I_LEN		esyntax
 TICK	I_TICK		esyntax

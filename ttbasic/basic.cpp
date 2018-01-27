@@ -488,7 +488,8 @@ inline bool is_strexp() {
           *cip == I_LEFTSTR ||
           *cip == I_RIGHTSTR ||
           *cip == I_MIDSTR ||
-          *cip == I_CWD
+          *cip == I_CWD ||
+          *cip == I_INKEYSTR
          );
 }
 
@@ -4482,6 +4483,7 @@ BString istrvalue()
   BString value;
   BString *bp;
   int len;
+  char c;
 
   switch (*cip++) {
   case I_STR:
@@ -4524,6 +4526,13 @@ BString istrvalue()
     break;
   case I_CWD:
     value = Unifile::cwd();
+    break;
+  case I_INKEYSTR:
+    c = iinkey();
+    if (c)
+      value = BString(c);
+    else
+      value = "";
     break;
   default:
     cip--;
