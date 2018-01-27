@@ -2265,8 +2265,8 @@ void iformat() {
     "ARE YOU SURE? (Y/N) ";
   static const char aborted[] PROGMEM = "Aborted";
   static const char formatting[] PROGMEM = "Formatting... ";
-  static const char success[] PROGMEM = "Success!\n";
-  static const char failed[] PROGMEM = "Failed\n";
+  static const char success[] PROGMEM = "Success!";
+  static const char failed[] PROGMEM = "Failed.";
 
   BString target = getParamFname();
   if (err)
