@@ -154,7 +154,7 @@ public:
 
   static Unifile open(const char *name, uint8_t flags) {
     UnifileString abs_name = path(name);
-    if (isSPIFFS(abs_name.c_str())) {
+    if (isSPIFFS(abs_name)) {
       UnifileString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
       const char *fl;
       switch (flags) {
@@ -180,7 +180,7 @@ public:
   static bool rename(const char *from, const char *to) {
     UnifileString abs_from = path(from);
     UnifileString abs_to = path(to);
-    if (isSPIFFS(abs_from) != isSPIFFS(abs_to.c_str()))
+    if (isSPIFFS(abs_from) != isSPIFFS(abs_to))
       return true;
     if (isSPIFFS(abs_from))
       return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
