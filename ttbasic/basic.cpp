@@ -145,6 +145,9 @@ void error(uint8_t flgCmd);
 #define c_getch( ) sc0.get_ch()
 #define c_kbhit( ) sc0.isKeyIn()
 
+#include <TKeyboard.h>
+extern TKeyboard kb;
+
 // 文字の出力
 inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0)
@@ -165,9 +168,19 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 
 // 改行
 void newline(uint8_t devno) {
-  if (devno==0)
+  if (devno==0) {
+    // XXX: this drains the keyboard buffer; is that a problem?
+    c_kbhit();
+    if (kb.state(PS2KEY_L_Ctrl)) {
+      uint32_t m = millis() + 200;
+      while (millis() < m) {
+        c_kbhit();
+        if (!kb.state(PS2KEY_L_Ctrl))
+          break;
+      }
+    }
     sc0.newLine();
-  else if (devno == 1)
+  } else if (devno == 1)
     Serial.println("");
 #if USE_NTSC == 1
   else if (devno == 2)
@@ -3821,8 +3834,6 @@ void iplot() {
 }
 
 #include "Psx.h"
-#include <TKeyboard.h>
-extern TKeyboard kb;
 Psx psx;
 
 static int cursor_pad_state()
