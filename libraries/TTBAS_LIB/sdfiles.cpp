@@ -234,30 +234,52 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint16_t len;
   uint8_t rc = 0;
   char name[32];
+  UnifileString fname;
+  UnifileString path = Unifile::path(_dir);
+  bool spiffs = Unifile::isSPIFFS(path);
 
-  if (SD_BEGIN() == false) 
+  if (!spiffs && SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
-  File dir = SD.open(_dir);
+  File dir;
+  fs::Dir fdir;
+  if (spiffs) {
+    fdir = SPIFFS.openDir(path.c_str() + FLASH_PREFIX_LEN + 1);
+  } else {
+    dir = SD.open(path.c_str());
+  }
 
-  if (dir) {
-    dir.rewindDirectory();
+  if (spiffs || (!spiffs && dir)) {
+    if (!spiffs)
+      dir.rewindDirectory();
+
     while (true) {
-      File entry =  dir.openNextFile();
-      if (!entry) {
-        break;
+      File entry;
+      bool is_directory = false;
+      if (spiffs) {
+        if (!fdir.next())
+          break;
+        fname = fdir.fileName().c_str();
+      } else {
+        entry =  dir.openNextFile();
+        if (!entry) {
+          break;
+        }
+        entry.getName(name, 32);
+        fname = name;
+        is_directory = entry.isDirectory();
+        entry.close();
       }
-      entry.getName(name, 32);
-      len = strlen(name);
-      if (!wildcard || (wildcard && wildcard_match(wildcard,name))) {
+      len = fname.length();
+      if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
-        if (entry.isDirectory()) {
-          c_puts(name);
+        if (is_directory) {
+          c_puts(fname.c_str());
           c_puts("*");
           len++;
         } else {
-          c_puts(name);
+          c_puts(fname.c_str());
         }
         if (!((cnt+1) % clmnum)) {
           newline();
@@ -267,13 +289,14 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         }
         cnt++;
       }
-      entry.close();
     }
-    dir.close();
+    if (!spiffs)
+      dir.close();
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  SD_END();
+  if (!spiffs)
+    SD_END();
   newline();
   return rc;
 }
