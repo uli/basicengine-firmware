@@ -1,6 +1,7 @@
 GOTO	I_GOTO		igoto
 GOSUB	I_GOSUB		igosub
 RETURN	I_RETURN	ireturn
+FORMAT	I_FORMAT	ecom
 FOR	I_FOR		ifor
 NEXT	I_NEXT		inext
 DO	I_DO		ido
@@ -66,7 +67,6 @@ PROC	I_PROC		iproc
 CALL	I_CALL		icall
 LRUN	I_LRUN		ilrun_
 FILES	I_FILES		ifiles
-FORMAT	I_FORMAT	ecom
 CONFIG	I_CONFIG	iconfig
 SAVECONFIG	I_SAVECONFIG	isaveconfig
 ERASE	I_ERASE		ierase
