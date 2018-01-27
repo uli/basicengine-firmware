@@ -5203,6 +5203,15 @@ void istop() {
   err = ERR_CTR_C;
 }
 
+void ichdir() {
+  BString new_cwd;
+  if(!(new_cwd = getParamFname())) {
+    return;
+  }
+  if (!Unifile::chDir(new_cwd.c_str()))
+    err = ERR_FILE_OPEN;
+}
+
 typedef void (*cmd_t)();
 #include "funtbl.h"
 

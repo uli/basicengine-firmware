@@ -84,6 +84,7 @@ EDIT	I_EDIT		iedit
 BORDER	I_BORDER	iborder
 ON	I_ON		ion
 STOP	I_STOP		istop
+CHDIR	I_CHDIR		ichdir
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom
