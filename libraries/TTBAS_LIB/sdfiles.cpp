@@ -254,10 +254,12 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
     while (true) {
       File entry;
       bool is_directory = false;
+      size_t siz;
       if (spiffs) {
         if (!fdir.next())
           break;
         fname = fdir.fileName().c_str();
+        siz = fdir.fileSize();
       } else {
         entry =  dir.openNextFile();
         if (!entry) {
@@ -266,12 +268,14 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         entry.getName(name, 32);
         fname = name;
         is_directory = entry.isDirectory();
+        siz = entry.fileSize();
         entry.close();
       }
       len = fname.length();
       if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
+        putnum(siz, 9); c_putch(' ');
         if (is_directory) {
           c_puts(fname.c_str());
           c_puts("*");
@@ -279,12 +283,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         } else {
           c_puts(fname.c_str());
         }
-        if (!((cnt+1) % clmnum)) {
-          newline();
-        } else {
-          for (uint8_t i = len; i < 14; i++)
-            c_puts(" ");
-        }
+        newline();
         cnt++;
       }
     }
@@ -295,7 +294,12 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   }
   if (!spiffs)
     SD_END();
+
   newline();
+  static const char files_msg[] PROGMEM = " files.";
+  putnum(cnt, 0); c_puts_P(files_msg);
+  newline();
+
   return rc;
 }
 
@@ -559,6 +563,7 @@ uint8_t sdfiles::rmdir(char* fname) {
   uint8_t rc = 1;
  
   // XXX: use Unifile
+  // (actually, this is a NOP for SPIFFS...)
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
