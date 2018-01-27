@@ -23,6 +23,7 @@
 
 #include "../../ttbasic/error.h"
 #include "../../ttbasic/BString.h"
+typedef BString UnifileString;
 
 #ifndef FILE_OVERWRITE
 #define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
@@ -152,9 +153,9 @@ public:
   }
 
   static Unifile open(const char *name, uint8_t flags) {
-    BString abs_name = path(name);
+    UnifileString abs_name = path(name);
     if (isSPIFFS(abs_name.c_str())) {
-      BString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
+      UnifileString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
       const char *fl;
       switch (flags) {
       case FILE_WRITE:		fl = "a"; break;
@@ -172,13 +173,13 @@ public:
     }
   }
   
-  static Unifile open(BString &name, uint8_t flags) {
+  static Unifile open(UnifileString &name, uint8_t flags) {
     return open(name.c_str(), flags);
   }
 
   static bool rename(const char *from, const char *to) {
-    BString abs_from = path(from);
-    BString abs_to = path(to);
+    UnifileString abs_from = path(from);
+    UnifileString abs_to = path(to);
     if (isSPIFFS(abs_from) != isSPIFFS(abs_to.c_str()))
       return true;
     if (isSPIFFS(abs_from))
@@ -191,22 +192,22 @@ public:
     }
   }
   
-  static inline bool isSPIFFS(BString file) {
+  static inline bool isSPIFFS(UnifileString file) {
     return file.startsWith(FLASH_PREFIX);
   }
 
-  static BString path(const char *rel) {
-    BString absolute;
+  static UnifileString path(const char *rel) {
+    UnifileString absolute;
     if (rel[0] == '/') {
       absolute = rel;
     } else {
-      absolute = m_cwd + BString("/") + BString(rel);
+      absolute = m_cwd + UnifileString("/") + UnifileString(rel);
     }
     return absolute;
   }
 
   static bool exists(const char *file) {
-    BString abs_file = path(file);
+    UnifileString abs_file = path(file);
     if (isSPIFFS(abs_file)) {
       return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     } else {
@@ -215,7 +216,7 @@ public:
   }  
 
   static bool chDir(const char *p) {
-    BString new_cwd = path(p);
+    UnifileString new_cwd = path(p);
     if (new_cwd == "/")
       new_cwd = "";
     else if (!isSPIFFS(new_cwd) && !exists(new_cwd.c_str()))
@@ -246,7 +247,7 @@ private:
   };
   uni_type m_type;
 
-  static BString m_cwd;
+  static UnifileString m_cwd;
 };
 
 class sdfiles {
