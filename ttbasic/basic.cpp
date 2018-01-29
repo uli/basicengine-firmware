@@ -1832,6 +1832,7 @@ void inew(uint8_t mode) {
     var.reset();
     svar.reset();
     num_arr.reset();
+    str_arr.reset();
   }
 
   //変数と配列の初期化
@@ -1846,6 +1847,8 @@ void inew(uint8_t mode) {
     var.reserve(var_names.varTop());
     num_arr_names.deleteDirect();
     num_arr.reserve(num_arr_names.varTop());
+    str_arr_names.deleteDirect();
+    str_arr.reserve(str_arr_names.varTop());
   }
   //実行制御用の初期化
   if (mode !=2) {
@@ -1857,6 +1860,8 @@ void inew(uint8_t mode) {
     svar.reserve(0);
     num_arr_names.deleteAll();
     num_arr.reserve(0);
+    str_arr_names.deleteAll();
+    str_arr.reserve(0);
     proc_names.deleteAll();
     proc.reserve(0);
 
