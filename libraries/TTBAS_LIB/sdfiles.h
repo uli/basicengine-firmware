@@ -232,6 +232,18 @@ public:
     return m_cwd.c_str();
   }
 
+  static bool remove(const char *p) {
+    UnifileString abs_file = path(p);
+    if (isSPIFFS(abs_file))
+      return SPIFFS.remove(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+    else {
+      SD_BEGIN();
+      bool ret = ::SD.remove(abs_file.c_str());
+      SD_END();
+      return ret;
+    }
+  }
+
 private:
   void cullOldFile() {
     if (m_sd_file) {
