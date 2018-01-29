@@ -1484,25 +1484,15 @@ void GROUP(basic_core) ivararr() {
 void isvar() {
   BString value;
   uint8_t index = *cip++;
-  int len;
   if (*cip != I_EQ) {
     err = ERR_VWOEQ;
     return;
   }
   cip++;
-  if (*cip == I_STR) {
-    cip++;
-    len = svar.var(index).fromBasic(cip);
-    if (!len)
-      err = ERR_OOM;
-    else
-      cip += len;
-  } else {
-    value = istrexp();
-    if (err)
-      return;
-    svar.var(index) = value;
-  }
+  value = istrexp();
+  if (err)
+    return;
+  svar.var(index) = value;
 }
 
 // Array assignment handler
