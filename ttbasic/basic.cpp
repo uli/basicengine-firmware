@@ -1244,7 +1244,7 @@ void SMALL iinput() {
       c_puts(istrexp().c_str());
       prompt = 0;        // prompt shown
 
-      if (*cip != I_COMMA) {
+      if (*cip != I_SEMI) {
 	err = ERR_SYNTAX;
 	goto DONE;
       }
