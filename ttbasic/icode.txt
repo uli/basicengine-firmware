@@ -128,6 +128,8 @@ OR	I_LOR		esyntax
 NOT	I_LNOT		esyntax
 ~	I_BITREV	esyntax
 ^	I_XOR		esyntax
+[	I_SQOPEN	esyntax
+]	I_SQCLOSE	esyntax
 RET	I_RET		esyntax
 ARG$	I_ARGSTR	esyntax
 ARG	I_ARG		esyntax

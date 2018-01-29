@@ -473,7 +473,7 @@ inline uint8_t checkClose() {
 inline bool is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return (*cip == I_STR ||
-          *cip == I_SVAR ||
+          (*cip == I_SVAR && cip[2] != I_SQOPEN) ||
           *cip == I_ARGSTR ||
           *cip == I_STRSTR ||
           *cip == I_CHR ||
