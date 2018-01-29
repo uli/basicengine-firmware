@@ -186,6 +186,7 @@ UP	I_UP		esyntax
 DOWN	I_DOWN		esyntax
 RIGHT	I_RIGHT		esyntax
 LEFT	I_LEFT		esyntax
+USING	I_USING		esyntax
 OUTPUT_OD	I_OUTPUT_OPEN_DRAIN	esyntax
 OUTPUT	I_OUTPUT	esyntax
 INPUT_PU	I_INPUT_PULLUP		esyntax

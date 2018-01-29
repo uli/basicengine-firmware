@@ -3115,10 +3115,12 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       str = istrexp();
       c_puts(str.c_str(), devno);
     } else  switch (*cip) { //中間コードで分岐
-    case I_SHARP: //「#
+    case I_USING: //「#
       cip++;
-      len = iexp(); //桁数を取得
-      if (err)
+      str = istrexp();
+      if (str[0] == '#')
+        len = strtonum(str.c_str() + 1, NULL);
+      if (err || *cip++ != I_SEMI)
 	return;
       break;
 
