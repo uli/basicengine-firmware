@@ -1232,7 +1232,6 @@ void SMALL iinput() {
   num_t value;
   BString str_value;
   short index;          // Array subscript or variable number
-  unsigned char i;      // 文字数
   unsigned char prompt; // prompt display flag
 
   sc0.show_curs(1);
@@ -1240,17 +1239,14 @@ void SMALL iinput() {
     prompt = 1;       // no prompt shown yet
 
     // Processing when a prompt is specified (w0t?)
-    if(*cip == I_STR) {   // もし中間コードが文字列なら
-      cip++;             // 中間コードポインタを次へ進める
-      i = *cip++;        // 文字数を取得
-      while (i--)        // 文字数だけ繰り返す
-	c_putch(*cip++);  // 文字を表示
-      prompt = 0;        // プロンプトを表示した
+    // We have to exclude string variables here because they may be lvalues.
+    if(is_strexp() && *cip != I_SVAR) {
+      c_puts(istrexp().c_str());
+      prompt = 0;        // prompt shown
 
       if (*cip != I_COMMA) {
 	err = ERR_SYNTAX;
 	goto DONE;
-	//return;
       }
       cip++;
     }
