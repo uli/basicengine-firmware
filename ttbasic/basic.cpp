@@ -3110,6 +3110,7 @@ int32_t iasc() {
 void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   num_t value;     //値
   int len;       //桁数
+  int32_t filenum;
   BString str;
 
   len = 0; //桁数を初期化
@@ -3127,6 +3128,18 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 	return;
       break;
 
+    case I_SHARP:
+      cip++;
+      if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
+        return;
+      if (!user_files[filenum]) {
+        err = ERR_FILE_NOT_OPEN;
+        return;
+      }
+      bfs.setTempFile(user_files[filenum]);
+      devno = 4;
+      break;
+      
     case I_CHR: // CHR$()関数
       cip++;
       if (getParam(value, 0,255, I_NONE)) break;   // 括弧の値を取得
