@@ -1484,11 +1484,34 @@ void GROUP(basic_core) ivararr() {
 void isvar() {
   BString value;
   uint8_t index = *cip++;
+  int32_t offset;
+  uint8_t sval;
+
+  if (*cip == I_SQOPEN) {
+    // String character accessor
+    ++cip;
+
+    if (getParam(offset, 0, svar.var(index).length(), I_SQCLOSE))
+      return;
+
+    if (*cip != I_EQ) {
+      err = ERR_VWOEQ;
+      return;
+    }
+    cip++;
+    
+    sval = iexp();
+    svar.var(index)[offset] = sval;
+
+    return;
+  }
+
   if (*cip != I_EQ) {
     err = ERR_VWOEQ;
     return;
   }
   cip++;
+
   value = istrexp();
   if (err)
     return;
