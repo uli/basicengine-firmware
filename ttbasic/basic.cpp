@@ -1264,7 +1264,7 @@ void SMALL iinput() {
       if (cip[-1] == I_VARARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
-        value = num_arr.var(i).var(idxs);
+        value = num_arr.var(index).var(idxs);
       }
  
       cip++;
