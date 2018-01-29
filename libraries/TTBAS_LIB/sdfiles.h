@@ -288,6 +288,10 @@ public:
   int8_t  IsText(char* tfname);                         // ファイルがテキストファイルかチェック
   int16_t readLine(char* str);                          // 1行分読込み
   int8_t  textOut(char* fname, int16_t sline, int16_t ln); // テキストファイルの出力
+
+  void setTempFile(Unifile f) {
+    tfile = f;
+  }
     
   // ビットマップファイルのロード
   uint8_t loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h);
