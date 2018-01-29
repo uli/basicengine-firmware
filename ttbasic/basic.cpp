@@ -4427,8 +4427,10 @@ BString istrvalue()
 {
   BString value;
   BString *bp;
-  int len;
+  int len, dims;
   char c;
+  uint8_t i;
+  int idxs[MAX_ARRAY_DIMS];
 
   switch (*cip++) {
   case I_STR:
@@ -4440,6 +4442,17 @@ BString istrvalue()
   case I_SVAR:
     value = svar.var(*cip++);
     break;
+
+  case I_STRARR:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != str_arr.var(i).dims()) {
+      err = ERR_SOR;
+    } else {
+      value = str_arr.var(i).var(idxs);
+    }
+    break;
+
   case I_ARGSTR:
     bp = iargstr();
     if (!err)
