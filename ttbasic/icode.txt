@@ -85,6 +85,8 @@ BORDER	I_BORDER	iborder
 ON	I_ON		ion
 STOP	I_STOP		istop
 CHDIR	I_CHDIR		ichdir
+TRON	I_TRON		itron
+TROFF	I_TROFF		itroff
 RENUM	I_RENUM		ecom
 RUN	I_RUN		ecom
 CONT	I_CONT		ecom

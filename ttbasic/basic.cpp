@@ -1751,6 +1751,15 @@ void ilet() {
   }
 }
 
+static bool trace_enabled = false;
+
+void itron() {
+  trace_enabled = true;
+}
+void itroff() {
+  trace_enabled = false;
+}
+
 void inew(uint8_t mode = 0);
 
 // RUN command handler
@@ -1777,7 +1786,13 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   }
 
   while (*clp) {     // 行ポインタが末尾を指すまで繰り返す
+    if (trace_enabled) {
+      putnum(getlineno(clp), 0);
+      c_putch(' ');
+    }
+
     cip = clp + sizeof(num_t) + 1;   // 中間コードポインタを行番号の後ろに設定
+
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
