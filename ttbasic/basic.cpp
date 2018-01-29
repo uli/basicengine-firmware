@@ -4137,6 +4137,19 @@ num_t GROUP(basic_core) ivalue() {
     }
     break;
 
+  case I_SVAR:
+    // String character accessor 
+    i = *cip++;
+    if (*cip++ != I_SQOPEN) {
+      // XXX: Can we actually get here?
+      err = ERR_SYNTAX;
+      return 0;
+    }
+    if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
+      return 0;
+    value = svar.var(i)[a];
+    break;
+    
   //括弧の値の取得
   case I_OPEN: //「(」
     cip--;
