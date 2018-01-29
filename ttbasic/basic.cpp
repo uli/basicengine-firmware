@@ -99,6 +99,9 @@ bool restore_text_window = false;
 sdfiles bfs;
 #endif
 
+#define MAX_USER_FILES 16
+Unifile user_files[MAX_USER_FILES];
+
 // *** システム設定関連 **************
 #define CONFIG_NTSC 65534  // EEPROM NTSC設定値保存番号
 #define CONFIG_KBD  65533  // EEPROM キーボード設定
@@ -5217,6 +5220,54 @@ void ichdir() {
   }
   if (!Unifile::chDir(new_cwd.c_str()))
     err = ERR_FILE_OPEN;
+}
+
+void iopen() {
+  BString filename;
+  uint8_t flags = FILE_READ;
+  int32_t filenum;
+
+  if (!(filename = getParamFname()))
+    return;
+  
+  if (*cip == I_FOR) {
+    ++cip;
+    switch (*cip++) {
+    case I_OUTPUT:	flags = FILE_OVERWRITE; break;
+    case I_INPUT:	flags = FILE_READ; break;
+    case I_APPEND:	flags = FILE_WRITE; break;
+    default:		err = ERR_SYNTAX; return;
+    }
+  }
+  
+  if (*cip++ != I_AS) {
+    err = ERR_SYNTAX;
+    return;
+  }
+  if (*cip == I_SHARP)
+    ++cip;
+
+  if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
+    return;
+  
+  user_files[filenum] = Unifile::open(filename, flags);
+  if (!user_files[filenum])
+    err = ERR_FILE_OPEN;
+}
+
+void iclose() {
+  int32_t filenum;
+
+  if (*cip == I_SHARP)
+    ++cip;
+
+  if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
+    return;
+
+  if (!user_files[filenum])
+    err = ERR_FILE_NOT_OPEN;
+  else
+    user_files[filenum].close();
 }
 
 typedef void (*cmd_t)();
