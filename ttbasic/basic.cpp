@@ -1234,8 +1234,6 @@ void SMALL iinput() {
   short index;          // 配列の添え字or変数番号
   unsigned char i;      // 文字数
   unsigned char prompt; // プロンプト表示フラグ
-  num_t ofvalue;        // オーバーフロー時の設定値
-  uint8_t flgofset =0;  // オーバーフロ時の設定値指定あり
 
   sc0.show_curs(1);
   for(;; ) {           // 無限に繰り返す
@@ -1271,18 +1269,6 @@ void SMALL iinput() {
  
       cip++;
 
-      // Setting value at overflow
-      // XXX: this is weird syntax; how does this look like in other BASICs?
-      // XXX: do we need it at all?
-      if (*cip == I_COMMA) {
-	cip++;
-	ofvalue = iexp();
-	if (err) {
-	  goto DONE;
-	}
-	flgofset = 1;
-      }
-
       // XXX: idiosyncrasy, never seen this in other BASICs
       if (prompt) {          // If you are not prompted yet
         if (dims)
@@ -1293,14 +1279,8 @@ void SMALL iinput() {
       }
 
       value = getnum();
-      if (err) {            // もしエラーが生じたら
-	if (err == ERR_VOF && flgofset) {
-	  err = ERR_OK;
-	  value = ofvalue;
-	} else {
-	  return;            // 終了
-	}
-      }
+      if (err)
+        return;
 
       if (dims)
         num_arr.var(index).var(idxs) = value;
@@ -1339,32 +1319,14 @@ void SMALL iinput() {
 	//return;                 // 終了
       }
 
-      // オーバーフロー時の設定値
-      if (*cip == I_COMMA) {
-	cip++;
-	ofvalue = iexp();
-	if (err) {
-	  //return;
-	  goto DONE;
-	}
-	flgofset = 1;
-      }
-
       if (prompt) { // もしまだプロンプトを表示していなければ
 	c_puts("@(");     //「@(」を表示
 	putnum(index, 0); // 添え字を表示
 	c_puts("):");     //「):」を表示
       }
       value = getnum(); // 値を入力
-      if (err) {           // もしエラーが生じたら
-	if (err == ERR_VOF && flgofset) {
-	  err = ERR_OK;
-	  value = ofvalue;
-	} else {
-	  goto DONE;
-	  //return;            // 終了
-	}
-      }
+      if (err)
+        return;
       arr[index] = value; //配列へ代入
       break;              // 打ち切る
 
