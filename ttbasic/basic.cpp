@@ -1303,13 +1303,23 @@ void SMALL iinput() {
       break;
 
     case I_SVAR:
+    case I_STRARR:
       index = *cip;
       
+      if (cip[-1] == I_STRARR) {
+        dims = get_array_dims(idxs);
+        // XXX: check if dims matches array
+        value = num_arr.var(index).var(idxs);
+      }
+ 
       cip++;
       
       // XXX: idiosyncrasy, never seen this in other BASICs
       if (prompt) {          // If you are not prompted yet
-        c_puts(svar_names.name(index));
+        if (dims)
+          c_puts(str_arr_names.name(index));
+        else
+          c_puts(svar_names.name(index));
 	c_putch(':');
       }
       
@@ -1317,7 +1327,10 @@ void SMALL iinput() {
       if (err)
         return;
       
-      svar.var(index) = str_value;
+      if (dims)
+        str_arr.var(index).var(idxs) = str_value;
+      else
+        svar.var(index) = str_value;
 
       break;
 
