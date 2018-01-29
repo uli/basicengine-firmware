@@ -1229,17 +1229,17 @@ num_t GROUP(basic_core) getparam() {
 void SMALL iinput() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
-  num_t value;          // 値
+  num_t value;
   BString str_value;
-  short index;          // 配列の添え字or変数番号
+  short index;          // Array subscript or variable number
   unsigned char i;      // 文字数
-  unsigned char prompt; // プロンプト表示フラグ
+  unsigned char prompt; // prompt display flag
 
   sc0.show_curs(1);
-  for(;; ) {           // 無限に繰り返す
-    prompt = 1;       // まだプロンプトを表示していない
+  for(;;) {
+    prompt = 1;       // no prompt shown yet
 
-    // プロンプトが指定された場合の処理
+    // Processing when a prompt is specified (w0t?)
     if(*cip == I_STR) {   // もし中間コードが文字列なら
       cip++;             // 中間コードポインタを次へ進める
       i = *cip++;        // 文字数を取得
@@ -1255,11 +1255,11 @@ void SMALL iinput() {
       cip++;
     }
 
-    // 値を入力する処理
-    switch (*cip++) {         // 中間コードで分岐
-    case I_VAR:             // 変数の場合
+    // Processing input values
+    switch (*cip++) {
+    case I_VAR:
     case I_VARARR:
-      index = *cip;         // 変数番号の取得
+      index = *cip;
 
       if (cip[-1] == I_VARARR) {
         dims = get_array_dims(idxs);
@@ -1286,7 +1286,7 @@ void SMALL iinput() {
         num_arr.var(index).var(idxs) = value;
       else
         var.var(index) = value;
-      break;               // 打ち切る
+      break;
 
     case I_SVAR:
       index = *cip;
