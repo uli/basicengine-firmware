@@ -869,9 +869,7 @@ void BackupFile(char *fn)
 		//remove(bkp);
 
 		/* Rename the old file as backup */
-
-		// XXX: unimp
-		//rename(fn, bkp);
+		Unifile::rename(fn, bkp);
 	}
 }
 
