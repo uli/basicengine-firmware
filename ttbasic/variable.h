@@ -358,6 +358,145 @@ private:
   BString **m_var;
 };
 
+template <typename T> class StringArray {
+public:
+  StringArray() {
+    m_dims = 0;
+    m_sizes = NULL;
+    m_var = NULL;
+    m_total = 0;
+  }
+  
+  ~StringArray() {
+    if (m_sizes)
+      free(m_sizes);
+    if (m_var)
+      delete[] m_var;
+  }
+
+  void reset() {
+    m_dims = 0;
+    m_total = 0;
+    if (m_sizes) {
+      free(m_sizes);
+      m_sizes = NULL;
+    }
+    if (m_var) {
+      delete[] m_var;
+      m_var = NULL;
+    }
+  }  
+
+  bool reserve(int dims, int *sizes) {
+    dbg_var("sa reserve dims %d\n", dims);
+    m_dims = dims;
+    m_sizes = (int *)malloc(dims * sizeof(int));
+    if (!m_sizes) {
+      m_dims = 0;
+      return true;
+    }
+    memcpy(m_sizes, sizes, dims * sizeof(int));
+    m_total = 1;
+    for (int i = 0; i < dims; ++i) {
+      m_total *= sizes[i];
+    }
+    dbg_var("na total %d\n", m_total);
+    m_var = new BString[m_total];
+    if (!m_var) {
+      free(m_sizes);
+      m_dims = 0;
+      m_sizes = NULL;
+      m_var = NULL;
+      return true;
+    }
+    return false;
+  }
+
+  inline T& var(int *idxs) {
+    if (!m_sizes) {
+      err = ERR_UNDEFARR;
+      // XXX: Is it possible to return an invalid reference without crashing?
+      return bull;
+    }
+    int mul = 1;
+    int idx = 0;
+    for (int i = 0; i < m_dims; ++i) {
+      if (idxs[i] >= m_sizes[i]) {
+        err = ERR_SOR;
+        // XXX: Likewise.
+        return bull;
+      }
+      idx += idxs[i] * mul;
+      mul *= m_sizes[i];
+    }
+    return m_var[idx];
+  }
+  
+  inline int dims() {
+    return m_dims;
+  }
+
+private:
+  int m_dims;
+  int m_total;
+  int *m_sizes;
+  T *m_var;
+  T bull;
+};
+
+template <typename T> class StringArrayVariables {
+public:
+  StringArrayVariables() {
+    m_size = 0;
+    m_var = NULL;
+  }
+  
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      m_var[i]->reset();
+  }
+  
+  bool reserve(uint8_t count) {
+    dbg_var("sa reserve %d\n", count);
+    if (count == 0) {
+      for (int i = 0; i < m_size; ++i) {
+        delete m_var[i];
+      }
+      free(m_var);
+      m_var = NULL;
+      m_size = 0;
+      return false;
+    }
+    
+    if (count < m_size) {
+      for (int i = count; i < m_size; ++i) {
+        delete m_var[i];
+      }
+    }
+    
+    m_var = (StringArray<T> **)realloc(m_var, count * sizeof(StringArray<T> **));
+    if (!m_var)
+      return true;
+    for (int i = m_size; i < count; ++i) {
+      m_var[i] = new StringArray<T>();
+    }
+    m_size = count;
+    return false;
+  }
+  
+  inline int size() {
+    return m_size;
+  }
+  
+  inline StringArray<T>& var(uint8_t index) {
+    return *m_var[index];
+  }
+
+private:
+  int m_size;
+  StringArray<T> **m_var;
+};
+
 struct basic_location {
   unsigned char *lp;
   unsigned char *ip;
