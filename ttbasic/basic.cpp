@@ -3092,28 +3092,11 @@ int32_t imap() {
 }
 
 // ASC(文字列)
-// ASC(文字列,文字位置)
-// ASC(変数,文字位置)
 int32_t iasc() {
-  int32_t value =0;
-  int32_t pos = 0;  // 文字位置
-  BString str;    // 文字列先頭位置
+  int32_t value;
 
   if (checkOpen()) return 0;
-
-  str = istrexp();
-
-  if (*cip == I_COMMA) {
-    ++cip;
-    if (getParam(pos, 0, str.length() - 1, I_NONE)) return 0;
-  }
-
-  if ((uint32_t)pos < str.length()) {
-    value = str[pos];
-  } else {
-    err = ERR_RANGE;
-  }
-
+  value = istrexp()[0];
   checkClose();
 
   return value;
