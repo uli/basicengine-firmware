@@ -3346,19 +3346,16 @@ void irename() {
 // REMOVE "ファイル名"
 void iremove() {
   BString fname;
-  uint8_t rc;
 
   if(!(fname = getParamFname())) {
     return;
   }
 
-#if USE_SD_CARD == 1
-  rc = bfs.remove((char *)fname.c_str());
-  if (rc) {
-    err = ERR_FILE_WRITE;
+  bool rc = Unifile::remove(fname.c_str());
+  if (!rc) {
+    err = ERR_FILE_WRITE;	// XXX: something more descriptive?
     return;
   }
-#endif
 }
 
 // BSAVE "ファイル名", アドレス
