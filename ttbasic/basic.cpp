@@ -1408,6 +1408,27 @@ void idim() {
   if (num_arr.var(index).reserve(dims, idxs))
     err = ERR_OOM;
 
+  if (*cip == I_EQ) {
+    // Initializers
+    if (dims > 1) {
+      err = ERR_NOT_SUPPORTED;
+    } else {
+      num_t value;
+      int cnt = 0;
+      do {
+        cip++;
+        value = iexp();
+        if (err)
+          return;
+        num_t &n = num_arr.var(index).var(&cnt);
+        if (err)
+          return;
+        n = value;
+        cnt++;
+      } while(*cip == I_COMMA);
+    }
+  }
+
   return;
 }
 
