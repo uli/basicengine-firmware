@@ -585,17 +585,3 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 
   return rc;
 }
-
-// ファイルの削除
-uint8_t sdfiles::remove(char* fname) {
-  uint8_t rc = 1;
-
-  // XXX: use Unifile
-  if (SD_BEGIN() == false) 
-    return 1;
-  if(SD.remove(fname) == true)
-    rc = 0;
-  SD_END();
-  return rc;  
-}
-
