@@ -95,6 +95,7 @@ FLASH	I_FLASH		ecom
 _none	I_VAR		ivar
 _none	I_VARARR	ivararr
 _none	I_SVAR		isvar
+_none	I_STRARR	istrarr
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 WHILE	I_WHILE		esyntax

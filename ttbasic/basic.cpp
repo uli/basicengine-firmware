@@ -1473,6 +1473,35 @@ void isvar() {
   svar.var(index) = value;
 }
 
+// String array variable assignment handler
+void GROUP(basic_core) istrarr() {
+  BString value;
+  int idxs[MAX_ARRAY_DIMS];
+  int dims = 0;
+  uint8_t index;
+  
+  index = *cip++;
+
+  dims = get_array_dims(idxs);
+  if (dims < 0)
+    return;
+
+  if (*cip != I_EQ) {
+    err = ERR_VWOEQ;
+    return;
+  }
+  cip++;
+
+  value = istrexp();
+  if (err)
+    return;
+
+  BString &s = str_arr.var(index).var(idxs);
+  if (err)
+    return;
+  s = value;
+}
+
 static inline bool end_of_statement()
 {
   return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE;
