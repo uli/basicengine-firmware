@@ -294,6 +294,8 @@ VarNames svar_names;
 #define MAX_ARRAY_DIMS 4
 NumArrayVariables<num_t> num_arr;
 VarNames num_arr_names;
+StringArrayVariables<BString> str_arr;
+VarNames str_arr_names;
 
 VarNames proc_names;
 Procedures proc;
