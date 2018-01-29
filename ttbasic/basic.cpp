@@ -2094,31 +2094,6 @@ void isave() {
 #endif
 }
 
-// フラッシュメモリ上のプログラム消去 ERASE[プログラム番号[,プログラム番号]
-void ierase() {
-#if 0
-  int16_t s_prgno, e_prgno;
-  uint8_t* sram_adr;
-  uint32_t flash_adr;
-
-  if ( getParam(s_prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
-  e_prgno = s_prgno;
-  if (*cip == I_COMMA) {
-    cip++;
-    if ( getParam(e_prgno, 0, FLASH_SAVE_NUM-1, I_NONE) ) return;
-  }
-
-  TFlash.unlock();
-  for (uint8_t prgno = s_prgno; prgno <= e_prgno; prgno++) {
-    for (uint8_t i=0; i < FLASH_PAGE_PAR_PRG; i++) {
-      flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG+i);
-      TFlash.eracePage(flash_adr);
-    }
-  }
-  TFlash.lock();
-#endif
-}
-
 // テキスト形式のプログラムのロード
 // 引数
 //   fname  :  ファイル名

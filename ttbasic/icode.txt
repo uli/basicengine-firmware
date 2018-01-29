@@ -69,7 +69,6 @@ LRUN	I_LRUN		ilrun_
 FILES	I_FILES		ifiles
 CONFIG	I_CONFIG	iconfig
 SAVECONFIG	I_SAVECONFIG	isaveconfig
-ERASE	I_ERASE		ierase
 SYSINFO	I_INFO		iinfo
 SCREEN	I_SCREEN	iscreen
 WINDOW	I_WINDOW	iwindow
