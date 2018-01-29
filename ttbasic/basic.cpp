@@ -824,7 +824,17 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       vname[--var_len] = 0;     // terminate C string
 
       p--;
-      if (*p == '$') {
+      if (*p == '$' && p[1] == '(') {
+        ibuf[len++] = I_STRARR;
+        int idx = str_arr_names.assign(vname, is_prg_text);
+        if (idx < 0)
+          goto oom;
+        ibuf[len++] = idx;
+        if (str_arr.reserve(str_arr_names.varTop()))
+          goto oom;
+        s += var_len + 1;
+        ptok++;
+      } else if (*p == '$') {
 	ibuf[len++] = I_SVAR;
 	int idx = svar_names.assign(vname, is_prg_text);
 	if (idx < 0)
