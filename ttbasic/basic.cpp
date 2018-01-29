@@ -2368,8 +2368,11 @@ int32_t iinkey() {
     // 一時バッファに入力済キーがあればそれを使う
     rc = prevPressKey;
     prevPressKey = 0;
-  } else
+  } else {
     rc = c_kbhit();
+    if (rc == SC_KEY_CTRL_C)
+      err = ERR_CTR_C;
+  }
 
   return rc;
 }
