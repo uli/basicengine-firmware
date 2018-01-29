@@ -1182,8 +1182,15 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
-    }
-    else
+    } else if (*ip == I_STRARR) {
+      ip++;
+      var_code = *ip++;
+      c_puts(str_arr_names.name(var_code), devno);
+      c_putch('$', devno);
+      c_putch('(', devno);
+      if (!nospaceb(*ip)) //もし例外にあたらなければ
+	c_putch(' ',devno);  //空白を表示
+    } else
 
     //文字列の処理
     if (*ip == I_STR) { //もし文字列なら
