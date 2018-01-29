@@ -225,7 +225,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT, I_BITREV, I_XOR,
-  I_ARRAY, I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
+  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F, I_PWM,
   I_DIN, I_ANA, I_MAP, I_DMP,
   I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
@@ -298,7 +298,6 @@ VarNames num_arr_names;
 VarNames proc_names;
 Procedures proc;
 
-num_t arr[SIZE_ARRY];             // 配列領域
 unsigned char *listbuf; // Pointer to program list area
 
 // macros for in/decrementing stack pointers with bounds checking
@@ -1303,29 +1302,6 @@ void SMALL iinput() {
 
       break;
 
-    case I_ARRAY: // 配列の場合
-      index = getparam();       // 配列の添え字を取得
-      if (err)                  // もしエラーが生じたら
-	goto DONE;
-      //return;                 // 終了
-
-      if (index >= SIZE_ARRY) { // もし添え字が上限を超えたら
-	err = ERR_SOR;          // エラー番号をセット
-	goto DONE;
-	//return;                 // 終了
-      }
-
-      if (prompt) { // もしまだプロンプトを表示していなければ
-	c_puts("@(");     //「@(」を表示
-	putnum(index, 0); // 添え字を表示
-	c_puts("):");     //「):」を表示
-      }
-      value = getnum(); // 値を入力
-      if (err)
-        return;
-      arr[index] = value; //配列へ代入
-      break;              // 打ち切る
-
     default: // 以上のいずれにも該当しなかった場合
       err = ERR_SYNTAX; // エラー番号をセット
       //return;            // 終了
@@ -1495,40 +1471,6 @@ void isvar() {
   if (err)
     return;
   svar.var(index) = value;
-}
-
-// Array assignment handler
-void iarray() {
-  int value; //値
-  short index; //配列の添え字
-
-  index = getparam(); //配列の添え字を取得
-  if (err) //もしエラーが生じたら
-    return;  //終了
-
-  if (index >= SIZE_ARRY || index < 0 ) { //もし添え字が上下限を超えたら
-    err = ERR_SOR; //エラー番号をセット
-    return; //終了
-  }
-
-  if (*cip != I_EQ) { //もし「=」でなければ
-    err = ERR_VWOEQ; //エラー番号をセット
-    return; //終了
-  }
-
-  // 例: @(n)=1,2,3,4,5 の連続設定処理
-  do {
-    cip++;
-    value = iexp(); // 式の値を取得
-    if (err)        // もしエラーが生じたら
-      return;       // 終了
-    if (index >= SIZE_ARRY) { // もし添え字が上限を超えたら
-      err = ERR_SOR;          // エラー番号をセット
-      return;
-    }
-    arr[index] = value; //配列へ代入
-    index++;
-  } while(*cip == I_COMMA);
 }
 
 static inline bool end_of_statement()
@@ -1727,11 +1669,6 @@ void ilet() {
     isvar();
     break;
 
-  case I_ARRAY: // 配列の場合
-    cip++;      // 中間コードポインタを次へ進める
-    iarray();   // 配列への代入を実行
-    break;
-
   default:      // 以上のいずれにも該当しなかった場合
     err = ERR_LETWOV; // エラー番号をセット
     break;            // 打ち切る
@@ -1858,8 +1795,6 @@ void SMALL ilist(uint8_t devno=0) {
 
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only
 void inew(uint8_t mode) {
-  int i; //ループカウンタ
-
   data_ip = data_lp = NULL;
 
   if (mode != 1) {
@@ -1871,8 +1806,6 @@ void inew(uint8_t mode) {
   //変数と配列の初期化
   if (mode == 0|| mode == 2) {
     // forget variables assigned in direct mode
-    for (i = 0; i < SIZE_ARRY; i++) //配列の数だけ繰り返す
-      arr[i] = 0;  //配列を0に初期化
 
     // XXX: These reserve() calls always downsize (or same-size) the
     // variable pools. Can they fail doing so?
@@ -2671,15 +2604,6 @@ void igetDate() {
       cip++; index = *cip;        // 変数インデックスの取得
       var.var(index) = v[i];
       cip++;
-    } else if (*cip == I_ARRAY) { // 配列の場合
-      cip++;
-      index = getparam();         // 添え字の取得
-      if (err) return;
-      if (index >= SIZE_ARRY || index < 0 ) {
-	err = ERR_SOR;
-	return;
-      }
-      arr[index] = v[i];          // 配列に格納
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
       return;
@@ -2717,15 +2641,6 @@ void igetTime() {
       cip++; index = *cip;        // 変数インデックスの取得
       var.var(index) = v[i];
       cip++;
-    } else if (*cip == I_ARRAY) { // 配列の場合
-      cip++;
-      index = getparam();         // 添え字の取得
-      if (err) return;
-      if (index >= SIZE_ARRY || index < 0 ) {
-	err = ERR_SOR;
-	return;
-      }
-      arr[index] = v[i];          // 配列に格納
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
       return;
@@ -4118,16 +4033,6 @@ num_t GROUP(basic_core) ivalue() {
     value = getparam(); //括弧の値を取得
     break;
 
-  //配列の値の取得
-  case I_ARRAY: //配列
-    value = getparam(); //括弧の値を取得
-    if (!err) {
-      if (value >= SIZE_ARRY)
-	err = ERR_SOR;          // 添え字が範囲を超えた
-      else
-	value = arr[(int)value];     // 配列の値を取得
-    }
-    break;
   case I_RND: //関数RND
     value = getparam(); //括弧の値を取得
     if (!err) {
