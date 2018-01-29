@@ -211,7 +211,10 @@ public:
     if (isSPIFFS(abs_file)) {
       return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     } else {
-      return ::SD.exists(abs_file.c_str());
+      SD_BEGIN();
+      bool ret = ::SD.exists(abs_file.c_str());
+      SD_END();
+      return ret;
     }
   }  
 
