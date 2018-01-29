@@ -1693,6 +1693,29 @@ void iread() {
     svar.var(*cip++) = svalue;
     break;
     
+  case I_STRARR: {
+    ++cip;
+    int idxs[MAX_ARRAY_DIMS];
+    int dims = 0;
+    
+    index = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims < 0)
+      return;
+
+    cip_save = cip;
+    cip = data_ip;
+    svalue = istrexp();
+    data_ip = cip;
+    cip = cip_save;
+
+    BString &s = str_arr.var(index).var(idxs);
+    if (err)
+      return;
+    s = svalue;
+    break;
+    }
+
   default:
     err = ERR_SYNTAX;
     break;
