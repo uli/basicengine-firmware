@@ -154,16 +154,12 @@ inline void c_putch(uint8_t c, uint8_t devno) {
     sc0.putch(c);
   else if (devno == 1)
     Serial.write(c);
-#if USE_NTSC == 1
   else if (devno == 2)
     sc0.gputch(c);
-#endif
   else if (devno == 3)
     mem_putch(c);
-#if USE_SD_CARD == 1
   else if (devno == 4)
     bfs.putch(c);
-#endif
 }
 
 // 改行
@@ -182,18 +178,14 @@ void newline(uint8_t devno) {
     sc0.newLine();
   } else if (devno == 1)
     Serial.println("");
-#if USE_NTSC == 1
   else if (devno == 2)
     sc0.gputch('\n');
-#endif
   else if (devno == 3)
     mem_putch('\n');
-#if USE_SD_CARD == 1
   else if (devno == 4) {
     bfs.putch('\x0d');
     bfs.putch('\x0a');
   }
-#endif
 }
 
 // tick用支援関数
