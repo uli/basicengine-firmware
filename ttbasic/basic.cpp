@@ -1571,6 +1571,7 @@ int GROUP(basic_core) token_size(uint8_t *code) {
     return 5;
   case I_VAR:
   case I_VARARR:
+  case I_STRARR:
   case I_CALL:
   case I_PROC:
     return 2;
