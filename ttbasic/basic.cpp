@@ -4061,7 +4061,7 @@ num_t GROUP(basic_core) ivalue() {
     i = *cip++;
     dims = get_array_dims(idxs);
     if (dims != num_arr.var(i).dims()) {
-      err = ERR_OOB;
+      err = ERR_SOR;
     } else {
       value = num_arr.var(i).var(idxs);
     }
