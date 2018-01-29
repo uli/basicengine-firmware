@@ -1387,12 +1387,15 @@ int get_array_dims(int *idxs) {
 void idim() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
+  bool is_string;
   uint8_t index;
 
-  if (*cip++ != I_VARARR) {
+  if (*cip != I_VARARR && *cip != I_STRARR) {
     err = ERR_SYNTAX;
     return;
   }
+  is_string = *cip == I_STRARR;
+  ++cip;
 
   index = *cip++;
 
@@ -1400,27 +1403,46 @@ void idim() {
   if (dims < 0)
     return;
 
-  if (num_arr.var(index).reserve(dims, idxs))
+  if ((!is_string && num_arr.var(index).reserve(dims, idxs)) ||
+      (is_string  && str_arr.var(index).reserve(dims, idxs))) {
     err = ERR_OOM;
+    return;
+  }
 
   if (*cip == I_EQ) {
     // Initializers
     if (dims > 1) {
       err = ERR_NOT_SUPPORTED;
     } else {
-      num_t value;
-      int cnt = 0;
-      do {
-        cip++;
-        value = iexp();
-        if (err)
-          return;
-        num_t &n = num_arr.var(index).var(&cnt);
-        if (err)
-          return;
-        n = value;
-        cnt++;
-      } while(*cip == I_COMMA);
+      if (is_string) {
+        BString svalue;
+        int cnt = 0;
+        do {
+          cip++;
+          svalue = istrexp();
+          if (err)
+            return;
+          BString &s = str_arr.var(index).var(&cnt);
+          if (err)
+            return;
+          s = svalue;
+          cnt++;
+        } while(*cip == I_COMMA);
+      } else {
+        num_t value;
+        int cnt = 0;
+        do {
+          cip++;
+          value = iexp();
+          if (err)
+            return;
+          num_t &n = num_arr.var(index).var(&cnt);
+          if (err)
+            return;
+          n = value;
+          cnt++;
+        } while(*cip == I_COMMA);
+      }
     }
   }
 
