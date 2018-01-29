@@ -1717,6 +1717,11 @@ void ilet() {
     isvar();
     break;
 
+  case I_STRARR:
+    cip++;
+    istrarr();
+    break;
+
   default:      // 以上のいずれにも該当しなかった場合
     err = ERR_LETWOV; // エラー番号をセット
     break;            // 打ち切る
