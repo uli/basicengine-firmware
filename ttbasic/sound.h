@@ -12,6 +12,10 @@ public:
 
     static SID sid;
 
+    static inline bool isPlaying(int ch) {
+        return m_next_event[ch] != 0;
+    }
+
 private:
     static void defaults(int ch);
     static void ICACHE_RAM_ATTR mmlCallback(MML_INFO *p, void *extobj);
