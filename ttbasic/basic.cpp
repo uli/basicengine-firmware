@@ -3035,9 +3035,9 @@ void isound() {
 
 BString mml_text;
 void iplay() {
-  sound.stopMml();
+  sound.stopMml(0);
   mml_text = istrexp();
-  sound.playMml(mml_text.c_str());
+  sound.playMml(0, mml_text.c_str());
 }
 
 //　NOTONE

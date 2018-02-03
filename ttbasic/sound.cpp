@@ -3,11 +3,11 @@
 #include "sound.h"
 
 SID BasicSound::sid;
-MML BasicSound::m_mml;
-MML_OPTION BasicSound::m_mml_opt;
-uint32_t BasicSound::m_next_event;
+MML BasicSound::m_mml[SOUND_CHANNELS];
+MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
+uint32_t BasicSound::m_next_event[SOUND_CHANNELS];
 
-uint32_t BasicSound::m_sid_off[3];
+uint32_t BasicSound::m_sid_off[SOUND_CHANNELS];
 
 
 const uint16_t sidfreq[] PROGMEM = {
@@ -47,25 +47,26 @@ const uint16_t sidfreq[] PROGMEM = {
 void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 {
   uint32_t now = millis();
-  m_next_event = now;
+  int ch = (int)extobj;
+  m_next_event[ch] = now;
   switch (p->type) {
     case MML_TYPE_NOTE:
       {
         MML_ARGS_NOTE *args = &(p->args.note);
-        m_sid_off[0] = now + args->ticks/2;
-        m_next_event += args->ticks;
+        m_sid_off[ch] = now + args->ticks/2;
+        m_next_event[ch] += args->ticks;
         if ((unsigned int)args->number < sizeof(sidfreq)/sizeof(*sidfreq)) {
           int freq = pgm_read_word(&sidfreq[args->number]);
-          sid.set_register(0, freq & 0xff);
-          sid.set_register(1, freq >> 8);
-          sid.set_register(4, 0x11);
+          sid.set_register(0 + ch * 7, freq & 0xff);
+          sid.set_register(1 + ch * 7, freq >> 8);
+          sid.set_register(4 + ch * 7, 0x11);
         }
       }
       break;
     case MML_TYPE_REST:
       {
         MML_ARGS_REST *args = &(p->args.rest);
-        m_next_event += args->ticks;
+        m_next_event[ch] += args->ticks;
       }
       break;
   }
@@ -74,45 +75,46 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 void BasicSound::begin(void)
 {
   sid.begin();
-  mml_init(&m_mml, mmlCallback, 0);
-  MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt);
-}
-
-void BasicSound::defaults()
-{
-  for (int ch = 0; ch < 3; ++ch) {
-    int ch_off = ch * 7;
-    sid.set_register(ch_off + 0, 0);
-    sid.set_register(ch_off + 1, 0);
-    sid.set_register(ch_off + 4, 0x11);
-    sid.set_register(ch_off + 5, 0x33);
-    sid.set_register(ch_off + 6, 0xd5);
-    m_sid_off[ch] = 0;
+  for (int i = 0; i < SOUND_CHANNELS; ++i) {
+    mml_init(&m_mml[i], mmlCallback, (void *)i);
+    MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
+    defaults(i);
   }
+}
+
+void BasicSound::defaults(int ch)
+{
+  int ch_off = ch * 7;
+  sid.set_register(ch_off + 0, 0);
+  sid.set_register(ch_off + 1, 0);
+  sid.set_register(ch_off + 4, 0x11);
+  sid.set_register(ch_off + 5, 0x33);
+  sid.set_register(ch_off + 6, 0xd5);
+  m_sid_off[ch] = 0;
+  m_next_event[ch] = 0;
   sid.set_register(0x18, 0xf);
-  m_next_event = 0;
 }
 
-void BasicSound::playMml(const char *data)
+void BasicSound::playMml(int ch, const char *data)
 {
-  mml_setup(&m_mml, &m_mml_opt, (char *)data);
-  defaults();
-  m_next_event = millis();
+  mml_setup(&m_mml[ch], &m_mml_opt[ch], (char *)data);
+  defaults(ch);
+  m_next_event[ch] = millis();
 }
 
-void BasicSound::stopMml()
+void BasicSound::stopMml(int ch)
 {
-  m_next_event = 0;
+  m_next_event[ch] = 0;
 }
 
 void ICACHE_RAM_ATTR BasicSound::pumpEvents()
 {
   uint32_t now = millis();
-  if (m_next_event && now >= m_next_event) {
-    if (mml_fetch(&m_mml) != MML_RESULT_OK)
-      m_next_event = 0;
-  }
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < SOUND_CHANNELS; ++i) {
+    if (m_next_event[i] && now >= m_next_event[i]) {
+      if (mml_fetch(&m_mml[i]) != MML_RESULT_OK)
+        m_next_event[i] = 0;
+    }
     if (m_sid_off[i] && m_sid_off[i] <= now) {
       m_sid_off[i] = 0;
       sid.set_register(i*7+4, 0x10);
