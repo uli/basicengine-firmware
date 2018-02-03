@@ -1,15 +1,14 @@
 #include "ttconfig.h"
 #include <Arduino.h>
 #include "sound.h"
-#include "SID.h"
-#include "mml.h"
 
-SID sid;
-MML mml;
-MML_OPTION mml_opt;
-uint32_t next_event;
+SID BasicSound::sid;
+MML BasicSound::m_mml;
+MML_OPTION BasicSound::m_mml_opt;
+uint32_t BasicSound::m_next_event;
 
-uint32_t sid_off[3];
+uint32_t BasicSound::m_sid_off[3];
+
 
 const uint16_t sidfreq[] PROGMEM = {
 0x0115 /* C-0 */, 0x0125 /* C#0 */, 0x0137 /* D-0 */, 0x0149 /* D#0 */, 
@@ -45,16 +44,16 @@ const uint16_t sidfreq[] PROGMEM = {
 0xDBD9 /* G#7 */, 0xE8ED /* A-7 */, 0xF6C6 /* A#7 */,
 };
 
-static void ICACHE_RAM_ATTR mml_callback(MML_INFO *p, void *extobj)
+void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 {
   uint32_t now = millis();
-  next_event = now;
+  m_next_event = now;
   switch (p->type) {
     case MML_TYPE_NOTE:
       {
         MML_ARGS_NOTE *args = &(p->args.note);
-        sid_off[0] = now + args->ticks/2;
-        next_event += args->ticks;
+        m_sid_off[0] = now + args->ticks/2;
+        m_next_event += args->ticks;
         if ((unsigned int)args->number < sizeof(sidfreq)/sizeof(*sidfreq)) {
           int freq = pgm_read_word(&sidfreq[args->number]);
           sid.set_register(0, freq & 0xff);
@@ -66,7 +65,7 @@ static void ICACHE_RAM_ATTR mml_callback(MML_INFO *p, void *extobj)
     case MML_TYPE_REST:
       {
         MML_ARGS_REST *args = &(p->args.rest);
-        next_event += args->ticks;
+        m_next_event += args->ticks;
       }
       break;
   }
@@ -75,8 +74,8 @@ static void ICACHE_RAM_ATTR mml_callback(MML_INFO *p, void *extobj)
 void BasicSound::begin(void)
 {
   sid.begin();
-  mml_init(&mml, mml_callback, 0);
-  MML_OPTION_INITIALIZER_DEFAULT(&mml_opt);
+  mml_init(&m_mml, mmlCallback, 0);
+  MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt);
 }
 
 void BasicSound::defaults()
@@ -88,34 +87,34 @@ void BasicSound::defaults()
     sid.set_register(ch_off + 4, 0x11);
     sid.set_register(ch_off + 5, 0x33);
     sid.set_register(ch_off + 6, 0xd5);
-    sid_off[ch] = 0;
+    m_sid_off[ch] = 0;
   }
   sid.set_register(0x18, 0xf);
-  next_event = 0;
+  m_next_event = 0;
 }
 
 void BasicSound::playMml(const char *data)
 {
-  mml_setup(&mml, &mml_opt, (char *)data);
+  mml_setup(&m_mml, &m_mml_opt, (char *)data);
   defaults();
-  next_event = millis();
+  m_next_event = millis();
 }
 
 void BasicSound::stopMml()
 {
-  next_event = 0;
+  m_next_event = 0;
 }
 
 void ICACHE_RAM_ATTR BasicSound::pumpEvents()
 {
   uint32_t now = millis();
-  if (next_event && now >= next_event) {
-    if (mml_fetch(&mml) != MML_RESULT_OK)
-      next_event = 0;
+  if (m_next_event && now >= m_next_event) {
+    if (mml_fetch(&m_mml) != MML_RESULT_OK)
+      m_next_event = 0;
   }
   for (int i = 0; i < 3; ++i) {
-    if (sid_off[i] && sid_off[i] <= now) {
-      sid_off[i] = 0;
+    if (m_sid_off[i] && m_sid_off[i] <= now) {
+      m_sid_off[i] = 0;
       sid.set_register(i*7+4, 0x10);
     }
   }
@@ -137,7 +136,7 @@ const uint32_t ICACHE_RODATA_ATTR fakePwm[]={
 extern "C" void ICACHE_RAM_ATTR fill_audio_buffer(uint32_t *buf, int samples)
 {
   for (int i = 0; i < samples; ++i) {
-    uint8_t s = sid.getSample();
+    uint8_t s = sound.sid.getSample();
     buf[i] = pgm_read_dword(&fakePwm[s >> 3]);
   }
 }

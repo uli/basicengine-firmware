@@ -3026,14 +3026,11 @@ void itone() {
   tv_tone(freq, tm);
 }
 
-#include "SID.h"
-#include "mml.h"
-extern SID sid;
 void isound() {
   int32_t reg, val;
   if ( getParam(reg, 0, INT32_MAX, I_COMMA) ) return;
   if ( getParam(val, 0, INT32_MAX, I_NONE) ) return;
-  sid.set_register(reg, val);
+  sound.sid.set_register(reg, val);
 }
 
 BString mml_text;
