@@ -4331,6 +4331,19 @@ num_t GROUP(basic_core) ivalue() {
     value = vs23.spriteCollision(a, b);
     break;
 
+  case I_PLAY:
+    if (checkOpen()) return 0;
+    if (getParam(a, 0, SOUND_CHANNELS, I_CLOSE)) return 0;
+    if (a == 0) {
+      b = 0;
+      for (int i = 0; i < SOUND_CHANNELS; ++i) {
+        b |= sound.isPlaying(i);
+      }
+      value = b;
+    } else
+      value = sound.isPlaying(a - 1);
+    break;
+
   default:
     cip--;
     if (is_strexp())
