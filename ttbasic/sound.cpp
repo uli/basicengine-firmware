@@ -72,14 +72,14 @@ static void ICACHE_RAM_ATTR mml_callback(MML_INFO *p, void *extobj)
   }
 }
 
-void sound_init(void)
+void BasicSound::begin(void)
 {
   sid.begin();
   mml_init(&mml, mml_callback, 0);
   MML_OPTION_INITIALIZER_DEFAULT(&mml_opt);
 }
 
-void sound_defaults(void)
+void BasicSound::defaults()
 {
   for (int ch = 0; ch < 3; ++ch) {
     int ch_off = ch * 7;
@@ -94,19 +94,19 @@ void sound_defaults(void)
   next_event = 0;
 }
 
-void sound_play_mml(const char *data)
+void BasicSound::playMml(const char *data)
 {
   mml_setup(&mml, &mml_opt, (char *)data);
-  sound_defaults();
+  defaults();
   next_event = millis();
 }
 
-void sound_stop_mml(void)
+void BasicSound::stopMml()
 {
   next_event = 0;
 }
 
-void ICACHE_RAM_ATTR sound_pump_events(void)
+void ICACHE_RAM_ATTR BasicSound::pumpEvents()
 {
   uint32_t now = millis();
   if (next_event && now >= next_event) {
@@ -141,3 +141,5 @@ extern "C" void ICACHE_RAM_ATTR fill_audio_buffer(uint32_t *buf, int samples)
     buf[i] = pgm_read_dword(&fakePwm[s >> 3]);
   }
 }
+
+BasicSound sound;

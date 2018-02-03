@@ -1,5 +1,11 @@
-void sound_init(void);
-void sound_play_mml(const char *data);
-void sound_stop_mml(void);
-void sound_pump_events(void);
+class BasicSound {
+public:
+    static void begin(void);
+    static void playMml(const char *data);
+    static void stopMml();
+    static void pumpEvents();
+private:
+    static void defaults();
+};
 
+extern BasicSound sound;

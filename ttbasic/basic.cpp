@@ -2350,7 +2350,7 @@ void ICACHE_RAM_ATTR pump_events(void)
   last_frame = vs23.frame();
 
   vs23.updateBg();
-  sound_pump_events();
+  sound.pumpEvents();
 
   uint8_t f = last_frame & 0x3f;
   if (f == 0) {
@@ -3038,9 +3038,9 @@ void isound() {
 
 BString mml_text;
 void iplay() {
-  sound_stop_mml();
+  sound.stopMml();
   mml_text = istrexp();
-  sound_play_mml(mml_text.c_str());
+  sound.playMml(mml_text.c_str());
 }
 
 //　NOTONE
@@ -5511,7 +5511,7 @@ void SMALL basic() {
 
   sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
 
-  sound_init();
+  sound.begin();
 
   Wire.begin(2, 0);
   // ESP8266 Wire code assumes that SCL and SDA pins are set low, instead
