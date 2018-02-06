@@ -832,8 +832,8 @@ uint8_t SMALL toktoi(bool find_prg_text) {
         ibuf[len++] = idx;
         if (str_arr.reserve(str_arr_names.varTop()))
           goto oom;
-        s += var_len + 1;
-        ptok++;
+        s += var_len + 2;
+        ptok += 2;
       } else if (*p == '$') {
 	ibuf[len++] = I_SVAR;
 	int idx = svar_names.assign(vname, is_prg_text);
