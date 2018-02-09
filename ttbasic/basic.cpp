@@ -5022,7 +5022,7 @@ overflow:
 }
 
 void iproc() {
-  ++cip;
+  err = ERR_ULN;	// XXX: come up with something better
 }
 
 // RETURN
