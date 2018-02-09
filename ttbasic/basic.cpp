@@ -1380,6 +1380,10 @@ void GROUP(basic_core) ivar() {
   var.var(index) = value;
 }
 
+void GROUP(basic_core) ilvar() {
+  err = ERR_NOT_SUPPORTED;
+}
+
 int get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
@@ -1526,6 +1530,10 @@ void isvar() {
   if (err)
     return;
   svar.var(index) = value;
+}
+
+void ilsvar() {
+  err = ERR_NOT_SUPPORTED;
 }
 
 // String array variable assignment handler
