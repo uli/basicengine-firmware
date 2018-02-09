@@ -4135,6 +4135,23 @@ num_t irgb() {
   return vs23.colorFromRgb(r, g, b);
 }
 
+static num_t GROUP(basic_core) get_lvar(uint8_t arg)
+{
+  if (!gstki) {
+    // not in a subroutine
+    err = ERR_GLOBAL;
+    return 0;
+  }
+  uint8_t proc_idx = ((uint32_t)gstk[gstki-1]) >> 24;
+  uint16_t argc = (uint32_t)(gstk[gstki-1]) & 0xffff;
+  int local_offset = proc.getNumArg(proc_idx, arg);
+  if (local_offset < 0) {
+    err = ERR_UNDEFARG;
+    return 0;
+  }
+  return astk_num[astk_num_i - argc + local_offset];
+}
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
@@ -4179,7 +4196,11 @@ num_t GROUP(basic_core) ivalue() {
   case I_VAR: //変数
     value = var.var(*cip++);
     break;
-    
+
+  case I_LVAR:
+    value = get_lvar(*cip++);
+    break;
+
   case I_VARARR:
     i = *cip++;
     dims = get_array_dims(idxs);
