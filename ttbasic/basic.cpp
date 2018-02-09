@@ -2511,7 +2511,7 @@ BString *iargstr() {
     err = ERR_UNDEFARG;
     return NULL;
   }
-  uint16_t argc = (uint32_t)(gstk[gstki-1]) >> 16;
+  uint16_t argc = ((uint32_t)(gstk[gstki-1]) >> 16) & 0xff;
 
   if (checkOpen()) return NULL;
   if ( getParam(a, 0, argc-1, I_NONE) ) return NULL;
@@ -4970,7 +4970,7 @@ void icall() {
 
   gstk[gstki++] = clp;                      // 行ポインタを退避
   gstk[gstki++] = cip;                      // 中間コードポインタを退避
-  gstk[gstki++] = (unsigned char *)(num_args | (str_args << 16));
+  gstk[gstki++] = (unsigned char *)(num_args | (str_args << 16) | (proc_idx << 24));
 
   clp = proc_loc.lp;
   cip = proc_loc.ip;
@@ -5002,7 +5002,7 @@ void ireturn() {
 
   uint32_t a = (uint32_t)gstk[--gstki];
   astk_num_i -= a & 0xffff;
-  astk_str_i -= a >> 16;
+  astk_str_i -= (a >> 16) & 0xff;
   cip = gstk[--gstki]; //行ポインタを復帰
   clp = gstk[--gstki]; //中間コードポインタを復帰
   return;
