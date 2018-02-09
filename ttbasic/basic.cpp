@@ -4883,7 +4883,7 @@ void icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
-  struct basic_location proc_loc = proc.proc(proc_idx);  
+  struct proc_t proc_loc = proc.proc(proc_idx);  
   dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {

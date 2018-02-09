@@ -497,7 +497,7 @@ private:
   StringArray<T> **m_var;
 };
 
-struct basic_location {
+struct proc_t {
   unsigned char *lp;
   unsigned char *ip;
 };
@@ -511,8 +511,7 @@ public:
 
   void reset() {
     for (int i = 0; i < m_size; ++i) {
-      m_proc[i].lp = NULL;
-      m_proc[i].ip = NULL;
+      memset(&m_proc[i], 0, sizeof(m_proc[i]));
     }
   }
 
@@ -524,12 +523,11 @@ public:
       m_size = 0;
       return false;
     }
-    m_proc = (struct basic_location *)realloc(m_proc, count * sizeof(*m_proc));
+    m_proc = (struct proc_t *)realloc(m_proc, count * sizeof(*m_proc));
     if (!m_proc)
       return true;
     for (int i = m_size; i < count; ++i) {
-      m_proc[i].lp = NULL;
-      m_proc[i].ip = NULL;
+      memset(&m_proc[i], 0, sizeof(m_proc[i]));
     }
     m_size = count;
     return false;
@@ -539,11 +537,11 @@ public:
     return m_size;
   }
   
-  inline struct basic_location& proc(uint8_t index) {
+  inline struct proc_t& proc(uint8_t index) {
     return m_proc[index];
   }
   
 private:
   int m_size;
-  struct basic_location *m_proc;
+  struct proc_t *m_proc;
 };
