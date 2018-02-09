@@ -497,9 +497,14 @@ private:
   StringArray<T> **m_var;
 };
 
+#define MAX_PROC_ARGS 8
+
 struct proc_t {
   unsigned char *lp;
   unsigned char *ip;
+  unsigned char args_num[MAX_PROC_ARGS];
+  unsigned char args_str[MAX_PROC_ARGS];
+  unsigned char argc_num, argc_str;
 };
 
 class Procedures {
@@ -540,7 +545,29 @@ public:
   inline struct proc_t& proc(uint8_t index) {
     return m_proc[index];
   }
+
+  inline int getNumArg(uint8_t index, uint8_t arg) {
+    if (index >= m_size)
+      return -1;
+    proc_t &pr = m_proc[index];
+    for (int i = 0; i < pr.argc_num; ++i) {
+      if (pr.args_num[i] == arg)
+        return i;
+    }
+    return -1;
+  }
   
+  inline int getStrArg(uint8_t index, uint8_t arg) {
+    if (index >= m_size)
+      return -1;
+    proc_t &pr = m_proc[index];
+    for (int i = 0; i < pr.argc_str; ++i) {
+      if (pr.args_str[i] == arg)
+        return i;
+    }
+    return -1;
+  }
+
 private:
   int m_size;
   struct proc_t *m_proc;
