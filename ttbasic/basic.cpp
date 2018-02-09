@@ -1622,10 +1622,51 @@ void initialize_proc_pointers(void)
     if (!lp)
       return;
 
-    proc.proc(ip[1]).lp = lp;
-    proc.proc(ip[1]).ip = ip + 2;
-
+    uint8_t proc_id = ip[1];
     ip += 2;
+
+    proc_t &pr = proc.proc(proc_id);
+
+    pr.argc_num = 0;
+    pr.argc_str = 0;
+
+    if (*ip == I_OPEN) {
+      ++ip;
+      do {
+        switch (*ip++) {
+        case I_VAR:
+          if (pr.argc_num >= MAX_PROC_ARGS) {
+            err = ERR_ASTKOF;
+            return;
+          }
+          pr.args_num[pr.argc_num] = *ip++;
+          pr.argc_num++;
+          break;
+        case I_SVAR:
+          if (pr.argc_str >= MAX_PROC_ARGS) {
+            err = ERR_ASTKOF;
+            return;
+          }
+          pr.args_str[pr.argc_str] = *ip++;
+          pr.argc_str++;
+          break;
+        default:
+          err = ERR_SYNTAX;
+          return;
+        }
+      } while (*ip++ == I_COMMA);
+
+      if (ip[-1] != I_CLOSE) {
+        if (ip[-1] == I_COMMA)
+          err = ERR_UNDEFARG;
+        else
+          err = ERR_SYNTAX;
+        return;
+      }
+    }
+
+    pr.lp = lp;
+    pr.ip = ip;
   }
 }
 
