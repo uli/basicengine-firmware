@@ -1565,7 +1565,7 @@ static inline bool end_of_statement()
 int GROUP(basic_core) token_size(uint8_t *code) {
   switch (*code) {
   case I_STR:
-    return code[1] + 1;
+    return code[1] + 2;
   case I_NUM:
     return sizeof(num_t) + 1;
   case I_HEXNUM:
