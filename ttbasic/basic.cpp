@@ -806,8 +806,14 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       }
       if (*s == c)	// If the character is ", go to the next character
         s++;
-    } else if (isAlpha(*ptok)) {
+    } else if (*ptok == '@' || isAlpha(*ptok)) {
       // Try converting to variable
+      bool is_local = false;
+      if (*ptok == '@') {
+        is_local = true;
+        ++ptok; ++s;
+      }
+
       var_len = 0;
       if (len >= SIZE_IBUF - 2) { // if the intermediate code is too long
 	err = ERR_IBUFOF;
@@ -826,6 +832,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 
       p--;
       if (*p == '$' && p[1] == '(') {
+        if (is_local) {
+          err = ERR_NOT_SUPPORTED;
+          return 0;
+        }
         ibuf[len++] = I_STRARR;
         int idx = str_arr_names.assign(vname, is_prg_text);
         if (idx < 0)
@@ -836,7 +846,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
         s += var_len + 2;
         ptok += 2;
       } else if (*p == '$') {
-	ibuf[len++] = I_SVAR;
+	ibuf[len++] = is_local ? I_LSVAR : I_SVAR;
 	int idx = svar_names.assign(vname, is_prg_text);
 	if (idx < 0)
 	  goto oom;
@@ -846,6 +856,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 	s += var_len + 1;
 	ptok++;
       } else if (*p == '(') {
+        if (is_local) {
+          err = ERR_NOT_SUPPORTED;
+          return 0;
+        }
         ibuf[len++] = I_VARARR;
         int idx = num_arr_names.assign(vname, is_prg_text);
         if (idx < 0)
@@ -857,7 +871,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
         ptok++;
       } else {
 	// Convert to intermediate code
-	ibuf[len++] = I_VAR; //中間コードを記録
+	ibuf[len++] = is_local ? I_LVAR : I_VAR; //中間コードを記録
 	int idx = var_names.assign(vname, is_prg_text);
 	if (idx < 0)
 	  goto oom;
