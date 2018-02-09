@@ -1089,7 +1089,7 @@ void inslist() {
   if (list_free() < *ibuf) { // If the vacancy is insufficient
     listbuf = (unsigned char *)realloc(listbuf, size_list + *ibuf);
     if (!listbuf) {
-      err = ERR_LBUFOF;
+      err = ERR_OOM;
       size_list = 0;
       return;
     }
