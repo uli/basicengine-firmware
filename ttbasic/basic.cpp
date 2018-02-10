@@ -4723,8 +4723,13 @@ BString istrvalue()
     if (!len)
       err = ERR_OOM;
     break;
+
   case I_SVAR:
     value = svar.var(*cip++);
+    break;
+
+  case I_LSVAR:
+    value = get_lsvar(*cip++);
     break;
 
   case I_STRARR:
