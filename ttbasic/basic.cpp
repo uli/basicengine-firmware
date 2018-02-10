@@ -493,7 +493,7 @@ inline uint8_t checkClose() {
   return err;
 }
 
-inline bool is_strexp() {
+static inline bool GROUP(basic_core) is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return (*cip == I_STR ||
           ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
