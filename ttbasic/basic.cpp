@@ -24,6 +24,12 @@
 
 #include "basic.h"
 
+struct unaligned_num_t {
+  num_t n;
+} __attribute__((packed));
+
+#define UNALIGNED_NUM_T(ip) (reinterpret_cast<struct unaligned_num_t *>(ip)->n)
+
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
 int size_list;
 #define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
@@ -793,7 +799,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       value = strtonum(ptok, &ptok);
       s = ptok;			// Stuff the processed part of the character string
       ibuf[len++] = I_NUM;	// Record intermediate code
-      os_memcpy(ibuf+len, &value, sizeof(num_t));
+      UNALIGNED_NUM_T(ibuf+len) = value;
       len += sizeof(num_t);
       if (find_prg_text) {
         is_prg_text = true;
@@ -923,7 +929,7 @@ uint32_t getlineno(unsigned char *lp) {
   num_t l;
   if(*lp == 0) //もし末尾だったら
     return (uint32_t)-1;
-  os_memcpy(&l, lp+1, sizeof(num_t));
+  l = UNALIGNED_NUM_T(lp+1);    
   return l;
 }
 
@@ -1164,8 +1170,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
     //定数の処理
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
-      num_t n;
-      os_memcpy(&n, ip, sizeof(num_t));
+      num_t n = UNALIGNED_NUM_T(ip);
       putnum(n, 0,devno); //値を取得して表示
       ip += sizeof(num_t); //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
@@ -2234,7 +2239,7 @@ void SMALL irenum() {
 	  } else {
 	    // とび先行番号を付け替える
 	    newnum = startLineNo + increase*index;
-	    os_memcpy(ptr+i+1, &newnum, sizeof(num_t));
+	    UNALIGNED_NUM_T(ptr+i+1) = newnum;
 	    i += sizeof(num_t) + 1;
 	    continue;
 	  }
@@ -2255,7 +2260,7 @@ void SMALL irenum() {
   index = 0;
   for (  clp = listbuf; *clp; clp += *clp ) {
     newnum = startLineNo + increase * index;
-    os_memcpy(clp+1, &newnum, sizeof(num_t));
+    UNALIGNED_NUM_T(clp+1) = newnum;
     index++;
   }
 }
@@ -4291,7 +4296,7 @@ num_t GROUP(basic_core) ivalue() {
 
   //定数の取得
   case I_NUM:    // 定数
-    os_memcpy(&value, cip, sizeof(num_t));
+    value = UNALIGNED_NUM_T(cip);
     cip += sizeof(num_t);
     break;
 
