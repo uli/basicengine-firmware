@@ -5038,8 +5038,8 @@ void icall() {
   if (checkClose())
     return;
 
-  gstk[gstki].lp = clp;                      // 行ポインタを退避
-  gstk[gstki].ip = cip;                      // 中間コードポインタを退避
+  gstk[gstki].lp = clp;
+  gstk[gstki].ip = cip;
   gstk[gstki].num_args = num_args;
   gstk[gstki].str_args = str_args;
   gstk[gstki++].proc_idx = proc_idx;
