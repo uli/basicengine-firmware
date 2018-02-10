@@ -1590,7 +1590,10 @@ int GROUP(basic_core) token_size(uint8_t *code) {
     return sizeof(num_t) + 1;
   case I_HEXNUM:
     return 5;
+  case I_LVAR:
   case I_VAR:
+  case I_LSVAR:
+  case I_SVAR:
   case I_VARARR:
   case I_STRARR:
   case I_CALL:
