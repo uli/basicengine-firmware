@@ -237,7 +237,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_DIN, I_ANA, I_MAP, I_DMP,
   I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
-  I_RET, I_ARG, I_ARGSTR,
+  I_RET, I_ARG, I_ARGSTR, I_ARGC,
 };
 
 // 前が定数か変数のとき前の空白をなくす中間コード
@@ -2691,6 +2691,18 @@ BString *iargstr() {
   return &astk_str[astk_str_i-argc+a];
 }
 
+num_t iargc() {
+  int32_t type;
+  if (checkOpen()) return 0;
+  if ( getParam(type, I_CLOSE) ) return 0;
+  if (!gstki)
+    return 0;
+  if (type == 0)
+    return gstk[gstki-1].num_args;
+  else
+    return gstk[gstki-1].str_args;
+}
+
 // スクリーン座標の文字コードの取得 'VPEEK(X,Y)'
 int32_t ivpeek() {
   int32_t value; // 値
@@ -4467,6 +4479,7 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_RET:   value = iret(); break;
   case I_ARG:	value = iarg(); break;
+  case I_ARGC:	value = iargc(); break;
 
   // 定数
   case I_HIGH:  value = CONST_HIGH; break;
