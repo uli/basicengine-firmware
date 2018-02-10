@@ -1182,7 +1182,9 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       c_putch('(', devno);
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
-    } else if (*ip == I_SVAR) {
+    } else if (*ip == I_SVAR || *ip == I_LSVAR) {
+      if (*ip == I_LSVAR)
+        c_putch('@', devno);
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(svar_names.name(var_code), devno);
