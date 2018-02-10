@@ -30,7 +30,7 @@ int size_list;
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 10     // GOSUB stack size
-#define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
+#define SIZE_LSTK 10     // FOR stack size
 #define SIZE_IFSTK 16	 // IF stack
 #define SIZE_ASTK 16	// argument stack
 
@@ -338,7 +338,14 @@ unsigned char astk_num_i;
 BString astk_str[SIZE_ASTK];
 unsigned char astk_str_i;
 
-unsigned char* lstk[SIZE_LSTK];   // FOR stack
+struct {
+  uint8_t *lp;
+  uint8_t *ip;
+  num_t vto;
+  num_t vstep;
+  int16_t index;
+  bool local;
+} lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
 uint8_t *cont_clp = NULL;
@@ -5051,20 +5058,22 @@ void ireturn() {
 }
 
 void GROUP(basic_core) ido() {
-  if (lstki > SIZE_LSTK - 5) {
+  if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
     return;
   }
-  lstk[lstki++] = clp;
-  lstk[lstki++] = cip;
-  lstk[lstki++] = (unsigned char*)-1;
-  lstk[lstki++] = (unsigned char*)-1;
-  lstk[lstki++] = (unsigned char*)-1;
+  lstk[lstki].lp = clp;
+  lstk[lstki].ip = cip;
+  lstk[lstki].vto = -1;
+  lstk[lstki].vstep = -1;
+  lstk[lstki].index = -1;
+  lstk[lstki++].local = false;
 }
 
 // FOR
 void GROUP(basic_core) ifor() {
-  int index, vto, vstep; // FOR文の変数番号、終了値、増分
+  int index;
+  num_t vto, vstep; // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
   if (*cip++ != I_VAR) { // もし変数がなかったら
@@ -5092,32 +5101,26 @@ void GROUP(basic_core) ifor() {
   } else                // STEPではなかったら
     vstep = 1;          // 増分を1に設定
 
-  // もし変数がオーバーフローする見込みなら
-  if (((vstep < 0) && (-INT32_MAX - vstep > vto)) ||
-      ((vstep > 0) && (INT32_MAX - vstep < vto))) {
-    err = ERR_VOF; //エラー番号をセット
-    return;
-  }
-
   // 繰り返し条件を退避
-  if (lstki > SIZE_LSTK - 5) { // もしFORスタックがいっぱいなら
+  if (lstki >= SIZE_LSTK) { // もしFORスタックがいっぱいなら
     err = ERR_LSTKOF;          // エラー番号をセット
     return;
   }
-  lstk[lstki++] = clp; // 行ポインタを退避
-  lstk[lstki++] = cip; // 中間コードポインタを退避
+  lstk[lstki].lp = clp; // 行ポインタを退避
+  lstk[lstki].ip = cip; // 中間コードポインタを退避
 
   // FORスタックに終了値、増分、変数名を退避
   // Special thanks hardyboy
-  lstk[lstki++] = (unsigned char*)(uintptr_t)vto;
-  lstk[lstki++] = (unsigned char*)(uintptr_t)vstep;
-  lstk[lstki++] = (unsigned char*)(uintptr_t)index;
+  lstk[lstki].vto = vto;
+  lstk[lstki].vstep = vstep;
+  lstk[lstki].index = index;
+  lstk[lstki++].local = false;
 }
 
 void GROUP(basic_core) iloop() {
   uint8_t cond;
 
-  if (lstki < 5) {
+  if (!lstki) {
     err = ERR_LSTKUF;
     return;
   }
@@ -5130,9 +5133,9 @@ void GROUP(basic_core) iloop() {
 
   // Look for nearest DO.
   while (lstki) {
-    if ((intptr_t)lstk[lstki - 1] == -1)
+    if (lstk[lstki - 1].index == -1)
       break;
-    lstki -= 5;
+    lstki--;
   }
   
   if (!lstki) {
@@ -5145,11 +5148,11 @@ void GROUP(basic_core) iloop() {
   if ((cond == I_WHILE && exp != 0) ||
       (cond == I_UNTIL && exp == 0)) {
     // Condition met, loop.
-    cip = lstk[lstki - 4];
-    clp = lstk[lstki - 5];
+    cip = lstk[lstki - 1].ip;
+    clp = lstk[lstki - 1].lp;
   } else {
     // Pop loop off stack.
-    lstki -= 5;
+    lstki--;
   }
 }
 
@@ -5157,10 +5160,10 @@ void GROUP(basic_core) iloop() {
 void GROUP(basic_core) inext() {
   int want_index;	// variable we want to NEXT
   int index;		// variable index
-  int vto;		// end of loop value
-  int vstep;		// increment value
+  num_t vto;		// end of loop value
+  num_t vstep;		// increment value
 
-  if (lstki < 5) {    // FOR stack is empty
+  if (!lstki) {    // FOR stack is empty
     err = ERR_LSTKUF;
     return;
   }
@@ -5174,7 +5177,7 @@ void GROUP(basic_core) inext() {
 
   while (lstki) {
     // Get index of iterator on top of stack.
-    index = (int)(uintptr_t)lstk[lstki - 1];
+    index = lstk[lstki - 1].index;
 
     // Done if it's the one we want (or if none is specified).
     if (want_index < 0 || want_index == index)
@@ -5182,7 +5185,7 @@ void GROUP(basic_core) inext() {
 
     // If it is not the specified variable, we assume we
     // want to NEXT to a loop higher up the stack.
-    lstki -= 5;
+    lstki--;
   }
 
   if (!lstki) {
@@ -5191,20 +5194,20 @@ void GROUP(basic_core) inext() {
     return;
   }
 
-  vstep = (int)(uintptr_t)lstk[lstki - 2];
+  vstep = lstk[lstki - 1].vstep;
   var.var(index) += vstep;
-  vto = (int)(uintptr_t)lstk[lstki - 3];
+  vto = lstk[lstki - 1].vto;
 
   // Is this loop finished?
   if (((vstep < 0) && (var.var(index) < vto)) ||
       ((vstep > 0) && (var.var(index) > vto))) {
-    lstki -= 5;  // drop it from FOR stack
+    lstki--;  // drop it from FOR stack
     return;
   }
 
   // Jump to the start of the loop.
-  cip = lstk[lstki - 4];
-  clp = lstk[lstki - 5];
+  cip = lstk[lstki - 1].ip;
+  clp = lstk[lstki - 1].lp;
 }
 
 // IF
