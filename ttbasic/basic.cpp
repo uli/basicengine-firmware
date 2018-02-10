@@ -999,21 +999,6 @@ uint8_t* getELSEptr(uint8_t* p) {
       }
       lp++;
       break;
-    case I_STR:     // 文字列
-      lp += lp[1]+1;
-      break;
-    case I_NUM:     // 定数
-      lp += sizeof(num_t) + 1;
-      break;
-    case I_HEXNUM:
-      lp+=5;        // 整数2バイト+中間コード1バイト分移動
-      break;
-    case I_VAR:     // 変数
-    case I_VARARR:
-    case I_CALL:
-    case I_PROC:
-      lp+=2;        // 変数名
-      break;
     case I_EOL:
       if (lifstk[lifstki-1] == false) {
         // Current IF is single-line, so it's finished here.
@@ -1048,7 +1033,7 @@ uint8_t* getELSEptr(uint8_t* p) {
         goto DONE;
       }
     default:        // その他
-      lp++;
+      lp += token_size(lp);
       break;
     }
   }

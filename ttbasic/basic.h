@@ -45,6 +45,8 @@ uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno);
 
+int GROUP(basic_core) token_size(uint8_t *code);
+
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );
 #endif
