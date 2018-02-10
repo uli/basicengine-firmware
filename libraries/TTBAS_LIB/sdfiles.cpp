@@ -284,6 +284,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
           c_puts(fname.c_str());
         }
         newline();
+        if (err)
+          break;
         cnt++;
       }
     }
