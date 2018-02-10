@@ -175,8 +175,9 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 void newline(uint8_t devno) {
   if (devno==0) {
     // XXX: this drains the keyboard buffer; is that a problem?
-    c_kbhit();
-    if (kb.state(PS2KEY_L_Shift)) {
+    if (c_kbhit() == SC_KEY_CTRL_C)
+      err = ERR_CTR_C;
+    else if (kb.state(PS2KEY_L_Shift)) {
       uint32_t m = millis() + 200;
       while (millis() < m) {
         c_kbhit();
