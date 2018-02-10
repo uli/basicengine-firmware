@@ -3784,7 +3784,6 @@ void SMALL iscreen() {
 
   sc0.setFont(fonts[0]);
   sc0.cls();
-  sc0.show_curs(true);
   sc0.locate(0,0);
 
   if (scmode == m)
