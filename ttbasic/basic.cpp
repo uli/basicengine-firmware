@@ -176,11 +176,11 @@ void newline(uint8_t devno) {
   if (devno==0) {
     // XXX: this drains the keyboard buffer; is that a problem?
     c_kbhit();
-    if (kb.state(PS2KEY_L_Ctrl)) {
+    if (kb.state(PS2KEY_L_Shift)) {
       uint32_t m = millis() + 200;
       while (millis() < m) {
         c_kbhit();
-        if (!kb.state(PS2KEY_L_Ctrl))
+        if (!kb.state(PS2KEY_L_Shift))
           break;
       }
     }
