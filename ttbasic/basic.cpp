@@ -5652,13 +5652,12 @@ uint8_t SMALL icom() {
   case I_LOAD:  ilrun_(); break;
 
   case I_LRUN:  if(ilrun()) {
-      sc0.show_curs(0); irun(clp);  sc0.show_curs(1);
+      sc0.show_curs(0); irun(clp);
   }
     break;
   case I_RUN:
     sc0.show_curs(0);
     irun();
-    sc0.show_curs(1);
     break;
   case I_CONT:
     if (!cont_cip || !cont_clp) {
@@ -5667,7 +5666,6 @@ uint8_t SMALL icom() {
       restore_windows();
       sc0.show_curs(0);
       irun(NULL, true);
-      sc0.show_curs(1);
     }
     break;
   case I_RENUM: // I_RENUMの場合
@@ -5684,12 +5682,13 @@ uint8_t SMALL icom() {
     cip--;
     sc0.show_curs(0);
     iexe();           // 中間コードを実行
-    sc0.show_curs(1);
     break;
   }
   
   if (err)
     resize_windows();
+
+  sc0.show_curs(true);
 
   return rc;
 }
