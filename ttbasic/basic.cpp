@@ -1394,6 +1394,23 @@ void GROUP(basic_core) ivar() {
   var.var(index) = value;
 }
 
+// Local variables are handled by encoding them with global variable indices.
+//
+// When a local variable is created (either through a procedure signature or
+// by referencing it), a global variable entry of the same name is created
+// (unless it already exists), and its index is used to encode the local
+// variable in the program text.
+//
+// When a local variable is dereferenced, the global index is translated to
+// an argument stack offset depending on which procedure is currently running.
+// So global and local variables of the same name share entries in the variable
+// table, but the value in the table is only used by the global variable. The
+// local's value resides on the argument stack.
+//
+// The reason for doing this in such a convoluted way is that we don't know
+// what a procedure's stack frame looks like at compile time because we may
+// have to compile code out-of-order.
+
 static int GROUP(basic_core) get_num_local_offset(uint8_t arg, bool &is_local)
 {
   if (!gstki) {
