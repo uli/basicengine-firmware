@@ -498,13 +498,17 @@ private:
 };
 
 #define MAX_PROC_ARGS 8
+#define MAX_PROC_LOCS 8
 
 struct proc_t {
   unsigned char *lp;
   unsigned char *ip;
   unsigned char args_num[MAX_PROC_ARGS];
   unsigned char args_str[MAX_PROC_ARGS];
+  unsigned char locs_num[MAX_PROC_ARGS];
+  unsigned char locs_str[MAX_PROC_ARGS];
   unsigned char argc_num, argc_str;
+  unsigned char locc_num, locc_str;
 };
 
 class Procedures {
@@ -566,6 +570,34 @@ public:
         return i;
     }
     return -1;
+  }
+
+  inline int getNumLoc(uint8_t index, uint8_t loc) {
+    if (index >= m_size)
+      return -1;
+    proc_t &pr = m_proc[index];
+    for (int i = 0; i < pr.locc_num; ++i) {
+      if (pr.locs_num[i] == loc)
+        return i;
+    }
+    if (pr.locc_num >= MAX_PROC_LOCS)
+      return -1;
+    pr.locs_num[pr.locc_num++] = loc;
+    return pr.locc_num - 1;
+  }
+  
+  inline int getStrLoc(uint8_t index, uint8_t loc) {
+    if (index >= m_size)
+      return -1;
+    proc_t &pr = m_proc[index];
+    for (int i = 0; i < pr.locc_str; ++i) {
+      if (pr.locs_str[i] == loc)
+        return i;
+    }
+    if (pr.locc_str >= MAX_PROC_LOCS)
+      return -1;
+    pr.locs_str[pr.locc_str++] = loc;
+    return pr.locc_str - 1;
   }
 
 private:
