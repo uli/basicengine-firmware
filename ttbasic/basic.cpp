@@ -29,7 +29,7 @@ int size_list;
 #define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
-#define SIZE_GSTK 30     // GOSUB stack size(2/nest) :10ネストまでOK
+#define SIZE_GSTK 10     // GOSUB stack size
 #define SIZE_LSTK 50     // FOR stack size(5/nest) :  10ネストまでOK
 #define SIZE_IFSTK 16	 // IF stack
 #define SIZE_ASTK 16	// argument stack
@@ -324,12 +324,20 @@ unsigned char *listbuf; // Pointer to program list area
 
 unsigned char* clp;               // Pointer current line
 unsigned char* cip;               // Pointer current Intermediate code
-unsigned char* gstk[SIZE_GSTK];   // GOSUB stack
+struct {
+  uint8_t *lp;
+  uint8_t *ip;
+  uint8_t num_args;
+  uint8_t str_args;
+  uint8_t proc_idx;
+} gstk[SIZE_GSTK];   // GOSUB stack
 unsigned char gstki;              // GOSUB stack index
+
 num_t astk_num[SIZE_ASTK];
 unsigned char astk_num_i;
 BString astk_str[SIZE_ASTK];
 unsigned char astk_str_i;
+
 unsigned char* lstk[SIZE_LSTK];   // FOR stack
 unsigned char lstki;              // FOR stack index
 
@@ -2506,7 +2514,7 @@ num_t iarg() {
     err = ERR_UNDEFARG;
     return 0;
   }
-  uint16_t argc = (uint32_t)(gstk[gstki-1]) & 0xffff;
+  uint16_t argc = gstk[gstki-1].num_args;
 
   if (checkOpen()) return 0;
   if ( getParam(a, 0, argc-1, I_NONE) ) return 0;
@@ -2521,7 +2529,7 @@ BString *iargstr() {
     err = ERR_UNDEFARG;
     return NULL;
   }
-  uint16_t argc = ((uint32_t)(gstk[gstki-1]) >> 16) & 0xff;
+  uint16_t argc = gstk[gstki-1].str_args;
 
   if (checkOpen()) return NULL;
   if ( getParam(a, 0, argc-1, I_NONE) ) return NULL;
@@ -4132,8 +4140,8 @@ static num_t GROUP(basic_core) get_lvar(uint8_t arg)
     err = ERR_GLOBAL;
     return 0;
   }
-  uint8_t proc_idx = ((uint32_t)gstk[gstki-1]) >> 24;
-  uint16_t argc = (uint32_t)(gstk[gstki-1]) & 0xffff;
+  uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  uint16_t argc = gstk[gstki-1].num_args;
   int local_offset = proc.getNumArg(proc_idx, arg);
   if (local_offset < 0) {
     err = ERR_UNDEFARG;
@@ -4888,13 +4896,15 @@ static void do_gosub(uint32_t lineno)
   }
 
   //ポインタを退避
-  if (gstki > SIZE_GSTK - 3) {              // もしGOSUBスタックがいっぱいなら
+  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
     return;
   }
-  gstk[gstki++] = clp;                      // 行ポインタを退避
-  gstk[gstki++] = cip;                      // 中間コードポインタを退避
-  gstk[gstki++] = 0;
+  gstk[gstki].lp = clp;                      // 行ポインタを退避
+  gstk[gstki].ip = cip;                      // 中間コードポインタを退避
+  gstk[gstki].num_args = 0;
+  gstk[gstki].str_args = 0;
+  gstk[gstki++].proc_idx = 0;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
   cip = clp + sizeof(num_t) + 1;            // 中間コードポインタを先頭の中間コードに更新
@@ -4963,7 +4973,7 @@ void icall() {
     return;
   }
   
-  if (gstki > SIZE_GSTK - 3) {              // もしGOSUBスタックがいっぱいなら
+  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
     return;
   }
@@ -4999,9 +5009,11 @@ void icall() {
   if (checkClose())
     return;
 
-  gstk[gstki++] = clp;                      // 行ポインタを退避
-  gstk[gstki++] = cip;                      // 中間コードポインタを退避
-  gstk[gstki++] = (unsigned char *)(num_args | (str_args << 16) | (proc_idx << 24));
+  gstk[gstki].lp = clp;                      // 行ポインタを退避
+  gstk[gstki].ip = cip;                      // 中間コードポインタを退避
+  gstk[gstki].num_args = num_args;
+  gstk[gstki].str_args = str_args;
+  gstk[gstki++].proc_idx = proc_idx;
 
   clp = proc_loc.lp;
   cip = proc_loc.ip;
@@ -5017,7 +5029,7 @@ void iproc() {
 
 // RETURN
 void ireturn() {
-  if (gstki < 3) {    // もしGOSUBスタックが空なら
+  if (!gstki) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
   }
@@ -5031,11 +5043,10 @@ void ireturn() {
     } while (*cip++ == I_COMMA && rcnt < MAX_RETVALS);
   }
 
-  uint32_t a = (uint32_t)gstk[--gstki];
-  astk_num_i -= a & 0xffff;
-  astk_str_i -= (a >> 16) & 0xff;
-  cip = gstk[--gstki]; //行ポインタを復帰
-  clp = gstk[--gstki]; //中間コードポインタを復帰
+  astk_num_i -= gstk[--gstki].num_args;
+  astk_str_i -= gstk[gstki].str_args;
+  clp = gstk[gstki].lp; //中間コードポインタを復帰
+  cip = gstk[gstki].ip; //行ポインタを復帰
   return;
 }
 
