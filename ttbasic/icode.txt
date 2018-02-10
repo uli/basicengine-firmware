@@ -7,9 +7,9 @@ NEXT	I_NEXT		inext
 DO	I_DO		ido
 LOOP	I_LOOP		iloop
 IF	I_IF		iif
+ENDIF	I_ENDIF		iendif
 END	I_END		iend
 ELSE	I_ELSE		ielse
-ENDIF	I_ENDIF		iendif
 :	I_COLON		inil
 '	I_SQUOT		iskip
 DATA	I_DATA		idata
