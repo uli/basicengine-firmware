@@ -1434,7 +1434,23 @@ static num_t& GROUP(basic_core) get_lvar(uint8_t arg)
 }
 
 void GROUP(basic_core) ilvar() {
-  err = ERR_NOT_SUPPORTED;
+  num_t value;
+  short index;	// variable index
+
+  index = *cip++;
+
+  if (*cip != I_EQ) {
+    err = ERR_VWOEQ;
+    return;
+  }
+  cip++;
+  value = iexp();
+  if (err)
+    return;
+  num_t &var = get_lvar(index);
+  if (err)
+    return;
+  var = value;
 }
 
 int get_array_dims(int *idxs) {
@@ -1870,6 +1886,11 @@ void ilet() {
   case I_VAR: // 変数の場合
     cip++;     // 中間コードポインタを次へ進める
     ivar();    // 変数への代入を実行
+    break;
+
+  case I_LVAR:
+    cip++;
+    ilvar();
     break;
 
   case I_VARARR:
