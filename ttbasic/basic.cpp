@@ -1394,6 +1394,45 @@ void GROUP(basic_core) ivar() {
   var.var(index) = value;
 }
 
+static int GROUP(basic_core) get_num_local_offset(uint8_t arg, bool &is_local)
+{
+  if (!gstki) {
+    // not in a subroutine
+    err = ERR_GLOBAL;
+    return 0;
+  }
+  is_local = false;
+  uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  int local_offset = proc.getNumArg(proc_idx, arg);
+  if (local_offset < 0) {
+    local_offset = proc.getNumLoc(proc_idx, arg);
+    if (local_offset < 0) {
+      err = ERR_ASTKOF;
+      return 0;
+    }
+    is_local = true;
+  }
+  return local_offset;
+}
+
+static num_t& GROUP(basic_core) get_lvar(uint8_t arg)
+{
+  bool is_local;
+  int local_offset = get_num_local_offset(arg, is_local);
+  if (err)
+    return astk_num[0];	// dummy
+  if (is_local) {
+    if (astk_num_i + local_offset >= SIZE_ASTK) {
+      err = ERR_ASTKOF;
+      return astk_num[0];	// dummy
+    }
+    return astk_num[astk_num_i + local_offset];
+  } else {
+    uint16_t argc = gstk[gstki-1].num_args;
+    return astk_num[astk_num_i - argc + local_offset];
+  }
+}
+
 void GROUP(basic_core) ilvar() {
   err = ERR_NOT_SUPPORTED;
 }
@@ -4138,23 +4177,6 @@ num_t irgb() {
     return 0;
   }
   return vs23.colorFromRgb(r, g, b);
-}
-
-static num_t GROUP(basic_core) get_lvar(uint8_t arg)
-{
-  if (!gstki) {
-    // not in a subroutine
-    err = ERR_GLOBAL;
-    return 0;
-  }
-  uint8_t proc_idx = gstk[gstki-1].proc_idx;
-  uint16_t argc = gstk[gstki-1].num_args;
-  int local_offset = proc.getNumArg(proc_idx, arg);
-  if (local_offset < 0) {
-    err = ERR_UNDEFARG;
-    return 0;
-  }
-  return astk_num[astk_num_i - argc + local_offset];
 }
 
 // Get value
