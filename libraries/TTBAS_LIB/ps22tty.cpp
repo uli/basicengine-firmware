@@ -359,15 +359,19 @@ uint8_t cnv2tty(keyEvent k) {
   return rc;
 }
 
+extern TPS2 pb;
+
 // キー入力文字の取得
-uint8_t ps2read() {
+uint8_t ICACHE_RAM_ATTR ps2read() {
   char* ptr;
   char c;
   uint8_t len;
   keyEvent k; // キー入力情報
   
-  k = kb.read(); 
-  c = cnv2tty(k);
+  if (pb.available() && (k = kb.read(), k.code))
+    c = cnv2tty(k);
+  else
+    c = 0;
 
   if (c == 0) {
     if (!rb_is_empty(&kbuf))

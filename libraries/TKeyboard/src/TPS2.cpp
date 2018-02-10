@@ -484,7 +484,7 @@ uint8_t TPS2::dequeue() {
 }
 
 // 取出し可能チェック
-uint8_t TPS2::available() {
+uint8_t ICACHE_RAM_ATTR TPS2::available() {
   uint8_t d = _q_top != _q_btm ? 1: 0; 
   return d;
 }

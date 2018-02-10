@@ -461,7 +461,10 @@ keyEvent TKeyboard::read()
 
   // Obtain key code
   c.value = 0;
-  code = scanToKeycode();
+  if (pb.available())
+    code = scanToKeycode();
+  else
+    code = 0;
   bk = code & BREAK_CODE;
   code &= 0xff;
 
