@@ -339,6 +339,7 @@ struct {
 } gstk[SIZE_GSTK];   // GOSUB stack
 unsigned char gstki;              // GOSUB stack index
 
+// Arguments/locals stack
 num_t astk_num[SIZE_ASTK];
 unsigned char astk_num_i;
 BString astk_str[SIZE_ASTK];
@@ -351,8 +352,8 @@ struct {
   num_t vstep;
   int16_t index;
   bool local;
-} lstk[SIZE_LSTK];   // FOR stack
-unsigned char lstki;              // FOR stack index
+} lstk[SIZE_LSTK];   // loop stack
+unsigned char lstki;              // loop stack index
 
 uint8_t *cont_clp = NULL;
 uint8_t *cont_cip = NULL;
