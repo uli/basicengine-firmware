@@ -3391,7 +3391,13 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       // And disregarding nonewln, for that matter.
       newline(devno);
       return;
-    } else if (*cip == I_COMMA || *cip == I_SEMI) {
+    } else if (*cip == I_COMMA) {
+      cip++;
+      while (sc0.c_x() % 8)
+        c_putch(' ');
+      if (end_of_statement())
+        return;
+    } else if (*cip == I_SEMI) {
       cip++;
       if (end_of_statement())
 	return;
