@@ -1564,7 +1564,46 @@ void GROUP(basic_core) ivararr() {
   n = value;
 }
 
-void isvar() {
+static int get_str_local_offset(uint8_t arg, bool &is_local)
+{
+  if (!gstki) {
+    // not in a subroutine
+    err = ERR_GLOBAL;
+    return 0;
+  }
+  is_local = false;
+  uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  int local_offset = proc.getStrArg(proc_idx, arg);
+  if (local_offset < 0) {
+    local_offset = proc.getStrLoc(proc_idx, arg);
+    if (local_offset < 0) {
+      err = ERR_ASTKOF;
+      return 0;
+    }
+    is_local = true;
+  }
+  return local_offset;
+}
+
+static BString& get_lsvar(uint8_t arg)
+{
+  bool is_local;
+  int local_offset = get_str_local_offset(arg, is_local);
+  if (err)
+    return astk_str[0];	// dummy
+  if (is_local) {
+    if (astk_str_i + local_offset >= SIZE_ASTK) {
+      err = ERR_ASTKOF;
+      return astk_str[0];	// dummy
+    }
+    return astk_str[astk_str_i + local_offset];
+  } else {
+    uint16_t argc = gstk[gstki-1].str_args;
+    return astk_str[astk_str_i - argc + local_offset];
+  }
+}
+
+void set_svar(bool is_lsvar) {
   BString value;
   uint8_t index = *cip++;
   int32_t offset;
@@ -1584,7 +1623,14 @@ void isvar() {
     cip++;
     
     sval = iexp();
-    svar.var(index)[offset] = sval;
+    if (is_lsvar) {
+      BString &str = get_lsvar(index);
+      if (err)
+        return;
+      str[offset] = sval;
+    } else {
+      svar.var(index)[offset] = sval;
+    }
 
     return;
   }
@@ -1598,11 +1644,22 @@ void isvar() {
   value = istrexp();
   if (err)
     return;
-  svar.var(index) = value;
+  if (is_lsvar) {
+    BString &str = get_lsvar(index);
+    if (err)
+      return;
+    str = value;
+  } else {
+    svar.var(index) = value;
+  }
+}
+
+void isvar() {
+  set_svar(false);
 }
 
 void ilsvar() {
-  err = ERR_NOT_SUPPORTED;
+  set_svar(true);
 }
 
 // String array variable assignment handler
@@ -1901,6 +1958,11 @@ void ilet() {
   case I_SVAR:
     cip++;
     isvar();
+    break;
+
+  case I_LSVAR:
+    cip++;
+    ilsvar();
     break;
 
   case I_STRARR:
