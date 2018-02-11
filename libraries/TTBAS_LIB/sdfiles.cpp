@@ -560,8 +560,10 @@ uint8_t sdfiles::mkdir(char* fname) {
 uint8_t sdfiles::rmdir(char* fname) {
   uint8_t rc = 1;
  
-  // XXX: use Unifile
-  // (actually, this is a NOP for SPIFFS...)
+  // This is a NOP for SPIFFS.
+  if (Unifile::isSPIFFS(fname))
+    return 0;
+
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
