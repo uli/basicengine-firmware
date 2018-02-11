@@ -144,6 +144,22 @@ public:
     }
   }
 
+  bool seekSet(size_t pos) {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); bool ret = m_sd_file->seekSet(pos); SD_END(); return ret; }
+    case FS: return m_fs_file->seek(pos, fs::SeekSet);
+    default: return false;
+    }
+  }
+
+  size_t position() {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file->position(); SD_END(); return ret; }
+    case FS: return m_fs_file->position();
+    default: return -1;
+    }
+  }
+
   operator bool() {
     switch (m_type) {
     case SD: return (bool)*m_sd_file;
