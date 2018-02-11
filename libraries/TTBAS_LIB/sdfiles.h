@@ -34,9 +34,9 @@ extern SdFat SD;
 bool SD_BEGIN(int mhz = 40);
 void SD_END(void);
 
-#define FLASH_PREFIX "/flash"
+const char FLASH_PREFIX[] = "/flash";
 #define FLASH_PREFIX_LEN 6
-#define SD_PREFIX "/sd"
+const char SD_PREFIX[] = "/sd";
 #define SD_PREFIX_LEN 3
 
 class Unifile {
