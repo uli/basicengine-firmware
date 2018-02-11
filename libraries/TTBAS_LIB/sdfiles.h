@@ -36,6 +36,8 @@ void SD_END(void);
 
 #define FLASH_PREFIX "/flash"
 #define FLASH_PREFIX_LEN 6
+#define SD_PREFIX "/sd"
+#define SD_PREFIX_LEN 3
 
 class Unifile {
 public:
@@ -183,7 +185,8 @@ public:
       return f;
     } else {
       SD_BEGIN();
-      Unifile f(::SD.open(name, flags));
+      UnifileString sdfat_name = abs_name.substring(SD_PREFIX_LEN + 1, 256);
+      Unifile f(::SD.open(sdfat_name, flags));
       SD_END();
       return f;
     }
@@ -202,7 +205,7 @@ public:
       return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
     else {
       SD_BEGIN();
-      bool ret = ::SD.rename(abs_from.c_str(), abs_to.c_str());
+      bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN + 1, abs_to.c_str() + SD_PREFIX_LEN + 1);
       SD_END();
       return ret;
     }
@@ -228,7 +231,7 @@ public:
       return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     } else {
       SD_BEGIN();
-      bool ret = ::SD.exists(abs_file.c_str());
+      bool ret = ::SD.exists(abs_file.c_str() + SD_PREFIX_LEN + 1);
       SD_END();
       return ret;
     }
@@ -254,7 +257,7 @@ public:
       return SPIFFS.remove(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     else {
       SD_BEGIN();
-      bool ret = ::SD.remove(abs_file.c_str());
+      bool ret = ::SD.remove(abs_file.c_str() + SD_PREFIX_LEN + 1);
       SD_END();
       return ret;
     }
