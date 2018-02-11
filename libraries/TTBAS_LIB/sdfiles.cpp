@@ -457,7 +457,7 @@ int8_t sdfiles::IsText(char* fname) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 // 
 
-File pcx_file;
+Unifile pcx_file;
 
 #define DR_PCX_NO_STDIO
 #define DR_PCX_IMPLEMENTATION
@@ -469,18 +469,13 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
     return pcx_file.position();
   else if (buf == (void *)-2)
     return pcx_file.seekSet(bytesToRead);
-  else
-    return pcx_file.read(buf, bytesToRead);
+  return pcx_file.read((char *)buf, bytesToRead);
 }
 
 uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h) {
   uint8_t rc =1;
  
-  // XXX: use Unifile!
-  if (SD_BEGIN(11) == false) 
-    return SD_ERR_INIT;
-
-  pcx_file = SD.open(fname, FILE_READ);
+  pcx_file = Unifile::open(fname, FILE_READ);
   if (!pcx_file)
     return SD_ERR_OPEN_FILE;
 
@@ -518,7 +513,6 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
 
 out:
   pcx_file.close();
-  SD_END();
   return rc;
 }
 
