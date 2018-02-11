@@ -40,7 +40,7 @@ SWRITE	I_SWRITE	iswrite
 MKDIR	I_MKDIR		imkdir
 RMDIR	I_RMDIR		irmdir
 RENAME	I_RENAME	irename
-FCOPY	I_FCOPY		eunimp
+COPY	I_COPY		icopy
 CAT	I_CAT		icat
 REMOVE	I_REMOVE	iremove
 TONE	I_TONE		itone

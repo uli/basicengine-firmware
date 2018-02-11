@@ -3606,6 +3606,26 @@ void iremove() {
   }
 }
 
+void icopy() {
+  uint8_t rc;
+
+  BString old_fname = getParamFname();
+  if (err)
+    return;
+  if (*cip != I_TO) {
+    err = ERR_SYNTAX;
+    return;
+  }
+  cip++;
+  BString new_fname = getParamFname();
+  if (err)
+    return;
+
+  rc = bfs.fcopy(old_fname.c_str(), new_fname.c_str());
+  if (rc)
+    err = ERR_FILE_WRITE;
+}
+
 // BSAVE "ファイル名", アドレス
 void SMALL ibsave() {
   //char fname[SD_PATH_LEN];
