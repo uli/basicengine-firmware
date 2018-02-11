@@ -332,40 +332,37 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
 uint8_t sdfiles::tmpClose() {
   if (tfile)
     tfile.close();
+
   return 0;
 }
 
 // 文字列出力
 uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
-#if 1
+
   if( tfile && s ) {
     n = tfile.write(s);
   }
-#endif
+
   return !n;    
 }
 
 // 1バイト出力 
 uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
-#if 1
+
   if(tfile) {
     n = tfile.write(c);
   }
-#endif
+
   return !n;   
 }
 
 // 1バイト読込
 int16_t sdfiles::read() {
-#if 1
   if(!tfile) 
     return -1;
   return tfile.read();
-#else
-  return -1;
-#endif
 }
 
 //
@@ -378,7 +375,6 @@ int16_t sdfiles::read() {
 //
 int16_t sdfiles::readLine(char* str) {
   int16_t len = 0;
-#if 1
   int16_t rc;
   
   while(1) {
@@ -395,7 +391,7 @@ int16_t sdfiles::readLine(char* str) {
     if (len == SD_TEXT_LEN)
       break;
   }
-#endif
+
   *str = 0;
   return len;
 }
