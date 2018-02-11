@@ -581,3 +581,36 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 
   return rc;
 }
+
+#define COPY_BUFFER_SIZE 512
+
+uint8_t sdfiles::fcopy(const char *srcp, const char *dstp)
+{
+  Unifile src = Unifile::open(srcp, FILE_READ);
+  if (!src)
+    return SD_ERR_OPEN_FILE;
+  Unifile dst = Unifile::open(dstp, FILE_OVERWRITE);
+  if (!dst) {
+    src.close();
+    return SD_ERR_OPEN_FILE;
+  }
+  uint8_t rc = 0;
+  char buf[COPY_BUFFER_SIZE];
+  for (;;) {
+    ssize_t redd = src.read(buf, COPY_BUFFER_SIZE);
+    if (redd < 0) {
+      rc = SD_ERR_READ_FILE;
+      goto out;
+    } else if (redd == 0)
+      break;
+
+    if (dst.write(buf, redd) != redd) {
+      rc = SD_ERR_WRITE_FILE;
+      goto out;
+    }
+  }
+out:
+  src.close();
+  dst.close();
+  return rc;
+}

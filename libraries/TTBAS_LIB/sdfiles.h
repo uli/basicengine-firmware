@@ -294,7 +294,7 @@ public:
   uint8_t mkdir(char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
   uint8_t rename(char* old_fname,char* new_fname);    // ファイル名の変更
-  uint8_t fcopy(char* old_fname,char* new_fname);       // ファイルのコピー
+  uint8_t fcopy(const char* old_fname,const char* new_fname);       // ファイルのコピー
 
   uint8_t tmpOpen(char* tfname, uint8_t mode);          // 一時ファイルオープン
   uint8_t tmpClose();                                   // 一時ファイルクローズ
