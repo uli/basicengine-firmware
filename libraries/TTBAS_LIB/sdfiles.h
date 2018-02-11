@@ -185,8 +185,8 @@ public:
       return f;
     } else {
       SD_BEGIN();
-      UnifileString sdfat_name = abs_name.substring(SD_PREFIX_LEN + 1, 256);
-      Unifile f(::SD.open(sdfat_name, flags));
+      UnifileString sdfat_name = abs_name.substring(SD_PREFIX_LEN, 256);
+      Unifile f(::SD.open(sdfat_name.c_str(), flags));
       SD_END();
       return f;
     }
@@ -205,7 +205,7 @@ public:
       return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
     else {
       SD_BEGIN();
-      bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN + 1, abs_to.c_str() + SD_PREFIX_LEN + 1);
+      bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN, abs_to.c_str() + SD_PREFIX_LEN);
       SD_END();
       return ret;
     }
@@ -231,7 +231,7 @@ public:
       return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     } else {
       SD_BEGIN();
-      bool ret = ::SD.exists(abs_file.c_str() + SD_PREFIX_LEN + 1);
+      bool ret = ::SD.exists(abs_file.c_str() + SD_PREFIX_LEN);
       SD_END();
       return ret;
     }
@@ -239,9 +239,7 @@ public:
 
   static bool chDir(const char *p) {
     UnifileString new_cwd = path(p);
-    if (new_cwd == "/")
-      new_cwd = "";
-    else if (!isSPIFFS(new_cwd) && !exists(new_cwd.c_str()))
+    if (!isSPIFFS(new_cwd) && !exists((new_cwd + "/").c_str()))
       return false;
     m_cwd = new_cwd;
     return true;
@@ -257,7 +255,7 @@ public:
       return SPIFFS.remove(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
     else {
       SD_BEGIN();
-      bool ret = ::SD.remove(abs_file.c_str() + SD_PREFIX_LEN + 1);
+      bool ret = ::SD.remove(abs_file.c_str() + SD_PREFIX_LEN);
       SD_END();
       return ret;
     }

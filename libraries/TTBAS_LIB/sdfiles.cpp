@@ -248,7 +248,10 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   if (spiffs) {
     fdir = SPIFFS.openDir(path.c_str() + FLASH_PREFIX_LEN + 1);
   } else {
-    dir = SD.open(path.c_str());
+    if (path == SD_PREFIX)
+      dir = SD.open("/");
+    else
+      dir = SD.open(path.c_str() + SD_PREFIX_LEN);
   }
 
   if (spiffs || (!spiffs && dir)) {
