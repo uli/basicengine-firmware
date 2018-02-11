@@ -535,6 +535,11 @@ uint8_t sdfiles::mkdir(char* fname) {
   if (Unifile::isSPIFFS(fname))
     return 0;
 
+  if (strncmp(fname, SD_PREFIX, SD_PREFIX_LEN))
+    return SD_ERR_OPEN_FILE;
+
+  fname += SD_PREFIX_LEN;
+
   if (SD_BEGIN() == false) {
     return SD_ERR_INIT;
   }
@@ -569,6 +574,11 @@ uint8_t sdfiles::rmdir(char* fname) {
 
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
+
+  if (strncmp(fname, SD_PREFIX, SD_PREFIX_LEN))
+    return SD_ERR_OPEN_FILE;
+
+  fname += SD_PREFIX_LEN;
 
   if(SD.rmdir(fname) == true) {
     rc = 0;
