@@ -5835,6 +5835,11 @@ void SMALL basic() {
   c_puts_P(bytes_free); newline();
 #endif
 
+  if (!Unifile::chDir(SD_PREFIX))
+    Unifile::chDir(FLASH_PREFIX);
+  static const char working_dir[] PROGMEM = "Directory ";
+  c_puts_P(working_dir); c_puts(Unifile::cwd()); newline();
+
   sc0.show_curs(1);
   error();          // "OK" or display an error message and clear the error number
 
