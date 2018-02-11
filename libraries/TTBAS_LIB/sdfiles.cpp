@@ -38,14 +38,18 @@ bool SD_BEGIN(int mhz)
   if (!sdfat_initialized) {
     sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(mhz));
   } else {
-    SPI.setFrequency(mhz * 1000000);
+    // Cannot use SPI.setFrequency() here because it's too slow; this method
+    // is called before every access. We instead use the mechanism
+    // for fast SPI frequency switching from the VS23S010 driver.
+    vs23.setSpiClockMax();
   }
   return sdfat_initialized;
 }
 
 void SD_END(void)
 {
-  SPI.setFrequency(11000000);
+  // Cannot use SPI.setFrequency() here because it's too slow.
+  vs23.setSpiClockWrite();
   SpiUnlock();
 }
 
