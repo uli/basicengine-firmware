@@ -11,6 +11,7 @@ elf:	funtbl.h
 		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
 		-fqbn "esp8266com:esp8266_nowifi:basic_engine:CpuFrequency=160,FlashSize=4M3M" \
 		-built-in-libraries $(ARDUINO_DIR)/libraries \
+		-warnings all \
 		-build-path $(PWD)/build -compile ttbasic.ino
 
 funtbl.h: icode.txt icode.py
