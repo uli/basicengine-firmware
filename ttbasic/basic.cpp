@@ -4696,6 +4696,17 @@ num_t GROUP(basic_core) ivalue() {
       value = sound.isPlaying(a - 1);
     break;
 
+  case I_SIZE:
+    if (checkOpen()) return 0;
+    if (*cip++ != I_STRLSTREF) {
+      err = ERR_SYNTAX;
+      return 0;
+    } else {
+      value = str_lst.var(*cip++).size();
+    }
+    if (checkClose()) return 0;
+    break;
+
   default:
     cip--;
     if (is_strexp())
