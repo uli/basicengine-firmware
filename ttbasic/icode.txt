@@ -122,12 +122,12 @@ $	I_DOLLAR	esyntax
 &	I_AND		esyntax
 >=	I_GTE		esyntax
 #	I_SHARP		esyntax
->	I_GT		esyntax
 =	I_EQ		esyntax
 <=	I_LTE		esyntax
 ><	I_NEQ		esyntax
 <>	I_NEQ2		esyntax
 <	I_LT		esyntax
+>	I_GT		esyntax
 AND	I_LAND		esyntax
 OR	I_LOR		esyntax
 NOT	I_LNOT		esyntax
