@@ -1733,7 +1733,7 @@ void ilsvar() {
 }
 
 // String array variable assignment handler
-void GROUP(basic_core) istrarr() {
+void istrarr() {
   BString value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
