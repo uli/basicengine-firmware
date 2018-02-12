@@ -98,6 +98,8 @@ _none	I_VARARR	ivararr
 _none	I_SVAR		isvar
 _none	I_LSVAR		ilsvar
 _none	I_STRARR	istrarr
+_none	I_STRLST	istrlst
+_none	I_STRLSTREF	esyntax
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 WHILE	I_WHILE		esyntax

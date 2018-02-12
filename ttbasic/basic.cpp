@@ -303,7 +303,8 @@ NumArrayVariables<num_t> num_arr;
 VarNames num_arr_names;
 StringArrayVariables<BString> str_arr;
 VarNames str_arr_names;
-
+StringListVariables<BString> str_lst;
+VarNames str_lst_names;
 VarNames proc_names;
 Procedures proc;
 
@@ -499,6 +500,7 @@ static inline bool GROUP(basic_core) is_strexp() {
   return (*cip == I_STR ||
           ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
           *cip == I_STRARR ||
+          *cip == I_STRLST ||
           *cip == I_ARGSTR ||
           *cip == I_STRSTR ||
           *cip == I_CHR ||
@@ -829,11 +831,15 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       }
       if (*s == c)	// If the character is ", go to the next character
         s++;
-    } else if (*ptok == '@' || isAlpha(*ptok)) {
+    } else if (*ptok == '@' || *ptok == '_' || isAlpha(*ptok)) {
       // Try converting to variable
       bool is_local = false;
+      bool is_list = false;
       if (*ptok == '@') {
         is_local = true;
+        ++ptok; ++s;
+      } else if (*ptok == '_') {
+        is_list = true;
         ++ptok; ++s;
       }
 
@@ -859,22 +865,42 @@ uint8_t SMALL toktoi(bool find_prg_text) {
           err = ERR_NOT_SUPPORTED;
           return 0;
         }
-        ibuf[len++] = I_STRARR;
-        int idx = str_arr_names.assign(vname, is_prg_text);
+        int idx;
+        if (is_list) {
+          ibuf[len++] = I_STRLST;
+          idx = str_lst_names.assign(vname, is_prg_text);
+        } else {
+          ibuf[len++] = I_STRARR;
+          idx = str_arr_names.assign(vname, is_prg_text);
+        }
         if (idx < 0)
           goto oom;
         ibuf[len++] = idx;
-        if (str_arr.reserve(str_arr_names.varTop()))
+        if ((!is_list && str_arr.reserve(str_arr_names.varTop())) ||
+            ( is_list && str_lst.reserve(str_lst_names.varTop())))
           goto oom;
         s += var_len + 2;
         ptok += 2;
       } else if (*p == '$') {
-	ibuf[len++] = is_local ? I_LSVAR : I_SVAR;
-	int idx = svar_names.assign(vname, is_prg_text);
+        uint8_t tok;
+        if (is_local)
+          tok = I_LSVAR;
+        else if (is_list)
+          tok = I_STRLSTREF;
+        else
+          tok = I_SVAR;
+        ibuf[len++] = tok;
+	int idx;
+	if (is_list) {
+	  idx = str_lst_names.assign(vname, is_prg_text);
+	} else {
+	  idx = svar_names.assign(vname, is_prg_text);
+        }
 	if (idx < 0)
 	  goto oom;
 	ibuf[len++] = idx;
-	if (svar.reserve(svar_names.varTop()))
+	if ((!is_list && svar.reserve(svar_names.varTop())) ||
+	    ( is_list && str_lst.reserve(str_lst_names.varTop())))
 	  goto oom;
 	s += var_len + 1;
 	ptok++;
@@ -1715,6 +1741,37 @@ void GROUP(basic_core) istrarr() {
   s = value;
 }
 
+// String list variable assignment handler
+void istrlst() {
+  BString value;
+  int idxs[MAX_ARRAY_DIMS];
+  int dims = 0;
+  uint8_t index;
+  
+  index = *cip++;
+
+  dims = get_array_dims(idxs);
+  if (dims != 1) {
+    err = ERR_SYNTAX;
+    return;
+  }
+
+  if (*cip != I_EQ) {
+    err = ERR_VWOEQ;
+    return;
+  }
+  cip++;
+
+  value = istrexp();
+  if (err)
+    return;
+
+  BString &s = str_lst.var(index).var(idxs[1]);
+  if (err)
+    return;
+  s = value;
+}
+
 static inline bool end_of_statement()
 {
   return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE;
@@ -1734,6 +1791,8 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   case I_SVAR:
   case I_VARARR:
   case I_STRARR:
+  case I_STRLST:
+  case I_STRLSTREF:
   case I_CALL:
   case I_PROC:
     return 2;
@@ -1994,6 +2053,11 @@ void ilet() {
     istrarr();
     break;
 
+  case I_STRLST:
+    cip++;
+    istrlst();
+    break;
+
   default:      // 以上のいずれにも該当しなかった場合
     err = ERR_LETWOV; // エラー番号をセット
     break;            // 打ち切る
@@ -2127,6 +2191,7 @@ void inew(uint8_t mode) {
     svar.reset();
     num_arr.reset();
     str_arr.reset();
+    str_lst.reset();
   }
 
   //変数と配列の初期化
@@ -2143,6 +2208,8 @@ void inew(uint8_t mode) {
     num_arr.reserve(num_arr_names.varTop());
     str_arr_names.deleteDirect();
     str_arr.reserve(str_arr_names.varTop());
+    str_lst_names.deleteDirect();
+    str_lst.reserve(str_lst_names.varTop());
   }
   //実行制御用の初期化
   if (mode !=2) {
@@ -2156,6 +2223,8 @@ void inew(uint8_t mode) {
     num_arr.reserve(0);
     str_arr_names.deleteAll();
     str_arr.reserve(0);
+    str_lst_names.deleteAll();
+    str_lst.reserve(0);
     proc_names.deleteAll();
     proc.reserve(0);
 
