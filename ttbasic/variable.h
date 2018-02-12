@@ -158,11 +158,11 @@ public:
   inline int size() {
     return m_size;
   }
-  
+
   inline num_t& var(uint8_t index) {
     return m_var[index];
   }
-  
+
 private:
   int m_size;
   num_t *m_var;
@@ -176,7 +176,7 @@ public:
     m_var = NULL;
     m_total = 0;
   }
-  
+
   ~NumArray() {
     if (m_sizes)
       free(m_sizes);
@@ -195,7 +195,7 @@ public:
       free(m_var);
       m_var = NULL;
     }
-  }  
+  }
 
   bool reserve(int dims, int *sizes) {
     dbg_var("na reserve dims %d\n", dims);
@@ -244,7 +244,7 @@ public:
     }
     return m_var[idx];
   }
-  
+
   inline int dims() {
     return m_dims;
   }
@@ -263,12 +263,12 @@ public:
     m_size = 0;
     m_var = NULL;
   }
-  
+
   void reset() {
     for (int i = 0; i < m_size; ++i)
       m_var[i]->reset();
   }
-  
+
   bool reserve(uint8_t count) {
     dbg_var("na reserve %d\n", count);
     if (count == 0) {
@@ -280,13 +280,13 @@ public:
       m_size = 0;
       return false;
     }
-    
+
     if (count < m_size) {
       for (int i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
-    
+
     m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> **));
     if (!m_var)
       return true;
@@ -296,11 +296,11 @@ public:
     m_size = count;
     return false;
   }
-  
+
   inline int size() {
     return m_size;
   }
-  
+
   inline NumArray<T>& var(uint8_t index) {
     return *m_var[index];
   }
@@ -316,7 +316,7 @@ public:
     m_size = 0;
     m_var = NULL;
   }
-  
+
   void reset() {
     for (int i = 0; i < m_size; ++i)
       *m_var[i] = "";
@@ -348,7 +348,7 @@ public:
     m_size = count;
     return false;
   }
-  
+
   inline BString& var(uint8_t index) {
     return *m_var[index];
   }
@@ -366,7 +366,7 @@ public:
     m_var = NULL;
     m_total = 0;
   }
-  
+
   ~StringArray() {
     if (m_sizes)
       free(m_sizes);
@@ -385,7 +385,7 @@ public:
       delete[] m_var;
       m_var = NULL;
     }
-  }  
+  }
 
   bool reserve(int dims, int *sizes) {
     dbg_var("sa reserve dims %d\n", dims);
@@ -431,7 +431,7 @@ public:
     }
     return m_var[idx];
   }
-  
+
   inline int dims() {
     return m_dims;
   }
@@ -450,12 +450,12 @@ public:
     m_size = 0;
     m_var = NULL;
   }
-  
+
   void reset() {
     for (int i = 0; i < m_size; ++i)
       m_var[i]->reset();
   }
-  
+
   bool reserve(uint8_t count) {
     dbg_var("sa reserve %d\n", count);
     if (count == 0) {
@@ -467,13 +467,13 @@ public:
       m_size = 0;
       return false;
     }
-    
+
     if (count < m_size) {
       for (int i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
-    
+
     m_var = (StringArray<T> **)realloc(m_var, count * sizeof(StringArray<T> **));
     if (!m_var)
       return true;
@@ -483,11 +483,11 @@ public:
     m_size = count;
     return false;
   }
-  
+
   inline int size() {
     return m_size;
   }
-  
+
   inline StringArray<T>& var(uint8_t index) {
     return *m_var[index];
   }
