@@ -4884,6 +4884,16 @@ BString istrvalue()
     }
     break;
 
+  case I_STRLST:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != 1) {
+      err = ERR_SYNTAX;
+    } else {
+      value = str_lst.var(i).var(idxs[0]);
+    }
+    break;
+
   case I_ARGSTR:
     bp = iargstr();
     if (!err)
