@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "variable.h"
+#include "proc.h"
 
 #define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 128    // 中間コード変換バッファサイズ
