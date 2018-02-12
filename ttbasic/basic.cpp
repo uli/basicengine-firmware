@@ -2030,14 +2030,17 @@ void iread() {
     svar.var(*cip++) = svalue;
     break;
     
-  case I_STRARR: {
+  case I_STRARR:
+  case I_STRLST:
+    {
+    bool is_list = cip[-1] == I_STRLST;
     ++cip;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
     
     index = *cip++;
     dims = get_array_dims(idxs);
-    if (dims < 0)
+    if (dims < 0 || (is_list && dims != 1))
       return;
 
     cip_save = cip;
@@ -2046,7 +2049,9 @@ void iread() {
     data_ip = cip;
     cip = cip_save;
 
-    BString &s = str_arr.var(index).var(idxs);
+    BString &s = is_list ?
+                    str_lst.var(index).var(idxs[0]) :
+                    str_arr.var(index).var(idxs);
     if (err)
       return;
     s = svalue;
