@@ -1240,14 +1240,23 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
-    } else if (*ip == I_STRARR) {
+    } else if (*ip == I_STRARR || *ip == I_STRLST) {
       ip++;
       var_code = *ip++;
-      c_puts(str_arr_names.name(var_code), devno);
+      if (ip[-2] == I_STRLST) {
+        c_putch('_', devno);
+        c_puts(str_lst_names.name(var_code), devno);
+      } else {
+        c_puts(str_arr_names.name(var_code), devno);
+      }
       c_putch('$', devno);
       c_putch('(', devno);
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
+    } else if (*ip == I_STRLSTREF) {
+      ip++;
+      var_code = *ip++;
+      c_putch('_', devno);
+      c_puts(str_lst_names.name(var_code), devno);
+      c_putch('$', devno);
     } else
 
     //文字列の処理
