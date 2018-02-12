@@ -1781,6 +1781,25 @@ void istrlst() {
   s = value;
 }
 
+void iappend() {
+  uint8_t index;
+  if (*cip == I_STRLSTREF) {
+    index = *++cip;
+    if (*++cip != I_COMMA)
+      goto syntax;
+    ++cip;
+    BString value = istrexp();
+    if (err)
+      return;
+    str_lst.var(index).append(value);
+  } else {
+    goto syntax;
+  }
+  return;
+syntax:
+  err = ERR_SYNTAX;
+}
+
 static inline bool end_of_statement()
 {
   return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE;

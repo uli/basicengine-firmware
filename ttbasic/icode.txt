@@ -92,6 +92,7 @@ RUN	I_RUN		ecom
 CONT	I_CONT		ecom
 DELETE	I_DELETE	ecom
 FLASH	I_FLASH		ecom
+APPEND	I_APPEND	iappend
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
@@ -198,7 +199,6 @@ LEFT	I_LEFT		esyntax
 USING	I_USING		esyntax
 OUTPUT_OD	I_OUTPUT_OPEN_DRAIN	esyntax
 OUTPUT	I_OUTPUT	esyntax
-APPEND	I_APPEND	esyntax
 INPUT_PU	I_INPUT_PULLUP		esyntax
 INPUT_PD	I_INPUT_PULLDOWN	esyntax
 ANALOG	I_INPUT_ANALOG	esyntax
