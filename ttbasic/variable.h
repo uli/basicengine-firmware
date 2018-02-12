@@ -497,3 +497,93 @@ private:
   StringArray<T> **m_var;
 };
 
+#include "QList.h"
+
+template <typename T> class StringList {
+public:
+  StringList() {
+    m_list.clear();
+  }
+
+  ~StringList() {
+  }
+
+  void reset() {
+    m_list.clear();
+  }
+
+  inline T& var(int idx) {
+    if (idx >= m_list.size()) {
+      err = ERR_SOR;
+      return bull;
+    }
+    return m_list.at(idx);
+  }
+
+  inline int size() {
+    return m_list.size();
+  }
+
+  inline bool append(T& item) {
+    m_list.push_back(item);
+    return false;
+  }
+
+private:
+  QList<T> m_list;
+  T bull;
+};
+
+template <typename T> class StringListVariables {
+public:
+  StringListVariables() {
+    m_size = 0;
+    m_var = NULL;
+  }
+
+  void reset() {
+    for (int i = 0; i < m_size; ++i)
+      m_var[i]->reset();
+  }
+
+  bool reserve(uint8_t count) {
+    dbg_var("sl reserve %d\n", count);
+    if (count == 0) {
+      for (int i = 0; i < m_size; ++i) {
+        delete m_var[i];
+      }
+      free(m_var);
+      m_var = NULL;
+      m_size = 0;
+      return false;
+    }
+
+    if (count < m_size) {
+      for (int i = count; i < m_size; ++i) {
+        delete m_var[i];
+      }
+    }
+
+    m_var = (StringList<T> **)realloc(m_var, count * sizeof(StringList<T> **));
+    if (!m_var)
+      return true;
+    for (int i = m_size; i < count; ++i) {
+      m_var[i] = new StringList<T>();
+    }
+    m_size = count;
+    return false;
+  }
+
+  inline int size() {
+    return m_size;
+  }
+
+  inline StringList<T>& var(uint8_t index) {
+    return *m_var[index];
+  }
+
+private:
+  int m_size;
+  StringList<T> **m_var;
+};
+
