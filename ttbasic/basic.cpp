@@ -1864,6 +1864,15 @@ void iappend() {
     if (err)
       return;
     str_lst.var(index).append(value);
+  } else if (*cip == I_NUMLSTREF) {
+    index = *++cip;
+    if (*++cip != I_COMMA)
+      goto syntax;
+    ++cip;
+    num_t value = iexp();
+    if (err)
+      return;
+    num_lst.var(index).append(value);
   } else {
     goto syntax;
   }
