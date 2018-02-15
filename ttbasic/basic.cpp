@@ -4813,11 +4813,18 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_SIZE:
     if (checkOpen()) return 0;
-    if (*cip++ != I_STRLSTREF) {
-      err = ERR_SYNTAX;
-      return 0;
-    } else {
+    if (*cip == I_STRLSTREF) {
+      ++cip;
       value = str_lst.var(*cip++).size();
+    } else if (*cip == I_NUMLSTREF) {
+      ++cip;
+      value = num_lst.var(*cip++).size();
+    } else {
+      if (is_var(*cip))
+        err = ERR_TYPE;
+      else
+        err = ERR_SYNTAX;
+      return 0;
     }
     if (checkClose()) return 0;
     break;
