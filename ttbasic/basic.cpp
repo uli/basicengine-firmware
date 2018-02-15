@@ -1245,13 +1245,21 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
-    } else if (*ip == I_VARARR) {
+    } else if (*ip == I_VARARR || *ip == I_NUMLST) {
       ip++;
       var_code = *ip++;
-      c_puts(num_arr_names.name(var_code), devno);
+      if (ip[-2] == I_NUMLST) {
+        c_putch('_', devno);
+        c_puts(num_lst_names.name(var_code), devno);
+      } else {
+        c_puts(num_arr_names.name(var_code), devno);
+      }
       c_putch('(', devno);
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
+    } else if (*ip == I_NUMLSTREF) {
+      ip++;
+      var_code = *ip++;
+      c_putch('_', devno);
+      c_puts(num_lst_names.name(var_code), devno);
     } else if (*ip == I_SVAR || *ip == I_LSVAR) {
       if (*ip == I_LSVAR)
         c_putch('@', devno);
