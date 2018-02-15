@@ -532,6 +532,24 @@ public:
     m_list.push_front(item);
     return false;
   }
+  inline T front() {
+    if (m_list.size() == 0) {
+      err = ERR_EMPTY;
+      return bull;
+    } else {
+      return m_list.front();
+    }
+  }
+  inline T back() {
+    if (m_list.size() == 0) {
+      err = ERR_EMPTY;
+      return bull;
+    } else {
+      return m_list.back();
+    }
+  }
+  inline void pop_front() { m_list.pop_front(); }
+  inline void pop_back() { m_list.pop_back(); }
 
 private:
   QList<T> m_list;
