@@ -4822,6 +4822,16 @@ num_t GROUP(basic_core) ivalue() {
     if (checkClose()) return 0;
     break;
 
+  case I_NUMLST:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != 1) {
+      err = ERR_SYNTAX;
+    } else {
+      value = num_lst.var(i).var(idxs[0]);
+    }
+    break;
+
   default:
     cip--;
     if (is_strexp())
