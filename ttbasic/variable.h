@@ -528,6 +528,10 @@ public:
     m_list.push_back(item);
     return false;
   }
+  inline bool prepend(T& item) {
+    m_list.push_front(item);
+    return false;
+  }
 
 private:
   QList<T> m_list;
