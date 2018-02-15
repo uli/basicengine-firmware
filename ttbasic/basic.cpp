@@ -303,7 +303,7 @@ NumArrayVariables<num_t> num_arr;
 VarNames num_arr_names;
 StringArrayVariables<BString> str_arr;
 VarNames str_arr_names;
-StringListVariables<BString> str_lst;
+BasicListVariables<BString> str_lst;
 VarNames str_lst_names;
 VarNames proc_names;
 Procedures proc;

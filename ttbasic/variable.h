@@ -499,13 +499,13 @@ private:
 
 #include "QList.h"
 
-template <typename T> class StringList {
+template <typename T> class BasicList {
 public:
-  StringList() {
+  BasicList() {
     m_list.clear();
   }
 
-  ~StringList() {
+  ~BasicList() {
   }
 
   void reset() {
@@ -534,9 +534,9 @@ private:
   T bull;
 };
 
-template <typename T> class StringListVariables {
+template <typename T> class BasicListVariables {
 public:
-  StringListVariables() {
+  BasicListVariables() {
     m_size = 0;
     m_var = NULL;
   }
@@ -564,11 +564,11 @@ public:
       }
     }
 
-    m_var = (StringList<T> **)realloc(m_var, count * sizeof(StringList<T> **));
+    m_var = (BasicList<T> **)realloc(m_var, count * sizeof(BasicList<T> **));
     if (!m_var)
       return true;
     for (int i = m_size; i < count; ++i) {
-      m_var[i] = new StringList<T>();
+      m_var[i] = new BasicList<T>();
     }
     m_size = count;
     return false;
@@ -578,12 +578,12 @@ public:
     return m_size;
   }
 
-  inline StringList<T>& var(uint8_t index) {
+  inline BasicList<T>& var(uint8_t index) {
     return *m_var[index];
   }
 
 private:
   int m_size;
-  StringList<T> **m_var;
+  BasicList<T> **m_var;
 };
 
