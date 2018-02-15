@@ -4496,6 +4496,11 @@ num_t irgb() {
   return vs23.colorFromRgb(r, g, b);
 }
 
+static inline bool is_var(unsigned char tok)
+{
+  return tok >= I_VAR && tok <= I_STRLSTREF;
+}
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
