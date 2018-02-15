@@ -113,6 +113,7 @@ public:
     if(start!=NULL)
       return start->item;
     //TODO: Catch error when list is empty
+    for (;;);
   }
 
   //Get item from back
@@ -121,6 +122,7 @@ public:
     if(end!=NULL)
       return end->item;
     //TODO: Catch error when list is empty
+    for (;;);
   }
 
   // Get size
@@ -192,6 +194,7 @@ public:
         tmp=tmp->next;
     }
     //TODO: Catch error when index is out of range
+    for (;;);
   }
 
   // Get length
