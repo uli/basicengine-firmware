@@ -4867,6 +4867,36 @@ num_t GROUP(basic_core) ivalue() {
     }
     break;
 
+  case I_POPF:
+    if (checkOpen()) return 0;
+    if (*cip++ == I_NUMLSTREF) {
+      value = num_lst.var(*cip++).front();
+      num_lst.var(*cip++).pop_front();
+    } else {
+      if (is_var(cip[-1]))
+        err = ERR_TYPE;
+      else
+        err = ERR_SYNTAX;
+      return 0;
+    }
+    if (checkClose()) return 0;
+    break;
+
+  case I_POPB:
+    if (checkOpen()) return 0;
+    if (*cip++ == I_NUMLSTREF) {
+      value = num_lst.var(*cip++).back();
+      num_lst.var(*cip++).pop_back();
+    } else {
+      if (is_var(cip[-1]))
+        err = ERR_TYPE;
+      else
+        err = ERR_SYNTAX;
+      return 0;
+    }
+    if (checkClose()) return 0;
+    break;
+  
   default:
     cip--;
     if (is_strexp())
