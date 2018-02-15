@@ -305,6 +305,8 @@ StringArrayVariables<BString> str_arr;
 VarNames str_arr_names;
 BasicListVariables<BString> str_lst;
 VarNames str_lst_names;
+BasicListVariables<num_t> num_lst;
+VarNames num_lst_names;
 VarNames proc_names;
 Procedures proc;
 
@@ -909,23 +911,43 @@ uint8_t SMALL toktoi(bool find_prg_text) {
           err = ERR_NOT_SUPPORTED;
           return 0;
         }
-        ibuf[len++] = I_VARARR;
-        int idx = num_arr_names.assign(vname, is_prg_text);
+        int idx;
+        if (is_list) {
+          ibuf[len++] = I_NUMLST;
+          idx = num_lst_names.assign(vname, is_prg_text);
+        } else {
+          ibuf[len++] = I_VARARR;
+          idx = num_arr_names.assign(vname, is_prg_text);
+        }
         if (idx < 0)
           goto oom;
         ibuf[len++] = idx;
-        if (num_arr.reserve(num_arr_names.varTop()))
+        if ((!is_list && num_arr.reserve(num_arr_names.varTop())) ||
+            ( is_list && num_lst.reserve(num_lst_names.varTop())))
           goto oom;
         s += var_len + 1;
         ptok++;
       } else {
 	// Convert to intermediate code
-	ibuf[len++] = is_local ? I_LVAR : I_VAR; //中間コードを記録
-	int idx = var_names.assign(vname, is_prg_text);
+        uint8_t tok;
+        if (is_local)
+          tok = I_LVAR;
+        else if (is_list)
+          tok = I_NUMLSTREF;
+        else
+          tok = I_VAR;
+	ibuf[len++] = tok;
+	int idx;
+	if (is_list) {
+	  idx = num_lst_names.assign(vname, is_prg_text);
+	} else {
+	  idx = var_names.assign(vname, is_prg_text);
+        }
 	if (idx < 0)
 	  goto oom;
 	ibuf[len++] = idx;
-	if (var.reserve(var_names.varTop()))
+	if ((!is_list && var.reserve(var_names.varTop())) ||
+	    ( is_list && num_lst.reserve(num_lst_names.varTop())))
 	  goto oom;
 	s += var_len;
       }
@@ -1792,6 +1814,37 @@ void istrlst() {
   s = value;
 }
 
+// Numeric list variable assignment handler
+void inumlst() {
+  num_t value;
+  int idxs[MAX_ARRAY_DIMS];
+  int dims = 0;
+  uint8_t index;
+  
+  index = *cip++;
+
+  dims = get_array_dims(idxs);
+  if (dims != 1) {
+    err = ERR_SYNTAX;
+    return;
+  }
+
+  if (*cip != I_EQ) {
+    err = ERR_VWOEQ;
+    return;
+  }
+  cip++;
+
+  value = iexp();
+  if (err)
+    return;
+
+  num_t &s = num_lst.var(index).var(idxs[1]);
+  if (err)
+    return;
+  s = value;
+}
+
 void iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
@@ -1829,6 +1882,8 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   case I_LSVAR:
   case I_SVAR:
   case I_VARARR:
+  case I_NUMLST:
+  case I_NUMLSTREF:
   case I_STRARR:
   case I_STRLST:
   case I_STRLSTREF:
@@ -2100,6 +2155,11 @@ void ilet() {
   case I_STRLST:
     cip++;
     istrlst();
+    break;
+
+  case I_NUMLST:
+    cip++;
+    inumlst();
     break;
 
   default:      // 以上のいずれにも該当しなかった場合
