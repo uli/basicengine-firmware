@@ -5104,6 +5104,37 @@ BString istrvalue()
     else
       value = "";
     break;
+  
+  case I_POPFSTR:
+    if (checkOpen()) break;
+    if (*cip++ == I_STRLSTREF) {
+      value = str_lst.var(*cip++).front();
+      str_lst.var(*cip++).pop_front();
+    } else {
+      if (is_var(cip[-1]))
+        err = ERR_TYPE;
+      else
+        err = ERR_SYNTAX;
+      break;
+    }
+    checkClose();
+    break;
+
+  case I_POPBSTR:
+    if (checkOpen()) break;
+    if (*cip++ == I_STRLSTREF) {
+      value = str_lst.var(*cip++).back();
+      str_lst.var(*cip++).pop_back();
+    } else {
+      if (is_var(cip[-1]))
+        err = ERR_TYPE;
+      else
+        err = ERR_SYNTAX;
+      break;
+    }
+    checkClose();
+    break;
+  
   default:
     cip--;
     // Check if a numeric expression follows, so we can give a more

@@ -213,6 +213,8 @@ FRAME	I_FRAME		esyntax
 FLAGS	I_FLAGS		esyntax
 TILECOLL	I_TILECOLL	esyntax
 SPRCOLL	I_SPRCOLL	esyntax
+POPF$	I_POPFSTR	esyntax
+POPB$	I_POPBSTR	esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax
