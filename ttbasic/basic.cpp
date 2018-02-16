@@ -4373,17 +4373,17 @@ uint8_t SMALL ilrun() {
   uint8_t label[34];
   uint8_t len;
   int8_t fg;               // File format 0: Binary format 1: Text format
-  uint8_t rc;
   uint8_t islrun = 1;
   uint8_t newmode = NEW_PROG;
   BString fname;
-  int32_t flgMerge = 0;    // Merge mode
 
   // Command identification
   if (*(cip-1) == I_LOAD) {
     islrun  = 0;
     lineno  = 0;
     newmode = NEW_ALL;
+  } else if (cip[-1] == I_MERGE) {
+    newmode = NEW_VAR;
   }
 
   // Get file name
@@ -4413,17 +4413,6 @@ uint8_t SMALL ilrun() {
       }
     } else {
       lineno = 0;
-    }
-  } else {
-    // LOAD
-    if(*cip == I_COMMA) {  // 第2引数の処理
-      cip++;
-      if ( getParam(flgMerge, 0, 1, I_NONE) ) return 0;
-      if (flgMerge == 0) {
-	newmode = NEW_ALL; // 上書きモード
-      } else {
-	newmode = NEW_VAR; // 追記モード
-      }
     }
   }
 
@@ -5815,6 +5804,10 @@ void ilrun_() {
     iloadbg();
   } else
     ilrun();
+}
+
+void imerge() {
+  ilrun();
 }
 
 void istop() {

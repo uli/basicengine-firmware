@@ -55,6 +55,7 @@ EEPFORMAT	I_EEPFORMAT	ieepformat
 EEPWRITE	I_EEPWRITE	ieepwrite
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
+MERGE	I_MERGE		imerge
 BLOAD	I_BLOAD		ibload
 BSAVE	I_BSAVE		ibsave
 LIST	I_LIST		ilist_
