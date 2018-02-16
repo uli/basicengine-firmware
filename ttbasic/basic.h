@@ -57,4 +57,8 @@ extern "C" size_t umm_free_heap_size( void );
 
 extern tTVscreen sc0;
 
+#define NEW_ALL		0
+#define NEW_PROG	1
+#define NEW_VAR		2
+
 #endif

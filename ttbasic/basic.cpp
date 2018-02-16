@@ -2239,7 +2239,7 @@ void itroff() {
   trace_enabled = false;
 }
 
-void inew(uint8_t mode = 0);
+void inew(uint8_t mode = NEW_ALL);
 
 // RUN command handler
 void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
@@ -2256,7 +2256,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   ifstki = 0;
   astk_num_i = 0;
   astk_str_i = 0;
-  inew(2);
+  inew(NEW_VAR);
 
   if (start_clp != NULL) {
     clp = start_clp;
@@ -2352,7 +2352,7 @@ void SMALL ilist(uint8_t devno=0) {
 void inew(uint8_t mode) {
   data_ip = data_lp = NULL;
 
-  if (mode != 1) {
+  if (mode != NEW_PROG) {
     var.reset();
     svar.reset();
     num_arr.reset();
@@ -2360,8 +2360,8 @@ void inew(uint8_t mode) {
     str_lst.reset();
   }
 
-  //変数と配列の初期化
-  if (mode == 0|| mode == 2) {
+  // Initialization of variables and arrays
+  if (mode == NEW_ALL|| mode == NEW_VAR) {
     // forget variables assigned in direct mode
 
     // XXX: These reserve() calls always downsize (or same-size) the
@@ -2377,8 +2377,9 @@ void inew(uint8_t mode) {
     str_lst_names.deleteDirect();
     str_lst.reserve(str_lst_names.varTop());
   }
-  //実行制御用の初期化
-  if (mode !=2) {
+
+  // Initialization for execution control
+  if (mode != NEW_VAR) {
     cont_cip = cont_clp = NULL;
     // forget all variables
     var_names.deleteAll();
@@ -2586,7 +2587,7 @@ void isave() {
 // 戻り値
 //   0:正常終了
 //   1:異常終了
-uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
+uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   int16_t rc;
   int32_t len;
   
@@ -2603,7 +2604,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
     return 1;
   }
 
-  if (newmode != 2)
+  if (newmode != NEW_VAR)
     inew(newmode);
   while(bfs.readLine(lbuf)) {
     tlimR(lbuf);  // 2017/07/31 追記
@@ -2635,7 +2636,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = 0) {
 //  0:正常終了
 //  1:異常終了
 
-uint8_t loadPrg(uint16_t prgno, uint8_t newmode=0) {
+uint8_t loadPrg(uint16_t prgno, uint8_t newmode = NEW_ALL) {
 #if 0
   uint32_t flash_adr;
   flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
@@ -4386,7 +4387,7 @@ uint8_t SMALL ilrun() {
   int8_t fg;               // ファイル形式 0:バイナリ形式  1:テキスト形式
   uint8_t rc;
   uint8_t islrun = 1;
-  uint8_t newmode = 1;
+  uint8_t newmode = NEW_PROG;
   BString fname;
   int32_t flgMerge = 0;    // マージモード
   uint8_t flgPrm2 = 0;    // 第2引数の有無
@@ -4395,7 +4396,7 @@ uint8_t SMALL ilrun() {
   if (*(cip-1) == I_LOAD) {
     islrun  = 0;
     lineno  = 0;
-    newmode = 0;
+    newmode = NEW_ALL;
   }
 
   // ファイル名またはプログラム番号の取得
@@ -4434,9 +4435,9 @@ uint8_t SMALL ilrun() {
       if ( getParam(flgMerge, 0, 1, I_NONE) ) return 0;
       flgPrm2 = 1;
       if (flgMerge == 0) {
-	newmode = 0; // 上書きモード
+	newmode = NEW_ALL; // 上書きモード
       } else {
-	newmode = 2; // 追記モード
+	newmode = NEW_VAR; // 追記モード
       }
     }
   }
@@ -5829,7 +5830,7 @@ void inew_() {
 }
 
 void iclv() {
-  inew(2);
+  inew(NEW_VAR);
 }
 
 void inil() {
