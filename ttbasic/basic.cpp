@@ -2356,6 +2356,7 @@ void inew(uint8_t mode) {
     var.reset();
     svar.reset();
     num_arr.reset();
+    num_lst.reset();
     str_arr.reset();
     str_lst.reset();
   }
