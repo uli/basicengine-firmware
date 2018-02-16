@@ -2673,12 +2673,13 @@ void SMALL idelete() {
   cont_clp = cont_cip = NULL;
   proc.reset();
 
-  if ( getParam(sNo, I_NONE) ) return;
-  if (*cip == I_COMMA) {
-    cip++;
-    if ( getParam(eNo, I_NONE) ) return;
-  } else {
-    eNo = sNo;
+  uint32_t current_line = getlineno(clp);
+
+  if (!get_range(sNo, eNo))
+    return;
+  if (!end_of_statement()) {
+    err = ERR_SYNTAX;
+    return;
   }
 
   if (eNo < sNo) {
