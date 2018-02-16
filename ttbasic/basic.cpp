@@ -2294,19 +2294,15 @@ resume:
 
 num_t GROUP(basic_core) imul();
 
-// LIST command
-void SMALL ilist(uint8_t devno=0) {
-  uint32_t lineno = 0;			// start line number
-  uint32_t endlineno = UINT32_MAX;	// end line number
-  uint32_t prnlineno;			// output line number
-  unsigned char *lp;
-
-  // Determine range
+static bool get_range(uint32_t &start, uint32_t &end)
+{
+  start = 0;
+  end = UINT32_MAX;
   if (!end_of_statement()) {
     if (*cip == I_MINUS) {
       // -<num> -> from start to line <num>
       cip++;
-      if (getParam(endlineno, I_NONE)) return;
+      if (getParam(end, I_NONE)) return false;
     } else {
       // <num>, <num>-, <num>-<num>
 
@@ -2315,25 +2311,37 @@ void SMALL ilist(uint8_t devno=0) {
       // parser.
       // It is still possible to use an expression containing +/- by
       // enclosing it in parentheses.
-      lineno = imul();
+      start = imul();
       if (err)
-        return;
+        return false;
 
       if (*cip == I_MINUS) {
         // <num>-, <num>-<num>
         cip++;
         if (!end_of_statement()) {
           // <num>-<num> -> list specified range
-          if (getParam(endlineno, lineno, UINT32_MAX, I_NONE)) return;
+          if (getParam(end, start, UINT32_MAX, I_NONE)) return false;
         } else {
           // <num>- -> list from line <num> to the end
         }
       } else {
         // <num> -> only one line
-        endlineno = lineno;
+        end = start;
       }
     }
   }
+  return true;
+}
+
+// LIST command
+void SMALL ilist(uint8_t devno=0) {
+  uint32_t lineno;			// start line number
+  uint32_t endlineno;	// end line number
+  uint32_t prnlineno;			// output line number
+  unsigned char *lp;
+
+  if (!get_range(lineno, endlineno))
+    return;
 
   // Skip until we reach the start line.
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
