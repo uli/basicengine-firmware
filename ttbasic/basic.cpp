@@ -4364,34 +4364,26 @@ void iedit() {
 }
 
 //
-// プログラムのロード・実行 LRUN/LOAD
-// LRUN プログラム番号
-// LRUN プログラム番号,行番号
-// LRUN プログラム番号,"ラベル"
-// LRUN "ファイル名"
-// LRUN "ファイル名",行番号
-// LRUN "ファイル名","ラベル"
-// LOAD プログラム番号
-// LOAD "ファイル名"
+// load / execute the program LRUN / LOAD
+// LRUN "file name"
+// LRUN "file name", line number
+// LRUN "file name", "label"
+// LOAD "file name"
 
-// 戻り値
-//  1:正常 0:異常
+// Return value
+// 1: normal 0: abnormal
 //
 uint8_t SMALL ilrun() {
-  int32_t prgno;
   uint32_t lineno = (uint32_t)-1;
   uint8_t *lp;
-  //char fname[SD_PATH_LEN];  // ファイル名
   uint8_t label[34];
   uint8_t len;
-  uint8_t mode = 0;        // ロードモード 0:フラッシュメモリ 1:SDカード
   int8_t fg;               // ファイル形式 0:バイナリ形式  1:テキスト形式
   uint8_t rc;
   uint8_t islrun = 1;
   uint8_t newmode = NEW_PROG;
   BString fname;
   int32_t flgMerge = 0;    // マージモード
-  uint8_t flgPrm2 = 0;    // 第2引数の有無
 
   // コマンド識別
   if (*(cip-1) == I_LOAD) {
@@ -4405,7 +4397,6 @@ uint8_t SMALL ilrun() {
     if(!(fname = getParamFname())) {
       return 0;
     }
-    mode = 1;
   } else {
     err = ERR_SYNTAX;
     return 0;
@@ -4434,7 +4425,6 @@ uint8_t SMALL ilrun() {
     if(*cip == I_COMMA) {  // 第2引数の処理
       cip++;
       if ( getParam(flgMerge, 0, 1, I_NONE) ) return 0;
-      flgPrm2 = 1;
       if (flgMerge == 0) {
 	newmode = NEW_ALL; // 上書きモード
       } else {
@@ -4443,47 +4433,25 @@ uint8_t SMALL ilrun() {
     }
   }
 
-  // プログラムのロード処理
-  if (mode == 0) {
-    // フラッシュメモリからプログラムのロード
-    if (!islrun && flgPrm2) {
-      // LOADコマンド時、フラッシュメモリからのロードで第2引数があった場合はエラーとする
-      err = ERR_SYNTAX;
-      return 0;
-    }
-    if ( loadPrg(prgno,newmode) ) {
-      return 0;
-    }
-  } else {
 #if USE_SD_CARD == 1
-    // SDカードからプログラムのロード
-    // SDカードからのロード
-    fg = bfs.IsText((char *)fname.c_str()); // 形式チェック
-    if (fg < 0) {
-      // Abnormal form (形式異常)
-      rc = -fg;
-      if( rc == SD_ERR_INIT ) {
-	err = ERR_SD_NOT_READY;
-      } else if (rc == SD_ERR_OPEN_FILE) {
-	err = ERR_FILE_OPEN;
-      } else if (rc == SD_ERR_READ_FILE) {
-	err = ERR_FILE_READ;
-      } else if (rc == SD_ERR_NOT_FILE) {
-	err = ERR_BAD_FNAME;
-      }
-    } else if (fg == 0) {
-      // Binary format load from SD card
-      err = ERR_NOT_SUPPORTED;
-    } else if (fg == 1) {
-      // Text format load from SD card
-      if( loadPrgText((char *)fname.c_str(),newmode)) {
-	err = ERR_FILE_READ;
-      }
+  // SDカードからプログラムのロード
+  // SDカードからのロード
+  fg = bfs.IsText((char *)fname.c_str()); // 形式チェック
+  if (fg < 0) {
+    // Abnormal form (形式異常)
+    err = -fg;
+  } else if (fg == 0) {
+    // Binary format load from SD card
+    err = ERR_NOT_SUPPORTED;
+  } else if (fg == 1) {
+    // Text format load from SD card
+    if( loadPrgText((char *)fname.c_str(),newmode)) {
+      err = ERR_FILE_READ;
     }
-    if (err)
-      return 0;
-#endif
   }
+  if (err)
+    return 0;
+#endif
 
   // 行番号・ラベル指定の処理
   if (lineno == 0) {
