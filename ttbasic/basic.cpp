@@ -6008,6 +6008,14 @@ uint8_t SMALL icom() {
       irun(NULL, true);
     }
     break;
+  case I_GOTO:
+    igoto();
+    if (!err) {
+      restore_windows();
+      sc0.show_curs(0);
+      irun(clp, true);
+    }
+    break;
   case I_RENUM: // I_RENUMの場合
     //if (*cip == I_EOL || *(cip + 3) == I_EOL || *(cip + 7) == I_EOL)
     irenum();
