@@ -2713,6 +2713,11 @@ void SMALL idelete() {
       }
     }
   }
+  
+  // continue on the next line, in the likely case the DELETE command didn't
+  // delete itself
+  clp = getlp(current_line + 1);
+  cip = clp + sizeof(num_t) + 1;
 }
 
 // プログラムファイル一覧表示 FILES ["ファイルパス"]
