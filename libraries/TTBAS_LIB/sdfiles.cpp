@@ -172,18 +172,18 @@ uint8_t sdfiles::save(char* fname, uint8_t* ptr, uint16_t sz) {
 }
 
 //
-// テキストファイルの出力
-// [引数]
-//  fname : ターゲットファイル名
-//  sline : 出力開始行(0～)
-//  ln    : 出力行数(1～)
-// [戻り値]
-//  SDカード利用失敗      : -SD_ERR_INIT
-//  ファイルオープン失敗  : -SD_ERR_OPEN_FILE
-//  ファイルでない        : -SD_ERR_NOT_FILE
-//  ファイルの終了に達した: 0
-//  継続可能              : 1
-// 
+// Output text file
+// [Arguments]
+//  fname: target file name
+//  sline: Output start line (0-)
+//  ln   : Number of output lines (1-)
+// [Return value]
+//  SD card use failure : -SD_ERR_INIT
+//  Failed to open file : -SD_ERR_OPEN_FILE
+//  not a file          : -SD_ERR_NOT_FILE
+//  End of file reached : 0
+//  possible to continue: 1
+//
 int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
