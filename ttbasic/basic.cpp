@@ -4845,7 +4845,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_POPF:
     if (checkOpen()) return 0;
     if (*cip++ == I_NUMLSTREF) {
-      value = num_lst.var(*cip++).front();
+      value = num_lst.var(*cip).front();
       num_lst.var(*cip++).pop_front();
     } else {
       if (is_var(cip[-1]))
@@ -4860,7 +4860,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_POPB:
     if (checkOpen()) return 0;
     if (*cip++ == I_NUMLSTREF) {
-      value = num_lst.var(*cip++).back();
+      value = num_lst.var(*cip).back();
       num_lst.var(*cip++).pop_back();
     } else {
       if (is_var(cip[-1]))
