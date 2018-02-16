@@ -4323,6 +4323,7 @@ Psx psx;
 
 static int cursor_pad_state()
 {
+  // The state is kept up-to-date by the interpreter polling for Ctrl-C.
   return kb.state(PS2KEY_L_Arrow) << psxLeftShift |
          kb.state(PS2KEY_R_Arrow) << psxRightShift |
          kb.state(PS2KEY_Down_Arrow) << psxDownShift |
@@ -4363,6 +4364,7 @@ void iedit() {
 // LRUN "file name", line number
 // LRUN "file name", "label"
 // LOAD "file name"
+// MERGE "file name", line number
 
 // Return value
 // 1: normal 0: abnormal
@@ -4401,14 +4403,14 @@ uint8_t SMALL ilrun() {
     // Obtain the second argument line number
     if(*cip == I_COMMA) {
       cip++;
-      if (*cip == I_STR) { // ラベルの場合
+      if (*cip == I_STR) { // if label
 	cip++;
 	len = *cip <= 32 ? *cip : 32;
 	label[0] = I_STR;
 	label[1] = len;
 	strncpy((char*)label+2, (char*)cip+1, len);
 	cip+=*cip+1;
-      } else {             // 行番号の場合
+      } else {             // if line number
 	if ( getParam(lineno, I_NONE) ) return 0;
       }
     } else {
@@ -4416,10 +4418,8 @@ uint8_t SMALL ilrun() {
     }
   }
 
-#if USE_SD_CARD == 1
-  // SDカードからプログラムのロード
-  // SDカードからのロード
-  fg = bfs.IsText((char *)fname.c_str()); // 形式チェック
+  // Load program from storage
+  fg = bfs.IsText((char *)fname.c_str()); // Format check
   if (fg < 0) {
     // Abnormal form (形式異常)
     err = -fg;
@@ -4434,30 +4434,29 @@ uint8_t SMALL ilrun() {
   }
   if (err)
     return 0;
-#endif
 
-  // 行番号・ラベル指定の処理
+  // Processing of line number / label designation
   if (lineno == 0) {
-    clp = listbuf; // 行ポインタをプログラム保存領域の先頭に設定
+    clp = listbuf; // Set the line pointer to start of program buffer
   } else if (lineno == (uint32_t)-1) {
     lp = getlpByLabel(label);
     if (lp == NULL) {
       err = ERR_ULN;
       return 0;
     }
-    clp = lp;     // 行ポインタをプログラム保存領域の指定行先頭に設定
+    clp = lp; // Set line pointer to start of specified line in program buffer
   } else {
-    // 指定行にジャンプする
-    lp = getlp(lineno);   // 分岐先のポインタを取得
+    // Jump to specified line
+    lp = getlp(lineno);
     if (lineno != getlineno(lp)) {
       err = ERR_ULN;
       return 0;
     }
-    clp = lp;     // 行ポインタをプログラム保存領域の指定ラベル先頭に設定
+    clp = lp;
   }
   if (!err) {
     if (islrun || (cip >= listbuf && cip < listbuf+size_list)) {
-      cip = clp+sizeof(num_t)+1;        // XXX: really? was 3
+      cip = clp+sizeof(num_t)+1;
     }
   }
   return 1;
