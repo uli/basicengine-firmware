@@ -2589,21 +2589,15 @@ void isave() {
 //   0:正常終了
 //   1:異常終了
 uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
-  int16_t rc;
   int32_t len;
   
   cont_clp = cont_cip = NULL;
   proc.reset();
 
 #if USE_SD_CARD == 1
-  rc = bfs.tmpOpen(fname,0);
-  if (rc == SD_ERR_INIT) {
-    err = ERR_SD_NOT_READY;
+  err = bfs.tmpOpen(fname,0);
+  if (err)
     return 1;
-  } else if (rc == SD_ERR_OPEN_FILE) {
-    err =  ERR_FILE_OPEN;
-    return 1;
-  }
 
   if (newmode != NEW_VAR)
     inew(newmode);
