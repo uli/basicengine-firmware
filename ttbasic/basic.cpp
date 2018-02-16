@@ -4378,21 +4378,21 @@ uint8_t SMALL ilrun() {
   uint8_t *lp;
   uint8_t label[34];
   uint8_t len;
-  int8_t fg;               // ファイル形式 0:バイナリ形式  1:テキスト形式
+  int8_t fg;               // File format 0: Binary format 1: Text format
   uint8_t rc;
   uint8_t islrun = 1;
   uint8_t newmode = NEW_PROG;
   BString fname;
-  int32_t flgMerge = 0;    // マージモード
+  int32_t flgMerge = 0;    // Merge mode
 
-  // コマンド識別
+  // Command identification
   if (*(cip-1) == I_LOAD) {
     islrun  = 0;
     lineno  = 0;
     newmode = NEW_ALL;
   }
 
-  // ファイル名またはプログラム番号の取得
+  // Get file name
   if (is_strexp()) {
     if(!(fname = getParamFname())) {
       return 0;
@@ -4404,8 +4404,8 @@ uint8_t SMALL ilrun() {
 
   if (islrun) {
     // LRUN
-    // 第2引数 行番号またはラベルの取得
-    if(*cip == I_COMMA) {  // 第2引数の処理
+    // Obtain the second argument line number
+    if(*cip == I_COMMA) {
       cip++;
       if (*cip == I_STR) { // ラベルの場合
 	cip++;
