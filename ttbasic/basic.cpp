@@ -1828,7 +1828,7 @@ void istrlst() {
   if (err)
     return;
 
-  BString &s = str_lst.var(index).var(idxs[1]);
+  BString &s = str_lst.var(index).var(idxs[0]);
   if (err)
     return;
   s = value;
@@ -1859,7 +1859,7 @@ void inumlst() {
   if (err)
     return;
 
-  num_t &s = num_lst.var(index).var(idxs[1]);
+  num_t &s = num_lst.var(index).var(idxs[0]);
   if (err)
     return;
   s = value;
