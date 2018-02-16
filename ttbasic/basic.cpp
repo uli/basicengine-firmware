@@ -4388,16 +4388,19 @@ uint8_t SMALL ilrun() {
   uint8_t label[34];
   uint8_t len;
   int8_t fg;               // File format 0: Binary format 1: Text format
-  uint8_t islrun = 1;
+  bool islrun = true;
+  bool ismerge = false;
   uint8_t newmode = NEW_PROG;
   BString fname;
 
   // Command identification
   if (*(cip-1) == I_LOAD) {
-    islrun  = 0;
+    islrun  = false;
     lineno  = 0;
     newmode = NEW_ALL;
   } else if (cip[-1] == I_MERGE) {
+    islrun = false;
+    ismerge = true;
     newmode = NEW_VAR;
   }
 
@@ -4411,10 +4414,11 @@ uint8_t SMALL ilrun() {
     return 0;
   }
 
-  if (islrun) {
-    // LRUN
+  if (islrun || ismerge) {
+    // LRUN or MERGE
     // Obtain the second argument line number
     if(*cip == I_COMMA) {
+      islrun = true;	// MERGE + line number => run!
       cip++;
       if (*cip == I_STR) { // if label
 	cip++;
@@ -5997,7 +6001,9 @@ uint8_t SMALL icom() {
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
   switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
-  case I_LOAD:  ilrun_(); break;
+  case I_LOAD:
+  case I_MERGE:
+    ilrun_(); break;
 
   case I_LRUN:  if(ilrun()) {
       sc0.show_curs(0); irun(clp);
