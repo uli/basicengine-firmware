@@ -85,23 +85,23 @@ public:
   void close() {
     switch (m_type) {
     case SD: { SD_BEGIN(); m_sd_file->close(); SD_END(); return; }
-    case FS: m_fs_file->close(); return;
+    case FS: { noInterrupts(); m_fs_file->close(); interrupts(); return; }
     default: return;
     }
   }
 
   ssize_t write(char *s) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s); SD_END(); return ret; }
-    case FS: return m_fs_file->write((uint8_t *)s, strlen(s));
+    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file->write(s); SD_END(); return ret; }
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write((uint8_t *)s, strlen(s)); interrupts(); return ret; }
     default: return -1;
     }
   }
 
   ssize_t write(char *s, size_t sz) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(s, sz); SD_END(); return ret; }
-    case FS: return m_fs_file->write((uint8_t *)s, sz);
+    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file->write(s, sz); SD_END(); return ret; }
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write((uint8_t *)s, sz); interrupts(); return ret; }
     default: return -1;
     }
   }
@@ -109,7 +109,7 @@ public:
   ssize_t write(uint8_t c) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(c); SD_END(); return ret; }
-    case FS: return m_fs_file->write(c);
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write(c); interrupts(); return ret; }
     default: return -1;
     }
   }
