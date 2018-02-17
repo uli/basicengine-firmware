@@ -48,6 +48,8 @@
 class tTVscreen : public tscreenBase, public tGraphicDev {
   private:
     uint8_t enableCursor;
+    uint8_t m_cursor_count;
+    bool m_cursor_state;
 
   protected:
     void INIT_DEV(){};                           // デバイスの初期化
@@ -78,6 +80,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void refresh_line(uint16_t l);                    // 行の再表示
 	
     void drawCursor(uint8_t flg);
+    void updateCursor();
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
     void draw_cls_curs();                             // カーソルの消去
 

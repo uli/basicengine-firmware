@@ -2815,12 +2815,7 @@ void ICACHE_RAM_ATTR pump_events(void)
   vs23.updateBg();
   sound.pumpEvents();
 
-  uint8_t f = last_frame & 0x3f;
-  if (f == 0) {
-    sc0.drawCursor(0);
-  } else if (f == 0x20) {
-    sc0.drawCursor(1);
-  }
+  sc0.updateCursor();
 }
 
 // 時間待ち

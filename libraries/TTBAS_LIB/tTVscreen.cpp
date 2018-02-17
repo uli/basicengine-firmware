@@ -39,7 +39,7 @@ uint8_t ICACHE_RAM_ATTR ps2read();
 //****************************************************************************
 // 差分実装
 //***************************************************************************
-        
+
 // カーソルの移動
 // ※pos_x,pos_yは本関数のみでのみ変更可能
 void tTVscreen::MOVE(uint8_t y, uint8_t x) {
@@ -48,7 +48,9 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
     c = VPEEK(pos_x,pos_y);
     tv_write(pos_x, pos_y, c?c:32);  
     tv_drawCurs(x, y);  
-  }
+  } 
+  m_cursor_count = 0;
+  m_cursor_state = false;
   pos_x = x;
   pos_y = y;
 }
@@ -111,6 +113,8 @@ void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* e
 #if PS2DEV == 1
   setupPS2(kbd_type);
 #endif
+  m_cursor_count = 0;
+  m_cursor_state = false;
 }
 
 // スクリーンの利用の終了
@@ -200,6 +204,16 @@ void tTVscreen::drawCursor(uint8_t flg) {
       draw_cls_curs();
     else if (enableCursor)
       tv_drawCurs(pos_x, pos_y);  
+}
+
+void ICACHE_RAM_ATTR tTVscreen::updateCursor()
+{
+  if (!m_cursor_count) {
+    m_cursor_state = !m_cursor_state;
+    drawCursor(m_cursor_state);
+    m_cursor_count = 30;
+  } else
+    --m_cursor_count;
 }
 
 void tTVscreen::show_curs(uint8_t flg) {
