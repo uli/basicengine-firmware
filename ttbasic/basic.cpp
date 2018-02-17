@@ -6076,7 +6076,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
 static void show_logo() {
   const unsigned char *ld = basic_engine_pcx;
   drpcx_load(read_image_bytes, &ld, false, NULL, NULL, NULL, 0,
-             sc0.getGWidth() - 160 - 0, 0, 0, 0, 160, 64);
+             sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62);
 }
 
 /*
@@ -6115,7 +6115,7 @@ void SMALL basic() {
 
   // Want to make sure we get the right hue.
   vs23.setColorSpace(1);
-  vs23.setColorConversion(1, 7, 3, 3, true);
+  vs23.setColorConversion(1, 7, 2, 4, true);
   show_logo();
   vs23.setColorSpace(1);	// reset color conversion
 
@@ -6138,7 +6138,7 @@ void SMALL basic() {
 
   // Platform/version
   sc0.setColor(vs23.colorFromRgb(64,64,64), 0);
-  sc0.locate(sc0.getWidth() - 14, 8);
+  sc0.locate(sc0.getWidth() - 14, 7);
   c_puts(STR_EDITION);
   c_puts(" " STR_VARSION);
 
