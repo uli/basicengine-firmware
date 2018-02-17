@@ -313,15 +313,15 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 }
 
 //
-// 一時ファイルオープン
-// [引数]
-//  fname : ターゲットファイル名
-//  mode  : 0 読込モード、1:書込みモード(新規)
-// [戻り値]
-//  正常終了              : 0
-//  SDカード利用失敗     : SD_ERR_INIT
-//  ファイルオープン失敗 : SD_ERR_OPEN_FILE
-//  
+// Open temporary file
+// [Arguments]
+//  fname: target file name
+//  mode : 0 read mode, 1: write mode (new)
+// [Return value]
+//  Normal completion  : 0
+//  SD card use failure: SD_ERR_INIT
+//  Failed to open file: SD_ERR_OPEN_FILE
+//
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
   if(mode) {
     tfile = Unifile::open(tfname, FILE_OVERWRITE);
