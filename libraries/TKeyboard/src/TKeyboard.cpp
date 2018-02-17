@@ -293,8 +293,6 @@ uint16_t TKeyboard::scanToKeycode()
 
   while(pb.available()) {
     c = pb.dequeue();     // Retrieve 1 byte from queue
-    //Serial.print("S=");
-    //Serial.println(c,HEX);
     switch(state) {
     case STS_SYOKI: // [0]->
       if (c <= 0x83) {
@@ -455,7 +453,6 @@ uint8_t TKeyboard::m_key_state[256/8];
 //
 keyEvent TKeyboard::read()
 {
-  //static uint16_t sts_state     = 0;           // キーボード状態
   static keyinfo sts_state = {.value = 0};
   static uint8_t sts_numlock   = LOCK_Start; // NumLock state
   static uint8_t sts_CapsLock  = LOCK_Start; // CapsLock state
@@ -665,7 +662,6 @@ uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol)
   if ((err = pb.rcev(&tmp)))
     goto ERROR;
   if (tmp != 0xFA) {
-    //Serial.println("Send Error 1");
     goto ERROR;
   }
   if ((err = pb.send(c)))
@@ -673,7 +669,6 @@ uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol)
   if ((err = pb.rcev(&tmp)))
     goto ERROR;
   if (tmp != 0xFA) {
-    //Serial.println("Send Error 2");
     goto ERROR;
   }
   goto DONE;
