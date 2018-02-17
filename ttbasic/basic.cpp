@@ -5108,7 +5108,7 @@ BString istrvalue()
   case I_POPFSTR:
     if (checkOpen()) break;
     if (*cip++ == I_STRLSTREF) {
-      value = str_lst.var(*cip++).front();
+      value = str_lst.var(*cip).front();
       str_lst.var(*cip++).pop_front();
     } else {
       if (is_var(cip[-1]))
@@ -5123,7 +5123,7 @@ BString istrvalue()
   case I_POPBSTR:
     if (checkOpen()) break;
     if (*cip++ == I_STRLSTREF) {
-      value = str_lst.var(*cip++).back();
+      value = str_lst.var(*cip).back();
       str_lst.var(*cip++).pop_back();
     } else {
       if (is_var(cip[-1]))
