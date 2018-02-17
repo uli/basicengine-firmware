@@ -330,9 +330,9 @@ uint8_t cnv2tty(keyEvent k) {
     case PS2KEY_PageDown:   rc = KEY_NPAGE;    break;
     case PS2KEY_End:        rc = KEY_END;      break;
     case PS2KEY_L_Arrow:    rc = KEY_LEFT;     break;
-    case PS2KEY_Up_Arrow:   rc = KEY_UP;       break;
+    case PS2KEY_Up_Arrow:   rc = k.SHIFT ? KEY_SHIFT_UP : KEY_UP;	break;
     case PS2KEY_R_Arrow:    rc = KEY_RIGHT;    break;
-    case PS2KEY_Down_Arrow: rc = KEY_DOWN;     break;
+    case PS2KEY_Down_Arrow: rc = k.SHIFT ? KEY_SHIFT_DOWN : KEY_DOWN;	break;
     case PS2KEY_ESC:        rc = KEY_ESCAPE;   break;
     case PS2KEY_Tab:        rc = KEY_TAB;      break;
     case PS2KEY_Space:      rc = 32;           break;

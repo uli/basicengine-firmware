@@ -29,6 +29,8 @@
 #define KEY_F1                  0x8B            // Function key F1
 #define KEY_F(n)                (KEY_F1+(n)-1)  // Space for additional 12 function keys
 
+#define KEY_SHIFT_DOWN	KEY_DOWN | 0x40
+#define KEY_SHIFT_UP	KEY_UP | 0x40
 #define KEY_SHIFT_CR	0xfe
 
 // コントロールキーコードの定義
