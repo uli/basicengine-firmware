@@ -278,8 +278,30 @@ void tscreenBase::movePosNextChar() {
 }
 
 // カーソルを次行に移動
-void tscreenBase::movePosNextLineChar() {
+void tscreenBase::movePosNextLineChar(bool force) {
   if (pos_y+1 < height) {
+    if (force) {
+      char* text;
+      int lineno = getLineNum(pos_y);
+      if (lineno > 0) {
+        int nm = getNextLineNo(lineno); 
+        if (nm > 0) {
+          text = getLineStr(nm);
+          int len = strlen(text);
+
+          // scroll up if the line doesn't fit
+          int remaining_lines = height - pos_y - 1;
+          for (int i=0; i < len/width+1 - remaining_lines; i++) {
+            scroll_up();
+            pos_y--;
+          }
+
+          strcpy((char*)&VPEEK(0,pos_y+1),text);
+          for (uint8_t i = 0; i < len/width+1; i++)
+             refresh_line(pos_y + 1 + i);
+        }
+      }
+    }
     if ( IS_PRINT(VPEEK(pos_x, pos_y + 1)) ) {
       // カーソルを真下に移動
       MOVE(pos_y+1, pos_x);
@@ -297,13 +319,34 @@ void tscreenBase::movePosNextLineChar() {
       MOVE(pos_y+1, x);      
     }
   } else if (pos_y+1 == height) {
-    edit_scrollUp();    
+    edit_scrollUp();
   }
 }
 
 // カーソルを前行に移動
-void tscreenBase::movePosPrevLineChar() {
+void tscreenBase::movePosPrevLineChar(bool force) {
   if (pos_y > 0) {
+    if (force) {
+      char* text;
+      int lineno = getLineNum(pos_y);
+      if (lineno > 0) {
+        int nm = getPrevLineNo(lineno); 
+        if (nm > 0) {
+          text = getLineStr(nm);
+          int len = strlen(text);
+
+          // scroll down if the line doesn't fit
+          for (int i=0; i < len/width+1 - pos_y; i++) {
+            scroll_down();
+            pos_y++;
+          }
+
+          strcpy((char*)&VPEEK(0,pos_y-len/width-1),text);
+          for (uint8_t i = 0; i < len/width+1; i++)
+             refresh_line(pos_y - 1 - i);
+        }
+      }
+    }
     if ( IS_PRINT(VPEEK(pos_x, pos_y-1)) ) {
       // カーソルを真上に移動
       MOVE(pos_y-1, pos_x);

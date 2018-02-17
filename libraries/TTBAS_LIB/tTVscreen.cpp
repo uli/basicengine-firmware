@@ -333,9 +333,15 @@ uint8_t tTVscreen::edit() {
       case KEY_DOWN:       // [↓]キー
         movePosNextLineChar();
         break;
+      case KEY_SHIFT_DOWN:
+        movePosNextLineChar(true);
+        break;
       
       case KEY_UP:         // [↑]キー
         movePosPrevLineChar();
+        break;
+      case KEY_SHIFT_UP:
+        movePosPrevLineChar(true);
         break;
 
       case SC_KEY_CTRL_N:  // 行挿入 

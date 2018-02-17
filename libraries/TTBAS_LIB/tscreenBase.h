@@ -97,8 +97,8 @@ protected:
     void movePosNextNewChar();                        // カーソルを１文字分次に移動
     void movePosPrevChar();                           // カーソルを1文字分前に移動
     void movePosNextChar();                           // カーソルを1文字分次に移動
-    void movePosNextLineChar();                       // カーソルを次行に移動
-    void movePosPrevLineChar();                       // カーソルを前行に移動
+    void movePosNextLineChar(bool force = false);     // カーソルを次行に移動
+    void movePosPrevLineChar(bool force = false);     // カーソルを前行に移動
     void moveLineEnd();                               // カーソルを行末に移動
     void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動 
     void locate(uint16_t x, uint16_t y);              // カーソルを指定位置に移動
