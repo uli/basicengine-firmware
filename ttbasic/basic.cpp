@@ -5480,36 +5480,36 @@ void icall() {
     return;
   }
 
-  if (checkOpen())
-    return;
-
   int num_args = 0;
   int str_args = 0;
-  if (*cip != I_CLOSE) for(;;) {
-    if (is_strexp()) {
-      BString b = istrexp();
-      if (err)
-        return;
-      if (astk_str_i >= SIZE_ASTK)
-        goto overflow;
-      astk_str[astk_str_i++] = b;
-      ++str_args;
-    } else {
-      n = iexp();
-      if (err)
-        return;
-      if (astk_num_i >= SIZE_ASTK)
-        goto overflow;
-      astk_num[astk_num_i++] = n;
-      ++num_args;
-    }
-    if (*cip != I_COMMA)
-      break;
+  if (*cip == I_OPEN) {
     ++cip;
-  }
+    if (*cip != I_CLOSE) for(;;) {
+      if (is_strexp()) {
+        BString b = istrexp();
+        if (err)
+          return;
+        if (astk_str_i >= SIZE_ASTK)
+          goto overflow;
+        astk_str[astk_str_i++] = b;
+        ++str_args;
+      } else {
+        n = iexp();
+        if (err)
+          return;
+        if (astk_num_i >= SIZE_ASTK)
+          goto overflow;
+        astk_num[astk_num_i++] = n;
+        ++num_args;
+      }
+      if (*cip != I_COMMA)
+        break;
+      ++cip;
+    }
 
-  if (checkClose())
-    return;
+    if (checkClose())
+      return;
+  }
 
   gstk[gstki].lp = clp;
   gstk[gstki].ip = cip;
