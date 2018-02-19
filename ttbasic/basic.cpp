@@ -5633,12 +5633,6 @@ void GROUP(basic_core) iloop() {
     return;
   }
 
-  cond = *cip++;
-  if (cond != I_WHILE && cond != I_UNTIL) {
-    err = ERR_LOOPWOC;
-    return ;
-  }
-
   // Look for nearest DO.
   while (lstki) {
     if (lstk[lstki - 1].index == -1)
@@ -5651,16 +5645,24 @@ void GROUP(basic_core) iloop() {
     return;
   }
 
-  num_t exp = iexp();
+  cond = *cip;
+  if (cond == I_WHILE || cond == I_UNTIL) {
+    ++cip;
+    num_t exp = iexp();
   
-  if ((cond == I_WHILE && exp != 0) ||
-      (cond == I_UNTIL && exp == 0)) {
-    // Condition met, loop.
+    if ((cond == I_WHILE && exp != 0) ||
+        (cond == I_UNTIL && exp == 0)) {
+      // Condition met, loop.
+      cip = lstk[lstki - 1].ip;
+      clp = lstk[lstki - 1].lp;
+    } else {
+      // Pop loop off stack.
+      lstki--;
+    }
+  } else {
+    // Infinite loop.
     cip = lstk[lstki - 1].ip;
     clp = lstk[lstki - 1].lp;
-  } else {
-    // Pop loop off stack.
-    lstki--;
   }
 }
 
