@@ -116,7 +116,7 @@ THEN	I_THEN		esyntax
 +	I_PLUS		esyntax
 *	I_MUL		esyntax
 /	I_DIV		esyntax
-%	I_DIVR		esyntax
+MOD	I_MOD		esyntax
 (	I_OPEN		esyntax
 )	I_CLOSE		esyntax
 $	I_DOLLAR	esyntax

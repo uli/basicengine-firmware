@@ -230,7 +230,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_UP, I_DOWN, I_RIGHT, I_LEFT,
   I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_MOD, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT, I_BITREV, I_XOR,
   I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
@@ -243,7 +243,7 @@ const uint8_t i_nsa[] __FLASH__ = {
 
 // 前が定数か変数のとき前の空白をなくす中間コード
 const uint8_t i_nsb[] __FLASH__ = {
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_DIVR, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_MOD, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT, I_LNOT, I_BITREV, I_XOR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
@@ -4917,7 +4917,7 @@ num_t GROUP(basic_core) imul() {
       value /= tmp; //割り算を実行
       break;
 
-    case I_DIVR: //剰余の場合
+    case I_MOD: //剰余の場合
       cip++; //中間コードポインタを次へ進める
       tmp = ivalue(); //演算値を取得
       if (tmp == 0) { //もし演算値が0なら
