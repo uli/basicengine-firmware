@@ -2114,6 +2114,10 @@ void iread() {
     cip_save = cip;
     cip = data_ip + 1;
     value = iexp();
+    if (err) {
+      clp = data_lp;
+      return;
+    }
     data_ip = cip;
     cip = cip_save;
     var.var(*cip++) = value;
@@ -2134,6 +2138,10 @@ void iread() {
     cip_save = cip;
     cip = data_ip + 1;
     value = iexp();
+    if (err) {
+      clp = data_lp;
+      return;
+    }
     data_ip = cip;
     cip = cip_save;
 
@@ -2150,6 +2158,10 @@ void iread() {
     cip_save = cip;
     cip = data_ip + 1;
     svalue = istrexp();
+    if (err) {
+      clp = data_lp;
+      return;
+    }
     data_ip = cip;
     cip = cip_save;
     svar.var(*cip++) = svalue;
@@ -2170,6 +2182,10 @@ void iread() {
     cip_save = cip;
     cip = data_ip + 1;
     svalue = istrexp();
+    if (err) {
+      clp = data_lp;
+      return;
+    }
     data_ip = cip;
     cip = cip_save;
 
