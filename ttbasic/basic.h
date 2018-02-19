@@ -7,8 +7,8 @@
 #include "variable.h"
 #include "proc.h"
 
-#define SIZE_LINE 128    // コマンドライン入力バッファサイズ + NULL
-#define SIZE_IBUF 128    // 中間コード変換バッファサイズ
+#define SIZE_LINE 256    // コマンドライン入力バッファサイズ + NULL
+#define SIZE_IBUF 256    // 中間コード変換バッファサイズ
 
 extern char lbuf[SIZE_LINE];
 extern char tbuf[SIZE_LINE];
