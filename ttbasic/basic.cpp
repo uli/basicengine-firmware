@@ -2108,13 +2108,11 @@ void iread() {
     err = ERR_OOD;
     return;
   }
-  ++cip;
 
   switch (*cip++) {
   case I_VAR:
-    ++cip;
     cip_save = cip;
-    cip = data_ip;
+    cip = data_ip + 1;
     value = iexp();
     data_ip = cip;
     cip = cip_save;
@@ -2125,7 +2123,6 @@ void iread() {
   case I_NUMLST:
     {
     bool is_list = cip[-1] == I_NUMLST;
-    ++cip;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
     
@@ -2135,7 +2132,7 @@ void iread() {
       return;
 
     cip_save = cip;
-    cip = data_ip;
+    cip = data_ip + 1;
     value = iexp();
     data_ip = cip;
     cip = cip_save;
@@ -2150,9 +2147,8 @@ void iread() {
     }
 
   case I_SVAR:
-    ++cip;
     cip_save = cip;
-    cip = data_ip;
+    cip = data_ip + 1;
     svalue = istrexp();
     data_ip = cip;
     cip = cip_save;
@@ -2163,7 +2159,6 @@ void iread() {
   case I_STRLST:
     {
     bool is_list = cip[-1] == I_STRLST;
-    ++cip;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
     
@@ -2173,7 +2168,7 @@ void iread() {
       return;
 
     cip_save = cip;
-    cip = data_ip;
+    cip = data_ip + 1;
     svalue = istrexp();
     data_ip = cip;
     cip = cip_save;
