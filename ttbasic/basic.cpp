@@ -2608,11 +2608,11 @@ void isave() {
 //   1:異常終了
 uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   int32_t len;
+  uint8_t rc = 0;
   
   cont_clp = cont_cip = NULL;
   proc.reset();
 
-#if USE_SD_CARD == 1
   err = bfs.tmpOpen(fname,0);
   if (err)
     return 1;
@@ -2625,20 +2625,21 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
     if (err) {
       c_puts(lbuf);
       newline();
-      error(false);
-      continue;
+      rc = 1;
+      break;
     }
     if (*ibuf == I_NUM) {
       *ibuf = len;
       inslist();
-      if (err)
+      if (err) {
 	error(true);
-      continue;
+	rc = 1;
+	break;
+      }
     }
   }
   bfs.tmpClose();
-#endif
-  return 0;
+  return rc;
 }
 
 // フラシュメモリからのプログラムロード
@@ -4451,9 +4452,7 @@ uint8_t SMALL ilrun() {
     err = ERR_NOT_SUPPORTED;
   } else if (fg == 1) {
     // Text format load from SD card
-    if( loadPrgText((char *)fname.c_str(),newmode)) {
-      err = ERR_FILE_READ;
-    }
+    loadPrgText((char *)fname.c_str(),newmode);
   }
   if (err)
     return 0;
