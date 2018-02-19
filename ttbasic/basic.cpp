@@ -2603,7 +2603,6 @@ void isave() {
     return;
   }
 
-#if USE_SD_CARD == 1
   // SDカードへの保存
   rc = bfs.tmpOpen((char *)fname.c_str(),1);
   if (rc == SD_ERR_INIT) {
@@ -2615,7 +2614,6 @@ void isave() {
   }
   ilist(4);
   bfs.tmpClose();
-#endif
 }
 
 // テキスト形式のプログラムのロード
