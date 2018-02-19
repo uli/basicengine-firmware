@@ -3639,12 +3639,6 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       devno = 4;
       break;
       
-    case I_CHR: // CHR$()関数
-      cip++;
-      if (getParam(value, 0,255, I_NONE)) break;   // 括弧の値を取得
-      c_putch(value, devno);
-      break;
-
     case I_DMP:  cip++; idmp(devno); break; // DMP$()関数
 
     default:	// anything else is assumed to be a numeric expression
@@ -5052,6 +5046,7 @@ BString istrvalue()
   int len, dims;
   char c;
   uint8_t i;
+  int32_t nv;
   int idxs[MAX_ARRAY_DIMS];
 
   switch (*cip++) {
@@ -5160,6 +5155,13 @@ BString istrvalue()
     checkClose();
     break;
   
+  case I_CHR: // CHR$()関数
+    if (checkOpen()) break;
+    if (getParam(nv, 0,255, I_NONE)) break;   // 括弧の値を取得
+    value = BString((char)nv);
+    checkClose();
+    break;
+
   default:
     cip--;
     // Check if a numeric expression follows, so we can give a more
