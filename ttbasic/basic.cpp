@@ -2013,6 +2013,7 @@ void initialize_proc_pointers(void)
         case I_VAR:
           if (pr.argc_num >= MAX_PROC_ARGS) {
             err = ERR_ASTKOF;
+            clp = lp; cip = ip;
             return;
           }
           pr.args_num[pr.argc_num] = *ip++;
@@ -2021,6 +2022,7 @@ void initialize_proc_pointers(void)
         case I_SVAR:
           if (pr.argc_str >= MAX_PROC_ARGS) {
             err = ERR_ASTKOF;
+            clp = lp; cip = ip;
             return;
           }
           pr.args_str[pr.argc_str] = *ip++;
@@ -2028,6 +2030,7 @@ void initialize_proc_pointers(void)
           break;
         default:
           err = ERR_SYNTAX;
+          clp = lp; cip = ip;
           return;
         }
       } while (*ip++ == I_COMMA);
@@ -2037,6 +2040,7 @@ void initialize_proc_pointers(void)
           err = ERR_UNDEFARG;
         else
           err = ERR_SYNTAX;
+        clp = lp; cip = ip;
         return;
       }
     }
@@ -2260,6 +2264,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
     goto resume;
   }
   initialize_proc_pointers();
+  if (err)
+    return;
 
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
