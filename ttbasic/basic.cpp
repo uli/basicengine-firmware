@@ -4657,6 +4657,9 @@ num_t GROUP(basic_core) ivalue() {
     else
       value = log(value);
     break;
+  case I_INT:
+    value = floor(getparam());
+    break;
       
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;

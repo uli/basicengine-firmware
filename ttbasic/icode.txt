@@ -175,6 +175,7 @@ GPEEK	I_GPEEK		esyntax
 GINP	I_GINP		esyntax
 I2CW	I_I2CW		esyntax
 I2CR	I_I2CR		esyntax
+INT	I_INT		esyntax
 IN	I_DIN		esyntax
 ANA	I_ANA		esyntax
 SREADY	I_SREADY	esyntax
