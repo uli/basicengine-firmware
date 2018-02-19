@@ -33,7 +33,7 @@ CIRCLE	I_CIRCLE	icircle
 BLIT	I_BLIT		iblit
 GPRINT	I_GPRINT	igprint
 GSCROLL	I_GSCROLL	igscroll
-OUT	I_DOUT		idwrite
+GPOUT	I_DOUT		idwrite
 SMODE	I_SMODE		ismode
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
@@ -176,7 +176,7 @@ GINP	I_GINP		esyntax
 I2CW	I_I2CW		esyntax
 I2CR	I_I2CR		esyntax
 INT	I_INT		esyntax
-IN	I_DIN		esyntax
+GPIN	I_DIN		esyntax
 ANA	I_ANA		esyntax
 SREADY	I_SREADY	esyntax
 SREAD	I_SREAD		esyntax
