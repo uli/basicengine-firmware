@@ -5184,6 +5184,8 @@ BString istrexp()
   }
 }
 
+#define basic_bool(x) ((x) ? -1 : 0)
+
 // Numeric expression parser
 num_t GROUP(basic_core) iexp() {
   num_t value, tmp;
@@ -5195,17 +5197,17 @@ num_t GROUP(basic_core) iexp() {
     switch (*cip++) {
     case I_EQ:
       rhs = istrexp();
-      return lhs == rhs;
+      return basic_bool(lhs == rhs);
     case I_NEQ:
     case I_NEQ2:
       rhs = istrexp();
-      return lhs != rhs;
+      return basic_bool(lhs != rhs);
     case I_LT:
       rhs = istrexp();
-      return lhs < rhs;
+      return basic_bool(lhs < rhs);
     case I_GT:
       rhs = istrexp();
-      return lhs > rhs;
+      return basic_bool(lhs > rhs);
     default:
       err = ERR_TYPE;
       return -1;
@@ -5221,36 +5223,36 @@ num_t GROUP(basic_core) iexp() {
     switch(*cip++) {
     case I_EQ:
       tmp = iplus();
-      value = (value == tmp);
+      value = basic_bool(value == tmp);
       break;
     case I_NEQ:
     case I_NEQ2:
       tmp = iplus();
-      value = (value != tmp);
+      value = basic_bool(value != tmp);
       break;
     case I_LT:
       tmp = iplus();
-      value = (value < tmp);
+      value = basic_bool(value < tmp);
       break;
     case I_LTE:
       tmp = iplus();
-      value = (value <= tmp);
+      value = basic_bool(value <= tmp);
       break;
     case I_GT:
       tmp = iplus();
-      value = (value > tmp);
+      value = basic_bool(value > tmp);
       break;
     case I_GTE:
       tmp = iplus();
-      value = (value >= tmp);
+      value = basic_bool(value >= tmp);
       break;
     case I_LAND:
       tmp = iplus();
-      value = (value && tmp);
+      value = basic_bool(value && tmp);
       break;
     case I_LOR:
       tmp = iplus();
-      value = (value || tmp);
+      value = basic_bool(value || tmp);
       break;
     default:
       cip--;
