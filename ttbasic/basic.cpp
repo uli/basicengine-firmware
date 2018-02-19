@@ -1603,6 +1603,10 @@ void idim() {
   if (dims < 0)
     return;
 
+  // BASIC convention: reserve one more element than specified
+  for (int i = 0; i < dims; ++i)
+    idxs[i]++;
+
   if ((!is_string && num_arr.var(index).reserve(dims, idxs)) ||
       (is_string  && str_arr.var(index).reserve(dims, idxs))) {
     err = ERR_OOM;
