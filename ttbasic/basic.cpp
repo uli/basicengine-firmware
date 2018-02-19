@@ -2052,6 +2052,7 @@ void initialize_proc_pointers(void)
 
 unsigned char *data_ip;
 unsigned char *data_lp;
+bool in_data = false;
 
 bool find_next_data() {
   int next;
@@ -2066,7 +2067,8 @@ bool find_next_data() {
     data_ip = data_lp + sizeof(num_t) + 1;
   }
   
-  while (*data_ip != I_DATA && *data_ip != I_COMMA) {
+  while (*data_ip != I_DATA && (!in_data || *data_ip != I_COMMA)) {
+    in_data = false;
     next = token_size(data_ip);
     if (next < 0) {
       data_lp += *data_lp;
@@ -2076,6 +2078,7 @@ bool find_next_data() {
     } else
       data_ip += next;
   }
+  in_data = true;
   return true;
 }
 
@@ -2272,6 +2275,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   ifstki = 0;
   astk_num_i = 0;
   astk_str_i = 0;
+  data_lp = data_ip = NULL;
+  in_data = false;
   inew(NEW_VAR);
 
   if (start_clp != NULL) {
@@ -2375,6 +2380,7 @@ void SMALL ilist(uint8_t devno=0) {
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only
 void inew(uint8_t mode) {
   data_ip = data_lp = NULL;
+  in_data = false;
 
   if (mode != NEW_PROG) {
     var.reset();
