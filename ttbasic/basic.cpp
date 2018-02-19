@@ -778,7 +778,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       proc.reserve(proc_names.varTop());
     }
     
-    if (key == I_CALL) {
+    if (key == I_CALL || key == I_FN) {
       while (c_isspace(*s)) s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
@@ -1205,7 +1205,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 	return;
       }
       
-      if (*ip == I_PROC || *ip == I_CALL) {
+      if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
         c_puts(proc_names.name(*ip), devno);
       }
@@ -1946,6 +1946,7 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   case I_STRLST:
   case I_STRLSTREF:
   case I_CALL:
+  case I_FN:
   case I_PROC:
     return 2;
   case I_EOL:
@@ -4547,6 +4548,8 @@ static inline bool is_var(unsigned char tok)
   return tok >= I_VAR && tok <= I_STRLSTREF;
 }
 
+void icall();
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
@@ -4884,6 +4887,14 @@ num_t GROUP(basic_core) ivalue() {
     if (checkClose()) return 0;
     break;
   
+  case I_FN:
+    i = gstki;
+    icall();
+    while (gstki > i)
+      iexe(true);
+    value = retval[0];
+    break;
+
   default:
     cip--;
     if (is_strexp())
