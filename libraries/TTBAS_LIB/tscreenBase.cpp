@@ -421,7 +421,7 @@ uint8_t tscreenBase::enter_text() {
   while (top > screen && *top != 0 )
     top--;
   if ( top != screen ) top++;
- text = top;
+  text = top;
   return true;
 }
 
