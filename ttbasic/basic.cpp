@@ -4532,7 +4532,6 @@ num_t irgb() {
       getParam(r, 0, 255, I_COMMA) ||
       getParam(g, 0, 255, I_COMMA) ||
       getParam(b, 0, 255, I_CLOSE)) {
-    err = ERR_SYNTAX;
     return 0;
   }
   return vs23.colorFromRgb(r, g, b);
