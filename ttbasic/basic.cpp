@@ -2888,7 +2888,7 @@ void iattr() {
 }
 
 // キー入力文字コードの取得 INKEY()関数
-int32_t iinkey() {
+int32_t GROUP(basic_core) iinkey() {
   int32_t rc = 0;
 
   if (prevPressKey) {
