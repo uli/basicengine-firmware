@@ -4076,7 +4076,7 @@ void ifont() {
 void SMALL iscreen() {
   int32_t m;
 
-  if ( getParam(m,  0, vs23.numModes, I_NONE) ) return;   // m
+  if ( getParam(m,  1, vs23.numModes, I_NONE) ) return;   // m
 
   // Discard dimensions saved for CONTing.
   restore_bgs = false;
