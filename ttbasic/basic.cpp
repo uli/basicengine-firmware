@@ -1316,7 +1316,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
   }
 }
 
-int get_array_dims(int *idxs);
+int GROUP(basic_core) get_array_dims(int *idxs);
 
 // Get argument in parenthesis
 num_t GROUP(basic_core) getparam() {
@@ -1562,7 +1562,7 @@ void GROUP(basic_core) ilvar() {
   var = value;
 }
 
-int get_array_dims(int *idxs) {
+int GROUP(basic_core) get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
     if (getParam(idxs[dims], 0, 255, I_NONE))
