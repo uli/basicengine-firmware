@@ -47,7 +47,8 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
   if (flgCur) {
     c = VPEEK(pos_x,pos_y);
     tv_write(pos_x, pos_y, c?c:32);  
-    tv_drawCurs(x, y);  
+    if (enableCursor)
+      tv_drawCurs(x, y);
   } 
   m_cursor_count = 0;
   m_cursor_state = false;
