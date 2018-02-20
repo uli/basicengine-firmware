@@ -122,8 +122,8 @@ MOD	I_MOD		esyntax
 $	I_DOLLAR	esyntax
 <<	I_LSHIFT	esyntax
 >>	I_RSHIFT	esyntax
-|	I_OR		esyntax
-&	I_AND		esyntax
+OR	I_OR		esyntax
+AND	I_AND		esyntax
 >=	I_GTE		esyntax
 #	I_SHARP		esyntax
 =	I_EQ		esyntax
@@ -132,11 +132,11 @@ $	I_DOLLAR	esyntax
 <>	I_NEQ2		esyntax
 <	I_LT		esyntax
 >	I_GT		esyntax
-AND	I_LAND		esyntax
-OR	I_LOR		esyntax
-NOT	I_LNOT		esyntax
-~	I_BITREV	esyntax
-^	I_XOR		esyntax
+&&	I_LAND		esyntax
+||	I_LOR		esyntax
+!	I_LNOT		esyntax
+NOT	I_BITREV	esyntax
+EOR	I_XOR		esyntax
 [	I_SQOPEN	esyntax
 ]	I_SQCLOSE	esyntax
 RET	I_RET		esyntax
