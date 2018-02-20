@@ -77,6 +77,7 @@ void VS23S010::begin()
   SPI.setFrequency(38000000);
   m_min_spi_div = getSpiClock();
   SPI.setFrequency(11000000);
+  m_def_spi_div = getSpiClock();
 
   m_gpio_state = 0xf;
   SpiRamWriteRegister(0x82, m_gpio_state);
@@ -755,7 +756,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             // much higher SPI speeds than the stable 11 MHz if we accept
             // that there is an occasional corrupted byte, which will
             // be corrected in the next frame.
-            setSpiClockWrite();
+            setSpiClockRead();
             SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
             setSpiClock(spi_clock_default);
 

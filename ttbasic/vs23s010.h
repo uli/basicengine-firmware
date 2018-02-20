@@ -121,8 +121,11 @@ class VS23S010 {
     void setSpiClock(uint32_t div) {
       SPI1CLK = div;
     }
-    void setSpiClockWrite() {
+    void setSpiClockRead() {
       SPI1CLK = m_current_mode->max_spi_freq;
+    }
+    void setSpiClockWrite() {
+      SPI1CLK = m_def_spi_div;
     }
     void setSpiClockMax() {
       SPI1CLK = m_min_spi_div;
@@ -265,6 +268,7 @@ private:
     uint32_t m_cycles_per_frame;
     
     int m_min_spi_div;	// smallest valid divider, i.e. max. frequency
+    int m_def_spi_div;	// divider safe for writing
     uint8_t m_gpio_state;
 
     const struct vs23_mode_t *m_current_mode;
