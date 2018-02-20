@@ -4587,7 +4587,7 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_BITREV: // 「~」 ビット反転
     //cip++; //中間コードポインタを次へ進める
-    value = ~((uint32_t)ivalue()); //値を取得してNOT演算
+    value = ~((int32_t)ivalue()); //値を取得してNOT演算
     break;
 
   //変数の値の取得
