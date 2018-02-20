@@ -5764,8 +5764,10 @@ void iif() {
       cip = newip;
       return;
     }
-    while (*cip != I_EOL) // I_EOLに達するまで繰り返す
-      cip++;              // 中間コードポインタを次へ進める
+    // For single-line IFs, skip the rest of the line
+    if (ifstk[ifstki-1] == false)
+      while (*cip != I_EOL)
+        cip++;
   }
 }
 
