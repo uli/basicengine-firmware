@@ -22,4 +22,4 @@ clean:
 
 SER ?= /dev/ttyUSB0
 upload: elf
-	$(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf build/ttbasic.ino.bin
+	for i in 1 2 ; do $(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf build/ttbasic.ino.bin && break ; done
