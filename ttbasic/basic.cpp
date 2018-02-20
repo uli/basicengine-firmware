@@ -204,8 +204,8 @@ void iclt() {
 }
 
 // 乱数
-int getrnd(int value) {
-  return random(value);
+num_t getrnd(int value) {
+  return ((num_t)random(RAND_MAX)/(num_t)RAND_MAX);
 }
 
 #ifdef ESP8266
