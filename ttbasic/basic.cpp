@@ -4548,7 +4548,7 @@ static inline bool is_var(unsigned char tok)
   return tok >= I_VAR && tok <= I_STRLSTREF;
 }
 
-void icall();
+void GROUP(basic_core) icall();
 
 // Get value
 num_t GROUP(basic_core) ivalue() {
@@ -5487,7 +5487,7 @@ void ion()
   }
 }
 
-void icall() {
+void GROUP(basic_core) icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
@@ -5554,7 +5554,7 @@ void iproc() {
 }
 
 // RETURN
-void ireturn() {
+void GROUP(basic_core) ireturn() {
   if (!gstki) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
