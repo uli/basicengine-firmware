@@ -4748,6 +4748,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_LEN:  // 関数LEN(変数)
     if (checkOpen()) break;
     value = istrexp().length();
+    if (checkClose()) break;
     break;
 
   case I_TICK: // 関数TICK()
