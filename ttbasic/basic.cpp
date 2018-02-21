@@ -835,7 +835,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       ptok = s;		// Points to the beginning of the string
 
       // Get the number of characters in a string
-      for (i = 0; (*ptok != c) && c_isprint(*ptok); i++)
+      for (i = 0; *ptok && (*ptok != c); i++)
 	ptok++;
 
       if (len >= SIZE_IBUF - 1 - i) { // if the intermediate code is too long
