@@ -352,6 +352,9 @@ uint8_t tTVscreen::edit() {
       case KEY_F(2):       // F2
         clerLine(pos_y);
         break;
+
+      case SC_KEY_CTRL_C:
+        break;
       
       default:             // その他
         Insert_char(ch);
