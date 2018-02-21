@@ -43,11 +43,10 @@ void setupPS2(uint8_t kb_type);
 // ※pos_x,pos_yは本関数のみでのみ変更可能
 void tTVscreen::MOVE(uint8_t y, uint8_t x) {
   uint8_t c;
-  if (flgCur) {
+  if (enableCursor && flgCur) {
     c = VPEEK(pos_x,pos_y);
     tv_write(pos_x, pos_y, c?c:32);  
-    if (enableCursor)
-      tv_drawCurs(x, y);
+    tv_drawCurs(x, y);
   } 
   m_cursor_count = 0;
   m_cursor_state = false;
@@ -209,7 +208,8 @@ void ICACHE_RAM_ATTR tTVscreen::updateCursor()
 {
   if (!m_cursor_count) {
     m_cursor_state = !m_cursor_state;
-    drawCursor(m_cursor_state);
+    if (enableCursor)
+      drawCursor(m_cursor_state);
     m_cursor_count = 30;
   } else
     --m_cursor_count;
