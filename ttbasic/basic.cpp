@@ -4156,12 +4156,14 @@ void SMALL iscreen() {
   vs23.reset();
 
   sc0.setFont(fonts[0]);
-  sc0.resetWindow();
-  sc0.cls();
-  sc0.locate(0,0);
 
-  if (scmode == m)
+  if (scmode == m) {
+    sc0.resetWindow();
+    sc0.locate(0,0);
+    sc0.cls();
+    sc0.show_curs(false);
     return;
+  }
 
   sc0.end();
   scmode = m;
