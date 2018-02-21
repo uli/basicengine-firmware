@@ -4114,7 +4114,7 @@ void iwindow() {
 
 void ifont() {
   int32_t idx;
-  if (getParam(idx, 0, NUM_FONTS, I_NONE))
+  if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
     return;
   sc0.setFont(fonts[idx]);
 }
