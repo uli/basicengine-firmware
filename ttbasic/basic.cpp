@@ -240,7 +240,7 @@ num_t getrnd(int value) {
 // List formatting condition
 // Intermediate code without trailing blank
 const uint8_t i_nsa[] __FLASH__ = {
-  I_RETURN, I_END,
+  I_END,
   I_CLS,I_CLT,
   I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH,
   I_UP, I_DOWN, I_RIGHT, I_LEFT,
