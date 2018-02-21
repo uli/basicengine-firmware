@@ -144,7 +144,7 @@ char kataStr[6];                   // 確定カタカナ文字列
 // 文字コードから母音コード(0～4)に変換する
 inline int16_t charToBoonCode(uint8_t c) {
   for (uint8_t i=0; i < sizeof(BoonTable); i++)
-    if (c == BoonTable[i])
+    if (c == pgm_read_byte(&BoonTable[i]))
        return i;
   return -1;
 }
@@ -152,7 +152,7 @@ inline int16_t charToBoonCode(uint8_t c) {
 // 文字コードから子音コードに変換する
 inline int16_t charToShionCode(uint8_t c) {
   for (uint8_t i=0; i < sizeof(ShionTable); i++)
-    if (c == ShionTable[i])
+    if (c == pgm_read_byte(&ShionTable[i]))
        return i+1;
   return -1;
 }
@@ -210,29 +210,29 @@ char* pRomaji2Kana(uint8_t c) {
         switch(code) {
         case _romaji_h:
           for (uint16_t i=0; i < (sizeof(Shion_Xh_Table)/sizeof(Shion_Xh_Table[0])); i++)
-            if ( Shion_Xh_Table[i][0] == romaji_sts) {
-              romaji_sts =  Shion_Xh_Table[i][1];
+            if ( pgm_read_byte(&Shion_Xh_Table[i][0]) == romaji_sts) {
+              romaji_sts =  pgm_read_byte(&Shion_Xh_Table[i][1]);
               goto STS_NEXT;
             }
           goto STS_ERROR;
         case _romaji_w:
           for (uint16_t i=0; i < (sizeof(Shion_Xw_Table)/sizeof(Shion_Xw_Table[0])); i++)
-            if ( Shion_Xw_Table[i][0] == romaji_sts) {
-              romaji_sts =  Shion_Xw_Table[i][1];
+            if ( pgm_read_byte(&Shion_Xw_Table[i][0]) == romaji_sts) {
+              romaji_sts =  pgm_read_byte(&Shion_Xw_Table[i][1]);
               goto STS_NEXT;
             }
           goto STS_ERROR;
         case _romaji_t:
           for (uint16_t i=0; i < (sizeof(Shion_Xt_Table)/sizeof(Shion_Xt_Table[0])); i++)
-            if ( Shion_Xt_Table[i][0] == romaji_sts) {
-              romaji_sts =  Shion_Xt_Table[i][1];
+            if ( pgm_read_byte(&Shion_Xt_Table[i][0]) == romaji_sts) {
+              romaji_sts = pgm_read_byte(&Shion_Xt_Table[i][1]);
               goto STS_NEXT;
             }
           goto STS_ERROR;
         case _romaji_y:
           for (uint16_t i=0; i < (sizeof(Shion_Xy_Table)/sizeof(Shion_Xy_Table[0])); i++)
-            if ( Shion_Xy_Table[i][0] == romaji_sts) {
-              romaji_sts =  Shion_Xy_Table[i][1];
+            if ( pgm_read_byte(&Shion_Xy_Table[i][0]) == romaji_sts) {
+              romaji_sts = pgm_read_byte(&Shion_Xy_Table[i][1]);
               goto STS_NEXT;
             }
           goto STS_ERROR;
@@ -382,9 +382,9 @@ uint8_t ICACHE_RAM_ATTR ps2read() {
   if (flgKana) {
     ptr = pRomaji2Kana(c);
     if (ptr) {
-      len = strlen(ptr);
+      len = strlen_P(ptr);
       for (int16_t i = 0 ; i < len; i++) {
-        rb_insert(&kbuf, ptr[i]);        
+        rb_insert(&kbuf, pgm_read_byte(&ptr[i]));
       }
     } else {
       if (romaji_sts == _romaji_top) {
