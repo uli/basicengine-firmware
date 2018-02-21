@@ -4136,6 +4136,7 @@ void SMALL iscreen() {
   vs23.reset();
 
   sc0.setFont(fonts[0]);
+  sc0.resetWindow();
   sc0.cls();
   sc0.locate(0,0);
 
