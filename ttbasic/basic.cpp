@@ -1180,12 +1180,52 @@ void inslist() {
     *p1++ = *p2++;  // 転送
 }
 
+#define MAX_INDENT 10
+#define INDENT_STEP 2
+
+static int8_t indent_level;
+
+// tokens that increase indentation
+inline bool is_indent(uint8_t c) {
+  return c == I_IF || c == I_FOR || c == I_DO;
+}
+// tokens that reduce indentation
+inline bool is_unindent(uint8_t c) {
+  return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP;
+}
+// tokens that temporarily reduce indentation
+inline bool is_reindent(uint8_t c) {
+  return c == I_ELSE;
+}
+
 //指定中間コード行レコードのテキスト出力
 void SMALL putlist(unsigned char* ip, uint8_t devno) {
   unsigned char i;  // ループカウンタ
   uint8_t var_code; // 変数コード
+  bool re_indent = false;
+  bool skip_indent = false;
+
+  re_indent = is_reindent(*ip);	// must be reverted at the end of the line
+  if (is_unindent(*ip) || re_indent) {
+    skip_indent = true;	// don't do this again in the main loop
+    indent_level -= INDENT_STEP;
+  }
+
+  if (indent_level < 0)
+    indent_level = 0;
+  for (i = 0; i < indent_level && i < MAX_INDENT; ++i)
+    c_putch(' ', devno);
 
   while (*ip != I_EOL) { //行末でなければ繰り返す
+    if (skip_indent)
+      skip_indent = false;
+    else {
+      if (is_indent(*ip))
+        indent_level += INDENT_STEP;
+      else if (is_unindent(*ip))
+        indent_level -= INDENT_STEP;
+    }
+
     //キーワードの処理
     if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
       char kw[MAX_KW_LEN+1];
@@ -1346,6 +1386,8 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       return;
     }
   }
+  if (re_indent)
+    indent_level += INDENT_STEP;
 }
 
 int GROUP(basic_core) get_array_dims(int *idxs);
@@ -2401,6 +2443,7 @@ void SMALL ilist(uint8_t devno=0) {
   // Skip until we reach the start line.
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
 
+  indent_level = 0;
   //リストを表示する
   while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
     prnlineno = getlineno(lp); // 行番号取得
@@ -4540,6 +4583,7 @@ void SMALL error(uint8_t flgCmd = false) {
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       newline();
 
+      indent_level = 0;
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
       c_puts(" ");
@@ -5389,6 +5433,7 @@ char* getLineStr(uint32_t lineno) {
     return NULL;
 
   // Output of specified line text to line buffer
+  indent_level = 0;
   cleartbuf();
   putnum(lineno, 0, 3);
   c_putch(' ', 3);
