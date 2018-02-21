@@ -6181,7 +6181,7 @@ void SMALL basic() {
   // Startup screen
   // Epigram
   sc0.setFont(fonts[1]);
-  sc0.setColor(vs23.colorFromRgb(72,72,72), 0);
+  sc0.setColor(vs23.colorFromRgb(72,72,72), COL(BG));
   {
     char epi[80];
     strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
@@ -6190,13 +6190,13 @@ void SMALL basic() {
   newline();
 
   // Banner
-  sc0.setColor(vs23.colorFromRgb(192,0,0), 0);
+  sc0.setColor(vs23.colorFromRgb(192,0,0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
   sc0.setFont(fonts[0]);
 
   // Platform/version
-  sc0.setColor(vs23.colorFromRgb(64,64,64), 0);
+  sc0.setColor(vs23.colorFromRgb(64,64,64), COL(BG));
   sc0.locate(sc0.getWidth() - 14, 7);
   c_puts(STR_EDITION);
   c_puts(" " STR_VARSION);
@@ -6209,7 +6209,7 @@ void SMALL basic() {
 #endif
 
   // Free memory
-  sc0.setColor(vs23.colorFromRgb(255,255,255), 0);
+  sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
