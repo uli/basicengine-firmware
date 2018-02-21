@@ -45,10 +45,11 @@ const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
 
 #define MIN_FONT_SIZE_X 6
 #define MIN_FONT_SIZE_Y 8
-#define NUM_FONTS 3
+#define NUM_FONTS 4
 static const uint8_t *fonts[] = {
   console_font_6x8,
   console_font_8x8,
+  cbm_ascii_font_8x8,
   font6x8tt,
 };
 

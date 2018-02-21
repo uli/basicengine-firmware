@@ -73,8 +73,10 @@
 
 #include "ati_6x8.h"
 #include "amstrad_8x8.h"
+#include "cbm_ascii_8x8.h"
 
 #define SMALL __attribute__((optimize("Os")))
+#define NOINS __attribute__((no_instrument_function))
 
 #define GROUP(g) __attribute__((section(".text." #g)))
 #endif
