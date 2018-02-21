@@ -3673,7 +3673,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       str = istrexp();
       if (str[0] == '#')
         len = strtonum(str.c_str() + 1, NULL);
-      if (err || *cip++ != I_SEMI)
+      if (err || *cip != I_SEMI)
 	return;
       break;
 
