@@ -191,12 +191,13 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 void newline(uint8_t devno) {
   if (devno==0) {
     // XXX: this drains the keyboard buffer; is that a problem?
-    if (c_kbhit() == SC_KEY_CTRL_C)
+    if (sc0.peekKey() == SC_KEY_CTRL_C) {
+      c_getch();
       err = ERR_CTR_C;
-    else if (kb.state(PS2KEY_L_Shift)) {
+    } else if (kb.state(PS2KEY_L_Shift)) {
       uint32_t m = millis() + 200;
       while (millis() < m) {
-        c_kbhit();
+        sc0.peekKey();
         if (!kb.state(PS2KEY_L_Shift))
           break;
       }
@@ -387,7 +388,6 @@ unsigned char ifstki;		  // IF stack index
 #define MAX_RETVALS 4
 num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
 
-uint8_t prevPressKey = 0;         // 直前入力キーの値(INKEY()、[ESC]中断キー競合防止用)
 uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
 
 // メモリへの文字出力
@@ -2942,12 +2942,8 @@ void iattr() {
 int32_t GROUP(basic_core) iinkey() {
   int32_t rc = 0;
 
-  if (prevPressKey) {
-    // 一時バッファに入力済キーがあればそれを使う
-    rc = prevPressKey;
-    prevPressKey = 0;
-  } else {
-    rc = c_kbhit();
+  if (c_kbhit()) {
+    rc = c_getch();
     if (rc == SC_KEY_CTRL_C)
       err = ERR_CTR_C;
   }
@@ -5995,14 +5991,11 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
 
     pump_events();
     //強制的な中断の判定
-    c = c_kbhit();
-    if (c) { // もし未読文字があったら
+    if ((c = sc0.peekKey())) { // もし未読文字があったら
       if (c == SC_KEY_CTRL_C || c==27 ) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
+        c_getch();
 	err = ERR_CTR_C;                  // エラー番号をセット
-	prevPressKey = 0;
 	break;
-      } else {
-	prevPressKey = c;
       }
     }
 
