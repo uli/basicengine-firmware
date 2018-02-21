@@ -98,6 +98,16 @@ void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
   win_c_height = win_height / f_height;
 }
 
+void tv_window_reset()
+{
+  win_x = 0;
+  win_y = 0;
+  win_width = g_width;
+  win_height = g_height;
+  win_c_width  = win_width  / f_width;
+  win_c_height = win_height / f_height;
+}
+
 void tv_window_get(int &x, int &y, int &w, int &h)
 {
   x = win_x / f_width;
