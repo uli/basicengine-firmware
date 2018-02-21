@@ -6041,6 +6041,8 @@ void SMALL resize_windows()
     bool obscured = false;
     int top_y = (y + (sc0.getScreenHeight() - 5)) * sc0.getFontHeight();
     for (int i = 0; i < VS23_MAX_BG; ++i) {
+      if (!vs23.bgEnabled(i))
+        continue;
       if (vs23.bgWinY(i) >= top_y) {
         vs23.disableBg(i);
         turn_bg_back_on[i] = true;
