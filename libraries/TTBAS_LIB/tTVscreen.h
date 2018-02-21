@@ -76,6 +76,9 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     uint8_t get_ch();                                 // 文字の取得
     inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得
     bool isKeyIn();                                // キー入力チェック 
+    inline uint8_t peekKey() {
+      return ps2peek();
+    }
     uint8_t edit();                                   // スクリーン編集
     void newLine();                                   // 改行出力
     void refresh_line(uint16_t l);                    // 行の再表示
