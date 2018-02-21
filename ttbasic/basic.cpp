@@ -2318,7 +2318,7 @@ void inew(uint8_t mode = NEW_ALL);
 void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   if (cont) {
-    if (!clp) {
+    if (!start_clp) {
       clp = cont_clp;
       cip = cont_cip;
     } else {
