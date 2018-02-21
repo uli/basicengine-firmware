@@ -31,7 +31,6 @@
 void    endPS2();
 
 void setupPS2(uint8_t kb_type);
-uint8_t ICACHE_RAM_ATTR ps2read();
 
 #define VPEEK(X,Y)      (screen[width*(Y)+(X)])
 #define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
@@ -162,13 +161,12 @@ void tTVscreen::refresh_line(uint16_t l) {
 
 	
 // キー入力チェック&キーの取得
-uint8_t ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
+bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 #ifdef DEBUG
-  if (Serial.available())
-    return Serial.read();
+  return Serial.available();
 #endif
 #if PS2DEV == 1
- return ps2read();
+ return ps2kbhit();
 #endif
 }
 
