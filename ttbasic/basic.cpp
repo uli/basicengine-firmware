@@ -37,7 +37,6 @@ int size_list;
 #define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 10     // GOSUB stack size
 #define SIZE_LSTK 10     // FOR stack size
-#define SIZE_IFSTK 16	 // IF stack
 #define SIZE_ASTK 16	// argument stack
 
 // *** フォント参照 ***************
@@ -384,11 +383,6 @@ unsigned char lstki;              // loop stack index
 uint8_t *cont_clp = NULL;
 uint8_t *cont_cip = NULL;
 
-bool ifstk[SIZE_IFSTK];		  // IF stack
-unsigned char ifstki;		  // IF stack index
-#define inc_ifstk(ret)	inc_stk(ifstki, SIZE_IFSTK, ERR_IFSTKOF, ret)
-#define dec_ifstk(ret)	dec_stk(ifstki,	ERR_IFSTKUF, ret)
-
 #define MAX_RETVALS 4
 num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
 
@@ -712,6 +706,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
   uint16_t hcnt;	// hexadecimal digit count
   uint8_t var_len;	// variable name length
   char vname [MAX_VAR_NAME];	// variable name
+  bool implicit_endif = false;
 
   bool is_prg_text = false;
 
@@ -721,13 +716,17 @@ uint8_t SMALL toktoi(bool find_prg_text) {
     key = lookup(s);
     if (key >= 0) {
       // 該当キーワードあり
-      if (len >= SIZE_IBUF - 1) {      // もし中間コードが長すぎたら
+      if (len >= SIZE_IBUF - 2) {      // もし中間コードが長すぎたら
 	err = ERR_IBUFOF;              // エラー番号をセット
 	return 0;                      // 0を持ち帰る
       }
       ibuf[len++] = key;                 // 中間コードを記録
       s+= strlen_P(kwtbl[key]);
-
+      if (key == I_THEN) {
+        while (c_isspace(*s)) s++;
+        if (*s)
+          implicit_endif = true;
+      }
     } else {
       //err = ERR_SYNTAX; //エラー番号をセット
       //return 0;
@@ -748,7 +747,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 	  return 0;          // 0を持ち帰る
 	}
 
-	if (len >= SIZE_IBUF - 3) { // もし中間コードが長すぎたら
+	if (len >= SIZE_IBUF - 5) { // もし中間コードが長すぎたら
 	  err = ERR_IBUFOF;         // エラー番号をセット
 	  return 0;                 // 0を持ち帰る
 	}
@@ -768,7 +767,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       ptok = s;                          // コメントの先頭を指す
 
       for (i = 0; *ptok++; i++) ;        // コメントの文字数を得る
-      if (len >= SIZE_IBUF - 2 - i) {    // もし中間コードが長すぎたら
+      if (len >= SIZE_IBUF - 3 - i) {    // もし中間コードが長すぎたら
 	err = ERR_IBUFOF;                // エラー番号をセット
 	return 0;                        // 0を持ち帰る
       }
@@ -785,7 +784,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
         err = ERR_COM;
         return 0;
       }
-      if (len >= SIZE_IBUF - 1) { //もし中間コードが長すぎたら
+      if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
 	err = ERR_IBUFOF;
 	return 0;
       }
@@ -803,6 +802,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
       proc.reserve(proc_names.varTop());
+      if (len >= SIZE_IBUF - 2) {
+	err = ERR_IBUFOF;
+	return 0;
+      }
       ibuf[len++] = idx;
     }
     
@@ -815,7 +818,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
     // Attempt to convert to constant
     ptok = s;                            // Points to the beginning of a word
     if (isDigit(*ptok)) {
-      if (len >= SIZE_IBUF - 3) { // If the intermediate code is too long
+      if (len >= SIZE_IBUF - sizeof(num_t) - 2) { // If the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
       }
@@ -838,7 +841,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       for (i = 0; *ptok && (*ptok != c); i++)
 	ptok++;
 
-      if (len >= SIZE_IBUF - 1 - i) { // if the intermediate code is too long
+      if (len >= SIZE_IBUF - 3 - i) { // if the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
       }
@@ -863,7 +866,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       }
 
       var_len = 0;
-      if (len >= SIZE_IBUF - 2) { // if the intermediate code is too long
+      if (len >= SIZE_IBUF - 3) { // if the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
       }
@@ -974,6 +977,8 @@ uint8_t SMALL toktoi(bool find_prg_text) {
     }
   }
 
+  if (implicit_endif)
+    ibuf[len++] = I_IMPLICITENDIF;
   ibuf[len++] = I_EOL;
   return len;
 
@@ -1052,35 +1057,20 @@ uint32_t getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t* getELSEptr(uint8_t* p) {
-#define inc_lifstk	inc_stk(lifstki, SIZE_IFSTK, ERR_IFSTKOF, NULL)
-#define dec_lifstk	dec_stk(lifstki, ERR_IFSTKUF, NULL)
+uint8_t* getELSEptr(uint8_t* p, bool endif_only = false) {
   uint8_t* rc = NULL;
   uint8_t* lp;
-  bool lifstk[SIZE_IFSTK];
   unsigned char lifstki = 1;
-  lifstk[0] = ifstk[ifstki-1];
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
   for (lp = p; ; ) {
     switch(*lp) {
     case I_IF:    // IF命令
       lp++;
-      lifstk[lifstki] = false;
-      if (*lp == I_THEN) {
-        lp++;
-        // If THEN is followed by EOL, it's a multiline IF.
-        if (*lp == I_EOL) {
-          lifstk[lifstki] = true;
-          // XXX: Shouldn't this be taken care of by the I_EOL handler?
-          clp += *clp;
-          lp = cip = clp + sizeof(num_t) + 1;
-        }
-      }
-      inc_lifstk;
+      lifstki++;
       break;
     case I_ELSE:  // ELSE命令
-      if (lifstki == 1) {
+      if (lifstki == 1 && !endif_only) {
         // Found the highest-level ELSE, we're done.
         rc = lp+1;
         goto DONE;
@@ -1088,38 +1078,26 @@ uint8_t* getELSEptr(uint8_t* p) {
       lp++;
       break;
     case I_EOL:
-      if (lifstk[lifstki-1] == false) {
-        // Current IF is single-line, so it's finished here.
-        dec_lifstk;
-        if (!lifstki) {
-          // This is the end of the last IF, and we have not found a
-          // matching ELSE, meaning there is none. We're done.
-          goto DONE;
-        }
-      }
-      // fallthrough
     case I_REM:
     case I_SQUOT:
       // Continue at next line.
       clp += *clp;
-      // XXX: What about EOT?
+      if (!*clp) {
+        err = ERR_NOENDIF;
+        return NULL;
+      }
       lp = cip = clp + sizeof(num_t) + 1;
       break;
     case I_ENDIF:
-      dec_lifstk;
-      if (lifstk[lifstki] != true) {
-        // Encountered ENDIF while not in a multiline IF.
-        // Not sure what to do here; this could happen if someone
-        // jumped into an ELSE block with another IF inside.
-        // Probably screwed up enough to consider it an error.
-        err = ERR_IFSTKUF;
-        goto DONE;
-      }
+    case I_IMPLICITENDIF:
+      lifstki--;
       lp++;
       if (!lifstki) {
         // End of the last IF, no ELSE found -> done.
+        rc = lp;
         goto DONE;
       }
+      break;
     default:        // その他
       lp += token_size(lp);
       break;
@@ -1360,9 +1338,10 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       sc0.setColor(COL(FG), COL(BG));
       if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO)
 	c_putch(' ',devno);
-    }
-
-    else { //どれにも当てはまらなかった場合
+    } else if (*ip == I_IMPLICITENDIF) {
+      // invisible
+      ip++;
+    } else { //どれにも当てはまらなかった場合
       err = ERR_SYS; //エラー番号をセット
       return;
     }
@@ -1977,7 +1956,7 @@ syntax:
 
 static inline bool end_of_statement()
 {
-  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE;
+  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
 }
 
 int GROUP(basic_core) token_size(uint8_t *code) {
@@ -2333,7 +2312,6 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
 
   gstki = 0;         // GOSUBスタックインデクスを0に初期化
   lstki = 0;         // FORスタックインデクスを0に初期化
-  ifstki = 0;
   astk_num_i = 0;
   astk_str_i = 0;
   data_lp = data_ip = NULL;
@@ -2491,7 +2469,6 @@ void inew(uint8_t mode) {
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
-    ifstki = 0;
     astk_num_i = 0;
     astk_str_i = 0;
 
@@ -5795,65 +5772,29 @@ void iif() {
     return;
   }
 
-  ifstk[ifstki] = false;	// assume it's a single-line IF
   if (*cip == I_THEN) {
     ++cip;
-    if (*cip == I_EOL) {
-      // THEN followed by EOL indicates a multi-line IF.
-      ifstk[ifstki] = true;
-    }
   }
-  inc_ifstk();
 
   if (condition) {    // もし真なら
     return;
   } else {
-    // 偽の場合の処理
-    // ELSEがあるかチェックする
-    // もしELSEより先にIFが見つかったらELSE無しとする
-    // ELSE文が無い場合の処理はREMと同じ
     newip = getELSEptr(cip);
-    if (newip != NULL) {
+    if (newip) {
       cip = newip;
-      return;
     }
-    // For single-line IFs, skip the rest of the line
-    if (ifstk[ifstki-1] == false)
-      while (*cip != I_EOL)
-        cip++;
   }
 }
 
 void iendif()
 {
-  if (ifstki > 0) {
-    dec_ifstk();
-  }
-  // XXX: Do we want to consider it an error if we encounter an ENDIF
-  // outside an IF block?
 }
 
 void ielse()
 {
-  // When we encounter an ELSE in our normal instruction stream, we have
-  // to skip what follows.
-  dec_ifstk();
-  if (ifstk[ifstki]) {
-    // Multi-line IF, find ENDIF.
-    for (;;) {
-      while (*cip != I_EOL && *cip != I_ENDIF)
-        cip++;
-      if (*cip == I_EOL) {
-        clp += *clp;
-        cip = clp + sizeof(num_t) + 1;
-      } else
-        break;
-    }
-  } else {
-    // Single-line IF, skip to EOL.
-    while (*cip != I_EOL) // I_EOLに達するまで繰り返す
-      cip++;              // 中間コードポインタを次へ進める
-  }
+  uint8_t *newip = getELSEptr(cip, true);
+  if (newip)
+    cip = newip;
 }
 
 // スキップ
@@ -6013,11 +5954,6 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
 
     if (err || (until_return && gstki < stk && *cip != I_EOL))
       return NULL;
-  }
-
-  // Last IF is single-line, so it ends here, at I_EOL.
-  if (ifstki > 0 && ifstk[ifstki-1] == false) {
-    dec_ifstk(NULL);
   }
 
   return clp + *clp;

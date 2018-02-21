@@ -103,6 +103,7 @@ _none	I_SVAR		isvar
 _none	I_LSVAR		ilsvar
 _none	I_STRARR	istrarr
 _none	I_STRLST	istrlst
+_none	I_IMPLICITENDIF	iendif
 _none	I_NUMLSTREF	esyntax
 _none	I_STRLSTREF	esyntax
 TO	I_TO		esyntax
