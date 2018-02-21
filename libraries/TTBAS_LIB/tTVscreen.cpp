@@ -354,11 +354,8 @@ uint8_t tTVscreen::edit() {
         break;
       
       default:             // その他
-      
-      if (IS_PRINT(ch)) {
         Insert_char(ch);
-      }        
-      break;
+        break;
     }
   } while(1);
 }
