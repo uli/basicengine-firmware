@@ -1208,7 +1208,14 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
     if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
       char kw[MAX_KW_LEN+1];
       strcpy_P(kw, kwtbl[*ip]);
+
+      if (isAlpha(kw[0]))
+        sc0.setColor(COL(KEYWORD), COL(BG));
+      else
+        sc0.setColor(COL(OP), COL(BG));
       c_puts(kw, devno); //キーワードテーブルの文字列を表示
+      sc0.setColor(COL(FG), COL(BG));
+
       if (*(ip+1) != I_COLON)
 	if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
 	  c_putch(' ',devno);  //空白を表示
@@ -1216,14 +1223,18 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
 	ip++; //ポインタを文字数へ進める
 	i = *ip++; //文字数を取得してポインタをコメントへ進める
+	sc0.setColor(COL(COMMENT), COL(BG));
 	while (i--) //文字数だけ繰り返す
 	  c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
+        sc0.setColor(COL(FG), COL(BG));
 	return;
       }
       
       if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
+        sc0.setColor(COL(PROC), COL(BG));
         c_puts(proc_names.name(*ip), devno);
+        sc0.setColor(COL(FG), COL(BG));
       }
 
       ip++; //ポインタを次の中間コードへ進める
@@ -1234,7 +1245,9 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
     if (*ip == I_NUM) { //もし定数なら
       ip++; //ポインタを値へ進める
       num_t n = UNALIGNED_NUM_T(ip);
+      sc0.setColor(COL(NUM), COL(BG));
       putnum(n, 0,devno); //値を取得して表示
+      sc0.setColor(COL(FG), COL(BG));
       ip += sizeof(num_t); //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
@@ -1244,48 +1257,63 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
     //16進定数の処理
     if (*ip == I_HEXNUM) { //もし16進定数なら
       ip++; //ポインタを値へ進める
+      sc0.setColor(COL(NUM), COL(BG));
       c_putch('$',devno); //空白を表示
       putHexnum(ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24), 8,devno); //値を取得して表示
+      sc0.setColor(COL(FG), COL(BG));
       ip += 4; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
     } else if (*ip == I_VAR || *ip == I_LVAR) { //もし定数なら
-      if (*ip == I_LVAR)
+      if (*ip == I_LVAR) {
+        sc0.setColor(COL(LVAR), COL(BG));
         c_putch('@', devno);
+      } else
+        sc0.setColor(COL(VAR), COL(BG));
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(var_names.name(var_code), devno);
+      sc0.setColor(COL(FG), COL(BG));
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
     } else if (*ip == I_VARARR || *ip == I_NUMLST) {
       ip++;
       var_code = *ip++;
+      sc0.setColor(COL(VAR), COL(BG));
       if (ip[-2] == I_NUMLST) {
         c_putch('_', devno);
         c_puts(num_lst_names.name(var_code), devno);
       } else {
         c_puts(num_arr_names.name(var_code), devno);
       }
+      sc0.setColor(COL(FG), COL(BG));
       c_putch('(', devno);
     } else if (*ip == I_NUMLSTREF) {
       ip++;
       var_code = *ip++;
+      sc0.setColor(COL(VAR), COL(BG));
       c_putch('_', devno);
       c_puts(num_lst_names.name(var_code), devno);
+      sc0.setColor(COL(FG), COL(BG));
     } else if (*ip == I_SVAR || *ip == I_LSVAR) {
-      if (*ip == I_LSVAR)
+      if (*ip == I_LSVAR) {
+        sc0.setColor(COL(LVAR), COL(BG));
         c_putch('@', devno);
+      } else
+        sc0.setColor(COL(VAR), COL(BG));
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(svar_names.name(var_code), devno);
       c_putch('$', devno);
+      sc0.setColor(COL(FG), COL(BG));
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
 	c_putch(' ',devno);  //空白を表示
     } else if (*ip == I_STRARR || *ip == I_STRLST) {
       ip++;
       var_code = *ip++;
+      sc0.setColor(COL(VAR), COL(BG));
       if (ip[-2] == I_STRLST) {
         c_putch('_', devno);
         c_puts(str_lst_names.name(var_code), devno);
@@ -1293,13 +1321,16 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
         c_puts(str_arr_names.name(var_code), devno);
       }
       c_putch('$', devno);
+      sc0.setColor(COL(FG), COL(BG));
       c_putch('(', devno);
     } else if (*ip == I_STRLSTREF) {
       ip++;
       var_code = *ip++;
+      sc0.setColor(COL(VAR), COL(BG));
       c_putch('_', devno);
       c_puts(str_lst_names.name(var_code), devno);
       c_putch('$', devno);
+      sc0.setColor(COL(FG), COL(BG));
     } else
 
     //文字列の処理
@@ -1315,12 +1346,14 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 	  break; //繰り返しを打ち切る
 	}
 
+      sc0.setColor(COL(STR), COL(BG));
       //文字列を表示する
       c_putch(c,devno); //文字列の括りを表示
       i = *ip++; //文字数を取得してポインタを文字列へ進める
       while (i--) //文字数だけ繰り返す
 	c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
       c_putch(c,devno); //文字列の括りを表示
+      sc0.setColor(COL(FG), COL(BG));
       if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO)
 	c_putch(' ',devno);
     }
@@ -2391,7 +2424,9 @@ void SMALL ilist(uint8_t devno=0) {
     prnlineno = getlineno(lp); // 行番号取得
     if (prnlineno > endlineno) // 表示終了行番号に達したら抜ける
       break;
+    sc0.setColor(COL(LINENUM), COL(BG));
     putnum(prnlineno, 0,devno); // 行番号を表示
+    sc0.setColor(COL(FG), COL(BG));
     c_putch(' ',devno);        // 空白を入れる
     putlist(lp + sizeof(num_t) + 1,devno);    // 行番号より後ろを文字列に変換して表示
     if (err)                   // もしエラーが生じたら
