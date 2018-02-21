@@ -225,6 +225,9 @@ class VS23S010 {
     inline uint16_t bgWinHeight(uint8_t bg) {
       return m_bg[bg].win_h;
     }
+    inline bool bgEnabled(uint8_t bg) {
+      return m_bg[bg].enabled;
+    }
     
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
 
