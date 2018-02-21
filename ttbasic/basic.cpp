@@ -113,12 +113,28 @@ Unifile user_files[MAX_USER_FILES];
 #define CONFIG_KBD  65533  // EEPROM キーボード設定
 #define CONFIG_PRG  65532  // 自動起動設定
 
+#define COL_BG		0
+#define COL_FG		1
+#define COL_KEYWORD	2
+#define COL_LINENUM	3
+#define COL_NUM		4
+#define COL_VAR		5
+#define COL_LVAR	6
+#define COL_OP		7
+#define COL_STR		8
+#define COL_PROC	9
+#define COL_COMMENT	10
+#define COL_BORDER	11
+
 typedef struct {
   int16_t NTSC;        // NTSC設定 (0,1,2,3)
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
   int16_t STARTPRG;    // 自動起動(-1,なし 0～9:保存プログラム番号)
+  uint8_t color_scheme[11];
 } SystemConfig;
 SystemConfig CONFIG;
+
+#define COL(n)	(CONFIG.color_scheme[COL_ ## n])
 
 // プロトタイプ宣言
 void loadConfig();
@@ -2868,7 +2884,7 @@ void ilocate() {
   sc0.locate((uint16_t)x, (uint16_t)y);
 }
 
-// 文字色の指定 COLOLR fc,bc
+// 文字色の指定 COLOR fc,bc
 void icolor() {
   int32_t fc,  bc = 0;
   if ( getParam(fc, 0, 255, I_NONE) ) return;
@@ -6270,6 +6286,18 @@ void loadConfig() {
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  1;
   CONFIG.STARTPRG  = -1;
+  COL(FG) = 7;
+  COL(BG) = 0;
+  COL(KEYWORD) = 7;
+  COL(LINENUM) = 3;
+  COL(NUM) = 27;
+  COL(VAR) = 3;
+  COL(LVAR) = 133;
+  COL(OP) = 99;
+  COL(STR) = 90;
+  COL(PROC) = 172;
+  COL(COMMENT) = 156;
+  COL(BORDER) = COL(BG);
   
   Unifile f = Unifile::open("/flash/.config", FILE_READ);
   if (!f)
