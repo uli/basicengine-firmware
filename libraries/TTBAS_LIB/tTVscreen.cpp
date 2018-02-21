@@ -259,11 +259,18 @@ void tTVscreen::setColor(uint16_t fc, uint16_t bc)
 // スクリーン編集
 uint8_t tTVscreen::edit() {
   uint8_t ch;  // 入力文字
+  keyEvent k;
 
   do {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
-    switch(ch) {
+    k = ps2last();
+    if (k.ALT) {
+      if (ch >= 'A' && ch <= '_')
+        Insert_char(ch - 64);
+      else if (ch >= '`' && ch <= '~')
+        Insert_char(ch + 32);
+    } else switch(ch) {
       case KEY_CR:         // [Enter]キー
         return enter_text();
       case KEY_SHIFT_CR:
