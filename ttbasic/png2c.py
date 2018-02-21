@@ -45,7 +45,7 @@ sys.stdout.write("""PROGMEM unsigned char console_font_%dx%d[] = { %d, %d, 0,
 
 raster = []
 for line in bitmap:
-    raster.append([c == 255 and 1 or 0 for c in [line[k+1] for k in range(0, size[0] * 3, 3)]])
+    raster.append([c != 0 and 1 or 0 for c in [line[k+1] for k in range(0, size[0] * 3, 3)]])
 
 # array of character bitmaps; each bitmap is an array of lines, each line
 # consists of 1 - bit is set and 0 - bit is not set
