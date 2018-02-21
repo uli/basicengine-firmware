@@ -360,15 +360,16 @@ uint8_t cnv2tty(keyEvent k) {
   return rc;
 }
 
+keyEvent ps22tty_last_key;
+
 // キー入力文字の取得
 uint8_t ICACHE_RAM_ATTR ps2read() {
   char* ptr;
   char c;
   uint8_t len;
-  keyEvent k; // キー入力情報
   
-  if (pb.available() && (k = kb.read(), k.code))
-    c = cnv2tty(k);
+  if (pb.available() && (ps22tty_last_key = kb.read(), ps22tty_last_key.code))
+    c = cnv2tty(ps22tty_last_key);
   else
     c = 0;
 

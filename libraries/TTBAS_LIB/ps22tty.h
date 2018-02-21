@@ -1,6 +1,7 @@
 #ifndef _PS22TTY_H
 #define _PS22TTY_H
 
+#include <TKeyboard.h>
 #include <TPS2.h>
 #include "ring_buffer.h"
 
@@ -16,4 +17,9 @@ static inline bool ICACHE_RAM_ATTR ps2kbhit() {
   return true;
 }
 
+extern keyEvent ps22tty_last_key;
+
+static inline keyEvent ICACHE_RAM_ATTR ps2last() {
+  return ps22tty_last_key;
+}
 #endif
