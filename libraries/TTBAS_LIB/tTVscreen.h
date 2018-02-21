@@ -94,7 +94,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 
     inline uint8_t IS_PRINT(uint8_t ch) {
       //return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
-      return (ch >= 32); 
+      return (ch > 0); 
     };
 
     void tone(int16_t freq, int16_t tm);
