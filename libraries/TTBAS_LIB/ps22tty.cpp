@@ -7,13 +7,14 @@
 // 修正 2017/05/18, ltu(ﾂ)が利用出来ない不具合の対応
 
 #include <string.h>
-#include "ring_buffer.h"
 #include <TKeyboard.h>
 #include "tTVscreen.h"
 
 #if defined(ESP8266) && !defined(__FLASH__)
 #define __FLASH__ ICACHE_RODATA_ATTR
 #endif
+
+#include "ps22tty.h"
 
 const int IRQpin =  PS2CLK;  // CLK(D+)
 const int DataPin = PS2DAT;  // Data(D-) 
@@ -359,8 +360,6 @@ uint8_t cnv2tty(keyEvent k) {
   return rc;
 }
 
-extern TPS2 pb;
-
 // キー入力文字の取得
 uint8_t ICACHE_RAM_ATTR ps2read() {
   char* ptr;
@@ -413,4 +412,19 @@ uint8_t ICACHE_RAM_ATTR ps2read() {
   return c;
 }
 
-
+uint8_t ICACHE_RAM_ATTR ps2peek()
+{
+  char c;
+  if (ps2kbhit()) {
+    if (!rb_is_empty(&kbuf))
+      return kbuf.buf[kbuf.head];
+    else {
+      c = ps2read();
+      if (c) {
+        rb_insert(&kbuf, c);
+        return c;
+      }
+    }
+  }
+  return 0;
+}  
