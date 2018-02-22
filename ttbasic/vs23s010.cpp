@@ -100,7 +100,7 @@ void VS23S010::reset()
   resetSprites();
   resetBgs();
   m_bin.Init(m_current_mode->x, m_current_mode->y);
-  setColorConversion(0, 7, 3, 6, true);
+  setColorSpace(0);
 }
 
 void SMALL VS23S010::setMode(uint8_t mode)
