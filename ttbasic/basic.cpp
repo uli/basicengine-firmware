@@ -126,15 +126,17 @@ Unifile user_files[MAX_USER_FILES];
 #define COL_COMMENT	10
 #define COL_BORDER	11
 
+#define CONFIG_COLS	12
+
 typedef struct {
   int16_t NTSC;        // NTSC設定 (0,1,2,3)
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
   int16_t STARTPRG;    // 自動起動(-1,なし 0～9:保存プログラム番号)
-  uint8_t color_scheme[11];
+  uint8_t color_scheme[CONFIG_COLS][3];
 } SystemConfig;
 SystemConfig CONFIG;
 
-#define COL(n)	(CONFIG.color_scheme[COL_ ## n])
+#define COL(n)	(vs23.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
 // プロトタイプ宣言
 void loadConfig();
@@ -6167,6 +6169,7 @@ void SMALL basic() {
   uint8_t rc;
 
   vs23.begin();
+  vs23.setColorSpace(1);
 
   psx.setupPins(0, 1, 2, 3, 3);
 
@@ -6192,7 +6195,6 @@ void SMALL basic() {
   sc0.show_curs(0);
 
   // Want to make sure we get the right hue.
-  vs23.setColorSpace(1);
   vs23.setColorConversion(1, 7, 2, 4, true);
   show_logo();
   vs23.setColorSpace(1);	// reset color conversion
@@ -6300,23 +6302,27 @@ void SMALL basic() {
   }
 }
 
+static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
+  {   0,   0,   0 },	// BG
+  { 255, 255, 255 },	// FG
+  { 255, 255, 255 },	// KEYWORD
+  { 128, 128, 128 },	// LINENUM
+  {  10, 120, 160 },	// NUM (teal)
+  { 140, 140, 140 },	// VAR (light gray)
+  { 244, 233, 123 },	// LVAR (beige)
+  { 214,  91, 189 },	// OP (pink)
+  {  50,  50, 255 },	// STR (blue)
+  { 238, 137,  17 },	// PROC (orange)
+  {  84, 255,   0 },	// COMMENT (green)
+  {   0,   0,   0 },	// BORDER
+};
+
 // システム環境設定のロード
 void loadConfig() {
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  1;
   CONFIG.STARTPRG  = -1;
-  COL(FG) = 7;
-  COL(BG) = 0;
-  COL(KEYWORD) = 7;
-  COL(LINENUM) = 3;
-  COL(NUM) = 27;
-  COL(VAR) = 3;
-  COL(LVAR) = 133;
-  COL(OP) = 99;
-  COL(STR) = 90;
-  COL(PROC) = 172;
-  COL(COMMENT) = 156;
-  COL(BORDER) = COL(BG);
+  memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   
   Unifile f = Unifile::open("/flash/.config", FILE_READ);
   if (!f)
