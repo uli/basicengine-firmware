@@ -185,8 +185,7 @@ void tv_drawCurs(uint8_t x, uint8_t y) {
 //
 // 文字の表示
 //
-void tv_write(uint8_t x, uint8_t y, uint8_t c) {
-#if USE_VS23 == 1
+void ICACHE_RAM_ATTR tv_write(uint8_t x, uint8_t y, uint8_t c) {
   const uint8_t *chp = tvfont+3+c*f_height;
   for (int i=0;i<f_height;++i) {
     uint8_t pix[f_width];
@@ -198,9 +197,6 @@ void tv_write(uint8_t x, uint8_t y, uint8_t c) {
     uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
     SpiRamWriteBytes(byteaddress, pix, f_width);
   }
-#else
-  TV.print_char(x * f_width, y * f_height ,c);  
-#endif
 }
 
 //
