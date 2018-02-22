@@ -250,7 +250,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_CLS,I_CLT,
   I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH,
   I_UP, I_DOWN, I_RIGHT, I_LEFT,
-  I_INKEY,I_VPEEK, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
+  I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT,
@@ -3059,8 +3059,8 @@ num_t iargc() {
     return gstk[gstki-1].str_args;
 }
 
-// スクリーン座標の文字コードの取得 'VPEEK(X,Y)'
-int32_t ivpeek() {
+// スクリーン座標の文字コードの取得 'CHAR(X,Y)'
+int32_t icharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -3070,6 +3070,14 @@ int32_t ivpeek() {
   if (checkClose()) return 0;
   value = (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
   return value;
+}
+
+void ichar() {
+  int32_t x, y, c;
+  if ( getParam(x, I_COMMA) ) return;
+  if ( getParam(y, I_COMMA) ) return;
+  if ( getParam(c, I_NONE) ) return;
+  sc0.write(x, y, c);
 }
 
 uint16_t pcf_state = 0xffff;
@@ -4783,7 +4791,7 @@ num_t GROUP(basic_core) ivalue() {
     value = iinkey(); // キー入力値の取得
     break;
 
-  case I_VPEEK: value = ivpeek();  break; //関数VPEEK
+  case I_CHAR: value = icharfun();  break; //関数CHAR
   case I_GPEEK: value = igpeek();  break; //関数GPEEK(X,Y)
   case I_GINP:  value = iginp();   break; //関数GINP(X,Y,W,H,C)
   case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
