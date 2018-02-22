@@ -118,9 +118,9 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline void getWindow(int &x, int &y, int &w, int &h) {
       tv_window_get(x, y, w, h);
     }
-    inline void resetWindow() {
+    inline void reset() {
       int x, y, w, h;
-      tv_window_reset();
+      tv_reinit();
       tv_window_get(x, y, w, h);
       tscreenBase::init(w, h, maxllen, screen);
     }
