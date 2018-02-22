@@ -4973,6 +4973,11 @@ num_t GROUP(basic_core) ivalue() {
     value = retval[0];
     break;
 
+  case I_FRAME:
+    if (checkOpen()||checkClose()) break;
+    value = vs23.frame();
+    break;
+
   default:
     cip--;
     if (is_strexp())
