@@ -2940,6 +2940,10 @@ void iwait() {
   uint32_t end = tm + millis();
   while (millis() < end) {
     pump_events();
+    if (sc0.peekKey() == SC_KEY_CTRL_C) {
+      err = ERR_CTR_C;
+      break;
+    }
   }
 }
 
