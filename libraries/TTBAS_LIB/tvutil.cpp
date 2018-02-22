@@ -88,6 +88,13 @@ void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) {
   tv_NTSC_adjust(ajst);
 }
 
+void tv_reinit()
+{
+  vs23.reset();
+  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+  tv_window_reset();
+}
+
 void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
   win_x = x * f_width;
