@@ -365,13 +365,6 @@ void tscreenBase::locate(uint16_t x, uint16_t y) {
   MOVE(y, x);
 }
 
-// カーソル位置の文字コード取得
-uint16_t tscreenBase::vpeek(uint16_t x, uint16_t y) {
-  if (x >= width || y >= height) 
-     return 0;
-  return VPEEK(x,y);
-}
-
 // 行データの入力確定
 uint8_t tscreenBase::enter_text() {
 

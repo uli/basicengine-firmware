@@ -107,7 +107,12 @@ protected:
     void Insert_newLine(uint16_t l);                  // 指定行に空白挿入 
     void edit_scrollUp();                             // スクロールして前行の表示
     void edit_scrollDown();                           // スクロールして次行の表示
-    uint16_t vpeek(uint16_t x, uint16_t y);           // カーソル位置の文字コード取得
+    // カーソル位置の文字コード取得
+    inline uint16_t vpeek(uint16_t x, uint16_t y) {
+      if (x >= width || y >= height) 
+         return 0;
+      return VPEEK(x,y);
+    }
     
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
     inline uint8_t *getScreen() { return screen; };   // スクリーン用バッファアドレス参照
