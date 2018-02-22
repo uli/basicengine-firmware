@@ -272,6 +272,7 @@ private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
     uint32_t m_cycles_per_frame;
+    uint32_t m_cycles_per_frame_calculated;
     
     int m_min_spi_div;	// smallest valid divider, i.e. max. frequency
     int m_def_spi_div;	// divider safe for writing

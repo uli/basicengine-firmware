@@ -128,7 +128,7 @@ void VS23S010::calibrateVsync()
   now = ESP.getCycleCount();
   while (currentLine() == 100) {};
   while (currentLine() != 100) {};
-  m_cycles_per_frame = ESP.getCycleCount() - now;
+  m_cycles_per_frame = m_cycles_per_frame_calculated = ESP.getCycleCount() - now;
 }
 
 void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
@@ -144,6 +144,12 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
     } else if (line > vs23.m_sync_line) {
       next -= (vs23.m_cycles_per_frame / 262) * (line-vs23.m_sync_line);
       vs23.m_cycles_per_frame -= 10;
+    }
+    if (vs23.m_cycles_per_frame > vs23.m_cycles_per_frame_calculated * 5 / 4 ||
+        vs23.m_cycles_per_frame < vs23.m_cycles_per_frame_calculated * 3 / 4) {
+      // If we went completely off the rail (may happen if the interrupt was
+      // substantially late at some point), we reset to a sane value.
+      vs23.m_cycles_per_frame = vs23.m_cycles_per_frame_calculated;
     }
 #ifdef DEBUG
     if (vs23.m_sync_line != line) {
