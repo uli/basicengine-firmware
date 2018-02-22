@@ -5585,6 +5585,11 @@ void GROUP(basic_core) icall() {
 
   int num_args = 0;
   int str_args = 0;
+  if (gstki > 0) {
+    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    astk_num_i += p.locc_num;
+    astk_str_i += p.locc_str;
+  }
   if (*cip == I_OPEN) {
     ++cip;
     if (*cip != I_CLOSE) for(;;) {
@@ -5650,6 +5655,11 @@ void GROUP(basic_core) ireturn() {
 
   astk_num_i -= gstk[--gstki].num_args;
   astk_str_i -= gstk[gstki].str_args;
+  if (gstki > 0) {
+    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    astk_num_i -= p.locc_num;
+    astk_str_i -= p.locc_str;
+  }
   clp = gstk[gstki].lp; //中間コードポインタを復帰
   cip = gstk[gstki].ip; //行ポインタを復帰
   return;
