@@ -3005,7 +3005,7 @@ int32_t GROUP(basic_core) iinkey() {
   int32_t rc = 0;
 
   if (c_kbhit()) {
-    rc = c_getch();
+    rc = sc0.tryGetChar();
     if (rc == SC_KEY_CTRL_C)
       err = ERR_CTR_C;
   }
