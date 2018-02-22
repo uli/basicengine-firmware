@@ -2947,6 +2947,24 @@ void iwait() {
   }
 }
 
+void ivsync() {
+  int32_t tm;
+  if (end_of_statement())
+    tm = 1;
+  else
+    if ( getParam(tm, 0, INT32_MAX, I_NONE) )
+      return;
+
+  uint32_t end = tm + vs23.frame();
+  while (vs23.frame() < end) {
+    pump_events();
+    if (sc0.peekKey() == SC_KEY_CTRL_C) {
+      err = ERR_CTR_C;
+      break;
+    }
+  }
+}
+  
 // カーソル移動 LOCATE x,y
 void ilocate() {
   int32_t x,  y;
