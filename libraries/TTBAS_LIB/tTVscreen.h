@@ -66,6 +66,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     uint16_t prev_pos_x;        // カーソル横位置
     uint16_t prev_pos_y;        // カーソル縦位置
  
+    void write(uint8_t x, uint8_t y, uint8_t c); // 文字の表示
     void init( uint16_t ln=256, uint8_t kbd_type=false,
     	       int16_t NTSCajst=0, uint8_t* extmem=NULL, 
                uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定

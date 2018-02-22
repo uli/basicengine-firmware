@@ -59,6 +59,11 @@ void tTVscreen::WRITE(uint8_t x, uint8_t y, uint8_t c) {
    tv_write(x, y, c); // 画面表示
 }
 
+void tTVscreen::write(uint8_t x, uint8_t y, uint8_t c) {
+  tv_write(x, y, c);
+  VPOKE(x, y, c);
+}
+
 // 画面全消去
 void tTVscreen::CLEAR() {
   tv_cls();      
