@@ -2434,7 +2434,7 @@ static bool get_range(uint32_t &start, uint32_t &end)
 }
 
 // LIST command
-void SMALL ilist(uint8_t devno=0) {
+void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
   uint32_t lineno;			// start line number
   uint32_t endlineno;	// end line number
   uint32_t prnlineno;			// output line number
@@ -2452,6 +2452,13 @@ void SMALL ilist(uint8_t devno=0) {
     prnlineno = getlineno(lp); // 行番号取得
     if (prnlineno > endlineno) // 表示終了行番号に達したら抜ける
       break;
+    if (search) {
+      char *l = getLineStr(prnlineno);
+      if (!strstr(l, search->c_str())) {
+        lp += *lp;
+        continue;
+      }
+    }
     sc0.setColor(COL(LINENUM), COL(BG));
     putnum(prnlineno, 0,devno); // 行番号を表示
     sc0.setColor(COL(FG), COL(BG));
@@ -2462,6 +2469,12 @@ void SMALL ilist(uint8_t devno=0) {
     newline(devno);            // 改行
     lp += *lp;               // 行ポインタを次の行へ進める
   }
+}
+
+void isearch() {
+  BString needle = istrexp();
+  if (!err)
+    ilist(0, &needle);
 }
 
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only

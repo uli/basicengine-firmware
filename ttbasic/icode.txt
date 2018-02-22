@@ -96,6 +96,7 @@ FLASH	I_FLASH		ecom
 APPEND	I_APPEND	iappend
 PREPEND	I_PREPEND	iprepend
 PROFILE	I_PROFILE	iprofile
+SEARCH	I_SEARCH	isearch
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
