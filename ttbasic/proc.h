@@ -12,6 +12,8 @@ struct proc_t {
   unsigned char locs_str[MAX_PROC_ARGS];
   unsigned char argc_num, argc_str;
   unsigned char locc_num, locc_str;
+  uint32_t profile_current;
+  uint32_t profile_total;
 };
 
 class Procedures {

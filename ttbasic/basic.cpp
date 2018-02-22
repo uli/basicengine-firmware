@@ -2078,6 +2078,7 @@ void initialize_proc_pointers(void)
 
     pr.argc_num = 0;
     pr.argc_str = 0;
+    pr.profile_total = 0;
 
     if (*ip == I_OPEN) {
       ++ip;
@@ -5571,11 +5572,13 @@ void ion()
   }
 }
 
+static bool profile_enabled;
+
 void GROUP(basic_core) icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
-  struct proc_t proc_loc = proc.proc(proc_idx);  
+  struct proc_t &proc_loc = proc.proc(proc_idx);
   dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
@@ -5632,6 +5635,10 @@ void GROUP(basic_core) icall() {
 
   clp = proc_loc.lp;
   cip = proc_loc.ip;
+  
+  if (profile_enabled) {
+    proc_loc.profile_current = ESP.getCycleCount();
+  }
   return;
 overflow:
   err = ERR_ASTKOF;
@@ -5664,6 +5671,10 @@ void GROUP(basic_core) ireturn() {
     struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
     astk_num_i -= p.locc_num;
     astk_str_i -= p.locc_str;
+  }
+  if (profile_enabled) {
+    struct proc_t &p = proc.proc(gstk[gstki].proc_idx);
+    p.profile_total += ESP.getCycleCount() - p.profile_current;
   }
   clp = gstk[gstki].lp; //中間コードポインタを復帰
   cip = gstk[gstki].ip; //行ポインタを復帰
@@ -5986,6 +5997,27 @@ void iclose() {
     err = ERR_FILE_NOT_OPEN;
   else
     user_files[filenum].close();
+}
+
+void iprofile() {
+  switch (*cip++) {
+  case I_ON:
+    profile_enabled = true;
+    break;
+  case I_OFF:
+    profile_enabled = false;
+    break;
+  case I_LIST:
+    for (int i = 0; i < proc.size(); ++i) {
+      struct proc_t &p = proc.proc(i);
+      sprintf(lbuf, "%10d %s", p.profile_total, proc_names.name(i));
+      c_puts(lbuf); newline();
+    }
+    break;
+  default:
+    err = ERR_SYNTAX;
+    break;
+  }
 }
 
 typedef void (*cmd_t)();
