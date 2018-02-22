@@ -45,6 +45,9 @@
 
 #include "tvutil.h"
 
+#define VPEEK(X,Y)      (screen[width*(Y)+(X)])
+#define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
+
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
   private:
@@ -66,7 +69,10 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     uint16_t prev_pos_x;        // カーソル横位置
     uint16_t prev_pos_y;        // カーソル縦位置
  
-    void write(uint8_t x, uint8_t y, uint8_t c); // 文字の表示
+    inline void write(uint8_t x, uint8_t y, uint8_t c) {
+      tv_write(x, y, c);
+      VPOKE(x, y, c);
+    }
     void init( uint16_t ln=256, uint8_t kbd_type=false,
     	       int16_t NTSCajst=0, uint8_t* extmem=NULL, 
                uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定

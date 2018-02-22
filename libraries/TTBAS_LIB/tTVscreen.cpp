@@ -32,9 +32,6 @@ void    endPS2();
 
 void setupPS2(uint8_t kb_type);
 
-#define VPEEK(X,Y)      (screen[width*(Y)+(X)])
-#define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
-
 //****************************************************************************
 // 差分実装
 //***************************************************************************
@@ -57,11 +54,6 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
 // 文字の表示
 void tTVscreen::WRITE(uint8_t x, uint8_t y, uint8_t c) {
    tv_write(x, y, c); // 画面表示
-}
-
-void tTVscreen::write(uint8_t x, uint8_t y, uint8_t c) {
-  tv_write(x, y, c);
-  VPOKE(x, y, c);
 }
 
 // 画面全消去
