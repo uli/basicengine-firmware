@@ -102,7 +102,7 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data)
 	// SpiRamReadByte(address), data);
 }
 
-void SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len)
+void ICACHE_RAM_ATTR SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len)
 {
 	uint8_t req[4];
 
