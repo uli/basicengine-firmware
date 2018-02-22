@@ -81,6 +81,9 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void reset_kbd(uint8_t kbd_type=false);
     void putch(uint8_t c);                            // 文字の出力
     uint8_t get_ch();                                 // 文字の取得
+    inline uint8_t tryGetChar() {
+      return ps2read();
+    }
     inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得
     bool isKeyIn();                                // キー入力チェック 
     inline uint8_t peekKey() {
