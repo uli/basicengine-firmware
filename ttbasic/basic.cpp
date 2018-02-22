@@ -3060,7 +3060,7 @@ num_t iargc() {
 }
 
 // スクリーン座標の文字コードの取得 'CHAR(X,Y)'
-int32_t icharfun() {
+int32_t GROUP(basic_core) icharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -3072,7 +3072,7 @@ int32_t icharfun() {
   return value;
 }
 
-void ichar() {
+void GROUP(basic_core) ichar() {
   int32_t x, y, c;
   if ( getParam(x, I_COMMA) ) return;
   if ( getParam(y, I_COMMA) ) return;
