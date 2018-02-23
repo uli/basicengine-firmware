@@ -230,7 +230,7 @@ const uint8_t i_nsa[] __FLASH__ = {
 
 // Intermediate code which eliminates previous space when former is constant or variable
 const uint8_t i_nsb[] __FLASH__ = {
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_OR, I_AND,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
