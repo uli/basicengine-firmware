@@ -5596,14 +5596,7 @@ static void on_go(bool is_gosub, int cas)
 
 void ion()
 {
-  uint32_t cas = iexp();
-  if (*cip == I_GOTO) {
-    ++cip;
-    on_go(false, cas);
-  } else if (*cip == I_GOSUB) {
-    ++cip;
-    on_go(true, cas);
-  } else if (*cip == I_SPRITE) {
+  if (*cip == I_SPRITE) {
     ++cip;
     if (*cip == I_OFF) {
       event_sprite_enabled = false;
@@ -5625,7 +5618,16 @@ void ion()
     event_error_enabled = true;
     event_error_line = iexp();
   } else {
-    err = ERR_SYNTAX;
+    uint32_t cas = iexp();
+    if (*cip == I_GOTO) {
+      ++cip;
+      on_go(false, cas);
+    } else if (*cip == I_GOSUB) {
+      ++cip;
+      on_go(true, cas);
+    } else {
+      err = ERR_SYNTAX;
+    }
   }
 }
 
