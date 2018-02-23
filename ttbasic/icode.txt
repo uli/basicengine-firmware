@@ -4,6 +4,7 @@ RETURN	I_RETURN	ireturn
 FORMAT	I_FORMAT	ecom
 FOR	I_FOR		ifor
 NEXT	I_NEXT		inext
+DOWN	I_DOWN		esyntax_workaround
 DO	I_DO		ido
 LOOP	I_LOOP		iloop
 IF	I_IF		iif
@@ -204,7 +205,6 @@ MSB	I_MSB		esyntax
 PRG	I_MPRG		esyntax
 FNT	I_MFNT		esyntax
 UP	I_UP		esyntax
-DOWN	I_DOWN		esyntax
 RIGHT	I_RIGHT		esyntax
 LEFT	I_LEFT		esyntax
 USING	I_USING		esyntax

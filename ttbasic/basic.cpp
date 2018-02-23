@@ -5947,6 +5947,7 @@ void esyntax() {
   cip--;
   err = ERR_SYNTAX;
 }
+#define esyntax_workaround esyntax
 
 void iprint_() {
   iprint();
