@@ -6089,8 +6089,6 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
   uint8_t stk = gstki;
 
   while (*cip != I_EOL) { //行末まで繰り返す
-
-    pump_events();
     //強制的な中断の判定
     if ((c = sc0.peekKey())) { // もし未読文字があったら
       if (c == SC_KEY_CTRL_C || c==27 ) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
@@ -6105,6 +6103,8 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
       funtbl[*cip++]();
     } else
       err = ERR_SYNTAX;
+
+    pump_events();
 
     if (err || (until_return && gstki < stk && *cip != I_EOL))
       return NULL;
