@@ -2900,7 +2900,7 @@ void GROUP(basic_core) event_handle_sprite()
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
     if (!vs23.spriteEnabled(i))
       continue;
-    for (int j = i; j < VS23_MAX_SPRITES; ++j) {
+    for (int j = i+1; j < VS23_MAX_SPRITES; ++j) {
       if (!vs23.spriteEnabled(j))
         continue;
       if ((dir = vs23.spriteCollision(i, j))) {
