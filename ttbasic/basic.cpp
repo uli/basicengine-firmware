@@ -131,7 +131,6 @@ Unifile user_files[MAX_USER_FILES];
 typedef struct {
   int16_t NTSC;        // NTSC設定 (0,1,2,3)
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
-  int16_t STARTPRG;    // 自動起動(-1,なし 0～9:保存プログラム番号)
   uint8_t color_scheme[CONFIG_COLS][3];
 } SystemConfig;
 SystemConfig CONFIG;
@@ -2660,15 +2659,6 @@ void SMALL iconfig() {
     }
     break;
 #endif
-#if 0
-  case 2: // プログラム自動起動番号設定
-    if (value < -1 || value >FLASH_SAVE_NUM-1)  {
-      err = ERR_VALUE;
-    } else {
-      CONFIG.STARTPRG = value;
-    }
-    break;
-#endif
   default:
     err = ERR_VALUE;
     break;
@@ -2749,31 +2739,6 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   }
   bfs.tmpClose();
   return rc;
-}
-
-// フラシュメモリからのプログラムロード
-// 引数
-//  progno:    プログラム番号
-//  newmmode:  初期化モード 0:初期化する 1:初期化しない
-// 戻り値
-//  0:正常終了
-//  1:異常終了
-
-uint8_t loadPrg(uint16_t prgno, uint8_t newmode = NEW_ALL) {
-#if 0
-  uint32_t flash_adr;
-  flash_adr = FLASH_START_ADDRESS + FLASH_PAGE_SIZE*(FLASH_PRG_START_PAGE+ prgno*FLASH_PAGE_PAR_PRG);
-
-  // 指定領域に保存されているかチェックする
-  if ( *((uint8_t*)flash_adr) == 0xff && *((uint8_t*)flash_adr+1) == 0xff) {
-    err = ERR_NOPRG;
-    return 1;
-  }
-  // 現在のプログラムの削除とロード
-  inew(newmode);
-  os_memcpy(listbuf, (uint8_t*)flash_adr, FLASH_PAGE_SIZE*FLASH_PAGE_PAR_PRG);
-#endif
-  return 0;
 }
 
 // Delete specified line
@@ -6336,17 +6301,6 @@ void SMALL basic() {
   sc0.show_curs(1);
   error();          // "OK" or display an error message and clear the error number
 
-  // Program auto-start
-  if (CONFIG.STARTPRG >=0  && loadPrg(CONFIG.STARTPRG) == 0) {
-    sc0.show_curs(0);
-    irun();
-    sc0.show_curs(1);
-    newline();
-    c_puts("Autorun No."); putnum(CONFIG.STARTPRG,0); c_puts(" stopped.");
-    newline();
-    err = 0;
-  }
-
   // Enter one line from the terminal and execute
   while (1) {
     rc = sc0.edit();
@@ -6411,7 +6365,6 @@ static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
 void loadConfig() {
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  1;
-  CONFIG.STARTPRG  = -1;
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   
   Unifile f = Unifile::open("/flash/.config", FILE_READ);
