@@ -137,7 +137,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   uint32_t now = ESP.getCycleCount();
   uint32_t next = now + vs23.m_cycles_per_frame;
   uint16_t line;
-  if (!SpiLocked()) {
+  if (!(vs23.m_frame & 15) && !SpiLocked()) {
     line = vs23.currentLine();
     if (line < vs23.m_sync_line) {
       next += (vs23.m_cycles_per_frame / 262) * (vs23.m_sync_line-line);
