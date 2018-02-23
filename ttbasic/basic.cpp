@@ -3125,7 +3125,13 @@ void idwrite() {
   Wire.write(pcf_state & 0xff);
   Wire.write(pcf_state >> 8);
 
-  int ret = Wire.endTransmission();
+#ifdef DEBUG_GPIO
+  int ret = 
+#endif
+  Wire.endTransmission();
+#ifdef DEBUG_GPIO
+  Serial.printf("wire st %d pcf 0x%x\n", ret, pcf_state);
+#endif
 }
 
 BString ihex() {
