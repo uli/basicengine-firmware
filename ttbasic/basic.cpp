@@ -3245,44 +3245,34 @@ int32_t ii2cw() {
   return rc;
 }
 
-// I2CR関数  I2CR(I2Cアドレス, 送信データアドレス, 送信データサイズ,受信データアドレス,受信データサイズ)
-int32_t ii2cr() {
-  int32_t i2cAdr, sdtop, sdlen,rdtop,rdlen;
-  uint8_t* sdptr;
-  uint8_t* rdptr;
-  int16_t rc;
-  int32_t n;
+BString ii2cr() {
+  int32_t i2cAdr, rdlen;
+  BString in, out;
 
-  if (checkOpen()) return 0;
-  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
-  if (getParam(sdtop, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(sdlen, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(rdtop, 0, INT32_MAX, I_COMMA)) return 0;
-  if (getParam(rdlen, 0, INT32_MAX, I_NONE)) return 0;
-  if (checkClose()) return 0;
-
-  sdptr = sanitize_addr(sdtop);
-  rdptr = sanitize_addr(rdtop);
-  if (sdptr == 0 || rdptr == 0 || sanitize_addr(sdtop+sdlen) == 0 || sanitize_addr(rdtop+rdlen) == 0)
-  { err = ERR_RANGE; return 0; }
+  if (checkOpen()) goto out;
+  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) goto out;
+  out = istrexp();
+  if (*cip++ != I_COMMA) {
+    err = ERR_SYNTAX;
+    goto out;
+  }
+  if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
 
   // I2Cデータ送受信
   Wire.beginTransmission(i2cAdr);
 
   // 送信
-  if (sdlen) {
-    Wire.write(sdptr, sdlen);
+  if (out.length()) {
+    Wire.write(out.c_str(), out.length());
   }
-  rc = Wire.endTransmission();
-  if (rdlen) {
-    if (rc!=0)
-      return rc;
-    n = Wire.requestFrom(i2cAdr, rdlen);
-    while (Wire.available()) {
-      *(rdptr++) = Wire.read();
-    }
+  if ((retval[0] = Wire.endTransmission()))
+    goto out;
+  Wire.requestFrom(i2cAdr, rdlen);
+  while (Wire.available()) {
+    in += Wire.read();
   }
-  return rc;
+out:
+  return in;
 }
 
 // SETDATEコマンド  SETDATE 年,月,日,時,分,秒
@@ -4853,7 +4843,6 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_PEEK: value = ipeek();   break;     // PEEK()関数
   case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
-  case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
 
   case I_RET:   value = iret(); break;
   case I_ARG:	value = iarg(); break;
@@ -5309,6 +5298,8 @@ BString istrvalue()
     value = BString((char)nv);
     checkClose();
     break;
+
+  case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
 
   default:
     cip--;
