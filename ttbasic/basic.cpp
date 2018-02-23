@@ -225,6 +225,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
+  I_PAD,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
