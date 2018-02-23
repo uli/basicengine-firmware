@@ -2338,7 +2338,11 @@ void itroff() {
 bool event_sprite_enabled;
 uint8_t event_sprite_proc_idx;
 
+bool event_error_enabled;
+uint32_t event_error_line;
+
 void inew(uint8_t mode = NEW_ALL);
+static void GROUP(basic_core) do_goto(uint32_t line);
 
 // RUN command handler
 void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
@@ -2355,6 +2359,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   }
   initialize_proc_pointers();
   event_sprite_enabled = false;
+  event_error_enabled = false;
 
   if (err)
     return;
@@ -2384,13 +2389,19 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
-      if (err == ERR_CTR_C) {
+      if (event_error_enabled) {
+        retval[0] = err;
+        retval[1] = getlineno(clp);
+        event_error_enabled = false;
+        do_goto(event_error_line);
+      } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
+        return;
       } else {
         cont_cip = cont_clp = NULL;
+        return;
       }
-      return;
     }
     clp = lp;         // 行ポインタを次の行の位置へ移動
   }
@@ -5680,6 +5691,14 @@ void ion()
       event_sprite_enabled = true;
       event_sprite_proc_idx = *cip++;
     }
+  } else if (*cip == I_ERROR) {
+    ++cip;
+    if (*cip++ != I_GOTO) {
+      err = ERR_SYNTAX;
+      return;
+    }
+    event_error_enabled = true;
+    event_error_line = iexp();
   } else {
     err = ERR_SYNTAX;
   }
