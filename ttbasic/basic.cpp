@@ -3210,39 +3210,22 @@ void ipoke() {
   } while(*cip == I_COMMA);
 }
 
-// I2CW関数  I2CW(I2Cアドレス, コマンドアドレス, コマンドサイズ, データアドレス, データサイズ)
 int32_t ii2cw() {
   int32_t i2cAdr;
-  uint32_t ctop, clen, top, len;
-  uint8_t* ptr;
-  uint8_t* cptr;
-  int16_t rc;
+  BString out;
 
   if (checkOpen()) return 0;
   if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
-  if (getParam(ctop, I_COMMA)) return 0;
-  if (getParam(clen, I_COMMA)) return 0;
-  if (getParam(top, I_COMMA)) return 0;
-  if (getParam(len, I_NONE)) return 0;
+  out = istrexp();
   if (checkClose()) return 0;
-
-  ptr  = sanitize_addr(top);
-  cptr = sanitize_addr(ctop);
-  if (ptr == 0 || cptr == 0 || sanitize_addr(top+len) == 0 || sanitize_addr(ctop+clen) == 0)
-  { err = ERR_RANGE; return 0; }
 
   // I2Cデータ送信
   Wire.beginTransmission(i2cAdr);
-  if (clen) {
-    for (uint32_t i = 0; i < clen; i++)
-      Wire.write(*cptr++);
+  if (out.length()) {
+    for (uint32_t i = 0; i < out.length(); i++)
+      Wire.write(out[i]);
   }
-  if (len) {
-    for (uint32_t i = 0; i < len; i++)
-      Wire.write(*ptr++);
-  }
-  rc =  Wire.endTransmission();
-  return rc;
+  return Wire.endTransmission();
 }
 
 BString ii2cr() {
