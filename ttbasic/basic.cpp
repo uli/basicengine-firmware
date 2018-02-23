@@ -32,9 +32,7 @@ struct unaligned_num_t {
 
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
 int size_list;
-#define SIZE_VAR  256    // 利用可能変数サイズ(A-Z,A0:A6-Z0:Z6の26+26*7=208)
 #define MAX_VAR_NAME 32  // maximum length of variable names
-#define SIZE_ARRY 100    // 配列変数サイズ(@(0)～@(99)
 #define SIZE_GSTK 10     // GOSUB stack size
 #define SIZE_LSTK 10     // FOR stack size
 #define SIZE_ASTK 16	// argument stack
@@ -60,9 +58,6 @@ uint8_t scmode = USE_SCREEN_MODE;
   #include "tTVscreen.h"
   tTVscreen   sc0; 
 #endif
-
-uint16_t tv_get_gwidth();
-uint16_t tv_get_gheight();
 
 // Saved background and text window dimensions.
 // These values are set when a program is interrupted and the text window is
@@ -119,14 +114,9 @@ SystemConfig CONFIG;
 // プロトタイプ宣言
 void loadConfig();
 void isaveconfig();
-int32_t getNextLineNo(int32_t lineno);
 void mem_putch(uint8_t c);
-const uint8_t* tv_getFontAdr();
-void tv_fontInit();
-void tv_toneInit();
 void tv_tone(int16_t freq, int16_t duration);
 void tv_notone();
-void tv_write(uint8_t c);
 unsigned char* GROUP(basic_core) iexe(bool until_return = false);
 num_t GROUP(basic_core) iexp(void);
 BString istrexp(void);
@@ -144,7 +134,6 @@ void error(uint8_t flgCmd);
 #define CONST_LOW    0
 #define CONST_LSB    LSBFIRST
 #define CONST_MSB    MSBFIRST
-#define SRAM_TOP     0x20000000
 
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
 #define c_getch( ) sc0.get_ch()
@@ -313,26 +302,6 @@ Procedures proc;
 
 unsigned char *listbuf; // Pointer to program list area
 
-// macros for in/decrementing stack pointers with bounds checking
-#define inc_stk(idx, size, errnum, ret) \
-  do { \
-    idx++;	\
-    if (idx >= size) {	\
-      err = errnum;	\
-      return ret;	\
-    }	\
-  } while (0)
-
-#define dec_stk(idx, errnum, ret) \
-  do { \
-    if (!idx) {	\
-      err = errnum;	\
-      return ret;	\
-    }	\
-    idx--;	\
-  } while (0)
-
-
 unsigned char* clp;               // Pointer current line
 unsigned char* cip;               // Pointer current Intermediate code
 struct {
@@ -365,8 +334,6 @@ uint8_t *cont_cip = NULL;
 
 #define MAX_RETVALS 4
 num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
-
-uint8_t lfgSerial1Opened = false;  // Serial1のオープン設定フラグ
 
 // メモリへの文字出力
 inline void mem_putch(uint8_t c) {
