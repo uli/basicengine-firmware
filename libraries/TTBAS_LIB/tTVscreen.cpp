@@ -223,29 +223,6 @@ void tTVscreen::draw_cls_curs() {
   tv_write(pos_x, pos_y, c?c:32);
 }
 	
-/*
-// 文字色指定
-void tTVscreen::setColor(uint16_t fc, uint16_t bc) {
-  static const uint16_t tbl_fcolor[]  =
-     { F_BLACK,F_RED,F_GREEN,F_BROWN,F_BLUE,F_MAGENTA,F_CYAN,A_NORMAL,F_YELLOW};
-  static const uint16_t tbl_bcolor[]  =
-     { B_BLACK,B_RED,B_GREEN,B_BROWN,B_BLUE,B_MAGENTA,B_CYAN,B_WHITE,B_YELLOW};
-
-  if ( (fc >= 0 && fc <= 8) && (bc >= 0 && bc <= 8) )
-     attrset(tbl_fcolor[fc]|tbl_bcolor[bc]);
-
-}
-
-// 文字属性
-void tTVscreen::setAttr(uint16_t attr) {
-  static const uint16_t tbl_attr[]  =
-    { A_NORMAL, A_UNDERLINE, A_REVERSE, A_BLINK, A_BOLD };
-  
-  if (attr >= 0 && attr <= 4)
-     attrset(tbl_attr[attr]);
-}
-*/    
-
 void tv_setcolor(uint16_t fc, uint16_t bc);
 
 void tTVscreen::setColor(uint16_t fc, uint16_t bc)
