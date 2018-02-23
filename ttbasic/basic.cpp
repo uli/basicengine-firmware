@@ -1554,7 +1554,7 @@ void GROUP(basic_core) ivar() {
     err = ERR_VWOEQ; //エラー番号をセット
     return;
   }
-  cip++; //中間コードポインタを次へ進める
+  cip++;
   //値の取得と代入
   value = iexp(); //式の値を取得
   if (err) //もしエラーが生じたら
@@ -1742,7 +1742,7 @@ void GROUP(basic_core) ivararr() {
     err = ERR_VWOEQ; //エラー番号をセット
     return;
   }
-  cip++; //中間コードポインタを次へ進める
+  cip++;
   //値の取得と代入
   value = iexp(); //式の値を取得
   if (err) //もしエラーが生じたら
@@ -4707,7 +4707,7 @@ num_t GROUP(basic_core) ivalue() {
     break;
 
   case I_BITREV: // 「~」 ビット反転
-    //cip++; //中間コードポインタを次へ進める
+    //cip++;
     value = ~((int32_t)ivalue()); //値を取得してNOT演算
     break;
 
@@ -5045,14 +5045,14 @@ num_t GROUP(basic_core) imul() {
     switch(*cip) { //中間コードで分岐
 
     case I_MUL: //掛け算の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       value *= tmp; //掛け算を実行
       break;
 
     case I_DIV: //割り算の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1;
@@ -5061,8 +5061,8 @@ num_t GROUP(basic_core) imul() {
       break;
 
     case I_MOD: //剰余の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1; //終了
@@ -5071,20 +5071,20 @@ num_t GROUP(basic_core) imul() {
       break;
 
     case I_LSHIFT: // シフト演算 "<<" の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       value =((uint32_t)value)<<(uint32_t)tmp;
       break;
 
     case I_RSHIFT: // シフト演算 ">>" の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       value =((uint32_t)value)>>(uint32_t)tmp;
       break;
 
     case I_AND: // 算術積(ビット演算)
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
+      cip++;
+      tmp = ivalue();
       value =((uint32_t)value)&((uint32_t)tmp);
       break; //ここで打ち切る
 
@@ -5099,7 +5099,7 @@ num_t GROUP(basic_core) imul() {
       tmp = ivalue(); //演算値を取得
       value =((uint32_t)value)^((uint32_t)tmp);
 
-    default: //以上のいずれにも該当しなかった場合
+    default:
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
 }
@@ -5114,18 +5114,18 @@ num_t GROUP(basic_core) iplus() {
   while (1)
     switch(*cip) {
     case I_PLUS: //足し算の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = imul(); //演算値を取得
+      cip++;
+      tmp = imul();
       value += tmp; //足し算を実行
       break;
 
     case I_MINUS: //引き算の場合
-      cip++; //中間コードポインタを次へ進める
-      tmp = imul(); //演算値を取得
+      cip++;
+      tmp = imul();
       value -= tmp; //引き算を実行
       break;
 
-    default: //以上のいずれにも該当しなかった場合
+    default:
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
 }
