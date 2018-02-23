@@ -5576,7 +5576,7 @@ void SMALL iinfo() {
   newline();
 }
 
-static void do_goto(uint32_t line)
+static void GROUP(basic_core) do_goto(uint32_t line)
 {
   uint8_t *lp = getlp(line);
   if (line != getlineno(lp)) {            // もし分岐先が存在しなければ
@@ -5589,7 +5589,7 @@ static void do_goto(uint32_t line)
 }
 
 // GOTO
-void igoto() {
+void GROUP(basic_core) igoto() {
   uint32_t lineno;    // 行番号
 
   // 引数の行番号取得
@@ -5598,7 +5598,7 @@ void igoto() {
   do_goto(lineno);
 }
 
-static void do_gosub(uint32_t lineno)
+static void GROUP(basic_core) do_gosub(uint32_t lineno)
 {
   uint8_t *lp = getlp(lineno);                       // 分岐先のポインタを取得
   if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
@@ -5622,7 +5622,7 @@ static void do_gosub(uint32_t lineno)
 }
 
 // GOSUB
-void igosub() {
+void GROUP(basic_core) igosub() {
   uint32_t lineno;    // 行番号
 
   // 引数の行番号取得
