@@ -5009,6 +5009,12 @@ num_t GROUP(basic_core) imul() {
   while (1) //無限に繰り返す
     switch(*cip) { //中間コードで分岐
 
+    case I_POW:	// XXX: this should have a higher priority
+      cip++;
+      tmp = ivalue();
+      value = pow(value, tmp);
+      break;
+
     case I_MUL: //掛け算の場合
       cip++;
       tmp = ivalue();
