@@ -76,28 +76,7 @@ bool restore_text_window = false;
 
 #define KEY_ENTER 13
 
-// **** I2Cライブラリの利用設定 ****
-#if OLD_WIRE_LIB == 1
-  // Wireライブラリ変更前の場合
-  #if I2C_USE_HWIRE == 0
-    #include <Wire.h>
-    #define I2C_WIRE  Wire
-  #else
-    #include <HardWire.h>
-    HardWire HWire(1, I2C_FAST_MODE); // I2C1を利用
-    #define I2C_WIRE  HWire
-  #endif
-#else 
-  // Wireライブラリ変更ありの場合
-  #if I2C_USE_HWIRE == 0
-    #include <SoftWire.h>
-    TwoWire SWire(SCL, SDA, SOFT_STANDARD);
-    #define I2C_WIRE  SWire
-  #else
-    #include <Wire.h>
-    #define I2C_WIRE  Wire
-  #endif
-#endif
+#include <Wire.h>
 
 // *** SDカード管理 ****************
 #include "sdfiles.h"
@@ -3288,16 +3267,16 @@ int32_t ii2cw() {
   { err = ERR_RANGE; return 0; }
 
   // I2Cデータ送信
-  I2C_WIRE.beginTransmission(i2cAdr);
+  Wire.beginTransmission(i2cAdr);
   if (clen) {
     for (uint32_t i = 0; i < clen; i++)
-      I2C_WIRE.write(*cptr++);
+      Wire.write(*cptr++);
   }
   if (len) {
     for (uint32_t i = 0; i < len; i++)
-      I2C_WIRE.write(*ptr++);
+      Wire.write(*ptr++);
   }
-  rc =  I2C_WIRE.endTransmission();
+  rc =  Wire.endTransmission();
   return rc;
 }
 
@@ -3323,19 +3302,19 @@ int32_t ii2cr() {
   { err = ERR_RANGE; return 0; }
 
   // I2Cデータ送受信
-  I2C_WIRE.beginTransmission(i2cAdr);
+  Wire.beginTransmission(i2cAdr);
 
   // 送信
   if (sdlen) {
-    I2C_WIRE.write(sdptr, sdlen);
+    Wire.write(sdptr, sdlen);
   }
-  rc = I2C_WIRE.endTransmission();
+  rc = Wire.endTransmission();
   if (rdlen) {
     if (rc!=0)
       return rc;
-    n = I2C_WIRE.requestFrom(i2cAdr, rdlen);
-    while (I2C_WIRE.available()) {
-      *(rdptr++) = I2C_WIRE.read();
+    n = Wire.requestFrom(i2cAdr, rdlen);
+    while (Wire.available()) {
+      *(rdptr++) = Wire.read();
     }
   }
   return rc;
