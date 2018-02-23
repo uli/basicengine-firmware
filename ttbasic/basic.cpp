@@ -5053,17 +5053,6 @@ num_t GROUP(basic_core) imul() {
       value =((uint32_t)value)&((uint32_t)tmp);
       break; //ここで打ち切る
 
-    case I_OR:  //算術和(ビット演算)
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
-      value =((uint32_t)value)|((uint32_t)tmp);
-      break;
-
-    case I_XOR: //非排他OR(ビット演算)
-      cip++; //中間コードポインタを次へ進める
-      tmp = ivalue(); //演算値を取得
-      value =((uint32_t)value)^((uint32_t)tmp);
-
     default:
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
@@ -5089,6 +5078,17 @@ num_t GROUP(basic_core) iplus() {
       tmp = imul();
       value -= tmp; //引き算を実行
       break;
+
+    case I_OR:  //算術和(ビット演算)
+      cip++;
+      tmp = imul();
+      value =((uint32_t)value)|((uint32_t)tmp);
+      break;
+
+    case I_XOR: //非排他OR(ビット演算)
+      cip++;
+      tmp = imul();
+      value =((uint32_t)value)^((uint32_t)tmp);
 
     default:
       return value; //値を持ち帰る
