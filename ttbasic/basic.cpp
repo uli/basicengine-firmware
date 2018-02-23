@@ -5063,7 +5063,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_FN:
     i = gstki;
     icall();
-    while (gstki > i)
+    while (gstki > i && !err)
       iexe(true);
     value = retval[0];
     break;
