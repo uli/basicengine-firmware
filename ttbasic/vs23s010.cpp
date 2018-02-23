@@ -22,6 +22,7 @@
 //#define DISABLE_BG_BOTTOM
 
 //#define PROFILE_BG
+//#define DEBUG_SYNC
 
 void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
@@ -151,7 +152,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
       // substantially late at some point), we reset to a sane value.
       vs23.m_cycles_per_frame = vs23.m_cycles_per_frame_calculated;
     }
-#ifdef DEBUG
+#ifdef DEBUG_SYNC
     if (vs23.m_sync_line != line) {
       Serial.print("deviation ");
       Serial.print(line-vs23.m_sync_line);
@@ -819,10 +820,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           cl > m_current_mode->y / 3 && 
           m_sync_line > m_current_mode->y * 2 / 3) {
         m_sync_line--;
+#ifdef DEBUG_SYNC
         Serial.printf("sync-- %d\n", m_sync_line);
+#endif
       } else if (!pass0_wraparound && pass0_end_line < m_current_mode->y + m_current_mode->top) {
         m_sync_line++;
+#ifdef DEBUG_SYNC
         Serial.printf("sync++ %d\n", m_sync_line);
+#endif
       }
     }
 
