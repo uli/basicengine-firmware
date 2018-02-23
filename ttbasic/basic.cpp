@@ -5948,7 +5948,7 @@ void GROUP(basic_core) inext() {
 }
 
 // IF
-void iif() {
+void GROUP(basic_core) iif() {
   num_t condition;    // IF文の条件値
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
 
@@ -5972,11 +5972,11 @@ void iif() {
   }
 }
 
-void iendif()
+void GROUP(basic_core) iendif()
 {
 }
 
-void ielse()
+void GROUP(basic_core) ielse()
 {
   uint8_t *newip = getELSEptr(cip, true);
   if (newip)
