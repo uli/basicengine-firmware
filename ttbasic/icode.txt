@@ -167,6 +167,7 @@ ATN	I_ATN		esyntax
 SQR	I_SQR		esyntax
 TAN	I_TAN		esyntax
 LOG	I_LOG		esyntax
+SGN	I_SGN		esyntax
 MAP	I_MAP		esyntax
 ASC	I_ASC		esyntax
 FREE	I_FREE		esyntax

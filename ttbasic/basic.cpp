@@ -4763,7 +4763,11 @@ num_t GROUP(basic_core) ivalue() {
   case I_INT:
     value = floor(getparam());
     break;
-      
+  case I_SGN:
+    value = getparam();
+    value = (0 < value) - (value < 0);
+    break;
+
   case I_FREE: //関数FREE
     if (checkOpen()||checkClose()) break;
 #ifdef ESP8266
