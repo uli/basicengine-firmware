@@ -5984,7 +5984,7 @@ void GROUP(basic_core) ielse()
 }
 
 // スキップ
-void iskip() {
+void GROUP(basic_core) iskip() {
   while (*cip != I_EOL) // I_EOLに達するまで繰り返す
     cip++;              // 中間コードポインタを次へ進める
 }
