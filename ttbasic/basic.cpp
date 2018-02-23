@@ -2335,6 +2335,9 @@ void itroff() {
   trace_enabled = false;
 }
 
+bool event_sprite_enabled;
+uint8_t event_sprite_proc_idx;
+
 void inew(uint8_t mode = NEW_ALL);
 
 // RUN command handler
@@ -2351,6 +2354,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
     goto resume;
   }
   initialize_proc_pointers();
+  event_sprite_enabled = false;
+
   if (err)
     return;
 
@@ -2882,6 +2887,80 @@ void icls() {
   sc0.locate(0,0);
 }
 
+static bool profile_enabled;
+
+void GROUP(basic_core) init_stack_frame()
+{
+  if (gstki > 0) {
+    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    astk_num_i += p.locc_num;
+    astk_str_i += p.locc_str;
+  }
+  gstk[gstki].num_args = 0;
+  gstk[gstki].str_args = 0;
+}
+
+void GROUP(basic_core) push_num_arg(num_t n)
+{
+  if (astk_num_i >= SIZE_ASTK) {
+    err = ERR_ASTKOF;
+    return;
+  }
+  astk_num[astk_num_i++] = n;
+  gstk[gstki].num_args++;
+}
+
+void GROUP(basic_core) do_call(uint8_t proc_idx)
+{
+  struct proc_t &proc_loc = proc.proc(proc_idx);
+  dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
+
+  if (!proc_loc.lp || !proc_loc.ip) {
+    err = ERR_UNDEFPROC;
+    return;
+  }
+  
+  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
+    err = ERR_GSTKOF;                       // エラー番号をセット
+    return;
+  }
+
+  gstk[gstki].lp = clp;
+  gstk[gstki].ip = cip;
+  gstk[gstki++].proc_idx = proc_idx;
+
+  clp = proc_loc.lp;
+  cip = proc_loc.ip;
+  
+  if (profile_enabled) {
+    proc_loc.profile_current = ESP.getCycleCount();
+  }
+  return;
+}
+
+
+void GROUP(basic_core) event_handle_sprite()
+{
+  uint8_t dir;
+  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    if (!vs23.spriteEnabled(i))
+      continue;
+    for (int j = i; j < VS23_MAX_SPRITES; ++j) {
+      if (!vs23.spriteEnabled(j))
+        continue;
+      if ((dir = vs23.spriteCollision(i, j))) {
+        init_stack_frame();
+        push_num_arg(i);
+        push_num_arg(j);
+        push_num_arg(dir);
+        do_call(event_sprite_proc_idx);
+        event_sprite_enabled = false;	// prevent interrupt storms
+        return;
+      }
+    }
+  }
+}
+
 #include "sound.h"
 
 void ICACHE_RAM_ATTR pump_events(void)
@@ -2896,6 +2975,9 @@ void ICACHE_RAM_ATTR pump_events(void)
   sound.pumpEvents();
 
   sc0.updateCursor();
+  
+  if (event_sprite_enabled)
+    event_handle_sprite();
 }
 
 // 時間待ち
@@ -5585,12 +5667,23 @@ void ion()
   } else if (*cip == I_GOSUB) {
     ++cip;
     on_go(true, cas);
+  } else if (*cip == I_SPRITE) {
+    ++cip;
+    if (*cip == I_OFF) {
+      event_sprite_enabled = false;
+      ++cip;
+    } else {
+      if (*cip++ != I_CALL) {
+        err = ERR_SYNTAX;
+        return;
+      }
+      event_sprite_enabled = true;
+      event_sprite_proc_idx = *cip++;
+    }
   } else {
     err = ERR_SYNTAX;
   }
 }
-
-static bool profile_enabled;
 
 void GROUP(basic_core) icall() {
   num_t n;
