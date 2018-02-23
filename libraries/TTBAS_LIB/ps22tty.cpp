@@ -417,15 +417,12 @@ uint8_t ICACHE_RAM_ATTR ps2peek()
 {
   char c;
   if (ps2kbhit()) {
+    c = ps2read();
+    if (c) {
+      rb_insert(&kbuf, c);
+    }
     if (!rb_is_empty(&kbuf))
       return kbuf.buf[kbuf.head];
-    else {
-      c = ps2read();
-      if (c) {
-        rb_insert(&kbuf, c);
-        return c;
-      }
-    }
   }
   return 0;
 }  
