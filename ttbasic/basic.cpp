@@ -156,10 +156,8 @@ inline void c_putch(uint8_t c, uint8_t devno) {
     bfs.putch(c);
 }
 
-// 改行
 void newline(uint8_t devno) {
   if (devno==0) {
-    // XXX: this drains the keyboard buffer; is that a problem?
     if (sc0.peekKey() == SC_KEY_CTRL_C) {
       c_getch();
       err = ERR_CTR_C;
