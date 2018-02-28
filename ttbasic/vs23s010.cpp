@@ -676,14 +676,20 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
       dest_addr_start = win_start_addr + (m_pitch * (pix_split_y - bg->win_y) * pass) - tile_start_x * tsx - xpoff;
 
+      // drawBg() does not handle partial lines. If a BG ends just before the split, we have to let
+      // drawBgBottom() handle the last line; otherwise, drawBg() has to draw an extra line.
+      int overdraw_y = 0;
+      if (pass == 0 && bg->win_y + bg->win_h >= bg_pix_split_y[i])
+        overdraw_y = 1;
+
       if (pass == 0)
 	drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
 
       drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
              tile_start_x, tile_start_y,
-             tile_end_x, pass ? tile_end_y : tile_split_y+2, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
+             tile_end_x, pass ? tile_end_y : tile_split_y+overdraw_y, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
 
-      if (pass == 1)
+      if (pass == 1 || overdraw_y == 0)
 	drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
 
 #ifdef PROFILE_BG
