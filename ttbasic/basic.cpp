@@ -1353,9 +1353,18 @@ void SMALL iinput() {
   num_t value;
   BString str_value;
   short index;          // Array subscript or variable number
+  int32_t filenum = -1;
 
-  // We have to exclude string variables here because they may be lvalues.
-  if(is_strexp() && *cip != I_SVAR) {
+  if (*cip == I_SHARP) {
+    cip++;
+    if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
+      return;
+    if (!user_files[filenum]) {
+      err = ERR_FILE_NOT_OPEN;
+      return;
+    }
+  } else if(is_strexp() && *cip != I_SVAR) {
+    // We have to exclude string variables here because they may be lvalues.
     c_puts(istrexp().c_str());
 
     if (*cip != I_SEMI) {
@@ -1388,7 +1397,12 @@ void SMALL iinput() {
  
       cip++;
 
-      value = getnum();
+      if (filenum >= 0) {
+        err = ERR_NOT_SUPPORTED;
+        return;
+      } else
+        value = getnum();
+
       if (err)
         return;
 
@@ -1419,8 +1433,15 @@ void SMALL iinput() {
       }
  
       cip++;
-      
-      str_value = getstr();
+
+      if (filenum >= 0) {
+        int c;
+        str_value = "";
+        while ((c = user_files[filenum].read()) >= 0 && c != '\n')
+          str_value += c;
+      } else {      
+        str_value = getstr();
+      }
       if (err)
         return;
       
