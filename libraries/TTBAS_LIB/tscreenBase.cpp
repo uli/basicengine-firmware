@@ -406,7 +406,6 @@ int16_t tscreenBase::getLineNum(int16_t l) {
 
 // 編集中画面をスクロールアップする
 void tscreenBase::edit_scrollUp() {
-  static uint32_t prvlineNum = 0; // 直前の処理行の行数
 #if DEPEND_TTBASIC == 0
    scroll_up();
 #else
@@ -414,9 +413,7 @@ void tscreenBase::edit_scrollUp() {
   int32_t lineno,nm,len;
   char* text;
   lineno = getLineNum(height-1); // 最終行の表示行番号の取得
-  if (lineno <= 0) {
-    lineno = prvlineNum;
-   }
+
   if (lineno > 0) {
     // 取得出来た場合、次の行番号を取得する
     nm = getNextLineNo(lineno); 
@@ -430,9 +427,7 @@ void tscreenBase::edit_scrollUp() {
       strcpy((char*)&VPEEK(0,height-1-(len/width)),text);
       for (uint8_t i=0; i < len/width+1; i++)
          refresh_line(height-1-i);
-      prvlineNum = nm; // 今回の処理した行を保持
     } else {
-      prvlineNum = 0; // 保持していた処理行をクリア
       scroll_up();      
     }
   } else {
