@@ -942,7 +942,7 @@ int list_free() {
 }
 
 // Get line numbere by line pointer
-uint32_t getlineno(unsigned char *lp) {
+uint32_t GROUP(basic_core) getlineno(unsigned char *lp) {
   num_t l;
   if(*lp == 0) //もし末尾だったら
     return (uint32_t)-1;
@@ -951,7 +951,7 @@ uint32_t getlineno(unsigned char *lp) {
 }
 
 // Search line by line number
-unsigned char* getlp(uint32_t lineno) {
+unsigned char* GROUP(basic_core) getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
   for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
