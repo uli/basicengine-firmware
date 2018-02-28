@@ -1353,25 +1353,20 @@ void SMALL iinput() {
   num_t value;
   BString str_value;
   short index;          // Array subscript or variable number
-  unsigned char prompt; // prompt display flag
+
+  // We have to exclude string variables here because they may be lvalues.
+  if(is_strexp() && *cip != I_SVAR) {
+    c_puts(istrexp().c_str());
+
+    if (*cip != I_SEMI) {
+      err = ERR_SYNTAX;
+      goto DONE;
+    }
+    cip++;
+  }
 
   sc0.show_curs(1);
   for(;;) {
-    prompt = 1;       // no prompt shown yet
-
-    // Processing when a prompt is specified (w0t?)
-    // We have to exclude string variables here because they may be lvalues.
-    if(is_strexp() && *cip != I_SVAR) {
-      c_puts(istrexp().c_str());
-      prompt = 0;        // prompt shown
-
-      if (*cip != I_SEMI) {
-	err = ERR_SYNTAX;
-	goto DONE;
-      }
-      cip++;
-    }
-
     // Processing input values
     switch (*cip++) {
     case I_VAR:
@@ -1392,17 +1387,6 @@ void SMALL iinput() {
       }
  
       cip++;
-
-      // XXX: idiosyncrasy, never seen this in other BASICs
-      if (prompt) {          // If you are not prompted yet
-        if (dims > 0)
-          c_puts(num_arr_names.name(index));
-        else if (dims < 0)
-          c_puts(num_lst_names.name(index));
-        else
-	  c_puts(var_names.name(index));
-	c_putch(':');
-      }
 
       value = getnum();
       if (err)
@@ -1435,17 +1419,6 @@ void SMALL iinput() {
       }
  
       cip++;
-      
-      // XXX: idiosyncrasy, never seen this in other BASICs
-      if (prompt) {          // If you are not prompted yet
-        if (dims > 0)
-          c_puts(str_arr_names.name(index));
-        else if (dims < 0)
-          c_puts(str_lst_names.name(index));
-        else
-          c_puts(svar_names.name(index));
-	c_putch(':');
-      }
       
       str_value = getstr();
       if (err)
