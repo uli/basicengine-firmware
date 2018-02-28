@@ -261,9 +261,8 @@ void tscreenBase::movePosNextLineChar(bool force) {
             pos_y--;
           }
 
-          strcpy((char*)&VPEEK(0,pos_y+1),text);
-          for (uint8_t i = 0; i < len/width+1; i++)
-             refresh_line(pos_y + 1 + i);
+          MOVE(pos_y + 1, 0);
+          getLineStr(nm, 0);
         }
       }
     }
@@ -306,9 +305,8 @@ void tscreenBase::movePosPrevLineChar(bool force) {
             pos_y++;
           }
 
-          strcpy((char*)&VPEEK(0,pos_y-len/width-1),text);
-          for (uint8_t i = 0; i < len/width+1; i++)
-             refresh_line(pos_y - 1 - i);
+          MOVE(pos_y - len/width - 1, 0);
+          getLineStr(nm, 0);
         }
       }
     }
@@ -424,9 +422,9 @@ void tscreenBase::edit_scrollUp() {
       for (uint8_t i=0; i < len/width+1; i++) {
         scroll_up();
       }
-      strcpy((char*)&VPEEK(0,height-1-(len/width)),text);
-      for (uint8_t i=0; i < len/width+1; i++)
-         refresh_line(height-1-i);
+      // print to screen
+      MOVE(height-1 - len/width, 0);
+      getLineStr(nm, 0);
     } else {
       scroll_up();      
     }
@@ -454,10 +452,9 @@ void tscreenBase::edit_scrollDown() {
       for (uint8_t i=0; i < len/width+1; i++) {
         scroll_down();
       }
-      strcpy((char*)&VPEEK(0,0),text);
-      //refresh();
-      for (uint8_t i=0; i < len/width+1; i++)
-         refresh_line(0+i);
+      // print to screen
+      MOVE(0, 0);
+      getLineStr(prv_nm, 0);
     } else {
       scroll_down();      
     }
