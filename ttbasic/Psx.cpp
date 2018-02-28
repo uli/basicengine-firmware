@@ -27,6 +27,7 @@
 
 Psx::Psx()
 {
+	_last_read = 0;
 }
 
 byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
@@ -90,7 +91,13 @@ int Psx::read()
     byte data1, data2;
     int data_out;
     int retries;
-    int last_read = -1;
+
+    if (_last_read < 0 && millis() < _last_failed + 1000) {
+      _last_failed = millis();
+      return -1;
+    }
+
+    _last_read = -1;
 
     // We want more than one consecutive read to yield the same data before
     // we trust it to be correct.
@@ -112,14 +119,14 @@ int Psx::read()
 	data_out = (data2 << 8) | data1;
 
         if (magic == 0x5a) {
-          if (data_out == last_read)
+          if (data_out == _last_read)
             confirmations++;
-          last_read = data_out;
+          _last_read = data_out;
           break;
         }
 
         // Not the right magic byte, try again.
-        last_read = -1;
+        _last_read = -1;
 
         // wait some time before doing another read
         // XXX: wild guess
@@ -128,6 +135,7 @@ int Psx::read()
 
       if (retries == 3)	{
         // exhausted all retries, there might be no controller here
+        _last_failed = millis();
         return -1;
       }
 

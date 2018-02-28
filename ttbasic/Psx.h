@@ -88,6 +88,8 @@ class Psx
 		byte _i;
 		boolean _temp;
 		byte _dataIn;
+		uint32_t _last_failed;
+		int _last_read;
 };
 
 #endif
