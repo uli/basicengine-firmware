@@ -44,7 +44,7 @@ uint32_t getPrevLineNo(uint32_t lineno);
 uint32_t getNextLineNo(uint32_t lineno);
 uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
-char* getLineStr(uint32_t lineno);
+char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 int GROUP(basic_core) token_size(uint8_t *code);
 

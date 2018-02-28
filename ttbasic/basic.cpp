@@ -5473,18 +5473,24 @@ uint32_t getNextLineNo(uint32_t lineno) {
 }
 
 // Get the program text of the specified line
-char* getLineStr(uint32_t lineno) {
+char* getLineStr(uint32_t lineno, uint8_t devno) {
   uint8_t* lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;
 
   // Output of specified line text to line buffer
   indent_level = 0;
-  cleartbuf();
-  putnum(lineno, 0, 3);
-  c_putch(' ', 3);
-  putlist(lp+sizeof(num_t)+1, 3);
-  c_putch(0,3);        // zero-terminate tbuf
+  if (devno == 3)
+    cleartbuf();
+  if (devno == 0)
+    sc0.setColor(COL(LINENUM), COL(BG));
+  putnum(lineno, 0, devno);
+  if (devno == 0)
+    sc0.setColor(COL(FG), COL(BG));
+  c_putch(' ', devno);
+  putlist(lp+sizeof(num_t)+1, devno);
+  if (devno == 3)
+    c_putch(0,devno);        // zero-terminate tbuf
   return tbuf;
 }
 
