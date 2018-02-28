@@ -6233,8 +6233,10 @@ uint8_t SMALL icom() {
     break;
   }
   
-  if (err)
+  if (err) {
+    while (sc0.tryGetChar()) {}
     resize_windows();
+  }
 
   sc0.show_curs(true);
 
