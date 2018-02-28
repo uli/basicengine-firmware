@@ -36,6 +36,7 @@
 #define psxUpShift	3
 #define psxStrtShift	4
 #define psxSlctShift	5
+#define psxErrorShift	16
 
 #define psxLeft		(1 << psxLeftShift)
 #define psxDown		(1 << psxDownShift)
@@ -43,6 +44,7 @@
 #define psxUp		(1 << psxUpShift)
 #define psxStrt		(1 << psxStrtShift)
 #define psxSlct		(1 << psxSlctShift)
+#define psxError	(1 << psxErrorShift)
 
 #define psxSquShift	8
 #define psxXShift	9

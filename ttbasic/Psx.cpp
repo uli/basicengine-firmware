@@ -94,7 +94,7 @@ int Psx::read()
 
     if (_last_read < 0 && millis() < _last_failed + 1000) {
       _last_failed = millis();
-      return -1;
+      return psxError;
     }
 
     _last_read = -1;
@@ -136,7 +136,7 @@ int Psx::read()
       if (retries == 3)	{
         // exhausted all retries, there might be no controller here
         _last_failed = millis();
-        return -1;
+        return psxError;
       }
 
       // wait some time before doing another read
