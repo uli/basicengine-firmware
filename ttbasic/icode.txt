@@ -225,6 +225,7 @@ POPF	I_POPF		esyntax
 POPB	I_POPB		esyntax
 POPF$	I_POPFSTR	esyntax
 POPB$	I_POPBSTR	esyntax
+VAL	I_VAL		esyntax
 FN	I_FN		esyntax
 ERROR	I_ERROR		esyntax
 OK	I_OK		esyntax

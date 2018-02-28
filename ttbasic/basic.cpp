@@ -4988,6 +4988,12 @@ num_t GROUP(basic_core) ivalue() {
     if (checkClose()) return 0;
     break;
   
+  case I_VAL:
+    if (checkOpen()) break;
+    value = strtonum(istrexp().c_str(), NULL);
+    checkClose();
+    break;
+
   case I_FN:
     i = gstki;
     icall();
