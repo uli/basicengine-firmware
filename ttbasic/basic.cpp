@@ -6364,11 +6364,12 @@ void SMALL basic() {
     rc = sc0.edit();
     if (rc) {
       textline = (char*)sc0.getText();
-      if (!strlen(textline) ) {
+      int textlen = strlen(textline);
+      if (!textlen) {
 	newline();
 	continue;
       }
-      if (strlen(textline) >= SIZE_LINE) {
+      if (textlen >= SIZE_LINE) {
 	err = ERR_LONG;
 	newline();
 	error();
@@ -6377,7 +6378,10 @@ void SMALL basic() {
 
       strcpy(lbuf, textline);
       tlimR((char*)lbuf);
-      newline();
+      textlen = textlen / sc0.getWidth();
+      do {
+        newline();
+      } while (textlen--);
     } else {
       continue;
     }
