@@ -4262,8 +4262,8 @@ void ibg() {
   case I_WINDOW:
     if (getParam(wx, 0, sc0.getGWidth() - 1, I_COMMA)) return;
     if (getParam(wy, 0, sc0.getGHeight() - 1, I_COMMA)) return;
-    if (getParam(ww, 0, sc0.getGWidth(), I_COMMA)) return;
-    if (getParam(wh, 0, sc0.getGHeight(), I_NONE)) return;
+    if (getParam(ww, 0, sc0.getGWidth() - wx, I_COMMA)) return;
+    if (getParam(wh, 0, sc0.getGHeight() - wy, I_NONE)) return;
     vs23.setBgWin(m, wx, wy, ww, wh);
     break;
   case I_ON:
