@@ -4473,9 +4473,9 @@ int32_t ipad() {
   if (checkOpen()) return 0;
   if (getParam(num, 0, 2, I_CLOSE)) return 0;
   switch (num) {
-  case 0:	return psx.read() | cursor_pad_state();
+  case 0:	return (psx.read() & 0xffff) | cursor_pad_state();
   case 1:	return cursor_pad_state();
-  case 2:	return psx.read();
+  case 2:	return psx.read() & 0xffff;
   default:	return 0;
   }
 }
