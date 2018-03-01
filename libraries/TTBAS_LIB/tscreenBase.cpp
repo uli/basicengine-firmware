@@ -297,7 +297,10 @@ void tscreenBase::movePosPrevLineChar(bool force) {
   if (pos_y > 0) {
     if (force) {
       char* text;
-      int lineno = getLineNum(pos_y);
+      uint8_t y = pos_y;
+      while (y && VPEEK(width-1, y-1))
+        y--;
+      int lineno = getLineNum(y);
       if (lineno > 0) {
         int nm = getPrevLineNo(lineno); 
         if (nm > 0) {
@@ -305,13 +308,16 @@ void tscreenBase::movePosPrevLineChar(bool force) {
           int len = strlen(text);
 
           // scroll down if the line doesn't fit
-          for (int i=0; i < len/width+1 - pos_y; i++) {
+          int remaining_lines = y;
+          for (int i=0; i < len/width+1 - remaining_lines; i++) {
             scroll_down();
             pos_y++;
+            y++;
           }
 
-          MOVE(pos_y - len/width - 1, 0);
+          MOVE(y - len/width - 1, 0);
           getLineStr(nm, 0);
+          MOVE(pos_y + 1, pos_x);
         }
       }
     }
