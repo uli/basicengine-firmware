@@ -67,6 +67,7 @@ void VS23S010::resetBgs()
 
 void VS23S010::begin()
 {
+  m_frameskip = 0;
   m_bg_modified = true;
   m_vsync_enabled = false;
   resetSprites();
@@ -576,7 +577,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   uint32_t pat_start_addr, win_start_addr;
   uint16_t pass0_end_line = 0;
 
-  if (m_frame == last_frame || !m_bg_modified || SpiLocked())
+  if (m_frame <= last_frame + m_frameskip || !m_bg_modified || SpiLocked())
     return;
   m_bg_modified = false;
   last_frame = m_frame;

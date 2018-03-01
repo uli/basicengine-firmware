@@ -278,6 +278,13 @@ class VS23S010 {
     inline void forceRedraw() {
       m_bg_modified = true;
     }
+    
+    inline void setFrameskip(uint32_t v) {
+      m_frameskip = v;
+    }
+    inline uint32_t getFrameskip() {
+      return m_frameskip;
+    }
 
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
@@ -351,6 +358,7 @@ private:
     void freeSpritePattern(struct sprite_t *s);
     
     uint32_t m_frame;
+    uint32_t m_frameskip;
 
     bool m_bg_modified;
     
