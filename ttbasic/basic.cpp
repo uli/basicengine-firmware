@@ -6379,9 +6379,7 @@ void SMALL basic() {
       strcpy(lbuf, textline);
       tlimR((char*)lbuf);
       textlen = textlen / sc0.getWidth();
-      do {
-        newline();
-      } while (textlen--);
+      sc0.locate(0, rc);
     } else {
       continue;
     }
