@@ -421,8 +421,10 @@ void tscreenBase::edit_scrollUp() {
   // 1行分スクロールアップを試みる
   int32_t lineno,nm,len;
   char* text;
-  lineno = getLineNum(height-1); // 最終行の表示行番号の取得
-
+  uint8_t y = height - 1;
+  while (y && VPEEK(width-1, y-1))
+    y--;
+  lineno = getLineNum(y);
   if (lineno > 0) {
     // 取得出来た場合、次の行番号を取得する
     nm = getNextLineNo(lineno); 
