@@ -36,6 +36,9 @@ void putnum(num_t value, int8_t d, uint8_t devno=0);
 
 void newline(uint8_t devno=0);
 
+extern unsigned char *clp;
+extern unsigned char *cip;
+
 BString getParamFname();
 
 void get_input(bool numeric = false);
@@ -47,6 +50,29 @@ uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 int GROUP(basic_core) token_size(uint8_t *code);
+num_t GROUP(basic_core) iexp();
+
+#ifdef FLOAT_NUMS
+// コマンド引数取得(uint32_t,引数チェックなし)
+static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_token) {
+  num_t p = iexp();
+  prm = p;
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
+    err = ERR_SYNTAX;
+  }
+  return err;
+}
+// コマンド引数取得(int32_t,引数チェックあり)
+static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
+  prm = iexp();
+  if (!err && (prm < v_min || prm > v_max))
+    err = ERR_VALUE;
+  else if (next_token != I_NONE && *cip++ != next_token) {
+    err = ERR_SYNTAX;
+  }
+  return err;
+}
+#endif
 
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );

@@ -392,20 +392,6 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
   return err;
 }
 
-#ifdef FLOAT_NUMS
-// コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
-  num_t p = iexp();
-  prm = p;
-  if (!err && (prm < v_min || prm > v_max))
-    err = ERR_VALUE;
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
-  }
-  return err;
-}
-#endif
-
 // コマンド引数取得(int32_t,引数チェックなし)
 inline uint8_t getParam(uint32_t& prm, token_t next_token) {
   prm = iexp();
@@ -426,18 +412,6 @@ inline uint8_t getParam(num_t& prm, token_t next_token) {
   }
   return err;
 }
-
-#ifdef FLOAT_NUMS
-// コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t getParam(int32_t& prm, token_t next_token) {
-  num_t p = iexp();
-  prm = p;
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
-  }
-  return err;
-}
-#endif
 
 // '('チェック関数
 inline uint8_t checkOpen() {
