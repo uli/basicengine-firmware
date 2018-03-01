@@ -247,22 +247,27 @@ void tscreenBase::movePosNextLineChar(bool force) {
   if (pos_y+1 < height) {
     if (force) {
       char* text;
-      int lineno = getLineNum(pos_y);
+      uint8_t y = pos_y;
+      while (y && VPEEK(width-1, y-1))
+        y--;
+      int lineno = getLineNum(y);
       if (lineno > 0) {
+        int curlen = strlen(getLineStr(lineno));
         int nm = getNextLineNo(lineno); 
         if (nm > 0) {
           text = getLineStr(nm);
           int len = strlen(text);
 
           // scroll up if the line doesn't fit
-          int remaining_lines = height - pos_y - 1;
+          int remaining_lines = height - y - curlen/width;
           for (int i=0; i < len/width+1 - remaining_lines; i++) {
             scroll_up();
-            pos_y--;
+            y--;
           }
 
-          MOVE(pos_y + 1, 0);
+          MOVE(y + curlen/width + 1, 0);
           getLineStr(nm, 0);
+          MOVE(pos_y - 1, pos_x);
         }
       }
     }
