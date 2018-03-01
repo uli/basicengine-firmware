@@ -6058,6 +6058,26 @@ void iprofile() {
   }
 }
 
+#include <eboot_command.h>
+#include <spi_flash.h>
+void iboot() {
+  int32_t sector;
+  if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
+    return;
+  eboot_command ebcmd;
+  ebcmd.action = ACTION_LOAD_APP;
+  ebcmd.args[0] = sector * SPI_FLASH_SEC_SIZE;
+  eboot_command_write(&ebcmd);
+#ifdef ESP8266_NOWIFI
+  // SDKnoWiFi does not have system_restart*(). The only working
+  // alternative I could find is triggering the WDT.
+  ets_wdt_enable(2,3,3);
+  for(;;);
+#else
+  ESP.reset();        // UNTESTED!
+#endif
+}
+
 typedef void (*cmd_t)();
 #include "funtbl.h"
 

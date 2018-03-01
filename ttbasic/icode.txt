@@ -100,6 +100,7 @@ PROFILE	I_PROFILE	iprofile
 SEARCH	I_SEARCH	isearch
 CHAR	I_CHAR		ichar
 VSYNC	I_VSYNC		ivsync
+BOOT	I_BOOT		iboot
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
