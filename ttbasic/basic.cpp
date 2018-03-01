@@ -4420,6 +4420,12 @@ void iplot() {
   vs23.setBgTile(bg, x, y, t);
 }
 
+void iframeskip() {
+  int32_t skip;
+  if (getParam(skip, 0, 60, I_NONE)) return;
+  vs23.setFrameskip(skip);
+}
+
 #include "Psx.h"
 Psx psx;
 
