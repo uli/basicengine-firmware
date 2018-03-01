@@ -36,23 +36,21 @@ void iflash()
     return;
   }
 
+#define PRINT_P(num, msg) \
+  static const char _msg_ ## num[] PROGMEM = \
+    msg; \
+  c_puts_P(_msg_ ## num)
+#define PRINTLN_P(num, msg) PRINT_P(num, msg); newline()
+
   newline();
-  static const char ays0[] PROGMEM =
-    "FIRMWARE UPDATE";
   sc0.setColor(0, col_warn);
-  c_puts_P(ays0); newline();
+  PRINTLN_P(ays0, "FIRMWARE UPDATE");
   sc0.setColor(col_normal, 0);
 
-  static const char ays0a[] PROGMEM =
-    "Are you absolutely sure you want to overwrite";
-  newline(); c_puts_P(ays0a); newline();
-
-  static const char ays1[] PROGMEM =
-    "the currently installed firmware";
-  c_puts_P(ays1); newline();
-
-  static const char ays2[] PROGMEM = "with ";
-  c_puts_P(ays2);
+  newline();
+  PRINTLN_P(ays0a, "Are you absolutely sure you want to overwrite");
+  PRINTLN_P(ays1, "the currently installed firmware");
+  PRINT_P(ays2, "with ");
   sc0.setColor(col_warn, 0);
   c_puts(filename.c_str());
   sc0.setColor(col_normal, 0);
@@ -63,54 +61,36 @@ void iflash()
   sprintf_P(msg, ays3, filename.c_str());
   c_puts(msg); newline();
 
-  static const char ays3a[] PROGMEM =
-    "BASIC Engine firmware image, or if you";
-  c_puts_P(ays3a); newline();
-
-  static const char ays4[] PROGMEM =
-    "lose power or reset the system during";
-  c_puts_P(ays4); newline();
-
-  static const char ays5[] PROGMEM =
-    "the upgrade procedure, it will no longer work";
-  c_puts_P(ays5); newline();
-
-  static const char ays6[] PROGMEM =
-    "until you use a serial programmer to restore";
-  c_puts_P(ays6); newline();
-
-  static const char ays7[] PROGMEM =
-    "a working firmware image.";
-  c_puts_P(ays7); newline(); newline();
+  PRINTLN_P(ays3a, "BASIC Engine firmware image, or if you");
+  PRINTLN_P(ays4, "lose power or reset the system during");
+  PRINTLN_P(ays5, "the upgrade procedure, it will no longer work");
+  PRINTLN_P(ays6, "until you use a serial programmer to restore");
+  PRINTLN_P(ays7, "a working firmware image.");
+  newline();
 
   sc0.setColor(col_warn, 0);
-  static const char ays8[] PROGMEM =
-    "Enter YES to continue, anything else to abort: ";
-  c_puts_P(ays8);
+  PRINT_P(ays8, "Enter YES to continue, anything else to abort: ");
   get_input();
   sc0.setColor(col_normal, 0);
   if (strcmp(lbuf, "YES")) {
-    static const char aborting[] PROGMEM = "Aborting.";
-    c_puts_P(aborting); newline();
+    PRINTLN_P(aysabrt, "Aborting.");
     goto out;
   }
 
   sc0.show_curs(0);
 
   if (!Update.begin(f.fileSize())) {
-    static const char update_start_fail_msg[] PROGMEM =
-      "Flash updater init failed, error: ";
-    c_puts_P(update_start_fail_msg); putnum(Update.getError(), 0);
+    PRINT_P(aysfail, "Flash updater init failed, error: ");
+    putnum(Update.getError(), 0);
     newline();
     goto out;
   }
 
-  static const char staging_update[] PROGMEM = "Staging update: ";
-  c_puts_P(staging_update);
+  PRINT_P(ayssup, "Staging update: ");
 
   x = sc0.c_x(); y = sc0.c_y();
   sc0.locate(x + 7, y);
-  c_putch('/'); putnum(f.fileSize(), 6); c_puts(" bytes");
+  c_putch('/'); putnum(f.fileSize(), 6); PRINT_P(aysb, " bytes");
 
   count = 0;
   for (;;) {
@@ -137,14 +117,11 @@ void iflash()
 
   success = Update.end();
   if (success) {
-    static const char success_msg[] PROGMEM = "Staging update successful.";
-    static const char now_msg[] PROGMEM = "Writing update to flash.";
-    static const char warn_msg[] PROGMEM = "DO NOT RESET OR POWER OFF!";
-    c_puts_P(success_msg); newline(); newline();
+    PRINTLN_P(ayssu, "Staging update successful."); newline();
     sc0.setColor(col_warn, 0);
-    c_puts_P(now_msg); newline();
+    PRINTLN_P(ayswr, "Writing update to flash.");
     sc0.setColor(0, col_warn);
-    c_puts_P(warn_msg); newline();
+    PRINTLN_P(aysdo, "DO NOT RESET OR POWER OFF!");
 #ifdef ESP8266_NOWIFI
     // SDKnoWiFi does not have system_restart*(). The only working
     // alternative I could find is triggering the WDT.
@@ -154,8 +131,8 @@ void iflash()
     ESP.reset();	// UNTESTED!
 #endif
   } else {
-    static const char error_msg[] PROGMEM = "Staging error: ";
-    c_puts_P(error_msg); putnum(Update.getError(), 0); newline();
+    PRINT_P(aysse, "Staging error: ");
+    putnum(Update.getError(), 0); newline();
     sc0.show_curs(1);
   }
   return;
