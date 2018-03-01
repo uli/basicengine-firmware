@@ -37,6 +37,7 @@ void VS23S010::adjust(int16_t cnt)
 
 void VS23S010::resetSprites()
 {
+  m_bg_modified = true;
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
     struct sprite_t *s = &m_sprite[i];
     if (s->pattern)
@@ -52,6 +53,7 @@ void VS23S010::resetSprites()
 
 void VS23S010::resetBgs()
 {
+  m_bg_modified = true;
   for (int i=0; i < VS23_MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     freeBg(i);
@@ -65,6 +67,7 @@ void VS23S010::resetBgs()
 
 void VS23S010::begin()
 {
+  m_bg_modified = true;
   m_vsync_enabled = false;
   resetSprites();
 
@@ -98,6 +101,7 @@ void VS23S010::end()
 
 void VS23S010::reset()
 {
+  m_bg_modified = true;
   resetSprites();
   resetBgs();
   m_bin.Init(m_current_mode->x, m_current_mode->y);
@@ -106,6 +110,7 @@ void VS23S010::reset()
 
 void SMALL VS23S010::setMode(uint8_t mode)
 {
+  m_bg_modified = true;
   setSyncLine(0);
   m_current_mode = &modes[mode];
   m_last_line = PICLINE_MAX;
@@ -180,6 +185,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 
 void VS23S010::setSyncLine(uint16_t line)
 {
+  m_bg_modified = true;
   if (line == 0) {
     if (m_vsync_enabled)
       timer0_detachInterrupt();
@@ -198,6 +204,7 @@ bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
 {
   struct bg_t *bg = &m_bg[bg_idx];
 
+  m_bg_modified = true;
   bg->enabled = false;
 
   if (bg->tiles)
@@ -220,6 +227,7 @@ bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
 
 void VS23S010::enableBg(uint8_t bg)
 {
+  m_bg_modified = true;
   if (m_bg[bg].tiles) {
     m_bg[bg].enabled = true;
   }
@@ -227,12 +235,14 @@ void VS23S010::enableBg(uint8_t bg)
 
 void VS23S010::disableBg(uint8_t bg)
 {
+  m_bg_modified = true;
   m_bg[bg].enabled = false;
 }
 
 void VS23S010::freeBg(uint8_t bg_idx)
 {
   struct bg_t *bg = &m_bg[bg_idx];
+  m_bg_modified = true;
   bg->enabled = false;
   if (bg->tiles) {
     free(bg->tiles);
@@ -247,6 +257,7 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   bg->win_y = y;
   bg->win_w = w;
   bg->win_h = h;
+  m_bg_modified = true;
 }
 
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
@@ -565,8 +576,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   uint32_t pat_start_addr, win_start_addr;
   uint16_t pass0_end_line = 0;
 
-  if (m_frame == last_frame || SpiLocked())
+  if (m_frame == last_frame || !m_bg_modified || SpiLocked())
     return;
+  m_bg_modified = false;
   last_frame = m_frame;
 
   int spi_clock_default = getSpiClock();
@@ -877,6 +889,7 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
     allocateSpritePattern(s);
   }
   loadSpritePattern(num);
+  m_bg_modified = true;
 }
 
 void VS23S010::loadSpritePattern(uint8_t num)
@@ -934,6 +947,7 @@ void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y)
   m_sprite[num].frame_x = frame_x;
   m_sprite[num].frame_y = frame_y;
   loadSpritePattern(num);
+  m_bg_modified = true;
 }
 
 void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
@@ -944,6 +958,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
   s->frame_x = s->frame_y = 0;
 
   loadSpritePattern(num);
+  m_bg_modified = true;
 #ifdef DEBUG_SPRITES
   Serial.printf("defined %d\n", num); Serial.flush();
 #endif
@@ -955,12 +970,14 @@ void VS23S010::enableSprite(uint8_t num)
   if (!s->pattern)
     loadSpritePattern(num);
   s->enabled = true;
+  m_bg_modified = true;
 }
 
 void VS23S010::disableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
   s->enabled = false;
+  m_bg_modified = true;
 }
 
 int VS23S010::cmp_sprite_y(const void *one, const void *two)
@@ -973,6 +990,7 @@ void VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
   m_sprite[num].pos_x = x;
   m_sprite[num].pos_y = y;
   qsort(m_sprites_ordered, VS23_MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
+  m_bg_modified = true;
 }
 
 void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
@@ -988,7 +1006,7 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
       x < tile_scroll_x + tile_w &&
       y >= tile_scroll_y &&
       y < tile_scroll_y + tile_h) {
-    // force redraw
+    m_bg_modified = true;
   }
 }
 

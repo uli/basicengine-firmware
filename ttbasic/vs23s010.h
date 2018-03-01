@@ -184,6 +184,7 @@ class VS23S010 {
       struct bg_t *bg = &m_bg[bg_idx];
       bg->tile_size_x = tile_size_x;
       bg->tile_size_y = tile_size_y;
+      m_bg_modified = true;
     }
 
     inline void setBgPattern(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y, uint16_t pat_w) {
@@ -191,6 +192,7 @@ class VS23S010 {
       bg->pat_x = pat_x;
       bg->pat_y = pat_y;
       bg->pat_w = pat_w;
+      m_bg_modified = true;
     }
 
     inline uint8_t bgTileSizeX(uint8_t bg) {
@@ -237,6 +239,7 @@ class VS23S010 {
     inline void scroll(uint8_t bg, uint16_t x, uint16_t y) {
       m_bg[bg].scroll_x = x;
       m_bg[bg].scroll_y = y;
+      m_bg_modified = true;
     }
     void updateBg();
 
@@ -250,6 +253,7 @@ class VS23S010 {
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
       m_sprite[num].transparent = !enable;
+      m_bg_modified = true;
     }
     inline bool spriteEnabled(uint8_t num) {
       return m_sprite[num].enabled;
@@ -270,6 +274,10 @@ class VS23S010 {
     void reset();
 
     void setBorder(uint8_t y, uint8_t uv);
+
+    inline void forceRedraw() {
+      m_bg_modified = true;
+    }
 
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
@@ -343,6 +351,8 @@ private:
     void freeSpritePattern(struct sprite_t *s);
     
     uint32_t m_frame;
+
+    bool m_bg_modified;
     
     GuillotineBinPack m_bin;
 };
