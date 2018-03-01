@@ -378,7 +378,7 @@ uint8_t tscreenBase::enter_text() {
     top--;
   if ( top != screen ) top++;
   text = top;
-  return ((top - screen) + strlen((char *)top)) / width + 1;
+  return ((top - screen) + strlen((char *)top)) / width + 1 - pos_y;
 }
 
 // 指定行の行番号の取得
