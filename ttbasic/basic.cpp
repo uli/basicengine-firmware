@@ -4075,7 +4075,7 @@ void  icat() {
   uint8_t c;
 
   BString fname;
-  uint8_t rc;
+  int8_t rc;
 
   if(!(fname = getParamFname())) {
     return;
