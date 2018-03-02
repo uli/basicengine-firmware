@@ -508,6 +508,11 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
     }
   }
 
+  if (dst_x + w > vs23.width() || dst_y + h > vs23.lastLine()) {
+    rc = ERR_RANGE;
+    goto out;
+  }
+
   if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
                  dst_x, dst_y, x, y, w, h))
     rc = 0;

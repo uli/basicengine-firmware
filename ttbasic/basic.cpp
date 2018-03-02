@@ -3837,13 +3837,6 @@ void SMALL ildbmp() {
     }
   }
 
-  // 仮想アドレスから実アドレスへの変換
-  // サイズチェック
-  if (x + w > sc0.getGWidth() || y + h > vs23.lastLine()) {
-    err = ERR_RANGE;
-    return;
-  }
-
   // 画像のロード
   err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
   if (!err) {
