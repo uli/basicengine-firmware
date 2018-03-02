@@ -3892,6 +3892,21 @@ void irmdir() {
 #endif
 }
 
+Unifile user_dir;
+void iopendir()
+{
+  BString fname = Unifile::cwd();
+
+  if (is_strexp() && !(fname = getParamFname())) {
+    return;
+  }
+
+  user_dir.close();
+  user_dir = Unifile::openDir(fname.c_str());
+  if (!user_dir)
+    err = ERR_FILE_OPEN;
+}
+
 // RENAME <old$> TO <new$>
 void irename() {
   uint8_t rc;

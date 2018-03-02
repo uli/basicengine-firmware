@@ -87,6 +87,7 @@ STOP	I_STOP		istop
 CHDIR	I_CHDIR		ichdir
 TRON	I_TRON		itron
 TROFF	I_TROFF		itroff
+OPENDIR	I_OPENDIR	iopendir
 OPEN	I_OPENCMD	iopen
 CLOSE	I_CLOSECMD	iclose
 RENUM	I_RENUM		ecom
