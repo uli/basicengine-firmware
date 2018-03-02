@@ -162,6 +162,7 @@ LEFT$	I_LEFTSTR	esyntax
 RIGHT$	I_RIGHTSTR	esyntax
 MID$	I_MIDSTR	esyntax
 CWD$	I_CWD		esyntax
+DIR$	I_DIRSTR	esyntax
 ABS	I_ABS		esyntax
 SIN	I_SIN		esyntax
 COS	I_COS		esyntax

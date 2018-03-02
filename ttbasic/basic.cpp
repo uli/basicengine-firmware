@@ -443,6 +443,7 @@ static inline bool GROUP(basic_core) is_strexp() {
           *cip == I_RIGHTSTR ||
           *cip == I_MIDSTR ||
           *cip == I_CWD ||
+          *cip == I_DIRSTR ||
           *cip == I_INKEYSTR
          );
 }
@@ -5154,6 +5155,16 @@ out:
   return value;
 }
 
+BString idirstr()
+{
+  auto dir_entry = user_dir.next();
+  if (!dir_entry)
+    user_dir.close();
+  retval[0] = dir_entry.size;
+  retval[1] = dir_entry.is_directory;
+  return dir_entry.name;
+}
+
 BString istrvalue()
 {
   BString value;
@@ -5229,9 +5240,14 @@ BString istrvalue()
   case I_BIN:
     value = ibin();
     break;
+
   case I_CWD:
     value = Unifile::cwd();
     break;
+  case I_DIRSTR:
+    value = idirstr();
+    break;
+
   case I_INKEYSTR:
     c = iinkey();
     if (c)
