@@ -54,10 +54,8 @@ static const uint8_t *fonts[] = {
 uint8_t workarea[VS23_MAX_X/MIN_FONT_SIZE_X * VS23_MAX_Y/MIN_FONT_SIZE_Y];
 uint8_t scmode = USE_SCREEN_MODE;
 
-#if USE_NTSC == 1 || USE_VS23 == 1
-  #include "tTVscreen.h"
-  tTVscreen   sc0; 
-#endif
+#include "tTVscreen.h"
+tTVscreen   sc0; 
 
 // Saved background and text window dimensions.
 // These values are set when a program is interrupted and the text window is
@@ -75,17 +73,10 @@ bool restore_text_window = false;
 
 // *** SDカード管理 ****************
 #include "sdfiles.h"
-#if USE_SD_CARD == 1
 sdfiles bfs;
-#endif
 
 #define MAX_USER_FILES 16
 Unifile user_files[MAX_USER_FILES];
-
-// *** システム設定関連 **************
-#define CONFIG_NTSC 65534  // EEPROM NTSC設定値保存番号
-#define CONFIG_KBD  65533  // EEPROM キーボード設定
-#define CONFIG_PRG  65532  // 自動起動設定
 
 #define COL_BG		0
 #define COL_FG		1
