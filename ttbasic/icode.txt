@@ -63,7 +63,7 @@ LIST	I_LIST		ilist_
 NEW	I_NEW		inew_
 REM	I_REM		iskip
 LET	I_LET		ilet
-CLV	I_CLV		iclv
+CLEAR	I_CLEAR		iclear
 PROC	I_PROC		iproc
 CALL	I_CALL		icall
 LRUN	I_LRUN		ilrun_

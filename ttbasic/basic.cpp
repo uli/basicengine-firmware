@@ -5953,7 +5953,7 @@ void inew_() {
   inew();
 }
 
-void iclv() {
+void iclear() {
   inew(NEW_VAR);
 }
 
