@@ -6101,7 +6101,7 @@ void iboot() {
 #ifdef ESP8266_NOWIFI
   // SDKnoWiFi does not have system_restart*(). The only working
   // alternative I could find is triggering the WDT.
-  ets_wdt_enable(2,3,3);
+  ets_wdt_enable(2,1,1);
   for(;;);
 #else
   ESP.reset();        // UNTESTED!
