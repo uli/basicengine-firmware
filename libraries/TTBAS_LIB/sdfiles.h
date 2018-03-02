@@ -326,7 +326,7 @@ public:
       Unifile f(SPIFFS.openDir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
       return f;
     } else {
-      Unifile f(::SD.open(abs_path.c_str() + SD_PREFIX_LEN));
+      Unifile f(::SD.open(abs_path == SD_PREFIX ? "/" : abs_path.c_str() + SD_PREFIX_LEN));
       SD_BEGIN();
       if (f && !f.m_sd_file->isDir()) {
         f.close();
