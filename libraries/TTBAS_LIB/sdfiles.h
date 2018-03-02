@@ -42,7 +42,22 @@ const char SD_PREFIX[] = "/sd";
 class Unifile {
 public:
   enum uni_type {
-    INVALID, SD, FS,
+    INVALID, SD, FS, SD_DIR, FS_DIR
+  };
+
+  class UniDirEntry {
+  public:
+    UniDirEntry() {
+      size = -1;
+      is_directory = false;
+    };
+    UnifileString name;
+    ssize_t size;
+    bool is_directory;
+    
+    operator bool() {
+      return size >= 0;
+    }
   };
 
   Unifile() {
@@ -62,6 +77,12 @@ public:
     *m_fs_file = f;
   }
 
+  Unifile(fs::Dir f) {
+    m_sd_file = NULL;
+    newSpiffsDir();
+    *m_fs_dir = f;
+  }
+
   void newSdFile() {
     cullOldFile();
     m_type = SD;
@@ -74,6 +95,12 @@ public:
     m_fs_file = new fs::File();
   }
 
+  void newSpiffsDir() {
+    cullOldFile();
+    m_type = FS_DIR;
+    m_fs_dir = new fs::Dir();
+  }
+
   bool isDirectory() {
     switch (m_type) {
     case SD: { SD_BEGIN(); bool ret = m_sd_file->isDirectory(); SD_END(); return ret; }
@@ -84,6 +111,7 @@ public:
 
   void close() {
     switch (m_type) {
+    case SD_DIR:
     case SD: { SD_BEGIN(); m_sd_file->close(); SD_END(); return; }
     case FS: { noInterrupts(); m_fs_file->close(); interrupts(); return; }
     default: return;
@@ -162,10 +190,41 @@ public:
     }
   }
 
+  UniDirEntry next() {
+    UniDirEntry e;
+    File sd_entry;
+    switch (m_type) {
+    case SD_DIR:
+      SD_BEGIN();
+      sd_entry = m_sd_file->openNextFile();
+      if (sd_entry) {
+        char name[32];
+        sd_entry.getName(name, 32);
+        e.name = name;
+        e.is_directory = sd_entry.isDirectory();
+        e.size = sd_entry.fileSize();
+      }
+      SD_END();
+      break;
+    case FS_DIR:
+      if (m_fs_dir->next()) {
+        e.name = m_fs_dir->fileName().c_str();
+        e.is_directory = false;
+        e.size = m_fs_dir->fileSize();
+      }
+      break;
+    default:
+      break;
+    }
+    return e;
+  }
+
   operator bool() {
     switch (m_type) {
+    case SD_DIR:
     case SD: return (bool)*m_sd_file;
     case FS: return (bool)*m_fs_file;
+    case FS_DIR: return true;
     default: return false;
     }
   }
@@ -261,6 +320,26 @@ public:
     }
   }
 
+  static Unifile openDir(const char *p) {
+    UnifileString abs_path = path(p);
+    if (isSPIFFS(abs_path)) {
+      Unifile f(SPIFFS.openDir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
+      return f;
+    } else {
+      Unifile f(::SD.open(abs_path.c_str() + SD_PREFIX_LEN));
+      SD_BEGIN();
+      if (f && !f.m_sd_file->isDir()) {
+        f.close();
+        f.m_type = INVALID;
+      } else {
+        f.m_sd_file->rewindDirectory();
+        f.m_type = SD_DIR;
+      }
+      SD_END();
+      return f;
+    }
+  }
+
 private:
   void cullOldFile() {
     if (m_sd_file) {
@@ -276,6 +355,7 @@ private:
   union {
     File *m_sd_file;
     fs::File *m_fs_file;
+    fs::Dir *m_fs_dir;
   };
   uni_type m_type;
 
