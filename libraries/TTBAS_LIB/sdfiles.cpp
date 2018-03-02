@@ -235,55 +235,22 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint16_t cnt = 0;
   uint16_t len;
   uint8_t rc = 0;
-  char name[32];
   UnifileString fname;
-  UnifileString path = Unifile::path(_dir);
-  bool spiffs = Unifile::isSPIFFS(path);
 
-  if (!spiffs && SD_BEGIN() == false) 
-    return SD_ERR_INIT;
+  Unifile dir = Unifile::openDir(_dir);
 
-  File dir;
-  fs::Dir fdir;
-  if (spiffs) {
-    fdir = SPIFFS.openDir(path.c_str() + FLASH_PREFIX_LEN + 1);
-  } else {
-    if (path == SD_PREFIX)
-      dir = SD.open("/");
-    else
-      dir = SD.open(path.c_str() + SD_PREFIX_LEN);
-  }
-
-  if (spiffs || (!spiffs && dir)) {
-    if (!spiffs)
-      dir.rewindDirectory();
-
+  if (dir) {
     while (true) {
-      File entry;
-      bool is_directory = false;
-      size_t siz;
-      if (spiffs) {
-        if (!fdir.next())
-          break;
-        fname = fdir.fileName().c_str();
-        siz = fdir.fileSize();
-      } else {
-        entry =  dir.openNextFile();
-        if (!entry) {
-          break;
-        }
-        entry.getName(name, 32);
-        fname = name;
-        is_directory = entry.isDirectory();
-        siz = entry.fileSize();
-        entry.close();
-      }
+      auto next = dir.next();
+      if (!next)
+        break;
+      fname = next.name;
       len = fname.length();
       if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
-        putnum(siz, 9); c_putch(' ');
-        if (is_directory) {
+        putnum(next.size, 9); c_putch(' ');
+        if (next.is_directory) {
           c_puts(fname.c_str());
           c_puts("*");
           len++;
@@ -296,13 +263,10 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         cnt++;
       }
     }
-    if (!spiffs)
-      dir.close();
+    dir.close();
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
-  if (!spiffs)
-    SD_END();
 
   newline();
   static const char files_msg[] PROGMEM = " files.";
