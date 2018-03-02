@@ -936,27 +936,6 @@ unsigned char* GROUP(basic_core) getlp(uint32_t lineno) {
   return lp; //ポインタを持ち帰る
 }
 
-// ラベルでラインポインタを取得する
-// pLabelは [I_STR][長さ][ラベル名] であること
-unsigned char* getlpByLabel(uint8_t* pLabel) {
-  unsigned char *lp; //ポインタ
-  uint8_t len;
-  pLabel++;
-  len = *pLabel; // 長さ取得
-  pLabel++;      // ラベル格納位置
-
-  for (lp = listbuf; *lp; lp += *lp)  { //先頭から末尾まで繰り返す
-    if ( *(lp+sizeof(num_t)+1) == I_STR ) {
-      if (len == *(lp+sizeof(num_t)+2)) {
-	if (strncmp((char*)pLabel, (char*)(lp+sizeof(num_t)+3), len) == 0) {
-	  return lp;
-	}
-      }
-    }
-  }
-  return NULL;
-}
-
 // 行番号から行インデックスを取得する
 uint32_t getlineIndex(uint32_t lineno) {
   unsigned char *lp; //ポインタ
@@ -4479,7 +4458,6 @@ void iedit() {
 // load / execute the program LRUN / LOAD
 // LRUN "file name"
 // LRUN "file name", line number
-// LRUN "file name", "label"
 // LOAD "file name"
 // MERGE "file name", line number
 
@@ -4489,8 +4467,6 @@ void iedit() {
 uint8_t SMALL ilrun() {
   uint32_t lineno = (uint32_t)-1;
   uint8_t *lp;
-  uint8_t label[34];
-  uint8_t len;
   int8_t fg;               // File format 0: Binary format 1: Text format
   bool islrun = true;
   bool ismerge = false;
@@ -4524,16 +4500,7 @@ uint8_t SMALL ilrun() {
     if(*cip == I_COMMA) {
       islrun = true;	// MERGE + line number => run!
       cip++;
-      if (*cip == I_STR) { // if label
-	cip++;
-	len = *cip <= 32 ? *cip : 32;
-	label[0] = I_STR;
-	label[1] = len;
-	strncpy((char*)label+2, (char*)cip+1, len);
-	cip+=*cip+1;
-      } else {             // if line number
-	if ( getParam(lineno, I_NONE) ) return 0;
-      }
+      if ( getParam(lineno, I_NONE) ) return 0;
     } else {
       lineno = 0;
     }
@@ -4554,16 +4521,9 @@ uint8_t SMALL ilrun() {
   if (err)
     return 0;
 
-  // Processing of line number / label designation
+  // Processing of line number
   if (lineno == 0) {
     clp = listbuf; // Set the line pointer to start of program buffer
-  } else if (lineno == (uint32_t)-1) {
-    lp = getlpByLabel(label);
-    if (lp == NULL) {
-      err = ERR_ULN;
-      return 0;
-    }
-    clp = lp; // Set line pointer to start of specified line in program buffer
   } else {
     // Jump to specified line
     lp = getlp(lineno);
