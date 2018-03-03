@@ -199,11 +199,13 @@ uint8_t TKeyboard::init()
     goto ERROR;
 
 ERROR:
-  // USB/PS2 "DeLUX" keyboard works despite the error, but if we don't wait a
-  // little bit here we will lose the first key press.
-  delay(1);
   pb.mode_idole(TPS2::D_IN);
   pb.enableInterrupts();
+  // Keyboards tend to start talking before we're ready to handle it,
+  // resulting in lost or bogus key events. Let them finish, then reset the
+  // PS/2 state machine.
+  delay(100);
+  pb.resetState();
   return err;
 }
 
