@@ -9,12 +9,6 @@
 
 extern "C" void startup(void);
 
-#define PRINT_P(num, msg) \
-  static const char _msg_ ## num[] PROGMEM = \
-    msg; \
-  c_puts_P(_msg_ ## num)
-#define PRINTLN_P(num, msg) PRINT_P(num, msg); newline()
-
 static void flash_user(BString filename, int sector)
 {
   uint8_t *buf;

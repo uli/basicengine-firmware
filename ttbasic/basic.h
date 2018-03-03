@@ -35,6 +35,12 @@ void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
 
+#define PRINT_P(num, msg) \
+  static const char _msg_ ## num[] PROGMEM = \
+    msg; \
+  c_puts_P(_msg_ ## num)
+#define PRINTLN_P(num, msg) PRINT_P(num, msg); newline()
+
 void putnum(num_t value, int8_t d, uint8_t devno=0);
 
 void newline(uint8_t devno=0);
