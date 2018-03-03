@@ -127,8 +127,6 @@ void error(uint8_t flgCmd);
 #define CONST_MSB    MSBFIRST
 
 // Terminal control(文字の表示・入力は下記の3関数のみ利用)
-#define c_getch( ) sc0.get_ch()
-#define c_kbhit( ) sc0.isKeyIn()
 
 #include <TKeyboard.h>
 extern TKeyboard kb;

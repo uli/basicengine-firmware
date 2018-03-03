@@ -28,6 +28,9 @@ static inline void cleartbuf() {
   memset(tbuf,0,SIZE_LINE);
 }
 
+#define c_getch( ) sc0.get_ch()
+#define c_kbhit( ) sc0.isKeyIn()
+
 void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
