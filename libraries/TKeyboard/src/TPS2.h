@@ -82,5 +82,6 @@ class TPS2 {
     // エラー情報取得
     inline static uint8_t error() ;
 
+    static void resetState();
 };
 #endif

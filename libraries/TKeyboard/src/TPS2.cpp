@@ -401,8 +401,8 @@ END:
 //
 // CLKピン状態変化 ハンドラ
 //
+static volatile uint8_t state = 0;
 void ICACHE_RAM_ATTR TPS2::clkPinHandle() {
-  volatile static uint8_t state = 0;  // ビット処理状態
   volatile static uint8_t data = 0;   // 受信データ
   volatile static uint8_t parity = 1; // パリティビット
 
@@ -461,6 +461,10 @@ END:
 void TPS2::clear_queue() {
   _q_top = 0;
   _q_btm = 0;
+}
+
+void TPS2::resetState() {
+  state = 0;
 }
 
 // キューへの挿入
