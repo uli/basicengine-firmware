@@ -2740,6 +2740,7 @@ void ifiles() {
 #endif
 }
 
+void SdFormat();
 void iformat() {
   static const char warn_spiffs[] PROGMEM =
     "This will ERASE ALL DATA on the internal flash file system!";
@@ -2768,6 +2769,8 @@ void iformat() {
     else
       c_puts_P(failed);
     newline();
+  } else if (target == "/sd") {
+    SdFormat();
   } else {
     err = ERR_NOT_SUPPORTED;
   }
