@@ -486,7 +486,7 @@ void putnum(num_t value, int8_t d, uint8_t devno) {
 //  dで桁指定時は0補完する
 //  符号は考慮しない
 //
-void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0) {
+void putHexnum(uint32_t value, uint8_t d, uint8_t devno) {
   char s[] = "%0.X";
   s[2] = '0' + d;
   sprintf(lbuf, s, value);
