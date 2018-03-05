@@ -344,6 +344,7 @@ void VS23S010::setColorSpace(uint8_t palette)
         case 1: setColorConversion(1, 7, 4, 7, true); break;
         default: break;
         }
+        m_colorspace = palette;
 }
 
 void VS23S010::setBorder(uint8_t y, uint8_t uv)

@@ -106,6 +106,9 @@ class VS23S010 {
     }
     static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
     void setColorSpace(uint8_t palette);
+    inline uint8_t getColorspace() {
+      return m_colorspace;
+    }
 
     void setMode(uint8_t mode);
     void calibrateVsync();
@@ -363,6 +366,8 @@ private:
     bool m_bg_modified;
     
     GuillotineBinPack m_bin;
+    
+    uint8_t m_colorspace;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
