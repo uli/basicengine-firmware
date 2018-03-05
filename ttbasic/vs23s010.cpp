@@ -30,6 +30,12 @@ void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
   SpiRamWriteByte(byteaddress, c);
 }
 
+uint8_t VS23S010::getPixel(uint16_t x, uint16_t y)
+{
+  uint32_t byteaddress = pixelAddr(x, y);
+  return SpiRamReadByte(byteaddress);
+}
+
 void VS23S010::adjust(int16_t cnt)
 {
   // XXX: Huh?
