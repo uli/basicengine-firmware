@@ -488,6 +488,65 @@ out:
   return rc;
 }
 
+uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w,int32_t h)
+{
+  uint8_t rc = 0;
+  drpcx_header hdr;
+
+  memset(&hdr, 0, sizeof(hdr));
+  hdr.header = 10;
+  hdr.version = 5;
+  hdr.encoding = 1;
+  hdr.bpp = 8;
+  hdr.right = w - 1;
+  hdr.bottom = h - 1;
+  hdr.hres = hdr.vres = 300;
+  hdr.bitPlanes = 1;
+  hdr.bytesPerLine = w;
+  hdr.paletteType = 1;
+  
+  pcx_file = Unifile::open(fname, FILE_OVERWRITE);
+  if (!pcx_file)
+    return ERR_FILE_OPEN;
+
+  pcx_file.write((char *)&hdr, sizeof(hdr));
+
+  for (int yy = src_y; yy < src_y + h; ++yy) {
+    uint8_t rle_count = 1;
+    uint8_t rle_last = vs23.getPixel(src_x, yy);
+    for (int xx = src_x + 1; xx < src_x + w; ++xx) {
+      uint8_t px = vs23.getPixel(xx, yy);
+      if (px == rle_last && rle_count < 63)
+        rle_count++;
+      else {
+        // flush last rle group
+        if (rle_count == 1 && rle_last < 0xc0)
+          pcx_file.write(rle_last);
+        else {
+          pcx_file.write(rle_count | 0xc0);
+          pcx_file.write(rle_last);
+        }
+        rle_count = 1;
+        rle_last = px;
+      }
+    }
+    // flush last rle group
+    if (rle_count == 1 && rle_last < 0xc0)
+      pcx_file.write(rle_last);
+    else {
+      pcx_file.write(rle_count | 0xc0);
+      pcx_file.write(rle_last);
+    }
+  }
+  
+  pcx_file.write(0x0c);	// palette marker
+  pcx_file.write((char *)vs23.paletteData(vs23.getColorspace()), 256 * 3);
+  
+  pcx_file.close();
+
+  return rc;
+}
+
 //
 // ディレクトリの作成
 // [引数]
