@@ -165,3 +165,8 @@ uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
   cache_entry->col = best;
   return best;
 }
+
+uint8_t *paletteData(uint8_t colorspace)
+{
+  return (uint8_t *)pals[colorspace];
+}

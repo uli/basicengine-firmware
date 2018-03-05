@@ -109,6 +109,7 @@ class VS23S010 {
     inline uint8_t getColorspace() {
       return m_colorspace;
     }
+    uint8_t *paletteData(uint8_t colorspace);
 
     void setMode(uint8_t mode);
     void calibrateVsync();
