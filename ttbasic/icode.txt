@@ -232,6 +232,7 @@ POPB$	I_POPBSTR	esyntax
 VAL	I_VAL		esyntax
 FN	I_FN		esyntax
 ERROR	I_ERROR		esyntax
+POS	I_POS		esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax

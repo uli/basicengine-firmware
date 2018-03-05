@@ -2567,6 +2567,7 @@ void iloadconfig() {
 }
 
 void isavebg();
+void isavepcx();
 
 // "SAVE <file name>" or "SAVE BG ..."
 void isave() {
@@ -2575,6 +2576,10 @@ void isave() {
 
   if (*cip == I_BG) {
     isavebg();
+    return;
+  } else if (*cip == I_PCX) {
+    ++cip;
+    isavepcx();
     return;
   }
 
@@ -3751,6 +3756,29 @@ BString getParamFname() {
   return fname;
 }
 
+void SMALL isavepcx() {
+  BString fname;
+  int32_t x = 0,y = 0;
+  int32_t w = sc0.getGWidth();
+  int32_t h = sc0.getGHeight();
+
+  if(!(fname = getParamFname())) {
+    return;
+  }
+
+  for (;;) {
+    if (*cip == I_POS) {
+      if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
+      if (getParam(y, 0, vs23.lastLine() - 1, I_NONE)) return;
+    } else if (*cip == I_SIZE) {
+      if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA)) return;
+      if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE)) return;
+    }
+  }
+  
+  err = bfs.saveBitmap((char *)fname.c_str(), x, y, w, h);
+  return;
+}
 
 void SMALL ildbmp() {
   BString fname;
