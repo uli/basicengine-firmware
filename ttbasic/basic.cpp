@@ -4470,7 +4470,7 @@ void iframeskip() {
 #include "Psx.h"
 Psx psx;
 
-static int cursor_pad_state()
+static int GROUP(basic_core) cursor_pad_state()
 {
   // The state is kept up-to-date by the interpreter polling for Ctrl-C.
   return kb.state(PS2KEY_L_Arrow) << psxLeftShift |
