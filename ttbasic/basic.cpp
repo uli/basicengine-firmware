@@ -202,7 +202,7 @@ num_t getrnd(int value) {
 const uint8_t i_nsa[] __FLASH__ = {
   I_END,
   I_CLS,I_CLT,
-  I_HIGH, I_LOW, I_CW, I_CH, I_GW, I_GH,
+  I_HIGH, I_LOW, I_CSIZE, I_PSIZE,
   I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
@@ -4851,15 +4851,23 @@ num_t GROUP(basic_core) ivalue() {
     break; //ここで打ち切る
 
   // 画面サイズ定数の参照
-  case I_CW: value = sc0.getWidth(); break;
-  case I_CH: value = sc0.getHeight(); break;
-#if USE_NTSC == 1
-  case I_GW: value = scmode ? sc0.getGWidth() : 0; break;
-  case I_GH: value = scmode ? sc0.getGHeight() : 0; break;
-#else
-  case I_GW: value = 0; break;
-  case I_GH: value = 0; break;
-#endif
+  case I_CSIZE:
+    a = getparam();
+    switch (a) {
+    case 0:	value = sc0.getWidth(); break;
+    case 1:	value = sc0.getHeight(); break;
+    default:	err = ERR_VALUE; break;
+    }
+    break;
+  case I_PSIZE:
+    a = getparam();
+    switch (a) {
+    case 0:	value = sc0.getGWidth(); break;
+    case 1:	value = sc0.getGHeight(); break;
+    default:	err = ERR_VALUE; break;
+    }
+    break;
+  
   // カーソル・スクロール等の方向
   case I_UP:    value = psxUp; break;
   case I_DOWN:  value = psxDown; break;

@@ -200,10 +200,8 @@ OFF	I_OFF		esyntax
 SIZE	I_SIZE		esyntax
 HIGH	I_HIGH		esyntax
 LOW	I_LOW		esyntax
-CW	I_CW		esyntax
-CH	I_CH		esyntax
-GW	I_GW		esyntax
-GH	I_GH		esyntax
+CSIZE	I_CSIZE		esyntax
+PSIZE	I_PSIZE		esyntax
 LSB	I_LSB		esyntax
 MSB	I_MSB		esyntax
 PRG	I_MPRG		esyntax
