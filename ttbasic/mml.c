@@ -388,12 +388,9 @@ static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz)
       return MML_RESULT_ILLEGAL_SEQUENCE_FOUND;
     }
     cnt++;
-    if (siz <= (cnt + 1)) {
-      *buf++ = 0;
+    if (siz <= (cnt + 1))
       return MML_RESULT_ILLEGAL_USER_EVENT_LENGTH;
-    }
   }
-  *buf++ = 0;
   TEXT_NEXT(handle);
   return MML_RESULT_OK;
 }
