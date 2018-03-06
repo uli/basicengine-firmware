@@ -15,6 +15,9 @@ public:
     static inline bool isPlaying(int ch) {
         return m_next_event[ch] != 0;
     }
+    static inline bool isFinished(int ch) {
+        return m_finished[ch];
+    }
 
 private:
     static void defaults(int ch);
@@ -25,6 +28,7 @@ private:
     static uint32_t m_next_event[SOUND_CHANNELS];
 
     static uint32_t m_sid_off[SOUND_CHANNELS];
+    static bool m_finished[SOUND_CHANNELS];
 };
 
 extern BasicSound sound;

@@ -6,6 +6,7 @@ SID BasicSound::sid;
 MML BasicSound::m_mml[SOUND_CHANNELS];
 MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
 uint32_t BasicSound::m_next_event[SOUND_CHANNELS];
+bool BasicSound::m_finished[SOUND_CHANNELS];
 
 uint32_t BasicSound::m_sid_off[SOUND_CHANNELS];
 
@@ -111,9 +112,12 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
 {
   uint32_t now = millis();
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
+    m_finished[i] = false;
     if (m_next_event[i] && now >= m_next_event[i]) {
-      if (mml_fetch(&m_mml[i]) != MML_RESULT_OK)
+      if (mml_fetch(&m_mml[i]) != MML_RESULT_OK) {
         m_next_event[i] = 0;
+        m_finished[i] = true;
+      }
     }
     if (m_sid_off[i] && m_sid_off[i] <= now) {
       m_sid_off[i] = 0;
