@@ -367,18 +367,24 @@ MML_RESULT mml_setup(MML *handle, MML_OPTION *option, char *text)
   return MML_RESULT_OK;
 }
 
-static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz)
+static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz, char *tbuf, int tsiz)
 {
-  int i;
   int cnt = 0;
 
-  for (i = 0; i < siz; i++) {
-    buf[i] = '\0';
-  }
+  memset(buf, 0, siz);
+  memset(tbuf, 0, tsiz);
 
-  if (TEXT_READ(handle) != '{') {
-    return MML_RESULT_ILLEGAL_USER_EVENT_TOKEN;
+  while (TEXT_READ(handle) != '{') {
+    *tbuf++ = TEXT_READ(handle);
+    TEXT_NEXT(handle);
+    if (TEXT_READ(handle) == '\0') {
+    	return MML_RESULT_ILLEGAL_SEQUENCE_FOUND;
+    }
+    cnt++;
+    if (tsiz <= (cnt + 1))
+    	return MML_RESULT_ILLEGAL_USER_EVENT_LENGTH;
   }
+  cnt = 0;
   TEXT_NEXT(handle);
 
   while (TEXT_READ(handle) != '}') {
@@ -601,7 +607,8 @@ MML_RESULT ICACHE_RAM_ATTR mml_fetch(MML *handle)
       {
         MML_INFO info;
         info.type = MML_TYPE_USER_EVENT;
-        mr = get_user_event_token(handle, info.args.user_event.name, sizeof(info.args.user_event.name));
+        mr = get_user_event_token(handle, info.args.user_event.name, sizeof(info.args.user_event.name),
+        				  info.args.user_event.type, sizeof(info.args.user_event.type));
         if (mr == MML_RESULT_OK) {
           handle->callback(&info, handle->extobj);
         }

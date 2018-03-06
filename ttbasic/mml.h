@@ -101,6 +101,7 @@ typedef struct {
 
 typedef struct {
   char name[MML_USER_EVENT_NAME_SIZE];
+  char type[MML_USER_EVENT_NAME_SIZE];
 } MML_ARGS_USER_EVENT;
 
 typedef struct {
