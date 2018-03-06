@@ -4867,6 +4867,15 @@ num_t GROUP(basic_core) ivalue() {
     default:	err = ERR_VALUE; break;
     }
     break;
+
+  case I_POS:
+    a = getparam();
+    switch (a) {
+    case 0:	value = sc0.c_x(); break;
+    case 1:	value = sc0.c_y(); break;
+    default:	err = ERR_VALUE; break;
+    }
+    break;
   
   // カーソル・スクロール等の方向
   case I_UP:    value = psxUp; break;
