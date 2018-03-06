@@ -4472,15 +4472,23 @@ static int cursor_pad_state()
          kb.state(PS2KEY_Z) << psxSquShift;
 }
 
-int32_t ipad() {
-  int32_t num;
-  if (checkOpen()) return 0;
-  if (getParam(num, 0, 2, I_CLOSE)) return 0;
+int GROUP(basic_core) pad_state(int num)
+{
   switch (num) {
   case 0:	return (psx.read() & 0xffff) | cursor_pad_state();
   case 1:	return cursor_pad_state();
   case 2:	return psx.read() & 0xffff;
-  default:	return 0;
+  }
+  return 0;
+}
+
+int32_t GROUP(basic_core) ipad() {
+  int32_t num;
+  if (checkOpen()) return 0;
+  if (getParam(num, 0, 2, I_CLOSE)) return 0;
+  return pad_state(num);
+}
+
   }
 }
 
