@@ -2227,6 +2227,11 @@ unsigned char *event_error_resume_ip;
 bool event_play_enabled;
 uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
+#define MAX_PADS 3
+bool event_pad_enabled;
+bool event_pad_proc_idx[MAX_PADS];
+int event_pad_last[MAX_PADS];
+
 void inew(uint8_t mode = NEW_ALL);
 static void GROUP(basic_core) do_goto(uint32_t line);
 
@@ -2248,6 +2253,8 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   event_error_enabled = false;
   event_error_resume_lp = NULL;
   event_play_enabled = false;
+  event_pad_enabled = false;
+  memset(event_pad_proc_idx, 0, sizeof(event_pad_proc_idx));
 
   if (err)
     return;
@@ -2879,6 +2886,8 @@ void GROUP(basic_core) event_handle_play(int ch)
   event_play_enabled = false;
 }
 
+void event_handle_pad();
+
 void ICACHE_RAM_ATTR pump_events(void)
 {
   static uint32_t last_frame;
@@ -2900,6 +2909,8 @@ void ICACHE_RAM_ATTR pump_events(void)
   
   if (event_sprite_enabled)
     event_handle_sprite();
+  if (event_pad_enabled)
+    event_handle_pad();
 }
 
 // 時間待ち
@@ -4489,6 +4500,23 @@ int32_t GROUP(basic_core) ipad() {
   return pad_state(num);
 }
 
+void GROUP(basic_core) event_handle_pad()
+{
+  for (int i = 0; i < MAX_PADS; ++i) {
+    if (!event_pad_proc_idx[i])
+      continue;
+    int new_state = pad_state(i);
+    int old_state = event_pad_last[i];
+    event_pad_last[i] = new_state;
+    if (new_state != old_state) {
+      init_stack_frame();
+      push_num_arg(i);
+      push_num_arg(new_state ^ old_state);
+      do_call(event_pad_proc_idx[i]);
+      // Have to end here so the handler can be executed.
+      // Events on other pads will be processed next time.
+      return;
+    }
   }
 }
 
@@ -5663,6 +5691,25 @@ void ion()
       }
       event_play_enabled = true;
       event_play_proc_idx[ch] = *cip++;
+    }
+  } else if (*cip == I_PAD) {
+    ++cip;
+    int pad = getparam();
+    if (pad < 0 || pad >= MAX_PADS) {
+      err = ERR_VALUE;
+      return;
+    }
+    if (*cip == I_OFF) {
+      event_pad_enabled = false;
+      memset(event_pad_proc_idx, 0, sizeof(event_pad_proc_idx));
+      ++cip;
+    } else {
+      if (*cip++ != I_CALL) {
+        err = ERR_SYNTAX;
+        return;
+      }
+      event_pad_enabled = true;
+      event_pad_proc_idx[pad] = *cip++;
     }
   } else if (*cip == I_ERROR) {
     ++cip;
