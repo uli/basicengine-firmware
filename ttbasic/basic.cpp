@@ -5634,7 +5634,7 @@ void GROUP(basic_core) igosub() {
 }
 
 // ON ... <GOTO|GOSUB> ...
-static void on_go(bool is_gosub, int cas)
+static void GROUP(basic_core) on_go(bool is_gosub, int cas)
 {
   uint32_t line;
   for (;;) {
@@ -5659,7 +5659,7 @@ static void on_go(bool is_gosub, int cas)
     do_goto(line);
 }
 
-void ion()
+void GROUP(basic_core) ion()
 {
   if (*cip == I_SPRITE) {
     ++cip;
