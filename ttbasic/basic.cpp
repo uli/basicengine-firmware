@@ -2221,6 +2221,8 @@ uint8_t event_sprite_proc_idx;
 
 bool event_error_enabled;
 uint32_t event_error_line;
+unsigned char *event_error_resume_lp;
+unsigned char *event_error_resume_ip;
 
 bool event_play_enabled;
 uint8_t event_play_proc_idx[SOUND_CHANNELS];
@@ -2244,6 +2246,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   initialize_proc_pointers();
   event_sprite_enabled = false;
   event_error_enabled = false;
+  event_error_resume_lp = NULL;
   event_play_enabled = false;
 
   if (err)
@@ -2274,10 +2277,13 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
+      event_error_resume_lp = NULL;
       if (event_error_enabled) {
         retval[0] = err;
         retval[1] = getlineno(clp);
         event_error_enabled = false;
+        event_error_resume_lp = clp;
+        event_error_resume_ip = cip;
         do_goto(event_error_line);
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
@@ -5672,6 +5678,24 @@ void ion()
   }
 }
 
+void iresume()
+{
+  if (!event_error_resume_lp) {
+    err = ERR_CONT;
+  } else {
+    clp = event_error_resume_lp;
+    cip = event_error_resume_ip;
+    event_error_resume_lp = NULL;
+    // XXX: To work reliably, this requires a lot of discipline in the
+    // error-generating code, which none of it currently has.
+    // And even then, it needs to do a better crawl job, similar
+    // to find_next_token().
+    while (!end_of_statement()) {
+      ++cip;
+    }
+  }
+}
+
 void GROUP(basic_core) icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
@@ -6271,6 +6295,14 @@ uint8_t SMALL icom() {
     break;
   case I_GOTO:
     igoto();
+    if (!err) {
+      restore_windows();
+      sc0.show_curs(0);
+      irun(clp, true);
+    }
+    break;
+  case I_RESUME:
+    iresume();
     if (!err) {
       restore_windows();
       sc0.show_curs(0);
