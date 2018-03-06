@@ -51,7 +51,6 @@ static const uint8_t *fonts[] = {
 };
 
 // **** スクリーン管理 *************
-uint8_t workarea[VS23_MAX_X/MIN_FONT_SIZE_X * VS23_MAX_Y/MIN_FONT_SIZE_Y];
 uint8_t scmode = USE_SCREEN_MODE;
 
 #include "tTVscreen.h"
@@ -4173,7 +4172,7 @@ void SMALL iscreen() {
   scmode = m;
 
   // NTSCスクリーン設定
-  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, m - 1);
+  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, m - 1);
 
   sc0.cls();
   sc0.show_curs(false);
@@ -6315,7 +6314,7 @@ void SMALL basic() {
   // Initialize execution environment
   inew();
 
-  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, workarea, SC_DEFAULT);
+  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, SC_DEFAULT);
 
   sound.begin();
 
