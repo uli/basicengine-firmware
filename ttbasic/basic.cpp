@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "ttconfig.h"
 #include "vs23s010.h"
+#include "sound.h"
 
 #ifndef os_memcpy
 #define os_memcpy memcpy
@@ -2221,6 +2222,9 @@ uint8_t event_sprite_proc_idx;
 bool event_error_enabled;
 uint32_t event_error_line;
 
+bool event_play_enabled;
+uint8_t event_play_proc_idx[SOUND_CHANNELS];
+
 void inew(uint8_t mode = NEW_ALL);
 static void GROUP(basic_core) do_goto(uint32_t line);
 
@@ -2240,6 +2244,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
   initialize_proc_pointers();
   event_sprite_enabled = false;
   event_error_enabled = false;
+  event_play_enabled = false;
 
   if (err)
     return;
@@ -2860,7 +2865,13 @@ void GROUP(basic_core) event_handle_sprite()
   }
 }
 
-#include "sound.h"
+void GROUP(basic_core) event_handle_play(int ch)
+{
+  init_stack_frame();
+  push_num_arg(ch);
+  do_call(event_play_proc_idx[ch]);
+  event_play_enabled = false;
+}
 
 void ICACHE_RAM_ATTR pump_events(void)
 {
@@ -2872,6 +2883,12 @@ void ICACHE_RAM_ATTR pump_events(void)
 
   vs23.updateBg();
   sound.pumpEvents();
+  if (event_play_enabled) {
+    for (int i = 0; i < SOUND_CHANNELS; ++i) {
+      if (sound.isFinished(i))
+        event_handle_play(i);
+    }
+  }
 
   sc0.updateCursor();
   
@@ -5614,6 +5631,24 @@ void ion()
       }
       event_sprite_enabled = true;
       event_sprite_proc_idx = *cip++;
+    }
+  } else if (*cip == I_PLAY) {
+    ++cip;
+    int ch = getparam();
+    if (ch < 0 || ch >= SOUND_CHANNELS) {
+      err = ERR_VALUE;
+      return;
+    }
+    if (*cip == I_OFF) {
+      event_play_enabled = false;
+      ++cip;
+    } else {
+      if (*cip++ != I_CALL) {
+        err = ERR_SYNTAX;
+        return;
+      }
+      event_play_enabled = true;
+      event_play_proc_idx[ch] = *cip++;
     }
   } else if (*cip == I_ERROR) {
     ++cip;
