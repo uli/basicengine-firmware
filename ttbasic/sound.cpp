@@ -1,6 +1,7 @@
 #include "ttconfig.h"
 #include <Arduino.h>
 #include "sound.h"
+#include "variable.h"
 
 SID BasicSound::sid;
 MML BasicSound::m_mml[SOUND_CHANNELS];
@@ -68,6 +69,38 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
       {
         MML_ARGS_REST *args = &(p->args.rest);
         m_next_event[ch] += args->ticks;
+      }
+      break;
+    case MML_TYPE_USER_EVENT:
+      {
+        MML_ARGS_USER_EVENT *args = &(p->args.user_event);
+        if (!strcmp(args->type, "ADSR")) {
+          int adsr[4] = {0, 0, 0, 0};
+          int a = 0;
+
+          char *tok = strtok(args->name, " ");
+          while (tok && a < 4) {
+            adsr[a] = strtonum(tok, 0);
+
+            if (adsr[a] < 0)
+              adsr[a] = 0;
+            else if (adsr[a] > 15)
+              adsr[a] = 15;
+
+            tok = strtok(NULL, " ");
+          };
+
+          int ch_off = ch * 7;
+          sid.set_register(ch_off + 5, (adsr[0] << 4) | adsr[1]);
+          sid.set_register(ch_off + 6, (adsr[2] << 4) | adsr[3]);
+        } else if (args->type[1] == '\0') {
+          if (args->type[0] >= '0' && args->type[0] <= '3') {
+            uint8_t waveform = 16 << (args->type[0] - '0');
+            uint8_t reg = sid.get_register(ch * 7 + 4) & 0xf;
+            reg |= waveform;
+            sid.set_register(ch * 7 + 4, reg);
+          }
+        }
       }
       break;
   }
