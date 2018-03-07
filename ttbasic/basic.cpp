@@ -5134,6 +5134,14 @@ num_t GROUP(basic_core) ivalue() {
     break;
   }
     
+  case I_VPEEK:
+    value = getparam();
+    if (value < 0 || value > 131071)
+      err = ERR_VALUE;
+    else
+      value = SpiRamReadByte(value);
+    break;
+
   default:
     cip--;
     if (is_strexp())
