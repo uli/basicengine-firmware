@@ -2844,7 +2844,6 @@ void GROUP(basic_core) push_num_arg(num_t n)
 void GROUP(basic_core) do_call(uint8_t proc_idx)
 {
   struct proc_t &proc_loc = proc.proc(proc_idx);
-  dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
     err = ERR_UNDEFPROC;
@@ -5867,7 +5866,6 @@ void GROUP(basic_core) icall() {
   uint8_t proc_idx = *cip++;
 
   struct proc_t &proc_loc = proc.proc(proc_idx);
-  dbg_var("call got %p/%p for %d\n", proc_loc.lp, proc_loc.ip, proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
     err = ERR_UNDEFPROC;
