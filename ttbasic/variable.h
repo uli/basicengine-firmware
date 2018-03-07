@@ -28,7 +28,7 @@ public:
   }
 
   inline bool reserve(int count) {
-    dbg_var("vnames reserve %d\n", count);
+    dbg_var("vnames reserve %d\r\n", count);
     if (count > m_size)
       return doReserve(count);
     else
@@ -36,7 +36,7 @@ public:
   }
 
   void deleteDownTo(uint8_t idx) {
-    dbg_var("vnames del dto %d\n", idx);
+    dbg_var("vnames del dto %d\r\n", idx);
     for (int i = idx; i < m_var_top; ++i) {
       if (m_var_name[i]) {
         free((void *)m_var_name[i]);
@@ -47,7 +47,7 @@ public:
   }
 
   void deleteAll() {
-    dbg_var("vnames del all\n");
+    dbg_var("vnames del all\r\n");
     deleteDownTo(0);
     if (m_var_name) {
       free(m_var_name);
@@ -57,18 +57,18 @@ public:
   }
 
   void deleteDirect() {
-    dbg_var("vnames del dir\n");
+    dbg_var("vnames del dir\r\n");
     deleteDownTo(m_prg_var_top);
     m_var_top = m_prg_var_top;
   }
 
   int find(const char *name)
   {
-    dbg_var("vnames find %s\n", name);
+    dbg_var("vnames find %s\r\n", name);
     for (int i=0; i < m_var_top; ++i) {
       if (!strcasecmp(name, m_var_name[i])) {
 #ifdef DEBUG_VAR
-        Serial.printf("found %d\n", i);
+        Serial.printf("found %d\r\n", i);
 #endif
         return i;
       }
@@ -78,7 +78,7 @@ public:
 
   int assign(const char *name, bool is_prg_text)
   {
-    dbg_var("vnames assign %s text %d\n", name, is_prg_text);
+    dbg_var("vnames assign %s text %d\r\n", name, is_prg_text);
 #ifdef DEBUG_VAR
     Serial.printf("assign %s ", name);
 #endif
@@ -92,7 +92,7 @@ public:
     m_var_name[m_var_top++] = strdup(name);
     if (is_prg_text)
       ++m_prg_var_top;
-    dbg_var("got %d\n", m_var_top-1);
+    dbg_var("got %d\r\n", m_var_top-1);
     return m_var_top-1;
   }
 
@@ -139,7 +139,7 @@ public:
   }
 
   bool reserve(uint8_t count) {
-    dbg_var("nv reserve %d\n", count);
+    dbg_var("nv reserve %d\r\n", count);
     if (count == 0) {
       free(m_var);
       m_var = NULL;
@@ -198,7 +198,7 @@ public:
   }
 
   bool reserve(int dims, int *sizes) {
-    dbg_var("na reserve dims %d\n", dims);
+    dbg_var("na reserve dims %d\r\n", dims);
     m_dims = dims;
     m_sizes = (int *)malloc(dims * sizeof(int));
     if (!m_sizes) {
@@ -210,7 +210,7 @@ public:
     for (int i = 0; i < dims; ++i) {
       m_total *= sizes[i];
     }
-    dbg_var("na total %d\n", m_total);
+    dbg_var("na total %d\r\n", m_total);
     m_var = (T *)malloc(m_total * sizeof(T));
     if (!m_var) {
       free(m_sizes);
@@ -270,7 +270,7 @@ public:
   }
 
   bool reserve(uint8_t count) {
-    dbg_var("na reserve %d\n", count);
+    dbg_var("na reserve %d\r\n", count);
     if (count == 0) {
       for (int i = 0; i < m_size; ++i) {
         delete m_var[i];
@@ -323,7 +323,7 @@ public:
   }
 
   bool reserve(uint8_t count) {
-    dbg_var("sv reserve %d\n", count);
+    dbg_var("sv reserve %d\r\n", count);
     if (count == 0) {
       for (int i = 0; i < m_size; ++i) {
         delete m_var[i];
@@ -388,7 +388,7 @@ public:
   }
 
   bool reserve(int dims, int *sizes) {
-    dbg_var("sa reserve dims %d\n", dims);
+    dbg_var("sa reserve dims %d\r\n", dims);
     m_dims = dims;
     m_sizes = (int *)malloc(dims * sizeof(int));
     if (!m_sizes) {
@@ -400,7 +400,7 @@ public:
     for (int i = 0; i < dims; ++i) {
       m_total *= sizes[i];
     }
-    dbg_var("na total %d\n", m_total);
+    dbg_var("na total %d\r\n", m_total);
     m_var = new BString[m_total];
     if (!m_var) {
       free(m_sizes);
@@ -457,7 +457,7 @@ public:
   }
 
   bool reserve(uint8_t count) {
-    dbg_var("sa reserve %d\n", count);
+    dbg_var("sa reserve %d\r\n", count);
     if (count == 0) {
       for (int i = 0; i < m_size; ++i) {
         delete m_var[i];
@@ -569,7 +569,7 @@ public:
   }
 
   bool reserve(uint8_t count) {
-    dbg_var("sl reserve %d\n", count);
+    dbg_var("sl reserve %d\r\n", count);
     if (count == 0) {
       for (int i = 0; i < m_size; ++i) {
         delete m_var[i];
