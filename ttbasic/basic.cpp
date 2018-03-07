@@ -5115,13 +5115,19 @@ num_t GROUP(basic_core) ivalue() {
     checkClose();
     break;
 
-  case I_FN:
-    i = gstki;
+  case I_FN: {
+    unsigned char *lp;
     icall();
-    while (gstki > i && !err)
-      iexe(true);
+    for (;;) {
+      lp = iexe(true);
+      if (!lp || err)
+        break;
+      clp = lp;
+      cip = clp + sizeof(num_t) + 1;
+    }
     value = retval[0];
     break;
+  }
 
   case I_FRAME:
     if (checkOpen()||checkClose()) break;
@@ -6347,7 +6353,7 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
 
     pump_events();
 
-    if (err || (until_return && gstki < stk && *cip != I_EOL))
+    if (err || (until_return && gstki < stk))
       return NULL;
   }
 
