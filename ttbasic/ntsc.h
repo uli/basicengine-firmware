@@ -18,12 +18,10 @@
 #define LINE_LENGTH_US 63.5555
 /// Frame length in lines (visible lines + nonvisible lines)
 /// Amount has to be odd for NTSC and RGB colors
-#ifdef INTERLACE
-#define TOTAL_LINES 525
+#define TOTAL_LINES_INTERLACE 525
 #define FIELD1START 261
-#else
-#define TOTAL_LINES 262
-#endif
+#define TOTAL_LINES_PROGRESSIVE 262
+#define TOTAL_LINES (m_interlace ? TOTAL_LINES_INTERLACE : TOTAL_LINES_PROGRESSIVE)
 		
 /// Number of lines used after the VSYNC but before visible area.
 #define FRONT_PORCH_LINES 20
@@ -56,11 +54,9 @@
 
 /// Reserve memory for this number of different prototype lines
 /// (prototype lines are used for sync timing, porch and border area)
-#ifdef INTERLACE
-#define PROTOLINES 8
-#else
-#define PROTOLINES 4
-#endif
+#define PROTOLINES_INTERLACE 8
+#define PROTOLINES_PROGRESSIVE 4
+#define PROTOLINES (m_interlace ? PROTOLINES_INTERLACE : PROTOLINES_PROGRESSIVE)
 
 /// Define USE_SLOTTED_PROTOS if you want to use fixed length prototype "slots"
 /// (allows patterned border area by defining different protolines
