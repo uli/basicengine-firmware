@@ -819,10 +819,9 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 	if (last_dir)
 		while (!blockFinished()) {
 		}
-	// XXX: What about PYF?
-	SpiRamWriteBMCtrl(0x34, byteaddress2 >> 1, byteaddress1 >> 1,
+	SpiRamWriteBMCtrl(BLOCKMVC1, byteaddress2 >> 1, byteaddress1 >> 1,
 			  ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2)
-			  | dir);
+			  | dir | lowpass());
 	if (!last_dir)
 		while (!blockFinished()) {
 		}

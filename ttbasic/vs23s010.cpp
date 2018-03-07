@@ -272,9 +272,8 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
 
 static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
-  // XXX: What about PYF?
   uint8_t req[5] = {
-    0x34,
+    BLOCKMVC1,
     (uint8_t)(byteaddress2 >> 9),
     (uint8_t)(byteaddress2 >> 1),
     (uint8_t)(dest_addr >> 9),
@@ -349,7 +348,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
   // Set up the LSB of the start/dest addresses; they don't change for
   // middle tiles, so we can omit the last byte of the request.
   while (!blockFinished()) {}
-  SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
+  SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2) | lowpass());
 
   for (int yy = tile_start_y+skip_y; yy < tile_end_y-1; ++yy) {
     dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * m_pitch - tile_start_x * tsx - xpoff;
@@ -435,7 +434,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
   // Set up the LSB of the start/dest addresses; they don't change for
   // middle tiles, so we can omit the last byte of the request.
   while (!blockFinished()) {}
-  SpiRamWriteBMCtrl(0x34, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2));
+  SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2) | lowpass());
 
 #ifndef DISABLE_BG_LEFT_COL
   tile = bg->tiles[(tile_start_y % bg_h) * bg_w + tile_start_x % bg_w];
@@ -517,7 +516,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
     int ba2a = pixelAddr(bg->pat_x, bg->pat_y);
 
     while (!blockFinished()) {}
-    SpiRamWriteBMCtrl(0x34, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2));
+    SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2) | lowpass());
 
 #ifndef DISABLE_BG_LEFT_COL
     if (tile_start_x + skip_x < tile_end_x) {
@@ -550,7 +549,6 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
       byteaddress1 = ba1a + (xx - tile_start_x) * tsx;
       byteaddress2 = ba2a + ty * m_pitch + tx;
       while (!blockFinished()) {}
-      // XXX: What about PYF?
       MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
@@ -567,7 +565,6 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 	draw_w -= 8;
       while (!blockFinished()) {}
       SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
-      // XXX: What about PYF?
       MoveBlockAddr(byteaddress2, byteaddress1);
     }
 #endif
