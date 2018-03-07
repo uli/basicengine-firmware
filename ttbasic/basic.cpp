@@ -97,6 +97,7 @@ typedef struct {
   int16_t NTSC;        // NTSC設定 (0,1,2,3)
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
   uint8_t color_scheme[CONFIG_COLS][3];
+  bool interlace;
 } SystemConfig;
 SystemConfig CONFIG;
 
@@ -2573,6 +2574,10 @@ void SMALL iconfig() {
     }
     break;
 #endif
+  case 2:
+    CONFIG.interlace = value != 0;
+    vs23.setInterlace(CONFIG.interlace);
+    break;
   default:
     err = ERR_VALUE;
     break;
