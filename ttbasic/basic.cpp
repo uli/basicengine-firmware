@@ -6519,7 +6519,9 @@ void SMALL basic() {
   char* textline;    // input line
   uint8_t rc;
 
-  vs23.begin();
+  loadConfig();
+
+  vs23.begin(CONFIG.interlace);
   vs23.setColorSpace(1);
 
   psx.setupPins(0, 1, 2, 3, 3);
@@ -6527,7 +6529,6 @@ void SMALL basic() {
   size_list = 0;
   listbuf = NULL;
 
-  loadConfig();
 
   // Initialize execution environment
   inew();
