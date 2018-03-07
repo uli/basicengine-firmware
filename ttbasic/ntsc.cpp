@@ -221,7 +221,7 @@ void ICACHE_RAM_ATTR SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2,
 }
 
 // / Set proto type picture line indexes 
-void SetLineIndex(uint16_t line, uint16_t wordAddress)
+void VS23S010::SetLineIndex(uint16_t line, uint16_t wordAddress)
 {
 	uint32_t indexAddr = INDEX_START_BYTES + line * 3;
 
@@ -233,7 +233,7 @@ void SetLineIndex(uint16_t line, uint16_t wordAddress)
 }
 
 // / Set picture type line indexes 
-void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress)
+void VS23S010::SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress)
 {
 	uint32_t indexAddr = INDEX_START_BYTES + line * 3;
 

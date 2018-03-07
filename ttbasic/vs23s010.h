@@ -117,6 +117,8 @@ class VS23S010 {
     void setSyncLine(uint16_t line);
  
     void SpiRamVideoInit();
+    void SetLineIndex(uint16_t line, uint16_t wordAddress);
+    void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress);
     void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb);
     uint16_t *SpiRamWriteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
     uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
