@@ -104,6 +104,7 @@ VSYNC	I_VSYNC		ivsync
 BOOT	I_BOOT		iboot
 FRAMESKIP	I_FRAMESKIP	iframeskip
 RESUME	I_RESUME	iresume
+VREG	I_VREG		ivreg
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
