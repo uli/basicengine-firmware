@@ -2160,6 +2160,10 @@ void iread() {
   }
 }
 
+void irestore() {
+  data_lp = NULL;
+}
+
 // LET handler
 void ilet() {
   switch (*cip) { //中間コードで分岐

@@ -15,6 +15,7 @@ ELSE	I_ELSE		ielse
 '	I_SQUOT		iskip
 DATA	I_DATA		idata
 READ	I_READ		iread
+RESTORE	I_RESTORE	irestore
 CLT	I_CLT		iclt
 WAIT	I_WAIT		iwait
 POKE	I_POKE		ipoke
