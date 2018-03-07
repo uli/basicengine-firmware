@@ -456,6 +456,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 		for (i = 0; i < BURSTDUR; i++)
 			SpiRamWriteWord(wi++, BURST_LEVEL);
 
+#if 0
 		// For testing purposes, make some interesting pattern to
 		// protos 0 and 1.
 		// Protoline 2 is blank from color burst to line end.
@@ -499,6 +500,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 						(WHITE_LEVEL - 0x30) | 0xc400);
 			}
 		}
+#endif
 	}
 
 	// Add to the second half of protoline 1 a short sync
