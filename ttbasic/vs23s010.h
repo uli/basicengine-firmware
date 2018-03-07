@@ -87,7 +87,10 @@ class VS23S010 {
     }
 
     inline uint16_t currentLine() {
-        return SpiRamReadRegister(CURLINE) & 0xfff;
+        uint16_t cl = SpiRamReadRegister(CURLINE) & 0xfff;
+        if (m_interlace && cl >= 262)
+          cl -= 262;
+        return cl;
     }
     
     inline uint32_t frame() {
