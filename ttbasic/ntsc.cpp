@@ -787,7 +787,10 @@ if (m_interlace) {
 
 	// 14. Set number of lines, length of pixel and enable video
 	// generation
-	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT * (TOTAL_LINES - 1))
+	// The line count is TOTAL_LINES - 1 in the example, but the only
+	// value that doesn't produce a crap picture is 263 (even interlaced!),
+	// so we hard-code it here.
+	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT * 263)
 			    | (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL - 1))
 			    | (VDCTRL2_ENABLE_VIDEO));
 
