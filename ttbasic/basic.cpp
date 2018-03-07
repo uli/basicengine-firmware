@@ -4730,6 +4730,10 @@ static inline bool is_var(unsigned char tok)
 
 void GROUP(basic_core) icall();
 
+static const uint8_t vs23_read_regs[] PROGMEM = {
+  0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
+};
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value, value2; // 値
@@ -5107,6 +5111,22 @@ num_t GROUP(basic_core) ivalue() {
     value = vs23.frame();
     break;
 
+  case I_VREG: {
+    a = getparam();
+    bool good = false;
+    for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
+      if (pgm_read_byte(&vs23_read_regs[i]) == a) {
+        good = true;
+        break;
+      }
+    }
+    if (!good)
+      err = ERR_VALUE;
+    else
+      value = SpiRamReadRegister(a);
+    break;
+  }
+    
   default:
     cip--;
     if (is_strexp())
