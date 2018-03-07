@@ -5945,10 +5945,13 @@ void GROUP(basic_core) ireturn() {
   // Set return values, if any.
   if (!end_of_statement()) {
     int rcnt = 0;
+    num_t my_retval[MAX_RETVALS];
     do {
       // XXX: implement return strings
-      retval[rcnt++] = iexp();
+      my_retval[rcnt++] = iexp();
     } while (*cip++ == I_COMMA && rcnt < MAX_RETVALS);
+    for (int i = 0; i < rcnt; ++i)
+      retval[i] = my_retval[i];
   }
 
   astk_num_i -= gstk[--gstki].num_args;
