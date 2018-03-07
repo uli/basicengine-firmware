@@ -71,11 +71,12 @@ void VS23S010::resetBgs()
   }
 }
 
-void VS23S010::begin()
+void VS23S010::begin(bool interlace)
 {
   m_frameskip = 0;
   m_bg_modified = true;
   m_vsync_enabled = false;
+  m_interlace = interlace;
   resetSprites();
 
   m_bin.Init(0, 0);

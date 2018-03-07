@@ -59,7 +59,7 @@ struct sprite_line {
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
-    void begin();  // NTSCビデオ表示開始
+    void begin(bool interlace = false);  // NTSCビデオ表示開始
     void end();                            // NTSCビデオ表示終了 
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち
@@ -124,6 +124,10 @@ class VS23S010 {
     uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width, uint16_t *pixels);
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
+
+    inline void setInterlace(bool interlace) {
+      m_interlace = interlace;
+    }
 
     uint32_t getSpiClock() {
       return SPI1CLK;
@@ -372,6 +376,8 @@ private:
     GuillotineBinPack m_bin;
     
     uint8_t m_colorspace;
+    
+    bool m_interlace;
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
