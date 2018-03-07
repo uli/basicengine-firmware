@@ -3000,6 +3000,13 @@ void ivreg() {
     break;
   }
 }
+
+void ivpoke() {
+  int32_t addr, value;
+  if (getParam(addr, 0, 131071, I_COMMA)) return;
+  if (getParam(value, 0, 255, I_NONE)) return;
+  SpiRamWriteByte(addr, value);
+}
   
 // カーソル移動 LOCATE x,y
 void ilocate() {
