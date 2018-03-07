@@ -16,6 +16,13 @@
 // 戻り値
 //  なし
 void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
+  if (screen && (w != width || h != height)) {
+    free(screen);
+    screen = NULL;
+  }
+  if (!screen)
+    screen = (uint8_t*)malloc(w * h);
+
   width   = w;
   height  = h;
   maxllen = l;
@@ -23,22 +30,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
   // デバイスの初期化
   INIT_DEV();
 
-  // 直前の獲得メモリの開放
-  if (!flgExtMem) {
-  	if (screen != NULL) {
-      free(screen);
-    }
-  }
-
-  // スクリーン用バッファ領域の設定
-  if (extmem == NULL) {
-    flgExtMem = 0;
-    screen = (uint8_t*)malloc( width * height );
-  } else {
-     flgExtMem = 1;
-  	 screen = extmem;
-  }
-  
   cls();
   show_curs(true);  
   MOVE(pos_y, pos_x);
@@ -54,11 +45,9 @@ void tscreenBase::end() {
   END_DEV();
 
   // 動的確保したメモリーの開放
-  if (!flgExtMem) {
-    if (screen != NULL) {
-      free(screen);
-      screen = NULL;
-    }
+  if (screen != NULL) {
+    free(screen);
+    screen = NULL;
   }
 }
 
