@@ -428,7 +428,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 	// word):
 	// VVVVUUUUYYYYYYYY.
 
-#ifdef INTERLACE
+if (m_interlace) {
 	uint16_t wi;
 	// Construct protoline 0 and 1. Protoline 0 is used for most of the
 	// picture.  Protoline 1 has a similar first half than 0, but the
@@ -582,7 +582,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
 							// beginning of line
 
-#else
+} else {	// interlace
 
 	// Protolines for progressive NTSC, here is not created a protoline
 	// corresponding to interlace protoline 2.
@@ -653,13 +653,13 @@ void SMALL VS23S010::SpiRamVideoInit()
 		// Long sync at the middle of line
 		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
 	}
-#endif
+}
 
 	setColorSpace(0);
 
 	// 12. Now set first eight lines of frame to point to NTSC sync lines
 	// Here the frame starts, lines 1 and 2
-#ifdef INTERLACE
+if (m_interlace) {
 	for (i = 0; i < 3; i++) {
 		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
 	}
@@ -700,7 +700,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
 	}
 
-#else
+} else {	// interlace
 
 	// For progressive NTSC case, this is quite a minimum case.  
 	// Here the frame starts, lines 1 to 3
@@ -715,7 +715,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 	for (i = 6; i < 9; i++) {
 		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
 	}
-#endif
+}
 
 	// 13. Set pic line indexes to point to protoline 0 and their
 	// individual picture line.
@@ -723,12 +723,12 @@ void SMALL VS23S010::SpiRamVideoInit()
 		SetPicIndex(i + STARTLINE, piclineByteAddress(i), 0);
 		// All lines use picture line 0
 		// SetPicIndex(i+STARTLINE, PICLINE_BYTE_ADDRESS(0),0);
-#ifdef INTERLACE
+if (m_interlace) {
 		// In interlaced case in both fields the same area is picture
 		// box area.
 		SetPicIndex(i + STARTLINE + FIELD1START, piclineByteAddress(i),
 			    0);
-#endif
+}
 	}
 
 	// Draw some color bars
