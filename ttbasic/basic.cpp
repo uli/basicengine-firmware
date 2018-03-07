@@ -98,6 +98,7 @@ typedef struct {
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
   uint8_t color_scheme[CONFIG_COLS][3];
   bool interlace;
+  bool lowpass;
 } SystemConfig;
 SystemConfig CONFIG;
 
@@ -2577,6 +2578,10 @@ void SMALL iconfig() {
   case 2:
     CONFIG.interlace = value != 0;
     vs23.setInterlace(CONFIG.interlace);
+    break;
+  case 3:
+    CONFIG.lowpass = value != 0;
+    vs23.setLowpass(CONFIG.lowpass);
     break;
   default:
     err = ERR_VALUE;
@@ -6521,7 +6526,7 @@ void SMALL basic() {
 
   loadConfig();
 
-  vs23.begin(CONFIG.interlace);
+  vs23.begin(CONFIG.interlace, CONFIG.lowpass);
   vs23.setColorSpace(1);
 
   psx.setupPins(0, 1, 2, 3, 3);
