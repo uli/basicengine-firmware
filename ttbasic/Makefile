@@ -5,7 +5,7 @@ DEST_ADDR = 0x00000000
 
 all: elf
 
-elf:	funtbl.h
+elf:	funtbl.h epigrams.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
@@ -16,6 +16,8 @@ elf:	funtbl.h
 
 funtbl.h: icode.txt icode.py
 	python icode.py
+epigrams.h: epigrams.txt epi.py
+	python epi.py <epigrams.txt >epigrams.h
 
 clean:
 	rm -fr $(PWD)/build/*
