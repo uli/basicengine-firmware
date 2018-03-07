@@ -59,7 +59,7 @@ struct sprite_line {
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
-    void begin(bool interlace = false);  // NTSCビデオ表示開始
+    void begin(bool interlace = false, bool lowpass = false);  // NTSCビデオ表示開始
     void end();                            // NTSCビデオ表示終了 
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち
@@ -130,6 +130,9 @@ class VS23S010 {
 
     inline void setInterlace(bool interlace) {
       m_interlace = interlace;
+    }
+    inline void setLowpass(bool lowpass) {
+      m_lowpass = lowpass;
     }
 
     uint32_t getSpiClock() {
@@ -381,6 +384,10 @@ private:
     uint8_t m_colorspace;
     
     bool m_interlace;
+    bool m_lowpass;
+    inline uint16_t lowpass() {
+      return m_lowpass ? BLOCKMVC1_PYF : 0;
+    }
 };
 
 extern VS23S010 vs23; // グローバルオブジェクト利用宣言
