@@ -200,7 +200,7 @@ public:
   bool reserve(int dims, int *sizes) {
     dbg_var("na reserve dims %d\r\n", dims);
     m_dims = dims;
-    m_sizes = (int *)malloc(dims * sizeof(int));
+    m_sizes = (int *)realloc(m_sizes, dims * sizeof(int));
     if (!m_sizes) {
       m_dims = 0;
       return true;
@@ -211,7 +211,7 @@ public:
       m_total *= sizes[i];
     }
     dbg_var("na total %d\r\n", m_total);
-    m_var = (T *)malloc(m_total * sizeof(T));
+    m_var = (T *)realloc(m_var, m_total * sizeof(T));
     if (!m_var) {
       free(m_sizes);
       m_dims = 0;
