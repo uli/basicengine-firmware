@@ -590,7 +590,8 @@ uint8_t parse_identifier(char *ptok, char *vname) {
   char *p = ptok;
   do {
     v = vname[var_len++] = *p++;
-  } while (isAlphaNumeric(v) && var_len < MAX_VAR_NAME-1);
+  } while ((isAlpha(v) || (var_len > 1 && (isAlphaNumeric(v) || v == '_'))) &&
+           var_len < MAX_VAR_NAME-1);
   vname[--var_len] = 0;     // terminate C string
   return var_len;
 }
