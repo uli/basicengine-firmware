@@ -303,6 +303,12 @@ class VS23S010 {
       return m_frameskip;
     }
 
+    uint32_t cyclesPerFrame() {
+      return m_cycles_per_frame;
+    }
+    uint32_t cyclesPerFrameCalculated() {
+      return m_cycles_per_frame_calculated;
+    }
 private:
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
