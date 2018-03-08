@@ -78,17 +78,13 @@ void VS23S010::setColorConversion(int yuvpal, int h_weight, int s_weight, int v_
   clear_color_cache();
 }
 
-uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
+uint8_t VS23S010::colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
 {
   int h, s, v;
   uint8_t best = 0;
 
   uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
   struct color_cache *cache_entry = &color_cache[cache_hash];
-  if (r == cache_entry->r && g == cache_entry->g && b == cache_entry->b) {
-    dbg_col("cache hit %d %d %d\n", r, g, b);
-    return cache_entry->col;
-  }
 
 #ifdef DEBUG
   int best_h, best_s, best_v;
@@ -164,6 +160,17 @@ uint8_t VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
   cache_entry->b = b;
   cache_entry->col = best;
   return best;
+}
+
+uint8_t ICACHE_RAM_ATTR VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
+{
+  uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
+  struct color_cache *cache_entry = &color_cache[cache_hash];
+  if (r == cache_entry->r && g == cache_entry->g && b == cache_entry->b) {
+    dbg_col("cache hit %d %d %d\n", r, g, b);
+    return cache_entry->col;
+  }
+  return colorFromRgbSlow(r, g, b);
 }
 
 uint8_t *paletteData(uint8_t colorspace)

@@ -325,6 +325,8 @@ private:
     int m_last_line;
     uint16_t m_sync_line;
 
+    uint8_t colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);
+
     struct bg_t {
       uint8_t *tiles;
       uint16_t pat_x, pat_y, pat_w;
