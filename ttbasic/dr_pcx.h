@@ -81,7 +81,7 @@ typedef size_t (* drpcx_read_proc)(void* userData, void* bufferOut, size_t bytes
 // Loads a PCX file using the given callbacks.
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y,
                      int* internalComponents, int desiredComponents,
-                     int dst_x, int dst_y, int off_x, int off_y, int w, int h);
+                     int dst_x, int dst_y, int off_x, int off_y, int w, int h, int mask = -1);
 
 // Frees memory returned by drpcx_load() and family.
 void drpcx_free(void* pReturnValueFromLoad);
@@ -140,6 +140,7 @@ typedef struct
     int dst_x, dst_y;
     int off_x, off_y;
     int w, h;
+    int mask;
 } drpcx;
 
 
@@ -528,11 +529,14 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     rleCount -= 1;
 
                     if (y >= oy && y < oy+h && x >= ox && x < ox+w && x < pPCX->width) {
+                      uint8_t c;
                       if (paletteMarker == 0x0c) {
-                        vs23.setPixel(dx + x-ox, dy + y-oy, palette256[rleValue]);
+                        c = palette256[rleValue];
                       } else {
-                        vs23.setPixel(dx + x-ox, dy + y-oy, rleValue >> 4);
+                        c = rleValue >> 4;
                       }
+                      if (pPCX->mask < 0 || c != pPCX->mask)
+                        vs23.setPixel(dx + x-ox, dy + y-oy, c);
                     }
                 }
             }
@@ -570,10 +574,18 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 if (y >= oy && y < oy+h) {
                   dr_uint32 x;
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
-                  for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                    pRow_[x-ox] = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                  if (pPCX->mask < 0) {
+                    for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
+                      pRow_[x-ox] = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                    }
+                    SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
+                  } else {
+                    for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
+                      uint8_t c = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                      if (pPCX->mask < 0 || c != pPCX->mask)
+                        vs23.setPixel(dx+x, dy+y-oy, c);
+                    }
                   }
-                  SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
                 }
             }
 
@@ -618,7 +630,7 @@ bool drpcx_info(drpcx_read_proc onRead, void* pUserData, int* x, int* y, int* in
 }
 
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y, int* internalComponents, int desiredComponents,
-                     int dx, int dy, int ox, int oy, int w, int h)
+                     int dx, int dy, int ox, int oy, int w, int h, int mask)
 {
     if (onRead == NULL) return false;
     if (desiredComponents > 4) return false;
@@ -653,6 +665,7 @@ bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int*
     pcx.off_y = oy;
     pcx.w = w;
     pcx.h = h;
+    pcx.mask = mask;
 
     dr_bool32 result = DR_FALSE;
     switch (pcx.header.bpp)
