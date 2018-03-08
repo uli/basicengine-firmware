@@ -2580,7 +2580,7 @@ void SMALL iconfig() {
     }
     break;
   case 1: // キーボード補正
-    if (value <0 || value >1)  {
+    if (value < 0 || value > 2)  {
       err = ERR_VALUE;
     } else {
       sc0.reset_kbd(value);
