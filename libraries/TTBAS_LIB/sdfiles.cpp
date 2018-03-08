@@ -439,7 +439,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
   return pcx_file.read((char *)buf, bytesToRead);
 }
 
-uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h) {
+uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask) {
   uint8_t rc =1;
  
   pcx_file = Unifile::open(fname, FILE_READ);
@@ -478,7 +478,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
   }
 
   if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
-                 dst_x, dst_y, x, y, w, h))
+                 dst_x, dst_y, x, y, w, h, mask))
     rc = 0;
   else
     rc = SD_ERR_READ_FILE;
