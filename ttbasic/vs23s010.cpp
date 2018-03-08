@@ -24,13 +24,13 @@
 //#define PROFILE_BG
 //#define DEBUG_SYNC
 
-void VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
+void ICACHE_RAM_ATTR VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
-uint8_t VS23S010::getPixel(uint16_t x, uint16_t y)
+uint8_t ICACHE_RAM_ATTR VS23S010::getPixel(uint16_t x, uint16_t y)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   return SpiRamReadByte(byteaddress);
