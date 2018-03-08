@@ -776,23 +776,13 @@ uint8_t SMALL toktoi(bool find_prg_text) {
         ++ptok; ++s;
       }
 
-      var_len = 0;
+      var_len = parse_identifier(ptok, vname);
       if (len >= SIZE_IBUF - 3) { // if the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
       }
 
-      uint8_t v;
-      char *p = ptok;
-      do {
-	v = vname[var_len++] = *p++;
-#ifdef DEBUG_VAR
-	Serial.printf("c %c (%d)\n", v, isAlphaNumeric(v));
-#endif
-      } while (isAlphaNumeric(v) && var_len < MAX_VAR_NAME-1);
-      vname[--var_len] = 0;     // terminate C string
-
-      p--;
+      char *p = ptok + var_len;
       if (*p == '$' && p[1] == '(') {
         if (is_local) {
           err = ERR_NOT_SUPPORTED;
