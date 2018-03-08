@@ -213,7 +213,7 @@
 #define VSHIFT 8
 #else
 /// 8 bits per pixel, U2 V2 Y4
-const uint8_t vs23_ops[2][5] = {
+const uint8_t vs23_ops[2][6] = {
   {
     /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
     PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
@@ -221,6 +221,7 @@ const uint8_t vs23_ops[2][5] = {
     PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
     PICK_NOTHING,
     0x0d,
+    0xee,
   },
   {
     /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
@@ -229,6 +230,7 @@ const uint8_t vs23_ops[2][5] = {
     PICK_Y + PICK_BITS(3) + SHIFT_BITS(3),
     PICK_NOTHING,
     0x0c,
+    0xdd,
   },
 };
 #endif
