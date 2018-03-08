@@ -54,6 +54,7 @@ void VS23S010::resetSprites()
     s->pos_x = s->pos_y = 0;
     s->frame_x = s->frame_y = 0;
     s->w = s->h = 8;
+    s->key = 0;
   }
 }
 
@@ -918,32 +919,34 @@ void VS23S010::loadSpritePattern(uint8_t num)
     p->len = s->w;
     p->type = LINE_SOLID;
 
-    uint8_t *pp = p->pixels;
-    while (*pp == 0 && p->len) {
-      solid_block = false;
-      ++pp;
-      ++p->off;
-      --p->len;
-    }
-
-    if (p->len) {
-      pp = p->pixels + s->w - 1;
-      while (*pp == 0) {
-	solid_block = false;
-	--pp;
-	--p->len;
+    if (s->key >= 0) {
+      uint8_t *pp = p->pixels;
+      while (*pp == s->key && p->len) {
+        solid_block = false;
+        ++pp;
+        ++p->off;
+        --p->len;
       }
-    }
 
-    for (int i = 0; i < p->len; ++i) {
-      if (p->pixels[p->off + i] == 0) {
-	p->type = LINE_BROKEN;
-	break;
+      if (p->len) {
+        pp = p->pixels + s->w - 1;
+        while (*pp == s->key) {
+          solid_block = false;
+          --pp;
+          --p->len;
+        }
       }
-    }
+
+      for (int i = 0; i < p->len; ++i) {
+        if (p->pixels[p->off + i] == s->key) {
+          p->type = LINE_BROKEN;
+          break;
+        }
+      }
 #ifdef DEBUG_SPRITES
-    Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
+      Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
 #endif
+    }
   }
 
   s->transparent = !solid_block;
@@ -953,6 +956,13 @@ void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y)
 {
   m_sprite[num].frame_x = frame_x;
   m_sprite[num].frame_y = frame_y;
+  loadSpritePattern(num);
+  m_bg_modified = true;
+}
+
+void VS23S010::setSpriteKey(uint8_t num, int16_t key)
+{
+  m_sprite[num].key = key;
   loadSpritePattern(num);
   m_bg_modified = true;
 }
