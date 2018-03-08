@@ -349,6 +349,10 @@ public:
     return false;
   }
 
+  inline int size() {
+    return m_size;
+  }
+
   inline BString& var(uint8_t index) {
     return *m_var[index];
   }
