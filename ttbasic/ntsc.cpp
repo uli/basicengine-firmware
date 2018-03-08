@@ -332,12 +332,12 @@ void VS23S010::setColorSpace(uint8_t palette)
 	// Use HROP1/HROP2/OP4/OP4 for 2 PLL clocks per pixel modes
 	SpiRamWriteProgram(PROGRAM,
           (vs23_ops[palette][3] << 8) | vs23_ops[palette][2],
-          (vs23_ops[palette][1] << 8) | vs23_ops[palette][0]
+          (vs23_ops[palette][m_pal ? 0 : 1] << 8) | vs23_ops[palette][m_pal ? 1 : 0]
         );
 	// Set color burst
 	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BURST;
 	for (int i = 0; i < BURSTDUR; i++)
-		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (vs23_ops[palette][4] << 8));
+		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (vs23_ops[palette][m_pal ? 5 : 4] << 8));
 
         switch (palette) {
         case 0: setColorConversion(0, 7, 3, 6, true); break;
