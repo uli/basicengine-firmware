@@ -4477,7 +4477,7 @@ void imovebg() {
 }
 
 void isprite() {
-  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags;
+  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4516,6 +4516,10 @@ void isprite() {
     if (getParam(flags, 0, 1, I_NONE)) return;
     // Bit 0: sprite opaque
     vs23.setSpriteOpaque(num, flags & 1);
+    break;
+  case I_KEY:
+    if (getParam(key, 0, 255, I_NONE)) return;
+    vs23.setSpriteKey(num, key);
     break;
   default:
     // XXX: throw an error if nothing has been done
