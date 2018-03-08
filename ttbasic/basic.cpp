@@ -5664,7 +5664,7 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
 }
 
 // システム情報の表示
-void SMALL iinfo() {
+void SMALL isysinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
   uint8_t* tmp = (uint8_t*)malloc(1);
