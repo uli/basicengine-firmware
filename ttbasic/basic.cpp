@@ -4926,7 +4926,15 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_LEN:  // 関数LEN(変数)
     if (checkOpen()) break;
-    value = istrexp().length();
+    if (*cip == I_STRLSTREF) {
+      ++cip;
+      value = str_lst.var(*cip++).size();
+    } else if (*cip == I_NUMLSTREF) {
+      ++cip;
+      value = num_lst.var(*cip++).size();
+    } else {
+      value = istrexp().length();
+    }
     if (checkClose()) break;
     break;
 
@@ -5070,24 +5078,6 @@ num_t GROUP(basic_core) ivalue() {
       value = b;
     } else
       value = sound.isPlaying(a - 1);
-    break;
-
-  case I_SIZE:
-    if (checkOpen()) return 0;
-    if (*cip == I_STRLSTREF) {
-      ++cip;
-      value = str_lst.var(*cip++).size();
-    } else if (*cip == I_NUMLSTREF) {
-      ++cip;
-      value = num_lst.var(*cip++).size();
-    } else {
-      if (is_var(*cip))
-        err = ERR_TYPE;
-      else
-        err = ERR_SYNTAX;
-      return 0;
-    }
-    if (checkClose()) return 0;
     break;
 
   case I_NUMLST:
