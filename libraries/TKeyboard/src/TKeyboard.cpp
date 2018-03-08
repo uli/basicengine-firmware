@@ -7,7 +7,7 @@
 
 static TPS2 pb; // PS/2 interface object
 volatile static uint8_t _flgLED; // LED control use flag (true: use  false: don't)
-volatile static uint8_t _flgUS;  // US keyboard mode
+volatile static uint8_t kbd_layout;  // keyboard layout
 static const uint8_t (*key_ascii)[2];
 
 // Scan code analysis state transition codes
@@ -107,6 +107,18 @@ static const uint8_t key_ascii_jp[][2] PROGMEM = {
   { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'w', 'W'},{ 'x', 'X'},{ 'y', 'Y'},{ 'z', 'Z'},
 };
 
+// German keyboard (code page 437)
+static const uint8_t key_ascii_de[][2] PROGMEM = {
+  /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
+  { ' ', ' '},{ '\x84','\x8e'},{ '\x94', '\x99'},{ ',', ';'},{ '\xe1', '?'},{ '.', ':'},{ '-', '_'},{ '\x81', '\x9a'},
+  { '+', '*'},{ '#','\''},{'#', '\''},{ '\'', '`'},{ '\\','_'},{ '0', '='},{ '1', '!'},{ '2', '"'},
+  { '3', '\x15'},{ '4', '$'},{ '5', '%'},{ '6', '&'},{ '7', '/'},{ '8', '('},{ '9', ')'},{'#', '\''},
+  {   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{ 'a', 'A'},{ 'b', 'B'},
+  { 'c', 'C'},{ 'd', 'D'},{ 'e', 'E'},{ 'f', 'F'},{ 'g', 'G'},{ 'h', 'H'},{ 'i', 'I'},{ 'j', 'J'},
+  { 'k', 'K'},{ 'l', 'L'},{ 'm', 'M'},{ 'n', 'N'},{ 'o', 'O'},{ 'p', 'P'},{ 'q', 'Q'},{ 'r', 'R'},
+  { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'w', 'W'},{ 'x', 'X'},{ 'z', 'Z'},{ 'y', 'Y'},
+};
+
 // Conversion table for numeric pad keys 94-111
 // { Normal code, NumLock/Shift code, 1: key code  0: ASCII code }
 static const uint8_t tenkey[][3] PROGMEM = {
@@ -137,14 +149,16 @@ static const uint8_t tenkey[][3] PROGMEM = {
 //   flgLED:	false: Do not control the LED, true: do LED control
 // Return value
 //   0: Normal termination      Other than 0: Abnormal termination
-uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t flgUS)
+uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout)
 {
   uint8_t rc;
-  _flgUS = flgUS;
-  if (_flgUS)
-    key_ascii = key_ascii_us;
-  else
-    key_ascii = key_ascii_jp;
+  kbd_layout = layout;
+  switch (kbd_layout) {
+  case 0:	key_ascii = key_ascii_jp; break;
+  case 1:	key_ascii = key_ascii_us; break;
+  case 2:	key_ascii = key_ascii_de; break;
+  default:	key_ascii = key_ascii_us; break;
+  }
 
   memset(m_key_state, 0, sizeof(m_key_state));
 
@@ -615,11 +629,18 @@ keyEvent TKeyboard::read()
         (prv_ScrolLock != (sts_ScrolLock & 1)))
       ctrl_LED(sts_CapsLock & 1, sts_numlock & 1, sts_ScrolLock & 1);
     goto DONE;
-  } else if (code == PS2KEY_HanZen && _flgUS) {
-    if (sts_state.kevt.SHIFT)
-      c.value = '`';
-    else
-      c.value = '~';
+  } else if (code == PS2KEY_HanZen && kbd_layout != 0) {
+    if (kbd_layout == 1) {
+      if (sts_state.kevt.SHIFT)
+        c.value = '`';
+      else
+        c.value = '~';
+    } else if (kbd_layout == 2) {
+      if (sts_state.kevt.SHIFT)
+        c.value = '^';
+      else
+        c.value = '\xf8';
+    }
     goto DONE;
   } else {
     // Other characters (key codes are assumed to be character codes)
