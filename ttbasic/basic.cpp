@@ -3912,6 +3912,7 @@ void SMALL ildbmp() {
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
   int32_t spr_from = -1, spr_to = -1;
+  int32_t key = -1;	// no keying
   bool define_bg = false;
   int bg;
 
@@ -3959,13 +3960,17 @@ void SMALL ildbmp() {
       cip++;
       if ( getParam(w,  0, INT32_MAX, I_COMMA) ) return;
       if ( getParam(h,  0, INT32_MAX, I_NONE) ) return;
+    } else if (*cip == I_KEY) {
+      // KEY c
+      cip++;
+      if (getParam(key, 0, 255, I_NONE)) return;
     } else {
       break;
     }
   }
 
   // 画像のロード
-  err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h);
+  err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h, key);
   if (!err) {
     if (define_bg)
       vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));

@@ -202,6 +202,7 @@ PCX	I_PCX		esyntax
 AS	I_AS		esyntax
 OFF	I_OFF		esyntax
 SIZE	I_SIZE		esyntax
+KEY	I_KEY		esyntax
 HIGH	I_HIGH		esyntax
 LOW	I_LOW		esyntax
 CSIZE	I_CSIZE		esyntax
