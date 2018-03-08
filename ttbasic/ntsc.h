@@ -13,18 +13,35 @@
 #define BYTEPIC	
 		
 /// Crystal frequency in MHZ (float, observe accuracy)
-#define XTAL_MHZ 3.579545
+#define XTAL_MHZ_NTSC 3.579545
+#define XTAL_MHZ_PAL 4.43361875
+#define XTAL_MHZ (m_pal ? XTAL_MHZ_PAL : XTAL_MHZ_NTSC)
+
 /// Line length in microseconds (float, observe accuracy)
-#define LINE_LENGTH_US 63.5555
+#define LINE_LENGTH_US_NTSC 63.5555
+#define LINE_LENGTH_US_PAL 64.0
+#define LINE_LENGTH_US (m_pal ? LINE_LENGTH_US_PAL : LINE_LENGTH_US_NTSC)
+
 /// Frame length in lines (visible lines + nonvisible lines)
 /// Amount has to be odd for NTSC and RGB colors
-#define TOTAL_LINES_INTERLACE 525
-#define FIELD1START 261
-#define TOTAL_LINES_PROGRESSIVE 262
+#define TOTAL_LINES_INTERLACE_NTSC 525
+#define TOTAL_LINES_INTERLACE_PAL 625
+#define TOTAL_LINES_INTERLACE (m_pal ? TOTAL_LINES_INTERLACE_PAL : TOTAL_LINES_INTERLACE_NTSC)
+
+#define FIELD1START_NTSC 261
+#define FIELD1START_PAL 310
+#define FIELD1START (m_pal ? FIELD1START_PAL : FIELD1START_NTSC)
+
+#define TOTAL_LINES_PROGRESSIVE_NTSC 262
+#define TOTAL_LINES_PROGRESSIVE_PAL 313	// or 312?
+#define TOTAL_LINES_PROGRESSIVE (m_pal ? TOTAL_LINES_PROGRESSIVE_PAL : TOTAL_LINES_PROGRESSIVE_NTSC)
+
 #define TOTAL_LINES (m_interlace ? TOTAL_LINES_INTERLACE : TOTAL_LINES_PROGRESSIVE)
 		
 /// Number of lines used after the VSYNC but before visible area.
-#define FRONT_PORCH_LINES 20
+#define FRONT_PORCH_LINES_NTSC 20
+#define FRONT_PORCH_LINES_PAL 22
+#define FRONT_PORCH_LINES (m_pal ? FRONT_PORCH_LINES_PAL : FRONT_PORCH_LINES_NTSC)
 		
 /// Width, in PLL clocks, of each pixel
 /// Used 4 to 8 for 160x120 pics
@@ -89,30 +106,48 @@
 		
 /// Define NTSC video timing constants
 /// NTSC short sync duration is 2.35 us
-#define SHORT_SYNC_US 2.542
+#define SHORT_SYNC_US_NTSC 2.542
+#define SHORT_SYNC_US_PAL 2.35
+#define SHORT_SYNC_US (m_pal ? SHORT_SYNC_US_PAL : SHORT_SYNC_US_NTSC)
+
 /// For the start of the line, the first 10 extra PLLCLK sync (0) cycles
 /// are subtracted.
 #define SHORTSYNC ((uint16_t)(SHORT_SYNC_US*XTAL_MHZ-10.0/8.0))
 /// For the middle of the line the whole duration of sync pulse is used.
 #define SHORTSYNCM ((uint16_t)(SHORT_SYNC_US*XTAL_MHZ))
 /// NTSC long sync duration is 27.3 us
-#define LONG_SYNC_US 27.33275
+#define LONG_SYNC_US_NTSC 27.33275
+#define LONG_SYNC_US_PAL 27.3
+#define LONG_SYNC_US (m_pal ? LONG_SYNC_US_PAL : LONG_SYNC_US_NTSC)
+
 #define LONGSYNC ((uint16_t)(LONG_SYNC_US*XTAL_MHZ))
 #define LONGSYNCM ((uint16_t)(LONG_SYNC_US*XTAL_MHZ))
 /// Normal visible picture line sync length is 4.7 us
 #define SYNC_US 4.7
 #define SYNC ((uint16_t)(SYNC_US*XTAL_MHZ-10.0/8.0))
 /// Color burst starts at 5.6 us
-#define BURST_US 5.3
+#define BURST_US_NTSC 5.3
+#define BURST_US_PAL 5.6
+#define BURST_US (m_pal ? BURST_US_PAL : BURST_US_NTSC)
+
 #define BURST ((uint16_t)(BURST_US*XTAL_MHZ-10.0/8.0))
 /// Color burst duration is 2.25 us
-#define BURST_DUR_US 2.67
+#define BURST_DUR_US_NTSC 2.67
+#define BURST_DUR_US_PAL 2.25
+#define BURST_DUR_US (m_pal ? BURST_DUR_US_PAL : BURST_DUR_US_NTSC)
+
 #define BURSTDUR ((uint16_t)(BURST_DUR_US*XTAL_MHZ))
 /// NTSC sync to blanking end time is 10.5 us
-#define BLANK_END_US 9.155
+#define BLANK_END_US_NTSC 9.155
+#define BLANK_END_US_PAL 10.5
+#define BLANK_END_US (m_pal ? BLANK_END_US_PAL : BLANK_END_US_NTSC)
+
 #define BLANKEND ((uint16_t)(BLANK_END_US*XTAL_MHZ-10.0/8.0))
 /// Front porch starts at the end of the line, at 62.5us 
-#define FRPORCH_US 61.8105
+#define FRPORCH_US_NTSC 61.8105
+#define FRPORCH_US_PAL 62.5
+#define FRPORCH_US (m_pal ? FRPORCH_US_PAL : FRPORCH_US_NTSC)
+
 #define FRPORCH ((uint16_t)(FRPORCH_US*XTAL_MHZ-10.0/8.0))
 
 /// Select U, V and Y bit widths for 16-bit or 8-bit wide pixels.
@@ -243,7 +278,7 @@ const uint8_t vs23_ops[2][5] = {
 /// Sync is always 0
 #define SYNC_LEVEL  0x0000
 /// one LSB is 5.1724137mV
-#define SYNC_LEVEL  0x0000
+#define SYNC_LEVEL  0x0000	// XXX: why is this here twice?
 /// 285 mV to 75 ohm load
 #define BLANK_LEVEL 0x0066
 /// 339 mV to 75 ohm load
