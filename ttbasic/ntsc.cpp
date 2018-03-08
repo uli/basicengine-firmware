@@ -428,232 +428,232 @@ void SMALL VS23S010::SpiRamVideoInit()
 	// word):
 	// VVVVUUUUYYYYYYYY.
 
-if (m_interlace) {
-	uint16_t wi;
-	// Construct protoline 0 and 1. Protoline 0 is used for most of the
-	// picture.  Protoline 1 has a similar first half than 0, but the
-	// end has a short sync pulse.  This is used for line 623. 
-	// Protoline 2 has a normal sync and color burst and nothing else. 
-	// It is used between vertical sync lines and visible lines, but is
-	// not mandatory always.
-	for (j = 0; j <= 2; j++) {
-		wi = PROTOLINE_WORD_ADDRESS(j);
-		// Set all to blank level.
+	if (m_interlace) {
+		uint16_t wi;
+		// Construct protoline 0 and 1. Protoline 0 is used for most of the
+		// picture.  Protoline 1 has a similar first half than 0, but the
+		// end has a short sync pulse.  This is used for line 623. 
+		// Protoline 2 has a normal sync and color burst and nothing else. 
+		// It is used between vertical sync lines and visible lines, but is
+		// not mandatory always.
+		for (j = 0; j <= 2; j++) {
+			wi = PROTOLINE_WORD_ADDRESS(j);
+			// Set all to blank level.
+			for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+				SpiRamWriteWord(wi++, BLANK_LEVEL);
+			}
+			// Set the color level to black
+			wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND;
+			for (i = BLANKEND; i < FRPORCH; i++) {
+				SpiRamWriteWord(wi++, BLACK_LEVEL);
+			}
+			// Set HSYNC
+			wi = PROTOLINE_WORD_ADDRESS(j);
+			for (i = 0; i < SYNC; i++)
+				SpiRamWriteWord(wi++, SYNC_LEVEL);
+			// Set color burst
+			wi = PROTOLINE_WORD_ADDRESS(j) + BURST;
+			for (i = 0; i < BURSTDUR; i++)
+				SpiRamWriteWord(wi++, BURST_LEVEL);
+
+#if 0
+			// For testing purposes, make some interesting pattern to
+			// protos 0 and 1.
+			// Protoline 2 is blank from color burst to line end.
+			if (j < 2) {
+				wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND + 55;
+				for (i = BLANKEND + 55; i < FRPORCH; i++) {
+					SpiRamWriteWord(wi++, BLACK_LEVEL + 0x20);
+				}
+				wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND;
+				SpiRamWriteWord(wi++, 0x7F);
+				for (i = 1; i <= 50; i++) {
+					// "Proto-maximum" green level + color
+					// carrier wave
+					SpiRamWriteWord(wi++, 0x797F + i * 0x1300);
+				}
+				// To make red+blue strip
+#define RED_BIT 0x0400
+#define BLUE_BIT 0x0800
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 126,
+						(0x7300 | BLACK_LEVEL) + RED_BIT);
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 130,
+						(0x7300 | BLACK_LEVEL) + RED_BIT +
+						BLUE_BIT);
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 134,
+						(0x7300 | BLACK_LEVEL) + BLUE_BIT);
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 138,
+						(0x7300 | BLACK_LEVEL));
+
+				// Max V and min U levels
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 146,
+						0x79c1);
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 147,
+						0x79c1);
+				SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 148,
+						0x79c1);
+
+				// Orangish color to the end of proto line
+				w = PROTOLINE_WORD_ADDRESS(0) + FRPORCH - 1;
+				for (i = 0; i <= 90; i++) {
+					SpiRamWriteWord((uint16_t)w--,
+							(WHITE_LEVEL - 0x30) | 0xc400);
+				}
+			}
+#endif
+		}
+
+		// Add to the second half of protoline 1 a short sync
+		wi = PROTOLINE_WORD_ADDRESS(1) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < SHORTSYNCM; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// middle of line
+		for (i = COLORCLKS_LINE_HALF + SHORTSYNCM; i < COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord(wi++, BLANK_LEVEL);	// To the end of the
+								// line to blank level
+		}
+
+		// Now let's construct protoline 3, this will become our short+short
+		// VSYNC line
+		wi = PROTOLINE_WORD_ADDRESS(3);
 		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
 			SpiRamWriteWord(wi++, BLANK_LEVEL);
 		}
+		wi = PROTOLINE_WORD_ADDRESS(3);
+		for (i = 0; i < SHORTSYNC; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// beginning of line
+		wi = PROTOLINE_WORD_ADDRESS(3) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < SHORTSYNCM; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// middle of line
+
+		// Now let's construct protoline 4, this will become our long+long
+		// VSYNC line
+		wi = PROTOLINE_WORD_ADDRESS(4);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord(wi++, BLANK_LEVEL);
+		}
+		wi = PROTOLINE_WORD_ADDRESS(4);
+		for (i = 0; i < LONGSYNC; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
+								// beginning of line
+		wi = PROTOLINE_WORD_ADDRESS(4) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < LONGSYNCM; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
+								// middle of line
+
+		// Now let's construct protoline 5, this will become our long+short
+		// VSYNC line
+		wi = PROTOLINE_WORD_ADDRESS(5);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord(wi++, BLANK_LEVEL);
+		}
+		wi = PROTOLINE_WORD_ADDRESS(5);
+		for (i = 0; i < LONGSYNC; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// beginning of line
+		wi = PROTOLINE_WORD_ADDRESS(5) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < SHORTSYNCM; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
+								// middle of line
+
+		// And yet a short+long sync line, protoline 6
+		wi = PROTOLINE_WORD_ADDRESS(6);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord(wi++, BLANK_LEVEL);
+		}
+		wi = PROTOLINE_WORD_ADDRESS(6);
+		for (i = 0; i < SHORTSYNC; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// beginning of line
+		wi = PROTOLINE_WORD_ADDRESS(6) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < LONGSYNCM; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
+								// middle of line
+
+		// Just short sync line, the last one, protoline 7
+		wi = PROTOLINE_WORD_ADDRESS(7);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord(wi++, BLANK_LEVEL);
+		}
+		wi = PROTOLINE_WORD_ADDRESS(7);
+		for (i = 0; i < SHORTSYNC; i++)
+			SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
+								// beginning of line
+
+	} else {	// interlace
+
+		// Protolines for progressive NTSC, here is not created a protoline
+		// corresponding to interlace protoline 2.
+		// Construct protoline 0
+		w = PROTOLINE_WORD_ADDRESS(0);	// Could be w=0 because proto 0 always 
+						// starts at address 0
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
+		}
+
 		// Set the color level to black
-		wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND;
-		for (i = BLANKEND; i < FRPORCH; i++) {
-			SpiRamWriteWord(wi++, BLACK_LEVEL);
-		}
+		setBorder(0, 0);
+
 		// Set HSYNC
-		wi = PROTOLINE_WORD_ADDRESS(j);
+		w = PROTOLINE_WORD_ADDRESS(0);
 		for (i = 0; i < SYNC; i++)
-			SpiRamWriteWord(wi++, SYNC_LEVEL);
-		// Set color burst
-		wi = PROTOLINE_WORD_ADDRESS(j) + BURST;
-		for (i = 0; i < BURSTDUR; i++)
-			SpiRamWriteWord(wi++, BURST_LEVEL);
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		// Makes a black&white picture
+		// for (i=0; i<BURSTDUR; i++) SpiRamWriteWord(w++,BLANK_LEVEL);
 
-#if 0
-		// For testing purposes, make some interesting pattern to
-		// protos 0 and 1.
-		// Protoline 2 is blank from color burst to line end.
-		if (j < 2) {
-			wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND + 55;
-			for (i = BLANKEND + 55; i < FRPORCH; i++) {
-				SpiRamWriteWord(wi++, BLACK_LEVEL + 0x20);
-			}
-			wi = PROTOLINE_WORD_ADDRESS(j) + BLANKEND;
-			SpiRamWriteWord(wi++, 0x7F);
-			for (i = 1; i <= 50; i++) {
-				// "Proto-maximum" green level + color
-				// carrier wave
-				SpiRamWriteWord(wi++, 0x797F + i * 0x1300);
-			}
-			// To make red+blue strip
-#define RED_BIT 0x0400
-#define BLUE_BIT 0x0800
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 126,
-					(0x7300 | BLACK_LEVEL) + RED_BIT);
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 130,
-					(0x7300 | BLACK_LEVEL) + RED_BIT +
-					BLUE_BIT);
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 134,
-					(0x7300 | BLACK_LEVEL) + BLUE_BIT);
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 138,
-					(0x7300 | BLACK_LEVEL));
-
-			// Max V and min U levels
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 146,
-					0x79c1);
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 147,
-					0x79c1);
-			SpiRamWriteWord(PROTOLINE_WORD_ADDRESS(j) + 148,
-					0x79c1);
-
-			// Orangish color to the end of proto line
-			w = PROTOLINE_WORD_ADDRESS(0) + FRPORCH - 1;
-			for (i = 0; i <= 90; i++) {
-				SpiRamWriteWord((uint16_t)w--,
-						(WHITE_LEVEL - 0x30) | 0xc400);
-			}
+		// Now let's construct protoline 1, this will become our short+short
+		// VSYNC line
+		w = PROTOLINE_WORD_ADDRESS(1);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
 		}
-#endif
-	}
+		w = PROTOLINE_WORD_ADDRESS(1);
+		for (i = 0; i < SHORTSYNC; i++) {
+			// Short sync at the beginning of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
+		w = PROTOLINE_WORD_ADDRESS(1) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < SHORTSYNCM; i++) {
+			// Short sync at the middle of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
 
-	// Add to the second half of protoline 1 a short sync
-	wi = PROTOLINE_WORD_ADDRESS(1) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < SHORTSYNCM; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// middle of line
-	for (i = COLORCLKS_LINE_HALF + SHORTSYNCM; i < COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);	// To the end of the
-							// line to blank level
-	}
+		// Now let's construct protoline 2, this will become our long+long
+		// VSYNC line
+		w = PROTOLINE_WORD_ADDRESS(2);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
+		}
+		w = PROTOLINE_WORD_ADDRESS(2);
+		for (i = 0; i < LONGSYNC; i++) {
+			// Long sync at the beginning of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
+		w = PROTOLINE_WORD_ADDRESS(2) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < LONGSYNCM; i++) {
+			// Long sync at the middle of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
 
-	// Now let's construct protoline 3, this will become our short+short
-	// VSYNC line
-	wi = PROTOLINE_WORD_ADDRESS(3);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);
+		// Now let's construct protoline 3, this will become our long+short
+		// VSYNC line
+		w = PROTOLINE_WORD_ADDRESS(3);
+		for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
+			SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
+		}
+		w = PROTOLINE_WORD_ADDRESS(3);
+		for (i = 0; i < LONGSYNC; i++) {
+			// Short sync at the beginning of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
+		w = PROTOLINE_WORD_ADDRESS(3) + COLORCLKS_LINE_HALF;
+		for (i = 0; i < SHORTSYNCM; i++) {
+			// Long sync at the middle of line
+			SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
+		}
 	}
-	wi = PROTOLINE_WORD_ADDRESS(3);
-	for (i = 0; i < SHORTSYNC; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// beginning of line
-	wi = PROTOLINE_WORD_ADDRESS(3) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < SHORTSYNCM; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// middle of line
-
-	// Now let's construct protoline 4, this will become our long+long
-	// VSYNC line
-	wi = PROTOLINE_WORD_ADDRESS(4);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);
-	}
-	wi = PROTOLINE_WORD_ADDRESS(4);
-	for (i = 0; i < LONGSYNC; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
-							// beginning of line
-	wi = PROTOLINE_WORD_ADDRESS(4) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < LONGSYNCM; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
-							// middle of line
-
-	// Now let's construct protoline 5, this will become our long+short
-	// VSYNC line
-	wi = PROTOLINE_WORD_ADDRESS(5);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);
-	}
-	wi = PROTOLINE_WORD_ADDRESS(5);
-	for (i = 0; i < LONGSYNC; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// beginning of line
-	wi = PROTOLINE_WORD_ADDRESS(5) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < SHORTSYNCM; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
-							// middle of line
-
-	// And yet a short+long sync line, protoline 6
-	wi = PROTOLINE_WORD_ADDRESS(6);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);
-	}
-	wi = PROTOLINE_WORD_ADDRESS(6);
-	for (i = 0; i < SHORTSYNC; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// beginning of line
-	wi = PROTOLINE_WORD_ADDRESS(6) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < LONGSYNCM; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Long sync at the
-							// middle of line
-
-	// Just short sync line, the last one, protoline 7
-	wi = PROTOLINE_WORD_ADDRESS(7);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord(wi++, BLANK_LEVEL);
-	}
-	wi = PROTOLINE_WORD_ADDRESS(7);
-	for (i = 0; i < SHORTSYNC; i++)
-		SpiRamWriteWord(wi++, SYNC_LEVEL);	// Short sync at the
-							// beginning of line
-
-} else {	// interlace
-
-	// Protolines for progressive NTSC, here is not created a protoline
-	// corresponding to interlace protoline 2.
-	// Construct protoline 0
-	w = PROTOLINE_WORD_ADDRESS(0);	// Could be w=0 because proto 0 always 
-					// starts at address 0
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
-	}
-
-	// Set the color level to black
-	setBorder(0, 0);
-
-	// Set HSYNC
-	w = PROTOLINE_WORD_ADDRESS(0);
-	for (i = 0; i < SYNC; i++)
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	// Makes a black&white picture
-	// for (i=0; i<BURSTDUR; i++) SpiRamWriteWord(w++,BLANK_LEVEL);
-
-	// Now let's construct protoline 1, this will become our short+short
-	// VSYNC line
-	w = PROTOLINE_WORD_ADDRESS(1);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(1);
-	for (i = 0; i < SHORTSYNC; i++) {
-		// Short sync at the beginning of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(1) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < SHORTSYNCM; i++) {
-		// Short sync at the middle of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-
-	// Now let's construct protoline 2, this will become our long+long
-	// VSYNC line
-	w = PROTOLINE_WORD_ADDRESS(2);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(2);
-	for (i = 0; i < LONGSYNC; i++) {
-		// Long sync at the beginning of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(2) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < LONGSYNCM; i++) {
-		// Long sync at the middle of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-
-	// Now let's construct protoline 3, this will become our long+short
-	// VSYNC line
-	w = PROTOLINE_WORD_ADDRESS(3);
-	for (i = 0; i <= COLORCLKS_PER_LINE; i++) {
-		SpiRamWriteWord((uint16_t)w++, BLANK_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(3);
-	for (i = 0; i < LONGSYNC; i++) {
-		// Short sync at the beginning of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-	w = PROTOLINE_WORD_ADDRESS(3) + COLORCLKS_LINE_HALF;
-	for (i = 0; i < SHORTSYNCM; i++) {
-		// Long sync at the middle of line
-		SpiRamWriteWord((uint16_t)w++, SYNC_LEVEL);
-	}
-}
 
 	setColorSpace(0);
 
@@ -780,13 +780,13 @@ if (m_interlace) {
 		SetPicIndex(i + STARTLINE, piclineByteAddress(i), 0);
 		// All lines use picture line 0
 		// SetPicIndex(i+STARTLINE, PICLINE_BYTE_ADDRESS(0),0);
-if (m_interlace) {
-		// In interlaced case in both fields the same area is picture
-		// box area.
-		// XXX: In PAL example, it says "TOTAL_LINES/2" instead of FIELD1START
-		SetPicIndex(i + STARTLINE + FIELD1START, piclineByteAddress(i),
-			    0);
-}
+		if (m_interlace) {
+			// In interlaced case in both fields the same area is picture
+			// box area.
+			// XXX: In PAL example, it says "TOTAL_LINES/2" instead of FIELD1START
+			SetPicIndex(i + STARTLINE + FIELD1START, piclineByteAddress(i),
+				    0);
+		}
 	}
 
 	// Draw some color bars
