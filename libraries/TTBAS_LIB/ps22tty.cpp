@@ -263,12 +263,10 @@ STS_DONE:  // [ローマ字カタカナ変換 遷移完了]
 
 }
 
-// PS/2キーボードのセットアップ
-void setupPS2(uint8_t kb_type = false) {
-  // PS/2 キーボードの利用開始
-  // begin()の引数： CLKピンNo、DATAピンNo、LED制御あり/なし、USキーボードを利用する/しない
+// PS/2 keyboard setup
+void setupPS2(uint8_t kb_type = 0) {
+  // Initialize keyboard with LED control enabled
   if ( kb.begin(IRQpin, DataPin, true, kb_type) ) {
-    // 初期化に失敗時はエラーメッセージ表示
     //Serial.println("PS/2 Keyboard initialize error.");
   } 
   
