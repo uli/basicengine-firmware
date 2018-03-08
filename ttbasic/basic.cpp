@@ -5667,24 +5667,44 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
 void SMALL isysinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
-  uint8_t* tmp = (uint8_t*)malloc(1);
-  uint32_t hadr = (uint32_t)tmp;
-  free(tmp);
 
+  PRINT_P(ps,"Program size: ");
+  putnum(size_list, 0);
+  newline();
+
+  PRINTLN_P(v,"Variables:");
+  
+  PRINT_P(n1,"Numerical: ");
+  putnum(var.size(), 0);
+  PRINT_P(n2,", ");
+  putnum(num_arr.size(), 0);
+  PRINT_P(n3," arrays, ");
+  putnum(num_lst.size(), 0);
+  PRINTLN_P(n4,"lists");
+
+  PRINT_P(s1,"Strings: ");
+  putnum(svar.size(), 0);
+  PRINT_P(s2,", ");
+  putnum(str_arr.size(), 0);
+  PRINT_P(s3," arrays, ");
+  putnum(str_lst.size(), 0);
+  PRINTLN_P(s4,"lists");
+  
   // スタック領域先頭アドレスの表示
-  c_puts("stack top:");
+  PRINT_P(ts,"Top of stack: ");
   putHexnum(adr, 8);
   newline();
 
-  // ヒープ領域先頭アドレスの表示
-  c_puts("heap top :");
-  putHexnum(hadr, 8);
+  // SRAM未使用領域の表示
+  PRINT_P(sf,"SRAM Free: ");
+  putnum(umm_free_heap_size(), 0);
   newline();
 
-  // SRAM未使用領域の表示
-  c_puts("SRAM Free:");
-  putnum(adr-hadr, 0);
-  newline();
+  PRINT_P(vt,"Video timing: ");
+  putnum(vs23.cyclesPerFrame(), 0);
+  PRINT_P(vt1," cpf (");
+  putnum(vs23.cyclesPerFrameCalculated(), 0);
+  PRINTLN_P(vt2," nominal)");
 }
 
 static void GROUP(basic_core) do_goto(uint32_t line)
