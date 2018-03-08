@@ -2552,11 +2552,29 @@ void SMALL irenum() {
   }
 }
 
+void SMALL config_color()
+{
+  int32_t idx, r, g, b;
+  if (getParam(idx, 0, CONFIG_COLS - 1, I_COMMA)) return;
+  if (getParam(r, 0, 255, I_COMMA)) return;
+  if (getParam(g, 0, 255, I_COMMA)) return;
+  if (getParam(b, 0, 255, I_NONE)) return;
+  CONFIG.color_scheme[idx][0] = r;
+  CONFIG.color_scheme[idx][1] = g;
+  CONFIG.color_scheme[idx][2] = b;
+}
+
 // CONFIGコマンド
 // CONFIG 項目番号,設定値
 void SMALL iconfig() {
   int32_t itemNo;
   int32_t value;
+
+  if (*cip == I_COLOR) {
+    ++cip;
+    config_color();
+    return;
+  }
 
   if ( getParam(itemNo, I_COMMA) ) return;
   if ( getParam(value, I_NONE) ) return;
