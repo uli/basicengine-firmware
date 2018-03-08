@@ -659,63 +659,120 @@ if (m_interlace) {
 
 	// 12. Now set first eight lines of frame to point to NTSC sync lines
 	// Here the frame starts, lines 1 and 2
-if (m_interlace) {
-	for (i = 0; i < 3; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
-	}
-	// Lines 4 to 6
-	for (i = 3; i < 6; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
-	}
-	// Lines 7 to 9
-	for (i = 6; i < 9; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
-	}
-	// At this point, lines 0 to 8 are VSYNC lines and all other lines are 
-	// proto0.
+	if (m_interlace) {
+		if (m_pal) {
+			for (i=0; i<2; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
+			}
+			// Line 3
+			SetLineIndex(2, PROTOLINE_WORD_ADDRESS(5));
+			// Lines 4 and 5
+			for (i=3; i<5; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			// At this point, lines 0 to 4 are VSYNC lines and all other lines are proto0.
 
-	// Another batch of VSYNC lines is made between the two fields of
-	// interlaced NTSC picture.
-	// The lines start from 261.
-	SetLineIndex(FIELD1START, PROTOLINE_WORD_ADDRESS(1));
-	for (i = FIELD1START + 1; i < FIELD1START + 3; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
-	}
-	SetLineIndex(FIELD1START + 3, PROTOLINE_WORD_ADDRESS(6));
-	for (i = FIELD1START + 4; i < FIELD1START + 6; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
-	}
-	SetLineIndex(FIELD1START + 6, PROTOLINE_WORD_ADDRESS(5));
-	for (i = FIELD1START + 7; i < FIELD1START + 9; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
-	}
-	SetLineIndex(FIELD1START + 9, PROTOLINE_WORD_ADDRESS(7));
+			// Another batch of VSYNC lines is made between the two fields of interlaced PAL picture.
+			// The lines start from 310.
+			for (i=FIELD1START; i<FIELD1START+2; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			SetLineIndex(FIELD1START+2, PROTOLINE_WORD_ADDRESS(6));
+			for (i=FIELD1START+3; i<FIELD1START+5; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
+			}
+			for (i=FIELD1START+5; i<FIELD1START+7; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			SetLineIndex(FIELD1START+7, PROTOLINE_WORD_ADDRESS(7));
 
-	// Set empty lines with sync and color burst to beginning of both
-	// frames.
-	for (i = 9; i < FRONT_PORCH_LINES; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
-	}
-	for (i = FIELD1START + 10; i < FIELD1START + FRONT_PORCH_LINES; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
-	}
+			// Set empty lines with sync and color burst to beginning of both frames.
+			for (i=5; i<FRONT_PORCH_LINES; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
+			for (i=FIELD1START+8; i<FIELD1START+FRONT_PORCH_LINES+2; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
 
-} else {	// interlace
+			// These are the three last lines of the frame, lines 623-625
+			SetLineIndex(TOTAL_LINES-1-3, PROTOLINE_WORD_ADDRESS(1));
+			for (i=TOTAL_LINES-1-2; i<=TOTAL_LINES-1; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+		} else {
+			for (i = 0; i < 3; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			// Lines 4 to 6
+			for (i = 3; i < 6; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
+			}
+			// Lines 7 to 9
+			for (i = 6; i < 9; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			// At this point, lines 0 to 8 are VSYNC lines and all other lines are 
+			// proto0.
 
-	// For progressive NTSC case, this is quite a minimum case.  
-	// Here the frame starts, lines 1 to 3
-	for (i = 0; i < 3; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
+			// Another batch of VSYNC lines is made between the two fields of
+			// interlaced NTSC picture.
+			// The lines start from 261.
+			SetLineIndex(FIELD1START, PROTOLINE_WORD_ADDRESS(1));
+			for (i = FIELD1START + 1; i < FIELD1START + 3; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			SetLineIndex(FIELD1START + 3, PROTOLINE_WORD_ADDRESS(6));
+			for (i = FIELD1START + 4; i < FIELD1START + 6; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(4));
+			}
+			SetLineIndex(FIELD1START + 6, PROTOLINE_WORD_ADDRESS(5));
+			for (i = FIELD1START + 7; i < FIELD1START + 9; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(3));
+			}
+			SetLineIndex(FIELD1START + 9, PROTOLINE_WORD_ADDRESS(7));
+
+			// Set empty lines with sync and color burst to beginning of both
+			// frames.
+			for (i = 9; i < FRONT_PORCH_LINES; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
+			for (i = FIELD1START + 10; i < FIELD1START + FRONT_PORCH_LINES; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
+		}
+	} else {	// interlace
+		if (m_pal) {
+			// For progressive PAL case, this is quite a minimum case.		
+			// Here the frame starts, lines 1 and 2
+			for (i=0; i<2; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
+			// Line 3
+			SetLineIndex(2, PROTOLINE_WORD_ADDRESS(3));
+			// Lines 4 and 5
+			for (i=3; i<5; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
+			}
+			// These are three last lines of the frame, lines 310-312
+			for (i=TOTAL_LINES-3; i<TOTAL_LINES; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
+			}
+		} else {
+			// For progressive NTSC case, this is quite a minimum case.  
+			// Here the frame starts, lines 1 to 3
+			for (i = 0; i < 3; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
+			}
+			// Lines 4 to 6
+			for (i = 3; i < 6; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
+			}
+			// Lines 7 to 9
+			for (i = 6; i < 9; i++) {
+				SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
+			}
+		}
 	}
-	// Lines 4 to 6
-	for (i = 3; i < 6; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(2));
-	}
-	// Lines 7 to 9
-	for (i = 6; i < 9; i++) {
-		SetLineIndex(i, PROTOLINE_WORD_ADDRESS(1));
-	}
-}
 
 	// 13. Set pic line indexes to point to protoline 0 and their
 	// individual picture line.
@@ -726,6 +783,7 @@ if (m_interlace) {
 if (m_interlace) {
 		// In interlaced case in both fields the same area is picture
 		// box area.
+		// XXX: In PAL example, it says "TOTAL_LINES/2" instead of FIELD1START
 		SetPicIndex(i + STARTLINE + FIELD1START, piclineByteAddress(i),
 			    0);
 }
@@ -792,6 +850,7 @@ if (m_interlace) {
 	// so we hard-code it here.
 	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT * 263)
 			    | (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL - 1))
+			    | (m_pal ? VDCTRL2_PAL : 0)
 			    | (VDCTRL2_ENABLE_VIDEO));
 
 }
