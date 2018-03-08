@@ -871,15 +871,16 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
 void VS23S010::allocateSpritePattern(struct sprite_t *s)
 {
-  s->pattern = (struct sprite_line *)malloc(s->h * sizeof(struct sprite_line));
-  uint8_t *pix = (uint8_t *)malloc(s->w * s->h);
+  void *smem = malloc(s->h * sizeof(struct sprite_line) +	// meta data
+                      s->w * s->h);				// pixel data
+  s->pattern = (struct sprite_line *)smem;
+  uint8_t *pix = (uint8_t *)smem + s->h * sizeof(struct sprite_line);
   for (int i = 0; i < s->h; ++i)
     s->pattern[i].pixels = pix + i * s->w;
 }
 
 void VS23S010::freeSpritePattern(struct sprite_t *s)
 {
-  free(s->pattern[0].pixels);
   free(s->pattern);
   s->pattern = NULL;
 }
