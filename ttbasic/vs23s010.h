@@ -394,6 +394,7 @@ private:
     uint8_t m_colorspace;
     
     bool m_interlace;
+    bool m_pal;
     bool m_lowpass;
     inline uint16_t lowpass() {
       return m_lowpass ? BLOCKMVC1_PYF : 0;

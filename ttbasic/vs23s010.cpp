@@ -78,7 +78,8 @@ void VS23S010::begin(bool interlace, bool lowpass)
   m_bg_modified = true;
   m_vsync_enabled = false;
   m_interlace = interlace;
-  m_lowpass = lowpass;
+  m_pal = false;
+  m_lowpass = m_pal ? true : lowpass;
   resetSprites();
 
   m_bin.Init(0, 0);
