@@ -5770,9 +5770,9 @@ void SMALL isysinfo() {
 
   newline();
   PRINT_P(vt,"Video timing: ");
-  putnum(vs23.cyclesPerFrame(), 0);
+  putint(vs23.cyclesPerFrame(), 0);
   PRINT_P(vt1," cpf (");
-  putnum(vs23.cyclesPerFrameCalculated(), 0);
+  putint(vs23.cyclesPerFrameCalculated(), 0);
   PRINTLN_P(vt2," nominal)");
 }
 
