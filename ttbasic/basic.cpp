@@ -478,6 +478,17 @@ void putnum(num_t value, int8_t d, uint8_t devno) {
   c_puts(lbuf, devno);
 }
 
+#ifdef FLOAT_NUMS
+void putint(int value, int8_t d, uint8_t devno) {
+  char f[] = "%.d";
+  f[1] = '0' + d;
+  sprintf(lbuf, f, value);
+  c_puts(lbuf, devno);
+}
+#else
+#define putint putnum
+#endif
+
 // 16進数の出力
 // 引数
 //  value : 出力対象数値
