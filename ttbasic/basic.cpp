@@ -5738,6 +5738,14 @@ void SMALL isysinfo() {
   putnum(str_lst.size(), 0);
   PRINTLN_P(s4," lists");
   
+  newline();
+  PRINT_P(ls,"Loop stack:   ");
+  putnum(lstki, 0);
+  newline();
+  PRINT_P(rs,"Return stack: ");
+  putnum(gstki, 0);
+  newline();
+
   // スタック領域先頭アドレスの表示
   newline();
   PRINT_P(ts,"CPU stack: ");
