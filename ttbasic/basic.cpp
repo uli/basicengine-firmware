@@ -5719,26 +5719,28 @@ void SMALL isysinfo() {
   putnum(size_list, 0);
   newline();
 
+  newline();
   PRINTLN_P(v,"Variables:");
   
-  PRINT_P(n1,"Numerical: ");
+  PRINT_P(n1," Numerical: ");
   putnum(var.size(), 0);
   PRINT_P(n2,", ");
   putnum(num_arr.size(), 0);
   PRINT_P(n3," arrays, ");
   putnum(num_lst.size(), 0);
-  PRINTLN_P(n4,"lists");
+  PRINTLN_P(n4," lists");
 
-  PRINT_P(s1,"Strings: ");
+  PRINT_P(s1," Strings:   ");
   putnum(svar.size(), 0);
   PRINT_P(s2,", ");
   putnum(str_arr.size(), 0);
   PRINT_P(s3," arrays, ");
   putnum(str_lst.size(), 0);
-  PRINTLN_P(s4,"lists");
+  PRINTLN_P(s4," lists");
   
   // スタック領域先頭アドレスの表示
-  PRINT_P(ts,"Top of stack: ");
+  newline();
+  PRINT_P(ts,"CPU stack: ");
   putHexnum(adr, 8);
   newline();
 
@@ -5747,6 +5749,7 @@ void SMALL isysinfo() {
   putnum(umm_free_heap_size(), 0);
   newline();
 
+  newline();
   PRINT_P(vt,"Video timing: ");
   putnum(vs23.cyclesPerFrame(), 0);
   PRINT_P(vt1," cpf (");
