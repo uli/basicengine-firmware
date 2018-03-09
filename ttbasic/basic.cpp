@@ -6553,11 +6553,20 @@ uint8_t SMALL icom() {
   case I_FORMAT:     iformat(); break;
   case I_FLASH:      iflash(); break;
 
-  default:            // どれにも該当しない場合
+  default: {
     cip--;
     sc0.show_curs(0);
-    iexe();           // 中間コードを実行
+    unsigned char gstki_save = gstki;
+    unsigned char lstki_save = lstki;
+    unsigned char astk_num_i_save = astk_num_i;
+    unsigned char astk_str_i_save = astk_str_i;
+    iexe();
+    gstki = gstki_save;
+    lstki = lstki_save;
+    astk_num_i = astk_num_i_save;
+    astk_str_i = astk_str_i_save;
     break;
+  }
   }
   
   if (err) {
