@@ -2910,6 +2910,23 @@ void GROUP(basic_core) event_handle_play(int ch)
 
 void event_handle_pad();
 
+#define EVENT_PROFILE_SAMPLES 7
+uint32_t event_profile[EVENT_PROFILE_SAMPLES];
+
+void draw_profile(void)
+{
+  int x = 0;
+  int y = sc0.getGHeight() - 1;
+  int scale = 1000000/60/sc0.getGWidth() + 1;
+  for (int i = 1; i < EVENT_PROFILE_SAMPLES; ++i) {
+    int pixels = (event_profile[i] - event_profile[i-1]) / scale;
+    vs23.drawLine(x, y, x + pixels, y, i * 0x20 + 0x4);
+    x += pixels;
+  }
+  vs23.drawLine(x, y, sc0.getGWidth(), y, 0x04);
+}
+
+
 void ICACHE_RAM_ATTR pump_events(void)
 {
   static uint32_t last_frame;
@@ -2918,21 +2935,31 @@ void ICACHE_RAM_ATTR pump_events(void)
 
   last_frame = vs23.frame();
 
+  event_profile[0] = micros();
   vs23.updateBg();
+  event_profile[1] = micros();
   sound.pumpEvents();
+  event_profile[2] = micros();
   if (event_play_enabled) {
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
       if (sound.isFinished(i))
         event_handle_play(i);
     }
   }
+  event_profile[3] = micros();
 
   sc0.updateCursor();
+  event_profile[4] = micros();
   
   if (event_sprite_enabled)
     event_handle_sprite();
+  event_profile[5] = micros();
   if (event_pad_enabled)
     event_handle_pad();
+  event_profile[6] = micros();
+  
+  if (profile_enabled)
+    draw_profile();
 }
 
 // 時間待ち
