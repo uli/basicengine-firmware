@@ -4353,10 +4353,16 @@ void ipalette() {
 }
 
 void iborder() {
-  int32_t y, uv;
+  int32_t y, uv, x, w;
   if (getParam(uv, 0, 255, I_COMMA)) return;
   if (getParam(y, 0, 255 - 0x66, I_NONE)) return;
-  vs23.setBorder(y, uv);
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(x, 0, vs23.borderWidth(), I_COMMA)) return;
+    if (getParam(w, 0, vs23.borderWidth() - x, I_NONE)) return;
+    vs23.setBorder(y, uv, x, w);
+  } else
+    vs23.setBorder(y, uv);
 }
 
 void ibg() {
