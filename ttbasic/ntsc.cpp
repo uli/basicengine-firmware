@@ -347,12 +347,17 @@ void VS23S010::setColorSpace(uint8_t palette)
         m_colorspace = palette;
 }
 
-void VS23S010::setBorder(uint8_t y, uint8_t uv)
+void VS23S010::setBorder(uint8_t y, uint8_t uv, uint16_t dx, uint16_t width)
 {
-	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND;
-	for (int i = BLANKEND; i < FRPORCH; i++) {
+	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND + dx;
+	for (int i = 0; i < width; i++) {
 		SpiRamWriteWord((uint16_t)w++, (uv << 8) | (y + 0x66));
 	}
+}
+
+void VS23S010::setBorder(uint8_t y, uint8_t uv)
+{
+	setBorder(y, uv, 0, FRPORCH - BLANKEND);
 }
 
 void SMALL VS23S010::SpiRamVideoInit()

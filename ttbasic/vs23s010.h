@@ -292,6 +292,10 @@ class VS23S010 {
     void reset();
 
     void setBorder(uint8_t y, uint8_t uv);
+    void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w);
+    inline uint16_t borderWidth() {
+      return FRPORCH - BLANKEND;
+    }
 
     inline void forceRedraw() {
       m_bg_modified = true;
