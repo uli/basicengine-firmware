@@ -2916,14 +2916,20 @@ uint32_t event_profile[EVENT_PROFILE_SAMPLES];
 void draw_profile(void)
 {
   int x = 0;
-  int y = sc0.getGHeight() - 1;
-  int scale = 1000000/60/sc0.getGWidth() + 1;
+  int bw = vs23.borderWidth();
+  int scale = 1000000/60/bw + 1;
+
   for (int i = 1; i < EVENT_PROFILE_SAMPLES; ++i) {
     int pixels = (event_profile[i] - event_profile[i-1]) / scale;
-    vs23.drawLine(x, y, x + pixels, y, i * 0x20 + 0x4);
+    if (x + pixels > bw)
+      pixels = bw - x;
+    if (pixels > 0)
+      vs23.setBorder(0x70, (i * 0x4c) % 256, x, pixels);
     x += pixels;
   }
-  vs23.drawLine(x, y, sc0.getGWidth(), y, 0x04);
+
+  if (x < bw)
+    vs23.setBorder(0x20, 0, x, bw - x);
 }
 
 
