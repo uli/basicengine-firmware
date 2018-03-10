@@ -1333,7 +1333,6 @@ void SMALL iinput() {
       if (cip[-1] == I_VARARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
-        value = num_arr.var(index).var(idxs);
       } else if (cip[-1] == I_NUMLST) {
         if (get_array_dims(idxs) != 1) {
           err = ERR_SYNTAX;
@@ -1370,7 +1369,6 @@ void SMALL iinput() {
       if (cip[-1] == I_STRARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
-        value = num_arr.var(index).var(idxs);
       } else if (cip[-1] == I_STRLST) {
         if (get_array_dims(idxs) != 1) {
           err = ERR_SYNTAX;
