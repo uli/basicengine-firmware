@@ -1556,6 +1556,10 @@ void idim() {
   dims = get_array_dims(idxs);
   if (dims < 0)
     return;
+  if (dims == 0) {
+    err = ERR_SYNTAX;
+    return;
+  }
 
   // BASIC convention: reserve one more element than specified
   for (int i = 0; i < dims; ++i)
