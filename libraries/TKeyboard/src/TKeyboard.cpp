@@ -637,9 +637,9 @@ keyEvent TKeyboard::read()
         c.value = '~';
     } else if (kbd_layout == 2) {
       if (sts_state.kevt.SHIFT)
-        c.value = '^';
-      else
         c.value = '\xf8';
+      else
+        c.value = '^';
     }
     goto DONE;
   } else {
