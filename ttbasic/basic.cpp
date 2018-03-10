@@ -213,7 +213,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_OUTPUT_OPEN_DRAIN, I_OUTPUT, I_INPUT_PULLUP, I_INPUT_PULLDOWN, I_INPUT_ANALOG, I_INPUT_F, I_PWM,
   I_DIN, I_ANA, I_MAP, I_DMP,
-  I_LSB, I_MSB, I_EEPREAD, I_MPRG, I_MFNT,
+  I_LSB, I_MSB, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_GPEEK, I_GINP,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
@@ -231,7 +231,7 @@ const uint8_t i_sf[] __FLASH__  = {
   I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
-  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,I_EEPFORMAT, I_EEPWRITE,
+  I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
   I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL, I_MOD,
 };
@@ -3504,88 +3504,6 @@ void idate() {
 #endif
 }
 
-// EEPFORMAT コマンド
-void ieepformat() {
-#if 0
-  uint16_t Status;
-  Status = EEPROM.format();
-  if (Status != EEPROM_OK) {
-    switch(Status) {
-    case EEPROM_OUT_SIZE:      err = ERR_EEPROM_OUT_SIZE; break;
-    case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS; break;
-    case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT; break;
-    case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE; break;
-    case EEPROM_BAD_FLASH:
-    default:                   err = ERR_EEPROM_BAD_FLASH; break;
-    }
-  }
-#endif
-}
-
-// EEPWRITE アドレス,データ コマンド
-void ieepwrite() {
-#if 0
-  int32_t adr;     // 書込みアドレス
-  uint32_t data;   // データ
-  uint16_t Status;
-
-  if ( getParam(adr, 0, INT32_MAX, I_COMMA) ) return;  // アドレス
-  if ( getParam(data, I_NONE) ) return;         // データ
-
-  // データの書込み
-  Status = EEPROM.write(adr, data);
-  if (Status != EEPROM_OK) {
-    switch(Status) {
-    case EEPROM_OUT_SIZE:      err = ERR_EEPROM_OUT_SIZE; break;
-    case EEPROM_BAD_ADDRESS:   err = ERR_EEPROM_BAD_ADDRESS; break;
-    case EEPROM_NOT_INIT:      err = ERR_EEPROM_NOT_INIT; break;
-    case EEPROM_NO_VALID_PAGE: err = ERR_EEPROM_NO_VALID_PAGE; break;
-    case EEPROM_BAD_FLASH:
-    default:                   err = ERR_EEPROM_BAD_FLASH; break;
-    }
-  }
-#endif
-}
-
-// EEPREAD(アドレス) 関数
-int32_t ieepread(uint32_t addr) {
-#if 0
-  uint16_t Status;
-  uint32_t data;
-
-  if (addr < 0 || addr > INT32_MAX) {
-    err = ERR_VALUE;
-    return 0;
-  }
-
-  Status = EEPROM.read(addr, &data);
-  if (Status != EEPROM_OK) {
-    switch(Status) {
-    case EEPROM_OUT_SIZE:
-      err = ERR_EEPROM_OUT_SIZE;
-      break;
-    case EEPROM_BAD_ADDRESS:
-      //err = ERR_EEPROM_BAD_ADDRESS;
-      data = 0;   // 保存データが無い場合は0を返す
-      break;
-    case EEPROM_NOT_INIT:
-      err = ERR_EEPROM_NOT_INIT;
-      break;
-    case EEPROM_NO_VALID_PAGE:
-      err = ERR_EEPROM_NO_VALID_PAGE;
-      break;
-    case EEPROM_BAD_FLASH:
-    default:
-      err = ERR_EEPROM_BAD_FLASH;
-      break;
-    }
-  }
-  return data;
-#else
-  return 0;
-#endif
-}
-
 // ドットの描画 PSET X,Y,C
 void ipset() {
   int32_t x,y,c;
@@ -5048,12 +4966,6 @@ num_t GROUP(basic_core) ivalue() {
     if (checkClose()) break;
     value = analogRead(A0);    // 入力値取得
 #endif
-    break;
-
-  case I_EEPREAD: // EEPREAD(アドレス)の場合
-    value = getparam();
-    if (err) break;
-    value = ieepread(value);   // 入力値取得
     break;
 
   case I_SREAD: // SREAD() シリアルデータ1バイト受信

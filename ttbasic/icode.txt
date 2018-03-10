@@ -53,8 +53,6 @@ DATE	I_DATE		idate
 GETDATE	I_GETDATE	igetDate
 GETTIME	I_GETTIME	igetTime
 SETDATE	I_SETDATE	isetDate
-EEPFORMAT	I_EEPFORMAT	ieepformat
-EEPWRITE	I_EEPWRITE	ieepwrite
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
 MERGE	I_MERGE		imerge
@@ -195,7 +193,6 @@ GPIN	I_DIN		esyntax
 ANA	I_ANA		esyntax
 SREADY	I_SREADY	esyntax
 SREAD	I_SREAD		esyntax
-EEPREAD	I_EEPREAD	esyntax
 PAD	I_PAD		esyntax
 RGB	I_RGB		esyntax
 PCX	I_PCX		esyntax
