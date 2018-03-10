@@ -2596,7 +2596,7 @@ void SMALL iconfig() {
     if (value < 0 || value > 2)  {
       err = ERR_VALUE;
     } else {
-      sc0.reset_kbd(value);
+      kb.setLayout(value);
       CONFIG.KEYBOARD = value;
     }
     break;
