@@ -531,8 +531,8 @@ keyEvent TKeyboard::read()
     case PS2KEY_R_Shift:  sts_state.kevt.SHIFT = bk ? 0 : 1; break;
     case PS2KEY_L_Ctrl:
     case PS2KEY_R_Ctrl:   sts_state.kevt.CTRL = bk ? 0 : 1;  break;
-    case PS2KEY_L_Alt:
-    case PS2KEY_R_Alt:    sts_state.kevt.ALT = bk ? 0 : 1; break;
+    case PS2KEY_L_Alt:	  sts_state.kevt.ALT = bk ? 0 : 1; break;
+    case PS2KEY_R_Alt:    sts_state.kevt.ALTGR = bk ? 0 : 1; break;
     case PS2KEY_L_GUI:    // Windows keys
     case PS2KEY_R_GUI:    sts_state.kevt.GUI = bk ? 0 : 1;  break;
 

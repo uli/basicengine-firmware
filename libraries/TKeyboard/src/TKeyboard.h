@@ -189,8 +189,9 @@ typedef struct  {
     uint8_t SHIFT : 1; // SHIFTあり
     uint8_t CTRL  : 1; // CTRLあり
     uint8_t ALT   : 1; // ALTあり
+    uint8_t ALTGR : 1;
     uint8_t GUI   : 1; // GUIあり
-    uint8_t dumy  : 2; // ダミー
+    uint8_t dumy  : 1; // ダミー
 } keyEvent;
 
 // キーボードイベント共用体
