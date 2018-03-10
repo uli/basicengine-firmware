@@ -248,7 +248,7 @@ uint8_t tTVscreen::edit() {
       case KEY_CR:         // [Enter]キー
         return enter_text() + 1;
       case KEY_SHIFT_CR:
-        ch = enter_text();
+        enter_text();
         Insert_newLine(pos_y);
         return 1;
 
