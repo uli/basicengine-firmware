@@ -142,6 +142,16 @@ static const uint8_t tenkey[][3] PROGMEM = {
   { '/',  '/', 0 },
 };
 
+void TKeyboard::setLayout(uint8_t layout)
+{
+  kbd_layout = layout;
+  switch (layout) {
+  case 0:	key_ascii = key_ascii_jp; break;
+  case 1:	key_ascii = key_ascii_us; break;
+  case 2:	key_ascii = key_ascii_de; break;
+  default:	key_ascii = key_ascii_us; break;
+  }
+}
 // Start of use (initialization)
 // Arguments
 //   clk:	PS/2 CLK
@@ -152,14 +162,7 @@ static const uint8_t tenkey[][3] PROGMEM = {
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout)
 {
   uint8_t rc;
-  kbd_layout = layout;
-  switch (kbd_layout) {
-  case 0:	key_ascii = key_ascii_jp; break;
-  case 1:	key_ascii = key_ascii_us; break;
-  case 2:	key_ascii = key_ascii_de; break;
-  default:	key_ascii = key_ascii_us; break;
-  }
-
+  setLayout(layout);
   memset(m_key_state, 0, sizeof(m_key_state));
 
   _flgLED = flgLED;    // Availability of LED control

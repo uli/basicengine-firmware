@@ -211,6 +211,7 @@ class TKeyboard {
   public:
     // キーボード利用開始
     static uint8_t begin(uint8_t clk, uint8_t dat, uint8_t flgLED=false, uint8_t layout = 0);
+    static void setLayout(uint8_t layout);
    
     // キーボード利用終了
     static void end();
