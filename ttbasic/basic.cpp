@@ -6678,6 +6678,7 @@ void SMALL basic() {
   // Epigram
   sc0.setFont(fonts[1]);
   sc0.setColor(vs23.colorFromRgb(72,72,72), COL(BG));
+  srand(ESP.getCycleCount());
   {
     char epi[80];
     strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
