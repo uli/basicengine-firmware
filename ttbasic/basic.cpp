@@ -76,7 +76,7 @@ bool restore_text_window = false;
 sdfiles bfs;
 
 #define MAX_USER_FILES 16
-Unifile user_files[MAX_USER_FILES];
+Unifile *user_files[MAX_USER_FILES];
 
 #define COL_BG		0
 #define COL_FG		1
@@ -1306,7 +1306,7 @@ void SMALL iinput() {
     cip++;
     if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
       return;
-    if (!user_files[filenum]) {
+    if (!user_files[filenum] || !*user_files[filenum]) {
       err = ERR_FILE_NOT_OPEN;
       return;
     }
@@ -1382,7 +1382,7 @@ void SMALL iinput() {
       if (filenum >= 0) {
         int c;
         str_value = "";
-        while ((c = user_files[filenum].read()) >= 0 && c != '\n')
+        while ((c = user_files[filenum]->read()) >= 0 && c != '\n')
           str_value += c;
       } else {      
         str_value = getstr();
@@ -3837,11 +3837,11 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       cip++;
       if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
         return;
-      if (!user_files[filenum]) {
+      if (!user_files[filenum] || !*user_files[filenum]) {
         err = ERR_FILE_NOT_OPEN;
         return;
       }
-      bfs.setTempFile(user_files[filenum]);
+      bfs.setTempFile(*user_files[filenum]);
       devno = 4;
       break;
       
@@ -6360,9 +6360,13 @@ void iopen() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
   
-  user_files[filenum] = Unifile::open(filename, flags);
-  if (!user_files[filenum])
+  Unifile f = Unifile::open(filename, flags);
+  if (!f)
     err = ERR_FILE_OPEN;
+  else {
+    user_files[filenum] = new Unifile();
+    *user_files[filenum] = f;
+  }
 }
 
 void iclose() {
@@ -6374,10 +6378,13 @@ void iclose() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
 
-  if (!user_files[filenum])
+  if (!user_files[filenum] || !*user_files[filenum])
     err = ERR_FILE_NOT_OPEN;
-  else
-    user_files[filenum].close();
+  else {
+    user_files[filenum]->close();
+    delete user_files[filenum];
+    user_files[filenum] = NULL;
+  }
 }
 
 void iprofile() {
@@ -6644,7 +6651,7 @@ void SMALL basic() {
 
   size_list = 0;
   listbuf = NULL;
-
+  memset(user_files, 0, sizeof(user_files));
 
   // Initialize execution environment
   inew();
