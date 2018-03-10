@@ -22,7 +22,7 @@ const int DataPin = PS2DAT;  // Data(D-)
 TKeyboard kb;               // PS/2キーボードドライバ
 uint8_t  flgKana = false;    // カナ入力モード
 struct   ring_buffer kbuf;   // キーバッファ
-uint8_t  kdata[16];  
+uint16_t  kdata[16];  
 
 #define RK_ENTRY_NUM (sizeof(RomaKama)/sizeof(RomaKama[0]))
 
@@ -270,7 +270,7 @@ void setupPS2(uint8_t kb_type = 0) {
     //Serial.println("PS/2 Keyboard initialize error.");
   } 
   
-  rb_init(&kbuf, sizeof(kdata), kdata);
+  rb_init(&kbuf, sizeof(kdata)/sizeof(kdata[0]), kdata);
   //kb.setPriority(0);
 }
 
@@ -280,8 +280,8 @@ void endPS2() {
 
 
 // PS/2キーボード入力処理
-uint8_t cnv2tty(keyEvent k) {
-  int16_t rc = 0;
+uint16_t cnv2tty(keyEvent k) {
+  uint16_t rc = 0;
   if (!k.code || k.BREAK)
       return 0;
 
@@ -361,9 +361,9 @@ uint8_t cnv2tty(keyEvent k) {
 keyEvent ps22tty_last_key;
 
 // キー入力文字の取得
-uint8_t ICACHE_RAM_ATTR ps2read() {
+uint16_t ICACHE_RAM_ATTR ps2read() {
   char* ptr;
-  char c;
+  uint16_t c;
   uint8_t len;
   
   if (pb.available() && (ps22tty_last_key = kb.read(), ps22tty_last_key.code))
@@ -411,9 +411,9 @@ uint8_t ICACHE_RAM_ATTR ps2read() {
   return c;
 }
 
-uint8_t ICACHE_RAM_ATTR ps2peek()
+uint16_t ICACHE_RAM_ATTR ps2peek()
 {
-  char c;
+  uint16_t c;
   if (ps2kbhit()) {
     c = ps2read();
     if (c) {

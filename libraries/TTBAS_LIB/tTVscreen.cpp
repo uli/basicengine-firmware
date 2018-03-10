@@ -168,8 +168,8 @@ bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 
 void pump_events(void);
 // 文字入力
-uint8_t tTVscreen::get_ch() {
-  char c;
+uint16_t tTVscreen::get_ch() {
+  uint16_t c;
   while(1) {
     pump_events();
 #ifdef DEBUG
@@ -232,7 +232,7 @@ void tTVscreen::setColor(uint16_t fc, uint16_t bc)
 
 // スクリーン編集
 uint8_t tTVscreen::edit() {
-  uint8_t ch;  // 入力文字
+  uint16_t ch;  // 入力文字
   keyEvent k;
 
   do {

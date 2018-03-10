@@ -74,7 +74,6 @@ protected:
     virtual void show_curs(uint8_t flg) = 0;                 // カーソルの表示/非表示
     virtual void draw_cls_curs() = 0;                        // カーソルの消去
     virtual void putch(uint8_t c);                       // 文字の出力
-    virtual uint8_t get_ch() = 0;                            // 文字の取得
     virtual bool isKeyIn() = 0;                           // キー入力チェック
 	virtual void setColor(uint16_t fc, uint16_t bc) {};  // 文字色指定
 	virtual void setAttr(uint16_t attr) {};              // 文字属性
