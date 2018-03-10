@@ -116,7 +116,7 @@ void VS23S010::reset()
   m_bg_modified = true;
   resetSprites();
   resetBgs();
-  m_bin.Init(m_current_mode->x, m_current_mode->y);
+  m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);
   setColorSpace(0);
 }
 
