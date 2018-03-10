@@ -229,7 +229,7 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
         case 3:
         case 4:
         {
-            dr_uint8 *pRow_ = (dr_uint8 *)malloc(stride);
+            dr_uint8 *pRow_ = (dr_uint8 *)calloc(stride, 1);
             if (!pRow_)
               return DR_FALSE;
 
