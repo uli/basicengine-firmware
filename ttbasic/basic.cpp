@@ -6679,11 +6679,7 @@ void SMALL basic() {
   sc0.setFont(fonts[1]);
   sc0.setColor(vs23.colorFromRgb(72,72,72), COL(BG));
   srand(ESP.getCycleCount());
-  {
-    char epi[80];
-    strcpy_P(epi, epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
-    c_puts(epi);
-  }
+  c_puts_P(epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
   newline();
 
   // Banner
