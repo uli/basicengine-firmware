@@ -499,7 +499,21 @@ keyEvent TKeyboard::read()
     m_key_state[code/8] |= 1 << code % 8;
 
   // Normal key
-  if (code >= PS2KEY_Space && code <= PS2KEY_Z) {
+  if (kbd_layout == 2 && sts_state.kevt.ALTGR && code != PS2KEY_R_Alt) {
+    switch (code) {
+    case PS2KEY_Q:	c.value = '@'; break;
+    case PS2KEY_2:	c.value = '\xfd'; break;
+    case PS2KEY_7:	c.value = '{'; break;
+    case PS2KEY_8:	c.value = '['; break;
+    case PS2KEY_9:	c.value = ']'; break;
+    case PS2KEY_0:	c.value = '}'; break;
+    case PS2KEY_minus:	c.value = '\\'; break;
+    case PS2KEY_L_brackets: c.value = '~'; break;
+    case PS2KEY_Pipe2:	c.value = '|'; break;
+    default:		c.value = 0; break;
+    }
+    goto DONE;
+  } else if (code >= PS2KEY_Space && code <= PS2KEY_Z) {
     // Keys affected by the state of CapsLock (A-Z)
     if (code >= PS2KEY_A && code <= PS2KEY_Z)
       c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][((sts_CapsLock&1)&&sts_state.kevt.SHIFT)||(!(sts_CapsLock&1)&&!sts_state.kevt.SHIFT) ? 0 : 1]);
