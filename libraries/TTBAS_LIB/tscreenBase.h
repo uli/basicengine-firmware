@@ -15,23 +15,23 @@
 #define KEY_CR        '\r'   // [Enter] key
 #define KEY_BACKSPACE '\b'   // [Backspace] key
 #define KEY_ESCAPE    0x1B   // [ESC] key
-#define KEY_DOWN      0x80   // [↓] key
-#define KEY_UP        0x81   // [↑] key
-#define KEY_LEFT      0x82   // [←] key
-#define KEY_RIGHT     0x83   // [→] key
-#define KEY_HOME      0x84   // [Home] key
-#define KEY_DC        0x85   // [Delete] key
-#define KEY_IC        0x86   // [Insert] key
-#define KEY_NPAGE     0x87   // [PageDown] key
-#define KEY_PPAGE     0x88   // [PageUp] key
-#define KEY_END       0x89   // [End] key
-#define KEY_BTAB      0x8A   // [Back tab] key
-#define KEY_F1                  0x8B            // Function key F1
+#define KEY_DOWN      0x180   // [↓] key
+#define KEY_UP        0x181   // [↑] key
+#define KEY_LEFT      0x182   // [←] key
+#define KEY_RIGHT     0x183   // [→] key
+#define KEY_HOME      0x184   // [Home] key
+#define KEY_DC        0x185   // [Delete] key
+#define KEY_IC        0x186   // [Insert] key
+#define KEY_NPAGE     0x187   // [PageDown] key
+#define KEY_PPAGE     0x188   // [PageUp] key
+#define KEY_END       0x189   // [End] key
+#define KEY_BTAB      0x18A   // [Back tab] key
+#define KEY_F1                  0x18B            // Function key F1
 #define KEY_F(n)                (KEY_F1+(n)-1)  // Space for additional 12 function keys
 
 #define KEY_SHIFT_DOWN	KEY_DOWN | 0x40
 #define KEY_SHIFT_UP	KEY_UP | 0x40
-#define KEY_SHIFT_CR	0xfe
+#define KEY_SHIFT_CR	0x1fe
 
 // コントロールキーコードの定義
 #define SC_KEY_CTRL_L   12  // 画面を消去
