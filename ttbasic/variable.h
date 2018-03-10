@@ -287,7 +287,7 @@ public:
       }
     }
 
-    m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> **));
+    m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> *));
     if (!m_var)
       return true;
     for (int i = m_size; i < count; ++i) {
