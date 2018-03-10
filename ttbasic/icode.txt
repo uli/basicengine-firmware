@@ -68,7 +68,6 @@ CALL	I_CALL		icall
 LRUN	I_LRUN		ilrun_
 FILES	I_FILES		ifiles
 CONFIG	I_CONFIG	iconfig
-SAVECONFIG	I_SAVECONFIG	isaveconfig
 SYSINFO	I_SYSINFO	isysinfo
 SCREEN	I_SCREEN	iscreen
 WINDOW	I_WINDOW	iwindow

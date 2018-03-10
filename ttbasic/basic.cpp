@@ -2634,6 +2634,10 @@ void isave() {
     ++cip;
     isavepcx();
     return;
+  } else if (*cip == I_CONFIG) {
+    ++cip;
+    isaveconfig();
+    return;
   }
 
   if(!(fname = getParamFname())) {
