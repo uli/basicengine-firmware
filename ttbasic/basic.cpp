@@ -6554,6 +6554,7 @@ void SMALL basic() {
   char* textline;    // input line
   uint8_t rc;
 
+  SPIFFS.begin(false);
   loadConfig();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass);
