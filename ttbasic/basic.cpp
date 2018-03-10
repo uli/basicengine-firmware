@@ -4826,7 +4826,7 @@ static const uint8_t vs23_read_regs[] PROGMEM = {
 
 // Get value
 num_t GROUP(basic_core) ivalue() {
-  num_t value, value2; // 値
+  num_t value = 0, value2; // 値
   uint8_t i;   // 文字数
   int dims;
   int idxs[MAX_ARRAY_DIMS];
