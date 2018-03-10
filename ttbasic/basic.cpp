@@ -6227,6 +6227,8 @@ void ilrun_() {
     ildbmp();
   } else if (*cip == I_BG) {
     iloadbg();
+  } else if (*cip == I_CONFIG) {
+    iloadconfig();
   } else
     ilrun();
 }
