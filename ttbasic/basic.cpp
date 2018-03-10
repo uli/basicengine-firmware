@@ -4367,9 +4367,9 @@ void iloadbg() {
 
   cip++;
 
-  if (!(filename = getParamFname()))
+  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA))
     return;
-  if (getParam(bg, 0, VS23_MAX_BG, I_TO))
+  if (!(filename = getParamFname()))
     return;
   
   Unifile f = Unifile::open(filename, FILE_READ);
