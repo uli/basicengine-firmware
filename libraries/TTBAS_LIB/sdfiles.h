@@ -62,48 +62,26 @@ public:
 
   Unifile() {
     m_type = INVALID;
-    m_sd_file = NULL;
   }
-
+  
   Unifile(File f) {
-    m_sd_file = NULL;
-    newSdFile();
-    *m_sd_file = f;
+    m_sd_file = f;
+    m_type = SD;
   }  
   
   Unifile(fs::File f) {
-    m_sd_file = NULL;
-    newSpiffsFile();
-    *m_fs_file = f;
+    m_fs_file = f;
+    m_type = FS;
   }
 
   Unifile(fs::Dir f) {
-    m_sd_file = NULL;
-    newSpiffsDir();
-    *m_fs_dir = f;
-  }
-
-  void newSdFile() {
-    cullOldFile();
-    m_type = SD;
-    m_sd_file = new File();
-  }
-  
-  void newSpiffsFile() {
-    cullOldFile();
-    m_type = FS;
-    m_fs_file = new fs::File();
-  }
-
-  void newSpiffsDir() {
-    cullOldFile();
+    m_fs_dir = f;
     m_type = FS_DIR;
-    m_fs_dir = new fs::Dir();
   }
 
   bool isDirectory() {
     switch (m_type) {
-    case SD: { SD_BEGIN(); bool ret = m_sd_file->isDirectory(); SD_END(); return ret; }
+    case SD: { SD_BEGIN(); bool ret = m_sd_file.isDirectory(); SD_END(); return ret; }
     case FS: return false; /* no directories in SPIFFS */
     default: return false;
     }
@@ -112,55 +90,55 @@ public:
   void close() {
     switch (m_type) {
     case SD_DIR:
-    case SD: { SD_BEGIN(); m_sd_file->close(); SD_END(); return; }
-    case FS: { noInterrupts(); m_fs_file->close(); interrupts(); return; }
+    case SD: { SD_BEGIN(); m_sd_file.close(); SD_END(); return; }
+    case FS: { noInterrupts(); m_fs_file.close(); interrupts(); return; }
     default: return;
     }
   }
 
   ssize_t write(char *s) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file->write(s); SD_END(); return ret; }
-    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write((uint8_t *)s, strlen(s)); interrupts(); return ret; }
+    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file.write(s); SD_END(); return ret; }
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file.write((uint8_t *)s, strlen(s)); interrupts(); return ret; }
     default: return -1;
     }
   }
 
   ssize_t write(char *s, size_t sz) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file->write(s, sz); SD_END(); return ret; }
-    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write((uint8_t *)s, sz); interrupts(); return ret; }
+    case SD: { SD_BEGIN(); ssize_t ret = m_sd_file.write(s, sz); SD_END(); return ret; }
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file.write((uint8_t *)s, sz); interrupts(); return ret; }
     default: return -1;
     }
   }
 
   ssize_t write(uint8_t c) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->write(c); SD_END(); return ret; }
-    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write(c); interrupts(); return ret; }
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file.write(c); SD_END(); return ret; }
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file.write(c); interrupts(); return ret; }
     default: return -1;
     }
   }
 
   int read() {
     switch (m_type) {
-    case SD: { SD_BEGIN(); int ret = m_sd_file->read(); SD_END(); return ret; }
-    case FS: return m_fs_file->read();
+    case SD: { SD_BEGIN(); int ret = m_sd_file.read(); SD_END(); return ret; }
+    case FS: return m_fs_file.read();
     default: return -1;
     }
   }
 
   ssize_t read(char* buf, size_t size) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->read(buf, size); SD_END(); return ret; }
-    case FS: return m_fs_file->read((uint8_t *)buf, size);
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file.read(buf, size); SD_END(); return ret; }
+    case FS: return m_fs_file.read((uint8_t *)buf, size);
     default: return -1;
     }
   }
 
   ssize_t fgets(char* str, int num) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->fgets(str, num); SD_END(); return ret; }
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file.fgets(str, num); SD_END(); return ret; }
     case FS: return -1;
     default: return -1;
     }
@@ -168,24 +146,24 @@ public:
 
   uint32_t fileSize() {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->fileSize(); SD_END(); return ret; }
-    case FS: return m_fs_file->size();
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file.fileSize(); SD_END(); return ret; }
+    case FS: return m_fs_file.size();
     default: return -1;
     }
   }
 
   bool seekSet(size_t pos) {
     switch (m_type) {
-    case SD: { SD_BEGIN(); bool ret = m_sd_file->seekSet(pos); SD_END(); return ret; }
-    case FS: return m_fs_file->seek(pos, fs::SeekSet);
+    case SD: { SD_BEGIN(); bool ret = m_sd_file.seekSet(pos); SD_END(); return ret; }
+    case FS: return m_fs_file.seek(pos, fs::SeekSet);
     default: return false;
     }
   }
 
   size_t position() {
     switch (m_type) {
-    case SD: { SD_BEGIN(); size_t ret = m_sd_file->position(); SD_END(); return ret; }
-    case FS: return m_fs_file->position();
+    case SD: { SD_BEGIN(); size_t ret = m_sd_file.position(); SD_END(); return ret; }
+    case FS: return m_fs_file.position();
     default: return -1;
     }
   }
@@ -196,7 +174,7 @@ public:
     switch (m_type) {
     case SD_DIR:
       SD_BEGIN();
-      sd_entry = m_sd_file->openNextFile();
+      sd_entry = m_sd_file.openNextFile();
       if (sd_entry) {
         char name[32];
         sd_entry.getName(name, 32);
@@ -207,10 +185,10 @@ public:
       SD_END();
       break;
     case FS_DIR:
-      if (m_fs_dir->next()) {
-        e.name = m_fs_dir->fileName().c_str();
+      if (m_fs_dir.next()) {
+        e.name = m_fs_dir.fileName().c_str();
         e.is_directory = false;
-        e.size = m_fs_dir->fileSize();
+        e.size = m_fs_dir.fileSize();
       }
       break;
     default:
@@ -222,8 +200,8 @@ public:
   operator bool() {
     switch (m_type) {
     case SD_DIR:
-    case SD: return (bool)*m_sd_file;
-    case FS: return (bool)*m_fs_file;
+    case SD: return (bool)m_sd_file;
+    case FS: return (bool)m_fs_file;
     case FS_DIR: return true;
     default: return false;
     }
@@ -240,14 +218,20 @@ public:
       case FILE_READ:		fl = "r"; break;
       default:			return Unifile();
       }
-      Unifile f(SPIFFS.open(spiffs_name.c_str(), fl));
-      return f;
+      fs::File f = SPIFFS.open(spiffs_name.c_str(), fl);
+      if (f)
+        return Unifile(f);
+      else
+        return Unifile();
     } else {
       SD_BEGIN();
       UnifileString sdfat_name = abs_name.substring(SD_PREFIX_LEN, 256);
-      Unifile f(::SD.open(sdfat_name.c_str(), flags));
+      File f = ::SD.open(sdfat_name.c_str(), flags);
       SD_END();
-      return f;
+      if (f)
+        return Unifile(f);
+      else
+        return Unifile();
     }
   }
   
@@ -323,40 +307,27 @@ public:
   static Unifile openDir(const char *p) {
     UnifileString abs_path = path(p);
     if (isSPIFFS(abs_path)) {
-      Unifile f(SPIFFS.openDir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
-      return f;
+      return Unifile(SPIFFS.openDir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
     } else {
-      Unifile f(::SD.open(abs_path == SD_PREFIX ? "/" : abs_path.c_str() + SD_PREFIX_LEN));
       SD_BEGIN();
-      if (f && !f.m_sd_file->isDir()) {
+      File f = ::SD.open(abs_path == SD_PREFIX ? "/" : abs_path.c_str() + SD_PREFIX_LEN);
+      if (!f || !f.isDir()) {
         f.close();
-        f.m_type = INVALID;
-      } else {
-        f.m_sd_file->rewindDirectory();
-        f.m_type = SD_DIR;
+        SD_END();
+        return Unifile();
       }
+      f.rewindDirectory();
+      Unifile uf(f);
+      uf.m_type = SD_DIR;
       SD_END();
-      return f;
+      return uf;
     }
   }
 
 private:
-  void cullOldFile() {
-    if (m_sd_file) {
-      if (m_type == SD)
-        delete m_sd_file;
-      else
-        delete m_fs_file;
-    }
-    m_type = INVALID;
-    m_sd_file = NULL;
-  }
-    
-  union {
-    File *m_sd_file;
-    fs::File *m_fs_file;
-    fs::Dir *m_fs_dir;
-  };
+  File m_sd_file;
+  fs::File m_fs_file;
+  fs::Dir m_fs_dir;
   uni_type m_type;
 
   static UnifileString m_cwd;
