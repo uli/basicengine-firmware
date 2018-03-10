@@ -277,7 +277,6 @@ void VS23S010::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 	int deltax, deltay, offset;
 	uint16_t i;
 
-	offset = 0;
 	deltax = x2 - x1;
 	deltay = y2 - y1;
 
