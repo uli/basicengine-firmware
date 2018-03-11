@@ -3816,7 +3816,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 	return;
     } else {
       if (!end_of_statement()) {
-	err = ERR_SYNTAX;
+        SYNTAX_T("separator");
 	newline(devno);
 	return;
       }
