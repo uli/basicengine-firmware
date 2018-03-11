@@ -4302,7 +4302,7 @@ void iborder() {
 
 void ibg() {
   int32_t m;
-  int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh;
+  int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh, prio;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4351,6 +4351,10 @@ void ibg() {
     break;
   case I_OFF:
     vs23.disableBg(m);
+    break;
+  case I_PRIO:
+    if (getParam(prio, 0, VS23_MAX_PRIO, I_NONE)) return;
+    vs23.setBgPriority(m, prio);
     break;
   default:
     cip--;
