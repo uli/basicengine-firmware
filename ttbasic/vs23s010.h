@@ -213,6 +213,11 @@ class VS23S010 {
       bg->pat_w = pat_w;
       m_bg_modified = true;
     }
+    
+    inline void setBgPriority(uint8_t bg_idx, uint8_t prio) {
+      m_bg[bg_idx].prio = prio;
+      m_bg_modified = true;
+    }
 
     inline uint8_t bgTileSizeX(uint8_t bg) {
       return m_bg[bg].tile_size_x;
@@ -277,6 +282,11 @@ class VS23S010 {
     }
     inline bool spriteEnabled(uint8_t num) {
       return m_sprite[num].enabled;
+    }
+
+    inline void setSpritePriority(uint8_t num, uint8_t prio) {
+      m_sprite[num].prio = prio;
+      m_bg_modified = true;
     }
 
     void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
