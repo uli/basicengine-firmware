@@ -1550,7 +1550,7 @@ void idim() {
   uint8_t index;
 
   if (*cip != I_VARARR && *cip != I_STRARR) {
-    err = ERR_SYNTAX;
+    SYNTAX_T("array variable");
     return;
   }
   is_string = *cip == I_STRARR;
@@ -1562,7 +1562,7 @@ void idim() {
   if (dims < 0)
     return;
   if (dims == 0) {
-    err = ERR_SYNTAX;
+    SYNTAX_T("at least one dimension");
     return;
   }
 
