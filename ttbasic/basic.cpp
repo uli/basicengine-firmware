@@ -2168,7 +2168,7 @@ void iread() {
     }
 
   default:
-    err = ERR_SYNTAX;
+    SYNTAX_T("variable");
     break;
   }
 }
