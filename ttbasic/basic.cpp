@@ -6289,12 +6289,12 @@ void iopen() {
     case I_OUTPUT:	flags = FILE_OVERWRITE; break;
     case I_INPUT:	flags = FILE_READ; break;
     case I_APPEND:	flags = FILE_WRITE; break;
-    default:		err = ERR_SYNTAX; return;
+    default:		SYNTAX_T("file mode"); return;
     }
   }
   
   if (*cip++ != I_AS) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_AS);
     return;
   }
   if (*cip == I_SHARP)
