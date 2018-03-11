@@ -5284,7 +5284,7 @@ BString ilrstr(bool right) {
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_COMMA);
     goto out;
   }
 
@@ -5308,7 +5308,7 @@ BString imidstr() {
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_COMMA);
     goto out;
   }
 
