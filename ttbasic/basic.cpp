@@ -4996,6 +4996,7 @@ num_t GROUP(basic_core) ivalue() {
     switch (a) {
     case 0:	value = sc0.getGWidth(); break;
     case 1:	value = sc0.getGHeight(); break;
+    case 2:	value = vs23.lastLine(); break;
     default:	err = ERR_VALUE; break;
     }
     break;
