@@ -211,13 +211,8 @@ UP	I_UP		esyntax
 RIGHT	I_RIGHT		esyntax
 LEFT	I_LEFT		esyntax
 USING	I_USING		esyntax
-OUTPUT_OD	I_OUTPUT_OPEN_DRAIN	esyntax
 OUTPUT	I_OUTPUT	esyntax
-INPUT_PU	I_INPUT_PULLUP		esyntax
-INPUT_PD	I_INPUT_PULLDOWN	esyntax
 ANALOG	I_INPUT_ANALOG	esyntax
-INPUT_FL	I_INPUT_F		esyntax
-PWM	I_PWM		esyntax
 TILES	I_TILES		esyntax
 PATTERN I_PATTERN	esyntax
 FRAME	I_FRAME		esyntax
