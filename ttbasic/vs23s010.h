@@ -37,8 +37,8 @@ struct vs23_mode_t {
 
 #define VS23_MAX_BG	4
 #define VS23_MAX_SPRITES 32
-#define VS23_MAX_SPRITE_W 16
-#define VS23_MAX_SPRITE_H 16
+#define VS23_MAX_SPRITE_W 32
+#define VS23_MAX_SPRITE_H 32
 
 #define VS23_NUM_COLORSPACES	2
 
