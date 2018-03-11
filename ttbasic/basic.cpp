@@ -4653,7 +4653,7 @@ uint8_t SMALL ilrun() {
       return 0;
     }
   } else {
-    err = ERR_SYNTAX;
+    SYNTAX_T("file name");
     return 0;
   }
 
