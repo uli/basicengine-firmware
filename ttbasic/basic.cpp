@@ -5810,7 +5810,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        err = ERR_SYNTAX;
+        SYNTAX(I_CALL);
         return;
       }
       event_sprite_enabled = true;
@@ -5828,7 +5828,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        err = ERR_SYNTAX;
+        SYNTAX(I_CALL);
         return;
       }
       event_play_enabled = true;
@@ -5847,7 +5847,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        err = ERR_SYNTAX;
+        SYNTAX(I_CALL);
         return;
       }
       event_pad_enabled = true;
@@ -5856,7 +5856,7 @@ void GROUP(basic_core) ion()
   } else if (*cip == I_ERROR) {
     ++cip;
     if (*cip++ != I_GOTO) {
-      err = ERR_SYNTAX;
+      SYNTAX(I_GOTO);
       return;
     }
     event_error_enabled = true;
@@ -5870,7 +5870,7 @@ void GROUP(basic_core) ion()
       ++cip;
       on_go(true, cas);
     } else {
-      err = ERR_SYNTAX;
+      SYNTAX_T("GOTO or GOSUB");
     }
   }
 }
