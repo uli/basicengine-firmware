@@ -1320,7 +1320,7 @@ void SMALL iinput() {
     c_puts(istrexp().c_str());
 
     if (*cip != I_SEMI) {
-      err = ERR_SYNTAX;
+      SYNTAX(I_SEMI);
       goto DONE;
     }
     cip++;
@@ -1340,7 +1340,7 @@ void SMALL iinput() {
         // XXX: check if dims matches array
       } else if (cip[-1] == I_NUMLST) {
         if (get_array_dims(idxs) != 1) {
-          err = ERR_SYNTAX;
+          SYNTAX_T("single dimension");
           return;
         }
         dims = -1;
@@ -1376,7 +1376,7 @@ void SMALL iinput() {
         // XXX: check if dims matches array
       } else if (cip[-1] == I_STRLST) {
         if (get_array_dims(idxs) != 1) {
-          err = ERR_SYNTAX;
+          SYNTAX_T("single dimension");
           return;
         }
         dims = -1;
@@ -1405,7 +1405,7 @@ void SMALL iinput() {
       break;
 
     default: // 以上のいずれにも該当しなかった場合
-      err = ERR_SYNTAX; // エラー番号をセット
+      SYNTAX_T("variable");
       //return;            // 終了
       goto DONE;
     } // 中間コードで分岐の末尾
@@ -1420,7 +1420,7 @@ void SMALL iinput() {
       //return;        // 終了
       goto DONE;
     default:      // 以上のいずれにも該当しなかった場合
-      err = ERR_SYNTAX; // エラー番号をセット
+      SYNTAX_T("separator");
       //return;           // 終了
       goto DONE;
     } // 中間コードで分岐の末尾
