@@ -373,7 +373,7 @@ inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_toke
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
   else if (next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    SYNTAX(next_token);
   }
   return err;
 }
@@ -383,7 +383,7 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
   else if (next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    SYNTAX(next_token);
   }
   return err;
 }
@@ -392,7 +392,7 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
 inline uint8_t getParam(uint32_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    SYNTAX(next_token);
   }
   return err;
 }
@@ -404,7 +404,7 @@ inline uint8_t getParam(num_t& prm, token_t next_token) {
     if (next_token == I_OPEN || next_token == I_CLOSE)
       err = ERR_PAREN;
     else
-      err = ERR_SYNTAX;
+      SYNTAX(next_token);
   }
   return err;
 }
