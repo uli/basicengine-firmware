@@ -4446,7 +4446,7 @@ void imovebg() {
 }
 
 void isprite() {
-  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key;
+  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4489,6 +4489,10 @@ void isprite() {
   case I_KEY:
     if (getParam(key, 0, 255, I_NONE)) return;
     vs23.setSpriteKey(num, key);
+    break;
+  case I_PRIO:
+    if (getParam(prio, 0, VS23_MAX_PRIO, I_NONE)) return;
+    vs23.setSpritePriority(num, prio);
     break;
   default:
     // XXX: throw an error if nothing has been done
