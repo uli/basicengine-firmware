@@ -4015,7 +4015,7 @@ void irename() {
   if (err)
     return;
   if (*cip != I_TO) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4050,7 +4050,7 @@ void icopy() {
   if (err)
     return;
   if (*cip != I_TO) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4076,7 +4076,7 @@ void SMALL ibsave() {
   }
 
   if (*cip != I_COMMA) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4131,7 +4131,7 @@ void SMALL ibload() {
   }
 
   if (*cip != I_COMMA) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_COMMA);
     return;
   }
   cip++;
