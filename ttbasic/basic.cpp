@@ -4368,7 +4368,7 @@ void ibg() {
   default:
     cip--;
     if (!end_of_statement())
-      err = ERR_SYNTAX;
+      SYNTAX_T("BG parameter");
     return;
   }
 }
@@ -4507,7 +4507,7 @@ void isprite() {
     // XXX: throw an error if nothing has been done
     cip--;
     if (!end_of_statement())
-      err = ERR_SYNTAX;
+      SYNTAX_T("sprite parameter");
     return;
   }
 }
@@ -4529,7 +4529,7 @@ void imove()
     ++cip;
     imovebg();
   } else
-    err = ERR_SYNTAX;
+    SYNTAX_T("BG or SPRITE");
 }
 
 void iplot() {
