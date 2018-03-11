@@ -55,6 +55,7 @@ void VS23S010::resetSprites()
     s->frame_x = s->frame_y = 0;
     s->w = s->h = 8;
     s->key = 0;
+    s->prio = VS23_MAX_PRIO;
   }
 }
 
@@ -69,6 +70,7 @@ void VS23S010::resetBgs()
     bg->pat_x = 0;
     bg->pat_y = m_current_mode->y + 8;
     bg->pat_w = m_current_mode->x / bg->tile_size_x;
+    bg->prio = i;
   }
 }
 

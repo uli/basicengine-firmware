@@ -42,6 +42,8 @@ struct vs23_mode_t {
 
 #define VS23_NUM_COLORSPACES	2
 
+#define VS23_MAX_PRIO	(VS23_MAX_BG-1)
+
 //#define DEBUG_BM
 
 enum {
@@ -340,6 +342,7 @@ private:
       int scroll_x, scroll_y;
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
+      uint8_t prio;
     } m_bg[VS23_MAX_BG];
 
     void ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
@@ -380,6 +383,7 @@ private:
       uint8_t w, h;
       uint8_t frame_x, frame_y;
       int16_t key;
+      uint8_t prio;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
