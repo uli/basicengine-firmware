@@ -1837,8 +1837,10 @@ void iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
-    if (*++cip != I_COMMA)
-      goto syntax;
+    if (*++cip != I_COMMA) {
+      SYNTAX(I_COMMA);
+      return;
+    }
     ++cip;
     BString value = istrexp();
     if (err)
@@ -1846,27 +1848,29 @@ void iappend() {
     str_lst.var(index).append(value);
   } else if (*cip == I_NUMLSTREF) {
     index = *++cip;
-    if (*++cip != I_COMMA)
-      goto syntax;
+    if (*++cip != I_COMMA) {
+      SYNTAX(I_COMMA);
+      return;
+    }
     ++cip;
     num_t value = iexp();
     if (err)
       return;
     num_lst.var(index).append(value);
   } else {
-    goto syntax;
+    SYNTAX_T("list reference");
   }
   return;
-syntax:
-  err = ERR_SYNTAX;
 }
 
 void iprepend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
-    if (*++cip != I_COMMA)
-      goto syntax;
+    if (*++cip != I_COMMA) {
+      SYNTAX(I_COMMA);
+      return;
+    }
     ++cip;
     BString value = istrexp();
     if (err)
@@ -1874,19 +1878,19 @@ void iprepend() {
     str_lst.var(index).prepend(value);
   } else if (*cip == I_NUMLSTREF) {
     index = *++cip;
-    if (*++cip != I_COMMA)
-      goto syntax;
+    if (*++cip != I_COMMA) {
+      SYNTAX(I_COMMA);
+      return;
+    }
     ++cip;
     num_t value = iexp();
     if (err)
       return;
     num_lst.var(index).prepend(value);
   } else {
-    goto syntax;
+    SYNTAX_T("list reference");
   }
   return;
-syntax:
-  err = ERR_SYNTAX;
 }
 
 static inline bool end_of_statement()
