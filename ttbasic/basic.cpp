@@ -6395,7 +6395,7 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
       funtbl[*cip++]();
     } else
-      err = ERR_SYNTAX;
+      SYNTAX_T("command");
 
     pump_events();
 
