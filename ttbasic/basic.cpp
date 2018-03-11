@@ -1782,7 +1782,7 @@ void istrlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    err = ERR_SYNTAX;
+    SYNTAX_T("one dimension");
     return;
   }
 
@@ -1813,7 +1813,7 @@ void inumlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    err = ERR_SYNTAX;
+    SYNTAX_T("one dimension");
     return;
   }
 
