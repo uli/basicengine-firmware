@@ -3910,7 +3910,7 @@ void SMALL ildbmp() {
           spr_to = spr_from;
         }
       } else {
-	err = ERR_SYNTAX;
+        SYNTAX_T("BG or SPRITE");
 	return;
       }
     } else if (*cip == I_TO) {
