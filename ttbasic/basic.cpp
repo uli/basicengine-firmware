@@ -2500,7 +2500,7 @@ void SMALL irenum() {
       if (*cip == I_NUM) {            // 増分指定があったら
 	increase = getlineno(cip);    // 引数を読み取って増分とする
       } else {
-	err = ERR_SYNTAX;             // カンマありで引数なしの場合はエラーとする
+        SYNTAX_T("line number");
 	return;
       }
     }
@@ -2726,7 +2726,7 @@ void SMALL idelete() {
   if (!get_range(sNo, eNo))
     return;
   if (!end_of_statement()) {
-    err = ERR_SYNTAX;
+    SYNTAX_T("end of statement");
     return;
   }
 
