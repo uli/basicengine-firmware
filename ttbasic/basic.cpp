@@ -4699,35 +4699,31 @@ uint8_t SMALL ilrun() {
 // Arguments:
 // flgCmd: set to false at program execution, true at command line
 void SMALL error(uint8_t flgCmd = false) {
-  char msg[40];
   if (err) {
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
     if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
-      strcpy_P(msg, errmsg[err]);
-      c_puts(msg);
-      c_puts(" in ");
+      c_puts_P(errmsg[err]);
+      PRINT_P(in," in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       newline();
 
       indent_level = 0;
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
-      c_puts(" ");
+      c_putch(' ');
       putlist(clp + sizeof(num_t) + 1);
       newline();
       //err = 0;
       //return;
     } else {                   // 指示の実行中なら
-      strcpy_P(msg, errmsg[err]);
-      c_puts(msg);     // エラーメッセージを表示
+      c_puts_P(errmsg[err]);     // エラーメッセージを表示
       newline();               // 改行
       //err = 0;               // エラー番号をクリア
       //return;
     }
   }
-  strcpy_P(msg, errmsg[0]);
-  c_puts(msg);           //「OK」を表示
+  c_puts_P(errmsg[0]);           //「OK」を表示
   newline();                   // 改行
   err = 0;                     // エラー番号をクリア
 }
