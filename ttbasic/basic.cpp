@@ -4834,7 +4834,7 @@ num_t GROUP(basic_core) ivalue() {
     i = *cip++;
     if (*cip++ != I_SQOPEN) {
       // XXX: Can we actually get here?
-      err = ERR_SYNTAX;
+      SYNTAX(I_SQOPEN);
       return 0;
     }
     if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
@@ -5077,7 +5077,7 @@ num_t GROUP(basic_core) ivalue() {
     i = *cip++;
     dims = get_array_dims(idxs);
     if (dims != 1) {
-      err = ERR_SYNTAX;
+      SYNTAX_T("one dimension");
     } else {
       value = num_lst.var(i).var(idxs[0]);
     }
@@ -5092,7 +5092,7 @@ num_t GROUP(basic_core) ivalue() {
       if (is_var(cip[-1]))
         err = ERR_TYPE;
       else
-        err = ERR_SYNTAX;
+        SYNTAX_T("numeric list reference");
       return 0;
     }
     if (checkClose()) return 0;
@@ -5107,7 +5107,7 @@ num_t GROUP(basic_core) ivalue() {
       if (is_var(cip[-1]))
         err = ERR_TYPE;
       else
-        err = ERR_SYNTAX;
+        SYNTAX_T("numeric list reference");
       return 0;
     }
     if (checkClose()) return 0;
@@ -5167,7 +5167,7 @@ num_t GROUP(basic_core) ivalue() {
     if (is_strexp())
       err = ERR_TYPE;
     else
-      err = ERR_SYNTAX;
+      SYNTAX_T("numeric expression");
     break;
   }
   return value; //取得した値を持ち帰る
