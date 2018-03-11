@@ -114,6 +114,10 @@ unsigned char* GROUP(basic_core) iexe(bool until_return = false);
 num_t GROUP(basic_core) iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
+#define SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
+#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
+                           err = ERR_SYNTAX; err_expected = __msg; \
+                      } while(0)
 
 // **** RTC用宣言 ********************
 #if USE_INNERRTC == 1
@@ -252,6 +256,7 @@ char sstyle(uint8_t code,
 
 // エラーメッセージ定義
 uint8_t err; // Error message index
+const char *err_expected;
 
 #define ESTR(n,s) static const char _errmsg_ ## n[] PROGMEM = s;
 #include "errdef.h"
@@ -4707,6 +4712,11 @@ void SMALL error(uint8_t flgCmd = false) {
       PRINT_P(in," in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       newline();
+      if (err_expected) {
+        PRINT_P(ex," (expected ");
+        c_puts_P(err_expected);
+        PRINT_P(ex2,")");
+      }
 
       indent_level = 0;
       // リストの該当行を表示
@@ -4718,6 +4728,11 @@ void SMALL error(uint8_t flgCmd = false) {
       //return;
     } else {                   // 指示の実行中なら
       c_puts_P(errmsg[err]);     // エラーメッセージを表示
+      if (err_expected) {
+        PRINT_P(ex," (expected ");
+        c_puts_P(err_expected);
+        PRINT_P(ex2,")");
+      }
       newline();               // 改行
       //err = 0;               // エラー番号をクリア
       //return;
@@ -4726,6 +4741,7 @@ void SMALL error(uint8_t flgCmd = false) {
   c_puts_P(errmsg[0]);           //「OK」を表示
   newline();                   // 改行
   err = 0;                     // エラー番号をクリア
+  err_expected = NULL;
 }
 
 num_t irgb() {
@@ -6640,6 +6656,7 @@ void SMALL basic() {
   c_puts_P(working_dir); c_puts(Unifile::cwd()); newline();
 
   sc0.show_curs(1);
+  err_expected = NULL;
   error();          // "OK" or display an error message and clear the error number
 
   // Enter one line from the terminal and execute
