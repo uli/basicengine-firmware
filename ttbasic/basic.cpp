@@ -3364,7 +3364,7 @@ BString ii2cr() {
   if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) goto out;
   out = istrexp();
   if (*cip++ != I_COMMA) {
-    err = ERR_SYNTAX;
+    SYNTAX(I_COMMA);
     goto out;
   }
   if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
