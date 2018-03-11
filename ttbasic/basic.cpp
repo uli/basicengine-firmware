@@ -1534,7 +1534,7 @@ int GROUP(basic_core) get_array_dims(int *idxs) {
     if (*cip == I_CLOSE)
       break;
     if (*cip != I_COMMA) {
-      err = ERR_SYNTAX;
+      SYNTAX(I_COMMA);
       return -1;
     }
     cip++;
