@@ -3322,7 +3322,7 @@ void ipoke() {
   // アドレスの指定
   vadr = iexp(); if(err) return;
   if (vadr <= 0 ) { err = ERR_VALUE; return; }
-  if(*cip != I_COMMA) { err = ERR_SYNTAX; return; }
+  if(*cip != I_COMMA) { SYNTAX(I_COMMA); return; }
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
