@@ -5371,7 +5371,7 @@ BString istrvalue()
     i = *cip++;
     dims = get_array_dims(idxs);
     if (dims != 1) {
-      err = ERR_SYNTAX;
+      SYNTAX_T("one dimension");
     } else {
       value = str_lst.var(i).var(idxs[0]);
     }
@@ -5431,7 +5431,7 @@ BString istrvalue()
       if (is_var(cip[-1]))
         err = ERR_TYPE;
       else
-        err = ERR_SYNTAX;
+        SYNTAX_T("string list reference");
       break;
     }
     checkClose();
@@ -5446,7 +5446,7 @@ BString istrvalue()
       if (is_var(cip[-1]))
         err = ERR_TYPE;
       else
-        err = ERR_SYNTAX;
+        SYNTAX_T("string list reference");
       break;
     }
     checkClose();
@@ -5470,7 +5470,7 @@ BString istrvalue()
     if (!err)
       err = ERR_TYPE;
     else
-      err = ERR_SYNTAX;
+      SYNTAX_T("string expression");
     break;
   }
   if (err)
