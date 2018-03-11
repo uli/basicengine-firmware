@@ -6346,7 +6346,7 @@ void iprofile() {
     }
     break;
   default:
-    err = ERR_SYNTAX;
+    SYNTAX_T("ON, OFF or LIST");
     break;
   }
 }
