@@ -1998,7 +1998,7 @@ void initialize_proc_pointers(void)
           pr.argc_str++;
           break;
         default:
-          err = ERR_SYNTAX;
+          SYNTAX_T("variable");
           clp = lp; cip = ip;
           return;
         }
@@ -2008,7 +2008,7 @@ void initialize_proc_pointers(void)
         if (ip[-1] == I_COMMA)
           err = ERR_UNDEFARG;
         else
-          err = ERR_SYNTAX;
+          SYNTAX(I_CLOSE);
         clp = lp; cip = ip;
         return;
       }
