@@ -3361,6 +3361,11 @@ void GROUP(basic_core) ipoke32() {
   do_poke(2);
 }
 
+void isys() {
+  void (*sys)() = (void (*)())(uintptr_t)iexp();
+  sys();
+}
+
 int32_t ii2cw() {
   int32_t i2cAdr;
   BString out;

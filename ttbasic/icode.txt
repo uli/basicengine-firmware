@@ -106,6 +106,7 @@ FRAMESKIP	I_FRAMESKIP	iframeskip
 RESUME	I_RESUME	iresume
 VREG	I_VREG		ivreg
 VPOKE	I_VPOKE		ivpoke
+SYS	I_SYS		isys
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
