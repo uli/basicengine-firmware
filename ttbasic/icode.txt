@@ -184,6 +184,8 @@ INKEY$	I_INKEYSTR	esyntax
 INKEY	I_INKEY		esyntax
 LEN	I_LEN		esyntax
 TICK	I_TICK		esyntax
+PEEK16	I_PEEK16	esyntax
+PEEK32	I_PEEK32	esyntax
 PEEK	I_PEEK		esyntax
 POINT	I_POINT		esyntax
 I2CW	I_I2CW		esyntax

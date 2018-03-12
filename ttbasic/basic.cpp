@@ -213,7 +213,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT,
-  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_I2CW, I_I2CR,
+  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEK16, I_PEEK32, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_OUTPUT, I_INPUT_ANALOG,
   I_DIN, I_ANA, I_MAP, I_DMP,
@@ -337,11 +337,14 @@ inline void mem_putch(uint8_t c) {
   }
 }
 
-void* sanitize_addr(uint32_t vadr) {
+void* GROUP(basic_core) sanitize_addr(uint32_t vadr, int type) {
   // XXX: This needs to be a lot smarter if we want it to reliably prevent
   // crashes from accidental memory accesses.
   if (vadr < 0x30000000U)
-    return 0;
+    return NULL;
+  if ((type == 1 && (vadr & 1)) ||
+      (type == 2 && (vadr & 3)))
+    return NULL;
   return (void *)vadr;
 }
 
@@ -3138,16 +3141,22 @@ int32_t GROUP(basic_core) iinkey() {
 }
 
 // メモリ参照　PEEK(adr[,bnk])
-int32_t ipeek() {
+int32_t ipeek(int type) {
   int32_t value = 0, vadr;
-  uint8_t* radr;
+  void* radr;
 
   if (checkOpen()) return 0;
   if ( getParam(vadr, I_NONE) ) return 0;
   if (checkClose()) return 0;
-  radr = (uint8_t *)sanitize_addr(vadr);
-  if (radr)
-    value = *radr;
+  radr = sanitize_addr(vadr, type);
+  if (radr) {
+    switch (type) {
+    case 0: value = *(uint8_t*)radr; break;
+    case 1: value = *(uint16_t*)radr; break;
+    case 2: value = *(uint32_t*)radr; break;
+    default: err = ERR_SYS; break;
+    }
+  }
   else
     err = ERR_RANGE;
   return value;
@@ -3325,7 +3334,7 @@ void GROUP(basic_core) do_poke(int type) {
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
-    adr = sanitize_addr(vadr);
+    adr = sanitize_addr(vadr, type);
     if (!adr) {
       err = ERR_RANGE;
       break;
@@ -4069,7 +4078,7 @@ void SMALL ibsave() {
   if ( getParam(len, I_NONE) ) return;             // データ長の取得
 
   // アドレスの範囲チェック
-  if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
+  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
     err = ERR_RANGE;
     return;
   }
@@ -4087,7 +4096,7 @@ void SMALL ibsave() {
 
   // データの書込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = (uint8_t *)sanitize_addr(vadr);
+    radr = (uint8_t *)sanitize_addr(vadr, 0);
     if (radr == NULL) {
       goto DONE;
     }
@@ -4124,7 +4133,7 @@ void SMALL ibload() {
   if ( getParam(len, I_NONE) ) return;              // データ長の取得
 
   // アドレスの範囲チェック
-  if ( !sanitize_addr(vadr) || !sanitize_addr(vadr + len) ) {
+  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
     err = ERR_RANGE;
     return;
   }
@@ -4141,7 +4150,7 @@ void SMALL ibload() {
 
   // データの読込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = (uint8_t *)sanitize_addr(vadr);
+    radr = (uint8_t *)sanitize_addr(vadr, 0);
     if (radr == NULL) {
       goto DONE;
     }
@@ -4945,7 +4954,9 @@ num_t GROUP(basic_core) ivalue() {
     }
     break;
 
-  case I_PEEK: value = ipeek();   break;     // PEEK()関数
+  case I_PEEK: value = ipeek(0);   break;     // PEEK()関数
+  case I_PEEK16: value = ipeek(1);   break;
+  case I_PEEK32: value = ipeek(2);   break;
   case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
 
   case I_RET:   value = iret(); break;
