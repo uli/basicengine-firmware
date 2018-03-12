@@ -4176,7 +4176,7 @@ DONE:
 }
 
 // TYPE "ファイル名"
-void  icat() {
+void  itype() {
   //char fname[SD_PATH_LEN];
   //uint8_t rc;
   int32_t line = 0;

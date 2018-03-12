@@ -43,7 +43,7 @@ MKDIR	I_MKDIR		imkdir
 RMDIR	I_RMDIR		irmdir
 RENAME	I_RENAME	irename
 COPY	I_COPY		icopy
-CAT	I_CAT		icat
+TYPE	I_TYPE		itype
 REMOVE	I_REMOVE	iremove
 TONE	I_TONE		itone
 NOTONE	I_NOTONE	inotone
