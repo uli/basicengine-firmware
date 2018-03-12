@@ -1038,6 +1038,26 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
   }
 }
 
+void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count)
+{
+  struct bg_t *bg = &m_bg[bg_idx];
+  int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
+  int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
+  int tile_w = bg->win_w / bg->tile_size_x;
+  int tile_h = bg->win_h / bg->tile_size_y;
+  int line_visible = y >= tile_scroll_y && y < tile_scroll_y + tile_h;
+
+  int off = (y % bg->h) * bg->w;
+  for (int xx = x; xx < x+count; ++xx) {
+    bg->tiles[off + (xx % bg->w)] = *tiles++;
+    if (xx >= tile_scroll_x &&
+        xx < tile_scroll_x + tile_w &&
+        line_visible) {
+      m_bg_modified = true;
+    }
+  }
+}
+
 bool VS23S010::allocBacking(int w, int h, int &x, int &y)
 {
   Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::Split256);

@@ -259,6 +259,7 @@ class VS23S010 {
     }
     
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
+    void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count);
 
     inline void scroll(uint8_t bg, uint16_t x, uint16_t y) {
       m_bg[bg].scroll_x = x;
