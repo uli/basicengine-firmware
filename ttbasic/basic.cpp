@@ -3525,7 +3525,7 @@ void ipset() {
   if (x < 0) x = 0;
   if (y < 0) y = 0;
   if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
-  if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
+  if (y >= vs23.lastLine()) y = vs23.lastLine()-1;
   sc0.pset(x,y,c);
 }
 
@@ -3539,9 +3539,9 @@ void iline() {
   if (x2 < 0) x1 =0;
   if (y2 < 0) y1 =0;
   if (x1 >= sc0.getGWidth()) x1 = sc0.getGWidth()-1;
-  if (y1 >= sc0.getGHeight()) y1 = sc0.getGHeight()-1;
+  if (y1 >= vs23.lastLine()) y1 = vs23.lastLine()-1;
   if (x2 >= sc0.getGWidth()) x2 = sc0.getGWidth()-1;
-  if (y2 >= sc0.getGHeight()) y2 = sc0.getGHeight()-1;
+  if (y2 >= vs23.lastLine()) y2 = vs23.lastLine()-1;
   sc0.line(x1, y1, x2, y2, c);
 }
 
@@ -3553,7 +3553,7 @@ void icircle() {
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
-  if (y >= sc0.getGHeight()) y = sc0.getGHeight()-1;
+  if (y >= vs23.lastLine()) y = vs23.lastLine()-1;
   if (r < 0) r = -r;
   sc0.circle(x, y, r, c, f);
 }
@@ -3563,7 +3563,7 @@ void irect() {
   int32_t x1,y1,x2,y2,c,f;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight())  {
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= vs23.lastLine())  {
     err = ERR_VALUE;
     return;
   }
@@ -3620,7 +3620,7 @@ void igscroll() {
     return;
   if (x1 < 0 || y1 < 0 ||
       x2 <= x1 || y2 <= y1 ||
-      x2 >= sc0.getGWidth() || y2 >= sc0.getGHeight()) {
+      x2 >= sc0.getGWidth() || y2 >= vs23.lastLine()) {
     err = ERR_VALUE;
     return;
   }
@@ -3803,7 +3803,7 @@ void igprint() {
   int32_t x,y;
   if (scmode) {
     if ( getParam(x, 0, sc0.getGWidth(), I_COMMA) ) return;
-    if ( getParam(y, 0, sc0.getGHeight(), I_COMMA) ) return;
+    if ( getParam(y, 0, vs23.lastLine(), I_COMMA) ) return;
     sc0.set_gcursor(x,y);
     iprint(2);
   } else {
