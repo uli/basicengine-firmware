@@ -337,12 +337,12 @@ inline void mem_putch(uint8_t c) {
   }
 }
 
-uint8_t* sanitize_addr(uint32_t vadr) {
+void* sanitize_addr(uint32_t vadr) {
   // XXX: This needs to be a lot smarter if we want it to reliably prevent
   // crashes from accidental memory accesses.
   if (vadr < 0x30000000U)
     return 0;
-  return (uint8_t *)vadr;
+  return (void *)vadr;
 }
 
 // Standard C libraly (about) same functions
@@ -3145,7 +3145,7 @@ int32_t ipeek() {
   if (checkOpen()) return 0;
   if ( getParam(vadr, I_NONE) ) return 0;
   if (checkClose()) return 0;
-  radr = sanitize_addr(vadr);
+  radr = (uint8_t *)sanitize_addr(vadr);
   if (radr)
     value = *radr;
   else
@@ -3315,7 +3315,7 @@ void idmp(uint8_t devno=0) {
 
 // POKEコマンド POKE ADR,データ[,データ,..データ]
 void GROUP(basic_core) do_poke(int type) {
-  uint8_t* adr;
+  void* adr;
   int32_t value;
   int32_t vadr;
 
@@ -4087,7 +4087,7 @@ void SMALL ibsave() {
 
   // データの書込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = sanitize_addr(vadr);
+    radr = (uint8_t *)sanitize_addr(vadr);
     if (radr == NULL) {
       goto DONE;
     }
@@ -4141,7 +4141,7 @@ void SMALL ibload() {
 
   // データの読込み
   for (uint32_t i = 0; i < len; i++) {
-    radr = sanitize_addr(vadr);
+    radr = (uint8_t *)sanitize_addr(vadr);
     if (radr == NULL) {
       goto DONE;
     }
