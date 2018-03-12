@@ -317,16 +317,7 @@ inline void tv_dot(int16_t x, int16_t y, int16_t n, uint8_t c) {
 
 // 指定座標のピクセル取得
 int16_t tv_gpeek(int16_t x, int16_t y) {
-#if USE_VS23 == 1
-  Serial.println("unimp tv_gpeek");
-  return 0;
-#else
-  uint8_t *adr;
-  uint8_t bipo;
-      bipo = (x & 0xf8) + 7 - (x & 7);
-      adr = b_adr + g_width*y/8 + bipo/8;
-   return (*adr >> bipo) & 1;//b_adr[g_width*y+ (x&0xf8) +7 -(x&7)];
-#endif
+  return vs23.getPixel(x, y);
 }
 
 void tv_set_gcursor(uint16_t x, uint16_t y) {
