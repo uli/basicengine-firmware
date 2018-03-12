@@ -4447,10 +4447,10 @@ void isprite() {
     vs23.resizeSprite(num, w, h);
     break;
   case I_FRAME:
-    if (getParam(frame_x, 0, sc0.getGWidth(), I_NONE)) return;
+    if (getParam(frame_x, 0, 255, I_NONE)) return;
     if (*cip == I_COMMA) {
       ++cip;
-      if (getParam(frame_y, 0, sc0.getGHeight(), I_NONE)) return;
+      if (getParam(frame_y, 0, 255, I_NONE)) return;
     } else
       frame_y = 0;
     vs23.setSpriteFrame(num, frame_x, frame_y);
