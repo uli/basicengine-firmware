@@ -4513,8 +4513,13 @@ void iplot() {
   }
   if (getParam(x, 0, INT_MAX, I_COMMA)) return;
   if (getParam(y, 0, INT_MAX, I_COMMA)) return;
-  if (getParam(t, 0, 255, I_NONE)) return;
-  vs23.setBgTile(bg, x, y, t);
+  if (is_strexp()) {
+    BString dat = istrexp();
+    vs23.setBgTiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
+  } else {
+    if (getParam(t, 0, 255, I_NONE)) return;
+    vs23.setBgTile(bg, x, y, t);
+  }
 }
 
 void iframeskip() {
