@@ -18,6 +18,8 @@ READ	I_READ		iread
 RESTORE	I_RESTORE	irestore
 CLT	I_CLT		iclt
 WAIT	I_WAIT		iwait
+POKE16	I_POKE16	ipoke16
+POKE32	I_POKE32	ipoke32
 POKE	I_POKE		ipoke
 PRINT	I_PRINT		iprint_
 ?	I_QUEST		iprint_

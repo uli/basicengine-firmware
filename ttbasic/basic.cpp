@@ -3314,14 +3314,13 @@ void idmp(uint8_t devno=0) {
 }
 
 // POKEコマンド POKE ADR,データ[,データ,..データ]
-void ipoke() {
+void GROUP(basic_core) do_poke(int type) {
   uint8_t* adr;
   int32_t value;
   int32_t vadr;
 
   // アドレスの指定
   vadr = iexp(); if(err) return;
-  if (vadr <= 0 ) { err = ERR_VALUE; return; }
   if(*cip != I_COMMA) { SYNTAX(I_COMMA); return; }
 
   // 例: 1,2,3,4,5 の連続設定処理
@@ -3333,9 +3332,24 @@ void ipoke() {
     }
     cip++;          // 中間コードポインタを次へ進める
     if (getParam(value, I_NONE)) return;
-    *((uint8_t*)adr) = (uint8_t)value;
+    switch (type) {
+    case 0: *((uint8_t*)adr) = value; break;
+    case 1: *((uint16_t *)adr) = value; break;
+    case 2: *((uint32_t *)adr) = value; break;
+    default: err = ERR_SYS; break;
+    }
     vadr++;
   } while(*cip == I_COMMA);
+}
+
+void GROUP(basic_core) ipoke() {
+  do_poke(0);
+}
+void GROUP(basic_core) ipoke16() {
+  do_poke(1);
+}
+void GROUP(basic_core) ipoke32() {
+  do_poke(2);
 }
 
 int32_t ii2cw() {
