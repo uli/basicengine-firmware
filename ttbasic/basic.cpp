@@ -6583,7 +6583,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
 static void show_logo() {
   const unsigned char *ld = basic_engine_pcx;
   drpcx_load(read_image_bytes, &ld, false, NULL, NULL, NULL, 0,
-             sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62);
+             sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62, 0);
 }
 
 /*
