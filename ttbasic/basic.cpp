@@ -99,6 +99,8 @@ typedef struct {
   uint8_t color_scheme[CONFIG_COLS][3];
   bool interlace;
   bool lowpass;
+  uint8_t mode;
+  uint8_t font;
 } SystemConfig;
 SystemConfig CONFIG;
 
@@ -2621,6 +2623,18 @@ void SMALL iconfig() {
     CONFIG.lowpass = value != 0;
     vs23.setLowpass(CONFIG.lowpass);
     break;
+  case 4:
+    if (value < 1 || value >= vs23.numModes)
+      err = ERR_VALUE;
+    else
+      CONFIG.mode = value;
+    break;
+  case 5:
+    if (value < 0 || value >= NUM_FONTS)
+      err = ERR_VALUE;
+    else
+      CONFIG.font = value;
+    break;
   default:
     err = ERR_VALUE;
     break;
@@ -4258,7 +4272,7 @@ void SMALL iscreen() {
 
   vs23.reset();
 
-  sc0.setFont(fonts[0]);
+  sc0.setFont(fonts[CONFIG.font]);
 
   if (scmode == m) {
     sc0.reset();
@@ -6610,7 +6624,7 @@ void SMALL basic() {
   // Initialize execution environment
   inew();
 
-  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, SC_DEFAULT);
+  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, CONFIG.mode - 1);
 
   sound.begin();
 
@@ -6640,7 +6654,7 @@ void SMALL basic() {
   sc0.setColor(vs23.colorFromRgb(192,0,0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
-  sc0.setFont(fonts[0]);
+  sc0.setFont(fonts[CONFIG.font]);
 
   // Platform/version
   sc0.setColor(vs23.colorFromRgb(64,64,64), COL(BG));
@@ -6740,6 +6754,8 @@ void loadConfig() {
   CONFIG.NTSC      =  0;
   CONFIG.KEYBOARD  =  1;
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
+  CONFIG.mode = 1;
+  CONFIG.font = 0;
   
   Unifile f = Unifile::open("/flash/.config", FILE_READ);
   if (!f)
