@@ -41,6 +41,9 @@ int clrline_x, clrline_y;
 uint16_t fg_color = 0xf;
 uint16_t bg_color = 0;
 
+uint16_t gcurs_x = 0;
+uint16_t gcurs_y = 0;
+
 // フォント利用設定
 void SMALL tv_fontInit() {
   if (!tvfont)
@@ -321,19 +324,12 @@ int16_t tv_gpeek(int16_t x, int16_t y) {
 }
 
 void tv_set_gcursor(uint16_t x, uint16_t y) {
-#if USE_VS23 == 1
-    Serial.println("unimp tv_set_gcursor");
-#else
-  TV.set_cursor(x,y);
-#endif
+  gcurs_x = x;
+  gcurs_y = y;
 }
 
 void tv_write(uint8_t c) {
-#if USE_VS23 == 1
-    Serial.println("unimp tv_write");
-#else
-  TV.write(c);
-#endif
+  tv_write_px(gcurs_x, gcurs_y, c);
 }
 
 // 音の再生
