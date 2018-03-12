@@ -5944,6 +5944,11 @@ void GROUP(basic_core) icall() {
     if (checkClose())
       return;
   }
+  if (num_args < proc_loc.argc_num ||
+      str_args < proc_loc.argc_str) {
+    err = ERR_ARGS;
+    return;
+  }
 
   gstk[gstki].lp = clp;
   gstk[gstki].ip = cip;
