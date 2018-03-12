@@ -16,7 +16,6 @@ void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, uint8_t c, int8_t f)
 void    tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
 void    tv_set_gcursor(uint16_t x, uint16_t y);
 void    tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) ;
-int16_t tv_gpeek(int16_t x, int16_t y);
 #if USE_VS23 == 0
 uint8_t* tv_getGVRAM();
 uint16_t tv_getGVRAMSize();
@@ -74,11 +73,6 @@ void tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, in
 // グラフィックスクロール
 void tGraphicDev::gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   tv_gscroll(x, y, w, h, mode);
-}
-
-// 指定位置のピクセル情報取得
-int16_t tGraphicDev::gpeek(int16_t x, int16_t y) {
-  return tv_gpeek(x,y);
 }
 
 void tGraphicDev::set_gcursor(uint16_t x, uint16_t y) {

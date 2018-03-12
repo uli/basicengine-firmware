@@ -34,7 +34,6 @@ class tGraphicDev {
     virtual void rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f);
     //virtual void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
     virtual void gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode);
-    virtual int16_t gpeek(int16_t x, int16_t y);
     virtual void set_gcursor(uint16_t, uint16_t);
     virtual void gputch(uint8_t c);
 

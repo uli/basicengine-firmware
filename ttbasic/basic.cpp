@@ -218,7 +218,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_OUTPUT, I_INPUT_ANALOG,
   I_DIN, I_ANA, I_MAP, I_DMP,
   I_LSB, I_MSB, I_MPRG, I_MFNT,
-  I_SREAD, I_SREADY, I_GPEEK,
+  I_SREAD, I_SREADY, I_POINT,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
 };
@@ -3677,23 +3677,14 @@ void inotone() {
   tv_notone();
 }
 
-// GPEEK(X,Y)関数の処理
-int32_t igpeek() {
-#if USE_NTSC == 1
+// POINT(X,Y)関数の処理
+int32_t ipoint() {
   int x, y;  // 座標
-  if (scmode) {
-    if (checkOpen()) return 0;
-    if ( getParam(x, I_COMMA) || getParam(y, I_NONE) ) return 0;
-    if (checkClose()) return 0;
-    if (x < 0 || y < 0 || x >= sc0.getGWidth()-1 || y >= sc0.getGHeight()-1) return 0;
-    return sc0.gpeek(x,y);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-    return 0;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  if (checkOpen()) return 0;
+  if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
+  if ( getParam(y, 0, vs23.lastLine()-1, I_NONE) ) return 0;
+  if (checkClose()) return 0;
+  return vs23.getPixel(x,y);
 }
 
 // MAP(V,L1,H1,L2,H2)関数の処理
@@ -4897,7 +4888,7 @@ num_t GROUP(basic_core) ivalue() {
     break;
 
   case I_CHAR: value = icharfun();  break; //関数CHAR
-  case I_GPEEK: value = igpeek();  break; //関数GPEEK(X,Y)
+  case I_POINT: value = ipoint();  break; //関数POINT(X,Y)
   case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
   case I_ASC:   value = iasc();    break; // 関数ASC(文字列)
 

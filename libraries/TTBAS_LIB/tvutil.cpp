@@ -318,11 +318,6 @@ inline void tv_dot(int16_t x, int16_t y, int16_t n, uint8_t c) {
 #endif
 }
 
-// 指定座標のピクセル取得
-int16_t tv_gpeek(int16_t x, int16_t y) {
-  return vs23.getPixel(x, y);
-}
-
 void tv_set_gcursor(uint16_t x, uint16_t y) {
   gcurs_x = x;
   gcurs_y = y;
