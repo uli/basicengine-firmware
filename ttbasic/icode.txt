@@ -184,7 +184,6 @@ LEN	I_LEN		esyntax
 TICK	I_TICK		esyntax
 PEEK	I_PEEK		esyntax
 GPEEK	I_GPEEK		esyntax
-GINP	I_GINP		esyntax
 I2CW	I_I2CW		esyntax
 I2CR	I_I2CR		esyntax
 INT	I_INT		esyntax

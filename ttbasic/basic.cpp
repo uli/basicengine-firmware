@@ -218,7 +218,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_OUTPUT, I_INPUT_ANALOG,
   I_DIN, I_ANA, I_MAP, I_DMP,
   I_LSB, I_MSB, I_MPRG, I_MFNT,
-  I_SREAD, I_SREADY, I_GPEEK, I_GINP,
+  I_SREAD, I_SREADY, I_GPEEK,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
 };
@@ -3696,26 +3696,6 @@ int32_t igpeek() {
 #endif
 }
 
-// GINP(X,Y,H,W,C)関数の処理
-int32_t iginp() {
-#if USE_NTSC == 1
-  int32_t x,y,w,h,c;
-  if (scmode) {
-    if (checkOpen()) return 0;
-    if ( getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(w, I_COMMA)||getParam(h, I_COMMA)||getParam(c, I_NONE) ) return 0;
-    if (checkClose()) return 0;
-    if (x < 0 || y < 0 || x >= sc0.getGWidth() || y >= sc0.getGHeight() || h < 0 || w < 0) return 0;
-    if (x+w >= sc0.getGWidth() || y+h >= sc0.getGHeight() ) return 0;
-    return sc0.ginp(x, y, w, h, c);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-    return 0;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
-}
-
 // MAP(V,L1,H1,L2,H2)関数の処理
 int32_t imap() {
   int32_t value,l1,h1,l2,h2,rc;
@@ -4918,7 +4898,6 @@ num_t GROUP(basic_core) ivalue() {
 
   case I_CHAR: value = icharfun();  break; //関数CHAR
   case I_GPEEK: value = igpeek();  break; //関数GPEEK(X,Y)
-  case I_GINP:  value = iginp();   break; //関数GINP(X,Y,W,H,C)
   case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
   case I_ASC:   value = iasc();    break; // 関数ASC(文字列)
 

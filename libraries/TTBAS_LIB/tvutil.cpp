@@ -325,23 +325,6 @@ int16_t tv_gpeek(int16_t x, int16_t y) {
 #endif
 }
 
-// 指定座標のピクセル有無のチェック
-int16_t tv_ginp(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c) {
-#if USE_VS23 == 1
-  Serial.println("unimp tv_ginp");
-  return 0;
-#else
-  for (int16_t i = y ; i < y+h; i++) {
-    for (int16_t j= x; j < x+w; j++) {
-      if (b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] == c) {
-          return 1;
-      }
-    }
-  }
-  return 0;
-#endif
-}
-
 void tv_set_gcursor(uint16_t x, uint16_t y) {
 #if USE_VS23 == 1
     Serial.println("unimp tv_set_gcursor");
