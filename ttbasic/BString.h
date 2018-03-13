@@ -95,6 +95,9 @@ class BString {
                 return 0;
             }
         }
+        inline void resetLength(unsigned int size) {
+            len = size;
+        }
 
         // creates a copy of the assigned value.  if the value is null or
         // invalid, or if the memory allocation fails, the string will be
