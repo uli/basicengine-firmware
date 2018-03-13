@@ -5362,6 +5362,35 @@ BString idirstr()
   return dir_entry.name;
 }
 
+BString iinputstr()
+{
+  int32_t len, fnum;
+  BString value;
+  ssize_t rd;
+
+  if (checkOpen()) goto out;
+  if (getParam(len, I_COMMA)) goto out;
+  if (*cip == I_SHARP)
+    ++cip;
+  if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE)) goto out;
+  if (!user_files[fnum] || !*user_files[fnum]) {
+    err = ERR_FILE_NOT_OPEN;
+    goto out;
+  }
+  if (!value.reserve(len)) {
+    err = ERR_OOM;
+    goto out;
+  }
+  rd = user_files[fnum]->read(value.begin(), len);
+  if (rd < 0) {
+    err = ERR_FILE_READ;
+    goto out;
+  }
+  value.resetLength(rd);
+out:
+  return value;
+}
+
 BString istrvalue()
 {
   BString value;
@@ -5491,6 +5520,8 @@ BString istrvalue()
     break;
 
   case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
+
+  case I_INPUTSTR:	value = iinputstr(); break;
 
   default:
     cip--;

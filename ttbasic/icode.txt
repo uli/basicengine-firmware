@@ -23,6 +23,7 @@ POKE32	I_POKE32	ipoke32
 POKE	I_POKE		ipoke
 PRINT	I_PRINT		iprint_
 ?	I_QUEST		iprint_
+INPUT$	I_INPUTSTR	esyntax_workaround
 INPUT	I_INPUT		iinput
 CLS	I_CLS		icls
 COLOR	I_COLOR		icolor
