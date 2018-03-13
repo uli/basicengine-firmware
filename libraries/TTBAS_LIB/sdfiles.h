@@ -352,10 +352,16 @@ public:
   uint8_t tmpClose();                                   // 一時ファイルクローズ
   uint8_t puts(char*s);                                 // 文字列出力
   int16_t read();                                       // 1バイト読込
+  inline ssize_t tmpRead(char* buf, size_t size) {
+    return tfile.read(buf, size);
+  }
   uint8_t putch(char c);                                // 1バイト出力 
   int8_t  IsText(char* tfname);                         // ファイルがテキストファイルかチェック
   int16_t readLine(char* str);                          // 1行分読込み
   int8_t  textOut(char* fname, int16_t sline, int16_t ln); // テキストファイルの出力
+  inline size_t  tmpSize() {
+    return tfile.fileSize();
+  }
 
   void setTempFile(Unifile f) {
     tfile = f;
