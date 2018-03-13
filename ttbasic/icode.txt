@@ -147,9 +147,6 @@ AND	I_AND		esyntax
 <>	I_NEQ2		esyntax
 <	I_LT		esyntax
 >	I_GT		esyntax
-&&	I_LAND		esyntax
-||	I_LOR		esyntax
-!	I_LNOT		esyntax
 NOT	I_BITREV	esyntax
 EOR	I_XOR		esyntax
 [	I_SQOPEN	esyntax

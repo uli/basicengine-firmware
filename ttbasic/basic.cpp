@@ -214,7 +214,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
-  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT, I_LNOT,
+  I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT,
   I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEK16, I_PEEK32, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_OUTPUT, I_INPUT_ANALOG,
@@ -4821,25 +4821,6 @@ num_t GROUP(basic_core) ivalue() {
     cip += 4;
     break;
 
-  //+付きの値の取得
-  case I_PLUS: //「+」
-    value = ivalue(); //値を取得
-    break;
-
-  //負の値の取得
-  case I_MINUS: //「-」
-    value = 0 - ivalue(); //値を取得して負の値に変換
-    break;
-
-  case I_LNOT: //「!」
-    value = !ivalue(); //値を取得してNOT演算
-    break;
-
-  case I_BITREV: // 「~」 ビット反転
-    //cip++;
-    value = ~((int32_t)ivalue()); //値を取得してNOT演算
-    break;
-
   //変数の値の取得
   case I_VAR: //変数
     value = var.var(*cip++);
@@ -5204,32 +5185,57 @@ num_t GROUP(basic_core) ivalue() {
   return value; //取得した値を持ち帰る
 }
 
+num_t GROUP(basic_core) ipow() {
+  num_t value, tmp;
+  
+  value = ivalue();
+  if (err)
+    return -1;
+  
+  while (1)
+    switch (*cip) {
+    case I_POW:
+      cip++;
+      tmp = ivalue();
+      value = pow(value, tmp);
+      break;
+    default:
+      return value;
+    }
+}
+
+num_t GROUP(basic_core) iunary() {
+  switch (*cip++) {
+  case I_MINUS: //「-」
+    return 0 - ipow(); //値を取得して負の値に変換
+  case I_PLUS:
+    return ipow();
+  default:
+    cip--;
+    return ipow();
+  }
+}
+
 // multiply or divide calculation
 num_t GROUP(basic_core) imul() {
   num_t value, tmp; //値と演算値
 
-  value = ivalue(); //値を取得
+  value = iunary(); //値を取得
   if (err)
     return -1;
 
   while (1) //無限に繰り返す
     switch(*cip) { //中間コードで分岐
 
-    case I_POW:	// XXX: this should have a higher priority
-      cip++;
-      tmp = ivalue();
-      value = pow(value, tmp);
-      break;
-
     case I_MUL: //掛け算の場合
       cip++;
-      tmp = ivalue();
+      tmp = iunary();
       value *= tmp; //掛け算を実行
       break;
 
     case I_DIV: //割り算の場合
       cip++;
-      tmp = ivalue();
+      tmp = iunary();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1;
@@ -5239,7 +5245,7 @@ num_t GROUP(basic_core) imul() {
 
     case I_MOD: //剰余の場合
       cip++;
-      tmp = ivalue();
+      tmp = iunary();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1; //終了
@@ -5249,21 +5255,15 @@ num_t GROUP(basic_core) imul() {
 
     case I_LSHIFT: // シフト演算 "<<" の場合
       cip++;
-      tmp = ivalue();
+      tmp = iunary();
       value =((uint32_t)value)<<(uint32_t)tmp;
       break;
 
     case I_RSHIFT: // シフト演算 ">>" の場合
       cip++;
-      tmp = ivalue();
+      tmp = iunary();
       value =((uint32_t)value)>>(uint32_t)tmp;
       break;
-
-    case I_AND: // 算術積(ビット演算)
-      cip++;
-      tmp = ivalue();
-      value =((uint32_t)value)&((uint32_t)tmp);
-      break; //ここで打ち切る
 
     default:
       return value; //値を持ち帰る
@@ -5290,17 +5290,6 @@ num_t GROUP(basic_core) iplus() {
       tmp = imul();
       value -= tmp; //引き算を実行
       break;
-
-    case I_OR:  //算術和(ビット演算)
-      cip++;
-      tmp = imul();
-      value =((uint32_t)value)|((uint32_t)tmp);
-      break;
-
-    case I_XOR: //非排他OR(ビット演算)
-      cip++;
-      tmp = imul();
-      value =((uint32_t)value)^((uint32_t)tmp);
 
     default:
       return value; //値を持ち帰る
@@ -5562,33 +5551,8 @@ BString istrexp()
 
 #define basic_bool(x) ((x) ? -1 : 0)
 
-// Numeric expression parser
-num_t GROUP(basic_core) iexp() {
+num_t GROUP(basic_core) irel() {
   num_t value, tmp;
-
-  if (is_strexp()) {
-    // string comparison (or error)
-    BString lhs = istrexp();
-    BString rhs;
-    switch (*cip++) {
-    case I_EQ:
-      rhs = istrexp();
-      return basic_bool(lhs == rhs);
-    case I_NEQ:
-    case I_NEQ2:
-      rhs = istrexp();
-      return basic_bool(lhs != rhs);
-    case I_LT:
-      rhs = istrexp();
-      return basic_bool(lhs < rhs);
-    case I_GT:
-      rhs = istrexp();
-      return basic_bool(lhs > rhs);
-    default:
-      err = ERR_TYPE;
-      return -1;
-    }
-  }
 
   value = iplus();
   if (err)
@@ -5622,14 +5586,82 @@ num_t GROUP(basic_core) iexp() {
       tmp = iplus();
       value = basic_bool(value >= tmp);
       break;
-    case I_LAND:
-      tmp = iplus();
-      value = basic_bool(value && tmp);
+    default:
+      cip--;
+      return value;
+    }
+}
+
+num_t GROUP(basic_core) inot() {
+  switch(*cip++) {
+  case I_BITREV: // NOT
+    return ~((int32_t)irel());
+  default:
+    cip--;
+    return irel();
+  }
+}
+
+num_t GROUP(basic_core) iand() {
+  num_t value, tmp;
+
+  value = inot();
+  if (err)
+    return -1;
+
+  while (1)
+    switch(*cip++) {
+    case I_AND:
+      tmp = inot();
+      value = ((uint32_t)value)&((uint32_t)tmp);
       break;
-    case I_LOR:
-      tmp = iplus();
-      value = basic_bool(value || tmp);
+    default:
+      cip--;
+      return value;
+    }
+}
+
+// Numeric expression parser
+num_t GROUP(basic_core) iexp() {
+  num_t value, tmp;
+
+  if (is_strexp()) {
+    // string comparison (or error)
+    BString lhs = istrexp();
+    BString rhs;
+    switch (*cip++) {
+    case I_EQ:
+      rhs = istrexp();
+      return basic_bool(lhs == rhs);
+    case I_NEQ:
+    case I_NEQ2:
+      rhs = istrexp();
+      return basic_bool(lhs != rhs);
+    case I_LT:
+      rhs = istrexp();
+      return basic_bool(lhs < rhs);
+    case I_GT:
+      rhs = istrexp();
+      return basic_bool(lhs > rhs);
+    default:
+      err = ERR_TYPE;
+      return -1;
+    }
+  }
+
+  value = iand();
+  if (err)
+    return -1;
+
+  while (1)
+    switch(*cip++) {
+    case I_OR:
+      tmp = iand();
+      value = ((uint32_t)value) | ((uint32_t)tmp);
       break;
+    case I_XOR:
+      tmp = iand();
+      value = ((uint32_t)value) ^ ((uint32_t)tmp);
     default:
       cip--;
       return value;
