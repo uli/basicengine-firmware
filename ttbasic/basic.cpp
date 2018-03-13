@@ -4078,8 +4078,6 @@ void icopy() {
 
 // BSAVE "ファイル名", アドレス
 void SMALL ibsave() {
-  //char fname[SD_PATH_LEN];
-  uint8_t*radr;
   uint32_t vadr, len;
   BString fname;
   uint8_t rc;
@@ -4089,7 +4087,7 @@ void SMALL ibsave() {
   }
 
   if (*cip != I_COMMA) {
-    SYNTAX(I_TO);
+    SYNTAX(I_COMMA);
     return;
   }
   cip++;
@@ -4103,33 +4101,35 @@ void SMALL ibsave() {
   }
 
   // ファイルオープン
-#if USE_SD_CARD == 1
   rc = bfs.tmpOpen((char *)fname.c_str(),1);
-  if (rc == SD_ERR_INIT) {
-    err = ERR_SD_NOT_READY;
-    return;
-  } else if (rc == SD_ERR_OPEN_FILE) {
-    err =  ERR_FILE_OPEN;
+  if (rc) {
+    err = rc;
     return;
   }
 
-  // データの書込み
-  for (uint32_t i = 0; i < len; i++) {
-    radr = (uint8_t *)sanitize_addr(vadr, 0);
-    if (radr == NULL) {
-      goto DONE;
+  if ((vadr & 3) == 0 && (len & 3) == 0) {
+    // データの書込み
+    for (uint32_t i = 0; i < len; i += 4) {
+      uint32_t c = *(uint32_t *)vadr;
+      if(bfs.tmpWrite((char *)&c, 4)) {
+        err = ERR_FILE_WRITE;
+        goto DONE;
+      }
+      vadr += 4;
     }
-    if(bfs.putch(*radr)) {
-      err = ERR_FILE_WRITE;
-      goto DONE;
+  } else {
+    // データの書込み
+    for (uint32_t i = 0; i < len; i++) {
+      if(bfs.putch(*(uint8_t *)vadr)) {
+        err = ERR_FILE_WRITE;
+        goto DONE;
+      }
+      vadr++;
     }
-    vadr++;
   }
 
 DONE:
   bfs.tmpClose();
-#endif
-  return;
 }
 
 void SMALL ibload() {
