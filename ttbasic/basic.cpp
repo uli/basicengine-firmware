@@ -4133,7 +4133,6 @@ DONE:
 }
 
 void SMALL ibload() {
-  uint8_t*radr;
   uint32_t vadr;
   ssize_t len = -1;
   int32_t c;
@@ -4168,19 +4167,32 @@ void SMALL ibload() {
   if (len == -1)
     len = bfs.tmpSize();
 
-  // データの読込み
-  for (uint32_t i = 0; i < len; i++) {
-    radr = (uint8_t *)sanitize_addr(vadr, 0);
-    if (radr == NULL) {
-      goto DONE;
+  // アドレスの範囲チェック
+  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
+    err = ERR_RANGE;
+    goto DONE;
+  }
+
+  if ((vadr & 3) == 0 && (len & 3) == 0) {
+    for (ssize_t i = 0; i < len; i += 4) {
+      uint32_t c;
+      if (bfs.tmpRead((char *)&c, 4) < 0) {
+        err = ERR_FILE_READ;
+        goto DONE;
+      }
+      *((uint32_t *)vadr) = c;
+      vadr += 4;
     }
-    c = bfs.read();
-    if (c <0 ) {
-      err = ERR_FILE_READ;
-      goto DONE;
+  } else {
+    // データの読込み
+    for (ssize_t i = 0; i < len; i++) {
+      c = bfs.read();
+      if (c <0 ) {
+        err = ERR_FILE_READ;
+        goto DONE;
+      }
+      *((uint8_t *)vadr++) = c;
     }
-    *radr = c;
-    vadr++;
   }
 
 DONE:
