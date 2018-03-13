@@ -362,6 +362,9 @@ public:
   inline size_t  tmpSize() {
     return tfile.fileSize();
   }
+  inline ssize_t tmpWrite(char *s, size_t sz) {
+    return tfile.write(s, sz);
+  }
 
   void setTempFile(Unifile f) {
     tfile = f;
