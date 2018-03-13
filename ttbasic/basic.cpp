@@ -4154,7 +4154,7 @@ void SMALL ibload() {
     cip++;
     if ( getParam(len, I_NONE) ) return;              // データ長の取得
   }
-#if USE_SD_CARD == 1
+
   // ファイルオープン
   rc = bfs.tmpOpen((char *)fname.c_str(),0);
   if (rc == SD_ERR_INIT) {
@@ -4185,7 +4185,6 @@ void SMALL ibload() {
 
 DONE:
   bfs.tmpClose();
-#endif
   return;
 }
 
