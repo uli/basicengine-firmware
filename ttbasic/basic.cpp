@@ -4134,7 +4134,8 @@ DONE:
 
 void SMALL ibload() {
   uint8_t*radr;
-  uint32_t vadr, len;
+  uint32_t vadr;
+  ssize_t len = -1;
   int32_t c;
   BString fname;
   uint8_t rc;
@@ -4143,18 +4144,15 @@ void SMALL ibload() {
     return;
   }
 
-  if (*cip != I_COMMA) {
-    SYNTAX(I_COMMA);
+  if (*cip != I_TO) {
+    SYNTAX(I_TO);
     return;
   }
   cip++;
-  if ( getParam(vadr, I_COMMA) ) return;  // アドレスの取得
-  if ( getParam(len, I_NONE) ) return;              // データ長の取得
-
-  // アドレスの範囲チェック
-  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
-    err = ERR_RANGE;
-    return;
+  if ( getParam(vadr, I_NONE) ) return;  // アドレスの取得
+  if (*cip == I_COMMA) {
+    cip++;
+    if ( getParam(len, I_NONE) ) return;              // データ長の取得
   }
 #if USE_SD_CARD == 1
   // ファイルオープン
@@ -4166,6 +4164,9 @@ void SMALL ibload() {
     err =  ERR_FILE_OPEN;
     return;
   }
+  
+  if (len == -1)
+    len = bfs.tmpSize();
 
   // データの読込み
   for (uint32_t i = 0; i < len; i++) {
