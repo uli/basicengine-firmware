@@ -52,9 +52,6 @@ void setup(void){
 }
 
 void loop(void){
-#ifdef ESP8266_NOWIFI
-  ets_wdt_disable();
-#endif
   Serial.println("Wir sind da, wo unten ist.");
   eboot_command ebcmd;
   ebcmd.action = ACTION_LOAD_APP;
