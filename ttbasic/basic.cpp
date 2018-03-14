@@ -4299,7 +4299,7 @@ void SMALL iscreen() {
   scmode = m;
 
   // NTSCスクリーン設定
-  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, m - 1);
+  sc0.init(SIZE_LINE,CONFIG.NTSC, NULL, m - 1);
 
   sc0.cls();
   sc0.show_curs(false);
@@ -6703,7 +6703,8 @@ void SMALL basic() {
   // Initialize execution environment
   inew();
 
-  sc0.init(SIZE_LINE, CONFIG.KEYBOARD,CONFIG.NTSC, NULL, CONFIG.mode - 1);
+  sc0.init(SIZE_LINE, CONFIG.NTSC, NULL, CONFIG.mode - 1);
+  sc0.reset_kbd(CONFIG.KEYBOARD);
 
   sound.begin();
 

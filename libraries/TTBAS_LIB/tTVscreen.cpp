@@ -91,7 +91,7 @@ void tTVscreen::INSLINE(uint8_t l) {
 //  l  : 1行の最大長
 // 戻り値
 //  なし
-void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* extmem, uint8_t vmode) {
+void tTVscreen::init(uint16_t ln, int16_t NTSCajst, uint8_t* extmem, uint8_t vmode) {
   
   // ビデオ出力設定
   tv_init(NTSCajst, extmem, vmode);
@@ -106,18 +106,12 @@ void tTVscreen::init(uint16_t ln, uint8_t kbd_type, int16_t NTSCajst, uint8_t* e
   }	
   tGraphicDev::init();
 
-#if PS2DEV == 1
-  setupPS2(kbd_type);
-#endif
   m_cursor_count = 0;
   m_cursor_state = false;
 }
 
 // スクリーンの利用の終了
 void tTVscreen::end() {
-  // キーボード利用の終了
-  endPS2();
-
   // ビデオ出力終了
   tv_end();
   tscreenBase::end();

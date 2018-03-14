@@ -73,10 +73,10 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
       tv_write(x, y, c);
       VPOKE(x, y, c);
     }
-    void init( uint16_t ln=256, uint8_t kbd_type=false,
+    void init( uint16_t ln=256,
     	       int16_t NTSCajst=0, uint8_t* extmem=NULL, 
                uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定
-	void end();                                          // スクリーンの利用の終了
+    void end();                                          // スクリーンの利用の終了
     void Serial_Ctrl(int16_t ch);
     void reset_kbd(uint8_t kbd_type=false);
     void putch(uint8_t c);                            // 文字の出力
