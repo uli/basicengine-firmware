@@ -840,7 +840,9 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             h -= offset_y;
           }
           if (w > 0 && h > 0)
-            MoveBlock(s->pat_x, s->pat_y + offset_y, x, y + offset_y, w, h, 0);
+            MoveBlock(s->pat_x + s->frame_x * s->w,
+                      s->pat_y + s->frame_y * s->h + offset_y,
+                      x, y + offset_y, w, h, 0);
         }
       }
 #endif
