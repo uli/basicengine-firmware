@@ -2316,6 +2316,7 @@ resume:
         event_error_resume_lp = clp;
         event_error_resume_ip = cip;
         do_goto(event_error_line);
+        // XXX: What about clp = lp below?
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
@@ -6088,6 +6089,8 @@ void GROUP(basic_core) ireturn() {
   astk_num_i -= gstk[--gstki].num_args;
   astk_str_i -= gstk[gstki].str_args;
   if (gstki > 0) {
+    // XXX: This can change if the parent procedure was called by this one
+    // (directly or indirectly)!
     struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
     astk_num_i -= p.locc_num;
     astk_str_i -= p.locc_str;
