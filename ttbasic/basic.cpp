@@ -3893,9 +3893,9 @@ void SMALL ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
-  int32_t spr_from = -1, spr_to = -1;
+  uint32_t spr_from, spr_to;
   int32_t key = -1;	// no keying
-  bool define_bg = false;
+  bool define_bg = false, define_spr = false;
   int bg;
 
   if(!(fname = getParamFname())) {
@@ -3913,15 +3913,13 @@ void SMALL ildbmp() {
       } else if (*cip == I_SPRITE) {	// AS SPRITE ...
         ++cip;
         dx = dy = -1;
-        if (getParam(spr_from, 0, VS23_MAX_SPRITES-1, I_NONE)) {
-          spr_from = 0;
+        define_spr = true;
+        if (!get_range(spr_from, spr_to)) return;
+        if (spr_to == UINT32_MAX)
           spr_to = VS23_MAX_SPRITES - 1;
-        } else if (*cip == I_MINUS) {
-          ++cip;
-          if (getParam(spr_to, spr_from, VS23_MAX_SPRITES-1, I_NONE))
-            return;
-        } else {
-          spr_to = spr_from;
+        if (spr_to > VS23_MAX_SPRITES-1 || spr_from > spr_to) {
+          err = ERR_RANGE;
+          return;
         }
       } else {
         SYNTAX_T("BG or SPRITE");
@@ -3956,8 +3954,8 @@ void SMALL ildbmp() {
   if (!err) {
     if (define_bg)
       vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
-    if (spr_from != -1) {
-      for (int i = spr_from; i < spr_to + 1; ++i) {
+    if (define_spr) {
+      for (uint32_t i = spr_from; i < spr_to + 1; ++i) {
         vs23.setSpritePattern(i, dx, dy);
       }
     }
