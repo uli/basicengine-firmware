@@ -6816,7 +6816,7 @@ void SMALL basic() {
 
 static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
   {   0,   0,   0 },	// BG
-  { 255, 255, 255 },	// FG
+  { 192, 192, 192 },	// FG
   { 255, 255, 255 },	// KEYWORD
   { 128, 128, 128 },	// LINENUM
   {  10, 120, 160 },	// NUM (teal)
