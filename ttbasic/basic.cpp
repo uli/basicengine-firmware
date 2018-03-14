@@ -6489,6 +6489,7 @@ unsigned char* GROUP(basic_core) iexe(bool until_return) {
       if (c == SC_KEY_CTRL_C || c==27 ) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
         c_getch();
 	err = ERR_CTR_C;                  // エラー番号をセット
+	err_expected = NULL;
 	break;
       }
     }
