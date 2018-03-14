@@ -4806,7 +4806,7 @@ num_t GROUP(basic_core) ivalue() {
   num_t value = 0, value2; // 値
   uint8_t i;   // 文字数
   int dims;
-  int idxs[MAX_ARRAY_DIMS];
+  static int idxs[MAX_ARRAY_DIMS];
   int32_t a, b, c;
 
   switch (*cip++) { //中間コードで分岐
