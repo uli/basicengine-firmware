@@ -218,7 +218,7 @@ const uint8_t i_nsa[] __FLASH__ = {
   I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEK16, I_PEEK32, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_OUTPUT, I_INPUT_ANALOG,
-  I_DIN, I_ANA, I_MAP, I_DMP,
+  I_DIN, I_ANA, I_MAP,
   I_LSB, I_MSB, I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
@@ -439,7 +439,6 @@ static inline bool GROUP(basic_core) is_strexp() {
           *cip == I_CHR ||
           *cip == I_HEX ||
           *cip == I_BIN ||
-          *cip == I_DMP ||
           *cip == I_LEFTSTR ||
           *cip == I_RIGHTSTR ||
           *cip == I_MIDSTR ||
@@ -3303,40 +3302,6 @@ out:
   return BString();
 }
 
-// 小数点数値出力 DMP$(数値) or DMP(数値,小数部桁数) or DMP(数値,小数部桁数,整数部桁指定)
-void idmp(uint8_t devno=0) {
-  int32_t value;     // 値
-  int32_t v1,v2;
-  int32_t n = 2;    // 小数部桁数
-  int32_t dn = 0;   // 整数部桁指定
-  int32_t base=1;
-
-  if (checkOpen()) return;
-  if (getParam(value, I_NONE)) return;
-  if (*cip == I_COMMA) {
-    cip++;
-    if (getParam(n, 0,4, I_NONE)) return;
-    if (*cip == I_COMMA) {
-      cip++;
-      if (getParam(dn,-6,6, I_NONE)) return;
-    }
-  }
-  if (checkClose()) return;
-
-  for (int32_t i=0; i<n; i++) {
-    base*=10;
-  }
-  v1 = value / base;
-  v2 = value % base;
-  if (v1 == 0 && value <0)
-    c_putch('-',devno);
-  putnum(v1, dn, devno);
-  if (n) {
-    c_putch('.',devno);
-    putnum(v2<0 ? -v2 : v2, -n, devno);
-  }
-}
-
 // POKEコマンド POKE ADR,データ[,データ,..データ]
 void GROUP(basic_core) do_poke(int type) {
   void* adr;
@@ -3790,8 +3755,6 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       devno = 4;
       break;
       
-    case I_DMP:  cip++; idmp(devno); break; // DMP$()関数
-
     default:	// anything else is assumed to be a numeric expression
       value = iexp();
       if (err) {

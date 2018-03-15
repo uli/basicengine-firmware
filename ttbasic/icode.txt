@@ -158,7 +158,6 @@ ARGC	I_ARGC		esyntax
 CHR$	I_CHR		esyntax
 BIN$	I_BIN		esyntax
 HEX$	I_HEX		esyntax
-DMP$	I_DMP		esyntax
 STR$	I_STRSTR	esyntax
 LEFT$	I_LEFTSTR	esyntax
 RIGHT$	I_RIGHTSTR	esyntax
