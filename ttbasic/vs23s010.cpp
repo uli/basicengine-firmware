@@ -796,6 +796,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             int width = sl->len;		// non-BG sprite pixel count
             if (offset_x > sl->off)		// need to clip from the left
               width -= offset_x - sl->off;
+            if (draw_w < sl->len + sl->off)	// need to clip from the right
+              width -= sl->len + sl->off - draw_w;
             if (width <= 0)			// anything left?
               continue;
 
