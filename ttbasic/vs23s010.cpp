@@ -843,14 +843,18 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           int x = s->pos_x;
           int y = s->pos_y;
 
+          int offset_x = 0;
           if (x < 0) {
             w += x;
+            offset_x = -x;
             x = 0;
           } else if (x + w >= m_current_mode->x) {
             w = m_current_mode->x - x;
           }
+          int offset_y = 0;
           if (y < 0) {
             h += y;
+            offset_y = -y;
             y = 0;
           } else if (y + h >= m_current_mode->y) {
             h = m_current_mode->y - y;
@@ -858,15 +862,14 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 
           // Draw sprites crossing the screen partition in two steps, top half
           // in the first pass, bottom half in the second pass.
-          int offset_y = 0;
           if (pass == 0 && y + h > last_pix_split_y)
             h = last_pix_split_y - y;
           if (pass == 1 && y < last_pix_split_y && y + h > last_pix_split_y) {
-            offset_y = last_pix_split_y - y;
+            offset_y += last_pix_split_y - y;
             h -= offset_y;
           }
           if (w > 0 && h > 0)
-            MoveBlock(s->pat_x + s->frame_x * s->w,
+            MoveBlock(s->pat_x + s->frame_x * s->w + offset_x,
                       s->pat_y + s->frame_y * s->h + offset_y,
                       x, y + offset_y, w, h, 0);
         }
