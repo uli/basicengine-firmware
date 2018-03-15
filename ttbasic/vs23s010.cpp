@@ -765,31 +765,55 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           int draw_w = s->w;
           int draw_h = s->h;
 
-          if (s->pos_y < 0)
+          int offset_y = 0;
+          if (s->pos_y < 0) {
             draw_h += s->pos_y;
-          else if (s->pos_y + s->h > m_current_mode->y)
+            offset_y = -s->pos_y;
+          } else if (s->pos_y + s->h > m_current_mode->y)
             draw_h -= s->pos_y + s->h - m_current_mode->y;
 
-          if (s->pos_x < 0)
+          int offset_x = 0;
+          if (s->pos_x < 0) {
             draw_w += s->pos_x;
-          else if (s->pos_x + s->w > m_current_mode->x)
+            offset_x = -s->pos_x;
+          } else if (s->pos_x + s->w > m_current_mode->x)
             draw_w -= s->pos_x + s->w - m_current_mode->x;
 
           // Draw sprites crossing the screen partition in two steps, top half
           // in the first pass, bottom half in the second pass.
-          int offset_y = 0;
           if (pass == 0 && s->pos_y + draw_h > last_pix_split_y)
             draw_h = last_pix_split_y - s->pos_y;
           if (pass == 1 && s->pos_y < last_pix_split_y && s->pos_y + draw_h > last_pix_split_y) {
             draw_h -= last_pix_split_y - s->pos_y;
-            offset_y = last_pix_split_y - s->pos_y;
+            offset_y += last_pix_split_y - s->pos_y;
             spr_addr += offset_y * m_pitch;
           }
 
           for (int sy = 0; sy < draw_h; ++sy) {
+            // We try our best to minimize the number of bytes that have to
+            // be sent to the VS23.
             struct sprite_line *sl = &s->pattern[sy+offset_y];
-            // Copy sprite data to SPI send buffer.
-            os_memcpy(sbuf, sl->pixels, s->w);
+            int width = sl->len;		// non-BG sprite pixel count
+            if (offset_x > sl->off)		// need to clip from the left
+              width -= offset_x - sl->off;
+            if (width <= 0)			// anything left?
+              continue;
+
+            uint32_t sa = spr_addr + sy*m_pitch;	// line to draw to
+            uint8_t *sb;				// what to draw
+            if (sl->type == LINE_BROKEN) {
+              // Copy sprite data to SPI send buffer so it can be masked.
+              os_memcpy(sbuf, sl->pixels + sl->off, sl->len);
+              sb = sbuf;
+            } else {
+              // Use data from sprite definition directly.
+              sb = sl->pixels + sl->off;
+            }
+            if (offset_x < sl->off) {
+              sa += sl->off - offset_x;
+            } else {
+              sb += offset_x - sl->off;
+            }
 
             if (sl->type == LINE_BROKEN) {
               // This line has inner transparent pixels; we read the screen
@@ -800,16 +824,16 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
               // that there is an occasional corrupted byte, which will
               // be corrected in the next frame.
               setSpiClockRead();
-              SpiRamReadBytesFast(spr_addr + sy*m_pitch + sl->off, bbuf, sl->len);
+              SpiRamReadBytesFast(sa, bbuf, width);
               setSpiClock(spi_clock_default);
 
-              for (int p = 0; p < sl->len; ++p) {
-                if (!sbuf[p + sl->off])
-                  sbuf[p+sl->off] = bbuf[p];
+              for (int p = 0; p < width; ++p) {
+                if (sb[p] == s->key)
+                  sb[p] = bbuf[p];
               }
             }
 
-            SpiRamWriteBytesFast(spr_addr + sy*m_pitch + sl->off, sbuf + sl->off, sl->len);
+            SpiRamWriteBytesFast(sa, sb, width);
           }
         } else {
           int w = s->w;
