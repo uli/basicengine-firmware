@@ -1004,10 +1004,16 @@ void VS23S010::loadSpritePattern(uint8_t num)
 
 void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
 {
-  m_sprite[num].frame_x = frame_x;
-  m_sprite[num].frame_y = frame_y;
-  loadSpritePattern(num);
-  m_bg_modified = true;
+  struct sprite_t *s = &m_sprite[num];
+  if (frame_x != s->frame_x || frame_y != s->frame_y ||
+      flip_x != s->flip_x || flip_y != s->flip_y) {
+    s->frame_x = frame_x;
+    s->frame_y = frame_y;
+    s->flip_x = flip_x;
+    s->flip_y = flip_y;
+    loadSpritePattern(num);
+    m_bg_modified = true;
+  }
 }
 
 void VS23S010::setSpriteKey(uint8_t num, int16_t key)
