@@ -276,6 +276,12 @@ class VS23S010 {
     void setSpriteKey(uint8_t num, int16_t key);
     void enableSprite(uint8_t num);
     void disableSprite(uint8_t num);
+    inline uint8_t spriteFrameX(uint8_t num) {
+      return m_sprite[num].frame_x;
+    }
+    inline uint8_t spriteFrameY(uint8_t num) {
+      return m_sprite[num].frame_y;
+    }
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
       m_sprite[num].transparent = !enable;
