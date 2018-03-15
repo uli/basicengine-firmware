@@ -848,8 +848,15 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             w += x;
             offset_x = -x;
             x = 0;
+            // Blitter fails to draw less than 4 pixel-wide blocks correctly.
+            // If this happens on the left side, we drop the sprite altogether.
+            if (w < 4)
+              continue;
           } else if (x + w >= m_current_mode->x) {
             w = m_current_mode->x - x;
+            // If it happens on the right side, we draw into the border.
+            if (w < 4)
+              w = 4;
           }
           int offset_y = 0;
           if (y < 0) {
