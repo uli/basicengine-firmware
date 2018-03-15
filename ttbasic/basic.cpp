@@ -5031,7 +5031,10 @@ num_t GROUP(basic_core) ivalue() {
     if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
     if (getParam(b, 0, VS23_MAX_SPRITES, I_NONE)) return 0;
     if (checkClose()) return 0;
-    value = vs23.spriteCollision(a, b);
+    if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
+      value = vs23.spriteCollision(a, b);
+    else
+      value = 0;
     break;
 
   case I_PLAY:
