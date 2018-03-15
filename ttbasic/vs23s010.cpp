@@ -1026,15 +1026,14 @@ void VS23S010::setSpriteKey(uint8_t num, int16_t key)
 void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 {
   struct sprite_t *s = &m_sprite[num];
-  s->pat_x = pat_x;
-  s->pat_y = pat_y;
-  s->frame_x = s->frame_y = 0;
+  if (s->pat_x != pat_x || s->pat_y != pat_y) {
+    s->pat_x = pat_x;
+    s->pat_y = pat_y;
+    s->frame_x = s->frame_y = 0;
 
-  loadSpritePattern(num);
-  m_bg_modified = true;
-#ifdef DEBUG_SPRITES
-  Serial.printf("defined %d\n", num); Serial.flush();
-#endif
+    loadSpritePattern(num);
+    m_bg_modified = true;
+  }
 }
 
 void VS23S010::enableSprite(uint8_t num)
