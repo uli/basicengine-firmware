@@ -4443,6 +4443,7 @@ void imovebg() {
 
 void isprite() {
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
+  bool set_frame = false;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4451,6 +4452,10 @@ void isprite() {
   }
 
   if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
+  
+  frame_x = vs23.spriteFrameX(num);
+  frame_y = vs23.spriteFrameY(num);
+
   for (;;) switch (*cip++) {
   case I_PATTERN:
     if (getParam(pat_x, 0, sc0.getGWidth(), I_COMMA)) return;
@@ -4469,7 +4474,7 @@ void isprite() {
       if (getParam(frame_y, 0, 255, I_NONE)) return;
     } else
       frame_y = 0;
-    vs23.setSpriteFrame(num, frame_x, frame_y);
+    set_frame = true;
     break;
   case I_ON:
     vs23.enableSprite(num);
@@ -4478,9 +4483,10 @@ void isprite() {
     vs23.disableSprite(num);
     break;
   case I_FLAGS:
-    if (getParam(flags, 0, 1, I_NONE)) return;
+    if (getParam(flags, 0, 7, I_NONE)) return;
     // Bit 0: sprite opaque
     vs23.setSpriteOpaque(num, flags & 1);
+    set_frame = true;
     break;
   case I_KEY:
     if (getParam(key, 0, 255, I_NONE)) return;
@@ -4495,6 +4501,8 @@ void isprite() {
     cip--;
     if (!end_of_statement())
       SYNTAX_T("sprite parameter");
+    if (set_frame)
+      vs23.setSpriteFrame(num, frame_x, frame_y, flags & 2, flags & 4);
     return;
   }
 }
