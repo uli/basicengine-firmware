@@ -56,6 +56,7 @@ void VS23S010::resetSprites()
     s->w = s->h = 8;
     s->key = 0;
     s->prio = VS23_MAX_PRIO;
+    s->flip_x = s->flip_y = false;
   }
 }
 
@@ -1001,7 +1002,7 @@ void VS23S010::loadSpritePattern(uint8_t num)
   s->transparent = !solid_block;
 }
 
-void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y)
+void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
 {
   m_sprite[num].frame_x = frame_x;
   m_sprite[num].frame_y = frame_y;
