@@ -282,6 +282,15 @@ class VS23S010 {
     inline uint8_t spriteFrameY(uint8_t num) {
       return m_sprite[num].frame_y;
     }
+    inline bool spriteFlipX(uint8_t num) {
+      return m_sprite[num].flip_x;
+    }
+    inline bool spriteFlipY(uint8_t num) {
+      return m_sprite[num].flip_y;
+    }
+    inline bool spriteOpaque(uint8_t num) {
+      return !m_sprite[num].transparent;
+    }
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
       m_sprite[num].transparent = !enable;
