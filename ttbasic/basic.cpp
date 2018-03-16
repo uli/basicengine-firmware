@@ -4455,6 +4455,9 @@ void isprite() {
   
   frame_x = vs23.spriteFrameX(num);
   frame_y = vs23.spriteFrameY(num);
+  flags = (vs23.spriteOpaque(num) << 0) |
+          (vs23.spriteFlipX(num) << 1) |
+          (vs23.spriteFlipY(num) << 2);
 
   for (;;) switch (*cip++) {
   case I_PATTERN:
