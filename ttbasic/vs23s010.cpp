@@ -963,7 +963,22 @@ void VS23S010::loadSpritePattern(uint8_t num)
 
   for (int sy = 0; sy < s->h; ++sy) {
     struct sprite_line *p = &s->pattern[sy];
-    SpiRamReadBytes(tile_addr + sy*m_pitch, p->pixels, s->w);
+
+    int pline;
+    if (s->flip_y)
+      pline = s->h - 1 - sy;
+    else
+      pline = sy;
+
+    SpiRamReadBytes(tile_addr + pline*m_pitch, p->pixels, s->w);
+
+    if (s->flip_x) {
+      for (int i = 0; i < s->w / 2; ++i) {
+        uint8_t tmp = p->pixels[s->w - 1 - i];
+        p->pixels[s->w - 1 - i] = p->pixels[i];
+        p->pixels[i] = tmp;
+      }
+    }
 
     p->off = 0;
     p->len = s->w;
