@@ -4493,7 +4493,7 @@ void imovebg() {
 
 void isprite() {
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
-  bool set_frame = false;
+  bool set_frame = false, set_opacity = false;
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4535,11 +4535,17 @@ void isprite() {
   case I_OFF:
     vs23.disableSprite(num);
     break;
-  case I_FLAGS:
-    if (getParam(flags, 0, 7, I_NONE)) return;
-    // Bit 0: sprite opaque
-    vs23.setSpriteOpaque(num, flags & 1);
-    set_frame = true;
+  case I_FLAGS: {
+      int32_t new_flags;
+      if (getParam(new_flags, 0, 7, I_NONE)) return;
+      if (new_flags != flags) {
+        if ((new_flags & 1) != (flags & 1))
+          set_opacity = true;
+        if ((new_flags & 6) != (flags & 6))
+          set_frame = true;
+        flags = new_flags;
+      }
+    }
     break;
   case I_KEY:
     if (getParam(key, 0, 255, I_NONE)) return;
@@ -4556,6 +4562,8 @@ void isprite() {
       SYNTAX_T("sprite parameter");
     if (set_frame)
       vs23.setSpriteFrame(num, frame_x, frame_y, flags & 2, flags & 4);
+    if (set_opacity || (set_frame && (flags & 1)))
+      vs23.setSpriteOpaque(num, flags & 1);
     return;
   }
 }
