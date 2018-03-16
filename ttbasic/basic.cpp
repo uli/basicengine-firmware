@@ -20,8 +20,12 @@
 
 #include "epigrams.h"
 
+#ifdef ESP8266
 #define STR_EDITION "ESP8266"
-#define STR_VARSION "V0.84"
+#else
+#define STR_EDITION "unknown"
+#endif
+#include "version.h"
 
 #include "basic.h"
 
@@ -6769,9 +6773,12 @@ void SMALL basic() {
 
   // Platform/version
   sc0.setColor(vs23.colorFromRgb(64,64,64), COL(BG));
-  sc0.locate(sc0.getWidth() - 14, 7);
-  c_puts(STR_EDITION);
-  c_puts(" " STR_VARSION);
+  static const char __e[] PROGMEM = STR_EDITION;
+  sc0.locate(sc0.getWidth() - strlen_P(__e), 7);
+  c_puts_P(__e);
+  static const char __v[] PROGMEM = STR_VARSION;
+  sc0.locate(sc0.getWidth() - strlen_P(__v), 8);
+  c_puts_P(__v);
 
   // Initialize file systems
   SPIFFS.begin();
