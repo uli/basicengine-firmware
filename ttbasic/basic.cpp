@@ -1117,12 +1117,11 @@ inline bool is_reindent(uint8_t c) {
   return c == I_ELSE;
 }
 
-//指定中間コード行レコードのテキスト出力
-void SMALL putlist(unsigned char* ip, uint8_t devno) {
-  unsigned char i;  // ループカウンタ
-  uint8_t var_code; // 変数コード
+void SMALL recalc_indent_line(unsigned char *lp) {
   bool re_indent = false;
   bool skip_indent = false;
+  line_desc_t *ld = (line_desc_t *)lp;
+  unsigned char *ip = lp + sizeof(line_desc_t);
 
   re_indent = is_reindent(*ip);	// must be reverted at the end of the line
   if (is_unindent(*ip) || re_indent) {
@@ -1132,10 +1131,10 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 
   if (indent_level < 0)
     indent_level = 0;
-  for (i = 0; i < indent_level && i < MAX_INDENT; ++i)
-    c_putch(' ', devno);
 
-  while (*ip != I_EOL) { //行末でなければ繰り返す
+  ld->indent = indent_level;
+  
+  while (*ip != I_EOL) {
     if (skip_indent)
       skip_indent = false;
     else {
@@ -1144,7 +1143,40 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       else if (is_unindent(*ip))
         indent_level -= INDENT_STEP;
     }
+    int ts = token_size(ip);
+    if (ts < 0)
+      break;
+    else
+      ip += ts;
+  }
 
+  if (re_indent)
+    indent_level += INDENT_STEP;
+}
+
+void SMALL recalc_indent() {
+  unsigned char *lp = listbuf;
+  indent_level = 0;
+
+  while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
+    recalc_indent_line(lp);    // 行番号より後ろを文字列に変換して表示
+    if (err)                   // もしエラーが生じたら
+      break;                   // 繰り返しを打ち切る
+    lp += *lp;               // 行ポインタを次の行へ進める
+  }
+}
+
+//指定中間コード行レコードのテキスト出力
+void SMALL putlist(unsigned char* ip, uint8_t devno) {
+  unsigned char i;  // ループカウンタ
+  uint8_t var_code; // 変数コード
+  line_desc_t *ld = (line_desc_t *)ip;
+  ip += sizeof(line_desc_t);
+
+  for (i = 0; i < ld->indent && i < MAX_INDENT; ++i)
+    c_putch(' ', devno);
+
+  while (*ip != I_EOL) { //行末でなければ繰り返す
     //キーワードの処理
     if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
       char kw[MAX_KW_LEN+1];
@@ -1305,8 +1337,6 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       return;
     }
   }
-  if (re_indent)
-    indent_level += INDENT_STEP;
 }
 
 int GROUP(basic_core) get_array_dims(int *idxs);
@@ -2401,7 +2431,6 @@ void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
   // Skip until we reach the start line.
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
 
-  indent_level = 0;
   //リストを表示する
   while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
     prnlineno = getlineno(lp); // 行番号取得
@@ -2418,7 +2447,7 @@ void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
     putnum(prnlineno, 0,devno); // 行番号を表示
     sc0.setColor(COL(FG), COL(BG));
     c_putch(' ',devno);        // 空白を入れる
-    putlist(lp + sizeof(num_t) + 1,devno);    // 行番号より後ろを文字列に変換して表示
+    putlist(lp,devno);    // 行番号より後ろを文字列に変換して表示
     if (err)                   // もしエラーが生じたら
       break;                   // 繰り返しを打ち切る
     newline(devno);            // 改行
@@ -2742,6 +2771,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
       }
     }
   }
+  recalc_indent();
   bfs.tmpClose();
   return rc;
 }
@@ -4745,11 +4775,10 @@ void SMALL error(uint8_t flgCmd = false) {
         PRINT_P(ex2,")");
       }
 
-      indent_level = 0;
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
       c_putch(' ');
-      putlist(clp + sizeof(num_t) + 1);
+      putlist(clp);
       newline();
       //err = 0;
       //return;
@@ -5739,7 +5768,6 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
     return NULL;
 
   // Output of specified line text to line buffer
-  indent_level = 0;
   if (devno == 3)
     cleartbuf();
   if (devno == 0)
@@ -5748,7 +5776,7 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
   if (devno == 0)
     sc0.setColor(COL(FG), COL(BG));
   c_putch(' ', devno);
-  putlist(lp+sizeof(num_t)+1, devno);
+  putlist(lp, devno);
   if (devno == 3)
     c_putch(0,devno);        // zero-terminate tbuf
   return tbuf;
@@ -6798,6 +6826,7 @@ void SMALL basic() {
     if (*ibuf == I_NUM) { // the beginning of the code buffer is a line number
       *ibuf = len;        // overwrite the token with the length
       inslist();          // Insert one line of intermediate code into the list
+      recalc_indent();
       if (err)
 	error();          // display program mode error message
       continue;
