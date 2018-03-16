@@ -6,7 +6,7 @@ DEST_ADDR = 0x00000000
 
 all: elf
 
-elf:	funtbl.h epigrams.h
+elf:	funtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
@@ -19,6 +19,8 @@ funtbl.h: icode.txt icode.py
 	python icode.py
 epigrams.h: epigrams.txt epi.py
 	python epi.py <epigrams.txt >epigrams.h
+version.h: ../.git/index
+	echo "#define STR_VARSION \"$(shell git describe --abbrev=4 --dirty --always --tags)\"" >$@
 
 clean:
 	rm -fr $(PWD)/build/*
