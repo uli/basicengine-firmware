@@ -298,6 +298,19 @@ Procedures proc;
 
 unsigned char *listbuf; // Pointer to program list area
 
+// BASIC line number descriptor.
+// NB: A lot of code relies on this being of size "sizeof(num_t)+1".
+typedef struct {
+  uint8_t next;
+  union {
+    num_t raw_line;
+    struct {
+      uint32_t line;
+      int8_t indent;
+    };
+  };
+} __attribute__((packed)) line_desc_t;
+
 unsigned char* clp;               // Pointer current line
 unsigned char* cip;               // Pointer current Intermediate code
 struct {
@@ -920,11 +933,10 @@ int list_free() {
 
 // Get line numbere by line pointer
 uint32_t GROUP(basic_core) getlineno(unsigned char *lp) {
-  num_t l;
-  if(*lp == 0) //もし末尾だったら
+  line_desc_t *ld = (line_desc_t *)lp;
+  if(ld->next == 0) //もし末尾だったら
     return (uint32_t)-1;
-  l = UNALIGNED_NUM_T(lp+1);    
-  return l;
+  return ld->line;
 }
 
 // Search line by line number
@@ -987,7 +999,7 @@ uint8_t* getELSEptr(uint8_t* p, bool endif_only = false) {
         err = ERR_NOENDIF;
         return NULL;
       }
-      lp = cip = clp + sizeof(num_t) + 1;
+      lp = cip = clp + sizeof(line_desc_t);
       break;
     case I_ENDIF:
     case I_IMPLICITENDIF:
@@ -1047,6 +1059,12 @@ void inslist() {
     }
     size_list += *ibuf;
   }
+
+  // Convert I_NUM literal to line number descriptor.
+  line_desc_t *ld = (line_desc_t *)ibuf;
+  num_t lin = ld->raw_line;
+  ld->line = lin;
+  ld->indent = 0;
 
   insp = getlp(getlineno(ibuf)); // 挿入位置ポインタを取得
 
@@ -1942,7 +1960,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
   *start_clp = *start_cip = NULL;
 
   if (!scip)
-    scip = sclp + sizeof(num_t) + 1;
+    scip = sclp + sizeof(line_desc_t);
 
   while (*scip != tok) {
     next = token_size(scip);
@@ -1950,7 +1968,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
       sclp += *sclp;
       if (!*sclp)
         return;
-      scip = sclp + sizeof(num_t) + 1;
+      scip = sclp + sizeof(line_desc_t);
     } else
       scip += next;
   }
@@ -2037,7 +2055,7 @@ bool find_next_data() {
       return false;
   }
   if (!data_ip) {
-    data_ip = data_lp + sizeof(num_t) + 1;
+    data_ip = data_lp + sizeof(line_desc_t);
   }
   
   while (*data_ip != I_DATA && (!in_data || *data_ip != I_COMMA)) {
@@ -2047,7 +2065,7 @@ bool find_next_data() {
       data_lp += *data_lp;
       if (!*data_lp)
         return false;
-      data_ip = data_lp + sizeof(num_t) + 1;
+      data_ip = data_lp + sizeof(line_desc_t);
     } else
       data_ip += next;
   }
@@ -2065,7 +2083,7 @@ void idata() {
       clp += *clp;
       if (!*clp)
         return;
-      cip = clp + sizeof(num_t) + 1;
+      cip = clp + sizeof(line_desc_t);
     } else
       cip += next;
   }
@@ -2267,7 +2285,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
       cip = cont_cip;
     } else {
       clp = start_clp;
-      cip = clp + sizeof(num_t) + 1;
+      cip = clp + sizeof(line_desc_t);
     }
     goto resume;
   }
@@ -2302,7 +2320,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
       c_putch(' ');
     }
 
-    cip = clp + sizeof(num_t) + 1;   // 中間コードポインタを行番号の後ろに設定
+    cip = clp + sizeof(line_desc_t);   // 中間コードポインタを行番号の後ろに設定
 
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
@@ -2499,7 +2517,7 @@ void SMALL irenum() {
   // 開始行番号、増分引数チェック
   if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
     startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
-    cip += sizeof(num_t) + 1;
+    cip += sizeof(line_desc_t);
     if (*cip == I_COMMA) {
       cip++;                          // カンマをスキップ
       if (*cip == I_NUM) {            // 増分指定があったら
@@ -2539,13 +2557,14 @@ void SMALL irenum() {
 	  index = getlineIndex(num);     // 行番号の行インデックスを取得する
 	  if (index == INT32_MAX) {
 	    // 該当する行が見つからないため、変更は行わない
-	    i += sizeof(num_t) + 1;
+	    i += sizeof(line_desc_t);
 	    continue;
 	  } else {
 	    // とび先行番号を付け替える
 	    newnum = startLineNo + increase*index;
-	    UNALIGNED_NUM_T(ptr+i+1) = newnum;
-	    i += sizeof(num_t) + 1;
+	    line_desc_t *ld = (line_desc_t *)(ptr + i);
+	    ld->line = newnum;
+	    i += sizeof(line_desc_t);
 	    continue;
 	  }
 	}
@@ -2565,7 +2584,8 @@ void SMALL irenum() {
   index = 0;
   for (  clp = listbuf; *clp; clp += *clp ) {
     newnum = startLineNo + increase * index;
-    UNALIGNED_NUM_T(clp+1) = newnum;
+    line_desc_t *ld = (line_desc_t *)clp;
+    ld->line = newnum;
     index++;
   }
 }
@@ -2782,7 +2802,7 @@ void SMALL idelete() {
   // continue on the next line, in the likely case the DELETE command didn't
   // delete itself
   clp = getlp(current_line + 1);
-  cip = clp + sizeof(num_t) + 1;
+  cip = clp + sizeof(line_desc_t);
 }
 
 // プログラムファイル一覧表示 FILES ["ファイルパス"]
@@ -4701,7 +4721,7 @@ uint8_t SMALL ilrun() {
   }
   if (!err) {
     if (islrun || (cip >= listbuf && cip < listbuf+size_list)) {
-      cip = clp+sizeof(num_t)+1;
+      cip = clp+sizeof(line_desc_t);
     }
   }
   return 1;
@@ -5115,7 +5135,7 @@ num_t GROUP(basic_core) ivalue() {
       if (!lp || err)
         break;
       clp = lp;
-      cip = clp + sizeof(num_t) + 1;
+      cip = clp + sizeof(line_desc_t);
     }
     value = retval[0];
     break;
@@ -5798,7 +5818,7 @@ static void GROUP(basic_core) do_goto(uint32_t line)
   }
 
   clp = lp;        // 行ポインタを分岐先へ更新
-  cip = clp + sizeof(num_t) + 1; // 中間コードポインタを先頭の中間コードに更新
+  cip = clp + sizeof(line_desc_t); // 中間コードポインタを先頭の中間コードに更新
 }
 
 // GOTO
@@ -5831,7 +5851,7 @@ static void GROUP(basic_core) do_gosub(uint32_t lineno)
   gstk[gstki++].proc_idx = 0;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
-  cip = clp + sizeof(num_t) + 1;            // 中間コードポインタを先頭の中間コードに更新
+  cip = clp + sizeof(line_desc_t);            // 中間コードポインタを先頭の中間コードに更新
 }
 
 // GOSUB
