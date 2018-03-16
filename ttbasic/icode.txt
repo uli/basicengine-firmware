@@ -27,7 +27,6 @@ INPUT$	I_INPUTSTR	esyntax_workaround
 INPUT	I_INPUT		iinput
 CLS	I_CLS		icls
 COLOR	I_COLOR		icolor
-ATTR	I_ATTR		iattr
 LOCATE	I_LOCATE	ilocate
 REDRAW	I_REFLESH	irefresh
 CSCROLL	I_CSCROLL	icscroll

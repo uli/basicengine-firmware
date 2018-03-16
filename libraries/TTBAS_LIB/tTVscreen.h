@@ -99,7 +99,6 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void draw_cls_curs();                             // カーソルの消去
 
     void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
-    //void setAttr(uint16_t attr);                      // 文字属性
     void beep() {/*addch(0x07);*/};
 
     inline uint8_t IS_PRINT(uint8_t ch) {

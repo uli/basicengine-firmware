@@ -238,7 +238,7 @@ const uint8_t i_nsb[] __FLASH__ = {
 
 // insert a blank before intermediate code
 const uint8_t i_sf[] __FLASH__  = {
-  I_ATTR, I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
+  I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,
@@ -3186,13 +3186,6 @@ void icolor() {
   }
   // 文字色の設定
   sc0.setColor((uint16_t)fc, (uint16_t)bc);
-}
-
-// 文字属性の指定 ATTRコマンド
-void iattr() {
-  int32_t attr;
-  if ( getParam(attr, 0, 4, I_NONE) ) return;
-  sc0.setAttr(attr);
 }
 
 // キー入力文字コードの取得 INKEY()関数
