@@ -33,3 +33,4 @@ inline int tv_font_width()
   return f_width;
 }
 
+void tv_flipcolors();

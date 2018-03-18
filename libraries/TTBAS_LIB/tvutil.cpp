@@ -368,3 +368,10 @@ void tv_setcolor(uint16_t fc, uint16_t bc)
   fg_color = fc;
   bg_color = bc;
 }
+
+void tv_flipcolors()
+{
+  uint16_t tmp = fg_color;
+  fg_color = bg_color;
+  bg_color = tmp;
+}
