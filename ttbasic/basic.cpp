@@ -143,10 +143,69 @@ void error(uint8_t flgCmd);
 #include <TKeyboard.h>
 extern TKeyboard kb;
 
+void GROUP(basic_core) screen_putch(uint8_t c) {
+  static bool escape = false;
+  static bool reverse = false;
+  if (c == '\\') {
+    if (!escape) {
+      escape = true;
+      return;
+    }
+    sc0.putch('\\');
+  } else {
+    if (escape) {
+      switch (c) {
+      case 'R':
+        if (!reverse) {
+          reverse = true;
+          sc0.flipColors();
+        }
+        break;
+      case 'N':
+        if (reverse) { 
+          reverse = false;
+          sc0.flipColors();
+        }
+        break;
+      case 'l':
+        if (sc0.c_x())
+          sc0.locate(sc0.c_x() - 1, sc0.c_y());
+        else if (sc0.c_y() > 0)
+          sc0.locate(sc0.getWidth() - 1, sc0.c_y() - 1);
+        break;
+      case 'r':
+        if (sc0.c_x() < sc0.getWidth() - 1)
+          sc0.locate(sc0.c_x() + 1, sc0.c_y());
+        else if (sc0.c_y() < sc0.getHeight() - 1)
+          sc0.locate(0, sc0.c_y() + 1);
+        break;
+      case 'u':
+        if (sc0.c_y() > 0)
+          sc0.locate(sc0.c_x(), sc0.c_y() - 1);
+        break;
+      case 'd':
+        if (sc0.c_y() < sc0.getHeight() - 1)
+          sc0.locate(sc0.c_x(), sc0.c_y() + 1);
+        break;
+      case 'c':	sc0.cls();	// fallthrough
+      case 'h': sc0.locate(0, 0);
+      default:	break;
+      }
+    } else {
+      switch (c) {
+      case '\n':newline(); break;
+      case '\r':sc0.locate(0, sc0.c_y()); break;
+      default:	sc0.putch(c); break;
+      }
+    }
+  }
+  escape = false;
+}
+
 // 文字の出力
 inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0)
-    sc0.putch(c);
+    screen_putch(c);
   else if (devno == 1)
     Serial.write(c);
   else if (devno == 2)
