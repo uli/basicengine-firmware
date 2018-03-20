@@ -841,10 +841,6 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       ibuf[len++] = idx;
       proc.reserve(proc_names.varTop());
     } else if (key == I_LABEL) {
-      if (!is_prg_text) {
-        err = ERR_COM;
-        return 0;
-      }
       if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
 	err = ERR_IBUFOF;
 	return 0;
