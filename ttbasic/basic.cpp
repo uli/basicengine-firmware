@@ -6038,7 +6038,7 @@ void GROUP(basic_core) ion()
     ++cip;
     int ch = getparam();
     if (ch < 0 || ch >= SOUND_CHANNELS) {
-      err = ERR_VALUE;
+      E_VALUE(0, SOUND_CHANNELS - 1);
       return;
     }
     if (*cip == I_OFF) {
@@ -6056,7 +6056,7 @@ void GROUP(basic_core) ion()
     ++cip;
     int pad = getparam();
     if (pad < 0 || pad >= MAX_PADS) {
-      err = ERR_VALUE;
+      E_VALUE(0, MAX_PADS - 1);
       return;
     }
     if (*cip == I_OFF) {
