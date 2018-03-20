@@ -4987,7 +4987,7 @@ num_t GROUP(basic_core) ivalue() {
     value = getparam(); //括弧の値を取得
     if (!err) {
       if (value < 0 )
-	err = ERR_VALUE;
+	E_VALUE(0, INT32_MAX);
       else
 	value = getrnd(value);  //乱数を取得
     }
@@ -5086,7 +5086,7 @@ num_t GROUP(basic_core) ivalue() {
       value = millis()/1000;         // 0～INT32_MAX s
     } else {
       value = 0;                                // 引数が正しくない
-      err = ERR_VALUE;
+      E_VALUE(0, 1);
     }
     break;
 
@@ -5148,7 +5148,7 @@ num_t GROUP(basic_core) ivalue() {
     switch (a) {
     case 0:	value = sc0.getWidth(); break;
     case 1:	value = sc0.getHeight(); break;
-    default:	err = ERR_VALUE; break;
+    default:	E_VALUE(0, 1); break;
     }
     break;
   case I_PSIZE:
@@ -5157,7 +5157,7 @@ num_t GROUP(basic_core) ivalue() {
     case 0:	value = sc0.getGWidth(); break;
     case 1:	value = sc0.getGHeight(); break;
     case 2:	value = vs23.lastLine(); break;
-    default:	err = ERR_VALUE; break;
+    default:	E_VALUE(0, 2); break;
     }
     break;
 
@@ -5166,7 +5166,7 @@ num_t GROUP(basic_core) ivalue() {
     switch (a) {
     case 0:	value = sc0.c_x(); break;
     case 1:	value = sc0.c_y(); break;
-    default:	err = ERR_VALUE; break;
+    default:	E_VALUE(0, 1); break;
     }
     break;
   
@@ -5296,7 +5296,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_VPEEK:
     value = getparam();
     if (value < 0 || value > 131071)
-      err = ERR_VALUE;
+      E_VALUE(0, 131071);
     else
       value = SpiRamReadByte(value);
     break;
