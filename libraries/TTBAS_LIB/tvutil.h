@@ -34,3 +34,6 @@ inline int tv_font_width()
 }
 
 void tv_flipcolors();
+
+extern uint16_t fg_color;
+extern uint16_t bg_color;

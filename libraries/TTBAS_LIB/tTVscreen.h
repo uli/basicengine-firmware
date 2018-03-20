@@ -102,6 +102,12 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline void flipColors() {
       tv_flipcolors();
     }
+    inline uint16_t getFgColor() {
+      return fg_color;
+    }
+    inline uint16_t getBgColor() {
+      return bg_color;
+    }
     void beep() {/*addch(0x07);*/};
 
     inline uint8_t IS_PRINT(uint8_t ch) {
