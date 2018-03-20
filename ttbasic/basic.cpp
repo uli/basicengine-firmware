@@ -6040,14 +6040,8 @@ void GROUP(basic_core) igoto() {
   }
 }
 
-static void GROUP(basic_core) do_gosub(uint32_t lineno)
+static void GROUP(basic_core) do_gosub_p(unsigned char *lp, unsigned char *ip)
 {
-  uint8_t *lp = getlp(lineno);                       // 分岐先のポインタを取得
-  if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
-    err = ERR_ULN;                          // エラー番号をセット
-    return;
-  }
-
   //ポインタを退避
   if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
@@ -6060,7 +6054,16 @@ static void GROUP(basic_core) do_gosub(uint32_t lineno)
   gstk[gstki++].proc_idx = 0;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
-  cip = clp + sizeof(line_desc_t);            // 中間コードポインタを先頭の中間コードに更新
+  cip = ip;
+}
+
+static void GROUP(basic_core) do_gosub(uint32_t lineno) {
+  uint8_t *lp = getlp(lineno);
+  if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
+    err = ERR_ULN;                          // エラー番号をセット
+    return;
+  }
+  do_gosub_p(lp, lp + sizeof(line_desc_t));
 }
 
 // GOSUB
