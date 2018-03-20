@@ -143,8 +143,20 @@ void error(uint8_t flgCmd);
 #include <TKeyboard.h>
 extern TKeyboard kb;
 
+// 1桁16進数文字を整数に変換する
+uint16_t GROUP(basic_core) hex2value(char c) {
+  if (c <= '9' && c >= '0')
+    return c - '0';
+  else if (c <= 'f' && c >= 'a')
+    return c - 'a' + 10;
+  else if (c <= 'F' && c >= 'A')
+    return c - 'A' + 10;
+  return 0;
+}
+
 void GROUP(basic_core) screen_putch(uint8_t c) {
   static bool escape = false;
+  static uint8_t col_digit = 0, color, is_bg;
   static bool reverse = false;
   if (c == '\\') {
     if (!escape) {
@@ -153,7 +165,20 @@ void GROUP(basic_core) screen_putch(uint8_t c) {
     }
     sc0.putch('\\');
   } else {
-    if (escape) {
+    if (col_digit > 0) {
+      if (col_digit == 1) {
+        color = hex2value(c);
+        col_digit++;
+      } else {
+        color = (color << 4) | hex2value(c);
+        if (is_bg)
+          sc0.setColor(sc0.getFgColor(), color);
+        else
+          sc0.setColor(color, sc0.getBgColor());
+
+        col_digit = 0;
+      }
+    } else if (escape) {
       switch (c) {
       case 'R':
         if (!reverse) {
@@ -189,6 +214,14 @@ void GROUP(basic_core) screen_putch(uint8_t c) {
         break;
       case 'c':	sc0.cls();	// fallthrough
       case 'h': sc0.locate(0, 0);
+      case 'f':
+        col_digit = 1;
+        is_bg = false;
+        break;
+      case 'b':
+        col_digit = 1;
+        is_bg = true;
+        break;
       default:	break;
       }
     } else {
@@ -522,17 +555,6 @@ static inline bool GROUP(basic_core) is_strexp() {
           *cip == I_DIRSTR ||
           *cip == I_INKEYSTR
          );
-}
-
-// 1桁16進数文字を整数に変換する
-uint16_t hex2value(char c) {
-  if (c <= '9' && c >= '0')
-    return c - '0';
-  else if (c <= 'f' && c >= 'a')
-    return c - 'a' + 10;
-  else if (c <= 'F' && c >= 'A')
-    return c - 'A' + 10;
-  return 0;
 }
 
 // 1文字出力
