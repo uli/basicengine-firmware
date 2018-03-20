@@ -6058,9 +6058,13 @@ void GROUP(basic_core) igoto() {
 
   if (*cip == I_LABEL) {
     ++cip;
-    uint8_t lb = *cip++;
-    clp = labels.label(lb).lp;
-    cip = labels.label(lb).ip;
+    label_t &lb = labels.label(*cip++);
+    if (!lb.lp || !lb.ip) {
+      err = ERR_UNDEFLABEL;
+      return;
+    }
+    clp = lb.lp;
+    cip = lb.ip;
   } else {
     // 引数の行番号取得
     lineno = iexp();
