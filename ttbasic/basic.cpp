@@ -2138,6 +2138,10 @@ void initialize_proc_pointers(void)
 
   lp = listbuf; ip = NULL;
 
+  for (int i = 0; i < proc.size(); ++i) {
+    proc.proc(i).lp = NULL;
+  }
+
   for (;;) {
     find_next_token(&lp, &ip, I_PROC);
     if (!lp)
@@ -2147,6 +2151,12 @@ void initialize_proc_pointers(void)
     ip += 2;
 
     proc_t &pr = proc.proc(proc_id);
+
+    if (pr.lp) {
+      err = ERR_DUPPROC;
+      clp = lp; cip = ip;
+      return;
+    }
 
     pr.argc_num = 0;
     pr.argc_str = 0;
