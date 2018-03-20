@@ -6560,6 +6560,10 @@ void GROUP(basic_core) iskip() {
     cip++;              // 中間コードポインタを次へ進める
 }
 
+void GROUP(basic_core) ilabel() {
+  ++cip;
+}
+
 // END
 void iend() {
   while (*clp)    // 行の終端まで繰り返す

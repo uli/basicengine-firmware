@@ -13,7 +13,7 @@ END	I_END		iend
 ELSE	I_ELSE		ielse
 :	I_COLON		inil
 '	I_SQUOT		iskip
-&	I_LABEL		iskip
+&	I_LABEL		ilabel
 DATA	I_DATA		idata
 READ	I_READ		iread
 RESTORE	I_RESTORE	irestore
