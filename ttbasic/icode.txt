@@ -232,6 +232,7 @@ VPEEK	I_VPEEK		esyntax
 EOF	I_EOF		esyntax
 LOF	I_LOF		esyntax
 OK	I_OK		esyntax
+LOC	I_LOC		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax
 _none	I_HEXNUM	esyntax
