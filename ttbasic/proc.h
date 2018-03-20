@@ -109,3 +109,52 @@ private:
   int m_size;
   struct proc_t *m_proc;
 };
+
+struct label_t {
+  unsigned char *lp;
+  unsigned char *ip;
+};
+
+class Labels {
+public:
+  Labels() {
+    m_size = 0;
+    m_lab = NULL;
+  }
+
+  void reset() {
+    for (int i = 0; i < m_size; ++i) {
+      memset(&m_lab[i], 0, sizeof(m_lab[i]));
+    }
+  }
+
+  bool reserve(uint8_t count) {
+    dbg_var("lb reserve %d\n", count);
+    if (count == 0) {
+      free(m_lab);
+      m_lab = NULL;
+      m_size = 0;
+      return false;
+    }
+    m_lab = (struct label_t *)realloc(m_lab, count * sizeof(*m_lab));
+    if (!m_lab)
+      return true;
+    for (int i = m_size; i < count; ++i) {
+      memset(&m_lab[i], 0, sizeof(m_lab[i]));
+    }
+    m_size = count;
+    return false;
+  }
+
+  inline int size() {
+    return m_size;
+  }
+  
+  inline struct label_t& label(uint8_t index) {
+    return m_lab[index];
+  }
+
+private:
+  int m_size;
+  struct label_t *m_lab;
+};
