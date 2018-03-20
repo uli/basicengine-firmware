@@ -88,6 +88,7 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
               adsr[a] = 15;
 
             tok = strtok(NULL, " ");
+            ++a;
           };
 
           int ch_off = ch * 7;
