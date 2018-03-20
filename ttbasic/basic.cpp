@@ -120,11 +120,6 @@ unsigned char* GROUP(basic_core) iexe(bool until_return = false);
 num_t GROUP(basic_core) iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
-#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
-#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
-                           err = ERR_SYNTAX; err_expected = __msg; \
-                      } while(0)
-
 // **** RTC用宣言 ********************
 #if USE_INNERRTC == 1
   #include <RTClock.h>
@@ -368,6 +363,25 @@ static const char* const errmsg[] PROGMEM = {
 #undef ESTR
 
 #include "error.h"
+
+#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
+#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
+                           err = ERR_SYNTAX; err_expected = __msg; \
+                      } while(0)
+
+void SMALL E_VALUE(int32_t from, int32_t to) {
+  static const char __fmt_ft[] PROGMEM = "from %d to %d";
+  static const char __fmt_t[] PROGMEM = "max %d";
+  static const char __fmt_f[] PROGMEM = "min %d";
+  err = ERR_VALUE;
+  if (from == INT32_MIN)
+    sprintf_P(tbuf, __fmt_t, to);
+  else if (to == INT32_MAX)
+    sprintf_P(tbuf, __fmt_f, from);
+  else
+    sprintf_P(tbuf, __fmt_ft, from, to);
+  err_expected = tbuf;
+}
 
 // RAM mapping
 char lbuf[SIZE_LINE];          // コマンド入力バッファ
