@@ -167,6 +167,14 @@ public:
     default: return -1;
     }
   }
+  
+  bool available() {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); bool ret = m_sd_file.available(); SD_END(); return ret; }
+    case FS: return m_fs_file.available();
+    default: return false;
+    }
+  }
 
   UniDirEntry next() {
     UniDirEntry e;
