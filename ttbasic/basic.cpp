@@ -4528,7 +4528,7 @@ void iloadbg() {
   tsy = f.read();
   
   if (!w || !h || !tsx || !tsy) {
-    err = ERR_VALUE;
+    err = ERR_FORMAT;
     goto out;
   }
   
