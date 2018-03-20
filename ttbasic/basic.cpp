@@ -6070,11 +6070,17 @@ static void GROUP(basic_core) do_gosub(uint32_t lineno) {
 void GROUP(basic_core) igosub() {
   uint32_t lineno;    // 行番号
 
-  // 引数の行番号取得
-  lineno = iexp();
-  if (err)
-    return;
-  do_gosub(lineno);
+  if (*cip == I_LABEL) {
+    ++cip;
+    label_t &lb = labels.label(*cip++);
+    do_gosub_p(lb.lp, lb.ip);
+  } else {
+    // 引数の行番号取得
+    lineno = iexp();
+    if (err)
+      return;
+    do_gosub(lineno);
+  }
 }
 
 // ON ... <GOTO|GOSUB> ...
