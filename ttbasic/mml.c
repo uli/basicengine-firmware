@@ -374,7 +374,7 @@ static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz, char *tb
   memset(buf, 0, siz);
   memset(tbuf, 0, tsiz);
 
-  while (TEXT_READ(handle) != '{') {
+  while (TEXT_READ(handle) != '{' && !isspace(TEXT_READ(handle))) {
     *tbuf++ = TEXT_READ(handle);
     TEXT_NEXT(handle);
     if (TEXT_READ(handle) == '\0') {
@@ -384,6 +384,10 @@ static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz, char *tb
     if (tsiz <= (cnt + 1))
     	return MML_RESULT_ILLEGAL_USER_EVENT_LENGTH;
   }
+
+  if (isspace(TEXT_READ(handle)))
+  	return MML_RESULT_OK;
+
   cnt = 0;
   TEXT_NEXT(handle);
 
