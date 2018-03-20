@@ -3844,9 +3844,11 @@ int32_t imap() {
   if ( getParam(value, I_COMMA)||getParam(l1, I_COMMA)||getParam(h1, I_COMMA)||getParam(l2, I_COMMA)||getParam(h2, I_NONE) )
     return 0;
   if (checkClose()) return 0;
-  if (l1 >= h1 || l2 >= h2 || value < l1 || value > h1) {
-    err = ERR_VALUE;
+  if (l1 >= h1 || l2 >= h2) {
+    err = ERR_RANGE;
     return 0;
+  } else if (value < l1 || value > h1) {
+    E_VALUE(l1, h1);
   }
   rc = (value-l1)*(h2-l2)/(h1-l1)+l2;
   return rc;
