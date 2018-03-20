@@ -499,7 +499,7 @@ char* tlimR(char* str) {
 inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
-    err = ERR_VALUE;
+    E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
   }
@@ -509,7 +509,7 @@ inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_toke
 inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
-    err = ERR_VALUE;
+    E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
   }
