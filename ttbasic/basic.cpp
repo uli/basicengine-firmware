@@ -403,8 +403,11 @@ BasicListVariables<BString> str_lst;
 VarNames str_lst_names;
 BasicListVariables<num_t> num_lst;
 VarNames num_lst_names;
+
 VarNames proc_names;
 Procedures proc;
+VarNames label_names;
+Labels labels;
 
 unsigned char *listbuf; // Pointer to program list area
 
@@ -821,9 +824,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 	ibuf[len++] = *s++;              // コメントを記録
       }
       break;                             // 文字列の処理を打ち切る（終端の処理へ進む）
-    }
-
-    if (key == I_PROC) {
+    } else if (key == I_PROC) {
       if (!is_prg_text) {
         err = ERR_COM;
         return 0;
@@ -839,9 +840,23 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       int idx = proc_names.assign(vname, true);
       ibuf[len++] = idx;
       proc.reserve(proc_names.varTop());
-    }
-    
-    if (key == I_CALL || key == I_FN) {
+    } else if (key == I_LABEL) {
+      if (!is_prg_text) {
+        err = ERR_COM;
+        return 0;
+      }
+      if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
+	err = ERR_IBUFOF;
+	return 0;
+      }
+
+      while (c_isspace(*s)) s++;
+      s += parse_identifier(s, vname);
+
+      int idx = label_names.assign(vname, true);
+      ibuf[len++] = idx;
+      labels.reserve(label_names.varTop());
+    } else if (key == I_CALL || key == I_FN) {
       while (c_isspace(*s)) s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
@@ -1145,6 +1160,7 @@ void inslist() {
 
   cont_clp = cont_cip = NULL;
   proc.reset();
+  labels.reset();
 
   // Empty check (If this is the case, it may be impossible to delete lines
   // when only line numbers are entered when there is insufficient space ..)
@@ -1300,12 +1316,15 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 	  c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
         sc0.setColor(COL(FG), COL(BG));
 	return;
-      }
-      
-      if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
+      } else if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
         sc0.setColor(COL(PROC), COL(BG));
         c_puts(proc_names.name(*ip), devno);
+        sc0.setColor(COL(FG), COL(BG));
+      } else if (*ip == I_LABEL) {
+        ip++;
+        sc0.setColor(COL(PROC), COL(BG));
+        c_puts(label_names.name(*ip), devno);
         sc0.setColor(COL(FG), COL(BG));
       }
 
@@ -2070,6 +2089,7 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   case I_CALL:
   case I_FN:
   case I_PROC:
+  case I_LABEL:
     return 2;
   case I_EOL:
   case I_REM:
@@ -2167,6 +2187,26 @@ void initialize_proc_pointers(void)
 
     pr.lp = lp;
     pr.ip = ip;
+  }
+}
+
+void initialize_label_pointers(void)
+{
+  unsigned char *lp, *ip;
+
+  lp = listbuf; ip = NULL;
+
+  for (;;) {
+    find_next_token(&lp, &ip, I_LABEL);
+    if (!lp)
+      return;
+
+    uint8_t label_id = ip[1];
+    ip += 2;
+
+    label_t &lb = labels.label(label_id);
+    lb.lp = lp;
+    lb.ip = ip;
   }
 }
 
@@ -2419,6 +2459,7 @@ void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
     goto resume;
   }
   initialize_proc_pointers();
+  initialize_label_pointers();
   event_sprite_enabled = false;
   event_error_enabled = false;
   event_error_resume_lp = NULL;
@@ -2608,6 +2649,8 @@ void inew(uint8_t mode) {
     str_lst.reserve(0);
     proc_names.deleteAll();
     proc.reserve(0);
+    label_names.deleteAll();
+    labels.reserve(0);
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
@@ -2844,6 +2887,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   
   cont_clp = cont_cip = NULL;
   proc.reset();
+  labels.reset();
 
   err = bfs.tmpOpen(fname,0);
   if (err)
@@ -2886,6 +2930,7 @@ void SMALL idelete() {
 
   cont_clp = cont_cip = NULL;
   proc.reset();
+  labels.reset();
 
   uint32_t current_line = getlineno(clp);
 
