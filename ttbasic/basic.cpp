@@ -2765,7 +2765,9 @@ void SMALL irenum() {
 	    i += sizeof(line_desc_t);
 	    continue;
 	  }
-	}
+	} else if (ptr[i] == I_LABEL) {
+	  ++i;
+        }
 	break;
       default:
         toksize = token_size(ptr+i);
