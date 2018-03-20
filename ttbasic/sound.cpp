@@ -61,7 +61,7 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
           int freq = pgm_read_word(&sidfreq[args->number]);
           sid.set_register(0 + ch * 7, freq & 0xff);
           sid.set_register(1 + ch * 7, freq >> 8);
-          sid.set_register(4 + ch * 7, 0x11);
+          sid.set_register(4 + ch * 7, (sid.get_register(4 + ch * 7) & 0xfe) | 1);
         }
       }
       break;
@@ -154,7 +154,7 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
     }
     if (m_sid_off[i] && m_sid_off[i] <= now) {
       m_sid_off[i] = 0;
-      sid.set_register(i*7+4, 0x10);
+      sid.set_register(i*7+4, sid.get_register(i*7+4) & 0xfe);
     }
   }
 }
