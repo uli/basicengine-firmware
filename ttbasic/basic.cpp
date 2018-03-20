@@ -2897,7 +2897,7 @@ void SMALL idelete() {
   }
 
   if (eNo < sNo) {
-    err = ERR_VALUE;
+    err = ERR_RANGE;
     return;
   }
 
