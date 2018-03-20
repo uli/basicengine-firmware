@@ -6600,7 +6600,7 @@ void iclear() {
   inew(NEW_VAR);
 }
 
-void inil() {
+void GROUP(basic_core) inil() {
 }
 
 void eunimp() {
