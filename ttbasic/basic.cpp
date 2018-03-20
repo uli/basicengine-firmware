@@ -6106,6 +6106,10 @@ void GROUP(basic_core) igosub() {
   if (*cip == I_LABEL) {
     ++cip;
     label_t &lb = labels.label(*cip++);
+    if (!lb.lp || !lb.ip) {
+      err = ERR_UNDEFLABEL;
+      return;
+    }
     do_gosub_p(lb.lp, lb.ip);
   } else {
     // 引数の行番号取得
