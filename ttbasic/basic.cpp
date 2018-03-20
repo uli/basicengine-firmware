@@ -1295,13 +1295,16 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 
       if (isAlpha(kw[0]))
         sc0.setColor(COL(KEYWORD), COL(BG));
+      else if (*ip == I_LABEL)
+        sc0.setColor(COL(PROC), COL(BG));
       else
         sc0.setColor(COL(OP), COL(BG));
       c_puts(kw, devno); //キーワードテーブルの文字列を表示
       sc0.setColor(COL(FG), COL(BG));
 
       if (*(ip+1) != I_COLON)
-	if ( (!nospacea(*ip) || spacef(*(ip+1))) && (*ip != I_COLON) && (*ip != I_SQUOT)) //もし例外にあたらなければ
+	if ( (!nospacea(*ip) || spacef(*(ip+1))) &&
+	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL) //もし例外にあたらなければ
 	  c_putch(' ',devno);  //空白を表示
 
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
