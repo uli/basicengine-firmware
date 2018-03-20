@@ -2750,7 +2750,7 @@ void SMALL irenum() {
       case I_GOTO:    // GOTO命令
       case I_GOSUB:   // GOSUB命令
 	i++;
-	if (ptr[i] == I_NUM) {
+	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
 	  num = getlineno(&ptr[i]);      // 現在の行番号を取得する
 	  index = getlineIndex(num);     // 行番号の行インデックスを取得する
 	  if (index == INT32_MAX) {
@@ -6852,7 +6852,7 @@ uint8_t SMALL icom() {
 
   case I_LRUN:  if(ilrun()) {
       sc0.show_curs(0); irun(clp);
-  }
+    }
     break;
   case I_RUN:
     sc0.show_curs(0);
@@ -6883,12 +6883,10 @@ uint8_t SMALL icom() {
       irun(clp, true);
     }
     break;
-  case I_RENUM: // I_RENUMの場合
-    //if (*cip == I_EOL || *(cip + 3) == I_EOL || *(cip + 7) == I_EOL)
+  case I_RENUM:
     irenum();
-    //else
-    //  err = ERR_SYNTAX;
     break;
+
   case I_DELETE:     idelete();  break;
   case I_FORMAT:     iformat(); break;
   case I_FLASH:      iflash(); break;
