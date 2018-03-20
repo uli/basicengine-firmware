@@ -120,7 +120,7 @@ unsigned char* GROUP(basic_core) iexe(bool until_return = false);
 num_t GROUP(basic_core) iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
-#define SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
+#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
 #define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
                            err = ERR_SYNTAX; err_expected = __msg; \
                       } while(0)
@@ -487,7 +487,7 @@ inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_toke
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
   else if (next_token != I_NONE && *cip++ != next_token) {
-    SYNTAX(next_token);
+    E_SYNTAX(next_token);
   }
   return err;
 }
@@ -497,7 +497,7 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
   if (!err &&  (prm < v_min || prm > v_max))
     err = ERR_VALUE;
   else if (next_token != I_NONE && *cip++ != next_token) {
-    SYNTAX(next_token);
+    E_SYNTAX(next_token);
   }
   return err;
 }
@@ -506,7 +506,7 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
 inline uint8_t getParam(uint32_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
-    SYNTAX(next_token);
+    E_SYNTAX(next_token);
   }
   return err;
 }
@@ -518,7 +518,7 @@ inline uint8_t getParam(num_t& prm, token_t next_token) {
     if (next_token == I_OPEN || next_token == I_CLOSE)
       err = ERR_PAREN;
     else
-      SYNTAX(next_token);
+      E_SYNTAX(next_token);
   }
   return err;
 }
@@ -1457,7 +1457,7 @@ void SMALL iinput() {
     c_puts(istrexp().c_str());
 
     if (*cip != I_SEMI) {
-      SYNTAX(I_SEMI);
+      E_SYNTAX(I_SEMI);
       goto DONE;
     }
     cip++;
@@ -1671,7 +1671,7 @@ int GROUP(basic_core) get_array_dims(int *idxs) {
     if (*cip == I_CLOSE)
       break;
     if (*cip != I_COMMA) {
-      SYNTAX(I_COMMA);
+      E_SYNTAX(I_COMMA);
       return -1;
     }
     cip++;
@@ -1975,7 +1975,7 @@ void iappend() {
   if (*cip == I_STRLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
-      SYNTAX(I_COMMA);
+      E_SYNTAX(I_COMMA);
       return;
     }
     ++cip;
@@ -1986,7 +1986,7 @@ void iappend() {
   } else if (*cip == I_NUMLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
-      SYNTAX(I_COMMA);
+      E_SYNTAX(I_COMMA);
       return;
     }
     ++cip;
@@ -2005,7 +2005,7 @@ void iprepend() {
   if (*cip == I_STRLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
-      SYNTAX(I_COMMA);
+      E_SYNTAX(I_COMMA);
       return;
     }
     ++cip;
@@ -2016,7 +2016,7 @@ void iprepend() {
   } else if (*cip == I_NUMLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
-      SYNTAX(I_COMMA);
+      E_SYNTAX(I_COMMA);
       return;
     }
     ++cip;
@@ -2145,7 +2145,7 @@ void initialize_proc_pointers(void)
         if (ip[-1] == I_COMMA)
           err = ERR_UNDEFARG;
         else
-          SYNTAX(I_CLOSE);
+          E_SYNTAX(I_CLOSE);
         clp = lp; cip = ip;
         return;
       }
@@ -3438,7 +3438,7 @@ void GROUP(basic_core) do_poke(int type) {
 
   // アドレスの指定
   vadr = iexp(); if(err) return;
-  if(*cip != I_COMMA) { SYNTAX(I_COMMA); return; }
+  if(*cip != I_COMMA) { E_SYNTAX(I_COMMA); return; }
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
@@ -3500,7 +3500,7 @@ BString ii2cr() {
   if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) goto out;
   out = istrexp();
   if (*cip++ != I_COMMA) {
-    SYNTAX(I_COMMA);
+    E_SYNTAX(I_COMMA);
     goto out;
   }
   if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
@@ -4118,7 +4118,7 @@ void irename() {
   if (err)
     return;
   if (*cip != I_TO) {
-    SYNTAX(I_TO);
+    E_SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4153,7 +4153,7 @@ void icopy() {
   if (err)
     return;
   if (*cip != I_TO) {
-    SYNTAX(I_TO);
+    E_SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4177,7 +4177,7 @@ void SMALL ibsave() {
   }
 
   if (*cip != I_COMMA) {
-    SYNTAX(I_COMMA);
+    E_SYNTAX(I_COMMA);
     return;
   }
   cip++;
@@ -4234,7 +4234,7 @@ void SMALL ibload() {
   }
 
   if (*cip != I_TO) {
-    SYNTAX(I_TO);
+    E_SYNTAX(I_TO);
     return;
   }
   cip++;
@@ -4953,7 +4953,7 @@ num_t GROUP(basic_core) ivalue() {
     i = *cip++;
     if (*cip++ != I_SQOPEN) {
       // XXX: Can we actually get here?
-      SYNTAX(I_SQOPEN);
+      E_SYNTAX(I_SQOPEN);
       return 0;
     }
     if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
@@ -5415,7 +5415,7 @@ BString ilrstr(bool right) {
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
-    SYNTAX(I_COMMA);
+    E_SYNTAX(I_COMMA);
     goto out;
   }
 
@@ -5439,7 +5439,7 @@ BString imidstr() {
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
-    SYNTAX(I_COMMA);
+    E_SYNTAX(I_COMMA);
     goto out;
   }
 
@@ -6014,7 +6014,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        SYNTAX(I_CALL);
+        E_SYNTAX(I_CALL);
         return;
       }
       event_sprite_enabled = true;
@@ -6032,7 +6032,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        SYNTAX(I_CALL);
+        E_SYNTAX(I_CALL);
         return;
       }
       event_play_enabled = true;
@@ -6051,7 +6051,7 @@ void GROUP(basic_core) ion()
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
-        SYNTAX(I_CALL);
+        E_SYNTAX(I_CALL);
         return;
       }
       event_pad_enabled = true;
@@ -6060,7 +6060,7 @@ void GROUP(basic_core) ion()
   } else if (*cip == I_ERROR) {
     ++cip;
     if (*cip++ != I_GOTO) {
-      SYNTAX(I_GOTO);
+      E_SYNTAX(I_GOTO);
       return;
     }
     event_error_enabled = true;
@@ -6505,7 +6505,7 @@ void iopen() {
   }
   
   if (*cip++ != I_AS) {
-    SYNTAX(I_AS);
+    E_SYNTAX(I_AS);
     return;
   }
   if (*cip == I_SHARP)
