@@ -4924,6 +4924,15 @@ static const uint8_t vs23_read_regs[] PROGMEM = {
   0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
 };
 
+int get_filenum_param() {
+  int32_t f = getparam();
+  if (f < 0 || f >= MAX_USER_FILES) {
+    E_VALUE(0, MAX_USER_FILES - 1);
+    return -1;
+  } else
+    return f;
+}
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value = 0, value2; // 値
@@ -5299,6 +5308,12 @@ num_t GROUP(basic_core) ivalue() {
       E_VALUE(0, 131071);
     else
       value = SpiRamReadByte(value);
+    break;
+
+  case I_EOF:
+    a = get_filenum_param();
+    if (!err)
+      value = !user_files[a]->available();
     break;
 
   default:
