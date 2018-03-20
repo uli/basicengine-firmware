@@ -5316,6 +5316,12 @@ num_t GROUP(basic_core) ivalue() {
       value = !user_files[a]->available();
     break;
 
+  case I_LOF:
+    a = get_filenum_param();
+    if (!err)
+      value = user_files[a]->fileSize();
+    break;
+
   default:
     cip--;
     if (is_strexp())

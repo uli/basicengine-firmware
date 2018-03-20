@@ -230,6 +230,7 @@ ERROR	I_ERROR		esyntax
 POS	I_POS		esyntax
 VPEEK	I_VPEEK		esyntax
 EOF	I_EOF		esyntax
+LOF	I_LOF		esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax
