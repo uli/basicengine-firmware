@@ -2660,11 +2660,11 @@ void SMALL irenum() {
   // 引数の有効性チェック
   cnt = countLines()-1;
   if (startLineNo <= 0 || increase <= 0) {
-    err = ERR_VALUE;
+    err = ERR_RANGE;
     return;
   }
   if (startLineNo + increase * cnt > INT32_MAX) {
-    err = ERR_VALUE;
+    err = ERR_RANGE;
     return;
   }
 
