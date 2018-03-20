@@ -2212,6 +2212,10 @@ void initialize_label_pointers(void)
 
   lp = listbuf; ip = NULL;
 
+  for (int i = 0; i < labels.size(); ++i) {
+    labels.label(i).lp = NULL;
+  }
+
   for (;;) {
     find_next_token(&lp, &ip, I_LABEL);
     if (!lp)
@@ -2221,8 +2225,15 @@ void initialize_label_pointers(void)
     ip += 2;
 
     label_t &lb = labels.label(label_id);
+    if (lb.lp) {
+      err = ERR_DUPLABEL;
+      clp = lp; cip = ip;
+      return;
+    }
+
     lb.lp = lp;
     lb.ip = ip;
+    printf("lbas %d <- %p %p\r\n", label_id, lp, ip);
   }
 }
 
