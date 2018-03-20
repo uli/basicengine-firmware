@@ -2748,7 +2748,7 @@ void SMALL iconfig() {
 #if USE_NTSC == 1
   case 0: // NTSC補正
     if (value <0 || value >2)  {
-      err = ERR_VALUE;
+      E_VALUE(0, 2);
     } else {
       sc0.adjustNTSC(value);
       CONFIG.NTSC = value;
@@ -2756,7 +2756,7 @@ void SMALL iconfig() {
     break;
   case 1: // キーボード補正
     if (value < 0 || value > 2)  {
-      err = ERR_VALUE;
+      E_VALUE(0, 2);
     } else {
       kb.setLayout(value);
       CONFIG.KEYBOARD = value;
@@ -2773,18 +2773,18 @@ void SMALL iconfig() {
     break;
   case 4:
     if (value < 1 || value >= vs23.numModes)
-      err = ERR_VALUE;
+      E_VALUE(1, vs23.numModes - 1);
     else
       CONFIG.mode = value;
     break;
   case 5:
     if (value < 0 || value >= NUM_FONTS)
-      err = ERR_VALUE;
+      E_VALUE(0, NUM_FONTS - 1);
     else
       CONFIG.font = value;
     break;
   default:
-    err = ERR_VALUE;
+    E_VALUE(0, 5);
     break;
   }
 }
