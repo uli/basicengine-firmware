@@ -6086,25 +6086,36 @@ void GROUP(basic_core) igosub() {
 // ON ... <GOTO|GOSUB> ...
 static void GROUP(basic_core) on_go(bool is_gosub, int cas)
 {
-  uint32_t line;
+  unsigned char *lp, *ip;
   for (;;) {
-    line = iexp();
+    if (*cip == I_LABEL) {
+      ++cip;
+      label_t &lb = labels.label(*cip++);
+      lp = lb.lp;
+      ip = lb.ip;
+    } else {
+      uint32_t line = iexp();
+      lp = getlp(line);
+      ip = lp + sizeof(line_desc_t);
+    }
+
     if (err)
       return;
-
     if (!cas)
       break;
-
     if (*cip != I_COMMA)
       return;
+
     ++cip;
     --cas;
   }
 
   if (is_gosub)
-    do_gosub(line);
-  else
-    do_goto(line);
+    do_gosub_p(lp, ip);
+  else {
+    clp = lp;
+    cip = ip;
+  }
 }
 
 void GROUP(basic_core) ion()
