@@ -6095,10 +6095,8 @@ static void GROUP(basic_core) on_go(bool is_gosub, int cas)
     if (!cas)
       break;
 
-    if (*cip != I_COMMA) {
-      err = ERR_ULN;
+    if (*cip != I_COMMA)
       return;
-    }
     ++cip;
     --cas;
   }
