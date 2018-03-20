@@ -6027,10 +6027,17 @@ static void GROUP(basic_core) do_goto(uint32_t line)
 void GROUP(basic_core) igoto() {
   uint32_t lineno;    // 行番号
 
-  // 引数の行番号取得
-  lineno = iexp();
-  if (err) return;
-  do_goto(lineno);
+  if (*cip == I_LABEL) {
+    ++cip;
+    uint8_t lb = *cip++;
+    clp = labels.label(lb).lp;
+    cip = labels.label(lb).ip;
+  } else {
+    // 引数の行番号取得
+    lineno = iexp();
+    if (err) return;
+    do_goto(lineno);
+  }
 }
 
 static void GROUP(basic_core) do_gosub(uint32_t lineno)
