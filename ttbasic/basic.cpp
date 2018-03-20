@@ -2094,6 +2094,13 @@ int GROUP(basic_core) token_size(uint8_t *code) {
   case I_REM:
   case I_SQUOT:
     return -1;
+  case I_GOTO:
+  case I_GOSUB:
+  case I_COMMA:
+    if (code[1] == I_LABEL)
+      return 3;
+    else
+      return 1;
   default:
     return 1;
   }
