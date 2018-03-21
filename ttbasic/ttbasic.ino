@@ -43,7 +43,7 @@ void setup(void){
   // supplies did not reveal anything suspicious.
   delay(1000);	// 1s seems to always do the trick; 500ms is not reliable.
 
-  Serial.begin(115200);
+  Serial.begin(921600);
   SpiLock();
 #ifdef ESP8266_NOWIFI
   //Select_CLKx1();
