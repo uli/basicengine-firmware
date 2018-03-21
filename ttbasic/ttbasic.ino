@@ -82,10 +82,7 @@ void loop(void){
   Serial.println("I2S");Serial.flush();
   InitI2S();
   SendI2S();
-  for (int i=0; i < 256; ++i) {
-    setSample(i);
-    //delay(50);
-  }
+
   // put your main code here, to run repeatedly:
   basic();
 }
