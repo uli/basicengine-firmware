@@ -14,10 +14,6 @@
 #include "vs23s010.h"
 #include "sound.h"
 
-#ifndef os_memcpy
-#define os_memcpy memcpy
-#endif
-
 #include "epigrams.h"
 
 #ifdef ESP8266
