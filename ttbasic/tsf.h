@@ -1349,7 +1349,7 @@ static void ICACHE_RAM_ATTR tsf_voice_render_fast(tsf* f, struct tsf_voice* v, s
       // Next sample.
       tmpSourceSamplePositionF32P32 += pitchRatioF32P32;
       if (tmpSourceSamplePositionF32P32 >= tmpLoopEndF32P32 && isLooping)
-        tmpSourceSamplePositionF32P32 -= (tmpLoopEndF32P32 - tmpLoopStart + (1LL<<32));
+        tmpSourceSamplePositionF32P32 -= (tmpLoopEndF32P32 - (((fixed32p32)tmpLoopStart) << 32) + (1LL<<32));
     }
 
     if (tmpSourceSamplePositionF32P32 >= tmpSampleEndF32P32 || v->ampenv.segment == TSF_SEGMENT_DONE)
