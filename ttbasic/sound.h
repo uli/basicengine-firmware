@@ -26,6 +26,13 @@ public:
     static inline bool needSamples() {
         return nosdk_i2s_curr_buf_pos == 0;
     }
+    
+    static inline int instCount() {
+        if (m_tsf)
+          return tsf_get_presetcount(m_tsf);
+        else
+          return 0;
+    }
 private:
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
