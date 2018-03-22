@@ -19,6 +19,21 @@ uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
 uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
 
+void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
+{
+  if (!m_tsf || ch >= SOUND_CHANNELS)
+    return;
+  uint32_t now = millis();
+  if (m_off_time[ch]) {
+    tsf_note_off(m_tsf, m_off_inst[ch], m_off_key[ch]);
+  }
+  m_next_event[ch] = now + ticks;
+  m_off_time[ch] = now + ticks;
+  m_off_key[ch] = note;
+  m_off_inst[ch] = inst;
+  tsf_note_on(m_tsf, inst, note, vel);
+}
+
 void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 {
   uint32_t now = millis();

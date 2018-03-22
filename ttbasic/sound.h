@@ -34,6 +34,8 @@ public:
           return 0;
     }
     static BString instName(int inst);
+    static void noteOn(int ch, int inst, int note, float vel, int ticks);
+    
 private:
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
