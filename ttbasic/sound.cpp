@@ -44,11 +44,7 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
     case MML_TYPE_NOTE:
       {
         MML_ARGS_NOTE *args = &(p->args.note);
-        m_next_event[ch] += args->ticks;
-        m_off_time[ch] = now + args->ticks/2;
-        m_off_inst[ch] = m_ch_inst[ch];
-        m_off_key[ch] = args->number;
-        tsf_note_on(m_tsf, m_ch_inst[ch], args->number, 1.0);
+        noteOn(ch, m_ch_inst[ch], args->number, 1.0, args->ticks);
       }
       break;
     case MML_TYPE_REST:
