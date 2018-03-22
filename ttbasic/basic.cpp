@@ -3198,6 +3198,10 @@ void draw_profile(void)
 void ICACHE_RAM_ATTR pump_events(void)
 {
   static uint32_t last_frame;
+
+  if (sound.needSamples())
+    sound.render();
+
   if (vs23.frame() == last_frame)
     return;
 
@@ -3205,6 +3209,7 @@ void ICACHE_RAM_ATTR pump_events(void)
 
   event_profile[0] = micros();
   vs23.updateBg();
+
   event_profile[1] = micros();
   sound.pumpEvents();
   event_profile[2] = micros();

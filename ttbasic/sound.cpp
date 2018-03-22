@@ -8,7 +8,6 @@
 #define TSF_MEMCPY os_memcpy
 #define TSF_MEMSET memset
 #include "tsf.h"
-#include "nosdki2s.h"
 
 MML BasicSound::m_mml[SOUND_CHANNELS];
 MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
@@ -166,7 +165,10 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
       m_off_time[i] = 0;
     }
   }
+}
 
+void ICACHE_RAM_ATTR BasicSound::render()
+{
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
   if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {

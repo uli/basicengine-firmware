@@ -4,6 +4,7 @@
 
 #define TSF_NO_STDIO
 #include "tsf.h"
+#include "nosdki2s.h"
 
 #define SOUND_CHANNELS	3
 
@@ -13,6 +14,7 @@ public:
     static void playMml(int ch, const char *data);
     static void stopMml(int ch);
     static void pumpEvents();
+    static void render();
 
     static inline bool isPlaying(int ch) {
         return m_next_event[ch] != 0;
@@ -21,6 +23,9 @@ public:
         return m_finished[ch];
     }
 
+    static inline bool needSamples() {
+        return nosdk_i2s_curr_buf_pos == 0;
+    }
 private:
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
