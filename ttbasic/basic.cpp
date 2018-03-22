@@ -6967,8 +6967,6 @@ void SMALL basic() {
   sc0.init(SIZE_LINE, CONFIG.NTSC, NULL, CONFIG.mode - 1);
   sc0.reset_kbd(CONFIG.KEYBOARD);
 
-  sound.begin();
-
   Wire.begin(2, 0);
   // ESP8266 Wire code assumes that SCL and SDA pins are set low, instead
   // of taking care of that itself. WTF?!?
@@ -7026,6 +7024,9 @@ void SMALL basic() {
     Unifile::chDir(FLASH_PREFIX);
   static const char working_dir[] PROGMEM = "Directory ";
   c_puts_P(working_dir); c_puts(Unifile::cwd()); newline();
+
+  // XXX: make sound font configurable
+  sound.begin();
 
   sc0.show_curs(1);
   err_expected = NULL;
