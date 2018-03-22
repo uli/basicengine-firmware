@@ -185,4 +185,14 @@ void ICACHE_RAM_ATTR BasicSound::render()
   }
 }
 
+BString BasicSound::instName(int index)
+{
+  BString name;
+
+  if (m_tsf && index < instCount())
+    name = tsf_get_presetname(m_tsf, index);
+
+  return name;
+}
+
 BasicSound sound;

@@ -33,6 +33,7 @@ public:
         else
           return 0;
     }
+    static BString instName(int inst);
 private:
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
