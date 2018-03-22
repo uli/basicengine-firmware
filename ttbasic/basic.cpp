@@ -566,6 +566,7 @@ static inline bool GROUP(basic_core) is_strexp() {
           *cip == I_MIDSTR ||
           *cip == I_CWD ||
           *cip == I_DIRSTR ||
+          *cip == I_INSTSTR ||
           *cip == I_INKEYSTR
          );
 }
@@ -5740,6 +5741,8 @@ BString istrvalue()
   case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
 
   case I_INPUTSTR:	value = iinputstr(); break;
+
+  case I_INSTSTR:	value = sound.instName(getparam()); break;
 
   default:
     cip--;

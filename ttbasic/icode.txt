@@ -232,6 +232,7 @@ POS	I_POS		esyntax
 VPEEK	I_VPEEK		esyntax
 EOF	I_EOF		esyntax
 LOF	I_LOF		esyntax
+INST$	I_INSTSTR	esyntax
 OK	I_OK		esyntax
 LOC	I_LOC		esyntax
 _none	I_NUM		esyntax
