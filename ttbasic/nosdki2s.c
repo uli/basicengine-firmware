@@ -92,8 +92,8 @@ void InitI2S()
 	//Initialize buffers
 	for( i = 0; i < I2S_BUFLEN; i++ )
 	{
-		i2sData[0][i] = 0x0000ff00;
-		i2sData[1][i] = 0xffffffff;
+		i2sData[0][i] = 0;
+		i2sData[1][i] = 0;
 	}
 #else
 	for (i = 0; i < 8; ++i) {
