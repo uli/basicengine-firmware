@@ -1482,8 +1482,17 @@ TSFDEF int tsf_get_presetcount(tsf* f)
 
 TSFDEF const char* tsf_get_presetname(tsf* f, int preset)
 {
-	if (f->presets[preset].regions == NULL && preset >= 0 && preset < f->presetNum) tsf_load_preset(f, f->hydra, preset);
-	return (preset < 0 || preset >= f->presetNum ? TSF_NULL : f->presets[preset].presetName);
+	bool clean_up = false;
+	if (f->presets[preset].regions == NULL && preset >= 0 && preset < f->presetNum) {
+		tsf_load_preset(f, f->hydra, preset);
+		clean_up = true;
+	}
+	const char *name = (preset < 0 || preset >= f->presetNum ? TSF_NULL : f->presets[preset].presetName);
+	if (clean_up) {
+		TSF_FREE(f->presets[preset].regions);
+		f->presets[preset].regions = NULL;
+	}
+	return name;
 }
 
 TSFDEF void tsf_set_output(tsf* f, enum TSFOutputMode outputmode, int samplerate, float globalgaindb)
