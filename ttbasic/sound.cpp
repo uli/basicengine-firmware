@@ -82,23 +82,23 @@ void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
   }
 }
 
-int BasicSound::tsf_read(void *data, void *ptr, unsigned int size) {
+int BasicSound::tsfile_read(void *data, void *ptr, unsigned int size) {
   return ((Unifile *)data)->read((char *)ptr, size);
 }
-int BasicSound:: tsf_tell(void *data) {
+int BasicSound:: tsfile_tell(void *data) {
   return ((Unifile *)data)->position();
 }
-int BasicSound::tsf_skip(void *data, unsigned int count) {
+int BasicSound::tsfile_skip(void *data, unsigned int count) {
   return ((Unifile *)data)->seekSet(((Unifile *)data)->position() + count);
 }
-int BasicSound::tsf_seek(void *data, unsigned int pos) {
+int BasicSound::tsfile_seek(void *data, unsigned int pos) {
   return ((Unifile *)data)->seekSet(pos);
 }
-int BasicSound::tsf_close(void *data) {
+int BasicSound::tsfile_close(void *data) {
   ((Unifile *)data)->close();
   return 0;
 }
-int BasicSound::tsf_size(void *data) {
+int BasicSound::tsfile_size(void *data) {
   return ((Unifile *)data)->fileSize();
 }
 struct tsf_stream BasicSound::m_sf2;
@@ -109,12 +109,12 @@ void BasicSound::begin(void)
 {
   m_sf2_file = Unifile::open("1mgm.sf2", FILE_READ);
   m_sf2.data = &m_sf2_file;
-  m_sf2.read = tsf_read;
-  m_sf2.tell = tsf_tell;
-  m_sf2.skip = tsf_skip;
-  m_sf2.seek = tsf_seek;
-  m_sf2.close = tsf_close;
-  m_sf2.size = tsf_size;
+  m_sf2.read = tsfile_read;
+  m_sf2.tell = tsfile_tell;
+  m_sf2.skip = tsfile_skip;
+  m_sf2.seek = tsfile_seek;
+  m_sf2.close = tsfile_close;
+  m_sf2.size = tsfile_size;
   m_tsf = tsf_load(&m_sf2);
   if (m_tsf)
     tsf_set_output(m_tsf, TSF_MONO, 16000, -10);

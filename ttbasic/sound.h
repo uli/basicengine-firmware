@@ -40,12 +40,12 @@ private:
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
     static Unifile m_sf2_file;
-    static int tsf_read(void *data, void *ptr, unsigned int size);
-    static int tsf_tell(void *data);
-    static int tsf_skip(void *data, unsigned int count);
-    static int tsf_seek(void *data, unsigned int pos);
-    static int tsf_close(void *data);
-    static int tsf_size(void *data);
+    static int tsfile_read(void *data, void *ptr, unsigned int size);
+    static int tsfile_tell(void *data);
+    static int tsfile_skip(void *data, unsigned int count);
+    static int tsfile_seek(void *data, unsigned int pos);
+    static int tsfile_close(void *data);
+    static int tsfile_size(void *data);
 
     static void defaults(int ch);
     static void ICACHE_RAM_ATTR mmlCallback(MML_INFO *p, void *extobj);
