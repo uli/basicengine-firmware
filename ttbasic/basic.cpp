@@ -567,6 +567,9 @@ static inline bool GROUP(basic_core) is_strexp() {
           *cip == I_CWD ||
           *cip == I_DIRSTR ||
           *cip == I_INSTSTR ||
+          *cip == I_INPUTSTR ||
+          *cip == I_POPFSTR ||
+          *cip == I_POPBSTR ||
           *cip == I_INKEYSTR
          );
 }
