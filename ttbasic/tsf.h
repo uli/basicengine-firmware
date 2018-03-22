@@ -253,6 +253,7 @@ struct tsf
 	int offset[TSF_BUFFS];
 	int timestamp[TSF_BUFFS];
 	int epoch;
+	bool playing;
 };
 
 struct tsf_stream_cached_data {
@@ -1633,14 +1634,21 @@ TSFDEF void ICACHE_RAM_ATTR tsf_render_short_fast(tsf* f, short* buffer, int sam
 {
   struct tsf_voice *v = f->voices, *vEnd = v + f->voiceNum;
   if (!flag_mixing) TSF_MEMSET(buffer, 0, (f->outputmode == TSF_MONO ? 1 : 2) * sizeof(short) * samples);
+  f->playing = false;
   for (; v != vEnd; v++) {
-    if (v->playingPreset != -1)
+    if (v->playingPreset != -1) {
+      f->playing = true;
       tsf_voice_render_fast(f, v, buffer, samples);
-    yield();
+#ifndef ESP8266_NOWIFI
+      yield();
+#endif
+    }
   }
 }
 
-
+static inline bool tsf_playing(tsf *f) {
+  return f->playing;
+}
 
 #ifdef __cplusplus
 }
