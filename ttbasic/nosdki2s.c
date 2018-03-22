@@ -47,8 +47,6 @@ volatile int isrs = 0;
 volatile uint32_t *nosdk_i2s_curr_buf;
 volatile uint32_t nosdk_i2s_curr_buf_pos;
 
-extern void fill_audio_buffer(uint32_t *buf, int samples);
-
 LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 	struct sdio_queue *finished;
 	SLC_INT_CLRL = 0xffffffff;
@@ -61,7 +59,6 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 	finished = (struct sdio_queue*) SLC_RX_EOF_DES_ADDR;
 	nosdk_i2s_curr_buf = (uint32_t *)finished->buf_ptr;
 	nosdk_i2s_curr_buf_pos = 0;
-	fill_audio_buffer((uint32_t *)finished->buf_ptr, I2S_BUFLEN);
 
 	isrs++;
 }
