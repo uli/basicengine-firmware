@@ -30,7 +30,6 @@
 volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
-#define I2S_BUFLEN 128
 //static unsigned int i2sData[2][16];
 static unsigned int i2sData[2][I2S_BUFLEN];
 struct sdio_queue i2sBufDesc[2] = {
