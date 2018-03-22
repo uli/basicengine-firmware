@@ -5,7 +5,7 @@
 //#include "nosdk8266.h"
 #include "c_types.h"
 
-#define I2S_BUFLEN 384
+#define I2S_BUFLEN 320
 
 //Functions you'll call:
 void InitI2S();
