@@ -12,6 +12,23 @@ void InitI2S();
 
 void SendI2S();
 
+extern volatile uint32_t *nosdk_i2s_curr_buf;
+extern volatile uint32_t nosdk_i2s_curr_buf_pos;
+static inline bool ICACHE_RAM_ATTR nosdk_i2s_write_sample_nb(uint32_t sample)
+{
+	if (nosdk_i2s_curr_buf_pos < I2S_BUFLEN) {
+		nosdk_i2s_curr_buf[nosdk_i2s_curr_buf_pos++] = sample;
+		return true;
+	} else
+		return false;
+}
+
+static inline bool ICACHE_RAM_ATTR nosdk_i2s_write_sample(uint32_t sample)
+{
+	while (!nosdk_i2s_write_sample_nb(sample)) {}
+	return true;
+}
+
 //From i2s_reg.h
 extern volatile uint32_t * DR_REG_I2S_BASEL;
 extern volatile uint32_t * DR_REG_SLC_BASEL;
