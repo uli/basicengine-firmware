@@ -36,6 +36,8 @@ public:
     }
     
     static inline int instCount() {
+        if (!m_tsf)
+          loadFont();
         if (m_tsf)
           return tsf_get_presetcount(m_tsf);
         else
@@ -43,6 +45,9 @@ public:
     }
     static BString instName(int inst);
     static void noteOn(int ch, int inst, int note, float vel, int ticks);
+
+    static void loadFont();
+    static void unloadFont();
     
 private:
     static tsf *m_tsf;
@@ -67,6 +72,7 @@ private:
     static uint8_t m_off_inst[SOUND_CHANNELS];
     static uint8_t m_ch_inst[SOUND_CHANNELS];
     static bool m_finished[SOUND_CHANNELS];
+    static uint32_t m_all_done_time;
 };
 
 extern BasicSound sound;

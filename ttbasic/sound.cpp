@@ -13,6 +13,7 @@ MML BasicSound::m_mml[SOUND_CHANNELS];
 MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
 uint32_t BasicSound::m_next_event[SOUND_CHANNELS];
 bool BasicSound::m_finished[SOUND_CHANNELS];
+uint32_t BasicSound::m_all_done_time;
 
 uint32_t BasicSound::m_off_time[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
@@ -105,7 +106,7 @@ struct tsf_stream BasicSound::m_sf2;
 Unifile BasicSound::m_sf2_file;
 tsf *BasicSound::m_tsf;
 
-void BasicSound::begin(void)
+void BasicSound::loadFont()
 {
   m_sf2_file = Unifile::open("1mgm.sf2", FILE_READ);
   m_sf2.data = &m_sf2_file;
@@ -118,7 +119,19 @@ void BasicSound::begin(void)
   m_tsf = tsf_load(&m_sf2);
   if (m_tsf)
     tsf_set_output(m_tsf, TSF_MONO, 16000, -10);
-  
+  m_all_done_time = 0;
+}
+
+void ICACHE_RAM_ATTR BasicSound::unloadFont()
+{
+  if (m_tsf) {
+    tsf_close(m_tsf);
+    m_tsf = NULL;
+  }
+}
+
+void BasicSound::begin(void)
+{
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
     mml_init(&m_mml[i], mmlCallback, (void *)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
@@ -135,6 +148,8 @@ void BasicSound::defaults(int ch)
 
 void BasicSound::playMml(int ch, const char *data)
 {
+  if (!m_tsf)
+    loadFont();
   mml_setup(&m_mml[ch], &m_mml_opt[ch], (char *)data);
   defaults(ch);
   m_next_event[ch] = millis();
@@ -172,9 +187,17 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
       }
     }
     if (m_off_time[i] && m_off_time[i] <= now) {
-      tsf_note_off(m_tsf, m_off_inst[i], m_off_key[i]);
+      if (m_tsf)
+        tsf_note_off(m_tsf, m_off_inst[i], m_off_key[i]);
       m_off_time[i] = 0;
     }
+  }
+  
+  if (m_tsf && !tsf_playing(m_tsf)) {
+    if (m_all_done_time && now + 2000 > m_all_done_time)
+      unloadFont();
+    else
+      m_all_done_time = now;
   }
 }
 
@@ -200,6 +223,8 @@ BString BasicSound::instName(int index)
 {
   BString name;
 
+  if (!m_tsf)
+    loadFont();
   if (m_tsf && index < instCount())
     name = tsf_get_presetname(m_tsf, index);
 
