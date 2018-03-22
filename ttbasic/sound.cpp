@@ -161,7 +161,7 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
       }
     }
     if (m_off_time[i] && m_off_time[i] <= now) {
-      tsf_note_off(m_tsf, 0, m_off_key[i]);
+      tsf_note_off(m_tsf, m_off_inst[i], m_off_key[i]);
       m_off_time[i] = 0;
     }
   }
