@@ -1074,7 +1074,7 @@ static void tsf_voice_calcpitchratio(struct tsf_voice* v, float outSampleRate)
 	v->pitchOutputFactor = v->region->sample_rate / (tsf_timecents2Secsd(v->region->pitch_keycenter * 100.0) * outSampleRate);
 }
 
-short tsf_read_short_cached(tsf *f, int pos)
+short ICACHE_RAM_ATTR tsf_read_short_cached(tsf *f, int pos)
 {
 	static int hits = 0;
 	static int misses = 0;
