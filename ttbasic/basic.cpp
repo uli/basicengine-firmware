@@ -3886,7 +3886,7 @@ void isound() {
   int32_t reg, val;
   if ( getParam(reg, 0, INT32_MAX, I_COMMA) ) return;
   if ( getParam(val, 0, INT32_MAX, I_NONE) ) return;
-  sound.sid.set_register(reg, val);
+  // XXX: unimplemented
 }
 
 BString mml_text;
