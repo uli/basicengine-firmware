@@ -3888,20 +3888,26 @@ void itone() {
 }
 
 void isound() {
-  int32_t ch, inst, note, len = 1000;
-  num_t vel = 1;
-  if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
-  if (getParam(inst, 0, sound.instCount() - 1, I_COMMA)) return;
-  if (getParam(note, 0, INT32_MAX, I_NONE)) return;
-  if (*cip == I_COMMA) {
+  if (*cip == I_FONT) {
     ++cip;
-    if (getParam(len, 0, INT32_MAX, I_NONE)) return;
+    BString font = getParamFname();
+    sound.setFontName(font);
+  } else {
+    int32_t ch, inst, note, len = 1000;
+    num_t vel = 1;
+    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
+    if (getParam(inst, 0, sound.instCount() - 1, I_COMMA)) return;
+    if (getParam(note, 0, INT32_MAX, I_NONE)) return;
     if (*cip == I_COMMA) {
       ++cip;
-      if (getParam(vel, 0, 1.0, I_NONE)) return;
+      if (getParam(len, 0, INT32_MAX, I_NONE)) return;
+      if (*cip == I_COMMA) {
+        ++cip;
+        if (getParam(vel, 0, 1.0, I_NONE)) return;
+      }
     }
+    sound.noteOn(ch, inst, note, vel, len);
   }
-  sound.noteOn(ch, inst, note, vel, len);
 }
 
 BString mml_text;
