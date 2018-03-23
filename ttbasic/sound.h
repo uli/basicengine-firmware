@@ -53,6 +53,9 @@ public:
 
     static void loadFont();
     static void unloadFont();
+    static inline void setFontName(BString &n) {
+      m_font_name = n;
+    }
     
 private:
     static tsf *m_tsf;
@@ -78,6 +81,7 @@ private:
     static uint8_t m_ch_inst[SOUND_CHANNELS];
     static bool m_finished[SOUND_CHANNELS];
     static uint32_t m_all_done_time;
+    static BString m_font_name;
 };
 
 extern BasicSound sound;

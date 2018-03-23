@@ -20,6 +20,8 @@ uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
 uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
 
+BString BasicSound::m_font_name;
+
 void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
 {
   if (!m_tsf || ch >= SOUND_CHANNELS)
@@ -108,7 +110,7 @@ tsf *BasicSound::m_tsf;
 
 void BasicSound::loadFont()
 {
-  m_sf2_file = Unifile::open("1mgm.sf2", FILE_READ);
+  m_sf2_file = Unifile::open(m_font_name.c_str(), FILE_READ);
   m_sf2.data = &m_sf2_file;
   m_sf2.read = tsfile_read;
   m_sf2.tell = tsfile_tell;
@@ -132,6 +134,7 @@ void ICACHE_RAM_ATTR BasicSound::unloadFont()
 
 void BasicSound::begin(void)
 {
+  m_font_name = "1mgm.sf2";
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
     mml_init(&m_mml[i], mmlCallback, (void *)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
