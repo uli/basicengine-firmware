@@ -20,6 +20,14 @@
 //#define PROFILE_BG
 //#define DEBUG_SYNC
 
+//#define DEBUG_PATTERNS
+
+#ifdef DEBUG_PATTERNS
+#define dbg_pat(x...) printf(x)
+#else
+#define dbg_pat(x...)
+#endif
+
 void ICACHE_RAM_ATTR VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
