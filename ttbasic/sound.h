@@ -5,7 +5,12 @@
 //#define DEBUG_TSF_MEMORY
 
 #ifdef DEBUG_TSF_MEMORY
-#define TSF_MALLOC(a) (printf("malloc %d@%d\r\n", (a), __LINE__), malloc((a)))
+static inline void *dbg_malloc(size_t s, int line) {
+  void *x = malloc(s);
+  printf("malloc %d@%d -> %p\r\n", s, line, x);
+  return x;
+}
+#define TSF_MALLOC(a) dbg_malloc((a), __LINE__)
 #define TSF_REALLOC(a, b) (printf("realloc %p -> %d@%d\r\n", (a), (b), __LINE__), realloc((a),(b)))
 #define TSF_FREE(a) do { printf("free %p@%d\r\n", (a), __LINE__); free((a)); } while(0)
 #endif
