@@ -3179,7 +3179,7 @@ void event_handle_pad();
 #define EVENT_PROFILE_SAMPLES 7
 uint32_t event_profile[EVENT_PROFILE_SAMPLES];
 
-void draw_profile(void)
+void GROUP(basic_core) draw_profile(void)
 {
   int x = 0;
   int bw = vs23.borderWidth();
