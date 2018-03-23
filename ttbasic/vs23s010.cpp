@@ -7,10 +7,6 @@
 #include "ntsc.h"
 #include "lock.h"
 
-#ifndef os_memcpy
-#define os_memcpy memcpy
-#endif
-
 //#define DISABLE_BG_LEFT_COL
 //#define DISABLE_BG_MIDDLE
 //#define DISABLE_BG_RIGHT_COL
