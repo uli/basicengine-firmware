@@ -256,6 +256,7 @@ struct tsf
 	bool playing;
 };
 
+#ifdef TSF_CACHE_WRAP
 struct tsf_stream_cached_data {
 	int buffs;
 	int buffsize;
@@ -387,7 +388,7 @@ TSFDEF struct tsf_stream *tsf_stream_wrap_cached(struct tsf_stream *stream, int 
 	dest->close = &tsf_stream_cached_close;
 	return dest;
 }
-
+#endif
 
 #ifndef TSF_NO_STDIO
 static int tsf_stream_stdio_read(FILE* f, void* ptr, unsigned int size) { return (int)fread(ptr, 1, size, f); }
