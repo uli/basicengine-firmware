@@ -4670,7 +4670,7 @@ void isavebg() {
   f.close();
 }
 
-void imovebg() {
+void GROUP(basic_core) imovebg() {
   int32_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
   // XXX: arbitrary limitation?
@@ -4680,7 +4680,7 @@ void imovebg() {
   vs23.scroll(bg, x, y);
 }
 
-void isprite() {
+void GROUP(basic_core) isprite() {
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
   bool set_frame = false, set_opacity = false;
 
@@ -4757,7 +4757,7 @@ void isprite() {
   }
 }
 
-void imovesprite() {
+void GROUP(basic_core) imovesprite() {
   int32_t num, pos_x, pos_y;
   if (getParam(num, 0, VS23_MAX_SPRITES, I_TO)) return;
   if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
@@ -4765,7 +4765,7 @@ void imovesprite() {
   vs23.moveSprite(num, pos_x, pos_y);
 }
 
-void imove()
+void GROUP(basic_core) imove()
 {
   if (*cip == I_SPRITE) {
     ++cip;
