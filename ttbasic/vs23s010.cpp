@@ -755,7 +755,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
 #ifndef DISABLE_SPRITE_DRAW
       for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
         struct sprite_t *s = m_sprites_ordered[sn];
-        if (!s->enabled)
+        if (!s->enabled || s->must_reload)
           continue;
         if (s->prio != prio)
           continue;
@@ -948,13 +948,15 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
   struct sprite_t *s = &m_sprite[num];
   s->p.w = w;
   s->p.h = h;
-  loadSpritePattern(num);
+  s->must_reload = true;
   m_bg_modified = true;
 }
 
 void VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
+
+  s->must_reload = false;
 
   if (s->pat) {
     if (memcmp(&s->pat->p, &s->p, sizeof(s->p))) {
@@ -1083,7 +1085,7 @@ void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, boo
     s->p.frame_y = frame_y;
     s->p.flip_x = flip_x;
     s->p.flip_y = flip_y;
-    loadSpritePattern(num);
+    s->must_reload = true;
     m_bg_modified = true;
   }
 }
@@ -1091,7 +1093,7 @@ void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, boo
 void VS23S010::setSpriteKey(uint8_t num, int16_t key)
 {
   m_sprite[num].p.key = key;
-  loadSpritePattern(num);
+  m_sprite[num].must_reload = true;
   m_bg_modified = true;
 }
 
@@ -1103,7 +1105,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
     s->p.pat_y = pat_y;
     s->p.frame_x = s->p.frame_y = 0;
 
-    loadSpritePattern(num);
+    s->must_reload = true;
     m_bg_modified = true;
   }
 }
@@ -1111,8 +1113,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 void VS23S010::enableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  if (!s->pat)
-    loadSpritePattern(num);
+  s->must_reload = true;
   s->enabled = true;
   m_bg_modified = true;
 }

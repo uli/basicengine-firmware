@@ -305,6 +305,12 @@ class VS23S010 {
       m_bg_modified = true;
     }
 
+    inline bool spriteReload(uint8_t num) {
+      if (m_sprite[num].must_reload)
+        loadSpritePattern(num);
+      return true;
+    }
+
     void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
     uint8_t spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile);
     uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
@@ -421,7 +427,7 @@ private:
       struct sprite_pattern *pat;
       struct sprite_props p;
       int16_t pos_x, pos_y;
-      bool enabled;
+      bool enabled, must_reload;
       uint8_t prio;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
