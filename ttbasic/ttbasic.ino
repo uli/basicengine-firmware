@@ -52,16 +52,7 @@ void setup(void){
 }
 
 void loop(void){
-  Serial.println("Wir sind da, wo unten ist.");
-  eboot_command ebcmd;
-  ebcmd.action = ACTION_LOAD_APP;
-  ebcmd.args[0] = 0x80000;
-  //eboot_command_write(&ebcmd);
   Serial.println("\nStarting");Serial.flush();
-  for (int i=0; i < 3; ++i) {
-    Serial.println("tick");Serial.flush();
-    Serial.println(millis());
-  }
 
   SPI.pins(14, 12, 13, 15);
   SPI.setDataMode(SPI_MODE0);
