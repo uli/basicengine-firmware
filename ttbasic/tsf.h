@@ -673,15 +673,16 @@ static void tsf_region_envtosecs(struct tsf_envelope* p, TSF_BOOL sustainIsGain)
 	else p->sustain = p->sustain / 10.0f;
 }
 
-static void tsf_load_preset(tsf* res, struct tsf_hydra *hydra, int presetToLoad)
+static int tsf_load_preset(tsf* res, struct tsf_hydra *hydra, int presetToLoad)
 {
 	enum { GenInstrument = 41, GenSampleID = 53 };
 	// Read each preset.
 	struct tsf_hydra_phdr phdr;
 	int phdrIdx, phdrMaxIdx;
+	int sortedIndex = 0;
 	for (phdrIdx = presetToLoad, get_phdr(hydra, phdrIdx, &phdr), phdrMaxIdx = presetToLoad + 1 /*hydra->phdrNum - 1*/; phdrIdx != phdrMaxIdx; phdrIdx++, get_phdr(hydra, phdrIdx, &phdr))
 	{
-		int sortedIndex = 0, region_index = 0;
+		int region_index = 0;
 		struct tsf_hydra_phdr otherPhdr;
 		int otherPhdrIdx;
 		struct tsf_preset* preset;
@@ -734,6 +735,11 @@ static void tsf_load_preset(tsf* res, struct tsf_hydra *hydra, int presetToLoad)
 				}
 			}
 		}
+
+		// Looks like non-existing presets result in a sortedIndex of 0. No idea what that is
+		// about, but we need to stuff the memleak.
+		if (preset->regions)
+		  TSF_FREE(preset->regions);
 
 		preset->regions = (struct tsf_region*)TSF_MALLOC(preset->regionNum * sizeof(struct tsf_region));
 
@@ -875,6 +881,7 @@ static void tsf_load_preset(tsf* res, struct tsf_hydra *hydra, int presetToLoad)
 			//if (pbag->modNdx < pbag[1].modNdx) addUnsupportedOpcode("any modulator");
 		}
 	}
+	return sortedIndex;
 }
 
 static void tsf_load_samples(int *fontSamplesOffset, int* fontSampleCount, struct tsf_riffchunk *chunkSmpl, struct tsf_stream* stream)
@@ -1483,15 +1490,18 @@ TSFDEF int tsf_get_presetcount(tsf* f)
 
 TSFDEF const char* tsf_get_presetname(tsf* f, int preset)
 {
-	bool clean_up = false;
+	int real_preset = -1;
 	if (f->presets[preset].regions == NULL && preset >= 0 && preset < f->presetNum) {
-		tsf_load_preset(f, f->hydra, preset);
-		clean_up = true;
+	        // This doesn't make the slightest bit of sense. tsf_load_preset() does some obscure
+	        // magic to determine a preset index that may or may not have anything to do with
+	        // the index we ask it for, but code everywhere expects it to.
+	        // Whatever, let's just plug the memleaks...
+		real_preset = tsf_load_preset(f, f->hydra, preset);
 	}
 	const char *name = (preset < 0 || preset >= f->presetNum ? TSF_NULL : f->presets[preset].presetName);
-	if (clean_up) {
-		TSF_FREE(f->presets[preset].regions);
-		f->presets[preset].regions = NULL;
+	if (real_preset >= 0) {
+		TSF_FREE(f->presets[real_preset].regions);
+		f->presets[real_preset].regions = NULL;
 	}
 	return name;
 }
