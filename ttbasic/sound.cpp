@@ -196,12 +196,15 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
     }
   }
   
+  // Unload driver if nothing has been played for a few seconds.
   if (m_tsf && !tsf_playing(m_tsf)) {
-    if (m_all_done_time && now + 2000 > m_all_done_time)
-      unloadFont();
-    else
+    if (m_all_done_time) {
+      if (now > m_all_done_time + 5000)
+        unloadFont();
+    } else
       m_all_done_time = now;
-  }
+  } else
+    m_all_done_time = 0;
 }
 
 void ICACHE_RAM_ATTR BasicSound::render()
