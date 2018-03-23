@@ -1194,7 +1194,7 @@ uint8_t VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile)
   return tile;
 }
 
-uint8_t VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
+uint8_t ICACHE_RAM_ATTR VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
 {
   uint8_t dir = 0x40;	// indicates collision
 
