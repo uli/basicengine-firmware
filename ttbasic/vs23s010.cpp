@@ -24,6 +24,7 @@
 
 #ifdef DEBUG_PATTERNS
 #define dbg_pat(x...) printf(x)
+extern "C" size_t umm_free_heap_size( void );
 #else
 #define dbg_pat(x...)
 #endif
