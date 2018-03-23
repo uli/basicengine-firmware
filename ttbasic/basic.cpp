@@ -4753,6 +4753,7 @@ void GROUP(basic_core) isprite() {
       vs23.setSpriteFrame(num, frame_x, frame_y, flags & 2, flags & 4);
     if (set_opacity || (set_frame && (flags & 1)))
       vs23.setSpriteOpaque(num, flags & 1);
+    vs23.spriteReload(num);
     return;
   }
 }
