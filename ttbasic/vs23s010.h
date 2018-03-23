@@ -277,23 +277,23 @@ class VS23S010 {
     void enableSprite(uint8_t num);
     void disableSprite(uint8_t num);
     inline uint8_t spriteFrameX(uint8_t num) {
-      return m_sprite[num].frame_x;
+      return m_sprite[num].p.frame_x;
     }
     inline uint8_t spriteFrameY(uint8_t num) {
-      return m_sprite[num].frame_y;
+      return m_sprite[num].p.frame_y;
     }
     inline bool spriteFlipX(uint8_t num) {
-      return m_sprite[num].flip_x;
+      return m_sprite[num].p.flip_x;
     }
     inline bool spriteFlipY(uint8_t num) {
-      return m_sprite[num].flip_y;
+      return m_sprite[num].p.flip_y;
     }
     inline bool spriteOpaque(uint8_t num) {
-      return !m_sprite[num].transparent;
+      return !m_sprite[num].p.transparent;
     }
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
-      m_sprite[num].transparent = !enable;
+      m_sprite[num].p.transparent = !enable;
       m_bg_modified = true;
     }
     inline bool spriteEnabled(uint8_t num) {
@@ -400,24 +400,35 @@ private:
                                       uint32_t ypoff,
                                       int skip_x);
 
-    struct sprite_t {
-      struct sprite_line *pattern;
+    struct sprite_props {
       uint16_t pat_x, pat_y;
-      int16_t pos_x, pos_y;
-      bool enabled;
-      bool transparent;
-      bool flip_x, flip_y;
       uint8_t w, h;
       uint8_t frame_x, frame_y;
       int16_t key;
+      bool transparent;
+      bool flip_x, flip_y;
+    };
+      
+    struct sprite_pattern {
+      struct sprite_props p;
+      uint32_t last;
+      uint8_t ref;
+      struct sprite_line lines[0];
+    };
+    struct sprite_pattern *m_patterns[VS23_MAX_SPRITES];
+    
+    struct sprite_t {
+      struct sprite_pattern *pat;
+      struct sprite_props p;
+      int16_t pos_x, pos_y;
+      bool enabled;
       uint8_t prio;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
 
     void loadSpritePattern(uint8_t num);
-    void allocateSpritePattern(struct sprite_t *s);
-    void freeSpritePattern(struct sprite_t *s);
+    struct sprite_pattern *allocateSpritePattern(struct sprite_props *p);
     
     uint32_t m_frame;
     uint32_t m_frameskip;

@@ -49,18 +49,21 @@ void VS23S010::resetSprites()
 {
   m_bg_modified = true;
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    if (m_patterns[i]) {
+      free(m_patterns[i]);
+      m_patterns[i] = NULL;
+    }
     struct sprite_t *s = &m_sprite[i];
-    if (s->pattern)
-      freeSpritePattern(s);
     m_sprites_ordered[i] = s;
     s->enabled = false;
-    s->transparent = true;
+    s->p.transparent = true;
     s->pos_x = s->pos_y = 0;
-    s->frame_x = s->frame_y = 0;
-    s->w = s->h = 8;
-    s->key = 0;
+    s->p.frame_x = s->p.frame_y = 0;
+    s->p.w = s->p.h = 8;
+    s->p.key = 0;
     s->prio = VS23_MAX_PRIO;
-    s->flip_x = s->flip_y = false;
+    s->p.flip_x = s->p.flip_y = false;
+    s->pat = NULL;
   }
 }
 
@@ -87,6 +90,7 @@ void VS23S010::begin(bool interlace, bool lowpass)
   m_interlace = interlace;
   m_pal = false;
   m_lowpass = m_pal ? true : lowpass;
+  memset(m_patterns, 0, sizeof(m_patterns));
   resetSprites();
 
   m_bin.Init(0, 0);
@@ -755,34 +759,35 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           continue;
         if (s->prio != prio)
           continue;
-        if (s->pos_x < -s->w || s->pos_y < -s->h)
+        if (s->pos_x < -s->p.w || s->pos_y < -s->p.h)
           continue;
         if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
           continue;
         if (pass == 0 && s->pos_y >= last_pix_split_y)
           continue;
-        if (pass == 1 && s->pos_y + s->h <= last_pix_split_y)
+        if (pass == 1 && s->pos_y + s->p.h <= last_pix_split_y)
           continue;
-        if (s->transparent) {
+        if (s->p.transparent) {
+          s->pat->last = m_frame;
           int sx = s->pos_x;
           uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
 
-          int draw_w = s->w;
-          int draw_h = s->h;
+          int draw_w = s->p.w;
+          int draw_h = s->p.h;
 
           int offset_y = 0;
           if (s->pos_y < 0) {
             draw_h += s->pos_y;
             offset_y = -s->pos_y;
-          } else if (s->pos_y + s->h > m_current_mode->y)
-            draw_h -= s->pos_y + s->h - m_current_mode->y;
+          } else if (s->pos_y + s->p.h > m_current_mode->y)
+            draw_h -= s->pos_y + s->p.h - m_current_mode->y;
 
           int offset_x = 0;
           if (s->pos_x < 0) {
             draw_w += s->pos_x;
             offset_x = -s->pos_x;
-          } else if (s->pos_x + s->w > m_current_mode->x)
-            draw_w -= s->pos_x + s->w - m_current_mode->x;
+          } else if (s->pos_x + s->p.w > m_current_mode->x)
+            draw_w -= s->pos_x + s->p.w - m_current_mode->x;
 
           // Draw sprites crossing the screen partition in two steps, top half
           // in the first pass, bottom half in the second pass.
@@ -797,7 +802,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
           for (int sy = 0; sy < draw_h; ++sy) {
             // We try our best to minimize the number of bytes that have to
             // be sent to the VS23.
-            struct sprite_line *sl = &s->pattern[sy+offset_y];
+            struct sprite_line *sl = &s->pat->lines[sy+offset_y];
             int width = sl->len;		// non-BG sprite pixel count
             if (offset_x > sl->off)		// need to clip from the left
               width -= offset_x - sl->off;
@@ -835,7 +840,7 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
               setSpiClock(spi_clock_default);
 
               for (int p = 0; p < width; ++p) {
-                if (sb[p] == s->key)
+                if (sb[p] == s->p.key)
                   sb[p] = bbuf[p];
               }
             }
@@ -843,8 +848,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             SpiRamWriteBytesFast(sa, sb, width);
           }
         } else {
-          int w = s->w;
-          int h = s->h;
+          int w = s->p.w;
+          int h = s->p.h;
           int x = s->pos_x;
           int y = s->pos_y;
 
@@ -881,8 +886,8 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
             h -= offset_y;
           }
           if (w > 0 && h > 0)
-            MoveBlock(s->pat_x + s->frame_x * s->w + offset_x,
-                      s->pat_y + s->frame_y * s->h + offset_y,
+            MoveBlock(s->p.pat_x + s->p.frame_x * s->p.w + offset_x,
+                      s->p.pat_y + s->p.frame_y * s->p.h + offset_y,
                       x, y + offset_y, w, h, 0);
         }
       }
@@ -924,32 +929,25 @@ void ICACHE_RAM_ATTR VS23S010::updateBg()
   SpiUnlock();
 }
 
-void VS23S010::allocateSpritePattern(struct sprite_t *s)
+struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_props *p)
 {
-  void *smem = malloc(s->h * sizeof(struct sprite_line) +	// meta data
-                      s->w * s->h);				// pixel data
-  s->pattern = (struct sprite_line *)smem;
-  uint8_t *pix = (uint8_t *)smem + s->h * sizeof(struct sprite_line);
-  for (int i = 0; i < s->h; ++i)
-    s->pattern[i].pixels = pix + i * s->w;
-}
-
-void VS23S010::freeSpritePattern(struct sprite_t *s)
-{
-  free(s->pattern);
-  s->pattern = NULL;
+  void *smem = malloc(p->h * sizeof(struct sprite_line) +	// line meta data
+                      p->w * p->h + 				// line pixel data
+                      sizeof(struct sprite_pattern));		// pattern meta data
+  struct sprite_pattern *pat = (struct sprite_pattern *)smem;
+  uint8_t *pix = (uint8_t *)smem + p->h * sizeof(struct sprite_line) + sizeof(struct sprite_pattern);
+  for (int i = 0; i < p->h; ++i)
+    pat->lines[i].pixels = pix + i * p->w;
+  pat->ref = 1;
+  pat->last = m_frame;
+  return pat;
 }
 
 void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
 {
   struct sprite_t *s = &m_sprite[num];
-  if ((w != s->w || h != s->h) && s->pattern)
-    freeSpritePattern(s);
-  s->w = w;
-  s->h = h;
-  if (!s->pattern) {
-    allocateSpritePattern(s);
-  }
+  s->p.w = w;
+  s->p.h = h;
   loadSpritePattern(num);
   m_bg_modified = true;
 }
@@ -957,40 +955,94 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
 void VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  uint32_t tile_addr = pixelAddr(s->pat_x + s->frame_x * s->w,
-                                 s->pat_y + s->frame_y * s->h);
 
-  if (!s->pattern)
-    allocateSpritePattern(s);
+  if (s->pat) {
+    if (memcmp(&s->pat->p, &s->p, sizeof(s->p))) {
+      dbg_pat("dumppat %d ref %d\r\n", num, s->pat->ref);
+    } else {
+      dbg_pat("samepat %d\r\n", num);
+      return;
+    }
+  }
+
+  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    struct sprite_pattern *p = m_patterns[i];
+    if (p) {
+      if (!memcmp(&p->p, &s->p, sizeof(s->p))) {
+        p->ref++;
+        dbg_pat("matchpat %d for %d ref %d\r\n", i, num, p->ref);
+        if (s->pat)
+          s->pat->ref--;
+        s->pat = p;
+        return;
+      } else if (p->ref == 0 && p->last + 30 < m_frame) {
+        dbg_pat("gc pat %d\r\n", i);
+        free(p);
+        m_patterns[i] = NULL;
+      }
+    }
+  }
+
+  struct sprite_pattern *pat = NULL;
+
+  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    if (!m_patterns[i]) {
+      pat = m_patterns[i] = allocateSpritePattern(&s->p);
+      dbg_pat("alocpad %d@%p for %d\r\n", i, pat, num);
+      break;
+    }
+  }
+
+  if (!pat) {
+    for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+      if (m_patterns[i] && m_patterns[i]->ref <= 0) {
+        dbg_pat("replpad %d@%p for %d\r\n", i, m_patterns[i], num);
+        free(m_patterns[i]);
+        pat = m_patterns[i] = allocateSpritePattern(&s->p);
+        break;
+      }
+    }
+  }
+  if (!pat) {
+    dbg_pat("pat FAIL\r\n");
+    return;
+  }
+
+  if (s->pat)
+    s->pat->ref--;
+  s->pat = pat;
+
+  uint32_t tile_addr = pixelAddr(s->p.pat_x + s->p.frame_x * s->p.w,
+                                 s->p.pat_y + s->p.frame_y * s->p.h);
 
   bool solid_block = true;
 
-  for (int sy = 0; sy < s->h; ++sy) {
-    struct sprite_line *p = &s->pattern[sy];
+  for (int sy = 0; sy < s->p.h; ++sy) {
+    struct sprite_line *p = &pat->lines[sy];
 
     int pline;
-    if (s->flip_y)
-      pline = s->h - 1 - sy;
+    if (s->p.flip_y)
+      pline = s->p.h - 1 - sy;
     else
       pline = sy;
 
-    SpiRamReadBytes(tile_addr + pline*m_pitch, p->pixels, s->w);
+    SpiRamReadBytes(tile_addr + pline*m_pitch, p->pixels, s->p.w);
 
-    if (s->flip_x) {
-      for (int i = 0; i < s->w / 2; ++i) {
-        uint8_t tmp = p->pixels[s->w - 1 - i];
-        p->pixels[s->w - 1 - i] = p->pixels[i];
+    if (s->p.flip_x) {
+      for (int i = 0; i < s->p.w / 2; ++i) {
+        uint8_t tmp = p->pixels[s->p.w - 1 - i];
+        p->pixels[s->p.w - 1 - i] = p->pixels[i];
         p->pixels[i] = tmp;
       }
     }
 
     p->off = 0;
-    p->len = s->w;
+    p->len = s->p.w;
     p->type = LINE_SOLID;
 
-    if (s->key >= 0) {
+    if (s->p.key >= 0) {
       uint8_t *pp = p->pixels;
-      while (*pp == s->key && p->len) {
+      while (*pp == s->p.key && p->len) {
         solid_block = false;
         ++pp;
         ++p->off;
@@ -998,8 +1050,8 @@ void VS23S010::loadSpritePattern(uint8_t num)
       }
 
       if (p->len) {
-        pp = p->pixels + s->w - 1;
-        while (*pp == s->key) {
+        pp = p->pixels + s->p.w - 1;
+        while (*pp == s->p.key) {
           solid_block = false;
           --pp;
           --p->len;
@@ -1007,7 +1059,7 @@ void VS23S010::loadSpritePattern(uint8_t num)
       }
 
       for (int i = 0; i < p->len; ++i) {
-        if (p->pixels[p->off + i] == s->key) {
+        if (p->pixels[p->off + i] == s->p.key) {
           p->type = LINE_BROKEN;
           break;
         }
@@ -1018,18 +1070,19 @@ void VS23S010::loadSpritePattern(uint8_t num)
     }
   }
 
-  s->transparent = !solid_block;
+  s->p.transparent = !solid_block;
+  os_memcpy(&pat->p, &s->p, sizeof(s->p));
 }
 
 void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
 {
   struct sprite_t *s = &m_sprite[num];
-  if (frame_x != s->frame_x || frame_y != s->frame_y ||
-      flip_x != s->flip_x || flip_y != s->flip_y) {
-    s->frame_x = frame_x;
-    s->frame_y = frame_y;
-    s->flip_x = flip_x;
-    s->flip_y = flip_y;
+  if (frame_x != s->p.frame_x || frame_y != s->p.frame_y ||
+      flip_x != s->p.flip_x || flip_y != s->p.flip_y) {
+    s->p.frame_x = frame_x;
+    s->p.frame_y = frame_y;
+    s->p.flip_x = flip_x;
+    s->p.flip_y = flip_y;
     loadSpritePattern(num);
     m_bg_modified = true;
   }
@@ -1037,7 +1090,7 @@ void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, boo
 
 void VS23S010::setSpriteKey(uint8_t num, int16_t key)
 {
-  m_sprite[num].key = key;
+  m_sprite[num].p.key = key;
   loadSpritePattern(num);
   m_bg_modified = true;
 }
@@ -1045,10 +1098,10 @@ void VS23S010::setSpriteKey(uint8_t num, int16_t key)
 void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 {
   struct sprite_t *s = &m_sprite[num];
-  if (s->pat_x != pat_x || s->pat_y != pat_y) {
-    s->pat_x = pat_x;
-    s->pat_y = pat_y;
-    s->frame_x = s->frame_y = 0;
+  if (s->p.pat_x != pat_x || s->p.pat_y != pat_y) {
+    s->p.pat_x = pat_x;
+    s->p.pat_y = pat_y;
+    s->p.frame_x = s->p.frame_y = 0;
 
     loadSpritePattern(num);
     m_bg_modified = true;
@@ -1058,7 +1111,7 @@ void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 void VS23S010::enableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  if (!s->pattern)
+  if (!s->pat)
     loadSpritePattern(num);
   s->enabled = true;
   m_bg_modified = true;
@@ -1147,9 +1200,9 @@ void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tile
   memset(res, 0, num_tiles);
   
   // Check if sprite is overlapping with background at all.
-  if (spr->pos_x + spr->w <= bg->win_x ||
+  if (spr->pos_x + spr->p.w <= bg->win_x ||
       spr->pos_x >= bg->win_x + bg->win_w ||
-      spr->pos_y + spr->h <= bg->win_y ||
+      spr->pos_y + spr->p.h <= bg->win_y ||
       spr->pos_y >= bg->win_y + bg->win_h)
     return;
   
@@ -1162,8 +1215,8 @@ void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tile
   // round down top/left
   int bg_first_tile_off = bg_left_x / tsx + bg->w * (bg_top_y / tsy);
   // round up width/height
-  int bg_tile_width = (spr->w + tsx - 1) / tsx;
-  int bg_tile_height =  (spr->h + tsy - 1) / tsy;
+  int bg_tile_width = (spr->p.w + tsx - 1) / tsx;
+  int bg_tile_height =  (spr->p.h + tsy - 1) / tsy;
   
   int bg_last_tile_off = bg_first_tile_off + bg_tile_width + bg_tile_height * bg->w;
   
@@ -1179,11 +1232,11 @@ void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tile
           res[m] = 0x40;	// indicates collision in general
           if (tx < spr->pos_x)
             res[m] |= psxLeft;
-          else if (tx + tsx > spr->pos_x + spr->w)
+          else if (tx + tsx > spr->pos_x + spr->p.w)
             res[m] |= psxRight;
           if (ty < spr->pos_y)
             res[m] |= psxUp;
-          else if (ty + tsy > spr->pos_y + spr->h)
+          else if (ty + tsy > spr->pos_y + spr->p.h)
             res[m] |= psxDown;
         }
       }
@@ -1205,19 +1258,19 @@ uint8_t ICACHE_RAM_ATTR VS23S010::spriteCollision(uint8_t collidee, uint8_t coll
   sprite_t *us = &m_sprite[collidee];
   sprite_t *them = &m_sprite[collider];
   
-  if (us->pos_x + us->w < them->pos_x)
+  if (us->pos_x + us->p.w < them->pos_x)
     return 0;
-  if (them->pos_x + them->w < us->pos_x)
+  if (them->pos_x + them->p.w < us->pos_x)
     return 0;
-  if (us->pos_y + us->h < them->pos_y)
+  if (us->pos_y + us->p.h < them->pos_y)
     return 0;
-  if (them->pos_y + them->h < us->pos_y)
+  if (them->pos_y + them->p.h < us->pos_y)
     return 0;
   
   // sprite frame as bounding box; we may want something more flexible...
   if (them->pos_x < us->pos_x)
     dir |= psxLeft;
-  else if (them->pos_x + them->w > us->pos_x + us->w)
+  else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
     dir |= psxRight;
 
   sprite_t *upper = us, *lower = them;
@@ -1225,18 +1278,18 @@ uint8_t ICACHE_RAM_ATTR VS23S010::spriteCollision(uint8_t collidee, uint8_t coll
     dir |= psxUp;
     upper = them;
     lower = us;
-  } else if (them->pos_y + them->h > us->pos_y + us->h)
+  } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
     dir |= psxDown;
 
   // Check for pixels in overlapping area.
   bool really = false;
-  for (int y = lower->pos_y - upper->pos_y; y < upper->h; ++y) {
+  for (int y = lower->pos_y - upper->pos_y; y < upper->p.h; ++y) {
     // Check if both sprites have any pixels in the lines they overlap in.
     int lower_py = y - lower->pos_y + upper->pos_y;
-    sprite_line *upper_line = &upper->pattern[y];
-    sprite_line *lower_line = &lower->pattern[lower_py];
-    bool uphasline = !upper->transparent || upper_line->len;
-    bool lowhasline = !lower->transparent || lower_line->len;
+    sprite_line *upper_line = &upper->pat->lines[y];
+    sprite_line *lower_line = &lower->pat->lines[lower_py];
+    bool uphasline = !upper->p.transparent || upper_line->len;
+    bool lowhasline = !lower->p.transparent || lower_line->len;
     if (uphasline && lowhasline) {
       int dist_x = abs(upper->pos_x - lower->pos_x);
       sprite_line *left_line, *right_line;
