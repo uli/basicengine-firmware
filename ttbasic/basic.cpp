@@ -2685,6 +2685,7 @@ void inew(uint8_t mode) {
     listbuf = (unsigned char *)malloc(1);
     if (!listbuf) {
       err = ERR_OOM;
+      size_list = 0;
       // If this fails, we're in deep shit...
       return;
     }
