@@ -825,7 +825,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 
       int idx = proc_names.assign(vname, true);
       ibuf[len++] = idx;
-      proc.reserve(proc_names.varTop());
+      if (proc.reserve(proc_names.varTop())) {
+        err = ERR_OOM;
+        return 0;
+      }
     } else if (key == I_LABEL) {
       if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
 	err = ERR_IBUFOF;
@@ -837,12 +840,18 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 
       int idx = label_names.assign(vname, true);
       ibuf[len++] = idx;
-      labels.reserve(label_names.varTop());
+      if (labels.reserve(label_names.varTop())) {
+        err = ERR_OOM;
+        return 0;
+      }
     } else if (key == I_CALL || key == I_FN) {
       while (c_isspace(*s)) s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
-      proc.reserve(proc_names.varTop());
+      if (proc.reserve(proc_names.varTop())) {
+        err = ERR_OOM;
+        return 0;
+      }
       if (len >= SIZE_IBUF - 2) {
 	err = ERR_IBUFOF;
 	return 0;
