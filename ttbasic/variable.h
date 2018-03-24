@@ -530,13 +530,13 @@ public:
     return m_list.size();
   }
 
-  inline bool append(T& item) {
-    m_list.push_back(item);
-    return false;
+  inline void append(T& item) {
+    if (!m_list.push_back(item))
+      err = ERR_OOM;
   }
-  inline bool prepend(T& item) {
-    m_list.push_front(item);
-    return false;
+  inline void prepend(T& item) {
+    if (!m_list.push_front(item))
+      err = ERR_OOM;
   }
   inline T front() {
     if (m_list.size() == 0) {
