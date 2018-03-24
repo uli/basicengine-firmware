@@ -1098,7 +1098,11 @@ short ICACHE_RAM_ATTR tsf_read_short_cached(tsf *f, int pos)
 				for (int i=0; i<TSF_BUFFS; i++) f->timestamp[i] = f->epoch++;
 			}
 			hits++;
-                        return f->buffer[i][pos - f->offset[i]];
+#ifdef ESP8266_NOWIFI
+			return pgm_read_word(&f->buffer[i][pos - f->offset[i]]);
+#else
+			return f->buffer[i][pos - f->offset[i]];
+#endif
 		}
 	}
 	int repl = 0;
@@ -1108,15 +1112,28 @@ short ICACHE_RAM_ATTR tsf_read_short_cached(tsf *f, int pos)
 	int readOff = pos - (pos % TSF_BUFFSIZE);
 // for (int i=0; i<TSF_BUFFSIZE; i++) { f->buffer[repl][i] = i; }
 	f->hydra->stream->seek(f->hydra->stream->data, readOff * sizeof(short));
+#ifdef ESP8266_NOWIFI
+	short tmpbuf[TSF_BUFFSIZE];	// XXX: daring, considering we have a small stack...
+	f->hydra->stream->read(f->hydra->stream->data, tmpbuf, TSF_BUFFSIZE * sizeof(short));//f->buffer[repl], TSF_BUFFSIZE * sizeof(short));
+	uint32_t *to = (uint32_t *)f->buffer[repl];
+	uint32_t *from = (uint32_t *)tmpbuf;
+	for (uint32_t i = 0; i < TSF_BUFFSIZE * sizeof(short) / sizeof(uint32_t); ++i)
+	  *to++ = *from++;
+#else
 	if (!f->buffer[repl])
 		f->buffer[repl] = (short *)TSF_MALLOC(TSF_BUFFSIZE * sizeof(short));
 	f->hydra->stream->read(f->hydra->stream->data, f->buffer[repl], TSF_BUFFSIZE * sizeof(short));
+#endif
 //static uint32_t *bp = NULL; if (!bp) bp = (uint32_t*)malloc(512);
 //printf("off=%08x, buff=%p, len=%08x\n", readOff * sizeof(short), bp, TSF_BUFFSIZE); spi_flash_read(0x0000, bp, 512/4-4) ;
 	f->timestamp[repl] = f->epoch++;
 	f->offset[repl] = readOff;
 	misses++;
+#ifdef ESP8266_NOWIFI
+	return tmpbuf[pos - readOff];
+#else
 	return f->buffer[repl][pos - readOff];
+#endif
 }
 
 static void tsf_voice_render(tsf* f, struct tsf_voice* v, float* outputBuffer, int numSamples)
@@ -1460,7 +1477,13 @@ TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 
 		// Cached sample
 		for (int i=0; i<TSF_BUFFS; i++) {
-			res->buffer[i] = NULL;//(short*)TSF_MALLOC(TSF_BUFFSIZE * sizeof(short));
+#ifdef ESP8266_NOWIFI
+			// Use unused IRAM
+			// XXX: Check if there is enough space!
+			res->buffer[i] = (short *)(0x40108000 - (i+1) * TSF_BUFFSIZE * sizeof(short));
+#else
+			res->buffer[i] = NULL;	// allocated as used
+#endif
 			res->offset[i] = 0xfffffff;
 			res->timestamp[i] = -1;
 		}
@@ -1481,9 +1504,11 @@ TSFDEF void tsf_close(tsf* f)
 	f->hydra->stream->close(f->hydra->stream->data);
 	TSF_FREE(f->hydra->stream);
 	TSF_FREE(f->hydra);
+#ifndef ESP8266_NOWIFI
 	for (int i=0; i<TSF_BUFFS; i++)
 		if (f->buffer[i])
 			TSF_FREE(f->buffer[i]);
+#endif
 	TSF_FREE(f);
 }
 
