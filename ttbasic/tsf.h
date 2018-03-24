@@ -254,6 +254,7 @@ struct tsf
 	int timestamp[TSF_BUFFS];
 	int epoch;
 	bool playing;
+	bool out_of_memory;
 };
 
 #ifdef TSF_CACHE_WRAP
@@ -739,9 +740,14 @@ static int tsf_load_preset(tsf* res, struct tsf_hydra *hydra, int presetToLoad)
 		// Looks like non-existing presets result in a sortedIndex of 0. No idea what that is
 		// about, but we need to stuff the memleak.
 		if (preset->regions)
-		  TSF_FREE(preset->regions);
+			TSF_FREE(preset->regions);
 
 		preset->regions = (struct tsf_region*)TSF_MALLOC(preset->regionNum * sizeof(struct tsf_region));
+		if (!preset->regions) {
+			res->out_of_memory = true;
+			res->playing = false;
+			return -1;
+		}
 
 		// Zones.
 		//*** TODO: Handle global zone (modulators only).
@@ -1118,10 +1124,16 @@ short ICACHE_RAM_ATTR tsf_read_short_cached(tsf *f, int pos)
 	uint32_t *to = (uint32_t *)f->buffer[repl];
 	uint32_t *from = (uint32_t *)tmpbuf;
 	for (uint32_t i = 0; i < TSF_BUFFSIZE * sizeof(short) / sizeof(uint32_t); ++i)
-	  *to++ = *from++;
+		*to++ = *from++;
 #else
-	if (!f->buffer[repl])
+	if (!f->buffer[repl]) {
 		f->buffer[repl] = (short *)TSF_MALLOC(TSF_BUFFSIZE * sizeof(short));
+		if (!f->buffer[repl]) {
+			f->out_of_memory = true;
+			f->playing = false;
+			return 0;
+		}
+	}
 	f->hydra->stream->read(f->hydra->stream->data, f->buffer[repl], TSF_BUFFSIZE * sizeof(short));
 #endif
 //static uint32_t *bp = NULL; if (!bp) bp = (uint32_t*)malloc(512);
@@ -1539,10 +1551,10 @@ TSFDEF const char* tsf_get_presetname(tsf* f, int preset)
 {
 	int real_preset = -1;
 	if (f->presets[preset].regions == NULL && preset >= 0 && preset < f->presetNum) {
-	        // This doesn't make the slightest bit of sense. tsf_load_preset() does some obscure
-	        // magic to determine a preset index that may or may not have anything to do with
-	        // the index we ask it for, but code everywhere expects it to.
-	        // Whatever, let's just plug the memleaks...
+		// This doesn't make the slightest bit of sense. tsf_load_preset() does some obscure
+		// magic to determine a preset index that may or may not have anything to do with
+		// the index we ask it for, but code everywhere expects it to.
+		// Whatever, let's just plug the memleaks...
 		real_preset = tsf_load_preset(f, f->hydra, preset);
 	}
 	const char *name = (preset < 0 || preset >= f->presetNum ? TSF_NULL : f->presets[preset].presetName);
@@ -1599,6 +1611,8 @@ TSFDEF void tsf_note_on(tsf* f, int preset, int key, float vel)
 #ifdef DEBUG
 				printf("OOM, no room for new voice.  Ignoring note_on\n");
 #endif
+				f->out_of_memory = true;
+				f->playing = false;
 				return;
 			}
 			voice = &f->voices[f->voiceNum - 4];
@@ -1667,6 +1681,11 @@ TSFDEF void tsf_render_short(tsf* f, short* buffer, int samples, int flag_mixing
 	{
 		TSF_FREE(f->outputSamples);
 		f->outputSamples = (float*)TSF_MALLOC(floatBufferSize);
+		if (!f->outputSamples) {
+			f->out_of_memory = true;
+			f->playing = false;
+			return;
+		}
 		f->outputSampleSize = floatBufferSize;
 	}
 
