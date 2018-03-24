@@ -90,10 +90,11 @@ public:
   void close() {
     switch (m_type) {
     case SD_DIR:
-    case SD: { SD_BEGIN(); m_sd_file.close(); SD_END(); return; }
-    case FS: { noInterrupts(); m_fs_file.close(); interrupts(); return; }
-    default: return;
+    case SD: { SD_BEGIN(); m_sd_file.close(); SD_END(); break; }
+    case FS: { noInterrupts(); m_fs_file.close(); interrupts(); break; }
+    default: break;
     }
+    m_type = INVALID;
   }
 
   ssize_t write(char *s) {
