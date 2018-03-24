@@ -6697,6 +6697,11 @@ void iopen() {
     err = ERR_FILE_OPEN;
   else {
     user_files[filenum] = new Unifile();
+    if (!user_files[filenum]) {
+      err = ERR_OOM;
+      f.close();
+      return;
+    }
     *user_files[filenum] = f;
   }
 }
