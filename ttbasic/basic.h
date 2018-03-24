@@ -63,6 +63,24 @@ char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 int GROUP(basic_core) token_size(uint8_t *code);
 num_t GROUP(basic_core) iexp();
 
+// キーワードテーブル
+#include "kwtbl.h"
+
+// Keyword count
+#define SIZE_KWTBL (sizeof(kwtbl) / sizeof(const char*))
+
+// i-code(Intermediate code) assignment
+#include "kwenum.h"
+
+extern uint8_t err;
+extern const char *err_expected;
+
+#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
+#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
+                           err = ERR_SYNTAX; err_expected = __msg; \
+                      } while(0)
+extern void E_VALUE(int32_t from, int32_t to);
+
 #ifdef FLOAT_NUMS
 // コマンド引数取得(uint32_t,引数チェックなし)
 static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_token) {

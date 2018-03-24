@@ -283,15 +283,6 @@ num_t getrnd(int value) {
 #define __FLASH__ ICACHE_RODATA_ATTR
 #endif
 
-// キーワードテーブル
-#include "kwtbl.h"
-
-// Keyword count
-#define SIZE_KWTBL (sizeof(kwtbl) / sizeof(const char*))
-
-// i-code(Intermediate code) assignment
-#include "kwenum.h"
-
 // List formatting condition
 // Intermediate code without trailing blank
 const uint8_t i_nsa[] __FLASH__ = {
@@ -359,11 +350,6 @@ static const char* const errmsg[] PROGMEM = {
 #undef ESTR
 
 #include "error.h"
-
-#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
-#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
-                           err = ERR_SYNTAX; err_expected = __msg; \
-                      } while(0)
 
 void SMALL E_VALUE(int32_t from, int32_t to) {
   static const char __fmt_ft[] PROGMEM = "from %d to %d";
