@@ -35,6 +35,10 @@ void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
   m_off_key[ch] = note;
   m_off_inst[ch] = inst;
   tsf_note_on(m_tsf, inst, note, vel);
+  if (m_tsf->out_of_memory) {
+    unloadFont();
+    err = ERR_OOM;
+  }
 }
 
 void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
@@ -213,6 +217,11 @@ void ICACHE_RAM_ATTR BasicSound::render()
   // soundfont file access to cache samples.
   if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
     tsf_render_short_fast(m_tsf, staging_buf, I2S_BUFLEN, TSF_FALSE);
+    if (m_tsf->out_of_memory) {
+      unloadFont();
+      err = ERR_OOM;
+      return;
+    }
     for (int i = 0; i < I2S_BUFLEN; ++i) {
       int idx = (staging_buf[i] >> 8) + 16;
       if (idx < 0)
@@ -231,8 +240,13 @@ BString BasicSound::instName(int index)
 
   if (!m_tsf)
     loadFont();
-  if (m_tsf && index < instCount())
+  if (m_tsf && index < instCount()) {
     name = tsf_get_presetname(m_tsf, index);
+    if (m_tsf->out_of_memory) {
+      unloadFont();
+      err = ERR_OOM;
+    }
+  }
 
   return name;
 }
