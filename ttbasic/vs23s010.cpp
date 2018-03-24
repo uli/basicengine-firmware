@@ -935,6 +935,8 @@ struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_p
   void *smem = malloc(p->h * sizeof(struct sprite_line) +	// line meta data
                       p->w * p->h + 				// line pixel data
                       sizeof(struct sprite_pattern));		// pattern meta data
+  if (!smem)
+    return NULL;
   struct sprite_pattern *pat = (struct sprite_pattern *)smem;
   uint8_t *pix = (uint8_t *)smem + p->h * sizeof(struct sprite_line) + sizeof(struct sprite_pattern);
   for (int i = 0; i < p->h; ++i)
