@@ -38,8 +38,10 @@ public:
       return false;
     }
     m_proc = (struct proc_t *)realloc(m_proc, count * sizeof(*m_proc));
-    if (!m_proc)
+    if (!m_proc) {
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       memset(&m_proc[i], 0, sizeof(m_proc[i]));
     }
@@ -137,8 +139,10 @@ public:
       return false;
     }
     m_lab = (struct label_t *)realloc(m_lab, count * sizeof(*m_lab));
-    if (!m_lab)
+    if (!m_lab) {
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       memset(&m_lab[i], 0, sizeof(m_lab[i]));
     }
