@@ -32,9 +32,11 @@ public:
   }
 
   // Push at front
-  void push_front(const T i)
+  bool push_front(const T i)
   {
     node *tmp = new node;
+    if (!tmp)
+      return false;
     tmp->item = i;
     tmp->next = NULL;
     tmp->prev = NULL;
@@ -51,12 +53,15 @@ public:
       start = tmp;
     }
     len++; // Increase size counter
+    return true;
   }
 
   // Push at back
-  void push_back(const T i)
+  bool push_back(const T i)
   {
     node *tmp = new node;
+    if (!tmp)
+      return false;
     tmp->item = i;
     tmp->next = NULL;
     tmp->prev = NULL;
@@ -73,6 +78,7 @@ public:
       end = tmp;
     }
     len++; // Increase size counter
+    return true;
   }
 
   // Pop from front
