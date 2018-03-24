@@ -307,8 +307,9 @@ class VS23S010 {
 
     inline bool spriteReload(uint8_t num) {
       if (m_sprite[num].must_reload)
-        loadSpritePattern(num);
-      return true;
+        return loadSpritePattern(num);
+      else
+        return true;
     }
 
     void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
