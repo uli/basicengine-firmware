@@ -305,6 +305,12 @@ public:
     }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new NumArray<T>();
+      if (!m_var[i]) {
+        for (int j = m_size; j < i; ++j)
+          delete m_var[j];
+        err = ERR_OOM;
+        return true;
+      }
     }
     m_size = count;
     return false;
@@ -361,6 +367,12 @@ public:
     }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new BString();
+      if (!m_var[i]) {
+        for (int j = m_size; j < i; ++j)
+          delete m_var[j];
+        err = ERR_OOM;
+        return true;
+      }
       *m_var[i] = "";
     }
     m_size = count;
@@ -510,6 +522,12 @@ public:
     }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new StringArray<T>();
+      if (!m_var[i]) {
+        for (int j = m_size; j < i; ++j)
+          delete m_var[j];
+        err = ERR_OOM;
+        return true;
+      }
     }
     m_size = count;
     return false;
@@ -627,6 +645,12 @@ public:
     }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new BasicList<T>();
+      if (!m_var[i]) {
+        for (int j = m_size; j < i; ++j)
+          delete m_var[j];
+        err = ERR_OOM;
+        return true;
+      }
     }
     m_size = count;
     return false;
