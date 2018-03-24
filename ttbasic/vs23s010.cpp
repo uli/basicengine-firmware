@@ -953,7 +953,7 @@ void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
   m_bg_modified = true;
 }
 
-void VS23S010::loadSpritePattern(uint8_t num)
+bool VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
 
@@ -964,7 +964,7 @@ void VS23S010::loadSpritePattern(uint8_t num)
       dbg_pat("dumppat %d ref %d\r\n", num, s->pat->ref);
     } else {
       dbg_pat("samepat %d\r\n", num);
-      return;
+      return true;
     }
   }
 
@@ -977,7 +977,7 @@ void VS23S010::loadSpritePattern(uint8_t num)
         if (s->pat)
           s->pat->ref--;
         s->pat = p;
-        return;
+        return true;
       } else if (p->ref == 0 && p->last + 30 < m_frame) {
         dbg_pat("gc pat %d\r\n", i);
         free(p);
@@ -991,6 +991,10 @@ void VS23S010::loadSpritePattern(uint8_t num)
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
     if (!m_patterns[i]) {
       pat = m_patterns[i] = allocateSpritePattern(&s->p);
+      if (!pat) {
+        s->enabled = false;
+        return false;
+      }
       dbg_pat("alocpad %d@%p for %d\r\n", i, pat, num);
       break;
     }
@@ -1002,13 +1006,18 @@ void VS23S010::loadSpritePattern(uint8_t num)
         dbg_pat("replpad %d@%p for %d\r\n", i, m_patterns[i], num);
         free(m_patterns[i]);
         pat = m_patterns[i] = allocateSpritePattern(&s->p);
+        if (!pat) {
+          s->enabled = false;
+          return false;
+        }
         break;
       }
     }
   }
   if (!pat) {
     dbg_pat("pat FAIL\r\n");
-    return;
+    s->enabled = false;
+    return false;
   }
 
   if (s->pat)
@@ -1075,6 +1084,8 @@ void VS23S010::loadSpritePattern(uint8_t num)
 
   s->p.transparent = !solid_block;
   os_memcpy(&pat->p, &s->p, sizeof(s->p));
+  
+  return true;
 }
 
 void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)

@@ -433,7 +433,7 @@ private:
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
 
-    void loadSpritePattern(uint8_t num);
+    bool loadSpritePattern(uint8_t num);
     struct sprite_pattern *allocateSpritePattern(struct sprite_props *p);
     
     uint32_t m_frame;
