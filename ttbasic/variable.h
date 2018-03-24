@@ -115,8 +115,11 @@ protected:
 private:
   bool doReserve(int count) {
     m_var_name = (char **)realloc(m_var_name, count * sizeof(char *));
-    if (!m_var_name)
+    if (!m_var_name) {
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i)
       m_var_name[i] = NULL;
     m_size = count;
@@ -147,8 +150,11 @@ public:
       return false;
     }
     m_var = (num_t *)realloc(m_var, count * sizeof(num_t));
-    if (!m_var)
+    if (!m_var) {
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i)
       m_var[i] = 0;
     m_size = count;
@@ -203,6 +209,7 @@ public:
     m_sizes = (int *)realloc(m_sizes, dims * sizeof(int));
     if (!m_sizes) {
       m_dims = 0;
+      err = ERR_OOM;
       return true;
     }
     memcpy(m_sizes, sizes, dims * sizeof(int));
@@ -217,6 +224,7 @@ public:
       m_dims = 0;
       m_sizes = NULL;
       m_var = NULL;
+      err = ERR_OOM;
       return true;
     }
     for (int i = 0; i < m_total; ++i) {
@@ -288,8 +296,13 @@ public:
     }
 
     m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> *));
-    if (!m_var)
+    if (!m_var) {
+      // XXX: How are we going to delete the elements already there before
+      // the failed realloc() call?
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new NumArray<T>();
     }
@@ -339,8 +352,13 @@ public:
       }
     }
     m_var = (BString **)realloc(m_var, count * sizeof(BString *));
-    if (!m_var)
+    if (!m_var) {
+      // XXX: How are we going to delete the elements already there before
+      // the failed realloc() call?
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new BString();
       *m_var[i] = "";
@@ -397,6 +415,7 @@ public:
     m_sizes = (int *)realloc(m_sizes, dims * sizeof(int));
     if (!m_sizes) {
       m_dims = 0;
+      err = ERR_OOM;
       return true;
     }
     memcpy(m_sizes, sizes, dims * sizeof(int));
@@ -413,6 +432,7 @@ public:
       m_dims = 0;
       m_sizes = NULL;
       m_var = NULL;
+      err = ERR_OOM;
       return true;
     }
     return false;
@@ -481,8 +501,13 @@ public:
     }
 
     m_var = (StringArray<T> **)realloc(m_var, count * sizeof(StringArray<T> **));
-    if (!m_var)
+    if (!m_var) {
+      // XXX: How are we going to delete the elements already there before
+      // the failed realloc() call?
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new StringArray<T>();
     }
@@ -593,8 +618,13 @@ public:
     }
 
     m_var = (BasicList<T> **)realloc(m_var, count * sizeof(BasicList<T> **));
-    if (!m_var)
+    if (!m_var) {
+      // XXX: How are we going to delete the elements already there before
+      // the failed realloc() call?
+      err = ERR_OOM;
+      m_size = 0;
       return true;
+    }
     for (int i = m_size; i < count; ++i) {
       m_var[i] = new BasicList<T>();
     }
