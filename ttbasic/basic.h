@@ -87,7 +87,7 @@ static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_toke
   num_t p = iexp();
   prm = p;
   if (!err && next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    E_SYNTAX(next_token);
   }
   return err;
 }
@@ -95,9 +95,9 @@ static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_toke
 static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
   prm = iexp();
   if (!err && (prm < v_min || prm > v_max))
-    err = ERR_VALUE;
+    E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
-    err = ERR_SYNTAX;
+    E_SYNTAX(next_token);
   }
   return err;
 }
