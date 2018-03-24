@@ -19,7 +19,9 @@ static inline void SpiUnlock(void)
 {
   --spi_lock;
   if (spi_lock < 0) {
+#ifdef DEBUG_LOCK
     Serial.println("WARN neg SPI refcnt");
+#endif
     spi_lock = 0;
   }
 }
