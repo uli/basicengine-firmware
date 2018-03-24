@@ -1463,16 +1463,34 @@ TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 	else
 	{
 		res = (tsf*)TSF_MALLOC(sizeof(tsf));
+		if (!res)
+			return NULL;
 		TSF_MEMSET(res, 0, sizeof(tsf));
 		res->presetNum = hydra.phdrNum - 1;
 		res->presets = (struct tsf_preset*)TSF_MALLOC(res->presetNum * sizeof(struct tsf_preset));
+		if (!res->presets) {
+			free(res);
+			return NULL;
+		}
 		TSF_MEMSET(res->presets, 0, res->presetNum * sizeof(struct tsf_preset));
 		res->fontSamplesOffset = fontSamplesOffset;
 		res->fontSampleCount = fontSampleCount;
 		res->outSampleRate = 44100.0f;
 		res->hydra = (struct tsf_hydra*)TSF_MALLOC(sizeof(struct tsf_hydra));
+		if (!res->hydra) {
+			free(res->presets);
+			free(res);
+			return NULL;
+		}
 		TSF_MEMCPY(res->hydra, &hydra, sizeof(*res->hydra));
 		res->hydra->stream = (struct tsf_stream*)TSF_MALLOC(sizeof(struct tsf_stream));
+		if (!res->hydra->stream) {
+			// Meine Fresse!
+			free(res->hydra);
+			free(res->presets);
+			free(res);
+			return NULL;
+		}
 		TSF_MEMCPY(res->hydra->stream, stream, sizeof(*res->hydra->stream));
 
 		// Cached sample
