@@ -74,3 +74,5 @@
 
 #define GROUP(g) __attribute__((section(".text." #g)))
 #endif
+
+#define UNIFILE_USE_SPIFFS

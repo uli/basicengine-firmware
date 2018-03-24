@@ -14,8 +14,14 @@
 
 #include <Arduino.h>
 #include <SdFat.h>
+
+#ifdef UNIFILE_USE_SPIFFS
 #define FS_NO_GLOBALS
 #include <FS.h>
+#else
+#include <ESP8266FastROMFS.h>
+extern FastROMFilesystem fs;
+#endif
 
 #define SD_CS       (4)   // SDカードモジュールCS
 #define SD_PATH_LEN 64      // ディレクトリパス長
@@ -62,13 +68,22 @@ public:
 
   Unifile() {
     m_type = INVALID;
+#ifndef UNIFILE_USE_SPIFFS
+    m_fs_file = NULL;
+    m_fs_dir = NULL;
+#endif
   }
   
   Unifile(File f) {
     m_sd_file = f;
     m_type = SD;
+#ifndef UNIFILE_USE_SPIFFS
+    m_fs_file = NULL;
+    m_fs_dir = NULL;
+#endif
   }  
   
+#ifdef UNIFILE_USE_SPIFFS
   Unifile(fs::File f) {
     m_fs_file = f;
     m_type = FS;
@@ -78,6 +93,25 @@ public:
     m_fs_dir = f;
     m_type = FS_DIR;
   }
+#else
+  Unifile(FastROMFile *f) {
+    m_fs_file = f;
+    if (f)
+      m_type = FS;
+    else
+      m_type = INVALID;
+    m_fs_dir = NULL;
+  }
+  
+  Unifile(FastROMFSDir *f) {
+    m_fs_dir = f;
+    if (f)
+      m_type = FS_DIR;
+    else
+      m_type = INVALID;
+    m_fs_file = NULL;
+  }
+#endif
 
   bool isDirectory() {
     switch (m_type) {
@@ -91,7 +125,11 @@ public:
     switch (m_type) {
     case SD_DIR:
     case SD: { SD_BEGIN(); m_sd_file.close(); SD_END(); break; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: { noInterrupts(); m_fs_file.close(); interrupts(); break; }
+#else
+    case FS: { noInterrupts(); m_fs_file->sync(); m_fs_file->close(); interrupts(); break; }
+#endif
     default: break;
     }
     m_type = INVALID;
@@ -100,7 +138,11 @@ public:
   ssize_t write(char *s) {
     switch (m_type) {
     case SD: { SD_BEGIN(); ssize_t ret = m_sd_file.write(s); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: { noInterrupts(); ssize_t ret = m_fs_file.write((uint8_t *)s, strlen(s)); interrupts(); return ret; }
+#else
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write((uint8_t *)s, strlen(s)); interrupts(); return ret; }
+#endif
     default: return -1;
     }
   }
@@ -108,7 +150,11 @@ public:
   ssize_t write(char *s, size_t sz) {
     switch (m_type) {
     case SD: { SD_BEGIN(); ssize_t ret = m_sd_file.write(s, sz); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: { noInterrupts(); ssize_t ret = m_fs_file.write((uint8_t *)s, sz); interrupts(); return ret; }
+#else
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write(s, sz); interrupts(); return ret; }
+#endif
     default: return -1;
     }
   }
@@ -116,7 +162,11 @@ public:
   ssize_t write(uint8_t c) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file.write(c); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: { noInterrupts(); ssize_t ret = m_fs_file.write(c); interrupts(); return ret; }
+#else
+    case FS: { noInterrupts(); ssize_t ret = m_fs_file->write(c); interrupts(); return ret; }
+#endif
     default: return -1;
     }
   }
@@ -124,7 +174,11 @@ public:
   int read() {
     switch (m_type) {
     case SD: { SD_BEGIN(); int ret = m_sd_file.read(); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.read();
+#else
+    case FS: return m_fs_file->read();
+#endif
     default: return -1;
     }
   }
@@ -132,7 +186,11 @@ public:
   ssize_t read(char* buf, size_t size) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file.read(buf, size); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.read((uint8_t *)buf, size);
+#else
+    case FS: return m_fs_file->read((uint8_t *)buf, size);
+#endif
     default: return -1;
     }
   }
@@ -140,7 +198,11 @@ public:
   ssize_t fgets(char* str, int num) {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file.fgets(str, num); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return -1;
+#else
+    case FS: return -1;
+#endif
     default: return -1;
     }
   }
@@ -148,7 +210,11 @@ public:
   uint32_t fileSize() {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file.fileSize(); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.size();
+#else
+    case FS: return m_fs_file->size();
+#endif
     default: return -1;
     }
   }
@@ -156,7 +222,11 @@ public:
   bool seekSet(size_t pos) {
     switch (m_type) {
     case SD: { SD_BEGIN(); bool ret = m_sd_file.seekSet(pos); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.seek(pos, fs::SeekSet);
+#else
+    case FS: return m_fs_file->seek(pos, SEEK_SET);
+#endif
     default: return false;
     }
   }
@@ -164,7 +234,11 @@ public:
   size_t position() {
     switch (m_type) {
     case SD: { SD_BEGIN(); size_t ret = m_sd_file.position(); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.position();
+#else
+    case FS: return m_fs_file->position();
+#endif
     default: return -1;
     }
   }
@@ -172,7 +246,11 @@ public:
   bool available() {
     switch (m_type) {
     case SD: { SD_BEGIN(); bool ret = m_sd_file.available(); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return m_fs_file.available();
+#else
+    case FS: return m_fs_file->available();
+#endif
     default: return false;
     }
   }
@@ -194,11 +272,22 @@ public:
       SD_END();
       break;
     case FS_DIR:
+#ifdef UNIFILE_USE_SPIFFS
       if (m_fs_dir.next()) {
         e.name = m_fs_dir.fileName().c_str();
         e.is_directory = false;
         e.size = m_fs_dir.fileSize();
       }
+#else
+      {
+        struct FastROMFSDirent *de = fs.readdir(m_fs_dir);
+        if (de) {
+          e.name = de->name;
+          e.is_directory = false;
+          e.size = de->len;
+        }
+      }
+#endif
       break;
     default:
       break;
@@ -210,8 +299,13 @@ public:
     switch (m_type) {
     case SD_DIR:
     case SD: return (bool)m_sd_file;
+#ifdef UNIFILE_USE_SPIFFS
     case FS: return (bool)m_fs_file;
     case FS_DIR: return true;
+#else
+    case FS: return m_fs_file != NULL;
+    case FS_DIR: return m_fs_dir != NULL;
+#endif
     default: return false;
     }
   }
@@ -227,7 +321,11 @@ public:
       case FILE_READ:		fl = "r"; break;
       default:			return Unifile();
       }
+#ifdef UNIFILE_USE_SPIFFS
       fs::File f = SPIFFS.open(spiffs_name.c_str(), fl);
+#else
+      FastROMFile *f = fs.open(spiffs_name.c_str(), fl);
+#endif
       if (f)
         return Unifile(f);
       else
@@ -254,7 +352,11 @@ public:
     if (isSPIFFS(abs_from) != isSPIFFS(abs_to))
       return true;
     if (isSPIFFS(abs_from))
+#ifdef UNIFILE_USE_SPIFFS
       return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
+#else
+      return fs.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
+#endif
     else {
       SD_BEGIN();
       bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN, abs_to.c_str() + SD_PREFIX_LEN);
@@ -280,7 +382,11 @@ public:
   static bool exists(const char *file) {
     UnifileString abs_file = path(file);
     if (isSPIFFS(abs_file)) {
+#ifdef UNIFILE_USE_SPIFFS
       return SPIFFS.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+#else
+      return fs.exists(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+#endif
     } else {
       SD_BEGIN();
       bool ret = ::SD.exists(abs_file.c_str() + SD_PREFIX_LEN);
@@ -304,7 +410,11 @@ public:
   static bool remove(const char *p) {
     UnifileString abs_file = path(p);
     if (isSPIFFS(abs_file))
+#ifdef UNIFILE_USE_SPIFFS
       return SPIFFS.remove(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+#else
+      return fs.unlink(abs_file.c_str() + FLASH_PREFIX_LEN + 1);
+#endif
     else {
       SD_BEGIN();
       bool ret = ::SD.remove(abs_file.c_str() + SD_PREFIX_LEN);
@@ -316,7 +426,11 @@ public:
   static Unifile openDir(const char *p) {
     UnifileString abs_path = path(p);
     if (isSPIFFS(abs_path)) {
+#ifdef UNIFILE_USE_SPIFFS
       return Unifile(SPIFFS.openDir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
+#else
+      return Unifile(fs.opendir(abs_path.c_str() + FLASH_PREFIX_LEN + 1));
+#endif      
     } else {
       SD_BEGIN();
       File f = ::SD.open(abs_path == SD_PREFIX ? "/" : abs_path.c_str() + SD_PREFIX_LEN);
@@ -335,8 +449,13 @@ public:
 
 private:
   File m_sd_file;
+#ifdef UNIFILE_USE_SPIFFS
   fs::File m_fs_file;
   fs::Dir m_fs_dir;
+#else
+  FastROMFile *m_fs_file;
+  FastROMFSDir *m_fs_dir;
+#endif
   uni_type m_type;
 
   static UnifileString m_cwd;

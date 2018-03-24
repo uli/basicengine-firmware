@@ -9,7 +9,7 @@
 //  2017/07/27, flist()で列数を指定可能
 //
 
-
+#include "../../ttbasic/ttconfig.h"
 #include "sdfiles.h"
 #include "../../ttbasic/basic.h"
 #include "../../ttbasic/lock.h"
@@ -21,7 +21,9 @@
 //extern RTClock rtc;
 
 SdFat SD;
-
+#ifndef UNIFILE_USE_SPIFFS
+FastROMFilesystem fs;
+#endif
 static bool sdfat_initialized = false;
 static int m_mhz = 0;
 static uint8_t cs = 0;

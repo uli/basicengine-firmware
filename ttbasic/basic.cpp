@@ -3053,6 +3053,7 @@ void ifiles() {
 
 void SdFormat();
 void iformat() {
+#ifdef UNIFILE_USE_SPIFFS
   static const char warn_spiffs[] PROGMEM =
     "This will ERASE ALL DATA on the internal flash file system!";
   static const char areyousure[] PROGMEM =
@@ -3085,6 +3086,9 @@ void iformat() {
   } else {
     err = ERR_NOT_SUPPORTED;
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 // 画面クリア
@@ -6973,7 +6977,11 @@ void SMALL basic() {
   char* textline;    // input line
   uint8_t rc;
 
+#ifdef UNIFILE_USE_SPIFFS
   SPIFFS.begin(false);
+#else
+  fs.mount();
+#endif
   loadConfig();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass);
@@ -7029,7 +7037,14 @@ void SMALL basic() {
   c_puts_P(__v);
 
   // Initialize file systems
+#ifdef UNIFILE_USE_SPIFFS
   SPIFFS.begin();
+#else
+  if (!fs.mount()) {
+    fs.mkfs();
+    fs.mount();
+  }
+#endif
 #if USE_SD_CARD == 1
   // Initialize SD card file system
   bfs.init(16);		// CS on GPIO16
