@@ -4961,6 +4961,13 @@ uint8_t SMALL ilrun() {
 // flgCmd: set to false at program execution, true at command line
 void SMALL error(uint8_t flgCmd = false) {
   if (err) {
+    if (err == ERR_OOM) {
+      // free as much as possible first
+      sound.unloadFont();
+      vs23.resetSprites();
+      vs23.resetBgs();
+      inew(NEW_VAR);
+    }
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
     if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
