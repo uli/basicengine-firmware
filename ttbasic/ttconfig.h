@@ -72,7 +72,7 @@
 #define SMALL __attribute__((optimize("Os")))
 #define NOINS __attribute__((no_instrument_function))
 
-#define GROUP(g) __attribute__((section(".text." #g)))
+#define GROUP(g) __attribute__((section(".irom." #g)))
 #endif
 
 #define UNIFILE_USE_SPIFFS
