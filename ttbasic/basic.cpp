@@ -536,7 +536,7 @@ inline uint8_t checkClose() {
   return err;
 }
 
-static inline bool GROUP(basic_core) is_strexp() {
+static inline bool BASIC_FP is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return (*cip == I_STR ||
           ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
@@ -1595,7 +1595,7 @@ DONE:
 }
 
 // Variable assignment handler
-void GROUP(basic_core) ivar() {
+void BASIC_FP ivar() {
   num_t value; //値
   short index; //変数番号
 
@@ -1630,7 +1630,7 @@ void GROUP(basic_core) ivar() {
 // what a procedure's stack frame looks like at compile time because we may
 // have to compile code out-of-order.
 
-static int GROUP(basic_core) get_num_local_offset(uint8_t arg, bool &is_local)
+static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
 {
   if (!gstki) {
     // not in a subroutine
@@ -1651,7 +1651,7 @@ static int GROUP(basic_core) get_num_local_offset(uint8_t arg, bool &is_local)
   return local_offset;
 }
 
-static num_t& GROUP(basic_core) get_lvar(uint8_t arg)
+static num_t& BASIC_FP get_lvar(uint8_t arg)
 {
   bool is_local;
   int local_offset = get_num_local_offset(arg, is_local);
@@ -1669,7 +1669,7 @@ static num_t& GROUP(basic_core) get_lvar(uint8_t arg)
   }
 }
 
-void GROUP(basic_core) ilvar() {
+void BASIC_FP ilvar() {
   num_t value;
   short index;	// variable index
 
@@ -1689,7 +1689,7 @@ void GROUP(basic_core) ilvar() {
   var = value;
 }
 
-int GROUP(basic_core) get_array_dims(int *idxs) {
+int BASIC_FP get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
     if (getParam(idxs[dims], 0, 255, I_NONE))
@@ -1781,7 +1781,7 @@ void idim() {
 }
 
 // Numeric array variable assignment handler
-void GROUP(basic_core) ivararr() {
+void BASIC_FP ivararr() {
   num_t value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
