@@ -65,22 +65,6 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 
 #endif
 
-void setSample(uint8_t s)
-{
-	for (int i=0; i<8; ++i) {
-		if (s/32 < i)
-			i2sData[0][i] = 0;
-			//i2sData[i] = 0xffffffffUL;
-		else if (s/32 > i)
-			i2sData[0][i] = 0xffffffffUL;
-			//i2sData[i] = 0;
-		else
-			i2sData[0][i] = 0xffffffffUL << (32 - s%32);
-			//i2sData[i] = 0xffffffffUL >> s%32;
-		//printf("foomeier %08X\n", i2sData[i]);
-	}
-}
-
 void InitI2S()
 {
 	int i;
