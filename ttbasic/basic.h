@@ -61,7 +61,7 @@ uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 int BASIC_FP token_size(uint8_t *code);
-num_t GROUP(basic_core) iexp();
+num_t BASIC_FP iexp();
 
 // キーワードテーブル
 #include "kwtbl.h"

@@ -113,7 +113,7 @@ void mem_putch(uint8_t c);
 void tv_tone(int16_t freq, int16_t duration);
 void tv_notone();
 unsigned char* GROUP(basic_core) iexe(bool until_return = false);
-num_t GROUP(basic_core) iexp(void);
+num_t BASIC_FP iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
 // **** RTC用宣言 ********************
@@ -2539,7 +2539,7 @@ resume:
   }
 }
 
-num_t GROUP(basic_core) imul();
+num_t BASIC_FP imul();
 
 static bool get_range(uint32_t &start, uint32_t &end)
 {
@@ -5054,7 +5054,7 @@ int32_t ilen() {
 }
 
 // Get value
-num_t GROUP(basic_core) ivalue() {
+num_t BASIC_FP ivalue() {
   num_t value = 0, value2; // 値
   uint8_t i;   // 文字数
   int dims;
@@ -5446,7 +5446,7 @@ num_t GROUP(basic_core) ivalue() {
   return value; //取得した値を持ち帰る
 }
 
-num_t GROUP(basic_core) ipow() {
+num_t BASIC_FP ipow() {
   num_t value, tmp;
   
   value = ivalue();
@@ -5465,7 +5465,7 @@ num_t GROUP(basic_core) ipow() {
     }
 }
 
-num_t GROUP(basic_core) iunary() {
+num_t BASIC_FP iunary() {
   switch (*cip++) {
   case I_MINUS: //「-」
     return 0 - ipow(); //値を取得して負の値に変換
@@ -5478,7 +5478,7 @@ num_t GROUP(basic_core) iunary() {
 }
 
 // multiply or divide calculation
-num_t GROUP(basic_core) imul() {
+num_t BASIC_FP imul() {
   num_t value, tmp; //値と演算値
 
   value = iunary(); //値を取得
@@ -5532,7 +5532,7 @@ num_t GROUP(basic_core) imul() {
 }
 
 // add or subtract calculation
-num_t GROUP(basic_core) iplus() {
+num_t BASIC_FP iplus() {
   num_t value, tmp; //値と演算値
   value = imul(); //値を取得
   if (err)
@@ -5814,7 +5814,7 @@ BString istrexp()
 
 #define basic_bool(x) ((x) ? -1 : 0)
 
-num_t GROUP(basic_core) irel() {
+num_t BASIC_FP irel() {
   num_t value, tmp;
 
   value = iplus();
@@ -5855,7 +5855,7 @@ num_t GROUP(basic_core) irel() {
     }
 }
 
-num_t GROUP(basic_core) inot() {
+num_t BASIC_FP inot() {
   switch(*cip++) {
   case I_BITREV: // NOT
     return ~((int32_t)irel());
@@ -5865,7 +5865,7 @@ num_t GROUP(basic_core) inot() {
   }
 }
 
-num_t GROUP(basic_core) iand() {
+num_t BASIC_FP iand() {
   num_t value, tmp;
 
   value = inot();
@@ -5885,7 +5885,7 @@ num_t GROUP(basic_core) iand() {
 }
 
 // Numeric expression parser
-num_t GROUP(basic_core) iexp() {
+num_t BASIC_FP iexp() {
   num_t value, tmp;
 
   if (is_strexp()) {
