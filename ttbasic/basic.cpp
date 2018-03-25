@@ -6398,7 +6398,7 @@ void BASIC_FP ireturn() {
   return;
 }
 
-void GROUP(basic_core) ido() {
+void BASIC_FP ido() {
   if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
     return;
@@ -6412,7 +6412,7 @@ void GROUP(basic_core) ido() {
 }
 
 // FOR
-void GROUP(basic_core) ifor() {
+void BASIC_FP ifor() {
   int index;
   num_t vto, vstep; // FOR文の変数番号、終了値、増分
 
@@ -6458,7 +6458,7 @@ void GROUP(basic_core) ifor() {
   lstk[lstki++].local = false;
 }
 
-void GROUP(basic_core) iloop() {
+void BASIC_FP iloop() {
   uint8_t cond;
 
   if (!lstki) {
@@ -6500,7 +6500,7 @@ void GROUP(basic_core) iloop() {
 }
 
 // NEXT
-void GROUP(basic_core) inext() {
+void BASIC_FP inext() {
   int want_index;	// variable we want to NEXT
   int index;		// variable index
   num_t vto;		// end of loop value
@@ -6554,7 +6554,7 @@ void GROUP(basic_core) inext() {
 }
 
 // IF
-void GROUP(basic_core) iif() {
+void BASIC_FP iif() {
   num_t condition;    // IF文の条件値
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
 
@@ -6578,11 +6578,11 @@ void GROUP(basic_core) iif() {
   }
 }
 
-void GROUP(basic_core) iendif()
+void BASIC_FP iendif()
 {
 }
 
-void GROUP(basic_core) ielse()
+void BASIC_FP ielse()
 {
   uint8_t *newip = getELSEptr(cip, true);
   if (newip)
