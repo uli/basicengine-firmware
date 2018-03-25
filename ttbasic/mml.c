@@ -31,6 +31,7 @@
 #include <Arduino.h>
 
 #include "mml.h"
+#include "ttconfig.h"
 
 #define MML_WORK_BUFFER_SIZE    (8)
 
@@ -70,7 +71,7 @@ typedef enum {
   MML_CHAR_TYPE_UNKNOWN,
 } MML_CHAR_TYPE;
 
-static MML_RESULT ICACHE_RAM_ATTR skip_whitespace(MML *handle)
+static MML_RESULT GROUP(basic_sound) skip_whitespace(MML *handle)
 {
   while (((TEXT_READ(handle)) == ' ') || ((TEXT_READ(handle)) == '\r') || ((TEXT_READ(handle)) == '\n') || ((TEXT_READ(handle)) == '\t')) {
     TEXT_NEXT(handle);
@@ -78,7 +79,7 @@ static MML_RESULT ICACHE_RAM_ATTR skip_whitespace(MML *handle)
   return MML_RESULT_OK;
 }
 
-static MML_RESULT ICACHE_RAM_ATTR get_note_number(MML *handle, char *text, int *number)
+static MML_RESULT GROUP(basic_sound) get_note_number(MML *handle, char *text, int *number)
 {
   char *note_distance = (char *)"C D EF G A B";
   char *p;
@@ -105,7 +106,7 @@ static MML_RESULT ICACHE_RAM_ATTR get_note_number(MML *handle, char *text, int *
   return MML_RESULT_OK;
 }
 
-static MML_RESULT ICACHE_RAM_ATTR convert_note_length_to_ticks(MML *handle, int note_length, int *ticks)
+static MML_RESULT GROUP(basic_sound) convert_note_length_to_ticks(MML *handle, int note_length, int *ticks)
 {
   int bticks = handle->option.bticks;
 
@@ -178,7 +179,7 @@ static MML_RESULT ICACHE_RAM_ATTR convert_note_length_to_ticks(MML *handle, int 
   return MML_RESULT_OK;
 }
 
-static MML_RESULT ICACHE_RAM_ATTR get_note_ticks(MML *handle, char *text, int *ticks)
+static MML_RESULT GROUP(basic_sound) get_note_ticks(MML *handle, char *text, int *ticks)
 {
   int note_length = LIBC_ATOI(text);
   char *p;
@@ -204,7 +205,7 @@ static MML_RESULT ICACHE_RAM_ATTR get_note_ticks(MML *handle, char *text, int *t
   return MML_RESULT_OK;
 }
 
-static MML_RESULT ICACHE_RAM_ATTR get_note_ticks_default(MML *handle, int *ticks)
+static MML_RESULT GROUP(basic_sound) get_note_ticks_default(MML *handle, int *ticks)
 {
   int val;
   MML_RESULT mr;
@@ -213,7 +214,7 @@ static MML_RESULT ICACHE_RAM_ATTR get_note_ticks_default(MML *handle, int *ticks
   return mr;
 }
 
-static MML_CHAR_TYPE ICACHE_RAM_ATTR get_char_type(char c)
+static MML_CHAR_TYPE GROUP(basic_sound) get_char_type(char c)
 {
   switch (c) {
     case 'C':
@@ -271,7 +272,7 @@ static MML_CHAR_TYPE ICACHE_RAM_ATTR get_char_type(char c)
   return MML_CHAR_TYPE_UNKNOWN;
 }
 
-static MML_RESULT ICACHE_RAM_ATTR get_token(MML *handle, char *buf, int siz)
+static MML_RESULT GROUP(basic_sound) get_token(MML *handle, char *buf, int siz)
 {
   MML_CHAR_TYPE ct_head, ct_next;
   int i;
@@ -405,7 +406,7 @@ static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz, char *tb
   return MML_RESULT_OK;
 }
 
-MML_RESULT ICACHE_RAM_ATTR mml_fetch(MML *handle)
+MML_RESULT GROUP(basic_sound) mml_fetch(MML *handle)
 {
   MML_RESULT mr;
   char buf1[MML_WORK_BUFFER_SIZE];

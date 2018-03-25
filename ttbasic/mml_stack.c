@@ -30,14 +30,15 @@
  */
 
 #include "mml_stack.h"
+#include "ttconfig.h"
 
-MML_STACK_RESULT mml_stack_init(mml_stack_t *p)
+MML_STACK_RESULT GROUP(basic_sound) mml_stack_init(mml_stack_t *p)
 {
   p->count = 0;
   return MML_STACK_RESULT_OK;
 }
 
-MML_STACK_RESULT mml_stack_push(mml_stack_t *p, char *pointer)
+MML_STACK_RESULT GROUP(basic_sound) mml_stack_push(mml_stack_t *p, char *pointer)
 {
   if (p->count == MML_STACK_MAX_DEPTH) {
     return MML_STACK_RESULT_ERROR_FULL;
@@ -47,7 +48,7 @@ MML_STACK_RESULT mml_stack_push(mml_stack_t *p, char *pointer)
   return MML_STACK_RESULT_OK;
 }
 
-MML_STACK_RESULT mml_stack_pop(mml_stack_t *p, char **pointer)
+MML_STACK_RESULT GROUP(basic_sound) mml_stack_pop(mml_stack_t *p, char **pointer)
 {
   if (p->count == 0) {
     return MML_STACK_RESULT_ERROR_EMPTY;

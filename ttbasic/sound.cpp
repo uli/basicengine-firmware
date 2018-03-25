@@ -41,7 +41,7 @@ void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
   }
 }
 
-void ICACHE_RAM_ATTR BasicSound::mmlCallback(MML_INFO *p, void *extobj)
+void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 {
   uint32_t now = millis();
   int ch = (int)extobj;
@@ -128,7 +128,7 @@ void BasicSound::loadFont()
   m_all_done_time = 0;
 }
 
-void ICACHE_RAM_ATTR BasicSound::unloadFont()
+void GROUP(basic_sound) BasicSound::unloadFont()
 {
   if (m_tsf) {
     tsf_close(m_tsf);
@@ -182,7 +182,7 @@ const uint32_t ICACHE_RODATA_ATTR fakePwm[]={
 
 static short staging_buf[I2S_BUFLEN];
 
-void ICACHE_RAM_ATTR BasicSound::pumpEvents()
+void GROUP(basic_sound) BasicSound::pumpEvents()
 {
   uint32_t now = millis();
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
@@ -211,7 +211,7 @@ void ICACHE_RAM_ATTR BasicSound::pumpEvents()
     m_all_done_time = 0;
 }
 
-void ICACHE_RAM_ATTR BasicSound::render()
+void GROUP(basic_sound) BasicSound::render()
 {
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
