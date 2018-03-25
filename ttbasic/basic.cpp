@@ -285,7 +285,7 @@ num_t getrnd(int value) {
 
 // List formatting condition
 // Intermediate code without trailing blank
-const uint8_t i_nsa[] __FLASH__ = {
+const uint8_t i_nsa[] BASIC_DAT = {
   I_END,
   I_CLS,I_CLT,
   I_HIGH, I_LOW, I_CSIZE, I_PSIZE,
@@ -304,14 +304,14 @@ const uint8_t i_nsa[] __FLASH__ = {
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
-const uint8_t i_nsb[] __FLASH__ = {
+const uint8_t i_nsb[] BASIC_DAT = {
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
 };
 
 // insert a blank before intermediate code
-const uint8_t i_sf[] __FLASH__  = {
+const uint8_t i_sf[] BASIC_DAT  = {
   I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
   I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
