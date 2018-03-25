@@ -135,7 +135,7 @@ void error(uint8_t flgCmd);
 extern TKeyboard kb;
 
 // 1桁16進数文字を整数に変換する
-uint16_t GROUP(basic_core) hex2value(char c) {
+uint16_t BASIC_INT hex2value(char c) {
   if (c <= '9' && c >= '0')
     return c - '0';
   else if (c <= 'f' && c >= 'a')
@@ -145,7 +145,7 @@ uint16_t GROUP(basic_core) hex2value(char c) {
   return 0;
 }
 
-void GROUP(basic_core) screen_putch(uint8_t c) {
+void BASIC_INT screen_putch(uint8_t c) {
   static bool escape = false;
   static uint8_t col_digit = 0, color, is_bg;
   static bool reverse = false;
@@ -447,7 +447,7 @@ inline void mem_putch(uint8_t c) {
   }
 }
 
-void* GROUP(basic_core) sanitize_addr(uint32_t vadr, int type) {
+void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
   // XXX: This needs to be a lot smarter if we want it to reliably prevent
   // crashes from accidental memory accesses.
   if (vadr < 0x30000000U)
@@ -3144,7 +3144,7 @@ void GROUP(basic_core) do_call(uint8_t proc_idx)
 }
 
 
-void GROUP(basic_core) event_handle_sprite()
+void BASIC_INT event_handle_sprite()
 {
   uint8_t dir;
   for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
@@ -3166,7 +3166,7 @@ void GROUP(basic_core) event_handle_sprite()
   }
 }
 
-void GROUP(basic_core) event_handle_play(int ch)
+void BASIC_INT event_handle_play(int ch)
 {
   init_stack_frame();
   push_num_arg(ch);
@@ -3179,7 +3179,7 @@ void event_handle_pad();
 #define EVENT_PROFILE_SAMPLES 7
 uint32_t event_profile[EVENT_PROFILE_SAMPLES];
 
-void GROUP(basic_core) draw_profile(void)
+void BASIC_INT draw_profile(void)
 {
   int x = 0;
   int bw = vs23.borderWidth();
@@ -4680,7 +4680,7 @@ void GROUP(basic_core) imovebg() {
   vs23.scroll(bg, x, y);
 }
 
-void GROUP(basic_core) isprite() {
+void BASIC_INT isprite() {
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
   bool set_frame = false, set_opacity = false;
 
@@ -4807,7 +4807,7 @@ void iframeskip() {
 #include "Psx.h"
 Psx psx;
 
-static int GROUP(basic_core) cursor_pad_state()
+static int BASIC_INT cursor_pad_state()
 {
   // The state is kept up-to-date by the interpreter polling for Ctrl-C.
   return kb.state(PS2KEY_L_Arrow) << psxLeftShift |
@@ -4820,7 +4820,7 @@ static int GROUP(basic_core) cursor_pad_state()
          kb.state(PS2KEY_Z) << psxSquShift;
 }
 
-int GROUP(basic_core) pad_state(int num)
+int BASIC_INT pad_state(int num)
 {
   switch (num) {
   case 0:	return (psx.read() & 0xffff) | cursor_pad_state();
@@ -4830,14 +4830,14 @@ int GROUP(basic_core) pad_state(int num)
   return 0;
 }
 
-int32_t GROUP(basic_core) ipad() {
+int32_t BASIC_INT ipad() {
   int32_t num;
   if (checkOpen()) return 0;
   if (getParam(num, 0, 2, I_CLOSE)) return 0;
   return pad_state(num);
 }
 
-void GROUP(basic_core) event_handle_pad()
+void BASIC_INT event_handle_pad()
 {
   for (int i = 0; i < MAX_PADS; ++i) {
     if (!event_pad_proc_idx[i])
