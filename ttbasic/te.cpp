@@ -98,7 +98,7 @@ char *ln_clp; /* Clipboard data (just one line) */
 /* Filename
    --------
 */
-char file_name[FILENAME_MAX];
+BString file_name;
 
 /* Editor box
    ----------
@@ -326,12 +326,13 @@ void LoopFileName()
 
 	CrtLocate(PS_ROW, ps_fname);
 
+	// XXX: What?? That's 1k!
 	for(i = FILENAME_MAX - 1; i; --i)
 		putchr(' ');
 
 	CrtLocate(PS_ROW, ps_fname);
 
-	putstr(file_name[0] ? file_name : "-no name-");
+	putstr(file_name.length() ? file_name.c_str() : "-no name-");
 }
 
 /* Insert CR (intro)
@@ -544,12 +545,12 @@ void Layout()
    ----------------
    Returns last character entered: INTRO or ESC.
 */
-int ReadLine(char *buf, int width)
+int ReadLine(BString &buf, unsigned int width)
 {
 	int len;
 	int ch;
 
-	putstr(buf); len=strlen(buf);
+	putstr(buf.c_str()); len=buf.length();
 
 	while(1)
 	{
@@ -559,8 +560,7 @@ int ReadLine(char *buf, int width)
 				if(len)
 				{
 					putchr('\b'); putchr(' '); putchr('\b');
-
-					--len;
+					buf.remove(buf.length()-1);
 				}
 				break;
 			case K_INTRO :
@@ -568,8 +568,10 @@ int ReadLine(char *buf, int width)
 				buf[len] = 0;
 				return ch;
 			default :
-				if(len < width && ch >= ' ')
-					putchr(buf[len++] = ch);
+				if(buf.length() < width && ch >= ' ') {
+					buf += ch;
+					putchr(ch);
+				}
 				break;
 		}
 	}
@@ -635,7 +637,7 @@ int SysLineConf(char *s)
    ------------------
    Return NZ if entered, else Z.
 */
-int SysLineFile(char *fn)
+int SysLineFile(BString &fn)
 {
 	int ch;
 
@@ -647,7 +649,7 @@ int SysLineFile(char *fn)
 
 	SysLine(NULL);
 
-	if(ch == K_INTRO && strlen(fn))
+	if(ch == K_INTRO && fn.length())
 			return 1;
 
 	return 0;
@@ -850,7 +852,7 @@ int ReadFile(const char *fn)
    Return NZ on error.
 */
 
-void BackupFile(char *fn)
+void BackupFile(const char *fn)
 {
 	Unifile fp;
 	const char *bkp;
@@ -859,7 +861,7 @@ void BackupFile(char *fn)
 
 	if((fp = Unifile::open(fn, FILE_READ)))
 	{
-	        fp.close();
+		fp.close();
 
 		bkp = "te.bkp";
 
@@ -877,7 +879,7 @@ void BackupFile(char *fn)
    ---------------
    Returns NZ on error.
 */
-int WriteFile(char *fn)
+int WriteFile(const char *fn)
 {
 	Unifile fp;
 	int i, err;
@@ -971,7 +973,7 @@ int MenuNew()
 */
 int MenuOpen()
 {
-	char fn[FILENAME_MAX];
+	BString fn;
 
 	if(lp_now > 1 || strlen(lp_arr[0]))
 	{
@@ -979,14 +981,14 @@ int MenuOpen()
 			return 1;
 	}
 
-	fn[0] = 0;
+	fn = "";
 
 	if(SysLineFile(fn))
 	{
-		if(ReadFile(fn))
+		if(ReadFile(fn.c_str()))
 			NewFile();
 		else
-			strcpy(file_name, fn);
+			file_name = fn;
 
 		return 0;
 	}
@@ -1000,14 +1002,14 @@ int MenuOpen()
 */
 int MenuSaveAs()
 {
-	char fn[FILENAME_MAX];
+	BString fn;
 
-	strcpy(fn, file_name);
+	fn = file_name;
 
 	if(SysLineFile(fn))
 	{
-		if(!WriteFile(fn))
-			strcpy(file_name, fn);
+		if(!WriteFile(fn.c_str()))
+			file_name = fn;
 
 		return 0;
 	}
@@ -1024,7 +1026,7 @@ int MenuSave()
 	if(!file_name[0])
 		return MenuSaveAs();
 
-	WriteFile(file_name);
+	WriteFile(file_name.c_str());
 
 	return 1;
 }
@@ -1767,7 +1769,7 @@ int te_main(char argc, const char **argv)
 		else if(ReadFile(argv[1]))
 			NewFile();
 		else
-			strcpy(file_name, argv[1]);
+			file_name = argv[1];
 	}
 	else
 	{
