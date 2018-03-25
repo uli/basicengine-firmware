@@ -1037,7 +1037,7 @@ int list_free() {
 }
 
 // Get line numbere by line pointer
-uint32_t GROUP(basic_core) getlineno(unsigned char *lp) {
+uint32_t BASIC_FP getlineno(unsigned char *lp) {
   line_desc_t *ld = (line_desc_t *)lp;
   if(ld->next == 0) //もし末尾だったら
     return (uint32_t)-1;
@@ -1045,7 +1045,7 @@ uint32_t GROUP(basic_core) getlineno(unsigned char *lp) {
 }
 
 // Search line by line number
-unsigned char* GROUP(basic_core) getlp(uint32_t lineno) {
+unsigned char* BASIC_FP getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
   for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
@@ -1451,7 +1451,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
   }
 }
 
-int GROUP(basic_core) get_array_dims(int *idxs);
+int BASIC_FP get_array_dims(int *idxs);
 
 // Get argument in parenthesis
 num_t BASIC_FP getparam() {
@@ -2062,7 +2062,7 @@ static inline bool end_of_statement()
   return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
 }
 
-int GROUP(basic_core) token_size(uint8_t *code) {
+int BASIC_FP token_size(uint8_t *code) {
   switch (*code) {
   case I_STR:
     return code[1] + 2;

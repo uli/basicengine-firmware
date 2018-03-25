@@ -60,7 +60,7 @@ uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
-int GROUP(basic_core) token_size(uint8_t *code);
+int BASIC_FP token_size(uint8_t *code);
 num_t GROUP(basic_core) iexp();
 
 // キーワードテーブル
