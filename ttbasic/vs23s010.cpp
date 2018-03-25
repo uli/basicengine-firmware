@@ -1108,9 +1108,12 @@ void GROUP(basic_vs23) VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, ui
 
 void VS23S010::setSpriteKey(uint8_t num, int16_t key)
 {
-  m_sprite[num].p.key = key;
-  m_sprite[num].must_reload = true;
-  m_bg_modified = true;
+  struct sprite_t *s = &m_sprite[num];
+  if (s->p.key != key) {
+    s->p.key = key;
+    s->must_reload = true;
+    m_bg_modified = true;
+  }
 }
 
 void GROUP(basic_vs23) VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
