@@ -2465,7 +2465,7 @@ bool event_pad_proc_idx[MAX_PADS];
 int event_pad_last[MAX_PADS];
 
 void inew(uint8_t mode = NEW_ALL);
-static void GROUP(basic_core) do_goto(uint32_t line);
+static void BASIC_FP do_goto(uint32_t line);
 
 // RUN command handler
 void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
@@ -3095,7 +3095,7 @@ void icls() {
 
 static bool profile_enabled;
 
-void GROUP(basic_core) init_stack_frame()
+void BASIC_FP init_stack_frame()
 {
   if (gstki > 0) {
     struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
@@ -3106,7 +3106,7 @@ void GROUP(basic_core) init_stack_frame()
   gstk[gstki].str_args = 0;
 }
 
-void GROUP(basic_core) push_num_arg(num_t n)
+void BASIC_FP push_num_arg(num_t n)
 {
   if (astk_num_i >= SIZE_ASTK) {
     err = ERR_ASTKOF;
@@ -3116,7 +3116,7 @@ void GROUP(basic_core) push_num_arg(num_t n)
   gstk[gstki].num_args++;
 }
 
-void GROUP(basic_core) do_call(uint8_t proc_idx)
+void BASIC_FP do_call(uint8_t proc_idx)
 {
   struct proc_t &proc_loc = proc.proc(proc_idx);
 
@@ -5022,7 +5022,7 @@ static inline bool is_var(unsigned char tok)
   return tok >= I_VAR && tok <= I_STRLSTREF;
 }
 
-void GROUP(basic_core) icall();
+void BASIC_FP icall();
 
 static const uint8_t vs23_read_regs[] PROGMEM = {
   0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
@@ -6075,7 +6075,7 @@ void SMALL isysinfo() {
   PRINTLN_P(vt2," nominal)");
 }
 
-static void GROUP(basic_core) do_goto(uint32_t line)
+static void BASIC_FP do_goto(uint32_t line)
 {
   uint8_t *lp = getlp(line);
   if (line != getlineno(lp)) {            // もし分岐先が存在しなければ
@@ -6088,7 +6088,7 @@ static void GROUP(basic_core) do_goto(uint32_t line)
 }
 
 // GOTO
-void GROUP(basic_core) igoto() {
+void BASIC_FP igoto() {
   uint32_t lineno;    // 行番号
 
   if (*cip == I_LABEL) {
@@ -6108,7 +6108,7 @@ void GROUP(basic_core) igoto() {
   }
 }
 
-static void GROUP(basic_core) do_gosub_p(unsigned char *lp, unsigned char *ip)
+static void BASIC_FP do_gosub_p(unsigned char *lp, unsigned char *ip)
 {
   //ポインタを退避
   if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
@@ -6125,7 +6125,7 @@ static void GROUP(basic_core) do_gosub_p(unsigned char *lp, unsigned char *ip)
   cip = ip;
 }
 
-static void GROUP(basic_core) do_gosub(uint32_t lineno) {
+static void BASIC_FP do_gosub(uint32_t lineno) {
   uint8_t *lp = getlp(lineno);
   if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
     err = ERR_ULN;                          // エラー番号をセット
@@ -6135,7 +6135,7 @@ static void GROUP(basic_core) do_gosub(uint32_t lineno) {
 }
 
 // GOSUB
-void GROUP(basic_core) igosub() {
+void BASIC_FP igosub() {
   uint32_t lineno;    // 行番号
 
   if (*cip == I_LABEL) {
@@ -6156,7 +6156,7 @@ void GROUP(basic_core) igosub() {
 }
 
 // ON ... <GOTO|GOSUB> ...
-static void GROUP(basic_core) on_go(bool is_gosub, int cas)
+static void BASIC_FP on_go(bool is_gosub, int cas)
 {
   unsigned char *lp, *ip;
   for (;;) {
@@ -6190,7 +6190,7 @@ static void GROUP(basic_core) on_go(bool is_gosub, int cas)
   }
 }
 
-void GROUP(basic_core) ion()
+void BASIC_FP ion()
 {
   if (*cip == I_SPRITE) {
     ++cip;
@@ -6282,7 +6282,7 @@ void iresume()
   }
 }
 
-void GROUP(basic_core) icall() {
+void BASIC_FP icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
@@ -6362,7 +6362,7 @@ void iproc() {
 }
 
 // RETURN
-void GROUP(basic_core) ireturn() {
+void BASIC_FP ireturn() {
   if (!gstki) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
@@ -6595,7 +6595,7 @@ void GROUP(basic_core) iskip() {
     cip++;              // 中間コードポインタを次へ進める
 }
 
-void GROUP(basic_core) ilabel() {
+void BASIC_FP ilabel() {
   ++cip;
 }
 
