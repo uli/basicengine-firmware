@@ -70,7 +70,7 @@ uint16_t SpiRamReadByte(uint32_t address)
 	return result;
 }
 
-void ICACHE_RAM_ATTR SpiRamReadBytes(uint32_t address, uint8_t * data,
+void GROUP(basic_vs23) SpiRamReadBytes(uint32_t address, uint8_t * data,
 				     uint32_t count)
 {
 	uint8_t req[4];
@@ -102,7 +102,7 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data)
 	// SpiRamReadByte(address), data);
 }
 
-void ICACHE_RAM_ATTR SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len)
+void GROUP(basic_vs23) SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len)
 {
 	uint8_t req[4];
 

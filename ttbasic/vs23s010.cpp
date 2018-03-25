@@ -29,13 +29,13 @@ extern "C" size_t umm_free_heap_size( void );
 #define dbg_pat(x...)
 #endif
 
-void ICACHE_RAM_ATTR VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
+void GROUP(basic_vs23) VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
-uint8_t ICACHE_RAM_ATTR VS23S010::getPixel(uint16_t x, uint16_t y)
+uint8_t GROUP(basic_vs23) VS23S010::getPixel(uint16_t x, uint16_t y)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   return SpiRamReadByte(byteaddress);
@@ -284,7 +284,7 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   m_bg_modified = true;
 }
 
-static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
+static inline void GROUP(basic_vs23) MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
   uint8_t req[5] = {
     BLOCKMVC1,
@@ -301,7 +301,7 @@ static inline void ICACHE_RAM_ATTR MoveBlockAddr(uint32_t byteaddress2, uint32_t
   VS23S010::startBlockMove();
 }
 
-static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
+static inline void GROUP(basic_vs23) SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
 {
   uint8_t cmd[count+4];
   cmd[0] = 3;
@@ -314,7 +314,7 @@ static inline void ICACHE_RAM_ATTR SpiRamReadBytesFast(uint32_t address, uint8_t
   os_memcpy(data, cmd+4, count);
 }
 
-static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
+static inline void GROUP(basic_vs23) SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
 {
   uint8_t cmd[len+4];
   cmd[0] = 2;
@@ -327,7 +327,7 @@ static inline void ICACHE_RAM_ATTR SpiRamWriteBytesFast(uint32_t address, uint8_
   VS23_DESELECT;
 }
 
-void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
+void GROUP(basic_vs23) VS23S010::drawBg(struct bg_t *bg,
                                       int dest_addr_start,
                                       uint32_t pat_start_addr,
                                       uint32_t win_start_addr,
@@ -425,7 +425,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBg(struct bg_t *bg,
 #endif
 }
 
-void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
+void GROUP(basic_vs23) VS23S010::drawBgTop(struct bg_t *bg,
                                          int dest_addr_start,
                                          uint32_t pat_start_addr,
                                          int tile_start_x,
@@ -504,7 +504,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgTop(struct bg_t *bg,
 #endif
 }
 
-void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
+void GROUP(basic_vs23) VS23S010::drawBgBottom(struct bg_t *bg,
                                             int tile_start_x,
                                             int tile_end_x,
                                             int tile_end_y,
@@ -586,7 +586,7 @@ void ICACHE_RAM_ATTR VS23S010::drawBgBottom(struct bg_t *bg,
 #endif
 }
 
-void ICACHE_RAM_ATTR VS23S010::updateBg()
+void GROUP(basic_vs23) VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
 #ifdef PROFILE_BG
@@ -1090,7 +1090,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
   return true;
 }
 
-void VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
+void GROUP(basic_vs23) VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
 {
   struct sprite_t *s = &m_sprite[num];
   if (frame_x != s->p.frame_x || frame_y != s->p.frame_y ||
@@ -1111,7 +1111,7 @@ void VS23S010::setSpriteKey(uint8_t num, int16_t key)
   m_bg_modified = true;
 }
 
-void VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
+void GROUP(basic_vs23) VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
 {
   struct sprite_t *s = &m_sprite[num];
   if (s->p.pat_x != pat_x || s->p.pat_y != pat_y) {
@@ -1139,12 +1139,12 @@ void VS23S010::disableSprite(uint8_t num)
   m_bg_modified = true;
 }
 
-int ICACHE_RAM_ATTR VS23S010::cmp_sprite_y(const void *one, const void *two)
+int GROUP(basic_vs23) VS23S010::cmp_sprite_y(const void *one, const void *two)
 {
   return (*(struct sprite_t**)one)->pos_y - (*(struct sprite_t **)two)->pos_y;
 }
 
-void ICACHE_RAM_ATTR VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
+void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
 {
   m_sprite[num].pos_x = x;
   m_sprite[num].pos_y = y;
@@ -1266,7 +1266,7 @@ uint8_t VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile)
   return tile;
 }
 
-uint8_t ICACHE_RAM_ATTR VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
+uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
 {
   uint8_t dir = 0x40;	// indicates collision
 
