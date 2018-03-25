@@ -1155,10 +1155,13 @@ int GROUP(basic_vs23) VS23S010::cmp_sprite_y(const void *one, const void *two)
 
 void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
 {
-  m_sprite[num].pos_x = x;
-  m_sprite[num].pos_y = y;
-  qsort(m_sprites_ordered, VS23_MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
-  m_bg_modified = true;
+  sprite_t *s = &m_sprite[num];
+  if (s->pos_x != x || s->pos_y != y) {
+    s->pos_x = x;
+    s->pos_y = y;
+    qsort(m_sprites_ordered, VS23_MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
+    m_bg_modified = true;
+  }
 }
 
 void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
