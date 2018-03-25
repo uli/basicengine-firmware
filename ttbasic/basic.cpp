@@ -3199,7 +3199,7 @@ void BASIC_INT draw_profile(void)
 }
 
 
-void ICACHE_RAM_ATTR pump_events(void)
+void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
 
