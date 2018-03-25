@@ -949,10 +949,12 @@ struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_p
 void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
 {
   struct sprite_t *s = &m_sprite[num];
-  s->p.w = w;
-  s->p.h = h;
-  s->must_reload = true;
-  m_bg_modified = true;
+  if (w != s->p.w || h != s->p.h) {
+    s->p.w = w;
+    s->p.h = h;
+    s->must_reload = true;
+    m_bg_modified = true;
+  }
 }
 
 bool VS23S010::loadSpritePattern(uint8_t num)
