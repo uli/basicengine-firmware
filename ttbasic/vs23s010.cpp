@@ -1132,16 +1132,20 @@ void GROUP(basic_vs23) VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, u
 void VS23S010::enableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  s->must_reload = true;
-  s->enabled = true;
-  m_bg_modified = true;
+  if (!s->enabled) {
+    s->must_reload = true;
+    s->enabled = true;
+    m_bg_modified = true;
+  }
 }
 
 void VS23S010::disableSprite(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
-  s->enabled = false;
-  m_bg_modified = true;
+  if (s->enabled) {
+    s->enabled = false;
+    m_bg_modified = true;
+  }
 }
 
 int GROUP(basic_vs23) VS23S010::cmp_sprite_y(const void *one, const void *two)
