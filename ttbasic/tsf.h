@@ -548,7 +548,7 @@ struct tsf_voice
 	struct tsf_voice_lfo modlfo, viblfo;
 };
 
-static inline double ICACHE_RAM_ATTR tsf_timecents2Secsd(double timecents) { return TSF_POW(2.0, timecents / 1200.0); }
+static inline double GROUP(basic_sound) tsf_timecents2Secsd(double timecents) { return TSF_POW(2.0, timecents / 1200.0); }
 static float tsf_timecents2Secsf(float timecents) { return TSF_POWF(2.0f, timecents / 1200.0f); }
 static float tsf_cents2Hertz(float cents) { return 8.176f * TSF_POWF(2.0f, cents / 1200.0f); }
 static float tsf_decibelsToGain(float db) { return (db > -100.f ? TSF_POWF(10.0f, db * 0.05f) : 0); }
@@ -1011,7 +1011,7 @@ static void tsf_voice_envelope_setup(struct tsf_voice_envelope* e, struct tsf_en
 	tsf_voice_envelope_nextsegment(e, TSF_SEGMENT_NONE, outSampleRate);
 }
 
-static void ICACHE_RAM_ATTR tsf_voice_envelope_process(struct tsf_voice_envelope* e, int numSamples, float outSampleRate)
+static void GROUP(basic_sound) tsf_voice_envelope_process(struct tsf_voice_envelope* e, int numSamples, float outSampleRate)
 {
 	if (e->slope)
 	{
@@ -1033,7 +1033,7 @@ static void tsf_voice_lowpass_setup(struct tsf_voice_lowpass* e, float Fc)
 	e->b2 = (1 - K * e->QInv + KK) * norm;
 }
 
-static float ICACHE_RAM_ATTR tsf_voice_lowpass_process(struct tsf_voice_lowpass* e, double In)
+static float GROUP(basic_sound) tsf_voice_lowpass_process(struct tsf_voice_lowpass* e, double In)
 {
 	double Out = In * e->a0 + e->z1; e->z1 = In * e->a1 + e->z2 - e->b1 * Out; e->z2 = In * e->a0 - e->b2 * Out; return (float)Out;
 }
@@ -1089,7 +1089,7 @@ static void tsf_voice_calcpitchratio(struct tsf_voice* v, float outSampleRate)
 	v->pitchOutputFactor = v->region->sample_rate / (tsf_timecents2Secsd(v->region->pitch_keycenter * 100.0) * outSampleRate);
 }
 
-short ICACHE_RAM_ATTR tsf_read_short_cached(tsf *f, int pos)
+short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 {
 	static int hits = 0;
 	static int misses = 0;
@@ -1302,7 +1302,7 @@ void DumpF32P32(char *name, long long x) {
 }
 #endif
 
-static void ICACHE_RAM_ATTR tsf_voice_render_fast(tsf* f, struct tsf_voice* v, short* outputBuffer, int numSamples)
+static void GROUP(basic_sound) tsf_voice_render_fast(tsf* f, struct tsf_voice* v, short* outputBuffer, int numSamples)
 {
   struct tsf_region* region = v->region;
   short* outL = outputBuffer;
@@ -1716,7 +1716,7 @@ TSFDEF void tsf_render_float(tsf* f, float* buffer, int samples, int flag_mixing
 			tsf_voice_render(f, v, buffer, samples);
 }
 
-TSFDEF void ICACHE_RAM_ATTR tsf_render_short_fast(tsf* f, short* buffer, int samples, int flag_mixing)
+TSFDEF void GROUP(basic_sound) tsf_render_short_fast(tsf* f, short* buffer, int samples, int flag_mixing)
 {
   struct tsf_voice *v = f->voices, *vEnd = v + f->voiceNum;
   if (!flag_mixing) TSF_MEMSET(buffer, 0, (f->outputmode == TSF_MONO ? 1 : 2) * sizeof(short) * samples);
