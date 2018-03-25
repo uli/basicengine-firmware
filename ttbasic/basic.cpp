@@ -3203,11 +3203,11 @@ void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
 
-  if (sound.needSamples())
-    sound.render();
-
-  if (vs23.frame() == last_frame)
+  if (vs23.frame() == last_frame) {
+    if (sound.needSamples())
+      sound.render();
     return;
+  }
 
   last_frame = vs23.frame();
 
@@ -3215,6 +3215,8 @@ void BASIC_FP pump_events(void)
   vs23.updateBg();
 
   event_profile[1] = micros();
+  if (sound.needSamples())
+    sound.render();
   sound.pumpEvents();
   event_profile[2] = micros();
   if (event_play_enabled) {
