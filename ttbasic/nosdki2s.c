@@ -30,13 +30,19 @@
 volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
-//static unsigned int i2sData[2][16];
+#ifdef ESP8266_NOWIFI
+extern char print_mem_buf[];
+struct sdio_queue i2sBufDesc[2] = {
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)print_mem_buf, .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)(print_mem_buf+I2S_BUFLEN*4), .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
+};
+#else
 static unsigned int i2sData[2][I2S_BUFLEN];
 struct sdio_queue i2sBufDesc[2] = {
 	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[0], .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
 	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[1], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
-//	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = 16*4,  .blocksize = 16*4, .buf_ptr = (uint32_t)&i2sData[1], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
 };
+#endif
 
 volatile int isrs = 0;
 
@@ -73,19 +79,16 @@ void InitI2S()
 	SLC_CONF0L = (1<<SLC_MODE_S);		//Configure DMA
 	SLC_RX_DSCR_CONFL = SLC_INFOR_NO_REPLACE|SLC_TOKEN_NO_REPLACE;
 
-#if 1
 	//Initialize buffers
 	for( i = 0; i < I2S_BUFLEN; i++ )
 	{
+#ifdef ESP8266_NOWIFI
+		((uint64_t *)print_mem_buf)[i] = 0;
+#else
 		i2sData[0][i] = 0;
 		i2sData[1][i] = 0;
-	}
-#else
-	for (i = 0; i < 8; ++i) {
-		//i2sData[i] = 0xffffffff << i;
-		i2sData[i] = 0xfff00000;
-	}
 #endif
+	}
 
 	//Set address for buffer descriptor.
 	SLC_RX_LINKL = ((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK;
