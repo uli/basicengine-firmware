@@ -112,7 +112,7 @@ void isaveconfig();
 void mem_putch(uint8_t c);
 void tv_tone(int16_t freq, int16_t duration);
 void tv_notone();
-unsigned char* GROUP(basic_core) iexe(bool until_return = false);
+unsigned char* BASIC_FP iexe(bool until_return = false);
 num_t BASIC_FP iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
@@ -2468,7 +2468,7 @@ void inew(uint8_t mode = NEW_ALL);
 static void BASIC_FP do_goto(uint32_t line);
 
 // RUN command handler
-void GROUP(basic_core) irun(uint8_t* start_clp = NULL, bool cont = false) {
+void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
@@ -6781,7 +6781,7 @@ typedef void (*cmd_t)();
 
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
-unsigned char* GROUP(basic_core) iexe(bool until_return) {
+unsigned char* BASIC_FP iexe(bool until_return) {
   uint8_t c;               // 入力キー
   err = 0;
   uint8_t stk = gstki;
