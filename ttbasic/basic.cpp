@@ -481,7 +481,7 @@ char* tlimR(char* str) {
 }
 
 // コマンド引数取得(int32_t,引数チェックあり)
-inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
+static inline uint8_t BASIC_FP getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
@@ -491,7 +491,7 @@ inline uint8_t getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_toke
   return err;
 }
 
-inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
+static inline uint32_t BASIC_FP getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
@@ -502,7 +502,7 @@ inline uint32_t getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t 
 }
 
 // コマンド引数取得(int32_t,引数チェックなし)
-inline uint8_t getParam(uint32_t& prm, token_t next_token) {
+static inline uint8_t BASIC_FP getParam(uint32_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
@@ -511,7 +511,7 @@ inline uint8_t getParam(uint32_t& prm, token_t next_token) {
 }
 
 // コマンド引数取得(uint32_t,引数チェックなし)
-inline uint8_t getParam(num_t& prm, token_t next_token) {
+static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     if (next_token == I_OPEN || next_token == I_CLOSE)
@@ -1454,7 +1454,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 int GROUP(basic_core) get_array_dims(int *idxs);
 
 // Get argument in parenthesis
-num_t GROUP(basic_core) getparam() {
+num_t BASIC_FP getparam() {
   num_t value; //値
   if (checkOpen()) return 0;
   if (getParam(value, I_NONE) ) return 0;

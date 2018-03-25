@@ -83,7 +83,7 @@ extern void E_VALUE(int32_t from, int32_t to);
 
 #ifdef FLOAT_NUMS
 // コマンド引数取得(uint32_t,引数チェックなし)
-static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_token) {
+static inline uint8_t BASIC_FP getParam(int32_t& prm, token_t next_token) {
   num_t p = iexp();
   prm = p;
   if (!err && next_token != I_NONE && *cip++ != next_token) {
@@ -92,7 +92,7 @@ static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, token_t next_toke
   return err;
 }
 // コマンド引数取得(int32_t,引数チェックあり)
-static inline uint8_t GROUP(basic_core) getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
+static inline uint8_t BASIC_FP getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
   prm = iexp();
   if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
