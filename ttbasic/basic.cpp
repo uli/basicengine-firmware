@@ -5037,6 +5037,22 @@ int get_filenum_param() {
     return f;
 }
 
+int32_t ilen() {
+  int32_t value;
+  if (checkOpen()) return 0;
+  if (*cip == I_STRLSTREF) {
+    ++cip;
+    value = str_lst.var(*cip++).size();
+  } else if (*cip == I_NUMLSTREF) {
+    ++cip;
+    value = num_lst.var(*cip++).size();
+  } else {
+    value = istrexp().length();
+  }
+  checkClose();
+  return value;
+}
+
 // Get value
 num_t GROUP(basic_core) ivalue() {
   num_t value = 0, value2; // 値
@@ -5168,20 +5184,7 @@ num_t GROUP(basic_core) ivalue() {
   case I_POINT: value = ipoint();  break; //関数POINT(X,Y)
   case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
   case I_ASC:   value = iasc();    break; // 関数ASC(文字列)
-
-  case I_LEN:  // 関数LEN(変数)
-    if (checkOpen()) break;
-    if (*cip == I_STRLSTREF) {
-      ++cip;
-      value = str_lst.var(*cip++).size();
-    } else if (*cip == I_NUMLSTREF) {
-      ++cip;
-      value = num_lst.var(*cip++).size();
-    } else {
-      value = istrexp().length();
-    }
-    if (checkClose()) break;
-    break;
+  case I_LEN:	value = ilen();	break;
 
   case I_TICK: // 関数TICK()
     if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
