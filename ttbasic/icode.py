@@ -4,7 +4,7 @@ cmdf = open('kwtbl.h', 'w')
 enumf = open('kwenum.h', 'w')
 funf = open('funtbl.h', 'w')
 enumf.write('#ifndef __KWENUM_H\n#define __KWENUM_H\nenum token_t {\n')
-funf.write('static const cmd_t funtbl[] __FLASH__ = {\n')
+funf.write('static const cmd_t funtbl[] GROUP(basic_data) = {\n')
 count = 0
 max_kw_len = 0
 last_cmd = 0
