@@ -4,9 +4,9 @@
 
 
 #include "font6x8tt.h"
-#include <Arduino.h>
+#include "../../ttbasic/ttconfig.h"
 
-PROGMEM const unsigned char font6x8tt[] = {
+GROUP(basic_data) const unsigned char font6x8tt[] = {
 	6,8,0,
 	//0
 	0b00000000,

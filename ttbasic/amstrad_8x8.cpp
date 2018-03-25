@@ -1,6 +1,6 @@
-#include <Arduino.h>
+#include "ttconfig.h"
 
-PROGMEM unsigned char console_font_8x8[] = { 8, 8, 0,
+GROUP(basic_data) unsigned char console_font_8x8[] = { 8, 8, 0,
 
     /*
      * code=0, hex=0x00, ascii="^@"
