@@ -272,7 +272,7 @@ void iclt() {
 }
 
 // 乱数
-num_t getrnd(int value) {
+num_t BASIC_FP getrnd(int value) {
   if (value <= 1)
     return ((num_t)random(RAND_MAX)/(num_t)RAND_MAX);
   else
@@ -3363,7 +3363,7 @@ void icolor() {
 }
 
 // キー入力文字コードの取得 INKEY()関数
-int32_t GROUP(basic_core) iinkey() {
+int32_t BASIC_FP iinkey() {
   int32_t rc = 0;
 
   if (c_kbhit()) {
@@ -3450,7 +3450,7 @@ num_t iargc() {
 }
 
 // スクリーン座標の文字コードの取得 'CHAR(X,Y)'
-int32_t GROUP(basic_core) icharfun() {
+int32_t BASIC_FP icharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -3462,7 +3462,7 @@ int32_t GROUP(basic_core) icharfun() {
   return value;
 }
 
-void GROUP(basic_core) ichar() {
+void BASIC_FP ichar() {
   int32_t x, y, c;
   if ( getParam(x, I_COMMA) ) return;
   if ( getParam(y, I_COMMA) ) return;
@@ -3524,7 +3524,7 @@ out:
 }
 
 // POKEコマンド POKE ADR,データ[,データ,..データ]
-void GROUP(basic_core) do_poke(int type) {
+void BASIC_FP do_poke(int type) {
   void* adr;
   int32_t value;
   int32_t vadr;
@@ -3552,13 +3552,13 @@ void GROUP(basic_core) do_poke(int type) {
   } while(*cip == I_COMMA);
 }
 
-void GROUP(basic_core) ipoke() {
+void BASIC_FP ipoke() {
   do_poke(0);
 }
-void GROUP(basic_core) ipoke16() {
+void BASIC_FP ipoke16() {
   do_poke(1);
 }
-void GROUP(basic_core) ipoke32() {
+void BASIC_FP ipoke32() {
   do_poke(2);
 }
 
@@ -6590,7 +6590,7 @@ void BASIC_FP ielse()
 }
 
 // スキップ
-void GROUP(basic_core) iskip() {
+void BASIC_FP iskip() {
   while (*cip != I_EOL) // I_EOLに達するまで繰り返す
     cip++;              // 中間コードポインタを次へ進める
 }
@@ -6635,7 +6635,7 @@ void iclear() {
   inew(NEW_VAR);
 }
 
-void GROUP(basic_core) inil() {
+void BASIC_FP inil() {
 }
 
 void eunimp() {
