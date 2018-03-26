@@ -19,8 +19,8 @@ READ	I_READ		iread
 RESTORE	I_RESTORE	irestore
 CLT	I_CLT		iclt
 WAIT	I_WAIT		iwait
-POKE16	I_POKE16	ipoke16
-POKE32	I_POKE32	ipoke32
+POKEW	I_POKEW		ipokew
+POKED	I_POKED		ipoked
 POKE	I_POKE		ipoke
 PRINT	I_PRINT		iprint_
 ?	I_QUEST		iprint_
@@ -182,8 +182,8 @@ INKEY$	I_INKEYSTR	esyntax
 INKEY	I_INKEY		esyntax
 LEN	I_LEN		esyntax
 TICK	I_TICK		esyntax
-PEEK16	I_PEEK16	esyntax
-PEEK32	I_PEEK32	esyntax
+PEEKW	I_PEEKW		esyntax
+PEEKD	I_PEEKD		esyntax
 PEEK	I_PEEK		esyntax
 POINT	I_POINT		esyntax
 I2CW	I_I2CW		esyntax

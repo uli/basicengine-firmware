@@ -291,7 +291,7 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT,
-  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEK16, I_PEEK32, I_I2CW, I_I2CR,
+  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_OUTPUT, I_INPUT_ANALOG,
   I_DIN, I_ANA, I_MAP,
@@ -3571,10 +3571,10 @@ void BASIC_FP do_poke(int type) {
 void BASIC_FP ipoke() {
   do_poke(0);
 }
-void BASIC_FP ipoke16() {
+void BASIC_FP ipokew() {
   do_poke(1);
 }
-void BASIC_FP ipoke32() {
+void BASIC_FP ipoked() {
   do_poke(2);
 }
 
@@ -5213,8 +5213,8 @@ num_t BASIC_FP ivalue() {
     break;
 
   case I_PEEK: value = ipeek(0);   break;     // PEEK()関数
-  case I_PEEK16: value = ipeek(1);   break;
-  case I_PEEK32: value = ipeek(2);   break;
+  case I_PEEKW: value = ipeek(1);   break;
+  case I_PEEKD: value = ipeek(2);   break;
   case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
 
   case I_RET:   value = iret(); break;
