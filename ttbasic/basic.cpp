@@ -117,10 +117,8 @@ num_t BASIC_FP iexp(void);
 BString istrexp(void);
 void error(uint8_t flgCmd);
 // **** RTC用宣言 ********************
-#if USE_INNERRTC == 1
-  #include <RTClock.h>
-  #include <time.h>
-  RTClock rtc(RTCSEL_LSE);
+#ifdef USE_INNERRTC
+  #include <Time.h>
 #endif
 
 // 定数
@@ -3619,8 +3617,7 @@ out:
 
 // SETDATEコマンド  SETDATE 年,月,日,時,分,秒
 void isetDate() {
-#if USE_INNERRTC == 1
-  struct tm t;
+#ifdef USE_INNERRTC
   int32_t p_year, p_mon, p_day;
   int32_t p_hour, p_min, p_sec;
 
@@ -3631,34 +3628,23 @@ void isetDate() {
   if ( getParam(p_min,     0,  59, I_COMMA) ) return;  // 分
   if ( getParam(p_sec,     0,  61, I_NONE)) return;  // 秒
 
-  // RTCの設定
-  t.tm_isdst = 0;             // サーマータイム [1:あり 、0:なし]
-  t.tm_year  = p_year - 1900; // 年   [1900からの経過年数]
-  t.tm_mon   = p_mon - 1;     // 月   [0-11] 0から始まることに注意
-  t.tm_mday  = p_day;         // 日   [1-31]
-  t.tm_hour  = p_hour;        // 時   [0-23]
-  t.tm_min   = p_min;         // 分   [0-59]
-  t.tm_sec   = p_sec;         // 秒   [0-61] うるう秒考慮
-  rtc.setTime(&t);            // 時刻の設定
+  setTime(p_hour, p_min, p_sec, p_day, p_mon, p_year);
 #else
-  err = ERR_SYNTAX; return;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
 // GETDATEコマンド  SETDATE 年格納変数,月格納変数, 日格納変数, 曜日格納変数
 void igetDate() {
-#if USE_INNERRTC == 1
+#ifdef USE_INNERRTC
   int16_t index;
-  time_t tt;
-  struct tm* st;
-  tt = rtc.getTime();   // 時刻取得
-  st = localtime(&tt);  // 時刻型変換
+  time_t tt = now();
 
-  int16_t v[] = {
-    st->tm_year+1900,
-    st->tm_mon+1,
-    st->tm_mday,
-    st->tm_wday
+  int v[] = {
+    year(tt),
+    month(tt),
+    day(tt),
+    weekday(tt),
   };
 
   for (uint8_t i=0; i <4; i++) {
@@ -3679,23 +3665,20 @@ void igetDate() {
     }
   }
 #else
-  err = ERR_SYNTAX;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
 // GETDATEコマンド  SETDATE 時格納変数,分格納変数, 秒格納変数
 void igetTime() {
-#if USE_INNERRTC == 1
+#ifdef USE_INNERRTC
   int16_t index;
-  time_t tt;
-  struct tm* st;
-  tt = rtc.getTime();   // 時刻取得
-  st = localtime(&tt);  // 時刻型変換
+  time_t tt = now();
 
-  int16_t v[] = {
-    st->tm_hour,          // 時
-    st->tm_min,           // 分
-    st->tm_sec            // 秒
+  int v[] = {
+    hour(tt),
+    minute(tt),
+    second(tt),
   };
 
   for (uint8_t i=0; i <3; i++) {
@@ -3716,35 +3699,39 @@ void igetTime() {
     }
   }
 #else
-  err = ERR_SYNTAX;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
 // DATEコマンド
 void idate() {
-#if USE_INNERRTC == 1
-  static const char *wday[] = {"Sun","Mon","Tue","Wed","Thr","Fri","Sat"};
-  time_t tt;
-  struct tm* st;
-  tt = rtc.getTime();    // 時刻取得
-  st = localtime(&tt);   // 時刻型変換
+#ifdef USE_INNERRTC
+  time_t tt = now();
 
-  putnum(st->tm_year+1900, -4);
+  putnum(year(tt), -4);
   c_putch('/');
-  putnum(st->tm_mon+1, -2);
+  putnum(month(tt), -2);
   c_putch('/');
-  putnum(st->tm_mday, -2);
-  c_puts(" [");
-  c_puts(wday[st->tm_wday]);
-  c_puts("] ");
-  putnum(st->tm_hour, -2);
+  putnum(day(tt), -2);
+  PRINT_P(" [");
+  switch (weekday(tt)) {
+  case 1: PRINT_P("Sun"); break;
+  case 2: PRINT_P("Mon"); break;
+  case 3: PRINT_P("Tue"); break;
+  case 4: PRINT_P("Wed"); break;
+  case 5: PRINT_P("Thu"); break;
+  case 6: PRINT_P("Fri"); break;
+  case 7: PRINT_P("Sat"); break;
+  };
+  PRINT_P("] ");
+  putnum(hour(tt), -2);
   c_putch(':');
-  putnum(st->tm_min, -2);
+  putnum(minute(tt), -2);
   c_putch(':');
-  putnum(st->tm_sec, -2);
+  putnum(second(tt), -2);
   newline();
 #else
-  err = ERR_SYNTAX;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
