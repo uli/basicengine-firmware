@@ -3071,33 +3071,23 @@ void ifiles() {
 void SdFormat();
 void iformat() {
 #ifdef UNIFILE_USE_SPIFFS
-  static const char warn_spiffs[] PROGMEM =
-    "This will ERASE ALL DATA on the internal flash file system!";
-  static const char areyousure[] PROGMEM =
-    "ARE YOU SURE? (Y/N) ";
-  static const char aborted[] PROGMEM = "Aborted";
-  static const char formatting[] PROGMEM = "Formatting... ";
-  static const char success[] PROGMEM = "Success!";
-  static const char failed[] PROGMEM = "Failed.";
-
   BString target = getParamFname();
   if (err)
     return;
 
   if (target == BString(F("/flash"))) {
-    c_puts_P(warn_spiffs); newline();
-    c_puts_P(areyousure);
+    PRINT_P("This will ERASE ALL DATA on the internal flash file system!\n");
+    PRINT_P("ARE YOU SURE? (Y/N) ");
     BString answer = getstr();
     if (answer != "Y" && answer != "y") {
-      c_puts_P(aborted); newline();
+      PRINT_P("Aborted\n");
       return;
     }
-    c_puts_P(formatting);
+    PRINT_P("Formatting... ");
     if (SPIFFS.format())
-      c_puts_P(success);
+      PRINT_P("Success!\n");
     else
-      c_puts_P(failed);
-    newline();
+      PRINT_P("Failed.");
   } else if (target == "/sd") {
     SdFormat();
   } else {
