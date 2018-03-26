@@ -575,11 +575,11 @@ void c_puts_P(const char *s, uint8_t devno) {
 // 'SNNNNN' S:符号 N:数値 or 空白
 //  dで桁指定時は空白補完する
 //
-static const char num_fmt[] PROGMEM = "%%%s%d"
 #ifdef FLOAT_NUMS
-  "g";
+static const char num_fmt[] PROGMEM = "%%%s%dg";
+static const char num_prec_fmt[] PROGMEM = "%%%s%d.%dg";
 #else
-  "d";
+static const char num_fmt[] PROGMEM = "%%%s%dd";
 #endif
 void putnum(num_t value, int8_t d, uint8_t devno) {
   char f[6];
@@ -591,7 +591,14 @@ void putnum(num_t value, int8_t d, uint8_t devno) {
   } else
     l = "";
 
+#ifdef FLOAT_NUMS
+  if (d == 0)
+    sprintf_P(f, num_fmt, l, d);
+  else
+    sprintf_P(f, num_prec_fmt, l, d, d);
+#else
   sprintf_P(f, num_fmt, l, d);
+#endif
   sprintf(lbuf, f, value);
   c_puts(lbuf, devno);
 }
