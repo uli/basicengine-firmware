@@ -576,7 +576,6 @@ void c_puts_P(const char *s, uint8_t devno) {
 //  dで桁指定時は空白補完する
 //
 #ifdef FLOAT_NUMS
-static const char num_fmt[] PROGMEM = "%%%s%dg";
 static const char num_prec_fmt[] PROGMEM = "%%%s%d.%dg";
 #else
 static const char num_fmt[] PROGMEM = "%%%s%dd";
@@ -593,7 +592,7 @@ void putnum(num_t value, int8_t d, uint8_t devno) {
 
 #ifdef FLOAT_NUMS
   if (d == 0)
-    sprintf_P(f, num_fmt, l, d);
+    sprintf_P(f, num_prec_fmt, l, d, 9);
   else
     sprintf_P(f, num_prec_fmt, l, d, d);
 #else
