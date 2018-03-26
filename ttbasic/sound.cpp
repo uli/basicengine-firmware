@@ -137,7 +137,7 @@ void GROUP(basic_sound) BasicSound::unloadFont()
 
 void BasicSound::begin(void)
 {
-  m_font_name = "1mgm.sf2";
+  m_font_name = F("1mgm.sf2");
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
     mml_init(&m_mml[i], mmlCallback, (void *)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
