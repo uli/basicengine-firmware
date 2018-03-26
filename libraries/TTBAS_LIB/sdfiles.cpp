@@ -276,6 +276,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint16_t cnt = 0;
   uint16_t len;
   uint8_t rc = 0;
+  uint64_t total_size = 0;
   UnifileString fname;
 
   Unifile dir = Unifile::openDir(_dir);
@@ -291,6 +292,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
         putnum(next.size, 10); c_putch(' ');
+        total_size += next.size;
         if (next.is_directory) {
           c_puts(fname.c_str());
           c_puts("*");
@@ -310,9 +312,8 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   }
 
   newline();
-  static const char files_msg[] PROGMEM = " files.";
-  putnum(cnt, 0); c_puts_P(files_msg);
-  newline();
+  putnum(cnt, 0); PRINT_P(" files, ");
+  putnum(total_size, 0); PRINT_P(" bytes.\n");
 
   return rc;
 }
