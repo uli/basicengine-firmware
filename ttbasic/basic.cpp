@@ -4974,13 +4974,13 @@ void SMALL error(uint8_t flgCmd = false) {
     if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
       c_puts_P(errmsg[err]);
-      PRINT_P(in," in ");
+      PRINT_P(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       newline();
       if (err_expected) {
-        PRINT_P(ex," (expected ");
+        PRINT_P(" (expected ");
         c_puts_P(err_expected);
-        PRINT_P(ex2,")");
+        PRINT_P(")");
       }
 
       // リストの該当行を表示
@@ -4993,9 +4993,9 @@ void SMALL error(uint8_t flgCmd = false) {
     } else {                   // 指示の実行中なら
       c_puts_P(errmsg[err]);     // エラーメッセージを表示
       if (err_expected) {
-        PRINT_P(ex," (expected ");
+        PRINT_P(" (expected ");
         c_puts_P(err_expected);
-        PRINT_P(ex2,")");
+        PRINT_P(")");
       }
       newline();               // 改行
       //err = 0;               // エラー番号をクリア
@@ -6027,54 +6027,54 @@ void SMALL isysinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
 
-  PRINT_P(ps,"Program size: ");
+  PRINT_P("Program size: ");
   putnum(size_list, 0);
   newline();
 
   newline();
-  PRINTLN_P(v,"Variables:");
+  PRINT_P("Variables:\n");
   
-  PRINT_P(n1," Numerical: ");
+  PRINT_P(" Numerical: ");
   putnum(var.size(), 0);
-  PRINT_P(n2,", ");
+  PRINT_P(", ");
   putnum(num_arr.size(), 0);
-  PRINT_P(n3," arrays, ");
+  PRINT_P(" arrays, ");
   putnum(num_lst.size(), 0);
-  PRINTLN_P(n4," lists");
+  PRINT_P(" lists\n");
 
-  PRINT_P(s1," Strings:   ");
+  PRINT_P(" Strings:   ");
   putnum(svar.size(), 0);
-  PRINT_P(s2,", ");
+  PRINT_P(", ");
   putnum(str_arr.size(), 0);
-  PRINT_P(s3," arrays, ");
+  PRINT_P(" arrays, ");
   putnum(str_lst.size(), 0);
-  PRINTLN_P(s4," lists");
+  PRINT_P(" lists\n");
   
   newline();
-  PRINT_P(ls,"Loop stack:   ");
+  PRINT_P("Loop stack:   ");
   putnum(lstki, 0);
   newline();
-  PRINT_P(rs,"Return stack: ");
+  PRINT_P("Return stack: ");
   putnum(gstki, 0);
   newline();
 
   // スタック領域先頭アドレスの表示
   newline();
-  PRINT_P(ts,"CPU stack: ");
+  PRINT_P("CPU stack: ");
   putHexnum(adr, 8);
   newline();
 
   // SRAM未使用領域の表示
-  PRINT_P(sf,"SRAM Free: ");
+  PRINT_P("SRAM Free: ");
   putnum(umm_free_heap_size(), 0);
   newline();
 
   newline();
-  PRINT_P(vt,"Video timing: ");
+  PRINT_P("Video timing: ");
   putint(vs23.cyclesPerFrame(), 0);
-  PRINT_P(vt1," cpf (");
+  PRINT_P(" cpf (");
   putint(vs23.cyclesPerFrameCalculated(), 0);
-  PRINTLN_P(vt2," nominal)");
+  PRINT_P(" nominal)\n");
 }
 
 static void BASIC_FP do_goto(uint32_t line)

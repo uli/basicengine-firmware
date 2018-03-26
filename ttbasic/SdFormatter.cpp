@@ -77,11 +77,11 @@ uint16_t const BU16 = 128;
 uint16_t const BU32 = 8192;
 
 //------------------------------------------------------------------------------
-#define sdError(msg) {PRINT_P(e, "error: "); PRINTLN_P(m,msg); sdErrorHalt();}
+#define sdError(msg) {PRINT_P("error: "); PRINT_P(msg); newline(); sdErrorHalt();}
 //------------------------------------------------------------------------------
 void sdErrorHalt() {
   if (card.errorCode()) {
-    PRINT_P(s,"SD error: "); putnum(int(card.errorCode()), 0);
+    PRINT_P("SD error: "); putnum(int(card.errorCode()), 0);
     c_putch(','); putnum(int(card.errorData()), 0); c_putch('.'); newline();
   }
   // XXX: At this point we should quit the whole thing...
@@ -90,19 +90,19 @@ void sdErrorHalt() {
 //------------------------------------------------------------------------------
 #if DEBUG_PRINT
 void debugPrint() {
-  PRINT_P(d1,"FreeStack: "); putnum(FreeStack(), 0); newline();
-  PRINT_P(d2,"partStart: "); putnum(relSector, 0); newline();
-  PRINT_P(d3,"partSize: "); putnum(partSize, 0); newline();
-  PRINT_P(d4,"reserved: "); putnum(reservedSectors, 0); newline();
-  PRINT_P(d5,"fatStart: "); putnum(fatStart, 0); newline();
-  PRINT_P(d6,"fatSize: "); putnum(fatSize, 0); newline();
-  PRINT_P(d7,"dataStart: "); putnum(dataStart, 0); newline();
-  PRINT_P(d8,"clusterCount: ");
+  PRINT_P("FreeStack: "); putnum(FreeStack(), 0); newline();
+  PRINT_P("partStart: "); putnum(relSector, 0); newline();
+  PRINT_P("partSize: "); putnum(partSize, 0); newline();
+  PRINT_P("reserved: "); putnum(reservedSectors, 0); newline();
+  PRINT_P("fatStart: "); putnum(fatStart, 0); newline();
+  PRINT_P("fatSize: "); putnum(fatSize, 0); newline();
+  PRINT_P("dataStart: "); putnum(dataStart, 0); newline();
+  PRINT_P("clusterCount: ");
   putnum((relSector + partSize - dataStart)/sectorsPerCluster, 0);
   newline();
-  PRINT_P(d9,"Heads: "); putnum(int(numberOfHeads), 0); newline();
-  PRINT_P(d10,"Sectors: "); putnum(int(sectorsPerTrack), 0); newline();
-  PRINT_P(d11,"Cylinders: ");
+  PRINT_P("Heads: "); putnum(int(numberOfHeads), 0); newline();
+  PRINT_P("Sectors: "); putnum(int(sectorsPerTrack), 0); newline();
+  PRINT_P("Cylinders: ");
   putnum(cardSizeBlocks/(numberOfHeads*sectorsPerTrack), 0); newline();
 }
 #endif  // DEBUG_PRINT
@@ -133,7 +133,7 @@ void initSizes() {
     sectorsPerCluster = 128;
   }
 
-  PRINT_P(b,"Blocks/Cluster: "); putnum(int(sectorsPerCluster), 0); newline();
+  PRINT_P("Blocks/Cluster: "); putnum(int(sectorsPerCluster), 0); newline();
   // set fake disk geometry
   sectorsPerTrack = cardCapacityMB <= 256 ? 32 : 63;
 
@@ -417,7 +417,7 @@ void makeFat32() {
 // flash erase all data
 uint32_t const ERASE_SIZE = 262144L;
 void eraseCard() {
-  newline(); PRINTLN_P(e,"Erasing");
+  PRINT_P("\nErasing\n");
   uint32_t firstBlock = 0;
   uint32_t lastBlock;
   uint16_t n = 0;
@@ -443,66 +443,61 @@ void eraseCard() {
   }
 //  cout << hex << showbase << setfill('0') << internal;
   
-  PRINT_P(a,"All data set to "); putHexnum(int(cache.data[0]), 0); newline();
-  PRINTLN_P(ed,"Erase done");
+  PRINT_P("All data set to "); putHexnum(int(cache.data[0]), 0); newline();
+  PRINT_P("Erase done\n");
 }
 //------------------------------------------------------------------------------
 void formatCard() {
   newline();
-  PRINTLN_P(f1,"Formatting");
+  PRINT_P("Formatting\n");
   initSizes();
   if (card.type() != SD_CARD_TYPE_SDHC) {
-    PRINTLN_P(f2,"FAT16");
+    PRINT_P("FAT16\n");
     makeFat16();
   } else {
-    PRINTLN_P(f3,"FAT32");
+    PRINT_P("FAT32\n");
     makeFat32();
   }
 #if DEBUG_PRINT
   debugPrint();
 #endif  // DEBUG_PRINT
-  PRINTLN_P(f4,"Format done");
+  PRINT_P("Format done\n");
 }
 //------------------------------------------------------------------------------
 void setup() {
   char c;
 
-  PRINTLN_P(t, "Type any character to start");
+  PRINT_P("Type any character to start\n");
   while (!c_getch()) {}
 
   newline();
-  PRINTLN_P(p1,"This program can erase and/or format SD/SDHC cards.");
-  newline();
-  PRINTLN_P(p2,"Erase uses the card's fast flash erase command.");
-  PRINTLN_P(p3,"Flash erase sets all data to 0X00 for most cards");
-  PRINTLN_P(p4,"and 0XFF for a few vendor's cards.");
-  newline();
-  PRINTLN_P(p5,"Cards larger than 2 GB will be formatted FAT32 and");
-  PRINTLN_P(p6,"smaller cards will be formatted FAT16.");
-  newline();
-  PRINTLN_P(p7,"Warning, all data on the card will be erased.");
-  PRINT_P(p8,"Enter 'Y' to continue: ");
+  PRINT_P("This program can erase and/or format SD/SDHC cards.\n\n"
+          "Erase uses the card's fast flash erase command.\n"
+          "Flash erase sets all data to 0X00 for most cards\n"
+          "and 0XFF for a few vendor's cards.\n\n"
+          "Cards larger than 2 GB will be formatted FAT32 and\n"
+          "smaller cards will be formatted FAT16.\n\n"
+          "Warning, all data on the card will be erased.\n"
+          "Enter 'Y' to continue: ");
   while (!(c = c_getch())) {}
   c_putch(c);
   newline();
   if (c != 'Y') {
-    PRINTLN_P(q,"Quitting, you did not enter 'Y'.");
+    PRINT_P("Quitting, you did not enter 'Y'.\n");
     goto out;
   }
 
-  newline();
-  PRINTLN_P(o1,"Options are:");
-  PRINTLN_P(o2,"E - erase the card and skip formatting.");
-  PRINTLN_P(o3,"F - erase and then format the card. (recommended)");
-  PRINTLN_P(o4,"Q - quick format the card without erase.");
-  newline();
-  PRINT_P(o5,"Enter option: ");
+  PRINT_P("\nOptions are:\n"
+          "E - erase the card and skip formatting.\n"
+          "F - erase and then format the card. (recommended)\n"
+          "Q - quick format the card without erase.\n\n"
+          "Enter option: ");
 
   while (!(c = c_getch())) {}
   c_putch(c);
   newline();
   if (!strchr("EFQ", c)) {
-    PRINTLN_P(q,"Quiting, invalid option entered.");
+    PRINT_P("Quiting, invalid option entered.\n");
     goto out;
   }
 #if USE_SDIO
@@ -511,9 +506,8 @@ void setup() {
   }
 #else  // USE_SDIO
   if (!card.begin(chipSelect, SPI_SPEED)) {
-    newline();
-    PRINTLN_P(f1,"SD initialization failure!");
-    PRINTLN_P(f2,"Is the SD card inserted correctly?");
+    PRINT_P("\nSD initialization failure!\n"
+            "Is the SD card inserted correctly?\n");
     sdError("card.begin failed");
   }
 #endif  
@@ -523,8 +517,8 @@ void setup() {
   }
   cardCapacityMB = (cardSizeBlocks + 2047)/2048;
 
-  PRINT_P(c1,"Card Size: "); putnum(1.048576*cardCapacityMB, 0);
-  PRINTLN_P(c2," MB, (MB = 1,000,000 bytes)");
+  PRINT_P("Card Size: "); putnum(1.048576*cardCapacityMB, 0);
+  PRINT_P(" MB, (MB = 1,000,000 bytes)\n");
 
   if (c == 'E' || c == 'F') {
     eraseCard();

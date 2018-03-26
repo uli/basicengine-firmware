@@ -31,22 +31,22 @@ static void flash_user(BString filename, int sector)
   int end_sector = sector + (size + SPI_FLASH_SEC_SIZE - 1) / SPI_FLASH_SEC_SIZE;
 
   newline();
-  PRINTLN_P(us0a, "Are you sure you want to overwrite the program");
-  PRINT_P(us1, "currently installed in sectors ");
-  putnum(sector, 0); PRINT_P(to, " to "); putnum(end_sector - 1, 0);
-  PRINT_P(us2, " with ");
+  PRINT_P("Are you sure you want to overwrite the program\n"
+          "currently installed in sectors ");
+  putnum(sector, 0); PRINT_P(" to "); putnum(end_sector - 1, 0);
+  PRINT_P(" with ");
   c_puts(filename.c_str());
   c_putch('?'); newline(); newline();
 
-  PRINT_P(us8, "Enter YES to continue, anything else to abort: ");
+  PRINT_P("Enter YES to continue, anything else to abort: ");
   get_input();
   if (strcmp(lbuf, "YES")) {
-    PRINTLN_P(usabrt, "Aborting.");
+    PRINT_P("Aborting.\n");
     goto out;
   }
 
   sc0.show_curs(0);
-  PRINT_P(es, "Erasing sector ");
+  PRINT_P("Erasing sector ");
   x = sc0.c_x(); y = sc0.c_y();
   for (int i = sector; i < end_sector; ++i) {
     sc0.locate(x, y);
@@ -62,10 +62,10 @@ static void flash_user(BString filename, int sector)
   }
 
   newline();
-  PRINT_P(wd, "Writing data: ");
+  PRINT_P("Writing data: ");
   x = sc0.c_x(); y = sc0.c_y();
   sc0.locate(x + 7, y);
-  c_putch('/'); putnum(f.fileSize(), 6); PRINT_P(usb, " bytes");
+  c_putch('/'); putnum(f.fileSize(), 6); PRINT_P(" bytes");
 
   count = 0;
   for (;;) {
@@ -98,7 +98,6 @@ out:
 
 void iflash()
 {
-  char msg[100];
   BString filename;
   bool success;
   uint8_t *buf;
@@ -136,53 +135,49 @@ void iflash()
 
   newline();
   sc0.setColor(0, col_warn);
-  PRINTLN_P(ays0, "FIRMWARE UPDATE");
+  PRINT_P("FIRMWARE UPDATE\n");
   sc0.setColor(col_normal, 0);
 
   newline();
-  PRINTLN_P(ays0a, "Are you absolutely sure you want to overwrite");
-  PRINTLN_P(ays1, "the currently installed firmware");
-  PRINT_P(ays2, "with ");
+  PRINT_P("Are you absolutely sure you want to overwrite\n"
+          "the currently installed firmware\n"
+          "with ");
   sc0.setColor(col_warn, 0);
   c_puts(filename.c_str());
   sc0.setColor(col_normal, 0);
   c_putch('?'); newline(); newline();
 
-  static const char ays3[] PROGMEM =
-    "If %s is not a working";
-  sprintf_P(msg, ays3, filename.c_str());
-  c_puts(msg); newline();
-
-  PRINTLN_P(ays3a, "BASIC Engine firmware image, or if you");
-  PRINTLN_P(ays4, "lose power or reset the system during");
-  PRINTLN_P(ays5, "the upgrade procedure, it will no longer work");
-  PRINTLN_P(ays6, "until you use a serial programmer to restore");
-  PRINTLN_P(ays7, "a working firmware image.");
-  newline();
+  PRINT_P("If "); c_puts(filename.c_str());
+  PRINT_P("is not a working\n"
+          "BASIC Engine firmware image, or if you\n"
+          "lose power or reset the system during\n"
+          "the upgrade procedure, it will no longer work\n"
+          "until you use a serial programmer to restore\n"
+          "a working firmware image.\n\n");
 
   sc0.setColor(col_warn, 0);
-  PRINT_P(ays8, "Enter YES to continue, anything else to abort: ");
+  PRINT_P("Enter YES to continue, anything else to abort: ");
   get_input();
   sc0.setColor(col_normal, 0);
   if (strcmp(lbuf, "YES")) {
-    PRINTLN_P(aysabrt, "Aborting.");
+    PRINT_P("Aborting.\n");
     goto out;
   }
 
   sc0.show_curs(0);
 
   if (!Update.begin(f.fileSize())) {
-    PRINT_P(aysfail, "Flash updater init failed, error: ");
+    PRINT_P("Flash updater init failed, error: ");
     putnum(Update.getError(), 0);
     newline();
     goto out;
   }
 
-  PRINT_P(ayssup, "Staging update: ");
+  PRINT_P("Staging update: ");
 
   x = sc0.c_x(); y = sc0.c_y();
   sc0.locate(x + 7, y);
-  c_putch('/'); putnum(f.fileSize(), 6); PRINT_P(aysb, " bytes");
+  c_putch('/'); putnum(f.fileSize(), 6); PRINT_P(" bytes");
 
   count = 0;
   for (;;) {
@@ -209,11 +204,11 @@ void iflash()
 
   success = Update.end();
   if (success) {
-    PRINTLN_P(ayssu, "Staging update successful."); newline();
+    PRINT_P("Staging update successful.\n\n");
     sc0.setColor(col_warn, 0);
-    PRINTLN_P(ayswr, "Writing update to flash.");
+    PRINT_P("Writing update to flash.\n");
     sc0.setColor(0, col_warn);
-    PRINTLN_P(aysdo, "DO NOT RESET OR POWER OFF!");
+    PRINT_P("DO NOT RESET OR POWER OFF!\n");
 #ifdef ESP8266_NOWIFI
     // SDKnoWiFi does not have system_restart*(). The only working
     // alternative I could find is triggering the WDT.
@@ -223,7 +218,7 @@ void iflash()
     ESP.reset();	// UNTESTED!
 #endif
   } else {
-    PRINT_P(aysse, "Staging error: ");
+    PRINT_P("Staging error: ");
     putnum(Update.getError(), 0); newline();
     sc0.show_curs(1);
   }
