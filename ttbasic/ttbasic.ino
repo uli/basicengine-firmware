@@ -7,6 +7,11 @@
 #include "ttconfig.h"
 #include "lock.h"
 
+#ifdef HAVE_PROFILE
+void NOINS setup(void);
+void NOINS loop(void);
+#endif
+
 volatile int spi_lock;
 
 #include <SPI.h>
@@ -76,4 +81,13 @@ void loop(void){
 
   // put your main code here, to run repeatedly:
   basic();
+
+#ifdef HAVE_PROFILE
+extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_enter(void *this_fn, void *call_site)
+{
 }
+
+extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_exit(void *this_fn, void *call_site)
+{
+}
+#endif

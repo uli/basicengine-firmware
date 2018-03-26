@@ -65,12 +65,15 @@
   #include <ichigoFont8x8.h>
 #endif
 
+#ifdef HAVE_PROFILE
+#define NOINS __attribute__((no_instrument_function))
+#endif
+
 #include "ati_6x8.h"
 #include "amstrad_8x8.h"
 #include "cbm_ascii_8x8.h"
 
 #define SMALL __attribute__((optimize("Os")))
-#define NOINS __attribute__((no_instrument_function))
 
 #define GROUP(g) __attribute__((section(".irom." #g)))
 #define BASIC_FP ICACHE_RAM_ATTR
