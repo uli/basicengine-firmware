@@ -83,14 +83,12 @@ uint8_t wildcard_match(const char *wildcard, const char *target) {
     }
 }
 
+#include <Time.h>
 // ファイルタイムスタンプコールバック関数
 void dateTime(uint16_t* date, uint16_t* time) {
-   time_t tt; 
-   struct tm* st;
-   tt = 0;//rtc.getTime();   // 時刻取得
-   st = localtime(&tt);  // 時刻型変換
-  *date = FAT_DATE(st->tm_year+1900, st->tm_mon+1, st->tm_mday);
-  *time = FAT_TIME(st->tm_hour, st->tm_min, st->tm_sec);
+   time_t tt = now();
+  *date = FAT_DATE(year(tt), month(tt), day(tt));
+  *time = FAT_TIME(hour(tt), minute(tt), second(tt));
 } 
 
 //
