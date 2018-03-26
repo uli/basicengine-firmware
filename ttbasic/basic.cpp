@@ -7090,6 +7090,8 @@ void SMALL basic() {
   err_expected = NULL;
   error();          // "OK" or display an error message and clear the error number
 
+  sc0.forget();
+
   // Enter one line from the terminal and execute
   while (1) {
     rc = sc0.edit();
