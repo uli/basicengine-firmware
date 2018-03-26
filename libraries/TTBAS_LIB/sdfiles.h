@@ -497,6 +497,8 @@ public:
   void setTempFile(Unifile f) {
     tfile = f;
   }
+
+  void fakeTime();
     
   // ビットマップファイルのロード
   uint8_t loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask = -1);

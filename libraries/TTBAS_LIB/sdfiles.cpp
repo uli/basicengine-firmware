@@ -91,6 +91,47 @@ void dateTime(uint16_t* date, uint16_t* time) {
   *time = FAT_TIME(hour(tt), minute(tt), second(tt));
 } 
 
+void sdfiles::fakeTime() {
+  SD_BEGIN();
+  File dir = ::SD.open("/");
+  File file;
+  if (!dir || !dir.isDir())
+    return;
+  while ((file = dir.openNextFile())) {
+    dir_t dirent;
+    if (!file.dirEntry(&dirent))
+      continue;
+    uint16_t date = dirent.creationDate;
+    uint16_t time = dirent.creationTime;
+    time_t tt = now();
+    if (FAT_YEAR(date) < year(tt))
+      continue;
+    if (FAT_YEAR(date) == year(tt)) {
+      if (FAT_MONTH(date) < month(tt))
+        continue;
+      if (FAT_MONTH(date) == month(tt)) {
+        if (FAT_DAY(date) < day(tt))
+          continue;
+        if (FAT_DAY(date) == day(tt)) {
+          if (FAT_HOUR(time) < hour(tt))
+            continue;
+          if (FAT_HOUR(time) == hour(tt)) {
+            if (FAT_MINUTE(time) < minute(tt))
+              continue;
+            if (FAT_MINUTE(time) == minute(tt)) {
+              if (FAT_SECOND(time) <= second(tt))
+                continue;
+            }
+          }
+        }
+      }
+    }
+    setTime(FAT_HOUR(time), FAT_MINUTE(time), FAT_SECOND(time),
+            FAT_DAY(date), FAT_MONTH(date), FAT_YEAR(date));
+  }
+  SD_END();
+}
+
 //
 // 初期設定
 // [引数]
