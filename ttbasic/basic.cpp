@@ -7072,16 +7072,16 @@ void SMALL basic() {
   sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
-  static const char bytes_free[] PROGMEM = " bytes free";
-  c_puts_P(bytes_free); newline();
+  PRINT_P(" bytes free\n");
 #endif
 
   if (!Unifile::chDir(SD_PREFIX))
     Unifile::chDir(FLASH_PREFIX);
   else
     bfs.fakeTime();
-  static const char working_dir[] PROGMEM = "Directory ";
-  c_puts_P(working_dir); c_puts(Unifile::cwd()); newline();
+
+  PRINT_P("Directory ");
+  c_puts(Unifile::cwd()); newline();
 
   // XXX: make sound font configurable
   sound.begin();
