@@ -85,6 +85,7 @@ protected:
 	virtual void end();                               // スクリーン利用終了
     void clerLine(uint16_t l);                        // 1行分クリア
     void cls();                                       // スクリーンのクリア
+    void forget();
     void refresh();                                   // スクリーンリフレッシュ表示
     virtual void refresh_line(uint16_t l);            // 行の再表示
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ

@@ -63,6 +63,9 @@ void tscreenBase::cls() {
   CLEAR();
   memset(screen, 0, width*height);
 }
+void tscreenBase::forget() {
+  memset(screen, 0, width*height);
+}
 
 // スクリーンリフレッシュ表示
 void tscreenBase::refresh() {
