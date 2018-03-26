@@ -72,7 +72,6 @@ bool restore_text_window = false;
 #include <Wire.h>
 
 // *** SDカード管理 ****************
-#include "sdfiles.h"
 sdfiles bfs;
 
 #define MAX_USER_FILES 16

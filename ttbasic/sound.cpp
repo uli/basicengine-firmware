@@ -1,7 +1,6 @@
 #include "ttconfig.h"
 #include <Arduino.h>
 #include "sound.h"
-#include "variable.h"
 
 #define TSF_NO_STDIO
 #define TSF_IMPLEMENTATION

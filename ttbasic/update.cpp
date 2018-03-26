@@ -3,7 +3,6 @@
 #include "BString.h"
 #include "error.h"
 #include "vs23s010.h"
-#include <sdfiles.h>
 #include <Updater.h>
 #include <spi_flash.h>
 

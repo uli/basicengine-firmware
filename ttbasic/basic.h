@@ -1,8 +1,12 @@
 #ifndef __BASIC_H
 #define __BASIC_H
 
+#include "ttconfig.h"
+
 #include <stdint.h>
 #include <string.h>
+#include <sdfiles.h>
+#include "BString.h"
 
 #include "variable.h"
 #include "proc.h"

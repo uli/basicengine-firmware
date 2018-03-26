@@ -713,8 +713,6 @@ void ResetLines()
 	lp_cur = lp_now = box_shr = box_shc = 0;
 }
 
-#include <sdfiles.h>
-
 /* New file
    --------
 */
