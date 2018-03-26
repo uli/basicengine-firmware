@@ -80,6 +80,12 @@ extern const char *err_expected;
                       } while(0)
 extern void E_VALUE(int32_t from, int32_t to);
 
+#define E_ERR(code, exp) do { \
+  static const char __msg[] PROGMEM = exp; \
+  err = ERR_ ## code; err_expected = __msg; \
+  } while(0)
+
+
 #ifdef FLOAT_NUMS
 // コマンド引数取得(uint32_t,引数チェックなし)
 static inline uint8_t BASIC_FP getParam(int32_t& prm, token_t next_token) {
