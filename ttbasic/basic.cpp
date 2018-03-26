@@ -3084,7 +3084,7 @@ void iformat() {
   if (err)
     return;
 
-  if (target == "/flash") {
+  if (target == BString(F("/flash"))) {
     c_puts_P(warn_spiffs); newline();
     c_puts_P(areyousure);
     BString answer = getstr();
