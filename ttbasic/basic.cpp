@@ -4476,6 +4476,7 @@ void ifont() {
   if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
     return;
   sc0.setFont(fonts[idx]);
+  sc0.forget();
 }
 
 // スクリーンモード指定 SCREEN M
