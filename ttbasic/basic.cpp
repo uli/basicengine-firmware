@@ -3975,25 +3975,47 @@ int32_t iasc() {
 // PRINT handler
 void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   num_t value;     //値
-  int len;       //桁数
   int32_t filenum;
   BString str;
+  BString format = F("%0.9g");	// default format without USING
 
-  len = 0; //桁数を初期化
   while (!end_of_statement()) {
     if (is_strexp()) {
       str = istrexp();
       c_puts(str.c_str(), devno);
     } else  switch (*cip) { //中間コードで分岐
-    case I_USING: //「#
+    case I_USING: { //「#
       cip++;
       str = istrexp();
-      if (str[0] == '#')
-        len = strtonum(str.c_str() + 1, NULL);
+      bool had_point = false;	// encountered a decimal point
+      int leading = 0;
+      int trailing = 0;		// decimal places
+      BString prefix, suffix;	// random literal characters
+      for (unsigned int i = 0; i < str.length(); ++i) {
+        switch (str[i]) {
+        case '#': if (!had_point) leading++; else trailing++; break;
+#ifdef FLOAT_NUMS
+        case '.':
+          if (had_point) {
+            E_ERR(USING, "single period");
+            return;
+          } else
+            had_point = true;
+          break;
+#endif
+        case '%': if (!had_point) prefix += F("%%"); else suffix += F("%%"); break;
+        default:  if (!had_point) prefix += str[i]; else suffix += str[i]; break;
+        }
+      }
+#ifdef FLOAT_NUMS
+      format = prefix + '%' + (trailing + leading + (trailing ? 1 : 0)) + '.' + trailing + 'f' + suffix;
+#else
+      format = prefix + '%' + leading + 'd' + suffix;
+#endif
       if (err || *cip != I_SEMI)
 	return;
       break;
-
+    }
     case I_SHARP:
       cip++;
       if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
@@ -4012,7 +4034,8 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 	newline();
 	return;
       }
-      putnum(value, len,devno);
+      sprintf(lbuf, format.c_str(), value);
+      c_puts(lbuf, devno);
       break;
     }
 
