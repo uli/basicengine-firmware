@@ -7072,6 +7072,8 @@ void SMALL basic() {
 
   if (!Unifile::chDir(SD_PREFIX))
     Unifile::chDir(FLASH_PREFIX);
+  else
+    bfs.fakeTime();
   static const char working_dir[] PROGMEM = "Directory ";
   c_puts_P(working_dir); c_puts(Unifile::cwd()); newline();
 
