@@ -576,13 +576,23 @@ void c_puts_P(const char *s, uint8_t devno) {
 //  dで桁指定時は空白補完する
 //
 void putnum(num_t value, int8_t d, uint8_t devno) {
+  if (d >= 0) {
 #ifdef FLOAT_NUMS
-  char f[] = "%.g";
+    char f[] = "%.g";
 #else
-  char f[] = "%.d";
+    char f[] = "%.d";
 #endif
-  f[1] = '0' + d;
-  sprintf(lbuf, f, value);
+    f[1] = '0' + d;
+    sprintf(lbuf, f, value);
+  } else {
+#ifdef FLOAT_NUMS
+    char f[] = "%0.g";
+#else
+    char f[] = "%0.d";
+#endif
+    f[2] = '0' - d;
+    sprintf(lbuf, f, value);
+  }
   c_puts(lbuf, devno);
 }
 
