@@ -69,12 +69,11 @@ void loop(void){
 
   SpiUnlock();
 
-  Serial.println("I2S");Serial.flush();
   InitI2S();
   SendI2S();
 
-  // put your main code here, to run repeatedly:
-  basic();
+  basic();	// does not return
+}
 
 #ifdef HAVE_PROFILE
 extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_enter(void *this_fn, void *call_site)
