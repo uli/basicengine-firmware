@@ -290,7 +290,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
       if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
-        putnum(next.size, 9); c_putch(' ');
+        putnum(next.size, 10); c_putch(' ');
         if (next.is_directory) {
           c_puts(fname.c_str());
           c_puts("*");
