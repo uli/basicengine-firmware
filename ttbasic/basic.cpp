@@ -446,13 +446,21 @@ inline void mem_putch(uint8_t c) {
 }
 
 void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
-  // XXX: This needs to be a lot smarter if we want it to reliably prevent
-  // crashes from accidental memory accesses.
-  if (vadr < 0x30000000U)
+  // Unmapped memory, causes exception
+  if (vadr < 0x20000000UL) {
+    E_ERR(VALUE, "mapped address");
     return NULL;
+  }
+  // IRAM, flash: 32-bit only
+  if ((vadr >= 0x40100000UL && vadr < 0x40300000UL) && type != 2) {
+    E_ERR(VALUE, "32-bit access");
+    return NULL;
+  }
   if ((type == 1 && (vadr & 1)) ||
-      (type == 2 && (vadr & 3)))
+      (type == 2 && (vadr & 3))) {
+    E_ERR(VALUE, "aligned address");
     return NULL;
+  }
   return (void *)vadr;
 }
 
