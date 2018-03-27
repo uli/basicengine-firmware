@@ -6,7 +6,7 @@ DEST_ADDR = 0x00000000
 
 all: elf
 
-elf:	funtbl.h epigrams.h version.h
+elf:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
@@ -15,7 +15,7 @@ elf:	funtbl.h epigrams.h version.h
 		-warnings all \
 		-build-path $(BUILD_PATH) -compile ttbasic.ino
 
-funtbl.h: icode.txt icode.py
+funtbl.h kwtbl.h: icode.txt icode.py
 	python icode.py
 epigrams.h: epigrams.txt epi.py
 	python epi.py <epigrams.txt >epigrams.h
