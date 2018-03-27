@@ -289,13 +289,27 @@ class VS23S010 {
       return m_sprite[num].p.flip_y;
     }
     inline bool spriteOpaque(uint8_t num) {
-      return !m_sprite[num].p.transparent;
+      return !m_sprite[num].pat;
     }
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
-      m_sprite[num].p.transparent = !enable;
+      struct sprite_t *s = &m_sprite[num];
+      if (enable == (s->pat == NULL))
+        return;
+
       m_bg_modified = true;
+      if (enable) {
+        // Opaque sprites don't need a pattern, no need to reload it
+        // even if previous operations would have made that necessary.
+        s->must_reload = false;
+        if (s->pat) {
+          s->pat->ref--;
+          s->pat = NULL;
+        }
+      } else
+        s->must_reload = true;
     }
+
     inline bool spriteEnabled(uint8_t num) {
       return m_sprite[num].enabled;
     }
@@ -412,7 +426,6 @@ private:
       uint8_t w, h;
       uint8_t frame_x, frame_y;
       uint8_t key;
-      bool transparent:1;
       bool flip_x:1, flip_y:1;
     };
       

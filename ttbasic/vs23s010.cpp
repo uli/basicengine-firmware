@@ -57,7 +57,6 @@ void VS23S010::resetSprites()
     struct sprite_t *s = &m_sprite[i];
     m_sprites_ordered[i] = s;
     s->enabled = false;
-    s->p.transparent = true;
     s->pos_x = s->pos_y = 0;
     s->p.frame_x = s->p.frame_y = 0;
     s->p.w = s->p.h = 8;
@@ -756,7 +755,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
 #ifndef DISABLE_SPRITE_DRAW
       for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
         struct sprite_t *s = m_sprites_ordered[sn];
-        if (!s->enabled || s->must_reload)
+        if (!s->enabled || (s->must_reload && s->pat))
           continue;
         if (s->prio != prio)
           continue;
@@ -768,7 +767,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
           continue;
         if (pass == 1 && s->pos_y + s->p.h <= last_pix_split_y)
           continue;
-        if (s->p.transparent) {
+        if (s->pat) {
           s->pat->last = m_frame;
           int sx = s->pos_x;
           uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
@@ -1084,8 +1083,11 @@ bool VS23S010::loadSpritePattern(uint8_t num)
 #endif
   }
 
-  s->p.transparent = !solid_block;
   os_memcpy(&pat->p, &s->p, sizeof(s->p));
+  if (solid_block) {
+    s->pat->ref--;
+    s->pat = NULL;
+  }
   
   return true;
 }
@@ -1313,8 +1315,8 @@ uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t co
     int lower_py = y - lower->pos_y + upper->pos_y;
     sprite_line *upper_line = &upper->pat->lines[y];
     sprite_line *lower_line = &lower->pat->lines[lower_py];
-    bool uphasline = !upper->p.transparent || upper_line->len;
-    bool lowhasline = !lower->p.transparent || lower_line->len;
+    bool uphasline = !upper->pat || upper_line->len;
+    bool lowhasline = !lower->pat || lower_line->len;
     if (uphasline && lowhasline) {
       int dist_x = abs(upper->pos_x - lower->pos_x);
       sprite_line *left_line, *right_line;
