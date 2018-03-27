@@ -412,8 +412,8 @@ private:
       uint8_t w, h;
       uint8_t frame_x, frame_y;
       int16_t key;
-      bool transparent;
-      bool flip_x, flip_y;
+      bool transparent:1;
+      bool flip_x:1, flip_y:1;
     };
       
     struct sprite_pattern {
@@ -428,8 +428,8 @@ private:
       struct sprite_pattern *pat;
       struct sprite_props p;
       int16_t pos_x, pos_y;
-      bool enabled, must_reload;
       uint8_t prio;
+      bool enabled:1, must_reload:1;
     } m_sprite[VS23_MAX_SPRITES];
     struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
