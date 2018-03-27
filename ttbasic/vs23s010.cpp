@@ -147,6 +147,9 @@ void SMALL VS23S010::setMode(uint8_t mode)
 
   SpiRamVideoInit();
   calibrateVsync();
+  // Start the new frame at the end of the visible screen plus a little extra.
+  // Used to be two-thirds down the screen, but that caused more flicker when
+  // the rendering load changes drastically.
   setSyncLine(m_current_mode->y + m_current_mode->top + 16);
 }
 
