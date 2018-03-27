@@ -8,16 +8,10 @@
 #define IOMUX_BASE ((volatile uint32_t *)PERIPHS_IO_MUX)
 #endif
 
-#define USE_I2S
-
 #define pico_i2c_writereg rom_i2c_writeReg
 //XXX TODO:  Do we need to worry about "output" here?
 #define nosdk8266_configio( port, FUNC, pd, pu ) \
 	IOMUX_BASE[(port-PERIPHS_IO_MUX)/4] = ((((FUNC&BIT2)<<2)|(FUNC&0x3))<<PERIPHS_IO_MUX_FUNC_S) | (pu<<7) | (pd<<6);
-
-#ifndef USE_I2S
-#error You need the USE_I2S feature anbled to use this.
-#endif
 
 #if MAIN_MHZ==52 || MAIN_MHZ==104
 #error You cannot operate the I2S bus without the PLL enabled. Select another clock frequency.
@@ -57,11 +51,6 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 	struct sdio_queue *finished;
 	SLC_INT_CLRL = 0xffffffff;
 
-	//This is a little wacky.  This function actually gets called twice.
-	//Once for the initial transfer, but by the time we tell it to stop
-	//The other zero transfer's already begun.
-//	SET_PERI_REG_MASK(SLC_RX_LINK, SLC_RXLINK_STOP);
-
 	finished = (struct sdio_queue*) SLC_RX_EOF_DES_ADDR;
 	nosdk_i2s_curr_buf = (uint32_t *)finished->buf_ptr;
 	nosdk_i2s_curr_buf_pos = 0;
@@ -98,11 +87,9 @@ void InitI2S()
 	//Attach the DMA interrupt
 	ets_isr_attach(ETS_SLC_INUM, slc_isr, NULL);
 	//Enable DMA operation intr
-		//WRITE_PERI_REG(SLC_INT_ENA,  SLC_RX_EOF_INT_ENA);
 	SLC_INT_ENAL = SLC_RX_EOF_INT_ENA; //Select the interrupt.
 
 	//clear any interrupt flags that are set
-		//WRITE_PERI_REG(SLC_INT_CLR, 0xffffffff);
 	SLC_INT_CLRL = 0xffffffff;
 	///enable DMA intr in cpu
 	ets_isr_unmask(1<<ETS_SLC_INUM);
@@ -110,11 +97,12 @@ void InitI2S()
 #endif
 	//Init pins to i2s functions
 	nosdk8266_configio(PERIPHS_IO_MUX_U0RXD_U, FUNC_I2SO_DATA, 0, 0);
-//	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_I2SO_WS);
-//	PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDO_U, FUNC_I2SO_BCK);
+	// Other I2S pins are used for other functions, so we don't configure them.
+	//PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_I2SO_WS);
+	//PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDO_U, FUNC_I2SO_BCK);
 
 	//Enable clock to i2s subsystem
-		//From 13 to 93, reconfigure the BBPLL to output i2c_bbpll_en_audio_clock_out
+	//From 13 to 93, reconfigure the BBPLL to output i2c_bbpll_en_audio_clock_out
 	//Code was originally: //i2c_writeReg_Mask_def(i2c_bbpll, i2c_bbpll_en_audio_clock_out, 1);
 	pico_i2c_writereg(103,4,4,0x93);
 
@@ -123,12 +111,7 @@ void InitI2S()
 	I2SCONFL = 0;
 
 	//Select 16bits per channel (FIFO_MOD=0)
-		//CLEAR_PERI_REG_MASK(I2S_FIFO_CONF, I2S_I2S_DSCR_EN|(I2S_I2S_RX_FIFO_MOD<<I2S_I2S_RX_FIFO_MOD_S)|(I2S_I2S_TX_FIFO_MOD<<I2S_I2S_TX_FIFO_MOD_S));
-		//SET_PERI_REG_MASK(I2S_FIFO_CONF, I2S_I2S_DSCR_EN);
 	I2S_FIFO_CONFL = I2S_I2S_DSCR_EN; 	//Enable DMA in i2s subsystem
-
-	//tx/rx binaureal
-//	CLEAR_PERI_REG_MASK(I2SCONF_CHAN, (I2S_TX_CHAN_MOD<<I2S_TX_CHAN_MOD_S)|(I2S_RX_CHAN_MOD<<I2S_RX_CHAN_MOD_S));
 
 #if I2S_INTERRUPTS
 
@@ -143,11 +126,9 @@ void InitI2S()
 
 
 	//enable int
-	//SET_PERI_REG_MASK(I2SINT_ENA,  I2S_I2S_RX_REMPTY_INT_ENA|I2S_I2S_RX_TAKE_DATA_INT_ENA);
 	I2SINT_ENAL = I2S_I2S_RX_REMPTY_INT_ENA|I2S_I2S_RX_TAKE_DATA_INT_ENA;
 
 	//Start transmission
-	//SET_PERI_REG_MASK(I2SCONF,I2S_I2S_TX_START);
 	I2SCONFL |= I2S_I2S_TX_START;
 }
 
@@ -155,14 +136,4 @@ void SendI2S()
 {
 	SLC_RX_LINKL = SLC_RXLINK_STOP;
 	SLC_RX_LINKL = (((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK) | SLC_RXLINK_START;
-
-/*	SET_PERI_REG_MASK(SLC_RX_LINK, SLC_RXLINK_STOP);
-	CLEAR_PERI_REG_MASK(SLC_RX_LINK,SLC_RXLINK_DESCADDR_MASK);
-	SET_PERI_REG_MASK(SLC_RX_LINK, ((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK);
-	SET_PERI_REG_MASK(SLC_RX_LINK, SLC_RXLINK_START);*/
 }
-
-//NOTE: See if frame is complete:
-// (SLC_INT_RAWL & (1<<16))?event happened.
-// To clear:	SLC_INT_CLRL = -1;
-
