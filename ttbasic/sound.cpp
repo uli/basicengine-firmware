@@ -62,6 +62,7 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
     case MML_TYPE_USER_EVENT:
       {
         MML_ARGS_USER_EVENT *args = &(p->args.user_event);
+        dbg_snd("[USER_EVENT: Name='%s' Type '%s']\r\n", args->name, args->type);
         if (!strcmp(args->type, "ADSR")) {
           int adsr[4] = {0, 0, 0, 0};
           int a = 0;
@@ -69,6 +70,7 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
           char *tok = strtok(args->name, " ");
           while (tok && a < 4) {
             adsr[a] = strtonum(tok, 0);
+            dbg_snd("adsr %d <- %d\r\n", a, adsr[a]);
 
             if (adsr[a] < 0)
               adsr[a] = 0;
@@ -85,6 +87,47 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
         }
       }
       break;
+#ifdef DEBUG_SOUND
+    case MML_TYPE_TEMPO:
+      {
+        MML_ARGS_TEMPO *args = &(p->args.tempo);
+        dbg_snd("[TEMPO : Value=%3d]\r\n", args->value);
+      }
+      break;
+    case MML_TYPE_LENGTH:
+      {
+        MML_ARGS_LENGTH *args = &(p->args.length);
+        dbg_snd("[LENGTH: Value=%3d]\r\n", args->value);
+      }
+      break;
+    case MML_TYPE_VOLUME:
+      {
+        MML_ARGS_VOLUME *args = &(p->args.volume);
+        dbg_snd("[VOLUME: Value=%3d]\r\n", args->value);
+      }
+      break;
+    case MML_TYPE_OCTAVE:
+      {
+        MML_ARGS_OCTAVE *args = &(p->args.octave);
+        dbg_snd("[OCTAVE: Value=%3d]\r\n", args->value);
+      }
+      break;
+    case MML_TYPE_OCTAVE_UP:
+      {
+        MML_ARGS_OCTAVE *args = &(p->args.octave_up);
+        dbg_snd("[OCTAVE: Value=%3d(Up)]\r\n", args->value);
+      }
+      break;
+    case MML_TYPE_OCTAVE_DOWN:
+      {
+        MML_ARGS_OCTAVE *args = &(p->args.octave_down);
+        dbg_snd("[OCTAVE: Value=%3d(Down)]\r\n", args->value);
+      }
+      break;
+#else
+    default:
+      break;
+#endif
   }
 }
 
