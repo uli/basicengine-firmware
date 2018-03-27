@@ -21,8 +21,8 @@
 #define WS_I2S_BCK 6
 #define WS_I2S_DIV 52
 
-volatile uint32_t * DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
-volatile uint32_t * DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
+volatile uint32_t * const DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
+volatile uint32_t * const DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
 #ifdef ESP8266_NOWIFI
 extern char print_mem_buf[];

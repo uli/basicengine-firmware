@@ -30,8 +30,8 @@ static inline bool ICACHE_RAM_ATTR nosdk_i2s_write_sample(uint32_t sample)
 }
 
 //From i2s_reg.h
-extern volatile uint32_t * DR_REG_I2S_BASEL;
-extern volatile uint32_t * DR_REG_SLC_BASEL;
+extern volatile uint32_t * const DR_REG_I2S_BASEL;
+extern volatile uint32_t * const DR_REG_SLC_BASEL;
 #define DR_REG_I2S_BASE 0x60000e00
 #define DR_REG_SLC_BASE 0x60000B00
 
