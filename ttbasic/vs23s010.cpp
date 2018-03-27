@@ -1313,21 +1313,36 @@ uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t co
   for (int y = lower->pos_y - upper->pos_y; y < upper->p.h; ++y) {
     // Check if both sprites have any pixels in the lines they overlap in.
     int lower_py = y - lower->pos_y + upper->pos_y;
-    sprite_line *upper_line = &upper->pat->lines[y];
-    sprite_line *lower_line = &lower->pat->lines[lower_py];
-    bool uphasline = !upper->pat || upper_line->len;
-    bool lowhasline = !lower->pat || lower_line->len;
-    if (uphasline && lowhasline) {
+    int upper_len, upper_off, lower_len, lower_off;
+    if (upper->pat) {
+      sprite_line *upper_line = &upper->pat->lines[y];
+      upper_len = upper_line->len;
+      upper_off = upper_line->off;
+    } else {
+      upper_len = upper->p.w;
+      upper_off = 0;
+    }
+    if (lower->pat) {      
+      sprite_line *lower_line = &lower->pat->lines[lower_py];
+      lower_len = lower_line->len;
+      lower_off = lower_line->off;
+    } else {
+      lower_len = lower->p.w;
+      lower_off = 0;
+    }
+    if (upper_len && lower_len) {
       int dist_x = abs(upper->pos_x - lower->pos_x);
-      sprite_line *left_line, *right_line;
+      int left_len, left_off, right_off;
       if (upper->pos_x < lower->pos_x) {
-        left_line = upper_line;
-        right_line = lower_line;
+        left_len = upper_len;
+        left_off = upper_off;
+        right_off = lower_off;
       } else {
-        left_line = lower_line;
-        right_line = upper_line;
+        left_len = lower_len;
+        left_off = lower_off;
+        right_off = upper_off;
       }
-      if (left_line->off + left_line->len >= right_line->off + dist_x) {
+      if (left_off + left_len >= right_off + dist_x) {
         really = true;
         break;
       }
