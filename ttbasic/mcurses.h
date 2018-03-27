@@ -15,8 +15,8 @@
  */
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 	#endif
 
 	#ifndef __MCURSES__
@@ -194,5 +194,5 @@ void                     endwin (void);                                      // 
 	#endif // __MCURSES__
 
 	#ifdef __cplusplus
-}
+//}
 #endif

@@ -14,12 +14,29 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
+#include "basic.h"
+#include <tTVscreen.h>
+#undef KEY_UP
+#undef KEY_DOWN
+#undef KEY_LEFT
+#undef KEY_RIGHT
+#undef KEY_END
+#undef KEY_BTAB
+#undef KEY_PPAGE
+#undef KEY_NPAGE
+#undef KEY_HOME
+#undef KEY_DC
+#undef KEY_F1
+#undef KEY_IC
+
+extern tTVscreen sc0;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef __AVR__
 	#include <avr/pgmspace.h>
+#elif defined(ESP8266)
 #else
 	#define PROGMEM
 	#define PSTR(x)                                 (x)
@@ -59,8 +76,6 @@ uint_fast8_t                                    mcurses_is_up = 0;              
 uint_fast8_t                                    mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint_fast8_t                                    mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
-static void                                     mcurses_puts_P (const char *);
-
 char (*FunctionPointer_getchar)(void);
 void  (*FunctionPointer_putchar)(uint_fast8_t ch);
 
@@ -69,14 +84,14 @@ void setFunction_getchar(char (*functionPoitner)(void))
 	FunctionPointer_getchar = functionPoitner;
 }
 
-void setFunction_putchar(void (*functionPoitner)(uint8_t ch))
+void setFunction_putchar(void (*functionPoitner)(uint_fast8_t ch))
 {
 	FunctionPointer_putchar = functionPoitner;
 }
 
 static uint_fast8_t mcurses_phyio_init (void)
 {
-
+	return false;
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,16 +103,22 @@ static void mcurses_phyio_done (void)
 	
 }
 
+#if 0
 static void mcurses_phyio_putc (uint_fast8_t ch)
 {
 	if(FunctionPointer_putchar!=0)	FunctionPointer_putchar(ch);
 }
+#endif
 
+#if 0
 static uint_fast8_t mcurses_phyio_getc (void)
 {
 	if(FunctionPointer_getchar!=0)	return FunctionPointer_getchar();
 	else return 0;
 }
+#else
+#define mcurses_phyio_getc c_getch
+#endif
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * PHYIO: set/reset nodelay (AVR)
@@ -129,16 +150,20 @@ static void mcurses_phyio_flush_output ()
  * INTERN: put a character (raw)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
+#if 0
 static void
 mcurses_putc (uint_fast8_t ch)
 {
     mcurses_phyio_putc (ch);
 }
+#endif
+#define mcurses_putc c_putch
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * INTERN: put a string from flash (raw)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
+#if 0
 static void
 mcurses_puts_P (const char * str)
 {
@@ -150,6 +175,8 @@ mcurses_puts_P (const char * str)
         str++;
     }
 }
+#endif
+#define mcurses_puts_P c_puts_P
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * INTERN: put a 3/2/1 digit integer number (raw)
@@ -259,11 +286,15 @@ mysetscrreg (uint_fast8_t top, uint_fast8_t bottom)
 static void
 mymove (uint_fast8_t y, uint_fast8_t x)
 {
+#if 1
+    sc0.locate(x, y);
+#else
     mcurses_puts_P (SEQ_CSI);
     mcurses_puti (y + 1);
     mcurses_putc (';');
     mcurses_puti (x + 1);
     mcurses_putc ('H');
+#endif
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -450,7 +481,7 @@ scroll (void)
 void
 clear (void)
 {
-    mcurses_puts_P (SEQ_CLEAR);
+    sc0.cls();
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -460,7 +491,9 @@ clear (void)
 void
 clrtobot (void)
 {
-    mcurses_puts_P (SEQ_CLRTOBOT);
+    sc0.clerLine(sc0.c_y(), sc0.c_x());
+    for (int i = sc0.c_y() + 1; i < sc0.getHeight(); ++i)
+      sc0.clerLine(i);
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -470,7 +503,7 @@ clrtobot (void)
 void
 clrtoeol (void)
 {
-    mcurses_puts_P (SEQ_CLRTOEOL);
+  sc0.clerLine(sc0.c_y(), sc0.c_x());
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -507,16 +540,10 @@ setscrreg (uint_fast8_t t, uint_fast8_t b)
 void
 curs_set (uint_fast8_t visibility)
 {
-    mcurses_puts_P (SEQ_CURSOR_VIS);
-
-    if (visibility == 0)
-    {
-        mcurses_putc ('l');
-    }
+    if (visibility > 0)
+      sc0.show_curs(0);
     else
-    {
-        mcurses_putc ('h');
-    }
+      sc0.show_curs(1);
 }
 
 
@@ -527,7 +554,8 @@ curs_set (uint_fast8_t visibility)
 void
 refresh (void)
 {
-    mcurses_phyio_flush_output ();
+//    mcurses_phyio_flush_output ();
+  sc0.refresh();
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -658,6 +686,9 @@ getch (void)
             ch = ERR;
         }
     }
+
+    if (ch == '\r')
+      ch = '\n';
 
     return ch;
 }
