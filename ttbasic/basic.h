@@ -41,6 +41,8 @@ void c_puts_P(const char *s, uint8_t devno=0);
 
 #define PRINT_P(msg) c_puts_P(PSTR((msg)))
 
+#define dbg_printf(x, y...) printf_P(PSTR(x), y)
+
 void putnum(num_t value, int8_t d, uint8_t devno=0);
 void putint(int value, int8_t d, uint8_t devno=0);
 void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0);
