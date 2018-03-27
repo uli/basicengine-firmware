@@ -39,10 +39,7 @@ void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
 
-#define PRINT_P(msg) do { \
-  static const char _msg[] PROGMEM = \
-    msg; \
-  c_puts_P(_msg); } while(0)
+#define PRINT_P(msg) c_puts_P(PSTR((msg)))
 
 void putnum(num_t value, int8_t d, uint8_t devno=0);
 void putint(int value, int8_t d, uint8_t devno=0);
