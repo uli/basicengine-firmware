@@ -1056,34 +1056,32 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     p->len = s->p.w;
     p->type = LINE_SOLID;
 
-    if (s->p.key >= 0) {
-      uint8_t *pp = p->pixels;
-      while (*pp == s->p.key && p->len) {
+    uint8_t *pp = p->pixels;
+    while (*pp == s->p.key && p->len) {
+      solid_block = false;
+      ++pp;
+      ++p->off;
+      --p->len;
+    }
+
+    if (p->len) {
+      pp = p->pixels + s->p.w - 1;
+      while (*pp == s->p.key) {
         solid_block = false;
-        ++pp;
-        ++p->off;
+        --pp;
         --p->len;
       }
-
-      if (p->len) {
-        pp = p->pixels + s->p.w - 1;
-        while (*pp == s->p.key) {
-          solid_block = false;
-          --pp;
-          --p->len;
-        }
-      }
-
-      for (int i = 0; i < p->len; ++i) {
-        if (p->pixels[p->off + i] == s->p.key) {
-          p->type = LINE_BROKEN;
-          break;
-        }
-      }
-#ifdef DEBUG_SPRITES
-      Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
-#endif
     }
+
+    for (int i = 0; i < p->len; ++i) {
+      if (p->pixels[p->off + i] == s->p.key) {
+        p->type = LINE_BROKEN;
+        break;
+      }
+    }
+#ifdef DEBUG_SPRITES
+    Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
+#endif
   }
 
   s->p.transparent = !solid_block;

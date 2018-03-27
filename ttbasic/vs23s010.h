@@ -411,7 +411,7 @@ private:
       uint16_t pat_x, pat_y;
       uint8_t w, h;
       uint8_t frame_x, frame_y;
-      int16_t key;
+      uint8_t key;
       bool transparent:1;
       bool flip_x:1, flip_y:1;
     };
