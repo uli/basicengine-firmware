@@ -998,7 +998,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
         s->enabled = false;
         return false;
       }
-      dbg_pat("alocpad %d@%p for %d\r\n", i, pat, num);
+      dbg_pat("alocpat %d@%p for %d\r\n", i, pat, num);
       break;
     }
   }
@@ -1006,7 +1006,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
   if (!pat) {
     for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
       if (m_patterns[i] && m_patterns[i]->ref <= 0) {
-        dbg_pat("replpad %d@%p for %d\r\n", i, m_patterns[i], num);
+        dbg_pat("replpat %d@%p for %d\r\n", i, m_patterns[i], num);
         free(m_patterns[i]);
         pat = m_patterns[i] = allocateSpritePattern(&s->p);
         if (!pat) {
