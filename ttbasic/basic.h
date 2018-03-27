@@ -124,4 +124,7 @@ extern tTVscreen sc0;
 #define NEW_PROG	1
 #define NEW_VAR		2
 
+void c_puts(const char *s, uint8_t devno);
+void c_puts_P(const char *s, uint8_t devno);
+
 #endif
