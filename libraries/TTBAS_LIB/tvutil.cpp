@@ -225,11 +225,13 @@ void tv_cls() {
 //
 // 指定行の1行クリア
 //
-void tv_clerLine(uint16_t l) {
+void tv_clerLine(uint16_t l, int from) {
 #if USE_VS23 == 1
+  int left = win_x + from * f_width;
+  int width = win_width - from * f_width;
   // Assumption: Screen data is followed by empty line in memory.
-  vs23.MoveBlock(clrline_x, clrline_y, win_x, win_y + l * f_height, win_width/2, f_height, 0);
-  vs23.MoveBlock(clrline_x, clrline_y, win_x + win_width/2, win_y + l * f_height, win_width/2, f_height, 0);
+  vs23.MoveBlock(clrline_x, clrline_y, left, win_y + l * f_height, width/2, f_height, 0);
+  vs23.MoveBlock(clrline_x, clrline_y, left + width/2, win_y + l * f_height, width/2, f_height, 0);
 #else
   memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
 #endif

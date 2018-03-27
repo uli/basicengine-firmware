@@ -2,7 +2,7 @@ void tv_init(int16_t ajst, uint8_t* extmem=NULL, uint8_t vmode=SC_DEFAULT);
 void tv_end();
 void    tv_write(uint8_t x, uint8_t y, uint8_t c);
 void    tv_drawCurs(uint8_t x, uint8_t y);
-void    tv_clerLine(uint16_t l) ;
+void    tv_clerLine(uint16_t l, int from = 0) ;
 void    tv_insLine(uint16_t l);
 void    tv_cls();
 void    tv_scroll_up();

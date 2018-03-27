@@ -60,7 +60,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void MOVE(uint8_t y, uint8_t x);             // キャラクタカーソル移動 **
     void WRITE(uint8_t x, uint8_t y, uint8_t c); // 文字の表示
     void CLEAR();                                // 画面全消去
-    void CLEAR_LINE(uint8_t l);                  // 行の消去
+    void CLEAR_LINE(uint8_t l, int from = 0);                  // 行の消去
     void SCROLL_UP();                            // スクロールアップ
     void SCROLL_DOWN();                          // スクロールダウン
     void INSLINE(uint8_t l);                     // 指定行に1行挿入(下スクロール)

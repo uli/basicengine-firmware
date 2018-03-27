@@ -52,9 +52,9 @@ void tscreenBase::end() {
 }
 
 // 指定行の1行分クリア
-void tscreenBase::clerLine(uint16_t l) {
-  memset(screen+width*l, 0, width);
-  CLEAR_LINE(l);
+void tscreenBase::clerLine(uint16_t l, int from) {
+  memset(screen+width*l + from, 0, width - from);
+  CLEAR_LINE(l, from);
   MOVE(pos_y, pos_x);
 }
 
@@ -128,7 +128,6 @@ void tscreenBase::putch(uint8_t c) {
    WRITE(pos_x, pos_y, c);
  movePosNextNewChar();
 }
-
 
 // 現在のカーソル位置に文字を挿入
 void tscreenBase::Insert_char(uint8_t c) {  

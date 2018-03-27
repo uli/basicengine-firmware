@@ -64,7 +64,7 @@ protected:
     virtual void MOVE(uint8_t y, uint8_t x) = 0;              // キャラクタカーソル移動
     virtual void WRITE(uint8_t x, uint8_t y, uint8_t c) = 0;  // 文字の表示
     virtual void CLEAR() = 0;                                 // 画面全消去
-    virtual void CLEAR_LINE(uint8_t l)  = 0;                  // 行の消去
+    virtual void CLEAR_LINE(uint8_t l, int from = 0)  = 0;                  // 行の消去
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
     virtual void SCROLL_DOWN() = 0;                           // スクロールダウン
     virtual void INSLINE(uint8_t l) = 0;                      // 指定行に1行挿入(下スクロール)
@@ -83,7 +83,7 @@ protected:
     };
     void init(uint16_t w=0,uint16_t h=0,uint16_t ln=128, uint8_t* extmem=NULL); // スクリーンの初期設定
 	virtual void end();                               // スクリーン利用終了
-    void clerLine(uint16_t l);                        // 1行分クリア
+    void clerLine(uint16_t l, int from = 0);                        // 1行分クリア
     void cls();                                       // スクリーンのクリア
     void forget();
     void refresh();                                   // スクリーンリフレッシュ表示

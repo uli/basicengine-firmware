@@ -62,8 +62,8 @@ void tTVscreen::CLEAR() {
 }
 
 // 行の消去
-void tTVscreen::CLEAR_LINE(uint8_t l) {
-  tv_clerLine(l);  
+void tTVscreen::CLEAR_LINE(uint8_t l, int from) {
+  tv_clerLine(l, from);  
 }
 
 // スクロールアップ
