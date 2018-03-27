@@ -1084,7 +1084,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
   }
 
   os_memcpy(&pat->p, &s->p, sizeof(s->p));
-  if (solid_block) {
+  if (solid_block && !s->p.flip_x && !s->p.flip_y) {
     s->pat->ref--;
     s->pat = NULL;
   }
