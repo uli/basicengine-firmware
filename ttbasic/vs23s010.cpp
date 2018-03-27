@@ -236,9 +236,6 @@ bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
   if (!bg->tiles)
     return true;
 
-  for (int i=0; i < width*height; ++i)
-    bg->tiles[i] = 64+(i&7);
-
   bg->w = width;
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 0;
