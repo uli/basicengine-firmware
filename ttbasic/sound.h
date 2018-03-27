@@ -2,7 +2,14 @@
 
 #include "basic.h"
 
+//#define DEBUG_SOUND
+
+#ifdef DEBUG_SOUND
 //#define DEBUG_TSF_MEMORY
+#define dbg_snd(x...) dbg_printf("snd: " x)
+#else
+#define dbg_snd(x...) do {} while(0)
+#endif
 
 #ifdef DEBUG_TSF_MEMORY
 static inline void *dbg_malloc(size_t s, int line) {
