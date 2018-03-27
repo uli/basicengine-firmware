@@ -523,7 +523,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
                  dst_x, dst_y, x, y, w, h, mask))
     rc = 0;
   else
-    rc = SD_ERR_READ_FILE;
+    rc = SD_ERR_READ_FILE;	// XXX: or OOM...
 
 out:
   pcx_file.close();
