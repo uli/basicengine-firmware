@@ -40,14 +40,6 @@
 #define SEQ_NEXTLINE                            PSTR("\033E")                   // goto next line (scroll up at end of scrolling region)
 #define SEQ_INSERTLINE                          PSTR("\033[L")                  // insert line
 #define SEQ_DELETELINE                          PSTR("\033[M")                  // delete line
-#define SEQ_ATTRSET                             PSTR("\033[0")                  // set attributes, e.g. "\033[0;7;1m"
-#define SEQ_ATTRSET_REVERSE                     PSTR(";7")                      // reverse
-#define SEQ_ATTRSET_UNDERLINE                   PSTR(";4")                      // underline
-#define SEQ_ATTRSET_BLINK                       PSTR(";5")                      // blink
-#define SEQ_ATTRSET_BOLD                        PSTR(";1")                      // bold
-#define SEQ_ATTRSET_DIM                         PSTR(";2")                      // dim
-#define SEQ_ATTRSET_FCOLOR                      PSTR(";3")                      // forground color
-#define SEQ_ATTRSET_BCOLOR                      PSTR(";4")                      // background color
 #define SEQ_INSERT_MODE                         PSTR("\033[4h")                 // set insert mode
 #define SEQ_REPLACE_MODE                        PSTR("\033[4l")                 // set replace mode
 #define SEQ_RESET_SCRREG                        PSTR("\033[r")                  // reset scrolling region
@@ -299,50 +291,47 @@ addstr_P (const char * str)
 void
 attrset (uint_fast16_t attr)
 {
-    static uint_fast8_t mcurses_attr = 0xff;                    // current attributes
+    static uint_fast8_t mcurses_attr = 0;                    // current attributes
     uint_fast8_t        idx;
 
     if (attr != mcurses_attr)
     {
-        mcurses_puts_P (SEQ_ATTRSET);
+        sc0.setColor(COL(FG), COL(BG));
 
         idx = (attr & F_COLOR) >> 8;
 
         if (idx >= 1 && idx <= 8)
         {
-            mcurses_puts_P (SEQ_ATTRSET_FCOLOR);
-            mcurses_putc (idx - 1 + '0');
+            sc0.setColor(vs23.colorFromRgb(CONFIG.color_scheme[idx-1]), sc0.getBgColor());
         }
 
         idx = (attr & B_COLOR) >> 12;
 
         if (idx >= 1 && idx <= 8)
         {
-            mcurses_puts_P (SEQ_ATTRSET_BCOLOR);
-            mcurses_putc (idx - 1 + '0');
+            sc0.setColor(sc0.getFgColor(), vs23.colorFromRgb(CONFIG.color_scheme[idx-1]));
         }
 
-        if (attr & A_REVERSE)
+        if ((attr & A_REVERSE) != (mcurses_attr & A_REVERSE))
         {
-            mcurses_puts_P (SEQ_ATTRSET_REVERSE);
+            sc0.setColor(sc0.getBgColor(), sc0.getFgColor());
         }
         if (attr & A_UNDERLINE)
         {
-            mcurses_puts_P (SEQ_ATTRSET_UNDERLINE);
+            // unimplemented
         }
         if (attr & A_BLINK)
         {
-            mcurses_puts_P (SEQ_ATTRSET_BLINK);
+            // unimplemented
         }
         if (attr & A_BOLD)
         {
-            mcurses_puts_P (SEQ_ATTRSET_BOLD);
+            sc0.setColor(vs23.colorFromRgb(255, 255, 255), vs23.colorFromRgb(0,0,0));
         }
         if (attr & A_DIM)
         {
-            mcurses_puts_P (SEQ_ATTRSET_DIM);
+            // unimplemented
         }
-        mcurses_putc ('m');
         mcurses_attr = attr;
     }
 }
