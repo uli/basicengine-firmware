@@ -380,7 +380,7 @@ uint16_t TKeyboard::scanToKeycode()
       if (scIndex >= sizeof(prnScrncode2)) {
 	goto STS_ERROR; // -> ERROR
       }
-      if (c == prnScrncode2[scIndex]) {
+      if (c == pgm_read_byte(&prnScrncode2[scIndex])) {
 	if (scIndex == sizeof(prnScrncode2)-1) {
 	  // ->[3-2-2-1-1-1](END)
 	  code = PS2KEY_PrintScreen | BREAK_CODE; // BREAK+PrintScreen
