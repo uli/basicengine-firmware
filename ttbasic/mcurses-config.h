@@ -14,5 +14,9 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#define MCURSES_LINES               24              // 24 lines
-#define MCURSES_COLS                80              // 80 columns
+#include <tTVscreen.h>
+#include <tscreenBase.h>
+
+extern tTVscreen sc0;
+#define MCURSES_LINES               (sc0.getHeight())              // 24 lines
+#define MCURSES_COLS                (sc0.getWidth())              // 80 columns

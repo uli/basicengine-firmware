@@ -14,22 +14,9 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
+#include "mcurses-config.h"
 #include "basic.h"
-#include <tTVscreen.h>
-#undef KEY_UP
-#undef KEY_DOWN
-#undef KEY_LEFT
-#undef KEY_RIGHT
-#undef KEY_END
-#undef KEY_BTAB
-#undef KEY_PPAGE
-#undef KEY_NPAGE
-#undef KEY_HOME
-#undef KEY_DC
-#undef KEY_F1
-#undef KEY_IC
 
-extern tTVscreen sc0;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

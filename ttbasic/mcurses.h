@@ -129,29 +129,6 @@ void                     endwin (void);                                      // 
 #define getyx(y,x)              y = mcurses_cury, x = mcurses_curx                  // get cursor coordinates
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
- * mcurses keys
- *---------------------------------------------------------------------------------------------------------------------------------------------------
- */
-#define KEY_TAB                 '\t'                                                // TAB key
-#define KEY_CR                  '\r'                                                // RETURN key
-#define KEY_BACKSPACE           '\b'                                                // Backspace key
-#define KEY_ESCAPE              0x1B                                                // ESCAPE (pressed twice)
-
-#define KEY_DOWN                0x80                                                // Down arrow key
-#define KEY_UP                  0x81                                                // Up arrow key
-#define KEY_LEFT                0x82                                                // Left arrow key
-#define KEY_RIGHT               0x83                                                // Right arrow key
-#define KEY_HOME                0x84                                                // Home key
-#define KEY_DC                  0x85                                                // Delete character key
-#define KEY_IC                  0x86                                                // Ins char/toggle ins mode key
-#define KEY_NPAGE               0x87                                                // Next-page key
-#define KEY_PPAGE               0x88                                                // Previous-page key
-#define KEY_END                 0x89                                                // End key
-#define KEY_BTAB                0x8A                                                // Back tab key
-#define KEY_F1                  0x8B                                                // Function key F1
-#define KEY_F(n)                (KEY_F1+(n)-1)                                      // Space for additional 12 function keys
-
-/*---------------------------------------------------------------------------------------------------------------------------------------------------
  * graphics: draw boxes
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
