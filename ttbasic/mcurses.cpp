@@ -219,6 +219,9 @@ mcurses_addch_or_insch (uint_fast8_t ch, uint_fast8_t insert)
     }
 
     mcurses_putc (ch);
+    // escape backslash, used as magic character by BASIC output routine
+    if (ch == '\\')
+      mcurses_putc(ch);
     mcurses_curx++;
 }
 
