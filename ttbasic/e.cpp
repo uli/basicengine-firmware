@@ -426,28 +426,20 @@ void	k_again (void)
 
 static int	load (const char *name)
 {
-#if 0
-	FILE	*f;
+	Unifile f;
 	int	i;
 
-	f = fopen (name, "r");
+	f = Unifile::open (name, FILE_READ);
 	if (!f)
-		return error ("$load file \"%s\"", name);
-	if (fseek (f, 0, SEEK_END))
-		return error ("$seek");
-	i = ftell (f);
+		return error (BString(F("load file \"")) + name + BString(F("\"")), true);
+	i = f.fileSize();
 	if (ins_mem (i)) {
-		if (fseek (f, 0, SEEK_SET))
-			return error ("$seek");
-		if (fread (text + cur_pos, 1, i, f) < i)
-			return error ("$read");
+		if (f.read (text + cur_pos, i) < i)
+			return error (F("read"), true);
 	} else
 		i = 0;
-	fclose (f);
+        f.close();
 	return i;
-#else
-return 0;
-#endif
 }
 
 static int	save (const char *name, int pos, int size)
