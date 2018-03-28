@@ -444,20 +444,15 @@ static int	load (const char *name)
 
 static int	save (const char *name, int pos, int size)
 {
-#if 0
-	FILE	*f;
+        Unifile f;
 
-	f = fopen (name, "w");
+	f = Unifile::open (name, FILE_OVERWRITE);
 	if (!f)
-		return error ("$save file \"%s\"", name);
-	if (fwrite (text + pos, 1, size, f) < size)
-		return error ("$write");
-	if (fclose (f))
-		return error ("$close");
+		return error (BString(F("save file \"")) + name + BString(F("\"")), true);
+	if (f.write (text + pos, size) < size)
+		return error (F("write"), true);
+        f.close();
 	return 1;
-#else
-return 0;
-#endif
 }
 
 void	k_save (void)
