@@ -87,8 +87,6 @@ extern uint_fast8_t             mcurses_curx;                                   
  * mcurses functions
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-void                     setFunction_putchar(void (*functionPoitner)(uint8_t ch));
-void                     setFunction_getchar(char (*functionPoitner)(void));
 uint_fast8_t             initscr (void);                                     // initialize mcurses
 void                     move (uint_fast8_t, uint_fast8_t);                  // move cursor to line, column (home = 0, 0)
 void                     attrset (uint_fast16_t);                            // set attribute(s)
