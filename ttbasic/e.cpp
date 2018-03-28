@@ -124,25 +124,15 @@ int	enter_string (const char *s, BString &buf)
 	/* NOTREACHED */
 }
 
-static int	error (const char *s, ...)
+static int	error (const BString &s, bool code = false)
 {
-	va_list	args;
-	char	buf[BUFSIZE];
-	int	i = 0;
-
-	va_start (args, s);
-	i += snprintf (buf + i, BUFSIZE - i, "Error ");
-	if (*s != '$')
-		i += vsnprintf (buf + i, BUFSIZE - i, s, args);
-	else {
-		i += vsnprintf (buf + i, BUFSIZE - i, s + 1, args);
-		i += snprintf (buf + i, BUFSIZE - i, ", %d", errno);
-	}
-	va_end (args);
-	beep ();
-	confirm (buf);
-
-	return 0;	/* convinient */
+        BString err_msg = F("Error ");
+        err_msg += s;
+        if (code)
+          err_msg += ", " + BString(errno);
+        beep();
+        confirm(err_msg.c_str());
+        return 0;
 }
 
 int	bol (int pos)
@@ -282,7 +272,7 @@ int	ins_mem (int size)
 		i = align_chunk (eof_pos + size);
 		p = (char *)realloc (text, i);
 		if (!p)
-			return error ("- no memory");
+			return error (F("- no memory"));
 		text = p;
 		text_size = i;
 	}
@@ -321,7 +311,7 @@ void	del_mem (int pos, int size)
 	if (i < text_size) {
 		p = (char *)realloc (text, i);
 		if (!p) {
-			error ("- realloc to decrease failed?");
+			error (F("- realloc to decrease failed?"));
 			return;
 		}
 		text = p;
