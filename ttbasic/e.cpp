@@ -136,7 +136,7 @@ static int	error (const char *s, ...)
 		i += vsnprintf (buf + i, BUFSIZE - i, s, args);
 	else {
 		i += vsnprintf (buf + i, BUFSIZE - i, s + 1, args);
-		i += snprintf (buf + i, BUFSIZE - i, ", %s", strerror (errno));
+		i += snprintf (buf + i, BUFSIZE - i, ", %d", errno);
 	}
 	va_end (args);
 	beep ();
