@@ -473,8 +473,8 @@ curs_set (uint_fast8_t visibility)
 void
 refresh (void)
 {
-//    mcurses_phyio_flush_output ();
-  sc0.refresh();
+    mcurses_phyio_flush_output ();
+//  sc0.refresh();
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
