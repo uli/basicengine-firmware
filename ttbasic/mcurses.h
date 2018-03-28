@@ -111,6 +111,7 @@ uint_fast8_t             getch (void);                                       // 
 void                     curs_set(uint_fast8_t);                             // set cursor to: 0=invisible 1=normal 2=very visible
 void                     refresh (void);                                     // flush output
 void                     endwin (void);                                      // end mcurses
+void 			 scrl(int whence);
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * mcurses macros

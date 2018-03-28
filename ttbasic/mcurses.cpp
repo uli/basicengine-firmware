@@ -782,3 +782,15 @@ endwin (void)
     mcurses_phyio_done ();                                                      // end of physical I/O
     mcurses_is_up = 0;
 }
+
+void scrl(int whence)
+{
+  while (whence < 0) {
+    sc0.scroll_down();
+    ++whence;
+  }
+  while (whence > 0) {
+    sc0.scroll_up();
+    --whence;
+  }
+}
