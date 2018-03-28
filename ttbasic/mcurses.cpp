@@ -51,7 +51,6 @@
 #define SEQ_INSERT_MODE                         PSTR("\033[4h")                 // set insert mode
 #define SEQ_REPLACE_MODE                        PSTR("\033[4l")                 // set replace mode
 #define SEQ_RESET_SCRREG                        PSTR("\033[r")                  // reset scrolling region
-#define SEQ_LOAD_G1                             PSTR("\033)0")                  // load G1 character set
 #define SEQ_CURSOR_VIS                          PSTR("\033[?25")                // set cursor visible/not visible
 
 static uint_fast8_t                             mcurses_scrl_start = 0;         // start of scrolling region, default is 0
@@ -197,32 +196,10 @@ mcurses_puti (uint_fast8_t i)
  * INTERN: addch or insch a character
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-#define CHARSET_G0      0
-#define CHARSET_G1      1
-
 static void
 mcurses_addch_or_insch (uint_fast8_t ch, uint_fast8_t insert)
 {
-    static uint_fast8_t  charset = 0xff;
     static uint_fast8_t  insert_mode = FALSE;
-
-    if (ch >= 0x80 && ch <= 0x9F)
-    {
-        if (charset != CHARSET_G1)
-        {
-            mcurses_putc ('\016');                                              // switch to G1 set
-            charset = CHARSET_G1;
-        }
-        ch -= 0x20;                                                             // subtract offset to G1 characters
-    }
-    else
-    {
-        if (charset != CHARSET_G0)
-        {
-            mcurses_putc ('\017');                                              // switch to G0 set
-            charset = CHARSET_G0;
-        }
-    }
 
     if (insert)
     {
@@ -295,7 +272,6 @@ initscr (void)
 
     if (mcurses_phyio_init ())
     {
-        mcurses_puts_P (SEQ_LOAD_G1);                                               // load graphic charset into G1
         attrset (A_NORMAL);
         clear ();
         move (0, 0);
@@ -775,7 +751,6 @@ endwin (void)
 {
     move (LINES - 1, 0);                                                        // move cursor to last line
     clrtoeol ();                                                                // clear this line
-    mcurses_putc ('\017');                                                      // switch to G0 set
     curs_set (TRUE);                                                            // show cursor
     mcurses_puts_P(SEQ_REPLACE_MODE);                                           // reset insert mode
     refresh ();                                                                 // flush output
