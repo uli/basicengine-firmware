@@ -515,107 +515,14 @@ halfdelay (uint_fast8_t tenths)
  * MCURSES: read key
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-#define MAX_KEYS                ((KEY_F1 + 12) - 0x80)
-
-static const char * function_keys[MAX_KEYS] =
-{
-    "B",                        // KEY_DOWN                 0x80                // Down arrow key
-    "A",                        // KEY_UP                   0x81                // Up arrow key
-    "D",                        // KEY_LEFT                 0x82                // Left arrow key
-    "C",                        // KEY_RIGHT                0x83                // Right arrow key
-    "1~",                       // KEY_HOME                 0x84                // Home key
-    "3~",                       // KEY_DC                   0x85                // Delete character key
-    "2~",                       // KEY_IC                   0x86                // Ins char/toggle ins mode key
-    "6~",                       // KEY_NPAGE                0x87                // Next-page key
-    "5~",                       // KEY_PPAGE                0x88                // Previous-page key
-    "4~",                       // KEY_END                  0x89                // End key
-    "Z",                        // KEY_BTAB                 0x8A                // Back tab key
-#if 0 // VT400:
-    "11~",                      // KEY_F(1)                 0x8B                // Function key F1
-    "12~",                      // KEY_F(2)                 0x8C                // Function key F2
-    "13~",                      // KEY_F(3)                 0x8D                // Function key F3
-    "14~",                      // KEY_F(4)                 0x8E                // Function key F4
-    "15~",                      // KEY_F(5)                 0x8F                // Function key F5
-#else // Linux console
-    "[A",                       // KEY_F(1)                 0x8B                // Function key F1
-    "[B",                       // KEY_F(2)                 0x8C                // Function key F2
-    "[C",                       // KEY_F(3)                 0x8D                // Function key F3
-    "[D",                       // KEY_F(4)                 0x8E                // Function key F4
-    "[E",                       // KEY_F(5)                 0x8F                // Function key F5
-#endif
-    "17~",                      // KEY_F(6)                 0x90                // Function key F6
-    "18~",                      // KEY_F(7)                 0x91                // Function key F7
-    "19~",                      // KEY_F(8)                 0x92                // Function key F8
-    "20~",                      // KEY_F(9)                 0x93                // Function key F9
-    "21~",                      // KEY_F(10)                0x94                // Function key F10
-    "23~",                      // KEY_F(11)                0x95                // Function key F11
-    "24~"                       // KEY_F(12)                0x96                // Function key F12
-};
 
 uint_fast8_t
 getch (void)
 {
-    char    buf[4];
     uint_fast8_t ch;
-    uint_fast8_t idx;
 
     refresh ();
     ch = mcurses_phyio_getc ();
-
-    if (ch == 0x7F)                                                             // BACKSPACE on VT200 sends DEL char
-    {
-        ch = KEY_BACKSPACE;                                                     // map it to '\b'
-    }
-    else if (ch == '\033')                                                      // ESCAPE
-    {
-        while ((ch = mcurses_phyio_getc ()) == ERR)
-        {
-            ;
-        }
-
-        if (ch == '\033')                                                       // 2 x ESCAPE
-        {
-            return KEY_ESCAPE;
-        }
-        else if (ch == '[')
-        {
-            for (idx = 0; idx < 3; idx++)
-            {
-                while ((ch = mcurses_phyio_getc ()) == ERR)
-                {
-                    ;
-                }
-
-                buf[idx] = ch;
-
-                if ((ch >= 'A' && ch <= 'Z') || ch == '~')
-                {
-                    idx++;
-                    break;
-                }
-            }
-
-            buf[idx] = '\0';
-
-            for (idx = 0; idx < MAX_KEYS; idx++)
-            {
-                if (! strcmp (buf, function_keys[idx]))
-                {
-                    ch = idx + 0x80;
-                    break;
-                }
-            }
-
-            if (idx == MAX_KEYS)
-            {
-                ch = ERR;
-            }
-        }
-        else
-        {
-            ch = ERR;
-        }
-    }
 
     if (ch == '\r')
       ch = '\n';
