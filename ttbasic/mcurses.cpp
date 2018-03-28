@@ -89,22 +89,7 @@ static void mcurses_phyio_done (void)
 	
 }
 
-#if 0
-static void mcurses_phyio_putc (uint_fast8_t ch)
-{
-	if(FunctionPointer_putchar!=0)	FunctionPointer_putchar(ch);
-}
-#endif
-
-#if 0
-static uint_fast8_t mcurses_phyio_getc (void)
-{
-	if(FunctionPointer_getchar!=0)	return FunctionPointer_getchar();
-	else return 0;
-}
-#else
 #define mcurses_phyio_getc c_getch
-#endif
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * PHYIO: set/reset nodelay (AVR)
@@ -253,15 +238,7 @@ mysetscrreg (uint_fast8_t top, uint_fast8_t bottom)
 static void
 mymove (uint_fast8_t y, uint_fast8_t x)
 {
-#if 1
     sc0.locate(x, y);
-#else
-    mcurses_puts_P (SEQ_CSI);
-    mcurses_puti (y + 1);
-    mcurses_putc (';');
-    mcurses_puti (x + 1);
-    mcurses_putc ('H');
-#endif
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
