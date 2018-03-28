@@ -460,9 +460,9 @@ void
 curs_set (uint_fast8_t visibility)
 {
     if (visibility > 0)
-      sc0.show_curs(0);
-    else
       sc0.show_curs(1);
+    else
+      sc0.show_curs(0);
 }
 
 
