@@ -62,19 +62,6 @@ uint_fast8_t                                    mcurses_is_up = 0;              
 uint_fast8_t                                    mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint_fast8_t                                    mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
-char (*FunctionPointer_getchar)(void);
-void  (*FunctionPointer_putchar)(uint_fast8_t ch);
-
-void setFunction_getchar(char (*functionPoitner)(void))
-{
-	FunctionPointer_getchar = functionPoitner;
-}
-
-void setFunction_putchar(void (*functionPoitner)(uint_fast8_t ch))
-{
-	FunctionPointer_putchar = functionPoitner;
-}
-
 static uint_fast8_t mcurses_phyio_init (void)
 {
 	return false;
