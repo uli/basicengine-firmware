@@ -513,14 +513,7 @@ static void	_init (void)
 	signal (SIGINT, done);
 #endif
 	initscr ();
-#if 0
-	keypad (stdscr, TRUE);
-	scrollok (stdscr, TRUE);
-	idlok (stdscr, TRUE);
-	nonl ();
-	raw ();
-	noecho ();
-#endif
+	erase ();
 }
 
 void	norm_cur (void)
