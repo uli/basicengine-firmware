@@ -4857,7 +4857,8 @@ void BASIC_INT event_handle_pad()
   }
 }
 
-int te_main(char argc, const char **argv);
+int e_main(int argc, char **argv);
+
 void iedit() {
   BString fn;
   const char *argv[2] = { NULL, NULL };
@@ -4866,7 +4867,9 @@ void iedit() {
     ++argc;
     argv[1] = fn.c_str();
   }
-  te_main(argc, argv);
+  sc0.show_curs(1);
+  e_main(argc, (char **)argv);
+  sc0.show_curs(0);
 }
 
 //
