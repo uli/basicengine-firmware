@@ -33,9 +33,6 @@
 #include "mcurses.h"
 
 #define SEQ_CSI                                 PSTR("\033[")                   // code introducer
-#define SEQ_CLEAR                               PSTR("\033[2J")                 // clear screen
-#define SEQ_CLRTOBOT                            PSTR("\033[J")                  // clear to bottom
-#define SEQ_CLRTOEOL                            PSTR("\033[K")                  // clear to end of line
 #define SEQ_DELCH                               PSTR("\033[P")                  // delete character
 #define SEQ_NEXTLINE                            PSTR("\033E")                   // goto next line (scroll up at end of scrolling region)
 #define SEQ_INSERTLINE                          PSTR("\033[L")                  // insert line
