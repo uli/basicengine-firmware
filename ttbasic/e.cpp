@@ -331,12 +331,9 @@ void	del_mem (int pos, int size)
 
 void	ins_ch (char ch)
 {
-        printf("ins_ch%d\r\n", ch);
 	if (!ins_mode && cur_pos < eof_pos) {
 		if (ch == '\n') {
-			printf("pcp%d ", cur_pos);
 			cur_pos = nextline (cur_pos);
-			printf("ncp%d\r\n", cur_pos);
 			return;
 		} else if (text[cur_pos] != '\n') {
 			is_changed = 1;
