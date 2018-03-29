@@ -424,6 +424,14 @@ union sdio_slave_status
     (v) |= SLC_TO_HOST_ADDR_MASK;   \
 } while(0);
 
+extern struct sdio_queue i2sBufDesc[];
+
+static inline void nosdk_i2s_set_blocksize(uint32_t len)
+{
+	i2sBufDesc[0].blocksize = len;
+	i2sBufDesc[1].blocksize = len;
+	i2sBufDesc[0].datalen = len;
+	i2sBufDesc[1].datalen = len;
+}
 
 #endif
-
