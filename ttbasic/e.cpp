@@ -23,11 +23,11 @@ static BString	file_name, block_name;
 static BString	find_str, replace_str;
 
 struct e_ctx_t {
-  char	*text = 0;
-  int	text_size = 0;
-  int bos_pos, eos_pos, cur_pos, eof_pos, bow_line;
-  int bow_line_prev, win_shift, cur_line, cur_y, cur_x;
-  int is_changed, ins_mode, find_mode;
+	char	*text = 0;
+	int	text_size = 0;
+	int bos_pos, eos_pos, cur_pos, eof_pos, bow_line;
+	int bow_line_prev, win_shift, cur_line, cur_y, cur_x;
+	int is_changed, ins_mode, find_mode;
 };
 struct e_ctx_t *ctx;
 #define text ctx->text
@@ -52,7 +52,7 @@ struct e_ctx_t *ctx;
 
 static void beep()
 {
-  PRINT_P("beep!\r\n");
+	PRINT_P("beep!\r\n");
 }
 
 void	adduch (unsigned char ch)
@@ -102,7 +102,7 @@ int	enter_string (const char *s, BString &buf)
 			ch = getch ();
 			goto ins_char;
 		case KEY_BACKSPACE:
-		        buf = buf.substring(0, buf.length() - 1);
+			buf = buf.substring(0, buf.length() - 1);
 			break;
 		case '\r': case '\n':
 			return 1;
@@ -113,7 +113,7 @@ int	enter_string (const char *s, BString &buf)
 		ins_char:	if (flag)
 					buf = F("");
 				if (buf.length() < STRMAX - 1) {
-				        buf += (char)ch;
+					buf += (char)ch;
 				}
 			} else
 				beep ();
@@ -126,13 +126,13 @@ int	enter_string (const char *s, BString &buf)
 
 static int	error (const BString &s, bool code = false)
 {
-        BString err_msg = F("Error ");
-        err_msg += s;
-        if (code)
-          err_msg += ", " + BString(errno);
-        beep();
-        confirm(err_msg.c_str());
-        return 0;
+	BString err_msg = F("Error ");
+	err_msg += s;
+	if (code)
+		err_msg += ", " + BString(errno);
+	beep();
+	confirm(err_msg.c_str());
+	return 0;
 }
 
 int	bol (int pos)
@@ -224,9 +224,9 @@ void	show (void)
 			else
 				attrset(A_NORMAL);//attroff (A_REVERSE);
 			if (text[m] == '\n') {
-			        clrtoeol();
+				clrtoeol();
 				break;
-                        }
+			}
 			else if (text[m] == '\t')
 				for (t = nexttab (j); j < t; j++)
 					addch (' ');
@@ -242,10 +242,10 @@ void	show (void)
 		m = nextline (m);
 	}
 	while (i < LINES) {
-	  move (i, 0);
-	  clrtoeol();
-	  ++i;
-        }
+		move (i, 0);
+		clrtoeol();
+		++i;
+	}
 	attrset(A_NORMAL);//attroff (A_REVERSE);
 }
 
@@ -444,14 +444,14 @@ static int	load (const char *name)
 
 static int	save (const char *name, int pos, int size)
 {
-        Unifile f;
+	Unifile f;
 
 	f = Unifile::open (name, FILE_OVERWRITE);
 	if (!f)
 		return error (BString(F("save file \"")) + name + BString(F("\"")), true);
 	if (f.write (text + pos, size) < size)
 		return error (F("write"), true);
-        f.close();
+	f.close();
 	return 1;
 }
 
@@ -545,7 +545,7 @@ int	e_main (int argc, char **argv)
 
 	ctx = (struct e_ctx_t *)calloc(1, sizeof(struct e_ctx_t));
 	if (!ctx)
-	  return -1;
+		return -1;
 
 	file_name = "";
 	block_name = "";
@@ -554,13 +554,13 @@ int	e_main (int argc, char **argv)
 
 	_init ();
 	if (argc >= 2) {
-	        file_name = argv[1];
+		file_name = argv[1];
 		load (file_name.c_str());
 		is_changed = 0;
 	}
 	erase();
 	for (;;) {
-	        curs_set(0);
+		curs_set(0);
 		show ();
 		move (cur_y, cur_x);
 		curs_set(1);
@@ -607,7 +607,7 @@ int	e_main (int argc, char **argv)
 			if (!is_changed || confirm (PSTR("Discard changes and exit? (y/N):"))) {
 				done (0);
 				goto out;
-                        }
+			}
 			break;
 		case CTRL ('T'):	/* go Top */
 			bow_line = cur_pos = 0;
@@ -675,7 +675,7 @@ int	e_main (int argc, char **argv)
 	}
 out:
 	if (text)
-	  free(text);
+		free(text);
 
 	free(ctx);
 
