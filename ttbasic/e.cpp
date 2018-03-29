@@ -28,6 +28,7 @@ struct e_ctx_t {
 	int bos_pos, eos_pos, cur_pos, eof_pos, bow_line;
 	int bow_line_prev, win_shift, cur_line, cur_y, cur_x;
 	int is_changed, ins_mode, find_mode;
+	bool cr_mode;
 };
 struct e_ctx_t *ctx;
 #define text ctx->text
@@ -433,13 +434,25 @@ static int	load (const char *name)
 	if (!f)
 		return error (BString(F("load file \"")) + name + BString(F("\"")), true);
 	i = f.fileSize();
-	if (ins_mem (i)) {
-		if (f.read (text + cur_pos, i) < i)
-			return error (F("read"), true);
-	} else
-		i = 0;
-        f.close();
-	return i;
+	// Filter CR
+	int total = 0;
+	int old_pos = cur_pos;
+	for (int j = 0; j < i; ++j, ++total) {
+		int c = f.read();
+		if (c < 0)
+			return error(F("read"), true);
+		if (c == '\r') {
+		        if (!ctx->cr_mode) printf("detected CR\r\n");
+		        ctx->cr_mode = true;
+			continue;
+                }
+		if (!ins_mem(1))
+			break;
+		text[cur_pos++] = c;
+	}
+	f.close();
+	cur_pos = old_pos;
+	return total;
 }
 
 static int	save (const char *name, int pos, int size)
@@ -449,8 +462,12 @@ static int	save (const char *name, int pos, int size)
 	f = Unifile::open (name, FILE_OVERWRITE);
 	if (!f)
 		return error (BString(F("save file \"")) + name + BString(F("\"")), true);
-	if (f.write (text + pos, size) < size)
+	for (int i = 0; i < size; ++i) {
+		if (ctx->cr_mode && text[pos + i] == '\n')
+		        f.write('\r');
+		if (f.write(text[pos + i]) < 0)
 		return error (F("write"), true);
+	}
 	f.close();
 	return 1;
 }
