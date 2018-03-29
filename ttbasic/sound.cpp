@@ -18,6 +18,7 @@ uint32_t BasicSound::m_off_time[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
 uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
+uint16_t BasicSound::m_bpm[SOUND_CHANNELS];
 
 BString BasicSound::m_font_name;
 
@@ -44,6 +45,12 @@ void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
   }
 }
 
+inline uint32_t BasicSound::mmlGetNoteLength(int ch, uint32_t note_ticks)
+{
+  return (60000) * note_ticks / m_bpm[ch] / m_mml_opt[ch].bticks;
+}
+  
+
 void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 {
   uint32_t now = millis();
@@ -54,13 +61,15 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
     case MML_TYPE_NOTE:
       {
         MML_ARGS_NOTE *args = &(p->args.note);
-        noteOn(ch, m_ch_inst[ch], args->number, 1.0, args->ticks);
+//        dbg_snd("[NOTE  : Number=%3d, Ticks=%4d]\n", args->number, args->ticks);
+        noteOn(ch, m_ch_inst[ch], args->number, 1.0, mmlGetNoteLength(ch, args->ticks));
       }
       break;
     case MML_TYPE_REST:
       {
         MML_ARGS_REST *args = &(p->args.rest);
-        m_next_event[ch] += args->ticks;
+//        dbg_snd("[REST  :             Ticks=%4d]\n", args->ticks);
+        m_next_event[ch] += mmlGetNoteLength(ch, args->ticks);
       }
       break;
     case MML_TYPE_USER_EVENT:
@@ -91,13 +100,14 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
         }
       }
       break;
-#ifdef DEBUG_SOUND
     case MML_TYPE_TEMPO:
       {
         MML_ARGS_TEMPO *args = &(p->args.tempo);
         dbg_snd("[TEMPO : Value=%3d]\r\n", args->value);
+        m_bpm[ch] = args->value;
       }
       break;
+#ifdef DEBUG_SOUND
     case MML_TYPE_LENGTH:
       {
         MML_ARGS_LENGTH *args = &(p->args.length);
@@ -197,8 +207,9 @@ void BasicSound::begin(void)
 void BasicSound::defaults(int ch)
 {
   m_off_time[ch] = 0;
-  m_ch_inst[ch] = ch;
+  m_ch_inst[ch] = ch * 3;
   m_next_event[ch] = 0;
+  m_bpm[ch] = 120;
 }
 
 void BasicSound::playMml(int ch, const char *data)

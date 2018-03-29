@@ -88,6 +88,7 @@ private:
 
     static void defaults(int ch);
     static void ICACHE_RAM_ATTR mmlCallback(MML_INFO *p, void *extobj);
+    static uint32_t mmlGetNoteLength(int ch, uint32_t note_ticks);
 
     static MML m_mml[SOUND_CHANNELS];
     static MML_OPTION m_mml_opt[SOUND_CHANNELS];
@@ -98,6 +99,7 @@ private:
     static uint8_t m_off_inst[SOUND_CHANNELS];
     static uint8_t m_ch_inst[SOUND_CHANNELS];
     static bool m_finished[SOUND_CHANNELS];
+    static uint16_t m_bpm[SOUND_CHANNELS];
     static uint32_t m_all_done_time;
     static BString m_font_name;
 };
