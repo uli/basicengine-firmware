@@ -444,13 +444,27 @@ setscrreg (uint_fast8_t t, uint_fast8_t b)
     mcurses_scrl_end = b;
 }
 
+static void redraw_under_cursor()
+{
+    int x = sc0.c_x();
+    int y = sc0.c_y();
+    if (attrs[x + y * sc0.getWidth()] != A_NORMAL) {
+        uint8_t tmp_attr = mcurses_attr;
+        attrset(attrs[x + y * sc0.getWidth()]);
+        screen_putch(sc0.vpeek(x, y));
+        sc0.locate(x, y);
+        attrset(tmp_attr);
+    }
+}
 void
 curs_set (uint_fast8_t visibility)
 {
     if (visibility > 0)
-      sc0.show_curs(1);
-    else
-      sc0.show_curs(0);
+        sc0.show_curs(1);
+    else {
+        sc0.show_curs(0);
+        redraw_under_cursor();
+    }
 }
 
 

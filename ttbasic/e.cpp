@@ -584,12 +584,12 @@ int	e_main (int argc, char **argv)
 	}
 	erase();
 	for (;;) {
-		curs_set(0);
 		show ();
-		curs_set(1);
 		move (cur_y, cur_x);
 		refresh ();
+		curs_set(1);
 		ch = getch ();
+		curs_set(0);
 		switch (ch) {
 		case KEY_UP:
 			k_up ();
