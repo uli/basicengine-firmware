@@ -2852,8 +2852,14 @@ void SMALL iconfig() {
     else
       CONFIG.cursor_color = value;
     break;
+  case 7:
+    if (value < 0 || value > 15)
+      E_VALUE(0, 15);
+    else
+      CONFIG.beep_volume = value;
+    break;
   default:
-    E_VALUE(0, 6);
+    E_VALUE(0, 7);
     break;
   }
 }
@@ -7176,6 +7182,7 @@ void loadConfig() {
   CONFIG.mode = 1;
   CONFIG.font = 0;
   CONFIG.cursor_color = 0x92;
+  CONFIG.beep_volume = 15;
   
   Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_READ);
   if (!f)

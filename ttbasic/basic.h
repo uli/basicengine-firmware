@@ -152,6 +152,7 @@ typedef struct {
   uint8_t mode;
   uint8_t font;
   uint8_t cursor_color;
+  uint8_t beep_volume;
 } SystemConfig;
 extern SystemConfig CONFIG;
 
