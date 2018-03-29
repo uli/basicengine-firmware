@@ -386,7 +386,7 @@ int16_t sdfiles::read() {
 //  0以外:  読み込んだバイト数
 //
 int16_t sdfiles::readLine(char* str) {
-  int16_t len = 0;
+  int len = 0;
   int16_t rc;
   
   while(1) {
@@ -394,10 +394,8 @@ int16_t sdfiles::readLine(char* str) {
     if (rc <= 0) break;
     if (*str == 0x0d)
       continue;
-    if (*str == 0x0a) {
-      rc = len;
+    if (*str == 0x0a)
       break;
-    }
     str++;
     len++;
     if (len == SD_TEXT_LEN)
@@ -405,7 +403,7 @@ int16_t sdfiles::readLine(char* str) {
   }
 
   *str = 0;
-  return len;
+  return rc;
 }
 
 //
