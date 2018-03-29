@@ -523,13 +523,18 @@ void	done (int sig)
 #endif
 }
 
-static void	_init (void)
+static int	_init (void)
 {
 #ifndef ARDUINO
 	signal (SIGINT, done);
 #endif
-	initscr ();
+
+	if (initscr () == ERR)
+		return -1;
+
 	erase ();
+
+	return 0;
 }
 
 void	norm_cur (void)
@@ -568,7 +573,10 @@ int	e_main (int argc, char **argv)
 	find_str = "";
 	replace_str = "";
 
-	_init ();
+	if (_init () == ERR) {
+		free(ctx);
+		return -1;
+	}
 	if (argc >= 2) {
 		file_name = argv[1];
 		load (file_name.c_str());
