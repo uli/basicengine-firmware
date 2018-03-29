@@ -115,6 +115,9 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline uint16_t getBgColor() {
       return bg_color;
     }
+    inline void setCursorColor(uint8_t cc) {
+      tv_setcursorcolor(cc);
+    }
     void beep() {/*addch(0x07);*/};
 
     inline uint8_t IS_PRINT(uint8_t ch) {
