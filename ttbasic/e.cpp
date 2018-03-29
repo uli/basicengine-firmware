@@ -222,10 +222,12 @@ void	show (void)
 		for (j = 0; m < eof_pos && j < EOS_COLS; m++) {
 			if (m >= bos_pos && m < eos_pos)
 				attrset(A_REVERSE);//attron(A_REVERSE);
-			else
-				attrset(A_NORMAL);//attroff (A_REVERSE);
+			else {
+				attrset(A_NORMAL);
+				if (text[m] == '\n')
+				  clrtoeol();
+			}
 			if (text[m] == '\n') {
-				clrtoeol();
 				break;
 			}
 			else if (text[m] == '\t')
