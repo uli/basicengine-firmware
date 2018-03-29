@@ -51,6 +51,8 @@ uint_fast8_t                                    mcurses_is_up = 0;              
 uint_fast8_t                                    mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint_fast8_t                                    mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
+static uint8_t *attrs;
+
 static uint_fast8_t mcurses_phyio_init (void)
 {
 	return false;
@@ -205,6 +207,10 @@ uint_fast8_t
 initscr (void)
 {
     uint_fast8_t rtc;
+
+    attrs = (uint8_t *)calloc(sc0.getWidth() * sc0.getHeight(), 1);
+    if (!attrs)
+      return ERR;
 
     if (mcurses_phyio_init ())
     {
@@ -596,6 +602,7 @@ endwin (void)
     refresh ();                                                                 // flush output
     mcurses_phyio_done ();                                                      // end of physical I/O
     mcurses_is_up = 0;
+    free (attrs);
 }
 
 void scrl(int whence)
