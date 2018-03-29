@@ -582,11 +582,11 @@ int	e_main (int argc, char **argv)
 				cur_pos++;
 			break;
 		case KEY_PPAGE:// case CTRL ('J'):
-			for (i = 1; i < LINES; i++)
+			for (i = 0; i < LINES; i++)
 				k_up ();
 			break;
 		case KEY_NPAGE:// case CTRL ('K'):
-			for (i = 1; i < LINES; i++)
+			for (i = 0; i < LINES; i++)
 				k_down ();
 			break;
 		case KEY_DC:	/* del */
