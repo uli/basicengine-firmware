@@ -38,6 +38,7 @@ static inline void cleartbuf() {
 void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
+void screen_putch(uint8_t c, bool lazy = false);
 
 #define PRINT_P(msg) c_puts_P(PSTR((msg)))
 

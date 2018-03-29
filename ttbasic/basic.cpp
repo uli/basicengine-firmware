@@ -116,7 +116,7 @@ uint16_t BASIC_INT hex2value(char c) {
   return 0;
 }
 
-void BASIC_INT screen_putch(uint8_t c) {
+void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
   static uint8_t col_digit = 0, color, is_bg;
   static bool reverse = false;
@@ -190,7 +190,7 @@ void BASIC_INT screen_putch(uint8_t c) {
       switch (c) {
       case '\n':newline(); break;
       case '\r':sc0.locate(0, sc0.c_y()); break;
-      default:	sc0.putch(c); break;
+      default:	sc0.putch(c, lazy); break;
       }
     }
   }
