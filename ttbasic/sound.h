@@ -65,8 +65,17 @@ public:
     static inline void setFontName(BString &n) {
       m_font_name = n;
     }
-    
+
+    static void beep(int period, int vol = 15, const uint8_t *env = NULL);
+    static void noBeep();
+
 private:
+    static void setBeep(int period, int vol);
+
+    static const uint8_t *m_beep_env;
+    static uint16_t m_beep_period;
+    static uint8_t m_beep_vol;
+
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
     static Unifile m_sf2_file;

@@ -21,6 +21,10 @@ uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
 
 BString BasicSound::m_font_name;
 
+uint16_t BasicSound::m_beep_period;
+uint8_t BasicSound::m_beep_vol;
+const uint8_t *BasicSound::m_beep_env;
+
 void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
 {
   if (!m_tsf || ch >= SOUND_CHANNELS)
@@ -168,6 +172,7 @@ void BasicSound::loadFont()
   if (m_tsf)
     tsf_set_output(m_tsf, TSF_MONO, 16000, -10);
   m_all_done_time = 0;
+  nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
 
 void GROUP(basic_sound) BasicSound::unloadFont()
@@ -186,6 +191,7 @@ void BasicSound::begin(void)
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
     defaults(i);
   }
+  m_beep_env = NULL;
 }
 
 void BasicSound::defaults(int ch)
@@ -251,6 +257,17 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
       m_all_done_time = now;
   } else
     m_all_done_time = 0;
+
+  if (m_beep_env) {
+    uint8_t vol = pgm_read_byte(m_beep_env);
+    if (!vol) {
+      m_beep_env = NULL;
+      noBeep();
+    } else {
+      setBeep(m_beep_period, vol * m_beep_vol / 16);
+      m_beep_env++;
+    }
+  }
 }
 
 void GROUP(basic_sound) BasicSound::render()
@@ -291,6 +308,44 @@ BString BasicSound::instName(int index)
   }
 
   return name;
+}
+void BasicSound::setBeep(int period, int vol)
+{
+  uint32_t sample = pgm_read_dword(&fakePwm[vol]);
+
+  nosdk_i2s_set_blocksize(period * 4);
+
+  for (int b = 0; b < 2; ++b) {
+    for (int i = 0; i < period / 2; ++i) {
+      ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = 0;
+    }
+    for (int i = period / 2; i < period; ++i) {
+      ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = sample;
+    }
+  }
+}
+
+void BasicSound::beep(int period, int vol, const uint8_t *env)
+{
+  if (period == 0) {
+    noBeep();
+    return;
+  }
+  setBeep(period, vol);
+  if (env) {
+    m_beep_env = env;
+    m_beep_period = period;
+    m_beep_vol = vol;
+  } else
+    m_beep_env = NULL;
+}
+
+void BasicSound::noBeep()
+{
+  m_beep_env = NULL;
+  memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, I2S_BUFLEN * 4);
+  memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
+  nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
 
 BasicSound sound;
