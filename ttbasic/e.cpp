@@ -442,10 +442,9 @@ static int	load (const char *name)
 		if (c < 0)
 			return error(F("read"), true);
 		if (c == '\r') {
-		        if (!ctx->cr_mode) printf("detected CR\r\n");
-		        ctx->cr_mode = true;
+			ctx->cr_mode = true;
 			continue;
-                }
+		}
 		if (!ins_mem(1))
 			break;
 		text[cur_pos++] = c;
@@ -464,7 +463,7 @@ static int	save (const char *name, int pos, int size)
 		return error (BString(F("save file \"")) + name + BString(F("\"")), true);
 	for (int i = 0; i < size; ++i) {
 		if (ctx->cr_mode && text[pos + i] == '\n')
-		        f.write('\r');
+			f.write('\r');
 		if (f.write(text[pos + i]) < 0)
 		return error (F("write"), true);
 	}
