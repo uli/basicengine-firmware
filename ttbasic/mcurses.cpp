@@ -600,6 +600,10 @@ endwin (void)
 
 void scrl(int whence)
 {
+  if (whence >= LINES || whence <= -LINES) {
+    sc0.cls();
+    return;
+  }
   while (whence < 0) {
     sc0.scroll_down();
     ++whence;
