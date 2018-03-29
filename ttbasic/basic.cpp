@@ -3344,6 +3344,12 @@ void icolor() {
   if(*cip == I_COMMA) {
     cip++;
     if ( getParam(bc, 0, 255, I_NONE) ) return;
+    if (*cip == I_COMMA) {
+      ++cip;
+      int cc;
+      if (getParam(cc, 0, 255, I_NONE)) return;
+      sc0.setCursorColor(cc);
+    }
   }
   // 文字色の設定
   sc0.setColor((uint16_t)fc, (uint16_t)bc);
