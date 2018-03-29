@@ -246,7 +246,6 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
     if (!rc) 
      break;
     if (cnt >= sline) {
-      c_puts("'");
       c_puts(str);
       newline();
     }
