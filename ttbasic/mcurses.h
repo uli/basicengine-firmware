@@ -79,9 +79,9 @@
  * mcurses variables
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-extern uint_fast8_t             mcurses_is_up;                                      // flag: mcurses is up
-extern uint_fast8_t             mcurses_cury;                                       // do not use, use getyx() instead!
-extern uint_fast8_t             mcurses_curx;                                       // do not use, use getyx() instead!
+extern uint8_t             mcurses_is_up;                                      // flag: mcurses is up
+extern uint8_t             mcurses_cury;                                       // do not use, use getyx() instead!
+extern uint8_t             mcurses_curx;                                       // do not use, use getyx() instead!
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * mcurses functions

@@ -47,9 +47,9 @@ static uint_fast8_t                             mcurses_scrl_end = LINES - 1;   
 static uint_fast8_t                             mcurses_nodelay;                // nodelay flag
 static uint_fast8_t                             mcurses_halfdelay;              // halfdelay value, in tenths of a second
 
-uint_fast8_t                                    mcurses_is_up = 0;              // flag: mcurses is up
-uint_fast8_t                                    mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
-uint_fast8_t                                    mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
+uint8_t                                         mcurses_is_up = 0;              // flag: mcurses is up
+uint8_t                                    	mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
+uint8_t                                    	mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
 static uint_fast8_t mcurses_attr = 0;                    // current attributes
 static uint8_t *attrs;
