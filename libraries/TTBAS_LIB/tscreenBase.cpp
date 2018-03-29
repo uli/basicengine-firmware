@@ -77,7 +77,8 @@ void tscreenBase::refresh() {
 // 1行分スクリーンのスクロールアップ
 void tscreenBase::scroll_up() {
   memmove(screen, screen + width, (height-1)*width);
-  draw_cls_curs();
+  if (flgCur)
+    draw_cls_curs();
   SCROLL_UP();
   clerLine(height-1);
   MOVE(pos_y, pos_x);
@@ -86,7 +87,8 @@ void tscreenBase::scroll_up() {
 // 1行分スクリーンのスクロールダウン
 void tscreenBase::scroll_down() {
   memmove(screen + width, screen, (height-1)*width);
-  draw_cls_curs();
+  if (flgCur)
+    draw_cls_curs();
   SCROLL_DOWN();
   clerLine(0);
   MOVE(pos_y, pos_x);
