@@ -122,14 +122,6 @@ void tTVscreen::reset_kbd(uint8_t kbd_type) {
   setupPS2(kbd_type);
 }
 
-// 文字の出力
-void tTVscreen::putch(uint8_t c) {
-  tscreenBase::putch(c);
-#ifdef DEBUG
-  Serial.write(c);       // シリアル出力
-#endif
-}
-
 // 改行
 void tTVscreen::newLine() {  
   tscreenBase::newLine();

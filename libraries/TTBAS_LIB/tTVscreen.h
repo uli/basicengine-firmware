@@ -79,7 +79,14 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void end();                                          // スクリーンの利用の終了
     void Serial_Ctrl(int16_t ch);
     void reset_kbd(uint8_t kbd_type=false);
-    void putch(uint8_t c);                            // 文字の出力
+
+    inline void putch(uint8_t c, bool lazy = false) {
+      tscreenBase::putch(c, lazy);
+    #ifdef DEBUG
+      Serial.write(c);       // シリアル出力
+    #endif
+    }
+
     uint16_t get_ch();                                 // 文字の取得
     inline uint16_t tryGetChar() {
       return ps2read();

@@ -122,8 +122,8 @@ void tscreenBase::delete_char() {
 }
 
 // 文字の出力
-void tscreenBase::putch(uint8_t c) {
- if (VPEEK(pos_x, pos_y) != c) {
+void tscreenBase::putch(uint8_t c, bool lazy) {
+ if (!lazy || VPEEK(pos_x, pos_y) != c) {
    VPOKE(pos_x, pos_y, c);
    if (!flgCur)
      WRITE(pos_x, pos_y, c);
