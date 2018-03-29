@@ -586,8 +586,8 @@ int	e_main (int argc, char **argv)
 	for (;;) {
 		curs_set(0);
 		show ();
-		move (cur_y, cur_x);
 		curs_set(1);
+		move (cur_y, cur_x);
 		refresh ();
 		ch = getch ();
 		switch (ch) {
