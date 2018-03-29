@@ -610,14 +610,19 @@ void scrl(int whence)
 {
   if (whence >= LINES || whence <= -LINES) {
     sc0.cls();
+    memset(attrs, 0, sc0.getWidth() * sc0.getHeight());
     return;
   }
   while (whence < 0) {
     sc0.scroll_down();
+    memmove(attrs, attrs + sc0.getWidth(), sc0.getWidth() * (sc0.getHeight() - 1));
+    memset(attrs, 0, sc0.getWidth());
     ++whence;
   }
   while (whence > 0) {
     sc0.scroll_up();
+    memmove(attrs + sc0.getWidth(), attrs, sc0.getWidth() * (sc0.getHeight() - 1));
+    memset(attrs + (sc0.getHeight() - 1) * sc0.getWidth(), 0, sc0.getWidth());
     --whence;
   }
 }
