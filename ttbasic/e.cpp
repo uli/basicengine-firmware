@@ -71,7 +71,7 @@ static int	confirm (const char *s)
 	int	ch;
 
 	move (LINES - 1, 0);
-	attrset(A_BOLD);//attron (A_BOLD);
+	attrset(B_BLACK|F_BLUE);
 	addstr_P (s);
 	attrset(A_NORMAL);//attroff (A_BOLD);
 	clrtoeol ();
