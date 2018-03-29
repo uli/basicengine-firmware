@@ -24,7 +24,9 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #define TSF_NO_STDIO
 #include "tsf.h"
+extern "C" {
 #include "nosdki2s.h"
+};
 
 #define SOUND_CHANNELS	3
 
