@@ -342,7 +342,7 @@ public:
     }
   }
   
-  static Unifile open(UnifileString &name, uint8_t flags) {
+  static Unifile open(const UnifileString &name, uint8_t flags) {
     return open(name.c_str(), flags);
   }
 
