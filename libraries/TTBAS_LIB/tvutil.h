@@ -23,6 +23,7 @@ void	tv_setFont(const uint8_t *font);
 
 extern uint16_t f_width;
 extern uint16_t f_height;
+extern uint8_t cursor_color;
 
 inline int tv_font_height()
 {
@@ -31,6 +32,11 @@ inline int tv_font_height()
 inline int tv_font_width()
 {
   return f_width;
+}
+
+inline void tv_setcursorcolor(uint8_t cc)
+{
+  cursor_color = cc;
 }
 
 void tv_flipcolors();

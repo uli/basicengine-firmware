@@ -40,6 +40,7 @@ int clrline_x, clrline_y;
 
 uint16_t fg_color = 0xf;
 uint16_t bg_color = 0;
+uint8_t cursor_color = 0x92;
 
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
@@ -185,7 +186,7 @@ uint16_t tv_get_gheight() {
 //
 void tv_drawCurs(uint8_t x, uint8_t y) {
   uint8_t pix[f_width];
-  memset(pix, fg_color, f_width);
+  memset(pix, cursor_color, f_width);
   for (int i = 0; i < f_height; ++i) {
     uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
     SpiRamWriteBytes(byteaddress, pix, f_width);
