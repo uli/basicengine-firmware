@@ -7098,6 +7098,15 @@ void SMALL basic() {
   // XXX: make sound font configurable
   sound.begin();
 
+  if (CONFIG.beep_volume > 0) {
+    static const uint8_t startup_env[] PROGMEM = {
+      15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+    };
+    sound.beep(30, CONFIG.beep_volume, startup_env);
+    delay(150);
+    sound.beep(15, CONFIG.beep_volume, startup_env);
+  }
+
   sc0.show_curs(1);
   err_expected = NULL;
   error();          // "OK" or display an error message and clear the error number
