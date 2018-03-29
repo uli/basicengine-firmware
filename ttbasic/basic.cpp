@@ -7166,6 +7166,8 @@ static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
   {   0,   0,   0 },	// BORDER
 };
 
+#define CONFIG_FILE "/flash/.config"
+
 // システム環境設定のロード
 void loadConfig() {
   CONFIG.NTSC      =  0;
@@ -7175,7 +7177,7 @@ void loadConfig() {
   CONFIG.font = 0;
   CONFIG.cursor_color = 0x92;
   
-  Unifile f = Unifile::open("/flash/.config", FILE_READ);
+  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_READ);
   if (!f)
     return;
   f.read((char *)&CONFIG, sizeof(CONFIG));
@@ -7184,7 +7186,7 @@ void loadConfig() {
 
 // システム環境設定の保存
 void isaveconfig() {
-  Unifile f = Unifile::open("/flash/.config", FILE_OVERWRITE);
+  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_OVERWRITE);
   if (!f) {
     err = ERR_FILE_OPEN;
   }
