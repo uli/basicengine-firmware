@@ -198,7 +198,7 @@ mysetscrreg (uint_fast8_t top, uint_fast8_t bottom)
  * move cursor (raw)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-static void
+static void inline
 mymove (uint_fast8_t y, uint_fast8_t x)
 {
     sc0.locate(x, y);
