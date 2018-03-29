@@ -100,7 +100,7 @@ static void mcurses_phyio_flush_output ()
  * INTERN: put a character (raw)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
-#define mcurses_putc c_putch
+#define mcurses_putc screen_putch
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * INTERN: put a string from flash (raw)
@@ -162,10 +162,14 @@ mcurses_addch_or_insch (uint_fast8_t ch, uint_fast8_t insert)
         }
     }
 
-    mcurses_putc (ch);
-    // escape backslash, used as magic character by BASIC output routine
-    if (ch == '\\')
-      mcurses_putc(ch);
+    int attr_idx = sc0.c_x() + sc0.c_y() * sc0.getWidth();
+    if (attrs[attr_idx] != mcurses_attr) {
+        screen_putch(ch);
+        if (ch == '\\')
+            screen_putch(ch);
+        attrs[attr_idx] = mcurses_attr;
+    } else
+        screen_putch(ch, true);
     mcurses_curx++;
 }
 
