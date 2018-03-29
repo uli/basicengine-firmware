@@ -51,6 +51,7 @@ uint_fast8_t                                    mcurses_is_up = 0;              
 uint_fast8_t                                    mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint_fast8_t                                    mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
+static uint_fast8_t mcurses_attr = 0;                    // current attributes
 static uint8_t *attrs;
 
 static uint_fast8_t mcurses_phyio_init (void)
@@ -274,7 +275,6 @@ addstr_P (const char * str)
 void
 attrset (uint_fast16_t attr)
 {
-    static uint_fast8_t mcurses_attr = 0;                    // current attributes
     uint_fast8_t        idx;
 
     if (attr != mcurses_attr)
