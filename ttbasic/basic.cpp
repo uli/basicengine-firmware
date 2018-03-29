@@ -83,7 +83,6 @@ SystemConfig CONFIG;
 void loadConfig();
 void isaveconfig();
 void mem_putch(uint8_t c);
-void tv_tone(int16_t freq, int16_t duration);
 void tv_notone();
 unsigned char* BASIC_FP iexe(bool until_return = false);
 num_t BASIC_FP iexp(void);
@@ -288,7 +287,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
-  I_TONE, I_NOTONE, I_CSCROLL, I_GSCROLL, I_MOD,
+  I_BEEP, I_CSCROLL, I_GSCROLL, I_MOD,
 };
 
 // exception search function
@@ -3868,17 +3867,19 @@ void SMALL ismode() {
   Serial.begin(baud, (enum SerialConfig)flags);
 }
 
-// TONE 周波数 [,音出し時間]
-void itone() {
-  int32_t freq;   // 周波数
-  int32_t tm = 0; // 音出し時間
+void ibeep() {
+  int32_t period;
+  int32_t vol = CONFIG.beep_volume;
 
-  if ( getParam(freq, 0, INT32_MAX, I_NONE) ) return;
+  if ( getParam(period, 0, I2S_BUFLEN, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
-    if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
+    if ( getParam(vol, 0, 15, I_NONE) ) return;
   }
-  tv_tone(freq, tm);
+  if (period == 0)
+    sound.noBeep();
+  else
+    sound.beep(period, vol);
 }
 
 void isound() {

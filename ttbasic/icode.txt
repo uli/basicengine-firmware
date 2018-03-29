@@ -48,7 +48,7 @@ RENAME	I_RENAME	irename
 COPY	I_COPY		icopy
 TYPE	I_TYPE		itype
 REMOVE	I_REMOVE	iremove
-TONE	I_TONE		itone
+BEEP	I_BEEP		ibeep
 NOTONE	I_NOTONE	inotone
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
