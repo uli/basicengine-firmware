@@ -151,6 +151,7 @@ typedef struct {
   bool lowpass;
   uint8_t mode;
   uint8_t font;
+  uint8_t cursor_color;
 } SystemConfig;
 extern SystemConfig CONFIG;
 

@@ -2846,8 +2846,14 @@ void SMALL iconfig() {
     else
       CONFIG.font = value;
     break;
+  case 6:
+    if (value < 0 || value > 255)
+      E_VALUE(0, 255);
+    else
+      CONFIG.cursor_color = value;
+    break;
   default:
-    E_VALUE(0, 5);
+    E_VALUE(0, 6);
     break;
   }
 }
@@ -7017,6 +7023,7 @@ void SMALL basic() {
   // Initialize execution environment
   inew();
 
+  sc0.setCursorColor(CONFIG.cursor_color);
   sc0.init(SIZE_LINE, CONFIG.NTSC, NULL, CONFIG.mode - 1);
   sc0.reset_kbd(CONFIG.KEYBOARD);
 
@@ -7166,6 +7173,7 @@ void loadConfig() {
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = 1;
   CONFIG.font = 0;
+  CONFIG.cursor_color = 0x92;
   
   Unifile f = Unifile::open("/flash/.config", FILE_READ);
   if (!f)
