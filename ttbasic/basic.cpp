@@ -898,14 +898,14 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       }
       if (*s == c)	// If the character is ", go to the next character
         s++;
-    } else if (*ptok == '@' || *ptok == '_' || isAlpha(*ptok)) {
+    } else if (*ptok == '@' || *ptok == '~' || isAlpha(*ptok)) {
       // Try converting to variable
       bool is_local = false;
       bool is_list = false;
       if (*ptok == '@') {
         is_local = true;
         ++ptok; ++s;
-      } else if (*ptok == '_') {
+      } else if (*ptok == '~') {
         is_list = true;
         ++ptok; ++s;
       }
@@ -1362,7 +1362,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       var_code = *ip++;
       sc0.setColor(COL(VAR), COL(BG));
       if (ip[-2] == I_NUMLST) {
-        c_putch('_', devno);
+        c_putch('~', devno);
         c_puts(num_lst_names.name(var_code), devno);
       } else {
         c_puts(num_arr_names.name(var_code), devno);
@@ -1373,7 +1373,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       ip++;
       var_code = *ip++;
       sc0.setColor(COL(VAR), COL(BG));
-      c_putch('_', devno);
+      c_putch('~', devno);
       c_puts(num_lst_names.name(var_code), devno);
       sc0.setColor(COL(FG), COL(BG));
     } else if (*ip == I_SVAR || *ip == I_LSVAR) {
@@ -1395,7 +1395,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       var_code = *ip++;
       sc0.setColor(COL(VAR), COL(BG));
       if (ip[-2] == I_STRLST) {
-        c_putch('_', devno);
+        c_putch('~', devno);
         c_puts(str_lst_names.name(var_code), devno);
       } else {
         c_puts(str_arr_names.name(var_code), devno);
@@ -1407,7 +1407,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       ip++;
       var_code = *ip++;
       sc0.setColor(COL(VAR), COL(BG));
-      c_putch('_', devno);
+      c_putch('~', devno);
       c_puts(str_lst_names.name(var_code), devno);
       c_putch('$', devno);
       sc0.setColor(COL(FG), COL(BG));
