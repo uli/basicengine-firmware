@@ -49,7 +49,6 @@ COPY	I_COPY		icopy
 TYPE	I_TYPE		itype
 REMOVE	I_REMOVE	iremove
 BEEP	I_BEEP		ibeep
-NOTONE	I_NOTONE	inotone
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate

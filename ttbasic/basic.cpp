@@ -83,7 +83,6 @@ SystemConfig CONFIG;
 void loadConfig();
 void isaveconfig();
 void mem_putch(uint8_t c);
-void tv_notone();
 unsigned char* BASIC_FP iexe(bool until_return = false);
 num_t BASIC_FP iexp(void);
 BString istrexp(void);
@@ -3910,11 +3909,6 @@ void iplay() {
   sound.stopMml(0);
   mml_text = istrexp();
   sound.playMml(0, mml_text.c_str());
-}
-
-//　NOTONE
-void inotone() {
-  tv_notone();
 }
 
 // POINT(X,Y)関数の処理
