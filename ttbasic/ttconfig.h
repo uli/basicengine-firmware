@@ -79,6 +79,7 @@
 #define BASIC_FP ICACHE_RAM_ATTR
 #define BASIC_INT GROUP(basic_core)
 #define BASIC_DAT GROUP(basic_data)
-#endif
 
 #define UNIFILE_USE_SPIFFS
+
+#endif
