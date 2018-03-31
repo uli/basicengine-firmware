@@ -1543,8 +1543,10 @@ void SMALL iinput() {
       if (filenum >= 0) {
         int c;
         str_value = "";
-        while ((c = user_files[filenum]->read()) >= 0 && c != '\n')
-          str_value += c;
+        while ((c = user_files[filenum]->read()) >= 0 && c != '\n') {
+          if (c != '\r')
+            str_value += c;
+        }
       } else {      
         str_value = getstr();
       }
