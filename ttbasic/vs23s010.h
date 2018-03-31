@@ -65,8 +65,6 @@ class VS23S010 {
     void end();                            // NTSCビデオ表示終了 
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち
-	void setBktmStartHook(void (*func)()); // ブランキング期間開始フック設定
-    void setBktmEndHook(void (*func)());   // ブランキング期間終了フック設定
 
     inline uint16_t width() {
       return XPIXELS;
