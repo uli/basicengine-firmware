@@ -2,30 +2,41 @@
 #include <Arduino.h>
 #include "sound.h"
 
+#ifdef HAVE_TSF
 #define TSF_NO_STDIO
 #define TSF_IMPLEMENTATION
 #define TSF_MEMCPY os_memcpy
 #define TSF_MEMSET memset
 #include "tsf.h"
+#endif
 
+#ifdef HAVE_MML
 MML BasicSound::m_mml[SOUND_CHANNELS];
 MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
 uint32_t BasicSound::m_next_event[SOUND_CHANNELS];
 bool BasicSound::m_finished[SOUND_CHANNELS];
+#endif
+#ifdef HAVE_TSF
 uint32_t BasicSound::m_all_done_time;
+#endif
 
+#ifdef HAVE_MML
 uint32_t BasicSound::m_off_time[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
 uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
 uint16_t BasicSound::m_bpm[SOUND_CHANNELS];
+#endif
 
+#ifdef HAVE_TSF
 BString BasicSound::m_font_name;
+#endif
 
 uint16_t BasicSound::m_beep_period;
 uint8_t BasicSound::m_beep_vol;
 const uint8_t *BasicSound::m_beep_env;
 
+#ifdef HAVE_TSF
 void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
 {
   if (!m_tsf || ch >= SOUND_CHANNELS)
@@ -44,7 +55,9 @@ void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
     err = ERR_OOM;
   }
 }
+#endif
 
+#ifdef HAVE_MML
 inline uint32_t BasicSound::mmlGetNoteLength(int ch, uint32_t note_ticks)
 {
   return (60000) * note_ticks / m_bpm[ch] / m_mml_opt[ch].bticks;
@@ -144,7 +157,9 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 #endif
   }
 }
+#endif	// HAVE_MML
 
+#ifdef HAVE_TSF
 int BasicSound::tsfile_read(void *data, void *ptr, unsigned int size) {
   return ((Unifile *)data)->read((char *)ptr, size);
 }
@@ -192,18 +207,24 @@ void GROUP(basic_sound) BasicSound::unloadFont()
     m_tsf = NULL;
   }
 }
+#endif	// HAVE_TSF
 
 void BasicSound::begin(void)
 {
+#ifdef HAVE_TSF
   m_font_name = F("1mgm.sf2");
+#endif
+#ifdef HAVE_MML
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
     mml_init(&m_mml[i], mmlCallback, (void *)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
     defaults(i);
   }
+#endif
   m_beep_env = NULL;
 }
 
+#ifdef HAVE_MML
 void BasicSound::defaults(int ch)
 {
   m_off_time[ch] = 0;
@@ -225,6 +246,7 @@ void BasicSound::stopMml(int ch)
 {
   m_next_event[ch] = 0;
 }
+#endif
 
 // Array with 32-bit values which have one bit more set to '1' in every
 // consecutive array index value
@@ -239,11 +261,16 @@ const uint32_t GROUP(basic_data) fakePwm[]={
         0xFFFFFFFB, 0xFFFFFFFF
 };
 
+#ifdef HAVE_TSF
 static short staging_buf[I2S_BUFLEN];
+#endif
 
 void GROUP(basic_sound) BasicSound::pumpEvents()
 {
+#if defined(HAVE_TSF) || defined(HAVE_MML)
   uint32_t now = millis();
+#endif
+#ifdef HAVE_MML
   for (int i = 0; i < SOUND_CHANNELS; ++i) {
     m_finished[i] = false;
     if (m_next_event[i] && now >= m_next_event[i]) {
@@ -258,7 +285,9 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
       m_off_time[i] = 0;
     }
   }
+#endif
   
+#ifdef HAVE_TSF
   // Unload driver if nothing has been played for a few seconds.
   if (m_tsf && !tsf_playing(m_tsf)) {
     if (m_all_done_time) {
@@ -268,6 +297,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
       m_all_done_time = now;
   } else
     m_all_done_time = 0;
+#endif
 
   if (m_beep_env) {
     uint8_t vol = pgm_read_byte(m_beep_env);
@@ -281,6 +311,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
   }
 }
 
+#ifdef HAVE_TSF
 void GROUP(basic_sound) BasicSound::render()
 {
   // This can not be done in the I2S interrupt handler because it may need
@@ -320,6 +351,8 @@ BString BasicSound::instName(int index)
 
   return name;
 }
+#endif
+
 void BasicSound::setBeep(int period, int vol)
 {
   uint32_t sample = pgm_read_dword(&fakePwm[vol]);

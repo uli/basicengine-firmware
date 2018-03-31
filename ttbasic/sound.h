@@ -2,6 +2,11 @@
 
 #include "basic.h"
 
+#if !defined(ESP8266) || defined(ESP8266_NOWIFI)
+#define HAVE_TSF
+#define HAVE_MML
+#endif
+
 //#define DEBUG_SOUND
 
 #ifdef DEBUG_SOUND
@@ -10,6 +15,8 @@
 #else
 #define dbg_snd(x...) do {} while(0)
 #endif
+
+#ifdef HAVE_TSF
 
 #ifdef DEBUG_TSF_MEMORY
 static inline void *dbg_malloc(size_t s, int line) {
@@ -24,6 +31,9 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #define TSF_NO_STDIO
 #include "tsf.h"
+
+#endif	// HAVE_TSF
+
 extern "C" {
 #include "nosdki2s.h"
 };
@@ -33,18 +43,25 @@ extern "C" {
 class BasicSound {
 public:
     static void begin(void);
+#ifdef HAVE_MML
     static void playMml(int ch, const char *data);
     static void stopMml(int ch);
+#endif
     static void pumpEvents();
+#ifdef HAVE_TSF
     static void render();
+#endif
 
+#ifdef HAVE_MML
     static inline bool isPlaying(int ch) {
         return m_next_event[ch] != 0;
     }
     static inline bool isFinished(int ch) {
         return m_finished[ch];
     }
+#endif
 
+#ifdef HAVE_TSF
     static inline bool needSamples() {
         return nosdk_i2s_curr_buf_pos == 0;
     }
@@ -65,6 +82,7 @@ public:
     static inline void setFontName(BString &n) {
       m_font_name = n;
     }
+#endif
 
     static void beep(int period, int vol = 15, const uint8_t *env = NULL);
     static void noBeep();
@@ -76,6 +94,7 @@ private:
     static uint16_t m_beep_period;
     static uint8_t m_beep_vol;
 
+#ifdef HAVE_TSF
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
     static Unifile m_sf2_file;
@@ -85,7 +104,9 @@ private:
     static int tsfile_seek(void *data, unsigned int pos);
     static int tsfile_close(void *data);
     static int tsfile_size(void *data);
+#endif
 
+#ifdef HAVE_MML
     static void defaults(int ch);
     static void ICACHE_RAM_ATTR mmlCallback(MML_INFO *p, void *extobj);
     static uint32_t mmlGetNoteLength(int ch, uint32_t note_ticks);
@@ -100,8 +121,11 @@ private:
     static uint8_t m_ch_inst[SOUND_CHANNELS];
     static bool m_finished[SOUND_CHANNELS];
     static uint16_t m_bpm[SOUND_CHANNELS];
+#endif
+#ifdef HAVE_TSF
     static uint32_t m_all_done_time;
     static BString m_font_name;
+#endif
 };
 
 extern BasicSound sound;
