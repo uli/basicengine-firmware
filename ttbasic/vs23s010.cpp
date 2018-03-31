@@ -200,13 +200,6 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 
   // See you next frame:
   timer0_write(next);
-#ifndef ESP8266_NOWIFI
-  // Any attempt to disable the software watchdog is subverted by the SDK
-  // by re-enabling it as soon as it gets the chance. This is the only
-  // way to avoid watchdog resets if you actually want to do anything
-  // with your system that is not wireless bullshit.
-  system_soft_wdt_feed();
-#endif
 }
 
 void VS23S010::setSyncLine(uint16_t line)
