@@ -3434,19 +3434,19 @@ num_t iarg() {
   return astk_num[astk_num_i-argc+a];
 }
 
-BString *iargstr() {
+BString sarg() {
   int32_t a;
   if (astk_str_i == 0) {
     err = ERR_UNDEFARG;
-    return NULL;
+    return BString();
   }
   uint16_t argc = gstk[gstki-1].str_args;
 
-  if (checkOpen()) return NULL;
-  if ( getParam(a, 0, argc-1, I_NONE) ) return NULL;
-  if (checkClose()) return NULL;
+  if (checkOpen()) return BString();
+  if ( getParam(a, 0, argc-1, I_NONE) ) return BString();
+  if (checkClose()) return BString();
 
-  return &astk_str[astk_str_i-argc+a];
+  return BString(astk_str[astk_str_i-argc+a]);
 }
 
 num_t iargc() {
@@ -3512,7 +3512,7 @@ void idwrite() {
 #endif
 }
 
-BString ihex() {
+BString shex() {
   int value; // 値
 
   if (checkOpen()) goto out;
@@ -3524,7 +3524,7 @@ out:
 }
 
 // 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
-BString ibin() {
+BString sbin() {
   int32_t value; // 値
 
   if (checkOpen()) goto out;
@@ -5672,7 +5672,14 @@ out:
   return value;
 }
 
-BString imidstr() {
+static BString sleft() {
+  return ilrstr(false);
+}
+static BString sright() {
+  return ilrstr(true);
+}
+
+BString smid() {
   BString value;
   int32_t start;
   int32_t len;
@@ -5694,7 +5701,7 @@ out:
   return value;
 }
 
-BString idirstr()
+BString sdir()
 {
   auto dir_entry = user_dir.next();
   if (!dir_entry)
@@ -5704,7 +5711,7 @@ BString idirstr()
   return dir_entry.name;
 }
 
-BString iinputstr()
+BString sinput()
 {
   int32_t len, fnum;
   BString value;
@@ -5733,17 +5740,96 @@ out:
   return value;
 }
 
+static BString schr() {
+  int32_t nv;
+  BString value;
+  if (checkOpen()) return value;
+  if (getParam(nv, 0,255, I_NONE)) return value; 
+  value = BString((char)nv);
+  checkClose();
+  return value;
+}
+
+static BString sstr() {
+  BString value;
+  if (checkOpen()) return value;
+  // The BString ctor for doubles is not helpful because it uses dtostrf()
+  // which can only do a fixed number of decimal places. That is not
+  // the BASIC Way(tm).
+  sprintf(lbuf, "%0g", iexp());
+  value = lbuf;
+  checkClose();
+  return value;
+}
+
+static BString scwd() {
+  return Unifile::cwd();
+}
+
+static BString sinkey() {
+  int32_t c = iinkey();
+  if (c)
+    return BString(c);
+  else
+    return BString();
+}
+
+static BString spopf() {
+  BString value;
+  if (checkOpen()) return value;
+  if (*cip++ == I_STRLSTREF) {
+    value = str_lst.var(*cip).front();
+    str_lst.var(*cip++).pop_front();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("string list reference");
+    return value;
+  }
+  checkClose();
+  return value;
+}
+
+static BString spopb() {
+  BString value;
+  if (checkOpen()) return value;
+  if (*cip++ == I_STRLSTREF) {
+    value = str_lst.var(*cip).back();
+    str_lst.var(*cip++).pop_back();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("string list reference");
+    return value;
+  }
+  checkClose();
+  return value;
+}
+
+static BString sinst() {
+#ifdef HAVE_TSF
+  return sound.instName(getparam());
+#else
+  err = ERR_NOT_SUPPORTED;
+  return BString();
+#endif
+}
+
+typedef BString (*strfun_t)();
+#include "strfuntbl.h"
+
 BString istrvalue()
 {
   BString value;
-  BString *bp;
   int len, dims;
-  char c;
   uint8_t i;
-  int32_t nv;
   int idxs[MAX_ARRAY_DIMS];
 
-  switch (*cip++) {
+  if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
+    value = strfuntbl[*cip++ - STRFUN_FIRST]();
+  } else switch (*cip++) {
   case I_STR:
     len = value.fromBasic(cip);
     cip += len;
@@ -5779,97 +5865,10 @@ BString istrvalue()
     }
     break;
 
-  case I_ARGSTR:
-    bp = iargstr();
-    if (!err)
-      value = *bp;
-    break;
-  case I_STRSTR:
-    if (checkOpen()) return value;
-    // The BString ctor for doubles is not helpful because it uses dtostrf()
-    // which can only do a fixed number of decimal places. That is not
-    // the BASIC Way(tm).
-    sprintf(lbuf, "%0g", iexp());
-    value = lbuf;
-    if (checkClose()) return value;
-    break;
-  case I_LEFTSTR:
-    value = ilrstr(false);
-    break;
-  case I_RIGHTSTR:
-    value = ilrstr(true);
-    break;
-  case I_MIDSTR:
-    value = imidstr();
-    break;
-  case I_HEX:
-    value = ihex();
-    break;
-  case I_BIN:
-    value = ibin();
-    break;
+  case I_I2CR:	value = ii2cr();   break;    // I2CR()関数
 
-  case I_CWD:
-    value = Unifile::cwd();
-    break;
-  case I_DIRSTR:
-    value = idirstr();
-    break;
+  case I_INPUTSTR:	value = sinput(); break;
 
-  case I_INKEYSTR:
-    c = iinkey();
-    if (c)
-      value = BString(c);
-    else
-      value = "";
-    break;
-  
-  case I_POPFSTR:
-    if (checkOpen()) break;
-    if (*cip++ == I_STRLSTREF) {
-      value = str_lst.var(*cip).front();
-      str_lst.var(*cip++).pop_front();
-    } else {
-      if (is_var(cip[-1]))
-        err = ERR_TYPE;
-      else
-        SYNTAX_T("string list reference");
-      break;
-    }
-    checkClose();
-    break;
-
-  case I_POPBSTR:
-    if (checkOpen()) break;
-    if (*cip++ == I_STRLSTREF) {
-      value = str_lst.var(*cip).back();
-      str_lst.var(*cip++).pop_back();
-    } else {
-      if (is_var(cip[-1]))
-        err = ERR_TYPE;
-      else
-        SYNTAX_T("string list reference");
-      break;
-    }
-    checkClose();
-    break;
-  
-  case I_CHR: // CHR$()関数
-    if (checkOpen()) break;
-    if (getParam(nv, 0,255, I_NONE)) break;   // 括弧の値を取得
-    value = BString((char)nv);
-    checkClose();
-    break;
-
-  case I_I2CR:  value = ii2cr();   break;    // I2CR()関数
-
-  case I_INPUTSTR:	value = iinputstr(); break;
-
-#ifdef HAVE_TSF
-  case I_INSTSTR:	value = sound.instName(getparam()); break;
-#endif
-
-  case I_WGETSTR:	value = iwgetstr(); break;
   default:
     cip--;
     // Check if a numeric expression follows, so we can give a more

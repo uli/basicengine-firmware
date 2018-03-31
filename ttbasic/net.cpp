@@ -35,7 +35,7 @@ num_t istatus() {
   return WiFiMulti.run();
 }
 
-BString iwgetstr() {
+BString swget() {
   BString rx;
   if (checkOpen()) return rx;
   BString url = istrexp();
@@ -72,7 +72,7 @@ num_t istatus() {
   err = ERR_NOT_SUPPORTED;
   return 0;
 }
-BString iwgetstr() {
+BString swget() {
   err = ERR_NOT_SUPPORTED;
   return BString(F(""));
 }
