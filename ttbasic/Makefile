@@ -15,6 +15,15 @@ elf:	funtbl.h kwtbl.h epigrams.h version.h
 		-warnings all \
 		-build-path $(BUILD_PATH) -compile ttbasic.ino
 
+elf_net:	funtbl.h kwtbl.h epigrams.h version.h
+	$(ARDUINO_DIR)/arduino-builder \
+		-hardware "$(ARDUINO_DIR)/hardware" \
+		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
+		-fqbn "esp8266com:esp8266:d1_mini:CpuFrequency=160,FlashSize=4M3M" \
+		-built-in-libraries $(ARDUINO_DIR)/libraries \
+		-warnings all \
+		-build-path $(BUILD_PATH)_net -compile ttbasic.ino
+
 funtbl.h kwtbl.h: icode.txt icode.py
 	python icode.py
 epigrams.h: epigrams.txt epi.py
@@ -28,3 +37,5 @@ clean:
 SER ?= /dev/ttyUSB0
 upload: elf
 	for i in 1 2 ; do $(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf $(BUILD_PATH)/ttbasic.ino.bin && break ; done
+upload_net: elf_net
+	for i in 1 2 ; do $(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf $(BUILD_PATH)_net/ttbasic.ino.bin && break ; done
