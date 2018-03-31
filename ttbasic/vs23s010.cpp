@@ -1,8 +1,6 @@
 #include "ttconfig.h"
 #include "Psx.h"
 
-#if USE_VS23 == 1
-
 #include "vs23s010.h"
 #include "ntsc.h"
 #include "lock.h"
@@ -1355,4 +1353,3 @@ uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t co
 }
 
 VS23S010 vs23;
-#endif
