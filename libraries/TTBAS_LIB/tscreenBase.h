@@ -75,7 +75,6 @@ protected:
     virtual void draw_cls_curs() = 0;                        // カーソルの消去
     void putch(uint8_t c, bool lazy = false);                       // 文字の出力
     virtual bool isKeyIn() = 0;                           // キー入力チェック
-	virtual void setColor(uint16_t fc, uint16_t bc) {};  // 文字色指定
 
 	//virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
     virtual inline uint8_t IS_PRINT(uint8_t ch) {
