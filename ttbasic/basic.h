@@ -63,6 +63,20 @@ uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
+// '('チェック関数
+inline uint8_t checkOpen() {
+  if (*cip != I_OPEN) err = ERR_PAREN;
+  else cip++;
+  return err;
+}
+
+// ')'チェック関数
+inline uint8_t checkClose() {
+  if (*cip != I_CLOSE) err = ERR_PAREN;
+  else cip++;
+  return err;
+}
+
 int BASIC_FP token_size(uint8_t *code);
 num_t BASIC_FP iexp();
 

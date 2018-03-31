@@ -502,20 +502,6 @@ static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
   return err;
 }
 
-// '('チェック関数
-inline uint8_t checkOpen() {
-  if (*cip != I_OPEN) err = ERR_PAREN;
-  else cip++;
-  return err;
-}
-
-// ')'チェック関数
-inline uint8_t checkClose() {
-  if (*cip != I_CLOSE) err = ERR_PAREN;
-  else cip++;
-  return err;
-}
-
 static inline bool BASIC_FP is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return (*cip == I_STR ||
