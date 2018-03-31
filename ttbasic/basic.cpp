@@ -17,7 +17,11 @@
 #include "epigrams.h"
 
 #ifdef ESP8266
+#ifdef ESP8266_NOWIFI
 #define STR_EDITION "ESP8266"
+#else
+#define STR_EDITION "ESP8266 WiFi"
+#endif
 #else
 #define STR_EDITION "unknown"
 #endif
