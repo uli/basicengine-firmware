@@ -45,8 +45,20 @@ class TPS2 {
     // 入出力
     inline static void  Clk_Out(uint8_t val); // CLKから出力
     inline static void  Dat_Out(uint8_t val); // DATから出力
+
+    // The SDK in mainline Arduino does not inline these functions as
+    // instructed, nor does it does place them in IRAM as instructed.
+    // This causes a crash when networking stuff and key events happen at
+    // the same time.
+    // This is a workaround that will still allow us to keep
+    // the functions inline with the noWiFi SDK.
+#ifdef ESP8266_NOWIFI
     inline static uint8_t Clk_In();           // CLKから入力
     inline static uint8_t Dat_In();           // データから入力
+#else
+    static uint8_t Clk_In();           // CLKから入力
+    static uint8_t Dat_In();           // データから入力
+#endif
     
     // ラインの制御
     static void  mode_idole(uint8_t dir);     // アイドル状態に設定
