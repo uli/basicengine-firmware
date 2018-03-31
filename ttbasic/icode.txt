@@ -107,6 +107,8 @@ RESUME	I_RESUME	iresume
 VREG	I_VREG		ivreg
 VPOKE	I_VPOKE		ivpoke
 SYS	I_SYS		isys
+CONNECT	I_CONNECT	iconnect
+SETAP	I_SETAP		isetap
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
@@ -234,6 +236,8 @@ LOF	I_LOF		esyntax
 INST$	I_INSTSTR	esyntax
 OK	I_OK		esyntax
 LOC	I_LOC		esyntax
+WGET$	I_WGETSTR	esyntax
+STATUS	I_STATUS	esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax
 _none	I_HEXNUM	esyntax

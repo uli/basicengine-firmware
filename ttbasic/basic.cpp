@@ -28,6 +28,7 @@
 #include "version.h"
 
 #include "basic.h"
+#include "net.h"
 
 struct unaligned_num_t {
   num_t n;
@@ -521,6 +522,7 @@ static inline bool BASIC_FP is_strexp() {
           *cip == I_INPUTSTR ||
           *cip == I_POPFSTR ||
           *cip == I_POPBSTR ||
+          *cip == I_WGETSTR ||
           *cip == I_INKEYSTR
          );
 }
@@ -5495,6 +5497,8 @@ num_t BASIC_FP ivalue() {
       value = user_files[a]->position();
     break;
     
+  case I_STATUS:	value = istatus(); break;
+
   default:
     cip--;
     if (is_strexp())
@@ -5835,6 +5839,7 @@ BString istrvalue()
 
   case I_INSTSTR:	value = sound.instName(getparam()); break;
 
+  case I_WGETSTR:	value = iwgetstr(); break;
   default:
     cip--;
     // Check if a numeric expression follows, so we can give a more
