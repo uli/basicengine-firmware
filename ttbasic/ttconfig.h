@@ -77,14 +77,16 @@
 
 #ifdef ESP8266_NOWIFI
 #define GROUP(g) __attribute__((section(".irom." #g)))
+#define GROUP_DATA GROUP
 #define BASIC_FP ICACHE_RAM_ATTR
 #else
 #define GROUP(g) __attribute__((section(".text." #g)))
+#define GROUP_DATA(g) __attribute__((section(".irom." #g)))
 #define BASIC_FP
 #endif
 
 #define BASIC_INT GROUP(basic_core)
-#define BASIC_DAT GROUP(basic_data)
+#define BASIC_DAT GROUP_DATA(basic_data)
 
 #define UNIFILE_USE_SPIFFS
 
