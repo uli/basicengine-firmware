@@ -79,6 +79,7 @@ inline uint8_t checkClose() {
 
 int BASIC_FP token_size(uint8_t *code);
 num_t BASIC_FP iexp();
+BString istrexp(void);
 
 // キーワードテーブル
 #include "kwtbl.h"

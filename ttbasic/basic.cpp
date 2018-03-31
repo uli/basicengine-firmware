@@ -89,7 +89,6 @@ void isaveconfig();
 void mem_putch(uint8_t c);
 unsigned char* BASIC_FP iexe(bool until_return = false);
 num_t BASIC_FP iexp(void);
-BString istrexp(void);
 void error(uint8_t flgCmd);
 // **** RTC用宣言 ********************
 #ifdef USE_INNERRTC
