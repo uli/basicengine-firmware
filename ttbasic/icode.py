@@ -5,7 +5,7 @@ enumf = open('kwenum.h', 'w')
 funf = open('funtbl.h', 'w')
 strfunf = open('strfuntbl.h', 'w')
 enumf.write('#ifndef __KWENUM_H\n#define __KWENUM_H\nenum token_t {\n')
-funf.write('static const cmd_t funtbl[] GROUP(basic_data) = {\n')
+funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
 count = 0
 max_kw_len = 0
 last_cmd = 0
@@ -66,7 +66,7 @@ cmdf.write('\n};\n\n#define MAX_KW_LEN ' + str(max_kw_len) + '\n')
 enumf.write('\n};\n#endif\n')
 funf.write('\n};\n')
 
-strfunf.write('\nstatic const strfun_t strfuntbl[] GROUP(basic_data) = {\n')
+strfunf.write('\nstatic const strfun_t strfuntbl[] BASIC_DAT = {\n')
 for i in range(0, strfun_count):
   if i % 8 == 0:
     strfunf.write(' ')
