@@ -3128,7 +3128,7 @@ void BASIC_FP do_call(uint8_t proc_idx)
   return;
 }
 
-
+#ifdef VS23_BG_ENGINE
 void BASIC_INT event_handle_sprite()
 {
   uint8_t dir;
@@ -3150,6 +3150,7 @@ void BASIC_INT event_handle_sprite()
     }
   }
 }
+#endif
 
 void BASIC_INT event_handle_play(int ch)
 {
@@ -3197,7 +3198,9 @@ void BASIC_FP pump_events(void)
   last_frame = vs23.frame();
 
   event_profile[0] = micros();
+#ifdef VS23_BG_ENGINE
   vs23.updateBg();
+#endif
 
   event_profile[1] = micros();
   if (sound.needSamples())
@@ -3215,8 +3218,10 @@ void BASIC_FP pump_events(void)
   sc0.updateCursor();
   event_profile[4] = micros();
   
+#ifdef VS23_BG_ENGINE
   if (event_sprite_enabled)
     event_handle_sprite();
+#endif
   event_profile[5] = micros();
   if (event_pad_enabled)
     event_handle_pad();
@@ -4101,10 +4106,12 @@ void SMALL ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
+#ifdef VS23_BG_ENGINE
   uint32_t spr_from, spr_to;
-  int32_t key = -1;	// no keying
   bool define_bg = false, define_spr = false;
   int bg;
+#endif
+  int32_t key = -1;	// no keying
 
   if(!(fname = getParamFname())) {
     return;
@@ -4112,6 +4119,7 @@ void SMALL ildbmp() {
 
   for (;; ) {
     if (*cip == I_AS) {
+#ifdef VS23_BG_ENGINE
       cip++;
       if (*cip == I_BG) {		// AS BG ...
         ++cip;
@@ -4133,6 +4141,10 @@ void SMALL ildbmp() {
         SYNTAX_T("BG or SPRITE");
 	return;
       }
+#else
+      err = ERR_NOT_SUPPORTED;
+      return;
+#endif
     } else if (*cip == I_TO) {
       // TO dx,dy
       cip++;
@@ -4160,6 +4172,7 @@ void SMALL ildbmp() {
   // 画像のロード
   err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h, key);
   if (!err) {
+#ifdef VS23_BG_ENGINE
     if (define_bg)
       vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
     if (define_spr) {
@@ -4167,6 +4180,7 @@ void SMALL ildbmp() {
         vs23.setSpritePattern(i, dx, dy);
       }
     }
+#endif
     retval[0] = dx;
     retval[1] = dy;
     retval[2] = w;
@@ -4543,6 +4557,7 @@ void iborder() {
 }
 
 void ibg() {
+#ifdef VS23_BG_ENGINE
   int32_t m;
   int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh, prio;
 
@@ -4604,9 +4619,13 @@ void ibg() {
       SYNTAX_T("BG parameter");
     return;
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void iloadbg() {
+#ifdef VS23_BG_ENGINE
   int32_t bg;
   uint8_t w, h, tsx, tsy;
   BString filename;
@@ -4647,9 +4666,13 @@ void iloadbg() {
 
 out:
   f.close();
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void isavebg() {
+#ifdef VS23_BG_ENGINE
   int32_t bg;
   uint8_t w, h;
   BString filename;
@@ -4675,9 +4698,13 @@ void isavebg() {
   f.write((char *)vs23.bgTiles(bg), w*h);
 
   f.close();
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void BASIC_FP imovebg() {
+#ifdef VS23_BG_ENGINE
   int32_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
   // XXX: arbitrary limitation?
@@ -4685,9 +4712,13 @@ void BASIC_FP imovebg() {
   if (getParam(y, INT32_MIN, INT32_MAX, I_NONE)) return;
   
   vs23.scroll(bg, x, y);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void BASIC_INT isprite() {
+#ifdef VS23_BG_ENGINE
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
   bool set_frame = false, set_opacity = false;
 
@@ -4764,14 +4795,21 @@ void BASIC_INT isprite() {
       err = ERR_OOM;
     return;
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void BASIC_FP imovesprite() {
+#ifdef VS23_BG_ENGINE
   int32_t num, pos_x, pos_y;
   if (getParam(num, 0, VS23_MAX_SPRITES, I_TO)) return;
   if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
   if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE)) return;
   vs23.moveSprite(num, pos_x, pos_y);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void BASIC_FP imove()
@@ -4787,6 +4825,7 @@ void BASIC_FP imove()
 }
 
 void iplot() {
+#ifdef VS23_BG_ENGINE
   int32_t bg, x, y, t;
   if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
   if (!vs23.bgTiles(bg)) {
@@ -4803,12 +4842,19 @@ void iplot() {
     if (getParam(t, 0, 255, I_NONE)) return;
     vs23.setBgTile(bg, x, y, t);
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void iframeskip() {
+#ifdef VS23_BG_ENGINE
   int32_t skip;
   if (getParam(skip, 0, 60, I_NONE)) return;
   vs23.setFrameskip(skip);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 #include "Psx.h"
@@ -4974,8 +5020,10 @@ void SMALL error(uint8_t flgCmd = false) {
     if (err == ERR_OOM) {
       // free as much as possible first
       sound.unloadFont();
+#ifdef VS23_BG_ENGINE
       vs23.resetSprites();
       vs23.resetBgs();
+#endif
       inew(NEW_VAR);
     }
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
@@ -5305,6 +5353,7 @@ num_t BASIC_FP ivalue() {
   case I_PAD:	value = ipad(); break;
   case I_RGB:	value = irgb(); break;
 
+#ifdef VS23_BG_ENGINE
   case I_TILECOLL:
     if (checkOpen()) return 0;
     if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
@@ -5324,6 +5373,7 @@ num_t BASIC_FP ivalue() {
     else
       value = 0;
     break;
+#endif
 
   case I_PLAY:
     if (checkOpen()) return 0;
@@ -6826,6 +6876,7 @@ void iflash();
 
 void SMALL resize_windows()
 {
+#ifdef VS23_BG_ENGINE
   int x, y, w, h;
   sc0.getWindow(x, y, w, h);
   restore_bgs = false;
@@ -6868,10 +6919,12 @@ void SMALL resize_windows()
       restore_text_window = true;
     }
   }
+#endif
 }
 
 void SMALL restore_windows()
 {
+#ifdef VS23_BG_ENGINE
   if (restore_text_window) {
     restore_text_window = false;
     sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
@@ -6888,6 +6941,7 @@ void SMALL restore_windows()
       }
     }
   }
+#endif
 }
 
 //Command precessor
