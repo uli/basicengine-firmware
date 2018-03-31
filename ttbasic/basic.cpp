@@ -3235,6 +3235,10 @@ void BASIC_FP pump_events(void)
   
   if (profile_enabled)
     draw_profile();
+
+#ifndef ESP8266_NOWIFI
+  yield();
+#endif
 }
 
 // 時間待ち
