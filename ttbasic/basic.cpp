@@ -5769,7 +5769,7 @@ static BString scwd() {
 static BString sinkey() {
   int32_t c = iinkey();
   if (c)
-    return BString(c);
+    return BString((char)c);
   else
     return BString();
 }
