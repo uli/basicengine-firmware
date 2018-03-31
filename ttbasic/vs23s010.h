@@ -392,7 +392,7 @@ private:
       uint8_t prio;
     } m_bg[VS23_MAX_BG];
 
-    void ICACHE_RAM_ATTR drawBg(struct bg_t *bg,
+    void drawBg(struct bg_t *bg,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
                             uint32_t win_start_addr,
@@ -404,7 +404,7 @@ private:
                             uint32_t ypoff,
                             int skip_x,
                             int skip_y);
-    void ICACHE_RAM_ATTR drawBgTop(struct bg_t *bg,
+    void drawBgTop(struct bg_t *bg,
                             int dest_addr_start,
                             uint32_t pat_start_addr,
                             int tile_start_x,
@@ -413,7 +413,7 @@ private:
                             uint32_t xpoff,
                             uint32_t ypoff);
 
-    void ICACHE_RAM_ATTR drawBgBottom(struct bg_t *bg,
+    void drawBgBottom(struct bg_t *bg,
                                       int tile_start_x,
                                       int tile_end_x,
                                       int tile_end_y,
