@@ -35,7 +35,7 @@ static const uint8_t (*key_ascii)[2];
 
 // Scan code 0x00 - 0x83 => Key code conversion table
 // 132 bytes worth
-static const uint8_t keycode1[] GROUP(basic_data) = {
+static const uint8_t keycode1[] BASIC_DAT = {
   0,		PS2KEY_F9,	0,		PS2KEY_F5,	PS2KEY_F3,	PS2KEY_F1,	PS2KEY_F2,	PS2KEY_F12,	// 0x00-0x07
   PS2KEY_F13,	PS2KEY_F10,	PS2KEY_F8,	PS2KEY_F6,	PS2KEY_F4,	PS2KEY_Tab,	PS2KEY_HanZen,	PS2KEY_PAD_Equal,// 0x08-0x0F
   PS2KEY_F14,	PS2KEY_L_Alt,	PS2KEY_L_Shift,	PS2KEY_Romaji,	PS2KEY_L_Ctrl,	PS2KEY_Q,	PS2KEY_1,	0,		// 0x10-0x17
@@ -57,7 +57,7 @@ static const uint8_t keycode1[] GROUP(basic_data) = {
 
 // Scan code 0xE010-0xE07D => Key code conversion table
 // 2 bytes (scan code lower byte, key code) * 38
-static const uint8_t keycode2[][2] GROUP(basic_data) = {
+static const uint8_t keycode2[][2] BASIC_DAT = {
   { 0x10, PS2KEY_WWW_Search },    { 0x11, PS2KEY_R_Alt },      { 0x14, PS2KEY_R_Ctrl },      { 0x15, PS2KEY_PrevTrack },
   { 0x18, PS2KEY_WWW_Favorites }, { 0x1F, PS2KEY_L_GUI },      { 0x20, PS2KEY_WWW_Refresh }, { 0x21, PS2KEY_VolumeDown },
   { 0x23, PS2KEY_Mute },          { 0x27, PS2KEY_R_GUI },      { 0x28, PS2KEY_WWW_Stop },    { 0x2B, PS2KEY_Calc },
@@ -71,12 +71,12 @@ static const uint8_t keycode2[][2] GROUP(basic_data) = {
 };
 
 // Pause Key scan codes
-static const uint8_t pausescode[] GROUP(basic_data) = {
+static const uint8_t pausescode[] BASIC_DAT = {
   0xE1,0x14,0x77,0xE1,0xF0,0x14,0xF0,0x77
 };
 
 // PrintScreen Key scan codes (break);
-static const uint8_t prnScrncode2[] GROUP(basic_data) = {
+static const uint8_t prnScrncode2[] BASIC_DAT = {
   0xE0,0xF0,0x7C,0xE0,0xF0,0x12
 };
 
@@ -85,7 +85,7 @@ static const uint8_t prnScrncode2[] GROUP(basic_data) = {
 // { not shifted, shifted }
 
 // US keyboard
-static const uint8_t key_ascii_us[][2] GROUP(basic_data) = {
+static const uint8_t key_ascii_us[][2] BASIC_DAT = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ '\'','\"'},{ ';', ':'},{ ',', '<'},{ '-', '_'},{ '.', '>'},{ '/', '?'},{ '[', '{'},
   { ']', '}'},{ '\\','|'},{'\\', '|'},{ '=', '+'},{ '\\','_'},{ '0', ')'},{ '1', '!'},{ '2', '@'},
@@ -97,7 +97,7 @@ static const uint8_t key_ascii_us[][2] GROUP(basic_data) = {
 };
 
 // Japanese keyboard
-static const uint8_t key_ascii_jp[][2] GROUP(basic_data) = {
+static const uint8_t key_ascii_jp[][2] BASIC_DAT = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{ ':', '*'},{ ';', '+'},{ ',', '<'},{ '-', '='},{ '.', '>'},{ '/', '?'},{ '@', '`'},
   { '[', '{'},{ '\\','|'},{ ']', '}'},{ '^', '~'},{ '\\','_'},{ '0', 0  },{ '1', '!'},{ '2','\"'},
@@ -109,7 +109,7 @@ static const uint8_t key_ascii_jp[][2] GROUP(basic_data) = {
 };
 
 // German keyboard (code page 437)
-static const uint8_t key_ascii_de[][2] GROUP(basic_data) = {
+static const uint8_t key_ascii_de[][2] BASIC_DAT = {
   /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
   { ' ', ' '},{'\x84','\x8e'},{'\x94','\x99'},{',',';'},{'\xe1','?'},{'.',':'},{'-','_'},{'\x81','\x9a'},
   { '+', '*'},{   0,  0 },{'#', '\''},{'\'', '`'},{ '\\','_'},{ '0', '='},{ '1', '!'},{ '2', '"'},
@@ -122,7 +122,7 @@ static const uint8_t key_ascii_de[][2] GROUP(basic_data) = {
 
 // Conversion table for numeric pad keys 94-111
 // { Normal code, NumLock/Shift code, 1: key code  0: ASCII code }
-static const uint8_t tenkey[][3] GROUP(basic_data) = {
+static const uint8_t tenkey[][3] BASIC_DAT = {
   { '=',  '=', 0 },
   { 0x0D, 0x0D, 0 },
   { '0',  PS2KEY_Insert, 1 },
