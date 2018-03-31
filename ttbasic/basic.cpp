@@ -66,11 +66,13 @@ tTVscreen   sc0;
 // These values are set when a program is interrupted and the text window is
 // forced to be visible at the bottom of the screen. That way, the original
 // geometries can be restored when the program is CONTinued.
+#ifdef VS23_BG_ENGINE
 static int original_bg_height[VS23_MAX_BG];
 static bool turn_bg_back_on[VS23_MAX_BG];
 bool restore_bgs = false;
 static uint16_t original_text_pos[2];
 bool restore_text_window = false;
+#endif
 
 #define KEY_ENTER 13
 
@@ -4468,8 +4470,10 @@ void  itype() {
 void iwindow() {
   int32_t x, y, w, h;
 
+#ifdef VS23_BG_ENGINE
   // Discard the dimensions saved for CONTing.
   restore_text_window = false;
+#endif
 
   if (*cip == I_OFF) {
     ++cip;
@@ -4502,9 +4506,11 @@ void SMALL iscreen() {
 
   if ( getParam(m,  1, vs23.numModes, I_NONE) ) return;   // m
 
+#ifdef VS23_BG_ENGINE
   // Discard dimensions saved for CONTing.
   restore_bgs = false;
   restore_text_window = false;
+#endif
 
   vs23.reset();
 
