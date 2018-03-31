@@ -5034,12 +5034,12 @@ void SMALL error(uint8_t flgCmd = false) {
       c_puts_P(errmsg[err]);
       PRINT_P(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
-      newline();
       if (err_expected) {
         PRINT_P(" (expected ");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
+      newline();
 
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
