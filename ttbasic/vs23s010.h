@@ -86,13 +86,8 @@ class VS23S010 {
         return m_first_line_addr + m_pitch * y + x;
     }
 
-    inline uint16_t currentLine() {
-        uint16_t cl = SpiRamReadRegister(CURLINE) & 0xfff;
-        if (m_interlace && cl >= 262)
-          cl -= 262;
-        return cl;
-    }
-    
+    uint16_t ICACHE_RAM_ATTR currentLine();
+
     inline uint32_t frame() {
       return m_frame;
     }

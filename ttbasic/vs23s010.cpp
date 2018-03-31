@@ -29,6 +29,13 @@ extern "C" size_t umm_free_heap_size( void );
 #define dbg_pat(x...)
 #endif
 
+uint16_t ICACHE_RAM_ATTR VS23S010::currentLine() {
+    uint16_t cl = SpiRamReadRegister(CURLINE) & 0xfff;
+    if (m_interlace && cl >= 262)
+      cl -= 262;
+    return cl;
+}
+
 void GROUP(basic_vs23) VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
