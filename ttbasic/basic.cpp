@@ -230,7 +230,6 @@ void newline(uint8_t devno) {
   else if (devno == 3)
     mem_putch('\n');
   else if (devno == 4) {
-    bfs.putch('\x0d');
     bfs.putch('\x0a');
   }
 }
