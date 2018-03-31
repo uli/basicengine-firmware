@@ -44,13 +44,13 @@ const uint8_t VS23S010::numModes = NUM_MODES;
 
 const struct vs23_mode_t *vs23_current_mode = &VS23S010::modes[0];
 
-static inline void vs23Select()
+static inline void ICACHE_RAM_ATTR vs23Select()
 {
 	SpiLock();
 	VS23_SELECT;
 }
 
-static inline void vs23Deselect()
+static inline void ICACHE_RAM_ATTR vs23Deselect()
 {
 	VS23_DESELECT;
 	SpiUnlock();
