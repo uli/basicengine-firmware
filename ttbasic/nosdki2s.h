@@ -9,7 +9,11 @@
 #include <slc_register.h>
 #endif
 
+#ifdef ESP8266_NOWIFI
 #define I2S_BUFLEN 320
+#else
+#define I2S_BUFLEN 160
+#endif
 
 //Functions you'll call:
 void InitI2S();
