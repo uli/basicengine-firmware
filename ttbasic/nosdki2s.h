@@ -5,6 +5,10 @@
 //#include "nosdk8266.h"
 #include "c_types.h"
 
+#ifndef ESP8266_NOWIFI
+#include <slc_register.h>
+#endif
+
 #define I2S_BUFLEN 320
 
 //Functions you'll call:
@@ -433,5 +437,9 @@ static inline void nosdk_i2s_set_blocksize(uint32_t len)
 	i2sBufDesc[0].datalen = len;
 	i2sBufDesc[1].datalen = len;
 }
+
+#ifndef ESP8266_NOWIFI
+#define SLC_RX_EOF_DES_ADDR	(REG_SLC_BASE + 0x48)
+#endif
 
 #endif
