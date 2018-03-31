@@ -6,7 +6,7 @@
 #include "font6x8tt.h"
 #include "../../ttbasic/ttconfig.h"
 
-GROUP(basic_data) const unsigned char font6x8tt[] = {
+BASIC_DAT const unsigned char font6x8tt[] = {
 	6,8,0,
 	//0
 	0b00000000,
