@@ -251,7 +251,7 @@ void BasicSound::stopMml(int ch)
 // Array with 32-bit values which have one bit more set to '1' in every
 // consecutive array index value
 // Taken from Espressif MP3 decoder demo.
-const uint32_t GROUP(basic_data) fakePwm[]={
+const uint32_t BASIC_DAT fakePwm[]={
         0x00000010, 0x00000410, 0x00400410, 0x00400C10, 0x00500C10,
         0x00D00C10, 0x20D00C10, 0x21D00C10, 0x21D80C10, 0xA1D80C10,
         0xA1D80D10, 0xA1D80D30, 0xA1DC0D30, 0xA1DC8D30, 0xB1DC8D30,
