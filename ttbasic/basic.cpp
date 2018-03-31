@@ -3194,8 +3194,10 @@ void BASIC_FP pump_events(void)
   static uint32_t last_frame;
 
   if (vs23.frame() == last_frame) {
+#ifdef HAVE_TSF
     if (sound.needSamples())
       sound.render();
+#endif
     return;
   }
 
@@ -3207,16 +3209,20 @@ void BASIC_FP pump_events(void)
 #endif
 
   event_profile[1] = micros();
+#ifdef HAVE_TSF
   if (sound.needSamples())
     sound.render();
+#endif
   sound.pumpEvents();
   event_profile[2] = micros();
+#ifdef HAVE_MML
   if (event_play_enabled) {
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
       if (sound.isFinished(i))
         event_handle_play(i);
     }
   }
+#endif
   event_profile[3] = micros();
 
   sc0.updateCursor();
@@ -3885,6 +3891,7 @@ void ibeep() {
 }
 
 void isound() {
+#ifdef HAVE_TSF
   if (*cip == I_FONT) {
     ++cip;
     BString font = getParamFname();
@@ -3905,13 +3912,22 @@ void isound() {
     }
     sound.noteOn(ch, inst, note, vel, len);
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
+#ifdef HAVE_MML
 BString mml_text;
+#endif
 void iplay() {
+#ifdef HAVE_MML
   sound.stopMml(0);
   mml_text = istrexp();
   sound.playMml(0, mml_text.c_str());
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 // POINT(X,Y)関数の処理
@@ -5027,7 +5043,9 @@ void SMALL error(uint8_t flgCmd = false) {
   if (err) {
     if (err == ERR_OOM) {
       // free as much as possible first
+#ifdef HAVE_TSF
       sound.unloadFont();
+#endif
 #ifdef VS23_BG_ENGINE
       vs23.resetSprites();
       vs23.resetBgs();
@@ -5384,6 +5402,7 @@ num_t BASIC_FP ivalue() {
 #endif
 
   case I_PLAY:
+#ifdef HAVE_MML
     if (checkOpen()) return 0;
     if (getParam(a, 0, SOUND_CHANNELS, I_CLOSE)) return 0;
     if (a == 0) {
@@ -5394,6 +5413,9 @@ num_t BASIC_FP ivalue() {
       value = b;
     } else
       value = sound.isPlaying(a - 1);
+#else
+    err = ERR_NOT_SUPPORTED;
+#endif
     break;
 
   case I_NUMLST:
@@ -5843,7 +5865,9 @@ BString istrvalue()
 
   case I_INPUTSTR:	value = iinputstr(); break;
 
+#ifdef HAVE_TSF
   case I_INSTSTR:	value = sound.instName(getparam()); break;
+#endif
 
   case I_WGETSTR:	value = iwgetstr(); break;
   default:
