@@ -1619,12 +1619,12 @@ void BASIC_FP ivar() {
 
 static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
 {
+  is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  is_local = false;
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
   int local_offset = proc.getNumArg(proc_idx, arg);
   if (local_offset < 0) {
@@ -1797,12 +1797,12 @@ void BASIC_FP ivararr() {
 
 static int get_str_local_offset(uint8_t arg, bool &is_local)
 {
+  is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  is_local = false;
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
   int local_offset = proc.getStrArg(proc_idx, arg);
   if (local_offset < 0) {
