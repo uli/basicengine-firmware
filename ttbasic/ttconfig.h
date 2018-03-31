@@ -75,8 +75,14 @@
 
 #define SMALL __attribute__((optimize("Os")))
 
+#ifdef ESP8266_NOWIFI
 #define GROUP(g) __attribute__((section(".irom." #g)))
 #define BASIC_FP ICACHE_RAM_ATTR
+#else
+#define GROUP(g)
+#define BASIC_FP
+#endif
+
 #define BASIC_INT GROUP(basic_core)
 #define BASIC_DAT GROUP(basic_data)
 
