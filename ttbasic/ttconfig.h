@@ -79,7 +79,7 @@
 #define GROUP(g) __attribute__((section(".irom." #g)))
 #define BASIC_FP ICACHE_RAM_ATTR
 #else
-#define GROUP(g)
+#define GROUP(g) __attribute__((section(".text." #g)))
 #define BASIC_FP
 #endif
 
