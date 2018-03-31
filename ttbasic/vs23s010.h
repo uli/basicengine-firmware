@@ -18,6 +18,10 @@
 #include <SPI.h>
 #include "GuillotineBinPack.h"
 
+#ifdef ESP8266_NOWIFI
+#define VS23_BG_ENGINE
+#endif
+
 #define SC_DEFAULT 0
 
 struct vs23_mode_t {
@@ -183,6 +187,7 @@ class VS23S010 {
         return LOW;
     }
 
+#ifdef VS23_BG_ENGINE
     bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
 
     inline uint8_t bgWidth(uint8_t bg) {
@@ -322,6 +327,7 @@ class VS23S010 {
     void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
     uint8_t spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile);
     uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
+#endif
 
     static const uint8_t numModes;
     static struct vs23_mode_t modes[];
@@ -339,6 +345,7 @@ class VS23S010 {
       return FRPORCH - BLANKEND;
     }
 
+#ifdef VS23_BG_ENGINE
     inline void forceRedraw() {
       m_bg_modified = true;
     }
@@ -349,6 +356,7 @@ class VS23S010 {
     inline uint32_t getFrameskip() {
       return m_frameskip;
     }
+#endif
 
     uint32_t cyclesPerFrame() {
       return m_cycles_per_frame;
@@ -374,6 +382,7 @@ private:
 
     uint8_t colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);
 
+#ifdef VS23_BG_ENGINE
     struct bg_t {
       uint8_t *tiles;
       uint16_t pat_x, pat_y, pat_w;
@@ -442,11 +451,14 @@ private:
 
     bool loadSpritePattern(uint8_t num);
     struct sprite_pattern *allocateSpritePattern(struct sprite_props *p);
+#endif
     
     uint32_t m_frame;
+#ifdef VS23_BG_ENGINE
     uint32_t m_frameskip;
 
     bool m_bg_modified;
+#endif
     
     GuillotineBinPack m_bin;
     
