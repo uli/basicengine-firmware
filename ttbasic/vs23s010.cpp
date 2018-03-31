@@ -184,6 +184,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 {
   uint32_t now = ESP.getCycleCount();
   uint32_t next = now + vs23.m_cycles_per_frame;
+#ifdef ESP8266_NOWIFI
   uint16_t line;
   if (!(vs23.m_frame & 15) && !SpiLocked()) {
     line = vs23.currentLine();
@@ -213,6 +214,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   else
     Serial.println("spilocked");
 #endif
+#endif	// ESP8266_NOWIFI
   vs23.m_frame++;
 
   // See you next frame:
