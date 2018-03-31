@@ -14,6 +14,12 @@
 #define __FLASH__ ICACHE_RODATA_ATTR
 #endif
 
+#ifndef ESP8266_NOWIFI
+// workaround until there is a basic_engine board in mainline Arduino
+static const uint8_t PS2CLK = 4;
+static const uint8_t PS2DAT = 5;
+#endif
+
 #include "ps22tty.h"
 
 const int IRQpin =  PS2CLK;  // CLK(D+)
