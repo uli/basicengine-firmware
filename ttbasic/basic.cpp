@@ -7011,7 +7011,11 @@ void SMALL basic() {
   uint8_t rc;
 
 #ifdef UNIFILE_USE_SPIFFS
+#ifdef ESP8266_NOWIFI
   SPIFFS.begin(false);
+#else
+  SPIFFS.begin();
+#endif
 #else
   fs.mount();
 #endif
