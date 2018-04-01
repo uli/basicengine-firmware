@@ -410,7 +410,6 @@ unsigned char lstki;              // loop stack index
 uint8_t *cont_clp = NULL;
 uint8_t *cont_cip = NULL;
 
-#define MAX_RETVALS 4
 num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
 
 // メモリへの文字出力

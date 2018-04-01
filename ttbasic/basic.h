@@ -23,6 +23,9 @@ extern unsigned char *listbuf;
 
 extern uint8_t err; // Error message index
 
+#define MAX_RETVALS 4
+extern num_t retval[MAX_RETVALS];
+
 uint8_t toktoi(bool find_prg_text = true);
 void putlist(unsigned char* ip, uint8_t devno=0);
 
