@@ -523,7 +523,7 @@ static inline bool BASIC_FP is_strexp() {
           *cip == I_INPUTSTR ||
           *cip == I_POPFSTR ||
           *cip == I_POPBSTR ||
-          *cip == I_WGETSTR ||
+          (*cip == I_NET && (*cip == I_INPUTSTR || *cip == I_GETSTR)) ||
           *cip == I_INKEYSTR
          );
 }
@@ -5867,6 +5867,20 @@ BString istrvalue()
   case I_I2CR:	value = ii2cr();   break;    // I2CR()関数
 
   case I_INPUTSTR:	value = sinput(); break;
+  case I_NET:
+#ifdef ESP8266_NOWIFI
+    err = ERR_NOT_SUPPORTED;
+#else
+    if (*cip == I_INPUTSTR) {
+      ++cip;
+      value = snetinput();
+    } else if (*cip == I_GETSTR) {
+      ++cip;
+      value = snetget();
+    } else
+      SYNTAX_T("network function");
+#endif
+    break;
 
   default:
     cip--;

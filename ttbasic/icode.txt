@@ -133,7 +133,7 @@ INKEY$	I_INKEYSTR	sinkey
 POPF$	I_POPFSTR	spopf
 POPB$	I_POPBSTR	spopb
 INST$	I_INSTSTR	sinst
-WGET$	I_WGETSTR	swget
+GET$	I_GETSTR	esyntax
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 WHILE	I_WHILE		esyntax

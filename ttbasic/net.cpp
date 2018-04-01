@@ -80,7 +80,27 @@ void inetclose() {
   stream = NULL;
 }
 
-BString swget() {
+BString snetinput() {
+  BString rx;
+  size_t count = getparam();
+  if (err)
+    return rx;
+  if (!http || !stream) {
+    E_NETWORK(PSTR("open connection"));
+    return rx;
+  }
+  size_t avail = stream->available();
+  count = avail < count ? avail : count;
+  if (!rx.reserve(count)) {
+    err = ERR_OOM;
+    return rx;
+  }
+  count = stream->readBytes(rx.begin(), count);
+  rx.resetLength(count);
+  return rx;
+}
+
+BString snetget() {
   BString rx;
   if (checkOpen()) return rx;
   BString url = istrexp();
@@ -128,9 +148,5 @@ void inet() {
 num_t nconnect() {
   err = ERR_NOT_SUPPORTED;
   return 0;
-}
-BString swget() {
-  err = ERR_NOT_SUPPORTED;
-  return BString(F(""));
 }
 #endif
