@@ -57,6 +57,7 @@ extern unsigned char *clp;
 extern unsigned char *cip;
 
 BString getParamFname();
+num_t getparam();
 
 void get_input(bool numeric = false);
 
