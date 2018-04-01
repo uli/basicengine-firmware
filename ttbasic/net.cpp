@@ -11,6 +11,7 @@
 
 ESP8266WiFiMulti WiFiMulti;
 static HTTPClient *http = NULL;
+static WiFiClient *stream = NULL;
 
 void isetap() {
   BString ssid = istrexp();
@@ -65,6 +66,7 @@ void inetopen() {
     return;
   }
   retval[0] = open_url(url);
+  stream = http->getStreamPtr();
 }
 
 void inetclose() {
@@ -75,6 +77,7 @@ void inetclose() {
   http->end();
   delete http;
   http = NULL;
+  stream = NULL;
 }
 
 BString swget() {
