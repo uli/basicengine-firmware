@@ -1,4 +1,3 @@
-void isetap();
-void iconnect();
-num_t istatus();
+void inet();
+num_t nconnect();
 BString swget();

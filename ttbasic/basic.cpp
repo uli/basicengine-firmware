@@ -5525,7 +5525,7 @@ num_t BASIC_FP ivalue() {
       value = user_files[a]->position();
     break;
     
-  case I_STATUS:	value = istatus(); break;
+  case I_CONNECT:	value = nconnect(); break;
 
   default:
     cip--;

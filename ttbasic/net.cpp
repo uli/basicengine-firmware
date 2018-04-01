@@ -29,7 +29,18 @@ void iconnect() {
   WiFiMulti.run();
 }
 
-num_t istatus() {
+void inet() {
+  if (*cip == I_CONFIG) {
+    ++cip;
+    isetap();
+  } else if (*cip == I_CONNECT) {
+    ++cip;
+    iconnect();
+  }
+  E_ERR(SYNTAX, "network command");
+}
+
+num_t nconnect() {
   if (checkOpen() || checkClose())
     return 0;
   return WiFiMulti.run();
@@ -62,13 +73,10 @@ BString swget() {
 
 #else
 
-void iconnect() {
+void inet() {
   err = ERR_NOT_SUPPORTED;
 }
-void isetap() {
-  err = ERR_NOT_SUPPORTED;
-}
-num_t istatus() {
+num_t nconnect() {
   err = ERR_NOT_SUPPORTED;
   return 0;
 }
