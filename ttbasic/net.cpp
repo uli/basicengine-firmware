@@ -56,6 +56,17 @@ static int open_url(BString &url) {
   return httpCode;
 }
 
+void inetopen() {
+  BString url = istrexp();
+  BString uh(F("http://"));
+  BString uhs(F("https://"));
+  if (!url.startsWith(uh) && !url.startsWith(uhs)) {
+    E_ERR(VALUE, "HTTP(S) URL");
+    return;
+  }
+  retval[0] = open_url(url);
+}
+
 void inetclose() {
   if (!http) {
     E_NETWORK(PSTR("open connection"));
@@ -93,6 +104,12 @@ void inet() {
     break;
   case I_CONNECT:
     iconnect();
+    break;
+  case I_OPEN:
+    inetopen();
+    break;
+  case I_CLOSE:
+    inetclose();
     break;
   default:
     E_ERR(SYNTAX, "network command");
