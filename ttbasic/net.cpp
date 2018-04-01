@@ -29,17 +29,6 @@ void iconnect() {
   WiFiMulti.run();
 }
 
-void inet() {
-  if (*cip == I_CONFIG) {
-    ++cip;
-    isetap();
-  } else if (*cip == I_CONNECT) {
-    ++cip;
-    iconnect();
-  }
-  E_ERR(SYNTAX, "network command");
-}
-
 num_t nconnect() {
   if (checkOpen() || checkClose())
     return 0;
@@ -69,6 +58,20 @@ BString swget() {
   }
   http.end();
   return rx;
+}
+
+void inet() {
+  switch (*cip++) {
+  case I_CONFIG:
+    isetap();
+    break;
+  case I_CONNECT:
+    iconnect();
+    break;
+  default:
+    E_ERR(SYNTAX, "network command");
+    break;
+  }
 }
 
 #else
