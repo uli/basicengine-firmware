@@ -7,10 +7,10 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
-
 #include <ESP8266HTTPClient.h>
 
 ESP8266WiFiMulti WiFiMulti;
+static HTTPClient *http = NULL;
 
 void isetap() {
   BString ssid = istrexp();
@@ -35,6 +35,37 @@ num_t nconnect() {
   return WiFiMulti.run();
 }
 
+static int open_url(BString &url) {
+  if (http) {
+    http->end();
+    delete http;
+  }
+  http = new HTTPClient;
+  if (!http) {
+    err = ERR_OOM;	// I guess...
+    return -1;
+  }
+  http->begin(url.c_str());
+  int httpCode = http->GET();
+  if (httpCode < 0) {
+    http->end();
+    E_NETWORK(http->errorToString(httpCode).c_str());
+    delete http;
+    http = NULL;
+  }
+  return httpCode;
+}
+
+void inetclose() {
+  if (!http) {
+    E_NETWORK(PSTR("open connection"));
+    return;
+  }
+  http->end();
+  delete http;
+  http = NULL;
+}
+
 BString swget() {
   BString rx;
   if (checkOpen()) return rx;
@@ -44,19 +75,14 @@ BString swget() {
   if (WiFiMulti.run() != WL_CONNECTED) {
     return BString(F("ENC"));
   }
-  HTTPClient http;
-  http.begin(url.c_str());
-  int httpCode = http.GET();
-  if (httpCode < 0) {
-    http.end();
-    return BString(F("EGT ")) + http.errorToString(httpCode).c_str();
-  }
-  if (httpCode == HTTP_CODE_OK) {
-    rx = http.getString().c_str();
-  } else {
+  int httpCode = open_url(url);
+  if (err)
+    return rx;
+  if (httpCode == HTTP_CODE_OK)
+    rx = http->getString().c_str();
+  else
     rx = BString(F("E")) + BString(httpCode);
-  }
-  http.end();
+  inetclose();
   return rx;
 }
 
