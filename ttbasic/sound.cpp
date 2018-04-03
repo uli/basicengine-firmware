@@ -26,6 +26,7 @@ uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
 uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
 uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
 uint16_t BasicSound::m_bpm[SOUND_CHANNELS];
+uint8_t BasicSound::m_velocity[SOUND_CHANNELS];
 #endif
 
 #ifdef HAVE_TSF
@@ -75,7 +76,7 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
       {
         MML_ARGS_NOTE *args = &(p->args.note);
 //        dbg_snd("[NOTE  : Number=%3d, Ticks=%4d]\n", args->number, args->ticks);
-        noteOn(ch, m_ch_inst[ch], args->number, 1.0, mmlGetNoteLength(ch, args->ticks));
+        noteOn(ch, m_ch_inst[ch], args->number, m_velocity[ch] / 15.0f, mmlGetNoteLength(ch, args->ticks));
       }
       break;
     case MML_TYPE_REST:
@@ -131,6 +132,7 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
       {
         MML_ARGS_VOLUME *args = &(p->args.volume);
         dbg_snd("[VOLUME: Value=%3d]\r\n", args->value);
+        m_velocity[ch] = min(0, max(args->value, 15));
       }
       break;
     case MML_TYPE_OCTAVE:
@@ -231,6 +233,7 @@ void BasicSound::defaults(int ch)
   m_ch_inst[ch] = ch * 3;
   m_next_event[ch] = 0;
   m_bpm[ch] = 120;
+  m_velocity[ch] = 15;
 }
 
 void BasicSound::playMml(int ch, const char *data)

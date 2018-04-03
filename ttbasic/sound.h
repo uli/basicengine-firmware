@@ -121,6 +121,7 @@ private:
     static uint8_t m_ch_inst[SOUND_CHANNELS];
     static bool m_finished[SOUND_CHANNELS];
     static uint16_t m_bpm[SOUND_CHANNELS];
+    static uint8_t m_velocity[SOUND_CHANNELS];
 #endif
 #ifdef HAVE_TSF
     static uint32_t m_all_done_time;
