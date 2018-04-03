@@ -877,9 +877,14 @@ void SMALL VS23S010::SpiRamVideoInit()
 	// 14. Set number of lines, length of pixel and enable video
 	// generation
 	// The line count is TOTAL_LINES - 1 in the example, but the only
-	// value that doesn't produce a crap picture is 263 (even interlaced!),
-	// so we hard-code it here.
-	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT * 263)
+	// value that doesn't produce a crap picture is 263 (even interlaced,
+	// PAL: 314), on both CRT and LCD displays, so we hard-code it here.
+
+	// XXX: PAL on Daewoo LCD TV, screen mode 1: 314 has no color noise,
+	//	but shifts one pixel up or down, depending on screen content;
+	//	"standard" 313 has color noise, but remains in place.
+	//	Does not seem to happen in other modes, may be a TV quirk.
+	SpiRamWriteRegister(VDCTRL2, (VDCTRL2_LINECOUNT * (m_pal ? 314 : 263))
 			    | (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL - 1))
 			    | (m_pal ? VDCTRL2_PAL : 0)
 			    | (VDCTRL2_ENABLE_VIDEO));
