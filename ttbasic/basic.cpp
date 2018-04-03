@@ -5057,7 +5057,7 @@ void SMALL error(uint8_t flgCmd = false) {
       PRINT_P(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       if (err_expected) {
-        PRINT_P(" (expected ");
+        PRINT_P(" (exp ");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
@@ -5073,7 +5073,7 @@ void SMALL error(uint8_t flgCmd = false) {
     } else {                   // 指示の実行中なら
       c_puts_P(errmsg[err]);     // エラーメッセージを表示
       if (err_expected) {
-        PRINT_P(" (expected ");
+        PRINT_P(" (exp ");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
@@ -5530,7 +5530,7 @@ num_t BASIC_FP ivalue() {
     if (is_strexp())
       err = ERR_TYPE;
     else
-      SYNTAX_T("numeric expression");
+      SYNTAX_T("numeric expr");
     break;
   }
   return value; //取得した値を持ち帰る
@@ -5890,7 +5890,7 @@ BString istrvalue()
     if (!err)
       err = ERR_TYPE;
     else
-      SYNTAX_T("string expression");
+      SYNTAX_T("string expr");
     break;
   }
   if (err)
