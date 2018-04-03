@@ -3259,15 +3259,14 @@ void iwait() {
 }
 
 void ivsync() {
-  int32_t tm;
+  uint32_t tm;
   if (end_of_statement())
-    tm = 1;
+    tm = vs23.frame() + 1;
   else
     if ( getParam(tm, 0, INT32_MAX, I_NONE) )
       return;
 
-  uint32_t end = tm + vs23.frame();
-  while (vs23.frame() < end) {
+  while (vs23.frame() < tm) {
     pump_events();
     if (sc0.peekKey() == SC_KEY_CTRL_C) {
       err = ERR_CTR_C;
