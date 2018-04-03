@@ -93,7 +93,6 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
 {
   m_vsync_enabled = false;
   m_interlace = interlace;
-  m_pal = system != 0;
   m_lowpass = lowpass;
 #ifdef VS23_BG_ENGINE
   m_frameskip = 0;
@@ -105,14 +104,19 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   m_bin.Init(0, 0);
 
   SpiLock();
-  for (int i = 0; i < numModes(); ++i) {
-    SPI.setFrequency(modes()[i].max_spi_freq);
-    modes()[i].max_spi_freq = getSpiClock();
+  for (int p = 0; p < 2; ++p) {
+    m_pal = !!p;
+    for (int i = 0; i < numModes(); ++i) {
+      SPI.setFrequency(modes()[i].max_spi_freq);
+      modes()[i].max_spi_freq = getSpiClock();
+    }
   }
   SPI.setFrequency(38000000);
   m_min_spi_div = getSpiClock();
   SPI.setFrequency(11000000);
   m_def_spi_div = getSpiClock();
+
+  m_pal = system != 0;
 
   m_gpio_state = 0xf;
   SpiRamWriteRegister(0x82, m_gpio_state);
