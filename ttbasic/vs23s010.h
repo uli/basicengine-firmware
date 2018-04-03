@@ -65,7 +65,7 @@ struct sprite_line {
 // ntscビデオ表示クラス定義
 class VS23S010 {    
   public:
-    void begin(bool interlace = false, bool lowpass = false);  // NTSCビデオ表示開始
+    void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
     void end();                            // NTSCビデオ表示終了 
     void cls();                            // 画面クリア
     void delay_frame(uint16_t x);          // フレーム換算時間待ち

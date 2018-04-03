@@ -89,12 +89,12 @@ void VS23S010::resetBgs()
 }
 #endif
 
-void VS23S010::begin(bool interlace, bool lowpass)
+void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
 {
   m_vsync_enabled = false;
   m_interlace = interlace;
-  m_pal = false;
-  m_lowpass = m_pal ? true : lowpass;
+  m_pal = system != 0;
+  m_lowpass = lowpass;
 #ifdef VS23_BG_ENGINE
   m_frameskip = 0;
   m_bg_modified = true;
