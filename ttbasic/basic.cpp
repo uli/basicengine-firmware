@@ -1497,8 +1497,18 @@ void SMALL iinput() {
       cip++;
 
       if (filenum >= 0) {
-        err = ERR_NOT_SUPPORTED;
-        return;
+        int c;
+        str_value = "";
+        for (;;) {
+          c = user_files[filenum]->peek();
+          if (isdigit(c) || c == '.')
+            str_value += (char)user_files[filenum]->read();
+          else if (isspace(c))
+            user_files[filenum]->read();
+          else
+            break;
+        }
+        value = str_value.toFloat();
       } else
         value = getnum();
 
