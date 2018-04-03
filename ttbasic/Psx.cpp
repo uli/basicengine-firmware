@@ -93,7 +93,7 @@ void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte
 }
 
 #define MAX_RETRIES 3
-#define CONFIRMATIONS 2
+#define CONFIRMATIONS 1
 
 int Psx::read()
 {
