@@ -7114,7 +7114,7 @@ void SMALL basic() {
   vs23.begin(CONFIG.interlace, CONFIG.lowpass);
   vs23.setColorSpace(1);
 
-  psx.setupPins(0, 1, 2, 3, 3);
+  psx.setupPins(0, 1, 2, 3, 1);
 
   size_list = 0;
   listbuf = NULL;
