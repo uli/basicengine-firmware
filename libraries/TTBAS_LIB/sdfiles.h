@@ -255,6 +255,18 @@ public:
     }
   }
 
+  int peek() {
+    switch (m_type) {
+    case SD: { SD_BEGIN(); int ret = m_sd_file.peek(); SD_END(); return ret; }
+#ifdef UNIFILE_USE_SPIFFS
+    case FS: return m_fs_file.peek();
+#else
+    case FS: return m_fs_file->peek();
+#endif
+    default: return -1;
+    }
+  }
+
   UniDirEntry next() {
     UniDirEntry e;
     File sd_entry;
