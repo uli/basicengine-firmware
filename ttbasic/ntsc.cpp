@@ -848,30 +848,6 @@ void SMALL VS23S010::SpiRamVideoInit()
 	}
 #endif
 
-	// Fixes the picture to proto area border artifacts if BEXTRA > 0.
-	if (BEXTRA > 0) {
-		for (i = 0; i < ENDLINE - STARTLINE; i++) {
-			for (j = 0; j < BEXTRA; j++) {
-#ifdef BYTEPIC
-				if (j % 2 == 1) {
-#else
-				if (j % 2 == 0) {
-#endif
-					// V and U of the first proto pixel
-					// after picture.
-					SpiRamWriteByte(PICLINE_BYTE_ADDRESS(i)
-							+ PICLINE_LENGTH_BYTES +
-							j, 0x00);
-				} else {
-					// Y of the first proto pixel after
-					// picture.
-					SpiRamWriteByte(PICLINE_BYTE_ADDRESS(i)
-							+ PICLINE_LENGTH_BYTES +
-							j, 0x37);
-				}
-			}
-		}
-	}
 	SPI1CLK = original_spi_div;
 
 	// 14. Set number of lines, length of pixel and enable video
@@ -888,7 +864,6 @@ void SMALL VS23S010::SpiRamVideoInit()
 			    | (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL - 1))
 			    | (m_pal ? VDCTRL2_PAL : 0)
 			    | (VDCTRL2_ENABLE_VIDEO));
-
 }
 
 void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
