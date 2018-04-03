@@ -110,6 +110,8 @@ int Psx::read()
 #ifdef DEBUG_PSX
     uint32_t now = micros();
 #endif
+    uint32_t spiclk = vs23.getSpiClock();
+    vs23.setSpiClockMax();
 
     // We want more than one consecutive read to yield the same data before
     // we trust it to be correct.
@@ -156,6 +158,7 @@ int Psx::read()
       delayMicroseconds(_delay*2);
     }
 
+    vs23.setSpiClock(spiclk);
     dbg_psx("psxr %d\r\n", micros() - now);
     return data_out;
 }
