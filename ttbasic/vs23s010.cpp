@@ -146,6 +146,7 @@ void VS23S010::reset()
 
 void SMALL VS23S010::setMode(uint8_t mode)
 {
+retry:
 #ifdef VS23_BG_ENGINE
   m_bg_modified = true;
 #endif
@@ -164,6 +165,15 @@ void SMALL VS23S010::setMode(uint8_t mode)
 
   SpiRamVideoInit();
   calibrateVsync();
+  if (m_pal && F_CPU / m_cycles_per_frame < 45) {
+    // We are in PAL mode, but the hardware has an NTSC crystal.
+    m_pal = false;
+    goto retry;
+  } else if (!m_pal && F_CPU / m_cycles_per_frame > 70) {
+    // We are in NTSC mode, but the hardware has a PAL crystal.
+    m_pal = true;
+    goto retry;
+  }
   // Start the new frame at the end of the visible screen plus a little extra.
   // Used to be two-thirds down the screen, but that caused more flicker when
   // the rendering load changes drastically.
