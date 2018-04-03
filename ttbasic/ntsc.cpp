@@ -329,14 +329,15 @@ void VS23S010::setColorSpace(uint8_t palette)
 {
 	// 8. Set microcode program for picture lines
 	// Use HROP1/HROP2/OP4/OP4 for 2 PLL clocks per pixel modes
+	const uint8_t *ops = m_pal ? vs23_ops_pal[palette] : vs23_ops_ntsc[palette];
 	SpiRamWriteProgram(PROGRAM,
-          (vs23_ops[palette][3] << 8) | vs23_ops[palette][2],
-          (vs23_ops[palette][m_pal ? 0 : 1] << 8) | vs23_ops[palette][m_pal ? 1 : 0]
+          (pgm_read_byte(&ops[3]) << 8) | pgm_read_byte(&ops[2]),
+          (pgm_read_byte(&ops[1]) << 8) | pgm_read_byte(&ops[0])
         );
 	// Set color burst
 	uint32_t w = PROTOLINE_WORD_ADDRESS(0) + BURST;
 	for (int i = 0; i < BURSTDUR; i++)
-		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (vs23_ops[palette][m_pal ? 5 : 4] << 8));
+		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (pgm_read_byte(&ops[4]) << 8));
 
         switch (palette) {
         case 0: setColorConversion(0, 7, 3, 6, true); break;

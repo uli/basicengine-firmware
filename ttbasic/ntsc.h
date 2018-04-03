@@ -2,10 +2,7 @@
 #define NTSC_H
 
 #include <stdint.h>
-
-//#include <vsos.h>
-//#include "devHwSpi.h"
-#include <stdint.h>
+#include <Arduino.h>
 
 /// Selects interlaced NTSC picture. When commented progressive NTSC is used.		
 //#define INTERLACE
@@ -212,8 +209,7 @@
 #define USHIFT 12
 #define VSHIFT 8
 #else
-/// 8 bits per pixel, U2 V2 Y4
-const uint8_t vs23_ops[2][6] = {
+static const uint8_t vs23_ops_ntsc[2][5] PROGMEM = {
   {
     /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
     PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
@@ -221,7 +217,6 @@ const uint8_t vs23_ops[2][6] = {
     PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
     PICK_NOTHING,
     0x0d,
-    0xee,
   },
   {
     /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
@@ -230,6 +225,23 @@ const uint8_t vs23_ops[2][6] = {
     PICK_Y + PICK_BITS(3) + SHIFT_BITS(3),
     PICK_NOTHING,
     0x0c,
+  },
+};
+static const uint8_t vs23_ops_pal[2][5] PROGMEM = {
+  {
+    /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
+    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
+    PICK_NOTHING,
+    0xee,
+  },
+  {
+    /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
+    PICK_A + PICK_BITS(6) + SHIFT_BITS(2),
+    PICK_B + PICK_BITS(6) + SHIFT_BITS(3),
+    PICK_Y + PICK_BITS(3) + SHIFT_BITS(3),
+    PICK_NOTHING,
     0xdd,
   },
 };
