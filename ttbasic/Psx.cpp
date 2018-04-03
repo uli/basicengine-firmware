@@ -25,6 +25,15 @@
 #include "Psx.h"
 #include "vs23s010.h"
 
+//#define DEBUG_PSX
+
+#ifdef DEBUG_PSX
+#include "basic.h"
+#define dbg_psx dbg_printf
+#else
+#define dbg_psx(x...)
+#endif
+
 Psx::Psx()
 {
 	_last_read = 0;
@@ -98,6 +107,9 @@ int Psx::read()
     }
 
     _last_read = -1;
+#ifdef DEBUG_PSX
+    uint32_t now = micros();
+#endif
 
     // We want more than one consecutive read to yield the same data before
     // we trust it to be correct.
@@ -144,5 +156,6 @@ int Psx::read()
       delayMicroseconds(_delay*2);
     }
 
+    dbg_psx("psxr %d\r\n", micros() - now);
     return data_out;
 }
