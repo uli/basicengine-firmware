@@ -818,6 +818,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 		}
 	}
 
+#ifdef DEBUG
 	// Draw some color bars
 	{
 		uint16_t re = 0;
@@ -845,6 +846,7 @@ void SMALL VS23S010::SpiRamVideoInit()
 		drawLineRgb(PICX - 1, 0, PICX - 1, PICY - 1, re, gr, bl);
 		drawLineRgb(0, PICY - 1, PICX - 1, PICY - 1, re, gr, bl);
 	}
+#endif
 
 	// Fixes the picture to proto area border artifacts if BEXTRA > 0.
 	if (BEXTRA > 0) {
