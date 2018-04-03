@@ -8,10 +8,10 @@
 
 // #define DEBUG
 
-// Remember to update VS23_MAX_X/Y!
-struct vs23_mode_t VS23S010::modes[] = {
-	// maximum usable without overscan, 76 6-pixel chars/line, 57 8-pixel
-	// chars
+// Remember to update VS23_MAX_X/Y! (XXX: they are not used anywhere any more...)
+struct vs23_mode_t VS23S010::modes_ntsc[] = {
+	// maximum usable on NTSC without overscan, 76 6-pixel chars/line,
+	// 57 8-pixel chars
 	{456, 224, 9, 10, 3, 9, 11000000},
 	// a bit smaller, may fit better on some TVs
 	{432, 216, 13, 14, 3, 9, 11000000},
@@ -29,6 +29,24 @@ struct vs23_mode_t VS23S010::modes[] = {
 						// useful?)
 };
 
+struct vs23_mode_t VS23S010::modes_pal[] = {
+	// compatible with NTSC mode 1, centered
+	{456, 224, 32, 29, 3, 7, 11000000},
+	// maximum screen width on PAL at 4 clocks per pixel
+	{432, 216, 33, 8, 4, 8, 11000000},
+	{320, 216, 33, 15, 5, 8, 11000000},	// VS23 NTSC demo
+	{320, 200, 41, 15, 5, 8, 14000000},	// (M)CGA, Commodore et al.
+	{256, 224, 32, 20, 6, 8, 15000000},	// SNES
+	{256, 192, 42, 20, 6, 8, 11000000},	// MSX, Spectrum, NDS
+	{160, 200, 41, 15, 10, 8, 11000000},	// Commodore/PCjr/CPC
+						// multi-color
+	// "Overscan modes" are actually underscan on PAL.
+	{352, 240, 24, 8, 5, 8, 11000000},	// PCE overscan (barely)
+	{282, 240, 24, 8, 6, 8, 11000000},	// PCE overscan (underscan on PAL)
+	{504, 240, 24, 20, 3, 9, 11000000},	// maximum PAL (the timing would allow
+	                                        // more, but we would run out of memory
+};
+
 // Common modes not included:
 // GBA (240x160): Lines do not scale evenly.
 // Apple ][ hires: Does not fill the screen well (too narrow).
@@ -39,10 +57,16 @@ struct vs23_mode_t VS23S010::modes[] = {
 // 2. Only two microprogram instructions can be executed per pixel, making
 // it impossible to support the full color gamut.
 
-#define NUM_MODES (sizeof(VS23S010::modes)/sizeof(vs23_mode_t))
-const uint8_t VS23S010::numModes = NUM_MODES;
+#define VS23_NUM_MODES_NTSC (sizeof(VS23S010::modes_ntsc)/sizeof(vs23_mode_t))
+#define VS23_NUM_MODES_PAL (sizeof(VS23S010::modes_pal)/sizeof(vs23_mode_t))
 
-const struct vs23_mode_t *vs23_current_mode = &VS23S010::modes[0];
+int VS23S010::numModes() {
+	return m_pal ? VS23_NUM_MODES_PAL : VS23_NUM_MODES_NTSC;
+}
+
+struct vs23_mode_t *VS23S010::modes() {
+	return m_pal ? modes_pal : modes_ntsc;
+}
 
 static inline void ICACHE_RAM_ATTR vs23Select()
 {

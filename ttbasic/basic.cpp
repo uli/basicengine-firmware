@@ -2826,8 +2826,8 @@ void SMALL iconfig() {
     vs23.setLowpass(CONFIG.lowpass);
     break;
   case 4:
-    if (value < 1 || value >= vs23.numModes)
-      E_VALUE(1, vs23.numModes - 1);
+    if (value < 1 || value >= vs23.numModes())
+      E_VALUE(1, vs23.numModes() - 1);
     else
       CONFIG.mode = value;
     break;
@@ -4518,7 +4518,7 @@ void ifont() {
 void SMALL iscreen() {
   int32_t m;
 
-  if ( getParam(m,  1, vs23.numModes, I_NONE) ) return;   // m
+  if ( getParam(m,  1, vs23.numModes(), I_NONE) ) return;   // m
 
 #ifdef VS23_BG_ENGINE
   // Discard dimensions saved for CONTing.

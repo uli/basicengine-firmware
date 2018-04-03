@@ -105,9 +105,9 @@ void VS23S010::begin(bool interlace, bool lowpass)
   m_bin.Init(0, 0);
 
   SpiLock();
-  for (int i = 0; i < numModes; ++i) {
-    SPI.setFrequency(modes[i].max_spi_freq);
-    modes[i].max_spi_freq = getSpiClock();
+  for (int i = 0; i < numModes(); ++i) {
+    SPI.setFrequency(modes()[i].max_spi_freq);
+    modes()[i].max_spi_freq = getSpiClock();
   }
   SPI.setFrequency(38000000);
   m_min_spi_div = getSpiClock();
@@ -150,7 +150,7 @@ void SMALL VS23S010::setMode(uint8_t mode)
   m_bg_modified = true;
 #endif
   setSyncLine(0);
-  m_current_mode = &modes[mode];
+  m_current_mode = &modes()[mode];
   m_last_line = PICLINE_MAX;
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;

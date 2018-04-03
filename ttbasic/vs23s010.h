@@ -114,6 +114,8 @@ class VS23S010 {
     }
     uint8_t *paletteData(uint8_t colorspace);
 
+    int numModes();
+    struct vs23_mode_t *modes();
     void setMode(uint8_t mode);
     void calibrateVsync();
     void setSyncLine(uint16_t line);
@@ -329,8 +331,8 @@ class VS23S010 {
     uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
 #endif
 
-    static const uint8_t numModes;
-    static struct vs23_mode_t modes[];
+    static struct vs23_mode_t modes_ntsc[];
+    static struct vs23_mode_t modes_pal[];
     
     inline uint16_t lastLine() { return m_last_line; }
 
