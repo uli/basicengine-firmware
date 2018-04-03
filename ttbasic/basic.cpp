@@ -2799,8 +2799,7 @@ void SMALL iconfig() {
   if ( getParam(itemNo, I_COMMA) ) return;
   if ( getParam(value, I_NONE) ) return;
   switch(itemNo) {
-#if USE_NTSC == 1
-  case 0: // NTSC補正
+  case 0: // NTSC, PAL, PAL60 (XXX: unimplemented)
     if (value <0 || value >2)  {
       E_VALUE(0, 2);
     } else {
@@ -2816,7 +2815,6 @@ void SMALL iconfig() {
       CONFIG.KEYBOARD = value;
     }
     break;
-#endif
   case 2:
     CONFIG.interlace = value != 0;
     vs23.setInterlace(CONFIG.interlace);
@@ -7110,7 +7108,7 @@ void SMALL basic() {
 #endif
   loadConfig();
 
-  vs23.begin(CONFIG.interlace, CONFIG.lowpass);
+  vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
   vs23.setColorSpace(1);
 
   psx.setupPins(0, 1, 2, 3, 1);
