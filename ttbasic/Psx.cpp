@@ -62,7 +62,8 @@ byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and ou
 		}
 
 		vs23.digitalWrite(_clockPin, HIGH);
-		delayMicroseconds(_delay);
+		// Additional delay unnecessary because of VS23 GPIO overhead.
+		//delayMicroseconds(_delay);
 	}
 	return _dataIn;
 }
