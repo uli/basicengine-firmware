@@ -3415,7 +3415,7 @@ int32_t ipeek(int type) {
   return value;
 }
 
-num_t iret() {
+num_t BASIC_FP nret() {
   int32_t r;
 
   if (checkOpen()) return 0;
@@ -3425,7 +3425,7 @@ num_t iret() {
   return retval[r];
 }
 
-num_t iarg() {
+num_t BASIC_FP narg() {
   int32_t a;
   if (astk_num_i == 0) {
     err = ERR_UNDEFARG;
@@ -3455,10 +3455,8 @@ BString sarg() {
   return BString(astk_str[astk_str_i-argc+a]);
 }
 
-num_t iargc() {
-  int32_t type;
-  if (checkOpen()) return 0;
-  if ( getParam(type, I_CLOSE) ) return 0;
+num_t BASIC_FP nargc() {
+  int32_t type = getparam();
   if (!gstki)
     return 0;
   if (type == 0)
@@ -3468,7 +3466,7 @@ num_t iargc() {
 }
 
 // スクリーン座標の文字コードの取得 'CHAR(X,Y)'
-int32_t BASIC_FP icharfun() {
+int32_t BASIC_FP ncharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -3585,7 +3583,7 @@ void isys() {
   sys();
 }
 
-int32_t ii2cw() {
+num_t BASIC_INT ni2cw() {
   int32_t i2cAdr;
   BString out;
 
@@ -3937,7 +3935,7 @@ void iplay() {
 }
 
 // POINT(X,Y)関数の処理
-int32_t ipoint() {
+num_t BASIC_FP npoint() {
   int x, y;  // 座標
   if (checkOpen()) return 0;
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
@@ -3947,7 +3945,7 @@ int32_t ipoint() {
 }
 
 // MAP(V,L1,H1,L2,H2)関数の処理
-int32_t imap() {
+num_t BASIC_FP SMALL nmap() {
   int32_t value,l1,h1,l2,h2,rc;
   if (checkOpen()) return 0;
   if ( getParam(value, I_COMMA)||getParam(l1, I_COMMA)||getParam(h1, I_COMMA)||getParam(l2, I_COMMA)||getParam(h2, I_NONE) )
@@ -3964,7 +3962,7 @@ int32_t imap() {
 }
 
 // ASC(文字列)
-int32_t iasc() {
+num_t BASIC_FP nasc() {
   int32_t value;
 
   if (checkOpen()) return 0;
@@ -4913,7 +4911,7 @@ int BASIC_INT pad_state(int num)
   return 0;
 }
 
-int32_t BASIC_INT ipad() {
+num_t BASIC_INT npad() {
   int32_t num;
   if (checkOpen()) return 0;
   if (getParam(num, 0, 2, I_CLOSE)) return 0;
@@ -5096,7 +5094,7 @@ void SMALL error(uint8_t flgCmd = false) {
   err_expected = NULL;
 }
 
-num_t irgb() {
+num_t BASIC_FP nrgb() {
   int32_t r, g, b;
   if (checkOpen() ||
       getParam(r, 0, 255, I_COMMA) ||
@@ -5127,7 +5125,7 @@ int get_filenum_param() {
     return f;
 }
 
-int32_t ilen() {
+num_t BASIC_INT nlen() {
   int32_t value;
   if (checkOpen()) return 0;
   if (*cip == I_STRLSTREF) {
@@ -5143,16 +5141,383 @@ int32_t ilen() {
   return value;
 }
 
+num_t BASIC_FP nrnd() {
+  num_t value = getparam(); //括弧の値を取得
+  if (!err) {
+    if (value < 0 )
+      E_VALUE(0, INT32_MAX);
+    else
+      value = getrnd(value);  //乱数を取得
+  }
+  return value;
+}
+
+num_t BASIC_FP nabs() {
+  num_t value = getparam(); //括弧の値を取得
+  if (value == INT32_MIN) {
+    err = ERR_VOF;
+    return 0;
+  }
+  if (value < 0)
+    value *= -1;  //正負を反転
+  return value;
+}
+
+num_t BASIC_FP nsin() {
+  return sin(getparam());
+}
+num_t BASIC_FP ncos() {
+  return cos(getparam());
+}
+num_t BASIC_FP nexp() {
+  return exp(getparam());
+}
+num_t BASIC_FP natn() {
+  return atan(getparam());
+}
+
+num_t BASIC_FP natn2() {
+  num_t value, value2;
+  if (checkOpen() || getParam(value, I_COMMA) || getParam(value2, I_CLOSE))
+    return 0;
+  return atan2(value, value2);
+}
+
+num_t BASIC_FP nsqr() {
+  num_t value = getparam();
+  if (value < 0)
+    err = ERR_FP;
+  else
+    value = sqrt(value);
+  return value;
+}
+
+num_t BASIC_FP ntan() {
+  // XXX: check for +/-inf
+  return tan(getparam());
+}
+
+num_t BASIC_FP nlog() {
+  num_t value = getparam();
+  if (value <= 0)
+    err = ERR_FP;
+  else
+    value = log(value);
+  return value;
+}
+
+num_t BASIC_FP nint() {
+  return floor(getparam());
+}
+
+num_t BASIC_FP nsgn() {
+  num_t value = getparam();
+  return (0 < value) - (value < 0);
+}
+
+num_t BASIC_FP nhigh() {
+  return CONST_HIGH;
+}
+num_t BASIC_FP nlow() {
+  return CONST_LOW;
+}
+num_t BASIC_FP nlsb() {
+  return CONST_LSB;
+}
+num_t BASIC_FP nmsb() {
+  return CONST_MSB;
+}
+
+num_t BASIC_INT nmprg() {
+  return (unsigned int)listbuf;
+}
+num_t BASIC_INT nmfnt() {
+  return (unsigned int)sc0.getfontadr();
+}
+
+num_t BASIC_INT ngpin() {
+  int32_t a;
+  if (checkOpen()) return 0;
+  if (getParam(a, 0, 15, I_NONE)) return 0;
+  if (checkClose()) return 0;
+  while (!blockFinished()) {}
+  if (Wire.requestFrom(0x20, 2) != 2) {
+    err = ERR_IO;
+    return 0;
+  } else {
+    uint16_t state = Wire.read();
+    state |= Wire.read() << 8;
+    return !!(state & (1 << a));
+  }
+}
+
+num_t BASIC_FP nana() {
+#ifdef ESP8266_NOWIFI
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#else
+  if (checkOpen()) return 0;
+  if (checkClose()) return 0;
+  return analogRead(A0);    // 入力値取得
+#endif
+}
+
+num_t BASIC_FP nsread() {
+  if (checkOpen()||checkClose()) return 0;
+  return Serial.read();
+}
+
+num_t BASIC_FP nsready() {
+  if (checkOpen()||checkClose()) return 0;
+  return Serial.available();
+}
+
+num_t BASIC_FP ncsize() {
+  // 画面サイズ定数の参照
+  int32_t a = getparam();
+  switch (a) {
+  case 0:	return sc0.getWidth();
+  case 1:	return sc0.getHeight();
+  default:	E_VALUE(0, 1); return 0;
+  }
+}
+
+num_t BASIC_FP npsize() {
+  int32_t a = getparam();
+  switch (a) {
+  case 0:	return sc0.getGWidth();
+  case 1:	return sc0.getGHeight();
+  case 2:	return vs23.lastLine();
+  default:	E_VALUE(0, 2); return 0;
+  }
+}
+
+num_t BASIC_FP npos() {
+  int32_t a = getparam();
+  switch (a) {
+  case 0:	return sc0.c_x();
+  case 1:	return sc0.c_y();
+  default:	E_VALUE(0, 1); return 0;
+  }
+}
+
+num_t BASIC_FP nup() {
+  // カーソル・スクロール等の方向
+  return psxUp;
+}
+num_t BASIC_FP nright() {
+  return psxRight;
+}
+num_t BASIC_FP nleft() {
+  return psxLeft;
+}
+
+num_t BASIC_FP ntilecoll() {
+#ifdef VS23_BG_ENGINE
+  int32_t a, b, c;
+  if (checkOpen()) return 0;
+  if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
+  if (getParam(b, 0, VS23_MAX_BG, I_COMMA)) return 0;
+  if (getParam(c, 0, 255, I_NONE)) return 0;
+  if (checkClose()) return 0;
+  return vs23.spriteTileCollision(a, b, c);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
+num_t BASIC_FP nsprcoll() {
+#ifdef VS23_BG_ENGINE
+  int32_t a, b;
+  if (checkOpen()) return 0;
+  if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
+  if (getParam(b, 0, VS23_MAX_SPRITES, I_NONE)) return 0;
+  if (checkClose()) return 0;
+  if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
+    return vs23.spriteCollision(a, b);
+  else
+    return 0;
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
+num_t BASIC_FP nplay() {
+#ifdef HAVE_MML
+  int32_t a, b;
+  if (checkOpen()) return 0;
+  if (getParam(a, 0, SOUND_CHANNELS, I_CLOSE)) return 0;
+  if (a == 0) {
+    b = 0;
+    for (int i = 0; i < SOUND_CHANNELS; ++i) {
+      b |= sound.isPlaying(i);
+    }
+    return b;
+  } else
+    return sound.isPlaying(a - 1);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
+num_t BASIC_FP nfree() {
+  if (checkOpen()||checkClose()) return 0;
+#ifdef ESP8266
+  return umm_free_heap_size();
+#else
+  err = ERR_NOT_SUPPORTED;
+  return -1;
+#endif
+}
+
+num_t BASIC_FP ninkey() {
+  if (checkOpen()||checkClose()) return 0;
+  return iinkey(); // キー入力値の取得
+}
+
+num_t BASIC_FP ntick() {
+  num_t value;
+  if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
+    // 引数無し
+    value = 0;
+    cip+=2;
+  } else {
+    value = getparam(); // 括弧の値を取得
+    if (err)
+      return 0;
+  }
+  if(value == 0) {
+    value = millis();              // 0～INT32_MAX ms
+  } else if (value == 1) {
+    value = millis()/1000;         // 0～INT32_MAX s
+  } else {
+    E_VALUE(0, 1);
+  }
+  return value;
+}
+
+num_t BASIC_FP npeek() {
+  return ipeek(0);
+}
+num_t BASIC_FP npeekw() {
+  return ipeek(1);
+}
+num_t BASIC_FP npeekd() {
+  return ipeek(2);
+}
+
+num_t BASIC_FP nframe() {
+  if (checkOpen()||checkClose()) return 0;
+  return vs23.frame();
+}
+
+num_t BASIC_FP nvreg() {
+  int32_t a = getparam();
+  bool good = false;
+  for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
+    if (pgm_read_byte(&vs23_read_regs[i]) == a) {
+      good = true;
+      break;
+    }
+  }
+  if (!good) {
+    err = ERR_VALUE;
+    return 0;
+  } else
+    return SpiRamReadRegister(a);
+}
+  
+num_t BASIC_FP nvpeek() {
+  num_t value = getparam();
+  if (value < 0 || value > 131071) {
+    E_VALUE(0, 131071);
+    return 0;
+  } else
+    return SpiRamReadByte(value);
+}
+
+num_t BASIC_FP neof() {
+  int32_t a = get_filenum_param();
+  if (!err)
+    return !user_files[a]->available();
+  else
+    return 0;
+}
+
+num_t BASIC_INT nlof() {
+  int32_t a = get_filenum_param();
+  if (!err)
+    return user_files[a]->fileSize();
+  else
+    return 0;
+}
+
+num_t BASIC_INT nloc() {
+  int32_t a = get_filenum_param();
+  if (!err)
+    return user_files[a]->position();
+  else
+    return 0;
+}
+  
+num_t BASIC_FP npopf() {
+  num_t value;
+  if (checkOpen()) return 0;
+  if (*cip++ == I_NUMLSTREF) {
+    value = num_lst.var(*cip).front();
+    num_lst.var(*cip++).pop_front();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("numeric list reference");
+    return 0;
+  }
+  if (checkClose()) return 0;
+  return value;
+}
+
+num_t BASIC_FP npopb() {
+  num_t value;
+  if (checkOpen()) return 0;
+  if (*cip++ == I_NUMLSTREF) {
+    value = num_lst.var(*cip).back();
+    num_lst.var(*cip++).pop_back();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("numeric list reference");
+    return 0;
+  }
+  if (checkClose()) return 0;
+  return value;
+}
+
+num_t BASIC_INT nval() {
+  if (checkOpen()) return 0;
+  num_t value = strtonum(istrexp().c_str(), NULL);
+  checkClose();
+  return value;
+}
+
+typedef num_t (*numfun_t)();
+#include "numfuntbl.h"
+
 // Get value
 num_t BASIC_FP ivalue() {
-  num_t value = 0, value2; // 値
+  num_t value = 0; // 値
   uint8_t i;   // 文字数
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
-  int32_t a, b, c;
+  int32_t a;
 
-  switch (*cip++) { //中間コードで分岐
-
+  if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
+    return numfuntbl[*cip++ - NUMFUN_FIRST]();
+  } else switch (*cip++) {
   //定数の取得
   case I_NUM:    // 定数
     value = UNALIGNED_NUM_T(cip);
@@ -5202,227 +5567,11 @@ num_t BASIC_FP ivalue() {
     value = getparam(); //括弧の値を取得
     break;
 
-  case I_RND: //関数RND
-    value = getparam(); //括弧の値を取得
-    if (!err) {
-      if (value < 0 )
-	E_VALUE(0, INT32_MAX);
-      else
-	value = getrnd(value);  //乱数を取得
-    }
-    break;
+  case I_CHAR: value = ncharfun(); break; //関数CHAR
 
-  case I_ABS: //関数ABS
-    value = getparam(); //括弧の値を取得
-    if (value == INT32_MIN)
-      err = ERR_VOF;
-    if (err)
-      break;
-    if (value < 0)
-      value *= -1;  //正負を反転
-    break;
-
-  case I_SIN:	value = sin(getparam()); break;
-  case I_COS:	value = cos(getparam()); break;
-  case I_EXP:	value = exp(getparam()); break;
-  case I_ATN:	value = atan(getparam()); break;
-  case I_ATN2:
-    if (checkOpen() || getParam(value, I_COMMA) || getParam(value2, I_CLOSE))
-      return 0;
-    value = atan2(value, value2);
-    break;
-  case I_SQR:
-    value = getparam();
-    if (value < 0)
-      err = ERR_FP;
-    else
-      value = sqrt(value);
-    break;
-  case I_TAN:
-    // XXX: check for +/-inf
-    value = tan(getparam()); break;
-  case I_LOG:
-    value = getparam();
-    if (value <= 0)
-      err = ERR_FP;
-    else
-      value = log(value);
-    break;
-  case I_INT:
-    value = floor(getparam());
-    break;
-  case I_SGN:
-    value = getparam();
-    value = (0 < value) - (value < 0);
-    break;
-
-  case I_FREE: //関数FREE
-    if (checkOpen()||checkClose()) break;
-#ifdef ESP8266
-    value = umm_free_heap_size();
-#else
-    value = -1;
-#endif
-    break;
-
-  case I_INKEY: //関数INKEY
-    if (checkOpen()||checkClose()) break;
-    value = iinkey(); // キー入力値の取得
-    break;
-
-  case I_CHAR: value = icharfun();  break; //関数CHAR
-  case I_POINT: value = ipoint();  break; //関数POINT(X,Y)
-  case I_MAP:   value = imap();    break; //関数MAP(V,L1,H1,L2,H2)
-  case I_ASC:   value = iasc();    break; // 関数ASC(文字列)
-  case I_LEN:	value = ilen();	break;
-
-  case I_TICK: // 関数TICK()
-    if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
-      // 引数無し
-      value = 0;
-      cip+=2;
-    } else {
-      value = getparam(); // 括弧の値を取得
-      if (err)
-	break;
-    }
-    if(value == 0) {
-      value = millis();              // 0～INT32_MAX ms
-    } else if (value == 1) {
-      value = millis()/1000;         // 0～INT32_MAX s
-    } else {
-      value = 0;                                // 引数が正しくない
-      E_VALUE(0, 1);
-    }
-    break;
-
-  case I_PEEK: value = ipeek(0);   break;     // PEEK()関数
-  case I_PEEKW: value = ipeek(1);   break;
-  case I_PEEKD: value = ipeek(2);   break;
-  case I_I2CW:  value = ii2cw();   break;    // I2CW()関数
-
-  case I_RET:   value = iret(); break;
-  case I_ARG:	value = iarg(); break;
-  case I_ARGC:	value = iargc(); break;
-
-  // 定数
-  case I_HIGH:  value = CONST_HIGH; break;
-  case I_LOW:   value = CONST_LOW;  break;
-  case I_LSB:   value = CONST_LSB;  break;
-  case I_MSB:   value = CONST_MSB;  break;
-
-  case I_MPRG:  value = (unsigned int)listbuf;   break;
-  case I_MFNT:  value = (unsigned int)sc0.getfontadr();   break;
-
-  case I_DIN: // DIN(ピン番号)
-    if (checkOpen()) break;
-    if (getParam(a, 0, 15, I_NONE)) break;
-    if (checkClose()) break;
-    while (!blockFinished()) {}
-    if (Wire.requestFrom(0x20, 2) != 2)
-      err = ERR_IO;
-    else {
-      uint16_t state = Wire.read();
-      state |= Wire.read() << 8;
-      value = !!(state & (1 << a));
-    }
-    break;
-
-  case I_ANA: // ANA(ピン番号)
-#ifdef ESP8266_NOWIFI
-    err = ERR_NOT_SUPPORTED;
-#else
-    if (checkOpen()) break;
-    if (checkClose()) break;
-    value = analogRead(A0);    // 入力値取得
-#endif
-    break;
-
-  case I_SREAD: // SREAD() シリアルデータ1バイト受信
-    if (checkOpen()||checkClose()) break;
-    value = Serial.read();
-    break; //ここで打ち切る
-
-  case I_SREADY: // SREADY() シリアルデータデータチェック
-    if (checkOpen()||checkClose()) break;
-    value = Serial.available();
-    break; //ここで打ち切る
-
-  // 画面サイズ定数の参照
-  case I_CSIZE:
-    a = getparam();
-    switch (a) {
-    case 0:	value = sc0.getWidth(); break;
-    case 1:	value = sc0.getHeight(); break;
-    default:	E_VALUE(0, 1); break;
-    }
-    break;
-  case I_PSIZE:
-    a = getparam();
-    switch (a) {
-    case 0:	value = sc0.getGWidth(); break;
-    case 1:	value = sc0.getGHeight(); break;
-    case 2:	value = vs23.lastLine(); break;
-    default:	E_VALUE(0, 2); break;
-    }
-    break;
-
-  case I_POS:
-    a = getparam();
-    switch (a) {
-    case 0:	value = sc0.c_x(); break;
-    case 1:	value = sc0.c_y(); break;
-    default:	E_VALUE(0, 1); break;
-    }
-    break;
-  
-  // カーソル・スクロール等の方向
-  case I_UP:    value = psxUp; break;
   case I_DOWN:  value = psxDown; break;
-  case I_RIGHT: value = psxRight; break;
-  case I_LEFT:  value = psxLeft; break;
 
-  case I_PAD:	value = ipad(); break;
-  case I_RGB:	value = irgb(); break;
-
-#ifdef VS23_BG_ENGINE
-  case I_TILECOLL:
-    if (checkOpen()) return 0;
-    if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
-    if (getParam(b, 0, VS23_MAX_BG, I_COMMA)) return 0;
-    if (getParam(c, 0, 255, I_NONE)) return 0;
-    if (checkClose()) return 0;
-    value = vs23.spriteTileCollision(a, b, c);
-    break;
-
-  case I_SPRCOLL:
-    if (checkOpen()) return 0;
-    if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
-    if (getParam(b, 0, VS23_MAX_SPRITES, I_NONE)) return 0;
-    if (checkClose()) return 0;
-    if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
-      value = vs23.spriteCollision(a, b);
-    else
-      value = 0;
-    break;
-#endif
-
-  case I_PLAY:
-#ifdef HAVE_MML
-    if (checkOpen()) return 0;
-    if (getParam(a, 0, SOUND_CHANNELS, I_CLOSE)) return 0;
-    if (a == 0) {
-      b = 0;
-      for (int i = 0; i < SOUND_CHANNELS; ++i) {
-        b |= sound.isPlaying(i);
-      }
-      value = b;
-    } else
-      value = sound.isPlaying(a - 1);
-#else
-    err = ERR_NOT_SUPPORTED;
-#endif
-    break;
+  case I_PLAY:	value = nplay(); break;
 
   case I_NUMLST:
     i = *cip++;
@@ -5432,42 +5581,6 @@ num_t BASIC_FP ivalue() {
     } else {
       value = num_lst.var(i).var(idxs[0]);
     }
-    break;
-
-  case I_POPF:
-    if (checkOpen()) return 0;
-    if (*cip++ == I_NUMLSTREF) {
-      value = num_lst.var(*cip).front();
-      num_lst.var(*cip++).pop_front();
-    } else {
-      if (is_var(cip[-1]))
-        err = ERR_TYPE;
-      else
-        SYNTAX_T("numeric list reference");
-      return 0;
-    }
-    if (checkClose()) return 0;
-    break;
-
-  case I_POPB:
-    if (checkOpen()) return 0;
-    if (*cip++ == I_NUMLSTREF) {
-      value = num_lst.var(*cip).back();
-      num_lst.var(*cip++).pop_back();
-    } else {
-      if (is_var(cip[-1]))
-        err = ERR_TYPE;
-      else
-        SYNTAX_T("numeric list reference");
-      return 0;
-    }
-    if (checkClose()) return 0;
-    break;
-  
-  case I_VAL:
-    if (checkOpen()) break;
-    value = strtonum(istrexp().c_str(), NULL);
-    checkClose();
     break;
 
   case I_FN: {
@@ -5484,54 +5597,7 @@ num_t BASIC_FP ivalue() {
     break;
   }
 
-  case I_FRAME:
-    if (checkOpen()||checkClose()) break;
-    value = vs23.frame();
-    break;
-
-  case I_VREG: {
-    a = getparam();
-    bool good = false;
-    for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
-      if (pgm_read_byte(&vs23_read_regs[i]) == a) {
-        good = true;
-        break;
-      }
-    }
-    if (!good)
-      err = ERR_VALUE;
-    else
-      value = SpiRamReadRegister(a);
-    break;
-  }
-    
-  case I_VPEEK:
-    value = getparam();
-    if (value < 0 || value > 131071)
-      E_VALUE(0, 131071);
-    else
-      value = SpiRamReadByte(value);
-    break;
-
-  case I_EOF:
-    a = get_filenum_param();
-    if (!err)
-      value = !user_files[a]->available();
-    break;
-
-  case I_LOF:
-    a = get_filenum_param();
-    if (!err)
-      value = user_files[a]->fileSize();
-    break;
-
-  case I_LOC:
-    a = get_filenum_param();
-    if (!err)
-      value = user_files[a]->position();
-    break;
-    
-  case I_CONNECT:	value = nconnect(); break;
+  case I_VREG:	value = nvreg(); break;
 
   default:
     cip--;
