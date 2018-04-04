@@ -1281,7 +1281,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       c_puts(kw, devno); //キーワードテーブルの文字列を表示
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip+1) != I_COLON)
+      if (*(ip+1) != I_COLON && *(ip+1) != I_OPEN)
 	if ( (!nospacea(*ip) || spacef(*(ip+1))) &&
 	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL) //もし例外にあたらなければ
 	  c_putch(' ',devno);  //空白を表示
