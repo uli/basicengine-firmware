@@ -133,6 +133,7 @@ INKEY$	I_INKEYSTR	sinkey
 POPF$	I_POPFSTR	spopf
 POPB$	I_POPBSTR	spopb
 INST$	I_INSTSTR	sinst
+I2CR	I_I2CR		si2cr
 GET$	I_GETSTR	esyntax
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax

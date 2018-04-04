@@ -3603,7 +3603,7 @@ int32_t ii2cw() {
   return Wire.endTransmission();
 }
 
-BString ii2cr() {
+BString si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
 
@@ -5834,7 +5834,7 @@ BString istrvalue()
   int idxs[MAX_ARRAY_DIMS];
 
   if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
-    value = strfuntbl[*cip++ - STRFUN_FIRST]();
+    return strfuntbl[*cip++ - STRFUN_FIRST]();
   } else switch (*cip++) {
   case I_STR:
     len = value.fromBasic(cip);
@@ -5870,8 +5870,6 @@ BString istrvalue()
       value = str_lst.var(i).var(idxs[0]);
     }
     break;
-
-  case I_I2CR:	value = ii2cr();   break;    // I2CR()関数
 
   case I_INPUTSTR:	value = sinput(); break;
   case I_NET:
