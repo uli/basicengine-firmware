@@ -4,6 +4,7 @@ cmdf = open('kwtbl.h', 'w')
 enumf = open('kwenum.h', 'w')
 funf = open('funtbl.h', 'w')
 strfunf = open('strfuntbl.h', 'w')
+numfunf = open('numfuntbl.h', 'w')
 enumf.write('#ifndef __KWENUM_H\n#define __KWENUM_H\nenum token_t {\n')
 funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
 count = 0
@@ -12,6 +13,8 @@ last_cmd = 0
 nulls = []
 strfuns = []
 strfun_count = 0
+numfuns = []
+numfun_count = 0
 for l in f.readlines():
   if len(l) == 0 or l.startswith('rem'):
     continue
@@ -28,7 +31,7 @@ for l in f.readlines():
     max_kw_len = len(cmd)
     
   enumf.write(enum + ',')
-  if fun != 'esyntax' and last_cmd > 0 and fun[0] != 's':
+  if fun != 'esyntax' and last_cmd > 0 and fun[0] != 's' and fun[0] != 'n':
     print 'esyntax tokens must be last'
     exit(1)
   if fun == 'esyntax' and last_cmd == 0:
@@ -48,6 +51,11 @@ for l in f.readlines():
       strfun_first = count
     strfuns += [(enum, fun)]
     strfun_count += 1
+  elif fun[0] == 'n':
+    if numfun_count == 0:
+      numfun_first = count
+    numfuns += [(enum, fun)]
+    numfun_count += 1
     
   count += 1
 
@@ -76,3 +84,14 @@ for i in range(0, strfun_count):
 strfunf.write('\n};\n')
 strfunf.write('#define STRFUN_FIRST ' + str(strfun_first) + '\n')
 strfunf.write('#define STRFUN_LAST ' + str(strfun_first + strfun_count) + '\n')
+
+numfunf.write('\nstatic const numfun_t numfuntbl[] BASIC_DAT = {\n')
+for i in range(0, numfun_count):
+  if i % 8 == 0:
+    numfunf.write(' ')
+  numfunf.write(' ' + numfuns[i][1] + ',')
+  if i % 8 == 7:
+    numfunf.write('\n')
+numfunf.write('\n};\n')
+numfunf.write('#define NUMFUN_FIRST ' + str(numfun_first) + '\n')
+numfunf.write('#define NUMFUN_LAST ' + str(numfun_first + numfun_count) + '\n')
