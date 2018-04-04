@@ -4,7 +4,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
 
@@ -125,12 +124,10 @@ int	enter_string (const char *s, BString &buf)
 	/* NOTREACHED */
 }
 
-static int	error (const BString &s, bool code = false)
+static int	error (const BString &s)
 {
 	BString err_msg = F("Error ");
 	err_msg += s;
-	if (code)
-		err_msg += ", " + BString(errno);
 	beep();
 	confirm(err_msg.c_str());
 	return 0;
@@ -434,7 +431,7 @@ static int	load (const char *name)
 
 	f = Unifile::open (name, FILE_READ);
 	if (!f)
-		return error (BString(F("load file \"")) + name + BString(F("\"")), true);
+		return error (BString(F("load file \"")) + name + BString(F("\"")));
 	i = f.fileSize();
 	// Filter CR
 	int total = 0;
@@ -442,7 +439,7 @@ static int	load (const char *name)
 	for (int j = 0; j < i; ++j, ++total) {
 		int c = f.read();
 		if (c < 0)
-			return error(F("read"), true);
+			return error(F("read"));
 		if (c == '\r') {
 			ctx->cr_mode = true;
 			continue;
@@ -462,12 +459,12 @@ static int	save (const char *name, int pos, int size)
 
 	f = Unifile::open (name, FILE_OVERWRITE);
 	if (!f)
-		return error (BString(F("save file \"")) + name + BString(F("\"")), true);
+		return error (BString(F("save file \"")) + name + BString(F("\"")));
 	for (int i = 0; i < size; ++i) {
 		if (ctx->cr_mode && text[pos + i] == '\n')
 			f.write('\r');
 		if (f.write(text[pos + i]) < 0)
-		return error (F("write"), true);
+		return error (F("write"));
 	}
 	f.close();
 	return 1;
