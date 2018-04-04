@@ -2,10 +2,7 @@
 #include "mcurses.h"
 #include "BString.h"
 #include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include <ctype.h>
-#include <stdio.h>
 
 #define TABSIZE 8
 #define CHUNKSIZE 1024
