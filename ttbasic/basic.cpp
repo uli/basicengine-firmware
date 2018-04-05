@@ -5516,7 +5516,7 @@ num_t BASIC_FP ivalue() {
   int32_t a;
 
   if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
-    return numfuntbl[*cip++ - NUMFUN_FIRST]();
+    value = numfuntbl[*cip++ - NUMFUN_FIRST]();
   } else switch (*cip++) {
   //定数の取得
   case I_NUM:    // 定数
@@ -5607,45 +5607,38 @@ num_t BASIC_FP ivalue() {
       SYNTAX_T("numeric expr");
     break;
   }
-  return value; //取得した値を持ち帰る
-}
 
-num_t BASIC_FP ipow() {
-  num_t value, tmp;
-  
-  value = ivalue();
-  if (err)
-    return -1;
-  
   while (1)
     switch (*cip) {
     case I_POW:
       cip++;
-      tmp = ivalue();
-      value = pow(value, tmp);
+      value = pow(value, ivalue());
       break;
     default:
       return value;
     }
 }
 
-num_t BASIC_FP iunary() {
-  switch (*cip++) {
-  case I_MINUS: //「-」
-    return 0 - ipow(); //値を取得して負の値に変換
-  case I_PLUS:
-    return ipow();
-  default:
-    cip--;
-    return ipow();
-  }
-}
-
 // multiply or divide calculation
 num_t BASIC_FP imul() {
   num_t value, tmp; //値と演算値
 
-  value = iunary(); //値を取得
+  while(1) {
+    switch (*cip++) {
+    case I_MINUS: //「-」
+      return 0 - imul(); //値を取得して負の値に変換
+      break;
+    case I_PLUS:
+      return imul();
+      break;
+    default:
+      cip--;
+      value = ivalue();
+      goto out;
+    }
+  }
+out:
+
   if (err)
     return -1;
 
@@ -5654,13 +5647,13 @@ num_t BASIC_FP imul() {
 
     case I_MUL: //掛け算の場合
       cip++;
-      tmp = iunary();
+      tmp = ivalue();
       value *= tmp; //掛け算を実行
       break;
 
     case I_DIV: //割り算の場合
       cip++;
-      tmp = iunary();
+      tmp = ivalue();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1;
@@ -5670,7 +5663,7 @@ num_t BASIC_FP imul() {
 
     case I_MOD: //剰余の場合
       cip++;
-      tmp = iunary();
+      tmp = ivalue();
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1; //終了
@@ -5680,13 +5673,13 @@ num_t BASIC_FP imul() {
 
     case I_LSHIFT: // シフト演算 "<<" の場合
       cip++;
-      tmp = iunary();
+      tmp = ivalue();
       value =((uint32_t)value)<<(uint32_t)tmp;
       break;
 
     case I_RSHIFT: // シフト演算 ">>" の場合
       cip++;
-      tmp = iunary();
+      tmp = ivalue();
       value =((uint32_t)value)>>(uint32_t)tmp;
       break;
 
