@@ -646,19 +646,18 @@ void get_input(bool numeric) {
     } else if (c == SC_KEY_CTRL_C || c==27) {
       err = ERR_CTR_C;
       break;
-    } else
-    //［BackSpace］キーが押された場合の処理（行頭ではないこと）
-    if (((c == 8) || (c == 127)) && (len > 0)) {
-      len--; //文字数を1減らす
-      //c_putch(8); c_putch(' '); c_putch(8); //文字を消す
-      sc0.movePosPrevChar();
-      sc0.delete_char();
-    } else
-    //行頭の符号および数字が入力された場合の処理（符号込みで6桁を超えないこと）
-    if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
+    } else if (c == 8 || c == 127) {
+      // Processing when the [BackSpace] key is pressed (not at the
+      // beginning of the line)
+      if (len > 0) {
+        len--;
+        sc0.movePosPrevChar();
+        sc0.delete_char();
+      }
+    } else if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
         (len == 0 && (c == '+' || c == '-')) || isDigit(c)) ) {
-      lbuf[len++] = c; //バッファへ入れて文字数を1増やす
-      c_putch(c); //表示
+      lbuf[len++] = c;
+      c_putch(c);
     } else {
       sc0.beep();
     }
