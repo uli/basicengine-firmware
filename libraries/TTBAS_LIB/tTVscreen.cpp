@@ -233,9 +233,9 @@ uint8_t tTVscreen::edit() {
     } else switch(ch) {
       case KEY_CR:         // [Enter]キー
         if (k.CTRL) {
-          enter_text();
+          int lines = enter_text();
           Insert_newLine(pos_y);
-          return 1;
+          return lines + 1;
         } else
           return enter_text() + 1;
 
