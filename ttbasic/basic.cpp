@@ -6890,6 +6890,20 @@ void iboot() {
 #endif
 }
 
+void iexec() {
+  BString file = getParamFname();
+  basic_ctx_t *old_bc = bc;
+  bc = new basic_ctx_t;
+  listbuf = NULL;
+  loadPrgText((char *)file.c_str(), NEW_ALL);
+  clp = listbuf;
+  cip = clp + sizeof(line_desc_t);
+  irun(clp);
+  free(listbuf);
+  delete bc;
+  bc = old_bc;
+}
+
 typedef void (*cmd_t)();
 #include "funtbl.h"
 

@@ -108,6 +108,7 @@ VREG	I_VREG		ivreg
 VPOKE	I_VPOKE		ivpoke
 SYS	I_SYS		isys
 NET	I_NET		inet
+EXEC	I_EXEC		iexec
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
