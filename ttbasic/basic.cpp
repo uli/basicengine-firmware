@@ -5125,6 +5125,275 @@ int get_filenum_param() {
     return f;
 }
 
+BString ilrstr(bool right) {
+  BString value;
+  int len;
+
+  if (checkOpen()) goto out;
+
+  value = istrexp();
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    goto out;
+  }
+
+  if (getParam(len, I_CLOSE)) goto out;
+
+  if (right)
+    value = value.substring(value.length() - len, value.length());
+  else
+    value = value.substring(0, len);
+
+out:
+  return value;
+}
+
+static BString sleft() {
+  return ilrstr(false);
+}
+static BString sright() {
+  return ilrstr(true);
+}
+
+BString smid() {
+  BString value;
+  int32_t start;
+  int32_t len;
+
+  if (checkOpen()) goto out;
+
+  value = istrexp();
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    goto out;
+  }
+
+  if (getParam(start, I_COMMA)) goto out;
+  if (getParam(len, I_CLOSE)) goto out;
+
+  value = value.substring(start, start + len);
+
+out:
+  return value;
+}
+
+BString sdir()
+{
+  auto dir_entry = user_dir.next();
+  if (!dir_entry)
+    user_dir.close();
+  retval[0] = dir_entry.size;
+  retval[1] = dir_entry.is_directory;
+  return dir_entry.name;
+}
+
+BString sinput()
+{
+  int32_t len, fnum;
+  BString value;
+  ssize_t rd;
+
+  if (checkOpen()) goto out;
+  if (getParam(len, I_COMMA)) goto out;
+  if (*cip == I_SHARP)
+    ++cip;
+  if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE)) goto out;
+  if (!user_files[fnum] || !*user_files[fnum]) {
+    err = ERR_FILE_NOT_OPEN;
+    goto out;
+  }
+  if (!value.reserve(len)) {
+    err = ERR_OOM;
+    goto out;
+  }
+  rd = user_files[fnum]->read(value.begin(), len);
+  if (rd < 0) {
+    err = ERR_FILE_READ;
+    goto out;
+  }
+  value.resetLength(rd);
+out:
+  return value;
+}
+
+static BString schr() {
+  int32_t nv;
+  BString value;
+  if (checkOpen()) return value;
+  if (getParam(nv, 0,255, I_NONE)) return value; 
+  value = BString((char)nv);
+  checkClose();
+  return value;
+}
+
+static BString sstr() {
+  BString value;
+  if (checkOpen()) return value;
+  // The BString ctor for doubles is not helpful because it uses dtostrf()
+  // which can only do a fixed number of decimal places. That is not
+  // the BASIC Way(tm).
+  sprintf(lbuf, "%0g", iexp());
+  value = lbuf;
+  checkClose();
+  return value;
+}
+
+static BString scwd() {
+  return Unifile::cwd();
+}
+
+static BString sinkey() {
+  int32_t c = iinkey();
+  if (c)
+    return BString((char)c);
+  else
+    return BString();
+}
+
+static BString spopf() {
+  BString value;
+  if (checkOpen()) return value;
+  if (*cip++ == I_STRLSTREF) {
+    value = str_lst.var(*cip).front();
+    str_lst.var(*cip++).pop_front();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("string list reference");
+    return value;
+  }
+  checkClose();
+  return value;
+}
+
+static BString spopb() {
+  BString value;
+  if (checkOpen()) return value;
+  if (*cip++ == I_STRLSTREF) {
+    value = str_lst.var(*cip).back();
+    str_lst.var(*cip++).pop_back();
+  } else {
+    if (is_var(cip[-1]))
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("string list reference");
+    return value;
+  }
+  checkClose();
+  return value;
+}
+
+static BString sinst() {
+#ifdef HAVE_TSF
+  return sound.instName(getparam());
+#else
+  err = ERR_NOT_SUPPORTED;
+  return BString();
+#endif
+}
+
+typedef BString (*strfun_t)();
+#include "strfuntbl.h"
+
+BString istrvalue()
+{
+  BString value;
+  int len, dims;
+  uint8_t i;
+  int idxs[MAX_ARRAY_DIMS];
+
+  if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
+    return strfuntbl[*cip++ - STRFUN_FIRST]();
+  } else switch (*cip++) {
+  case I_STR:
+    len = value.fromBasic(cip);
+    cip += len;
+    if (!len)
+      err = ERR_OOM;
+    break;
+
+  case I_SVAR:
+    value = svar.var(*cip++);
+    break;
+
+  case I_LSVAR:
+    value = get_lsvar(*cip++);
+    break;
+
+  case I_STRARR:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != str_arr.var(i).dims()) {
+      err = ERR_SOR;
+    } else {
+      value = str_arr.var(i).var(idxs);
+    }
+    break;
+
+  case I_STRLST:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != 1) {
+      SYNTAX_T("one dimension");
+    } else {
+      value = str_lst.var(i).var(idxs[0]);
+    }
+    break;
+
+  case I_INPUTSTR:	value = sinput(); break;
+  case I_NET:
+#ifdef ESP8266_NOWIFI
+    err = ERR_NOT_SUPPORTED;
+#else
+    if (*cip == I_INPUTSTR) {
+      ++cip;
+      value = snetinput();
+    } else if (*cip == I_GETSTR) {
+      ++cip;
+      value = snetget();
+    } else
+      SYNTAX_T("network function");
+#endif
+    break;
+
+  default:
+    cip--;
+    // Check if a numeric expression follows, so we can give a more
+    // helpful error message.
+    err = 0;
+    iexp();
+    if (!err)
+      err = ERR_TYPE;
+    else
+      SYNTAX_T("string expr");
+    break;
+  }
+  if (err)
+    return BString();
+  else
+    return value;
+}
+
+BString istrexp()
+{
+  BString value, tmp;
+  
+  value = istrvalue();
+
+  for (;;) switch(*cip) {
+  case I_PLUS:
+    cip++;
+    tmp = istrvalue();
+    if (err)
+      return BString();
+    value += tmp;
+    break;
+  default:
+    return value;
+  }
+}
+
 num_t BASIC_INT nlen() {
   int32_t value;
   if (checkOpen()) return 0;
@@ -5712,275 +5981,6 @@ num_t BASIC_FP iplus() {
     default:
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
-}
-
-BString ilrstr(bool right) {
-  BString value;
-  int len;
-
-  if (checkOpen()) goto out;
-
-  value = istrexp();
-  if (*cip++ != I_COMMA) {
-    E_SYNTAX(I_COMMA);
-    goto out;
-  }
-
-  if (getParam(len, I_CLOSE)) goto out;
-
-  if (right)
-    value = value.substring(value.length() - len, value.length());
-  else
-    value = value.substring(0, len);
-
-out:
-  return value;
-}
-
-static BString sleft() {
-  return ilrstr(false);
-}
-static BString sright() {
-  return ilrstr(true);
-}
-
-BString smid() {
-  BString value;
-  int32_t start;
-  int32_t len;
-
-  if (checkOpen()) goto out;
-
-  value = istrexp();
-  if (*cip++ != I_COMMA) {
-    E_SYNTAX(I_COMMA);
-    goto out;
-  }
-
-  if (getParam(start, I_COMMA)) goto out;
-  if (getParam(len, I_CLOSE)) goto out;
-
-  value = value.substring(start, start + len);
-
-out:
-  return value;
-}
-
-BString sdir()
-{
-  auto dir_entry = user_dir.next();
-  if (!dir_entry)
-    user_dir.close();
-  retval[0] = dir_entry.size;
-  retval[1] = dir_entry.is_directory;
-  return dir_entry.name;
-}
-
-BString sinput()
-{
-  int32_t len, fnum;
-  BString value;
-  ssize_t rd;
-
-  if (checkOpen()) goto out;
-  if (getParam(len, I_COMMA)) goto out;
-  if (*cip == I_SHARP)
-    ++cip;
-  if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE)) goto out;
-  if (!user_files[fnum] || !*user_files[fnum]) {
-    err = ERR_FILE_NOT_OPEN;
-    goto out;
-  }
-  if (!value.reserve(len)) {
-    err = ERR_OOM;
-    goto out;
-  }
-  rd = user_files[fnum]->read(value.begin(), len);
-  if (rd < 0) {
-    err = ERR_FILE_READ;
-    goto out;
-  }
-  value.resetLength(rd);
-out:
-  return value;
-}
-
-static BString schr() {
-  int32_t nv;
-  BString value;
-  if (checkOpen()) return value;
-  if (getParam(nv, 0,255, I_NONE)) return value; 
-  value = BString((char)nv);
-  checkClose();
-  return value;
-}
-
-static BString sstr() {
-  BString value;
-  if (checkOpen()) return value;
-  // The BString ctor for doubles is not helpful because it uses dtostrf()
-  // which can only do a fixed number of decimal places. That is not
-  // the BASIC Way(tm).
-  sprintf(lbuf, "%0g", iexp());
-  value = lbuf;
-  checkClose();
-  return value;
-}
-
-static BString scwd() {
-  return Unifile::cwd();
-}
-
-static BString sinkey() {
-  int32_t c = iinkey();
-  if (c)
-    return BString((char)c);
-  else
-    return BString();
-}
-
-static BString spopf() {
-  BString value;
-  if (checkOpen()) return value;
-  if (*cip++ == I_STRLSTREF) {
-    value = str_lst.var(*cip).front();
-    str_lst.var(*cip++).pop_front();
-  } else {
-    if (is_var(cip[-1]))
-      err = ERR_TYPE;
-    else
-      SYNTAX_T("string list reference");
-    return value;
-  }
-  checkClose();
-  return value;
-}
-
-static BString spopb() {
-  BString value;
-  if (checkOpen()) return value;
-  if (*cip++ == I_STRLSTREF) {
-    value = str_lst.var(*cip).back();
-    str_lst.var(*cip++).pop_back();
-  } else {
-    if (is_var(cip[-1]))
-      err = ERR_TYPE;
-    else
-      SYNTAX_T("string list reference");
-    return value;
-  }
-  checkClose();
-  return value;
-}
-
-static BString sinst() {
-#ifdef HAVE_TSF
-  return sound.instName(getparam());
-#else
-  err = ERR_NOT_SUPPORTED;
-  return BString();
-#endif
-}
-
-typedef BString (*strfun_t)();
-#include "strfuntbl.h"
-
-BString istrvalue()
-{
-  BString value;
-  int len, dims;
-  uint8_t i;
-  int idxs[MAX_ARRAY_DIMS];
-
-  if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
-    return strfuntbl[*cip++ - STRFUN_FIRST]();
-  } else switch (*cip++) {
-  case I_STR:
-    len = value.fromBasic(cip);
-    cip += len;
-    if (!len)
-      err = ERR_OOM;
-    break;
-
-  case I_SVAR:
-    value = svar.var(*cip++);
-    break;
-
-  case I_LSVAR:
-    value = get_lsvar(*cip++);
-    break;
-
-  case I_STRARR:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims != str_arr.var(i).dims()) {
-      err = ERR_SOR;
-    } else {
-      value = str_arr.var(i).var(idxs);
-    }
-    break;
-
-  case I_STRLST:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims != 1) {
-      SYNTAX_T("one dimension");
-    } else {
-      value = str_lst.var(i).var(idxs[0]);
-    }
-    break;
-
-  case I_INPUTSTR:	value = sinput(); break;
-  case I_NET:
-#ifdef ESP8266_NOWIFI
-    err = ERR_NOT_SUPPORTED;
-#else
-    if (*cip == I_INPUTSTR) {
-      ++cip;
-      value = snetinput();
-    } else if (*cip == I_GETSTR) {
-      ++cip;
-      value = snetget();
-    } else
-      SYNTAX_T("network function");
-#endif
-    break;
-
-  default:
-    cip--;
-    // Check if a numeric expression follows, so we can give a more
-    // helpful error message.
-    err = 0;
-    iexp();
-    if (!err)
-      err = ERR_TYPE;
-    else
-      SYNTAX_T("string expr");
-    break;
-  }
-  if (err)
-    return BString();
-  else
-    return value;
-}
-
-BString istrexp()
-{
-  BString value, tmp;
-  
-  value = istrvalue();
-
-  for (;;) switch(*cip) {
-  case I_PLUS:
-    cip++;
-    tmp = istrvalue();
-    if (err)
-      return BString();
-    value += tmp;
-    break;
-  default:
-    return value;
-  }
 }
 
 #define basic_bool(x) ((x) ? -1 : 0)
