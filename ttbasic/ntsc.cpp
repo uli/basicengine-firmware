@@ -10,11 +10,15 @@
 
 // Remember to update VS23_MAX_X/Y! (XXX: they are not used anywhere any more...)
 struct vs23_mode_t VS23S010::modes_ntsc[] = {
-	// maximum usable on NTSC without overscan, 76 6-pixel chars/line,
-	// 57 8-pixel chars
-	{456, 224, 9, 10, 3, 9, 11000000},
-	// a bit smaller, may fit better on some TVs
-	{432, 216, 13, 14, 3, 9, 11000000},
+	// Maximum usable on NTSC without overscan, 76 6-pixel chars/line,
+	// 57 8-pixel chars.
+	// NB: This is wider than necessary because a 456-pixel width causes
+	// artifacts on PAL, and we want to have the same geometry on both
+	// systems.
+	{460, 224, 9, 10, 3, 9, 11000000},
+	// a bit smaller, may fit better on some TVs; width chosen to work on
+	// both PAL and NTSC without artifacts.
+	{436, 216, 13, 14, 3, 9, 11000000},
 	{320, 216, 11, 15, 4, 9, 11000000},	// VS23 NTSC demo
 	{320, 200, 20, 15, 4, 9, 14000000},	// (M)CGA, Commodore et al.
 	{256, 224, 9, 15, 5, 9, 15000000},	// SNES
@@ -27,13 +31,16 @@ struct vs23_mode_t VS23S010::modes_ntsc[] = {
 						// useful?)
 	{282, 240, 0, 8, 5, 8, 11000000},	// PCE overscan (is this
 						// useful?)
+        // Overscan on NTSC, for compatibility with "maximum PAL" mode.
+	{508, 240, 0, 0, 3, 8, 11000000},
 };
 
 struct vs23_mode_t VS23S010::modes_pal[] = {
-	// compatible with NTSC mode 1, centered
-	{456, 224, 32, 29, 3, 7, 11000000},
-	// maximum screen width on PAL at 4 clocks per pixel
-	{432, 216, 33, 8, 4, 8, 11000000},
+        // Much smaller than the screen, but have to be compatible with NTSC.
+	{460, 224, 32, 29, 3, 8, 11000000},
+	// This could work with a pixel clock divider of 4, but it would be
+	// extremely wide (near overscan).
+	{436, 216, 33, 29, 3, 8, 11000000},
 	{320, 216, 33, 15, 5, 8, 11000000},	// VS23 NTSC demo
 	{320, 200, 41, 15, 5, 8, 14000000},	// (M)CGA, Commodore et al.
 	{256, 224, 32, 20, 6, 8, 15000000},	// SNES
@@ -43,8 +50,10 @@ struct vs23_mode_t VS23S010::modes_pal[] = {
 	// "Overscan modes" are actually underscan on PAL.
 	{352, 240, 24, 8, 5, 8, 11000000},	// PCE overscan (barely)
 	{282, 240, 24, 8, 6, 8, 11000000},	// PCE overscan (underscan on PAL)
-	{504, 240, 24, 20, 3, 9, 11000000},	// maximum PAL (the timing would allow
-	                                        // more, but we would run out of memory
+	// Maximum PAL (the timing would allow more, but we would run out of memory)
+	// NB: This does not line up with any font sizes; the width is chosen
+	// to avoid artifacts.
+	{508, 240, 24, 20, 3, 9, 11000000},
 };
 
 // Common modes not included:
