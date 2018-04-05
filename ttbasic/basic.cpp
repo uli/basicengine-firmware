@@ -857,7 +857,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 
     // Attempt to convert to constant
     ptok = s;                            // Points to the beginning of a word
-    if (isDigit(*ptok)) {
+    if (isDigit(*ptok) || *ptok == '.') {
       if (len >= SIZE_IBUF - sizeof(num_t) - 2) { // If the intermediate code is too long
 	err = ERR_IBUFOF;
 	return 0;
