@@ -4201,7 +4201,6 @@ void irmdir() {
 #endif
 }
 
-Unifile user_dir;
 // RENAME <old$> TO <new$>
 void irename() {
   uint8_t rc;
@@ -5116,9 +5115,21 @@ out:
 
 BString sdir()
 {
-  auto dir_entry = user_dir.next();
-  if (!dir_entry)
-    user_dir.close();
+  int32_t fnum = getparam();
+  if (fnum < 0 || fnum >= MAX_USER_FILES) {
+    E_VALUE(0, MAX_USER_FILES - 1);
+out:
+    return BString(F(""));
+  }
+  if (!user_files[fnum] || !*user_files[fnum]) {
+    err = ERR_FILE_NOT_OPEN;
+    goto out;
+  }
+  if (!user_files[fnum]->isDirectory()) {
+    err = ERR_NOT_DIR;
+    goto out;
+  }
+  auto dir_entry = user_files[fnum]->next();
   retval[0] = dir_entry.size;
   retval[1] = dir_entry.is_directory;
   return dir_entry.name;
