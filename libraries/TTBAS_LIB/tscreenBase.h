@@ -31,7 +31,6 @@
 
 #define KEY_SHIFT_DOWN	KEY_DOWN | 0x40
 #define KEY_SHIFT_UP	KEY_UP | 0x40
-#define KEY_SHIFT_CR	0x1fe
 
 // コントロールキーコードの定義
 #define SC_KEY_CTRL_L   12  // 画面を消去

@@ -232,11 +232,12 @@ uint8_t tTVscreen::edit() {
         Insert_char(ch + 32);
     } else switch(ch) {
       case KEY_CR:         // [Enter]キー
-        return enter_text() + 1;
-      case KEY_SHIFT_CR:
-        enter_text();
-        Insert_newLine(pos_y);
-        return 1;
+        if (k.CTRL) {
+          enter_text();
+          Insert_newLine(pos_y);
+          return 1;
+        } else
+          return enter_text() + 1;
 
       case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
       case KEY_F(1):       // F1
