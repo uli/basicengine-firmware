@@ -194,11 +194,16 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   escape = false;
 }
 
+static int redirect_file = -1;
+
 // 文字の出力
 inline void c_putch(uint8_t c, uint8_t devno) {
-  if (devno == 0)
-    screen_putch(c);
-  else if (devno == 1)
+  if (devno == 0) {
+    if (redirect_file >= 0)
+      user_files[redirect_file]->write(c);
+    else
+      screen_putch(c);
+  } else if (devno == 1)
     Serial.write(c);
   else if (devno == 2)
     sc0.gputch(c);
