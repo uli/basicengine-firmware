@@ -6858,6 +6858,10 @@ void iopen() {
   if (!f)
     err = ERR_FILE_OPEN;
   else {
+    if (user_files[filenum]) {
+      user_files[filenum]->close();
+      delete user_files[filenum];
+    }
     user_files[filenum] = new Unifile();
     if (!user_files[filenum]) {
       err = ERR_OOM;
