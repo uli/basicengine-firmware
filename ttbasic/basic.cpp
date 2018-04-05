@@ -74,8 +74,6 @@ static uint16_t original_text_pos[2];
 bool restore_text_window = false;
 #endif
 
-#define KEY_ENTER 13
-
 #include <Wire.h>
 
 // *** SDカード管理 ****************
@@ -641,7 +639,7 @@ void get_input(bool numeric) {
   len = 0; //文字数をクリア
   while(1) {
     c = c_getch();
-    if (c == KEY_ENTER) {
+    if (c == KEY_CR) {
       break;
     } else if (c == SC_KEY_CTRL_C || c==27) {
       err = ERR_CTR_C;
