@@ -115,7 +115,7 @@ class VS23S010 {
     uint8_t *paletteData(uint8_t colorspace);
 
     int numModes();
-    struct vs23_mode_t *modes();
+    const struct vs23_mode_t *modes();
     void setMode(uint8_t mode);
     void calibrateVsync();
     void setSyncLine(uint16_t line);
@@ -143,7 +143,7 @@ class VS23S010 {
       SPI1CLK = div;
     }
     void setSpiClockRead() {
-      SPI1CLK = m_current_mode->max_spi_freq;
+      SPI1CLK = m_current_mode.max_spi_freq;
     }
     void setSpiClockWrite() {
       SPI1CLK = m_def_spi_div;
@@ -331,8 +331,8 @@ class VS23S010 {
     uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
 #endif
 
-    static struct vs23_mode_t modes_ntsc[];
-    static struct vs23_mode_t modes_pal[];
+    const static struct vs23_mode_t modes_ntsc[];
+    const static struct vs23_mode_t modes_pal[];
     
     inline uint16_t lastLine() { return m_last_line; }
 
@@ -376,7 +376,7 @@ private:
     int m_def_spi_div;	// divider safe for writing
     uint8_t m_gpio_state;
 
-    const struct vs23_mode_t *m_current_mode;
+    struct vs23_mode_t m_current_mode;
     uint32_t m_pitch;	// Distance between piclines in bytes
     uint32_t m_first_line_addr;
     int m_last_line;

@@ -9,7 +9,7 @@
 // #define DEBUG
 
 // Remember to update VS23_MAX_X/Y! (XXX: they are not used anywhere any more...)
-struct vs23_mode_t VS23S010::modes_ntsc[] = {
+const struct vs23_mode_t VS23S010::modes_ntsc[] PROGMEM = {
 	// Maximum usable on NTSC without overscan, 76 6-pixel chars/line,
 	// 57 8-pixel chars.
 	// NB: This is wider than necessary because a 456-pixel width causes
@@ -35,7 +35,7 @@ struct vs23_mode_t VS23S010::modes_ntsc[] = {
 	{508, 240, 0, 0, 3, 8, 11000000},
 };
 
-struct vs23_mode_t VS23S010::modes_pal[] = {
+const struct vs23_mode_t VS23S010::modes_pal[] PROGMEM = {
         // Much smaller than the screen, but have to be compatible with NTSC.
 	{460, 224, 32, 29, 3, 8, 11000000},
 	// This could work with a pixel clock divider of 4, but it would be
@@ -73,7 +73,7 @@ int VS23S010::numModes() {
 	return m_pal ? VS23_NUM_MODES_PAL : VS23_NUM_MODES_NTSC;
 }
 
-struct vs23_mode_t *VS23S010::modes() {
+const struct vs23_mode_t *VS23S010::modes() {
 	return m_pal ? modes_pal : modes_ntsc;
 }
 

@@ -82,8 +82,8 @@ void VS23S010::resetBgs()
     bg->tile_size_x = 8;
     bg->tile_size_y = 8;
     bg->pat_x = 0;
-    bg->pat_y = m_current_mode->y + 8;
-    bg->pat_w = m_current_mode->x / bg->tile_size_x;
+    bg->pat_y = m_current_mode.y + 8;
+    bg->pat_w = m_current_mode.x / bg->tile_size_x;
     bg->prio = i;
   }
 }
@@ -104,13 +104,6 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   m_bin.Init(0, 0);
 
   SpiLock();
-  for (int p = 0; p < 2; ++p) {
-    m_pal = !!p;
-    for (int i = 0; i < numModes(); ++i) {
-      SPI.setFrequency(modes()[i].max_spi_freq);
-      modes()[i].max_spi_freq = getSpiClock();
-    }
-  }
   SPI.setFrequency(38000000);
   m_min_spi_div = getSpiClock();
   SPI.setFrequency(11000000);
@@ -144,7 +137,7 @@ void VS23S010::reset()
   resetSprites();
   resetBgs();
 #endif
-  m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);
+  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
   setColorSpace(0);
 }
 
@@ -155,7 +148,13 @@ retry:
   m_bg_modified = true;
 #endif
   setSyncLine(0);
-  m_current_mode = &modes()[mode];
+
+  memcpy_P(&m_current_mode, &modes()[mode], sizeof(m_current_mode));
+  uint32_t spi_div = getSpiClock();
+  SPI.setFrequency(m_current_mode.max_spi_freq);
+  m_current_mode.max_spi_freq = getSpiClock();
+  setSpiClock(spi_div);
+
   m_last_line = PICLINE_MAX;
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
@@ -165,7 +164,7 @@ retry:
   resetSprites();
 #endif
 
-  m_bin.Init(m_current_mode->x, m_last_line - m_current_mode->y);
+  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   SpiRamVideoInit();
   calibrateVsync();
@@ -181,7 +180,7 @@ retry:
   // Start the new frame at the end of the visible screen plus a little extra.
   // Used to be two-thirds down the screen, but that caused more flicker when
   // the rendering load changes drastically.
-  setSyncLine(m_current_mode->y + m_current_mode->top + 16);
+  setSyncLine(m_current_mode.y + m_current_mode.top + 16);
 }
 
 void VS23S010::calibrateVsync()
@@ -272,8 +271,8 @@ bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
   bg->h = height;
   bg->scroll_x = bg->scroll_y = 0;
   bg->win_x = bg->win_y = 0;
-  bg->win_w = m_current_mode->x;
-  bg->win_h = m_current_mode->y;
+  bg->win_w = m_current_mode.x;
+  bg->win_h = m_current_mode.y;
   return false;
 }
 
@@ -651,7 +650,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
   // initial height. If an object cannot be drawn exactly up to the
   // current partitioning point, that point will be raised to make sure
   // that the next layer will not overshoot the previous one.
-  last_pix_split_y = m_current_mode->y / 2;
+  last_pix_split_y = m_current_mode.y / 2;
 
   int bg_tile_start_y[VS23_MAX_BG];
   int bg_tile_end_y[VS23_MAX_BG];
@@ -790,7 +789,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
           continue;
         if (s->pos_x < -s->p.w || s->pos_y < -s->p.h)
           continue;
-        if (s->pos_x >= m_current_mode->x || s->pos_y >= m_current_mode->y)
+        if (s->pos_x >= m_current_mode.x || s->pos_y >= m_current_mode.y)
           continue;
         if (pass == 0 && s->pos_y >= last_pix_split_y)
           continue;
@@ -808,15 +807,15 @@ void GROUP(basic_vs23) VS23S010::updateBg()
           if (s->pos_y < 0) {
             draw_h += s->pos_y;
             offset_y = -s->pos_y;
-          } else if (s->pos_y + s->p.h > m_current_mode->y)
-            draw_h -= s->pos_y + s->p.h - m_current_mode->y;
+          } else if (s->pos_y + s->p.h > m_current_mode.y)
+            draw_h -= s->pos_y + s->p.h - m_current_mode.y;
 
           int offset_x = 0;
           if (s->pos_x < 0) {
             draw_w += s->pos_x;
             offset_x = -s->pos_x;
-          } else if (s->pos_x + s->p.w > m_current_mode->x)
-            draw_w -= s->pos_x + s->p.w - m_current_mode->x;
+          } else if (s->pos_x + s->p.w > m_current_mode.x)
+            draw_w -= s->pos_x + s->p.w - m_current_mode.x;
 
           // Draw sprites crossing the screen partition in two steps, top half
           // in the first pass, bottom half in the second pass.
@@ -891,8 +890,8 @@ void GROUP(basic_vs23) VS23S010::updateBg()
             // If this happens on the left side, we drop the sprite altogether.
             if (w < 4)
               continue;
-          } else if (x + w >= m_current_mode->x) {
-            w = m_current_mode->x - x;
+          } else if (x + w >= m_current_mode.x) {
+            w = m_current_mode.x - x;
             // If it happens on the right side, we draw into the border.
             if (w < 4)
               w = 4;
@@ -902,8 +901,8 @@ void GROUP(basic_vs23) VS23S010::updateBg()
             h += y;
             offset_y = -y;
             y = 0;
-          } else if (y + h >= m_current_mode->y) {
-            h = m_current_mode->y - y;
+          } else if (y + h >= m_current_mode.y) {
+            h = m_current_mode.y - y;
           }
 
           // Draw sprites crossing the screen partition in two steps, top half
@@ -931,13 +930,13 @@ void GROUP(basic_vs23) VS23S010::updateBg()
       bool pass0_wraparound = pass0_end_line < m_sync_line;
       uint16_t cl = currentLine();
       if (!(!pass0_wraparound && cl >= pass0_end_line) &&
-          cl > m_current_mode->y / 3 && 
-          m_sync_line > m_current_mode->y * 2 / 3) {
+          cl > m_current_mode.y / 3 && 
+          m_sync_line > m_current_mode.y * 2 / 3) {
         m_sync_line--;
 #ifdef DEBUG_SYNC
         Serial.printf("sync-- %d\n", m_sync_line);
 #endif
-      } else if (!pass0_wraparound && pass0_end_line < m_current_mode->y + m_current_mode->top) {
+      } else if (!pass0_wraparound && pass0_end_line < m_current_mode.y + m_current_mode.top) {
         m_sync_line++;
 #ifdef DEBUG_SYNC
         Serial.printf("sync++ %d\n", m_sync_line);
@@ -1234,14 +1233,14 @@ void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t 
 bool VS23S010::allocBacking(int w, int h, int &x, int &y)
 {
   Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::Split256);
-  x = r.x; y = r.y + m_current_mode->y;
+  x = r.x; y = r.y + m_current_mode.y;
   return r.height != 0;
 }
 
 void VS23S010::freeBacking(int x, int y, int w, int h)
 {
   Rect r;
-  r.x = x; r.y = y - m_current_mode->y; r.width = w; r.height = h;
+  r.x = x; r.y = y - m_current_mode.y; r.width = w; r.height = h;
   m_bin.Free(r, true);
 }
 
