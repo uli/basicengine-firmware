@@ -109,6 +109,7 @@ VPOKE	I_VPOKE		ivpoke
 SYS	I_SYS		isys
 NET	I_NET		inet
 EXEC	I_EXEC		iexec
+CMD	I_CMD		icmd
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr

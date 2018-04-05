@@ -6734,6 +6734,21 @@ void esyntax() {
 }
 #define esyntax_workaround esyntax
 
+void icmd () {
+  int32_t redir;
+  if (*cip == I_OFF) {
+    ++cip;
+    redirect_file = -1;
+    return;
+  } else
+    getParam(redir, 0, MAX_USER_FILES, I_NONE);
+  if (!user_files[redir] || !*user_files[redir]) {
+    err = ERR_FILE_NOT_OPEN;
+    redirect_file = -1;
+  } else
+    redirect_file = redir;
+}
+
 void iprint_() {
   iprint();
 }
