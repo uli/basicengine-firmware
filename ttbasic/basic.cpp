@@ -4202,20 +4202,6 @@ void irmdir() {
 }
 
 Unifile user_dir;
-void iopendir()
-{
-  BString fname = Unifile::cwd();
-
-  if (is_strexp() && !(fname = getParamFname())) {
-    return;
-  }
-
-  user_dir.close();
-  user_dir = Unifile::openDir(fname.c_str());
-  if (!user_dir)
-    err = ERR_FILE_OPEN;
-}
-
 // RENAME <old$> TO <new$>
 void irename() {
   uint8_t rc;
@@ -6828,7 +6814,7 @@ void ichdir() {
 
 void iopen() {
   BString filename;
-  uint8_t flags = FILE_READ;
+  int flags = FILE_READ;
   int32_t filenum;
 
   if (!(filename = getParamFname()))
@@ -6840,6 +6826,7 @@ void iopen() {
     case I_OUTPUT:	flags = FILE_OVERWRITE; break;
     case I_INPUT:	flags = FILE_READ; break;
     case I_APPEND:	flags = FILE_WRITE; break;
+    case I_DIRECTORY:	flags = -1; break;
     default:		SYNTAX_T("file mode"); return;
     }
   }
@@ -6854,7 +6841,11 @@ void iopen() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
   
-  Unifile f = Unifile::open(filename, flags);
+  Unifile f;
+  if (flags == -1)
+    f = Unifile::openDir(filename.c_str());
+  else
+    f = Unifile::open(filename, flags);
   if (!f)
     err = ERR_FILE_OPEN;
   else {
