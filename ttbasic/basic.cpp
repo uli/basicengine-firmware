@@ -7179,7 +7179,7 @@ void SMALL basic() {
   loadConfig();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
-  vs23.setColorSpace(1);
+  vs23.setColorSpace(0);
 
   psx.setupPins(0, 1, 2, 3, 1);
 
@@ -7204,9 +7204,9 @@ void SMALL basic() {
   sc0.show_curs(0);
 
   // Want to make sure we get the right hue.
-  vs23.setColorConversion(1, 7, 2, 4, true);
+  vs23.setColorConversion(0, 7, 2, 4, true);
   show_logo();
-  vs23.setColorSpace(1);	// reset color conversion
+  vs23.setColorSpace(0);	// reset color conversion
 
   // Startup screen
   // Epigram

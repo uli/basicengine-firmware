@@ -45,8 +45,8 @@ static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b, int *h, int *s, int *v)
 
 /* must be same order as vs23_ops[] */
 static const struct palette *pals[] = {
-  p_ee_a22_b22_y44_n10,
   n_0c_b62_a63_y33_n10,
+  p_ee_a22_b22_y44_n10,
 };
 
 #define COLOR_CACHE_SIZE 64

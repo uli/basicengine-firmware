@@ -211,14 +211,6 @@
 #else
 static const uint8_t vs23_ops_ntsc[2][5] PROGMEM = {
   {
-    /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
-    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
-    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
-    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
-    PICK_NOTHING,
-    0x0d,
-  },
-  {
     /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
     PICK_B + PICK_BITS(6) + SHIFT_BITS(2),
     PICK_A + PICK_BITS(6) + SHIFT_BITS(3),
@@ -226,23 +218,31 @@ static const uint8_t vs23_ops_ntsc[2][5] PROGMEM = {
     PICK_NOTHING,
     0x0c,
   },
+  {
+    /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
+    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
+    PICK_NOTHING,
+    0x0d,
+  },
 };
 static const uint8_t vs23_ops_pal[2][5] PROGMEM = {
   {
-    /* N-0D-B22-A22-Y44-N10 (NTSC equivalent of P-EE-A22-B22-Y44-N10) */
-    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
-    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
-    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
-    PICK_NOTHING,
-    0xee,
-  },
-  {
-    /* N-0C-B62-A63-Y33-N10 (NTSC equivalent of P-DD-A62-B63-Y33-N10) */
+    /* P-DD-A62-B63-Y33-N10 (PAL equivalent of N-0C-B62-A63-Y33-N10) */
     PICK_A + PICK_BITS(6) + SHIFT_BITS(2),
     PICK_B + PICK_BITS(6) + SHIFT_BITS(3),
     PICK_Y + PICK_BITS(3) + SHIFT_BITS(3),
     PICK_NOTHING,
     0xdd,
+  },
+  {
+    /* P-EE-A22-B22-Y44-N10 (PAL equivalent of N-0D-B22-A22-Y44-N10) */
+    PICK_A + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_B + PICK_BITS(2) + SHIFT_BITS(2),
+    PICK_Y + PICK_BITS(4) + SHIFT_BITS(4),
+    PICK_NOTHING,
+    0xee,
   },
 };
 #endif
