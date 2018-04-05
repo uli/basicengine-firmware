@@ -297,7 +297,7 @@ attrset (uint_fast16_t attr)
             sc0.setColor(sc0.getFgColor(), vs23.colorFromRgb(CONFIG.color_scheme[idx-1]));
         }
 
-        if ((attr & A_REVERSE) != (mcurses_attr & A_REVERSE))
+        if (attr & A_REVERSE)
         {
             sc0.setColor(sc0.getBgColor(), sc0.getFgColor());
         }
