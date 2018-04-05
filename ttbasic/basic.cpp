@@ -294,6 +294,11 @@ const uint8_t i_sf[] BASIC_DAT  = {
   I_BEEP, I_CSCROLL, I_GSCROLL, I_MOD,
 };
 
+// tokens that can be functions (no space before paren) or something else
+const uint8_t i_dual[] BASIC_DAT = {
+  I_FRAME, I_PLAY, I_VREG, I_POS,
+};
+
 // exception search function
 char sstyle(uint8_t code,
             const uint8_t *table, uint8_t count) {
@@ -307,6 +312,7 @@ char sstyle(uint8_t code,
 #define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa))
 #define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb))
 #define spacef(c) sstyle(c, i_sf, sizeof(i_sf))
+#define dual(c) sstyle(c, i_dual, sizeof(i_dual))
 
 // エラーメッセージ定義
 uint8_t err; // Error message index
@@ -1281,7 +1287,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       c_puts(kw, devno); //キーワードテーブルの文字列を表示
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip+1) != I_COLON && *(ip+1) != I_OPEN)
+      if (*(ip+1) != I_COLON && (*(ip+1) != I_OPEN || !dual(*ip)))
 	if ( (!nospacea(*ip) || spacef(*(ip+1))) &&
 	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL) //もし例外にあたらなければ
 	  c_putch(' ',devno);  //空白を表示
