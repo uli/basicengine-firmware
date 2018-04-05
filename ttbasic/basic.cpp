@@ -6862,6 +6862,8 @@ void iopen() {
   else {
     if (user_files[filenum]) {
       user_files[filenum]->close();
+      if (redirect_file == filenum)
+        redirect_file = -1;
       delete user_files[filenum];
     }
     user_files[filenum] = new Unifile();
@@ -6887,6 +6889,8 @@ void iclose() {
     err = ERR_FILE_NOT_OPEN;
   else {
     user_files[filenum]->close();
+    if (redirect_file == filenum)
+      redirect_file = -1;
     delete user_files[filenum];
     user_files[filenum] = NULL;
   }
