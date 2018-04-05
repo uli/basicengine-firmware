@@ -5724,6 +5724,23 @@ num_t BASIC_INT nval() {
   return value;
 }
 
+num_t BASIC_INT ninstr() {
+  BString haystack, needle;
+  if (checkOpen()) return 0;
+  haystack = istrexp();
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    return 0;
+  }
+  needle = istrexp();
+  if (checkClose()) return 0;
+  char *res = strstr(haystack.c_str(), needle.c_str());
+  if (!res)
+    return -1;
+  else
+    return res - haystack.c_str();
+}
+
 typedef num_t (*numfun_t)();
 #include "numfuntbl.h"
 
