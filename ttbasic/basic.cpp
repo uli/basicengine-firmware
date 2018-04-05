@@ -37,11 +37,6 @@ struct unaligned_num_t {
 #define UNALIGNED_NUM_T(ip) (reinterpret_cast<struct unaligned_num_t *>(ip)->n)
 
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
-int size_list;
-#define MAX_VAR_NAME 32  // maximum length of variable names
-#define SIZE_GSTK 10     // GOSUB stack size
-#define SIZE_LSTK 10     // FOR stack size
-#define SIZE_ASTK 16	// argument stack
 
 // *** フォント参照 ***************
 const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
@@ -349,28 +344,6 @@ char tbuf[SIZE_LINE];          // テキスト表示用バッファ
 int32_t tbuf_pos = 0;
 unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
-NumVariables var;
-VarNames var_names;
-StringVariables svar;
-VarNames svar_names;
-
-#define MAX_ARRAY_DIMS 4
-NumArrayVariables<num_t> num_arr;
-VarNames num_arr_names;
-StringArrayVariables<BString> str_arr;
-VarNames str_arr_names;
-BasicListVariables<BString> str_lst;
-VarNames str_lst_names;
-BasicListVariables<num_t> num_lst;
-VarNames num_lst_names;
-
-VarNames proc_names;
-Procedures proc;
-VarNames label_names;
-Labels labels;
-
-unsigned char *listbuf; // Pointer to program list area
-
 // BASIC line number descriptor.
 // NB: A lot of code relies on this being of size "sizeof(num_t)+1".
 typedef struct {
@@ -384,37 +357,7 @@ typedef struct {
   };
 } __attribute__((packed)) line_desc_t;
 
-unsigned char* clp;               // Pointer current line
-unsigned char* cip;               // Pointer current Intermediate code
-struct {
-  uint8_t *lp;
-  uint8_t *ip;
-  uint8_t num_args;
-  uint8_t str_args;
-  uint8_t proc_idx;
-} gstk[SIZE_GSTK];   // GOSUB stack
-unsigned char gstki;              // GOSUB stack index
-
-// Arguments/locals stack
-num_t astk_num[SIZE_ASTK];
-unsigned char astk_num_i;
-BString astk_str[SIZE_ASTK];
-unsigned char astk_str_i;
-
-struct {
-  uint8_t *lp;
-  uint8_t *ip;
-  num_t vto;
-  num_t vstep;
-  int16_t index;
-  bool local;
-} lstk[SIZE_LSTK];   // loop stack
-unsigned char lstki;              // loop stack index
-
-uint8_t *cont_clp = NULL;
-uint8_t *cont_cip = NULL;
-
-num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
+basic_ctx_t *bc = NULL;
 
 // メモリへの文字出力
 inline void mem_putch(uint8_t c) {
@@ -812,7 +755,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 
       int idx = proc_names.assign(vname, true);
       ibuf[len++] = idx;
-      if (proc.reserve(proc_names.varTop())) {
+      if (procs.reserve(proc_names.varTop())) {
         err = ERR_OOM;
         return 0;
       }
@@ -835,7 +778,7 @@ uint8_t SMALL toktoi(bool find_prg_text) {
       while (c_isspace(*s)) s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
-      if (proc.reserve(proc_names.varTop())) {
+      if (procs.reserve(proc_names.varTop())) {
         err = ERR_OOM;
         return 0;
       }
@@ -988,12 +931,12 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 	if (is_list) {
 	  idx = num_lst_names.assign(vname, is_prg_text);
 	} else {
-	  idx = var_names.assign(vname, is_prg_text);
+	  idx = nvar_names.assign(vname, is_prg_text);
         }
 	if (idx < 0)
 	  goto oom;
 	ibuf[len++] = idx;
-	if ((!is_list && var.reserve(var_names.varTop())) ||
+	if ((!is_list && nvar.reserve(nvar_names.varTop())) ||
 	    ( is_list && num_lst.reserve(num_lst_names.varTop())))
 	  goto oom;
 	s += var_len;
@@ -1137,7 +1080,7 @@ void inslist() {
   int len;               // 移動の長さ
 
   cont_clp = cont_cip = NULL;
-  proc.reset();
+  procs.reset();
   labels.reset();
 
   // Empty check (If this is the case, it may be impossible to delete lines
@@ -1344,7 +1287,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
         sc0.setColor(COL(VAR), COL(BG));
       ip++; //ポインタを変数番号へ進める
       var_code = *ip++;
-      c_puts(var_names.name(var_code), devno);
+      c_puts(nvar_names.name(var_code), devno);
       sc0.setColor(COL(FG), COL(BG));
 
       if (!nospaceb(*ip)) //もし例外にあたらなければ
@@ -1523,7 +1466,7 @@ void SMALL iinput() {
       else if (dims < 0)
         num_lst.var(index).var(idxs[0]) = value;
       else
-        var.var(index) = value;
+        nvar.var(index) = value;
 
       break;
 
@@ -1609,7 +1552,7 @@ void BASIC_FP ivar() {
   value = iexp(); //式の値を取得
   if (err) //もしエラーが生じたら
     return;  //終了
-  var.var(index) = value;
+  nvar.var(index) = value;
 }
 
 // Local variables are handled by encoding them with global variable indices.
@@ -1638,9 +1581,9 @@ static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
     return 0;
   }
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
-  int local_offset = proc.getNumArg(proc_idx, arg);
+  int local_offset = procs.getNumArg(proc_idx, arg);
   if (local_offset < 0) {
-    local_offset = proc.getNumLoc(proc_idx, arg);
+    local_offset = procs.getNumLoc(proc_idx, arg);
     if (local_offset < 0) {
       err = ERR_ASTKOF;
       return 0;
@@ -1816,9 +1759,9 @@ static int get_str_local_offset(uint8_t arg, bool &is_local)
     return 0;
   }
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
-  int local_offset = proc.getStrArg(proc_idx, arg);
+  int local_offset = procs.getStrArg(proc_idx, arg);
   if (local_offset < 0) {
-    local_offset = proc.getStrLoc(proc_idx, arg);
+    local_offset = procs.getStrLoc(proc_idx, arg);
     if (local_offset < 0) {
       err = ERR_ASTKOF;
       return 0;
@@ -2132,8 +2075,8 @@ void initialize_proc_pointers(void)
 
   lp = listbuf; ip = NULL;
 
-  for (int i = 0; i < proc.size(); ++i) {
-    proc.proc(i).lp = NULL;
+  for (int i = 0; i < procs.size(); ++i) {
+    procs.proc(i).lp = NULL;
   }
 
   for (;;) {
@@ -2144,7 +2087,7 @@ void initialize_proc_pointers(void)
     uint8_t proc_id = ip[1];
     ip += 2;
 
-    proc_t &pr = proc.proc(proc_id);
+    proc_t &pr = procs.proc(proc_id);
 
     if (pr.lp) {
       err = ERR_DUPPROC;
@@ -2301,7 +2244,7 @@ void iread() {
     }
     data_ip = cip;
     cip = cip_save;
-    var.var(*cip++) = value;
+    nvar.var(*cip++) = value;
     break;
     
   case I_VARARR:
@@ -2628,7 +2571,7 @@ void inew(uint8_t mode) {
   in_data = false;
 
   if (mode != NEW_PROG) {
-    var.reset();
+    nvar.reset();
     svar.reset();
     num_arr.reset();
     num_lst.reset();
@@ -2644,8 +2587,8 @@ void inew(uint8_t mode) {
     // variable pools. Can they fail doing so?
     svar_names.deleteDirect();
     svar.reserve(svar_names.varTop());
-    var_names.deleteDirect();
-    var.reserve(var_names.varTop());
+    nvar_names.deleteDirect();
+    nvar.reserve(nvar_names.varTop());
     num_arr_names.deleteDirect();
     num_arr.reserve(num_arr_names.varTop());
     str_arr_names.deleteDirect();
@@ -2658,8 +2601,8 @@ void inew(uint8_t mode) {
   if (mode != NEW_VAR) {
     cont_cip = cont_clp = NULL;
     // forget all variables
-    var_names.deleteAll();
-    var.reserve(0);
+    nvar_names.deleteAll();
+    nvar.reserve(0);
     svar_names.deleteAll();
     svar.reserve(0);
     num_arr_names.deleteAll();
@@ -2669,7 +2612,7 @@ void inew(uint8_t mode) {
     str_lst_names.deleteAll();
     str_lst.reserve(0);
     proc_names.deleteAll();
-    proc.reserve(0);
+    procs.reserve(0);
     label_names.deleteAll();
     labels.reserve(0);
 
@@ -2920,7 +2863,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   uint8_t rc = 0;
   
   cont_clp = cont_cip = NULL;
-  proc.reset();
+  procs.reset();
   labels.reset();
 
   err = bfs.tmpOpen(fname,0);
@@ -2963,7 +2906,7 @@ void SMALL idelete() {
   int32_t len;       // 移動の長さ
 
   cont_clp = cont_cip = NULL;
-  proc.reset();
+  procs.reset();
   labels.reset();
 
   uint32_t current_line = getlineno(clp);
@@ -3097,7 +3040,7 @@ static bool profile_enabled;
 void BASIC_FP init_stack_frame()
 {
   if (gstki > 0) {
-    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i += p.locc_num;
     astk_str_i += p.locc_str;
   }
@@ -3117,7 +3060,7 @@ void BASIC_FP push_num_arg(num_t n)
 
 void BASIC_FP do_call(uint8_t proc_idx)
 {
-  struct proc_t &proc_loc = proc.proc(proc_idx);
+  struct proc_t &proc_loc = procs.proc(proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
     err = ERR_UNDEFPROC;
@@ -3367,11 +3310,11 @@ void ilocate() {
 
 // 文字色の指定 COLOR fc,bc
 void icolor() {
-  int32_t fc,  bc = 0;
+  int32_t fc,  bgc = 0;
   if ( getParam(fc, 0, 255, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
-    if ( getParam(bc, 0, 255, I_NONE) ) return;
+    if ( getParam(bgc, 0, 255, I_NONE) ) return;
     if (*cip == I_COMMA) {
       ++cip;
       int cc;
@@ -3380,7 +3323,7 @@ void icolor() {
     }
   }
   // 文字色の設定
-  sc0.setColor((uint16_t)fc, (uint16_t)bc);
+  sc0.setColor((uint16_t)fc, (uint16_t)bgc);
 }
 
 // キー入力文字コードの取得 INKEY()関数
@@ -3669,7 +3612,7 @@ void igetDate() {
   for (uint8_t i=0; i <4; i++) {
     if (*cip == I_VAR) {          // 変数の場合
       cip++; index = *cip;        // 変数インデックスの取得
-      var.var(index) = v[i];
+      nvar.var(index) = v[i];
       cip++;
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
@@ -3703,7 +3646,7 @@ void igetTime() {
   for (uint8_t i=0; i <3; i++) {
     if (*cip == I_VAR) {          // 変数の場合
       cip++; index = *cip;        // 変数インデックスの取得
-      var.var(index) = v[i];
+      nvar.var(index) = v[i];
       cip++;
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
@@ -5803,7 +5746,7 @@ num_t BASIC_FP ivalue() {
 
   //変数の値の取得
   case I_VAR: //変数
-    value = var.var(*cip++);
+    value = nvar.var(*cip++);
     break;
 
   case I_LVAR:
@@ -6204,7 +6147,7 @@ void SMALL isysinfo() {
   PRINT_P("Variables:\n");
   
   PRINT_P(" Numerical: ");
-  putnum(var.size(), 0);
+  putnum(nvar.size(), 0);
   PRINT_P(", ");
   putnum(num_arr.size(), 0);
   PRINT_P(" arrays, ");
@@ -6457,7 +6400,7 @@ void BASIC_FP icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
-  struct proc_t &proc_loc = proc.proc(proc_idx);
+  struct proc_t &proc_loc = procs.proc(proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
     err = ERR_UNDEFPROC;
@@ -6472,7 +6415,7 @@ void BASIC_FP icall() {
   int num_args = 0;
   int str_args = 0;
   if (gstki > 0) {
-    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i += p.locc_num;
     astk_str_i += p.locc_str;
   }
@@ -6556,12 +6499,12 @@ void BASIC_FP ireturn() {
   if (gstki > 0) {
     // XXX: This can change if the parent procedure was called by this one
     // (directly or indirectly)!
-    struct proc_t &p = proc.proc(gstk[gstki-1].proc_idx);
+    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i -= p.locc_num;
     astk_str_i -= p.locc_str;
   }
   if (profile_enabled) {
-    struct proc_t &p = proc.proc(gstk[gstki].proc_idx);
+    struct proc_t &p = procs.proc(gstk[gstki].proc_idx);
     p.profile_total += ESP.getCycleCount() - p.profile_current;
   }
   clp = gstk[gstki].lp; //中間コードポインタを復帰
@@ -6709,12 +6652,12 @@ void BASIC_FP inext() {
   }
 
   vstep = lstk[lstki - 1].vstep;
-  var.var(index) += vstep;
+  nvar.var(index) += vstep;
   vto = lstk[lstki - 1].vto;
 
   // Is this loop finished?
-  if (((vstep < 0) && (var.var(index) < vto)) ||
-      ((vstep > 0) && (var.var(index) > vto))) {
+  if (((vstep < 0) && (nvar.var(index) < vto)) ||
+      ((vstep > 0) && (nvar.var(index) > vto))) {
     lstki--;  // drop it from FOR stack
     return;
   }
@@ -6915,8 +6858,8 @@ void iprofile() {
     profile_enabled = false;
     break;
   case I_LIST:
-    for (int i = 0; i < proc.size(); ++i) {
-      struct proc_t &p = proc.proc(i);
+    for (int i = 0; i < procs.size(); ++i) {
+      struct proc_t &p = procs.proc(i);
       sprintf(lbuf, "%10d %s", p.profile_total, proc_names.name(i));
       c_puts(lbuf); newline();
     }
@@ -7163,6 +7106,8 @@ void SMALL basic() {
   unsigned char len; // Length of intermediate code
   char* textline;    // input line
   uint8_t rc;
+
+  bc = new basic_ctx_t;
 
 #ifdef UNIFILE_USE_SPIFFS
 #ifdef ESP8266_NOWIFI

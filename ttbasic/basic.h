@@ -19,12 +19,8 @@ extern char tbuf[SIZE_LINE];
 extern int32_t tbuf_pos;
 extern unsigned char ibuf[SIZE_IBUF];
 
-extern unsigned char *listbuf;
-
 extern uint8_t err; // Error message index
 
-#define MAX_RETVALS 4
-extern num_t retval[MAX_RETVALS];
 
 uint8_t toktoi(bool find_prg_text = true);
 void putlist(unsigned char* ip, uint8_t devno=0);
@@ -53,9 +49,6 @@ void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0);
 
 void newline(uint8_t devno=0);
 
-extern unsigned char *clp;
-extern unsigned char *cip;
-
 BString getParamFname();
 num_t getparam();
 
@@ -66,6 +59,115 @@ uint32_t getNextLineNo(uint32_t lineno);
 uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
+
+#define MAX_VAR_NAME 32  // maximum length of variable names
+#define SIZE_GSTK 10     // GOSUB stack size
+#define SIZE_LSTK 10     // FOR stack size
+#define SIZE_ASTK 16	// argument stack
+
+#define MAX_RETVALS 4
+
+typedef struct {
+  int size_list;
+
+  NumVariables nvar;
+  VarNames nvar_names;
+  StringVariables svar;
+  VarNames svar_names;
+
+  #define MAX_ARRAY_DIMS 4
+  NumArrayVariables<num_t> num_arr;
+  VarNames num_arr_names;
+  StringArrayVariables<BString> str_arr;
+  VarNames str_arr_names;
+  BasicListVariables<BString> str_lst;
+  VarNames str_lst_names;
+  BasicListVariables<num_t> num_lst;
+  VarNames num_lst_names;
+
+  VarNames proc_names;
+  Procedures procs;
+  VarNames label_names;
+  Labels labels;
+
+  unsigned char *listbuf; // Pointer to program list area
+
+  unsigned char* clp;               // Pointer current line
+  unsigned char* cip;               // Pointer current Intermediate code
+  struct {
+    uint8_t *lp;
+    uint8_t *ip;
+    uint8_t num_args;
+    uint8_t str_args;
+    uint8_t proc_idx;
+  } gstk[SIZE_GSTK];   // GOSUB stack
+  unsigned char gstki;              // GOSUB stack index
+
+  // Arguments/locals stack
+  num_t astk_num[SIZE_ASTK];
+  unsigned char astk_num_i;
+  BString astk_str[SIZE_ASTK];
+  unsigned char astk_str_i;
+
+  struct {
+    uint8_t *lp;
+    uint8_t *ip;
+    num_t vto;
+    num_t vstep;
+    int16_t index;
+    bool local;
+  } lstk[SIZE_LSTK];   // loop stack
+  unsigned char lstki;              // loop stack index
+
+  uint8_t *cont_clp = NULL;
+  uint8_t *cont_cip = NULL;
+
+  num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
+} basic_ctx_t;
+
+extern basic_ctx_t *bc;
+
+#define size_list bc->size_list
+
+#define nvar bc->nvar
+#define nvar_names bc->nvar_names
+#define svar bc->svar
+#define svar_names bc->svar_names
+
+#define num_arr bc->num_arr
+#define num_arr_names bc->num_arr_names
+#define str_arr bc->str_arr
+#define str_arr_names bc->str_arr_names
+#define str_lst bc->str_lst
+#define str_lst_names bc->str_lst_names
+#define num_lst bc->num_lst
+#define num_lst_names bc->num_lst_names
+
+#define proc_names bc->proc_names
+#define procs bc->procs
+#define label_names bc->label_names
+#define labels bc->labels
+
+#define listbuf bc->listbuf
+
+#define clp bc->clp
+#define cip bc->cip 
+
+#define gstk bc->gstk
+#define gstki bc->gstki
+
+#define astk_num bc->astk_num
+#define astk_num_i bc->astk_num_i
+#define astk_str bc->astk_str
+#define astk_str_i bc->astk_str_i
+
+#define lstk bc->lstk
+#define lstki bc->lstki
+
+#define cont_clp bc->cont_clp
+#define cont_cip bc->cont_cip
+
+#define retval bc->retval
 
 // '('チェック関数
 inline uint8_t checkOpen() {
