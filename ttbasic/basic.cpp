@@ -6026,27 +6026,24 @@ num_t BASIC_FP irel() {
     }
 }
 
-num_t BASIC_FP inot() {
+num_t BASIC_FP iand() {
+  num_t value, tmp;
+
   switch(*cip++) {
   case I_BITREV: // NOT
     return ~((int32_t)irel());
   default:
     cip--;
-    return irel();
+    value = irel();
   }
-}
 
-num_t BASIC_FP iand() {
-  num_t value, tmp;
-
-  value = inot();
   if (err)
     return -1;
 
   while (1)
     switch(*cip++) {
     case I_AND:
-      tmp = inot();
+      tmp = irel();
       value = ((uint32_t)value)&((uint32_t)tmp);
       break;
     default:
