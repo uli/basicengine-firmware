@@ -27,6 +27,10 @@ public:
     m_var_name = NULL;
   }
 
+  ~VarNames() {
+    deleteAll();
+  }
+
   inline bool reserve(int count) {
     dbg_var("vnames reserve %d\r\n", count);
     if (count > m_size)
@@ -134,6 +138,10 @@ public:
   NumVariables() {
     m_size = 0;
     m_var = NULL;
+  }
+
+  ~NumVariables() {
+    free(m_var);
   }
 
   void reset() {
@@ -272,6 +280,10 @@ public:
     m_var = NULL;
   }
 
+  ~NumArrayVariables() {
+    reserve(0);
+  }
+
   void reset() {
     for (int i = 0; i < m_size; ++i)
       m_var[i]->reset();
@@ -334,6 +346,10 @@ public:
   StringVariables() {
     m_size = 0;
     m_var = NULL;
+  }
+
+  ~StringVariables() {
+    reserve(0);
   }
 
   void reset() {
@@ -489,6 +505,10 @@ public:
     m_var = NULL;
   }
 
+  ~StringArrayVariables() {
+    reserve(0);
+  }
+
   void reset() {
     for (int i = 0; i < m_size; ++i)
       m_var[i]->reset();
@@ -610,6 +630,10 @@ public:
   BasicListVariables() {
     m_size = 0;
     m_var = NULL;
+  }
+
+  ~BasicListVariables() {
+    reserve(0);
   }
 
   void reset() {
