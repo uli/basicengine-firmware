@@ -23,6 +23,10 @@ public:
     m_proc = NULL;
   }
 
+  ~Procedures() {
+    reserve(0);
+  }
+
   void reset() {
     for (int i = 0; i < m_size; ++i) {
       memset(&m_proc[i], 0, sizeof(m_proc[i]));
@@ -122,6 +126,10 @@ public:
   Labels() {
     m_size = 0;
     m_lab = NULL;
+  }
+
+  ~Labels() {
+    reserve(0);
   }
 
   void reset() {
