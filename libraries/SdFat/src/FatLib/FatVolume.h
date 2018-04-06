@@ -44,7 +44,8 @@
 #else  // DEBUG_MODE
 #define DBG_FAIL_MACRO
 #define DBG_PRINT_IF(b)
-#define DBG_HALT_IF(b)
+extern void syspanic(const char *txt);
+#define DBG_HALT_IF(b) if (b) {syspanic(F("SdFat panic: " #b));}
 #endif  // DEBUG_MODE
 #endif  // DOXYGEN_SHOULD_SKIP_THIS
 //------------------------------------------------------------------------------
