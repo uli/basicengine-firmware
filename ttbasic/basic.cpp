@@ -2397,11 +2397,6 @@ void itroff() {
 bool event_sprite_enabled;
 uint8_t event_sprite_proc_idx;
 
-bool event_error_enabled;
-uint32_t event_error_line;
-unsigned char *event_error_resume_lp;
-unsigned char *event_error_resume_ip;
-
 bool event_play_enabled;
 uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
