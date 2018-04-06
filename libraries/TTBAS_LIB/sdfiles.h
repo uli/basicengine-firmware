@@ -115,8 +115,9 @@ public:
 
   bool isDirectory() {
     switch (m_type) {
-    case SD: { SD_BEGIN(); bool ret = m_sd_file.isDirectory(); SD_END(); return ret; }
-    case FS: return false; /* no directories in SPIFFS */
+    case SD_DIR:
+    case FS_DIR:
+      return true;
     default: return false;
     }
   }
