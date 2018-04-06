@@ -392,9 +392,9 @@ int16_t sdfiles::read() {
 //
 int16_t sdfiles::readLine(char* str) {
   int len = 0;
-  int16_t rc;
+  int16_t rc = 0;
   
-  while(1) {
+  while(tfile->available()) {
     rc = tfile->read(str, 1);
     if (rc <= 0) break;
     if (*str == 0x0d)
