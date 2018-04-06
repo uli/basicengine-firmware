@@ -235,7 +235,7 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
     return -rc;
   }
   
-  if (tfile.isDirectory()) {
+  if (tfile->isDirectory()) {
     rc = -SD_ERR_NOT_FILE;
     tmpClose();
     goto DONE;
@@ -328,10 +328,13 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  Failed to open file: SD_ERR_OPEN_FILE
 //
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
+  tfile = new Unifile;
+  if (!tfile)
+    return ERR_OOM;
   if(mode) {
-    tfile = Unifile::open(tfname, FILE_OVERWRITE);
+    *tfile = Unifile::open(tfname, FILE_OVERWRITE);
   } else {
-    tfile = Unifile::open(tfname, FILE_READ);   
+    *tfile = Unifile::open(tfname, FILE_READ);   
   }
 
   if (tfile)
@@ -342,8 +345,10 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
 
 // 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
-  if (tfile)
-    tfile.close();
+  if (tfile) {
+    tfile->close();
+    tfile = NULL;
+  }
 
   return 0;
 }
@@ -353,7 +358,7 @@ uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
 
   if( tfile && s ) {
-    n = tfile.write(s);
+    n = tfile->write(s);
   }
 
   return !n;    
@@ -364,7 +369,7 @@ uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
 
   if(tfile) {
-    n = tfile.write(c);
+    n = tfile->write(c);
   }
 
   return !n;   
@@ -374,7 +379,7 @@ uint8_t sdfiles::putch(char c) {
 int16_t sdfiles::read() {
   if(!tfile) 
     return -1;
-  return tfile.read();
+  return tfile->read();
 }
 
 //
@@ -390,7 +395,7 @@ int16_t sdfiles::readLine(char* str) {
   int16_t rc;
   
   while(1) {
-    rc = tfile.read(str, 1);
+    rc = tfile->read(str, 1);
     if (rc <= 0) break;
     if (*str == 0x0d)
       continue;
