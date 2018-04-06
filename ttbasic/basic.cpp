@@ -215,6 +215,10 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 
 void newline(uint8_t devno) {
   if (devno==0) {
+    if (redirect_file >= 0) {
+      user_files[redirect_file]->write('\n');
+      return;
+    }
     if (sc0.peekKey() == SC_KEY_CTRL_C) {
       c_getch();
       err = ERR_CTR_C;
