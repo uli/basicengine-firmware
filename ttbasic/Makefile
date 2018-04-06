@@ -9,18 +9,20 @@ all: elf
 elf:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
-		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
+		-tools "$(ARDUINO_DIR)/tools-builder" \
 		-fqbn "esp8266com:esp8266_nowifi:basic_engine:CpuFrequency=160,FlashSize=4M3M" \
 		-built-in-libraries $(ARDUINO_DIR)/libraries \
+		-libraries ../libraries \
 		-warnings all \
 		-build-path $(BUILD_PATH) -compile ttbasic.ino
 
 elf_net:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
-		-tools "$(ARDUINO_DIR)/tools-builder,/home/uli/.arduino15/packages" \
+		-tools "$(ARDUINO_DIR)/tools-builder" \
 		-fqbn "esp8266com:esp8266:d1_mini:CpuFrequency=160,FlashSize=4M3M" \
 		-built-in-libraries $(ARDUINO_DIR)/libraries \
+		-libraries ../libraries \
 		-warnings all \
 		-build-path $(BUILD_PATH)_net -compile ttbasic.ino
 
