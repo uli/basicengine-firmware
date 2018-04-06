@@ -6860,6 +6860,13 @@ void iopen() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
   
+  if (user_files[filenum]) {
+    user_files[filenum]->close();
+    if (redirect_file == filenum)
+      redirect_file = -1;
+    delete user_files[filenum];
+  }
+
   Unifile f;
   if (flags == -1)
     f = Unifile::openDir(filename.c_str());
@@ -6868,12 +6875,6 @@ void iopen() {
   if (!f)
     err = ERR_FILE_OPEN;
   else {
-    if (user_files[filenum]) {
-      user_files[filenum]->close();
-      if (redirect_file == filenum)
-        redirect_file = -1;
-      delete user_files[filenum];
-    }
     user_files[filenum] = new Unifile();
     if (!user_files[filenum]) {
       err = ERR_OOM;
