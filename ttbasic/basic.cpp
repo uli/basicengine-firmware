@@ -74,7 +74,6 @@ bool restore_text_window = false;
 // *** SDカード管理 ****************
 sdfiles bfs;
 
-#define MAX_USER_FILES 16
 Unifile *user_files[MAX_USER_FILES];
 
 SystemConfig CONFIG;

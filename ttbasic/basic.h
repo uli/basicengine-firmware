@@ -251,6 +251,9 @@ static inline uint8_t BASIC_FP getParam(int32_t& prm, int32_t v_min,  int32_t v_
 extern "C" size_t umm_free_heap_size( void );
 #endif
 
+#define MAX_USER_FILES 16
+extern Unifile *user_files[MAX_USER_FILES];
+
 #include <tscreenBase.h>
 #include <tTVscreen.h>
 
