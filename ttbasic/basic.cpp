@@ -193,13 +193,14 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   escape = false;
 }
 
-static int redirect_file = -1;
+int redirect_output_file = -1;
+int redirect_input_file = -1;
 
 // 文字の出力
 inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0) {
-    if (redirect_file >= 0)
-      user_files[redirect_file]->write(c);
+    if (redirect_output_file >= 0)
+      user_files[redirect_output_file]->write(c);
     else
       screen_putch(c);
   } else if (devno == 1)
@@ -214,8 +215,8 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 
 void newline(uint8_t devno) {
   if (devno==0) {
-    if (redirect_file >= 0) {
-      user_files[redirect_file]->write('\n');
+    if (redirect_output_file >= 0) {
+      user_files[redirect_output_file]->write('\n');
       return;
     }
     if (sc0.peekKey() == SC_KEY_CTRL_C) {
@@ -2464,6 +2465,8 @@ void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
+      redirect_output_file = -1;
+      redirect_input_file = -1;
       event_error_resume_lp = NULL;
       if (event_error_enabled) {
         retval[0] = err;
@@ -6760,18 +6763,45 @@ void esyntax() {
 #define esyntax_workaround esyntax
 
 void icmd () {
+  bool is_input;
   int32_t redir;
+  if (*cip == I_OUTPUT) {
+    is_input = false;
+    ++cip;
+  } else if (*cip == I_INPUT) {
+    is_input = true;
+    ++cip;
+  } else if (*cip == I_OFF) {
+    ++cip;
+    redirect_input_file = -1;
+    redirect_output_file = -1;
+    return;
+  } else {
+    SYNTAX_T("INPUT or OUTPUT");
+    return;
+  }
+
   if (*cip == I_OFF) {
     ++cip;
-    redirect_file = -1;
+    if (is_input)
+      redirect_input_file = -1;
+    else
+      redirect_output_file = -1;
     return;
   } else
     getParam(redir, 0, MAX_USER_FILES, I_NONE);
   if (!user_files[redir] || !*user_files[redir]) {
     err = ERR_FILE_NOT_OPEN;
-    redirect_file = -1;
-  } else
-    redirect_file = redir;
+    if (is_input)
+      redirect_input_file = -1;
+    else
+      redirect_output_file = -1;
+  } else {
+    if (is_input)
+      redirect_input_file = redir;
+    else
+      redirect_output_file = redir;
+  }
 }
 
 void iprint_() {
@@ -6865,9 +6895,12 @@ void iopen() {
   
   if (user_files[filenum]) {
     user_files[filenum]->close();
-    if (redirect_file == filenum)
-      redirect_file = -1;
+    if (redirect_output_file == filenum)
+      redirect_output_file = -1;
+    if (redirect_input_file == filenum)
+      redirect_input_file = -1;
     delete user_files[filenum];
+    user_files[filenum] = NULL;
   }
 
   Unifile f;
@@ -6901,8 +6934,10 @@ void iclose() {
     err = ERR_FILE_NOT_OPEN;
   else {
     user_files[filenum]->close();
-    if (redirect_file == filenum)
-      redirect_file = -1;
+    if (redirect_output_file == filenum)
+      redirect_output_file = -1;
+    if (redirect_input_file == filenum)
+      redirect_input_file = -1;
     delete user_files[filenum];
     user_files[filenum] = NULL;
   }

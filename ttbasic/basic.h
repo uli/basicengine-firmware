@@ -31,8 +31,6 @@ static inline void cleartbuf() {
   memset(tbuf,0,SIZE_LINE);
 }
 
-#define c_getch( ) sc0.get_ch()
-#define c_kbhit( ) sc0.isKeyIn()
 
 void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
@@ -262,6 +260,18 @@ extern tTVscreen sc0;
 #define NEW_ALL		0
 #define NEW_PROG	1
 #define NEW_VAR		2
+
+extern int redirect_output_file;
+extern int redirect_input_file;
+
+static inline uint16_t c_getch() {
+  if (redirect_input_file >= 0)
+    return user_files[redirect_input_file]->read();
+  else
+    return sc0.get_ch();
+}
+
+#define c_kbhit( ) sc0.isKeyIn()
 
 void c_puts(const char *s, uint8_t devno);
 void c_puts_P(const char *s, uint8_t devno);
