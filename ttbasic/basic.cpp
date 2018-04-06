@@ -3974,7 +3974,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       }
       bfs.setTempFile(*user_files[filenum]);
       devno = 4;
-      break;
+      continue;
       
     default:	// anything else is assumed to be a numeric expression
       value = iexp();
