@@ -600,17 +600,16 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
 //  SDカード利用失敗       : SD_ERR_INIT
 //  ファイルオープンエラー : SD_ERR_OPEN_FILE 
 //
-uint8_t sdfiles::mkdir(char* fname) {
+uint8_t sdfiles::mkdir(const char* fname) {
   uint8_t rc = 1;
  
   // This is a NOP for SPIFFS.
   if (Unifile::isSPIFFS(fname))
     return 0;
 
-  if (strncmp(fname, SD_PREFIX, SD_PREFIX_LEN))
-    return SD_ERR_OPEN_FILE;
+  UnifileString abs_name = Unifile::path(fname);
 
-  fname += SD_PREFIX_LEN;
+  fname = abs_name.c_str() + SD_PREFIX_LEN;
 
   if (SD_BEGIN() == false) {
     return SD_ERR_INIT;

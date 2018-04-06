@@ -484,7 +484,7 @@ public:
   uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
   uint8_t save(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのセーブ
   uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
-  uint8_t mkdir(char* fname);                           // ディレクトリの作成
+  uint8_t mkdir(const char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
   uint8_t rename(char* old_fname,char* new_fname);    // ファイル名の変更
   uint8_t fcopy(const char* old_fname,const char* new_fname);       // ファイルのコピー
