@@ -4204,7 +4204,7 @@ void irmdir() {
 
 // RENAME <old$> TO <new$>
 void irename() {
-  uint8_t rc;
+  bool rc;
 
   BString old_fname = getParamFname();
   if (err)
@@ -4219,7 +4219,7 @@ void irename() {
     return;
 
   rc = Unifile::rename(old_fname.c_str(), new_fname.c_str());
-  if (rc)
+  if (!rc)
     err = ERR_FILE_WRITE;
 }
 
