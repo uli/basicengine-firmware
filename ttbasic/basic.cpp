@@ -6697,11 +6697,22 @@ void BASIC_FP iif() {
     return;
   }
 
+  bool have_goto = false;
   if (*cip == I_THEN) {
     ++cip;
+    if (*cip == I_NUM)	// XXX: should be "if not command"
+      have_goto = true;
+  } else if (*cip == I_GOTO) {
+    ++cip;
+    have_goto = true;
+  } else {
+    SYNTAX_T("THEN or GOTO");
+    return;
   }
 
   if (condition) {    // もし真なら
+    if (have_goto)
+      igoto();
     return;
   } else {
     newip = getELSEptr(cip);
