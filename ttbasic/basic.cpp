@@ -220,7 +220,7 @@ void newline(uint8_t devno) {
       return;
     }
     if (sc0.peekKey() == SC_KEY_CTRL_C) {
-      c_getch();
+      sc0.get_ch();
       err = ERR_CTR_C;
     } else if (kb.state(PS2KEY_L_Shift)) {
       uint32_t m = millis() + 200;
