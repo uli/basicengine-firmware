@@ -2055,6 +2055,9 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
 
   *start_clp = *start_cip = NULL;
 
+  if (!*sclp)
+    return;
+
   if (!scip)
     scip = sclp + sizeof(line_desc_t);
 
