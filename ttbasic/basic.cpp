@@ -6944,6 +6944,14 @@ void iboot() {
 
 void iexec() {
   BString file = getParamFname();
+  int is_text = bfs.IsText((char *)file.c_str());
+  if (is_text < 0) {
+    err = -is_text;
+    return;
+  } else if (!is_text) {
+    E_ERR(FORMAT, "BASIC program");
+    return;
+  }
   basic_ctx_t *old_bc = bc;
   bc = new basic_ctx_t;
   listbuf = NULL;
