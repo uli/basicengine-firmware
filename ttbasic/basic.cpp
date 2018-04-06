@@ -7428,3 +7428,12 @@ void isaveconfig() {
   f.write((char *)&CONFIG, sizeof(CONFIG));
   f.close();
 }
+
+void syspanic(const char *txt) {
+  redirect_output_file = -1;
+  c_puts(txt);
+  PRINT_P("\nSystem halted");
+  Serial.println(txt);
+  Serial.println(F("System halted"));
+  for (;;);
+}
