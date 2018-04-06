@@ -2475,8 +2475,8 @@ resume:
         cont_cip = cont_clp = NULL;
         return;
       }
-    }
-    clp = lp;         // 行ポインタを次の行の位置へ移動
+    } else
+      clp = lp;         // 行ポインタを次の行の位置へ移動
   }
 }
 
