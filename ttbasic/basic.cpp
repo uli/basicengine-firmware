@@ -347,7 +347,6 @@ void SMALL E_VALUE(int32_t from, int32_t to) {
 char lbuf[SIZE_LINE];          // コマンド入力バッファ
 char tbuf[SIZE_LINE];          // テキスト表示用バッファ
 int32_t tbuf_pos = 0;
-unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
 // BASIC line number descriptor.
 // NB: A lot of code relies on this being of size "sizeof(num_t)+1".

@@ -68,6 +68,8 @@ char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 #define MAX_RETVALS 4
 
 typedef struct {
+  unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
+
   int size_list;
 
   NumVariables nvar;
@@ -126,6 +128,8 @@ typedef struct {
 } basic_ctx_t;
 
 extern basic_ctx_t *bc;
+
+#define ibuf bc->ibuf
 
 #define size_list bc->size_list
 
