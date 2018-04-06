@@ -25,7 +25,7 @@
 // Arduino Ethernet shield: pin 4
 // Sparkfun SD shield: pin 8
 // Adafruit SD shields and modules: pin 10
-const uint8_t chipSelect = 4;
+const uint8_t chipSelect = 16;
 
 // Initialize at highest supported speed not over 11 MHz.
 // Reduce max speed if errors occur.
@@ -509,6 +509,7 @@ void setup() {
     PRINT_P("\nSD initialization failure!\n"
             "Is the SD card inserted correctly?\n");
     sdError("card.begin failed");
+    return;
   }
 #endif  
   cardSizeBlocks = card.cardSize();
