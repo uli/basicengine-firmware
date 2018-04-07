@@ -590,7 +590,7 @@ void get_input(bool numeric) {
   len = 0; //文字数をクリア
   while(1) {
     c = c_getch();
-    if (c == KEY_CR) {
+    if (c == KEY_CR || (redirect_input_file >= 0 && c == '\n')) {
       break;
     } else if (c == SC_KEY_CTRL_C || c==27) {
       err = ERR_CTR_C;
@@ -600,15 +600,20 @@ void get_input(bool numeric) {
       // beginning of the line)
       if (len > 0) {
         len--;
-        sc0.movePosPrevChar();
-        sc0.delete_char();
+        if (redirect_output_file >= 0)
+          c_putch('\x08');
+        else {
+          sc0.movePosPrevChar();
+          sc0.delete_char();
+        }
       }
     } else if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
         (len == 0 && (c == '+' || c == '-')) || isDigit(c)) ) {
       lbuf[len++] = c;
       c_putch(c);
     } else {
-      sc0.beep();
+      if (redirect_output_file < 0)
+        sc0.beep();
     }
   }
   newline(); //改行
