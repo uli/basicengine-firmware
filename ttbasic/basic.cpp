@@ -2499,8 +2499,6 @@ void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
 resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
-      redirect_output_file = -1;
-      redirect_input_file = -1;
       event_error_resume_lp = NULL;
       if (event_error_enabled) {
         retval[0] = err;
@@ -2513,9 +2511,13 @@ resume:
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
+        redirect_output_file = -1;
+        redirect_input_file = -1;
         return;
       } else {
         cont_cip = cont_clp = NULL;
+        redirect_output_file = -1;
+        redirect_input_file = -1;
         return;
       }
     } else
