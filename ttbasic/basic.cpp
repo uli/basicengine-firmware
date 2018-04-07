@@ -1589,6 +1589,10 @@ static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
     return 0;
   }
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  if (proc_idx == NO_PROC) {
+    err = ERR_GLOBAL;
+    return 0;
+  }
   int local_offset = procs.getNumArg(proc_idx, arg);
   if (local_offset < 0) {
     local_offset = procs.getNumLoc(proc_idx, arg);
@@ -1767,6 +1771,10 @@ static int get_str_local_offset(uint8_t arg, bool &is_local)
     return 0;
   }
   uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  if (proc_idx == NO_PROC) {
+    err = ERR_GLOBAL;
+    return 0;
+  }
   int local_offset = procs.getStrArg(proc_idx, arg);
   if (local_offset < 0) {
     local_offset = procs.getStrLoc(proc_idx, arg);
@@ -2401,7 +2409,6 @@ void itroff() {
   trace_enabled = false;
 }
 
-bool event_sprite_enabled;
 uint8_t event_sprite_proc_idx;
 
 bool event_play_enabled;
@@ -2409,7 +2416,7 @@ uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
 #define MAX_PADS 3
 bool event_pad_enabled;
-bool event_pad_proc_idx[MAX_PADS];
+uint8_t event_pad_proc_idx[MAX_PADS];
 int event_pad_last[MAX_PADS];
 
 void inew(uint8_t mode = NEW_ALL);
@@ -2430,12 +2437,13 @@ void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
   }
   initialize_proc_pointers();
   initialize_label_pointers();
-  event_sprite_enabled = false;
+  event_sprite_proc_idx = NO_PROC;
   event_error_enabled = false;
   event_error_resume_lp = NULL;
   event_play_enabled = false;
   event_pad_enabled = false;
-  memset(event_pad_proc_idx, 0, sizeof(event_pad_proc_idx));
+  memset(event_pad_proc_idx, NO_PROC, sizeof(event_pad_proc_idx));
+  memset(event_play_proc_idx, NO_PROC, sizeof(event_play_proc_idx));
 
   if (err)
     return;
@@ -3047,7 +3055,7 @@ static bool profile_enabled;
 
 void BASIC_FP init_stack_frame()
 {
-  if (gstki > 0) {
+  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
     struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i += p.locc_num;
     astk_str_i += p.locc_str;
@@ -3109,7 +3117,7 @@ void BASIC_INT event_handle_sprite()
         push_num_arg(j);
         push_num_arg(dir);
         do_call(event_sprite_proc_idx);
-        event_sprite_enabled = false;	// prevent interrupt storms
+        event_sprite_proc_idx = NO_PROC;	// prevent interrupt storms
         return;
       }
     }
@@ -3119,6 +3127,8 @@ void BASIC_INT event_handle_sprite()
 
 void BASIC_INT event_handle_play(int ch)
 {
+  if (event_play_proc_idx[ch] == NO_PROC)
+    return;
   init_stack_frame();
   push_num_arg(ch);
   do_call(event_play_proc_idx[ch]);
@@ -3190,7 +3200,7 @@ void BASIC_FP pump_events(void)
   event_profile[4] = micros();
   
 #ifdef VS23_BG_ENGINE
-  if (event_sprite_enabled)
+  if (event_sprite_proc_idx != NO_PROC)
     event_handle_sprite();
 #endif
   event_profile[5] = micros();
@@ -4858,7 +4868,7 @@ num_t BASIC_INT npad() {
 void BASIC_INT event_handle_pad()
 {
   for (int i = 0; i < MAX_PADS; ++i) {
-    if (!event_pad_proc_idx[i])
+    if (event_pad_proc_idx[i] == NO_PROC)
       continue;
     int new_state = pad_state(i);
     int old_state = event_pad_last[i];
@@ -6253,7 +6263,7 @@ static void BASIC_FP do_gosub_p(unsigned char *lp, unsigned char *ip)
   gstk[gstki].ip = cip;                      // 中間コードポインタを退避
   gstk[gstki].num_args = 0;
   gstk[gstki].str_args = 0;
-  gstk[gstki++].proc_idx = 0;
+  gstk[gstki++].proc_idx = NO_PROC;
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
   cip = ip;
@@ -6329,14 +6339,13 @@ void BASIC_FP ion()
   if (*cip == I_SPRITE) {
     ++cip;
     if (*cip == I_OFF) {
-      event_sprite_enabled = false;
+      event_sprite_proc_idx = NO_PROC;
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
         E_SYNTAX(I_CALL);
         return;
       }
-      event_sprite_enabled = true;
       event_sprite_proc_idx = *cip++;
     }
   } else if (*cip == I_PLAY) {
@@ -6366,7 +6375,7 @@ void BASIC_FP ion()
     }
     if (*cip == I_OFF) {
       event_pad_enabled = false;
-      memset(event_pad_proc_idx, 0, sizeof(event_pad_proc_idx));
+      memset(event_pad_proc_idx, -1, sizeof(event_pad_proc_idx));
       ++cip;
     } else {
       if (*cip++ != I_CALL) {
@@ -6434,7 +6443,7 @@ void BASIC_FP icall() {
 
   int num_args = 0;
   int str_args = 0;
-  if (gstki > 0) {
+  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
     struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i += p.locc_num;
     astk_str_i += p.locc_str;
@@ -6516,14 +6525,14 @@ void BASIC_FP ireturn() {
 
   astk_num_i -= gstk[--gstki].num_args;
   astk_str_i -= gstk[gstki].str_args;
-  if (gstki > 0) {
+  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
     // XXX: This can change if the parent procedure was called by this one
     // (directly or indirectly)!
     struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
     astk_num_i -= p.locc_num;
     astk_str_i -= p.locc_str;
   }
-  if (profile_enabled) {
+  if (profile_enabled && gstk[gstki].proc_idx != NO_PROC) {
     struct proc_t &p = procs.proc(gstk[gstki].proc_idx);
     p.profile_total += ESP.getCycleCount() - p.profile_current;
   }

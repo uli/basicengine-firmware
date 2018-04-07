@@ -3,6 +3,8 @@
 #define MAX_PROC_ARGS 8
 #define MAX_PROC_LOCS 8
 
+#define NO_PROC ((uint8_t)-1)
+
 struct proc_t {
   unsigned char *lp;
   unsigned char *ip;
