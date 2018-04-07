@@ -699,7 +699,10 @@ uint8_t SMALL toktoi(bool find_prg_text) {
 	err = ERR_IBUFOF;              // エラー番号をセット
 	return 0;                      // 0を持ち帰る
       }
-      ibuf[len++] = key;                 // 中間コードを記録
+      if (key == I_IF && len > 0 && ibuf[len-1] == I_END)
+        ibuf[len-1] = I_ENDIF;
+      else
+        ibuf[len++] = key;                 // 中間コードを記録
       s+= strlen_P(kwtbl[key]);
       if (key == I_THEN) {
         while (c_isspace(*s)) s++;
