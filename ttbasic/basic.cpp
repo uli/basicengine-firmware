@@ -2509,7 +2509,7 @@ resume:
         event_error_resume_lp = clp;
         event_error_resume_ip = cip;
         do_goto(event_error_line);
-        // XXX: What about clp = lp below?
+        err_expected = NULL;	// prevent stale "expected" messages
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
