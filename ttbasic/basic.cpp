@@ -1416,6 +1416,7 @@ void SMALL iinput() {
   BString str_value;
   short index;          // Array subscript or variable number
   int32_t filenum = -1;
+  uint8_t eoi;	// end-of-input character
 
   if (*cip == I_SHARP) {
     cip++;
@@ -1458,21 +1459,32 @@ void SMALL iinput() {
  
       cip++;
 
+      if (*cip == I_COMMA)
+        eoi = ',';
+      else
+        eoi = '\r';
+
       if (filenum >= 0) {
         int c;
         str_value = "";
+        if (eoi == '\r')
+          eoi = '\n';
         for (;;) {
           c = user_files[filenum]->peek();
           if (isdigit(c) || c == '.')
             str_value += (char)user_files[filenum]->read();
           else if (isspace(c))
             user_files[filenum]->read();
-          else
+          else if (c == eoi) {
+            user_files[filenum]->read();
+            break;
+          } else
             break;
         }
         value = str_value.toFloat();
-      } else
-        value = getnum();
+      } else {
+        value = getnum(eoi);
+      }
 
       if (err)
         return;
@@ -1503,16 +1515,22 @@ void SMALL iinput() {
       }
  
       cip++;
+      if (*cip == I_COMMA)
+        eoi = ',';
+      else
+        eoi = '\r';
 
       if (filenum >= 0) {
         int c;
         str_value = "";
-        while ((c = user_files[filenum]->read()) >= 0 && c != '\n') {
+        if (eoi == '\r')
+          eoi = '\n';
+        while ((c = user_files[filenum]->read()) >= 0 && c != eoi) {
           if (c != '\r')
             str_value += c;
         }
-      } else {      
-        str_value = getstr();
+      } else {
+        str_value = getstr(eoi);
       }
       if (err)
         return;
