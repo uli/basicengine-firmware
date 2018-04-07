@@ -583,14 +583,14 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
   c_puts(&lbuf[16-dig],devno);
 }
 
-void get_input(bool numeric) {
+void get_input(bool numeric, uint8_t eoi) {
   char c; //文字
   uint8_t len; //文字数
 
   len = 0; //文字数をクリア
   while(1) {
     c = c_getch();
-    if (c == KEY_CR || (redirect_input_file >= 0 && c == '\n')) {
+    if (c == eoi || (eoi == '\r' && redirect_input_file >= 0 && c == '\n')) {
       break;
     } else if (c == SC_KEY_CTRL_C || c==27) {
       err = ERR_CTR_C;
@@ -616,23 +616,26 @@ void get_input(bool numeric) {
         sc0.beep();
     }
   }
-  newline(); //改行
+  if (eoi == '\r' || eoi == '\n')
+    newline();
+  else
+    c_putch(eoi);
   lbuf[len] = 0; //終端を置く
 }
 
 // 数値の入力
-num_t getnum() {
+num_t getnum(uint8_t eoi = '\r') {
   num_t value;
 
-  get_input(true);
+  get_input(true, eoi);
   value = strtonum(lbuf, NULL);
   // XXX: say "EXTRA IGNORED" if there is unused input?
 
   return value;
 }
 
-BString getstr() {
-  get_input();
+BString getstr(uint8_t eoi = '\r') {
+  get_input(false, eoi);
   return BString(lbuf);
 }
 

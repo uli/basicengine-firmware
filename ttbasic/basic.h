@@ -50,7 +50,7 @@ void newline(uint8_t devno=0);
 BString getParamFname();
 num_t getparam();
 
-void get_input(bool numeric = false);
+void get_input(bool numeric = false, uint8_t eoi = '\r');
 
 uint32_t getPrevLineNo(uint32_t lineno);
 uint32_t getNextLineNo(uint32_t lineno);
