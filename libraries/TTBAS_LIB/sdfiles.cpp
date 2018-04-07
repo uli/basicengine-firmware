@@ -347,6 +347,7 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
 uint8_t sdfiles::tmpClose() {
   if (tfile) {
     tfile->close();
+    delete tfile;
     tfile = NULL;
   }
 
