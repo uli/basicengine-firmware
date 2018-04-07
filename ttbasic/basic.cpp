@@ -6050,7 +6050,7 @@ num_t BASIC_FP iand() {
     switch(*cip++) {
     case I_AND:
       tmp = irel();
-      value = ((uint32_t)value)&((uint32_t)tmp);
+      value = ((int32_t)value)&((int32_t)tmp);
       break;
     default:
       cip--;
@@ -6094,11 +6094,11 @@ num_t BASIC_FP iexp() {
     switch(*cip++) {
     case I_OR:
       tmp = iand();
-      value = ((uint32_t)value) | ((uint32_t)tmp);
+      value = ((int32_t)value) | ((int32_t)tmp);
       break;
     case I_XOR:
       tmp = iand();
-      value = ((uint32_t)value) ^ ((uint32_t)tmp);
+      value = ((int32_t)value) ^ ((int32_t)tmp);
     default:
       cip--;
       return value;
