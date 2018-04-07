@@ -5762,6 +5762,8 @@ num_t BASIC_INT ninstr() {
   BString haystack, needle;
   if (checkOpen()) return 0;
   haystack = istrexp();
+  if (err)
+    return 0;
   if (*cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
     return 0;
