@@ -87,15 +87,21 @@ public:
     Serial.printf("assign %s ", name);
 #endif
     int v = find(name);
-    if (v >= 0)
+    if (v >= 0) {
+      // This variable may have been created in direct mode, but it is now
+      // referenced in program mode, so we have to make sure it is
+      // preserved.
+      if (is_prg_text && m_prg_var_top < v + 1)
+        m_prg_var_top = v + 1;
       return v;
+    }
 
     if (reserve(m_var_top+1))
       return -1;
 
     m_var_name[m_var_top++] = strdup(name);
     if (is_prg_text)
-      ++m_prg_var_top;
+      m_prg_var_top = m_var_top;
     dbg_var("got %d\r\n", m_var_top-1);
     return m_var_top-1;
   }
