@@ -2507,11 +2507,13 @@ resume:
       if (event_error_enabled) {
         retval[0] = err;
         retval[1] = getlineno(clp);
+        retval[2] = -1;
+        err = 0;
+        err_expected = NULL;	// prevent stale "expected" messages
         event_error_enabled = false;
         event_error_resume_lp = clp;
         event_error_resume_ip = cip;
         do_goto(event_error_line);
-        err_expected = NULL;	// prevent stale "expected" messages
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
@@ -7067,6 +7069,28 @@ void iexec() {
   clp = listbuf;
   cip = clp + sizeof(line_desc_t);
   irun(clp);
+  if (err) {
+    if (old_bc->_event_error_enabled) {
+      // This replicates the code in irun() because we have to get the error
+      // line number in the context of the subprogram.
+      int sub_line = getlineno(clp);
+      free(listbuf);
+      delete bc;
+      bc = old_bc;
+      retval[0] = err;
+      retval[1] = getlineno(clp);
+      retval[2] = sub_line;
+      err = 0;
+      event_error_enabled = false;
+      event_error_resume_lp = NULL;
+      do_goto(event_error_line);
+      err_expected = NULL;	// prevent stale "expected" messages
+      return;
+    } else {
+      // Print the error in the context of the subprogram.
+      error();
+    }
+  } 
   free(listbuf);
   delete bc;
   bc = old_bc;
