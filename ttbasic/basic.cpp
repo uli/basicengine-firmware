@@ -674,7 +674,7 @@ uint32_t getlineno(unsigned char *lp);
 // If find_prg_text is true (default), variable and procedure names
 // are designated as belonging to the program; if not, they are considered
 // temporary, even if the input line starts with a number.
-uint8_t SMALL toktoi(bool find_prg_text) {
+uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
   int16_t i;
   int key;
   uint8_t len = 0;	// length of sequence of intermediate code
