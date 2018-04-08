@@ -124,10 +124,10 @@ typedef struct {
 
   num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
 
-  bool event_error_enabled;
-  uint32_t event_error_line;
-  unsigned char *event_error_resume_lp;
-  unsigned char *event_error_resume_ip;
+  bool _event_error_enabled;
+  uint32_t _event_error_line;
+  unsigned char *_event_error_resume_lp;
+  unsigned char *_event_error_resume_ip;
 } basic_ctx_t;
 
 extern basic_ctx_t *bc;
@@ -176,10 +176,10 @@ extern basic_ctx_t *bc;
 
 #define retval bc->retval
 
-#define event_error_enabled bc->event_error_enabled
-#define event_error_line bc->event_error_line
-#define event_error_resume_lp bc->event_error_resume_lp
-#define event_error_resume_ip bc->event_error_resume_ip
+#define event_error_enabled bc->_event_error_enabled
+#define event_error_line bc->_event_error_line
+#define event_error_resume_lp bc->_event_error_resume_lp
+#define event_error_resume_ip bc->_event_error_resume_ip
 
 // '('チェック関数
 inline uint8_t checkOpen() {
