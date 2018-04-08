@@ -192,6 +192,7 @@ UP	I_UP		nup
 RIGHT	I_RIGHT		nright
 LEFT	I_LEFT		nleft
 INSTR	I_INSTR		ninstr
+COMPARE	I_COMPARE	ncompare
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
 WHILE	I_WHILE		esyntax

@@ -5576,6 +5576,20 @@ num_t BASIC_FP npos() {
   }
 }
 
+num_t ncompare() {
+  if (checkOpen()) return 0;
+  BString one = getParamFname();
+  if (err)
+    return 0;
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    return 0;
+  }
+  BString two = getParamFname();
+  if (err || checkClose()) return 0;
+  return bfs.compare(one.c_str(), two.c_str());
+}
+
 num_t BASIC_FP nup() {
   // カーソル・スクロール等の方向
   return psxUp;
