@@ -2515,13 +2515,9 @@ resume:
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
-        redirect_output_file = -1;
-        redirect_input_file = -1;
         return;
       } else {
         cont_cip = cont_clp = NULL;
-        redirect_output_file = -1;
-        redirect_input_file = -1;
         return;
       }
     } else
@@ -7409,6 +7405,8 @@ void SMALL basic() {
 
   // Enter one line from the terminal and execute
   while (1) {
+    redirect_input_file = -1;
+    redirect_output_file = -1;
     rc = sc0.edit();
     if (rc) {
       textline = (char*)sc0.getText();
