@@ -394,7 +394,8 @@ void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
   return (void *)vadr;
 }
 
-// Standard C libraly (about) same functions
+// Standard C library (about) same functions
+// XXX: We pull in ctype anyway, can do away with these.
 char c_isprint(char c) {
   //return(c >= 32 && c <= 126);
   return(c >= 32 && c!=127 );
@@ -403,7 +404,7 @@ char c_isspace(char c) {
   return(c == ' ' || (c <= 13 && c >= 9));
 }
 
-// 文字列の右側の空白文字を削除する
+// Delete whitespace on the right side of the string
 char* tlimR(char* str) {
   uint32_t len = strlen(str);
   for (uint32_t i = len - 1; i>0; i--) {
