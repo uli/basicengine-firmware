@@ -2909,6 +2909,7 @@ void isave() {
 uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   int32_t len;
   uint8_t rc = 0;
+  uint32_t last_line = 0;
   
   cont_clp = cont_cip = NULL;
   procs.reset();
@@ -2921,6 +2922,14 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   if (newmode != NEW_VAR)
     inew(newmode);
   while(bfs.readLine(lbuf)) {
+    if (!isDigit(lbuf[0])) {
+      // Insert a line number before tokenizing.
+      memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
+      memset(lbuf,' ', 11);
+      last_line += 10;
+      int lnum_size = sprintf(lbuf, "%d", last_line);
+      lbuf[lnum_size] = ' ';
+    }
     tlimR(lbuf);  // 2017/07/31 追記
     len = toktoi();
     if (err) {
@@ -2937,6 +2946,12 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
 	rc = 1;
 	break;
       }
+      last_line = ((line_desc_t *)ibuf)->line;
+    } else {
+      SYNTAX_T("valid program line");
+      error(true);
+      rc = 1;
+      break;
     }
   }
   recalc_indent();
