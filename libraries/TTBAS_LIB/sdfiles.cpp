@@ -703,3 +703,35 @@ out:
   dst.close();
   return rc;
 }
+
+int8_t sdfiles::compare(const char *one, const char *two)
+{
+  int8_t ret = 0;
+  Unifile fone = Unifile::open(one, FILE_READ);
+  Unifile ftwo = Unifile::open(two, FILE_READ);
+  char buf1[128];
+  char buf2[128];
+  while (fone.available() && ftwo.available()) {
+    size_t one_bytes = fone.read(buf1, 128);
+    size_t two_bytes = ftwo.read(buf2, 128);
+    if (one_bytes != two_bytes) {
+      ret = one_bytes < two_bytes ? -1 : 1;
+      goto out;
+    }
+    int cmp = memcmp(buf1, buf2, one_bytes);
+    if (cmp) {
+      ret = cmp;
+      goto out;
+    }
+  }
+  if (fone.available() != ftwo.available()) {
+    if (fone.available())
+      ret = 1;
+    else
+      ret = -1;
+  }
+out:
+  fone.close();
+  ftwo.close();
+  return ret;
+}
