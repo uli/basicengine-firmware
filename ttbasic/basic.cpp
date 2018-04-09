@@ -6421,6 +6421,7 @@ void BASIC_FP igosub() {
 static void BASIC_FP on_go(bool is_gosub, int cas)
 {
   unsigned char *lp, *ip;
+  --cas;
   for (;;) {
     if (*cip == I_LABEL) {
       ++cip;
