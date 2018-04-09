@@ -2962,7 +2962,9 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   if (newmode != NEW_VAR)
     inew(newmode);
   while(bfs.readLine(lbuf)) {
-    if (!isDigit(lbuf[0])) {
+    char *sbuf = lbuf;
+    while (isspace(*sbuf)) sbuf++;
+    if (!isDigit(*sbuf)) {
       // Insert a line number before tokenizing.
       memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
       memset(lbuf,' ', 11);
