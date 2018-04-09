@@ -67,7 +67,7 @@ LET	I_LET		ilet
 CLEAR	I_CLEAR		iclear
 PROC	I_PROC		iproc
 CALL	I_CALL		icall
-LRUN	I_LRUN		ilrun_
+CHAIN	I_CHAIN		imerge
 FILES	I_FILES		ifiles
 CONFIG	I_CONFIG	iconfig
 SYSINFO	I_SYSINFO	isysinfo

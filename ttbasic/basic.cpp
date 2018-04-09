@@ -4946,9 +4946,9 @@ void iedit() {
 }
 
 //
-// load / execute the program LRUN / LOAD
-// LRUN "file name"
-// LRUN "file name", line number
+// load / execute the program CHAIN / LOAD
+// CHAIN "file name"
+// CHAIN "file name", line number
 // LOAD "file name"
 // MERGE "file name", line number
 
@@ -7214,7 +7214,7 @@ uint8_t SMALL icom() {
   case I_MERGE:
     ilrun_(); break;
 
-  case I_LRUN:  if(ilrun()) {
+  case I_CHAIN:  if(ilrun()) {
       sc0.show_curs(0); irun(clp);
     }
     break;
