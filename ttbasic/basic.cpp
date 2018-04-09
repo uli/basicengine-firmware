@@ -6553,6 +6553,10 @@ void iresume()
   }
 }
 
+void ierror() {
+  err = iexp();
+}
+
 void BASIC_FP icall() {
   num_t n;
   uint8_t proc_idx = *cip++;

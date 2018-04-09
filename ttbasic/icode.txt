@@ -111,6 +111,7 @@ EXEC	I_EXEC		iexec
 CMD	I_CMD		icmd
 WHILE	I_WHILE		iwhile
 WEND	I_WEND		iwend
+ERROR	I_ERROR		ierror
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
@@ -137,7 +138,7 @@ POPF$	I_POPFSTR	spopf
 POPB$	I_POPBSTR	spopb
 INST$	I_INSTSTR	sinst
 I2CR	I_I2CR		si2cr
-RET$	I_RET$		sret
+RET$	I_RETSTR	sret
 GET$	I_GETSTR	esyntax
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
@@ -241,7 +242,6 @@ FLAGS	I_FLAGS		esyntax
 PRIO	I_PRIO		esyntax
 FN	I_FN		esyntax
 DIRECTORY	I_DIRECTORY	esyntax
-ERROR	I_ERROR		esyntax
 TAB	I_TAB		esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
