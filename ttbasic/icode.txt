@@ -109,6 +109,8 @@ SYS	I_SYS		isys
 NET	I_NET		inet
 EXEC	I_EXEC		iexec
 CMD	I_CMD		icmd
+WHILE	I_WHILE		iwhile
+WEND	I_WEND		iwend
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
@@ -195,7 +197,6 @@ INSTR	I_INSTR		ninstr
 COMPARE	I_COMPARE	ncompare
 TO	I_TO		esyntax
 STEP	I_STEP		esyntax
-WHILE	I_WHILE		esyntax
 UNTIL	I_UNTIL		esyntax
 THEN	I_THEN		esyntax
 ,	I_COMMA		esyntax

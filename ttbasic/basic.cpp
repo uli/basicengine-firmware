@@ -1075,6 +1075,46 @@ DONE:
   return rc;
 }
 
+uint8_t* BASIC_INT getWENDptr(uint8_t* p) {
+  uint8_t* rc = NULL;
+  uint8_t* lp;
+  unsigned char lifstki = 1;
+
+  for (lp = p; ; ) {
+    switch(*lp) {
+    case I_WHILE:
+      if (lp[-1] != I_LOOP)
+        lifstki++;
+      lp++;
+      break;
+    case I_WEND:
+      if (lifstki == 1) {
+        // Found the highest-level WEND, we're done.
+        rc = lp+1;
+        goto DONE;
+      }
+      lp++;
+      break;
+    case I_EOL:
+    case I_REM:
+    case I_SQUOT:
+      // Continue at next line.
+      clp += *clp;
+      if (!*clp) {
+        err = ERR_WHILEWOW;
+        return NULL;
+      }
+      lp = cip = clp + sizeof(line_desc_t);
+      break;
+    default:
+      lp += token_size(lp);
+      break;
+    }
+  }
+DONE:
+  return rc;
+}
+
 // プログラム行数を取得する
 uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX) {
   unsigned char *lp; //ポインタ
@@ -6620,6 +6660,66 @@ void BASIC_FP ido() {
   lstk[lstki++].local = false;
 }
 
+void BASIC_FP iwhile() {
+  if (lstki >= SIZE_LSTK) {
+    err = ERR_LSTKOF;
+    return;
+  }
+  lstk[lstki].lp = clp;
+  lstk[lstki].ip = cip;
+  num_t cond = iexp();
+  if (cond) {
+    lstk[lstki].vto = -1;
+    lstk[lstki].vstep = -1;
+    lstk[lstki].index = -2;
+    lstk[lstki++].local = false;
+  } else {
+    unsigned char *newip = getWENDptr(cip);
+    if (newip) {
+      cip = newip;
+    } else {
+      err = ERR_WHILEWOW;
+    }
+  }
+}
+
+void BASIC_FP iwend() {
+  if (!lstki) {
+    err = ERR_LSTKUF;
+    return;
+  }
+
+  // Look for nearest WHILE.
+  while (lstki) {
+    if (lstk[lstki - 1].index == -2)
+      break;
+    lstki--;
+  }
+  
+  if (!lstki) {
+    err = ERR_LSTKUF;
+    return;
+  }
+
+  unsigned char *tmp_ip = cip;
+  unsigned char *tmp_lp = clp;
+
+  // Jump to condition
+  cip = lstk[lstki - 1].ip;
+  clp = lstk[lstki - 1].lp;
+
+  num_t cond = iexp();
+  // If the condition is true, continue with the loop
+  if (cond)
+    return;
+
+  // If the condition is not true, pop the loop and
+  // go back to the WEND.
+  cip = tmp_ip;
+  clp = tmp_lp;
+  lstki--;
+}
+  
 // FOR
 void BASIC_FP ifor() {
   int index;
