@@ -5491,12 +5491,8 @@ num_t BASIC_INT nlen() {
 
 num_t BASIC_FP nrnd() {
   num_t value = getparam(); //括弧の値を取得
-  if (!err) {
-    if (value < 0 )
-      E_VALUE(0, INT32_MAX);
-    else
-      value = getrnd(value);  //乱数を取得
-  }
+  if (!err)
+    value = getrnd(value);
   return value;
 }
 
