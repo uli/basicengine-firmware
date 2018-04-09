@@ -6096,7 +6096,35 @@ num_t BASIC_FP iplus() {
 num_t BASIC_FP irel() {
   num_t value, tmp;
 
-  value = iplus();
+  if (is_strexp()) {
+    // string comparison (or error)
+    BString lhs = istrexp();
+    BString rhs;
+    switch (*cip++) {
+    case I_EQ:
+      rhs = istrexp();
+      value = basic_bool(lhs == rhs);
+      break;
+    case I_NEQ:
+    case I_NEQ2:
+      rhs = istrexp();
+      value = basic_bool(lhs != rhs);
+      break;
+    case I_LT:
+      rhs = istrexp();
+      value = basic_bool(lhs < rhs);
+      break;
+    case I_GT:
+      rhs = istrexp();
+      value = basic_bool(lhs > rhs);
+      break;
+    default:
+      err = ERR_TYPE;
+      return -1;
+    }
+  } else
+    value = iplus();
+
   if (err)
     return -1;
 
@@ -6163,30 +6191,6 @@ num_t BASIC_FP iand() {
 // Numeric expression parser
 num_t BASIC_FP iexp() {
   num_t value, tmp;
-
-  if (is_strexp()) {
-    // string comparison (or error)
-    BString lhs = istrexp();
-    BString rhs;
-    switch (*cip++) {
-    case I_EQ:
-      rhs = istrexp();
-      return basic_bool(lhs == rhs);
-    case I_NEQ:
-    case I_NEQ2:
-      rhs = istrexp();
-      return basic_bool(lhs != rhs);
-    case I_LT:
-      rhs = istrexp();
-      return basic_bool(lhs < rhs);
-    case I_GT:
-      rhs = istrexp();
-      return basic_bool(lhs > rhs);
-    default:
-      err = ERR_TYPE;
-      return -1;
-    }
-  }
 
   value = iand();
   if (err)
