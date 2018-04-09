@@ -3136,8 +3136,10 @@ void iformat() {
 
 // 画面クリア
 void icls() {
-  sc0.cls();
-  sc0.locate(0,0);
+  if (redirect_output_file < 0) {
+    sc0.cls();
+    sc0.locate(0,0);
+  }
 }
 
 static bool profile_enabled;
