@@ -5354,6 +5354,15 @@ static BString sinst() {
 #endif
 }
 
+static BString sret() {
+  int32_t n = getparam();
+  if (n < 0 || n >= MAX_RETVALS) {
+    E_VALUE(0, MAX_RETVALS-1);
+    return BString(F(""));
+  }
+  return retstr[n];
+}
+
 typedef BString (*strfun_t)();
 #include "strfuntbl.h"
 
@@ -6632,14 +6641,21 @@ void BASIC_FP ireturn() {
 
   // Set return values, if any.
   if (!end_of_statement()) {
-    int rcnt = 0;
+    int rcnt = 0, rscnt = 0;
     num_t my_retval[MAX_RETVALS];
+    BString *my_retstr[MAX_RETVALS];	// don't want to always construct all strings
     do {
-      // XXX: implement return strings
-      my_retval[rcnt++] = iexp();
-    } while (*cip++ == I_COMMA && rcnt < MAX_RETVALS);
+      if (is_strexp())
+        my_retstr[rscnt++] = new BString(istrexp());
+      else
+        my_retval[rcnt++] = iexp();
+    } while (*cip++ == I_COMMA && rcnt < MAX_RETVALS && rscnt < MAX_RETVALS);
     for (int i = 0; i < rcnt; ++i)
       retval[i] = my_retval[i];
+    for (int i = 0; i < rscnt; ++i) {
+      retstr[i] = *my_retstr[i];
+      delete my_retstr[i];
+    }
   }
 
   astk_num_i -= gstk[--gstki].num_args;

@@ -123,6 +123,7 @@ typedef struct {
   uint8_t *cont_cip = NULL;
 
   num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
+  BString retstr[MAX_RETVALS];	    // multi-value returns (string)
 
   bool _event_error_enabled;
   uint32_t _event_error_line;
@@ -175,6 +176,7 @@ extern basic_ctx_t *bc;
 #define cont_cip bc->cont_cip
 
 #define retval bc->retval
+#define retstr bc->retstr
 
 #define event_error_enabled bc->_event_error_enabled
 #define event_error_line bc->_event_error_line

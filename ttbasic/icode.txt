@@ -137,6 +137,7 @@ POPF$	I_POPFSTR	spopf
 POPB$	I_POPBSTR	spopb
 INST$	I_INSTSTR	sinst
 I2CR	I_I2CR		si2cr
+RET$	I_RET$		sret
 GET$	I_GETSTR	esyntax
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
