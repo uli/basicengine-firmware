@@ -1568,7 +1568,7 @@ void SMALL iinput() {
           eoi = '\n';
         while ((c = user_files[filenum]->read()) >= 0 && c != eoi) {
           if (c != '\r')
-            str_value += c;
+            str_value += (char)c;
         }
       } else {
         str_value = getstr(eoi);
