@@ -2282,7 +2282,7 @@ void iread() {
     return;
   }
 
-  switch (*cip++) {
+  for (;;) switch (*cip++) {
   case I_VAR:
     cip_save = cip;
     cip = data_ip + 1;
@@ -2371,9 +2371,14 @@ void iread() {
     break;
     }
 
-  default:
-    SYNTAX_T("variable");
+  case I_COMMA:
+    ++cip;
     break;
+
+  default:
+    if (!end_of_statement()) 
+      SYNTAX_T("variable");
+    return;
   }
 }
 
