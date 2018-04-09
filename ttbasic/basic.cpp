@@ -5363,6 +5363,15 @@ static BString sret() {
   return retstr[n];
 }
 
+static BString serror() {
+  uint32_t code = getparam();
+  if (code < 0 || code > sizeof(errmsg) / sizeof(*errmsg)) {
+    E_VALUE(0, sizeof(errmsg) / sizeof(*errmsg));
+    return BString(F(""));
+  } else
+    return BString(FPSTR(errmsg[code]));
+}
+
 typedef BString (*strfun_t)();
 #include "strfuntbl.h"
 
