@@ -400,9 +400,6 @@ char c_isprint(char c) {
   //return(c >= 32 && c <= 126);
   return(c >= 32 && c!=127 );
 }
-char c_isspace(char c) {
-  return(c == ' ' || (c <= 13 && c >= 9));
-}
 
 // Delete whitespace on the right side of the string
 char* tlimR(char* str) {
@@ -691,7 +688,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
   bool is_prg_text = false;
 
   while (*s) {                  //文字列1行分の終端まで繰り返す
-    while (c_isspace(*s)) s++;  //空白を読み飛ばす
+    while (isspace(*s)) s++;  //空白を読み飛ばす
 
     key = lookup(s);
     if (key >= 0) {
@@ -706,7 +703,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
         ibuf[len++] = key;                 // 中間コードを記録
       s+= strlen_P(kwtbl[key]);
       if (key == I_THEN) {
-        while (c_isspace(*s)) s++;
+        while (isspace(*s)) s++;
         if (*s)
           implicit_endif = true;
       }
@@ -746,7 +743,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 
     //コメントへの変換を試みる
     if(key == I_REM|| key == I_SQUOT) {       // もし中間コードがI_REMなら
-      while (c_isspace(*s)) s++;         // 空白を読み飛ばす
+      while (isspace(*s)) s++;         // 空白を読み飛ばす
       ptok = s;                          // コメントの先頭を指す
 
       for (i = 0; *ptok++; i++) ;        // コメントの文字数を得る
@@ -770,7 +767,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 	return 0;
       }
 
-      while (c_isspace(*s)) s++;
+      while (isspace(*s)) s++;
       s += parse_identifier(s, vname);
 
       int idx = proc_names.assign(vname, true);
@@ -785,7 +782,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 	return 0;
       }
 
-      while (c_isspace(*s)) s++;
+      while (isspace(*s)) s++;
       s += parse_identifier(s, vname);
 
       int idx = label_names.assign(vname, true);
@@ -795,7 +792,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
         return 0;
       }
     } else if (key == I_CALL || key == I_FN) {
-      while (c_isspace(*s)) s++;
+      while (isspace(*s)) s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
       if (procs.reserve(proc_names.varTop())) {
