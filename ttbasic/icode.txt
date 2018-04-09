@@ -241,6 +241,7 @@ PRIO	I_PRIO		esyntax
 FN	I_FN		esyntax
 DIRECTORY	I_DIRECTORY	esyntax
 ERROR	I_ERROR		esyntax
+TAB	I_TAB		esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax

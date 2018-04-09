@@ -4081,6 +4081,16 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       devno = 4;
       continue;
       
+    case I_TAB:
+      value = getparam();
+      if (value < 0 || value >= sc0.getWidth()) {
+        E_VALUE(0, sc0.getWidth());
+        return;
+      }
+      if (redirect_output_file < 0 && sc0.c_x() < value)
+        sc0.locate(value, sc0.c_y());
+      break;
+
     default:	// anything else is assumed to be a numeric expression
       value = iexp();
       if (err) {
