@@ -1022,7 +1022,7 @@ uint32_t getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t* getELSEptr(uint8_t* p, bool endif_only = false) {
+uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false) {
   uint8_t* rc = NULL;
   uint8_t* lp;
   unsigned char lifstki = 1;
