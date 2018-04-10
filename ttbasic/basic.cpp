@@ -7670,7 +7670,7 @@ void isaveconfig() {
 
 void syspanic(const char *txt) {
   redirect_output_file = -1;
-  c_puts(txt);
+  c_puts_P(txt);
   PRINT_P("\nSystem halted");
   Serial.println(txt);
   Serial.println(F("System halted"));
