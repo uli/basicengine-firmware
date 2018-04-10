@@ -171,7 +171,7 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
           sc0.locate(sc0.c_x(), sc0.c_y() + 1);
         break;
       case 'c':	sc0.cls();	// fallthrough
-      case 'h': sc0.locate(0, 0);
+      case 'h': sc0.locate(0, 0); break;
       case 'f':
         col_digit = 1;
         is_bg = false;
