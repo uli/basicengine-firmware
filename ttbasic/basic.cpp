@@ -1486,12 +1486,12 @@ void SMALL iinput() {
     case I_VAR:
     case I_VARARR:
     case I_NUMLST:
-      index = *cip;
+      index = *cip++;
 
-      if (cip[-1] == I_VARARR) {
+      if (cip[-2] == I_VARARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
-      } else if (cip[-1] == I_NUMLST) {
+      } else if (cip[-2] == I_NUMLST) {
         if (get_array_dims(idxs) != 1) {
           SYNTAX_T("single dimension");
           return;
@@ -1499,8 +1499,6 @@ void SMALL iinput() {
         dims = -1;
       }
  
-      cip++;
-
       if (*cip == I_COMMA)
         eoi = ',';
       else
@@ -1543,12 +1541,12 @@ void SMALL iinput() {
     case I_SVAR:
     case I_STRARR:
     case I_STRLST:
-      index = *cip;
+      index = *cip++;
       
-      if (cip[-1] == I_STRARR) {
+      if (cip[-2] == I_STRARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
-      } else if (cip[-1] == I_STRLST) {
+      } else if (cip[-2] == I_STRLST) {
         if (get_array_dims(idxs) != 1) {
           SYNTAX_T("single dimension");
           return;
@@ -1556,7 +1554,6 @@ void SMALL iinput() {
         dims = -1;
       }
  
-      cip++;
       if (*cip == I_COMMA)
         eoi = ',';
       else
