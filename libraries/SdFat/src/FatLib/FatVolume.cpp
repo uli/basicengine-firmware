@@ -462,6 +462,7 @@ bool FatVolume::init(uint8_t part) {
     }
     volumeStartBlock = p->firstSector;
   }
+  m_volumeStartBlock = volumeStartBlock;
   pc = cacheFetchData(volumeStartBlock, FatCache::CACHE_FOR_READ);
   if (!pc) {
     DBG_FAIL_MACRO;

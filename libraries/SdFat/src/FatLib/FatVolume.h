@@ -261,6 +261,10 @@ class FatVolume {
   int8_t dbgFat(uint32_t n, uint32_t* v) {
     return fatGet(n, v);
   }
+
+  uint32_t volumeStartBlock() {
+    return m_volumeStartBlock;
+  }
 //------------------------------------------------------------------------------
  private:
   // Allow FatFile and FatCache access to FatVolume private functions.
@@ -280,6 +284,7 @@ class FatVolume {
   uint32_t m_fatStartBlock;        // Start block for first FAT.
   uint32_t m_lastCluster;          // Last cluster number in FAT.
   uint32_t m_rootDirStart;         // Start block for FAT16, cluster for FAT32.
+  uint32_t m_volumeStartBlock;
 //------------------------------------------------------------------------------
   // block I/O functions.
   bool readBlock(uint32_t block, uint8_t* dst) {
