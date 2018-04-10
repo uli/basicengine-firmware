@@ -112,10 +112,18 @@ uint16_t BASIC_INT hex2value(char c) {
   return 0;
 }
 
+bool screen_putch_disable_escape_codes = false;
+
 void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
   static uint8_t col_digit = 0, color, is_bg;
   static bool reverse = false;
+
+  if (screen_putch_disable_escape_codes) {
+    sc0.putch(c, lazy);
+    return;
+  }
+
   if (c == '\\') {
     if (!escape) {
       escape = true;
@@ -2621,6 +2629,7 @@ void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
   // Skip until we reach the start line.
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
 
+  screen_putch_disable_escape_codes = true;
   //リストを表示する
   while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
     prnlineno = getlineno(lp); // 行番号取得
@@ -2643,6 +2652,7 @@ void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
     newline(devno);            // 改行
     lp += *lp;               // 行ポインタを次の行へ進める
   }
+  screen_putch_disable_escape_codes = false;
 }
 
 void isearch() {
