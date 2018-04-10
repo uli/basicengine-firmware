@@ -2415,10 +2415,14 @@ void iread() {
     }
 
   case I_COMMA:
-    ++cip;
+    if (!find_next_data()) {
+      err = ERR_OOD;
+      return;
+    }
     break;
 
   default:
+    --cip;
     if (!end_of_statement()) 
       SYNTAX_T("variable");
     return;
