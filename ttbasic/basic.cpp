@@ -1198,12 +1198,13 @@ void inslist() {
 static int8_t indent_level;
 
 // tokens that increase indentation
-inline bool is_indent(uint8_t c) {
-  return c == I_IF || c == I_FOR || c == I_DO;
+inline bool is_indent(uint8_t *c) {
+  return *c == I_IF || *c == I_DO || *c == I_WHILE ||
+        (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT && c[1] != I_APPEND && c[1] != I_DIRECTORY);
 }
 // tokens that reduce indentation
 inline bool is_unindent(uint8_t c) {
-  return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP;
+  return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP || c == I_WEND;
 }
 // tokens that temporarily reduce indentation
 inline bool is_reindent(uint8_t c) {
@@ -1231,7 +1232,7 @@ void SMALL recalc_indent_line(unsigned char *lp) {
     if (skip_indent)
       skip_indent = false;
     else {
-      if (is_indent(*ip))
+      if (is_indent(ip))
         indent_level += INDENT_STEP;
       else if (is_unindent(*ip))
         indent_level -= INDENT_STEP;
