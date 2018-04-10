@@ -5421,6 +5421,7 @@ BString istrvalue()
     break;
 
   case I_INPUTSTR:	value = sinput(); break;
+  case I_ERRORSTR:	value = serror(); break;
   case I_NET:
 #ifdef ESP8266_NOWIFI
     err = ERR_NOT_SUPPORTED;

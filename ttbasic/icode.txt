@@ -111,6 +111,7 @@ EXEC	I_EXEC		iexec
 CMD	I_CMD		icmd
 WHILE	I_WHILE		iwhile
 WEND	I_WEND		iwend
+ERROR$	I_ERRORSTR	esyntax_workaround
 ERROR	I_ERROR		ierror
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
@@ -139,7 +140,6 @@ POPB$	I_POPBSTR	spopb
 INST$	I_INSTSTR	sinst
 I2CR	I_I2CR		si2cr
 RET$	I_RETSTR	sret
-ERROR$	I_ERRORSTR	serror
 GET$	I_GETSTR	esyntax
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
