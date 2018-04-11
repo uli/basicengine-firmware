@@ -1752,68 +1752,74 @@ void idim() {
   bool is_string;
   uint8_t index;
 
-  if (*cip != I_VARARR && *cip != I_STRARR) {
-    SYNTAX_T("array variable");
-    return;
-  }
-  is_string = *cip == I_STRARR;
-  ++cip;
-
-  index = *cip++;
-
-  dims = get_array_dims(idxs);
-  if (dims < 0)
-    return;
-  if (dims == 0) {
-    SYNTAX_T("at least one dimension");
-    return;
-  }
-
-  // BASIC convention: reserve one more element than specified
-  for (int i = 0; i < dims; ++i)
-    idxs[i]++;
-
-  if ((!is_string && num_arr.var(index).reserve(dims, idxs)) ||
-      (is_string  && str_arr.var(index).reserve(dims, idxs))) {
-    err = ERR_OOM;
-    return;
-  }
-
-  if (*cip == I_EQ) {
-    // Initializers
-    if (dims > 1) {
-      err = ERR_NOT_SUPPORTED;
-    } else {
-      if (is_string) {
-        BString svalue;
-        int cnt = 0;
-        do {
-          cip++;
-          svalue = istrexp();
-          if (err)
-            return;
-          BString &s = str_arr.var(index).var(&cnt);
-          if (err)
-            return;
-          s = svalue;
-          cnt++;
-        } while(*cip == I_COMMA);
-      } else {
-        num_t value;
-        int cnt = 0;
-        do {
-          cip++;
-          value = iexp();
-          if (err)
-            return;
-          num_t &n = num_arr.var(index).var(&cnt);
-          if (err)
-            return;
-          n = value;
-          cnt++;
-        } while(*cip == I_COMMA);
-      }
+  for (;;) {
+    if (*cip != I_VARARR && *cip != I_STRARR) {
+      SYNTAX_T("array variable");
+      return;
     }
+    is_string = *cip == I_STRARR;
+    ++cip;
+
+    index = *cip++;
+
+    dims = get_array_dims(idxs);
+    if (dims < 0)
+      return;
+    if (dims == 0) {
+      SYNTAX_T("at least one dimension");
+      return;
+    }
+
+    // BASIC convention: reserve one more element than specified
+    for (int i = 0; i < dims; ++i)
+      idxs[i]++;
+
+    if ((!is_string && num_arr.var(index).reserve(dims, idxs)) ||
+        (is_string  && str_arr.var(index).reserve(dims, idxs))) {
+      err = ERR_OOM;
+      return;
+    }
+
+    if (*cip == I_EQ) {
+      // Initializers
+      if (dims > 1) {
+        err = ERR_NOT_SUPPORTED;
+      } else {
+        if (is_string) {
+          BString svalue;
+          int cnt = 0;
+          do {
+            cip++;
+            svalue = istrexp();
+            if (err)
+              return;
+            BString &s = str_arr.var(index).var(&cnt);
+            if (err)
+              return;
+            s = svalue;
+            cnt++;
+          } while(*cip == I_COMMA);
+        } else {
+          num_t value;
+          int cnt = 0;
+          do {
+            cip++;
+            value = iexp();
+            if (err)
+              return;
+            num_t &n = num_arr.var(index).var(&cnt);
+            if (err)
+              return;
+            n = value;
+            cnt++;
+          } while(*cip == I_COMMA);
+        }
+      }
+      break;
+    }
+    if (*cip != I_COMMA)
+      break;
+    ++cip;
   }
 
   return;
