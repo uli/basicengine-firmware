@@ -257,6 +257,8 @@ void iclt() {
 
 // 乱数
 num_t BASIC_FP getrnd(int value) {
+  if (value < 0)
+    randomSeed(value);
   if (value <= 1)
     return ((num_t)random(RAND_MAX)/(num_t)RAND_MAX);
   else
