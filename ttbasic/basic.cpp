@@ -616,7 +616,7 @@ void get_input(bool numeric, uint8_t eoi) {
         }
       }
     } else if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
-        (len == 0 && (c == '+' || c == '-')) || isDigit(c)) ) {
+        c == '+' || c == '-' || isDigit(c) || c == 'e' || c == 'E') ) {
       lbuf[len++] = c;
       c_putch(c);
     } else {
