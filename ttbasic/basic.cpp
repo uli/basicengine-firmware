@@ -5410,8 +5410,8 @@ static BString sret() {
 
 static BString serror() {
   uint32_t code = getparam();
-  if (code > sizeof(errmsg) / sizeof(*errmsg)) {
-    E_VALUE(0, sizeof(errmsg) / sizeof(*errmsg));
+  if (code >= sizeof(errmsg) / sizeof(*errmsg)) {
+    E_VALUE(0, sizeof(errmsg) / sizeof(*errmsg) - 1);
     return BString(F(""));
   } else
     return BString(FPSTR(errmsg[code]));
