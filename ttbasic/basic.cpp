@@ -6490,26 +6490,34 @@ void BASIC_FP igosub() {
 // ON ... <GOTO|GOSUB> ...
 static void BASIC_FP on_go(bool is_gosub, int cas)
 {
-  unsigned char *lp, *ip;
+  unsigned char *lp = NULL, *ip = NULL;
   --cas;
   for (;;) {
     if (*cip == I_LABEL) {
       ++cip;
-      label_t &lb = labels.label(*cip++);
-      lp = lb.lp;
-      ip = lb.ip;
+      if (!cas) {
+        label_t &lb = labels.label(*cip++);
+        lp = lb.lp;
+        ip = lb.ip;
+      }
     } else {
       uint32_t line = iexp();
-      lp = getlp(line);
-      ip = lp + sizeof(line_desc_t);
+      if (!cas) {
+        lp = getlp(line);
+        ip = lp + sizeof(line_desc_t);
+      }
     }
 
     if (err)
       return;
-    if (!cas)
+    if (!cas && !is_gosub)
       break;
-    if (*cip != I_COMMA)
-      return;
+    if (*cip != I_COMMA) {
+      if (lp)
+        break;
+      else
+        return;
+    }
 
     ++cip;
     --cas;
