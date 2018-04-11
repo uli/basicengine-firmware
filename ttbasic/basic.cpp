@@ -4083,12 +4083,16 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       cip++;
       str = istrexp();
       bool had_point = false;	// encountered a decimal point
+      bool had_digit = false;	// encountered a #
       int leading = 0;
       int trailing = 0;		// decimal places
       BString prefix, suffix;	// random literal characters
       for (unsigned int i = 0; i < str.length(); ++i) {
         switch (str[i]) {
-        case '#': if (!had_point) leading++; else trailing++; break;
+        case '#':
+          if (!had_point) leading++; else trailing++;
+          had_digit = true;
+          break;
 #ifdef FLOAT_NUMS
         case '.':
           if (had_point) {
@@ -4098,8 +4102,8 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
             had_point = true;
           break;
 #endif
-        case '%': if (!had_point) prefix += F("%%"); else suffix += F("%%"); break;
-        default:  if (!had_point) prefix += str[i]; else suffix += str[i]; break;
+        case '%': if (!had_point && !had_digit) prefix += F("%%"); else suffix += F("%%"); break;
+        default:  if (!had_point && !had_digit) prefix += str[i]; else suffix += str[i]; break;
         }
       }
 #ifdef FLOAT_NUMS
