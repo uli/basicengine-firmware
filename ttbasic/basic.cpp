@@ -693,6 +693,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
   uint16_t hcnt;	// hexadecimal digit count
   uint8_t var_len;	// variable name length
   char vname [MAX_VAR_NAME];	// variable name
+  bool had_if = false;
   bool implicit_endif = false;
 
   bool is_prg_text = false;
@@ -709,10 +710,19 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
       }
       if (key == I_IF && len > 0 && ibuf[len-1] == I_END)
         ibuf[len-1] = I_ENDIF;
-      else
+      else {
+        if (key == I_IF)
+          had_if = true;
+        if ((key == I_REM || key == I_SQUOT) && implicit_endif) {
+          // execution skips the rest of the line when encountering
+          // a comment, so implicit ENDIF must be inserted before that
+          ibuf[len++] = I_IMPLICITENDIF;
+          implicit_endif = false;
+        }
         ibuf[len++] = key;                 // 中間コードを記録
+      }
       s+= strlen_P(kwtbl[key]);
-      if (key == I_THEN) {
+      if (had_if && (key == I_THEN || key == I_GOTO)) {
         while (isspace(*s)) s++;
         if (*s)
           implicit_endif = true;
