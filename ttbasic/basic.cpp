@@ -1470,6 +1470,11 @@ num_t BASIC_FP getparam() {
   return value; //値を持ち帰る
 }
 
+static inline bool end_of_statement()
+{
+  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
+}
+
 // INPUT handler
 void SMALL iinput() {
   int dims = 0;
@@ -1610,19 +1615,19 @@ void SMALL iinput() {
     } // 中間コードで分岐の末尾
 
     //値の入力を連続するかどうか判定する処理
-    switch (*cip) { // 中間コードで分岐
-    case I_COMMA:    // コンマの場合
-      cip++;         // 中間コードポインタを次へ進める
-      break;         // 打ち切る
-    case I_COLON:    //「:」の場合
-    case I_EOL:      // 行末の場合
-      //return;        // 終了
+    if (end_of_statement())
       goto DONE;
-    default:      // 以上のいずれにも該当しなかった場合
-      SYNTAX_T("separator");
-      //return;           // 終了
-      goto DONE;
-    } // 中間コードで分岐の末尾
+    else {
+      switch (*cip) { // 中間コードで分岐
+      case I_COMMA:    // コンマの場合
+        cip++;         // 中間コードポインタを次へ進める
+        break;         // 打ち切る
+      default:      // 以上のいずれにも該当しなかった場合
+        SYNTAX_T("separator");
+        //return;           // 終了
+        goto DONE;
+      } // 中間コードで分岐の末尾
+    }
   }   // 無限に繰り返すの末尾
 
 DONE:
@@ -2104,11 +2109,6 @@ void iprepend() {
     SYNTAX_T("list reference");
   }
   return;
-}
-
-static inline bool end_of_statement()
-{
-  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
 }
 
 int BASIC_FP token_size(uint8_t *code) {
