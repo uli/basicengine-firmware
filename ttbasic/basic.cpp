@@ -2448,7 +2448,15 @@ void iread() {
 }
 
 void irestore() {
-  data_lp = NULL;
+  if (end_of_statement())
+    data_lp = NULL;
+  else {
+    uint32_t line = iexp();
+    if (err)
+      return;
+    data_lp = getlp(line);
+    data_ip = data_lp + sizeof(line_desc_t);
+  }
 }
 
 // LET handler
