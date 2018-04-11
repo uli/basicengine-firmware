@@ -2591,7 +2591,8 @@ resume:
         event_error_enabled = false;
         event_error_resume_lp = clp;
         event_error_resume_ip = cip;
-        do_goto(event_error_line);
+        clp = event_error_lp;
+        cip = event_error_ip;
       } else if (err == ERR_CTR_C) {
         cont_cip = cip;
         cont_clp = clp;
@@ -6589,7 +6590,20 @@ void BASIC_FP ion()
       return;
     }
     event_error_enabled = true;
-    event_error_line = iexp();
+    if (*cip == I_LABEL) {
+      ++cip;
+      label_t &lb = labels.label(*cip++);
+      if (!lb.lp || !lb.ip) {
+        err = ERR_UNDEFLABEL;
+        return;
+      }
+      event_error_lp = lb.lp;
+      event_error_ip = lb.ip;
+    } else {
+      int line = iexp();
+      event_error_lp = getlp(line);
+      event_error_ip = event_error_lp + sizeof(line_desc_t);
+    }
   } else {
     uint32_t cas = iexp();
     if (*cip == I_GOTO) {
@@ -7290,7 +7304,8 @@ void iexec() {
       err = 0;
       event_error_enabled = false;
       event_error_resume_lp = NULL;
-      do_goto(event_error_line);
+      clp = event_error_lp;
+      cip = event_error_ip;
       err_expected = NULL;	// prevent stale "expected" messages
       return;
     } else {

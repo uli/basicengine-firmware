@@ -126,7 +126,8 @@ typedef struct {
   BString retstr[MAX_RETVALS];	    // multi-value returns (string)
 
   bool _event_error_enabled;
-  uint32_t _event_error_line;
+  unsigned char *_event_error_lp;
+  unsigned char *_event_error_ip;
   unsigned char *_event_error_resume_lp;
   unsigned char *_event_error_resume_ip;
 } basic_ctx_t;
@@ -179,7 +180,8 @@ extern basic_ctx_t *bc;
 #define retstr bc->retstr
 
 #define event_error_enabled bc->_event_error_enabled
-#define event_error_line bc->_event_error_line
+#define event_error_lp bc->_event_error_lp
+#define event_error_ip bc->_event_error_ip
 #define event_error_resume_lp bc->_event_error_resume_lp
 #define event_error_resume_ip bc->_event_error_resume_ip
 
