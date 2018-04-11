@@ -2726,21 +2726,23 @@ void inew(uint8_t mode) {
   // Initialization for execution control
   if (mode != NEW_VAR) {
     cont_cip = cont_clp = NULL;
-    // forget all variables
-    nvar_names.deleteAll();
-    nvar.reserve(0);
-    svar_names.deleteAll();
-    svar.reserve(0);
-    num_arr_names.deleteAll();
-    num_arr.reserve(0);
-    str_arr_names.deleteAll();
-    str_arr.reserve(0);
-    str_lst_names.deleteAll();
-    str_lst.reserve(0);
-    proc_names.deleteAll();
-    procs.reserve(0);
-    label_names.deleteAll();
-    labels.reserve(0);
+    if (mode == NEW_ALL) {
+      // forget all variables
+      nvar_names.deleteAll();
+      nvar.reserve(0);
+      svar_names.deleteAll();
+      svar.reserve(0);
+      num_arr_names.deleteAll();
+      num_arr.reserve(0);
+      str_arr_names.deleteAll();
+      str_arr.reserve(0);
+      str_lst_names.deleteAll();
+      str_lst.reserve(0);
+      proc_names.deleteAll();
+      procs.reserve(0);
+      label_names.deleteAll();
+      labels.reserve(0);
+    }
 
     gstki = 0; //GOSUBスタックインデクスを0に初期化
     lstki = 0; //FORスタックインデクスを0に初期化
