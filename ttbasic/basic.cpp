@@ -3006,6 +3006,12 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
     while (isspace(*sbuf)) sbuf++;
     if (!isDigit(*sbuf)) {
       // Insert a line number before tokenizing.
+      if (strlen(lbuf) > SIZE_LINE - 12) {
+        err = ERR_LONG;
+        error(true);
+        rc = 1;
+        break;
+      }
       memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
       memset(lbuf,' ', 11);
       last_line += 10;
