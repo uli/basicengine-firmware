@@ -1446,7 +1446,7 @@ num_t BASIC_FP getparam() {
 
 static inline bool end_of_statement()
 {
-  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
+  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
 }
 
 static inline bool BASIC_FP is_strexp();
