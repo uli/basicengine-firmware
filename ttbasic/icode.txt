@@ -237,7 +237,6 @@ SIZE	I_SIZE		esyntax
 KEY	I_KEY		esyntax
 USING	I_USING		esyntax
 OUTPUT	I_OUTPUT	esyntax
-ANALOG	I_INPUT_ANALOG	esyntax
 TILES	I_TILES		esyntax
 PATTERN I_PATTERN	esyntax
 FLAGS	I_FLAGS		esyntax
