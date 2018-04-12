@@ -5587,6 +5587,8 @@ num_t BASIC_FP ntan() {
 
 num_t BASIC_FP nlog() {
   num_t value = getparam();
+  if (err)
+    return 0;
   if (value <= 0)
     err = ERR_FP;
   else
