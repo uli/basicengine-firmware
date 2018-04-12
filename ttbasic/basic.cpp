@@ -5145,7 +5145,9 @@ void SMALL error(uint8_t flgCmd = false) {
     // もしプログラムの実行中なら（cipがリストの中にあり、clpが末尾ではない場合）
     if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
+      sc0.setColor(COL(PROC), COL(BG));
       c_puts_P(errmsg[err]);
+      sc0.setColor(COL(FG), COL(BG));
       PRINT_P(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       if (err_expected) {
@@ -5163,7 +5165,9 @@ void SMALL error(uint8_t flgCmd = false) {
       if (mark >= 0) {
         for (int i = 0; i < mark; ++i)
           c_putch(' ');
+        sc0.setColor(COL(PROC), COL(BG));
         c_putch('^');
+        sc0.setColor(COL(FG), COL(BG));
         if (mark < 3)
           newline();
         else
