@@ -814,6 +814,11 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 	return 0;
       }
       value = strtonum(ptok, &ptok);
+      if (s == ptok) {
+        // nothing parsed, most likely a random single period
+        SYNTAX_T("valid number");
+        return 0;
+      }
       s = ptok;			// Stuff the processed part of the character string
       ibuf[len++] = I_NUM;	// Record intermediate code
       UNALIGNED_NUM_T(ibuf+len) = value;
