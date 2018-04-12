@@ -5401,6 +5401,24 @@ static BString serror() {
     return BString(FPSTR(errmsg[code]));
 }
 
+static BString sstring() {
+  BString out;
+  int32_t count;
+  int32_t c;
+  if (checkOpen()) return out;
+  if (getParam(count, I_COMMA)) return out;
+  if (getParam(c, 0, 255, I_CLOSE)) return out;
+  if (!out.reserve(count)) {
+    err = ERR_OOM;
+    return out;
+  }
+  memset(out.begin(), c, count);
+  out.begin()[count] = 0;
+  out.resetLength(count);
+  
+  return out;
+}
+
 typedef BString (*strfun_t)();
 #include "strfuntbl.h"
 
