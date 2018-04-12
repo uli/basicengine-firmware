@@ -684,7 +684,7 @@ uint32_t getlineno(unsigned char *lp);
 uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
   int16_t i;
   int key;
-  uint8_t len = 0;	// length of sequence of intermediate code
+  int len = 0;	// length of sequence of intermediate code
   char *ptok;		// pointer to the inside of one word
   char *s = lbuf;	// pointer to the inside of the string buffer
   char c;		// Character used to enclose string (")
