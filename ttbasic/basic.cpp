@@ -2992,7 +2992,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
       }
       memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
       memset(lbuf,' ', 11);
-      last_line += 10;
+      last_line += 1;
       int lnum_size = sprintf(lbuf, "%d", last_line);
       lbuf[lnum_size] = ' ';
     }
