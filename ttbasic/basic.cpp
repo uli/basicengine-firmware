@@ -5158,8 +5158,17 @@ void SMALL error(uint8_t flgCmd = false) {
       // リストの該当行を表示
       putnum(getlineno(clp), 0);
       c_putch(' ');
-      putlist(clp);
+      int mark = putlist(clp);
       newline();
+      if (mark >= 0) {
+        for (int i = 0; i < mark; ++i)
+          c_putch(' ');
+        c_putch('^');
+        if (mark < 3)
+          newline();
+        else
+          sc0.locate(0, sc0.c_y());
+      }
       //err = 0;
       //return;
     } else {                   // 指示の実行中なら
