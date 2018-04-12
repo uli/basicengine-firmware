@@ -6585,7 +6585,11 @@ void BASIC_FP ion()
     }
   } else if (*cip == I_ERROR) {
     ++cip;
-    if (*cip++ != I_GOTO) {
+    if (*cip == I_OFF) {
+      ++cip;
+      event_error_enabled = false;
+      return;
+    } else if (*cip++ != I_GOTO) {
       E_SYNTAX(I_GOTO);
       return;
     }
