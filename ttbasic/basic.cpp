@@ -6066,7 +6066,7 @@ num_t BASIC_FP ivalue() {
       err = ERR_TYPE;
     else
       SYNTAX_T("numeric expr");
-    break;
+    return 0;
   }
 
   while (1)
