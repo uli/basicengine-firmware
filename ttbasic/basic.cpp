@@ -466,31 +466,6 @@ static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
   return err;
 }
 
-static inline bool BASIC_FP is_strexp() {
-  // XXX: does not detect string comparisons (numeric)
-  return (*cip == I_STR ||
-          ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
-          *cip == I_STRARR ||
-          *cip == I_STRLST ||
-          *cip == I_ARGSTR ||
-          *cip == I_STRSTR ||
-          *cip == I_CHR ||
-          *cip == I_HEX ||
-          *cip == I_BIN ||
-          *cip == I_LEFTSTR ||
-          *cip == I_RIGHTSTR ||
-          *cip == I_MIDSTR ||
-          *cip == I_CWD ||
-          *cip == I_DIRSTR ||
-          *cip == I_INSTSTR ||
-          *cip == I_INPUTSTR ||
-          *cip == I_POPFSTR ||
-          *cip == I_POPBSTR ||
-          (*cip == I_NET && (*cip == I_INPUTSTR || *cip == I_GETSTR)) ||
-          *cip == I_INKEYSTR
-         );
-}
-
 // 1文字出力
 void c_puts(const char *s, uint8_t devno) {
   while (*s) c_putch(*s++, devno);  //終端でなければ出力して繰り返す
@@ -1474,6 +1449,8 @@ static inline bool end_of_statement()
 {
   return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF;
 }
+
+static inline bool BASIC_FP is_strexp();
 
 // INPUT handler
 void SMALL iinput() {
@@ -5426,6 +5403,20 @@ static BString serror() {
 
 typedef BString (*strfun_t)();
 #include "strfuntbl.h"
+
+static inline bool BASIC_FP is_strexp() {
+  // XXX: does not detect string comparisons (numeric)
+  return ((*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) ||
+          *cip == I_STR ||
+          ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
+          *cip == I_STRARR ||
+          *cip == I_STRLST ||
+          *cip == I_STRSTR ||
+          *cip == I_INPUTSTR ||
+          (*cip == I_NET && (cip[1] == I_INPUTSTR || cip[1] == I_GETSTR)) ||
+          *cip == I_ERRORSTR
+         );
+}
 
 BString istrvalue()
 {
