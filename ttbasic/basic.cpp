@@ -1421,7 +1421,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 	c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
       c_putch(c,devno); //文字列の括りを表示
       sc0.setColor(COL(FG), COL(BG));
-      if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO)
+      if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO || *ip == I_THEN)
 	c_putch(' ',devno);
     } else if (*ip == I_IMPLICITENDIF) {
       // invisible
