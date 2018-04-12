@@ -23,7 +23,7 @@ extern uint8_t err; // Error message index
 
 
 uint8_t toktoi(bool find_prg_text = true);
-void putlist(unsigned char* ip, uint8_t devno=0);
+int putlist(unsigned char* ip, uint8_t devno=0);
 
 // メモリ書き込みポインタのクリア
 static inline void cleartbuf() {

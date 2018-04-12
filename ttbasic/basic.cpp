@@ -1260,7 +1260,8 @@ void SMALL recalc_indent() {
 }
 
 //指定中間コード行レコードのテキスト出力
-void SMALL putlist(unsigned char* ip, uint8_t devno) {
+int SMALL putlist(unsigned char* ip, uint8_t devno) {
+  int mark = -1;
   unsigned char i;  // ループカウンタ
   uint8_t var_code; // 変数コード
   line_desc_t *ld = (line_desc_t *)ip;
@@ -1296,7 +1297,7 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
 	while (i--) //文字数だけ繰り返す
 	  c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
         sc0.setColor(COL(FG), COL(BG));
-	return;
+	return mark;
       } else if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
         sc0.setColor(COL(PROC), COL(BG));
@@ -1433,9 +1434,12 @@ void SMALL putlist(unsigned char* ip, uint8_t devno) {
       ip++;
     } else { //どれにも当てはまらなかった場合
       err = ERR_SYS; //エラー番号をセット
-      return;
+      return mark;
     }
+    if (ip <= cip)
+      mark = sc0.c_x();
   }
+  return mark;
 }
 
 int BASIC_FP get_array_dims(int *idxs);
