@@ -6115,6 +6115,8 @@ out:
     case I_DIV: //割り算の場合
       cip++;
       tmp = ivalue();
+      if (err)
+        return -1;
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1;
@@ -6125,6 +6127,8 @@ out:
     case I_MOD: //剰余の場合
       cip++;
       tmp = ivalue();
+      if (err)
+        return -1;
       if (tmp == 0) { //もし演算値が0なら
 	err = ERR_DIVBY0; //エラー番号をセット
 	return -1; //終了
