@@ -5407,7 +5407,19 @@ static BString sstring() {
   int32_t c;
   if (checkOpen()) return out;
   if (getParam(count, I_COMMA)) return out;
-  if (getParam(c, 0, 255, I_CLOSE)) return out;
+  if (is_strexp()) {
+    BString cs = istrexp();
+    if (err)
+      return cs;
+    if (cs.length() < 1) {
+      E_ERR(VALUE, "min 1 character");
+      return cs;
+    }
+    c = cs[0];
+    if (checkClose()) return cs;
+  } else {
+    if (getParam(c, 0, 255, I_CLOSE)) return out;
+  }
   if (!out.reserve(count)) {
     err = ERR_OOM;
     return out;
