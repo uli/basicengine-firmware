@@ -1827,6 +1827,10 @@ void BASIC_FP ivararr() {
   dims = get_array_dims(idxs);
   if (dims < 0)
     return;
+  if (dims != num_arr.var(index).dims()) {
+    err = ERR_SOR;
+    return;
+  }
 
   if (*cip != I_EQ) { //もし「=」でなければ
     err = ERR_VWOEQ; //エラー番号をセット
