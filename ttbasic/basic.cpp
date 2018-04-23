@@ -6070,6 +6070,8 @@ num_t BASIC_FP ivalue() {
   case I_FN: {
     unsigned char *lp;
     icall();
+    if (err)
+      break;
     for (;;) {
       lp = iexe(true);
       if (!lp || err)
