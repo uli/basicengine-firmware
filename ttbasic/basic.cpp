@@ -3557,7 +3557,7 @@ num_t BASIC_FP nargc() {
 }
 
 // スクリーン座標の文字コードの取得 'CHAR(X,Y)'
-int32_t BASIC_FP ncharfun() {
+int32_t BASIC_INT ncharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -4026,7 +4026,7 @@ void iplay() {
 }
 
 // POINT(X,Y)関数の処理
-num_t BASIC_FP npoint() {
+num_t BASIC_INT npoint() {
   int x, y;  // 座標
   if (checkOpen()) return 0;
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
@@ -4053,7 +4053,7 @@ num_t BASIC_FP SMALL nmap() {
 }
 
 // ASC(文字列)
-num_t BASIC_FP nasc() {
+num_t BASIC_INT nasc() {
   int32_t value;
 
   if (checkOpen()) return 0;
@@ -5707,12 +5707,12 @@ num_t BASIC_FP nana() {
 #endif
 }
 
-num_t BASIC_FP nsread() {
+num_t BASIC_INT nsread() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.read();
 }
 
-num_t BASIC_FP nsready() {
+num_t BASIC_INT nsready() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.available();
 }
@@ -5873,7 +5873,7 @@ num_t BASIC_FP nframe() {
   return vs23.frame();
 }
 
-num_t BASIC_FP nvreg() {
+num_t BASIC_INT nvreg() {
   int32_t a = getparam();
   bool good = false;
   for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
@@ -5898,7 +5898,7 @@ num_t BASIC_FP nvpeek() {
     return SpiRamReadByte(value);
 }
 
-num_t BASIC_FP neof() {
+num_t BASIC_INT neof() {
   int32_t a = get_filenum_param();
   if (!err)
     return !user_files[a]->available();
@@ -6584,7 +6584,7 @@ static void BASIC_FP on_go(bool is_gosub, int cas)
   }
 }
 
-void BASIC_FP ion()
+void BASIC_INT ion()
 {
   if (*cip == I_SPRITE) {
     ++cip;
