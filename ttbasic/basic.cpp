@@ -6563,6 +6563,10 @@ static void BASIC_FP on_go(bool is_gosub, int cas)
       uint32_t line = iexp();
       if (!cas) {
         lp = getlp(line);
+        if (line != getlineno(lp)) {
+          err = ERR_ULN;
+          return;
+        }
         ip = lp + sizeof(line_desc_t);
       }
     }
