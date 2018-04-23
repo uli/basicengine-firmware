@@ -4134,6 +4134,9 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
         sc0.locate(value, sc0.c_y());
       break;
 
+    case I_COMMA:
+      break;
+
     default:	// anything else is assumed to be a numeric expression
       value = iexp();
       if (err) {
@@ -4162,12 +4165,15 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       newline(devno);
       return;
     } else if (*cip == I_COMMA) {
-      cip++;
-      if (redirect_output_file < 0)
-        while (sc0.c_x() % 8)
-          c_putch(' ');
-      if (end_of_statement())
-        return;
+      while (*cip == I_COMMA) {
+        cip++;
+        if (redirect_output_file < 0)
+          do {
+            c_putch(' ');
+          } while (sc0.c_x() % 8);
+        if (end_of_statement())
+          return;
+      }
     } else if (*cip == I_SEMI) {
       cip++;
       if (end_of_statement())
