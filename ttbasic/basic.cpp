@@ -1721,7 +1721,7 @@ void BASIC_FP ilvar() {
 int BASIC_FP get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
-    if (getParam(idxs[dims], 0, 255, I_NONE))
+    if (getParam(idxs[dims], I_NONE))
       return -1;
     dims++;
     if (*cip == I_CLOSE)
