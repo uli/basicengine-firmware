@@ -65,6 +65,7 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 void nosdk_i2s_clear_buf()
 {
 	memset(print_mem_buf, 0xaa, I2S_BUFLEN * 4 * 2);
+	((uint32_t *)print_mem_buf)[I2S_BUFLEN * 2] = I2S_BUF_GUARD;
 }
 #else
 void nosdk_i2s_clear_buf()

@@ -11,6 +11,11 @@
 
 #ifdef ESP8266_NOWIFI
 #define I2S_BUFLEN 320
+#define I2S_BUF_GUARD 0xfeefeefeUL
+extern char print_mem_buf[];
+static inline bool nosdk_i2s_check_guard() {
+  return ((uint32_t*)print_mem_buf)[I2S_BUFLEN * 2] != I2S_BUF_GUARD;
+}
 #else
 #define I2S_BUFLEN 160
 #endif
