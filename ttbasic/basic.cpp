@@ -4221,10 +4221,12 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     } else if (*cip == I_COMMA) {
       while (*cip == I_COMMA) {
         cip++;
-        if (redirect_output_file < 0)
+        if (devno == 0 && redirect_output_file < 0)
           do {
             c_putch(' ');
           } while (sc0.c_x() % 8);
+        else
+          c_putch('\t', devno);
         if (end_of_statement())
           return;
       }
