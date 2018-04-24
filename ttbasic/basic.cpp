@@ -6099,6 +6099,17 @@ num_t BASIC_FP ivalue() {
     return 0;
   }
 
+#ifdef ESP8266_NOWIFI
+  // XXX: So, yes, it's weird that the I2S could would be responsible for
+  // checking for system stack overflows, but it happens to have its data
+  // buffer right below the stack, and knows where it ends...
+  if (nosdk_i2s_check_guard()) {
+    nosdk_i2s_clear_buf();
+    err = ERR_STACKOF;
+    return value;
+  }
+#endif
+
   while (1)
     switch (*cip) {
     case I_POW:
