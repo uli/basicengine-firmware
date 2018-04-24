@@ -2274,7 +2274,7 @@ unsigned char *data_ip;
 unsigned char *data_lp;
 bool in_data = false;
 
-bool find_next_data() {
+bool BASIC_INT find_next_data() {
   int next;
 
   if (!data_lp) {
@@ -2318,8 +2318,23 @@ void idata() {
   }
 }
 
-void iread() {
-  unsigned char *cip_save;
+static unsigned char *data_cip_save;
+void BASIC_INT data_push() {
+  data_cip_save = cip;
+  cip = data_ip + 1;
+}
+
+void BASIC_INT data_pop() {
+  if (err) {
+    // XXX: You would actually want to know both locations (READ and DATA).
+    clp = data_lp;
+    return;
+  }
+  data_ip = cip;
+  cip = data_cip_save;
+}
+
+void BASIC_INT iread() {
   num_t value;
   BString svalue;
   uint8_t index;
@@ -2331,15 +2346,11 @@ void iread() {
 
   for (;;) switch (*cip++) {
   case I_VAR:
-    cip_save = cip;
-    cip = data_ip + 1;
+    data_push();
     value = iexp();
-    if (err) {
-      clp = data_lp;
+    data_pop();
+    if (err)
       return;
-    }
-    data_ip = cip;
-    cip = cip_save;
     nvar.var(*cip++) = value;
     break;
     
@@ -2355,15 +2366,11 @@ void iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    cip_save = cip;
-    cip = data_ip + 1;
+    data_push();
     value = iexp();
-    if (err) {
-      clp = data_lp;
+    data_pop();
+    if (err)
       return;
-    }
-    data_ip = cip;
-    cip = cip_save;
 
     num_t &n = is_list ?
                   num_lst.var(index).var(idxs[0]) :
@@ -2375,21 +2382,16 @@ void iread() {
     }
 
   case I_SVAR:
-    cip_save = cip;
-    cip = data_ip + 1;
+    data_push();
     svalue = istrexp();
-    if (err) {
-      clp = data_lp;
+    data_pop();
+    if (err)
       return;
-    }
-    data_ip = cip;
-    cip = cip_save;
     svar.var(*cip++) = svalue;
     break;
     
   case I_STRARR:
-  case I_STRLST:
-    {
+  case I_STRLST: {
     bool is_list = cip[-1] == I_STRLST;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
@@ -2399,15 +2401,11 @@ void iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    cip_save = cip;
-    cip = data_ip + 1;
+    data_push();
     svalue = istrexp();
-    if (err) {
-      clp = data_lp;
+    data_pop();
+    if (err)
       return;
-    }
-    data_ip = cip;
-    cip = cip_save;
 
     BString &s = is_list ?
                     str_lst.var(index).var(idxs[0]) :
@@ -2416,7 +2414,7 @@ void iread() {
       return;
     s = svalue;
     break;
-    }
+  }
 
   case I_COMMA:
     if (!find_next_data()) {
