@@ -2446,7 +2446,7 @@ void irestore() {
 }
 
 // LET handler
-void ilet() {
+void BASIC_INT ilet() {
   switch (*cip) { //中間コードで分岐
   case I_VAR: // 変数の場合
     cip++;     // 中間コードポインタを次へ進める
