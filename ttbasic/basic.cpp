@@ -6344,6 +6344,7 @@ num_t BASIC_FP iexp() {
     case I_XOR:
       tmp = iand();
       value = ((int32_t)value) ^ ((int32_t)tmp);
+      break;
     default:
       cip--;
       if (!err && !isfinite(value) && !math_exceptions_disabled) {
