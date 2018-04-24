@@ -4126,7 +4126,9 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     case I_TAB:
       ++cip;
       value = getparam();
-      if (value < 0 || value >= sc0.getWidth()) {
+      if (value < 0)
+        value = 0;
+      else if (value >= sc0.getWidth()) {
         E_VALUE(0, sc0.getWidth());
         return;
       }
