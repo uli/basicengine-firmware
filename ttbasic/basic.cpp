@@ -4159,18 +4159,16 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
       devno = 4;
       continue;
       
-    case I_TAB:
+    case I_TAB: {
       ++cip;
-      value = getparam();
-      if (value < 0)
-        value = 0;
-      else if (value >= sc0.getWidth()) {
-        E_VALUE(0, sc0.getWidth());
-        return;
-      }
-      if (redirect_output_file < 0 && sc0.c_x() < value)
-        sc0.locate(value, sc0.c_y());
+      int32_t col = getparam();
+      if (col < 0)
+        col = 0;
+      col = col % sc0.getWidth();
+      if (redirect_output_file < 0 && sc0.c_x() < col)
+        sc0.locate(col, sc0.c_y());
       break;
+    }
 
     case I_COMMA:
       break;
