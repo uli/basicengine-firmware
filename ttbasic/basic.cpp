@@ -5638,28 +5638,15 @@ num_t BASIC_FP natn2() {
 }
 
 num_t BASIC_FP nsqr() {
-  num_t value = getparam();
-  if (value < 0)
-    err = ERR_FP;
-  else
-    value = sqrt(value);
-  return value;
+  return sqrt(getparam());
 }
 
 num_t BASIC_FP ntan() {
-  // XXX: check for +/-inf
   return tan(getparam());
 }
 
 num_t BASIC_FP nlog() {
-  num_t value = getparam();
-  if (err)
-    return 0;
-  if (value <= 0)
-    err = ERR_FP;
-  else
-    value = log(value);
-  return value;
+  return log(getparam());
 }
 
 num_t BASIC_FP nint() {
@@ -6161,10 +6148,6 @@ out:
       tmp = ivalue();
       if (err)
         return -1;
-      if (tmp == 0) { //もし演算値が0なら
-	err = ERR_DIVBY0; //エラー番号をセット
-	return -1;
-      }
       value /= tmp; //割り算を実行
       break;
 
@@ -6172,10 +6155,6 @@ out:
       tmp = ivalue();
       if (err)
         return -1;
-      if (tmp == 0) { //もし演算値が0なら
-	err = ERR_DIVBY0; //エラー番号をセット
-	return -1; //終了
-      }
       value = (int32_t)value % (int32_t)tmp; //割り算を実行
       break;
 
@@ -6337,6 +6316,12 @@ num_t BASIC_FP iexp() {
       value = ((int32_t)value) ^ ((int32_t)tmp);
     default:
       cip--;
+      if (!err && !isfinite(value)) {
+        if (isinf(value))
+          err = ERR_DIVBY0;
+        else
+          err = ERR_FP;
+      }
       return value;
     }
 }
