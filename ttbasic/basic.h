@@ -130,6 +130,8 @@ typedef struct {
   unsigned char *_event_error_ip;
   unsigned char *_event_error_resume_lp;
   unsigned char *_event_error_resume_ip;
+  
+  bool math_exceptions_disabled;
 } basic_ctx_t;
 
 extern basic_ctx_t *bc;
@@ -184,6 +186,8 @@ extern basic_ctx_t *bc;
 #define event_error_ip bc->_event_error_ip
 #define event_error_resume_lp bc->_event_error_resume_lp
 #define event_error_resume_ip bc->_event_error_resume_ip
+
+#define math_exceptions_disabled bc->math_exceptions_disabled
 
 // '('チェック関数
 inline uint8_t checkOpen() {

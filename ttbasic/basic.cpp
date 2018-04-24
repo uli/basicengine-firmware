@@ -2539,6 +2539,7 @@ void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
   event_error_resume_lp = NULL;
   event_play_enabled = false;
   event_pad_enabled = false;
+  math_exceptions_disabled = false;
   memset(event_pad_proc_idx, NO_PROC, sizeof(event_pad_proc_idx));
   memset(event_play_proc_idx, NO_PROC, sizeof(event_play_proc_idx));
 
@@ -6331,7 +6332,7 @@ num_t BASIC_FP iexp() {
       value = ((int32_t)value) ^ ((int32_t)tmp);
     default:
       cip--;
-      if (!err && !isfinite(value)) {
+      if (!err && !isfinite(value) && !math_exceptions_disabled) {
         if (isinf(value))
           err = ERR_DIVBY0;
         else
