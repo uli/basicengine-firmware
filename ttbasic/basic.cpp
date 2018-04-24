@@ -3091,6 +3091,8 @@ void SMALL idelete() {
     }
   }
   
+  initialize_proc_pointers();
+  initialize_label_pointers();
   // continue on the next line, in the likely case the DELETE command didn't
   // delete itself
   clp = getlp(current_line + 1);
