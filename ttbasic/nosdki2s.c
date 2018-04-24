@@ -60,27 +60,33 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 
 #endif
 
+#ifdef ESP8266_NOWIFI
+#include <string.h>
+void nosdk_i2s_clear_buf()
+{
+	memset(print_mem_buf, 0xaa, I2S_BUFLEN * 4 * 2);
+}
+#else
+void nosdk_i2s_clear_buf()
+{
+	for( i = 0; i < I2S_BUFLEN; i++ )
+	{
+		i2sData[0][i] = 0;
+		i2sData[1][i] = 0;
+	}
+}
+#endif
+
 void InitI2S()
 {
-	int i;
-
 	DR_REG_SLC_BASEL[4] = 0;  //Reset DMA
 	SLC_CONF0L = (1<<SLC_MODE_S);		//Configure DMA
 	SLC_RX_DSCR_CONFL = SLC_INFOR_NO_REPLACE|SLC_TOKEN_NO_REPLACE;
 
-	//Initialize buffers
-	for( i = 0; i < I2S_BUFLEN; i++ )
-	{
-#ifdef ESP8266_NOWIFI
-		((uint64_t *)print_mem_buf)[i] = 0;
-#else
-		i2sData[0][i] = 0;
-		i2sData[1][i] = 0;
-#endif
-	}
-
 	//Set address for buffer descriptor.
 	SLC_RX_LINKL = ((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK;
+
+	nosdk_i2s_clear_buf();
 
 #if I2S_INTERRUPTS
 

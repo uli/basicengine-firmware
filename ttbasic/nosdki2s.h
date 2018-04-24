@@ -20,6 +20,8 @@ void InitI2S();
 
 void SendI2S();
 
+void nosdk_i2s_clear_buf();
+
 extern volatile uint32_t *nosdk_i2s_curr_buf;
 extern volatile uint32_t nosdk_i2s_curr_buf_pos;
 static inline bool ICACHE_RAM_ATTR nosdk_i2s_write_sample_nb(uint32_t sample)
