@@ -3751,6 +3751,15 @@ void iset() {
     ++cip;
     isetDate();
     return;
+  } else if (*cip == I_FLAGS) {
+    ++cip;
+    if (getParam(flag, 0, 0, I_COMMA)) return;
+    if (getParam(val, 0, 1, I_NONE)) return;
+
+    switch (flag) {
+    case 0:	math_exceptions_disabled = val; break;
+    default:	break;
+    }
   } else {
     SYNTAX_T("exp DATE or FLAGS");
   }
