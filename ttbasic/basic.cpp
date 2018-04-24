@@ -2330,6 +2330,11 @@ void BASIC_INT data_pop() {
     clp = data_lp;
     return;
   }
+  if (!end_of_statement() && *cip != I_COMMA) {
+    clp = data_lp;
+    SYNTAX_T("well-formed DATA");
+    return;
+  }
   data_ip = cip;
   cip = data_cip_save;
 }
