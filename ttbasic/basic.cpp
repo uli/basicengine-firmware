@@ -2135,6 +2135,7 @@ int BASIC_FP token_size(uint8_t *code) {
   case I_GOTO:
   case I_GOSUB:
   case I_COMMA:
+  case I_RESTORE:
     if (code[1] == I_LABEL)
       return 3;
     else
@@ -2447,7 +2448,16 @@ void BASIC_INT iread() {
 void irestore() {
   if (end_of_statement())
     data_lp = NULL;
-  else {
+  else if (*cip == I_LABEL) {
+    ++cip;
+    label_t &lb = labels.label(*cip++);
+    if (!lb.lp || !lb.ip) {
+      err = ERR_UNDEFLABEL;
+      return;
+    }
+    data_lp = lb.lp;
+    data_ip = lb.ip;
+  } else {
     uint32_t line = iexp();
     if (err)
       return;
