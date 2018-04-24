@@ -52,9 +52,8 @@ BEEP	I_BEEP		ibeep
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate
-GETDATE	I_GETDATE	igetDate
-GETTIME	I_GETTIME	igetTime
 SETDATE	I_SETDATE	isetDate
+GET	I_GET		iget
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
 MERGE	I_MERGE		imerge
@@ -244,6 +243,7 @@ PRIO	I_PRIO		esyntax
 FN	I_FN		esyntax
 DIRECTORY	I_DIRECTORY	esyntax
 TAB	I_TAB		esyntax
+TIME	I_TIME		esyntax
 OK	I_OK		esyntax
 _none	I_NUM		esyntax
 _none	I_STR		esyntax

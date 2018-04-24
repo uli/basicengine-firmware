@@ -298,7 +298,7 @@ const uint8_t i_nsb[] BASIC_DAT = {
 // insert a blank before intermediate code
 const uint8_t i_sf[] BASIC_DAT  = {
   I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
-  I_GETDATE,I_GETTIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,I_THEN,
+  I_GET,I_TIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,I_THEN,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SETDATE,I_WAIT,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
@@ -3810,6 +3810,18 @@ void igetTime() {
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
+}
+
+void iget() {
+  if (*cip == I_DATE) {
+    ++cip;
+    igetDate();
+  } else if (*cip == I_TIME) {
+    ++cip;
+    igetTime();
+  } else {
+    SYNTAX_T("exp DATE or TIME");
+  }
 }
 
 // DATEコマンド
