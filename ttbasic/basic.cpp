@@ -1495,7 +1495,8 @@ void SMALL iinput() {
       goto DONE;
     }
     cip++;
-  }
+  } else if (*cip == I_SEMI)
+    ++cip;
 
   sc0.show_curs(1);
   for(;;) {
