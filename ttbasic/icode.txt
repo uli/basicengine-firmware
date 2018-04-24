@@ -52,7 +52,6 @@ BEEP	I_BEEP		ibeep
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate
-SETDATE	I_SETDATE	isetDate
 GET	I_GET		iget
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
@@ -112,6 +111,7 @@ WHILE	I_WHILE		iwhile
 WEND	I_WEND		iwend
 ERROR$	I_ERRORSTR	esyntax_workaround
 ERROR	I_ERROR		ierror
+SET	I_SET		iset
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
