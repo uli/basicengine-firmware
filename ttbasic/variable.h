@@ -256,7 +256,7 @@ public:
     int mul = 1;
     int idx = 0;
     for (int i = 0; i < m_dims; ++i) {
-      if (idxs[i] >= m_sizes[i]) {
+      if (idxs[i] < 0 || idxs[i] >= m_sizes[i]) {
         err = ERR_SOR;
         // XXX: Likewise.
         return bull;
@@ -481,7 +481,7 @@ public:
     int mul = 1;
     int idx = 0;
     for (int i = 0; i < m_dims; ++i) {
-      if (idxs[i] >= m_sizes[i]) {
+      if (idxs[i] < 0 || idxs[i] >= m_sizes[i]) {
         err = ERR_SOR;
         // XXX: Likewise.
         return bull;
