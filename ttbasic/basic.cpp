@@ -5991,13 +5991,27 @@ num_t BASIC_INT ninstr() {
 typedef num_t (*numfun_t)();
 #include "numfuntbl.h"
 
+num_t BASIC_INT nsvar_a() {
+  uint8_t i;
+  int32_t a;
+  // String character accessor 
+  i = *cip++;
+  if (*cip++ != I_SQOPEN) {
+    // XXX: Can we actually get here?
+    E_SYNTAX(I_SQOPEN);
+    return 0;
+  }
+  if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
+    return 0;
+  return svar.var(i)[a];
+}
+
 // Get value
 num_t BASIC_FP ivalue() {
   num_t value = 0; // 値
   uint8_t i;   // 文字数
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
-  int32_t a;
 
   if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
     value = numfuntbl[*cip++ - NUMFUN_FIRST]();
@@ -6033,18 +6047,9 @@ num_t BASIC_FP ivalue() {
     break;
 
   case I_SVAR:
-    // String character accessor 
-    i = *cip++;
-    if (*cip++ != I_SQOPEN) {
-      // XXX: Can we actually get here?
-      E_SYNTAX(I_SQOPEN);
-      return 0;
-    }
-    if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
-      return 0;
-    value = svar.var(i)[a];
+    value = nsvar_a();
     break;
-    
+
   //括弧の値の取得
   case I_OPEN: //「(」
     cip--;
