@@ -869,6 +869,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 
       char *p = ptok + var_len;
       if (*p == '$' && p[1] == '(') {
+        // XXX: Does not parse "A$ (" correctly.
         if (is_local) {
           err = ERR_NOT_SUPPORTED;
           return 0;
