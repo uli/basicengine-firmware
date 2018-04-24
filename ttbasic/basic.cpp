@@ -7068,10 +7068,8 @@ void BASIC_FP iif() {
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
 
   condition = iexp(); // 真偽を取得
-  if (err) {          // もしエラーが生じたら
-    err = ERR_IFWOC;  // エラー番号をセット
+  if (err)
     return;
-  }
 
   bool have_goto = false;
   if (*cip == I_THEN) {
