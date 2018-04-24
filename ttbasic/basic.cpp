@@ -1486,7 +1486,7 @@ void SMALL iinput() {
       err = ERR_FILE_NOT_OPEN;
       return;
     }
-  } else if(is_strexp() && *cip != I_SVAR) {
+  } else if(is_strexp() && *cip != I_SVAR && *cip != I_STRARR) {
     // We have to exclude string variables here because they may be lvalues.
     c_puts(istrexp().c_str());
 
