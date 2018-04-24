@@ -387,17 +387,17 @@ inline void mem_putch(uint8_t c) {
 void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
   // Unmapped memory, causes exception
   if (vadr < 0x20000000UL) {
-    E_ERR(VALUE, "mapped address");
+    E_ERR(VALUE, "unmapped address");
     return NULL;
   }
   // IRAM, flash: 32-bit only
   if ((vadr >= 0x40100000UL && vadr < 0x40300000UL) && type != 2) {
-    E_ERR(VALUE, "32-bit access");
+    E_ERR(VALUE, "non-32-bit access");
     return NULL;
   }
   if ((type == 1 && (vadr & 1)) ||
       (type == 2 && (vadr & 3))) {
-    E_ERR(VALUE, "aligned address");
+    E_ERR(VALUE, "misaligned address");
     return NULL;
   }
   return (void *)vadr;
@@ -816,7 +816,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
       value = strtonum(ptok, &ptok);
       if (s == ptok) {
         // nothing parsed, most likely a random single period
-        SYNTAX_T("valid number");
+        SYNTAX_T("invalid number");
         return 0;
       }
       s = ptok;			// Stuff the processed part of the character string
@@ -1504,7 +1504,7 @@ void SMALL iinput() {
         // XXX: check if dims matches array
       } else if (cip[-2] == I_NUMLST) {
         if (get_array_dims(idxs) != 1) {
-          SYNTAX_T("single dimension");
+          SYNTAX_T("invalid list index");
           return;
         }
         dims = -1;
@@ -1559,7 +1559,7 @@ void SMALL iinput() {
         // XXX: check if dims matches array
       } else if (cip[-2] == I_STRLST) {
         if (get_array_dims(idxs) != 1) {
-          SYNTAX_T("single dimension");
+          SYNTAX_T("invalid list index");
           return;
         }
         dims = -1;
@@ -1595,7 +1595,7 @@ void SMALL iinput() {
       break;
 
     default: // 以上のいずれにも該当しなかった場合
-      SYNTAX_T("variable");
+      SYNTAX_T("exp variable");
       //return;            // 終了
       goto DONE;
     } // 中間コードで分岐の末尾
@@ -1609,7 +1609,7 @@ void SMALL iinput() {
         cip++;         // 中間コードポインタを次へ進める
         break;         // 打ち切る
       default:      // 以上のいずれにも該当しなかった場合
-        SYNTAX_T("separator");
+        SYNTAX_T("exp separator");
         //return;           // 終了
         goto DONE;
       } // 中間コードで分岐の末尾
@@ -1745,7 +1745,7 @@ void idim() {
 
   for (;;) {
     if (*cip != I_VARARR && *cip != I_STRARR) {
-      SYNTAX_T("array variable");
+      SYNTAX_T("not an array variable");
       return;
     }
     is_string = *cip == I_STRARR;
@@ -1757,7 +1757,7 @@ void idim() {
     if (dims < 0)
       return;
     if (dims == 0) {
-      SYNTAX_T("at least one dimension");
+      SYNTAX_T("missing dimensions");
       return;
     }
 
@@ -1986,7 +1986,7 @@ void istrlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    SYNTAX_T("one dimension");
+    SYNTAX_T("invalid list index");
     return;
   }
 
@@ -2017,7 +2017,7 @@ void inumlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    SYNTAX_T("one dimension");
+    SYNTAX_T("invalid list index");
     return;
   }
 
@@ -2062,7 +2062,7 @@ void iappend() {
       return;
     num_lst.var(index).append(value);
   } else {
-    SYNTAX_T("list reference");
+    SYNTAX_T("exp list reference");
   }
   return;
 }
@@ -2092,7 +2092,7 @@ void iprepend() {
       return;
     num_lst.var(index).prepend(value);
   } else {
-    SYNTAX_T("list reference");
+    SYNTAX_T("exp list reference");
   }
   return;
 }
@@ -2218,7 +2218,7 @@ void initialize_proc_pointers(void)
           pr.argc_str++;
           break;
         default:
-          SYNTAX_T("variable");
+          SYNTAX_T("exp variable");
           clp = lp; cip = ip;
           return;
         }
@@ -2332,7 +2332,7 @@ void BASIC_INT data_pop() {
   }
   if (!end_of_statement() && *cip != I_COMMA) {
     clp = data_lp;
-    SYNTAX_T("well-formed DATA");
+    SYNTAX_T("malformed DATA");
     return;
   }
   data_ip = cip;
@@ -2431,7 +2431,7 @@ void BASIC_INT iread() {
   default:
     --cip;
     if (!end_of_statement()) 
-      SYNTAX_T("variable");
+      SYNTAX_T("exp variable");
     return;
   }
 }
@@ -2777,7 +2777,7 @@ void SMALL irenum() {
       if (*cip == I_NUM) {            // 増分指定があったら
 	increase = getlineno(cip);    // 引数を読み取って増分とする
       } else {
-        SYNTAX_T("line number");
+        SYNTAX_T("exp line number");
 	return;
       }
     }
@@ -3026,7 +3026,7 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
       }
       last_line = ((line_desc_t *)ibuf)->line;
     } else {
-      SYNTAX_T("valid program line");
+      SYNTAX_T("invalid program line");
       error(true);
       rc = 1;
       break;
@@ -3055,7 +3055,7 @@ void SMALL idelete() {
   if (!get_range(sNo, eNo))
     return;
   if (!end_of_statement()) {
-    SYNTAX_T("end of statement");
+    SYNTAX_T("exp end of statement");
     return;
   }
 
@@ -4094,7 +4094,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 #ifdef FLOAT_NUMS
         case '.':
           if (had_point) {
-            E_ERR(USING, "single period");
+            E_ERR(USING, "multiple periods");
             return;
           } else
             had_point = true;
@@ -4184,7 +4184,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 	return;
     } else {
       if (!end_of_statement()) {
-        SYNTAX_T("separator");
+        SYNTAX_T("exp separator");
 	newline(devno);
 	return;
       }
@@ -4279,7 +4279,7 @@ void SMALL ildbmp() {
           return;
         }
       } else {
-        SYNTAX_T("BG or SPRITE");
+        SYNTAX_T("exp BG or SPRITE");
 	return;
       }
 #else
@@ -4744,7 +4744,7 @@ void ibg() {
   default:
     cip--;
     if (!end_of_statement())
-      SYNTAX_T("BG parameter");
+      SYNTAX_T("exp BG parameter");
     return;
   }
 #else
@@ -4914,7 +4914,7 @@ void BASIC_INT isprite() {
     // XXX: throw an error if nothing has been done
     cip--;
     if (!end_of_statement())
-      SYNTAX_T("sprite parameter");
+      SYNTAX_T("exp sprite parameter");
     if (set_frame)
       vs23.setSpriteFrame(num, frame_x, frame_y, flags & 2, flags & 4);
     if (set_opacity || (set_frame && (flags & 1)))
@@ -4949,7 +4949,7 @@ void BASIC_FP imove()
     ++cip;
     imovebg();
   } else
-    SYNTAX_T("BG or SPRITE");
+    SYNTAX_T("exp BG or SPRITE");
 }
 
 void iplot() {
@@ -5089,7 +5089,7 @@ uint8_t SMALL ilrun() {
       return 0;
     }
   } else {
-    SYNTAX_T("file name");
+    SYNTAX_T("exp file name");
     return 0;
   }
 
@@ -5165,7 +5165,7 @@ void SMALL error(uint8_t flgCmd = false) {
       PRINT_P(" in ");
       putnum(getlineno(clp), 0); // 行番号を調べて表示
       if (err_expected) {
-        PRINT_P(" (exp ");
+        PRINT_P(" (");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
@@ -5192,7 +5192,7 @@ void SMALL error(uint8_t flgCmd = false) {
     } else {                   // 指示の実行中なら
       c_puts_P(errmsg[err]);     // エラーメッセージを表示
       if (err_expected) {
-        PRINT_P(" (exp ");
+        PRINT_P(" (");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
@@ -5385,7 +5385,7 @@ static BString spopf() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("string list reference");
+      SYNTAX_T("exp string list reference");
     return value;
   }
   checkClose();
@@ -5402,7 +5402,7 @@ static BString spopb() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("string list reference");
+      SYNTAX_T("exp string list reference");
     return value;
   }
   checkClose();
@@ -5447,7 +5447,7 @@ static BString sstring() {
     if (err)
       return cs;
     if (cs.length() < 1) {
-      E_ERR(VALUE, "min 1 character");
+      E_ERR(VALUE, "need min 1 character");
       return cs;
     }
     c = cs[0];
@@ -5518,7 +5518,7 @@ BString istrvalue()
     i = *cip++;
     dims = get_array_dims(idxs);
     if (dims != 1) {
-      SYNTAX_T("one dimension");
+      SYNTAX_T("invalid list index");
     } else {
       value = str_lst.var(i).var(idxs[0]);
     }
@@ -5537,7 +5537,7 @@ BString istrvalue()
       ++cip;
       value = snetget();
     } else
-      SYNTAX_T("network function");
+      SYNTAX_T("exp network function");
 #endif
     break;
 
@@ -5550,7 +5550,7 @@ BString istrvalue()
     if (!err)
       err = ERR_TYPE;
     else
-      SYNTAX_T("string expr");
+      SYNTAX_T("exp string expr");
     break;
   }
   if (err)
@@ -5925,7 +5925,7 @@ num_t BASIC_FP npopf() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("numeric list reference");
+      SYNTAX_T("exp numeric list reference");
     return 0;
   }
   if (checkClose()) return 0;
@@ -5942,7 +5942,7 @@ num_t BASIC_FP npopb() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("numeric list reference");
+      SYNTAX_T("exp numeric list reference");
     return 0;
   }
   if (checkClose()) return 0;
@@ -6049,7 +6049,7 @@ num_t BASIC_FP ivalue() {
     i = *cip++;
     dims = get_array_dims(idxs);
     if (dims != 1) {
-      SYNTAX_T("one dimension");
+      SYNTAX_T("invalid list index");
     } else {
       value = num_lst.var(i).var(idxs[0]);
     }
@@ -6078,7 +6078,7 @@ num_t BASIC_FP ivalue() {
     if (is_strexp())
       err = ERR_TYPE;
     else
-      SYNTAX_T("numeric expr");
+      SYNTAX_T("exp numeric expr");
     return 0;
   }
 
@@ -6674,7 +6674,7 @@ void BASIC_INT ion()
       ++cip;
       on_go(true, cas);
     } else {
-      SYNTAX_T("GOTO or GOSUB");
+      SYNTAX_T("exp GOTO or GOSUB");
     }
   }
 }
@@ -7057,7 +7057,7 @@ void BASIC_FP iif() {
     ++cip;
     have_goto = true;
   } else {
-    SYNTAX_T("THEN or GOTO");
+    SYNTAX_T("exp THEN or GOTO");
     return;
   }
 
@@ -7125,7 +7125,7 @@ void icmd () {
     redirect_output_file = -1;
     return;
   } else {
-    SYNTAX_T("INPUT or OUTPUT");
+    SYNTAX_T("exp INPUT, OUTPUT or OFF");
     return;
   }
 
@@ -7227,7 +7227,7 @@ void iopen() {
     case I_INPUT:	flags = FILE_READ; break;
     case I_APPEND:	flags = FILE_WRITE; break;
     case I_DIRECTORY:	flags = -1; break;
-    default:		SYNTAX_T("file mode"); return;
+    default:		SYNTAX_T("exp file mode"); return;
     }
   }
   
@@ -7307,7 +7307,7 @@ void iprofile() {
     }
     break;
   default:
-    SYNTAX_T("ON, OFF or LIST");
+    SYNTAX_T("exp ON, OFF or LIST");
     break;
   }
 }
@@ -7339,7 +7339,7 @@ void iexec() {
     err = -is_text;
     return;
   } else if (!is_text) {
-    E_ERR(FORMAT, "BASIC program");
+    E_ERR(FORMAT, "not a BASIC program");
     return;
   }
   basic_ctx_t *old_bc = bc;
@@ -7402,7 +7402,7 @@ unsigned char* BASIC_FP iexe(bool until_return) {
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
       funtbl[*cip++]();
     } else
-      SYNTAX_T("command");
+      SYNTAX_T("exp command");
 
     pump_events();
 

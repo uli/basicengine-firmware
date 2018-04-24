@@ -62,7 +62,7 @@ void inetopen() {
   BString uh(F("http://"));
   BString uhs(F("https://"));
   if (!url.startsWith(uh) && !url.startsWith(uhs)) {
-    E_ERR(VALUE, "HTTP(S) URL");
+    E_ERR(VALUE, "unsupported URL");
     return;
   }
   retval[0] = open_url(url);
@@ -71,7 +71,7 @@ void inetopen() {
 
 void inetclose() {
   if (!http) {
-    E_NETWORK(PSTR("open connection"));
+    E_NETWORK(PSTR("no connection"));
     return;
   }
   http->end();
@@ -86,7 +86,7 @@ BString snetinput() {
   if (err)
     return rx;
   if (!http || !stream) {
-    E_NETWORK(PSTR("open connection"));
+    E_NETWORK(PSTR("no connection"));
     return rx;
   }
   size_t avail = stream->available();
