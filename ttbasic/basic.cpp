@@ -6145,16 +6145,14 @@ out:
     return -1;
 
   while (1) //無限に繰り返す
-    switch(*cip) { //中間コードで分岐
+    switch(*cip++) { //中間コードで分岐
 
     case I_MUL: //掛け算の場合
-      cip++;
       tmp = ivalue();
       value *= tmp; //掛け算を実行
       break;
 
     case I_DIV: //割り算の場合
-      cip++;
       tmp = ivalue();
       if (err)
         return -1;
@@ -6166,7 +6164,6 @@ out:
       break;
 
     case I_MOD: //剰余の場合
-      cip++;
       tmp = ivalue();
       if (err)
         return -1;
@@ -6178,18 +6175,17 @@ out:
       break;
 
     case I_LSHIFT: // シフト演算 "<<" の場合
-      cip++;
       tmp = ivalue();
       value =((uint32_t)value)<<(uint32_t)tmp;
       break;
 
     case I_RSHIFT: // シフト演算 ">>" の場合
-      cip++;
       tmp = ivalue();
       value =((uint32_t)value)>>(uint32_t)tmp;
       break;
 
     default:
+      --cip;
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
 }
