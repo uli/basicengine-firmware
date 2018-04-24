@@ -356,6 +356,13 @@ void SMALL E_VALUE(int32_t from, int32_t to) {
   err_expected = tbuf;
 }
 
+void SMALL E_SYNTAX(unsigned char token) {
+  err = ERR_SYNTAX;
+  strcpy_P(tbuf, PSTR("expected \""));
+  strcat_P(tbuf, kwtbl[token]);
+  strcat_P(tbuf, PSTR("\""));
+  err_expected = tbuf;
+}
 // RAM mapping
 char lbuf[SIZE_LINE];          // コマンド入力バッファ
 char tbuf[SIZE_LINE];          // テキスト表示用バッファ

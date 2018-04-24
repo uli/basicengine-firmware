@@ -219,7 +219,7 @@ BString istrexp(void);
 extern uint8_t err;
 extern const char *err_expected;
 
-#define E_SYNTAX(exp) do { err = ERR_SYNTAX; err_expected = kwtbl[exp]; } while(0)
+extern void E_SYNTAX(unsigned char token);
 #define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
                            err = ERR_SYNTAX; err_expected = __msg; \
                       } while(0)
