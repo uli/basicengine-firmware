@@ -1541,7 +1541,7 @@ void SMALL iinput() {
         return;
 
       if (dims > 0)
-        num_arr.var(index).var(idxs) = value;
+        num_arr.var(index).var(dims, idxs) = value;
       else if (dims < 0)
         num_lst.var(index).var(idxs[0]) = value;
       else
@@ -1586,7 +1586,7 @@ void SMALL iinput() {
         return;
       
       if (dims > 0)
-        str_arr.var(index).var(idxs) = str_value;
+        str_arr.var(index).var(dims, idxs) = str_value;
       else if (dims < 0)
         str_lst.var(index).var(idxs[0]) = str_value;
       else
@@ -1784,7 +1784,7 @@ void idim() {
             svalue = istrexp();
             if (err)
               return;
-            BString &s = str_arr.var(index).var(&cnt);
+            BString &s = str_arr.var(index).var(1, &cnt);
             if (err)
               return;
             s = svalue;
@@ -1798,7 +1798,7 @@ void idim() {
             value = iexp();
             if (err)
               return;
-            num_t &n = num_arr.var(index).var(&cnt);
+            num_t &n = num_arr.var(index).var(1, &cnt);
             if (err)
               return;
             n = value;
@@ -1828,10 +1828,9 @@ void BASIC_FP ivararr() {
   dims = get_array_dims(idxs);
   if (dims < 0)
     return;
-  if (dims != num_arr.var(index).dims()) {
-    err = ERR_SOR;
+  num_t &n = num_arr.var(index).var(dims, idxs);
+  if (err)
     return;
-  }
 
   if (*cip != I_EQ) { //もし「=」でなければ
     err = ERR_VWOEQ; //エラー番号をセット
@@ -1842,9 +1841,6 @@ void BASIC_FP ivararr() {
   value = iexp(); //式の値を取得
   if (err) //もしエラーが生じたら
     return;  //終了
-  num_t &n = num_arr.var(index).var(idxs);
-  if (err)
-    return;
   n = value;
 }
 
@@ -1962,6 +1958,9 @@ void istrarr() {
   dims = get_array_dims(idxs);
   if (dims < 0)
     return;
+  BString &s = str_arr.var(index).var(dims, idxs);
+  if (err)
+    return;
 
   if (*cip != I_EQ) {
     err = ERR_VWOEQ;
@@ -1973,9 +1972,6 @@ void istrarr() {
   if (err)
     return;
 
-  BString &s = str_arr.var(index).var(idxs);
-  if (err)
-    return;
   s = value;
 }
 
@@ -2371,7 +2367,7 @@ void iread() {
 
     num_t &n = is_list ?
                   num_lst.var(index).var(idxs[0]) :
-                  num_arr.var(index).var(idxs);
+                  num_arr.var(index).var(dims, idxs);
     if (err)
       return;
     n = value;
@@ -2415,7 +2411,7 @@ void iread() {
 
     BString &s = is_list ?
                     str_lst.var(index).var(idxs[0]) :
-                    str_arr.var(index).var(idxs);
+                    str_arr.var(index).var(dims, idxs);
     if (err)
       return;
     s = svalue;
@@ -5512,11 +5508,7 @@ BString istrvalue()
   case I_STRARR:
     i = *cip++;
     dims = get_array_dims(idxs);
-    if (dims != str_arr.var(i).dims()) {
-      err = ERR_SOR;
-    } else {
-      value = str_arr.var(i).var(idxs);
-    }
+    value = str_arr.var(i).var(dims, idxs);
     break;
 
   case I_STRLST:
@@ -6031,11 +6023,7 @@ num_t BASIC_FP ivalue() {
   case I_VARARR:
     i = *cip++;
     dims = get_array_dims(idxs);
-    if (dims != num_arr.var(i).dims()) {
-      err = ERR_SOR;
-    } else {
-      value = num_arr.var(i).var(idxs);
-    }
+    value = num_arr.var(i).var(dims, idxs);
     break;
 
   case I_SVAR:

@@ -247,10 +247,15 @@ public:
     return false;
   }
 
-  inline T& var(int *idxs) {
+  inline T& var(int dims, int *idxs) {
     if (!m_sizes) {
       err = ERR_UNDEFARR;
       // XXX: Is it possible to return an invalid reference without crashing?
+      return bull;
+    }
+    if (dims != m_dims) {
+      err = ERR_SOR;
+      // XXX: Likewise.
       return bull;
     }
     int mul = 1;
@@ -472,10 +477,15 @@ public:
     return false;
   }
 
-  inline T& var(int *idxs) {
+  inline T& var(int dims, int *idxs) {
     if (!m_sizes) {
       err = ERR_UNDEFARR;
       // XXX: Is it possible to return an invalid reference without crashing?
+      return bull;
+    }
+    if (dims != m_dims) {
+      err = ERR_SOR;
+      // XXX: Likewise.
       return bull;
     }
     int mul = 1;
