@@ -5342,8 +5342,14 @@ BString smid() {
     goto out;
   }
 
-  if (getParam(start, I_COMMA)) goto out;
-  if (getParam(len, I_CLOSE)) goto out;
+  if (getParam(start, I_NONE)) goto out;
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(len, I_NONE)) goto out;
+  } else {
+    len = value.length() - start;
+  }
+  if (checkClose()) goto out;
 
   value = value.substring(start, start + len);
 
