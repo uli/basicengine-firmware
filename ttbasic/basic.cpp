@@ -2283,6 +2283,8 @@ bool BASIC_INT find_next_data() {
   int next;
 
   if (!data_lp) {
+    in_data = false;
+    data_ip = NULL;
     if (*listbuf)
       data_lp = listbuf;
     else
