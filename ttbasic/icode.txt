@@ -112,6 +112,7 @@ WEND	I_WEND		iwend
 ERROR$	I_ERRORSTR	esyntax_workaround
 ERROR	I_ERROR		ierror
 SET	I_SET		iset
+SEEK	I_SEEK		iseek
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr

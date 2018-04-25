@@ -7350,6 +7350,25 @@ void iclose() {
   }
 }
 
+void iseek() {
+  int32_t filenum, pos;
+
+  if (*cip == I_SHARP)
+    ++cip;
+
+  if (getParam(filenum, 0, MAX_USER_FILES - 1, I_COMMA))
+    return;
+
+  if (!user_files[filenum] || !*user_files[filenum])
+    err = ERR_FILE_NOT_OPEN;
+
+  if (getParam(pos, 0, user_files[filenum]->fileSize(), I_NONE))
+    return;
+
+  if (!user_files[filenum]->seekSet(pos))
+    err = ERR_FILE_SEEK;
+}
+
 void iprofile() {
   switch (*cip++) {
   case I_ON:
