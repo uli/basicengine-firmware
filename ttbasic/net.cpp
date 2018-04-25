@@ -13,6 +13,13 @@ ESP8266WiFiMulti WiFiMulti;
 static HTTPClient *http = NULL;
 static WiFiClient *stream = NULL;
 
+static void E_NETWORK(const BString &msg) {
+  static BString net_err;
+  err = ERR_NETWORK;
+  net_err = msg;
+  err_expected = net_err.c_str();
+}
+
 void isetap() {
   BString ssid = istrexp();
   if (err)
@@ -135,7 +142,7 @@ void inet() {
     inetclose();
     break;
   default:
-    E_ERR(SYNTAX, "network command");
+    E_ERR(SYNTAX, "exp network command");
     break;
   }
 }
