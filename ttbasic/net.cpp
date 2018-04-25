@@ -127,6 +127,56 @@ BString snetget() {
   return rx;
 }
 
+void inetget() {
+  BString url = istrexp();
+  BString file;
+  if (*cip == I_TO) {
+    ++cip;
+    file = getParamFname();
+  } else {
+    int sl = url.lastIndexOf('/');
+    if (sl < 0)
+      file = F("index.html");
+    else
+      file = url.substring(sl + 1);
+  }
+  if (err)
+    return;
+  if (WiFiMulti.run() != WL_CONNECTED) {
+    E_NETWORK(F("not connected"));
+    return;
+  }
+  int httpCode = open_url(url);
+  if (err)
+    return;
+  Unifile f = Unifile::open(file.c_str(), FILE_OVERWRITE);
+  if (!f) {
+    err = ERR_FILE_OPEN;
+    inetclose();
+    return;
+  }
+  int total = 0;
+  if (httpCode == HTTP_CODE_OK) {
+    WiFiClient *stream = http->getStreamPtr();
+    char buf[128];
+    while (http->connected()) {
+      int av = stream->available();
+      if (!av) {
+        delay(1);
+      } else {
+        int count = stream->readBytes(buf, av > 128 ? 128 : av);
+        f.write(buf, count);
+        total += count;
+      }
+    }
+  } else {
+    E_NETWORK(BString(F("E")) + BString(httpCode));
+  }
+  f.close();
+  inetclose();
+  retval[0] = total;
+}
+
 void inet() {
   switch (*cip++) {
   case I_CONFIG:
@@ -140,6 +190,9 @@ void inet() {
     break;
   case I_CLOSE:
     inetclose();
+    break;
+  case I_GET:
+    inetget();
     break;
   default:
     E_ERR(SYNTAX, "exp network command");
