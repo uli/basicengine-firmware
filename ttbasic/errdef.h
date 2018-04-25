@@ -27,11 +27,6 @@ ESTR(ERR_SYNTAX, "Syntax error")
 ESTR(ERR_SYS, "Internal error")
 ESTR(ERR_CTR_C, "Break")
 ESTR(ERR_LONG, "Line too long")
-ESTR(ERR_EEPROM_OUT_SIZE, "EEPROM out size")         // 追加
-ESTR(ERR_EEPROM_BAD_ADDRESS, "EEPROM bad address")      // 追加
-ESTR(ERR_EEPROM_BAD_FLASH, "EEPROM bad FLASH")        // 追加
-ESTR(ERR_EEPROM_NOT_INIT, "EEPROM not INIT") //  追加
-ESTR(ERR_EEPROM_NO_VALID_PAGE, "EEPROM not valid page") //  追加
 ESTR(ERR_FILE_WRITE, "File write error") //  追加
 ESTR(ERR_FILE_READ, "File read error") //  追加
 ESTR(ERR_GPIO, "Cannot use GPIO function") //  追加
