@@ -70,7 +70,7 @@ void nosdk_i2s_clear_buf()
 #else
 void nosdk_i2s_clear_buf()
 {
-	for( i = 0; i < I2S_BUFLEN; i++ )
+	for( int i = 0; i < I2S_BUFLEN; i++ )
 	{
 		i2sData[0][i] = 0;
 		i2sData[1][i] = 0;
