@@ -3630,13 +3630,11 @@ void idwrite() {
 
 BString shex() {
   int value; // 値
-
-  if (checkOpen()) goto out;
-  if (getParam(value, I_NONE)) goto out;
-  if (checkClose()) goto out;
-  return BString(value, 16);
-out:
-  return BString();
+  if (checkOpen() || getParam(value, I_CLOSE))
+    return BString();
+  BString hex(value, 16);
+  hex.toUpperCase();
+  return hex;
 }
 
 // 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
