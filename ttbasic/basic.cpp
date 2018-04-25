@@ -5308,6 +5308,10 @@ BString ilrstr(bool right) {
   }
 
   if (getParam(len, I_CLOSE)) goto out;
+  if (len < 0) {
+    E_ERR(VALUE, "negative substring length");
+    goto out;
+  }
 
   if (right)
     value = value.substring(value.length() - len, value.length());
