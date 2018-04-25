@@ -7123,7 +7123,11 @@ void BASIC_FP iif() {
   } else {
     newip = getELSEptr(cip);
     if (newip) {
-      cip = newip;
+      if (*newip == I_NUM) {
+        do_goto(UNALIGNED_NUM_T(newip+1));
+      } else {
+        cip = newip;
+      }
     }
   }
 }
