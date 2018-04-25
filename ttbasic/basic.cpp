@@ -82,7 +82,7 @@ SystemConfig CONFIG;
 void loadConfig();
 void isaveconfig();
 void mem_putch(uint8_t c);
-unsigned char* BASIC_FP iexe(bool until_return = false);
+unsigned char* BASIC_FP iexe(int stk = -1);
 num_t BASIC_FP iexp(void);
 void error(uint8_t flgCmd);
 // **** RTC用宣言 ********************
@@ -6125,10 +6125,11 @@ num_t BASIC_FP ivalue() {
   case I_FN: {
     unsigned char *lp;
     icall();
+    i = gstki;
     if (err)
       break;
     for (;;) {
-      lp = iexe(true);
+      lp = iexe(i);
       if (!lp || err)
         break;
       clp = lp;
@@ -7473,10 +7474,9 @@ typedef void (*cmd_t)();
 
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
-unsigned char* BASIC_FP iexe(bool until_return) {
+unsigned char* BASIC_FP iexe(int stk) {
   uint8_t c;               // 入力キー
   err = 0;
-  uint8_t stk = gstki;
 
   while (*cip != I_EOL) { //行末まで繰り返す
     //強制的な中断の判定
@@ -7497,7 +7497,7 @@ unsigned char* BASIC_FP iexe(bool until_return) {
 
     pump_events();
 
-    if (err || (until_return && gstki < stk))
+    if (err || gstki < stk)
       return NULL;
   }
 
