@@ -2279,10 +2279,6 @@ void initialize_label_pointers(void)
   }
 }
 
-unsigned char *data_ip;
-unsigned char *data_lp;
-bool in_data = false;
-
 bool BASIC_INT find_next_data() {
   int next;
 
