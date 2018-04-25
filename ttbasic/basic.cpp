@@ -5186,6 +5186,8 @@ uint8_t SMALL ilrun() {
   }
   if (!err) {
     if (islrun || (cip >= listbuf && cip < listbuf+size_list)) {
+      initialize_proc_pointers();
+      initialize_label_pointers();
       cip = clp+sizeof(line_desc_t);
     }
   }
