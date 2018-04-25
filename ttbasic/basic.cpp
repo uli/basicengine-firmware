@@ -4111,7 +4111,12 @@ num_t BASIC_INT nasc() {
   int32_t value;
 
   if (checkOpen()) return 0;
-  value = istrexp()[0];
+  BString a = istrexp();
+  if (a.length() < 1) {
+    E_ERR(VALUE, "empty string");
+    return 0;
+  }
+  value = a[0];
   checkClose();
 
   return value;
