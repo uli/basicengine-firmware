@@ -2515,6 +2515,12 @@ void BASIC_INT ilet() {
 
 static bool trace_enabled = false;
 
+static void do_trace() {
+  putnum(getlineno(clp), 0);
+  c_putch(' ');
+}
+#define TRACE do { if (trace_enabled) do_trace(); } while(0)
+
 void itron() {
   trace_enabled = true;
 }
@@ -2577,11 +2583,7 @@ void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
   }
 
   while (*clp) {     // 行ポインタが末尾を指すまで繰り返す
-    if (trace_enabled) {
-      putnum(getlineno(clp), 0);
-      c_putch(' ');
-    }
-
+    TRACE;
     cip = clp + sizeof(line_desc_t);   // 中間コードポインタを行番号の後ろに設定
 
 resume:
