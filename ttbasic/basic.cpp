@@ -5345,6 +5345,10 @@ BString smid() {
   }
 
   if (getParam(start, I_NONE)) goto out;
+  if (start < 0) {
+    E_ERR(VALUE, "negative string offset");
+    goto out;
+  }
   if (*cip == I_COMMA) {
     ++cip;
     if (getParam(len, I_NONE)) goto out;
