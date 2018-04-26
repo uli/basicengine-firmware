@@ -5315,9 +5315,9 @@ BString ilrstr(bool right) {
     goto out;
   }
 
-  if (right)
-    value = value.substring(value.length() - len, value.length());
-  else
+  if (right) {
+    value = value.substring(_max(0, (int)value.length() - len), value.length());
+  } else
     value = value.substring(0, len);
 
 out:
