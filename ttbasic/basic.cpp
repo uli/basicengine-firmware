@@ -5437,6 +5437,7 @@ static BString sstr() {
 }
 
 static BString scwd() {
+  if (checkOpen() || checkClose()) return BString();
   return Unifile::cwd();
 }
 
