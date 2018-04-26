@@ -3116,6 +3116,7 @@ void SMALL idelete() {
   // delete itself
   clp = getlp(current_line + 1);
   cip = clp + sizeof(line_desc_t);
+  TRACE;
 }
 
 // プログラムファイル一覧表示 FILES ["ファイルパス"]
@@ -3242,6 +3243,7 @@ void BASIC_FP do_call(uint8_t proc_idx)
 
   clp = proc_loc.lp;
   cip = proc_loc.ip;
+  TRACE;
   
   if (profile_enabled) {
     proc_loc.profile_current = ESP.getCycleCount();
@@ -6134,6 +6136,7 @@ num_t BASIC_FP ivalue() {
         break;
       clp = lp;
       cip = clp + sizeof(line_desc_t);
+      TRACE;
     }
     value = retval[0];
     break;
@@ -6540,6 +6543,7 @@ static void BASIC_FP do_goto(uint32_t line)
 
   clp = lp;        // 行ポインタを分岐先へ更新
   cip = clp + sizeof(line_desc_t); // 中間コードポインタを先頭の中間コードに更新
+  TRACE;
 }
 
 // GOTO
@@ -6555,6 +6559,7 @@ void BASIC_FP igoto() {
     }
     clp = lb.lp;
     cip = lb.ip;
+    TRACE;
   } else {
     // 引数の行番号取得
     lineno = iexp();
@@ -6578,6 +6583,7 @@ static void BASIC_FP do_gosub_p(unsigned char *lp, unsigned char *ip)
 
   clp = lp;                                 // 行ポインタを分岐先へ更新
   cip = ip;
+  TRACE;
 }
 
 static void BASIC_FP do_gosub(uint32_t lineno) {
@@ -6655,6 +6661,7 @@ static void BASIC_FP on_go(bool is_gosub, int cas)
   else {
     clp = lp;
     cip = ip;
+    TRACE;
   }
 }
 
@@ -6755,6 +6762,7 @@ void iresume()
   } else {
     clp = event_error_resume_lp;
     cip = event_error_resume_ip;
+    TRACE;
     event_error_resume_lp = NULL;
     // XXX: To work reliably, this requires a lot of discipline in the
     // error-generating code, which none of it currently has.
@@ -6835,6 +6843,7 @@ void BASIC_FP icall() {
 
   clp = proc_loc.lp;
   cip = proc_loc.ip;
+  TRACE;
   
   if (profile_enabled) {
     proc_loc.profile_current = ESP.getCycleCount();
@@ -6890,6 +6899,7 @@ void BASIC_FP ireturn() {
   }
   clp = gstk[gstki].lp; //中間コードポインタを復帰
   cip = gstk[gstki].ip; //行ポインタを復帰
+  TRACE;
   return;
 }
 
@@ -6953,6 +6963,7 @@ void BASIC_FP iwend() {
   // Jump to condition
   cip = lstk[lstki - 1].ip;
   clp = lstk[lstki - 1].lp;
+  TRACE;
 
   num_t cond = iexp();
   // If the condition is true, continue with the loop
@@ -6963,6 +6974,7 @@ void BASIC_FP iwend() {
   // go back to the WEND.
   cip = tmp_ip;
   clp = tmp_lp;
+  TRACE;
   lstki--;
 }
   
@@ -7043,6 +7055,7 @@ void BASIC_FP iloop() {
       // Condition met, loop.
       cip = lstk[lstki - 1].ip;
       clp = lstk[lstki - 1].lp;
+      TRACE;
     } else {
       // Pop loop off stack.
       lstki--;
@@ -7051,6 +7064,7 @@ void BASIC_FP iloop() {
     // Infinite loop.
     cip = lstk[lstki - 1].ip;
     clp = lstk[lstki - 1].lp;
+    TRACE;
   }
 }
 
@@ -7106,6 +7120,7 @@ void BASIC_FP inext() {
   // Jump to the start of the loop.
   cip = lstk[lstki - 1].ip;
   clp = lstk[lstki - 1].lp;
+  TRACE;
 }
 
 // IF
