@@ -59,10 +59,11 @@ BString::BString(BStringSumHelper &&rval) {
 
 BString::BString(char c) {
     init();
-    char buf[2];
-    buf[0] = c;
-    buf[1] = 0;
-    *this = buf;
+    if (!reserve(1))
+      return;
+    buffer[0] = c;
+    buffer[1] = 0;
+    len = 1;
 }
 
 BString::BString(unsigned char value, unsigned char base) {
