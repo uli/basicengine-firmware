@@ -3098,6 +3098,8 @@ void SMALL idelete() {
   } else {
     for (uint32_t i = sNo; i <= eNo; i++) {
       lp = getlp(i); // 削除位置ポインタを取得
+      if (!*lp)
+        break;
       if (getlineno(lp) == i) {               // もし行番号が一致したら
 	p1 = lp;                              // p1を挿入位置に設定
 	p2 = p1 + *p1;                        // p2を次の行に設定
