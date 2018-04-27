@@ -5368,6 +5368,8 @@ out:
 BString sdir()
 {
   int32_t fnum = getparam();
+  if (err)
+    goto out;
   if (fnum < 0 || fnum >= MAX_USER_FILES) {
     E_VALUE(0, MAX_USER_FILES - 1);
 out:
