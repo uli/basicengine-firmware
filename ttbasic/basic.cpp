@@ -286,6 +286,7 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
+  I_DIRSTR, I_INSTR,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
@@ -307,7 +308,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const uint8_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS,
+  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT,
 };
 
 // exception search function
