@@ -6269,7 +6269,7 @@ num_t BASIC_FP iplus() {
       break;
 
     default:
-      if (!err && !isfinite(value) && !math_exceptions_disabled) {
+      if (!math_exceptions_disabled && !err && !finite(value)) {
         if (isinf(value))
           err = ERR_DIVBY0;
         else
