@@ -5516,6 +5516,10 @@ static BString sstring() {
   int32_t c;
   if (checkOpen()) return out;
   if (getParam(count, I_COMMA)) return out;
+  if (count < 0) {
+    E_ERR(VALUE, "negative length");
+    return out;
+  }
   if (is_strexp()) {
     BString cs = istrexp();
     if (err)
