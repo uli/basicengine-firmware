@@ -1060,6 +1060,9 @@ bool VS23S010::loadSpritePattern(uint8_t num)
 
   bool solid_block = true;
 
+  SpiLock();
+  int spi_clock_default = getSpiClock();
+  setSpiClockRead();
   for (int sy = 0; sy < s->p.h; ++sy) {
     struct sprite_line *p = &pat->lines[sy];
 
@@ -1110,6 +1113,8 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
 #endif
   }
+  setSpiClock(spi_clock_default);
+  SpiUnlock();
 
   os_memcpy(&pat->p, &s->p, sizeof(s->p));
   if (solid_block && !s->p.flip_x && !s->p.flip_y) {
