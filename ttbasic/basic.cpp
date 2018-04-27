@@ -6263,6 +6263,12 @@ num_t BASIC_FP iplus() {
       break;
 
     default:
+      if (!err && !isfinite(value) && !math_exceptions_disabled) {
+        if (isinf(value))
+          err = ERR_DIVBY0;
+        else
+          err = ERR_FP;
+      }
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
 }
@@ -6384,12 +6390,6 @@ num_t BASIC_FP iexp() {
       break;
     default:
       cip--;
-      if (!err && !isfinite(value) && !math_exceptions_disabled) {
-        if (isinf(value))
-          err = ERR_DIVBY0;
-        else
-          err = ERR_FP;
-      }
       return value;
     }
 }
