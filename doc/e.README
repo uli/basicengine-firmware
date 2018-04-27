@@ -1,0 +1,66 @@
+`e' version 0.993
+~~~~~~~~~~~~~~~~~
+`e' is minimalistic text editor
+- inspired by Norton Editor for DOS
+- insert/replace mode, block operations with highlighting, find and replace,
+  goto line
+- writed on C with ncurses, should compile anywhere
+- tested with
+   - FreeBSD 2.2.8-7.2
+   - RedHat 6.2
+   - SunOS 2.6-10
+- file loaded entirely in memory, you limited only to what realloc(3) return
+
+Controls
+~~~~~~~~
+charasters, Enter, Up, Down, Left, Right, Home, End, PgUp, PgDn, Del, Backspace
+	standart behavior
+ins	toggle insert mode
+^X	exit
+^S	save file as
+^T	goto top of text
+^O	goto bottom of text
+^Y	delete current line
+^Q	quote next charaster (put in text nonprintable symbol)
+^A	go to line by number (or beginnig of selection if number not specified)
+^F	find string (not regexp, usual string, exact case)
+^R	replace one string by another
+^N	repeat last operation of find or replace
+^B	mark begin of block (you'll see if beginning mark before ending)
+^E	mark end of block
+^C	copy marked block to current position
+^V	move marked block to current position
+^D	delete marked block
+^P	put (write) block in file
+^G	get (load) block from file
+^J	same as PgUp
+^K	same as PgDn
+
+Hints
+~~~~~
+- you can edit binary files because `e' don't format anything
+- to reset block selection put ending mark before or at beginning mark (^B^E)
+- you can convert Dos files (crlf) to Unix (lf) easily: while pressing
+Ctrl print trqmmmnnnnnnnnn... :)
+- and back to Dos: trqjmqmqjmnnn...
+- by analogy be careful to Ctrl while printing something like 'tboed'
+- there is no autosave or some kind of that, so backup your data in time 
+
+Bugs
+~~~~
+- many operations on every getch: erase() and COLS*LINES addch(),
+but i don't think its so bad (scrolling is optimised, so on telnet session
+to 386 i feel the same speed like vi).
+- bad documentation, which counts only this file in terrible english
+without man page, i would be very thankful if someone can write it
+
+Copyrights
+~~~~~~~~~~
+- as is, no warranties at all
+- you can do with this sources whatever you want, except if you use
+latest version of this program and found a bug, you must inform me about it
+
+Credits
+~~~~~~~
+Mtv Europe <mtve1927@gmail.com>
+	initial release
