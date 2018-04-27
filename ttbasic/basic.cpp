@@ -4628,16 +4628,8 @@ void  itype() {
   while(1) {
     rc = bfs.textOut((char *)fname.c_str(), line, sc0.getHeight());
     if (rc < 0) {
-      if (rc == -SD_ERR_OPEN_FILE) {
-	err = ERR_FILE_OPEN;
-	return;
-      } else if (rc == -SD_ERR_INIT) {
-	err = ERR_SD_NOT_READY;
-	return;
-      } else if (rc == -SD_ERR_NOT_FILE) {
-	err =  ERR_BAD_FNAME;
-	return;
-      }
+      err = -rc;
+      return;
     } else if (rc == 0) {
       break;
     }
