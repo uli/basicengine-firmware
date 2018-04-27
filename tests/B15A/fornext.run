@@ -1,0 +1,24 @@
+FORNEXT.BAS: Test FOR-NEXT Statements
+A FOR-NEXT Loop with STEP statement:
+FOR: i is 1
+FOR: i is 3
+FOR: i is 5
+FOR: i is 7
+FOR: i is 9
+FOR: i is 11
+FOR: i is 13
+FOR: i is 15
+FOR: i is 17
+FOR: i is 19
+FOR: i is 21
+FOR: i is 23
+FOR: i is 25
+FOR: i is 27
+FOR: i is 29
+A FOR-NEXT Loop without STEP statement:
+FOR: i is 2
+FOR: i is 3
+FOR: i is 4
+FOR: i is 5
+FOR: i is 6
+FOR: i is 7

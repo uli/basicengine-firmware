@@ -1,0 +1,175 @@
+         11111111112222222222333333333344444444445555555555666666666677777777778
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+There were a small number of changes made to the programs in order to make them
+runnable. These are apparently due to differences between original Microsoft
+Basic and later versions (GW-BASIC, QBASIC).
+
+In all cases, the problem was that the program was taking advantage of a quirk
+of original Microsoft basic, which didn't work with later versions. So the
+GW-Basic/QBasic Modified sources are simply cleaner version of the originals,
+and should be usable for other Basic dialects as well.
+
+<------------------------- THINGS THAT WERE FIXED ----------------------------->
+
+1. In "Sinewave" the statement: 
+
+40 REMARKABLE .... 
+
+Uses a trick that worked with many Basic interpreters that recognize keywords
+wherever they appear, even in the middle of other words. This does not work in
+GWBasic/QBasic.
+
+MYSTRING$ 
+
+Are allowed, you would go crazy trying to chase down imbedded keywords. It
+worked in neither GW-BASIC nor QBASIC.
+
+2. (various files) Spacing. 
+
+As in example (1), it is not possible to have the statement: 
+
+10IFC$="BARK"THENGOTO20 
+
+The keywords must not be run together with other keywords and variable names
+(which was sometimes done to save memory space on early machines): 
+
+10 IF C$="BARK" THEN GOTO 20 
+
+3. (varius files) Special characters. 
+
+Occasionally, a special character (control character) appears in the programs.
+These were REMed out. Special characters in ASCII are characters less than 32 in
+value (space).
+
+8. In the program "hexapawn", the function fns appears before its definition,
+which causes a problem with Qbasic. The lines 20 and 25 were swapped. 
+
+9. In the program "hexapawn", line 511 uses an unterminated REM statement. Space
+added.
+
+10. "Hexapawn" has an interesting board output routine that executes tab(10) 
+(line 1030) multiple times. On the original MS Basic (and other basics) tabbing
+to a position that is behind or at the current position is a no-op. GW-Basic and
+Qbasic actually throw another line and tabs to the position. This was fixed by
+replacing:
+
+1030 PRINT TAB(10);MID$(P$,S((I-1)*3+J)+2,1);
+
+With:
+
+1015 PRINT TAB(10);
+1020 FOR J=1 TO 3
+1030 PRINT MID$(P$,S((I-1)*3+J)+2,1);
+
+I.e., move the tab to print position to the outter loop, since it only need be
+executed once.
+
+11. "hilo" makes the unwarranted assumption in line 180 that 100*rnd(1) will be
+a number from 1 to 100. Actually, the number will be between 0 and 99, since
+exact 0 and exact 1 will never be the result of rnd, and the fraction is
+removed. Fixed by changing line 180 to: 
+
+180 Y=INT(100*RND(1)+1)
+
+12. In "horserace", there is a really bazzare bit of code in lines 570 to 780
+where the value of N is used after a for n=..next loop, and apparently it
+expects the value to be 8. In both IP Basic and Qbasic it isn't, but is instead
+9, and this results in access to the uninitialized variable d(i) and a zero divide.
+
+Fixed this by adding the line: 
+
+721 n = 8
+
+13. In "salvo", line 1270, DEF FNA is executed twice, because the code loops
+back to that point. On several basics this is not a nice trick, although the 
+original Microsoft Basic probably tolerated it. The solution was to move the
+defines upwards toward the top.
+
+15. "bowling" does not format correctly on GW-Basic and QBasic. This is because
+of the tab issue (see "hexapawn" above). The answer is to replace three existing
+lines with the following ones:
+
+3780 PRINT: PRINT TAB(I+1);
+4140 PRINT "+ ";
+4320 PRINT "O ";
+
+16. In "awari", GW-Basic and QBasic don't apprecate the odd order of the "for"
+statement at 230. This occurs because the Basic implementation is doing more
+complete analysis of the Basic source while reading it, and it will get confused
+if there aren't matching "next" statements for each "for" statement in the
+statements following. The fix was to change the statement at 235 to:
+
+235 NEXT I
+
+Because all the line did was branch to a "NEXT I" statement.
+
+17. "checkers" has the "for" issue problem at 1340. The code was changed by
+moving the "NEXT A" to each of the for loops on previous lines, based on the
+fact that S(X,Y) is invariant in the included code.
+
+1340 X=R(3):Y=R(4):IF S(X,Y)=-1 THEN B=-2:FOR A=-2 TO 2 STEP 4:GOSUB 1370: NEXT A
+1350 IF S(X,Y)=-2 THEN FOR A=-2 TO 2 STEP 4:FOR B=-2 TO 2 STEP 4:GOSUB 1370:NEXT B: NEXT A
+1360 IF R(0)<>-99 THEN PRINT"TO"R(3);R(4);:R(0)=-99:GOTO 1240
+
+18. In "qubic" (3d tic tac toe), the line 1560 attempts to run non-existant
+program "menu" (and crashes/hangs GW-Basic/QBasic). Change this line to:
+
+1560 STOP
+
+19. In "qubic", the "lprint" statement is used to print out the playing board.
+This is not useful unless you have a printer connected for DOS use, which is not
+common with Windows users. These statements were changed to "print".
+
+20. "life", the program spills out endless printout, since neither GW-Basic nor
+QBASIC appear to respond to control-C unless the program performs input. To fix
+this, the following statement was added:
+
+637 INPUT "PRESS RETURN TO CONTINUE";A12
+
+21. In "banner", the banner text is printed to the screen, then 75 lines of 
+blanks are printed to the screen. Unless your screen is more than 75 lines tall,
+the program will just result in a blank screen, without apparent action.
+
+Banner was designed for continous print forms, like teletypes or old form feed
+printers. The best use of it now would be to save the output to a file, which I
+have left up to the users.
+
+22. In "animal", there were two "for-next" issues, lines 415 and 640. The
+solution was to move the next statement to the next line.
+
+23. "bullfght", the lines 1390 and 1395 were swapped to remove definition order
+issue.
+
+24. "poetry" loops forever, which locks up GW-Basic/QBasic. I added the 
+following line:
+
+237 INPUT "PRESS RETURN TO CONTINUE"; A12
+
+You are free to change this to output a whole page before stopping, etc.
+
+25. "splat" has and error in referencing a non-existant line 540. Its wrong in
+the original listing from the book, take a look. It does not appear to affect
+the program run, which is probally why it exists. QBasic does not appreciate
+gotos that go nowhere, so the line was replaced by:
+
+610 STOP: REM GOTO 540 
+
+26. In "stock", QBasic didn't like the lack of ";" between print items. This was
+added.
+
+658 PRINT "YOU HAVE USED $";-C5;" MORE THAN YOU HAVE." 
+
+<------------------------ THINGS THAT WEREN'T FIXED --------------------------->
+
+1. "checkers" was seen making impossible moves, jumping a opposing player, but
+leaving the original position still there (duplicated piece).
+
+2. "diamond" does not work quite correctly, I suspect because of the tab issue.
+
+3. "life2" does not match the printout in the book, which frankly does not make
+much sense. It looks like the original relied on overprinting on a teletype.
+
+4. Animal does not work, giving incorrect printout. 
+
+5. "life" works under GW-Basic, but not QBasic.

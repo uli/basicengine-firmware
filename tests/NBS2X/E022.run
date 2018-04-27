@@ -1,0 +1,5 @@
+DATA1.BAS -- Test DATA, READ, and RESTORE Statements
+Data read: Ted 56.789 Dale 45.678
+After RESTORE:
+Data read: Ted 56.789 Dale 45.678
+*** ALL TESTS PASSED ***

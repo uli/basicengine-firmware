@@ -1,0 +1,156 @@
+
+THIS PROGRAM AS DESIGNED TO SELECT THE
+PROPER VALUES OF RESISTANCE AND CAPA-
+CITANCE FOR THE PROPER OPERATION OF THE
+555 TIMER-OSCILLATOR.
+
+ENTER THE DESIRED FREQUENCY OF OSCILLATION( hz )
+1000
+
+
+
+THE FOLLOWING VALUES OF RESISTANCE
+AND CAPACITANCE DETERMINE THE FRE-
+QUENCY OF 1000HZ.
+              ---------------------
+           1-| GND             VCC |-8
+             |                     |
+           2-| TRIGGER      DISCHG |-7 R(b) TO VCC
+             |      555-IC         |
+           3-| OUTPUT     THRESHOLD|-6 R(a) TO 7, C1 TO GND
+             |                     |
+           4-| RESET     CONT. VOLT|-5
+              ---------------------  
+
+
+SET1:
+R(A)=470 OHMS
+R(B)=1200 OHMS
+C=0.50174216UF
+
+
+
+SET2:
+R(A)=560 OHMS
+R(B)=15000 OHMS
+C=0.0471204188UF
+
+
+
+SET3:
+R(A)=620 OHMS
+R(B)=15000 OHMS
+C=0.0470280862UF
+
+
+
+SET4:
+R(A)=1000 OHMS
+R(B)=220 OHMS
+C=1UF
+
+
+
+SET5:
+R(A)=4700 OHMS
+R(B)=12000 OHMS
+C=0.050174216UF
+
+
+
+SET6:
+R(A)=1200 OHMS
+R(B)=120 OHMS
+C=1UF
+
+
+
+SET7:
+R(A)=5600 OHMS
+R(B)=470 OHMS
+C=0.220183486UF
+
+
+
+SET8:
+R(A)=6200 OHMS
+R(B)=180 OHMS
+C=0.219512195UF
+
+
+
+SET9:
+R(A)=10000 OHMS
+R(B)=2200 OHMS
+C=0.1UF
+
+
+
+SET10:
+R(A)=47000 OHMS
+R(B)=120000 OHMS
+C=0.0050174216UF
+
+
+
+SET11:
+R(A)=12000 OHMS
+R(B)=1200 OHMS
+C=0.1UF
+
+
+
+SET12:
+R(A)=56000 OHMS
+R(B)=4700 OHMS
+C=0.0220183486UF
+
+
+
+SET13:
+R(A)=62000 OHMS
+R(B)=1800 OHMS
+C=0.0219512195UF
+
+
+
+SET14:
+R(A)=100000 OHMS
+R(B)=22000 OHMS
+C=0.01UF
+
+
+
+SET15:
+R(A)=120000 OHMS
+R(B)=12000 OHMS
+C=0.01UF
+
+
+
+SET16:
+R(A)=560000 OHMS
+R(B)=47000 OHMS
+C=0.00220183486UF
+
+
+
+SET17:
+R(A)=620000 OHMS
+R(B)=18000 OHMS
+C=0.00219512195UF
+
+
+
+SET18:
+R(A)=1000000 OHMS
+R(B)=220000 OHMS
+C=0.001UF
+
+
+
+SET19:
+R(A)=1200000 OHMS
+R(B)=120000 OHMS
+C=0.001UF
+

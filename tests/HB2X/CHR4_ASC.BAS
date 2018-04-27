@@ -1,0 +1,30 @@
+  100 REM PURPOSE: VERIFY 'ASC' AND 'CHR$'
+  110 REM  AUTHOR: HOWARD WULF, AF5NE
+  120 REM    DATE: 2017-03-05
+  130 REM    NOTE: OPTION VERSION BYWATER
+  140 REM
+  150 REM
+  160 REM
+  170 REM --------------------
+  180 PRINT " I", " L", " A"
+  190 PRINT " ===", " ===", " ==="
+  200 FOR I = 0 TO 255
+  210   LET A$ = CHR$(I)
+  220   LET L  = LEN(A$)
+  230   LET A  = ASC(A$)
+  240   PRINT I, L, A
+  250   IF L <> 1 THEN 800
+  260   IF A <> I THEN 850
+  270 NEXT I
+  280 PRINT "TEST COMPLETE"
+  290 GOTO 999
+  800 REM --------------------
+  810 PRINT "WRONG LENGTH"
+  820 GOTO 999
+  850 REM --------------------
+  860 PRINT "WRONG ASC()"
+  870 GOTO 999
+  880 REM --------------------
+  890 REM
+  999 END
+

@@ -1,0 +1,11 @@
+The arctangent value of 0 is0
+*** TEST #1 PASSED ***
+The arctangent value of 0.5 is0.463647609
+*** TEST #2 PASSED ***
+The arctangent value of -0.5 is-0.463647609
+*** TEST #3 PASSED ***
+The arctangent value of 1 is0.785398163
+*** TEST #4 PASSED ***
+The arctangent value of -1 is-0.785398163
+*** TEST #5 PASSED ***
+*** ALL TESTS PASSED ***

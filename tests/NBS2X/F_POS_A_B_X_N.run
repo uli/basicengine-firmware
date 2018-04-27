@@ -1,0 +1,398 @@
+TESTCASE # 1   E= 1           R= 0           A$=[]          B$=[]          X= 0
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 2   E= 0           R= 1           A$=[ ]         B$=[ ]         X= 1
+               F= 0           N= 1
+*** TEST PASSED ***
+TESTCASE # 3   E= 1           R= 0           A$=[3]         B$=[3]         X=-1
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 4   E= 1           R= 0           A$=[z]         B$=[z]         X= .4
+
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 5   E= 1           R= 0           A$=[  ]        B$=[  ]        X=-.4
+
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 6   E= 0           R= 1           A$=[ 3]        B$=[ 3]        X= .6
+
+               F= 0           N= 1
+*** TEST PASSED ***
+TESTCASE # 7   E= 1           R= 0           A$=[ z]        B$=[ z]        X=-.6
+
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 8   E= 0           R= 0           A$=[3 ]        B$=[3 ]        X=
+ 254
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 9   E= 0           R= 0           A$=[z ]        B$=[z ]        X=
+ 255
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 10  E= 0           R= 0           A$=[ 3 ]       B$=[ 3 ]       X=
+ 256
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 11  E= 1           R= 0           A$=[ z ]       B$=[ z ]       X=
+ 32000
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 12  E= 1           R= 0           A$=[ LLLL]     B$=[ LLLL]     X=
+-.227229
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 13  E= 1           R= 0           A$=[    ''    ]               B$=[
+    ''    ]    X=-.239157
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 14  E= 1           R= 0           A$=[   oo     ]               B$=[
+   oo     ]    X=-.213586
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 15  E= 1           R= 0           A$=[ 00  ]     B$=[ 00  ]     X=
+ .274675
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 16  E= 1           R= 0           A$=[   \\\\  ] B$=[   \\\\  ] X=
+ .169766
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 17  E= 1           R= 0           A$=[ lllll  ]  B$=[ lllll  ]  X=
+ .318766
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 18  E= 1           R= 0           A$=[    uuuu  ]               B$=[
+    uuuu  ]    X= 2.06658E-2
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 19  E= 1           R= 0           A$=[  a  ]     B$=[  a  ]     X=
+ .188257
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 20  E= 1           R= 0           A$=[       ]   B$=[       ]   X=
+-.277537
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 21  E= 1           R= 0           A$=[ hh     ]  B$=[ hh     ]  X=
+-.481303
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 22  E= 1           R= 0           A$=[  h   ]    B$=[  h   ]    X=
+ .43556
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 23  E= 1           R= 0           A$=[ )]        B$=[ )]        X=
+-.210971
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 24  E= 1           R= 0           A$=[    5   ]  B$=[    5   ]  X=
+-.455216
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 25  E= 1           R= 0           A$=[  2 ]      B$=[  2 ]      X=
+-110.907
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 26  E= 0           R= 0           A$=[ -   ]     B$=[ -   ]     X=
+ 105.632
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 27  E= 1           R= 0           A$=[dd ]       B$=[dd ]       X=
+-114.341
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 28  E= 0           R= 0           A$=[  tttt   ] B$=[  tttt   ] X=
+ 109.706
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 29  E= 0           R= 0           A$=[  ::::   ] B$=[  ::::   ] X=
+ 109.198
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 30  E= 0           R= 0           A$=[   ___   ] B$=[   ___   ] X=
+ 85.8773
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 31  E= 1           R= 0           A$=[     ]     B$=[     ]     X=
+-58.3548
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 32  E= 0           R= 0           A$=[       ]   B$=[       ]   X=
+ 29.6397
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 33  E= 1           R= 0           A$=[ _____  ]  B$=[ _____  ]  X=
+-108.36
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 34  E= 1           R= 0           A$=[ S ]       B$=[ S ]       X=
+-46.5199
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 35  E= 0           R= 0           A$=[  FFFF ]   B$=[  FFFF ]   X=
+ 112.521
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 36  E= 0           R= 0           A$=[    kkk]   B$=[    kkk]   X=
+ 45.4151
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 37  E= 0           R= 0           A$=[    NNNN  ]               B$=[
+    NNNN  ]    X= 101.129
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 38  E= 0           R= 0           A$=[   mmmm  ] B$=[   mmmm  ] X=
+ 65.0473
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 39  E= 0           R= 0           A$=[    ,,,,, ]               B$=[
+    ,,,,, ]    X= 48.4012
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 40  E= 0           R= 0           A$=[OO   ]     B$=[OO   ]     X=
+ 122.294
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 41  E= 1           R= 0           A$=[   HHHH  ] B$=[   HHHH  ] X=
+-56.1094
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 42  E= 1           R= 0           A$=[ < ]       B$=[ < ]       X=
+-121.087
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 43  E= 1           R= 0           A$=[   j    ]  B$=[   j    ]  X=
+-123.517
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 44  E= 1           R= 0           A$=[    yyyy    ]             B$=[
+    yyyy    ]  X=-97.6301
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 45  E= 1           R= 0           A$=[  +++ ]    B$=[  +++ ]    X=
+-64.0001
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 46  E= 1           R= 0           A$=[o  ]       B$=[o  ]       X=
+-25.6888
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 47  E= 0           R= 0           A$=[    ((]    B$=[    ((]    X=
+ 14.8006
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 48  E= 1           R= 0           A$=[     uu     ]             B$=[
+     uu     ]  X=-61.0877
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 49  E= 1           R= 0           A$=[    00     ]              B$=[
+    00     ]   X=-66.6381
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 50  E= 1           R= 0           A$=[     HH  ] B$=[     HH  ] X=
+-5476.5
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 51  E= 1           R= 0           A$=[     ]     B$=[     ]     X=
+-21210.3
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 52  E= 1           R= 0           A$=[  G   ]    B$=[  G   ]    X=
+-28757.2
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 53  E= 1           R= 0           A$=[    {{{{ ] B$=[    {{{{ ] X=
+-28732.2
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 54  E= 1           R= 0           A$=[    ]]]     ]             B$=[
+    ]]]     ]  X= 12730.3
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 55  E= 1           R= 0           A$=[CCC]       B$=[CCC]       X=
+-1830.69
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 56  E= 1           R= 0           A$=[     44  ] B$=[     44  ] X=
+ 5486.39
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 57  E= 1           R= 0           A$=[^^  ]      B$=[^^  ]      X=
+ 22405.9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 58  E= 1           R= 0           A$=[    QQ    ]               B$=[
+    QQ    ]    X= 30809.8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 59  E= 1           R= 0           A$=[     FFFF  ]              B$=[
+     FFFF  ]   X=-28930.6
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 60  E= 1           R= 0           A$=[ n   ]     B$=[ n   ]     X=
+-6014.53
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 61  E= 1           R= 0           A$=[    hh  ]  B$=[    hh  ]  X=
+ 17414.6
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 62  E= 1           R= 0           A$=[555    ]   B$=[555    ]   X=
+-10538.3
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 63  E= 1           R= 0           A$=[    YYYY ] B$=[    YYYY ] X=
+-17536.3
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 64  E= 1           R= 0           A$=[    w     ]               B$=[
+    w     ]    X=-8856.62
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 65  E= 1           R= 0           A$=[MMMM ]     B$=[MMMM ]     X=
+-5140.12
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 66  E= 1           R= 0           A$=[ JJJJ    ] B$=[ JJJJ    ] X=
+-8595.31
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 67  E= 1           R= 0           A$=[    %%    ]               B$=[
+    %%    ]    X=-3382.87
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 68  E= 1           R= 0           A$=[     *  ]  B$=[     *  ]  X=
+-5002.07
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 69  E= 1           R= 0           A$=[    @@@   ]               B$=[
+    @@@   ]    X=-5800.72
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 70  E= 1           R= 0           A$=[I ]        B$=[I ]        X=
+ 29686.4
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 71  E= 0           R= 0           A$=[    ss  ]  B$=[    ss  ]  X=
+ 2571
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 72  E= 1           R= 0           A$=[  f ]      B$=[  f ]      X=
+ 31091
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 73  E= 1           R= 0           A$=[   D  ]    B$=[   D  ]    X=
+ 14819
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 74  E= 0           R= 0           A$=[###    ]   B$=[###    ]   X=
+ 3790.9
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 75  E= 1           R= 0           A$=[    '     ]               B$=[
+    '     ]    X=-4.2981E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 76  E= 1           R= 0           A$=[  dd    ]  B$=[  dd    ]  X=
+-7.05453E+8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 77  E= 1           R= 0           A$=[ TT    ]   B$=[ TT    ]   X=
+-3.10179E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 78  E= 1           R= 0           A$=[  vvv ]    B$=[  vvv ]    X=
+-4.86159E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 79  E= 1           R= 0           A$=[    X ]    B$=[    X ]    X=
+-8.62908E+8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 80  E= 1           R= 0           A$=[    %   ]  B$=[    %   ]  X=
+-3.4101E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 81  E= 1           R= 0           A$=[  ]        B$=[  ]        X=
+ 3.3889E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 82  E= 1           R= 0           A$=[ 5555   ]  B$=[ 5555   ]  X=
+ 2.49826E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 83  E= 1           R= 0           A$=[FFFF   ]   B$=[FFFF   ]   X=
+ 2.3491E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 84  E= 1           R= 0           A$=[     %%  ] B$=[     %%  ] X=
+ 1.94745E+8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 85  E= 1           R= 0           A$=[     ]     B$=[     ]     X=
+ 2.02475E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 86  E= 1           R= 0           A$=[  ~~~~    ]               B$=[
+  ~~~~    ]    X=-2.26748E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 87  E= 1           R= 0           A$=[   ||    ] B$=[   ||    ] X=
+-2.10587E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 88  E= 1           R= 0           A$=[     SSS     ]            B$=[
+     SSS     ] X= 4.23585E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 89  E= 1           R= 0           A$=[   6666 ]  B$=[   6666 ]  X=
+-2.66524E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 90  E= 1           R= 0           A$=[    ww   ] B$=[    ww   ] X=
+ 4.01052E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 91  E= 1           R= 0           A$=[  1111   ] B$=[  1111   ] X=
+-4.87912E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 92  E= 1           R= 0           A$=[ K ]       B$=[ K ]       X=
+ 1.77556E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 93  E= 1           R= 0           A$=[  ttttt ]  B$=[  ttttt ]  X=
+ 2.87705E+8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 94  E= 1           R= 0           A$=[ OOOOO   ] B$=[ OOOOO   ] X=
+ 1.99977E+8
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 95  E= 1           R= 0           A$=[ E  ]      B$=[ E  ]      X=
+-3.39941E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 96  E= 1           R= 0           A$=[ PPPPP   ] B$=[ PPPPP   ] X=
+-3.49119E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 97  E= 1           R= 0           A$=[    == ]   B$=[    == ]   X=
+-2.86324E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 98  E= 1           R= 0           A$=[ VVVV    ] B$=[ VVVV    ] X=
+ 4.20418E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 99  E= 1           R= 0           A$=[ c   ]     B$=[ c   ]     X=
+-3.1518E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+TESTCASE # 100                E= 1           R= 0           A$=[    yyyy     ]
+B$=[    yyyy     ]            X= 4.60615E+9
+               F= 1           N= 0
+*** TEST PASSED ***
+*** ALL TESTS PASSED ***

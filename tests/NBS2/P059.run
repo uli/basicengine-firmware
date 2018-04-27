@@ -1,0 +1,13 @@
+PROGRAM FILE 59: ARRAY NAMED 'A' IS DISTINCT FROM 'A$'.
+    ANSI STANDARD 6.2, 6.4
+
+SECTION 59.1:  ARRAY NAMED 'A' IS DISTINCT FROM 'A$'.
+
+                    BEGIN TEST
+
+
+***  TEST PASSED  ***
+
+                    END TEST
+
+END PROGRAM 59

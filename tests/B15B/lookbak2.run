@@ -1,0 +1,22 @@
+Enter Matter Density of the universe, OmegaM (0 - 2.0)0.1
+Enter Cosmological Constant, OmegaL (0. - 1.0)0.9
+Will you enter (A)ge of the universe or (H)ubble constantA
+Enter Age of the universe NOW in billions of years16
+Will you enter (T)ime THEN or (R)edshift of the light we see NOWT
+Enter Age of the universe THEN, in billions of years1
+ Finding what redshift matches Age THEN ......
+Age Factor NOW  (Age=Fac/H0) =  1.2766
+Age of the universe NOW  =  16.0000 billion years
+Age of the universe THEN =   1.0000 billion years
+Light travel time        =  15.0000 billion years
+Redshift of the light we see NOW      =    7.810
+Scale of the universe NOW versus THEN =    8.810
+Distance of object THEN =      4.235 billion light-years
+Distance of object NOW  =     37.310 billion light-years
+Luminosity Distance NOW =    328.712 billion light-years
+Distance Modulus     =     50.018
+Speed away from us THEN =   2.821 x speed of light*
+Speed away from us NOW  =   2.977 x speed of light*
+Hubble constant THEN   =     651.33 km/sec/megaparsec
+Hubble constant NOW    =      78.02 km/sec/megaparsec
+ * Not the object's own speed, but caused by the expansion of space.

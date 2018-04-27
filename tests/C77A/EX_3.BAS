@@ -1,0 +1,56 @@
+REM Purpose: Verify example program
+REM   Refer:
+REM    Page: 7
+REM
+
+
+LET X = 1
+PRINT X
+
+LET X = 1.0
+PRINT X
+
+LET X = -88
+PRINT X
+
+LET X = 123458.788
+PRINT X
+
+LET X = 1.883
+PRINT X
+
+LET X = .01
+PRINT X
+
+LET X = 11E12
+PRINT X
+
+LET X = 1.77E-8
+PRINT X
+
+LET X = 1.5E+3
+PRINT X
+
+LET X = 1500
+PRINT X
+
+LET X = 1.5E-3
+PRINT X
+
+LET X = .0015 
+PRINT X
+
+REM LET I = 1abOH
+LET I = $1ab0
+PRINT I
+
+REM LET I = 10111110B
+LET I = $DE
+PRINT I
+
+REM LET I = 07FFFH 
+LET I = $07FFF
+PRINT I
+
+
+END

@@ -1,0 +1,93 @@
+PROGRAM FILE 1: NULL PRINT AND PRINTING QUOTED STRINGS.
+    ANSI STANDARD 3.2, 3.4, 5.2, 5.4, 12.2, 12.4
+
+*** NOTE: THIS PROGRAM MAKES USE OF THE END STATEMENT
+    WHICH HAS NOT YET BEEN TESTED. IF SUBSEQUENT TESTS SHOW
+    THIS FEATURE TO BE INCORRECTLY IMPLEMENTED, THEN THE 
+    VALIDITY OF THE RESULTS OF THIS TEST ROUTINE IS DOUBTFUL.
+
+
+                  * * * * * * * * * * * * * * * * * *
+                  *                                 *
+                  *   MINIMAL BASIC TEST PROGRAMS   *
+                  *            VERSION 2            *
+                  *                                 *
+                  *            PRODUCT OF           *
+                  *   NATIONAL BUREAU OF STANDARDS  *
+                  *                                 *
+                  * * * * * * * * * * * * * * * * * *
+
+SECTION 1.1: NULL PRINT. 
+
+                               BEGIN TEST.
+            THIS IS LINE 1.
+            THIS IS LINE 2.
+
+            THIS IS LINE 4, 3 SHOULD HAVE BEEN SKIPPED.
+            THIS IS LINE 5.
+
+
+          THIS IS LINE 8, 6 AND 7 SHOULD HAVE BEEN SKIPPED.
+
+*** TEST PASSED IF LINES 2 AND 4 HAVE A BLANK LINE BETWEEN
+    THEM, AND LINES 5 AND 8 TWO BLANK LINES ***
+
+                                END TEST.
+
+SECTION 2.1: LEGAL CHARACTERS IN PRINTING QUOTED STRINGS.
+
+                               BEGIN TEST.
+
+ LINE BELOW MUST PRINT OUT UPPER CASE LETTERS A THROUGH Z
+                       ABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+ LINE BELOW MUST PRINT OUT DIGITS ZERO THROUGH NINE.
+                               0123456789
+
+LINE BELOW MUST PRINT OUT, IN THE FOLLOWING ORDER, LEFT
+PARENTHESIS, RIGHT PARENTHESIS, AMPERSAND, EXCLAMATION
+POINT, NUMBER SIGN, PERCENT, APOSTROPHE, QUESTION MARK,
+ASTERISK, AND DOLLAR SIGN.
+                                   ()&!#%'?*$
+
+LINE BELOW MUST PRINT OUT, IN THE FOLLOWING ORDER, PLUS,
+COMMA, MINUS, SLANT, LESS-THAN, EQUALS, GREATER-THAN,
+CIRCUMFLEX, AND PERIOD.
+                                   +,-/<=>^.
+
+LINE BELOW MUST PRINT OUT, IN THE FOLLOWING ORDER, COLON,
+SPACE, SEMI-COLON, AND UNDERLINE.
+                                   : ;_
+
+*** TEST PASSED IF THE ABOVE SPECIFICATIONS WERE MET ***
+
+                                    END TEST.
+
+SECTION 1.3: SPACES IN QUOTED STRINGS.
+
+                                   BEGIN TEST.
+
+                       ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                       A CD  GH   LM    RS     YZ
+
+*** TEST PASSED IF THE SECOND LINE OF ALPHA CHARACTERS IN 
+    THE ABOVE TEST HAS BLANKS WHERE THE LETTERS B, E, F,
+    I, J, K, N, O, P, Q, T, U, V, W, AND X APPEAR IN THE 
+    FIRST LINE. ***
+
+                                END TEST.
+
+SECTION 1.4: PRINTING THE NULL STRING.
+
+                               BEGIN TEST.
+
+THE NEXT STATEMENT PRINTS A NULL QUOTED STRING.
+
+THE LINE ABOVE MUST BE BLANK AS A RESULT OF PRINTING
+A NULL QUOTED STRING.
+
+*** TEST PASSED IF THE ABOVE SPECIFICATIONS WERE MET ***
+
+                                END TEST.
+
+END PROGRAM 1

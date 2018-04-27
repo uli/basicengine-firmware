@@ -1,0 +1,53 @@
+PROGRAM FILE 7: EXCEPTION - STRING OVERFLOW USING
+        THE LET-STATEMENT.
+    ANSI STANDARD 9.5, 12.4
+
+SECTION 7.1: EXCEPTION - STRING OVERFLOW USING
+              THE LET-STATEMENT.
+
+STRING OVERFLOW OCCURS WHEN THE VALUE ASSIGNED TO A STRING
+VARIABLE CONTAINS MORE CHARACTERS THAN CAN BE RETAINED.
+
+TO PASS THIS TEST:
+
+    1) A MESSAGE IDENTIFYING THE EXCEPTION MUST BE
+       DISPLAYED AND EXECUTION MUST TERMINATE, OR
+
+    2) STRING OVERFLOW MUST NOT OCCUR
+
+                               BEGIN TEST.
+
+ABOUT TO ASSIGN STRING OF 19 CHARACTERS - 
+ABOUT TO ASSIGN STRING OF 20 CHARACTERS - 
+ABOUT TO ASSIGN STRING OF 30 CHARACTERS - 
+ABOUT TO ASSIGN STRING OF 40 CHARACTERS - 
+ABOUT TO ASSIGN STRING OF 50 CHARACTERS - 
+ABOUT TO ASSIGN STRING OF 58 CHARACTERS - 
+ALL ASSIGNMENTS COMPLETED.
+
+?*******19********!
+?*******19********!
+
+?********20********!
+?********20********!
+
+?*************30*************!
+?*************30*************!
+
+?******************40******************!
+?******************40******************!
+
+?***********************50***********************!
+?***********************50***********************!
+
+?***************************58***************************!
+?***************************58***************************!
+
+IF THE PAIRED LINES IN THE OUTPUT ARE IDENTICAL AND EACH
+   LINE STARTS WITH A QUESTION MARK AND ENDS WITH AN
+   EXCLAMATION POINT, THEN
+*** TEST PASSED ***
+
+                             END TEST.
+
+END PROGRAM 7

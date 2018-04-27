@@ -1,0 +1,23 @@
+REM Purpose: Verify example program
+REM   Refer:
+REM    Page: 11
+REM
+
+
+PRINT 12 AND 3
+PRINT $C AND $5
+PRINT NOT -1
+PRINT NOT $3
+PRINT 12 OR 3
+PRINT $0C OR $5
+
+LET I = 12.11
+LET J = 3.2
+PRINT I  EOR J
+
+LET I = 12.11
+LET J = 3.7
+PRINT I  EOR J
+
+
+END

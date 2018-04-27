@@ -1,0 +1,14 @@
+CallFunc.BAS -- Test BASIC User-defined Function Statements
+The next printed line should be from the Function.
+
+This is written from the Function.
+The value of variable <xarg> is 5
+The value of variable <yarg$> is Hello
+The value of variable <tvar> is 17
+The value of variable <tvar> is reset to 99
+The Function should return 104
+
+This is back at the main program.
+The value of variable <testvar> is now 17
+The returned value from the function is 104
+Did it work?

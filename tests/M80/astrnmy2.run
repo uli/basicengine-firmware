@@ -1,0 +1,84 @@
+
+Astronomy Programs
+
+1- Find Altitude and Azimuth, given Right Ascension and Declination
+2- Find Local Sidereal Time, given Day of Year and Local Time
+3- Find Right Ascension and Declination, given ALT, AZ and LST
+4- QUIT Program, Return to MBASIC
+
+Enter Choice ==> 1
+
+Find Altitude and Azimuth
+
+
+RA (HOURS)12
+RA (MINUTES)34
+RA (SECONDS)56
+
+DEC (DEGREES)98
+DEC (MINUTES)54
+DEC (SECONDS)32
+
+LMST (DECIMAL HOURS)6
+
+     ALTITUDE = 50.0955433
+      AZIMUTH = 12.3238644
+
+
+<cr> to Continue
+
+Astronomy Programs
+
+1- Find Altitude and Azimuth, given Right Ascension and Declination
+2- Find Local Sidereal Time, given Day of Year and Local Time
+3- Find Right Ascension and Declination, given ALT, AZ and LST
+4- QUIT Program, Return to MBASIC
+
+Enter Choice ==> 2
+
+Find Local Sidereal Time, LST
+
+
+DAY OF YEAR 123
+LOCAL TIME (HOURS)11
+LOCAL TIME (MINUTES)22
+LOCAL TIME (SECONDS)33
+
+LOCAL MEAN TIME =11.3758333
+           GMST = 7.10952713
+           LMST = 1.98612713
+
+
+<cr> to Continue
+
+Astronomy Programs
+
+1- Find Altitude and Azimuth, given Right Ascension and Declination
+2- Find Local Sidereal Time, given Day of Year and Local Time
+3- Find Right Ascension and Declination, given ALT, AZ and LST
+4- QUIT Program, Return to MBASIC
+
+Enter Choice ==> 3
+
+Find Right Ascension and Declination
+
+
+ALTITUDE123
+AZIMUTH123
+LOCAL SIDEREAL TIME (DECIMAL HOURS)6
+
+RA = 9.233127
+DEC = 52.4171031
+
+
+<cr> to Continue
+
+Astronomy Programs
+
+1- Find Altitude and Azimuth, given Right Ascension and Declination
+2- Find Local Sidereal Time, given Day of Year and Local Time
+3- Find Right Ascension and Declination, given ALT, AZ and LST
+4- QUIT Program, Return to MBASIC
+
+Enter Choice ==> 4
+Break (27)@400

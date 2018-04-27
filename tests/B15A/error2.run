@@ -1,0 +1,59 @@
+ERL=130, ERR=1, ERR$=Division by zero
+ERL=130, ERR=2, ERR$=Floating point exception
+ERL=130, ERR=3, ERR$=Overflow
+ERL=130, ERR=4, ERR$=Subscript out of range
+ERL=130, ERR=5, ERR$=Icode buffer full
+ERL=130, ERR=6, ERR$=GOSUB too many nested
+ERL=130, ERR=7, ERR$=RETURN stack underflow
+ERL=130, ERR=8, ERR$=Argument stack overflow
+ERL=130, ERR=9, ERR$=Undefined argument
+ERL=130, ERR=10, ERR$=FOR too many nested
+ERL=130, ERR=11, ERR$=NEXT without FOR
+ERL=130, ERR=12, ERR$=FOR without variable
+ERL=130, ERR=13, ERR$=FOR without TO
+ERL=130, ERR=14, ERR$=LET without variable
+ERL=130, ERR=15, ERR$=IF without condition
+ERL=130, ERR=16, ERR$=IF stack overflow
+ERL=130, ERR=17, ERR$=IF stack underflow
+ERL=130, ERR=18, ERR$=Undefined line number
+ERL=130, ERR=19, ERR$='(' or ')' expected
+ERL=130, ERR=20, ERR$='=' expected
+ERL=130, ERR=21, ERR$=Cannot use system command
+ERL=130, ERR=22, ERR$=Illegal value
+ERL=130, ERR=23, ERR$=Out of range value
+ERL=130, ERR=24, ERR$=Program not found
+ERL=130, ERR=25, ERR$=Syntax error
+ERL=130, ERR=26, ERR$=Internal error
+ERL=130, ERR=27, ERR$=Break
+ERL=130, ERR=28, ERR$=Line too long
+ERL=130, ERR=29, ERR$=File write error
+ERL=130, ERR=30, ERR$=File read error
+ERL=130, ERR=31, ERR$=Cannot use GPIO function
+ERL=130, ERR=32, ERR$=Too long path
+ERL=130, ERR=33, ERR$=File open error
+ERL=130, ERR=34, ERR$=File not open
+ERL=130, ERR=35, ERR$=SD I/O error
+ERL=130, ERR=36, ERR$=Bad file name
+ERL=130, ERR=37, ERR$=Not supported
+ERL=130, ERR=38, ERR$=Out of video memory
+ERL=130, ERR=39, ERR$=Out of memory
+ERL=130, ERR=40, ERR$=Can't continue
+ERL=130, ERR=41, ERR$=Undefined array
+ERL=130, ERR=42, ERR$=Undefined procedure
+ERL=130, ERR=43, ERR$=Undefined label
+ERL=130, ERR=44, ERR$=Duplicate procedure
+ERL=130, ERR=45, ERR$=Duplicate label
+ERL=130, ERR=46, ERR$=Out of data
+ERL=130, ERR=47, ERR$=I/O error
+ERL=130, ERR=48, ERR$=Type mismatch
+ERL=130, ERR=49, ERR$=Local variable outside procedure
+ERL=130, ERR=50, ERR$=Empty list
+ERL=130, ERR=51, ERR$=ENDIF not found
+ERL=130, ERR=52, ERR$=Not enough arguments
+ERL=130, ERR=53, ERR$=File format error
+ERL=130, ERR=54, ERR$=USING format error
+ERL=130, ERR=55, ERR$=Network error
+ERL=130, ERR=56, ERR$=Not a directory
+ERL=130, ERR=57, ERR$=WHILE without WEND
+ERL=130, ERR=58, ERR$=System stack overflow
+ERL=130, ERR=59, ERR$=File seek error

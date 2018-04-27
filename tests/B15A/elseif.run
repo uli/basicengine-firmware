@@ -1,0 +1,6 @@
+ELSEIF.BAS -- Test MultiLine IF-THEN-ELSE Constructions
+
+The program should detect if the number you enter is 4 or 5 or 6.
+Please enter a number, 1-9? 5
+The number is 5.
+This concludes our test.

@@ -1,0 +1,42 @@
+PROGRAM FILE 57: ARRAY ASSIGNMENT WITH OPTION BASE 0.
+    ANSI STANDARD 6.2, 6.4, 9.2, 9.4, 15.2, 15.4
+
+SECTION 57.1: ONE-DIMENSIONAL ARRAYS WITHOUT THE
+        DIM STATEMENT.
+
+                               BEGIN TEST.
+
+***  TEST PASSED   ***
+
+                               END TEST.
+
+SECTION 57.2: TWO-DIMENSIONAL ARRAYS WITHOUT THE
+        DIM-STATEMENT.
+
+                              BEGIN TEST.
+
+***  TEST PASSED  ***
+
+                               END TEST.
+
+SECTION 57.3: ONE-DIMENSIONAL ARRAYS WITH THE
+        DIM-STATEMENT.
+
+                              BEGIN TEST.
+
+*** TEST PASSED  ***
+
+                                END TEST.
+
+
+SECTION 57.4: TWO-DIMENSIONAL ARRAYS WITH THE
+        DIM-STATEMENT.
+
+                               BEGIN TEST.
+
+***  TEST PASSED  ***
+
+                                END TEST.
+
+
+END PROGRAM 57

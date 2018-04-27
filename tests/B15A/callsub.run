@@ -1,0 +1,12 @@
+CallSub.BAS -- Test BASIC Call and Sub Statements
+The next printed line should be from the Subroutine.
+
+This is written from the Subroutine.
+The value of variable <xarg> is 5
+The value of variable <yarg$> is Hello
+The value of variable <tvar> is 17
+The value of variable <tvar> is reset to 99
+
+This is back at the main program.
+The value of variable <testvar> is now 17
+Did it work?

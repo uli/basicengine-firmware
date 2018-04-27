@@ -1,0 +1,6 @@
+This is program CHAIN1.BAS
+The value of X is 5.6789
+We shall no pass execution to program CHAIN2.BAS...
+This is program CHAIN2.BAS
+The value of X is now 5.6789
+This concludes our CHAIN test.

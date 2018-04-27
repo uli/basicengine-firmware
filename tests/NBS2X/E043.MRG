@@ -1,0 +1,10 @@
+02000 REM ----------------------------------------------------
+02010 REM FILENAME:  merge1.txt
+02020 REM  PURPOSE:  Verify MERGE <file-name>
+02030 REM   AUTHOR:  Howard Wulf AF5NE
+02040 REM     DATE:  October 10th, 2014
+02050 REM ----------------------------------------------------
+02060 REM This file is merged by "merge1.bas"
+02070 REM
+02080 PRINT "Inside E043.MRG"
+02090 GOTO 09900

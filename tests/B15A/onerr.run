@@ -1,0 +1,6 @@
+Test bwBASIC ON ERROR GOSUB statement
+The next line will include an error
+This is the error handler
+The error number is 48
+The error line   is 50
+This is the line after the error

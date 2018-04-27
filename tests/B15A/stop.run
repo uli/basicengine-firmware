@@ -1,0 +1,3 @@
+STOP.BAS -- Test STOP Statement
+If the program is interrupted after this line, STOP worked OK
+Break (27)@40

@@ -1,0 +1,30 @@
+PROGRAM FILE 31: EXCEPTION - ZERO RAISED TO A NEGATIVE POWER.
+    ANSI STANDARD 7.5
+
+SECTION 31.1: EXCEPTION - ZERO RAISED TO A NEGATIVE POWER.
+
+TO PASS THIS TEST:
+
+    1) A MESSAGE IDENTIFYING THE EXCEPTION MUST BE
+       DISPLAYED, AND
+
+    2) POSITIVE INFINITY MUST BE SUPPLIED AS THE VALUE
+       OF THE EXPRESSION AND EXECUTION CONTINUES.
+
+               BEGIN TEST
+
+VALUE SUPPLIED = -inf
+
+*** TEST FAILED: VALUE SUPPLIED LESS THAN MINIMUM
+    POSITIVE MACHINE INFINITY. ***
+Except that that is not how anything actually behaves:
+- CBM BASIC: A = 0
+- MSX BASIC: Division by zero
+- C++: -inf
+=> We go with C++, because that's consistent with
+MSX BASIC when FP exceptions are enabled, and doesn't
+require extra code.
+
+                END TEST
+
+END PROGRAM 31

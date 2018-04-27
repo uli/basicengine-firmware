@@ -1,0 +1,25 @@
+Height of observer in feet15000
+Zenith dist. of occulting edge (deg)89
+Aerosol extinction (mag/air mass)0.9
+Occult bottom (B) or top (T) of SunB
+
+ Time    x      y    V mag.  Color
+ 0.00   0.70   0.30  13.5  Violet
+ 0.11   0.70   0.30  13.9  Violet
+ 0.22   0.70   0.30  14.3  Violet
+ 0.33   0.69   0.31  14.9  Violet
+ 0.44   0.67   0.33  15.6  Violet
+ 0.55   0.61   0.39  16.7     Red
+ 0.66   0.58   0.41  17.6     Red
+ 0.76   0.48   0.51  19.1     Red
+ 0.87   0.29   0.69  20.3  Orange
+ 0.98   0.29   0.68  21.4  Orange
+ 1.09   0.13   0.59  24.6  Yellow
+ 1.20   0.02   0.51  25.8  Yellow
+ 1.31   0.02   0.50  26.6  Yellow
+ 1.42   0.04   0.44  28.0   Green
+ 1.53   0.16   0.02  33.6    Blue
+ 1.64   0.16   0.02  34.0    Blue
+ 1.75   0.16   0.02  34.5    Blue
+ 1.86   0.16   0.02  35.3    Blue
+ 1.97   0.16   0.02  36.9    Blue

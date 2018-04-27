@@ -1,0 +1,52 @@
+COORDINATE PLOT
+
+X-AXIS:  LEFT ENDPOINT, RIGHT ENDPOINT, INCREMENT1,40,1
+Y-AXIS: LOWER ENDPOINT, UPPER ENDPOINT, INCERMENT1,20,1
+NUMBER OF POINTS TO BE PLOTTED3
+COORDINATES OF POINT 15,10
+               POINT 220,14
+               POINT 330,18
+
+INTERSECTION OF AXES AT (1,1)
+
+********************y
+*
+*
+*
+*+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*+
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+x

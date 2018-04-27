@@ -1,0 +1,21 @@
+Initial epoch (yr)2000
+Final epoch (yr)  2015
+Initial epoch 2000
+  R.A. (h,m,s)1,2,3
+  Dec. (d,m,s)4,5,6
+Proper motion in
+  R.A. (sec/yr)   7
+  Dec. (arcsec/yr)8
+
+Final epoch 2015
+  R.A. (h,m,s):  1  4 34.529
+  Dec. (d,m,s): + 4 11 54.92
+Proper motion in
+  R.A. (sec/yr):    7.0009
+  Dec. (arcsec/yr): 7.958
+
+Select one:
+  (A)nother star
+  (N)ew final epoch
+  (Q)uit
+Q

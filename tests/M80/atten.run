@@ -1,0 +1,64 @@
+What attenuator do you want, TEE, PI or MINIMUM LOSS..PI
+
+What is the input impedance...75
+
+What is the output impedance..50
+
+What is the required loss (in dB)...3
+Specified loss is too low..adjusting to....
+MINIMUM LOSS PAD DESIGN
+
+Pad for Z1 > Z2
+
+----R1--------
+         |
+         R2
+         |
+--------------
+Source Impedance=75,Terminating Impedance=50
+R1=,43.3012702,R2=86.6025404
+Loss (dB)=5.71946329
+
+
+What attenuator do you want, TEE, PI or MINIMUM LOSS..TEE
+
+What is the input impedance...75
+
+What is the output impedance..50
+
+What is the required loss (in dB)...3
+Specified loss is too low..adjusting to....
+MINIMUM LOSS PAD DESIGN
+
+Pad for Z1 > Z2
+
+----R1--------
+         |
+         R2
+         |
+--------------
+Source Impedance=75,Terminating Impedance=50
+R1=,43.3012702,R2=86.6025404
+Loss (dB)=5.71946329
+
+
+What attenuator do you want, TEE, PI or MINIMUM LOSS..MIN
+
+What is the input impedance...75
+
+What is the output impedance..50
+MINIMUM LOSS PAD DESIGN
+
+Pad for Z1 > Z2
+
+----R1--------
+         |
+         R2
+         |
+--------------
+Source Impedance=75,Terminating Impedance=50
+R1=,43.3012702,R2=86.6025404
+Loss (dB)=5.71946329
+
+
+What attenuator do you want, TEE, PI or MINIMUM LOSS..QUIT

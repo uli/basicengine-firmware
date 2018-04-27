@@ -1,0 +1,25 @@
+02000 REM ----------------------------------------------------
+02010 REM FILENAME:  chain2.txt
+02020 REM  PURPOSE:  Verify CHAIN <file-name>
+02030 REM   AUTHOR:  Howard Wulf AF5NE
+02040 REM     DATE:  October 10th, 2014
+02050 REM ----------------------------------------------------
+02060 REM This file is chained by "chain2.bas"
+02070 REM
+02080 PRINT "Inside E039.CHN"
+02090 PRINT "X$="; X$
+02100 if X$ <> "abcdef" then goto &TestFailed
+02110 print "A$="; A$
+02120 'if A$ <> "" then goto &TestFailed
+02130 print "*** TEST #1 PASSED ***"
+8000 rem ------------------------------------------
+8010 &TestPassed:
+8020 print "*** ALL TESTS PASSED ***"
+8030 goto &TheEnd
+8500 rem ------------------------------------------
+8510 &TestFailed:
+8520 print "*** TEST FAILED ***"
+8530 goto &TheEnd
+9000 rem ------------------------------------------
+9010 &TheEnd:
+9999 end

@@ -1,0 +1,491 @@
+ERECURSIVE BUDGETING MODEL
+
+* * *
+E
+Select your budgeting period by number.  Later on it will
+be extended to one year.
+
+1-WEEKLY
+2-BIWEEKLY
+3-SEMIMONTHLY
+4-MONTHLY
+
+: 1
+E
+Alright, first let's look at income for the period.
+
+SALARY/WAGES $2345
+OTHER INCOME $678
+E
+Ok, now let's look at paycheck deductions.
+
+FED INC TAX $901
+STATE AND LOCAL TAX $234
+SOCIAL SECURITY $56
+UNEMPLOYMENT INS $7
+HEALTH INS $89
+LIFE INS $12
+CONTRIBUTIONS $34
+OTHER DEDUCTIONS $56
+EOk, now let's look at fixed expenses.
+
+RENT/MORTGAGE $78
+LIFE INS $90
+HEALTH INS $12
+HOUSE INS $34
+AUTO INS $56
+CAR PAYMENTS $78
+LOAN PAYMENTS $90
+TRASH REMOVAL $12
+OTHER FIXED EXP $34
+EOk, at this point our table looks like this: 
+
+
+================================================================
+
+RECURSIVE BUDGETING MODEL
+
+* * *
+
+================================================================
+
+SPENDABLE INCOME SUMMARY
+
+----------------------------------------------------------------
+ACCOUNTPERIODANNUAL
+----------------------------------------------------------------
+TOTAL INCOME$$ 3023,$$157196,
+
+PAYCHECK DEDUCTIONS$$-1389,
+
+FIXED EXPENSES$$ -484,$$-1873,$$-97396,
+---------------
+SPENDABLE INCOME$$ 1150,$$59800,
+================
+
+================================================================
+
+
+PRESS 'RETURN' TO CONTINUE
+
+E
+Ok, now for the first round of variable expense.  Don't
+pinch yourself in your estimates (within reason).  Let the
+computer help you to refine your budget later on.
+
+FOOD/BEVERAGES $56
+CLOTHING $78
+DRY CLEANING $90
+BARBER/BEAUTY $12
+HOME MAINT $34
+HOME HEAT'G FUEL $56
+WATER $78
+ELECTRICITY $90
+TELEPHONE $12
+GAS/OIL $34
+AUTO MAINT $56
+FARES/TOLLS/PARKING $78
+DENTIST $90
+PHYSICIAN $12
+DRUGS/SUNDRIES $34
+SCHOOL EXPENSE $56
+FAMILY ALLOWANCE $78
+CLUBS/LODGES $90
+THEATER/SPORTS $12
+RESTAURANTS $34
+OTHER ENT'MENT $56
+MAG'S/BOOKS/PAPERS $78
+SITTERS $90
+CHILD CARE $12
+VACATION SAVINGS $34
+OTHER SAVINGS $56
+CONTRIBUTIONS $78
+OTHER EXPENSES $90
+
+
+Your budget for the first round totalled $1574.  This
+compares to spendable income of $1150.  We have
+prorated the difference, $-424, over all variable expense
+accounts.
+
+PRESS 'RETURN' TO CONTINUE
+
+E
+ENow we begin the budget refinement phase.  Make as many
+passes as you like.  As you review each account, decide
+whether to FREEZE it or leave it for another pass.
+
+HINT: Don't be in a hurry to freeze an account.
+
+Your task is finished when all accounts are frozen!
+
+PRESS 'RETURN' TO CONTINUE
+
+E
+FOOD/BEVERAGES $40
+Change ('Y' or 'N') N
+Freeze ('Y' or 'N') Y
+
+Ok, the account has been frozen at $40.
+
+CLOTHING $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+DRY CLEANING $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+BARBER/BEAUTY $8
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+HOME MAINT $24
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+HOME HEAT'G FUEL $40
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+WATER $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+ELECTRICITY $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+TELEPHONE $8
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+GAS/OIL $24
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+AUTO MAINT $40
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+FARES/TOLLS/PARKING $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+DENTIST $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+PHYSICIAN $8
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+DRUGS/SUNDRIES $24
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+SCHOOL EXPENSE $40
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+FAMILY ALLOWANCE $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+CLUBS/LODGES $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+THEATER/SPORTS $8
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+RESTAURANTS $24
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+OTHER ENT'MENT $40
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+MAG'S/BOOKS/PAPERS $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+SITTERS $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+CHILD CARE $8
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+VACATION SAVINGS $24
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+OTHER SAVINGS $40
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+CONTRIBUTIONS $56
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+OTHER EXPENSES $65
+Change ('Y' or 'N') Y
+Revised amount $12
+Freeze ('Y' or 'N') Y
+Ok, the account has been frozen at $12, and the difference
+prorated over the remaining accounts.
+
+
+
+Please enter the requested information before we provide a final detail of your budget.
+
+* DON'T use commas or colons *
+
+Name: TOM CAT
+Budget year: 2015
+
+
+E================================================================
+
+
+* THE TOM CAT FAMILY BUDGET FOR 2015 *
+
+================================================================
+
+ACCOUNT|INCOME|EXPENSE|PERCENT
+|-----------------|-----------------| TOTAL
+| PERIOD | ANNUAL | PERIOD | ANNUAL |INCOME
+-------------------|--------|--------|--------|--------|-------
+INCOME|$$         3023.0,|$$,|        |        | |$$       157196.0,|$$,|        |        | |$$          100.0,|$$,|        |        | 
+------|        |        |        |        |
+SALARY/WAGES|$$         2345.0,|$$,|        |        | |$$       121940.0,|$$,|        |        | |$$           77.6,|$$,|        |        | 
+OTHER INCOME|$$          678.0,|$$,|        |        | |$$        35256.0,|$$,|        |        | |$$           22.4,|$$,|        |        | 
+|        |        |        |        |
+PAYCHECK DEDUCT'S|        |        |$$         1389.0,|$$,| |        |        |$$        72228.0,|$$,| |        |        |$$           45.9,|$$,| 
+-----------------|        |        |        |        |
+FED INC TAX|        |        |$$          901.0,|$$,| |        |        |$$        46852.0,|$$,| |        |        |$$           29.8,|$$,| 
+STATE AND LOCAL TAX|        |        |$$          234.0,|$$,| |        |        |$$        12168.0,|$$,| |        |        |$$            7.7,|$$,| 
+SOCIAL SECURITY|        |        |$$           56.0,|$$,| |        |        |$$         2912.0,|$$,| |        |        |$$            1.9,|$$,| 
+UNEMPLOYMENT INS|        |        |$$            7.0,|$$,| |        |        |$$          364.0,|$$,| |        |        |$$            0.2,|$$,| 
+HEALTH INS|        |        |$$           89.0,|$$,| |        |        |$$         4628.0,|$$,| |        |        |$$            2.9,|$$,| 
+LIFE INS|        |        |$$           12.0,|$$,| |        |        |$$          624.0,|$$,| |        |        |$$            0.4,|$$,| 
+CONTRIBUTIONS|        |        |$$           34.0,|$$,| |        |        |$$         1768.0,|$$,| |        |        |$$            1.1,|$$,| 
+OTHER DEDUCTIONS|        |        |$$           56.0,|$$,| |        |        |$$         2912.0,|$$,| |        |        |$$            1.9,|$$,| 
+|        |        |        |        |
+FIXED EXPENSES|        |        |$$          484.0,|$$,| |        |        |$$        25168.0,|$$,| |        |        |$$           16.0,|$$,| 
+--------------|        |        |        |        |
+RENT/MORTGAGE|        |        |$$           78.0,|$$,| |        |        |$$         4056.0,|$$,| |        |        |$$            2.6,|$$,| 
+LIFE INS|        |        |$$           90.0,|$$,| |        |        |$$         4680.0,|$$,| |        |        |$$            3.0,|$$,| 
+HEALTH INS|        |        |$$           12.0,|$$,| |        |        |$$          624.0,|$$,| |        |        |$$            0.4,|$$,| 
+HOUSE INS|        |        |$$           34.0,|$$,| |        |        |$$         1768.0,|$$,| |        |        |$$            1.1,|$$,| 
+AUTO INS|        |        |$$           56.0,|$$,| |        |        |$$         2912.0,|$$,| |        |        |$$            1.9,|$$,| 
+CAR PAYMENTS|        |        |$$           78.0,|$$,| |        |        |$$         4056.0,|$$,| |        |        |$$            2.6,|$$,| 
+LOAN PAYMENTS|        |        |$$           90.0,|$$,| |        |        |$$         4680.0,|$$,| |        |        |$$            3.0,|$$,| 
+TRASH REMOVAL|        |        |$$           12.0,|$$,| |        |        |$$          624.0,|$$,| |        |        |$$            0.4,|$$,| 
+OTHER FIXED EXP|        |        |$$           34.0,|$$,| |        |        |$$         1768.0,|$$,| |        |        |$$            1.1,|$$,| 
+|        |        |        |        |
+VARIABLE EXPENSE|        |        |$$         1150.0,|$$,| |        |        |$$        59800.0,|$$,| |        |        |$$           38.0,|$$,| 
+----------------|        |        |        |        |
+FOOD/BEVERAGES|        |        |$$          126.0,|$$,| |        |        |$$         6552.0,|$$,| |        |        |$$            4.2,|$$,| 
+CLOTHING|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+DRY CLEANING|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+BARBER/BEAUTY|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+HOME MAINT|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+HOME HEAT'G FUEL|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+WATER|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+ELECTRICITY|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+TELEPHONE|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+GAS/OIL|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+AUTO MAINT|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+FARES/TOLLS/PARKING|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+DENTIST|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+PHYSICIAN|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+DRUGS/SUNDRIES|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+SCHOOL EXPENSE|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+FAMILY ALLOWANCE|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+CLUBS/LODGES|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+THEATER/SPORTS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+RESTAURANTS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+OTHER ENT'MENT|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+MAG'S/BOOKS/PAPERS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+SITTERS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+CHILD CARE|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+VACATION SAVINGS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+OTHER SAVINGS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+CONTRIBUTIONS|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+OTHER EXPENSES|        |        |$$           37.0,|$$,| |        |        |$$         1924.0,|$$,| |        |        |$$            1.2,|$$,| 
+
+================================================================
+
+================================================================
+
+
+* EXPENSE BAR CHART *
+PERCENT OF TOTAL INCOME
+
+-------------------------------------------------------------------------------
+
+ ....|....1....|....2....|....3....|....4....|....5....|....6
+
+FED INC TAX]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+STATE AND LOCAL TAX]]]]]]]]
+SOCIAL SECURITY]]
+UNEMPLOYMENT INS]
+HEALTH INS]]]
+LIFE INS]
+CONTRIBUTIONS]
+OTHER DEDUCTIONS]]
+RENT/MORTGAGE]]]
+LIFE INS]]]
+HEALTH INS]
+HOUSE INS]
+AUTO INS]]
+CAR PAYMENTS]]]
+LOAN PAYMENTS]]]
+TRASH REMOVAL]
+OTHER FIXED EXP]
+FOOD/BEVERAGES]]]]
+CLOTHING]
+DRY CLEANING]
+BARBER/BEAUTY]
+HOME MAINT]
+HOME HEAT'G FUEL]
+WATER]
+ELECTRICITY]
+TELEPHONE]
+GAS/OIL]
+AUTO MAINT]
+FARES/TOLLS/PARKING]
+DENTIST]
+PHYSICIAN]
+DRUGS/SUNDRIES]
+SCHOOL EXPENSE]
+FAMILY ALLOWANCE]
+CLUBS/LODGES]
+THEATER/SPORTS]
+RESTAURANTS]
+OTHER ENT'MENT]
+MAG'S/BOOKS/PAPERS]
+SITTERS]
+CHILD CARE]
+VACATION SAVINGS]
+OTHER SAVINGS]
+CONTRIBUTIONS]
+OTHER EXPENSES]
+
+ ....|....1....|....2....|....3....|....4....|....5....|....6
+
+
+===============================================================================
+
+
+
+

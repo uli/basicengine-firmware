@@ -1,0 +1,4 @@
+INPUT.BAS -- Test INPUT Statement
+Input string, number: abc,123
+The string is: abc
+The number is: 123

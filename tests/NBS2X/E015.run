@@ -1,0 +1,11 @@
+The cosine value of 0 is1
+*** TEST #1 PASSED ***
+The cosine value of 0.5 is0.877582562
+*** TEST #2 PASSED ***
+The cosine value of -0.5 is0.877582562
+*** TEST #3 PASSED ***
+The cosine value of 1 is0.540302306
+*** TEST #4 PASSED ***
+The cosine value of -1 is0.540302306
+*** TEST #5 PASSED ***
+*** ALL TESTS PASSED ***

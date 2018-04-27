@@ -1,0 +1,5 @@
+The ASCII value of ABCDEF is65
+*** TEST #1 PASSED ***
+The ASCII value of abcdef is97
+*** TEST #2 PASSED ***
+*** ALL TESTS PASSED ***

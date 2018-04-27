@@ -1,0 +1,61 @@
+ TIMER CALCULATIONS
+ This program calculates values and times for these timers:
+1     9601
+2     9602
+3     96L02
+4     74121
+5     74122
+6     74123
+7     555
+8     556  (Dual 555)
+9     To end
+
+
+Enter the number corresponding to the desired timer :1
+Enter letter for variable you wish to find :
+R      resistor
+C      Capacitor
+T      Time
+E      Exit
+R
+Enter value for 'C' in farads1000e-6
+Enter value for 'T' in seconds :1
+THE RESISTANCE IS 3.1Kohms
+Enter letter for variable you wish to find :
+R      resistor
+C      Capacitor
+T      Time
+E      Exit
+C
+Enter value for 'R' in ohms :310
+Enter value for 'T' in seconds :100
+THE CAPACITANCE IS 1Kfarads
+Enter letter for variable you wish to find :
+R      resistor
+C      Capacitor
+T      Time
+E      Exit
+T
+Enter value for 'R' in ohms :3.1e3
+Enter value for 'C' in farads1000e-6
+THE TIME IS 0sec
+Enter letter for variable you wish to find :
+R      resistor
+C      Capacitor
+T      Time
+E      Exit
+E
+ TIMER CALCULATIONS
+ This program calculates values and times for these timers:
+1     9601
+2     9602
+3     96L02
+4     74121
+5     74122
+6     74123
+7     555
+8     556  (Dual 555)
+9     To end
+
+
+Enter the number corresponding to the desired timer :9

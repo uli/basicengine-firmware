@@ -1,0 +1,8 @@
+TESTCASE # 1   E= 0           R= 0           X= 0
+               F= 0           N= 0
+*** TEST PASSED ***
+TESTCASE # 2   E= 0           R= 0           X= 1
+               F= 1           N= 0
+*** TEST FAILED, EXCEPTION MISMATCH ***
+
+Program interrupted at line 1006

@@ -1,0 +1,7 @@
+WRITEINP.BAS -- Test WRITE # and INPUT # Statements
+This is what was written:
+String 1	1.1234567	String 2	2.2345678	String 3	3.3456789
+This is what was read:
+String 1	1.1234567	String 2	2.2345678	String 3	3.3456789
+	0		0		0
+End of WRITEINP.BAS
