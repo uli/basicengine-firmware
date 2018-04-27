@@ -7,6 +7,10 @@
 #include "ttconfig.h"
 #include "lock.h"
 
+#ifdef ENABLE_GDBSTUB
+#include <GDBStub.h>
+#endif
+
 #ifdef HAVE_PROFILE
 void NOINS setup(void);
 void NOINS loop(void);

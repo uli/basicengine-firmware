@@ -69,6 +69,8 @@
 #define NOINS __attribute__((no_instrument_function))
 #endif
 
+//#define ENABLE_GDBSTUB
+
 #include "ati_6x8.h"
 #include "amstrad_8x8.h"
 #include "cbm_ascii_8x8.h"

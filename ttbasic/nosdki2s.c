@@ -1,3 +1,4 @@
+#include "ttconfig.h"
 #include "nosdki2s.h"
 #ifdef ESP8266_NOWIFI
 #include <hw/pin_mux_register.h>
@@ -47,6 +48,7 @@ volatile int isrs = 0;
 volatile uint32_t *nosdk_i2s_curr_buf;
 volatile uint32_t nosdk_i2s_curr_buf_pos;
 
+#ifndef ENABLE_GDBSTUB
 LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 	struct sdio_queue *finished;
 	SLC_INT_CLRL = 0xffffffff;
@@ -57,6 +59,7 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 
 	isrs++;
 }
+#endif
 
 #endif
 
@@ -80,6 +83,9 @@ void nosdk_i2s_clear_buf()
 
 void InitI2S()
 {
+#ifdef ENABLE_GDBSTUB
+	return;
+#else
 	DR_REG_SLC_BASEL[4] = 0;  //Reset DMA
 	SLC_CONF0L = (1<<SLC_MODE_S);		//Configure DMA
 	SLC_RX_DSCR_CONFL = SLC_INFOR_NO_REPLACE|SLC_TOKEN_NO_REPLACE;
@@ -137,6 +143,7 @@ void InitI2S()
 
 	//Start transmission
 	I2SCONFL |= I2S_I2S_TX_START;
+#endif	// ENABLE_GDBSTUB
 }
 
 void SendI2S()
