@@ -337,7 +337,7 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
     *tfile = Unifile::open(tfname, FILE_READ);   
   }
 
-  if (tfile)
+  if (*tfile)
     return 0;
 
   return SD_ERR_OPEN_FILE;
