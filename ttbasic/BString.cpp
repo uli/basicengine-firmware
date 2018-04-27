@@ -149,7 +149,17 @@ unsigned char BString::reserve(unsigned int size) {
 
 unsigned char BString::changeBuffer(unsigned int maxStrLen) {
     size_t newSize = (maxStrLen + 16) & (~0xf);
-    char *newbuffer = (char *) realloc(buffer, newSize);
+    char *newbuffer;
+#ifdef ESP8266
+    if (newSize > 262144) {
+      // umm seems to crap out instead of reporting an error if you allocate
+      // anything larger than about 9MB for some reason...
+      // Weirdly enough, this does not seem to happen in variable.h, for
+      // example.
+      newbuffer = NULL;
+    } else
+#endif
+    newbuffer = (char *) realloc(buffer, newSize);
     if(newbuffer) {
         size_t oldSize = capacity + 1; // include NULL.
         if (newSize > oldSize)
