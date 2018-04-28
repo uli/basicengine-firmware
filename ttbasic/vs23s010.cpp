@@ -181,6 +181,11 @@ retry:
   // Used to be two-thirds down the screen, but that caused more flicker when
   // the rendering load changes drastically.
   setSyncLine(m_current_mode.y + m_current_mode.top + 16);
+
+  // Sony KX-14CP1 and possibly other displays freak out if we start drawing
+  // stuff before they had a chance to synchronize with the new mode, so we
+  // wait a few frames.
+  delay(160);
 }
 
 void VS23S010::calibrateVsync()
