@@ -7724,6 +7724,16 @@ void SMALL basic() {
 #endif
   loadConfig();
 
+#if USE_SD_CARD == 1
+  // Initialize SD card file system
+  bfs.init(16);		// CS on GPIO16
+#endif
+
+  if (!Unifile::chDir(SD_PREFIX))
+    Unifile::chDir(FLASH_PREFIX);
+  else
+    bfs.fakeTime();
+
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
   vs23.setColorSpace(0);
 
@@ -7786,11 +7796,6 @@ void SMALL basic() {
     fs.mount();
   }
 #endif
-#if USE_SD_CARD == 1
-  // Initialize SD card file system
-  bfs.init(16);		// CS on GPIO16
-#endif
-
   // Free memory
   sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
@@ -7798,11 +7803,6 @@ void SMALL basic() {
   putnum(umm_free_heap_size(), 0);
   PRINT_P(" bytes free\n");
 #endif
-
-  if (!Unifile::chDir(SD_PREFIX))
-    Unifile::chDir(FLASH_PREFIX);
-  else
-    bfs.fakeTime();
 
   PRINT_P("Directory ");
   c_puts(Unifile::cwd()); newline();
