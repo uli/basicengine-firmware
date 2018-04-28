@@ -185,12 +185,22 @@ retry:
 
 void VS23S010::calibrateVsync()
 {
-  uint32_t now;
+  uint32_t now, now2, cycles;
   while (currentLine() != 100) {};
   now = ESP.getCycleCount();
   while (currentLine() == 100) {};
   while (currentLine() != 100) {};
-  m_cycles_per_frame = m_cycles_per_frame_calculated = ESP.getCycleCount() - now;
+  for (;;) {
+    now2 = ESP.getCycleCount();
+    cycles = now2 - now;
+    if (abs(m_cycles_per_frame - cycles) < 80000)
+      break;
+    m_cycles_per_frame = cycles;
+    now = now2;
+    while (currentLine() == 100) {};
+    while (currentLine() != 100) {};
+  }
+  m_cycles_per_frame = m_cycles_per_frame_calculated = cycles;
 }
 
 void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
