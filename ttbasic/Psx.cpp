@@ -151,6 +151,7 @@ int Psx::read()
       if (retries == 3)	{
         // exhausted all retries, there might be no controller here
         _last_failed = millis();
+        vs23.setSpiClock(spiclk);
         return psxError;
       }
 
