@@ -34,7 +34,8 @@ version.h: ../.git/index
 	echo "#define STR_VARSION \"$(shell git describe --abbrev=4 --dirty --always --tags)\"" >$@
 
 clean:
-	rm -fr $(PWD)/build/*
+	rm -fr $(BUILD_PATH)/*
+	rm -fr $(BUILD_PATH)_NET/*
 
 SER ?= /dev/ttyUSB0
 upload: elf
