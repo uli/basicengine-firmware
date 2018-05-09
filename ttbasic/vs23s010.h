@@ -135,6 +135,9 @@ class VS23S010 {
     inline void setLowpass(bool lowpass) {
       m_lowpass = lowpass;
     }
+    inline void setLineAdjust(int8_t line_adjust) {
+      m_line_adjust = line_adjust;
+    }
 
     uint32_t getSpiClock() {
       return SPI1CLK;
@@ -469,6 +472,7 @@ private:
     bool m_interlace;
     bool m_pal;
     bool m_lowpass;
+    int8_t m_line_adjust;
     inline uint16_t lowpass() {
       return m_lowpass ? BLOCKMVC1_PYF : 0;
     }

@@ -118,6 +118,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   
   setColorConversion(0, 7, 3, 6, true);
   m_colorspace = 0;
+  m_line_adjust = 0;
 }
 
 void VS23S010::end()
