@@ -120,7 +120,7 @@ class VS23S010 {
     void calibrateVsync();
     void setSyncLine(uint16_t line);
  
-    void SpiRamVideoInit();
+    void videoInit();
     void SetLineIndex(uint16_t line, uint16_t wordAddress);
     void SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAddress);
     void FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t rgb);

@@ -393,7 +393,7 @@ void VS23S010::setBorder(uint8_t y, uint8_t uv)
 	setBorder(y, uv, 0, FRPORCH - BLANKEND);
 }
 
-void SMALL VS23S010::SpiRamVideoInit()
+void SMALL VS23S010::videoInit()
 {
 	uint16_t i, j;
 	uint32_t w;

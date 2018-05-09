@@ -166,7 +166,7 @@ retry:
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
-  SpiRamVideoInit();
+  videoInit();
   calibrateVsync();
   if (m_pal && F_CPU / m_cycles_per_frame < 45) {
     // We are in PAL mode, but the hardware has an NTSC crystal.
