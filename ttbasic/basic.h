@@ -308,7 +308,8 @@ void c_puts_P(const char *s, uint8_t devno);
 #define CONFIG_COLS	12
 
 typedef struct {
-  int16_t NTSC;        // NTSC設定 (0,1,2,3)
+  int8_t NTSC;        // NTSC設定 (0,1,2,3)
+  int8_t line_adjust;	// number of lines to add to default
   int16_t KEYBOARD;    // キーボード設定 (0:JP, 1:US)
   uint8_t color_scheme[CONFIG_COLS][3];
   bool interlace;

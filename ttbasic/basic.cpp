@@ -2946,6 +2946,14 @@ void SMALL iconfig() {
     else
       CONFIG.beep_volume = value;
     break;
+  case 8:
+    if (value < -128 || value > 127)
+      E_VALUE(-128, 127);
+    else {
+      CONFIG.line_adjust = value;
+      vs23.setLineAdjust(CONFIG.line_adjust);
+    }
+    break;
   default:
     E_VALUE(0, 7);
     break;
@@ -7735,6 +7743,7 @@ void SMALL basic() {
     bfs.fakeTime();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
+  vs23.setLineAdjust(CONFIG.line_adjust);
   vs23.setColorSpace(0);
 
   psx.setupPins(0, 1, 2, 3, 1);
@@ -7895,6 +7904,7 @@ static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
 // システム環境設定のロード
 void loadConfig() {
   CONFIG.NTSC      =  0;
+  CONFIG.line_adjust = 0;
   CONFIG.KEYBOARD  =  1;
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = 1;
