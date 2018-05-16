@@ -8,6 +8,12 @@ under 10 Euros in parts, or mass-produced for even less.
 
 More information on the hardware can be found in the
 [BASIC Engine PCB](https://github.com/uli/basicengine-pcb) repository.
+Demos can be found at the [BASIC Engine demos](https://github.com/uli/basicengine-demos)
+repository.
+
+Click on the thumbnails below to watch some demo videos:
+[![Shmup](http://img.youtube.com/vi/WEeHVyWH8rQ/0.jpg)](http://www.youtube.com/watch?v=WEeHVyWH8rQ "BASIC Engine Shmup Demo")
+[![Tetris](http://img.youtube.com/vi/0ZsucdE6l2o/0.jpg)](http://www.youtube.com/watch?v=0ZsucdE6l2o "BASIC Engine Tetris Demo")
 
 This firmware contains a basic operating system and BASIC interpreter
 ("Engine BASIC") that allows the BASIC Engine to be used as a stand-alone
