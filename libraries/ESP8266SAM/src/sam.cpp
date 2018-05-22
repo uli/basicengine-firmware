@@ -4,8 +4,6 @@
 //#include <stdlib.h>
 #include <stddef.h> // define NULL
 #include "debug.h"
-#include "sam.h"
-#include "render.h"
 #include "SamTabs.h"
 
 static char input[256]; //tab39445

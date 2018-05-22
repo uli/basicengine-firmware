@@ -19,9 +19,6 @@
 #include <Arduino.h>
 #include <ESP8266SAM.h>
 
-#include "reciter.h"
-#include "sam.h"
-
 // Thunk from C to C++ with a this-> pointer
 void ESP8266SAM::OutputByteCallback(void *cbdata, unsigned char b)
 {
