@@ -19,6 +19,25 @@
 #include <Arduino.h>
 #include <ESP8266SAM.h>
 
+#ifdef PC_HOSTED
+uint8_t buffer[BUFSIZE];
+int bufptr_read = 0;
+int bufptr_write = 0;
+void fill_audio(void *udata, Uint8 *stream, int len)
+{
+  ESP8266SAM *sam = (ESP8266SAM *)udata;
+  while (len) {
+    if (bufptr_read < bufptr_write) {
+      *stream++ = buffer[bufptr_read++];
+      len--;
+    } else {
+      bufptr_read = bufptr_write = 0;
+      if (!sam->moreSamples())
+        break;
+    }
+  }
+}
+#endif
 // Thunk from C to C++ with a this-> pointer
 void ESP8266SAM::OutputByteCallback(void *cbdata, unsigned char b)
 {
@@ -30,21 +49,24 @@ void ESP8266SAM::OutputByte(unsigned char b)
 {
   // Xvert unsigned 8 to signed 16...
   int16_t s16 = b;// s16 -= 128; //s16 *= 128;
-  int16_t sample[2];
+  uint8_t sample[2];
   sample[0] = s16;
   sample[1] = s16;
-  while (!output->ConsumeSample(sample)) yield();
+#ifdef PC_HOSTED
+  buffer[bufptr_write++] = sample[0];
+  if (bufptr_write >= BUFSIZE) {
+    printf("bufof! %d %d\n", bufptr_read, bufptr_write);
+    abort();
+  }
+#else
+  // XXX: do something
+#endif
 }
   
-void ESP8266SAM::Say(AudioOutput *out, const char *str)
+void ESP8266SAM::Say(const char *str)
 {
   if (!str || strlen(str)>254) return; // Only can speak up to 1 page worth of data...
   
-  // These are fixed by the synthesis routines
-  out->SetRate(22050);
-  out->SetBitsPerSample(8);
-  out->SetChannels(1);
-  out->begin();
 
   // SAM settings
   SetSingMode(singmode);

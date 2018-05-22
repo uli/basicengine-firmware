@@ -19,7 +19,12 @@
 #define _ESP8266SAM_H
 
 #include <Arduino.h>
-#include <AudioOutput.h>
+#include <stdint.h>
+#ifdef PC_HOSTED
+#include <SDL/SDL.h>
+#define BUFSIZE 16
+extern void fill_audio(void *udata, Uint8 *stream, int len);
+#endif
 
 class ESP8266SAM {
 
@@ -32,7 +37,6 @@ public:
     mouth = 128;
     throat = 128;
     speed = 72;
-    output = NULL;
     oldtimetableindex = 0;
     mem59 = 0;
     bufferpos = 0;
@@ -40,10 +44,28 @@ public:
     memset(amplitude2, 0, 256);
     memset(amplitude3, 0, 256);
     prepo_reset_xy = false;
+  #ifdef PC_HOSTED
+    SDL_AudioSpec wanted;
+    wanted.freq = 22050;
+    wanted.format = AUDIO_U8;
+    wanted.channels = 1;
+    wanted.samples = 1024;
+    wanted.callback = fill_audio;
+    wanted.userdata = this;
+    if (SDL_OpenAudio(&wanted, NULL) < 0) {
+      fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+      exit(1);
+    }
+    SDL_PauseAudio(0);
+  #else
+  #endif
   };
   
   ~ESP8266SAM()
   {
+#ifdef PC_HOSTED
+    SDL_CloseAudio();
+#endif
   }
 
   enum SAMVoice { VOICE_SAM, VOICE_ELF, VOICE_ROBOT, VOICE_STUFFY, VOICE_OLDLADY, VOICE_ET };
@@ -56,12 +78,12 @@ public:
   void SetThroat(uint8_t val) { throat = val; }
   void SetSpeed(uint8_t val) { speed = val; }
 
-  void Say(AudioOutput *out, const char *str);
-  void Say_P(AudioOutput *out, const char *str) {
+  void Say(const char *str);
+  void Say_P(const char *str) {
     char ram[256];
     strncpy_P(ram, str, 256);
     ram[255] = 0;
-    Say(out, ram);
+    Say(ram);
   };
 
   bool moreSamples();
@@ -76,7 +98,6 @@ private:
   int speed;
   int mouth;
   int throat;
-  AudioOutput *output;
 
   // render
   void Output8BitAry(int index, unsigned char ary[5]);
