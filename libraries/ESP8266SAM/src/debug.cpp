@@ -6,6 +6,7 @@ extern const unsigned char signInputTable2[];
 
 void PrintPhonemes(unsigned char *phonemeindex, unsigned char *phonemeLength, unsigned char *stress)
 {
+#ifdef DEBUG_SAM
 	int i = 0;
 	printf("===========================================\n");
 
@@ -32,6 +33,7 @@ void PrintPhonemes(unsigned char *phonemeindex, unsigned char *phonemeLength, un
 	}
 	printf("===========================================\n");
 	printf("\n");
+#endif
 }
 
 void PrintOutput(
@@ -44,6 +46,7 @@ void PrintOutput(
 	unsigned char *a3,
 	unsigned char *p)
 {
+#ifdef DEBUG_SAM
 	printf("===========================================\n");
 	printf("Final data for speech output:\n\n");
 	int i = 0;
@@ -55,13 +58,14 @@ void PrintOutput(
 		i++;
 	}
 	printf("===========================================\n");
-
+#endif
 }
 
 extern unsigned char GetRuleByte(unsigned short mem62, unsigned char Y);
 
 void PrintRule(int offset)
 {
+#ifdef DEBUG_SAM
 	int i = 1;
 	unsigned char A = 0;
 	printf("Applying rule: ");
@@ -72,4 +76,5 @@ void PrintRule(int offset)
 		i++;
 	} while ((A&128)==0);
 	printf("\n");
+#endif
 }
