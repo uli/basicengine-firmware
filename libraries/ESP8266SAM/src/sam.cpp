@@ -1,3 +1,4 @@
+#include "ESP8266SAM.h"
 #include <stdio.h> // define printf()
 #include <string.h> // strlen()
 //#include <stdlib.h>
@@ -9,40 +10,16 @@
 
 static char input[256]; //tab39445
 //standard sam sound
-unsigned char speed = 72;
-unsigned char pitch = 64;
-static unsigned char mouth = 128;
-static unsigned char throat = 128;
-int singmode = 0;
+//unsigned char speed = 72;
+//unsigned char pitch = 64;
+//static unsigned char mouth = 128;
+//static unsigned char throat = 128;
+//int singmode = 0;
 
 //extern int debug;
 
-unsigned char mem39;
-unsigned char mem44;
-unsigned char mem47;
-unsigned char mem49;
-unsigned char mem50;
-unsigned char mem51;
-unsigned char mem53;
-unsigned char mem56;
+//unsigned char mem59=0;
 
-unsigned char mem59=0;
-
-static unsigned char A, X, Y;
-
-static unsigned char stress[256]; //numbers from 0 to 8
-static unsigned char phonemeLength[256]; //tab40160
-static unsigned char phonemeindex[256];
-
-unsigned char phonemeIndexOutput[60]; //tab47296
-unsigned char stressOutput[60]; //tab47365
-unsigned char phonemeLengthOutput[60]; //tab47416
-
-
-
-
-// contains the final soundbuffer
-int bufferpos=0;
 //char *buffer = NULL;
 
 
@@ -56,27 +33,6 @@ void SetInput(char *_input)
 	input[l] = 0;
 }
 
-void SetSpeed(unsigned char _speed) {speed = _speed;};
-void SetPitch(unsigned char _pitch) {pitch = _pitch;};
-void SetMouth(unsigned char _mouth) {mouth = _mouth;};
-void SetThroat(unsigned char _throat) {throat = _throat;};
-void EnableSingmode(int x) {singmode = x;};
-//char* GetBuffer(){return buffer;};
-int GetBufferLength(){return bufferpos;};
-
-void Init();
-int Parser1();
-void Parser2();
-int SAMMain();
-void CopyStress();
-void SetPhonemeLength();
-void AdjustLengths();
-void Code41240();
-void Insert(unsigned char position, unsigned char mem60, unsigned char mem59, unsigned char mem58);
-void InsertBreath();
-void PrepareOutput();
-void SetMouthThroat(unsigned char mouth, unsigned char throat);
-
 // 168=pitches
 // 169=frequency1
 // 170=frequency2
@@ -85,8 +41,10 @@ void SetMouthThroat(unsigned char mouth, unsigned char throat);
 // 173=amplitude2
 // 174=amplitude3
 
-
-void Init()
+extern const unsigned char freq1data_init[] PROGMEM;
+extern const unsigned char freq2data_init[] PROGMEM;
+extern const unsigned char freq3data_init[] PROGMEM;
+void ESP8266SAM::Init()
 {
 	int i;
 	SetMouthThroat( mouth, throat);
@@ -95,6 +53,9 @@ void Init()
 	// TODO, check for free the memory, 10 seconds of output should be more than enough
 //	buffer = malloc(22050*10);
 
+        memcpy_P(freq1data, freq1data_init, sizeof(freq1data));
+        memcpy_P(freq2data, freq2data_init, sizeof(freq2data));
+        memcpy_P(freq3data, freq3data_init, sizeof(freq3data));
 	/*
 	freq2data = &mem[45136];
 	freq1data = &mem[45056];
@@ -139,7 +100,7 @@ void (*outcb)(void *, unsigned char) = NULL;
 void *outcbdata = NULL;
 
 //int Code39771()
-int SAMMain( void (*cb)(void *, unsigned char), void *cbd )
+int ESP8266SAM::SAMMain( void (*cb)(void *, unsigned char), void *cbd )
 {
   outcb = cb;
   outcbdata = cbd;
@@ -179,7 +140,7 @@ int SAMMain( void (*cb)(void *, unsigned char), void *cbd )
 	return 1;
 }
 
-int SAMPrepare()
+int ESP8266SAM::SAMPrepare()
 {
   Init();
   phonemeindex[255] = 32; //to prevent buffer overflow
@@ -208,7 +169,7 @@ int SAMPrepare()
 
 
 //void Code48547()
-void PrepareOutput()
+void ESP8266SAM::PrepareOutput()
 {
 	A = 0;
 	X = 0;
@@ -253,7 +214,7 @@ void PrepareOutput()
 }
 
 //void Code48431()
-void InsertBreath()
+void ESP8266SAM::InsertBreath()
 {
 	unsigned char mem54;
 	unsigned char mem55;
@@ -317,7 +278,7 @@ void InsertBreath()
 
 
 //void Code41883()
-void CopyStress()
+void ESP8266SAM::CopyStress()
 {
     // loop thought all the phonemes to be output
 	unsigned char pos=0; //mem66
@@ -360,7 +321,7 @@ void CopyStress()
 
 
 //void Code41014()
-void Insert(unsigned char position/*var57*/, unsigned char mem60, unsigned char mem59, unsigned char mem58)
+void ESP8266SAM::Insert(unsigned char position/*var57*/, unsigned char mem60, unsigned char mem59, unsigned char mem58)
 {
 	int i;
 	for(i=253; i >= position; i--) // ML : always keep last safe-guarding 255
@@ -427,7 +388,7 @@ void Insert(unsigned char position/*var57*/, unsigned char mem60, unsigned char 
 // The character <0x9B> marks the end of text in input[]. When it is reached,
 // the index 255 is placed at the end of the phonemeIndexTable[], and the
 // function returns with a 1 indicating success.
-int Parser1()
+int ESP8266SAM::Parser1()
 {
 	int i;
 	unsigned char sign1;
@@ -557,7 +518,7 @@ pos41134:
 
 //change phonemelength depedendent on stress
 //void Code41203()
-void SetPhonemeLength()
+void ESP8266SAM::SetPhonemeLength()
 {
 	unsigned char A;
 	int position = 0;
@@ -577,7 +538,7 @@ void SetPhonemeLength()
 }
 
 
-void Code41240()
+void ESP8266SAM::Code41240()
 {
 	unsigned char pos=0;
 
@@ -644,7 +605,7 @@ void Code41240()
 
 
 //void Code41397()
-void Parser2()
+void ESP8266SAM::Parser2()
 {
 	if (debug) printf("Parser2\n");
 	unsigned char pos = 0; //mem66;
@@ -1093,7 +1054,7 @@ pos41812:
 
 
 //void Code48619()
-void AdjustLengths()
+void ESP8266SAM::AdjustLengths()
 {
 
     // LENGTHEN VOWELS PRECEDING PUNCTUATION
@@ -1450,7 +1411,7 @@ if (debug) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeind
 
 // -------------------------------------------------------------------------
 // ML : Code47503 is division with remainder, and mem50 gets the sign
-void Code47503(unsigned char mem52)
+void ESP8266SAM::Code47503(unsigned char mem52)
 {
 
 	Y = 0;

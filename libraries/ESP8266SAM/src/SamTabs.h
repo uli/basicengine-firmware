@@ -14,7 +14,7 @@ const unsigned char stressInputTable[] PROGMEM =
 };
 
 //tab40682
-const unsigned char signInputTable1[] PROGMEM =
+extern const unsigned char signInputTable1[] PROGMEM =
 {
 	' ', '.', '?', ',', '-', 'I', 'I', 'E',
 	'A', 'A', 'A', 'A', 'U', 'A', 'I', 'E',
@@ -30,7 +30,7 @@ const unsigned char signInputTable1[] PROGMEM =
 };
 
 //tab40763
-const unsigned char signInputTable2[] PROGMEM =
+extern const unsigned char signInputTable2[] PROGMEM =
 {
 	'*', '*', '*', '*', '*', 'Y', 'H', 'H',
 	'E', 'A', 'H', 'O', 'H', 'X', 'X', 'R',

@@ -1,3 +1,4 @@
+#include "ESP8266SAM.h"
 //#include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // abs()
@@ -9,47 +10,27 @@
 //extern int debug;
 #include <pgmspace.h>
 
-unsigned char wait1 = 7;
-unsigned char wait2 = 6;
-
-extern unsigned char A, X, Y;
-extern unsigned char mem44;
-extern unsigned char mem47;
-extern unsigned char mem49;
-extern unsigned char mem39;
-extern unsigned char mem50;
-extern unsigned char mem51;
-extern unsigned char mem53;
-extern unsigned char mem56;
-
-extern unsigned char speed;
-extern unsigned char pitch;
-extern int singmode;
+//unsigned char wait1 = 7;
+//unsigned char wait2 = 6;
 
 
-extern unsigned char phonemeIndexOutput[60]; //tab47296
-extern unsigned char stressOutput[60]; //tab47365
-extern unsigned char phonemeLengthOutput[60]; //tab47416
-
-unsigned char pitches[256]; // tab43008
-
-unsigned char frequency1[256];
-unsigned char frequency2[256];
-unsigned char frequency3[256];
-
-unsigned char amplitude1[256];
-unsigned char amplitude2[256];
-unsigned char amplitude3[256];
-
-unsigned char sampledConsonantFlag[256]; // tab44800
+//extern unsigned char speed;
+//extern unsigned char pitch;
+//extern int singmode;
 
 
-void AddInflection(unsigned char mem48, unsigned char phase1);
-unsigned char trans(unsigned char mem39212, unsigned char mem39213);
+//extern unsigned char phonemeIndexOutput[60]; //tab47296
+//extern unsigned char stressOutput[60]; //tab47365
+//extern unsigned char phonemeLengthOutput[60]; //tab47416
+
+
+
+//void AddInflection(unsigned char mem48, unsigned char phase1);
+//unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 
 
 // contains the final soundbuffer
-extern int bufferpos;
+//extern int bufferpos;
 //extern char *buffer;
 
 #ifndef ESP8266
@@ -68,9 +49,7 @@ const unsigned char timetable[5][5] PROGMEM =
 
 extern void (*outcb)(void *, unsigned char);
 extern void *outcbdata;
-static unsigned char oldtimetableindex = 0;
-static unsigned char lastAry[5];
-void Output8BitAry(int index, unsigned char ary[5])
+void ESP8266SAM::Output8BitAry(int index, unsigned char ary[5])
 {
 	int newbufferpos =  bufferpos + pgm_read_byte(&timetable[oldtimetableindex][index]);
 	int bp0 = bufferpos / 50;
@@ -81,7 +60,7 @@ void Output8BitAry(int index, unsigned char ary[5])
 	bufferpos = newbufferpos;
 	oldtimetableindex = index;
 }
-void Output8Bit(int index, unsigned char A)
+void ESP8266SAM::Output8Bit(int index, unsigned char A)
 {
 	unsigned char ary[5] = {A,A,A,A,A};
 	Output8BitAry(index, ary);
@@ -104,7 +83,7 @@ void Output8Bit(int index, unsigned char A)
 // 172=amplitude1
 // 173=amplitude2
 // 174=amplitude3
-unsigned char Read(unsigned char p, unsigned char Y)
+unsigned char ESP8266SAM::Read(unsigned char p, unsigned char Y)
 {
 	switch(p)
 	{
@@ -120,7 +99,7 @@ unsigned char Read(unsigned char p, unsigned char Y)
 	return 0;
 }
 
-void Write(unsigned char p, unsigned char Y, unsigned char value)
+void ESP8266SAM::Write(unsigned char p, unsigned char Y, unsigned char value)
 {
 
 	switch(p)
@@ -194,7 +173,7 @@ void Write(unsigned char p, unsigned char Y, unsigned char value)
 
 
 // Code48227()
-void RenderSample(unsigned char *mem66)
+void ESP8266SAM::RenderSample(unsigned char *mem66)
 {
 	int tempA;
 	// current phoneme's index
@@ -363,9 +342,8 @@ pos48315:
 // 4. Render the each frame.
 
 
-
 //void Code47574()
-void Render()
+void ESP8266SAM::Render()
 {
 	unsigned char phase1 = 0;  //mem43
 	unsigned char phase2 = 0;
@@ -909,7 +887,7 @@ pos48159:
 // index X. A rising inflection is used for questions, and
 // a falling inflection is used for statements.
 
-void AddInflection(unsigned char mem48, unsigned char phase1)
+void ESP8266SAM::AddInflection(unsigned char mem48, unsigned char phase1)
 {
 	//pos48372:
 	//	mem48 = 255;
@@ -977,7 +955,7 @@ const unsigned char mouthFormants48_53[6] PROGMEM = {19, 27, 21, 27, 18, 13};
         // formant 2 frequencies (throat) 48..53
 const unsigned char throatFormants48_53[6] PROGMEM = {72, 39, 31, 43, 30, 34};
 
-void SetMouthThroat(unsigned char mouth, unsigned char throat)
+void ESP8266SAM::SetMouthThroat(unsigned char mouth, unsigned char throat)
 {
 	unsigned char initialFrequency;
 	unsigned char newFrequency = 0;
@@ -1023,7 +1001,7 @@ void SetMouthThroat(unsigned char mouth, unsigned char throat)
 
 
 //return = (mem39212*mem39213) >> 1
-unsigned char trans(unsigned char mem39212, unsigned char mem39213)
+unsigned char ESP8266SAM::trans(unsigned char mem39212, unsigned char mem39213)
 {
 	//pos39008:
 	unsigned char carry;

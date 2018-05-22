@@ -28,11 +28,14 @@ public:
   {
     singmode = false;
     phonetic = false;
-    pitch = 0;
-    mouth = 0;
-    throat = 0;
-    speed = 0;
+    pitch = 64;
+    mouth = 128;
+    throat = 128;
+    speed = 72;
     output = NULL;
+    oldtimetableindex = 0;
+    mem59 = 0;
+    bufferpos = 0;
   };
   
   ~ESP8266SAM()
@@ -67,6 +70,83 @@ private:
   int mouth;
   int throat;
   AudioOutput *output;
+
+  // render
+  void Output8BitAry(int index, unsigned char ary[5]);
+  void Output8Bit(int index, unsigned char A);
+  unsigned char Read(unsigned char p, unsigned char Y);
+  void Write(unsigned char p, unsigned char Y, unsigned char value);
+  void RenderSample(unsigned char*);
+  void Render();
+  void AddInflection(unsigned char mem48, unsigned char phase1);
+  void SetMouthThroat(unsigned char mouth, unsigned char throat);
+  unsigned char trans(unsigned char mem39212, unsigned char mem39213);
+
+  int GetBufferLength(){return bufferpos;};
+  void Init();
+  int SAMMain( void (*cb)(void *, unsigned char), void *cbd );
+  int SAMPrepare();
+  void PrepareOutput();
+  void InsertBreath();
+  void CopyStress();
+  void Insert(unsigned char position/*var57*/, unsigned char mem60, unsigned char mem59, unsigned char mem58);
+  int Parser1();
+  void SetPhonemeLength();
+
+  void Code41240();
+  void Parser2();
+
+  void AdjustLengths();
+
+  void Code47503(unsigned char mem52);
+
+  // reciter
+  void Code37055(unsigned char mem59);
+  void Code37066(unsigned char mem58);
+  int TextToPhonemes(char *input); // Code36484
+
+  unsigned char A, X, Y;
+  unsigned char mem44;
+  unsigned char mem47;
+  unsigned char mem49;
+  unsigned char mem39;
+  unsigned char mem50;
+  unsigned char mem51;
+  unsigned char mem53;
+  unsigned char mem56;
+  unsigned char mem59;
+
+  unsigned char freq1data[80];
+  unsigned char freq2data[80];
+  unsigned char freq3data[80];
+
+  unsigned char pitches[256]; // tab43008
+
+  unsigned char frequency1[256];
+  unsigned char frequency2[256];
+  unsigned char frequency3[256];
+
+  unsigned char amplitude1[256];
+  unsigned char amplitude2[256];
+  unsigned char amplitude3[256];
+
+  unsigned char sampledConsonantFlag[256]; // tab44800
+
+  unsigned char inputtemp[256];   // secure copy of input tab36096
+
+  unsigned char oldtimetableindex;
+  unsigned char lastAry[5];
+
+  unsigned char stress[256]; //numbers from 0 to 8
+  unsigned char phonemeLength[256]; //tab40160
+  unsigned char phonemeindex[256];
+
+  unsigned char phonemeIndexOutput[60]; //tab47296
+  unsigned char stressOutput[60]; //tab47365
+  unsigned char phonemeLengthOutput[60]; //tab47416
+
+  // contains the final soundbuffer
+  int bufferpos;
 };
 
 #endif

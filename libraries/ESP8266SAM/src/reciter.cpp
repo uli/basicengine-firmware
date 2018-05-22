@@ -1,15 +1,14 @@
+#include "ESP8266SAM.h"
 #include <stdio.h>
 #include <string.h>
 #include "reciter.h"
 #include "ReciterTabs.h"
 #include "debug.h"
 
-unsigned char A, X, Y;
+//unsigned char A, X, Y;
 //extern int debug;
 
-static unsigned char inputtemp[256];   // secure copy of input tab36096
-
-void Code37055(unsigned char mem59)
+void ESP8266SAM::Code37055(unsigned char mem59)
 {
 	X = mem59;
 	X--;
@@ -19,7 +18,7 @@ void Code37055(unsigned char mem59)
 	return;
 }
 
-void Code37066(unsigned char mem58)
+void ESP8266SAM::Code37066(unsigned char mem58)
 {
 	X = mem58;
 	X++;
@@ -41,7 +40,7 @@ unsigned char GetRuleByte(unsigned short mem62, unsigned char Y)
 	return pgm_read_byte(rules+address+Y); //rules[address+Y];
 }
 
-int TextToPhonemes(char *input) // Code36484
+int ESP8266SAM::TextToPhonemes(char *input) // Code36484
 {
 	//unsigned char *tab39445 = &mem[39445];   //input and output
 	//unsigned char mem29;
