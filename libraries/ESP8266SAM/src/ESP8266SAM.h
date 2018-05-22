@@ -86,6 +86,7 @@ private:
   unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 
   int GetBufferLength(){return bufferpos;};
+  void SetInput(char *_input);
   void Init();
   int SAMMain( void (*cb)(void *, unsigned char), void *cbd );
   int SAMPrepare();

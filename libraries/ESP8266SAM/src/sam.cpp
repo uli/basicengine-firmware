@@ -21,7 +21,7 @@ static char input[256]; //tab39445
 //char *buffer = NULL;
 
 
-void SetInput(char *_input)
+void ESP8266SAM::SetInput(char *_input)
 {
 	int i, l;
 	l = strlen(_input);
