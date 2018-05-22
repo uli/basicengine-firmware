@@ -36,6 +36,9 @@ public:
     oldtimetableindex = 0;
     mem59 = 0;
     bufferpos = 0;
+    memset(amplitude1, 0, 256);
+    memset(amplitude2, 0, 256);
+    memset(amplitude3, 0, 256);
   };
   
   ~ESP8266SAM()
