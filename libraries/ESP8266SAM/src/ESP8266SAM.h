@@ -39,6 +39,7 @@ public:
     memset(amplitude1, 0, 256);
     memset(amplitude2, 0, 256);
     memset(amplitude3, 0, 256);
+    prepo_reset_xy = false;
   };
   
   ~ESP8266SAM()
@@ -63,6 +64,9 @@ public:
     Say(out, ram);
   };
 
+  bool moreSamples();
+
+
 private:
   static void OutputByteCallback(void *cbdata, unsigned char b);
   void OutputByte(unsigned char b);
@@ -79,8 +83,9 @@ private:
   void Output8Bit(int index, unsigned char A);
   unsigned char Read(unsigned char p, unsigned char Y);
   void Write(unsigned char p, unsigned char Y, unsigned char value);
-  void RenderSample(unsigned char*);
+  void RenderSample();
   void Render();
+  void RenderLoop();
   void AddInflection(unsigned char mem48, unsigned char phase1);
   void SetMouthThroat(unsigned char mouth, unsigned char throat);
   unsigned char trans(unsigned char mem39212, unsigned char mem39213);
@@ -120,6 +125,15 @@ private:
   unsigned char mem56;
   unsigned char mem59;
 
+  unsigned char mem48;
+  unsigned char phase1;  //mem43
+  unsigned char phase2;
+  unsigned char phase3;
+  unsigned char mem38;
+  unsigned char speedcounter; //mem45
+
+  unsigned char mem66;
+
   unsigned char freq1data[80];
   unsigned char freq2data[80];
   unsigned char freq3data[80];
@@ -151,7 +165,22 @@ private:
 
   // contains the final soundbuffer
   int bufferpos;
+  
+  enum {
+    RENDER_IDLE,
+    RENDER_PREP,
+    RENDER_PREP_RESTORE,
+    RENDER_REND,
+    RENDER_LOOP,
+    RENDER_SAMPLE_1,
+    RENDER_SAMPLE_2,
+    RENDER_SAMPLE_3,
+    RENDER_SAMPLE_END,
+  } render_state;
+  bool last_loop;
+  int last_render_sample_call;
+  bool prepo_reset_xy;
+  unsigned char prepo_reset_x_value;
 };
 
 #endif
-

@@ -68,9 +68,38 @@ void ESP8266SAM::Say(AudioOutput *out, const char *str)
   }
 
   // Say it!
-  output = out;
+//  output = out;
   SetInput(input);
   SAMMain(OutputByteCallback, (void*)this);
+  render_state = RENDER_PREP;
+}
+
+bool ESP8266SAM::moreSamples()
+{
+  for (;;) {
+    switch (render_state) {
+    case RENDER_IDLE:
+      return false;
+    case RENDER_PREP:
+    case RENDER_PREP_RESTORE:
+      PrepareOutput();
+      break;
+    case RENDER_REND:
+      Render();
+      break;
+    case RENDER_LOOP:
+    case RENDER_SAMPLE_END:
+      RenderLoop();
+      return true;
+    case RENDER_SAMPLE_1:
+    case RENDER_SAMPLE_2:
+    case RENDER_SAMPLE_3:
+      RenderSample();
+      return true;
+    default:
+      exit(1);
+    }
+  }
 }
 
 void ESP8266SAM::SetVoice(enum SAMVoice voice)

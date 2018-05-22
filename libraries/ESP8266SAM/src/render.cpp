@@ -173,9 +173,13 @@ void ESP8266SAM::Write(unsigned char p, unsigned char Y, unsigned char value)
 
 
 // Code48227()
-void ESP8266SAM::RenderSample(unsigned char *mem66)
+void ESP8266SAM::RenderSample()
 {
 	int tempA;
+	if (render_state == RENDER_SAMPLE_1)
+	  goto render_sample_1;
+        else if (render_state == RENDER_SAMPLE_2)
+          goto render_sample_2;
 	// current phoneme's index
 	mem49 = Y;
 
@@ -234,12 +238,18 @@ pos48280:
 		//mem[54296] = X;
         // output the byte
 		Output8Bit(1, (X&0xf)*16);
+		render_state = RENDER_SAMPLE_1;
+		return;
+render_sample_1:
 		// if X != 0, exit loop
 		if(X != 0) goto pos48296;
 	}
 
 	// output a 5 for the on bit
 	Output8Bit(2, 5*16);
+	render_state = RENDER_SAMPLE_2;
+	return;
+render_sample_2:
 
 	//48295: NOP
 pos48296:
@@ -259,6 +269,7 @@ pos48296:
 	// restore values and return
 	mem44 = 1;
 	Y = mem49;
+	render_state = RENDER_SAMPLE_END;
 	return;
 
 
@@ -270,7 +281,7 @@ pos48315:
    // number of samples?
 	phase1 = A ^ 255;
 
-	Y = *mem66;
+	Y = mem66;
 	do
 	{
 		//pos48321:
@@ -304,6 +315,9 @@ pos48315:
 				X=6;
 				Output8Bit(4, (X&0xf)*16);
 			}
+			render_state = RENDER_SAMPLE_3;
+			return;
+render_sample_3:
 
 			mem56--;
 		} while(mem56 != 0);
@@ -320,8 +334,9 @@ pos48315:
 	// restore values and return
 	A = 1;
 	mem44 = 1;
-	*mem66 = Y;
+	mem66 = Y;
 	Y = mem49;
+	render_state = RENDER_SAMPLE_END;
 	return;
 }
 
@@ -345,16 +360,17 @@ pos48315:
 //void Code47574()
 void ESP8266SAM::Render()
 {
-	unsigned char phase1 = 0;  //mem43
-	unsigned char phase2 = 0;
-	unsigned char phase3 = 0;
-	unsigned char mem66 = 0;
-	unsigned char mem38 = 0;
+  mem48 = 0;
+  phase1 = 0;
+  phase2 = 0;
+  phase3 = 0;
+  mem38 = 0;
+  speedcounter = 0;
+  mem66 = 0;
+  printf("render\n");
 	unsigned char mem40 = 0;
-	unsigned char speedcounter = 0; //mem45
-	unsigned char mem48 = 0;
 	int i;
-	if (phonemeIndexOutput[0] == 255) return; //exit if no data
+	if (phonemeIndexOutput[0] == 255) { render_state = RENDER_IDLE; return; }//exit if no data
 
 	A = 0;
 	X = 0;
@@ -774,6 +790,18 @@ if (debug)
         PrintOutput(sampledConsonantFlag, frequency1, frequency2, frequency3, amplitude1, amplitude2, amplitude3, pitches);
 }
 
+  render_state = RENDER_LOOP;
+}
+
+void ESP8266SAM::RenderLoop()
+{
+  if (render_state == RENDER_SAMPLE_END) {
+    render_state = RENDER_LOOP;
+    if (last_render_sample_call == 1)
+      goto render_sample_call_1;
+    else
+      goto render_sample_call_2;
+  }
 // PROCESS THE FRAMES
 //
 // In traditional vocal synthesis, the glottal pulse drives filters, which
@@ -785,8 +813,6 @@ if (debug)
 
 	//finally the loop for sound output
 	//pos48078:
-	while(1)
-	{
         // get the sampled information on the phoneme
 		A = sampledConsonantFlag[Y];
 		mem39 = A;
@@ -796,8 +822,12 @@ if (debug)
 		if(A != 0)
 		{
             // render the sample for the phoneme
-			RenderSample(&mem66);
-
+			RenderSample();
+                if (render_state != RENDER_SAMPLE_END) {
+                  last_render_sample_call = 1;
+                  return;
+                }
+render_sample_call_1:
 			// skip ahead two in the phoneme buffer
 			Y += 2;
 			mem48 -= 2;
@@ -835,7 +865,13 @@ if (debug)
 		}
 
 		// if the frame count is zero, exit the loop
-		if(mem48 == 0) 	return;
+		if(mem48 == 0) 	{
+		  if (last_loop)
+		    render_state = RENDER_IDLE;
+                  else
+                    render_state = RENDER_PREP;
+                  return;
+                }
 		speedcounter = speed;
 pos48155:
 
@@ -857,7 +893,7 @@ pos48159:
 			phase1 = 0;
 			phase2 = 0;
 			phase3 = 0;
-			continue;
+			return;
 		}
 
 		// decrement the count
@@ -870,15 +906,19 @@ pos48159:
 			phase1 += frequency1[Y];
 			phase2 += frequency2[Y];
 			phase3 += frequency3[Y];
-			continue;
+			return;
 		}
 
 		// voiced sampled phonemes interleave the sample with the
 		// glottal pulse. The sample flag is non-zero, so render
 		// the sample for the phoneme.
-		RenderSample(&mem66);
+		RenderSample();
+              if (render_state != RENDER_SAMPLE_END) {
+                last_render_sample_call = 2;
+                return;
+              }
+render_sample_call_2:
 		goto pos48159;
-	} //while
 
 }
 

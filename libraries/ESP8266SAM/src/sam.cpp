@@ -133,7 +133,9 @@ int ESP8266SAM::SAMMain( void (*cb)(void *, unsigned char), void *cbd )
 		PrintPhonemes(phonemeindex, phonemeLength, stress);
 	}
 
-	PrepareOutput();
+	A = 0;
+	X = 0;
+	Y = 0;
 
 	return 1;
 }
@@ -169,9 +171,12 @@ int ESP8266SAM::SAMPrepare()
 //void Code48547()
 void ESP8266SAM::PrepareOutput()
 {
-	A = 0;
-	X = 0;
-	Y = 0;
+  if (prepo_reset_xy) {
+    prepo_reset_xy = false;
+    X = prepo_reset_x_value;
+    Y = 0;
+  }
+  last_loop = false;
 
 	//pos48551:
 	while(1)
@@ -181,7 +186,8 @@ void ESP8266SAM::PrepareOutput()
 		{
 			A = 255;
 			phonemeIndexOutput[Y] = 255;
-			Render();
+			render_state = RENDER_REND;
+			last_loop = true;
 			return;
 		}
 		if (A == 254)
@@ -190,11 +196,11 @@ void ESP8266SAM::PrepareOutput()
 			int temp = X;
 			//mem[48546] = X;
 			phonemeIndexOutput[Y] = 255;
-			Render();
+			render_state = RENDER_REND;
 			//X = mem[48546];
-			X=temp;
-			Y = 0;
-			continue;
+			prepo_reset_xy = true;
+			prepo_reset_x_value = temp;
+			return;
 		}
 
 		if (A == 0)
