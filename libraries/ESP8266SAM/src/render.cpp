@@ -181,6 +181,8 @@ void ESP8266SAM::RenderSample()
     goto render_sample_1;
   else if (render_state == RENDER_SAMPLE_2)
     goto render_sample_2;
+  else if (render_state == RENDER_SAMPLE_3)
+    goto render_sample_3;
   // current phoneme's index
   mem49 = Y;
 
@@ -273,8 +275,6 @@ pos48296:
   render_state = RENDER_SAMPLE_END;
   return;
 
-
-  unsigned char phase1;
 
 pos48315:
 // handle voiced samples here
@@ -828,6 +828,7 @@ void ESP8266SAM::RenderLoop()
       last_render_sample_call = 1;
       return;
     }
+    render_state = RENDER_LOOP;
 render_sample_call_1:
     // skip ahead two in the phoneme buffer
     Y += 2;
@@ -918,6 +919,7 @@ pos48159:
     last_render_sample_call = 2;
     return;
   }
+  render_state = RENDER_LOOP;
 render_sample_call_2:
   goto pos48159;
 
