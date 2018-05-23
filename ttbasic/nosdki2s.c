@@ -20,7 +20,6 @@
 
 // I2S frequency dividers. Base clock appears to be 160 MHz.
 #define WS_I2S_BCK 6
-#define WS_I2S_DIV 52
 
 volatile uint32_t * const DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * const DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
@@ -81,7 +80,7 @@ void nosdk_i2s_clear_buf()
 }
 #endif
 
-void InitI2S()
+void InitI2S(uint32_t samplerate)
 {
 #ifdef ENABLE_GDBSTUB
 	return;
@@ -132,10 +131,14 @@ void InitI2S()
 	I2SINT_CLRL = 0;  //Clear interrupts in I2SINT_CLR
 #endif
 	//Configure the I2SConf mode.
+	uint32_t ws_i2s_div = 160000000UL /	// base clock
+			      32 / 		// 32 bits per sample
+			      WS_I2S_BCK / 	// base clock divider
+			      samplerate;
 	I2SCONFL = I2S_RIGHT_FIRST|I2S_MSB_RIGHT|I2S_RECE_SLAVE_MOD|
 						I2S_RECE_MSB_SHIFT|I2S_TRANS_MSB_SHIFT|
 						(((WS_I2S_BCK)&I2S_BCK_DIV_NUM )<<I2S_BCK_DIV_NUM_S)|
-						(((WS_I2S_DIV)&I2S_CLKM_DIV_NUM)<<I2S_CLKM_DIV_NUM_S);
+						(((ws_i2s_div)&I2S_CLKM_DIV_NUM)<<I2S_CLKM_DIV_NUM_S);
 
 
 	//enable int

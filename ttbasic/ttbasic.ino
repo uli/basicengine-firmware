@@ -73,7 +73,7 @@ void loop(void){
 
   SpiUnlock();
 
-  InitI2S();
+  InitI2S(16000);
   SendI2S();
 
   basic();	// does not return

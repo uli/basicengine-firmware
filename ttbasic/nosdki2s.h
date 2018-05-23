@@ -21,7 +21,7 @@ static inline bool nosdk_i2s_check_guard() {
 #endif
 
 //Functions you'll call:
-void InitI2S();
+void InitI2S(uint32_t samplerate);
 
 void SendI2S();
 
