@@ -89,6 +89,12 @@ public:
 
   bool moreSamples();
 
+  void wait() {
+    while (render_state != RENDER_IDLE) {}
+  }
+  bool finished() {
+    return render_state == RENDER_IDLE;
+  }
 
 private:
   static void OutputByteCallback(void *cbdata, unsigned char b);
