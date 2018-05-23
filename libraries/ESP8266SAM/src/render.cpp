@@ -1,5 +1,4 @@
 #include "ESP8266SAM.h"
-//#include <stdio.h>
 #include <string.h>
 #include <stdlib.h> // abs()
 
@@ -7,31 +6,7 @@
 #include "RenderTabs.h"
 
 #include "debug.h"
-//extern int debug;
 #include <pgmspace.h>
-
-//unsigned char wait1 = 7;
-//unsigned char wait2 = 6;
-
-
-//extern unsigned char speed;
-//extern unsigned char pitch;
-//extern int singmode;
-
-
-//extern unsigned char phonemeIndexOutput[60]; //tab47296
-//extern unsigned char stressOutput[60]; //tab47365
-//extern unsigned char phonemeLengthOutput[60]; //tab47416
-
-
-
-//void AddInflection(unsigned char mem48, unsigned char phase1);
-//unsigned char trans(unsigned char mem39212, unsigned char mem39213);
-
-
-// contains the final soundbuffer
-//extern int bufferpos;
-//extern char *buffer;
 
 #ifndef ESP8266
 static void yield() { /* NOOP */
@@ -66,14 +41,6 @@ void ESP8266SAM::Output8Bit(int index, unsigned char A)
   unsigned char ary[5] = {A, A, A, A, A};
   Output8BitAry(index, ary);
 }
-
-
-
-
-
-
-
-
 
 //written by me because of different table positions.
 // mem[47] = ...
@@ -115,7 +82,6 @@ void ESP8266SAM::Write(unsigned char p, unsigned char Y, unsigned char value)
   }
   //printf("Error writing to tables\n");
 }
-
 
 
 // -------------------------------------------------------------------------
@@ -587,7 +553,6 @@ void ESP8266SAM::Render()
   X = 0;
   while (1)      //while No. 1
   {
-
     // get the current and following phoneme
     Y = phonemeIndexOutput[X];
     A = phonemeIndexOutput[X+1];
