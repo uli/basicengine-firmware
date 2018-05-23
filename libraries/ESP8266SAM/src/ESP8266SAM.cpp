@@ -54,14 +54,12 @@ void ESP8266SAM::OutputByte(unsigned char b)
   uint8_t sample[2];
   sample[0] = s16;
   sample[1] = s16;
-#ifdef PC_HOSTED
   buffer[bufptr_write++] = sample[0];
+#ifdef PC_HOSTED
   if (bufptr_write >= SAMPLE_BUF_SIZE) {
     printf("bufof! %d %d\n", bufptr_read, bufptr_write);
     abort();
   }
-#else
-  // XXX: do something
 #endif
 }
   
