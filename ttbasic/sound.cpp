@@ -320,7 +320,16 @@ void GROUP(basic_sound) BasicSound::render()
 {
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
-  if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
+  if (m_sam && nosdk_i2s_curr_buf_pos == 0) {
+    for (int i = 0; i < I2S_BUFLEN; ++i) {
+      nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[m_sam->getSample() >> 3]);
+    }
+    nosdk_i2s_curr_buf_pos = I2S_BUFLEN;
+    if (m_sam->finished()) {
+      delete m_sam;
+      m_sam = NULL;
+    }
+  } else if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
     tsf_render_short_fast(m_tsf, staging_buf, I2S_BUFLEN, TSF_FALSE);
     if (m_tsf->out_of_memory) {
       unloadFont();
