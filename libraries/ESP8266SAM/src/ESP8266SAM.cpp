@@ -114,7 +114,7 @@ bool ESP8266SAM::moreSamples()
       RenderSample();
       return true;
     default:
-      exit(1);
+      return false;
     }
   }
 }
