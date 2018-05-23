@@ -91,7 +91,7 @@ public:
   };
 
   bool moreSamples();
-
+  uint8_t getSample();
   void wait() {
     while (render_state != RENDER_IDLE) {}
   }

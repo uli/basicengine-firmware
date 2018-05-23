@@ -19,6 +19,18 @@
 #include <Arduino.h>
 #include <ESP8266SAM.h>
 
+uint8_t ESP8266SAM::getSample()
+{
+  if (finished())
+    return 128;
+  if (bufptr_read >= bufptr_write) {
+    bufptr_read = bufptr_write = 0;
+    if (!moreSamples())
+      return 128;
+  }
+  return buffer[bufptr_read++];
+}
+
 #ifdef PC_HOSTED
 void fill_audio(void *udata, Uint8 *stream, int len)
 {
