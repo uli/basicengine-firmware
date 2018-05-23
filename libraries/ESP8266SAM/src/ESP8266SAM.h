@@ -44,6 +44,7 @@ public:
     memset(amplitude2, 0, 256);
     memset(amplitude3, 0, 256);
     prepo_reset_xy = false;
+    render_state = RENDER_IDLE;
   #ifdef PC_HOSTED
     SDL_AudioSpec wanted;
     wanted.freq = 22050;
