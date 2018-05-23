@@ -92,6 +92,7 @@ public:
     static ESP8266SAM *sam() {
       if (!m_sam)
         m_sam = new ESP8266SAM;
+      m_sam_done_time = 0;
       return m_sam;
     }
 
@@ -136,6 +137,7 @@ private:
     static BString m_font_name;
 #endif
 
+    static uint32_t m_sam_done_time;
     static ESP8266SAM *m_sam;
 };
 
