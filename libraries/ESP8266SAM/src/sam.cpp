@@ -45,15 +45,15 @@ extern const unsigned char freq3data_init[] PROGMEM;
 void ESP8266SAM::Init()
 {
   int i;
+  memcpy_P(freq1data, freq1data_init, sizeof(freq1data));
+  memcpy_P(freq2data, freq2data_init, sizeof(freq2data));
+  memcpy_P(freq3data, freq3data_init, sizeof(freq3data));
   SetMouthThroat( mouth, throat);
 
   bufferpos = 0;
   // TODO, check for free the memory, 10 seconds of output should be more than enough
 //	buffer = malloc(22050*10);
 
-  memcpy_P(freq1data, freq1data_init, sizeof(freq1data));
-  memcpy_P(freq2data, freq2data_init, sizeof(freq2data));
-  memcpy_P(freq3data, freq3data_init, sizeof(freq3data));
   /*
      freq2data = &mem[45136];
      freq1data = &mem[45056];
