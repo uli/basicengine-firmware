@@ -28,6 +28,12 @@
 extern void fill_audio(void *udata, Uint8 *stream, int len);
 #endif
 
+#ifdef DEBUG_SAM
+#define dbg_sam(x...) printf(x)
+#else
+#define dbg_sam(x...) do {} while(0)
+#endif
+
 class ESP8266SAM {
 
 public:
