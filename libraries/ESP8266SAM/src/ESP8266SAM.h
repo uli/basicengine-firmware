@@ -194,6 +194,8 @@ private:
   unsigned char stressOutput[60]; //tab47365
   unsigned char phonemeLengthOutput[60]; //tab47416
 
+  char input[256];
+
   // contains the final soundbuffer
   int bufferpos;
   

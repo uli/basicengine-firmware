@@ -6,7 +6,6 @@
 #include "debug.h"
 #include "SamTabs.h"
 
-static char input[256]; //tab39445
 //standard sam sound
 //unsigned char speed = 72;
 //unsigned char pitch = 64;
