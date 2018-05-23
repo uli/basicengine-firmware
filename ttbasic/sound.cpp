@@ -328,6 +328,7 @@ void GROUP(basic_sound) BasicSound::render()
       } else if (millis() > m_sam_done_time + 5000) {
         delete m_sam;
         m_sam = NULL;
+        InitI2S(16000);
       }
     }
     if (m_sam) {

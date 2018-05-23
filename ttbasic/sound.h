@@ -93,6 +93,7 @@ public:
       if (!m_sam)
         m_sam = new ESP8266SAM;
       m_sam_done_time = 0;
+      InitI2S(22050);
       return m_sam;
     }
 
