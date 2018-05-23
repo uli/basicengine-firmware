@@ -67,6 +67,9 @@ void ESP8266SAM::OutputByte(unsigned char b)
   
 void ESP8266SAM::Say(const char *str)
 {
+  // dump remaining samples
+  while (moreSamples()) { bufptr_write = 0; }
+
   if (!str || strlen(str)>254) return; // Only can speak up to 1 page worth of data...
   
   // Input massaging
