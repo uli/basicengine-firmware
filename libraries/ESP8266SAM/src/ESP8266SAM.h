@@ -67,7 +67,6 @@ public:
       exit(1);
     }
     SDL_PauseAudio(0);
-  #else
   #endif
   };
   
