@@ -368,7 +368,7 @@ void ESP8266SAM::Render()
   mem38 = 0;
   speedcounter = 0;
   mem66 = 0;
-  printf("render\n");
+  dbg_sam("render\n");
   unsigned char mem40 = 0;
   int i;
   if (phonemeIndexOutput[0] == 255) { render_state = RENDER_IDLE; return; }      //exit if no data

@@ -57,7 +57,7 @@ void ESP8266SAM::OutputByte(unsigned char b)
   buffer[bufptr_write++] = sample[0];
 #ifdef PC_HOSTED
   if (bufptr_write >= SAMPLE_BUF_SIZE) {
-    printf("bufof! %d %d\n", bufptr_read, bufptr_write);
+    dbg_sam("bufof! %d %d\n", bufptr_read, bufptr_write);
     abort();
   }
 #endif
@@ -83,6 +83,7 @@ void ESP8266SAM::Say(const char *str)
     strncat(input, "[", 255);
     if (!TextToPhonemes(input)) return; // ERROR
   }
+  dbg_sam("ph %s\n", input);
 
   // Say it!
 //  output = out;
