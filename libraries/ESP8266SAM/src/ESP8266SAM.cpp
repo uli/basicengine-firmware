@@ -69,14 +69,6 @@ void ESP8266SAM::Say(const char *str)
 {
   if (!str || strlen(str)>254) return; // Only can speak up to 1 page worth of data...
   
-
-  // SAM settings
-  SetSingMode(singmode);
-  if (speed) SetSpeed(speed);
-  if (pitch) SetPitch(pitch);
-  if (mouth) SetMouth(mouth);
-  if (throat) SetThroat(throat);
-
   // Input massaging
   char input[256];
   for (int i=0; str[i]; i++)
