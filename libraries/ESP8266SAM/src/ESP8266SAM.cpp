@@ -35,15 +35,8 @@ uint8_t ESP8266SAM::getSample()
 void fill_audio(void *udata, Uint8 *stream, int len)
 {
   ESP8266SAM *sam = (ESP8266SAM *)udata;
-  while (len) {
-    if (bufptr_read < bufptr_write) {
-      *stream++ = buffer[bufptr_read++];
-      len--;
-    } else {
-      bufptr_read = bufptr_write = 0;
-      if (!sam->moreSamples())
-        break;
-    }
+  while (len--) {
+    *stream++ = sam->getSample();
   }
 }
 #endif
