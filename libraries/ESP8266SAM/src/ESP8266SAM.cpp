@@ -20,9 +20,6 @@
 #include <ESP8266SAM.h>
 
 #ifdef PC_HOSTED
-uint8_t buffer[BUFSIZE];
-int bufptr_read = 0;
-int bufptr_write = 0;
 void fill_audio(void *udata, Uint8 *stream, int len)
 {
   ESP8266SAM *sam = (ESP8266SAM *)udata;
@@ -54,7 +51,7 @@ void ESP8266SAM::OutputByte(unsigned char b)
   sample[1] = s16;
 #ifdef PC_HOSTED
   buffer[bufptr_write++] = sample[0];
-  if (bufptr_write >= BUFSIZE) {
+  if (bufptr_write >= SAMPLE_BUF_SIZE) {
     printf("bufof! %d %d\n", bufptr_read, bufptr_write);
     abort();
   }

@@ -20,9 +20,11 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+
+#define SAMPLE_BUF_SIZE 16
+
 #ifdef PC_HOSTED
 #include <SDL/SDL.h>
-#define BUFSIZE 16
 extern void fill_audio(void *udata, Uint8 *stream, int len);
 #endif
 
@@ -45,6 +47,7 @@ public:
     memset(amplitude3, 0, 256);
     prepo_reset_xy = false;
     render_state = RENDER_IDLE;
+    bufptr_read = bufptr_write = 0;
   #ifdef PC_HOSTED
     SDL_AudioSpec wanted;
     wanted.freq = 22050;
@@ -206,9 +209,13 @@ private:
     RENDER_SAMPLE_END,
   } render_state;
   bool last_loop;
-  int last_render_sample_call;
+  int8_t last_render_sample_call;
   bool prepo_reset_xy;
   unsigned char prepo_reset_x_value;
+
+  uint8_t buffer[SAMPLE_BUF_SIZE];
+  int8_t bufptr_read;
+  int8_t bufptr_write;
 };
 
 #endif
