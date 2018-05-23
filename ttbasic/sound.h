@@ -34,6 +34,8 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #endif	// HAVE_TSF
 
+#include "ESP8266SAM.h"
+
 extern "C" {
 #include "nosdki2s.h"
 };
@@ -87,6 +89,12 @@ public:
     static void beep(int period, int vol = 15, const uint8_t *env = NULL);
     static void noBeep();
 
+    static ESP8266SAM *sam() {
+      if (!m_sam)
+        m_sam = new ESP8266SAM;
+      return m_sam;
+    }
+
 private:
     static void setBeep(int period, int vol);
 
@@ -127,6 +135,8 @@ private:
     static uint32_t m_all_done_time;
     static BString m_font_name;
 #endif
+
+    static ESP8266SAM *m_sam;
 };
 
 extern BasicSound sound;

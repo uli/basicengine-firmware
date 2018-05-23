@@ -224,6 +224,7 @@ void BasicSound::begin(void)
   }
 #endif
   m_beep_env = NULL;
+  m_sam = NULL;
 }
 
 #ifdef HAVE_MML
@@ -394,5 +395,7 @@ void BasicSound::noBeep()
   memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
   nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
+
+ESP8266SAM *BasicSound::m_sam;
 
 BasicSound sound;
