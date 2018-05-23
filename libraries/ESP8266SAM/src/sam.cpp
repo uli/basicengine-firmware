@@ -1391,7 +1391,7 @@ pos48644:
       index = phonemeindex[X-1];
 
       // prior phoneme a stop consonant>
-      if ((pgm_read_byte(&flags[index]) & 2) != 0)
+      if ((pgm_read_byte(&flags[index]) & 2) != 0) {
 	// Rule: <LIQUID CONSONANT> <DIPHTONG>
 
 	if (debug) printf("RULE: <LIQUID CONSONANT> <DIPHTONG> - decrease by 2\n");
@@ -1403,6 +1403,7 @@ pos48644:
 
       if (debug) printf("POST\n");
       if (debug) printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[phonemeindex[X]], signInputTable2[phonemeindex[X]], phonemeLength[X]);
+      }
     }
 
     // move to next phoneme
