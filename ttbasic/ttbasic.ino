@@ -38,9 +38,6 @@ extern "C" {
 void basic();
 uint8_t serialMode;
 
-extern "C" void setSample(uint8_t s);
-void SpiRamVideoInit();
-
 void setup(void){
   // That does not seem to be necessary on ESP8266.
   //randomSeed(analogRead(PA0));
@@ -62,17 +59,20 @@ void setup(void){
 }
 
 void loop(void){
-  Serial.println("\nStarting");Serial.flush();
+  Serial.println(F("\nStarting")); Serial.flush();
 
   SPI.pins(14, 12, 13, 15);
   SPI.setDataMode(SPI_MODE0);
+  // Set up VS23 chip select.
   digitalWrite(15, HIGH);
   pinMode(15, OUTPUT);
   SPI.begin();
+  // Default to safe frequency.
   SPI.setFrequency(11000000);
 
   SpiUnlock();
 
+  // Initialize I2S to default sample rate, start transmission.
   InitI2S(16000);
   SendI2S();
 
