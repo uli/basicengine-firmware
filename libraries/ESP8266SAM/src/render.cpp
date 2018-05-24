@@ -51,7 +51,7 @@ void ESP8266SAM::Output8Bit(int index, unsigned char A)
 // 172=amplitude1
 // 173=amplitude2
 // 174=amplitude3
-unsigned char ESP8266SAM::Read(unsigned char p, unsigned char Y)
+unsigned char __attribute__((optimize ("no-jump-tables"))) ESP8266SAM::Read(unsigned char p, unsigned char Y)
 {
   switch (p)
   {
@@ -67,7 +67,7 @@ unsigned char ESP8266SAM::Read(unsigned char p, unsigned char Y)
   return 0;
 }
 
-void ESP8266SAM::Write(unsigned char p, unsigned char Y, unsigned char value)
+void __attribute__((optimize ("no-jump-tables"))) ESP8266SAM::Write(unsigned char p, unsigned char Y, unsigned char value)
 {
 
   switch (p)

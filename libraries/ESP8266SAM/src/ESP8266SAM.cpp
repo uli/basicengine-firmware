@@ -92,7 +92,7 @@ void ESP8266SAM::Say(const char *str)
   render_state = RENDER_PREP;
 }
 
-bool ESP8266SAM::moreSamples()
+bool __attribute__((optimize ("no-jump-tables"))) ESP8266SAM::moreSamples()
 {
   for (;;) {
     switch (render_state) {
