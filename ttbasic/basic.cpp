@@ -4095,6 +4095,18 @@ void iplay() {
 #endif
 }
 
+void isay() {
+  BString text = istrexp();
+  if (err)
+    return;
+  ESP8266SAM *sam = sound.sam();
+  if (!sam) {
+    err = ERR_OOM;
+    return;
+  }
+  sam->Say(text.c_str());
+}
+
 // POINT(X,Y)関数の処理
 num_t BASIC_INT npoint() {
   int x, y;  // 座標

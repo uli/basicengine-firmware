@@ -19,6 +19,7 @@ bool BasicSound::m_finished[SOUND_CHANNELS];
 #ifdef HAVE_TSF
 uint32_t BasicSound::m_all_done_time;
 #endif
+uint32_t BasicSound::m_sam_done_time;
 
 #ifdef HAVE_MML
 uint32_t BasicSound::m_off_time[SOUND_CHANNELS];
@@ -224,6 +225,7 @@ void BasicSound::begin(void)
   }
 #endif
   m_beep_env = NULL;
+  m_sam = NULL;
 }
 
 #ifdef HAVE_MML
@@ -319,7 +321,23 @@ void GROUP(basic_sound) BasicSound::render()
 {
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
-  if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
+  if (m_sam && nosdk_i2s_curr_buf_pos == 0) {
+    if (m_sam->finished()) {
+      if (!m_sam_done_time) {
+        m_sam_done_time = millis();
+      } else if (millis() > m_sam_done_time + 5000) {
+        delete m_sam;
+        m_sam = NULL;
+        InitI2S(16000);
+      }
+    }
+    if (m_sam) {
+      for (int i = 0; i < I2S_BUFLEN; ++i) {
+        nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[m_sam->getSample() >> 3]);
+      }
+      nosdk_i2s_curr_buf_pos = I2S_BUFLEN;
+    }
+  } else if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
     tsf_render_short_fast(m_tsf, staging_buf, I2S_BUFLEN, TSF_FALSE);
     if (m_tsf->out_of_memory) {
       unloadFont();
@@ -394,5 +412,7 @@ void BasicSound::noBeep()
   memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
   nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
+
+ESP8266SAM *BasicSound::m_sam;
 
 BasicSound sound;
