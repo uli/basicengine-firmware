@@ -114,6 +114,7 @@ ERROR	I_ERROR		ierror
 SET	I_SET		iset
 SEEK	I_SEEK		iseek
 SAY	I_SAY		isay
+CREDITS	I_CREDITS	icredits
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr

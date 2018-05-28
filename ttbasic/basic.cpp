@@ -29,6 +29,7 @@
 
 #include "basic.h"
 #include "net.h"
+#include "credits.h"
 
 struct unaligned_num_t {
   num_t n;
@@ -5128,6 +5129,10 @@ void iframeskip() {
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
+}
+
+void icredits() {
+  c_puts_P(__credits);
 }
 
 #include "Psx.h"
