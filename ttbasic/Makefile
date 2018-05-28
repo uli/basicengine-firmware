@@ -36,9 +36,10 @@ version.h: ../.git/index
 clean:
 	rm -fr $(BUILD_PATH)/*
 	rm -fr $(BUILD_PATH)_NET/*
+	rm -f ../doc/reference*.adoc ../doc/manual.html
 
 doc:
-	bash scripts/mkref.sh
+	bash scripts/mkref.sh || true
 
 SER ?= /dev/ttyUSB0
 upload: elf
