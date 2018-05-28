@@ -4,7 +4,7 @@ BUILD_PATH = $(PWD)/../build
 
 DEST_ADDR = 0x00000000
 
-all: elf
+all: elf doc
 
 elf:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
@@ -36,6 +36,9 @@ version.h: ../.git/index
 clean:
 	rm -fr $(BUILD_PATH)/*
 	rm -fr $(BUILD_PATH)_NET/*
+
+doc:
+	bash scripts/mkref.sh
 
 SER ?= /dev/ttyUSB0
 upload: elf
