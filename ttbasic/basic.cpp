@@ -3476,7 +3476,16 @@ void ivpoke() {
   SpiRamWriteByte(addr, value);
 }
   
-// カーソル移動 LOCATE x,y
+/***bc scr LOCATE
+Moves the text cursor to the specified position.
+\usage LOCATE x_pos, y_pos
+\args
+@x_pos	cursor X coordinate +
+        [`0` to `CSIZE(0)-1`]
+@y_pos	cursor Y coordinate +
+        [`0` to `CSIZE(1)-1`]
+\ref CSIZE()
+***/
 void ilocate() {
   int32_t x,  y;
   if ( getParam(x, I_COMMA) ) return;
@@ -3492,7 +3501,14 @@ void ilocate() {
   sc0.locate((uint16_t)x, (uint16_t)y);
 }
 
-// 文字色の指定 COLOR fc,bc
+/***bc scr COLOR
+Changes the foreground and background color for text output.
+\usage COLOR fg_color[, bg_color]
+\args
+@fg_color	Foreground color [`0` to `255`]
+@bg_color	Background color [`0` to `255`, default: `0`]
+\ref RGB()
+***/
 void icolor() {
   int32_t fc,  bgc = 0;
   if ( getParam(fc, 0, 255, I_NONE) ) return;
@@ -3912,7 +3928,14 @@ void idate() {
 #endif
 }
 
-// ドットの描画 PSET X,Y,C
+/***bc pix PSET
+Draws a pixel.
+\usage PSET x_coord, y_coord, color
+\args
+@x_coord The X coordinate of the pixel.
+@y_coord The Y coordinate of the pixel.
+\ref RGB()
+***/
 void ipset() {
   int32_t x,y,c;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
@@ -3924,7 +3947,21 @@ void ipset() {
   sc0.pset(x,y,c);
 }
 
-// 直線の描画 LINE X1,Y1,X2,Y2,C
+/***bc pix LINE
+Draws a line.
+\usage
+LINE x1_coord, y1_coord, x2_coord, y2_coord, color
+\args
+@x1_coord The X coordinate of the line's starting point. +
+          [`0` to `PSIZE(0)-1`]
+@y1_coord The Y coordinate of the line's starting point. +
+          [`0` to `PSIZE(1)-1`]
+@x2_coord The X coordinate of the line's end point. +
+          [`0` to `PSIZE(0)-1`]
+@y2_coord The Y coordinate of the line's end point. +
+          [`0` to `PSIZE(1)-1`]
+\ref PSIZE() RGB()
+***/
 void iline() {
   int32_t x1,x2,y1,y2,c;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
@@ -3940,7 +3977,21 @@ void iline() {
   sc0.line(x1, y1, x2, y2, c);
 }
 
-// 円の描画 CIRCLE X,Y,R,C,F
+/***bc pix CIRCLE
+Draws a circle.
+
+\usage CIRCLE x_coord, y_coord, radius, color, fill_color
+
+\args
+@x_coord	The X coordinate of the circle's center.
+@y_coord	The Y coordinate of the circle's center.
+@radius		The circle's radius.
+@color		The color of the circle's outline.
+@fill_color	The color of the circle's body.
+
+\bugs
+It is not possible to draw a non-filled circle.
+***/
 void icircle() {
   int32_t x, y, r, c, f;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
@@ -4040,6 +4091,18 @@ void SMALL ismode() {
   Serial.begin(baud, (enum SerialConfig)flags);
 }
 
+/***bc snd BEEP
+Produces a sound using the "beeper" sound engine.
+\usage BEEP period[, volume]
+\args
+@period	- tone cycle period in samples [`0` (off) to `320`/`160`]
+@volume	- tone volume +
+          [`0` to `15`, default: as set in system configuration]
+\note
+The maximum value for `period` depends on the flavor of Engine BASIC;
+it's 320 for the gaming build, and 160 for the network build.
+\ref CONFIG
+***/
 void ibeep() {
   int32_t period;
   int32_t vol = CONFIG.beep_volume;
@@ -4414,7 +4477,12 @@ void SMALL ildbmp() {
   }
 }
 
-// MKDIR "ファイル名"
+/***bc fs MKDIR
+Creates a directory.
+\usage MKDIR directory$
+\args
+@directory$	The path to the new directory.
+***/
 void imkdir() {
   uint8_t rc;
   BString fname;
@@ -5286,6 +5354,24 @@ void SMALL error(uint8_t flgCmd = false) {
   err_expected = NULL;
 }
 
+/***bf scr RGB
+Converts RGB value to hardware color value.
+\desc
+All Engine BASIC commands that require a color value expect that value
+to be in the video controller's format, which depends on the <<PALETTE>>
+setting.
+
+RGB() can be used to calculate hardware color values from the more easily
+understood RGB format, and can also help with programs that need to work
+with different color palettes.
+\usage color = RGB(red, green, blue)
+\args
+@red	Red component [0 to 255]
+@green	Green component [0 to 255]
+@blue	Blue component [0 to 255]
+\ret YUV color value
+\ref PALETTE COLOR
+***/
 num_t BASIC_FP nrgb() {
   int32_t r, g, b;
   if (checkOpen() ||
@@ -5810,6 +5896,16 @@ num_t BASIC_INT nsready() {
   return Serial.available();
 }
 
+/***bf scr CSIZE
+Returns the dimensions of the current screen mode in text characters.
+\usage size = CSIZE(dimension)
+\args
+@dimension	Requested screen dimension: +
+                `0`: text screen width +
+                `1`: text screen height
+\ret Size in characters.
+\ref FONT SCREEN
+***/
 num_t BASIC_FP ncsize() {
   // 画面サイズ定数の参照
   int32_t a = getparam();
@@ -5820,6 +5916,17 @@ num_t BASIC_FP ncsize() {
   }
 }
 
+/***bf scr PSIZE
+Returns the dimensions of the current screen mode in pixels.
+\usage size = PSIZE(dimension)
+\args
+@dimension	Requested screen dimension: +
+                `0`: screen width +
+                `1`: visible screen height +
+                `2`: total screen height
+\ret Size in pixels.
+\ref SCREEN
+***/
 num_t BASIC_FP npsize() {
   int32_t a = getparam();
   switch (a) {
@@ -5830,6 +5937,15 @@ num_t BASIC_FP npsize() {
   }
 }
 
+/***bf scr POS
+Returns the text cursor position.
+\usage position = POS(axis)
+\args
+@axis	Requested axis: +
+        `0`: horizontal +
+        `1`: vertical
+\ret Position in characters.
+***/
 num_t BASIC_FP npos() {
   int32_t a = getparam();
   switch (a) {
@@ -5853,13 +5969,26 @@ num_t ncompare() {
   return bfs.compare(one.c_str(), two.c_str());
 }
 
+/***bn io UP
+Value of the "up" direction for input devices.
+\ref PAD() DOWN LEFT RIGHT
+***/
 num_t BASIC_FP nup() {
   // カーソル・スクロール等の方向
   return psxUp;
 }
+
+/***bn io RIGHT
+Value of the "right" direction for input devices.
+\ref PAD() UP DOWN LEFT
+***/
 num_t BASIC_FP nright() {
   return psxRight;
 }
+/***bn io LEFT
+Value of the "left" direction for input devices.
+\ref PAD() UP DOWN RIGHT
+***/
 num_t BASIC_FP nleft() {
   return psxLeft;
 }
@@ -6141,6 +6270,10 @@ num_t BASIC_FP ivalue() {
 
   case I_CHAR: value = ncharfun(); break; //関数CHAR
 
+/***bn io DOWN
+Value of the "down" direction for input devices.
+\ref PAD() UP LEFT RIGHT
+***/
   case I_DOWN:  value = psxDown; break;
 
   case I_PLAY:	value = nplay(); break;
