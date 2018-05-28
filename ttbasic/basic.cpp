@@ -5161,6 +5161,45 @@ int BASIC_INT pad_state(int num)
   return 0;
 }
 
+/***bf io PAD
+Get the state of the game controller(s) and cursor pad.
+
+`PAD()` can be used to query actual game controllers, or a "virtual" controller
+simulated with cursor and letter keys on the keyboard.
+
+The special controller number `0` returns the combined state of all (real and
+virtual) controllers, making it easier to write programs that work with and
+without a game controller.
+\usage state = PAD(num)
+\args
+@num Number of the game controller: +
+     `0`: all controllers combined +
+     `1`: cursor pad +
+     `2`: PSX controller
+\ret
+Bit field representing the button states of the requested controller(s). The
+value is the sum of any of the following bit values:
+[options=header]
+|===
+| Bit value | PSX Controller | Keyboard
+| `1` (aka `<<LEFT>>`) | kbd:[&#x25c4;] button | kbd:[Left] key
+| `2` (aka `<<DOWN>>`) | kbd:[&#x25bc;] button | kbd:[Down] key
+| `4` (aka `<<RIGHT>>`) | kbd:[&#x25ba;] button | kbd:[Right] key
+| `8` (aka `<<UP>>`) | kbd:[&#x25b2;] button | kbd:[Up] key
+| `16` | kbd:[Start] button | n/a
+| `32` | kbd:[Select] button | n/a
+| `256` | kbd:[&#x25a1;] button | kbd:[Z] key
+| `512` | kbd:[&#x2715;] button | kbd:[X] key
+| `1024` | kbd:[&#x25cb;] button | kbd:[S] key
+| `2048` | kbd:[&#x25b3;] button | kbd:[A] key
+| `4096` | kbd:[R1] button | n/a
+| `8192` | kbd:[L1] button | n/a
+| `16384` | kbd:[R2] button | n/a
+| `32768` | kbd:[L2] button | n/a
+|===
+
+\ref UP DOWN LEFT RIGHT
+***/
 num_t BASIC_INT npad() {
   int32_t num;
   if (checkOpen()) return 0;
