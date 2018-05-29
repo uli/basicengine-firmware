@@ -5030,6 +5030,7 @@ The `FLAGS` attribute is the sum of any of the following bit values:
 \note
 The `SPRITE` command's attributes can be specified in any order, but it is
 usually a good idea to place the `ON` attribute at the end if used.
+\ref MOVE_SPRITE
 ***/
 void BASIC_INT isprite() {
 #ifdef VS23_BG_ENGINE
@@ -5125,6 +5126,7 @@ Moves a sprite.
 There are no restrictions on the coordinates that can be used; sprites
 that are placed completely outside the dimensions of the current screen
 mode will not be drawn.
+\ref SPRITE
 ***/
 void BASIC_FP imovesprite() {
 #ifdef VS23_BG_ENGINE
@@ -5164,6 +5166,7 @@ If the numeric `tile` argument is given, a single tile will be set.
 If a string of tiles (`tile$`) is passed, a tile will be set for each of the
 elements of the string, starting from the specified tile coordinates and
 proceeding horizontally.
+\ref BG
 ***/
 void iplot() {
 #ifdef VS23_BG_ENGINE
