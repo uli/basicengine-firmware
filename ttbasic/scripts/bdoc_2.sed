@@ -1,6 +1,6 @@
 /\\args.*$/,/\(\\[a-z]\|\*\*\*\)/s,^\(\\[b-z].*\|\*\*\*/\),|===\n\1,	# terminate \args table
 #s,/\*\*\*bc\s*,==== ,			# command start
-s,/\*\*\*bc\s*\S*\s*\(\S*\)\s*,[reftext=\1]\n==== [blue]#\1# ,	# command start
+s,/\*\*\*bc\s*\S*\s*\(.*\),[reftext=\1]\n==== [blue]#\1# ,	# command start
 /\\tok\s*/d				# delete \tok (used for online help)
 #/^$/,/\\/ s/^$/_DELETE/
 #/_DELETE/d
