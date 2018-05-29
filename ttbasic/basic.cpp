@@ -7544,10 +7544,20 @@ void isprint() {
   iprint(1);
 }
 
+/***bc bas NEW
+Deletes the program in memory as well as all variables.
+\usage NEW
+\ref CLEAR DELETE
+***/
 void inew_() {
   inew();
 }
 
+/***bc bas CLEAR
+Deletes all variables.
+\usage CLEAR
+\ref NEW
+***/
 void iclear() {
   inew(NEW_VAR);
 }
@@ -7579,10 +7589,24 @@ void imerge() {
   ilrun();
 }
 
+/***bc bas STOP
+Halts the program.
+
+A program stopped by a `STOP` command can be resumed using `CONTINUE`.
+\usage STOP
+\ref CONTINUE
+***/
 void istop() {
   err = ERR_CTR_C;
 }
 
+/***bc fs CHDIR
+Changes the current directory.
+\usage CHDIR directory$
+\args
+@directory$	Path to the new current directory.
+\ref CWD$()
+***/
 void ichdir() {
   BString new_cwd;
   if(!(new_cwd = getParamFname())) {
@@ -7731,6 +7755,23 @@ void iboot() {
 #endif
 }
 
+/***bc bas EXEC
+Executes a BASIC program as a child process.
+\usage EXEC program_file$
+\args
+@program_file$	Name of the BASIC program file to be executed
+\note
+A program run via `EXEC` runs in its own program and variable space, and
+nothing it does affects the calling program or its variables, with the
+exception of the following:
+
+* *Open files* are shared between the parent and child program. Any changes
+  will be visible to both programs.
+* *Error handlers* set in the parent program will be triggered by errors
+  in the child program, unless they are handled by the child.
+\bugs
+There is no generalized way to share data between parent and child program.
+***/
 void iexec() {
   BString file = getParamFname();
   int is_text = bfs.IsText((char *)file.c_str());
