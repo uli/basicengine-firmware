@@ -2881,8 +2881,88 @@ void SMALL config_color()
   CONFIG.color_scheme[idx][2] = b;
 }
 
-// CONFIGコマンド
-// CONFIG 項目番号,設定値
+/***bc sys CONFIG
+Changes configuration options.
+
+The options will be reset to their defaults on system startup unless they
+have been saved using <<SAVE CONFIG>>. Changing power-on default options does not
+affect the system until the options are saved and the system is restarted.
+\usage CONFIG option, value
+\args
+@option	Configuration option to be set [`0` to `8`]
+@value	Option value
+\sec OPTIONS
+The following options exist:
+
+* `0`: TV norm +
+  Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`).
++
+WARNING: This configuration option does not make much sense; the available
+TV norm depends on the installed color burst crystal and is automatically
+detected; PAL60 mode is not currently implemented. +
+The semantics of this option are therefore likely to change in the future.
+
+* `1`: Keyboard layout +
+  Three different keyboard layouts are supported: +
+  `0` (Japanese), `1` (US English, default) and `2` (German).
+
+* `2`: Interlacing +
+  Sets the video output to progressive (`0`) or interlaced (`1`). A change
+  in this option will become effective on the next screen mode change.
++
+WARNING: The intention of this option is to provide an interlaced signal
+to TVs that do not handle a progressive signal well. So far, no displays
+have turned up that require it, so it may be removed and/or replaced
+with a different option in future releases.
+
+* `3`: Luminance low-pass filter +
+  This option enables (`1`) or disables (`0`, default) the video luminance
+  low-pass filter. The recommended setting depends on the properties of the
+  display device used.
++
+Many recent TVs are able to handle high resolutions well; with such
+devices, it is recommended to turn the low-pass filter off to achieve
+a more crisp display.
++
+On other (usually older) TVs, high-resolution images may cause excessive
+color artifacting (a "rainbow" effect) or flicker; with such devices,
+it is recommended to turn the low-pass filter on to reduce these effects,
+at the expense of sharpness.
+
+* `4`: Power-on screen mode [`1` (default) to `10`] +
+  Sets the screen mode the system defaults to at power-on.
+
+* `5`: Power-on screen font [`0` (default) to `{NUM_FONTS_m1}`] +
+  Sets the screen font the system defaults to at power-on.
+
+* `6`: Power-on cursor color [`0` to `255`] +
+  Sets the cursor color the system defaults to at power-on.
+
+* `7`: Beeper sound volume [`0` to `15` (default)] +
+  Sets the volume of the "beeper" sound engine, which applies, among
+  other things, to the start-up jingle.
+
+* `8`: Screen line adjustment [`-128` to `128`, default: `0`]
+  Adjusts the number of screen lines. A positive value adds lines, a negative
+  value subtracts them. +
+  This option may be useful to mitigate issues with color artifacting and
+  flicker on some devices.
++
+WARNING: It is not clear if this option is useful in practice, and it may be
+removed in future releases.
+
+\note
+To restore the default configuration, run the command `REMOVE
+"/flash/.config"` and restart the system.
+\bugs
+* Changing the low-pass filter option (`3`) only takes effect at the time
+  of the next block move, which happens for instance when scrolling the
+  screen.
+* There is no way to override a saved configuration, which may make it
+  difficult or even impossible to fix an system configured to an unusable
+  state.
+\ref BEEP FONT SAVE_CONFIG SCREEN
+***/
 void SMALL iconfig() {
   int32_t itemNo;
   int32_t value;
@@ -2953,7 +3033,7 @@ void SMALL iconfig() {
     }
     break;
   default:
-    E_VALUE(0, 7);
+    E_VALUE(0, 8);
     break;
   }
 }
