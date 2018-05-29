@@ -5150,6 +5150,21 @@ void BASIC_FP imove()
     SYNTAX_T("exp BG or SPRITE");
 }
 
+/***bc bg PLOT
+Sets the value of one or more background tiles.
+\usage PLOT bg, x, y, [tile | tile$]
+\args
+@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
+@x	Tile X coordinate [`0` to background width in tiles]
+@y	Tile Y coordinate [`0` to background height in tiles]
+@tile	Tile identifier [`0` to `255`]
+@tile$	Tile identifiers
+\note
+If the numeric `tile` argument is given, a single tile will be set.
+If a string of tiles (`tile$`) is passed, a tile will be set for each of the
+elements of the string, starting from the specified tile coordinates and
+proceeding horizontally.
+***/
 void iplot() {
 #ifdef VS23_BG_ENGINE
   int32_t bg, x, y, t;
