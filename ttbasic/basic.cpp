@@ -6163,6 +6163,20 @@ num_t BASIC_FP npos() {
   }
 }
 
+/***bf fs COMPARE
+Compares two files.
+\usage result = COMPARE(file1$, file2$)
+\args
+@file1$	name of first file to compare
+@file2$ name of second file to compare
+\ret
+If both files are equal, the return value is `0`. Otherwise, the return
+value is `-1` or `1`.
+
+If the files are not equal, the sign of the result is determined by the sign
+of the difference between the first pair of bytes that differ in `file1$`
+and `file2$`.
+***/
 num_t ncompare() {
   if (checkOpen()) return 0;
   BString one = getParamFname();
