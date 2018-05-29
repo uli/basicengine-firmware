@@ -1,5 +1,6 @@
 io Input/Output
 fs File System
+bg Sprite/Background Engine
 pix Pixel Graphics
 scr Screen Handling
 snd Sound

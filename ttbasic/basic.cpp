@@ -4991,6 +4991,46 @@ void BASIC_FP imovebg() {
 #endif
 }
 
+/***bc bg SPRITE
+Defines a sprite's properties.
+
+Using `SPRITE`, you can define a sprite's appearance, size, animation frame, color key,
+prority, special effects, and turn it on and off.
+
+`SPRITE OFF` turns all sprites off.
+\usage
+SPRITE num [PATTERN pat_x, pat_y][SIZE w, h][FRAME frame_x, frame_y]
+           [FLAGS flags][KEY key][PRIO priority][ON|OFF]
+
+SPRITE OFF
+\args
+@pat_x X 	coordinate of the top/left sprite pattern, pixels
+@pat_y Y	coordinate of the top/left sprite pattern, pixels
+@w		sprite width, pixels [`0` to `{VS23_MAX_SPRITE_W_m1}`]
+@h		sprite height, pixels [`0` to `{VS23_MAX_SPRITE_H_m1}`]
+@frame_x	X coordinate of the pattern section to be used,
+                in multiples of sprite width
+@frame_y	Y coordinate of the pattern section to be used,
+                in multiples of sprite height
+@flags		special effect flags [`0` to `7`]
+@key		key color value to be used for transparency masking +
+                [`0` to `255`]
+@priority	sprite priority in relation to background layers +
+                [`0` to `{VS23_MAX_BG_m1}`]
+
+\sec FLAGS
+The `FLAGS` attribute is the sum of any of the following bit values:
+[options=header]
+|===
+| Bit value | Effect
+| `1` | Sprite opacity (opaque if set)
+| `2` | Horizontal flip
+| `4` | Vertical flip
+|===
+\note
+The `SPRITE` command's attributes can be specified in any order, but it is
+usually a good idea to place the `ON` attribute at the end if used.
+***/
 void BASIC_INT isprite() {
 #ifdef VS23_BG_ENGINE
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
@@ -5074,6 +5114,18 @@ void BASIC_INT isprite() {
 #endif
 }
 
+/***bc bg MOVE SPRITE
+Moves a sprite.
+\usage MOVE SPRITE num TO pos_x, pos_y
+\args
+@num Sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+@pos_x Sprite position X coordinate, pixels
+@pos_y Sprite position X coordinate, pixels
+\note
+There are no restrictions on the coordinates that can be used; sprites
+that are placed completely outside the dimensions of the current screen
+mode will not be drawn.
+***/
 void BASIC_FP imovesprite() {
 #ifdef VS23_BG_ENGINE
   int32_t num, pos_x, pos_y;
