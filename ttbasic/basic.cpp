@@ -4755,6 +4755,23 @@ void iwindow() {
   sc0.show_curs(false);
 }
 
+/***bc scr FONT
+Sets the current text font.
+\usage FONT font_num
+\args
+@font_num	font number [`0` to `{NUM_FONTS_m1}`]
+\sec FONTS
+The following fonts are available:
+|===
+| 0 | ATI console font, 6x8 pixels (default)
+| 1 | CPC font, 8x8 pixels
+| 2 | PETSCII font, 8x8 pixels
+| 3 | Japanese font, 6x8 pixels
+|===
+\note
+The font set at power-on can be set using the `CONFIG` command.
+\ref CONFIG
+***/
 void ifont() {
   int32_t idx;
   if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
