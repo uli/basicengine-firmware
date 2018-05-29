@@ -19,5 +19,6 @@ s,\\note\s*,\n===== NOTE,		# \note
 s,\\sec\s*\(.*\)$,\n===== \1\n,		# \sec <custom section>
 /\\ref/s,\([A-Z0-9]\S*\),<<\1>>\,,g	# link \ref items
 /\\ref/s/,$//				# remove extraneous comma at end of \ref
+/\\ref/s/_/ /g				# replace underscores with spaces in \ref
 s,\\ref\s*,\n===== SEE ALSO\n,		# \ref
 s,\*\*\*/$,,				# end of block
