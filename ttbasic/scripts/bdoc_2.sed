@@ -6,9 +6,9 @@ s,/\*\*\*bc\s*\S*\s*\(.*\),[reftext=\1]\n==== [blue]#\1# ,	# command start
 #/_DELETE/d
 s,/\*\*\*bf\s*\S*\s*\(\S*\)\s*,[reftext=\1()]\n==== [green]#\1()# ,	# function start
 s,/\*\*\*bn\s*\S*\s*\(\S*\)\s*,[reftext=\1]\n==== [purple]#\1# ,	# constant start
-/\\usage.*$/,/\\[a-z]/s,\(^[A-Za-z]\S*.*\),`\1`\n,	# monotype \usage value in separate line
-s,\\usage$,\n===== USAGE,		# \usage tag on separate line
-s,\\usage\s*\(.*\)$,\n===== USAGE\n`\1`,	# monotype \usage tag and value in single line
+# most \usage processing is done in bdoc_1a.sed
+s,\\usage\s*\(\S.*\)$,\n===== USAGE\n----\n\1\n----,	# monotype \usage tag and value in single line
+s,\\usage\s*,\n===== USAGE,		# \usage
 s,\\desc\s*,\n===== DESCRIPTION,	# \desc
 s,\\args\s*,\n===== PARAMETERS\n|===,	# \args
 s,@\(\S*\)\s*,| `\1` | ,		# argument
