@@ -5061,6 +5061,14 @@ void ibg() {
 #endif
 }
 
+/***bc bg LOAD BG
+Loads a background map from storage.
+\usage LOAD BG bg, file$
+\args
+@bg	Background number. [`0` to `{VS23_MAX_BG_m1}`]
+@file$	Name of background map file.
+\ref SAVE_BG
+***/
 void iloadbg() {
 #ifdef VS23_BG_ENGINE
   int32_t bg;
@@ -5108,6 +5116,16 @@ out:
 #endif
 }
 
+/***bc bg SAVE BG
+Saves a background map to storage.
+\usage SAVE BG bg TO file$
+\args
+@bg	Background number. [`0` to `{VS23_MAX_BG_m1}`]
+@file$	Name of background map file.
+\bugs
+Does not check if the specified background is properly defined.
+\ref LOAD_BG
+***/
 void isavebg() {
 #ifdef VS23_BG_ENGINE
   int32_t bg;
@@ -5140,6 +5158,18 @@ void isavebg() {
 #endif
 }
 
+/***bc bg MOVE BG
+Scrolls a tiled background.
+\usage MOVE BG bg TO pos_x, pos_y
+\args
+@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
+@pos_x	Top/left corner offset horizontal, pixels
+@pos_y  Top/left corner offset vertical, pixels
+\note
+There are no restrictions on the coordinates that can be used; backgrounds
+maps wrap around if the display window extends beyond the map boundaries.
+\ref BG
+***/
 void BASIC_FP imovebg() {
 #ifdef VS23_BG_ENGINE
   int32_t bg, x, y;
@@ -5354,6 +5384,20 @@ void iplot() {
 #endif
 }
 
+/***bc bg FRAMESKIP
+Sets the number of frames that should be skipped before a new frame is rendered
+by the BG/sprite engine.
+
+This serves to increase the available CPU power to BASIC by reducing the load
+imposed by the graphics subsystem.
+\usage FRAMESKIP frm
+\args
+@frm	Number of frames to be skipped. [`0` (default) to `60`]
+\note
+It is not possible to mitigate flickering caused by overloading the graphics
+engine using `FRAMESKIP` because each frame that is actually rendered must
+be so within a single TV frame.
+***/
 void iframeskip() {
 #ifdef VS23_BG_ENGINE
   int32_t skip;
