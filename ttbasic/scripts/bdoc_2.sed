@@ -12,7 +12,6 @@ s,\\usage\s*,\n===== USAGE,		# \usage
 s,\\desc\s*,\n===== DESCRIPTION,	# \desc
 s,\\args\s*,\n===== PARAMETERS\n|===,	# \args
 s,@\(\S*\)\s*,| `\1` | ,		# argument
-s,\\ret\s*\(\S\)*$,\n===== RETURN VALUE\n\1\n,
 s,\\ret\s*,\n===== RETURN VALUE\n,	# \ret
 s,\\error\s*,\n===== ERRORS\n,		# \error
 s,\\bugs\s*,\n===== BUGS,		# \bugs

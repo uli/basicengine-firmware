@@ -5707,13 +5707,52 @@ out:
   return value;
 }
 
+/***bf bas LEFT$
+Returns a specified number of leftmost characters in a string.
+\usage s$ = LEFT$(l$, num)
+\args
+@l	Any string expression.
+@num	The number of characters to return. [min `0`]
+\ret Substring of at most the length specified in `num`.
+
+If `l$` is shorter than `num` characters, the return value
+is `l$`.
+\ref MID$() RIGHT$()
+***/
 static BString sleft() {
   return ilrstr(false);
 }
+/***bf bas RIGHT$
+Returns a specified number of rightmost characters in a string.
+\usage s$ = RIGHT$(r$, num)
+\args
+@r	Any string expression.
+@num	The number of characters to return. [min `0`]
+\ret Substring of at most `num` characters.
+
+If `r$` is shorter than `num` characters, the return value
+is `r$`.
+\ref LEFT$() MID$()
+***/
 static BString sright() {
   return ilrstr(true);
 }
 
+/***bf bas MID$
+Returns part of a string (a substring).
+\usage s$ = MID$(m$, start[, len])
+\args
+@m$	Any string expression.
+@start	Position of the first character in the substring being returned.
+@len	number of characters in the substring. [default: `LEN(m$)-start`]
+\ret Substring of at most `len` characters.
+
+If `m$` is shorter than `len` characters, the return value is `m$`.
+\bugs
+`MID$()` cannot be used as the target of an assignment, as is possible in
+other BASIC implementations.
+\ref LEFT$() LEN() RIGHT$()
+***/
 BString smid() {
   BString value;
   int32_t start;
@@ -5930,7 +5969,7 @@ call.
 \usage rval$ = RET$(num)
 \args
 @num	Number of the string return value. [`0` to `{MAX_RETVALS_m1}`]
-\ret String return value.
+\ret String return value requested.
 \ref RETURN
 ***/
 static BString sret() {
@@ -7998,6 +8037,7 @@ exception of the following:
   in the child program, unless they are handled by the child.
 \bugs
 There is no generalized way to share data between parent and child program.
+\ref CHAIN
 ***/
 void iexec() {
   BString file = getParamFname();
