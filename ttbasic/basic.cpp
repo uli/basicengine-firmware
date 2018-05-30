@@ -4226,6 +4226,17 @@ void isound() {
 #ifdef HAVE_MML
 BString mml_text;
 #endif
+/***bc snd PLAY
+Plays a piece of music in Music Macro Language (MML) using the
+wavetable synthesizer.
+\usage PLAY mml$
+\args
+@mml$	Score in MML format.
+\bugs
+* Only supports one sound channel.
+* MML syntax undocumented.
+* Fails silently if the synthesizer could not be initialized.
+***/
 void iplay() {
 #ifdef HAVE_MML
   sound.stopMml(0);
@@ -4236,6 +4247,20 @@ void iplay() {
 #endif
 }
 
+/***bc snd SAY
+Speaks the given text.
+\usage SAY text$
+\args
+@text$	The text to be spoken.
+\note
+`text$` is assumed to be in English.
+
+`SAY` cannot be used concurrently with the wavetable synthesizer
+because they use different sample rates.
+\bugs
+* Does not support phonetic input.
+* No possibility to change synthesizer parameters.
+***/
 void isay() {
   BString text = istrexp();
   if (err)
@@ -4248,7 +4273,14 @@ void isay() {
   sam->Say(text.c_str());
 }
 
-// POINT(X,Y)関数の処理
+/***bf pix POINT
+Returns the color of the pixel at the given coordinates.
+\usage px = POINT(x, y)
+\args
+@x	X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@y	Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+\ret Pixel color [`0` to `255`]
+***/
 num_t BASIC_INT npoint() {
   int x, y;  // 座標
   if (checkOpen()) return 0;
@@ -4258,7 +4290,19 @@ num_t BASIC_INT npoint() {
   return vs23.getPixel(x,y);
 }
 
-// MAP(V,L1,H1,L2,H2)関数の処理
+/***bf bas MAP
+Re-maps a value from one range to another
+\usage mval = MAP(val, l1, h1, l2, h2)
+\args
+@val	Value to be re-mapped
+@l1	Lower bound of the value's current range
+@h1	Upper bound of the value's current range
+@l2	Lower bound of the value's target range
+@h2	Upper bound of the value's target range
+\ret Re-mapped value.
+\bugs
+Restricts `value` to the range `l1`-`h1`, which is arbitrary.
+***/
 num_t BASIC_FP SMALL nmap() {
   int32_t value,l1,h1,l2,h2,rc;
   if (checkOpen()) return 0;
