@@ -7926,6 +7926,21 @@ void ichdir() {
     err = ERR_FILE_OPEN;
 }
 
+/***bc fs OPEN
+Opens a file or directory.
+\usage
+OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
+\args
+@file$		Name of the file or directory.
+@file_num	File number to be used [`0` to `{MAX_USER_FILES_m1}`]
+\sec MODES
+* `*INPUT*` opens the file for reading. (This is the default if no mode is
+  specified.)
+* `*OUTPUT*` empties the file and opens it for writing.
+* `*APPEND*` opens the file for writing while keeping its content.
+* `*DIRECTORY*` opens `file$` as a directory.
+\ref CLOSE DIR$() INPUT INPUT$() PRINT SEEK
+***/
 void iopen() {
   BString filename;
   int flags = FILE_READ;
@@ -7983,6 +7998,13 @@ void iopen() {
   }
 }
 
+/***bc fs CLOSE
+Closes an open file or directory.
+\usage CLOSE [#]file_num
+\args
+@file_num	Number of an open file or directory.
+\ref OPEN
+***/
 void iclose() {
   int32_t filenum;
 
@@ -8005,6 +8027,17 @@ void iclose() {
   }
 }
 
+/***bc fs SEEK
+Sets the file position for the next read or write.
+\usage SEEK file_num, position
+\args
+@file_num	Number of an open file.
+@position	The position where the next read or write should occur.
+\error
+The command will generate an error if `file_num` is not open or the operation
+is unsuccessful.
+\ref INPUT INPUT$() PRINT
+***/
 void iseek() {
   int32_t filenum, pos;
 
