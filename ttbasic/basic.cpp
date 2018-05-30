@@ -4152,13 +4152,36 @@ void igscroll() {
   sc0.gscroll(x1,y1,x2-x1+1, y2-y1+1, d);
 }
 
-// シリアル1バイト出力 : SWRITE データ
+/***bc io SWRITE
+Writes a byte to the serial port.
+
+WARNING: This command may be renamed in the future to reduce namespace
+pollution.
+\usage SWRITE c
+\args
+@c	Byte to be written
+\ref SMODE
+***/
 void iswrite() {
   int32_t c;
   if ( getParam(c, I_NONE) ) return;
   Serial.write(c);
 }
 
+/***bc io SMODE
+Changes the serial port configuration.
+
+WARNING: This command is likely to be renamed in the future to reduce
+namespace pollution.
+\usage SMODE baud[, flags]
+\args
+@baud	Baud rate [`0` to `921600`]
+@flags	Serial port flags
+\bugs
+The meaning of `flags` is determined by `enum` values in the Arduino core
+and cannot be relied on to remain stable.
+\ref SWRITE
+***/
 void SMALL ismode() {
   int32_t baud, flags = SERIAL_8N1;
   if ( getParam(baud, 0, 921600, I_NONE) ) return;
