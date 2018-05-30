@@ -4932,6 +4932,28 @@ void SMALL iscreen() {
   sc0.refresh();
 }
 
+/***bc scr PALETTE
+Sets the color space ("palette") for the current screen mode, as well as
+coefficients for the color conversion function `RGB()`.
+\usage PALETTE pal[, hw, sw, vw, f]
+\args
+@pal	Colorspace number [`0` or `1`]
+@hw	Hue weight for color conversion [`0` to `7`]
+@sw	Saturation weight for color conversion [`0` to `7`]
+@vw	Value weight for color conversion [`0` to `7`]
+@f	Conversion fix-ups enabled [`0` or `1`]
+\note
+The default component weights depend on the color space. They are:
+[option=heading]
+|===
+|Color space | H | S | V
+| 0 | 7 | 3 | 6
+| 1 | 7 | 4 | 7
+|===
+
+Conversion fix-ups are enabled by default.
+\ref RGB() SCREEN
+***/
 void ipalette() {
   int32_t p, hw, sw, vw, f;
   if (getParam(p, 0, VS23_NUM_COLORSPACES - 1, I_NONE)) return;
@@ -4946,6 +4968,22 @@ void ipalette() {
   }
 }
 
+/***bc scr BORDER
+Sets the color of the screen border.
+
+The color can be set individually for each screen column.
+\usage BORDER uv, y[, x, w]
+\args
+@uv	UV component of the border color [`0` to `255`]
+@y	Y component of the border color [`0` to `255`]
+@x	First column to set [default: `0`]
+@w	Number of columns to set [default: all]
+\note
+There is no direct correspondence between border and screen color values.
+\bugs
+There is no way to find the allowed range of values for `x` and `w` without
+trial and error.
+***/
 void iborder() {
   int32_t y, uv, x, w;
   if (getParam(uv, 0, 255, I_COMMA)) return;
@@ -5721,6 +5759,10 @@ with different color palettes.
 @green	Green component [0 to 255]
 @blue	Blue component [0 to 255]
 \ret YUV color value
+\note
+The color conversion method used is optimized for use with pixel art.
+Its results can be tweaked by setting conversion coefficients with
+the `PALETTE` command.
 \ref PALETTE COLOR
 ***/
 num_t BASIC_FP nrgb() {
