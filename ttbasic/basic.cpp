@@ -7782,9 +7782,9 @@ void imerge() {
 /***bc bas STOP
 Halts the program.
 
-A program stopped by a `STOP` command can be resumed using `CONTINUE`.
+A program stopped by a `STOP` command can be resumed using `CONT`.
 \usage STOP
-\ref CONTINUE
+\ref CONT
 ***/
 void istop() {
   err = ERR_CTR_C;
@@ -8132,6 +8132,16 @@ uint8_t SMALL icom() {
     sc0.show_curs(0);
     irun();
     break;
+/***bc bas CONT
+Continues an interrupted program.
+
+`CONT` can be used to resume a program run that has been interrupted by
+kbd:[Ctrl+C] or by the `STOP` command. It will reset text window and
+tiled background layouts if they have been automatically adjusted when the
+program was interrupted.
+\usage CONT
+\ref BG STOP WINDOW
+***/
   case I_CONT:
     if (!cont_cip || !cont_clp) {
       err = ERR_CONT;
