@@ -4275,7 +4275,16 @@ num_t BASIC_FP SMALL nmap() {
   return rc;
 }
 
-// ASC(文字列)
+/***bf bas ASC
+Returns the ASCII code for the first character in a string expression.
+\usage val = ASC(s$)
+\args
+@s$	String expression
+\ret ASCII code of the first character.
+\error
+Generates an error if `s$` is empty.
+\ref CHR$()
+***/
 num_t BASIC_INT nasc() {
   int32_t value;
 
@@ -4291,7 +4300,33 @@ num_t BASIC_INT nasc() {
   return value;
 }
 
-// PRINT handler
+/***bc bas PRINT
+Prints data to the current output device (usually the screen) or
+to a given file.
+\usage
+PRINT [#file_num, ][*expressions*][<;|,>]
+\args
+@file_num	File number to be printed to +
+                [default: current output device]
+@expressions	List of expressions specifying what to print
+\sec EXPRESSIONS
+The following types of expressions can be used in a `PRINT` command
+expressions list:
+
+* Numeric expressions
+* String expressions
+* `TAB(num)` (inserts spaces until the cursor is at or beyond the
+  column `num`)
+
+Expressions have to be separated by either a semicolon (`;`) or
+a comma (`,`). The former concatenates expressions directly,
+while the later inserts spaces until the next tabulator stop
+is reached.
+\bugs
+`TAB()` does not work when output is redirected to a file using
+`CMD`.
+\ref CMD GPRINT
+***/
 void iprint(uint8_t devno=0,uint8_t nonewln=0) {
   num_t value;     //値
   int32_t filenum;
