@@ -4445,6 +4445,24 @@ BString getParamFname() {
   return fname;
 }
 
+/***bc scr SAVE PCX
+Saves a portion of video memory to storage as a PCX file.
+\usage SAVE PCX image$ [POS x, y] [SIZE w, h]
+\args
+@image$	Name of image file to be created.
+@x	Left of video memory section, pixels +
+        [`0` (default) to `PSIZE(0)-1`]
+@y	Top of video memory section, pixels +
+        [`0` (default) to `PSIZE(2)-1`]
+@w	Width of video memory section, pixels +
+        [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]
+@h	Height of video memory section, pixels +
+        [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
+\bugs
+CAUTION: This command has never been tested and can thus not be guaranteed
+not to eat your cat.
+\ref LOAD_PCX
+***/
 void SMALL isavepcx() {
   BString fname;
   int32_t x = 0,y = 0;
@@ -4469,6 +4487,38 @@ void SMALL isavepcx() {
   return;
 }
 
+/***bc scr LOAD PCX
+Loads a PCX image file in whole or in parts from storage to video memory.
+\usage
+LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
+         [SIZE width, height] [KEY col]
+\args
+@bg		Background number [`0` to `{VS23_MAX_BG_m1}`]
+@range		Sprite range [limits between `0` and `{VS23_MAX_SPRITES_m1}`]
+@dest_x		Destination X coordinate, pixels +
+                [`0` (default) to `PSIZE(0)-w`]
+@dest_y		Destination Y coordinate, pixels +
+                [`0` (default) to `PSIZE(2)-h`]
+@x		Offset within image file, X axis, pixels [default: `0`]
+@y		Offset within image file, Y axis, pixels [default: `0`]
+@width		Width of image portion to be loaded, pixels [default: image width]
+@height		Height of image portion to be loaded, pixels [default: image height]
+@col		Color key for transparency [default: no transparency]
+\note
+If no destination is specified, an area of off-screen memory will be allocated
+automatically.
+
+If `AS BG` is used, the loaded image portion will be assigned to the specified background
+as its tile set.
+
+If `AS SPRITE` is used, the loaded image portion will be assigned to the specified
+range of sprites as their sprite patterns.
+
+IMPORTANT: `AS BG` and `AS SPRITE` are not available in the network build.
+
+If a color key is specified, pixels of the given color will not be drawn.
+\ref BG SAVE_PCX SPRITE
+***/
 void SMALL ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
@@ -5125,7 +5175,7 @@ BG OFF
   to specify the `PATTERN` attribute as well.
 \bugs
 If a background cannot be turned on, no error is generated.
-\ref LOAD_BG MOVE_BG SAVE_BG
+\ref LOAD_BG LOAD_PCX MOVE_BG SAVE_BG
 ***/
 void ibg() {
 #ifdef VS23_BG_ENGINE
@@ -5357,7 +5407,7 @@ The `FLAGS` attribute is the sum of any of the following bit values:
 \note
 The `SPRITE` command's attributes can be specified in any order, but it is
 usually a good idea to place the `ON` attribute at the end if used.
-\ref MOVE_SPRITE
+\ref LOAD_PCX MOVE_SPRITE
 ***/
 void BASIC_INT isprite() {
 #ifdef VS23_BG_ENGINE
