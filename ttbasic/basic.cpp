@@ -4196,6 +4196,29 @@ void ibeep() {
     sound.beep(period, vol);
 }
 
+/***bc snd SOUND FONT
+Sets the sound font to be used by the wavetable synthesizer.
+\usage SOUND FONT file$
+\args
+@file$	Name of the SF2 sound font file
+\note
+The default sound font name is `1mgm.sf2`.
+\bugs
+No sanity checks are performed before setting the sound font.
+\ref INST$()
+***/
+
+/***bc snd SOUND
+Generates a sound using the wavetable synthesizer.
+\usage SOUND ch, inst, note[, len[, vel]]
+\args
+@ch	Sound channel [`0` to `{SOUND_CHANNELS_m1}`]
+@inst	Instrument number
+@note	Note pitch
+@len	Note duration, milliseconds [default: 1000]
+@vel	Note velocity [`0` to `1` (default)]
+\ref INST$() SOUND_FONT
+***/
 void isound() {
 #ifdef HAVE_TSF
   if (*cip == I_FONT) {
@@ -4206,7 +4229,12 @@ void isound() {
     int32_t ch, inst, note, len = 1000;
     num_t vel = 1;
     if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
-    if (getParam(inst, 0, sound.instCount() - 1, I_COMMA)) return;
+    int instcnt = sound.instCount();
+    if (!instcnt) {
+      err = ERR_TSF;
+      return;
+    }
+    if (getParam(inst, 0, instcnt - 1, I_COMMA)) return;
     if (getParam(note, 0, INT32_MAX, I_NONE)) return;
     if (*cip == I_COMMA) {
       ++cip;

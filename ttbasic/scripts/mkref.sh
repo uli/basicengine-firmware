@@ -15,6 +15,7 @@ import_def VS23_NUM_COLORSPACES
 import_def NUM_FONTS
 import_def MAX_RETVALS
 import_def MAX_USER_FILES
+import_def SOUND_CHANNELS
 echo ":max_err: $((`wc -l <errdef.h`-1))" >>$REFDOC
 
 cat scripts/groups.txt|while read grp desc; do
