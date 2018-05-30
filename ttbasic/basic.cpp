@@ -5135,12 +5135,12 @@ Sets the current text font.
 @font_num	font number [`0` to `{NUM_FONTS_m1}`]
 \sec FONTS
 The following fonts are available:
-|===
+\table
 | 0 | ATI console font, 6x8 pixels (default)
 | 1 | CPC font, 8x8 pixels
 | 2 | PETSCII font, 8x8 pixels
 | 3 | Japanese font, 6x8 pixels
-|===
+\endtable
 \note
 The font set at power-on can be set using the `CONFIG` command.
 \ref CONFIG
@@ -5161,8 +5161,7 @@ Change the screen resolution.
 // XXX: No convenient way to auto-update the number of modes.
 \sec MODES
 The following modes are available:
-[options=heading]
-|===
+\table header
 | Mode | Resolution | Comment
 | 1 | 460x224 | Maximum usable resolution in NTSC mode.
 | 2 | 436x216 | Slightly smaller than mode 1; helpful if
@@ -5176,7 +5175,7 @@ The following modes are available:
 | 9 | 282x240 | PC Engine-compatible overscan mode
 | 10 | 508x240 | Maximum usable resolution in PAL mode. (Overscan on NTSC
                  systems.)
-|===
+\endtable
 \note
 * While the resolutions are the same for NTSC and PAL configurations, the
   actual sizes and aspect ratios vary depending on the TV system.
@@ -5237,12 +5236,11 @@ coefficients for the color conversion function `RGB()`.
 @f	Conversion fix-ups enabled [`0` or `1`]
 \note
 The default component weights depend on the color space. They are:
-[option=heading]
-|===
+\table header
 |Color space | H | S | V
 | 0 | 7 | 3 | 6
 | 1 | 7 | 4 | 7
-|===
+\endtable
 
 Conversion fix-ups are enabled by default.
 \ref RGB() SCREEN
@@ -5544,13 +5542,12 @@ SPRITE OFF
 
 \sec FLAGS
 The `FLAGS` attribute is the sum of any of the following bit values:
-[options=header]
-|===
+\table header
 | Bit value | Effect
 | `1` | Sprite opacity (opaque if set)
 | `2` | Horizontal flip
 | `4` | Vertical flip
-|===
+\endtable
 \note
 The `SPRITE` command's attributes can be specified in any order, but it is
 usually a good idea to place the `ON` attribute at the end if used.
@@ -5787,8 +5784,7 @@ without a game controller.
 \ret
 Bit field representing the button states of the requested controller(s). The
 value is the sum of any of the following bit values:
-[options=header]
-|===
+\table header
 | Bit value | PSX Controller | Keyboard
 | `1` (aka `<<LEFT>>`) | kbd:[&#x25c4;] button | kbd:[Left] key
 | `2` (aka `<<DOWN>>`) | kbd:[&#x25bc;] button | kbd:[Down] key
@@ -5804,7 +5800,7 @@ value is the sum of any of the following bit values:
 | `8192` | kbd:[L1] button | n/a
 | `16384` | kbd:[R2] button | n/a
 | `32768` | kbd:[L2] button | n/a
-|===
+\endtable
 
 \ref UP DOWN LEFT RIGHT
 ***/
