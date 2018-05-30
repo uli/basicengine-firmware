@@ -4115,8 +4115,27 @@ void iblit() {
   vs23.MoveBlock(x, y, dx, dy, w, h, dir);
 }
 
-// キャラクタスクロール CSCROLL X1,Y1,X2,Y2,方向
-// 方向 0: 上, 1: 下, 2: 右, 3: 左
+/***bc scr CSCROLL
+Scrolls the text screen contents in the given direction.
+\usage CSCROLL x1, y1, x2, y2, direction
+\args
+@x1	Start of the screen region, X coordinate, characters [`0` to `CSIZE(0)-1`]
+@y1	Start of the screen region, Y coordinate, characters [`0` to `CSIZE(1)-1`]
+@x2	End of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]
+@y2	End of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]
+@direction	Direction
+\sec DIRECTION
+Valid values for `direction` are:
+\table
+| `0` | up
+| `1` | down
+| `2` | left
+| `3` | right
+\endtable
+\bugs
+Colors are lost when scrolling.
+\ref BLIT GSCROLL CSIZE()
+***/
 void  icscroll() {
 #if USE_NTSC == 1
   int32_t x1,y1,x2,y2,d;
@@ -4137,7 +4156,25 @@ void  icscroll() {
 #endif
 }
 
-// グラフィックスクロール GSCROLL X1,Y1,X2,Y2,方向
+/***bc pix GSCROLL
+Scroll a portion screen contents in the given direction.
+\usage GSCROLL x1, y1, x2, y2, direction
+\args
+@x1	Start of the screen region, X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@y1	Start of the screen region, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@x2	End of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]
+@y2	End of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]
+@direction	Direction
+\sec DIRECTION
+Valid values for `direction` are:
+\table
+| `0` | up
+| `1` | down
+| `2` | left
+| `3` | right
+\endtable
+\ref BLIT CSCROLL PSIZE()
+***/
 void igscroll() {
   int32_t x1,y1,x2,y2,d;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
