@@ -327,7 +327,9 @@ void tv_set_gcursor(uint16_t x, uint16_t y) {
 }
 
 void tv_write(uint8_t c) {
-  tv_write_px(gcurs_x, gcurs_y, c);
+  if (gcurs_x < g_width - f_width)
+    tv_write_px(gcurs_x, gcurs_y, c);
+  gcurs_x += f_width;
 }
 
 // 音の再生
