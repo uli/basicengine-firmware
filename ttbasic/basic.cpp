@@ -5506,6 +5506,12 @@ void BASIC_INT event_handle_pad()
 
 int e_main(int argc, char **argv);
 
+/***bc sys EDIT
+Runs the ASCII text editor.
+\usage EDIT [file$]
+\args
+@file$	Name of file to be edited. [default: new file]
+***/
 void iedit() {
   BString fn;
   const char *argv[2] = { NULL, NULL };
@@ -8057,6 +8063,24 @@ void iseek() {
     err = ERR_FILE_SEEK;
 }
 
+/***bc sys PROFILE
+Enables or disables the system and procedure profiler.
+
+The system profiler shows a bar in the border of the screen indicating
+how much CPU time is spent on the various tasks of the grahpics
+and sound subsystems. It helps in determining the cause of system
+overloads that lead to graphics and/or sound glitches.
+
+`PROFILE ON` enables the profiler, `PROFILE OFF` disables it.
+
+`PROFILE ON` also enables the procedure profiler that helps determine the
+number of CPU cycles used in each BASIC procedure. After the program has
+been run, the results can be viewed using `PROFILE LIST`.
+\usage PROFILE [ON|OFF|LIST]
+\bugs
+It is not possible to switch the system and procedure profiling on and off
+independently.
+***/
 void iprofile() {
   switch (*cip++) {
   case I_ON:
@@ -8080,6 +8104,15 @@ void iprofile() {
 
 #include <eboot_command.h>
 #include <spi_flash.h>
+/***bc sys BOOT
+Boots the system from the specified flash page.
+\usage BOOT page
+\args
+@page	Flash page to boot from. [`0` to `255`]
+\note
+The `BOOT` command does not verify if valid firmware code is installed at
+the given flash page. Use with caution.
+***/
 void iboot() {
   int32_t sector;
   if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
@@ -8587,7 +8620,13 @@ void loadConfig() {
   f.close();
 }
 
-// システム環境設定の保存
+/***bc sys SAVE CONFIG
+Saves the current set of configuration options as default.
+\usage SAVE CONFIG
+\note
+The configuration will be saved as a file under the name `/flash/.config`.
+\ref CONFIG
+***/
 void isaveconfig() {
   Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_OVERWRITE);
   if (!f) {
