@@ -5820,6 +5820,14 @@ out:
   return value;
 }
 
+/***bf bas CHR$
+Returns the character corresponding to a specified ASCII code.
+\usage char = CHR$(val)
+\args
+@val	ASCII code.
+\ret Single-character string.
+\ref ASC()
+***/
 static BString schr() {
   int32_t nv;
   BString value;
@@ -5895,6 +5903,18 @@ static BString spopb() {
   return value;
 }
 
+/***bf snd INST$
+Returns the name of the specified wavetable synthesizer instrument.
+\usage name$ = INST$(num)
+\args
+@num	Instrument number.
+\ret
+Instrument name.
+
+If an instrument is not defined in the current sound font, an empty
+string is returned.
+\ref SOUND_FONT
+***/
 static BString sinst() {
 #ifdef HAVE_TSF
   return sound.instName(getparam());
@@ -5904,6 +5924,15 @@ static BString sinst() {
 #endif
 }
 
+/***bf bas RET$
+Returns one of the string return values returned by the last function
+call.
+\usage rval$ = RET$(num)
+\args
+@num	Number of the string return value. [`0` to `{MAX_RETVALS_m1}`]
+\ret String return value.
+\ref RETURN
+***/
 static BString sret() {
   int32_t n = getparam();
   if (n < 0 || n >= MAX_RETVALS) {
@@ -5913,6 +5942,14 @@ static BString sret() {
   return retstr[n];
 }
 
+/***bf bas ERROR$
+Returns the error message associated with a given error number.
+\usage msg$ = ERROR$(num)
+\args
+@num	Error number [`0` to `{max_err}`]
+\ret Error message.
+\ref ON_ERROR RET()
+***/
 static BString serror() {
   uint32_t code = getparam();
   if (code >= sizeof(errmsg) / sizeof(*errmsg)) {
