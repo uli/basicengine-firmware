@@ -4860,7 +4860,42 @@ void ifont() {
   sc0.forget();
 }
 
-// スクリーンモード指定 SCREEN M
+/***bc scr SCREEN
+Change the screen resolution.
+\usage SCREEN mode
+\args
+@mode Screen mode. [`1` to `10`]
+// XXX: No convenient way to auto-update the number of modes.
+\sec MODES
+The following modes are available:
+[options=heading]
+|===
+| Mode | Resolution | Comment
+| 1 | 460x224 | Maximum usable resolution in NTSC mode.
+| 2 | 436x216 | Slightly smaller than mode 1; helpful if
+                the display does not show the entirety of mode 1.
+| 3 | 320x216 |
+| 4 | 320x200 | Common resolution on many home computer systems.
+| 5 | 256x224 | Compatible with the SNES system.
+| 6 | 256x192 | Common resolution used by MSX, ZX Spectrum and others.
+| 7 | 160x200 | Common low-resolution mode on several home computer systems.
+| 8 | 352x240 | PC Engine-compatible overscan mode
+| 9 | 282x240 | PC Engine-compatible overscan mode
+| 10 | 508x240 | Maximum usable resolution in PAL mode. (Overscan on NTSC
+                 systems.)
+|===
+\note
+* While the resolutions are the same for NTSC and PAL configurations, the
+  actual sizes and aspect ratios vary depending on the TV system.
+
+* Resolutions have been chosen to match those used in other systems to
+  facilitate porting of existing programs.
+
+* Apart from changing the mode, `SCREEN` clears the screen, resets the font
+  and color space (palette) to their defaults, and disables sprites and
+  tiled backgrounds.
+\ref BG CLS FONT PALETTE SPRITE
+***/
 void SMALL iscreen() {
   int32_t m;
 
@@ -4924,6 +4959,40 @@ void iborder() {
     vs23.setBorder(y, uv);
 }
 
+/***bc bg BG
+Defines a tiled background's properties.
+
+Using `BG`, you can define a tiled background's map and tile size, tile set,
+window size and position, and priority, as well as turn it on or off.
+
+`BG OFF` turns off all backgrounds.
+\usage
+BG bg [TILES w, h] [PATTERN px, py, pw] [SIZE tx, ty] [WINDOW wx, wy, ww, wh]
+      [PRIO priority] [ON|OFF]
+BG OFF
+\args
+@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
+@w	Background map width, in tiles.
+@h	Background map height, in tiles.
+@px	Tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@py	Tile set Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@tx	Tile width, pixels [`8` (default) to `32`]
+@ty	Tile height, pixels [`8` (default) to `32`]
+@wx	Window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
+@wy	Window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
+@ww	Window width, pixels [`0` to `PSIZE(0)-wx` (default)]
+@wh	Window height, pixels [`0` to `PSIZE(1)-wy` (default)]
+@priority Background priority [`0` to `{VS23_MAX_BG_m1}`, default: `bg`]
+\note
+* The `BG` command's attributes can be specified in any order, but it is
+  usually a good idea to place the `ON` attribute at the end if used.
+* A background cannot be turned on unless at least the `TILES` attribute
+  is set. In order to get sensible output, it will probably be necessary
+  to specify the `PATTERN` attribute as well.
+\bugs
+If a background cannot be turned on, no error is generated.
+\ref LOAD_BG MOVE_BG SAVE_BG
+***/
 void ibg() {
 #ifdef VS23_BG_ENGINE
   int32_t m;
