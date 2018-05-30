@@ -5746,6 +5746,18 @@ out:
   return value;
 }
 
+/***bf fs DIR$
+Returns the next entry of an open directory.
+\usage d$ = DIR$(dir_num)
+\args
+@dir_num	Number of an open directory.
+\ret Returns the directory entry as the value of the function.
+
+Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1)
+depending on whether the entry is a directory itself.
+\error
+An error is generated if `dir_num` is not open or not a directory.
+***/
 BString sdir()
 {
   int32_t fnum = getparam();
@@ -5770,6 +5782,15 @@ out:
   return dir_entry.name;
 }
 
+/***bf fs INPUT$
+Returns a string of characters read from a specified file.
+\usage dat$ = INPUT$(len, [#]file_num)
+\args
+@len		Number of bytes to read.
+@file_num	Number of an open file. [`0` to `{MAX_USER_FILES_m1}`]
+\ret Data read from file.
+\ref INPUT
+***/
 BString sinput()
 {
   int32_t len, fnum;
@@ -5821,6 +5842,12 @@ static BString sstr() {
   return value;
 }
 
+/***bf fs CWD$
+Returns the current working directory.
+\usage dir$ = CWD$()
+\ret Current working directory.
+\ref CHDIR
+***/
 static BString scwd() {
   if (checkOpen() || checkClose()) return BString();
   return Unifile::cwd();

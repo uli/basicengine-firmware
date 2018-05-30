@@ -13,6 +13,7 @@ import_def VS23_MAX_SPRITE_W
 import_def VS23_MAX_SPRITE_H
 import_def VS23_NUM_COLORSPACES
 import_def NUM_FONTS
+import_def MAX_USER_FILES
 
 cat scripts/groups.txt|while read grp desc; do
   sed -nf scripts/bdoc_1.sed <basic.cpp|sed -zf scripts/bdoc_1a.sed|
