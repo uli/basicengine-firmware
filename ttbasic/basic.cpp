@@ -5525,13 +5525,37 @@ void iedit() {
   sc0.show_curs(0);
 }
 
-//
-// load / execute the program CHAIN / LOAD
-// CHAIN "file name"
-// CHAIN "file name", line number
-// LOAD "file name"
-// MERGE "file name", line number
-
+/***bc bas LOAD
+Load a program from storage.
+\usage LOAD file$
+\args
+@file$	Name of the BASIC program.
+\ref LOAD_BG LOAD_PCX SAVE
+***/
+/***bc bas MERGE
+Merge a program in storage with the program currently in memory.
+\usage MERGE file$[, line_num]
+\args
+@file$		Name of the BASIC program to be merged.
+@line_num	Line number at which to contine execution. [default: first line]
+\note
+If called from within a program, `MERGE` will continue execution from line `line_num`
+after the merge (or the beginning of the program if `line_num` is not specified).
+\bugs
+When called from within a program, `MERGE` resets all variables. This probably
+limits its usefulness.
+\ref CHAIN
+***/
+/***bc bas CHAIN
+Loads a new program and runs it, keeping the current set of variables.
+\usage CHAIN file$[, line_num]
+\args
+@file$		Name of the BASIC program to be executed.
+@line_num	Line number at which execution will start. [default: first line]
+\note
+Unlike `EXEC`, `CHAIN` does not allow returning to the original program.
+\ref EXEC LOAD
+***/
 // Return value
 // 1: normal 0: abnormal
 //
