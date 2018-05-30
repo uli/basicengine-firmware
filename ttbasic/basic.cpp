@@ -4420,13 +4420,30 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
     newline(devno);
 }
 
-// GPRINT x,y,..
+/***bc pix GPRINT
+Prints a string of characters at the specified pixel position.
+
+`GPRINT` allows printing characters outside the fixed text grid, including
+off-screen video memory.
+\usage GPRINT x, y, *expressions*
+\args
+@x	Start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@y	Start point, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@expressions	`PRINT`-format list of expressions specifying what to draw
+\note
+* The expression list functions as it does in the `PRINT` command.
+* The "new line" character that is generally appended at the end of a `PRINT`
+  command is drawn literally by `GPRINT`, showing up as a funny character
+  at the end of the drawn text. This can be avoided by appending a semicolon
+  (`;`) to the print parameters.
+\ref PRINT
+***/
 void igprint() {
 #if USE_NTSC == 1
   int32_t x,y;
   if (scmode) {
-    if ( getParam(x, 0, sc0.getGWidth(), I_COMMA) ) return;
-    if ( getParam(y, 0, vs23.lastLine(), I_COMMA) ) return;
+    if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA) ) return;
+    if ( getParam(y, 0, vs23.lastLine()-1, I_COMMA) ) return;
     sc0.set_gcursor(x,y);
     iprint(2);
   } else {
