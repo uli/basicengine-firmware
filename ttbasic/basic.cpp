@@ -4652,7 +4652,22 @@ void icopy() {
     err = ERR_FILE_WRITE;
 }
 
-// BSAVE "ファイル名", アドレス
+/***bc fs BSAVE
+Saves an area of memory to a file.
+\usage BSAVE file$, addr, len
+\args
+@file$	Name of binary file.
+addr	Memory start address.
+len	Number of bytes to be saved.
+\note
+`BSAVE` will use 32-bit memory accesses if `addr` and `len` are
+multiples of 4, and 8-bit accesses otherwise.
+
+While the `BSAVE` command does a basic sanity check of the given
+parameters, it cannot predict any system malfunctions resulting
+from its use. Use with caution.
+\ref BLOAD
+***/
 void SMALL ibsave() {
   uint32_t vadr, len;
   BString fname;
@@ -4708,6 +4723,22 @@ DONE:
   bfs.tmpClose();
 }
 
+/***bc fs BLOAD
+Loads a binary file to memory.
+\usage BLOAD file$ TO addr[, len]
+\args
+@file$	Name of binary file.
+@addr	Memory address to be loaded to.
+@len	Number of bytes to be loaded. [default: whole file]
+\note
+`BLOAD` will use 32-bit memory accesses if `addr` and `len` are
+multiples of 4, and 8-bit accesses otherwise.
+
+While the `BLOAD` command does a basic sanity check of the given
+parameters, it cannot predict any system malfunctions resulting
+from its use. Use with caution.
+\ref BSAVE
+***/
 void SMALL ibload() {
   uint32_t vadr;
   ssize_t len = -1;
@@ -4776,7 +4807,13 @@ DONE:
   return;
 }
 
-// TYPE "ファイル名"
+/***bc fs TYPE
+Writes the contents of a file to the screen. When a screen's worth of text
+has been printed, it pauses and waits for a key press.
+\usage TYPE file$
+\args
+@file$	Name of the file.
+***/
 void  itype() {
   //char fname[SD_PATH_LEN];
   //uint8_t rc;
@@ -4809,7 +4846,27 @@ void  itype() {
 #endif
 }
 
-// ターミナルスクリーンの画面サイズ指定 WINDOW X,Y,W,H
+/***bc scr WINDOW
+Sets the text screen window.
+
+`WINDOW OFF` resets the text window to cover the entire screen.
+\usage
+WINDOW x, y, w, h
+
+WINDOW OFF
+\args
+@x	Left boundary of the text window, in characters. +
+        [`0` to `CSIZE(0)-8`]
+@y	Top boundary of the text window, in characters. +
+        [`0` to `CSIZE(1)-2`]
+@w	Width of the text window, in characters. +
+        [`8` to `CSIZE(0)-x`]
+@h	Height of the text window, in characters. +
+        [`2` to `CSIZE(1)-y`]
+\bugs
+`WINDOW` always clears the newly defined window, which may not be desirable.
+\ref CSIZE()
+***/
 void iwindow() {
   int32_t x, y, w, h;
 
