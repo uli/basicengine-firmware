@@ -4577,7 +4577,15 @@ void imkdir() {
   }
 }
 
-// RMDIR "ファイル名"
+/***bc fs RMDIR
+Deletes a directory.
+\usage RMDIR directory$
+\args
+@directory$	Name of directory to be deleted.
+\bugs
+Does not support wildcard patterns.
+\ref MKDIR
+***/
 void irmdir() {
   BString fname;
   uint8_t rc;
@@ -4596,7 +4604,15 @@ void irmdir() {
 #endif
 }
 
-// RENAME <old$> TO <new$>
+/***bc fs RENAME
+Changes the name of a file or directory.
+\usage RENAME old$ TO new$
+\args
+@old$	Current file name.
+@new$	New file name.
+\bugs
+Does not support wildcard patterns.
+***/
 void irename() {
   bool rc;
 
@@ -4617,7 +4633,21 @@ void irename() {
     err = ERR_FILE_WRITE;
 }
 
-// REMOVE "ファイル名"
+/***bc fs REMOVE
+Deletes a file from storage.
+
+WARNING: `REMOVE` does not ask for confirmation before deleting the
+         specified file.
+
+WARNING: Do not confuse with `DELETE`, which deletes lines from the
+program in memory.
+\usage REMOVE file$
+\args
+@file$	File to be deleted.
+\bugs
+Does not support wildcard patterns.
+\ref DELETE
+***/
 void iremove() {
   BString fname;
 
@@ -4632,6 +4662,15 @@ void iremove() {
   }
 }
 
+/***bc fs COPY
+Copies a file.
+\usage COPY file$ TO new_file$
+\args
+@file$		File to be copied.
+@new_file$	Copy of the file to be created.
+\bugs
+Does not support wildcard patterns.
+***/
 void icopy() {
   uint8_t rc;
 
