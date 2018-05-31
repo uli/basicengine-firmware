@@ -3761,7 +3761,44 @@ out:
   return BString();
 }
 
-// POKEコマンド POKE ADR,データ[,データ,..データ]
+/***bc sys POKE
+Write a byte to an address in memory.
+\usage POKE addr, value
+\args
+@addr	Memory address
+@value	Value to be written
+\note
+`addr` must be mapped writable and must allow byte-wise access.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref POKED POKEW
+***/
+/***bc sys POKEW
+Write a half-word (16 bits) to an address in memory.
+\usage POKEW addr, value
+\args
+@addr	Memory address
+@value	Value to be written
+\note
+`addr` must be mapped writable and must allow half-word-wise access.
+It must be 2-byte aligned.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref POKE POKED
+***/
+/***bc sys POKED
+Write a word (32 bits) to an address in memory.
+\usage POKED addr, value
+\args
+@addr	Memory address
+@value	Value to be written
+\note
+`addr` must be mapped writable and must allow half-word-wise access.
+It must be 4-byte aligned.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref POKE POKEW
+***/
 void BASIC_FP do_poke(int type) {
   void* adr;
   int32_t value;
@@ -3800,11 +3837,31 @@ void BASIC_FP ipoked() {
   do_poke(2);
 }
 
+/***bc sys SYS
+Call a machine language routine.
+
+WARNING: Using this command incorrectly may crash the system, or worse.
+\usage SYS addr
+\args
+@addr	A memory address mapped as executable.
+\bugs
+No sanity checks are performed on the address.
+***/
 void isys() {
   void (*sys)() = (void (*)())(uintptr_t)iexp();
   sys();
 }
 
+/***bf io I2CW
+Sends data to an I2C device.
+\usage res = I2CW(i2c_addr, out_data)
+\args
+@i2c_addr	I2C address [`0` to `$7F`]
+@out_data	Data to be transmitted.
+\ret
+Status code of the transmission.
+\ref I2CR()
+***/
 num_t BASIC_INT ni2cw() {
   int32_t i2cAdr;
   BString out;
@@ -3823,6 +3880,21 @@ num_t BASIC_INT ni2cw() {
   return Wire.endTransmission();
 }
 
+/***bf io I2CR
+Request data from I2C device.
+\usage in$ = I2CR(i2c_addr, out_data, read_length)
+\args
+@i2c_addr	I2C address [`0` to `$7F`]
+@out_data	Data to be transmitted
+@read_length	Number of bytes to be received
+\ret
+Returns the received data as the value of the function call.
+
+Also returns the status code of the outward transmission in `RET(0)`.
+\note
+If `out_data` is an empty string, no data is sent before the read request.
+\ref I2CW()
+***/
 BString si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
@@ -3853,7 +3925,20 @@ out:
   return in;
 }
 
-// SETDATEコマンド  SETDATE 年,月,日,時,分,秒
+/***bc sys SET DATE
+Sets the current date and time.
+\usage SET DATE year, month, day, hour, minute, second
+\args
+@year	Numeric expression [`1900` to `2036`]
+@month	Numeric expression [`1` to `12`]
+@day	Numeric expression [`1` to `31`]
+@hour	Numeric expression [`0` to `23`]
+@minute	Numeric expression [`0` to `59`]
+@second	Numeric expression [`0` to `61`]
+\bugs
+It is unclear why the maximum value for `second` is 61 and not 59.
+\ref DATE GET_DATE
+***/
 void isetDate() {
 #ifdef USE_INNERRTC
   int32_t p_year, p_mon, p_day;
@@ -3864,6 +3949,7 @@ void isetDate() {
   if ( getParam(p_day,     1,  31, I_COMMA) ) return;  // 日
   if ( getParam(p_hour,    0,  23, I_COMMA) ) return;  // 時
   if ( getParam(p_min,     0,  59, I_COMMA) ) return;  // 分
+  // 61? WTF?
   if ( getParam(p_sec,     0,  61, I_NONE)) return;  // 秒
 
   setTime(p_hour, p_min, p_sec, p_day, p_mon, p_year);
@@ -3893,7 +3979,23 @@ void iset() {
   }
 }
 
-// GETDATEコマンド  SETDATE 年格納変数,月格納変数, 日格納変数, 曜日格納変数
+/***bc sys GET DATE
+Get the current date.
+
+\usage GET DATE year, month, day, weekday
+\args
+@year		Numeric variable
+@month		Numeric variable
+@day		Numeric variable
+@weekday	Numeric variable
+\ret Returns the current date in the given numeric variables.
+\bugs
+Only supports scalar variables, not array or list members.
+
+WARNING: The syntax and semantics of this command are not consistent with
+other BASIC implementations and may be changed in future releases.
+\ref DATE GET_TIME SET_DATE
+***/
 void igetDate() {
 #ifdef USE_INNERRTC
   int16_t index;
@@ -3928,7 +4030,22 @@ void igetDate() {
 #endif
 }
 
-// GETDATEコマンド  SETDATE 時格納変数,分格納変数, 秒格納変数
+/***bc sys GET TIME
+Get the current time.
+
+\usage GET TIME hour, minute, second
+\args
+@hour	Numeric variable
+@minute	Numeric variable
+@second	Numeric variable
+\ret Returns the current time in the given numeric variables.
+\bugs
+Only supports scalar variables, not array or list members.
+
+WARNING: The syntax and semantics of this command are not consistent with
+other BASIC implementations and may be changed in future releases.
+\ref SET_DATE
+***/
 void igetTime() {
 #ifdef USE_INNERRTC
   int16_t index;
@@ -3974,7 +4091,14 @@ void iget() {
   }
 }
 
-// DATEコマンド
+/***bc sys DATE
+Prints the current date and time.
+
+WARNING: The semantics of this command are not consistent with other BASIC
+implementations and may be changed in future releases.
+\usage DATE
+\ref GET_DATE SET_DATE
+***/
 void idate() {
 #ifdef USE_INNERRTC
   time_t tt = now();
@@ -4094,7 +4218,25 @@ void irect() {
   sc0.rect(x1, y1, x2-x1, y2-y1, c, f);
 }
 
-// ビットマップの描画 BITMAP 横座標, 縦座標, アドレス, インデックス, 幅, 高さ [,倍率]
+/***bc pix BLIT
+Copies a rectangular area of video memory to another area.
+\usage BLIT x, y TO dest_x, dest_y SIZE width, height [UP|DOWN]
+\args
+@x	Source area, X coordinate [`0` to `PSIZE(0)-1`]
+@y	Source area, Y coordinate [`0` to `PSIZE(2)-1`]
+@dest_x	Destination area, X coordinate [`0` to `PSIZE(0)-1`]
+@dest_y	Destination area, Y coordinate [`0` to `PSIZE(2)-1`]
+@width	Area width [`0` to `PSIZE(0)-x`]
+@height	Area height [`0` to `PSIZE(2)-y`]
+\note
+The default transfer direction is down.
+\bugs
+* Transfers only work up to sizes of 255 in each dimension.
+* The semantics are very much tied to the hardware and not
+  at all obvious. They are likely to be changed in future
+  releases.
+\ref GSCROLL
+***/
 void iblit() {
   int32_t x,y,w,h,dx,dy;
   int32_t dir = 0;
