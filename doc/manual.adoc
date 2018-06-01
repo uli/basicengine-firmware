@@ -4,6 +4,29 @@
 :numbered:
 :experimental:
 
+== How to Use this Manual
+
+=== Syntax Conventions
+// Lifted from qbasic.net
+* *`KEYWORDS`*: Items in capital letters indicate BASIC keywords.
+  Keywords are a required part of the statement syntax, unless they are
+  enclosed in brackets. You must spell keywords correctly.
+* *`placeholders`*: Items in lowercase are placeholders for information you
+  must supply in the statement, such as a filename.
+* *`[optional item]`*: Items inside square brackets do not need to be used
+  in the statement.
+* *`<choice1|choice2>`*: Angle brackets and a vertical bar indicate a
+  choice between two or more items. You must use one of the items in the
+  statement unless the angle brackets are enclosed in square brackets, e.g.
+  `[<optional1|optional2>]`.
+* *`item, item, ...`* means several of the preceding items can be used in a
+  single-line statement.
+
+NOTE: The uppercase and lowercase syntax notation conventions are used to
+help you read the syntax rules for a statement, and are _not_ capitalization
+rules you must type in. Neither keywords nor variable and procedure names
+are case-sensitive.
+
 == Command and Function Reference
 
 include::reference.adoc[]
