@@ -39,16 +39,9 @@
   *
   */
   
-//#include <SdFat.h>
-//#include <SdFatUtil.h>
 #include "ztypes.h"
-#include "../../ttbasic/basic.h"
 
 /* Static data */
-
-extern int GLOBALVER;
-
-Unifile game;        /* Zcode file pointer */
 
 /*
  * open_story
@@ -65,12 +58,7 @@ void AZIP::open_story( void )
     char game_name[] = "GAME.DAT";
     Unifile game_in;
 
-    if ( game = Unifile::open( memory_name, FILE_OVERWRITE ) )
-    {
-        //game.truncate(0);
-        //game.close();
-    }
-    else
+    if (!(game = Unifile::open( memory_name, FILE_OVERWRITE )))
     {
         fatal(PSTR("cannot open mem\n"));
     }
@@ -80,28 +68,11 @@ void AZIP::open_story( void )
         game_in.seekSet(0);
         while ( ( count = game_in.read( (char *)stack, sizeof(stack)) ) > 0 )
         {
-            //game.close();
-            //if(!(game = Unifile::open( memory_name, FILE_WRITE ))) {
-            //    fatal(PSTR("cannot open mem2\n"));
-            //}
-
-            //game.seekSet(game.fileSize());
             game.write( (char *)stack, count);
-            //game.close();
-            
-            //if(!(game = Unifile::open( game_name, FILE_READ ))) {
-            //    fatal(PSTR("cannot open game\n"));
-            //}
-
             pos += count;
-            //game.seekSet(pos);
         }
 
         game_in.close();
-        //if(!(game = Unifile::open( memory_name, FILE_WRITE ))) {
-        //    fatal(PSTR("cannot open mem3\n"));
-        //}
-
         return;
     }
     fatal(PSTR("nopen game"));
@@ -115,7 +86,7 @@ void AZIP::open_story( void )
  *
  */
 
-void flush_block(int i) {
+void AZIP::flush_block(int i) {
     struct cache_block *cb = &cache_blocks[i];
     if (cb->dirty) {
       game.seekSet(cb->addr);
@@ -281,7 +252,7 @@ zword_t AZIP::read_code_word( void )
 
 }                               /* read_code_word */
 
-struct cache_block *fetch_block(unsigned long addr)
+struct cache_block * AZIP::fetch_block(unsigned long addr)
 {
     int bl = rand() % CACHE_BLOCKS;
     flush_block(bl);

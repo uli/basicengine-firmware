@@ -46,6 +46,8 @@
 //#include <avr/pgmspace.h>
 #include <Arduino.h>
 
+#include "../../ttbasic/basic.h"
+
 /* Configuration options */
 
 #define DEFAULT_ROWS  2         /* Default screen height */
@@ -280,6 +282,10 @@ class AZIP {
 public:
   AZIP();
 
+  void load();
+  void run();
+
+private:
   /* Global routines */
 
   /* configur.c */
@@ -311,6 +317,9 @@ public:
   void close_story( void );
   unsigned int get_story_size( void );
   void open_story( void );
+
+  struct cache_block *fetch_block(unsigned long addr);
+  void flush_block(int i);
 
   /* input.c */
 
@@ -497,6 +506,10 @@ public:
   zword_t dictionary_offset;
   ZINT16 dictionary_size;
   unsigned int entry_size;
+
+  Unifile game;
+
+  struct cache_block *cache_blocks;
 };
 
 

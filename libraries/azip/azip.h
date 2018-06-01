@@ -1,3 +1,1 @@
-void azipLoad();
-void azipLoop();
-
+#include "ztypes.h"
