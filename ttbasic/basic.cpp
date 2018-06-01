@@ -3639,6 +3639,14 @@ int32_t ipeek(int type) {
   return value;
 }
 
+/***bf bas RET
+Returns one of the numeric return values of the last function call.
+\usage rval = RET(num)
+\args
+@num	number of the numeric return value [`0` to `{MAX_RETVALS_m1}`]
+\ret Requested return value.
+\ref RETURN RET$()
+***/
 num_t BASIC_FP nret() {
   int32_t r;
 
@@ -3649,6 +3657,18 @@ num_t BASIC_FP nret() {
   return retval[r];
 }
 
+/***bf bas ARG
+Returns a numeric argument passed to a procedure.
+\usage a = ARG(num)
+\args
+@num	number of the numeric argument
+\ret Argument value.
+\error
+An error is generated if no numeric arguments have been passed,
+`num` is equal to or larger than `ARGC(0)`, or the function is
+evaluated outside a procedure.
+\ref ARG$() ARGC()
+***/
 num_t BASIC_FP narg() {
   int32_t a;
   if (astk_num_i == 0) {
@@ -3664,6 +3684,18 @@ num_t BASIC_FP narg() {
   return astk_num[astk_num_i-argc+a];
 }
 
+/***bf bas ARG$
+Returns a string argument passed to a procedure.
+\usage a$ = ARG$(num)
+\args
+@num	number of the string argument
+\ret Argument value.
+\error
+An error is generated if no string arguments have been passed,
+`num` is equal to or larger than `ARGC(1)`, or the function is
+evaluated outside a procedure.
+\ref ARG() ARGC()
+***/
 BString sarg() {
   int32_t a;
   if (astk_str_i == 0) {
@@ -3679,6 +3711,17 @@ BString sarg() {
   return BString(astk_str[astk_str_i-argc+a]);
 }
 
+/***bf bas ARGC
+Returns the argument count for numeric and string variables passed
+to a procedure.
+\usage cnt = ARGC(typ)
+\args
+@typ	type of argument [`0` for numeric, `1` for string]
+\ret Argument count.
+\note
+Returns `0` if called outside a procedure.
+\ref CALL FN
+***/
 num_t BASIC_FP nargc() {
   int32_t type = getparam();
   if (!gstki)
