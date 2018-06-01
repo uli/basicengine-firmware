@@ -15,13 +15,13 @@
 #include "azip.h"
 #include "ztypes.h"
 
-void AZIP::load()
+void AZIP::load(const char *file_name)
 {
   cache_blocks = (struct cache_block *)calloc(CACHE_BLOCKS, sizeof(*cache_blocks));
   for (int i = 0; i < CACHE_BLOCKS; ++i) 
     cache_blocks[i].addr = -1;
 
-  open_story( );
+  open_story( file_name );
   
   // put your setup code here, to run once:
   configure( V1, V8 );

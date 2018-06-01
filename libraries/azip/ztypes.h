@@ -282,7 +282,7 @@ class AZIP {
 public:
   AZIP();
 
-  void load();
+  void load(const char *file_name);
   void run();
 
 private:
@@ -316,7 +316,7 @@ private:
   void z_open_playback( int );
   void close_story( void );
   unsigned int get_story_size( void );
-  void open_story( void );
+  void open_story( const char *file_name );
 
   struct cache_block *fetch_block(unsigned long addr);
   void flush_block(int i);

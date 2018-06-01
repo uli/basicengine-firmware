@@ -50,12 +50,11 @@
  *
  */
 
-void AZIP::open_story( void )
+void AZIP::open_story( const char *game_name )
 {
     int16_t count;
     uint32_t pos = 0;
     char memory_name[] = "MEMORY.DAT";
-    char game_name[] = "GAME.DAT";
     Unifile game_in;
 
     if (!(game = Unifile::open( memory_name, FILE_OVERWRITE )))
