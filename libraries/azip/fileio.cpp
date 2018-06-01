@@ -39,15 +39,16 @@
   *
   */
   
-#include <SdFat.h>
-#include <SdFatUtil.h>
+//#include <SdFat.h>
+//#include <SdFatUtil.h>
 #include "ztypes.h"
+#include <basic.h>
 
 /* Static data */
 
 extern int GLOBALVER;
 
-SdFile game;        /* Zcode file pointer */
+Unifile game;        /* Zcode file pointer */
 
 /*
  * open_story
@@ -62,46 +63,48 @@ void open_story( void )
     uint32_t pos = 0;
     char memory_name[] = "MEMORY.DAT";
     char game_name[] = "GAME.DAT";
+    Unifile game_in;
 
-    if ( game.open( memory_name, O_RDWR | O_CREAT ) )
+    if ( game = Unifile::open( memory_name, FILE_OVERWRITE ) )
     {
-        game.truncate(0);
-        game.close();
+        //game.truncate(0);
+        //game.close();
     }
     else
     {
-        goto FATAL;
+        fatal(PSTR("cannot open mem\n"));
     }
 
-    if ( game.open( game_name, O_RDONLY ) )
+    if ( game_in = Unifile::open( game_name, FILE_READ ) )
     {
-        game.seekSet(0);
-        while ( ( count = game.read( stack, sizeof(stack)) ) > 0 )
+        game_in.seekSet(0);
+        while ( ( count = game_in.read( (char *)stack, sizeof(stack)) ) > 0 )
         {
-            game.close();
-            if(!game.open( memory_name, O_RDWR ))
-                goto FATAL;
+            //game.close();
+            //if(!(game = Unifile::open( memory_name, FILE_WRITE ))) {
+            //    fatal(PSTR("cannot open mem2\n"));
+            //}
 
-            game.seekEnd();
-            game.write( stack, count);
-            game.close();
+            //game.seekSet(game.fileSize());
+            game.write( (char *)stack, count);
+            //game.close();
             
-            if(!game.open( game_name, O_RDONLY ))
-                goto FATAL;
+            //if(!(game = Unifile::open( game_name, FILE_READ ))) {
+            //    fatal(PSTR("cannot open game\n"));
+            //}
 
             pos += count;
-            game.seekSet(pos);
+            //game.seekSet(pos);
         }
 
-        game.close();
-        if(!game.open( memory_name, O_RDWR ))
-            goto FATAL;
+        game_in.close();
+        //if(!(game = Unifile::open( memory_name, FILE_WRITE ))) {
+        //    fatal(PSTR("cannot open mem3\n"));
+        //}
 
         return;
     }
-
-FATAL:
-    fatal();
+    fatal(PSTR("nopen game"));
 }                               /* open_story */
 
 
@@ -115,7 +118,7 @@ FATAL:
 void close_story( void )
 {
 
-    if ( game.isOpen() )
+    if ( game )
     {
         game.close( );
     }

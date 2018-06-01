@@ -277,7 +277,7 @@ void z_throw( zword_t value, zword_t new_fp )
 
     if ( new_fp > fp )
     {
-        fatal();
+        fatal(PSTR("z_throw"));
     }
 
     fp = new_fp;

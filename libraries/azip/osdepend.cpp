@@ -40,10 +40,10 @@
   */
 
 #include "ztypes.h"
+#include <basic.h>
 
-
-void fatal( void )
+void fatal( const char *msg )
 {
-    Serial.println("Fatal");
-    exit( 1 );
+    c_puts_P(PSTR("Fatal: ")); c_puts_P(msg);
+    for(;;);//exit( 1 );
 }                               /* fatal */

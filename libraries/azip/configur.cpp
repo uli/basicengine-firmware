@@ -51,7 +51,7 @@ void configure( zbyte_t min_version, zbyte_t max_version )
     if ( h_type < min_version || h_type > max_version ||
        ( get_byte( H_CONFIG ) & CONFIG_BYTE_SWAPPED ) )
     {
-        fatal();
+        fatal(PSTR("some version thing"));
     }
 
     if ( h_type < V4 )

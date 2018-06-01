@@ -151,7 +151,7 @@ int interpret(  )
                     break;
 
                 default:
-                    fatal();
+                    fatal(PSTR("unkext"));
                 }
             }
             else
@@ -348,7 +348,7 @@ int interpret(  )
                     break;
 
                 default:
-                    fatal();
+                    fatal(PSTR("unkop"));
                 }
             }
         }
@@ -476,7 +476,7 @@ int interpret(  )
                     break;
 
                 default:
-                    fatal();
+                    fatal(PSTR("unkzop"));
                 }
             }
         }

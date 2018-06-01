@@ -40,7 +40,7 @@
   */
 
 #include "ztypes.h"
-
+#include <basic.h>
 
 /*
 * decode_text
@@ -548,11 +548,10 @@ void write_char( int c )
              if(line_count >= 80)
              {
                  line_count = 1;
-                 Serial.write('\n');
+                 newline();
              }
          }
-         
-         Serial.write(c);
+         c_putch(c);
     }
 }                               /* write_char */
 

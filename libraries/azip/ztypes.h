@@ -43,7 +43,7 @@
 #define __ZTYPES_INCLUDED
 
 #include <assert.h>
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 #include <Arduino.h>
 
 /* Configuration options */
@@ -51,8 +51,8 @@
 #define DEFAULT_ROWS  2         /* Default screen height */
 #define DEFAULT_COLS 40         /* Deafult screen width */
 
-#define RANDOM_FUNC  random
-#define SRANDOM_FUNC srandom
+#define RANDOM_FUNC  rand
+#define SRANDOM_FUNC srand
 
 /* Global defines */
 
@@ -424,7 +424,7 @@ zword_t load_variable( int );
 
 /* osdepend.c */
 
-void fatal( void );
+void fatal( const char *msg );
 
 
 /* property.c */

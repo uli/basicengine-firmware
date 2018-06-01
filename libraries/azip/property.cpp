@@ -192,7 +192,7 @@ void z_put_prop( zword_t obj, zword_t prop, zword_t setvalue )
 
     if ( ( value & property_mask ) != prop )
     {
-        fatal();
+        fatal(PSTR("nopropid"));
     }
 
     /* Determine if this is a byte or word sized property */
@@ -247,7 +247,7 @@ void z_get_next_prop( zword_t obj, zword_t prop )
         /* If the property id wasn't found then complain */
         if ( ( zbyte_t ) ( value & property_mask ) != ( zbyte_t ) prop )
         {
-            fatal();
+            fatal(PSTR("nopropid2"));
         }
     }
 

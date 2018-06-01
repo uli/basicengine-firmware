@@ -40,6 +40,7 @@
   */
 
 #include "ztypes.h"
+#include <basic.h>
 
 /* Statically defined word separator list */
 
@@ -570,14 +571,11 @@ int input_line( int buflen, unsigned long addr, int timeout, int *read_size )
 
     do
     {
-        if(Serial.available() > 0)
+        c = c_getch();
+        if ( (c != '\n') && (*read_size < buflen) )
         {
-            c = Serial.read();
-            if ( (c != '\n') && (*read_size < buflen) )
-            {
-                ( *read_size )++;
-                write_data_byte(&addr, tolower(c));
-            }
+            ( *read_size )++;
+            write_data_byte(&addr, tolower(c));
         }
     }
     while ( c != '\n' );

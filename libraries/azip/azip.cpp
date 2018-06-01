@@ -11,28 +11,13 @@
   *
   */
 
-
+#include <basic.h>
 #include <SdFat.h>
-#include <SdFatUtil.h>
+//#include <SdFatUtil.h>
 #include "ztypes.h"
 
-// SD chip select pin
-const uint8_t chipSelect = 4;
-
-// file system
-SdFat sd;
-
-void setup()
+void azipLoad()
 {
-  Serial.begin(9600);
-  
-  Serial.println("Enter any key to start...");
-  
-  while (!Serial.available()) {}
-  Serial.read();
- 
-  if (!sd.init(SPI_FULL_SPEED, chipSelect)) sd.initErrorHalt();
-
   open_story( );
   
   // put your setup code here, to run once:
@@ -43,7 +28,7 @@ void setup()
   z_restart(  );
 }
 
-void loop()
+void azipLoop()
 {
   // put your main code here, to run repeatedly:
   interpret( );  
