@@ -545,7 +545,7 @@ void write_char( int c )
          else
          {
              line_count++;
-             if(line_count >= 80)
+             if(line_count >= sc0.getWidth())
              {
                  line_count = 1;
                  newline();
