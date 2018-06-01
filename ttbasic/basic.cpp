@@ -6401,10 +6401,6 @@ static inline bool is_var(unsigned char tok)
 
 void BASIC_FP icall();
 
-static const uint8_t vs23_read_regs[] PROGMEM = {
-  0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
-};
-
 int get_filenum_param() {
   int32_t f = getparam();
   if (f < 0 || f >= MAX_USER_FILES) {
@@ -7265,6 +7261,13 @@ num_t BASIC_FP ninkey() {
   return iinkey(); // キー入力値の取得
 }
 
+/***bf sys TICK
+Returns the elapsed time since power-on.
+\usage tim = TICK([unit])
+\args
+@unit	unit of time [`0` for milliseconds, `1` for seconds, default: `0`]
+\ret Time elapsed.
+***/
 num_t BASIC_FP ntick() {
   num_t value;
   if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
@@ -7296,11 +7299,30 @@ num_t BASIC_FP npeekd() {
   return ipeek(2);
 }
 
+/***bf scr FRAME
+Returns the number of video frames since power-on.
+\usage fr = FRAME()
+\ret Frame count.
+\ref VSYNC
+***/
 num_t BASIC_FP nframe() {
   if (checkOpen()||checkClose()) return 0;
   return vs23.frame();
 }
 
+/***bf scr VREG
+Read a video controller register.
+\usage v = VREG(reg)
+\args
+@reg	video controller register number
+\ret Register contents.
+\note
+Valid register numbers are: `$01`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
+\ref VREG
+***/
+static const uint8_t vs23_read_regs[] PROGMEM = {
+  0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
+};
 num_t BASIC_INT nvreg() {
   int32_t a = getparam();
   bool good = false;
@@ -7317,6 +7339,14 @@ num_t BASIC_INT nvreg() {
     return SpiRamReadRegister(a);
 }
   
+/***bf scr VPEEK
+Read a location in video memory.
+\usage v = VPEEK(video_addr)
+\args
+@video_addr	Byte address in video memory. [`0` to `131071`]
+\ret Memory content.
+\ref VPOKE VREG()
+***/
 num_t BASIC_FP nvpeek() {
   num_t value = getparam();
   if (value < 0 || value > 131071) {
