@@ -6225,7 +6225,7 @@ uint8_t SMALL ilrun() {
   BString fname;
 
   // Command identification
-  if (*(cip-1) == I_LOAD) {
+  if (*(cip-1) == I_LOAD || *(cip-1) == I_RUN) {
     islrun  = false;
     lineno  = 0;
     newmode = NEW_ALL;
@@ -9108,6 +9108,11 @@ uint8_t SMALL icom() {
     }
     break;
   case I_RUN:
+    if (is_strexp()) {
+      ilrun();
+      if (err)
+        break;
+    }
     sc0.show_curs(0);
     irun();
     break;
