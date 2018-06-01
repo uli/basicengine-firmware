@@ -3689,7 +3689,20 @@ num_t BASIC_FP nargc() {
     return gstk[gstki-1].str_args;
 }
 
-// スクリーン座標の文字コードの取得 'CHAR(X,Y)'
+/***bf scr CHAR
+Returns the text character on screen at a given position.
+\usage c = CHAR(x, y)
+\args
+@x	X coordinate, characters
+@y	Y coordinate, characters
+\ret Character code.
+\note
+* If the coordinates exceed the dimensions of the text screen, `0` will be returned.
+* The value returned represents the current character in text screen memory. It
+  may not represent what is actually visible on screen if it has been manipulated
+  using pixel graphics functions, such as `GPRINT`.
+\ref CHAR GPRINT
+***/
 int32_t BASIC_INT ncharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
@@ -3702,6 +3715,16 @@ int32_t BASIC_INT ncharfun() {
   return value;
 }
 
+/***bc scr CHAR
+Prints a single character to the screen.
+\usage CHAR x, y, c
+\args
+@x	X coordinate, characters [`0` to `CSIZE(0)`]
+@y	Y coordinate, characters [`0` to `CSIZE(1)`]
+@c	character [`0` to `255`]
+\bugs
+No sanity checks are performed on arguments.
+***/
 void BASIC_FP ichar() {
   int32_t x, y, c;
   if ( getParam(x, I_COMMA) ) return;
@@ -3712,7 +3735,14 @@ void BASIC_FP ichar() {
 
 uint16_t pcf_state = 0xffff;
 
-// GPIO ピンデジタル出力
+/***bc io GPOUT
+Sets the state of a general-purpose I/O pin.
+\usage GPOUT pin, value
+\args
+@pin	pin number [`0` to `15`]
+@value	pin state [`0` for "off", anything else for "on"]
+\ref GPIN()
+***/
 void idwrite() {
   int32_t pinno,  data;
 
@@ -3740,6 +3770,14 @@ void idwrite() {
 #endif
 }
 
+/***bf bas HEX$
+Returns a string containing the hexadecimal representation of a number.
+\usage h$ = HEX$(num)
+\args
+@num	numeric expression
+\ret Hexadecimal number as text.
+\ref BIN$()
+***/
 BString shex() {
   int value; // 値
   if (checkOpen() || getParam(value, I_CLOSE))
@@ -3749,7 +3787,14 @@ BString shex() {
   return hex;
 }
 
-// 2進数出力 'BIN$(数値, 桁数)' or 'BIN$(数値)'
+/***bf bas BIN$
+Returns a string containing the binary representation of a number.
+\usage b$ = BIN$(num)
+\args
+@num	numeric expression
+\ret Binary number as text.
+\ref HEX$()
+***/
 BString sbin() {
   int32_t value; // 値
 
