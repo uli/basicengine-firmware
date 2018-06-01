@@ -4370,7 +4370,7 @@ void irect() {
 
 /***bc pix BLIT
 Copies a rectangular area of video memory to another area.
-\usage BLIT x, y TO dest_x, dest_y SIZE width, height [UP|DOWN]
+\usage BLIT x, y TO dest_x, dest_y SIZE width, height [<UP|DOWN>]
 \args
 @x	source area, X coordinate [`0` to `PSIZE(0)-1`]
 @y	source area, Y coordinate [`0` to `PSIZE(2)-1`]
@@ -5626,7 +5626,7 @@ window size and position, and priority, as well as turn it on or off.
 `BG OFF` turns off all backgrounds.
 \usage
 BG bg [TILES w, h] [PATTERN px, py, pw] [SIZE tx, ty] [WINDOW wx, wy, ww, wh]
-      [PRIO priority] [ON|OFF]
+      [PRIO priority] [<ON|OFF>]
 BG OFF
 \args
 @bg	background number [`0` to `{VS23_MAX_BG_m1}`]
@@ -5851,7 +5851,7 @@ prority, special effects, and turn it on and off.
 `SPRITE OFF` turns all sprites off.
 \usage
 SPRITE num [PATTERN pat_x, pat_y][SIZE w, h][FRAME frame_x, frame_y]
-           [FLAGS flags][KEY key][PRIO priority][ON|OFF]
+           [FLAGS flags][KEY key][PRIO priority][<ON|OFF>]
 
 SPRITE OFF
 \args
@@ -6004,7 +6004,7 @@ void BASIC_FP imove()
 
 /***bc bg PLOT
 Sets the value of one or more background tiles.
-\usage PLOT bg, x, y, [tile | tile$]
+\usage PLOT bg, x, y, <tile|tile$>
 \args
 @bg	background number [`0` to `{VS23_MAX_BG_m1}`]
 @x	tile X coordinate [`0` to background width in tiles]
@@ -8838,7 +8838,7 @@ overloads that lead to graphics and/or sound glitches.
 `PROFILE ON` also enables the procedure profiler that helps determine the
 number of CPU cycles used in each BASIC procedure. After the program has
 been run, the results can be viewed using `PROFILE LIST`.
-\usage PROFILE [ON|OFF|LIST]
+\usage PROFILE <ON|OFF|LIST>
 \bugs
 It is not possible to switch the system and procedure profiling on and off
 independently.
