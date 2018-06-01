@@ -4157,11 +4157,14 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord, color
 @x1_coord The X coordinate of the line's starting point. +
           [`0` to `PSIZE(0)-1`]
 @y1_coord The Y coordinate of the line's starting point. +
-          [`0` to `PSIZE(1)-1`]
+          [`0` to `PSIZE(2)-1`]
 @x2_coord The X coordinate of the line's end point. +
           [`0` to `PSIZE(0)-1`]
 @y2_coord The Y coordinate of the line's end point. +
-          [`0` to `PSIZE(1)-1`]
+          [`0` to `PSIZE(2)-1`]
+@color	  The color of the line.
+\note
+Coordinates that exceed the valid video memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
 void iline() {
@@ -4185,14 +4188,19 @@ Draws a circle.
 \usage CIRCLE x_coord, y_coord, radius, color, fill_color
 
 \args
-@x_coord	The X coordinate of the circle's center.
-@y_coord	The Y coordinate of the circle's center.
-@radius		The circle's radius.
-@color		The color of the circle's outline.
-@fill_color	The color of the circle's body.
-
+@x_coord	The X coordinate of the circle's center +
+                [`0` to `PSIZE(0)-1`]
+@y_coord	The Y coordinate of the circle's center +
+                [`0` to `PSIZE(2)-1`]
+@radius		The circle's radius
+@color		The color of the circle's outline [`0` to `255`]
+@fill_color	The color of the circle's body +
+                [`0` to `255`, or `-1` for an unfilled circle]
+\note
+Coordinates that exceed the valid video memory area will be clamped.
 \bugs
-It is not possible to draw a non-filled circle.
+`fill_color` cannot be omitted.
+\ref PSIZE() RGB()
 ***/
 void icircle() {
   int32_t x, y, r, c, f;
@@ -4206,7 +4214,26 @@ void icircle() {
   sc0.circle(x, y, r, c, f);
 }
 
-// 四角の描画 RECT X1,Y1,X2,Y2,C,F
+/***bc pix RECT
+Draws a rectangle.
+\usage
+RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
+\args
+@x1_coord The X coordinate of the rectangle's top/left corner. +
+          [`0` to `PSIZE(0)-1`]
+@y1_coord The Y coordinate of the rectangle's top/left corner. +
+          [`0` to `PSIZE(2)-1`]
+@x2_coord The X coordinate of the rectangle's bottom/right corner. +
+          [`0` to `PSIZE(0)-1`]
+@y2_coord The Y coordinate of the rectangle's bottom/right corner. +
+          [`0` to `PSIZE(2)-1`]
+@color	  The color of the rectangle's outline.
+@fill_color The color of the rectangle's body +
+            [`0` to `255`, or `-1` for an unfilled rectangle]
+\bugs
+`fill_color` cannot be omitted.
+\ref PSIZE() RGB()
+***/
 void irect() {
   int32_t x1,y1,x2,y2,c,f;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
