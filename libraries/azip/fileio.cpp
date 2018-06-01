@@ -115,11 +115,22 @@ void open_story( void )
  *
  */
 
+void flush_block(int i) {
+    struct cache_block *cb = &cache_blocks[i];
+    if (cb->dirty) {
+      game.seekSet(cb->addr);
+      game.write((char *)cb->mem, 512);
+      cb->dirty = false;
+    }
+}
+
 void close_story( void )
 {
 
     if ( game )
     {
+        for (int i = 0; i < CACHE_BLOCKS; ++i)
+          flush_block(i);
         game.close( );
     }
 
@@ -270,6 +281,17 @@ zword_t read_code_word( void )
 
 }                               /* read_code_word */
 
+struct cache_block *fetch_block(unsigned long addr)
+{
+    int bl = rand() % CACHE_BLOCKS;
+    flush_block(bl);
+    struct cache_block *cb = &cache_blocks[bl];
+    cb->addr = addr / 512 * 512;
+    game.seekSet( cb->addr );
+    game.read((char *)cb->mem, 512);
+    return cb;
+}
+
 /*
 * read_code_byte
 *
@@ -281,10 +303,17 @@ zbyte_t read_code_byte( void )
 {
     zbyte_t value;
 
-    /* Seek to start of page */
-    game.seekSet( pc );
+    for (int i = 0; i < CACHE_BLOCKS; ++i) {
+      struct cache_block *cb = &cache_blocks[i];
+      if (cb->addr / 512 == pc / 512) {
+        value = cb->mem[pc % 512];
+        pc++;
+        return value;
+      }
+    }
 
-    value = game.read();
+    struct cache_block *cb = fetch_block(pc);
+    value = cb->mem[pc % 512];
 
     /* Update the PC */
     pc++;
@@ -330,10 +359,16 @@ zbyte_t read_data_byte( unsigned long *addr )
 {
     zbyte_t value = 0;
 
-    /* Seek to start of page */
-    game.seekSet( *addr );
-
-    value = game.read();
+    for (int i = 0; i < CACHE_BLOCKS; ++i) {
+      struct cache_block *cb = &cache_blocks[i];
+      if (cb->addr / 512 == *addr / 512) {
+        value = cb->mem[*addr % 512];
+        (*addr)++;
+        return value;
+      }
+    }
+    struct cache_block *cb = fetch_block(*addr);
+    value = cb->mem[*addr % 512];
 
     /* Update the address */
 
@@ -345,10 +380,18 @@ zbyte_t read_data_byte( unsigned long *addr )
 
 void write_data_byte( unsigned long *addr, zbyte_t value)
 {
-    /* Seek to start of page */
-    game.seekSet( *addr );
-
-    game.write( value );
+    for (int i = 0; i < CACHE_BLOCKS; ++i) {
+      struct cache_block *cb = &cache_blocks[i];
+      if (cb->addr / 512 == *addr / 512) {
+        cb->mem[*addr % 512] = value;
+        cb->dirty = true;
+        (*addr)++;
+        return;
+      }
+    }
+    struct cache_block *cb = fetch_block(*addr);
+    cb->mem[*addr % 512] = value;
+    cb->dirty = true;
 
     /* Update the address */
     ( *addr )++;

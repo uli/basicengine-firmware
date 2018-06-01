@@ -14,8 +14,14 @@
 #include "../../ttbasic/basic.h"
 #include "ztypes.h"
 
+struct cache_block *cache_blocks;
+
 void azipLoad()
 {
+  cache_blocks = (struct cache_block *)calloc(CACHE_BLOCKS, sizeof(*cache_blocks));
+  for (int i = 0; i < CACHE_BLOCKS; ++i) 
+    cache_blocks[i].addr = -1;
+
   open_story( );
   
   // put your setup code here, to run once:
@@ -30,5 +36,6 @@ void azipLoop()
 {
   // put your main code here, to run repeatedly:
   interpret( );  
+  free(cache_blocks);
 }
 

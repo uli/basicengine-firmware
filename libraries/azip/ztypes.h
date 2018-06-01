@@ -480,4 +480,12 @@ void z_load( zword_t );
 void z_pull( zword_t );
 void z_push( zword_t );
 
+#define CACHE_BLOCKS 16
+struct cache_block {
+  zword_t addr;
+  uint8_t mem[512];
+  bool dirty;
+};
+extern struct cache_block *cache_blocks;
+
 #endif /* !defined(__ZTYPES_INCLUDED) */
