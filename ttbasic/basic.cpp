@@ -2889,8 +2889,8 @@ have been saved using <<SAVE CONFIG>>. Changing power-on default options does no
 affect the system until the options are saved and the system is restarted.
 \usage CONFIG option, value
 \args
-@option	Configuration option to be set [`0` to `8`]
-@value	Option value
+@option	configuration option to be set [`0` to `8`]
+@value	option value
 \sec OPTIONS
 The following options exist:
 
@@ -3583,8 +3583,8 @@ void ilocate() {
 Changes the foreground and background color for text output.
 \usage COLOR fg_color[, bg_color]
 \args
-@fg_color	Foreground color [`0` to `255`]
-@bg_color	Background color [`0` to `255`, default: `0`]
+@fg_color	foreground color [`0` to `255`]
+@bg_color	background color [`0` to `255`, default: `0`]
 \ref RGB()
 ***/
 void icolor() {
@@ -3765,8 +3765,8 @@ out:
 Write a byte to an address in memory.
 \usage POKE addr, value
 \args
-@addr	Memory address
-@value	Value to be written
+@addr	memory address
+@value	value to be written
 \note
 `addr` must be mapped writable and must allow byte-wise access.
 \bugs
@@ -3777,8 +3777,8 @@ Sanity checks for `addr` are insufficient.
 Write a half-word (16 bits) to an address in memory.
 \usage POKEW addr, value
 \args
-@addr	Memory address
-@value	Value to be written
+@addr	memory address
+@value	value to be written
 \note
 `addr` must be mapped writable and must allow half-word-wise access.
 It must be 2-byte aligned.
@@ -3790,8 +3790,8 @@ Sanity checks for `addr` are insufficient.
 Write a word (32 bits) to an address in memory.
 \usage POKED addr, value
 \args
-@addr	Memory address
-@value	Value to be written
+@addr	memory address
+@value	value to be written
 \note
 `addr` must be mapped writable and must allow half-word-wise access.
 It must be 4-byte aligned.
@@ -3843,7 +3843,7 @@ Call a machine language routine.
 WARNING: Using this command incorrectly may crash the system, or worse.
 \usage SYS addr
 \args
-@addr	A memory address mapped as executable.
+@addr	a memory address mapped as executable
 \bugs
 No sanity checks are performed on the address.
 ***/
@@ -3857,7 +3857,7 @@ Sends data to an I2C device.
 \usage res = I2CW(i2c_addr, out_data)
 \args
 @i2c_addr	I2C address [`0` to `$7F`]
-@out_data	Data to be transmitted.
+@out_data	data to be transmitted
 \ret
 Status code of the transmission.
 \ref I2CR()
@@ -3885,8 +3885,8 @@ Request data from I2C device.
 \usage in$ = I2CR(i2c_addr, out_data, read_length)
 \args
 @i2c_addr	I2C address [`0` to `$7F`]
-@out_data	Data to be transmitted
-@read_length	Number of bytes to be received
+@out_data	data to be transmitted
+@read_length	number of bytes to be received
 \ret
 Returns the received data as the value of the function call.
 
@@ -3929,12 +3929,12 @@ out:
 Sets the current date and time.
 \usage SET DATE year, month, day, hour, minute, second
 \args
-@year	Numeric expression [`1900` to `2036`]
-@month	Numeric expression [`1` to `12`]
-@day	Numeric expression [`1` to `31`]
-@hour	Numeric expression [`0` to `23`]
-@minute	Numeric expression [`0` to `59`]
-@second	Numeric expression [`0` to `61`]
+@year	numeric expression [`1900` to `2036`]
+@month	numeric expression [`1` to `12`]
+@day	numeric expression [`1` to `31`]
+@hour	numeric expression [`0` to `23`]
+@minute	numeric expression [`0` to `59`]
+@second	numeric expression [`0` to `61`]
 \bugs
 It is unclear why the maximum value for `second` is 61 and not 59.
 \ref DATE GET_DATE
@@ -3984,11 +3984,11 @@ Get the current date.
 
 \usage GET DATE year, month, day, weekday
 \args
-@year		Numeric variable
-@month		Numeric variable
-@day		Numeric variable
-@weekday	Numeric variable
-\ret Returns the current date in the given numeric variables.
+@year		numeric variable
+@month		numeric variable
+@day		numeric variable
+@weekday	numeric variable
+\ret The current date in the given numeric variables.
 \bugs
 Only supports scalar variables, not array or list members.
 
@@ -4035,10 +4035,10 @@ Get the current time.
 
 \usage GET TIME hour, minute, second
 \args
-@hour	Numeric variable
-@minute	Numeric variable
-@second	Numeric variable
-\ret Returns the current time in the given numeric variables.
+@hour	numeric variable
+@minute	numeric variable
+@second	numeric variable
+\ret The current time in the given numeric variables.
 \bugs
 Only supports scalar variables, not array or list members.
 
@@ -4134,8 +4134,8 @@ void idate() {
 Draws a pixel.
 \usage PSET x_coord, y_coord, color
 \args
-@x_coord The X coordinate of the pixel.
-@y_coord The Y coordinate of the pixel.
+@x_coord X coordinate of the pixel
+@y_coord Y coordinate of the pixel
 \ref RGB()
 ***/
 void ipset() {
@@ -4154,15 +4154,15 @@ Draws a line.
 \usage
 LINE x1_coord, y1_coord, x2_coord, y2_coord, color
 \args
-@x1_coord The X coordinate of the line's starting point. +
+@x1_coord X coordinate of the line's starting point +
           [`0` to `PSIZE(0)-1`]
-@y1_coord The Y coordinate of the line's starting point. +
+@y1_coord Y coordinate of the line's starting point +
           [`0` to `PSIZE(2)-1`]
-@x2_coord The X coordinate of the line's end point. +
+@x2_coord X coordinate of the line's end point +
           [`0` to `PSIZE(0)-1`]
-@y2_coord The Y coordinate of the line's end point. +
+@y2_coord Y coordinate of the line's end point +
           [`0` to `PSIZE(2)-1`]
-@color	  The color of the line.
+@color	  color of the line
 \note
 Coordinates that exceed the valid video memory area will be clamped.
 \ref PSIZE() RGB()
@@ -4188,13 +4188,13 @@ Draws a circle.
 \usage CIRCLE x_coord, y_coord, radius, color, fill_color
 
 \args
-@x_coord	The X coordinate of the circle's center +
+@x_coord	X coordinate of the circle's center +
                 [`0` to `PSIZE(0)-1`]
-@y_coord	The Y coordinate of the circle's center +
+@y_coord	Y coordinate of the circle's center +
                 [`0` to `PSIZE(2)-1`]
-@radius		The circle's radius
-@color		The color of the circle's outline [`0` to `255`]
-@fill_color	The color of the circle's body +
+@radius		circle's radius
+@color		color of the circle's outline [`0` to `255`]
+@fill_color	color of the circle's body +
                 [`0` to `255`, or `-1` for an unfilled circle]
 \note
 Coordinates that exceed the valid video memory area will be clamped.
@@ -4219,16 +4219,16 @@ Draws a rectangle.
 \usage
 RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
 \args
-@x1_coord The X coordinate of the rectangle's top/left corner. +
+@x1_coord X coordinate of the rectangle's top/left corner +
           [`0` to `PSIZE(0)-1`]
-@y1_coord The Y coordinate of the rectangle's top/left corner. +
+@y1_coord Y coordinate of the rectangle's top/left corner +
           [`0` to `PSIZE(2)-1`]
-@x2_coord The X coordinate of the rectangle's bottom/right corner. +
+@x2_coord X coordinate of the rectangle's bottom/right corner +
           [`0` to `PSIZE(0)-1`]
-@y2_coord The Y coordinate of the rectangle's bottom/right corner. +
+@y2_coord Y coordinate of the rectangle's bottom/right corner +
           [`0` to `PSIZE(2)-1`]
-@color	  The color of the rectangle's outline.
-@fill_color The color of the rectangle's body +
+@color	  color of the rectangle's outline
+@fill_color color of the rectangle's body +
             [`0` to `255`, or `-1` for an unfilled rectangle]
 \bugs
 `fill_color` cannot be omitted.
@@ -4249,12 +4249,12 @@ void irect() {
 Copies a rectangular area of video memory to another area.
 \usage BLIT x, y TO dest_x, dest_y SIZE width, height [UP|DOWN]
 \args
-@x	Source area, X coordinate [`0` to `PSIZE(0)-1`]
-@y	Source area, Y coordinate [`0` to `PSIZE(2)-1`]
-@dest_x	Destination area, X coordinate [`0` to `PSIZE(0)-1`]
-@dest_y	Destination area, Y coordinate [`0` to `PSIZE(2)-1`]
-@width	Area width [`0` to `PSIZE(0)-x`]
-@height	Area height [`0` to `PSIZE(2)-y`]
+@x	source area, X coordinate [`0` to `PSIZE(0)-1`]
+@y	source area, Y coordinate [`0` to `PSIZE(2)-1`]
+@dest_x	destination area, X coordinate [`0` to `PSIZE(0)-1`]
+@dest_y	destination area, Y coordinate [`0` to `PSIZE(2)-1`]
+@width	area width [`0` to `PSIZE(0)-x`]
+@height	area height [`0` to `PSIZE(2)-y`]
 \note
 The default transfer direction is down.
 \bugs
@@ -4288,11 +4288,11 @@ void iblit() {
 Scrolls the text screen contents in the given direction.
 \usage CSCROLL x1, y1, x2, y2, direction
 \args
-@x1	Start of the screen region, X coordinate, characters [`0` to `CSIZE(0)-1`]
-@y1	Start of the screen region, Y coordinate, characters [`0` to `CSIZE(1)-1`]
-@x2	End of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]
-@y2	End of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]
-@direction	Direction
+@x1	start of the screen region, X coordinate, characters [`0` to `CSIZE(0)-1`]
+@y1	start of the screen region, Y coordinate, characters [`0` to `CSIZE(1)-1`]
+@x2	end of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]
+@y2	end of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]
+@direction	direction
 \sec DIRECTION
 Valid values for `direction` are:
 \table
@@ -4329,11 +4329,11 @@ void  icscroll() {
 Scroll a portion screen contents in the given direction.
 \usage GSCROLL x1, y1, x2, y2, direction
 \args
-@x1	Start of the screen region, X coordinate, pixels [`0` to `PSIZE(0)-1`]
-@y1	Start of the screen region, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
-@x2	End of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]
-@y2	End of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]
-@direction	Direction
+@x1	start of the screen region, X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@y1	start of the screen region, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@x2	end of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]
+@y2	end of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]
+@direction	direction
 \sec DIRECTION
 Valid values for `direction` are:
 \table
@@ -4365,7 +4365,7 @@ WARNING: This command may be renamed in the future to reduce namespace
 pollution.
 \usage SWRITE c
 \args
-@c	Byte to be written
+@c	byte to be written
 \ref SMODE
 ***/
 void iswrite() {
@@ -4381,8 +4381,8 @@ WARNING: This command is likely to be renamed in the future to reduce
 namespace pollution.
 \usage SMODE baud[, flags]
 \args
-@baud	Baud rate [`0` to `921600`]
-@flags	Serial port flags
+@baud	baud rate [`0` to `921600`]
+@flags	serial port flags
 \bugs
 The meaning of `flags` is determined by `enum` values in the Arduino core
 and cannot be relied on to remain stable.
@@ -4429,7 +4429,7 @@ void ibeep() {
 Sets the sound font to be used by the wavetable synthesizer.
 \usage SOUND FONT file$
 \args
-@file$	Name of the SF2 sound font file
+@file$	name of the SF2 sound font file
 \note
 The default sound font name is `1mgm.sf2`.
 \bugs
@@ -4441,11 +4441,11 @@ No sanity checks are performed before setting the sound font.
 Generates a sound using the wavetable synthesizer.
 \usage SOUND ch, inst, note[, len[, vel]]
 \args
-@ch	Sound channel [`0` to `{SOUND_CHANNELS_m1}`]
-@inst	Instrument number
-@note	Note pitch
-@len	Note duration, milliseconds [default: 1000]
-@vel	Note velocity [`0` to `1` (default)]
+@ch	sound channel [`0` to `{SOUND_CHANNELS_m1}`]
+@inst	instrument number
+@note	note pitch
+@len	note duration, milliseconds [default: 1000]
+@vel	note velocity [`0` to `1` (default)]
 \ref INST$() SOUND_FONT
 ***/
 void isound() {
@@ -4488,7 +4488,7 @@ Plays a piece of music in Music Macro Language (MML) using the
 wavetable synthesizer.
 \usage PLAY mml$
 \args
-@mml$	Score in MML format.
+@mml$	score in MML format
 \bugs
 * Only supports one sound channel.
 * MML syntax undocumented.
@@ -4508,7 +4508,7 @@ void iplay() {
 Speaks the given text.
 \usage SAY text$
 \args
-@text$	The text to be spoken.
+@text$	text to be spoken
 \note
 `text$` is assumed to be in English.
 
@@ -4551,11 +4551,11 @@ num_t BASIC_INT npoint() {
 Re-maps a value from one range to another
 \usage mval = MAP(val, l1, h1, l2, h2)
 \args
-@val	Value to be re-mapped
-@l1	Lower bound of the value's current range
-@h1	Upper bound of the value's current range
-@l2	Lower bound of the value's target range
-@h2	Upper bound of the value's target range
+@val	value to be re-mapped
+@l1	lower bound of the value's current range
+@h1	upper bound of the value's current range
+@l2	lower bound of the value's target range
+@h2	upper bound of the value's target range
 \ret Re-mapped value.
 \bugs
 Restricts `value` to the range `l1`-`h1`, which is arbitrary.
@@ -4580,7 +4580,7 @@ num_t BASIC_FP SMALL nmap() {
 Returns the ASCII code for the first character in a string expression.
 \usage val = ASC(s$)
 \args
-@s$	String expression
+@s$	string expression
 \ret ASCII code of the first character.
 \error
 Generates an error if `s$` is empty.
@@ -4607,9 +4607,9 @@ to a given file.
 \usage
 PRINT [#file_num, ][*expressions*][<;|,>]
 \args
-@file_num	File number to be printed to +
+@file_num	file number to be printed to +
                 [default: current output device]
-@expressions	List of expressions specifying what to print
+@expressions	list of expressions specifying what to print
 \sec EXPRESSIONS
 The following types of expressions can be used in a `PRINT` command
 expressions list:
@@ -4763,8 +4763,8 @@ Prints a string of characters at the specified pixel position.
 off-screen video memory.
 \usage GPRINT x, y, *expressions*
 \args
-@x	Start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]
-@y	Start point, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@x	start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@y	start point, Y coordinate, pixels [`0` to `PSIZE(2)-1`]
 @expressions	`PRINT`-format list of expressions specifying what to draw
 \note
 * The expression list functions as it does in the `PRINT` command.
@@ -4802,14 +4802,14 @@ BString getParamFname() {
 Saves a portion of video memory to storage as a PCX file.
 \usage SAVE PCX image$ [POS x, y] [SIZE w, h]
 \args
-@image$	Name of image file to be created.
-@x	Left of video memory section, pixels +
+@image$	name of image file to be created
+@x	left of video memory section, pixels +
         [`0` (default) to `PSIZE(0)-1`]
-@y	Top of video memory section, pixels +
+@y	top of video memory section, pixels +
         [`0` (default) to `PSIZE(2)-1`]
-@w	Width of video memory section, pixels +
+@w	width of video memory section, pixels +
         [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]
-@h	Height of video memory section, pixels +
+@h	height of video memory section, pixels +
         [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
 \bugs
 CAUTION: This command has never been tested and can thus not be guaranteed
@@ -4846,17 +4846,17 @@ Loads a PCX image file in whole or in parts from storage to video memory.
 LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
          [SIZE width, height] [KEY col]
 \args
-@bg		Background number [`0` to `{VS23_MAX_BG_m1}`]
-@range		Sprite range [limits between `0` and `{VS23_MAX_SPRITES_m1}`]
-@dest_x		Destination X coordinate, pixels +
+@bg		background number [`0` to `{VS23_MAX_BG_m1}`]
+@range		sprite range [limits between `0` and `{VS23_MAX_SPRITES_m1}`]
+@dest_x		destination X coordinate, pixels +
                 [`0` (default) to `PSIZE(0)-w`]
-@dest_y		Destination Y coordinate, pixels +
+@dest_y		destination Y coordinate, pixels +
                 [`0` (default) to `PSIZE(2)-h`]
-@x		Offset within image file, X axis, pixels [default: `0`]
-@y		Offset within image file, Y axis, pixels [default: `0`]
-@width		Width of image portion to be loaded, pixels [default: image width]
-@height		Height of image portion to be loaded, pixels [default: image height]
-@col		Color key for transparency [default: no transparency]
+@x		offset within image file, X axis, pixels [default: `0`]
+@y		offset within image file, Y axis, pixels [default: `0`]
+@width		width of image portion to be loaded, pixels [default: image width]
+@height		height of image portion to be loaded, pixels [default: image height]
+@col		color key for transparency [default: no transparency]
 \note
 If no destination is specified, an area of off-screen memory will be allocated
 automatically.
@@ -4962,7 +4962,7 @@ void SMALL ildbmp() {
 Creates a directory.
 \usage MKDIR directory$
 \args
-@directory$	The path to the new directory.
+@directory$	path to the new directory
 ***/
 void imkdir() {
   uint8_t rc;
@@ -4984,7 +4984,7 @@ void imkdir() {
 Deletes a directory.
 \usage RMDIR directory$
 \args
-@directory$	Name of directory to be deleted.
+@directory$	name of directory to be deleted
 \bugs
 Does not support wildcard patterns.
 \ref MKDIR
@@ -5011,8 +5011,8 @@ void irmdir() {
 Changes the name of a file or directory.
 \usage RENAME old$ TO new$
 \args
-@old$	Current file name.
-@new$	New file name.
+@old$	current file name
+@new$	new file name
 \bugs
 Does not support wildcard patterns.
 ***/
@@ -5046,7 +5046,7 @@ WARNING: Do not confuse with `DELETE`, which deletes lines from the
 program in memory.
 \usage REMOVE file$
 \args
-@file$	File to be deleted.
+@file$	file to be deleted
 \bugs
 Does not support wildcard patterns.
 \ref DELETE
@@ -5069,8 +5069,8 @@ void iremove() {
 Copies a file.
 \usage COPY file$ TO new_file$
 \args
-@file$		File to be copied.
-@new_file$	Copy of the file to be created.
+@file$		file to be copied
+@new_file$	copy of the file to be created
 \bugs
 Does not support wildcard patterns.
 ***/
@@ -5098,9 +5098,9 @@ void icopy() {
 Saves an area of memory to a file.
 \usage BSAVE file$, addr, len
 \args
-@file$	Name of binary file.
-addr	Memory start address.
-len	Number of bytes to be saved.
+@file$	name of binary file
+@addr	memory start address
+@len	number of bytes to be saved
 \note
 `BSAVE` will use 32-bit memory accesses if `addr` and `len` are
 multiples of 4, and 8-bit accesses otherwise.
@@ -5169,9 +5169,9 @@ DONE:
 Loads a binary file to memory.
 \usage BLOAD file$ TO addr[, len]
 \args
-@file$	Name of binary file.
-@addr	Memory address to be loaded to.
-@len	Number of bytes to be loaded. [default: whole file]
+@file$	name of binary file
+@addr	memory address to be loaded to
+@len	number of bytes to be loaded [default: whole file]
 \note
 `BLOAD` will use 32-bit memory accesses if `addr` and `len` are
 multiples of 4, and 8-bit accesses otherwise.
@@ -5254,7 +5254,7 @@ Writes the contents of a file to the screen. When a screen's worth of text
 has been printed, it pauses and waits for a key press.
 \usage TYPE file$
 \args
-@file$	Name of the file.
+@file$	name of the file
 ***/
 void  itype() {
   //char fname[SD_PATH_LEN];
@@ -5297,13 +5297,13 @@ WINDOW x, y, w, h
 
 WINDOW OFF
 \args
-@x	Left boundary of the text window, in characters. +
+@x	left boundary of the text window, in characters +
         [`0` to `CSIZE(0)-8`]
-@y	Top boundary of the text window, in characters. +
+@y	top boundary of the text window, in characters +
         [`0` to `CSIZE(1)-2`]
-@w	Width of the text window, in characters. +
+@w	width of the text window, in characters +
         [`8` to `CSIZE(0)-x`]
-@h	Height of the text window, in characters. +
+@h	height of the text window, in characters +
         [`2` to `CSIZE(1)-y`]
 \bugs
 `WINDOW` always clears the newly defined window, which may not be desirable.
@@ -5363,7 +5363,7 @@ void ifont() {
 Change the screen resolution.
 \usage SCREEN mode
 \args
-@mode Screen mode. [`1` to `10`]
+@mode screen mode [`1` to `10`]
 // XXX: No convenient way to auto-update the number of modes.
 \sec MODES
 The following modes are available:
@@ -5435,11 +5435,11 @@ Sets the color space ("palette") for the current screen mode, as well as
 coefficients for the color conversion function `RGB()`.
 \usage PALETTE pal[, hw, sw, vw, f]
 \args
-@pal	Colorspace number [`0` or `1`]
-@hw	Hue weight for color conversion [`0` to `7`]
-@sw	Saturation weight for color conversion [`0` to `7`]
-@vw	Value weight for color conversion [`0` to `7`]
-@f	Conversion fix-ups enabled [`0` or `1`]
+@pal	colorspace number [`0` or `1`]
+@hw	hue weight for color conversion [`0` to `7`]
+@sw	saturation weight for color conversion [`0` to `7`]
+@vw	value weight for color conversion [`0` to `7`]
+@f	conversion fix-ups enabled [`0` or `1`]
 \note
 The default component weights depend on the color space. They are:
 \table header
@@ -5473,8 +5473,8 @@ The color can be set individually for each screen column.
 \args
 @uv	UV component of the border color [`0` to `255`]
 @y	Y component of the border color [`0` to `255`]
-@x	First column to set [default: `0`]
-@w	Number of columns to set [default: all]
+@x	first column to set [default: `0`]
+@w	number of columns to set [default: all]
 \note
 There is no direct correspondence between border and screen color values.
 \bugs
@@ -5506,17 +5506,17 @@ BG bg [TILES w, h] [PATTERN px, py, pw] [SIZE tx, ty] [WINDOW wx, wy, ww, wh]
       [PRIO priority] [ON|OFF]
 BG OFF
 \args
-@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
-@w	Background map width, in tiles.
-@h	Background map height, in tiles.
-@px	Tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]
-@py	Tile set Y coordinate, pixels [`0` to `PSIZE(2)-1`]
-@tx	Tile width, pixels [`8` (default) to `32`]
-@ty	Tile height, pixels [`8` (default) to `32`]
-@wx	Window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
-@wy	Window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
-@ww	Window width, pixels [`0` to `PSIZE(0)-wx` (default)]
-@wh	Window height, pixels [`0` to `PSIZE(1)-wy` (default)]
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@w	background map width, in tiles
+@h	background map height, in tiles
+@px	tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@py	tile set Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@tx	tile width, pixels [`8` (default) to `32`]
+@ty	tile height, pixels [`8` (default) to `32`]
+@wx	window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
+@wy	window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
+@ww	window width, pixels [`0` to `PSIZE(0)-wx` (default)]
+@wh	window height, pixels [`0` to `PSIZE(1)-wy` (default)]
 @priority Background priority [`0` to `{VS23_MAX_BG_m1}`, default: `bg`]
 \note
 * The `BG` command's attributes can be specified in any order, but it is
@@ -5600,8 +5600,8 @@ void ibg() {
 Loads a background map from storage.
 \usage LOAD BG bg, file$
 \args
-@bg	Background number. [`0` to `{VS23_MAX_BG_m1}`]
-@file$	Name of background map file.
+@bg	background number. [`0` to `{VS23_MAX_BG_m1}`]
+@file$	name of background map file
 \ref SAVE_BG
 ***/
 void iloadbg() {
@@ -5655,8 +5655,8 @@ out:
 Saves a background map to storage.
 \usage SAVE BG bg TO file$
 \args
-@bg	Background number. [`0` to `{VS23_MAX_BG_m1}`]
-@file$	Name of background map file.
+@bg	background number. [`0` to `{VS23_MAX_BG_m1}`]
+@file$	name of background map file
 \bugs
 Does not check if the specified background is properly defined.
 \ref LOAD_BG
@@ -5697,9 +5697,9 @@ void isavebg() {
 Scrolls a tiled background.
 \usage MOVE BG bg TO pos_x, pos_y
 \args
-@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
-@pos_x	Top/left corner offset horizontal, pixels
-@pos_y  Top/left corner offset vertical, pixels
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@pos_x	top/left corner offset horizontal, pixels
+@pos_y	top/left corner offset vertical, pixels
 \note
 There are no restrictions on the coordinates that can be used; backgrounds
 maps wrap around if the display window extends beyond the map boundaries.
@@ -5883,11 +5883,11 @@ void BASIC_FP imove()
 Sets the value of one or more background tiles.
 \usage PLOT bg, x, y, [tile | tile$]
 \args
-@bg	Background number [`0` to `{VS23_MAX_BG_m1}`]
-@x	Tile X coordinate [`0` to background width in tiles]
-@y	Tile Y coordinate [`0` to background height in tiles]
-@tile	Tile identifier [`0` to `255`]
-@tile$	Tile identifiers
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@x	tile X coordinate [`0` to background width in tiles]
+@y	tile Y coordinate [`0` to background height in tiles]
+@tile	tile identifier [`0` to `255`]
+@tile$	tile identifiers
 \note
 If the numeric `tile` argument is given, a single tile will be set.
 If a string of tiles (`tile$`) is passed, a tile will be set for each of the
@@ -5926,7 +5926,7 @@ This serves to increase the available CPU power to BASIC by reducing the load
 imposed by the graphics subsystem.
 \usage FRAMESKIP frm
 \args
-@frm	Number of frames to be skipped. [`0` (default) to `60`]
+@frm	number of frames to be skipped [`0` (default) to `60`]
 \note
 It is not possible to mitigate flickering caused by overloading the graphics
 engine using `FRAMESKIP` because each frame that is actually rendered must
@@ -6043,7 +6043,7 @@ int e_main(int argc, char **argv);
 Runs the ASCII text editor.
 \usage EDIT [file$]
 \args
-@file$	Name of file to be edited. [default: new file]
+@file$	name of file to be edited [default: new file]
 ***/
 void iedit() {
   BString fn;
@@ -6062,15 +6062,15 @@ void iedit() {
 Load a program from storage.
 \usage LOAD file$
 \args
-@file$	Name of the BASIC program.
+@file$	name of the BASIC program
 \ref LOAD_BG LOAD_PCX SAVE
 ***/
 /***bc bas MERGE
 Merge a program in storage with the program currently in memory.
 \usage MERGE file$[, line_num]
 \args
-@file$		Name of the BASIC program to be merged.
-@line_num	Line number at which to contine execution. [default: first line]
+@file$		name of the BASIC program to be merged
+@line_num	line number at which to contine execution [default: first line]
 \note
 If called from within a program, `MERGE` will continue execution from line `line_num`
 after the merge (or the beginning of the program if `line_num` is not specified).
@@ -6083,8 +6083,8 @@ limits its usefulness.
 Loads a new program and runs it, keeping the current set of variables.
 \usage CHAIN file$[, line_num]
 \args
-@file$		Name of the BASIC program to be executed.
-@line_num	Line number at which execution will start. [default: first line]
+@file$		name of the BASIC program to be executed
+@line_num	line number at which execution will start [default: first line]
 \note
 Unlike `EXEC`, `CHAIN` does not allow returning to the original program.
 \ref EXEC LOAD
@@ -6250,9 +6250,9 @@ understood RGB format, and can also help with programs that need to work
 with different color palettes.
 \usage color = RGB(red, green, blue)
 \args
-@red	Red component [0 to 255]
-@green	Green component [0 to 255]
-@blue	Blue component [0 to 255]
+@red	red component [0 to 255]
+@green	green component [0 to 255]
+@blue	blue component [0 to 255]
 \ret YUV color value
 \note
 The color conversion method used is optimized for use with pixel art.
@@ -6322,12 +6322,11 @@ out:
 Returns a specified number of leftmost characters in a string.
 \usage s$ = LEFT$(l$, num)
 \args
-@l	Any string expression.
-@num	The number of characters to return. [min `0`]
+@l	any string expression
+@num	number of characters to return [min `0`]
 \ret Substring of at most the length specified in `num`.
-
-If `l$` is shorter than `num` characters, the return value
-is `l$`.
+\note
+If `l$` is shorter than `num` characters, the return value is `l$`.
 \ref MID$() RIGHT$()
 ***/
 static BString sleft() {
@@ -6337,12 +6336,11 @@ static BString sleft() {
 Returns a specified number of rightmost characters in a string.
 \usage s$ = RIGHT$(r$, num)
 \args
-@r	Any string expression.
-@num	The number of characters to return. [min `0`]
+@r	any string expression
+@num	number of characters to return [min `0`]
 \ret Substring of at most `num` characters.
-
-If `r$` is shorter than `num` characters, the return value
-is `r$`.
+\note
+If `r$` is shorter than `num` characters, the return value is `r$`.
 \ref LEFT$() MID$()
 ***/
 static BString sright() {
@@ -6353,11 +6351,11 @@ static BString sright() {
 Returns part of a string (a substring).
 \usage s$ = MID$(m$, start[, len])
 \args
-@m$	Any string expression.
-@start	Position of the first character in the substring being returned.
-@len	number of characters in the substring. [default: `LEN(m$)-start`]
+@m$	any string expression
+@start	position of the first character in the substring being returned
+@len	number of characters in the substring [default: `LEN(m$)-start`]
 \ret Substring of at most `len` characters.
-
+\note
 If `m$` is shorter than `len` characters, the return value is `m$`.
 \bugs
 `MID$()` cannot be used as the target of an assignment, as is possible in
@@ -6400,7 +6398,7 @@ out:
 Returns the next entry of an open directory.
 \usage d$ = DIR$(dir_num)
 \args
-@dir_num	Number of an open directory.
+@dir_num	number of an open directory
 \ret Returns the directory entry as the value of the function.
 
 Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1)
@@ -6436,8 +6434,8 @@ out:
 Returns a string of characters read from a specified file.
 \usage dat$ = INPUT$(len, [#]file_num)
 \args
-@len		Number of bytes to read.
-@file_num	Number of an open file. [`0` to `{MAX_USER_FILES_m1}`]
+@len		number of bytes to read
+@file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
 \ret Data read from file.
 \ref INPUT
 ***/
@@ -6474,7 +6472,7 @@ out:
 Returns the character corresponding to a specified ASCII code.
 \usage char = CHR$(val)
 \args
-@val	ASCII code.
+@val	ASCII code
 \ret Single-character string.
 \ref ASC()
 ***/
@@ -6557,7 +6555,7 @@ static BString spopb() {
 Returns the name of the specified wavetable synthesizer instrument.
 \usage name$ = INST$(num)
 \args
-@num	Instrument number.
+@num	instrument number
 \ret
 Instrument name.
 
@@ -6579,9 +6577,9 @@ Returns one of the string return values returned by the last function
 call.
 \usage rval$ = RET$(num)
 \args
-@num	Number of the string return value. [`0` to `{MAX_RETVALS_m1}`]
+@num	number of the string return value [`0` to `{MAX_RETVALS_m1}`]
 \ret String return value requested.
-\ref RETURN
+\ref RET() RETURN
 ***/
 static BString sret() {
   int32_t n = getparam();
@@ -6596,7 +6594,7 @@ static BString sret() {
 Returns the error message associated with a given error number.
 \usage msg$ = ERROR$(num)
 \args
-@num	Error number [`0` to `{max_err}`]
+@num	error number [`0` to `{max_err}`]
 \ret Error message.
 \ref ON_ERROR RET()
 ***/
@@ -6891,7 +6889,7 @@ num_t BASIC_INT nsready() {
 Returns the dimensions of the current screen mode in text characters.
 \usage size = CSIZE(dimension)
 \args
-@dimension	Requested screen dimension: +
+@dimension	requested screen dimension: +
                 `0`: text screen width +
                 `1`: text screen height
 \ret Size in characters.
@@ -6911,7 +6909,7 @@ num_t BASIC_FP ncsize() {
 Returns the dimensions of the current screen mode in pixels.
 \usage size = PSIZE(dimension)
 \args
-@dimension	Requested screen dimension: +
+@dimension	requested screen dimension: +
                 `0`: screen width +
                 `1`: visible screen height +
                 `2`: total screen height
@@ -6932,7 +6930,7 @@ num_t BASIC_FP npsize() {
 Returns the text cursor position.
 \usage position = POS(axis)
 \args
-@axis	Requested axis: +
+@axis	requested axis: +
         `0`: horizontal +
         `1`: vertical
 \ret Position in characters.
@@ -8481,7 +8479,7 @@ void istop() {
 Changes the current directory.
 \usage CHDIR directory$
 \args
-@directory$	Path to the new current directory.
+@directory$	path to the new current directory
 \ref CWD$()
 ***/
 void ichdir() {
@@ -8498,8 +8496,8 @@ Opens a file or directory.
 \usage
 OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
 \args
-@file$		Name of the file or directory.
-@file_num	File number to be used [`0` to `{MAX_USER_FILES_m1}`]
+@file$		name of the file or directory
+@file_num	file number to be used [`0` to `{MAX_USER_FILES_m1}`]
 \sec MODES
 * `*INPUT*` opens the file for reading. (This is the default if no mode is
   specified.)
@@ -8569,7 +8567,7 @@ void iopen() {
 Closes an open file or directory.
 \usage CLOSE [#]file_num
 \args
-@file_num	Number of an open file or directory.
+@file_num	number of an open file or directory
 \ref OPEN
 ***/
 void iclose() {
@@ -8598,8 +8596,8 @@ void iclose() {
 Sets the file position for the next read or write.
 \usage SEEK file_num, position
 \args
-@file_num	Number of an open file.
-@position	The position where the next read or write should occur.
+@file_num	number of an open file
+@position	position where the next read or write should occur
 \error
 The command will generate an error if `file_num` is not open or the operation
 is unsuccessful.
@@ -8669,7 +8667,7 @@ void iprofile() {
 Boots the system from the specified flash page.
 \usage BOOT page
 \args
-@page	Flash page to boot from. [`0` to `255`]
+@page	flash page to boot from [`0` to `255`]
 \note
 The `BOOT` command does not verify if valid firmware code is installed at
 the given flash page. Use with caution.
@@ -8696,7 +8694,7 @@ void iboot() {
 Executes a BASIC program as a child process.
 \usage EXEC program_file$
 \args
-@program_file$	Name of the BASIC program file to be executed
+@program_file$	name of the BASIC program file to be executed
 \note
 A program run via `EXEC` runs in its own program and variable space, and
 nothing it does affects the calling program or its variables, with the
