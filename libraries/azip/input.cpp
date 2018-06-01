@@ -572,13 +572,14 @@ int input_line( int buflen, unsigned long addr, int timeout, int *read_size )
     do
     {
         c = c_getch();
-        if ( (c != '\n') && (*read_size < buflen) )
+        c_putch(c);
+        if ( (c != '\r') && (*read_size < buflen) )
         {
             ( *read_size )++;
             write_data_byte(&addr, tolower(c));
         }
     }
-    while ( c != '\n' );
+    while ( c != '\r' );
 
     return c;
 }                               /* input_line */
