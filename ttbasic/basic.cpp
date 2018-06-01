@@ -3617,7 +3617,43 @@ int32_t BASIC_FP iinkey() {
   return rc;
 }
 
-// メモリ参照　PEEK(adr[,bnk])
+/***bf sys PEEK
+Read a byte of data from an address in memory.
+\usage v = PEEK(addr)
+\args
+@addr	memory address
+\ret Content of memory address.
+\note
+Memory at `addr` must allow byte-wise access.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref PEEKD() PEEKW()
+***/
+/***bf sys PEEKW
+Read a half-word (16 bits) of data from an address in memory.
+\usage v = PEEKW(addr)
+\args
+@addr	memory address
+\ret Content of memory address.
+\note
+Memory at `addr` must allow byte-wise access, and `addr` must be 2-byte
+aligned.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref PEEK() PEEKD()
+***/
+/***bf sys PEEKD
+Read a word (32 bits) of data from an address in memory.
+\usage v = PEEKD(addr)
+\args
+@addr	memory address
+\ret Content of memory address.
+\note
+`addr` must be 4-byte aligned.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref PEEK() PEEKW()
+***/
 int32_t ipeek(int type) {
   int32_t value = 0, vadr;
   void* radr;
