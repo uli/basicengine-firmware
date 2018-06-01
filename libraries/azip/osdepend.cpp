@@ -40,7 +40,7 @@
   */
 
 #include "ztypes.h"
-#include <basic.h>
+#include "../../ttbasic/basic.h"
 
 void fatal( const char *msg )
 {

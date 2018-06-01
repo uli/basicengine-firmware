@@ -42,7 +42,7 @@
 //#include <SdFat.h>
 //#include <SdFatUtil.h>
 #include "ztypes.h"
-#include <basic.h>
+#include "../../ttbasic/basic.h"
 
 /* Static data */
 

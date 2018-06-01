@@ -40,7 +40,7 @@
   */
 
 #include "ztypes.h"
-#include <basic.h>
+#include "../../ttbasic/basic.h"
 
 /* Statically defined word separator list */
 

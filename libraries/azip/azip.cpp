@@ -11,9 +11,7 @@
   *
   */
 
-#include <basic.h>
-#include <SdFat.h>
-//#include <SdFatUtil.h>
+#include "../../ttbasic/basic.h"
 #include "ztypes.h"
 
 void azipLoad()
