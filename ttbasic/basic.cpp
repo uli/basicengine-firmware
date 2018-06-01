@@ -7156,15 +7156,15 @@ num_t BASIC_FP nplay() {
 #ifdef HAVE_MML
   int32_t a, b;
   if (checkOpen()) return 0;
-  if (getParam(a, 0, SOUND_CHANNELS, I_CLOSE)) return 0;
-  if (a == 0) {
+  if (getParam(a, -1, SOUND_CHANNELS - 1, I_CLOSE)) return 0;
+  if (a == -1) {
     b = 0;
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
       b |= sound.isPlaying(i);
     }
     return b;
   } else
-    return sound.isPlaying(a - 1);
+    return sound.isPlaying(a);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
