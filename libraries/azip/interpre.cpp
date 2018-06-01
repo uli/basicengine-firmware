@@ -43,8 +43,6 @@
 
 //#define DEBUG_TERPRE
 
-static int halt = FALSE;
-
 /*
 * interpret
 *

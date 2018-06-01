@@ -491,6 +491,12 @@ public:
   int interpreter_state;
   int interpreter_status;
   int screen_window;
+
+  int halt;
+
+  zword_t dictionary_offset;
+  ZINT16 dictionary_size;
+  unsigned int entry_size;
 };
 
 

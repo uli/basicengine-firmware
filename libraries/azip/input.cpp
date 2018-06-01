@@ -43,12 +43,7 @@
 #include "../../ttbasic/basic.h"
 
 /* Statically defined word separator list */
-
-static const char *separators = " \t\n\f.,?";
-static zword_t dictionary_offset = 0;
-static ZINT16 dictionary_size = 0;
-static unsigned int entry_size = 0;
-
+static const char separators[] PROGMEM = " \t\n\f.,?";
 
 /*
 * z_read_char
@@ -402,12 +397,12 @@ unsigned long AZIP::next_token( unsigned long s_addr, unsigned long str_end, uns
 
         /* Look for statically defined separators last */
 
-        for ( i = 0; separators[i] && get_byte(s_addr) != separators[i]; i++ )
+        for ( i = 0; pgm_read_byte(&separators[i]) && get_byte(s_addr) != pgm_read_byte(&separators[i]); i++ )
             ;
 
         /* If a separator is found then return the information */
 
-        if ( separators[i] )
+        if ( pgm_read_byte(&separators[i]) )
         {
 
             /* If length has been set then just return the word position */

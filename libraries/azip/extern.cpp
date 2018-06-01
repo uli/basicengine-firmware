@@ -73,6 +73,12 @@ AZIP::AZIP()
   interpreter_state = RUN;
   interpreter_status = 0;
   screen_window = TEXT_WINDOW;
+
+  halt = FALSE;
+
+  dictionary_offset = 0;
+  dictionary_size = 0;
+  entry_size = 0;
 }
 
 /* Character translation tables */
