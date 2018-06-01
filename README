@@ -1,0 +1,36 @@
+Arduino Z-code Interpreter Program
+
+This version of the Z-code interpreter is derived from Jzip created by John Holder.
+More information about Jzip, including the source code can by found here:
+http://jzip.sourceforge.net/
+
+Software Dependencies:
+SDFAT library http://code.google.com/p/sdfatlib/
+
+Hardware Dependencies:
+Formatted SD card
+I am using the SD card interface on the Arduino Ethernet Shield, but you should be able to use any Arduino compatible SD card interface.
+http://arduino.cc/en/Main/ArduinoEthernetShield
+
+Getting Started Steps:
+1. Copy a Z-Machine game file to the SD card and name it "GAME.DAT".
+2. Compile and upload the sketch to the Arduino.
+3. Open the Arduino Serial Monitor, set the baud rate to 9600 and the line ending to Newline.
+4. The sketch will pause waiting for the return key.
+5. After hitting the return key, within a few seconds you should see the welcome screen in the serial monitor.
+6. You can begin typing commands in the top portion of the serial monitor, next to the Send button.
+
+I have include a copy Mini-Zork I downloaded from here:
+http://www.ifarchive.org/indexes/if-archiveXinfocomXdemos.html
+
+Game files can be found several places on the internet, a good source for games is The Interactive Fiction Archive:
+http://www.ifarchive.org/indexes/if-archiveXgamesXzcode.html
+
+Zork I, II, and III can be downloaded here:
+http://www.infocom-if.org/downloads/downloads.html
+
+Limitations:
+Due to the limits of RAM and FLASH, I removed most of the screen handling capability. 
+I removed the game save and restore capability. I will continue to see if I can add some basic game save/restore capability.
+
+
