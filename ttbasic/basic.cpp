@@ -3604,7 +3604,6 @@ void icolor() {
   sc0.setColor((uint16_t)fc, (uint16_t)bgc);
 }
 
-// キー入力文字コードの取得 INKEY()関数
 int32_t BASIC_FP iinkey() {
   int32_t rc = 0;
 
@@ -7120,6 +7119,35 @@ num_t BASIC_FP nleft() {
   return psxLeft;
 }
 
+/***bf bg TILECOLL
+Checks if a sprite has collided with a background tile.
+\usage res = TILECOLL(spr, bg, tile)
+\args
+@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@tile	tile number [`0` to `255`]
+\ret
+If the return value is `0`, no collision has taken place. Otherwise
+the return value is the sum of `64` and any of the following
+bit values:
+\table header
+| Bit value | Meaning
+| `1` (aka `<<LEFT>>`) | The tile is left of the sprite.
+| `2` (aka `<<DOWN>>`) | The tile is below the sprite.
+| `4` (aka `<<RIGHT>>`) | The tile is right of the sprite.
+| `8` (aka `<<UP>>`) | The tile is above the sprite.
+\endtable
+
+Note that it is possible that none of these bits are set even if
+a collision has taken place (i.e., the return value is `64`) if
+the sprite's size is larger than the tile size of the given
+background layer, and the sprite covers the tile completely.
+\bugs
+WARNING: This function has never been tested.
+
+Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate.
+\ref SPRCOLL()
+***/
 num_t BASIC_FP ntilecoll() {
 #ifdef VS23_BG_ENGINE
   int32_t a, b, c;
@@ -7135,6 +7163,37 @@ num_t BASIC_FP ntilecoll() {
 #endif
 }
 
+/***bf bg SPRCOLL
+Checks if a sprite has collided with another sprite.
+\usage res = SPRCOLL(spr1, spr2)
+\args
+@spr1	sprite number 1 [`0` to `{VS23_MAX_SPRITES_m1}`]
+@spr2	sprite number 2 [`0` to `{VS23_MAX_SPRITES_m1}`]
+\ret
+If the return value is `0`, no collision has taken place. Otherwise
+the return value is the sum of `64` and any of the following
+bit values:
+\table header
+| Bit value | Meaning
+| `1` (aka `<<LEFT>>`) | Sprite 2 is left of sprite 1.
+| `2` (aka `<<DOWN>>`) | Sprite 2 is below sprite 1.
+| `4` (aka `<<RIGHT>>`) | Sprite 2 is right of sprite 1.
+| `8` (aka `<<UP>>`) | Sprite 2 is above sprite 1.
+\endtable
+
+It is possible that none of these bits are set even if
+a collision has taken place (i.e., the return value is `64`) if
+sprite 1 is larger than sprite 2 and covers it completely.
+\note
+* Collisions are only detected if both sprites are enabled.
+* Sprite/sprite collision detection is pixel-accurate, i.e. a collision is
+only detected if visible pixels of two sprites overlap.
+\bugs
+Does not return an intuitive direction indication if sprite 2 is larger than
+sprite 1 and covers it completely. (It will indicate that sprite 2 is
+up/left of sprite 1.)
+\ref TILECOLL()
+***/
 num_t BASIC_FP nsprcoll() {
 #ifdef VS23_BG_ENGINE
   int32_t a, b;
@@ -7152,6 +7211,15 @@ num_t BASIC_FP nsprcoll() {
 #endif
 }
 
+/***bf snd PLAY
+Checks if a sound is playing a on wavetable synthesizer channel.
+\usage p = PLAY(channel)
+\args
+@channel	sound channel +
+                [`0` to `{SOUND_CHANNELS}`, or `-1` to check all channels]
+\ret `1` if sound is playing, `0` otherwise.
+\ref PLAY SOUND
+***/
 num_t BASIC_FP nplay() {
 #ifdef HAVE_MML
   int32_t a, b;
@@ -7171,6 +7239,11 @@ num_t BASIC_FP nplay() {
 #endif
 }
 
+/***bf bas FREE
+Get free memory size.
+\usage bytes = FREE()
+\ret Number of bytes free.
+***/
 num_t BASIC_FP nfree() {
   if (checkOpen()||checkClose()) return 0;
 #ifdef ESP8266
@@ -7181,6 +7254,12 @@ num_t BASIC_FP nfree() {
 #endif
 }
 
+/***bf io INKEY
+Reads a character from the keyboard and returns its numeric value.
+\usage c = INKEY()
+\ret Key code [`0` to `65535`]
+\ref INKEY$()
+***/
 num_t BASIC_FP ninkey() {
   if (checkOpen()||checkClose()) return 0;
   return iinkey(); // キー入力値の取得
