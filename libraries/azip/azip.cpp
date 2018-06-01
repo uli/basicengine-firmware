@@ -12,30 +12,33 @@
   */
 
 #include "../../ttbasic/basic.h"
+#include "azip.h"
 #include "ztypes.h"
 
 struct cache_block *cache_blocks;
+AZIP *azip;
 
 void azipLoad()
 {
+  azip = new AZIP;
   cache_blocks = (struct cache_block *)calloc(CACHE_BLOCKS, sizeof(*cache_blocks));
   for (int i = 0; i < CACHE_BLOCKS; ++i) 
     cache_blocks[i].addr = -1;
 
-  open_story( );
+  azip->open_story( );
   
   // put your setup code here, to run once:
-  configure( V1, V8 );
+  azip->configure( V1, V8 );
 
-  initialize_screen(  );
+  azip->initialize_screen(  );
 
-  z_restart(  );
+  azip->z_restart(  );
 }
 
 void azipLoop()
 {
   // put your main code here, to run repeatedly:
-  interpret( );  
+  azip->interpret( );  
   free(cache_blocks);
 }
 

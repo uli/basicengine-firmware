@@ -48,7 +48,7 @@
 *
 */
 
-void z_add( zword_t a, zword_t b )
+void AZIP::z_add( zword_t a, zword_t b )
 {
     store_operand( (zword_t)(a + b) );
 }
@@ -60,7 +60,7 @@ void z_add( zword_t a, zword_t b )
 *
 */
 
-void z_sub( zword_t a, zword_t b )
+void AZIP::z_sub( zword_t a, zword_t b )
 {
     store_operand( (zword_t)(a - b) );
 }
@@ -72,7 +72,7 @@ void z_sub( zword_t a, zword_t b )
 *
 */
 
-void z_mul( zword_t a, zword_t b )
+void AZIP::z_mul( zword_t a, zword_t b )
 {
     store_operand( (zword_t)(( ZINT16 ) a * ( ZINT16 ) b) );
 }
@@ -84,7 +84,7 @@ void z_mul( zword_t a, zword_t b )
 *
 */
 
-void z_div( zword_t a, zword_t b )
+void AZIP::z_div( zword_t a, zword_t b )
 {
     /* The magic rule is: round towards zero. */
     ZINT16 sa = ( ZINT16 ) a;
@@ -103,7 +103,7 @@ void z_div( zword_t a, zword_t b )
 *
 */
 
-void z_mod( zword_t a, zword_t b )
+void AZIP::z_mod( zword_t a, zword_t b )
 {
     /* The magic rule is: be consistent with divide, because
     * (a/b)*a + (a%b) == a. So (a%b) has the same sign as a. */
@@ -138,7 +138,7 @@ void z_mod( zword_t a, zword_t b )
 *
 */
 
-void z_log_shift( zword_t a, zword_t b )
+void AZIP::z_log_shift( zword_t a, zword_t b )
 {
 
     if ( ( ZINT16 ) b > 0 )
@@ -156,7 +156,7 @@ void z_log_shift( zword_t a, zword_t b )
 *
 */
 
-void z_art_shift( zword_t a, zword_t b )
+void AZIP::z_art_shift( zword_t a, zword_t b )
 {
     if ( ( ZINT16 ) b > 0 )
         store_operand( ( zword_t ) ( ( ZINT16 ) a << ( ZINT16 ) b ) );
@@ -171,7 +171,7 @@ void z_art_shift( zword_t a, zword_t b )
 *
 */
 
-void z_or( zword_t a, zword_t b )
+void AZIP::z_or( zword_t a, zword_t b )
 {
     store_operand( (zword_t)(a | b) );
 }
@@ -183,7 +183,7 @@ void z_or( zword_t a, zword_t b )
 *
 */
 
-void z_not( zword_t a )
+void AZIP::z_not( zword_t a )
 {
     store_operand( (zword_t)(~a) );
 }
@@ -195,7 +195,7 @@ void z_not( zword_t a )
 *
 */
 
-void z_and( zword_t a, zword_t b )
+void AZIP::z_and( zword_t a, zword_t b )
 {
     store_operand( (zword_t)(a & b) );
 }
@@ -207,7 +207,7 @@ void z_and( zword_t a, zword_t b )
 *
 */
 
-void z_random( zword_t a )
+void AZIP::z_random( zword_t a )
 {
     if ( a == 0 )
         store_operand( 0 );
@@ -227,7 +227,7 @@ void z_random( zword_t a )
 *
 */
 
-void z_test( zword_t a, zword_t b )
+void AZIP::z_test( zword_t a, zword_t b )
 {
     conditional_jump( ( ( ~a ) & b ) == 0 );
 }
@@ -239,7 +239,7 @@ void z_test( zword_t a, zword_t b )
 *
 */
 
-void z_jz( zword_t a )
+void AZIP::z_jz( zword_t a )
 {
     conditional_jump( a == 0 );
 }
@@ -251,7 +251,7 @@ void z_jz( zword_t a )
 *
 */
 
-void z_je( int count, zword_t * operand )
+void AZIP::z_je( int count, zword_t * operand )
 {
     int i;
 
@@ -271,7 +271,7 @@ void z_je( int count, zword_t * operand )
 *
 */
 
-void z_jl( zword_t a, zword_t b )
+void AZIP::z_jl( zword_t a, zword_t b )
 {
     conditional_jump( ( ZINT16 ) a < ( ZINT16 ) b );
 }
@@ -283,7 +283,7 @@ void z_jl( zword_t a, zword_t b )
 *
 */
 
-void z_jg( zword_t a, zword_t b )
+void AZIP::z_jg( zword_t a, zword_t b )
 {
     conditional_jump( ( ZINT16 ) a > ( ZINT16 ) b );
 }

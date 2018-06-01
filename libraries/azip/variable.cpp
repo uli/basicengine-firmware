@@ -48,7 +48,7 @@
 *
 */
 
-void z_load( zword_t variable )
+void AZIP::z_load( zword_t variable )
 {
     store_operand( load_variable( variable ) );
 }                               /* load */
@@ -60,7 +60,7 @@ void z_load( zword_t variable )
 *
 */
 
-void z_push( zword_t value )
+void AZIP::z_push( zword_t value )
 {
     stack[--sp] = value;
 }                               /* push_var */
@@ -72,7 +72,7 @@ void z_push( zword_t value )
 *
 */
 
-void z_pull( zword_t variable )
+void AZIP::z_pull( zword_t variable )
 {
     z_store( variable, stack[sp++] );
 }                               /* pop_var */
@@ -84,7 +84,7 @@ void z_pull( zword_t variable )
 *
 */
 
-void z_inc( zword_t variable )
+void AZIP::z_inc( zword_t variable )
 {
     z_store( variable, (zword_t)(load_variable( variable ) + 1) );
 }                               /* increment */
@@ -96,7 +96,7 @@ void z_inc( zword_t variable )
 *
 */
 
-void z_dec( zword_t variable )
+void AZIP::z_dec( zword_t variable )
 {
     z_store( variable, (zword_t)(load_variable( variable ) - 1) );
 }                               /* decrement */
@@ -108,7 +108,7 @@ void z_dec( zword_t variable )
 *
 */
 
-void z_inc_chk( zword_t variable, zword_t target )
+void AZIP::z_inc_chk( zword_t variable, zword_t target )
 {
     ZINT16 value;
 
@@ -124,7 +124,7 @@ void z_inc_chk( zword_t variable, zword_t target )
 *
 */
 
-void z_dec_chk( zword_t variable, zword_t target )
+void AZIP::z_dec_chk( zword_t variable, zword_t target )
 {
     ZINT16 value;
 

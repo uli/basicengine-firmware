@@ -52,7 +52,7 @@ static int halt = FALSE;
 *
 */
 
-int interpret(  )
+int __attribute__((optimize ("no-jump-tables"))) AZIP::interpret(  )
 {
     zbyte_t opcode;
     zword_t specifier, operand[8];

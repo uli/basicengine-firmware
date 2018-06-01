@@ -48,7 +48,7 @@
  *
  */
 
-void z_check_arg_count( zword_t argc )
+void AZIP::z_check_arg_count( zword_t argc )
 {
 
     conditional_jump( argc <= ( zword_t ) ( stack[fp + 1] & ARGS_MASK ) );
@@ -65,7 +65,7 @@ void z_check_arg_count( zword_t argc )
  *
  */
 
-int z_call( int argc, zword_t * argv, int type )
+int AZIP::z_call( int argc, zword_t * argv, int type )
 {
     zword_t arg;
     int i = 1, args, status = 0;
@@ -123,7 +123,7 @@ int z_call( int argc, zword_t * argv, int type )
  *
  */
 
-void z_ret( zword_t value )
+void AZIP::z_ret( zword_t value )
 {
     zword_t argc;
 
@@ -167,7 +167,7 @@ void z_ret( zword_t value )
  *
  */
 
-void z_jump( zword_t offset )
+void AZIP::z_jump( zword_t offset )
 {
 
     pc = ( unsigned long ) ( pc + ( ZINT16 ) offset - 2 );
@@ -181,7 +181,7 @@ void z_jump( zword_t offset )
  *
  */
 
-void z_restart( void )
+void AZIP::z_restart( void )
 {
     unsigned int scripting_flag;
 
@@ -218,7 +218,7 @@ void z_restart( void )
  *
  */
 
-void restart_interp( int scripting_flag )
+void AZIP::restart_interp( int scripting_flag )
 {
     if ( scripting_flag )
         set_word( H_FLAGS, ( get_word( H_FLAGS ) | SCRIPTING_FLAG ) );
@@ -253,7 +253,7 @@ void restart_interp( int scripting_flag )
  *
  */
 
-void z_catch( void )
+void AZIP::z_catch( void )
 {
     if ( h_type > V4 )
     {
@@ -272,7 +272,7 @@ void z_catch( void )
  *
  */
 
-void z_throw( zword_t value, zword_t new_fp )
+void AZIP::z_throw( zword_t value, zword_t new_fp )
 {
 
     if ( new_fp > fp )

@@ -39,8 +39,6 @@
 #define NEXT 1
 #define CHILD 2
 
-static zword_t read_object( zword_t objp, int field );
-static void write_object( zword_t objp, int field, zword_t value );
 
 /*
 * get_object_address
@@ -49,7 +47,7 @@ static void write_object( zword_t objp, int field, zword_t value );
 *
 */
 
-zword_t get_object_address( zword_t obj )
+zword_t AZIP::get_object_address( zword_t obj )
 {
     int offset;
 
@@ -74,7 +72,7 @@ zword_t get_object_address( zword_t obj )
 *
 */
 
-void z_insert_obj( zword_t obj1, zword_t obj2 )
+void AZIP::z_insert_obj( zword_t obj1, zword_t obj2 )
 {
     zword_t obj1p, obj2p, child2;
 
@@ -114,7 +112,7 @@ void z_insert_obj( zword_t obj1, zword_t obj2 )
 *
 */
 
-void z_remove_obj( zword_t obj )
+void AZIP::z_remove_obj( zword_t obj )
 {
     zword_t objp, parentp, childp, parent, child;
 
@@ -172,7 +170,7 @@ void z_remove_obj( zword_t obj )
 *
 */
 
-void z_get_parent( zword_t obj )
+void AZIP::z_get_parent( zword_t obj )
 {
 
     store_operand( read_object( get_object_address( obj ), PARENT ) );
@@ -187,7 +185,7 @@ void z_get_parent( zword_t obj )
 *
 */
 
-void z_get_child( zword_t obj )
+void AZIP::z_get_child( zword_t obj )
 {
     zword_t child;
 
@@ -207,7 +205,7 @@ void z_get_child( zword_t obj )
 *
 */
 
-void z_get_sibling( zword_t obj )
+void AZIP::z_get_sibling( zword_t obj )
 {
     zword_t next;
 
@@ -226,7 +224,7 @@ void z_get_sibling( zword_t obj )
 *
 */
 
-void z_jin( zword_t obj1, zword_t obj2 )
+void AZIP::z_jin( zword_t obj1, zword_t obj2 )
 {
 
     conditional_jump( read_object( get_object_address( obj1 ), PARENT ) == obj2 );
@@ -240,7 +238,7 @@ void z_jin( zword_t obj1, zword_t obj2 )
 *
 */
 
-void z_test_attr( zword_t obj, zword_t bit )
+void AZIP::z_test_attr( zword_t obj, zword_t bit )
 {
     zword_t objp;
     zbyte_t value;
@@ -267,7 +265,7 @@ void z_test_attr( zword_t obj, zword_t bit )
 *
 */
 
-void z_set_attr( zword_t obj, zword_t bit )
+void AZIP::z_set_attr( zword_t obj, zword_t bit )
 {
     zword_t objp;
     zbyte_t value;
@@ -301,7 +299,7 @@ void z_set_attr( zword_t obj, zword_t bit )
 *
 */
 
-void z_clear_attr( zword_t obj, zword_t bit )
+void AZIP::z_clear_attr( zword_t obj, zword_t bit )
 {
     zword_t objp;
     zbyte_t value;
@@ -325,7 +323,7 @@ void z_clear_attr( zword_t obj, zword_t bit )
 
 }                               /* z_clear_attr */
 
-static zword_t read_object( zword_t objp, int field )
+zword_t AZIP::read_object( zword_t objp, int field )
 {
     zword_t value;
 
@@ -352,7 +350,7 @@ static zword_t read_object( zword_t objp, int field )
 
 }                               /* read_object */
 
-static void write_object( zword_t objp, int field, zword_t value )
+void AZIP::write_object( zword_t objp, int field, zword_t value )
 {
 
     if ( h_type < V4 )

@@ -41,7 +41,7 @@
   
 #include "ztypes.h"
 
-void configure( zbyte_t min_version, zbyte_t max_version )
+void AZIP::configure( zbyte_t min_version, zbyte_t max_version )
 {
 
     h_type = get_byte( H_TYPE );
@@ -99,12 +99,12 @@ void configure( zbyte_t min_version, zbyte_t max_version )
 
 }                               /* configure */
 
-void initialize_screen( void )
+void AZIP::initialize_screen( void )
 {
     h_interpreter = INTERP_MSDOS;
 }                               /* initialize_screen */
 
-void restart_screen( void )
+void AZIP::restart_screen( void )
 {
     zbyte_t high = 1, low = 0;
 

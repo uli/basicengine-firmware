@@ -49,9 +49,6 @@ static zword_t dictionary_offset = 0;
 static ZINT16 dictionary_size = 0;
 static unsigned int entry_size = 0;
 
-static void tokenise_line( zword_t, zword_t, zword_t, zword_t );
-static unsigned long next_token( unsigned long, unsigned long, unsigned long *, int *, const char * );
-static zword_t find_word( int, unsigned long, long );
 
 /*
 * z_read_char
@@ -64,7 +61,7 @@ static zword_t find_word( int, unsigned long, long );
 *
 */
 
-void z_read_char( int argc, zword_t * argv )
+void AZIP::z_read_char( int argc, zword_t * argv )
 {
     int c;
     zword_t arg_list[2];
@@ -125,7 +122,7 @@ void z_read_char( int argc, zword_t * argv )
 *
 */
 
-void z_sread_aread( int argc, zword_t * argv )
+void AZIP::z_sread_aread( int argc, zword_t * argv )
 {
    int terminator;
 
@@ -166,7 +163,7 @@ void z_sread_aread( int argc, zword_t * argv )
 *
 */
 
-int get_line( zword_t address, zword_t timeout, zword_t action_routine )
+int AZIP::get_line( zword_t address, zword_t timeout, zword_t action_routine )
 {
    unsigned long addr;
    int buflen, read_size, status, c;
@@ -241,7 +238,7 @@ int get_line( zword_t address, zword_t timeout, zword_t action_routine )
 *
 */
 
-static void tokenise_line( zword_t char_buf, zword_t token_buf, zword_t dictionary, zword_t flag )
+void AZIP::tokenise_line( zword_t char_buf, zword_t token_buf, zword_t dictionary, zword_t flag )
 {
     int i, count, words, token_length;
     long word_index, chop = 0;
@@ -364,7 +361,7 @@ static void tokenise_line( zword_t char_buf, zword_t token_buf, zword_t dictiona
 *
 */
 
-static unsigned long next_token( unsigned long s_addr, unsigned long str_end, unsigned long *token, int *length,
+unsigned long AZIP::next_token( unsigned long s_addr, unsigned long str_end, unsigned long *token, int *length,
     const char *punctuation )
 {
     int i;
@@ -441,7 +438,7 @@ static unsigned long next_token( unsigned long s_addr, unsigned long str_end, un
 *
 */
 
-static zword_t find_word( int len, unsigned long cp_addr, long chop )
+zword_t AZIP::find_word( int len, unsigned long cp_addr, long chop )
 {
     ZINT16 word[3];
     long word_index, offset, status;
@@ -539,7 +536,7 @@ static zword_t find_word( int len, unsigned long cp_addr, long chop )
 *
 */
 
-void z_tokenise( int argc, zword_t * argv )
+void AZIP::z_tokenise( int argc, zword_t * argv )
 {
 
     /* Supply default parameters */
@@ -555,7 +552,7 @@ void z_tokenise( int argc, zword_t * argv )
 
 }                               /* z_tokenise */
 
-int input_character( int timeout )
+int AZIP::input_character( int timeout )
 {
     int c = getchar(  );
 
@@ -563,7 +560,7 @@ int input_character( int timeout )
     return ( ( c == '\n' ) ? '\r' : c );
 }                               /* input_character */
 
-int input_line( int buflen, unsigned long addr, int timeout, int *read_size )
+int AZIP::input_line( int buflen, unsigned long addr, int timeout, int *read_size )
 {
     int c = 0;
 

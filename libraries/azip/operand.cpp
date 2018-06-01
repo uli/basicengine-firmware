@@ -48,7 +48,7 @@
 *
 */
 
-zword_t load_operand( int type )
+zword_t AZIP::load_operand( int type )
 {
     zword_t operand;
 
@@ -90,7 +90,7 @@ zword_t load_operand( int type )
 *
 */
 
-void store_operand( zword_t operand )
+void AZIP::store_operand( zword_t operand )
 {
     zbyte_t specifier;
 
@@ -116,7 +116,7 @@ void store_operand( zword_t operand )
 *
 */
 
-zword_t load_variable( int number )
+zword_t AZIP::load_variable( int number )
 {
     if ( number )
     {
@@ -147,7 +147,7 @@ zword_t load_variable( int number )
 *
 */
 
-void z_store( int number, zword_t variable )
+void AZIP::z_store( int number, zword_t variable )
 {
 
     if ( number )
@@ -174,7 +174,7 @@ void z_store( int number, zword_t variable )
 *
 * Supposed to jump if the game thinks that it is pirated.
 */
-void z_piracy( int flag )
+void AZIP::z_piracy( int flag )
 {
     conditional_jump( flag );
 }
@@ -193,7 +193,7 @@ void z_piracy( int flag )
 *
 */
 
-void conditional_jump( int flag )
+void AZIP::conditional_jump( int flag )
 {
     zbyte_t specifier;
     zword_t offset;

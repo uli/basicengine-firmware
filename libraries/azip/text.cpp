@@ -53,7 +53,7 @@
 *
 */
 
-void decode_text( unsigned long *address )
+void AZIP::decode_text( unsigned long *address )
 {
     int i, synonym_flag, synonym = 0, zscii_flag, zscii = 0;
     int data, code, shift_state, shift_lock;
@@ -270,7 +270,7 @@ void decode_text( unsigned long *address )
 *
 */
 
-void encode_text( int len, unsigned long s_addr, ZINT16 * buffer )
+void AZIP::encode_text( int len, unsigned long s_addr, ZINT16 * buffer )
 {
     int i, j, prev_table, table, next_table, shift_state, code, codes_count;
     char codes[9];
@@ -441,7 +441,7 @@ void encode_text( int len, unsigned long s_addr, ZINT16 * buffer )
 *
 */
 
-void write_zchar( int c )
+void AZIP::write_zchar( int c )
 {
     char xlat_buffer[MAX_TEXT_SIZE + 1];
     int i;
@@ -534,7 +534,7 @@ void write_zchar( int c )
 * count, as well as, filling up the buffer.
 *
 */
-void write_char( int c )
+void AZIP::write_char( int c )
 {
     static unsigned char line_count = 0;
     
@@ -563,7 +563,7 @@ void write_char( int c )
 *
 */
 
-void write_string( const prog_char *s )
+void AZIP::write_string( const prog_char *s )
 {
     while ( *s )
         write_char( *s++ );
@@ -587,7 +587,7 @@ void write_string( const prog_char *s )
 *
 */
 
-void z_output_stream( zword_t type, zword_t option )
+void AZIP::z_output_stream( zword_t type, zword_t option )
 {
     if( ( ZINT16 )type == 3)
     {
@@ -606,7 +606,7 @@ void z_output_stream( zword_t type, zword_t option )
 *
 */
 
-void z_print_char( zword_t c )
+void AZIP::z_print_char( zword_t c )
 {
     write_zchar( ( char ) c );
 }                               /* z_print_char */
@@ -618,7 +618,7 @@ void z_print_char( zword_t c )
 *
 */
 
-void z_print_num( zword_t num )
+void AZIP::z_print_num( zword_t num )
 {
     int i, count;
     char buffer[10];
@@ -639,7 +639,7 @@ void z_print_num( zword_t num )
 *
 */
 
-void z_print_paddr( zword_t packed_address )
+void AZIP::z_print_paddr( zword_t packed_address )
 {
     unsigned long address;
 
@@ -659,7 +659,7 @@ void z_print_paddr( zword_t packed_address )
 *
 */
 
-void z_print_addr( zword_t offset )
+void AZIP::z_print_addr( zword_t offset )
 {
     unsigned long address;
 
@@ -678,7 +678,7 @@ void z_print_addr( zword_t offset )
 *
 */
 
-void z_print_obj( zword_t obj )
+void AZIP::z_print_obj( zword_t obj )
 {
     zword_t offset;
     unsigned long address;
@@ -709,7 +709,7 @@ void z_print_obj( zword_t obj )
 *
 */
 
-void z_print( void )
+void AZIP::z_print( void )
 {
 
     /* Decode and output text at PC */
@@ -726,7 +726,7 @@ void z_print( void )
 *
 */
 
-void z_print_ret( void )
+void AZIP::z_print_ret( void )
 {
 
     z_print(  );
@@ -743,7 +743,7 @@ void z_print_ret( void )
 *
 */
 
-void z_new_line( void )
+void AZIP::z_new_line( void )
 {
     write_char('\n');
 }                               /* z_new_line */
@@ -757,7 +757,7 @@ void z_new_line( void )
 *
 */
 
-void print_time( int hours, int minutes )
+void AZIP::print_time( int hours, int minutes )
 {
     int pm_indicator;
 
@@ -797,7 +797,7 @@ void print_time( int hours, int minutes )
 *
 */
 
-void z_encode( zword_t word_addr, zword_t word_length, zword_t word_offset, zword_t dest_addr )
+void AZIP::z_encode( zword_t word_addr, zword_t word_length, zword_t word_offset, zword_t dest_addr )
 {
     unsigned long addr;
     int i;

@@ -42,7 +42,7 @@
 #include "ztypes.h"
 #include "../../ttbasic/basic.h"
 
-void fatal( const char *msg )
+void AZIP::fatal( const char *msg )
 {
     c_puts_P(PSTR("Fatal: ")); c_puts_P(msg);
     for(;;);//exit( 1 );

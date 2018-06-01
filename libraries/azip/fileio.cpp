@@ -57,7 +57,7 @@ Unifile game;        /* Zcode file pointer */
  *
  */
 
-void open_story( void )
+void AZIP::open_story( void )
 {
     int16_t count;
     uint32_t pos = 0;
@@ -124,7 +124,7 @@ void flush_block(int i) {
     }
 }
 
-void close_story( void )
+void AZIP::close_story( void )
 {
 
     if ( game )
@@ -144,7 +144,7 @@ void close_story( void )
  *
  */
 
-unsigned int get_story_size( void )
+unsigned int AZIP::get_story_size( void )
 {
 
     return game.fileSize( );
@@ -160,7 +160,7 @@ unsigned int get_story_size( void )
  *
  */
 
-void z_verify( void )
+void AZIP::z_verify( void )
 {
     /* Make a conditional jump based on whether the checksum is equal */
 
@@ -178,7 +178,7 @@ void z_verify( void )
  *
  */
 
-int z_save( int argc, zword_t table, zword_t bytes, zword_t name )
+int AZIP::z_save( int argc, zword_t table, zword_t bytes, zword_t name )
 {
     int status = 0;
 
@@ -208,7 +208,7 @@ int z_save( int argc, zword_t table, zword_t bytes, zword_t name )
  *     2 = restore succeeded
  */
 
-int z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
+int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
 {
     int status;
 
@@ -238,7 +238,7 @@ int z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
  *
  */
 
-void z_save_undo( void )
+void AZIP::z_save_undo( void )
 {
     /* If no memory for data area then say undo is not available */
     store_operand( ( zword_t ) - 1 );
@@ -255,7 +255,7 @@ void z_save_undo( void )
  *
  */
 
-void z_restore_undo( void )
+void AZIP::z_restore_undo( void )
 {
     /* If no memory for data area then say undo is not available */
     store_operand( ( zword_t ) - 1 );
@@ -270,7 +270,7 @@ void z_restore_undo( void )
 *
 */
 
-zword_t read_code_word( void )
+zword_t AZIP::read_code_word( void )
 {
     zword_t w;
 
@@ -299,7 +299,7 @@ struct cache_block *fetch_block(unsigned long addr)
 *
 */
 
-zbyte_t read_code_byte( void )
+zbyte_t AZIP::read_code_byte( void )
 {
     zbyte_t value;
 
@@ -330,7 +330,7 @@ zbyte_t read_code_byte( void )
 *
 */
 
-zword_t read_data_word( unsigned long *addr )
+zword_t AZIP::read_data_word( unsigned long *addr )
 {
     zword_t w;
 
@@ -341,7 +341,7 @@ zword_t read_data_word( unsigned long *addr )
 
 }                               /* read_data_word */
 
-void write_data_word( unsigned long *addr, zword_t value)
+void AZIP::write_data_word( unsigned long *addr, zword_t value)
 {
     write_data_byte(addr, (zbyte_t)(value >> 8));
     write_data_byte(addr, (zbyte_t)(value));
@@ -355,7 +355,7 @@ void write_data_word( unsigned long *addr, zword_t value)
 *
 */
 
-zbyte_t read_data_byte( unsigned long *addr )
+zbyte_t AZIP::read_data_byte( unsigned long *addr )
 {
     zbyte_t value = 0;
 
@@ -378,7 +378,7 @@ zbyte_t read_data_byte( unsigned long *addr )
 
 }                               /* read_data_byte */
 
-void write_data_byte( unsigned long *addr, zbyte_t value)
+void AZIP::write_data_byte( unsigned long *addr, zbyte_t value)
 {
     for (int i = 0; i < CACHE_BLOCKS; ++i) {
       struct cache_block *cb = &cache_blocks[i];
@@ -398,8 +398,8 @@ void write_data_byte( unsigned long *addr, zbyte_t value)
 
 }                               /* write_data_byte */
 
-zbyte_t get_byte(unsigned long offset){ unsigned long addr = offset; return read_data_byte(&addr); }
-zword_t get_word(unsigned long offset){ unsigned long addr = offset; return read_data_word(&addr);}
-void set_byte(unsigned long offset, zbyte_t value){ unsigned long addr = offset; write_data_byte(&addr, value);}
-void set_word(unsigned long offset, zword_t value){ unsigned long addr = offset; write_data_word(&addr, value);}
+zbyte_t AZIP::get_byte(unsigned long offset){ unsigned long addr = offset; return read_data_byte(&addr); }
+zword_t AZIP::get_word(unsigned long offset){ unsigned long addr = offset; return read_data_word(&addr);}
+void AZIP::set_byte(unsigned long offset, zbyte_t value){ unsigned long addr = offset; write_data_byte(&addr, value);}
+void AZIP::set_word(unsigned long offset, zword_t value){ unsigned long addr = offset; write_data_word(&addr, value);}
 

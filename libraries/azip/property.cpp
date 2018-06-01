@@ -49,7 +49,7 @@
 *
 */
 
-static zword_t get_property_addr( zword_t obj )
+zword_t AZIP::get_property_addr( zword_t obj )
 {
     zword_t object_addr;
     zword_t prop_addr;
@@ -77,7 +77,7 @@ static zword_t get_property_addr( zword_t obj )
 *
 */
 
-static zword_t get_next_property( zword_t prop_addr )
+zword_t AZIP::get_next_property( zword_t prop_addr )
 {
     zbyte_t value;
 
@@ -115,7 +115,7 @@ static zword_t get_next_property( zword_t prop_addr )
 *
 */
 
-void z_get_prop( zword_t obj, zword_t prop )
+void AZIP::z_get_prop( zword_t obj, zword_t prop )
 {
     zword_t prop_addr;
     zword_t wprop_val;
@@ -171,7 +171,7 @@ void z_get_prop( zword_t obj, zword_t prop )
 *
 */
 
-void z_put_prop( zword_t obj, zword_t prop, zword_t setvalue )
+void AZIP::z_put_prop( zword_t obj, zword_t prop, zword_t setvalue )
 {
     zword_t prop_addr;
     zword_t value;
@@ -218,7 +218,7 @@ void z_put_prop( zword_t obj, zword_t prop, zword_t setvalue )
 *
 */
 
-void z_get_next_prop( zword_t obj, zword_t prop )
+void AZIP::z_get_next_prop( zword_t obj, zword_t prop )
 {
     zword_t prop_addr;
     zbyte_t value;
@@ -264,7 +264,7 @@ void z_get_next_prop( zword_t obj, zword_t prop )
 *
 */
 
-void z_get_prop_addr( zword_t obj, zword_t prop )
+void AZIP::z_get_prop_addr( zword_t obj, zword_t prop )
 {
     zword_t prop_addr;
     zbyte_t value;
@@ -308,7 +308,7 @@ void z_get_prop_addr( zword_t obj, zword_t prop )
 *
 */
 
-void z_get_prop_len( zword_t prop_addr )
+void AZIP::z_get_prop_len( zword_t prop_addr )
 {
     zbyte_t value;
 
@@ -352,7 +352,7 @@ void z_get_prop_len( zword_t prop_addr )
 *
 */
 
-void z_scan_table( int argc, zword_t * argv )
+void AZIP::z_scan_table( int argc, zword_t * argv )
 {
     unsigned long address;
     unsigned int i, step;
@@ -432,7 +432,7 @@ void z_scan_table( int argc, zword_t * argv )
 *
 */
 
-void z_copy_table( zword_t src, zword_t dst, zword_t count )
+void AZIP::z_copy_table( zword_t src, zword_t dst, zword_t count )
 {
     unsigned long address;
     unsigned int i;
@@ -479,7 +479,7 @@ void z_copy_table( zword_t src, zword_t dst, zword_t count )
 *
 */
 
-void z_loadw( zword_t addr, zword_t offset )
+void AZIP::z_loadw( zword_t addr, zword_t offset )
 {
     unsigned long address;
    ZINT16 _offset = (ZINT16)offset;
@@ -501,7 +501,7 @@ void z_loadw( zword_t addr, zword_t offset )
 *
 */
 
-void z_loadb( zword_t addr, zword_t offset )
+void AZIP::z_loadb( zword_t addr, zword_t offset )
 {
     unsigned long address;
    ZINT16 _offset = (ZINT16)offset;
@@ -523,7 +523,7 @@ void z_loadb( zword_t addr, zword_t offset )
 *
 */
 
-void z_storew( zword_t addr, zword_t offset, zword_t value )
+void AZIP::z_storew( zword_t addr, zword_t offset, zword_t value )
 {
 
     /* Calculate word array index address */
@@ -543,7 +543,7 @@ void z_storew( zword_t addr, zword_t offset, zword_t value )
 *
 */
 
-void z_storeb( zword_t addr, zword_t offset, zword_t value )
+void AZIP::z_storeb( zword_t addr, zword_t offset, zword_t value )
 {
 
     /* Calculate byte array index address */

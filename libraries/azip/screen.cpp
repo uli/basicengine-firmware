@@ -50,7 +50,7 @@
 *
 */
 
-void z_set_window( zword_t w )
+void AZIP::z_set_window( zword_t w )
 {
     screen_window = w;
 }                               /* z_set_window */
@@ -63,7 +63,7 @@ void z_set_window( zword_t w )
 *
 */
 
-void z_show_status( void )
+void AZIP::z_show_status( void )
 {
     //write_string("\n\n[ ");
 
@@ -109,7 +109,7 @@ void z_show_status( void )
 *
 */
 
-void z_print_table( int argc, zword_t * argv )
+void AZIP::z_print_table( int argc, zword_t * argv )
 {
     unsigned long address;
     unsigned int width, height;

@@ -276,209 +276,227 @@ typedef short ZINT16;           /*   signed 2 byte quantity */
 
 #define MAX_TEXT_SIZE 8
 
-/* Data access */
+class AZIP {
+public:
+  AZIP();
+
+  /* Global routines */
+
+  /* configur.c */
+
+  void initialize_screen( void );
+  void restart_screen( void );
+  void configure( zbyte_t, zbyte_t );
+
+  /* control.c */
+
+  void z_check_arg_count( zword_t );
+  int  z_call( int, zword_t *, int );
+  void z_jump( zword_t );
+  void z_restart( void );
+  void restart_interp( int );
+  void z_ret( zword_t );
+  void z_catch( void );
+  void z_throw( zword_t, zword_t );
+
+
+  /* fileio.c */
+
+  void z_verify( void );
+  int z_restore( int, zword_t, zword_t, zword_t );
+  int z_save( int, zword_t, zword_t, zword_t );
+  void z_restore_undo( void );
+  void z_save_undo( void );
+  void z_open_playback( int );
+  void close_story( void );
+  unsigned int get_story_size( void );
+  void open_story( void );
+
+  /* input.c */
+
+  int get_line( zword_t, zword_t, zword_t );
+  void z_read_char( int, zword_t * );
+  void z_sread_aread( int, zword_t * );
+  void z_tokenise( int, zword_t * );
+  int input_character( int );
+  int input_line( int, unsigned long, int, int * );
+
+  void tokenise_line( zword_t, zword_t, zword_t, zword_t );
+  unsigned long next_token( unsigned long, unsigned long, unsigned long *, int *, const char * );
+  zword_t find_word( int, unsigned long, long );
+
+  /* interpre.c */
+
+  int interpret( void );
+
+
+  /* math.c */
+
+  void z_add( zword_t, zword_t );
+  void z_div( zword_t, zword_t );
+  void z_mul( zword_t, zword_t );
+  void z_sub( zword_t, zword_t );
+  void z_mod( zword_t, zword_t );
+  void z_or( zword_t, zword_t );
+  void z_and( zword_t, zword_t );
+  void z_not( zword_t );
+  void z_art_shift( zword_t, zword_t );
+  void z_log_shift( zword_t, zword_t );
+  void z_je( int, zword_t * );
+  void z_jg( zword_t, zword_t );
+  void z_jl( zword_t, zword_t );
+  void z_jz( zword_t );
+  void z_random( zword_t );
+  void z_test( zword_t, zword_t );
+
+
+  /* memory.c */
+
+  zbyte_t read_code_byte( void );
+  zbyte_t read_data_byte( unsigned long * );
+  zword_t read_code_word( void );
+  zword_t read_data_word( unsigned long * );
+  void write_data_byte( unsigned long * , zbyte_t);
+  void write_data_word( unsigned long * , zword_t);
+  zbyte_t get_byte(unsigned long);
+  zword_t get_word(unsigned long);
+  void set_byte(unsigned long, zbyte_t);
+  void set_word(unsigned long, zword_t);
+
+
+  /* object.c */
+
+  zword_t get_object_address( zword_t );
+  void z_insert_obj( zword_t, zword_t );
+  void z_remove_obj( zword_t );
+  void z_get_child( zword_t );
+  void z_get_sibling( zword_t );
+  void z_get_parent( zword_t );
+  void z_jin( zword_t, zword_t );
+  void z_clear_attr( zword_t, zword_t );
+  void z_set_attr( zword_t, zword_t );
+  void z_test_attr( zword_t, zword_t );
+
+  zword_t read_object( zword_t objp, int field );
+  void write_object( zword_t objp, int field, zword_t value );
+
+  /* operand.c */
+
+  void z_piracy( int );
+  void z_store( int, zword_t );
+  void conditional_jump( int );
+  void store_operand( zword_t );
+  zword_t load_operand( int );
+  zword_t load_variable( int );
+
+
+  /* osdepend.c */
+
+  void fatal( const char *msg );
+
+
+  /* property.c */
+
+  void z_get_next_prop( zword_t, zword_t );
+  void z_get_prop( zword_t, zword_t );
+  void z_get_prop_addr( zword_t, zword_t );
+  void z_get_prop_len( zword_t );
+  void z_put_prop( zword_t, zword_t, zword_t );
+  void z_copy_table( zword_t, zword_t, zword_t );
+  void z_scan_table( int, zword_t * );
+  void z_loadb( zword_t, zword_t );
+  void z_loadw( zword_t, zword_t );
+  void z_storeb( zword_t, zword_t, zword_t );
+  void z_storew( zword_t, zword_t, zword_t );
+
+  zword_t get_property_addr( zword_t obj );
+  zword_t get_next_property( zword_t prop_addr );
+
+  /* screen.c */
+
+  void z_show_status( void );
+  void z_set_window( zword_t );
+  void z_print_table( int, zword_t * );
+
+
+  /* text.c */
+
+  void z_encode( zword_t, zword_t, zword_t, zword_t );
+  void z_new_line( void );
+  void z_print_char( zword_t );
+  void z_print_num( zword_t );
+  void z_print( void );
+  void z_print_addr( zword_t );
+  void z_print_paddr( zword_t );
+  void z_print_obj( zword_t );
+  void z_print_ret( void );
+  void z_buffer_mode( zword_t );
+  void z_output_stream( zword_t, zword_t );
+  void z_set_text_style( zword_t );
+  void decode_text( unsigned long * );
+  void encode_text( int, unsigned long, ZINT16 * );
+  void print_time( int, int );
+  void write_char( int );
+  void write_string( const char * );
+  void write_zchar( int );
+
+
+  /* variable.c */
+
+  void z_inc( zword_t );
+  void z_dec( zword_t );
+  void z_inc_chk( zword_t, zword_t );
+  void z_dec_chk( zword_t, zword_t );
+  void z_load( zword_t );
+  void z_pull( zword_t );
+  void z_push( zword_t );
+
+  unsigned char JTERP;
+  int GLOBALVER;
+
+  /* Game header data */
+
+  zbyte_t h_type;
+  zbyte_t h_config;
+  zword_t h_version;
+  zword_t h_data_size;
+  zword_t h_start_pc;
+  zword_t h_words_offset;
+  zword_t h_objects_offset;
+  zword_t h_globals_offset;
+  zword_t h_restart_size;
+  zword_t h_flags;
+  zword_t h_synonyms_offset;
+  zword_t h_file_size;
+  zword_t h_checksum;
+  zbyte_t h_interpreter = INTERP_MSDOS;
+  zbyte_t h_interpreter_version = 'B'; /* Interpreter version 2 */
+  zword_t h_alternate_alphabet_offset;
+  zword_t h_unicode_table;
+
+  /* Game version specific data */
+
+  int story_scaler;
+  int story_shift;
+  int property_mask;
+  int property_size_mask;
+
+  /* Stack and PC data */
+
+  zword_t stack[STACK_SIZE];
+  zword_t sp = STACK_SIZE;
+  zword_t fp = STACK_SIZE - 1;
+  zword_t frame_count;        /* frame pointer for get_fp */
+  unsigned long pc;
+  int interpreter_state;
+  int interpreter_status;
+  int screen_window;
+};
 
 
 /* External data */
 
-extern int GLOBALVER;
-extern zbyte_t h_type;
-extern zbyte_t h_config;
-extern zword_t h_version;
-extern zword_t h_data_size;
-extern zword_t h_start_pc;
-extern zword_t h_words_offset;
-extern zword_t h_objects_offset;
-extern zword_t h_globals_offset;
-extern zword_t h_restart_size;
-extern zword_t h_flags;
-extern zword_t h_synonyms_offset;
-extern zword_t h_file_size;
-extern zword_t h_checksum;
-extern zbyte_t h_interpreter;
-extern zbyte_t h_interpreter_version;
-extern zword_t h_alternate_alphabet_offset;
-extern zword_t h_unicode_table;
-
-extern int story_scaler;
-extern int story_shift;
-extern int property_mask;
-extern int property_size_mask;
-
-extern zword_t stack[STACK_SIZE];
-extern zword_t sp;
-extern zword_t fp;
-extern zword_t frame_count;
-extern unsigned long pc;
-extern int interpreter_state;
-extern int interpreter_status;
-
 extern prog_char lookup_table[3][26] PROGMEM;
-
-extern int screen_window;
-
-/* Global routines */
-
-/* configur.c */
-
-void initialize_screen( void );
-void restart_screen( void );
-void configure( zbyte_t, zbyte_t );
-
-/* control.c */
-
-void z_check_arg_count( zword_t );
-int  z_call( int, zword_t *, int );
-void z_jump( zword_t );
-void z_restart( void );
-void restart_interp( int );
-void z_ret( zword_t );
-void z_catch( void );
-void z_throw( zword_t, zword_t );
-
-
-/* fileio.c */
-
-void z_verify( void );
-int z_restore( int, zword_t, zword_t, zword_t );
-int z_save( int, zword_t, zword_t, zword_t );
-void z_restore_undo( void );
-void z_save_undo( void );
-void z_open_playback( int );
-void close_story( void );
-unsigned int get_story_size( void );
-void open_story( void );
-
-/* input.c */
-
-int get_line( zword_t, zword_t, zword_t );
-void z_read_char( int, zword_t * );
-void z_sread_aread( int, zword_t * );
-void z_tokenise( int, zword_t * );
-int input_character( int );
-int input_line( int, unsigned long, int, int * );
-
-
-/* interpre.c */
-
-int interpret( void );
-
-
-/* math.c */
-
-void z_add( zword_t, zword_t );
-void z_div( zword_t, zword_t );
-void z_mul( zword_t, zword_t );
-void z_sub( zword_t, zword_t );
-void z_mod( zword_t, zword_t );
-void z_or( zword_t, zword_t );
-void z_and( zword_t, zword_t );
-void z_not( zword_t );
-void z_art_shift( zword_t, zword_t );
-void z_log_shift( zword_t, zword_t );
-void z_je( int, zword_t * );
-void z_jg( zword_t, zword_t );
-void z_jl( zword_t, zword_t );
-void z_jz( zword_t );
-void z_random( zword_t );
-void z_test( zword_t, zword_t );
-
-
-/* memory.c */
-
-zbyte_t read_code_byte( void );
-zbyte_t read_data_byte( unsigned long * );
-zword_t read_code_word( void );
-zword_t read_data_word( unsigned long * );
-void write_data_byte( unsigned long * , zbyte_t);
-void write_data_word( unsigned long * , zword_t);
-zbyte_t get_byte(unsigned long);
-zword_t get_word(unsigned long);
-void set_byte(unsigned long, zbyte_t);
-void set_word(unsigned long, zword_t);
-
-
-/* object.c */
-
-zword_t get_object_address( zword_t );
-void z_insert_obj( zword_t, zword_t );
-void z_remove_obj( zword_t );
-void z_get_child( zword_t );
-void z_get_sibling( zword_t );
-void z_get_parent( zword_t );
-void z_jin( zword_t, zword_t );
-void z_clear_attr( zword_t, zword_t );
-void z_set_attr( zword_t, zword_t );
-void z_test_attr( zword_t, zword_t );
-
-
-/* operand.c */
-
-void z_piracy( int );
-void z_store( int, zword_t );
-void conditional_jump( int );
-void store_operand( zword_t );
-zword_t load_operand( int );
-zword_t load_variable( int );
-
-
-/* osdepend.c */
-
-void fatal( const char *msg );
-
-
-/* property.c */
-
-void z_get_next_prop( zword_t, zword_t );
-void z_get_prop( zword_t, zword_t );
-void z_get_prop_addr( zword_t, zword_t );
-void z_get_prop_len( zword_t );
-void z_put_prop( zword_t, zword_t, zword_t );
-void z_copy_table( zword_t, zword_t, zword_t );
-void z_scan_table( int, zword_t * );
-void z_loadb( zword_t, zword_t );
-void z_loadw( zword_t, zword_t );
-void z_storeb( zword_t, zword_t, zword_t );
-void z_storew( zword_t, zword_t, zword_t );
-
-/* screen.c */
-
-void z_show_status( void );
-void z_set_window( zword_t );
-void z_print_table( int, zword_t * );
-
-
-/* text.c */
-
-void z_encode( zword_t, zword_t, zword_t, zword_t );
-void z_new_line( void );
-void z_print_char( zword_t );
-void z_print_num( zword_t );
-void z_print( void );
-void z_print_addr( zword_t );
-void z_print_paddr( zword_t );
-void z_print_obj( zword_t );
-void z_print_ret( void );
-void z_buffer_mode( zword_t );
-void z_output_stream( zword_t, zword_t );
-void z_set_text_style( zword_t );
-void decode_text( unsigned long * );
-void encode_text( int, unsigned long, ZINT16 * );
-void print_time( int, int );
-void write_char( int );
-void write_string( const char * );
-void write_zchar( int );
-
-
-/* variable.c */
-
-void z_inc( zword_t );
-void z_dec( zword_t );
-void z_inc_chk( zword_t, zword_t );
-void z_dec_chk( zword_t, zword_t );
-void z_load( zword_t );
-void z_pull( zword_t );
-void z_push( zword_t );
 
 #define CACHE_BLOCKS 16
 struct cache_block {
