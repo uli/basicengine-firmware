@@ -1284,16 +1284,15 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
   while (*ip != I_EOL) { //行末でなければ繰り返す
     //キーワードの処理
     if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
-      char kw[MAX_KW_LEN+1];
-      strcpy_P(kw, kwtbl[*ip]);
+      const char *kw;
 
-      if (isAlpha(kw[0]))
+      if (isAlpha(pgm_read_byte(&kw[0])))
         sc0.setColor(COL(KEYWORD), COL(BG));
       else if (*ip == I_LABEL)
         sc0.setColor(COL(PROC), COL(BG));
       else
         sc0.setColor(COL(OP), COL(BG));
-      c_puts(kw, devno); //キーワードテーブルの文字列を表示
+      c_puts_P(kw, devno); //キーワードテーブルの文字列を表示
       sc0.setColor(COL(FG), COL(BG));
 
       if (*(ip+1) != I_COLON && (*(ip+1) != I_OPEN || !dual(*ip)))

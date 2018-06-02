@@ -8,7 +8,6 @@ numfunf = open('numfuntbl.h', 'w')
 enumf.write('#ifndef __KWENUM_H\n#define __KWENUM_H\nenum token_t {\n')
 funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
 count = 0
-max_kw_len = 0
 last_cmd = 0
 nulls = []
 strfuns = []
@@ -70,7 +69,7 @@ for i in range(0, count):
   if i % 8 == 7:
     cmdf.write('\n')
   
-cmdf.write('\n};\n\n#define MAX_KW_LEN ' + str(max_kw_len) + '\n')
+cmdf.write('\n};\n')
 enumf.write('\n};\n#endif\n')
 funf.write('\n};\n')
 
