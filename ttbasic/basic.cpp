@@ -6100,6 +6100,20 @@ void icredits() {
   c_puts_P(__credits);
 }
 
+#include <azip.h>
+void ixyzzy() {
+  if (!is_strexp()) {
+    PRINT_P("Nothing happens.\n");
+    return;
+  }
+  BString game = getParamFname();
+  if (err)
+    return;
+  AZIP azip;
+  azip.load(game.c_str());
+  azip.run();
+}
+
 #include "Psx.h"
 Psx psx;
 
