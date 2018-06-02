@@ -638,6 +638,13 @@ int lookup(char* str) {
   }
   return -1;
 }
+int lookup_ext(char* str) {
+  for (uint8_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
+    if (kwtbl_ext[i] && !strncasecmp_P(str, kwtbl_ext[i], strlen_P(kwtbl_ext[i])))
+      return i;
+  }
+  return -1;
+}
 
 uint8_t parse_identifier(char *ptok, char *vname) {
   uint8_t var_len = 0;
@@ -681,7 +688,18 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
   while (*s) {                  //文字列1行分の終端まで繰り返す
     while (isspace(*s)) s++;  //空白を読み飛ばす
 
+    bool isext = false;
     key = lookup(s);
+    if (key < 0) {
+      key = lookup_ext(s);
+      if (key >= 0) {
+        isext = true;
+        ibuf[len++] = I_EXTEND;
+        s += strlen_P(kwtbl_ext[key]);
+      }
+    } else {
+      s += strlen_P(kwtbl[key]);
+    }
     if (key >= 0) {
       // 該当キーワードあり
       if (len >= SIZE_IBUF - 2) {      // もし中間コードが長すぎたら
@@ -703,8 +721,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
         }
         ibuf[len++] = key;                 // 中間コードを記録
       }
-      s+= strlen_P(kwtbl[key]);
-      if (had_if && (key == I_THEN || key == I_GOTO)) {
+      if (had_if && !isext && (key == I_THEN || key == I_GOTO)) {
         while (isspace(*s)) s++;
         if (*s)
           implicit_endif++;
@@ -741,6 +758,11 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 	ibuf[len++] = hex >> 16;
 	ibuf[len++] = hex >> 24;
       }
+    }
+
+    if (isext) {
+      find_prg_text = false;
+      continue;
     }
 
     //コメントへの変換を試みる
@@ -1283,8 +1305,18 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
 
   while (*ip != I_EOL) { //行末でなければ繰り返す
     //キーワードの処理
-    if (*ip < SIZE_KWTBL && kwtbl[*ip]) { //もしキーワードなら
+    if ((*ip < SIZE_KWTBL && kwtbl[*ip]) || *ip == I_EXTEND) { //もしキーワードなら
       const char *kw;
+      if (*ip == I_EXTEND) {
+        ip++;
+        if (*ip >= SIZE_KWTBL_EXT) {
+          err = ERR_SYS;
+          return 0;
+        }
+        kw = kwtbl_ext[*ip];
+      } else { 
+        kw = kwtbl[*ip];
+      }
 
       if (isAlpha(pgm_read_byte(&kw[0])))
         sc0.setColor(COL(KEYWORD), COL(BG));
@@ -8985,8 +9017,18 @@ void iexec() {
   bc = old_bc;
 }
 
+void iextend();
+
 typedef void (*cmd_t)();
 #include "funtbl.h"
+
+void iextend() {
+  if (*cip >= sizeof(funtbl_ext) / sizeof(funtbl_ext[0])) {
+    err = ERR_SYS;
+    return;
+  }
+  funtbl_ext[*cip++]();
+}
 
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)

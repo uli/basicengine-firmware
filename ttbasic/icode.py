@@ -14,49 +14,56 @@ strfuns = []
 strfun_count = 0
 numfuns = []
 numfun_count = 0
+extended = []
+ext_count = 0
 for l in f.readlines():
   if len(l) == 0 or l.startswith('rem'):
     continue
-  if count % 8 == 0:
-    enumf.write('  ')
-    funf.write('  ')
   cmd, enum, fun = l.split()
+  if not enum.startswith('X_'):
+    if count % 8 == 0:
+      enumf.write('  ')
+      funf.write('  ')
 
-  if cmd == '_none':
-    nulls += [count]
-  else:
-    cmdf.write('static const char __cmd' + str(count) + ' [] PROGMEM = "' + cmd + '";\n')
-  if len(cmd) > max_kw_len:
-    max_kw_len = len(cmd)
-    
-  enumf.write(enum + ',')
-  if fun != 'esyntax' and last_cmd > 0 and fun[0] != 's' and fun[0] != 'n':
-    print 'esyntax tokens must be last'
-    exit(1)
-  if fun == 'esyntax' and last_cmd == 0:
-    last_cmd = count
-  if last_cmd == 0:
-    funf.write(fun + ',')
-  if count % 8 == 7:
-    enumf.write('\n')
+    if cmd == '_none':
+      nulls += [count]
+    else:
+      cmdf.write('static const char __cmd' + str(count) + ' [] PROGMEM = "' + cmd + '";\n')
+
+    enumf.write(enum + ',')
+
+    if fun != 'esyntax' and last_cmd > 0 and fun[0] != 's' and fun[0] != 'n':
+      print 'esyntax tokens must be last'
+      exit(1)
+    if fun == 'esyntax' and last_cmd == 0:
+      last_cmd = count
     if last_cmd == 0:
-      funf.write('\n')
-  else:
-    enumf.write(' ')
-    if last_cmd == 0:
-      funf.write(' ')
-  if fun[0] == 's':
-    if strfun_count == 0:
-      strfun_first = count
-    strfuns += [(enum, fun)]
-    strfun_count += 1
-  elif fun[0] == 'n':
-    if numfun_count == 0:
-      numfun_first = count
-    numfuns += [(enum, fun)]
-    numfun_count += 1
-    
-  count += 1
+      funf.write(fun + ',')
+    if count % 8 == 7:
+      enumf.write('\n')
+      if last_cmd == 0:
+        funf.write('\n')
+    else:
+      enumf.write(' ')
+      if last_cmd == 0:
+        funf.write(' ')
+    if fun[0] == 's':
+      if strfun_count == 0:
+        strfun_first = count
+      strfuns += [(enum, fun)]
+      strfun_count += 1
+    elif fun[0] == 'n':
+      if numfun_count == 0:
+        numfun_first = count
+      numfuns += [(enum, fun)]
+      numfun_count += 1
+    count += 1
+  else:	# X_
+    if ext_count == 0:
+      ext_first = count
+    extended += [(cmd, enum, fun)]
+    ext_count += 1
+
 
 cmdf.write('\nstatic const char * const kwtbl[] PROGMEM = {\n')
 for i in range(0, count):
@@ -66,6 +73,27 @@ for i in range(0, count):
     cmdf.write('NULL, ')
   else:
     cmdf.write('__cmd' + str(i) + ', ')
+  if i % 8 == 7:
+    cmdf.write('\n')
+cmdf.write('\n};\n')
+  
+enumf.write('\n};\n')
+enumf.write('enum token_ext_t {\n')
+funf.write('\n};\n')
+funf.write('static const cmd_t funtbl_ext[] BASIC_DAT = {\n')
+
+max_kw_ext_len = 0
+for i in range(0, ext_count):
+  cmdf.write('static const char __cmd_ext' + str(i) + ' [] PROGMEM = "' + extended[i][0] + '";\n')
+  max_kw_ext_len = max(max_kw_ext_len, len(extended[i][0]))
+  enumf.write(extended[i][1] + ', ')
+  funf.write(extended[i][2] + ', ')
+
+cmdf.write('\nstatic const char * const kwtbl_ext[] PROGMEM = {\n')
+for i in range(0, ext_count):
+  if i % 8 == 0:
+    cmdf.write('  ')
+  cmdf.write('__cmd_ext' + str(i) + ', ')
   if i % 8 == 7:
     cmdf.write('\n')
   

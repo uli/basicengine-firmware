@@ -224,6 +224,7 @@ BString istrexp(void);
 
 // Keyword count
 #define SIZE_KWTBL (sizeof(kwtbl) / sizeof(const char*))
+#define SIZE_KWTBL_EXT (sizeof(kwtbl_ext) / sizeof(const char *))
 
 // i-code(Intermediate code) assignment
 #include "kwenum.h"
