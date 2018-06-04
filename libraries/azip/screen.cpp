@@ -65,7 +65,11 @@ void AZIP::z_set_window( zword_t w )
 
 void AZIP::z_show_status( void )
 {
-    //write_string("\n\n[ ");
+    int x = sc0.c_x();
+    int y = sc0.c_y();
+    sc0.setWindow(0, 0, sc0.getScreenWidth(), 1);
+    sc0.locate(0, 0);
+    write_string(PSTR("\\R"));
 
     /* Print the object description for global variable 16 */
 
@@ -78,7 +82,10 @@ void AZIP::z_show_status( void )
         /* If a time display print the hours and minutes from global
         * variables 17 and 18 */
 
-        //write_string( " Time: " );
+        while (sc0.c_x() < sc0.getWidth() - 21)
+          write_char(' ');
+        sc0.locate(sc0.getWidth() - 21);
+        write_string( PSTR(" Time: ") );
         print_time( load_variable( 17 ), load_variable( 18 ) );
     }
     else
@@ -87,15 +94,21 @@ void AZIP::z_show_status( void )
         /* If a moves/score display print the score and moves from global
         * variables 17 and 18 */
 
-        //write_string( " Score: " );
+        while (sc0.c_x() < sc0.getWidth() - 31)
+          write_char(' ');
+        sc0.locate(sc0.getWidth() - 31);
+        write_string( PSTR(" Score: ") );
         z_print_num( load_variable( 17 ) );
 
-        //write_string( " Moves: " );
+        write_string( PSTR(" Moves: ") );
         z_print_num( load_variable( 18 ) );
     }
 
-    //write_string(" ]\n\n> ");
-
+    while (sc0.c_x() < sc0.getWidth() - 1)
+      write_char(' ');
+    write_string(PSTR("\\N"));
+    sc0.setWindow(0, 1, sc0.getScreenWidth(), sc0.getScreenHeight() - 1);
+    sc0.locate(x, y);
 }                               /* output_new_line */
 
 /*

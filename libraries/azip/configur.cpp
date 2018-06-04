@@ -111,8 +111,10 @@ void AZIP::restart_screen( void )
     set_byte( H_STANDARD_HIGH, high );
     set_byte( H_STANDARD_LOW, low );
 
-    if ( h_type < V4 )
-        set_byte( H_CONFIG, ( get_byte( H_CONFIG ) | CONFIG_NOSTATUSLINE ) );
+    sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    sc0.cls();
+    sc0.setWindow(0, 1, sc0.getScreenWidth(), sc0.getScreenHeight() - 1);
+    sc0.locate(0, sc0.getHeight() - 1);
 
     /* Force graphics off as we can't do them */
     set_word( H_FLAGS, ( get_word( H_FLAGS ) & ( ~GRAPHICS_FLAG ) ) );
