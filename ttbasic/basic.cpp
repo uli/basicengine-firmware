@@ -192,6 +192,13 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
       switch (c) {
       case '\n':newline(); break;
       case '\r':sc0.locate(0, sc0.c_y()); break;
+      case '\b':
+        if (sc0.c_x() > 0) {
+          sc0.locate(sc0.c_x() - 1);
+          sc0.putch(' ');
+          sc0.locate(sc0.c_x() - 1);
+        }
+        break;
       default:	sc0.putch(c, lazy); break;
       }
     }
