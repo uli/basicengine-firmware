@@ -7833,7 +7833,7 @@ num_t BASIC_FP iexp() {
 
 // Get number of line at top left of the screen
 uint32_t getTopLineNum() {
-  uint8_t* ptr = sc0.getScreen();
+  uint8_t* ptr = sc0.getScreenWindow();
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
@@ -7854,7 +7854,7 @@ uint32_t getTopLineNum() {
 
 // Get number of line at the bottom left of the screen
 uint32_t getBottomLineNum() {
-  uint8_t* ptr = sc0.getScreen()+sc0.getWidth()*(sc0.getHeight()-1);
+  uint8_t* ptr = sc0.getScreenWindow()+sc0.getStride()*(sc0.getHeight()-1);
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
