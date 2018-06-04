@@ -45,9 +45,6 @@
 
 #include "tvutil.h"
 
-#define VPEEK(X,Y)      (screen[width*(Y)+(X)])
-#define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
-
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
   private:
