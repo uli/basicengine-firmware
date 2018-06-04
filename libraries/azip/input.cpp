@@ -563,6 +563,7 @@ int AZIP::input_line( int buflen, unsigned long addr, int timeout, int *read_siz
 
     if (h_type < V4)
         z_show_status();
+    sc0.show_curs(1);
     do
     {
         c = c_getch();
@@ -574,6 +575,7 @@ int AZIP::input_line( int buflen, unsigned long addr, int timeout, int *read_siz
         }
     }
     while ( c != '\r' );
+    sc0.show_curs(0);
     newline();
 
     return c;
