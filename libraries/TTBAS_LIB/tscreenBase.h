@@ -100,7 +100,7 @@ protected:
     void movePosPrevLineChar(bool force = false);     // カーソルを前行に移動
     void moveLineEnd();                               // カーソルを行末に移動
     void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動 
-    void locate(uint16_t x, uint16_t y);              // カーソルを指定位置に移動
+    void locate(uint16_t x, int16_t y = -1);              // カーソルを指定位置に移動
     uint8_t enter_text();                             // 行入力確定ハンドラ
     virtual void newLine();                           // 改行出力
     void Insert_newLine(uint16_t l);                  // 指定行に空白挿入 
