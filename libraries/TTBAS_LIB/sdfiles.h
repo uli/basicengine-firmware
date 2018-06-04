@@ -136,6 +136,19 @@ public:
     m_type = INVALID;
   }
 
+  void sync() {
+    switch (m_type) {
+    case SD_DIR:
+    case SD: { SD_BEGIN(); m_sd_file.sync(); SD_END(); break; }
+#ifdef UNIFILE_USE_SPIFFS
+    case FS: break;
+#else
+    case FS: { noInterrupts(); m_fs_file->sync(); interrupts(); break; }
+#endif
+    default: break;
+    }
+  }
+    
   ssize_t write(char *s) {
     switch (m_type) {
     case SD: { SD_BEGIN(); ssize_t ret = m_sd_file.write(s); SD_END(); return ret; }
