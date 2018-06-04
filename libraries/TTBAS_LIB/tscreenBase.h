@@ -121,6 +121,8 @@ protected:
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
     inline uint16_t getWidth() { return width;};      // スクリーン横幅取得
     inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
+    inline uint16_t getScreenWidth() { return whole_width;};      // スクリーン横幅取得
+    inline uint16_t getScreenHeight() { return whole_height;};    // スクリーン縦幅取得
     inline uint16_t getScreenByteSize() {return whole_width*whole_height;}; // スクリーン領域バイトサイズ
     int16_t getLineNum(int16_t l);                    // 指定行の行番号の取得
 };
