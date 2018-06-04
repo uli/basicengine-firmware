@@ -72,6 +72,7 @@ void AZIP::open_story( const char *game_name )
         }
 
         game_in.close();
+        game.sync();	// avoids file system errors if azip isn't properly exited
         return;
     }
     fatal(PSTR("nopen game"));
