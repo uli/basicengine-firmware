@@ -567,7 +567,15 @@ int AZIP::input_line( int buflen, unsigned long addr, int timeout, int *read_siz
     do
     {
         c = c_getch();
-        if ( (c != '\r') && (*read_size < buflen) )
+        if (c == '\b') {
+          if (*read_size > 0) {
+            c_putch('\b');
+            (*read_size)--;
+            addr--;
+            write_data_byte(&addr, 0);
+            addr--;
+          }
+        } else if ( (c != '\r') && (*read_size < buflen) )
         {
             c_putch(c);
             ( *read_size )++;
