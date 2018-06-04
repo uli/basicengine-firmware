@@ -536,21 +536,8 @@ void AZIP::write_zchar( int c )
 */
 void AZIP::write_char( int c )
 {
-    static unsigned char line_count = 0;
-    
     if ( screen_window == TEXT_WINDOW )
     {
-         if(c == '\n')
-             line_count = 0;
-         else
-         {
-             line_count++;
-             if(line_count >= sc0.getWidth())
-             {
-                 line_count = 1;
-                 newline();
-             }
-         }
          c_putch(c);
     }
 }                               /* write_char */
