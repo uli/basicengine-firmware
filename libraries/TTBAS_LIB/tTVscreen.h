@@ -131,16 +131,14 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 
     inline void setWindow(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
       tv_window_set(x, y, w, h);
-      tscreenBase::init(w, h, maxllen, screen);
+      win_x = x; win_y = y;
+      width = w; height = h;
     }
     inline void getWindow(int &x, int &y, int &w, int &h) {
       tv_window_get(x, y, w, h);
     }
     inline void reset() {
-      int x, y, w, h;
-      tv_reinit();
-      tv_window_get(x, y, w, h);
-      tscreenBase::init(w, h, maxllen, screen);
+      tscreenBase::init(whole_width, whole_height, maxllen, screen);
     }
 
     inline uint8_t getScreenWidth() {

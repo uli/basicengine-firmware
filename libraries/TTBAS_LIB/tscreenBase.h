@@ -40,14 +40,16 @@
 #define SC_KEY_CTRL_D    4  // 行削除
 #define SC_KEY_CTRL_N   14  // 行挿入
 
-#define VPEEK(X,Y)      (screen[width*(Y)+(X)])
-#define VPOKE(X,Y,C)    (screen[width*(Y)+(X)]=C)
+#define VPEEK(X,Y)      (screen[whole_width*((Y)+win_y) + (X)+win_x])
+#define VPOKE(X,Y,C)    (screen[whole_width*((Y)+win_y) + (X)+win_x]=(C))
 
 class tscreenBase {
   protected:
     uint8_t* screen = NULL;     // スクリーン用バッファ
-    uint16_t width;             // スクリーン横サイズ
-    uint16_t height;            // スクリーン縦サイズ
+    uint16_t width;             // text window width
+    uint16_t height;            // text window height
+    uint16_t whole_width, whole_height;	// full screen width/height (chars)
+    uint16_t win_x, win_y;	// text window position
     uint16_t maxllen;           // 1行最大長さ
     uint16_t pos_x;             // カーソル横位置
     uint16_t pos_y;             // カーソル縦位置
@@ -112,12 +114,14 @@ protected:
     }
     
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
-    inline uint8_t *getScreen() { return screen; };   // スクリーン用バッファアドレス参照
+    inline uint8_t *getScreen() { return screen; }   // スクリーン用バッファアドレス参照
+    inline uint8_t *getScreenWindow() { return &VPEEK(0, 0); }
+    inline uint16_t getStride() { return whole_width; }
     inline uint16_t c_x() { return pos_x;};           // 現在のカーソル横位置参照
     inline uint16_t c_y() { return pos_y;};           // 現在のカーソル縦位置参照
     inline uint16_t getWidth() { return width;};      // スクリーン横幅取得
     inline uint16_t getHeight() { return height;};    // スクリーン縦幅取得
-    inline uint16_t getScreenByteSize() {return width*height;}; // スクリーン領域バイトサイズ
+    inline uint16_t getScreenByteSize() {return whole_width*whole_height;}; // スクリーン領域バイトサイズ
     int16_t getLineNum(int16_t l);                    // 指定行の行番号の取得
 };
 

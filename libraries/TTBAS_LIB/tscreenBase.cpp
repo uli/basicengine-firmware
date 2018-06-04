@@ -16,16 +16,17 @@
 // 戻り値
 //  なし
 void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
-  if (screen && (w != width || h != height)) {
+  if (screen && (w != whole_width || h != whole_height)) {
     free(screen);
     screen = NULL;
   }
   if (!screen)
     screen = (uint8_t*)malloc(w * h);
 
-  width   = w;
-  height  = h;
+  whole_width = width   = w;
+  whole_height = height  = h;
   maxllen = l;
+  win_x = 0; win_y = 0;
 
   // デバイスの初期化
   INIT_DEV();
@@ -53,7 +54,7 @@ void tscreenBase::end() {
 
 // 指定行の1行分クリア
 void tscreenBase::clerLine(uint16_t l, int from) {
-  memset(screen+width*l + from, 0, width - from);
+  memset(&VPEEK(from, l), 0, width - from);
   CLEAR_LINE(l, from);
   MOVE(pos_y, pos_x);
 }
@@ -61,10 +62,12 @@ void tscreenBase::clerLine(uint16_t l, int from) {
 // スクリーンのクリア
 void tscreenBase::cls() {
   CLEAR();
-  memset(screen, 0, width*height);
+  for (int i = 0; i < height; ++i)
+    memset(&VPEEK(0, i), 0, width);
 }
 void tscreenBase::forget() {
-  memset(screen, 0, width*height);
+  for (int i = 0; i < height; ++i)
+    memset(&VPEEK(0, i), 0, width);
 }
 
 // スクリーンリフレッシュ表示
@@ -76,7 +79,8 @@ void tscreenBase::refresh() {
 
 // 1行分スクリーンのスクロールアップ
 void tscreenBase::scroll_up() {
-  memmove(screen, screen + width, (height-1)*width);
+  for (int i = 1; i < height; ++i)
+    memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width);
   if (flgCur)
     draw_cls_curs();
   SCROLL_UP();
@@ -86,7 +90,8 @@ void tscreenBase::scroll_up() {
 
 // 1行分スクリーンのスクロールダウン
 void tscreenBase::scroll_down() {
-  memmove(screen + width, screen, (height-1)*width);
+  for (int i = 0; i < height-1; ++i)
+    memmove(&VPEEK(0, i + 1), &VPEEK(0, i), width);
   if (flgCur)
     draw_cls_curs();
   SCROLL_DOWN();
@@ -97,9 +102,11 @@ void tscreenBase::scroll_down() {
 // 指定行に空白行挿入
 void tscreenBase::Insert_newLine(uint16_t l) {
   if (l < height-1) {
-    memmove(screen+(l+2)*width, screen+(l+1)*width, width*(height-1-l-1));
+    for (int i = l + 1; i < height - 1; ++i)
+      memmove(&VPEEK(0, i+1), &VPEEK(0, i), width);
+    //memmove(screen+(l+2)*width, screen+(l+1)*width, width*(height-1-l-1));
   }
-  memset(screen+(l+1)*width, 0, width);
+  memset(&VPEEK(0, l+1), 0, width);
   INSLINE(l+1);
 }
 
@@ -149,7 +156,7 @@ void tscreenBase::Insert_char(uint8_t c) {
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
       scroll_up();
-      start_adr-=width;
+      start_adr-=whole_width;
       MOVE(pos_y-1, pos_x);
     } else  if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
@@ -161,14 +168,14 @@ void tscreenBase::Insert_char(uint8_t c) {
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
       scroll_up();
-      start_adr-=width;
+      start_adr-=whole_width;
       MOVE(pos_y-1, pos_x);
     } else  if ( ((pos_x + ln +1)%width == width-1) && !VPEEK(pos_x + ln , pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
           Insert_newLine(pos_y+(pos_x+ln)/width);
     }
     // 1文字挿入のために1文字分のスペースを確保
-    memmove(start_adr+1, start_adr, ln);
+    memmove(start_adr+1, start_adr, ln);	// XXX: off-by-one?
     *start_adr=c; // 確保したスペースに1文字表示
     movePosNextNewChar();
     
@@ -380,16 +387,16 @@ uint8_t tscreenBase::enter_text() {
   // ポインタをさかのぼって、前行からの文字列の連続性を調べる
   // その文字列先頭アドレスをtopにセットする
   uint8_t *top = ptr;
-  while (top > screen && *top != 0 )
+  while (top > &VPEEK(0, 0) && *top != 0 )
     top--;
-  if ( top != screen ) top++;
+  if ( top != &VPEEK(0, 0) ) top++;
   text = top;
-  return ((top - screen) + strlen((char *)top)) / width + 1 - pos_y;
+  return ((top - &VPEEK(0, 0)) + strlen((char *)top)) / width + 1 - pos_y;
 }
 
 // 指定行の行番号の取得
 int16_t tscreenBase::getLineNum(int16_t l) {
-  uint8_t* ptr = screen+width*l;
+  uint8_t* ptr = &VPEEK(0, l);
   uint32_t n = 0;
   int rc = -1;  
   while (isDigit(*ptr)) {
