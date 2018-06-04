@@ -507,10 +507,10 @@ void AZIP::write_zchar( int c )
             else if ( c > 154 && c < 164 )
             {
                 /* German character replacements */
-                static char xlat[] = "aeoeueAeOeUess>><<";
+                static const char xlat[] PROGMEM = "aeoeueAeOeUess>><<";
 
-                xlat_buffer[0] = xlat[( ( c - 155 ) * 2 ) + 0];
-                xlat_buffer[1] = xlat[( ( c - 155 ) * 2 ) + 1];
+                xlat_buffer[0] = pgm_read_byte(&xlat[( ( c - 155 ) * 2 ) + 0]);
+                xlat_buffer[1] = pgm_read_byte(&xlat[( ( c - 155 ) * 2 ) + 1]);
                 xlat_buffer[2] = '\0';
             }
         }
@@ -565,8 +565,8 @@ void AZIP::write_char( int c )
 
 void AZIP::write_string( const prog_char *s )
 {
-    while ( *s )
-        write_char( *s++ );
+    while ( pgm_read_byte(s) )
+        write_char( pgm_read_byte(s++) );
 
 }                               /* write_string */
 
@@ -624,7 +624,7 @@ void AZIP::z_print_num( zword_t num )
     char buffer[10];
 
     i = ( ZINT16 ) num;
-    sprintf( buffer, "%d", i );
+    sprintf_P( buffer, PSTR("%d"), i );
     count = strlen( buffer );
     for ( i = 0; i < count; i++ )
         write_char( buffer[i] );
@@ -784,9 +784,9 @@ void AZIP::print_time( int hours, int minutes )
 
     /* Write the am or pm string */
     if ( pm_indicator == ON )
-        write_string( " pm" );
+        write_string( PSTR(" pm") );
     else
-        write_string( " am" );
+        write_string( PSTR(" am") );
 
 }                               /* print_time */
 
