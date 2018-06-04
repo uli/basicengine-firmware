@@ -5459,8 +5459,6 @@ WINDOW OFF
         [`8` to `CSIZE(0)-x`]
 @h	height of the text window, in characters +
         [`2` to `CSIZE(1)-y`]
-\bugs
-`WINDOW` always clears the newly defined window, which may not be desirable.
 \ref CSIZE()
 ***/
 void iwindow() {
@@ -5484,7 +5482,6 @@ void iwindow() {
 
   sc0.setWindow(x, y, w, h);
   sc0.locate(0,0);
-  sc0.cls();
   sc0.show_curs(false);
 }
 
