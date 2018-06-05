@@ -47,12 +47,12 @@
 330       err=RET(0)
 340       erl=RET(1)
 345       errsub=RET(2)
-350       PRINT ERROR$ (err);" (";err;")@";errsub
+350       PRINT ERROR$(err);" (";err;")@";errsub
 355       CMD OFF 
 356       CLOSE 14:REM CLOSE 15
 360     ENDIF 
 361     ttal=ttal+1
-362     IF COMPARE (@of$,@rn$)=0 THEN 
+362     IF COMPARE(@of$,@rn$)=0 THEN 
 363       PRINT " \f9cPASS\f0f"
 364       REMOVE @of$
 365       passed=passed+1
