@@ -7,7 +7,7 @@
 01000 'COMMON X$, Z
 01010 X$ = "abcdef"
 01020 Z = 1.2345
-01030 chain "/sd/bwbasic-tests/NBS2X/E042.CHN"
+01030 chain "/sd/tests/NBS2X/E042.CHN"
 03000 REM ----------------------------------------------------
 03010 REM If we get to here, then the CHAIN failed
 03020 REM ----------------------------------------------------

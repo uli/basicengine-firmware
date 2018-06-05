@@ -6,7 +6,7 @@
 00160 REM ----------------------------------------------------
 01000 'COMMON X$
 01010 X$ = "abcdef"
-01020 let A$ = "/sd/bwbasic-tests/NBS2X/E039.CHN"
+01020 let A$ = "/sd/tests/NBS2X/E039.CHN"
 01030 chain A$
 03000 REM ----------------------------------------------------
 03010 REM If we get to here, then the CHAIN failed

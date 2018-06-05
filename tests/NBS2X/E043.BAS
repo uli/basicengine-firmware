@@ -4,7 +4,7 @@
 00130 REM   AUTHOR:  Howard Wulf AF5NE
 00140 REM     DATE:  October 10th, 2014
 00160 REM ----------------------------------------------------
-01000 let f$ = "/sd/bwbasic-tests/NBS2X/E043.MRG"
+01000 let f$ = "/sd/tests/NBS2X/E043.MRG"
 01010 delete 2000-2090
 01020 merge f$, 1030
 01030 REM ----------------------------------------------------
