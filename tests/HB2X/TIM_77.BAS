@@ -9,7 +9,7 @@
   130 REM |                                                                     |
   140 REM +---------------------------------------------------------------------+
 151 t=TICK()
-  200 for i = 1 to 5E6
+  200 for i = 1 to 2E6
   210 next i
   300 PRINT "On my system, this should be between 4 and 6 seconds: ";int((TICK()-t)/1000)
   999 END
