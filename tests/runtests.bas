@@ -1,5 +1,9 @@
 10 testdir$="/sd/tests"
 15 ttal=0:failed=0:passed=0
+16 IF RET$(0)<>"" THEN
+17   CALL proc_dir(RET$(0))
+18   GOTO 105
+19 ENDIF
 20 OPEN testdir$ FOR DIRECTORY AS #12
 30 d$=DIR$(12)
 40 DO 
