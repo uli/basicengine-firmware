@@ -9184,9 +9184,35 @@ uint8_t SMALL icom() {
     break;
   case I_RUN:
     if (is_strexp()) {
-      ilrun();
+      // RUN with file name -> we need to check for arguments
+      // Problem: loading a new program clobbers ibuf, so we won't be able
+      // to parse our arguments afterwards. We therefore save the current
+      // instruction pointer, parse the arguments, reset the instruction
+      // pointer, and then call ilrun(), which will only look at the file
+      // name and discard everything else.
+      // XXX: This means the file name is evaluated twice. Not sure if that
+      // will be a problem in practice.
+      unsigned char *save_cip = cip;
+      istrexp();	// dump file name
+      int nr = 0, sr = 0;
+      for (int i = 0; i < MAX_RETVALS; ++i) {
+        retval[i] = 0;
+        retstr[i] = BString();
+      }
+      while (*cip == I_COMMA) {
+        ++cip;
+        if (is_strexp()) {
+          retstr[sr++] = istrexp();
+        } else {
+          retval[nr++] = iexp();
+        }
+        if (err)
+          break;
+      }
       if (err)
         break;
+      cip = save_cip;
+      ilrun();
     }
     sc0.show_curs(0);
     irun();
