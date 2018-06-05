@@ -1,0 +1,8 @@
+8 ?FN a(3)
+9 rem STOP 
+10 ?FN b(1)
+20 END
+100 PROC a
+110 RETURN 5
+200 PROC b
+210 RETURN FN a(5)

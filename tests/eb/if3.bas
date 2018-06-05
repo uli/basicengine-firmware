@@ -1,0 +1,12 @@
+10 a=3
+20 IF a=3 THEN 
+30 PRINT "good1"
+40 ELSE 
+50 PRINT "bad1"
+60 IF a=4 THEN 
+70 PRINT "bad2"
+80 ELSE 
+90 PRINT "bad3"
+100 ENDIF 
+110 PRINT "bad4"
+120 ENDIF 

@@ -1,0 +1,5 @@
+50 PRINT "b"
+55 PRINT "a=";a
+60 b=20
+70 DELETE 50-100
+110 PRINT "e";a

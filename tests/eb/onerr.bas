@@ -1,0 +1,5 @@
+10 ON ERROR GOTO 1000
+20 PRINT "foo"
+30 a=a/0
+40 END
+1000 PRINT "error"

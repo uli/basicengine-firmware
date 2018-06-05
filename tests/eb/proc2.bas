@@ -1,0 +1,4 @@
+10 GOTO 1000
+100 PROC foo(a):@a=@a+1:RETURN 
+110 PROC bar:@l=5:CALL foo(3):PRINT @l:RETURN 
+1000 CALL bar
