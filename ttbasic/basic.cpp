@@ -713,6 +713,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
 	err = ERR_IBUFOF;              // エラー番号をセット
 	return 0;                      // 0を持ち帰る
       }
+      // translate "END IF" to "ENDIF"
       if (key == I_IF && len > 0 && ibuf[len-1] == I_END)
         ibuf[len-1] = I_ENDIF;
       else {
@@ -730,8 +731,13 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
       }
       if (had_if && !isext && (key == I_THEN || key == I_GOTO)) {
         while (isspace(*s)) s++;
-        if (*s)
-          implicit_endif++;
+        if (*s) {
+          // Handle "IF ... THEN ' comment" properly
+          // XXX: Should "IF ... THEN : REM comment" also be considered?
+          int nk = lookup(s);
+          if (nk != I_SQUOT)
+            implicit_endif++;
+        }
       }
     } else {
       //err = ERR_SYNTAX; //エラー番号をセット
