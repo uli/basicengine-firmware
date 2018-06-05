@@ -1067,10 +1067,10 @@ uint32_t getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false) {
+uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 0) {
   uint8_t* rc = NULL;
   uint8_t* lp;
-  unsigned char lifstki = 1;
+  unsigned char lifstki = 1 + adjust;
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
   for (lp = p; ; ) {
@@ -1244,7 +1244,7 @@ static int8_t indent_level;
 
 // tokens that increase indentation
 inline bool is_indent(uint8_t *c) {
-  return *c == I_IF || *c == I_DO || *c == I_WHILE ||
+  return (*c == I_IF && c[-1] != I_ELSE) || *c == I_DO || *c == I_WHILE ||
         (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT && c[1] != I_APPEND && c[1] != I_DIRECTORY);
 }
 // tokens that reduce indentation
@@ -8626,7 +8626,13 @@ void BASIC_FP iendif()
 
 void BASIC_FP ielse()
 {
-  uint8_t *newip = getELSEptr(cip, true);
+  // Special handling for "ELSE IF": Skip one level of nesting. This avoids
+  // having to have an ENDIF for each ELSE at the end of an IF ... ELSE IF
+  // ... cascade.
+  int adjust = 0;
+  if (*cip == I_IF)
+    adjust = -1;
+  uint8_t *newip = getELSEptr(cip, true, adjust);
   if (newip)
     cip = newip;
 }
