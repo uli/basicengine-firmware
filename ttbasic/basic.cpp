@@ -6530,7 +6530,9 @@ Returns part of a string (a substring).
 @len	number of characters in the substring [default: `LEN(m$)-start`]
 \ret Substring of at most `len` characters.
 \note
-If `m$` is shorter than `len` characters, the return value is `m$`.
+* If `m$` is shorter than `len` characters, the return value is `m$`.
+* Unlike with other BASIC implementations, `start` is zero-based, i.e. the
+  first character is 0, not 1.
 \bugs
 `MID$()` cannot be used as the target of an assignment, as is possible in
 other BASIC implementations.
