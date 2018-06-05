@@ -291,7 +291,7 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
-  I_DIRSTR, I_INSTR,
+  I_DIRSTR, I_INSTR, I_ERRORSTR, I_COMPARE,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
