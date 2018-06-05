@@ -8443,12 +8443,17 @@ void BASIC_FP ifor() {
   num_t vto, vstep; // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
-  if (*cip++ != I_VAR) { // もし変数がなかったら
+  if (*cip == I_VAR) { // もし変数がなかったら
+    index = *++cip; // 変数名を取得
+    ivar();       // 代入文を実行
+    lstk[lstki].local = false;
+  } else if (*cip == I_LVAR) {
+    index = *++cip;
+    ilvar();
+    lstk[lstki].local = true;
+  } else {
     err = ERR_FORWOV;    // エラー番号をセット
-    return;
   }
-  index = *cip; // 変数名を取得
-  ivar();       // 代入文を実行
   if (err)      // もしエラーが生じたら
     return;
 
@@ -8480,8 +8485,7 @@ void BASIC_FP ifor() {
   // Special thanks hardyboy
   lstk[lstki].vto = vto;
   lstk[lstki].vstep = vstep;
-  lstk[lstki].index = index;
-  lstk[lstki++].local = false;
+  lstk[lstki++].index = index;
 }
 
 void BASIC_FP iloop() {
@@ -8529,8 +8533,10 @@ void BASIC_FP iloop() {
 
 // NEXT
 void BASIC_FP inext() {
-  int want_index;	// variable we want to NEXT
-  int index;		// variable index
+  int want_index;	// variable we want to NEXT, if specified
+  bool want_local;
+  int index;		// loop variable index we will actually use
+  bool local;
   num_t vto;		// end of loop value
   num_t vstep;		// increment value
 
@@ -8539,19 +8545,20 @@ void BASIC_FP inext() {
     return;
   }
 
-  if (*cip != I_VAR)
+  if (*cip != I_VAR && *cip != I_LVAR)
     want_index = -1;		// just use whatever is TOS
   else {
-    ++cip;
-    want_index = *cip++;	// NEXT a specific iterator
+    want_local = *cip++ == I_LVAR;
+    want_index = *cip++;	// NEXT a specific loop variable
   }
 
   while (lstki) {
-    // Get index of iterator on top of stack.
+    // Get index of loop variable on top of stack.
     index = lstk[lstki - 1].index;
+    local = lstk[lstki - 1].local;
 
     // Done if it's the one we want (or if none is specified).
-    if (want_index < 0 || want_index == index)
+    if (want_index < 0 || (want_index == index && want_local == local))
       break;
 
     // If it is not the specified variable, we assume we
@@ -8565,13 +8572,15 @@ void BASIC_FP inext() {
     return;
   }
 
+  num_t &loop_var = local ? get_lvar(index) : nvar.var(index);
+  
   vstep = lstk[lstki - 1].vstep;
-  nvar.var(index) += vstep;
+  loop_var += vstep;
   vto = lstk[lstki - 1].vto;
 
   // Is this loop finished?
-  if (((vstep < 0) && (nvar.var(index) < vto)) ||
-      ((vstep > 0) && (nvar.var(index) > vto))) {
+  if (((vstep < 0) && (loop_var < vto)) ||
+      ((vstep > 0) && (loop_var > vto))) {
     lstki--;  // drop it from FOR stack
     return;
   }
