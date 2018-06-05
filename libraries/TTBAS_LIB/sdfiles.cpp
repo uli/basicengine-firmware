@@ -709,6 +709,10 @@ int8_t sdfiles::compare(const char *one, const char *two)
   int8_t ret = 0;
   Unifile fone = Unifile::open(one, FILE_READ);
   Unifile ftwo = Unifile::open(two, FILE_READ);
+  if (!fone || !ftwo) {
+    err = ERR_FILE_OPEN;
+    goto out;
+  }
   char buf1[128];
   char buf2[128];
   while (fone.available() && ftwo.available()) {
