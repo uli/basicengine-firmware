@@ -6160,12 +6160,14 @@ simulated with cursor and letter keys on the keyboard.
 The special controller number `0` returns the combined state of all (real and
 virtual) controllers, making it easier to write programs that work with and
 without a game controller.
-\usage state = PAD(num)
+\usage state = PAD(num[, state])
 \args
 @num Number of the game controller: +
      `0`: all controllers combined +
      `1`: cursor pad +
      `2`: PSX controller
+@state	`0`: current button state (default) +
+        `1`: button-change events
 \ret
 Bit field representing the button states of the requested controller(s). The
 value is the sum of any of the following bit values:
@@ -6187,13 +6189,44 @@ value is the sum of any of the following bit values:
 | `32768` | kbd:[L2] button | n/a
 \endtable
 
-\ref UP DOWN LEFT RIGHT
+Depending on `state`, these bit values are set if the respective buttons are
+currently pressed (`0`) or newly pressed (`1`).
+
+If `state` is `1`, additional values are returned:
+
+* `RET(1)` contains buttons that are newly released,
+* `RET(2)` contains the current button state.
+\note
+WARNING: Using `PAD()` to retrieve button events (`state` is not `0`) interacts with
+the event handling via `ON PAD`. It is not recommended to use both at the
+same time.
+\ref ON_PAD UP DOWN LEFT RIGHT
 ***/
 num_t BASIC_INT npad() {
   int32_t num;
+  int32_t state = 0;
+
   if (checkOpen()) return 0;
-  if (getParam(num, 0, 2, I_CLOSE)) return 0;
-  return pad_state(num);
+
+  if (getParam(num, 0, 2, I_NONE)) return 0;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(state, 0, 3, I_NONE)) return 0;
+  }
+
+  if (checkClose())
+    return 0;
+
+  int ps = pad_state(num);
+  if (state) {
+    int cs = ps ^ event_pad_last[num];
+    retval[1] = cs & ~ps;
+    retval[2] = ps;
+    event_pad_last[num] = ps;
+    ps &= cs;
+  }
+  return ps;
 }
 
 void BASIC_INT event_handle_pad()
