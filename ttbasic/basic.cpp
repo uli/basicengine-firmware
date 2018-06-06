@@ -730,6 +730,7 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
         ibuf[len++] = key;                 // 中間コードを記録
       }
       if (had_if && !isext && (key == I_THEN || key == I_GOTO)) {
+        had_if = false;	// prevent multiple implicit endifs for "THEN GOTO"
         while (isspace(*s)) s++;
         if (*s) {
           // Handle "IF ... THEN ' comment" properly
