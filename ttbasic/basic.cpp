@@ -1338,6 +1338,8 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
         sc0.setColor(COL(PROC), COL(BG));
       else
         sc0.setColor(COL(OP), COL(BG));
+      if (*ip == I_SQUOT)
+        PRINT_P("  ");
       c_puts_P(kw, devno); //キーワードテーブルの文字列を表示
       sc0.setColor(COL(FG), COL(BG));
 
