@@ -6688,7 +6688,7 @@ static BString scwd() {
 
 static BString sinkey() {
   int32_t c = iinkey();
-  if (c >= 0 && c < 0x100) {
+  if (c > 0 && c < 0x100) {
     return BString((char)c);
   } else if (c >= 0x100) {
     return BString((char)(c >> 8)) + BString((char)(c & 255));
