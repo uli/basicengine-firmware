@@ -6719,6 +6719,24 @@ static BString scwd() {
   return Unifile::cwd();
 }
 
+/***bn bas INKEY$
+Reads a character from the keyboard.
+\usage c$ = INKEY$
+\ret
+Returns either
+
+* an empty string if there is no keyboard input,
+* a single-character string for regular keys,
+* a two-character string for extended keys.
+
+An "extended key" is a key that does not have a common ASCII representation,
+such as cursor or function keys.
+\note
+`INKEY$` is not consistent with the Engine BASIC convention of following
+functions with parentheses to distinguish them from constants and variables
+in order to remain compatible with other BASIC implementations.
+\ref INKEY()
+***/
 static BString sinkey() {
   int32_t c = iinkey();
   if (c > 0 && c < 0x100) {
@@ -7347,7 +7365,7 @@ num_t BASIC_FP nfree() {
 Reads a character from the keyboard and returns its numeric value.
 \usage c = INKEY()
 \ret Key code [`0` to `65535`]
-\ref INKEY$()
+\ref INKEY$
 ***/
 num_t BASIC_FP ninkey() {
   if (checkOpen()||checkClose()) return 0;
