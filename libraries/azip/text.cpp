@@ -470,9 +470,9 @@ void AZIP::write_zchar( int c )
             if ( c > 23 && c < 28 )
             {
                 /* Arrow keys - these must the keyboard keys used for input */
-                static char xlat[4] = { '\\', '/', '+', '-' };
+                static const char xlat[4] PROGMEM = { '\\', '/', '+', '-' };
 
-                xlat_buffer[0] = xlat[c - 24];
+                xlat_buffer[0] = pgm_read_byte(&xlat[c - 24]);
                 xlat_buffer[1] = '\0';
             }
             else if ( c == 0 )
