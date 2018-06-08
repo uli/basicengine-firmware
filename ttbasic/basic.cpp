@@ -5040,9 +5040,6 @@ Saves a portion of video memory to storage as a PCX file.
         [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]
 @h	height of video memory section, pixels +
         [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
-\bugs
-CAUTION: This command has never been tested and can thus not be guaranteed
-not to eat your cat.
 \ref LOAD_PCX
 ***/
 void SMALL isavepcx() {
@@ -5062,7 +5059,8 @@ void SMALL isavepcx() {
     } else if (*cip == I_SIZE) {
       if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA)) return;
       if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE)) return;
-    }
+    } else
+      break;
   }
   
   err = bfs.saveBitmap((char *)fname.c_str(), x, y, w, h);

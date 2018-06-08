@@ -199,7 +199,7 @@ uint8_t ICACHE_RAM_ATTR VS23S010::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
   return colorFromRgbSlow(r, g, b);
 }
 
-uint8_t *paletteData(uint8_t colorspace)
+uint8_t *VS23S010::paletteData(uint8_t colorspace)
 {
   return (uint8_t *)pals[colorspace];
 }
