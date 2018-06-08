@@ -22,23 +22,23 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *       
+ *
  * --------------------------------------------------------------------
  */
- 
- /*
-  * Modified by Louis Davis April, 2012
-  * Arduino support.
-  *
-  */
 
- /*
-  * fileio.c
-  *
-  * File manipulation routines. Should be generic.
-  *
-  */
-  
+/*
+ * Modified by Louis Davis April, 2012
+ * Arduino support.
+ *
+ */
+
+/*
+ * fileio.c
+ *
+ * File manipulation routines. Should be generic.
+ *
+ */
+
 #include "ztypes.h"
 
 /* Static data */
@@ -72,7 +72,7 @@ void AZIP::open_story( const char *game_name )
         }
 
         game_in.close();
-        game.sync();	// avoids file system errors if azip isn't properly exited
+        game.sync();    // avoids file system errors if azip isn't properly exited
         return;
     }
     fatal(PSTR("nopen game"));
@@ -89,9 +89,9 @@ void AZIP::open_story( const char *game_name )
 void AZIP::flush_block(int i) {
     struct cache_block *cb = &cache_blocks[i];
     if (cb->dirty) {
-      game.seekSet(cb->addr);
-      game.write((char *)cb->mem, 512);
-      cb->dirty = false;
+        game.seekSet(cb->addr);
+        game.write((char *)cb->mem, 512);
+        cb->dirty = false;
     }
 }
 
@@ -101,7 +101,7 @@ void AZIP::close_story( void )
     if ( game )
     {
         for (int i = 0; i < CACHE_BLOCKS; ++i)
-          flush_block(i);
+            flush_block(i);
         game.close( );
     }
 
@@ -212,7 +212,7 @@ int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
 void AZIP::z_save_undo( void )
 {
     /* If no memory for data area then say undo is not available */
-    store_operand( ( zword_t ) - 1 );
+    store_operand( ( zword_t ) -1 );
 
 }                               /* z_save_undo */
 
@@ -229,17 +229,17 @@ void AZIP::z_save_undo( void )
 void AZIP::z_restore_undo( void )
 {
     /* If no memory for data area then say undo is not available */
-    store_operand( ( zword_t ) - 1 );
+    store_operand( ( zword_t ) -1 );
 
 }                               /* z_restore_undo */
 
 
 /*
-* read_code_word
-*
-* Read a word from the instruction stream.
-*
-*/
+ * read_code_word
+ *
+ * Read a word from the instruction stream.
+ *
+ */
 
 zword_t AZIP::read_code_word( void )
 {
@@ -252,7 +252,7 @@ zword_t AZIP::read_code_word( void )
 
 }                               /* read_code_word */
 
-struct cache_block * AZIP::fetch_block(unsigned long addr)
+struct cache_block *AZIP::fetch_block(unsigned long addr)
 {
     int bl = rand() % CACHE_BLOCKS;
     flush_block(bl);
@@ -264,23 +264,23 @@ struct cache_block * AZIP::fetch_block(unsigned long addr)
 }
 
 /*
-* read_code_byte
-*
-* Read a byte from the instruction stream.
-*
-*/
+ * read_code_byte
+ *
+ * Read a byte from the instruction stream.
+ *
+ */
 
 zbyte_t AZIP::read_code_byte( void )
 {
     zbyte_t value;
 
     for (int i = 0; i < CACHE_BLOCKS; ++i) {
-      struct cache_block *cb = &cache_blocks[i];
-      if (cb->addr / 512 == pc / 512) {
-        value = cb->mem[pc % 512];
-        pc++;
-        return value;
-      }
+        struct cache_block *cb = &cache_blocks[i];
+        if (cb->addr / 512 == pc / 512) {
+            value = cb->mem[pc % 512];
+            pc++;
+            return value;
+        }
     }
 
     struct cache_block *cb = fetch_block(pc);
@@ -295,11 +295,11 @@ zbyte_t AZIP::read_code_byte( void )
 }                               /* read_code_byte */
 
 /*
-* read_data_word
-*
-* Read a word from the data area.
-*
-*/
+ * read_data_word
+ *
+ * Read a word from the data area.
+ *
+ */
 
 zword_t AZIP::read_data_word( unsigned long *addr )
 {
@@ -320,23 +320,23 @@ void AZIP::write_data_word( unsigned long *addr, zword_t value)
 }                               /* write_data_word */
 
 /*
-* read_data_byte
-*
-* Read a byte from the data area.
-*
-*/
+ * read_data_byte
+ *
+ * Read a byte from the data area.
+ *
+ */
 
 zbyte_t AZIP::read_data_byte( unsigned long *addr )
 {
     zbyte_t value = 0;
 
     for (int i = 0; i < CACHE_BLOCKS; ++i) {
-      struct cache_block *cb = &cache_blocks[i];
-      if (cb->addr / 512 == *addr / 512) {
-        value = cb->mem[*addr % 512];
-        (*addr)++;
-        return value;
-      }
+        struct cache_block *cb = &cache_blocks[i];
+        if (cb->addr / 512 == *addr / 512) {
+            value = cb->mem[*addr % 512];
+            (*addr)++;
+            return value;
+        }
     }
     struct cache_block *cb = fetch_block(*addr);
     value = cb->mem[*addr % 512];
@@ -352,13 +352,13 @@ zbyte_t AZIP::read_data_byte( unsigned long *addr )
 void AZIP::write_data_byte( unsigned long *addr, zbyte_t value)
 {
     for (int i = 0; i < CACHE_BLOCKS; ++i) {
-      struct cache_block *cb = &cache_blocks[i];
-      if (cb->addr / 512 == *addr / 512) {
-        cb->mem[*addr % 512] = value;
-        cb->dirty = true;
-        (*addr)++;
-        return;
-      }
+        struct cache_block *cb = &cache_blocks[i];
+        if (cb->addr / 512 == *addr / 512) {
+            cb->mem[*addr % 512] = value;
+            cb->dirty = true;
+            (*addr)++;
+            return;
+        }
     }
     struct cache_block *cb = fetch_block(*addr);
     cb->mem[*addr % 512] = value;
@@ -369,8 +369,16 @@ void AZIP::write_data_byte( unsigned long *addr, zbyte_t value)
 
 }                               /* write_data_byte */
 
-zbyte_t AZIP::get_byte(unsigned long offset){ unsigned long addr = offset; return read_data_byte(&addr); }
-zword_t AZIP::get_word(unsigned long offset){ unsigned long addr = offset; return read_data_word(&addr);}
-void AZIP::set_byte(unsigned long offset, zbyte_t value){ unsigned long addr = offset; write_data_byte(&addr, value);}
-void AZIP::set_word(unsigned long offset, zword_t value){ unsigned long addr = offset; write_data_word(&addr, value);}
+zbyte_t AZIP::get_byte(unsigned long offset){
+    unsigned long addr = offset; return read_data_byte(&addr);
+}
+zword_t AZIP::get_word(unsigned long offset){
+    unsigned long addr = offset; return read_data_word(&addr);
+}
+void AZIP::set_byte(unsigned long offset, zbyte_t value){
+    unsigned long addr = offset; write_data_byte(&addr, value);
+}
+void AZIP::set_word(unsigned long offset, zword_t value){
+    unsigned long addr = offset; write_data_word(&addr, value);
+}
 
