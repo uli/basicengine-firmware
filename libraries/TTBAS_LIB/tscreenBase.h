@@ -54,9 +54,9 @@ class tscreenBase {
     uint16_t pos_x;             // カーソル横位置
     uint16_t pos_y;             // カーソル縦位置
     uint8_t*  text;             // 行確定文字列
-    uint8_t flgIns;             // 編集モード
     uint8_t dev;                // 文字入力デバイス
-    uint8_t flgCur;             // カーソル表示設定
+    uint8_t flgCur:1;             // カーソル表示設定
+    bool flgIns:1;             // 編集モード
 	
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
