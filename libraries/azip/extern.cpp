@@ -79,6 +79,9 @@ AZIP::AZIP()
   dictionary_offset = 0;
   dictionary_size = 0;
   entry_size = 0;
+  
+  save_name[0] = 0;
+  auxilary_name[0] = 0;
 }
 
 /* Character translation tables */

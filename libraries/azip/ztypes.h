@@ -242,6 +242,7 @@ typedef short ZINT16;           /*   signed 2 byte quantity */
 
 /* Local defines */
 
+#define PAGE_SIZE 0x200
 #define STACK_SIZE 1024
 
 #define ON     1
@@ -277,6 +278,10 @@ typedef short ZINT16;           /*   signed 2 byte quantity */
 #define GAME_LOAD_AUX 8
 
 #define MAX_TEXT_SIZE 8
+
+// pulled out of my ass
+#define Z_FILENAME_MAX 64
+#define Z_PATHNAME_MAX 64
 
 class AZIP {
 public:
@@ -317,6 +322,9 @@ private:
   void close_story( void );
   unsigned int get_story_size( void );
   void open_story( const char *file_name );
+  int save_restore( const char *file_name, int flag );
+  int get_file_name( char *file_name, char *default_name, int flag );
+  void get_default_name( char *default_name, zword_t addr );
 
   struct cache_block *fetch_block(unsigned long addr);
   void flush_block(int i);
@@ -430,7 +438,7 @@ private:
   void z_erase_window( zword_t w );
   void z_erase_line( zword_t flag );
   void z_set_cursor( zword_t row, zword_t column );
-
+  
   /* text.c */
 
   void z_encode( zword_t, zword_t, zword_t, zword_t );
@@ -515,6 +523,9 @@ private:
   Unifile game;
 
   struct cache_block *cache_blocks;
+
+  char save_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
+  char auxilary_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
 };
 
 
