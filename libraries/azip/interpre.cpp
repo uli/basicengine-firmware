@@ -281,7 +281,7 @@ int __attribute__((optimize ("no-jump-tables"))) AZIP::interpret(  )
                     z_pull( operand[0] );
                     break;
                 case 0x2a:
-                    //z_split_window( operand[0] );
+                    z_split_window( operand[0] );
                     break;
                 case 0x2b:
                     z_set_window( operand[0] );
@@ -290,13 +290,13 @@ int __attribute__((optimize ("no-jump-tables"))) AZIP::interpret(  )
                     z_call( count, operand, FUNCTION );
                     break;
                 case 0x2d:
-                    //z_erase_window( operand[0] );
+                    z_erase_window( operand[0] );
                     break;
                 case 0x2e:
-                    //z_erase_line( operand[0] );
+                    z_erase_line( operand[0] );
                     break;
                 case 0x2f:
-                    //z_set_cursor( operand[0], operand[1] );
+                    z_set_cursor( operand[0], operand[1] );
                     break;
 
                 case 0x31:

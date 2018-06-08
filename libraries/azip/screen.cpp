@@ -52,9 +52,75 @@
 
 void AZIP::z_set_window( zword_t w )
 {
+    if (w == screen_window)
+        return;
+
     screen_window = w;
+    if (w == STATUS_WINDOW) {
+        row = sc0.c_y();
+        col = sc0.c_x();
+        sc0.setWindow(0, 0, sc0.getScreenWidth(), status_size);
+        if (h_type < V4)
+            sc0.locate(1, 0);
+        else
+            sc0.locate(0, 0);
+    } else {
+        sc0.setWindow(0, status_size, sc0.getScreenWidth(),
+                      sc0.getScreenHeight() - status_size);
+        if (row < status_size)
+            row = status_size;
+        sc0.locate(col, row);
+    }
 }                               /* z_set_window */
 
+void AZIP::z_split_window( zword_t lines )
+{
+    lines &= 0xff;
+    if ( h_type < V4 )
+        lines++;
+    if (lines) {
+        if ( lines > ( zword_t ) ( sc0.getScreenHeight() - 1 ) )
+            status_size = sc0.getScreenHeight() - 1;
+        else
+            status_size = lines;
+        if ( h_type < V4)
+            z_erase_window( STATUS_WINDOW );
+    } else {
+        status_size = 0;
+        z_set_window( TEXT_WINDOW );
+    }
+}
+
+void AZIP::z_erase_window( zword_t w )
+{
+    zword_t cw = screen_window;
+    if ( (zbyte_t) w == (zbyte_t) Z_SCREEN ) {
+        sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    } else if ( ( zbyte_t ) w == TEXT_WINDOW ) {
+        z_set_window( TEXT_WINDOW );
+    } else if ( ( zbyte_t ) w == STATUS_WINDOW ) {
+        z_set_window( STATUS_WINDOW );
+    }
+    sc0.cls();
+    z_set_window( cw );
+    if ( h_type > V4 )
+        sc0.locate(0, 0);
+    else
+        sc0.locate(0, sc0.getHeight() - 1);
+}
+
+void AZIP::z_erase_line( zword_t flag )
+{
+    if ( flag )
+      sc0.clerLine(sc0.c_y(), sc0.c_x());
+}
+
+void AZIP::z_set_cursor( zword_t rw, zword_t cl )
+{
+    if ( screen_window == STATUS_WINDOW ) {
+        sc0.locate( cl - 1, rw - 1 );
+    }
+}
 
 /*
 * z_show_status

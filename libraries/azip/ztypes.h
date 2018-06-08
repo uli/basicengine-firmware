@@ -425,8 +425,11 @@ private:
 
   void z_show_status( void );
   void z_set_window( zword_t );
+  void z_split_window( zword_t lines );
   void z_print_table( int, zword_t * );
-
+  void z_erase_window( zword_t w );
+  void z_erase_line( zword_t flag );
+  void z_set_cursor( zword_t row, zword_t column );
 
   /* text.c */
 
@@ -500,6 +503,8 @@ private:
   int interpreter_state;
   int interpreter_status;
   int screen_window;
+  int row, col;
+  int status_size;
 
   int halt;
 
