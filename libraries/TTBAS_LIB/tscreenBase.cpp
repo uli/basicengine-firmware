@@ -37,6 +37,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
 
   // 編集機能の設定
   flgIns = true;
+  flgScroll = true;
 }
 
 // スクリーン利用終了
@@ -79,6 +80,8 @@ void tscreenBase::refresh() {
 
 // 1行分スクリーンのスクロールアップ
 void tscreenBase::scroll_up() {
+  if (!flgScroll)
+    return;
   for (int i = 1; i < height; ++i)
     memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width);
   if (flgCur)
@@ -90,6 +93,8 @@ void tscreenBase::scroll_up() {
 
 // 1行分スクリーンのスクロールダウン
 void tscreenBase::scroll_down() {
+  if (!flgScroll)
+    return;
   for (int i = 0; i < height-1; ++i)
     memmove(&VPEEK(0, i + 1), &VPEEK(0, i), width);
   if (flgCur)

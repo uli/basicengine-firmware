@@ -57,6 +57,7 @@ class tscreenBase {
     uint8_t dev;                // 文字入力デバイス
     uint8_t flgCur:1;             // カーソル表示設定
     bool flgIns:1;             // 編集モード
+    bool flgScroll:1;
 	
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
@@ -124,6 +125,8 @@ protected:
     inline uint16_t getScreenHeight() { return whole_height;};    // スクリーン縦幅取得
     inline uint16_t getScreenByteSize() {return whole_width*whole_height;}; // スクリーン領域バイトサイズ
     int16_t getLineNum(int16_t l);                    // 指定行の行番号の取得
+
+    inline void setScroll(bool enabled) { flgScroll = enabled; }
 };
 
 #endif
