@@ -172,8 +172,10 @@ void AZIP::z_show_status( void )
 
     while (sc0.c_x() < sc0.getWidth() - 1)
       write_char(' ');
-    write_string(PSTR("\\N"));
+    sc0.setScroll(false);
+    write_string(PSTR(" \\N"));
     sc0.setWindow(0, 1, sc0.getScreenWidth(), sc0.getScreenHeight() - 1);
+    sc0.setScroll(true);
     sc0.locate(x, y);
 }                               /* output_new_line */
 
