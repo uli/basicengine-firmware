@@ -3143,7 +3143,15 @@ void iloadconfig() {
 void isavebg();
 void isavepcx();
 
-// "SAVE <file name>" or "SAVE BG ..."
+/***bc bas SAVE
+Saves the BASIC program in memory to storage.
+\usage SAVE file$
+\args
+@file$	name of file to be saved
+\note
+BASIC programs are saved in plain text (ASCII) format.
+\ref SAVE_BG SAVE_CONFIG SAVE_PCX
+***/
 void isave() {
   BString fname;
   int8_t rc;
