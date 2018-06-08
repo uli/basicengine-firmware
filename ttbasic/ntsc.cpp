@@ -896,8 +896,17 @@ void SMALL VS23S010::videoInit()
 	//	but shifts one pixel up or down, depending on screen content;
 	//	"standard" 313 has color noise, but remains in place.
 	//	Does not seem to happen in other modes, may be a TV quirk.
+
+	int total_lines;
+	if (m_pal)
+		total_lines = 314;
+	else
+		total_lines = 263;
+	if (m_interlace)
+		total_lines *= 2;
+
 	SpiRamWriteRegister(VDCTRL2,
-	                    (VDCTRL2_LINECOUNT * ((m_pal ? 314 : 263) + m_line_adjust))
+	                    (VDCTRL2_LINECOUNT * (total_lines + m_line_adjust))
 			    | (VDCTRL2_PIXEL_WIDTH * (PLLCLKS_PER_PIXEL - 1))
 			    | (m_pal ? VDCTRL2_PAL : 0)
 			    | (VDCTRL2_ENABLE_VIDEO));
