@@ -2916,6 +2916,57 @@ void SMALL irenum() {
   }
 }
 
+static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
+  {   0,   0,   0 },	// BG
+  { 192, 192, 192 },	// FG
+  { 255, 255, 255 },	// KEYWORD
+  { 128, 128, 128 },	// LINENUM
+  {  10, 120, 160 },	// NUM (teal)
+  { 140, 140, 140 },	// VAR (light gray)
+  { 244, 233, 123 },	// LVAR (beige)
+  { 214,  91, 189 },	// OP (pink)
+  {  50,  50, 255 },	// STR (blue)
+  { 238, 137,  17 },	// PROC (orange)
+  {  84, 255,   0 },	// COMMENT (green)
+  {   0,   0,   0 },	// BORDER
+};
+
+/***bc sys CONFIG COLOR
+Changes the color scheme.
+
+The color scheme is a set of colors that are used to print system messages
+and BASIC program listings. It also contains the default foreground and
+background colors.
+\usage CONFIG COLOR col, red, green, blue
+\args
+@col	color code [`0` to `{CONFIG_COLS_m1}`]
+@red	red component [0 to 255]
+@green	green component [0 to 255]
+@blue	blue component [0 to 255]
+\sec COLOR CODES
+\table
+| 0 | Default background
+| 1 | Default foreground
+| 2 | Syntax: BASIC keywords
+| 3 | Syntax: line numbers
+| 4 | Syntax: numbers
+| 5 | Syntax: global variables
+| 6 | Syntax: local variables and arguments
+| 7 | Syntax: operands
+| 8 | Syntax: string constants
+| 9 | Syntax: procedure names
+| 10 | Syntax: comments
+| 11 | Default border color
+\endtable
+\note
+* Unlike the `COLOR` command, `CONFIG COLOR` requires the colors to be given
+  in RGB format; this is to ensure that the color scheme works with all YUV
+  colorspaces.
+* To set the current color scheme as the default, use `SAVE CONFIG`.
+\bugs
+The default border color is not used.
+\ref COLOR CONFIG SAVE_CONFIG
+***/
 void SMALL config_color()
 {
   int32_t idx, r, g, b;
@@ -9545,21 +9596,6 @@ void SMALL basic() {
       error(false);	// display direct mode error message
   }
 }
-
-static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
-  {   0,   0,   0 },	// BG
-  { 192, 192, 192 },	// FG
-  { 255, 255, 255 },	// KEYWORD
-  { 128, 128, 128 },	// LINENUM
-  {  10, 120, 160 },	// NUM (teal)
-  { 140, 140, 140 },	// VAR (light gray)
-  { 244, 233, 123 },	// LVAR (beige)
-  { 214,  91, 189 },	// OP (pink)
-  {  50,  50, 255 },	// STR (blue)
-  { 238, 137,  17 },	// PROC (orange)
-  {  84, 255,   0 },	// COMMENT (green)
-  {   0,   0,   0 },	// BORDER
-};
 
 #define CONFIG_FILE "/flash/.config"
 
