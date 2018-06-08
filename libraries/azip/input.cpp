@@ -549,7 +549,7 @@ void AZIP::z_tokenise( int argc, zword_t * argv )
 
 int AZIP::input_character( int timeout )
 {
-    int c = getchar(  );
+    int c = c_getch(  );
 
     /* Bureaucracy expects CR, not NL.  */
     return ( ( c == '\n' ) ? '\r' : c );
