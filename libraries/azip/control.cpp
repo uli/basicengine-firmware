@@ -236,13 +236,6 @@ void AZIP::restart_interp( int scripting_flag )
     set_byte( H_MAX_CHAR_WIDTH, 1 ); /* Size of a character in screen units */
     set_byte( H_MAX_CHAR_HEIGHT, 1 );
 
-    /* Initialise status region */
-
-    if ( h_type < V4 )
-    {
-        write_char('\n');
-    }
-
 }                               /* restart_interp */
 
 /*
