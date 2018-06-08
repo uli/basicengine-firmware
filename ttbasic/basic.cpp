@@ -4393,7 +4393,7 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord, color
           [`0` to `PSIZE(2)-1`]
 @color	  color of the line
 \note
-Coordinates that exceed the valid video memory area will be clamped.
+Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
 void iline() {
@@ -4426,7 +4426,7 @@ Draws a circle.
 @fill_color	color of the circle's body +
                 [`0` to `255`, or `-1` for an unfilled circle]
 \note
-Coordinates that exceed the valid video memory area will be clamped.
+Coordinates that exceed the valid pixel memory area will be clamped.
 \bugs
 `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
@@ -4475,7 +4475,7 @@ void irect() {
 }
 
 /***bc pix BLIT
-Copies a rectangular area of video memory to another area.
+Copies a rectangular area of pixel memory to another area.
 \usage BLIT x, y TO dest_x, dest_y SIZE width, height [<UP|DOWN>]
 \args
 @x	source area, X coordinate [`0` to `PSIZE(0)-1`]
@@ -4989,7 +4989,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 Prints a string of characters at the specified pixel position.
 
 `GPRINT` allows printing characters outside the fixed text grid, including
-off-screen video memory.
+off-screen pixel memory.
 \usage GPRINT x, y, *expressions*
 \args
 @x	start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]
@@ -5028,17 +5028,17 @@ BString getParamFname() {
 }
 
 /***bc scr SAVE PCX
-Saves a portion of video memory to storage as a PCX file.
+Saves a portion of pixel memory to storage as a PCX file.
 \usage SAVE PCX image$ [POS x, y] [SIZE w, h]
 \args
 @image$	name of image file to be created
-@x	left of video memory section, pixels +
+@x	left of pixel memory section, pixels +
         [`0` (default) to `PSIZE(0)-1`]
-@y	top of video memory section, pixels +
+@y	top of pixel memory section, pixels +
         [`0` (default) to `PSIZE(2)-1`]
-@w	width of video memory section, pixels +
+@w	width of pixel memory section, pixels +
         [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]
-@h	height of video memory section, pixels +
+@h	height of pixel memory section, pixels +
         [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
 \ref LOAD_PCX
 ***/
@@ -5068,7 +5068,7 @@ void SMALL isavepcx() {
 }
 
 /***bc scr LOAD PCX
-Loads a PCX image file in whole or in parts from storage to video memory.
+Loads a PCX image file in whole or in parts from storage to pixel memory.
 \usage
 LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
          [SIZE width, height] [KEY col]

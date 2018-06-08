@@ -27,6 +27,14 @@ help you read the syntax rules for a statement, and are _not_ capitalization
 rules you must type in. Neither keywords nor variable and procedure names
 are case-sensitive.
 
+=== Terminology
+
+* *Video memory* refers to all random-access memory residing on the video
+  controller chip.
+* *Pixel memory* refers to the parts of video memory that represent pixels,
+  including the visible screen and the off-screen area that can be accessed
+  by graphics commands and functions.
+
 == Command and Function Reference
 
 include::reference.adoc[]
