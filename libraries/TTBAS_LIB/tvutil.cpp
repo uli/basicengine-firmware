@@ -41,6 +41,7 @@ int clrline_x, clrline_y;
 uint16_t fg_color = 0xf;
 uint16_t bg_color = 0;
 uint8_t cursor_color = 0x92;
+uint8_t clrline_color;
 
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
@@ -81,6 +82,7 @@ void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) {
   // We don't want to allocate this last because it will be in the way when
   // allocating a larger font later.
   vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+  clrline_color = 0;
 
   win_x = 0;
   win_y = 0;
@@ -92,10 +94,19 @@ void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) {
   tv_NTSC_adjust(ajst);
 }
 
+static void tv_set_clear_line_col(uint8_t cc)
+{
+  if (clrline_color != cc) {
+    vs23.drawRect(clrline_x, clrline_y, g_width / 2, 8, cc, cc);
+    clrline_color = cc;
+  }
+}
+
 void tv_reinit()
 {
   vs23.reset();
   vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+  clrline_color = 0;
   tv_window_reset();
 }
 
@@ -227,15 +238,12 @@ void tv_cls() {
 // 指定行の1行クリア
 //
 void tv_clerLine(uint16_t l, int from) {
-#if USE_VS23 == 1
   int left = win_x + from * f_width;
   int width = win_width - from * f_width;
   // Assumption: Screen data is followed by empty line in memory.
+  tv_set_clear_line_col(bg_color);
   vs23.MoveBlock(clrline_x, clrline_y, left, win_y + l * f_height, width/2, f_height, 0);
   vs23.MoveBlock(clrline_x, clrline_y, left + width/2, win_y + l * f_height, width/2, f_height, 0);
-#else
-  memset(vram + f_height*g_width/8*l, 0, f_height*g_width/8);
-#endif
 }
 
 //
