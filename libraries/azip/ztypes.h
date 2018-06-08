@@ -242,7 +242,7 @@ typedef short ZINT16;           /*   signed 2 byte quantity */
 
 /* Local defines */
 
-#define STACK_SIZE 256
+#define STACK_SIZE 1024
 
 #define ON     1
 #define OFF    0
