@@ -3254,9 +3254,20 @@ uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
   return rc;
 }
 
-// Delete specified line
-// DELETE line number
-// DELETE start line number, end line number
+/***bc bas DELETE
+Delete specified line(s) from the BASIC program in memory.
+
+WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
+\usage DELETE range
+\args
+@range	a range of BASIC program lines
+\note
+* Using `DELETE` does not affect variables.
+* When called from a running program, execution will continue at the next
+  program line, i.e. commands following `DELETE` on the same line are
+  disregarded.
+\ref REMOVE
+***/
 void SMALL idelete() {
   uint32_t sNo, eNo;
   uint8_t  *lp;      // 削除位置ポインタ

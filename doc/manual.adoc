@@ -34,6 +34,16 @@ are case-sensitive.
 * *Pixel memory* refers to the parts of video memory that represent pixels,
   including the visible screen and the off-screen area that can be accessed
   by graphics commands and functions.
+* A *range* is a way to specify a set of numbers by giving a start and/or
+  an end. The following forms are allowed: +
++
+[options="autowidth,1"]
+|===
+| _num_  | A single number.
+| -_num_ | All numbers up to and including _num_
+| _num_- | All numbers from _num_.
+| _num1_-_num2_ | All numbers between _num1_ and _num2_, inclusive.
+|===
 
 == Command and Function Reference
 
