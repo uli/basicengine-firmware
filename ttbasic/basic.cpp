@@ -3319,7 +3319,14 @@ void SMALL idelete() {
   TRACE;
 }
 
-// プログラムファイル一覧表示 FILES ["ファイルパス"]
+/***bc bas FILES
+Displays the contents of the current or a specified directory.
+\usage FILES [filespec$]
+\args
+@filespec$	a filename or path, may include wildcard characters +
+                [default: all files in the current directory]
+\ref CHDIR CWD$()
+***/
 void ifiles() {
   BString fname;
   char wildcard[SD_PATH_LEN];
@@ -3566,7 +3573,13 @@ void BASIC_FP pump_events(void)
 #endif
 }
 
-// 時間待ち
+/***bc sys WAIT
+Pause for a specific amount of time.
+\usage WAIT ms
+\args
+@ms	time in milliseconds
+\ref TICK()
+***/
 void iwait() {
   int32_t tm;
   if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
@@ -3580,6 +3593,30 @@ void iwait() {
   }
 }
 
+/***bc scr VSYNC
+Synchronize with video output.
+
+Waits until the video frame counter has reached or exceeded a given
+value, or until the next frame if none is specified.
+\usage VSYNC [frame]
+\args
+@frame	frame number to be waited for
+\note
+Specifying a frame number helps avoid slowdowns by continuing immediately
+if the program is "late", and not wait for another frame.
+====
+----
+f = FRAME()
+DO
+  ' stuff that may take longer than expected
+  VSYNC f+1	// <1>
+  f = f + 1
+LOOP
+----
+<1> This command will not wait if frame `f+1` has already passed.
+====
+\ref FRAME()
+***/
 void ivsync() {
   uint32_t tm;
   if (end_of_statement())
@@ -3602,6 +3639,26 @@ static const uint8_t vs23_write_regs[] PROGMEM = {
   0x34, 0x35
 };
 
+/***bc scr VREG
+Writes to a video controller register.
+
+WARNING: Incorrect use of this command can configure the video controller to
+produce invalid output, with may cause damage to older CRT displays.
+\usage VREG reg, val[, val ...]
+\args
+@reg	video controller register number
+@val	value [`0` to `65535`]
+\note
+Valid registers numbers are: `$01`, `$28` to `$30`, `$34`, `$35`, `$82` and `$b8`
+
+The number of values required depends on the register accessed:
+\table
+| `$34`, `$35` | 3 values
+| `$30` | 2 values
+| all others | 1 value
+\endtable
+\ref VREG()
+***/
 void ivreg() {
   int32_t opcode;
   int vals;
@@ -3653,6 +3710,17 @@ void ivreg() {
   }
 }
 
+/***bc scr VPOKE
+Write one byte of data to video memory.
+
+WARNING: Incorrect use of this command can configure the video controller to
+produce invalid output, with may cause damage to older CRT displays.
+\usage VPOKE addr, val
+\args
+@addr	video memory address [`0` to `131071`]
+@val	value [`0` to `255`]
+\ref VPEEK()
+***/
 void ivpoke() {
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
