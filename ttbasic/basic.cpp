@@ -226,16 +226,23 @@ inline void c_putch(uint8_t c, uint8_t devno) {
     bfs.putch(c);
 }
 
-void newline(uint8_t devno) {
+uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false) {
+  if (c == SC_KEY_CTRL_C) {
+    err = ERR_CTR_C;
+    if (!dont_dump)
+      sc0.get_ch();
+  }
+  return err;
+}
+
+void BASIC_INT newline(uint8_t devno) {
   if (devno==0) {
     if (redirect_output_file >= 0) {
       user_files[redirect_output_file]->write('\n');
       return;
     }
-    if (sc0.peekKey() == SC_KEY_CTRL_C) {
-      sc0.get_ch();
-      err = ERR_CTR_C;
-    } else if (kb.state(PS2KEY_L_Shift)) {
+    uint16_t c = sc0.peekKey();
+    if (!process_hotkeys(c) && kb.state(PS2KEY_L_Shift)) {
       uint32_t m = millis() + 200;
       while (millis() < m) {
         sc0.peekKey();
@@ -587,8 +594,7 @@ void get_input(bool numeric, uint8_t eoi) {
     c = c_getch();
     if (c == eoi || (eoi == '\r' && redirect_input_file >= 0 && c == '\n')) {
       break;
-    } else if (c == SC_KEY_CTRL_C || c==27) {
-      err = ERR_CTR_C;
+    } else if (process_hotkeys(c, true)) {
       break;
     } else if (c == 8 || c == 127) {
       // Processing when the [BackSpace] key is pressed (not at the
@@ -3597,8 +3603,8 @@ void iwait() {
   uint32_t end = tm + millis();
   while (millis() < end) {
     pump_events();
-    if (sc0.peekKey() == SC_KEY_CTRL_C) {
-      err = ERR_CTR_C;
+    uint16_t c = sc0.peekKey();
+    if (process_hotkeys(c)) {
       break;
     }
   }
@@ -3638,8 +3644,8 @@ void ivsync() {
 
   while (vs23.frame() < tm) {
     pump_events();
-    if (sc0.peekKey() == SC_KEY_CTRL_C) {
-      err = ERR_CTR_C;
+    uint16_t c = sc0.peekKey();
+    if (process_hotkeys(c)) {
       break;
     }
   }
@@ -3794,8 +3800,7 @@ int32_t BASIC_FP iinkey() {
 
   if (c_kbhit()) {
     rc = sc0.tryGetChar();
-    if (rc == SC_KEY_CTRL_C)
-      err = ERR_CTR_C;
+    process_hotkeys(rc);
   }
 
   return rc;
@@ -9272,9 +9277,7 @@ unsigned char* BASIC_FP iexe(int stk) {
   while (*cip != I_EOL) { //行末まで繰り返す
     //強制的な中断の判定
     if ((c = sc0.peekKey())) { // もし未読文字があったら
-      if (c == SC_KEY_CTRL_C || c==27 ) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
-        c_getch();
-	err = ERR_CTR_C;                  // エラー番号をセット
+      if (process_hotkeys(c)) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
 	err_expected = NULL;
 	break;
       }
