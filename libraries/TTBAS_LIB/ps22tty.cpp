@@ -355,6 +355,7 @@ uint16_t cnv2tty(keyEvent k) {
         flgKana = true;
       }
       break;
+    case PS2KEY_PrintScreen: rc = KEY_PRINT; break;
   }
   return rc;
 }

@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 
-// 編集キーの定義
+// Definition of edit key
 #define KEY_TAB       '\t'   // [TAB] key
 #define KEY_CR        '\r'   // [Enter] key
 #define KEY_BACKSPACE '\b'   // [Backspace] key
@@ -29,10 +29,12 @@
 #define KEY_F1                  0x18B            // Function key F1
 #define KEY_F(n)                (KEY_F1+(n)-1)  // Space for additional 12 function keys
 
+#define KEY_PRINT     0x1A0
+
 #define KEY_SHIFT_DOWN	KEY_DOWN | 0x40
 #define KEY_SHIFT_UP	KEY_UP | 0x40
 
-// コントロールキーコードの定義
+// Definition of control key code
 #define SC_KEY_CTRL_L   12  // 画面を消去
 #define SC_KEY_CTRL_R   18  // 画面を再表示
 #define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
