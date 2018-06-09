@@ -154,6 +154,8 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline int getFontWidth() {
       return tv_font_width();
     }
+
+    void saveScreenshot();
 };
 
 #endif

@@ -273,6 +273,8 @@ extern "C" size_t umm_free_heap_size( void );
 #define MAX_USER_FILES 16
 extern Unifile *user_files[MAX_USER_FILES];
 
+extern sdfiles bfs;
+
 #include <tscreenBase.h>
 #include <tTVscreen.h>
 

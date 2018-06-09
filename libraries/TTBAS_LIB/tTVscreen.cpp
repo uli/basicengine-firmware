@@ -22,6 +22,7 @@
 //
 
 #include "../../ttbasic/ttconfig.h"
+#include "../../ttbasic/basic.h"
 
 #include <string.h>
 #include "tTVscreen.h"
@@ -329,6 +330,16 @@ uint8_t tTVscreen::edit() {
         break;
     }
   } while(1);
+}
+
+void SMALL tTVscreen::saveScreenshot() {
+  char screen_file[16];
+  for (int i = 0; i < 10000; ++i) {
+    sprintf_P(screen_file, PSTR("screen_%04d.pcx"), i);
+    if (!Unifile::exists(screen_file))
+      break;
+  }
+  bfs.saveBitmap(screen_file, 0, 0, getGWidth(), getGHeight());
 }
 
 // シリアルポートスクリーン制御出力
