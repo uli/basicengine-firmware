@@ -9648,10 +9648,12 @@ void SMALL basic() {
       textline = (char*)sc0.getText();
       int textlen = strlen(textline);
       if (!textlen) {
+        free(textline);
 	newline();
 	continue;
       }
       if (textlen >= SIZE_LINE) {
+        free(textline);
 	err = ERR_LONG;
 	newline();
 	error();
@@ -9659,6 +9661,7 @@ void SMALL basic() {
       }
 
       strcpy(lbuf, textline);
+      free(textline);
       tlimR((char*)lbuf);
       while (--rc)
         newline();
