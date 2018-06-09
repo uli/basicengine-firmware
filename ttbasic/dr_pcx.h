@@ -521,6 +521,9 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
+                uint8_t *ln = 0;
+                if (pPCX->mask < 0)
+                  ln = (uint8_t *)malloc(pPCX->header.bytesPerLine);
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
                     if (rleCount == 0) {
@@ -535,9 +538,15 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                       } else {
                         c = rleValue >> 4;
                       }
-                      if (pPCX->mask < 0 || c != pPCX->mask)
+                      if (pPCX->mask < 0) {
+                        ln[x] = c;
+                      } else if (c != pPCX->mask)
                         vs23.setPixel(dx + x-ox, dy + y-oy, c);
                     }
+                }
+                if (pPCX->mask < 0 && y >= oy && y < oy+h) {
+                  SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
+                  free(ln);
                 }
             }
             free(palette256);
