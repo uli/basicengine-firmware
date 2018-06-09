@@ -11,16 +11,26 @@ More information on the hardware can be found in the
 Demos can be found at the [BASIC Engine demos](https://github.com/uli/basicengine-demos)
 repository.
 
+## Screenshots
+
+![Shmup](./doc/screenshots/screen_shmup.png)
+![Zork](./doc/screenshots/screen_zork.png)
+![Boot screen](./doc/screenshots/screen_boot.png)
+
+## Videos
+
 Click on the thumbnails below to watch some demo videos:
 [![Shmup](http://img.youtube.com/vi/WEeHVyWH8rQ/0.jpg)](http://www.youtube.com/watch?v=WEeHVyWH8rQ "BASIC Engine Shmup Demo")
 [![Tetris](http://img.youtube.com/vi/0ZsucdE6l2o/0.jpg)](http://www.youtube.com/watch?v=0ZsucdE6l2o "BASIC Engine Tetris Demo")
+
+## Firmware
 
 This firmware contains a basic operating system and BASIC interpreter
 ("Engine BASIC") that allows the BASIC Engine to be used as a stand-alone
 computer programmable in the BASIC language.  It provides easy access to the
 hardware's capabilities as well as numerous other features.
 
-## Graphics and sound
+### Graphics and sound
 
 - 256-color text and graphics at resolutions from 160x200 up to 460x224
   (PAL: 508x240) pixels
@@ -34,7 +44,7 @@ hardware's capabilities as well as numerous other features.
   permitting higher-color screen modes, custom resolutions and other
   video effects.
 
-## Special BASIC language features
+### Special BASIC language features
 
 - Structured programming constructs (*DO*/*LOOP*, *WHILE*/*WEND*,
   *IF*/*THEN*/*ELSE*/*ENDIF* blocks).
@@ -44,7 +54,7 @@ hardware's capabilities as well as numerous other features.
 - Escape codes for *PRINT*, similar to the control characters in Commodore BASIC.
 - Event handlers (sprite collision, end-of-music, errors, game controller input).
 
-## Development features
+### Development features
 
 - "Screen editor" similar to Commodore BASIC, allowing direct manipulation
   of on-screen code and commands, while also permitting scrolling within the
@@ -52,7 +62,7 @@ hardware's capabilities as well as numerous other features.
 - Syntax highlighting and automatic indentation in *LIST* command.
 - Loading of programs with or without line numbers.
 
-## Hardware support
+### Hardware support
 
 - ESP8266 CPU core running at 160 MHz, ca. 63kB free memory for BASIC
   applications.
@@ -63,14 +73,15 @@ hardware's capabilities as well as numerous other features.
   German layouts supported).
 - Access to custom hardware add-ons via the 16-pin GPIO extender or I2C bus.
 
-## Network support
+### Network support
 
 - Separate build that provides networking capabilities (cannot be used with
   tiled BG/sprites and wavetable synthesizer due to resource constraints;
   both builds can, however, be installed in flash at the same time)
 
-## Other features
+### Other features
 
+- Z-code interpreter for playing interactive fiction games.
 - ASCII text editor.
 - Firmware update from SD card.
 - Customizable color scheme, start-up screen mode and font..
@@ -79,7 +90,7 @@ hardware's capabilities as well as numerous other features.
   when turned on.
 - Automated test suite adapted from Bywater BASIC.
 
-## Binary releases
+### Binary releases
 
 Binaries are available in the [release section](https://github.com/uli/basicengine-firmware/releases).
 They can be uploaded to the system via the serial port, using esptool:
@@ -95,7 +106,7 @@ updated from SD card using the command
 FLASH "ttbasic-<version>.bin"
 ```
 
-## Compiling the source code
+### Compiling the source code
 
 The project Makefile uses the Arduino builder to compile the system.
 
@@ -105,7 +116,7 @@ contains a BASIC Engine build target.
 
 The networked version can be built with the standard ESP8266 Arduino core.
 
-## Origins
+### Origins
 The software is a heavily modified version of
 [TOYOSHIKI Tiny BASIC for Arduino STM32](https://github.com/Tamakichi/ttbasic_arduino/tree/ttbasic_arduino_ps2_ntsc).
 
