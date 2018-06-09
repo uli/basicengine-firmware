@@ -147,21 +147,27 @@ void tscreenBase::putch(uint8_t c, bool lazy) {
 
 // 現在のカーソル位置に文字を挿入
 void tscreenBase::Insert_char(uint8_t c) {  
-  uint8_t* start_adr = &VPEEK(pos_x,pos_y);
-  uint8_t* last = start_adr;
-  uint16_t ln = 0;  
+  int start_adr_x = pos_x;
+  int start_adr_y = pos_y;
+  int last_x = start_adr_x;
+  int last_y = start_adr_y;
+  uint16_t ln = 0;
 
   // 入力位置の既存文字列長(カーソル位置からの長さ)の参照
-  while( *last ) {
+  while( last_y < height && VPEEK(last_x, last_y) ) {
     ln++;
-    last++;
+    last_x++;
+    if (last_x >= width) {
+      last_x = 0;
+      last_y++;
+    }
   }
   if (ln == 0 || flgIns == false) {
      // 文字列長さが0または上書きモードの場合、そのまま1文字表示
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
       scroll_up();
-      start_adr-=whole_width;
+      start_adr_y--;
       MOVE(pos_y-1, pos_x);
     } else  if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
@@ -173,15 +179,34 @@ void tscreenBase::Insert_char(uint8_t c) {
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
       scroll_up();
-      start_adr-=whole_width;
+      start_adr_y--;
       MOVE(pos_y-1, pos_x);
     } else  if ( ((pos_x + ln +1)%width == width-1) && !VPEEK(pos_x + ln , pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
           Insert_newLine(pos_y+(pos_x+ln)/width);
     }
-    // 1文字挿入のために1文字分のスペースを確保
-    memmove(start_adr+1, start_adr, ln);	// XXX: off-by-one?
-    *start_adr=c; // 確保したスペースに1文字表示
+    // Shift all following characters right
+    int lln = ln;
+    int ssx = start_adr_x;
+    int ssy = start_adr_y;
+    uint8_t cn = VPEEK(ssx, ssy);
+    while (lln) {
+      int next_x = ssx+1;
+      int next_y = ssy;
+      if (next_x >= width) {
+        next_x = 0;
+        next_y++;
+        if (next_y >= height)
+          break;
+      }
+      uint8_t ncn = VPEEK(next_x, next_y);
+      VPOKE(next_x, next_y, cn);
+      cn = ncn;
+      ssx = next_x;
+      ssy = next_y;
+      --lln;
+    }
+    VPOKE(start_adr_x, start_adr_y, c);
     movePosNextNewChar();
     
     // 挿入した行の再表示
