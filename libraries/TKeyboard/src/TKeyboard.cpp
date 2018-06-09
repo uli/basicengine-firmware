@@ -342,13 +342,14 @@ uint16_t TKeyboard::scanToKeycode()
     case STS_MKEY_1: // [3]->
       switch(c) {
       case 0xF0:  state = STS_MKEY_BREAK; continue; // ->[3-2]
-#if 0
       // Doing this causes the shift key to become stuck when doing Shift-CursorDown
       // because the shift code (0x12) comes before the break code (0xf0), at least
       // with the DeLUX USB keyboard.
-      // This may break key combos with PrintScreen.
-      case 0x12:  state = STS_MKEY_SC2; scIndex=1; continue; // ->[3-3]
-#endif
+      // Disabling this breaks key combos with PrintScreen, so we have a workaround
+      // in STS_MKEY_SC2 that goes back to STS_1KEY_BREAK to make sure the shift
+      // key break is registered.
+      case 0x12:
+          state = STS_MKEY_SC2; scIndex=1; continue; // ->[3-3]
       default:
 	code = findcode(c);
 	if (code) {
@@ -392,7 +393,11 @@ uint16_t TKeyboard::scanToKeycode()
       break;
 
     case STS_MKEY_SC2:  // [3-3]->
-      if ( c == 0xe0 ) {
+      if ( c == 0xF0 ) {
+        // workaround, see STS_MKEY_1 case 0x12
+        state = STS_1KEY_BREAK;
+        continue;
+      } else if ( c == 0xe0 ) {
 	state  = STS_MKEY_SC3;
 	continue;
       }
