@@ -117,18 +117,49 @@ void tscreenBase::Insert_newLine(uint16_t l) {
 
 // 現在のカーソル位置の文字削除
 void tscreenBase::delete_char() {
-  uint8_t* start_adr = &VPEEK(pos_x,pos_y);
-  uint8_t* top = start_adr;
+  int start_adr_x = pos_x;
+  int start_adr_y = pos_y;
+  int top_x = start_adr_x;
+  int top_y = start_adr_y;
   uint16_t ln = 0;
 
-  if (!*top) // 0文字削除不能
+  if (!VPEEK(top_x, top_y)) // 0文字削除不能
     return;
   
-  while( *top ) { ln++; top++; } // 行端,長さ調査
+  while( VPEEK(top_x, top_y) ) { 
+    ln++;
+    top_x++;
+    if (top_x >= width) {
+      top_x = 0;
+      top_y++;
+      if (top_y >= height)
+        break;
+    }
+  } // 行端,長さ調査
+
   if ( ln > 1 ) {
-    memmove(start_adr, start_adr + 1, ln-1); // 1文字詰める
+    int lln = ln - 1;
+    while (lln) {
+      int next_x = start_adr_x + 1;
+      int next_y = start_adr_y;
+      if (next_x >= width) {
+        next_x = 0;
+        next_y++;
+      }
+      VPOKE(start_adr_x, start_adr_y, VPEEK(next_x, next_y));
+      start_adr_x = next_x;
+      start_adr_y = next_y;
+      --lln;
+    }
   }
-  *(top-1) = 0; 
+
+  top_x--;
+  if (top_x < 0) {
+    top_x = width-1;
+    top_y--;
+  }
+  VPOKE(top_x, top_y, 0);
+
   for (uint8_t i=0; i < (pos_x+ln)/width+1; i++)
     refresh_line(pos_y+i);   
   MOVE(pos_y,pos_x);
