@@ -550,6 +550,8 @@ void AZIP::z_tokenise( int argc, zword_t * argv )
 int AZIP::input_character( int timeout )
 {
     int c = c_getch(  );
+    if (c == KEY_PRINT)
+      sc0.saveScreenshot();
 
     /* Bureaucracy expects CR, not NL.  */
     return ( ( c == '\n' ) ? '\r' : c );
@@ -567,6 +569,8 @@ int AZIP::input_line( int buflen, unsigned long addr, int timeout, int *read_siz
     do
     {
         c = c_getch();
+        if (c == KEY_PRINT)
+          sc0.saveScreenshot();
         if (c == '\b') {
           if (*read_size > 0) {
             c_putch('\b');
