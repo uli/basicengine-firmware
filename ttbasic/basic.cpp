@@ -229,9 +229,13 @@ inline void c_putch(uint8_t c, uint8_t devno) {
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false) {
   if (c == SC_KEY_CTRL_C) {
     err = ERR_CTR_C;
-    if (!dont_dump)
-      sc0.get_ch();
-  }
+  } else if (c == KEY_PRINT) {
+    sc0.saveScreenshot();
+  } else
+    return 0;
+
+  if (!dont_dump)
+    sc0.get_ch();
   return err;
 }
 
