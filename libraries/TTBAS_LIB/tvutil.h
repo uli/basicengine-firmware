@@ -9,6 +9,8 @@ void    tv_scroll_up();
 void    tv_scroll_down();
 uint8_t tv_get_cwidth();
 uint8_t tv_get_cheight();
+uint16_t tv_get_gwidth();
+uint16_t tv_get_gheight();
 uint8_t tv_get_win_cwidth();
 uint8_t tv_get_win_cheight();
 void    tv_write(uint8_t c);

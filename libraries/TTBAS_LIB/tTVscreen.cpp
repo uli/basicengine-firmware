@@ -96,7 +96,8 @@ void tTVscreen::init(uint16_t ln, int16_t NTSCajst, uint8_t vmode) {
   
   // ビデオ出力設定
   tv_init(NTSCajst, vmode);
-    tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln);
+  tscreenBase::init(tv_get_gwidth() / MIN_FONT_SIZE_X,
+                    tv_get_gheight() / MIN_FONT_SIZE_Y, ln);
   tGraphicDev::init();
 
   m_cursor_count = 0;
