@@ -73,7 +73,7 @@ void tv_NTSC_adjust(int16_t ajst) {
 //
 // NTSC表示の初期設定
 // 
-void tv_init(int16_t ajst, uint8_t* extmem, uint8_t vmode) { 
+void tv_init(int16_t ajst, uint8_t vmode) { 
   vs23.setMode(vmode);
   g_width  = vs23.width();           // 横ドット数
   g_height = vs23.height();          // 縦ドット数

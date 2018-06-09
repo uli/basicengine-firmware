@@ -5733,7 +5733,7 @@ void SMALL iscreen() {
   scmode = m;
 
   // NTSCスクリーン設定
-  sc0.init(SIZE_LINE,CONFIG.NTSC, NULL, m - 1);
+  sc0.init(SIZE_LINE,CONFIG.NTSC, m - 1);
 
   sc0.cls();
   sc0.show_curs(false);
@@ -9561,7 +9561,7 @@ void SMALL basic() {
   inew();
 
   sc0.setCursorColor(CONFIG.cursor_color);
-  sc0.init(SIZE_LINE, CONFIG.NTSC, NULL, CONFIG.mode - 1);
+  sc0.init(SIZE_LINE, CONFIG.NTSC, CONFIG.mode - 1);
   sc0.reset_kbd(CONFIG.KEYBOARD);
 
   Wire.begin(2, 0);

@@ -92,19 +92,11 @@ void tTVscreen::INSLINE(uint8_t l) {
 //  l  : 1行の最大長
 // 戻り値
 //  なし
-void tTVscreen::init(uint16_t ln, int16_t NTSCajst, uint8_t* extmem, uint8_t vmode) {
+void tTVscreen::init(uint16_t ln, int16_t NTSCajst, uint8_t vmode) {
   
   // ビデオ出力設定
-  tv_init(NTSCajst, extmem, vmode);
-  if (extmem == NULL) {
+  tv_init(NTSCajst, vmode);
     tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln);
-  } else {
-    tscreenBase::init(tv_get_cwidth(),tv_get_cheight(), ln, extmem
-#if USE_VS23 == 0
-    + getGRAMsize()
-#endif
-    );
-  }	
   tGraphicDev::init();
 
   m_cursor_count = 0;

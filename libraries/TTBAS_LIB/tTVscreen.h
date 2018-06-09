@@ -71,7 +71,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
       VPOKE(x, y, c);
     }
     void init( uint16_t ln=256,
-    	       int16_t NTSCajst=0, uint8_t* extmem=NULL, 
+    	       int16_t NTSCajst=0,
                uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定
     void end();                                          // スクリーンの利用の終了
     void Serial_Ctrl(int16_t ch);
