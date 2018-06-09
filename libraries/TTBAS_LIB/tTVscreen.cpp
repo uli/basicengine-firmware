@@ -325,6 +325,10 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_CTRL_C:
         break;
       
+      case KEY_PRINT:
+        saveScreenshot();
+        break;
+
       default:             // その他
         Insert_char(ch);
         break;
