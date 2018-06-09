@@ -585,7 +585,11 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
   }
   
   pcx_file.write(0x0c);	// palette marker
-  pcx_file.write((char *)vs23.paletteData(vs23.getColorspace()), 256 * 3);
+
+  uint8_t *pal = vs23.paletteData(vs23.getColorspace());
+  // PROGMEM, not safe to pass it directly to FS functions
+  for (int i = 0; i < 256*3; ++i)
+    pcx_file.write((char)pgm_read_byte(&pal[i]));
   
   pcx_file.close();
 
