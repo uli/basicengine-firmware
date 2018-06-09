@@ -95,8 +95,8 @@ void tscreenBase::scroll_up() {
 void tscreenBase::scroll_down() {
   if (!flgScroll)
     return;
-  for (int i = 0; i < height-1; ++i)
-    memmove(&VPEEK(0, i + 1), &VPEEK(0, i), width);
+  for (int i = height-2; i >= 0; --i)
+    memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
   if (flgCur)
     draw_cls_curs();
   SCROLL_DOWN();
@@ -107,9 +107,8 @@ void tscreenBase::scroll_down() {
 // 指定行に空白行挿入
 void tscreenBase::Insert_newLine(uint16_t l) {
   if (l < height-1) {
-    for (int i = l + 1; i < height - 1; ++i)
-      memmove(&VPEEK(0, i+1), &VPEEK(0, i), width);
-    //memmove(screen+(l+2)*width, screen+(l+1)*width, width*(height-1-l-1));
+    for (int i = height-2; i >= l + 1; --i)
+      memcpy(&VPEEK(0, i+1), &VPEEK(0, i), width);
   }
   memset(&VPEEK(0, l+1), 0, width);
   INSLINE(l+1);
