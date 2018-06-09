@@ -386,20 +386,58 @@ void tscreenBase::locate(uint16_t x, int16_t y) {
 
 // 行データの入力確定
 uint8_t tscreenBase::enter_text() {
+  // Find the end of the logical line that we are on right now.
+  int end_x, end_y;
+  end_x = pos_x;
+  end_y = pos_y;
+  while (VPEEK(end_x, end_y)) {
+    end_x++;
+    if (end_x >= width) {
+      end_x = 0;
+      end_y++;
+      if (end_y >= height)
+        break;
+    }
+  }
 
-  // 現在のカーソル位置の行先頭アドレス取得
-  uint8_t *ptr = &VPEEK(0, pos_y); 
-  if (pos_x == 0 && pos_y)
-    ptr--;
+  // Find the start of the logical line.
+  int top_x = pos_x - 1;
+  int top_y = pos_y;
+  if (top_x < 0) {
+    top_x = width-1;
+    top_y--;
+  }
+  while ((top_x > 0 || top_y > 0) && VPEEK(top_x, top_y) != 0) {
+    top_x--;
+    if (top_x < 0) {
+      top_x = width-1;
+      top_y--;
+    }
+  }
+  top_x++;
+  if (top_x >= width) {
+    top_x = 0;
+    top_y++;
+  }
 
-  // ポインタをさかのぼって、前行からの文字列の連続性を調べる
-  // その文字列先頭アドレスをtopにセットする
-  uint8_t *top = ptr;
-  while (top > &VPEEK(0, 0) && *top != 0 )
-    top--;
-  if ( top != &VPEEK(0, 0) ) top++;
-  text = top;
-  return ((top - &VPEEK(0, 0)) + strlen((char *)top)) / width + 1 - pos_y;
+  // Copy screen text into a contiguous buffer.
+  text = (uint8_t *)malloc((1 + end_y - top_y) * width);
+  uint8_t *t = text;
+  int ptr_x = top_x;
+  int ptr_y = top_y;
+  uint8_t c;
+  do {
+    c = VPEEK(ptr_x, ptr_y);
+    *t++ = c;
+    ptr_x++;
+    if (ptr_x >= width) {
+      ptr_x = 0;
+      ptr_y++;
+    }
+  } while (ptr_y < end_y || ptr_x < end_x);
+  *t = 0;
+
+  return 1 + end_y - top_y;
 }
 
 // 指定行の行番号の取得
