@@ -407,17 +407,21 @@ uint8_t tscreenBase::enter_text() {
     top_x = width-1;
     top_y--;
   }
-  while ((top_x > 0 || top_y > 0) && VPEEK(top_x, top_y) != 0) {
-    top_x--;
-    if (top_x < 0) {
-      top_x = width-1;
-      top_y--;
+  if (top_y < 0) {
+    top_x = top_y = 0;
+  } else {
+    while (top_y >= 0 && VPEEK(top_x, top_y) != 0) {
+      top_x--;
+      if (top_x < 0) {
+        top_x = width-1;
+        top_y--;
+      }
     }
-  }
-  top_x++;
-  if (top_x >= width) {
-    top_x = 0;
-    top_y++;
+    top_x++;
+    if (top_x >= width) {
+      top_x = 0;
+      top_y++;
+    }
   }
 
   // Copy screen text into a contiguous buffer.
