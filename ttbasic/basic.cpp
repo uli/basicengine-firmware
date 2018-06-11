@@ -1300,28 +1300,29 @@ void SMALL recalc_indent() {
   unsigned char *lp = listbuf;
   indent_level = 0;
 
-  while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
-    recalc_indent_line(lp);    // 行番号より後ろを文字列に変換して表示
-    if (err)                   // もしエラーが生じたら
-      break;                   // 繰り返しを打ち切る
-    lp += *lp;               // 行ポインタを次の行へ進める
+  while (*lp) {
+    recalc_indent_line(lp);
+    if (err)
+      break;
+    lp += *lp;
   }
 }
 
-//指定中間コード行レコードのテキスト出力
+// Text output of specified intermediate code line record
 int SMALL putlist(unsigned char* ip, uint8_t devno) {
   int mark = -1;
-  unsigned char i;  // ループカウンタ
-  uint8_t var_code; // 変数コード
+  unsigned char i;
+  uint8_t var_code;
   line_desc_t *ld = (line_desc_t *)ip;
   ip += sizeof(line_desc_t);
 
   for (i = 0; i < ld->indent && i < MAX_INDENT; ++i)
     c_putch(' ', devno);
 
-  while (*ip != I_EOL) { //行末でなければ繰り返す
-    //キーワードの処理
-    if ((*ip < SIZE_KWTBL && kwtbl[*ip]) || *ip == I_EXTEND) { //もしキーワードなら
+  while (*ip != I_EOL) {
+    // keyword processing
+    if ((*ip < SIZE_KWTBL && kwtbl[*ip]) || *ip == I_EXTEND) {
+      // if it is a keyword
       const char *kw;
       if (*ip == I_EXTEND) {
         ip++;
@@ -1342,13 +1343,13 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
         sc0.setColor(COL(OP), COL(BG));
       if (*ip == I_SQUOT)
         PRINT_P("  ");
-      c_puts_P(kw, devno); //キーワードテーブルの文字列を表示
+      c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
       if (*(ip+1) != I_COLON && (*(ip+1) != I_OPEN || !dual(*ip)))
 	if ( (!nospacea(*ip) || spacef(*(ip+1))) &&
-	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL) //もし例外にあたらなければ
-	  c_putch(' ',devno);  //空白を表示
+	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL)
+	  c_putch(' ',devno);
 
       if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
 	ip++; //ポインタを文字数へ進める
