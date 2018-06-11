@@ -3274,7 +3274,7 @@ WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
 \note
 * Using `DELETE` does not affect variables.
 * When called from a running program, execution will continue at the next
-  program line, i.e. commands following `DELETE` on the same line are
+  program line, i.e. statements following `DELETE` on the same line are
   disregarded.
 \ref REMOVE
 ***/
@@ -3340,7 +3340,7 @@ void SMALL idelete() {
   TRACE;
 }
 
-/***bc bas FILES
+/***bc fs FILES
 Displays the contents of the current or a specified directory.
 \usage FILES [filespec$]
 \args
