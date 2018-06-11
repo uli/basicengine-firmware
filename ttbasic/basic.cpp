@@ -7453,7 +7453,7 @@ Checks if a sound is playing a on wavetable synthesizer channel.
 \usage p = PLAY(channel)
 \args
 @channel	sound channel +
-                [`0` to `{SOUND_CHANNELS}`, or `-1` to check all channels]
+                [`0` to `{SOUND_CHANNELS_m1}`, or `-1` to check all channels]
 \ret `1` if sound is playing, `0` otherwise.
 \ref PLAY SOUND
 ***/
@@ -8323,6 +8323,28 @@ static void BASIC_FP on_go(bool is_gosub, int cas)
 void BASIC_INT ion()
 {
   if (*cip == I_SPRITE) {
+/***bc bg ON SPRITE
+Defines an event handler for sprite collisions.
+
+The handler is called once for each collision between two sprites.
+The handler can be disabled using `ON SPRITE OFF`.
+\usage
+ON SPRITE CALL handler
+
+ON SPRITE OFF
+\args
+@handler	a procedure defined with `PROC`
+\sec HANDLER
+The event handler will be passed three numeric arguments: The sprite IDs
+of the involved sprites, and the direction of the collision, as would
+be returned by `SPRCOLL()`.
+\note
+The handler will be called once for each sprite collision, but it has
+to be re-enabled using `ON SPRITE CALL` each time to prevent event storms.
+\bugs
+WARNING: This command has never been tested.
+\ref PROC SPRCOLL()
+***/
     ++cip;
     if (*cip == I_OFF) {
       event_sprite_proc_idx = NO_PROC;
@@ -8335,6 +8357,31 @@ void BASIC_INT ion()
       event_sprite_proc_idx = *cip++;
     }
   } else if (*cip == I_PLAY) {
+/***bc snd ON PLAY
+Defines an event handler triggered by the end of the current MML pattern.
+
+The handler is called once the MML pattern of any sound channel has
+finished playing. It can be disabled using `ON PLAY ... OFF`.
+\usage
+ON PLAY channel CALL handler
+
+ON PLAY channel OFF
+\args
+@channel	a sound channel [`0` to `{SOUND_CHANNELS_m1}`]
+@handler	a procedure defined with `PROC`
+\sec HANDLER
+The event handler will receive the number of the channel that has
+ended as a numeric argument.
+\note
+All end-of-music handlers will be disabled when one of them is called,
+and they therefore have to be re-enabled using `ON PLAY CALL` if so
+desired.
+\bugs
+WARNING: This command has never been tested.
+
+An event on one channel will disable handling on all channels. That is stupid.
+\ref PLAY PLAY()
+***/
     ++cip;
     int ch = getparam();
     if (ch < 0 || ch >= SOUND_CHANNELS) {
@@ -8353,6 +8400,29 @@ void BASIC_INT ion()
       event_play_proc_idx[ch] = *cip++;
     }
   } else if (*cip == I_PAD) {
+/***bc io ON PAD
+Defines a game controller input handler triggered by changes in the
+state of the buttons of a given controller.
+
+Game controller input event handling can be disabled using `ON PAD OFF`.
+\usage
+ON PAD num CALL handler
+
+ON PAD OFF
+\args
+@num		number of the game controller [`0` to `{MAX_PADS_m1}`]
+@handler	a procedure defined with `PROC`
+\sec HANDLER
+The event handler will receive two numeric arguments: the number of
+the game controller that has changed state, and a bit pattern indicating
+which buttons have changed.
+\note
+Unlike some other event handlers, the game controller handler remains
+enabled after an event has been processed and does not have to be re-armed.
+\bugs
+WARNING: This command has never been tested.
+\ref PAD()
+***/
     ++cip;
     int pad = getparam();
     if (pad < 0 || pad >= MAX_PADS) {
@@ -8372,6 +8442,32 @@ void BASIC_INT ion()
       event_pad_proc_idx[pad] = *cip++;
     }
   } else if (*cip == I_ERROR) {
+/***bc bas ON ERROR
+Enables error handling and, when a run-time error occurs, directs your
+program to branch to an error-handling routine.
+
+Error handling can be disabled using `ON ERROR OFF`.
+\usage
+ON ERROR GOTO location
+
+ON ERROR OFF
+\args
+@location	a line number or a label
+\sec HANDLER
+The error code is passed to the handler in `RET(0)`, and the line number in `RET(1)`.
+
+When an error has been forwarded from a sub-program run with `EXEC`, the line
+number of the sub-program in which the error has been triggered is passed in `RET(2)`.
+\note
+Unlike other event handlers, `ON ERROR` does not call the error handler as a procedure,
+and it is not possible to use `RETURN` to resume execution. `RESUME` must be used
+instead.
+
+When a program is executed using `EXEC` and does not define its own error handler, any
+errors occurring there will be forwarded to the calling program's error handler, if
+there is one.
+\ref EXEC RESUME
+***/
     ++cip;
     if (*cip == I_OFF) {
       ++cip;
@@ -8410,6 +8506,22 @@ void BASIC_INT ion()
   }
 }
 
+/***bc bas RESUME
+Resume program execution after an error has been handled.
+\desc
+When an error has been caught by a handler set up using `ON ERROR`,
+it is possible to resume execution after the statement that caused the
+error using `RESUME`.
+\usage RESUME
+\note
+In other BASIC implementations, `RESUME` will retry the statement that
+has caused the error, while continuing after the error is possible
+using `RESUME NEXT`. In Engine BASIC, `RESUME` will always skip the
+statement that generated the error.
+\bugs
+It is not possible to repeat the statement that has generated the error.
+\ref ON_ERROR
+***/
 void iresume()
 {
   if (!event_error_resume_lp) {
@@ -8429,10 +8541,25 @@ void iresume()
   }
 }
 
+/***bc bas ERROR
+Triggers an error.
+\usage ERROR code
+\args
+@code	error code
+\ref ON_ERROR
+***/
 void ierror() {
   err = iexp();
 }
 
+/***bc bas CALL
+Calls a procedure.
+\usage CALL procedure[(argument[, argument ...])]
+\args
+@procedure	name of a procedure declared with `PROC`
+@argument	a string or numeric expression
+\ref FN PROC
+***/
 void BASIC_FP icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
