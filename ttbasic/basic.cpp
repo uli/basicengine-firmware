@@ -88,14 +88,6 @@ void error(uint8_t flgCmd);
   #include <Time.h>
 #endif
 
-// 定数
-#define CONST_HIGH   1
-#define CONST_LOW    0
-#define CONST_LSB    LSBFIRST
-#define CONST_MSB    MSBFIRST
-
-// Terminal control(文字の表示・入力は下記の3関数のみ利用)
-
 #include <TKeyboard.h>
 extern TKeyboard kb;
 
@@ -290,7 +282,7 @@ num_t BASIC_FP getrnd(int value) {
 const uint8_t i_nsa[] BASIC_DAT = {
   I_END,
   I_CLS,I_CLT,
-  I_HIGH, I_LOW, I_CSIZE, I_PSIZE,
+  I_CSIZE, I_PSIZE,
   I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
@@ -298,7 +290,7 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_DIN, I_ANA, I_MAP,
-  I_LSB, I_MSB, I_MPRG, I_MFNT,
+  I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
@@ -7206,19 +7198,6 @@ num_t BASIC_FP nint() {
 num_t BASIC_FP nsgn() {
   num_t value = getparam();
   return (0 < value) - (value < 0);
-}
-
-num_t BASIC_FP nhigh() {
-  return CONST_HIGH;
-}
-num_t BASIC_FP nlow() {
-  return CONST_LOW;
-}
-num_t BASIC_FP nlsb() {
-  return CONST_LSB;
-}
-num_t BASIC_FP nmsb() {
-  return CONST_MSB;
 }
 
 num_t BASIC_INT nmprg() {

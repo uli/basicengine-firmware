@@ -192,10 +192,6 @@ EOF	I_EOF		neof
 LOF	I_LOF		nlof
 LOC	I_LOC		nloc
 CONNECT	I_CONNECT	nconnect
-HIGH	I_HIGH		nhigh
-LOW	I_LOW		nlow
-LSB	I_LSB		nlsb
-MSB	I_MSB		nmsb
 PRG	I_MPRG		nmprg
 FNT	I_MFNT		nmfnt
 UP	I_UP		nup
