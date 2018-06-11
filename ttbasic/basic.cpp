@@ -5172,6 +5172,9 @@ LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
 @width		width of image portion to be loaded, pixels [default: image width]
 @height		height of image portion to be loaded, pixels [default: image height]
 @col		color key for transparency [default: no transparency]
+\ret
+Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as width and
+height in `RET(2)` and `RET(3)`, respectively.
 \note
 If no destination is specified, an area of off-screen memory will be allocated
 automatically.
