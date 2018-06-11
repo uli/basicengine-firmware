@@ -7682,6 +7682,20 @@ num_t BASIC_INT nval() {
   return value;
 }
 
+/***bf bas INSTR
+Get the position of the first occurrence of a string in another string.
+\usage p = INSTR(haystack$, needle$)
+\args
+@haystack$	string in which to search
+@needle$	string to search for
+\ret
+Position of first occurence of `needle$` (starting with `0`), or `-1` if it
+could not be found.
+
+NOTE: The meaning of the return value differs from other BASIC implementations,
+in which `0` usually indicates that the string has not been found, and locations
+found start at `1`.
+***/
 num_t BASIC_INT ninstr() {
   BString haystack, needle;
   if (checkOpen()) return 0;
@@ -8858,7 +8872,11 @@ void BASIC_FP ilabel() {
   ++cip;
 }
 
-// END
+/***bc bas END
+Ends the program.
+\usage END
+\ref ENDIF
+***/
 void iend() {
   while (*clp)    // 行の終端まで繰り返す
     clp += *clp;  // 行ポインタを次へ進める
@@ -8874,6 +8892,26 @@ void esyntax() {
 }
 #define esyntax_workaround esyntax
 
+/***bc fs CMD
+Redirect screen I/O to a file.
+\desc
+`CMD` allows to redirect standard text output or input operations to
+files.
+
+Redirection can be disabled by replacing the file number with `OFF`. `CMD
+OFF` turns off both input and output redirection.
+\usage
+CMD <INPUT|OUTPUT> file_num
+CMD <INPUT|OUTPUT> OFF
+CMD OFF
+\args
+@file_num	file number to be redirected to
+\note
+Redirection will automatically be reset if a file redirected to is closed
+(either explicitly or implicitly, by opening a new file using the currently
+used file number), or when returning to the command prompt.
+\ref OPEN CLOSE
+***/
 void icmd () {
   bool is_input;
   int32_t redir;
@@ -8920,6 +8958,14 @@ void iprint_() {
   iprint();
 }
 
+/***bc scr REDRAW
+Redraw the text screen.
+\desc
+Overwrites anything displayed on-screen with the characters stored in
+the text buffer.
+\usage REDRAW
+\ref CLS
+***/
 void irefresh() {
   sc0.refresh();
 }
