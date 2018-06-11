@@ -8533,7 +8533,20 @@ void iproc() {
   err = ERR_ULN;	// XXX: come up with something better
 }
 
-// RETURN
+/***bc bas RETURN
+Return from a subroutine or procedure.
+
+Returns from a subroutine called by `GOSUB` or from a procedure
+defined by `PROC` and called with `CALL` or `FN`.
+
+If specified, up to {MAX_RETVALS} return values of each type (numeric or
+string) can be returned to the caller.
+\usage RETURN [<value|value$>[, <value|value$> ...]]
+\args
+@value	numeric expression
+@value$	string expression
+\ref CALL FN GOSUB PROC
+***/
 void BASIC_FP ireturn() {
   if (!gstki) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
@@ -8578,6 +8591,34 @@ void BASIC_FP ireturn() {
   return;
 }
 
+/***bc bas DO
+Repeats a block of statements while a condition is true or until a condition
+becomes true.
+\usage
+DO
+  statement_block
+LOOP [<WHILE|UNTIL> condition]
+\args
+@statement_block one or more statements on one or more lines
+@condition	a numeric expression
+\note
+If `condition` is prefixed by `WHILE`, the loop will repeat if `condition`
+is "true" (non-zero). If `condition` is prefixed by `UNTIL`, the loop will
+continue if `condition` is "false" (zero). In any other case, the loop will
+be exited and execution will continue with the statement following the
+`LOOP` command.
+
+If no condition is specified, the loop will repeat forever.
+\example
+----
+i=0
+PRINT "Value of i at beginning of loop is ";i
+DO
+  i=i+1
+LOOP WHILE i<10
+PRINT "Value of i at end of loop is ";i
+----
+***/
 void BASIC_FP ido() {
   if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
@@ -8591,6 +8632,26 @@ void BASIC_FP ido() {
   lstk[lstki++].local = false;
 }
 
+/***bc bas WHILE
+Executes a series of statements as long as a specified condition is "true".
+
+\usage WHILE condition
+\args
+@condition	any numeric expression
+\note
+`condition` is evaluated at the start of the loop. If it is "false",
+execution continues after the corresponding `WEND` statement. (Note that
+all kinds of loops can be nested, so this may not be the nearest `WEND`
+statement.)
+
+If `condition` is "true", the statements following the `WHILE` statement
+will be executed, until the corresponding `WEND` statement is reached,
+at which point `condition` will be evaluated again to determine whether
+to continue the loop.
+
+The `WHILE` keyword can also form part of a `LOOP` command.
+\ref LOOP
+***/
 void BASIC_FP iwhile() {
   if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
@@ -8614,6 +8675,11 @@ void BASIC_FP iwhile() {
   }
 }
 
+/***bc bas WEND
+Iterates a `WHILE` loop.
+\usage WEND
+\ref WHILE
+***/
 void BASIC_FP iwend() {
   if (!lstki) {
     err = ERR_LSTKUF;
@@ -8653,7 +8719,39 @@ void BASIC_FP iwend() {
   lstki--;
 }
   
-// FOR
+/***bc bas FOR
+Starts a loop repeating a block of statements a specified number of times.
+\usage
+FOR loop_variable = start TO end [STEP increment]
+  statement_block
+NEXT [loop_variable]
+\args
+@loop_variable	a numeric variable used as the loop counter
+@start		initial value of the loop counter
+@increment	amount the counter is changed each time through the loop +
+                [default: `1`]
+@statement_block one or more statements on one or more lines
+\note
+Both `end` and `increment` are only evaluated once, at the start of the
+loop. Any changes to these expressions afterwards will not have any effect
+on it.
+
+If no loop variable is specified in the `NEXT` command, the top-most `FOR`
+loop on the loop stack (that is, the one started last) will be iterated. If
+it is specified, the `FOR` loop associated with the given variable will be
+iterated, and any nested loops below it will be discarded.
+\example
+----
+FOR i = 1 TO 15
+  PRINT i
+NEXT i
+----
+----
+FOR i = 7 to -6 STEP -3
+  PRINT i
+NEXT i
+----
+***/
 void BASIC_FP ifor() {
   int index;
   num_t vto, vstep; // FOR文の変数番号、終了値、増分
@@ -8704,6 +8802,11 @@ void BASIC_FP ifor() {
   lstk[lstki++].index = index;
 }
 
+/***bc bas LOOP
+Iterates a `DO` loop.
+\usage LOOP [<UNTIL|WHILE> condition]
+\ref DO
+***/
 void BASIC_FP iloop() {
   uint8_t cond;
 
@@ -8747,7 +8850,11 @@ void BASIC_FP iloop() {
   }
 }
 
-// NEXT
+/***bc bas NEXT
+Increments and tests the counter in a `FOR` loop.
+\usage NEXT [loop_variable]
+\ref FOR
+***/
 void BASIC_FP inext() {
   int want_index;	// variable we want to NEXT, if specified
   bool want_local;
@@ -8807,7 +8914,31 @@ void BASIC_FP inext() {
   TRACE;
 }
 
-// IF
+/***bc bas IF
+Executes a statement or statement block depending on specified conditions.
+\usage
+IF condition THEN
+  statement_block
+[ELSE IF condition THEN
+  statement_block]
+...
+[ELSE
+  statement_block]
+ENDIF
+
+IF condition THEN statements [ELSE statements]
+\args
+@condition		any numeric expression
+@statement_block	one or more statements on one or more lines
+@statements		one or more statements, separated by colons
+\note
+A `condition` is considered "false" if it is zero, and "true" in any other
+case.
+
+IMPORTANT: In many BASIC implementations, `ENDIF` is spelled `END IF` (that
+is, as two commands). If the sequence `END IF` is entered or loaded in a
+program, Engine BASIC will convert it to `ENDIF`.
+***/
 void BASIC_FP iif() {
   num_t condition;    // IF文の条件値
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
@@ -8845,10 +8976,18 @@ void BASIC_FP iif() {
   }
 }
 
+/***bc bas ENDIF
+Ends a muli-line `IF` statement.
+\ref IF
+***/
 void BASIC_FP iendif()
 {
 }
 
+/***bc bas ELSE
+Introduces the `ELSE` branch of an `IF` statement.
+\ref IF
+***/
 void BASIC_FP ielse()
 {
   // Special handling for "ELSE IF": Skip one level of nesting. This avoids
