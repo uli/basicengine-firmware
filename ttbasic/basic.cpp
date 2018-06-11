@@ -2943,7 +2943,7 @@ static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
 
 /***bc sys CONFIG COLOR
 Changes the color scheme.
-
+\desc
 The color scheme is a set of colors that are used to print system messages
 and BASIC program listings. It also contains the default foreground and
 background colors.
@@ -2991,7 +2991,7 @@ void SMALL config_color()
 
 /***bc sys CONFIG
 Changes configuration options.
-
+\desc
 The options will be reset to their defaults on system startup unless they
 have been saved using <<SAVE CONFIG>>. Changing power-on default options does not
 affect the system until the options are saved and the system is restarted.
@@ -3616,7 +3616,7 @@ void iwait() {
 
 /***bc scr VSYNC
 Synchronize with video output.
-
+\desc
 Waits until the video frame counter has reached or exceeded a given
 value, or until the next frame if none is specified.
 \usage VSYNC [frame]
@@ -5075,7 +5075,7 @@ void iprint(uint8_t devno=0,uint8_t nonewln=0) {
 
 /***bc pix GPRINT
 Prints a string of characters at the specified pixel position.
-
+\desc
 `GPRINT` allows printing characters outside the fixed text grid, including
 off-screen pixel memory.
 \usage GPRINT x, y, *expressions*
@@ -5808,7 +5808,7 @@ void iborder() {
 
 /***bc bg BG
 Defines a tiled background's properties.
-
+\desc
 Using `BG`, you can define a tiled background's map and tile size, tile set,
 window size and position, and priority, as well as turn it on or off.
 
@@ -6033,7 +6033,7 @@ void BASIC_FP imovebg() {
 
 /***bc bg SPRITE
 Defines a sprite's properties.
-
+\desc
 Using `SPRITE`, you can define a sprite's appearance, size, animation frame, color key,
 prority, special effects, and turn it on and off.
 
@@ -6300,7 +6300,7 @@ int BASIC_INT pad_state(int num)
 
 /***bf io PAD
 Get the state of the game controller(s) and cursor pad.
-
+\desc
 `PAD()` can be used to query actual game controllers, or a "virtual" controller
 simulated with cursor and letter keys on the keyboard.
 
@@ -9130,7 +9130,7 @@ void iseek() {
 
 /***bc sys PROFILE
 Enables or disables the system and procedure profiler.
-
+\desc
 The system profiler shows a bar in the border of the screen indicating
 how much CPU time is spent on the various tasks of the grahpics
 and sound subsystems. It helps in determining the cause of system
@@ -9425,7 +9425,7 @@ uint8_t SMALL icom() {
     break;
 /***bc bas CONT
 Continues an interrupted program.
-
+\desc
 `CONT` can be used to resume a program run that has been interrupted by
 kbd:[Ctrl+C] or by the `STOP` command. It will reset text window and
 tiled background layouts if they have been automatically adjusted when the
