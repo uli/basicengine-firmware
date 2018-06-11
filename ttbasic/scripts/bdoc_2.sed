@@ -18,6 +18,7 @@ s,\\ret\s*,\n===== RETURN VALUE\n,	# \ret
 s,\\error\s*,\n===== ERRORS\n,		# \error
 s,\\bugs\s*,\n===== BUGS,		# \bugs
 s,\\note\s*,\n===== NOTES,		# \note
+s,\\example\s*,\n===== EXAMPLES,	# \example
 s,\\sec\s*\(.*\)$,\n===== \1\n,		# \sec <custom section>
 /\\ref/s,\([A-Z0-9]\S*\),<<\1>>\,,g	# link \ref items
 /\\ref/s/,$//				# remove extraneous comma at end of \ref
