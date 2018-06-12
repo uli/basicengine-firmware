@@ -6633,7 +6633,7 @@ static inline bool is_var(unsigned char tok)
 
 void BASIC_FP icall();
 
-int get_filenum_param() {
+int BASIC_INT get_filenum_param() {
   int32_t f = getparam();
   if (f < 0 || f >= MAX_USER_FILES) {
     E_VALUE(0, MAX_USER_FILES - 1);
@@ -6642,7 +6642,7 @@ int get_filenum_param() {
     return f;
 }
 
-BString ilrstr(bool right) {
+BString BASIC_INT ilrstr(bool right) {
   BString value;
   int len;
 
@@ -6680,7 +6680,7 @@ Returns a specified number of leftmost characters in a string.
 If `l$` is shorter than `num` characters, the return value is `l$`.
 \ref MID$() RIGHT$()
 ***/
-static BString sleft() {
+static BString BASIC_INT sleft() {
   return ilrstr(false);
 }
 /***bf bas RIGHT$
@@ -6694,7 +6694,7 @@ Returns a specified number of rightmost characters in a string.
 If `r$` is shorter than `num` characters, the return value is `r$`.
 \ref LEFT$() MID$()
 ***/
-static BString sright() {
+static BString BASIC_INT sright() {
   return ilrstr(true);
 }
 
@@ -6715,7 +6715,7 @@ Returns part of a string (a substring).
 other BASIC implementations.
 \ref LEFT$() LEN() RIGHT$()
 ***/
-BString smid() {
+BString BASIC_INT smid() {
   BString value;
   int32_t start;
   int32_t len;
@@ -6880,7 +6880,7 @@ functions with parentheses to distinguish them from constants and variables
 in order to remain compatible with other BASIC implementations.
 \ref INKEY()
 ***/
-static BString sinkey() {
+static BString BASIC_INT sinkey() {
   int32_t c = iinkey();
   if (c > 0 && c < 0x100) {
     return BString((char)c);
@@ -6890,7 +6890,7 @@ static BString sinkey() {
     return BString();
 }
 
-static BString spopf() {
+static BString BASIC_INT spopf() {
   BString value;
   if (checkOpen()) return value;
   if (*cip++ == I_STRLSTREF) {
@@ -6907,7 +6907,7 @@ static BString spopf() {
   return value;
 }
 
-static BString spopb() {
+static BString BASIC_INT spopb() {
   BString value;
   if (checkOpen()) return value;
   if (*cip++ == I_STRLSTREF) {
@@ -6954,7 +6954,7 @@ call.
 \ret String return value requested.
 \ref RET() RETURN
 ***/
-static BString sret() {
+static BString BASIC_INT sret() {
   int32_t n = getparam();
   if (n < 0 || n >= MAX_RETVALS) {
     E_VALUE(0, MAX_RETVALS-1);
@@ -7031,7 +7031,7 @@ static inline bool BASIC_FP is_strexp() {
          );
 }
 
-BString istrvalue()
+BString BASIC_INT istrvalue()
 {
   BString value;
   int len, dims;
@@ -7107,7 +7107,7 @@ BString istrvalue()
     return value;
 }
 
-BString istrexp()
+BString BASIC_INT istrexp()
 {
   BString value, tmp;
   
