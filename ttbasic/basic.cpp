@@ -7604,6 +7604,13 @@ num_t BASIC_FP nvpeek() {
 
 #define basic_bool(x) ((x) ? -1 : 0)
 
+/***bf fs EOF
+Checks whether the end of a file has been reached.
+\usage e = EOF(file_num)
+\args
+@file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
+\ret `-1` if the end of the file has been reached, `0` otherwise.
+***/
 num_t BASIC_INT neof() {
   int32_t a = get_filenum_param();
   if (!err)
@@ -7612,6 +7619,13 @@ num_t BASIC_INT neof() {
     return 0;
 }
 
+/***bf fs LOF
+Returns the length of a file in bytes.
+\usage l = LOF(file_num)
+\args
+@file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
+\ret Length of file.
+***/
 num_t BASIC_INT nlof() {
   int32_t a = get_filenum_param();
   if (!err)
@@ -7620,6 +7634,13 @@ num_t BASIC_INT nlof() {
     return 0;
 }
 
+/***bf fs LOC
+Returns the current position within a file.
+\usage l = LOC(file_num)
+\args
+@file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
+\ret Position at which the next byte will be read or written.
+***/
 num_t BASIC_INT nloc() {
   int32_t a = get_filenum_param();
   if (!err)
@@ -7628,6 +7649,14 @@ num_t BASIC_INT nloc() {
     return 0;
 }
   
+/***bf bas POPF
+Remove an element from the beginning of a numeric list.
+\usage e = POPF(~list)
+\args
+@~list	reference to a numeric list
+\ret Value of the element removed.
+\ref POPB()
+***/
 num_t BASIC_FP npopf() {
   num_t value;
   if (checkOpen()) return 0;
@@ -7645,6 +7674,14 @@ num_t BASIC_FP npopf() {
   return value;
 }
 
+/***bf bas POPB
+Remove an element from the end of a numeric list.
+\usage e = POPB(~list)
+\args
+@~list	reference to a numeric list
+\ret Value of the element removed.
+\ref POPF()
+***/
 num_t BASIC_FP npopb() {
   num_t value;
   if (checkOpen()) return 0;
@@ -7662,6 +7699,14 @@ num_t BASIC_FP npopb() {
   return value;
 }
 
+/***bf bas VAL
+Converts a number contained in a string to a numeric value.
+\usage v = VAL(num$)
+\args
+@num$	a string expression containing the text representation of a number
+\ret Numeric value of `num$`.
+\ref STR$()
+***/
 num_t BASIC_INT nval() {
   if (checkOpen()) return 0;
   num_t value = strtonum(istrexp().c_str(), NULL);
@@ -7786,6 +7831,34 @@ Value of the "down" direction for input devices.
     }
     break;
 
+/***bn bas FN
+Call a procedure and get its return value.
+
+Evaluates to the first return value of a procedure.
+\usage v = FN procedure[(argument[, argument ...])]
+\args
+@procedure	name of a procedure declared with `PROC`
+@argument	a string or numeric expression
+\ret First return value of called procedure.
+\note
+Most implementations of BASIC allow declaration of functions using `DEF FN`,
+a syntax that is not supported by Engine BASIC.  To achieve the same result,
+you will have to rewrite the function declaration:
+
+.Standard BASIC
+====
+----
+DEF FN f(x) = x * 2
+----
+====
+.Engine BASIC
+====
+----
+PROC f(x): RETURN @x * 2
+----
+====
+\ref CALL
+***/
   case I_FN: {
     unsigned char *lp;
     icall();
