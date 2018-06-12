@@ -7114,6 +7114,11 @@ BString BASIC_INT istrexp()
   value = istrvalue();
 
   for (;;) switch(*cip) {
+/***bo sop + (strings)
+String concatenation operator.
+\usage a$ + b$
+\res Concatentatin of `a$` and `b$`.
+***/
   case I_PLUS:
     cip++;
     tmp = istrvalue();
@@ -7823,6 +7828,12 @@ Value of the "down" direction for input devices.
 
   while (1)
     switch (*cip) {
+/***bo op ^
+Exponentiation operator.
+\usage a ^ b
+\res `a` raised to the power of `b`.
+\prec 1
+***/
     case I_POW:
       cip++;
       value = pow(value, ivalue());
@@ -7838,9 +7849,23 @@ num_t BASIC_FP imul() {
 
   while(1) {
     switch (*cip++) {
+/***bo op - (unary)
+Negation operator.
+\usage -a
+\res The negative of `a`.
+\prec 2
+***/
     case I_MINUS: //「-」
       return 0 - imul(); //値を取得して負の値に変換
       break;
+/***bo op + (unary)
+Identity operator.
+\usage +a
+\res `a`.
+\note
+This operator serves decorative purposes only.
+\prec 2
+***/
     case I_PLUS:
       return imul();
       break;
@@ -7858,11 +7883,23 @@ out:
   while (1) //無限に繰り返す
     switch(*cip++) { //中間コードで分岐
 
+/***bo op *
+Multiplication operator.
+\usage a * b
+\res Product of `a` and `b`.
+\prec 3
+***/
     case I_MUL: //掛け算の場合
       tmp = ivalue();
       value *= tmp; //掛け算を実行
       break;
 
+/***bo op /
+Division operator.
+\usage a / b
+\res Quotient of `a` and `b`.
+\prec 3
+***/
     case I_DIV: //割り算の場合
       tmp = ivalue();
       if (err)
@@ -7870,6 +7907,12 @@ out:
       value /= tmp; //割り算を実行
       break;
 
+/***bo op MOD
+Modulus operator.
+\usage a MOD b
+\res Remainder of division of `a` and `b`.
+\prec 3
+***/
     case I_MOD: //剰余の場合
       tmp = ivalue();
       if (err)
@@ -7877,11 +7920,23 @@ out:
       value = (int32_t)value % (int32_t)tmp; //割り算を実行
       break;
 
+/***bo op <<
+Bit-shift operator, left.
+\usage a << b
+\res `a` converted to an unsigned integer and shifted left by `b` bits.
+\prec 3
+***/
     case I_LSHIFT: // シフト演算 "<<" の場合
       tmp = ivalue();
       value =((uint32_t)value)<<(uint32_t)tmp;
       break;
 
+/***bo op >>
+Bit-shift operator, right.
+\usage a >> b
+\res `a` converted to an unsigned integer and shifted right by `b` bits.
+\prec 3
+***/
     case I_RSHIFT: // シフト演算 ">>" の場合
       tmp = ivalue();
       value =((uint32_t)value)>>(uint32_t)tmp;
@@ -7902,12 +7957,24 @@ num_t BASIC_FP iplus() {
 
   while (1)
     switch(*cip) {
+/***bo op +
+Numeric addition operator.
+\usage a + b
+\res Sum of `a` and `b`.
+\prec 4
+***/
     case I_PLUS: //足し算の場合
       cip++;
       tmp = imul();
       value += tmp; //足し算を実行
       break;
 
+/***bo op -
+Numeric subtraction operator.
+\usage a - b
+\res Difference of `a` and `b`.
+\prec 4
+***/
     case I_MINUS: //引き算の場合
       cip++;
       tmp = imul();
@@ -7929,16 +7996,49 @@ num_t BASIC_INT irel_string() {
   BString lhs = istrexp();
   BString rhs;
   switch (*cip++) {
+/***bo op = (strings)
+String equality operator.
+\usage a$ = b$
+\res
+`-1` if the value of `a$` is identical to the value of `b$`, `0` otherwise.
+\prec 5
+***/
   case I_EQ:
     rhs = istrexp();
     return basic_bool(lhs == rhs);
+/***bo op <> (strings)
+String inequality operator.
+\usage
+a$ <> b$
+
+a$ >< b$
+\res
+`-1` if the value of `a$` is different from the value of `b$`, `0` otherwise.
+\prec 5
+***/
   case I_NEQ:
   case I_NEQ2:
     rhs = istrexp();
     return basic_bool(lhs != rhs);
+/***bo op < (strings)
+String less-than operator.
+\usage a$ < b$
+\res
+`-1` if the value of `a$` precedes the value of `b$` when sorted
+alphabetically, `0` otherwise.
+\prec 5
+***/
   case I_LT:
     rhs = istrexp();
     return basic_bool(lhs < rhs);
+/***bo op > (strings)
+String greater-than operator.
+\usage a$ > b$
+\res
+`-1` if the value of `a$` succeeds the value of `b$` when sorted
+alphabetically, `0` otherwise.
+\prec 5
+***/
   case I_GT:
     rhs = istrexp();
     return basic_bool(lhs > rhs);
@@ -7998,14 +8098,35 @@ a < b
       tmp = iplus();
       value = basic_bool(value < tmp);
       break;
+/***bo op \<=
+Less-than-or-equal operator.
+\usage
+a <= b
+\res `-1` if `a` is less than or equal to `b`, `0` otherwise.
+\prec 6
+***/
     case I_LTE:
       tmp = iplus();
       value = basic_bool(value <= tmp);
       break;
+/***bo op >
+Greater-than operator.
+\usage
+a > b
+\res `-1` if `a` is greater than `b`, `0` otherwise.
+\prec 6
+***/
     case I_GT:
       tmp = iplus();
       value = basic_bool(value > tmp);
       break;
+/***bo op >=
+Greater-than-or-equal operator.
+\usage
+a >= b
+\res `-1` if `a` is greater than or equal to `b`, `0` otherwise.
+\prec 6
+***/
     case I_GTE:
       tmp = iplus();
       value = basic_bool(value >= tmp);
