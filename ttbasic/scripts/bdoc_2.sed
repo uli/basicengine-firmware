@@ -14,7 +14,7 @@ s,\\usage\s*\(\S.*\)$,\n===== USAGE\n----\n\1\n----,	# monotype \usage tag and v
 s,\\usage\s*,\n===== USAGE,		# \usage
 s,\\desc\s*,\n===== DESCRIPTION,	# \desc
 s,\\args\s*,\n===== PARAMETERS\n[%autowidth]\n|===,	# \args
-s,@\(\S*\)\s*,| `\1` | ,		# argument
+s,^@\(\S*\)\s*,| `\1` | ,		# argument
 s,\\ret\s*,\n===== RETURN VALUE\n,	# \ret
 s,\\res\s*,\n===== RESULT\n,		# \res
 s,\\error\s*,\n===== ERRORS\n,		# \error
