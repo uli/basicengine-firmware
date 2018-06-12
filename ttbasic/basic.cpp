@@ -8345,6 +8345,7 @@ the statement after the `GOSUB` command by using `RETURN`.
 It may be more convenient to use `PROC` procedures and the `CALL` command
 instead.
 \example
+====
 ----
 FOR i = 1 TO 20
   GOSUB Square
@@ -8355,6 +8356,7 @@ END
 PRINT i, i * i
 RETURN
 ----
+====
 \ref CALL ON_GOSUB PROC RETURN
 ***/
 void BASIC_FP igosub() {
