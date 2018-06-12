@@ -7597,10 +7597,12 @@ num_t BASIC_FP nvpeek() {
     return SpiRamReadByte(value);
 }
 
+#define basic_bool(x) ((x) ? -1 : 0)
+
 num_t BASIC_INT neof() {
   int32_t a = get_filenum_param();
   if (!err)
-    return !user_files[a]->available();
+    return basic_bool(!user_files[a]->available());
   else
     return 0;
 }
@@ -7922,8 +7924,6 @@ num_t BASIC_FP iplus() {
       return value; //値を持ち帰る
     } //中間コードで分岐の末尾
 }
-
-#define basic_bool(x) ((x) ? -1 : 0)
 
 num_t BASIC_INT irel_string() {
   BString lhs = istrexp();
