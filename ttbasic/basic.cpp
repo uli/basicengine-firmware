@@ -8558,7 +8558,11 @@ Calls a procedure.
 \args
 @procedure	name of a procedure declared with `PROC`
 @argument	a string or numeric expression
-\ref FN PROC
+\note
+At least as many arguments must be given as defined in the procedure
+declaration. Additional arguments can be accessed using `ARG()` and
+`ARG$()`.
+\ref ARG() ARG$() ARGC() FN PROC
 ***/
 void BASIC_FP icall() {
   num_t n;
