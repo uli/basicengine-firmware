@@ -4917,8 +4917,8 @@ to a given file.
 \usage
 PRINT [#file_num, ][*expressions*][<;|,>]
 \args
-@file_num	file number to be printed to +
-                [default: current output device]
+@file_num	file number to be printed to [`0` to `{MAX_USER_FILES_m1}`,
+                default: current output device]
 @expressions	list of expressions specifying what to print
 \sec EXPRESSIONS
 The following types of expressions can be used in a `PRINT` command
@@ -9281,7 +9281,7 @@ CMD <INPUT|OUTPUT> file_num
 CMD <INPUT|OUTPUT> OFF
 CMD OFF
 \args
-@file_num	file number to be redirected to
+@file_num	number of an open file to redirect to [`0` to `{MAX_USER_FILES_m1}`]
 \note
 Redirection will automatically be reset if a file redirected to is closed
 (either explicitly or implicitly, by opening a new file using the currently
@@ -9498,7 +9498,7 @@ void iopen() {
 Closes an open file or directory.
 \usage CLOSE [#]file_num
 \args
-@file_num	number of an open file or directory
+@file_num	number of an open file or directory [`0` to `{MAX_USER_FILES_m1}`]
 \ref OPEN
 ***/
 void iclose() {
@@ -9527,7 +9527,7 @@ void iclose() {
 Sets the file position for the next read or write.
 \usage SEEK file_num, position
 \args
-@file_num	number of an open file
+@file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
 @position	position where the next read or write should occur
 \error
 The command will generate an error if `file_num` is not open or the operation
