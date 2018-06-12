@@ -1,4 +1,6 @@
 bas BASIC Core
+op Numeric Operators
+sop String Operators
 io Input/Output
 fs File System
 bg Sprite/Background Engine

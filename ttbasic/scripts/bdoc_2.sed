@@ -8,6 +8,7 @@ s,/\*\*\*bc\s*\S*\s*\(.*\),[reftext=\1]\n==== [blue]#\1# ,	# command start
 #/_DELETE/d
 s,/\*\*\*bf\s*\S*\s*\(\S*\)\s*,[reftext=\1()]\n==== [green]#\1()# ,	# function start
 s,/\*\*\*bn\s*\S*\s*\(\S*\)\s*,[reftext=\1]\n==== [purple]#\1# ,	# constant start
+s,/\*\*\*bo\s*\S*\s*\(\S*\)\s*,[reftext=\1]\n==== [aqua]#\1# ,	# operator start
 # most \usage processing is done in bdoc_1a.sed
 s,\\usage\s*\(\S.*\)$,\n===== USAGE\n----\n\1\n----,	# monotype \usage tag and value in single line
 s,\\usage\s*,\n===== USAGE,		# \usage
@@ -15,6 +16,7 @@ s,\\desc\s*,\n===== DESCRIPTION,	# \desc
 s,\\args\s*,\n===== PARAMETERS\n[%autowidth]\n|===,	# \args
 s,@\(\S*\)\s*,| `\1` | ,		# argument
 s,\\ret\s*,\n===== RETURN VALUE\n,	# \ret
+s,\\res\s*,\n===== RESULT\n,		# \res
 s,\\error\s*,\n===== ERRORS\n,		# \error
 s,\\bugs\s*,\n===== BUGS,		# \bugs
 s,\\note\s*,\n===== NOTES,		# \note
