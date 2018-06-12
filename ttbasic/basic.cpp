@@ -6263,6 +6263,10 @@ void ixyzzy() {
   BString game = getParamFname();
   if (err)
     return;
+  if (!Unifile::exists(game.c_str())) {
+    err = ERR_FILE_OPEN;
+    return;
+  }
   AZIP azip;
   azip.load(game.c_str());
   azip.run();
