@@ -17,6 +17,7 @@ s,\\args\s*,\n===== PARAMETERS\n[%autowidth]\n|===,	# \args
 s,^@\(\S*\)\s*,| `\1` | ,		# argument
 s,\\ret\s*,\n===== RETURN VALUE\n,	# \ret
 s,\\res\s*,\n===== RESULT\n,		# \res
+s,\\prec\s*,\n===== PRECEDENCE\n,	# \prec
 s,\\error\s*,\n===== ERRORS\n,		# \error
 s,\\bugs\s*,\n===== BUGS,		# \bugs
 s,\\note\s*,\n===== NOTES,		# \note
