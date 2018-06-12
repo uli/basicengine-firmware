@@ -7967,6 +7967,7 @@ num_t BASIC_FP irel() {
 Equality operator.
 \usage a = b
 \res `-1` if `a` and `b` are equal, `0` otherwise.
+\prec 6
 ***/
     case I_EQ:
       tmp = iplus();
@@ -7979,6 +7980,7 @@ a <> b
 
 a >< b
 \res `-1` if `a` and `b` are not equal, `0` otherwise.
+\prec 6
 ***/
     case I_NEQ:
     case I_NEQ2:
@@ -7990,6 +7992,7 @@ Less-than operator.
 \usage
 a < b
 \res `-1` if `a` is less than `b`, `0` otherwise.
+\prec 6
 ***/
     case I_LT:
       tmp = iplus();
@@ -8021,6 +8024,10 @@ num_t BASIC_FP iand() {
 Bitwise inversion operator.
 \usage NOT a
 \res Bitwise inversion of `a`.
+\prec 7
+\note
+Like most BASIC implementations, Engine BASIC does not have a dedicated
+"logical NOT" operator; instead, the bitwise operator is used.
 ***/
   case I_BITREV: // NOT
     return ~((int32_t)irel());
@@ -8039,6 +8046,7 @@ Bitwise inversion operator.
 Bitwise AND operator.
 \usage a AND b
 \res Bitwise conjunction of `a` and `b`.
+\prec 7
 \note
 Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical AND" operator; instead, the bitwise operator is used.
@@ -8066,6 +8074,7 @@ num_t BASIC_FP iexp() {
 Bitwise OR operator.
 \usage a OR b
 \res Bitwise inclusive disjunction of `a` and `b`.
+\prec 8
 \note
 Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical OR" operator; instead, the bitwise operator is used.
@@ -8078,6 +8087,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 Bitwise exclusive-OR operator.
 \usage a EOR b
 \res Bitwise exclusive disjunction of `a` and `b`.
+\prec 8
 ***/
     case I_XOR:
       tmp = iand();
