@@ -7963,15 +7963,34 @@ num_t BASIC_FP irel() {
   // conditional expression
   while (1)
     switch(*cip++) {
+/***bo op =
+Equality operator.
+\usage a = b
+\res `-1` if `a` and `b` are equal, `0` otherwise.
+***/
     case I_EQ:
       tmp = iplus();
       value = basic_bool(value == tmp);
       break;
+/***bo op <>
+Inequality operator.
+\usage
+a <> b
+
+a >< b
+\res `-1` if `a` and `b` are not equal, `0` otherwise.
+***/
     case I_NEQ:
     case I_NEQ2:
       tmp = iplus();
       value = basic_bool(value != tmp);
       break;
+/***bo op <
+Less-than operator.
+\usage
+a < b
+\res `-1` if `a` is less than `b`, `0` otherwise.
+***/
     case I_LT:
       tmp = iplus();
       value = basic_bool(value < tmp);
@@ -7998,6 +8017,11 @@ num_t BASIC_FP iand() {
   num_t value, tmp;
 
   switch(*cip++) {
+/***bo op NOT
+Bitwise inversion operator.
+\usage NOT a
+\res Bitwise inversion of `a`.
+***/
   case I_BITREV: // NOT
     return ~((int32_t)irel());
   default:
@@ -8011,6 +8035,14 @@ num_t BASIC_FP iand() {
   while (1)
     switch(*cip++) {
     case I_AND:
+/***bo op AND
+Bitwise AND operator.
+\usage a AND b
+\res Bitwise conjunction of `a` and `b`.
+\note
+Like most BASIC implementations, Engine BASIC does not have a dedicated
+"logical AND" operator; instead, the bitwise operator is used.
+***/
       tmp = irel();
       value = ((int32_t)value)&((int32_t)tmp);
       break;
@@ -8030,10 +8062,23 @@ num_t BASIC_FP iexp() {
 
   while (1)
     switch(*cip++) {
+/***bo op OR
+Bitwise OR operator.
+\usage a OR b
+\res Bitwise inclusive disjunction of `a` and `b`.
+\note
+Like most BASIC implementations, Engine BASIC does not have a dedicated
+"logical OR" operator; instead, the bitwise operator is used.
+***/
     case I_OR:
       tmp = iand();
       value = ((int32_t)value) | ((int32_t)tmp);
       break;
+/***bo op EOR
+Bitwise exclusive-OR operator.
+\usage a EOR b
+\res Bitwise exclusive disjunction of `a` and `b`.
+***/
     case I_XOR:
       tmp = iand();
       value = ((int32_t)value) ^ ((int32_t)tmp);
