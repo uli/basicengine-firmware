@@ -8133,7 +8133,22 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
   return tbuf;
 }
 
-// システム情報の表示
+/***bc sys SYSINFO
+Displays internal information about the system.
+
+WARNING: This command may be renamed in the future to reduce namespace
+pollution.
+\usage SYSINFO
+\desc
+`SYSINFO` displays the following information:
+
+* Program size,
+* statistics on scalar, array and list variables, both numeric and string,
+* loop and return stack depths,
+* CPU stack pointer address,
+* free memory size and
+* video timing information (nominal and actual cycles per frame).
+***/
 void SMALL isysinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
@@ -8201,7 +8216,18 @@ static void BASIC_FP do_goto(uint32_t line)
   TRACE;
 }
 
-// GOTO
+/***bc bas GOTO
+Branches to a specified line or label.
+\usage GOTO <line_number|&label>
+\args
+@line_number	a BASIC program line number
+@&label		a BASIC program label
+\note
+It is recommended to use `GOTO` sparingly as it tends to make programs
+more difficult to understand. If possible, use loop constructs and
+procedure calls instead.
+\ref ON_GOTO
+***/
 void BASIC_FP igoto() {
   uint32_t lineno;    // 行番号
 
@@ -8250,7 +8276,32 @@ static void BASIC_FP do_gosub(uint32_t lineno) {
   do_gosub_p(lp, lp + sizeof(line_desc_t));
 }
 
-// GOSUB
+/***bc bas GOSUB
+Calls a subroutine.
+\desc
+`GOSUB` puts the current position in the program on a stack and then
+branches to the given location. It is then possible to return to
+the statement after the `GOSUB` command by using `RETURN`.
+\usage GOSUB <line_number|&label>
+\args
+@line_number	a BASIC program line number
+@&label		a BASIC program label
+\note
+It may be more convenient to use `PROC` procedures and the `CALL` command
+instead.
+\example
+----
+FOR i = 1 TO 20
+  GOSUB Square
+NEXT i
+END
+  
+&Square:
+PRINT i, i * i
+RETURN
+----
+\ref CALL ON_GOSUB PROC RETURN
+***/
 void BASIC_FP igosub() {
   uint32_t lineno;    // 行番号
 
@@ -8271,7 +8322,27 @@ void BASIC_FP igosub() {
   }
 }
 
-// ON ... <GOTO|GOSUB> ...
+/***bc bas ON GOTO
+Branches to one of several locations, depending on the value of an expression.
+\usage ON expression <GOTO|GOSUB> <line_number|&label>[, <line_number|&label> ...]
+\args
+@expression	any numeric expression
+@line_number	a BASIC program line number
+@&label		a BASIC program label
+\desc
+`ON GOTO` and `ON GOSUB` will branch to the first given line number or label
+if `expression` is `1`, to the second if `expression` is `2`, and so forth. 
+If `expression` is `0`, it will do nothing, and execution will continue with
+the next statement.
+
+`ON GOSUB` calls the given location as a subroutine, while `ON GOTO` simply
+continues execution there.
+\ref GOTO GOSUB
+***/
+/***bc bas ON GOSUB
+Call one of several subroutines, depending on the value of an expression.
+\ref ON_GOTO GOSUB
+***/
 static void BASIC_FP on_go(bool is_gosub, int cas)
 {
   unsigned char *lp = NULL, *ip = NULL;
