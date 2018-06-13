@@ -192,8 +192,6 @@ EOF	I_EOF		neof
 LOF	I_LOF		nlof
 LOC	I_LOC		nloc
 CONNECT	I_CONNECT	nconnect
-PRG	I_MPRG		nmprg
-FNT	I_MFNT		nmfnt
 UP	I_UP		nup
 RIGHT	I_RIGHT		nright
 LEFT	I_LEFT		nleft

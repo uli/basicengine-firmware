@@ -290,7 +290,6 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_I2CW, I_I2CR,
   I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
   I_DIN, I_ANA, I_MAP,
-  I_MPRG, I_MFNT,
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
@@ -316,7 +315,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const uint8_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT,
+  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS,
 };
 
 // exception search function
@@ -7212,11 +7211,28 @@ num_t BASIC_FP nsgn() {
   return (0 < value) - (value < 0);
 }
 
-num_t BASIC_INT nmprg() {
-  return (unsigned int)listbuf;
-}
-num_t BASIC_INT nmfnt() {
-  return (unsigned int)sc0.getfontadr();
+/***bf sys SYS
+Retrieve internal system addresses and parameters.
+\usage a = SYS(item)
+\args
+@item	number of the item of information to be retrieved
+\ret Requested information.
+\sec ITEMS
+The following internal information can be retrieved using `SYS()`:
+\table
+| `0` | memory address of BASIC program buffer
+| `1` | memory address of current font
+\endtable
+***/
+num_t nsys() {
+  int32_t item = getparam();
+  if (err)
+    return 0;
+  switch (item) {
+  case 0:	return (uint32_t)listbuf;
+  case 1:	return (uint32_t)sc0.getfontadr();
+  default:	E_VALUE(0, 1); return 0;
+  }
 }
 
 /***bf io GPIN
@@ -7855,6 +7871,8 @@ num_t BASIC_FP ivalue() {
     break;
 
   case I_CHAR: value = ncharfun(); break; //関数CHAR
+
+  case I_SYS: value = nsys(); break;
 
 /***bn io DOWN
 Value of the "down" direction for input devices.
