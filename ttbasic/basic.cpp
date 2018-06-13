@@ -263,7 +263,22 @@ void iclt() {
 //  systick_uptime_millis = 0;
 }
 
-// 乱数
+/***bf m RND
+Returns a random number.
+\usage r = RND(mod)
+\args
+@mod	modifier determining the type of random number to generate
+\ret A random number of the selected type.
+\sec TYPES
+The following types of random numbers are generated depending on the value
+of `mod`:
+\table
+| `mod` > 1 | a random integer number between 0 and 2147483647
+| `mod` between 0 and 1 | a random fractional number between 0 and 1
+| `mod` < 0 | a random fractional number between 0 and 1; a specific
+              value of `mod` will always yield the same random number
+\endtable
+***/
 num_t BASIC_FP getrnd(int value) {
   if (value < 0)
     randomSeed(value);
@@ -7152,6 +7167,7 @@ num_t BASIC_INT nlen() {
   return value;
 }
 
+// see getrnd() for basicdoc
 num_t BASIC_FP nrnd() {
   num_t value = getparam(); //括弧の値を取得
   if (!err)
@@ -7159,6 +7175,13 @@ num_t BASIC_FP nrnd() {
   return value;
 }
 
+/***bf m ABS
+Returns the absolute value of a number.
+\usage a = ABS(num)
+\args
+@num	any numeric expression
+\ret Absolute value of `num`.
+***/
 num_t BASIC_FP nabs() {
   num_t value = getparam(); //括弧の値を取得
   if (value == INT32_MIN) {
@@ -7170,19 +7193,66 @@ num_t BASIC_FP nabs() {
   return value;
 }
 
+/***bf m SIN
+Returns the sine of a specified angle.
+\usage s = SIN(angle)
+\args
+@angle	an angle expressed in radians
+\ret Sine of `angle`.
+\ref COS() TAN()
+***/
 num_t BASIC_FP nsin() {
   return sin(getparam());
 }
+/***bf m COS
+Returns the cosine of a specified angle.
+\usage c = COS(angle)
+\args
+@angle	an angle expressed in radians
+\ret Cosine of `angle`.
+\ref SIN() TAN()
+***/
 num_t BASIC_FP ncos() {
   return cos(getparam());
 }
+/***bf m EXP
+Returns _e_ raised to a specified power, where _e_ is the base of natural
+logarithms.
+\usage ex = EXP(pow)
+\args
+@pow	Power to raise _e_ to.
+\ret Exponential value of `pow`.
+***/
 num_t BASIC_FP nexp() {
   return exp(getparam());
 }
+/***bf m ATN
+Arc tangent function.
+\usage a = ATN(x)
+\args
+@x	any numeric expression
+\desc
+`ATN()` calculates the principal value of the arc tangent of `x`; that  is the
+value whose tangent is `x`.
+\ret The principal value of the arc tangent of `x` in radians.
+\ref ATN2()
+***/
 num_t BASIC_FP natn() {
   return atan(getparam());
 }
 
+/***bf m ATN2
+Arc tangent function of two variables.
+\usage a2 = ATN2(x, y)
+\args
+@x	any numeric expression
+@y	any numeric expression
+\desc
+Calculates the principal value of the arc tangent of `y`/`x`, using the signs of
+the two arguments to determine the quadrant of the result.
+\ret Arc tangent of `y`/`x`.
+\ref ATN()
+***/
 num_t BASIC_FP natn2() {
   num_t value, value2;
   if (checkOpen() || getParam(value, I_COMMA) || getParam(value2, I_CLOSE))
@@ -7190,22 +7260,60 @@ num_t BASIC_FP natn2() {
   return atan2(value, value2);
 }
 
+/***bf m SQR
+Square root function.
+\usage s = SQR(num)
+\args
+@num	any numeric expression larger than or equal to `0`
+\ret The nonnegative square root of `num`.
+***/
 num_t BASIC_FP nsqr() {
   return sqrt(getparam());
 }
 
+/***bf m TAN
+Returns the tangent of a specified angle.
+\usage t = TAN(angle)
+\args
+@angle	an angle expressed in radians
+\ret Tangent of `angle`.
+\ref COS() SIN()
+***/
 num_t BASIC_FP ntan() {
   return tan(getparam());
 }
 
+/***bf m LOG
+Returns the natural logarithm of a numeric expression.
+\usage l = LOG(num)
+\args
+@num	any numeric expression
+\ret The natural logarithm of `num`.
+***/
 num_t BASIC_FP nlog() {
   return log(getparam());
 }
 
+/***bf m INT
+Returns the largest integer less than or equal to a numeric expression.
+\usage i = INT(num)
+\args
+@num	any numeric expression
+\ret `num` rounded down to the nearest integer.
+***/
 num_t BASIC_FP nint() {
   return floor(getparam());
 }
 
+/***bf m SGN
+Returns a value indicating the sign of a numeric expression.
+\usage s = SGN(num)
+\args
+@num	any numeric expression
+\ret
+`1` if the expression is positive, `0` if it is zero, or `-1` if it is
+negative.
+***/
 num_t BASIC_FP nsgn() {
   num_t value = getparam();
   return (0 < value) - (value < 0);

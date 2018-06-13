@@ -1,4 +1,5 @@
 bas BASIC Core
+m Math Functions
 op Numeric Operators
 sop String Operators
 io Input/Output
