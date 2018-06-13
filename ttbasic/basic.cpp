@@ -4006,6 +4006,8 @@ Sets the state of a general-purpose I/O pin.
 \args
 @pin	pin number [`0` to `15`]
 @value	pin state [`0` for "off", anything else for "on"]
+\note
+`GPOUT` allows access to pins on the I2C I/O extender only.
 \ref GPIN()
 ***/
 void idwrite() {
@@ -7217,6 +7219,16 @@ num_t BASIC_INT nmfnt() {
   return (unsigned int)sc0.getfontadr();
 }
 
+/***bf io GPIN
+Reads the state of a general-purpose I/O pin.
+\usage s = GPIN(pin)
+\args
+@pin	pin number [`0` to `15`]
+\ret State of pin: `0` for low, `1` for high.
+\note
+`GPIN()` allows access to pins on the I2C I/O extender only.
+\ref GPOUT
+***/
 num_t BASIC_INT ngpin() {
   int32_t a;
   if (checkOpen()) return 0;
@@ -7233,6 +7245,11 @@ num_t BASIC_INT ngpin() {
   }
 }
 
+/***bf io ANA
+Reads value from the analog input pin.
+\usage v = ANA()
+\ret Analog value read.
+***/
 num_t BASIC_FP nana() {
 #ifdef ESP8266_NOWIFI
   err = ERR_NOT_SUPPORTED;
@@ -7244,11 +7261,33 @@ num_t BASIC_FP nana() {
 #endif
 }
 
+/***bf io SREAD
+Reads bytes from the serial port.
+
+WARNING: This function is currently useless because the serial port
+receive pin is used for sound output in the BASIC Engine. It may be
+removed in the future if it turns out that there is no viable way
+to support serial input.
+\usage b = SREAD()
+\ret Byte of data read, or `-1` if there was no data available.
+\ref SREADY()
+***/
 num_t BASIC_INT nsread() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.read();
 }
 
+/***bf io SREADY
+Checks for available bytes on the serial port.
+
+WARNING: This function is currently useless because the serial port
+receive pin is used for sound output in the BASIC Engine. It may be
+removed in the future if it turns out that there is no viable way
+to support serial input.
+\usage n = SREADY()
+\ret Number of bytes available to read.
+\ref SREAD()
+***/
 num_t BASIC_INT nsready() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.available();
