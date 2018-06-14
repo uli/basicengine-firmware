@@ -7000,6 +7000,22 @@ static BString serror() {
     return BString(FPSTR(errmsg[code]));
 }
 
+/***bf bas STRING$
+Returns a string of a specified length made up of a repeating character.
+\usage s$ = STRING$(count, char$)
+\args
+@count	number of characters [at least `0`]
+@char$	any non-empty string expression
+\note
+* If `char$` contains more than one character, only the first will be considered.
+* If `count` is `0`, an empty string will be returned.
+\example
+----
+PRINT STRING$(5, "-");
+PRINT "Hello";
+PRINT STRING$(5, "-")
+----
+***/
 static BString sstring() {
   BString out;
   int32_t count;
@@ -7151,6 +7167,18 @@ String concatenation operator.
   }
 }
 
+/***bf bas LEN
+Returns the number of characters in a string or the number of elements in
+a list.
+\usage
+sl = LEN(string$)
+
+ll = LEN(~list)
+\args
+@string$	any string expression
+@~list		reference to a numeric or string list
+\ret Length in characters (string) or elements (list).
+***/
 num_t BASIC_INT nlen() {
   int32_t value;
   if (checkOpen()) return 0;
