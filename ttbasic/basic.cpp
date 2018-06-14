@@ -3703,7 +3703,7 @@ The number of values required depends on the register accessed:
 \endtable
 \ref VREG()
 ***/
-void ivreg() {
+void BASIC_INT ivreg() {
   int32_t opcode;
   int vals;
 
@@ -3765,7 +3765,7 @@ produce invalid output, with may cause damage to older CRT displays.
 @val	value [`0` to `255`]
 \ref VPEEK()
 ***/
-void ivpoke() {
+void BASIC_INT ivpoke() {
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
   if (getParam(value, 0, 255, I_NONE)) return;
