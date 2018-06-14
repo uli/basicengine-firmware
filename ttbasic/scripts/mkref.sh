@@ -32,4 +32,4 @@ cat scripts/groups.txt|while read grp desc; do
   } >>../doc/reference.adoc
 done
 
-asciidoctor ../doc/manual.adoc
+asciidoctor -a stylesheet=../doc/asciidoctor.css ../doc/manual.adoc
