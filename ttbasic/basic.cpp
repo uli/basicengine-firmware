@@ -3397,6 +3397,18 @@ void ifiles() {
 #endif
 }
 
+/***bc fs FORMAT
+Formats the specified file system.
+
+WARNING: This command will erase any files stored on the formatted file
+system, including system files and the saved configuration, if any.
+
+IMPORTANT: Formatting the SD card file system does not currently work.
+\usage FORMAT <"/flash"|"/sd">
+\bugs
+SD card formatting is currently broken; use another device to format SD
+cards for use with the BASIC Engine.
+***/
 void SdFormat();
 void iformat() {
 #ifdef UNIFILE_USE_SPIFFS
@@ -3427,7 +3439,11 @@ void iformat() {
 #endif
 }
 
-// 画面クリア
+/***bc scr CLS
+Clears the current text window.
+\usage CLS
+\ref WINDOW
+***/
 void icls() {
   if (redirect_output_file < 0) {
     sc0.cls();
@@ -6266,10 +6282,21 @@ void iframeskip() {
 #endif
 }
 
+/***bc sys CREDITS
+Prints information on Engine BASIC's components, its authors and
+licensing conditions.
+\usage CREDITS
+***/
 void icredits() {
   c_puts_P(__credits);
 }
 
+/***bc sys XYZZY
+Run Z-machine program.
+\usage XYZZY file_name$
+\args
+@file_name$	name of a z-code file
+***/
 #include <azip.h>
 void ixyzzy() {
   if (!is_strexp()) {
@@ -6859,6 +6886,14 @@ static BString schr() {
   return value;
 }
 
+/***bf bas STR$
+Returns a string representation of a number.
+\usage s$ = STR$(num)
+\args
+@num	any numeric expression
+\ret String representation of `num`.
+\ref VAL()
+***/
 static BString sstr() {
   BString value;
   if (checkOpen()) return value;
@@ -6910,6 +6945,16 @@ static BString BASIC_INT sinkey() {
     return BString();
 }
 
+/***bf bas POPF$
+Remove an element from the beginning of a string list.
+\usage e$ = POPF$(~list$)
+\args
+@~list$	reference to a string list
+\ret Value of the element removed.
+\error
+An error is generated if `~list$` is empty.
+\ref POPB$()
+***/
 static BString BASIC_INT spopf() {
   BString value;
   if (checkOpen()) return value;
@@ -6927,6 +6972,16 @@ static BString BASIC_INT spopf() {
   return value;
 }
 
+/***bf bas POPB$
+Remove an element from the end of a string list.
+\usage e$ = POPB$(~list$)
+\args
+@~list$	reference to a string list
+\ret Value of the element removed.
+\error
+An error is generated if `~list$` is empty.
+\ref POPF$()
+***/
 static BString BASIC_INT spopb() {
   BString value;
   if (checkOpen()) return value;
@@ -7153,7 +7208,7 @@ BString BASIC_INT istrexp()
 /***bo sop + (strings)
 String concatenation operator.
 \usage a$ + b$
-\res Concatentatin of `a$` and `b$`.
+\res Concatenation of `a$` and `b$`.
 ***/
   case I_PLUS:
     cip++;
@@ -7850,6 +7905,8 @@ Remove an element from the beginning of a numeric list.
 \args
 @~list	reference to a numeric list
 \ret Value of the element removed.
+\error
+An error is generated if `~list` is empty.
 \ref POPB()
 ***/
 num_t BASIC_FP npopf() {
@@ -7875,6 +7932,8 @@ Remove an element from the end of a numeric list.
 \args
 @~list	reference to a numeric list
 \ret Value of the element removed.
+\error
+An error is generated if `~list` is empty.
 \ref POPF()
 ***/
 num_t BASIC_FP npopb() {
