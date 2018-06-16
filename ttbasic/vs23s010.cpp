@@ -1242,12 +1242,18 @@ void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
 void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
 {
   struct bg_t *bg = &m_bg[bg_idx];
+
+  int toff = (y % bg->h) * bg->w + (x % bg->w);
+  if (bg->tiles[toff] == t)
+    return;
+  else
+    bg->tiles[toff] = t;
+
   int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
   int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
   int tile_w = bg->win_w / bg->tile_size_x;
   int tile_h = bg->win_h / bg->tile_size_y;
 
-  bg->tiles[(y % bg->h) * bg->w + (x % bg->w)] = t;
   if (x >= tile_scroll_x &&
       x < tile_scroll_x + tile_w &&
       y >= tile_scroll_y &&
