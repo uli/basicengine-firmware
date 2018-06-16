@@ -309,13 +309,14 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
   I_PAD, I_SPRCOLL, I_TILECOLL,
   I_DIRSTR, I_INSTR, I_ERRORSTR, I_COMPARE,
+  I_SQOPEN, I_SQCLOSE,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
 const uint8_t i_nsb[] BASIC_DAT = {
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT,
-  I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL
+  I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL, I_SQOPEN, I_SQCLOSE,
 };
 
 // insert a blank before intermediate code
