@@ -278,10 +278,17 @@ class VS23S010 {
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
     void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count);
 
-    inline void scroll(uint8_t bg, uint16_t x, uint16_t y) {
-      m_bg[bg].scroll_x = x;
-      m_bg[bg].scroll_y = y;
-      m_bg_modified = true;
+    inline void scroll(uint8_t bg_idx, int x, int y) {
+      struct bg_t *bg = &m_bg[bg_idx];
+      while (x < 0)
+        x += bg->tile_size_x * bg->w;
+      while (y < 0)
+        y += bg->tile_size_y * bg->h;
+      if (bg->scroll_x != x || bg->scroll_y != y) {
+        bg->scroll_x = x;
+        bg->scroll_y = y;
+        m_bg_modified = true;
+      }
     }
     void updateBg();
 
