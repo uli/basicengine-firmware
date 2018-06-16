@@ -1105,6 +1105,8 @@ uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 
         goto DONE;
       }
       lp++;
+      if (*lp == I_IF)
+        lp++;
       break;
     case I_EOL:
     case I_REM:
