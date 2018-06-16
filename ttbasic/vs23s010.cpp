@@ -123,6 +123,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
 #ifdef VS23_BG_ENGINE
   m_frameskip = 0;
   m_bg_modified = true;
+  memset(m_bg, 0, sizeof(m_bg));
   memset(m_patterns, 0, sizeof(m_patterns));
   resetSprites();
 #endif
