@@ -1268,6 +1268,9 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
   else
     bg->tiles[toff] = t;
 
+#if 0
+  // damage detection
+  // XXX: does not work if BG wraps around
   int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
   int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
   int tile_w = bg->win_w / bg->tile_size_x;
@@ -1279,16 +1282,22 @@ void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
       y < tile_scroll_y + tile_h) {
     m_bg_modified = true;
   }
+#else
+  m_bg_modified = true;
+#endif
 }
 
 void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count)
 {
   struct bg_t *bg = &m_bg[bg_idx];
+#if 0
+  // XXX: damage detection does not work if BG wraps around
   int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
   int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
   int tile_w = bg->win_w / bg->tile_size_x;
   int tile_h = bg->win_h / bg->tile_size_y;
   int line_visible = y >= tile_scroll_y && y < tile_scroll_y + tile_h;
+#endif
 
   int off = (y % bg->h) * bg->w;
   for (int xx = x; xx < x+count; ++xx) {
@@ -1296,12 +1305,17 @@ void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t 
     if (bg->tile_map)
       t = bg->tile_map[t];
     bg->tiles[off + (xx % bg->w)] = t;
+#if 0
     if (xx >= tile_scroll_x &&
         xx < tile_scroll_x + tile_w &&
         line_visible) {
       m_bg_modified = true;
     }
   }
+#else
+  }
+  m_bg_modified = true;
+#endif
 }
 #endif	// VS23_BG_ENGINE
 
