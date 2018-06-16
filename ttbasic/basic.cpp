@@ -2039,6 +2039,29 @@ void istrarr() {
   if (err)
     return;
 
+  if (*cip == I_SQOPEN) {
+    // String character accessor
+    ++cip;
+
+    int32_t offset;
+    if (getParam(offset, 0, s.length(), I_SQCLOSE))
+      return;
+
+    if (*cip != I_EQ) {
+      err = ERR_VWOEQ;
+      return;
+    }
+    cip++;
+    
+    uint8_t sval = iexp();
+    if (err)
+      return;
+
+    s[offset] = sval;
+
+    return;
+  }
+
   if (*cip != I_EQ) {
     err = ERR_VWOEQ;
     return;
