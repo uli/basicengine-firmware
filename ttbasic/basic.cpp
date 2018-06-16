@@ -2872,7 +2872,7 @@ void SMALL irenum() {
 
   // 引数の有効性チェック
   cnt = countLines()-1;
-  if (startLineNo <= 0 || increase <= 0) {
+  if (startLineNo < 0 || increase <= 0) {
     err = ERR_RANGE;
     return;
   }
@@ -2894,8 +2894,8 @@ void SMALL irenum() {
       case I_GOSUB:   // GOSUB命令
 	i++;
 	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
-	  num = getlineno(&ptr[i]);      // 現在の行番号を取得する
-	  index = getlineIndex(num);     // 行番号の行インデックスを取得する
+	  num = getlineno(&ptr[i]);
+	  index = getlineIndex(num);
 	  if (index == INT32_MAX) {
 	    // 該当する行が見つからないため、変更は行わない
 	    i += sizeof(line_desc_t);
