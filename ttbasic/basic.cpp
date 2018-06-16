@@ -2842,7 +2842,16 @@ void inew(uint8_t mode) {
   }
 }
 
-// RENUME command handler
+/***bc bas RENUM
+Renumber BASIC program in memory.
+\usage RENUM [<start>[, <step>]]
+\args
+@start	new line number to start at [min `0`, default: `10`]
+@step	line number increment [min `0`, default: `10`]
+\note
+Computed branches (`GOTO` and `GOSUB` commands with variable arguments)
+cannot be renumbered correctly.
+***/
 void SMALL irenum() {
   uint32_t startLineNo = 10;  // 開始行番号
   uint32_t increase = 10;     // 増分
