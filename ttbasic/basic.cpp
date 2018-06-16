@@ -331,7 +331,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const uint8_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS,
+  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP,
 };
 
 // exception search function
