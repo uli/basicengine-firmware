@@ -8431,6 +8431,14 @@ alphabetically, `0` otherwise.
   case I_GT:
     rhs = istrexp();
     return basic_bool(lhs > rhs);
+  case I_SQOPEN: {
+    int32_t i = iexp();
+    if (*cip++ != I_SQCLOSE) {
+      E_SYNTAX(I_SQCLOSE);
+      return -1;
+    }
+    return lhs[i];
+  }
   default:
     err = ERR_TYPE;
     return -1;
