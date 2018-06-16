@@ -6243,25 +6243,58 @@ If the numeric `tile` argument is given, a single tile will be set.
 If a string of tiles (`tile$`) is passed, a tile will be set for each of the
 elements of the string, starting from the specified tile coordinates and
 proceeding horizontally.
-\ref BG
+\ref BG PLOT_MAP
+***/
+/***bc bg PLOT MAP
+Creates a mapping from one tile to another.
+\desc
+Tile numbers depend on the locations of graphics data in memory and do not
+usually represent printable characters, often making it difficult to handle
+them in program text. By remapping a printable character to a tile as
+represented by the graphics data, it is possible to use that human-readable
+character in your program, making it easier to write and to understand.
+\usage PLOT bg MAP from TO to
+\args
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@from	tile number to remap [`0` to `255`]
+@to	tile number to map to [`0` to `255`]
+\example
+====
+----
+PLOT 0 MAP ASC("X") TO 1
+PLOT 0 MAP ASC("O") TO 3
+...
+PLOT 0,5,10,"XOOOXXOO"
+----
+====
+\ref PLOT
 ***/
 void iplot() {
 #ifdef VS23_BG_ENGINE
   int32_t bg, x, y, t;
-  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA)) return;
+  if (getParam(bg, 0, VS23_MAX_BG, I_NONE)) return;
   if (!vs23.bgTiles(bg)) {
     // BG not defined
     err = ERR_RANGE;
     return;
   }
-  if (getParam(x, 0, INT_MAX, I_COMMA)) return;
-  if (getParam(y, 0, INT_MAX, I_COMMA)) return;
-  if (is_strexp()) {
-    BString dat = istrexp();
-    vs23.setBgTiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
+  if (*cip == I_MAP) {
+    ++cip;
+    if (getParam(x, 0, 255, I_TO)) return;
+    if (getParam(y, 0, 255, I_NONE)) return;
+    vs23.mapBgTile(bg, x, y);
+  } else if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
   } else {
-    if (getParam(t, 0, 255, I_NONE)) return;
-    vs23.setBgTile(bg, x, y, t);
+    if (getParam(x, 0, INT_MAX, I_COMMA)) return;
+    if (getParam(y, 0, INT_MAX, I_COMMA)) return;
+    if (is_strexp()) {
+      BString dat = istrexp();
+      vs23.setBgTiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
+    } else {
+      if (getParam(t, 0, 255, I_NONE)) return;
+      vs23.setBgTile(bg, x, y, t);
+    }
   }
 #else
   err = ERR_NOT_SUPPORTED;
