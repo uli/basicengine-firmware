@@ -8079,6 +8079,8 @@ num_t BASIC_INT nsvar_a() {
   return svar.var(i)[a];
 }
 
+num_t BASIC_INT irel_string();
+
 // Get value
 num_t BASIC_FP ivalue() {
   num_t value = 0; // 値
@@ -8088,6 +8090,9 @@ num_t BASIC_FP ivalue() {
 
   if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
     value = numfuntbl[*cip++ - NUMFUN_FIRST]();
+  } else if (is_strexp()) {
+    // string comparison (or error)
+    value = irel_string();
   } else switch (*cip++) {
   //定数の取得
   case I_NUM:    // 定数
@@ -8447,12 +8452,7 @@ alphabetically, `0` otherwise.
 
 num_t BASIC_FP irel() {
   num_t value, tmp;
-
-  if (is_strexp()) {
-    // string comparison (or error)
-    value = irel_string();
-  } else
-    value = iplus();
+  value = iplus();
 
   if (err)
     return -1;
