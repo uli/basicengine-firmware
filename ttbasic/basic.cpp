@@ -2854,8 +2854,8 @@ Computed branches (`GOTO` and `GOSUB` commands with variable arguments)
 cannot be renumbered correctly.
 ***/
 void SMALL irenum() {
-  uint32_t startLineNo = 10;  // 開始行番号
-  uint32_t increase = 10;     // 増分
+  int32_t startLineNo = 10;  // 開始行番号
+  int32_t increase = 10;     // 増分
   uint8_t* ptr;               // プログラム領域参照ポインタ
   uint32_t len;               // 行長さ
   uint32_t i;                 // 中間コード参照位置
@@ -2865,18 +2865,11 @@ void SMALL irenum() {
   uint32_t cnt;               // プログラム行数
   int toksize;
 
-  // 開始行番号、増分引数チェック
-  if (*cip == I_NUM) {               // もしRENUMT命令に引数があったら
-    startLineNo = getlineno(cip);    // 引数を読み取って開始行番号とする
-    cip += sizeof(line_desc_t);
+  if (!end_of_statement()) {
+    startLineNo = iexp();
     if (*cip == I_COMMA) {
-      cip++;                          // カンマをスキップ
-      if (*cip == I_NUM) {            // 増分指定があったら
-	increase = getlineno(cip);    // 引数を読み取って増分とする
-      } else {
-        SYNTAX_T("exp line number");
-	return;
-      }
+      cip++;
+      increase = iexp();
     }
   }
 
