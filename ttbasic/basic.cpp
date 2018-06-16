@@ -8501,7 +8501,7 @@ Bitwise AND operator.
 Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical AND" operator; instead, the bitwise operator is used.
 ***/
-      tmp = irel();
+      tmp = iand();
       value = ((int32_t)value)&((int32_t)tmp);
       break;
     default:
