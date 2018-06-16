@@ -277,6 +277,7 @@ class VS23S010 {
     
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
     void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count);
+    void mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to);
 
     inline void scroll(uint8_t bg_idx, int x, int y) {
       struct bg_t *bg = &m_bg[bg_idx];
@@ -418,6 +419,7 @@ private:
       uint16_t win_x, win_y, win_w, win_h;
       bool enabled;
       uint8_t prio;
+      uint8_t *tile_map;
     } m_bg[VS23_MAX_BG];
 
     void drawBg(struct bg_t *bg,

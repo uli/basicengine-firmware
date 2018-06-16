@@ -342,6 +342,10 @@ void VS23S010::freeBg(uint8_t bg_idx)
     free(bg->tiles);
     bg->tiles = NULL;
   }
+  if (bg->tile_map) {
+    free(bg->tile_map);
+    bg->tile_map = NULL;
+  }
 }
 
 void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
@@ -1240,9 +1244,23 @@ void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
   }
 }
 
+void VS23S010::mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to)
+{
+  struct bg_t *bg = &m_bg[bg_idx];
+  if (!bg->tile_map) {
+    bg->tile_map = (uint8_t *)malloc(256);
+    for (int i = 0; i < 256; ++i)
+      bg->tile_map[i] = i;
+  }
+  bg->tile_map[from] = to;
+}
+
 void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
 {
   struct bg_t *bg = &m_bg[bg_idx];
+
+  if (bg->tile_map)
+    t = bg->tile_map[t];
 
   int toff = (y % bg->h) * bg->w + (x % bg->w);
   if (bg->tiles[toff] == t)
@@ -1274,7 +1292,10 @@ void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t 
 
   int off = (y % bg->h) * bg->w;
   for (int xx = x; xx < x+count; ++xx) {
-    bg->tiles[off + (xx % bg->w)] = *tiles++;
+    uint8_t t = *tiles++;
+    if (bg->tile_map)
+      t = bg->tile_map[t];
+    bg->tiles[off + (xx % bg->w)] = t;
     if (xx >= tile_scroll_x &&
         xx < tile_scroll_x + tile_w &&
         line_visible) {
