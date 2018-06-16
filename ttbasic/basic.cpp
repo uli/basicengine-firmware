@@ -1089,6 +1089,7 @@ uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 
   uint8_t* rc = NULL;
   uint8_t* lp;
   unsigned char lifstki = 1 + adjust;
+  uint8_t *stlp = clp; uint8_t *stip = cip;
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
   for (lp = p; ; ) {
@@ -1111,6 +1112,7 @@ uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 
       // Continue at next line.
       clp += *clp;
       if (!*clp) {
+        clp = stlp; cip = stip;
         err = ERR_NOENDIF;
         return NULL;
       }
