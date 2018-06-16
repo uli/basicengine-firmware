@@ -1064,7 +1064,7 @@ unsigned char* BASIC_FP getlp(uint32_t lineno) {
   return lp; //ポインタを持ち帰る
 }
 
-// 行番号から行インデックスを取得する
+// Get line index from line number
 uint32_t getlineIndex(uint32_t lineno) {
   unsigned char *lp; //ポインタ
   uint32_t index = 0;
@@ -2890,8 +2890,9 @@ void SMALL irenum() {
     // 行内検索
     while( i < len-1 ) {
       switch(ptr[i]) {
-      case I_GOTO:    // GOTO命令
-      case I_GOSUB:   // GOSUB命令
+      case I_GOTO:
+      case I_GOSUB:
+      case I_THEN:
 	i++;
 	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
 	  num = getlineno(&ptr[i]);
