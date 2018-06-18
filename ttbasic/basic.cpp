@@ -307,7 +307,7 @@ const uint8_t i_nsa[] BASIC_DAT = {
   I_DIN, I_ANA,
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
-  I_PAD, I_SPRCOLL, I_TILECOLL,
+  I_PAD, I_SPRCOLL, I_SPRX, I_SPRY, I_TILECOLL,
   I_DIRSTR, I_INSTR, I_ERRORSTR, I_COMPARE,
   I_SQOPEN, I_SQCLOSE,
 };
@@ -7761,6 +7761,53 @@ num_t BASIC_FP nsprcoll() {
     return vs23.spriteCollision(a, b);
   else
     return 0;
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
+/***bf bg SPRX
+Returns the horizontal position of a given sprite.
+\usage p = SPRX(spr)
+\args
+@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+\ret
+X coordinate of sprite `spr`.
+\ref MOVE_SPRITE SPRY()
+***/
+num_t BASIC_FP nsprx() {
+#ifdef VS23_BG_ENGINE
+  int32_t spr;
+
+  if (checkOpen() ||
+      getParam(spr, 0, VS23_MAX_SPRITES, I_CLOSE))
+    return 0;
+
+  return vs23.spriteX(spr);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+/***bf bg SPRY
+Returns the vertical position of a given sprite.
+\usage p = SPRY(spr)
+\args
+@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+\ret
+Y coordinate of sprite `spr`.
+\ref MOVE_SPRITE SPRX()
+***/
+num_t BASIC_FP nspry() {
+#ifdef VS23_BG_ENGINE
+  int32_t spr;
+
+  if (checkOpen() ||
+      getParam(spr, 0, VS23_MAX_SPRITES, I_CLOSE))
+    return 0;
+
+  return vs23.spriteY(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;

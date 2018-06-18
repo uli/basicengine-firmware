@@ -183,6 +183,8 @@ PSIZE	I_PSIZE		npsize
 FRAME	I_FRAME		nframe
 TILECOLL	I_TILECOLL	ntilecoll
 SPRCOLL	I_SPRCOLL	nsprcoll
+SPRX	I_SPRX		nsprx
+SPRY	I_SPRY		nspry
 POPF	I_POPF		npopf
 POPB	I_POPB		npopb
 VAL	I_VAL		nval
