@@ -316,6 +316,12 @@ class VS23S010 {
     inline bool spriteOpaque(uint8_t num) {
       return !m_sprite[num].pat;
     }
+    inline int16_t spriteX(uint8_t num) {
+      return m_sprite[num].pos_x;
+    }
+    inline int16_t spriteY(uint8_t num) {
+      return m_sprite[num].pos_y;
+    }
 
     inline void setSpriteOpaque(uint8_t num, bool enable) {
       struct sprite_t *s = &m_sprite[num];
