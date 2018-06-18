@@ -7814,6 +7814,53 @@ num_t BASIC_FP nspry() {
 #endif
 }
 
+/***bf bg BSCRX
+Returns the horizontal scrolling offset of a given background layer.
+\usage p = BSCRX(bg)
+\args
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+\ret
+X scrolling offset of background `bg`.
+\ref BG BSCRY()
+***/
+num_t BASIC_FP nbscrx() {
+#ifdef VS23_BG_ENGINE
+  int32_t bg;
+
+  if (checkOpen() ||
+      getParam(bg, 0, VS23_MAX_BG-1, I_CLOSE))
+    return 0;
+
+  return vs23.bgScrollX(bg);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+/***bf bg BSCRY
+Returns the vertical scrolling offset of a given background layer.
+\usage p = BSCRY(bg)
+\args
+@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+\ret
+Y scrolling offset of background `bg`.
+\ref BG BSCRX()
+***/
+num_t BASIC_FP nbscry() {
+#ifdef VS23_BG_ENGINE
+  int32_t bg;
+
+  if (checkOpen() ||
+      getParam(bg, 0, VS23_MAX_BG-1, I_CLOSE))
+    return 0;
+
+  return vs23.bgScrollY(bg);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
 /***bf snd PLAY
 Checks if a sound is playing a on wavetable synthesizer channel.
 \usage p = PLAY(channel)

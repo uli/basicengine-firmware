@@ -185,6 +185,8 @@ TILECOLL	I_TILECOLL	ntilecoll
 SPRCOLL	I_SPRCOLL	nsprcoll
 SPRX	I_SPRX		nsprx
 SPRY	I_SPRY		nspry
+BSCRX	I_BSCRX		nbscrx
+BSCRY	I_BSCRY		nbscry
 POPF	I_POPF		npopf
 POPB	I_POPB		npopb
 VAL	I_VAL		nval
