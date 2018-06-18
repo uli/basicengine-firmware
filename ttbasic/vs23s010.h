@@ -274,6 +274,12 @@ class VS23S010 {
     inline bool bgEnabled(uint8_t bg) {
       return m_bg[bg].enabled;
     }
+    inline int bgScrollX(uint8_t bg) {
+      return m_bg[bg].scroll_x;
+    }
+    inline int bgScrollY(uint8_t bg) {
+      return m_bg[bg].scroll_y;
+    }
     
     void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
     void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count);
