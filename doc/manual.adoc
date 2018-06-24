@@ -3,6 +3,8 @@
 :toclevels: 3
 :numbered:
 :experimental:
+:imagesdir: ./images
+:toc-title: pass:[<a href="/"><img src="images/be_logo.png"/></a>Engine BASIC Reference Manual]
 
 == How to Use this Manual
 
