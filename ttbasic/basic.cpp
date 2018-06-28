@@ -9012,7 +9012,7 @@ instead.
 ====
 ----
 FOR i = 1 TO 20
-  GOSUB Square
+  GOSUB &Square
 NEXT i
 END
   
