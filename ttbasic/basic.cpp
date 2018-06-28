@@ -7129,11 +7129,13 @@ Returns a string of a specified length made up of a repeating character.
 * If `char$` contains more than one character, only the first will be considered.
 * If `count` is `0`, an empty string will be returned.
 \example
+====
 ----
 PRINT STRING$(5, "-");
 PRINT "Hello";
 PRINT STRING$(5, "-")
 ----
+====
 ***/
 static BString sstring() {
   BString out;
@@ -9465,6 +9467,7 @@ be exited and execution will continue with the statement following the
 
 If no condition is specified, the loop will repeat forever.
 \example
+====
 ----
 i=0
 PRINT "Value of i at beginning of loop is ";i
@@ -9473,6 +9476,7 @@ DO
 LOOP WHILE i<10
 PRINT "Value of i at end of loop is ";i
 ----
+====
 ***/
 void BASIC_FP ido() {
   if (lstki >= SIZE_LSTK) {
@@ -9596,16 +9600,20 @@ loop on the loop stack (that is, the one started last) will be iterated. If
 it is specified, the `FOR` loop associated with the given variable will be
 iterated, and any nested loops below it will be discarded.
 \example
+====
 ----
 FOR i = 1 TO 15
   PRINT i
 NEXT i
 ----
+====
+====
 ----
 FOR i = 7 to -6 STEP -3
   PRINT i
 NEXT i
 ----
+====
 ***/
 void BASIC_FP ifor() {
   int index;
