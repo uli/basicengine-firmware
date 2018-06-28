@@ -813,6 +813,52 @@ uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
       }
       break;                             // 文字列の処理を打ち切る（終端の処理へ進む）
     } else if (key == I_PROC) {
+// XXX: No better place to put this...
+/***bc bas PROC
+Define a procedure or function.
+\usage PROC name[(<num_arg|str_arg$>[, <num_arg|str_arg$> ...])]
+\args
+@name		procedure name
+@num_arg	name of a numeric argument variable
+@str_arg$	name of a string argument variable
+\desc
+`PROC` defines a procedure or function that can be called using `CALL` or
+`FN`.  If a procedure or function has arguments, they can be referenced as
+local variables using the `@` sigil.
+
+Within a procedure or function, any numeric or string variable prefixed with
+the `@` sigil will be treated as a local variable that is valid only within
+the scope of the procedure. Setting such a variable will not affect global
+variables or local variables in other procedures.
+\error
+Procedures can only be called using `CALL` or `FN`. If a `PROC` statement
+is encountered during normal program flow, an error is generated.
+\example
+====
+----
+PROC foo(x, y)
+  MOVE SPRITE 0 TO @x, @y
+  RETURN
+----
+----
+CALL foo(20, 30)
+----
+====
+
+====
+----
+PROC sum(eins, zwei)
+  RETURN @eins+@zwei
+----
+----
+s = FN sum(1, 1)
+----
+====
+\bugs
+It is not currently possible to use complex data types (arrays and lists)
+as local variables or arguments.
+\ref CALL FN RETURN
+***/
       if (!is_prg_text) {
         err = ERR_COM;
         return 0;
