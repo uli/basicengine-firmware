@@ -5720,16 +5720,16 @@ WINDOW x, y, w, h
 WINDOW OFF
 \args
 @x	left boundary of the text window, in characters +
-        [`0` to `CSIZE(0)-8`]
+        [`0` to `CSIZE(0)-1`]
 @y	top boundary of the text window, in characters +
-        [`0` to `CSIZE(1)-2`]
+        [`0` to `CSIZE(1)-1`]
 @w	width of the text window, in characters +
-        [`8` to `CSIZE(0)-x`]
+        [`1` to `CSIZE(0)-x`]
 @h	height of the text window, in characters +
-        [`2` to `CSIZE(1)-y`]
+        [`1` to `CSIZE(1)-y`]
 \ref CSIZE()
 ***/
-void iwindow() {
+void BASIC_INT iwindow() {
   int32_t x, y, w, h;
 
 #ifdef VS23_BG_ENGINE
@@ -5743,10 +5743,10 @@ void iwindow() {
     return;
   }
 
-  if ( getParam(x,  0, sc0.getScreenWidth() - 8, I_COMMA) ) return;   // x
-  if ( getParam(y,  0, sc0.getScreenHeight() - 2, I_COMMA) ) return;        // y
-  if ( getParam(w,  8, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
-  if ( getParam(h,  2, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
+  if ( getParam(x,  0, sc0.getScreenWidth() - 1, I_COMMA) ) return;   // x
+  if ( getParam(y,  0, sc0.getScreenHeight() - 1, I_COMMA) ) return;        // y
+  if ( getParam(w,  1, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
+  if ( getParam(h,  1, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
 
   sc0.setWindow(x, y, w, h);
   sc0.locate(0,0);
