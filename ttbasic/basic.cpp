@@ -2344,6 +2344,8 @@ void initialize_proc_pointers(void)
 
     pr.argc_num = 0;
     pr.argc_str = 0;
+    pr.locc_num = 0;
+    pr.locc_str = 0;
     pr.profile_total = 0;
 
     if (*ip == I_OPEN) {
