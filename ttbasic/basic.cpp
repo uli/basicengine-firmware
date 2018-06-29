@@ -10371,7 +10371,7 @@ void iextend();
 typedef void (*cmd_t)();
 #include "funtbl.h"
 
-void iextend() {
+void BASIC_INT iextend() {
   if (*cip >= sizeof(funtbl_ext) / sizeof(funtbl_ext[0])) {
     err = ERR_SYS;
     return;
