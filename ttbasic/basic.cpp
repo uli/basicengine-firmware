@@ -9376,10 +9376,14 @@ void BASIC_FP icall() {
 
   int num_args = 0;
   int str_args = 0;
+  // Argument stack indices cannot be modified while arguments are evaluated
+  // because that would mess with the stack frame of the caller.
+  int new_astk_num_i = astk_num_i;
+  int new_astk_str_i = astk_str_i;
   if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
     struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
-    astk_num_i += p.locc_num;
-    astk_str_i += p.locc_str;
+    new_astk_num_i += p.locc_num;
+    new_astk_str_i += p.locc_str;
   }
   if (*cip == I_OPEN) {
     ++cip;
@@ -9388,17 +9392,17 @@ void BASIC_FP icall() {
         BString b = istrexp();
         if (err)
           return;
-        if (astk_str_i >= SIZE_ASTK)
+        if (new_astk_str_i >= SIZE_ASTK)
           goto overflow;
-        astk_str[astk_str_i++] = b;
+        astk_str[new_astk_str_i++] = b;
         ++str_args;
       } else {
         n = iexp();
         if (err)
           return;
-        if (astk_num_i >= SIZE_ASTK)
+        if (new_astk_num_i >= SIZE_ASTK)
           goto overflow;
-        astk_num[astk_num_i++] = n;
+        astk_num[new_astk_num_i++] = n;
         ++num_args;
       }
       if (*cip != I_COMMA)
@@ -9409,6 +9413,8 @@ void BASIC_FP icall() {
     if (checkClose())
       return;
   }
+  astk_num_i = new_astk_num_i;
+  astk_str_i = new_astk_str_i;
   if (num_args < proc_loc.argc_num ||
       str_args < proc_loc.argc_str) {
     err = ERR_ARGS;
