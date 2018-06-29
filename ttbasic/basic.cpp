@@ -5740,6 +5740,7 @@ void BASIC_INT iwindow() {
   if (*cip == I_OFF) {
     ++cip;
     sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    sc0.setScroll(true);
     return;
   }
 
@@ -5749,6 +5750,7 @@ void BASIC_INT iwindow() {
   if ( getParam(h,  1, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
 
   sc0.setWindow(x, y, w, h);
+  sc0.setScroll(h > 1 ? true : false);
   sc0.locate(0,0);
   sc0.show_curs(false);
 }
@@ -10449,6 +10451,7 @@ void SMALL resize_windows()
       original_text_pos[0] = sc0.c_x();
       original_text_pos[1] = sc0.c_y();
       sc0.setWindow(x, y + sc0.getScreenHeight() - 5, w, 5);
+      sc0.setScroll(true);
       sc0.locate(0,0);
       sc0.cls();
       restore_text_window = true;
@@ -10463,6 +10466,7 @@ void SMALL restore_windows()
   if (restore_text_window) {
     restore_text_window = false;
     sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
+    sc0.setScroll(true);
     sc0.locate(original_text_pos[0], original_text_pos[1]);
   }
   if (restore_bgs) {
