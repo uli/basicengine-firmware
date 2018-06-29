@@ -195,9 +195,11 @@ void tscreenBase::Insert_char(uint8_t c) {
      // 文字列長さが0または上書きモードの場合、そのまま1文字表示
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
-      scroll_up();
-      start_adr_y--;
-      MOVE(pos_y-1, pos_x);
+      if (pos_y > 0) {
+        scroll_up();
+        start_adr_y--;
+        MOVE(pos_y-1, pos_x);
+      }
     } else  if ( (pos_x + ln >= width-1) && !VPEEK(width-1,pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
        Insert_newLine(pos_y+(pos_x+ln)/width);       
@@ -207,9 +209,11 @@ void tscreenBase::Insert_char(uint8_t c) {
      // 挿入処理が必要の場合  
     if (pos_y + (pos_x+ln+1)/width >= height) {
       // 最終行を超える場合は、挿入前に1行上にスクロールして表示行を確保
-      scroll_up();
-      start_adr_y--;
-      MOVE(pos_y-1, pos_x);
+      if (pos_y > 0) {
+        scroll_up();
+        start_adr_y--;
+        MOVE(pos_y-1, pos_x);
+      }
     } else  if ( ((pos_x + ln +1)%width == width-1) && !VPEEK(pos_x + ln , pos_y) ) {
        // 画面左端に1文字を書く場合で、次行と連続でない場合は下の行に1行空白を挿入する
           Insert_newLine(pos_y+(pos_x+ln)/width);
