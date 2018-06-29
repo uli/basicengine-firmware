@@ -26,7 +26,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
   whole_width = width   = w;
   whole_height = height  = h;
   maxllen = l;
-  win_x = 0; win_y = 0;
 
   // デバイスの初期化
   INIT_DEV();
