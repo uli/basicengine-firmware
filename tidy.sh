@@ -13,6 +13,8 @@ clang-tidy-5.0 "$@" -- \
   -I${ARDUINO_BSP}/variants/basic_engine \
   -I${LIBS_DIR}/TTVoutfonts -I${ARDUINO_BSP}/libraries/SPI -I${LIBS_DIR}/TTBAS_LIB -I${LIBS_DIR}/TKeyboard/src \
   -I${LIBS_DIR}/ESP8266SAM/src \
+  -I${LIBS_DIR}/azip \
   -I${ARDUINO_BSP}/libraries/Wire -I${LIBS_DIR}/SdFat/src \
   -D_GCC_LIMITS_H_ -DARDUINO -D__XTENSA__ -DESP8266 -DESP8266_NOWIFI -D__ets__ \
+  -DF_CPU=160000000 \
   -std=c++11 -m32 -U__GNUC__ -Wno-unknown-attributes -Wall
