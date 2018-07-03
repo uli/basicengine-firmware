@@ -3645,7 +3645,9 @@ void BASIC_INT draw_profile(void)
 void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
-
+#ifdef HOSTED
+  hosted_pump_events();
+#endif
   if (vs23.frame() == last_frame) {
 #ifdef HAVE_TSF
     if (sound.needSamples())
