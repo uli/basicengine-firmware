@@ -3182,7 +3182,9 @@ void SMALL iconfig() {
     if (value < 0 || value > 2)  {
       E_VALUE(0, 2);
     } else {
+#ifndef HOSTED
       kb.setLayout(value);
+#endif
       CONFIG.KEYBOARD = value;
     }
     break;
