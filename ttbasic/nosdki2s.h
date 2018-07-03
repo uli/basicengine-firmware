@@ -443,10 +443,12 @@ extern struct sdio_queue i2sBufDesc[];
 
 static inline void nosdk_i2s_set_blocksize(uint32_t len)
 {
+#ifndef HOSTED
 	i2sBufDesc[0].blocksize = len;
 	i2sBufDesc[1].blocksize = len;
 	i2sBufDesc[0].datalen = len;
 	i2sBufDesc[1].datalen = len;
+#endif
 }
 
 #ifndef ESP8266_NOWIFI

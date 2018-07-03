@@ -406,6 +406,7 @@ void BasicSound::setBeep(int period, int vol)
 
   nosdk_i2s_set_blocksize(period * 4);
 
+#ifndef HOSTED
   for (int b = 0; b < 2; ++b) {
     for (int i = 0; i < period / 2; ++i) {
       ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = 0;
@@ -414,6 +415,7 @@ void BasicSound::setBeep(int period, int vol)
       ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = sample;
     }
   }
+#endif
 }
 
 void BasicSound::beep(int period, int vol, const uint8_t *env)
@@ -434,8 +436,10 @@ void BasicSound::beep(int period, int vol, const uint8_t *env)
 void BasicSound::noBeep()
 {
   m_beep_env = NULL;
+#ifndef HOSTED
   memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, I2S_BUFLEN * 4);
   memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
+#endif
   nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
 
