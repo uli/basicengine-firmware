@@ -8359,7 +8359,7 @@ PROC f(x): RETURN @x * 2
     return 0;
   }
 
-#ifdef ESP8266_NOWIFI
+#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
   // XXX: So, yes, it's weird that the I2S could would be responsible for
   // checking for system stack overflows, but it happens to have its data
   // buffer right below the stack, and knows where it ends...
