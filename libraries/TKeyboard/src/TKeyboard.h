@@ -239,9 +239,13 @@ class TKeyboard {
     inline static void  mode_stop();      // 通信禁止
     inline static void  mode_send();      // ホスト送信モード
     
+#ifdef HOSTED
+    bool state(uint8_t keycode);
+#else
     inline static bool state(uint8_t keycode) {
       return !!(m_key_state[keycode/8] & (1 << keycode % 8));
     }
+#endif
 };
 
 #endif
