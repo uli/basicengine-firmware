@@ -336,7 +336,7 @@ public:
     }
   }
 
-  static Unifile open(const char *name, uint8_t flags) {
+  static Unifile open(const char *name, int flags) {
     UnifileString abs_name = path(name);
     if (isSPIFFS(abs_name)) {
       UnifileString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
@@ -368,7 +368,7 @@ public:
     }
   }
   
-  static Unifile open(const UnifileString &name, uint8_t flags) {
+  static Unifile open(const UnifileString &name, int flags) {
     return open(name.c_str(), flags);
   }
 
