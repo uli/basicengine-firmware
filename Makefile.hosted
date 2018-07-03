@@ -7,7 +7,7 @@ CXXFLAGS = $(CFLAGS) -fpermissive -std=c++11
 
 SOURCES = $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
 	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
-	hosted/ttbasic.cpp \
+	$(shell ls libraries/azip/*.cpp) hosted/ttbasic.cpp \
 	hosted/Arduino.cpp hosted/WString.cpp hosted/core_esp8266_noniso.cpp hosted/noniso.cpp \
 	hosted/Time.cpp hosted/hosted_spi.cpp hosted/TKeyboard.cpp
 SOURCES_C = $(shell ls ttbasic/*.c) hosted/hosted_i2s.c
