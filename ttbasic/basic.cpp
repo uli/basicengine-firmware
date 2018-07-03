@@ -10286,6 +10286,7 @@ The `BOOT` command does not verify if valid firmware code is installed at
 the given flash page. Use with caution.
 ***/
 void iboot() {
+#ifndef HOSTED
   int32_t sector;
   if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
     return;
@@ -10300,6 +10301,7 @@ void iboot() {
   for(;;);
 #else
   ESP.reset();        // UNTESTED!
+#endif
 #endif
 }
 
