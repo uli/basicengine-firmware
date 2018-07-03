@@ -7948,7 +7948,7 @@ Get free memory size.
 ***/
 num_t BASIC_FP nfree() {
   if (checkOpen()||checkClose()) return 0;
-#ifdef ESP8266
+#if defined(ESP8266) && !defined(HOSTED)
   return umm_free_heap_size();
 #else
   err = ERR_NOT_SUPPORTED;
@@ -8913,10 +8913,12 @@ void SMALL isysinfo() {
   putHexnum(adr, 8);
   newline();
 
+#if defined(ESP8266) && !defined(HOSTED)
   // SRAM未使用領域の表示
   PRINT_P("SRAM Free: ");
   putnum(umm_free_heap_size(), 0);
   newline();
+#endif
 
   newline();
   PRINT_P("Video timing: ");
@@ -10724,7 +10726,7 @@ void SMALL basic() {
   // Free memory
   sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
-#ifdef ESP8266
+#if defined(ESP8266) && !defined(HOSTED)
   putnum(umm_free_heap_size(), 0);
   PRINT_P(" bytes free\n");
 #endif
