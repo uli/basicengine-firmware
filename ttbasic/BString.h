@@ -39,8 +39,13 @@ class BStringSumHelper;
 // XXX: SdFat/src/SysCall.h messes with this! WTF??
 #undef F
 class __FlashStringHelper;
+#ifdef HOSTED
+#define FPSTR(p) (p)
+#define F(p) (p)
+#else
 #define FPSTR(pstr_pointer) (reinterpret_cast<const __FlashStringHelper *>(pstr_pointer))
 #define F(string_literal) (FPSTR(PSTR(string_literal)))
+#endif
 
 // The string class
 class BString {
