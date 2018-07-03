@@ -29,6 +29,9 @@
 #include "BString.h"
 #include "error.h"
 #include "vs23s010.h"
+
+#ifndef HOSTED
+
 #include <Updater.h>
 #include <spi_flash.h>
 
@@ -255,3 +258,9 @@ out:
   // XXX: clean up Updater?
   sc0.show_curs(1);
 }
+
+#else	// !HOSTED
+void iflash() {
+  err = ERR_NOT_SUPPORTED;
+}
+#endif
