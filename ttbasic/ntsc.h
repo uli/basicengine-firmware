@@ -186,7 +186,7 @@
 #endif
 
 /// Protoline 0 starts always at address 0
-#define PROTOLINE_BYTE_ADDRESS(n) (PROTOLINE_LENGTH_WORDS)*2*(n))
+#define PROTOLINE_BYTE_ADDRESS(n) (PROTOLINE_LENGTH_WORDS*2*(n))
 #define PROTOLINE_WORD_ADDRESS(n) (PROTOLINE_LENGTH_WORDS*(n))
 
 /// Calculate picture lengths in pixels and bytes, coordinate areas for picture area
