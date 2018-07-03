@@ -26,7 +26,7 @@ const unsigned char tab36376[] PROGMEM  =
 	163, 76, 138, 142
 };
 
-const char rules[] PROGMEM =
+const unsigned char rules[] PROGMEM =
 {
 ']','A'|0x80,
 ' ','(','A','.',')',                    '=','E','H','4','Y','.',' '|0x80,
@@ -484,7 +484,7 @@ const char rules[] PROGMEM =
 'j'|0x80
 };
 
-const char rules2[] PROGMEM =
+const unsigned char rules2[] PROGMEM =
 {
 '(','A',')',                            '='|0x80,
 '(','!',')',                            '=','.'|0x80,
