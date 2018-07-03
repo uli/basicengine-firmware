@@ -14,9 +14,7 @@ class SPIClass {
 public:
   void begin() {
   }
-  void write(uint8_t data) {
-    printf("SPIwrite %02X\n",data);
-  }
+  void write(uint8_t data);
   void setFrequency(uint32_t freq) {
   }
   bool pins(int8_t sck, int8_t miso, int8_t mosi, int8_t ss) {

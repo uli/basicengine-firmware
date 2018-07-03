@@ -1,6 +1,7 @@
 #include "hosted_spi.h"
 #include <stdio.h>
 #include "ntsc.h"
+#include "SPI.h"
 
 uint8_t vs23_mem[131072];
 
@@ -43,14 +44,27 @@ void SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len) {
     vs23_mem[(address+i) % 131072] = data[i];
 }
 
+uint32_t mvsrc, mvtgt;
+uint16_t mvskp;
+uint8_t mvlen, mvlin;
+int mvdir;
+
 void SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2, uint16_t data3) {
   printf("RWBM2C %04X %04X %04X\n", data1, data2, data3);
+  mvskp = data1;
+  mvlen = data2;
+  mvlin = data3;
 }
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
   printf("RWBMC  %04X %04X %04X %04X\n", opcode, data1, data2, data3);
+  mvsrc = (data1 << 1) | ((data3 >> 2) & 1);
+  mvtgt = (data2 << 1) | ((data3 >> 1) & 1);
+  mvdir = data3 & 1 ? -1 : 1;
 }
 void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2) {
   printf("RWBMCF %04X %04X %04X\n", opcode, data1, data2);
+  mvsrc = (mvsrc & 1) | (data1 << 1);
+  mvtgt = (mvtgt & 1) | (data2 << 1);
 }
 
 uint16_t SpiRamReadRegister(register uint16_t opcode) {
@@ -77,4 +91,25 @@ void SpiRamWriteByteRegister(uint16_t opcode, uint16_t data) {
 
 void SpiRamWriteProgram(uint16_t opcode, uint16_t data1, uint16_t data2) {
   printf("RWP  %04X %04X %04X\n", opcode, data1, data2);
+}
+
+void SPIClass::write(uint8_t data) {
+  printf("SPIwrite %04X\n",data);
+  if (data == 0x36) {
+    printf("mov src %05X tgt %05X dir %d lin %d len %d skp %d\n",
+      mvsrc, mvtgt, mvdir, mvlin, mvlen, mvskp);
+    int vs, vt, x, y;
+    for (vs = mvsrc, vt = mvtgt, x = 0, y = 0;; ) {
+      vs23_mem[vt] = vs23_mem[vs];
+      x++; vs += mvdir; vt += mvdir;
+      if (x == mvlen) {
+        vt += mvdir * mvskp;
+        vs += mvdir * mvskp;
+        x = 0;
+        y++;
+        if (y == mvlin)
+          break;
+      }
+    }
+  }
 }
