@@ -1,11 +1,22 @@
 #ifndef _SDFAT_H
 #define _SDFAT_H
 
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <sdfiles.h>
 
 #define FILE_READ O_RDONLY
 #define FILE_WRITE (O_RDWR | O_CREAT | O_APPEND)
+#define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
 #define O_READ O_RDONLY
+
+#define FS_PREFIX "./vfs"
+
+const char *apsd(const char *p);
+const char *apfs(const char *p);
 
 typedef struct {
   uint16_t creationDate;
@@ -19,10 +30,21 @@ public:
   }
 };
 
+class SdFat;
+
 class File {
+  friend class SdFat;
 public:
+  File() {
+    fp = NULL;
+  }
   bool close() {
-    return false;
+    if (fp) {
+      int ret = fclose(fp);
+      fp = NULL;
+      return ret;
+    } else
+      return false;
   }
   bool sync() {
     return false;
@@ -37,7 +59,9 @@ public:
     return write(&b, 1);
   }
   int read(void* buf, size_t nbyte) {
-    return -1;
+    if (!fp)
+      return -1;
+    return fread(buf, 1, nbyte, fp);
   }
   int read() {
     uint8_t b;
@@ -47,16 +71,32 @@ public:
     return -1;
   }
   uint32_t fileSize() const {
-    return 0;
+    if (!fp)
+      return 0;
+    size_t c = ftell(fp);
+    fseek(fp, 0, SEEK_END);
+    size_t s = ftell(fp);
+    fseek(fp, c, SEEK_SET);
+    return s;
   }
   bool seekSet(uint32_t pos) {
-    return false;
+    if (!fp)
+      return false;
+    else
+      return fseek(fp, pos, SEEK_SET) == 0;
   }
   uint32_t available() {
-    return 0;
+    size_t c = ftell(fp);
+    fseek(fp, 0, SEEK_END);
+    size_t e = ftell(fp);
+    fseek(fp, c, SEEK_SET);
+    return e-c;
   }
   int position() {
-    return -1;
+    if (!fp)
+      return -1;
+    else
+      return ftell(fp);
   }
   int peek() {
     return -1;
@@ -80,23 +120,35 @@ public:
     return false;
   }
   operator bool() {
-    return false;
+    return fp != NULL;
   }
+private:
+  FILE *fp;
 };
 
 #define SD_SCK_MHZ(x) 0
 
 class SdFat {
 public:
-  File open(const char *path, uint8_t mode = FILE_READ) {
+  File open(const char *path, int mode = FILE_READ) {
     File tmpFile;
+    char mod[2];
+    mod[1]=0;
+    switch (mode) {
+    case FILE_READ:	mod[0] = 'r'; break;
+    case FILE_OVERWRITE:mod[0] = 'w'; break;
+    case FILE_WRITE:	mod[0] = 'a'; break;
+    default:		mod[0] = 'r'; break;
+    }
+    tmpFile.fp = fopen(apsd(path), mod);
     return tmpFile;
   }
   bool rename(const char *oldPath, const char *newPath) {
     return false;
   }
   bool exists(const char* path) {
-    return false;
+    struct stat st;
+    return lstat(apsd(path), &st) == 0;
   }
   bool remove(const char* path) {
     return false;
