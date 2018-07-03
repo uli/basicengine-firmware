@@ -358,6 +358,9 @@ void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint
   m_bg_modified = true;
 }
 
+#ifdef HOSTED
+#include <hosted_spi.h>
+#else
 static inline void GROUP(basic_vs23) MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
   uint8_t req[5] = {
@@ -400,6 +403,7 @@ static inline void GROUP(basic_vs23) SpiRamWriteBytesFast(uint32_t address, uint
   SPI.writeBytes(cmd, len+4);
   VS23_DESELECT;
 }
+#endif
 
 void GROUP(basic_vs23) VS23S010::drawBg(struct bg_t *bg,
                                       int dest_addr_start,
