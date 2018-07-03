@@ -14,7 +14,9 @@ typedef signed char         sint8_t;
 typedef signed short        sint16_t;
 typedef signed long         sint32_t;
 typedef signed long long    sint64_t;
+#if __WORDSIZE != 64
 typedef unsigned long long  u_int64_t;
+#endif
 typedef float               real32_t;
 typedef double              real64_t;
 

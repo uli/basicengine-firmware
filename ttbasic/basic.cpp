@@ -5609,7 +5609,7 @@ from its use. Use with caution.
 ***/
 void SMALL ibload() {
   uint32_t vadr;
-  ssize_t len = -1;
+  int32_t len = -1;
   int32_t c;
   BString fname;
   uint8_t rc;
