@@ -24,7 +24,7 @@
 volatile uint32_t * const DR_REG_I2S_BASEL = (volatile uint32_t*)0x60000e00;
 volatile uint32_t * const DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 
-#ifdef ESP8266_NOWIFI
+#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 extern char print_mem_buf[];
 struct sdio_queue i2sBufDesc[2] = {
 	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)print_mem_buf, .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
@@ -62,7 +62,7 @@ LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 
 #endif
 
-#ifdef ESP8266_NOWIFI
+#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 #include <string.h>
 void nosdk_i2s_clear_buf()
 {
