@@ -47,7 +47,7 @@ volatile int isrs = 0;
 volatile uint32_t *nosdk_i2s_curr_buf;
 volatile uint32_t nosdk_i2s_curr_buf_pos;
 
-#ifndef ENABLE_GDBSTUB
+#if !defined(ENABLE_GDBSTUB) && !defined(HOSTED)
 LOCAL ICACHE_RAM_ATTR void slc_isr(void) {
 	struct sdio_queue *finished;
 	SLC_INT_CLRL = 0xffffffff;
@@ -80,6 +80,7 @@ void nosdk_i2s_clear_buf()
 }
 #endif
 
+#ifndef HOSTED
 void InitI2S(uint32_t samplerate)
 {
 #ifdef ENABLE_GDBSTUB
@@ -154,3 +155,4 @@ void SendI2S()
 	SLC_RX_LINKL = SLC_RXLINK_STOP;
 	SLC_RX_LINKL = (((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK) | SLC_RXLINK_START;
 }
+#endif	// !HOSTED
