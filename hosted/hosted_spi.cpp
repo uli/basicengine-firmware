@@ -35,7 +35,7 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data) {
   vs23_mem[(waddress * 2 + 1) % 131072] = data >> 8;
 }
 void SpiRamWriteByte(register uint32_t address, uint8_t data) {
-  printf("RWB  %08X %02X\n", address, data);
+  //printf("RWB  %08X %02X\n", address, data);
   vs23_mem[address % 131072] = data;
 }
 void SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len) {
@@ -50,13 +50,13 @@ uint8_t mvlen, mvlin;
 int mvdir;
 
 void SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2, uint16_t data3) {
-  printf("RWBM2C %04X %04X %04X\n", data1, data2, data3);
+  //printf("RWBM2C %04X %04X %04X\n", data1, data2, data3);
   mvskp = data1;
   mvlen = data2;
   mvlin = data3;
 }
 void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
-  printf("RWBMC  %04X %04X %04X %04X\n", opcode, data1, data2, data3);
+  //printf("RWBMC  %04X %04X %04X %04X\n", opcode, data1, data2, data3);
   mvsrc = (data1 << 1) | ((data3 >> 2) & 1);
   mvtgt = (data2 << 1) | ((data3 >> 1) & 1);
   mvdir = data3 & 1 ? -1 : 1;
@@ -94,10 +94,9 @@ void SpiRamWriteProgram(uint16_t opcode, uint16_t data1, uint16_t data2) {
 }
 
 void SPIClass::write(uint8_t data) {
-  printf("SPIwrite %04X\n",data);
   if (data == 0x36) {
-    printf("mov src %05X tgt %05X dir %d lin %d len %d skp %d\n",
-      mvsrc, mvtgt, mvdir, mvlin, mvlen, mvskp);
+    //printf("mov src %05X tgt %05X dir %d lin %d len %d skp %d\n",
+    //  mvsrc, mvtgt, mvdir, mvlin, mvlen, mvskp);
     int vs, vt, x, y;
     for (vs = mvsrc, vt = mvtgt, x = 0, y = 0;; ) {
       vs23_mem[vt] = vs23_mem[vs];
@@ -111,5 +110,6 @@ void SPIClass::write(uint8_t data) {
           break;
       }
     }
-  }
+  } else
+    printf("SPIwrite %04X\n",data);
 }
