@@ -17,6 +17,8 @@
 #include <stdint.h>
 #include "basic.h"
 
+#ifndef HOSTED
+
 // Set USE_SDIO to zero for SPI card access. 
 #define USE_SDIO 0
 //
@@ -538,3 +540,9 @@ void SdFormat()
   SdFormatter sdf;
   sdf.setup();
 }
+#else // !HOSTED
+void SdFormat()
+{
+  err = ERR_NOT_SUPPORTED;
+}
+#endif // !HOSTED
