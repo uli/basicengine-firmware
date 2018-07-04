@@ -5,10 +5,6 @@
 
 uint8_t vs23_mem[131072];
 
-void MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr) {
-  printf("MBA  %08X %08X\n", byteaddress2, dest_addr);
-}
-
 void SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
   printf("RRBF %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
@@ -65,6 +61,13 @@ void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2) {
   printf("RWBMCF %04X %04X %04X\n", opcode, data1, data2);
   mvsrc = (mvsrc & 1) | (data1 << 1);
   mvtgt = (mvtgt & 1) | (data2 << 1);
+}
+
+void MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr) {
+  //printf("MBA  %08X %08X\n", byteaddress2, dest_addr);
+  mvsrc = byteaddress2;
+  mvtgt = dest_addr;
+  SPI.write(0x36);
 }
 
 uint16_t SpiRamReadRegister(register uint16_t opcode) {
