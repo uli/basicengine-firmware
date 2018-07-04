@@ -11,7 +11,7 @@ void SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
     data[i] = vs23_mem[(address+i) % 131072];
 }
 void SpiRamReadBytes(uint32_t address, uint8_t *data, uint32_t count) {
-  printf("RRB  %08X %p %d\n", address, data, count);
+  printf("RRBS %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
     data[i] = vs23_mem[(address+i) % 131072];
 }
@@ -109,7 +109,7 @@ void SPIClass::write(uint8_t data) {
         vs += mvdir * mvskp;
         x = 0;
         y++;
-        if (y == mvlin)
+        if (y == mvlin + 1)
           break;
       }
     }
