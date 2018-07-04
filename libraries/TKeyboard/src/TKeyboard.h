@@ -58,9 +58,9 @@
 #define PS2KEY_ESC			    30	// [ESC]
 #define PS2KEY_Tab 		    31	// [Tab]
 #define PS2KEY_Enter       32  // [Enter]
-#define PS2KEY_Space		    35	// [空白]
 #define PS2KEY_Backspace	  33	// [BackSpace]
 #define PS2KEY_Delete		  34	// [Delete]
+#define PS2KEY_Space		    35	// [空白]
 
 #define PS2KEY_Colon		    36	// [: *]
 #define PS2KEY_Semicolon	  37	// [; +]
