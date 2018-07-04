@@ -3649,7 +3649,9 @@ void BASIC_FP pump_events(void)
   hosted_pump_events();
 #endif
   if (vs23.frame() == last_frame) {
-#ifdef HAVE_TSF
+#if defined(HAVE_TSF) && !defined(HOSTED)
+    // Wasn't able to get this to work without underruns in the hosted build.
+    // Doing the rendering in the SDL callback instead.
     if (sound.needSamples())
       sound.render();
 #endif

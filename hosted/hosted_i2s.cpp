@@ -1,13 +1,47 @@
 extern "C" {
 #include <nosdki2s.h>
 }
+#include <SDL/SDL.h>
+#include <sound.h>
 
 extern unsigned int i2sData[2][I2S_BUFLEN];
+static int cubu = 0;
+
+void slc_isr(void *userdata, Uint8 *stream, int len) {
+	sound.render();
+	int i;
+	for (i = 0; i < len; ++i) {
+		stream[i] = nosdk_i2s_curr_buf[i];
+	}
+
+	cubu ^= 1;
+	nosdk_i2s_curr_buf = i2sData[cubu];
+	nosdk_i2s_curr_buf_pos = 0;
+}
 
 extern "C" void InitI2S(uint32_t samplerate)
 {
 	nosdk_i2s_clear_buf();
-	nosdk_i2s_curr_buf = i2sData[0];
+	cubu = 0;
+	nosdk_i2s_curr_buf = i2sData[cubu];
+	nosdk_i2s_curr_buf_pos = 0;
+
+	SDL_AudioSpec as, obtained;
+	as.freq = samplerate;
+	as.format = AUDIO_U8;
+	as.channels = 1;
+	// This doesn't make sense, but when I request I2S_BUFLEN, I get
+	// a buffer half the size. WTF?
+	as.samples = I2S_BUFLEN*2;
+	as.callback = slc_isr;
+	if (SDL_OpenAudio(&as, &obtained) < 0) {
+		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+		exit(1);
+	}
+	if (obtained.samples != I2S_BUFLEN)
+		fprintf(stderr, "Odd audio buffer size, not starting.");
+	else
+		SDL_PauseAudio(0);
 }
 
 void SendI2S()
