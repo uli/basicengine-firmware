@@ -97,3 +97,6 @@ void hosted_pump_events() {
   last_line = new_line;
   vs23.setFrame(micros() / 64 / 261);	// XXX: PAL? etc...
 }
+
+#include "Wire.h"
+TwoWire Wire;
