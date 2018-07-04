@@ -6,6 +6,10 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <Arduino.h>
+#include <BString.h>
+#include <memory>
 
 #define FILE_READ O_RDONLY
 #define FILE_WRITE (O_RDWR | O_CREAT | O_APPEND)
@@ -29,17 +33,28 @@ public:
   }
 };
 
+int smart_fclose(FILE *stream);
+int smart_closedir(DIR *dirp);
+
 class SdFat;
+extern SdFat SD;
 
 class File {
   friend class SdFat;
 public:
   File() {
+    dir = NULL;
     fp = NULL;
   }
   bool close() {
-    if (fp) {
-      int ret = fclose(fp);
+    // Doesn't behave exactly like SdFat; it leaves the file/directory open
+    // if there is still a copy referencing it.
+    if (dir.get()) {
+      bool ret = dir.get() != 0;
+      dir = NULL;
+      return ret;
+    } else if (fp.get()) {
+      bool ret = fp.get() != 0;
       fp = NULL;
       return ret;
     } else
@@ -58,9 +73,9 @@ public:
     return write(&b, 1);
   }
   int read(void* buf, size_t nbyte) {
-    if (!fp)
+    if (!fp.get())
       return -1;
-    return fread(buf, 1, nbyte, fp);
+    return fread(buf, 1, nbyte, fp.get());
   }
   int read() {
     uint8_t b;
@@ -70,45 +85,48 @@ public:
     return -1;
   }
   uint32_t fileSize() const {
-    if (!fp)
+    if (!fp.get())
       return 0;
-    size_t c = ftell(fp);
-    fseek(fp, 0, SEEK_END);
-    size_t s = ftell(fp);
-    fseek(fp, c, SEEK_SET);
+    size_t c = ftell(fp.get());
+    fseek(fp.get(), 0, SEEK_END);
+    size_t s = ftell(fp.get());
+    fseek(fp.get(), c, SEEK_SET);
     return s;
   }
   bool seekSet(uint32_t pos) {
-    if (!fp)
+    if (!fp.get())
       return false;
     else
-      return fseek(fp, pos, SEEK_SET) == 0;
+      return fseek(fp.get(), pos, SEEK_SET) == 0;
   }
   uint32_t available() {
-    size_t c = ftell(fp);
-    fseek(fp, 0, SEEK_END);
-    size_t e = ftell(fp);
-    fseek(fp, c, SEEK_SET);
+    size_t c = ftell(fp.get());
+    fseek(fp.get(), 0, SEEK_END);
+    size_t e = ftell(fp.get());
+    fseek(fp.get(), c, SEEK_SET);
     return e-c;
   }
   int position() {
-    if (!fp)
+    if (!fp.get())
       return -1;
     else
-      return ftell(fp);
+      return ftell(fp.get());
   }
   int peek() {
     return -1;
   }
-  File openNextFile(uint8_t mode = O_READ) {
-    File tmpFile;
-    return tmpFile;
-  }
-  bool getName(char* name, size_t size) {
-    return false;
+
+  File openNextFile(uint8_t mode = O_READ);
+
+  bool getName(char* _name, size_t size) {
+    if (fp.get() || dir.get()) {
+      strncpy(_name, name.c_str(), size);
+      return true;
+    } else
+      return false;
   }
   bool isDirectory() const {
-    return false;
+    return dir.get() != NULL;
   }
   bool isDir() const {
     return isDirectory();
@@ -119,10 +137,13 @@ public:
     return false;
   }
   operator bool() {
-    return fp != NULL;
+    return fp.get() != NULL || dir.get() != NULL;
   }
+
 private:
-  FILE *fp;
+  std::shared_ptr<FILE> fp;
+  std::shared_ptr<DIR> dir;
+  BString name, full_name;
 };
 
 #define SD_SCK_MHZ(x) 0
@@ -139,8 +160,23 @@ public:
     case FILE_WRITE:	mod[0] = 'a'; break;
     default:		mod[0] = 'r'; break;
     }
-    tmpFile.fp = fopen(apsd(path), mod);
-    return tmpFile;
+
+    tmpFile.full_name = path;
+    int last_slash = tmpFile.full_name.lastIndexOf('/');
+    if (last_slash >= 0)
+      tmpFile.name = tmpFile.full_name.substring(last_slash+1);
+    else
+      tmpFile.name = tmpFile.full_name;
+
+    DIR *_dir = opendir(apsd(path));
+    if (_dir) {
+      tmpFile.dir = std::shared_ptr<DIR>(_dir, smart_closedir);
+      return tmpFile;
+    } else {
+      FILE *_fp = fopen(apsd(path), mod);
+      tmpFile.fp = std::shared_ptr<FILE>(_fp, smart_fclose);
+      return tmpFile;
+    }
   }
   bool rename(const char *oldPath, const char *newPath) {
     return false;
@@ -233,7 +269,5 @@ static inline uint8_t FAT_MINUTE(uint16_t fatTime) {
 static inline uint8_t FAT_SECOND(uint16_t fatTime) {
   return 2*(fatTime & 0X1F);
 }
-
-extern SdFat SD;
 
 #endif
