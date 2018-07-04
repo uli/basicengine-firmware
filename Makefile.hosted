@@ -23,3 +23,5 @@ basic: $(OBJS) $(OBJS_C)
 clean:
 	rm -f $(OBJS) $(OBJS_C)
 
+$(OBJS) $(OBJS_C): $(shell ls hosted/*.h ttbasic/*.h libraries/*/src/*.h libraries/*/*.h)
+
