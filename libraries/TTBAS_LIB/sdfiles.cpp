@@ -16,9 +16,7 @@
 #include "../../ttbasic/vs23s010.h"
 #include <string.h>
 
-//#include <RTClock.h>
 #include <time.h>
-//extern RTClock rtc;
 
 SdFat SD;
 #ifndef UNIFILE_USE_SPIFFS
