@@ -69,6 +69,7 @@ char* itoa(int value, char* result, int base) {
     return result;
 }
 
+#if 0	// defined by glibc
 int atoi(const char* s) {
     return (int) atol(s);
 }
@@ -82,4 +83,4 @@ double atof(const char* s) {
     char * tmp;
     return strtod(s, &tmp);
 }
-
+#endif
