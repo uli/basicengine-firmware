@@ -6,12 +6,12 @@
 uint8_t vs23_mem[131072];
 
 void SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
-  printf("RRBF %08X %p %d\n", address, data, count);
+  //printf("RRBF %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
     data[i] = vs23_mem[(address+i) % 131072];
 }
 void SpiRamReadBytes(uint32_t address, uint8_t *data, uint32_t count) {
-  printf("RRBS %08X %p %d\n", address, data, count);
+  //printf("RRBS %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
     data[i] = vs23_mem[(address+i) % 131072];
 }
@@ -21,7 +21,7 @@ uint16_t SpiRamReadByte(uint32_t address) {
 }
 
 void SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len) {
-  printf("RWBF %08X %p %d\n", address, data, len);
+  //printf("RWBF %08X %p %d\n", address, data, len);
   for (int i = 0; i < len; ++i)
     vs23_mem[(address+i) % 131072] = data[i];
 }
