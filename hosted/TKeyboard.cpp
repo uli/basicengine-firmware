@@ -183,19 +183,21 @@ keyEvent TKeyboard::read() {
   ki.value = 0;
   SDL_Event event;
   SDL_PumpEvents();
-  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK) == 1) {
-    switch (event.type) {
-    case SDL_KEYUP:
-      ki.kevt.code = event.key.keysym.unicode;
-      ki.kevt.BREAK = 1;
-      return ki.kevt;
-    case SDL_KEYDOWN:
-      ki.kevt.code = event.key.keysym.unicode;
-      return ki.kevt;
-    default:
-      abort();
+  if (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK) == 1) {
+    int unicode = event.key.keysym.unicode;
+    if (unicode)
+      ki.kevt.code = unicode;
+    else {
+      ki.kevt.KEY = 1;
+      for (int i = 0; i < sizeof(ps2_to_sdl)/sizeof(*ps2_to_sdl); ++i) {
+        if (ps2_to_sdl[i] == event.key.keysym.sym) {
+          ki.kevt.code = i;
+          break;
+        }
+      }
     }
-    SDL_PumpEvents();
+    if (event.type == SDL_KEYUP)
+      ki.kevt.BREAK = 1;
   }
   return ki.kevt;
 }
