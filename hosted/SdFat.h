@@ -6,7 +6,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sdfiles.h>
 
 #define FILE_READ O_RDONLY
 #define FILE_WRITE (O_RDWR | O_CREAT | O_APPEND)
