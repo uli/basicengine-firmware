@@ -282,6 +282,9 @@ void BasicSound::stopMml(int ch)
 // Array with 32-bit values which have one bit more set to '1' in every
 // consecutive array index value
 // Taken from Espressif MP3 decoder demo.
+#ifdef HOSTED
+extern const uint32_t fakePwm[];
+#else
 const uint32_t BASIC_DAT fakePwm[]={
         0x00000010, 0x00000410, 0x00400410, 0x00400C10, 0x00500C10,
         0x00D00C10, 0x20D00C10, 0x21D00C10, 0x21D80C10, 0xA1D80C10,
@@ -291,6 +294,7 @@ const uint32_t BASIC_DAT fakePwm[]={
         0xFFFEDD73, 0xFFFEDD7B, 0xFFFEFD7B, 0xFFFFFD7B, 0xFFFFFDFB,
         0xFFFFFFFB, 0xFFFFFFFF
 };
+#endif
 
 #ifdef HAVE_TSF
 static short staging_buf[I2S_BUFLEN];
