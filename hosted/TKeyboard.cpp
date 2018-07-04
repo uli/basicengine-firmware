@@ -175,7 +175,7 @@ bool TKeyboard::state(uint8_t keycode) {
 uint8_t TPS2::available() {
   SDL_Event events[8];
   SDL_PumpEvents();
-  return SDL_PeepEvents(events, 8, SDL_PEEKEVENT, SDL_KEYUPMASK);
+  return SDL_PeepEvents(events, 8, SDL_PEEKEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK);
 }
 
 keyEvent TKeyboard::read() {
