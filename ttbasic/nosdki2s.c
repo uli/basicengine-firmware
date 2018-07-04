@@ -31,7 +31,7 @@ struct sdio_queue i2sBufDesc[2] = {
 	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)(print_mem_buf+I2S_BUFLEN*4), .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
 };
 #else
-static unsigned int i2sData[2][I2S_BUFLEN];
+unsigned int i2sData[2][I2S_BUFLEN];
 #ifndef HOSTED
 struct sdio_queue i2sBufDesc[2] = {
 	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[0], .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
