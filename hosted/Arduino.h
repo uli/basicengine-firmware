@@ -46,7 +46,7 @@ typedef uint8_t byte;
 static uint32_t micros() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  return tv.tv_usec;
+  return tv.tv_sec * 1000000UL + tv.tv_usec;
 }
 static uint32_t millis() {
   return micros() / 1000;
