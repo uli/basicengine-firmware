@@ -95,8 +95,10 @@ void sdfiles::fakeTime() {
   SD_BEGIN();
   File dir = ::SD.open("/");
   File file;
-  if (!dir || !dir.isDir())
+  if (!dir || !dir.isDir()) {
+    SD_END();
     return;
+  }
   while ((file = dir.openNextFile())) {
     dir_t dirent;
     if (!file.dirEntry(&dirent))
