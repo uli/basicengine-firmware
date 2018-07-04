@@ -39,6 +39,7 @@ struct palette {
   uint8_t r, g, b;
 };
 #include <N-0C-B62-A63-Y33-N10.h>
+#include <P-EE-A22-B22-Y44-N10.h>
 
 int main(int argc, char **argv)
 {
@@ -55,9 +56,9 @@ int main(int argc, char **argv)
     palette[0][i].r = n_0c_b62_a63_y33_n10[i].r;
     palette[0][i].g = n_0c_b62_a63_y33_n10[i].g;
     palette[0][i].b = n_0c_b62_a63_y33_n10[i].b;
-    palette[1][i].r = i/2;
-    palette[1][i].g = i;
-    palette[1][i].b = i/2;
+    palette[1][i].r = p_ee_a22_b22_y44_n10[i].r;
+    palette[1][i].g = p_ee_a22_b22_y44_n10[i].g;
+    palette[1][i].b = p_ee_a22_b22_y44_n10[i].b;
   }
   setup();
   for (;;)
