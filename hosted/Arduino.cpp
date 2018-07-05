@@ -103,8 +103,8 @@ void hosted_pump_events() {
       }
     }
   } else if (new_line < last_line) {
+    int pal = vs23_mem[PROTOLINE_BYTE_ADDRESS(0) + BURST*2];
     m_pal = vs23.isPal();
-    int pal = vs23_mem[PROTOLINE_BYTE_ADDRESS(0) + BURST*2 + 1];
     if (pal == 0x0c || pal == 0xdd) {
       SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette[0], 0, 256);
     } else {

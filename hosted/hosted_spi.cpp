@@ -28,8 +28,8 @@ void SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len) {
 }
 void SpiRamWriteWord(uint16_t waddress, uint16_t data) {
   //printf("RWW  %08X %04X\n", waddress, data);
-  vs23_mem[(waddress * 2) % 131072] = data;
-  vs23_mem[(waddress * 2 + 1) % 131072] = data >> 8;
+  vs23_mem[(waddress * 2) % 131072] = data >> 8;
+  vs23_mem[(waddress * 2 + 1) % 131072] = data;
 }
 void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   //printf("RWB  %08X %02X\n", address, data);
