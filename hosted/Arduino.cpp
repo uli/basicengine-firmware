@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-  screen = SDL_SetVideoMode(600, 400, 8, SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(1400, 1050, 8, SDL_HWSURFACE);
   if (!screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
@@ -80,10 +80,27 @@ void hosted_pump_events() {
     }
     SDL_PumpEvents();
   }
+
   int new_line = SpiRamReadRegister(CURLINE);
+
   if (new_line > last_line) {
-    for (int i = last_line; i < 224; ++i) {
-      memcpy((uint8_t *)screen->pixels + i*screen->pitch, &vs23_mem[vs23.piclineByteAddress(i)], vs23.width());
+    for (int i = last_line; i < vs23.height(); ++i) {
+#define STRETCH_Y 4.4	// empirically determined
+#define m_current_mode vs23.m_current_mode	// needed by STARTLINE...
+      for (int j = 0; j < STRETCH_Y; ++j) {
+        // one SDL pixel is one VS23 PLL clock cycle wide
+        // picstart is defined in terms of color clocks (PLL/8)
+        uint8_t *scr = (uint8_t *)screen->pixels +
+                       (int(i*STRETCH_Y + j + STARTLINE))*screen->pitch +
+                       vs23_int.picstart * 8 - 308;
+        uint8_t *vdc = vs23_mem + vs23.piclineByteAddress(i);
+        for (int x = 0; x < vs23.width(); ++x) {
+          // pixel width determined by VS23 program length
+          for (int p = 0; p < vs23_int.plen; ++p) {
+            *scr++ = vdc[x];
+          }
+        }
+      }
     }
   } else if (new_line < last_line) {
     m_pal = vs23.isPal();
