@@ -33,8 +33,6 @@ void setup();
 SDL_Surface *screen;
 SDL_Color palette[2][256];
 
-static bool m_pal = false;
-
 struct palette {
   uint8_t r, g, b;
 };
@@ -87,6 +85,7 @@ void hosted_pump_events() {
     for (int i = last_line; i < vs23.height(); ++i) {
 #define STRETCH_Y 4.4	// empirically determined
 #define m_current_mode vs23.m_current_mode	// needed by STARTLINE...
+#define m_pal vs23_int.pal
       for (int j = 0; j < STRETCH_Y; ++j) {
         // one SDL pixel is one VS23 PLL clock cycle wide
         // picstart is defined in terms of color clocks (PLL/8)
@@ -104,7 +103,6 @@ void hosted_pump_events() {
     }
   } else if (new_line < last_line) {
     int pal = vs23_mem[PROTOLINE_BYTE_ADDRESS(0) + BURST*2];
-    m_pal = vs23.isPal();
     if (pal == 0x0c || pal == 0xdd) {
       SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette[0], 0, 256);
     } else {
