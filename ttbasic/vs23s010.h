@@ -410,7 +410,9 @@ class VS23S010 {
     uint32_t cyclesPerFrameCalculated() {
       return m_cycles_per_frame_calculated;
     }
+#ifndef HOSTED
 private:
+#endif
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
     uint32_t m_cycles_per_frame;
