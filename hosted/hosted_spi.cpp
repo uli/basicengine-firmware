@@ -4,6 +4,7 @@
 #include "SPI.h"
 
 uint8_t vs23_mem[131072];
+struct vs23_int vs23_int;
 
 void SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
   //printf("RRBF %08X %p %d\n", address, data, count);
@@ -86,7 +87,27 @@ uint8_t SpiRamReadRegister8(uint16_t opcode) {
 }
 
 void SpiRamWriteRegister(uint16_t opcode, uint16_t data) {
-  printf("RWR  %04X %04X\n", opcode, data);
+  switch (opcode) {
+  case VDCTRL1:
+    vs23_int.vdctrl1 = data;
+    break;
+  case VDCTRL2:
+    vs23_int.vdctrl2 = data;
+    vs23_int.line_count = (data & 0x3ff) - 1;
+    vs23_int.enabled = !!(data & 0x8000);
+    vs23_int.pal = !!(data & 0x4000);
+    vs23_int.line_us = vs23_int.pal ? LINE_LENGTH_US_PAL : LINE_LENGTH_US_NTSC;
+    vs23_int.plen = ((data >> 10) & 0xf) + 1;
+    break;
+  case WRITE_STATUS:	vs23_int.write_status = data; break;
+  case PICSTART:	vs23_int.picstart = data; break;
+  case PICEND:	vs23_int.picend = data; break;
+  case LINELEN:	vs23_int.linelen = data; break;
+  case INDEXSTART:	vs23_int.indexstart = data; break;
+  default:
+    printf("RWR  %04X %04X\n", opcode, data);
+    break;
+  }
 }
 void SpiRamWriteByteRegister(uint16_t opcode, uint16_t data) {
   printf("RWBR %04X %04X\n", opcode, data);

@@ -87,6 +87,22 @@ static HardwareSerial Serial;
 
 #include "Esp.h"
 
+struct vs23_int {
+  uint16_t vdctrl1, vdctrl2;
+  uint16_t write_status;
+  uint16_t picstart;
+  uint16_t picend;
+  uint16_t linelen;
+  uint16_t indexstart;
+
+  int line_count;
+  bool enabled;
+  bool pal;
+  int plen;
+  double line_us;
+};
+extern struct vs23_int vs23_int;
+
 #endif // __cplusplus
 
 void digitalWrite(uint8_t pin, uint8_t val);
