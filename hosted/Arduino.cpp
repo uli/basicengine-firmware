@@ -96,7 +96,7 @@ void hosted_pump_events() {
     SDL_Flip(screen);
   }
   last_line = new_line;
-  vs23.setFrame(micros() / 64 / 261);	// XXX: PAL? etc...
+  vs23.setFrame(micros() / vs23_int.line_us / vs23_int.line_count);
 }
 
 #include "Wire.h"

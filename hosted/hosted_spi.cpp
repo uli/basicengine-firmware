@@ -74,7 +74,7 @@ void MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr) {
 uint16_t SpiRamReadRegister(register uint16_t opcode) {
   switch (opcode) {
   case CURLINE:
-    return (micros() / 64) % 261;	// XXX: PAL? accuracy? configuration?
+    return int(micros() / vs23_int.line_us) % vs23_int.line_count;
   default:
     printf("RRR  %04X\n", opcode);
     return 0xffff;
