@@ -4858,6 +4858,9 @@ Sets the sound font to be used by the wavetable synthesizer.
 \args
 @file$	name of the SF2 sound font file
 \note
+If a relative path is specified, Engine BASIC will first attempt
+to load the sound font from `/sd`, then from `/flash`.
+
 The default sound font name is `1mgm.sf2`.
 \bugs
 No sanity checks are performed before setting the sound font.
