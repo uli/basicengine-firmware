@@ -3,6 +3,7 @@
 #include "FS.h"
 #include "SPI.h"
 #include <vs23s010.h>
+#include <malloc.h>
 
 void digitalWrite(uint8_t pin, uint8_t val) {
   printf("DW %d <- %02X\n", pin, val);
@@ -89,6 +90,8 @@ static void my_exit(void)
 #else
 #define ENCODER_CMD "ffmpeg"
 #endif
+
+int hosting_mem_allocated;
 
 int main(int argc, char **argv)
 {
@@ -180,6 +183,8 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
+
+  hosting_mem_allocated = mallinfo().uordblks;  
 
   setup();
   for (;;)
@@ -357,6 +362,11 @@ void hosted_pump_events() {
   }
   last_line = new_line;
   vs23.setFrame(micros() / vs23_int.line_us / vs23_int.line_count);
+}
+
+extern "C" size_t umm_free_heap_size( void )
+{
+  return 70000 - (mallinfo().uordblks - hosting_mem_allocated);
 }
 
 #include "Wire.h"

@@ -3,6 +3,7 @@ extern "C" {
 }
 #include <SDL/SDL.h>
 #include <sound.h>
+#include <malloc.h>
 
 extern unsigned int i2sData[2][I2S_BUFLEN];
 static int cubu = 0;
@@ -27,6 +28,8 @@ void slc_isr(void *userdata, Uint8 *stream, int len) {
 	nosdk_i2s_curr_buf_pos = 0;
 }
 
+extern int hosting_mem_allocated;
+
 extern "C" void InitI2S(uint32_t samplerate)
 {
 	nosdk_i2s_clear_buf();
@@ -42,6 +45,9 @@ extern "C" void InitI2S(uint32_t samplerate)
 	// a buffer half the size. WTF?
 	as.samples = I2S_BUFLEN*2;
 	as.callback = slc_isr;
+
+	int mem_before = mallinfo().uordblks;
+	
 	if (SDL_OpenAudio(&as, &obtained) < 0) {
 		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
 		exit(1);
@@ -50,6 +56,8 @@ extern "C" void InitI2S(uint32_t samplerate)
 		fprintf(stderr, "Odd audio buffer size, not starting.");
 	else
 		SDL_PauseAudio(0);
+
+        hosting_mem_allocated += mallinfo().uordblks - mem_before;
 }
 
 void SendI2S()
