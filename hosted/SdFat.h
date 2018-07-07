@@ -61,10 +61,15 @@ public:
       return false;
   }
   bool sync() {
-    return false;
+    if (!fp.get())
+      return false;
+    fflush(fp.get());
+    return true;
   }
   int write(const void* buf, size_t nbyte) {
-    return -1;
+    if (!fp.get())
+      return -1;
+    return fwrite(buf, 1, nbyte, fp.get());
   }
   int write(const char* str) {
     return write(str, strlen(str));
