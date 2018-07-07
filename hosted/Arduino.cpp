@@ -39,12 +39,20 @@ struct palette {
 #include <N-0C-B62-A63-Y33-N10.h>
 #include <P-EE-A22-B22-Y44-N10.h>
 
+#define SDL_X_SIZE 1400
+#define SDL_Y_SIZE 1050
+#define STRETCH_Y 4.4	// empircally determined
+#define YUV_Y_SIZE (int(SDL_Y_SIZE/STRETCH_Y))
+
+#define VIEWPORT_X 308
+#define VIEWPORT_Y 22
+
 int main(int argc, char **argv)
 {
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-  screen = SDL_SetVideoMode(1400, 1050, 32, SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(SDL_X_SIZE, SDL_Y_SIZE, 32, SDL_HWSURFACE);
   if (!screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
@@ -85,34 +93,56 @@ void hosted_pump_events() {
   int new_line = SpiRamReadRegister(CURLINE);
 
   if (new_line > last_line) {
+    // draw picture lines
     for (int i = last_line; i < vs23.height(); ++i) {
-#define STRETCH_Y 4.4	// empirically determined
 #define m_current_mode vs23.m_current_mode	// needed by STARTLINE...
 #define m_pal vs23_int.pal
+
+      // pointer to SDL screen line
+      uint8_t *scr_line = (uint8_t *)screen->pixels +
+                          (int((i + STARTLINE - VIEWPORT_Y) *STRETCH_Y))*screen->pitch;
+      // X offset of start of picture (pixels)
+      int xoff = vs23_int.picstart * 8 - VIEWPORT_X;
+      // draw SDL screen border
       for (int j = 0; j < STRETCH_Y; ++j) {
-        // one SDL pixel is one VS23 PLL clock cycle wide
-        // picstart is defined in terms of color clocks (PLL/8)
-        uint8_t *scr = (uint8_t *)screen->pixels +
-                       (int(i*STRETCH_Y + j + STARTLINE))*screen->pitch +
-                       (vs23_int.picstart * 8 - 308) * screen->format->BytesPerPixel;
-        uint8_t *vdc = vs23_mem + vs23.piclineByteAddress(i);
-        for (int x = 0; x < vs23.width(); ++x) {
-          // pixel width determined by VS23 program length
-          for (int p = 0; p < vs23_int.plen; ++p) {
-            *scr++ = pl[vdc[x]].b;
-            *scr++ = pl[vdc[x]].g;
-            *scr++ = pl[vdc[x]].r;
-            *scr++ = 0;
-          }
+        memcpy(scr_line + j * screen->pitch, screen->pixels, xoff * screen->format->BytesPerPixel);
+        memcpy(scr_line + j * screen->pitch + (xoff + vs23.width()) * screen->format->BytesPerPixel,
+               (uint8_t *)screen->pixels + (xoff + vs23.width()) * screen->format->BytesPerPixel,
+               (screen->w - vs23.width() - xoff) * screen->format->BytesPerPixel);
+      }
+
+
+      // one SDL pixel is one VS23 PLL clock cycle wide
+      // picstart is defined in terms of color clocks (PLL/8)
+      uint8_t *scr = scr_line + xoff * screen->format->BytesPerPixel;
+
+      uint8_t *vdc = vs23_mem + vs23.piclineByteAddress(i);
+      uint8_t *sscr = scr;
+      for (int x = 0; x < vs23.width(); ++x) {
+        // pixel width determined by VS23 program length
+        for (int p = 0; p < vs23_int.plen; ++p) {
+          *scr++ = pl[vdc[x]].b;
+          *scr++ = pl[vdc[x]].g;
+          *scr++ = pl[vdc[x]].r;
+          *scr++ = 0;
         }
+      }
+      scr = sscr + screen->pitch;
+      for (int j = 1; j < STRETCH_Y; ++j, scr += screen->pitch) {
+        memcpy(scr, sscr,
+               vs23.width() * screen->format->BytesPerPixel * vs23_int.plen);
       }
     }
   } else if (new_line < last_line) {
+    // frame complete, blit it
+
+    // update palette
     int pal = vs23_mem[PROTOLINE_BYTE_ADDRESS(0) + BURST*2];
     if (pal == 0x0c || pal == 0xdd)
       pl = palette[0];
     else
       pl = palette[1];
+
     SDL_Flip(screen);
     uint8_t *p = (uint8_t*)screen->pixels;
     for (int x = 0; x < screen->w; ++x) {
@@ -136,8 +166,18 @@ void hosted_pump_events() {
       *p++ = r;
       *p++ = 0;
     }
-    for (int i = 1; i < screen->h; ++i) {
+
+    // Left/right border is drawn at the time the respective
+    // picture line is; here, we only draw protolines.
+
+    // draw SDL screen border top (before start of picture)
+    for (int i = 1; i < (STARTLINE - VIEWPORT_Y)*STRETCH_Y; ++i) {
       memcpy(p, screen->pixels, screen->pitch);
+      p += screen->pitch;
+    }
+    // draw SDL screen border bottom (after end of picture)
+    for (int i = (STARTLINE - VIEWPORT_Y+vs23.height()) * STRETCH_Y; i < screen->h; ++i) {
+      memcpy((uint8_t *)screen->pixels + i * screen->pitch, screen->pixels, screen->pitch);
       p += screen->pitch;
     }
   }
