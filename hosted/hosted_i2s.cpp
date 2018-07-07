@@ -7,12 +7,20 @@ extern "C" {
 extern unsigned int i2sData[2][I2S_BUFLEN];
 static int cubu = 0;
 
+extern FILE *aud_fp;
+uint64_t total_samples = 0;
+
+void dump_yuv();
+
 void slc_isr(void *userdata, Uint8 *stream, int len) {
 	sound.render();
 	int i;
 	for (i = 0; i < len; ++i) {
 		stream[i] = nosdk_i2s_curr_buf[i];
 	}
+	if (aud_fp)
+	  fwrite(stream, len, 1, aud_fp);
+        total_samples += len;
 
 	cubu ^= 1;
 	nosdk_i2s_curr_buf = i2sData[cubu];

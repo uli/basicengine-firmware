@@ -47,6 +47,49 @@ struct palette {
 #define VIEWPORT_X 308
 #define VIEWPORT_Y 22
 
+uint8_t y_screen[SDL_X_SIZE*YUV_Y_SIZE];
+uint8_t u_screen[SDL_X_SIZE*YUV_Y_SIZE];
+uint8_t v_screen[SDL_X_SIZE*YUV_Y_SIZE];
+
+FILE *vid_fp = NULL;
+FILE *aud_fp = NULL;
+#define VIDEO_FIFO "video.y4m"
+#define AUDIO_FIFO "audio.8u1"
+
+//#define USE_MENCODER
+
+void dump_yuv()
+{
+  fprintf(vid_fp, "FRAME\n");
+  fwrite(y_screen, sizeof(y_screen), 1, vid_fp);
+#ifdef USE_MENCODER
+  // wrong U/V order
+  fwrite(v_screen, sizeof(y_screen), 1, vid_fp);
+  fwrite(u_screen, sizeof(y_screen), 1, vid_fp);
+#else
+  fwrite(u_screen, sizeof(y_screen), 1, vid_fp);
+  fwrite(v_screen, sizeof(y_screen), 1, vid_fp);
+#endif
+}
+
+static void my_exit(void)
+{
+  fprintf(stderr, "my_exit\n");
+  if (vid_fp)
+    pclose(vid_fp);
+  if (aud_fp)
+    pclose(aud_fp);
+  unlink(VIDEO_FIFO);
+  unlink(AUDIO_FIFO);
+  SDL_Quit();
+}
+
+#ifdef USE_MENCODER
+#define ENCODER_CMD "mencoder"
+#else
+#define ENCODER_CMD "ffmpeg"
+#endif
+
 int main(int argc, char **argv)
 {
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -57,7 +100,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
   }
-  atexit(SDL_Quit);
+  atexit(my_exit);
   for (int i = 0; i < 256; ++i) {
     palette[0][i].r = n_0c_b62_a63_y33_n10[i].r;
     palette[0][i].g = n_0c_b62_a63_y33_n10[i].g;
@@ -66,6 +109,78 @@ int main(int argc, char **argv)
     palette[1][i].g = p_ee_a22_b22_y44_n10[i].g;
     palette[1][i].b = p_ee_a22_b22_y44_n10[i].b;
   }
+
+  int opt;
+  const char *video_file = NULL;
+  while ((opt = getopt(argc, argv, "r::")) != -1) {
+    switch (opt) {
+    case 'r':
+      if (optarg)
+	video_file = optarg;
+      else
+	video_file = "video.mp4";
+      break;
+    default: /* '?' */
+      fprintf(stderr, "Usage: %s [-r video_file]\n",
+              argv[0]);
+      exit(1);
+    }
+  }
+
+  if (video_file) {
+    memset(u_screen, 128, sizeof(u_screen));
+    memset(v_screen, 128, sizeof(v_screen));
+
+    mkfifo(VIDEO_FIFO, 0600);
+    mkfifo(AUDIO_FIFO, 0600);
+
+    int ret = system(ENCODER_CMD " 2>/dev/null");
+    if (WEXITSTATUS(ret) == 127) {
+      fprintf(stderr, ENCODER_CMD " command not found\n");
+      exit(1);
+    }
+    ret = system("mbuffer -V 2>/dev/null");
+    if (WEXITSTATUS(ret) == 127) {
+      fprintf(stderr, "mbuffer command not found\n");
+      exit(1);
+    }
+
+    char *cmd;
+#ifdef USE_MENCODER
+    ret = asprintf(&cmd, ENCODER_CMD " -o '%s' "
+           "-ovc x264 "
+           "-oac mp3lame "
+           "-audiofile " AUDIO_FIFO " -audio-demuxer rawaudio "
+           "-rawaudio channels=1:samplesize=1:rate=16000 "
+           "-noskip " // "-audio-delay -2 "
+           "-really-quiet "
+           VIDEO_FIFO " &", video_file);
+#else
+    ret = asprintf(&cmd, ENCODER_CMD " "
+           "-f u8 -c:a pcm_u8 -ac 1 -ar 16000 -i " AUDIO_FIFO " "
+           "-f yuv4mpegpipe -i " VIDEO_FIFO " "
+           "-y '%s' &", video_file);
+#endif
+    if (ret < 0 || system(cmd)) {
+      fprintf(stderr, "failed to start " ENCODER_CMD);
+      exit(1);
+    }
+
+    vid_fp = popen("mbuffer -q -m200M >" VIDEO_FIFO, "w");
+    if (vid_fp)
+      fprintf(vid_fp, "YUV4MPEG2 W%d H%d F60:1 Ip A10:%1.1lf C444\n", SDL_X_SIZE, YUV_Y_SIZE, STRETCH_Y*10);
+    else {
+      fprintf(stderr, "failed to start video buffer");
+      exit(1);
+    }
+
+    aud_fp = popen("mbuffer -q -m2M >" AUDIO_FIFO, "w");
+    if (!aud_fp) {
+      fprintf(stderr, "failed to start audio buffer");
+      exit(1);
+    }
+  }
+
   setup();
   for (;;)
     loop();
@@ -73,9 +188,13 @@ int main(int argc, char **argv)
 
 #include "border_pal.h"
 
+uint64_t total_frames = 0;
+extern uint64_t total_samples;
+
 void hosted_pump_events() {
   static int last_line = 0;
   static SDL_Color *pl = palette[0];
+
   SDL_Event event;
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
@@ -103,6 +222,9 @@ void hosted_pump_events() {
                           (int((i + STARTLINE - VIEWPORT_Y) *STRETCH_Y))*screen->pitch;
       // X offset of start of picture (pixels)
       int xoff = vs23_int.picstart * 8 - VIEWPORT_X;
+      // offset to YUV screen line (bytes, from start of component
+      int yuv_line_off = int(i+STARTLINE-VIEWPORT_Y)*screen->w;
+
       // draw SDL screen border
       for (int j = 0; j < STRETCH_Y; ++j) {
         memcpy(scr_line + j * screen->pitch, screen->pixels, xoff * screen->format->BytesPerPixel);
@@ -111,10 +233,26 @@ void hosted_pump_events() {
                (screen->w - vs23.width() - xoff) * screen->format->BytesPerPixel);
       }
 
+      if (vid_fp) {
+        // draw YUV border
+        int yuv_right_off = yuv_line_off + xoff + vs23.width();
+        int yuv_right_width = screen->w - xoff - vs23.width();
+        memcpy(&y_screen[yuv_line_off], y_screen, xoff);
+        memcpy(&y_screen[yuv_right_off], y_screen + xoff + vs23.width(), yuv_right_width);
+        memcpy(&u_screen[yuv_line_off], u_screen, screen->w);
+        memcpy(&u_screen[yuv_right_off], u_screen + xoff + vs23.width(), yuv_right_width);
+        memcpy(&v_screen[yuv_line_off], v_screen, screen->w);
+        memcpy(&v_screen[yuv_right_off], v_screen + xoff + vs23.width(), yuv_right_width);
+      }
 
       // one SDL pixel is one VS23 PLL clock cycle wide
       // picstart is defined in terms of color clocks (PLL/8)
       uint8_t *scr = scr_line + xoff * screen->format->BytesPerPixel;
+
+      yuv_line_off += vs23_int.picstart * 8 - VIEWPORT_X;
+      uint8_t *y_scr = y_screen + yuv_line_off;
+      uint8_t *u_scr = u_screen + yuv_line_off;
+      uint8_t *v_scr = v_screen + yuv_line_off;
 
       uint8_t *vdc = vs23_mem + vs23.piclineByteAddress(i);
       uint8_t *sscr = scr;
@@ -125,6 +263,12 @@ void hosted_pump_events() {
           *scr++ = pl[vdc[x]].g;
           *scr++ = pl[vdc[x]].r;
           *scr++ = 0;
+          int y = 0.299 * scr[-2] + 0.587* scr[-3] + 0.114 * scr[-4];
+          int u = -0.147 * scr[-2] - 0.289 * scr[-3] + 0.436 * scr[-4];
+          int v = 0.615 * scr[-2] - 0.515 * scr[-3] - 0.100 * scr[-4];
+          *y_scr++ = y;
+          *u_scr++ = u + 128;
+          *v_scr++ = v + 128;
         }
       }
       scr = sscr + screen->pitch;
@@ -144,6 +288,18 @@ void hosted_pump_events() {
       pl = palette[1];
 
     SDL_Flip(screen);
+
+    if (vid_fp)
+      dump_yuv();
+    total_frames++;
+
+    // audio starts ~2s ahead for some reason; fill in frames
+    // until synchronized
+    while (total_samples >= total_frames * 16000/60) {
+      if (vid_fp)
+        dump_yuv();
+      total_frames++;
+    }
     uint8_t *p = (uint8_t*)screen->pixels;
     for (int x = 0; x < screen->w; ++x) {
       int w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND + x/8;
@@ -165,6 +321,10 @@ void hosted_pump_events() {
       *p++ = g;
       *p++ = r;
       *p++ = 0;
+
+      y_screen[x] = 0.299 * r + 0.587* g + 0.114 * b;
+      u_screen[x] = 128 + (-0.147 * r - 0.289 * g + 0.436 * b);
+      v_screen[x] = 128 + (0.615 * r - 0.515 * g - 0.100 * b);
     }
 
     // Left/right border is drawn at the time the respective
@@ -179,6 +339,20 @@ void hosted_pump_events() {
     for (int i = (STARTLINE - VIEWPORT_Y+vs23.height()) * STRETCH_Y; i < screen->h; ++i) {
       memcpy((uint8_t *)screen->pixels + i * screen->pitch, screen->pixels, screen->pitch);
       p += screen->pitch;
+    }
+    if (vid_fp) {
+      // draw YUV border top (before start of picture)
+      for (int i = 1; i < (STARTLINE - VIEWPORT_Y); ++i) {
+        memcpy(&y_screen[i*screen->w], y_screen, screen->w);
+        memcpy(&u_screen[i*screen->w], u_screen, screen->w);
+        memcpy(&v_screen[i*screen->w], v_screen, screen->w);
+      }
+      // draw YUV border bottom (after end of picture)
+      for (int i = STARTLINE-VIEWPORT_Y+vs23.height(); i < YUV_Y_SIZE; ++i) {
+        memcpy(&y_screen[i*screen->w], y_screen, screen->w);
+        memcpy(&u_screen[i*screen->w], u_screen, screen->w);
+        memcpy(&v_screen[i*screen->w], v_screen, screen->w);
+      }
     }
   }
   last_line = new_line;
