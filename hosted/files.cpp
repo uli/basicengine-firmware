@@ -15,7 +15,10 @@ const char *apfs(const char *p) {
 File File::openNextFile(uint8_t mode) {
   if (!dir.get())
     return File();
-  struct dirent *de = readdir(dir.get());
+  struct dirent *de;
+  do {
+    de = readdir(dir.get());
+  } while (de && (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")));
   if (!de)
     return File();
   BString ap = full_name + "/" + de->d_name;
