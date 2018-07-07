@@ -10,6 +10,7 @@
 #include <Arduino.h>
 #include <BString.h>
 #include <memory>
+#include <unistd.h>
 
 #define FILE_READ O_RDONLY
 #define FILE_WRITE (O_RDWR | O_CREAT | O_APPEND)
@@ -191,7 +192,7 @@ public:
     return lstat(apsd(path), &st) == 0;
   }
   bool remove(const char* path) {
-    return false;
+    return unlink(apsd(path)) == 0;
   }
   bool begin(uint8_t csPin = 0, int foo = 0) {
     return true;
