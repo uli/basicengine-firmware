@@ -4164,7 +4164,7 @@ BString shex() {
   int value; // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
-  BString hex(value, 16);
+  BString hex((unsigned int)value, 16);
   hex.toUpperCase();
   return hex;
 }
