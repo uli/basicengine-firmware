@@ -328,16 +328,6 @@ void tv_write(uint8_t c) {
   gcurs_x += f_width;
 }
 
-// 音の再生
-void tv_tone(int16_t freq, int16_t tm) {
-  Serial.println("unimp tv_tone");
-}
-
-// 音の停止
-void tv_notone() {
-  Serial.println("unimp tv_notone");
-}
-
 // グラフィック横スクロール
 void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   switch (mode) {
