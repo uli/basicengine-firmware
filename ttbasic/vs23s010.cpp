@@ -1138,7 +1138,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     p->type = LINE_SOLID;
 
     uint8_t *pp = p->pixels;
-    while (*pp == s->p.key && p->len) {
+    while (p->len && *pp == s->p.key) {
       solid_block = false;
       ++pp;
       ++p->off;
