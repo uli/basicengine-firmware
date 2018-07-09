@@ -3,6 +3,7 @@ INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/sr
 CFLAGS=-DARDUINO -DESP8266 -DESP8266_NOWIFI -DHOSTED -DF_CPU=160000000 \
 	-O2 -g -Ihosted -Ittbasic $(INCLUDE)
 CFLAGS += -m32
+#CFLAGS += -fprofile-arcs -ftest-coverage
 CXXFLAGS = $(CFLAGS) -fpermissive -std=c++11
 
 SOURCES = $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
@@ -22,6 +23,10 @@ basic: $(OBJS) $(OBJS_C)
 
 clean:
 	rm -f $(OBJS) $(OBJS_C)
+
+gcov:
+	rm -f *.gcov
+	gcov $(SOURCES) $(SOURCES_C)
 
 $(OBJS) $(OBJS_C): $(shell ls hosted/*.h ttbasic/*.h libraries/*/src/*.h libraries/*/*.h)
 
