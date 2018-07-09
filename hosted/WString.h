@@ -1,5 +1,5 @@
 /*
- BString.h - String library for Wiring & Arduino
+ WString.h - String library for Wiring & Arduino
  ...mostly rewritten by Paul Stoffregen...
  Copyright (c) 2009-10 Hernando Barragan.  All right reserved.
  Copyright 2011, Paul Stoffregen, paul@pjrc.com
@@ -19,41 +19,35 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef BString_class_h
-#define BString_class_h
+#ifndef String_class_h
+#define String_class_h
 #ifdef __cplusplus
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <pgmspace.h>
-#include "ttconfig.h"
-
 
 // An inherited class for holding the result of a concatenation.  These
 // result objects are assumed to be writable by subsequent concatenations.
-class BStringSumHelper;
+class StringSumHelper;
 
 // an abstract class used as a means to proide a unique pointer type
 // but really has no body
-// XXX: SdFat/src/SysCall.h messes with this! WTF??
-#undef F
 class __FlashStringHelper;
-#ifdef HOSTED
-#define FPSTR(p) (p)
-#define F(p) (p)
-#else
+#if 0
 #define FPSTR(pstr_pointer) (reinterpret_cast<const __FlashStringHelper *>(pstr_pointer))
 #define F(string_literal) (FPSTR(PSTR(string_literal)))
 #endif
+#define F(p) (p)
 
 // The string class
-class BString {
+class String {
         // use a function pointer to allow for "if (s)" without the
         // complications of an operator bool(). for more information, see:
         // http://www.artima.com/cppsource/safebool.html
-        typedef void (BString::*BStringIfHelperType)() const;
-        void BStringIfHelper() const {
+        typedef void (String::*StringIfHelperType)() const;
+        void StringIfHelper() const {
         }
 
     public:
@@ -62,33 +56,22 @@ class BString {
         // if the initial value is null or invalid, or if memory allocation
         // fails, the string will be marked as invalid (i.e. "if (s)" will
         // be false).
-        BString(const char *cstr = "");
-        BString(const BString &str);
-        BString(const __FlashStringHelper *str);
+        String(const char *cstr = "");
+        String(const String &str);
+        String(const __FlashStringHelper *str);
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        BString(BString &&rval);
-        BString(BStringSumHelper &&rval);
+        String(String &&rval);
+        String(StringSumHelper &&rval);
 #endif
-        explicit BString(char c);
-        explicit BString(unsigned char, unsigned char base = 10);
-        explicit BString(int, unsigned char base = 10);
-        explicit BString(unsigned int, unsigned char base = 10);
-        explicit BString(long, unsigned char base = 10);
-        explicit BString(unsigned long, unsigned char base = 10);
-        explicit BString(float, unsigned char decimalPlaces = 2);
-        explicit BString(double, unsigned char decimalPlaces = 2);
-        ~BString(void);
-
-        int fromBasic(unsigned char *s) {
-          len = *s++;
-          if (!reserve(len)) {
-            invalidate();
-            return 0;
-          }
-          os_memcpy(buffer, s, len);
-          buffer[len] = 0;
-          return len + 1;
-        }
+        explicit String(char c);
+        explicit String(unsigned char, unsigned char base = 10);
+        explicit String(int, unsigned char base = 10);
+        explicit String(unsigned int, unsigned char base = 10);
+        explicit String(long, unsigned char base = 10);
+        explicit String(unsigned long, unsigned char base = 10);
+        explicit String(float, unsigned char decimalPlaces = 2);
+        explicit String(double, unsigned char decimalPlaces = 2);
+        ~String(void);
 
         // memory management
         // return true on success, false on failure (in which case, the string
@@ -102,19 +85,16 @@ class BString {
                 return 0;
             }
         }
-        inline void resetLength(unsigned int size) {
-            len = size;
-        }
 
         // creates a copy of the assigned value.  if the value is null or
         // invalid, or if the memory allocation fails, the string will be
         // marked as invalid ("if (s)" will be false).
-        BString & operator =(const BString &rhs);
-        BString & operator =(const char *cstr);
-        BString & operator = (const __FlashStringHelper *str);
+        String & operator =(const String &rhs);
+        String & operator =(const char *cstr);
+        String & operator = (const __FlashStringHelper *str);
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        BString & operator =(BString &&rval);
-        BString & operator =(BStringSumHelper &&rval);
+        String & operator =(String &&rval);
+        String & operator =(StringSumHelper &&rval);
 #endif
 
         // concatenate (works w/ built-in types)
@@ -122,7 +102,7 @@ class BString {
         // returns true on success, false on failure (in which case, the string
         // is left unchanged).  if the argument is null or invalid, the
         // concatenation is considered unsucessful.
-        unsigned char concat(const BString &str);
+        unsigned char concat(const String &str);
         unsigned char concat(const char *cstr);
         unsigned char concat(char c);
         unsigned char concat(unsigned char c);
@@ -136,90 +116,90 @@ class BString {
 
         // if there's not enough memory for the concatenated value, the string
         // will be left unchanged (but this isn't signalled in any way)
-        BString & operator +=(const BString &rhs) {
+        String & operator +=(const String &rhs) {
             concat(rhs);
             return (*this);
         }
-        BString & operator +=(const char *cstr) {
+        String & operator +=(const char *cstr) {
             concat(cstr);
             return (*this);
         }
-        BString & operator +=(char c) {
+        String & operator +=(char c) {
             concat(c);
             return (*this);
         }
-        BString & operator +=(unsigned char num) {
+        String & operator +=(unsigned char num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(int num) {
+        String & operator +=(int num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(unsigned int num) {
+        String & operator +=(unsigned int num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(long num) {
+        String & operator +=(long num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(unsigned long num) {
+        String & operator +=(unsigned long num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(float num) {
+        String & operator +=(float num) {
             concat(num);
             return (*this);
         }
-        BString & operator +=(double num) {
+        String & operator +=(double num) {
             concat(num);
             return (*this);
         }
-        BString & operator += (const __FlashStringHelper *str){
+        String & operator += (const __FlashStringHelper *str){
             concat(str);
             return (*this);
         }
 
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, const BString &rhs);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, const char *cstr);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, char c);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, unsigned char num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, int num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, unsigned int num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, long num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, unsigned long num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, float num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, double num);
-        friend BStringSumHelper & operator +(const BStringSumHelper &lhs, const __FlashStringHelper *rhs);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, const String &rhs);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, const char *cstr);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, char c);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, unsigned char num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, int num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, unsigned int num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, long num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, unsigned long num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, float num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, double num);
+        friend StringSumHelper & operator +(const StringSumHelper &lhs, const __FlashStringHelper *rhs);
 
-        // comparison (only works w/ BStrings and "strings")
-        operator BStringIfHelperType() const {
-            return buffer ? &BString::BStringIfHelper : 0;
+        // comparison (only works w/ Strings and "strings")
+        operator StringIfHelperType() const {
+            return buffer ? &String::StringIfHelper : 0;
         }
-        int compareTo(const BString &s) const;
-        unsigned char equals(const BString &s) const;
+        int compareTo(const String &s) const;
+        unsigned char equals(const String &s) const;
         unsigned char equals(const char *cstr) const;
-        unsigned char operator ==(const BString &rhs) const {
+        unsigned char operator ==(const String &rhs) const {
             return equals(rhs);
         }
         unsigned char operator ==(const char *cstr) const {
             return equals(cstr);
         }
-        unsigned char operator !=(const BString &rhs) const {
+        unsigned char operator !=(const String &rhs) const {
             return !equals(rhs);
         }
         unsigned char operator !=(const char *cstr) const {
             return !equals(cstr);
         }
-        unsigned char operator <(const BString &rhs) const;
-        unsigned char operator >(const BString &rhs) const;
-        unsigned char operator <=(const BString &rhs) const;
-        unsigned char operator >=(const BString &rhs) const;
-        unsigned char equalsIgnoreCase(const BString &s) const;
-        unsigned char startsWith(const BString &prefix) const;
-        unsigned char startsWith(const BString &prefix, unsigned int offset) const;
-        unsigned char endsWith(const BString &suffix) const;
+        unsigned char operator <(const String &rhs) const;
+        unsigned char operator >(const String &rhs) const;
+        unsigned char operator <=(const String &rhs) const;
+        unsigned char operator >=(const String &rhs) const;
+        unsigned char equalsIgnoreCase(const String &s) const;
+        unsigned char startsWith(const String &prefix) const;
+        unsigned char startsWith(const String &prefix, unsigned int offset) const;
+        unsigned char endsWith(const String &suffix) const;
 
         // character acccess
         char charAt(unsigned int index) const;
@@ -239,21 +219,21 @@ class BString {
         // search
         int indexOf(char ch) const;
         int indexOf(char ch, unsigned int fromIndex) const;
-        int indexOf(const BString &str) const;
-        int indexOf(const BString &str, unsigned int fromIndex) const;
+        int indexOf(const String &str) const;
+        int indexOf(const String &str, unsigned int fromIndex) const;
         int lastIndexOf(char ch) const;
         int lastIndexOf(char ch, unsigned int fromIndex) const;
-        int lastIndexOf(const BString &str) const;
-        int lastIndexOf(const BString &str, unsigned int fromIndex) const;
-        BString substring(unsigned int beginIndex) const {
+        int lastIndexOf(const String &str) const;
+        int lastIndexOf(const String &str, unsigned int fromIndex) const;
+        String substring(unsigned int beginIndex) const {
             return substring(beginIndex, len);
         }
         ;
-        BString substring(unsigned int beginIndex, unsigned int endIndex) const;
+        String substring(unsigned int beginIndex, unsigned int endIndex) const;
 
         // modification
         void replace(char find, char replace);
-        void replace(const BString& find, const BString& replace);
+        void replace(const String& find, const String& replace);
         void remove(unsigned int index);
         void remove(unsigned int index, unsigned int count);
         void toLowerCase(void);
@@ -267,7 +247,7 @@ class BString {
     protected:
         char *buffer;	        // the actual char array
         unsigned int capacity;  // the array length minus one (for the '\0')
-        unsigned int len;       // the BString length (not counting the '\0')
+        unsigned int len;       // the String length (not counting the '\0')
     protected:
         void init(void);
         void invalidate(void);
@@ -275,46 +255,46 @@ class BString {
         unsigned char concat(const char *cstr, unsigned int length);
 
         // copy and move
-        BString & copy(const char *cstr, unsigned int length);
-        BString & copy(const __FlashStringHelper *pstr, unsigned int length);
+        String & copy(const char *cstr, unsigned int length);
+        String & copy(const __FlashStringHelper *pstr, unsigned int length);
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
-        void move(BString &rhs);
+        void move(String &rhs);
 #endif
 };
 
-class BStringSumHelper: public BString {
+class StringSumHelper: public String {
     public:
-        BStringSumHelper(const BString &s) :
-                BString(s) {
+        StringSumHelper(const String &s) :
+                String(s) {
         }
-        BStringSumHelper(const char *p) :
-                BString(p) {
+        StringSumHelper(const char *p) :
+                String(p) {
         }
-        BStringSumHelper(char c) :
-                BString(c) {
+        StringSumHelper(char c) :
+                String(c) {
         }
-        BStringSumHelper(unsigned char num) :
-                BString(num) {
+        StringSumHelper(unsigned char num) :
+                String(num) {
         }
-        BStringSumHelper(int num) :
-                BString(num) {
+        StringSumHelper(int num) :
+                String(num) {
         }
-        BStringSumHelper(unsigned int num) :
-                BString(num) {
+        StringSumHelper(unsigned int num) :
+                String(num) {
         }
-        BStringSumHelper(long num) :
-                BString(num) {
+        StringSumHelper(long num) :
+                String(num) {
         }
-        BStringSumHelper(unsigned long num) :
-                BString(num) {
+        StringSumHelper(unsigned long num) :
+                String(num) {
         }
-        BStringSumHelper(float num) :
-                BString(num) {
+        StringSumHelper(float num) :
+                String(num) {
         }
-        BStringSumHelper(double num) :
-                BString(num) {
+        StringSumHelper(double num) :
+                String(num) {
         }
 };
 
 #endif  // __cplusplus
-#endif  // BString_class_h
+#endif  // String_class_h

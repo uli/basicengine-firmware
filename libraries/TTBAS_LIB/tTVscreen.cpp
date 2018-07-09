@@ -401,14 +401,6 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
     }
 }
 
-void tTVscreen::tone(int16_t freq, int16_t tm) {
-  tv_tone(freq, tm);  
-}
-
-void tTVscreen::notone() {
-  tv_notone();    
-}
-
 void tTVscreen::adjustNTSC(int16_t ajst) {
   tv_NTSC_adjust(ajst);
 }

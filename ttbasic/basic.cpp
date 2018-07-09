@@ -519,7 +519,7 @@ static const char num_prec_fmt[] PROGMEM = "%%%s%d.%dg";
 static const char num_fmt[] PROGMEM = "%%%s%dd";
 #endif
 void putnum(num_t value, int8_t d, uint8_t devno) {
-  char f[6];
+  char f[8];
   const char *l;
 
   if (d < 0) {
@@ -3182,7 +3182,9 @@ void SMALL iconfig() {
     if (value < 0 || value > 2)  {
       E_VALUE(0, 2);
     } else {
+#ifndef HOSTED
       kb.setLayout(value);
+#endif
       CONFIG.KEYBOARD = value;
     }
     break;
@@ -3643,9 +3645,13 @@ void BASIC_INT draw_profile(void)
 void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
-
+#ifdef HOSTED
+  hosted_pump_events();
+#endif
   if (vs23.frame() == last_frame) {
-#ifdef HAVE_TSF
+#if defined(HAVE_TSF) && !defined(HOSTED)
+    // Wasn't able to get this to work without underruns in the hosted build.
+    // Doing the rendering in the SDL callback instead.
     if (sound.needSamples())
       sound.render();
 #endif
@@ -4158,7 +4164,7 @@ BString shex() {
   int value; // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
-  BString hex(value, 16);
+  BString hex((unsigned int)value, 16);
   hex.toUpperCase();
   return hex;
 }
@@ -4852,6 +4858,9 @@ Sets the sound font to be used by the wavetable synthesizer.
 \args
 @file$	name of the SF2 sound font file
 \note
+If a relative path is specified, Engine BASIC will first attempt
+to load the sound font from `/sd`, then from `/flash`.
+
 The default sound font name is `1mgm.sf2`.
 \bugs
 No sanity checks are performed before setting the sound font.
@@ -5605,7 +5614,7 @@ from its use. Use with caution.
 ***/
 void SMALL ibload() {
   uint32_t vadr;
-  ssize_t len = -1;
+  int32_t len = -1;
   int32_t c;
   BString fname;
   uint8_t rc;
@@ -8359,7 +8368,7 @@ PROC f(x): RETURN @x * 2
     return 0;
   }
 
-#ifdef ESP8266_NOWIFI
+#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
   // XXX: So, yes, it's weird that the I2S could would be responsible for
   // checking for system stack overflows, but it happens to have its data
   // buffer right below the stack, and knows where it ends...
@@ -8913,10 +8922,12 @@ void SMALL isysinfo() {
   putHexnum(adr, 8);
   newline();
 
+#ifdef ESP8266
   // SRAM未使用領域の表示
   PRINT_P("SRAM Free: ");
   putnum(umm_free_heap_size(), 0);
   newline();
+#endif
 
   newline();
   PRINT_P("Video timing: ");
@@ -10286,6 +10297,7 @@ The `BOOT` command does not verify if valid firmware code is installed at
 the given flash page. Use with caution.
 ***/
 void iboot() {
+#ifndef HOSTED
   int32_t sector;
   if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
     return;
@@ -10300,6 +10312,7 @@ void iboot() {
   for(;;);
 #else
   ESP.reset();        // UNTESTED!
+#endif
 #endif
 }
 

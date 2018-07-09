@@ -10,7 +10,7 @@
 1090 PRINT "SGN(-2.2): "; SGN(-2.2)
 1100 PRINT "INT(-2.2): "; INT(-2.2)
 1102 INPUT "Paused";X$
-1110 PRINT "RND(-2.2): "; RND(-2.2)
+1110 PRINT "RND(-2.2)=RND(-2.2): "; RND(-2.2)=RND(-2.2)
 1120 PRINT "CHR$($60): "; CHR$($60)
 1130 PRINT "TAB(52): <"; TAB(52); ">"
 1140 rem PRINT "SPC(5): <"; SPC(5); ">"

@@ -186,7 +186,7 @@
 #endif
 
 /// Protoline 0 starts always at address 0
-#define PROTOLINE_BYTE_ADDRESS(n) (PROTOLINE_LENGTH_WORDS)*2*(n))
+#define PROTOLINE_BYTE_ADDRESS(n) (PROTOLINE_LENGTH_WORDS*2*(n))
 #define PROTOLINE_WORD_ADDRESS(n) (PROTOLINE_LENGTH_WORDS*(n))
 
 /// Calculate picture lengths in pixels and bytes, coordinate areas for picture area
@@ -329,8 +329,13 @@ static const uint8_t vs23_ops_pal[2][5] PROGMEM = {
 #define WHITE_LEVEL 0x00ff
 
 #ifdef ESP8266
+#ifdef HOSTED
+#define VS23_SELECT
+#define VS23_DESELECT
+#else
 #define VS23_SELECT do { GPOC = 1<<15; } while(0)
 #define VS23_DESELECT do { GPOS = 1<<15; } while(0)
+#endif
 #else
 #define VS23_SELECT digitalWrite(15, LOW)
 #define VS23_DESELECT digitalWrite(15, HIGH)
@@ -359,7 +364,11 @@ void SpiRamWriteByteRegister(register uint16_t opcode, register uint16_t data);
 static inline bool blockFinished(void) { return !(SpiRamReadRegister8(0x86) & 1); }
 #else
 #ifdef ESP8266
+#ifdef HOSTED
+static inline bool blockFinished(void) { return true; }
+#else
 static inline bool blockFinished(void) { return GPI & (1 << 2); }
+#endif
 #else
 static inline bool blockFinished(void) { return digitalRead(2); }
 #endif

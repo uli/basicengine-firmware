@@ -25,6 +25,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
 
   whole_width = width   = w;
   whole_height = height  = h;
+  win_x = win_y = 0; // note: does not reset the TV window
   maxllen = l;
 
   // デバイスの初期化

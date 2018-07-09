@@ -526,7 +526,7 @@ getch (void)
 void
 getnstr (char * str, uint_fast8_t maxlen)
 {
-    uint_fast8_t ch;
+    int ch;
     uint_fast8_t curlen = 0;
     uint_fast8_t curpos = 0;
     uint_fast8_t starty;

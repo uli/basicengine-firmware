@@ -336,7 +336,7 @@ public:
     }
   }
 
-  static Unifile open(const char *name, uint8_t flags) {
+  static Unifile open(const char *name, int flags) {
     UnifileString abs_name = path(name);
     if (isSPIFFS(abs_name)) {
       UnifileString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
@@ -368,7 +368,7 @@ public:
     }
   }
   
-  static Unifile open(const UnifileString &name, uint8_t flags) {
+  static Unifile open(const UnifileString &name, int flags) {
     return open(name.c_str(), flags);
   }
 
@@ -494,8 +494,6 @@ private:
 
 public:
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
-  uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
-  uint8_t save(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのセーブ
   uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
   uint8_t mkdir(const char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除

@@ -152,18 +152,6 @@ const uint8_t* tv_getFontAdr() {
   return tvfont;
 }
 
-#if USE_VS23 == 0
-// GVRAMアドレス取得
-uint8_t* tv_getGVRAM() {
-  return vram;
-}
-#endif
-
-// GVRAMサイズ取得
-uint16_t tv_getGVRAMSize() {
-  return (g_width>>3)*g_height;
-}
-
 // 画面文字数横
 uint8_t tv_get_cwidth() {
   return c_width;
@@ -338,16 +326,6 @@ void tv_write(uint8_t c) {
   if (gcurs_x < g_width - f_width)
     tv_write_px(gcurs_x, gcurs_y, c);
   gcurs_x += f_width;
-}
-
-// 音の再生
-void tv_tone(int16_t freq, int16_t tm) {
-  Serial.println("unimp tv_tone");
-}
-
-// 音の停止
-void tv_notone() {
-  Serial.println("unimp tv_notone");
 }
 
 // グラフィック横スクロール

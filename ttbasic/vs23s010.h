@@ -109,6 +109,13 @@ class VS23S010 {
     inline uint32_t frame() {
       return m_frame;
     }
+    inline void setFrame(uint32_t f) {
+      m_frame = f;
+    }
+
+    inline bool isPal() {
+      return m_pal;
+    }
 
     void setPixel(uint16_t x, uint16_t y, uint8_t c);
     void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
@@ -403,7 +410,9 @@ class VS23S010 {
     uint32_t cyclesPerFrameCalculated() {
       return m_cycles_per_frame_calculated;
     }
+#ifndef HOSTED
 private:
+#endif
     static void ICACHE_RAM_ATTR vsyncHandler(void);
     bool m_vsync_enabled;
     uint32_t m_cycles_per_frame;

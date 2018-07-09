@@ -214,7 +214,18 @@ tsf *BasicSound::m_tsf;
 
 void BasicSound::loadFont()
 {
-  m_sf2_file = Unifile::open(m_font_name.c_str(), FILE_READ);
+  if (m_font_name[0] == '/') {
+    m_sf2_file = Unifile::open(m_font_name.c_str(), FILE_READ);
+  } else {
+    m_sf2_file = Unifile::open(
+      (BString(SD_PREFIX) + BString('/') + m_font_name).c_str(),
+      FILE_READ);
+    if (!m_sf2_file) {
+      m_sf2_file = Unifile::open(
+        (BString(FLASH_PREFIX) + BString('/') + m_font_name).c_str(),
+        FILE_READ);
+    }
+  }
   m_sf2.data = &m_sf2_file;
   m_sf2.read = tsfile_read;
   m_sf2.tell = tsfile_tell;
@@ -282,6 +293,9 @@ void BasicSound::stopMml(int ch)
 // Array with 32-bit values which have one bit more set to '1' in every
 // consecutive array index value
 // Taken from Espressif MP3 decoder demo.
+#ifdef HOSTED
+extern const uint32_t fakePwm[];
+#else
 const uint32_t BASIC_DAT fakePwm[]={
         0x00000010, 0x00000410, 0x00400410, 0x00400C10, 0x00500C10,
         0x00D00C10, 0x20D00C10, 0x21D00C10, 0x21D80C10, 0xA1D80C10,
@@ -291,6 +305,7 @@ const uint32_t BASIC_DAT fakePwm[]={
         0xFFFEDD73, 0xFFFEDD7B, 0xFFFEFD7B, 0xFFFFFD7B, 0xFFFFFDFB,
         0xFFFFFFFB, 0xFFFFFFFF
 };
+#endif
 
 #ifdef HAVE_TSF
 static short staging_buf[I2S_BUFLEN];
@@ -406,6 +421,7 @@ void BasicSound::setBeep(int period, int vol)
 
   nosdk_i2s_set_blocksize(period * 4);
 
+#ifndef HOSTED
   for (int b = 0; b < 2; ++b) {
     for (int i = 0; i < period / 2; ++i) {
       ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = 0;
@@ -414,6 +430,7 @@ void BasicSound::setBeep(int period, int vol)
       ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = sample;
     }
   }
+#endif
 }
 
 void BasicSound::beep(int period, int vol, const uint8_t *env)
@@ -434,8 +451,10 @@ void BasicSound::beep(int period, int vol, const uint8_t *env)
 void BasicSound::noBeep()
 {
   m_beep_env = NULL;
+#ifndef HOSTED
   memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, I2S_BUFLEN * 4);
   memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
+#endif
   nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
 

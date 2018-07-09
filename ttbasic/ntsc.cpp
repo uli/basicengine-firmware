@@ -116,6 +116,7 @@ static inline void ICACHE_RAM_ATTR vs23Deselect()
 	SpiUnlock();
 }
 
+#ifndef HOSTED
 uint16_t SpiRamReadByte(uint32_t address)
 {
 	uint16_t result;
@@ -279,6 +280,7 @@ void ICACHE_RAM_ATTR SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2,
 	SPI.writeBytes(req, 5);
 	vs23Deselect();
 }
+#endif
 
 // / Set proto type picture line indexes 
 void VS23S010::SetLineIndex(uint16_t line, uint16_t wordAddress)

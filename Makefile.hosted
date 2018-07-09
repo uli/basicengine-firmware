@@ -1,0 +1,35 @@
+INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
+	-Ilibraries/ESP8266SAM/src -Ilibraries/azip
+CFLAGS=-DARDUINO -DESP8266 -DESP8266_NOWIFI -DHOSTED -DF_CPU=160000000 \
+	-O2 -g -Ihosted -Ittbasic $(INCLUDE)
+CFLAGS += -m32
+#CFLAGS += -fprofile-arcs -ftest-coverage
+CXXFLAGS = $(CFLAGS) -fpermissive -std=c++11
+
+SOURCES = $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
+	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
+	$(shell ls libraries/azip/*.cpp) hosted/ttbasic.cpp \
+	hosted/Arduino.cpp hosted/WString.cpp hosted/core_esp8266_noniso.cpp hosted/noniso.cpp \
+	hosted/Time.cpp hosted/hosted_spi.cpp hosted/TKeyboard.cpp \
+	hosted/files.cpp hosted/hosted_i2s.cpp
+SOURCES_C = $(shell ls ttbasic/*.c)
+OBJS = $(SOURCES:.cpp=.o)
+OBJS_C = $(SOURCES_C:.c=.o)
+
+PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
+	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
+
+all: basic
+
+basic: $(OBJS) $(OBJS_C)
+	$(CXX) $(CXXFLAGS) -o basic $(OBJS) $(OBJS_C) -lSDL
+
+clean:
+	rm -f $(OBJS) $(OBJS_C) $(PROF)
+
+gcov:
+	rm -f *.gcov
+	gcov $(SOURCES) $(SOURCES_C)
+
+$(OBJS) $(OBJS_C): $(shell ls hosted/*.h ttbasic/*.h libraries/*/src/*.h libraries/*/*.h)
+
