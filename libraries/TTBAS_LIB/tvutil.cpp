@@ -152,18 +152,6 @@ const uint8_t* tv_getFontAdr() {
   return tvfont;
 }
 
-#if USE_VS23 == 0
-// GVRAMアドレス取得
-uint8_t* tv_getGVRAM() {
-  return vram;
-}
-#endif
-
-// GVRAMサイズ取得
-uint16_t tv_getGVRAMSize() {
-  return (g_width>>3)*g_height;
-}
-
 // 画面文字数横
 uint8_t tv_get_cwidth() {
   return c_width;
