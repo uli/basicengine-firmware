@@ -494,8 +494,6 @@ private:
 
 public:
   uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
-  uint8_t load(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのロード
-  uint8_t save(char* fname, uint8_t* ptr, uint16_t sz); // ファイルのセーブ
   uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
   uint8_t mkdir(const char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
