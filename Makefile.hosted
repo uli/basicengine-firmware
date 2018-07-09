@@ -16,13 +16,16 @@ SOURCES_C = $(shell ls ttbasic/*.c)
 OBJS = $(SOURCES:.cpp=.o)
 OBJS_C = $(SOURCES_C:.c=.o)
 
+PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
+	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
+
 all: basic
 
 basic: $(OBJS) $(OBJS_C)
 	$(CXX) $(CXXFLAGS) -o basic $(OBJS) $(OBJS_C) -lSDL
 
 clean:
-	rm -f $(OBJS) $(OBJS_C)
+	rm -f $(OBJS) $(OBJS_C) $(PROF)
 
 gcov:
 	rm -f *.gcov
