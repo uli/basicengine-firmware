@@ -52,9 +52,10 @@ static uint32_t millis() {
   return micros() / 1000;
 }
 
-#define delay SDL_Delay
+#define delay(ms) delayMicroseconds((ms)*1000)
 static void delayMicroseconds(unsigned int us) {
-  SDL_Delay(us / 1000);
+  uint32_t until = micros() + us;
+  while (micros() < until) {}
 }
 
 #ifdef __cplusplus 
