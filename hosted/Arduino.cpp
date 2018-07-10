@@ -73,9 +73,15 @@ void dump_yuv()
 #endif
 }
 
+static SDL_Thread *scrthr;
+static int screen_thread(void *p);
+static bool screen_quit = false;
+
 static void my_exit(void)
 {
   fprintf(stderr, "my_exit\n");
+  screen_quit = true;
+  SDL_WaitThread(scrthr, NULL);
   if (vid_fp)
     pclose(vid_fp);
   if (aud_fp)
@@ -186,6 +192,7 @@ int main(int argc, char **argv)
 
   hosting_mem_allocated = mallinfo().uordblks;  
 
+  SDL_CreateThread(screen_thread, NULL);
   setup();
   for (;;)
     loop();
@@ -197,9 +204,6 @@ uint64_t total_frames = 0;
 extern uint64_t total_samples;
 
 void hosted_pump_events() {
-  static int last_line = 0;
-  static SDL_Color *pl = palette[0];
-
   SDL_Event event;
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
@@ -213,7 +217,18 @@ void hosted_pump_events() {
     }
     SDL_PumpEvents();
   }
+}
 
+int screen_thread(void *p)
+{
+  static int last_line = 0;
+  static SDL_Color *pl = palette[0];
+
+  while (!screen_quit) {
+  if (!vs23_int.enabled) {
+    SDL_Delay(10);
+    continue;
+  }
   int new_line = SpiRamReadRegister(CURLINE);
 
   if (new_line > last_line) {
@@ -361,7 +376,8 @@ void hosted_pump_events() {
     }
   }
   last_line = new_line;
-  vs23.setFrame(micros() / vs23_int.line_us / vs23_int.line_count);
+  usleep(100);
+  }
 }
 
 uint32_t VS23S010::frame()
