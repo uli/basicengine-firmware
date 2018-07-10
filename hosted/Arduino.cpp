@@ -190,9 +190,10 @@ int main(int argc, char **argv)
     }
   }
 
+  SDL_CreateThread(screen_thread, NULL);
+
   hosting_mem_allocated = mallinfo().uordblks;  
 
-  SDL_CreateThread(screen_thread, NULL);
   setup();
   for (;;)
     loop();
