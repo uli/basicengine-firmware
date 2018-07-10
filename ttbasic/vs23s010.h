@@ -106,9 +106,14 @@ class VS23S010 {
 
     uint16_t ICACHE_RAM_ATTR currentLine();
 
+#ifdef HOSTED
+    uint32_t frame();
+#else
     inline uint32_t frame() {
       return m_frame;
     }
+#endif
+
     inline void setFrame(uint32_t f) {
       m_frame = f;
     }

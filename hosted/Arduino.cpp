@@ -364,6 +364,15 @@ void hosted_pump_events() {
   vs23.setFrame(micros() / vs23_int.line_us / vs23_int.line_count);
 }
 
+uint32_t VS23S010::frame()
+{
+  // The hosted environment is not real-time enough to provide an asynchronous
+  // update of m_frame with reasonable accuracy; we therefore calculate it on
+  // demand.
+  m_frame = (micros() / vs23_int.line_us - vs23.m_sync_line) / vs23_int.line_count;
+  return m_frame;
+}
+
 extern "C" size_t umm_free_heap_size( void )
 {
   return 70000 - (mallinfo().uordblks - hosting_mem_allocated);
