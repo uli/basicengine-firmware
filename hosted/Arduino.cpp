@@ -218,7 +218,7 @@ void hosted_pump_events() {
 
   if (new_line > last_line) {
     // draw picture lines
-    for (int i = last_line; i < vs23.height(); ++i) {
+    for (int i = last_line; i < _min(new_line,vs23.height()); ++i) {
 #define m_current_mode vs23.m_current_mode	// needed by STARTLINE...
 #define m_pal vs23_int.pal
 
