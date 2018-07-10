@@ -12,10 +12,14 @@ const uint8_t SPI_MODE3 = 0x11; ///<  CPOL: 1  CPHA: 1
 
 class SPIClass {
 public:
+  SPIClass() {
+    SPI1CLK = 38;
+  }
   void begin() {
   }
   void write(uint8_t data);
   void setFrequency(uint32_t freq) {
+    SPI1CLK = freq / 1000000;
   }
   bool pins(int8_t sck, int8_t miso, int8_t mosi, int8_t ss) {
     return true;
