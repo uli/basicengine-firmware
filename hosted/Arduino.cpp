@@ -352,7 +352,7 @@ int screen_thread(void *p)
     // picture line is; here, we only draw protolines.
 
     // draw SDL screen border top (before start of picture)
-    for (int i = 1; i < (STARTLINE - VIEWPORT_Y)*STRETCH_Y; ++i) {
+    for (int i = 1; i < int((STARTLINE - VIEWPORT_Y)*STRETCH_Y); ++i) {
       memcpy(p, screen->pixels, screen->pitch);
       p += screen->pitch;
     }
