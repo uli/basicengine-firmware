@@ -25,6 +25,9 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#include "ttconfig.h"
+#ifdef USE_VS23
+
 #ifndef NTSC_H
 #define NTSC_H
 
@@ -375,3 +378,5 @@ static inline bool blockFinished(void) { return digitalRead(2); }
 #endif
 
 #endif
+
+#endif	// USE_VS23

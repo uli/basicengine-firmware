@@ -25,6 +25,8 @@
  *****************************************************************************/
 
 #include "ttconfig.h"
+#ifdef USE_VS23
+
 #include "Psx.h"
 
 #include "vs23s010.h"
@@ -1480,3 +1482,4 @@ uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t co
 #endif	// VS23_BG_ENGINE
 
 VS23S010 vs23;
+#endif	// USE_VS23

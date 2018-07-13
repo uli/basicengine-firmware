@@ -25,6 +25,9 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#include "ttconfig.h"
+#ifdef USE_VS23
+
 #include "ntsc.h"
 #include <string.h>
 #include <Arduino.h>
@@ -912,3 +915,5 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 	startBlockMove();
 	last_dir = dir;
 }
+
+#endif	// USE_VS23
