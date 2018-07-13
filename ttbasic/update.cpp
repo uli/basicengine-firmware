@@ -30,7 +30,7 @@
 #include "error.h"
 #include "video.h"
 
-#ifndef HOSTED
+#if !defined(HOSTED) && defined(ESP8266)
 
 #include <Updater.h>
 #include <spi_flash.h>
