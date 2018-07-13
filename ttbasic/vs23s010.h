@@ -140,6 +140,10 @@ class VS23S010 {
     void TvFilledRectangle (uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t *texture, uint16_t color);
     void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir);
 
+    inline void writeBytes(uint32_t address, uint8_t *data, uint32_t len) {
+      SpiRamWriteBytes(address, data, len);
+    }
+
     inline void setInterlace(bool interlace) {
       m_interlace = interlace;
     }

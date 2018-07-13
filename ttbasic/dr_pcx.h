@@ -545,7 +545,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     }
                 }
                 if (pPCX->mask < 0 && y >= oy && y < oy+h) {
-                  SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
+                  vs23.writeBytes(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
                   free(ln);
                 }
             }
@@ -587,7 +587,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       pRow_[x-ox] = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                     }
-                    SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
+                    vs23.writeBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
                   } else {
                     for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       uint8_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
