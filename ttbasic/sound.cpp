@@ -215,15 +215,15 @@ tsf *BasicSound::m_tsf;
 void BasicSound::loadFont()
 {
   if (m_font_name[0] == '/') {
-    m_sf2_file = Unifile::open(m_font_name.c_str(), FILE_READ);
+    m_sf2_file = Unifile::open(m_font_name.c_str(), UFILE_READ);
   } else {
     m_sf2_file = Unifile::open(
       (BString(SD_PREFIX) + BString('/') + m_font_name).c_str(),
-      FILE_READ);
+      UFILE_READ);
     if (!m_sf2_file) {
       m_sf2_file = Unifile::open(
         (BString(FLASH_PREFIX) + BString('/') + m_font_name).c_str(),
-        FILE_READ);
+        UFILE_READ);
     }
   }
   m_sf2.data = &m_sf2_file;

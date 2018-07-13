@@ -175,7 +175,7 @@ void inetget() {
   int httpCode = open_url(url);
   if (err)
     return;
-  Unifile f = Unifile::open(file.c_str(), FILE_OVERWRITE);
+  Unifile f = Unifile::open(file.c_str(), UFILE_OVERWRITE);
   if (!f) {
     err = ERR_FILE_OPEN;
     inetclose();

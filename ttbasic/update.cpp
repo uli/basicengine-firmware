@@ -49,7 +49,7 @@ static void flash_user(BString filename, int sector)
     err = ERR_OOM;
     return;
   }
-  Unifile f = Unifile::open(filename, FILE_READ);
+  Unifile f = Unifile::open(filename, UFILE_READ);
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
@@ -155,7 +155,7 @@ void iflash()
     return;
   }
 
-  Unifile f = Unifile::open(filename, FILE_READ);
+  Unifile f = Unifile::open(filename, UFILE_READ);
   if (!f) {
     err = ERR_FILE_OPEN;
     return;

@@ -265,9 +265,9 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
   if (!tfile)
     return ERR_OOM;
   if(mode) {
-    *tfile = Unifile::open(tfname, FILE_OVERWRITE);
+    *tfile = Unifile::open(tfname, UFILE_OVERWRITE);
   } else {
-    *tfile = Unifile::open(tfname, FILE_READ);   
+    *tfile = Unifile::open(tfname, UFILE_READ);   
   }
 
   if (*tfile)
@@ -362,7 +362,7 @@ int8_t sdfiles::IsText(char* fname) {
   int8_t rc = -1;
  
   // ファイルのオープン
-  myFile = Unifile::open(fname, FILE_READ);
+  myFile = Unifile::open(fname, UFILE_READ);
   if (myFile) {
     if (myFile.isDirectory()) {
       rc = - SD_ERR_NOT_FILE;
@@ -420,7 +420,7 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask) {
   uint8_t rc =1;
  
-  pcx_file = Unifile::open(fname, FILE_READ);
+  pcx_file = Unifile::open(fname, UFILE_READ);
   if (!pcx_file)
     return SD_ERR_OPEN_FILE;
 
@@ -483,7 +483,7 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
   hdr.bytesPerLine = w;
   hdr.paletteType = 1;
   
-  pcx_file = Unifile::open(fname, FILE_OVERWRITE);
+  pcx_file = Unifile::open(fname, UFILE_OVERWRITE);
   if (!pcx_file)
     return ERR_FILE_OPEN;
 
@@ -612,10 +612,10 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 
 uint8_t sdfiles::fcopy(const char *srcp, const char *dstp)
 {
-  Unifile src = Unifile::open(srcp, FILE_READ);
+  Unifile src = Unifile::open(srcp, UFILE_READ);
   if (!src)
     return SD_ERR_OPEN_FILE;
-  Unifile dst = Unifile::open(dstp, FILE_OVERWRITE);
+  Unifile dst = Unifile::open(dstp, UFILE_OVERWRITE);
   if (!dst) {
     src.close();
     return SD_ERR_OPEN_FILE;
@@ -644,8 +644,8 @@ out:
 int8_t sdfiles::compare(const char *one, const char *two)
 {
   int8_t ret = 0;
-  Unifile fone = Unifile::open(one, FILE_READ);
-  Unifile ftwo = Unifile::open(two, FILE_READ);
+  Unifile fone = Unifile::open(one, UFILE_READ);
+  Unifile ftwo = Unifile::open(two, UFILE_READ);
   if (!fone || !ftwo) {
     err = ERR_FILE_OPEN;
     goto out;

@@ -57,12 +57,12 @@ void AZIP::open_story( const char *game_name )
     BString memory_name(F("MEMORY.DAT"));
     Unifile game_in;
 
-    if (!(game = Unifile::open( memory_name.c_str(), FILE_OVERWRITE )))
+    if (!(game = Unifile::open( memory_name.c_str(), UFILE_OVERWRITE )))
     {
         fatal(PSTR("cannot open mem\n"));
     }
 
-    if ( game_in = Unifile::open( game_name, FILE_READ ) )
+    if ( game_in = Unifile::open( game_name, UFILE_READ ) )
     {
         game_in.seekSet(0);
         while ( ( count = game_in.read( (char *)stack, sizeof(stack)) ) > 0 )
@@ -259,7 +259,7 @@ int AZIP::save_restore( const char *file_name, int flag )
 
     if ( flag == GAME_SAVE || flag == GAME_RESTORE )
     {
-        if ( !( tfp = Unifile::open( file_name, ( flag == GAME_SAVE ) ? FILE_OVERWRITE : FILE_READ ) ) )
+        if ( !( tfp = Unifile::open( file_name, ( flag == GAME_SAVE ) ? UFILE_OVERWRITE : UFILE_READ ) ) )
         {
             write_string( PSTR("Cannot open SAVE file ") ); write_string(file_name); newline();
             return ( 1 );
@@ -430,7 +430,7 @@ int AZIP::z_save( int argc, zword_t table, zword_t bytes, zword_t name )
             goto finished;
         }
 
-        if ( !( afp = Unifile::open( new_name, FILE_OVERWRITE ) ) )
+        if ( !( afp = Unifile::open( new_name, UFILE_OVERWRITE ) ) )
         {
             goto finished;
         }
@@ -511,7 +511,7 @@ int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
             goto finished;
         }
 
-        if ( !( afp = Unifile::open( new_name, FILE_READ ) ) )
+        if ( !( afp = Unifile::open( new_name, UFILE_READ ) ) )
         {
             goto finished;
         }

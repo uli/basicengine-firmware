@@ -6047,7 +6047,7 @@ void iloadbg() {
   if (!(filename = getParamFname()))
     return;
   
-  Unifile f = Unifile::open(filename, FILE_READ);
+  Unifile f = Unifile::open(filename, UFILE_READ);
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
@@ -6104,7 +6104,7 @@ void isavebg() {
   if (getParam(bg, 0, VS23_MAX_BG, I_TO))
     return;
   
-  Unifile f = Unifile::open(filename, FILE_OVERWRITE);
+  Unifile f = Unifile::open(filename, UFILE_OVERWRITE);
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
@@ -10132,7 +10132,7 @@ OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
 ***/
 void iopen() {
   BString filename;
-  int flags = FILE_READ;
+  int flags = UFILE_READ;
   int32_t filenum;
 
   if (!(filename = getParamFname()))
@@ -10141,9 +10141,9 @@ void iopen() {
   if (*cip == I_FOR) {
     ++cip;
     switch (*cip++) {
-    case I_OUTPUT:	flags = FILE_OVERWRITE; break;
-    case I_INPUT:	flags = FILE_READ; break;
-    case I_APPEND:	flags = FILE_WRITE; break;
+    case I_OUTPUT:	flags = UFILE_OVERWRITE; break;
+    case I_INPUT:	flags = UFILE_READ; break;
+    case I_APPEND:	flags = UFILE_WRITE; break;
     case I_DIRECTORY:	flags = -1; break;
     default:		SYNTAX_T("exp file mode"); return;
     }
@@ -10827,7 +10827,7 @@ void loadConfig() {
   CONFIG.cursor_color = 0x92;
   CONFIG.beep_volume = 15;
   
-  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_READ);
+  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), UFILE_READ);
   if (!f)
     return;
   f.read((char *)&CONFIG, sizeof(CONFIG));
@@ -10842,7 +10842,7 @@ The configuration will be saved as a file under the name `/flash/.config`.
 \ref CONFIG
 ***/
 void isaveconfig() {
-  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), FILE_OVERWRITE);
+  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), UFILE_OVERWRITE);
   if (!f) {
     err = ERR_FILE_OPEN;
   }

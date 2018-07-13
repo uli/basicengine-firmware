@@ -426,7 +426,7 @@ static int	load (const char *name)
 	Unifile f;
 	int	i;
 
-	f = Unifile::open (name, FILE_READ);
+	f = Unifile::open (name, UFILE_READ);
 	if (!f)
 		return error (BString(F("load file \"")) + name + BString(F("\"")));
 	i = f.fileSize();
@@ -454,7 +454,7 @@ static int	save (const char *name, int pos, int size)
 {
 	Unifile f;
 
-	f = Unifile::open (name, FILE_OVERWRITE);
+	f = Unifile::open (name, UFILE_OVERWRITE);
 	if (!f)
 		return error (BString(F("save file \"")) + name + BString(F("\"")));
 	for (int i = 0; i < size; ++i) {

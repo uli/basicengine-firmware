@@ -35,6 +35,17 @@ typedef BString UnifileString;
 #define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
 #endif
 
+#ifdef UNIFILE_USE_SD
+#define UFILE_READ 42
+#define UFILE_WRITE 43
+#define UFILE_OVERWRITE 44
+#else
+#define UFILE_WRITE FILE_WRITE
+#define UFILE_READ FILE_READ
+#define UFILE_OVERWRITE FILE_OVERWRITE
+#endif
+
+
 extern SdFat SD;
 
 bool SD_BEGIN(int mhz = 40);
@@ -342,9 +353,9 @@ public:
       UnifileString spiffs_name = abs_name.substring(FLASH_PREFIX_LEN + 1, 256);
       const char *fl;
       switch (flags) {
-      case FILE_WRITE:		fl = "a"; break;
-      case FILE_OVERWRITE:	fl = "w"; break;
-      case FILE_READ:		fl = "r"; break;
+      case UFILE_WRITE:		fl = "a"; break;
+      case UFILE_OVERWRITE:	fl = "w"; break;
+      case UFILE_READ:		fl = "r"; break;
       default:			return Unifile();
       }
 #ifdef UNIFILE_USE_SPIFFS
