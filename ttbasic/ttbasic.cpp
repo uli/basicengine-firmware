@@ -25,6 +25,7 @@
  *****************************************************************************/
 
 #include "ttconfig.h"
+#include <Arduino.h>
 #include "lock.h"
 #include "audio.h"
 
@@ -44,7 +45,7 @@ extern "C" {
 #ifdef ESP8266_NOWIFI
 #include <hw/esp8266.h>
 #include <hw/pin_mux_register.h>
-#else
+#elif defined(ESP8266)
 #include <eagle_soc.h>
 #endif
 #ifdef ESP8266
@@ -52,16 +53,25 @@ extern "C" {
 #endif
 };
 
+#ifdef ESP8266
 #include <eboot_command.h>
 
 extern "C" {
 #include <user_interface.h>
 };
+#endif
+
+#ifdef ESP32
+#include <soc/rtc.h>
+#endif
 
 void basic();
 uint8_t serialMode;
 
-void setup(void){
+void setup() {
+#ifdef ESP32
+  rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+#endif
   // That does not seem to be necessary on ESP8266.
   //randomSeed(analogRead(PA0));
 
