@@ -21,6 +21,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#define __GNU_VISIBLE 1
 #include <Arduino.h>
 #include "BString.h"
 #include "stdlib_noniso.h"
