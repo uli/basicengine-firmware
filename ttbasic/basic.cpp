@@ -4830,7 +4830,11 @@ void SMALL ismode() {
     ++cip;
     if (getParam(flags, 0, 0x3f, I_NONE)) return;
   }
-  Serial.begin(baud, (enum SerialConfig)flags);
+  Serial.begin(baud,
+#ifdef ESP8266
+    (SerialConfig)
+#endif
+    flags);
 }
 
 /***bc snd BEEP
