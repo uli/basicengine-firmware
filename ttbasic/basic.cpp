@@ -10730,7 +10730,7 @@ void SMALL basic() {
   vs23.setLineAdjust(CONFIG.line_adjust);
   vs23.setColorSpace(0);
 
-  psx.setupPins(0, 1, 2, 3, 1);
+  psx.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
 
   size_list = 0;
   listbuf = NULL;

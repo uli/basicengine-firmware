@@ -122,4 +122,18 @@
 #define HAVE_NETWORK
 #endif
 
+#ifdef ESP8266
+#define PSX_DATA_PIN	0
+#define PSX_CMD_PIN	1
+#define PSX_ATTN_PIN	2
+#define PSX_CLK_PIN	3
+#define PSX_DELAY	1
+#elif defined(ESP32)
+#define PSX_DATA_PIN	16
+#define PSX_CMD_PIN	17
+#define PSX_ATTN_PIN	2
+#define PSX_CLK_PIN	4
+#define PSX_DELAY	1
+#endif
+
 #endif
