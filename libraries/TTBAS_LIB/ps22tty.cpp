@@ -10,8 +10,8 @@
 #include <TKeyboard.h>
 #include "tTVscreen.h"
 
-#if defined(ESP8266) && !defined(__FLASH__)
-#define __FLASH__ ICACHE_RODATA_ATTR
+#if (defined(ESP8266) || defined(ESP32)) && !defined(__FLASH__)
+#define __FLASH__ PROGMEM
 #endif
 
 #ifndef ESP8266_NOWIFI
@@ -44,7 +44,7 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
- const char RomaKama[][5][4] ICACHE_RODATA_ATTR =  {
+ const char RomaKama[][5][4] PROGMEM =  {
   //  a       e       i       o        u
   { "\xb1", "\xb4", "\xb2", "\xb5", "\xb3", },                                          //[]  : ｱ ｴ ｲ ｵ ｳ
   { "\xca\xde", "\xcd\xde", "\xcb\xde", "\xce\xde", "\xcc\xde", },                      //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
