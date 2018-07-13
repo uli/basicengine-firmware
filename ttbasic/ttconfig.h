@@ -77,6 +77,14 @@
 
 #define SMALL __attribute__((optimize("Os")))
 
+#ifdef ESP32
+#define GROUP(g)
+#define GROUP_DATA
+#define BASIC_FP
+#define BASIC_INT
+#define BASIC_DAT
+#else
+
 #ifdef ESP8266_NOWIFI
 #define GROUP(g) __attribute__((section(".irom." #g)))
 #define GROUP_DATA GROUP
@@ -89,6 +97,8 @@
 
 #define BASIC_INT GROUP(basic_core)
 #define BASIC_DAT GROUP_DATA(basic_data)
+
+#endif // ESP32
 
 #ifdef ESP8266
 #define UNIFILE_USE_SPIFFS
