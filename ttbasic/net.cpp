@@ -27,7 +27,7 @@
 #include "basic.h"
 #include "net.h"
 
-#ifndef ESP8266_NOWIFI
+#ifdef HAVE_NETWORK
 
 #include <Arduino.h>
 

@@ -7299,7 +7299,7 @@ BString BASIC_INT istrvalue()
   case I_INPUTSTR:	value = sinput(); break;
   case I_ERRORSTR:	value = serror(); break;
   case I_NET:
-#ifdef ESP8266_NOWIFI
+#ifndef HAVE_NETWORK
     err = ERR_NOT_SUPPORTED;
 #else
     if (*cip == I_INPUTSTR) {
