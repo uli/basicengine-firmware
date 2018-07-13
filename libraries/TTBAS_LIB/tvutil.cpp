@@ -143,9 +143,6 @@ void tv_window_get(int &x, int &y, int &w, int &h)
 // NTSC表示の終了
 // 
 void tv_end() {
-#if USE_VS23 == 0
-  TV.end();
-#endif
 }
 
 // フォントアドレス取得
@@ -258,12 +255,8 @@ void tv_insLine(uint16_t l) {
 
 // 1行分スクリーンのスクロールアップ
 void tv_scroll_up() {
-#if USE_VS23 == 1
   vs23.MoveBlock(win_x, win_y + f_height, win_x, win_y, win_width/2, win_height-f_height, 0);
   vs23.MoveBlock(win_x + win_width/2, win_y + f_height, win_x + win_width/2, win_y, win_width/2, win_height-f_height, 0);
-#else
-  TV.shift(*(tvfont+1), UP);
-#endif
   tv_clerLine(win_c_height-1);
 }
 
