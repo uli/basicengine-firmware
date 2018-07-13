@@ -3789,6 +3789,7 @@ The number of values required depends on the register accessed:
 \ref VREG()
 ***/
 void BASIC_INT ivreg() {
+#ifdef USE_VS23
   int32_t opcode;
   int vals;
 
@@ -3837,6 +3838,9 @@ void BASIC_INT ivreg() {
     SpiRamWriteRegister(opcode, values[0]);
     break;
   }
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 /***bc scr VPOKE
@@ -3851,10 +3855,14 @@ produce invalid output, with may cause damage to older CRT displays.
 \ref VPEEK()
 ***/
 void BASIC_INT ivpoke() {
+#ifdef USE_VS23
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
   if (getParam(value, 0, 255, I_NONE)) return;
   SpiRamWriteByte(addr, value);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
   
 /***bc scr LOCATE
@@ -8039,6 +8047,7 @@ static const uint8_t vs23_read_regs[] PROGMEM = {
   0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
 };
 num_t BASIC_INT nvreg() {
+#ifdef USE_VS23
   int32_t a = getparam();
   bool good = false;
   for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
@@ -8052,6 +8061,10 @@ num_t BASIC_INT nvreg() {
     return 0;
   } else
     return SpiRamReadRegister(a);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
 }
   
 /***bf scr VPEEK
@@ -8063,12 +8076,17 @@ Read a location in video memory.
 \ref VPOKE VREG()
 ***/
 num_t BASIC_FP nvpeek() {
+#ifdef USE_VS23
   num_t value = getparam();
   if (value < 0 || value > 131071) {
     E_VALUE(0, 131071);
     return 0;
   } else
     return SpiRamReadByte(value);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
 }
 
 #define basic_bool(x) ((x) ? -1 : 0)
@@ -8929,12 +8947,14 @@ void SMALL isysinfo() {
   newline();
 #endif
 
+#ifdef USE_VS23
   newline();
   PRINT_P("Video timing: ");
   putint(vs23.cyclesPerFrame(), 0);
   PRINT_P(" cpf (");
   putint(vs23.cyclesPerFrameCalculated(), 0);
   PRINT_P(" nominal)\n");
+#endif
 }
 
 static void BASIC_FP do_goto(uint32_t line)
