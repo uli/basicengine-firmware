@@ -94,7 +94,9 @@ void setup() {
 void loop(void){
   Serial.println(F("\nStarting")); Serial.flush();
 
+#ifndef ESP32
   SPI.pins(14, 12, 13, 15);
+#endif
   SPI.setDataMode(SPI_MODE0);
 
 #ifdef USE_VS23
