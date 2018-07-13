@@ -19,6 +19,7 @@
 #include <string.h>
 #include "../../ttbasic/ntsc.h"
 #include "../../ttbasic/vs23s010.h"
+#include "../../ttbasic/graphics.h"
 #include "tTVscreen.h"
 
 extern uint8_t* ttbasic_font;
@@ -97,7 +98,7 @@ void tv_init(int16_t ajst, uint8_t vmode) {
 static void tv_set_clear_line_col(uint8_t cc)
 {
   if (clrline_color != cc) {
-    vs23.drawRect(clrline_x, clrline_y, g_width / 2, 8, cc, cc);
+    gfx.drawRect(clrline_x, clrline_y, g_width / 2, 8, cc, cc);
     clrline_color = cc;
   }
 }
@@ -286,17 +287,17 @@ void tv_pset(int16_t x, int16_t y, uint8_t c) {
   
 // 線の描画
 void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
-  vs23.drawLine(x1, y1, x2, y2, c);
+  gfx.drawLine(x1, y1, x2, y2, c);
 }
 
 // 円の描画
 void tv_circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
-  vs23.drawCircle(x, y, r, c, f);
+  gfx.drawCircle(x, y, r, c, f);
 }
 
 // 四角の描画
 void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
-  vs23.drawRect(x, y, w, h, c, f);
+  gfx.drawRect(x, y, w, h, c, f);
 }
 
 // 指定サイズのドットの描画
@@ -334,22 +335,22 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
     case 0:	// up
       vs23.MoveBlock(x,	        y + 1, x,         y, w / 2, h - 1, 0);
       vs23.MoveBlock(x + w / 2, y + 1, x + w / 2, y, w / 2, h - 1, 0);
-      vs23.drawLine(x, y + h - 1, x + w - 1, y + h - 1, 0);
+      gfx.drawLine(x, y + h - 1, x + w - 1, y + h - 1, 0);
       break;
     case 1:	// down
       vs23.MoveBlock(x + w / 2 - 1, y + h - 1 - 1, x + w / 2 - 1, y + h - 1, w / 2, h - 1, 1);
       vs23.MoveBlock(x + w - 1,     y + h - 1 - 1, x + w - 1,     y + h - 1, w / 2, h - 1, 1);
-      vs23.drawLine(x, y, x + w - 1, y, 0);
+      gfx.drawLine(x, y, x + w - 1, y, 0);
       break;
     case 2:	// left
       vs23.MoveBlock(x + 1,     y, x,             y, w / 2 - 1, h, 0);
       vs23.MoveBlock(x + w / 2, y, x + w / 2 - 1, y, w / 2,     h, 0);
-      vs23.drawLine(x, y, x, y + h - 1, 0);
+      gfx.drawLine(x, y, x, y + h - 1, 0);
       break;
     case 3:	// right
       vs23.MoveBlock(x + w - 1 - 1, y + h - 1, x + w - 1,         y + h - 1, w / 2 - 1, h, 1);
       vs23.MoveBlock(x + w / 2 - 1, y + h - 1, x + w / 2 + 1 - 1, y + h - 1, w / 2,     h, 1);
-      vs23.drawLine(x + w - 1, y, x + w - 1, y + h - 1, 0);
+      gfx.drawLine(x + w - 1, y, x + w - 1, y + h - 1, 0);
       break;
   }
 }

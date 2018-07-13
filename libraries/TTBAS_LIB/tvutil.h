@@ -1,3 +1,5 @@
+#include "../../ttbasic/vs23s010.h"
+
 void tv_init(int16_t ajst, uint8_t vmode=SC_DEFAULT);
 void tv_end();
 void    tv_write(uint8_t x, uint8_t y, uint8_t c);

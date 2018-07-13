@@ -25,14 +25,16 @@
  *****************************************************************************/
 
 #include "vs23s010.h"
+#include "colorspace.h"
+#include "graphics.h"
 
-void VS23S010::drawRect(int x0, int y0, int w, int h, uint8_t c, int fc)
+void Graphics::drawRect(int x0, int y0, int w, int h, uint8_t c, int fc)
 {
   if (fc == -1) {
     w--;
     h--;
     if (w == 0 && h == 0) {
-       setPixel(x0,y0,c);
+       vs23.setPixel(x0,y0,c);
     } else if (w == 0 || h == 0) {
       drawLine(x0,y0,x0+w,y0+h,c);
     } else {
@@ -52,7 +54,7 @@ void VS23S010::drawRect(int x0, int y0, int w, int h, uint8_t c, int fc)
   }
 }
 
-void VS23S010::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
+void Graphics::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
 {
   int f = 1 - radius;
   int ddF_x = 1;
@@ -65,10 +67,10 @@ void VS23S010::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
   if (fc != -1)
     drawLine(x0-radius, y0, x0+radius, y0, fc);
   
-  setPixel(x0, y0 + radius,c);
-  setPixel(x0, y0 - radius,c);
-  setPixel(x0 + radius, y0,c);
-  setPixel(x0 - radius, y0,c);
+  vs23.setPixel(x0, y0 + radius,c);
+  vs23.setPixel(x0, y0 - radius,c);
+  vs23.setPixel(x0 + radius, y0,c);
+  vs23.setPixel(x0 - radius, y0,c);
   
   while(x+1 < y) {  // 2017/02/28 オリジナルの不具合修正
     if(f >= 0) {
@@ -96,13 +98,50 @@ void VS23S010::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
       pyy = y;
       pyx = x;
     }
-    setPixel(x0 + x, y0 + y,c);
-    setPixel(x0 - x, y0 + y,c);
-    setPixel(x0 + x, y0 - y,c);
-    setPixel(x0 - x, y0 - y,c);
-    setPixel(x0 + y, y0 + x,c);
-    setPixel(x0 - y, y0 + x,c);
-    setPixel(x0 + y, y0 - x,c);
-    setPixel(x0 - y, y0 - x,c);
+    vs23.setPixel(x0 + x, y0 + y,c);
+    vs23.setPixel(x0 - x, y0 + y,c);
+    vs23.setPixel(x0 + x, y0 - y,c);
+    vs23.setPixel(x0 - x, y0 - y,c);
+    vs23.setPixel(x0 + y, y0 + x,c);
+    vs23.setPixel(x0 - y, y0 + x,c);
+    vs23.setPixel(x0 + y, y0 - x,c);
+    vs23.setPixel(x0 - y, y0 - x,c);
   }
 }
+
+// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
+// than or equal to y1
+void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+			uint8_t c)
+{
+	int deltax, deltay, offset;
+	uint16_t i;
+
+	deltax = x2 - x1;
+	deltay = y2 - y1;
+
+	if (deltax != 0 && deltay != 0) {
+		offset = x1 - deltax * y1 / deltay;
+		for (i = 0; i < deltay; i++) {
+			vs23.setPixel(deltax * (y1 + i) / deltay + offset, y1 + i,
+				 c);
+		}
+	} else if (deltax == 0) {
+		for (i = 0; i < deltay; i++) {
+			vs23.setPixel(x1, y1 + i, c);
+		}
+	} else {
+		for (i = 0; i < deltax; i++) {
+			vs23.setPixel(x1 + i, y1, c);
+		}
+	}
+}
+
+void Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+			   uint8_t r, uint8_t g, uint8_t b)
+{
+	int c = csp.colorFromRgb(r, g, b);
+
+	drawLine(x1, y1, x2, y2, c);
+}
+

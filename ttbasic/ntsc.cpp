@@ -32,7 +32,7 @@
 #include "vs23s010.h"
 #include "lock.h"
 #include "colorspace.h"
-#include "ttconfig.h"
+#include "graphics.h"
 
 // #define DEBUG
 
@@ -332,42 +332,6 @@ void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
 #endif
 }
 
-// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
-// than or equal to y1
-void VS23S010::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-			uint8_t c)
-{
-	int deltax, deltay, offset;
-	uint16_t i;
-
-	deltax = x2 - x1;
-	deltay = y2 - y1;
-
-	if (deltax != 0 && deltay != 0) {
-		offset = x1 - deltax * y1 / deltay;
-		for (i = 0; i < deltay; i++) {
-			setPixel(deltax * (y1 + i) / deltay + offset, y1 + i,
-				 c);
-		}
-	} else if (deltax == 0) {
-		for (i = 0; i < deltay; i++) {
-			setPixel(x1, y1 + i, c);
-		}
-	} else {
-		for (i = 0; i < deltax; i++) {
-			setPixel(x1 + i, y1, c);
-		}
-	}
-}
-
-void VS23S010::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-			   uint8_t r, uint8_t g, uint8_t b)
-{
-	int c = colorFromRgb(r, g, b);
-
-	drawLine(x1, y1, x2, y2, c);
-}
-
 // / Fills a rectangle. Volor is given in RGB 565 format
 void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			   uint16_t rgb)
@@ -384,7 +348,7 @@ void VS23S010::FillRect565(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 	bl = (rgb << 3) & 0xf8;
 
 	for (i = 0; i < deltax; i++) {
-		drawLineRgb(x1 + i, y1, x1 + i, y2, re, gr, bl);
+		gfx.drawLineRgb(x1 + i, y1, x1 + i, y2, re, gr, bl);
 	}
 }
 
