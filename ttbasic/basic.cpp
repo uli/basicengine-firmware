@@ -10309,8 +10309,10 @@ void iprofile() {
   }
 }
 
+#ifdef ESP8266
 #include <eboot_command.h>
 #include <spi_flash.h>
+#endif
 /***bc sys BOOT
 Boots the system from the specified flash page.
 \usage BOOT page
@@ -10321,7 +10323,7 @@ The `BOOT` command does not verify if valid firmware code is installed at
 the given flash page. Use with caution.
 ***/
 void iboot() {
-#ifndef HOSTED
+#if !defined(HOSTED) && defined(ESP8266)
   int32_t sector;
   if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
     return;
@@ -10337,6 +10339,8 @@ void iboot() {
 #else
   ESP.reset();        // UNTESTED!
 #endif
+#else
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
