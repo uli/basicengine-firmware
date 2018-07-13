@@ -237,7 +237,7 @@ void BasicSound::loadFont()
   if (m_tsf)
     tsf_set_output(m_tsf, TSF_MONO, 16000, -10);
   m_all_done_time = 0;
-  nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
+  nosdk_i2s_set_blocksize(SOUND_BUFLEN * 4);
 }
 
 void GROUP(basic_sound) BasicSound::unloadFont()
@@ -308,7 +308,7 @@ const uint32_t BASIC_DAT fakePwm[]={
 #endif
 
 #ifdef HAVE_TSF
-static short staging_buf[I2S_BUFLEN];
+static short staging_buf[SOUND_BUFLEN];
 #endif
 
 void GROUP(basic_sound) BasicSound::pumpEvents()
@@ -373,19 +373,19 @@ void GROUP(basic_sound) BasicSound::render()
       }
     }
     if (m_sam) {
-      for (int i = 0; i < I2S_BUFLEN; ++i) {
+      for (int i = 0; i < SOUND_BUFLEN; ++i) {
         nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[m_sam->getSample() >> 3]);
       }
-      nosdk_i2s_curr_buf_pos = I2S_BUFLEN;
+      nosdk_i2s_curr_buf_pos = SOUND_BUFLEN;
     }
   } else if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
-    tsf_render_short_fast(m_tsf, staging_buf, I2S_BUFLEN, TSF_FALSE);
+    tsf_render_short_fast(m_tsf, staging_buf, SOUND_BUFLEN, TSF_FALSE);
     if (m_tsf->out_of_memory) {
       unloadFont();
       err = ERR_OOM;
       return;
     }
-    for (int i = 0; i < I2S_BUFLEN; ++i) {
+    for (int i = 0; i < SOUND_BUFLEN; ++i) {
       int idx = (staging_buf[i] >> 8) + 16;
       if (idx < 0)
         idx = 0;
@@ -393,7 +393,7 @@ void GROUP(basic_sound) BasicSound::render()
         idx = 31;
       nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[idx]);
     }
-    nosdk_i2s_curr_buf_pos = I2S_BUFLEN;
+    nosdk_i2s_curr_buf_pos = SOUND_BUFLEN;
   }
 }
 
@@ -452,10 +452,10 @@ void BasicSound::noBeep()
 {
   m_beep_env = NULL;
 #ifndef HOSTED
-  memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, I2S_BUFLEN * 4);
-  memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, I2S_BUFLEN * 4);
+  memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, SOUND_BUFLEN * 4);
+  memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, SOUND_BUFLEN * 4);
+  nosdk_i2s_set_blocksize(SOUND_BUFLEN * 4);
 #endif
-  nosdk_i2s_set_blocksize(I2S_BUFLEN * 4);
 }
 
 ESP8266SAM *BasicSound::m_sam;

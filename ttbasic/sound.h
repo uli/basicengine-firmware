@@ -65,6 +65,7 @@ static inline void *dbg_malloc(size_t s, int line) {
 extern "C" {
 #include "nosdki2s.h"
 };
+#define SOUND_BUFLEN I2S_BUFLEN
 
 #define SOUND_CHANNELS	3
 
