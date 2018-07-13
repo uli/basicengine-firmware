@@ -91,6 +91,10 @@
 #define BASIC_DAT GROUP_DATA(basic_data)
 
 #define UNIFILE_USE_SPIFFS
+#if !defined(ESP8266)
+#define os_memcpy memcpy
+#endif
+
 #if defined(ESP8266) && !defined(ESP8266_NOWIFI)
 #define HAVE_NETWORK
 #endif
