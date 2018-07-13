@@ -10674,7 +10674,7 @@ void SMALL basic() {
 #else
   SPIFFS.begin();
 #endif
-#else
+#elif defined(UNIFILE_USE_FASTROMFS)
   fs.mount();
 #endif
   loadConfig();
@@ -10746,7 +10746,7 @@ void SMALL basic() {
   // Initialize file systems
 #ifdef UNIFILE_USE_SPIFFS
   SPIFFS.begin();
-#else
+#elif defined(UNIFILE_USE_FASTROMFS)
   if (!fs.mount()) {
     fs.mkfs();
     fs.mount();

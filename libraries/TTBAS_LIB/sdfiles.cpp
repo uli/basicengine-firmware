@@ -19,7 +19,7 @@
 #include <time.h>
 
 SdFat SD;
-#ifndef UNIFILE_USE_SPIFFS
+#ifdef UNIFILE_USE_FASTROMFS
 FastROMFilesystem fs;
 #endif
 static bool sdfat_initialized = false;

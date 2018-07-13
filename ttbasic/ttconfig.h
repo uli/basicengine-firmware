@@ -91,6 +91,8 @@
 #define BASIC_DAT GROUP_DATA(basic_data)
 
 #define UNIFILE_USE_SPIFFS
+//#define UNIFILE_USE_FASTROMFS
+
 #if !defined(ESP8266)
 #define os_memcpy memcpy
 #endif
