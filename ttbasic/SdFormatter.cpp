@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include "basic.h"
 
-#ifndef HOSTED
+#if !defined(HOSTED) && defined(ESP8266)
 
 // Set USE_SDIO to zero for SPI card access. 
 #define USE_SDIO 0
