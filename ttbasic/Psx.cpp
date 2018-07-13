@@ -34,6 +34,20 @@
 #define dbg_psx(x...)
 #endif
 
+#ifdef ESP8266
+#define USE_VS23_GPIO
+#endif
+
+#ifdef USE_VS23_GPIO
+#define DIGITAL_WRITE	vs23.digitalWrite
+#define DIGITAL_READ	vs23.digitalRead
+#define PIN_MODE	vs23.pinMode
+#else
+#define DIGITAL_WRITE	digitalWrite
+#define DIGITAL_READ	digitalRead
+#define PIN_MODE	pinMode
+#endif
+
 Psx::Psx()
 {
 	_last_read = 0;
@@ -48,20 +62,20 @@ byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and ou
 	{
 		
 		
-		if ( _dataOut & (1 << _i) ) vs23.digitalWrite(_cmndPin, HIGH);	// Writes out the _dataOut bits
-		else vs23.digitalWrite(_cmndPin, LOW);
+		if ( _dataOut & (1 << _i) ) DIGITAL_WRITE(_cmndPin, HIGH);	// Writes out the _dataOut bits
+		else DIGITAL_WRITE(_cmndPin, LOW);
 
-		vs23.digitalWrite(_clockPin, LOW);
+		DIGITAL_WRITE(_clockPin, LOW);
 		
 		delayMicroseconds(_delay);
 
-		_temp = vs23.digitalRead(_dataPin);					// Reads the data pin
+		_temp = DIGITAL_READ(_dataPin);					// Reads the data pin
 		if (_temp)
 		{
 			_dataIn = _dataIn | (B10000000 >> _i);		// Shifts the read data into _dataIn
 		}
 
-		vs23.digitalWrite(_clockPin, HIGH);
+		DIGITAL_WRITE(_clockPin, HIGH);
 		// Additional delay unnecessary because of VS23 GPIO overhead.
 		//delayMicroseconds(_delay);
 	}
@@ -71,24 +85,24 @@ byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and ou
 
 void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte delay)
 {
-	vs23.pinMode(dataPin, INPUT);
+	PIN_MODE(dataPin, INPUT);
 
 	// We don't have an internal pull-up. (In fact, we have an internal
 	// pull-down which we override with a strong external pull-up...)
-	//vs23.digitalWrite(dataPin, HIGH);	// Turn on internal pull-up
+	//DIGITAL_WRITE(dataPin, HIGH);	// Turn on internal pull-up
 
 	_dataPin = dataPin;
 
-	vs23.pinMode(cmndPin, OUTPUT);
+	PIN_MODE(cmndPin, OUTPUT);
 	_cmndPin = cmndPin;
 
-	vs23.pinMode(attPin, OUTPUT);
+	PIN_MODE(attPin, OUTPUT);
 	_attPin = attPin;
-	vs23.digitalWrite(_attPin, HIGH);
+	DIGITAL_WRITE(_attPin, HIGH);
 
-	vs23.pinMode(clockPin, OUTPUT);
+	PIN_MODE(clockPin, OUTPUT);
 	_clockPin = clockPin;
-	vs23.digitalWrite(_clockPin, HIGH);
+	DIGITAL_WRITE(_clockPin, HIGH);
 	
 	_delay = delay;
 }
@@ -111,8 +125,10 @@ int Psx::read()
 #ifdef DEBUG_PSX
     uint32_t now = micros();
 #endif
+#ifdef USE_VS23_GPIO
     uint32_t spiclk = vs23.getSpiClock();
     vs23.setSpiClockMax();
+#endif
 
     // We want more than one consecutive read to yield the same data before
     // we trust it to be correct.
@@ -120,7 +136,7 @@ int Psx::read()
       // If we don't get the right magic byte back, we retry a few times
       // before giving up.
       for (retries = 0; retries < MAX_RETRIES; ++retries) {
-	vs23.digitalWrite(_attPin, LOW);
+	DIGITAL_WRITE(_attPin, LOW);
 
 	shift(0x01);
 	shift(0x42);	// returns report type
@@ -129,7 +145,7 @@ int Psx::read()
 	data1 = ~shift(0xFF);
 	data2 = ~shift(0xFF);
 
-	vs23.digitalWrite(_attPin, HIGH);
+	DIGITAL_WRITE(_attPin, HIGH);
 
 	data_out = (data2 << 8) | data1;
 
@@ -151,7 +167,9 @@ int Psx::read()
       if (retries == 3)	{
         // exhausted all retries, there might be no controller here
         _last_failed = millis();
+#ifdef USE_VS23_GPIO
         vs23.setSpiClock(spiclk);
+#endif
         return psxError;
       }
 
@@ -160,7 +178,9 @@ int Psx::read()
       delayMicroseconds(_delay*2);
     }
 
+#ifdef USE_VS23_GPIO
     vs23.setSpiClock(spiclk);
+#endif
     dbg_psx("psxr %d\r\n", micros() - now);
     return data_out;
 }
