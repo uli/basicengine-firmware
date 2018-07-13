@@ -46,7 +46,9 @@ extern "C" {
 #else
 #include <eagle_soc.h>
 #endif
+#ifdef ESP8266
 #include "nosdki2s.h"
+#endif
 };
 
 #include <eboot_command.h>
@@ -92,9 +94,11 @@ void loop(void){
 
   SpiUnlock();
 
+#ifdef ESP8266
   // Initialize I2S to default sample rate, start transmission.
   InitI2S(16000);
   SendI2S();
+#endif
 
   basic();	// does not return
 }
