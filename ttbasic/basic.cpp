@@ -4348,7 +4348,7 @@ BString si2cr() {
 
   // 送信
   if (out.length()) {
-    Wire.write(out.c_str(), out.length());
+    Wire.write((const uint8_t *)out.c_str(), out.length());
   }
   if ((retval[0] = Wire.endTransmission()))
     goto out;
