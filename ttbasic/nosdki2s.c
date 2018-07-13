@@ -1,3 +1,5 @@
+#ifdef ESP8266
+
 #include "ttconfig.h"
 #include "nosdki2s.h"
 #ifdef ESP8266_NOWIFI
@@ -158,3 +160,5 @@ void SendI2S()
 	SLC_RX_LINKL = (((uint32)&i2sBufDesc[0]) & SLC_RXLINK_DESCADDR_MASK) | SLC_RXLINK_START;
 }
 #endif	// !HOSTED
+
+#endif // ESP8266
