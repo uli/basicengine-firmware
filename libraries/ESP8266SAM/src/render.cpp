@@ -8,7 +8,7 @@
 #include "debug.h"
 #include <pgmspace.h>
 
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(ESP32)
 static void yield() { /* NOOP */
 }
 #endif
