@@ -90,8 +90,10 @@
 #define BASIC_INT GROUP(basic_core)
 #define BASIC_DAT GROUP_DATA(basic_data)
 
+#ifdef ESP8266
 #define UNIFILE_USE_SPIFFS
 //#define UNIFILE_USE_FASTROMFS
+#endif
 
 #if !defined(ESP8266)
 #define os_memcpy memcpy
