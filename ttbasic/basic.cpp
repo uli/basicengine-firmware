@@ -5883,7 +5883,7 @@ Conversion fix-ups are enabled by default.
 ***/
 void ipalette() {
   int32_t p, hw, sw, vw, f;
-  if (getParam(p, 0, VS23_NUM_COLORSPACES - 1, I_NONE)) return;
+  if (getParam(p, 0, CSP_NUM_COLORSPACES - 1, I_NONE)) return;
   vs23.setColorSpace(p);
   if (*cip == I_COMMA) {
     cip++;
@@ -5891,7 +5891,7 @@ void ipalette() {
     if (getParam(sw, 0, 7, I_COMMA) ) return;
     if (getParam(vw, 0, 7, I_COMMA) ) return;
     if (getParam(f, 0, 1, I_NONE)) return;
-    vs23.setColorConversion(p, hw, sw, vw, !!f);
+    csp.setColorConversion(p, hw, sw, vw, !!f);
   }
 }
 
@@ -6793,7 +6793,7 @@ num_t BASIC_FP nrgb() {
       getParam(b, 0, 255, I_CLOSE)) {
     return 0;
   }
-  return vs23.colorFromRgb(r, g, b);
+  return csp.colorFromRgb(r, g, b);
 }
 
 static inline bool is_var(unsigned char tok)
@@ -10696,26 +10696,26 @@ void SMALL basic() {
   sc0.show_curs(0);
 
   // Want to make sure we get the right hue.
-  vs23.setColorConversion(0, 7, 2, 4, true);
+  csp.setColorConversion(0, 7, 2, 4, true);
   show_logo();
   vs23.setColorSpace(0);	// reset color conversion
 
   // Startup screen
   // Epigram
   sc0.setFont(fonts[1]);
-  sc0.setColor(vs23.colorFromRgb(72,72,72), COL(BG));
+  sc0.setColor(csp.colorFromRgb(72,72,72), COL(BG));
   srand(ESP.getCycleCount());
   c_puts_P(epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
   newline();
 
   // Banner
-  sc0.setColor(vs23.colorFromRgb(192,0,0), COL(BG));
+  sc0.setColor(csp.colorFromRgb(192,0,0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
   sc0.setFont(fonts[CONFIG.font]);
 
   // Platform/version
-  sc0.setColor(vs23.colorFromRgb(64,64,64), COL(BG));
+  sc0.setColor(csp.colorFromRgb(64,64,64), COL(BG));
   static const char __e[] PROGMEM = STR_EDITION;
   sc0.locate(sc0.getWidth() - strlen_P(__e), 7);
   c_puts_P(__e);

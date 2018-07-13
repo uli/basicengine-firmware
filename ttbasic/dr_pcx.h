@@ -261,7 +261,7 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                 for (dr_uint32 x = 0; x < pPCX->width; ++x)
                 {
                     dr_uint8 paletteIndex = pRow[0];
-                    vs23.setPixel(dx + x-ox, dy + y-oy, vs23.colorFromRgb(
+                    vs23.setPixel(dx + x-ox, dy + y-oy, csp.colorFromRgb(
                       pPCX->header.palette16[paletteIndex*3 + 0],
                       pPCX->header.palette16[paletteIndex*3 + 1],
                       pPCX->header.palette16[paletteIndex*3 + 2]
@@ -339,7 +339,7 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
                                 cgaIndex = (((paletteIndex << 1) + p) + (i << 3));
                             }
 
-                            vs23.setPixel(dx + x-ox, dy + y-oy, vs23.colorFromRgb(
+                            vs23.setPixel(dx + x-ox, dy + y-oy, csp.colorFromRgb(
                               paletteCGA[cgaIndex*3 + 0],
                               paletteCGA[cgaIndex*3 + 1],
                               paletteCGA[cgaIndex*3 + 2]
@@ -512,7 +512,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 }
                 // Convert to YUV422
                 for (int i = 0; i < 256; ++i) {
-                  palette256[i] = vs23.colorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
+                  palette256[i] = csp.colorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
                 }
             }
 
@@ -585,12 +585,12 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
                   if (pPCX->mask < 0) {
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                      pRow_[x-ox] = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                      pRow_[x-ox] = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                     }
                     SpiRamWriteBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
                   } else {
                     for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                      uint8_t c = vs23.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                      uint8_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                       if (pPCX->mask < 0 || c != pPCX->mask)
                         vs23.setPixel(dx+x, dy+y-oy, c);
                     }

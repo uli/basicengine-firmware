@@ -287,14 +287,14 @@ attrset (uint_fast16_t attr)
 
         if (idx >= 1 && idx <= 8)
         {
-            sc0.setColor(vs23.colorFromRgb(CONFIG.color_scheme[idx-1]), sc0.getBgColor());
+            sc0.setColor(csp.colorFromRgb(CONFIG.color_scheme[idx-1]), sc0.getBgColor());
         }
 
         idx = (attr & B_COLOR) >> 12;
 
         if (idx >= 1 && idx <= 8)
         {
-            sc0.setColor(sc0.getFgColor(), vs23.colorFromRgb(CONFIG.color_scheme[idx-1]));
+            sc0.setColor(sc0.getFgColor(), csp.colorFromRgb(CONFIG.color_scheme[idx-1]));
         }
 
         if (attr & A_REVERSE)
@@ -311,7 +311,7 @@ attrset (uint_fast16_t attr)
         }
         if (attr & A_BOLD)
         {
-            sc0.setColor(vs23.colorFromRgb(255, 255, 255), vs23.colorFromRgb(0,0,0));
+            sc0.setColor(csp.colorFromRgb(255, 255, 255), csp.colorFromRgb(0,0,0));
         }
         if (attr & A_DIM)
         {

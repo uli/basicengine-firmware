@@ -31,6 +31,7 @@
 #include <SPI.h>
 #include "vs23s010.h"
 #include "lock.h"
+#include "colorspace.h"
 #include "ttconfig.h"
 
 // #define DEBUG
@@ -312,7 +313,7 @@ void VS23S010::SetPicIndex(uint16_t line, uint32_t byteAddress, uint16_t protoAd
 void VS23S010::setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
 			   uint8_t b)
 {
-	uint16_t pixdata = colorFromRgb(r, g, b);
+	uint16_t pixdata = csp.colorFromRgb(r, g, b);
 
 #ifndef BYTEPIC
 	{
@@ -402,11 +403,11 @@ void VS23S010::setColorSpace(uint8_t palette)
 		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (pgm_read_byte(&ops[4]) << 8));
 
         switch (palette) {
-        case 0: setColorConversion(0, 7, 3, 6, true); break;
-        case 1: setColorConversion(1, 7, 4, 7, true); break;
+        case 0: csp.setColorConversion(0, 7, 3, 6, true); break;
+        case 1: csp.setColorConversion(1, 7, 4, 7, true); break;
         default: break;
         }
-        m_colorspace = palette;
+        csp.setColorSpace(palette);
 }
 
 void VS23S010::setBorder(uint8_t y, uint8_t uv, uint16_t dx, uint16_t width)

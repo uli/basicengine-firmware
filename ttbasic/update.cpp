@@ -131,8 +131,8 @@ void iflash()
   uint8_t *buf;
   int x, y, count;
   
-  uint8_t col_warn = vs23.colorFromRgb(255, 64, 0);
-  uint8_t col_normal = vs23.colorFromRgb(255, 255, 255);
+  uint8_t col_warn = csp.colorFromRgb(255, 64, 0);
+  uint8_t col_normal = csp.colorFromRgb(255, 255, 255);
 
   // Check that there is at least 32k of memory available,
   // just to be on the safe side.

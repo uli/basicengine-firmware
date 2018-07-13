@@ -58,8 +58,6 @@ struct vs23_mode_t {
 #define VS23_MAX_SPRITE_W 32
 #define VS23_MAX_SPRITE_H 32
 
-#define VS23_NUM_COLORSPACES	2
-
 #define VS23_MAX_PRIO	(VS23_MAX_BG-1)
 
 //#define DEBUG_BM
@@ -129,18 +127,9 @@ class VS23S010 {
     void drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t r, uint8_t g, uint8_t b);
     void drawRect(int x0, int y0, int w, int h, uint8_t c, int fc);
     void drawCircle(int x0, int y0, int radius, uint8_t c, int fc);
-    uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
-    inline uint8_t colorFromRgb(uint8_t *c) {
-      return colorFromRgb(c[0], c[1], c[2]);
-    }
-    static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
-    void setColorSpace(uint8_t palette);
-    inline uint8_t getColorspace() {
-      return m_colorspace;
-    }
-    uint8_t *paletteData(uint8_t colorspace);
 
     int numModes();
+    void setColorSpace(uint8_t palette);
     const struct vs23_mode_t *modes();
     void setMode(uint8_t mode);
     void calibrateVsync();
@@ -433,8 +422,6 @@ private:
     int m_last_line;
     uint16_t m_sync_line;
 
-    uint8_t colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);
-
 #ifdef VS23_BG_ENGINE
     struct bg_t {
       uint8_t *tiles;
@@ -515,8 +502,6 @@ private:
 #endif
     
     GuillotineBinPack m_bin;
-    
-    uint8_t m_colorspace;
     
     bool m_interlace;
     bool m_pal;

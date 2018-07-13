@@ -8,6 +8,8 @@
 #include <sdfiles.h>
 #include "BString.h"
 
+#include "colorspace.h"
+#include "vs23s010.h"
 #include "variable.h"
 #include "proc.h"
 
@@ -328,6 +330,6 @@ typedef struct {
 } SystemConfig;
 extern SystemConfig CONFIG;
 
-#define COL(n)	(vs23.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
+#define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
 #endif

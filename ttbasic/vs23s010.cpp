@@ -30,6 +30,7 @@
 #include "vs23s010.h"
 #include "ntsc.h"
 #include "lock.h"
+#include "colorspace.h"
 
 //#define DISABLE_BG_LEFT_COL
 //#define DISABLE_BG_MIDDLE
@@ -143,8 +144,8 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
 
   SpiUnlock();
   
-  setColorConversion(0, 7, 3, 6, true);
-  m_colorspace = 0;
+  csp.setColorConversion(0, 7, 3, 6, true);
+  csp.setColorSpace(0);
   m_line_adjust = 0;
 }
 
