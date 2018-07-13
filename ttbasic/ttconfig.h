@@ -11,8 +11,16 @@
 
 // ** NTSCビデオ出力利用有無 *************************************************
 #define USE_NTSC  1  // 0:利用しない 1:利用する (デフォルト:1)
+
+#ifdef ESP8266
 #define USE_VS23 1
 #ifdef ESP8266_NOWIFI
+#define USE_BG_ENGINE
+#endif
+#endif
+
+#ifdef ESP32
+#define USE_ESP32GFX 1
 #define USE_BG_ENGINE
 #endif
 
