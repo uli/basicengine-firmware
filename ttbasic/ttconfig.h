@@ -93,6 +93,7 @@
 #ifdef ESP8266
 #define UNIFILE_USE_SPIFFS
 //#define UNIFILE_USE_FASTROMFS
+#define UNIFILE_USE_SDFAT
 #endif
 
 #if !defined(ESP8266)

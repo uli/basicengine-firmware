@@ -18,7 +18,10 @@
 
 #include <time.h>
 
+#ifdef UNIFILE_USE_SDFAT
 SdFat SD;
+#endif
+
 #ifdef UNIFILE_USE_FASTROMFS
 FastROMFilesystem fs;
 #endif
@@ -36,7 +39,11 @@ bool SD_BEGIN(int mhz)
   }
   SpiLock();
   if (!sdfat_initialized) {
+#ifdef UNIFILE_USE_SDFAT
     sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(mhz));
+#elif defined(UNIFILE_USE_FS)
+    sdfat_initialized = SD.begin();
+#endif
   } else {
     // Cannot use SPI.setFrequency() here because it's too slow; this method
     // is called before every access. We instead use the mechanism
@@ -83,13 +90,16 @@ uint8_t wildcard_match(const char *wildcard, const char *target) {
 
 #include <Time.h>
 // ファイルタイムスタンプコールバック関数
+#ifdef UNIFILE_USE_SDFAT
 void dateTime(uint16_t* date, uint16_t* time) {
    time_t tt = now();
   *date = FAT_DATE(year(tt), month(tt), day(tt));
   *time = FAT_TIME(hour(tt), minute(tt), second(tt));
 } 
+#endif
 
 void sdfiles::fakeTime() {
+#ifdef UNIFILE_USE_SDFAT
   SD_BEGIN();
   File dir = ::SD.open("/");
   File file;
@@ -130,6 +140,7 @@ void sdfiles::fakeTime() {
             FAT_DAY(date), FAT_MONTH(date), FAT_YEAR(date));
   }
   SD_END();
+#endif
 }
 
 //
@@ -141,7 +152,9 @@ void sdfiles::fakeTime() {
 uint8_t  sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
+#ifdef UNIFILE_USE_SDFAT
   SdFile::dateTimeCallback( &dateTime );
+#endif
   return 0;
 }
 
