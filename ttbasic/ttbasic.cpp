@@ -85,9 +85,13 @@ void loop(void){
 
   SPI.pins(14, 12, 13, 15);
   SPI.setDataMode(SPI_MODE0);
+
+#ifdef USE_VS23
   // Set up VS23 chip select.
   digitalWrite(15, HIGH);
   pinMode(15, OUTPUT);
+#endif
+
   SPI.begin();
   // Default to safe frequency.
   SPI.setFrequency(11000000);
