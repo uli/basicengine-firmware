@@ -114,6 +114,10 @@
 #define UNIFILE_USE_SDFAT
 #endif
 
+#ifdef ESP32
+#define UNIFILE_USE_FS
+#endif
+
 #if !defined(ESP8266)
 #define os_memcpy memcpy
 #endif
