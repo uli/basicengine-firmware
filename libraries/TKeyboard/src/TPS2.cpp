@@ -115,27 +115,34 @@ void TPS2::end() {
 #endif
 }
 
+#ifdef ESP32
+// no pull-ups on the Bauern-Box
+#define PS2_OUTPUT	OUTPUT
+#else
+#define PS2_OUTPUT	OUTPUT_OPEN_DRAIN
+#endif
+
 // CLKを出力モードに設定
 void  TPS2::clkSet_Out() {
-  pinMode(_clkPin, OUTPUT_OPEN_DRAIN);
+  pinMode(_clkPin, PS2_OUTPUT);
   _clkDir = D_OUT;  
 }
 
 // CLKを入力モードに設定
 void  TPS2::clkSet_In() {
-  pinMode(_clkPin, INPUT);
+  pinMode(_clkPin, INPUT_PULLUP);
   _clkDir = D_IN;
 }
 
 // DATを出力モードに設定
 void  TPS2::datSet_Out() {
-  pinMode(_datPin, OUTPUT_OPEN_DRAIN);
+  pinMode(_datPin, PS2_OUTPUT);
   _datDir = D_OUT;    
 }
 
 // DATを入力モードに設定
 void  TPS2::datSet_In() {
-  pinMode(_datPin, INPUT);
+  pinMode(_datPin, INPUT_PULLUP);
   _datDir = D_IN;
 }
 
