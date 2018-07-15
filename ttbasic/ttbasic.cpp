@@ -68,6 +68,11 @@ extern "C" {
 void basic();
 uint8_t serialMode;
 
+#ifdef ESP32
+#include "AudioOutput.h"
+AudioOutput esp32_audio;
+#endif
+
 void setup() {
 #ifdef ESP32
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
