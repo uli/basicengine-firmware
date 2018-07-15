@@ -10719,7 +10719,11 @@ void SMALL basic() {
   loadConfig();
 
   // Initialize SD card file system
+#ifdef ESP32
+  bfs.init(5);
+#else
   bfs.init(16);		// CS on GPIO16
+#endif
 
   if (!Unifile::chDir(SD_PREFIX))
     Unifile::chDir(FLASH_PREFIX);
