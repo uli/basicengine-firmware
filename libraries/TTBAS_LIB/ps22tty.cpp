@@ -16,8 +16,14 @@
 
 #ifndef ESP8266_NOWIFI
 // workaround until there is a basic_engine board in mainline Arduino
+#ifdef ESP32
+// less than 32, or checkKbd() has to be updated
+static const uint8_t PS2CLK = 14;
+static const uint8_t PS2DAT = 13;
+#else
 static const uint8_t PS2CLK = 4;
 static const uint8_t PS2DAT = 5;
+#endif
 #endif
 
 #include "ps22tty.h"

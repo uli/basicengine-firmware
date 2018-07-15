@@ -12,6 +12,12 @@
 #include <Arduino.h>
 #define QUEUESIZE 128 // キーバッファサイズ
 
+#ifdef ESP32
+// GPIO edge-triggered interrupts don't work with Arduino-ESP32,
+// see https://github.com/espressif/arduino-esp32/issues/1111
+#define PS2_POLLING
+#endif
+
 #ifdef PS2_POLLING
 extern volatile uint8_t _clkPin;
 #endif
