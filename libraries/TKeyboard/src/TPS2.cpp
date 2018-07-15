@@ -13,7 +13,7 @@
 //#include <libmaple/timer.h>
 //#include <libmaple/exti.h>
 
-volatile static uint8_t _clkPin; // CLKピン
+volatile uint8_t _clkPin; // CLKピン
 volatile static uint8_t _datPin; // DATピン
 volatile static uint8_t _clkDir; // CLK入出力方向
 volatile static uint8_t _datDir; // CLK入出力方向
@@ -32,15 +32,27 @@ volatile static uint8_t _sendParity = 1;  // パリティビット
 typedef int nvic_irq_num;
 typedef int exti_num;
 volatile static nvic_irq_num  _irq_num;   // 割り込みベクター番号
-  
+
+#ifdef PS2_POLLING
+bool TPS2::_intr_ena;
+#endif
+
 // CLK変化割り込み許可
 void TPS2::enableInterrupts() {
+#ifdef PS2_POLLING
+  _intr_ena = true;
+#else
   interrupts();
+#endif
 }
 
 // CLK変化割り込み禁止
 void TPS2::disableInterrupts() {
+#ifdef PS2_POLLING
+  _intr_ena = false;
+#else
   noInterrupts();
+#endif
 }
 
 // 割り込み優先レベルの設定
@@ -89,14 +101,18 @@ void TPS2::begin(uint8_t clk, uint8_t dat) {
   clear_queue();  
   
   // 割り込みハンドラの登録
-  attachInterrupt(_clkPin, clkPinHandle, FALLING);  
+#ifndef PS2_POLLING
+  attachInterrupt(_clkPin, clkPinHandle, FALLING);
+#endif
   disableInterrupts();
 }
 
 // 利用終了
 void TPS2::end() {
   disableInterrupts();
+#ifndef PS2_POLLING
   detachInterrupt(_clkPin);
+#endif
 }
 
 // CLKを出力モードに設定

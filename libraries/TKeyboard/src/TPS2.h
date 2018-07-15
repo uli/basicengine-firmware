@@ -12,8 +12,11 @@
 #include <Arduino.h>
 #define QUEUESIZE 128 // キーバッファサイズ
 
-// PS/2バスの定義
+#ifdef PS2_POLLING
+extern volatile uint8_t _clkPin;
+#endif
 
+// PS/2バスの定義
 class TPS2 {
   // 定数
   public:
@@ -26,6 +29,9 @@ class TPS2 {
     
   // メンバー変数
   private:
+#ifdef PS2_POLLING
+    static bool _intr_ena;
+#endif
 
   // メンバー関数
   public:
@@ -95,5 +101,18 @@ class TPS2 {
     inline static uint8_t error() ;
 
     static void resetState();
+
+#ifdef PS2_POLLING
+    inline static void IRAM_ATTR checkKbd() {
+        static bool clkstate = true;
+        // only works for GPIOs less than 32
+        bool newstate = (GPIO.in >> _clkPin) & 1;
+
+        if (_intr_ena == true && clkstate == true && newstate == false)
+          clkPinHandle();
+
+        clkstate = newstate;
+    }
+#endif
 };
 #endif
