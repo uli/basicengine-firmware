@@ -80,7 +80,7 @@ void VS23S010::adjust(int16_t cnt)
   // XXX: Huh?
 }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
 void VS23S010::resetSprites()
 {
   m_bg_modified = true;
@@ -123,7 +123,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   m_vsync_enabled = false;
   m_interlace = interlace;
   m_lowpass = lowpass;
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   m_frameskip = 0;
   m_bg_modified = true;
   memset(m_bg, 0, sizeof(m_bg));
@@ -154,7 +154,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
 void VS23S010::end()
 {
   m_bin.Init(0, 0);
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   for (int i = 0; i < VS23_MAX_BG; ++i) {
     freeBg(i);
   }
@@ -163,7 +163,7 @@ void VS23S010::end()
 
 void VS23S010::reset()
 {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   m_bg_modified = true;
   resetSprites();
   resetBgs();
@@ -175,7 +175,7 @@ void VS23S010::reset()
 void SMALL VS23S010::setMode(uint8_t mode)
 {
 retry:
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   m_bg_modified = true;
 #endif
   setSyncLine(0);
@@ -190,7 +190,7 @@ retry:
   m_first_line_addr = PICLINE_BYTE_ADDRESS(0);
   m_pitch = PICLINE_BYTE_ADDRESS(1) - m_first_line_addr;
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   resetBgs();
   resetSprites();
 #endif
@@ -282,7 +282,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 
 void VS23S010::setSyncLine(uint16_t line)
 {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   m_bg_modified = true;
 #endif
   if (line == 0) {
@@ -299,7 +299,7 @@ void VS23S010::setSyncLine(uint16_t line)
   }
 }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
 bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
 {
   struct bg_t *bg = &m_bg[bg_idx];
@@ -1324,7 +1324,7 @@ void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t 
   m_bg_modified = true;
 #endif
 }
-#endif	// VS23_BG_ENGINE
+#endif	// USE_BG_ENGINE
 
 bool VS23S010::allocBacking(int w, int h, int &x, int &y)
 {
@@ -1340,7 +1340,7 @@ void VS23S010::freeBacking(int x, int y, int w, int h)
   m_bin.Free(r, true);
 }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
 void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tiles, uint8_t num_tiles)
 {
   sprite_t *spr = &m_sprite[sprite];
@@ -1479,7 +1479,7 @@ uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t co
 
   return dir;
 }
-#endif	// VS23_BG_ENGINE
+#endif	// USE_BG_ENGINE
 
 VS23S010 vs23;
 #endif	// USE_VS23

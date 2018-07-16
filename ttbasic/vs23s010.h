@@ -32,10 +32,6 @@
 #include <SPI.h>
 #include "GuillotineBinPack.h"
 
-#ifdef ESP8266_NOWIFI
-#define VS23_BG_ENGINE
-#endif
-
 #define SC_DEFAULT 0
 
 struct vs23_mode_t {
@@ -207,7 +203,7 @@ class VS23S010 {
         return LOW;
     }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
     bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
 
     inline uint8_t bgWidth(uint8_t bg) {
@@ -385,7 +381,7 @@ class VS23S010 {
       return FRPORCH - BLANKEND;
     }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
     inline void forceRedraw() {
       m_bg_modified = true;
     }
@@ -422,7 +418,7 @@ private:
     int m_last_line;
     uint16_t m_sync_line;
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
     struct bg_t {
       uint8_t *tiles;
       uint16_t pat_x, pat_y, pat_w;
@@ -495,7 +491,7 @@ private:
 #endif
     
     uint32_t m_frame;
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
     uint32_t m_frameskip;
 
     bool m_bg_modified;

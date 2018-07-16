@@ -59,7 +59,7 @@ tTVscreen   sc0;
 // These values are set when a program is interrupted and the text window is
 // forced to be visible at the bottom of the screen. That way, the original
 // geometries can be restored when the program is CONTinued.
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
 static int original_bg_height[VS23_MAX_BG];
 static bool turn_bg_back_on[VS23_MAX_BG];
 bool restore_bgs = false;
@@ -3583,7 +3583,7 @@ void BASIC_FP do_call(uint8_t proc_idx)
   return;
 }
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
 void BASIC_INT event_handle_sprite()
 {
   uint8_t dir;
@@ -3661,7 +3661,7 @@ void BASIC_FP pump_events(void)
   last_frame = vs23.frame();
 
   event_profile[0] = micros();
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   vs23.updateBg();
 #endif
 
@@ -3685,7 +3685,7 @@ void BASIC_FP pump_events(void)
   sc0.updateCursor();
   event_profile[4] = micros();
   
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   if (event_sprite_proc_idx != NO_PROC)
     event_handle_sprite();
 #endif
@@ -5319,7 +5319,7 @@ void SMALL ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   uint32_t spr_from, spr_to;
   bool define_bg = false, define_spr = false;
   int bg;
@@ -5332,7 +5332,7 @@ void SMALL ildbmp() {
 
   for (;; ) {
     if (*cip == I_AS) {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
       cip++;
       if (*cip == I_BG) {		// AS BG ...
         ++cip;
@@ -5385,7 +5385,7 @@ void SMALL ildbmp() {
   // 画像のロード
   err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h, key);
   if (!err) {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
     if (define_bg)
       vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
     if (define_spr) {
@@ -5753,7 +5753,7 @@ WINDOW OFF
 void BASIC_INT iwindow() {
   int32_t x, y, w, h;
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   // Discard the dimensions saved for CONTing.
   restore_text_window = false;
 #endif
@@ -5841,7 +5841,7 @@ void SMALL iscreen() {
 
   if ( getParam(m,  1, vs23.numModes(), I_NONE) ) return;   // m
 
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   // Discard dimensions saved for CONTing.
   restore_bgs = false;
   restore_text_window = false;
@@ -5971,7 +5971,7 @@ If a background cannot be turned on, no error is generated.
 \ref LOAD_BG LOAD_PCX MOVE_BG SAVE_BG
 ***/
 void ibg() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t m;
   int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh, prio;
 
@@ -6047,7 +6047,7 @@ Loads a background map from storage.
 \ref SAVE_BG
 ***/
 void iloadbg() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg;
   uint8_t w, h, tsx, tsy;
   BString filename;
@@ -6104,7 +6104,7 @@ Does not check if the specified background is properly defined.
 \ref LOAD_BG
 ***/
 void isavebg() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg;
   uint8_t w, h;
   BString filename;
@@ -6148,7 +6148,7 @@ maps wrap around if the display window extends beyond the map boundaries.
 \ref BG
 ***/
 void BASIC_FP imovebg() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg, x, y;
   if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
   // XXX: arbitrary limitation?
@@ -6202,7 +6202,7 @@ usually a good idea to place the `ON` attribute at the end if used.
 \ref LOAD_PCX MOVE_SPRITE
 ***/
 void BASIC_INT isprite() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
   bool set_frame = false, set_opacity = false;
 
@@ -6298,7 +6298,7 @@ mode will not be drawn.
 \ref SPRITE
 ***/
 void BASIC_FP imovesprite() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t num, pos_x, pos_y;
   if (getParam(num, 0, VS23_MAX_SPRITES, I_TO)) return;
   if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
@@ -6362,7 +6362,7 @@ PLOT 0,5,10,"XOOOXXOO"
 \ref PLOT
 ***/
 void iplot() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg, x, y, t;
   if (getParam(bg, 0, VS23_MAX_BG, I_NONE)) return;
   if (!vs23.bgTiles(bg)) {
@@ -6408,7 +6408,7 @@ engine using `FRAMESKIP` because each frame that is actually rendered must
 be so within a single TV frame.
 ***/
 void iframeskip() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t skip;
   if (getParam(skip, 0, 60, I_NONE)) return;
   vs23.setFrameskip(skip);
@@ -6718,7 +6718,7 @@ void SMALL error(uint8_t flgCmd = false) {
 #ifdef HAVE_TSF
       sound.unloadFont();
 #endif
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
       vs23.resetSprites();
       vs23.resetBgs();
 #endif
@@ -7778,7 +7778,7 @@ Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate.
 \ref SPRCOLL()
 ***/
 num_t BASIC_FP ntilecoll() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t a, b, c;
   if (checkOpen()) return 0;
   if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
@@ -7824,7 +7824,7 @@ up/left of sprite 1.)
 \ref TILECOLL()
 ***/
 num_t BASIC_FP nsprcoll() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t a, b;
   if (checkOpen()) return 0;
   if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
@@ -7850,7 +7850,7 @@ X coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRY()
 ***/
 num_t BASIC_FP nsprx() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t spr;
 
   if (checkOpen() ||
@@ -7873,7 +7873,7 @@ Y coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRX()
 ***/
 num_t BASIC_FP nspry() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t spr;
 
   if (checkOpen() ||
@@ -7897,7 +7897,7 @@ X scrolling offset of background `bg`.
 \ref BG BSCRY()
 ***/
 num_t BASIC_FP nbscrx() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg;
 
   if (checkOpen() ||
@@ -7920,7 +7920,7 @@ Y scrolling offset of background `bg`.
 \ref BG BSCRX()
 ***/
 num_t BASIC_FP nbscry() {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int32_t bg;
 
   if (checkOpen() ||
@@ -10454,7 +10454,7 @@ void iflash();
 
 void SMALL resize_windows()
 {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   int x, y, w, h;
   sc0.getWindow(x, y, w, h);
   restore_bgs = false;
@@ -10503,7 +10503,7 @@ void SMALL resize_windows()
 
 void SMALL restore_windows()
 {
-#ifdef VS23_BG_ENGINE
+#ifdef USE_BG_ENGINE
   if (restore_text_window) {
     restore_text_window = false;
     sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
