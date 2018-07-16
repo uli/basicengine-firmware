@@ -92,8 +92,40 @@ void ESP32GFX::setMode(uint8_t mode)
 {
 }
 
-void ESP32GFX::updateBg()
+void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
 {
+  static uint32_t last_frame = 0;
+
+  if (m_frame <= last_frame + m_frameskip || !m_bg_modified)
+    return;
+  m_bg_modified = false;
+  last_frame = m_frame;
+
+  for (int b = 0; b < MAX_BG; ++b) {
+    bg_t *bg = &m_bg[b];
+    if (!bg->enabled)
+      continue;
+
+    int tsx = bg->tile_size_x;
+    int tsy = bg->tile_size_y;
+    int sx = bg->scroll_x;
+    int ex = XRES + bg->scroll_x;
+    int sy = bg->scroll_y;
+    int ey = YRES + bg->scroll_y;
+
+    for (int y = sy; y < ey; ++y) {
+      for (int x = sx; x < ex; ++x) {
+        int tile_x = x / tsx;
+        int tile_y = y / tsy;
+        uint8_t tile = bg->tiles[tile_x % bg->w + (tile_y % bg->h) * bg->w];
+        int off_x = x % tsx;
+        int off_y = y % tsy;
+        int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
+        int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
+        m_pixels[y-sy][x-sx] = m_pixels[t_y][t_x];
+      }
+    }
+  }
 }
 
 #ifdef USE_BG_ENGINE
