@@ -87,7 +87,7 @@ void setup() {
   // supplies did not reveal anything suspicious.
   delay(1000);	// 1s seems to always do the trick; 500ms is not reliable.
 
-  Serial.begin(921600);
+  Serial.begin(115200);
   SpiLock();
 
 #ifdef ESP8266_NOWIFI
@@ -99,7 +99,7 @@ void setup() {
 void loop(void){
   Serial.println(F("\nStarting")); Serial.flush();
 
-#ifndef ESP32
+#ifdef ESP8266
   SPI.pins(14, 12, 13, 15);
 #endif
   SPI.setDataMode(SPI_MODE0);
