@@ -88,7 +88,7 @@
 #ifdef ESP32
 #define GROUP(g)
 #define GROUP_DATA
-#define BASIC_FP
+#define BASIC_FP	IRAM_ATTR
 #define BASIC_INT
 #define BASIC_DAT
 #else
