@@ -24,18 +24,26 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#include "basic.h"
-#include "net.h"
-
+#include "ttconfig.h"
 #ifdef HAVE_NETWORK
 
 #include <Arduino.h>
 
+#ifdef ESP8266
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266HTTPClient.h>
+typedef ESP8266WiFiMulti WiFiMulti;
+#else
+#include <WiFi.h>
+#include <WiFiMulti.h>
+#include <HTTPClient.h>
+#endif
 
-ESP8266WiFiMulti WiFiMulti;
+#include "basic.h"
+#include "net.h"
+
+WiFiMulti wm;
 static HTTPClient *http = NULL;
 static WiFiClient *stream = NULL;
 
@@ -56,17 +64,17 @@ void isetap() {
   }
   BString password = istrexp();
   
-  WiFiMulti.addAP(ssid.c_str(), password.c_str());
+  wm.addAP(ssid.c_str(), password.c_str());
 }
 
 void iconnect() {
-  WiFiMulti.run();
+  wm.run();
 }
 
 num_t nconnect() {
   if (checkOpen() || checkClose())
     return 0;
-  return WiFiMulti.run();
+  return wm.run();
 }
 
 static int open_url(BString &url) {
@@ -139,7 +147,7 @@ BString snetget() {
   BString url = istrexp();
   if (err || checkClose())
     return rx;
-  if (WiFiMulti.run() != WL_CONNECTED) {
+  if (wm.run() != WL_CONNECTED) {
     return BString(F("ENC"));
   }
   int httpCode = open_url(url);
@@ -168,7 +176,7 @@ void inetget() {
   }
   if (err)
     return;
-  if (WiFiMulti.run() != WL_CONNECTED) {
+  if (wm.run() != WL_CONNECTED) {
     E_NETWORK(F("not connected"));
     return;
   }
@@ -227,6 +235,8 @@ void inet() {
 }
 
 #else
+
+#include "basic.h"
 
 void inet() {
   err = ERR_NOT_SUPPORTED;
