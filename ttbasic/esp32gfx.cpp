@@ -48,6 +48,23 @@ void ESP32GFX::reset()
 
 void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
 {
+  if (dir) {
+    x_src -= width - 1;
+    x_dst -= width - 1;
+    while (height) {
+      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width);
+      y_dst--;
+      y_src--;
+      height--;
+    }
+  } else {
+    while (height) {
+      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width);
+      y_dst++;
+      y_src++;
+      height--;
+    }
+  }
 }
 
 // XXX: duplicate code in VS23S010
