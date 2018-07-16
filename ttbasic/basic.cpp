@@ -60,8 +60,8 @@ tTVscreen   sc0;
 // forced to be visible at the bottom of the screen. That way, the original
 // geometries can be restored when the program is CONTinued.
 #ifdef USE_BG_ENGINE
-static int original_bg_height[VS23_MAX_BG];
-static bool turn_bg_back_on[VS23_MAX_BG];
+static int original_bg_height[MAX_BG];
+static bool turn_bg_back_on[MAX_BG];
 bool restore_bgs = false;
 static uint16_t original_text_pos[2];
 bool restore_text_window = false;
@@ -3587,10 +3587,10 @@ void BASIC_FP do_call(uint8_t proc_idx)
 void BASIC_INT event_handle_sprite()
 {
   uint8_t dir;
-  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+  for (int i = 0; i < MAX_SPRITES; ++i) {
     if (!vs23.spriteEnabled(i))
       continue;
-    for (int j = i+1; j < VS23_MAX_SPRITES; ++j) {
+    for (int j = i+1; j < MAX_SPRITES; ++j) {
       if (!vs23.spriteEnabled(j))
         continue;
       if ((dir = vs23.spriteCollision(i, j))) {
@@ -5286,8 +5286,8 @@ Loads a PCX image file in whole or in parts from storage to pixel memory.
 LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
          [SIZE width, height] [KEY col]
 \args
-@bg		background number [`0` to `{VS23_MAX_BG_m1}`]
-@range		sprite range [limits between `0` and `{VS23_MAX_SPRITES_m1}`]
+@bg		background number [`0` to `{MAX_BG_m1}`]
+@range		sprite range [limits between `0` and `{MAX_SPRITES_m1}`]
 @dest_x		destination X coordinate, pixels +
                 [`0` (default) to `PSIZE(0)-w`]
 @dest_y		destination Y coordinate, pixels +
@@ -5337,7 +5337,7 @@ void SMALL ildbmp() {
       if (*cip == I_BG) {		// AS BG ...
         ++cip;
         dx = dy = -1;
-        if (getParam(bg,  0, VS23_MAX_BG-1, I_NONE)) return;
+        if (getParam(bg,  0, MAX_BG-1, I_NONE)) return;
         define_bg = true;
       } else if (*cip == I_SPRITE) {	// AS SPRITE ...
         ++cip;
@@ -5345,8 +5345,8 @@ void SMALL ildbmp() {
         define_spr = true;
         if (!get_range(spr_from, spr_to)) return;
         if (spr_to == UINT32_MAX)
-          spr_to = VS23_MAX_SPRITES - 1;
-        if (spr_to > VS23_MAX_SPRITES-1 || spr_from > spr_to) {
+          spr_to = MAX_SPRITES - 1;
+        if (spr_to > MAX_SPRITES-1 || spr_from > spr_to) {
           err = ERR_RANGE;
           return;
         }
@@ -5948,7 +5948,7 @@ BG bg [TILES w, h] [PATTERN px, py, pw] [SIZE tx, ty] [WINDOW wx, wy, ww, wh]
       [PRIO priority] [<ON|OFF>]
 BG OFF
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 @w	background map width, in tiles
 @h	background map height, in tiles
 @px	tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]
@@ -5959,7 +5959,7 @@ BG OFF
 @wy	window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
 @ww	window width, pixels [`0` to `PSIZE(0)-wx` (default)]
 @wh	window height, pixels [`0` to `PSIZE(1)-wy` (default)]
-@priority Background priority [`0` to `{VS23_MAX_BG_m1}`, default: `bg`]
+@priority Background priority [`0` to `{MAX_BG_m1}`, default: `bg`]
 \note
 * The `BG` command's attributes can be specified in any order, but it is
   usually a good idea to place the `ON` attribute at the end if used.
@@ -5981,7 +5981,7 @@ void ibg() {
     return;
   }
 
-  if (getParam(m, 0, VS23_MAX_BG, I_NONE)) return;
+  if (getParam(m, 0, MAX_BG, I_NONE)) return;
 
   // Background modified, do not restore the saved values when CONTing.
   original_bg_height[m] = -1;
@@ -6024,7 +6024,7 @@ void ibg() {
     vs23.disableBg(m);
     break;
   case I_PRIO:
-    if (getParam(prio, 0, VS23_MAX_PRIO, I_NONE)) return;
+    if (getParam(prio, 0, MAX_PRIO, I_NONE)) return;
     vs23.setBgPriority(m, prio);
     break;
   default:
@@ -6042,7 +6042,7 @@ void ibg() {
 Loads a background map from storage.
 \usage LOAD BG bg, file$
 \args
-@bg	background number. [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number. [`0` to `{MAX_BG_m1}`]
 @file$	name of background map file
 \ref SAVE_BG
 ***/
@@ -6054,7 +6054,7 @@ void iloadbg() {
 
   cip++;
 
-  if (getParam(bg, 0, VS23_MAX_BG, I_COMMA))
+  if (getParam(bg, 0, MAX_BG, I_COMMA))
     return;
   if (!(filename = getParamFname()))
     return;
@@ -6097,7 +6097,7 @@ out:
 Saves a background map to storage.
 \usage SAVE BG bg TO file$
 \args
-@bg	background number. [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number. [`0` to `{MAX_BG_m1}`]
 @file$	name of background map file
 \bugs
 Does not check if the specified background is properly defined.
@@ -6113,7 +6113,7 @@ void isavebg() {
 
   if (!(filename = getParamFname()))
     return;
-  if (getParam(bg, 0, VS23_MAX_BG, I_TO))
+  if (getParam(bg, 0, MAX_BG, I_TO))
     return;
   
   Unifile f = Unifile::open(filename, UFILE_OVERWRITE);
@@ -6139,7 +6139,7 @@ void isavebg() {
 Scrolls a tiled background.
 \usage MOVE BG bg TO pos_x, pos_y
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 @pos_x	top/left corner offset horizontal, pixels
 @pos_y	top/left corner offset vertical, pixels
 \note
@@ -6150,7 +6150,7 @@ maps wrap around if the display window extends beyond the map boundaries.
 void BASIC_FP imovebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y;
-  if (getParam(bg, 0, VS23_MAX_BG, I_TO)) return;
+  if (getParam(bg, 0, MAX_BG, I_TO)) return;
   // XXX: arbitrary limitation?
   if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA)) return;
   if (getParam(y, INT32_MIN, INT32_MAX, I_NONE)) return;
@@ -6176,8 +6176,8 @@ SPRITE OFF
 \args
 @pat_x X 	coordinate of the top/left sprite pattern, pixels
 @pat_y Y	coordinate of the top/left sprite pattern, pixels
-@w		sprite width, pixels [`0` to `{VS23_MAX_SPRITE_W_m1}`]
-@h		sprite height, pixels [`0` to `{VS23_MAX_SPRITE_H_m1}`]
+@w		sprite width, pixels [`0` to `{MAX_SPRITE_W_m1}`]
+@h		sprite height, pixels [`0` to `{MAX_SPRITE_H_m1}`]
 @frame_x	X coordinate of the pattern section to be used,
                 in multiples of sprite width
 @frame_y	Y coordinate of the pattern section to be used,
@@ -6186,7 +6186,7 @@ SPRITE OFF
 @key		key color value to be used for transparency masking +
                 [`0` to `255`]
 @priority	sprite priority in relation to background layers +
-                [`0` to `{VS23_MAX_BG_m1}`]
+                [`0` to `{MAX_BG_m1}`]
 
 \sec FLAGS
 The `FLAGS` attribute is the sum of any of the following bit values:
@@ -6212,7 +6212,7 @@ void BASIC_INT isprite() {
     return;
   }
 
-  if (getParam(num, 0, VS23_MAX_SPRITES, I_NONE)) return;
+  if (getParam(num, 0, MAX_SPRITES, I_NONE)) return;
   
   frame_x = vs23.spriteFrameX(num);
   frame_y = vs23.spriteFrameY(num);
@@ -6227,8 +6227,8 @@ void BASIC_INT isprite() {
     vs23.setSpritePattern(num, pat_x, pat_y);
     break;
   case I_SIZE:
-    if (getParam(w, 1, VS23_MAX_SPRITE_W, I_COMMA)) return;
-    if (getParam(h, 1, VS23_MAX_SPRITE_H, I_NONE)) return;
+    if (getParam(w, 1, MAX_SPRITE_W, I_COMMA)) return;
+    if (getParam(h, 1, MAX_SPRITE_H, I_NONE)) return;
     vs23.resizeSprite(num, w, h);
     break;
   case I_FRAME:
@@ -6263,7 +6263,7 @@ void BASIC_INT isprite() {
     vs23.setSpriteKey(num, key);
     break;
   case I_PRIO:
-    if (getParam(prio, 0, VS23_MAX_PRIO, I_NONE)) return;
+    if (getParam(prio, 0, MAX_PRIO, I_NONE)) return;
     vs23.setSpritePriority(num, prio);
     break;
   default:
@@ -6288,7 +6288,7 @@ void BASIC_INT isprite() {
 Moves a sprite.
 \usage MOVE SPRITE num TO pos_x, pos_y
 \args
-@num Sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+@num Sprite number [`0` to `{MAX_SPRITES_m1}`]
 @pos_x Sprite position X coordinate, pixels
 @pos_y Sprite position X coordinate, pixels
 \note
@@ -6300,7 +6300,7 @@ mode will not be drawn.
 void BASIC_FP imovesprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pos_x, pos_y;
-  if (getParam(num, 0, VS23_MAX_SPRITES, I_TO)) return;
+  if (getParam(num, 0, MAX_SPRITES, I_TO)) return;
   if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
   if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE)) return;
   vs23.moveSprite(num, pos_x, pos_y);
@@ -6325,7 +6325,7 @@ void BASIC_FP imove()
 Sets the value of one or more background tiles.
 \usage PLOT bg, x, y, <tile|tile$>
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 @x	tile X coordinate [`0` to background width in tiles]
 @y	tile Y coordinate [`0` to background height in tiles]
 @tile	tile identifier [`0` to `255`]
@@ -6347,7 +6347,7 @@ represented by the graphics data, it is possible to use that human-readable
 character in your program, making it easier to write and to understand.
 \usage PLOT bg MAP from TO to
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 @from	tile number to remap [`0` to `255`]
 @to	tile number to map to [`0` to `255`]
 \example
@@ -6364,7 +6364,7 @@ PLOT 0,5,10,"XOOOXXOO"
 void iplot() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y, t;
-  if (getParam(bg, 0, VS23_MAX_BG, I_NONE)) return;
+  if (getParam(bg, 0, MAX_BG, I_NONE)) return;
   if (!vs23.bgTiles(bg)) {
     // BG not defined
     err = ERR_RANGE;
@@ -7752,8 +7752,8 @@ num_t BASIC_FP nleft() {
 Checks if a sprite has collided with a background tile.
 \usage res = TILECOLL(spr, bg, tile)
 \args
-@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@spr	sprite number [`0` to `{MAX_SPRITES_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 @tile	tile number [`0` to `255`]
 \ret
 If the return value is `0`, no collision has taken place. Otherwise
@@ -7781,8 +7781,8 @@ num_t BASIC_FP ntilecoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b, c;
   if (checkOpen()) return 0;
-  if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
-  if (getParam(b, 0, VS23_MAX_BG, I_COMMA)) return 0;
+  if (getParam(a, 0, MAX_SPRITES, I_COMMA)) return 0;
+  if (getParam(b, 0, MAX_BG, I_COMMA)) return 0;
   if (getParam(c, 0, 255, I_NONE)) return 0;
   if (checkClose()) return 0;
   return vs23.spriteTileCollision(a, b, c);
@@ -7796,8 +7796,8 @@ num_t BASIC_FP ntilecoll() {
 Checks if a sprite has collided with another sprite.
 \usage res = SPRCOLL(spr1, spr2)
 \args
-@spr1	sprite number 1 [`0` to `{VS23_MAX_SPRITES_m1}`]
-@spr2	sprite number 2 [`0` to `{VS23_MAX_SPRITES_m1}`]
+@spr1	sprite number 1 [`0` to `{MAX_SPRITES_m1}`]
+@spr2	sprite number 2 [`0` to `{MAX_SPRITES_m1}`]
 \ret
 If the return value is `0`, no collision has taken place. Otherwise
 the return value is the sum of `64` and any of the following
@@ -7827,8 +7827,8 @@ num_t BASIC_FP nsprcoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b;
   if (checkOpen()) return 0;
-  if (getParam(a, 0, VS23_MAX_SPRITES, I_COMMA)) return 0;
-  if (getParam(b, 0, VS23_MAX_SPRITES, I_NONE)) return 0;
+  if (getParam(a, 0, MAX_SPRITES, I_COMMA)) return 0;
+  if (getParam(b, 0, MAX_SPRITES, I_NONE)) return 0;
   if (checkClose()) return 0;
   if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
     return vs23.spriteCollision(a, b);
@@ -7844,7 +7844,7 @@ num_t BASIC_FP nsprcoll() {
 Returns the horizontal position of a given sprite.
 \usage p = SPRX(spr)
 \args
-@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+@spr	sprite number [`0` to `{MAX_SPRITES_m1}`]
 \ret
 X coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRY()
@@ -7854,7 +7854,7 @@ num_t BASIC_FP nsprx() {
   int32_t spr;
 
   if (checkOpen() ||
-      getParam(spr, 0, VS23_MAX_SPRITES, I_CLOSE))
+      getParam(spr, 0, MAX_SPRITES, I_CLOSE))
     return 0;
 
   return vs23.spriteX(spr);
@@ -7867,7 +7867,7 @@ num_t BASIC_FP nsprx() {
 Returns the vertical position of a given sprite.
 \usage p = SPRY(spr)
 \args
-@spr	sprite number [`0` to `{VS23_MAX_SPRITES_m1}`]
+@spr	sprite number [`0` to `{MAX_SPRITES_m1}`]
 \ret
 Y coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRX()
@@ -7877,7 +7877,7 @@ num_t BASIC_FP nspry() {
   int32_t spr;
 
   if (checkOpen() ||
-      getParam(spr, 0, VS23_MAX_SPRITES, I_CLOSE))
+      getParam(spr, 0, MAX_SPRITES, I_CLOSE))
     return 0;
 
   return vs23.spriteY(spr);
@@ -7891,7 +7891,7 @@ num_t BASIC_FP nspry() {
 Returns the horizontal scrolling offset of a given background layer.
 \usage p = BSCRX(bg)
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 \ret
 X scrolling offset of background `bg`.
 \ref BG BSCRY()
@@ -7901,7 +7901,7 @@ num_t BASIC_FP nbscrx() {
   int32_t bg;
 
   if (checkOpen() ||
-      getParam(bg, 0, VS23_MAX_BG-1, I_CLOSE))
+      getParam(bg, 0, MAX_BG-1, I_CLOSE))
     return 0;
 
   return vs23.bgScrollX(bg);
@@ -7914,7 +7914,7 @@ num_t BASIC_FP nbscrx() {
 Returns the vertical scrolling offset of a given background layer.
 \usage p = BSCRY(bg)
 \args
-@bg	background number [`0` to `{VS23_MAX_BG_m1}`]
+@bg	background number [`0` to `{MAX_BG_m1}`]
 \ret
 Y scrolling offset of background `bg`.
 \ref BG BSCRX()
@@ -7924,7 +7924,7 @@ num_t BASIC_FP nbscry() {
   int32_t bg;
 
   if (checkOpen() ||
-      getParam(bg, 0, VS23_MAX_BG-1, I_CLOSE))
+      getParam(bg, 0, MAX_BG-1, I_CLOSE))
     return 0;
 
   return vs23.bgScrollY(bg);
@@ -10468,7 +10468,7 @@ void SMALL resize_windows()
     // window.
     bool obscured = false;
     int top_y = (y + (sc0.getScreenHeight() - 5)) * sc0.getFontHeight();
-    for (int i = 0; i < VS23_MAX_BG; ++i) {
+    for (int i = 0; i < MAX_BG; ++i) {
       if (!vs23.bgEnabled(i))
         continue;
       if (vs23.bgWinY(i) >= top_y) {
@@ -10512,7 +10512,7 @@ void SMALL restore_windows()
   }
   if (restore_bgs) {
     restore_bgs = false;
-    for (int i = 0; i < VS23_MAX_BG; ++i) {
+    for (int i = 0; i < MAX_BG; ++i) {
       if (turn_bg_back_on[i]) {
         vs23.enableBg(i);
       } else if (original_bg_height[i] >= 0) {

@@ -84,7 +84,7 @@ void VS23S010::adjust(int16_t cnt)
 void VS23S010::resetSprites()
 {
   m_bg_modified = true;
-  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+  for (int i = 0; i < MAX_SPRITES; ++i) {
     if (m_patterns[i]) {
       free(m_patterns[i]);
       m_patterns[i] = NULL;
@@ -96,7 +96,7 @@ void VS23S010::resetSprites()
     s->p.frame_x = s->p.frame_y = 0;
     s->p.w = s->p.h = 8;
     s->p.key = 0;
-    s->prio = VS23_MAX_PRIO;
+    s->prio = MAX_PRIO;
     s->p.flip_x = s->p.flip_y = false;
     s->pat = NULL;
   }
@@ -105,7 +105,7 @@ void VS23S010::resetSprites()
 void VS23S010::resetBgs()
 {
   m_bg_modified = true;
-  for (int i=0; i < VS23_MAX_BG; ++i) {
+  for (int i=0; i < MAX_BG; ++i) {
     struct bg_t *bg = &m_bg[i];
     freeBg(i);
     bg->tile_size_x = 8;
@@ -155,7 +155,7 @@ void VS23S010::end()
 {
   m_bin.Init(0, 0);
 #ifdef USE_BG_ENGINE
-  for (int i = 0; i < VS23_MAX_BG; ++i) {
+  for (int i = 0; i < MAX_BG; ++i) {
     freeBg(i);
   }
 #endif
@@ -706,12 +706,12 @@ void GROUP(basic_vs23) VS23S010::updateBg()
   // that the next layer will not overshoot the previous one.
   last_pix_split_y = m_current_mode.y / 2;
 
-  int bg_tile_start_y[VS23_MAX_BG];
-  int bg_tile_end_y[VS23_MAX_BG];
-  int bg_tile_split_y[VS23_MAX_BG];
-  int bg_pix_split_y[VS23_MAX_BG];
+  int bg_tile_start_y[MAX_BG];
+  int bg_tile_end_y[MAX_BG];
+  int bg_tile_split_y[MAX_BG];
+  int bg_pix_split_y[MAX_BG];
   tsy = -1;
-  for (int i = 0; i < VS23_MAX_BG; ++i) {
+  for (int i = 0; i < MAX_BG; ++i) {
     bg = &m_bg[i];
     if (!bg->enabled)
       continue;
@@ -758,12 +758,12 @@ void GROUP(basic_vs23) VS23S010::updateBg()
   // before the frame starts and can be displayed while the bottom half is
   // still being drawn.
   for (int pass = 0; pass < 2; ++pass) {
-    for (int prio = 0; prio <= VS23_MAX_PRIO; ++prio) {
+    for (int prio = 0; prio <= MAX_PRIO; ++prio) {
       // Block move programming can be done at max SPI speed.
       setSpiClockMax();
 
       // Draw enabled backgrounds.
-      if (tsy != -1) for (int i = 0; i < VS23_MAX_BG; ++i) {
+      if (tsy != -1) for (int i = 0; i < MAX_BG; ++i) {
         bg = &m_bg[i];
         if (!bg->enabled)
           continue;
@@ -831,11 +831,11 @@ void GROUP(basic_vs23) VS23S010::updateBg()
         lines[3] = currentLine();
 #endif
 
-      uint8_t bbuf[VS23_MAX_SPRITE_W];
-      uint8_t sbuf[VS23_MAX_SPRITE_W];
+      uint8_t bbuf[MAX_SPRITE_W];
+      uint8_t sbuf[MAX_SPRITE_W];
 
 #ifndef DISABLE_SPRITE_DRAW
-      for (int sn = 0; sn < VS23_MAX_SPRITES; ++sn) {
+      for (int sn = 0; sn < MAX_SPRITES; ++sn) {
         struct sprite_t *s = m_sprites_ordered[sn];
         if (!s->enabled || (s->must_reload && s->pat))
           continue;
@@ -1053,7 +1053,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     }
   }
 
-  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+  for (int i = 0; i < MAX_SPRITES; ++i) {
     struct sprite_pattern *p = m_patterns[i];
     if (p) {
       if (!memcmp(&p->p, &s->p, sizeof(s->p))) {
@@ -1073,7 +1073,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
 
   struct sprite_pattern *pat = NULL;
 
-  for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+  for (int i = 0; i < MAX_SPRITES; ++i) {
     if (!m_patterns[i]) {
       pat = m_patterns[i] = allocateSpritePattern(&s->p);
       if (!pat) {
@@ -1086,7 +1086,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
   }
 
   if (!pat) {
-    for (int i = 0; i < VS23_MAX_SPRITES; ++i) {
+    for (int i = 0; i < MAX_SPRITES; ++i) {
       if (m_patterns[i] && m_patterns[i]->ref <= 0) {
         dbg_pat("replpat %d@%p for %d\r\n", i, m_patterns[i], num);
         free(m_patterns[i]);
@@ -1246,7 +1246,7 @@ void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
   if (s->pos_x != x || s->pos_y != y) {
     s->pos_x = x;
     s->pos_y = y;
-    qsort(m_sprites_ordered, VS23_MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
+    qsort(m_sprites_ordered, MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
     m_bg_modified = true;
   }
 }

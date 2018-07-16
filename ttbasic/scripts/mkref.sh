@@ -1,5 +1,5 @@
 function import_def {
-	val="`grep -h "#define\s*${1}\s*" *.h |sed "s,#define\s*${1}\s*,,g"`"
+	val="`grep -h "#define\s*${1}\s*" *.h |head -n1|sed "s,#define\s*${1}\s*,,g"`"
 	echo ":$1: ${val}" >>$REFDOC
 	echo ":$1_m1: $((val-1))" >>$REFDOC
 }
@@ -7,11 +7,11 @@ function import_def {
 REFDOC=../doc/reference.adoc
 rm -f $REFDOC
 
-import_def VS23_MAX_SPRITES
-import_def VS23_MAX_BG
-import_def VS23_MAX_SPRITE_W
-import_def VS23_MAX_SPRITE_H
-import_def VS23_NUM_COLORSPACES
+import_def MAX_SPRITES
+import_def MAX_BG
+import_def MAX_SPRITE_W
+import_def MAX_SPRITE_H
+import_def CSP_NUM_COLORSPACES
 import_def NUM_FONTS
 import_def MAX_RETVALS
 import_def MAX_USER_FILES

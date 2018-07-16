@@ -49,12 +49,12 @@ struct vs23_mode_t {
 #define VS23_MAX_X	456
 #define VS23_MAX_Y	224
 
-#define VS23_MAX_BG	4
-#define VS23_MAX_SPRITES 32
-#define VS23_MAX_SPRITE_W 32
-#define VS23_MAX_SPRITE_H 32
+#define MAX_BG	4
+#define MAX_SPRITES 32
+#define MAX_SPRITE_W 32
+#define MAX_SPRITE_H 32
 
-#define VS23_MAX_PRIO	(VS23_MAX_BG-1)
+#define MAX_PRIO	(MAX_BG-1)
 
 //#define DEBUG_BM
 
@@ -429,7 +429,7 @@ private:
       bool enabled;
       uint8_t prio;
       uint8_t *tile_map;
-    } m_bg[VS23_MAX_BG];
+    } m_bg[MAX_BG];
 
     void drawBg(struct bg_t *bg,
                             int dest_addr_start,
@@ -474,7 +474,7 @@ private:
       uint8_t ref;
       struct sprite_line lines[0];
     };
-    struct sprite_pattern *m_patterns[VS23_MAX_SPRITES];
+    struct sprite_pattern *m_patterns[MAX_SPRITES];
     
     struct sprite_t {
       struct sprite_pattern *pat;
@@ -482,8 +482,8 @@ private:
       int16_t pos_x, pos_y;
       uint8_t prio;
       bool enabled:1, must_reload:1;
-    } m_sprite[VS23_MAX_SPRITES];
-    struct sprite_t *m_sprites_ordered[VS23_MAX_SPRITES];
+    } m_sprite[MAX_SPRITES];
+    struct sprite_t *m_sprites_ordered[MAX_SPRITES];
     static int cmp_sprite_y(const void *one, const void *two);
 
     bool loadSpritePattern(uint8_t num);
