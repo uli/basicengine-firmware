@@ -22,6 +22,8 @@
 #else
 #define STR_EDITION "ESP8266 WiFi"
 #endif
+#elif defined(ESP32)
+#define STR_EDITION "ESP32"
 #else
 #define STR_EDITION "unknown"
 #endif
