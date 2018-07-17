@@ -8,7 +8,7 @@
 #define SC_DEFAULT 0
 #define XRES 320
 #define YRES 240
-#define LAST_LINE 480
+#define LAST_LINE 400
 
 #define MAX_BG 4
 
