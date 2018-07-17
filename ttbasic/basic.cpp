@@ -7962,6 +7962,34 @@ num_t BASIC_FP nplay() {
 #endif
 }
 
+#ifndef ESP8266
+int try_malloc() {
+  uint32_t total = 0;
+  void **foo = (void **)calloc(128, sizeof(void *));
+  if (!foo)
+    return total;
+  total += 128 * sizeof(void *);
+  int bs = 8192;
+  int cnt = 0;
+  for (;;) {
+    foo[cnt] = malloc(bs);
+    if (!foo[cnt]) {
+      bs /= 2;
+      if (!bs)
+        break;
+      continue;
+    }
+    total += bs;
+    cnt++;
+  }
+  while (cnt) {
+    free(foo[--cnt]);
+  }
+  free(foo);
+  return total;
+}
+#endif
+
 /***bf bas FREE
 Get free memory size.
 \usage bytes = FREE()
@@ -7972,8 +8000,7 @@ num_t BASIC_FP nfree() {
 #ifdef ESP8266
   return umm_free_heap_size();
 #else
-  err = ERR_NOT_SUPPORTED;
-  return -1;
+  return try_malloc();
 #endif
 }
 
@@ -8944,12 +8971,14 @@ void SMALL isysinfo() {
   putHexnum(adr, 8);
   newline();
 
-#ifdef ESP8266
   // SRAM未使用領域の表示
   PRINT_P("SRAM Free: ");
+#ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
-  newline();
+#else
+  putnum(try_malloc(), 0);
 #endif
+  newline();
 
 #ifdef USE_VS23
   newline();
@@ -10765,8 +10794,10 @@ void SMALL basic() {
   sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
-  PRINT_P(" bytes free\n");
+#else
+  putnum(try_malloc(), 0);
 #endif
+  PRINT_P(" bytes free\n");
 
   PRINT_P("Directory ");
   c_puts(Unifile::cwd()); newline();
