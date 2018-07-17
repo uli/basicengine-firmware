@@ -42,7 +42,7 @@ bool SD_BEGIN(int mhz)
 #ifdef UNIFILE_USE_SDFAT
     sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(mhz));
 #elif defined(UNIFILE_USE_FS)
-    sdfat_initialized = SD.begin();
+    sdfat_initialized = SD.begin(SS, SPI, mhz * 1000000);
 #endif
   } else {
     // Cannot use SPI.setFrequency() here because it's too slow; this method
