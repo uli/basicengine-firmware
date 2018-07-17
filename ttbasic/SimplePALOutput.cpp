@@ -48,12 +48,8 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(uint8_t **frame)
       
       short y0 = yuv2y[px0];
       short y1 = yuv2y[px1];
-      unsigned char p04u = p0u;
-      unsigned char p04v = p0v;
-      unsigned char p14v = p1v;
-      unsigned char p14u = p1u;
-      short u = UVLUT[(p04u+p14u)/2];
-      short v = UVLUT[(p14v+p04v)/2];
+      short u = UVLUT[(p0u+p1u)/2];
+      short v = UVLUT[(p1v+p0v)/2];
       short u0 = (SIN[x] * u);
       short u1 = (SIN[x + 1] * u);
       short v0 = (COS[x] * v);
