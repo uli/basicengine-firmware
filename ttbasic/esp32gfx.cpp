@@ -32,8 +32,7 @@ void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_frame = 0;
   m_pal.init();
   for (int i = 0; i < LAST_LINE; ++i) {
-    m_pixels[i] = (uint8_t *)malloc(XRES);
-    memset(m_pixels[i], i, XRES);
+    m_pixels[i] = (uint8_t *)calloc(1, XRES);
   }
   reset();
   xTaskCreatePinnedToCore(pal_core, "c", 1024, NULL, 1, NULL, 0);
