@@ -120,14 +120,19 @@ void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
 
     for (int y = sy; y < ey; ++y) {
       for (int x = sx; x < ex; ++x) {
+        int off_x = x % tsx;
+        int off_y = y % tsy;
         int tile_x = x / tsx;
         int tile_y = y / tsy;
         uint8_t tile = bg->tiles[tile_x % bg->w + (tile_y % bg->h) * bg->w];
-        int off_x = x % tsx;
-        int off_y = y % tsy;
         int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
-        m_pixels[y-sy][x-sx] = m_pixels[t_y][t_x];
+        if (!off_x && x < ex - tsx) {
+          memcpy(&m_pixels[y-sy][x-sx], &m_pixels[t_y][t_x], tsx);
+          x += tsx - 1;
+        } else {
+          m_pixels[y-sy][x-sx] = m_pixels[t_y][t_x];
+        }
       }
     }
   }
