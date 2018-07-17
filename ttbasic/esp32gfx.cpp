@@ -92,6 +92,8 @@ void ESP32GFX::setMode(uint8_t mode)
 {
 }
 
+//#define PROFILE_BG
+
 void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
 {
   static uint32_t last_frame = 0;
@@ -101,6 +103,9 @@ void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
   m_bg_modified = false;
   last_frame = m_frame;
 
+#ifdef PROFILE_BG
+  uint32_t start = micros();
+#endif
   for (int b = 0; b < MAX_BG; ++b) {
     bg_t *bg = &m_bg[b];
     if (!bg->enabled)
@@ -126,6 +131,10 @@ void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
       }
     }
   }
+#ifdef PROFILE_BG
+  uint32_t taken = micros() - start;
+  Serial.printf("rend %d\r\n", taken);
+#endif
 }
 
 #ifdef USE_BG_ENGINE
