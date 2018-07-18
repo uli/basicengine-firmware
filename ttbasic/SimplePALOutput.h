@@ -146,7 +146,7 @@ class SimplePALOutput
   void sendLine(unsigned short *l);
   void sendSync1();
   void sendSync2();
-  void __attribute__((optimize("O3"))) sendFrame(uint8_t **frame);
+  void sendFrame(const struct esp32gfx_mode_t *mode, uint8_t **frame);
 };
 
 

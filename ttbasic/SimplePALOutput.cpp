@@ -26,7 +26,8 @@ void SimplePALOutput::sendSync2() {
     sendLine(shortSync);
 }
 
-void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(uint8_t **frame)
+void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
+  const struct esp32gfx_mode_t *mode, uint8_t **frame)
 {
   int l = 0;
   sendSync1();
