@@ -10881,7 +10881,7 @@ void loadConfig() {
   CONFIG.line_adjust = 0;
   CONFIG.KEYBOARD  =  1;
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
-  CONFIG.mode = 1;
+  CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
   CONFIG.cursor_color = 0x92;
   CONFIG.beep_volume = 15;
