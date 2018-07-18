@@ -3468,14 +3468,13 @@ void ifiles() {
       fname = "";
     }
   }
-#if USE_SD_CARD == 1
+
   rc = bfs.flist((char *)fname.c_str(), wcard, sc0.getWidth()/14);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
     err = ERR_FILE_OPEN;
   }
-#endif
 }
 
 /***bc fs FORMAT
@@ -5440,14 +5439,12 @@ void irmdir() {
     return;
   }
 
-#if USE_SD_CARD == 1
   rc = bfs.rmdir((char *)fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
     err = ERR_BAD_FNAME;
   }
-#endif
 }
 
 /***bc fs RENAME
@@ -5712,7 +5709,6 @@ void  itype() {
     return;
   }
 
-#if USE_SD_CARD == 1
   while(1) {
     rc = bfs.textOut((char *)fname.c_str(), line, sc0.getHeight());
     if (rc < 0) {
@@ -5728,7 +5724,6 @@ void  itype() {
       break;
     line += sc0.getHeight();
   }
-#endif
 }
 
 /***bc scr WINDOW
@@ -10716,10 +10711,8 @@ void SMALL basic() {
 #endif
   loadConfig();
 
-#if USE_SD_CARD == 1
   // Initialize SD card file system
   bfs.init(16);		// CS on GPIO16
-#endif
 
   if (!Unifile::chDir(SD_PREFIX))
     Unifile::chDir(FLASH_PREFIX);
