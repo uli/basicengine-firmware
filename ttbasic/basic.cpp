@@ -31,6 +31,9 @@
 #include "net.h"
 #include "credits.h"
 
+// size by which the list buffer is incremented when full
+#define LISTBUF_INC	128
+
 struct unaligned_num_t {
   num_t n;
 } __attribute__((packed));
@@ -1257,13 +1260,14 @@ void inslist() {
   // when only line numbers are entered when there is insufficient space ..)
   // @Tamakichi)
   if (list_free() < *ibuf) { // If the vacancy is insufficient
-    listbuf = (unsigned char *)realloc(listbuf, size_list + *ibuf);
+    int inc_mem = (*ibuf + LISTBUF_INC - 1) / LISTBUF_INC * LISTBUF_INC;
+    listbuf = (unsigned char *)realloc(listbuf, size_list + inc_mem);
     if (!listbuf) {
       err = ERR_OOM;
       size_list = 0;
       return;
     }
-    size_list += *ibuf;
+    size_list += inc_mem;
   }
 
   // Convert I_NUM literal to line number descriptor.
@@ -2905,7 +2909,7 @@ void inew(uint8_t mode) {
     if (listbuf)
       free(listbuf);
     // XXX: Should we be more generous here to avoid fragmentation?
-    listbuf = (unsigned char *)malloc(1);
+    listbuf = (unsigned char *)malloc(LISTBUF_INC);
     if (!listbuf) {
       err = ERR_OOM;
       size_list = 0;
