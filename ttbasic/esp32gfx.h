@@ -19,10 +19,11 @@
 #define MAX_PRIO	(MAX_BG-1)
 
 struct esp32gfx_mode_t {
-  uint16_t x;
-  uint16_t y;
-  uint8_t top;
-  uint8_t left;
+  int x;
+  int y;
+  int top;
+  int left;
+  int pclk;
 };
 
 class ESP32GFX {
