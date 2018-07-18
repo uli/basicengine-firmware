@@ -149,6 +149,6 @@ class SimplePALOutput
   void sendSync1(int blank_lines);
   void sendSync2(int blank_lines);
   void sendFrame(const struct esp32gfx_mode_t *mode, uint8_t **frame);
+  void sendFrame1ppc(const struct esp32gfx_mode_t *mode, uint8_t **frame);
+  void sendFrame4ppc(const struct esp32gfx_mode_t *mode, uint8_t **frame);
 };
-
-

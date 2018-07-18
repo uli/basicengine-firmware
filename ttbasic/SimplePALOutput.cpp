@@ -96,4 +96,95 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
   sendSync2(302 - mode->y - mode->top);
 }
 
+void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
+  const struct esp32gfx_mode_t *mode, uint8_t **frame)
+{
+  int l = 0;
+  sendSync1(mode->top);
+
+  //image
+  for(int i = 0; i < mode->y; i += 2)
+  {
+    uint8_t *pixels0 = frame[i];
+    uint8_t *pixels1 = frame[i + 1];
+    int j = mode->left;
+    for(int x = 0; x < mode->x; x++)
+    {
+      uint8_t px0 = *pixels0++;
+      uint8_t px1 = *pixels1++;
+      unsigned short p0v = yuv2v[px0];
+      unsigned short p0u = yuv2u[px0];
+      unsigned short p1u = yuv2u[px1];
+      unsigned short p1v = yuv2v[px1];
+      
+      short y0 = yuv2y[px0];
+      short y1 = yuv2y[px1];
+
+      // we don't mix the hues in 1ppc modes because it takes too much time
+      short u0 = (SIN[x] * UVLUT[p0u]);
+      short v0 = (COS[x] * UVLUT[p0v]);
+
+      //word order is swapped for I2S packing (j + 1) comes first then j
+      line[0][j^1] = y0 + u0 + v0;
+      line[1][j^1] = y1 + u0 - v0;
+      j++;
+    }
+    sendLine(line[0]);
+    sendLine(line[1]);
+  }
+  
+  sendSync2(302 - mode->y - mode->top);
+}
+
+void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
+  const struct esp32gfx_mode_t *mode, uint8_t **frame)
+{
+  int l = 0;
+  sendSync1(mode->top);
+
+  //image
+  for(int i = 0; i < mode->y; i += 4)
+  {
+    uint8_t *pixels0 = frame[i];
+    uint8_t *pixels1 = frame[i + 1];
+    int j = mode->left;
+    for(int x = 0; x < mode->x * 4; x += 4)
+    {
+      uint8_t px0 = *pixels0++;
+      uint8_t px1 = *pixels1++;
+      unsigned short p0v = yuv2v[px0];
+      unsigned short p0u = yuv2u[px0];
+      unsigned short p1u = yuv2u[px1];
+      unsigned short p1v = yuv2v[px1];
+      
+      short y0 = yuv2y[px0];
+      short y1 = yuv2y[px1];
+      short u = UVLUT[(p0u+p1u)/2];
+      short v = UVLUT[(p1v+p0v)/2];
+      short u0 = (SIN[x] * u);
+      short u1 = (SIN[x + 1] * u);
+      short u2 = (SIN[x + 2] * u);
+      short u3 = (SIN[x + 3] * u);
+      short v0 = (COS[x] * v);
+      short v1 = (COS[x + 1] * v);
+      short v2 = (COS[x + 2] * v);
+      short v3 = (COS[x + 3] * v);
+      //word order is swapped for I2S packing (j + 1) comes first then j
+      line[0][j] = y0 + u1 + v1;
+      line[1][j] = y1 + u1 - v1;
+      line[0][j + 1] = y0 + u0 + v0;
+      line[1][j + 1] = y1 + u0 - v0;
+      line[0][j + 2] = y0 + u3 + v3;
+      line[1][j + 2] = y1 + u3 - v3;
+      line[0][j + 3] = y0 + u2 + v2;
+      line[1][j + 3] = y1 + u2 - v2;
+      j += 4;
+    }
+    sendLine(line[0]);
+    sendLine(line[1]);
+  }
+  
+  sendSync2(302 - mode->y - mode->top);
+}
+
 #endif	// ESP32

@@ -20,8 +20,14 @@ void ESP32GFX::render()
     delay(16);
   else {
     switch (m_current_mode.pclk) {
+      case 1:
+        m_pal.sendFrame1ppc(&m_current_mode, m_pixels);
+        break;
       case 2:
         m_pal.sendFrame(&m_current_mode, m_pixels);
+        break;
+      case 4:
+        m_pal.sendFrame4ppc(&m_current_mode, m_pixels);
         break;
       default:
         break;
