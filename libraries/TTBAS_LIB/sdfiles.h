@@ -28,7 +28,6 @@
 extern FastROMFilesystem fs;
 #endif
 
-#define SD_CS       (4)   // SDカードモジュールCS
 #define SD_PATH_LEN 64      // ディレクトリパス長
 #define SD_TEXT_LEN 255     // テキスト１行最大長さ
 
@@ -603,7 +602,7 @@ private:
   uint8_t flgtmpOlen;
 
 public:
-  uint8_t init(uint8_t cs=SD_CS);                       // 初期設定
+  uint8_t init(uint8_t cs);                       // 初期設定
   uint8_t flist(char* _dir, char* wildcard=NULL, uint8_t clmnum=2); // ファイルリスト出力
   uint8_t mkdir(const char* fname);                           // ディレクトリの作成
   uint8_t rmdir(char* fname);                           // ディレクトリの削除
