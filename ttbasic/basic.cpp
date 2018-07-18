@@ -10700,6 +10700,7 @@ void SMALL basic() {
 
   bc = new basic_ctx_t;
 
+  // try to mount SPIFFS, ignore failure (do not format)
 #ifdef UNIFILE_USE_SPIFFS
 #ifdef ESP8266_NOWIFI
   SPIFFS.begin(false);
@@ -10708,6 +10709,8 @@ void SMALL basic() {
 #endif
 #elif defined(UNIFILE_USE_FASTROMFS)
   fs.mount();
+#elif defined(UNIFILE_USE_FS)
+  SPIFFS.begin();
 #endif
   loadConfig();
 
@@ -10773,9 +10776,11 @@ void SMALL basic() {
   sc0.locate(sc0.getWidth() - strlen_P(__v), 8);
   c_puts_P(__v);
 
-  // Initialize file systems
+  // Initialize file systems, format SPIFFS if necessary
 #ifdef UNIFILE_USE_SPIFFS
   SPIFFS.begin();
+#elif defined(UNIFILE_USE_FS)
+  SPIFFS.begin(true);
 #elif defined(UNIFILE_USE_FASTROMFS)
   if (!fs.mount()) {
     fs.mkfs();
