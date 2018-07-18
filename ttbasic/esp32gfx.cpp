@@ -113,9 +113,9 @@ void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
     int tsx = bg->tile_size_x;
     int tsy = bg->tile_size_y;
     int sx = bg->scroll_x;
-    int ex = XRES + bg->scroll_x;
+    int ex = m_current_mode.x + bg->scroll_x;
     int sy = bg->scroll_y;
-    int ey = YRES + bg->scroll_y;
+    int ey = m_current_mode.y + bg->scroll_y;
 
     for (int y = sy; y < ey; ++y) {
       for (int x = sx; x < ex; ++x) {

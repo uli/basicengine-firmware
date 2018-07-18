@@ -7,7 +7,6 @@
 
 #define SC_DEFAULT 0
 #define XRES 320
-#define YRES 240
 #define LAST_LINE 400
 
 #define MAX_BG 4
@@ -31,10 +30,10 @@ public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
 
   inline uint16_t width() {
-    return XRES;
+    return m_current_mode.x;
   }
   inline uint16_t height() {
-    return YRES;
+    return m_current_mode.y;
   }
 
   int numModes() { return 1; }
