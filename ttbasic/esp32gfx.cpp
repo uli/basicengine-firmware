@@ -51,7 +51,7 @@ void ESP32GFX::reset()
   setColorSpace(0);
 }
 
-void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint8_t width, uint8_t height, uint8_t dir)
+void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
 {
   if (dir) {
     x_src -= width - 1;
