@@ -124,7 +124,8 @@ class SimplePALOutput
        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
        .communication_format = I2S_COMM_FORMAT_I2S_MSB,
        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-       .dma_buf_count = 10,
+       // three buffers works as well, but we're playing it safe
+       .dma_buf_count = 4,
        .dma_buf_len = lineSamples   //a buffer per line
     };
     
