@@ -2,12 +2,9 @@
 #define _ESP32GFX_H
 
 #include "ttconfig.h"
-#include "SimplePALOutput.h"
 #include "GuillotineBinPack.h"
 
-#define SC_DEFAULT 0
-#define XRES 320
-#define LAST_LINE 400
+#define SC_DEFAULT 11
 
 #define MAX_BG 4
 
@@ -21,9 +18,11 @@ struct esp32gfx_mode_t {
   int x;
   int y;
   int top;
-  int left;
+  int left;	// must be even to simplify buffer word swap
   int pclk;
 };
+
+#include "SimplePALOutput.h"
 
 class ESP32GFX {
 public:
@@ -36,10 +35,10 @@ public:
     return m_current_mode.y;
   }
 
-  int numModes() { return 1; }
+  int numModes() { return SPO_NUM_MODES; }
   void setMode(uint8_t mode);
   void setColorSpace(uint8_t palette) {}
-  inline int lastLine() { return LAST_LINE; }
+  inline int lastLine() { return m_last_line; }
 
   bool blockFinished() { return true; }
 
@@ -252,10 +251,14 @@ public:
 
 private:
   struct esp32gfx_mode_t m_current_mode;
+  static const struct esp32gfx_mode_t modes_pal[];
+  bool m_display_enabled;
+
   GuillotineBinPack m_bin;
 
   uint32_t m_frame;
-  uint8_t *m_pixels[LAST_LINE];
+  uint8_t **m_pixels;
+  int m_last_line;
 
 #ifdef USE_BG_ENGINE
   struct bg_t {

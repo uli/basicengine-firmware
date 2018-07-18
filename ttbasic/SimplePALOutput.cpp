@@ -1,13 +1,13 @@
 #ifdef ESP32
 
-#include "SimplePALOutput.h"
+#include "esp32gfx.h"
 
 inline void SimplePALOutput::sendLine(unsigned short *l)
 {
   i2s_write_bytes(I2S_PORT, (char*)l, lineSamples * sizeof(unsigned short), portMAX_DELAY);
 }
 
-void SimplePALOutput::sendSync1() {
+void SimplePALOutput::sendSync1(int blank_lines) {
   //long sync
   for(int i = 0; i < 3; i++)
     sendLine(longSync);
@@ -15,30 +15,57 @@ void SimplePALOutput::sendSync1() {
   for(int i = 0; i < 4; i++)
     sendLine(shortSync);
   //blank lines
-  for(int i = 0; i < 37; i++)
+  for(int i = 0; i < blank_lines; i++)
     sendLine(blank);
 }
 
-void SimplePALOutput::sendSync2() {
-  for(int i = 0; i < 25; i++)
+void SimplePALOutput::sendSync2(int blank_lines) {
+  for(int i = 0; i < blank_lines; i++)
     sendLine(blank);
   for(int i = 0; i < 3; i++)
     sendLine(shortSync);
 }
 
+const struct esp32gfx_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
+        // Much smaller than the screen, but have to be compatible with NTSC.
+	{460, 224, 45, 256, 1},
+	// This could work with a pixel clock divider of 4, but it would be
+	// extremely wide (near overscan).
+	{436, 216, 49, 268, 1},
+	{320, 216, 49, 168, 2},	// VS23 NTSC demo
+	{320, 200, 57, 168, 2},	// (M)CGA, Commodore et al.
+	{256, 224, 45, 232, 2},	// SNES
+	{256, 192, 61, 232, 2},	// MSX, Spectrum, NDS
+	{160, 200, 57, 168, 4},	// Commodore/PCjr/CPC
+						// multi-color
+	// "Overscan modes" are actually underscan on PAL.
+	{352, 240, 37, 108, 2},	// PCE overscan (barely)
+	{282, 240, 37, 200, 2},	// PCE overscan (underscan on PAL)
+	// Maximum PAL (the timing would allow more, but we would run out of memory)
+	// NB: This does not line up with any font sizes; the width is chosen
+	// to avoid artifacts.
+	{508, 240, 37, 234, 1},
+	{320, 256, 29, 168, 2},	// maximum PAL at 2 clocks per pixel
+	{320, 240, 37, 168, 2},	// DawnOfAV demo, Mode X
+	// maximum the software renderer can handle with 4 DMA buffers
+	// more is possible with more buffers, but the memory usage is
+	// prohibitive
+	{512, 256, 29, 232, 1},
+};
+
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
   const struct esp32gfx_mode_t *mode, uint8_t **frame)
 {
   int l = 0;
-  sendSync1();
+  sendSync1(mode->top);
 
   //image
-  for(int i = 0; i < 240; i += 2)
+  for(int i = 0; i < mode->y; i += 2)
   {
     uint8_t *pixels0 = frame[i];
     uint8_t *pixels1 = frame[i + 1];
-    int j = frameStart;
-    for(int x = 0; x < imageSamples; x += 2)
+    int j = mode->left;
+    for(int x = 0; x < mode->x * 2; x += 2)
     {
       uint8_t px0 = *pixels0++;
       uint8_t px1 = *pixels1++;
@@ -66,7 +93,7 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
     sendLine(line[1]);
   }
   
-  sendSync2();
+  sendSync2(302 - mode->y - mode->top);
 }
 
 #endif	// ESP32

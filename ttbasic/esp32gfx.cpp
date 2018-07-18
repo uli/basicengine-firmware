@@ -16,26 +16,35 @@ static void pal_core(void *data)
 
 void ESP32GFX::render()
 {
-  m_pal.sendFrame(m_pixels);
+  if (!m_display_enabled)
+    delay(16);
+  else {
+    switch (m_current_mode.pclk) {
+      case 2:
+        m_pal.sendFrame(&m_current_mode, m_pixels);
+        break;
+      default:
+        break;
+    }
+  }
   m_frame++;
 }
 
 void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system)
 {
-  m_current_mode.x = 320;
-  m_current_mode.y = 240;
-  m_current_mode.top = 0;	// XXX: use real value
-  m_current_mode.left = 0;	// ditto
+  m_display_enabled = false;
+  delay(16);
+  m_last_line = 0;
+  m_pixels = NULL;
+  setMode(SC_DEFAULT);
 
   m_bin.Init(0, 0);
 
   m_frame = 0;
   m_pal.init();
-  for (int i = 0; i < LAST_LINE; ++i) {
-    m_pixels[i] = (uint8_t *)calloc(1, XRES);
-  }
   reset();
-  xTaskCreatePinnedToCore(pal_core, "c", 1024, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(pal_core, "c", 1024, NULL, 2, NULL, 0);
+  m_display_enabled = true;
 }
 
 void ESP32GFX::reset()
@@ -45,9 +54,9 @@ void ESP32GFX::reset()
   resetSprites();
   resetBgs();
 #endif
-  for (int i = 0; i < LAST_LINE; ++i)
-    memset(m_pixels[i], 0, XRES);
-  m_bin.Init(m_current_mode.x, LAST_LINE - m_current_mode.y);
+  for (int i = 0; i < m_last_line; ++i)
+    memset(m_pixels[i], 0, m_current_mode.x);
+  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
   setColorSpace(0);
 }
 
@@ -87,8 +96,28 @@ void ESP32GFX::freeBacking(int x, int y, int w, int h)
   m_bin.Free(r, true);
 }
 
+#include <esp_heap_alloc_caps.h>
+
 void ESP32GFX::setMode(uint8_t mode)
 {
+  m_display_enabled = false;
+  delay(16);
+
+  for (int i = 0; i < m_last_line; ++i) {
+    if (m_pixels[i])
+      free(m_pixels[i]);
+  }
+  free(m_pixels);
+
+  m_current_mode = modes_pal[mode];
+  m_pal.setMode(m_current_mode);
+
+  m_last_line = _max(131072 / m_current_mode.x, m_current_mode.y + 8);
+  m_pixels = (uint8_t **)pvPortMallocCaps(sizeof(*m_pixels) * m_last_line, MALLOC_CAP_32BIT);
+  for (int i = 0; i < m_last_line; ++i) {
+    m_pixels[i] = (uint8_t *)calloc(1, m_current_mode.x);
+  }
+  m_display_enabled = true;
 }
 
 //#define PROFILE_BG

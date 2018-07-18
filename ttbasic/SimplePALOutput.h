@@ -9,7 +9,6 @@ const int syncSamples = 64;
 const int burstSamples = 38;
 
 const int burstStart = 70;
-const int frameStart = 168; //must be even to simplify buffer word swap
 const int imageSamples = 640;
 
 const int syncLevel = 0;
@@ -22,6 +21,8 @@ const float colorFactor = (M_PI * 2) / 16;
 const float burstPhase = M_PI / 4 * 3;
 
 #include "RGB2YUV.h"
+
+#define SPO_NUM_MODES	13
 
 class SimplePALOutput
 {
@@ -41,7 +42,7 @@ class SimplePALOutput
 
   static const i2s_port_t I2S_PORT = (i2s_port_t)I2S_NUM_0;
     
-  SimplePALOutput()
+  void setMode(const struct esp32gfx_mode_t &mode)
   {
 //    Serial.begin(115200);
     for(int i = 0; i < syncSamples; i++)
@@ -92,7 +93,7 @@ class SimplePALOutput
     
     for(int i = 0; i < imageSamples; i++)
     {
-      int p = frameStart + i;
+      int p = mode.left + i;
       int c = p - burstStart;
       SIN[i] = round(0.436798 * sin(c * burstPerSample) * 256);
       COS[i] = round(0.614777 * cos(c * burstPerSample) * 256);     
@@ -145,8 +146,8 @@ class SimplePALOutput
   }
 
   void sendLine(unsigned short *l);
-  void sendSync1();
-  void sendSync2();
+  void sendSync1(int blank_lines);
+  void sendSync2(int blank_lines);
   void sendFrame(const struct esp32gfx_mode_t *mode, uint8_t **frame);
 };
 
