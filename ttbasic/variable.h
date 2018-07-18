@@ -46,6 +46,9 @@ typedef int32_t num_t;
 #define dbg_var(x...)
 #endif
 
+#define varRealloc(p, nu) \
+  (__typeof__((p)))realloc((p), nu * sizeof(*(p)));
+
 class VarNames {
 public:
   VarNames() {
@@ -150,7 +153,7 @@ protected:
 
 private:
   bool doReserve(int count) {
-    m_var_name = (char **)realloc(m_var_name, count * sizeof(char *));
+    m_var_name = varRealloc(m_var_name, count);
     if (!m_var_name) {
       err = ERR_OOM;
       m_size = 0;
@@ -189,7 +192,7 @@ public:
       m_size = 0;
       return false;
     }
-    m_var = (num_t *)realloc(m_var, count * sizeof(num_t));
+    m_var = varRealloc(m_var, count);
     if (!m_var) {
       err = ERR_OOM;
       m_size = 0;
@@ -245,8 +248,8 @@ public:
 
   bool reserve(int dims, int *sizes) {
     dbg_var("na reserve dims %d\r\n", dims);
+    m_sizes = varRealloc(m_sizes, dims);
     m_dims = dims;
-    m_sizes = (int *)realloc(m_sizes, dims * sizeof(int));
     if (!m_sizes) {
       m_dims = 0;
       err = ERR_OOM;
@@ -258,7 +261,7 @@ public:
       m_total *= sizes[i];
     }
     dbg_var("na total %d\r\n", m_total);
-    m_var = (T *)realloc(m_var, m_total * sizeof(T));
+    m_var = varRealloc(m_var, m_total);
     if (!m_var) {
       free(m_sizes);
       m_dims = 0;
@@ -344,7 +347,7 @@ public:
       }
     }
 
-    m_var = (NumArray<T> **)realloc(m_var, count * sizeof(NumArray<T> *));
+    m_var = varRealloc(m_var, count);
     if (!m_var) {
       // XXX: How are we going to delete the elements already there before
       // the failed realloc() call?
@@ -410,7 +413,7 @@ public:
         delete m_var[i];
       }
     }
-    m_var = (BString **)realloc(m_var, count * sizeof(BString *));
+    m_var = varRealloc(m_var, count);
     if (!m_var) {
       // XXX: How are we going to delete the elements already there before
       // the failed realloc() call?
@@ -476,8 +479,8 @@ public:
 
   bool reserve(int dims, int *sizes) {
     dbg_var("sa reserve dims %d\r\n", dims);
+    m_sizes = varRealloc(m_sizes, dims);
     m_dims = dims;
-    m_sizes = (int *)realloc(m_sizes, dims * sizeof(int));
     if (!m_sizes) {
       m_dims = 0;
       err = ERR_OOM;
@@ -574,7 +577,7 @@ public:
       }
     }
 
-    m_var = (StringArray<T> **)realloc(m_var, count * sizeof(StringArray<T> **));
+    m_var = varRealloc(m_var, count);
     if (!m_var) {
       // XXX: How are we going to delete the elements already there before
       // the failed realloc() call?
@@ -701,7 +704,7 @@ public:
       }
     }
 
-    m_var = (BasicList<T> **)realloc(m_var, count * sizeof(BasicList<T> **));
+    m_var = varRealloc(m_var, count);
     if (!m_var) {
       // XXX: How are we going to delete the elements already there before
       // the failed realloc() call?
