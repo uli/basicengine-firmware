@@ -1,6 +1,8 @@
 #include "ttconfig.h"
 
-#if defined(ESP8266)
+#ifdef ESP32
+#include "AudioOutput.h"
+#elif defined(ESP8266)
 #include "esp8266audio.h"
 #else
 #define SOUND_BUFLEN 0

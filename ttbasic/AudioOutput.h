@@ -1,10 +1,7 @@
-#include "soc/i2s_reg.h"
-#include "soc/timer_group_struct.h"
-#include "driver/periph_ctrl.h"
-#include "driver/timer.h"
+#ifndef _AUDIOOUTPUT_H
+#define _AUDIOOUTPUT_H
 
-class AudioOutput;
-void IRAM_ATTR timerInterrupt(AudioOutput *audioOutput);
+#define SOUND_BUFLEN 160
 
 #include <TPS2.h>
 
@@ -13,37 +10,41 @@ class AudioOutput
   public:
 //  AudioSystem *audioSystem;
   
-  void init()//AudioSystem &audioSystem)
-  {
-//    this->audioSystem = &audioSystem;
-    timer_config_t config;
-    config.alarm_en = 1;
-    config.auto_reload = 1;
-    config.counter_dir = TIMER_COUNT_UP;
-    config.divider = 16;
-    config.intr_type = TIMER_INTR_LEVEL;
-    config.counter_en = TIMER_PAUSE;
-    timer_init((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0, &config);
-    timer_pause((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0);
-    timer_set_counter_value((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0, 0x00000000ULL);
-    timer_set_alarm_value((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0, 1.0/ /*audioSystem.samplingRate*/ 32000 * TIMER_BASE_CLK / config.divider);
-    timer_enable_intr((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0);
-    timer_isr_register((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0, (void (*)(void*))timerInterrupt, (void*) this, ESP_INTR_FLAG_IRAM, NULL);
-    timer_start((timer_group_t)TIMER_GROUP_0, (timer_idx_t)TIMER_0);
+  void init(int sample_rate);
+
+  inline void setBlockSize(int size) {
+    m_block_size = size;
   }
+  inline int getBlockSize() {
+    return m_block_size;
+  }
+
+  inline void queueSample(uint8_t sample) {
+    m_curr_buf[m_curr_buf_pos++] = sample;
+  }
+  inline void setSampleAt(int buf, int idx, uint8_t sample) {
+    m_sound_buf[buf][idx] = sample;
+  }
+
+  inline int currBufPos() {
+    return m_curr_buf_pos;
+  }
+
+  inline void clearBufs() {
+    memset(m_sound_buf, 0, sizeof(m_sound_buf));
+  }
+
+private:
+  static void IRAM_ATTR timerInterrupt(AudioOutput *audioOutput);
+
+  static int m_curr_buf_pos;
+  static uint8_t *m_curr_buf;
+
+  static int m_block_size;
+  static uint8_t m_sound_buf[2][SOUND_BUFLEN];
+
 };
 
-void IRAM_ATTR timerInterrupt(AudioOutput *audioOutput)
-{
-  uint32_t intStatus = TIMERG0.int_st_timers.val;
-  if(intStatus & BIT(TIMER_0)) 
-  {
-      TIMERG0.hw_timer[TIMER_0].update = 1;
-      TIMERG0.int_clr_timers.t0 = 1;
-      TIMERG0.hw_timer[TIMER_0].config.alarm_en = 1;
-      
-//      WRITE_PERI_REG(I2S_CONF_SIGLE_DATA_REG(0), audioOutput->audioSystem->nextSample() << 24);
-      TPS2::checkKbd();
-  }
-}  
+extern AudioOutput audio;
 
+#endif	// _AUDIOOUTPUT_H
