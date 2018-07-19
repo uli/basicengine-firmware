@@ -4858,7 +4858,7 @@ void ibeep() {
   int32_t period;
   int32_t vol = CONFIG.beep_volume;
 
-  if ( getParam(period, 0, I2S_BUFLEN, I_NONE) ) return;
+  if ( getParam(period, 0, SOUND_BUFLEN, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
     if ( getParam(vol, 0, 15, I_NONE) ) return;
