@@ -1106,6 +1106,13 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 			hits++;
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 			return pgm_read_word(&f->buffer[i][pos - f->offset[i]]);
+#elif defined(ESP32)
+                        // pgm_read_word() does not work as expected on ESP32 because
+                        // flash is byte-addressable.
+                        int idx = pos - f->offset[i];
+                        int shift = (idx & 1) ? 16 : 0;
+                        uint32_t *s = (uint32_t *)f->buffer[i];
+                        return (s[idx / 2] >> shift) & 0xffff;
 #else
 			return f->buffer[i][pos - f->offset[i]];
 #endif
@@ -1118,9 +1125,19 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 	int readOff = pos - (pos % TSF_BUFFSIZE);
 // for (int i=0; i<TSF_BUFFSIZE; i++) { f->buffer[repl][i] = i; }
 	f->hydra->stream->seek(f->hydra->stream->data, readOff * sizeof(short));
-#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
+#if (defined(ESP8266_NOWIFI) || defined(ESP32)) && !defined(HOSTED)
 	short tmpbuf[TSF_BUFFSIZE];	// XXX: daring, considering we have a small stack...
-	f->hydra->stream->read(f->hydra->stream->data, tmpbuf, TSF_BUFFSIZE * sizeof(short));//f->buffer[repl], TSF_BUFFSIZE * sizeof(short));
+	f->hydra->stream->read(f->hydra->stream->data, tmpbuf, TSF_BUFFSIZE * sizeof(short));
+#ifdef ESP32
+        if (!f->buffer[repl]) {
+          f->buffer[repl] = (short *)heap_caps_malloc(TSF_BUFFSIZE * sizeof(short), MALLOC_CAP_32BIT);
+          if (!f->buffer[repl]) {
+                  f->out_of_memory = true;
+                  f->playing = false;
+                  return 0;
+          }
+        }
+#endif
 	uint32_t *to = (uint32_t *)f->buffer[repl];
 	uint32_t *from = (uint32_t *)tmpbuf;
 	for (uint32_t i = 0; i < TSF_BUFFSIZE * sizeof(short) / sizeof(uint32_t); ++i)
@@ -1141,7 +1158,7 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 	f->timestamp[repl] = f->epoch++;
 	f->offset[repl] = readOff;
 	misses++;
-#if defined(ESP8266_NOWIFI) && !defined(HOSTED)
+#if (defined(ESP8266_NOWIFI) || defined(ESP32)) && !defined(HOSTED)
 	return tmpbuf[pos - readOff];
 #else
 	return f->buffer[repl][pos - readOff];
@@ -1725,7 +1742,7 @@ TSFDEF void GROUP(basic_sound) tsf_render_short_fast(tsf* f, short* buffer, int 
     if (v->playingPreset != -1) {
       f->playing = true;
       tsf_voice_render_fast(f, v, buffer, samples);
-#ifndef ESP8266_NOWIFI
+#if defined(ESP8266) && !defined(ESP8266_NOWIFI)
       yield();
 #endif
     }
