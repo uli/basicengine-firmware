@@ -177,6 +177,50 @@ next:
   uint32_t taken = micros() - start;
   Serial.printf("rend %d\r\n", taken);
 #endif
+  for (int si = 0; si < MAX_SPRITES; ++si) {
+    sprite_t *s = &m_sprite[si];
+    // skip if not visible
+    if (!s->enabled)
+      continue;
+    if (s->pos_x + s->p.w < 0 ||
+        s->pos_x >= width() ||
+        s->pos_y + s->p.h < 0 ||
+        s->pos_y >= height())
+      continue;
+
+    // consider flipped axes
+    int dx, offx;
+    if (s->p.flip_x) {
+      dx = -1; offx = s->p.w - 1;
+    } else {
+      dx = 1; offx = 0;
+    }
+    int dy, offy;
+    if (s->p.flip_y) {
+      dy = -1; offy = s->p.h - 1;
+    } else {
+      dy = 1; offy = 0;
+    }
+
+    // sprite pattern start coordinates
+    int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
+    int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
+
+    for (int y = 0; y != s->p.h; ++y) {
+      int yy = y + s->pos_y;
+      if (yy < 0 || yy > height())
+        continue;
+      for (int x = 0; x != s->p.w; ++x) {
+        int xx = x + s->pos_x;
+        if (xx < 0 || xx > width())
+          continue;
+        uint8_t p = m_pixels[py+y*dy][px+x*dx];
+        // draw only non-keyed pixels
+        if (p != s->p.key)
+          m_pixels[yy][xx] = p;
+      }
+    }
+  }
 }
 
 #ifdef USE_BG_ENGINE
