@@ -24,7 +24,7 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#include "vs23s010.h"
+#include "video.h"
 #include "colorspace.h"
 #include "graphics.h"
 

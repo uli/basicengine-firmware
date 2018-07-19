@@ -13,7 +13,7 @@
 #include "sdfiles.h"
 #include "../../ttbasic/basic.h"
 #include "../../ttbasic/lock.h"
-#include "../../ttbasic/vs23s010.h"
+#include "../../ttbasic/video.h"
 #include <string.h>
 
 #include <time.h>

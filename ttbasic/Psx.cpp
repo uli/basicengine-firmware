@@ -23,7 +23,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Psx.h"
-#include "vs23s010.h"
+#include "video.h"
 
 //#define DEBUG_PSX
 

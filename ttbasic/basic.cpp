@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "ttconfig.h"
-#include "vs23s010.h"
+#include "video.h"
 #include "sound.h"
 
 #include "epigrams.h"

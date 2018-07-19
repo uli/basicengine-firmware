@@ -28,7 +28,7 @@
 #include "basic.h"
 #include "BString.h"
 #include "error.h"
-#include "vs23s010.h"
+#include "video.h"
 
 #ifndef HOSTED
 

@@ -9,7 +9,7 @@
 #include "BString.h"
 
 #include "colorspace.h"
-#include "vs23s010.h"
+#include "video.h"
 #include "variable.h"
 #include "proc.h"
 

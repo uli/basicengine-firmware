@@ -1,4 +1,4 @@
-#include "../../ttbasic/vs23s010.h"
+#include "../../ttbasic/video.h"
 
 void tv_init(int16_t ajst, uint8_t vmode=SC_DEFAULT);
 void tv_end();

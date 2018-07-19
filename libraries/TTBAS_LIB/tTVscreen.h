@@ -26,7 +26,7 @@
 
 #include <Arduino.h>
 #if USE_VS23 == 1
-#include "../../ttbasic/vs23s010.h"
+#include "../../ttbasic/video.h"
 #endif
 #include "tscreenBase.h"
 #include "tGraphicDev.h"
