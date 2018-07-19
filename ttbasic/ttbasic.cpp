@@ -26,6 +26,7 @@
 
 #include "ttconfig.h"
 #include "lock.h"
+#include "audio.h"
 
 #ifdef ENABLE_GDBSTUB
 #include <GDBStub.h>
@@ -98,11 +99,8 @@ void loop(void){
 
   SpiUnlock();
 
-#ifdef ESP8266
   // Initialize I2S to default sample rate, start transmission.
-  InitI2S(16000);
-  SendI2S();
-#endif
+  audio.init(16000);
 
   basic();	// does not return
 }

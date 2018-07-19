@@ -27,6 +27,7 @@
 #include "mml.h"
 
 #include "basic.h"
+#include "audio.h"
 
 #if !defined(ESP8266) || defined(ESP8266_NOWIFI)
 #define HAVE_TSF
@@ -65,7 +66,6 @@ static inline void *dbg_malloc(size_t s, int line) {
 extern "C" {
 #include "nosdki2s.h"
 };
-#define SOUND_BUFLEN I2S_BUFLEN
 
 #define SOUND_CHANNELS	3
 
@@ -92,7 +92,7 @@ public:
 
 #ifdef HAVE_TSF
     static inline bool needSamples() {
-        return nosdk_i2s_curr_buf_pos == 0;
+        return audio.currBufPos() == 0;
     }
     
     static inline int instCount() {

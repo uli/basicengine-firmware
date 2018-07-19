@@ -27,6 +27,7 @@
 #include "ttconfig.h"
 #include <Arduino.h>
 #include "sound.h"
+#include "audio.h"
 
 #ifdef HAVE_TSF
 #define TSF_NO_STDIO
@@ -237,7 +238,7 @@ void BasicSound::loadFont()
   if (m_tsf)
     tsf_set_output(m_tsf, TSF_MONO, 16000, -10);
   m_all_done_time = 0;
-  nosdk_i2s_set_blocksize(SOUND_BUFLEN * 4);
+  audio.setBlockSize(SOUND_BUFLEN);
 }
 
 void GROUP(basic_sound) BasicSound::unloadFont()
@@ -288,23 +289,6 @@ void BasicSound::stopMml(int ch)
 {
   m_next_event[ch] = 0;
 }
-#endif
-
-// Array with 32-bit values which have one bit more set to '1' in every
-// consecutive array index value
-// Taken from Espressif MP3 decoder demo.
-#ifdef HOSTED
-extern const uint32_t fakePwm[];
-#else
-const uint32_t BASIC_DAT fakePwm[]={
-        0x00000010, 0x00000410, 0x00400410, 0x00400C10, 0x00500C10,
-        0x00D00C10, 0x20D00C10, 0x21D00C10, 0x21D80C10, 0xA1D80C10,
-        0xA1D80D10, 0xA1D80D30, 0xA1DC0D30, 0xA1DC8D30, 0xB1DC8D30,
-        0xB9DC8D30, 0xB9FC8D30, 0xBDFC8D30, 0xBDFE8D30, 0xBDFE8D32,
-        0xBDFE8D33, 0xBDFECD33, 0xFDFECD33, 0xFDFECD73, 0xFDFEDD73,
-        0xFFFEDD73, 0xFFFEDD7B, 0xFFFEFD7B, 0xFFFFFD7B, 0xFFFFFDFB,
-        0xFFFFFFFB, 0xFFFFFFFF
-};
 #endif
 
 #ifdef HAVE_TSF
@@ -362,23 +346,22 @@ void GROUP(basic_sound) BasicSound::render()
 {
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
-  if (m_sam && nosdk_i2s_curr_buf_pos == 0) {
+  if (m_sam && audio.currBufPos() == 0) {
     if (m_sam->finished()) {
       if (!m_sam_done_time) {
         m_sam_done_time = millis();
       } else if (millis() > m_sam_done_time + 5000) {
         delete m_sam;
         m_sam = NULL;
-        InitI2S(16000);
+        audio.init(16000);
       }
     }
     if (m_sam) {
       for (int i = 0; i < SOUND_BUFLEN; ++i) {
-        nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[m_sam->getSample() >> 3]);
+        audio.queueSample(m_sam->getSample());
       }
-      nosdk_i2s_curr_buf_pos = SOUND_BUFLEN;
     }
-  } else if (m_tsf && nosdk_i2s_curr_buf_pos == 0) {
+  } else if (m_tsf && audio.currBufPos() == 0) {
     tsf_render_short_fast(m_tsf, staging_buf, SOUND_BUFLEN, TSF_FALSE);
     if (m_tsf->out_of_memory) {
       unloadFont();
@@ -386,14 +369,13 @@ void GROUP(basic_sound) BasicSound::render()
       return;
     }
     for (int i = 0; i < SOUND_BUFLEN; ++i) {
-      int idx = (staging_buf[i] >> 8) + 16;
+      int idx = (staging_buf[i] >> 5) + 128;
       if (idx < 0)
         idx = 0;
-      else if (idx > 31)
-        idx = 31;
-      nosdk_i2s_curr_buf[i] = pgm_read_dword(&fakePwm[idx]);
+      else if (idx > 255)
+        idx = 255;
+      audio.queueSample(idx);
     }
-    nosdk_i2s_curr_buf_pos = SOUND_BUFLEN;
   }
 }
 
@@ -417,17 +399,17 @@ BString BasicSound::instName(int index)
 
 void BasicSound::setBeep(int period, int vol)
 {
-  uint32_t sample = pgm_read_dword(&fakePwm[vol]);
+  uint32_t sample = vol * 17;
 
-  nosdk_i2s_set_blocksize(period * 4);
+  audio.setBlockSize(period);
 
 #ifndef HOSTED
   for (int b = 0; b < 2; ++b) {
     for (int i = 0; i < period / 2; ++i) {
-      ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = 0;
+      audio.setSampleAt(b, i, 0);
     }
     for (int i = period / 2; i < period; ++i) {
-      ((uint32_t *)i2sBufDesc[b].buf_ptr)[i] = sample;
+      audio.setSampleAt(b, i, sample);
     }
   }
 #endif
@@ -451,10 +433,9 @@ void BasicSound::beep(int period, int vol, const uint8_t *env)
 void BasicSound::noBeep()
 {
   m_beep_env = NULL;
-#ifndef HOSTED
-  memset((void *)i2sBufDesc[0].buf_ptr, 0xaa, SOUND_BUFLEN * 4);
-  memset((void *)i2sBufDesc[1].buf_ptr, 0xaa, SOUND_BUFLEN * 4);
-  nosdk_i2s_set_blocksize(SOUND_BUFLEN * 4);
+#if !defined(HOSTED)
+  audio.clearBufs();
+  audio.setBlockSize(SOUND_BUFLEN);
 #endif
 }
 
