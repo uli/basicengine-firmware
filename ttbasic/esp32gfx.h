@@ -29,6 +29,7 @@ public:
   void updateBg();
 
   inline void setSpriteOpaque(uint8_t num, bool enable) {
+    m_sprite[num].p.opaque = enable;
   }
 
   uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
