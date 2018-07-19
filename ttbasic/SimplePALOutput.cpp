@@ -26,7 +26,7 @@ void SimplePALOutput::sendSync2(int blank_lines) {
     sendLine(shortSync);
 }
 
-const struct esp32gfx_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
+const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
         // Much smaller than the screen, but have to be compatible with NTSC.
 	{460, 224, 45, 256, 1},
 	// This could work with a pixel clock divider of 4, but it would be
@@ -54,7 +54,7 @@ const struct esp32gfx_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 };
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
-  const struct esp32gfx_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, uint8_t **frame)
 {
   int l = 0;
   sendSync1(mode->top);
@@ -97,7 +97,7 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
 }
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
-  const struct esp32gfx_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, uint8_t **frame)
 {
   int l = 0;
   sendSync1(mode->top);
@@ -137,7 +137,7 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
 }
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
-  const struct esp32gfx_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, uint8_t **frame)
 {
   int l = 0;
   sendSync1(mode->top);

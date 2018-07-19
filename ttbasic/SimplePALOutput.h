@@ -42,7 +42,7 @@ class SimplePALOutput
 
   static const i2s_port_t I2S_PORT = (i2s_port_t)I2S_NUM_0;
     
-  void setMode(const struct esp32gfx_mode_t &mode)
+  void setMode(const struct video_mode_t &mode)
   {
 //    Serial.begin(115200);
     for(int i = 0; i < syncSamples; i++)
@@ -148,7 +148,7 @@ class SimplePALOutput
   void sendLine(unsigned short *l);
   void sendSync1(int blank_lines);
   void sendSync2(int blank_lines);
-  void sendFrame(const struct esp32gfx_mode_t *mode, uint8_t **frame);
-  void sendFrame1ppc(const struct esp32gfx_mode_t *mode, uint8_t **frame);
-  void sendFrame4ppc(const struct esp32gfx_mode_t *mode, uint8_t **frame);
+  void sendFrame(const struct video_mode_t *mode, uint8_t **frame);
+  void sendFrame1ppc(const struct video_mode_t *mode, uint8_t **frame);
+  void sendFrame4ppc(const struct video_mode_t *mode, uint8_t **frame);
 };
