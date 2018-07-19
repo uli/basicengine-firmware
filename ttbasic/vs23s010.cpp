@@ -83,37 +83,14 @@ void VS23S010::adjust(int16_t cnt)
 #ifdef USE_BG_ENGINE
 void VS23S010::resetSprites()
 {
-  m_bg_modified = true;
+  BGEngine::resetSprites();
   for (int i = 0; i < MAX_SPRITES; ++i) {
     if (m_patterns[i]) {
       free(m_patterns[i]);
       m_patterns[i] = NULL;
     }
     struct sprite_t *s = &m_sprite[i];
-    m_sprites_ordered[i] = s;
-    s->enabled = false;
-    s->pos_x = s->pos_y = 0;
-    s->p.frame_x = s->p.frame_y = 0;
-    s->p.w = s->p.h = 8;
-    s->p.key = 0;
-    s->prio = MAX_PRIO;
-    s->p.flip_x = s->p.flip_y = false;
     s->pat = NULL;
-  }
-}
-
-void VS23S010::resetBgs()
-{
-  m_bg_modified = true;
-  for (int i=0; i < MAX_BG; ++i) {
-    struct bg_t *bg = &m_bg[i];
-    freeBg(i);
-    bg->tile_size_x = 8;
-    bg->tile_size_y = 8;
-    bg->pat_x = 0;
-    bg->pat_y = m_current_mode.y + 8;
-    bg->pat_w = m_current_mode.x / bg->tile_size_x;
-    bg->prio = i;
   }
 }
 #endif
@@ -163,12 +140,7 @@ void VS23S010::end()
 
 void VS23S010::reset()
 {
-#ifdef USE_BG_ENGINE
-  m_bg_modified = true;
-  resetSprites();
-  resetBgs();
-#endif
-  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+  BGEngine::reset();
   setColorSpace(0);
 }
 
@@ -300,66 +272,6 @@ void VS23S010::setSyncLine(uint16_t line)
 }
 
 #ifdef USE_BG_ENGINE
-bool VS23S010::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-
-  m_bg_modified = true;
-  bg->enabled = false;
-
-  if (bg->tiles)
-    free(bg->tiles);
-  bg->tiles = (uint8_t *)calloc(width * height, 1);
-  if (!bg->tiles)
-    return true;
-
-  bg->w = width;
-  bg->h = height;
-  bg->scroll_x = bg->scroll_y = 0;
-  bg->win_x = bg->win_y = 0;
-  bg->win_w = m_current_mode.x;
-  bg->win_h = m_current_mode.y;
-  return false;
-}
-
-void VS23S010::enableBg(uint8_t bg)
-{
-  m_bg_modified = true;
-  if (m_bg[bg].tiles) {
-    m_bg[bg].enabled = true;
-  }
-}
-
-void VS23S010::disableBg(uint8_t bg)
-{
-  m_bg_modified = true;
-  m_bg[bg].enabled = false;
-}
-
-void VS23S010::freeBg(uint8_t bg_idx)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-  m_bg_modified = true;
-  bg->enabled = false;
-  if (bg->tiles) {
-    free(bg->tiles);
-    bg->tiles = NULL;
-  }
-  if (bg->tile_map) {
-    free(bg->tile_map);
-    bg->tile_map = NULL;
-  }
-}
-
-void VS23S010::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-  bg->win_x = x;
-  bg->win_y = y;
-  bg->win_w = w;
-  bg->win_h = h;
-  m_bg_modified = true;
-}
 
 #ifdef HOSTED
 #include <hosted_spi.h>
@@ -1027,17 +939,6 @@ struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_p
   return pat;
 }
 
-void VS23S010::resizeSprite(uint8_t num, uint8_t w, uint8_t h)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (w != s->p.w || h != s->p.h) {
-    s->p.w = w;
-    s->p.h = h;
-    s->must_reload = true;
-    m_bg_modified = true;
-  }
-}
-
 bool VS23S010::loadSpritePattern(uint8_t num)
 {
   struct sprite_t *s = &m_sprite[num];
@@ -1062,6 +963,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
         if (s->pat)
           s->pat->ref--;
         s->pat = p;
+        s->p.opaque = false;
         return true;
       } else if (p->ref == 0 && p->last + 30 < m_frame) {
         dbg_pat("gc pat %d\r\n", i);
@@ -1175,233 +1077,9 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     s->pat->ref--;
     s->pat = NULL;
   }
+  s->p.opaque = solid_block;
   
   return true;
-}
-
-void GROUP(basic_vs23) VS23S010::setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y, bool flip_x, bool flip_y)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (frame_x != s->p.frame_x || frame_y != s->p.frame_y ||
-      flip_x != s->p.flip_x || flip_y != s->p.flip_y) {
-    s->p.frame_x = frame_x;
-    s->p.frame_y = frame_y;
-    s->p.flip_x = flip_x;
-    s->p.flip_y = flip_y;
-    s->must_reload = true;
-    m_bg_modified = true;
-  }
-}
-
-void VS23S010::setSpriteKey(uint8_t num, int16_t key)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (s->p.key != key) {
-    s->p.key = key;
-    s->must_reload = true;
-    m_bg_modified = true;
-  }
-}
-
-void GROUP(basic_vs23) VS23S010::setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (s->p.pat_x != pat_x || s->p.pat_y != pat_y) {
-    s->p.pat_x = pat_x;
-    s->p.pat_y = pat_y;
-    s->p.frame_x = s->p.frame_y = 0;
-
-    s->must_reload = true;
-    m_bg_modified = true;
-  }
-}
-
-void VS23S010::enableSprite(uint8_t num)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (!s->enabled) {
-    s->must_reload = true;
-    s->enabled = true;
-    m_bg_modified = true;
-  }
-}
-
-void VS23S010::disableSprite(uint8_t num)
-{
-  struct sprite_t *s = &m_sprite[num];
-  if (s->enabled) {
-    s->enabled = false;
-    m_bg_modified = true;
-  }
-}
-
-int GROUP(basic_vs23) VS23S010::cmp_sprite_y(const void *one, const void *two)
-{
-  return (*(struct sprite_t**)one)->pos_y - (*(struct sprite_t **)two)->pos_y;
-}
-
-void GROUP(basic_vs23) VS23S010::moveSprite(uint8_t num, int16_t x, int16_t y)
-{
-  sprite_t *s = &m_sprite[num];
-  if (s->pos_x != x || s->pos_y != y) {
-    s->pos_x = x;
-    s->pos_y = y;
-    qsort(m_sprites_ordered, MAX_SPRITES, sizeof(struct sprite_t *), cmp_sprite_y);
-    m_bg_modified = true;
-  }
-}
-
-void VS23S010::mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-  if (!bg->tile_map) {
-    bg->tile_map = (uint8_t *)malloc(256);
-    for (int i = 0; i < 256; ++i)
-      bg->tile_map[i] = i;
-  }
-  bg->tile_map[from] = to;
-}
-
-void VS23S010::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-
-  if (bg->tile_map)
-    t = bg->tile_map[t];
-
-  int toff = (y % bg->h) * bg->w + (x % bg->w);
-  if (bg->tiles[toff] == t)
-    return;
-  else
-    bg->tiles[toff] = t;
-
-#if 0
-  // damage detection
-  // XXX: does not work if BG wraps around
-  int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
-  int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
-  int tile_w = bg->win_w / bg->tile_size_x;
-  int tile_h = bg->win_h / bg->tile_size_y;
-
-  if (x >= tile_scroll_x &&
-      x < tile_scroll_x + tile_w &&
-      y >= tile_scroll_y &&
-      y < tile_scroll_y + tile_h) {
-    m_bg_modified = true;
-  }
-#else
-  m_bg_modified = true;
-#endif
-}
-
-void VS23S010::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count)
-{
-  struct bg_t *bg = &m_bg[bg_idx];
-#if 0
-  // XXX: damage detection does not work if BG wraps around
-  int tile_scroll_x = bg->scroll_x / bg->tile_size_x;
-  int tile_scroll_y = bg->scroll_y / bg->tile_size_y;
-  int tile_w = bg->win_w / bg->tile_size_x;
-  int tile_h = bg->win_h / bg->tile_size_y;
-  int line_visible = y >= tile_scroll_y && y < tile_scroll_y + tile_h;
-#endif
-
-  int off = (y % bg->h) * bg->w;
-  for (int xx = x; xx < x+count; ++xx) {
-    uint8_t t = *tiles++;
-    if (bg->tile_map)
-      t = bg->tile_map[t];
-    bg->tiles[off + (xx % bg->w)] = t;
-#if 0
-    if (xx >= tile_scroll_x &&
-        xx < tile_scroll_x + tile_w &&
-        line_visible) {
-      m_bg_modified = true;
-    }
-  }
-#else
-  }
-  m_bg_modified = true;
-#endif
-}
-#endif	// USE_BG_ENGINE
-
-bool VS23S010::allocBacking(int w, int h, int &x, int &y)
-{
-  Rect r = m_bin.Insert(w, h, false, GuillotineBinPack::RectBestAreaFit, GuillotineBinPack::Split256);
-  x = r.x; y = r.y + m_current_mode.y;
-  return r.height != 0;
-}
-
-void VS23S010::freeBacking(int x, int y, int w, int h)
-{
-  Rect r;
-  r.x = x; r.y = y - m_current_mode.y; r.width = w; r.height = h;
-  m_bin.Free(r, true);
-}
-
-#ifdef USE_BG_ENGINE
-void VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg_idx, uint8_t *tiles, uint8_t num_tiles)
-{
-  sprite_t *spr = &m_sprite[sprite];
-  bg_t *bg = &m_bg[bg_idx];
-  int tsx = bg->tile_size_x;
-  int tsy = bg->tile_size_y;
-  uint8_t res[num_tiles];
-  
-  // Intialize results with "no collision".
-  memset(res, 0, num_tiles);
-  
-  // Check if sprite is overlapping with background at all.
-  if (spr->pos_x + spr->p.w <= bg->win_x ||
-      spr->pos_x >= bg->win_x + bg->win_w ||
-      spr->pos_y + spr->p.h <= bg->win_y ||
-      spr->pos_y >= bg->win_y + bg->win_h)
-    return;
-  
-  // Calculate pixel coordinates of top/left sprite corner in relation to
-  // the background's origin.
-  int bg_left_x = bg->scroll_x - bg->win_x + spr->pos_x;
-  int bg_top_y = bg->scroll_y - bg->win_y + spr->pos_y;
-
-  // Calculate offset, width and height in tiles.
-  // round down top/left
-  int bg_first_tile_off = bg_left_x / tsx + bg->w * (bg_top_y / tsy);
-  // round up width/height
-  int bg_tile_width = (spr->p.w + tsx - 1) / tsx;
-  int bg_tile_height =  (spr->p.h + tsy - 1) / tsy;
-  
-  int bg_last_tile_off = bg_first_tile_off + bg_tile_width + bg_tile_height * bg->w;
-  
-  // Iterate over all tiles overlapping the sprite and record in what way they are
-  // overlapping.
-  // For every line
-  for (int t = bg_first_tile_off, ty = bg_top_y; t < bg_last_tile_off; t += bg->w, ty += tsy) {
-    // For every column
-    for (int tt = t, tx = bg_left_x; tt < t + bg->w; ++tt, tx += tsx) {
-      // For every tile code to be checked
-      for (int m = 0; m < num_tiles; ++m) {
-        if (tiles[m] == bg->tiles[tt % (bg->w*bg->h)]) {
-          res[m] = 0x40;	// indicates collision in general
-          if (tx < spr->pos_x)
-            res[m] |= psxLeft;
-          else if (tx + tsx > spr->pos_x + spr->p.w)
-            res[m] |= psxRight;
-          if (ty < spr->pos_y)
-            res[m] |= psxUp;
-          else if (ty + tsy > spr->pos_y + spr->p.h)
-            res[m] |= psxDown;
-        }
-      }
-    }
-  }
-  os_memcpy(tiles, res, num_tiles);
-}
-
-uint8_t VS23S010::spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile)
-{
-  spriteTileCollision(sprite, bg, &tile, 1);
-  return tile;
 }
 
 uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
