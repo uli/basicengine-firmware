@@ -26,6 +26,9 @@
 #include <float.h>
 #include <ctype.h>
 #include "istream.h"
+
+namespace sdfat {
+
 //------------------------------------------------------------------------------
 int istream::get() {
   int c;
@@ -393,4 +396,6 @@ void istream::skipWhite() {
     c = getch(&pos);
   } while (isspace(c));
   setpos(&pos);
+}
+
 }

@@ -103,6 +103,9 @@ const uint8_t UNGETC_BUF_SIZE = 2;
 /** Seek relative to start-of-file. */
 #define SEEK_SET 0
 #endif  // SEEK_SET
+
+namespace sdfat {
+
 //------------------------------------------------------------------------------
 /** \class StdioStream
  * \brief StdioStream implements a minimal stdio stream.
@@ -664,4 +667,7 @@ class StdioStream : private FatFile {
   uint8_t  m_buf[STREAM_BUF_SIZE];
 };
 //------------------------------------------------------------------------------
+
+}
+
 #endif  // StdioStream_h

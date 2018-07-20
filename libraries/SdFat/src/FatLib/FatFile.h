@@ -24,6 +24,7 @@
  */
 #ifndef FatFile_h
 #define FatFile_h
+
 /**
  * \file
  * \brief FatFile class
@@ -32,10 +33,14 @@
 #include <string.h>
 #include <stddef.h>
 #include <limits.h>
+
 #include "FatLibConfig.h"
 #include "FatApiConstants.h"
 #include "FatStructs.h"
 #include "FatVolume.h"
+
+namespace sdfat {
+
 class FatFileSystem;
 //------------------------------------------------------------------------------
 // Stuff to store strings in AVR flash.
@@ -1003,4 +1008,7 @@ class FatFile {
   uint32_t   m_fileSize;         // file size in bytes
   uint32_t   m_firstCluster;     // first cluster of file
 };
+
+}
+
 #endif  // FatFile_h

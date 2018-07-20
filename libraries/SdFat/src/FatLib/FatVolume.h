@@ -64,6 +64,9 @@ class CharWriter {
 };
 typedef CharWriter print_t;
 #endif  // ENABLE_ARDUINO_FEATURES
+
+namespace sdfat {
+
 //------------------------------------------------------------------------------
 // Forward declaration of FatVolume.
 class FatVolume;
@@ -378,4 +381,7 @@ class FatVolume {
     return cluster > m_lastCluster;
   }
 };
+
+}
+
 #endif  // FatVolume

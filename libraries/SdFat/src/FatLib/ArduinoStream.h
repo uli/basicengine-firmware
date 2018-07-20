@@ -31,6 +31,9 @@
 #include "FatLibConfig.h"
 #if ENABLE_ARDUINO_FEATURES
 #include "bufstream.h"
+
+namespace sdfat {
+
 //==============================================================================
 /**
  * \class ArduinoInStream
@@ -149,5 +152,8 @@ class ArduinoOutStream : public ostream {
   ArduinoOutStream() {}
   Print* m_pr;
 };
+
+}
+
 #endif  // ENABLE_ARDUINO_FEATURES
 #endif  // ArduinoStream_h

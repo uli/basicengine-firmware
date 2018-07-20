@@ -24,6 +24,7 @@
  */
 #ifndef SdFat_h
 #define SdFat_h
+
 /**
  * \file
  * \brief SdFat class
@@ -35,6 +36,9 @@
 //------------------------------------------------------------------------------
 /** SdFat version */
 #define SD_FAT_VERSION "1.0.5"
+
+namespace sdfat {
+
 //==============================================================================
 /**
  * \class SdBaseFile
@@ -506,4 +510,7 @@ class Sd2Card : public SdSpiCard {
  private:
   SdFatSpiDriver m_spi;
 };
+
+}
+
 #endif  // SdFat_h

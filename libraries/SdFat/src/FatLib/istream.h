@@ -30,6 +30,8 @@
  */
 #include "ios.h"
 
+namespace sdfat {
+
 /**
  * \class istream
  * \brief Input Stream
@@ -381,4 +383,7 @@ void istream::getNumber(T* value) {
     }
   }
 }
+
+}
+
 #endif  // istream_h

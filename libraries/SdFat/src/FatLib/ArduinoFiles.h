@@ -42,6 +42,9 @@
  * \class PrintFile
  * \brief FatFile with Print.
  */
+
+namespace sdfat {
+
 class PrintFile : public FatFile, public Print {
  public:
   PrintFile() {}
@@ -245,5 +248,8 @@ class File : public FatFile, public Stream {
     return FatFile::write(buf, size);
   }
 };
+
+}
+
 #endif  // ENABLE_ARDUINO_FEATURES
 #endif  // ArduinoFiles_h

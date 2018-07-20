@@ -23,6 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "FatFile.h"
+
+namespace sdfat {
+
 //------------------------------------------------------------------------------
 //
 uint8_t FatFile::lfnChecksum(uint8_t* name) {
@@ -685,4 +688,7 @@ fail:
 done:
   return true;
 }
+
+}
+
 #endif  // #if USE_LONG_FILE_NAMES

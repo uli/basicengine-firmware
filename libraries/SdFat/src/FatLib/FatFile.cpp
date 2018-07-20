@@ -22,8 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 #include "FatFile.h"
 #include "FatFileSystem.h"
+
+namespace sdfat {
+
 //------------------------------------------------------------------------------
 // Pointer to cwd directory.
 FatFile* FatFile::m_cwd = 0;
@@ -1495,4 +1499,6 @@ fail:
   // return for write error
   m_error |= WRITE_ERROR;
   return -1;
+}
+
 }
