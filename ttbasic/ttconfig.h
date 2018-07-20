@@ -115,8 +115,8 @@
 #endif
 
 #ifdef ESP32
-#define UNIFILE_USE_SDFAT
 #define UNIFILE_USE_NEW_SPIFFS
+#define UNIFILE_USE_NEW_SD
 #endif
 
 #if !defined(ESP8266)
