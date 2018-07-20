@@ -143,7 +143,7 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
   sendSync1(mode->top);
 
   //image
-  for(int i = 0; i < mode->y; i += 4)
+  for(int i = 0; i < mode->y; i += 2)
   {
     uint8_t *pixels0 = frame[i];
     uint8_t *pixels1 = frame[i + 1];
