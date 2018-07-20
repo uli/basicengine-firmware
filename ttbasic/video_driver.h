@@ -8,8 +8,8 @@
 struct video_mode_t {
   uint16_t x;
   uint16_t y;
-  uint8_t top;
-  uint8_t left;
+  uint16_t top;
+  uint16_t left;
   uint8_t vclkpp;
 #ifdef USE_VS23
   uint8_t bextra;
