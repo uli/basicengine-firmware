@@ -102,6 +102,9 @@ void ESP32GFX::setMode(uint8_t mode)
   for (int i = 0; i < m_last_line; ++i) {
     m_pixels[i] = (uint8_t *)calloc(1, m_current_mode.x);
   }
+
+  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+
   m_display_enabled = true;
 }
 
