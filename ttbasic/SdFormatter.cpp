@@ -41,6 +41,8 @@ const uint8_t chipSelect = 16;
 #include "FreeStack.h"
 #endif  // DEBUG_PRINT
 
+using namespace sdfat;
+
 // Threw the whole sketch into a class so it doesn't occupy memory statically.
 class SdFormatter {
 public:
