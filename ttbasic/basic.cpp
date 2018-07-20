@@ -3497,7 +3497,7 @@ cards for use with the BASIC Engine.
 ***/
 void SdFormat();
 void iformat() {
-#ifdef UNIFILE_USE_SPIFFS
+#ifdef UNIFILE_USE_OLD_SPIFFS
   BString target = getParamFname();
   if (err)
     return;
@@ -10707,7 +10707,7 @@ void SMALL basic() {
   bc = new basic_ctx_t;
 
   // try to mount SPIFFS, ignore failure (do not format)
-#ifdef UNIFILE_USE_SPIFFS
+#ifdef UNIFILE_USE_OLD_SPIFFS
 #ifdef ESP8266_NOWIFI
   SPIFFS.begin(false);
 #else
@@ -10715,7 +10715,7 @@ void SMALL basic() {
 #endif
 #elif defined(UNIFILE_USE_FASTROMFS)
   fs.mount();
-#elif defined(UNIFILE_USE_FS)
+#elif defined(UNIFILE_USE_NEW_SPIFFS)
   SPIFFS.begin();
 #endif
   loadConfig();
@@ -10787,9 +10787,9 @@ void SMALL basic() {
   c_puts_P(__v);
 
   // Initialize file systems, format SPIFFS if necessary
-#ifdef UNIFILE_USE_SPIFFS
+#ifdef UNIFILE_USE_OLD_SPIFFS
   SPIFFS.begin();
-#elif defined(UNIFILE_USE_FS)
+#elif defined(UNIFILE_USE_NEW_SPIFFS)
   SPIFFS.begin(true);
 #elif defined(UNIFILE_USE_FASTROMFS)
   if (!fs.mount()) {

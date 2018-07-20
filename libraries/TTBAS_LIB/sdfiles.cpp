@@ -19,7 +19,7 @@
 #include <time.h>
 
 #ifdef UNIFILE_USE_SDFAT
-SdFat SD;
+sdfat::SdFat sdf;
 #endif
 
 #ifdef UNIFILE_USE_FASTROMFS
@@ -40,8 +40,8 @@ bool SD_BEGIN(int mhz)
   SpiLock();
   if (!sdfat_initialized) {
 #ifdef UNIFILE_USE_SDFAT
-    sdfat_initialized = SD.begin(cs, SD_SCK_MHZ(mhz));
-#elif defined(UNIFILE_USE_FS)
+    sdfat_initialized = sdf.begin(cs, SD_SCK_MHZ(mhz));
+#elif defined(UNIFILE_USE_NEW_SD)
     sdfat_initialized = SD.begin(SS, SPI, mhz * 1000000);
 #endif
   } else {
@@ -89,6 +89,11 @@ uint8_t wildcard_match(const char *wildcard, const char *target) {
 }
 
 #include <Time.h>
+
+#ifdef UNIFILE_USE_SDFAT
+using namespace sdfat;
+#endif
+
 // ファイルタイムスタンプコールバック関数
 #ifdef UNIFILE_USE_SDFAT
 void dateTime(uint16_t* date, uint16_t* time) {
@@ -98,11 +103,12 @@ void dateTime(uint16_t* date, uint16_t* time) {
 } 
 #endif
 
+
 void sdfiles::fakeTime() {
 #ifdef UNIFILE_USE_SDFAT
   SD_BEGIN();
-  File dir = ::SD.open("/");
-  File file;
+  auto dir = sdf.open("/");
+  sdfat::File file;
   if (!dir || !dir.isDir()) {
     SD_END();
     return;
@@ -153,7 +159,7 @@ uint8_t  sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
 #ifdef UNIFILE_USE_SDFAT
-  SdFile::dateTimeCallback( &dateTime );
+  sdfat::SdFile::dateTimeCallback( &dateTime );
 #endif
   return 0;
 }
@@ -566,10 +572,18 @@ uint8_t sdfiles::mkdir(const char* fname) {
     return SD_ERR_INIT;
   }
 
+#ifdef UNIFILE_USE_SDFAT
+  if (sdf.exists(fname)) {
+#else
   if (SD.exists(fname)) {
+#endif
     rc = SD_ERR_OPEN_FILE;    
   } else {
+#ifdef UNIFILE_USE_SDFAT
+    if(sdf.mkdir(fname) == true) {
+#else
     if(SD.mkdir(fname) == true) {
+#endif
       rc = 0;
     } else {
       rc = SD_ERR_OPEN_FILE;
@@ -602,7 +616,11 @@ uint8_t sdfiles::rmdir(char* fname) {
 
   fname += SD_PREFIX_LEN;
 
+#ifdef UNIFILE_USE_SDFAT
+  if(sdf.rmdir(fname) == true) {
+#else
   if(SD.rmdir(fname) == true) {
+#endif
     rc = 0;
   } else {
     rc =  SD_ERR_OPEN_FILE;

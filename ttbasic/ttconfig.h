@@ -109,7 +109,7 @@
 #endif // ESP32
 
 #ifdef ESP8266
-#define UNIFILE_USE_SPIFFS
+#define UNIFILE_USE_OLD_SPIFFS
 //#define UNIFILE_USE_FASTROMFS
 #define UNIFILE_USE_SDFAT
 #endif
