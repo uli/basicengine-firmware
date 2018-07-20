@@ -56,7 +56,6 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
   const struct video_mode_t *mode, uint8_t **frame)
 {
-  int l = 0;
   sendSync1(mode->top);
 
   //image
@@ -99,7 +98,6 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
   const struct video_mode_t *mode, uint8_t **frame)
 {
-  int l = 0;
   sendSync1(mode->top);
 
   //image
@@ -139,7 +137,6 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
   const struct video_mode_t *mode, uint8_t **frame)
 {
-  int l = 0;
   sendSync1(mode->top);
 
   //image
