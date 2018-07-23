@@ -14,7 +14,6 @@ const int burstAmp = 8;//12;
 const int maxLevel = 54;
 const int maxUVLevel = 27;//54;
 const float burstPerSample = (2 * M_PI) / (13333333 / 4433618.75);
-const float colorFactor = (M_PI * 2) / 16;
 const float burstPhase = M_PI / 4 * 3;
 
 #include "RGB2YUV.h"
@@ -77,26 +76,6 @@ void SimplePALOutput::setMode(const struct video_mode_t &mode)
     blank[p ^ 1] = b0;
   }
 
-  
-  /*float r = 1;
-  float g = 0;
-  float b = 0;
-  float y = 0.299 * r + 0.587 * g + 0.114 * b;
-  //float u = 0.493 * (b - y);
-  //float v = 0.877 * (r - y);
-  float u =  -0.147407 * r - 0.289391 * g + 0.436798 * b; //(-0.436798, 0.436798)
-  float v = 0.614777 * r - 0.514799 * g - 0.099978 * b;   //(-0.614777, 0.614777)
-  for(int i = 0; i < imageSamples; i++)
-  {
-    int p = frameStart + i;
-    int c = p - burstStart;
-    unsigned short b0 = ((short)(blankLevel + (y + u * sin(c * burstPerSample) + v * cos(c * burstPerSample)) * 50 )) << 8;
-    unsigned short b1 = ((short)(blankLevel + (y + u * sin(c * burstPerSample) - v * cos(c * burstPerSample)) * 50 )) << 8;
-    //unsigned short b0 = ((short)(blankLevel + sin(p * burstPerSample + (i/40) * colorFactor) * 20) + 20) << 8;
-    line[0][p ^ 1] = b0;
-    line[1][p ^ 1] = b1;
-  }*/
-  
   for(int i = 0; i < imageSamples; i++)
   {
     int p = mode.left + i;
