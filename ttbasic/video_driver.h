@@ -40,6 +40,8 @@ public:
     }
 #endif
 
+  void setColorSpace(uint8_t palette);
+
 protected:
   uint32_t m_frame;
 

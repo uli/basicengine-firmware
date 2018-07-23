@@ -369,12 +369,7 @@ void VS23S010::setColorSpace(uint8_t palette)
 	for (int i = 0; i < BURSTDUR; i++)
 		SpiRamWriteWord((uint16_t)w++, BURST_LEVEL | (pgm_read_byte(&ops[4]) << 8));
 
-        switch (palette) {
-        case 0: csp.setColorConversion(0, 7, 3, 6, true); break;
-        case 1: csp.setColorConversion(1, 7, 4, 7, true); break;
-        default: break;
-        }
-        csp.setColorSpace(palette);
+        Video::setColorSpace(palette);
 }
 
 void VS23S010::setBorder(uint8_t y, uint8_t uv, uint16_t dx, uint16_t width)

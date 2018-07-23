@@ -1,4 +1,5 @@
 #include "video_driver.h"
+#include "colorspace.h"
 
 bool Video::allocBacking(int w, int h, int &x, int &y)
 {
@@ -17,4 +18,14 @@ void Video::freeBacking(int x, int y, int w, int h)
 void Video::reset()
 {
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+}
+
+void Video::setColorSpace(uint8_t palette)
+{
+  switch (palette) {
+  case 0: csp.setColorConversion(0, 7, 3, 6, true); break;
+  case 1: csp.setColorConversion(1, 7, 4, 7, true); break;
+  default: break;
+  }
+  csp.setColorSpace(palette);
 }
