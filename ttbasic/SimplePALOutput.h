@@ -27,6 +27,7 @@ class SimplePALOutput
   static const i2s_port_t I2S_PORT = (i2s_port_t)I2S_NUM_0;
     
   void setMode(const struct video_mode_t &mode);
+  void setColorSpace(uint8_t palette);
   void init();
 
   void sendLine(unsigned short *l);

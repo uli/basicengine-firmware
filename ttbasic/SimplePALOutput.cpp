@@ -89,9 +89,14 @@ void SimplePALOutput::setMode(const struct video_mode_t &mode)
     YLUT[i] = (blankLevel << 8) + round(i / 15. * 256 * maxLevel);
     UVLUT[i] = round((i - 8) / 7. * maxUVLevel);
   }
-  
+
+  setColorSpace(0);
+}
+
+void SimplePALOutput::setColorSpace(uint8_t palette)
+{  
   for (int i = 0; i < 256; ++i) {
-      uint8_t *rgb0 = &csp.paletteData(0)[i*3];
+      uint8_t *rgb0 = &csp.paletteData(palette)[i*3];
       uint16_t rgb444_0 = (rgb0[0] >> 4) | (rgb0[1] & 0xf0) | ((rgb0[2]&0xf0) << 4);
       uint16_t c = RGB2YUV[rgb444_0];
 //        Serial.printf("i %d r %04X c %04X\n", i, rgb444_0, c);
