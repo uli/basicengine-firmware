@@ -52,6 +52,7 @@ BEEP	I_BEEP		ibeep
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate
+GET$	I_GETSTR	esyntax_workaround
 GET	I_GET		iget
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
@@ -145,7 +146,6 @@ INST$	I_INSTSTR	sinst
 I2CR	I_I2CR		si2cr
 RET$	I_RETSTR	sret
 STRING$	I_STRINGSTR	sstring
-GET$	I_GETSTR	esyntax
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
 ARG	I_ARG		narg
