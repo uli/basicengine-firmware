@@ -3,24 +3,8 @@
 #include "driver/i2s.h"
 #include "colorspace.h"
 
-const int lineSamples = 854;
 const int memSamples = 856;
-const int syncSamples = 64;
-const int burstSamples = 38;
-
-const int burstStart = 70;
 const int imageSamples = 640;
-
-const int syncLevel = 0;
-const int blankLevel = 23;
-const int burstAmp = 8;//12;
-const int maxLevel = 54;
-const int maxUVLevel = 27;//54;
-const float burstPerSample = (2 * M_PI) / (13333333 / 4433618.75);
-const float colorFactor = (M_PI * 2) / 16;
-const float burstPhase = M_PI / 4 * 3;
-
-#include "RGB2YUV.h"
 
 #define SPO_NUM_MODES	13
 
