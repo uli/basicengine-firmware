@@ -139,8 +139,8 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 	{436, 216, 49, 268, 1},
 	{320, 216, 49, 168, 2},	// VS23 NTSC demo
 	{320, 200, 57, 168, 2},	// (M)CGA, Commodore et al.
-	{256, 224, 45, 232, 2},	// SNES
-	{256, 192, 61, 232, 2},	// MSX, Spectrum, NDS
+	{256, 224, 45, 168, 25},	// SNES
+	{256, 192, 61, 168, 25},	// MSX, Spectrum, NDS
 	{160, 200, 57, 168, 4},	// Commodore/PCjr/CPC
 						// multi-color
 	// "Overscan modes" are actually underscan on PAL.

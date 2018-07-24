@@ -29,6 +29,9 @@ void ESP32GFX::render()
       case 4:
         m_pal.sendFrame4ppc(&m_current_mode, m_pixels);
         break;
+      case 25:
+        m_pal.sendFrame2pp5c(&m_current_mode, m_pixels);
+        break;
       default:
         break;
     }
