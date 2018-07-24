@@ -15,8 +15,8 @@ class SimplePALOutput
   unsigned short shortSync[memSamples];
   unsigned short line[2][memSamples];
   unsigned short blank[memSamples];
-  short SIN[imageSamples];
-  short COS[imageSamples];
+  static short SIN[imageSamples];
+  static short COS[imageSamples];
 
   short YLUT[16];
   short UVLUT[16];

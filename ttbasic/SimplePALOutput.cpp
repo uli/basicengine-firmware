@@ -18,6 +18,9 @@ const float burstPhase = M_PI / 4 * 3;
 
 #include "RGB2YUV.h"
 
+short SimplePALOutput::SIN[imageSamples];
+short SimplePALOutput::COS[imageSamples];
+
 void SimplePALOutput::init()
 {
   i2s_config_t i2s_config = {
