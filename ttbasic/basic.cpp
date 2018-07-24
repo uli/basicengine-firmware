@@ -55,7 +55,7 @@ static const uint8_t *fonts[NUM_FONTS] = {
 };
 
 // **** スクリーン管理 *************
-uint8_t scmode = USE_SCREEN_MODE;
+uint8_t scmode = 0;
 
 #include "tTVscreen.h"
 tTVscreen   sc0; 
