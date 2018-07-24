@@ -53,6 +53,14 @@ void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_pal.init();
   reset();
   xTaskCreatePinnedToCore(pal_core, "c", 1024, NULL, 2, NULL, 0);
+  // Ugly hack: We have disabled heap allocator locking in the SDK because
+  // it causes temporary display corruption by disabling interrupts during
+  // allocation.  This is not normally a problem because the PRO core is
+  // busy creating the video signal and thus does not pose a threat for the
+  // heap, but (I guess) the OS allocates memory when starting that task. 
+  // We therefore do this in a feeble attempt to avoid interfering with it:
+  delay(16);
+
   m_display_enabled = true;
 }
 
