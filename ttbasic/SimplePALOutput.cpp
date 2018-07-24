@@ -180,7 +180,7 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 
 // generate color carrier waveform using the first line's color only
 // (saves cycles in borderline cases)
-#define UWAVE_NOMIX(n) \
+#define UVWAVE_NOMIX(n) \
   short u0 = SIN[x + (n)] * UVLUT[p0u]; \
   short v0 = COS[x + (n)] * UVLUT[p0v];
 
@@ -190,12 +190,6 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 #define STORE(off, wave) \
   line[0][j + (off)] = y0 + u ## wave + v ## wave; \
   line[1][j + (off)] = y1 + u ## wave - v ## wave;
-
-// write single sample to buffers
-// (required for modes in which j can be odd)
-#define STORE_ONE() \
-  line[0][j ^ 1] = y0 + u0 + v0; \
-  line[1][j ^ 1] = y1 + u0 - v0;
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
   const struct video_mode_t *mode, uint8_t **frame)
@@ -239,17 +233,23 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
     uint8_t *pixels0 = frame[i];
     uint8_t *pixels1 = frame[i + 1];
     int j = mode->left;
-    for(int x = 0; x < mode->x; x++)
+    for(int x = 0; x < mode->x; x += 2)
     {
-      PIX()
-      YUV()
-
-      // we don't mix the hues in 1ppc modes because it takes too much time
-      UWAVE_NOMIX(0)
-
-      //word order is swapped for I2S packing (j + 1) comes first then j
-      STORE_ONE()
-      j++;
+      {
+        PIX()
+        YUV()
+        // We don't mix the hues in 1ppc modes because it takes too much time.
+        // (It also doesn't seem to make a lot of difference anyway.)
+        UVWAVE_NOMIX(0)
+        STORE(1, 0)
+      }
+      {
+        PIX()
+        YUV()
+        UVWAVE_NOMIX(1)
+        STORE(0, 0)
+      }
+      j+=2;
     }
     sendLine(line[0]);
     sendLine(line[1]);
