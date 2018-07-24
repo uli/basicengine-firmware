@@ -241,23 +241,14 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
     int j = mode->left;
     for(int x = 0; x < mode->x; x++)
     {
-      uint8_t px0 = *pixels0++;
-      uint8_t px1 = *pixels1++;
-      unsigned short p0v = yuv2v[px0];
-      unsigned short p0u = yuv2u[px0];
-      unsigned short p1u = yuv2u[px1];
-      unsigned short p1v = yuv2v[px1];
-      
-      short y0 = yuv2y[px0];
-      short y1 = yuv2y[px1];
+      PIX()
+      YUV()
 
       // we don't mix the hues in 1ppc modes because it takes too much time
-      short u0 = (SIN[x] * UVLUT[p0u]);
-      short v0 = (COS[x] * UVLUT[p0v]);
+      UWAVE_NOMIX(0)
 
       //word order is swapped for I2S packing (j + 1) comes first then j
-      line[0][j^1] = y0 + u0 + v0;
-      line[1][j^1] = y1 + u0 - v0;
+      STORE_ONE()
       j++;
     }
     sendLine(line[0]);
