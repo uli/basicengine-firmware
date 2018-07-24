@@ -210,26 +210,15 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
     int j = mode->left;
     for(int x = 0; x < mode->x * 2; x += 2)
     {
-      uint8_t px0 = *pixels0++;
-      uint8_t px1 = *pixels1++;
-      unsigned short p0v = yuv2v[px0];
-      unsigned short p0u = yuv2u[px0];
-      unsigned short p1u = yuv2u[px1];
-      unsigned short p1v = yuv2v[px1];
-      
-      short y0 = yuv2y[px0];
-      short y1 = yuv2y[px1];
-      short u = UVLUT[(p0u+p1u)/2];
-      short v = UVLUT[(p1v+p0v)/2];
-      short u0 = (SIN[x] * u);
-      short u1 = (SIN[x + 1] * u);
-      short v0 = (COS[x] * v);
-      short v1 = (COS[x + 1] * v);
+      PIX()
+      YUV()
+      UWAVE(0)
+      UWAVE(1)
+      VWAVE(0)
+      VWAVE(1)
       //word order is swapped for I2S packing (j + 1) comes first then j
-      line[0][j] = y0 + u1 + v1;
-      line[1][j] = y1 + u1 - v1;
-      line[0][j + 1] = y0 + u0 + v0;
-      line[1][j + 1] = y1 + u0 - v0;
+      STORE(0, 1);
+      STORE(1, 0);
       j += 2;
     }
     sendLine(line[0]);
