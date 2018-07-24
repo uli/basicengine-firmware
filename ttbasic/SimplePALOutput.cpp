@@ -63,7 +63,7 @@ void SimplePALOutput::setMode(const struct video_mode_t &mode)
   for(int i = 0; i < lineSamples - syncSamples; i++)
   {
     shortSync[(i + syncSamples) ^ 1] = blankLevel  << 8;
-    longSync[(lineSamples - syncSamples + i) ^ 1] = syncLevel  << 8;
+    longSync[i ^ 1] = syncLevel  << 8;
     line[0][(i + syncSamples) ^ 1] = blankLevel  << 8;
     line[1][(i + syncSamples) ^ 1] = blankLevel  << 8;
     blank[(i + syncSamples) ^ 1] = blankLevel  << 8;
