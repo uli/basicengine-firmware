@@ -158,6 +158,45 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 	{512, 256, 29, 232, 1},
 };
 
+// retrieve pixels (even/odd line)
+#define PIX() \
+  uint8_t px0 = *pixels0++; \
+  uint8_t px1 = *pixels1++;
+
+// calculate Y (even/odd lines separate) and UV (even/odd lines mixed)
+#define YUV() \
+  unsigned short p0v = yuv2v[px0]; \
+  unsigned short p0u = yuv2u[px0]; \
+  unsigned short p1u = yuv2u[px1]; \
+  unsigned short p1v = yuv2v[px1]; \
+  short y0 = yuv2y[px0]; \
+  short y1 = yuv2y[px1]; \
+  short u = UVLUT[(p0u+p1u)/2]; \
+  short v = UVLUT[(p1v+p0v)/2];
+
+// generate color carrier waveform
+#define UWAVE(n)	short u ## n = SIN[x + (n)] * u;
+#define VWAVE(n)	short v ## n = COS[x + (n)] * v;
+
+// generate color carrier waveform using the first line's color only
+// (saves cycles in borderline cases)
+#define UWAVE_NOMIX(n) \
+  short u0 = SIN[x + (n)] * UVLUT[p0u]; \
+  short v0 = COS[x + (n)] * UVLUT[p0v];
+
+// write samples to buffers
+// (only works if each iteration of the horizontal loop starts with
+// an even j)
+#define STORE(off, wave) \
+  line[0][j + (off)] = y0 + u ## wave + v ## wave; \
+  line[1][j + (off)] = y1 + u ## wave - v ## wave;
+
+// write single sample to buffers
+// (required for modes in which j can be odd)
+#define STORE_ONE() \
+  line[0][j ^ 1] = y0 + u0 + v0; \
+  line[1][j ^ 1] = y1 + u0 - v0;
+
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
   const struct video_mode_t *mode, uint8_t **frame)
 {
