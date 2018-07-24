@@ -148,14 +148,13 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 	{282, 240, 37, 200, 2},	// PCE overscan (underscan on PAL)
 	// Maximum PAL (the timing would allow more, but we would run out of memory)
 	// NB: This does not line up with any font sizes; the width is chosen
-	// to avoid artifacts.
+	// to avoid artifacts on VS23.
 	{508, 240, 37, 234, 1},
+	// ESP32GFX-specific modes
 	{320, 256, 29, 168, 2},	// maximum PAL at 2 clocks per pixel
 	{320, 240, 37, 168, 2},	// DawnOfAV demo, Mode X
-	// maximum the software renderer can handle with 4 DMA buffers
-	// more is possible with more buffers, but the memory usage is
-	// prohibitive
-	{512, 256, 29, 232, 1},
+	// maximum the software renderer can handle
+	{640, 256, 29, 168, 1},
 };
 
 // retrieve pixels (even/odd line)
