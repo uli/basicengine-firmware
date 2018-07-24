@@ -132,10 +132,17 @@ void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
 
     int tsx = bg->tile_size_x;
     int tsy = bg->tile_size_y;
+
+    // start/end coordinates of the visible BG window, relative to the
+    // BG's origin, in pixels
     int sx = bg->scroll_x;
-    int ex = m_current_mode.x + bg->scroll_x;
+    int ex = bg->win_w + bg->scroll_x;
     int sy = bg->scroll_y;
-    int ey = m_current_mode.y + bg->scroll_y;
+    int ey = bg->win_h + bg->scroll_y;
+
+    // offset to add to BG-relative coordinates to get screen coordinates
+    int owx = -sx + bg->win_x;
+    int owy = -sy + bg->win_y;
 
     for (int y = sy; y < ey; ++y) {
       for (int x = sx; x < ex; ++x) {
@@ -148,20 +155,23 @@ next:
         int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
-          memcpy(&m_pixels[y-sy][x-sx], &m_pixels[t_y][t_x], tsx);
+          // can draw a whole tile line
+          memcpy(&m_pixels[y+owy][x+owx], &m_pixels[t_y][t_x], tsx);
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          m_pixels[y-sy][x-sx] = m_pixels[t_y][t_x];
+          m_pixels[y+owy][x+owx] = m_pixels[t_y][t_x];
         }
       }
     }
   }
+
 #ifdef PROFILE_BG
   uint32_t taken = micros() - start;
   Serial.printf("rend %d\r\n", taken);
 #endif
+
   for (int si = 0; si < MAX_SPRITES; ++si) {
     sprite_t *s = &m_sprite[si];
     // skip if not visible
