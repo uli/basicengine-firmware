@@ -36,4 +36,5 @@ class SimplePALOutput
   void sendFrame(const struct video_mode_t *mode, uint8_t **frame);
   void sendFrame1ppc(const struct video_mode_t *mode, uint8_t **frame);
   void sendFrame4ppc(const struct video_mode_t *mode, uint8_t **frame);
+  void sendFrame2pp5c(const struct video_mode_t *mode, uint8_t **frame);
 };

@@ -295,4 +295,79 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
   sendSync2(302 - mode->y - mode->top);
 }
 
+void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame2pp5c(
+  const struct video_mode_t *mode, uint8_t **frame)
+{
+  sendSync1(mode->top);
+
+  //image
+  for(int i = 0; i < mode->y; i += 2)
+  {
+    uint8_t *pixels0 = frame[i];
+    uint8_t *pixels1 = frame[i + 1];
+    int j = mode->left;
+    for(int x = 0; x < mode->x * 5 / 2; x += 10)
+    {
+      {
+        PIX()
+        YUV()
+        UWAVE(0)
+        UWAVE(1)
+        UWAVE(2)
+        VWAVE(0)
+        VWAVE(1)
+        VWAVE(2)
+        //word order is swapped for I2S packing (j + 1) comes first then j
+        STORE(1, 0)
+        STORE(0, 1)
+        STORE(3, 2)
+      }
+      
+      {
+        PIX()
+        YUV()
+        UWAVE(3)
+        UWAVE(4)
+        VWAVE(3)
+        VWAVE(4)
+        //word order is swapped for I2S packing (j + 1) comes first then j
+        STORE(2, 3)
+        STORE(5, 4)
+      }
+
+      {
+        PIX()
+        YUV()
+        UWAVE(5)
+        UWAVE(6)
+        UWAVE(7)
+        VWAVE(5)
+        VWAVE(6)
+        VWAVE(7)
+        //word order is swapped for I2S packing (j + 1) comes first then j
+        STORE(4, 5)
+        STORE(7, 6)
+        STORE(6, 7)
+      }
+
+      {
+        PIX()
+        YUV()
+        UWAVE(8)
+        UWAVE(9)
+        VWAVE(8)
+        VWAVE(9)
+        //word order is swapped for I2S packing (j + 1) comes first then j
+        STORE(9, 8)
+        STORE(8, 9)
+      }
+      j+=10;
+    }
+    sendLine(line[0]);
+    sendLine(line[1]);
+  }
+  
+  sendSync2(302 - mode->y - mode->top);
+}
+
 #endif	// ESP32
