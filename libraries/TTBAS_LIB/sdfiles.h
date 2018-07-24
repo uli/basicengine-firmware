@@ -80,7 +80,7 @@ typedef BString UnifileString;
 extern sdfat::SdFat sdf;
 #endif
 
-bool SD_BEGIN(int mhz = 20);
+bool SD_BEGIN(int mhz = 40);
 void SD_END(void);
 
 const char FLASH_PREFIX[] = "/flash";
