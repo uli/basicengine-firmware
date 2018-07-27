@@ -22,6 +22,8 @@
 const char *apsd(const char *p);
 const char *apfs(const char *p);
 
+namespace sdfat {
+
 typedef struct {
   uint16_t creationDate;
   uint16_t creationTime;
@@ -275,5 +277,7 @@ static inline uint8_t FAT_MINUTE(uint16_t fatTime) {
 static inline uint8_t FAT_SECOND(uint16_t fatTime) {
   return 2*(fatTime & 0X1F);
 }
+
+};
 
 #endif

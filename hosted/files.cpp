@@ -1,5 +1,7 @@
 #include "SdFat.h"
 
+using namespace sdfat;
+
 char full_path[1024];
 
 const char *apsd(const char *p) {
@@ -25,7 +27,7 @@ File File::openNextFile(uint8_t mode) {
   return SD.open(ap.c_str(), mode);
 }
 
-int smart_fclose(FILE *stream)
+int sdfat::smart_fclose(FILE *stream)
 {
   if (stream)
     return fclose(stream);
@@ -33,7 +35,7 @@ int smart_fclose(FILE *stream)
     return EOF;
 }
 
-int smart_closedir(DIR *dirp)
+int sdfat::smart_closedir(DIR *dirp)
 {
   if (dirp)
     return closedir(dirp);
