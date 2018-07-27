@@ -6587,10 +6587,12 @@ void iedit() {
   BString fn;
   const char *argv[2] = { NULL, NULL };
   int argc = 1;
-  if ((fn = getParamFname())) {
+  if (is_strexp() && (fn = getParamFname())) {
     ++argc;
     argv[1] = fn.c_str();
   }
+  if (err)
+    return;
   sc0.show_curs(1);
   e_main(argc, (char **)argv);
   sc0.show_curs(0);
