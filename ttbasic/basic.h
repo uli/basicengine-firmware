@@ -320,6 +320,11 @@ static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
   return err;
 }
 
+static inline bool end_of_statement()
+{
+  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
+}
+
 void* BASIC_INT sanitize_addr(uint32_t vadr, int type);
 
 #ifdef ESP8266
@@ -352,10 +357,17 @@ static inline uint16_t c_getch() {
 
 #define c_kbhit( ) sc0.isKeyIn()
 
+uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false);
+
 void c_puts(const char *s, uint8_t devno);
 void c_puts_P(const char *s, uint8_t devno);
 
 num_t BASIC_FP ivalue();
+
+void iprint(uint8_t devno = 0,uint8_t nonewln = 0);
+
+int32_t ncharfun();
+num_t nvreg();
 
 #define COL_BG		0
 #define COL_FG		1
@@ -387,5 +399,17 @@ typedef struct {
 extern SystemConfig CONFIG;
 
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
+
+#ifdef USE_BG_ENGINE
+extern bool restore_text_window;
+extern bool restore_bgs;
+#endif
+
+void BASIC_FP init_stack_frame();
+void BASIC_FP push_num_arg(num_t n);
+
+extern const uint8_t *fonts[NUM_FONTS];
+
+void BASIC_FP pump_events(void);
 
 #endif
