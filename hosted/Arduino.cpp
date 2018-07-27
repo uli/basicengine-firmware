@@ -381,7 +381,7 @@ int screen_thread(void *p)
   }
 }
 
-uint32_t VS23S010::frame()
+uint32_t Video::frame()
 {
   // The hosted environment is not real-time enough to provide an asynchronous
   // update of m_frame with reasonable accuracy; we therefore calculate it on
