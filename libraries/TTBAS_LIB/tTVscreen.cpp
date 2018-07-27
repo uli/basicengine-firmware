@@ -43,7 +43,9 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
   uint8_t c;
   if (enableCursor && flgCur) {
     c = VPEEK(pos_x,pos_y);
-    tv_write(pos_x, pos_y, c?c:32);  
+    uint8_t f = VPEEK_FG(pos_x, pos_y);
+    uint8_t b = VPEEK_BG(pos_x, pos_y);
+    tv_write_color(pos_x, pos_y, c?c:32, f, b);  
     tv_drawCurs(x, y);
   } 
   m_cursor_count = 0;
@@ -130,7 +132,7 @@ void tTVscreen::refresh_line(uint16_t l) {
   CLEAR_LINE(l);
   for (uint16_t j = 0; j < width; j++) {
     if( IS_PRINT( VPEEK(j,l) )) { 
-      WRITE(j,l,VPEEK(j,l));
+      tv_write_color(j, l, VPEEK(j, l), VPEEK_FG(j, l), VPEEK_BG(j, l));
     }
   }
 }
@@ -200,7 +202,9 @@ void tTVscreen::show_curs(uint8_t flg) {
 // カーソルの消去
 void tTVscreen::draw_cls_curs() {
   uint8_t c = VPEEK(pos_x,pos_y);
-  tv_write(pos_x, pos_y, c?c:32);
+  uint8_t f = VPEEK_FG(pos_x, pos_y);
+  uint8_t b = VPEEK_BG(pos_x, pos_y);
+  tv_write_color(pos_x, pos_y, c?c:32, f, b);
 }
 	
 void tv_setcolor(uint16_t fc, uint16_t bc);
@@ -368,28 +372,36 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
     case 0: // 上
       for (uint16_t i= 0; i < h-1; i++) {
         memcpy(&VPEEK(x,y+i), &VPEEK(x,y+i+1), w);
+        VMOVE_C(x,y+i+1, x,y+i, w, 1);
       }
       memset(&VPEEK(x, y + h - 1), 0, w);
+      VSET_C(x, y+h-1, 0, 0, w);
       break;            
 
     case 1: // 下
       for (uint16_t i= 0; i < h-1; i++) {
         memcpy(&VPEEK(x,y + h-1-i), &VPEEK(x,y+h-1-i-1), w);
+        VMOVE_C(x,y+h-1-i-1, x,y+h-1-i, w, 1);
       }
       memset(&VPEEK(x, y), 0, w);
+      VSET_C(x, y, 0, 0, w);
       break;            
 
     case 2: // 右
       for (uint16_t i=0; i < h; i++) {
         memmove(&VPEEK(x+1, y+i) ,&VPEEK(x,y+i), w-1);
+        VMOVE_C(x,y+i, x+1,y+i, w-1, 1);
         VPOKE(x,y+i,0);
+        VPOKE_CCOL(x, y+i);
       }
       break;
       
     case 3: // 左
       for (uint16_t i=0; i < h; i++) {
         memmove(&VPEEK(x,y+i) ,&VPEEK(x+1,y+i), w-1);
+        VMOVE_C(x+1,y+i, x,y+i, w-1, 1);
         VPOKE(x+w-1,y+i,0);
+        VPOKE_CCOL(x+w-1,y+i);
       }
       break;
   }
@@ -397,7 +409,9 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   for (uint8_t i = 0; i < h; i++) 
     for (uint8_t j=0; j < w; j++) {
       c = VPEEK(x+j,y+i);
-      tv_write(x+j,y+i, c?c:32);
+      uint8_t f = VPEEK_FG(x+j, y+i);
+      uint8_t b = VPEEK_BG(x+j, y+i);
+      tv_write_color(x+j,y+i, c?c:32, f, b);
     }
 }
 

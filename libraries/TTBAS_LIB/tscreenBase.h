@@ -42,8 +42,38 @@
 #define SC_KEY_CTRL_D    4  // 行削除
 #define SC_KEY_CTRL_N   14  // 行挿入
 
+// text memory access macros
 #define VPEEK(X,Y)      (screen[whole_width*((Y)+win_y) + (X)+win_x])
 #define VPOKE(X,Y,C)    (screen[whole_width*((Y)+win_y) + (X)+win_x]=(C))
+
+// color memory access macros
+#define VPEEK_FG(X, Y)	vs23.getPixel(colmem_fg_x + (X), colmem_fg_y + (Y))
+#define VPEEK_BG(X, Y)	vs23.getPixel(colmem_bg_x + (X), colmem_bg_y + (Y))
+#define VPOKE_FGBG(X,Y,F,B) do { \
+  vs23.setPixel(colmem_fg_x + (X), colmem_fg_y + (Y), (F)); \
+  vs23.setPixel(colmem_bg_x + (X), colmem_bg_y + (Y), (B)); \
+} while (0)
+
+#define VMOVE_C(X1, Y1, X2, Y2, W, H) do { \
+  vs23.MoveBlock(colmem_fg_x + (X1), colmem_fg_y + (Y1), \
+                 colmem_fg_x + (X2), colmem_fg_y + (Y2), \
+                 (W), (H), 0); \
+  vs23.MoveBlock(colmem_bg_x + (X1), colmem_bg_y + (Y1), \
+                 colmem_bg_x + (X2), colmem_bg_y + (Y2), \
+                 (W), (H), 0); \
+} while (0)
+
+#define VSET_C(X,Y,F,B,W) do { \
+  for (int _x = colmem_fg_x + (X); _x < colmem_fg_x + (X)+(W); ++_x) { \
+    vs23.setPixel(_x, colmem_fg_y + (Y), (F)); \
+  } \
+  for (int _x = colmem_bg_x + (X); _x < colmem_bg_x + (X)+(W); ++_x) { \
+    vs23.setPixel(_x, colmem_bg_y + (Y), (B)); \
+  } \
+} while (0)
+
+// poke current FG/BG colors to color memory
+#define VPOKE_CCOL(X, Y)	VPOKE_FGBG(X, Y, fg_color, bg_color)
 
 class tscreenBase {
   protected:

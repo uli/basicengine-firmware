@@ -3,6 +3,7 @@
 void tv_init(int16_t ajst, uint8_t vmode=SC_DEFAULT);
 void tv_end();
 void    tv_write(uint8_t x, uint8_t y, uint8_t c);
+void    tv_write_color(uint8_t x, uint8_t y, uint8_t c, uint8_t fg, uint8_t bg);
 void    tv_drawCurs(uint8_t x, uint8_t y);
 void    tv_clerLine(uint16_t l, int from = 0) ;
 void    tv_insLine(uint16_t l);
@@ -45,3 +46,6 @@ void tv_flipcolors();
 
 extern uint16_t fg_color;
 extern uint16_t bg_color;
+
+extern int colmem_fg_x, colmem_fg_y;
+extern int colmem_bg_x, colmem_bg_y;

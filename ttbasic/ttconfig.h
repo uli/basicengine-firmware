@@ -66,6 +66,9 @@
   #include <ichigoFont8x8.h>
 #endif
 
+#define MIN_FONT_SIZE_X 6
+#define MIN_FONT_SIZE_Y 8
+
 #ifdef HAVE_PROFILE
 #define NOINS __attribute__((no_instrument_function))
 #endif

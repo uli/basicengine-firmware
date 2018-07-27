@@ -69,6 +69,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     inline void write(uint8_t x, uint8_t y, uint8_t c) {
       tv_write(x, y, c);
       VPOKE(x, y, c);
+      VPOKE_CCOL(x, y);
     }
     void init( uint16_t ln=256,
     	       int16_t NTSCajst=0,

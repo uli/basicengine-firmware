@@ -21,7 +21,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
     screen = NULL;
   }
   if (!screen)
-    screen = (uint8_t*)calloc(w, h);
+    screen = (uint8_t*)calloc(w * h, sizeof(*screen));
 
   whole_width = width   = w;
   whole_height = height  = h;
@@ -60,6 +60,7 @@ void tscreenBase::end() {
 // 指定行の1行分クリア
 void tscreenBase::clerLine(uint16_t l, int from) {
   memset(&VPEEK(from, l), 0, width - from);
+  VSET_C(from, l, 0, 0, width-from);
   CLEAR_LINE(l, from);
   MOVE(pos_y, pos_x);
 }
@@ -67,12 +68,17 @@ void tscreenBase::clerLine(uint16_t l, int from) {
 // スクリーンのクリア
 void tscreenBase::cls() {
   CLEAR();
-  for (int i = 0; i < height; ++i)
+  for (int i = 0; i < height; ++i) {
     memset(&VPEEK(0, i), 0, width);
+    VSET_C(0, i, 0, 0, width);
+  }
 }
+
 void tscreenBase::forget() {
-  for (int i = 0; i < height; ++i)
+  for (int i = 0; i < height; ++i) {
     memset(&VPEEK(0, i), 0, width);
+    VSET_C(0, i, 0, 0, width);
+  }
 }
 
 // スクリーンリフレッシュ表示
@@ -86,8 +92,10 @@ void tscreenBase::refresh() {
 void tscreenBase::scroll_up() {
   if (!flgScroll)
     return;
-  for (int i = 1; i < height; ++i)
+  for (int i = 1; i < height; ++i) {
     memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width);
+    VMOVE_C(0, i, 0, i-1, width, 1);
+  }
   if (flgCur)
     draw_cls_curs();
   SCROLL_UP();
@@ -99,8 +107,10 @@ void tscreenBase::scroll_up() {
 void tscreenBase::scroll_down() {
   if (!flgScroll)
     return;
-  for (int i = height-2; i >= 0; --i)
+  for (int i = height-2; i >= 0; --i) {
     memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
+    VMOVE_C(0, i, 0, i+1, width, 1);
+  }
   if (flgCur)
     draw_cls_curs();
   SCROLL_DOWN();
@@ -111,10 +121,13 @@ void tscreenBase::scroll_down() {
 // 指定行に空白行挿入
 void tscreenBase::Insert_newLine(uint16_t l) {
   if (l < height-1) {
-    for (int i = height-2; i >= l + 1; --i)
+    for (int i = height-2; i >= l + 1; --i) {
       memcpy(&VPEEK(0, i+1), &VPEEK(0, i), width);
+      VMOVE_C(0, i, 0, i+1, width, 1);
+    }
   }
   memset(&VPEEK(0, l+1), 0, width);
+  VSET_C(0, l+1, 0, 0, width);
   INSLINE(l+1);
 }
 
@@ -150,6 +163,7 @@ void tscreenBase::delete_char() {
         next_y++;
       }
       VPOKE(start_adr_x, start_adr_y, VPEEK(next_x, next_y));
+      VPOKE_FGBG(start_adr_x, start_adr_y, VPEEK_FG(next_x, next_y), VPEEK_BG(next_x, next_y));
       start_adr_x = next_x;
       start_adr_y = next_y;
       --lln;
@@ -162,6 +176,7 @@ void tscreenBase::delete_char() {
     top_y--;
   }
   VPOKE(top_x, top_y, 0);
+  VPOKE_CCOL(top_x, top_y);
 
   for (uint8_t i=0; i < (pos_x+ln)/width+1; i++)
     refresh_line(pos_y+i);   
@@ -171,8 +186,11 @@ void tscreenBase::delete_char() {
 
 // 文字の出力
 void tscreenBase::putch(uint8_t c, bool lazy) {
- if (!lazy || VPEEK(pos_x, pos_y) != c) {
+ if (!lazy || VPEEK(pos_x, pos_y) != c ||
+              VPEEK_FG(pos_x, pos_y) != fg_color ||
+              VPEEK_BG(pos_x, pos_y) != bg_color) {
    VPOKE(pos_x, pos_y, c);
+   VPOKE_CCOL(pos_x, pos_y);
    if (!flgCur)
      WRITE(pos_x, pos_y, c);
  }
@@ -228,6 +246,8 @@ void tscreenBase::Insert_char(uint8_t c) {
     int ssx = start_adr_x;
     int ssy = start_adr_y;
     uint8_t cn = VPEEK(ssx, ssy);
+    uint16_t cnfg = VPEEK_FG(ssx, ssy);
+    uint16_t cnbg = VPEEK_BG(ssx, ssy);
     while (lln) {
       int next_x = ssx+1;
       int next_y = ssy;
@@ -238,13 +258,20 @@ void tscreenBase::Insert_char(uint8_t c) {
           break;
       }
       uint8_t ncn = VPEEK(next_x, next_y);
+      uint8_t ncnfg = VPEEK_FG(next_x, next_y);
+      uint8_t ncnbg = VPEEK_BG(next_x, next_y);
       VPOKE(next_x, next_y, cn);
+      VPOKE_FGBG(next_x, next_y, cnfg, cnbg);
+      
       cn = ncn;
+      cnfg = ncnfg;
+      cnbg = ncnbg;
       ssx = next_x;
       ssy = next_y;
       --lln;
     }
     VPOKE(start_adr_x, start_adr_y, c);
+    VPOKE_CCOL(start_adr_x, start_adr_y);
     movePosNextNewChar();
     
     // 挿入した行の再表示

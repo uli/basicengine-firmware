@@ -49,8 +49,6 @@ void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0);
 
 void newline(uint8_t devno=0);
 
-#define MIN_FONT_SIZE_X 6
-#define MIN_FONT_SIZE_Y 8
 #define NUM_FONTS 4
 
 BString getParamFname();

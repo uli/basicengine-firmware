@@ -71,6 +71,9 @@ void tv_NTSC_adjust(int16_t ajst) {
   Serial.println("unimp tv_NTSC_adjust");
 }
 
+int colmem_fg_x, colmem_fg_y;
+int colmem_bg_x, colmem_bg_y;
+
 //
 // NTSC表示の初期設定
 // 
@@ -82,6 +85,8 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   // XXX: assumes font height == 8
   // We don't want to allocate this last because it will be in the way when
   // allocating a larger font later.
+  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_fg_x, colmem_fg_y);
+  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_bg_x, colmem_bg_y);
   vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
   clrline_color = 0;
 
@@ -209,6 +214,15 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
 
 void ICACHE_RAM_ATTR tv_write(uint8_t x, uint8_t y, uint8_t c) {
   tv_write_px(win_x + x*f_width, win_y + y*f_height, c);
+}
+
+void ICACHE_RAM_ATTR tv_write_color(uint8_t x, uint8_t y, uint8_t c, uint8_t fg, uint8_t bg)
+{
+  uint8_t sfg = fg_color;
+  uint8_t sbg = bg_color;
+  fg_color = fg; bg_color = bg;
+  tv_write(x, y, c);
+  fg_color = sfg; bg_color = sbg;
 }
 
 //
