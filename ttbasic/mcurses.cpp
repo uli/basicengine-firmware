@@ -49,6 +49,8 @@ uint8_t                                         mcurses_is_up = 0;              
 uint8_t                                    	mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint8_t                                    	mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
+uint8_t start_fg, start_bg;
+
 static uint_fast8_t mcurses_attr = 0;                    // current attributes
 static uint8_t *attrs;
 
@@ -210,6 +212,9 @@ uint_fast8_t
 initscr (void)
 {
     uint_fast8_t rtc;
+
+    start_fg = sc0.getFgColor();
+    start_bg = sc0.getBgColor();
 
     attrs = (uint8_t *)calloc(sc0.getWidth() * sc0.getHeight(), 1);
     if (!attrs)
@@ -620,6 +625,7 @@ endwin (void)
     mcurses_phyio_done ();                                                      // end of physical I/O
     mcurses_is_up = 0;
     free (attrs);
+    sc0.setColor(start_fg, start_bg);
 }
 
 void scrl(int whence)
