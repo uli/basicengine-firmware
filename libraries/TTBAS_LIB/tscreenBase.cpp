@@ -21,7 +21,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
     screen = NULL;
   }
   if (!screen)
-    screen = (uint8_t*)malloc(w * h);
+    screen = (uint8_t*)calloc(w, h);
 
   whole_width = width   = w;
   whole_height = height  = h;
@@ -30,6 +30,10 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l,uint8_t* extmem) {
 
   // デバイスの初期化
   INIT_DEV();
+  
+  if (pos_x >= w || pos_y >= h) {
+    pos_x = 0; pos_y = 0;
+  }
 
   cls();
   show_curs(true);  
