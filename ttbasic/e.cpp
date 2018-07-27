@@ -563,6 +563,7 @@ int	e_main (int argc, char **argv)
 	ctx = (struct e_ctx_t *)calloc(1, sizeof(struct e_ctx_t));
 	if (!ctx)
 		return -1;
+	ins_mode = true;
 
 	file_name = "";
 	block_name = "";
