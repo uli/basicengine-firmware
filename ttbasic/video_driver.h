@@ -42,7 +42,9 @@ public:
 
   void setColorSpace(uint8_t palette);
 
+#ifndef HOSTED
 protected:
+#endif
   uint32_t m_frame;
 
   struct video_mode_t m_current_mode;
