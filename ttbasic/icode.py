@@ -6,10 +6,11 @@ funf = open('funtbl.h', 'w')
 strfunf = open('strfuntbl.h', 'w')
 numfunf = open('numfuntbl.h', 'w')
 enumf.write('#ifndef __KWENUM_H\n#define __KWENUM_H\nenum token_t {\n')
-funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
 count = 0
 last_cmd = 0
 nulls = []
+cmds = []
+cmds_count = 0
 strfuns = []
 strfun_count = 0
 numfuns = []
@@ -21,10 +22,6 @@ for l in f.readlines():
     continue
   cmd, enum, fun = l.split()
   if not enum.startswith('X_'):
-    if count % 8 == 0:
-      enumf.write('  ')
-      funf.write('  ')
-
     if cmd == '_none':
       nulls += [count]
     else:
@@ -38,15 +35,8 @@ for l in f.readlines():
     if fun == 'esyntax' and last_cmd == 0:
       last_cmd = count
     if last_cmd == 0:
-      funf.write(fun + ',')
-    if count % 8 == 7:
-      enumf.write('\n')
-      if last_cmd == 0:
-        funf.write('\n')
-    else:
-      enumf.write(' ')
-      if last_cmd == 0:
-        funf.write(' ')
+      cmds += [(cmd, enum, fun)]
+      cmds_count += 1
     if fun[0] == 's':
       if strfun_count == 0:
         strfun_first = count
@@ -77,12 +67,27 @@ for i in range(0, count):
     cmdf.write('\n')
 cmdf.write('\n};\n')
   
+max_kw_ext_len = 0
+
+for i in range(0, cmds_count):
+  funf.write('void ' + cmds[i][2] + '();\n')
+
+funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
+
+for i in range(0, cmds_count):
+  max_kw_ext_len = max(max_kw_ext_len, len(cmds[i][0]))
+  funf.write(cmds[i][2] + ', ')
+
+funf.write('\n};\n')
+
 enumf.write('\n};\n')
 enumf.write('enum token_ext_t {\n')
-funf.write('\n};\n')
+
+for i in range(0, ext_count):
+  funf.write('void ' + extended[i][2] + '();\n')
+
 funf.write('static const cmd_t funtbl_ext[] BASIC_DAT = {\n')
 
-max_kw_ext_len = 0
 for i in range(0, ext_count):
   cmdf.write('static const char __cmd_ext' + str(i) + ' [] PROGMEM = "' + extended[i][0] + '";\n')
   max_kw_ext_len = max(max_kw_ext_len, len(extended[i][0]))
@@ -101,6 +106,8 @@ cmdf.write('\n};\n')
 enumf.write('\n};\n#endif\n')
 funf.write('\n};\n')
 
+for i in range(0, strfun_count):
+  strfunf.write("BString " + strfuns[i][1] + '();\n')
 strfunf.write('\nstatic const strfun_t strfuntbl[] BASIC_DAT = {\n')
 for i in range(0, strfun_count):
   if i % 8 == 0:
@@ -112,6 +119,8 @@ strfunf.write('\n};\n')
 strfunf.write('#define STRFUN_FIRST ' + str(strfun_first) + '\n')
 strfunf.write('#define STRFUN_LAST ' + str(strfun_first + strfun_count) + '\n')
 
+for i in range(0, numfun_count):
+  numfunf.write("num_t " + numfuns[i][1] + '();\n')
 numfunf.write('\nstatic const numfun_t numfuntbl[] BASIC_DAT = {\n')
 for i in range(0, numfun_count):
   if i % 8 == 0:
