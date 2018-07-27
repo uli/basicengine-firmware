@@ -21,7 +21,7 @@ import_def MAX_PADS
 echo ":max_err: $((`wc -l <errdef.h`-1))" >>$REFDOC
 
 cat scripts/groups.txt|while read grp desc; do
-  sed -nf scripts/bdoc_1.sed <basic.cpp|sed -zf scripts/bdoc_1a.sed|
+  cat basic*.cpp net.cpp | sed -nf scripts/bdoc_1.sed | sed -zf scripts/bdoc_1a.sed |
   	  grep "/\*\*\*b[a-z]\s*${grp}\s*"|
           sort|sed -f scripts/bdoc_1b.sed|sed -f scripts/bdoc_2.sed >../doc/reference_${grp}.adoc
   { echo "=== $desc"
