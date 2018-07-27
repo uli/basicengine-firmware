@@ -459,48 +459,6 @@ char* tlimR(char* str) {
   return str;
 }
 
-// コマンド引数取得(int32_t,引数チェックあり)
-static inline uint8_t BASIC_FP getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
-  prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
-    E_VALUE(v_min, v_max);
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-static inline uint32_t BASIC_FP getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
-  prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
-    E_VALUE(v_min, v_max);
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-// コマンド引数取得(int32_t,引数チェックなし)
-static inline uint8_t BASIC_FP getParam(uint32_t& prm, token_t next_token) {
-  prm = iexp();
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-// コマンド引数取得(uint32_t,引数チェックなし)
-static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
-  prm = iexp();
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    if (next_token == I_OPEN || next_token == I_CLOSE)
-      err = ERR_PAREN;
-    else
-      E_SYNTAX(next_token);
-  }
-  return err;
-}
-
 // 1文字出力
 void c_puts(const char *s, uint8_t devno) {
   while (*s) c_putch(*s++, devno);  //終端でなければ出力して繰り返す
