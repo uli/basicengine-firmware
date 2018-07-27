@@ -615,7 +615,7 @@ endwin (void)
     move (LINES - 1, 0);                                                        // move cursor to last line
     clrtoeol ();                                                                // clear this line
     curs_set (TRUE);                                                            // show cursor
-    mcurses_puts_P(SEQ_REPLACE_MODE);                                           // reset insert mode
+    //mcurses_puts_P(SEQ_REPLACE_MODE);                                           // reset insert mode
     refresh ();                                                                 // flush output
     mcurses_phyio_done ();                                                      // end of physical I/O
     mcurses_is_up = 0;
