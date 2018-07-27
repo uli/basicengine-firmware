@@ -69,6 +69,8 @@ char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 #define MAX_RETVALS 4
 
+#define basic_bool(x) ((x) ? -1 : 0)
+
 typedef struct {
   unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
@@ -341,6 +343,8 @@ static inline uint16_t c_getch() {
 
 void c_puts(const char *s, uint8_t devno);
 void c_puts_P(const char *s, uint8_t devno);
+
+num_t BASIC_FP ivalue();
 
 #define COL_BG		0
 #define COL_FG		1
