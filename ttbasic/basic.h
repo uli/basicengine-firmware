@@ -64,6 +64,12 @@ char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 BString getstr(uint8_t eoi = '\r');
 
+num_t& BASIC_FP get_lvar(uint8_t arg);
+BString& get_lsvar(uint8_t arg);
+
+void BASIC_FP ivar();
+void BASIC_FP ilvar();
+
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_GSTK 10     // GOSUB stack size
 #define SIZE_LSTK 10     // FOR stack size
