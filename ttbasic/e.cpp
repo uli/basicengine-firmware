@@ -23,7 +23,7 @@ struct e_ctx_t {
 	int	text_size = 0;
 	int bos_pos, eos_pos, cur_pos, eof_pos, bow_line;
 	int bow_line_prev, win_shift, cur_line, cur_y, cur_x;
-	int is_changed, ins_mode, find_mode;
+	bool is_changed, ins_mode, find_mode;
 	bool cr_mode;
 };
 struct e_ctx_t *ctx;
@@ -284,7 +284,7 @@ int	ins_mem (int size)
 		bos_pos += size;
 	if (eos_pos > cur_pos)
 		eos_pos += size;
-	is_changed = 1;
+	is_changed = true;
 	return 1;
 }
 
@@ -296,7 +296,7 @@ void	del_mem (int pos, int size)
 	for (i = pos + size; i < eof_pos; i++)	/* read comment to ins_mem() */
 		text[i - size] = text[i];
 	eof_pos -= size;
-	is_changed = 1;
+	is_changed = true;
 #define del_pos(p) (p > pos + size ? p -= size : p > pos ? p = pos : p)
 	del_pos (bos_pos);
 	del_pos (eos_pos);
@@ -323,7 +323,7 @@ void	ins_ch (char ch)
 			cur_pos = nextline (cur_pos);
 			return;
 		} else if (text[cur_pos] != '\n') {
-			is_changed = 1;
+			is_changed = true;
 			goto a;
 		}
 	}
@@ -383,7 +383,7 @@ int	k_find (void)
 {
 	if (!enter_string (PSTR("Search for: "), find_str) || !find_str.length())
 		return 0;
-	find_mode = 1;
+	find_mode = true;
 	return find_again (0);
 }
 
@@ -409,7 +409,7 @@ void	k_replace (void)
 		return;
 	if (!enter_string (PSTR("Replace to: "), replace_str))
 		return;
-	find_mode = 0;
+	find_mode = false;
 	replace_again ();
 }
 
@@ -472,7 +472,7 @@ void	k_save (void)
 	if (!enter_string (PSTR("Enter file name to save: "), file_name))
 		return;
 	if (save (file_name.c_str(), 0, eof_pos))
-		is_changed = 0;
+		is_changed = false;
 }
 
 void	k_getblock (void)
@@ -576,7 +576,7 @@ int	e_main (int argc, char **argv)
 	if (argc >= 2) {
 		file_name = argv[1];
 		load (file_name.c_str());
-		is_changed = 0;
+		is_changed = false;
 	}
 	erase();
 	for (;;) {
@@ -675,7 +675,7 @@ int	e_main (int argc, char **argv)
 			k_getblock ();
 			break;
 		case KEY_IC:
-			ins_mode ^= 1;
+			ins_mode = !ins_mode;
 			break;
 		case CTRL ('A'):
 			k_goto ();
