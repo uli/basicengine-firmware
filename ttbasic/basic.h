@@ -62,6 +62,8 @@ uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
 char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
+BString getstr(uint8_t eoi = '\r');
+
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #define SIZE_GSTK 10     // GOSUB stack size
 #define SIZE_LSTK 10     // FOR stack size
@@ -221,6 +223,8 @@ int BASIC_FP token_size(uint8_t *code);
 num_t BASIC_FP iexp();
 BString istrexp(void);
 
+BString sinput();
+
 // キーワードテーブル
 #include "kwtbl.h"
 
@@ -310,6 +314,7 @@ static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
   return err;
 }
 
+void* BASIC_INT sanitize_addr(uint32_t vadr, int type);
 
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );
