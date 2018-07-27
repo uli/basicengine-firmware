@@ -23,7 +23,7 @@ void SpiRamReadBytes(uint32_t address, uint8_t *data, uint32_t count) {
   wait_bytes(count+4);
 }
 uint16_t SpiRamReadByte(uint32_t address) {
-  printf("RRB  %08X\n", address);
+  //printf("RRB  %08X\n", address);
   wait_bytes(5);
   return vs23_mem[address % 131072];
 }
