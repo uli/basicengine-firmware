@@ -228,6 +228,9 @@ inline uint8_t checkClose() {
 int BASIC_FP token_size(uint8_t *code);
 num_t BASIC_FP iexp();
 BString istrexp(void);
+bool BASIC_FP is_strexp();
+
+void BASIC_FP do_call(uint8_t proc_idx);
 
 BString sinput();
 
@@ -365,6 +368,7 @@ void c_puts_P(const char *s, uint8_t devno);
 num_t BASIC_FP ivalue();
 
 void iprint(uint8_t devno = 0,uint8_t nonewln = 0);
+void iloadbg();
 
 int32_t ncharfun();
 num_t nvreg();
@@ -400,10 +404,19 @@ extern SystemConfig CONFIG;
 
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
+void BASIC_INT event_handle_play(int ch);
+void event_handle_pad();
+void event_handle_sprite();
+
+extern uint8_t event_sprite_proc_idx;
+
 #ifdef USE_BG_ENGINE
 extern bool restore_text_window;
 extern bool restore_bgs;
 #endif
+
+void SMALL resize_windows();
+void SMALL restore_windows();
 
 void BASIC_FP init_stack_frame();
 void BASIC_FP push_num_arg(num_t n);
