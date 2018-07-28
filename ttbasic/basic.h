@@ -12,6 +12,7 @@
 #include "video.h"
 #include "variable.h"
 #include "proc.h"
+#include "sound.h"
 
 #define SIZE_LINE 256    // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 256    // 中間コード変換バッファサイズ
@@ -372,6 +373,7 @@ void iloadbg();
 
 int32_t ncharfun();
 num_t nvreg();
+num_t nplay();
 
 #define COL_BG		0
 #define COL_FG		1
@@ -405,9 +407,12 @@ extern SystemConfig CONFIG;
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
 void BASIC_INT event_handle_play(int ch);
-void event_handle_pad();
-void event_handle_sprite();
+extern bool event_play_enabled;
+extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
+void event_handle_pad();
+
+void event_handle_sprite();
 extern uint8_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE

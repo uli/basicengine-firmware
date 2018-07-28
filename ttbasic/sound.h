@@ -24,9 +24,11 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#ifndef _SOUND_H
+#define _SOUND_H
+
 #include "mml.h"
 
-#include "basic.h"
 #include "audio.h"
 
 #if !defined(ESP8266) || defined(ESP8266_NOWIFI)
@@ -64,6 +66,8 @@ static inline void *dbg_malloc(size_t s, int line) {
 #include "ESP8266SAM.h"
 
 #define SOUND_CHANNELS	3
+
+#include "basic.h"
 
 class BasicSound {
 public:
@@ -168,3 +172,5 @@ private:
 };
 
 extern BasicSound sound;
+
+#endif
