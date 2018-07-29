@@ -94,7 +94,7 @@ bool screen_putch_disable_escape_codes = false;
 
 void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
-  static uint8_t col_digit = 0, color, is_bg;
+  static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;
 
   if (screen_putch_disable_escape_codes) {
@@ -109,18 +109,20 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
     }
     sc0.putch('\\');
   } else {
-    if (col_digit > 0) {
-      if (col_digit == 1) {
-        color = hex2value(c);
-        col_digit++;
+    if (hex_digit > 0) {
+      if (hex_digit == 1) {
+        hex_value = hex2value(c);
+        hex_digit++;
       } else {
-        color = (color << 4) | hex2value(c);
-        if (is_bg)
-          sc0.setColor(sc0.getFgColor(), color);
+        hex_value = (hex_value << 4) | hex2value(c);
+        if (hex_type == 0)
+          sc0.setColor(sc0.getFgColor(), hex_value);
+        else if (hex_type == 1)
+          sc0.setColor(hex_value, sc0.getBgColor());
         else
-          sc0.setColor(color, sc0.getBgColor());
+          sc0.putch(hex_value, lazy);
 
-        col_digit = 0;
+        hex_digit = 0;
       }
     } else if (escape) {
       switch (c) {
@@ -159,12 +161,16 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
       case 'c':	sc0.cls();	// fallthrough
       case 'h': sc0.locate(0, 0); break;
       case 'f':
-        col_digit = 1;
-        is_bg = false;
+        hex_digit = 1;
+        hex_type = 1;
         break;
       case 'b':
-        col_digit = 1;
-        is_bg = true;
+        hex_digit = 1;
+        hex_type = 0;
+        break;
+      case 'x':
+        hex_digit = 1;
+        hex_type = 2;
         break;
       default:	break;
       }
