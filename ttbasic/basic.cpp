@@ -4680,7 +4680,7 @@ static BString sstring() {
 typedef BString (*strfun_t)();
 #include "strfuntbl.h"
 
-inline bool BASIC_FP is_strexp() {
+bool BASIC_FP is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return ((*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) ||
           *cip == I_STR ||
