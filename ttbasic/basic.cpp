@@ -5983,6 +5983,9 @@ void BASIC_FP icall() {
   }
   if (*cip == I_OPEN) {
     ++cip;
+    QList<BString> strargs;
+    QList<num_t> numargs;
+
     if (*cip != I_CLOSE) for(;;) {
       if (is_strexp()) {
         BString b = istrexp();
@@ -5990,7 +5993,7 @@ void BASIC_FP icall() {
           return;
         if (new_astk_str_i >= SIZE_ASTK)
           goto overflow;
-        astk_str[new_astk_str_i++] = b;
+        strargs.push_back(b);
         ++str_args;
       } else {
         n = iexp();
@@ -5998,7 +6001,7 @@ void BASIC_FP icall() {
           return;
         if (new_astk_num_i >= SIZE_ASTK)
           goto overflow;
-        astk_num[new_astk_num_i++] = n;
+        numargs.push_back(n);
         ++num_args;
       }
       if (*cip != I_COMMA)
@@ -6008,6 +6011,13 @@ void BASIC_FP icall() {
 
     if (checkClose())
       return;
+
+    for (int i = 0; i < strargs.size(); ++i) {
+      astk_str[new_astk_str_i++] = strargs[i];
+    }
+    for (int i = 0; i < numargs.size(); ++i) {
+      astk_num[new_astk_num_i++] = numargs[i];
+    }
   }
   astk_num_i = new_astk_num_i;
   astk_str_i = new_astk_str_i;
