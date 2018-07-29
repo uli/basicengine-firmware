@@ -121,10 +121,10 @@ void SMALL iscreen() {
 
   vs23.reset();
 
-  sc0.setFont(fonts[CONFIG.font]);
 
   if (scmode == m) {
     sc0.reset();
+    sc0.setFont(fonts[CONFIG.font]);
     sc0.locate(0,0);
     sc0.cls();
     sc0.show_curs(false);
@@ -137,6 +137,7 @@ void SMALL iscreen() {
   // NTSCスクリーン設定
   sc0.init(SIZE_LINE,CONFIG.NTSC, m - 1);
 
+  sc0.setFont(fonts[CONFIG.font]);
   sc0.cls();
   sc0.show_curs(false);
   sc0.draw_cls_curs();
