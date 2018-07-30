@@ -2355,7 +2355,7 @@ void SMALL irenum() {
   for (  clp = listbuf; *clp; clp += *clp) {
     ptr = clp;
     len = *ptr;
-    ptr++;
+    ptr += sizeof(line_desc_t);
     i=0;
     // 行内検索
     while( i < len-1 ) {
@@ -2365,18 +2365,17 @@ void SMALL irenum() {
       case I_THEN:
 	i++;
 	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
-	  num = getlineno(&ptr[i]);
+	  num = UNALIGNED_NUM_T(&ptr[i+1]);
 	  index = getlineIndex(num);
 	  if (index == INT32_MAX) {
 	    // 該当する行が見つからないため、変更は行わない
-	    i += sizeof(line_desc_t);
+	    i += sizeof(num_t) + 1;
 	    continue;
 	  } else {
 	    // とび先行番号を付け替える
 	    newnum = startLineNo + increase*index;
-	    line_desc_t *ld = (line_desc_t *)(ptr + i);
-	    ld->line = newnum;
-	    i += sizeof(line_desc_t);
+	    UNALIGNED_NUM_T(&ptr[i+1]) = newnum;
+	    i += sizeof(num_t) + 1;
 	    continue;
 	  }
 	} else if (ptr[i] == I_LABEL) {
