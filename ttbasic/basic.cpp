@@ -5432,15 +5432,23 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
   // Output of specified line text to line buffer
   if (devno == 3)
     cleartbuf();
+
   if (devno == 0)
     sc0.setColor(COL(LINENUM), COL(BG));
   putnum(lineno, 0, devno);
-  if (devno == 0)
+
+  if (devno == 0) {
+    screen_putch_disable_escape_codes = true;
     sc0.setColor(COL(FG), COL(BG));
+  }
   c_putch(' ', devno);
   putlist(lp, devno);
+
   if (devno == 3)
     c_putch(0,devno);        // zero-terminate tbuf
+  else if (devno == 0)
+    screen_putch_disable_escape_codes = false;
+
   return tbuf;
 }
 
