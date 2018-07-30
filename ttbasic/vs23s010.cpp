@@ -100,6 +100,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   m_vsync_enabled = false;
   m_interlace = interlace;
   m_lowpass = lowpass;
+  m_frame = 0;
 #ifdef USE_BG_ENGINE
   m_frameskip = 0;
   m_bg_modified = true;
