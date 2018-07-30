@@ -6881,6 +6881,8 @@ program was interrupted.
     }
     break;
   case I_GOTO:
+    initialize_proc_pointers();
+    initialize_label_pointers();
     igoto();
     if (!err) {
       restore_windows();
