@@ -1359,7 +1359,8 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
         sc0.setColor(COL(PROC), COL(BG));
       else
         sc0.setColor(COL(OP), COL(BG));
-      if (*ip == I_SQUOT)
+      // indent single-quote comment unless at start of line
+      if (*ip == I_SQUOT && ip != (unsigned char *)&ld[1])
         PRINT_P("  ");
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
