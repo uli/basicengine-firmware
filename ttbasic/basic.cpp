@@ -5107,7 +5107,7 @@ num_t BASIC_INT ninstr() {
   }
   needle = istrexp();
   if (checkClose()) return 0;
-  char *res = strstr(haystack.c_str(), needle.c_str());
+  const char *res = strstr(haystack.c_str(), needle.c_str());
   if (!res)
     return -1;
   else
