@@ -97,6 +97,11 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;
 
+  if (kb.state(PS2KEY_L_Shift)) {
+    sc0.peekKey();
+    delay(3);
+  }
+
   if (screen_putch_disable_escape_codes) {
     sc0.putch(c, lazy);
     return;
@@ -230,15 +235,6 @@ void BASIC_INT newline(uint8_t devno) {
     if (redirect_output_file >= 0) {
       user_files[redirect_output_file]->write('\n');
       return;
-    }
-    uint16_t c = sc0.peekKey();
-    if (!process_hotkeys(c) && kb.state(PS2KEY_L_Shift)) {
-      uint32_t m = millis() + 200;
-      while (millis() < m) {
-        sc0.peekKey();
-        if (!kb.state(PS2KEY_L_Shift))
-          break;
-      }
     }
     sc0.newLine();
   } else if (devno == 1)
