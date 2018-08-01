@@ -12,8 +12,13 @@ void BASIC_FP ivar() {
 
   index = *cip++; //変数番号を取得して次へ進む
 
-  if (*cip != I_EQ) { //もし「=」でなければ
-    err = ERR_VWOEQ; //エラー番号をセット
+  if (*cip != I_EQ) {
+    // Unlike other cases of missing assignment operators (which can only
+    // occur if some sort of syntactic element that unambigously identifies
+    // them as variable identifiers is used), this one is most likely caused
+    // by an unknown or misspelled command.
+    err = ERR_UNK;
+    err_expected = nvar_names.name(index);
     return;
   }
   cip++;

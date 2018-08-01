@@ -18,7 +18,7 @@ ESTR(ERR_IFSTKOF, "IF stack overflow")
 ESTR(ERR_IFSTKUF, "IF stack underflow")
 ESTR(ERR_ULN, "Undefined line number")
 ESTR(ERR_PAREN, "\'(\' or \')\' expected")
-ESTR(ERR_VWOEQ, "\'=\' expected (misspelled command?)")
+ESTR(ERR_VWOEQ, "\'=\' expected")
 ESTR(ERR_COM, "Cannot use system command") // v0.83 メッセージ文変更
 ESTR(ERR_VALUE, "Illegal value")      // 追加
 ESTR(ERR_RANGE, "Out of range value") // 追加
@@ -59,3 +59,4 @@ ESTR(ERR_WHILEWOW, "WHILE without WEND")
 ESTR(ERR_STACKOF, "System stack overflow")
 ESTR(ERR_FILE_SEEK, "File seek error")
 ESTR(ERR_TSF, "Failed to init synth")
+ESTR(ERR_UNK, "Unknown command")
