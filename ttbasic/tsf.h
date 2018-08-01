@@ -225,7 +225,7 @@ typedef char tsf_char20[20];
 #define TSF_FourCCEquals(value1, value2) (value1[0] == value2[0] && value1[1] == value2[1] && value1[2] == value2[2] && value1[3] == value2[3])
 
 // Samples cache, number and sample count
-#define TSF_BUFFS 7
+#define TSF_BUFFS 14
 #define TSF_BUFFSIZE 512
 
 struct tsf
@@ -249,7 +249,7 @@ struct tsf
 	struct tsf_hydra *hydra;
 
 	// Cached sample read 
-	short *buffer[TSF_BUFFS];
+	char *buffer[TSF_BUFFS];
 	int offset[TSF_BUFFS];
 	int timestamp[TSF_BUFFS];
 	int epoch;
@@ -1105,16 +1105,16 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 			}
 			hits++;
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
-			return pgm_read_word(&f->buffer[i][pos - f->offset[i]]);
+			return ((char)pgm_read_byte(&f->buffer[i][pos - f->offset[i]])) * 256;
 #elif defined(ESP32)
-                        // pgm_read_word() does not work as expected on ESP32 because
-                        // flash is byte-addressable.
-                        int idx = pos - f->offset[i];
-                        int shift = (idx & 1) ? 16 : 0;
-                        uint32_t *s = (uint32_t *)f->buffer[i];
-                        return (s[idx / 2] >> shift) & 0xffff;
+			// pgm_read_word() does not work as expected on ESP32 because
+			// flash is byte-addressable.
+			int idx = pos - f->offset[i];
+			int shift = (idx & 3) * 8;
+			uint32_t *s = (uint32_t *)f->buffer[i];
+			return ((char)((s[idx / 4] >> shift) & 0xff)) * 256;
 #else
-			return f->buffer[i][pos - f->offset[i]];
+			return f->buffer[i][pos - f->offset[i]] * 256;
 #endif
 		}
 	}
@@ -1125,44 +1125,39 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 	int readOff = pos - (pos % TSF_BUFFSIZE);
 // for (int i=0; i<TSF_BUFFSIZE; i++) { f->buffer[repl][i] = i; }
 	f->hydra->stream->seek(f->hydra->stream->data, readOff * sizeof(short));
-#if (defined(ESP8266_NOWIFI) || defined(ESP32)) && !defined(HOSTED)
 	short tmpbuf[TSF_BUFFSIZE];	// XXX: daring, considering we have a small stack...
 	f->hydra->stream->read(f->hydra->stream->data, tmpbuf, TSF_BUFFSIZE * sizeof(short));
-#ifdef ESP32
-        if (!f->buffer[repl]) {
-          f->buffer[repl] = (short *)heap_caps_malloc(TSF_BUFFSIZE * sizeof(short), MALLOC_CAP_32BIT);
-          if (!f->buffer[repl]) {
-                  f->out_of_memory = true;
-                  f->playing = false;
-                  return 0;
-          }
-        }
-#endif
-	uint32_t *to = (uint32_t *)f->buffer[repl];
-	uint32_t *from = (uint32_t *)tmpbuf;
-	for (uint32_t i = 0; i < TSF_BUFFSIZE * sizeof(short) / sizeof(uint32_t); ++i)
-		*to++ = *from++;
-#else
+#if !defined(ESP8266_NOWIFI) || defined(HOSTED)
 	if (!f->buffer[repl]) {
-		f->buffer[repl] = (short *)TSF_MALLOC(TSF_BUFFSIZE * sizeof(short));
-		if (!f->buffer[repl]) {
-			f->out_of_memory = true;
-			f->playing = false;
-			return 0;
-		}
-	}
-	f->hydra->stream->read(f->hydra->stream->data, f->buffer[repl], TSF_BUFFSIZE * sizeof(short));
+#ifdef ESP32
+	  f->buffer[repl] = (char *)heap_caps_malloc(TSF_BUFFSIZE * sizeof(char), MALLOC_CAP_32BIT);
+#else
+	  f->buffer[repl] = (char *)TSF_MALLOC(TSF_BUFFSIZE * sizeof(char));
 #endif
-//static uint32_t *bp = NULL; if (!bp) bp = (uint32_t*)malloc(512);
-//printf("off=%08x, buff=%p, len=%08x\n", readOff * sizeof(short), bp, TSF_BUFFSIZE); spi_flash_read(0x0000, bp, 512/4-4) ;
+	  if (!f->buffer[repl]) {
+		  f->out_of_memory = true;
+		  f->playing = false;
+		  return 0;
+	  }
+	}
+#endif
+	// ESP* use memory that allows 32-bit accesses only, so we always
+	// have to write four samples at a time.
+	uint32_t *to = (uint32_t *)f->buffer[repl];
+	short *from = tmpbuf;
+	for (int i = 0; i < TSF_BUFFSIZE; i += 4, from += 4) {
+		uint32_t val =
+		  ((uint8_t)(from[0] / 256)) <<  0 |
+		  ((uint8_t)(from[1] / 256)) <<  8 |
+		  ((uint8_t)(from[2] / 256)) << 16 |
+		  ((uint8_t)(from[3] / 256)) << 24;
+		*to++ = val;
+	}
+
 	f->timestamp[repl] = f->epoch++;
 	f->offset[repl] = readOff;
 	misses++;
-#if (defined(ESP8266_NOWIFI) || defined(ESP32)) && !defined(HOSTED)
-	return tmpbuf[pos - readOff];
-#else
-	return f->buffer[repl][pos - readOff];
-#endif
+	return pgm_read_byte(&f->buffer[repl][pos - readOff]) * 256;
 }
 
 static void tsf_voice_render(tsf* f, struct tsf_voice* v, float* outputBuffer, int numSamples)
@@ -1526,8 +1521,8 @@ TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 		for (int i=0; i<TSF_BUFFS; i++) {
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 			// Use unused IRAM
-			// XXX: Check if there is enough space!
-			res->buffer[i] = (short *)(0x40108000 - (i+1) * TSF_BUFFSIZE * sizeof(short));
+			// check for collision with code in check8266iram.sh
+			res->buffer[i] = (char *)(0x40108000 - (i+1) * TSF_BUFFSIZE * sizeof(char));
 #else
 			res->buffer[i] = NULL;	// allocated as used
 #endif
