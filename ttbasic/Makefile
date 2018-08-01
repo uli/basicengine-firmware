@@ -21,6 +21,7 @@ elf:	funtbl.h kwtbl.h epigrams.h version.h
 		-libraries ../libraries \
 		-warnings all \
 		-build-path $(BUILD_PATH) -compile ttbasic.ino
+	scripts/check8266iram.sh $(BUILD_PATH)/ttbasic.ino.elf
 
 elf_net:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
