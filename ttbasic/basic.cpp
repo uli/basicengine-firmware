@@ -6055,7 +6055,7 @@ overflow:
 }
 
 void iproc() {
-  err = ERR_ULN;	// XXX: come up with something better
+  err = ERR_PROCWOC;
 }
 
 /***bc bas RETURN
