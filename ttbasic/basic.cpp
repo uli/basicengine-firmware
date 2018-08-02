@@ -97,7 +97,7 @@ void BASIC_INT screen_putch(uint8_t c, bool lazy) {
   static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;
 
-  if (kb.state(PS2KEY_L_Shift)) {
+  if (kb.state(PS2KEY_L_Alt)) {
     sc0.peekKey();
     delay(3);
   }
