@@ -29,15 +29,15 @@ volatile uint32_t * const DR_REG_SLC_BASEL = (volatile uint32_t*)0x60000B00;
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 extern char print_mem_buf[];
 struct sdio_queue i2sBufDesc[2] = {
-	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)print_mem_buf, .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
-	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)(print_mem_buf+I2S_BUFLEN*4), .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t *)print_mem_buf, .next_link_ptr = &i2sBufDesc[1] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t *)(print_mem_buf+I2S_BUFLEN*4), .next_link_ptr = &i2sBufDesc[0] },
 };
 #else
 unsigned int i2sData[2][I2S_BUFLEN];
 #ifndef HOSTED
 struct sdio_queue i2sBufDesc[2] = {
-	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[0], .next_link_ptr = (uint32_t)&i2sBufDesc[1] },
-	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = (uint32_t)i2sData[1], .next_link_ptr = (uint32_t)&i2sBufDesc[0] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = i2sData[0], .next_link_ptr = &i2sBufDesc[1] },
+	{ .owner = 1, .eof = 1, .sub_sof = 0, .datalen = I2S_BUFLEN*4,  .blocksize = I2S_BUFLEN*4, .buf_ptr = i2sData[1], .next_link_ptr = &i2sBufDesc[0] },
 };
 #endif
 #endif

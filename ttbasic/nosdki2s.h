@@ -176,8 +176,8 @@ struct sdio_queue
 	uint32 	eof:1;
 	uint32	owner:1;
 
-	uint32	buf_ptr;
-	uint32	next_link_ptr;
+	uint32	*buf_ptr;
+	struct sdio_queue	*next_link_ptr;
 };
 
 struct sdio_slave_status_element

@@ -33,7 +33,7 @@ public:
   }
   
   void setSampleAt(int buf, int idx, uint8_t sample) {
-    ((uint32_t *)i2sBufDesc[buf].buf_ptr)[idx] =
+    i2sBufDesc[buf].buf_ptr[idx] =
       pgm_read_dword(&fakePwm[sample >> 3]);
   }
 
