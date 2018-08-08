@@ -238,7 +238,6 @@ uint8_t tTVscreen::edit() {
           return enter_text() + 1;
 
       case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
-      case KEY_F(1):       // F1
         cls();
         locate(0,0);
         Serial_Ctrl(SC_KEY_CTRL_L);
@@ -265,7 +264,6 @@ uint8_t tTVscreen::edit() {
         break;
 
       case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
-      case KEY_F(5):       // F5
         refresh();  break;
 
       case KEY_END:       // [ENDキー] 行の右端移動
@@ -310,12 +308,10 @@ uint8_t tTVscreen::edit() {
         break;
 
       case SC_KEY_CTRL_N:  // 行挿入 
-      case KEY_F(3):       // F3
         Insert_newLine(pos_y);       
         break;
 
       case SC_KEY_CTRL_D:  // 行削除
-      case KEY_F(2):       // F2
         clerLine(pos_y);
         break;
 
