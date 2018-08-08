@@ -16,7 +16,7 @@
 class BGEngine : public Video {
 #ifdef USE_BG_ENGINE
 public:
-  virtual void reset();
+  void reset() override;
 
   inline uint8_t bgWidth(uint8_t bg) {
     return m_bg[bg].w;

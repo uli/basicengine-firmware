@@ -21,7 +21,7 @@ struct video_mode_t {
 
 class Video {
 public:
-  void reset();
+  virtual void reset();
 
   inline void setLineAdjust(int8_t line_adjust) {
     m_line_adjust = line_adjust;
