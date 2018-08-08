@@ -479,10 +479,11 @@ num_t BASIC_FP nrgb() {
 
 /***bc scr COLOR
 Changes the foreground and background color for text output.
-\usage COLOR fg_color[, bg_color]
+\usage COLOR fg_color[, bg_color [, cursor_color]]
 \args
 @fg_color	foreground color [`0` to `255`]
 @bg_color	background color [`0` to `255`, default: `0`]
+@cursor_color	cursor color [`0` to `255`]
 \ref RGB()
 ***/
 void icolor() {
