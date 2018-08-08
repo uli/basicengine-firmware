@@ -297,6 +297,10 @@ uint16_t cnv2tty(keyEvent k) {
   if (!k.code || k.BREAK)
       return 0;
 
+  if (k.KEY && k.code >= PS2KEY_F1 && k.code <= PS2KEY_F12) {
+    return KEY_F(k.code - PS2KEY_F1 + 1);
+  }
+
   // CTRLとの併用
   if (k.CTRL) {
     //Serial.println(k.code,DEC);
