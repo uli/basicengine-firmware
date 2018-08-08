@@ -223,7 +223,11 @@ uint8_t tTVscreen::edit() {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
     k = ps2last();
-    if (k.ALT) {
+    if (k.CTRL && ch >= KEY_F(1) && ch <= KEY_F(12)) {
+      int hue = 15 + ch - KEY_F(1) + (k.ALT ? 12 : 0);
+      int col = ((hue & 0xf) << 4) | (k.SHIFT ? 10 : 13);
+      setColor(col, sc0.getBgColor());
+    } else if (k.ALT) {
       if (ch >= 'A' && ch <= '_')
         Insert_char(ch - 64);
       else if (ch >= '`' && ch <= '~')
