@@ -430,4 +430,6 @@ extern const uint8_t *fonts[NUM_FONTS];
 
 void BASIC_FP pump_events(void);
 
+void basic_init_io();
+
 #endif
