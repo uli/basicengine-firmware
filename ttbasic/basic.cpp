@@ -43,19 +43,6 @@ struct unaligned_num_t {
 
 // TOYOSHIKI TinyBASIC プログラム利用域に関する定義
 
-// *** フォント参照 ***************
-const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
-
-const uint8_t *fonts[NUM_FONTS] = {
-  console_font_6x8,
-  console_font_8x8,
-  cbm_ascii_font_8x8,
-  font6x8tt,
-};
-
-#include "tTVscreen.h"
-tTVscreen   sc0; 
-
 // *** SDカード管理 ****************
 sdfiles bfs;
 
@@ -68,8 +55,6 @@ void mem_putch(uint8_t c);
 unsigned char* BASIC_FP iexe(int stk = -1);
 num_t BASIC_FP iexp(void);
 void error(uint8_t flgCmd);
-#include <TKeyboard.h>
-extern TKeyboard kb;
 
 // 1桁16進数文字を整数に変換する
 uint16_t BASIC_INT hex2value(char c) {
@@ -80,113 +65,6 @@ uint16_t BASIC_INT hex2value(char c) {
   else if (c <= 'F' && c >= 'A')
     return c - 'A' + 10;
   return 0;
-}
-
-bool screen_putch_disable_escape_codes = false;
-
-void BASIC_INT screen_putch(uint8_t c, bool lazy) {
-  static bool escape = false;
-  static uint8_t hex_digit = 0, hex_value, hex_type;
-  static bool reverse = false;
-
-  if (kb.state(PS2KEY_L_Alt)) {
-    sc0.peekKey();
-    delay(3);
-  }
-
-  if (screen_putch_disable_escape_codes) {
-    sc0.putch(c, lazy);
-    return;
-  }
-
-  if (c == '\\') {
-    if (!escape) {
-      escape = true;
-      return;
-    }
-    sc0.putch('\\');
-  } else {
-    if (hex_digit > 0) {
-      if (hex_digit == 1) {
-        hex_value = hex2value(c);
-        hex_digit++;
-      } else {
-        hex_value = (hex_value << 4) | hex2value(c);
-        if (hex_type == 0)
-          sc0.setColor(sc0.getFgColor(), hex_value);
-        else if (hex_type == 1)
-          sc0.setColor(hex_value, sc0.getBgColor());
-        else
-          sc0.putch(hex_value, lazy);
-
-        hex_digit = 0;
-      }
-    } else if (escape) {
-      switch (c) {
-      case 'R':
-        if (!reverse) {
-          reverse = true;
-          sc0.flipColors();
-        }
-        break;
-      case 'N':
-        if (reverse) { 
-          reverse = false;
-          sc0.flipColors();
-        }
-        break;
-      case 'l':
-        if (sc0.c_x())
-          sc0.locate(sc0.c_x() - 1, sc0.c_y());
-        else if (sc0.c_y() > 0)
-          sc0.locate(sc0.getWidth() - 1, sc0.c_y() - 1);
-        break;
-      case 'r':
-        if (sc0.c_x() < sc0.getWidth() - 1)
-          sc0.locate(sc0.c_x() + 1, sc0.c_y());
-        else if (sc0.c_y() < sc0.getHeight() - 1)
-          sc0.locate(0, sc0.c_y() + 1);
-        break;
-      case 'u':
-        if (sc0.c_y() > 0)
-          sc0.locate(sc0.c_x(), sc0.c_y() - 1);
-        break;
-      case 'd':
-        if (sc0.c_y() < sc0.getHeight() - 1)
-          sc0.locate(sc0.c_x(), sc0.c_y() + 1);
-        break;
-      case 'c':	sc0.cls();	// fallthrough
-      case 'h': sc0.locate(0, 0); break;
-      case 'f':
-        hex_digit = 1;
-        hex_type = 1;
-        break;
-      case 'b':
-        hex_digit = 1;
-        hex_type = 0;
-        break;
-      case 'x':
-        hex_digit = 1;
-        hex_type = 2;
-        break;
-      default:	break;
-      }
-    } else {
-      switch (c) {
-      case '\n':newline(); break;
-      case '\r':sc0.locate(0, sc0.c_y()); break;
-      case '\b':
-        if (sc0.c_x() > 0) {
-          sc0.locate(sc0.c_x() - 1);
-          sc0.putch(' ');
-          sc0.locate(sc0.c_x() - 1);
-        }
-        break;
-      default:	sc0.putch(c, lazy); break;
-      }
-    }
-  }
-  escape = false;
 }
 
 int redirect_output_file = -1;

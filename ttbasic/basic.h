@@ -39,6 +39,7 @@ void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno=0);
 void c_puts_P(const char *s, uint8_t devno=0);
 void screen_putch(uint8_t c, bool lazy = false);
+extern bool screen_putch_disable_escape_codes;
 
 #define PRINT_P(msg) c_puts_P(PSTR((msg)))
 
@@ -47,6 +48,7 @@ void screen_putch(uint8_t c, bool lazy = false);
 void putnum(num_t value, int8_t d, uint8_t devno=0);
 void putint(int value, int8_t d, uint8_t devno=0);
 void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0);
+uint16_t BASIC_INT hex2value(char c);
 
 void newline(uint8_t devno=0);
 
@@ -363,6 +365,8 @@ static inline uint16_t c_getch() {
 
 #define c_kbhit( ) sc0.isKeyIn()
 
+#include <TKeyboard.h>
+extern TKeyboard kb;
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false);
 
 void c_puts(const char *s, uint8_t devno);
