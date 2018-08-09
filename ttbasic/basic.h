@@ -333,6 +333,8 @@ void* BASIC_INT sanitize_addr(uint32_t vadr, int type);
 
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size( void );
+#else
+extern int try_malloc();
 #endif
 
 #define MAX_USER_FILES 16
