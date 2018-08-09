@@ -261,25 +261,6 @@ inline void mem_putch(uint8_t c) {
   }
 }
 
-void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
-  // Unmapped memory, causes exception
-  if (vadr < 0x20000000UL) {
-    E_ERR(VALUE, "unmapped address");
-    return NULL;
-  }
-  // IRAM, flash: 32-bit only
-  if ((vadr >= 0x40100000UL && vadr < 0x40300000UL) && type != 2) {
-    E_ERR(VALUE, "non-32-bit access");
-    return NULL;
-  }
-  if ((type == 1 && (vadr & 1)) ||
-      (type == 2 && (vadr & 3))) {
-    E_ERR(VALUE, "misaligned address");
-    return NULL;
-  }
-  return (void *)vadr;
-}
-
 // Standard C library (about) same functions
 // XXX: We pull in ctype anyway, can do away with these.
 char c_isprint(char c) {
