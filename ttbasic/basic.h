@@ -410,6 +410,8 @@ typedef struct {
 } SystemConfig;
 extern SystemConfig CONFIG;
 
+void loadConfig();
+
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
 void BASIC_INT event_handle_play(int ch);
@@ -442,5 +444,7 @@ void BASIC_FP pump_events(void);
 
 void basic_init_io();
 void basic_init_input();
+void basic_init_file_early();
+void basic_init_file_late();
 
 #endif

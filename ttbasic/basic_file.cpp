@@ -2,6 +2,48 @@
 
 Unifile *user_files[MAX_USER_FILES];
 
+void SMALL basic_init_file_early() {
+  // try to mount SPIFFS, ignore failure (do not format)
+#ifdef UNIFILE_USE_OLD_SPIFFS
+#ifdef ESP8266_NOWIFI
+  SPIFFS.begin(false);
+#else
+  SPIFFS.begin();
+#endif
+#elif defined(UNIFILE_USE_FASTROMFS)
+  fs.mount();
+#elif defined(UNIFILE_USE_NEW_SPIFFS)
+  SPIFFS.begin();
+#endif
+  loadConfig();
+
+  // Initialize SD card file system
+#ifdef ESP32
+  bfs.init(5);
+#else
+  bfs.init(16);		// CS on GPIO16
+#endif
+
+  if (!Unifile::chDir(SD_PREFIX))
+    Unifile::chDir(FLASH_PREFIX);
+  else
+    bfs.fakeTime();
+}
+
+void SMALL basic_init_file_late() {
+  // Initialize file systems, format SPIFFS if necessary
+#ifdef UNIFILE_USE_OLD_SPIFFS
+  SPIFFS.begin();
+#elif defined(UNIFILE_USE_NEW_SPIFFS)
+  SPIFFS.begin(true);
+#elif defined(UNIFILE_USE_FASTROMFS)
+  if (!fs.mount()) {
+    fs.mkfs();
+    fs.mount();
+  }
+#endif
+}
+
 int BASIC_INT get_filenum_param() {
   int32_t f = getparam();
   if (f < 0 || f >= MAX_USER_FILES) {

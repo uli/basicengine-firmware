@@ -49,7 +49,6 @@ sdfiles bfs;
 SystemConfig CONFIG;
 
 // プロトタイプ宣言
-void loadConfig();
 void isaveconfig();
 void mem_putch(uint8_t c);
 unsigned char* BASIC_FP iexe(int stk = -1);
@@ -5770,31 +5769,7 @@ void SMALL basic() {
 
   bc = new basic_ctx_t;
 
-  // try to mount SPIFFS, ignore failure (do not format)
-#ifdef UNIFILE_USE_OLD_SPIFFS
-#ifdef ESP8266_NOWIFI
-  SPIFFS.begin(false);
-#else
-  SPIFFS.begin();
-#endif
-#elif defined(UNIFILE_USE_FASTROMFS)
-  fs.mount();
-#elif defined(UNIFILE_USE_NEW_SPIFFS)
-  SPIFFS.begin();
-#endif
-  loadConfig();
-
-  // Initialize SD card file system
-#ifdef ESP32
-  bfs.init(5);
-#else
-  bfs.init(16);		// CS on GPIO16
-#endif
-
-  if (!Unifile::chDir(SD_PREFIX))
-    Unifile::chDir(FLASH_PREFIX);
-  else
-    bfs.fakeTime();
+  basic_init_file_early();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
   vs23.setLineAdjust(CONFIG.line_adjust);
@@ -5846,17 +5821,7 @@ void SMALL basic() {
   sc0.locate(sc0.getWidth() - strlen_P(__v), 8);
   c_puts_P(__v);
 
-  // Initialize file systems, format SPIFFS if necessary
-#ifdef UNIFILE_USE_OLD_SPIFFS
-  SPIFFS.begin();
-#elif defined(UNIFILE_USE_NEW_SPIFFS)
-  SPIFFS.begin(true);
-#elif defined(UNIFILE_USE_FASTROMFS)
-  if (!fs.mount()) {
-    fs.mkfs();
-    fs.mount();
-  }
-#endif
+  basic_init_file_late();
   // Free memory
   sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
