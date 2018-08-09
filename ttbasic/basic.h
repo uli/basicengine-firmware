@@ -411,6 +411,7 @@ typedef struct {
 extern SystemConfig CONFIG;
 
 void loadConfig();
+void iloadconfig();
 
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
