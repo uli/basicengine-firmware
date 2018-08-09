@@ -1,7 +1,7 @@
 INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
 	-Ilibraries/ESP8266SAM/src -Ilibraries/azip
 CFLAGS=-DARDUINO -DESP8266 -DESP8266_NOWIFI -DHOSTED -DF_CPU=160000000 \
-	-O2 -g -Ihosted -Ittbasic $(INCLUDE)
+	-O2 -g -Ihosted -Ittbasic $(INCLUDE) -Wall -Wno-unused
 CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage
 CXXFLAGS = $(CFLAGS) -fpermissive -std=c++11
