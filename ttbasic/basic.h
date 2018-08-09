@@ -416,6 +416,10 @@ void BASIC_INT event_handle_play(int ch);
 extern bool event_play_enabled;
 extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
+#define MAX_PADS 3
+extern bool event_pad_enabled;
+extern uint8_t event_pad_proc_idx[MAX_PADS];
+extern int event_pad_last[MAX_PADS];
 void event_handle_pad();
 
 void event_handle_sprite();
@@ -437,5 +441,6 @@ extern const uint8_t *fonts[NUM_FONTS];
 void BASIC_FP pump_events(void);
 
 void basic_init_io();
+void basic_init_input();
 
 #endif
