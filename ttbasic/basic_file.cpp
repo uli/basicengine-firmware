@@ -392,6 +392,55 @@ void iseek() {
     err = ERR_FILE_SEEK;
 }
 
+/***bc fs FILES
+Displays the contents of the current or a specified directory.
+\usage FILES [filespec$]
+\args
+@filespec$	a filename or path, may include wildcard characters +
+                [default: all files in the current directory]
+\ref CHDIR CWD$()
+***/
+void ifiles() {
+  BString fname;
+  char wildcard[SD_PATH_LEN];
+  char* wcard = NULL;
+  char* ptr = NULL;
+  uint8_t flgwildcard = 0;
+  int16_t rc;
+
+  if (!is_strexp())
+    fname = "";
+  else
+    fname = getParamFname();
+
+  if (fname.length() > 0) {
+    for (int8_t i = fname.length()-1; i >= 0; i--) {
+      if (fname[i] == '/') {
+        ptr = &fname[i];
+        break;
+      }
+      if (fname[i] == '*' || fname[i] == '?' || fname[i] == '.')
+        flgwildcard = 1;
+    }
+    if (ptr != NULL && flgwildcard == 1) {
+      strcpy(wildcard, ptr+1);
+      wcard = wildcard;
+      *(ptr+1) = 0;
+    } else if (ptr == NULL && flgwildcard == 1) {
+      strcpy(wildcard, fname.c_str());
+      wcard = wildcard;
+      fname = "";
+    }
+  }
+
+  rc = bfs.flist((char *)fname.c_str(), wcard, sc0.getWidth()/14);
+  if (rc == SD_ERR_INIT) {
+    err = ERR_SD_NOT_READY;
+  } else if (rc == SD_ERR_OPEN_FILE) {
+    err = ERR_FILE_OPEN;
+  }
+}
+
 /***bc fs MKDIR
 Creates a directory.
 \usage MKDIR directory$
