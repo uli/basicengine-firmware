@@ -153,7 +153,7 @@ public:
   void clear(unsigned int index)
   {
     node *tmp = start;
-    for(int i=0;i<=index&&tmp!=NULL;i++)
+    for(unsigned int i=0;i<=index&&tmp!=NULL;i++)
     {
       if(i==index)
       {
@@ -179,7 +179,7 @@ public:
   T get(unsigned int index)
   {
     node *tmp = start;
-    for(int i=0;i<=index&&tmp!=NULL;i++)
+    for(unsigned int i=0;i<=index&&tmp!=NULL;i++)
     {
       if(i==index)
         return tmp->item;
@@ -192,7 +192,7 @@ public:
   T& at(unsigned int index)
   {
     node *tmp = start;
-    for(int i=0;i<=index&&tmp!=NULL;i++)
+    for(unsigned int i=0;i<=index&&tmp!=NULL;i++)
     {
       if(i==index)
         return tmp->item;
@@ -222,7 +222,7 @@ public:
   T& operator[](unsigned int index)
   {
     node *tmp = start;
-    for(int i=0;i<=index&&tmp!=NULL;i++)
+    for(unsigned int i=0;i<=index&&tmp!=NULL;i++)
     {
       if(i==index)
         return tmp->item;
@@ -237,7 +237,7 @@ public:
   const T& operator[](unsigned int index) const
   {
     node *tmp = start;
-    for(int i=0;i<=index&&tmp!=NULL;i++)
+    for(unsigned int i=0;i<=index&&tmp!=NULL;i++)
     {
       if(i==index)
         return tmp->item;
