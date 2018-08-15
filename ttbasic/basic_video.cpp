@@ -748,23 +748,15 @@ Colors are lost when scrolling.
 \ref BLIT GSCROLL CSIZE()
 ***/
 void  icscroll() {
-#if USE_NTSC == 1
   int32_t x1,y1,x2,y2,d;
-  if (scmode) {
-    if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
-      return;
-    if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getWidth() || y2 >= sc0.getHeight())  {
-      err = ERR_VALUE;
-      return;
-    }
-    if (d < 0 || d > 3) d = 0;
-    sc0.cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
-  } else {
-    err = ERR_NOT_SUPPORTED;
+  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
+    return;
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getWidth() || y2 >= sc0.getHeight())  {
+    err = ERR_VALUE;
+    return;
   }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  if (d < 0 || d > 3) d = 0;
+  sc0.cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
 }
 
 /***bc pix GSCROLL
@@ -836,19 +828,11 @@ off-screen pixel memory.
 \ref PRINT
 ***/
 void igprint() {
-#if USE_NTSC == 1
   int32_t x,y;
-  if (scmode) {
-    if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA) ) return;
-    if ( getParam(y, 0, vs23.lastLine()-1, I_COMMA) ) return;
-    sc0.set_gcursor(x,y);
-    iprint(2);
-  } else {
-    err = ERR_NOT_SUPPORTED;
-  }
-#else
-  err = ERR_NOT_SUPPORTED;
-#endif
+  if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA) ) return;
+  if ( getParam(y, 0, vs23.lastLine()-1, I_COMMA) ) return;
+  sc0.set_gcursor(x,y);
+  iprint(2);
 }
 
 /***bc pix PSET
