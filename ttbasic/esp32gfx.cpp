@@ -211,11 +211,11 @@ next:
 
     for (int y = 0; y != s->p.h; ++y) {
       int yy = y + s->pos_y;
-      if (yy < 0 || yy > height())
+      if (yy < 0 || yy >= height())
         continue;
       for (int x = 0; x != s->p.w; ++x) {
         int xx = x + s->pos_x;
-        if (xx < 0 || xx > width())
+        if (xx < 0 || xx >= width())
           continue;
         uint8_t p = m_pixels[py+y*dy][px+x*dx];
         // draw only non-keyed pixels
