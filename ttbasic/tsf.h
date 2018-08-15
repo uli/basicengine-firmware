@@ -1107,7 +1107,7 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
 			return ((char)pgm_read_byte(&f->buffer[i][pos - f->offset[i]])) * 256;
 #elif defined(ESP32)
-			// pgm_read_word() does not work as expected on ESP32 because
+			// pgm_read_byte() does not work as expected on ESP32 because
 			// flash is byte-addressable.
 			int idx = pos - f->offset[i];
 			int shift = (idx & 3) * 8;
@@ -1157,7 +1157,7 @@ short GROUP(basic_sound) tsf_read_short_cached(tsf *f, int pos)
 	f->timestamp[repl] = f->epoch++;
 	f->offset[repl] = readOff;
 	misses++;
-	return pgm_read_byte(&f->buffer[repl][pos - readOff]) * 256;
+	return tmpbuf[pos - readOff];
 }
 
 static void tsf_voice_render(tsf* f, struct tsf_voice* v, float* outputBuffer, int numSamples)
