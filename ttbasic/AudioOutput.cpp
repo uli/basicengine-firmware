@@ -30,7 +30,7 @@ void IRAM_ATTR AudioOutput::timerInterrupt(AudioOutput *audioOutput)
       tick = !tick;
       if (tick) {
 //      WRITE_PERI_REG(I2S_CONF_SIGLE_DATA_REG(0), audioOutput->audioSystem->nextSample() << 24);
-        WRITE_PERI_REG(I2S_CONF_SIGLE_DATA_REG(0), m_sound_buf[m_read_buf][m_read_pos++]);
+        WRITE_PERI_REG(I2S_CONF_SIGLE_DATA_REG(0), m_sound_buf[m_read_buf][m_read_pos++] << 24);
         if (m_read_pos >= m_block_size) {
           m_curr_buf = m_sound_buf[m_read_buf];
           m_curr_buf_pos = 0;
