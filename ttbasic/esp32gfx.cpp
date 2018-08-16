@@ -235,8 +235,8 @@ uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_
 {
   uint8_t dir = 0x40;	// indicates collision
 
-  sprite_t *us = &m_sprite[collidee];
-  sprite_t *them = &m_sprite[collider];
+  const sprite_t *us = &m_sprite[collidee];
+  const sprite_t *them = &m_sprite[collider];
   
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
@@ -248,12 +248,15 @@ uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_
     return 0;
   
   // sprite frame as bounding box; we may want something more flexible...
-  if (them->pos_x < us->pos_x)
+  const sprite_t *left = us, *right = them;
+  if (them->pos_x < us->pos_x) {
     dir |= psxLeft;
-  else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
+    left = them;
+    right = us;
+  } else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
     dir |= psxRight;
 
-  sprite_t *upper = us, *lower = them;
+  const sprite_t *upper = us, *lower = them;
   if (them->pos_y < us->pos_y) {
     dir |= psxUp;
     upper = them;
@@ -261,52 +264,33 @@ uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_
   } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
     dir |= psxDown;
 
-#if 0
   // Check for pixels in overlapping area.
-  bool really = false;
-  for (int y = lower->pos_y - upper->pos_y; y < upper->p.h; ++y) {
-    // Check if both sprites have any pixels in the lines they overlap in.
-    int lower_py = y - lower->pos_y + upper->pos_y;
-    int upper_len, upper_off, lower_len, lower_off;
-    if (upper->pat) {
-      sprite_line *upper_line = &upper->pat->lines[y];
-      upper_len = upper_line->len;
-      upper_off = upper_line->off;
-    } else {
-      upper_len = upper->p.w;
-      upper_off = 0;
-    }
-    if (lower->pat) {      
-      sprite_line *lower_line = &lower->pat->lines[lower_py];
-      lower_len = lower_line->len;
-      lower_off = lower_line->off;
-    } else {
-      lower_len = lower->p.w;
-      lower_off = 0;
-    }
-    if (upper_len && lower_len) {
-      int dist_x = abs(upper->pos_x - lower->pos_x);
-      int left_len, left_off, right_off;
-      if (upper->pos_x < lower->pos_x) {
-        left_len = upper_len;
-        left_off = upper_off;
-        right_off = lower_off;
-      } else {
-        left_len = lower_len;
-        left_off = lower_off;
-        right_off = upper_off;
-      }
-      if (left_off + left_len >= right_off + dist_x) {
-        really = true;
-        break;
-      }
+  const int leftpatx = left->p.pat_x + left->p.frame_x * left->p.w;
+  const int leftpaty = left->p.pat_y + left->p.frame_y * left->p.h;
+  const int rightpatx = right->p.pat_x + right->p.frame_x * right->p.w;
+  const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
+
+  for (int y = lower->pos_y;
+       y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);
+       y++) {
+    int leftpy = leftpaty + y - left->pos_y;
+    int rightpy = rightpaty + y - right->pos_y;
+
+    for (int x = right->pos_x;
+         x < _min(right->pos_x + right->p.w, left->pos_x + left->p.w);
+         x++) {
+      int leftpx = leftpatx + x - left->pos_x;
+      int rightpx = rightpatx + x - right->pos_x;
+      int leftpixel = m_pixels[leftpy][leftpx];
+      int rightpixel = m_pixels[rightpy][rightpx];
+
+      if (leftpixel != left->p.key && rightpixel != right->p.key)
+        return dir;
     }
   }
-  if (!really)
-    return 0;
-#endif
-
-  return dir;
+  
+  // no overlapping pixels
+  return 0;
 }
 #endif	// USE_BG_ENGINE
 
