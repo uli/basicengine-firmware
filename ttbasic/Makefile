@@ -1,7 +1,13 @@
-ARDUINO_DIR = /home/uli/devel/esp8266/arduino-1.8.3
-ARDUINO_ESP32_DIR = ~/devel/esp32/arduino-1.8.5
+# Change these paths to match your system:
 
+# Path to Arduino installation used for ESP8266
+ARDUINO_DIR = ~/devel/esp8266/arduino-1.8.3
+# Path to Arduino installation used for ESP32
+ARDUINO_ESP32_DIR = ~/devel/esp32/arduino-1.8.5
+# Path to Arduino ESP32 core
 ARDUINO_CORE_ESP32_DIR = ~/devel/esp32/arduino-esp32
+
+# No changes required below this point.
 
 ESPTOOL = $(ARDUINO_DIR)/hardware/esp8266com/esp8266_nowifi/tools/esptool/esptool
 ESPTOOL_ESP32 = $(ARDUINO_ESP32_DIR)/hardware/espressif/esp32/tools/esptool.py
