@@ -202,7 +202,7 @@ void VS23S010::calibrateVsync()
   for (;;) {
     now2 = ESP.getCycleCount();
     cycles = now2 - now;
-    if (abs(m_cycles_per_frame - cycles) < 80000)
+    if (abs((int)m_cycles_per_frame - (int)cycles) < 80000)
       break;
     m_cycles_per_frame = cycles;
     now = now2;
