@@ -19,6 +19,7 @@ DEST_ADDR = 0x00000000
 all: elf doc
 
 elf:	funtbl.h kwtbl.h epigrams.h version.h
+	mkdir -p $(BUILD_PATH)
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder" \
@@ -30,6 +31,7 @@ elf:	funtbl.h kwtbl.h epigrams.h version.h
 	scripts/check8266iram.sh $(BUILD_PATH)/ttbasic.ino.elf
 
 elf_net:	funtbl.h kwtbl.h epigrams.h version.h
+	mkdir -p $(BUILD_PATH)_net
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder" \
@@ -40,6 +42,7 @@ elf_net:	funtbl.h kwtbl.h epigrams.h version.h
 		-build-path $(BUILD_PATH)_net -compile ttbasic.ino
 
 esp32:	funtbl.h kwtbl.h epigrams.h version.h
+	mkdir -p $(BUILD_PATH)_esp32
 	$(ARDUINO_ESP32_DIR)/arduino-builder \
 		-build-path $(BUILD_PATH)_esp32 \
 		-hardware ~/devel/esp32/arduino-1.8.5/hardware \
