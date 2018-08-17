@@ -1,7 +1,7 @@
 # Change these paths to match your system:
 
 # Path to Arduino installation used for ESP8266
-ARDUINO_DIR = ~/devel/esp8266/arduino-1.8.3
+ARDUINO_DIR = ../tools/esp8266/arduino-1.8.5
 # Path to Arduino installation used for ESP32
 ARDUINO_ESP32_DIR = ~/devel/esp32/arduino-1.8.5
 # Path to Arduino ESP32 core
