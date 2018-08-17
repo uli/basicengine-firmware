@@ -116,6 +116,11 @@ static inline long _random(long v) {
 #define random _random
 #define randomSeed srand
 
+#ifdef __cplusplus
+// workaround to avoid mix-ups with our min()/max() macros
+#include <memory>
+#endif
+
 #define _min(a,b) ((a)<(b)?(a):(b))
 #define _max(a,b) ((a)>(b)?(a):(b))
 #define min _min
