@@ -2,6 +2,8 @@
 
 using namespace sdfat;
 
+SdFat sdfat::SD;
+
 char full_path[1024];
 
 const char *apsd(const char *p) {
