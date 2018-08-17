@@ -3,9 +3,9 @@
 # Path to Arduino installation used for ESP8266
 ARDUINO_DIR = ../tools/esp8266/arduino-1.8.5
 # Path to Arduino installation used for ESP32
-ARDUINO_ESP32_DIR = ~/devel/esp32/arduino-1.8.5
+ARDUINO_ESP32_DIR = ../tools/esp32/arduino-1.8.5
 # Path to Arduino ESP32 core
-ARDUINO_CORE_ESP32_DIR = ~/devel/esp32/arduino-esp32
+ARDUINO_CORE_ESP32_DIR = ../tools/esp32/arduino-esp32
 
 # No changes required below this point.
 
@@ -45,7 +45,7 @@ esp32:	funtbl.h kwtbl.h epigrams.h version.h
 	mkdir -p $(BUILD_PATH)_esp32
 	$(ARDUINO_ESP32_DIR)/arduino-builder \
 		-build-path $(BUILD_PATH)_esp32 \
-		-hardware ~/devel/esp32/arduino-1.8.5/hardware \
+		-hardware $(ARDUINO_ESP32_DIR)/hardware \
 		-tools $(ARDUINO_CORE_ESP32_DIR)/tools \
 		-fqbn "espressif:esp32:esp32:FlashFreq=80,FlashMode=dio,PartitionScheme=no_ota" \
 		-libraries ../libraries \
