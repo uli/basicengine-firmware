@@ -23,3 +23,8 @@ downloads_esp32: downloads
 downloads_hosted:
 	bash ttbasic/scripts/installpackages.sh
 	bash ttbasic/scripts/installpackages_hosted.sh
+
+upload_native:
+	cd ttbasic ; $(MAKE) upload
+upload_esp32:
+	cd ttbasic ; $(MAKE) upload_esp32
