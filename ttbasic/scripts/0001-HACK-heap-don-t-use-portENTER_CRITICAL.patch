@@ -1,0 +1,42 @@
+From 4355d0e71c39e9d12adaa3ab4ebe7e6f39e72e32 Mon Sep 17 00:00:00 2001
+From: Ulrich Hecht <uli@basicengine.org>
+Date: Thu, 23 Aug 2018 17:07:39 +0200
+Subject: [PATCH] HACK: heap: don't use portENTER_CRITICAL()
+
+---
+ components/heap/multi_heap_platform.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/components/heap/multi_heap_platform.h b/components/heap/multi_heap_platform.h
+index 6c220cd..b050129 100644
+--- a/components/heap/multi_heap_platform.h
++++ b/components/heap/multi_heap_platform.h
+@@ -19,6 +19,7 @@
+ #include <rom/ets_sys.h>
+ #include <assert.h>
+ 
++#if 0
+ /* Because malloc/free can happen inside an ISR context,
+    we need to use portmux spinlocks here not RTOS mutexes */
+ #define MULTI_HEAP_LOCK(PLOCK) do {               \
+@@ -33,6 +34,17 @@
+             portEXIT_CRITICAL((portMUX_TYPE *)(PLOCK));     \
+         }                                                   \
+     } while(0)
++#else
++/* BASIC Engine Shuttle hack: Because using portENTER_CRITICAL() messes up the video
++   timing by disabling interrupts or whatever, we cannot use it lest we want to
++   have the display collapse every time memory is allocated. We instead use
++   vPortCPUAcquireMutex(), which does not mess with the interrupt state and
++   is hopefully safe enough for our use case. (I have yet to see any device drivers
++   using the heap allocator...)
++ */
++#define MULTI_HEAP_LOCK(PLOCK) do { if (PLOCK) vPortCPUAcquireMutex( PLOCK ); } while(0)
++#define MULTI_HEAP_UNLOCK(PLOCK) do { if (PLOCK) vPortCPUReleaseMutex( PLOCK ); } while(0)
++#endif
+ 
+ /* Not safe to use std i/o while in a portmux critical section,
+    can deadlock, so we use the ROM equivalent functions. */
+-- 
+2.7.4
+

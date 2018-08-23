@@ -14,6 +14,8 @@ if ! test -e downloaded1 ; then
     # esp-idf moves faster than Arduino, need to use a known-working version
     cd esp-idf
     git checkout be81d2c16d7f4caeea9ceb29fece01510664caf3
+    patch -p1 <../../../ttbasic/scripts/0001-HACK-heap-don-t-use-portENTER_CRITICAL.patch
+    patch -p1 <../../../ttbasic/scripts/0001-make-project.mk-no-Werror.patch
     cd ..
     touch downloaded1
 fi
