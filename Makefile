@@ -1,5 +1,21 @@
 all:
-	@echo 'run "make native", "make net" or "make hosted"'
+	@echo 'Run one of the following commands to compile the firmware:'
+	@echo
+	@echo -e '"make native"\tBASIC Engine (ESP8266) firmware'
+	@echo -e '"make net"\tBASIC Engine (ESP8266) firmware with network support'
+	@echo -e '"make esp32"\tBASIC Engine Shuttle (ESP32) firmware'
+	@echo -e '"make hosted"\tPC-hosted Engine BASIC build'
+	@echo
+	@echo 'To upload firmware, run "make upload_native" (ESP8266) or'
+	@echo '"make upload_esp32" (ESP32).'
+	@echo
+	@echo 'You can specify a serial port if necessary:'
+	@echo '"make upload_native SER=/dev/ttyUSB1"'
+	@echo
+	@echo 'The build system will try to automatically install required packages'
+	@echo 'and build suitable toolchains for each target. To this end, it will'
+	@echo 'download a considerable amount of data. Be sure not to run it on a'
+	@echo 'slow or metered connection the first time.'
 
 .PHONY: native net esp32 hosted downloads downloads_esp8266 downloads_esp32 downloads_hosted
 

@@ -25,3 +25,16 @@ Click on the thumbnails below to watch some demo videos:
 [![Tetris](http://img.youtube.com/vi/0ZsucdE6l2o/0.jpg)](http://www.youtube.com/watch?v=0ZsucdE6l2o "BASIC Engine Tetris Demo")
 
 Find out more at the [BASIC Engine web site](https://basicengine.org/).
+
+## Compiling
+
+Run `make` for instructions on how to compile the firmware for various targets.
+
+The build system will currently only work on x64 Debian-like systems. If you want to
+change them to work with your system, you will have to adapt these shell scripts in
+`ttbasic/scripts`:
+
+- `installpackages.sh`
+- `installpackages_hosted.sh`
+- `getesp8266.sh`
+- `getesp32.sh`
