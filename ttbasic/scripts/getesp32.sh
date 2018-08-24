@@ -15,8 +15,10 @@ if ! test -e downloaded1 ; then
 fi
 
 if ! test -e downloaded2 ; then
+    cd ..
     wget -c $ARDUINO_URL
-    tar xvf ${ARDUINO_URL##*/}
+    cd esp32
+    tar xvf ../${ARDUINO_URL##*/}
     # work around arduino-builder error
     sed -i 's,{runtime.tools.ctags.path},/usr/bin,' arduino-${ARDUINO_VERSION}/hardware/platform.txt
     touch downloaded2

@@ -11,8 +11,10 @@ mkdir -p tools/esp8266
 cd tools/esp8266
 
 if ! test -e downloaded1 ; then
+    cd ..
     wget -c $ARDUINO_URL
-    tar xvf ${ARDUINO_URL##*/}
+    cd esp8266
+    tar xvf ../${ARDUINO_URL##*/}
     touch downloaded1
 fi
 
