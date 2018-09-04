@@ -1,6 +1,7 @@
 #!/bin/bash
 ARDUINO_VERSION=1.8.5
-ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz
+ARDUINO_ARCH=`uname -m|sed -e s,aarch64,arm, -e s,x86_64,64,`
+ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux${ARDUINO_ARCH}.tar.xz
 
 ARDUINO_ESP8266_GIT_URL=https://github.com/esp8266/Arduino.git
 ARDUINO_ESP8266_NOWIFI_GIT_URL=https://github.com/uli/Arduino_nowifi.git
