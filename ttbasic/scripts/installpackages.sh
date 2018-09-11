@@ -8,7 +8,7 @@ then
   sudo apt-get -y install libc6:armhf libstdc++6:armhf zlib1g:armhf
 fi
 
-PACKAGES="asciidoctor libc6-dev libncurses5-dev gperf python-serial exuberant-ctags"
+PACKAGES="asciidoctor libc6-dev libncurses5-dev gperf python-serial exuberant-ctags flex bison"
 
 for p in ${PACKAGES} ; do
   if ! dpkg -s "$p" >/dev/null 2>&1 ; then

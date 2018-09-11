@@ -1,6 +1,7 @@
 #!/bin/bash
 ARDUINO_VERSION=1.8.5
-ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz
+ARDUINO_ARCH=`uname -m|sed -e s,aarch64,arm, -e s,x86_64,64,`
+ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux${ARDUINO_ARCH}.tar.xz
 ARDUINO_ESP32_GIT_URL=https://github.com/espressif/arduino-esp32.git
 ESP_IDF_GIT_URL=https://github.com/uli/esp-idf-beshuttle.git
 
@@ -35,7 +36,26 @@ if ! test -e downloaded4 ; then
 fi
 cd tools
 if ! test -e downloaded5 ; then
-    python get.py
+    if test `uname -m` == aarch64 ; then
+        # no pre-built ARM-hosted toolchain
+        sudo apt-get -y install gawk grep gettext python-dev automake texinfo help2man libtool libtool-bin
+        pushd .
+        cd ../..
+        mkdir -p toolchain
+        cd toolchain
+        git clone -b xtensa-1.22.x https://github.com/espressif/crosstool-NG.git
+        cd crosstool-NG
+        ./bootstrap
+        ./configure --enable-local
+        MAKELEVEL=0 make install
+        ./ct-ng xtensa-esp32-elf
+        ./ct-ng build
+        chmod -R u+w builds/xtensa-esp32-elf
+        popd
+        ln -sf ../../toolchain/crosstool-NG/builds/xtensa-esp32-elf .
+    else
+    	python get.py
+    fi
     touch downloaded5
 fi
 cd ../..
