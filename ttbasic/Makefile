@@ -9,8 +9,7 @@ ARDUINO_CORE_ESP32_DIR = ../tools/esp32/arduino-esp32
 
 # No changes required below this point.
 
-ESPTOOL = $(ARDUINO_DIR)/hardware/esp8266com/esp8266_nowifi/tools/esptool/esptool
-ESPTOOL_ESP32 = $(ARDUINO_ESP32_DIR)/hardware/espressif/esp32/tools/esptool.py
+ESPTOOL = scripts/esptool.py
 
 BUILD_PATH = $(PWD)/../build
 
@@ -68,12 +67,12 @@ doc:
 
 SER ?= /dev/ttyUSB0
 upload: elf
-	for i in 1 2 ; do $(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf $(BUILD_PATH)/ttbasic.ino.bin && break ; done
+	python $(ESPTOOL) -c esp8266 -b 921600 -p /dev/ttyUSB0 write_flash $(DEST_ADDR) $(BUILD_PATH)/ttbasic.ino.bin
 upload_net: elf_net
-	for i in 1 2 ; do $(ESPTOOL) -cd ck -cb 921600 -cp $(SER) -ca $(DEST_ADDR) -cf $(BUILD_PATH)_net/ttbasic.ino.bin && break ; done
+	python $(ESPTOOL) -c esp8266 -b 921600 -p /dev/ttyUSB0 write_flash $(DEST_ADDR) $(BUILD_PATH)_net/ttbasic.ino.bin
 
 upload_esp32: esp32
-	python $(ESPTOOL_ESP32) \
+	python $(ESPTOOL) \
 		--chip esp32 --port $(SER) --baud 921600  --before default_reset \
 		--after hard_reset write_flash -z --flash_mode dio --flash_freq 80m \
 		--flash_size detect \
