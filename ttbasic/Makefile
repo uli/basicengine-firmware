@@ -34,7 +34,7 @@ elf_net:	funtbl.h kwtbl.h epigrams.h version.h
 	$(ARDUINO_DIR)/arduino-builder \
 		-hardware "$(ARDUINO_DIR)/hardware" \
 		-tools "$(ARDUINO_DIR)/tools-builder" \
-		-fqbn "esp8266com:esp8266:d1_mini:CpuFrequency=160,FlashSize=4M3M" \
+		-fqbn "esp8266com:esp8266:d1_mini:xtal=160,eesz=4M3M" \
 		-built-in-libraries $(ARDUINO_DIR)/libraries \
 		-libraries ../libraries \
 		-warnings all \
