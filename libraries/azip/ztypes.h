@@ -531,7 +531,7 @@ private:
 
 /* External data */
 
-extern prog_char lookup_table[3][26] PROGMEM;
+extern char lookup_table[3][26] PROGMEM;
 
 #define CACHE_BLOCKS 16
 struct cache_block {

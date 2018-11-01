@@ -550,7 +550,7 @@ void AZIP::write_char( int c )
 *
 */
 
-void AZIP::write_string( const prog_char *s )
+void AZIP::write_string( const char *s )
 {
     while ( pgm_read_byte(s) )
         write_char( pgm_read_byte(s++) );
