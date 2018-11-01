@@ -3,6 +3,7 @@ ARDUINO_VERSION=1.8.5
 ARDUINO_ARCH=`uname -m|sed -e s,aarch64,arm, -e s,x86_64,64,`
 ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux${ARDUINO_ARCH}.tar.xz
 ARDUINO_ESP32_GIT_URL=https://github.com/espressif/arduino-esp32.git
+ARDUINO_ESP32_COMMIT=80c110ece70b179ddfe686e8ee45b6c808779454
 ESP_IDF_GIT_URL=https://github.com/uli/esp-idf-beshuttle.git
 
 set -e
@@ -27,6 +28,7 @@ fi
 
 if ! test -e downloaded3 ; then
     git clone ${ARDUINO_ESP32_GIT_URL} arduino-esp32
+    git checkout $ARDUINO_ESP32_COMMIT
     touch downloaded3
 fi
 cd arduino-esp32
