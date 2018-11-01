@@ -28,7 +28,9 @@ fi
 
 if ! test -e downloaded3 ; then
     git clone ${ARDUINO_ESP32_GIT_URL} arduino-esp32
+    cd arduino-esp32
     git checkout $ARDUINO_ESP32_COMMIT
+    cd ..
     touch downloaded3
 fi
 cd arduino-esp32

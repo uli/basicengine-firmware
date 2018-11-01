@@ -4,6 +4,8 @@ ARDUINO_ARCH=`uname -m|sed -e s,aarch64,arm, -e s,x86_64,64,`
 ARDUINO_URL=https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux${ARDUINO_ARCH}.tar.xz
 
 ARDUINO_ESP8266_GIT_URL=https://github.com/esp8266/Arduino.git
+ARDUINO_ESP8266_GIT_COMMIT=cc0bfa04d401810ed3f5d7d01be6e88b9011997f
+
 ARDUINO_ESP8266_NOWIFI_GIT_URL=https://github.com/uli/Arduino_nowifi.git
 
 set -e
@@ -26,6 +28,9 @@ cd esp8266com
 
 if ! test -e downloaded2 ; then
     git clone ${ARDUINO_ESP8266_GIT_URL} esp8266
+    cd esp8266
+    git checkout $ARDUINO_ESP8266_GIT_COMMIT
+    cd ..
     touch downloaded2
 fi
 
