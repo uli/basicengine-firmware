@@ -67,9 +67,9 @@ doc:
 
 SER ?= /dev/ttyUSB0
 upload: elf
-	python $(ESPTOOL) -c esp8266 -b 921600 -p /dev/ttyUSB0 write_flash $(DEST_ADDR) $(BUILD_PATH)/ttbasic.ino.bin
+	python $(ESPTOOL) -c esp8266 -b 921600 -p $(SER) write_flash $(DEST_ADDR) $(BUILD_PATH)/ttbasic.ino.bin
 upload_net: elf_net
-	python $(ESPTOOL) -c esp8266 -b 921600 -p /dev/ttyUSB0 write_flash $(DEST_ADDR) $(BUILD_PATH)_net/ttbasic.ino.bin
+	python $(ESPTOOL) -c esp8266 -b 921600 -p $(SER) write_flash $(DEST_ADDR) $(BUILD_PATH)_net/ttbasic.ino.bin
 
 upload_esp32: esp32
 	python $(ESPTOOL) \
