@@ -5337,6 +5337,8 @@ uint8_t SMALL icom() {
     ilrun_(); break;
 
   case I_CHAIN:  if(ilrun()) {
+      if (err == ERR_CHAIN)
+        err = 0;
       sc0.show_curs(0); irun(clp);
     }
     break;
