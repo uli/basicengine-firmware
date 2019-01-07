@@ -5481,6 +5481,7 @@ void SMALL basic() {
   uint8_t rc;
 
   bc = new basic_ctx_t;
+  memset(bc, 0, sizeof(*bc));
 
   basic_init_file_early();
 
