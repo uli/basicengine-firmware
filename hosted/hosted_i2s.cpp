@@ -15,6 +15,7 @@ void dump_yuv();
 
 void slc_isr(void *userdata, Uint8 *stream, int len) {
 	sound.render();
+
 	int i;
 	for (i = 0; i < len; ++i) {
 		stream[i] = nosdk_i2s_curr_buf[i];
@@ -30,15 +31,26 @@ void slc_isr(void *userdata, Uint8 *stream, int len) {
 
 extern int hosting_mem_allocated;
 
-extern "C" void InitI2S(uint32_t samplerate)
+int sound_reinit_rate = 0;
+
+void reinit_sound()
 {
+	static bool inited = false;
+
+	SDL_LockAudio();
+	SDL_PauseAudio(1);
+
+	if (inited)
+		SDL_CloseAudio();
+	SDL_UnlockAudio();
+
 	nosdk_i2s_clear_buf();
 	cubu = 0;
 	nosdk_i2s_curr_buf = i2sData[cubu];
 	nosdk_i2s_curr_buf_pos = 0;
 
 	SDL_AudioSpec as, obtained;
-	as.freq = samplerate;
+	as.freq = sound_reinit_rate;
 	as.format = AUDIO_U8;
 	as.channels = 1;
 	// This doesn't make sense, but when I request I2S_BUFLEN, I get
@@ -52,12 +64,22 @@ extern "C" void InitI2S(uint32_t samplerate)
 		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
 		exit(1);
 	}
+
 	if (obtained.samples != I2S_BUFLEN)
 		fprintf(stderr, "Odd audio buffer size, not starting.");
 	else
 		SDL_PauseAudio(0);
 
-        hosting_mem_allocated += mallinfo().uordblks - mem_before;
+	if (!inited)
+		hosting_mem_allocated += mallinfo().uordblks - mem_before;
+
+	inited = true;
+	sound_reinit_rate = 0;
+}
+
+extern "C" void InitI2S(uint32_t samplerate)
+{
+	sound_reinit_rate = samplerate;
 }
 
 void SendI2S()

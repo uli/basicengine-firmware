@@ -203,9 +203,15 @@ int main(int argc, char **argv)
 
 uint64_t total_frames = 0;
 extern uint64_t total_samples;
+extern int sound_reinit_rate;
+void reinit_sound();
 
 void hosted_pump_events() {
   SDL_Event event;
+
+  if (sound_reinit_rate)
+    reinit_sound();
+
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
     switch (event.type) {
