@@ -74,6 +74,16 @@ void tv_NTSC_adjust(int16_t ajst) {
 int colmem_fg_x, colmem_fg_y;
 int colmem_bg_x, colmem_bg_y;
 
+static void allocate_system_bufs()
+{
+  // XXX: assumes font height == 8
+  // We don't want to allocate this last because it will be in the way when
+  // allocating a larger font later.
+  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_fg_x, colmem_fg_y);
+  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_bg_x, colmem_bg_y);
+  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+}
+
 //
 // NTSC表示の初期設定
 // 
@@ -82,12 +92,7 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   g_width  = vs23.width();           // 横ドット数
   g_height = vs23.height();          // 縦ドット数
 
-  // XXX: assumes font height == 8
-  // We don't want to allocate this last because it will be in the way when
-  // allocating a larger font later.
-  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_fg_x, colmem_fg_y);
-  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_bg_x, colmem_bg_y);
-  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+  allocate_system_bufs();
   clrline_color = 0;
 
   win_x = 0;
@@ -111,7 +116,7 @@ static void tv_set_clear_line_col(uint8_t cc)
 void tv_reinit()
 {
   vs23.reset();
-  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
+  allocate_system_bufs();
   clrline_color = 0;
   tv_window_reset();
 }
