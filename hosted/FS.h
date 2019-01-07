@@ -1,3 +1,6 @@
+#ifndef __FS_H
+#define __FS_H
+
 #include "WString.h"
 
 namespace fs {
@@ -89,3 +92,5 @@ public:
 };
 
 extern fs::FS SPIFFS;
+
+#endif
