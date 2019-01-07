@@ -137,6 +137,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
       tv_window_get(x, y, w, h);
     }
     inline void reset() {
+      tv_reinit();
       tscreenBase::init(whole_width, whole_height, maxllen, screen);
       setWindow(0, 0, whole_width, whole_height);
     }
