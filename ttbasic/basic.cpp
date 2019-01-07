@@ -2137,6 +2137,7 @@ void inew(uint8_t mode) {
     *listbuf = 0;
     size_list = 1;
     clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
+    cip = clp + sizeof(line_desc_t);
   }
 }
 
