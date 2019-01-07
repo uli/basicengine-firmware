@@ -385,6 +385,7 @@ int screen_thread(void *p)
   last_line = new_line;
   usleep(100);
   }
+  return 0;
 }
 
 uint32_t Video::frame()
