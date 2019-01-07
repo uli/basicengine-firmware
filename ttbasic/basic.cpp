@@ -1953,7 +1953,10 @@ resume:
     lp = iexe();     // 中間コードを実行して次の行の位置を得る
     if (err) {         // もしエラーを生じたら
       event_error_resume_lp = NULL;
-      if (event_error_enabled) {
+      if (err == ERR_CHAIN) {
+        // reset continue pointers, but keep running
+        cont_cip = cont_clp = NULL;
+      } else if (event_error_enabled) {
         retval[0] = err;
         retval[1] = getlineno(clp);
         retval[2] = -1;
@@ -3204,6 +3207,8 @@ uint8_t SMALL ilrun() {
       initialize_proc_pointers();
       initialize_label_pointers();
       cip = clp+sizeof(line_desc_t);
+      if (islrun)
+        err = ERR_CHAIN;
     }
   }
   return 1;
@@ -4772,8 +4777,9 @@ void BASIC_FP iwend() {
 
   num_t cond = iexp();
   // If the condition is true, continue with the loop
-  if (cond)
+  if (cond || err) {
     return;
+  }
 
   // If the condition is not true, pop the loop and
   // go back to the WEND.
