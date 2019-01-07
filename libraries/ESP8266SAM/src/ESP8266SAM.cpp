@@ -72,6 +72,7 @@ void ESP8266SAM::Say(const char *str)
   
   // Input massaging
   char input[256];
+  memset(input, 0, 256);
   for (int i=0; str[i]; i++)
     input[i] = toupper((int)str[i]);
   input[strlen(str)] = 0;
