@@ -184,6 +184,93 @@ int	pos_x (int line, int xx)
 	return i;
 }
 
+static void highlight_basic_keywords(int m, int linelen, char *colors,
+				     const char * const *table, int table_size)
+{
+	for (int cc = 0; cc < linelen; ++cc) {
+		for (int kw = 0; kw < table_size; ++kw) {
+			if (kw == I_DOLLAR)
+				continue;
+			if (table[kw] && (int)strlen_P(table[kw]) <= linelen-cc &&
+			    strncasecmp_P(table[kw], &text[m+cc], strlen_P(table[kw])) == 0) {
+				unsigned int ci;
+				for (ci = 0; ci < strlen_P(table[kw]); ++ci) {
+					if (isalpha(text[m+cc])) {
+						// command
+						colors[cc+ci] = F_BRIGHTWHITE >> 8;
+					} else {
+						// operator
+						// XXX: doesn't work for AND, MOD etc.
+						colors[cc+ci] = F_MAGENTA >> 8;
+					}
+				}
+				// stuff following CALL, PROC and FN gets procedure color
+				if (kw == I_CALL || kw == I_PROC || kw == I_FN) {
+					cc += ci;
+					while (cc < linelen && (isspace(text[m+cc]) ||
+					       isalnum(text[m+cc]) || text[m+cc]=='_')) {
+						colors[cc] = F_ORANGE >> 8;
+						++cc;
+					}
+					--cc;
+				}
+				else if (kw == I_REM || kw == I_SQUOT) {
+					// comment, color rest of line
+					cc += ci;
+					while (cc < linelen) {
+						colors[cc] = F_GREEN >> 8;
+						++cc;
+					}
+					--cc;
+				}
+				break;
+			}
+		}
+	}
+}
+
+static char *highlight_basic(int m)
+{
+	int linelen = nextline(m) - m;
+	if (!linelen)
+		return NULL;
+
+	char *colors = (char *)malloc(linelen);
+	if (!colors)
+		return NULL;
+
+	memset(colors, F_WHITE >> 8, linelen);
+
+	// numbers at the beginning of the line are dark grey (line numbers)
+	// while constants are teal (cyan)
+	int numcol = F_GREY >> 8;
+	for (int cc = 0; cc < linelen; ++cc) {
+		if (isdigit(text[m+cc])) {
+			colors[cc] = numcol;
+		} else
+			numcol = F_CYAN >> 8;
+	}
+
+	highlight_basic_keywords(m, linelen, colors, kwtbl, sizeof(kwtbl)/sizeof(*kwtbl));
+	highlight_basic_keywords(m, linelen, colors, kwtbl_ext, sizeof(kwtbl_ext)/sizeof(*kwtbl_ext));
+
+	// string constants
+	for (int cc = 0; cc < linelen; ++cc) {
+		if (text[m+cc] == '"') {
+			do {
+				colors[cc] = F_BLUE >> 8;
+				++cc;
+			} while (cc < linelen && text[m+cc] != '"');
+			if (cc < linelen) {
+				colors[cc] = F_BLUE >> 8;
+				++cc;
+			}
+		}
+	}
+
+	return colors;
+}
+
 void	show (void)
 {
 	int	i, m, t, j;
@@ -210,6 +297,8 @@ void	show (void)
 	if (!text)
 		return;
 	for (m = bow_line, i = 0; m < eof_pos && i < LINES; i++) {
+		int startm = m;
+		char *colors = highlight_basic(m);
 		m = pos_x (m, win_shift);
 		move (i, 0);
 #define EOS_COLS (i < LINES - 1 ? COLS : COLS - 1)
@@ -228,7 +317,10 @@ void	show (void)
 				for (t = nexttab (j); j < t; j++)
 					addch (' ');
 			else {
+				if (colors)
+					attrset(colors[m-startm] << 8);
 				adduch (text[m]);
+				attrset(A_NORMAL);
 				j++;
 			}
 		}
@@ -237,6 +329,7 @@ void	show (void)
 				addch (' ');
 #undef EOS_COLS
 		m = nextline (m);
+		free(colors);
 	}
 	while (i < LINES) {
 		move (i, 0);
