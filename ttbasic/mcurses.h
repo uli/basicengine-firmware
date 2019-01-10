@@ -54,25 +54,29 @@
 #define A_STANDOUT              A_BOLD                                              // standout (same as bold)
 
 #define F_BLACK                 0x0100                                              // foreground black
-#define F_RED                   0x0200                                              // foreground red
-#define F_GREEN                 0x0300                                              // foreground green
-#define F_BROWN                 0x0400                                              // foreground brown
-#define F_BLUE                  0x0500                                              // foreground blue
-#define F_MAGENTA               0x0600                                              // foreground magenta
-#define F_CYAN                  0x0700                                              // foreground cyan
-#define F_WHITE                 0x0800                                              // foreground white
-#define F_YELLOW                F_BROWN                                             // some terminals show brown as yellow (with A_BOLD)
+#define F_WHITE                 0x0200                                              // foreground white
+#define F_BRIGHTWHITE           0x0300                                              // foreground bright white
+#define F_GREY                  0x0400                                              // foreground grey
+#define F_CYAN                  0x0500                                              // foreground cyan
+#define F_LIGHTGRAY             0x0600                                              // foreground light gray
+#define F_BEIGE                 0x0700                                              // foreground beige
+#define F_MAGENTA               0x0800                                              // foreground magenta
+#define F_BLUE                  0x0900                                              // foreground blue
+#define F_ORANGE                0x0A00                                              // foreground orange
+#define F_GREEN                 0x0B00                                              // foreground green
 #define F_COLOR                 0x0F00                                              // foreground mask
 
 #define B_BLACK                 0x1000                                              // background black
-#define B_RED                   0x2000                                              // background red
-#define B_GREEN                 0x3000                                              // background green
-#define B_BROWN                 0x4000                                              // background brown
-#define B_BLUE                  0x5000                                              // background blue
-#define B_MAGENTA               0x6000                                              // background magenta
-#define B_CYAN                  0x7000                                              // background cyan
-#define B_WHITE                 0x8000                                              // background white
-#define B_YELLOW                B_BROWN                                             // some terminals show brown as yellow (with A_BOLD)
+#define B_WHITE                 0x2000                                              // background white
+#define B_BRIGHTWHITE           0x3000                                              // background bright white
+#define B_GREY                  0x4000                                              // background grey
+#define B_CYAN                  0x5000                                              // background cyan
+#define B_LIGHTGRAY             0x6000                                              // background light gray
+#define B_BEIGE                 0x7000                                              // background beige
+#define B_MAGENTA               0x8000                                              // background magenta
+#define B_BLUE                  0x9000                                              // background blue
+#define B_ORANGE                0xA000                                              // background orange
+#define B_GREEN                 0xB000                                              // background green
 #define B_COLOR                 0xF000                                              // background mask
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------

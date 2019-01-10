@@ -290,7 +290,7 @@ attrset (uint_fast16_t attr)
 
         idx = (attr & F_COLOR) >> 8;
 
-        if (idx >= 1 && idx <= 8)
+        if (idx >= 1 && idx <= 0xb)
         {
             sc0.setColor(csp.colorFromRgb(CONFIG.color_scheme[idx-1]), sc0.getBgColor());
         }
