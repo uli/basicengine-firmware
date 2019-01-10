@@ -109,7 +109,7 @@ void                     delch (void);                                       // 
 void                     insch (uint_fast8_t);                               // insert character at current position
 void                     nodelay (uint_fast8_t);                             // set/reset nodelay
 void                     halfdelay (uint_fast8_t);                           // set/reset halfdelay
-uint_fast8_t             getch (void);                                       // read key
+int                      getch (void);                                       // read key
 void                     curs_set(uint_fast8_t);                             // set cursor to: 0=invisible 1=normal 2=very visible
 void                     refresh (void);                                     // flush output
 void                     endwin (void);                                      // end mcurses

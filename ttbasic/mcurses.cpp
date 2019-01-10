@@ -510,10 +510,10 @@ halfdelay (uint_fast8_t tenths)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-uint_fast8_t
+int
 getch (void)
 {
-    uint_fast8_t ch;
+    int ch;
 
     refresh ();
     ch = mcurses_phyio_getc ();
