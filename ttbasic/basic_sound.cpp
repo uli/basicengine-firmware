@@ -14,24 +14,32 @@ void BASIC_INT event_handle_play(int ch)
 }
 
 #ifdef HAVE_MML
-BString mml_text;
+BString mml_text[SOUND_CHANNELS];
 #endif
 /***bc snd PLAY
 Plays a piece of music in Music Macro Language (MML) using the
 wavetable synthesizer.
-\usage PLAY mml$
+\usage PLAY [ch, ]mml$
 \args
+@ch	sound channel [`0` to `{SOUND_CHANNELS_m1}`, default: `0`]
 @mml$	score in MML format
 \bugs
-* Only supports one sound channel.
 * MML syntax undocumented.
 * Fails silently if the synthesizer could not be initialized.
 ***/
 void iplay() {
 #ifdef HAVE_MML
-  sound.stopMml(0);
-  mml_text = istrexp();
-  sound.playMml(0, mml_text.c_str());
+  int32_t ch = 0;
+
+  if (!is_strexp())
+    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
+
+  sound.stopMml(ch);
+  mml_text[ch] = istrexp();
+  if (err)
+    return;
+
+  sound.playMml(ch, mml_text[ch].c_str());
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
