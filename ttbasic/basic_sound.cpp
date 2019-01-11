@@ -169,7 +169,7 @@ Generates a sound using the wavetable synthesizer.
 @ch	sound channel [`0` to `{SOUND_CHANNELS_m1}`]
 @inst	instrument number
 @note	note pitch
-@len	note duration, milliseconds [default: 1000]
+@len	note duration, milliseconds [default: `1000`]
 @vel	note velocity [`0` to `1` (default)]
 \ref INST$() SOUND_FONT
 ***/
