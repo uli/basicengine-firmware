@@ -655,8 +655,13 @@ void ESP8266SAM::Render()
 	signed char m53 = (signed char)mem53;
 	mem50 = mem53 & 128;
 	unsigned char m53abs = abs(m53);
-	mem51 = m53abs % mem40;                 //abs((char)m53) % mem40;
-	mem53 = (unsigned char)((signed char)(m53) / mem40);
+	unsigned char mem40x;
+	if (!mem40)	// workaround for FP exceptions
+	  mem40x = 1;
+        else
+          mem40x = mem40;
+	mem51 = m53abs % mem40x;                 //abs((char)m53) % mem40;
+	mem53 = (unsigned char)((signed char)(m53) / mem40x);
 	// interpolation range
 	X = mem40;                 // number of frames to interpolate over
 	Y = phase3;                 // starting frame
