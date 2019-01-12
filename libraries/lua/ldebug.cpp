@@ -771,13 +771,16 @@ l_noret luaG_errormsg (lua_State *L) {
 }
 
 
-l_noret luaG_runerror (lua_State *L, const char *fmt, ...) {
+l_noret __luaG_runerror (lua_State *L, const char *fmt, ...) {
+  char ffmt[128];
+  strncpy_P(ffmt, fmt, 127);
+  ffmt[127] = 0;
   CallInfo *ci = L->ci;
   const char *msg;
   va_list argp;
   luaC_checkGC(L);  /* error message uses memory */
   va_start(argp, fmt);
-  msg = luaO_pushvfstring(L, fmt, argp);  /* format message */
+  msg = luaO_pushvfstring(L, ffmt, argp);  /* format message */
   va_end(argp);
   if (isLua(ci))  /* if Lua function, add source:line information */
     luaG_addinfo(L, msg, ci_func(ci)->p->source, currentline(ci));
