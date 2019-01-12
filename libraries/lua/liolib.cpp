@@ -70,7 +70,7 @@ static int l_checkmode (const char *mode) {
 #define l_popen(L,c,m)  \
 	  ((void)c, (void)m, \
 	  luaL_error(L, "'popen' not supported"), \
-	  (FILE*)0)
+	  (l_FILE*)0)
 #define l_pclose(L,file)		((void)L, (void)file, -1)
 
 #endif				/* } */
@@ -172,7 +172,7 @@ static int f_tostring (lua_State *L) {
 }
 
 
-static FILE *tofile (lua_State *L) {
+static l_FILE *tofile (lua_State *L) {
   LStream *p = tolstream(L);
   if (isclosed(p))
     luaL_error(L, "attempt to use a closed file");
@@ -291,7 +291,7 @@ static int io_tmpfile (lua_State *L) {
 }
 
 
-static FILE *getiofile (lua_State *L, const char *findex) {
+static l_FILE *getiofile (lua_State *L, const char *findex) {
   LStream *p;
   lua_getfield(L, LUA_REGISTRYINDEX, findex);
   p = (LStream *)lua_touserdata(L, -1);
@@ -411,7 +411,7 @@ static int io_lines (lua_State *L) {
 
 /* auxiliary structure used by 'read_number' */
 typedef struct {
-  FILE *f;  /* file being read */
+  l_FILE *f;  /* file being read */
   int c;  /* current character (look ahead) */
   int n;  /* number of elements in buffer 'buff' */
   char buff[L_MAXLENNUM + 1];  /* +1 for ending '\0' */
@@ -460,7 +460,7 @@ static int readdigits (RN *rn, int hex) {
 ** Then it calls 'lua_stringtonumber' to check whether the format is
 ** correct and to convert it to a Lua number.
 */
-static int read_number (lua_State *L, FILE *f) {
+static int read_number (lua_State *L, l_FILE *f) {
   RN rn;
   int count = 0;
   int hex = 0;
@@ -494,7 +494,7 @@ static int read_number (lua_State *L, FILE *f) {
 }
 
 
-static int test_eof (lua_State *L, FILE *f) {
+static int test_eof (lua_State *L, l_FILE *f) {
   int c = getc(f);
   ungetc(c, f);  /* no-op when c == EOF */
   lua_pushliteral(L, "");
@@ -502,7 +502,7 @@ static int test_eof (lua_State *L, FILE *f) {
 }
 
 
-static int read_line (lua_State *L, FILE *f, int chop) {
+static int read_line (lua_State *L, l_FILE *f, int chop) {
   luaL_Buffer b;
   int c = '\0';
   luaL_buffinit(L, &b);
@@ -523,7 +523,7 @@ static int read_line (lua_State *L, FILE *f, int chop) {
 }
 
 
-static void read_all (lua_State *L, FILE *f) {
+static void read_all (lua_State *L, l_FILE *f) {
   size_t nr;
   luaL_Buffer b;
   luaL_buffinit(L, &b);
@@ -536,7 +536,7 @@ static void read_all (lua_State *L, FILE *f) {
 }
 
 
-static int read_chars (lua_State *L, FILE *f, size_t n) {
+static int read_chars (lua_State *L, l_FILE *f, size_t n) {
   size_t nr;  /* number of chars actually read */
   char *p;
   luaL_Buffer b;
@@ -549,7 +549,7 @@ static int read_chars (lua_State *L, FILE *f, size_t n) {
 }
 
 
-static int g_read (lua_State *L, FILE *f, int first) {
+static int g_read (lua_State *L, l_FILE *f, int first) {
   int nargs = lua_gettop(L) - 1;
   int n, success;
   clearerr(f);
@@ -643,7 +643,7 @@ static int io_readline (lua_State *L) {
 /* }====================================================== */
 
 
-static int g_write (lua_State *L, FILE *f, int arg) {
+static int g_write (lua_State *L, l_FILE *f, int arg) {
   int nargs = lua_gettop(L) - arg;
   int status = 1;
   for (; nargs--; arg++) {
@@ -673,7 +673,7 @@ static int io_write (lua_State *L) {
 
 
 static int f_write (lua_State *L) {
-  FILE *f = tofile(L);
+  l_FILE *f = tofile(L);
   lua_pushvalue(L, 1);  /* push file at the stack top (to be returned) */
   return g_write(L, f, 2);
 }
@@ -682,7 +682,7 @@ static int f_write (lua_State *L) {
 static int f_seek (lua_State *L) {
   static const int mode[] = {SEEK_SET, SEEK_CUR, SEEK_END};
   static const char *const modenames[] = {"set", "cur", "end", NULL};
-  FILE *f = tofile(L);
+  l_FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, "cur", modenames);
   lua_Integer p3 = luaL_optinteger(L, 3, 0);
   l_seeknum offset = (l_seeknum)p3;
@@ -701,7 +701,7 @@ static int f_seek (lua_State *L) {
 static int f_setvbuf (lua_State *L) {
   static const int mode[] = {_IONBF, _IOFBF, _IOLBF};
   static const char *const modenames[] = {"no", "full", "line", NULL};
-  FILE *f = tofile(L);
+  l_FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, NULL, modenames);
   lua_Integer sz = luaL_optinteger(L, 3, LUAL_BUFFERSIZE);
   int res = setvbuf(f, NULL, mode[op], (size_t)sz);
@@ -778,7 +778,7 @@ static int io_noclose (lua_State *L) {
 }
 
 
-static void createstdfile (lua_State *L, FILE *f, const char *k,
+static void createstdfile (lua_State *L, l_FILE *f, const char *k,
                            const char *fname) {
   LStream *p = newprefile(L);
   p->f = f;
