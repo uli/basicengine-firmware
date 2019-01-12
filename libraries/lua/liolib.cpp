@@ -612,7 +612,7 @@ static int g_read (lua_State *L, l_FILE *f, int first) {
             success = 1; /* always success */
             break;
           default:
-            return luaL_argerror(L, n, "invalid format");
+            return luaL_argerror_P(L, n, "invalid format");
         }
       }
     }

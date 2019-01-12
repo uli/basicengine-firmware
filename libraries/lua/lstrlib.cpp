@@ -1072,7 +1072,7 @@ static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
       break;
     }
     default: {
-      luaL_argerror(L, arg, "value has no literal form");
+      luaL_argerror_P(L, arg, "value has no literal form");
     }
   }
 }
@@ -1131,7 +1131,7 @@ static int str_format (lua_State *L) {
       char *buff = luaL_prepbuffsize(&b, MAX_ITEM);  /* to put formatted item */
       int nb = 0;  /* number of bytes in added item */
       if (++arg > top)
-        luaL_argerror(L, arg, "no value");
+        luaL_argerror_P(L, arg, "no value");
       strfrmt = scanformat(L, strfrmt, form);
       switch (*strfrmt++) {
         case 'c': {
@@ -1370,7 +1370,7 @@ static KOption getdetails (Header *h, size_t totalsize,
   int align = *psize;  /* usually, alignment follows size */
   if (opt == Kpaddalign) {  /* 'X' gets alignment from following option */
     if (**fmt == '\0' || getoption(h, fmt, &align) == Kchar || align == 0)
-      luaL_argerror(h->L, 1, "invalid next option for option 'X'");
+      luaL_argerror_P(h->L, 1, "invalid next option for option 'X'");
   }
   if (align <= 1 || opt == Kchar)  /* need no alignment? */
     *ntoalign = 0;
@@ -1378,7 +1378,7 @@ static KOption getdetails (Header *h, size_t totalsize,
     if (align > h->maxalign)  /* enforce maximum alignment */
       align = h->maxalign;
     if ((align & (align - 1)) != 0)  /* is 'align' not a power of 2? */
-      luaL_argerror(h->L, 1, "format asks for alignment not power of 2");
+      luaL_argerror_P(h->L, 1, "format asks for alignment not power of 2");
     *ntoalign = (align - (int)(totalsize & (align - 1))) & (align - 1);
   }
   return opt;

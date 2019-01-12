@@ -165,7 +165,7 @@ static int db_getinfo (lua_State *L) {
     }
   }
   if (!lua_getinfo(L1, options, &ar))
-    return luaL_argerror(L, arg+2, "invalid option");
+    return luaL_argerror_P(L, arg+2, "invalid option");
   lua_newtable(L);  /* table to collect results */
   if (strchr(options, 'S')) {
     settabss(L, "source", ar.source);
@@ -213,7 +213,7 @@ static int db_getlocal (lua_State *L) {
   else {  /* stack-level argument */
     int level = (int)luaL_checkinteger(L, arg + 1);
     if (!lua_getstack(L1, level, &ar))  /* out of range? */
-      return luaL_argerror(L, arg+1, "level out of range");
+      return luaL_argerror_P(L, arg+1, "level out of range");
     checkstack(L, L1, 1);
     name = lua_getlocal(L1, &ar, nvar);
     if (name) {
@@ -238,7 +238,7 @@ static int db_setlocal (lua_State *L) {
   int level = (int)luaL_checkinteger(L, arg + 1);
   int nvar = (int)luaL_checkinteger(L, arg + 2);
   if (!lua_getstack(L1, level, &ar))  /* out of range? */
-    return luaL_argerror(L, arg+1, "level out of range");
+    return luaL_argerror_P(L, arg+1, "level out of range");
   luaL_checkany(L, arg+3);
   lua_settop(L, arg+3);
   checkstack(L, L1, 1);

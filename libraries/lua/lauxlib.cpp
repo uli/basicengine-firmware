@@ -396,7 +396,7 @@ LUALIB_API void luaL_checktype (lua_State *L, int arg, int t) {
 
 LUALIB_API void luaL_checkany (lua_State *L, int arg) {
   if (lua_type(L, arg) == LUA_TNONE)
-    luaL_argerror(L, arg, "value expected");
+    luaL_argerror_P(L, arg, "value expected");
 }
 
 
@@ -434,7 +434,7 @@ LUALIB_API lua_Number luaL_optnumber (lua_State *L, int arg, lua_Number def) {
 
 static void interror (lua_State *L, int arg) {
   if (lua_isnumber(L, arg))
-    luaL_argerror(L, arg, "number has no integer representation");
+    luaL_argerror_P(L, arg, "number has no integer representation");
   else
     tag_error(L, arg, LUA_TNUMBER);
 }
