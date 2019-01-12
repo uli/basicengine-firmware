@@ -168,20 +168,23 @@ LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1,
 */
 
 LUALIB_API int luaL_argerror (lua_State *L, int arg, const char *extramsg) {
+  char emsg[128];
+  emsg[127] = 0;
+  strncpy_P(emsg, extramsg, 127);
   lua_Debug ar;
   if (!lua_getstack(L, 0, &ar))  /* no stack frame? */
-    return luaL_error(L, "bad argument #%d (%s)", arg, extramsg);
+    return luaL_error(L, "bad argument #%d (%s)", arg, emsg);
   lua_getinfo(L, "n", &ar);
   if (strcmp(ar.namewhat, "method") == 0) {
     arg--;  /* do not count 'self' */
     if (arg == 0)  /* error is in the self argument itself? */
       return luaL_error(L, "calling '%s' on bad self (%s)",
-                           ar.name, extramsg);
+                           ar.name, emsg);
   }
   if (ar.name == NULL)
     ar.name = (pushglobalfuncname(L, &ar)) ? lua_tostring(L, -1) : "?";
   return luaL_error(L, "bad argument #%d to '%s' (%s)",
-                        arg, ar.name, extramsg);
+                        arg, ar.name, emsg);
 }
 
 
