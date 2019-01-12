@@ -621,7 +621,7 @@ static const luaL_Reg randfuncs[] = {
 */
 static void setrandfunc (lua_State *L) {
   RanState *state = (RanState *)lua_newuserdatauv(L, sizeof(RanState), 0);
-  lua_Unsigned seed1 = (lua_Unsigned)time(NULL); 
+  lua_Unsigned seed1 = (lua_Unsigned)(millis()/1000); //time(NULL); 
   lua_Unsigned seed2 = (lua_Unsigned)(size_t)L; 
   setseed(state->s, seed1, seed2);
   luaL_setfuncs(L, randfuncs, 1);
