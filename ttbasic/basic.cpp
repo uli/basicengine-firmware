@@ -5602,7 +5602,11 @@ void SMALL basic() {
     }
 
     if (lua) {
-      luaL_dostring(lua, lbuf);
+      if (luaL_dostring(lua, lbuf)) {
+        PRINT_P("error: ");
+        c_puts(lua_tostring(lua, -1));
+        newline();
+      }
       continue;
     }
 
