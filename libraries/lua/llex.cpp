@@ -52,7 +52,7 @@ static const char *const luaX_tokens [] = {
 
 
 static l_noret lexerror (LexState *ls, const char *msg, int token);
-
+#define lexerror_P(ls, msg, token) lexerror(ls, PSTR(msg), token)
 
 static void save (LexState *ls, int c) {
   Mbuffer *b = ls->buff;
@@ -107,7 +107,10 @@ static const char *txtToken (LexState *ls, int token) {
 
 
 static l_noret lexerror (LexState *ls, const char *msg, int token) {
-  msg = luaG_addinfo(ls->L, msg, ls->source, ls->linenumber);
+  char mmsg[128];
+  mmsg[127] = 0;
+  strncpy_P(mmsg, msg, 127);
+  msg = luaG_addinfo(ls->L, mmsg, ls->source, ls->linenumber);
   if (token)
     luaO_pushfstring_P(ls->L, "%s near %s", msg, txtToken(ls, token));
   luaD_throw(ls->L, LUA_ERRSYNTAX);
