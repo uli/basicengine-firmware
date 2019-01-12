@@ -109,20 +109,26 @@ static lua_State *getthread (lua_State *L, int *arg) {
 ** from 'lua_getinfo' into result table. Key is always a string;
 ** value can be a string, an int, or a boolean.
 */
-static void settabss (lua_State *L, const char *k, const char *v) {
+static void __settabss (lua_State *L, const char *k, const char *v) {
+  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushstring(L, v);
-  lua_setfield(L, -2, k);
+  lua_setfield(L, -2, kk);
 }
+#define settabss(L, k, v) __settabss(L, PSTR(k), v)
 
-static void settabsi (lua_State *L, const char *k, int v) {
+static void __settabsi (lua_State *L, const char *k, int v) {
+  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushinteger(L, v);
-  lua_setfield(L, -2, k);
+  lua_setfield(L, -2, kk);
 }
+#define settabsi(L, k, v) __settabsi(L, PSTR(k), v)
 
-static void settabsb (lua_State *L, const char *k, int v) {
+static void __settabsb (lua_State *L, const char *k, int v) {
+  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushboolean(L, v);
-  lua_setfield(L, -2, k);
+  lua_setfield(L, -2, kk);
 }
+#define settabsb(L, k, v) __settabsb(L, PSTR(k), v)
 
 
 /*
