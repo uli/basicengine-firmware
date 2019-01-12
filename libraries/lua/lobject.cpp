@@ -463,6 +463,18 @@ const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
 }
 
 
+const char *__luaO_pushfstring_P (lua_State *L, const char *fmt, ...) {
+  char ffmt[128];
+  strncpy_P(ffmt, fmt, 127);
+  ffmt[127] = 0;
+  const char *msg;
+  va_list argp;
+  va_start(argp, fmt);
+  msg = luaO_pushvfstring(L, ffmt, argp);
+  va_end(argp);
+  return msg;
+}
+
 const char *luaO_pushfstring (lua_State *L, const char *fmt, ...) {
   const char *msg;
   va_list argp;
