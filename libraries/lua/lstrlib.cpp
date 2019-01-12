@@ -272,7 +272,7 @@ static int arith_unm (lua_State *L) {
 }
 
 
-static const luaL_Reg stringmetamethods[] = {
+static const luaL_Reg stringmetamethods[] PROGMEM = {
   {"__add", arith_add},
   {"__sub", arith_sub},
   {"__mul", arith_mul},
@@ -1635,7 +1635,7 @@ static int str_unpack (lua_State *L) {
 /* }====================================================== */
 
 
-static const luaL_Reg strlib[] = {
+static const luaL_Reg strlib[] PROGMEM = {
   {"byte", str_byte},
   {"char", str_char},
   {"dump", str_dump},

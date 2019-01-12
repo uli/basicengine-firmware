@@ -180,7 +180,7 @@ static int luaB_kill (lua_State *L) {
 }
 
 
-static const luaL_Reg co_funcs[] = {
+static const luaL_Reg co_funcs[] PROGMEM = {
   {"create", luaB_cocreate},
   {"resume", luaB_coresume},
   {"running", luaB_corunning},

@@ -405,7 +405,7 @@ static int sort (lua_State *L) {
 /* }====================================================== */
 
 
-static const luaL_Reg tab_funcs[] = {
+static const luaL_Reg tab_funcs[] PROGMEM = {
   {"concat", tconcat},
   {"insert", tinsert},
   {"pack", tpack},

@@ -487,7 +487,7 @@ static int luaB_tostring (lua_State *L) {
 }
 
 
-static const luaL_Reg base_funcs[] = {
+static const luaL_Reg base_funcs[] PROGMEM = {
   {"assert", luaB_assert},
   {"collectgarbage", luaB_collectgarbage},
   {"dofile", luaB_dofile},

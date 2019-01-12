@@ -1066,7 +1066,7 @@ static lua_State *getstate (lua_State *L) {
 
 
 static int loadlib (lua_State *L) {
-  static const luaL_Reg libs[] = {
+  static const luaL_Reg libs[] PROGMEM = {
     {LUA_GNAME, luaopen_base},
     {"coroutine", luaopen_coroutine},
     {"debug", luaopen_debug},
@@ -1758,7 +1758,7 @@ static int coresume (lua_State *L) {
 
 
 
-static const struct luaL_Reg tests_funcs[] = {
+static const struct luaL_Reg tests_funcs[] PROGMEM = {
   {"checkmemory", lua_checkmemory},
   {"closestate", closestate},
   {"d2s", d2s},

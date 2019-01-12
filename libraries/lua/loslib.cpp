@@ -386,7 +386,7 @@ static int os_exit (lua_State *L) {
 #endif
 
 
-static const luaL_Reg syslib[] = {
+static const luaL_Reg syslib[] PROGMEM = {
 #if 0
   {"clock",     os_clock},
   {"date",      os_date},

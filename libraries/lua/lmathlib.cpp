@@ -606,7 +606,7 @@ static int math_randomseed (lua_State *L) {
 }
 
 
-static const luaL_Reg randfuncs[] = {
+static const luaL_Reg randfuncs[] PROGMEM = {
   {"random", math_random},
   {"randomseed", math_randomseed},
   {NULL, NULL}
@@ -683,7 +683,7 @@ static int math_log10 (lua_State *L) {
 
 
 
-static const luaL_Reg mathlib[] = {
+static const luaL_Reg mathlib[] PROGMEM = {
   {"abs",   math_abs},
   {"acos",  math_acos},
   {"asin",  math_asin},

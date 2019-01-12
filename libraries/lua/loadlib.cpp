@@ -638,7 +638,7 @@ static int ll_require (lua_State *L) {
 
 
 
-static const luaL_Reg pk_funcs[] = {
+static const luaL_Reg pk_funcs[] PROGMEM = {
   {"loadlib", ll_loadlib},
   {"searchpath", ll_searchpath},
   /* placeholders */
@@ -651,7 +651,7 @@ static const luaL_Reg pk_funcs[] = {
 };
 
 
-static const luaL_Reg ll_funcs[] = {
+static const luaL_Reg ll_funcs[] PROGMEM = {
   {"require", ll_require},
   {NULL, NULL}
 };

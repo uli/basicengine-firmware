@@ -767,7 +767,7 @@ static int f_flush (lua_State *L) {
 /*
 ** functions for 'io' library
 */
-static const luaL_Reg iolib[] = {
+static const luaL_Reg iolib[] PROGMEM = {
   {"close", io_close},
   {"flush", io_flush},
   {"input", io_input},
@@ -786,7 +786,7 @@ static const luaL_Reg iolib[] = {
 /*
 ** methods for file handles
 */
-static const luaL_Reg flib[] = {
+static const luaL_Reg flib[] PROGMEM = {
   {"close", f_close},
   {"flush", f_flush},
   {"lines", f_lines},
