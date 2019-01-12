@@ -410,7 +410,7 @@ const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
         if (lisprint(cast_uchar(buff)))
           pushstr(L, &buff, 1);
         else  /* non-printable character; print its code */
-          luaO_pushfstring(L, "<\\%d>", cast_uchar(buff));
+          luaO_pushfstring_P(L, "<\\%d>", cast_uchar(buff));
         break;
       }
       case 'd': {  /* an 'int' */

@@ -67,7 +67,7 @@ static void expr (LexState *ls, expdesc *v);
 
 static l_noret error_expected (LexState *ls, int token) {
   luaX_syntaxerror(ls,
-      luaO_pushfstring(ls->L, "%s expected", luaX_token2str(ls, token)));
+      luaO_pushfstring_P(ls->L, "%s expected", luaX_token2str(ls, token)));
 }
 
 
@@ -77,8 +77,8 @@ static l_noret errorlimit (FuncState *fs, int limit, const char *what) {
   int line = fs->f->linedefined;
   const char *where = (line == 0)
                       ? "main function"
-                      : luaO_pushfstring(L, "function at line %d", line);
-  msg = luaO_pushfstring(L, "too many %s (limit is %d) in %s",
+                      : luaO_pushfstring_P(L, "function at line %d", line);
+  msg = luaO_pushfstring_P(L, "too many %s (limit is %d) in %s",
                              what, limit, where);
   luaX_syntaxerror(fs->ls, msg);
 }
@@ -132,7 +132,7 @@ static void check_match (LexState *ls, int what, int who, int where) {
     if (where == ls->linenumber)  /* all in the same line? */
       error_expected(ls, what);  /* do not need a complex message */
     else {
-      luaX_syntaxerror(ls, luaO_pushfstring(ls->L,
+      luaX_syntaxerror(ls, luaO_pushfstring_P(ls->L,
              "%s expected (to close %s at line %d)",
               luaX_token2str(ls, what), luaX_token2str(ls, who), where));
     }
@@ -1630,7 +1630,7 @@ static void tocloselocalstat (LexState *ls) {
   TString *attr = str_checkname(ls);
   if (strcmp(getstr(attr), "toclose") != 0)
     luaK_semerror(ls,
-      luaO_pushfstring(ls->L, "unknown attribute '%s'", getstr(attr)));
+      luaO_pushfstring_P(ls->L, "unknown attribute '%s'", getstr(attr)));
   new_localvar(ls, str_checkname(ls));
   checknext(ls, '=');
   exp1(ls, 0);

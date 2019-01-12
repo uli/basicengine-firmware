@@ -37,7 +37,7 @@ typedef struct {
 
 
 static l_noret error (LoadState *S, const char *why) {
-  luaO_pushfstring(S->L, "%s: %s precompiled chunk", S->name, why);
+  luaO_pushfstring_P(S->L, "%s: %s precompiled chunk", S->name, why);
   luaD_throw(S->L, LUA_ERRSYNTAX);
 }
 
@@ -255,7 +255,7 @@ static void checkliteral (LoadState *S, const char *s, const char *msg) {
 
 static void fchecksize (LoadState *S, size_t size, const char *tname) {
   if (LoadByte(S) != size)
-    error(S, luaO_pushfstring(S->L, "%s size mismatch in", tname));
+    error(S, luaO_pushfstring_P(S->L, "%s size mismatch in", tname));
 }
 
 

@@ -694,7 +694,7 @@ static const char *varinfo (lua_State *L, const TValue *o) {
       kind = getobjname(ci_func(ci)->p, currentpc(ci),
                         cast_int(cast(StkId, o) - (ci->func + 1)), &name);
   }
-  return (kind) ? luaO_pushfstring(L, " (%s '%s')", kind, name) : "";
+  return (kind) ? luaO_pushfstring_P(L, " (%s '%s')", kind, name) : "";
 }
 
 
@@ -754,7 +754,7 @@ const char *luaG_addinfo (lua_State *L, const char *msg, TString *src,
   else {  /* no source available; use "?" instead */
     buff[0] = '?'; buff[1] = '\0';
   }
-  return luaO_pushfstring(L, "%s:%d: %s", buff, line, msg);
+  return luaO_pushfstring_P(L, "%s:%d: %s", buff, line, msg);
 }
 
 
