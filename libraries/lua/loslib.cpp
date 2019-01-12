@@ -136,7 +136,7 @@ static time_t l_checktime (lua_State *L, int arg) {
 
 
 
-
+#if 0
 static int os_execute (lua_State *L) {
   const char *cmd = luaL_optstring(L, 1, NULL);
   int stat = system(cmd);
@@ -147,7 +147,7 @@ static int os_execute (lua_State *L) {
     return 1;
   }
 }
-
+#endif
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
@@ -162,6 +162,7 @@ static int os_rename (lua_State *L) {
 }
 
 
+#if 0
 static int os_tmpname (lua_State *L) {
   char buff[LUA_TMPNAMBUFSIZE];
   int err;
@@ -367,8 +368,10 @@ static int os_setlocale (lua_State *L) {
   lua_pushstring(L, setlocale(cat[op], l));
   return 1;
 }
+#endif
 
 
+#if 0
 static int os_exit (lua_State *L) {
   int status;
   if (lua_isboolean(L, 1))
@@ -380,20 +383,25 @@ static int os_exit (lua_State *L) {
   if (L) exit(status);  /* 'if' to avoid warnings for unreachable 'return' */
   return 0;
 }
+#endif
 
 
 static const luaL_Reg syslib[] = {
+#if 0
   {"clock",     os_clock},
   {"date",      os_date},
   {"difftime",  os_difftime},
   {"execute",   os_execute},
   {"exit",      os_exit},
   {"getenv",    os_getenv},
+#endif
   {"remove",    os_remove},
   {"rename",    os_rename},
+#if 0
   {"setlocale", os_setlocale},
   {"time",      os_time},
   {"tmpname",   os_tmpname},
+#endif
   {NULL, NULL}
 };
 
