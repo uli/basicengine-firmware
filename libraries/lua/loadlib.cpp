@@ -695,14 +695,22 @@ static void createclibstable (lua_State *L) {
   lua_rawsetp(L, LUA_REGISTRYINDEX, &CLIBS);  /* set CLIBS table in registry */
 }
 
+static const char __LUA_PATH_VAR[] PROGMEM = LUA_PATH_VAR;
+static const char __LUA_PATH_DEFAULT[] PROGMEM = LUA_PATH_DEFAULT;
+static const char __LUA_CPATH_VAR[] PROGMEM = LUA_CPATH_VAR;
+static const char __LUA_CPATH_DEFAULT[] PROGMEM = LUA_CPATH_DEFAULT;
 
 LUAMOD_API int luaopen_package (lua_State *L) {
   createclibstable(L);
   luaL_newlib(L, pk_funcs);  /* create 'package' table */
   createsearcherstable(L);
   /* set paths */
-  setpath(L, "path", LUA_PATH_VAR, LUA_PATH_DEFAULT);
-  setpath(L, "cpath", LUA_CPATH_VAR, LUA_CPATH_DEFAULT);
+  char lpv[strlen_P(__LUA_PATH_VAR)+1]; strcpy_P(lpv, __LUA_PATH_VAR);
+  char lpd[strlen_P(__LUA_PATH_DEFAULT)+1]; strcpy_P(lpd, __LUA_PATH_DEFAULT);
+  char lcpv[strlen_P(__LUA_CPATH_VAR)+1]; strcpy_P(lcpv, __LUA_CPATH_VAR);
+  char lcpd[strlen_P(__LUA_CPATH_DEFAULT)+1]; strcpy_P(lcpd, __LUA_CPATH_DEFAULT);
+  setpath(L, "path", lpv, lpd);
+  setpath(L, "cpath", lcpv, lcpd);
   /* store config information */
   lua_pushliteral(L, LUA_DIRSEP "\n" LUA_PATH_SEP "\n" LUA_PATH_MARK "\n"
                      LUA_EXEC_DIR "\n" LUA_IGMARK "\n");
