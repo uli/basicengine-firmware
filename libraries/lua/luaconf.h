@@ -10,7 +10,29 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include "../../ttbasic/basic.h"
 
+#undef panic
+
+#define LUA_USE_LONGJMP
+
+#define LUA_USE_CTYPE   1
+
+
+#define l_getc(f)	f->read()
+#define l_lockfile(f)           ((void)0)
+#define l_unlockfile(f)         ((void)0)  
+
+#define lua_writestring(s, l) be_lua_writestring(s, l)
+
+#define lua_writeline() newline()
+void be_lua_writestringerror(const char *fmt, const char *msg);
+#define lua_writestringerror be_lua_writestringerror
+
+#define l_fseek be_l_fseek
+#define l_seeknum int
+#define l_ftell(f) f->position()
+#define l_FILE Unifile
 
 /*
 ** ===================================================================

@@ -28,7 +28,7 @@
 #include "lstring.h"
 #include "ltable.h"
 
-
+#undef clp
 
 /* maximum number of local variables per function (must be smaller
    than 250, due to the bytecode format) */

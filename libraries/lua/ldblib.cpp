@@ -19,6 +19,7 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#undef nvar
 
 /*
 ** The hook table at registry[&HOOKKEY] maps threads to their current

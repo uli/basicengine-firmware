@@ -20,6 +20,17 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+static void be_lua_writestring(const char *s, int l) {
+  while (l--) {
+    c_putch(*s++);
+  }
+}
+
+void be_lua_writestringerror(const char *fmt, const char *msg) {
+  char str[strlen(fmt)+strlen(msg)+1];
+  sprintf(str, fmt, msg);
+  c_puts(str);
+}
 
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
