@@ -59,7 +59,7 @@ static void save (LexState *ls, int c) {
   if (luaZ_bufflen(b) + 1 > luaZ_sizebuffer(b)) {
     size_t newsize;
     if (luaZ_sizebuffer(b) >= MAX_SIZE/2)
-      lexerror(ls, "lexical element too long", 0);
+      lexerror_P(ls, "lexical element too long", 0);
     newsize = luaZ_sizebuffer(b) * 2;
     luaZ_resizebuffer(ls->L, b, newsize);
   }
@@ -158,7 +158,7 @@ static void inclinenumber (LexState *ls) {
   if (currIsNewline(ls) && ls->current != old)
     next(ls);  /* skip '\n\r' or '\r\n' */
   if (++ls->linenumber >= MAX_INT)
-    lexerror(ls, "chunk has too many lines", 0);
+    lexerror_P(ls, "chunk has too many lines", 0);
 }
 
 
@@ -233,7 +233,7 @@ static int read_numeral (LexState *ls, SemInfo *seminfo) {
   }
   save(ls, '\0');
   if (luaO_str2num(luaZ_buffer(ls->buff), &obj) == 0)  /* format error? */
-    lexerror(ls, "malformed number", TK_FLT);
+    lexerror_P(ls, "malformed number", TK_FLT);
   if (ttisinteger(&obj)) {
     seminfo->i = ivalue(&obj);
     return TK_INT;
@@ -373,11 +373,11 @@ static void read_string (LexState *ls, int del, SemInfo *seminfo) {
   while (ls->current != del) {
     switch (ls->current) {
       case EOZ:
-        lexerror(ls, "unfinished string", TK_EOS);
+        lexerror_P(ls, "unfinished string", TK_EOS);
         break;  /* to avoid warnings */
       case '\n':
       case '\r':
-        lexerror(ls, "unfinished string", TK_STRING);
+        lexerror_P(ls, "unfinished string", TK_STRING);
         break;  /* to avoid warnings */
       case '\\': {  /* escape sequences */
         int c;  /* final character to be saved */
@@ -469,7 +469,7 @@ static int llex (LexState *ls, SemInfo *seminfo) {
           return TK_STRING;
         }
         else if (sep == 0)  /* '[=...' missing second bracket? */
-          lexerror(ls, "invalid long string delimiter", TK_STRING);
+          lexerror_P(ls, "invalid long string delimiter", TK_STRING);
         return '[';
       }
       case '=': {
