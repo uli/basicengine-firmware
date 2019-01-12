@@ -5471,6 +5471,10 @@ static void show_logo() {
              sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62, 0);
 }
 
+#include <lauxlib.h>
+
+extern lua_State *lua;
+
 /*
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
@@ -5594,6 +5598,11 @@ void SMALL basic() {
       while (--rc)
         newline();
     } else {
+      continue;
+    }
+
+    if (lua) {
+      luaL_dostring(lua, lbuf);
       continue;
     }
 

@@ -127,6 +127,7 @@ _none	I_IMPLICITENDIF	iendif
 _none	I_EXTEND	iextend
 CREDITS	X_CREDITS	icredits
 XYZZY	X_XYZZY		ixyzzy
+LUA	X_LUA		ilua
 _none	I_NUMLSTREF	esyntax
 _none	I_STRLSTREF	esyntax
 ARG$	I_ARGSTR	sarg

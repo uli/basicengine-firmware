@@ -660,3 +660,19 @@ void syspanic(const char *txt) {
   Serial.println(F("System halted"));
   for (;;);
 }
+
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+lua_State *lua = NULL;
+
+void ilua()
+{
+  lua = luaL_newstate();
+  if (!lua) {
+    err = ERR_SYS;
+    return;
+  }
+  luaL_openlibs(lua);
+}
