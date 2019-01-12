@@ -226,11 +226,14 @@ LUALIB_API void luaL_where (lua_State *L, int level) {
 ** not need reserved stack space when called. (At worst, it generates
 ** an error with "stack overflow" instead of the given message.)
 */
-LUALIB_API int luaL_error (lua_State *L, const char *fmt, ...) {
+LUALIB_API int __luaL_error (lua_State *L, const char *fmt, ...) {
+  char ffmt[128];
+  strncpy(ffmt, fmt, 127);
+  ffmt[127] = 0;
   va_list argp;
   va_start(argp, fmt);
   luaL_where(L, 1);
-  lua_pushvfstring(L, fmt, argp);
+  lua_pushvfstring(L, ffmt, argp);
   va_end(argp);
   lua_concat(L, 2);
   return lua_error(L);
