@@ -27,8 +27,8 @@ static void be_lua_writestring(const char *s, int l) {
 }
 
 void be_lua_writestringerror(const char *fmt, const char *msg) {
-  char str[strlen(fmt)+strlen(msg)+1];
-  sprintf(str, fmt, msg);
+  char str[strlen_P(fmt)+strlen(msg)+1];
+  sprintf_P(str, fmt, msg);
   c_puts(str);
 }
 

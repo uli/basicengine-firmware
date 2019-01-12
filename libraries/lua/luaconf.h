@@ -27,7 +27,7 @@
 
 #define lua_writeline() newline()
 void be_lua_writestringerror(const char *fmt, const char *msg);
-#define lua_writestringerror be_lua_writestringerror
+#define lua_writestringerror(f,m) be_lua_writestringerror(PSTR(f),m)
 
 #define l_fseek be_l_fseek
 #define l_seeknum int
