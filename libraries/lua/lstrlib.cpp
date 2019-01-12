@@ -1634,25 +1634,42 @@ static int str_unpack (lua_State *L) {
 
 /* }====================================================== */
 
+static const char __byte[] PROGMEM = "byte";
+static const char __char[] PROGMEM = "char";
+static const char __dump[] PROGMEM = "dump";
+static const char __find[] PROGMEM = "find";
+static const char __format[] PROGMEM = "format";
+static const char __gmatch[] PROGMEM = "gmatch";
+static const char __gsub[] PROGMEM = "gsub";
+static const char __len[] PROGMEM = "len";
+static const char __lower[] PROGMEM = "lower";
+static const char __match[] PROGMEM = "match";
+static const char __rep[] PROGMEM = "rep";
+static const char __reverse[] PROGMEM = "reverse";
+static const char __sub[] PROGMEM = "sub";
+static const char __upper[] PROGMEM = "upper";
+static const char __pack[] PROGMEM = "pack";
+static const char __packsize[] PROGMEM = "packsize";
+static const char __unpack[] PROGMEM = "unpack";
 
 static const luaL_Reg strlib[] PROGMEM = {
-  {"byte", str_byte},
-  {"char", str_char},
-  {"dump", str_dump},
-  {"find", str_find},
-  {"format", str_format},
-  {"gmatch", gmatch},
-  {"gsub", str_gsub},
-  {"len", str_len},
-  {"lower", str_lower},
-  {"match", str_match},
-  {"rep", str_rep},
-  {"reverse", str_reverse},
-  {"sub", str_sub},
-  {"upper", str_upper},
-  {"pack", str_pack},
-  {"packsize", str_packsize},
-  {"unpack", str_unpack},
+  {__byte, str_byte},
+  {__char, str_char},
+  {__dump, str_dump},
+  {__find, str_find},
+  {__format, str_format},
+  {__gmatch, gmatch},
+  {__gsub, str_gsub},
+  {__len, str_len},
+  {__lower, str_lower},
+  {__match, str_match},
+  {__rep, str_rep},
+  {__reverse, str_reverse},
+  {__sub, str_sub},
+  {__upper, str_upper},
+  {__pack, str_pack},
+  {__packsize, str_packsize},
+  {__unpack, str_unpack},
   {NULL, NULL}
 };
 

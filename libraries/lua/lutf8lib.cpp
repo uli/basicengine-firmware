@@ -245,15 +245,22 @@ static int iter_codes (lua_State *L) {
 /* pattern to match a single UTF-8 character */
 #define UTF8PATT	"[\0-\x7F\xC2-\xF4][\x80-\xBF]*"
 
+static const char __offset[] PROGMEM = "offset";
+static const char __codepoint[] PROGMEM = "codepoint";
+static const char __char[] PROGMEM = "char";
+static const char __len[] PROGMEM = "len";
+static const char __codes[] PROGMEM = "codes";
+  /* placeholders */
+static const char __charpattern[] PROGMEM = "charpattern";
 
 static const luaL_Reg funcs[] PROGMEM = {
-  {"offset", byteoffset},
-  {"codepoint", codepoint},
-  {"char", utfchar},
-  {"len", utflen},
-  {"codes", iter_codes},
+  {__offset, byteoffset},
+  {__codepoint, codepoint},
+  {__char, utfchar},
+  {__len, utflen},
+  {__codes, iter_codes},
   /* placeholders */
-  {"charpattern", NULL},
+  {__charpattern, NULL},
   {NULL, NULL}
 };
 

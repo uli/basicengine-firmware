@@ -637,22 +637,31 @@ static int ll_require (lua_State *L) {
 
 
 
+static const char __loadlib[] PROGMEM = "loadlib";
+static const char __searchpath[] PROGMEM = "searchpath";
+  /* placeholders */
+static const char __preload[] PROGMEM = "preload";
+static const char __cpath[] PROGMEM = "cpath";
+static const char __path[] PROGMEM = "path";
+static const char __searchers[] PROGMEM = "searchers";
+static const char __loaded[] PROGMEM = "loaded";
 
 static const luaL_Reg pk_funcs[] PROGMEM = {
-  {"loadlib", ll_loadlib},
-  {"searchpath", ll_searchpath},
+  {__loadlib, ll_loadlib},
+  {__searchpath, ll_searchpath},
   /* placeholders */
-  {"preload", NULL},
-  {"cpath", NULL},
-  {"path", NULL},
-  {"searchers", NULL},
-  {"loaded", NULL},
+  {__preload, NULL},
+  {__cpath, NULL},
+  {__path, NULL},
+  {__searchers, NULL},
+  {__loaded, NULL},
   {NULL, NULL}
 };
 
+static const char __require[] PROGMEM = "require";
 
 static const luaL_Reg ll_funcs[] PROGMEM = {
-  {"require", ll_require},
+  {__require, ll_require},
   {NULL, NULL}
 };
 

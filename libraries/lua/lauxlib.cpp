@@ -486,10 +486,12 @@ static int boxgc (lua_State *L) {
   return 0;
 }
 
+static const char ____gc[] PROGMEM = "__gc";
+static const char ____close[] PROGMEM = "__close";
 
 static const luaL_Reg boxmt[] PROGMEM = {  /* box metamethods */
-  {"__gc", boxgc},
-  {"__close", boxgc},
+  {____gc, boxgc},
+  {____close, boxgc},
   {NULL, NULL}
 };
 

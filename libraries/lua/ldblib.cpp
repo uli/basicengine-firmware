@@ -436,24 +436,40 @@ static int db_traceback (lua_State *L) {
   return 1;
 }
 
+static const char __debug[] PROGMEM = "debug";
+static const char __getuservalue[] PROGMEM = "getuservalue";
+static const char __gethook[] PROGMEM = "gethook";
+static const char __getinfo[] PROGMEM = "getinfo";
+static const char __getlocal[] PROGMEM = "getlocal";
+static const char __getregistry[] PROGMEM = "getregistry";
+static const char __getmetatable[] PROGMEM = "getmetatable";
+static const char __getupvalue[] PROGMEM = "getupvalue";
+static const char __upvaluejoin[] PROGMEM = "upvaluejoin";
+static const char __upvalueid[] PROGMEM = "upvalueid";
+static const char __setuservalue[] PROGMEM = "setuservalue";
+static const char __sethook[] PROGMEM = "sethook";
+static const char __setlocal[] PROGMEM = "setlocal";
+static const char __setmetatable[] PROGMEM = "setmetatable";
+static const char __setupvalue[] PROGMEM = "setupvalue";
+static const char __traceback[] PROGMEM = "traceback";
 
 static const luaL_Reg dblib[] PROGMEM = {
-  {"debug", db_debug},
-  {"getuservalue", db_getuservalue},
-  {"gethook", db_gethook},
-  {"getinfo", db_getinfo},
-  {"getlocal", db_getlocal},
-  {"getregistry", db_getregistry},
-  {"getmetatable", db_getmetatable},
-  {"getupvalue", db_getupvalue},
-  {"upvaluejoin", db_upvaluejoin},
-  {"upvalueid", db_upvalueid},
-  {"setuservalue", db_setuservalue},
-  {"sethook", db_sethook},
-  {"setlocal", db_setlocal},
-  {"setmetatable", db_setmetatable},
-  {"setupvalue", db_setupvalue},
-  {"traceback", db_traceback},
+  {__debug, db_debug},
+  {__getuservalue, db_getuservalue},
+  {__gethook, db_gethook},
+  {__getinfo, db_getinfo},
+  {__getlocal, db_getlocal},
+  {__getregistry, db_getregistry},
+  {__getmetatable, db_getmetatable},
+  {__getupvalue, db_getupvalue},
+  {__upvaluejoin, db_upvaluejoin},
+  {__upvalueid, db_upvalueid},
+  {__setuservalue, db_setuservalue},
+  {__sethook, db_sethook},
+  {__setlocal, db_setlocal},
+  {__setmetatable, db_setmetatable},
+  {__setupvalue, db_setupvalue},
+  {__traceback, db_traceback},
   {NULL, NULL}
 };
 

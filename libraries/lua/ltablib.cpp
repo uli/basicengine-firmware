@@ -404,15 +404,22 @@ static int sort (lua_State *L) {
 
 /* }====================================================== */
 
+static const char __concat[] PROGMEM = "concat";
+static const char __insert[] PROGMEM = "insert";
+static const char __pack[] PROGMEM = "pack";
+static const char __unpack[] PROGMEM = "unpack";
+static const char __remove[] PROGMEM = "remove";
+static const char __move[] PROGMEM = "move";
+static const char __sort[] PROGMEM = "sort";
 
 static const luaL_Reg tab_funcs[] PROGMEM = {
-  {"concat", tconcat},
-  {"insert", tinsert},
-  {"pack", tpack},
-  {"unpack", tunpack},
-  {"remove", tremove},
-  {"move", tmove},
-  {"sort", sort},
+  {__concat, tconcat},
+  {__insert, tinsert},
+  {__pack, tpack},
+  {__unpack, tunpack},
+  {__remove, tremove},
+  {__move, tmove},
+  {__sort, sort},
   {NULL, NULL}
 };
 

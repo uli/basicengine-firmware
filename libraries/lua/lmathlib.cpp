@@ -682,46 +682,83 @@ static int math_log10 (lua_State *L) {
 /* }================================================================== */
 
 
+static const char __abs [] PROGMEM = "abs";
+static const char __acos [] PROGMEM = "acos";
+static const char __asin [] PROGMEM = "asin";
+static const char __atan [] PROGMEM = "atan";
+static const char __ceil [] PROGMEM = "ceil";
+static const char __cos [] PROGMEM = "cos";
+static const char __deg [] PROGMEM = "deg";
+static const char __exp [] PROGMEM = "exp";
+static const char __tointeger [] PROGMEM = "tointeger";
+static const char __floor [] PROGMEM = "floor";
+static const char __fmod [] PROGMEM = "fmod";
+static const char __ult [] PROGMEM = "ult";
+static const char __log [] PROGMEM = "log";
+static const char __max [] PROGMEM = "max";
+static const char __min [] PROGMEM = "min";
+static const char __modf [] PROGMEM = "modf";
+static const char __rad [] PROGMEM = "rad";
+static const char __sin [] PROGMEM = "sin";
+static const char __sqrt [] PROGMEM = "sqrt";
+static const char __tan [] PROGMEM = "tan";
+static const char __type [] PROGMEM = "type";
+#if defined(LUA_COMPAT_MATHLIB)
+static const char __atan2 [] PROGMEM = "atan2";
+static const char __cosh [] PROGMEM = "cosh";
+static const char __sinh [] PROGMEM = "sinh";
+static const char __tanh [] PROGMEM = "tanh";
+static const char __pow [] PROGMEM = "pow";
+static const char __frexp [] PROGMEM = "frexp";
+static const char __ldexp [] PROGMEM = "ldexp";
+static const char __log10 [] PROGMEM = "log10";
+#endif
+static const char __random [] PROGMEM = "random";
+static const char __randomseed [] PROGMEM = "randomseed";
+static const char __pi [] PROGMEM = "pi";
+static const char __huge [] PROGMEM = "huge";
+static const char __maxinteger [] PROGMEM = "maxinteger";
+static const char __mininteger [] PROGMEM = "mininteger";
 
 static const luaL_Reg mathlib[] PROGMEM = {
-  {"abs",   math_abs},
-  {"acos",  math_acos},
-  {"asin",  math_asin},
-  {"atan",  math_atan},
-  {"ceil",  math_ceil},
-  {"cos",   math_cos},
-  {"deg",   math_deg},
-  {"exp",   math_exp},
-  {"tointeger", math_toint},
-  {"floor", math_floor},
-  {"fmod",   math_fmod},
-  {"ult",   math_ult},
-  {"log",   math_log},
-  {"max",   math_max},
-  {"min",   math_min},
-  {"modf",   math_modf},
-  {"rad",   math_rad},
-  {"sin",   math_sin},
-  {"sqrt",  math_sqrt},
-  {"tan",   math_tan},
-  {"type", math_type},
+  {__abs,   math_abs},
+  {__acos,  math_acos},
+  {__asin,  math_asin},
+  {__atan,  math_atan},
+  {__ceil,  math_ceil},
+  {__cos,   math_cos},
+  {__deg,   math_deg},
+  {__exp,   math_exp},
+  {__tointeger, math_toint},
+  {__floor, math_floor},
+  {__fmod,   math_fmod},
+  {__ult,   math_ult},
+  {__log,   math_log},
+  {__max,   math_max},
+  {__min,   math_min},
+  {__modf,   math_modf},
+  {__rad,   math_rad},
+  {__sin,   math_sin},
+  {__sqrt,  math_sqrt},
+  {__tan,   math_tan},
+  {__type, math_type},
 #if defined(LUA_COMPAT_MATHLIB)
-  {"atan2", math_atan},
-  {"cosh",   math_cosh},
-  {"sinh",   math_sinh},
-  {"tanh",   math_tanh},
-  {"pow",   math_pow},
-  {"frexp", math_frexp},
-  {"ldexp", math_ldexp},
-  {"log10", math_log10},
+  {__atan2, math_atan},
+  {__cosh,   math_cosh},
+  {__sinh,   math_sinh},
+  {__tanh,   math_tanh},
+  {__pow,   math_pow},
+  {__frexp, math_frexp},
+  {__ldexp, math_ldexp},
+  {__log10, math_log10},
 #endif
   /* placeholders */
-  {"random", NULL},
-  {"randomseed", NULL},
-  {"pi", NULL},
-  {"huge", NULL},
-  {"maxinteger", NULL},
-  {"mininteger", NULL},
+  {__random, NULL},
+  {__randomseed, NULL},
+  {__pi, NULL},
+  {__huge, NULL},
+  {__maxinteger, NULL},
+  {__mininteger, NULL},
   {NULL, NULL}
 };
 

@@ -767,18 +767,31 @@ static int f_flush (lua_State *L) {
 /*
 ** functions for 'io' library
 */
+
+static const char __close[] PROGMEM = "close";
+static const char __flush[] PROGMEM = "flush";
+static const char __input[] PROGMEM = "input";
+static const char __lines[] PROGMEM = "lines";
+static const char __open[] PROGMEM = "open";
+static const char __output[] PROGMEM = "output";
+static const char __popen[] PROGMEM = "popen";
+static const char __read[] PROGMEM = "read";
+//static const char __tmpfile[] PROGMEM = "tmpfile";
+static const char __type[] PROGMEM = "type";
+static const char __write[] PROGMEM = "write";
+
 static const luaL_Reg iolib[] PROGMEM = {
-  {"close", io_close},
-  {"flush", io_flush},
-  {"input", io_input},
-  {"lines", io_lines},
-  {"open", io_open},
-  {"output", io_output},
-  {"popen", io_popen},
-  {"read", io_read},
-//  {"tmpfile", io_tmpfile},
-  {"type", io_type},
-  {"write", io_write},
+  {__close, io_close},
+  {__flush, io_flush},
+  {__input, io_input},
+  {__lines, io_lines},
+  {__open, io_open},
+  {__output, io_output},
+  {__popen, io_popen},
+  {__read, io_read},
+//  {__tmpfile, io_tmpfile},
+  {__type, io_type},
+  {__write, io_write},
   {NULL, NULL}
 };
 
@@ -786,17 +799,29 @@ static const luaL_Reg iolib[] PROGMEM = {
 /*
 ** methods for file handles
 */
+
+static const char __xclose[] PROGMEM = "close";
+static const char __xflush[] PROGMEM = "flush";
+static const char __xlines[] PROGMEM = "lines";
+static const char __xread[] PROGMEM = "read";
+static const char __seek[] PROGMEM = "seek";
+//static const char __setvbuf[] PROGMEM = "setvbuf";
+static const char __xwrite[] PROGMEM = "write";
+static const char ____gc[] PROGMEM = "__gc";
+static const char ____close[] PROGMEM = "__close";
+static const char ____tostring[] PROGMEM = "__tostring";
+
 static const luaL_Reg flib[] PROGMEM = {
-  {"close", f_close},
-  {"flush", f_flush},
-  {"lines", f_lines},
-  {"read", f_read},
-  {"seek", f_seek},
-//  {"setvbuf", f_setvbuf},
-  {"write", f_write},
-  {"__gc", f_gc},
-  {"__close", f_gc},
-  {"__tostring", f_tostring},
+  {__xclose, f_close},
+  {__xflush, f_flush},
+  {__xlines, f_lines},
+  {__xread, f_read},
+  {__seek, f_seek},
+//  {__setvbuf, f_setvbuf},
+  {__xwrite, f_write},
+  {____gc, f_gc},
+  {____close, f_gc},
+  {____tostring, f_tostring},
   {NULL, NULL}
 };
 

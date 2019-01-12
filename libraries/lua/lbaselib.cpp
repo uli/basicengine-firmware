@@ -486,34 +486,60 @@ static int luaB_tostring (lua_State *L) {
   return 1;
 }
 
+static const char __assert[] PROGMEM = "assert";
+static const char __collectgarbage[] PROGMEM = "collectgarbage";
+static const char __dofile[] PROGMEM = "dofile";
+static const char __error[] PROGMEM = "error";
+static const char __getmetatable[] PROGMEM = "getmetatable";
+static const char __ipairs[] PROGMEM = "ipairs";
+static const char __loadfile[] PROGMEM = "loadfile";
+static const char __load[] PROGMEM = "load";
+static const char __next[] PROGMEM = "next";
+static const char __pairs[] PROGMEM = "pairs";
+static const char __pcall[] PROGMEM = "pcall";
+static const char __print[] PROGMEM = "print";
+static const char __warn[] PROGMEM = "warn";
+static const char __rawequal[] PROGMEM = "rawequal";
+static const char __rawlen[] PROGMEM = "rawlen";
+static const char __rawget[] PROGMEM = "rawget";
+static const char __rawset[] PROGMEM = "rawset";
+static const char __select[] PROGMEM = "select";
+static const char __setmetatable[] PROGMEM = "setmetatable";
+static const char __tonumber[] PROGMEM = "tonumber";
+static const char __tostring[] PROGMEM = "tostring";
+static const char __type[] PROGMEM = "type";
+static const char __xpcall[] PROGMEM = "xpcall";
+  /* placeholders */
+static const char __LUA_GNAME[] PROGMEM = LUA_GNAME;
+static const char ___VERSION[] PROGMEM = "_VERSION";
 
 static const luaL_Reg base_funcs[] PROGMEM = {
-  {"assert", luaB_assert},
-  {"collectgarbage", luaB_collectgarbage},
-  {"dofile", luaB_dofile},
-  {"error", luaB_error},
-  {"getmetatable", luaB_getmetatable},
-  {"ipairs", luaB_ipairs},
-  {"loadfile", luaB_loadfile},
-  {"load", luaB_load},
-  {"next", luaB_next},
-  {"pairs", luaB_pairs},
-  {"pcall", luaB_pcall},
-  {"print", luaB_print},
-  {"warn", luaB_warn},
-  {"rawequal", luaB_rawequal},
-  {"rawlen", luaB_rawlen},
-  {"rawget", luaB_rawget},
-  {"rawset", luaB_rawset},
-  {"select", luaB_select},
-  {"setmetatable", luaB_setmetatable},
-  {"tonumber", luaB_tonumber},
-  {"tostring", luaB_tostring},
-  {"type", luaB_type},
-  {"xpcall", luaB_xpcall},
+  {__assert, luaB_assert},
+  {__collectgarbage, luaB_collectgarbage},
+  {__dofile, luaB_dofile},
+  {__error, luaB_error},
+  {__getmetatable, luaB_getmetatable},
+  {__ipairs, luaB_ipairs},
+  {__loadfile, luaB_loadfile},
+  {__load, luaB_load},
+  {__next, luaB_next},
+  {__pairs, luaB_pairs},
+  {__pcall, luaB_pcall},
+  {__print, luaB_print},
+  {__warn, luaB_warn},
+  {__rawequal, luaB_rawequal},
+  {__rawlen, luaB_rawlen},
+  {__rawget, luaB_rawget},
+  {__rawset, luaB_rawset},
+  {__select, luaB_select},
+  {__setmetatable, luaB_setmetatable},
+  {__tonumber, luaB_tonumber},
+  {__tostring, luaB_tostring},
+  {__type, luaB_type},
+  {__xpcall, luaB_xpcall},
   /* placeholders */
-  {LUA_GNAME, NULL},
-  {"_VERSION", NULL},
+  {__LUA_GNAME, NULL},
+  {___VERSION, NULL},
   {NULL, NULL}
 };
 

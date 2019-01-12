@@ -179,16 +179,24 @@ static int luaB_kill (lua_State *L) {
   }
 }
 
+static const char __create[] PROGMEM = "create";
+static const char __resume[] PROGMEM = "resume";
+static const char __running[] PROGMEM = "running";
+static const char __status[] PROGMEM = "status";
+static const char __wrap[] PROGMEM = "wrap";
+static const char __yield[] PROGMEM = "yield";
+static const char __isyieldable[] PROGMEM = "isyieldable";
+static const char __kill[] PROGMEM = "kill";
 
 static const luaL_Reg co_funcs[] PROGMEM = {
-  {"create", luaB_cocreate},
-  {"resume", luaB_coresume},
-  {"running", luaB_corunning},
-  {"status", luaB_costatus},
-  {"wrap", luaB_cowrap},
-  {"yield", luaB_yield},
-  {"isyieldable", luaB_yieldable},
-  {"kill", luaB_kill},
+  {__create, luaB_cocreate},
+  {__resume, luaB_coresume},
+  {__running, luaB_corunning},
+  {__status, luaB_costatus},
+  {__wrap, luaB_cowrap},
+  {__yield, luaB_yield},
+  {__isyieldable, luaB_yieldable},
+  {__kill, luaB_kill},
   {NULL, NULL}
 };
 
