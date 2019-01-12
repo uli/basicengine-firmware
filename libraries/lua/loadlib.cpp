@@ -225,7 +225,7 @@ static lua_CFunction lsys_sym (lua_State *L, void *lib, const char *sym) {
 #define LIB_FAIL	"absent"
 
 
-#define DLMSG	"dynamic libraries not enabled; check your Lua installation"
+#define DLMSG	"nodyn" //"dynamic libraries not enabled; check your Lua installation"
 
 
 static void lsys_unloadlib (void *lib) {
