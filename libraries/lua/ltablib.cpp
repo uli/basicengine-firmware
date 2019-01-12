@@ -226,7 +226,7 @@ typedef unsigned int IdxT;
 */
 #if !defined(l_randomizePivot)		/* { */
 
-#include <time.h>
+//#include <time.h>
 
 /* size of 'e' measured in number of 'unsigned int's */
 #define sof(e)		(sizeof(e) / sizeof(unsigned int))
