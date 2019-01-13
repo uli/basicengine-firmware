@@ -129,7 +129,7 @@ LUALIB_API void (luaL_requiref) (lua_State *L, const char *modname,
   (luaL_checkversion(L), luaL_newlibtable(L,l), luaL_setfuncs(L,l,0))
 
 #define luaL_argcheck(L, cond,arg,extramsg)	\
-		((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
+		((void)((cond) || luaL_argerror_P(L, (arg), (extramsg))))
 
 #define luaL_argexpected(L,cond,arg,tname)	\
 		((void)((cond) || luaL_typeerror(L, (arg), (tname))))
