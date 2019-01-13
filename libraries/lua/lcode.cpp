@@ -129,7 +129,7 @@ static void fixjump (FuncState *fs, int pc, int dest) {
   int offset = dest - (pc + 1);
   lua_assert(dest != NO_JUMP);
   if (!(-OFFSET_sJ <= offset && offset <= MAXARG_sJ - OFFSET_sJ))
-    luaX_syntaxerror(fs->ls, "control structure too long");
+    luaX_syntaxerror_P(fs->ls, "control structure too long");
   lua_assert(GET_OPCODE(*jmp) == OP_JMP);
   SETARG_sJ(*jmp, offset);
 }
@@ -436,7 +436,7 @@ void luaK_checkstack (FuncState *fs, int n) {
   int newstack = fs->freereg + n;
   if (newstack > fs->f->maxstacksize) {
     if (newstack >= MAXREGS)
-      luaX_syntaxerror(fs->ls,
+      luaX_syntaxerror_P(fs->ls,
         "function or expression needs too many registers");
     fs->f->maxstacksize = cast_byte(newstack);
   }
@@ -1626,7 +1626,7 @@ void luaK_setlist (FuncState *fs, int base, int nelems, int tostore) {
     codeextraarg(fs, c);
   }
   else
-    luaX_syntaxerror(fs->ls, "constructor too long");
+    luaX_syntaxerror_P(fs->ls, "constructor too long");
   fs->freereg = base + 1;  /* free registers with list values */
 }
 

@@ -119,7 +119,7 @@ static void checknext (LexState *ls, int c) {
 }
 
 
-#define check_condition(ls,c,msg)	{ if (!(c)) luaX_syntaxerror(ls, msg); }
+#define check_condition(ls,c,msg)	{ if (!(c)) luaX_syntaxerror_P(ls, msg); }
 
 
 /*
@@ -840,7 +840,7 @@ static void parlist (LexState *ls) {
           isvararg = 1;
           break;
         }
-        default: luaX_syntaxerror(ls, "<name> or '...' expected");
+        default: luaX_syntaxerror_P(ls, "<name> or '...' expected");
       }
     } while (!isvararg && testnext(ls, ','));
   }
@@ -913,7 +913,7 @@ static void funcargs (LexState *ls, expdesc *f, int line) {
       break;
     }
     default: {
-      luaX_syntaxerror(ls, "function arguments expected");
+      luaX_syntaxerror_P(ls, "function arguments expected");
     }
   }
   lua_assert(f->k == VNONRELOC);
@@ -957,7 +957,7 @@ static void primaryexp (LexState *ls, expdesc *v) {
       return;
     }
     default: {
-      luaX_syntaxerror(ls, "unexpected symbol");
+      luaX_syntaxerror_P(ls, "unexpected symbol");
     }
   }
 }
@@ -1397,7 +1397,7 @@ static void fixforjump (FuncState *fs, int pc, int dest, int back) {
   if (back)
     offset = -offset;
   if (unlikely(offset > MAXARG_Bx))
-    luaX_syntaxerror(fs->ls, "control structure too long");
+    luaX_syntaxerror_P(fs->ls, "control structure too long");
   SETARG_Bx(*jmp, offset);
 }
 
@@ -1499,7 +1499,7 @@ static void forstat (LexState *ls, int line) {
   switch (ls->t.token) {
     case '=': fornum(ls, varname, line); break;
     case ',': case TK_IN: forlist(ls, varname); break;
-    default: luaX_syntaxerror(ls, "'=' or 'in' expected");
+    default: luaX_syntaxerror_P(ls, "'=' or 'in' expected");
   }
   check_match(ls, TK_END, TK_FOR, line);
   leaveblock(fs);  /* loop scope ('break' jumps to this point) */
