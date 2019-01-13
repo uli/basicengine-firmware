@@ -37,7 +37,7 @@
 
 
 /* ORDER RESERVED */
-static const char *const luaX_tokens [] = {
+static const char *const luaX_tokens [] PROGMEM = {
     "and", "break", "do", "else", "elseif",
     "end", "false", "for", "function", "goto", "if",
     "in", "local", "nil", "not", "or", "repeat",
