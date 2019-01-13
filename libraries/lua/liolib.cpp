@@ -267,7 +267,7 @@ static void opencheck (lua_State *L, const char *fname, const char *mode) {
     p->f = NULL;
   }
   if (p->f == NULL)
-    luaL_error(L, "cannot open file '%s' (%s)", fname, strerror(errno));
+    luaL_error(L, "cannot open file '%s' (%d)", fname, errno);
 }
 
 
