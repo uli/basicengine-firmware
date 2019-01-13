@@ -59,7 +59,7 @@ int luaO_fb2int (int x) {
 ** Computes ceil(log2(x))
 */
 int luaO_ceillog2 (unsigned int x) {
-  static const lu_byte log_2[256] = {  /* log_2[i] = ceil(log2(i - 1)) */
+  static const lu_byte log_2[256] PROGMEM = {  /* log_2[i] = ceil(log2(i - 1)) */
     0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
@@ -72,7 +72,7 @@ int luaO_ceillog2 (unsigned int x) {
   int l = 0;
   x--;
   while (x >= 256) { l += 8; x >>= 8; }
-  return l + log_2[x];
+  return l + pgm_read_byte(&log_2[x]);
 }
 
 
