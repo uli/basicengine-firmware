@@ -121,7 +121,7 @@ static int codepoint (lua_State *L) {
   if (pose - posi >= INT_MAX)  /* (lua_Integer -> int) overflow? */
     return luaL_error(L, "string slice too long");
   n = (int)(pose -  posi) + 1;  /* upper bound for number of returns */
-  luaL_checkstack(L, n, "string slice too long");
+  luaL_checkstack_P(L, n, "string slice too long");
   n = 0;  /* count the number of returns */
   se = s + pose;  /* string end */
   for (s += posi - 1; s < se;) {

@@ -587,7 +587,7 @@ static int g_read (lua_State *L, l_FILE *f, int first) {
   }
   else {
     /* ensure stack space for all results and for auxlib's buffer */
-    luaL_checkstack(L, nargs+LUA_MINSTACK, "too many arguments");
+    luaL_checkstack_P(L, nargs+LUA_MINSTACK, "too many arguments");
     success = 1;
     for (n = first; nargs-- && success; n++) {
       if (lua_type(L, n) == LUA_TNUMBER) {
@@ -647,7 +647,7 @@ static int io_readline (lua_State *L) {
   if (isclosed(p))  /* file is already closed? */
     return luaL_error(L, "file is already closed");
   lua_settop(L , 1);
-  luaL_checkstack(L, n, "too many arguments");
+  luaL_checkstack_P(L, n, "too many arguments");
   for (i = 1; i <= n; i++)  /* push arguments to 'g_read' */
     lua_pushvalue(L, lua_upvalueindex(3 + i));
   n = g_read(L, p->f, 2);  /* 'n' is number of results */
