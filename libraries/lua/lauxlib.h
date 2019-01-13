@@ -62,6 +62,7 @@ LUALIB_API lua_Integer (luaL_optinteger) (lua_State *L, int arg,
                                           lua_Integer def);
 
 LUALIB_API void (luaL_checkstack) (lua_State *L, int sz, const char *msg);
+#define luaL_checkstack_P(L, sz, msg) luaL_checkstack(L, sz, PSTR(msg))
 LUALIB_API void (luaL_checktype) (lua_State *L, int arg, int t);
 LUALIB_API void (luaL_checkany) (lua_State *L, int arg);
 
