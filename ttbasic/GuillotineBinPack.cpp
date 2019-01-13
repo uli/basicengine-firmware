@@ -229,7 +229,7 @@ int GuillotineBinPack::ScoreByHeuristic(int width, int height, const Rect &freeR
 	case RectWorstAreaFit: return ScoreWorstAreaFit(width, height, freeRect);
 	case RectWorstShortSideFit: return ScoreWorstShortSideFit(width, height, freeRect);
 	case RectWorstLongSideFit: return ScoreWorstLongSideFit(width, height, freeRect);
-	default: assert(false); return INT32_MAX;
+	default: /*assert(false);*/ return INT32_MAX;
 	}
 }
 
@@ -394,7 +394,7 @@ void GuillotineBinPack::SplitFreeRectByHeuristic(const Rect &freeRect, const Rec
                   splitHorizontal = (placedRect.width * h > w * placedRect.height);
                 break;
 	default:
-		assert(false);
+		return; //assert(false);
 	}
 
 	// Perform the actual split.
