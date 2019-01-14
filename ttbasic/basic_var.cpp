@@ -510,7 +510,21 @@ void iprepend() {
   return;
 }
 
-// LET handler
+/***bc bas LET
+Assigns the value of an expression to a variable. 
+\usage LET variable = expression
+\args
+@variable	any variable
+@expression	any expression that is of the same type as `variable`
+\note
+The use of this command is optional; any variable assignment can be
+written as `variable = expression`, without prefixing it with `LET`.
+
+It is provided solely as a compatibility feature with other
+BASIC dialects. Its use in new programs is not recommended, as it
+consumes additional memory and compute resources without providing
+any benefit.
+***/
 void BASIC_INT ilet() {
   switch (*cip) { //中間コードで分岐
   case I_VAR: // 変数の場合
