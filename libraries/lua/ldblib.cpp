@@ -318,12 +318,18 @@ static int db_upvaluejoin (lua_State *L) {
 ** thread (if there is one)
 */
 static void hookf (lua_State *L, lua_Debug *ar) {
-  static const char *const hooknames[] =
-    {"call", "return", "line", "count", "tail call"};
+  static const char __call[] PROGMEM = "call";
+  static const char __return[] PROGMEM = "return";
+  static const char __line[] PROGMEM = "line";
+  static const char __count[] PROGMEM = "count";
+  static const char __tail_call[] PROGMEM = "tail call";
+  static const char *const hooknames[] PROGMEM =
+    {__call, __return, __line, __count, __tail_call};
+
   lua_rawgetp(L, LUA_REGISTRYINDEX, &HOOKKEY);
   lua_pushthread(L);
   if (lua_rawget(L, -2) == LUA_TFUNCTION) {  /* is there a hook function? */
-    lua_pushstring(L, hooknames[(int)ar->event]);  /* push event name */
+    __lua_pushstring_P(L, hooknames[(int)ar->event]);  /* push event name */
     if (ar->currentline >= 0)
       lua_pushinteger(L, ar->currentline);  /* push current line */
     else lua_pushnil(L);
