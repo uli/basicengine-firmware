@@ -76,6 +76,7 @@ int luaO_ceillog2 (unsigned int x) {
 }
 
 
+// XXX: 56 byte jump table
 static lua_Integer intarith (lua_State *L, int op, lua_Integer v1,
                                                    lua_Integer v2) {
   switch (op) {
@@ -96,6 +97,7 @@ static lua_Integer intarith (lua_State *L, int op, lua_Integer v1,
 }
 
 
+// XXX: 56 byte jump table
 static lua_Number numarith (lua_State *L, int op, lua_Number v1,
                                                   lua_Number v2) {
   switch (op) {
@@ -393,7 +395,7 @@ static void pushstr (lua_State *L, const char *str, size_t l) {
 ** this function handles only '%d', '%c', '%f', '%p', and '%s'
    conventional formats, plus Lua-specific '%I' and '%U'
 */
-const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
+const char * __attribute__((optimize ("no-jump-tables"))) luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
   int n = 0;  /* number of strings in the stack to concatenate */
   const char *e;  /* points to next conversion specifier */
   while ((e = strchr(fmt, '%')) != NULL) {
