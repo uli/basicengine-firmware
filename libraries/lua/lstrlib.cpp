@@ -366,7 +366,7 @@ static const char *classend (MatchState *ms, const char *p) {
 }
 
 
-static int match_class (int c, int cl) {
+static int __attribute__((optimize ("no-jump-tables"))) match_class (int c, int cl) {
   int res;
   switch (tolower(cl)) {
     case 'a' : res = isalpha(c); break;
@@ -1113,7 +1113,7 @@ static void addlenmod (char *form, const char *lenmod) {
 }
 
 
-static int str_format (lua_State *L) {
+static int __attribute__((optimize ("no-jump-tables"))) str_format (lua_State *L) {
   int top = lua_gettop(L);
   int arg = 1;
   size_t sfl;
@@ -1317,7 +1317,7 @@ static void initheader (lua_State *L, Header *h) {
 /*
 ** Read and classify next option. 'size' is filled with option's size.
 */
-static KOption getoption (Header *h, const char **fmt, int *size) {
+static KOption __attribute__((optimize ("no-jump-tables"))) getoption (Header *h, const char **fmt, int *size) {
   int opt = *((*fmt)++);
   *size = 0;  /* default */
   switch (opt) {
@@ -1426,7 +1426,7 @@ static void copywithendian (volatile char *dest, volatile const char *src,
 }
 
 
-static int str_pack (lua_State *L) {
+static int __attribute__((optimize ("no-jump-tables"))) str_pack (lua_State *L) {
   luaL_Buffer b;
   Header h;
   const char *fmt = luaL_checkstring(L, 1);  /* format string */
