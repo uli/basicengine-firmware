@@ -34,20 +34,48 @@ LUAI_DDEF const char *const luaT_typenames_[LUA_TOTALTAGS] PROGMEM = {
   "upvalue", "proto" /* these last cases are used for tests only */
 };
 
+static const char ____index[] PROGMEM = "__index";
+static const char ____newindex[] PROGMEM = "__newindex";
+static const char ____gc[] PROGMEM = "__gc";
+static const char ____mode[] PROGMEM = "__mode";
+static const char ____len[] PROGMEM = "__len";
+static const char ____eq[] PROGMEM = "__eq";
+static const char ____add[] PROGMEM = "__add";
+static const char ____sub[] PROGMEM = "__sub";
+static const char ____mul[] PROGMEM = "__mul";
+static const char ____mod[] PROGMEM = "__mod";
+static const char ____pow[] PROGMEM = "__pow";
+static const char ____div[] PROGMEM = "__div";
+static const char ____idiv[] PROGMEM = "__idiv";
+static const char ____band[] PROGMEM = "__band";
+static const char ____bor[] PROGMEM = "__bor";
+static const char ____bxor[] PROGMEM = "__bxor";
+static const char ____shl[] PROGMEM = "__shl";
+static const char ____shr[] PROGMEM = "__shr";
+static const char ____unm[] PROGMEM = "__unm";
+static const char ____bnot[] PROGMEM = "__bnot";
+static const char ____lt[] PROGMEM = "__lt";
+static const char ____le[] PROGMEM = "__le";
+static const char ____concat[] PROGMEM = "__concat";
+static const char ____call[] PROGMEM = "__call";
+static const char ____close[] PROGMEM = "__close";
 
 void luaT_init (lua_State *L) {
   static const char *const luaT_eventname[] PROGMEM = {  /* ORDER TM */
-    "__index", "__newindex",
-    "__gc", "__mode", "__len", "__eq",
-    "__add", "__sub", "__mul", "__mod", "__pow",
-    "__div", "__idiv",
-    "__band", "__bor", "__bxor", "__shl", "__shr",
-    "__unm", "__bnot", "__lt", "__le",
-    "__concat", "__call", "__close"
+    ____index, ____newindex,
+    ____gc, ____mode, ____len, ____eq,
+    ____add, ____sub, ____mul, ____mod, ____pow,
+    ____div, ____idiv,
+    ____band, ____bor, ____bxor, ____shl, ____shr,
+    ____unm, ____bnot, ____lt, ____le,
+    ____concat, ____call, ____close
   };
+  char evname[16];
+  evname[15] = 0;
   int i;
   for (i=0; i<TM_N; i++) {
-    G(L)->tmname[i] = luaS_new(L, luaT_eventname[i]);
+    strncpy_P(evname, luaT_eventname[i], 15);
+    G(L)->tmname[i] = luaS_new(L, evname);
     luaC_fix(L, obj2gco(G(L)->tmname[i]));  /* never collect these names */
   }
 }
