@@ -606,9 +606,12 @@ static int math_randomseed (lua_State *L) {
 }
 
 
+static const char __random [] PROGMEM = "random";
+static const char __randomseed [] PROGMEM = "randomseed";
+
 static const luaL_Reg randfuncs[] PROGMEM = {
-  {"random", math_random},
-  {"randomseed", math_randomseed},
+  {__random, math_random},
+  {__randomseed, math_randomseed},
   {NULL, NULL}
 };
 
@@ -713,8 +716,6 @@ static const char __frexp [] PROGMEM = "frexp";
 static const char __ldexp [] PROGMEM = "ldexp";
 static const char __log10 [] PROGMEM = "log10";
 #endif
-static const char __random [] PROGMEM = "random";
-static const char __randomseed [] PROGMEM = "randomseed";
 static const char __pi [] PROGMEM = "pi";
 static const char __huge [] PROGMEM = "huge";
 static const char __maxinteger [] PROGMEM = "maxinteger";
