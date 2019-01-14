@@ -1399,7 +1399,7 @@ static int sweepstep (lua_State *L, global_State *g,
 }
 
 
-static lu_mem singlestep (lua_State *L) {
+static lu_mem __attribute__((optimize ("no-jump-tables"))) singlestep (lua_State *L) {
   global_State *g = G(L);
   switch (g->gcstate) {
     case GCSpause: {
