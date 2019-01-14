@@ -133,7 +133,7 @@ static int l_hashfloat (lua_Number n) {
 ** and value in 'vkl') so that we can call it on keys inserted into
 ** nodes.
 */
-static Node *mainposition (const Table *t, int ktt, const Value *kvl) {
+static Node * __attribute__((optimize ("no-jump-tables"))) mainposition (const Table *t, int ktt, const Value *kvl) {
   switch (withvariant(ktt)) {
     case LUA_TNUMINT:
       return hashint(t, ivalueraw(*kvl));
