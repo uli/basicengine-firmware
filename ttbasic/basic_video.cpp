@@ -18,7 +18,8 @@ uint8_t scmode = 0;
 
 bool screen_putch_disable_escape_codes = false;
 
-void BASIC_INT screen_putch(uint8_t c, bool lazy) {
+// XXX: 168 byte jump table
+void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
   static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;
