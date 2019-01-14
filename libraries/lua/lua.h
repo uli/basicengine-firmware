@@ -270,6 +270,8 @@ LUA_API int  (lua_getiuservalue) (lua_State *L, int idx, int n);
 LUA_API void  (lua_setglobal) (lua_State *L, const char *name);
 LUA_API void  (lua_settable) (lua_State *L, int idx);
 LUA_API void  (lua_setfield) (lua_State *L, int idx, const char *k);
+LUA_API void  (__lua_setfield_P) (lua_State *L, int idx, const char *k);
+#define lua_setfield_P(L, idx, k) __lua_setfield_P(L, idx, PSTR(k))
 LUA_API void  (lua_seti) (lua_State *L, int idx, lua_Integer n);
 LUA_API void  (lua_rawset) (lua_State *L, int idx);
 LUA_API void  (lua_rawseti) (lua_State *L, int idx, lua_Integer n);

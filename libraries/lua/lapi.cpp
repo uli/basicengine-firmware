@@ -823,6 +823,13 @@ LUA_API void lua_setfield (lua_State *L, int idx, const char *k) {
   auxsetstr(L, index2value(L, idx), k);
 }
 
+LUA_API void __lua_setfield_P (lua_State *L, int idx, const char *k) {
+  char kk[128];
+  kk[127] = 0;
+  strncpy_P(kk, k, 127);
+  lua_lock(L);  /* unlock done in 'auxsetstr' */
+  auxsetstr(L, index2value(L, idx), kk);
+}
 
 LUA_API void lua_seti (lua_State *L, int idx, lua_Integer n) {
   TValue *t;
