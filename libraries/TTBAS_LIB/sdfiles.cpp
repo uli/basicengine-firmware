@@ -31,6 +31,8 @@ static uint8_t cs = 0;
 
 UnifileString Unifile::m_cwd;
 
+const char FLASH_PREFIX[] = "/flash";
+
 bool SD_BEGIN(int mhz)
 {
   if (mhz != m_mhz) {

@@ -83,7 +83,7 @@ extern sdfat::SdFat sdf;
 bool SD_BEGIN(int mhz = 40);
 void SD_END(void);
 
-const char FLASH_PREFIX[] = "/flash";
+extern const char FLASH_PREFIX[];
 #define FLASH_PREFIX_LEN 6
 const char SD_PREFIX[] = "/sd";
 #define SD_PREFIX_LEN 3
