@@ -251,14 +251,14 @@ static void LoadFunction (LoadState *S, Proto *f, TString *psource) {
 }
 
 
-static void checkliteral (LoadState *S, const char *s, const char *msg) {
+static void __checkliteral (LoadState *S, const char *s, const char *msg) {
   char buff[sizeof(LUA_SIGNATURE) + sizeof(LUAC_DATA)]; /* larger than both */
   size_t len = strlen(s);
   LoadVector(S, buff, len);
   if (memcmp(s, buff, len) != 0)
-    error(S, msg);
+    __error_P(S, msg);
 }
-
+#define checkliteral(S, s, msg) __checkliteral(S, s, PSTR(msg))
 
 static void fchecksize (LoadState *S, size_t size, const char *tname) {
   if (LoadByte(S) != size)
