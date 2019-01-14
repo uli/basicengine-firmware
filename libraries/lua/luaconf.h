@@ -34,6 +34,8 @@ void be_lua_writestringerror(const char *fmt, const char *msg);
 #define l_ftell(f) f->position()
 #define l_FILE Unifile
 
+#define lua_getlocaledecpoint() '.'
+
 /*
 ** ===================================================================
 ** Search for "@@" to find all configurable definitions.
