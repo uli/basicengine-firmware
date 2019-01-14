@@ -508,6 +508,12 @@ LUA_API const char *lua_pushstring (lua_State *L, const char *s) {
   return s;
 }
 
+LUA_API const char *__lua_pushstring_P (lua_State *L, const char *s) {
+  char ss[128];
+  ss[127] = 0;
+  strncpy_P(ss, s, 127);
+  return lua_pushstring(L, ss);
+}
 
 LUA_API const char *lua_pushvfstring (lua_State *L, const char *fmt,
                                       va_list argp) {
