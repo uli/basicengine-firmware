@@ -709,7 +709,8 @@ static void pushclosure (lua_State *L, Proto *p, UpVal **encup, StkId base,
 /*
 ** finish execution of an opcode interrupted by a yield
 */
-void luaV_finishOp (lua_State *L) {
+// XXX: 232 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaV_finishOp (lua_State *L) {
   CallInfo *ci = L->ci;
   StkId base = ci->func + 1;
   Instruction inst = *(ci->u.l.savedpc - 1);  /* interrupted instruction */
