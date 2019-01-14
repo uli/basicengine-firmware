@@ -1697,7 +1697,6 @@ void initialize_label_pointers(void)
 
     lb.lp = lp;
     lb.ip = ip;
-    printf("lbas %d <- %p %p\r\n", label_id, lp, ip);
   }
 }
 
