@@ -3909,7 +3909,8 @@ Exponentiation operator.
     }
 }
 
-num_t BASIC_INT irel_string() {
+// XXX: 40 byte jump table
+num_t BASIC_INT __attribute__((optimize ("no-jump-tables"))) irel_string() {
   BString lhs = istrexp();
   BString rhs;
   switch (*cip++) {
