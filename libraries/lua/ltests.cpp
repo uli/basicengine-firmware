@@ -792,7 +792,7 @@ static int gc_color (lua_State *L) {
   luaL_checkany(L, 1);
   o = obj_at(L, 1);
   if (!iscollectable(o))
-    lua_pushstring(L, "no collectable");
+    lua_pushstring_P(L, "no collectable");
   else {
     GCObject *obj = gcvalue(o);
     lua_pushstring(L, isdead(G(L), obj) ? "dead" :
@@ -808,7 +808,7 @@ static int gc_age (lua_State *L) {
   luaL_checkany(L, 1);
   o = obj_at(L, 1);
   if (!iscollectable(o))
-    lua_pushstring(L, "no collectable");
+    lua_pushstring_P(L, "no collectable");
   else {
     static const char *gennames[] = {"new", "survival", "old0", "old1",
                                      "old", "touched1", "touched2"};

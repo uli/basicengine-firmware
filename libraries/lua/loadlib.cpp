@@ -444,9 +444,9 @@ static const char *pushnextfilename (lua_State *L, const char *path) {
 static void pusherrornotfound (lua_State *L, const char *path) {
   if (*path == *LUA_PATH_SEP)
     path++;  /* skip separator */
-  lua_pushstring(L, "\n\tno file '");
+  lua_pushstring_P(L, "\n\tno file '");
   luaL_gsub(L, path, LUA_PATH_SEP, "'\n\tno file '");
-  lua_pushstring(L, "'");
+  lua_pushstring_P(L, "'");
   lua_concat(L, 3);
 }
 
