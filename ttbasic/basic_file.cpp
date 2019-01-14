@@ -787,7 +787,7 @@ void  itype() {
       break;
     }
 
-    c_puts("== More?('Y' or SPACE key) =="); newline();
+    PRINT_P("== More?('Y' or SPACE key) =="); newline();
     c = c_getch();
     if (c != 'y' && c!= 'Y' && c != 32)
       break;
