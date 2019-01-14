@@ -193,7 +193,7 @@ static int pushmode (lua_State *L, int oldmode) {
 }
 
 
-static int luaB_collectgarbage (lua_State *L) {
+static int __attribute__((optimize ("no-jump-tables"))) luaB_collectgarbage (lua_State *L) {
   static const char *const opts[] PROGMEM = {"stop", "restart", "collect",
     "count", "step", "setpause", "setstepmul",
     "isrunning", "generational", "incremental", NULL};
