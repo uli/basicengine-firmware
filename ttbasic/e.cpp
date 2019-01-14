@@ -77,7 +77,8 @@ static int	confirm (const char *s)
 	return ch == 'y' || ch == 'Y';
 }
 
-int	enter_string (const char *s, BString &buf)
+// XXX: 72 byte jump table
+int __attribute__((optimize ("no-jump-tables"))) enter_string (const char *s, BString &buf)
 {
 	int	ch, flag = 1;
 
