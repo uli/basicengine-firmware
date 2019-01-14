@@ -140,9 +140,9 @@ static void treatstackoption (lua_State *L, lua_State *L1, const char *fname) {
     lua_rotate(L, -2, 1);  /* exchange object and table */
   else
     lua_xmove(L1, L, 1);  /* move object to the "main" stack */
-  lua_setfield(L, -2, fname);  /* put object into table */
+  __lua_setfield_P(L, -2, fname);  /* put object into table */
 }
-
+#define treatstackoption_P(L, L1, fname) treatstackoption(L, L1, PSTR(fname))
 
 /*
 ** Calls 'lua_getinfo' and collects all results in a new table.
@@ -195,9 +195,9 @@ static int db_getinfo (lua_State *L) {
   if (strchr(options, 't'))
     settabsb(L, "istailcall", ar.istailcall);
   if (strchr(options, 'L'))
-    treatstackoption(L, L1, "activelines");
+    treatstackoption_P(L, L1, "activelines");
   if (strchr(options, 'f'))
-    treatstackoption(L, L1, "func");
+    treatstackoption_P(L, L1, "func");
   return 1;  /* return table */
 }
 
