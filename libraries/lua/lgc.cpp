@@ -116,7 +116,7 @@ static lu_mem atomic (lua_State *L);
 #define gnodelast(h)	gnode(h, cast_sizet(sizenode(h)))
 
 
-static GCObject **getgclist (GCObject *o) {
+static GCObject ** __attribute__((optimize ("no-jump-tables"))) getgclist (GCObject *o) {
   switch (o->tt) {
     case LUA_TTABLE: return &gco2t(o)->gclist;
     case LUA_TLCL: return &gco2lcl(o)->gclist;
@@ -264,7 +264,7 @@ GCObject *luaC_newobj (lua_State *L, int tt, size_t sz) {
 ** upvalues are already linked in 'headuv' list. They are kept gray
 ** to avoid barriers, as their values will be revisited by the thread.)
 */
-static void reallymarkobject (global_State *g, GCObject *o) {
+static void __attribute__((optimize ("no-jump-tables"))) reallymarkobject (global_State *g, GCObject *o) {
   white2gray(o);
   switch (o->tt) {
     case LUA_TSHRSTR:
@@ -593,7 +593,7 @@ static int traversethread (global_State *g, lua_State *th) {
 ** traverse one gray object, turning it to black (except for threads,
 ** which are always gray).
 */
-static lu_mem propagatemark (global_State *g) {
+static lu_mem __attribute__((optimize ("no-jump-tables"))) propagatemark (global_State *g) {
   GCObject *o = g->gray;
   gray2black(o);
   g->gray = *getgclist(o);  /* remove from 'gray' list */
@@ -699,7 +699,7 @@ static void freeupval (lua_State *L, UpVal *uv) {
 }
 
 
-static void freeobj (lua_State *L, GCObject *o) {
+static void __attribute__((optimize ("no-jump-tables"))) freeobj (lua_State *L, GCObject *o) {
   switch (o->tt) {
     case LUA_TPROTO:
       luaF_freeproto(L, gco2p(o));
