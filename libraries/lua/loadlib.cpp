@@ -678,7 +678,7 @@ static void createsearcherstable (lua_State *L) {
     lua_pushcclosure(L, searchers[i], 1);
     lua_rawseti(L, -2, i+1);
   }
-  lua_setfield(L, -2, "searchers");  /* put it in field 'searchers' */
+  lua_setfield_P(L, -2, "searchers");  /* put it in field 'searchers' */
 }
 
 
@@ -690,7 +690,7 @@ static void createclibstable (lua_State *L) {
   lua_newtable(L);  /* create CLIBS table */
   lua_createtable(L, 0, 1);  /* create metatable for CLIBS */
   lua_pushcfunction(L, gctm);
-  lua_setfield(L, -2, "__gc");  /* set finalizer for CLIBS table */
+  lua_setfield_P(L, -2, "__gc");  /* set finalizer for CLIBS table */
   lua_setmetatable(L, -2);
   lua_rawsetp(L, LUA_REGISTRYINDEX, &CLIBS);  /* set CLIBS table in registry */
 }
@@ -714,13 +714,13 @@ LUAMOD_API int luaopen_package (lua_State *L) {
   /* store config information */
   lua_pushliteral(L, LUA_DIRSEP "\n" LUA_PATH_SEP "\n" LUA_PATH_MARK "\n"
                      LUA_EXEC_DIR "\n" LUA_IGMARK "\n");
-  lua_setfield(L, -2, "config");
+  lua_setfield_P(L, -2, "config");
   /* set field 'loaded' */
   luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_LOADED_TABLE);
-  lua_setfield(L, -2, "loaded");
+  lua_setfield_P(L, -2, "loaded");
   /* set field 'preload' */
   luaL_getsubtable(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
-  lua_setfield(L, -2, "preload");
+  lua_setfield_P(L, -2, "preload");
   lua_pushglobaltable(L);
   lua_pushvalue(L, -2);  /* set 'package' as upvalue for next lib */
   luaL_setfuncs(L, ll_funcs, 1);  /* open lib into global table */

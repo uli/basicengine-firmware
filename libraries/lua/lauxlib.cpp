@@ -315,7 +315,7 @@ LUALIB_API int luaL_newmetatable (lua_State *L, const char *tname) {
   lua_pop(L, 1);
   lua_createtable(L, 0, 2);  /* create metatable */
   lua_pushstring(L, tname);
-  lua_setfield(L, -2, "__name");  /* metatable.__name = tname */
+  lua_setfield_P(L, -2, "__name");  /* metatable.__name = tname */
   lua_pushvalue(L, -1);
   lua_setfield(L, LUA_REGISTRYINDEX, tname);  /* registry.name = metatable */
   return 1;

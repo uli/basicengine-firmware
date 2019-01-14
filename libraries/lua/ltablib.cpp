@@ -181,7 +181,7 @@ static int tpack (lua_State *L) {
   for (i = n; i >= 1; i--)  /* assign elements */
     lua_seti(L, 1, i);
   lua_pushinteger(L, n);
-  lua_setfield(L, 1, "n");  /* t.n = number of elements */
+  lua_setfield_P(L, 1, "n");  /* t.n = number of elements */
   return 1;  /* return table */
 }
 

@@ -1171,7 +1171,7 @@ static int checkpanic (lua_State *L) {
   }
   lua_atpanic(L1, panicback);  /* set its panic function */
   lua_pushlightuserdata(L1, &b);
-  lua_setfield(L1, LUA_REGISTRYINDEX, "_jmpbuf");  /* store 'Aux' struct */
+  lua_setfield_P(L1, LUA_REGISTRYINDEX, "_jmpbuf");  /* store 'Aux' struct */
   if (setjmp(b.jb) == 0) {  /* set jump buffer */
     runC(L, L1, code);  /* run code unprotected */
     lua_pushliteral(L, "no errors");
@@ -1711,7 +1711,7 @@ static void sethookaux (lua_State *L, int mask, int count, const char *scpt) {
     lua_pop(L, 1);  /* remove previous value */
     lua_newtable(L);  /* create new C_HOOK table */
     lua_pushvalue(L, -1);
-    lua_setfield(L, LUA_REGISTRYINDEX, "C_HOOK");  /* register it */
+    lua_setfield_P(L, LUA_REGISTRYINDEX, "C_HOOK");  /* register it */
   }
   lua_pushlightuserdata(L, L);
   lua_pushstring(L, scpt);
