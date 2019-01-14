@@ -305,7 +305,8 @@ uint8_t TKeyboard::findcode(uint8_t c)
 //   Error
 //     255
 //
-uint16_t TKeyboard::scanToKeycode()
+// XXX: 136 byte jump table
+uint16_t __attribute__((optimize ("no-jump-tables"))) TKeyboard::scanToKeycode()
 {
   static uint8_t state = STS_SYOKI;
   static uint8_t scIndex = 0;
