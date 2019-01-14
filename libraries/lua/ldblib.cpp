@@ -110,23 +110,20 @@ static lua_State *getthread (lua_State *L, int *arg) {
 ** value can be a string, an int, or a boolean.
 */
 static void __settabss (lua_State *L, const char *k, const char *v) {
-  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushstring(L, v);
-  lua_setfield(L, -2, kk);
+  __lua_setfield_P(L, -2, k);
 }
 #define settabss(L, k, v) __settabss(L, PSTR(k), v)
 
 static void __settabsi (lua_State *L, const char *k, int v) {
-  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushinteger(L, v);
-  lua_setfield(L, -2, kk);
+  __lua_setfield_P(L, -2, k);
 }
 #define settabsi(L, k, v) __settabsi(L, PSTR(k), v)
 
 static void __settabsb (lua_State *L, const char *k, int v) {
-  char kk[64]; kk[63] = 0; strncpy_P(kk, k, 63);
   lua_pushboolean(L, v);
-  lua_setfield(L, -2, kk);
+  __lua_setfield_P(L, -2, k);
 }
 #define settabsb(L, k, v) __settabsb(L, PSTR(k), v)
 
