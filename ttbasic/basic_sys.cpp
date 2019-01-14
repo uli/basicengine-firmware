@@ -373,7 +373,8 @@ implementations and may be changed in future releases.
 \usage DATE
 \ref GET_DATE SET_DATE
 ***/
-void idate() {
+// XXX: 32 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) idate() {
 #ifdef USE_INNERRTC
   time_t tt = now();
 
