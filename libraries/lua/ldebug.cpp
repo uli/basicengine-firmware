@@ -517,7 +517,7 @@ static const char *gxf (const Proto *p, int pc, Instruction i, int isup) {
 }
 
 
- const char *getobjname (const Proto *p, int lastpc, int reg,
+ const char * __attribute__((optimize ("no-jump-tables"))) getobjname (const Proto *p, int lastpc, int reg,
                          const char **name) {
   int pc;
   *name = luaF_getlocalname(p, reg + 1, lastpc);
