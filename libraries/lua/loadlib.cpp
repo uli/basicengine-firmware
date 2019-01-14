@@ -291,9 +291,12 @@ static void setpath (lua_State *L, const char *fieldname,
                                    const char *envname,
                                    const char *dft) {
   const char *nver = lua_pushfstring_P(L, "%s%s", envname, LUA_VERSUFFIX);
-  const char *path = getenv(nver);  /* use versioned name */
+  const char *path = NULL;
+#if 0
+  path = getenv(nver);  /* use versioned name */
   if (path == NULL)  /* no environment variable? */
     path = getenv(envname);  /* try unversioned name */
+#endif
   if (path == NULL || noenv(L))  /* no environment variable? */
     lua_pushstring(L, dft);  /* use default */
   else {
