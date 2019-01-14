@@ -381,7 +381,7 @@ LUA_API void  (lua_toclose) (lua_State *L, int idx);
 #define lua_isnone(L,n)		(lua_type(L, (n)) == LUA_TNONE)
 #define lua_isnoneornil(L, n)	(lua_type(L, (n)) <= 0)
 
-#define lua_pushliteral(L, s)	lua_pushstring(L, "" s)
+#define lua_pushliteral(L, s)	lua_pushstring_P(L, "" s)
 
 #define lua_pushglobaltable(L)  \
 	((void)lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS))
