@@ -417,6 +417,7 @@ static int db_gethook (lua_State *L) {
 }
 
 
+#if 0
 static int db_debug (lua_State *L) {
   for (;;) {
     char buffer[250];
@@ -430,6 +431,7 @@ static int db_debug (lua_State *L) {
     lua_settop(L, 0);  /* remove eventual returns */
   }
 }
+#endif
 
 
 static int db_traceback (lua_State *L) {
@@ -463,7 +465,7 @@ static const char __setupvalue[] PROGMEM = "setupvalue";
 static const char __traceback[] PROGMEM = "traceback";
 
 static const luaL_Reg dblib[] PROGMEM = {
-  {__debug, db_debug},
+//  {__debug, db_debug},
   {__getuservalue, db_getuservalue},
   {__gethook, db_gethook},
   {__getinfo, db_getinfo},
