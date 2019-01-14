@@ -305,13 +305,14 @@ static void read_long_string (LexState *ls, SemInfo *seminfo, size_t sep) {
 }
 
 
-static void esccheck (LexState *ls, int c, const char *msg) {
+static void __esccheck (LexState *ls, int c, const char *msg) {
   if (!c) {
     if (ls->current != EOZ)
       save_and_next(ls);  /* add current to buffer for error message */
     lexerror(ls, msg, TK_STRING);
   }
 }
+#define esccheck(ls, c, msg) __esccheck(ls, c, PSTR(msg))
 
 
 static int gethexa (LexState *ls) {
