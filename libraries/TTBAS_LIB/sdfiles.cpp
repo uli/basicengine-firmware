@@ -423,7 +423,7 @@ int8_t sdfiles::IsText(char* fname) {
 //  ファイル読み込み失敗 : SD_ERR_READ_FILE
 // 
 
-Unifile pcx_file;
+Unifile *pcx_file = NULL;
 
 #define DR_PCX_NO_STDIO
 #define DR_PCX_IMPLEMENTATION
@@ -431,19 +431,27 @@ Unifile pcx_file;
 
 static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
 {
+  if (!pcx_file)
+    return -1;
   if (buf == (void *)-1)
-    return pcx_file.position();
+    return pcx_file->position();
   else if (buf == (void *)-2)
-    return pcx_file.seekSet(bytesToRead);
-  return pcx_file.read((char *)buf, bytesToRead);
+    return pcx_file->seekSet(bytesToRead);
+  return pcx_file->read((char *)buf, bytesToRead);
 }
 
 uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask) {
   uint8_t rc =1;
- 
-  pcx_file = Unifile::open(fname, UFILE_READ);
+
+  pcx_file = new Unifile();
   if (!pcx_file)
+    return ERR_OOM;
+  *pcx_file = Unifile::open(fname, UFILE_READ);
+  if (!*pcx_file) {
+    delete pcx_file;
+    pcx_file = NULL;
     return SD_ERR_OPEN_FILE;
+  }
 
   int width, height, components;
 
@@ -456,7 +464,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
       rc = SD_ERR_READ_FILE;
       goto out;
     }
-    pcx_file.seekSet(0);
+    pcx_file->seekSet(0);
     w = width - x;
     h = height - y;
   }
@@ -483,7 +491,9 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
     rc = SD_ERR_READ_FILE;	// XXX: or OOM...
 
 out:
-  pcx_file.close();
+  pcx_file->close();
+  delete pcx_file;
+  pcx_file = NULL;
   return rc;
 }
 
@@ -504,11 +514,17 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
   hdr.bytesPerLine = w;
   hdr.paletteType = 1;
   
-  pcx_file = Unifile::open(fname, UFILE_OVERWRITE);
+  pcx_file = new Unifile();
   if (!pcx_file)
+    return ERR_OOM;
+  *pcx_file = Unifile::open(fname, UFILE_OVERWRITE);
+  if (!*pcx_file) {
+    delete pcx_file;
+    pcx_file = NULL;
     return ERR_FILE_OPEN;
+  }
 
-  pcx_file.write((char *)&hdr, sizeof(hdr));
+  pcx_file->write((char *)&hdr, sizeof(hdr));
 
   for (int yy = src_y; yy < src_y + h; ++yy) {
     uint8_t rle_count = 1;
@@ -520,10 +536,10 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
       else {
         // flush last rle group
         if (rle_count == 1 && rle_last < 0xc0)
-          pcx_file.write(rle_last);
+          pcx_file->write(rle_last);
         else {
-          pcx_file.write(rle_count | 0xc0);
-          pcx_file.write(rle_last);
+          pcx_file->write(rle_count | 0xc0);
+          pcx_file->write(rle_last);
         }
         rle_count = 1;
         rle_last = px;
@@ -531,21 +547,23 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
     }
     // flush last rle group
     if (rle_count == 1 && rle_last < 0xc0)
-      pcx_file.write(rle_last);
+      pcx_file->write(rle_last);
     else {
-      pcx_file.write(rle_count | 0xc0);
-      pcx_file.write(rle_last);
+      pcx_file->write(rle_count | 0xc0);
+      pcx_file->write(rle_last);
     }
   }
   
-  pcx_file.write(0x0c);	// palette marker
+  pcx_file->write(0x0c);	// palette marker
 
   uint8_t *pal = csp.paletteData(csp.getColorSpace());
   // PROGMEM, not safe to pass it directly to FS functions
   for (int i = 0; i < 256*3; ++i)
-    pcx_file.write((char)pgm_read_byte(&pal[i]));
+    pcx_file->write((char)pgm_read_byte(&pal[i]));
   
-  pcx_file.close();
+  pcx_file->close();
+  delete pcx_file;
+  pcx_file = NULL;
 
   return rc;
 }
