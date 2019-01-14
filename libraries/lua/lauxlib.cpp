@@ -99,15 +99,15 @@ static int pushglobalfuncname (lua_State *L, lua_Debug *ar) {
 
 static void pushfuncname (lua_State *L, lua_Debug *ar) {
   if (pushglobalfuncname(L, ar)) {  /* try first a global name */
-    lua_pushfstring(L, "function '%s'", lua_tostring(L, -1));
+    lua_pushfstring_P(L, "function '%s'", lua_tostring(L, -1));
     lua_remove(L, -2);  /* remove name */
   }
   else if (*ar->namewhat != '\0')  /* is there a name from code? */
-    lua_pushfstring(L, "%s '%s'", ar->namewhat, ar->name);  /* use it */
+    lua_pushfstring_P(L, "%s '%s'", ar->namewhat, ar->name);  /* use it */
   else if (*ar->what == 'm')  /* main? */
       lua_pushliteral(L, "main chunk");
   else if (*ar->what != 'C')  /* for Lua functions, use <file:line> */
-    lua_pushfstring(L, "function <%s:%d>", ar->short_src, ar->linedefined);
+    lua_pushfstring_P(L, "function <%s:%d>", ar->short_src, ar->linedefined);
   else  /* nothing left... */
     lua_pushliteral(L, "?");
 }
@@ -135,7 +135,7 @@ LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1,
   int last = lastlevel(L1);
   int n1 = (last - level > LEVELS1 + LEVELS2) ? LEVELS1 : -1;
   if (msg)
-    lua_pushfstring(L, "%s\n", msg);
+    lua_pushfstring_P(L, "%s\n", msg);
   luaL_checkstack(L, 10, NULL);
   lua_pushliteral(L, "stack traceback:");
   while (lua_getstack(L1, level++, &ar)) {
@@ -145,9 +145,9 @@ LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1,
     }
     else {
       lua_getinfo(L1, "Slnt", &ar);
-      lua_pushfstring(L, "\n\t%s:", ar.short_src);
+      lua_pushfstring_P(L, "\n\t%s:", ar.short_src);
       if (ar.currentline > 0)
-        lua_pushfstring(L, "%d:", ar.currentline);
+        lua_pushfstring_P(L, "%d:", ar.currentline);
       lua_pushliteral(L, " in ");
       pushfuncname(L, &ar);
       if (ar.istailcall)
@@ -197,7 +197,7 @@ int luaL_typeerror (lua_State *L, int arg, const char *tname) {
     typearg = "light userdata";  /* special name for messages */
   else
     typearg = luaL_typename(L, arg);  /* standard name */
-  msg = lua_pushfstring(L, "%s expected, got %s", tname, typearg);
+  msg = lua_pushfstring_P(L, "%s expected, got %s", tname, typearg);
   return luaL_argerror(L, arg, msg);
 }
 
@@ -216,11 +216,11 @@ LUALIB_API void luaL_where (lua_State *L, int level) {
   if (lua_getstack(L, level, &ar)) {  /* check function at level */
     lua_getinfo(L, "Sl", &ar);  /* get info about it */
     if (ar.currentline > 0) {  /* is there info? */
-      lua_pushfstring(L, "%s:%d: ", ar.short_src, ar.currentline);
+      lua_pushfstring_P(L, "%s:%d: ", ar.short_src, ar.currentline);
       return;
     }
   }
-  lua_pushfstring(L, "");  /* else, no information available... */
+  lua_pushfstring_P(L, "");  /* else, no information available... */
 }
 
 
@@ -252,7 +252,7 @@ LUALIB_API int luaL_fileresult (lua_State *L, int stat, const char *fname) {
   else {
     lua_pushnil(L);
     if (fname)
-      lua_pushfstring(L, "%s: %d", fname, en);
+      lua_pushfstring_P(L, "%s: %d", fname, en);
     else
       lua_pushstring(L, "foo");//strerror(en));
     lua_pushinteger(L, en);
@@ -367,7 +367,7 @@ LUALIB_API int luaL_checkoption (lua_State *L, int arg, const char *def,
     if (strcmp(lst[i], name) == 0)
       return i;
   return luaL_argerror(L, arg,
-                       lua_pushfstring(L, "invalid option '%s'", name));
+                       lua_pushfstring_P(L, "invalid option '%s'", name));
 }
 
 
@@ -715,7 +715,7 @@ static const char *getF (lua_State *L, void *ud, size_t *size) {
 
 static int errfile (lua_State *L, const char *what, int fnameindex) {
   const char *filename = lua_tostring(L, fnameindex) + 1;
-  lua_pushfstring(L, "cannot %s %s: %d", what, filename, errno);
+  lua_pushfstring_P(L, "cannot %s %s: %d", what, filename, errno);
   lua_remove(L, fnameindex);
   return LUA_ERRFILE;
 }
@@ -770,7 +770,7 @@ LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
 #endif
   }
   else {
-    lua_pushfstring(L, "@%s", filename);
+    lua_pushfstring_P(L, "@%s", filename);
     lf.f = new Unifile(); *lf.f = Unifile::open(filename, UFILE_READ);
     if (!*lf.f) {
       delete lf.f;
@@ -887,9 +887,9 @@ LUALIB_API const char *luaL_tolstring (lua_State *L, int idx, size_t *len) {
     switch (lua_type(L, idx)) {
       case LUA_TNUMBER: {
         if (lua_isinteger(L, idx))
-          lua_pushfstring(L, "%I", (LUAI_UACINT)lua_tointeger(L, idx));
+          lua_pushfstring_P(L, "%I", (LUAI_UACINT)lua_tointeger(L, idx));
         else
-          lua_pushfstring(L, "%f", (LUAI_UACNUMBER)lua_tonumber(L, idx));
+          lua_pushfstring_P(L, "%f", (LUAI_UACNUMBER)lua_tonumber(L, idx));
         break;
       }
       case LUA_TSTRING:
@@ -905,7 +905,7 @@ LUALIB_API const char *luaL_tolstring (lua_State *L, int idx, size_t *len) {
         int tt = luaL_getmetafield(L, idx, "__name");  /* try name */
         const char *kind = (tt == LUA_TSTRING) ? lua_tostring(L, -1) :
                                                  luaL_typename(L, idx);
-        lua_pushfstring(L, "%s: %p", kind, lua_topointer(L, idx));
+        lua_pushfstring_P(L, "%s: %p", kind, lua_topointer(L, idx));
         if (tt != LUA_TNIL)
           lua_remove(L, -2);  /* remove '__name' */
         break;

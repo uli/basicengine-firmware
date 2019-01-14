@@ -189,7 +189,7 @@ static void pusherror (lua_State *L) {
       NULL, error, 0, buffer, sizeof(buffer)/sizeof(char), NULL))
     lua_pushstring(L, buffer);
   else
-    lua_pushfstring(L, "system error %d\n", error);
+    lua_pushfstring_P(L, "system error %d\n", error);
 }
 
 static void lsys_unloadlib (void *lib) {
@@ -290,7 +290,7 @@ static int noenv (lua_State *L) {
 static void setpath (lua_State *L, const char *fieldname,
                                    const char *envname,
                                    const char *dft) {
-  const char *nver = lua_pushfstring(L, "%s%s", envname, LUA_VERSUFFIX);
+  const char *nver = lua_pushfstring_P(L, "%s%s", envname, LUA_VERSUFFIX);
   const char *path = getenv(nver);  /* use versioned name */
   if (path == NULL)  /* no environment variable? */
     path = getenv(envname);  /* try unversioned name */
@@ -533,12 +533,12 @@ static int loadfunc (lua_State *L, const char *filename, const char *modname) {
   if (mark) {
     int stat;
     openfunc = lua_pushlstring(L, modname, mark - modname);
-    openfunc = lua_pushfstring(L, LUA_POF"%s", openfunc);
+    openfunc = lua_pushfstring_P(L, LUA_POF"%s", openfunc);
     stat = lookforfunc(L, filename, openfunc);
     if (stat != ERRFUNC) return stat;
     modname = mark + 1;  /* else go ahead and try old-style name */
   }
-  openfunc = lua_pushfstring(L, LUA_POF"%s", modname);
+  openfunc = lua_pushfstring_P(L, LUA_POF"%s", modname);
   return lookforfunc(L, filename, openfunc);
 }
 
@@ -564,7 +564,7 @@ static int searcher_Croot (lua_State *L) {
     if (stat != ERRFUNC)
       return checkload(L, 0, filename);  /* real error */
     else {  /* open function not found */
-      lua_pushfstring(L, "\n\tno module '%s' in file '%s'", name, filename);
+      lua_pushfstring_P(L, "\n\tno module '%s' in file '%s'", name, filename);
       return 1;
     }
   }
@@ -577,7 +577,7 @@ static int searcher_preload (lua_State *L) {
   const char *name = luaL_checkstring(L, 1);
   lua_getfield(L, LUA_REGISTRYINDEX, LUA_PRELOAD_TABLE);
   if (lua_getfield(L, -1, name) == LUA_TNIL)  /* not found? */
-    lua_pushfstring(L, "\n\tno field package.preload['%s']", name);
+    lua_pushfstring_P(L, "\n\tno field package.preload['%s']", name);
   return 1;
 }
 

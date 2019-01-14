@@ -160,7 +160,7 @@ static int db_getinfo (lua_State *L) {
   const char *options = luaL_optstring(L, arg+2, "flnSrtu");
   checkstack(L, L1, 3);
   if (lua_isfunction(L, arg + 1)) {  /* info about a function? */
-    options = lua_pushfstring(L, ">%s", options);  /* add '>' to 'options' */
+    options = lua_pushfstring_P(L, ">%s", options);  /* add '>' to 'options' */
     lua_pushvalue(L, arg + 1);  /* move function to 'L1' stack */
     lua_xmove(L, L1, 1);
   }

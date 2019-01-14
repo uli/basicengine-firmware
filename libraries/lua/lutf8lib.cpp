@@ -139,7 +139,7 @@ static int codepoint (lua_State *L) {
 static void pushutfchar (lua_State *L, int arg) {
   lua_Integer code = luaL_checkinteger(L, arg);
   luaL_argcheck(L, 0 <= code && code <= MAXUNICODE, arg, "value out of range");
-  lua_pushfstring(L, "%U", (long)code);
+  lua_pushfstring_P(L, "%U", (long)code);
 }
 
 

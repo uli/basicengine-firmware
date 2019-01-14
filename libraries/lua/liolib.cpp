@@ -167,7 +167,7 @@ static int f_tostring (lua_State *L) {
   if (isclosed(p))
     lua_pushliteral(L, "file (closed)");
   else
-    lua_pushfstring(L, "file (%p)", p->f);
+    lua_pushfstring_P(L, "file (%p)", p->f);
   return 1;
 }
 
