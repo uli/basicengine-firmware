@@ -430,7 +430,8 @@ LUA_API lua_State *lua_tothread (lua_State *L, int idx) {
 }
 
 
-LUA_API const void *lua_topointer (lua_State *L, int idx) {
+// XXX: 216 byte jump table (WTF?)
+LUA_API const void * __attribute__((optimize ("no-jump-tables"))) lua_topointer (lua_State *L, int idx) {
   const TValue *o = index2value(L, idx);
   switch (ttypetag(o)) {
     case LUA_TTABLE: return hvalue(o);
