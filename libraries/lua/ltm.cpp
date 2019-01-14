@@ -157,11 +157,11 @@ void luaT_trybinTM (lua_State *L, const TValue *p1, const TValue *p2,
         if (ttisnumber(p1) && ttisnumber(p2))
           luaG_tointerror(L, p1, p2);
         else
-          luaG_opinterror(L, p1, p2, "perform bitwise operation on");
+          luaG_opinterror_P(L, p1, p2, "perform bitwise operation on");
       }
       /* calls never return, but to avoid warnings: *//* FALLTHROUGH */
       default:
-        luaG_opinterror(L, p1, p2, "perform arithmetic on");
+        luaG_opinterror_P(L, p1, p2, "perform arithmetic on");
     }
   }
 }
