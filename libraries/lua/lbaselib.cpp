@@ -194,7 +194,7 @@ static int pushmode (lua_State *L, int oldmode) {
 
 
 static int luaB_collectgarbage (lua_State *L) {
-  static const char *const opts[] = {"stop", "restart", "collect",
+  static const char *const opts[] PROGMEM = {"stop", "restart", "collect",
     "count", "step", "setpause", "setstepmul",
     "isrunning", "generational", "incremental", NULL};
   static const int optsnum[] PROGMEM = {LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
