@@ -675,7 +675,8 @@ void luaK_setoneret (FuncState *fs, expdesc *e) {
 ** Ensure that expression 'e' is not a variable.
 ** (Expression still may have jump lists.)
 */
-void luaK_dischargevars (FuncState *fs, expdesc *e) {
+// XXX: 40 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_dischargevars (FuncState *fs, expdesc *e) {
   switch (e->k) {
     case VLOCAL: {  /* already in a register */
       e->k = VNONRELOC;  /* becomes a non-relocatable value */
@@ -723,7 +724,8 @@ void luaK_dischargevars (FuncState *fs, expdesc *e) {
 ** 'e' will become a non-relocatable expression).
 ** (Expression still may have jump lists.)
 */
-static void discharge2reg (FuncState *fs, expdesc *e, int reg) {
+// XXX: 64 byte jump table
+static void __attribute__((optimize ("no-jump-tables"))) discharge2reg (FuncState *fs, expdesc *e, int reg) {
   luaK_dischargevars(fs, e);
   switch (e->k) {
     case VNIL: {
@@ -884,7 +886,8 @@ void luaK_exp2val (FuncState *fs, expdesc *e) {
 ** Try to make 'e' a K expression with an index in the range of R/K
 ** indices. Return true iff succeeded.
 */
-static int luaK_exp2K (FuncState *fs, expdesc *e) {
+// XXX: 24 byte jump table
+static int __attribute__((optimize ("no-jump-tables"))) luaK_exp2K (FuncState *fs, expdesc *e) {
   if (!hasjumps(e)) {
     int info;
     switch (e->k) {  /* move constants to 'k' */
@@ -933,7 +936,8 @@ static void codeABRK (FuncState *fs, OpCode o, int a, int b,
 /*
 ** Generate code to store result of expression 'ex' into variable 'var'.
 */
-void luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
+// XXX: 24 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
   switch (var->k) {
     case VLOCAL: {
       freeexp(fs, ex);
@@ -1436,7 +1440,8 @@ static void codeeq (FuncState *fs, BinOpr opr, expdesc *e1, expdesc *e2) {
 /*
 ** Apply prefix operation 'op' to expression 'e'.
 */
-void luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
+// XXX: 64 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
   static const expdesc ef = {VKINT, {0}, NO_JUMP, NO_JUMP};
   switch (op) {
     case OPR_MINUS: case OPR_BNOT:  /* use 'ef' as fake 2nd operand */
@@ -1456,7 +1461,8 @@ void luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
 ** Process 1st operand 'v' of binary operation 'op' before reading
 ** 2nd operand.
 */
-void luaK_infix (FuncState *fs, BinOpr op, expdesc *v) {
+// XXX: 80 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_infix (FuncState *fs, BinOpr op, expdesc *v) {
   switch (op) {
     case OPR_AND: {
       luaK_goiftrue(fs, v);  /* go ahead only if 'v' is true */
@@ -1523,7 +1529,8 @@ static void codeconcat (FuncState *fs, expdesc *e1, expdesc *e2, int line) {
 /*
 ** Finalize code for binary operation, after reading 2nd operand.
 */
-void luaK_posfix (FuncState *fs, BinOpr opr,
+// XXX: 80 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_posfix (FuncState *fs, BinOpr opr,
                   expdesc *e1, expdesc *e2, int line) {
   switch (opr) {
     case OPR_AND: {
@@ -1651,7 +1658,8 @@ static int finaltarget (Instruction *code, int i) {
 ** Do a final pass over the code of a function, doing small peephole
 ** optimizations and adjustments.
 */
-void luaK_finish (FuncState *fs) {
+// XXX: 64 byte jump table
+void __attribute__((optimize ("no-jump-tables"))) luaK_finish (FuncState *fs) {
   int i;
   Proto *p = fs->f;
   for (i = 0; i < fs->pc; i++) {
