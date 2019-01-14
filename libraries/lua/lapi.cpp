@@ -1093,7 +1093,8 @@ LUA_API int lua_status (lua_State *L) {
 /*
 ** Garbage-collection function
 */
-LUA_API int lua_gc (lua_State *L, int what, ...) {
+// XXX: 48 byte jump table
+LUA_API int __attribute__((optimize ("no-jump-tables"))) lua_gc (lua_State *L, int what, ...) {
   va_list argp;
   int res = 0;
   global_State *g = G(L);
