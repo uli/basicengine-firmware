@@ -618,13 +618,17 @@ static int recover (lua_State *L, int status) {
 ** of the coroutine itself. (Such errors should not be handled by any
 ** coroutine error handler and should not kill the coroutine.)
 */
-static int resume_error (lua_State *L, const char *msg, int narg) {
+static int __resume_error (lua_State *L, const char *msg, int narg) {
+  char mmsg[128];
+  mmsg[127] = 0;
+  strncpy_P(mmsg, msg, 127);
   L->top -= narg;  /* remove args from the stack */
-  setsvalue2s(L, L->top, luaS_new(L, msg));  /* push error message */
+  setsvalue2s(L, L->top, luaS_new(L, mmsg));  /* push error message */
   api_incr_top(L);
   lua_unlock(L);
   return LUA_ERRRUN;
 }
+#define resume_error(L, msg, narg) __resume_error(L, PSTR(msg), narg)
 
 
 /*
