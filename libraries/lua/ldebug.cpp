@@ -718,9 +718,12 @@ l_noret luaG_concaterror (lua_State *L, const TValue *p1, const TValue *p2) {
 
 l_noret luaG_opinterror (lua_State *L, const TValue *p1,
                          const TValue *p2, const char *msg) {
+  char mmsg[128];
+  mmsg[127] = 0;
+  strncpy_P(mmsg, msg, 127);
   if (!ttisnumber(p1))  /* first operand is wrong? */
     p2 = p1;  /* now second is wrong */
-  luaG_typeerror(L, p2, msg);
+  luaG_typeerror(L, p2, mmsg);
 }
 
 

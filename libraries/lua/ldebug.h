@@ -33,6 +33,7 @@ LUAI_FUNC l_noret luaG_concaterror (lua_State *L, const TValue *p1,
 LUAI_FUNC l_noret luaG_opinterror (lua_State *L, const TValue *p1,
                                                  const TValue *p2,
                                                  const char *msg);
+#define luaG_opinterror_P(L, p1, p2, msg) luaG_opinterror(L, p1, p2, PSTR(msg))
 LUAI_FUNC l_noret luaG_tointerror (lua_State *L, const TValue *p1,
                                                  const TValue *p2);
 LUAI_FUNC l_noret luaG_ordererror (lua_State *L, const TValue *p1,
