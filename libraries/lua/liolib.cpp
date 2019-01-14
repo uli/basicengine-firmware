@@ -720,8 +720,8 @@ static int be_l_fseek(Unifile *f, int offset, int whence) {
 }
 
 static int f_seek (lua_State *L) {
-  static const int mode[] = {SEEK_SET, SEEK_CUR, SEEK_END};
-  static const char *const modenames[] = {"set", "cur", "end", NULL};
+  static const int mode[] PROGMEM = {SEEK_SET, SEEK_CUR, SEEK_END};
+  static const char *const modenames[] PROGMEM = {"set", "cur", "end", NULL};
   l_FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, "cur", modenames);
   lua_Integer p3 = luaL_optinteger(L, 3, 0);
@@ -740,8 +740,8 @@ static int f_seek (lua_State *L) {
 
 #if 0
 static int f_setvbuf (lua_State *L) {
-  static const int mode[] = {_IONBF, _IOFBF, _IOLBF};
-  static const char *const modenames[] = {"no", "full", "line", NULL};
+  static const int mode[] PROGMEM = {_IONBF, _IOFBF, _IOLBF};
+  static const char *const modenames[] PROGMEM = {"no", "full", "line", NULL};
   l_FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, NULL, modenames);
   lua_Integer sz = luaL_optinteger(L, 3, LUAL_BUFFERSIZE);
