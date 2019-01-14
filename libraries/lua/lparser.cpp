@@ -381,8 +381,9 @@ static void adjust_assign (LexState *ls, int nvars, int nexps, expdesc *e) {
 */
 static l_noret jumpscopeerror (LexState *ls, Labeldesc *gt) {
   const char *varname = getstr(getlocvar(ls->fs, gt->nactvar)->varname);
-  const char *msg = "<goto %s> at line %d jumps into the scope of local '%s'";
-  msg = luaO_pushfstring(ls->L, msg, getstr(gt->name), gt->line, varname);
+  const char *msg = luaO_pushfstring_P(ls->L,
+    "<goto %s> at line %d jumps into the scope of local '%s'",
+    getstr(gt->name), gt->line, varname);
   luaK_semerror(ls, msg);  /* raise the error */
 }
 
@@ -526,12 +527,11 @@ static void enterblock (FuncState *fs, BlockCnt *bl, lu_byte isloop) {
 static l_noret undefgoto (LexState *ls, Labeldesc *gt) {
   const char *msg;
   if (eqstr(gt->name, luaS_newliteral(ls->L, "break"))) {
-    msg = "break outside loop at line %d";
-    msg = luaO_pushfstring(ls->L, msg, gt->line);
+    msg = luaO_pushfstring_P(ls->L, "break outside loop at line %d", gt->line);
   }
   else {
-    msg = "no visible label '%s' for <goto> at line %d";
-    msg = luaO_pushfstring(ls->L, msg, getstr(gt->name), gt->line);
+    msg = luaO_pushfstring_P(ls->L, "no visible label '%s' for <goto> at line %d",
+      getstr(gt->name), gt->line);
   }
   luaK_semerror(ls, msg);
 }
@@ -1308,8 +1308,8 @@ static void breakstat (LexState *ls) {
 static void checkrepeated (LexState *ls, TString *name) {
   Labeldesc *lb = findlabel(ls, name);
   if (unlikely(lb != NULL)) {  /* already defined? */
-    const char *msg = "label '%s' already defined on line %d";
-    msg = luaO_pushfstring(ls->L, msg, getstr(name), lb->line);
+    const char *msg = luaO_pushfstring_P(ls->L,
+      "label '%s' already defined on line %d", getstr(name), lb->line);
     luaK_semerror(ls, msg);  /* error */
   }
 }
