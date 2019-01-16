@@ -526,7 +526,7 @@ static void enterblock (FuncState *fs, BlockCnt *bl, lu_byte isloop) {
 */
 static l_noret undefgoto (LexState *ls, Labeldesc *gt) {
   const char *msg;
-  if (eqstr(gt->name, luaS_newliteral(ls->L, "break"))) {
+  if (eqstr(gt->name, luaS_newliteral_P(ls->L, "break"))) {
     msg = luaO_pushfstring_P(ls->L, "break outside loop at line %d", gt->line);
   }
   else {
@@ -542,7 +542,7 @@ static void leaveblock (FuncState *fs) {
   LexState *ls = fs->ls;
   int hasclose = 0;
   if (bl->isloop)  /* fix pending breaks? */
-    hasclose = createlabel(ls, luaS_newliteral(ls->L, "break"), 0, 0);
+    hasclose = createlabel(ls, luaS_newliteral_P(ls->L, "break"), 0, 0);
   if (!hasclose && bl->previous && bl->upval)
     luaK_codeABC(fs, OP_CLOSE, bl->nactvar, 0, 0);
   fs->bl = bl->previous;
@@ -1298,7 +1298,7 @@ static void gotostat (LexState *ls) {
 static void breakstat (LexState *ls) {
   int line = ls->linenumber;
   luaX_next(ls);  /* skip break */
-  newgotoentry(ls, luaS_newliteral(ls->L, "break"), line, luaK_jump(ls->fs));
+  newgotoentry(ls, luaS_newliteral_P(ls->L, "break"), line, luaK_jump(ls->fs));
 }
 
 
@@ -1516,7 +1516,7 @@ static void forstat (LexState *ls, int line) {
 */
 static int issinglejump (LexState *ls, TString **label, int *target) {
   if (testnext(ls, TK_BREAK)) {  /* a break? */
-    *label = luaS_newliteral(ls->L, "break");
+    *label = luaS_newliteral_P(ls->L, "break");
     return 1;
   }
   else if (ls->t.token != TK_GOTO || luaX_lookahead(ls) != TK_NAME)
