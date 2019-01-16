@@ -164,7 +164,6 @@ void SMALL Basic::iconfig() {
     if (value <0 || value >2)  {
       E_VALUE(0, 2);
     } else {
-      sc0.adjustNTSC(value);
       CONFIG.NTSC = value;
     }
     break;

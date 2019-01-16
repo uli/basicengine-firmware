@@ -17,7 +17,6 @@ uint16_t tv_get_gheight();
 uint8_t tv_get_win_cwidth();
 uint8_t tv_get_win_cheight();
 void    tv_write(uint8_t c);
-void    tv_NTSC_adjust(int16_t ajst);
 void	tv_reinit();
 void	tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h);
 void	tv_window_get(int &x, int &y, int &w, int &h);

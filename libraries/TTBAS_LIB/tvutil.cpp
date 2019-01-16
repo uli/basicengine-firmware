@@ -66,11 +66,6 @@ void tv_setFont(const uint8_t *font)
     tv_fontInit();
 }
 
-// NTSC 垂直同期信号補正
-void tv_NTSC_adjust(int16_t ajst) {
-  Serial.println("unimp tv_NTSC_adjust");
-}
-
 int colmem_fg_x, colmem_fg_y;
 int colmem_bg_x, colmem_bg_y;
 
@@ -101,8 +96,6 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   win_height = g_height;
 	
   tv_fontInit();
-
-  tv_NTSC_adjust(ajst);
 }
 
 static void tv_set_clear_line_col(uint8_t cc)
