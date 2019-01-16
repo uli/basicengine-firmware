@@ -415,4 +415,13 @@ void luaE_warning (lua_State *L, const char *msg) {
     wf(&G(L)->ud_warn, msg);
 }
 
+void __luaE_warning_P (lua_State *L, const char *msg) {
+  char mmsg[128];
+  mmsg[127] = 0;
+  strncpy_P(mmsg, msg, 127);
+  lua_WarnFunction wf = G(L)->warnf;
+  if (wf != NULL)
+    wf(&G(L)->ud_warn, mmsg);
+}
+
 
