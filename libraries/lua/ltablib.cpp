@@ -34,9 +34,10 @@
 
 
 static int checkfield (lua_State *L, const char *key, int n) {
-  lua_pushstring(L, key);
+  __lua_pushstring_P(L, key);
   return (lua_rawget(L, -n) != LUA_TNIL);
 }
+#define checkfield_P(L, key, n) checkfield(L, PSTR(key), n)
 
 
 /*
