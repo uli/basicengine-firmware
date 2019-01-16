@@ -668,6 +668,18 @@ void syspanic(const char *txt) {
 
 lua_State *lua = NULL;
 
+static void lhook(lua_State *L, lua_Debug *ar)
+{
+  int c;
+  (void)ar;
+  if ((c = sc0.peekKey())) {
+        if (process_hotkeys(c)) {
+          luaL_error(L, "interrupted!");
+        }
+  }
+  pump_events();
+}
+
 void Basic::ilua()
 {
   lua = luaL_newstate();
@@ -676,4 +688,5 @@ void Basic::ilua()
     return;
   }
   luaL_openlibs(lua);
+  lua_sethook(lua, lhook, LUA_MASKCOUNT, 1000);
 }
