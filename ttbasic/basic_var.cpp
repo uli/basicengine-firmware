@@ -572,6 +572,15 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) ilet() {
     err = ERR_LETWOV; // エラー番号をセット
     break;            // 打ち切る
   }
+
+  if (err == ERR_UNK) {
+    // Variable assignment code assumes that a malformed assignment is
+    // usually caused by a misspelled command and reports it as such; in our
+    // case, however, we know it's supposed to be an assignment, so we report
+    // it as such.
+    err = ERR_VWOEQ;
+    err_expected = NULL;
+  }
 }
 
 /***bf bas POPF
