@@ -192,11 +192,21 @@ static int pushmode (lua_State *L, int oldmode) {
   return 1;
 }
 
+static const char __stop[] PROGMEM = "stop";
+static const char __restart[] PROGMEM = "restart";
+static const char __collect[] PROGMEM = "collect";
+static const char __count[] PROGMEM = "count";
+static const char __step[] PROGMEM = "step";
+static const char __setpause[] PROGMEM = "setpause";
+static const char __setstepmul[] PROGMEM = "setstepmul";
+static const char __isrunning[] PROGMEM = "isrunning";
+static const char __generational[] PROGMEM = "generational";
+static const char __incremental[] PROGMEM = "incremental";
 
 static int __attribute__((optimize ("no-jump-tables"))) luaB_collectgarbage (lua_State *L) {
-  static const char *const opts[] PROGMEM = {"stop", "restart", "collect",
-    "count", "step", "setpause", "setstepmul",
-    "isrunning", "generational", "incremental", NULL};
+  static const char *const opts[] PROGMEM = {__stop, __restart, __collect,
+    __count, __step, __setpause, __setstepmul,
+    __isrunning, __generational, __incremental, NULL};
   static const int optsnum[] PROGMEM = {LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
     LUA_GCCOUNT, LUA_GCSTEP, LUA_GCSETPAUSE, LUA_GCSETSTEPMUL,
     LUA_GCISRUNNING, LUA_GCGEN, LUA_GCINC};
