@@ -848,10 +848,10 @@ static void GCTM (lua_State *L) {
     if (status != LUA_OK) {  /* error while running __gc? */
       const char *msg = (ttisstring(s2v(L->top - 1)))
                         ? svalue(s2v(L->top - 1))
-                        : "error object is not a string";
-      luaE_warning(L, "error in __gc metamethod (");
-      luaE_warning(L, msg);
-      luaE_warning(L, ")\n");
+                        : PSTR("error object is not a string");
+      luaE_warning_P(L, "error in __gc metamethod (");
+      __luaE_warning_P(L, msg);
+      luaE_warning_P(L, ")\n");
     }
   }
 }
