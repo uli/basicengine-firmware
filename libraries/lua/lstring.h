@@ -23,7 +23,8 @@
 
 #define luaS_newliteral(L, s)	(luaS_newlstr(L, "" s, \
                                  (sizeof(s)/sizeof(char))-1))
-
+TString *__luaS_newliteral_P(lua_State *L, const char *s);
+#define luaS_newliteral_P(L, s) __luaS_newliteral_P(L, PSTR(s))
 
 /*
 ** test whether a string is a reserved word
