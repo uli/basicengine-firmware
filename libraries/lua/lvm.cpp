@@ -197,7 +197,7 @@ void luaV_finishget (lua_State *L, const TValue *t, TValue *key, StkId val,
       lua_assert(!ttistable(t));
       tm = luaT_gettmbyobj(L, t, TM_INDEX);
       if (unlikely(notm(tm)))
-        luaG_typeerror(L, t, "index");  /* no metamethod */
+        luaG_typeerror_P(L, t, "index");  /* no metamethod */
       /* else will try the metamethod */
     }
     else {  /* 't' is a table */
@@ -254,7 +254,7 @@ void luaV_finishset (lua_State *L, const TValue *t, TValue *key,
     else {  /* not a table; check metamethod */
       tm = luaT_gettmbyobj(L, t, TM_NEWINDEX);
       if (unlikely(notm(tm)))
-        luaG_typeerror(L, t, "index");
+        luaG_typeerror_P(L, t, "index");
     }
     /* try the metamethod */
     if (ttisfunction(tm)) {
@@ -607,7 +607,7 @@ void luaV_objlen (lua_State *L, StkId ra, const TValue *rb) {
     default: {  /* try metamethod */
       tm = luaT_gettmbyobj(L, rb, TM_LEN);
       if (unlikely(notm(tm)))  /* no metamethod? */
-        luaG_typeerror(L, rb, "get length of");
+        luaG_typeerror_P(L, rb, "get length of");
       break;
     }
   }
