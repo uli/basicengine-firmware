@@ -18,7 +18,7 @@ Pause for a specific amount of time.
 @ms	time in milliseconds
 \ref TICK()
 ***/
-void iwait() {
+void Basic::iwait() {
   int32_t tm;
   if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
   uint32_t end = tm + millis();
@@ -87,7 +87,7 @@ Read a word (32 bits) of data from an address in memory.
 Sanity checks for `addr` are insufficient.
 \ref PEEK() PEEKW()
 ***/
-int32_t ipeek(int type) {
+int32_t Basic::ipeek(int type) {
   int32_t value = 0, vadr;
   void* radr;
 
@@ -146,7 +146,7 @@ It must be 4-byte aligned.
 Sanity checks for `addr` are insufficient.
 \ref POKE POKEW
 ***/
-void BASIC_FP do_poke(int type) {
+void BASIC_FP Basic::do_poke(int type) {
   void* adr;
   int32_t value;
   int32_t vadr;
@@ -174,13 +174,13 @@ void BASIC_FP do_poke(int type) {
   } while(*cip == I_COMMA);
 }
 
-void BASIC_FP ipoke() {
+void BASIC_FP Basic::ipoke() {
   do_poke(0);
 }
-void BASIC_FP ipokew() {
+void BASIC_FP Basic::ipokew() {
   do_poke(1);
 }
-void BASIC_FP ipoked() {
+void BASIC_FP Basic::ipoked() {
   do_poke(2);
 }
 
@@ -194,7 +194,7 @@ WARNING: Using this command incorrectly may crash the system, or worse.
 \bugs
 No sanity checks are performed on the address.
 ***/
-void isys() {
+void Basic::isys() {
   void (*sys)() = (void (*)())(uintptr_t)iexp();
   sys();
 }
@@ -213,7 +213,7 @@ Sets the current date and time.
 It is unclear why the maximum value for `second` is 61 and not 59.
 \ref DATE GET_DATE
 ***/
-void isetDate() {
+void Basic::isetDate() {
 #ifdef USE_INNERRTC
   int32_t p_year, p_mon, p_day;
   int32_t p_hour, p_min, p_sec;
@@ -232,7 +232,7 @@ void isetDate() {
 #endif
 }
 
-void iset() {
+void Basic::iset() {
   int32_t flag, val;
 
   if (*cip == I_DATE) {
@@ -270,7 +270,7 @@ WARNING: The syntax and semantics of this command are not consistent with
 other BASIC implementations and may be changed in future releases.
 \ref DATE GET_TIME SET_DATE
 ***/
-void igetDate() {
+void Basic::igetDate() {
 #ifdef USE_INNERRTC
   int16_t index;
   time_t tt = now();
@@ -320,7 +320,7 @@ WARNING: The syntax and semantics of this command are not consistent with
 other BASIC implementations and may be changed in future releases.
 \ref SET_DATE
 ***/
-void igetTime() {
+void Basic::igetTime() {
 #ifdef USE_INNERRTC
   int16_t index;
   time_t tt = now();
@@ -353,7 +353,7 @@ void igetTime() {
 #endif
 }
 
-void iget() {
+void Basic::iget() {
   if (*cip == I_DATE) {
     ++cip;
     igetDate();
@@ -374,7 +374,7 @@ implementations and may be changed in future releases.
 \ref GET_DATE SET_DATE
 ***/
 // XXX: 32 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) idate() {
+void __attribute__((optimize ("no-jump-tables"))) Basic::idate() {
 #ifdef USE_INNERRTC
   time_t tt = now();
 
@@ -410,7 +410,7 @@ Prints information on Engine BASIC's components, its authors and
 licensing conditions.
 \usage CREDITS
 ***/
-void icredits() {
+void Basic::icredits() {
   c_puts_P(__credits);
 }
 
@@ -421,7 +421,7 @@ Run Z-machine program.
 @file_name$	name of a z-code file
 ***/
 #include <azip.h>
-void ixyzzy() {
+void Basic::ixyzzy() {
   if (!is_strexp()) {
     PRINT_P("Nothing happens.\n");
     return;
@@ -451,7 +451,7 @@ The following internal information can be retrieved using `SYS()`:
 | `1` | memory address of current font
 \endtable
 ***/
-num_t nsys() {
+num_t Basic::nsys() {
   int32_t item = getparam();
   if (err)
     return 0;
@@ -495,7 +495,7 @@ Get free memory size.
 \usage bytes = FREE()
 \ret Number of bytes free.
 ***/
-num_t BASIC_FP nfree() {
+num_t BASIC_FP Basic::nfree() {
   if (checkOpen()||checkClose()) return 0;
 #ifdef ESP8266
   return umm_free_heap_size();
@@ -511,7 +511,7 @@ Returns the elapsed time since power-on.
 @unit	unit of time [`0` for milliseconds, `1` for seconds, default: `0`]
 \ret Time elapsed.
 ***/
-num_t BASIC_FP ntick() {
+num_t BASIC_FP Basic::ntick() {
   num_t value;
   if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
     // 引数無し
@@ -532,13 +532,13 @@ num_t BASIC_FP ntick() {
   return value;
 }
 
-num_t BASIC_FP npeek() {
+num_t BASIC_FP Basic::npeek() {
   return ipeek(0);
 }
-num_t BASIC_FP npeekw() {
+num_t BASIC_FP Basic::npeekw() {
   return ipeek(1);
 }
-num_t BASIC_FP npeekd() {
+num_t BASIC_FP Basic::npeekd() {
   return ipeek(2);
 }
 
@@ -558,7 +558,7 @@ pollution.
 * free memory size and
 * video timing information (nominal and actual cycles per frame).
 ***/
-void SMALL isysinfo() {
+void SMALL Basic::isysinfo() {
   char top = 't';
   uint32_t adr = (uint32_t)&top;
 
@@ -631,7 +631,7 @@ Boots the system from the specified flash page.
 The `BOOT` command does not verify if valid firmware code is installed at
 the given flash page. Use with caution.
 ***/
-void iboot() {
+void Basic::iboot() {
 #if !defined(HOSTED) && defined(ESP8266)
   int32_t sector;
   if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
@@ -668,7 +668,7 @@ void syspanic(const char *txt) {
 
 lua_State *lua = NULL;
 
-void ilua()
+void Basic::ilua()
 {
   lua = luaL_newstate();
   if (!lua) {

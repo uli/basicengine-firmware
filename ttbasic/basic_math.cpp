@@ -8,7 +8,7 @@ Returns the sine of a specified angle.
 \ret Sine of `angle`.
 \ref COS() TAN()
 ***/
-num_t BASIC_FP nsin() {
+num_t BASIC_FP Basic::nsin() {
   return sin(getparam());
 }
 /***bf m COS
@@ -19,7 +19,7 @@ Returns the cosine of a specified angle.
 \ret Cosine of `angle`.
 \ref SIN() TAN()
 ***/
-num_t BASIC_FP ncos() {
+num_t BASIC_FP Basic::ncos() {
   return cos(getparam());
 }
 /***bf m EXP
@@ -30,7 +30,7 @@ logarithms.
 @pow	Power to raise _e_ to.
 \ret Exponential value of `pow`.
 ***/
-num_t BASIC_FP nexp() {
+num_t BASIC_FP Basic::nexp() {
   return exp(getparam());
 }
 /***bf m ATN
@@ -44,7 +44,7 @@ value whose tangent is `x`.
 \ret The principal value of the arc tangent of `x` in radians.
 \ref ATN2()
 ***/
-num_t BASIC_FP natn() {
+num_t BASIC_FP Basic::natn() {
   return atan(getparam());
 }
 
@@ -60,7 +60,7 @@ the two arguments to determine the quadrant of the result.
 \ret Arc tangent of `y`/`x`.
 \ref ATN()
 ***/
-num_t BASIC_FP natn2() {
+num_t BASIC_FP Basic::natn2() {
   num_t value, value2;
   if (checkOpen() || getParam(value, I_COMMA) || getParam(value2, I_CLOSE))
     return 0;
@@ -74,7 +74,7 @@ Square root function.
 @num	any numeric expression larger than or equal to `0`
 \ret The nonnegative square root of `num`.
 ***/
-num_t BASIC_FP nsqr() {
+num_t BASIC_FP Basic::nsqr() {
   return sqrt(getparam());
 }
 
@@ -86,7 +86,7 @@ Returns the tangent of a specified angle.
 \ret Tangent of `angle`.
 \ref COS() SIN()
 ***/
-num_t BASIC_FP ntan() {
+num_t BASIC_FP Basic::ntan() {
   return tan(getparam());
 }
 
@@ -97,7 +97,7 @@ Returns the natural logarithm of a numeric expression.
 @num	any numeric expression
 \ret The natural logarithm of `num`.
 ***/
-num_t BASIC_FP nlog() {
+num_t BASIC_FP Basic::nlog() {
   return log(getparam());
 }
 
@@ -108,7 +108,7 @@ Returns the largest integer less than or equal to a numeric expression.
 @num	any numeric expression
 \ret `num` rounded down to the nearest integer.
 ***/
-num_t BASIC_FP nint() {
+num_t BASIC_FP Basic::nint() {
   return floor(getparam());
 }
 
@@ -121,13 +121,13 @@ Returns a value indicating the sign of a numeric expression.
 `1` if the expression is positive, `0` if it is zero, or `-1` if it is
 negative.
 ***/
-num_t BASIC_FP nsgn() {
+num_t BASIC_FP Basic::nsgn() {
   num_t value = getparam();
   return (0 < value) - (value < 0);
 }
 
 // multiply or divide calculation
-num_t BASIC_FP imul() {
+num_t BASIC_FP Basic::imul() {
   num_t value, tmp; //値と演算値
 
   while(1) {
@@ -232,7 +232,7 @@ Bit-shift operator, right.
 }
 
 // add or subtract calculation
-num_t BASIC_FP iplus() {
+num_t BASIC_FP Basic::iplus() {
   num_t value, tmp; //値と演算値
   value = imul(); //値を取得
   if (err)
@@ -275,7 +275,7 @@ Numeric subtraction operator.
     } //中間コードで分岐の末尾
 }
 
-num_t BASIC_FP irel() {
+num_t BASIC_FP Basic::irel() {
   num_t value, tmp;
   value = iplus();
 
@@ -359,7 +359,7 @@ a >= b
     }
 }
 
-num_t BASIC_FP iand() {
+num_t BASIC_FP Basic::iand() {
   num_t value, tmp;
 
   switch(*cip++) {
@@ -404,7 +404,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 }
 
 // Numeric expression parser
-num_t BASIC_FP iexp() {
+num_t BASIC_FP Basic::iexp() {
   num_t value, tmp;
 
   value = iand();

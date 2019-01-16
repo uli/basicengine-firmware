@@ -44,7 +44,7 @@ void SMALL basic_init_file_late() {
 #endif
 }
 
-int BASIC_INT get_filenum_param() {
+int BASIC_INT Basic::get_filenum_param() {
   int32_t f = getparam();
   if (f < 0 || f >= MAX_USER_FILES) {
     E_VALUE(0, MAX_USER_FILES - 1);
@@ -60,7 +60,7 @@ Checks whether the end of a file has been reached.
 @file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
 \ret `-1` if the end of the file has been reached, `0` otherwise.
 ***/
-num_t BASIC_INT neof() {
+num_t BASIC_INT Basic::neof() {
   int32_t a = get_filenum_param();
   if (!err)
     return basic_bool(!user_files[a]->available());
@@ -75,7 +75,7 @@ Returns the length of a file in bytes.
 @file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
 \ret Length of file.
 ***/
-num_t BASIC_INT nlof() {
+num_t BASIC_INT Basic::nlof() {
   int32_t a = get_filenum_param();
   if (!err)
     return user_files[a]->fileSize();
@@ -90,7 +90,7 @@ Returns the current position within a file.
 @file_num	number of an open file [`0` to `{MAX_USER_FILES_m1}`]
 \ret Position at which the next byte will be read or written.
 ***/
-num_t BASIC_INT nloc() {
+num_t BASIC_INT Basic::nloc() {
   int32_t a = get_filenum_param();
   if (!err)
     return user_files[a]->position();
@@ -110,7 +110,7 @@ depending on whether the entry is a directory itself.
 \error
 An error is generated if `dir_num` is not open or not a directory.
 ***/
-BString sdir()
+BString Basic::sdir()
 {
   int32_t fnum = getparam();
   if (err)
@@ -143,7 +143,7 @@ Returns a string of characters read from a specified file.
 \ret Data read from file.
 \ref INPUT
 ***/
-BString sinput()
+BString Basic::sinput()
 {
   int32_t len, fnum;
   BString value;
@@ -192,7 +192,7 @@ Redirection will automatically be reset if a file redirected to is closed
 used file number), or when returning to the command prompt.
 \ref OPEN CLOSE
 ***/
-void icmd () {
+void Basic::icmd () {
   bool is_input;
   int32_t redir;
   if (*cip == I_OUTPUT) {
@@ -241,7 +241,7 @@ Changes the current directory.
 @directory$	path to the new current directory
 \ref CWD$()
 ***/
-void ichdir() {
+void Basic::ichdir() {
   BString new_cwd;
   if(!(new_cwd = getParamFname())) {
     return;
@@ -256,7 +256,7 @@ Returns the current working directory.
 \ret Current working directory.
 \ref CHDIR
 ***/
-BString scwd() {
+BString Basic::scwd() {
   if (checkOpen() || checkClose()) return BString();
   return Unifile::cwd();
 }
@@ -276,7 +276,7 @@ OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
 * `*DIRECTORY*` opens `file$` as a directory.
 \ref CLOSE DIR$() INPUT INPUT$() PRINT SEEK
 ***/
-void iopen() {
+void Basic::iopen() {
   BString filename;
   int flags = UFILE_READ;
   int32_t filenum;
@@ -340,7 +340,7 @@ Closes an open file or directory.
 @file_num	number of an open file or directory [`0` to `{MAX_USER_FILES_m1}`]
 \ref OPEN
 ***/
-void iclose() {
+void Basic::iclose() {
   int32_t filenum;
 
   if (*cip == I_SHARP)
@@ -373,7 +373,7 @@ The command will generate an error if `file_num` is not open or the operation
 is unsuccessful.
 \ref INPUT INPUT$() PRINT
 ***/
-void iseek() {
+void Basic::iseek() {
   int32_t filenum, pos;
 
   if (*cip == I_SHARP)
@@ -400,7 +400,7 @@ Displays the contents of the current or a specified directory.
                 [default: all files in the current directory]
 \ref CHDIR CWD$()
 ***/
-void ifiles() {
+void Basic::ifiles() {
   BString fname;
   char wildcard[SD_PATH_LEN];
   char* wcard = NULL;
@@ -447,7 +447,7 @@ Creates a directory.
 \args
 @directory$	path to the new directory
 ***/
-void imkdir() {
+void Basic::imkdir() {
   uint8_t rc;
   BString fname;
 
@@ -472,7 +472,7 @@ Deletes a directory.
 Does not support wildcard patterns.
 \ref MKDIR
 ***/
-void irmdir() {
+void Basic::irmdir() {
   BString fname;
   uint8_t rc;
 
@@ -497,7 +497,7 @@ Changes the name of a file or directory.
 \bugs
 Does not support wildcard patterns.
 ***/
-void irename() {
+void Basic::irename() {
   bool rc;
 
   BString old_fname = getParamFname();
@@ -532,7 +532,7 @@ program in memory.
 Does not support wildcard patterns.
 \ref DELETE
 ***/
-void iremove() {
+void Basic::iremove() {
   BString fname;
 
   if(!(fname = getParamFname())) {
@@ -555,7 +555,7 @@ Copies a file.
 \bugs
 Does not support wildcard patterns.
 ***/
-void icopy() {
+void Basic::icopy() {
   uint8_t rc;
 
   BString old_fname = getParamFname();
@@ -589,7 +589,7 @@ If the files are not equal, the sign of the result is determined by the sign
 of the difference between the first pair of bytes that differ in `file1$`
 and `file2$`.
 ***/
-num_t ncompare() {
+num_t Basic::ncompare() {
   if (checkOpen()) return 0;
   BString one = getParamFname();
   if (err)
@@ -619,7 +619,7 @@ parameters, it cannot predict any system malfunctions resulting
 from its use. Use with caution.
 \ref BLOAD
 ***/
-void SMALL ibsave() {
+void SMALL Basic::ibsave() {
   uint32_t vadr, len;
   BString fname;
   uint8_t rc;
@@ -690,7 +690,7 @@ parameters, it cannot predict any system malfunctions resulting
 from its use. Use with caution.
 \ref BSAVE
 ***/
-void SMALL ibload() {
+void SMALL Basic::ibload() {
   uint32_t vadr;
   int32_t len = -1;
   int32_t c;
@@ -765,7 +765,7 @@ has been printed, it pauses and waits for a key press.
 \args
 @file$	name of the file
 ***/
-void  itype() {
+void  Basic::itype() {
   //char fname[SD_PATH_LEN];
   //uint8_t rc;
   int32_t line = 0;
@@ -808,7 +808,7 @@ SD card formatting is currently broken; use another device to format SD
 cards for use with the BASIC Engine.
 ***/
 void SdFormat();
-void iformat() {
+void Basic::iformat() {
 #ifdef UNIFILE_USE_OLD_SPIFFS
   BString target = getParamFname();
   if (err)

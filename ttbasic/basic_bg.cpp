@@ -15,7 +15,7 @@ bool restore_text_window = false;
 uint8_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE
-void BASIC_INT event_handle_sprite()
+void BASIC_INT Basic::event_handle_sprite()
 {
   uint8_t dir;
   for (int i = 0; i < MAX_SPRITES; ++i) {
@@ -72,7 +72,7 @@ BG OFF
 If a background cannot be turned on, no error is generated.
 \ref LOAD_BG LOAD_PCX MOVE_BG SAVE_BG
 ***/
-void ibg() {
+void Basic::ibg() {
 #ifdef USE_BG_ENGINE
   int32_t m;
   int32_t w, h, px, py, pw, tx, ty, wx, wy, ww, wh, prio;
@@ -148,7 +148,7 @@ Loads a background map from storage.
 @file$	name of background map file
 \ref SAVE_BG
 ***/
-void iloadbg() {
+void Basic::iloadbg() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
   uint8_t w, h, tsx, tsy;
@@ -205,7 +205,7 @@ Saves a background map to storage.
 Does not check if the specified background is properly defined.
 \ref LOAD_BG
 ***/
-void isavebg() {
+void Basic::isavebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
   uint8_t w, h;
@@ -249,7 +249,7 @@ There are no restrictions on the coordinates that can be used; backgrounds
 maps wrap around if the display window extends beyond the map boundaries.
 \ref BG
 ***/
-void BASIC_FP imovebg() {
+void BASIC_FP Basic::imovebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y;
   if (getParam(bg, 0, MAX_BG, I_TO)) return;
@@ -303,7 +303,7 @@ The `SPRITE` command's attributes can be specified in any order, but it is
 usually a good idea to place the `ON` attribute at the end if used.
 \ref LOAD_PCX MOVE_SPRITE
 ***/
-void BASIC_INT isprite() {
+void BASIC_INT Basic::isprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
   bool set_frame = false, set_opacity = false;
@@ -399,7 +399,7 @@ that are placed completely outside the dimensions of the current screen
 mode will not be drawn.
 \ref SPRITE
 ***/
-void BASIC_FP imovesprite() {
+void BASIC_FP Basic::imovesprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pos_x, pos_y;
   if (getParam(num, 0, MAX_SPRITES, I_TO)) return;
@@ -411,7 +411,7 @@ void BASIC_FP imovesprite() {
 #endif
 }
 
-void BASIC_FP imove()
+void BASIC_FP Basic::imove()
 {
   if (*cip == I_SPRITE) {
     ++cip;
@@ -463,7 +463,7 @@ PLOT 0,5,10,"XOOOXXOO"
 ====
 \ref PLOT
 ***/
-void iplot() {
+void Basic::iplot() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y, t;
   if (getParam(bg, 0, MAX_BG, I_NONE)) return;
@@ -509,7 +509,7 @@ It is not possible to mitigate flickering caused by overloading the graphics
 engine using `FRAMESKIP` because each frame that is actually rendered must
 be so within a single TV frame.
 ***/
-void iframeskip() {
+void Basic::iframeskip() {
 #ifdef USE_BG_ENGINE
   int32_t skip;
   if (getParam(skip, 0, 60, I_NONE)) return;
@@ -548,7 +548,7 @@ WARNING: This function has never been tested.
 Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate.
 \ref SPRCOLL()
 ***/
-num_t BASIC_FP ntilecoll() {
+num_t BASIC_FP Basic::ntilecoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b, c;
   if (checkOpen()) return 0;
@@ -594,7 +594,7 @@ sprite 1 and covers it completely. (It will indicate that sprite 2 is
 up/left of sprite 1.)
 \ref TILECOLL()
 ***/
-num_t BASIC_FP nsprcoll() {
+num_t BASIC_FP Basic::nsprcoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b;
   if (checkOpen()) return 0;
@@ -620,7 +620,7 @@ Returns the horizontal position of a given sprite.
 X coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRY()
 ***/
-num_t BASIC_FP nsprx() {
+num_t BASIC_FP Basic::nsprx() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
@@ -643,7 +643,7 @@ Returns the vertical position of a given sprite.
 Y coordinate of sprite `spr`.
 \ref MOVE_SPRITE SPRX()
 ***/
-num_t BASIC_FP nspry() {
+num_t BASIC_FP Basic::nspry() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
@@ -667,7 +667,7 @@ Returns the horizontal scrolling offset of a given background layer.
 X scrolling offset of background `bg`.
 \ref BG BSCRY()
 ***/
-num_t BASIC_FP nbscrx() {
+num_t BASIC_FP Basic::nbscrx() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 
@@ -690,7 +690,7 @@ Returns the vertical scrolling offset of a given background layer.
 Y scrolling offset of background `bg`.
 \ref BG BSCRX()
 ***/
-num_t BASIC_FP nbscry() {
+num_t BASIC_FP Basic::nbscry() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 

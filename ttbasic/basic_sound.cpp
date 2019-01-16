@@ -3,7 +3,7 @@
 bool event_play_enabled;
 uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
-void BASIC_INT event_handle_play(int ch)
+void BASIC_INT Basic::event_handle_play(int ch)
 {
   if (event_play_proc_idx[ch] == NO_PROC)
     return;
@@ -27,7 +27,7 @@ wavetable synthesizer.
 * MML syntax undocumented.
 * Fails silently if the synthesizer could not be initialized.
 ***/
-void iplay() {
+void Basic::iplay() {
 #ifdef HAVE_MML
   int32_t ch = 0;
 
@@ -59,7 +59,7 @@ because they use different sample rates.
 * Does not support phonetic input.
 * No possibility to change synthesizer parameters.
 ***/
-void isay() {
+void Basic::isay() {
   BString text = istrexp();
   if (err)
     return;
@@ -80,7 +80,7 @@ Checks if a sound is playing a on wavetable synthesizer channel.
 \ret `1` if sound is playing, `0` otherwise.
 \ref PLAY SOUND
 ***/
-num_t BASIC_FP nplay() {
+num_t BASIC_FP Basic::nplay() {
 #ifdef HAVE_MML
   int32_t a, b;
   if (checkOpen()) return 0;
@@ -111,7 +111,7 @@ If an instrument is not defined in the current sound font, an empty
 string is returned.
 \ref SOUND_FONT
 ***/
-BString sinst() {
+BString Basic::sinst() {
 #ifdef HAVE_TSF
   return sound.instName(getparam());
 #else
@@ -132,7 +132,7 @@ The maximum value for `period` depends on the flavor of Engine BASIC;
 it's 320 for the gaming build, and 160 for the network build.
 \ref CONFIG
 ***/
-void ibeep() {
+void Basic::ibeep() {
   int32_t period;
   int32_t vol = CONFIG.beep_volume;
 
@@ -173,7 +173,7 @@ Generates a sound using the wavetable synthesizer.
 @vel	note velocity [`0` to `1` (default)]
 \ref INST$() SOUND_FONT
 ***/
-void isound() {
+void Basic::isound() {
 #ifdef HAVE_TSF
   if (*cip == I_FONT) {
     ++cip;

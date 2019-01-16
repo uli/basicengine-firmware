@@ -65,7 +65,8 @@ extern "C" {
 #include <soc/rtc.h>
 #endif
 
-void basic();
+#include "basic.h"
+
 uint8_t serialMode;
 
 void setup() {
@@ -114,7 +115,9 @@ void loop(void){
   // Initialize I2S to default sample rate, start transmission.
   audio.init(16000);
 
-  basic();	// does not return
+  bc = new Basic;
+  memset(bc, 0, sizeof(*bc));
+  bc->basic();	// does not return
 }
 
 #ifdef HAVE_PROFILE

@@ -124,7 +124,7 @@ out:
   sc0.show_curs(1);
 }
 
-void iflash()
+void Basic::iflash()
 {
   BString filename;
   bool success;
@@ -260,7 +260,7 @@ out:
 }
 
 #else	// !HOSTED
-void iflash() {
+void Basic::iflash() {
   err = ERR_NOT_SUPPORTED;
 }
 #endif

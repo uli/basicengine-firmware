@@ -25,9 +25,6 @@ extern unsigned char ibuf[SIZE_IBUF];
 extern uint8_t err; // Error message index
 
 
-uint8_t toktoi(bool find_prg_text = true);
-int putlist(unsigned char* ip, uint8_t devno=0);
-
 // メモリ書き込みポインタのクリア
 static inline void cleartbuf() {
   tbuf_pos=0;
@@ -59,11 +56,8 @@ num_t getparam();
 
 void get_input(bool numeric = false, uint8_t eoi = '\r');
 
-uint32_t getPrevLineNo(uint32_t lineno);
-uint32_t getNextLineNo(uint32_t lineno);
 uint32_t getBottomLineNum();
 uint32_t getTopLineNum();
-char* getLineStr(uint32_t lineno, uint8_t devno = 3);
 
 BString getstr(uint8_t eoi = '\r');
 
@@ -82,7 +76,194 @@ void BASIC_FP ilvar();
 
 #define basic_bool(x) ((x) ? -1 : 0)
 
-typedef struct {
+#define NEW_ALL		0
+#define NEW_PROG	1
+#define NEW_VAR		2
+
+extern void E_SYNTAX(unsigned char token);
+#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
+                           err = ERR_SYNTAX; err_expected = __msg; \
+                      } while(0)
+extern void E_VALUE(int32_t from, int32_t to);
+
+#define E_ERR(code, exp) do { \
+  static const char __msg[] PROGMEM = exp; \
+  err = ERR_ ## code; err_expected = __msg; \
+  } while(0)
+
+class Basic {
+public:
+  void basic();
+
+  void draw_profile(void);
+  void event_handle_sprite();
+  void event_handle_pad();
+  void event_handle_play(int ch);
+  char* getLineStr(uint32_t lineno, uint8_t devno = 3);
+  uint32_t getPrevLineNo(uint32_t lineno);
+  uint32_t getNextLineNo(uint32_t lineno);
+
+private:
+  int list_free();
+  unsigned char* getlp(uint32_t lineno);
+  uint32_t getlineIndex(uint32_t lineno);
+  uint8_t* getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 0);
+  uint8_t* getWENDptr(uint8_t* p);
+  uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX);
+
+  void inslist();
+  void recalc_indent();
+  uint8_t toktoi(bool find_prg_text = true);
+  void irenum();
+  
+  int SMALL putlist(unsigned char* ip, uint8_t devno = 0);
+
+  int get_array_dims(int *idxs);
+  num_t getparam();
+
+  void initialize_proc_pointers(void);
+  void initialize_label_pointers(void);
+
+  bool find_next_data();
+  void data_push();
+  void data_pop();
+
+  void iprint(uint8_t devno = 0,uint8_t nonewln = 0);
+
+  void do_trace();
+  uint8_t ilrun();
+  void irun(uint8_t* start_clp = NULL, bool cont = false);
+
+  void inew(uint8_t mode = NEW_ALL);
+
+  bool get_range(uint32_t &start, uint32_t &end);
+
+  void SMALL ilist(uint8_t devno=0, BString *search = NULL);
+
+  void iloadbg();
+  void isavebg();
+  void isavepcx();
+  void SMALL ildbmp();
+
+  void imovebg();
+  void imovesprite();
+
+  num_t nvreg();
+  int32_t ncharfun();
+
+  void config_color();
+  
+  num_t nplay();
+
+  uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL);
+  BString sinput();
+
+  void init_stack_frame();
+  void push_num_arg(num_t n);
+  void do_call(uint8_t proc_idx);
+  void do_goto(uint32_t line);
+  void do_gosub_p(unsigned char *lp, unsigned char *ip);
+  void do_gosub(uint32_t lineno);
+  void on_go(bool is_gosub, int cas);
+
+  void SMALL error(uint8_t flgCmd = false);
+  BString serror();
+  void esyntax();
+  void eunimp();
+
+  BString ilrstr(bool right);
+
+  typedef BString (Basic::*strfun_t)();
+  static const strfun_t strfuntbl[];
+
+  typedef void (Basic::*cmd_t)();
+  static const Basic::cmd_t funtbl[];
+  static const Basic::cmd_t funtbl_ext[];
+  
+  typedef num_t (Basic::*numfun_t)();
+  static const Basic::numfun_t numfuntbl[];
+
+#define DECL_FUNCS
+#include "numfuntbl.h"
+#include "strfuntbl.h"
+#include "funtbl.h"
+#undef DECL_FUNCS
+#define esyntax_workaround esyntax
+
+  bool is_strexp();
+  BString istrvalue();
+  BString istrexp();
+  num_t irel_string();
+
+  num_t nsvar_a();
+  int get_num_local_offset(uint8_t arg, bool &is_local);
+  num_t& get_lvar(uint8_t arg);
+  int get_str_local_offset(uint8_t arg, bool &is_local);
+  BString& get_lsvar(uint8_t arg);
+  void set_svar(bool is_lsvar);
+
+  num_t ivalue();
+  num_t iexp();
+  num_t imul();
+  num_t iplus();
+  num_t irel();
+  num_t iand();
+
+  num_t nsys();
+  int32_t ipeek(int type);
+  void do_poke(int type);
+  
+  void isetDate();
+  void igetDate();
+  void igetTime();
+
+  void iformat();
+  void iflash();
+
+  int get_filenum_param();
+
+  void isetap();
+  void inetopen();
+  void inetclose();
+  void inetget();
+  BString snetinput();
+  BString snetget();
+
+  unsigned char* iexe(int stk = -1);
+  uint8_t SMALL icom();
+
+  // '('チェック関数
+  inline uint8_t checkOpen() {
+    if (*cip != I_OPEN) err = ERR_PAREN;
+    else cip++;
+    return err;
+  }
+
+  // ')'チェック関数
+  inline uint8_t checkClose() {
+    if (*cip != I_CLOSE) err = ERR_PAREN;
+    else cip++;
+    return err;
+  }
+
+#ifdef FLOAT_NUMS
+  uint8_t BASIC_FP getParam(int32_t& prm, token_t next_token);
+  uint8_t BASIC_FP getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token);
+#endif
+
+  // コマンド引数取得(int32_t,引数チェックあり)
+  uint8_t BASIC_FP getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token);
+  uint32_t BASIC_FP getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token);
+  uint8_t BASIC_FP getParam(uint32_t& prm, token_t next_token);
+  uint8_t BASIC_FP getParam(num_t& prm, token_t next_token);
+
+  BString getParamFname();
+
+  inline bool end_of_statement()
+  {
+    return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
+  }
+
   unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
   int size_list;
@@ -142,100 +323,22 @@ typedef struct {
   num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
   BString retstr[MAX_RETVALS];	    // multi-value returns (string)
 
-  bool _event_error_enabled;
-  unsigned char *_event_error_lp;
-  unsigned char *_event_error_ip;
-  unsigned char *_event_error_resume_lp;
-  unsigned char *_event_error_resume_ip;
+  bool event_error_enabled;
+  unsigned char *event_error_lp;
+  unsigned char *event_error_ip;
+  unsigned char *event_error_resume_lp;
+  unsigned char *event_error_resume_ip;
   
   bool math_exceptions_disabled;
   
   unsigned char *data_lp;
   unsigned char *data_ip;
   bool in_data;
-} basic_ctx_t;
+};
 
-extern basic_ctx_t *bc;
+extern Basic *bc;
 
-#define ibuf bc->ibuf
-
-#define size_list bc->size_list
-
-#define nvar bc->nvar
-#define nvar_names bc->nvar_names
-#define svar bc->svar
-#define svar_names bc->svar_names
-
-#define num_arr bc->num_arr
-#define num_arr_names bc->num_arr_names
-#define str_arr bc->str_arr
-#define str_arr_names bc->str_arr_names
-#define str_lst bc->str_lst
-#define str_lst_names bc->str_lst_names
-#define num_lst bc->num_lst
-#define num_lst_names bc->num_lst_names
-
-#define proc_names bc->proc_names
-#define procs bc->procs
-#define label_names bc->label_names
-#define labels bc->labels
-
-#define listbuf bc->listbuf
-
-#define clp bc->clp
-#define cip bc->cip 
-
-#define gstk bc->gstk
-#define gstki bc->gstki
-
-#define astk_num bc->astk_num
-#define astk_num_i bc->astk_num_i
-#define astk_str bc->astk_str
-#define astk_str_i bc->astk_str_i
-
-#define lstk bc->lstk
-#define lstki bc->lstki
-
-#define cont_clp bc->cont_clp
-#define cont_cip bc->cont_cip
-
-#define retval bc->retval
-#define retstr bc->retstr
-
-#define event_error_enabled bc->_event_error_enabled
-#define event_error_lp bc->_event_error_lp
-#define event_error_ip bc->_event_error_ip
-#define event_error_resume_lp bc->_event_error_resume_lp
-#define event_error_resume_ip bc->_event_error_resume_ip
-
-#define math_exceptions_disabled bc->math_exceptions_disabled
-
-#define data_lp bc->data_lp
-#define data_ip bc->data_ip
-#define in_data bc->in_data
-
-// '('チェック関数
-inline uint8_t checkOpen() {
-  if (*cip != I_OPEN) err = ERR_PAREN;
-  else cip++;
-  return err;
-}
-
-// ')'チェック関数
-inline uint8_t checkClose() {
-  if (*cip != I_CLOSE) err = ERR_PAREN;
-  else cip++;
-  return err;
-}
-
-int BASIC_FP token_size(uint8_t *code);
-num_t BASIC_FP iexp();
-BString istrexp(void);
-bool BASIC_FP is_strexp();
-
-void BASIC_FP do_call(uint8_t proc_idx);
-
-BString sinput();
+int token_size(uint8_t *code);
 
 // キーワードテーブル
 #include "kwtbl.h"
@@ -249,87 +352,6 @@ BString sinput();
 
 extern uint8_t err;
 extern const char *err_expected;
-
-extern void E_SYNTAX(unsigned char token);
-#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
-                           err = ERR_SYNTAX; err_expected = __msg; \
-                      } while(0)
-extern void E_VALUE(int32_t from, int32_t to);
-
-#define E_ERR(code, exp) do { \
-  static const char __msg[] PROGMEM = exp; \
-  err = ERR_ ## code; err_expected = __msg; \
-  } while(0)
-
-
-#ifdef FLOAT_NUMS
-// コマンド引数取得(uint32_t,引数チェックなし)
-static inline uint8_t BASIC_FP getParam(int32_t& prm, token_t next_token) {
-  num_t p = iexp();
-  prm = p;
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-// コマンド引数取得(int32_t,引数チェックあり)
-static inline uint8_t BASIC_FP getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
-  prm = iexp();
-  if (!err && (prm < v_min || prm > v_max))
-    E_VALUE(v_min, v_max);
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-#endif
-
-// コマンド引数取得(int32_t,引数チェックあり)
-static inline uint8_t BASIC_FP getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
-  prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
-    E_VALUE(v_min, v_max);
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-static inline uint32_t BASIC_FP getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
-  prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
-    E_VALUE(v_min, v_max);
-  else if (next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-// コマンド引数取得(int32_t,引数チェックなし)
-static inline uint8_t BASIC_FP getParam(uint32_t& prm, token_t next_token) {
-  prm = iexp();
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-// コマンド引数取得(uint32_t,引数チェックなし)
-static inline uint8_t BASIC_FP getParam(num_t& prm, token_t next_token) {
-  prm = iexp();
-  if (!err && next_token != I_NONE && *cip++ != next_token) {
-    if (next_token == I_OPEN || next_token == I_CLOSE)
-      err = ERR_PAREN;
-    else
-      E_SYNTAX(next_token);
-  }
-  return err;
-}
-
-static inline bool end_of_statement()
-{
-  return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
-}
 
 void* BASIC_INT sanitize_addr(uint32_t vadr, int type);
 
@@ -348,10 +370,6 @@ extern sdfiles bfs;
 #include <tTVscreen.h>
 
 extern tTVscreen sc0;
-
-#define NEW_ALL		0
-#define NEW_PROG	1
-#define NEW_VAR		2
 
 extern int redirect_output_file;
 extern int redirect_input_file;
@@ -374,7 +392,6 @@ void c_puts_P(const char *s, uint8_t devno);
 
 num_t BASIC_FP ivalue();
 
-void iprint(uint8_t devno = 0,uint8_t nonewln = 0);
 void iloadbg();
 
 int32_t ncharfun();
@@ -415,7 +432,6 @@ void iloadconfig();
 
 #define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
 
-void BASIC_INT event_handle_play(int ch);
 extern bool event_play_enabled;
 extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
@@ -423,9 +439,7 @@ extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
 extern bool event_pad_enabled;
 extern uint8_t event_pad_proc_idx[MAX_PADS];
 extern int event_pad_last[MAX_PADS];
-void event_handle_pad();
 
-void event_handle_sprite();
 extern uint8_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE

@@ -143,7 +143,7 @@ WINDOW OFF
         [`1` to `CSIZE(1)-y`]
 \ref CSIZE()
 ***/
-void BASIC_INT iwindow() {
+void BASIC_INT Basic::iwindow() {
   int32_t x, y, w, h;
 
 #ifdef USE_BG_ENGINE
@@ -186,7 +186,7 @@ The following fonts are available:
 The font set at power-on can be set using the `CONFIG` command.
 \ref CONFIG
 ***/
-void ifont() {
+void Basic::ifont() {
   int32_t idx;
   if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
     return;
@@ -229,7 +229,7 @@ The following modes are available:
   tiled backgrounds.
 \ref BG CLS FONT PALETTE SPRITE
 ***/
-void SMALL iscreen() {
+void SMALL Basic::iscreen() {
   int32_t m;
 
   if ( getParam(m,  1, vs23.numModes(), I_NONE) ) return;   // m
@@ -287,7 +287,7 @@ The default component weights depend on the color space. They are:
 Conversion fix-ups are enabled by default.
 \ref RGB() SCREEN
 ***/
-void ipalette() {
+void Basic::ipalette() {
   int32_t p, hw, sw, vw, f;
   if (getParam(p, 0, CSP_NUM_COLORSPACES - 1, I_NONE)) return;
   vs23.setColorSpace(p);
@@ -317,7 +317,7 @@ There is no direct correspondence between border and screen color values.
 There is no way to find the allowed range of values for `x` and `w` without
 trial and error.
 ***/
-void iborder() {
+void Basic::iborder() {
   int32_t y, uv, x, w;
   if (getParam(uv, 0, 255, I_COMMA)) return;
   if (getParam(y, 0, 255 - 0x66, I_NONE)) return;
@@ -354,7 +354,7 @@ LOOP
 ====
 \ref FRAME()
 ***/
-void ivsync() {
+void Basic::ivsync() {
   uint32_t tm;
   if (end_of_statement())
     tm = vs23.frame() + 1;
@@ -396,7 +396,7 @@ The number of values required depends on the register accessed:
 \endtable
 \ref VREG()
 ***/
-void BASIC_INT ivreg() {
+void BASIC_INT Basic::ivreg() {
 #ifdef USE_VS23
   int32_t opcode;
   int vals;
@@ -457,7 +457,7 @@ Returns the number of video frames since power-on.
 \ret Frame count.
 \ref VSYNC
 ***/
-num_t BASIC_FP nframe() {
+num_t BASIC_FP Basic::nframe() {
   if (checkOpen()||checkClose()) return 0;
   return vs23.frame();
 }
@@ -475,7 +475,7 @@ Valid register numbers are: `$01`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
 static const uint8_t vs23_read_regs[] PROGMEM = {
   0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
 };
-num_t BASIC_INT nvreg() {
+num_t BASIC_INT Basic::nvreg() {
 #ifdef USE_VS23
   int32_t a = getparam();
   bool good = false;
@@ -504,7 +504,7 @@ Read a location in video memory.
 \ret Memory content.
 \ref VPOKE VREG()
 ***/
-num_t BASIC_FP nvpeek() {
+num_t BASIC_FP Basic::nvpeek() {
 #ifdef USE_VS23
   num_t value = getparam();
   if (value < 0 || value > 131071) {
@@ -529,7 +529,7 @@ produce invalid output, with may cause damage to older CRT displays.
 @val	value [`0` to `255`]
 \ref VPEEK()
 ***/
-void BASIC_INT ivpoke() {
+void BASIC_INT Basic::ivpoke() {
 #ifdef USE_VS23
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
@@ -550,7 +550,7 @@ Moves the text cursor to the specified position.
         [`0` to `CSIZE(1)-1`]
 \ref CSIZE()
 ***/
-void ilocate() {
+void Basic::ilocate() {
   int32_t x,  y;
   if ( getParam(x, I_COMMA) ) return;
   if ( getParam(y, I_NONE) ) return;
@@ -587,7 +587,7 @@ Its results can be tweaked by setting conversion coefficients with
 the `PALETTE` command.
 \ref PALETTE COLOR
 ***/
-num_t BASIC_FP nrgb() {
+num_t BASIC_FP Basic::nrgb() {
   int32_t r, g, b;
   if (checkOpen() ||
       getParam(r, 0, 255, I_COMMA) ||
@@ -607,7 +607,7 @@ Changes the foreground and background color for text output.
 @cursor_color	cursor color [`0` to `255`]
 \ref RGB()
 ***/
-void icolor() {
+void Basic::icolor() {
   int32_t fc,  bgc = 0;
   if ( getParam(fc, 0, 255, I_NONE) ) return;
   if(*cip == I_COMMA) {
@@ -634,7 +634,7 @@ Returns the dimensions of the current screen mode in text characters.
 \ret Size in characters.
 \ref FONT SCREEN
 ***/
-num_t BASIC_FP ncsize() {
+num_t BASIC_FP Basic::ncsize() {
   // 画面サイズ定数の参照
   int32_t a = getparam();
   switch (a) {
@@ -655,7 +655,7 @@ Returns the dimensions of the current screen mode in pixels.
 \ret Size in pixels.
 \ref SCREEN
 ***/
-num_t BASIC_FP npsize() {
+num_t BASIC_FP Basic::npsize() {
   int32_t a = getparam();
   switch (a) {
   case 0:	return sc0.getGWidth();
@@ -674,7 +674,7 @@ Returns the text cursor position.
         `1`: vertical
 \ret Position in characters.
 ***/
-num_t BASIC_FP npos() {
+num_t BASIC_FP Basic::npos() {
   int32_t a = getparam();
   switch (a) {
   case 0:	return sc0.c_x();
@@ -697,7 +697,7 @@ Returns the text character on screen at a given position.
   using pixel graphics functions, such as `GPRINT`.
 \ref CHAR GPRINT
 ***/
-int32_t BASIC_INT ncharfun() {
+int32_t BASIC_INT Basic::ncharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
@@ -719,7 +719,7 @@ Prints a single character to the screen.
 \bugs
 No sanity checks are performed on arguments.
 ***/
-void BASIC_FP ichar() {
+void BASIC_FP Basic::ichar() {
   int32_t x, y, c;
   if ( getParam(x, I_COMMA) ) return;
   if ( getParam(y, I_COMMA) ) return;
@@ -748,7 +748,7 @@ Valid values for `direction` are:
 Colors are lost when scrolling.
 \ref BLIT GSCROLL CSIZE()
 ***/
-void  icscroll() {
+void  Basic::icscroll() {
   int32_t x1,y1,x2,y2,d;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
     return;
@@ -779,7 +779,7 @@ Valid values for `direction` are:
 \endtable
 \ref BLIT CSCROLL PSIZE()
 ***/
-void igscroll() {
+void Basic::igscroll() {
   int32_t x1,y1,x2,y2,d;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
     return;
@@ -801,7 +801,7 @@ Returns the color of the pixel at the given coordinates.
 @y	Y coordinate, pixels [`0` to `PSIZE(2)-1`]
 \ret Pixel color [`0` to `255`]
 ***/
-num_t BASIC_INT npoint() {
+num_t BASIC_INT Basic::npoint() {
   int x, y;  // 座標
   if (checkOpen()) return 0;
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
@@ -828,7 +828,7 @@ off-screen pixel memory.
   (`;`) to the print parameters.
 \ref PRINT
 ***/
-void igprint() {
+void Basic::igprint() {
   int32_t x,y;
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA) ) return;
   if ( getParam(y, 0, vs23.lastLine()-1, I_COMMA) ) return;
@@ -844,7 +844,7 @@ Draws a pixel.
 @y_coord Y coordinate of the pixel
 \ref RGB()
 ***/
-void ipset() {
+void Basic::ipset() {
   int32_t x,y,c;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
     return;
@@ -873,7 +873,7 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord, color
 Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
-void iline() {
+void Basic::iline() {
   int32_t x1,x2,y1,y2,c;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
     return;
@@ -908,7 +908,7 @@ Coordinates that exceed the valid pixel memory area will be clamped.
 `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
-void icircle() {
+void Basic::icircle() {
   int32_t x, y, r, c, f;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
@@ -940,7 +940,7 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
 `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
-void irect() {
+void Basic::irect() {
   int32_t x1,y1,x2,y2,c,f;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
@@ -970,7 +970,7 @@ The default transfer direction is down.
   releases.
 \ref GSCROLL
 ***/
-void iblit() {
+void Basic::iblit() {
   int32_t x,y,w,h,dx,dy;
   int32_t dir = 0;
   if (getParam(x, 0, sc0.getGWidth(), I_COMMA)) return;

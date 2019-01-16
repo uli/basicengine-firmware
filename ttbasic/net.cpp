@@ -54,7 +54,7 @@ static void E_NETWORK(const BString &msg) {
   err_expected = net_err.c_str();
 }
 
-void isetap() {
+void Basic::isetap() {
   BString ssid = istrexp();
   if (err)
     return;
@@ -71,7 +71,7 @@ void iconnect() {
   wm.run();
 }
 
-num_t nconnect() {
+num_t Basic::nconnect() {
   if (checkOpen() || checkClose())
     return 0;
   return wm.run();
@@ -98,7 +98,7 @@ static int open_url(BString &url) {
   return httpCode;
 }
 
-void inetopen() {
+void Basic::inetopen() {
   BString url = istrexp();
   BString uh(F("http://"));
   BString uhs(F("https://"));
@@ -110,7 +110,7 @@ void inetopen() {
   stream = http->getStreamPtr();
 }
 
-void inetclose() {
+void Basic::inetclose() {
   if (!http) {
     E_NETWORK(PSTR("no connection"));
     return;
@@ -121,7 +121,7 @@ void inetclose() {
   stream = NULL;
 }
 
-BString snetinput() {
+BString Basic::snetinput() {
   BString rx;
   size_t count = getparam();
   if (err)
@@ -141,7 +141,7 @@ BString snetinput() {
   return rx;
 }
 
-BString snetget() {
+BString Basic::snetget() {
   BString rx;
   if (checkOpen()) return rx;
   BString url = istrexp();
@@ -161,7 +161,7 @@ BString snetget() {
   return rx;
 }
 
-void inetget() {
+void Basic::inetget() {
   BString url = istrexp();
   BString file;
   if (*cip == I_TO) {
@@ -211,7 +211,7 @@ void inetget() {
   retval[0] = total;
 }
 
-void inet() {
+void Basic::inet() {
   switch (*cip++) {
   case I_CONFIG:
     isetap();
@@ -238,10 +238,10 @@ void inet() {
 
 #include "basic.h"
 
-void inet() {
+void Basic::inet() {
   err = ERR_NOT_SUPPORTED;
 }
-num_t nconnect() {
+num_t Basic::nconnect() {
   err = ERR_NOT_SUPPORTED;
   return 0;
 }

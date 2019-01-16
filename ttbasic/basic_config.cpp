@@ -53,7 +53,7 @@ background colors.
 The default border color is not used.
 \ref COLOR CONFIG SAVE_CONFIG
 ***/
-void SMALL config_color()
+void SMALL Basic::config_color()
 {
   int32_t idx, r, g, b;
   if (getParam(idx, 0, CONFIG_COLS - 1, I_COMMA)) return;
@@ -147,7 +147,7 @@ To restore the default configuration, run the command `REMOVE
   state.
 \ref BEEP FONT SAVE_CONFIG SCREEN
 ***/
-void SMALL iconfig() {
+void SMALL Basic::iconfig() {
   int32_t itemNo;
   int32_t value;
 

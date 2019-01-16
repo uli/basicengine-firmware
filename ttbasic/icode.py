@@ -69,30 +69,35 @@ cmdf.write('\n};\n')
   
 max_kw_ext_len = 0
 
+funf.write("#ifdef DECL_FUNCS\n")
+dup=[]
 for i in range(0, cmds_count):
-  funf.write('void ' + cmds[i][2] + '();\n')
+  if not cmds[i][2] in dup:
+    funf.write('void ' + cmds[i][2] + '();\n')
+    dup += [cmds[i][2]]
 
-funf.write('static const cmd_t funtbl[] BASIC_DAT = {\n')
+funf.write('#endif\n#ifdef DECL_TABLE\nconst Basic::cmd_t Basic::funtbl[] BASIC_DAT = {\n')
 
 for i in range(0, cmds_count):
   max_kw_ext_len = max(max_kw_ext_len, len(cmds[i][0]))
-  funf.write(cmds[i][2] + ', ')
+  funf.write('&Basic::' + cmds[i][2] + ', ')
 
-funf.write('\n};\n')
+funf.write('\n};\n#endif\n')
 
 enumf.write('\n};\n')
 enumf.write('enum token_ext_t {\n')
 
+funf.write("#ifdef DECL_FUNCS\n")
 for i in range(0, ext_count):
   funf.write('void ' + extended[i][2] + '();\n')
 
-funf.write('static const cmd_t funtbl_ext[] BASIC_DAT = {\n')
+funf.write('#endif\n#ifdef DECL_TABLE\nconst Basic::cmd_t Basic::funtbl_ext[] BASIC_DAT = {\n')
 
 for i in range(0, ext_count):
   cmdf.write('static const char __cmd_ext' + str(i) + ' [] PROGMEM = "' + extended[i][0] + '";\n')
   max_kw_ext_len = max(max_kw_ext_len, len(extended[i][0]))
   enumf.write(extended[i][1] + ', ')
-  funf.write(extended[i][2] + ', ')
+  funf.write('&Basic::' + extended[i][2] + ', ')
 
 cmdf.write('\nstatic const char * const kwtbl_ext[] PROGMEM = {\n')
 for i in range(0, ext_count):
@@ -104,30 +109,40 @@ for i in range(0, ext_count):
   
 cmdf.write('\n};\n')
 enumf.write('\n};\n#endif\n')
-funf.write('\n};\n')
+funf.write('\n};\n#endif\n')
 
+strfunf.write("#ifdef DECL_FUNCS\n")
+dup = []
 for i in range(0, strfun_count):
-  strfunf.write("BString " + strfuns[i][1] + '();\n')
-strfunf.write('\nstatic const strfun_t strfuntbl[] BASIC_DAT = {\n')
+  if not strfuns[i][1] in dup:
+    strfunf.write("BString " + strfuns[i][1] + '();\n')
+    dup += [strfuns[i][1]]
+
+strfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::strfun_t Basic::strfuntbl[] BASIC_DAT = {\n')
 for i in range(0, strfun_count):
   if i % 8 == 0:
     strfunf.write(' ')
-  strfunf.write(' ' + strfuns[i][1] + ',')
+  strfunf.write(' ' + '&Basic::' + strfuns[i][1] + ',')
   if i % 8 == 7:
     strfunf.write('\n')
 strfunf.write('\n};\n')
 strfunf.write('#define STRFUN_FIRST ' + str(strfun_first) + '\n')
-strfunf.write('#define STRFUN_LAST ' + str(strfun_first + strfun_count) + '\n')
+strfunf.write('#define STRFUN_LAST ' + str(strfun_first + strfun_count) + '\n#endif\n')
 
+numfunf.write("#ifdef DECL_FUNCS\n")
+dup=[]
 for i in range(0, numfun_count):
-  numfunf.write("num_t " + numfuns[i][1] + '();\n')
-numfunf.write('\nstatic const numfun_t numfuntbl[] BASIC_DAT = {\n')
+  if not numfuns[i][1] in dup:
+    numfunf.write("num_t " + numfuns[i][1] + '();\n')
+    dup += [numfuns[i][1]]
+
+numfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::numfun_t Basic::numfuntbl[] BASIC_DAT = {\n')
 for i in range(0, numfun_count):
   if i % 8 == 0:
     numfunf.write(' ')
-  numfunf.write(' ' + numfuns[i][1] + ',')
+  numfunf.write(' ' + '&Basic::' + numfuns[i][1] + ',')
   if i % 8 == 7:
     numfunf.write('\n')
 numfunf.write('\n};\n')
 numfunf.write('#define NUMFUN_FIRST ' + str(numfun_first) + '\n')
-numfunf.write('#define NUMFUN_LAST ' + str(numfun_first + numfun_count) + '\n')
+numfunf.write('#define NUMFUN_LAST ' + str(numfun_first + numfun_count) + '\n#endif\n')

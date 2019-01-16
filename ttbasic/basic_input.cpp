@@ -109,7 +109,7 @@ the event handling via `ON PAD`. It is not recommended to use both at the
 same time.
 \ref ON_PAD UP DOWN LEFT RIGHT
 ***/
-num_t BASIC_INT npad() {
+num_t BASIC_INT Basic::npad() {
   int32_t num;
   int32_t state = 0;
 
@@ -136,7 +136,7 @@ num_t BASIC_INT npad() {
   return ps;
 }
 
-void BASIC_INT event_handle_pad()
+void BASIC_INT Basic::event_handle_pad()
 {
   for (int i = 0; i < MAX_PADS; ++i) {
     if (event_pad_proc_idx[i] == NO_PROC)
@@ -174,7 +174,7 @@ functions with parentheses to distinguish them from constants and variables
 in order to remain compatible with other BASIC implementations.
 \ref INKEY()
 ***/
-BString BASIC_INT sinkey() {
+BString BASIC_INT Basic::sinkey() {
   int32_t c = iinkey();
   if (c > 0 && c < 0x100) {
     return BString((char)c);
@@ -188,7 +188,7 @@ BString BASIC_INT sinkey() {
 Value of the "up" direction for input devices.
 \ref PAD() DOWN LEFT RIGHT
 ***/
-num_t BASIC_FP nup() {
+num_t BASIC_FP Basic::nup() {
   // カーソル・スクロール等の方向
   return psxUp;
 }
@@ -197,14 +197,14 @@ num_t BASIC_FP nup() {
 Value of the "right" direction for input devices.
 \ref PAD() UP DOWN LEFT
 ***/
-num_t BASIC_FP nright() {
+num_t BASIC_FP Basic::nright() {
   return psxRight;
 }
 /***bn io LEFT
 Value of the "left" direction for input devices.
 \ref PAD() UP DOWN RIGHT
 ***/
-num_t BASIC_FP nleft() {
+num_t BASIC_FP Basic::nleft() {
   return psxLeft;
 }
 
@@ -214,7 +214,7 @@ Reads a character from the keyboard and returns its numeric value.
 \ret Key code [`0` to `65535`]
 \ref INKEY$
 ***/
-num_t BASIC_FP ninkey() {
+num_t BASIC_FP Basic::ninkey() {
   if (checkOpen()||checkClose()) return 0;
   return iinkey(); // キー入力値の取得
 }

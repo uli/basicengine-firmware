@@ -22,7 +22,7 @@ Sets the state of a general-purpose I/O pin.
 `GPOUT` allows access to pins on the I2C I/O extender only.
 \ref GPIN()
 ***/
-void idwrite() {
+void Basic::idwrite() {
   int32_t pinno,  data;
 
   if ( getParam(pinno, 0, 15, I_COMMA) ) return;
@@ -59,7 +59,7 @@ Sends data to an I2C device.
 Status code of the transmission.
 \ref I2CR()
 ***/
-num_t BASIC_INT ni2cw() {
+num_t BASIC_INT Basic::ni2cw() {
   int32_t i2cAdr;
   BString out;
 
@@ -92,7 +92,7 @@ Also returns the status code of the outward transmission in `RET(0)`.
 If `out_data` is an empty string, no data is sent before the read request.
 \ref I2CW()
 ***/
-BString si2cr() {
+BString Basic::si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
 
@@ -132,7 +132,7 @@ pollution.
 @c	byte to be written
 \ref SMODE
 ***/
-void iswrite() {
+void Basic::iswrite() {
   int32_t c;
   if ( getParam(c, I_NONE) ) return;
   Serial.write(c);
@@ -152,7 +152,7 @@ The meaning of `flags` is determined by `enum` values in the Arduino core
 and cannot be relied on to remain stable.
 \ref SWRITE
 ***/
-void SMALL ismode() {
+void SMALL Basic::ismode() {
   int32_t baud, flags = SERIAL_8N1;
   if ( getParam(baud, 0, 921600, I_NONE) ) return;
   if (*cip == I_COMMA) {
@@ -176,7 +176,7 @@ Reads the state of a general-purpose I/O pin.
 `GPIN()` allows access to pins on the I2C I/O extender only.
 \ref GPOUT
 ***/
-num_t BASIC_INT ngpin() {
+num_t BASIC_INT Basic::ngpin() {
   int32_t a;
   if (checkOpen()) return 0;
   if (getParam(a, 0, 15, I_NONE)) return 0;
@@ -197,7 +197,7 @@ Reads value from the analog input pin.
 \usage v = ANA()
 \ret Analog value read.
 ***/
-num_t BASIC_FP nana() {
+num_t BASIC_FP Basic::nana() {
 #ifdef ESP8266_NOWIFI
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -219,7 +219,7 @@ to support serial input.
 \ret Byte of data read, or `-1` if there was no data available.
 \ref SREADY()
 ***/
-num_t BASIC_INT nsread() {
+num_t BASIC_INT Basic::nsread() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.read();
 }
@@ -235,11 +235,11 @@ to support serial input.
 \ret Number of bytes available to read.
 \ref SREAD()
 ***/
-num_t BASIC_INT nsready() {
+num_t BASIC_INT Basic::nsready() {
   if (checkOpen()||checkClose()) return 0;
   return Serial.available();
 }
 
-void isprint() {
+void Basic::isprint() {
   iprint(1);
 }

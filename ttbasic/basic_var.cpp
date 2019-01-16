@@ -6,7 +6,7 @@ static inline bool is_var(unsigned char tok)
 }
 
 // Variable assignment handler
-void BASIC_FP ivar() {
+void BASIC_FP Basic::ivar() {
   num_t value; //値
   short index; //変数番号
 
@@ -46,7 +46,7 @@ void BASIC_FP ivar() {
 // what a procedure's stack frame looks like at compile time because we may
 // have to compile code out-of-order.
 
-static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
+int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local)
 {
   is_local = false;
   if (!gstki) {
@@ -71,7 +71,7 @@ static int BASIC_FP get_num_local_offset(uint8_t arg, bool &is_local)
   return local_offset;
 }
 
-num_t& BASIC_FP get_lvar(uint8_t arg)
+num_t& BASIC_FP Basic::get_lvar(uint8_t arg)
 {
   bool is_local;
   int local_offset = get_num_local_offset(arg, is_local);
@@ -89,7 +89,7 @@ num_t& BASIC_FP get_lvar(uint8_t arg)
   }
 }
 
-void BASIC_FP ilvar() {
+void BASIC_FP Basic::ilvar() {
   num_t value;
   short index;	// variable index
 
@@ -109,7 +109,7 @@ void BASIC_FP ilvar() {
   var = value;
 }
 
-int BASIC_FP get_array_dims(int *idxs) {
+int BASIC_FP Basic::get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
     if (getParam(idxs[dims], I_NONE))
@@ -127,7 +127,7 @@ int BASIC_FP get_array_dims(int *idxs) {
   return dims;
 }
 
-void idim() {
+void Basic::idim() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
   bool is_string;
@@ -207,7 +207,7 @@ void idim() {
 }
 
 // Numeric array variable assignment handler
-void BASIC_FP ivararr() {
+void BASIC_FP Basic::ivararr() {
   num_t value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
@@ -234,7 +234,7 @@ void BASIC_FP ivararr() {
   n = value;
 }
 
-static int get_str_local_offset(uint8_t arg, bool &is_local)
+int Basic::get_str_local_offset(uint8_t arg, bool &is_local)
 {
   is_local = false;
   if (!gstki) {
@@ -259,7 +259,7 @@ static int get_str_local_offset(uint8_t arg, bool &is_local)
   return local_offset;
 }
 
-BString& get_lsvar(uint8_t arg)
+BString& Basic::get_lsvar(uint8_t arg)
 {
   bool is_local;
   int local_offset = get_str_local_offset(arg, is_local);
@@ -277,7 +277,7 @@ BString& get_lsvar(uint8_t arg)
   }
 }
 
-void set_svar(bool is_lsvar) {
+void Basic::set_svar(bool is_lsvar) {
   BString value;
   uint8_t index = *cip++;
   int32_t offset;
@@ -328,16 +328,16 @@ void set_svar(bool is_lsvar) {
   }
 }
 
-void isvar() {
+void Basic::isvar() {
   set_svar(false);
 }
 
-void ilsvar() {
+void Basic::ilsvar() {
   set_svar(true);
 }
 
 // String array variable assignment handler
-void istrarr() {
+void Basic::istrarr() {
   BString value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
@@ -389,7 +389,7 @@ void istrarr() {
 }
 
 // String list variable assignment handler
-void istrlst() {
+void Basic::istrlst() {
   BString value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
@@ -420,7 +420,7 @@ void istrlst() {
 }
 
 // Numeric list variable assignment handler
-void inumlst() {
+void Basic::inumlst() {
   num_t value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
@@ -450,7 +450,7 @@ void inumlst() {
   s = value;
 }
 
-void iappend() {
+void Basic::iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
@@ -480,7 +480,7 @@ void iappend() {
   return;
 }
 
-void iprepend() {
+void Basic::iprepend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
@@ -526,7 +526,7 @@ consumes additional memory and compute resources without providing
 any benefit.
 ***/
 // XXX: 32-byte jump table
-void BASIC_INT __attribute__((optimize ("no-jump-tables"))) ilet() {
+void BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::ilet() {
   switch (*cip) { //中間コードで分岐
   case I_VAR: // 変数の場合
     cip++;     // 中間コードポインタを次へ進める
@@ -593,7 +593,7 @@ Remove an element from the beginning of a numeric list.
 An error is generated if `~list` is empty.
 \ref POPB()
 ***/
-num_t BASIC_FP npopf() {
+num_t BASIC_FP Basic::npopf() {
   num_t value;
   if (checkOpen()) return 0;
   if (*cip++ == I_NUMLSTREF) {
@@ -620,7 +620,7 @@ Remove an element from the end of a numeric list.
 An error is generated if `~list` is empty.
 \ref POPF()
 ***/
-num_t BASIC_FP npopb() {
+num_t BASIC_FP Basic::npopb() {
   num_t value;
   if (checkOpen()) return 0;
   if (*cip++ == I_NUMLSTREF) {
@@ -647,7 +647,7 @@ Remove an element from the beginning of a string list.
 An error is generated if `~list$` is empty.
 \ref POPB$()
 ***/
-BString BASIC_INT spopf() {
+BString BASIC_INT Basic::spopf() {
   BString value;
   if (checkOpen()) return value;
   if (*cip++ == I_STRLSTREF) {
@@ -674,7 +674,7 @@ Remove an element from the end of a string list.
 An error is generated if `~list$` is empty.
 \ref POPF$()
 ***/
-BString BASIC_INT spopb() {
+BString BASIC_INT Basic::spopb() {
   BString value;
   if (checkOpen()) return value;
   if (*cip++ == I_STRLSTREF) {

@@ -341,7 +341,7 @@ void tscreenBase::movePosNextChar() {
 
 // カーソルを次行に移動
 void tscreenBase::movePosNextLineChar(bool force) {
-  if (pos_y+1 < height) {
+  if (bc && pos_y+1 < height) {
     if (force) {
       char* text;
       uint8_t y = pos_y;
@@ -349,10 +349,10 @@ void tscreenBase::movePosNextLineChar(bool force) {
         y--;
       int lineno = getLineNum(y);
       if (lineno > 0) {
-        int curlen = strlen(getLineStr(lineno));
-        int nm = getNextLineNo(lineno); 
+        int curlen = strlen(bc->getLineStr(lineno));
+        int nm = bc->getNextLineNo(lineno); 
         if (nm > 0) {
-          text = getLineStr(nm);
+          text = bc->getLineStr(nm);
           int len = strlen(text);
 
           // scroll up if the line doesn't fit
@@ -363,7 +363,7 @@ void tscreenBase::movePosNextLineChar(bool force) {
           }
 
           MOVE(y + curlen/width + 1, 0);
-          getLineStr(nm, 0);
+          bc->getLineStr(nm, 0);
           MOVE(pos_y - 1, pos_x);
         }
       }
@@ -391,7 +391,7 @@ void tscreenBase::movePosNextLineChar(bool force) {
 
 // カーソルを前行に移動
 void tscreenBase::movePosPrevLineChar(bool force) {
-  if (pos_y > 0) {
+  if (bc && pos_y > 0) {
     if (force) {
       char* text;
       uint8_t y = pos_y;
@@ -399,9 +399,9 @@ void tscreenBase::movePosPrevLineChar(bool force) {
         y--;
       int lineno = getLineNum(y);
       if (lineno > 0) {
-        int nm = getPrevLineNo(lineno); 
+        int nm = bc->getPrevLineNo(lineno); 
         if (nm > 0) {
-          text = getLineStr(nm);
+          text = bc->getLineStr(nm);
           int len = strlen(text);
 
           // scroll down if the line doesn't fit
@@ -413,7 +413,7 @@ void tscreenBase::movePosPrevLineChar(bool force) {
           }
 
           MOVE(y - len/width - 1, 0);
-          getLineStr(nm, 0);
+          bc->getLineStr(nm, 0);
           MOVE(pos_y + 1, pos_x);
         }
       }
@@ -557,9 +557,11 @@ int16_t tscreenBase::getLineNum(int16_t l) {
 
 // 編集中画面をスクロールアップする
 void tscreenBase::edit_scrollUp() {
-#if DEPEND_TTBASIC == 0
-   scroll_up();
-#else
+  if (!bc) {
+    scroll_up();
+    return;
+  }
+
   // 1行分スクロールアップを試みる
   int32_t lineno,nm,len;
   char* text;
@@ -569,17 +571,17 @@ void tscreenBase::edit_scrollUp() {
   lineno = getLineNum(y);
   if (lineno > 0) {
     // 取得出来た場合、次の行番号を取得する
-    nm = getNextLineNo(lineno); 
+    nm = bc->getNextLineNo(lineno); 
     if (nm > 0) {
       // 次の行が存在する
-      text = getLineStr(nm);
+      text = bc->getLineStr(nm);
       len = strlen(text);
       for (uint8_t i=0; i < len/width+1; i++) {
         scroll_up();
       }
       // print to screen
       MOVE(height-1 - len/width, 0);
-      getLineStr(nm, 0);
+      bc->getLineStr(nm, 0);
     } else {
       scroll_up();      
     }
@@ -587,29 +589,30 @@ void tscreenBase::edit_scrollUp() {
     scroll_up();    
   }
   MOVE(pos_y, pos_x);
-#endif
 }
 
 // Scroll down the editing screen
 void tscreenBase::edit_scrollDown() {
-#if DEPEND_TTBASIC == 0
-  scroll_down();
-#else
+  if (!bc) {
+    scroll_down();
+    return;
+  }
+
   // Try scrolling down by one line
   int32_t lineno,prv_nm,len;
   char* text;
   lineno = getLineNum(0); // Obtain display line number of the last line
   if (lineno > 0) {
-    prv_nm = getPrevLineNo(lineno);
+    prv_nm = bc->getPrevLineNo(lineno);
     if (prv_nm > 0) {
-      text = getLineStr(prv_nm);
+      text = bc->getLineStr(prv_nm);
       len = strlen(text);
       for (uint8_t i=0; i < len/width+1; i++) {
         scroll_down();
       }
       // print to screen
       MOVE(0, 0);
-      getLineStr(prv_nm, 0);
+      bc->getLineStr(prv_nm, 0);
     } else {
       scroll_down();      
     }
@@ -617,5 +620,4 @@ void tscreenBase::edit_scrollDown() {
     scroll_down();
   }
  MOVE(pos_y, pos_x);
-#endif
 }

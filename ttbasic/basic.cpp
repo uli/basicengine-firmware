@@ -46,10 +46,79 @@ struct unaligned_num_t {
 // *** SDカード管理 ****************
 sdfiles bfs;
 
+#define DECL_TABLE
+#include "numfuntbl.h"
+#include "strfuntbl.h"
+#include "funtbl.h"
+#undef DECL_TABLE
+
+#ifdef FLOAT_NUMS
+// コマンド引数取得(uint32_t,引数チェックなし)
+uint8_t BASIC_FP Basic::getParam(int32_t& prm, token_t next_token) {
+  num_t p = iexp();
+  prm = p;
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
+    E_SYNTAX(next_token);
+  }
+  return err;
+}
+// コマンド引数取得(int32_t,引数チェックあり)
+uint8_t BASIC_FP Basic::getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
+  prm = iexp();
+  if (!err && (prm < v_min || prm > v_max))
+    E_VALUE(v_min, v_max);
+  else if (next_token != I_NONE && *cip++ != next_token) {
+    E_SYNTAX(next_token);
+  }
+  return err;
+}
+#endif
+
+// コマンド引数取得(int32_t,引数チェックあり)
+uint8_t BASIC_FP Basic::getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
+  prm = iexp();
+  if (!err &&  (prm < v_min || prm > v_max))
+    E_VALUE(v_min, v_max);
+  else if (next_token != I_NONE && *cip++ != next_token) {
+    E_SYNTAX(next_token);
+  }
+  return err;
+}
+
+uint32_t BASIC_FP Basic::getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
+  prm = iexp();
+  if (!err &&  (prm < v_min || prm > v_max))
+    E_VALUE(v_min, v_max);
+  else if (next_token != I_NONE && *cip++ != next_token) {
+    E_SYNTAX(next_token);
+  }
+  return err;
+}
+
+// コマンド引数取得(int32_t,引数チェックなし)
+uint8_t BASIC_FP Basic::getParam(uint32_t& prm, token_t next_token) {
+  prm = iexp();
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
+    E_SYNTAX(next_token);
+  }
+  return err;
+}
+
+// コマンド引数取得(uint32_t,引数チェックなし)
+uint8_t BASIC_FP Basic::getParam(num_t& prm, token_t next_token) {
+  prm = iexp();
+  if (!err && next_token != I_NONE && *cip++ != next_token) {
+    if (next_token == I_OPEN || next_token == I_CLOSE)
+      err = ERR_PAREN;
+    else
+      E_SYNTAX(next_token);
+  }
+  return err;
+}
+
 // プロトタイプ宣言
 void isaveconfig();
 void mem_putch(uint8_t c);
-unsigned char* BASIC_FP iexe(int stk = -1);
 num_t BASIC_FP iexp(void);
 void error(uint8_t flgCmd);
 
@@ -103,7 +172,7 @@ void BASIC_INT newline(uint8_t devno) {
 }
 
 // tick用支援関数
-void iclt() {
+void Basic::iclt() {
 //  systick_uptime_millis = 0;
 }
 
@@ -249,7 +318,7 @@ typedef struct {
   };
 } __attribute__((packed)) line_desc_t;
 
-basic_ctx_t *bc = NULL;
+Basic *bc = NULL;
 
 // メモリへの文字出力
 inline void mem_putch(uint8_t c) {
@@ -475,7 +544,7 @@ uint32_t getlineno(unsigned char *lp);
 // If find_prg_text is true (default), variable and procedure names
 // are designated as belonging to the program; if not, they are considered
 // temporary, even if the input line starts with a number.
-uint8_t BASIC_INT SMALL toktoi(bool find_prg_text) {
+uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
   int16_t i;
   int key;
   int len = 0;	// length of sequence of intermediate code
@@ -868,7 +937,7 @@ oom:
 
 
 // Return free memory size
-int list_free() {
+int Basic::list_free() {
   unsigned char* lp;
 
   for (lp = listbuf; *lp; lp += *lp) ;  // Move the pointer to the end of the list
@@ -884,7 +953,7 @@ uint32_t BASIC_FP getlineno(unsigned char *lp) {
 }
 
 // Search line by line number
-unsigned char* BASIC_FP getlp(uint32_t lineno) {
+unsigned char* BASIC_FP Basic::getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
   for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
@@ -895,7 +964,7 @@ unsigned char* BASIC_FP getlp(uint32_t lineno) {
 }
 
 // Get line index from line number
-uint32_t getlineIndex(uint32_t lineno) {
+uint32_t Basic::getlineIndex(uint32_t lineno) {
   unsigned char *lp; //ポインタ
   uint32_t index = 0;
   uint32_t rc = INT32_MAX;
@@ -914,7 +983,7 @@ uint32_t getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t* BASIC_INT getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 0) {
+uint8_t* BASIC_INT Basic::getELSEptr(uint8_t* p, bool endif_only, int adjust) {
   uint8_t* rc = NULL;
   uint8_t* lp;
   unsigned char lifstki = 1 + adjust;
@@ -968,7 +1037,7 @@ DONE:
   return rc;
 }
 
-uint8_t* BASIC_INT getWENDptr(uint8_t* p) {
+uint8_t* BASIC_INT Basic::getWENDptr(uint8_t* p) {
   uint8_t* rc = NULL;
   uint8_t* lp;
   unsigned char lifstki = 1;
@@ -1009,7 +1078,7 @@ DONE:
 }
 
 // プログラム行数を取得する
-uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX) {
+uint32_t Basic::countLines(uint32_t st, uint32_t ed) {
   unsigned char *lp; //ポインタ
   uint32_t cnt = 0;
   uint32_t lineno;
@@ -1027,7 +1096,7 @@ uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX) {
 // Insert [ibuf] in [listbuf]
 //  [ibuf]: [1: data length] [1: I_NUM] [2: line number] [intermediate code]
 //
-void inslist() {
+void Basic::inslist() {
   unsigned char *insp;     // 挿入位置ポインタ
   unsigned char *p1, *p2;  // 移動先と移動元ポインタ
   int len;               // 移動の長さ
@@ -1145,7 +1214,7 @@ void SMALL recalc_indent_line(unsigned char *lp) {
     indent_level += INDENT_STEP;
 }
 
-void SMALL recalc_indent() {
+void SMALL Basic::recalc_indent() {
   unsigned char *lp = listbuf;
   indent_level = 0;
 
@@ -1158,7 +1227,7 @@ void SMALL recalc_indent() {
 }
 
 // Text output of specified intermediate code line record
-int SMALL putlist(unsigned char* ip, uint8_t devno) {
+int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
   uint8_t var_code;
@@ -1354,10 +1423,8 @@ int SMALL putlist(unsigned char* ip, uint8_t devno) {
   return mark;
 }
 
-int BASIC_FP get_array_dims(int *idxs);
-
 // Get argument in parenthesis
-num_t BASIC_FP getparam() {
+num_t BASIC_FP Basic::getparam() {
   num_t value; //値
   if (checkOpen()) return 0;
   if (getParam(value, I_NONE) ) return 0;
@@ -1366,7 +1433,7 @@ num_t BASIC_FP getparam() {
 }
 
 // INPUT handler
-void SMALL iinput() {
+void SMALL Basic::iinput() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
   num_t value;
@@ -1594,7 +1661,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
   *start_cip = scip;
 }
 
-void initialize_proc_pointers(void)
+void Basic::initialize_proc_pointers(void)
 {
   unsigned char *lp, *ip;
 
@@ -1670,7 +1737,7 @@ void initialize_proc_pointers(void)
   }
 }
 
-void initialize_label_pointers(void)
+void Basic::initialize_label_pointers(void)
 {
   unsigned char *lp, *ip;
 
@@ -1700,7 +1767,7 @@ void initialize_label_pointers(void)
   }
 }
 
-bool BASIC_INT find_next_data() {
+bool BASIC_INT Basic::find_next_data() {
   int next;
 
   if (!data_lp) {
@@ -1730,7 +1797,7 @@ bool BASIC_INT find_next_data() {
   return true;
 }
 
-void idata() {
+void Basic::idata() {
   int next;
 
   // Skip over the DATA statement
@@ -1747,12 +1814,12 @@ void idata() {
 }
 
 static unsigned char *data_cip_save;
-void BASIC_INT data_push() {
+void BASIC_INT Basic::data_push() {
   data_cip_save = cip;
   cip = data_ip + 1;
 }
 
-void BASIC_INT data_pop() {
+void BASIC_INT Basic::data_pop() {
   if (err) {
     // XXX: You would actually want to know both locations (READ and DATA).
     clp = data_lp;
@@ -1767,7 +1834,7 @@ void BASIC_INT data_pop() {
   cip = data_cip_save;
 }
 
-void BASIC_INT iread() {
+void BASIC_INT Basic::iread() {
   num_t value;
   BString svalue;
   uint8_t index;
@@ -1864,7 +1931,7 @@ void BASIC_INT iread() {
   }
 }
 
-void irestore() {
+void Basic::irestore() {
   if (end_of_statement())
     data_lp = NULL;
   else if (*cip == I_LABEL) {
@@ -1887,24 +1954,21 @@ void irestore() {
 
 static bool trace_enabled = false;
 
-static void do_trace() {
+void Basic::do_trace() {
   putnum(getlineno(clp), 0);
   c_putch(' ');
 }
 #define TRACE do { if (trace_enabled) do_trace(); } while(0)
 
-void itron() {
+void Basic::itron() {
   trace_enabled = true;
 }
-void itroff() {
+void Basic::itroff() {
   trace_enabled = false;
 }
 
-void inew(uint8_t mode = NEW_ALL);
-static void BASIC_FP do_goto(uint32_t line);
-
 // RUN command handler
-void BASIC_FP irun(uint8_t* start_clp = NULL, bool cont = false) {
+void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
@@ -1981,7 +2045,7 @@ resume:
 
 num_t BASIC_FP imul();
 
-static bool get_range(uint32_t &start, uint32_t &end)
+bool Basic::get_range(uint32_t &start, uint32_t &end)
 {
   start = 0;
   end = UINT32_MAX;
@@ -2021,7 +2085,7 @@ static bool get_range(uint32_t &start, uint32_t &end)
 }
 
 // LIST command
-void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
+void SMALL Basic::ilist(uint8_t devno, BString *search) {
   uint32_t lineno;			// start line number
   uint32_t endlineno;	// end line number
   uint32_t prnlineno;			// output line number
@@ -2059,14 +2123,14 @@ void SMALL ilist(uint8_t devno=0, BString *search = NULL) {
   screen_putch_disable_escape_codes = false;
 }
 
-void isearch() {
+void Basic::isearch() {
   BString needle = istrexp();
   if (!err)
     ilist(0, &needle);
 }
 
 // Argument 0: all erase, 1: erase only program, 2: erase variable area only
-void inew(uint8_t mode) {
+void Basic::inew(uint8_t mode) {
   data_ip = data_lp = NULL;
   in_data = false;
 
@@ -2150,7 +2214,7 @@ Renumber BASIC program in memory.
 Computed branches (`GOTO` and `GOSUB` commands with variable arguments)
 cannot be renumbered correctly.
 ***/
-void SMALL irenum() {
+void SMALL Basic::irenum() {
   int32_t startLineNo = 10;  // 開始行番号
   int32_t increase = 10;     // 増分
   uint8_t* ptr;               // プログラム領域参照ポインタ
@@ -2233,8 +2297,6 @@ void SMALL irenum() {
   }
 }
 
-void isavebg();
-void isavepcx();
 
 /***bc bas SAVE
 Saves the BASIC program in memory to storage.
@@ -2245,7 +2307,7 @@ Saves the BASIC program in memory to storage.
 BASIC programs are saved in plain text (ASCII) format.
 \ref SAVE_BG SAVE_CONFIG SAVE_PCX
 ***/
-void isave() {
+void Basic::isave() {
   BString fname;
   int8_t rc;
 
@@ -2286,7 +2348,7 @@ void isave() {
 // 戻り値
 //   0:正常終了
 //   1:異常終了
-uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL) {
+uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
   int32_t len;
   uint8_t rc = 0;
   uint32_t last_line = 0;
@@ -2361,7 +2423,7 @@ WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
   disregarded.
 \ref REMOVE
 ***/
-void SMALL idelete() {
+void SMALL Basic::idelete() {
   uint32_t sNo, eNo;
   uint8_t  *lp;      // 削除位置ポインタ
   uint8_t *p1, *p2;  // 移動先と移動元ポインタ
@@ -2428,7 +2490,7 @@ Clears the current text window.
 \usage CLS
 \ref WINDOW
 ***/
-void icls() {
+void Basic::icls() {
   if (redirect_output_file < 0) {
     sc0.cls();
     sc0.locate(0,0);
@@ -2437,7 +2499,7 @@ void icls() {
 
 static bool profile_enabled;
 
-void BASIC_FP init_stack_frame()
+void BASIC_FP Basic::init_stack_frame()
 {
   if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
     struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
@@ -2448,7 +2510,7 @@ void BASIC_FP init_stack_frame()
   gstk[gstki].str_args = 0;
 }
 
-void BASIC_FP push_num_arg(num_t n)
+void BASIC_FP Basic::push_num_arg(num_t n)
 {
   if (astk_num_i >= SIZE_ASTK) {
     err = ERR_ASTKOF;
@@ -2458,7 +2520,7 @@ void BASIC_FP push_num_arg(num_t n)
   gstk[gstki].num_args++;
 }
 
-void BASIC_FP do_call(uint8_t proc_idx)
+void BASIC_FP Basic::do_call(uint8_t proc_idx)
 {
   struct proc_t &proc_loc = procs.proc(proc_idx);
 
@@ -2489,7 +2551,7 @@ void BASIC_FP do_call(uint8_t proc_idx)
 #define EVENT_PROFILE_SAMPLES 7
 uint32_t event_profile[EVENT_PROFILE_SAMPLES];
 
-void BASIC_INT draw_profile(void)
+void BASIC_INT Basic::draw_profile(void)
 {
   int x = 0;
   int bw = vs23.borderWidth();
@@ -2542,8 +2604,8 @@ void BASIC_FP pump_events(void)
 #ifdef HAVE_MML
   if (event_play_enabled) {
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
-      if (sound.isFinished(i))
-        event_handle_play(i);
+      if (bc && sound.isFinished(i))
+        bc->event_handle_play(i);
     }
   }
 #endif
@@ -2553,16 +2615,16 @@ void BASIC_FP pump_events(void)
   event_profile[4] = micros();
   
 #ifdef USE_BG_ENGINE
-  if (event_sprite_proc_idx != NO_PROC)
-    event_handle_sprite();
+  if (bc && event_sprite_proc_idx != NO_PROC)
+    bc->event_handle_sprite();
 #endif
   event_profile[5] = micros();
-  if (event_pad_enabled)
-    event_handle_pad();
+  if (bc && event_pad_enabled)
+    bc->event_handle_pad();
   event_profile[6] = micros();
   
-  if (profile_enabled)
-    draw_profile();
+  if (bc && profile_enabled)
+    bc->draw_profile();
 
 #ifndef ESP8266_NOWIFI
   yield();
@@ -2577,7 +2639,7 @@ Returns one of the numeric return values of the last function call.
 \ret Requested return value.
 \ref RETURN RET$()
 ***/
-num_t BASIC_FP nret() {
+num_t BASIC_FP Basic::nret() {
   int32_t r;
 
   if (checkOpen()) return 0;
@@ -2599,7 +2661,7 @@ An error is generated if no numeric arguments have been passed,
 evaluated outside a procedure.
 \ref ARG$() ARGC()
 ***/
-num_t BASIC_FP narg() {
+num_t BASIC_FP Basic::narg() {
   int32_t a;
   if (astk_num_i == 0) {
     err = ERR_UNDEFARG;
@@ -2626,7 +2688,7 @@ An error is generated if no string arguments have been passed,
 evaluated outside a procedure.
 \ref ARG() ARGC()
 ***/
-BString sarg() {
+BString Basic::sarg() {
   int32_t a;
   if (astk_str_i == 0) {
     err = ERR_UNDEFARG;
@@ -2652,7 +2714,7 @@ to a procedure.
 Returns `0` if called outside a procedure.
 \ref CALL FN
 ***/
-num_t BASIC_FP nargc() {
+num_t BASIC_FP Basic::nargc() {
   int32_t type = getparam();
   if (!gstki)
     return 0;
@@ -2670,7 +2732,7 @@ Returns a string containing the hexadecimal representation of a number.
 \ret Hexadecimal number as text.
 \ref BIN$()
 ***/
-BString shex() {
+BString Basic::shex() {
   int value; // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
@@ -2687,7 +2749,7 @@ Returns a string containing the binary representation of a number.
 \ret Binary number as text.
 \ref HEX$()
 ***/
-BString sbin() {
+BString Basic::sbin() {
   int32_t value; // 値
 
   if (checkOpen()) goto out;
@@ -2711,7 +2773,7 @@ Re-maps a value from one range to another
 \bugs
 Restricts `value` to the range `l1`-`h1`, which is arbitrary.
 ***/
-num_t BASIC_FP SMALL nmap() {
+num_t BASIC_FP SMALL Basic::nmap() {
   int32_t value,l1,h1,l2,h2,rc;
   if (checkOpen()) return 0;
   if ( getParam(value, I_COMMA)||getParam(l1, I_COMMA)||getParam(h1, I_COMMA)||getParam(l2, I_COMMA)||getParam(h2, I_NONE) )
@@ -2737,7 +2799,7 @@ Returns the ASCII code for the first character in a string expression.
 Generates an error if `s$` is empty.
 \ref CHR$()
 ***/
-num_t BASIC_INT nasc() {
+num_t BASIC_INT Basic::nasc() {
   int32_t value;
 
   if (checkOpen()) return 0;
@@ -2779,7 +2841,7 @@ is reached.
 `CMD`.
 \ref CMD GPRINT
 ***/
-void iprint(uint8_t devno, uint8_t nonewln) {
+void Basic::iprint(uint8_t devno, uint8_t nonewln) {
   num_t value;     //値
   int32_t filenum;
   BString str;
@@ -2908,7 +2970,7 @@ void iprint(uint8_t devno, uint8_t nonewln) {
 }
 
 // ファイル名引数の取得
-BString getParamFname() {
+BString Basic::getParamFname() {
   BString fname = istrexp();
   if (fname.length() >= SD_PATH_LEN)
     err = ERR_LONGPATH;
@@ -2930,7 +2992,7 @@ Saves a portion of pixel memory to storage as a PCX file.
         [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
 \ref LOAD_PCX
 ***/
-void SMALL isavepcx() {
+void SMALL Basic::isavepcx() {
   BString fname;
   int32_t x = 0,y = 0;
   int32_t w = sc0.getGWidth();
@@ -2990,7 +3052,7 @@ IMPORTANT: `AS BG` and `AS SPRITE` are not available in the network build.
 If a color key is specified, pixels of the given color will not be drawn.
 \ref BG SAVE_PCX SPRITE
 ***/
-void SMALL ildbmp() {
+void SMALL Basic::ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
   int32_t x = 0,y = 0,w = -1, h = -1;
@@ -3084,7 +3146,7 @@ Runs the ASCII text editor.
 \args
 @file$	name of file to be edited [default: new file]
 ***/
-void iedit() {
+void Basic::iedit() {
   BString fn;
   const char *argv[2] = { NULL, NULL };
   int argc = 1;
@@ -3133,7 +3195,7 @@ Unlike `EXEC`, `CHAIN` does not allow returning to the original program.
 // Return value
 // 1: normal 0: abnormal
 //
-uint8_t SMALL ilrun() {
+uint8_t SMALL Basic::ilrun() {
   uint32_t lineno = (uint32_t)-1;
   uint8_t *lp;
   int8_t fg;               // File format 0: Binary format 1: Text format
@@ -3217,7 +3279,7 @@ uint8_t SMALL ilrun() {
 // output error message
 // Arguments:
 // flgCmd: set to false at program execution, true at command line
-void SMALL error(uint8_t flgCmd = false) {
+void SMALL Basic::error(uint8_t flgCmd) {
   if (err) {
     if (err == ERR_OOM) {
       // free as much as possible first
@@ -3281,9 +3343,7 @@ void SMALL error(uint8_t flgCmd = false) {
   err_expected = NULL;
 }
 
-void BASIC_FP icall();
-
-BString BASIC_INT ilrstr(bool right) {
+BString BASIC_INT Basic::ilrstr(bool right) {
   BString value;
   int len;
 
@@ -3321,7 +3381,7 @@ Returns a specified number of leftmost characters in a string.
 If `l$` is shorter than `num` characters, the return value is `l$`.
 \ref MID$() RIGHT$()
 ***/
-static BString BASIC_INT sleft() {
+BString BASIC_INT Basic::sleft() {
   return ilrstr(false);
 }
 /***bf bas RIGHT$
@@ -3335,7 +3395,7 @@ Returns a specified number of rightmost characters in a string.
 If `r$` is shorter than `num` characters, the return value is `r$`.
 \ref LEFT$() MID$()
 ***/
-static BString BASIC_INT sright() {
+BString BASIC_INT Basic::sright() {
   return ilrstr(true);
 }
 
@@ -3356,7 +3416,7 @@ Returns part of a string (a substring).
 other BASIC implementations.
 \ref LEFT$() LEN() RIGHT$()
 ***/
-BString BASIC_INT smid() {
+BString BASIC_INT Basic::smid() {
   BString value;
   int32_t start;
   int32_t len;
@@ -3396,7 +3456,7 @@ Returns the character corresponding to a specified ASCII code.
 \ret Single-character string.
 \ref ASC()
 ***/
-static BString schr() {
+BString Basic::schr() {
   int32_t nv;
   BString value;
   if (checkOpen()) return value;
@@ -3414,7 +3474,7 @@ Returns a string representation of a number.
 \ret String representation of `num`.
 \ref VAL()
 ***/
-static BString sstr() {
+BString Basic::sstr() {
   BString value;
   if (checkOpen()) return value;
   // The BString ctor for doubles is not helpful because it uses dtostrf()
@@ -3435,7 +3495,7 @@ call.
 \ret String return value requested.
 \ref RET() RETURN
 ***/
-static BString BASIC_INT sret() {
+BString BASIC_INT Basic::sret() {
   int32_t n = getparam();
   if (n < 0 || n >= MAX_RETVALS) {
     E_VALUE(0, MAX_RETVALS-1);
@@ -3452,7 +3512,7 @@ Returns the error message associated with a given error number.
 \ret Error message.
 \ref ON_ERROR RET()
 ***/
-static BString serror() {
+BString Basic::serror() {
   uint32_t code = getparam();
   if (code >= sizeof(errmsg) / sizeof(*errmsg)) {
     E_VALUE(0, sizeof(errmsg) / sizeof(*errmsg) - 1);
@@ -3479,7 +3539,7 @@ PRINT STRING$(5, "-")
 ----
 ====
 ***/
-static BString sstring() {
+BString Basic::sstring() {
   BString out;
   int32_t count;
   int32_t c;
@@ -3513,10 +3573,8 @@ static BString sstring() {
   return out;
 }
 
-typedef BString (*strfun_t)();
-#include "strfuntbl.h"
 
-bool BASIC_FP is_strexp() {
+bool BASIC_FP Basic::is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return ((*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) ||
           *cip == I_STR ||
@@ -3530,7 +3588,7 @@ bool BASIC_FP is_strexp() {
          );
 }
 
-BString BASIC_INT istrvalue()
+BString BASIC_INT Basic::istrvalue()
 {
   BString value;
   int len, dims;
@@ -3538,7 +3596,7 @@ BString BASIC_INT istrvalue()
   int idxs[MAX_ARRAY_DIMS];
 
   if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
-    return strfuntbl[*cip++ - STRFUN_FIRST]();
+    return (this->*strfuntbl[*cip++ - STRFUN_FIRST])();
   } else switch (*cip++) {
   case I_STR:
     len = value.fromBasic(cip);
@@ -3606,7 +3664,7 @@ BString BASIC_INT istrvalue()
     return value;
 }
 
-BString BASIC_INT istrexp()
+BString BASIC_INT Basic::istrexp()
 {
   BString value, tmp;
   
@@ -3642,7 +3700,7 @@ ll = LEN(~list)
 @~list		reference to a numeric or string list
 \ret Length in characters (string) or elements (list).
 ***/
-num_t BASIC_INT nlen() {
+num_t BASIC_INT Basic::nlen() {
   int32_t value;
   if (checkOpen()) return 0;
   if (*cip == I_STRLSTREF) {
@@ -3659,7 +3717,7 @@ num_t BASIC_INT nlen() {
 }
 
 // see getrnd() for basicdoc
-num_t BASIC_FP nrnd() {
+num_t BASIC_FP Basic::nrnd() {
   num_t value = getparam(); //括弧の値を取得
   if (!err)
     value = getrnd(value);
@@ -3673,7 +3731,7 @@ Returns the absolute value of a number.
 @num	any numeric expression
 \ret Absolute value of `num`.
 ***/
-num_t BASIC_FP nabs() {
+num_t BASIC_FP Basic::nabs() {
   num_t value = getparam(); //括弧の値を取得
   if (value == INT32_MIN) {
     err = ERR_VOF;
@@ -3692,7 +3750,7 @@ Converts a number contained in a string to a numeric value.
 \ret Numeric value of `num$`.
 \ref STR$()
 ***/
-num_t BASIC_INT nval() {
+num_t BASIC_INT Basic::nval() {
   if (checkOpen()) return 0;
   num_t value = strtonum(istrexp().c_str(), NULL);
   checkClose();
@@ -3713,7 +3771,7 @@ NOTE: The meaning of the return value differs from other BASIC implementations,
 in which `0` usually indicates that the string has not been found, and locations
 found start at `1`.
 ***/
-num_t BASIC_INT ninstr() {
+num_t BASIC_INT Basic::ninstr() {
   BString haystack, needle;
   if (checkOpen()) return 0;
   haystack = istrexp();
@@ -3732,10 +3790,7 @@ num_t BASIC_INT ninstr() {
     return res - haystack.c_str();
 }
 
-typedef num_t (*numfun_t)();
-#include "numfuntbl.h"
-
-num_t BASIC_INT nsvar_a() {
+num_t BASIC_INT Basic::nsvar_a() {
   uint8_t i;
   int32_t a;
   // String character accessor 
@@ -3750,18 +3805,15 @@ num_t BASIC_INT nsvar_a() {
   return svar.var(i)[a];
 }
 
-num_t BASIC_INT irel_string();
-num_t nsys();
-
 // Get value
-num_t BASIC_FP ivalue() {
+num_t BASIC_FP Basic::ivalue() {
   num_t value = 0; // 値
   uint8_t i;   // 文字数
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
 
   if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
-    value = numfuntbl[*cip++ - NUMFUN_FIRST]();
+    value = (this->*numfuntbl[*cip++ - NUMFUN_FIRST])();
   } else if (is_strexp()) {
     // string comparison (or error)
     value = irel_string();
@@ -3910,7 +3962,7 @@ Exponentiation operator.
 }
 
 // XXX: 40 byte jump table
-num_t BASIC_INT __attribute__((optimize ("no-jump-tables"))) irel_string() {
+num_t BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::irel_string() {
   BString lhs = istrexp();
   BString rhs;
   switch (*cip++) {
@@ -4017,7 +4069,7 @@ uint32_t getBottomLineNum() {
 }
 
 // Get the number of the line preceding the specified line
-uint32_t getPrevLineNo(uint32_t lineno) {
+uint32_t Basic::getPrevLineNo(uint32_t lineno) {
   uint8_t* lp, *prv_lp = NULL;
   int32_t rc = -1;
   for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
@@ -4029,7 +4081,7 @@ uint32_t getPrevLineNo(uint32_t lineno) {
 }
 
 // Get the number of the line succeeding the specified line
-uint32_t getNextLineNo(uint32_t lineno) {
+uint32_t Basic::getNextLineNo(uint32_t lineno) {
   uint8_t* lp;
   int32_t rc = -1;
 
@@ -4043,7 +4095,7 @@ uint32_t getNextLineNo(uint32_t lineno) {
 }
 
 // Get the program text of the specified line
-char* getLineStr(uint32_t lineno, uint8_t devno) {
+char* Basic::getLineStr(uint32_t lineno, uint8_t devno) {
   uint8_t* lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;
@@ -4071,7 +4123,7 @@ char* getLineStr(uint32_t lineno, uint8_t devno) {
   return tbuf;
 }
 
-static void BASIC_FP do_goto(uint32_t line)
+void BASIC_FP Basic::do_goto(uint32_t line)
 {
   uint8_t *lp = getlp(line);
   if (line != getlineno(lp)) {            // もし分岐先が存在しなければ
@@ -4096,7 +4148,7 @@ more difficult to understand. If possible, use loop constructs and
 procedure calls instead.
 \ref ON_GOTO
 ***/
-void BASIC_FP igoto() {
+void BASIC_FP Basic::igoto() {
   uint32_t lineno;    // 行番号
 
   if (*cip == I_LABEL) {
@@ -4117,7 +4169,7 @@ void BASIC_FP igoto() {
   }
 }
 
-static void BASIC_FP do_gosub_p(unsigned char *lp, unsigned char *ip)
+void BASIC_FP Basic::do_gosub_p(unsigned char *lp, unsigned char *ip)
 {
   //ポインタを退避
   if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
@@ -4135,7 +4187,7 @@ static void BASIC_FP do_gosub_p(unsigned char *lp, unsigned char *ip)
   TRACE;
 }
 
-static void BASIC_FP do_gosub(uint32_t lineno) {
+void BASIC_FP Basic::do_gosub(uint32_t lineno) {
   uint8_t *lp = getlp(lineno);
   if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
     err = ERR_ULN;                          // エラー番号をセット
@@ -4172,7 +4224,7 @@ RETURN
 ====
 \ref CALL ON_GOSUB PROC RETURN
 ***/
-void BASIC_FP igosub() {
+void BASIC_FP Basic::igosub() {
   uint32_t lineno;    // 行番号
 
   if (*cip == I_LABEL) {
@@ -4213,7 +4265,7 @@ continues execution there.
 Call one of several subroutines, depending on the value of an expression.
 \ref ON_GOTO GOSUB
 ***/
-static void BASIC_FP on_go(bool is_gosub, int cas)
+void BASIC_FP Basic::on_go(bool is_gosub, int cas)
 {
   unsigned char *lp = NULL, *ip = NULL;
   --cas;
@@ -4261,7 +4313,7 @@ static void BASIC_FP on_go(bool is_gosub, int cas)
   }
 }
 
-void BASIC_INT ion()
+void BASIC_INT Basic::ion()
 {
   if (*cip == I_SPRITE) {
 /***bc bg ON SPRITE
@@ -4463,7 +4515,7 @@ statement that generated the error.
 It is not possible to repeat the statement that has generated the error.
 \ref ON_ERROR
 ***/
-void iresume()
+void Basic::iresume()
 {
   if (!event_error_resume_lp) {
     err = ERR_CONT;
@@ -4489,7 +4541,7 @@ Triggers an error.
 @code	error code
 \ref ON_ERROR
 ***/
-void ierror() {
+void Basic::ierror() {
   err = iexp();
 }
 
@@ -4505,7 +4557,7 @@ declaration. Additional arguments can be accessed using `ARG()` and
 `ARG$()`.
 \ref ARG() ARG$() ARGC() FN PROC
 ***/
-void BASIC_FP icall() {
+void BASIC_FP Basic::icall() {
   num_t n;
   uint8_t proc_idx = *cip++;
 
@@ -4597,7 +4649,7 @@ overflow:
   return;
 }
 
-void iproc() {
+void Basic::iproc() {
   err = ERR_PROCWOC;
 }
 
@@ -4615,7 +4667,7 @@ string) can be returned to the caller.
 @value$	string expression
 \ref CALL FN GOSUB PROC
 ***/
-void BASIC_FP ireturn() {
+void BASIC_FP Basic::ireturn() {
   if (!gstki) {    // もしGOSUBスタックが空なら
     err = ERR_GSTKUF; // エラー番号をセット
     return;
@@ -4689,7 +4741,7 @@ PRINT "Value of i at end of loop is ";i
 ----
 ====
 ***/
-void BASIC_FP ido() {
+void BASIC_FP Basic::ido() {
   if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
     return;
@@ -4722,7 +4774,7 @@ to continue the loop.
 The `WHILE` keyword can also form part of a `LOOP` command.
 \ref LOOP
 ***/
-void BASIC_FP iwhile() {
+void BASIC_FP Basic::iwhile() {
   if (lstki >= SIZE_LSTK) {
     err = ERR_LSTKOF;
     return;
@@ -4750,7 +4802,7 @@ Iterates a `WHILE` loop.
 \usage WEND
 \ref WHILE
 ***/
-void BASIC_FP iwend() {
+void BASIC_FP Basic::iwend() {
   if (!lstki) {
     err = ERR_LSTKUF;
     return;
@@ -4827,7 +4879,7 @@ NEXT i
 ----
 ====
 ***/
-void BASIC_FP ifor() {
+void BASIC_FP Basic::ifor() {
   int index;
   num_t vto, vstep; // FOR文の変数番号、終了値、増分
 
@@ -4882,7 +4934,7 @@ Iterates a `DO` loop.
 \usage LOOP [<UNTIL|WHILE> condition]
 \ref DO
 ***/
-void BASIC_FP iloop() {
+void BASIC_FP Basic::iloop() {
   uint8_t cond;
 
   if (!lstki) {
@@ -4930,7 +4982,7 @@ Increments and tests the counter in a `FOR` loop.
 \usage NEXT [loop_variable]
 \ref FOR
 ***/
-void BASIC_FP inext() {
+void BASIC_FP Basic::inext() {
   int want_index;	// variable we want to NEXT, if specified
   bool want_local;
   int index;		// loop variable index we will actually use
@@ -5014,7 +5066,7 @@ IMPORTANT: In many BASIC implementations, `ENDIF` is spelled `END IF` (that
 is, as two commands). If the sequence `END IF` is entered or loaded in a
 program, Engine BASIC will convert it to `ENDIF`.
 ***/
-void BASIC_FP iif() {
+void BASIC_FP Basic::iif() {
   num_t condition;    // IF文の条件値
   uint8_t* newip;       // ELSE文以降の処理対象ポインタ
 
@@ -5055,7 +5107,7 @@ void BASIC_FP iif() {
 Ends a muli-line `IF` statement.
 \ref IF
 ***/
-void BASIC_FP iendif()
+void BASIC_FP Basic::iendif()
 {
 }
 
@@ -5063,7 +5115,7 @@ void BASIC_FP iendif()
 Introduces the `ELSE` branch of an `IF` statement.
 \ref IF
 ***/
-void BASIC_FP ielse()
+void BASIC_FP Basic::ielse()
 {
   // Special handling for "ELSE IF": Skip one level of nesting. This avoids
   // having to have an ENDIF for each ELSE at the end of an IF ... ELSE IF
@@ -5077,12 +5129,12 @@ void BASIC_FP ielse()
 }
 
 // スキップ
-void BASIC_FP iskip() {
+void BASIC_FP Basic::iskip() {
   while (*cip != I_EOL) // I_EOLに達するまで繰り返す
     cip++;              // 中間コードポインタを次へ進める
 }
 
-void BASIC_FP ilabel() {
+void BASIC_FP Basic::ilabel() {
   ++cip;
 }
 
@@ -5091,22 +5143,21 @@ Ends the program.
 \usage END
 \ref ENDIF
 ***/
-void iend() {
+void Basic::iend() {
   while (*clp)    // 行の終端まで繰り返す
     clp += *clp;  // 行ポインタを次へ進める
 }
 
-void ecom() {
+void Basic::ecom() {
   err = ERR_COM;
 }
 
-void esyntax() {
+void Basic::esyntax() {
   cip--;
   err = ERR_SYNTAX;
 }
-#define esyntax_workaround esyntax
 
-void iprint_() {
+void Basic::iprint_() {
   iprint();
 }
 
@@ -5118,7 +5169,7 @@ the text buffer.
 \usage REDRAW
 \ref CLS
 ***/
-void irefresh() {
+void Basic::irefresh() {
   sc0.refresh();
 }
 
@@ -5127,7 +5178,7 @@ Deletes the program in memory as well as all variables.
 \usage NEW
 \ref CLEAR DELETE
 ***/
-void inew_() {
+void Basic::inew_() {
   inew();
 }
 
@@ -5136,22 +5187,22 @@ Deletes all variables.
 \usage CLEAR
 \ref NEW
 ***/
-void iclear() {
+void Basic::iclear() {
   inew(NEW_VAR);
 }
 
-void BASIC_FP inil() {
+void BASIC_FP Basic::inil() {
 }
 
-void eunimp() {
+void Basic::eunimp() {
   err = ERR_NOT_SUPPORTED;
 }
 
-void ilist_() {
+void Basic::ilist_() {
   ilist();
 }
 
-void ilrun_() {
+void Basic::ilrun_() {
   if (*cip == I_PCX) {
     cip++;
     ildbmp();
@@ -5163,7 +5214,7 @@ void ilrun_() {
     ilrun();
 }
 
-void imerge() {
+void Basic::imerge() {
   ilrun();
 }
 
@@ -5174,7 +5225,7 @@ A program stopped by a `STOP` command can be resumed using `CONT`.
 \usage STOP
 \ref CONT
 ***/
-void istop() {
+void Basic::istop() {
   err = ERR_CTR_C;
 }
 
@@ -5196,7 +5247,7 @@ been run, the results can be viewed using `PROFILE LIST`.
 It is not possible to switch the system and procedure profiling on and off
 independently.
 ***/
-void iprofile() {
+void Basic::iprofile() {
   switch (*cip++) {
   case I_ON:
     profile_enabled = true;
@@ -5235,7 +5286,7 @@ exception of the following:
 There is no generalized way to share data between parent and child program.
 \ref CHAIN
 ***/
-void iexec() {
+void Basic::iexec() {
   BString file = getParamFname();
   int is_text = bfs.IsText((char *)file.c_str());
   if (is_text < 0) {
@@ -5245,21 +5296,18 @@ void iexec() {
     E_ERR(FORMAT, "not a BASIC program");
     return;
   }
-  basic_ctx_t *old_bc = bc;
-  bc = new basic_ctx_t;
-  listbuf = NULL;
-  loadPrgText((char *)file.c_str(), NEW_ALL);
-  clp = listbuf;
-  cip = clp + sizeof(line_desc_t);
-  irun(clp);
+  Basic sub;
+  sub.listbuf = NULL;
+  sub.loadPrgText((char *)file.c_str(), NEW_ALL);
+  sub.clp = sub.listbuf;
+  sub.cip = sub.clp + sizeof(line_desc_t);
+  sub.irun(sub.clp);
   if (err) {
-    if (old_bc->_event_error_enabled) {
+    if (event_error_enabled) {
       // This replicates the code in irun() because we have to get the error
       // line number in the context of the subprogram.
-      int sub_line = getlineno(clp);
-      free(listbuf);
-      delete bc;
-      bc = old_bc;
+      int sub_line = getlineno(sub.clp);
+      free(sub.listbuf);
       retval[0] = err;
       retval[1] = getlineno(clp);
       retval[2] = sub_line;
@@ -5275,27 +5323,20 @@ void iexec() {
       error();
     }
   } 
-  free(listbuf);
-  delete bc;
-  bc = old_bc;
+  free(sub.listbuf);
 }
 
-void iextend();
-
-typedef void (*cmd_t)();
-#include "funtbl.h"
-
-void BASIC_INT iextend() {
+void BASIC_INT Basic::iextend() {
   if (*cip >= sizeof(funtbl_ext) / sizeof(funtbl_ext[0])) {
     err = ERR_SYS;
     return;
   }
-  funtbl_ext[*cip++]();
+  (this->*funtbl_ext[*cip++])();
 }
 
 // 中間コードの実行
 // 戻り値      : 次のプログラム実行位置(行の先頭)
-unsigned char* BASIC_FP iexe(int stk) {
+unsigned char* BASIC_FP Basic::iexe(int stk) {
   uint8_t c;               // 入力キー
   err = 0;
 
@@ -5310,7 +5351,7 @@ unsigned char* BASIC_FP iexe(int stk) {
 
     //中間コードを実行
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
-      funtbl[*cip++]();
+      (this->*funtbl[*cip++])();
     } else
       SYNTAX_T("exp command");
 
@@ -5323,11 +5364,8 @@ unsigned char* BASIC_FP iexe(int stk) {
   return clp + *clp;
 }
 
-void iflash();
-void iformat();
-
 //Command precessor
-uint8_t SMALL icom() {
+uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
   cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
 
@@ -5479,13 +5517,10 @@ extern lua_State *lua;
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
  */
-void SMALL basic() {
+void SMALL Basic::basic() {
   unsigned char len; // Length of intermediate code
   char* textline;    // input line
   uint8_t rc;
-
-  bc = new basic_ctx_t;
-  memset(bc, 0, sizeof(*bc));
 
   basic_init_file_early();
 
