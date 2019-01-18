@@ -802,6 +802,11 @@ LUA_API void lua_setglobal (lua_State *L, const char *name) {
   auxsetstr(L, luaH_getint(reg, LUA_RIDX_GLOBALS), name);
 }
 
+LUA_API void __lua_setglobal_P (lua_State *L, const char *name) {
+  char nname[128]; nname[127] = 0;
+  strncpy_P(nname, name, 127);
+  lua_setglobal(L, nname);
+}
 
 LUA_API void lua_settable (lua_State *L, int idx) {
   TValue *t;

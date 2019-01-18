@@ -268,6 +268,8 @@ LUA_API int  (lua_getiuservalue) (lua_State *L, int idx, int n);
 ** set functions (stack -> Lua)
 */
 LUA_API void  (lua_setglobal) (lua_State *L, const char *name);
+LUA_API void  (__lua_setglobal_P) (lua_State *L, const char *name);
+#define lua_setglobal_P(L, name) __lua_setglobal_P(L, PSTR(name))
 LUA_API void  (lua_settable) (lua_State *L, int idx);
 LUA_API void  (lua_setfield) (lua_State *L, int idx, const char *k);
 LUA_API void  (__lua_setfield_P) (lua_State *L, int idx, const char *k);
