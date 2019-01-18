@@ -496,7 +496,7 @@ static int luaB_tostring (lua_State *L) {
   return 1;
 }
 
-static const char __assert[] PROGMEM = "assert";
+static const char __l_assert[] PROGMEM = "assert";
 static const char __collectgarbage[] PROGMEM = "collectgarbage";
 static const char __dofile[] PROGMEM = "dofile";
 static const char __error[] PROGMEM = "error";
@@ -524,7 +524,7 @@ static const char __LUA_GNAME[] PROGMEM = LUA_GNAME;
 static const char ___VERSION[] PROGMEM = "_VERSION";
 
 static const luaL_Reg base_funcs[] PROGMEM = {
-  {__assert, luaB_assert},
+  {__l_assert, luaB_assert},
   {__collectgarbage, luaB_collectgarbage},
   {__dofile, luaB_dofile},
   {__error, luaB_error},
