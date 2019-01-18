@@ -662,9 +662,7 @@ void syspanic(const char *txt) {
   for (;;);
 }
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "lua_defs.h"
 
 lua_State *lua = NULL;
 

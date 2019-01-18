@@ -5509,9 +5509,7 @@ static void show_logo() {
              sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62, 0);
 }
 
-#include <lauxlib.h>
-
-extern lua_State *lua;
+#include "lua_defs.h"
 
 /*
    TOYOSHIKI Tiny BASIC
