@@ -686,5 +686,6 @@ void Basic::ilua()
     return;
   }
   luaL_openlibs(lua);
+  luaopen_be(lua);
   lua_sethook(lua, lhook, LUA_MASKCOUNT, 1000);
 }
