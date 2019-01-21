@@ -36,5 +36,6 @@ void AZIP::run()
   // put your main code here, to run repeatedly:
   interpret( );  
   free(cache_blocks);
+  sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
 }
 
