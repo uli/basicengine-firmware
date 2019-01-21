@@ -1994,10 +1994,11 @@ all loop and subroutine stacks cleared, but with the variables still intact.
 void Basic::irun_() {
   int32_t lineno;
 
-  if (getParam(lineno, I_NONE)) {
+  if (end_of_statement()) {
     err = 0;
     lineno = 0;
-  }
+  } else if (getParam(lineno, I_NONE))
+    return;
 
   unsigned char *lp = getlp(lineno);
   if (!lp) {
@@ -5453,9 +5454,12 @@ uint8_t SMALL Basic::icom() {
         break;
       cip = save_cip;
       ilrun();
+      sc0.show_curs(0);
+      irun();
+    } else {
+      sc0.show_curs(0);
+      irun_();
     }
-    sc0.show_curs(0);
-    irun_();
     break;
 /***bc bas CONT
 Continues an interrupted program.
