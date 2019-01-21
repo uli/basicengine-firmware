@@ -535,7 +535,7 @@ extern char lookup_table[3][26] PROGMEM;
 
 #define CACHE_BLOCKS 16
 struct cache_block {
-  zword_t addr;
+  unsigned long addr;
   uint8_t mem[512];
   bool dirty;
 };
