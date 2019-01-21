@@ -1967,6 +1967,30 @@ void Basic::itroff() {
   trace_enabled = false;
 }
 
+/***bc bas RUN
+Runs the progam in memory.
+\desc
+If a file name is given, that program will be loaded to memory first.  If a
+line number is given, execution will begin at the specified line. Otherwise,
+execution will start at the first line.
+\usage
+RUN [line_num]
+
+RUN file$
+\args
+@file$		name of the BASIC program to be loaded and run
+@line_num	line number at which execution will start [default: first line]
+\note
+`RUN` behaves slightly differently when executed from within a program than
+when used in direct mode.
+
+In direct mode, `RUN` clears all variables, whereas within a program, it
+does not.  The purpose of this is to allow a program to restart itself with
+all loop and subroutine stacks cleared, but with the variables still intact.
+\bugs
+* The syntax `RUN file$` does not work from within a program. Use `CHAIN` instead.
+\ref CHAIN CLEAR EXEC GOTO LOAD
+***/
 void Basic::irun_() {
   int32_t lineno;
 
