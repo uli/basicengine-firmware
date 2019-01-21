@@ -89,7 +89,7 @@ TROFF	I_TROFF		itroff
 OPEN	I_OPENCMD	iopen
 CLOSE	I_CLOSECMD	iclose
 RENUM	I_RENUM		ecom
-RUN	I_RUN		ecom
+RUN	I_RUN		irun_
 CONT	I_CONT		ecom
 DELETE	I_DELETE	idelete
 FLASH	I_FLASH		ecom

@@ -1967,6 +1967,23 @@ void Basic::itroff() {
   trace_enabled = false;
 }
 
+void Basic::irun_() {
+  int32_t lineno;
+
+  if (getParam(lineno, I_NONE)) {
+    err = 0;
+    lineno = 0;
+  }
+
+  unsigned char *lp = getlp(lineno);
+  if (!lp) {
+    err = ERR_ULN;
+    return;
+  }
+
+  irun(lp, false, false);
+}
+
 // RUN command handler
 void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
@@ -5414,7 +5431,7 @@ uint8_t SMALL Basic::icom() {
       ilrun();
     }
     sc0.show_curs(0);
-    irun();
+    irun_();
     break;
 /***bc bas CONT
 Continues an interrupted program.
