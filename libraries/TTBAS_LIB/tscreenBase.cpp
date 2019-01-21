@@ -60,7 +60,7 @@ void tscreenBase::end() {
 // 指定行の1行分クリア
 void tscreenBase::clerLine(uint16_t l, int from) {
   memset(&VPEEK(from, l), 0, width - from);
-  VSET_C(from, l, 0, 0, width-from);
+  VSET_C(from, l, fg_color, bg_color, width-from);
   CLEAR_LINE(l, from);
   MOVE(pos_y, pos_x);
 }
@@ -70,14 +70,14 @@ void tscreenBase::cls() {
   CLEAR();
   for (int i = 0; i < height; ++i) {
     memset(&VPEEK(0, i), 0, width);
-    VSET_C(0, i, 0, 0, width);
+    VSET_C(0, i, fg_color, bg_color, width);
   }
 }
 
 void tscreenBase::forget() {
   for (int i = 0; i < height; ++i) {
     memset(&VPEEK(0, i), 0, width);
-    VSET_C(0, i, 0, 0, width);
+    VSET_C(0, i, fg_color, bg_color, width);
   }
 }
 
@@ -127,7 +127,7 @@ void tscreenBase::Insert_newLine(uint16_t l) {
     }
   }
   memset(&VPEEK(0, l+1), 0, width);
-  VSET_C(0, l+1, 0, 0, width);
+  VSET_C(0, l+1, fg_color, bg_color, width);
   INSLINE(l+1);
 }
 

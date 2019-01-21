@@ -375,7 +375,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
         VMOVE_C(x,y+i+1, x,y+i, w, 1);
       }
       memset(&VPEEK(x, y + h - 1), 0, w);
-      VSET_C(x, y+h-1, 0, 0, w);
+      VSET_C(x, y+h-1, fg_color, bg_color, w);
       break;            
 
     case 1: // 下
@@ -384,7 +384,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
         VMOVE_C(x,y+h-1-i-1, x,y+h-1-i, w, 1);
       }
       memset(&VPEEK(x, y), 0, w);
-      VSET_C(x, y, 0, 0, w);
+      VSET_C(x, y, fg_color, bg_color, w);
       break;            
 
     case 2: // 右
