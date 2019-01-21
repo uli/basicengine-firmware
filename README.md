@@ -30,9 +30,9 @@ Find out more at the [BASIC Engine web site](https://basicengine.org/).
 
 Run `make` for instructions on how to compile the firmware for various targets.
 
-The build system will currently only work on x64 Debian-like systems. If you want to
-change them to work with your system, you will have to adapt these shell scripts in
-`ttbasic/scripts`:
+The build system will currently only work on x64 and ARM64 Debian-like
+systems. If you want to change them to work with your system, you will have
+to adapt these shell scripts in `ttbasic/scripts`:
 
 - `installpackages.sh`
 - `installpackages_hosted.sh`
