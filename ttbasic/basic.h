@@ -132,7 +132,7 @@ private:
 
   void do_trace();
   uint8_t ilrun();
-  void irun(uint8_t* start_clp = NULL, bool cont = false);
+  void irun(uint8_t* start_clp = NULL, bool cont = false, bool clear = true);
 
   void inew(uint8_t mode = NEW_ALL);
 

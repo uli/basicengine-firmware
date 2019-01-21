@@ -1968,7 +1968,7 @@ void Basic::itroff() {
 }
 
 // RUN command handler
-void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont) {
+void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
   uint8_t*   lp;     // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
@@ -2000,7 +2000,8 @@ void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont) {
   astk_str_i = 0;
   data_lp = data_ip = NULL;
   in_data = false;
-  inew(NEW_VAR);
+  if (clear)
+    inew(NEW_VAR);
 
   if (start_clp != NULL) {
     clp = start_clp;
