@@ -160,11 +160,11 @@ class SdFat {
 public:
   File open(const char *path, int mode = FILE_READ) {
     File tmpFile;
-    char mod[2];
-    mod[1]=0;
+    char mod[3];
+    mod[1]=0; mod[2]=0;
     switch (mode) {
     case FILE_READ:	mod[0] = 'r'; break;
-    case FILE_OVERWRITE:mod[0] = 'w'; break;
+    case FILE_OVERWRITE:mod[0] = 'w'; mod[1] = '+'; break;
     case FILE_WRITE:	mod[0] = 'a'; break;
     default:		mod[0] = 'r'; break;
     }
