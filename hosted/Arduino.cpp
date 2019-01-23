@@ -101,10 +101,32 @@ int hosting_mem_allocated;
 
 int main(int argc, char **argv)
 {
+  int opt;
+  int sdl_flags = SDL_HWSURFACE;
+
+  const char *video_file = NULL;
+  while ((opt = getopt(argc, argv, "fr::")) != -1) {
+    switch (opt) {
+    case 'r':
+      if (optarg)
+	video_file = optarg;
+      else
+	video_file = "video.mp4";
+      break;
+    case 'f':
+      sdl_flags |= SDL_FULLSCREEN;
+      break;
+    default: /* '?' */
+      fprintf(stderr, "Usage: %s [-r video_file]\n",
+              argv[0]);
+      exit(1);
+    }
+  }
+
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-  screen = SDL_SetVideoMode(SDL_X_SIZE, SDL_Y_SIZE, 32, SDL_HWSURFACE);
+  screen = SDL_SetVideoMode(SDL_X_SIZE, SDL_Y_SIZE, 32, sdl_flags);
   if (!screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
@@ -117,23 +139,6 @@ int main(int argc, char **argv)
     palette[1][i].r = p_ee_a22_b22_y44_n10[i].r;
     palette[1][i].g = p_ee_a22_b22_y44_n10[i].g;
     palette[1][i].b = p_ee_a22_b22_y44_n10[i].b;
-  }
-
-  int opt;
-  const char *video_file = NULL;
-  while ((opt = getopt(argc, argv, "r::")) != -1) {
-    switch (opt) {
-    case 'r':
-      if (optarg)
-	video_file = optarg;
-      else
-	video_file = "video.mp4";
-      break;
-    default: /* '?' */
-      fprintf(stderr, "Usage: %s [-r video_file]\n",
-              argv[0]);
-      exit(1);
-    }
   }
 
   if (video_file) {
