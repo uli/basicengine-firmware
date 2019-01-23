@@ -189,7 +189,7 @@ keyEvent TKeyboard::read() {
       ki.kevt.code = unicode;
     else {
       ki.kevt.KEY = 1;
-      for (int i = 0; i < sizeof(ps2_to_sdl)/sizeof(*ps2_to_sdl); ++i) {
+      for (unsigned int i = 0; i < sizeof(ps2_to_sdl)/sizeof(*ps2_to_sdl); ++i) {
         if (ps2_to_sdl[i] == event.key.keysym.sym) {
           ki.kevt.code = i;
           break;
@@ -204,6 +204,7 @@ keyEvent TKeyboard::read() {
 }
 
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout) {
+  return 0;
 }
 
 void TKeyboard::end() {
