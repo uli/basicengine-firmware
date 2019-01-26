@@ -103,6 +103,11 @@ int main(int argc, char **argv)
 {
   int opt;
   int sdl_flags = SDL_HWSURFACE;
+  int sdl_w = SDL_X_SIZE;
+  int sdl_h = SDL_Y_SIZE;
+
+  SDL_Init(SDL_INIT_EVERYTHING);
+  const SDL_VideoInfo *info = SDL_GetVideoInfo();
 
   const char *video_file = NULL;
   while ((opt = getopt(argc, argv, "fr::")) != -1) {
@@ -115,6 +120,8 @@ int main(int argc, char **argv)
       break;
     case 'f':
       sdl_flags |= SDL_FULLSCREEN;
+      sdl_w = info->current_w;
+      sdl_h = info->current_h;
       break;
     default: /* '?' */
       fprintf(stderr, "Usage: %s [-r video_file]\n",
@@ -123,10 +130,9 @@ int main(int argc, char **argv)
     }
   }
 
-  SDL_Init(SDL_INIT_EVERYTHING);
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-  screen = SDL_SetVideoMode(SDL_X_SIZE, SDL_Y_SIZE, 32, sdl_flags);
+  screen = SDL_SetVideoMode(sdl_w, sdl_h, 32, sdl_flags);
   if (!screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
