@@ -45,6 +45,9 @@ struct palette {
 #define STRETCH_Y 4.4	// empircally determined
 #define YUV_Y_SIZE (int(SDL_Y_SIZE/STRETCH_Y))
 
+#define SDL_X_OFF ((screen->w - SDL_X_SIZE) / 2 * screen->format->BytesPerPixel)
+#define SDL_Y_OFF ((screen->h - SDL_Y_SIZE) / 2 * screen->pitch)
+
 #define VIEWPORT_X 308
 #define VIEWPORT_Y 22
 
@@ -256,8 +259,8 @@ int screen_thread(void *p)
 #define m_pal vs23_int.pal
 
       // pointer to SDL screen line
-      uint8_t *scr_line = (uint8_t *)screen->pixels +
-                          (int((i + STARTLINE - VIEWPORT_Y) *STRETCH_Y))*screen->pitch;
+      uint8_t *scr_line = (uint8_t *)screen->pixels + SDL_X_OFF +
+                          (int((i + STARTLINE - VIEWPORT_Y ) * STRETCH_Y)*screen->pitch) + SDL_Y_OFF;
       // X offset of start of picture (pixels)
       int xoff = vs23_int.picstart * 8 - VIEWPORT_X;
       // offset to YUV screen line (bytes, from start of component
@@ -265,10 +268,10 @@ int screen_thread(void *p)
 
       // draw SDL screen border
       for (int j = 0; j < STRETCH_Y; ++j) {
-        memcpy(scr_line + j * screen->pitch, screen->pixels, xoff * screen->format->BytesPerPixel);
+        memcpy(scr_line + j * screen->pitch, screen->pixels + SDL_X_OFF + SDL_Y_OFF, xoff * screen->format->BytesPerPixel);
         memcpy(scr_line + j * screen->pitch + (xoff + vs23.width()) * screen->format->BytesPerPixel,
-               (uint8_t *)screen->pixels + (xoff + vs23.width()) * screen->format->BytesPerPixel,
-               (screen->w - vs23.width() - xoff) * screen->format->BytesPerPixel);
+               (uint8_t *)screen->pixels + SDL_X_OFF + SDL_Y_OFF + (xoff + vs23.width()) * screen->format->BytesPerPixel,
+               (SDL_X_SIZE - vs23.width() - xoff) * screen->format->BytesPerPixel);
       }
 
       if (vid_fp) {
@@ -338,7 +341,7 @@ int screen_thread(void *p)
         dump_yuv();
       total_frames++;
     }
-    uint8_t *p = (uint8_t*)screen->pixels;
+    uint8_t *p = (uint8_t*)screen->pixels + SDL_X_OFF + SDL_Y_OFF;
     for (int x = 0; x < SDL_X_SIZE; ++x) {
       int w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND + x/8;
       int y = (vs23_mem[w*2+1] - 0x66) * 255 / 0x99;
@@ -369,14 +372,16 @@ int screen_thread(void *p)
     // picture line is; here, we only draw protolines.
 
     // draw SDL screen border top (before start of picture)
+    p = (uint8_t*)screen->pixels + SDL_X_OFF + SDL_Y_OFF + screen->pitch;
     for (int i = 1; i < int((STARTLINE - VIEWPORT_Y)*STRETCH_Y); ++i) {
-      memcpy(p, screen->pixels, screen->pitch);
+      memcpy(p, screen->pixels + SDL_X_OFF + SDL_Y_OFF, SDL_X_SIZE * screen->format->BytesPerPixel);
       p += screen->pitch;
     }
     // draw SDL screen border bottom (after end of picture)
-    for (int i = (STARTLINE - VIEWPORT_Y+vs23.height()) * STRETCH_Y; i < screen->h; ++i) {
-      memcpy((uint8_t *)screen->pixels + i * screen->pitch, screen->pixels, screen->pitch);
-      p += screen->pitch;
+    for (int i = (STARTLINE - VIEWPORT_Y+vs23.height()) * STRETCH_Y; i < SDL_Y_SIZE; ++i) {
+      memcpy((uint8_t *)screen->pixels + SDL_X_OFF + SDL_Y_OFF + i * screen->pitch,
+             screen->pixels + SDL_X_OFF + SDL_Y_OFF,
+             SDL_X_SIZE * screen->format->BytesPerPixel);
     }
     if (vid_fp) {
       // draw YUV border top (before start of picture)
