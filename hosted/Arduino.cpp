@@ -255,7 +255,7 @@ int screen_thread(void *p)
       // X offset of start of picture (pixels)
       int xoff = vs23_int.picstart * 8 - VIEWPORT_X;
       // offset to YUV screen line (bytes, from start of component
-      int yuv_line_off = int(i+STARTLINE-VIEWPORT_Y)*screen->w;
+      int yuv_line_off = int(i+STARTLINE-VIEWPORT_Y)*SDL_X_SIZE;
 
       // draw SDL screen border
       for (int j = 0; j < STRETCH_Y; ++j) {
@@ -268,12 +268,12 @@ int screen_thread(void *p)
       if (vid_fp) {
         // draw YUV border
         int yuv_right_off = yuv_line_off + xoff + vs23.width();
-        int yuv_right_width = screen->w - xoff - vs23.width();
+        int yuv_right_width = SDL_X_SIZE - xoff - vs23.width();
         memcpy(&y_screen[yuv_line_off], y_screen, xoff);
         memcpy(&y_screen[yuv_right_off], y_screen + xoff + vs23.width(), yuv_right_width);
-        memcpy(&u_screen[yuv_line_off], u_screen, screen->w);
+        memcpy(&u_screen[yuv_line_off], u_screen, SDL_X_SIZE);
         memcpy(&u_screen[yuv_right_off], u_screen + xoff + vs23.width(), yuv_right_width);
-        memcpy(&v_screen[yuv_line_off], v_screen, screen->w);
+        memcpy(&v_screen[yuv_line_off], v_screen, SDL_X_SIZE);
         memcpy(&v_screen[yuv_right_off], v_screen + xoff + vs23.width(), yuv_right_width);
       }
 
@@ -333,7 +333,7 @@ int screen_thread(void *p)
       total_frames++;
     }
     uint8_t *p = (uint8_t*)screen->pixels;
-    for (int x = 0; x < screen->w; ++x) {
+    for (int x = 0; x < SDL_X_SIZE; ++x) {
       int w = PROTOLINE_WORD_ADDRESS(0) + BLANKEND + x/8;
       int y = (vs23_mem[w*2+1] - 0x66) * 255 / 0x99;
       int uv = vs23_mem[w*2];
@@ -375,15 +375,15 @@ int screen_thread(void *p)
     if (vid_fp) {
       // draw YUV border top (before start of picture)
       for (int i = 1; i < (STARTLINE - VIEWPORT_Y); ++i) {
-        memcpy(&y_screen[i*screen->w], y_screen, screen->w);
-        memcpy(&u_screen[i*screen->w], u_screen, screen->w);
-        memcpy(&v_screen[i*screen->w], v_screen, screen->w);
+        memcpy(&y_screen[i*SDL_X_SIZE], y_screen, SDL_X_SIZE);
+        memcpy(&u_screen[i*SDL_X_SIZE], u_screen, SDL_X_SIZE);
+        memcpy(&v_screen[i*SDL_X_SIZE], v_screen, SDL_X_SIZE);
       }
       // draw YUV border bottom (after end of picture)
       for (int i = STARTLINE-VIEWPORT_Y+vs23.height(); i < YUV_Y_SIZE; ++i) {
-        memcpy(&y_screen[i*screen->w], y_screen, screen->w);
-        memcpy(&u_screen[i*screen->w], u_screen, screen->w);
-        memcpy(&v_screen[i*screen->w], v_screen, screen->w);
+        memcpy(&y_screen[i*SDL_X_SIZE], y_screen, SDL_X_SIZE);
+        memcpy(&u_screen[i*SDL_X_SIZE], u_screen, SDL_X_SIZE);
+        memcpy(&v_screen[i*SDL_X_SIZE], v_screen, SDL_X_SIZE);
       }
     }
   }
