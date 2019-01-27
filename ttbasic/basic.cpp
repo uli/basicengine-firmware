@@ -5683,7 +5683,7 @@ void SMALL Basic::basic() {
     if (lua) {
       if (luaL_dostring(lua, lbuf)) {
         const char *err_str = lua_tostring(lua, -1);
-        if (strcmp_P(err_str, PSTR("return to basic"))) {
+        if (strstr_P(err_str, PSTR("return to basic"))) {
           lua_close(lua);
           lua = NULL;
         } else {
