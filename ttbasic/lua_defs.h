@@ -8,5 +8,6 @@
 extern lua_State *lua;
 
 int luaopen_be(lua_State *l);
+int luaopen_video(lua_State *l);
 
 #endif
