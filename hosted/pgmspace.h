@@ -11,6 +11,7 @@
 #define strcat_P strcat
 #define strncasecmp_P strncasecmp
 #define strcmp_P strcmp
+#define strstr_P strstr
 
 #define pgm_read_byte(p) (*((const uint8_t *)(p)))
 #define pgm_read_word(p) (*((const uint16_t *)(p)))
