@@ -1967,6 +1967,32 @@ void Basic::itroff() {
   trace_enabled = false;
 }
 
+void Basic::clear_execution_state(bool clear)
+{
+  initialize_proc_pointers();
+  initialize_label_pointers();
+  event_sprite_proc_idx = NO_PROC;
+  event_error_enabled = false;
+  event_error_resume_lp = NULL;
+  event_play_enabled = false;
+  event_pad_enabled = false;
+  math_exceptions_disabled = false;
+  memset(event_pad_proc_idx, NO_PROC, sizeof(event_pad_proc_idx));
+  memset(event_play_proc_idx, NO_PROC, sizeof(event_play_proc_idx));
+
+  if (err)
+    return;
+
+  gstki = 0;         // GOSUBスタックインデクスを0に初期化
+  lstki = 0;         // FORスタックインデクスを0に初期化
+  astk_num_i = 0;
+  astk_str_i = 0;
+  data_lp = data_ip = NULL;
+  in_data = false;
+  if (clear)
+    inew(NEW_VAR);
+}
+
 /***bc bas RUN
 Runs the progam in memory.
 \desc
@@ -2006,7 +2032,9 @@ void Basic::irun_() {
     return;
   }
 
-  irun(lp, false, false);
+  clear_execution_state(false);
+  clp = lp;
+  cip = clp + sizeof(line_desc_t);
 }
 
 // RUN command handler
@@ -2022,28 +2050,10 @@ void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
     }
     goto resume;
   }
-  initialize_proc_pointers();
-  initialize_label_pointers();
-  event_sprite_proc_idx = NO_PROC;
-  event_error_enabled = false;
-  event_error_resume_lp = NULL;
-  event_play_enabled = false;
-  event_pad_enabled = false;
-  math_exceptions_disabled = false;
-  memset(event_pad_proc_idx, NO_PROC, sizeof(event_pad_proc_idx));
-  memset(event_play_proc_idx, NO_PROC, sizeof(event_play_proc_idx));
-
+  
+  clear_execution_state(clear);
   if (err)
     return;
-
-  gstki = 0;         // GOSUBスタックインデクスを0に初期化
-  lstki = 0;         // FORスタックインデクスを0に初期化
-  astk_num_i = 0;
-  astk_str_i = 0;
-  data_lp = data_ip = NULL;
-  in_data = false;
-  if (clear)
-    inew(NEW_VAR);
 
   if (start_clp != NULL) {
     clp = start_clp;
@@ -5459,6 +5469,7 @@ uint8_t SMALL Basic::icom() {
     } else {
       sc0.show_curs(0);
       irun_();
+      irun(clp);
     }
     break;
 /***bc bas CONT
