@@ -2035,6 +2035,7 @@ void Basic::irun_() {
   clear_execution_state(false);
   clp = lp;
   cip = clp + sizeof(line_desc_t);
+  err = ERR_CHAIN;
 }
 
 // RUN command handler
@@ -5469,6 +5470,8 @@ uint8_t SMALL Basic::icom() {
     } else {
       sc0.show_curs(0);
       irun_();
+      if (err == ERR_CHAIN)
+        err = 0;
       irun(clp);
     }
     break;
