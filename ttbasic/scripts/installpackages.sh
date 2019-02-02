@@ -10,8 +10,14 @@ fi
 
 PACKAGES="asciidoctor libc6-dev libncurses5-dev gperf python-serial exuberant-ctags flex bison"
 
-for p in ${PACKAGES} ; do
-  if ! dpkg -s "$p" >/dev/null 2>&1 ; then
-	sudo apt-get -y install "$p"
-  fi
-done
+# if the user is running Fedora
+if [ `lsb_release -is` = "Fedora" ]; then
+    PACKAGES="asciidoc glibc-devel ncurses-devel gperf python2-pyserial ctags flex bison" 
+    sudo dnf install $PACKAGES -y
+else
+    for p in ${PACKAGES} ; do
+	if ! dpkg -s "$p" >/dev/null 2>&1 ; then
+	    sudo apt-get -y install "$p"
+	fi
+    done
+fi
