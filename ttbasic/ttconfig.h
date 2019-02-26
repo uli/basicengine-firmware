@@ -108,11 +108,13 @@
 #define UNIFILE_USE_OLD_SPIFFS
 //#define UNIFILE_USE_FASTROMFS
 #define UNIFILE_USE_SDFAT
+#define UNIFILE_STDIO
 #endif
 
 #ifdef ESP32
 #define UNIFILE_USE_NEW_SPIFFS
 #define UNIFILE_USE_NEW_SD
+#define UNIFILE_STDIO
 #endif
 
 #if !defined(ESP8266)
@@ -135,6 +137,10 @@
 #define PSX_ATTN_PIN	2
 #define PSX_CLK_PIN	4
 #define PSX_DELAY	1
+#endif
+
+#ifdef UNIFILE_STDIO
+#include <unifile_stdio.h>
 #endif
 
 #endif
