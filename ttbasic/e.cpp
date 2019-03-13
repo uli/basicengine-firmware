@@ -608,14 +608,14 @@ void	k_goto (void)
 void	done (int sig)
 {
 	endwin ();
-#ifndef ARDUINO
+#if 0
 	exit (0);
 #endif
 }
 
 static int	_init (void)
 {
-#ifndef ARDUINO
+#if 0
 	signal (SIGINT, done);
 #endif
 
