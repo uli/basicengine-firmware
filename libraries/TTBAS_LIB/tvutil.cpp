@@ -188,7 +188,7 @@ void tv_drawCurs(uint8_t x, uint8_t y) {
   uint8_t pix[f_width];
   memset(pix, cursor_color, f_width);
   for (int i = 0; i < f_height; ++i) {
-    uint32_t byteaddress = vs23.piclineByteAddress(win_y + y*f_height+i)+ win_x + x*f_width;
+    uint32_t byteaddress = vs23.pixelAddr(win_x + x*f_width, win_y + y*f_height+i);
     vs23.writeBytes(byteaddress, pix, f_width);
   }
 }
@@ -205,7 +205,7 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
       pix[j] = ch&0x80 ? fg_color : bg_color;
       ch <<= 1;
     }
-    uint32_t byteaddress = vs23.piclineByteAddress(y+i)+ x;
+    uint32_t byteaddress = vs23.pixelAddr(x, y+i);
     vs23.writeBytes(byteaddress, pix, f_width);
   }
 }
