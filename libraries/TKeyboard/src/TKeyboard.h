@@ -13,6 +13,8 @@
 
 #if defined(ESP8266) && !defined(__FLASH__)
 #define __FLASH__ ICACHE_RODATA_ATTR
+#elif !defined(__FLASH__)
+#define __FLASH__
 #endif
 
 // 状態管理用
