@@ -473,7 +473,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
       rc = ERR_RANGE;
       goto out;
     }
-    if (!vs23.allocBacking(w, h, dst_x, dst_y)) {
+    if (!vs23.allocBacking(w, h, (int&)dst_x, (int&)dst_y)) {
       rc = ERR_SCREEN_FULL;
       goto out;
     }

@@ -615,7 +615,7 @@ void Basic::icolor() {
     if ( getParam(bgc, 0, 255, I_NONE) ) return;
     if (*cip == I_COMMA) {
       ++cip;
-      int cc;
+      int32_t cc;
       if (getParam(cc, 0, 255, I_NONE)) return;
       sc0.setCursorColor(cc);
     }
@@ -802,7 +802,7 @@ Returns the color of the pixel at the given coordinates.
 \ret Pixel color [`0` to `255`]
 ***/
 num_t BASIC_INT Basic::npoint() {
-  int x, y;  // 座標
+  int32_t x, y;  // 座標
   if (checkOpen()) return 0;
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
   if ( getParam(y, 0, vs23.lastLine()-1, I_NONE) ) return 0;

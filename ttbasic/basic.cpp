@@ -2787,7 +2787,7 @@ Returns a string containing the hexadecimal representation of a number.
 \ref BIN$()
 ***/
 BString Basic::shex() {
-  int value; // 値
+  int32_t value; // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
   BString hex((unsigned int)value, 16);
@@ -3113,7 +3113,7 @@ void SMALL Basic::ildbmp() {
 #ifdef USE_BG_ENGINE
   uint32_t spr_from, spr_to;
   bool define_bg = false, define_spr = false;
-  int bg;
+  int32_t bg;
 #endif
   int32_t key = -1;	// no keying
 
@@ -3399,7 +3399,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
 
 BString BASIC_INT Basic::ilrstr(bool right) {
   BString value;
-  int len;
+  int32_t len;
 
   if (checkOpen()) goto out;
 

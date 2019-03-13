@@ -112,7 +112,7 @@ void BASIC_FP Basic::ilvar() {
 int BASIC_FP Basic::get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
-    if (getParam(idxs[dims], I_NONE))
+    if (getParam((int32_t&)idxs[dims], I_NONE))
       return -1;
     dims++;
     if (*cip == I_CLOSE)
