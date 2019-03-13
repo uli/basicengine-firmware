@@ -198,7 +198,7 @@ Reads value from the analog input pin.
 \ret Analog value read.
 ***/
 num_t BASIC_FP Basic::nana() {
-#ifdef ESP8266_NOWIFI
+#if !(defined(ESP8266) || defined(ESP32)) || defined(ESP8266_NOWIFI)
   err = ERR_NOT_SUPPORTED;
   return 0;
 #else
