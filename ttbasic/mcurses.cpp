@@ -25,7 +25,9 @@
 #else
 	#define PROGMEM
 	#define PSTR(x)                                 (x)
+#ifndef pgm_read_byte
 	#define pgm_read_byte(s)                        (*s)
+#endif
 #endif 
 
 #include "mcurses.h"
