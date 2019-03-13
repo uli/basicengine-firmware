@@ -2629,7 +2629,7 @@ void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
 #ifdef HOSTED
-  hosted_pump_events();
+  platform_pump_events();
 #endif
   if (vs23.frame() == last_frame) {
 #if defined(HAVE_TSF) && !defined(HOSTED)
