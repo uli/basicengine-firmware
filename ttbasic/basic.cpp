@@ -24,6 +24,8 @@
 #endif
 #elif defined(ESP32)
 #define STR_EDITION "ESP32"
+#elif defined(H3)
+#define STR_EDITION "H3"
 #else
 #define STR_EDITION "unknown"
 #endif
@@ -2628,7 +2630,7 @@ void BASIC_INT Basic::draw_profile(void)
 void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
-#ifdef HOSTED
+#if defined(HOSTED) || defined(H3)
   platform_pump_events();
 #endif
   if (vs23.frame() == last_frame) {
@@ -5638,6 +5640,8 @@ void SMALL Basic::basic() {
   sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
+#elif defined(H3)
+  putnum(sys_mem_free(), 0);
 #else
   putnum(try_malloc(), 0);
 #endif

@@ -24,6 +24,11 @@
 #define USE_BG_ENGINE
 #endif
 
+#ifdef H3
+#define USE_H3GFX 1
+#define USE_BG_ENGINE
+#endif
+
 // ** ターミナルモード時のデフォルト スクリーンサイズ  ***********************
 // ※ 可動中では、WIDTHコマンドで変更可能  (デフォルト:80x25)
 #define TERM_W       80
@@ -81,7 +86,13 @@
 
 #define SMALL __attribute__((optimize("Os")))
 
-#ifdef ESP32
+#ifdef H3
+#define GROUP(g)
+#define GROUP_DATA
+#define BASIC_FP
+#define BASIC_INT
+#define BASIC_DAT
+#elif defined(ESP32)
 #define GROUP(g)
 #define GROUP_DATA
 #define BASIC_FP	IRAM_ATTR
@@ -102,7 +113,7 @@
 #define BASIC_INT GROUP(basic_core)
 #define BASIC_DAT GROUP_DATA(basic_data)
 
-#endif // ESP32
+#endif
 
 #ifdef ESP8266
 #define UNIFILE_USE_OLD_SPIFFS
@@ -115,6 +126,12 @@
 #define UNIFILE_USE_NEW_SPIFFS
 #define UNIFILE_USE_NEW_SD
 #define UNIFILE_STDIO
+#endif
+
+#ifdef H3
+#define UNIFILE_USE_OLD_SPIFFS
+#define UNIFILE_USE_SDFAT
+#define __FLASH__
 #endif
 
 #if !defined(ESP8266)
@@ -132,6 +149,13 @@
 #define PSX_CLK_PIN	3
 #define PSX_DELAY	1
 #elif defined(ESP32)
+#define PSX_DATA_PIN	16
+#define PSX_CMD_PIN	17
+#define PSX_ATTN_PIN	2
+#define PSX_CLK_PIN	4
+#define PSX_DELAY	1
+#elif defined(H3)
+// bogus
 #define PSX_DATA_PIN	16
 #define PSX_CMD_PIN	17
 #define PSX_ATTN_PIN	2

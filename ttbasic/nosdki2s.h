@@ -5,7 +5,7 @@
 //#include "nosdk8266.h"
 #include "c_types.h"
 
-#ifndef ESP8266_NOWIFI
+#if !defined(ESP8266_NOWIFI) && !defined(H3)
 #include <slc_register.h>
 #endif
 

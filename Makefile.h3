@@ -1,0 +1,38 @@
+TARGET = basic
+
+OSDIR = ~/devel/orangepi/allwinner-bare-metal
+
+SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
+	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
+	$(shell ls libraries/azip/*.cpp) \
+	h3/Arduino.cpp $(shell ls arduino_compat/*.cpp) \
+	h3/Time.cpp h3/TKeyboard.cpp \
+	h3/files.cpp h3/h3_i2s.cpp
+
+SOURCES_C = $(shell ls ttbasic/*.c)
+OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
+
+PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
+	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
+
+LIBS = -lstdc++
+
+include $(OSDIR)/build.mk
+
+INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
+	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua
+ARDFLAGS = -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
+	   -Wall -Wno-unused -D_GNU_SOURCE
+CFLAGS += $(ARDFLAGS)
+#CFLAGS += -m32
+#CFLAGS += -fprofile-arcs -ftest-coverage
+CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
+
+clean:
+	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
+
+gcov:
+	rm -f *.gcov
+	gcov $(SOURCES) $(SOURCES_C)
+
+-include $(OBJS:%.o=%.d)

@@ -5,6 +5,10 @@
 #include "GuillotineBinPack.h"
 #include <stdint.h>
 
+#ifdef H3
+#include <system.h>
+#endif
+
 struct video_mode_t {
   uint16_t x;
   uint16_t y;
@@ -32,7 +36,11 @@ public:
   bool allocBacking(int w, int h, int &x, int &y);
   void freeBacking(int x, int y, int w, int h);
 
-#ifdef HOSTED
+#if defined(H3)
+    inline uint32_t frame() {
+      return tick_counter;
+    }
+#elif defined(HOSTED)
     uint32_t frame();
 #else
     inline uint32_t frame() {
