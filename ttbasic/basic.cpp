@@ -137,7 +137,7 @@ int redirect_output_file = -1;
 int redirect_input_file = -1;
 
 // 文字の出力
-inline void c_putch(uint8_t c, uint8_t devno) {
+extern inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0) {
     if (redirect_output_file >= 0)
       user_files[redirect_output_file]->write(c);
