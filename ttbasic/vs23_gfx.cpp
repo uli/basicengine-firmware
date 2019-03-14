@@ -28,7 +28,7 @@
 #include "colorspace.h"
 #include "graphics.h"
 
-void Graphics::drawRect(int x0, int y0, int w, int h, uint8_t c, int fc)
+void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
 {
   if (fc == -1) {
     w--;
@@ -54,7 +54,7 @@ void Graphics::drawRect(int x0, int y0, int w, int h, uint8_t c, int fc)
   }
 }
 
-void Graphics::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
+void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, pixel_t fc)
 {
   int f = 1 - radius;
   int ddF_x = 1;
@@ -112,7 +112,7 @@ void Graphics::drawCircle(int x0, int y0, int radius, uint8_t c, int fc)
 // Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
 // than or equal to y1
 void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
-			uint8_t c)
+			pixel_t c)
 {
 	int deltax, deltay, offset;
 	uint16_t i;
@@ -140,7 +140,7 @@ void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 void Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			   uint8_t r, uint8_t g, uint8_t b)
 {
-	int c = csp.colorFromRgb(r, g, b);
+	pixel_t c = csp.colorFromRgb(r, g, b);
 
 	drawLine(x1, y1, x2, y2, c);
 }
