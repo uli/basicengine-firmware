@@ -194,7 +194,7 @@ protected:
   };
 
   struct sprite_line {
-    uint8_t *pixels;
+    pixel_t *pixels;
     uint8_t off;
     uint8_t len;
     uint8_t type;
