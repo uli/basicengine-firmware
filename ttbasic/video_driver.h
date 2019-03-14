@@ -16,8 +16,13 @@ typedef uint8_t ipixel_t;
 class pixel_t
 {
 public:
-  explicit pixel_t(PIXEL_TYPE val) : m_value(val) {}
-  explicit operator PIXEL_TYPE() const noexcept
+  pixel_t() {};
+  explicit pixel_t(uint8_t val) : m_value(val) {}
+  operator uint32_t() const noexcept
+  {
+    return m_value;
+  }
+  explicit operator uint8_t() const noexcept
   {
     return m_value;
   }
@@ -27,8 +32,13 @@ private:
 class ipixel_t
 {
 public:
-  explicit pixel_t(uint8_t val) : m_value(val) {}
-  explicit operator uint8_t() const noexcept
+  ipixel_t() {}
+  explicit ipixel_t(uint32_t val) : m_value(val) {}
+  operator uint8_t() const noexcept
+  {
+    return m_value;
+  }
+  explicit operator uint32_t() const noexcept
   {
     return m_value;
   }
