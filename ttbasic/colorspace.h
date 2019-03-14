@@ -1,6 +1,7 @@
 #ifndef _COLORSPACE_H
 #define _COLORSPACE_H
 
+#include "video_driver.h"
 #include <stdint.h>
 
 #define CSP_NUM_COLORSPACES	2
@@ -19,6 +20,8 @@ public:
       return m_colorspace;
     }
     uint8_t *paletteData(uint8_t colorspace);
+
+    pixel_t fromIndexed(ipixel_t c);
 
 private:
     uint8_t colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);

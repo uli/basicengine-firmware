@@ -205,4 +205,14 @@ uint8_t *Colorspace::paletteData(uint8_t colorspace)
   return (uint8_t *)pals[colorspace];
 }
 
+pixel_t Colorspace::fromIndexed(ipixel_t c)
+{
+  if (sizeof(pixel_t) == sizeof(ipixel_t))
+    return c;
+  else {
+    const palette *p = pals[m_colorspace];
+    return p[c].r << 16 | p[c].g << 8 | p[c].b;
+  }
+}
+
 Colorspace csp;
