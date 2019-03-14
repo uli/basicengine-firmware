@@ -514,7 +514,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 // Convert to YUV422
                 // XXX: Needless loss of quality on platforms with 32-bit colorspace
                 for (int i = 0; i < 256; ++i) {
-                  palette256[i] = csp.colorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
+                  palette256[i] = csp.indexedColorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
                 }
             }
 
