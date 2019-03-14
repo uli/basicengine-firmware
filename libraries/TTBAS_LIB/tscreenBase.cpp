@@ -246,8 +246,8 @@ void tscreenBase::Insert_char(uint8_t c) {
     int ssx = start_adr_x;
     int ssy = start_adr_y;
     uint8_t cn = VPEEK(ssx, ssy);
-    uint16_t cnfg = VPEEK_FG(ssx, ssy);
-    uint16_t cnbg = VPEEK_BG(ssx, ssy);
+    pixel_t cnfg = VPEEK_FG(ssx, ssy);
+    pixel_t cnbg = VPEEK_BG(ssx, ssy);
     while (lln) {
       int next_x = ssx+1;
       int next_y = ssy;
@@ -258,8 +258,8 @@ void tscreenBase::Insert_char(uint8_t c) {
           break;
       }
       uint8_t ncn = VPEEK(next_x, next_y);
-      uint8_t ncnfg = VPEEK_FG(next_x, next_y);
-      uint8_t ncnbg = VPEEK_BG(next_x, next_y);
+      pixel_t ncnfg = VPEEK_FG(next_x, next_y);
+      pixel_t ncnbg = VPEEK_BG(next_x, next_y);
       VPOKE(next_x, next_y, cn);
       VPOKE_FGBG(next_x, next_y, cnfg, cnbg);
       
