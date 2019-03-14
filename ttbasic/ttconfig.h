@@ -17,16 +17,19 @@
 #ifdef ESP8266_NOWIFI
 #define USE_BG_ENGINE
 #endif
+#define PIXEL_TYPE uint8_t
 #endif
 
 #ifdef ESP32
 #define USE_ESP32GFX 1
 #define USE_BG_ENGINE
+#define PIXEL_TYPE uint8_t
 #endif
 
 #ifdef H3
 #define USE_H3GFX 1
 #define USE_BG_ENGINE
+#define PIXEL_TYPE uint32_t
 #endif
 
 // ** ターミナルモード時のデフォルト スクリーンサイズ  ***********************

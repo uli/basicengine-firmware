@@ -9,6 +9,34 @@
 #include <system.h>
 #endif
 
+#ifndef STATIC_ANALYSIS
+typedef PIXEL_TYPE pixel_t;
+typedef uint8_t ipixel_t;
+#else
+class pixel_t
+{
+public:
+  explicit pixel_t(PIXEL_TYPE val) : m_value(val) {}
+  explicit operator PIXEL_TYPE() const noexcept
+  {
+    return m_value;
+  }
+private:
+  PIXEL_TYPE m_value;
+};
+class ipixel_t
+{
+public:
+  explicit pixel_t(uint8_t val) : m_value(val) {}
+  explicit operator uint8_t() const noexcept
+  {
+    return m_value;
+  }
+private:
+  uint8_t m_value;
+};
+#endif
+
 struct video_mode_t {
   uint16_t x;
   uint16_t y;
