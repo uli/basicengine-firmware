@@ -83,6 +83,9 @@ class VS23S010 : public BGEngine {
     }
 
     void setPixel(uint16_t x, uint16_t y, pixel_t c);
+    inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
+      setPixel(x, y, (pixel_t)(PIXEL_TYPE)c);
+    }
     void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
     pixel_t getPixel(uint16_t x, uint16_t y);
 
@@ -104,6 +107,12 @@ class VS23S010 : public BGEngine {
 
     inline void writeBytes(uint32_t address, uint8_t *data, uint32_t len) {
       SpiRamWriteBytes(address, data, len);
+    }
+    inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
+      writeBytes(address, (uint8_t *)data, len * sizeof(pixel_t));
+    }
+    inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+      writeBytes(address, (uint8_t *)data, len);
     }
 
     inline void setInterlace(bool interlace) {
