@@ -198,8 +198,8 @@ void SMALL Basic::iconfig() {
       CONFIG.font = value;
     break;
   case 6:
-    if (value < 0 || value > 255)
-      E_VALUE(0, 255);
+    if (value < 0 || value >= (1 << sizeof(pixel_t) * 8))
+      E_VALUE(0, (1 << sizeof(pixel_t) * 8) - 1);
     else
       CONFIG.cursor_color = value;
     break;
@@ -237,7 +237,8 @@ void loadConfig() {
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
-  CONFIG.cursor_color = 0x92;
+  // XXX: colorspace may not be initialized yet
+  CONFIG.cursor_color = csp.colorFromRgb(0, 149, 0);
   CONFIG.beep_volume = 15;
   
   Unifile f = Unifile::open(BString(F(CONFIG_FILE)), UFILE_READ);
