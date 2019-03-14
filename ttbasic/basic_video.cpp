@@ -48,9 +48,9 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t
       } else {
         hex_value = (hex_value << 4) | hex2value(c);
         if (hex_type == 0)
-          sc0.setColor(sc0.getFgColor(), hex_value);
+          sc0.setColor(sc0.getFgColor(), csp.fromIndexed((ipixel_t)hex_value));
         else if (hex_type == 1)
-          sc0.setColor(hex_value, sc0.getBgColor());
+          sc0.setColor(csp.fromIndexed((ipixel_t)hex_value), sc0.getBgColor());
         else
           sc0.putch(hex_value, lazy);
 
@@ -609,6 +609,7 @@ Changes the foreground and background color for text output.
 ***/
 void Basic::icolor() {
   int32_t fc,  bgc = 0;
+  // XXX: allow 32-bit colors
   if ( getParam(fc, 0, 255, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
@@ -617,11 +618,11 @@ void Basic::icolor() {
       ++cip;
       int32_t cc;
       if (getParam(cc, 0, 255, I_NONE)) return;
-      sc0.setCursorColor(cc);
+      sc0.setCursorColor(csp.fromIndexed((ipixel_t)cc));
     }
   }
   // 文字色の設定
-  sc0.setColor((uint16_t)fc, (uint16_t)bgc);
+  sc0.setColor(csp.fromIndexed((ipixel_t)fc), csp.fromIndexed((ipixel_t)bgc));
 }
 
 /***bf scr CSIZE
@@ -807,7 +808,7 @@ num_t BASIC_INT Basic::npoint() {
   if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
   if ( getParam(y, 0, vs23.lastLine()-1, I_NONE) ) return 0;
   if (checkClose()) return 0;
-  return vs23.getPixel(x,y);
+  return (num_t)(PIXEL_TYPE)vs23.getPixel(x,y);
 }
 
 /***bc pix GPRINT
@@ -989,4 +990,3 @@ void Basic::iblit() {
     
   vs23.MoveBlock(x, y, dx, dy, w, h, dir);
 }
-
