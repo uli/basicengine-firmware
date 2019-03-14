@@ -51,7 +51,7 @@ uint8_t                                         mcurses_is_up = 0;              
 uint8_t                                    	mcurses_cury = 0xff;            // current y position of cursor, public (getyx())
 uint8_t                                    	mcurses_curx = 0xff;            // current x position of cursor, public (getyx())
 
-uint8_t start_fg, start_bg;
+pixel_t start_fg, start_bg;
 
 static uint_fast8_t mcurses_attr = 0;                    // current attributes
 static uint8_t *attrs;
