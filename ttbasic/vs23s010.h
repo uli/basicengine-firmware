@@ -82,9 +82,9 @@ class VS23S010 : public BGEngine {
       return m_pal;
     }
 
-    void setPixel(uint16_t x, uint16_t y, uint8_t c);
+    void setPixel(uint16_t x, uint16_t y, pixel_t c);
     void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
-    uint8_t getPixel(uint16_t x, uint16_t y);
+    pixel_t getPixel(uint16_t x, uint16_t y);
 
     int numModes();
     void setColorSpace(uint8_t palette);

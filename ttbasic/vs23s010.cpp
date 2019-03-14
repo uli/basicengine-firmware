@@ -63,16 +63,16 @@ uint16_t ICACHE_RAM_ATTR VS23S010::currentLine() {
     return cl;
 }
 
-void GROUP(basic_vs23) VS23S010::setPixel(uint16_t x, uint16_t y, uint8_t c)
+void GROUP(basic_vs23) VS23S010::setPixel(uint16_t x, uint16_t y, pixel_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
-uint8_t GROUP(basic_vs23) VS23S010::getPixel(uint16_t x, uint16_t y)
+pixel_t GROUP(basic_vs23) VS23S010::getPixel(uint16_t x, uint16_t y)
 {
   uint32_t byteaddress = pixelAddr(x, y);
-  return SpiRamReadByte(byteaddress);
+  return (pixel_t)SpiRamReadByte(byteaddress);
 }
 
 void VS23S010::adjust(int16_t cnt)
@@ -744,8 +744,8 @@ void GROUP(basic_vs23) VS23S010::updateBg()
         lines[3] = currentLine();
 #endif
 
-      uint8_t bbuf[MAX_SPRITE_W];
-      uint8_t sbuf[MAX_SPRITE_W];
+      pixel_t bbuf[MAX_SPRITE_W];
+      pixel_t sbuf[MAX_SPRITE_W];
 
 #ifndef DISABLE_SPRITE_DRAW
       for (int sn = 0; sn < MAX_SPRITES; ++sn) {
@@ -807,7 +807,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
               continue;
 
             uint32_t sa = spr_addr + sy*m_pitch;	// line to draw to
-            uint8_t *sb;				// what to draw
+            pixel_t *sb;				// what to draw
             if (sl->type == LINE_BROKEN) {
               // Copy sprite data to SPI send buffer so it can be masked.
               os_memcpy(sbuf, sl->pixels + sl->off, sl->len);
@@ -831,7 +831,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
               // that there is an occasional corrupted byte, which will
               // be corrected in the next frame.
               setSpiClockRead();
-              SpiRamReadBytesFast(sa, bbuf, width);
+              SpiRamReadBytesFast(sa, (uint8_t *)bbuf, width);
               setSpiClock(spi_clock_default);
 
               for (int p = 0; p < width; ++p) {
@@ -840,7 +840,7 @@ void GROUP(basic_vs23) VS23S010::updateBg()
               }
             }
 
-            SpiRamWriteBytesFast(sa, sb, width);
+            SpiRamWriteBytesFast(sa, (uint8_t *)sb, width);
           }
         } else {
           int w = s->p.w;
@@ -932,7 +932,7 @@ struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_p
   if (!smem)
     return NULL;
   struct sprite_pattern *pat = (struct sprite_pattern *)smem;
-  uint8_t *pix = (uint8_t *)smem + p->h * sizeof(struct sprite_line) + sizeof(struct sprite_pattern);
+  pixel_t *pix = (pixel_t *)smem + p->h * sizeof(struct sprite_line) + sizeof(struct sprite_pattern);
   for (int i = 0; i < p->h; ++i)
     pat->lines[i].pixels = pix + i * p->w;
   pat->ref = 1;
@@ -1029,11 +1029,11 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     else
       pline = sy;
 
-    SpiRamReadBytes(tile_addr + pline*m_pitch, p->pixels, s->p.w);
+    SpiRamReadBytes(tile_addr + pline*m_pitch, (uint8_t *)p->pixels, s->p.w);
 
     if (s->p.flip_x) {
       for (int i = 0; i < s->p.w / 2; ++i) {
-        uint8_t tmp = p->pixels[s->p.w - 1 - i];
+        pixel_t tmp = p->pixels[s->p.w - 1 - i];
         p->pixels[s->p.w - 1 - i] = p->pixels[i];
         p->pixels[i] = tmp;
       }
@@ -1043,7 +1043,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     p->len = s->p.w;
     p->type = LINE_SOLID;
 
-    uint8_t *pp = p->pixels;
+    pixel_t *pp = p->pixels;
     while (p->len && *pp == s->p.key) {
       solid_block = false;
       ++pp;
