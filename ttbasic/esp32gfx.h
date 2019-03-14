@@ -47,6 +47,9 @@ public:
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     m_pixels[y][x] = c;
   }
+  inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
+    setPixel(x, y, (pixel_t)c);
+  }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return m_pixels[y][x];
@@ -73,6 +76,13 @@ public:
   inline void writeBytes(uint32_t address, uint8_t *data, uint32_t len) {
     memcpy((void *)address, data, len);
   }
+  inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
+    writeBytes(address, (uint8_t *)data, len * sizeof(pixel_t));
+  }
+  inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+    writeBytes(address, (uint8_t *)data, len);
+  }
+
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
     return (uint32_t)&m_pixels[y][x];
   }
