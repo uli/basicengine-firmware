@@ -8,11 +8,17 @@
 
 class Colorspace {
 public:
-    static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
-    uint8_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
-    inline uint8_t colorFromRgb(uint8_t *c) {
+    pixel_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
+    inline pixel_t colorFromRgb(uint8_t *c) {
       return colorFromRgb(c[0], c[1], c[2]);
     }
+
+    static void setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup);
+    ipixel_t indexedColorFromRgb(uint8_t r, uint8_t g, uint8_t b);
+    inline ipixel_t indexedColorFromRgb(uint8_t *c) {
+      return indexedColorFromRgb(c[0], c[1], c[2]);
+    }
+
     inline void setColorSpace(uint8_t palette) {
       m_colorspace = palette;
     }
@@ -24,7 +30,7 @@ public:
     pixel_t fromIndexed(ipixel_t c);
 
 private:
-    uint8_t colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);
+    ipixel_t indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b);
 
     uint8_t m_colorspace;
 };

@@ -86,7 +86,7 @@ struct color_cache_state color_cache_state;
 
 struct color_cache {
   uint8_t r, g, b;
-  uint8_t col;
+  ipixel_t col;
 };
 struct color_cache color_cache[COLOR_CACHE_SIZE];
 
@@ -105,7 +105,7 @@ void Colorspace::setColorConversion(int yuvpal, int h_weight, int s_weight, int 
   clear_color_cache();
 }
 
-uint8_t Colorspace::colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
+ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
 {
   int h, s, v;
   uint8_t best = 0;
@@ -153,7 +153,7 @@ uint8_t Colorspace::colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
 
     if (_r == r && _g == g && b == _b) {
       dbg_col("exact match rgb %d %d %d\n", r, g, b);
-      return i;
+      return (ipixel_t)i;
     }
 
     rgb_to_hsv(_r, _g, _b, &_h, &_s, &_v);
@@ -185,11 +185,11 @@ uint8_t Colorspace::colorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
   cache_entry->r = r;
   cache_entry->g = g;
   cache_entry->b = b;
-  cache_entry->col = best;
-  return best;
+  cache_entry->col = (ipixel_t)best;
+  return (ipixel_t)best;
 }
 
-uint8_t ICACHE_RAM_ATTR Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
+ipixel_t ICACHE_RAM_ATTR Colorspace::indexedColorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 {
   uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
   struct color_cache *cache_entry = &color_cache[cache_hash];
@@ -197,7 +197,7 @@ uint8_t ICACHE_RAM_ATTR Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b
     dbg_col("cache hit %d %d %d\n", r, g, b);
     return cache_entry->col;
   }
-  return colorFromRgbSlow(r, g, b);
+  return indexedColorFromRgbSlow(r, g, b);
 }
 
 uint8_t *Colorspace::paletteData(uint8_t colorspace)
@@ -208,11 +208,19 @@ uint8_t *Colorspace::paletteData(uint8_t colorspace)
 pixel_t Colorspace::fromIndexed(ipixel_t c)
 {
   if (sizeof(pixel_t) == sizeof(ipixel_t))
-    return c;
+    return (pixel_t)c;
   else {
     const palette *p = pals[m_colorspace];
-    return p[c].r << 16 | p[c].g << 8 | p[c].b;
+    return (pixel_t)(p[c].r << 16 | p[c].g << 8 | p[c].b);
   }
+}
+
+pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
+{
+  if (sizeof(pixel_t) == sizeof(ipixel_t))
+    return (pixel_t)indexedColorFromRgb(r, g, b);
+  else
+    return (pixel_t)(r << 16 | g << 8 | b);
 }
 
 Colorspace csp;
