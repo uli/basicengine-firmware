@@ -76,7 +76,7 @@ public:
   }
 
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
-    memcpy((pixel_t *)address, data, len);
+    memcpy((pixel_t *)address, data, len * sizeof(pixel_t));
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
     pixel_t *pa = (pixel_t *)address;
