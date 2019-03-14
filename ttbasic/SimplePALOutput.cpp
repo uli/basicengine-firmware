@@ -159,8 +159,8 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
 
 // retrieve pixels (even/odd line)
 #define PIX() \
-  uint8_t px0 = *pixels0++; \
-  uint8_t px1 = *pixels1++;
+  pixel_t px0 = *pixels0++; \
+  pixel_t px1 = *pixels1++;
 
 // calculate Y (even/odd lines separate) and UV (even/odd lines mixed)
 #define YUV() \
@@ -191,15 +191,15 @@ const struct video_mode_t ESP32GFX::modes_pal[SPO_NUM_MODES] PROGMEM = {
   line[1][j + (off)] = y1 + u ## wave - v ## wave;
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
-  const struct video_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, pixel_t **frame)
 {
   sendSync1(mode->top);
 
   //image
   for(int i = 0; i < mode->y; i += 2)
   {
-    uint8_t *pixels0 = frame[i];
-    uint8_t *pixels1 = frame[i + 1];
+    pixel_t *pixels0 = frame[i];
+    pixel_t *pixels1 = frame[i + 1];
     int j = mode->left;
     for(int x = 0; x < mode->x * 2; x += 2)
     {
@@ -222,15 +222,15 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame(
 }
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
-  const struct video_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, pixel_t **frame)
 {
   sendSync1(mode->top);
 
   //image
   for(int i = 0; i < mode->y; i += 2)
   {
-    uint8_t *pixels0 = frame[i];
-    uint8_t *pixels1 = frame[i + 1];
+    pixel_t *pixels0 = frame[i];
+    pixel_t *pixels1 = frame[i + 1];
     int j = mode->left;
     for(int x = 0; x < mode->x; x += 2)
     {
@@ -258,15 +258,15 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame1ppc(
 }
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
-  const struct video_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, pixel_t **frame)
 {
   sendSync1(mode->top);
 
   //image
   for(int i = 0; i < mode->y; i += 2)
   {
-    uint8_t *pixels0 = frame[i];
-    uint8_t *pixels1 = frame[i + 1];
+    pixel_t *pixels0 = frame[i];
+    pixel_t *pixels1 = frame[i + 1];
     int j = mode->left;
     for(int x = 0; x < mode->x * 4; x += 4)
     {
@@ -295,15 +295,15 @@ void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame4ppc(
 }
 
 void __attribute__((optimize("O3"))) SimplePALOutput::sendFrame2pp5c(
-  const struct video_mode_t *mode, uint8_t **frame)
+  const struct video_mode_t *mode, pixel_t **frame)
 {
   sendSync1(mode->top);
 
   //image
   for(int i = 0; i < mode->y; i += 2)
   {
-    uint8_t *pixels0 = frame[i];
-    uint8_t *pixels1 = frame[i + 1];
+    pixel_t *pixels0 = frame[i];
+    pixel_t *pixels1 = frame[i + 1];
     int j = mode->left;
     for(int x = 0; x < mode->x * 5 / 2; x += 10)
     {

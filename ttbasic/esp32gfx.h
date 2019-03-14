@@ -44,11 +44,11 @@ public:
   void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {}
   inline uint16_t borderWidth() { return 42; }
 
-  inline void setPixel(uint16_t x, uint16_t y, uint8_t c) {
+  inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     m_pixels[y][x] = c;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
-  inline uint8_t getPixel(uint16_t x, uint16_t y) {
+  inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return m_pixels[y][x];
   }
 
@@ -86,7 +86,7 @@ private:
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
 
-  uint8_t **m_pixels;
+  pixel_t **m_pixels;
 
   SimplePALOutput m_pal;
 };
