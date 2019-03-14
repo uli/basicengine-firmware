@@ -214,6 +214,12 @@ void tTVscreen::setColor(pixel_t fc, pixel_t bc)
   tv_setcolor(fc, bc);
 }
 
+void tTVscreen::setColorIndexed(ipixel_t fc, ipixel_t bc)
+{
+  tv_setcolor(csp.fromIndexed(fc), csp.fromIndexed(bc));
+}
+
+
 // スクリーン編集
 uint8_t tTVscreen::edit() {
   uint16_t ch;  // 入力文字

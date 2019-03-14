@@ -104,6 +104,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void draw_cls_curs();                             // カーソルの消去
 
     void setColor(pixel_t fc, pixel_t bc);          // 文字色指定
+    void setColorIndexed(ipixel_t fc, ipixel_t bc);
     inline void flipColors() {
       tv_flipcolors();
     }
