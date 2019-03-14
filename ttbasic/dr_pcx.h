@@ -216,7 +216,8 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                         dr_uint8 mask = (1 << (7 - bit));
                         dr_uint8 paletteIndex = (rleValue & mask) >> (7 - bit);
 
-                        vs23.setPixelIndexed(dx + x-ox, dy + y-oy, paletteIndex * 0x0f);
+                        vs23.setPixelIndexed(dx + x-ox, dy + y-oy,
+                                             (ipixel_t)(paletteIndex * 0x0f));
                     }
                 }
             }
@@ -535,9 +536,9 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     if (y >= oy && y < oy+h && x >= ox && x < ox+w && x < pPCX->width) {
                       ipixel_t c;
                       if (paletteMarker == 0x0c) {
-                        c = palette256[rleValue];
+                        c = (ipixel_t)palette256[rleValue];
                       } else {
-                        c = rleValue >> 4;
+                        c = (ipixel_t)(rleValue >> 4);
                       }
                       if (pPCX->mask < 0) {
                         ln[x] = c;
