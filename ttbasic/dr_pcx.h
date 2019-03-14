@@ -546,8 +546,9 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 }
                 if (pPCX->mask < 0 && y >= oy && y < oy+h) {
                   vs23.writeBytes(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
-                  free(ln);
                 }
+                if (pPCX->mask < 0)
+                  free(ln);
             }
             free(palette256);
 
