@@ -103,17 +103,17 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
     void draw_cls_curs();                             // カーソルの消去
 
-    void setColor(uint16_t fc, uint16_t bc);          // 文字色指定
+    void setColor(pixel_t fc, pixel_t bc);          // 文字色指定
     inline void flipColors() {
       tv_flipcolors();
     }
-    inline uint16_t getFgColor() {
+    inline pixel_t getFgColor() {
       return fg_color;
     }
-    inline uint16_t getBgColor() {
+    inline pixel_t getBgColor() {
       return bg_color;
     }
-    inline void setCursorColor(uint8_t cc) {
+    inline void setCursorColor(pixel_t cc) {
       tv_setcursorcolor(cc);
     }
     void beep() {/*addch(0x07);*/};

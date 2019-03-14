@@ -43,8 +43,8 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
   uint8_t c;
   if (enableCursor && flgCur) {
     c = VPEEK(pos_x,pos_y);
-    uint8_t f = VPEEK_FG(pos_x, pos_y);
-    uint8_t b = VPEEK_BG(pos_x, pos_y);
+    pixel_t f = VPEEK_FG(pos_x, pos_y);
+    pixel_t b = VPEEK_BG(pos_x, pos_y);
     tv_write_color(pos_x, pos_y, c?c:32, f, b);  
     tv_drawCurs(x, y);
   } 
@@ -202,14 +202,14 @@ void tTVscreen::show_curs(uint8_t flg) {
 // カーソルの消去
 void tTVscreen::draw_cls_curs() {
   uint8_t c = VPEEK(pos_x,pos_y);
-  uint8_t f = VPEEK_FG(pos_x, pos_y);
-  uint8_t b = VPEEK_BG(pos_x, pos_y);
+  pixel_t f = VPEEK_FG(pos_x, pos_y);
+  pixel_t b = VPEEK_BG(pos_x, pos_y);
   tv_write_color(pos_x, pos_y, c?c:32, f, b);
 }
 	
-void tv_setcolor(uint16_t fc, uint16_t bc);
+void tv_setcolor(pixel_t fc, pixel_t bc);
 
-void tTVscreen::setColor(uint16_t fc, uint16_t bc)
+void tTVscreen::setColor(pixel_t fc, pixel_t bc)
 {
   tv_setcolor(fc, bc);
 }
@@ -224,9 +224,9 @@ uint8_t tTVscreen::edit() {
     ch = get_ch ();
     k = ps2last();
     if (k.CTRL && ch >= KEY_F(1) && ch <= KEY_F(12)) {
-      int hue = 15 + ch - KEY_F(1) + (k.ALT ? 12 : 0);
-      int col = ((hue & 0xf) << 4) | (k.SHIFT ? 10 : 13);
-      setColor(col, sc0.getBgColor());
+      ipixel_t hue = (ipixel_t)(15 + ch - KEY_F(1) + (k.ALT ? 12 : 0));
+      ipixel_t col = (ipixel_t)(((hue & 0xf) << 4) | (k.SHIFT ? 10 : 13));
+      setColor(csp.fromIndexed(col), sc0.getBgColor());
     } else if (k.ALT) {
       if (ch >= 'A' && ch <= '_')
         Insert_char(ch - 64);
@@ -409,8 +409,8 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   for (uint8_t i = 0; i < h; i++) 
     for (uint8_t j=0; j < w; j++) {
       c = VPEEK(x+j,y+i);
-      uint8_t f = VPEEK_FG(x+j, y+i);
-      uint8_t b = VPEEK_BG(x+j, y+i);
+      pixel_t f = VPEEK_FG(x+j, y+i);
+      pixel_t b = VPEEK_BG(x+j, y+i);
       tv_write_color(x+j,y+i, c?c:32, f, b);
     }
 }
