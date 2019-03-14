@@ -131,8 +131,9 @@ void Basic::iflash()
   uint8_t *buf;
   int x, y, count;
   
-  uint8_t col_warn = csp.colorFromRgb(255, 64, 0);
-  uint8_t col_normal = csp.colorFromRgb(255, 255, 255);
+  pixel_t col_warn = csp.colorFromRgb(255, 64, 0);
+  pixel_t col_normal = csp.colorFromRgb(255, 255, 255);
+  pixel_t col_black = csp.colorFromRgb(0, 0, 0);
 
   // Check that there is at least 32k of memory available,
   // just to be on the safe side.
@@ -162,17 +163,17 @@ void Basic::iflash()
   }
 
   newline();
-  sc0.setColor(0, col_warn);
+  sc0.setColor(col_black, col_warn);
   PRINT_P("FIRMWARE UPDATE\n");
-  sc0.setColor(col_normal, 0);
+  sc0.setColor(col_normal, col_black);
 
   newline();
   PRINT_P("Are you absolutely sure you want to overwrite\n"
           "the currently installed firmware\n"
           "with ");
-  sc0.setColor(col_warn, 0);
+  sc0.setColor(col_warn, col_black);
   c_puts(filename.c_str());
-  sc0.setColor(col_normal, 0);
+  sc0.setColor(col_normal, col_black);
   c_putch('?'); newline(); newline();
 
   PRINT_P("If "); c_puts(filename.c_str());
@@ -183,10 +184,10 @@ void Basic::iflash()
           "until you use a serial programmer to restore\n"
           "a working firmware image.\n\n");
 
-  sc0.setColor(col_warn, 0);
+  sc0.setColor(col_warn, col_black);
   PRINT_P("Enter YES to continue, anything else to abort: ");
   get_input();
-  sc0.setColor(col_normal, 0);
+  sc0.setColor(col_normal, col_black);
   if (strcmp(lbuf, "YES")) {
     PRINT_P("Aborting.\n");
     goto out;
@@ -233,9 +234,9 @@ void Basic::iflash()
   success = Update.end();
   if (success) {
     PRINT_P("Staging update successful.\n\n");
-    sc0.setColor(col_warn, 0);
+    sc0.setColor(col_warn, col_black);
     PRINT_P("Writing update to flash.\n");
-    sc0.setColor(0, col_warn);
+    sc0.setColor(col_black, col_warn);
     PRINT_P("DO NOT RESET OR POWER OFF!\n");
 #ifdef ESP8266_NOWIFI
     // SDKnoWiFi does not have system_restart*(). The only working
