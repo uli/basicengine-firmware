@@ -216,7 +216,7 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                         dr_uint8 mask = (1 << (7 - bit));
                         dr_uint8 paletteIndex = (rleValue & mask) >> (7 - bit);
 
-                        vs23.setPixel(dx + x-ox, dy + y-oy, paletteIndex * 0x0f);
+                        vs23.setPixelIndexed(dx + x-ox, dy + y-oy, paletteIndex * 0x0f);
                     }
                 }
             }
@@ -511,6 +511,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     return DR_FALSE;
                 }
                 // Convert to YUV422
+                // XXX: Needless loss of quality on platforms with 32-bit colorspace
                 for (int i = 0; i < 256; ++i) {
                   palette256[i] = csp.colorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
                 }
@@ -521,9 +522,9 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
-                uint8_t *ln = 0;
+                ipixel_t *ln = 0;
                 if (pPCX->mask < 0)
-                  ln = (uint8_t *)malloc(pPCX->header.bytesPerLine);
+                  ln = (ipixel_t *)malloc(pPCX->header.bytesPerLine);
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
                     if (rleCount == 0) {
@@ -532,7 +533,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     rleCount -= 1;
 
                     if (y >= oy && y < oy+h && x >= ox && x < ox+w && x < pPCX->width) {
-                      uint8_t c;
+                      ipixel_t c;
                       if (paletteMarker == 0x0c) {
                         c = palette256[rleValue];
                       } else {
@@ -541,11 +542,11 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                       if (pPCX->mask < 0) {
                         ln[x] = c;
                       } else if (c != pPCX->mask)
-                        vs23.setPixel(dx + x-ox, dy + y-oy, c);
+                        vs23.setPixelIndexed(dx + x-ox, dy + y-oy, c);
                     }
                 }
                 if (pPCX->mask < 0 && y >= oy && y < oy+h) {
-                  vs23.writeBytes(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
+                  vs23.setPixelsIndexed(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
                 }
                 if (pPCX->mask < 0)
                   free(ln);
@@ -585,15 +586,18 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   dr_uint32 x;
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
                   if (pPCX->mask < 0) {
+                    // XXX: Needless loss of quality on platforms with 32-bit colorspace
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       pRow_[x-ox] = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                     }
-                    vs23.writeBytes(vs23.pixelAddr(dx, dy+y-oy), pRow_, x-ox);
+                    vs23.setPixelsIndexed(vs23.pixelAddr(dx, dy+y-oy), (ipixel_t *)pRow_, x-ox);
                   } else {
                     for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                      uint8_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
-                      if (pPCX->mask < 0 || c != pPCX->mask)
+                      ipixel_t ci = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
+                      if (pPCX->mask < 0 || ci != pPCX->mask) {
+                        pixel_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                         vs23.setPixel(dx+x, dy+y-oy, c);
+                      }
                     }
                   }
                 }
