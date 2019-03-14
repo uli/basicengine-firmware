@@ -23,7 +23,7 @@ public:
   inline void setColorSpace(uint8_t palette) {
     uint8_t *pal = csp.paletteData(palette);
     for (int i = 0; i < 256; ++i) {
-      m_current_palette[i] = (pal[i*3] << 16) | (pal[i*3+1] << 8) | pal[i*3+2];
+      m_current_palette[i] = (pixel_t)((pal[i*3] << 16) | (pal[i*3+1] << 8) | pal[i*3+2]);
     }
     Video::setColorSpace(palette);
   }
@@ -46,11 +46,14 @@ public:
   void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {}
   inline uint16_t borderWidth() { return 42; }
 
-  inline void setPixel(uint16_t x, uint16_t y, uint8_t c) {
+  inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
+    m_pixels[y][x] = c;
+  }
+  inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
     m_pixels[y][x] = m_current_palette[c];
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
-  inline uint8_t getPixel(uint16_t x, uint16_t y) {
+  inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return m_pixels[y][x];
   }
 
@@ -72,11 +75,15 @@ public:
   void setSpiClockMax() {
   }
 
-  inline void writeBytes(uint32_t address, uint8_t *data, uint32_t len) {
-    uint32_t *pa = (uint32_t *)address;
+  inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
+    memcpy((pixel_t *)address, data, len);
+  }
+  inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+    pixel_t *pa = (pixel_t *)address;
     for (uint32_t i = 0; i < len; ++i)
       *pa++ = m_current_palette[*data++];
   }
+
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
     return (uint32_t)&m_pixels[y][x];
   }
@@ -90,9 +97,9 @@ private:
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
 
-  uint32_t **m_pixels;
+  pixel_t **m_pixels;
   
-  uint32_t m_current_palette[256];
+  pixel_t m_current_palette[256];
 };
 
 extern H3GFX vs23;
