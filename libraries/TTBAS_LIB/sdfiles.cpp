@@ -226,21 +226,23 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint64_t total_size = 0;
   UnifileString fname;
 
-  Unifile dir = Unifile::openDir(_dir);
+  DIR *dir = opendir(_dir);
 
   if (dir) {
     while (true) {
-      auto next = dir.next();
+      dirent *next = readdir(dir);
       if (!next)
         break;
-      fname = next.name;
+      fname = next->d_name;
       len = fname.length();
       if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
-        putnum(next.size, 10); c_putch(' ');
-        total_size += next.size;
-        if (next.is_directory) {
+        struct stat st;
+        stat((BString(_dir) + BString(F("/")) + fname).c_str(), &st);
+        putnum(st.st_size, 10); c_putch(' ');
+        total_size += st.st_size;
+        if (next->d_type == DT_DIR) {
           c_puts(fname.c_str());
           c_puts("*");
           len++;
@@ -253,7 +255,7 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
         cnt++;
       }
     }
-    dir.close();
+    closedir(dir);
   } else {
     rc = SD_ERR_OPEN_FILE;
   }
