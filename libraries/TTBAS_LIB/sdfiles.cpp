@@ -640,32 +640,32 @@ uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
 
 uint8_t sdfiles::fcopy(const char *srcp, const char *dstp)
 {
-  Unifile src = Unifile::open(srcp, UFILE_READ);
+  FILE *src = fopen(srcp, "r");
   if (!src)
     return SD_ERR_OPEN_FILE;
-  Unifile dst = Unifile::open(dstp, UFILE_OVERWRITE);
+  FILE *dst = fopen(dstp, "w");
   if (!dst) {
-    src.close();
+    fclose(src);
     return SD_ERR_OPEN_FILE;
   }
   uint8_t rc = 0;
   char buf[COPY_BUFFER_SIZE];
   for (;;) {
-    ssize_t redd = src.read(buf, COPY_BUFFER_SIZE);
-    if (redd < 0) {
+    size_t redd = fread(buf, 1, COPY_BUFFER_SIZE, src);
+    if (redd == 0 && ferror(src)) {
       rc = SD_ERR_READ_FILE;
       goto out;
     } else if (redd == 0)
       break;
 
-    if (dst.write(buf, redd) != redd) {
+    if (fwrite(buf, 1, redd, dst) != redd) {
       rc = SD_ERR_WRITE_FILE;
       goto out;
     }
   }
 out:
-  src.close();
-  dst.close();
+  fclose(src);
+  fclose(dst);
   return rc;
 }
 
