@@ -202,4 +202,11 @@ int stat(const char *pathname, struct stat *buf)
   return 0;
 }
 
+extern sdfiles bfs;
+int mkdir(const char *pathname, mode_t mode)
+{
+  (void)mode;
+  return bfs.mkdir(pathname);
+}
+
 #endif

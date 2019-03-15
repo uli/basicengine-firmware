@@ -56,6 +56,8 @@ struct stat {
 
 int stat(const char *pathname, struct stat *buf);
 
+int mkdir(const char *pathname, mode_t mode);
+
 #ifdef __cplusplus
 }
 #endif
