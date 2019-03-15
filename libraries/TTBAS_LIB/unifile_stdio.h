@@ -18,6 +18,7 @@ FILE *_fopen(const char *path, const char *mode);
 int _fclose(FILE *stream);
 size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
+int _fputs(const char *s, FILE *stream);
 int _fseek(FILE *stream, int offset, int whence);
 int _feof(FILE *stream);
 int _getc(FILE *stream);
@@ -63,6 +64,7 @@ int stat(const char *pathname, struct stat *buf);
 #define fclose _fclose
 #define fread _fread
 #define fwrite _fwrite
+#define fputs _fputs
 #define fseek _fseek
 #define feof _feof
 #undef getc

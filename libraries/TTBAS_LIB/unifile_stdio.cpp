@@ -50,6 +50,15 @@ size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
   return ret / size;
 }
 
+int _fputs(const char *s, FILE *stream)
+{
+  size_t len = strlen(s);
+  if (fwrite(s, 1, len, stream) == len)
+    return 0;
+  else
+    return -1;
+}
+
 int _fseek(FILE *stream, int offset, int whence) {
   Unifile *f = (Unifile *)stream;
   bool ret;
