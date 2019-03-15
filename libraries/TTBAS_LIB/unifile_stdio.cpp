@@ -1,4 +1,7 @@
 #include "../../ttbasic/ttconfig.h"
+
+#ifdef UNIFILE_STDIO
+
 #include "sdfiles.h"
 #include <errno.h>
 
@@ -150,3 +153,5 @@ int rename(const char *oldpath, const char *newpath)
 }
 
 }
+
+#endif
