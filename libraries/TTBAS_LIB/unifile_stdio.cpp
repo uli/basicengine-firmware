@@ -209,4 +209,9 @@ int mkdir(const char *pathname, mode_t mode)
   return bfs.mkdir(pathname);
 }
 
+int rmdir(const char *pathname)
+{
+  return bfs.rmdir((char *)pathname);
+}
+
 #endif
