@@ -98,4 +98,39 @@ void _clearerr(FILE *stream)
   // XXX: stream status unimplemented
 }
 
+DIR *opendir(const char *name)
+{
+  Unifile *d = new Unifile;
+  *d = Unifile::openDir(name);
+  if (!*d) {
+    delete d;
+    return NULL;
+  }
+  return (DIR *)d;
+}
+
+int closedir(DIR *dir)
+{
+  Unifile *d = (Unifile *)dir;
+  d->close();
+  delete d;
+  return 0;
+}
+
+struct dirent *readdir(DIR *dir)
+{
+  static struct dirent de;
+  Unifile *d = (Unifile *)dir;
+
+  auto ude = d->next();
+  if (!ude)
+    return NULL;
+
+  de.d_type = ude.is_directory ? DT_DIR : DT_REG;
+  memset(de.d_name, 0, sizeof(de.d_name));
+  strncpy(de.d_name, ude.name.c_str(), sizeof(de.d_name) - 1);
+  
+  return &de;
+}
+
 }

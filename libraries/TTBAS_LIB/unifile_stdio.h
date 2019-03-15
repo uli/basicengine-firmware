@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+typedef void DIR;
+
 FILE *_fopen(const char *path, const char *mode);
 int _fclose(FILE *stream);
 size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
@@ -19,6 +21,18 @@ int _ungetc(int c, FILE *stream);
 int _fflush(FILE *stream);
 int _ferror(FILE *stream);
 void _clearerr(FILE *stream);
+
+struct dirent {
+	unsigned char d_type;
+	char d_name[64];       /* filename */
+};
+
+#define DT_DIR	4
+#define DT_REG	8
+
+DIR *opendir(const char *name);
+int closedir(DIR *dir);
+struct dirent *readdir(DIR *dir);
 
 #ifdef __cplusplus
 }
