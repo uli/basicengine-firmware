@@ -55,24 +55,24 @@ void AZIP::open_story( const char *game_name )
     int16_t count;
     uint32_t pos = 0;
     BString memory_name(F("MEMORY.DAT"));
-    Unifile game_in;
+    FILE *game_in;
 
-    if (!(game = Unifile::open( memory_name.c_str(), UFILE_OVERWRITE )))
+    if (!(game = fopen( memory_name.c_str(), "w" )))
     {
         fatal(PSTR("cannot open mem\n"));
     }
 
-    if ( game_in = Unifile::open( game_name, UFILE_READ ) )
+    if ( game_in = fopen( game_name, "r" ) )
     {
-        game_in.seekSet(0);
-        while ( ( count = game_in.read( (char *)stack, sizeof(stack)) ) > 0 )
+        fseek(game_in, 0, SEEK_SET);
+        while ( ( count = fread( (char *)stack, 1, sizeof(stack), game_in ) ) > 0 )
         {
-            game.write( (char *)stack, count);
+            fwrite( (char *)stack, 1, count, game );
             pos += count;
         }
 
-        game_in.close();
-        game.sync();    // avoids file system errors if azip isn't properly exited
+        fclose(game_in);
+        fflush(game);    // avoids file system errors if azip isn't properly exited
         return;
     }
     fatal(PSTR("nopen game"));
@@ -89,8 +89,8 @@ void AZIP::open_story( const char *game_name )
 void AZIP::flush_block(int i) {
     struct cache_block *cb = &cache_blocks[i];
     if (cb->dirty) {
-        game.seekSet(cb->addr);
-        game.write((char *)cb->mem, 512);
+        fseek(game, cb->addr, SEEK_SET);
+        fwrite((char *)cb->mem, 1, 512, game);
         cb->dirty = false;
     }
 }
@@ -102,7 +102,7 @@ void AZIP::close_story( void )
     {
         for (int i = 0; i < CACHE_BLOCKS; ++i)
             flush_block(i);
-        game.close( );
+        fclose(game);
     }
 
 }                               /* close_story */
@@ -118,7 +118,11 @@ void AZIP::close_story( void )
 unsigned int AZIP::get_story_size( void )
 {
 
-    return game.fileSize( );
+    long now = ftell(game);
+    fseek(game, 0, SEEK_END);
+    long end = ftell(game);
+    fseek(game, now, SEEK_SET);
+    return end;
 
 }                               /* get_story_size */
 
@@ -213,7 +217,8 @@ int AZIP::get_file_name( char *file_name, char *default_name, int flag )
 
     if ( flag == GAME_SAVE || flag == GAME_SCRIPT || flag == GAME_RECORD || flag == GAME_SAVE_AUX )
     {
-        if ( Unifile::exists( file_name ) ) {
+        struct stat st;
+        if ( stat( file_name, &st ) == 0 ) {
             /* If it succeeded then prompt to overwrite */
 
             write_string( PSTR("You are about to write over an existing file.\n") );
@@ -251,7 +256,7 @@ int AZIP::get_file_name( char *file_name, char *default_name, int flag )
 
 int AZIP::save_restore( const char *file_name, int flag )
 {
-    Unifile tfp;
+    FILE *tfp;
 
     int scripting_flag = 0, status = 0;
 
@@ -259,7 +264,7 @@ int AZIP::save_restore( const char *file_name, int flag )
 
     if ( flag == GAME_SAVE || flag == GAME_RESTORE )
     {
-        if ( !( tfp = Unifile::open( file_name, ( flag == GAME_SAVE ) ? UFILE_OVERWRITE : UFILE_READ ) ) )
+        if ( !( tfp = fopen( file_name, ( flag == GAME_SAVE ) ? "w" : "r" ) ) )
         {
             write_string( PSTR("Cannot open SAVE file ") ); write_string(file_name); newline();
             return ( 1 );
@@ -280,12 +285,12 @@ int AZIP::save_restore( const char *file_name, int flag )
 
     if ( flag == GAME_SAVE )
     {
-        if ( status == 0 && tfp.write( (char *)stack, sizeof ( stack ) ) != sizeof ( stack ) )
+        if ( status == 0 && fwrite( (char *)stack, 1, sizeof ( stack ), tfp ) != sizeof ( stack ) )
             status = 1;
     }
     else if ( flag == GAME_RESTORE )
     {
-        if ( status == 0 && tfp.read( (char *)stack, sizeof ( stack ) ) != sizeof ( stack ) )
+        if ( status == 0 && fread( (char *)stack, 1, sizeof ( stack ), tfp ) != sizeof ( stack ) )
             status = 1;
     }
 
@@ -308,7 +313,7 @@ int AZIP::save_restore( const char *file_name, int flag )
     {
         if ( status == 0 ) {
             for (int i = 0; i < h_restart_size; ++i) {
-                if ( tfp.write( get_byte( i ) ) < 0 ) {
+                if ( putc( get_byte( i ), tfp ) < 0 ) {
                     status = 1;
                     break;
                 }
@@ -319,7 +324,7 @@ int AZIP::save_restore( const char *file_name, int flag )
     {
         if ( status == 0 ) {
             for (int i = 0; i < h_restart_size; ++i) {
-                int c = tfp.read();
+                int c = getc(tfp);
                 if (c < 0) {
                     status = 1;
                     break;
@@ -334,7 +339,7 @@ int AZIP::save_restore( const char *file_name, int flag )
 
     if ( flag == GAME_SAVE )
     {
-        tfp.close();
+        fclose(tfp);
         if ( scripting_flag )
         {
             set_word( H_FLAGS, get_word( H_FLAGS ) | SCRIPTING_FLAG );
@@ -342,7 +347,7 @@ int AZIP::save_restore( const char *file_name, int flag )
     }
     else if ( flag == GAME_RESTORE )
     {
-        tfp.close();
+        fclose(tfp);
         restart_screen(  );
         restart_interp( scripting_flag );
     }
@@ -354,7 +359,7 @@ int AZIP::save_restore( const char *file_name, int flag )
         if ( flag == GAME_SAVE )
         {
             write_string( PSTR("Write to SAVE file failed\n") );
-            Unifile::remove( file_name );
+            remove( file_name );
         }
         else
         {
@@ -418,7 +423,7 @@ int AZIP::z_save( int argc, zword_t table, zword_t bytes, zword_t name )
 {
     char new_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
     char default_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
-    Unifile afp;
+    FILE *afp;
 
     int status = 0;
 
@@ -430,19 +435,19 @@ int AZIP::z_save( int argc, zword_t table, zword_t bytes, zword_t name )
             goto finished;
         }
 
-        if ( !( afp = Unifile::open( new_name, UFILE_OVERWRITE ) ) )
+        if ( !( afp = fopen( new_name, "w" ) ) )
         {
             goto finished;
         }
 
         for (int i = 0; i < bytes; ++i) {
-            if ( afp.write( get_byte( i + table ) ) < 0) {
+            if ( putc( get_byte( i + table ), afp ) < 0) {
                 status = 1;
                 break;
             }
         }
 
-        afp.close();
+        fclose(afp);
 
         if ( status == 0 )
         {
@@ -497,7 +502,7 @@ int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
 {
     char new_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
     char default_name[Z_FILENAME_MAX + Z_PATHNAME_MAX + 1];
-    Unifile afp;
+    FILE *afp;
 
     int status;
 
@@ -511,13 +516,13 @@ int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
             goto finished;
         }
 
-        if ( !( afp = Unifile::open( new_name, UFILE_READ ) ) )
+        if ( !( afp = fopen( new_name, "r" ) ) )
         {
             goto finished;
         }
 
         for (int i = 0; i < bytes; ++i) {
-            int c = afp.read();
+            int c = getc(afp);
             if ( c < 0 ) {
                 status = 1;
                 break;
@@ -526,7 +531,7 @@ int AZIP::z_restore( int argc, zword_t table, zword_t bytes, zword_t name )
             }
         }
 
-        afp.close();
+        fclose(afp);
 
         if ( status == 0 )
         {
@@ -634,8 +639,8 @@ struct cache_block *AZIP::fetch_block(unsigned long addr)
     flush_block(bl);
     struct cache_block *cb = &cache_blocks[bl];
     cb->addr = addr / 512 * 512;
-    game.seekSet( cb->addr );
-    game.read((char *)cb->mem, 512);
+    fseek(game, cb->addr, SEEK_SET);
+    fread((char *)cb->mem, 1, 512, game);
     return cb;
 }
 

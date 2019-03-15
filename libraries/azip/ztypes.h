@@ -520,7 +520,7 @@ private:
   ZINT16 dictionary_size;
   unsigned int entry_size;
 
-  Unifile game;
+  FILE *game;
 
   struct cache_block *cache_blocks;
 
