@@ -241,11 +241,11 @@ void loadConfig() {
   CONFIG.cursor_color = csp.colorFromRgb(0, 149, 0);
   CONFIG.beep_volume = 15;
   
-  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), UFILE_READ);
+  FILE *f = fopen(BString(F(CONFIG_FILE)).c_str(), "r");
   if (!f)
     return;
-  f.read((char *)&CONFIG, sizeof(CONFIG));
-  f.close();
+  fread((char *)&CONFIG, 1, sizeof(CONFIG), f);
+  fclose(f);
 }
 
 /***bc sys SAVE CONFIG
@@ -256,10 +256,10 @@ The configuration will be saved as a file under the name `/flash/.config`.
 \ref CONFIG
 ***/
 void isaveconfig() {
-  Unifile f = Unifile::open(BString(F(CONFIG_FILE)), UFILE_OVERWRITE);
+  FILE *f = fopen(BString(F(CONFIG_FILE)).c_str(), "w");
   if (!f) {
     err = ERR_FILE_OPEN;
   }
-  f.write((char *)&CONFIG, sizeof(CONFIG));
-  f.close();
+  fwrite((char *)&CONFIG, 1, sizeof(CONFIG), f);
+  fclose(f);
 }
