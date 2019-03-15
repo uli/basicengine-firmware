@@ -517,18 +517,22 @@ void	k_again (void)
 
 static int	load (const char *name)
 {
-	Unifile f;
+	FILE *f;
 	int	i;
 
-	f = Unifile::open (name, UFILE_READ);
+	f = fopen (name, "r");
 	if (!f)
 		return error (BString(F("load file \"")) + name + BString(F("\"")));
-	i = f.fileSize();
+	if (fseek (f, 0, SEEK_END))
+		return error (F("seek"));
+	i = ftell (f);
+	if (fseek (f, 0, SEEK_SET))
+		return error (F("seek"));
 	// Filter CR
 	int total = 0;
 	int old_pos = cur_pos;
 	for (int j = 0; j < i; ++j, ++total) {
-		int c = f.read();
+		int c = getc(f);
 		if (c < 0)
 			return error(F("read"));
 		if (c == '\r') {
@@ -539,25 +543,25 @@ static int	load (const char *name)
 			break;
 		text[cur_pos++] = c;
 	}
-	f.close();
+	fclose(f);
 	cur_pos = old_pos;
 	return total;
 }
 
 static int	save (const char *name, int pos, int size)
 {
-	Unifile f;
+	FILE *f;
 
-	f = Unifile::open (name, UFILE_OVERWRITE);
+	f = fopen (name, "w");
 	if (!f)
 		return error (BString(F("save file \"")) + name + BString(F("\"")));
 	for (int i = 0; i < size; ++i) {
 		if (ctx->cr_mode && text[pos + i] == '\n')
-			f.write('\r');
-		if (f.write(text[pos + i]) < 0)
-		return error (F("write"));
+			putc('\r', f);
+		if (putc(text[pos + i], f) < 0)
+			return error (F("write"));
 	}
-	f.close();
+	fclose(f);
 	return 1;
 }
 
