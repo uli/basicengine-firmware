@@ -163,4 +163,20 @@ int rename(const char *oldpath, const char *newpath)
 
 }
 
+int chdir(const char *path)
+{
+  if (Unifile::chDir(path))
+    return 0;
+  else
+    return -1;
+}
+
+char *getcwd(char *buf, size_t size)
+{
+  UnifileString cwd = Unifile::cwd();
+  memset(buf, 0, size);
+  strncpy(buf, cwd.c_str(), size-1);
+  return buf;
+}
+
 #endif

@@ -42,6 +42,9 @@ struct dirent *readdir(DIR *dir);
 int remove(const char *pathname);
 int rename(const char *oldpath, const char *newpath);
 
+int chdir(const char *path);
+char *getcwd(char *buf, size_t size);
+
 #ifdef __cplusplus
 }
 #endif
