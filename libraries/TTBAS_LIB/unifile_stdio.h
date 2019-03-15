@@ -1,4 +1,8 @@
 #include <stdio.h>
+#if defined(UNIFILE_USE_SDFAT) && defined(__cplusplus)
+// messes with our macros, have to include it first
+#include <SdFat.h>
+#endif
 
 #ifndef EOF
 #define EOF (-1)
