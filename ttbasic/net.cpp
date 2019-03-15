@@ -183,7 +183,7 @@ void Basic::inetget() {
   int httpCode = open_url(url);
   if (err)
     return;
-  Unifile f = Unifile::open(file.c_str(), UFILE_OVERWRITE);
+  FILE *f = fopen(file.c_str(), "w");
   if (!f) {
     err = ERR_FILE_OPEN;
     inetclose();
@@ -199,14 +199,14 @@ void Basic::inetget() {
         delay(1);
       } else {
         int count = stream->readBytes(buf, av > 128 ? 128 : av);
-        f.write(buf, count);
+        fwrite(buf, 1, count, f);
         total += count;
       }
     }
   } else {
     E_NETWORK(BString(F("E")) + BString(httpCode));
   }
-  f.close();
+  fclose(f);
   inetclose();
   retval[0] = total;
 }
