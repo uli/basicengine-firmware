@@ -133,4 +133,20 @@ struct dirent *readdir(DIR *dir)
   return &de;
 }
 
+int remove(const char *pathname)
+{
+  if (Unifile::remove(pathname))
+    return 0;
+  else
+    return -1;
+}
+
+int rename(const char *oldpath, const char *newpath)
+{
+  if (Unifile::rename(oldpath, newpath))
+    return 0;
+  else
+    return -1;
+}
+
 }

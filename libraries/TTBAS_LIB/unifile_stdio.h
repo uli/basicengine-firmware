@@ -34,6 +34,9 @@ DIR *opendir(const char *name);
 int closedir(DIR *dir);
 struct dirent *readdir(DIR *dir);
 
+int remove(const char *pathname);
+int rename(const char *oldpath, const char *newpath);
+
 #ifdef __cplusplus
 }
 #endif
