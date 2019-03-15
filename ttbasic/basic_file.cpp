@@ -24,8 +24,8 @@ void SMALL basic_init_file_early() {
   bfs.init(16);		// CS on GPIO16
 #endif
 
-  if (!Unifile::chDir(SD_PREFIX))
-    Unifile::chDir(FLASH_PREFIX);
+  if (chdir(SD_PREFIX))
+    chdir(FLASH_PREFIX);
   else
     bfs.fakeTime();
 }
@@ -246,7 +246,7 @@ void Basic::ichdir() {
   if(!(new_cwd = getParamFname())) {
     return;
   }
-  if (!Unifile::chDir(new_cwd.c_str()))
+  if (chdir(new_cwd.c_str()))
     err = ERR_FILE_OPEN;
 }
 

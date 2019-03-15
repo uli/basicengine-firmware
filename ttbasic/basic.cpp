@@ -5648,7 +5648,8 @@ void SMALL Basic::basic() {
   PRINT_P(" bytes free\n");
 
   PRINT_P("Directory ");
-  c_puts(Unifile::cwd()); newline();
+  char cwd[16];
+  c_puts(getcwd(cwd, 16)); newline();
 
   // XXX: make sound font configurable
   sound.begin();
