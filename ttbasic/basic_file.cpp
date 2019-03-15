@@ -1,6 +1,6 @@
 #include "basic.h"
 
-Unifile *user_files[MAX_USER_FILES];
+FILEDIR user_files[MAX_USER_FILES];
 
 void SMALL basic_init_file_early() {
   // try to mount SPIFFS, ignore failure (do not format)
@@ -62,8 +62,8 @@ Checks whether the end of a file has been reached.
 ***/
 num_t BASIC_INT Basic::neof() {
   int32_t a = get_filenum_param();
-  if (!err)
-    return basic_bool(!user_files[a]->available());
+  if (!err && user_files[a].f)
+    return basic_bool(!feof(user_files[a].f));
   else
     return 0;
 }
@@ -77,9 +77,13 @@ Returns the length of a file in bytes.
 ***/
 num_t BASIC_INT Basic::nlof() {
   int32_t a = get_filenum_param();
-  if (!err)
-    return user_files[a]->fileSize();
-  else
+  if (!err && user_files[a].f) {
+    size_t now = ftell(user_files[a].f);
+    fseek(user_files[a].f, 0, SEEK_END);
+    size_t size = ftell(user_files[a].f);
+    fseek(user_files[a].f, now, SEEK_SET);
+    return size;
+  } else
     return 0;
 }
 
@@ -92,8 +96,8 @@ Returns the current position within a file.
 ***/
 num_t BASIC_INT Basic::nloc() {
   int32_t a = get_filenum_param();
-  if (!err)
-    return user_files[a]->position();
+  if (!err && user_files[a].f)
+    return ftell(user_files[a].f);
   else
     return 0;
 }
@@ -120,18 +124,25 @@ BString Basic::sdir()
 out:
     return BString(F(""));
   }
-  if (!user_files[fnum] || !*user_files[fnum]) {
+  if (!user_files[fnum].d && !user_files[fnum].f) {
     err = ERR_FILE_NOT_OPEN;
     goto out;
   }
-  if (!user_files[fnum]->isDirectory()) {
+  if (!user_files[fnum].d) {
     err = ERR_NOT_DIR;
     goto out;
   }
-  auto dir_entry = user_files[fnum]->next();
-  retval[0] = dir_entry.size;
-  retval[1] = dir_entry.is_directory;
-  return dir_entry.name;
+
+  dirent *dir_entry = readdir(user_files[fnum].d);
+
+  struct stat st;
+  stat((user_files[fnum].dir_name + BString(F("/")) +
+       BString(dir_entry->d_name)).c_str(), &st);
+
+  retval[0] = st.st_size;
+  retval[1] = dir_entry->d_type == DT_DIR;
+
+  return BString(dir_entry->d_name);
 }
 
 /***bf fs INPUT$
@@ -154,7 +165,7 @@ BString Basic::sinput()
   if (*cip == I_SHARP)
     ++cip;
   if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE)) goto out;
-  if (!user_files[fnum] || !*user_files[fnum]) {
+  if (!user_files[fnum].f) {
     err = ERR_FILE_NOT_OPEN;
     goto out;
   }
@@ -162,7 +173,7 @@ BString Basic::sinput()
     err = ERR_OOM;
     goto out;
   }
-  rd = user_files[fnum]->read(value.begin(), len);
+  rd = fread(value.begin(), 1, len, user_files[fnum].f);
   if (rd < 0) {
     err = ERR_FILE_READ;
     goto out;
@@ -220,7 +231,7 @@ void Basic::icmd () {
     return;
   } else
     getParam(redir, 0, MAX_USER_FILES, I_NONE);
-  if (!user_files[redir] || !*user_files[redir]) {
+  if (!user_files[redir].f) {
     err = ERR_FILE_NOT_OPEN;
     if (is_input)
       redirect_input_file = -1;
@@ -258,7 +269,11 @@ Returns the current working directory.
 ***/
 BString Basic::scwd() {
   if (checkOpen() || checkClose()) return BString();
-  return Unifile::cwd();
+  char cwd[64];
+  if (getcwd(cwd, 64))
+    return BString(cwd);
+  else
+    return BString();
 }
 
 /***bc fs OPEN
@@ -278,7 +293,7 @@ OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
 ***/
 void Basic::iopen() {
   BString filename;
-  int flags = UFILE_READ;
+  const char * flags = "r";
   int32_t filenum;
 
   if (!(filename = getParamFname()))
@@ -287,10 +302,10 @@ void Basic::iopen() {
   if (*cip == I_FOR) {
     ++cip;
     switch (*cip++) {
-    case I_OUTPUT:	flags = UFILE_OVERWRITE; break;
-    case I_INPUT:	flags = UFILE_READ; break;
-    case I_APPEND:	flags = UFILE_WRITE; break;
-    case I_DIRECTORY:	flags = -1; break;
+    case I_OUTPUT:	flags = "w"; break;
+    case I_INPUT:	flags = "r"; break;
+    case I_APPEND:	flags = "a"; break;
+    case I_DIRECTORY:	flags = NULL; break;
     default:		SYNTAX_T("exp file mode"); return;
     }
   }
@@ -305,32 +320,29 @@ void Basic::iopen() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
   
-  if (user_files[filenum]) {
-    user_files[filenum]->close();
+  if (user_files[filenum].f) {
+    fclose(user_files[filenum].f);
     if (redirect_output_file == filenum)
       redirect_output_file = -1;
     if (redirect_input_file == filenum)
       redirect_input_file = -1;
-    delete user_files[filenum];
-    user_files[filenum] = NULL;
+    user_files[filenum].f = NULL;
+  } else if (user_files[filenum].d) {
+    closedir(user_files[filenum].d);
+    user_files[filenum].d = NULL;
+    user_files[filenum].dir_name = BString();
   }
 
-  Unifile f;
-  if (flags == -1)
-    f = Unifile::openDir(filename.c_str());
-  else
-    f = Unifile::open(filename, flags);
-  if (!f)
+  FILEDIR f = { NULL, NULL, "" };
+  if (flags == NULL) {
+    f.d = opendir(filename.c_str());
+    char cwd[64];
+    getcwd(cwd, 64);
+    f.dir_name = BString(cwd) + BString(F("/")) + filename;
+  } else
+    f.f = fopen(filename.c_str(), flags);
+  if (!f.f && !f.d)
     err = ERR_FILE_OPEN;
-  else {
-    user_files[filenum] = new Unifile();
-    if (!user_files[filenum]) {
-      err = ERR_OOM;
-      f.close();
-      return;
-    }
-    *user_files[filenum] = f;
-  }
 }
 
 /***bc fs CLOSE
@@ -349,16 +361,20 @@ void Basic::iclose() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
 
-  if (!user_files[filenum] || !*user_files[filenum])
+  if (!user_files[filenum].f && !user_files[filenum].d)
     err = ERR_FILE_NOT_OPEN;
   else {
-    user_files[filenum]->close();
-    if (redirect_output_file == filenum)
-      redirect_output_file = -1;
-    if (redirect_input_file == filenum)
-      redirect_input_file = -1;
-    delete user_files[filenum];
-    user_files[filenum] = NULL;
+    if (user_files[filenum].f) {
+      fclose(user_files[filenum].f);
+      if (redirect_output_file == filenum)
+        redirect_output_file = -1;
+      if (redirect_input_file == filenum)
+        redirect_input_file = -1;
+      user_files[filenum].f = NULL;
+    } else {
+      closedir(user_files[filenum].d);
+      user_files[filenum].d = NULL;
+    }
   }
 }
 
@@ -382,13 +398,18 @@ void Basic::iseek() {
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_COMMA))
     return;
 
-  if (!user_files[filenum] || !*user_files[filenum])
+  if (!user_files[filenum].f)
     err = ERR_FILE_NOT_OPEN;
 
-  if (getParam(pos, 0, user_files[filenum]->fileSize(), I_NONE))
+  size_t now = ftell(user_files[filenum].f);
+  fseek(user_files[filenum].f, 0, SEEK_END);
+  size_t max = ftell(user_files[filenum].f);
+  fseek(user_files[filenum].f, now, SEEK_SET);
+
+  if (getParam(pos, 0, max, I_NONE))
     return;
 
-  if (!user_files[filenum]->seekSet(pos))
+  if (fseek(user_files[filenum].f, pos, SEEK_SET))
     err = ERR_FILE_SEEK;
 }
 
@@ -512,8 +533,8 @@ void Basic::irename() {
   if (err)
     return;
 
-  rc = Unifile::rename(old_fname.c_str(), new_fname.c_str());
-  if (!rc)
+  rc = rename(old_fname.c_str(), new_fname.c_str());
+  if (rc)
     err = ERR_FILE_WRITE;
 }
 
@@ -539,8 +560,8 @@ void Basic::iremove() {
     return;
   }
 
-  bool rc = Unifile::remove(fname.c_str());
-  if (!rc) {
+  bool rc = remove(fname.c_str());
+  if (rc) {
     err = ERR_FILE_WRITE;	// XXX: something more descriptive?
     return;
   }

@@ -142,7 +142,7 @@ int redirect_input_file = -1;
 extern inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0) {
     if (redirect_output_file >= 0)
-      user_files[redirect_output_file]->write(c);
+      putc(c, user_files[redirect_output_file].f);
     else
       screen_putch(c);
   } else if (devno == 1)
@@ -158,7 +158,7 @@ extern inline void c_putch(uint8_t c, uint8_t devno) {
 void BASIC_INT newline(uint8_t devno) {
   if (devno==0) {
     if (redirect_output_file >= 0) {
-      user_files[redirect_output_file]->write('\n');
+      putc('\n', user_files[redirect_output_file].f);
       return;
     }
     sc0.newLine();
@@ -1448,7 +1448,7 @@ void SMALL Basic::iinput() {
     cip++;
     if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
       return;
-    if (!user_files[filenum] || !*user_files[filenum]) {
+    if (!user_files[filenum].f) {
       err = ERR_FILE_NOT_OPEN;
       return;
     }
@@ -1495,16 +1495,15 @@ void SMALL Basic::iinput() {
         if (eoi == '\r')
           eoi = '\n';
         for (;;) {
-          c = user_files[filenum]->peek();
+          c = getc(user_files[filenum].f);
           if (isdigit(c) || c == '.')
-            str_value += (char)user_files[filenum]->read();
-          else if (isspace(c))
-            user_files[filenum]->read();
-          else if (c == eoi) {
-            user_files[filenum]->read();
+            str_value += (char)c;
+          else if (isspace(c) || c == eoi)
             break;
-          } else
+          else {
+            ungetc(c, user_files[filenum].f);
             break;
+          }
         }
         value = str_value.toFloat();
       } else {
@@ -1549,7 +1548,7 @@ void SMALL Basic::iinput() {
         str_value = "";
         if (eoi == '\r')
           eoi = '\n';
-        while ((c = user_files[filenum]->read()) >= 0 && c != eoi) {
+        while ((c = getc(user_files[filenum].f)) >= 0 && c != eoi) {
           if (c != '\r')
             str_value += (char)c;
         }
@@ -2948,11 +2947,11 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
       cip++;
       if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
         return;
-      if (!user_files[filenum] || !*user_files[filenum]) {
+      if (!user_files[filenum].f) {
         err = ERR_FILE_NOT_OPEN;
         return;
       }
-      bfs.setTempFile(*user_files[filenum]);
+      bfs.setTempFile(user_files[filenum].f);
       devno = 4;
       continue;
       

@@ -363,7 +363,12 @@ extern int try_malloc();
 #endif
 
 #define MAX_USER_FILES 16
-extern Unifile *user_files[MAX_USER_FILES];
+struct FILEDIR {
+  FILE *f;
+  DIR *d;
+  BString dir_name;
+};
+extern FILEDIR user_files[MAX_USER_FILES];
 
 extern sdfiles bfs;
 
@@ -377,7 +382,7 @@ extern int redirect_input_file;
 
 static inline uint16_t c_getch() {
   if (redirect_input_file >= 0)
-    return user_files[redirect_input_file]->read();
+    return getc(user_files[redirect_input_file].f);
   else
     return sc0.get_ch();
 }
