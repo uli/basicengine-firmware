@@ -136,7 +136,7 @@ private:
 #ifdef HAVE_TSF
     static tsf *m_tsf;
     static struct tsf_stream m_sf2;
-    static Unifile m_sf2_file;
+    static FILE *m_sf2_file;
     static int tsfile_read(void *data, void *ptr, unsigned int size);
     static int tsfile_tell(void *data);
     static int tsfile_skip(void *data, unsigned int count);

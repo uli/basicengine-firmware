@@ -191,40 +191,44 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 
 #ifdef HAVE_TSF
 int BasicSound::tsfile_read(void *data, void *ptr, unsigned int size) {
-  return ((Unifile *)data)->read((char *)ptr, size);
+  return fread((char *)ptr, 1, size, (FILE *)data);
 }
 int BasicSound:: tsfile_tell(void *data) {
-  return ((Unifile *)data)->position();
+  return ftell((FILE *)data);
 }
 int BasicSound::tsfile_skip(void *data, unsigned int count) {
-  return ((Unifile *)data)->seekSet(((Unifile *)data)->position() + count);
+  return fseek((FILE *)data, count, SEEK_CUR);
 }
 int BasicSound::tsfile_seek(void *data, unsigned int pos) {
-  return ((Unifile *)data)->seekSet(pos);
+  return fseek((FILE *)data, pos, SEEK_SET);
 }
 int BasicSound::tsfile_close(void *data) {
-  ((Unifile *)data)->close();
+  fclose((FILE *)data);
   return 0;
 }
 int BasicSound::tsfile_size(void *data) {
-  return ((Unifile *)data)->fileSize();
+  long now = ftell((FILE *)data);
+  fseek((FILE *)data, 0, SEEK_END);
+  long end = ftell((FILE *)data);
+  fseek((FILE *)data, now, SEEK_SET);
+  return end;
 }
 struct tsf_stream BasicSound::m_sf2;
-Unifile BasicSound::m_sf2_file;
+FILE *BasicSound::m_sf2_file;
 tsf *BasicSound::m_tsf;
 
 void BasicSound::loadFont()
 {
   if (m_font_name[0] == '/') {
-    m_sf2_file = Unifile::open(m_font_name.c_str(), UFILE_READ);
+    m_sf2_file = fopen(m_font_name.c_str(), "r");
   } else {
-    m_sf2_file = Unifile::open(
+    m_sf2_file = fopen(
       (BString(SD_PREFIX) + BString('/') + m_font_name).c_str(),
-      UFILE_READ);
+      "r");
     if (!m_sf2_file) {
-      m_sf2_file = Unifile::open(
+      m_sf2_file = fopen(
         (BString(FLASH_PREFIX) + BString('/') + m_font_name).c_str(),
-        UFILE_READ);
+        "r");
     }
   }
   m_sf2.data = &m_sf2_file;
