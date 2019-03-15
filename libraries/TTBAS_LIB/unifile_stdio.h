@@ -45,6 +45,16 @@ int rename(const char *oldpath, const char *newpath);
 int chdir(const char *path);
 char *getcwd(char *buf, size_t size);
 
+struct stat {
+	mode_t st_mode;
+	off_t st_size;
+};
+
+#define S_IFDIR	0040000
+#define S_IFREG	0100000
+
+int stat(const char *pathname, struct stat *buf);
+
 #ifdef __cplusplus
 }
 #endif

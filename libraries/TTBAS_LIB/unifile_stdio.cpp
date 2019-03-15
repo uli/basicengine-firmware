@@ -179,4 +179,18 @@ char *getcwd(char *buf, size_t size)
   return buf;
 }
 
+int stat(const char *pathname, struct stat *buf)
+{
+  Unifile f = Unifile::open(pathname, UFILE_READ);
+  if (!f) {
+    errno = ENOENT;
+    return -1;
+  }
+  memset(buf, 0, sizeof(struct stat));
+  buf->st_size = f.fileSize();
+  buf->st_mode = f.isDirectory() ? S_IFDIR : S_IFREG;
+  
+  return 0;
+}
+
 #endif
