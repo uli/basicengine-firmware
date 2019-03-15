@@ -501,7 +501,7 @@ void Basic::irmdir() {
     return;
   }
 
-  rc = bfs.rmdir((char *)fname.c_str());
+  rc = rmdir(fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
