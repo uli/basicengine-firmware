@@ -161,16 +161,16 @@ void Basic::iloadbg() {
   if (!(filename = getParamFname()))
     return;
   
-  Unifile f = Unifile::open(filename, UFILE_READ);
+  FILE *f = fopen(filename.c_str(), "r");
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
   }
   
-  w = f.read();
-  h = f.read();
-  tsx = f.read();
-  tsy = f.read();
+  w = getc(f);
+  h = getc(f);
+  tsx = getc(f);
+  tsy = getc(f);
   
   if (!w || !h || !tsx || !tsy) {
     err = ERR_FORMAT;
@@ -183,13 +183,13 @@ void Basic::iloadbg() {
     goto out;
   }
 
-  if (f.read((char *)vs23.bgTiles(bg), w*h) != w*h) {
+  if (fread((char *)vs23.bgTiles(bg), 1, w*h, f) != w*h) {
     err = ERR_FILE_READ;
     goto out;
   }
 
 out:
-  f.close();
+  fclose(f);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -218,20 +218,20 @@ void Basic::isavebg() {
   if (getParam(bg, 0, MAX_BG, I_TO))
     return;
   
-  Unifile f = Unifile::open(filename, UFILE_OVERWRITE);
+  FILE *f = fopen(filename.c_str(), "w");
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
   }
 
   w = vs23.bgWidth(bg); h = vs23.bgHeight(bg);
-  f.write(w); f.write(h);
-  f.write(vs23.bgTileSizeX(bg));
-  f.write(vs23.bgTileSizeY(bg));
+  putc(w, f); putc(h, f);
+  putc(vs23.bgTileSizeX(bg), f);
+  putc(vs23.bgTileSizeY(bg), f);
   
-  f.write((char *)vs23.bgTiles(bg), w*h);
+  fwrite((char *)vs23.bgTiles(bg), 1, w*h, f);
 
-  f.close();
+  fclose(f);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
