@@ -83,6 +83,15 @@ int _ungetc(int c, FILE *stream)
   return c;
 }
 
+int _putc(int c, FILE *stream)
+{
+  Unifile *f = (Unifile *)stream;
+  if (f->write((char)c) < 0)
+    return EOF;
+  else
+    return c;
+}
+
 int _fflush(FILE *stream)
 {
   Unifile *f = (Unifile *)stream;

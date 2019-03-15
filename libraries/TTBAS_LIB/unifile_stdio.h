@@ -22,6 +22,7 @@ int _fseek(FILE *stream, int offset, int whence);
 int _feof(FILE *stream);
 int _getc(FILE *stream);
 int _ungetc(int c, FILE *stream);
+int _putc(int c, FILE *stream);
 int _fflush(FILE *stream);
 int _ferror(FILE *stream);
 void _clearerr(FILE *stream);
@@ -54,6 +55,8 @@ int rename(const char *oldpath, const char *newpath);
 #undef getc
 #define getc _getc
 #define ungetc _ungetc
+#undef putc
+#define putc _putc
 #define fflush _fflush
 #define ferror _ferror
 #define clearerr _clearerr
