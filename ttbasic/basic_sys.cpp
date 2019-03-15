@@ -429,7 +429,8 @@ void Basic::ixyzzy() {
   BString game = getParamFname();
   if (err)
     return;
-  if (!Unifile::exists(game.c_str())) {
+  struct stat st;
+  if (stat(game.c_str(), &st)) {
     err = ERR_FILE_OPEN;
     return;
   }
