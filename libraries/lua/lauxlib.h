@@ -207,7 +207,7 @@ LUALIB_API char *(luaL_buffinitsize) (lua_State *L, luaL_Buffer *B, size_t sz);
 
 
 typedef struct luaL_Stream {
-  l_FILE *f;  /* stream (NULL for incompletely created streams) */
+  FILE *f;  /* stream (NULL for incompletely created streams) */
   lua_CFunction closef;  /* to close stream (NULL for closed streams) */
 } luaL_Stream;
 
