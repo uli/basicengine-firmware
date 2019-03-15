@@ -19,7 +19,6 @@
 #define LUA_USE_CTYPE   1
 
 
-#define l_getc(f)	f->read()
 #define l_lockfile(f)           ((void)0)
 #define l_unlockfile(f)         ((void)0)  
 
@@ -28,11 +27,6 @@
 #define lua_writeline() newline()
 void be_lua_writestringerror(const char *fmt, const char *msg);
 #define lua_writestringerror(f,m) be_lua_writestringerror(PSTR(f),m)
-
-#define l_fseek be_l_fseek
-#define l_seeknum int
-#define l_ftell(f) f->position()
-#define l_FILE Unifile
 
 #define lua_getlocaledecpoint() '.'
 
