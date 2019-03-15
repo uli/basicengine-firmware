@@ -189,12 +189,6 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
     return -rc;
   }
   
-  if (tfile->isDirectory()) {
-    rc = -SD_ERR_NOT_FILE;
-    tmpClose();
-    goto DONE;
-  }
-
   while (1) {
     rc = readLine(str);
     if (!rc) 
@@ -282,16 +276,13 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  Failed to open file: SD_ERR_OPEN_FILE
 //
 uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-  tfile = new Unifile;
-  if (!tfile)
-    return ERR_OOM;
   if(mode) {
-    *tfile = Unifile::open(tfname, UFILE_OVERWRITE);
+    tfile = fopen(tfname, "w");
   } else {
-    *tfile = Unifile::open(tfname, UFILE_READ);   
+    tfile = fopen(tfname, "r");   
   }
 
-  if (*tfile)
+  if (tfile)
     return 0;
 
   return SD_ERR_OPEN_FILE;
@@ -300,8 +291,7 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
 // 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
   if (tfile) {
-    tfile->close();
-    delete tfile;
+    fclose(tfile);
     tfile = NULL;
   }
 
@@ -313,7 +303,7 @@ uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
 
   if( tfile && s ) {
-    n = tfile->write(s);
+    n = fputs(s, tfile);
   }
 
   return !n;    
@@ -324,7 +314,7 @@ uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
 
   if(tfile) {
-    n = tfile->write(c);
+    n = putc(c, tfile);
   }
 
   return !n;   
@@ -334,7 +324,7 @@ uint8_t sdfiles::putch(char c) {
 int16_t sdfiles::read() {
   if(!tfile) 
     return -1;
-  return tfile->read();
+  return getc(tfile);
 }
 
 //
@@ -349,9 +339,10 @@ int16_t sdfiles::readLine(char* str) {
   int len = 0;
   int16_t rc = 0;
   
-  while(tfile->available()) {
-    rc = tfile->read(str, 1);
+  while(!feof(tfile)) {
+    rc = getc(tfile);
     if (rc <= 0) break;
+    *str = rc;
     if (*str == 0x0d)
       continue;
     if (*str == 0x0a)
@@ -378,27 +369,23 @@ int16_t sdfiles::readLine(char* str) {
 //  ファイルでない       : - SD_ERR_NOT_FILE
 //
 int8_t sdfiles::IsText(char* fname) {
-  Unifile myFile;
+  FILE *myFile;
   char head[2];   // ヘッダー
   int8_t rc = -1;
  
   // ファイルのオープン
-  myFile = Unifile::open(fname, UFILE_READ);
+  myFile = fopen(fname, "r");
   if (myFile) {
-    if (myFile.isDirectory()) {
-      rc = - SD_ERR_NOT_FILE;
+    if (fread(head, 1, 2, myFile) != 2)  {
+      rc = -SD_ERR_READ_FILE;
     } else {
-      if (! myFile.read(head, 2) )  {
-        rc = -SD_ERR_READ_FILE;
+      if (head[0] == 0 && head[1] == 0) {
+        rc = 0;
       } else {
-        if (head[0] == 0 && head[1] == 0) {
-          rc = 0;
-        } else {
-          rc = 1;
-        }
+        rc = 1;
       }
     }
-    myFile.close();
+    fclose(myFile);
   } else {
     rc = -SD_ERR_OPEN_FILE;    
   }
