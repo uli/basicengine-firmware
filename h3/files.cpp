@@ -17,7 +17,6 @@ const char *apfs(const char *p) {
 }
 
 File File::openNextFile(uint8_t mode) {
-#if 0
   if (!dir.get())
     return File();
   struct dirent *de;
@@ -28,7 +27,6 @@ File File::openNextFile(uint8_t mode) {
     return File();
   BString ap = full_name + "/" + de->d_name;
   return SD.open(ap.c_str(), mode);
-#endif
   return File();
 }
 
@@ -42,10 +40,8 @@ int sdfat::smart_fclose(FILE *stream)
 
 int sdfat::smart_closedir(DIR *dirp)
 {
-#if 0
   if (dirp)
     return closedir(dirp);
   else
-#endif
     return -1;
 }

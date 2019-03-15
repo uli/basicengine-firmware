@@ -6,8 +6,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-//#include <dirent.h>
-typedef void DIR;
+#include <dirent.h>
 #include <Arduino.h>
 #include <BString.h>
 #include <memory>
@@ -177,7 +176,7 @@ public:
     else
       tmpFile.name = tmpFile.full_name;
 
-    DIR *_dir = NULL;//opendir(apsd(path));
+    DIR *_dir = opendir(apsd(path));
     if (_dir) {
       tmpFile.dir = std::shared_ptr<DIR>(_dir, smart_closedir);
       return tmpFile;
