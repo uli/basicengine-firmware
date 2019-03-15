@@ -476,7 +476,7 @@ void Basic::imkdir() {
     return;
   }
 
-  rc = bfs.mkdir((char *)fname.c_str());
+  rc = mkdir(fname.c_str(), 0755);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
