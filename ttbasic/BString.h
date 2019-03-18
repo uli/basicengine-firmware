@@ -39,7 +39,7 @@ class BStringSumHelper;
 // XXX: SdFat/src/SysCall.h messes with this! WTF??
 #undef F
 class __FlashStringHelper;
-#ifndef ARDUINO
+#if !defined(ARDUINO) || defined(HOSTED)
 #define FPSTR(p) (p)
 #define F(p) (p)
 #else
