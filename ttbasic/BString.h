@@ -43,7 +43,9 @@ class __FlashStringHelper;
 #define FPSTR(p) (p)
 #define F(p) (p)
 #else
+#ifndef FPSTR
 #define FPSTR(pstr_pointer) (reinterpret_cast<const __FlashStringHelper *>(pstr_pointer))
+#endif
 #define F(string_literal) (FPSTR(PSTR(string_literal)))
 #endif
 
