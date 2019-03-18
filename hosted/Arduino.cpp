@@ -102,6 +102,9 @@ static void my_exit(void)
 
 int hosting_mem_allocated;
 
+extern int sound_reinit_rate;
+void reinit_sound();
+
 int main(int argc, char **argv)
 {
   int opt;
@@ -208,6 +211,9 @@ int main(int argc, char **argv)
 
   hosting_mem_allocated = mallinfo().uordblks;  
 
+  sound_reinit_rate = 16000;
+  reinit_sound();
+  chroot("vfs");
   setup();
   for (;;)
     loop();
@@ -217,14 +223,12 @@ int main(int argc, char **argv)
 
 uint64_t total_frames = 0;
 extern uint64_t total_samples;
-extern int sound_reinit_rate;
-void reinit_sound();
 
 void platform_pump_events() {
   SDL_Event event;
 
-  if (sound_reinit_rate)
-    reinit_sound();
+//  if (sound_reinit_rate)
+//    reinit_sound();
 
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
