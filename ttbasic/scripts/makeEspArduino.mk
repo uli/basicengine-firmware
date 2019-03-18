@@ -243,23 +243,23 @@ $(BUILD_INFO_H): | $(BUILD_DIR)
 
 # Build rules for the different source file types
 $(BUILD_DIR)/%.cpp$(OBJ_EXT): %.cpp $(BUILD_INFO_H) $(ARDUINO_MK)
-	echo  $(<F)
+	echo  "  CXX     $(<F)"
 	$(CPP_COM) $(CPP_EXTRA) $< -o $@
 
 $(BUILD_DIR)/%_.cpp$(OBJ_EXT): %.ino $(BUILD_INFO_H) $(ARDUINO_MK)
-	echo  $(<F)
+	echo  "  CXX     $(<F)"
 	$(CPP_COM) $(CPP_EXTRA) -x c++ -include $(CORE_DIR)/Arduino.h $< -o $@
 
 $(BUILD_DIR)/%.pde$(OBJ_EXT): %.pde $(BUILD_INFO_H) $(ARDUINO_MK)
-	echo  $(<F)
+	echo  "  CXX     $(<F)"
 	$(CPP_COM) $(CPP_EXTRA) -x c++ -include $(CORE_DIR)/Arduino.h $< -o $@
 
 $(BUILD_DIR)/%.c$(OBJ_EXT): %.c $(ARDUINO_MK)
-	echo  $(<F)
+	echo  "  CC      $(<F)"
 	$(C_COM) $(C_EXTRA) $< -o $@
 
 $(BUILD_DIR)/%.S$(OBJ_EXT): %.S $(ARDUINO_MK)
-	echo  $(<F)
+	echo  "  AS      $(<F)"
 	$(S_COM) $(S_EXTRA) $< -o $@
 
 $(CORE_LIB): $(CORE_OBJ)
