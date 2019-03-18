@@ -2,10 +2,22 @@
 
 # Path to Arduino installation used for ESP8266
 ARDUINO_DIR = ../tools/esp8266/arduino-1.8.5
+ESP_ROOT = $(ARDUINO_DIR)/hardware/esp8266com/esp8266
+ESP_ROOT_NOWIFI = $(ARDUINO_DIR)/hardware/esp8266com/esp8266_nowifi
+
 # Path to Arduino installation used for ESP32
 ARDUINO_ESP32_DIR = ../tools/esp32/arduino-1.8.5
 # Path to Arduino ESP32 core
 ARDUINO_CORE_ESP32_DIR = ../tools/esp32/arduino-esp32
+
+LIBS =	../libraries/TTVoutfonts \
+	../libraries/TTBAS_LIB \
+	../libraries/TKeyboard \
+	../libraries/SdFat/src \
+	../libraries/lua \
+	../libraries/Time \
+	../libraries/azip \
+	../libraries/ESP8266SAM/src
 
 # No changes required below this point.
 
@@ -18,37 +30,52 @@ DEST_ADDR = 0x00000000
 all: elf doc
 
 elf:	funtbl.h kwtbl.h epigrams.h version.h
-	mkdir -p $(BUILD_PATH)
-	$(ARDUINO_DIR)/arduino-builder \
-		-hardware "$(ARDUINO_DIR)/hardware" \
-		-tools "$(ARDUINO_DIR)/tools-builder" \
-		-fqbn "esp8266com:esp8266_nowifi:basic_engine:CpuFrequency=160,FlashSize=4M3M" \
-		-built-in-libraries $(ARDUINO_DIR)/libraries \
-		-libraries ../libraries \
-		-warnings all \
-		-build-path $(BUILD_PATH) -compile ttbasic.ino
-	scripts/check8266iram.sh $(BUILD_PATH)/ttbasic.ino.elf
+	make -f scripts/makeEspArduino.mk \
+		CHIP=esp8266 \
+		BOARD=basic_engine \
+		FLASH_DEF=4M3M \
+		F_CPU=160000000L \
+		ESP_ROOT=$(ESP_ROOT_NOWIFI) \
+		LIBS="$(ESP_ROOT_NOWIFI)/libraries/SPI $(ESP_ROOT_NOWIFI)/libraries/Wire $(LIBS)" \
+		BUILD_DIR=$(BUILD_PATH) \
+		SKETCH=ttbasic.ino \
+		COMP_WARNINGS="-Wall -Wextra -Wno-unused-parameter"
+	scripts/check8266iram.sh $(BUILD_PATH)/ttbasic.elf
 
 elf_net:	funtbl.h kwtbl.h epigrams.h version.h
-	mkdir -p $(BUILD_PATH)_net
-	$(ARDUINO_DIR)/arduino-builder \
-		-hardware "$(ARDUINO_DIR)/hardware" \
-		-tools "$(ARDUINO_DIR)/tools-builder" \
-		-fqbn "esp8266com:esp8266:d1_mini:xtal=160,eesz=4M3M" \
-		-built-in-libraries $(ARDUINO_DIR)/libraries \
-		-libraries ../libraries \
-		-warnings all \
-		-build-path $(BUILD_PATH)_net -compile ttbasic.ino
+	make -f scripts/makeEspArduino.mk \
+		CHIP=esp8266 \
+		BOARD=d1_mini \
+		FLASH_DEF=4M3M \
+		F_CPU=160000000L \
+		ESP_ROOT=$(ESP_ROOT) \
+		LIBS="$(ESP_ROOT)/libraries/SPI $(ESP_ROOT)/libraries/Wire \
+		      $(ESP_ROOT)/libraries/ESP8266WiFi \
+		      $(ESP_ROOT)/libraries/ESP8266HTTPClient \
+		      $(LIBS)" \
+		BUILD_DIR=$(BUILD_PATH)_net \
+		SKETCH=ttbasic.ino \
+		COMP_WARNINGS="-Wall -Wextra -Wno-unused-parameter"
 
 esp32:	funtbl.h kwtbl.h epigrams.h version.h
-	mkdir -p $(BUILD_PATH)_esp32
-	$(ARDUINO_ESP32_DIR)/arduino-builder \
-		-build-path $(BUILD_PATH)_esp32 \
-		-hardware $(ARDUINO_ESP32_DIR)/hardware \
-		-tools $(ARDUINO_CORE_ESP32_DIR)/tools \
-		-fqbn "espressif:esp32:esp32:FlashFreq=80,FlashMode=dio,PartitionScheme=no_ota" \
-		-libraries ../libraries \
-		-compile ttbasic.ino
+	make -f scripts/makeEspArduino.mk \
+		CHIP=esp32 \
+		BOARD=esp32 \
+		FLASH_MODE=dio \
+		FLASH_SPEED=80m \
+		FLASH_DEF=no_ota \
+		ESP_ROOT=$(ARDUINO_CORE_ESP32_DIR) \
+		LIBS="$(ARDUINO_CORE_ESP32_DIR)/libraries/SPI \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/Wire \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/SD \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/FS \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/SPIFFS \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/WiFi \
+		      $(ARDUINO_CORE_ESP32_DIR)/libraries/HTTPClient \
+		      $(LIBS)" \
+		BUILD_DIR=$(BUILD_PATH)_esp32 \
+		SKETCH=ttbasic.ino \
+		COMP_WARNINGS="-Wall -Wextra -Wno-unused-parameter -Wno-deprecated-declarations"
 
 funtbl.h kwtbl.h: icode.txt icode.py
 	python icode.py
@@ -59,7 +86,8 @@ version.h: ../.git/index
 
 clean:
 	rm -fr $(BUILD_PATH)/*
-	rm -fr $(BUILD_PATH)_NET/*
+	rm -fr $(BUILD_PATH)_net/*
+	rm -fr $(BUILD_PATH)_esp32/*
 	rm -f ../doc/reference*.adoc ../doc/manual.html
 
 doc:
@@ -67,7 +95,7 @@ doc:
 
 SER ?= /dev/ttyUSB0
 upload: elf
-	python $(ESPTOOL) -c esp8266 -b 921600 -p $(SER) write_flash $(DEST_ADDR) $(BUILD_PATH)/ttbasic.ino.bin
+	python $(ESPTOOL) -c esp8266 -b 921600 -p $(SER) write_flash $(DEST_ADDR) $(BUILD_PATH)/ttbasic.bin
 upload_net: elf_net
 	python $(ESPTOOL) -c esp8266 -b 921600 -p $(SER) write_flash $(DEST_ADDR) $(BUILD_PATH)_net/ttbasic.ino.bin
 
@@ -78,5 +106,5 @@ upload_esp32: esp32
 		--flash_size detect \
 		0xe000 $(ARDUINO_CORE_ESP32_DIR)/tools/partitions/boot_app0.bin \
 		0x1000 $(ARDUINO_CORE_ESP32_DIR)/tools/sdk/bin/bootloader_dio_80m.bin \
-		0x10000 "$(BUILD_PATH)_esp32/ttbasic.ino.bin" \
-		0x8000 "$(BUILD_PATH)_esp32/ttbasic.ino.partitions.bin"
+		0x10000 "$(BUILD_PATH)_esp32/ttbasic.bin" \
+		0x8000 "$(BUILD_PATH)_esp32/ttbasic.partitions.bin"
