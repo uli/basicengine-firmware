@@ -225,6 +225,9 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint64_t total_size = 0;
   UnifileString fname;
 
+  if (strlen(_dir) == 0)
+    _dir = (char *)".";
+
   DIR *dir = _opendir(_dir);
 
   if (dir) {
