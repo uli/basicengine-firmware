@@ -122,7 +122,9 @@
 #define UNIFILE_USE_OLD_SPIFFS
 //#define UNIFILE_USE_FASTROMFS
 #define UNIFILE_USE_SDFAT
+#ifndef HOSTED
 #define UNIFILE_STDIO
+#endif
 #endif
 
 #ifdef ESP32
