@@ -119,7 +119,7 @@ void _clearerr(FILE *stream)
   // XXX: stream status unimplemented
 }
 
-DIR *opendir(const char *name)
+DIR *_opendir(const char *name)
 {
   Unifile *d = new Unifile;
   *d = Unifile::openDir(name);
@@ -130,7 +130,7 @@ DIR *opendir(const char *name)
   return (DIR *)d;
 }
 
-int closedir(DIR *dir)
+int _closedir(DIR *dir)
 {
   Unifile *d = (Unifile *)dir;
   d->close();
@@ -138,7 +138,7 @@ int closedir(DIR *dir)
   return 0;
 }
 
-struct dirent *readdir(DIR *dir)
+struct dirent *_readdir(DIR *dir)
 {
   static struct dirent de;
   Unifile *d = (Unifile *)dir;
@@ -154,7 +154,7 @@ struct dirent *readdir(DIR *dir)
   return &de;
 }
 
-int remove(const char *pathname)
+int _remove(const char *pathname)
 {
   if (Unifile::remove(pathname))
     return 0;
@@ -162,7 +162,7 @@ int remove(const char *pathname)
     return -1;
 }
 
-int rename(const char *oldpath, const char *newpath)
+int _rename(const char *oldpath, const char *newpath)
 {
   if (Unifile::rename(oldpath, newpath))
     return 0;
@@ -172,7 +172,7 @@ int rename(const char *oldpath, const char *newpath)
 
 }
 
-int chdir(const char *path)
+int _chdir(const char *path)
 {
   if (Unifile::chDir(path))
     return 0;
@@ -180,7 +180,7 @@ int chdir(const char *path)
     return -1;
 }
 
-char *getcwd(char *buf, size_t size)
+char *_getcwd(char *buf, size_t size)
 {
   UnifileString cwd = Unifile::cwd();
   memset(buf, 0, size);
@@ -188,7 +188,7 @@ char *getcwd(char *buf, size_t size)
   return buf;
 }
 
-int stat(const char *pathname, struct stat *buf)
+int _stat(const char *pathname, struct stat *buf)
 {
   Unifile f = Unifile::open(pathname, UFILE_READ);
   if (!f) {
@@ -203,13 +203,13 @@ int stat(const char *pathname, struct stat *buf)
 }
 
 extern sdfiles bfs;
-int mkdir(const char *pathname, mode_t mode)
+int _mkdir(const char *pathname, mode_t mode)
 {
   (void)mode;
   return bfs.mkdir(pathname);
 }
 
-int rmdir(const char *pathname)
+int _rmdir(const char *pathname)
 {
   return bfs.rmdir((char *)pathname);
 }

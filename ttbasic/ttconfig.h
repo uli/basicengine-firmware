@@ -168,6 +168,17 @@
 
 #ifdef UNIFILE_STDIO
 #include <unifile_stdio.h>
+#else
+#define _opendir opendir
+#define _closedir closedir
+#define _readdir readdir
+#define _remove remove
+#define _rename rename
+#define _chdir chdir
+#define _getcwd getcwd
+#define _stat stat
+#define _mkdir mkdir
+#define _rmdir rmdir
 #endif
 
 #endif

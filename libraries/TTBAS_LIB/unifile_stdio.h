@@ -36,15 +36,15 @@ struct dirent {
 #define DT_DIR	4
 #define DT_REG	8
 
-DIR *opendir(const char *name);
-int closedir(DIR *dir);
-struct dirent *readdir(DIR *dir);
+DIR *_opendir(const char *name);
+int _closedir(DIR *dir);
+struct dirent *_readdir(DIR *dir);
 
-int remove(const char *pathname);
-int rename(const char *oldpath, const char *newpath);
+int _remove(const char *pathname);
+int _rename(const char *oldpath, const char *newpath);
 
-int chdir(const char *path);
-char *getcwd(char *buf, size_t size);
+int _chdir(const char *path);
+char *_getcwd(char *buf, size_t size);
 
 struct stat {
 	mode_t st_mode;
@@ -54,10 +54,10 @@ struct stat {
 #define S_IFDIR	0040000
 #define S_IFREG	0100000
 
-int stat(const char *pathname, struct stat *buf);
+int _stat(const char *pathname, struct stat *buf);
 
-int mkdir(const char *pathname, mode_t mode);
-int rmdir(const char *pathname);
+int _mkdir(const char *pathname, mode_t mode);
+int _rmdir(const char *pathname);
 
 #ifdef __cplusplus
 }

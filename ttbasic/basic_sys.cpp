@@ -430,7 +430,7 @@ void Basic::ixyzzy() {
   if (err)
     return;
   struct stat st;
-  if (stat(game.c_str(), &st)) {
+  if (_stat(game.c_str(), &st)) {
     err = ERR_FILE_OPEN;
     return;
   }

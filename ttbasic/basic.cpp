@@ -5648,7 +5648,7 @@ void SMALL Basic::basic() {
 
   PRINT_P("Directory ");
   char cwd[16];
-  c_puts(getcwd(cwd, 16)); newline();
+  c_puts(_getcwd(cwd, 16)); newline();
 
   // XXX: make sound font configurable
   sound.begin();

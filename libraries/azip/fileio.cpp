@@ -218,7 +218,7 @@ int AZIP::get_file_name( char *file_name, char *default_name, int flag )
     if ( flag == GAME_SAVE || flag == GAME_SCRIPT || flag == GAME_RECORD || flag == GAME_SAVE_AUX )
     {
         struct stat st;
-        if ( stat( file_name, &st ) == 0 ) {
+        if ( _stat( file_name, &st ) == 0 ) {
             /* If it succeeded then prompt to overwrite */
 
             write_string( PSTR("You are about to write over an existing file.\n") );
@@ -359,7 +359,7 @@ int AZIP::save_restore( const char *file_name, int flag )
         if ( flag == GAME_SAVE )
         {
             write_string( PSTR("Write to SAVE file failed\n") );
-            remove( file_name );
+            _remove( file_name );
         }
         else
         {

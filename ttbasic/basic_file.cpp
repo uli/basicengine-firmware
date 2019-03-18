@@ -24,8 +24,8 @@ void SMALL basic_init_file_early() {
   bfs.init(16);		// CS on GPIO16
 #endif
 
-  if (chdir(SD_PREFIX))
-    chdir(FLASH_PREFIX);
+  if (_chdir(SD_PREFIX))
+    _chdir(FLASH_PREFIX);
   else
     bfs.fakeTime();
 }
@@ -133,10 +133,10 @@ out:
     goto out;
   }
 
-  dirent *dir_entry = readdir(user_files[fnum].d);
+  dirent *dir_entry = _readdir(user_files[fnum].d);
 
   struct stat st;
-  stat((user_files[fnum].dir_name + BString(F("/")) +
+  _stat((user_files[fnum].dir_name + BString(F("/")) +
        BString(dir_entry->d_name)).c_str(), &st);
 
   retval[0] = st.st_size;
@@ -257,7 +257,7 @@ void Basic::ichdir() {
   if(!(new_cwd = getParamFname())) {
     return;
   }
-  if (chdir(new_cwd.c_str()))
+  if (_chdir(new_cwd.c_str()))
     err = ERR_FILE_OPEN;
 }
 
@@ -270,7 +270,7 @@ Returns the current working directory.
 BString Basic::scwd() {
   if (checkOpen() || checkClose()) return BString();
   char cwd[64];
-  if (getcwd(cwd, 64))
+  if (_getcwd(cwd, 64))
     return BString(cwd);
   else
     return BString();
@@ -328,16 +328,16 @@ void Basic::iopen() {
       redirect_input_file = -1;
     user_files[filenum].f = NULL;
   } else if (user_files[filenum].d) {
-    closedir(user_files[filenum].d);
+    _closedir(user_files[filenum].d);
     user_files[filenum].d = NULL;
     user_files[filenum].dir_name = BString();
   }
 
   FILEDIR f = { NULL, NULL, "" };
   if (flags == NULL) {
-    f.d = opendir(filename.c_str());
+    f.d = _opendir(filename.c_str());
     char cwd[64];
-    getcwd(cwd, 64);
+    _getcwd(cwd, 64);
     f.dir_name = BString(cwd) + BString(F("/")) + filename;
   } else
     f.f = fopen(filename.c_str(), flags);
@@ -372,7 +372,7 @@ void Basic::iclose() {
         redirect_input_file = -1;
       user_files[filenum].f = NULL;
     } else {
-      closedir(user_files[filenum].d);
+      _closedir(user_files[filenum].d);
       user_files[filenum].d = NULL;
     }
   }
@@ -476,7 +476,7 @@ void Basic::imkdir() {
     return;
   }
 
-  rc = mkdir(fname.c_str(), 0755);
+  rc = _mkdir(fname.c_str(), 0755);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -501,7 +501,7 @@ void Basic::irmdir() {
     return;
   }
 
-  rc = rmdir(fname.c_str());
+  rc = _rmdir(fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -533,7 +533,7 @@ void Basic::irename() {
   if (err)
     return;
 
-  rc = rename(old_fname.c_str(), new_fname.c_str());
+  rc = _rename(old_fname.c_str(), new_fname.c_str());
   if (rc)
     err = ERR_FILE_WRITE;
 }
@@ -560,7 +560,7 @@ void Basic::iremove() {
     return;
   }
 
-  bool rc = remove(fname.c_str());
+  bool rc = _remove(fname.c_str());
   if (rc) {
     err = ERR_FILE_WRITE;	// XXX: something more descriptive?
     return;
