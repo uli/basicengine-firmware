@@ -237,8 +237,13 @@ void loadConfig() {
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
-  // XXX: colorspace may not be initialized yet
-  CONFIG.cursor_color = csp.colorFromRgb(0, 149, 0);
+
+  // XXX: colorspace is not initialized yet, cannot use conversion methods
+  if (sizeof(pixel_t) == 1)
+    CONFIG.cursor_color = (pixel_t)0x92;
+  else
+    CONFIG.cursor_color = (pixel_t)0x00009500UL;
+
   CONFIG.beep_volume = 15;
   
   FILE *f = fopen(BString(F(CONFIG_FILE)).c_str(), "r");
