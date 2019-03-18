@@ -231,7 +231,7 @@ void BasicSound::loadFont()
         "r");
     }
   }
-  m_sf2.data = &m_sf2_file;
+  m_sf2.data = m_sf2_file;
   m_sf2.read = tsfile_read;
   m_sf2.tell = tsfile_tell;
   m_sf2.skip = tsfile_skip;
