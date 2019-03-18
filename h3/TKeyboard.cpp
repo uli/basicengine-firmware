@@ -18,14 +18,14 @@ static const int ps2_to_usb[] = {
 71,	// PS2KEY_ScrollLock	10	// [ScrollLock]
 57,	// PS2KEY_CapsLock	  11	// [CapsLock]
 70,	// PS2KEY_PrintScreen	12	// [PrintScreen]
-0,	// PS2KEY_HanZen		  13	// [半角/全角 漢字]
+148,	// PS2KEY_HanZen		  13	// [半角/全角 漢字]
 73,	// PS2KEY_Insert		  14	// [Insert]
 74,	// PS2KEY_Home		    15	// [Home]
 72,	// PS2KEY_Pause		    16	// [Pause]
-0,	// PS2KEY_Romaji		  17	// [カタカナ ひらがな ローマ字]
-0,	// PS2KEY_APP			    18	// [メニューキー]
-0,	// PS2KEY_Henkan		  19	// [変換]
-0,	// PS2KEY_Muhenkan	  20	// [無変換]
+135,	// PS2KEY_Romaji		17	// [カタカナ ひらがな ローマ字]
+101,	// PS2KEY_APP	18	// [メニューキー]
+138,	// PS2KEY_Henkan		  19	// [変換]
+139,	// PS2KEY_Muhenkan	  20	// [無変換]
 75,	// PS2KEY_PageUp		  21	// [PageUp]
 78,	// PS2KEY_PageDown	  22	// [PageDown]
 77,	// PS2KEY_End			    23	// [End]
@@ -63,106 +63,110 @@ static const int ps2_to_usb[] = {
 36,	// PS2KEY_7			55	// [7 &]
 37,	// PS2KEY_8			56	// [8 *]
 38,	// PS2KEY_9			57	// [9 (]
-#if 0
-SDLK_BACKSLASH,	// PS2KEY_Pipe2 58  // [\ |] (USキーボード用)
+// According to MS translation table, this key does not exist.
+0,	// PS2KEY_Pipe2 58  // [\ |] (USキーボード用)
 0,
 0,
 0,
 0,
 0,
 0,
-SDLK_a,	// PS2KEY_A			65	// [a A]
-SDLK_b,	// PS2KEY_B			66	// [b B]
-SDLK_c,	// PS2KEY_C			67	// [c C]
-SDLK_d,	// PS2KEY_D			68	// [d D]
-SDLK_e,	// PS2KEY_E			69	// [e E]
-SDLK_f,	// PS2KEY_F			70	// [f F]
-SDLK_g,	// PS2KEY_G			71	// [g G]
-SDLK_h,	// PS2KEY_H			72	// [h H]
-SDLK_i,	// PS2KEY_I			73	// [i I]
-SDLK_j,	// PS2KEY_J			74	// [j J]
-SDLK_k,	// PS2KEY_K			75	// [k K]
-SDLK_l,	// PS2KEY_L			76	// [l L]
-SDLK_m,	// PS2KEY_M			77	// [m M]
-SDLK_n,	// PS2KEY_N			78	// [n N]
-SDLK_o,	// PS2KEY_O			79	// [o O]
-SDLK_p,	// PS2KEY_P			80	// [p P]
-SDLK_q,	// PS2KEY_Q			81	// [q Q]
-SDLK_r,	// PS2KEY_R			82	// [r R]
-SDLK_s,	// PS2KEY_S			83	// [s S]
-SDLK_t,	// PS2KEY_T			84	// [t T]
-SDLK_u,	// PS2KEY_U			85	// [u U]
-SDLK_v,	// PS2KEY_V			86	// [v V]
-SDLK_w,	// PS2KEY_W			87	// [w W]
-SDLK_x,	// PS2KEY_X			88	// [x X]
-SDLK_y,	// PS2KEY_Y			89	// [y Y]
-SDLK_z,	// PS2KEY_Z			90	// [z Z]
+4,	// PS2KEY_A			65	// [a A]
+5,	// PS2KEY_B			66	// [b B]
+6,	// PS2KEY_C			67	// [c C]
+7,	// PS2KEY_D			68	// [d D]
+8,	// PS2KEY_E			69	// [e E]
+9,	// PS2KEY_F			70	// [f F]
+10,	// PS2KEY_G			71	// [g G]
+11,	// PS2KEY_H			72	// [h H]
+12,	// PS2KEY_I			73	// [i I]
+13,	// PS2KEY_J			74	// [j J]
+14,	// PS2KEY_K			75	// [k K]
+15,	// PS2KEY_L			76	// [l L]
+16,	// PS2KEY_M			77	// [m M]
+17,	// PS2KEY_N			78	// [n N]
+18,	// PS2KEY_O			79	// [o O]
+19,	// PS2KEY_P			80	// [p P]
+20,	// PS2KEY_Q			81	// [q Q]
+21,	// PS2KEY_R			82	// [r R]
+22,	// PS2KEY_S			83	// [s S]
+23,	// PS2KEY_T			84	// [t T]
+24,	// PS2KEY_U			85	// [u U]
+25,	// PS2KEY_V			86	// [v V]
+26,	// PS2KEY_W			87	// [w W]
+27,	// PS2KEY_X			88	// [x X]
+28,	// PS2KEY_Y			89	// [y Y]
+29,	// PS2KEY_Z			90	// [z Z]
 0,
 0,
 0,
-SDLK_EQUALS,	// PS2KEY_PAD_Equal	94	// [=]
-SDLK_KP_ENTER,	// PS2KEY_PAD_Enter	95	// [Enter]
-SDLK_KP0,	// PS2KEY_PAD_0		96  	// [0/Insert]
-SDLK_KP1,	// PS2KEY_PAD_1		97  	// [1/End]
-SDLK_KP2,	// PS2KEY_PAD_2		98  	// [2/DownArrow]
-SDLK_KP3,	// PS2KEY_PAD_3		99  	// [3/PageDown]
-SDLK_KP4,	// PS2KEY_PAD_4		100 	// [4/LeftArrow]
-SDLK_KP5,	// PS2KEY_PAD_5		101 	// [5]
-SDLK_KP6,	// PS2KEY_PAD_6		102 	// [6/RightArrow]
-SDLK_KP7,	// PS2KEY_PAD_7		103 	// [7/Home]
-SDLK_KP8,	// PS2KEY_PAD_8		104 	// [8/UPArrow]
-SDLK_KP9,	// PS2KEY_PAD_9		105	  // [9/PageUp]
-SDLK_KP_MULTIPLY,	// PS2KEY_PAD_Multi	106	// [*]
-SDLK_KP_PLUS,	// PS2KEY_PAD_Plus	107	// [+]
-0,	// PS2KEY_PAD_Kamma	108	// [,]
-SDLK_KP_MINUS,	// PS2KEY_PAD_Minus	109	// [-]
-SDLK_KP_PERIOD,	// PS2KEY_PAD_DOT		110	// [./Delete]
-SDLK_KP_DIVIDE,	// PS2KEY_PAD_Slash	111	// [/]
-SDLK_F1,	// PS2KEY_F1 		112	// [F1]
-SDLK_F2,	// PS2KEY_F2 		113	// [F2]
-SDLK_F3,	// PS2KEY_F3 		114	// [F3]
-SDLK_F4,	// PS2KEY_F4 		115	// [F4]
-SDLK_F5,	// PS2KEY_F5 		116	// [F5]
-SDLK_F6,	// PS2KEY_F6 		117	// [F6]
-SDLK_F7,	// PS2KEY_F7 		118	// [F7]
-SDLK_F8,	// PS2KEY_F8 		119	// [F8]
-SDLK_F9,	// PS2KEY_F9 		120	// [F9]
-SDLK_F10,	// PS2KEY_F10 	121	// [F10]
-SDLK_F11,	// PS2KEY_F11 	122	// [F11]
-SDLK_F12,	// PS2KEY_F12 	123	// [F12]
-SDLK_F13,	// PS2KEY_F13 	124	// [F13]
-SDLK_F14,	// PS2KEY_F14 	125	// [F14]
-SDLK_F15,	// PS2KEY_F15 	126	// [F15]
-0,	// PS2KEY_F16 	127	// [F16]
-0,	// PS2KEY_F17 	128	// [F17]
-0,	// PS2KEY_F18 	129	// [F18]
-0,	// PS2KEY_F19 	130	// [F19]
-0,	// PS2KEY_F20 	131	// [F20]
-0,	// PS2KEY_F21 	132	// [F21]
-0,	// PS2KEY_F22 	133	// [F22]
-0,	// PS2KEY_F23 	134	// [F23]
-0,	// PS2KEY_PrevTrack		  135	// 前のトラック
-0,	// PS2KEY_WWW_Favorites	136	// ブラウザお気に入り
-0,	// PS2KEY_WWW_Refresh		137	// ブラウザ更新表示
-0,	// PS2KEY_VolumeDown		138	// 音量を下げる
-0,	// PS2KEY_Mute			    139	// ミュート
-0,	// PS2KEY_WWW_Stop		  140	// ブラウザ停止
-0,	// PS2KEY_Calc			    141	// 電卓
-0,	// PS2KEY_WWW_Forward		142	// ブラウザ進む
-0,	// PS2KEY_VolumeUp		  143	// 音量を上げる
-0,	// PS2KEY_PLAY			    144	// 再生
-SDLK_POWER,	// PS2KEY_POWER			    145	// 電源ON
-0,	// PS2KEY_WWW_Back		  146	// ブラウザ戻る
-0,	// PS2KEY_WWW_Home		  147	// ブラウザホーム
-0,	// PS2KEY_Sleep			    148	// スリープ
-0,	// PS2KEY_Mycomputer		149	// マイコンピュータ
-0,	// PS2KEY_Mail			    150	// メーラー起動
-0,	// PS2KEY_NextTrack		  151	// 次のトラック
-0,	// PS2KEY_MEdiaSelect		152	// メディア選択
-0,	// PS2KEY_Wake			    153	// ウェイクアップ
-0,	// PS2KEY_Stop			    154	// 停止
-0,	// PS2KEY_WWW_Search		155	// ウェブ検索
-#endif
+103,	// PS2KEY_PAD_Equal	94	// [=]
+88,	// PS2KEY_PAD_Enter	95	// [Enter]
+98,	// PS2KEY_PAD_0		96  	// [0/Insert]
+89,	// PS2KEY_PAD_1		97  	// [1/End]
+90,	// PS2KEY_PAD_2		98  	// [2/DownArrow]
+91,	// PS2KEY_PAD_3		99  	// [3/PageDown]
+92,	// PS2KEY_PAD_4		100 	// [4/LeftArrow]
+93,	// PS2KEY_PAD_5		101 	// [5]
+94,	// PS2KEY_PAD_6		102 	// [6/RightArrow]
+95,	// PS2KEY_PAD_7		103 	// [7/Home]
+96,	// PS2KEY_PAD_8		104 	// [8/UPArrow]
+97,	// PS2KEY_PAD_9		105	  // [9/PageUp]
+85,	// PS2KEY_PAD_Multi	106	// [*]
+87,	// PS2KEY_PAD_Plus	107	// [+]
+// This is the "Keypad ," (aka "Brazilian ."), not the "PC9800 Keypad ,"
+// What a pain in the ass this keyboard stuff is!
+133,	// PS2KEY_PAD_Kamma	108	// [,]
+86,	// PS2KEY_PAD_Minus	109	// [-]
+99,	// PS2KEY_PAD_DOT		110	// [./Delete]
+84,	// PS2KEY_PAD_Slash	111	// [/]
+58,	// PS2KEY_F1 		112	// [F1]
+59,	// PS2KEY_F2 		113	// [F2]
+60,	// PS2KEY_F3 		114	// [F3]
+61,	// PS2KEY_F4 		115	// [F4]
+62,	// PS2KEY_F5 		116	// [F5]
+63,	// PS2KEY_F6 		117	// [F6]
+64,	// PS2KEY_F7 		118	// [F7]
+65,	// PS2KEY_F8 		119	// [F8]
+66,	// PS2KEY_F9 		120	// [F9]
+67,	// PS2KEY_F10 	121	// [F10]
+68,	// PS2KEY_F11 	122	// [F11]
+69,	// PS2KEY_F12 	123	// [F12]
+104,	// PS2KEY_F13 	124	// [F13]
+105,	// PS2KEY_F14 	125	// [F14]
+106,	// PS2KEY_F15 	126	// [F15]
+107,	// PS2KEY_F16 	127	// [F16]
+108,	// PS2KEY_F17 	128	// [F17]
+109,	// PS2KEY_F18 	129	// [F18]
+110,	// PS2KEY_F19 	130	// [F19]
+111,	// PS2KEY_F20 	131	// [F20]
+112,	// PS2KEY_F21 	132	// [F21]
+113,	// PS2KEY_F22 	133	// [F22]
+114,	// PS2KEY_F23 	134	// [F23]
+// From USB HID to PS/2 Scan Code Translation Table
+// https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+// Some of these have two-byte usage IDs, I don't know how that works.
+182,	// PS2KEY_PrevTrack	  135	// 前のトラック
+0,	// XXX: 0x22a	PS2KEY_WWW_Favorites	136	// ブラウザお気に入り
+0,	// XXX: 0x227	PS2KEY_WWW_Refresh		137	// ブラウザ更新表示
+129,	// PS2KEY_VolumeDown		138	// 音量を下げる
+127,	// PS2KEY_Mute			    139	// ミュート
+120,	// PS2KEY_WWW_Stop		  140	// ブラウザ停止
+0,	// XXX: 0x192	PS2KEY_Calc			    141	// 電卓
+0,	// XXX: 0x225 PS2KEY_WWW_Forward		142	// ブラウザ進む
+128,	// PS2KEY_VolumeUp		  143	// 音量を上げる
+205,	// PS2KEY_PLAY			    144	// 再生
+102,	// PS2KEY_POWER			    145	// 電源ON
+0,	// XXX: 0x224 PS2KEY_WWW_Back		  146	// ブラウザ戻る
+0,	// XXX: 0x223 PS2KEY_WWW_Home		  147	// ブラウザホーム
+130,	// PS2KEY_Sleep			    148	// スリープ
+0,	// XXX: 0x194 PS2KEY_Mycomputer		149	// マイコンピュータ
+0,	// XXX: 0x18a	PS2KEY_Mail			    150	// メーラー起動
+181,	// PS2KEY_NextTrack		  151	// 次のトラック
+183,	// PS2KEY_MEdiaSelect		152	// メディア選択
+131,	// PS2KEY_Wake			    153	// ウェイクアップ
+120,	// PS2KEY_Stop			    154	// 停止
+0,	// XXX: 0x221 PS2KEY_WWW_Search		155	// ウェブ検索
 };
 
 static const uint8_t usb2ascii[] = {
