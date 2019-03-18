@@ -205,7 +205,6 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
   }
   tmpClose();
 
-DONE:
   return rc; 
 }
 
