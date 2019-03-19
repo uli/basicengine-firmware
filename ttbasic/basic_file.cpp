@@ -137,7 +137,16 @@ out:
     goto out;
   }
 
-  dirent *dir_entry = _readdir(user_files[fnum].d);
+  // read entries, skip "." and ".."
+  dirent *dir_entry;
+  do {
+    dir_entry = _readdir(user_files[fnum].d);
+  } while (dir_entry &&
+           (
+             !strcmp_P(dir_entry->d_name, PSTR(".")) ||
+             !strcmp_P(dir_entry->d_name, PSTR(".."))
+           )
+          );
 
   if (!dir_entry)
     return BString();
