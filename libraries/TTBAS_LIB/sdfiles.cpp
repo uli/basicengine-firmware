@@ -235,6 +235,12 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
       dirent *next = _readdir(dir);
       if (!next)
         break;
+
+      // skip "." and ".."
+      if (!strcmp_P(next->d_name, PSTR(".")) ||
+          !strcmp_P(next->d_name, PSTR("..")))
+        continue;
+
       fname = next->d_name;
       len = fname.length();
       if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
