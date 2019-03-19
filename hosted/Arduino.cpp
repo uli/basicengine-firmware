@@ -82,7 +82,6 @@ static bool screen_quit = false;
 
 static void my_exit(void)
 {
-  fprintf(stderr, "my_exit\n");
   screen_quit = true;
   SDL_WaitThread(scrthr, NULL);
   if (vid_fp)
@@ -211,9 +210,27 @@ int main(int argc, char **argv)
 
   hosting_mem_allocated = mallinfo().uordblks;  
 
+  // HACK: We can't change the sample rate once we have chroot'ed, so we
+  // need to do it here.
   sound_reinit_rate = 16000;
   reinit_sound();
-  chroot("vfs");
+
+  // chroot to virtual file system and drop root privileges
+  char *sudo_uid = secure_getenv("SUDO_UID");
+  if (getuid() != 0 || sudo_uid == NULL) {
+    fprintf(stderr, "needs to run as root using sudo (sorry)\n");
+    exit(1);
+  }
+
+  if (chroot("vfs") < 0) {
+    fprintf(stderr, "failed to chroot to vfs directory\n");
+    exit(1);
+  }
+
+  if (setuid((uid_t)strtoll(sudo_uid, NULL, 10)) < 0) {
+    fprintf(stderr, "WARNING: failed to drop root privileges\n");
+  }
+
   setup();
   for (;;)
     loop();
