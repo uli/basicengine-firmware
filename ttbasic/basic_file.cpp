@@ -698,7 +698,7 @@ void SMALL Basic::ibsave() {
   if ((vadr & 3) == 0 && (len & 3) == 0) {
     // データの書込み
     for (uint32_t i = 0; i < len; i += 4) {
-      uint32_t c = *(uint32_t *)vadr;
+      uint32_t c = *(uint32_t *)(unsigned long)vadr;
       if(bfs.tmpWrite((char *)&c, 4)) {
         err = ERR_FILE_WRITE;
         goto DONE;
@@ -708,7 +708,7 @@ void SMALL Basic::ibsave() {
   } else {
     // データの書込み
     for (uint32_t i = 0; i < len; i++) {
-      if(bfs.putch(*(uint8_t *)vadr)) {
+      if(bfs.putch(*(uint8_t *)(unsigned long)vadr)) {
         err = ERR_FILE_WRITE;
         goto DONE;
       }
@@ -784,7 +784,7 @@ void SMALL Basic::ibload() {
         err = ERR_FILE_READ;
         goto DONE;
       }
-      *((uint32_t *)vadr) = c;
+      *((uint32_t *)(unsigned long)vadr) = c;
       vadr += 4;
     }
   } else {
@@ -795,7 +795,7 @@ void SMALL Basic::ibload() {
         err = ERR_FILE_READ;
         goto DONE;
       }
-      *((uint8_t *)vadr++) = c;
+      *((uint8_t *)(unsigned long)(vadr++)) = c;
     }
   }
 
