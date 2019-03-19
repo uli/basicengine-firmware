@@ -24,9 +24,11 @@ void SMALL basic_init_file_early() {
   bfs.init(16);		// CS on GPIO16
 #endif
 
-  if (_chdir(SD_PREFIX))
-    _chdir(FLASH_PREFIX);
-  else
+  if (_chdir(SD_PREFIX)) {
+    if(_chdir(FLASH_PREFIX)) {
+      // Can't really do anything if this fails, nothing is initialized yet.
+    }
+  } else
     bfs.fakeTime();
 }
 
