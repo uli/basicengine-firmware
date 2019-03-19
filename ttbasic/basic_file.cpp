@@ -109,6 +109,8 @@ Returns the next entry of an open directory.
 @dir_num	number of an open directory
 \ret Returns the directory entry as the value of the function.
 
+Returns an empty string if the end of the directory has been reached.
+
 Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1)
 depending on whether the entry is a directory itself.
 \error
@@ -134,6 +136,9 @@ out:
   }
 
   dirent *dir_entry = _readdir(user_files[fnum].d);
+
+  if (!dir_entry)
+    return BString();
 
   struct stat st;
   _stat((user_files[fnum].dir_name + BString(F("/")) +
