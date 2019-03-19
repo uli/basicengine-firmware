@@ -288,8 +288,10 @@ BString Basic::scwd() {
   char cwd[64];
   if (_getcwd(cwd, 64))
     return BString(cwd);
-  else
+  else {
+    err = ERR_LONG_PATH;
     return BString();
+  }
 }
 
 /***bc fs OPEN
@@ -353,7 +355,12 @@ void Basic::iopen() {
   if (flags == NULL) {
     f.d = _opendir(filename.c_str());
     char cwd[64];
-    _getcwd(cwd, 64);
+    if (_getcwd(cwd, 64) == NULL) {
+      err = ERR_LONG_PATH;
+      if (f.d)
+        _closedir(f.d);
+      return;
+    }
     f.dir_name = BString(cwd) + BString(F("/")) + filename;
   } else
     f.f = fopen(filename.c_str(), flags);
