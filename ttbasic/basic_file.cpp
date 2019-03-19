@@ -343,6 +343,8 @@ void Basic::iopen() {
     f.f = fopen(filename.c_str(), flags);
   if (!f.f && !f.d)
     err = ERR_FILE_OPEN;
+
+  user_files[filenum] = f;
 }
 
 /***bc fs CLOSE
