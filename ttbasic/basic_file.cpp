@@ -1,4 +1,7 @@
 #include "basic.h"
+#ifdef H3
+#include <fs.h>
+#endif
 
 FILEDIR user_files[MAX_USER_FILES];
 
@@ -24,6 +27,11 @@ void SMALL basic_init_file_early() {
   bfs.init(16);		// CS on GPIO16
 #endif
 
+#ifdef H3
+  // Also done in arch_pump_events(), but that's too late for us here.
+  sd_detect();
+#endif
+  
   if (_chdir(SD_PREFIX)) {
     if(_chdir(FLASH_PREFIX)) {
       // Can't really do anything if this fails, nothing is initialized yet.
