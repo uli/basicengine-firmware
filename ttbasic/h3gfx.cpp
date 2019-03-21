@@ -98,10 +98,10 @@ void H3GFX::updateBg()
 {
   static uint32_t last_frame = 0;
 
-  if (m_frame <= last_frame + m_frameskip || !m_bg_modified)
+  if (frame() <= last_frame + m_frameskip || !m_bg_modified)
     return;
   m_bg_modified = false;
-  last_frame = m_frame;
+  last_frame = frame();
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
