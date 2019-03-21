@@ -40,6 +40,10 @@ void H3GFX::reset()
 
 void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
 {
+#ifdef DEBUG
+  uint32_t m = micros();
+  uint16_t h = height;
+#endif
   if (dir) {
     x_src -= width - 1;
     x_dst -= width - 1;
@@ -57,6 +61,11 @@ void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y
       height--;
     }
   }
+#ifdef DEBUG
+  uint32_t elapsed = micros() - m;
+  if (elapsed > 10)
+    printf("blit %dx%d %d micros\n", width, h, micros() - m);
+#endif
 }
 
 void H3GFX::setMode(uint8_t mode)
