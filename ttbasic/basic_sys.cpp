@@ -32,6 +32,7 @@ void Basic::iwait() {
 }
 
 void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
+#ifdef ESP8266
   // Unmapped memory, causes exception
   if (vadr < 0x20000000UL) {
     E_ERR(VALUE, "unmapped address");
@@ -42,6 +43,9 @@ void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
     E_ERR(VALUE, "non-32-bit access");
     return NULL;
   }
+#else
+  // anything goes
+#endif
   if ((type == 1 && (vadr & 1)) ||
       (type == 2 && (vadr & 3))) {
     E_ERR(VALUE, "misaligned address");
