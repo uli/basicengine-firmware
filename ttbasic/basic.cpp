@@ -2174,6 +2174,7 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
       break;                   // 繰り返しを打ち切る
     newline(devno);            // 改行
     lp += *lp;               // 行ポインタを次の行へ進める
+    pump_events();
   }
   screen_putch_disable_escape_codes = false;
 }
