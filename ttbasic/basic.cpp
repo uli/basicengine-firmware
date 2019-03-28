@@ -2243,20 +2243,24 @@ void Basic::inew(uint8_t mode) {
     astk_num_i = 0;
     astk_str_i = 0;
 
+    bool direct_mode = !(cip >= listbuf && cip < listbuf + size_list);
+    
     if (listbuf)
       free(listbuf);
     // XXX: Should we be more generous here to avoid fragmentation?
-    listbuf = (unsigned char *)malloc(LISTBUF_INC);
+    listbuf = (unsigned char *)calloc(1, LISTBUF_INC);
     if (!listbuf) {
       err = ERR_OOM;
       size_list = 0;
       // If this fails, we're in deep shit...
       return;
     }
-    *listbuf = 0;
-    size_list = 1;
+    size_list = LISTBUF_INC;
     clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
-    cip = clp + sizeof(line_desc_t);
+    if (!direct_mode) {
+      cip = clp + sizeof(line_desc_t);
+      *cip = I_EOL;
+    }
   }
 }
 
