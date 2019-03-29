@@ -197,14 +197,13 @@ int BasicSound:: tsfile_tell(void *data) {
   return ftell((FILE *)data);
 }
 int BasicSound::tsfile_skip(void *data, unsigned int count) {
-  return fseek((FILE *)data, count, SEEK_CUR);
+  return !fseek((FILE *)data, count, SEEK_CUR);
 }
 int BasicSound::tsfile_seek(void *data, unsigned int pos) {
-  return fseek((FILE *)data, pos, SEEK_SET);
+  return !fseek((FILE *)data, pos, SEEK_SET);
 }
 int BasicSound::tsfile_close(void *data) {
-  fclose((FILE *)data);
-  return 0;
+  return !fclose((FILE *)data);
 }
 int BasicSound::tsfile_size(void *data) {
   long now = ftell((FILE *)data);
