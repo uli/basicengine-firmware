@@ -504,6 +504,8 @@ num_t BASIC_FP Basic::nfree() {
   if (checkOpen()||checkClose()) return 0;
 #ifdef ESP8266
   return umm_free_heap_size();
+#elif defined(H3)
+  return sys_mem_free();
 #else
   return try_malloc();
 #endif
