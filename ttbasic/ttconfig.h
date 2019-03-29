@@ -32,6 +32,7 @@
 #define USE_H3GFX 1
 #define USE_BG_ENGINE
 #define PIXEL_TYPE uint32_t
+#define BUFFERED_SCREEN
 #endif
 
 // ** ターミナルモード時のデフォルト スクリーンサイズ  ***********************

@@ -162,6 +162,9 @@ void BASIC_INT newline(uint8_t devno) {
       return;
     }
     sc0.newLine();
+#ifdef BUFFERED_SCREEN
+    pump_events();
+#endif
   } else if (devno == 1)
     Serial.println("");
   else if (devno == 2)
@@ -2174,7 +2177,6 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
       break;                   // 繰り返しを打ち切る
     newline(devno);            // 改行
     lp += *lp;               // 行ポインタを次の行へ進める
-    pump_events();
   }
   screen_putch_disable_escape_codes = false;
 }
