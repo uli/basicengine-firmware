@@ -225,8 +225,13 @@ typedef char tsf_char20[20];
 #define TSF_FourCCEquals(value1, value2) (value1[0] == value2[0] && value1[1] == value2[1] && value1[2] == value2[2] && value1[3] == value2[3])
 
 // Samples cache, number and sample count
+#ifdef LOWMEM
 #define TSF_BUFFS 13
 #define TSF_BUFFSIZE 512
+#else
+#define TSF_BUFFS 32
+#define TSF_BUFFSIZE 4096
+#endif
 
 struct tsf
 {

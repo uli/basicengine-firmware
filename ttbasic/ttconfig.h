@@ -18,12 +18,14 @@
 #define USE_BG_ENGINE
 #endif
 #define PIXEL_TYPE uint8_t
+#define LOWMEM
 #endif
 
 #ifdef ESP32
 #define USE_ESP32GFX 1
 #define USE_BG_ENGINE
 #define PIXEL_TYPE uint8_t
+#define LOWMEM
 #endif
 
 #ifdef H3
