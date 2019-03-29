@@ -103,7 +103,7 @@ void H3GFX::setMode(uint8_t mode)
 
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
 
-  backbuffer = (uint32_t *)malloc(sizeof(pixel_t) *
+  backbuffer = (uint32_t *)calloc(sizeof(pixel_t),
                                   (m_current_mode.x + m_current_mode.left * 2) *
                                   (m_last_line + m_current_mode.top));
 
