@@ -5644,12 +5644,14 @@ void SMALL Basic::basic() {
   sc0.locate(0,2);
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
+  PRINT_P(" bytes free\n");
 #elif defined(H3)
-  putnum(sys_mem_free(), 0);
+  putnum(sys_mem_free() / 1048576, 0);
+  PRINT_P(" MB free\n");
 #else
   putnum(try_malloc(), 0);
-#endif
   PRINT_P(" bytes free\n");
+#endif
 
   PRINT_P("Directory ");
   char cwd[16];
