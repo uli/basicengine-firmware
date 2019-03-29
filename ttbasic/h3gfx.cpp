@@ -8,8 +8,25 @@
 
 H3GFX vs23;
 
-const struct video_mode_t H3GFX::modes_pal[1] = {
-	{480, 270, 45, 256, 1},
+const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
+	{460, 224, 16, 16, 1},
+	{436, 216, 16, 16, 1},
+	{320, 216, 16, 16, 2},	// VS23 NTSC demo
+	{320, 200, 16, 16, 2},	// (M)CGA, Commodore et al.
+	{256, 224, 16, 16, 25},	// SNES
+	{256, 192, 16, 16, 25},	// MSX, Spectrum, NDS
+	{160, 200, 16, 16, 4},	// Commodore/PCjr/CPC
+						// multi-color
+	// "Overscan modes"
+	{352, 240, 16, 16, 2},	// PCE overscan (barely)
+	{282, 240, 16, 16, 2},	// PCE overscan (underscan on PAL)
+	{508, 240, 16, 16, 1},
+	// ESP32GFX modes
+	{320, 256, 16, 16, 2},	// maximum PAL at 2 clocks per pixel
+	{320, 240, 16, 16, 2},	// DawnOfAV demo, Mode X
+	{640, 256, 16, 16, 1},
+	// default H3 mode
+	{480, 270, 16, 16, 1},
 };
 
 #include <usb.h>
@@ -68,26 +85,35 @@ void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y
 #endif
 }
 
+static uint32_t *backbuffer = 0;
+
 void H3GFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
-  delay(16);
 
   free(m_pixels);
+  free(backbuffer);
 
   m_current_mode = modes_pal[mode];
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
   // the specified resolution plus color memory.
-  m_last_line = 512-16;//_max(131072 / m_current_mode.x,
-                    // m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
+  m_last_line = _max(524288 / m_current_mode.x,
+                     m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
 
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
+
+  backbuffer = (uint32_t *)malloc(sizeof(pixel_t) *
+                                  (m_current_mode.x + m_current_mode.left * 2) *
+                                  (m_last_line + m_current_mode.top));
+
   for (int i = 0; i < m_last_line; ++i) {
-    m_pixels[i] = active_buffer + 512 * (i + 16) + 16;//(uint8_t *)calloc(1, m_current_mode.x);
+    m_pixels[i] = backbuffer + (m_current_mode.x + m_current_mode.left * 2) * (i + m_current_mode.top) + m_current_mode.left;
   }
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+
+  display_set_mode(m_current_mode.x, m_current_mode.y, m_current_mode.left, m_current_mode.top);
 
   m_display_enabled = true;
 }
@@ -98,10 +124,22 @@ void H3GFX::updateBg()
 {
   static uint32_t last_frame = 0;
 
-  if (frame() <= last_frame + m_frameskip || !m_bg_modified)
+  if (frame() <= last_frame + m_frameskip)
     return;
-  m_bg_modified = false;
+
   last_frame = frame();
+
+  memcpy((void *)active_buffer, backbuffer,
+         (m_current_mode.x + m_current_mode.left * 2) *
+         (m_current_mode.y + m_current_mode.top) *
+         sizeof(pixel_t));
+
+  buffer_swap();
+
+  if (!m_bg_modified)
+    return;
+
+  m_bg_modified = false;
 
 #ifdef PROFILE_BG
   uint32_t start = micros();

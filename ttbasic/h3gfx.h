@@ -5,7 +5,9 @@
 #include "bgengine.h"
 #include "colorspace.h"
 
-#define SC_DEFAULT 0
+#define SC_DEFAULT 13
+
+#define H3_SCREEN_MODES 14
 
 class H3GFX : public BGEngine {
 public:
@@ -18,7 +20,7 @@ public:
     return m_current_mode.y;
   }
 
-  int numModes() { return 1; }
+  int numModes() { return H3_SCREEN_MODES; }
   void setMode(uint8_t mode);
   inline void setColorSpace(uint8_t palette) {
     Video::setColorSpace(palette);
