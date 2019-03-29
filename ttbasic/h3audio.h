@@ -5,7 +5,9 @@
 
 #include <TPS2.h>
 
-class AudioOutput
+extern "C" void hook_audio_get_sample(int16_t *l, int16_t *r);
+
+class H3Audio
 {
   public:
 //  AudioSystem *audioSystem;
@@ -34,8 +36,10 @@ class AudioOutput
     memset(m_sound_buf, 0, sizeof(m_sound_buf));
   }
 
+  friend void ::hook_audio_get_sample(int16_t *l, int16_t *r);
+
 private:
-  static void timerInterrupt(AudioOutput *audioOutput);
+  static void timerInterrupt(H3Audio *audioOutput);
 
   static int m_curr_buf_pos;
   static uint8_t *m_curr_buf;
@@ -45,6 +49,6 @@ private:
 
 };
 
-extern AudioOutput audio;
+extern H3Audio audio;
 
 #endif	// _H3AUDIO_H
