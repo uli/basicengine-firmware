@@ -7,7 +7,7 @@ SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls l
 	$(shell ls libraries/azip/*.cpp) \
 	h3/Arduino.cpp $(shell ls arduino_compat/*.cpp) \
 	h3/Time.cpp h3/TKeyboard.cpp \
-	h3/files.cpp h3/h3_i2s.cpp
+	h3/files.cpp
 
 SOURCES_C = $(shell ls ttbasic/*.c)
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
