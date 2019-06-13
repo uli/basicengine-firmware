@@ -584,6 +584,8 @@ public:
     } else if (rel[0] == '.' && rel[1] == 0) {
       absolute = m_cwd;
     } else {
+      while (rel[0] == '.' && rel[1] == '/')
+        rel += 2;
       absolute = m_cwd + UnifileString("/") + UnifileString(rel);
     }
     return absolute;
