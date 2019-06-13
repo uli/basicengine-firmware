@@ -581,6 +581,8 @@ public:
     UnifileString absolute;
     if (rel[0] == '/') {
       absolute = rel;
+    } else if (rel[0] == '.' && rel[1] == 0) {
+      absolute = m_cwd;
     } else {
       absolute = m_cwd + UnifileString("/") + UnifileString(rel);
     }
