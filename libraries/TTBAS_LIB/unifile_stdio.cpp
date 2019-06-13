@@ -71,6 +71,12 @@ int _fseek(FILE *stream, int offset, int whence) {
   return !ret;
 }
 
+long _ftell(FILE *stream)
+{
+  Unifile *f = (Unifile *)stream;
+  return f->position();
+}
+
 int _feof(FILE *stream)
 {
   Unifile *f = (Unifile *)stream;

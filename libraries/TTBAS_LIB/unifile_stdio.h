@@ -20,6 +20,7 @@ size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
 int _fputs(const char *s, FILE *stream);
 int _fseek(FILE *stream, int offset, int whence);
+long _ftell(FILE *stream);
 int _feof(FILE *stream);
 int _getc(FILE *stream);
 int _ungetc(int c, FILE *stream);
@@ -69,6 +70,7 @@ int _rmdir(const char *pathname);
 #define fwrite _fwrite
 #define fputs _fputs
 #define fseek _fseek
+#define ftell _ftell
 #define feof _feof
 #undef getc
 #define getc _getc
