@@ -1,1 +1,1 @@
-ERL=120, ERR=20, ERR$='=' expected (misspelled command?)
+ERL=120, ERR=61, ERR$=Unknown command
