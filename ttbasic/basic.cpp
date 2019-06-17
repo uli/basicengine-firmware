@@ -1504,7 +1504,8 @@ void SMALL Basic::iinput() {
           else if (isspace(c) || c == eoi)
             break;
           else {
-            ungetc(c, user_files[filenum].f);
+            if (c >= 0)
+              ungetc(c, user_files[filenum].f);
             break;
           }
         }
