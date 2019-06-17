@@ -115,7 +115,7 @@ private:
   void recalc_indent();
   uint8_t toktoi(bool find_prg_text = true);
   void irenum();
-  
+
   int SMALL putlist(unsigned char* ip, uint8_t devno = 0);
 
   int get_array_dims(int *idxs);
@@ -153,7 +153,7 @@ private:
   int32_t ncharfun();
 
   void config_color();
-  
+
   num_t nplay();
 
   uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL);
@@ -180,7 +180,7 @@ private:
   typedef void (Basic::*cmd_t)();
   static const Basic::cmd_t funtbl[];
   static const Basic::cmd_t funtbl_ext[];
-  
+
   typedef num_t (Basic::*numfun_t)();
   static const Basic::numfun_t numfuntbl[];
 
@@ -213,7 +213,7 @@ private:
   num_t nsys();
   int32_t ipeek(int type);
   void do_poke(int type);
-  
+
   void isetDate();
   void igetDate();
   void igetTime();
@@ -329,9 +329,9 @@ private:
   unsigned char *event_error_ip;
   unsigned char *event_error_resume_lp;
   unsigned char *event_error_resume_ip;
-  
+
   bool math_exceptions_disabled;
-  
+
   unsigned char *data_lp;
   unsigned char *data_ip;
   bool in_data;
@@ -392,9 +392,6 @@ static inline uint16_t c_getch() {
 #include <TKeyboard.h>
 extern TKeyboard kb;
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false);
-
-void c_puts(const char *s, uint8_t devno);
-void c_puts_P(const char *s, uint8_t devno);
 
 num_t BASIC_FP ivalue();
 
