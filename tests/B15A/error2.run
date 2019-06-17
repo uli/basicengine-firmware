@@ -17,7 +17,7 @@ ERL=130, ERR=16, ERR$=IF stack overflow
 ERL=130, ERR=17, ERR$=IF stack underflow
 ERL=130, ERR=18, ERR$=Undefined line number
 ERL=130, ERR=19, ERR$='(' or ')' expected
-ERL=130, ERR=20, ERR$='=' expected (misspelled command?)
+ERL=130, ERR=20, ERR$='=' expected
 ERL=130, ERR=21, ERR$=Cannot use system command
 ERL=130, ERR=22, ERR$=Illegal value
 ERL=130, ERR=23, ERR$=Out of range value
