@@ -763,7 +763,7 @@ as local variables or arguments.
       }
       ibuf[len++] = idx;
     }
-    
+
     // done if keyword parsed
     if (key >= 0) {
       find_prg_text = false;
@@ -1198,7 +1198,7 @@ void SMALL recalc_indent_line(unsigned char *lp) {
     indent_level = 0;
 
   ld->indent = indent_level;
-  
+
   while (*ip != I_EOL) {
     if (skip_indent)
       skip_indent = false;
@@ -1254,7 +1254,7 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
           return 0;
         }
         kw = kwtbl_ext[*ip];
-      } else { 
+      } else {
         kw = kwtbl[*ip];
       }
 
@@ -1486,7 +1486,7 @@ void SMALL Basic::iinput() {
         }
         dims = -1;
       }
- 
+
       if (*cip == I_COMMA)
         eoi = ',';
       else
@@ -1530,7 +1530,7 @@ void SMALL Basic::iinput() {
     case I_STRARR:
     case I_STRLST:
       index = *cip++;
-      
+
       if (cip[-2] == I_STRARR) {
         dims = get_array_dims(idxs);
         // XXX: check if dims matches array
@@ -1541,7 +1541,7 @@ void SMALL Basic::iinput() {
         }
         dims = -1;
       }
- 
+
       if (*cip == I_COMMA)
         eoi = ',';
       else
@@ -1561,7 +1561,7 @@ void SMALL Basic::iinput() {
       }
       if (err)
         return;
-      
+
       if (dims > 0)
         str_arr.var(index).var(dims, idxs) = str_value;
       else if (dims < 0)
@@ -1786,7 +1786,7 @@ bool BASIC_INT Basic::find_next_data() {
   if (!data_ip) {
     data_ip = data_lp + sizeof(line_desc_t);
   }
-  
+
   while (*data_ip != I_DATA && (!in_data || *data_ip != I_COMMA)) {
     in_data = false;
     next = token_size(data_ip);
@@ -1858,14 +1858,14 @@ void BASIC_INT Basic::iread() {
       return;
     nvar.var(*cip++) = value;
     break;
-    
+
   case I_VARARR:
   case I_NUMLST:
     {
     bool is_list = cip[-1] == I_NUMLST;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
-    
+
     index = *cip++;
     dims = get_array_dims(idxs);
     if (dims < 0 || (is_list && dims != 1))
@@ -1894,13 +1894,13 @@ void BASIC_INT Basic::iread() {
       return;
     svar.var(*cip++) = svalue;
     break;
-    
+
   case I_STRARR:
   case I_STRLST: {
     bool is_list = cip[-1] == I_STRLST;
     int idxs[MAX_ARRAY_DIMS];
     int dims = 0;
-    
+
     index = *cip++;
     dims = get_array_dims(idxs);
     if (dims < 0 || (is_list && dims != 1))
@@ -1930,7 +1930,7 @@ void BASIC_INT Basic::iread() {
 
   default:
     --cip;
-    if (!end_of_statement()) 
+    if (!end_of_statement())
       SYNTAX_T("exp variable");
     return;
   }
@@ -2056,7 +2056,7 @@ void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
     }
     goto resume;
   }
-  
+
   clear_execution_state(clear);
   if (err)
     return;
@@ -2247,7 +2247,7 @@ void Basic::inew(uint8_t mode) {
     astk_str_i = 0;
 
     bool direct_mode = !(cip >= listbuf && cip < listbuf + size_list);
-    
+
     if (listbuf)
       free(listbuf);
     // XXX: Should we be more generous here to avoid fragmentation?
@@ -2415,7 +2415,7 @@ uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
   int32_t len;
   uint8_t rc = 0;
   uint32_t last_line = 0;
-  
+
   cont_clp = cont_cip = NULL;
   procs.reset();
   labels.reset();
@@ -2538,7 +2538,7 @@ void SMALL Basic::idelete() {
       }
     }
   }
-  
+
   initialize_proc_pointers();
   initialize_label_pointers();
   // continue on the next line, in the likely case the DELETE command didn't
@@ -2591,7 +2591,7 @@ void BASIC_FP Basic::do_call(uint8_t proc_idx)
     err = ERR_UNDEFPROC;
     return;
   }
-  
+
   if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
     return;
@@ -2604,7 +2604,7 @@ void BASIC_FP Basic::do_call(uint8_t proc_idx)
   clp = proc_loc.lp;
   cip = proc_loc.ip;
   TRACE;
-  
+
   if (profile_enabled) {
     proc_loc.profile_current = ESP.getCycleCount();
   }
@@ -2676,7 +2676,7 @@ void BASIC_FP pump_events(void)
 
   sc0.updateCursor();
   event_profile[4] = micros();
-  
+
 #ifdef USE_BG_ENGINE
   if (bc && event_sprite_proc_idx != NO_PROC)
     bc->event_handle_sprite();
@@ -2685,7 +2685,7 @@ void BASIC_FP pump_events(void)
   if (bc && event_pad_enabled)
     bc->event_handle_pad();
   event_profile[6] = micros();
-  
+
   if (bc && profile_enabled)
     bc->draw_profile();
 
@@ -2962,7 +2962,7 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
       bfs.setTempFile(user_files[filenum].f);
       devno = 4;
       continue;
-      
+
     case I_TAB: {
       ++cip;
       int32_t col = getparam();
@@ -2996,7 +2996,7 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
     // 文字列引数流用時はここで終了
     // "Ends here when diverting character string argument"
     // WTF is that supposed to mean?
-    if (nonewln && *cip == I_COMMA) 
+    if (nonewln && *cip == I_COMMA)
       return;
 
     if (*cip == I_ELSE) {
@@ -3075,7 +3075,7 @@ void SMALL Basic::isavepcx() {
     } else
       break;
   }
-  
+
   err = bfs.saveBitmap((char *)fname.c_str(), x, y, w, h);
   return;
 }
@@ -3523,7 +3523,7 @@ BString Basic::schr() {
   int32_t nv;
   BString value;
   if (checkOpen()) return value;
-  if (getParam(nv, 0,255, I_NONE)) return value; 
+  if (getParam(nv, 0,255, I_NONE)) return value;
   value = BString((char)nv);
   checkClose();
   return value;
@@ -3632,7 +3632,7 @@ BString Basic::sstring() {
   memset(out.begin(), c, count);
   out.begin()[count] = 0;
   out.resetLength(count);
-  
+
   return out;
 }
 
@@ -3730,7 +3730,7 @@ BString BASIC_INT Basic::istrvalue()
 BString BASIC_INT Basic::istrexp()
 {
   BString value, tmp;
-  
+
   value = istrvalue();
 
   for (;;) switch(*cip) {
@@ -3856,7 +3856,7 @@ num_t BASIC_INT Basic::ninstr() {
 num_t BASIC_INT Basic::nsvar_a() {
   uint8_t i;
   int32_t a;
-  // String character accessor 
+  // String character accessor
   i = *cip++;
   if (*cip++ != I_SQOPEN) {
     // XXX: Can we actually get here?
@@ -4279,7 +4279,7 @@ FOR i = 1 TO 20
   GOSUB &Square
 NEXT i
 END
-  
+
 &Square:
 PRINT i, i * i
 RETURN
@@ -4316,7 +4316,7 @@ Branches to one of several locations, depending on the value of an expression.
 @&label		a BASIC program label
 \desc
 `ON GOTO` and `ON GOSUB` will branch to the first given line number or label
-if `expression` is `1`, to the second if `expression` is `2`, and so forth. 
+if `expression` is `1`, to the second if `expression` is `2`, and so forth.
 If `expression` is `0`, it will do nothing, and execution will continue with
 the next statement.
 
@@ -4630,7 +4630,7 @@ void BASIC_FP Basic::icall() {
     err = ERR_UNDEFPROC;
     return;
   }
-  
+
   if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;                       // エラー番号をセット
     return;
@@ -4702,7 +4702,7 @@ void BASIC_FP Basic::icall() {
   clp = proc_loc.lp;
   cip = proc_loc.ip;
   TRACE;
-  
+
   if (profile_enabled) {
     proc_loc.profile_current = ESP.getCycleCount();
   }
@@ -4877,7 +4877,7 @@ void BASIC_FP Basic::iwend() {
       break;
     lstki--;
   }
-  
+
   if (!lstki) {
     err = ERR_LSTKUF;
     return;
@@ -4904,7 +4904,7 @@ void BASIC_FP Basic::iwend() {
   TRACE;
   lstki--;
 }
-  
+
 /***bc bas FOR
 Starts a loop repeating a block of statements a specified number of times.
 \usage
@@ -5011,7 +5011,7 @@ void BASIC_FP Basic::iloop() {
       break;
     lstki--;
   }
-  
+
   if (!lstki) {
     err = ERR_LSTKUF;
     return;
@@ -5021,7 +5021,7 @@ void BASIC_FP Basic::iloop() {
   if (cond == I_WHILE || cond == I_UNTIL) {
     ++cip;
     num_t exp = iexp();
-  
+
     if ((cond == I_WHILE && exp != 0) ||
         (cond == I_UNTIL && exp == 0)) {
       // Condition met, loop.
@@ -5086,7 +5086,7 @@ void BASIC_FP Basic::inext() {
   }
 
   num_t &loop_var = local ? get_lvar(index) : nvar.var(index);
-  
+
   vstep = lstk[lstki - 1].vstep;
   loop_var += vstep;
   vto = lstk[lstki - 1].vto;
@@ -5385,7 +5385,7 @@ void Basic::iexec() {
       // Print the error in the context of the subprogram.
       error();
     }
-  } 
+  }
   free(sub.listbuf);
 }
 
@@ -5544,7 +5544,7 @@ program was interrupted.
     break;
   }
   }
-  
+
   if (err) {
     while (sc0.tryGetChar()) {}
     resize_windows();
