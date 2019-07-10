@@ -136,9 +136,8 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
             ++a;
           };
           // obsolete
-        } else if (args->type[1] == '\0') {
-          // XXX: numbers > 9?
-          m_ch_inst[ch] = args->type[0] - '0';
+        } else if (isDigit(args->type[0])) {
+          m_ch_inst[ch] = strtonum(args->type, 0);
         }
       }
       break;
