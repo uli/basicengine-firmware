@@ -43,9 +43,9 @@ struct unaligned_num_t {
 
 #define UNALIGNED_NUM_T(ip) (reinterpret_cast<struct unaligned_num_t *>(ip)->n)
 
-// TOYOSHIKI TinyBASIC プログラム利用域に関する定義
+// Definition of TOYOSHIKI TinyBASIC program usage area
 
-// *** SDカード管理 ****************
+// *** SD card management *****************
 sdfiles bfs;
 
 #define DECL_TABLE
@@ -55,7 +55,7 @@ sdfiles bfs;
 #undef DECL_TABLE
 
 #ifdef FLOAT_NUMS
-// コマンド引数取得(uint32_t,引数チェックなし)
+// Get command arguments (uint32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(int32_t& prm, token_t next_token) {
   num_t p = iexp();
   prm = p;
@@ -64,7 +64,7 @@ uint8_t BASIC_FP Basic::getParam(int32_t& prm, token_t next_token) {
   }
   return err;
 }
-// コマンド引数取得(int32_t,引数チェックあり)
+// Get command argument (int32_t, with argument check)
 uint8_t BASIC_FP Basic::getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
   prm = iexp();
   if (!err && (prm < v_min || prm > v_max))
@@ -76,7 +76,7 @@ uint8_t BASIC_FP Basic::getParam(int32_t& prm, int32_t v_min,  int32_t v_max, to
 }
 #endif
 
-// コマンド引数取得(int32_t,引数チェックあり)
+// Get command argument (int32_t, with argument check)
 uint8_t BASIC_FP Basic::getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
   prm = iexp();
   if (!err &&  (prm < v_min || prm > v_max))
@@ -97,7 +97,7 @@ uint32_t BASIC_FP Basic::getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max,
   return err;
 }
 
-// コマンド引数取得(int32_t,引数チェックなし)
+// Get command arguments (int32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(uint32_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
@@ -106,7 +106,7 @@ uint8_t BASIC_FP Basic::getParam(uint32_t& prm, token_t next_token) {
   return err;
 }
 
-// コマンド引数取得(uint32_t,引数チェックなし)
+// Get command arguments (uint32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(num_t& prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
@@ -118,13 +118,13 @@ uint8_t BASIC_FP Basic::getParam(num_t& prm, token_t next_token) {
   return err;
 }
 
-// プロトタイプ宣言
+// prototype
 void isaveconfig();
 void mem_putch(uint8_t c);
 num_t BASIC_FP iexp(void);
 void error(uint8_t flgCmd);
 
-// 1桁16進数文字を整数に変換する
+// Convert a single digit hexadecimal character to an integer
 uint16_t BASIC_INT hex2value(char c) {
   if (c <= '9' && c >= '0')
     return c - '0';
@@ -138,7 +138,7 @@ uint16_t BASIC_INT hex2value(char c) {
 int redirect_output_file = -1;
 int redirect_input_file = -1;
 
-// 文字の出力
+// Character output
 extern inline void c_putch(uint8_t c, uint8_t devno) {
   if (devno == 0) {
     if (redirect_output_file >= 0)
@@ -176,7 +176,7 @@ void BASIC_INT newline(uint8_t devno) {
   }
 }
 
-// tick用支援関数
+// Support function for tick
 void Basic::iclt() {
 //  systick_uptime_millis = 0;
 }
@@ -256,9 +256,9 @@ const uint8_t i_dual[] BASIC_DAT = {
 char sstyle(uint8_t code,
             const uint8_t *table, uint8_t count) {
   while(count--) //中間コードの数だけ繰り返す
-    if (code == pgm_read_byte(&table[count])) //もし該当の中間コードがあったら
-      return 1;  //1を持ち帰る
-  return 0; //（なければ）0を持ち帰る
+    if (code == pgm_read_byte(&table[count]))	// if there is a corresponding intermediate code
+      return 1;
+  return 0;
 }
 
 // exception search macro
@@ -267,9 +267,9 @@ char sstyle(uint8_t code,
 #define spacef(c) sstyle(c, i_sf, sizeof(i_sf))
 #define dual(c) sstyle(c, i_dual, sizeof(i_dual))
 
-// エラーメッセージ定義
+// Error message definition
 uint8_t err; // Error message index
-const char *err_expected;
+const char *err_expected;	// Clarification for the user
 
 #define ESTR(n,s) static const char _errmsg_ ## n[] PROGMEM = s;
 #include "errdef.h"
@@ -306,8 +306,8 @@ void SMALL E_SYNTAX(unsigned char token) {
   err_expected = tbuf;
 }
 // RAM mapping
-char lbuf[SIZE_LINE];          // コマンド入力バッファ
-char tbuf[SIZE_LINE];          // テキスト表示用バッファ
+char lbuf[SIZE_LINE];          // Command input buffer
+char tbuf[SIZE_LINE];          // Text display buffer
 int32_t tbuf_pos = 0;
 
 // BASIC line number descriptor.
@@ -353,22 +353,21 @@ char* tlimR(char* str) {
   return str;
 }
 
-// 1文字出力
 void c_puts(const char *s, uint8_t devno) {
-  while (*s) c_putch(*s++, devno);  //終端でなければ出力して繰り返す
+  while (*s) c_putch(*s++, devno);
 }
 void c_puts_P(const char *s, uint8_t devno) {
   while (pgm_read_byte(s)) c_putch(pgm_read_byte(s++), devno);
 }
 
 // Print numeric specified columns
-// 引数
-//  value : 出力対象数値
-//  d     : 桁指定(0で指定無し)
-//  devno : 出力先デバイスコード
-// 機能
-// 'SNNNNN' S:符号 N:数値 or 空白
-//  dで桁指定時は空白補完する
+// arguments
+//  value : Output target value
+//  d     : Digits (0 means not specified)
+//  devno : Output device
+// function
+// 'SNNNNN' S: Sign N: Number or blank
+// If the digit is specified by d, blank complements
 //
 #ifdef FLOAT_NUMS
 static const char num_prec_fmt[] PROGMEM = "%%%s%d.%dg";
@@ -408,15 +407,15 @@ void putint(int value, int8_t d, uint8_t devno) {
 #define putint putnum
 #endif
 
-// 16進数の出力
-// 引数
-//  value : 出力対象数値
-//  d     : 桁指定(0で指定無し)
-//  devno : 出力先デバイスコード
-// 機能
-// 'XXXX' X:数値
-//  dで桁指定時は0補完する
-//  符号は考慮しない
+// Output in hexadecimal
+// Arguments:
+//   value: Output target number
+//   d: Digits (0 is not specified)
+//   devno: Output device
+// function
+//   'XXXX' X: number
+//   0 complement when digit is specified by d.
+//   Does not consider sign.
 //
 void putHexnum(uint32_t value, uint8_t d, uint8_t devno) {
   char s[] = "%0.X";
@@ -425,18 +424,18 @@ void putHexnum(uint32_t value, uint8_t d, uint8_t devno) {
   c_puts(lbuf,devno);
 }
 
-// 2進数の出力
-// 引数
-//  value : 出力対象数値
-//  d     : 桁指定(0で指定無し)
-//  devno : 出力先デバイスコード
-// 機能
-// 'BBBBBBBBBBBBBBBB' B:数値
-//  dで桁指定時は0補完する
-//  符号は考慮しない
+// Binary output
+// Arguments:
+//   value: Output target number
+//   d: Digits (0 is not specified)
+//   devno: Output device
+// function
+//   'BBBBBBBBBBBBBBBB' B: Number
+//   0 complement when digit is specified by d
+//   Does not consider sign.
 //
 void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
-  uint32_t bin = (uint32_t)value;  // 符号なし16進数として参照利用する
+  uint32_t bin = (uint32_t)value;  // Interpreted as unsigned hexadecimal
   uint32_t b;
   uint32_t dig = 0;
 
@@ -619,19 +618,19 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
       //return 0;
     }
 
-    // 16進数の変換を試みる $XXXX
+    // Try hexadecimal conversion $XXXX
     if (key == I_DOLLAR) {
-      if (isHexadecimalDigit(*s)) {   // もし文字が16進数文字なら
-	hex = 0;              // 定数をクリア
-	hcnt = 0;             // 桁数
-	do { //次の処理をやってみる
-	  hex = (hex<<4) + hex2value(*s++); // 数字を値に変換
+      if (isHexadecimalDigit(*s)) {
+	hex = 0;
+	hcnt = 0;             // Number of digits
+	do {
+	  hex = (hex<<4) + hex2value(*s++);
 	  hcnt++;
-	} while (isHexadecimalDigit(*s)); //16進数文字がある限り繰り返す
+	} while (isHexadecimalDigit(*s));
 
-	if (hcnt > 8) {      // 桁溢れチェック
-	  err = ERR_VOF;     // エラー番号オバーフローをセット
-	  return 0;          // 0を持ち帰る
+	if (hcnt > 8) {      // Overflow check
+	  err = ERR_VOF;
+	  return 0;
 	}
 
 	if (len >= SIZE_IBUF - 5) { // もし中間コードが長すぎたら
