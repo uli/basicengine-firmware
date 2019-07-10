@@ -193,7 +193,7 @@ static void highlight_basic_keywords(int m, int linelen, char *colors,
 			if (kw == I_DOLLAR)
 				continue;
 			if (table[kw] && (int)strlen_P(table[kw]) <= linelen-cc &&
-			    strncasecmp_P(table[kw], &text[m+cc], strlen_P(table[kw])) == 0) {
+			    strncasecmp_P(&text[m+cc], table[kw], strlen_P(table[kw])) == 0) {
 				unsigned int ci;
 				for (ci = 0; ci < strlen_P(table[kw]); ++ci) {
 					if (isalpha(text[m+cc])) {
