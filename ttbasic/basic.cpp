@@ -960,9 +960,9 @@ uint32_t BASIC_FP getlineno(unsigned char *lp) {
 unsigned char* BASIC_FP Basic::getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
-  for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
-    if (getlineno(lp) >= lineno) //もし指定の行番号以上なら
-      break;  //繰り返しを打ち切る
+  for (lp = listbuf; *lp; lp += *lp) // Repeat from top to bottom
+    if (getlineno(lp) >= lineno)
+      break;
 
   return lp; //ポインタを持ち帰る
 }
@@ -5396,22 +5396,22 @@ void BASIC_INT Basic::iextend() {
   (this->*funtbl_ext[*cip++])();
 }
 
-// 中間コードの実行
-// 戻り値      : 次のプログラム実行位置(行の先頭)
+// execute intermediate code
+// Return value: next program execution position (line start)
 unsigned char* BASIC_FP Basic::iexe(int stk) {
   uint8_t c;               // 入力キー
   err = 0;
 
-  while (*cip != I_EOL) { //行末まで繰り返す
+  while (*cip != I_EOL) {
     //強制的な中断の判定
-    if ((c = sc0.peekKey())) { // もし未読文字があったら
-      if (process_hotkeys(c)) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
+    if ((c = sc0.peekKey())) { // If there are unread characters
+      if (process_hotkeys(c)) {
 	err_expected = NULL;
 	break;
       }
     }
 
-    //中間コードを実行
+    // Execute intermediate code
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
       (this->*funtbl[*cip++])();
     } else
@@ -5429,9 +5429,9 @@ unsigned char* BASIC_FP Basic::iexe(int stk) {
 //Command precessor
 uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
-  cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
+  cip = ibuf;          // Set the intermediate code pointer to the beginning of the intermediate code buffer
 
-  switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
+  switch (*cip++) {    // Branch by the intermediate code pointed to by the intermediate code pointer
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;
