@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 20011-2017 Bill Greiman
+ * Copyright (c) 2011-2018 Bill Greiman
  * This file is part of the SdFat library for SD memory cards.
  *
  * MIT License
@@ -71,13 +71,32 @@ fail:
 }
 //------------------------------------------------------------------------------
 bool FatVolume::allocateCluster(uint32_t current, uint32_t* next) {
-  uint32_t find = current ? current : m_allocSearchStart;
-  uint32_t start = find;
+  uint32_t find;
+  bool setStart;
+  if (m_allocSearchStart < current) {
+    // Try to keep file contiguous. Start just after current cluster.
+    find = current;
+    setStart = false;
+  } else {
+    find = m_allocSearchStart;
+    setStart = true;
+  }
   while (1) {
     find++;
-    // If at end of FAT go to beginning of FAT.
     if (find > m_lastCluster) {
-      find = 2;
+      if (setStart) {
+        // Can't find space, checked all clusters.
+        DBG_FAIL_MACRO;
+        goto fail;
+      }
+      find = m_allocSearchStart;
+      setStart = true;
+      continue;
+    }
+    if (find == current) {
+      // Can't find space, already searched clusters after current.
+      DBG_FAIL_MACRO;
+      goto fail;
     }
     uint32_t f;
     int8_t fg = fatGet(find, &f);
@@ -88,26 +107,21 @@ bool FatVolume::allocateCluster(uint32_t current, uint32_t* next) {
     if (fg && f == 0) {
       break;
     }
-    if (find == start) {
-      // Can't find space checked all clusters.
-      DBG_FAIL_MACRO;
-      goto fail;
-    }
   }
-  // mark end of chain
+  if (setStart) {
+    m_allocSearchStart = find;
+  }
+  // Mark end of chain.
   if (!fatPutEOC(find)) {
     DBG_FAIL_MACRO;
     goto fail;
   }
   if (current) {
-    // link clusters
+    // Link clusters.
     if (!fatPut(current, find)) {
       DBG_FAIL_MACRO;
       goto fail;
     }
-  } else {
-    // Remember place for search start.
-    m_allocSearchStart = find;
   }
   updateFreeClusterCount(-1);
   *next = find;
@@ -118,22 +132,29 @@ fail:
 }
 //------------------------------------------------------------------------------
 // find a contiguous group of clusters
-bool FatVolume::allocContiguous(uint32_t count, uint32_t* firstCluster) {
+bool FatVolume::allocContiguous(uint32_t count,
+                                uint32_t* firstCluster, uint32_t startCluster) {
   // flag to save place to start next search
-  bool setStart = true;
+  bool setStart;
   // start of group
   uint32_t bgnCluster;
   // end of group
   uint32_t endCluster;
-  // Start at cluster after last allocated cluster.
-  uint32_t startCluster = m_allocSearchStart;
-  endCluster = bgnCluster = startCluster + 1;
-
+  if (startCluster != 0) {
+    bgnCluster = startCluster;
+    setStart = false;
+  } else {
+    // Start at cluster after last allocated cluster.
+    bgnCluster = m_allocSearchStart + 1;
+    setStart = true;
+  }
+  endCluster = bgnCluster;
   // search the FAT for free clusters
   while (1) {
-    // If past end - start from beginning of FAT.
     if (endCluster > m_lastCluster) {
-      bgnCluster = endCluster = 2;
+      // Can't find space.
+      DBG_FAIL_MACRO;
+      goto fail;
     }
     uint32_t f;
     int8_t fg = fatGet(endCluster, &f);
@@ -142,29 +163,26 @@ bool FatVolume::allocContiguous(uint32_t count, uint32_t* firstCluster) {
       goto fail;
     }
     if (f || fg == 0) {
-      // cluster in use try next cluster as bgnCluster
-      bgnCluster = endCluster + 1;
-
+      if (startCluster) {
+        DBG_FAIL_MACRO;
+        goto fail;
+      }
       // don't update search start if unallocated clusters before endCluster.
       if (bgnCluster != endCluster) {
         setStart = false;
       }
+      // cluster in use try next cluster as bgnCluster
+      bgnCluster = endCluster + 1;
     } else if ((endCluster - bgnCluster + 1) == count) {
       // done - found space
       break;
     }
-    // Can't find space if all clusters checked.
-    if (startCluster == endCluster) {
-      DBG_FAIL_MACRO;
-      goto fail;
-    }
     endCluster++;
   }
-  // remember possible next free cluster
+  // Remember possible next free cluster.
   if (setStart) {
-    m_allocSearchStart = endCluster + 1;
+    m_allocSearchStart = endCluster;
   }
-
   // mark end of chain
   if (!fatPutEOC(endCluster)) {
     DBG_FAIL_MACRO;
@@ -355,8 +373,8 @@ bool FatVolume::freeChain(uint32_t cluster) {
     // Add one to count of free clusters.
     updateFreeClusterCount(1);
 
-    if (cluster < m_allocSearchStart) {
-      m_allocSearchStart = cluster;
+    if (cluster <= m_allocSearchStart) {
+      m_allocSearchStart = cluster - 1;
     }
     cluster = next;
   } while (fg);

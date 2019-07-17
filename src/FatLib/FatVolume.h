@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 20011-2017 Bill Greiman
+ * Copyright (c) 2011-2018 Bill Greiman
  * This file is part of the SdFat library for SD memory cards.
  *
  * MIT License
@@ -196,12 +196,20 @@ class FatVolume {
   uint32_t dataStartBlock() const {
     return m_dataStartBlock;
   }
+  /** \return The sector number for the start of file data. */
+  uint32_t dataStartSector() const {
+    return m_dataStartBlock;
+  }
   /** \return The number of File Allocation Tables. */
   uint8_t fatCount() {
     return 2;
   }
   /** \return The logical block number for the start of the first FAT. */
   uint32_t fatStartBlock() const {
+    return m_fatStartBlock;
+  }
+  /** \return The sector number for the start of the first FAT. */
+  uint32_t fatStartSector() const {
     return m_fatStartBlock;
   }
   /** \return The FAT type of the volume. Values are 12, 16 or 32. */
@@ -233,6 +241,10 @@ class FatVolume {
    * the value false is returned for failure.
    */
   bool init(uint8_t part);
+  /** \return The cluster number of last cluster in the volume. */
+  uint32_t lastCluster() const {
+    return m_lastCluster;
+  }
   /** \return The number of entries in the root directory for FAT16 volumes. */
   uint16_t rootDirEntryCount() const {
     return m_rootDirEntryCount;
@@ -242,9 +254,17 @@ class FatVolume {
   uint32_t rootDirStart() const {
     return m_rootDirStart;
   }
+  /** \return The volume's cluster size in sectors. */
+  uint8_t sectorsPerCluster() const {
+    return m_blocksPerCluster;
+  }
   /** \return The number of blocks in the volume */
   uint32_t volumeBlockCount() const {
     return blocksPerCluster()*clusterCount();
+  }
+  /** \return The number of sectors in the volume */
+  uint32_t volumeSectorCount() const {
+    return sectorsPerCluster()*clusterCount();
   }
   /** Wipe all data from the volume.
    * \param[in] pr print stream for status dots.
@@ -255,7 +275,7 @@ class FatVolume {
    *
    * \param[in] n cluster number.
    * \param[out] v value of entry
-   * \return true for success or false for failure
+   * \return -1 error, 0 EOC, else 1.
    */
   int8_t dbgFat(uint32_t n, uint32_t* v) {
     return fatGet(n, v);
@@ -263,9 +283,9 @@ class FatVolume {
 //------------------------------------------------------------------------------
  private:
   // Allow FatFile and FatCache access to FatVolume private functions.
-  friend class FatCache;
-  friend class FatFile;
-  friend class FatFileSystem;
+  friend class FatCache;       ///< Allow access to FatVolume.
+  friend class FatFile;        ///< Allow access to FatVolume.
+  friend class FatFileSystem;  ///< Allow access to FatVolume.
 //------------------------------------------------------------------------------
   BlockDriver* m_blockDev;      // block device
   uint8_t  m_blocksPerCluster;     // Cluster size in blocks.
@@ -357,7 +377,8 @@ class FatVolume {
   }
 //------------------------------------------------------------------------------
   bool allocateCluster(uint32_t current, uint32_t* next);
-  bool allocContiguous(uint32_t count, uint32_t* firstCluster);
+  bool allocContiguous(uint32_t count,
+                       uint32_t* firstCluster, uint32_t startCluster = 0);
   uint8_t blockOfCluster(uint32_t position) const {
     return (position >> 9) & m_clusterBlockMask;
   }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 20011-2017 Bill Greiman
+ * Copyright (c) 2011-2018 Bill Greiman
  * This file is part of the SdFat library for SD memory cards.
  *
  * MIT License
@@ -32,9 +32,12 @@
 #include "BlockDriver.h"
 #include "FatLib/FatLib.h"
 #include "SdCard/SdioCard.h"
+#if INCLUDE_SDIOS
+#include "sdios.h"
+#endif  // INCLUDE_SDIOS
 //------------------------------------------------------------------------------
-/** SdFat version */
-#define SD_FAT_VERSION "1.0.5"
+/** SdFat version 1.1.0 */
+#define SD_FAT_VERSION 10100
 //==============================================================================
 /**
  * \class SdBaseFile
@@ -49,9 +52,9 @@ class SdBaseFile : public FatFile {
    *
    * \param[in] oflag Values for \a oflag are constructed by a
    * bitwise-inclusive OR of open flags. see
-   * FatFile::open(FatFile*, const char*, uint8_t).
+   * FatFile::open(FatFile*, const char*, oflag_t).
    */
-  SdBaseFile(const char* path, uint8_t oflag) : FatFile(path, oflag) {}
+  SdBaseFile(const char* path, oflag_t oflag) : FatFile(path, oflag) {}
 };
 //-----------------------------------------------------------------------------
 #if ENABLE_ARDUINO_FEATURES
@@ -68,9 +71,9 @@ class SdFile : public PrintFile {
    *
    * \param[in] oflag Values for \a oflag are constructed by a
    * bitwise-inclusive OR of open flags. see
-   * FatFile::open(FatFile*, const char*, uint8_t).
+   * FatFile::open(FatFile*, const char*, oflag_t).
    */
-  SdFile(const char* path, uint8_t oflag) : PrintFile(path, oflag) {}
+  SdFile(const char* path, oflag_t oflag) : PrintFile(path, oflag) {}
 };
 #endif  // #if ENABLE_ARDUINO_FEATURES
 //-----------------------------------------------------------------------------
@@ -308,12 +311,12 @@ class SdFat : public SdFileSystem<SdSpiCard> {
  public:
 #if IMPLEMENT_SPI_PORT_SELECTION || defined(DOXYGEN)
   SdFat() {
-    m_spi.setPort(0);
+    m_spi.setPort(nullptr);
   }
   /** Constructor with SPI port selection.
    * \param[in] spiPort SPI port number.
    */
-  explicit SdFat(uint8_t spiPort) {
+  explicit SdFat(SPIClass* spiPort) {
     m_spi.setPort(spiPort);
   }
 #endif  // IMPLEMENT_SPI_PORT_SELECTION
@@ -441,12 +444,12 @@ class SdFatEX : public SdFileSystem<SdSpiCardEX> {
  public:
 #if IMPLEMENT_SPI_PORT_SELECTION  || defined(DOXYGEN)
   SdFatEX() {
-    m_spi.setPort(0);
+    m_spi.setPort(nullptr);
   }
   /** Constructor with SPI port selection.
    * \param[in] spiPort SPI port number.
    */
-  explicit SdFatEX(uint8_t spiPort) {
+  explicit SdFatEX(SPIClass* spiPort) {
     m_spi.setPort(spiPort);
   }
 #endif  // IMPLEMENT_SPI_PORT_SELECTION
