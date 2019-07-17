@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 20011-2017 Bill Greiman
+ * Copyright (c) 2011-2018 Bill Greiman
  * This file is part of the SdFat library for SD memory cards.
  *
  * MIT License
@@ -56,10 +56,16 @@ class SdSpiCard {
   /**
    * Determine the size of an SD flash memory card.
    *
-   * \return The number of 512 byte data blocks in the card
+   * \return The number of 512 byte sectors in the card
    *         or zero if an error occurs.
    */
-  uint32_t cardSize();
+  uint32_t cardCapacity();
+  /** \return Card size in sectors or zero if an error occurs. */
+  uint32_t cardSize() {return cardCapacity();}
+  /** Clear debug stats. */
+  void dbgClearStats();
+  /** Print debug stats. */
+  void dbgPrintStats();
   /** Erase a range of blocks.
    *
    * \param[in] firstBlock The address of the first block in the range.

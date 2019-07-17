@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 20011-2017 Bill Greiman
+ * Copyright (c) 2011-2018 Bill Greiman
  * This file is part of the SdFat library for SD memory cards.
  *
  * MIT License
@@ -26,7 +26,6 @@
 #define FatFileSystem_h
 #include "FatVolume.h"
 #include "FatFile.h"
-#include "ArduinoStream.h"
 #include "ArduinoFiles.h"
 
 namespace sdfat {
@@ -65,9 +64,11 @@ class FatFileSystem : public  FatVolume {
    * LS_SIZE - %Print file size.
    *
    * LS_R - Recursive list of subdirectories.
+   *
+   * \return true for success or false if an error occurred.
    */
-  void ls(uint8_t flags = 0) {
-    ls(&Serial, flags);
+  bool ls(uint8_t flags = 0) {
+    return ls(&Serial, flags);
   }
   /** List the directory contents of a directory to Serial.
    *
@@ -80,29 +81,31 @@ class FatFileSystem : public  FatVolume {
    * LS_SIZE - %Print file size.
    *
    * LS_R - Recursive list of subdirectories.
+   *
+   * \return true for success or false if an error occurred.
    */
-  void ls(const char* path, uint8_t flags = 0) {
-    ls(&Serial, path, flags);
+  bool ls(const char* path, uint8_t flags = 0) {
+    return ls(&Serial, path, flags);
   }
   /** open a file
    *
    * \param[in] path location of file to be opened.
-   * \param[in] mode open mode flags.
+   * \param[in] oflag open flags.
    * \return a File object.
    */
-  File open(const char *path, uint8_t mode = FILE_READ) {
+  File open(const char *path, oflag_t oflag = FILE_READ) {
     File tmpFile;
-    tmpFile.open(vwd(), path, mode);
+    tmpFile.open(vwd(), path, oflag);
     return tmpFile;
   }
   /** open a file
    *
    * \param[in] path location of file to be opened.
-   * \param[in] mode open mode flags.
+   * \param[in] oflag open flags.
    * \return a File object.
    */
-  File open(const String &path, uint8_t mode = FILE_READ) {
-    return open(path.c_str(), mode );
+  File open(const String &path, oflag_t oflag = FILE_READ) {
+    return open(path.c_str(), oflag );
   }
 #endif  // ENABLE_ARDUINO_FEATURES
   /** Change a volume's working directory to root
@@ -147,7 +150,7 @@ class FatFileSystem : public  FatVolume {
     if (path[0] == '/' && path[1] == '\0') {
       return chdir(set_cwd);
     }
-    if (!dir.open(vwd(), path, O_READ)) {
+    if (!dir.open(vwd(), path, O_RDONLY)) {
       goto fail;
     }
     if (!dir.isDir()) {
@@ -198,9 +201,11 @@ fail:
    * LS_SIZE - %Print file size.
    *
    * LS_R - Recursive list of subdirectories.
+   *
+   * \return true for success or false if an error occurred.
    */
-  void ls(print_t* pr, uint8_t flags = 0) {
-    vwd()->ls(pr, flags);
+  bool ls(print_t* pr, uint8_t flags = 0) {
+    return vwd()->ls(pr, flags);
   }
   //----------------------------------------------------------------------------
   /** List the directory contents of a directory.
@@ -216,11 +221,12 @@ fail:
    * LS_SIZE - %Print file size.
    *
    * LS_R - Recursive list of subdirectories.
+   *
+   * \return true for success or false if an error occurred.
    */
-  void ls(print_t* pr, const char* path, uint8_t flags) {
+  bool ls(print_t* pr, const char* path, uint8_t flags) {
     FatFile dir;
-    dir.open(vwd(), path, O_READ);
-    dir.ls(pr, flags);
+    return dir.open(vwd(), path, O_RDONLY) && dir.ls(pr, flags);
   }
   //----------------------------------------------------------------------------
   /** Make a subdirectory in the volume working directory.
@@ -265,7 +271,7 @@ fail:
    */
   bool rename(const char *oldPath, const char *newPath) {
     FatFile file;
-    if (!file.open(vwd(), oldPath, O_READ)) {
+    if (!file.open(vwd(), oldPath, O_RDONLY)) {
       return false;
     }
     return file.rename(vwd(), newPath);
@@ -282,7 +288,7 @@ fail:
    */
   bool rmdir(const char* path) {
     FatFile sub;
-    if (!sub.open(vwd(), path, O_READ)) {
+    if (!sub.open(vwd(), path, O_RDONLY)) {
       return false;
     }
     return sub.rmdir();
@@ -300,7 +306,7 @@ fail:
    */
   bool truncate(const char* path, uint32_t length) {
     FatFile file;
-    if (!file.open(vwd(), path, O_WRITE)) {
+    if (!file.open(vwd(), path, O_WRONLY)) {
       return false;
     }
     return file.truncate(length);
