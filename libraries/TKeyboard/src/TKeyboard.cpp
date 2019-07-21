@@ -120,6 +120,18 @@ static const uint8_t key_ascii_de[][2] BASIC_DAT = {
   { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'w', 'W'},{ 'x', 'X'},{ 'z', 'Z'},{ 'y', 'Y'},
 };
 
+// French keyboard (code page 437)
+static const uint8_t key_ascii_fr[][2] BASIC_DAT = {
+  /*{0x1B,0x1B},{0x09,0x09},{0x0D,0x0D},{0x08,0x08},{0x7F,0x7F},*/
+  { ' ', ' '},{ '\x97','%'},{ 'm', 'M'},{ ';', '.'},{ ')', '\xF8'},{ ':', '/'},{ '!', '\x7F'},{ '\x7F', '\x7F'},
+  { '$', '\x9C'},{'\x7F', '\x7F'},{ '*','\xE6'},{ '=', '+'},{ '?','?'},{ '\x85', '0'},{ '&', '1'},{ '\x82', '2'},
+  { '"', '3'},{ '\'', '4'},{ '(', '5'},{ '-', '6'},{ '\x8A', '7'},{ '_', '8'},{ '\x80', '9'},{'\x7F', '\x7F'},
+  {   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{   0,  0 },{ 'q', 'Q'},{ 'b', 'B'},
+  { 'c', 'C'},{ 'd', 'D'},{ 'e', 'E'},{ 'f', 'F'},{ 'g', 'G'},{ 'h', 'H'},{ 'i', 'I'},{ 'j', 'J'},
+  { 'k', 'K'},{ 'l', 'L'},{ ',', '?'},{ 'n', 'N'},{ 'o', 'O'},{ 'p', 'P'},{ 'a', 'A'},{ 'r', 'R'},
+  { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'z', 'z'},{ 'x', 'X'},{ 'y', 'Y'},{ 'w', 'W'},
+};
+
 // Conversion table for numeric pad keys 94-111
 // { Normal code, NumLock/Shift code, 1: key code  0: ASCII code }
 static const uint8_t tenkey[][3] BASIC_DAT = {
@@ -150,6 +162,7 @@ void TKeyboard::setLayout(uint8_t layout)
   case 0:	key_ascii = key_ascii_jp; break;
   case 1:	key_ascii = key_ascii_us; break;
   case 2:	key_ascii = key_ascii_de; break;
+  case 3:	key_ascii = key_ascii_fr; break;
   default:	key_ascii = key_ascii_us; break;
   }
 }
@@ -520,6 +533,22 @@ keyEvent TKeyboard::read()
     default:		c.value = 0; break;
     }
     goto DONE;
+  } else if (kbd_layout == 3 && sts_state.kevt.ALTGR && code != PS2KEY_R_Alt) {
+    switch (code) {
+    case PS2KEY_2:	c.value = '~'; break;
+    case PS2KEY_3:	c.value = '#'; break;
+    case PS2KEY_4:	c.value = '{'; break;
+    case PS2KEY_5:	c.value = '['; break;
+    case PS2KEY_6:	c.value = '|'; break;
+    case PS2KEY_7:	c.value = '`'; break;
+    case PS2KEY_8:	c.value = '\\'; break;
+    case PS2KEY_9:	c.value = '^'; break;
+    case PS2KEY_0:	c.value = '@'; break;
+    case PS2KEY_minus:	c.value = ']'; break;
+    case PS2KEY_Hat:	c.value = '}'; break;
+    default:		c.value = 0; break;
+    }
+    goto DONE;
   } else if (code >= PS2KEY_Space && code <= PS2KEY_Z) {
     // Keys affected by the state of CapsLock (A-Z)
     if (code >= PS2KEY_A && code <= PS2KEY_Z)
@@ -664,6 +693,11 @@ keyEvent TKeyboard::read()
         c.value = '\xf8';
       else
         c.value = '^';
+    } else if (kbd_layout == 3) {
+      if (sts_state.kevt.SHIFT)
+        c.value = 0;
+      else
+        c.value = '\xFD';
     }
     goto DONE;
   } else {
