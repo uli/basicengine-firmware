@@ -165,7 +165,7 @@ int SMALL Psx::read()
 	delayMicroseconds(_delay*2);
       }
 
-      if (retries == 3)	{
+      if (retries == MAX_RETRIES) {
         // exhausted all retries, there might be no controller here
         _last_failed = millis();
 #ifdef USE_VS23_GPIO
