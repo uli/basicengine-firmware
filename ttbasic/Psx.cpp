@@ -56,10 +56,10 @@ Psx::Psx()
 
 byte SMALL Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
 {
-	_temp = 0;
-	_dataIn = 0;
+	boolean _temp = 0;
+	byte _dataIn = 0;
 
-	for (_i = 0; _i <= 7; _i++)
+	for (int _i = 0; _i <= 7; _i++)
 	{
 		
 		
