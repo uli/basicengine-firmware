@@ -158,8 +158,6 @@ int SMALL Psx::read()
         }
 
         // Not the right magic byte, try again.
-        _last_read = -1;
-
         // wait some time before doing another read
         // XXX: wild guess
 	delayMicroseconds(_delay*2);
