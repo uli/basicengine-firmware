@@ -54,7 +54,7 @@ Psx::Psx()
 	_last_read = 0;
 }
 
-byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
+byte SMALL Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
 {
 	_temp = 0;
 	_dataIn = 0;
@@ -111,7 +111,7 @@ void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte
 #define MAX_RETRIES 3
 #define CONFIRMATIONS 1
 
-int Psx::read()
+int SMALL Psx::read()
 {
     byte data1, data2;
     int data_out;
