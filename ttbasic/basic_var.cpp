@@ -315,9 +315,29 @@ void Basic::set_svar(bool is_lsvar) {
   }
   cip++;
 
-  value = istrexp();
-  if (err)
-    return;
+  if (*cip == I_SQOPEN) {
+    uint32_t element;
+    ++cip;
+    for (;; ++cip) {
+      if (getParam(element, 0, 255, I_NONE))
+        return;
+      value.concat((char)element);
+
+      if (*cip == I_SQCLOSE) {
+        ++cip;
+        break;
+      }
+      if (*cip != I_COMMA) {
+        E_ERR(SYNTAX, ", or ] expected");
+        return;
+      }
+    }
+  } else {
+    value = istrexp();
+    if (err)
+      return;
+  }
+
   if (is_lsvar) {
     BString &str = get_lsvar(index);
     if (err)
