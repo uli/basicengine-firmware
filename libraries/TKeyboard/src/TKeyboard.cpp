@@ -490,7 +490,7 @@ uint8_t TKeyboard::m_key_state[256/8];
 //
 // Returned value: input information
 //
-keyEvent TKeyboard::read()
+keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
 {
   static keyinfo sts_state = {.value = 0};
   static uint8_t sts_numlock   = LOCK_Start; // NumLock state
