@@ -401,6 +401,11 @@ BString BasicSound::instName(int index)
 
 void BasicSound::setBeep(int period, int vol)
 {
+  if (vol > 15)
+    vol = 15;
+  else if (vol < 0)
+    vol = 0;
+
   uint32_t sample = vol * 17;
 
   audio.setBlockSize(period);
