@@ -122,11 +122,13 @@ BString Basic::sinst() {
 
 /***bc snd BEEP
 Produces a sound using the "beeper" sound engine.
-\usage BEEP period[, volume]
+\usage BEEP period[, volume [, env$]]
 \args
-@period	- tone cycle period in samples [`0` (off) to `320`/`160`]
-@volume	- tone volume +
-          [`0` to `15`, default: as set in system configuration]
+@period	tone cycle period in samples [`0` (off) to `320`/`160`]
+@volume	tone volume +
+        [`0` to `15`, default: as set in system configuration]
+@env$	volume envelope
+	[characters from `CHR$(0)` to `CHR$(15)`, default: constant volume]
 \note
 The maximum value for `period` depends on the flavor of Engine BASIC;
 it's 320 for the gaming build, and 160 for the network build.
@@ -135,16 +137,25 @@ it's 320 for the gaming build, and 160 for the network build.
 void Basic::ibeep() {
   int32_t period;
   int32_t vol = CONFIG.beep_volume;
+  BString env;
+  uint8_t *env_ptr = NULL;
 
   if ( getParam(period, 0, SOUND_BUFLEN, I_NONE) ) return;
   if(*cip == I_COMMA) {
     cip++;
     if ( getParam(vol, 0, 15, I_NONE) ) return;
   }
+  if (*cip == I_COMMA) {
+    cip++;
+    env = istrexp();
+    if (err)
+      return;
+    env_ptr = (uint8_t *)env.c_str();
+  }
   if (period == 0)
     sound.noBeep();
   else
-    sound.beep(period, vol);
+    sound.beep(period, vol, env_ptr);
 }
 
 /***bc snd SOUND FONT
