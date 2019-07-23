@@ -63,7 +63,8 @@ BString BasicSound::m_font_name;
 
 uint16_t BasicSound::m_beep_period;
 uint8_t BasicSound::m_beep_vol;
-const uint8_t *BasicSound::m_beep_env;
+uint8_t *BasicSound::m_beep_env;
+uint16_t BasicSound::m_beep_pos;
 
 #ifdef HAVE_TSF
 void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
@@ -332,13 +333,12 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
 #endif
 
   if (m_beep_env) {
-    uint8_t vol = pgm_read_byte(m_beep_env);
+    uint8_t vol = m_beep_env[m_beep_pos];
     if (!vol) {
-      m_beep_env = NULL;
       noBeep();
     } else {
       setBeep(m_beep_period, vol * m_beep_vol / 16);
-      m_beep_env++;
+      m_beep_pos++;
     }
   }
 }
@@ -430,15 +430,20 @@ void BasicSound::beep(int period, int vol, const uint8_t *env)
   }
   setBeep(period, vol);
   if (env) {
-    m_beep_env = env;
+    free(m_beep_env);
+    m_beep_env = (uint8_t *)strdup((const char *)env);
+    m_beep_pos = 0;
     m_beep_period = period;
     m_beep_vol = vol;
-  } else
+  } else {
+    free(m_beep_env);
     m_beep_env = NULL;
+  }
 }
 
 void BasicSound::noBeep()
 {
+  free(m_beep_env);
   m_beep_env = NULL;
 #if !defined(HOSTED)
   audio.clearBufs();

@@ -129,7 +129,8 @@ public:
 private:
     static void setBeep(int period, int vol);
 
-    static const uint8_t *m_beep_env;
+    static uint8_t *m_beep_env;
+    static uint16_t m_beep_pos;
     static uint16_t m_beep_period;
     static uint8_t m_beep_vol;
 
