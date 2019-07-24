@@ -166,6 +166,10 @@ void Basic::idim() {
       if (dims > 1) {
         err = ERR_NOT_SUPPORTED;
       } else {
+        if (*++cip != I_SQOPEN) {
+          E_SYNTAX(I_SQOPEN);
+          return;
+        }
         if (is_string) {
           BString svalue;
           int cnt = 0;
@@ -194,6 +198,10 @@ void Basic::idim() {
             n = value;
             cnt++;
           } while(*cip == I_COMMA);
+        }
+        if (*cip++ != I_SQCLOSE) {
+          E_SYNTAX(I_SQCLOSE);
+          return;
         }
       }
       break;
