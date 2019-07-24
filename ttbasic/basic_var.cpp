@@ -548,6 +548,13 @@ void Basic::istrlstref() {
   }
 }
 
+/***bc bas APPEND
+Appends an element to the end of a list.
+\usage APPEND list, value
+\args
+@list	a numeric or string list variable
+@value	a numeric or string expression
+***/
 void Basic::iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
@@ -578,6 +585,13 @@ void Basic::iappend() {
   return;
 }
 
+/***bc bas PREPEND
+Adds an element to the start of a list.
+\usage PREPEND list, value
+\args
+@list	a numeric or string list variable
+@value	a numeric or string expression
+***/
 void Basic::iprepend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
