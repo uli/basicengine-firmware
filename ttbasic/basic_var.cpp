@@ -488,6 +488,66 @@ void Basic::inumlst() {
   s = value;
 }
 
+void Basic::inumlstref() {
+  uint8_t index = *cip++;
+  num_t value;
+
+  if (*cip++ != I_EQ) {
+    E_SYNTAX(I_EQ);
+    return;
+  }
+  if (*cip != I_SQOPEN) {
+    E_SYNTAX(I_SQOPEN);
+    return;
+  }
+
+  num_lst.var(index).reset();
+  do {
+    cip++;
+    value = iexp();
+    if (err)
+      return;
+    num_lst.var(index).append(value);
+    if (err)
+      return;
+  } while(*cip == I_COMMA);
+
+  if (*cip++ != I_SQCLOSE) {
+    E_SYNTAX(I_SQCLOSE);
+    return;
+  }
+}
+
+void Basic::istrlstref() {
+  uint8_t index = *cip++;
+  BString value;
+
+  if (*cip++ != I_EQ) {
+    E_SYNTAX(I_EQ);
+    return;
+  }
+  if (*cip != I_SQOPEN) {
+    E_SYNTAX(I_SQOPEN);
+    return;
+  }
+
+  str_lst.var(index).reset();
+  do {
+    cip++;
+    value = istrexp();
+    if (err)
+      return;
+    str_lst.var(index).append(value);
+    if (err)
+      return;
+  } while(*cip == I_COMMA);
+
+  if (*cip++ != I_SQCLOSE) {
+    E_SYNTAX(I_SQCLOSE);
+    return;
+  }
+}
+
 void Basic::iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
@@ -604,6 +664,16 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::ilet() {
   case I_NUMLST:
     cip++;
     inumlst();
+    break;
+
+  case I_NUMLSTREF:
+    cip++;
+    inumlstref();
+    break;
+
+  case I_STRLSTREF:
+    cip++;
+    istrlstref();
     break;
 
   default:      // 以上のいずれにも該当しなかった場合
