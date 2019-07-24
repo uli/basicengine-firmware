@@ -127,6 +127,16 @@ int BASIC_FP Basic::get_array_dims(int *idxs) {
   return dims;
 }
 
+/***bc bas DIM
+Declares an array.
+\usage DIM variable(dimension[, ...]) [= [value, ...]]
+\args
+@variable	an numeric or string array variable
+@dimension	one or more dimensions of the array
+@value		initial value(s) for the array elements
+\note
+Initialization is only possible for one-dimensional arrays.
+***/
 void Basic::idim() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
