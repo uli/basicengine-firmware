@@ -3852,19 +3852,18 @@ num_t BASIC_INT Basic::ninstr() {
     return res - haystack.c_str();
 }
 
-num_t BASIC_INT Basic::nsvar_a() {
+num_t BASIC_INT Basic::nsvar_a(BString &value) {
   uint8_t i;
   int32_t a;
   // String character accessor
-  i = *cip++;
   if (*cip++ != I_SQOPEN) {
     // XXX: Can we actually get here?
     E_SYNTAX(I_SQOPEN);
     return 0;
   }
-  if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
+  if (getParam(a, 0, value.length(), I_SQCLOSE))
     return 0;
-  return svar.var(i)[a];
+  return value[a];
 }
 
 // Get value
@@ -3907,7 +3906,27 @@ num_t BASIC_FP Basic::ivalue() {
     break;
 
   case I_SVAR:
-    value = nsvar_a();
+    value = nsvar_a(svar.var(*cip++));
+    break;
+
+  case I_LSVAR:
+    value = nsvar_a(get_lsvar(*cip++));
+    break;
+
+  case I_STRARR:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    value = nsvar_a(str_arr.var(i).var(dims, idxs));
+    break;
+
+  case I_STRLST:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != 1) {
+      SYNTAX_T("invalid list index");
+    } else {
+      value = nsvar_a(str_lst.var(i).var(idxs[0]));
+    }
     break;
 
   //括弧の値の取得

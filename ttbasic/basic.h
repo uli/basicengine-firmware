@@ -196,7 +196,7 @@ private:
   BString istrexp();
   num_t irel_string();
 
-  num_t nsvar_a();
+  num_t nsvar_a(BString &);
   int get_num_local_offset(uint8_t arg, bool &is_local);
   num_t& get_lvar(uint8_t arg);
   int get_str_local_offset(uint8_t arg, bool &is_local);
