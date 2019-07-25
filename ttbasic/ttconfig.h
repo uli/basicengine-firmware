@@ -9,8 +9,9 @@
 #ifndef __ttconfig_h__
 #define __ttconfig_h__
 
-// ** NTSCビデオ出力利用有無 *************************************************
-#define USE_NTSC  1  // 0:利用しない 1:利用する (デフォルト:1)
+// ** Use of NTSC video output *************************************************
+// XXX: This is non-optional by now and should thus be removed.
+#define USE_NTSC  1  // 0: Not used, 1: Used. (Default: 1)
 
 #ifdef ESP8266
 #define USE_VS23 1
@@ -35,37 +36,38 @@
 #define BUFFERED_SCREEN
 #endif
 
-// ** ターミナルモード時のデフォルト スクリーンサイズ  ***********************
-// ※ 可動中では、WIDTHコマンドで変更可能  (デフォルト:80x25)
+// ** Default screen size in terminal mode ************************
+// ※ While moving, can be changed by WIDTH command (default: 80x25)
+// XXX: I don't think this works anymore.
 #define TERM_W       80
 #define TERM_H       25
 
 // ** Default speed of Serial port 1 *********************************************
 #define GPIO_S1_BAUD    115200
 
-// ** 内蔵RTCの利用指定   0:利用しない 1:利用する *****************************
-#define USE_INNERRTC   1 // (デフォルト:1) ※ SDカード利用時は必ず1とする
+// ** Use of built-in RTC 0: Not use 1: Use *****************************
+#define USE_INNERRTC   1 // (Default: 1) ※ Always set to 1 when using an SD card
 
-// ** フォントデータ指定 ******************************************************
-#define FONTSELECT  1  // 0 ～ 3 (デフォルト :1)
+// ** Font data specification ******************************************************
+#define FONTSELECT  1  // 0 to 3 (default: 1)
 
 #if FONTSELECT == 0
-  // 6x8 TVoutフォント
+  // 6x8 TVout font
   #define TV_DISPLAY_FONT font6x8
   #include <font6x8.h>
 
 #elif FONTSELECT == 1
-  // 6x8ドット オリジナルフォント(デフォルト)
+  // 6x8 pixel original font (default)
   #define TV_DISPLAY_FONT font6x8tt
   #include <font6x8tt.h>
 
 #elif FONTSELECT == 2
-  // 8x8 TVoutフォント
+  // 8x8 TVout font
   #define TV_DISPLAY_FONT font8x8
   #include <font8x8.h>
 
 #elif FONTSELECT == 3
-  // 8x8 IchigoJamフォント(オプション機能 要フォント)
+  // 8x8 IchigoJam font (optional feature required font)
   #define TV_DISPLAY_FONT ichigoFont8x8 
   #include <ichigoFont8x8.h>
 #endif
