@@ -24,13 +24,13 @@
 
 extern uint8_t* ttbasic_font;
 
-const uint8_t* tvfont = 0;     // 利用フォント
-uint16_t c_width;    // 横文字数
-uint16_t c_height;   // 縦文字数
-uint16_t f_width;    // フォント幅(ドット)
-uint16_t f_height;   // フォント高さ(ドット)
-uint16_t g_width;    // 画面横ドット数(ドット)
-uint16_t g_height;   // 画面縦ドット数(ドット)
+const uint8_t* tvfont = 0;     // Font to use
+uint16_t c_width;    // Screen horizontal characters
+uint16_t c_height;   // Screen vertical characters
+uint16_t f_width;    // Font width (pixels)
+uint16_t f_height;   // Font height (pixels)
+uint16_t g_width;    // Screen horizontal pixels
+uint16_t g_height;   // Screen vertical pixels
 uint16_t win_x, win_y, win_width, win_height;
 uint16_t win_c_width, win_c_height;
 int clrline_x, clrline_y;
@@ -48,10 +48,12 @@ void SMALL tv_fontInit() {
   if (!tvfont)
     tvfont = console_font_6x8;
 
-  f_width  = pgm_read_byte(tvfont+0);             // 横フォントドット数
-  f_height = pgm_read_byte(tvfont+1);             // 縦フォントドット数  
-  c_width  = g_width  / f_width;       // 横文字数
-  c_height = g_height / f_height;      // 縦文字数
+  // Font dimensions, pixels
+  f_width  = pgm_read_byte(tvfont+0);
+  f_height = pgm_read_byte(tvfont+1);
+  // Screen dimensions, characters
+  c_width  = g_width  / f_width;
+  c_height = g_height / f_height;
   win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
 }
@@ -76,12 +78,12 @@ static void allocate_system_bufs()
 }
 
 //
-// NTSC表示の初期設定
+// Default setting for NTSC display
 // 
 void tv_init(int16_t ajst, uint8_t vmode) { 
   vs23.setMode(vmode);
-  g_width  = vs23.width();           // 横ドット数
-  g_height = vs23.height();          // 縦ドット数
+  g_width  = vs23.width();           // Horizontal pixel number
+  g_height = vs23.height();          // Number of vertical pixels
 
   allocate_system_bufs();
   clrline_color = (pixel_t)0;
@@ -139,22 +141,21 @@ void tv_window_get(int &x, int &y, int &w, int &h)
 }
 
 //
-// NTSC表示の終了
+// End of NTSC display
 // 
 void tv_end() {
 }
 
-// フォントアドレス取得
 const uint8_t* tv_getFontAdr() {
   return tvfont;
 }
 
-// 画面文字数横
+// Screen characters sideways
 uint8_t tv_get_cwidth() {
   return c_width;
 }
 
-// 画面文字数縦
+// Screen characters downwards
 uint8_t tv_get_cheight() {
   return c_height;
 }
@@ -167,18 +168,18 @@ uint8_t tv_get_win_cheight() {
   return win_c_height;
 }
 
-// 画面グラフィック横ドット数
+// Screen graphic horizontal pixels
 uint16_t tv_get_gwidth() {
   return g_width;
 }
 
-// 画面グラフィック縦ドット数
+// Screen graphic vertical pixels
 uint16_t tv_get_gheight() {
   return g_height;
 }
 
 //
-// カーソル表示
+// Cursor display
 //
 void tv_drawCurs(uint8_t x, uint8_t y) {
   pixel_t pix[f_width];
@@ -192,7 +193,7 @@ void tv_drawCurs(uint8_t x, uint8_t y) {
 }
 
 //
-// 文字の表示
+// Display character
 //
 static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
   const uint8_t *chp = tvfont+3+c*f_height;
@@ -222,7 +223,7 @@ void ICACHE_RAM_ATTR tv_write_color(uint8_t x, uint8_t y, uint8_t c, pixel_t fg,
 }
 
 //
-// 画面のクリア
+// Clear screen
 //
 void tv_cls() {
   for (int i = 0; i < win_c_height; ++i) {
@@ -231,7 +232,7 @@ void tv_cls() {
 }
 
 //
-// 指定行の1行クリア
+// Clear one specified line
 //
 void tv_clerLine(uint16_t l, int from) {
   int left = win_x + from * f_width;
@@ -243,7 +244,7 @@ void tv_clerLine(uint16_t l, int from) {
 }
 
 //
-// 指定行に1行挿入(下スクロール)
+// Insert one line at specified line (downward scroll)
 //
 void tv_insLine(uint16_t l) {
   if (l > win_c_height-1) {
@@ -263,14 +264,14 @@ void tv_insLine(uint16_t l) {
   }
 }
 
-// 1行分スクリーンのスクロールアップ
+// Screen scroll up for one line
 void tv_scroll_up() {
   vs23.MoveBlock(win_x, win_y + f_height, win_x, win_y, win_width/2, win_height-f_height, 0);
   vs23.MoveBlock(win_x + win_width/2, win_y + f_height, win_x + win_width/2, win_y, win_width/2, win_height-f_height, 0);
   tv_clerLine(win_c_height-1);
 }
 
-// 1行分スクリーンのスクロールダウン
+// Screen scroll down for one line
 void tv_scroll_down() {
   vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
             win_x + win_width-1, win_y + win_height-1,
@@ -283,22 +284,22 @@ void tv_scroll_down() {
   tv_clerLine(0);
 }
 
-// 点の描画
+// Point drawing
 void tv_pset(int16_t x, int16_t y, pixel_t c) {
   vs23.setPixel(x, y, c);
 }
   
-// 線の描画
+// Draw a line
 void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
   gfx.drawLine(x1, y1, x2, y2, c);
 }
 
-// 円の描画
+// Drawing a circle
 void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
   gfx.drawCircle(x, y, r, c, f);
 }
 
-// 四角の描画
+// Draw a square
 void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   gfx.drawRect(x, y, w, h, c, f);
 }
@@ -314,7 +315,7 @@ void tv_write(uint8_t c) {
   gcurs_x += f_width;
 }
 
-// グラフィック横スクロール
+// Graphic horizontal scroll
 void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   pixel_t col_black = (pixel_t)0;
   switch (mode) {
