@@ -38,10 +38,10 @@ void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
     } else if (w == 0 || h == 0) {
       drawLine(x0,y0,x0+w,y0+h,c);
     } else {
-       // 水平線
+       // Horizontal line
        drawLine(x0,y0  , x0+w, y0  , c);
        drawLine(x0,y0+h, x0+w, y0+h, c);
-       // 垂直線
+       // Vertical line
        if (h>1) {  
            drawLine(x0,  y0+1,x0  ,y0+h-1,c);
            drawLine(x0+w,y0+1,x0+w,y0+h-1,c);
@@ -72,7 +72,7 @@ void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
   vs23.setPixel(x0 + radius, y0,c);
   vs23.setPixel(x0 - radius, y0,c);
   
-  while(x+1 < y) {  // 2017/02/28 オリジナルの不具合修正
+  while(x+1 < y) {
     if(f >= 0) {
       y--;
       ddF_y += 2;
