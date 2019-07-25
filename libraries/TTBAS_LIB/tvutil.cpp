@@ -27,10 +27,6 @@ extern uint8_t* ttbasic_font;
 const uint8_t* tvfont = 0;     // 利用フォント
 uint16_t c_width;    // 横文字数
 uint16_t c_height;   // 縦文字数
-#if USE_VS23 == 0
-uint8_t* vram;       // VRAM先頭
-uint8_t *b_adr;     // フレームバッファビットバンドアドレ
-#endif
 uint16_t f_width;    // フォント幅(ドット)
 uint16_t f_height;   // フォント高さ(ドット)
 uint16_t g_width;    // 画面横ドット数(ドット)
@@ -305,24 +301,6 @@ void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
 // 四角の描画
 void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   gfx.drawRect(x, y, w, h, c, f);
-}
-
-// 指定サイズのドットの描画
-inline void tv_dot(int16_t x, int16_t y, int16_t n, pixel_t c) {
-#if USE_VS23 == 1
-  Serial.println("unimp tv_dot");
-#else
-  uint8_t *adr;
-  uint8_t bipo;
-  for (int16_t i = y ; i < y+n; i++) {
-    for (int16_t j= x; j < x+n; j++) {
-      bipo = (j & 0xf8) + 7 - (j & 7);
-      adr = b_adr + g_width*i/8 + bipo/8;
-      *adr = (*adr & ~(1 << bipo)) | (c << bipo);
-      //b_adr[g_width*i+ (j&0xf8) +7 -(j&7)] = c;
-    }
-  }
-#endif
 }
 
 void tv_set_gcursor(uint16_t x, uint16_t y) {
