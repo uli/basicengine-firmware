@@ -1801,6 +1801,15 @@ bool BASIC_INT Basic::find_next_data() {
   return true;
 }
 
+/***bc bas DATA
+Specifies values to be read by subsequent `READ` statements.
+\usage DATA expr[, expr...]
+\args
+@expr	a numeric or string expression
+\note
+When a DATA statement is executed, nothing happens.
+\ref READ RESTORE
+***/
 void Basic::idata() {
   int next;
 
@@ -1838,6 +1847,18 @@ void BASIC_INT Basic::data_pop() {
   cip = data_cip_save;
 }
 
+/***bc bas READ
+Reads values specified in `DATA` statements and assigns them to variables.
+\usage READ var[, var...]
+\args
+@var	numeric or string variable
+\note
+Data is read from the element that follows the current "data pointer".
+The data pointer points to the beginning of the program initially. With every
+element read it is forwarded to the next one. It can be set directly with
+the `RESTORE` command.
+\ref DATA RESTORE
+***/
 void BASIC_INT Basic::iread() {
   num_t value;
   BString svalue;
@@ -1947,6 +1968,13 @@ void BASIC_INT Basic::iread() {
   }
 }
 
+/***bc bas RESTORE
+Sets the data pointer to a given location.
+\usage RESTORE [location]
+\args
+@location	a label or line number [default: start of program]
+\ref DATA READ
+***/
 void Basic::irestore() {
   if (end_of_statement())
     data_lp = NULL;
