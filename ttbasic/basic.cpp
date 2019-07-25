@@ -1848,11 +1848,29 @@ void BASIC_INT Basic::iread() {
     return;
   }
 
+  auto data_exp = [&] () {
+    num_t v = 0;
+    data_push();
+    if (*cip != I_COMMA && !end_of_statement()) {
+      v = iexp();
+    }
+    data_pop();
+    return v;
+  };
+
+  auto data_strexp = [&] () {
+    BString v;
+    data_push();
+    if (*cip != I_COMMA && !end_of_statement()) {
+      v = istrexp();
+    }
+    data_pop();
+    return v;
+  };
+
   for (;;) switch (*cip++) {
   case I_VAR:
-    data_push();
-    value = iexp();
-    data_pop();
+    value = data_exp();
     if (err)
       return;
     nvar.var(*cip++) = value;
@@ -1870,9 +1888,7 @@ void BASIC_INT Basic::iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    data_push();
-    value = iexp();
-    data_pop();
+    value = data_exp();
     if (err)
       return;
 
@@ -1886,9 +1902,7 @@ void BASIC_INT Basic::iread() {
     }
 
   case I_SVAR:
-    data_push();
-    svalue = istrexp();
-    data_pop();
+    svalue = data_strexp();
     if (err)
       return;
     svar.var(*cip++) = svalue;
@@ -1905,9 +1919,7 @@ void BASIC_INT Basic::iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    data_push();
-    svalue = istrexp();
-    data_pop();
+    svalue = data_strexp();
     if (err)
       return;
 
