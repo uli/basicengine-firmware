@@ -298,12 +298,12 @@ void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
 }
 
 // 円の描画
-void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, pixel_t f) {
+void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
   gfx.drawCircle(x, y, r, c, f);
 }
 
 // 四角の描画
-void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, pixel_t f) {
+void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   gfx.drawRect(x, y, w, h, c, f);
 }
 

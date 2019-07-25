@@ -54,7 +54,7 @@ void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
   }
 }
 
-void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, pixel_t fc)
+void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
 {
   int f = 1 - radius;
   int ddF_x = 1;
