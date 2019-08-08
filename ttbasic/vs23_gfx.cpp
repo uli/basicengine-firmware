@@ -109,32 +109,34 @@ void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
   }
 }
 
-// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
-// than or equal to y1
+// Draws a line between two points (x1,y1) and (x2,y2).
 void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			pixel_t c)
 {
-	int deltax, deltay, offset;
-	uint16_t i;
+  int deltax = abs(x2 - x1);
+  int deltay = abs(y2 - y1);
 
-	deltax = x2 - x1;
-	deltay = y2 - y1;
+  int slopex = x1 < x2 ? 1 : -1;
+  int slopey = y1 < y2 ? 1 : -1;
 
-	if (deltax != 0 && deltay != 0) {
-		offset = x1 - deltax * y1 / deltay;
-		for (i = 0; i < deltay; i++) {
-			vs23.setPixel(deltax * (y1 + i) / deltay + offset, y1 + i,
-				 c);
-		}
-	} else if (deltax == 0) {
-		for (i = 0; i < deltay; i++) {
-			vs23.setPixel(x1, y1 + i, c);
-		}
-	} else {
-		for (i = 0; i < deltax; i++) {
-			vs23.setPixel(x1 + i, y1, c);
-		}
-	}
+  int err = (deltax > deltay ? deltax : -deltay) / 2, e2;
+
+  for (;;) {
+    vs23.setPixel(x1, y1, c);
+
+    if (x1 == x2 && y1 == y2)
+      break;
+
+    e2 = err;
+    if (e2 > -deltax) {
+      err -= deltay;
+      x1 += slopex;
+    }
+    if (e2 <  deltay) {
+      err += deltax;
+      y1 += slopey;
+    }
+  }
 }
 
 void Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
