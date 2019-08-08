@@ -859,7 +859,7 @@ void Basic::ipset() {
 /***bc pix LINE
 Draws a line.
 \usage
-LINE x1_coord, y1_coord, x2_coord, y2_coord, color
+LINE x1_coord, y1_coord, x2_coord, y2_coord[, color]
 \args
 @x1_coord X coordinate of the line's starting point +
           [`0` to `PSIZE(0)-1`]
@@ -869,15 +869,23 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord, color
           [`0` to `PSIZE(0)-1`]
 @y2_coord Y coordinate of the line's end point +
           [`0` to `PSIZE(2)-1`]
-@color	  color of the line
+@color	  color of the line [default: cursor color]
 \note
 Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
 void Basic::iline() {
   int32_t x1,x2,y1,y2,c;
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
+
+  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_NONE))
     return;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    getParam(c, I_NONE);
+  } else
+    c = cursor_color;
+
   if (x1 < 0) x1 =0;
   if (y1 < 0) y1 =0;
   if (x2 < 0) x1 =0;
