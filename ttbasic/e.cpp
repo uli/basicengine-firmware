@@ -185,6 +185,7 @@ int	pos_x (int line, int xx)
 	return i;
 }
 
+#ifdef SYNTAX_HIGHLIGHTING
 static void highlight_basic_keywords(int m, int linelen, char *colors,
 				     const char * const *table, int table_size)
 {
@@ -271,6 +272,7 @@ static char *highlight_basic(int m)
 
 	return colors;
 }
+#endif
 
 void	show (void)
 {
@@ -298,8 +300,10 @@ void	show (void)
 	if (!text)
 		return;
 	for (m = bow_line, i = 0; m < eof_pos && i < LINES; i++) {
+#ifdef SYNTAX_HIGHLIGHTING
 		int startm = m;
 		char *colors = highlight_basic(m);
+#endif
 		m = pos_x (m, win_shift);
 		move (i, 0);
 #define EOS_COLS (i < LINES - 1 ? COLS : COLS - 1)
@@ -318,10 +322,14 @@ void	show (void)
 				for (t = nexttab (j); j < t; j++)
 					addch (' ');
 			else {
+#ifdef SYNTAX_HIGHLIGHTING
 				if (colors)
 					attrset(colors[m-startm] << 8);
+#endif
 				adduch (text[m]);
+#ifdef SYNTAX_HIGHLIGHTING
 				attrset(A_NORMAL);
+#endif
 				j++;
 			}
 		}
@@ -330,7 +338,9 @@ void	show (void)
 				addch (' ');
 #undef EOS_COLS
 		m = nextline (m);
+#ifdef SYNTAX_HIGHLIGHTING
 		free(colors);
+#endif
 	}
 	while (i < LINES) {
 		move (i, 0);
