@@ -36,6 +36,13 @@
 #define BUFFERED_SCREEN
 #endif
 
+#ifdef __DJGPP__
+#define USE_DOSGFX 1
+#define USE_BG_ENGINE
+#define PIXEL_TYPE uint8_t
+#define BUFFERED_SCREEN
+#endif
+
 // ** Default screen size in terminal mode ************************
 // ※ While moving, can be changed by WIDTH command (default: 80x25)
 // XXX: I don't think this works anymore.
@@ -87,7 +94,7 @@
 
 #define SMALL __attribute__((optimize("Os")))
 
-#ifdef H3
+#if defined(H3) || defined(__DJGPP__)
 #define GROUP(g)
 #define GROUP_DATA
 #define BASIC_FP
@@ -137,6 +144,10 @@
 #define __FLASH__
 #endif
 
+#ifdef __DJGPP__
+#define __FLASH__
+#endif
+
 #if !defined(ESP8266)
 #define os_memcpy memcpy
 #endif
@@ -157,7 +168,7 @@
 #define PSX_ATTN_PIN	2
 #define PSX_CLK_PIN	4
 #define PSX_DELAY	1
-#elif defined(H3)
+#elif defined(H3) || defined(__DJGPP__)
 // bogus
 #define PSX_DATA_PIN	16
 #define PSX_CMD_PIN	17
