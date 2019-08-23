@@ -8,11 +8,6 @@
 #include "debug.h"
 #include <pgmspace.h>
 
-#if !defined(ESP8266) && !defined(ESP32) && !defined(H3)
-static void yield() { /* NOOP */
-}
-#endif
-
 //timetable for more accurate c64 simulation
 const unsigned char timetable[5][5] PROGMEM =
 {
