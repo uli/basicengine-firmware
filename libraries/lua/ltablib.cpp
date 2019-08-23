@@ -9,6 +9,9 @@
 
 #include "lprefix.h"
 
+#ifdef __DJGPP__
+#include <time.h>
+#endif
 
 #include <limits.h>
 #include <stddef.h>
