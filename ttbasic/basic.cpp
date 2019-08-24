@@ -5641,6 +5641,12 @@ static void show_logo() {
 
 #include "lua_defs.h"
 
+#ifdef __DJGPP__
+extern "C" {
+#include <libc/malldbg.h>
+};
+#endif
+
 /*
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
@@ -5712,6 +5718,10 @@ void SMALL Basic::basic() {
 #elif defined(H3)
   putnum(sys_mem_free() / 1048576, 0);
   PRINT_P(" MB free\n");
+#elif defined(__DJGPP__)
+  struct mallinfo mi = mallinfo();
+  putnum(mi.fordblks / 1024 * 16, 0);
+  PRINT_P(" KB free\n");
 #else
   putnum(try_malloc(), 0);
   PRINT_P(" bytes free\n");
