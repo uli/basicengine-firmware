@@ -78,7 +78,7 @@ public:
     inline uint32_t frame() {
       return tick_counter;
     }
-#elif defined(HOSTED)
+#elif defined(HOSTED) || defined(__DJGPP__)
     uint32_t frame();
 #else
     inline uint32_t frame() {

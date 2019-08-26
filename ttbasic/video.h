@@ -9,3 +9,6 @@
 #ifdef USE_H3GFX
 #include "h3gfx.h"
 #endif
+#ifdef USE_DOSGFX
+#include <dosgfx.h>
+#endif
