@@ -29,9 +29,11 @@ static bool sdfat_initialized = false;
 static int m_mhz = 0;
 static uint8_t cs = 0;
 
+#ifdef USE_UNIFILE
 UnifileString Unifile::m_cwd;
 
 const char FLASH_PREFIX[] = "/flash";
+#endif
 
 bool SD_BEGIN(int mhz)
 {
@@ -563,6 +565,7 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
 uint8_t sdfiles::mkdir(const char* fname) {
   uint8_t rc = 1;
  
+#ifdef USE_UNIFILE
   UnifileString abs_name = Unifile::path(fname);
 
   // This is a NOP for SPIFFS.
@@ -593,6 +596,9 @@ uint8_t sdfiles::mkdir(const char* fname) {
     }
   }
   SD_END();
+#else	// USE_UNIFILE
+  rc = !mkdir(fname);
+#endif
   return rc;
 }
 
@@ -607,6 +613,7 @@ uint8_t sdfiles::mkdir(const char* fname) {
 uint8_t sdfiles::rmdir(const char* fname) {
   uint8_t rc = 1;
  
+#ifdef USE_UNIFILE
   UnifileString abs_name = Unifile::path(fname);
 
   // This is a NOP for SPIFFS.
@@ -628,15 +635,9 @@ uint8_t sdfiles::rmdir(const char* fname) {
     rc =  SD_ERR_OPEN_FILE;
   }
   SD_END();
-  return rc;
-}
-
-uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
-  uint8_t rc = 1;
-  
-  if(Unifile::rename(old_fname,new_fname) == true)
-    rc = 0;
-
+#else
+  rc = !rmdir(fname);
+#endif
   return rc;
 }
 

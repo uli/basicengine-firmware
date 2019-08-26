@@ -14,14 +14,17 @@
 
 #include <Arduino.h>
 
-// sanity checks
-#if !defined(UNIFILE_USE_SDFAT) && \
-    !defined(UNIFILE_USE_FASTROMFS) && \
-    !defined(UNIFILE_USE_OLD_SPIFFS) && \
-    !defined(UNIFILE_USE_NEW_SPIFFS) && \
-    !defined(UNIFILE_USE_NEW_SD)
-#error no file system enabled
-#endif
+#include "../../ttbasic/error.h"
+#include "../../ttbasic/BString.h"
+typedef BString UnifileString;
+
+#if defined(UNIFILE_USE_SDFAT) || \
+    defined(UNIFILE_USE_FASTROMFS) || \
+    defined(UNIFILE_USE_OLD_SPIFFS) || \
+    defined(UNIFILE_USE_NEW_SPIFFS) || \
+    defined(UNIFILE_USE_NEW_SD)
+
+#define USE_UNIFILE
 
 #if defined(UNIFILE_USE_SDFAT) && defined(UNIFILE_USE_NEW_SD)
 #error only one of SdFat and SD can be enabled
@@ -58,9 +61,6 @@ extern FastROMFilesystem fs;
 #define SD_PATH_LEN 64      // Directory path length
 #define SD_TEXT_LEN 255     // Maximum length of one line of text
 
-#include "../../ttbasic/error.h"
-#include "../../ttbasic/BString.h"
-typedef BString UnifileString;
 
 #ifndef FILE_OVERWRITE
 #define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
@@ -716,6 +716,22 @@ private:
 
   static UnifileString m_cwd;
 };
+
+#else	// use Unifile
+#include <sys/stat.h>
+#include <dirent.h>
+
+#define SD_PATH_LEN 64      // Directory path length
+#define SD_TEXT_LEN 255     // Maximum length of one line of text
+
+#ifdef __DJGPP__
+static const char FLASH_PREFIX[] = "A:";
+#define FLASH_PREFIX_LEN 2
+const char SD_PREFIX[] = "C:";
+#define SD_PREFIX_LEN 2
+#endif
+
+#endif	// use Unifile
 
 class sdfiles {
 private:
