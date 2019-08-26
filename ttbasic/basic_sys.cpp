@@ -495,6 +495,10 @@ int try_malloc() {
 }
 #endif
 
+#ifdef __DJGPP__
+#include <dpmi.h>
+#endif
+
 /***bf bas FREE
 Get free memory size.
 \usage bytes = FREE()
@@ -506,6 +510,8 @@ num_t BASIC_FP Basic::nfree() {
   return umm_free_heap_size();
 #elif defined(H3)
   return sys_mem_free();
+#elif defined(__DJGPP__)
+  return _go32_dpmi_remaining_physical_memory();
 #else
   return try_malloc();
 #endif

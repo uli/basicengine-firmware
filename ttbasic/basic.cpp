@@ -5643,7 +5643,7 @@ static void show_logo() {
 
 #ifdef __DJGPP__
 extern "C" {
-#include <libc/malldbg.h>
+#include <dpmi.h>
 };
 #endif
 
@@ -5719,8 +5719,7 @@ void SMALL Basic::basic() {
   putnum(sys_mem_free() / 1048576, 0);
   PRINT_P(" MB free\n");
 #elif defined(__DJGPP__)
-  struct mallinfo mi = mallinfo();
-  putnum(mi.fordblks / 1024 * 16, 0);
+  putnum(_go32_dpmi_remaining_physical_memory() / 1024, 0);
   PRINT_P(" KB free\n");
 #else
   putnum(try_malloc(), 0);
