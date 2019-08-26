@@ -171,7 +171,7 @@ void SMALL Basic::iconfig() {
     if (value < 0 || value > 3)  {
       E_VALUE(0, 3);
     } else {
-#if !defined(HOSTED) && !defined(H3)
+#if !defined(HOSTED) && !defined(H3) && !defined(__DJGPP__)
       kb.setLayout(value);
 #endif
       CONFIG.KEYBOARD = value;
