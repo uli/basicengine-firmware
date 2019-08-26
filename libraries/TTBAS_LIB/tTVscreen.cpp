@@ -343,7 +343,8 @@ void SMALL tTVscreen::saveScreenshot() {
   char screen_file[16];
   for (int i = 0; i < 10000; ++i) {
     sprintf_P(screen_file, PSTR("screen_%04d.pcx"), i);
-    if (!Unifile::exists(screen_file))
+    struct stat st;
+    if (_stat(screen_file, &st))
       break;
   }
   bfs.saveBitmap(screen_file, 0, 0, getGWidth(), getGHeight());
