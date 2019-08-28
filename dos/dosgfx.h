@@ -9,6 +9,8 @@
 
 #define DOS_SCREEN_MODES 14
 
+extern volatile int retrace_count;
+
 class DOSGFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
@@ -88,6 +90,10 @@ public:
   }
 
   void render();
+
+  inline uint32_t frame() {
+    return retrace_count;
+  }
 
 private:
   static const struct video_mode_t modes_pal[];

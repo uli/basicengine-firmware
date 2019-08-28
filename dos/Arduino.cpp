@@ -1,11 +1,5 @@
 #include <video_driver.h>
 
-uint32_t Video::frame()
-{
-  static uint32_t frame = 0;
-  return frame++;
-}
-
 #include "Arduino.h"
 #include "FS.h"
 #include "SPI.h"
