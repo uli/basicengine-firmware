@@ -39,9 +39,7 @@ typedef uint8_t boolean;
 typedef uint8_t byte;
 
 static uint32_t micros() {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return tv.tv_sec * 1000000 + tv.tv_usec;
+	return uclock() * 1000000 / UCLOCKS_PER_SEC;
 }
 static uint32_t millis() {
 	return micros() / 1000;
