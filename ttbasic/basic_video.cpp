@@ -242,7 +242,6 @@ void SMALL Basic::iscreen() {
 
   vs23.reset();
 
-
   if (scmode == m) {
     sc0.reset();
     sc0.setFont(fonts[CONFIG.font]);
@@ -252,10 +251,15 @@ void SMALL Basic::iscreen() {
     return;
   }
 
+  // NTSCスクリーン設定
+  if (!vs23.setMode(m - 1)) {
+    E_ERR(IO, "cannot set screen mode");
+    return;
+  }
+    
   sc0.end();
   scmode = m;
 
-  // NTSCスクリーン設定
   sc0.init(SIZE_LINE,CONFIG.NTSC, m - 1);
 
   sc0.setFont(fonts[CONFIG.font]);
