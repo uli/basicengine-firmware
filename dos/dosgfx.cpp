@@ -34,7 +34,6 @@ void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
-  m_pixels = NULL;
   setMode(SC_DEFAULT);
 
   m_bin.Init(0, 0);
@@ -48,75 +47,35 @@ void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
 void DOSGFX::reset()
 {
   BGEngine::reset();
-  for (int i = 0; i < m_last_line; ++i)
-    memset(m_pixels[i], 0, m_current_mode.x * sizeof(pixel_t));
+  clear_to_color(screen, 0);
   setColorSpace(0);
 }
 
 void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
 {
-#ifdef DEBUG
-  uint32_t m = micros();
-  uint16_t h = height;
-#endif
-  if (dir) {
-    x_src -= width - 1;
-    x_dst -= width - 1;
-    while (height) {
-      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
-      y_dst--;
-      y_src--;
-      height--;
-    }
-  } else {
-    while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
-      y_dst++;
-      y_src++;
-      height--;
-    }
-  }
-#ifdef DEBUG
-  uint32_t elapsed = micros() - m;
-  if (elapsed > 10)
-    printf("blit %dx%d %d micros\n", width, h, micros() - m);
-#endif
+  blit(screen, screen,
+    x_src + m_current_mode.left, y_src + m_current_mode.top,
+    x_dst + m_current_mode.left, y_dst + m_current_mode.top, width, height);
 }
-
-static pixel_t *backbuffer = 0;
 
 void DOSGFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
 
-  printf("m_pixels %p backbuffer %p\n", m_pixels, backbuffer);
-  free(m_pixels);
-  free(backbuffer);
-
   m_current_mode = modes_pal[mode];
-
-printf("mode %d\n", mode);
-  if (set_gfx_mode(GFX_AUTODETECT, m_current_mode.x, m_current_mode.y, 0, 0) != 0) {
-    allegro_message("Error setting graphics mode\n%s\n", allegro_error);
-    exit(1);
-  }
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
   // the specified resolution plus color memory.
   m_last_line = _max(524288 / m_current_mode.x,
                      m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
 
-  printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
-  m_pixels = (pixel_t **)malloc(sizeof(*m_pixels) * m_last_line);
-
-  backbuffer = (pixel_t *)calloc(sizeof(pixel_t),
-                                  (m_current_mode.x + m_current_mode.left * 2) *
-                                  (m_last_line + m_current_mode.top));
-
-  printf("m_pixels %p backbuffer %p\n", m_pixels, backbuffer);
-  for (int i = 0; i < m_last_line; ++i) {
-    m_pixels[i] = backbuffer + (m_current_mode.x + m_current_mode.left * 2) * (i + m_current_mode.top) + m_current_mode.left;
+  if (set_gfx_mode(GFX_AUTODETECT, m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2,
+    m_current_mode.x + m_current_mode.left * 2, m_last_line) != 0) {
+    allegro_message("Error setting graphics mode\n%s\n", allegro_error);
+    exit(1);
   }
+
+  setColorSpace(0);
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
@@ -143,12 +102,6 @@ void DOSGFX::updateBg()
     return;
 
   last_frame = frame();
-
-  for (int y = 0; y < m_current_mode.y; ++y) {
-    for (int x = 0; x < m_current_mode.x; ++x) {
-      _putpixel(screen, x, y, m_pixels[y][x]);
-    }
-  }
 
   if (!m_bg_modified)
     return;
@@ -189,12 +142,12 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          memcpy(&m_pixels[y+owy][x+owx], &m_pixels[t_y][t_x], tsx * 4);
+          blit(screen, screen, x+owx, y+owy, t_x, t_y, tsx*4, 1);
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          m_pixels[y+owy][x+owx] = m_pixels[t_y][t_x];
+          _putpixel(screen, x+owx, y+owy, _getpixel(screen, t_x, t_y));
         }
       }
     }
@@ -242,10 +195,10 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        uint8_t p = m_pixels[py+y*dy][px+x*dx];
+        uint8_t p = _getpixel(screen, px+x*dx, py+y*dy);
         // draw only non-keyed pixels
         if (p != s->p.key)
-          m_pixels[yy][xx] = p;
+          _putpixel(screen, xx, yy, p);
       }
     }
   }
@@ -302,8 +255,8 @@ uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider)
          x++) {
       int leftpx = leftpatx + x - left->pos_x;
       int rightpx = rightpatx + x - right->pos_x;
-      int leftpixel = m_pixels[leftpy][leftpx];
-      int rightpixel = m_pixels[rightpy][rightpx];
+      int leftpixel = _getpixel(screen, leftpx, leftpy);
+      int rightpixel = _getpixel(screen, rightpx, rightpy);
 
       if (leftpixel != left->p.key && rightpixel != right->p.key)
         return dir;

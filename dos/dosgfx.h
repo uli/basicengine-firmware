@@ -5,6 +5,13 @@
 #include "bgengine.h"
 #include "colorspace.h"
 
+// pc.h defines a function sound() that conflicts with our BasicSound instance.
+#define sound __pc_sound
+// This is not defined for whatever reason, leading to conflicts with stdint.h.
+#define ALLEGRO_HAVE_STDINT_H
+#include <allegro.h>
+#undef sound
+
 #define SC_DEFAULT 3
 
 #define DOS_SCREEN_MODES 14
@@ -45,14 +52,14 @@ public:
   inline uint16_t borderWidth() { return 42; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
-    m_pixels[y][x] = c;
+    _putpixel(screen, x + m_current_mode.left, y + m_current_mode.top, c);
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
-    m_pixels[y][x] = c;
+    _putpixel(screen, x + m_current_mode.left, y + m_current_mode.top, c);
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
-    return m_pixels[y][x];
+    return _getpixel(screen, x + m_current_mode.left, y + m_current_mode.top);
   }
 
   void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir);
@@ -74,19 +81,20 @@ public:
   }
 
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
-    memcpy((pixel_t *)address, data, len * sizeof(pixel_t));
+    uint32_t x = (address >> 16) + m_current_mode.left;
+    uint32_t y = (address & 0xffff) + m_current_mode.top;
+    for (uint32_t i = 0; i < len; ++i)
+    	_putpixel(screen, x+i, y, data[i]);
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
-    pixel_t *pa = (pixel_t *)address;
-    for (uint32_t i = 0; i < len; ++i)
-      *pa++ = *data++;
+    setPixels(address, (pixel_t *)data, len);
   }
 
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
-    return (uint32_t)&m_pixels[y][x];
+    return (uint32_t)(x << 16)|(y & 0xffff);
   }
   inline uint32_t piclineByteAddress(int line) {
-      return (uint32_t)&m_pixels[line][0];
+    return (uint32_t)(line & 0xffff);
   }
 
   void render();
@@ -98,8 +106,6 @@ public:
 private:
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
-
-  pixel_t **m_pixels;
 };
 
 extern DOSGFX vs23;
