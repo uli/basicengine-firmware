@@ -1,4 +1,5 @@
 #include <video_driver.h>
+#include "dosaudio.h"
 
 #include "Arduino.h"
 #include "FS.h"
@@ -47,6 +48,8 @@ int main(int argc, char **argv)
     return 1;
 
   install_timer();
+
+  audio.begin();
 
   setup();
   for (;;)

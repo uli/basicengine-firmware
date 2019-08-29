@@ -8,6 +8,7 @@
 class DOSAudio
 {
 public:
+  void begin();
   
   void init(int sample_rate);
 
@@ -44,6 +45,11 @@ private:
   static int m_block_size;
   static uint8_t m_sound_buf[2][SOUND_BUFLEN];
 
+  enum {
+    AU_NONE,
+    AU_PCI,
+    AU_ALLEGRO,
+  } m_backend;
 };
 
 extern DOSAudio audio;
