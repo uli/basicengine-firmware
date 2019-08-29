@@ -298,7 +298,7 @@ uint16_t cnv2tty(keyEvent k) {
       return 0;
 
   if (k.KEY && k.code >= PS2KEY_F1 && k.code <= PS2KEY_F12) {
-    return KEY_F(k.code - PS2KEY_F1 + 1);
+    return SC_KEY_F(k.code - PS2KEY_F1 + 1);
   }
 
   // CTRLとの併用
@@ -339,21 +339,21 @@ uint16_t cnv2tty(keyEvent k) {
   
   // 特殊キーの場合
   switch(k.code) {
-    case PS2KEY_Insert:     rc = KEY_IC;       break;
-    case PS2KEY_Home:       rc = KEY_HOME;     break;
-    case PS2KEY_PageUp:     rc = KEY_PPAGE;    break;
-    case PS2KEY_PageDown:   rc = KEY_NPAGE;    break;
-    case PS2KEY_End:        rc = KEY_END;      break;
-    case PS2KEY_L_Arrow:    rc = KEY_LEFT;     break;
-    case PS2KEY_Up_Arrow:   rc = k.SHIFT ? KEY_SHIFT_UP : KEY_UP;	break;
-    case PS2KEY_R_Arrow:    rc = KEY_RIGHT;    break;
-    case PS2KEY_Down_Arrow: rc = k.SHIFT ? KEY_SHIFT_DOWN : KEY_DOWN;	break;
-    case PS2KEY_ESC:        rc = KEY_ESCAPE;   break;
-    case PS2KEY_Tab:        rc = KEY_TAB;      break;
+    case PS2KEY_Insert:     rc = SC_KEY_IC;       break;
+    case PS2KEY_Home:       rc = SC_KEY_HOME;     break;
+    case PS2KEY_PageUp:     rc = SC_KEY_PPAGE;    break;
+    case PS2KEY_PageDown:   rc = SC_KEY_NPAGE;    break;
+    case PS2KEY_End:        rc = SC_KEY_END;      break;
+    case PS2KEY_L_Arrow:    rc = SC_KEY_LEFT;     break;
+    case PS2KEY_Up_Arrow:   rc = k.SHIFT ? SC_KEY_SHIFT_UP : SC_KEY_UP;	break;
+    case PS2KEY_R_Arrow:    rc = SC_KEY_RIGHT;    break;
+    case PS2KEY_Down_Arrow: rc = k.SHIFT ? SC_KEY_SHIFT_DOWN : SC_KEY_DOWN;	break;
+    case PS2KEY_ESC:        rc = SC_KEY_ESCAPE;   break;
+    case PS2KEY_Tab:        rc = SC_KEY_TAB;      break;
     case PS2KEY_Space:      rc = 32;           break;
-    case PS2KEY_Backspace:  rc = KEY_BACKSPACE;break;
-    case PS2KEY_Delete:     rc = KEY_DC;       break;
-    case PS2KEY_Enter:	    rc = KEY_CR;       break;
+    case PS2KEY_Backspace:  rc = SC_KEY_BACKSPACE;break;
+    case PS2KEY_Delete:     rc = SC_KEY_DC;       break;
+    case PS2KEY_Enter:	    rc = SC_KEY_CR;       break;
     case PS2KEY_Romaji: 
       if (flgKana) {
         flgKana = false;
@@ -361,7 +361,7 @@ uint16_t cnv2tty(keyEvent k) {
         flgKana = true;
       }
       break;
-    case PS2KEY_PrintScreen: rc = KEY_PRINT; break;
+    case PS2KEY_PrintScreen: rc = SC_KEY_PRINT; break;
   }
   return rc;
 }

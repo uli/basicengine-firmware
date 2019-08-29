@@ -14,7 +14,7 @@ void SMALL basic_init_input() {
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump) {
   if (c == SC_KEY_CTRL_C) {
     err = ERR_CTR_C;
-  } else if (c == KEY_PRINT) {
+  } else if (c == SC_KEY_PRINT) {
     sc0.saveScreenshot();
   } else
     return 0;

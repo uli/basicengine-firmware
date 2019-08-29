@@ -229,8 +229,8 @@ uint8_t tTVscreen::edit() {
     //MOVE(pos_y, pos_x);
     ch = get_ch ();
     k = ps2last();
-    if (k.CTRL && ch >= KEY_F(1) && ch <= KEY_F(12)) {
-      ipixel_t hue = (ipixel_t)(15 + ch - KEY_F(1) + (k.ALT ? 12 : 0));
+    if (k.CTRL && ch >= SC_KEY_F(1) && ch <= SC_KEY_F(12)) {
+      ipixel_t hue = (ipixel_t)(15 + ch - SC_KEY_F(1) + (k.ALT ? 12 : 0));
       ipixel_t col = (ipixel_t)(((hue & 0xf) << 4) | (k.SHIFT ? 10 : 13));
       setColor(csp.fromIndexed(col), sc0.getBgColor());
     } else if (k.ALT) {
@@ -239,7 +239,7 @@ uint8_t tTVscreen::edit() {
       else if (ch >= '`' && ch <= '~')
         Insert_char(ch + 32);
     } else switch(ch) {
-      case KEY_CR:         // [Enter]キー
+      case SC_KEY_CR:         // [Enter]キー
         if (k.CTRL) {
           int lines = enter_text();
           Insert_newLine(pos_y - 1 + lines);
@@ -253,11 +253,11 @@ uint8_t tTVscreen::edit() {
         Serial_Ctrl(SC_KEY_CTRL_L);
         break;
  
-      case KEY_HOME:      // [HOMEキー] 行先頭移動
+      case SC_KEY_HOME:      // [HOMEキー] 行先頭移動
         locate(0, pos_y);
         break;
         
-      case KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
+      case SC_KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
         if (pos_x == 0 && pos_y == height-1) {
           edit_scrollUp();
         } else {
@@ -265,7 +265,7 @@ uint8_t tTVscreen::edit() {
         }
         break;
         
-      case KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
+      case SC_KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
         if (pos_x == 0 && pos_y == 0) {
           edit_scrollDown();
         } else {
@@ -276,44 +276,44 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
         refresh();  break;
 
-      case KEY_END:       // [ENDキー] 行の右端移動
+      case SC_KEY_END:       // [ENDキー] 行の右端移動
          moveLineEnd();
          break;
 
-      case KEY_IC:         // [Insert]キー
+      case SC_KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
         break;        
 
-      case KEY_BACKSPACE:  // [BS]キー
+      case SC_KEY_BACKSPACE:  // [BS]キー
           movePosPrevChar();
           delete_char();
-         Serial_Ctrl(KEY_BACKSPACE);
+         Serial_Ctrl(SC_KEY_BACKSPACE);
         break;        
 
-      case KEY_DC:         // [Del]キー
+      case SC_KEY_DC:         // [Del]キー
       case SC_KEY_CTRL_X:
         delete_char();
         break;        
       
-      case KEY_RIGHT:      // [→]キー
+      case SC_KEY_RIGHT:      // [→]キー
         movePosNextChar();
         break;
 
-      case KEY_LEFT:       // [←]キー
+      case SC_KEY_LEFT:       // [←]キー
         movePosPrevChar();
         break;
 
-      case KEY_DOWN:       // [↓]キー
+      case SC_KEY_DOWN:       // [↓]キー
         movePosNextLineChar();
         break;
-      case KEY_SHIFT_DOWN:
+      case SC_KEY_SHIFT_DOWN:
         movePosNextLineChar(true);
         break;
       
-      case KEY_UP:         // [↑]キー
+      case SC_KEY_UP:         // [↑]キー
         movePosPrevLineChar();
         break;
-      case KEY_SHIFT_UP:
+      case SC_KEY_SHIFT_UP:
         movePosPrevLineChar(true);
         break;
 
@@ -328,7 +328,7 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_CTRL_C:
         break;
       
-      case KEY_PRINT:
+      case SC_KEY_PRINT:
         saveScreenshot();
         break;
 
@@ -355,7 +355,7 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
 #ifdef DEBUG
   char* s=NULL;
   switch(ch) {
-    case KEY_BACKSPACE:
+    case SC_KEY_BACKSPACE:
      s = "\x08\x1b[P";
      break;
     case SC_KEY_CTRL_L:

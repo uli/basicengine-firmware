@@ -543,29 +543,29 @@ getnstr (char * str, uint_fast8_t maxlen)
     maxlen--;                               // reserve one byte in order to store '\0' in last position
     getyx (starty, startx);                 // get current cursor position
 
-    while ((ch = getch ()) != KEY_CR)
+    while ((ch = getch ()) != SC_KEY_CR)
     {
         switch (ch)
         {
-            case KEY_LEFT:
+            case SC_KEY_LEFT:
                 if (curpos > 0)
                 {
                     curpos--;
                 }
                 break;
-            case KEY_RIGHT:
+            case SC_KEY_RIGHT:
                 if (curpos < curlen)
                 {
                     curpos++;
                 }
                 break;
-            case KEY_HOME:
+            case SC_KEY_HOME:
                 curpos = 0;
                 break;
-            case KEY_END:
+            case SC_KEY_END:
                 curpos = curlen;
                 break;
-            case KEY_BACKSPACE:
+            case SC_KEY_BACKSPACE:
                 if (curpos > 0)
                 {
                     curpos--;
@@ -581,7 +581,7 @@ getnstr (char * str, uint_fast8_t maxlen)
                 }
                 break;
 
-            case KEY_DC:
+            case SC_KEY_DC:
                 if (curlen > 0)
                 {
                     curlen--;

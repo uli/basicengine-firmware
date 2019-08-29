@@ -99,7 +99,7 @@ int __attribute__((optimize ("no-jump-tables"))) enter_string (const char *s, BS
 		case CTRL ('Q'):
 			ch = getch ();
 			goto ins_char;
-		case KEY_BACKSPACE:
+		case SC_KEY_BACKSPACE:
 			buf = buf.substring(0, buf.length() - 1);
 			break;
 		case '\r': case '\n':
@@ -696,40 +696,40 @@ int	e_main (int argc, char **argv)
 		ch = getch ();
 		curs_set(0);
 		switch (ch) {
-		case KEY_UP:
+		case SC_KEY_UP:
 			k_up ();
 			break;
-		case KEY_DOWN:
+		case SC_KEY_DOWN:
 			k_down ();
 			break;
-		case KEY_LEFT:
+		case SC_KEY_LEFT:
 			if (cur_pos)
 				cur_pos--;
 			break;
-		case KEY_RIGHT:
+		case SC_KEY_RIGHT:
 			if (cur_pos < eof_pos)
 				cur_pos++;
 			break;
-		case KEY_PPAGE:// case CTRL ('J'):
+		case SC_KEY_PPAGE:// case CTRL ('J'):
 			for (i = 0; i < LINES; i++)
 				k_up ();
 			break;
-		case KEY_NPAGE:// case CTRL ('K'):
+		case SC_KEY_NPAGE:// case CTRL ('K'):
 			for (i = 0; i < LINES; i++)
 				k_down ();
 			break;
-		case KEY_DC:	/* del */
+		case SC_KEY_DC:	/* del */
 			if (cur_pos < eof_pos)
 				del_mem (cur_pos, 1);
 			break;
-		case KEY_BACKSPACE:
+		case SC_KEY_BACKSPACE:
 			if (cur_pos)
 				del_mem (--cur_pos, 1);
 			break;
-		case KEY_HOME:
+		case SC_KEY_HOME:
 			cur_pos = cur_line;
 			break;
-		case KEY_END:
+		case SC_KEY_END:
 			cur_pos = eol (cur_pos);
 			break;
 		case CTRL ('X'):
@@ -783,7 +783,7 @@ int	e_main (int argc, char **argv)
 		case CTRL ('G'):
 			k_getblock ();
 			break;
-		case KEY_IC:
+		case SC_KEY_IC:
 			ins_mode = !ins_mode;
 			break;
 		case CTRL ('A'):

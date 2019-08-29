@@ -11,28 +11,28 @@
 #include <Arduino.h>
 
 // Definition of edit key
-#define KEY_TAB       '\t'   // [TAB] key
-#define KEY_CR        '\r'   // [Enter] key
-#define KEY_BACKSPACE '\b'   // [Backspace] key
-#define KEY_ESCAPE    0x1B   // [ESC] key
-#define KEY_DOWN      0x180   // [↓] key
-#define KEY_UP        0x181   // [↑] key
-#define KEY_LEFT      0x182   // [←] key
-#define KEY_RIGHT     0x183   // [→] key
-#define KEY_HOME      0x184   // [Home] key
-#define KEY_DC        0x185   // [Delete] key
-#define KEY_IC        0x186   // [Insert] key
-#define KEY_NPAGE     0x187   // [PageDown] key
-#define KEY_PPAGE     0x188   // [PageUp] key
-#define KEY_END       0x189   // [End] key
-#define KEY_BTAB      0x18A   // [Back tab] key
-#define KEY_F1                  0x18B            // Function key F1
-#define KEY_F(n)                (KEY_F1+(n)-1)  // Space for additional 12 function keys
+#define SC_KEY_TAB       '\t'   // [TAB] key
+#define SC_KEY_CR        '\r'   // [Enter] key
+#define SC_KEY_BACKSPACE '\b'   // [Backspace] key
+#define SC_KEY_ESCAPE    0x1B   // [ESC] key
+#define SC_KEY_DOWN      0x180   // [↓] key
+#define SC_KEY_UP        0x181   // [↑] key
+#define SC_KEY_LEFT      0x182   // [←] key
+#define SC_KEY_RIGHT     0x183   // [→] key
+#define SC_KEY_HOME      0x184   // [Home] key
+#define SC_KEY_DC        0x185   // [Delete] key
+#define SC_KEY_IC        0x186   // [Insert] key
+#define SC_KEY_NPAGE     0x187   // [PageDown] key
+#define SC_KEY_PPAGE     0x188   // [PageUp] key
+#define SC_KEY_END       0x189   // [End] key
+#define SC_KEY_BTAB      0x18A   // [Back tab] key
+#define SC_KEY_F1                  0x18B            // Function key F1
+#define SC_KEY_F(n)                (SC_KEY_F1+(n)-1)  // Space for additional 12 function keys
 
-#define KEY_PRINT     0x1A0
+#define SC_KEY_PRINT     0x1A0
 
-#define KEY_SHIFT_DOWN	KEY_DOWN | 0x40
-#define KEY_SHIFT_UP	KEY_UP | 0x40
+#define SC_KEY_SHIFT_DOWN	SC_KEY_DOWN | 0x40
+#define SC_KEY_SHIFT_UP	SC_KEY_UP | 0x40
 
 // Definition of control key code
 #define SC_KEY_CTRL_L   12  // 画面を消去
