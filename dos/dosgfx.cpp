@@ -62,18 +62,21 @@ bool DOSGFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
 
-  m_current_mode = modes_pal[mode];
-
   // Try to allocate no more than 128k, but make sure it's enough to hold
   // the specified resolution plus color memory.
-  m_last_line = _max(524288 / m_current_mode.x,
-                     m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
+  m_last_line = _max(524288 / modes_pal[mode].x,
+                     modes_pal[mode].y + modes_pal[mode].y / MIN_FONT_SIZE_Y);
 
-  if (set_gfx_mode(GFX_AUTODETECT, m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2,
-    m_current_mode.x + m_current_mode.left * 2, m_last_line) != 0) {
+  if (set_gfx_mode(GFX_AUTODETECT, modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2,
+    modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line) != 0) {
     allegro_message("Error setting graphics mode\n%s\n", allegro_error);
-    exit(1);
+    set_gfx_mode(GFX_AUTODETECT, m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2,
+      m_current_mode.x + m_current_mode.left * 2, m_last_line);
+    setColorSpace(0);
+    return false;
   }
+
+  m_current_mode = modes_pal[mode];
 
   setColorSpace(0);
 
