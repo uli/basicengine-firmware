@@ -11,10 +11,18 @@ extern struct ring_buffer kbuf;
 uint16_t ICACHE_RAM_ATTR ps2read();
 uint16_t ICACHE_RAM_ATTR ps2peek();
 
+#ifdef __DJGPP__
+extern "C" int keypressed(void);
+#endif
+
 static inline bool ICACHE_RAM_ATTR ps2kbhit() {
+#ifdef __DJGPP__
+  return keypressed();
+#else
   if (!pb.available() && rb_is_empty(&kbuf))
     return false;
   return true;
+#endif
 }
 
 extern keyEvent ps22tty_last_key;

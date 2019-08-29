@@ -10,6 +10,8 @@
 #include <TKeyboard.h>
 #include "tTVscreen.h"
 
+#ifndef __DJGPP__	// DOS uses Allegro keyboard system
+
 #if (defined(ESP8266) || defined(ESP32)) && !defined(__FLASH__)
 #define __FLASH__ PROGMEM
 #endif
@@ -432,3 +434,5 @@ uint16_t ICACHE_RAM_ATTR ps2peek()
   }
   return 0;
 }  
+
+#endif

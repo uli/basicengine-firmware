@@ -42,7 +42,6 @@ int main(int argc, char **argv)
   if (allegro_init() != 0)
     return 1;
 
-  install_keyboard(); 
   install_timer();
 
   setup();
