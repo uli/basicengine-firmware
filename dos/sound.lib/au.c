@@ -207,11 +207,15 @@ void AU_setmixer_one(unsigned int mixchannum, unsigned int setmode, int newvalue
 	//calculate new percent
 	switch (setmode) {
 	case MIXER_SETMODE_ABSOLUTE: newpercentval = newvalue; break;
-	case MIXER_SETMODE_RELATIVE: if (function == AU_MIXCHANFUNC_VOLUME)
+	case MIXER_SETMODE_RELATIVE:
+		if (function == AU_MIXCHANFUNC_VOLUME)
 			newpercentval = aui->card_mixer_values[channel] + newvalue;
 		else
-		if (newvalue < 0) newpercentval = 0;
-		else newpercentval = 100; break;
+			if (newvalue < 0)
+				newpercentval = 0;
+			else
+				newpercentval = 100;
+		break;
 	default: return;
 	}
 	if (newpercentval < 0) newpercentval = 0;
