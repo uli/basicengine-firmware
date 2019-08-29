@@ -20,7 +20,7 @@ public:
   }
 
   int numModes() { return SPO_NUM_MODES; }
-  void setMode(uint8_t mode);
+  bool setMode(uint8_t mode);
   inline void setColorSpace(uint8_t palette) {
     m_pal.setColorSpace(palette);
     Video::setColorSpace(palette);

@@ -94,7 +94,7 @@ void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_
 }
 
 #include <esp_heap_alloc_caps.h>
-void ESP32GFX::setMode(uint8_t mode)
+bool ESP32GFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
   delay(16);
@@ -121,6 +121,8 @@ void ESP32GFX::setMode(uint8_t mode)
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   m_display_enabled = true;
+  
+  return true;
 }
 
 //#define PROFILE_BG

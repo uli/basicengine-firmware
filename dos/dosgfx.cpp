@@ -58,7 +58,7 @@ void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t 
     x_dst + m_current_mode.left, y_dst + m_current_mode.top, width, height);
 }
 
-void DOSGFX::setMode(uint8_t mode)
+bool DOSGFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
 
@@ -80,6 +80,8 @@ void DOSGFX::setMode(uint8_t mode)
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   m_display_enabled = true;
+  
+  return true;
 }
 
 void DOSGFX::setColorSpace(uint8_t palette)

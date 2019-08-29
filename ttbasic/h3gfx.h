@@ -21,7 +21,7 @@ public:
   }
 
   int numModes() { return H3_SCREEN_MODES; }
-  void setMode(uint8_t mode);
+  bool setMode(uint8_t mode);
   inline void setColorSpace(uint8_t palette) {
     Video::setColorSpace(palette);
     uint8_t *pal = csp.paletteData(palette);

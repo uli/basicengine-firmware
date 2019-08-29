@@ -145,7 +145,7 @@ void VS23S010::reset()
   setColorSpace(0);
 }
 
-void SMALL VS23S010::setMode(uint8_t mode)
+bool SMALL VS23S010::setMode(uint8_t mode)
 {
 retry:
 #ifdef USE_BG_ENGINE
@@ -190,6 +190,8 @@ retry:
   // stuff before they had a chance to synchronize with the new mode, so we
   // wait a few frames.
   delay(160);
+  
+  return true;
 }
 
 void VS23S010::calibrateVsync()

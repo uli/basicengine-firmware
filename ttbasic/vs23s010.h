@@ -92,7 +92,7 @@ class VS23S010 : public BGEngine {
     int numModes();
     void setColorSpace(uint8_t palette);
     const struct video_mode_t *modes();
-    void setMode(uint8_t mode);
+    bool setMode(uint8_t mode);
     void calibrateVsync();
     void setSyncLine(uint16_t line);
  

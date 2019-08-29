@@ -87,7 +87,7 @@ void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y
 
 static uint32_t *backbuffer = 0;
 
-void H3GFX::setMode(uint8_t mode)
+bool H3GFX::setMode(uint8_t mode)
 {
   m_display_enabled = false;
 
@@ -116,6 +116,8 @@ void H3GFX::setMode(uint8_t mode)
   display_set_mode(m_current_mode.x, m_current_mode.y, m_current_mode.left, m_current_mode.top);
 
   m_display_enabled = true;
+  
+  return true;
 }
 
 //#define PROFILE_BG

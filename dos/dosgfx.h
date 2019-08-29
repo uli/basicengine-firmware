@@ -30,7 +30,7 @@ public:
   }
 
   int numModes() { return DOS_SCREEN_MODES; }
-  void setMode(uint8_t mode);
+  bool setMode(uint8_t mode);
   void setColorSpace(uint8_t palette);
 
   bool blockFinished() { return true; }
