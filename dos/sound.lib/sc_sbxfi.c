@@ -780,7 +780,7 @@ static void EMU20KX_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct emu20kx_card_s *card = aui->card_private_data;
 
-	sprintf(sout, "XFI : Creative %s (%4.4X) found on port:%4.4X irq:%d",
+	sprintf(sout, "XFI : Creative %s (%4.4X) found on port:%4.4lX irq:%d",
 		card->pci_dev->device_name, card->subsys_id, card->iobase, card->irq);
 }
 

@@ -1074,7 +1074,7 @@ static void INTELHD_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct intelhd_card_s *card = aui->card_private_data;
 
-	sprintf(sout, "IHD : %s (%4.4X%4.4X) -> %s (%8.8X) (max %dkHz/%dbit%s/%dch)\n",
+	sprintf(sout, "IHD : %s (%4.4lX%4.4lX) -> %s (%8.8lX) (max %ldkHz/%dbit%s/%dch)\n",
 		card->pci_dev->device_name,
 		(long)card->pci_dev->vendor_id, (long)card->pci_dev->device_id,
 		ihd_search_vendorname(card->codec_vendor_id >> 16), card->codec_vendor_id,

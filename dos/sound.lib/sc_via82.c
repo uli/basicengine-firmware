@@ -217,7 +217,7 @@ static void VIA82XX_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct via82xx_card *card = aui->card_private_data;
 
-	sprintf(sout, "VIA : %s soundcard found on port:%4.4X irq:%d chiprev:%2.2X model:%4.4X",
+	sprintf(sout, "VIA : %s soundcard found on port:%4.4lX irq:%d chiprev:%2.2X model:%4.4X",
 		card->pci_dev->device_name, card->iobase, card->irq, card->chiprev, card->model);
 }
 

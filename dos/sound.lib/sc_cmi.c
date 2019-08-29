@@ -576,7 +576,7 @@ static void CMI8X38_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct cmi8x38_card *card = aui->card_private_data;
 
-	sprintf(sout, "CMI : %s soundcard found on port:%4.4X irq:%d chipver:%d max-chans:%d",
+	sprintf(sout, "CMI : %s soundcard found on port:%4.4lX irq:%d chipver:%d max-chans:%d",
 		card->pci_dev->device_name, card->iobase, card->irq, card->chip_version, card->max_channels);
 }
 

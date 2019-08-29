@@ -163,7 +163,7 @@ void AU_setrate(unsigned int *fr, unsigned int *bt, unsigned int *ch)
 	aui->card_bufprotect = buffer_protection;
 
 #ifndef SDR
-	sprintf(sout, "Ok! : set %iHz/%ibit/%ich -> DMA_size: %i at address: %ph\n", *fr, *bt, *ch, aui->card_dmasize, aui->card_DMABUFF
+	sprintf(sout, "Ok! : set %iHz/%ibit/%ich -> DMA_size: %li at address: %ph\n", *fr, *bt, *ch, aui->card_dmasize, aui->card_DMABUFF
 #ifdef __DJGPP__
 		- __djgpp_conventional_base
 #endif

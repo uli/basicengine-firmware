@@ -439,7 +439,7 @@ static void ES1371_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct ensoniq_card_s *card = aui->card_private_data;
 
-	sprintf(sout, "ENS : Ensoniq %s found on port:%4.4X irq:%d rev:%2.2X",
+	sprintf(sout, "ENS : Ensoniq %s found on port:%4.4lX irq:%d rev:%2.2X",
 		card->pci_dev->device_name, card->port, card->irq, card->chiprev);
 }
 

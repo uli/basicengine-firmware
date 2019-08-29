@@ -1206,7 +1206,7 @@ static void SBLIVE_card_info(struct mpxplay_audioout_info_s *aui)
 {
 	struct emu10k1_card *card = aui->card_private_data;
 
-	sprintf(sout,		       "SBA : SB %s (%8.8X)(bits:16%s) on port:%4.4X irq:%d",
+	sprintf(sout,		       "SBA : SB %s (%8.8lX)(bits:16%s) on port:%4.4X irq:%d",
 		((card->card_capabilities->longname) ? card->card_capabilities->longname : card->pci_dev->device_name),
 		card->serial,	       ((card->chips & EMU_CHIPS_24BIT) ? ",24" : ""),
 		(int)card->iobase,     (int)card->irq);
