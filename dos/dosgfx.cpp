@@ -12,9 +12,9 @@ const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
 	{460, 224, 16, 16, 1},
 	{436, 216, 16, 16, 1},
 	{320, 216, 16, 16, 2},	// VS23 NTSC demo
-	{320, 200, 16, 16, 2},	// (M)CGA, Commodore et al.
+	{320, 200, 0, 0, 2},	// (M)CGA, Commodore et al.
 	{256, 224, 16, 16, 25},	// SNES
-	{256, 192, 16, 16, 25},	// MSX, Spectrum, NDS
+	{256, 192, (200-192)/2, (320-256)/2, 25},	// MSX, Spectrum, NDS
 	{160, 200, 16, 16, 4},	// Commodore/PCjr/CPC
 						// multi-color
 	// "Overscan modes"
@@ -23,8 +23,8 @@ const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
 	{508, 240, 16, 16, 1},
 	// ESP32GFX modes
 	{320, 256, 16, 16, 2},	// maximum PAL at 2 clocks per pixel
-	{320, 240, 16, 16, 2},	// DawnOfAV demo, Mode X
-	{640, 256, 16, 16, 1},
+	{320, 240, 0, 0, 2},	// DawnOfAV demo, Mode X
+	{640, 256, (480-256)/2, 0, 1},
 	// default H3 mode
 	{480, 270, 16, 16, 1},
 };
