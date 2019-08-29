@@ -108,14 +108,13 @@ static inline long _random(long v) {
 
 #include "WString.h"
 
-static inline void yield() {
-}
-
 void platform_pump_events();
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+void yield();
+
 void *
 memmem (const void *haystack_start,
 	size_t haystack_len,

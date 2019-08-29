@@ -35,10 +35,14 @@ static void my_exit(void)
 
 #include <allegro.h>
 
+extern "C" void init_idle();
+
 int main(int argc, char **argv)
 {
   atexit(my_exit);
 
+  init_idle();
+  
   if (allegro_init() != 0)
     return 1;
 
