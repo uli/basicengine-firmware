@@ -81,7 +81,6 @@ static void allocate_system_bufs()
 // Default setting for NTSC display
 // 
 void tv_init(int16_t ajst, uint8_t vmode) { 
-  vs23.setMode(vmode);
   g_width  = vs23.width();           // Horizontal pixel number
   g_height = vs23.height();          // Number of vertical pixels
 
