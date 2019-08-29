@@ -1,0 +1,19 @@
+********************************************************************************
+This is a library of sound cards based on the modified mpxplay_source_code me
+ (Ruslan Starodubov).
+The library can be compiled for different memory model (for WATCOMC and DJGPP).
+Maybe use it in any projects for sound programs DOS.
+All changes its code let me know. (starus2009@mail.ru)
+********************************************************************************
+
+//main soundcard routines:
+char* AU_search(unsigned int config); config = 0 (for LINE_OUT) or 1 for STEREO_SPEAKER_OUT (only Intel HDA chips)
+uint AU_cardbuf_space(void); return free space in buffer (sample position)
+void AU_start(void); start DMA
+void AU_stop(void); stop DMA
+void AU_close(void); close device for EXIT
+void AU_setrate(unsigned int *fr, unsigned int *bt, unsigned int *ch); *fr pointer to int frequency; *bt pointer to int bits_sample; *ch pointer to int channels (1 or 2)
+void AU_setmixer_all(unsigned int vol); set volume all mixer in % (per cent)
+void AU_writedata(char *pcm, long len, unsigned int look); write data_sample (*pcm) to buffer; look - bool for EXIT any press KEY
+
+use compile directive ZDM for disable __djgpp_nearptr_enable() (only for DJGPP)

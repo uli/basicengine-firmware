@@ -1,0 +1,11 @@
+CC = gcc
+CFLAGS = -c -O1
+AR = ar
+SOURCES = au.c ac97_def.c dpmi_c.c mdma.c pcibios.c sc_cmi.c sc_e1371.c sc_ich.c sc_inthd.c sc_sbl24.c sc_sbliv.c sc_sbxfi.c sc_via82.c tim.c
+OBJS = au.o ac97_def.o dpmi_c.o mdma.o pcibios.o sc_cmi.o sc_e1371.o sc_ich.o sc_inthd.o sc_sbl24.o sc_sbliv.o sc_sbxfi.o sc_via82.o tim.o
+
+libau.a:
+	$(CC) $(CFLAGS) $(SOURCES)
+	$(AR) q libau.a $(OBJS)
+
+all: libau.a
