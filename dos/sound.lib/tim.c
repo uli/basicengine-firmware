@@ -4,6 +4,7 @@ void pds_delay_10us(unsigned int ticks) //each tick is 10us
 {
 	unsigned int i, oldtsc, tsctemp, tscdif;
 
+#if 0
 	_disable();
 	for (i = 0; i < ticks; i++) {
 		outp(0x43, 64); // chanel 1 only read (NOT modify!) chanels 0 & 2 is free!
@@ -18,6 +19,10 @@ void pds_delay_10us(unsigned int ticks) //each tick is 10us
 		} while (tscdif < 12); //wait for 10us 12/1193180 sec
 	}
 	_enable();
+#else
+	uclock_t t = my_uclock();
+	while (my_uclock < t + (10 * ticks)) {}
+#endif
 }
 mpxp_uint64_t pds_gettimeu(void)
 {
