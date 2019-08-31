@@ -1,7 +1,7 @@
 #ifndef _DOSAUDIO_H
 #define _DOSAUDIO_H
 
-#define SOUND_BUFLEN 160
+#define SOUND_BUFLEN 2048
 
 #include <TPS2.h>
 
@@ -36,6 +36,11 @@ public:
 
 //  friend void ::hook_audio_get_sample(int16_t *l, int16_t *r);
 
+  inline void pumpEvents() {
+    if (m_backend == AU_PCI)
+    	doFillPciBuffer();
+  }
+
 private:
   static void timerInterrupt(DOSAudio *audioOutput);
 
@@ -44,6 +49,8 @@ private:
 
   static int m_block_size;
   static uint8_t m_sound_buf[2][SOUND_BUFLEN];
+
+  void doFillPciBuffer();
 
   enum {
     AU_NONE,

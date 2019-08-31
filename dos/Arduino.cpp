@@ -63,6 +63,7 @@ extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
 void platform_pump_events() {
+  audio.pumpEvents();
 }
 
 #include "Wire.h"
