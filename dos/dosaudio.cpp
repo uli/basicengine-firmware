@@ -28,6 +28,7 @@ void DOSAudio::begin()
 {
   char *pci_sound = AU_search(1);
   if (pci_sound) {
+    puts(pci_sound);
     m_backend = AU_PCI;
   } else if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) == 0) {
     m_backend = AU_ALLEGRO;
