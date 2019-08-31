@@ -27,6 +27,8 @@ const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
 	{640, 256, (480-256)/2, 0, 1},
 	// default H3 mode
 	{480, 270, 16, 16, 1},
+	// default DOS mode
+	{640, 480, 0, 0, 0},
 };
 
 void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)

@@ -12,9 +12,10 @@
 #include <allegro.h>
 #undef sound
 
-#define SC_DEFAULT 3
+#define SC_DEFAULT 14
+#define SC_DEFAULT_SECONDARY 3
 
-#define DOS_SCREEN_MODES 14
+#define DOS_SCREEN_MODES 15
 
 extern volatile int retrace_count;
 
