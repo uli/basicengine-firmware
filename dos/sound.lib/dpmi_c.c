@@ -1,9 +1,10 @@
 #include "def.h"
 
+unsigned short sel;
 void pds_dpmi_dos_freemem()
 {
 	struct dosmem_t *dm = &dosmem_t;
-	unsigned short sel = dm->selector;
+	/*unsigned short*/ sel = dm->selector;
 
 #ifdef __DJGPP__
 	asm ("movw %0,%%dx" ::"m" (sel));
@@ -19,17 +20,20 @@ void pds_dpmi_dos_freemem()
 #endif
 }
 
+char *lin;
 struct dosmem_t *pds_dpmi_dos_allocmem(unsigned int size)
 {
 	struct dosmem_t *dm = &dosmem_t;
-	unsigned short sel;
-	char *lin;
 
 #ifdef __DJGPP__
 #ifndef ZDM
 	if (!__djgpp_nearptr_enable()) return NULL;
 #endif
 
+	asm("push %eax");
+	asm("push %ebx");
+	asm("push %ecx");
+	asm("push %edx");
 	asm ("movl %0,%%ebx" ::"m" (size));
 	asm ("movw $0x100,%ax\n"
 	     "addl $16,%ebx\n"
@@ -42,6 +46,10 @@ struct dosmem_t *pds_dpmi_dos_allocmem(unsigned int size)
 	     "shll $4,%eax");
 	asm ("movl %%eax,%0" : "=m" (lin));
 	asm ("movw %%dx,%0" : "=m" (sel));
+	asm("pop %edx");
+	asm("pop %ecx");
+	asm("pop %ebx");
+	asm("pop %eax");
 
 #else   /*WATCOM*/
 	_asm {
