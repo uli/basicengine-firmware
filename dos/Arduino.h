@@ -38,8 +38,17 @@ typedef unsigned int word;
 typedef uint8_t boolean;
 typedef uint8_t byte;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+uclock_t my_uclock(void);
+#ifdef __cplusplus
+}
+#endif
+
 static uint32_t micros() {
-	return uclock() * 1000000 / UCLOCKS_PER_SEC;
+	static uint64_t ticks = 0;
+	return my_uclock() * 1000000 / UCLOCKS_PER_SEC;
 }
 static uint32_t millis() {
 	return micros() / 1000;
