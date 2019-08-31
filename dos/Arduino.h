@@ -47,7 +47,6 @@ uclock_t my_uclock(void);
 #endif
 
 static uint32_t micros() {
-	static uint64_t ticks = 0;
 	return my_uclock() * 1000000 / UCLOCKS_PER_SEC;
 }
 static uint32_t millis() {
