@@ -1,0 +1,12 @@
+build
+doc
+tools
+libraries
+ttbasic/epigrams.h
+ttbasic/funtbl.h
+ttbasic/kwenum.h
+ttbasic/kwtbl.h
+ttbasic/numfuntbl.h
+ttbasic/strfuntbl.h
+ttbasic/version.h
+
