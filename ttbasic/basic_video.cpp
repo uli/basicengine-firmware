@@ -469,27 +469,21 @@ Read a video controller register.
 @reg	video controller register number
 \ret Register contents.
 \note
-Valid register numbers are: `$01`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
+Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
 \ref VREG
 ***/
-static const uint8_t vs23_read_regs[] PROGMEM = {
-  0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
-};
 num_t BASIC_INT Basic::nvreg() {
 #ifdef USE_VS23
-  int32_t a = getparam();
-  bool good = false;
-  for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
-    if (pgm_read_byte(&vs23_read_regs[i]) == a) {
-      good = true;
-      break;
-    }
+  uint32_t opcode = getparam();
+  switch(opcode) {
+    case 0x05:
+    case 0x84:
+    case 0x86:
+    case 0xB7: return SpiRamReadRegister8(opcode);
+    case 0x53:
+    case 0x9F: return SpiRamReadRegister(opcode);
+    default:   err = ERR_VALUE; return 0;
   }
-  if (!good) {
-    err = ERR_VALUE;
-    return 0;
-  } else
-    return SpiRamReadRegister(a);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
