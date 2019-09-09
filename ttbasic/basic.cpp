@@ -3106,9 +3106,11 @@ void SMALL Basic::isavepcx() {
 
   for (;;) {
     if (*cip == I_POS) {
+      cip++;
       if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
       if (getParam(y, 0, vs23.lastLine() - 1, I_NONE)) return;
     } else if (*cip == I_SIZE) {
+      cip++;
       if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA)) return;
       if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE)) return;
     } else
