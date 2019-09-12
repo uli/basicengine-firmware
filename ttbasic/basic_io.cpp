@@ -116,7 +116,7 @@ BString Basic::si2cr() {
     goto out;
   Wire.requestFrom(i2cAdr, rdlen);
   while (Wire.available()) {
-    in += Wire.read();
+    in += (char)Wire.read();
   }
 out:
   return in;
