@@ -500,12 +500,12 @@ Read a location in video memory.
 ***/
 num_t BASIC_FP Basic::nvpeek() {
 #ifdef USE_VS23
-  num_t value = getparam();
-  if (value < 0 || value > 131071) {
+  num_t addr = getparam();
+  if (addr < 0 || addr > 131071) {
     E_VALUE(0, 131071);
     return 0;
-  } else
-    return SpiRamReadByte(value);
+  }
+  return SpiRamReadByte(addr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -513,20 +513,26 @@ num_t BASIC_FP Basic::nvpeek() {
 }
 
 /***bc scr VPOKE
-Write one byte of data to video memory.
+Write data to video memory.
 
 WARNING: Incorrect use of this command can configure the video controller to
 produce invalid output, with may cause damage to older CRT displays.
 \usage VPOKE addr, val
 \args
 @addr	video memory address [`0` to `131071`]
-@val	value [`0` to `255`]
+@val	numeric value [`0` to `255`] or string expression
 \ref VPEEK()
 ***/
 void BASIC_INT Basic::ivpoke() {
 #ifdef USE_VS23
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
+  if (is_strexp()) {
+    BString str = istrexp();
+    if ((value = str.length()))
+      SpiRamWriteBytes(addr, (uint8_t *)str.c_str(), value);
+    return;
+  }
   if (getParam(value, 0, 255, I_NONE)) return;
   SpiRamWriteByte(addr, value);
 #else
