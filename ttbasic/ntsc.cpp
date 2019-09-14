@@ -154,12 +154,12 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data)
 {
 	uint8_t req[5];
 
-	vs23Select();
 	req[0] = 2;
 	req[1] = address >> 16;
 	req[2] = address >> 8;
 	req[3] = address;
 	req[4] = data;
+	vs23Select();
 	SPI.writeBytes(req, 5);
 	vs23Deselect();
 	// if (SpiRamReadByte(address) != data)
@@ -171,11 +171,11 @@ void GROUP(basic_vs23) SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32
 {
 	uint8_t req[4];
 
-	vs23Select();
 	req[0] = 2;
 	req[1] = address >> 16;
 	req[2] = address >> 8;
 	req[3] = address;
+	vs23Select();
 	SPI.writeBytes(req, 4);
 	SPI.writeBytes(data, len);
 	vs23Deselect();
@@ -205,13 +205,13 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data)
 	uint8_t req[6];
 	uint32_t address = (uint32_t) waddress * 2;
 
-	vs23Select();
 	req[0] = 2;
 	req[1] = address >> 16;
 	req[2] = address >> 8;
 	req[3] = address;
 	req[4] = data >> 8;
 	req[5] = data;
+	vs23Select();
 	SPI.writeBytes(req, 6);
 	vs23Deselect();
 }
