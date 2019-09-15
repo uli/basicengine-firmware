@@ -55,8 +55,8 @@
 extern FastROMFilesystem fs;
 #endif
 
-#define SD_PATH_LEN 64      // ディレクトリパス長
-#define SD_TEXT_LEN 255     // テキスト１行最大長さ
+#define SD_PATH_LEN 64      // Directory path length
+#define SD_TEXT_LEN 255     // Maximum length of one line of text
 
 #include "../../ttbasic/error.h"
 #include "../../ttbasic/BString.h"

@@ -62,16 +62,16 @@ void SD_END(void)
   SpiUnlock();
 }
 
-// ワイルドカードでのマッチング(下記のリンク先のソースを利用)
+// Wildcard matching (use the linked source below)
 // http://qiita.com/gyu-don/items/5a640c6d2252a860c8cd
 //
-// [引数]
-//  wildcard : 判定条件(ワイルドカード *,?の利用可能)
-//  target   : 判定対象文字列
-// [戻り値]
-// 一致     : 0
-// 不一致   : 0以外
-// 
+// [argument]
+//	wildcard: Judgment condition (wildcard *,? available)
+//	target: Character string to be judged
+// [Return value]
+//	Match: 0
+//	not match: other than 0
+//
 uint8_t wildcard_match(const char *wildcard, const char *target) {
     const char *pw = wildcard, *pt = target;
     while(1){
@@ -96,7 +96,7 @@ uint8_t wildcard_match(const char *wildcard, const char *target) {
 using namespace sdfat;
 #endif
 
-// ファイルタイムスタンプコールバック関数
+// File timestamp callback function
 #ifdef UNIFILE_USE_SDFAT
 void dateTime(uint16_t* date, uint16_t* time) {
    time_t tt = now();
@@ -152,11 +152,12 @@ void sdfiles::fakeTime() {
 }
 
 //
-// 初期設定
-// [引数]
-//  _cs : SDカードのcsピン番号
-// [戻り値]
-//  0
+// Initial setting
+// [argument]
+//	_cs: SD card cs pin number
+// [Return value]
+//	0
+//
 uint8_t  sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
@@ -209,14 +210,14 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
 }
 
 //
-// ファイルリスト出力
-// [引数]
-//  _dir             : ファイルパス
-//  wildcard         : ワイルドカード(NULL:指定なし)
-// [戻り値]
-//  正常終了         : 0
-//  SDカード利用失敗 : SD_ERR_INIT
-//  SD_ERR_OPEN_FILE : ファイルオープンエラー 
+// File list output
+// [argument]
+//	_dir: File path
+//	wildcard: wildcard (NULL: not specified)
+// [Return value]
+//	Normal end: 0
+//	SD card use failure: SD_ERR_INIT
+//	SD_ERR_OPEN_FILE: File open error
 //
 uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   uint16_t cnt = 0;
@@ -298,7 +299,6 @@ uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) {
   return SD_ERR_OPEN_FILE;
 }
 
-// 一時ファイルクローズ
 uint8_t sdfiles::tmpClose() {
   if (tfile) {
     fclose(tfile);
@@ -308,7 +308,6 @@ uint8_t sdfiles::tmpClose() {
   return 0;
 }
 
-// 文字列出力
 uint8_t sdfiles::puts(char*s) {
   int16_t n = 0;
 
@@ -319,7 +318,7 @@ uint8_t sdfiles::puts(char*s) {
   return !n;    
 }
 
-// 1バイト出力 
+// 1 byte output
 uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
 
@@ -330,7 +329,7 @@ uint8_t sdfiles::putch(char c) {
   return !n;   
 }
 
-// 1バイト読込
+// 1 byte read
 int16_t sdfiles::read() {
   if(!tfile) 
     return -1;
@@ -338,12 +337,12 @@ int16_t sdfiles::read() {
 }
 
 //
-// 1行分読込み
-// [引数]
-// str :読み取りデータ格納アドレス
-// [戻り値]
-//  0    :  データなし
-//  0以外:  読み込んだバイト数
+// read one line
+// [argument]
+//	str: Read data storage address
+// [Return value]
+//	0: no data
+//	Other than 0: Number of bytes read
 //
 int16_t sdfiles::readLine(char* str) {
   int len = 0;
@@ -368,15 +367,15 @@ int16_t sdfiles::readLine(char* str) {
 }
 
 //
-// ファイルがテキストファイルかチェック  
-// [引数]
-//  fname : ターゲットファイル名
-// [戻り値]
-//  正常終了             : 0 バイナリ形式 1:テキスト形式
-//  SDカード利用失敗     : - SD_ERR_INIT
-//  ファイルオープン失敗 : - SD_ERR_OPEN_FILE
-//  ファイル読み込み失敗 : - SD_ERR_READ_FILE
-//  ファイルでない       : - SD_ERR_NOT_FILE
+// check if the file is a text file
+// [argument]
+//	fname: target file name
+// [Return value]
+//	Normal end: 0 Binary format 1: Text format
+//	SD card use failure:-SD_ERR_INIT
+//	File open failure:-SD_ERR_OPEN_FILE
+//	file read failure:-SD_ERR_READ_FILE
+//	not a file:-SD_ERR_NOT_FILE
 //
 int8_t sdfiles::IsText(char* fname) {
   FILE *myFile;
@@ -404,22 +403,21 @@ int8_t sdfiles::IsText(char* fname) {
 }
 
 //
-// ビットマップファイルのロード
-// [引数]
-//  fname : ターゲットファイル名
-//  ptr   : ロードデータの格納アドレス
-//  x     : ビットマップ画像の切り出し座標 x
-//  y     : ビットマップ画像の切り出し座標 y
-//  w     : ビットマップ画像の切り出し幅
-//  h     : ビットマップ画像の切り出し高さ
-//  mode  : 色モード 0:通常 1：反転
-//[戻り値]
-//  正常終了             : 0 
-//  SDカード利用失敗     : SD_ERR_INIT
-//  ファイルオープン失敗 : SD_ERR_OPEN_FILE
-//  ファイル読み込み失敗 : SD_ERR_READ_FILE
-// 
-
+// Load bitmap file
+// [argument]
+// 	fname: target file name
+//	ptr: Load data storage address
+//	x: cutout coordinate of bitmap image x
+//	y: Bit map image cutout coordinates y
+//	w: Bitmap image cutout width
+//	h: Bitmap image cutout height
+//	mode: Color mode 0: Normal 1: Inverted
+//[Return value]
+//	Normal end: 0
+//	SD card use failure: SD_ERR_INIT
+//	file open failure: SD_ERR_OPEN_FILE
+//	file read failure: SD_ERR_READ_FILE
+//
 FILE *pcx_file = NULL;
 
 #define DR_PCX_NO_STDIO
@@ -554,13 +552,13 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
 }
 
 //
-// ディレクトリの作成
-// [引数]
-//  fname                  : ファイル名
-// [戻り値]
-//  正常終了               : 0
-//  SDカード利用失敗       : SD_ERR_INIT
-//  ファイルオープンエラー : SD_ERR_OPEN_FILE 
+// Create directory
+// [argument]
+// 	fname: file name
+// [Return value]
+// 	Normal end: 0
+// 	SD card use failure: SD_ERR_INIT
+// 	file open error: SD_ERR_OPEN_FILE
 //
 uint8_t sdfiles::mkdir(const char* fname) {
   uint8_t rc = 1;
@@ -598,13 +596,13 @@ uint8_t sdfiles::mkdir(const char* fname) {
   return rc;
 }
 
-// ディレクトリの削除
-// [引数]
-//  fname                  : ファイル名
-// [戻り値]
-//  正常終了               : 0
-//  SDカード利用失敗       : SD_ERR_INIT
-//  ファイルオープンエラー : SD_ERR_OPEN_FILE 
+// delete directory
+// [argument]
+// 	fname: file name
+// [Return value]
+// 	Normal end: 0
+// 	SD card use failure: SD_ERR_INIT
+// 	file open error: SD_ERR_OPEN_FILE
 //
 uint8_t sdfiles::rmdir(char* fname) {
   uint8_t rc = 1;
@@ -634,7 +632,6 @@ uint8_t sdfiles::rmdir(char* fname) {
   return rc;
 }
 
-// ファイル名の変更
 uint8_t sdfiles::rename(char* old_fname,char* new_fname) {
   uint8_t rc = 1;
   

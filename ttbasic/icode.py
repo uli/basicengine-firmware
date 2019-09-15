@@ -32,7 +32,7 @@ for l in f.readlines():
     if fun != 'esyntax' and last_cmd > 0 and fun[0] != 's' and fun[0] != 'n':
       print 'esyntax tokens must be last'
       exit(1)
-    if fun == 'esyntax' and last_cmd == 0:
+    if (fun == 'esyntax' or fun[0] == 's') and last_cmd == 0:
       last_cmd = count
     if last_cmd == 0:
       cmds += [(cmd, enum, fun)]

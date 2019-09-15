@@ -123,13 +123,13 @@ _none	I_SVAR		isvar
 _none	I_LSVAR		ilsvar
 _none	I_STRARR	istrarr
 _none	I_STRLST	istrlst
+_none	I_NUMLSTREF	inumlstref
+_none	I_STRLSTREF	istrlstref
 _none	I_IMPLICITENDIF	iendif
 _none	I_EXTEND	iextend
 CREDITS	X_CREDITS	icredits
 XYZZY	X_XYZZY		ixyzzy
 LUA	X_LUA		ilua
-_none	I_NUMLSTREF	esyntax
-_none	I_STRLSTREF	esyntax
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin

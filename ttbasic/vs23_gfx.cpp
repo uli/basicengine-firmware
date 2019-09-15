@@ -38,10 +38,10 @@ void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
     } else if (w == 0 || h == 0) {
       drawLine(x0,y0,x0+w,y0+h,c);
     } else {
-       // 水平線
+       // Horizontal line
        drawLine(x0,y0  , x0+w, y0  , c);
        drawLine(x0,y0+h, x0+w, y0+h, c);
-       // 垂直線
+       // Vertical line
        if (h>1) {  
            drawLine(x0,  y0+1,x0  ,y0+h-1,c);
            drawLine(x0+w,y0+1,x0+w,y0+h-1,c);
@@ -54,7 +54,7 @@ void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
   }
 }
 
-void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, pixel_t fc)
+void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
 {
   int f = 1 - radius;
   int ddF_x = 1;
@@ -72,7 +72,7 @@ void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, pixel_t fc)
   vs23.setPixel(x0 + radius, y0,c);
   vs23.setPixel(x0 - radius, y0,c);
   
-  while(x+1 < y) {  // 2017/02/28 オリジナルの不具合修正
+  while(x+1 < y) {
     if(f >= 0) {
       y--;
       ddF_y += 2;
@@ -109,32 +109,34 @@ void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, pixel_t fc)
   }
 }
 
-// Draws a line between two points (x1,y1) and (x2,y2), y2 must be higher
-// than or equal to y1
+// Draws a line between two points (x1,y1) and (x2,y2).
 void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			pixel_t c)
 {
-	int deltax, deltay, offset;
-	uint16_t i;
+  int deltax = abs(x2 - x1);
+  int deltay = abs(y2 - y1);
 
-	deltax = x2 - x1;
-	deltay = y2 - y1;
+  int slopex = x1 < x2 ? 1 : -1;
+  int slopey = y1 < y2 ? 1 : -1;
 
-	if (deltax != 0 && deltay != 0) {
-		offset = x1 - deltax * y1 / deltay;
-		for (i = 0; i < deltay; i++) {
-			vs23.setPixel(deltax * (y1 + i) / deltay + offset, y1 + i,
-				 c);
-		}
-	} else if (deltax == 0) {
-		for (i = 0; i < deltay; i++) {
-			vs23.setPixel(x1, y1 + i, c);
-		}
-	} else {
-		for (i = 0; i < deltax; i++) {
-			vs23.setPixel(x1 + i, y1, c);
-		}
-	}
+  int err = (deltax > deltay ? deltax : -deltay) / 2, e2;
+
+  for (;;) {
+    vs23.setPixel(x1, y1, c);
+
+    if (x1 == x2 && y1 == y2)
+      break;
+
+    e2 = err;
+    if (e2 > -deltax) {
+      err -= deltay;
+      x1 += slopex;
+    }
+    if (e2 <  deltay) {
+      err += deltax;
+      y1 += slopey;
+    }
+  }
 }
 
 void Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,

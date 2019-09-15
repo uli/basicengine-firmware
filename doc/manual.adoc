@@ -47,6 +47,85 @@ are case-sensitive.
 | _num1_-_num2_ | All numbers between _num1_ and _num2_, inclusive.
 |===
 
+== Data Types
+
+=== Arrays
+Arrays must be dimensioned using the <<DIM>> command, which can also be used
+to resize and re-dimension them at any time. In the case of numeric arrays,
+the current values will be maintained. For string arrays, the existing values
+will be deleted.
+
+If the <<DIM>> command is used to create a one-dimensional array, it can be
+followed by an `=` sign and a list of initial values separated by commas and
+enclosed in angular brackets (`[` and `]`).
+
+==== Examples
+Creating an uninitialized two-dimensional numeric array of size 4x6:
+----
+DIM A(4, 6)
+----
+Creating an initialized one-dimensional string array:
+----
+DIM A$(2) = ["one", "two", "three"]
+----
+Accessing an array element:
+----
+PRINT A$(0)
+one
+----
+
+=== Lists
+Similar to arrays, lists are data types that contain zero or more elements of a
+specific simple type (numbers or strings). List names start with the character `~`.
+
+Lists are more dynamic than arrays and allow items to be added and removed freely,
+using the <<POPB()>>, <<POPF()>>, <<POPB$()>> and <<POPF$()>> functions and the
+<<APPEND>> and <<PREPEND>> commands.
+
+Individual elements can be accessed in the same way as array elements.
+
+Lists are always one-dimensional. The current length of a list can be determined
+using the <<LEN()>> function.
+
+==== Examples
+Appending a list element:
+----
+APPEND ~A$, "Tom"
+----
+Accessing an element:
+----
+PRINT ~A$(0)
+Tom
+~A$(0) = "Jerry"
+----
+Removing a list element from the beginning of the list:
+----
+element$ = POPF$(~A$)
+PRINT element$
+Jerry
+----
+Creating a list with initial values:
+----
+~A = [1,2,3,4]
+----
+
+=== Strings as numeric buffers
+Engine BASIC tries to make it easy to use strings as general-purpose buffers that
+have a lower overhead and use less memory than arrays or lists.
+
+To create a string from a sequence of byte-sized numbers, a string initializer
+can be used:
+----
+A$ = [65, 66, 67]
+PRINT A$
+ABC
+----
+Individual characters can be set and retrieved as numbers:
+----
+PRINT A$[0]
+65
+----
+
 == Command and Function Reference
 
 include::reference.adoc[]

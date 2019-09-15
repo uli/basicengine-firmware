@@ -127,6 +127,16 @@ int BASIC_FP Basic::get_array_dims(int *idxs) {
   return dims;
 }
 
+/***bc bas DIM
+Declares an array.
+\usage DIM variable(dimension[, ...]) [= [value, ...]]
+\args
+@variable	an numeric or string array variable
+@dimension	one or more dimensions of the array
+@value		initial value(s) for the array elements
+\note
+Initialization is only possible for one-dimensional arrays.
+***/
 void Basic::idim() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
@@ -166,6 +176,10 @@ void Basic::idim() {
       if (dims > 1) {
         err = ERR_NOT_SUPPORTED;
       } else {
+        if (*++cip != I_SQOPEN) {
+          E_SYNTAX(I_SQOPEN);
+          return;
+        }
         if (is_string) {
           BString svalue;
           int cnt = 0;
@@ -194,6 +208,10 @@ void Basic::idim() {
             n = value;
             cnt++;
           } while(*cip == I_COMMA);
+        }
+        if (*cip++ != I_SQCLOSE) {
+          E_SYNTAX(I_SQCLOSE);
+          return;
         }
       }
       break;
@@ -315,9 +333,29 @@ void Basic::set_svar(bool is_lsvar) {
   }
   cip++;
 
-  value = istrexp();
-  if (err)
-    return;
+  if (*cip == I_SQOPEN) {
+    uint32_t element;
+    ++cip;
+    for (;; ++cip) {
+      if (getParam(element, 0, 255, I_NONE))
+        return;
+      value.concat((char)element);
+
+      if (*cip == I_SQCLOSE) {
+        ++cip;
+        break;
+      }
+      if (*cip != I_COMMA) {
+        E_ERR(SYNTAX, ", or ] expected");
+        return;
+      }
+    }
+  } else {
+    value = istrexp();
+    if (err)
+      return;
+  }
+
   if (is_lsvar) {
     BString &str = get_lsvar(index);
     if (err)
@@ -450,6 +488,73 @@ void Basic::inumlst() {
   s = value;
 }
 
+void Basic::inumlstref() {
+  uint8_t index = *cip++;
+  num_t value;
+
+  if (*cip++ != I_EQ) {
+    E_SYNTAX(I_EQ);
+    return;
+  }
+  if (*cip != I_SQOPEN) {
+    E_SYNTAX(I_SQOPEN);
+    return;
+  }
+
+  num_lst.var(index).reset();
+  do {
+    cip++;
+    value = iexp();
+    if (err)
+      return;
+    num_lst.var(index).append(value);
+    if (err)
+      return;
+  } while(*cip == I_COMMA);
+
+  if (*cip++ != I_SQCLOSE) {
+    E_SYNTAX(I_SQCLOSE);
+    return;
+  }
+}
+
+void Basic::istrlstref() {
+  uint8_t index = *cip++;
+  BString value;
+
+  if (*cip++ != I_EQ) {
+    E_SYNTAX(I_EQ);
+    return;
+  }
+  if (*cip != I_SQOPEN) {
+    E_SYNTAX(I_SQOPEN);
+    return;
+  }
+
+  str_lst.var(index).reset();
+  do {
+    cip++;
+    value = istrexp();
+    if (err)
+      return;
+    str_lst.var(index).append(value);
+    if (err)
+      return;
+  } while(*cip == I_COMMA);
+
+  if (*cip++ != I_SQCLOSE) {
+    E_SYNTAX(I_SQCLOSE);
+    return;
+  }
+}
+
+/***bc bas APPEND
+Appends an element to the end of a list.
+\usage APPEND list, value
+\args
+@list	a numeric or string list variable
+@value	a numeric or string expression
+***/
 void Basic::iappend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
@@ -480,6 +585,13 @@ void Basic::iappend() {
   return;
 }
 
+/***bc bas PREPEND
+Adds an element to the start of a list.
+\usage PREPEND list, value
+\args
+@list	a numeric or string list variable
+@value	a numeric or string expression
+***/
 void Basic::iprepend() {
   uint8_t index;
   if (*cip == I_STRLSTREF) {
@@ -566,6 +678,16 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::ilet() {
   case I_NUMLST:
     cip++;
     inumlst();
+    break;
+
+  case I_NUMLSTREF:
+    cip++;
+    inumlstref();
+    break;
+
+  case I_STRLSTREF:
+    cip++;
+    istrlstref();
     break;
 
   default:      // 以上のいずれにも該当しなかった場合

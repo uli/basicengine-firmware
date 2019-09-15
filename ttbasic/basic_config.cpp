@@ -87,8 +87,8 @@ detected; PAL60 mode is not currently implemented. +
 The semantics of this option are therefore likely to change in the future.
 
 * `1`: Keyboard layout +
-  Three different keyboard layouts are supported: +
-  `0` (Japanese), `1` (US English, default) and `2` (German).
+  Four different keyboard layouts are supported: +
+  `0` (Japanese), `1` (US English, default), `2` (German) and `3` (French).
 
 * `2`: Interlacing +
   Sets the video output to progressive (`0`) or interlaced (`1`). A change
@@ -168,8 +168,8 @@ void SMALL Basic::iconfig() {
     }
     break;
   case 1: // キーボード補正
-    if (value < 0 || value > 2)  {
-      E_VALUE(0, 2);
+    if (value < 0 || value > 3)  {
+      E_VALUE(0, 3);
     } else {
 #if !defined(HOSTED) && !defined(H3)
       kb.setLayout(value);

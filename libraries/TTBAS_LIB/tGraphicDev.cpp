@@ -35,12 +35,12 @@ void tGraphicDev::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c
 }
 
 // 円の描画
-void tGraphicDev::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int8_t f) {
+void tGraphicDev::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int f) {
   tv_circle(x, y, r, c, f);
 }
 
 // 四角の描画
-void tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int8_t f) {
+void tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int f) {
   tv_rect(x, y, w, h, c, f);
 }
 

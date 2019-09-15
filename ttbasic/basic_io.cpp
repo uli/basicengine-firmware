@@ -10,8 +10,6 @@ void SMALL basic_init_io() {
   digitalWrite(2, LOW);
 }
 
-uint16_t pcf_state = 0xffff;
-
 /***bc io GPOUT
 Sets the state of a general-purpose I/O pin.
 \usage GPOUT pin, value
@@ -23,6 +21,7 @@ Sets the state of a general-purpose I/O pin.
 \ref GPIN()
 ***/
 void Basic::idwrite() {
+  static uint16_t pcf_state = 0xffff;
   int32_t pinno,  data;
 
   if ( getParam(pinno, 0, 15, I_COMMA) ) return;
@@ -37,15 +36,12 @@ void Basic::idwrite() {
 
   // XXX: frequency is higher when running at 160 MHz because F_CPU is wrong
   Wire.beginTransmission(0x20);
-  Wire.write(pcf_state & 0xff);
-  Wire.write(pcf_state >> 8);
+  retval[1]  = Wire.write(pcf_state & 0xff);
+  retval[1] += Wire.write(pcf_state >> 8);
 
+  retval[0] = Wire.endTransmission();
 #ifdef DEBUG_GPIO
-  int ret = 
-#endif
-  Wire.endTransmission();
-#ifdef DEBUG_GPIO
-  Serial.printf("wire st %d pcf 0x%x\n", ret, pcf_state);
+  Serial.printf("wire st %d pcf 0x%x\n", retval[0], pcf_state);
 #endif
 }
 
@@ -68,13 +64,16 @@ num_t BASIC_INT Basic::ni2cw() {
   out = istrexp();
   if (checkClose()) return 0;
 
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
+
   // I2Cデータ送信
   Wire.beginTransmission(i2cAdr);
-  if (out.length()) {
-    for (uint32_t i = 0; i < out.length(); i++)
-      Wire.write(out[i]);
+  if ((retval[1] = out.length())) {
+    retval[1] = Wire.write((const uint8_t *)out.c_str(), retval[1]);
   }
-  return Wire.endTransmission();
+  return retval[0] = Wire.endTransmission();
 }
 
 /***bf io I2CR
@@ -96,29 +95,35 @@ BString Basic::si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
 
-  if (checkOpen()) goto out;
-  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) goto out;
-  out = istrexp();
-  if (*cip++ != I_COMMA) {
-    E_SYNTAX(I_COMMA);
-    goto out;
-  }
-  if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
+  do {  // break target
+    if (checkOpen()) break;
+    if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) break;
+    out = istrexp();
+    if (*cip++ != I_COMMA) {
+        E_SYNTAX(I_COMMA);
+        break;
+    }
+    if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) break;
 
-  // I2Cデータ送受信
-  Wire.beginTransmission(i2cAdr);
+    // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+    // to avoid interference.
+    while (!blockFinished()) {}
 
-  // 送信
-  if (out.length()) {
-    Wire.write((const uint8_t *)out.c_str(), out.length());
-  }
-  if ((retval[0] = Wire.endTransmission()))
-    goto out;
-  Wire.requestFrom(i2cAdr, rdlen);
-  while (Wire.available()) {
-    in += Wire.read();
-  }
-out:
+    // I2Cデータ送受信
+    Wire.beginTransmission(i2cAdr);
+
+    // 送信
+    if ((retval[1] = out.length())) {
+      retval[1] = Wire.write((const uint8_t *)out.c_str(), retval[1]);
+    }
+    if ((retval[0] = Wire.endTransmission())|| !rdlen) break;
+
+    Wire.requestFrom(i2cAdr, rdlen);
+    while (Wire.available()) {
+      in += (char)Wire.read();
+    }
+  } while (0);
+
   return in;
 }
 
@@ -181,15 +186,19 @@ num_t BASIC_INT Basic::ngpin() {
   if (checkOpen()) return 0;
   if (getParam(a, 0, 15, I_NONE)) return 0;
   if (checkClose()) return 0;
+
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
   while (!blockFinished()) {}
+
+  // no choice, we need 2 bytes
   if (Wire.requestFrom(0x20, 2) != 2) {
     err = ERR_IO;
     return 0;
-  } else {
-    uint16_t state = Wire.read();
-    state |= Wire.read() << 8;
-    return !!(state & (1 << a));
   }
+  uint16_t state = Wire.read();
+  state |= Wire.read() << 8;
+  return !!(state & (1 << a));
 }
 
 /***bf io ANA
@@ -202,8 +211,7 @@ num_t BASIC_FP Basic::nana() {
   err = ERR_NOT_SUPPORTED;
   return 0;
 #else
-  if (checkOpen()) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen()||checkClose()) return 0;
   return analogRead(A0);    // 入力値取得
 #endif
 }

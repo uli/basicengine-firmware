@@ -960,9 +960,9 @@ uint32_t BASIC_FP getlineno(unsigned char *lp) {
 unsigned char* BASIC_FP Basic::getlp(uint32_t lineno) {
   unsigned char *lp; //ポインタ
 
-  for (lp = listbuf; *lp; lp += *lp) //先頭から末尾まで繰り返す
-    if (getlineno(lp) >= lineno) //もし指定の行番号以上なら
-      break;  //繰り返しを打ち切る
+  for (lp = listbuf; *lp; lp += *lp) // Repeat from top to bottom
+    if (getlineno(lp) >= lineno)
+      break;
 
   return lp; //ポインタを持ち帰る
 }
@@ -1801,6 +1801,15 @@ bool BASIC_INT Basic::find_next_data() {
   return true;
 }
 
+/***bc bas DATA
+Specifies values to be read by subsequent `READ` statements.
+\usage DATA expr[, expr...]
+\args
+@expr	a numeric or string expression
+\note
+When a DATA statement is executed, nothing happens.
+\ref READ RESTORE
+***/
 void Basic::idata() {
   int next;
 
@@ -1838,6 +1847,18 @@ void BASIC_INT Basic::data_pop() {
   cip = data_cip_save;
 }
 
+/***bc bas READ
+Reads values specified in `DATA` statements and assigns them to variables.
+\usage READ var[, var...]
+\args
+@var	numeric or string variable
+\note
+Data is read from the element that follows the current "data pointer".
+The data pointer points to the beginning of the program initially. With every
+element read it is forwarded to the next one. It can be set directly with
+the `RESTORE` command.
+\ref DATA RESTORE
+***/
 void BASIC_INT Basic::iread() {
   num_t value;
   BString svalue;
@@ -1848,11 +1869,29 @@ void BASIC_INT Basic::iread() {
     return;
   }
 
+  auto data_exp = [&] () {
+    num_t v = 0;
+    data_push();
+    if (*cip != I_COMMA && !end_of_statement()) {
+      v = iexp();
+    }
+    data_pop();
+    return v;
+  };
+
+  auto data_strexp = [&] () {
+    BString v;
+    data_push();
+    if (*cip != I_COMMA && !end_of_statement()) {
+      v = istrexp();
+    }
+    data_pop();
+    return v;
+  };
+
   for (;;) switch (*cip++) {
   case I_VAR:
-    data_push();
-    value = iexp();
-    data_pop();
+    value = data_exp();
     if (err)
       return;
     nvar.var(*cip++) = value;
@@ -1870,9 +1909,7 @@ void BASIC_INT Basic::iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    data_push();
-    value = iexp();
-    data_pop();
+    value = data_exp();
     if (err)
       return;
 
@@ -1886,9 +1923,7 @@ void BASIC_INT Basic::iread() {
     }
 
   case I_SVAR:
-    data_push();
-    svalue = istrexp();
-    data_pop();
+    svalue = data_strexp();
     if (err)
       return;
     svar.var(*cip++) = svalue;
@@ -1905,9 +1940,7 @@ void BASIC_INT Basic::iread() {
     if (dims < 0 || (is_list && dims != 1))
       return;
 
-    data_push();
-    svalue = istrexp();
-    data_pop();
+    svalue = data_strexp();
     if (err)
       return;
 
@@ -1935,6 +1968,13 @@ void BASIC_INT Basic::iread() {
   }
 }
 
+/***bc bas RESTORE
+Sets the data pointer to a given location.
+\usage RESTORE [location]
+\args
+@location	a label or line number [default: start of program]
+\ref DATA READ
+***/
 void Basic::irestore() {
   if (end_of_statement())
     data_lp = NULL;
@@ -2319,6 +2359,7 @@ void SMALL Basic::irenum() {
       case I_GOTO:
       case I_GOSUB:
       case I_THEN:
+      case I_RESTORE:
 	i++;
 	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
 	  num = UNALIGNED_NUM_T(&ptr[i+1]);
@@ -3066,9 +3107,11 @@ void SMALL Basic::isavepcx() {
 
   for (;;) {
     if (*cip == I_POS) {
+      cip++;
       if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
       if (getParam(y, 0, vs23.lastLine() - 1, I_NONE)) return;
     } else if (*cip == I_SIZE) {
+      cip++;
       if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA)) return;
       if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE)) return;
     } else
@@ -3852,19 +3895,18 @@ num_t BASIC_INT Basic::ninstr() {
     return res - haystack.c_str();
 }
 
-num_t BASIC_INT Basic::nsvar_a() {
+num_t BASIC_INT Basic::nsvar_a(BString &value) {
   uint8_t i;
   int32_t a;
   // String character accessor
-  i = *cip++;
   if (*cip++ != I_SQOPEN) {
     // XXX: Can we actually get here?
     E_SYNTAX(I_SQOPEN);
     return 0;
   }
-  if (getParam(a, 0, svar.var(i).length(), I_SQCLOSE))
+  if (getParam(a, 0, value.length(), I_SQCLOSE))
     return 0;
-  return svar.var(i)[a];
+  return value[a];
 }
 
 // Get value
@@ -3907,7 +3949,27 @@ num_t BASIC_FP Basic::ivalue() {
     break;
 
   case I_SVAR:
-    value = nsvar_a();
+    value = nsvar_a(svar.var(*cip++));
+    break;
+
+  case I_LSVAR:
+    value = nsvar_a(get_lsvar(*cip++));
+    break;
+
+  case I_STRARR:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    value = nsvar_a(str_arr.var(i).var(dims, idxs));
+    break;
+
+  case I_STRLST:
+    i = *cip++;
+    dims = get_array_dims(idxs);
+    if (dims != 1) {
+      SYNTAX_T("invalid list index");
+    } else {
+      value = nsvar_a(str_lst.var(i).var(idxs[0]));
+    }
     break;
 
   //括弧の値の取得
@@ -5396,22 +5458,22 @@ void BASIC_INT Basic::iextend() {
   (this->*funtbl_ext[*cip++])();
 }
 
-// 中間コードの実行
-// 戻り値      : 次のプログラム実行位置(行の先頭)
+// execute intermediate code
+// Return value: next program execution position (line start)
 unsigned char* BASIC_FP Basic::iexe(int stk) {
   uint8_t c;               // 入力キー
   err = 0;
 
-  while (*cip != I_EOL) { //行末まで繰り返す
+  while (*cip != I_EOL) {
     //強制的な中断の判定
-    if ((c = sc0.peekKey())) { // もし未読文字があったら
-      if (process_hotkeys(c)) { // 読み込んでもし[ESC],［CTRL_C］キーだったら
+    if ((c = sc0.peekKey())) { // If there are unread characters
+      if (process_hotkeys(c)) {
 	err_expected = NULL;
 	break;
       }
     }
 
-    //中間コードを実行
+    // Execute intermediate code
     if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
       (this->*funtbl[*cip++])();
     } else
@@ -5429,9 +5491,9 @@ unsigned char* BASIC_FP Basic::iexe(int stk) {
 //Command precessor
 uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
-  cip = ibuf;          // 中間コードポインタを中間コードバッファの先頭に設定
+  cip = ibuf;          // Set the intermediate code pointer to the beginning of the intermediate code buffer
 
-  switch (*cip++) {    // 中間コードポインタが指し示す中間コードによって分岐
+  switch (*cip++) {    // Branch by the intermediate code pointed to by the intermediate code pointer
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;

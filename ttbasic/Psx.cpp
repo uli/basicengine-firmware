@@ -54,12 +54,12 @@ Psx::Psx()
 	_last_read = 0;
 }
 
-byte Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
+byte SMALL Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
 {
-	_temp = 0;
-	_dataIn = 0;
+	boolean _temp = 0;
+	byte _dataIn = 0;
 
-	for (_i = 0; _i <= 7; _i++)
+	for (int _i = 0; _i <= 7; _i++)
 	{
 		
 		
@@ -111,7 +111,7 @@ void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte
 #define MAX_RETRIES 3
 #define CONFIRMATIONS 1
 
-int Psx::read()
+int SMALL Psx::read()
 {
     byte data1, data2;
     int data_out;
@@ -158,14 +158,12 @@ int Psx::read()
         }
 
         // Not the right magic byte, try again.
-        _last_read = -1;
-
         // wait some time before doing another read
         // XXX: wild guess
 	delayMicroseconds(_delay*2);
       }
 
-      if (retries == 3)	{
+      if (retries == MAX_RETRIES) {
         // exhausted all retries, there might be no controller here
         _last_failed = millis();
 #ifdef USE_VS23_GPIO

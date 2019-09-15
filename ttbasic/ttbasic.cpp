@@ -83,7 +83,7 @@ void setup() {
   // supplies did not reveal anything suspicious.
   delay(1000);	// 1s seems to always do the trick; 500ms is not reliable.
 
-  Serial.begin(115200);
+  Serial.begin(GPIO_S1_BAUD);
   SpiLock();
 
 #ifdef ESP8266_NOWIFI

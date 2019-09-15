@@ -469,27 +469,21 @@ Read a video controller register.
 @reg	video controller register number
 \ret Register contents.
 \note
-Valid register numbers are: `$01`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
+Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
 \ref VREG
 ***/
-static const uint8_t vs23_read_regs[] PROGMEM = {
-  0x01, 0x9f, 0x84, 0x86, 0xb7, 0x53
-};
 num_t BASIC_INT Basic::nvreg() {
 #ifdef USE_VS23
-  int32_t a = getparam();
-  bool good = false;
-  for (uint32_t i = 0; i < sizeof(vs23_read_regs); ++i) {
-    if (pgm_read_byte(&vs23_read_regs[i]) == a) {
-      good = true;
-      break;
-    }
+  uint32_t opcode = getparam();
+  switch(opcode) {
+    case 0x05:
+    case 0x84:
+    case 0x86:
+    case 0xB7: return SpiRamReadRegister8(opcode);
+    case 0x53:
+    case 0x9F: return SpiRamReadRegister(opcode);
+    default:   err = ERR_VALUE; return 0;
   }
-  if (!good) {
-    err = ERR_VALUE;
-    return 0;
-  } else
-    return SpiRamReadRegister(a);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -506,12 +500,12 @@ Read a location in video memory.
 ***/
 num_t BASIC_FP Basic::nvpeek() {
 #ifdef USE_VS23
-  num_t value = getparam();
-  if (value < 0 || value > 131071) {
+  num_t addr = getparam();
+  if (addr < 0 || addr > 131071) {
     E_VALUE(0, 131071);
     return 0;
-  } else
-    return SpiRamReadByte(value);
+  }
+  return SpiRamReadByte(addr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -519,20 +513,26 @@ num_t BASIC_FP Basic::nvpeek() {
 }
 
 /***bc scr VPOKE
-Write one byte of data to video memory.
+Write data to video memory.
 
 WARNING: Incorrect use of this command can configure the video controller to
 produce invalid output, with may cause damage to older CRT displays.
 \usage VPOKE addr, val
 \args
 @addr	video memory address [`0` to `131071`]
-@val	value [`0` to `255`]
+@val	value [0 to 255] or string expression
 \ref VPEEK()
 ***/
 void BASIC_INT Basic::ivpoke() {
 #ifdef USE_VS23
   int32_t addr, value;
   if (getParam(addr, 0, 131071, I_COMMA)) return;
+  if (is_strexp()) {
+    BString str = istrexp();
+    if ((value = str.length()))
+      SpiRamWriteBytes(addr, (uint8_t *)str.c_str(), value);
+    return;
+  }
   if (getParam(value, 0, 255, I_NONE)) return;
   SpiRamWriteByte(addr, value);
 #else
@@ -859,7 +859,7 @@ void Basic::ipset() {
 /***bc pix LINE
 Draws a line.
 \usage
-LINE x1_coord, y1_coord, x2_coord, y2_coord, color
+LINE x1_coord, y1_coord, x2_coord, y2_coord[, color]
 \args
 @x1_coord X coordinate of the line's starting point +
           [`0` to `PSIZE(0)-1`]
@@ -869,15 +869,23 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord, color
           [`0` to `PSIZE(0)-1`]
 @y2_coord Y coordinate of the line's end point +
           [`0` to `PSIZE(2)-1`]
-@color	  color of the line
+@color	  color of the line [default: text foreground color]
 \note
 Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
 void Basic::iline() {
   int32_t x1,x2,y1,y2,c;
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_NONE))
+
+  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_NONE))
     return;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    getParam(c, I_NONE);
+  } else
+    c = fg_color;
+
   if (x1 < 0) x1 =0;
   if (y1 < 0) y1 =0;
   if (x2 < 0) x1 =0;
