@@ -2359,6 +2359,7 @@ void SMALL Basic::irenum() {
       case I_GOTO:
       case I_GOSUB:
       case I_THEN:
+      case I_RESTORE:
 	i++;
 	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
 	  num = UNALIGNED_NUM_T(&ptr[i+1]);
