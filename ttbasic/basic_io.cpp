@@ -68,6 +68,10 @@ num_t BASIC_INT Basic::ni2cw() {
   out = istrexp();
   if (checkClose()) return 0;
 
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
+
   // I2Cデータ送信
   Wire.beginTransmission(i2cAdr);
   if (out.length()) {
@@ -104,6 +108,10 @@ BString Basic::si2cr() {
     goto out;
   }
   if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
+
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
 
   // I2Cデータ送受信
   Wire.beginTransmission(i2cAdr);
@@ -181,15 +189,18 @@ num_t BASIC_INT Basic::ngpin() {
   if (checkOpen()) return 0;
   if (getParam(a, 0, 15, I_NONE)) return 0;
   if (checkClose()) return 0;
+
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
   while (!blockFinished()) {}
+
   if (Wire.requestFrom(0x20, 2) != 2) {
     err = ERR_IO;
     return 0;
-  } else {
-    uint16_t state = Wire.read();
-    state |= Wire.read() << 8;
-    return !!(state & (1 << a));
   }
+  uint16_t state = Wire.read();
+  state |= Wire.read() << 8;
+  return !!(state & (1 << a));
 }
 
 /***bf io ANA
