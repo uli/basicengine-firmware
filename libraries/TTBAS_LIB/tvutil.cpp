@@ -112,7 +112,7 @@ void tv_reinit()
   tv_window_reset();
 }
 
-void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+void GROUP(basic_video) tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
   win_x = x * f_width;
   win_y = y * f_height;
@@ -122,7 +122,7 @@ void tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
   win_c_height = win_height / f_height;
 }
 
-void tv_window_reset()
+void GROUP(basic_video) tv_window_reset()
 {
   win_x = 0;
   win_y = 0;
@@ -132,7 +132,7 @@ void tv_window_reset()
   win_c_height = win_height / f_height;
 }
 
-void tv_window_get(int &x, int &y, int &w, int &h)
+void GROUP(basic_video) tv_window_get(int &x, int &y, int &w, int &h)
 {
   x = win_x / f_width;
   y = win_y / f_height;
@@ -151,37 +151,37 @@ const uint8_t* tv_getFontAdr() {
 }
 
 // Screen characters sideways
-uint8_t tv_get_cwidth() {
+uint8_t GROUP(basic_video) tv_get_cwidth() {
   return c_width;
 }
 
 // Screen characters downwards
-uint8_t tv_get_cheight() {
+uint8_t GROUP(basic_video) tv_get_cheight() {
   return c_height;
 }
 
-uint8_t tv_get_win_cwidth() {
+uint8_t GROUP(basic_video) tv_get_win_cwidth() {
   return win_c_width;
 }
 
-uint8_t tv_get_win_cheight() {
+uint8_t GROUP(basic_video) tv_get_win_cheight() {
   return win_c_height;
 }
 
 // Screen graphic horizontal pixels
-uint16_t tv_get_gwidth() {
+uint16_t GROUP(basic_video) tv_get_gwidth() {
   return g_width;
 }
 
 // Screen graphic vertical pixels
-uint16_t tv_get_gheight() {
+uint16_t GROUP(basic_video) tv_get_gheight() {
   return g_height;
 }
 
 //
 // Cursor display
 //
-void tv_drawCurs(uint8_t x, uint8_t y) {
+void GROUP(basic_video) tv_drawCurs(uint8_t x, uint8_t y) {
   pixel_t pix[f_width];
   for (int i = 0; i < f_width; ++i)
     pix[i] = cursor_color;
@@ -265,14 +265,14 @@ void tv_insLine(uint16_t l) {
 }
 
 // Screen scroll up for one line
-void tv_scroll_up() {
+void GROUP(basic_video) tv_scroll_up() {
   vs23.MoveBlock(win_x, win_y + f_height, win_x, win_y, win_width/2, win_height-f_height, 0);
   vs23.MoveBlock(win_x + win_width/2, win_y + f_height, win_x + win_width/2, win_y, win_width/2, win_height-f_height, 0);
   tv_clerLine(win_c_height-1);
 }
 
 // Screen scroll down for one line
-void tv_scroll_down() {
+void GROUP(basic_video) tv_scroll_down() {
   vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
             win_x + win_width-1, win_y + win_height-1,
             win_width/2, win_height-f_height,
@@ -285,38 +285,38 @@ void tv_scroll_down() {
 }
 
 // Point drawing
-void tv_pset(int16_t x, int16_t y, pixel_t c) {
+void GROUP(basic_video) tv_pset(int16_t x, int16_t y, pixel_t c) {
   vs23.setPixel(x, y, c);
 }
   
 // Draw a line
-void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
+void GROUP(basic_video) tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
   gfx.drawLine(x1, y1, x2, y2, c);
 }
 
 // Drawing a circle
-void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
+void GROUP(basic_video) tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
   gfx.drawCircle(x, y, r, c, f);
 }
 
 // Draw a square
-void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
+void GROUP(basic_video) tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   gfx.drawRect(x, y, w, h, c, f);
 }
 
-void tv_set_gcursor(uint16_t x, uint16_t y) {
+void GROUP(basic_video) tv_set_gcursor(uint16_t x, uint16_t y) {
   gcurs_x = x;
   gcurs_y = y;
 }
 
-void tv_write(uint8_t c) {
+void GROUP(basic_video) tv_write(uint8_t c) {
   if (gcurs_x < g_width - f_width)
     tv_write_px(gcurs_x, gcurs_y, c);
   gcurs_x += f_width;
 }
 
 // Graphic horizontal scroll
-void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
+void GROUP(basic_video) tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   pixel_t col_black = (pixel_t)0;
   switch (mode) {
     case 0:	// up
@@ -342,13 +342,13 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   }
 }
 
-void tv_setcolor(pixel_t fc, pixel_t bc)
+void GROUP(basic_video) tv_setcolor(pixel_t fc, pixel_t bc)
 {
   fg_color = fc;
   bg_color = bc;
 }
 
-void tv_flipcolors()
+void GROUP(basic_video) tv_flipcolors()
 {
   pixel_t tmp = fg_color;
   fg_color = bg_color;
