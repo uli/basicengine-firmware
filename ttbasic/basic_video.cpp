@@ -845,7 +845,7 @@ Draws a pixel.
 @y_coord Y coordinate of the pixel
 \ref RGB()
 ***/
-void Basic::ipset() {
+void GROUP(basic_video) Basic::ipset() {
   int32_t x,y,c;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
     return;
@@ -874,7 +874,7 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord[, color]
 Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
-void Basic::iline() {
+void GROUP(basic_video) Basic::iline() {
   int32_t x1,x2,y1,y2,c;
 
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_NONE))
@@ -917,7 +917,7 @@ Coordinates that exceed the valid pixel memory area will be clamped.
 `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
-void Basic::icircle() {
+void GROUP(basic_video) Basic::icircle() {
   int32_t x, y, r, c, f;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
@@ -949,7 +949,7 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
 `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
-void Basic::irect() {
+void GROUP(basic_video) Basic::irect() {
   int32_t x1,y1,x2,y2,c,f;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
@@ -979,7 +979,7 @@ The default transfer direction is down.
   releases.
 \ref GSCROLL
 ***/
-void Basic::iblit() {
+void GROUP(basic_video) Basic::iblit() {
   int32_t x,y,w,h,dx,dy;
   int32_t dir = 0;
   if (getParam(x, 0, sc0.getGWidth(), I_COMMA)) return;
