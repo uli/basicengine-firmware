@@ -28,7 +28,7 @@
 #include "colorspace.h"
 #include "graphics.h"
 
-void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
+void GROUP(basic_video) Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
 {
   if (fc == -1) {
     w--;
@@ -54,7 +54,7 @@ void Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
   }
 }
 
-void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
+void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
 {
   int f = 1 - radius;
   int ddF_x = 1;
@@ -110,7 +110,7 @@ void Graphics::drawCircle(int x0, int y0, int radius, pixel_t c, int fc)
 }
 
 // Draws a line between two points (x1,y1) and (x2,y2).
-void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+void GROUP(basic_video) Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			pixel_t c)
 {
   int deltax = abs(x2 - x1);
@@ -139,7 +139,7 @@ void Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   }
 }
 
-void Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+void GROUP(basic_video) Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 			   uint8_t r, uint8_t g, uint8_t b)
 {
 	pixel_t c = csp.colorFromRgb(r, g, b);
