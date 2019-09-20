@@ -5722,7 +5722,7 @@ void SMALL Basic::basic() {
   putnum(_go32_dpmi_remaining_physical_memory() / 1024, 0);
   PRINT_P(" KB free\n");
 #else
-  putnum(try_malloc(), 0);
+  putnum(9999, 0);
   PRINT_P(" bytes free\n");
 #endif
 

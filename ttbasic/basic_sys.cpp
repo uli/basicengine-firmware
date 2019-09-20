@@ -467,34 +467,6 @@ num_t Basic::nsys() {
   }
 }
 
-#ifndef ESP8266
-int try_malloc() {
-  uint32_t total = 0;
-  void **foo = (void **)calloc(128, sizeof(void *));
-  if (!foo)
-    return total;
-  total += 128 * sizeof(void *);
-  int bs = 8192;
-  int cnt = 0;
-  for (;;) {
-    foo[cnt] = malloc(bs);
-    if (!foo[cnt]) {
-      bs /= 2;
-      if (!bs)
-        break;
-      continue;
-    }
-    total += bs;
-    cnt++;
-  }
-  while (cnt) {
-    free(foo[--cnt]);
-  }
-  free(foo);
-  return total;
-}
-#endif
-
 #ifdef __DJGPP__
 #include <dpmi.h>
 #endif
@@ -513,7 +485,7 @@ num_t BASIC_FP Basic::nfree() {
 #elif defined(__DJGPP__)
   return _go32_dpmi_remaining_physical_memory();
 #else
-  return try_malloc();
+  return 9999;
 #endif
 }
 
@@ -617,7 +589,7 @@ void SMALL Basic::isysinfo() {
 #ifdef ESP8266
   putnum(umm_free_heap_size(), 0);
 #else
-  putnum(try_malloc(), 0);
+  putnum(9999, 0);
 #endif
   newline();
 
