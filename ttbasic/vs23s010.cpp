@@ -63,13 +63,13 @@ uint16_t ICACHE_RAM_ATTR VS23S010::currentLine() {
     return cl;
 }
 
-void GROUP(basic_vs23) VS23S010::setPixel(uint16_t x, uint16_t y, pixel_t c)
+void GROUP(basic_video) VS23S010::setPixel(uint16_t x, uint16_t y, pixel_t c)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
-pixel_t GROUP(basic_vs23) VS23S010::getPixel(uint16_t x, uint16_t y)
+pixel_t GROUP(basic_video) VS23S010::getPixel(uint16_t x, uint16_t y)
 {
   uint32_t byteaddress = pixelAddr(x, y);
   return (pixel_t)SpiRamReadByte(byteaddress);
@@ -277,7 +277,7 @@ void VS23S010::setSyncLine(uint16_t line)
 #ifdef HOSTED
 #include <hosted_spi.h>
 #else
-static inline void GROUP(basic_vs23) MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
+static inline void GROUP(basic_video) MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
 {
   uint8_t req[5] = {
     BLOCKMVC1,
@@ -294,7 +294,7 @@ static inline void GROUP(basic_vs23) MoveBlockAddr(uint32_t byteaddress2, uint32
   VS23S010::startBlockMove();
 }
 
-static inline void GROUP(basic_vs23) SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
+static inline void GROUP(basic_video) SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
 {
   uint8_t cmd[count+4];
   cmd[0] = 3;
@@ -307,7 +307,7 @@ static inline void GROUP(basic_vs23) SpiRamReadBytesFast(uint32_t address, uint8
   os_memcpy(data, cmd+4, count);
 }
 
-static inline void GROUP(basic_vs23) SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
+static inline void GROUP(basic_video) SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
 {
   uint8_t cmd[len+4];
   cmd[0] = 2;
@@ -321,7 +321,7 @@ static inline void GROUP(basic_vs23) SpiRamWriteBytesFast(uint32_t address, uint
 }
 #endif
 
-void GROUP(basic_vs23) VS23S010::drawBg(struct bg_t *bg,
+void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg,
                                       int dest_addr_start,
                                       uint32_t pat_start_addr,
                                       uint32_t win_start_addr,
@@ -419,7 +419,7 @@ void GROUP(basic_vs23) VS23S010::drawBg(struct bg_t *bg,
 #endif
 }
 
-void GROUP(basic_vs23) VS23S010::drawBgTop(struct bg_t *bg,
+void GROUP(basic_video) VS23S010::drawBgTop(struct bg_t *bg,
                                          int dest_addr_start,
                                          uint32_t pat_start_addr,
                                          int tile_start_x,
@@ -498,7 +498,7 @@ void GROUP(basic_vs23) VS23S010::drawBgTop(struct bg_t *bg,
 #endif
 }
 
-void GROUP(basic_vs23) VS23S010::drawBgBottom(struct bg_t *bg,
+void GROUP(basic_video) VS23S010::drawBgBottom(struct bg_t *bg,
                                             int tile_start_x,
                                             int tile_end_x,
                                             int tile_end_y,
@@ -580,7 +580,7 @@ void GROUP(basic_vs23) VS23S010::drawBgBottom(struct bg_t *bg,
 #endif
 }
 
-void GROUP(basic_vs23) VS23S010::updateBg()
+void GROUP(basic_video) VS23S010::updateBg()
 {
   static uint32_t last_frame = 0;
 #ifdef PROFILE_BG
@@ -1083,7 +1083,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
   return true;
 }
 
-uint8_t GROUP(basic_vs23) VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
+uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
 {
   uint8_t dir = 0x40;	// indicates collision
 
