@@ -43,6 +43,13 @@
 #define BUFFERED_SCREEN
 #endif
 
+#ifdef SDL
+#define USE_SDLGFX 1
+#define USE_BG_ENGINE
+#define PIXEL_TYPE uint32_t
+#define BUFFERED_SCREEN
+#endif
+
 // ** Default screen size in terminal mode ************************
 // ※ While moving, can be changed by WIDTH command (default: 80x25)
 // XXX: I don't think this works anymore.
@@ -168,7 +175,7 @@
 #define PSX_ATTN_PIN	2
 #define PSX_CLK_PIN	4
 #define PSX_DELAY	1
-#elif defined(H3) || defined(__DJGPP__)
+#elif defined(H3) || defined(__DJGPP__) || defined(SDL)
 // bogus
 #define PSX_DATA_PIN	16
 #define PSX_CMD_PIN	17

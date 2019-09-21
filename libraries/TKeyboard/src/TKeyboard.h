@@ -241,7 +241,7 @@ class TKeyboard {
     inline static void  mode_stop();      // 通信禁止
     inline static void  mode_send();      // ホスト送信モード
     
-#if defined(HOSTED) || defined(H3) || defined(__DJGPP__)
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
     bool state(uint8_t keycode);
 #else
     inline static bool state(uint8_t keycode) {

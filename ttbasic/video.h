@@ -12,3 +12,6 @@
 #ifdef USE_DOSGFX
 #include <dosgfx.h>
 #endif
+#ifdef USE_SDLGFX
+#include <sdlgfx.h>
+#endif

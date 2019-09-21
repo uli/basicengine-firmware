@@ -6,6 +6,8 @@
 #include "h3audio.h"
 #elif defined(__DJGPP__)
 #include <dosaudio.h>
+#elif defined(SDL)
+#include <sdlaudio.h>
 #elif defined(ESP8266)
 #include "esp8266audio.h"
 #else
