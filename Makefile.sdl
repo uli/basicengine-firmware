@@ -1,0 +1,41 @@
+TARGET = basic.sdl
+
+SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
+	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
+	$(shell ls libraries/azip/*.cpp) \
+	$(shell ls sdl/*.cpp) \
+	$(shell ls arduino_compat/*.cpp)
+
+SOURCES_C = $(shell ls ttbasic/*.c)
+
+OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
+
+PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
+	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
+
+LIBS = -lstdc++ -lSDL -lSDL_gfx -lswscale
+
+CROSS_COMPILE=
+CC=$(CROSS_COMPILE)gcc
+CXX=$(CROSS_COMPILE)g++
+
+INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
+	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua
+ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -g -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
+	   -Wall -Wno-unused -D_GNU_SOURCE -DSDL
+CFLAGS += $(ARDFLAGS)
+#CFLAGS += -m32
+#CFLAGS += -fprofile-arcs -ftest-coverage
+CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+
+clean:
+	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
+
+gcov:
+	rm -f *.gcov
+	$(CROSS_COMPILE)gcov $(SOURCES) $(SOURCES_C)
+
+-include $(OBJS:%.o=%.d)
