@@ -472,13 +472,8 @@ num_t Basic::nsys() {
 #include <dpmi.h>
 #endif
 
-/***bf bas FREE
-Get free memory size.
-\usage bytes = FREE()
-\ret Number of bytes free.
-***/
-num_t BASIC_FP Basic::nfree() {
-  if (checkOpen()||checkClose()) return 0;
+long SMALL Basic::getFreeMemory()
+{
 #ifdef ESP8266
   return umm_free_heap_size();
 #elif defined(H3)
@@ -486,8 +481,18 @@ num_t BASIC_FP Basic::nfree() {
 #elif defined(__DJGPP__)
   return _go32_dpmi_remaining_physical_memory();
 #else
-  return 9999;
+  return -1;
 #endif
+}
+
+/***bf bas FREE
+Get free memory size.
+\usage bytes = FREE()
+\ret Number of bytes free.
+***/
+num_t BASIC_FP Basic::nfree() {
+  if (checkOpen()||checkClose()) return 0;
+  return getFreeMemory();
 }
 
 /***bf sys TICK

@@ -5712,19 +5712,17 @@ void SMALL Basic::basic() {
   // Free memory
   sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
-#ifdef ESP8266
-  putnum(umm_free_heap_size(), 0);
-  PRINT_P(" bytes free\n");
-#elif defined(H3)
-  putnum(sys_mem_free() / 1048576, 0);
-  PRINT_P(" MB free\n");
-#elif defined(__DJGPP__)
-  putnum(_go32_dpmi_remaining_physical_memory() / 1024, 0);
-  PRINT_P(" KB free\n");
-#else
-  putnum(9999, 0);
-  PRINT_P(" bytes free\n");
-#endif
+
+  long free_mem = getFreeMemory();
+  if (free_mem < 0)
+    PRINT_P("unknown memory size\n");
+  else if (free_mem < 1048576) {
+    putnum(free_mem, 0);
+    PRINT_P(" bytes free\n");
+  } else {
+    putnum(free_mem / 1048576, 0);
+    PRINT_P(" MB free\n");
+  }
 
   PRINT_P("Directory ");
   char cwd[16];

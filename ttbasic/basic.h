@@ -265,6 +265,8 @@ private:
     return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
   }
 
+  long getFreeMemory();
+
   unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
 
   int size_list;
