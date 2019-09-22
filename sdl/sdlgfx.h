@@ -104,10 +104,12 @@ public:
   void render();
 
   inline uint32_t frame() {
-    return SDL_GetTicks()/17;//m_frame;
+    return m_frame;
   }
 
 private:
+  static Uint32 timerCallback(Uint32 t);
+
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
   SDL_Surface *m_screen;

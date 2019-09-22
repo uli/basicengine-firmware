@@ -32,6 +32,15 @@ const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
 
 extern int sdl_w, sdl_h, sdl_flags;
 
+Uint32 SDLGFX::timerCallback(Uint32 t)
+{
+  SDL_Event ev;
+  ev.type = SDL_USEREVENT;
+  SDL_PushEvent(&ev);
+  vs23.m_frame++;
+  return t;
+}
+
 void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
 {
   m_display_enabled = false;
@@ -53,6 +62,8 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
   reset();
 
   m_display_enabled = true;
+
+  SDL_SetTimer(16, timerCallback);
 }
 
 void SDLGFX::reset()
