@@ -5,7 +5,7 @@ static void    setTime(int hr,int min,int sec,int day, int month, int yr) {
 }
 
 static time_t now() {
-  return millis() / 1000;
+  return time(NULL);
 }
 
 int     year(time_t t);    // the year for the given time
