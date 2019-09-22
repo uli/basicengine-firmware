@@ -28,6 +28,7 @@ void Basic::iwait() {
     if (process_hotkeys(c)) {
       break;
     }
+    yield();
   }
 }
 

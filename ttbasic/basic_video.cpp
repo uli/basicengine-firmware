@@ -372,6 +372,7 @@ void Basic::ivsync() {
     if (process_hotkeys(c)) {
       break;
     }
+    yield();
   }
 }
 
