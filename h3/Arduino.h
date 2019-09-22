@@ -119,7 +119,7 @@ void timer0_detachInterrupt(void);
 static inline void yield() {
 }
 
-void platform_pump_events();
+void platform_process_events();
 
 #define TRAC printf("%s:%d\n", __FUNCTION__, __LINE__);
 #endif

@@ -142,7 +142,7 @@ static inline void yield() {
 	SDL_WaitEvent(NULL);
 }
 
-void platform_pump_events();
+void platform_process_events();
 
 extern uint8_t vs23_mem[];
 

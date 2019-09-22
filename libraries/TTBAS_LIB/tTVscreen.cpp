@@ -148,12 +148,12 @@ bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 #endif
 }
 
-void pump_events(void);
+void process_events(void);
 // 文字入力
 uint16_t tTVscreen::get_ch() {
   uint16_t c;
   while(1) {
-    pump_events();
+    process_events();
 #ifdef DEBUG
     if (Serial.available()) {
       c = Serial.read();

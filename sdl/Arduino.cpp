@@ -83,7 +83,7 @@ uint64_t total_frames = 0;
 extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
-void platform_pump_events() {
+void platform_process_events() {
   SDL_Event event;
   
   audio.pumpEvents();

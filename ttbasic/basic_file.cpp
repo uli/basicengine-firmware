@@ -28,7 +28,7 @@ void SMALL basic_init_file_early() {
 #endif
 
 #ifdef H3
-  // Also done in arch_pump_events(), but that's too late for us here.
+  // Also done in arch_process_events(), but that's too late for us here.
   sd_detect();
 #endif
   

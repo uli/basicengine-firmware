@@ -116,7 +116,7 @@ static inline long _random(long v) {
 
 #include "WString.h"
 
-void platform_pump_events();
+void platform_process_events();
 
 #ifdef __cplusplus
 extern "C" {

@@ -140,7 +140,7 @@ void timer0_detachInterrupt(void);
 static inline void yield() {
 }
 
-void platform_pump_events();
+void platform_process_events();
 
 extern uint8_t vs23_mem[];
 

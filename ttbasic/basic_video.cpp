@@ -367,7 +367,7 @@ void Basic::ivsync() {
       return;
 
   while (vs23.frame() < tm) {
-    pump_events();
+    process_events();
     uint16_t c = sc0.peekKey();
     if (process_hotkeys(c)) {
       break;

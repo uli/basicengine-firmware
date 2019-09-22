@@ -23,7 +23,7 @@ void Basic::iwait() {
   if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
   uint32_t end = tm + millis();
   while (millis() < end) {
-    pump_events();
+    process_events();
     uint16_t c = sc0.peekKey();
     if (process_hotkeys(c)) {
       break;
@@ -660,7 +660,7 @@ static void lhook(lua_State *L, lua_Debug *ar)
           luaL_error(L, "interrupted!");
         }
   }
-  pump_events();
+  process_events();
 }
 
 void Basic::ilua()

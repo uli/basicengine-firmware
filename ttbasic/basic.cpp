@@ -163,7 +163,7 @@ void BASIC_INT newline(uint8_t devno) {
     }
     sc0.newLine();
 #ifdef BUFFERED_SCREEN
-    pump_events();
+    process_events();
 #endif
   } else if (devno == 1)
     Serial.println("");
@@ -2674,11 +2674,11 @@ void BASIC_INT Basic::draw_profile(void)
 }
 
 
-void BASIC_FP pump_events(void)
+void BASIC_FP process_events(void)
 {
   static uint32_t last_frame;
 #if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
-  platform_pump_events();
+  platform_process_events();
 #endif
   if (vs23.frame() == last_frame) {
 #if defined(HAVE_TSF) && !defined(HOSTED)
@@ -5479,7 +5479,7 @@ unsigned char* BASIC_FP Basic::iexe(int stk) {
     } else
       SYNTAX_T("exp command");
 
-    pump_events();
+    process_events();
 
     if (err || gstki < stk)
       return NULL;
