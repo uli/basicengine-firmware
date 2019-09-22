@@ -17,18 +17,35 @@
 #include "epigrams.h"
 
 #ifdef ESP8266
+
 #ifdef ESP8266_NOWIFI
 #define STR_EDITION "ESP8266"
 #else
 #define STR_EDITION "ESP8266 WiFi"
 #endif
+
 #elif defined(ESP32)
+
 #define STR_EDITION "ESP32"
+
 #elif defined(H3)
+
 #define STR_EDITION "H3"
+
+#elif defined(SDL)
+
+#ifdef __linux__
+#define STR_EDITION "Linux/SDL"
 #else
-#define STR_EDITION "unknown"
+#define STR_EDITION "unknown/SDL"
 #endif
+
+#else
+
+#define STR_EDITION "unknown"
+
+#endif
+
 #include "version.h"
 
 #include "basic.h"
