@@ -5,12 +5,10 @@
 #include "bgengine.h"
 #include "colorspace.h"
 
-// pc.h defines a function sound() that conflicts with our BasicSound instance.
-#define sound __pc_sound
-// This is not defined for whatever reason, leading to conflicts with stdint.h.
-#define ALLEGRO_HAVE_STDINT_H
-#include <allegro.h>
-#undef sound
+extern "C" {
+#include "vesa.h"
+}
+#include <sys/farptr.h>
 
 #define SC_DEFAULT 14
 #define SC_DEFAULT_SECONDARY 3
@@ -18,6 +16,7 @@
 #define DOS_SCREEN_MODES 15
 
 extern volatile int retrace_count;
+extern VBESURFACE *vbesurface_ptr;
 
 class DOSGFX : public BGEngine {
 public:
@@ -53,14 +52,14 @@ public:
   inline uint16_t borderWidth() { return 42; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
-    _putpixel(screen, x + m_current_mode.left, y + m_current_mode.top, c);
+    _farpokeb(vbesurface_ptr->lfb_selector, (y + m_current_mode.top) * m_current_mode.x + m_current_mode.left + x, c);
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
-    _putpixel(screen, x + m_current_mode.left, y + m_current_mode.top, c);
+    _farpokeb(vbesurface_ptr->lfb_selector, (y + m_current_mode.top) * m_current_mode.x + m_current_mode.left + x, c);
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
-    return _getpixel(screen, x + m_current_mode.left, y + m_current_mode.top);
+    return 0;//_getpixel(screen, x + m_current_mode.left, y + m_current_mode.top);
   }
 
   void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir);
@@ -85,7 +84,7 @@ public:
     uint32_t x = (address >> 16) + m_current_mode.left;
     uint32_t y = (address & 0xffff) + m_current_mode.top;
     for (uint32_t i = 0; i < len; ++i)
-    	_putpixel(screen, x+i, y, data[i]);
+    	setPixel(x + i, y, data[i]);
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
     setPixels(address, (pixel_t *)data, len);

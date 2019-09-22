@@ -1,12 +1,17 @@
 #ifdef __DJGPP__
 
 #include <Arduino.h>
-#include <allegro.h>
 #include "dosgfx.h"
 #include "colorspace.h"
 #include "Psx.h"
 
+extern "C" {
+#include "vesa.h"
+}
+
 DOSGFX vs23;
+
+VBESURFACE *vbesurface_ptr;
 
 const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
 	{460, 224, 16, 16, 1},
@@ -36,7 +41,15 @@ void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
-  setMode(SC_DEFAULT);
+  printf("set mode\n");
+  m_current_mode = modes_pal[SC_DEFAULT];
+  if (!setMode(SC_DEFAULT)) {
+    if (!setMode(SC_DEFAULT_SECONDARY)) {
+      printf("failed to enter graphics mode\n");
+      delay(500);
+      exit(1);
+    }
+  }
 
   m_bin.Init(0, 0);
 
@@ -49,15 +62,36 @@ void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
 void DOSGFX::reset()
 {
   BGEngine::reset();
-  clear_to_color(screen, 0);
+//  clear_to_color(screen, 0);
   setColorSpace(0);
 }
 
 void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
 {
-  blit(screen, screen,
-    x_src + m_current_mode.left, y_src + m_current_mode.top,
-    x_dst + m_current_mode.left, y_dst + m_current_mode.top, width, height);
+  uint8_t *m_pixels = (uint8_t*)vbesurface_ptr->offscreen_ptr;
+  int sw = m_current_mode.x;
+  int sh = m_current_mode.y;
+  if (dir) {
+    x_src -= width - 1;
+    x_dst -= width - 1;
+    while (height) {
+      _movedatal(vbesurface_ptr->lfb_selector, y_src * sw + x_src,
+                 vbesurface_ptr->lfb_selector, y_dst * sw + x_dst,
+                 width / 4);
+      y_dst--;
+      y_src--;
+      height--;
+    }
+  } else {
+    while (height) {
+      _movedatal(vbesurface_ptr->lfb_selector, y_src * sw + x_src,
+                 vbesurface_ptr->lfb_selector, y_dst * sw + x_dst,
+                 width / 4);
+      y_dst++;
+      y_src++;
+      height--;
+    }
+  }
 }
 
 bool DOSGFX::setMode(uint8_t mode)
@@ -69,11 +103,14 @@ bool DOSGFX::setMode(uint8_t mode)
   m_last_line = _max(524288 / modes_pal[mode].x,
                      modes_pal[mode].y + modes_pal[mode].y / MIN_FONT_SIZE_Y);
 
-  if (set_gfx_mode(GFX_AUTODETECT, modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2,
-    modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line) != 0) {
-    allegro_message("Error setting graphics mode\n%s\n", allegro_error);
-    set_gfx_mode(GFX_AUTODETECT, m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2,
-      m_current_mode.x + m_current_mode.left * 2, m_last_line);
+  m_last_line++;
+  printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2, modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line);
+  delay(1000);
+  vbesurface_ptr = VBEinfoInit(modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2, 8, 2000);
+  if (!vbesurface_ptr) {
+    printf("bad!!\n");
+    delay(2000);
+    vbesurface_ptr = VBEinit(m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2, 8);
     setColorSpace(0);
     return false;
   }
@@ -94,8 +131,8 @@ void DOSGFX::setColorSpace(uint8_t palette)
   Video::setColorSpace(palette);
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
-    RGB c = { pal[i*3] >> 2, pal[i*3+1] >> 2, pal[i*3+2] >> 2 };
-    set_color(i, &c);
+//    RGB c = { pal[i*3] >> 2, pal[i*3+1] >> 2, pal[i*3+2] >> 2 };
+//    set_color(i, &c);
   }
 }
 
@@ -149,12 +186,12 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          blit(screen, screen, x+owx, y+owy, t_x, t_y, tsx*4, 1);
+          //XXX blit(screen, screen, x+owx, y+owy, t_x, t_y, tsx*4, 1);
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          _putpixel(screen, x+owx, y+owy, _getpixel(screen, t_x, t_y));
+          putPixel(x+owx, y+owy, getPixel(t_x, t_y));
         }
       }
     }
@@ -202,10 +239,10 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        uint8_t p = _getpixel(screen, px+x*dx, py+y*dy);
+        uint8_t p = getPixel(px+x*dx, py+y*dy);
         // draw only non-keyed pixels
         if (p != s->p.key)
-          _putpixel(screen, xx, yy, p);
+          putPixel(xx, yy, p);
       }
     }
   }
@@ -262,8 +299,8 @@ uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider)
          x++) {
       int leftpx = leftpatx + x - left->pos_x;
       int rightpx = rightpatx + x - right->pos_x;
-      int leftpixel = _getpixel(screen, leftpx, leftpy);
-      int rightpixel = _getpixel(screen, rightpx, rightpy);
+      int leftpixel = getPixel(leftpx, leftpy);
+      int rightpixel = getPixel(rightpx, rightpy);
 
       if (leftpixel != left->p.key && rightpixel != right->p.key)
         return dir;
