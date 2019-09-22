@@ -30,6 +30,9 @@ void DOSAudio::init(int sample_rate)
     AU_setrate(&rate, &bits, &chans);
     AU_setmixer_all(100);
     AU_start();
+  }
+}
+
 void DOSAudio::doFillPciBuffer()
 {
   if (m_curr_buf_pos > 0) {
@@ -41,6 +44,7 @@ void DOSAudio::doFillPciBuffer()
       AU_writedata((char *)foo, SOUND_BUFLEN, 0);
       m_curr_buf_pos = 0;
     }
+  }
 }
 
 void DOSAudio::begin()
