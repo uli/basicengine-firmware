@@ -168,6 +168,7 @@ uint16_t tTVscreen::get_ch() {
       break;
     }
 #endif
+    yield();
   }
   return c;  
 }
