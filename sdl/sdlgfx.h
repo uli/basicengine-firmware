@@ -57,9 +57,11 @@ public:
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     PIXEL(x, y) = c;
+    m_dirty = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
     PIXEL(x, y) = m_current_palette[c];
+    m_dirty = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
@@ -87,8 +89,11 @@ public:
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
     uint32_t x = (address >> 16) + m_current_mode.left;
     uint32_t y = (address & 0xffff) + m_current_mode.top;
+
     for (uint32_t i = 0; i < len; ++i)
-    	setPixel(x + i, y, data[i]);
+      PIXEL(x+i, y) = data[i];
+
+    m_dirty = true;
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
     setPixels(address, (pixel_t *)data, len);
@@ -114,6 +119,7 @@ private:
   bool m_display_enabled;
   SDL_Surface *m_screen;
   SDL_Surface *m_surface;
+  bool m_dirty;
   
   SwsContext *m_resize;
   uint8_t *m_src_pix[1];

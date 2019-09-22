@@ -77,6 +77,7 @@ void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t 
   SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };
   SDL_Rect dst = { (Sint16)x_dst, (Sint16)y_dst, width, height };
   SDL_BlitSurface(m_surface, &src, m_surface, &dst);
+  m_dirty = true;
 }
 
 bool SDLGFX::setMode(uint8_t mode)
@@ -122,6 +123,7 @@ bool SDLGFX::setMode(uint8_t mode)
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   m_display_enabled = true;
+  m_dirty = true;
   
   return true;
 }
@@ -146,21 +148,25 @@ void SDLGFX::updateBg()
 
   last_frame = frame();
 
-  m_src_pix[0] = (uint8_t *)m_surface->pixels;
-  m_src_stride[0] = m_surface->pitch;
+  if (m_dirty) {
+    m_src_pix[0] = (uint8_t *)m_surface->pixels;
+    m_src_stride[0] = m_surface->pitch;
 
-  m_dst_pix[0] = (uint8_t *)m_screen->pixels;
-  m_dst_stride[0] = m_screen->pitch;
-  
-  sws_scale(m_resize, m_src_pix, m_src_stride, 0, m_current_mode.y + m_current_mode.top * 2,
-            m_dst_pix, m_dst_stride);
+    m_dst_pix[0] = (uint8_t *)m_screen->pixels;
+    m_dst_stride[0] = m_screen->pitch;
 
-  SDL_Flip(m_screen);
+    sws_scale(m_resize, m_src_pix, m_src_stride, 0, m_current_mode.y + m_current_mode.top * 2,
+              m_dst_pix, m_dst_stride);
+
+    SDL_Flip(m_screen);
+    m_dirty = false;
+  }
 
   if (!m_bg_modified)
     return;
 
   m_bg_modified = false;
+  m_dirty = true;
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
