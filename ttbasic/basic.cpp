@@ -2728,10 +2728,6 @@ void BASIC_FP process_events(void)
 
   if (bc && profile_enabled)
     bc->draw_profile();
-
-#ifndef ESP8266_NOWIFI
-  yield();
-#endif
 }
 
 /***bf bas RET
