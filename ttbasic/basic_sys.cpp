@@ -472,6 +472,10 @@ num_t Basic::nsys() {
 #include <dpmi.h>
 #endif
 
+#ifdef __linux__
+#include <sys/sysinfo.h>
+#endif
+
 long SMALL Basic::getFreeMemory()
 {
 #ifdef ESP8266
@@ -480,6 +484,13 @@ long SMALL Basic::getFreeMemory()
   return sys_mem_free();
 #elif defined(__DJGPP__)
   return _go32_dpmi_remaining_physical_memory();
+#elif defined(__linux__)
+  struct sysinfo si;
+  if (!sysinfo(&si)) {
+    return (si.freeram + si.bufferram) * si.mem_unit;
+  } else {
+    return -1;
+  }
 #else
   return -1;
 #endif
