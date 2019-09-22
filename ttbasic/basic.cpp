@@ -2677,7 +2677,7 @@ void BASIC_INT Basic::draw_profile(void)
 void BASIC_FP pump_events(void)
 {
   static uint32_t last_frame;
-#if defined(HOSTED) || defined(H3)
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__)
   platform_pump_events();
 #endif
   if (vs23.frame() == last_frame) {
