@@ -114,7 +114,7 @@ bool SDLGFX::setMode(uint8_t mode)
 
   m_resize = sws_getContext(m_surface->w, m_current_mode.y + m_current_mode.top * 2, AV_PIX_FMT_RGB32,
                           m_screen->w, m_screen->h, AV_PIX_FMT_RGB32,
-                          SWS_BICUBIC, NULL, NULL, NULL);
+                          SWS_FAST_BILINEAR, NULL, NULL, NULL);
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
   
