@@ -31,6 +31,12 @@ CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions -U__STRICT_ANSI_
 $(TARGET): $(OBJS)
 	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
+image: $(TARGET)
+	upx $(TARGET) || true
+	sudo mount -o loop FLOPPY.img /mnt
+	sudo cp $(TARGET) /mnt
+	sudo umount /mnt
+
 clean:
 	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
 
