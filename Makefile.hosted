@@ -11,7 +11,7 @@ SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls l
 	$(shell ls libraries/azip/*.cpp) \
 	hosted/ttbasic.cpp \
 	hosted/Arduino.cpp $(shell ls arduino_compat/*.cpp) \
-	hosted/Time.cpp hosted/hosted_spi.cpp hosted/TKeyboard.cpp \
+	hosted/hosted_spi.cpp hosted/TKeyboard.cpp \
 	hosted/files.cpp hosted/hosted_i2s.cpp
 
 SOURCES_C = $(shell ls ttbasic/*.c)
