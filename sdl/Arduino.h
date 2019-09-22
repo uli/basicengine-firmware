@@ -139,6 +139,7 @@ void timer0_detachInterrupt(void);
 #include "WString.h"
 
 static inline void yield() {
+	SDL_WaitEvent(NULL);
 }
 
 void platform_pump_events();
