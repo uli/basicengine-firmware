@@ -1,9 +1,9 @@
 #ifndef _SDLAUDIO_H
 #define _SDLAUDIO_H
 
-#define SOUND_BUFLEN 2048
+#include <SDL/SDL.h>
 
-#include <TPS2.h>
+#define SOUND_BUFLEN 512
 
 class SDLAudio
 {
@@ -21,8 +21,6 @@ public:
 
   inline void queueSample(uint8_t sample) {
     m_curr_buf[m_curr_buf_pos++] = sample;
-//    if (sample != 128)
-//    printf("q %d @ %d\n", sample, m_curr_buf_pos-1);
   }
   inline void setSampleAt(int buf, int idx, uint8_t sample) {
     m_sound_buf[buf][idx] = sample;
@@ -36,13 +34,11 @@ public:
     memset(m_sound_buf, 0, sizeof(m_sound_buf));
   }
 
-//  friend void ::hook_audio_get_sample(int16_t *l, int16_t *r);
-
   inline void pumpEvents() {
   }
 
 private:
-  static void timerInterrupt(SDLAudio *audioOutput);
+  static void fillAudioBuffer(void *userdata, Uint8 *samples, int len);
 
   static int m_curr_buf_pos;
   static uint8_t *m_curr_buf;
