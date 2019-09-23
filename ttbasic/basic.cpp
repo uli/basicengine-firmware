@@ -5646,10 +5646,6 @@ static void show_logo() {
    The BASIC entry point
  */
 void SMALL Basic::basic() {
-  unsigned char len; // Length of intermediate code
-  char* textline;    // input line
-  uint8_t rc;
-
   basic_init_file_early();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
@@ -5743,35 +5739,40 @@ void SMALL Basic::basic() {
 
   sc0.forget();
 
+  char *textline;   // input line
+  uint32_t len;     // Length of intermediate code
+  uint8_t rc;
+
+  len = vs23.digitalRead(0) && CONFIG.autostart ? UINT_MAX : 0;
+  sprintf_P(lbuf, PSTR("run \"AUTOEXEC.BAS\""));
+
   // Enter one line from the terminal and execute
   while (1) {
     redirect_input_file = -1;
     redirect_output_file = -1;
-    rc = sc0.edit();
-    if (rc) {
-      textline = (char*)sc0.getText();
-      int textlen = strlen(textline);
-      if (!textlen) {
-        free(textline);
-	newline();
-	continue;
-      }
-      if (textlen >= SIZE_LINE) {
-        free(textline);
-	err = ERR_LONG;
-	newline();
-	error();
-	continue;
-      }
 
-      strcpy(lbuf, textline);
+    if (len != UINT_MAX) {
+      if (!(rc = sc0.edit())) continue;
+
+      // we got something worth looking at
+      len = strlen(textline = (char *)sc0.getText());
+      strncpy(lbuf, textline, SIZE_LINE);
       free(textline);
-      tlimR((char*)lbuf);
-      while (--rc)
+
+      // empty and over-length
+      if ((len -1) > SIZE_LINE) {
         newline();
-    } else {
-      continue;
+        if (len) {
+          err = ERR_LONG;
+          error();
+        }
+        continue;
+      }
+      while (--rc) newline();
     }
+
+    // clean-up trailing whitespace
+    tlimR(lbuf);
 
     if (lua) {
       if (luaL_dostring(lua, lbuf)) {
@@ -5801,7 +5802,7 @@ void SMALL Basic::basic() {
       inslist();          // Insert one line of intermediate code into the list
       recalc_indent();
       if (err)
-	error();          // display program mode error message
+        error();          // display program mode error message
       continue;
     }
 
