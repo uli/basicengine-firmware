@@ -28,6 +28,11 @@ const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
 	{480, 270, 16, 16, 1},
 	// default SDL mode
 	{640, 480, 0, 0, 0},
+        {800, 600, 0, 0, 0},
+        {1024, 768, 0, 0, 0},
+        {1280, 720, 0, 0, 0},
+        {1280, 1024, 0, 0, 0},
+        {1920, 1080, 0, 0, 0},
 };
 
 extern int sdl_w, sdl_h, sdl_flags;

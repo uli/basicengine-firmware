@@ -15,7 +15,7 @@ extern "C" {
 #define SC_DEFAULT 14
 #define SC_DEFAULT_SECONDARY 3
 
-#define SDL_SCREEN_MODES 15
+#define SDL_SCREEN_MODES 20
 
 #define PIXEL(x, y) ( \
   ((pixel_t*)m_surface->pixels)[ \
