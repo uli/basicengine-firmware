@@ -427,6 +427,7 @@ typedef struct {
   uint8_t font;
   pixel_t cursor_color;
   uint8_t beep_volume;
+  bool autostart;
 } SystemConfig;
 extern SystemConfig CONFIG;
 
