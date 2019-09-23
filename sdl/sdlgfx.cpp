@@ -118,9 +118,15 @@ bool SDLGFX::setMode(uint8_t mode)
   if (m_resize)
     sws_freeContext(m_resize);
 
+  int scaler = SWS_FAST_BILINEAR;
+
+  if (m_screen->w >= m_surface->w * 3 &&
+      m_screen->h >= m_current_mode.y * 3)
+    scaler = SWS_POINT;
+
   m_resize = sws_getContext(m_surface->w, m_current_mode.y, AV_PIX_FMT_RGB32,
-                          m_screen->w, m_screen->h, AV_PIX_FMT_RGB32,
-                          SWS_FAST_BILINEAR, NULL, NULL, NULL);
+                            m_screen->w, m_screen->h, AV_PIX_FMT_RGB32,
+                            scaler, NULL, NULL, NULL);
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
   
