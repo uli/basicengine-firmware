@@ -98,7 +98,8 @@ bool SDLGFX::setMode(uint8_t mode)
     SDL_FreeSurface(m_surface);
 
   SDL_PixelFormat *fmt = m_screen->format;
-  m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE, m_current_mode.x + m_current_mode.left * 2,
+  m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+    m_current_mode.x,
     m_last_line,
     32,
     fmt->Rmask,
@@ -112,7 +113,7 @@ bool SDLGFX::setMode(uint8_t mode)
   if (m_resize)
     sws_freeContext(m_resize);
 
-  m_resize = sws_getContext(m_surface->w, m_current_mode.y + m_current_mode.top * 2, AV_PIX_FMT_RGB32,
+  m_resize = sws_getContext(m_surface->w, m_current_mode.y, AV_PIX_FMT_RGB32,
                           m_screen->w, m_screen->h, AV_PIX_FMT_RGB32,
                           SWS_FAST_BILINEAR, NULL, NULL, NULL);
 
@@ -155,7 +156,7 @@ void SDLGFX::updateBg()
     m_dst_pix[0] = (uint8_t *)m_screen->pixels;
     m_dst_stride[0] = m_screen->pitch;
 
-    sws_scale(m_resize, m_src_pix, m_src_stride, 0, m_current_mode.y + m_current_mode.top * 2,
+    sws_scale(m_resize, m_src_pix, m_src_stride, 0, m_current_mode.y,
               m_dst_pix, m_dst_stride);
 
     SDL_Flip(m_screen);

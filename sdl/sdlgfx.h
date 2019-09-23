@@ -19,7 +19,7 @@ extern "C" {
 
 #define PIXEL(x, y) ( \
   ((pixel_t*)m_surface->pixels)[ \
-    x + m_current_mode.left + (y + m_current_mode.top) * m_surface->pitch / sizeof(pixel_t) \
+    x + y * m_surface->pitch / sizeof(pixel_t) \
   ] )
 
 class SDLGFX : public BGEngine {
@@ -87,8 +87,8 @@ public:
   }
 
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
-    uint32_t x = (address >> 16) + m_current_mode.left;
-    uint32_t y = (address & 0xffff) + m_current_mode.top;
+    uint32_t x = address >> 16;
+    uint32_t y = address & 0xffff;
 
     for (uint32_t i = 0; i < len; ++i)
       PIXEL(x+i, y) = data[i];
