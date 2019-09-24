@@ -731,14 +731,6 @@ static const char FLASH_PREFIX[] = "A:";
 const char SD_PREFIX[] = "C:";
 #define SD_PREFIX_LEN 2
 
-#elif defined(SDL)
-
-// XXX: Not sure what to put here. getcwd()?
-static const char FLASH_PREFIX[] = "/live";
-#define FLASH_PREFIX_LEN 5
-const char SD_PREFIX[] = "/home";
-#define SD_PREFIX_LEN 5
-
 #endif
 
 #endif	// use Unifile
