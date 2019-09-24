@@ -218,6 +218,13 @@ tsf *BasicSound::m_tsf;
 
 void BasicSound::loadFont()
 {
+#ifdef SDL
+  char *root = getenv("ENGINEBASIC_ROOT");
+  if (root && m_font_name[0] != '/')
+    m_sf2_file = fopen((BString(root) + BString('/') + m_font_name).c_str(), "r");
+  else
+    m_sf2_file = fopen(m_font_name.c_str(), "r");
+#else
   if (m_font_name[0] == '/') {
     m_sf2_file = fopen(m_font_name.c_str(), "r");
   } else {
@@ -230,6 +237,7 @@ void BasicSound::loadFont()
         "r");
     }
   }
+#endif
   if (!m_sf2_file)
     return;
 
