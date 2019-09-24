@@ -531,7 +531,7 @@ uint8_t tscreenBase::enter_text() {
   } while (ptr_y < end_y || ptr_x < end_x);
   *t = 0;
 
-  return 1 + end_y - top_y;
+  return 1 + end_y - pos_y;
 }
 
 // 指定行の行番号の取得
