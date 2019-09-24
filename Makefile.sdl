@@ -33,9 +33,14 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
+	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
 gcov:
 	rm -f *.gcov
 	$(CROSS_COMPILE)gcov $(SOURCES) $(SOURCES_C)
+
+ttbasic/funtbl.h:
+	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
+$(OBJS): ttbasic/funtbl.h
 
 -include $(OBJS:%.o=%.d)

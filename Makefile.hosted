@@ -28,6 +28,7 @@ basic: $(OBJS) $(OBJS_C)
 
 clean:
 	rm -f $(OBJS) $(OBJS_C) $(PROF)
+	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
 gcov:
 	rm -f *.gcov
@@ -35,3 +36,6 @@ gcov:
 
 $(OBJS) $(OBJS_C): $(shell ls hosted/*.h ttbasic/*.h libraries/*/src/*.h libraries/*/*.h)
 
+ttbasic/funtbl.h:
+	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
+$(OBJS): ttbasic/funtbl.h
