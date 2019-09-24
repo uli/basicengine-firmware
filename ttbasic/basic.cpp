@@ -5738,11 +5738,12 @@ void SMALL Basic::basic() {
   }
 
   PRINT_P("Directory ");
-  char cwd[16];
-  if (_getcwd(cwd, 16) == NULL)
+  char *cwd = new char[256];
+  if (_getcwd(cwd, 256) == NULL)
     c_puts_P("none");
   else
     c_puts(cwd);
+  delete cwd;
   newline();
 
   // XXX: make sound font configurable
