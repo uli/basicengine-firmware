@@ -5,9 +5,8 @@ OSDIR = ~/devel/orangepi/allwinner-bare-metal
 SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
 	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
 	$(shell ls libraries/azip/*.cpp) \
-	h3/Arduino.cpp $(shell ls arduino_compat/*.cpp) \
-	h3/Time.cpp h3/TKeyboard.cpp \
-	h3/files.cpp
+	$(shell ls h3/*.cpp) \
+	$(shell ls arduino_compat/*.cpp)
 
 SOURCES_C = $(shell ls ttbasic/*.c)
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
