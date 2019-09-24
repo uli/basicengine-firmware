@@ -21,7 +21,7 @@ CXX=$(CROSS_COMPILE)g++
 
 INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
 	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua
-ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -g -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
+ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
 	   -Wall -Wno-unused -D_GNU_SOURCE -DSDL
 CFLAGS += $(ARDFLAGS)
 #CFLAGS += -m32
