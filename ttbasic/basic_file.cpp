@@ -32,12 +32,18 @@ void SMALL basic_init_file_early() {
   sd_detect();
 #endif
   
+#ifdef SDL
+  char *root = getenv("ENGINEBASIC_ROOT");
+  if (root)
+    _chdir(root);
+#else
   if (_chdir(SD_PREFIX)) {
     if(_chdir(FLASH_PREFIX)) {
       // Can't really do anything if this fails, nothing is initialized yet.
     }
   } else
     bfs.fakeTime();
+#endif
 }
 
 void SMALL basic_init_file_late() {
