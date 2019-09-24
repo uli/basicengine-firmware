@@ -5,7 +5,8 @@ all:
 	@echo -e '"make net"\tBASIC Engine (ESP8266) firmware with network support'
 	@echo -e '"make esp32"\tBASIC Engine Shuttle (ESP32) firmware'
 	@echo -e '"make h3"\tAllwinner H3 Engine BASIC build'
-	@echo -e '"make hosted"\tPC-hosted Engine BASIC build'
+	@echo -e '"make hosted"\tPC-hosted Engine BASIC build for debugging'
+	@echo -e '"make sdl"\tEngine BASIC build with SDL 1.2 backend'
 	@echo
 	@echo 'To upload firmware, run "make upload_native" (ESP8266) or'
 	@echo '"make upload_esp32" (ESP32).'
@@ -18,7 +19,7 @@ all:
 	@echo 'download a considerable amount of data. Be sure not to run it on a'
 	@echo 'slow or metered connection the first time.'
 
-.PHONY: native net esp32 h3 hosted downloads downloads_esp8266 downloads_esp32 downloads_hosted
+.PHONY: native net esp32 h3 hosted sdl downloads downloads_esp8266 downloads_esp32 downloads_hosted
 
 native: downloads_esp8266
 	cd ttbasic ; $(MAKE)
@@ -30,6 +31,8 @@ h3:
 	$(MAKE) -f Makefile.h3
 hosted: downloads_hosted
 	$(MAKE) -f Makefile.hosted
+sdl:
+	$(MAKE) -f Makefile.sdl
 
 downloads:
 	bash ttbasic/scripts/installpackages.sh
