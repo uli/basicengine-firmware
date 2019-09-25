@@ -55,12 +55,12 @@ void SDLAudio::init(int sample_rate)
   desired.samples = SOUND_BUFLEN * 2;
   desired.callback = fillAudioBuffer;
 
-  if (SDL_OpenAudio(&desired, NULL) < 0) {
+  if (SDL_OpenAudio(&desired, NULL) < 0)
     fprintf(stderr, "Couldn't open audio: %s", SDL_GetError());
-    exit(1);
+  else {
+    inited = true;
+    SDL_PauseAudio(0);
   }
-  inited = true;
-  SDL_PauseAudio(0);
 }
 
 void SDLAudio::begin()
