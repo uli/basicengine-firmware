@@ -589,7 +589,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   if (pPCX->mask < 0) {
                     // XXX: Needless loss of quality on platforms with 32-bit colorspace
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
-                      pRow_[x-ox] = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
+                      pRow_[x-ox] = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
                     }
                     vs23.setPixelsIndexed(vs23.pixelAddr(dx, dy+y-oy), (ipixel_t *)pRow_, x-ox);
                   } else {
