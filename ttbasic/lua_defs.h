@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2019 Ulrich Hecht
+
 #ifndef __LUA_DEFS_H
 #define __LUA_DEFS_H
 

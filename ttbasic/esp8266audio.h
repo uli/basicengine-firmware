@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018 Ulrich Hecht
+
 #ifndef _ESP8266AUDIO_H
 #define _ESP8266AUDIO_H
 

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #ifndef _NOSDK_I2S_H
 #define _NOSDK_I2S_H
 

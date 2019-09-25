@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018, 2019 Ulrich Hecht
+
 #ifdef ESP32
 
 #include <Arduino.h>

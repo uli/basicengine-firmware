@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018, 2019 Ulrich Hecht
+
 #ifndef _VIDEO_DRIVER_H
 #define _VIDEO_DRIVER_H
 

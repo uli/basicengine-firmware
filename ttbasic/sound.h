@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT
 /******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2017-2018 Ulrich Hecht.
+ * Copyright (c) 2017-2019 Ulrich Hecht.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation

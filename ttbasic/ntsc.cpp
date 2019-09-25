@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT
 /******************************************************************************
  * The MIT License
  *
- * Copyright (c) 2017-2018 Ulrich Hecht.
+ * Copyright (c) 2017-2019 Ulrich Hecht.
  * Based on example code by VLSI Solution.
  *
  * Permission is hereby granted, free of charge, to any person

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2017, 2018 Ulrich Hecht
+
 #ifndef _LOCK_H
 #define _LOCK_H
 

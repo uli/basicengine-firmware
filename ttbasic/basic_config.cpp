@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2017-2019 Ulrich Hecht
+
 #include "basic.h"
 
 SystemConfig CONFIG;

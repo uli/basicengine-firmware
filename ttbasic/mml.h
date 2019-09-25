@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 /**
  * @file mml.h
  * @author Shinichiro Nakamura

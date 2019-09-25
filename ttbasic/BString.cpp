@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /*
  BString.cpp - String library for Wiring & Arduino
  ...mostly rewritten by Paul Stoffregen...
@@ -5,6 +6,8 @@
  Copyright 2011, Paul Stoffregen, paul@pjrc.com
  Modified by Ivan Grokhotkov, 2014 - esp8266 support
  Modified by Michael C. Miller, 2015 - esp8266 progmem support
+ Modified by Ulrich Hecht - binary data support
+ Copyright (c) 2018, 2019 Ulrich Hecht
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public

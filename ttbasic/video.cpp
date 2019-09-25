@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2017, 2018 Ulrich Hecht
+
 #include "video_driver.h"
 #include "colorspace.h"
 

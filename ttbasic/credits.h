@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018 Ulrich Hecht
+
 #define GPL "\\f44(GPL)\\fff\n"
 #define MIT "\\f44(MIT)\\fff\n"
 #define PD "\\f44(PD)\\fff\n"

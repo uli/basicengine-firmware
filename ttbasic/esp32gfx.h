@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018, 2019 Ulrich Hecht
+
 #ifndef _ESP32GFX_H
 #define _ESP32GFX_H
 

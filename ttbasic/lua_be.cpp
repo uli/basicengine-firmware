@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2019 Ulrich Hecht
+
 #include "basic.h"
 #include "lua_defs.h"
 

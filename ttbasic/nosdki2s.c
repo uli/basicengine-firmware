@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #ifdef ESP8266
 
 #include "ttconfig.h"
