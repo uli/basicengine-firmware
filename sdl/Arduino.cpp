@@ -46,7 +46,7 @@ int sdl_w, sdl_h, sdl_flags;
 int main(int argc, char **argv)
 {
   int opt;
-  sdl_flags = SDL_HWSURFACE;
+  sdl_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
   sdl_w = SDL_X_SIZE;
   sdl_h = SDL_Y_SIZE;
 
