@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /*
  core_esp8266_noniso.c - nonstandard (but usefull) conversion functions
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /* 
   stdlib_noniso.h - nonstandard (but usefull) conversion functions
 

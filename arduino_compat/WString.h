@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /*
  WString.h - String library for Wiring & Arduino
  ...mostly rewritten by Paul Stoffregen...

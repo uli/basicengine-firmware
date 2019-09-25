@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018 Ulrich Hecht
+
 class TwoWire {
 public:
   static void begin(int sda, int scl) {
