@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2019 Ulrich Hecht
+
 #ifndef _DOSAUDIO_H
 #define _DOSAUDIO_H
 
