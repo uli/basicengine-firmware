@@ -327,8 +327,8 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
          x++) {
       int leftpx = leftpatx + x - left->pos_x;
       int rightpx = rightpatx + x - right->pos_x;
-      int leftpixel = 0;//XXX _getpixel(screen, leftpx, leftpy);
-      int rightpixel = 0;//XXX _getpixel(screen, rightpx, rightpy);
+      int leftpixel = getPixel(leftpx, leftpy);
+      int rightpixel = getPixel(rightpx, rightpy);
 
       if (leftpixel != left->p.key && rightpixel != right->p.key)
         return dir;
