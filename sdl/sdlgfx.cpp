@@ -260,6 +260,8 @@ void SDLGFX::updateBg()
     int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
     int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
 
+    pixel_t skey = s->p.key == -1 ? 0xffffffff : m_current_palette[s->p.key];
+
     for (int y = 0; y != s->p.h; ++y) {
       int yy = y + s->pos_y;
       if (yy < 0 || yy >= height())
@@ -270,7 +272,7 @@ void SDLGFX::updateBg()
           continue;
         pixel_t p = getPixel(px+x*dx, py+y*dy);
         // draw only non-keyed pixels
-        if (p != s->p.key)
+        if (p != skey)
           setPixel(xx, yy, p);
       }
     }
@@ -317,6 +319,9 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
   const int rightpatx = right->p.pat_x + right->p.frame_x * right->p.w;
   const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
 
+  pixel_t lkey = left->p.key == -1 ? 0xffffffff : m_current_palette[left->p.key];
+  pixel_t rkey = right->p.key == -1 ? 0xffffffff : m_current_palette[right->p.key];
+
   for (int y = lower->pos_y;
        y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);
        y++) {
@@ -328,10 +333,10 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
          x++) {
       int leftpx = leftpatx + x - left->pos_x;
       int rightpx = rightpatx + x - right->pos_x;
-      int leftpixel = getPixel(leftpx, leftpy);
-      int rightpixel = getPixel(rightpx, rightpy);
+      pixel_t leftpixel = getPixel(leftpx, leftpy);
+      pixel_t rightpixel = getPixel(rightpx, rightpy);
 
-      if (leftpixel != left->p.key && rightpixel != right->p.key)
+      if (leftpixel != lkey && rightpixel != rkey)
         return dir;
     }
   }
