@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2019 Ulrich Hecht
+
 #ifndef _H3AUDIO_H
 #define _H3AUDIO_H
 
