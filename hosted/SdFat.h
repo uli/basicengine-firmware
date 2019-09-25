@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018, 2019 Ulrich Hecht
+
 #ifndef _SDFAT_H
 #define _SDFAT_H
 

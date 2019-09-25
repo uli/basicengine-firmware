@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018 Ulrich Hecht
+
 #include "hosted_spi.h"
 #include <stdio.h>
 #include "ntsc.h"

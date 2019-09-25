@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2018 Ulrich Hecht
+
 #include <stdint.h>
 
 void MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr);
