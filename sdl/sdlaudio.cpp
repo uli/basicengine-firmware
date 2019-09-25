@@ -18,7 +18,11 @@ void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len)
   for (int i = 0; i < len; ++i) {
     stream[i] = m_curr_buf[(i + off) % m_block_size];
   }
-  off = (off + len) % m_block_size;
+  if (len == m_block_size)
+    off = 0;
+  else
+    off = (off + len) % m_block_size;
+
   m_curr_buf_pos = 0;
 }
 
