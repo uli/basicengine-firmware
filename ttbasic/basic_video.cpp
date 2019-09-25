@@ -600,7 +600,7 @@ num_t BASIC_FP Basic::nrgb() {
       getParam(b, 0, 255, I_CLOSE)) {
     return 0;
   }
-  return csp.colorFromRgb(r, g, b);
+  return csp.indexedColorFromRgb(r, g, b);
 }
 
 /***bc scr COLOR
