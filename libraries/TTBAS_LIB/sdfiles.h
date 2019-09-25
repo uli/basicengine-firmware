@@ -14,9 +14,19 @@
 
 #include <Arduino.h>
 
+#include "../../ttbasic/ttconfig.h"
+
 #include "../../ttbasic/error.h"
 #include "../../ttbasic/BString.h"
 typedef BString UnifileString;
+
+#ifdef LOWMEM
+#define SD_PATH_LEN 64      // Directory path length
+#define SD_TEXT_LEN 255     // Maximum length of one line of text
+#else
+#define SD_PATH_LEN 1024      // Directory path length
+#define SD_TEXT_LEN 4096     // Maximum length of one line of text
+#endif
 
 #if defined(UNIFILE_USE_SDFAT) || \
     defined(UNIFILE_USE_FASTROMFS) || \
@@ -57,10 +67,6 @@ typedef BString UnifileString;
 #include <ESP8266FastROMFS.h>
 extern FastROMFilesystem fs;
 #endif
-
-#define SD_PATH_LEN 64      // Directory path length
-#define SD_TEXT_LEN 255     // Maximum length of one line of text
-
 
 #ifndef FILE_OVERWRITE
 #define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
@@ -720,9 +726,6 @@ private:
 #else	// use Unifile
 #include <sys/stat.h>
 #include <dirent.h>
-
-#define SD_PATH_LEN 64      // Directory path length
-#define SD_TEXT_LEN 255     // Maximum length of one line of text
 
 #ifdef __DJGPP__
 
