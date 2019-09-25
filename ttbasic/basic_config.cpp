@@ -129,7 +129,7 @@ at the expense of sharpness.
   Sets the volume of the "beeper" sound engine, which applies, among
   other things, to the start-up jingle.
 
-* `8`: Screen line adjustment [`-128` to `128`, default: `0`]
+* `8`: Screen line adjustment [`-128` to `128`, default: `0`] +
   Adjusts the number of screen lines. A positive value adds lines, a negative
   value subtracts them. +
   This option may be useful to mitigate issues with color artifacting and
@@ -138,9 +138,14 @@ at the expense of sharpness.
 WARNING: It is not clear if this option is useful in practice, and it may be
 removed in future releases.
 
+* `9`: Enable auto start +
+  This option enables (`1`) or disables (`0`, default) program auto start. +
+  The command executed is `run "AUTOEXEC.BAS"` (using CWD$()).
+
 \note
-To restore the default configuration, run the command `REMOVE
-"/flash/.config"` and restart the system.
+* To restore the default configuration, run the command `REMOVE
+  "/flash/.config"` and restart the system.
+* Pressing any PAD(0) key during start-up will cancel auto start.
 \bugs
 * Changing the low-pass filter option (`3`) only takes effect at the time
   of the next block move, which happens for instance when scrolling the
@@ -220,8 +225,11 @@ void SMALL Basic::iconfig() {
       vs23.setLineAdjust(CONFIG.line_adjust);
     }
     break;
+  case 9:
+    CONFIG.autostart = value != 0;
+    break;
   default:
-    E_VALUE(0, 8);
+    E_VALUE(0, 9);
     break;
   }
 }
@@ -240,6 +248,7 @@ void loadConfig() {
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
+  CONFIG.autostart = false;
 
   // XXX: colorspace is not initialized yet, cannot use conversion methods
   if (sizeof(pixel_t) == 1)
