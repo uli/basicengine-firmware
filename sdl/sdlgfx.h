@@ -95,8 +95,15 @@ public:
 
     m_dirty = true;
   }
+
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
-    setPixels(address, (pixel_t *)data, len);
+    uint32_t x = address >> 16;
+    uint32_t y = address & 0xffff;
+
+    for (uint32_t i = 0; i < len; ++i)
+      PIXEL(x+i, y) = m_current_palette[data[i]];
+
+    m_dirty = true;
   }
 
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
