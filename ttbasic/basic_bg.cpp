@@ -213,9 +213,9 @@ void Basic::isavebg() {
 
   cip++;
 
-  if (!(filename = getParamFname()))
-    return;
   if (getParam(bg, 0, MAX_BG, I_TO))
+    return;
+  if (!(filename = getParamFname()))
     return;
   
   FILE *f = fopen(filename.c_str(), "w");
