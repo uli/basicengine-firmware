@@ -53,6 +53,8 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
   printf("set mode\n");
   m_current_mode = modes_pal[SC_DEFAULT];
 
+  // XXX: We always use 32 bpp because scaling is much slower if the color
+  // spaces are different.
   m_screen = SDL_SetVideoMode(sdl_w, sdl_h, 32, sdl_flags);
   if (!m_screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
@@ -145,7 +147,7 @@ void SDLGFX::setColorSpace(uint8_t palette)
   Video::setColorSpace(palette);
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
-      m_current_palette[i] = SDL_MapRGB(m_screen->format, pal[i*3], pal[i*3+1], pal[i*3+2]);
+      m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i*3], pal[i*3+1], pal[i*3+2]);
   }
 }
 
