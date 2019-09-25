@@ -209,16 +209,26 @@ void SDLGFX::updateBg()
     tile_start_x = bg->scroll_x / bg->tile_size_x;
     tile_end_x = tile_start_x + (bg->win_w + tsx-1) / tsx + 1;
 
-    SDL_Rect clip = { bg->win_x, bg->win_y, bg->win_w, bg->win_h };
+    SDL_Rect clip = { (Sint16)bg->win_x, (Sint16)bg->win_y,
+                      bg->win_w, bg->win_h };
     SDL_SetClipRect(m_surface, &clip);
 
     for (int y = tile_start_y; y < tile_end_y; ++y) {
       for (int x = tile_start_x; x < tile_end_x; ++x) {
         uint8_t tile = bg->tiles[x % bg->w + (y % bg->h) * bg->w];
+
         int t_x = bg->pat_x + (tile % bg->pat_w) * tsx;
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy;
-        SDL_Rect dst = { x * tsx + owx, y * tsy + owy, tsx, tsy };
-        SDL_Rect src = { t_x, t_y, tsx, tsy };
+
+        SDL_Rect dst;
+        dst.x = x * tsx + owx;
+        dst.y = y * tsy + owy;
+        dst.w = tsx; dst.h = tsy;
+
+        SDL_Rect src;
+        src.x = t_x; src.y = t_y;
+        src.w = tsx; src.h = tsy;
+
         SDL_BlitSurface(m_surface, &src, m_surface, &dst);
       }
     }
