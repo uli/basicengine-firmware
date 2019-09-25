@@ -5,7 +5,11 @@ static void    setTime(int hr,int min,int sec,int day, int month, int yr) {
 }
 
 static time_t now() {
+#ifdef __unix__
   return time(NULL);
+#else
+  return millis() / 1000;
+#endif
 }
 
 int     year(time_t t);    // the year for the given time
