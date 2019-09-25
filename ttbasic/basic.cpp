@@ -2698,9 +2698,10 @@ void BASIC_FP process_events(void)
   platform_process_events();
 #endif
   if (vs23.frame() == last_frame) {
-#if defined(HAVE_TSF) && !defined(HOSTED)
-    // Wasn't able to get this to work without underruns in the hosted build.
-    // Doing the rendering in the SDL callback instead.
+#if defined(HAVE_TSF) && !defined(HOSTED) && !defined(SDL)
+    // Wasn't able to get this to work without underruns in SDL-based builds.
+    // Doing the rendering in the SDL callback instead, which is probably
+    // the right thing to do in the first place.
     if (sound.needSamples())
       sound.render();
 #endif
@@ -2715,7 +2716,7 @@ void BASIC_FP process_events(void)
 #endif
 
   event_profile[1] = micros();
-#ifdef HAVE_TSF
+#if defined(HAVE_TSF) && !defined(HOSTED) && !defined(SDL)
   if (sound.needSamples())
     sound.render();
 #endif

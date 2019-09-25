@@ -1,6 +1,7 @@
 #include "sdlaudio.h"
 
 #include <SDL/SDL.h>
+#include <sound.h>
 
 SDLAudio audio;
 
@@ -15,6 +16,8 @@ int SDLAudio::m_block_size;
 void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len)
 {
   static int off = 0;
+
+  sound.render();
   for (int i = 0; i < len; ++i) {
     stream[i] = m_curr_buf[(i + off) % m_block_size];
   }
