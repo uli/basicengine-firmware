@@ -563,17 +563,17 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
 uint8_t sdfiles::mkdir(const char* fname) {
   uint8_t rc = 1;
  
-  // This is a NOP for SPIFFS.
-  if (Unifile::isSPIFFS(fname))
-    return 0;
-
   UnifileString abs_name = Unifile::path(fname);
 
-  fname = abs_name.c_str() + SD_PREFIX_LEN;
+  // This is a NOP for SPIFFS.
+  if (Unifile::isSPIFFS(abs_name))
+    return 0;
 
   if (SD_BEGIN() == false) {
     return SD_ERR_INIT;
   }
+
+  fname = abs_name.c_str() + (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
 
 #ifdef UNIFILE_USE_SDFAT
   if (sdf.exists(fname)) {
@@ -604,20 +604,19 @@ uint8_t sdfiles::mkdir(const char* fname) {
 // 	SD card use failure: SD_ERR_INIT
 // 	file open error: SD_ERR_OPEN_FILE
 //
-uint8_t sdfiles::rmdir(char* fname) {
+uint8_t sdfiles::rmdir(const char* fname) {
   uint8_t rc = 1;
  
+  UnifileString abs_name = Unifile::path(fname);
+
   // This is a NOP for SPIFFS.
-  if (Unifile::isSPIFFS(fname))
+  if (Unifile::isSPIFFS(abs_name))
     return 0;
 
   if (SD_BEGIN() == false) 
     return SD_ERR_INIT;
 
-  if (strncmp(fname, SD_PREFIX, SD_PREFIX_LEN))
-    return SD_ERR_OPEN_FILE;
-
-  fname += SD_PREFIX_LEN;
+  fname = abs_name.c_str() + (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
 
 #ifdef UNIFILE_USE_SDFAT
   if(sdf.rmdir(fname) == true) {
