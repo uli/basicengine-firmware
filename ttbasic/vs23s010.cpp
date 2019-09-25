@@ -127,6 +127,8 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   csp.setColorConversion(0, 7, 3, 6, true);
   csp.setColorSpace(0);
   m_line_adjust = 0;
+
+  setMode(SC_DEFAULT);
 }
 
 void VS23S010::end()
