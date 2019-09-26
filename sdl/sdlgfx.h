@@ -50,9 +50,12 @@ public:
 
   void reset();
 
-  void setBorder(uint8_t y, uint8_t uv) {}
-  void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {}
-  inline uint16_t borderWidth() { return 42; }
+  void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w);
+  inline void setBorder(uint8_t y, uint8_t uv) {
+    setBorder(y, uv, 0, borderWidth());
+  }
+
+  inline uint16_t borderWidth() { return m_screen->w; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     PIXEL(x, y) = c;
@@ -119,6 +122,10 @@ public:
   }
 
 private:
+  inline pixel_t *screenPixel(int x, int y) {
+    return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/4 + x];
+  }
+
   static Uint32 timerCallback(Uint32 t);
 
   static const struct video_mode_t modes_pal[];
