@@ -533,7 +533,17 @@ static void scale_integral(SDL_Surface *src, SDL_Surface *dst, int src_h)
 	uint32_t *sp = (uint32_t *)src->pixels;
 	uint32_t *dp = (uint32_t *)dst->pixels;
 
-	// XXX: center
+	int off_x, off_y;
+	if (downfactor_x > 1)
+		off_x = (dst->w - src->w / downfactor_x) / 2;
+	else
+		off_x = (dst->w - src->w * upfactor_x) / 2;
+	if (downfactor_y > 1)
+		off_y = (dst->h - src_h / downfactor_y) / 2;
+	else
+		off_y = (dst->h - src_h * upfactor_y) / 2;
+
+	dp += off_x + off_y * dst_pitch;
 
 	if (downfactor_x > 0 && downfactor_y > 0 && downscalers[downfactor_x - 1][downfactor_y - 1])
 		downscalers[downfactor_x - 1][downfactor_y - 1](sp, dp, src->w, src_h, src_pitch, dst_pitch);
@@ -541,8 +551,9 @@ static void scale_integral(SDL_Surface *src, SDL_Surface *dst, int src_h)
 		upscalers[upfactor_x - 1][upfactor_y - 1](sp, dp, src->w, src_h, src_pitch, dst_pitch);
 	else {
 		// 1x1
-		SDL_Rect r = { 0, 0, (Uint16)src->w, (Uint16)src_h };
-		SDL_BlitSurface(src, &r, dst, NULL);
+		SDL_Rect src_rect = { 0, 0, (Uint16)src->w, (Uint16)src_h };
+		SDL_Rect dst_rect = { (Sint16)off_x, (Sint16)off_y };
+		SDL_BlitSurface(src, &src_rect, dst, &dst_rect);
 	}
 }
 
