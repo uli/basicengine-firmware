@@ -374,6 +374,87 @@ static void scale_6x5(uint32_t *src, uint32_t *dst, int src_w, int src_h, int sr
 	}
 }
 
+static void scale_7x4(uint32_t *src, uint32_t *dst, int src_w, int src_h, int src_pitch, int dst_pitch)
+{
+	for (int y = 0; y < src_h; ++y) {
+		for (int x = 0; x < src_w; ++x) {
+			uint32_t p = SRCPIXEL(x, y);
+			DSTPIXEL(x*7, y*4) = p;
+			DSTPIXEL(x*7+1, y*4) = p;
+			DSTPIXEL(x*7+2, y*4) = p;
+			DSTPIXEL(x*7+3, y*4) = p;
+			DSTPIXEL(x*7+4, y*4) = p;
+			DSTPIXEL(x*7+5, y*4) = p;
+			DSTPIXEL(x*7+6, y*4) = p;
+			DSTPIXEL(x*7, y*4+1) = p;
+			DSTPIXEL(x*7+1, y*4+1) = p;
+			DSTPIXEL(x*7+2, y*4+1) = p;
+			DSTPIXEL(x*7+3, y*4+1) = p;
+			DSTPIXEL(x*7+4, y*4+1) = p;
+			DSTPIXEL(x*7+5, y*4+1) = p;
+			DSTPIXEL(x*7+6, y*4+1) = p;
+			DSTPIXEL(x*7, y*4+2) = p;
+			DSTPIXEL(x*7+1, y*4+2) = p;
+			DSTPIXEL(x*7+2, y*4+2) = p;
+			DSTPIXEL(x*7+3, y*4+2) = p;
+			DSTPIXEL(x*7+4, y*4+2) = p;
+			DSTPIXEL(x*7+5, y*4+2) = p;
+			DSTPIXEL(x*7+6, y*4+2) = p;
+			DSTPIXEL(x*7, y*4+3) = p;
+			DSTPIXEL(x*7+1, y*4+3) = p;
+			DSTPIXEL(x*7+2, y*4+3) = p;
+			DSTPIXEL(x*7+3, y*4+3) = p;
+			DSTPIXEL(x*7+4, y*4+3) = p;
+			DSTPIXEL(x*7+5, y*4+3) = p;
+			DSTPIXEL(x*7+6, y*4+3) = p;
+		}
+	}
+}
+
+static void scale_7x5(uint32_t *src, uint32_t *dst, int src_w, int src_h, int src_pitch, int dst_pitch)
+{
+	for (int y = 0; y < src_h; ++y) {
+		for (int x = 0; x < src_w; ++x) {
+			uint32_t p = SRCPIXEL(x, y);
+			DSTPIXEL(x*7, y*5) = p;
+			DSTPIXEL(x*7+1, y*5) = p;
+			DSTPIXEL(x*7+2, y*5) = p;
+			DSTPIXEL(x*7+3, y*5) = p;
+			DSTPIXEL(x*7+4, y*5) = p;
+			DSTPIXEL(x*7+5, y*5) = p;
+			DSTPIXEL(x*7+6, y*5) = p;
+			DSTPIXEL(x*7, y*5+1) = p;
+			DSTPIXEL(x*7+1, y*5+1) = p;
+			DSTPIXEL(x*7+2, y*5+1) = p;
+			DSTPIXEL(x*7+3, y*5+1) = p;
+			DSTPIXEL(x*7+4, y*5+1) = p;
+			DSTPIXEL(x*7+5, y*5+1) = p;
+			DSTPIXEL(x*7+6, y*5+1) = p;
+			DSTPIXEL(x*7, y*5+2) = p;
+			DSTPIXEL(x*7+1, y*5+2) = p;
+			DSTPIXEL(x*7+2, y*5+2) = p;
+			DSTPIXEL(x*7+3, y*5+2) = p;
+			DSTPIXEL(x*7+4, y*5+2) = p;
+			DSTPIXEL(x*7+5, y*5+2) = p;
+			DSTPIXEL(x*7+6, y*5+2) = p;
+			DSTPIXEL(x*7, y*5+3) = p;
+			DSTPIXEL(x*7+1, y*5+3) = p;
+			DSTPIXEL(x*7+2, y*5+3) = p;
+			DSTPIXEL(x*7+3, y*5+3) = p;
+			DSTPIXEL(x*7+4, y*5+3) = p;
+			DSTPIXEL(x*7+5, y*5+3) = p;
+			DSTPIXEL(x*7+6, y*5+3) = p;
+			DSTPIXEL(x*7, y*5+4) = p;
+			DSTPIXEL(x*7+1, y*5+4) = p;
+			DSTPIXEL(x*7+2, y*5+4) = p;
+			DSTPIXEL(x*7+3, y*5+4) = p;
+			DSTPIXEL(x*7+4, y*5+4) = p;
+			DSTPIXEL(x*7+5, y*5+4) = p;
+			DSTPIXEL(x*7+6, y*5+4) = p;
+		}
+	}
+}
+
 static void scale_12x5(uint32_t *src, uint32_t *dst, int src_w, int src_h, int src_pitch, int dst_pitch)
 {
 	for (int y = 0; y < src_h; ++y) {
@@ -505,12 +586,12 @@ static scaler_t upscalers[12][6] = {
 	{ scale_2x1,	scale_4x2,	scale_4x3,	scale_4x4,	scale_4x5,	scale_4x5	},	// 4x
 	{ scale_2x1,	scale_4x2,	scale_5x3,	scale_5x4,	scale_5x4,	scale_5x4	},	// 5x
 	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 6x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 7x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 8x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 9x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 10x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_6x5,	scale_6x5	},	// 11x
-	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_6x4,	scale_12x5,	scale_12x5	},	// 12x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_7x5,	scale_7x5	},	// 7x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_7x5,	scale_7x5	},	// 8x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_7x5,	scale_7x5	},	// 9x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_7x5,	scale_7x5	},	// 10x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_7x5,	scale_7x5	},	// 11x
+	{ scale_2x1,	scale_4x2,	scale_6x3,	scale_7x4,	scale_12x5,	scale_12x5	},	// 12x
 };
 
 static scaler_t downscalers[3][3] = {
