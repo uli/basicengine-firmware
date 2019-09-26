@@ -20,6 +20,8 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+#include <basic.h>
+
 static void be_lua_writestring(const char *s, int l) {
   while (l--) {
     c_putch(*s++);

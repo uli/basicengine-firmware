@@ -9,9 +9,8 @@
 
 #include "lprefix.h"
 
-#ifdef __DJGPP__
 #include <time.h>
-#endif
+#include <Arduino.h>
 
 #include <limits.h>
 #include <stddef.h>

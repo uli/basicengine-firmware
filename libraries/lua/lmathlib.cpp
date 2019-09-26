@@ -15,6 +15,7 @@
 #include <math.h>
 #include <stdlib.h>
 //#include <time.h>
+#include <Arduino.h>
 
 #include "lua.h"
 
