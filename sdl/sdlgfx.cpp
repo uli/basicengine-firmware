@@ -120,19 +120,6 @@ bool SDLGFX::setMode(uint8_t mode)
   
   // XXX: handle fail
 
-  if (m_resize)
-    sws_freeContext(m_resize);
-
-  int scaler = SWS_FAST_BILINEAR;
-
-  if (m_screen->w >= m_surface->w * 3 &&
-      m_screen->h >= m_current_mode.y * 3)
-    scaler = SWS_POINT;
-
-  m_resize = sws_getContext(m_surface->w, m_current_mode.y, AV_PIX_FMT_RGB32,
-                            m_screen->w, m_screen->h, AV_PIX_FMT_RGB32,
-                            scaler, NULL, NULL, NULL);
-
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
   
   setColorSpace(0);
@@ -156,6 +143,8 @@ void SDLGFX::setColorSpace(uint8_t palette)
 
 //#define PROFILE_BG
 
+#include "scalers.h"
+
 void SDLGFX::updateBg()
 {
   static uint32_t last_frame = 0;
@@ -166,15 +155,7 @@ void SDLGFX::updateBg()
   last_frame = frame();
 
   if (m_dirty) {
-    m_src_pix[0] = (uint8_t *)m_surface->pixels;
-    m_src_stride[0] = m_surface->pitch;
-
-    m_dst_pix[0] = (uint8_t *)m_screen->pixels;
-    m_dst_stride[0] = m_screen->pitch;
-
-    sws_scale(m_resize, m_src_pix, m_src_stride, 0, m_current_mode.y,
-              m_dst_pix, m_dst_stride);
-
+    scale_integral(m_surface, m_screen, m_current_mode.y);
     SDL_Flip(m_screen);
     m_dirty = false;
   }

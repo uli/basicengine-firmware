@@ -11,10 +11,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
-extern "C" {
-#include <libswscale/swscale.h>
-}
-
 #define SC_DEFAULT 14
 #define SC_DEFAULT_SECONDARY 3
 
@@ -130,12 +126,6 @@ private:
   SDL_Surface *m_screen;
   SDL_Surface *m_surface;
   bool m_dirty;
-  
-  SwsContext *m_resize;
-  uint8_t *m_src_pix[1];
-  int m_src_stride[1];
-  uint8_t *m_dst_pix[1];
-  int m_dst_stride[1];
   
   pixel_t m_current_palette[256];
 };
