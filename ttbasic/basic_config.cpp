@@ -140,7 +140,7 @@ removed in future releases.
 
 * `9`: Enable auto start +
   This option enables (`1`) or disables (`0`, default) program auto start. +
-  The effective command is `EXEC "AUTOEXEC.BAS"` (using CWD$()).
+  The effective command is `CHAIN "AUTOEXEC.BAS"` first from /sd then /flash.
 
 \note
 * To restore the default configuration, run the command `REMOVE
