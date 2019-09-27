@@ -44,9 +44,18 @@
 #endif
 
 #ifdef SDL
+
+#define SDL_BPP 32
+
 #define USE_SDLGFX 1
 #define USE_BG_ENGINE
+#if SDL_BPP == 8
+#define PIXEL_TYPE uint8_t
+#elif SDL_BPP == 16
+#define PIXEL_TYPE uint16_t
+#else
 #define PIXEL_TYPE uint32_t
+#endif
 #define BUFFERED_SCREEN
 #endif
 

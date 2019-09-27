@@ -56,9 +56,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
   printf("set mode\n");
   m_current_mode = modes_pal[SC_DEFAULT];
 
-  // XXX: We always use 32 bpp because scaling is much slower if the color
-  // spaces are different.
-  m_screen = SDL_SetVideoMode(sdl_w, sdl_h, 32, sdl_flags);
+  m_screen = SDL_SetVideoMode(sdl_w, sdl_h, SDL_BPP, sdl_flags);
   if (!m_screen) {
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
@@ -111,7 +109,7 @@ bool SDLGFX::setMode(uint8_t mode)
   m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
     m_current_mode.x,
     m_last_line,
-    32,
+    fmt->BitsPerPixel,
     fmt->Rmask,
     fmt->Gmask,
     fmt->Bmask,
@@ -144,7 +142,10 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w)
   int v = 15 - (uv >> 4);
   int u = 15 - (uv & 0xf);
 
-  uint32_t color = border_pal[((u&0xf) << 6) | ((v&0xf) << 10) | y];
+  pixel_t color = border_pal[((u&0xf) << 6) | ((v&0xf) << 10) | y];
+#if SDL_BPP != 32
+  color = SDL_MapRGB(m_surface->format, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+#endif
 
   for (int y = 0; y < m_screen->h; ++y) {
     for (int xx = x; xx < w + x; ++xx) {
@@ -158,7 +159,13 @@ void SDLGFX::setColorSpace(uint8_t palette)
   Video::setColorSpace(palette);
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
-      m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i*3], pal[i*3+1], pal[i*3+2]);
+#if SDL_BPP == 8
+    SDL_Color c = { pal[i*3], pal[i*3+1], pal[i*3+2] };
+    SDL_SetColors(m_screen, &c, i, 1);
+    SDL_SetColors(m_surface, &c, i, 1);
+#else
+    m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i*3], pal[i*3+1], pal[i*3+2]);
+#endif
   }
 }
 
@@ -176,7 +183,13 @@ void SDLGFX::updateBg()
   last_frame = frame();
 
   if (m_dirty) {
-    scale_integral_32(m_surface, m_screen, m_current_mode.y);
+    if (SDL_BPP == 8)
+      scale_integral_8(m_surface, m_screen, m_current_mode.y);
+    else if (SDL_BPP == 16)
+      scale_integral_16(m_surface, m_screen, m_current_mode.y);
+    else
+      scale_integral_32(m_surface, m_screen, m_current_mode.y);
+
     SDL_Flip(m_screen);
     m_dirty = false;
   }
@@ -277,7 +290,11 @@ void SDLGFX::updateBg()
     int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
     int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
 
+#if SDL_BPP == 8
+    pixel_t skey = s->p.key;
+#else
     pixel_t skey = s->p.key == -1 ? 0xffffffff : m_current_palette[s->p.key];
+#endif
 
     for (int y = 0; y != s->p.h; ++y) {
       int yy = y + s->pos_y;
@@ -336,8 +353,14 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
   const int rightpatx = right->p.pat_x + right->p.frame_x * right->p.w;
   const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
 
-  pixel_t lkey = left->p.key == -1 ? 0xffffffff : m_current_palette[left->p.key];
-  pixel_t rkey = right->p.key == -1 ? 0xffffffff : m_current_palette[right->p.key];
+  pixel_t lkey, rkey;
+#if SDL_BPP == 8
+  lkey = left->p.key;
+  rkey = right->p.key;
+#else
+  lkey = left->p.key == -1 ? 0xffffffff : m_current_palette[left->p.key];
+  rkey = right->p.key == -1 ? 0xffffffff : m_current_palette[right->p.key];
+#endif
 
   for (int y = lower->pos_y;
        y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);

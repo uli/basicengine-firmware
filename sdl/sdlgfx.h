@@ -66,7 +66,11 @@ public:
     m_dirty = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
+#if SDL_BPP == 8
+    PIXEL(x, y) = c;
+#else
     PIXEL(x, y) = m_current_palette[c];
+#endif
     m_dirty = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
@@ -107,7 +111,11 @@ public:
     uint32_t y = address & 0xffff;
 
     for (uint32_t i = 0; i < len; ++i)
+#if SDL_BPP == 8
+      PIXEL(x+i, y) = data[i];
+#else
       PIXEL(x+i, y) = m_current_palette[data[i]];
+#endif
 
     m_dirty = true;
   }
@@ -138,7 +146,9 @@ private:
   SDL_Surface *m_surface;
   bool m_dirty;
   
+#if SDL_BPP != 8
   pixel_t m_current_palette[256];
+#endif
 };
 
 #undef PIXEL
