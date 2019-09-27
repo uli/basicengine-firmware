@@ -192,7 +192,7 @@ keyEvent TKeyboard::read() {
         event.key.keysym.sym == SDLK_PAUSE) {
       exit(0);
     }
-    if (unicode)
+    if (unicode && unicode != 127)
       ki.kevt.code = unicode;
     else {
       ki.kevt.KEY = 1;
