@@ -36,6 +36,10 @@ public:
   bool setMode(uint8_t mode);
   void setColorSpace(uint8_t palette);
 
+  inline pixel_t colorFromRgb(int r, int g, int b) {
+    return SDL_MapRGB(m_surface->format, r, g, b);
+  }
+
   bool blockFinished() { return true; }
 
 #ifdef USE_BG_ENGINE
