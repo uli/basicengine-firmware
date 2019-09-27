@@ -61,6 +61,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
     fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
     exit(1);
   }
+  SDL_ShowCursor(SDL_DISABLE);
 
   setMode(SC_DEFAULT);
 
