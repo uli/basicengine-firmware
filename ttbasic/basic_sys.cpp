@@ -476,7 +476,7 @@ num_t Basic::nsys() {
 #include <sys/sysinfo.h>
 #endif
 
-long SMALL Basic::getFreeMemory()
+uint64_t SMALL Basic::getFreeMemory()
 {
 #ifdef ESP8266
   return umm_free_heap_size();

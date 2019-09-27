@@ -5727,7 +5727,7 @@ void SMALL Basic::basic() {
   sc0.setColor(COL(FG), COL(BG));
   sc0.locate(0,2);
 
-  long free_mem = getFreeMemory();
+  uint64_t free_mem = getFreeMemory();
   if (free_mem < 0)
     PRINT_P("unknown memory size\n");
   else if (free_mem < 1048576) {
