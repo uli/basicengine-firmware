@@ -103,7 +103,57 @@ bool SDLGFX::setMode(uint8_t mode)
   
   m_current_mode = modes_pal[mode];
 
-  m_screen = SDL_SetVideoMode(m_current_mode.x, m_current_mode.y, SDL_BPP, sdl_flags);
+  SDL_Rect **modes;
+  modes = SDL_ListModes(m_screen->format, sdl_flags);
+
+  int final_w = 0, final_h = 0;
+
+  if (modes != NULL && modes != (SDL_Rect **)-1) {
+    // First choice: Modes that are 1x or 2x the desired resolution.
+    for (int i = 0; modes[i]; ++i) {
+      int w = modes[i]->w, h = modes[i]->h;
+      if ((w == m_current_mode.x && h == m_current_mode.y) ||
+          (w == m_current_mode.x * 2 && h == m_current_mode.y * 2)) {
+        final_w = w;
+        final_h = h;
+        break;
+      }
+    }
+
+    // Second choice: Mode that is large enough and has the smallest
+    // difference in size to the desired resolution.
+    int min_diff = 10000;
+    int max_w = 0, max_h = 0;
+    if (final_w == 0) {
+      for (int i = 0; modes[i]; ++i) {
+        int w = modes[i]->w, h = modes[i]->h;
+        if (w < m_current_mode.x || h < m_current_mode.y)
+          continue;
+        int diff = (w - m_current_mode.x) + (h - m_current_mode.y);
+        if (diff < min_diff) {
+          final_w = w;
+          final_h = h;
+          min_diff = diff;
+        }
+        if (max_w < w) {
+          max_w = w; max_h = h;
+        }
+      }
+    }
+
+    // Still nothing -> we don't have a large enough mode. Try the widest.
+    if (final_w == 0) {
+      final_w = max_w;
+      final_h = max_h;
+    }
+  } else {
+    // No mode list -> everything goes.
+    final_w = m_current_mode.x;
+    final_h = m_current_mode.y;
+  }
+
+  m_screen = SDL_SetVideoMode(final_w, final_h, SDL_BPP, sdl_flags);
+
   if (m_surface)
     SDL_FreeSurface(m_surface);
 
