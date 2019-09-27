@@ -127,7 +127,7 @@ public:
 
 private:
   inline pixel_t *screenPixel(int x, int y) {
-    return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/4 + x];
+    return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/sizeof(pixel_t) + x];
   }
 
   static Uint32 timerCallback(Uint32 t);
