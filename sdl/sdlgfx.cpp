@@ -103,6 +103,7 @@ bool SDLGFX::setMode(uint8_t mode)
   
   m_current_mode = modes_pal[mode];
 
+  m_screen = SDL_SetVideoMode(m_current_mode.x, m_current_mode.y, SDL_BPP, sdl_flags);
   if (m_surface)
     SDL_FreeSurface(m_surface);
 
