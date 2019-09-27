@@ -176,7 +176,7 @@ void SDLGFX::updateBg()
   last_frame = frame();
 
   if (m_dirty) {
-    scale_integral(m_surface, m_screen, m_current_mode.y);
+    scale_integral_32(m_surface, m_screen, m_current_mode.y);
     SDL_Flip(m_screen);
     m_dirty = false;
   }
