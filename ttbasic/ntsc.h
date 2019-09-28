@@ -285,6 +285,7 @@ static const uint8_t vs23_ops_pal[2][5] PROGMEM = {
 /// General VS23 commands
 #define WRITE_STATUS 0x01
 #define WRITE_MULTIIC 0xb8
+#define WRITE_GPIO_CTRL 0x82
 
 /// Bit definitions
 #define VDCTRL1 0x2B
@@ -316,6 +317,8 @@ static const uint8_t vs23_ops_pal[2][5] PROGMEM = {
 #define VTABLE 0x2e
 #define UTABLE 0x2f
 #define BLOCKMVC1 0x34
+#define BLOCKMVC2 0x35
+#define BLOCKMV_S 0x36
 #define CURLINE 0x53
 
 /// Sync, blank, burst and white level definitions, here are several options
