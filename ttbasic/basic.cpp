@@ -5661,15 +5661,23 @@ extern "C" {
 };
 #endif
 
+#define AS_LINE(idx, line) static const char as_line_##idx[] PROGMEM = line
+
+AS_LINE(0, "run");
+AS_LINE(1, "1 READ m$,t$:IF PAD(0) THEN ?m$+\"cancelled\":END");
+AS_LINE(2, "2 FOR p=0 TO 1:READ p$:ON ERROR GOTO &ENOENT:CHAIN p$+t$");
+AS_LINE(3, "3   &ENOENT:IF p THEN ?m$+\"failed\":END");
+AS_LINE(4, "4 NEXT:DATA \"autostart \",\"/AUTOEXEC.BAS\",\"/sd\",\"/flash\"");
+
+// lines are injected from last to first (countdown)
+static const char *const as_prog[] PROGMEM = { as_line_0, as_line_1, as_line_2, as_line_3, as_line_4, };
+static const uint32_t as_lcnt = sizeof(as_prog)/sizeof(as_prog[0]);
+
 /*
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
  */
 void SMALL Basic::basic() {
-  unsigned char len; // Length of intermediate code
-  char* textline;    // input line
-  uint8_t rc;
-
   basic_init_file_early();
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
@@ -5765,35 +5773,40 @@ void SMALL Basic::basic() {
 
   sc0.forget();
 
+  char *textline;   // input line
+  uint32_t len;     // Length of intermediate code
+  uint8_t rc;
+
+  uint32_t inject = CONFIG.autostart ? -as_lcnt : 0;
+
   // Enter one line from the terminal and execute
   while (1) {
     redirect_input_file = -1;
     redirect_output_file = -1;
-    rc = sc0.edit();
-    if (rc) {
-      textline = (char*)sc0.getText();
-      int textlen = strlen(textline);
-      if (!textlen) {
-        free(textline);
-	newline();
-	continue;
-      }
-      if (textlen >= SIZE_LINE) {
-        free(textline);
-	err = ERR_LONG;
-	newline();
-	error();
-	continue;
-      }
 
-      strcpy(lbuf, textline);
+    if (inject < -as_lcnt) {
+      if (!(rc = sc0.edit())) continue;
+
+      // we got something worth looking at
+      len = strlen(textline = (char *)sc0.getText());
+      strncpy(lbuf, textline, SIZE_LINE);
       free(textline);
-      tlimR((char*)lbuf);
-      while (--rc)
+
+      // empty and over-length
+      if ((len -1) > SIZE_LINE) {
         newline();
-    } else {
-      continue;
+        if (len) {
+          err = ERR_LONG;
+          error();
+        }
+        continue;
+      }
+      while (--rc) newline();
     }
+    else sprintf_P(lbuf, as_prog[-(++inject)]);
+
+    // clean-up trailing whitespace
+    tlimR(lbuf);
 
     if (lua) {
       if (luaL_dostring(lua, lbuf)) {
@@ -5823,7 +5836,7 @@ void SMALL Basic::basic() {
       inslist();          // Insert one line of intermediate code into the list
       recalc_indent();
       if (err)
-	error();          // display program mode error message
+        error();          // display program mode error message
       continue;
     }
 
