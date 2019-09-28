@@ -216,12 +216,21 @@ pixel_t Colorspace::fromIndexed(ipixel_t c)
   }
 }
 
+#ifdef SDL
+#include <video.h>
+#endif
+
 pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 {
   if (sizeof(pixel_t) == sizeof(ipixel_t))
     return (pixel_t)indexedColorFromRgb(r, g, b);
   else
+    // XXX: generalize
+#ifdef SDL
+    return vs23.colorFromRgb(r, g, b);
+#else
     return (pixel_t)(r << 16 | g << 8 | b);
+#endif
 }
 
 Colorspace csp;

@@ -13,7 +13,7 @@ OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
 PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
 	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
 
-LIBS = -lstdc++ -lSDL -lSDL_gfx -lswscale
+LIBS = -lstdc++ -lSDL -lSDL_gfx
 
 CROSS_COMPILE=
 CC=$(CROSS_COMPILE)gcc

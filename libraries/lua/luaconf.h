@@ -10,7 +10,11 @@
 
 #include <limits.h>
 #include <stddef.h>
-#include "../../ttbasic/basic.h"
+#include <pgmspace.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include "../../ttbasic/ttconfig.h"
 
 #undef panic
 

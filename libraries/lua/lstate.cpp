@@ -9,6 +9,7 @@
 
 #include "lprefix.h"
 
+#include <Arduino.h>
 
 #include <stddef.h>
 #include <string.h>

@@ -11,10 +11,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
-extern "C" {
-#include <libswscale/swscale.h>
-}
-
 #define SC_DEFAULT 14
 #define SC_DEFAULT_SECONDARY 3
 
@@ -40,6 +36,10 @@ public:
   bool setMode(uint8_t mode);
   void setColorSpace(uint8_t palette);
 
+  inline pixel_t colorFromRgb(int r, int g, int b) {
+    return SDL_MapRGB(m_surface->format, r, g, b);
+  }
+
   bool blockFinished() { return true; }
 
 #ifdef USE_BG_ENGINE
@@ -54,16 +54,23 @@ public:
 
   void reset();
 
-  void setBorder(uint8_t y, uint8_t uv) {}
-  void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {}
-  inline uint16_t borderWidth() { return 42; }
+  void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w);
+  inline void setBorder(uint8_t y, uint8_t uv) {
+    setBorder(y, uv, 0, borderWidth());
+  }
+
+  inline uint16_t borderWidth() { return m_screen->w; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     PIXEL(x, y) = c;
     m_dirty = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
+#if SDL_BPP == 8
+    PIXEL(x, y) = c;
+#else
     PIXEL(x, y) = m_current_palette[c];
+#endif
     m_dirty = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
@@ -104,7 +111,11 @@ public:
     uint32_t y = address & 0xffff;
 
     for (uint32_t i = 0; i < len; ++i)
+#if SDL_BPP == 8
+      PIXEL(x+i, y) = data[i];
+#else
       PIXEL(x+i, y) = m_current_palette[data[i]];
+#endif
 
     m_dirty = true;
   }
@@ -123,6 +134,10 @@ public:
   }
 
 private:
+  inline pixel_t *screenPixel(int x, int y) {
+    return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/sizeof(pixel_t) + x];
+  }
+
   static Uint32 timerCallback(Uint32 t);
 
   static const struct video_mode_t modes_pal[];
@@ -131,13 +146,9 @@ private:
   SDL_Surface *m_surface;
   bool m_dirty;
   
-  SwsContext *m_resize;
-  uint8_t *m_src_pix[1];
-  int m_src_stride[1];
-  uint8_t *m_dst_pix[1];
-  int m_dst_stride[1];
-  
+#if SDL_BPP != 8
   pixel_t m_current_palette[256];
+#endif
 };
 
 #undef PIXEL
