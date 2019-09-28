@@ -381,7 +381,7 @@ void Basic::ivsync() {
 
 static const uint8_t vs23_write_regs[] PROGMEM = {
   0x01, 0x82, 0xb8, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,
-  0x34, 0x35
+  0x34, 0x35, 0x36, 0x00    // treated as string
 };
 
 /***bc scr VREG
@@ -389,16 +389,17 @@ Writes to a video controller register.
 
 WARNING: Incorrect use of this command can configure the video controller to
 produce invalid output, with may cause damage to older CRT displays.
-\usage VREG reg, val[, val ...]
+\usage VREG reg[, val[, val ...]]
 \args
 @reg	video controller register number
 @val	value [`0` to `65535`]
 \note
-Valid registers numbers are: `$01`, `$28` to `$30`, `$34`, `$35`, `$82` and `$b8`
+Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` and `$B8`
 
 The number of values required depends on the register accessed:
 \table
 | `$34`, `$35` | 3 values
+| `$36` | no value
 | `$30` | 2 values
 | all others | 1 value
 \endtable
@@ -406,53 +407,42 @@ The number of values required depends on the register accessed:
 ***/
 void BASIC_INT Basic::ivreg() {
 #ifdef USE_VS23
-  int32_t opcode;
+  int32_t opcode = 0;
   int vals;
 
-  if (getParam(opcode, 0, 255, I_COMMA)) return;
-
-  bool good = false;
-  for (uint32_t i = 0; i < sizeof(vs23_write_regs); ++i) {
-    if (pgm_read_byte(&vs23_write_regs[i]) == opcode) {
-      good = true;
-      break;
-    }
-  }
-  if (!good) {
+  if (getParam(opcode, 1, 255, I_NONE)) return;
+  if (!strstr_P((const char *)vs23_write_regs, (const char *)&opcode)) {
     err = ERR_VALUE;
+    return;
+  }
+  if (opcode != BLOCKMV_S && *cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
     return;
   }
 
   switch (opcode) {
-  case BLOCKMVC1:	vals = 3; break;
-  case 0x35:		vals = 3; break;
-  case PROGRAM:		vals = 2; break;
-  default:		vals = 1; break;
+  case BLOCKMVC1:
+  case BLOCKMVC2:   vals = 3; break;
+  case BLOCKMV_S:   vals = 0; break;
+  case PROGRAM:     vals = 2; break;
+  default:          vals = 1; break;
   }
 
-  int32_t values[vals];
+  int32_t values[3];    // max size
   for (int i = 0; i < vals; ++i) {
     if (getParam(values[i], 0, 65535, i == vals - 1 ? I_NONE : I_COMMA))
       return;
   }
 
   switch (opcode) {
-  case BLOCKMVC1:
-    SpiRamWriteBMCtrl(BLOCKMVC1, values[0], values[1], values[2]);
-    break;
-  case 0x35:
-    SpiRamWriteBM2Ctrl(values[0], values[1], values[2]);
-    break;
-  case PROGRAM:
-    SpiRamWriteProgram(PROGRAM, values[0], values[1]);
-    break;
+  case BLOCKMVC1:       SpiRamWriteBMCtrl(BLOCKMVC1, values[0], values[1], values[2]); break;
+  case BLOCKMVC2:       SpiRamWriteBM2Ctrl(values[0], values[1], values[2]); break;
+  case BLOCKMV_S:       vs23.startBlockMove(); break;
+  case PROGRAM:         SpiRamWriteProgram(PROGRAM, values[0], values[1]); break;
+  case WRITE_GPIO_CTRL:
   case WRITE_MULTIIC:
-  case WRITE_STATUS:
-    SpiRamWriteByteRegister(opcode, values[0]);
-    break;
-  default:
-    SpiRamWriteRegister(opcode, values[0]);
-    break;
+  case WRITE_STATUS:    SpiRamWriteByteRegister(opcode, values[0]); break;
+  default:              SpiRamWriteRegister(opcode, values[0]); break;
   }
 #else
   err = ERR_NOT_SUPPORTED;
