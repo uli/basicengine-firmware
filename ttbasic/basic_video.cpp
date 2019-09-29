@@ -381,7 +381,7 @@ void Basic::ivsync() {
 
 static const uint8_t vs23_write_regs[] PROGMEM = {
   0x01, 0x82, 0xb8, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,
-  0x34, 0x35, 0x36, 0x00    // treated as string
+  0x34, 0x35, 0x36
 };
 
 /***bc scr VREG
@@ -408,14 +408,18 @@ The number of values required depends on the register accessed:
 void BASIC_INT Basic::ivreg() {
 #ifdef USE_VS23
   int32_t opcode;
-  uint8_t vals, scan[2] = {0x00, 0x00};
+  int vals;
 
   if (getParam(opcode, 1, 255, I_NONE)) return;
-  scan[0] = opcode; // construct temporary string
-  if (!strstr_P((const char *)vs23_write_regs, (const char *)scan)) {
-    err = ERR_VALUE;
-    return;
+
+  for(uint i = 0; i <= sizeof(vs23_write_regs); i++) {
+    if (i == sizeof(vs23_write_regs)) { // out of data
+      err = ERR_VALUE;
+      return;
+    }
+    if (pgm_read_byte(&vs23_write_regs[i]) == opcode) break;
   }
+
   if (opcode != BLOCKMV_S && *cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
     return;
