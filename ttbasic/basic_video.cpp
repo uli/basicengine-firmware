@@ -407,11 +407,12 @@ The number of values required depends on the register accessed:
 ***/
 void BASIC_INT Basic::ivreg() {
 #ifdef USE_VS23
-  int32_t opcode = 0;
-  int vals;
+  int32_t opcode;
+  uint8_t vals, scan[2] = {0x00, 0x00};
 
   if (getParam(opcode, 1, 255, I_NONE)) return;
-  if (!strstr_P((const char *)vs23_write_regs, (const char *)&opcode)) {
+  scan[0] = opcode; // construct temporary string
+  if (!strstr_P((const char *)vs23_write_regs, (const char *)scan)) {
     err = ERR_VALUE;
     return;
   }
