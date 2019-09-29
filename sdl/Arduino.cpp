@@ -41,27 +41,25 @@ static void my_exit(void)
 
 extern "C" void init_idle();
 
-#define SDL_X_SIZE 800
-#define SDL_Y_SIZE 600
-
-int sdl_w, sdl_h, sdl_flags;
+const SDL_VideoInfo *sdl_info;
+int sdl_flags;
+bool sdl_keep_res = false;
 
 int main(int argc, char **argv)
 {
   int opt;
   sdl_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
-  sdl_w = SDL_X_SIZE;
-  sdl_h = SDL_Y_SIZE;
 
   SDL_Init(SDL_INIT_EVERYTHING);
-  const SDL_VideoInfo *info = SDL_GetVideoInfo();
+  sdl_info = SDL_GetVideoInfo();
 
-  while ((opt = getopt(argc, argv, "f")) != -1) {
+  while ((opt = getopt(argc, argv, "fd")) != -1) {
     switch (opt) {
     case 'f':
       sdl_flags |= SDL_FULLSCREEN;
-      sdl_w = info->current_w;
-      sdl_h = info->current_h;
+      break;
+    case 'd':
+      sdl_keep_res = true;
       break;
     default: /* '?' */
       fprintf(stderr, "Usage: %s [-f]\n",

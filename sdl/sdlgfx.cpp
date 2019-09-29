@@ -38,7 +38,9 @@ const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
         {1920, 1080, 0, 0, 0},
 };
 
-extern int sdl_w, sdl_h, sdl_flags;
+extern const SDL_VideoInfo *sdl_info;
+extern int sdl_flags;
+extern bool sdl_keep_res;
 
 Uint32 SDLGFX::timerCallback(Uint32 t)
 {
@@ -56,13 +58,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
   printf("set mode\n");
   m_current_mode = modes_pal[SC_DEFAULT];
 
-  m_screen = SDL_SetVideoMode(sdl_w, sdl_h, SDL_BPP, sdl_flags);
-  if (!m_screen) {
-    fprintf(stderr, "SDL set mode failed: %s\n", SDL_GetError());
-    exit(1);
-  }
   SDL_ShowCursor(SDL_DISABLE);
-
   setMode(SC_DEFAULT);
 
   m_bin.Init(0, 0);
@@ -104,11 +100,14 @@ bool SDLGFX::setMode(uint8_t mode)
   m_current_mode = modes_pal[mode];
 
   SDL_Rect **modes;
-  modes = SDL_ListModes(m_screen->format, sdl_flags);
+  modes = SDL_ListModes(sdl_info->vfmt, sdl_flags);
 
   int final_w = 0, final_h = 0;
 
-  if (modes != NULL && modes != (SDL_Rect **)-1) {
+  if (sdl_keep_res) {
+    final_w = sdl_info->current_w;
+    final_h = sdl_info->current_h;
+  } else if (modes != NULL && modes != (SDL_Rect **)-1) {
     // First choice: Modes that are 1x or 2x the desired resolution.
     for (int i = 0; modes[i]; ++i) {
       int w = modes[i]->w, h = modes[i]->h;
