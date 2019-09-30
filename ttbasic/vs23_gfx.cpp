@@ -31,27 +31,31 @@
 
 void GROUP(basic_video) Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
 {
-  if (fc == -1) {
-    w--;
-    h--;
-    if (w == 0 && h == 0) {
-       vs23.setPixel(x0,y0,c);
-    } else if (w == 0 || h == 0) {
-      drawLine(x0,y0,x0+w,y0+h,c);
-    } else {
-       // Horizontal line
-       drawLine(x0,y0  , x0+w, y0  , c);
-       drawLine(x0,y0+h, x0+w, y0+h, c);
-       // Vertical line
-       if (h>1) {  
-           drawLine(x0,  y0+1,x0  ,y0+h-1,c);
-           drawLine(x0+w,y0+1,x0+w,y0+h-1,c);
-       }
-    }
+  w--;
+  h--;
+  if (w == 0 && h == 0) {
+    vs23.setPixel(x0,y0,c);
+  } else if (w == 0 || h == 0) {
+    drawLine(x0,y0,x0+w,y0+h,c);
   } else {
-    for (int i = y0; i < y0+h; i++) {
-          drawLine(x0, i, x0+w, i, c);
+    // Horizontal line
+    drawLine(x0,y0  , x0+w, y0  , c);
+    drawLine(x0,y0+h, x0+w, y0+h, c);
+    // Vertical line
+    if (h > 1) {
+      drawLine(x0,  y0+1,x0  ,y0+h-1,c);
+      drawLine(x0+w,y0+1,x0+w,y0+h-1,c);
     }
+  }
+
+  if (fc != -1) {
+    y0++; h--;
+    x0++; w -= 2;
+
+    if (w >= 0)
+      for (int i = y0; i < y0+h; i++) {
+        drawLine(x0, i, x0+w, i, fc);
+      }
   }
 }
 
