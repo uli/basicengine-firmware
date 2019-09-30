@@ -851,12 +851,16 @@ Draws a pixel.
 \args
 @x_coord X coordinate of the pixel
 @y_coord Y coordinate of the pixel
+@color	 color of the pixel [`0` to `255`]
 \ref RGB()
 ***/
 void GROUP(basic_video) Basic::ipset() {
   int32_t x,y,c;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
     return;
+
+  c = csp.fromIndexed(c);
+
   if (x < 0) x = 0;
   if (y < 0) y = 0;
   if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
@@ -891,6 +895,7 @@ void GROUP(basic_video) Basic::iline() {
   if (*cip == I_COMMA) {
     ++cip;
     getParam(c, I_NONE);
+    c = csp.fromIndexed(c);
   } else
     c = fg_color;
 
@@ -929,6 +934,11 @@ void GROUP(basic_video) Basic::icircle() {
   int32_t x, y, r, c, f;
   if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
+
+  c = csp.fromIndexed(c);
+  if (f != -1)
+    f = csp.fromIndexed(f);
+
   if (x < 0) x =0;
   if (y < 0) y =0;
   if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
@@ -961,6 +971,11 @@ void GROUP(basic_video) Basic::irect() {
   int32_t x1,y1,x2,y2,c,f;
   if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
     return;
+
+  c = csp.fromIndexed(c);
+  if (f != -1)
+    f = csp.fromIndexed(f);
+
   if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= vs23.lastLine())  {
     err = ERR_VALUE;
     return;
