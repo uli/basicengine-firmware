@@ -6,7 +6,8 @@
 #ifndef __tGraphicDev_h__
 #define __tGraphicDev_h__
 
-#include "../../ttbasic/ttconfig.h"
+#include <ttconfig.h>
+#include <video_driver.h>
 
 #include <Arduino.h>
 
@@ -24,10 +25,10 @@ class tGraphicDev {
     virtual uint16_t getGHeight();      // Graphics screen vertical width acquisition
 
     // Graphic drawing
-    virtual void pset(int16_t x, int16_t y, uint8_t c);
-    virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c);
-    virtual void circle(int16_t x, int16_t y, int16_t r, uint8_t c, int f);
-    virtual void rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int f);
+    virtual void pset(int16_t x, int16_t y, pixel_t c);
+    virtual void line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c);
+    virtual void circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f);
+    virtual void rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f);
     //virtual void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
     virtual void gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode);
     virtual void set_gcursor(uint16_t, uint16_t);

@@ -25,22 +25,22 @@ uint16_t GROUP(basic_video) tGraphicDev::getGHeight() {
 } 
 
 // ドット描画
-void GROUP(basic_video) tGraphicDev::pset(int16_t x, int16_t y, uint8_t c) {
+void GROUP(basic_video) tGraphicDev::pset(int16_t x, int16_t y, pixel_t c) {
   tv_pset(x,y,c);
 }
 
 // 線の描画
-void GROUP(basic_video) tGraphicDev::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t c) {
- tv_line(x1,y1,x2,y2,c);
+void GROUP(basic_video) tGraphicDev::line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
+  tv_line(x1,y1,x2,y2,c);
 }
 
 // 円の描画
-void GROUP(basic_video) tGraphicDev::circle(int16_t x, int16_t y, int16_t r, uint8_t c, int f) {
+void GROUP(basic_video) tGraphicDev::circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
   tv_circle(x, y, r, c, f);
 }
 
 // 四角の描画
-void GROUP(basic_video) tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t c, int f) {
+void GROUP(basic_video) tGraphicDev::rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   tv_rect(x, y, w, h, c, f);
 }
 
