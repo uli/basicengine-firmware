@@ -584,6 +584,8 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
 
   while (*s) {                  //文字列1行分の終端まで繰り返す
     while (isspace(*s)) s++;  //空白を読み飛ばす
+    if (!*s)			// Abort if nothing left after skipping whitespace.
+      break;
 
     bool isext = false;
     key = lookup(s);
