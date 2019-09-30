@@ -980,7 +980,7 @@ void GROUP(basic_video) Basic::irect() {
     err = ERR_VALUE;
     return;
   }
-  sc0.rect(x1, y1, x2-x1, y2-y1, c, f);
+  sc0.rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
 }
 
 /***bc pix BLIT
