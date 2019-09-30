@@ -206,19 +206,24 @@ uint8_t *Colorspace::paletteData(uint8_t colorspace)
   return (uint8_t *)pals[colorspace];
 }
 
+#ifdef SDL
+#include <video.h>
+#endif
+
 pixel_t Colorspace::fromIndexed(ipixel_t c)
 {
   if (sizeof(pixel_t) == sizeof(ipixel_t))
     return (pixel_t)c;
   else {
     const palette *p = pals[m_colorspace];
+    // XXX: generalize
+#ifdef SDL
+    return vs23.colorFromRgb(p[c].r, p[c].g, p[c].b);
+#else
     return (pixel_t)(p[c].r << 16 | p[c].g << 8 | p[c].b);
+#endif
   }
 }
-
-#ifdef SDL
-#include <video.h>
-#endif
 
 pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
 {
