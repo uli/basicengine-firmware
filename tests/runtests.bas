@@ -1,4 +1,4 @@
-10 testdir$="/sd/tests"
+10 testdir$=cwd$()
 15 ttal=0:failed=0:passed=0
 16 IF RET$(0)<>"" THEN
 17   CALL proc_dir(RET$(0))
