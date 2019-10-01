@@ -178,6 +178,7 @@ ANA	I_ANA		nana
 SREADY	I_SREADY	nsready
 SREAD	I_SREAD		nsread
 PAD	I_PAD		npad
+KEY	I_KEY		nkey
 RGB	I_RGB		nrgb
 CSIZE	I_CSIZE		ncsize
 PSIZE	I_PSIZE		npsize
@@ -237,7 +238,6 @@ PCX	I_PCX		esyntax
 AS	I_AS		esyntax
 OFF	I_OFF		esyntax
 SIZE	I_SIZE		esyntax
-KEY	I_KEY		esyntax
 USING	I_USING		esyntax
 OUTPUT	I_OUTPUT	esyntax
 TILES	I_TILES		esyntax

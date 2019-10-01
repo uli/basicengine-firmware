@@ -110,7 +110,7 @@ If `state` is `1`, additional values are returned:
 WARNING: Using `PAD()` to retrieve button events (`state` is not `0`) interacts with
 the event handling via `ON PAD`. It is not recommended to use both at the
 same time.
-\ref ON_PAD UP DOWN LEFT RIGHT
+\ref ON_PAD KEY() UP DOWN LEFT RIGHT
 ***/
 num_t BASIC_INT Basic::npad() {
   int32_t num;
@@ -137,6 +137,155 @@ num_t BASIC_INT Basic::npad() {
     ps &= cs;
   }
   return ps;
+}
+
+/***bf io KEY
+Get the state of the specified keyboard key.
+\usage state = KEY(num)
+\args
+@num Key code [`0` to `255`]
+\ret
+`1` if the key is held, `0` if it is not.
+
+The key codes are detailed in the table below.
+Availability of each key depends on the Engine BASIC platform.
+
+\table header
+| Key			| Key code	| Notes
+| kbd:[Left Alt]	| 1		|
+| kbd:[Left Shift]	| 2		|
+| kbd:[Left Ctrl]	| 3		|
+| kbd:[Right Shift]	| 4		|
+| kbd:[Right Alt]	| 5		|
+| kbd:[Right Ctrl]	| 6		|
+| kbd:[Left GUI]	| 7		|
+| kbd:[Right GUI]	| 8		|
+| kbd:[NumLock]		| 9		|
+| kbd:[Scroll Lock]	| 10		|
+| kbd:[Caps Lock]	| 11		|
+| kbd:[Print Screen]	| 12		|
+| kbd:[`]		| 13		|
+| kbd:[Insert]		| 14		|
+| kbd:[Home]		| 15		|
+| kbd:[Pause]		| 16		|
+| kbd:[Romaji]		| 17		| Japanese keyboard, not available on SDL
+| kbd:[App]		| 18		| Japanese keyboard, not available on SDL
+| kbd:[Henkan]		| 19		| Japanese keyboard, not available on SDL
+| kbd:[Muhenkan]	| 20		| Japanese keyboard, not available on SDL
+| kbd:[Page Up]		| 21		|
+| kbd:[Page Down]	| 22		|
+| kbd:[End]		| 23		|
+| kbd:[Left Arrow]	| 24		|
+| kbd:[Up_Arrow]	| 25		|
+| kbd:[Right Arrow]	| 26		|
+| kbd:[Down Arrow]	| 27		|
+| kbd:[ESC]		| 30		|
+| kbd:[Tab]		| 31		|
+| kbd:[Enter]		| 32		|
+| kbd:[Backspace]	| 33		|
+| kbd:[Delete]		| 34		|
+| kbd:[Space]		| 35		|
+| kbd:[']		| 36		|
+| kbd:[:]		| 37		|
+| kbd:[,]		| 38		|
+| kbd:[-]		| 39		|
+| kbd:[.]		| 40		|
+| kbd:[/]		| 41		|
+| kbd:[[]		| 42		|
+| kbd:[\]]		| 43		|
+| kbd:[&#x5c;]		| 44		|
+| kbd:[\]]		| 45		| Japanese keyboard, not available on SDL
+| kbd:[=]		| 46		|
+| kbd:[Ro]		| 47		| Japanese keyboard, not available on SDL
+| kbd:[0]		| 48		|
+| kbd:[1]		| 49		|
+| kbd:[2]		| 50		|
+| kbd:[3]		| 51		|
+| kbd:[4]		| 52		|
+| kbd:[5]		| 53		|
+| kbd:[6]		| 54		|
+| kbd:[7]		| 55		|
+| kbd:[8]		| 56		|
+| kbd:[9]		| 57		|
+| kbd:[Pipe2]		| 58		| <<unclear,not well defined>>, not available on SDL
+| kbd:[A]		| 65		|
+| kbd:[B]		| 66		|
+| kbd:[C]		| 67		|
+| kbd:[D]		| 68		|
+| kbd:[E]		| 69		|
+| kbd:[F]		| 70		|
+| kbd:[G]		| 71		|
+| kbd:[H]		| 72		|
+| kbd:[I]		| 73		|
+| kbd:[J]		| 74		|
+| kbd:[K]		| 75		|
+| kbd:[L]		| 76		|
+| kbd:[M]		| 77		|
+| kbd:[N]		| 78		|
+| kbd:[O]		| 79		|
+| kbd:[P]		| 80		|
+| kbd:[Q]		| 81		|
+| kbd:[R]		| 82		|
+| kbd:[S]		| 83		|
+| kbd:[T]		| 84		|
+| kbd:[U]		| 85		|
+| kbd:[V]		| 86		|
+| kbd:[W]		| 87		|
+| kbd:[X]		| 88		|
+| kbd:[Y]		| 89		|
+| kbd:[Z]		| 90		|
+| Keypad kbd:[=]	| 94		|
+| Keypad kbd:[Enter]	| 95		|
+| Keypad kbd:[0]	| 96		|
+| Keypad kbd:[1]	| 97		|
+| Keypad kbd:[2]	| 98		|
+| Keypad kbd:[3]	| 99		|
+| Keypad kbd:[4]	| 100		|
+| Keypad kbd:[5]	| 101		|
+| Keypad kbd:[6]	| 102		|
+| Keypad kbd:[7]	| 103		|
+| Keypad kbd:[8]	| 104		|
+| Keypad kbd:[9]	| 105		|
+| Keypad kbd:[*]	| 106		|
+| Keypad kbd:[+]	| 107		|
+| Keypad kbd:[,]	| 108		| Brazilian keyboard, not available on SDL
+| Keypad kbd:[-]	| 109		|
+| Keypad kbd:[.]	| 110		|
+| Keypad kbd:[/]	| 111		|
+| kbd:[F1]		| 112		|
+| kbd:[F2]		| 113		|
+| kbd:[F3]		| 114		|
+| kbd:[F4]		| 115		|
+| kbd:[F5]		| 116		|
+| kbd:[F6]		| 117		|
+| kbd:[F7]		| 118		|
+| kbd:[F8]		| 119		|
+| kbd:[F9]		| 120		|
+| kbd:[F10]		| 121		|
+| kbd:[F11]		| 122		|
+| kbd:[F12]		| 123		|
+| kbd:[Power]		| 145		|
+\endtable
+\note
+Key codes are fixed and do not change with the configured keyboard layout.
+\bugs
+* Not all keys available on international (especially Japanese) keyboard are
+  correctly mapped on all platforms.
+* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key is documented
+  as belonging to a US layout keyboard, but US layouts do not have a separate
+  kbd:[|] key.
+* There is currently no keyboard event handling similar to <<ON PAD>> for game pad
+  input.
+\ref PAD()
+***/
+num_t BASIC_INT Basic::nkey() {
+  int32_t scancode;
+
+  if (checkOpen()) return 0;
+
+  if (getParam(scancode, 0, 255, I_CLOSE)) return 0;
+
+  return kb.state(scancode);
 }
 
 void BASIC_INT Basic::event_handle_pad()
