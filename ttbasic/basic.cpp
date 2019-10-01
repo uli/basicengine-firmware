@@ -530,15 +530,50 @@ BString getstr(uint8_t eoi) {
 //  見つかった : キーワードコード
 int lookup(char* str) {
   for (uint8_t i = 0; i < SIZE_KWTBL; ++i) {
-    if (kwtbl[i] && !strncasecmp_P(str, kwtbl[i], strlen_P(kwtbl[i])))
+    if (kwtbl[i]) {
+      int l = strlen_P(kwtbl[i]);
+
+      if (strncasecmp(str, kwtbl[i], l))
+        continue;
+
+      // Don't match if
+      // - keyword separation is not optional, and
+      // - the keyword ends in a letter, and
+      // - the keyword is not ELSE (to allow "ELSEIF"), and
+      // - the keyword is not FN, and
+      // - the character after the keyword is valid in an identifier.
+
+      // NB: There are keywords other than FN that ECMA BASIC-2 does not
+      // allow in identifiers, but they are extremely arbitrary and have
+      // therefore been omitted here.
+      // FN is here because there are tests relying on it being glued to
+      // function identifiers.
+      if (!CONFIG.keyword_sep_optional && isAlpha(str[l-1]) &&
+          i != I_ELSE && i != I_FN &&
+          (isAlphaNumeric(str[l]) || str[l] == '_'))
+        continue;
+
       return i;
+    }
   }
   return -1;
 }
 int lookup_ext(char* str) {
   for (uint8_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
-    if (kwtbl_ext[i] && !strncasecmp_P(str, kwtbl_ext[i], strlen_P(kwtbl_ext[i])))
+    if (kwtbl_ext[i]) {
+      int l = strlen_P(kwtbl_ext[i]);
+
+      if (strncasecmp(str, kwtbl_ext[i], l))
+        continue;
+
+      // See lookup().
+      if (!CONFIG.keyword_sep_optional && isAlpha(str[l-1]) &&
+          i != I_ELSE && i != I_FN &&
+          (isAlphaNumeric(str[l]) || str[l] == '_'))
+        continue;
+
       return i;
+    }
   }
   return -1;
 }
