@@ -39,7 +39,7 @@ gcov:
 	rm -f *.gcov
 	$(CROSS_COMPILE)gcov $(SOURCES) $(SOURCES_C)
 
-ttbasic/funtbl.h:
+ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
 $(OBJS): ttbasic/funtbl.h
 
