@@ -432,6 +432,7 @@ typedef struct {
   uint8_t font;
   pixel_t cursor_color;
   uint8_t beep_volume;
+  bool keyword_sep_optional;	// do not require separation of keywords
 } SystemConfig;
 extern SystemConfig CONFIG;
 

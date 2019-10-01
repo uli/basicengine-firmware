@@ -220,8 +220,11 @@ void SMALL Basic::iconfig() {
       vs23.setLineAdjust(CONFIG.line_adjust);
     }
     break;
+  case 9:
+    CONFIG.keyword_sep_optional = value != 0;
+    break;
   default:
-    E_VALUE(0, 8);
+    E_VALUE(0, 9);
     break;
   }
 }
@@ -240,6 +243,7 @@ void loadConfig() {
   memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
+  CONFIG.keyword_sep_optional = false;
 
   // XXX: colorspace is not initialized yet, cannot use conversion methods
   if (sizeof(pixel_t) == 1)
