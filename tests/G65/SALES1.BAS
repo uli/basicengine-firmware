@@ -1,5 +1,5 @@
-5 DIMP(3)
-6 DIMS(3,5)
+5 DIM P(3)
+6 DIM S(3,5)
   10 FOR I = 1 TO 3
   20   READ P(I)
   30 NEXT I

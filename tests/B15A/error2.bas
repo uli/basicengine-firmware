@@ -2,7 +2,7 @@
 105 REM NOTE: ERROR 0 should NOT cause any error whatsoever (it clears the error status)
 110 ON ERROR GOTO 200
 120 FOR i=0 TO 59
-125   REMprint "i="; i
+125   REM print "i="; i
 130   ERROR i
 134   REM print "RESUME NEXT should have cleared ERR"; ERR
 135   REM if ERR <> 0 goto 999

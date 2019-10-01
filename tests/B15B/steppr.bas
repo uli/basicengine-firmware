@@ -1,4 +1,4 @@
-1 GOTO4:PROC POKE( X, Y )
+1 GOTO 4:PROC POKE( X, Y )
 2 PRINT "Address=";@X,"Byte=";@Y
 3 RETURN
 4 ' ---------------------------

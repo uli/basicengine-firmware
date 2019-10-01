@@ -52,7 +52,7 @@
 520 FOR J=2 TO 9: READ A$: PRINT A$;" $";:INPUT"";D(J):TD=TD+D(J): NEXT J
 530 PRINT CL$;
 540 PRINT"Ok, now let's look at fixed expenses.": PRINT
-550 FOR J=10 TO 18:READ A$:PRINT A$;" $";:INPUTD(J):TF=TF+D(J): NEXT J
+550 FOR J=10 TO 18:READ A$:PRINT A$;" $";:INPUT D(J):TF=TF+D(J): NEXT J
 560 DF=TD+TF: SI=TI-DF: S=64
 570 PRINT CL$;
 580 PRINT"Ok, at this point our table looks like this: ": PRINT
@@ -78,7 +78,7 @@
 780 PRINT:PRINT"Ok, now for the first round of variable expense.  Don't"
 790 PRINT"pinch yourself in your estimates (within reason).  Let the"
 800 PRINT"computer help you to refine your budget later on.": PRINT
-810 FOR J=0 TO Q:READ E$(J):PRINT E$(J);" $";: INPUTV(J):VT=VT+V(J):NEXT J
+810 FOR J=0 TO Q:READ E$(J):PRINT E$(J);" $";: INPUT V(J):VT=VT+V(J):NEXT J
 820 RESTORE
 830 PRINT:PRINT
 840 PRINT"Your budget for the first round totalled $";VT;".  This"
@@ -210,7 +210,7 @@
 2090 GOSUB 2110: PRINT: GOTO 2200
 2100 FOR L=1 TO S:PRINT"-";:NEXT L: PRINT: RETURN
 2110 FOR L=1 TO S:PRINT"=";:NEXT L: PRINT: RETURN
-2120 PRINT"PRESS 'RETURN' TO CONTINUE":INPUTA$
+2120 PRINT"PRESS 'RETURN' TO CONTINUE":INPUT A$
 2130 PRINT CL$;
 2140 RETURN
 2150 IF A<=V(J) THEN 2190
