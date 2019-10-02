@@ -1373,7 +1373,15 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
       ip++; //ポインタを値へ進める
       sc0.setColor(COL(NUM), COL(BG));
       c_putch('$',devno); //空白を表示
-      putHexnum(ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24), 8,devno); //値を取得して表示
+      uint32_t num = ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24);
+      int digits;
+      if (num < 256)
+        digits = 2;
+      else if (num < 65536)
+        digits = 4;
+      else
+        digits = 8;
+      putHexnum(num, digits, devno); //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
       ip += 4; //ポインタを次の中間コードへ進める
       if (!nospaceb(*ip)) //もし例外にあたらなければ
