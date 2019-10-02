@@ -705,7 +705,9 @@ int8_t sdfiles::compare(const char *one, const char *two)
       ret = -1;
   }
 out:
-  fclose(fone);
-  fclose(ftwo);
+  if (fone)
+    fclose(fone);
+  if (ftwo)
+    fclose(ftwo);
   return ret;
 }
