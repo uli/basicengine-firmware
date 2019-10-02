@@ -48,12 +48,19 @@ bool sdl_keep_res = false;
 int main(int argc, char **argv)
 {
   int opt;
+
+  char *path = getcwd(NULL, 0);
+  if (path) {
+    setenv("ENGINEBASIC_ROOT", path, 0);
+    free(path);
+  }
+
   sdl_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
 
   SDL_Init(SDL_INIT_EVERYTHING);
   sdl_info = SDL_GetVideoInfo();
 
-  while ((opt = getopt(argc, argv, "fd")) != -1) {
+  while ((opt = getopt(argc, argv, "fdr:")) != -1) {
     switch (opt) {
     case 'f':
       sdl_flags |= SDL_FULLSCREEN;
@@ -61,8 +68,15 @@ int main(int argc, char **argv)
     case 'd':
       sdl_keep_res = true;
       break;
+    case 'r':
+      path = realpath(optarg, NULL);
+      if (path) {
+        setenv("ENGINEBASIC_ROOT", path, 1);
+        free(path);
+      }
+      break;
     default: /* '?' */
-      fprintf(stderr, "Usage: %s [-f]\n",
+      fprintf(stderr, "Usage: %s [-f] [-d] [-r <BASIC root path>]\n",
               argv[0]);
       exit(1);
     }
