@@ -1,0 +1,114 @@
+10 GOTO 40:GOSUB 200:RETURN 
+20 FOR i=1 TO 20 STEP 3:NEXT i:step3=2
+30 IF a=DOWN THEN DO:LOOP 
+40 IF a=UP THEN 
+45   IF a=upthen THEN PRINT printbesser 
+50 ELSE:ENDIF:END   'foo
+60 &bla:DATA "hans"
+70 READ a$:RESTORE &bla
+80 CLT:WAIT 20:POKEW 10,20:POKED 50,60:POKE 70,80:PRINT "fertig"
+90 ?"echt?"
+100 bla$=INPUT$(1,2):INPUT a:CLS:COLOR 10
+110 LOCATE a,b:REDRAW:CSCROLL 5,5,6,6,1:PSET 42,23,12:LINE 20,20,30,30
+120 RECT c,d,e,f,0,-1:CIRCLE 20,f,pi,33,4,-1:
+130 BLIT hier,thereto TO tosomewhere,somethere SIZE sizex,sizeyup UP
+140 GPRINT 1,towo,gprintstring$:GSCROLL vier,5,6,sieben_,2
+150 GPOUT blow,upp
+160 MKDIR "mkdir":d$="mkdir":RMDIR d$
+170 RENAME d$ TO "nothing":COPY "nofile" TO nothere$
+180 TYPE typ$+".txt"
+190 DIM viel(40)
+200 dimmehr=23
+210 PALETTE 0
+220 palette0=42
+230 viel=FN viel(23)
+240 ON ERROR GOTO home
+250 onerror=40
+260 ?a$
+270 STOP:stopp$="collaborate"
+280 TRON:tronn=40:TROFF 
+290 APPEND ~top$,"ende"
+300 PREPEND ~list$,"anfang"
+310 SEARCH "text"
+320 @b=CHAR(@c,4)
+330 VPOKE 20,30
+340 SYS tem
+350 system=1
+360 WHILE whiler=4:?ERROR$(42):WEND 
+370 SAY something$+CHR$(ASC("!"))
+380 x=SIN(pi)+sins(666)
+390 x=ARGC(argctype)*ARG(0)+ABS(1)-SIN(2)/COS(coss)^EXP(42)+ATN2(2,3)+ATN(1):y=SQR(4)
+400 zztop=TAN(tannen) MOD modulo<<SGN(sign)>>MAP(3,3,5,x,8)/FREE()
+410 leta=letter:LET a=RND(2)+INKEY()*LEN(CWD$())+TICK()+PEEKW(23)
+420 CALL procedure(PEEKD(200),PEEKW(300),PEEKD(400))
+430 pointer=POINT(pointerx,pointery)+PAD(0)+PAD(padd)+KEY(keyup+UP)
+440 ptr=RGB(red,green,1)+CSIZE(0)+PSIZE(1)+FRAME()
+450 bg0=0
+460 BG bg0 TILES tilesw,tilesh PATTERN patternx,patterny,patternw SIZE sizex,sizey WINDOW windowx,windowy,windoww,windowh PRIO priority ON 
+470 BEEP beep30:BEEP 30:PLAY music$+"ccc":PLAY playchan,"cdefg"
+480 SOUND 0,10,20,30:DATE 
+490 SAVE pcxprogram$:SAVE PCX "picture.pcx":SAVE PCX pcxfile$
+500 MERGE "program.bas":MERGE merger$
+510 BSAVE bloadfile$,addr:BSAVE "bload.bin",addr,length:BSAVE "bload.bin",0
+520 CLEAR:NEW:PROC procedure(eins,zwei,torei):RETURN @eins+@zwei+@torei
+530 CHAIN chainloader$:CHAIN "program.bas"
+540 FILES:FILES filesss$:FILES "*.bas"
+550 CONFIG config1,value1:CONFIG 0,0
+560 SYSINFO:SCREEN 1:SCREEN 2^2:SCREEN mode
+570 WINDOW window1,window2,window3,window4
+580 FONT font1:FONT 1
+590 SPRITE sprite0 PATTERN patternx,patterny,SIN(42) SIZE sizex,sizey FRAME 4,framey FLAGS flags1 KEY key1 PRIO priority_s OFF 
+600 MOVE SPRITE 0 TO tox,toy
+610 PLOT bg0,tix,tiy,0:PLOT 0,2,2,tile$
+620 PLOT 0 MAP fromtile TO totile
+630 EDIT "file.txt":EDIT file$
+640 BORDER wall,berlin
+650 ON PAD pad0 CALL procedure:STOP 
+660 CHDIR "/":CHDIR CWD$()+"/subdir"
+670 OPEN openfile$ FOR INPUT AS openfileno
+672 OPEN "file" FOR OUTPUT AS #3
+674 OPEN "file" FOR OUTPUT AS 3
+676 OPEN CWD$() FOR DIRECTORY AS 12
+680 CLOSE openfileno
+690 RENUM 0,renumberstep+42
+700 RUN runline:CONT 
+710 DELETE 100-zweihundert
+720 FLASH "bang.bin"
+730 PROFILE ON:PROFILE OFF 
+740 VSYNC FRAME()+10
+750 BOOT bootpage
+760 FRAMESKIP ATN2(3,4):FRAMESKIP 4
+770 RESUME:VREG $33,10
+780 network=NET CONNECT()
+790 EXEC executable$:EXEC "program.bas":EXEC "program.bas"
+800 CMD 4:cmd4=0
+810 setdate=5:SET DATE y2k+19,10,setdate,0,0,0
+820 SEEK openfileno,position
+830 ~liste=[1,2,3,4]:PRINT ~liste(0)
+840 @locstring$="foo":PRINT @locstring$
+850 DIM a$(30):a$(20)="zwanzig"
+860 ~stringlst$=["eins","zwei"]:PRINT ~stringlst$(0)
+870 APPEND ~liste,42
+880 CREDITS:XYZZY "zork.z3":LUA 
+890 ?ARG$(0)+BIN$($67)+HEX$(23)+STR$(69)+LEFT$("links",3)+RIGHT$("rechts",4)
+900 ?MID$("mittwoch",3,4)+CWD$()+DIR$(dirhandle)+INKEY$+inkeydinky$
+910 PRINT POPF$(~stringlst$);POPB$(~stringlst$)
+915 PRINT POPF(~liste);POPB$(~liste)
+920 PRINT INST$(10)+RET$(1);STRING$(strings,stringstring$);RET(rett)+ARGC(0)
+930 PRINT ARG(argnum)+ARG(1);ABS(absolute);LEN(length$(10))+INT(-42.3)
+940 ?GPIN(inpin)+GPIN(32)+ANA()
+950 ?TILECOLL(spritenum,bgnum,tilenum);SPRCOLL(sprite1,sprite2)
+960 ?SPRX(sprite1);SPRX(2);SPRY(sprite2);SPRY(4)
+970 ?BSCRX(bg0);BSCRY(bg1);BSCRX(2);BSCRY(4)
+980 ?VAL(STR$(1)),POS(posaxis),POS(0)
+990 ?VPEEK(567),VPEEK(vpeekaddr)
+1000 ?EOF(eofno),EOF(0),LOF(openfileno),LOF(LEFT),LOC(locno),LOC(RIGHT)
+1010 PRINT INSTR(CWD$(),"/")
+1020 PRINT COMPARE("eins",zwei$),COMPARE(compare1$,compare2$);
+1030 DO:LOOP UNTIL FN dead(meat)
+1040 IF a>=1 OR b<=a OR c<>d OR d><c OR 0 NOT 1 OR not1<>not0 EOR 42 THEN PRINT "w0t?";USING "###";-7 
+1050 GET TIME h,min,sec_:?TAB(10);h
+1060 IF a=1 THEN 
+1070 ELSE IF a=3 THEN 
+1080 ELSE IF a=4 THEN 
+1090 ENDIF 
