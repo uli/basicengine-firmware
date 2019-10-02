@@ -233,7 +233,11 @@ void iloadconfig() {
   loadConfig();
 }
 
-#define CONFIG_FILE "/flash/.config"
+#ifdef SDL
+#define CONFIG_FILE (BString(getenv("ENGINEBASIC_ROOT")) + BString("/.config"))
+#else
+#define CONFIG_FILE BString(F("/flash/.config"))
+#endif
 
 // システム環境設定のロード
 void loadConfig() {
@@ -253,7 +257,7 @@ void loadConfig() {
 
   CONFIG.beep_volume = 15;
   
-  FILE *f = fopen(BString(F(CONFIG_FILE)).c_str(), "r");
+  FILE *f = fopen(CONFIG_FILE.c_str(), "r");
   if (!f)
     return;
   fread((char *)&CONFIG, 1, sizeof(CONFIG), f);
@@ -268,7 +272,7 @@ The configuration will be saved as a file under the name `/flash/.config`.
 \ref CONFIG
 ***/
 void isaveconfig() {
-  FILE *f = fopen(BString(F(CONFIG_FILE)).c_str(), "w");
+  FILE *f = fopen(CONFIG_FILE.c_str(), "w");
   if (!f) {
     err = ERR_FILE_OPEN;
   }
