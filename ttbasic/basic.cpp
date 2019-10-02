@@ -4,7 +4,7 @@
    GNU General Public License
    2017/03/22, Modified by Tamakichi、for Arduino STM32
    Modified for BASIC Engine by Ulrich Hecht
-   (C) 2017 Ulrich Hecht
+   (C) 2017-2019 Ulrich Hecht
  */
 
 #include <Arduino.h>
@@ -230,26 +230,29 @@ num_t BASIC_FP getrnd(int value) {
 // List formatting condition
 // Intermediate code without trailing blank
 const uint8_t i_nsa[] BASIC_DAT = {
-  I_END,
-  I_CLS,I_CLT,
   I_CSIZE, I_PSIZE,
-  I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR,
+  I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_POW,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT,
-  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_I2CW, I_I2CR,
-  I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT,
+  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_VPEEK, I_I2CW, I_I2CR,
+  I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT, I_SGN,
   I_DIN, I_ANA,
   I_SREAD, I_SREADY, I_POINT,
   I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
-  I_PAD, I_SPRCOLL, I_SPRX, I_SPRY, I_TILECOLL,
+  I_SPRCOLL, I_SPRX, I_SPRY, I_TILECOLL, I_BSCRX, I_BSCRY,
   I_DIRSTR, I_INSTR, I_ERRORSTR, I_COMPARE,
   I_SQOPEN, I_SQCLOSE,
+  I_INPUTSTR, I_RGB, I_CWD, I_INKEYSTR,
+  I_UP, I_DOWN, I_LEFT, I_RIGHT, I_TAB,
+  I_EOF, I_LOF, I_LOC,
+  I_INSTSTR, I_STRINGSTR, I_LEFTSTR, I_RIGHTSTR, I_MIDSTR,
+  I_POPF, I_POPFSTR, I_POPB, I_POPBSTR,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
 const uint8_t i_nsb[] BASIC_DAT = {
-  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT,
+  I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_POW,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL, I_SQOPEN, I_SQCLOSE,
 };
@@ -257,16 +260,16 @@ const uint8_t i_nsb[] BASIC_DAT = {
 // insert a blank before intermediate code
 const uint8_t i_sf[] BASIC_DAT  = {
   I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
-  I_GET,I_TIME,I_GOSUB,I_GOTO,I_INKEY,I_INPUT,I_LET,I_LIST,I_ELSE,I_THEN,
+  I_GET,I_TIME,I_GOSUB,I_GOTO,I_INPUT,I_LET,I_LIST,I_ELSE,I_THEN,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SET,I_WAIT,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
-  I_BEEP, I_CSCROLL, I_GSCROLL, I_MOD,
+  I_BEEP, I_CSCROLL, I_GSCROLL, I_MOD, I_SIZE, I_FOR,
 };
 
 // tokens that can be functions (no space before paren) or something else
 const uint8_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP,
+  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD,
 };
 
 // exception search function
