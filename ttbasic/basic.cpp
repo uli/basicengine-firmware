@@ -536,7 +536,7 @@ int lookup(char* str) {
     if (kwtbl[i]) {
       int l = strlen_P(kwtbl[i]);
 
-      if (strncasecmp(str, kwtbl[i], l))
+      if (strncasecmp_P(str, kwtbl[i], l))
         continue;
 
       // Don't match if
@@ -566,7 +566,7 @@ int lookup_ext(char* str) {
     if (kwtbl_ext[i]) {
       int l = strlen_P(kwtbl_ext[i]);
 
-      if (strncasecmp(str, kwtbl_ext[i], l))
+      if (strncasecmp_P(str, kwtbl_ext[i], l))
         continue;
 
       // See lookup().
