@@ -34,7 +34,7 @@ struct palette {
 
 static void my_exit(void)
 {
-  fprintf(stderr, "my_exit\n");
+  SDL_Quit();
 }
 
 #include <SDL/SDL.h>
