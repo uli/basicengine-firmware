@@ -27,42 +27,12 @@
 #ifndef Psx_h
 #define Psx_h
 
-#include "Arduino.h"
+#include <joystick.h>
 
-// Button Hex Representations:
-#define psxLeftShift	0
-#define psxDownShift	1
-#define psxRightShift	2
-#define psxUpShift	3
-#define psxStrtShift	4
-#define psxSlctShift	5
 #define psxErrorShift	16
-
-#define psxLeft		(1 << psxLeftShift)
-#define psxDown		(1 << psxDownShift)
-#define psxRight	(1 << psxRightShift)
-#define psxUp		(1 << psxUpShift)
-#define psxStrt		(1 << psxStrtShift)
-#define psxSlct		(1 << psxSlctShift)
 #define psxError	(1 << psxErrorShift)
 
-#define psxSquShift	8
-#define psxXShift	9
-#define psxOShift	10
-#define psxTriShift	11
-#define psxR1Shift	12
-#define psxL1Shift	13
-#define psxR2Shift	14
-#define psxL2Shift	15
-
-#define psxSqu		(1 << psxSquShift)
-#define psxX		(1 << psxXShift)
-#define psxO		(1 << psxOShift)
-#define psxTri		(1 << psxTriShift)
-#define psxR1		(1 << psxR1Shift)
-#define psxL1		(1 << psxL1Shift)
-#define psxR2		(1 << psxR2Shift)
-#define psxL2		(1 << psxL2Shift)
+#include "Arduino.h"
 
 class Psx
 {

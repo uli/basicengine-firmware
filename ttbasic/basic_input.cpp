@@ -7,11 +7,11 @@ bool event_pad_enabled;
 uint8_t event_pad_proc_idx[MAX_PADS];
 int event_pad_last[MAX_PADS];
 
-#include "Psx.h"
-Psx psx;
+#include <Psx.h>
+Psx joy;
 
 void SMALL basic_init_input() {
-  psx.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
+  joy.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
 }
 
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump) {
@@ -41,22 +41,22 @@ int32_t BASIC_FP iinkey() {
 static int BASIC_INT cursor_pad_state()
 {
   // The state is kept up-to-date by the interpreter polling for Ctrl-C.
-  return kb.state(PS2KEY_L_Arrow) << psxLeftShift |
-         kb.state(PS2KEY_R_Arrow) << psxRightShift |
-         kb.state(PS2KEY_Down_Arrow) << psxDownShift |
-         kb.state(PS2KEY_Up_Arrow) << psxUpShift |
-         kb.state(PS2KEY_X) << psxXShift |
-         kb.state(PS2KEY_A) << psxTriShift |
-         kb.state(PS2KEY_S) << psxOShift |
-         kb.state(PS2KEY_Z) << psxSquShift;
+  return kb.state(PS2KEY_L_Arrow) << joyLeftShift |
+         kb.state(PS2KEY_R_Arrow) << joyRightShift |
+         kb.state(PS2KEY_Down_Arrow) << joyDownShift |
+         kb.state(PS2KEY_Up_Arrow) << joyUpShift |
+         kb.state(PS2KEY_X) << joyXShift |
+         kb.state(PS2KEY_A) << joyTriShift |
+         kb.state(PS2KEY_S) << joyOShift |
+         kb.state(PS2KEY_Z) << joySquShift;
 }
 
 int BASIC_INT pad_state(int num)
 {
   switch (num) {
-  case 0:	return (psx.read() & 0xffff) | cursor_pad_state();
+  case 0:	return (joy.read() & 0xffff) | cursor_pad_state();
   case 1:	return cursor_pad_state();
-  case 2:	return psx.read() & 0xffff;
+  case 2:	return joy.read() & 0xffff;
   }
   return 0;
 }
@@ -75,14 +75,14 @@ without a game controller.
 @num Number of the game controller: +
      `0`: all controllers combined +
      `1`: cursor pad +
-     `2`: PSX controller
+     `2`: Joystick/joypad controller
 @state	`0`: current button state (default) +
         `1`: button-change events
 \ret
 Bit field representing the button states of the requested controller(s). The
 value is the sum of any of the following bit values:
 \table header
-| Bit value | PSX Controller | Keyboard
+| Bit value | Joystick/joypad Controller | Keyboard
 | `1` (aka `<<LEFT>>`) | kbd:[&#x25c4;] button | kbd:[Left] key
 | `2` (aka `<<DOWN>>`) | kbd:[&#x25bc;] button | kbd:[Down] key
 | `4` (aka `<<RIGHT>>`) | kbd:[&#x25ba;] button | kbd:[Right] key
@@ -342,7 +342,7 @@ Value of the "up" direction for input devices.
 ***/
 num_t BASIC_FP Basic::nup() {
   // カーソル・スクロール等の方向
-  return psxUp;
+  return joyUp;
 }
 
 /***bn io RIGHT
@@ -350,14 +350,14 @@ Value of the "right" direction for input devices.
 \ref PAD() UP DOWN LEFT
 ***/
 num_t BASIC_FP Basic::nright() {
-  return psxRight;
+  return joyRight;
 }
 /***bn io LEFT
 Value of the "left" direction for input devices.
 \ref PAD() UP DOWN RIGHT
 ***/
 num_t BASIC_FP Basic::nleft() {
-  return psxLeft;
+  return joyLeft;
 }
 
 /***bf io INKEY

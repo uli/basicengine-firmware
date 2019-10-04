@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include "sdlgfx.h"
 #include "colorspace.h"
-#include "Psx.h"
+#include <joystick.h>
 
 #include <SDL/SDL_gfxPrimitives.h>
 
@@ -388,19 +388,19 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
   if (them->pos_x < us->pos_x) {
-    dir |= psxLeft;
+    dir |= joyLeft;
     left = them;
     right = us;
   } else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
-    dir |= psxRight;
+    dir |= joyRight;
 
   const sprite_t *upper = us, *lower = them;
   if (them->pos_y < us->pos_y) {
-    dir |= psxUp;
+    dir |= joyUp;
     upper = them;
     lower = us;
   } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
-    dir |= psxDown;
+    dir |= joyDown;
 
   // Check for pixels in overlapping area.
   const int leftpatx = left->p.pat_x + left->p.frame_x * left->p.w;

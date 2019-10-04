@@ -5,7 +5,7 @@
 #define _BGENGINE_H
 
 #include "ttconfig.h"
-#include "Psx.h"
+#include <joystick.h>
 #include "video_driver.h"
 #include <stdint.h>
 

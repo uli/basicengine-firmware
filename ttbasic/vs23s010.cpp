@@ -28,7 +28,7 @@
 #include "ttconfig.h"
 #ifdef USE_VS23
 
-#include "Psx.h"
+#include <joystick.h>
 
 #include "vs23s010.h"
 #include "ntsc.h"
@@ -1106,17 +1106,17 @@ uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t c
   
   // sprite frame as bounding box; we may want something more flexible...
   if (them->pos_x < us->pos_x)
-    dir |= psxLeft;
+    dir |= joyLeft;
   else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
-    dir |= psxRight;
+    dir |= joyRight;
 
   sprite_t *upper = us, *lower = them;
   if (them->pos_y < us->pos_y) {
-    dir |= psxUp;
+    dir |= joyUp;
     upper = them;
     lower = us;
   } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
-    dir |= psxDown;
+    dir |= joyDown;
 
   // Check for pixels in overlapping area.
   bool really = false;
