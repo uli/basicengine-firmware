@@ -20,6 +20,7 @@
 #endif
 #define PIXEL_TYPE uint8_t
 #define LOWMEM
+#define USE_PSX_GPIO
 #endif
 
 #ifdef ESP32
@@ -27,6 +28,7 @@
 #define USE_BG_ENGINE
 #define PIXEL_TYPE uint8_t
 #define LOWMEM
+#define USE_PSX_GPIO
 #endif
 
 #ifdef H3

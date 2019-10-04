@@ -184,3 +184,5 @@ int SMALL Psx::read()
     dbg_psx("psxr %d\r\n", micros() - now);
     return data_out;
 }
+
+Psx joy;

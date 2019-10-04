@@ -7,11 +7,12 @@ bool event_pad_enabled;
 uint8_t event_pad_proc_idx[MAX_PADS];
 int event_pad_last[MAX_PADS];
 
-#include <Psx.h>
-Psx joy;
+#include <joystick.h>
 
 void SMALL basic_init_input() {
+#ifdef USE_PSX_GPIO
   joy.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
+#endif
 }
 
 uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump) {

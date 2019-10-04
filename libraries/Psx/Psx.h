@@ -27,8 +27,6 @@
 #ifndef Psx_h
 #define Psx_h
 
-#include <joystick.h>
-
 #define psxErrorShift	16
 #define psxError	(1 << psxErrorShift)
 

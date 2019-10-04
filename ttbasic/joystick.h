@@ -1,3 +1,6 @@
+#ifndef _JOYSTICK_H
+#define _JOYSTICK_H
+
 #include <ttconfig.h>
 
 // Button Hex Representations:
@@ -33,3 +36,7 @@
 #define joyR2		(1 << joyR2Shift)
 #define joyL2		(1 << joyL2Shift)
 
+#include <platform_joystick.h>
+extern Joystick joy;
+
+#endif	// _JOYSTICK_H
