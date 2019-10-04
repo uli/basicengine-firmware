@@ -664,6 +664,14 @@ void syspanic(const char *txt) {
   for (;;);
 }
 
+void Basic::isystem() {
+#ifdef __unix__
+  exit(0);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
+}
+
 #include "lua_defs.h"
 
 lua_State *lua = NULL;

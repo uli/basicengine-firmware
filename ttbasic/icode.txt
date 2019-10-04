@@ -70,6 +70,7 @@ CHAIN	I_CHAIN		imerge
 FILES	I_FILES		ifiles
 CONFIG	I_CONFIG	iconfig
 SYSINFO	I_SYSINFO	isysinfo
+SYSTEM	I_SYSTEM	isystem
 SCREEN	I_SCREEN	iscreen
 WINDOW	I_WINDOW	iwindow
 FONT	I_FONT		ifont
