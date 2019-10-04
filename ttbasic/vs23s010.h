@@ -245,34 +245,7 @@ private:
     uint16_t m_sync_line;
 
 #ifdef USE_BG_ENGINE
-    void drawBg(struct bg_t *bg,
-                            int dest_addr_start,
-                            uint32_t pat_start_addr,
-                            uint32_t win_start_addr,
-                            int tile_start_x,
-                            int tile_start_y,
-                            int tile_end_x,
-                            int tile_end_y,
-                            uint32_t xpoff,
-                            uint32_t ypoff,
-                            int skip_x,
-                            int skip_y);
-    void drawBgTop(struct bg_t *bg,
-                            int dest_addr_start,
-                            uint32_t pat_start_addr,
-                            int tile_start_x,
-                            int tile_start_y,
-                            int tile_end_x,
-                            uint32_t xpoff,
-                            uint32_t ypoff);
-
-    void drawBgBottom(struct bg_t *bg,
-                                      int tile_start_x,
-                                      int tile_end_x,
-                                      int tile_end_y,
-                                      uint32_t xpoff,
-                                      uint32_t ypoff,
-                                      int skip_x);
+    void drawBg(struct bg_t *bg, int y1, int y2);
 
     struct sprite_pattern *m_patterns[MAX_SPRITES];
     
