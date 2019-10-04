@@ -12,6 +12,8 @@ int event_pad_last[MAX_PADS];
 void SMALL basic_init_input() {
 #ifdef USE_PSX_GPIO
   joy.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
+#else
+  joy.begin();
 #endif
 }
 
