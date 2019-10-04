@@ -17,7 +17,8 @@ LIBS =	../libraries/TTVoutfonts \
 	../libraries/lua \
 	../libraries/Time \
 	../libraries/azip \
-	../libraries/ESP8266SAM/src
+	../libraries/ESP8266SAM/src \
+	../libraries/Psx \
 
 # No changes required below this point.
 
