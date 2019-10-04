@@ -29,12 +29,19 @@
 #include "colorspace.h"
 #include "graphics.h"
 
+// XXX: This should be provided by the graphics drivers.
+static inline void setPixelSafe(uint16_t x, uint16_t y, pixel_t c)
+{
+  if (x < vs23.width() && y < vs23.lastLine())
+    vs23.setPixel(x, y, c);
+}
+
 void GROUP(basic_video) Graphics::drawRect(int x0, int y0, int w, int h, pixel_t c, int fc)
 {
   w--;
   h--;
   if (w == 0 && h == 0) {
-    vs23.setPixel(x0,y0,c);
+    setPixelSafe(x0,y0,c);
   } else if (w == 0 || h == 0) {
     drawLine(x0,y0,x0+w,y0+h,c);
   } else {
@@ -72,11 +79,11 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius, pixel_t
   if (fc != -1)
     drawLine(x0-radius, y0, x0+radius, y0, fc);
   
-  vs23.setPixel(x0, y0 + radius,c);
-  vs23.setPixel(x0, y0 - radius,c);
-  vs23.setPixel(x0 + radius, y0,c);
-  vs23.setPixel(x0 - radius, y0,c);
-  
+  setPixelSafe(x0, y0 + radius,c);
+  setPixelSafe(x0, y0 - radius,c);
+  setPixelSafe(x0 + radius, y0,c);
+  setPixelSafe(x0 - radius, y0,c);
+
   while(x+1 < y) {
     if(f >= 0) {
       y--;
@@ -103,19 +110,19 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius, pixel_t
       pyy = y;
       pyx = x;
     }
-    vs23.setPixel(x0 + x, y0 + y,c);
-    vs23.setPixel(x0 - x, y0 + y,c);
-    vs23.setPixel(x0 + x, y0 - y,c);
-    vs23.setPixel(x0 - x, y0 - y,c);
-    vs23.setPixel(x0 + y, y0 + x,c);
-    vs23.setPixel(x0 - y, y0 + x,c);
-    vs23.setPixel(x0 + y, y0 - x,c);
-    vs23.setPixel(x0 - y, y0 - x,c);
+    setPixelSafe(x0 + x, y0 + y,c);
+    setPixelSafe(x0 - x, y0 + y,c);
+    setPixelSafe(x0 + x, y0 - y,c);
+    setPixelSafe(x0 - x, y0 - y,c);
+    setPixelSafe(x0 + y, y0 + x,c);
+    setPixelSafe(x0 - y, y0 + x,c);
+    setPixelSafe(x0 + y, y0 - x,c);
+    setPixelSafe(x0 - y, y0 - x,c);
   }
 }
 
 // Draws a line between two points (x1,y1) and (x2,y2).
-void GROUP(basic_video) Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+void GROUP(basic_video) Graphics::drawLine(int x1, int y1, int x2, int y2,
 			pixel_t c)
 {
   int deltax = abs(x2 - x1);
@@ -127,7 +134,7 @@ void GROUP(basic_video) Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2
   int err = (deltax > deltay ? deltax : -deltay) / 2, e2;
 
   for (;;) {
-    vs23.setPixel(x1, y1, c);
+    setPixelSafe(x1, y1, c);
 
     if (x1 == x2 && y1 == y2)
       break;
@@ -144,7 +151,7 @@ void GROUP(basic_video) Graphics::drawLine(uint16_t x1, uint16_t y1, uint16_t x2
   }
 }
 
-void GROUP(basic_video) Graphics::drawLineRgb(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+void GROUP(basic_video) Graphics::drawLineRgb(int x1, int y1, int x2, int y2,
 			   uint8_t r, uint8_t g, uint8_t b)
 {
 	pixel_t c = csp.colorFromRgb(r, g, b);
