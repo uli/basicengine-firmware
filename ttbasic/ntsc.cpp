@@ -256,13 +256,16 @@ uint8_t SpiRamReadRegister8(uint16_t opcode)
 void ICACHE_RAM_ATTR SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1,
 				       uint16_t data2, uint16_t data3)
 {
-	uint8_t req[6] = { (uint8_t)opcode, (uint8_t)(data1 >> 8),
-	                   (uint8_t)data1, (uint8_t)(data2 >> 8),
-	                   (uint8_t)data2, (uint8_t)data3 };
-	// Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
-	vs23Select();
-	SPI.writeBytes(req, 6);
-	vs23Deselect();
+    static uint8_t LSB = 0xE0;
+    uint8_t req[6] = { (uint8_t)opcode, (uint8_t)(data1 >> 8),
+                       (uint8_t)data1, (uint8_t)(data2 >> 8),
+                       (uint8_t)data2, (uint8_t)data3 };
+    // Serial.printf("%02x <= %04x%04x%02xh\n",opcode,data1,data2,data3);
+    vs23Select();
+    SPI.writeBytes(req, LSB == data3 ? 5 : 6);
+    vs23Deselect();
+
+    LSB = data3;
 }
 
 void SpiRamWriteBMCtrlFast(uint16_t opcode, uint16_t data1, uint16_t data2)

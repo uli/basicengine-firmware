@@ -3,6 +3,7 @@
  * The MIT License
  *
  * Copyright (c) 2017-2019 Ulrich Hecht.
+ * Copyright (c) 2019 Marko Lukat.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -35,15 +36,7 @@
 #include "lock.h"
 #include "colorspace.h"
 
-//#define DISABLE_BG_LEFT_COL
-//#define DISABLE_BG_MIDDLE
-//#define DISABLE_BG_RIGHT_COL
-
 //#define DISABLE_SPRITE_DRAW
-
-//#define DISABLE_BG_TOP
-//#define DISABLE_BG_CENTER
-//#define DISABLE_BG_BOTTOM
 
 //#define PROFILE_BG
 //#define DEBUG_SYNC
@@ -282,23 +275,6 @@ void VS23S010::setSyncLine(uint16_t line)
 #ifdef HOSTED
 #include <hosted_spi.h>
 #else
-static inline void GROUP(basic_video) MoveBlockAddr(uint32_t byteaddress2, uint32_t dest_addr)
-{
-  uint8_t req[5] = {
-    BLOCKMVC1,
-    (uint8_t)(byteaddress2 >> 9),
-    (uint8_t)(byteaddress2 >> 1),
-    (uint8_t)(dest_addr >> 9),
-    (uint8_t)(dest_addr >> 1)
-  };
-
-  VS23_SELECT;
-  SPI.writeBytes(req, 5);
-  VS23_DESELECT;
-  while (!blockFinished()) {}
-  VS23S010::startBlockMove();
-}
-
 static inline void GROUP(basic_video) SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
 {
   uint8_t cmd[count+4];
@@ -326,263 +302,173 @@ static inline void GROUP(basic_video) SpiRamWriteBytesFast(uint32_t address, uin
 }
 #endif
 
-void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg,
-                                      int dest_addr_start,
-                                      uint32_t pat_start_addr,
-                                      uint32_t win_start_addr,
-                                      int tile_start_x,
-                                      int tile_start_y,
-                                      int tile_end_x,
-                                      int tile_end_y,
-                                      uint32_t xpoff,
-                                      uint32_t ypoff,
-                                      int skip_x,
-                                      int skip_y)
+#define SpiRamWriteBM1Ctrl(a, b, c) SpiRamWriteBMCtrl(BLOCKMVC1, (a), (b), (c))
+void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2)
 {
-#ifndef DISABLE_BG_CENTER
-  // This code draws into the "extra" bytes following each picture line.
-  // Doing so keeps us from having to give border tiles special treatment:
-  // their invisible parts are simply drawn where they cannot be seen.
-  // It also helps to avoid narrow block moves (less than 4 bytes wide),
-  // which often don't work as expected.
+//  re/draw tiled background within window limitations
+//
+//  Vertical blitting is limited to 256 lines, with a tile limit of 32 lines there
+//  is no conflict here. Each background section [y1, y2[ is simply drawn line by
+//  line with the top and/or bottom line having potentially less than full height.
+//
+//  Horizontally we have a width limit of 5 pixels which can be reliably transferred.
+//  Below that it primarily depends on the destination alignment how much is in fact
+//  transferred. Which means that tile widths below 5 are upgraded to 5 pixels and
+//  - in the case of the RHS tile - have their start offset adjusted (-ve).
+//
+//  In both cases we end up with unwanted pixel data which is simply overwritten by
+//  the middle tiles or for sufficiently small windows LHS and RHS have to sort this
+//  out among themselves.
+//
+//  = determine LHS, MID and RHS offset/length pairs, there is always a LHS tile
+//    even if it's full width
+//  = draw LHS/RHS first, draw the shorter one first, this leaves us with
+//    - LHS only    ops: 4/%100
+//    - LHS+RHS     ops: 3/%011
+//    - RHS+LHS     ops: 6/%110
+//  = if there're any MIDdle tiles to be drawn, do so
+//
+//  The latter have all the same w/h setup so that's only done once (BMC2). The start
+//  address setup benefits when the bit pattern for bits 0 doesn't change (BMC1 is a
+//  1+5 byte sequence which - when shortened - will reuse the previously latched 6th
+//  byte). Whether 5 or 6 bytes are sent is determined within the BMC1 call (LSB cache).
 
-  // XXX: This means that window width must be a multiple of tile width.
+    int32_t LHS_offset, LHS_length;
+    int32_t MID_offset, MID_length;
+    int32_t RHS_offset, RHS_length;
 
-  uint32_t tile;
-  uint32_t tx, ty;
-  uint32_t byteaddress2, dest_addr;
-  uint32_t tsx = bg->tile_size_x;
-  uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;
-  uint8_t bg_h = bg->h;
-  uint32_t pw = bg->pat_w;
-  int draw_w;
+    uint8_t LSB, ops = 2;
 
-  // Set up the LSB of the start/dest addresses; they don't change for
-  // middle tiles, so we can omit the last byte of the request.
-  while (!blockFinished()) {}
-  SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2) | lowpass());
+    int32_t tx, tsx = bg->tile_size_x;
+    int32_t ty, tsy = bg->tile_size_y;
 
-  for (int yy = tile_start_y+skip_y; yy < tile_end_y-1; ++yy) {
-    dest_addr_start = win_start_addr + ((yy - tile_start_y) * tsy - ypoff) * m_pitch - tile_start_x * tsx - xpoff;
+    // split hline
+    MID_length  = bg->win_w;
 
-#ifndef DISABLE_BG_LEFT_COL
-    // Left tile
-    tile = bg->tiles[(yy % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
-    tx = (tile % pw) * tsx;
-    ty = (tile / pw) * tsy;
+    LHS_offset  = bg->scroll_x % tsx;
+    LHS_length  = min(tsx - LHS_offset, MID_length);
 
-    dest_addr = dest_addr_start + (tile_start_x+skip_x) * tsx;
-    byteaddress2 = pat_start_addr + ty*m_pitch + tx;
+    MID_length -= LHS_length;
 
-    draw_w = tsx;
-    if (xpoff >= 8) {
-      draw_w -=8;
-      dest_addr += 8;
-      byteaddress2 += 8;
+    RHS_offset  = 0;
+    RHS_length  = MID_length % tsx;
+
+    MID_offset  = LHS_length;
+    MID_length -= RHS_length;
+
+    // determine draw order
+    if (RHS_length) ops |= 1;
+    if (LHS_length > RHS_length) ops <<= 1;
+
+    // handle h/w bug, block widths < 5 don't work
+    // 4: 6/16, 3: 3/16, 2: 1/16, 1: 0/16
+    // ... but they look interesting ...
+    if (LHS_length) {
+        LHS_length  = max(5, LHS_length);
     }
-    while (!blockFinished()) {}
-    SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-1);
-    MoveBlockAddr(byteaddress2, dest_addr);
-#endif
 
-#ifndef DISABLE_BG_MIDDLE
-    // Middle tiles
-    while (!blockFinished()) {}
-    SpiRamWriteBM2Ctrl(m_pitch-tsx, tsx, tsy-1);
-    for (int xx = tile_start_x+skip_x+1; xx < tile_end_x-1; ++xx) {
-      tile = bg->tiles[(yy % bg_h) * bg_w + xx % bg_w];
-      tx = (tile % pw) * tsx;
-      ty = (tile / pw) * tsy;
-
-      dest_addr = dest_addr_start + xx * tsx;
-      byteaddress2 = pat_start_addr + ty*m_pitch + tx;
-
-      MoveBlockAddr(byteaddress2, dest_addr);
+    if (RHS_length) {
+        RHS_offset  = RHS_length - max(5, RHS_length);
+        RHS_length -= RHS_offset;
     }
+#if 0
+    printf("%3d %3d | %3d %3d | %3d %3d: %02X\n",
+        LHS_offset, LHS_length,
+        MID_offset, MID_length,
+        RHS_offset, RHS_length,
+        ops);
 #endif
+    int32_t offset_y = bg->scroll_y + (y1 - bg->win_y);
+    int32_t tile, ROW_height, ROW_offset = offset_y % tsy;
 
-#ifndef DISABLE_BG_RIGHT_COL
-    // Right tile
-    tile = bg->tiles[(yy % bg_h) * bg_w + (tile_end_x-1) % bg_w];
-    tx = (tile % pw) * tsx;
-    ty = (tile / pw) * tsy;
+    while (y1 < y2) {
+        // destination address for this row
+        uint32_t tmp_addr, src_addr, dst_addr = pixelAddr(bg->win_x, y1);
 
-    dest_addr = dest_addr_start + (tile_end_x-1) * tsx;
-    byteaddress2 = pat_start_addr + ty*m_pitch + tx;
+        ROW_height = min(tsy - ROW_offset, y2 - y1);
 
-    draw_w = tsx;
-    if (xpoff < tsx - 8)
-      draw_w -=8;
+        // top left map tile indices
+        int32_t xs = (bg->scroll_x / tsx) % bg->w;
+        int32_t ys = (offset_y     / tsy) % bg->h;
 
-    while (!blockFinished()) {}
-    SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-1);
-    MoveBlockAddr(byteaddress2, dest_addr);
-#endif
-  }
-  while (!blockFinished()) {}
-#endif
-}
+        // plot border tiles, left[/right]
+        switch (ops) {
+        case 3:
+            // plot LHS
+            // relative x: 0
+            tile = bg->tiles[ys * bg->w + xs];
+            tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+            src_addr = pixelAddr(tx, ty);
 
-void GROUP(basic_video) VS23S010::drawBgTop(struct bg_t *bg,
-                                         int dest_addr_start,
-                                         uint32_t pat_start_addr,
-                                         int tile_start_x,
-                                         int tile_start_y,
-                                         int tile_end_x,
-                                         uint32_t xpoff,
-                                         uint32_t ypoff)
-{
-#ifndef DISABLE_BG_TOP
-  uint32_t tile;
-  uint32_t tx, ty;
-  uint32_t byteaddress2, dest_addr;
-  uint32_t tsx = bg->tile_size_x;
-  uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;
-  uint8_t bg_h = bg->h;
-  uint32_t pw = bg->pat_w;
-  int draw_w;
+            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-  // Set up the LSB of the start/dest addresses; they don't change for
-  // middle tiles, so we can omit the last byte of the request.
-  while (!blockFinished()) {}
-  SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((dest_addr_start & 1) << 1) | ((pat_start_addr & 1) << 2) | lowpass());
+            while (!blockFinished()) {}
+            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+            SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height -1);
+            startBlockMove();
 
-#ifndef DISABLE_BG_LEFT_COL
-  tile = bg->tiles[(tile_start_y % bg_h) * bg_w + tile_start_x % bg_w];
-  tx = (tile % pw) * tsx;
-  ty = (tile / pw) * tsy + ypoff;
+        case 6:
+            // plot RHS
+            // relative x: MID_offset + MID_length + RHS_offset
+            tile = bg->tiles[ys * bg->w + ((xs + 1 + MID_length / tsx) % bg->w)];
+            tx = (tile % bg->pat_w) * tsx + bg->pat_x + RHS_offset;
+            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+            src_addr = pixelAddr(tx, ty);
 
-  dest_addr = dest_addr_start + tile_start_x * tsx;
-  byteaddress2 = pat_start_addr + ty * m_pitch + tx;
+            tmp_addr = dst_addr + MID_offset + MID_length + RHS_offset;
+            LSB = ((src_addr & 1) << 2) | ((tmp_addr & 1) << 1) | lowpass();
 
-  draw_w = tsx;
-  if (xpoff >= 8) {
-    draw_w -=8;
-    dest_addr += 8;
-    byteaddress2 += 8;
-  }
+            while (!blockFinished()) {}
+            SpiRamWriteBM1Ctrl(src_addr >> 1, tmp_addr >> 1, LSB);
+            SpiRamWriteBM2Ctrl(m_pitch - RHS_length, RHS_length, ROW_height -1);
+            startBlockMove();
 
-  SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-ypoff-1);
-  MoveBlockAddr(byteaddress2, dest_addr);
-#endif
+            if (ops & 1) break;
+        case 4:
+            // plot LHS
+            // relative x: 0
+            tile = bg->tiles[ys * bg->w + xs];
+            tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+            src_addr = pixelAddr(tx, ty);
 
-#ifndef DISABLE_BG_MIDDLE
-  while (!blockFinished()) {}
-  SpiRamWriteBM2Ctrl(m_pitch-tsx, tsx, tsy-ypoff-1);
-  for (int xx = tile_start_x+1; xx < tile_end_x-1; ++xx) {
-    tile = bg->tiles[(tile_start_y % bg_h) * bg_w + xx % bg_w];
-    tx = (tile % pw) * tsx;
-    ty = (tile / pw) * tsy + ypoff;
+            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-    dest_addr = dest_addr_start + xx * tsx;
-    byteaddress2 = pat_start_addr + ty * m_pitch + tx;
-    MoveBlockAddr(byteaddress2, dest_addr);
-  }
-#endif
+            while (!blockFinished()) {}
+            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+            SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height -1);
+            startBlockMove();
 
-#ifndef DISABLE_BG_RIGHT_COL
-  tile = bg->tiles[(tile_start_y % bg_h) * bg_w + (tile_end_x - 1) % bg_w];
-  tx = (tile % pw) * tsx;
-  ty = (tile / pw) * tsy + ypoff;
+        default:
+            break;
+        }
 
-  dest_addr = dest_addr_start + (tile_end_x - 1) * tsx;
-  byteaddress2 = pat_start_addr + ty * m_pitch + tx;
+        while (!blockFinished()) {}
+        SpiRamWriteBM2Ctrl(m_pitch - tsx, tsx, ROW_height -1);
 
-  draw_w = tsx;
-  if (xpoff < tsx - 8) {
-    draw_w -=8;
-  }
-  while (!blockFinished()) {}
-  SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, tsy-ypoff-1);
-  MoveBlockAddr(byteaddress2, dest_addr);
-#endif
+        // plot middle part
+        dst_addr += MID_offset;
+        for (int i = 0; i < MID_length; i += tsx) {
+            tile = bg->tiles[ys * bg->w + (++xs % bg->w)];
+            tx = (tile % bg->pat_w) * tsx + bg->pat_x;
+            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+            src_addr = pixelAddr(tx, ty);
 
-  while (!blockFinished()) {}
-#endif
-}
+            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-void GROUP(basic_video) VS23S010::drawBgBottom(struct bg_t *bg,
-                                            int tile_start_x,
-                                            int tile_end_x,
-                                            int tile_end_y,
-                                            uint32_t xpoff,
-                                            uint32_t ypoff,
-                                            int skip_x)
-{
-#ifndef DISABLE_BG_BOTTOM
-  uint32_t tile;
-  uint32_t tx, ty;
-  uint32_t tsx = bg->tile_size_x;
-  uint32_t tsy = bg->tile_size_y;
-  uint8_t bg_w = bg->w;
-  uint8_t bg_h = bg->h;
-  uint32_t pw = bg->pat_w;
-  uint32_t byteaddress1, byteaddress2;
-  int draw_w;
+            while (!blockFinished()) {}
+            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+            startBlockMove();
 
-  ypoff = (ypoff + bg->win_h) % tsy;
-  // Bottom line
-  if (ypoff) {
-    int ba1a = pixelAddr(bg->win_x - xpoff, bg->win_y + bg->win_h - ypoff);
-    int ba2a = pixelAddr(bg->pat_x, bg->pat_y);
+            dst_addr += tsx;
+        }
 
-    while (!blockFinished()) {}
-    SpiRamWriteBMCtrl(BLOCKMVC1, 0, 0, ((ba1a & 1) << 1) | ((ba2a & 1) << 2) | lowpass());
-
-#ifndef DISABLE_BG_LEFT_COL
-    if (tile_start_x + skip_x < tile_end_x) {
-      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_start_x+skip_x) % bg_w];
-      tx = (tile % pw) * tsx;
-      ty = (tile / pw) * tsy;
-      byteaddress1 = ba1a + ((tile_start_x+skip_x) - tile_start_x) * tsx;
-      byteaddress2 = ba2a + ty * m_pitch + tx;
-      draw_w = tsx;
-      if (xpoff >= 8) {
-	draw_w -= 8;
-	byteaddress1 += 8;
-	byteaddress2 += 8;
-      }
-      SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
-      MoveBlockAddr(byteaddress2, byteaddress1);
+        // advance
+        ROW_offset = 0;
+        offset_y  += ROW_height;
+        y1        += ROW_height;
     }
-#endif
-
-#ifndef DISABLE_BG_MIDDLE
-    // Set pitch, width and height; same for all tiles
-    while (!blockFinished()) {}
-    SpiRamWriteBM2Ctrl(m_pitch-tsx, tsx, ypoff-1);
-    // Set up the LSB of the start/dest addresses; they don't change for
-    // middle tiles, so we can omit the last byte of the request.
-    for (int xx = tile_start_x+skip_x+1; xx < tile_end_x-1; ++xx) {
-      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + xx % bg_w];
-      tx = (tile % pw) * tsx;
-      ty = (tile / pw) * tsy;
-      byteaddress1 = ba1a + (xx - tile_start_x) * tsx;
-      byteaddress2 = ba2a + ty * m_pitch + tx;
-      while (!blockFinished()) {}
-      MoveBlockAddr(byteaddress2, byteaddress1);
-    }
-#endif
-
-#ifndef DISABLE_BG_RIGHT_COL
-    if (tile_start_x + skip_x < tile_end_x - 1) {
-      tile = bg->tiles[((tile_end_y-1) % bg_h) * bg_w + (tile_end_x - 1) % bg_w];
-      tx = (tile % pw) * tsx;
-      ty = (tile / pw) * tsy;
-      byteaddress1 = ba1a + ((tile_end_x - 1) - tile_start_x) * tsx;
-      byteaddress2 = ba2a + ty * m_pitch + tx;
-      draw_w = tsx;
-      if (xpoff < tsx - 8)
-	draw_w -= 8;
-      while (!blockFinished()) {}
-      SpiRamWriteBM2Ctrl(m_pitch-draw_w, draw_w, ypoff-1);
-      MoveBlockAddr(byteaddress2, byteaddress1);
-    }
-#endif
-  }
-#endif
 }
 
 void GROUP(basic_video) VS23S010::updateBg()
@@ -592,8 +478,6 @@ void GROUP(basic_video) VS23S010::updateBg()
   uint32_t mxx;
   int lines[6];
 #endif
-  int dest_addr_start;
-  uint32_t pat_start_addr, win_start_addr;
   uint16_t pass0_end_line = 0;
 
   if (m_frame <= last_frame + m_frameskip || !m_bg_modified || SpiLocked())
@@ -610,65 +494,13 @@ void GROUP(basic_video) VS23S010::updateBg()
 #endif
 
   struct bg_t *bg;
-  int tsx, tsy;
-  int xpoff, ypoff;
-  int tile_start_x, tile_start_y;
-  int tile_end_x, tile_end_y;
-  int tile_split_y;
-  int last_pix_split_y, pix_split_y;
 
   // Every layer needs to end the drawing the first half of the screen at
   // or before the height the previous one did. This indicates the
   // initial height. If an object cannot be drawn exactly up to the
   // current partitioning point, that point will be raised to make sure
   // that the next layer will not overshoot the previous one.
-  last_pix_split_y = m_current_mode.y / 2;
-
-  int bg_tile_start_y[MAX_BG];
-  int bg_tile_end_y[MAX_BG];
-  int bg_tile_split_y[MAX_BG];
-  int bg_pix_split_y[MAX_BG];
-  tsy = -1;
-  for (int i = 0; i < MAX_BG; ++i) {
-    bg = &m_bg[i];
-    if (!bg->enabled)
-      continue;
-    tsx = bg->tile_size_x;
-    tsy = bg->tile_size_y;
-    xpoff = bg->scroll_x % tsx;
-    ypoff = bg->scroll_y % tsy;
-
-    tile_start_y = bg->scroll_y / tsy;
-    tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
-    tile_split_y = tile_start_y + (last_pix_split_y - bg->win_y) / tsy;
-    pix_split_y = (tile_split_y - tile_start_y) * tsy - ypoff + bg->win_y;
-
-    // make sure pix_split_y is less or equal than last_pix_split_y
-    while (pix_split_y > last_pix_split_y) {
-      --tile_split_y;
-      pix_split_y -= tsy;
-    }
-
-#ifdef DEBUG
-    Serial.printf("bg %d win %d,%d sx/y %d,%d tile start %d(%dpx) end %d(%dpx) split %d(%dpx) pix split %dpx ypoff %dpx\n",
-                  i, bg->win_x, bg->win_y, bg->scroll_x, bg->scroll_y, tile_start_y, tile_start_y*tsy,
-                  tile_end_y, tile_end_y*tsy, tile_split_y, tile_split_y*tsy, pix_split_y, ypoff);
-#endif
-    // make sure next layer stops at or before this one
-    if (pix_split_y < last_pix_split_y)
-      last_pix_split_y = pix_split_y;
-
-    // make sure drawing does not start/end before/after the actual window
-    if (tile_split_y < tile_start_y)
-      tile_split_y = tile_start_y;
-    if (tile_split_y > tile_end_y)
-      tile_split_y = tile_end_y;
-    
-    bg_tile_start_y[i] = tile_start_y;
-    bg_tile_end_y[i] = tile_end_y;
-    bg_tile_split_y[i] = tile_split_y;
-    bg_pix_split_y[i] = pix_split_y;
-  }
+  int last_pix_split_y = m_current_mode.y / 2;
 
   // Drawing all backgrounds and sprites does not usually fit into the
   // vertical blank period. The screen is therefore redrawn in two passes,
@@ -681,7 +513,7 @@ void GROUP(basic_video) VS23S010::updateBg()
       setSpiClockMax();
 
       // Draw enabled backgrounds.
-      if (tsy != -1) for (int i = 0; i < MAX_BG; ++i) {
+      for (int i = 0; i < MAX_BG; ++i) {
         bg = &m_bg[i];
         if (!bg->enabled)
           continue;
@@ -689,45 +521,15 @@ void GROUP(basic_video) VS23S010::updateBg()
           continue;
 
         // In first pass, skip BGs starting below the split line.
-        if (pass == 0 && bg->win_y >= bg_pix_split_y[i])
+        if (pass == 0 && bg->win_y >= last_pix_split_y)
           continue;
         // In second pass, skip BGs ending above the split line.
-        if (pass == 1 && bg->win_y + bg->win_h <= bg_pix_split_y[i])
+        if (pass == 1 && bg->win_y + bg->win_h <= last_pix_split_y)
           continue;
 
-        tsx = bg->tile_size_x;
-        tsy = bg->tile_size_y;
-        xpoff = bg->scroll_x % tsx;
-        ypoff = bg->scroll_y % tsy;
-
-        tile_start_y = bg_tile_start_y[i];
-        tile_end_y = bg_tile_end_y[i];
-        tile_split_y = bg_tile_split_y[i];
-        pix_split_y = bg_pix_split_y[i];
-
-        tile_start_x = bg->scroll_x / bg->tile_size_x;
-        tile_end_x = tile_start_x + (bg->win_w + bg->tile_size_x-1) / bg->tile_size_x + 1;
-
-        pat_start_addr = pixelAddr(bg->pat_x, bg->pat_y);
-        win_start_addr = pixelAddr(bg->win_x, bg->win_y);
-
-        dest_addr_start = win_start_addr + (m_pitch * (pix_split_y - bg->win_y) * pass) - tile_start_x * tsx - xpoff;
-
-        // drawBg() does not handle partial lines. If a BG ends just before the split, we have to let
-        // drawBgBottom() handle the last line; otherwise, drawBg() has to draw an extra line.
-        int overdraw_y = 0;
-        if (pass == 0 && bg->win_y + bg->win_h >= bg_pix_split_y[i])
-          overdraw_y = 1;
-
-        if (pass == 0)
-          drawBgTop(bg, dest_addr_start, pat_start_addr, tile_start_x, tile_start_y, tile_end_x, xpoff, ypoff);
-
-        drawBg(bg, dest_addr_start, pat_start_addr, win_start_addr,
-               tile_start_x, tile_start_y,
-               tile_end_x, pass ? tile_end_y : tile_split_y+overdraw_y, xpoff, ypoff, 0, pass ? (tile_split_y - tile_start_y) : 1);
-
-        if (pass == 1 || overdraw_y == 0)
-          drawBgBottom(bg, tile_start_x, tile_end_x, tile_end_y, xpoff, ypoff, 0);
+        // draw the relevant portion of the background from y1 (incl) to y2 (excl)
+        if (pass == 0) drawBg(bg, bg->win_y, min(bg->win_y + bg->win_h, last_pix_split_y));
+        else           drawBg(bg, max(bg->win_y, last_pix_split_y), bg->win_y + bg->win_h);
 
 #ifdef PROFILE_BG
         lines[1] = currentLine();
@@ -872,7 +674,6 @@ void GROUP(basic_video) VS23S010::updateBg()
           if (y < 0) {
             h += y;
             offset_y = -y;
-            y = 0;
           } else if (y + h >= m_current_mode.y) {
             h = m_current_mode.y - y;
           }

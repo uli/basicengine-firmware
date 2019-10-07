@@ -62,7 +62,7 @@ BG OFF
 @ty	tile height, pixels [`8` (default) to `32`]
 @wx	window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
 @wy	window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
-@ww	window width, pixels [`0` to `PSIZE(0)-wx` (default)]
+@ww	window width, pixels [`9` to `PSIZE(0)-wx` (default)]
 @wh	window height, pixels [`0` to `PSIZE(1)-wy` (default)]
 @priority Background priority [`0` to `{MAX_BG_m1}`, default: `bg`]
 \note
@@ -117,7 +117,7 @@ void Basic::ibg() {
   case I_WINDOW:
     if (getParam(wx, 0, sc0.getGWidth() - 1, I_COMMA)) return;
     if (getParam(wy, 0, sc0.getGHeight() - 1, I_COMMA)) return;
-    if (getParam(ww, 0, sc0.getGWidth() - wx, I_COMMA)) return;
+    if (getParam(ww, 9, sc0.getGWidth() - wx, I_COMMA)) return;
     if (getParam(wh, 0, sc0.getGHeight() - wy, I_NONE)) return;
     vs23.setBgWin(m, wx, wy, ww, wh);
     break;
