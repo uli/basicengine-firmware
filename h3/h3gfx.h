@@ -8,6 +8,8 @@
 #include "bgengine.h"
 #include "colorspace.h"
 
+#include <string.h>
+
 #define SC_DEFAULT 13
 
 #define H3_SCREEN_MODES 14
