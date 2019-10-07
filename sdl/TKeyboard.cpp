@@ -183,6 +183,8 @@ uint8_t TPS2::available() {
   return SDL_PeepEvents(events, 8, SDL_PEEKEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK);
 }
 
+#include <sdlgfx.h>
+
 keyEvent TKeyboard::read() {
   keyinfo ki;
   ki.value = 0;
@@ -190,10 +192,17 @@ keyEvent TKeyboard::read() {
   SDL_PumpEvents();
   if (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK) == 1) {
     int unicode = event.key.keysym.unicode;
+
     if ((event.key.keysym.mod & (KMOD_LCTRL | KMOD_RCTRL)) &&
         event.key.keysym.sym == SDLK_PAUSE) {
       exit(0);
     }
+
+    if ((event.key.keysym.mod & KMOD_LALT) &&
+        event.key.keysym.sym == SDLK_RETURN && event.type == SDL_KEYDOWN) {
+      vs23.toggleFullscreen();
+    }
+
     if (unicode && unicode != 127)
       ki.kevt.code = unicode;
     else {
