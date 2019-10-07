@@ -39,14 +39,16 @@ const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
 	{640, 480, 0, 0, 0},
 };
 
+#include <config.h>
+
 void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
 {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
   printf("set mode\n");
-  m_current_mode = modes_pal[SC_DEFAULT];
-  if (!setMode(SC_DEFAULT)) {
+  m_current_mode = modes_pal[CONFIG.mode - 1];
+  if (!setMode(CONFIG.mode - 1)) {
     if (!setMode(SC_DEFAULT_SECONDARY)) {
       printf("failed to enter graphics mode\n");
       delay(500);
