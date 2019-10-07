@@ -51,15 +51,17 @@ Uint32 SDLGFX::timerCallback(Uint32 t)
   return t;
 }
 
+#include <config.h>
+
 void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
 {
   m_display_enabled = false;
   m_last_line = 0;
   printf("set mode\n");
-  m_current_mode = modes_pal[SC_DEFAULT];
+  m_current_mode = modes_pal[CONFIG.mode - 1];
 
   SDL_ShowCursor(SDL_DISABLE);
-  setMode(SC_DEFAULT);
+  setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
 
