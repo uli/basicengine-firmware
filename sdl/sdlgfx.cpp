@@ -187,6 +187,14 @@ bool SDLGFX::setMode(uint8_t mode)
   return true;
 }
 
+void SDLGFX::toggleFullscreen()
+{
+  if (m_screen) {
+    SDL_WM_ToggleFullScreen(m_screen);
+    sdl_flags ^= SDL_FULLSCREEN;
+  }
+}
+
 #include <border_pal.h>
 
 void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w)
