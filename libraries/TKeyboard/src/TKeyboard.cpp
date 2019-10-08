@@ -35,6 +35,7 @@ static const uint8_t (*key_ascii)[2];
 
 // Scan code 0x00 - 0x83 => Key code conversion table
 // 132 bytes worth
+// clang-format off
 static const uint8_t keycode1[] BASIC_DAT = {
   0,		PS2KEY_F9,	0,		PS2KEY_F5,	PS2KEY_F3,	PS2KEY_F1,	PS2KEY_F2,	PS2KEY_F12,	// 0x00-0x07
   PS2KEY_F13,	PS2KEY_F10,	PS2KEY_F8,	PS2KEY_F6,	PS2KEY_F4,	PS2KEY_Tab,	PS2KEY_HanZen,	PS2KEY_PAD_Equal,// 0x08-0x0F
@@ -131,6 +132,7 @@ static const uint8_t key_ascii_fr[][2] BASIC_DAT = {
   { 'k', 'K'},{ 'l', 'L'},{ ',', '?'},{ 'n', 'N'},{ 'o', 'O'},{ 'p', 'P'},{ 'a', 'A'},{ 'r', 'R'},
   { 's', 'S'},{ 't', 'T'},{ 'u', 'U'},{ 'v', 'V'},{ 'z', 'z'},{ 'x', 'X'},{ 'y', 'Y'},{ 'w', 'W'},
 };
+// clang-format on
 
 // Conversion table for numeric pad keys 94-111
 // { Normal code, NumLock/Shift code, 1: key code  0: ASCII code }

@@ -229,6 +229,7 @@ num_t BASIC_FP getrnd(int value) {
 
 // List formatting condition
 // Intermediate code without trailing blank
+// clang-format off
 const uint8_t i_nsa[] BASIC_DAT = {
   I_CSIZE, I_PSIZE,
   I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
@@ -271,6 +272,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
 const uint8_t i_dual[] BASIC_DAT = {
   I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD,
 };
+// clang-format on
 
 // exception search function
 char sstyle(uint8_t code,
@@ -727,6 +729,7 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
       break;                             // 文字列の処理を打ち切る（終端の処理へ進む）
     } else if (key == I_PROC) {
 // XXX: No better place to put this...
+// clang-format off
 /***bc bas PROC
 Define a procedure or function.
 \usage PROC name[(<num_arg|str_arg$>[, <num_arg|str_arg$> ...])]
@@ -772,6 +775,7 @@ It is not currently possible to use complex data types (arrays and lists)
 as local variables or arguments.
 \ref CALL FN RETURN
 ***/
+// clang-format on
       if (!is_prg_text) {
         err = ERR_COM;
         return 0;

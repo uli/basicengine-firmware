@@ -41,6 +41,7 @@ uint16_t  kdata[16];
 #define RK_ENTRY_NUM (sizeof(RomaKama)/sizeof(RomaKama[0]))
 
 //子音状態遷移コード
+// clang-format off
 enum {
   _romaji_top = 0,
   _romaji_b, _romaji_c, _romaji_d, _romaji_f, _romaji_g,  _romaji_h, _romaji_j, _romaji_k, _romaji_l, _romaji_m,
@@ -52,7 +53,7 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
- const char RomaKama[][5][4] PROGMEM =  {
+const char RomaKama[][5][4] PROGMEM =  {
   //  a       e       i       o        u
   { "\xb1", "\xb4", "\xb2", "\xb5", "\xb3", },                                          //[]  : ｱ ｴ ｲ ｵ ｳ
   { "\xca\xde", "\xcd\xde", "\xcb\xde", "\xce\xde", "\xcc\xde", },                      //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
@@ -111,6 +112,7 @@ enum {
   { "\xac", "\xaa", "\xaa", "\xae", "\xad", },                                          //[xy] : ｬ ｪ ｪ ｮ ｭ
   { "\xbc\xde\xac", "\xbc\xde\xaa", "\xbc\xde\xa8", "\xbc\xde\xae", "\xbc\xde\xad", },  //[zy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
 };
+// clang-format on
 
 // 例外([nn])
 const char RomaKama_nn[4] __FLASH__ ="\xdd"; // 'ﾝ'

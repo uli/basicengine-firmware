@@ -576,6 +576,7 @@ typedef void (*SCALER_TYPE)(SCALER_SRC_TYPE *, SCALER_DST_TYPE *, int, int, int,
 // Combinations that do not occur with the current set of modes are not
 // implemented, but are mapped to a fallback scaler, just in case...
 
+// clang-format off
 static SCALER_TYPE SCALERS_UP[12][6] = {
 	{ NULL,		SCALER(1x2),	SCALER(1x3),	SCALER(1x3),	SCALER(1x3),	SCALER(1x3)	},	// 1x
 	{ SCALER(2x1),	SCALER(2x2),	SCALER(2x3),	SCALER(2x3),	SCALER(2x3),	SCALER(2x3)	},	// 2x
@@ -596,6 +597,7 @@ static SCALER_TYPE SCALERS_DOWN[3][3] = {
 	{ SCALER(p5x1),	SCALER(p5xp5),	SCALER(p5xp33)	}, // .55x
 	{ SCALER(p33xp5),	SCALER(p33xp5),	SCALER(p33xp33)	}, // .33x
 };
+// clang-format on
 
 static void SCALE_FUNC(SDL_Surface *src, SDL_Surface *dst, int src_h)
 {
