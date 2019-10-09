@@ -15,10 +15,10 @@
 #include <memory>
 #include <unistd.h>
 
-#define FILE_READ O_RDONLY
-#define FILE_WRITE (O_RDWR | O_CREAT | O_APPEND)
-#define FILE_OVERWRITE	(O_RDWR | O_CREAT | O_TRUNC)
-#define O_READ O_RDONLY
+#define FILE_READ      O_RDONLY
+#define FILE_WRITE     (O_RDWR | O_CREAT | O_APPEND)
+#define FILE_OVERWRITE (O_RDWR | O_CREAT | O_TRUNC)
+#define O_READ         O_RDONLY
 
 #define FS_PREFIX "./vfs"
 
@@ -47,6 +47,7 @@ extern SdFat SD;
 
 class File {
   friend class SdFat;
+
 public:
   File() {
     dir = NULL;
@@ -72,18 +73,18 @@ public:
     fflush(fp.get());
     return true;
   }
-  int write(const void* buf, size_t nbyte) {
+  int write(const void *buf, size_t nbyte) {
     if (!fp.get())
       return -1;
     return fwrite(buf, 1, nbyte, fp.get());
   }
-  int write(const char* str) {
+  int write(const char *str) {
     return write(str, strlen(str));
   }
   int write(uint8_t b) {
     return write(&b, 1);
   }
-  int read(void* buf, size_t nbyte) {
+  int read(void *buf, size_t nbyte) {
     if (!fp.get())
       return -1;
     return fread(buf, 1, nbyte, fp.get());
@@ -92,7 +93,7 @@ public:
     uint8_t b;
     return read(&b, 1) == 1 ? b : -1;
   }
-  int16_t fgets(char* str, int16_t num, char* delim = 0) {
+  int16_t fgets(char *str, int16_t num, char *delim = 0) {
     return -1;
   }
   uint32_t fileSize() const {
@@ -115,7 +116,7 @@ public:
     fseek(fp.get(), 0, SEEK_END);
     size_t e = ftell(fp.get());
     fseek(fp.get(), c, SEEK_SET);
-    return e-c;
+    return e - c;
   }
   int position() {
     if (!fp.get())
@@ -129,7 +130,7 @@ public:
 
   File openNextFile(uint8_t mode = O_READ);
 
-  bool getName(char* _name, size_t size) {
+  bool getName(char *_name, size_t size) {
     if (fp.get() || dir.get()) {
       strncpy(_name, name.c_str(), size);
       return true;
@@ -144,7 +145,7 @@ public:
   }
   void rewindDirectory() {
   }
-  bool dirEntry(dir_t* dst) {
+  bool dirEntry(dir_t *dst) {
     return false;
   }
   operator bool() {
@@ -175,7 +176,7 @@ public:
     tmpFile.full_name = path;
     int last_slash = tmpFile.full_name.lastIndexOf('/');
     if (last_slash >= 0)
-      tmpFile.name = tmpFile.full_name.substring(last_slash+1);
+      tmpFile.name = tmpFile.full_name.substring(last_slash + 1);
     else
       tmpFile.name = tmpFile.full_name;
 
@@ -192,20 +193,20 @@ public:
   bool rename(const char *oldPath, const char *newPath) {
     return false;
   }
-  bool exists(const char* path) {
+  bool exists(const char *path) {
     struct stat st;
     return false;//lstat(apsd(path), &st) == 0;
   }
-  bool remove(const char* path) {
+  bool remove(const char *path) {
     return unlink(apsd(path)) == 0;
   }
   bool begin(uint8_t csPin = 0, int foo = 0) {
     return true;
   }
-  bool mkdir(const char* path, bool pFlag = true) {
+  bool mkdir(const char *path, bool pFlag = true) {
     return false;
   }
-  bool rmdir(const char* path) {
+  bool rmdir(const char *path) {
     return false;
   }
 };
@@ -278,9 +279,9 @@ static inline uint8_t FAT_MINUTE(uint16_t fatTime) {
  * \return Extracted second [0,58]
  */
 static inline uint8_t FAT_SECOND(uint16_t fatTime) {
-  return 2*(fatTime & 0X1F);
+  return 2 * (fatTime & 0X1F);
 }
 
-};
+};  // namespace sdfat
 
 #endif
