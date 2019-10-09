@@ -23,40 +23,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef Psx_h
 #define Psx_h
 
-#define psxErrorShift	16
-#define psxError	(1 << psxErrorShift)
+#define psxErrorShift 16
+#define psxError      (1 << psxErrorShift)
 
 #include "Arduino.h"
 
-class Psx
-{
-	public:
-		Psx();
-		void setupPins(byte , byte , byte , byte , byte );		// (Data Pin #, CMND Pin #, ATT Pin #, CLK Pin #, Delay)
-															// Delay is how long the clock goes without changing state
-															// in Microseconds. It can be lowered to increase response,
-															// but if it is too low it may cause glitches and have some
-															// keys spill over with false-positives. A regular PSX controller
-															// works fine at 50 uSeconds.
-															
-		int read();								// Returns the status of the button presses in an unsignd int.
-															// The value returned corresponds to each key as defined above.
-		
-	private:
-		byte shift(byte _dataOut);
+class Psx {
+public:
+  Psx();
+  void setupPins(byte, byte, byte, byte,
+                 byte);  // (Data Pin #, CMND Pin #, ATT Pin #, CLK Pin #, Delay)
+  // Delay is how long the clock goes without changing state
+  // in Microseconds. It can be lowered to increase response,
+  // but if it is too low it may cause glitches and have some
+  // keys spill over with false-positives. A regular PSX controller
+  // works fine at 50 uSeconds.
 
-		byte _dataPin;
-		byte _cmndPin;
-		byte _attPin;
-		byte _clockPin;
-		
-		byte _delay;
-		uint32_t _last_failed;
-		int _last_read;
+  int read();  // Returns the status of the button presses in an unsignd int.
+               // The value returned corresponds to each key as defined above.
+
+private:
+  byte shift(byte _dataOut);
+
+  byte _dataPin;
+  byte _cmndPin;
+  byte _attPin;
+  byte _clockPin;
+
+  byte _delay;
+  uint32_t _last_failed;
+  int _last_read;
 };
 
 #endif

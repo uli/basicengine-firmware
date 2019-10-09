@@ -41,148 +41,145 @@
 #endif
 
 #ifdef USE_VS23_GPIO
-#define DIGITAL_WRITE	vs23.digitalWrite
-#define DIGITAL_READ	vs23.digitalRead
-#define PIN_MODE	vs23.pinMode
+#define DIGITAL_WRITE vs23.digitalWrite
+#define DIGITAL_READ  vs23.digitalRead
+#define PIN_MODE      vs23.pinMode
 #else
-#define DIGITAL_WRITE	digitalWrite
-#define DIGITAL_READ	digitalRead
-#define PIN_MODE	pinMode
+#define DIGITAL_WRITE digitalWrite
+#define DIGITAL_READ  digitalRead
+#define PIN_MODE      pinMode
 #endif
 
-Psx::Psx()
-{
-	_last_read = 0;
+Psx::Psx() {
+  _last_read = 0;
 }
 
-byte SMALL Psx::shift(byte _dataOut)							// Does the actual shifting, both in and out simultaneously
-{
-	boolean _temp = 0;
-	byte _dataIn = 0;
+// Does the actual shifting, both in and out simultaneously
+byte SMALL Psx::shift(byte _dataOut) {
+  boolean _temp = 0;
+  byte _dataIn = 0;
 
-	for (int _i = 0; _i <= 7; _i++)
-	{
-		
-		
-		if ( _dataOut & (1 << _i) ) DIGITAL_WRITE(_cmndPin, HIGH);	// Writes out the _dataOut bits
-		else DIGITAL_WRITE(_cmndPin, LOW);
+  for (int _i = 0; _i <= 7; _i++) {
+    // Writes out the _dataOut bits
+    if (_dataOut & (1 << _i))
+      DIGITAL_WRITE(_cmndPin, HIGH);
+    else
+      DIGITAL_WRITE(_cmndPin, LOW);
 
-		DIGITAL_WRITE(_clockPin, LOW);
-		
-		delayMicroseconds(_delay);
+    DIGITAL_WRITE(_clockPin, LOW);
 
-		_temp = DIGITAL_READ(_dataPin);					// Reads the data pin
-		if (_temp)
-		{
-			_dataIn = _dataIn | (B10000000 >> _i);		// Shifts the read data into _dataIn
-		}
+    delayMicroseconds(_delay);
 
-		DIGITAL_WRITE(_clockPin, HIGH);
-		// Additional delay unnecessary because of VS23 GPIO overhead.
-		//delayMicroseconds(_delay);
-	}
-	return _dataIn;
+    _temp = DIGITAL_READ(_dataPin);
+    if (_temp) {
+      // Shifts the read data into _dataIn
+      _dataIn = _dataIn | (B10000000 >> _i);
+    }
+
+    DIGITAL_WRITE(_clockPin, HIGH);
+    // Additional delay unnecessary because of VS23 GPIO overhead.
+    //delayMicroseconds(_delay);
+  }
+  return _dataIn;
 }
 
+void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin,
+                    byte delay) {
+  PIN_MODE(dataPin, INPUT);
 
-void Psx::setupPins(byte dataPin, byte cmndPin, byte attPin, byte clockPin, byte delay)
-{
-	PIN_MODE(dataPin, INPUT);
+  // We don't have an internal pull-up. (In fact, we have an internal
+  // pull-down which we override with a strong external pull-up...)
+  //DIGITAL_WRITE(dataPin, HIGH);	// Turn on internal pull-up
 
-	// We don't have an internal pull-up. (In fact, we have an internal
-	// pull-down which we override with a strong external pull-up...)
-	//DIGITAL_WRITE(dataPin, HIGH);	// Turn on internal pull-up
+  _dataPin = dataPin;
 
-	_dataPin = dataPin;
+  PIN_MODE(cmndPin, OUTPUT);
+  _cmndPin = cmndPin;
 
-	PIN_MODE(cmndPin, OUTPUT);
-	_cmndPin = cmndPin;
+  PIN_MODE(attPin, OUTPUT);
+  _attPin = attPin;
+  DIGITAL_WRITE(_attPin, HIGH);
 
-	PIN_MODE(attPin, OUTPUT);
-	_attPin = attPin;
-	DIGITAL_WRITE(_attPin, HIGH);
+  PIN_MODE(clockPin, OUTPUT);
+  _clockPin = clockPin;
+  DIGITAL_WRITE(_clockPin, HIGH);
 
-	PIN_MODE(clockPin, OUTPUT);
-	_clockPin = clockPin;
-	DIGITAL_WRITE(_clockPin, HIGH);
-	
-	_delay = delay;
+  _delay = delay;
 }
 
-#define MAX_RETRIES 3
+#define MAX_RETRIES   3
 #define CONFIRMATIONS 1
 
-int SMALL Psx::read()
-{
-    byte data1, data2;
-    int data_out;
-    int retries;
+int SMALL Psx::read() {
+  byte data1, data2;
+  int data_out;
+  int retries;
 
-    if (_last_read < 0 && millis() < _last_failed + 1000) {
+  if (_last_read < 0 && millis() < _last_failed + 1000) {
+    _last_failed = millis();
+    return psxError;
+  }
+
+  _last_read = -1;
+#ifdef DEBUG_PSX
+  uint32_t now = micros();
+#endif
+#ifdef USE_VS23_GPIO
+  uint32_t spiclk = vs23.getSpiClock();
+  vs23.setSpiClockMax();
+#endif
+
+  // We want more than one consecutive read to yield the same data before
+  // we trust it to be correct.
+  for (int confirmations = 0; confirmations < CONFIRMATIONS;) {
+    // If we don't get the right magic byte back, we retry a few times
+    // before giving up.
+    for (retries = 0; retries < MAX_RETRIES; ++retries) {
+      DIGITAL_WRITE(_attPin, LOW);
+
+      shift(0x01);
+      shift(0x42);  // returns report type
+      byte magic = shift(0xFF);
+
+      data1 = ~shift(0xFF);
+      data2 = ~shift(0xFF);
+
+      DIGITAL_WRITE(_attPin, HIGH);
+
+      data_out = (data2 << 8) | data1;
+
+      if (magic == 0x5a) {
+        if (data_out == _last_read)
+          confirmations++;
+        _last_read = data_out;
+        break;
+      }
+
+      // Not the right magic byte, try again.
+      // wait some time before doing another read
+      // XXX: wild guess
+      delayMicroseconds(_delay * 2);
+    }
+
+    if (retries == MAX_RETRIES) {
+      // exhausted all retries, there might be no controller here
       _last_failed = millis();
+#ifdef USE_VS23_GPIO
+      vs23.setSpiClock(spiclk);
+#endif
       return psxError;
     }
 
-    _last_read = -1;
-#ifdef DEBUG_PSX
-    uint32_t now = micros();
-#endif
-#ifdef USE_VS23_GPIO
-    uint32_t spiclk = vs23.getSpiClock();
-    vs23.setSpiClockMax();
-#endif
-
-    // We want more than one consecutive read to yield the same data before
-    // we trust it to be correct.
-    for (int confirmations = 0; confirmations < CONFIRMATIONS; ) {
-      // If we don't get the right magic byte back, we retry a few times
-      // before giving up.
-      for (retries = 0; retries < MAX_RETRIES; ++retries) {
-	DIGITAL_WRITE(_attPin, LOW);
-
-	shift(0x01);
-	shift(0x42);	// returns report type
-	byte magic = shift(0xFF);
-
-	data1 = ~shift(0xFF);
-	data2 = ~shift(0xFF);
-
-	DIGITAL_WRITE(_attPin, HIGH);
-
-	data_out = (data2 << 8) | data1;
-
-        if (magic == 0x5a) {
-          if (data_out == _last_read)
-            confirmations++;
-          _last_read = data_out;
-          break;
-        }
-
-        // Not the right magic byte, try again.
-        // wait some time before doing another read
-        // XXX: wild guess
-	delayMicroseconds(_delay*2);
-      }
-
-      if (retries == MAX_RETRIES) {
-        // exhausted all retries, there might be no controller here
-        _last_failed = millis();
-#ifdef USE_VS23_GPIO
-        vs23.setSpiClock(spiclk);
-#endif
-        return psxError;
-      }
-
-      // wait some time before doing another read
-      // XXX: wild guess
-      delayMicroseconds(_delay*2);
-    }
+    // wait some time before doing another read
+    // XXX: wild guess
+    delayMicroseconds(_delay * 2);
+  }
 
 #ifdef USE_VS23_GPIO
-    vs23.setSpiClock(spiclk);
+  vs23.setSpiClock(spiclk);
 #endif
-    dbg_psx("psxr %d\r\n", micros() - now);
-    return data_out;
+  dbg_psx("psxr %d\r\n", micros() - now);
+  return data_out;
 }
 
 Psx joy;
