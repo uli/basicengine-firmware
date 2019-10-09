@@ -10,11 +10,10 @@
 
 extern "C" void hook_audio_get_sample(int16_t *l, int16_t *r);
 
-class H3Audio
-{
-  public:
-//  AudioSystem *audioSystem;
-  
+class H3Audio {
+public:
+  //  AudioSystem *audioSystem;
+
   void init(int sample_rate);
 
   inline void setBlockSize(int size) {
@@ -49,7 +48,6 @@ private:
 
   static int m_block_size;
   static uint8_t m_sound_buf[2][SOUND_BUFLEN];
-
 };
 
 extern H3Audio audio;
