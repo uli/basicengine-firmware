@@ -170,7 +170,7 @@ SDLK_UNKNOWN,	// PS2KEY_WWW_Search		155	// ウェブ検索
 bool TKeyboard::state(uint8_t keycode) {
   const Uint8 *state = SDL_GetKeyState(NULL);
   int sdlcode = 0;
-  if (keycode < sizeof(ps2_to_sdl)/sizeof(*ps2_to_sdl))
+  if (keycode < sizeof(ps2_to_sdl) / sizeof(*ps2_to_sdl))
     sdlcode = ps2_to_sdl[keycode];
   return state[sdlcode];
 }
@@ -178,7 +178,8 @@ bool TKeyboard::state(uint8_t keycode) {
 uint8_t TPS2::available() {
   SDL_Event events[8];
   SDL_PumpEvents();
-  return SDL_PeepEvents(events, 8, SDL_PEEKEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK);
+  return SDL_PeepEvents(events, 8, SDL_PEEKEVENT,
+                        SDL_KEYUPMASK | SDL_KEYDOWNMASK);
 }
 
 keyEvent TKeyboard::read() {
@@ -186,7 +187,8 @@ keyEvent TKeyboard::read() {
   ki.value = 0;
   SDL_Event event;
   SDL_PumpEvents();
-  if (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_KEYUPMASK|SDL_KEYDOWNMASK) == 1) {
+  if (SDL_PeepEvents(&event, 1, SDL_GETEVENT,
+                     SDL_KEYUPMASK | SDL_KEYDOWNMASK) == 1) {
     int unicode = event.key.keysym.unicode;
     if ((event.key.keysym.mod & (KMOD_LCTRL | KMOD_RCTRL)) &&
         event.key.keysym.sym == SDLK_PAUSE) {
@@ -196,7 +198,8 @@ keyEvent TKeyboard::read() {
       ki.kevt.code = unicode;
     else {
       ki.kevt.KEY = 1;
-      for (unsigned int i = 0; i < sizeof(ps2_to_sdl)/sizeof(*ps2_to_sdl); ++i) {
+      for (unsigned int i = 0; i < sizeof(ps2_to_sdl) / sizeof(*ps2_to_sdl);
+           ++i) {
         if (ps2_to_sdl[i] == event.key.keysym.sym) {
           ki.kevt.code = i;
           break;
@@ -210,7 +213,8 @@ keyEvent TKeyboard::read() {
   return ki.kevt;
 }
 
-uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout) {
+uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
+                         uint8_t layout) {
   return 0;
 }
 
