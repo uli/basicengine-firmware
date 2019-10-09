@@ -10,20 +10,20 @@ uint8_t vs23_mem[131072];
 struct vs23_int vs23_int;
 
 static void wait_bytes(int c) {
-  delayMicroseconds((c)*8/SPI1CLK);
+  delayMicroseconds((c)*8 / SPI1CLK);
 }
 
 void SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
   //printf("RRBF %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
-    data[i] = vs23_mem[(address+i) % 131072];
-  wait_bytes(count+4);
+    data[i] = vs23_mem[(address + i) % 131072];
+  wait_bytes(count + 4);
 }
 void SpiRamReadBytes(uint32_t address, uint8_t *data, uint32_t count) {
   //printf("RRBS %08X %p %d\n", address, data, count);
   for (int i = 0; i < count; ++i)
-    data[i] = vs23_mem[(address+i) % 131072];
-  wait_bytes(count+4);
+    data[i] = vs23_mem[(address + i) % 131072];
+  wait_bytes(count + 4);
 }
 uint16_t SpiRamReadByte(uint32_t address) {
   //printf("RRB  %08X\n", address);
@@ -34,8 +34,8 @@ uint16_t SpiRamReadByte(uint32_t address) {
 void SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len) {
   //printf("RWBF %08X %p %d\n", address, data, len);
   for (int i = 0; i < len; ++i)
-    vs23_mem[(address+i) % 131072] = data[i];
-  wait_bytes(len+4);
+    vs23_mem[(address + i) % 131072] = data[i];
+  wait_bytes(len + 4);
 }
 void SpiRamWriteWord(uint16_t waddress, uint16_t data) {
   //printf("RWW  %08X %04X\n", waddress, data);
@@ -48,11 +48,11 @@ void SpiRamWriteByte(register uint32_t address, uint8_t data) {
   vs23_mem[address % 131072] = data;
   wait_bytes(5);
 }
-void SpiRamWriteBytes(uint32_t address, uint8_t * data, uint32_t len) {
+void SpiRamWriteBytes(uint32_t address, uint8_t *data, uint32_t len) {
   //printf("RWBS %08X %p %d\n", address, data, len);
   for (int i = 0; i < len; ++i)
-    vs23_mem[(address+i) % 131072] = data[i];
-  wait_bytes(len+4);
+    vs23_mem[(address + i) % 131072] = data[i];
+  wait_bytes(len + 4);
 }
 
 uint32_t mvsrc, mvtgt;
@@ -67,7 +67,8 @@ void SpiRamWriteBM2Ctrl(uint16_t data1, uint16_t data2, uint16_t data3) {
   mvlin = data3;
   wait_bytes(5);
 }
-void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2, uint16_t data3) {
+void SpiRamWriteBMCtrl(uint16_t opcode, uint16_t data1, uint16_t data2,
+                       uint16_t data3) {
   //printf("RWBMC  %04X %04X %04X %04X\n", opcode, data1, data2, data3);
   mvsrc = (data1 << 1) | ((data3 >> 2) & 1);
   mvtgt = (data2 << 1) | ((data3 >> 1) & 1);
@@ -119,11 +120,11 @@ void SpiRamWriteRegister(uint16_t opcode, uint16_t data) {
     vs23_int.line_us = vs23_int.pal ? LINE_LENGTH_US_PAL : LINE_LENGTH_US_NTSC;
     vs23_int.plen = ((data >> 10) & 0xf) + 1;
     break;
-  case WRITE_STATUS:	vs23_int.write_status = data; break;
-  case PICSTART:	vs23_int.picstart = data; break;
-  case PICEND:	vs23_int.picend = data; break;
-  case LINELEN:	vs23_int.linelen = data; break;
-  case INDEXSTART:	vs23_int.indexstart = data; break;
+  case WRITE_STATUS: vs23_int.write_status = data; break;
+  case PICSTART:     vs23_int.picstart = data; break;
+  case PICEND:       vs23_int.picend = data; break;
+  case LINELEN:      vs23_int.linelen = data; break;
+  case INDEXSTART:   vs23_int.indexstart = data; break;
   default:
     printf("RWR  %04X %04X\n", opcode, data);
     break;
@@ -145,9 +146,11 @@ void SPIClass::write(uint8_t data) {
     //printf("mov src %05X tgt %05X dir %d lin %d len %d skp %d\n",
     //  mvsrc, mvtgt, mvdir, mvlin, mvlen, mvskp);
     int vs, vt, x, y;
-    for (vs = mvsrc, vt = mvtgt, x = 0, y = 0;; ) {
+    for (vs = mvsrc, vt = mvtgt, x = 0, y = 0;;) {
       vs23_mem[vt] = vs23_mem[vs];
-      x++; vs += mvdir; vt += mvdir;
+      x++;
+      vs += mvdir;
+      vt += mvdir;
       if (x == mvlen) {
         vt += mvdir * mvskp;
         vs += mvdir * mvskp;
@@ -158,5 +161,5 @@ void SPIClass::write(uint8_t data) {
       }
     }
   } else
-    printf("SPIwrite %04X\n",data);
+    printf("SPIwrite %04X\n", data);
 }
