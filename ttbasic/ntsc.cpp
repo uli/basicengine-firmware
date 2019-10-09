@@ -888,6 +888,9 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 {
 	static uint8_t last_dir = 0;
 
+	// extract horizontal/vertical
+	uint8_t vertical = (dir & 2) ? 0 : 1; dir &= 1;
+
 #ifdef DEBUG
 	if (x_src < 0 || x_dst < 0 || x_src + width > m_current_mode->x ||
 	    x_dst + width > m_current_mode->x || y_src < 0 || y_dst < 0 ||
@@ -902,15 +905,16 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 	// If the last move was a reverse one, we have to wait until it's
 	// finished before we can set the new addresses.
 	if (last_dir)
-		while (!blockFinished()) {
-		}
+		while (!blockFinished()) {}
+
 	SpiRamWriteBMCtrl(BLOCKMVC1, byteaddress2 >> 1, byteaddress1 >> 1,
 			  ((byteaddress1 & 1) << 1) | ((byteaddress2 & 1) << 2)
 			  | dir | lowpass());
-	if (!last_dir)
-		while (!blockFinished()) {
-		}
-	SpiRamWriteBM2Ctrl(m_pitch - width, width, height - 1);
+
+    if (!last_dir)
+		while (!blockFinished()) {}
+
+	SpiRamWriteBM2Ctrl((m_pitch - width) * vertical, width, height - 1);
 	startBlockMove();
 	last_dir = dir;
 }
