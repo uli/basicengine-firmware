@@ -35,8 +35,7 @@ UnifileString Unifile::m_cwd;
 const char FLASH_PREFIX[] = "/flash";
 #endif
 
-bool SD_BEGIN(int mhz)
-{
+bool SD_BEGIN(int mhz) {
   if (mhz != m_mhz) {
     m_mhz = mhz;
     sdfat_initialized = false;
@@ -57,8 +56,7 @@ bool SD_BEGIN(int mhz)
   return sdfat_initialized;
 }
 
-void SD_END(void)
-{
+void SD_END(void) {
   // Cannot use SPI.setFrequency() here because it's too slow.
   vs23.setSpiClockWrite();
   SpiUnlock();
@@ -75,21 +73,22 @@ void SD_END(void)
 //	not match: other than 0
 //
 uint8_t wildcard_match(const char *wildcard, const char *target) {
-    const char *pw = wildcard, *pt = target;
-    while(1){
-        if(*pt == 0) return *pw == 0;
-        else if(*pw == 0) return 0;
-        else if(*pw == '*'){
-            return *(pw+1) == 0 || wildcard_match(pw, pt + 1)
-                                || wildcard_match(pw + 1, pt);
-        }
-        else if(*pw == '?' || (*pw == *pt)){
-            pw++;
-            pt++;
-            continue;
-        }
-        else return 0;
-    }
+  const char *pw = wildcard, *pt = target;
+  while (1) {
+    if (*pt == 0)
+      return *pw == 0;
+    else if (*pw == 0)
+      return 0;
+    else if (*pw == '*') {
+      return *(pw + 1) == 0 || wildcard_match(pw, pt + 1) ||
+             wildcard_match(pw + 1, pt);
+    } else if (*pw == '?' || (*pw == *pt)) {
+      pw++;
+      pt++;
+      continue;
+    } else
+      return 0;
+  }
 }
 
 #include <Time.h>
@@ -100,13 +99,12 @@ using namespace sdfat;
 
 // File timestamp callback function
 #ifdef UNIFILE_USE_SDFAT
-void dateTime(uint16_t* date, uint16_t* time) {
-   time_t tt = now();
+void dateTime(uint16_t *date, uint16_t *time) {
+  time_t tt = now();
   *date = FAT_DATE(year(tt), month(tt), day(tt));
   *time = FAT_TIME(hour(tt), minute(tt), second(tt));
-} 
+}
 #endif
-
 
 void sdfiles::fakeTime() {
 #ifdef UNIFILE_USE_SDFAT
@@ -146,8 +144,8 @@ void sdfiles::fakeTime() {
         }
       }
     }
-    setTime(FAT_HOUR(time), FAT_MINUTE(time), FAT_SECOND(time),
-            FAT_DAY(date), FAT_MONTH(date), FAT_YEAR(date));
+    setTime(FAT_HOUR(time), FAT_MINUTE(time), FAT_SECOND(time), FAT_DAY(date),
+            FAT_MONTH(date), FAT_YEAR(date));
   }
   SD_END();
 #endif
@@ -160,11 +158,11 @@ void sdfiles::fakeTime() {
 // [Return value]
 //	0
 //
-uint8_t  sdfiles::init(uint8_t _cs) {
+uint8_t sdfiles::init(uint8_t _cs) {
   cs = _cs;
   flgtmpOlen = false;
 #ifdef UNIFILE_USE_SDFAT
-  sdfat::SdFile::dateTimeCallback( &dateTime );
+  sdfat::SdFile::dateTimeCallback(&dateTime);
 #endif
   return 0;
 }
@@ -182,33 +180,33 @@ uint8_t  sdfiles::init(uint8_t _cs) {
 //  End of file reached : 0
 //  possible to continue: 1
 //
-int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
+int8_t sdfiles::textOut(char *fname, int16_t sline, int16_t ln) {
   char str[SD_TEXT_LEN];
   uint16_t cnt = 0;
   uint8_t rc = 0;
 
-  rc = tmpOpen(fname,0);
+  rc = tmpOpen(fname, 0);
   if (rc) {
     return -rc;
   }
-  
+
   while (1) {
     rc = readLine(str);
-    if (!rc) 
-     break;
+    if (!rc)
+      break;
     if (cnt >= sline) {
       c_puts(str);
       newline();
     }
     cnt++;
-    if (cnt >=sline+ln) {
+    if (cnt >= sline + ln) {
       rc = 1;
       break;
     }
   }
   tmpClose();
 
-  return rc; 
+  return rc;
 }
 
 //
@@ -221,7 +219,7 @@ int8_t sdfiles::textOut(char* fname, int16_t sline, int16_t ln) {
 //	SD card use failure: SD_ERR_INIT
 //	SD_ERR_OPEN_FILE: File open error
 //
-uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
+uint8_t sdfiles::flist(char *_dir, char *wildcard, uint8_t clmnum) {
   uint16_t cnt = 0;
   uint16_t len;
   uint8_t rc = 0;
@@ -246,12 +244,13 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 
       fname = next->d_name;
       len = fname.length();
-      if (!wildcard || (wildcard && wildcard_match(wildcard,fname.c_str()))) {
+      if (!wildcard || (wildcard && wildcard_match(wildcard, fname.c_str()))) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
         struct stat st;
         _stat((BString(_dir) + BString(F("/")) + fname).c_str(), &st);
-        putnum(st.st_size, 10); c_putch(' ');
+        putnum(st.st_size, 10);
+        c_putch(' ');
         total_size += st.st_size;
         if (next->d_type == DT_DIR) {
           c_puts(fname.c_str());
@@ -272,8 +271,10 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
   }
 
   newline();
-  putnum(cnt, 0); PRINT_P(" files, ");
-  putnum(total_size, 0); PRINT_P(" bytes.\n");
+  putnum(cnt, 0);
+  PRINT_P(" files, ");
+  putnum(total_size, 0);
+  PRINT_P(" bytes.\n");
 
   return rc;
 }
@@ -288,11 +289,11 @@ uint8_t sdfiles::flist(char* _dir, char* wildcard, uint8_t clmnum) {
 //  SD card use failure: SD_ERR_INIT
 //  Failed to open file: SD_ERR_OPEN_FILE
 //
-uint8_t sdfiles::tmpOpen(char* tfname, uint8_t mode) { 
-  if(mode) {
+uint8_t sdfiles::tmpOpen(char *tfname, uint8_t mode) {
+  if (mode) {
     tfile = fopen(tfname, "w");
   } else {
-    tfile = fopen(tfname, "r");   
+    tfile = fopen(tfname, "r");
   }
 
   if (tfile)
@@ -310,30 +311,30 @@ uint8_t sdfiles::tmpClose() {
   return 0;
 }
 
-uint8_t sdfiles::puts(char*s) {
+uint8_t sdfiles::puts(char *s) {
   int16_t n = 0;
 
-  if( tfile && s ) {
+  if (tfile && s) {
     n = fputs(s, tfile);
   }
 
-  return !n;    
+  return !n;
 }
 
 // 1 byte output
 uint8_t sdfiles::putch(char c) {
   int16_t n = 0;
 
-  if(tfile) {
+  if (tfile) {
     n = putc(c, tfile);
   }
 
-  return !n;   
+  return !n;
 }
 
 // 1 byte read
 int16_t sdfiles::read() {
-  if(!tfile) 
+  if (!tfile)
     return -1;
   return getc(tfile);
 }
@@ -346,13 +347,14 @@ int16_t sdfiles::read() {
 //	0: no data
 //	Other than 0: Number of bytes read
 //
-int16_t sdfiles::readLine(char* str) {
+int16_t sdfiles::readLine(char *str) {
   int len = 0;
   int16_t rc = 0;
-  
-  while(!feof(tfile)) {
+
+  while (!feof(tfile)) {
     rc = getc(tfile);
-    if (rc <= 0) break;
+    if (rc <= 0)
+      break;
     *str = rc;
     if (*str == 0x0d)
       continue;
@@ -379,15 +381,15 @@ int16_t sdfiles::readLine(char* str) {
 //	file read failure:-SD_ERR_READ_FILE
 //	not a file:-SD_ERR_NOT_FILE
 //
-int8_t sdfiles::IsText(char* fname) {
+int8_t sdfiles::IsText(char *fname) {
   FILE *myFile;
-  char head[2];   // ヘッダー
+  char head[2];  // ヘッダー
   int8_t rc = -1;
- 
+
   // ファイルのオープン
   myFile = fopen(fname, "r");
   if (myFile) {
-    if (fread(head, 1, 2, myFile) != 2)  {
+    if (fread(head, 1, 2, myFile) != 2) {
       rc = -SD_ERR_READ_FILE;
     } else {
       if (head[0] == 0 && head[1] == 0) {
@@ -398,7 +400,7 @@ int8_t sdfiles::IsText(char* fname) {
     }
     fclose(myFile);
   } else {
-    rc = -SD_ERR_OPEN_FILE;    
+    rc = -SD_ERR_OPEN_FILE;
   }
 
   return rc;
@@ -426,8 +428,7 @@ FILE *pcx_file = NULL;
 #define DR_PCX_IMPLEMENTATION
 #include "../../ttbasic/dr_pcx.h"
 
-static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
-{
+static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
   if (!pcx_file)
     return -1;
   if (buf == (void *)-1)
@@ -437,8 +438,10 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead)
   return fread((char *)buf, 1, bytesToRead, pcx_file);
 }
 
-uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask) {
-  uint8_t rc =1;
+uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
+                            int32_t x, int32_t y, int32_t &w, int32_t &h,
+                            int mask) {
+  uint8_t rc = 1;
 
   pcx_file = fopen(fname, "r");
   if (!pcx_file) {
@@ -465,7 +468,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
       rc = ERR_RANGE;
       goto out;
     }
-    if (!vs23.allocBacking(w, h, (int&)dst_x, (int&)dst_y)) {
+    if (!vs23.allocBacking(w, h, (int &)dst_x, (int &)dst_y)) {
       rc = ERR_SCREEN_FULL;
       goto out;
     }
@@ -480,7 +483,7 @@ uint8_t sdfiles::loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t
                  dst_x, dst_y, x, y, w, h, mask))
     rc = 0;
   else
-    rc = SD_ERR_READ_FILE;	// XXX: or OOM...
+    rc = SD_ERR_READ_FILE;  // XXX: or OOM...
 
 out:
   fclose(pcx_file);
@@ -488,8 +491,8 @@ out:
   return rc;
 }
 
-uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w,int32_t h)
-{
+uint8_t sdfiles::saveBitmap(char *fname, int32_t src_x, int32_t src_y,
+                            int32_t w, int32_t h) {
   uint8_t rc = 0;
   drpcx_header hdr;
 
@@ -504,7 +507,7 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
   hdr.bitPlanes = 1;
   hdr.bytesPerLine = w;
   hdr.paletteType = 1;
-  
+
   pcx_file = fopen(fname, "w");
   if (!pcx_file) {
     return ERR_FILE_OPEN;
@@ -539,14 +542,14 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
       putc(rle_last, pcx_file);
     }
   }
-  
-  putc(0x0c, pcx_file);	// palette marker
+
+  putc(0x0c, pcx_file);  // palette marker
 
   uint8_t *pal = csp.paletteData(csp.getColorSpace());
   // PROGMEM, not safe to pass it directly to FS functions
-  for (int i = 0; i < 256*3; ++i)
+  for (int i = 0; i < 256 * 3; ++i)
     putc((char)pgm_read_byte(&pal[i]), pcx_file);
-  
+
   fclose(pcx_file);
   pcx_file = NULL;
 
@@ -562,9 +565,9 @@ uint8_t sdfiles::saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w
 // 	SD card use failure: SD_ERR_INIT
 // 	file open error: SD_ERR_OPEN_FILE
 //
-uint8_t sdfiles::mkdir(const char* fname) {
+uint8_t sdfiles::mkdir(const char *fname) {
   uint8_t rc = 1;
- 
+
 #ifdef USE_UNIFILE
   UnifileString abs_name = Unifile::path(fname);
 
@@ -576,19 +579,20 @@ uint8_t sdfiles::mkdir(const char* fname) {
     return SD_ERR_INIT;
   }
 
-  fname = abs_name.c_str() + (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
+  fname = abs_name.c_str() +
+          (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
 
 #ifdef UNIFILE_USE_SDFAT
   if (sdf.exists(fname)) {
 #else
   if (SD.exists(fname)) {
 #endif
-    rc = SD_ERR_OPEN_FILE;    
+    rc = SD_ERR_OPEN_FILE;
   } else {
 #ifdef UNIFILE_USE_SDFAT
-    if(sdf.mkdir(fname) == true) {
+    if (sdf.mkdir(fname) == true) {
 #else
-    if(SD.mkdir(fname) == true) {
+    if (SD.mkdir(fname) == true) {
 #endif
       rc = 0;
     } else {
@@ -596,7 +600,7 @@ uint8_t sdfiles::mkdir(const char* fname) {
     }
   }
   SD_END();
-#else	// USE_UNIFILE
+#else  // USE_UNIFILE
   rc = !mkdir(fname);
 #endif
   return rc;
@@ -610,9 +614,9 @@ uint8_t sdfiles::mkdir(const char* fname) {
 // 	SD card use failure: SD_ERR_INIT
 // 	file open error: SD_ERR_OPEN_FILE
 //
-uint8_t sdfiles::rmdir(const char* fname) {
+uint8_t sdfiles::rmdir(const char *fname) {
   uint8_t rc = 1;
- 
+
 #ifdef USE_UNIFILE
   UnifileString abs_name = Unifile::path(fname);
 
@@ -620,19 +624,20 @@ uint8_t sdfiles::rmdir(const char* fname) {
   if (Unifile::isSPIFFS(abs_name))
     return 0;
 
-  if (SD_BEGIN() == false) 
+  if (SD_BEGIN() == false)
     return SD_ERR_INIT;
 
-  fname = abs_name.c_str() + (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
+  fname = abs_name.c_str() +
+          (abs_name.startsWith(SD_PREFIX) ? SD_PREFIX_LEN : 0);
 
 #ifdef UNIFILE_USE_SDFAT
-  if(sdf.rmdir(fname) == true) {
+  if (sdf.rmdir(fname) == true) {
 #else
-  if(SD.rmdir(fname) == true) {
+  if (SD.rmdir(fname) == true) {
 #endif
     rc = 0;
   } else {
-    rc =  SD_ERR_OPEN_FILE;
+    rc = SD_ERR_OPEN_FILE;
   }
   SD_END();
 #else
@@ -643,8 +648,7 @@ uint8_t sdfiles::rmdir(const char* fname) {
 
 #define COPY_BUFFER_SIZE 512
 
-uint8_t sdfiles::fcopy(const char *srcp, const char *dstp)
-{
+uint8_t sdfiles::fcopy(const char *srcp, const char *dstp) {
   FILE *src = fopen(srcp, "r");
   if (!src)
     return SD_ERR_OPEN_FILE;
@@ -674,8 +678,7 @@ out:
   return rc;
 }
 
-int8_t sdfiles::compare(const char *one, const char *two)
-{
+int8_t sdfiles::compare(const char *one, const char *two) {
   int8_t ret = 0;
   FILE *fone = fopen(one, "r");
   FILE *ftwo = fopen(two, "r");
