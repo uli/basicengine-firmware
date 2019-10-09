@@ -157,8 +157,7 @@ static const uint8_t tenkey[][3] BASIC_DAT = {
   { '/',  '/', 0 },
 };
 
-void TKeyboard::setLayout(uint8_t layout)
-{
+void TKeyboard::setLayout(uint8_t layout) {
   kbd_layout = layout;
   switch (layout) {
   case 0:	key_ascii = key_ascii_jp; break;
@@ -175,8 +174,8 @@ void TKeyboard::setLayout(uint8_t layout)
 //   flgLED:	false: Do not control the LED, true: do LED control
 // Return value
 //   0: Normal termination      Other than 0: Abnormal termination
-uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout)
-{
+uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
+                         uint8_t layout) {
   uint8_t rc;
   setLayout(layout);
   memset(m_key_state, 0, sizeof(m_key_state));
@@ -188,22 +187,20 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layou
 }
 
 // End of use
-void TKeyboard::end()
-{
+void TKeyboard::end() {
   pb.end();
 }
 
 // Keyboard initialization
 // Return value:	0: Normal completion	not 0: Abnormal termination
-uint8_t TKeyboard::init()
-{
-  uint8_t c,err;
+uint8_t TKeyboard::init() {
+  uint8_t c, err;
 
   pb.disableInterrupts();
   pb.clear_queue();
 
   // Reset command: FF	response is FA, AA
-  if ( (err = pb.hostSend(0xff)) )
+  if ((err = pb.hostSend(0xff)))
     goto ERROR;
 
   err = pb.response(&c);
@@ -216,7 +213,7 @@ uint8_t TKeyboard::init()
 
   // Identification information check: F2
   // Response is FA, AB, 83 if keyboard identification OK
-  if ( (err = pb.hostSend(0xf2)) )
+  if ((err = pb.hostSend(0xf2)))
     goto ERROR;
 
   err = pb.response(&c);
@@ -243,52 +240,45 @@ ERROR:
 }
 
 // Enable CLK change interrupt
-void TKeyboard::enableInterrupts()
-{
+void TKeyboard::enableInterrupts() {
   pb.enableInterrupts();
 }
 
 // Disable CLK change interrupt
-void TKeyboard::disableInterrupts()
-{
+void TKeyboard::disableInterrupts() {
   pb.disableInterrupts();
 }
 
 // Interrupt priority setting
-void TKeyboard::setPriority(uint8_t n)
-{
+void TKeyboard::setPriority(uint8_t n) {
   pb.setPriority(n);
 }
 
 // Set PS/2 line to idle state
-void TKeyboard::mode_idole()
-{
+void TKeyboard::mode_idole() {
   pb.mode_idole(TPS2::D_IN);
 }
 
 // Prohibit communication on PS/2 line
-void TKeyboard::mode_stop()
-{
+void TKeyboard::mode_stop() {
   pb.mode_stop();
 }
 
 // Set PS/2 line to host transmission mode
-void TKeyboard::mode_send()
-{
+void TKeyboard::mode_send() {
   pb.mode_send();
 }
 
 // Scan code search
-uint8_t TKeyboard::findcode(uint8_t c)
-{
-  int t_p = 0; // Search range upper limit
+uint8_t TKeyboard::findcode(uint8_t c) {
+  int t_p = 0;  // Search range upper limit
   int e_p = sizeof(keycode2)/sizeof(keycode2[0])-1; // Search range lower limit
   int pos;
   uint16_t d = 0;
   int flg_stop = 0;
 
-  while(true) {
-    pos = t_p + ((e_p - t_p+1)>>1);
+  while (true) {
+    pos = t_p + ((e_p - t_p + 1) >> 1);
     d = pgm_read_byte(&keycode2[pos][0]);
     if (d == c) {
       flg_stop = 1;
@@ -296,12 +286,12 @@ uint8_t TKeyboard::findcode(uint8_t c)
     } else if (c > d) {
       t_p = pos + 1;
       if (t_p > e_p) {
-	break;
+        break;
       }
     } else {
-      e_p = pos -1;
+      e_p = pos - 1;
       if (e_p < t_p)
-	break;
+        break;
     }
   }
   if (!flg_stop)
@@ -321,35 +311,35 @@ uint8_t TKeyboard::findcode(uint8_t c)
 //     255
 //
 // XXX: 136 byte jump table
-uint16_t __attribute__((optimize ("no-jump-tables"))) TKeyboard::scanToKeycode()
-{
+uint16_t __attribute__((optimize("no-jump-tables")))
+TKeyboard::scanToKeycode() {
   static uint8_t state = STS_SYOKI;
   static uint8_t scIndex = 0;
   uint16_t c, code = 0;
 
-  while(pb.available()) {
-    c = pb.dequeue();     // Retrieve 1 byte from queue
-    switch(state) {
-    case STS_SYOKI: // [0]->
+  while (pb.available()) {
+    c = pb.dequeue();  // Retrieve 1 byte from queue
+    switch (state) {
+    case STS_SYOKI:  // [0]->
       if (c <= 0x83) {
-	// [0]->[1] 1 byte (END)
-	code = pgm_read_byte(keycode1+c);
-	goto DONE;
+        // [0]->[1] 1 byte (END)
+        code = pgm_read_byte(keycode1 + c);
+        goto DONE;
       } else {
-	switch(c) {
-	case 0xF0:  state = STS_1KEY_BREAK; continue; // ->[2]
-	case 0xE0:  state = STS_MKEY_1; continue;     // ->[3]
-	case 0xE1:  state = STS_MKEY_PS; scIndex = 0; continue;  // ->[4]
-	default:    goto STS_ERROR;  // -> ERROR
-	}
+        switch (c) {
+        case 0xF0: state = STS_1KEY_BREAK; continue;            // ->[2]
+        case 0xE0: state = STS_MKEY_1; continue;                // ->[3]
+        case 0xE1: state = STS_MKEY_PS; scIndex = 0; continue;  // ->[4]
+        default:   goto STS_ERROR;                              // -> ERROR
+        }
       }
       break;
 
     case STS_1KEY_BREAK: // [2]->
       if (c <= 0x83) {
-	// [2]->[2-1] BREAK + 1 byte (END)
-	code = pgm_read_byte(keycode1+c) | BREAK_CODE;
-	goto DONE;
+        // [2]->[2-1] BREAK + 1 byte (END)
+        code = pgm_read_byte(keycode1 + c) | BREAK_CODE;
+        goto DONE;
       } else {
 	goto STS_ERROR; // -> ERROR
       }
@@ -398,24 +388,24 @@ uint16_t __attribute__((optimize ("no-jump-tables"))) TKeyboard::scanToKeycode()
 	goto STS_ERROR; // -> ERROR
       }
       if (c == pgm_read_byte(&prnScrncode2[scIndex])) {
-	if (scIndex == sizeof(prnScrncode2)-1) {
-	  // ->[3-2-2-1-1-1](END)
-	  code = PS2KEY_PrintScreen | BREAK_CODE; // BREAK+PrintScreen
-	  goto DONE;
-	} else {
-	  continue;
-	}
+        if (scIndex == sizeof(prnScrncode2) - 1) {
+          // ->[3-2-2-1-1-1](END)
+          code = PS2KEY_PrintScreen | BREAK_CODE;  // BREAK+PrintScreen
+          goto DONE;
+        } else {
+          continue;
+        }
       }
       break;
 
     case STS_MKEY_SC2:  // [3-3]->
-      if ( c == 0xF0 ) {
+      if (c == 0xF0) {
         // workaround, see STS_MKEY_1 case 0x12
         state = STS_1KEY_BREAK;
         continue;
-      } else if ( c == 0xe0 ) {
-	state  = STS_MKEY_SC3;
-	continue;
+      } else if (c == 0xe0) {
+        state = STS_MKEY_SC3;
+        continue;
       }
       break;
 
@@ -443,13 +433,13 @@ uint16_t __attribute__((optimize ("no-jump-tables"))) TKeyboard::scanToKeycode()
 	goto STS_ERROR; // -> ERROR
       }
       if (c == pgm_read_byte(&pausescode[scIndex])) {
-	if (scIndex == sizeof(pausescode)-1) {
-	  // ->[4-1-1-1-1-1-1-1](END)
-	  code = PS2KEY_Pause; // Pause key
-	  goto DONE;
-	} else {
-	  continue;
-	}
+        if (scIndex == sizeof(pausescode) - 1) {
+          // ->[4-1-1-1-1-1-1-1](END)
+          code = PS2KEY_Pause;  // Pause key
+          goto DONE;
+        } else {
+          continue;
+        }
       } else {
 	goto STS_ERROR; // -> ERROR
       }
@@ -469,7 +459,7 @@ DONE:
   return code;
 }
 
-uint8_t TKeyboard::m_key_state[256/8];
+uint8_t TKeyboard::m_key_state[256 / 8];
 
 //
 // Acquire input key information (consider CapsLock, NumLock, ScrollLock)
@@ -492,9 +482,8 @@ uint8_t TKeyboard::m_key_state[256/8];
 //
 // Returned value: input information
 //
-keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
-{
-  static keyinfo sts_state = {.value = 0};
+keyEvent __attribute__((optimize("no-jump-tables"))) TKeyboard::read() {
+  static keyinfo sts_state = { .value = 0 };
   static uint8_t sts_numlock   = LOCK_Start; // NumLock state
   static uint8_t sts_CapsLock  = LOCK_Start; // CapsLock state
   static uint8_t sts_ScrolLock = LOCK_Start; // ScrollLock state
@@ -516,9 +505,9 @@ keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
     goto DONE;  // No key input or error
 
   if (bk)
-    m_key_state[code/8] &= ~(1 << code % 8);
+    m_key_state[code / 8] &= ~(1 << code % 8);
   else
-    m_key_state[code/8] |= 1 << code % 8;
+    m_key_state[code / 8] |= 1 << code % 8;
 
   // Normal key
   if (kbd_layout == 2 && sts_state.kevt.ALTGR && code != PS2KEY_R_Alt) {
@@ -556,21 +545,22 @@ keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
     if (code >= PS2KEY_A && code <= PS2KEY_Z)
       c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][((sts_CapsLock&1)&&sts_state.kevt.SHIFT)||(!(sts_CapsLock&1)&&!sts_state.kevt.SHIFT) ? 0 : 1]);
     else
-      c.value = pgm_read_byte(&key_ascii[code-PS2KEY_Space][sts_state.kevt.SHIFT ? 1 : 0]);
+      c.value = pgm_read_byte(
+              &key_ascii[code - PS2KEY_Space][sts_state.kevt.SHIFT ? 1 : 0]);
     goto DONE;
   } else if (code >= PS2KEY_PAD_Equal && code <= PS2KEY_PAD_Slash) {
     // Numeric keypad
-    if ( (sts_numlock & 1) &&  !sts_state.kevt.SHIFT ) {
+    if ((sts_numlock & 1) && !sts_state.kevt.SHIFT) {
       // NumLock is enabled and Shift is not held
-      c.value = pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][0]);
+      c.value = pgm_read_byte(&tenkey[code - PS2KEY_PAD_Equal][0]);
       //Serial.println("[DEBUG:NumLock]");
     } else {
-      c.value = pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][1]);
-      if (pgm_read_byte(&tenkey[code-PS2KEY_PAD_Equal][2]))
-	c.value |= PS2KEY_CODE;
+      c.value = pgm_read_byte(&tenkey[code - PS2KEY_PAD_Equal][1]);
+      if (pgm_read_byte(&tenkey[code - PS2KEY_PAD_Equal][2]))
+        c.value |= PS2KEY_CODE;
     }
     goto DONE;
-  } else if (code >=PS2KEY_L_Alt && code <= PS2KEY_CapsLock) {
+  } else if (code >= PS2KEY_L_Alt && code <= PS2KEY_CapsLock) {
     // Input control key
 
     // Save the state of Lock keys before operation
@@ -578,15 +568,15 @@ keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
     uint8_t prv_CapsLock = sts_CapsLock & 1;
     uint8_t prv_ScrolLock = sts_ScrolLock & 1;
 
-    switch(code) {
+    switch (code) {
     case PS2KEY_L_Shift:
     case PS2KEY_R_Shift:  sts_state.kevt.SHIFT = bk ? 0 : 1; break;
     case PS2KEY_L_Ctrl:
-    case PS2KEY_R_Ctrl:   sts_state.kevt.CTRL = bk ? 0 : 1;  break;
-    case PS2KEY_L_Alt:	  sts_state.kevt.ALT = bk ? 0 : 1; break;
+    case PS2KEY_R_Ctrl:   sts_state.kevt.CTRL  = bk ? 0 : 1; break;
+    case PS2KEY_L_Alt:    sts_state.kevt.ALT   = bk ? 0 : 1; break;
     case PS2KEY_R_Alt:    sts_state.kevt.ALTGR = bk ? 0 : 1; break;
     case PS2KEY_L_GUI:    // Windows keys
-    case PS2KEY_R_GUI:    sts_state.kevt.GUI = bk ? 0 : 1;  break;
+    case PS2KEY_R_GUI:    sts_state.kevt.GUI   = bk ? 0 : 1; break;
 
     case PS2KEY_CapsLock: // Toggle action
       switch (sts_CapsLock) {
@@ -704,7 +694,7 @@ keyEvent __attribute__((optimize ("no-jump-tables"))) TKeyboard::read()
     goto DONE;
   } else {
     // Other characters (key codes are assumed to be character codes)
-    c.value = code|PS2KEY_CODE;
+    c.value = code | PS2KEY_CODE;
     goto DONE;
   }
 
@@ -712,7 +702,7 @@ ERROR:
   c.value = PS2KEY_ERROR;
 
 DONE:
-  c.value |= sts_state.value|bk;
+  c.value |= sts_state.value | bk;
   return c.kevt;
 }
 
@@ -724,20 +714,18 @@ DONE:
 // Return value
 //   0: normal	1: abnormal
 //
-uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol)
-{
-
-  if(!_flgLED)
+uint8_t TKeyboard::ctrl_LED(uint8_t swCaps, uint8_t swNum, uint8_t swScrol) {
+  if (!_flgLED)
     return 0;
 
   uint8_t c = 0, err, tmp;
   //pb.disableInterrupts();
 
-  if(swCaps)
+  if (swCaps)
     c |= 0x04;  // CapsLock LED
-  if(swNum)
+  if (swNum)
     c |= 0x02;  // NumLock LED
-  if(swScrol)
+  if (swScrol)
     c |= 0x01;  // ScrollLock LED
 
   if ((err = pb.send(0xed)))
