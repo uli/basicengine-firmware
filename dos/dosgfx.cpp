@@ -17,32 +17,30 @@ DOSGFX vs23;
 VBESURFACE *vbesurface_ptr;
 
 const struct video_mode_t DOSGFX::modes_pal[DOS_SCREEN_MODES] = {
-	{460, 224, 16, 16, 1},
-	{436, 216, 16, 16, 1},
-	{320, 216, 16, 16, 2},	// VS23 NTSC demo
-	{320, 200, 0, 0, 2},	// (M)CGA, Commodore et al.
-	{256, 224, 16, 16, 25},	// SNES
-	{256, 192, (200-192)/2, (320-256)/2, 25},	// MSX, Spectrum, NDS
-	{160, 200, 16, 16, 4},	// Commodore/PCjr/CPC
-						// multi-color
-	// "Overscan modes"
-	{352, 240, 16, 16, 2},	// PCE overscan (barely)
-	{282, 240, 16, 16, 2},	// PCE overscan (underscan on PAL)
-	{508, 240, 16, 16, 1},
-	// ESP32GFX modes
-	{320, 256, 16, 16, 2},	// maximum PAL at 2 clocks per pixel
-	{320, 240, 0, 0, 2},	// DawnOfAV demo, Mode X
-	{640, 256, (480-256)/2, 0, 1},
-	// default H3 mode
-	{480, 270, 16, 16, 1},
-	// default DOS mode
-	{640, 480, 0, 0, 0},
+  { 460, 224, 16, 16, 1 },
+  { 436, 216, 16, 16, 1 },
+  { 320, 216, 16, 16, 2 },   // VS23 NTSC demo
+  { 320, 200, 0, 0, 2 },     // (M)CGA, Commodore et al.
+  { 256, 224, 16, 16, 25 },  // SNES
+  { 256, 192, (200 - 192) / 2, (320 - 256) / 2, 25 },  // MSX, Spectrum, NDS
+  { 160, 200, 16, 16, 4 },   // Commodore/PCjr/CPC multi-color
+  // "Overscan modes"
+  { 352, 240, 16, 16, 2 },  // PCE overscan (barely)
+  { 282, 240, 16, 16, 2 },  // PCE overscan (underscan on PAL)
+  { 508, 240, 16, 16, 1 },
+  // ESP32GFX modes
+  { 320, 256, 16, 16, 2 },  // maximum PAL at 2 clocks per pixel
+  { 320, 240, 0, 0, 2 },    // DawnOfAV demo, Mode X
+  { 640, 256, (480 - 256) / 2, 0, 1 },
+  // default H3 mode
+  { 480, 270, 16, 16, 1 },
+  // default DOS mode
+  { 640, 480, 0, 0, 0 },
 };
 
 #include <config.h>
 
-void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
-{
+void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
@@ -64,16 +62,16 @@ void DOSGFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_display_enabled = true;
 }
 
-void DOSGFX::reset()
-{
+void DOSGFX::reset() {
   BGEngine::reset();
 //  clear_to_color(screen, 0);
   setColorSpace(0);
 }
 
-void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
-{
-  uint8_t *m_pixels = (uint8_t*)vbesurface_ptr->offscreen_ptr;
+void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                       uint16_t y_dst, uint16_t width, uint16_t height,
+                       uint8_t dir) {
+  uint8_t *m_pixels = (uint8_t *)vbesurface_ptr->offscreen_ptr;
   int sw = m_current_mode.x;
   int sh = m_current_mode.y;
   if (dir) {
@@ -99,8 +97,7 @@ void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t 
   }
 }
 
-bool DOSGFX::setMode(uint8_t mode)
-{
+bool DOSGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
@@ -109,13 +106,18 @@ bool DOSGFX::setMode(uint8_t mode)
                      modes_pal[mode].y + modes_pal[mode].y / MIN_FONT_SIZE_Y);
 
   m_last_line++;
-  printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2, modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line);
+  printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2,
+         modes_pal[mode].y + modes_pal[mode].top * 2,
+         modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line);
   delay(1000);
-  vbesurface_ptr = VBEinfoInit(modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2, 8, 2000);
+  vbesurface_ptr =
+          VBEinfoInit(modes_pal[mode].x + modes_pal[mode].left * 2,
+                      modes_pal[mode].y + modes_pal[mode].top * 2, 8, 2000);
   if (!vbesurface_ptr) {
     printf("bad!!\n");
     delay(2000);
-    vbesurface_ptr = VBEinit(m_current_mode.x + m_current_mode.left * 2, m_current_mode.y + m_current_mode.top * 2, 8);
+    vbesurface_ptr = VBEinit(m_current_mode.x + m_current_mode.left * 2,
+                             m_current_mode.y + m_current_mode.top * 2, 8);
     setColorSpace(0);
     return false;
   }
@@ -127,12 +129,11 @@ bool DOSGFX::setMode(uint8_t mode)
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   m_display_enabled = true;
-  
+
   return true;
 }
 
-void DOSGFX::setColorSpace(uint8_t palette)
-{
+void DOSGFX::setColorSpace(uint8_t palette) {
   Video::setColorSpace(palette);
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
@@ -143,8 +144,7 @@ void DOSGFX::setColorSpace(uint8_t palette)
 
 //#define PROFILE_BG
 
-void DOSGFX::updateBg()
-{
+void DOSGFX::updateBg() {
   static uint32_t last_frame = 0;
 
   if (frame() <= last_frame + m_frameskip)
@@ -196,7 +196,7 @@ next:
           tile_x++;
           goto next;
         } else {
-          putPixel(x+owx, y+owy, getPixel(t_x, t_y));
+          putPixel(x + owx, y + owy, getPixel(t_x, t_y));
         }
       }
     }
@@ -221,15 +221,19 @@ next:
     // consider flipped axes
     int dx, offx;
     if (s->p.flip_x) {
-      dx = -1; offx = s->p.w - 1;
+      dx = -1;
+      offx = s->p.w - 1;
     } else {
-      dx = 1; offx = 0;
+      dx = 1;
+      offx = 0;
     }
     int dy, offy;
     if (s->p.flip_y) {
-      dy = -1; offy = s->p.h - 1;
+      dy = -1;
+      offy = s->p.h - 1;
     } else {
-      dy = 1; offy = 0;
+      dy = 1;
+      offy = 0;
     }
 
     // sprite pattern start coordinates
@@ -244,7 +248,7 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        uint8_t p = getPixel(px+x*dx, py+y*dy);
+        uint8_t p = getPixel(px + x * dx, py + y * dy);
         // draw only non-keyed pixels
         if (p != s->p.key)
           putPixel(xx, yy, p);
@@ -254,13 +258,12 @@ next:
 }
 
 #ifdef USE_BG_ENGINE
-uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider)
-{
-  uint8_t dir = 0x40;	// indicates collision
+uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
 
   const sprite_t *us = &m_sprite[collidee];
   const sprite_t *them = &m_sprite[collider];
-  
+
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
   if (them->pos_x + them->p.w < us->pos_x)
@@ -269,7 +272,7 @@ uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider)
     return 0;
   if (them->pos_y + them->p.h < us->pos_y)
     return 0;
-  
+
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
   if (them->pos_x < us->pos_x) {
@@ -311,7 +314,7 @@ uint8_t DOSGFX::spriteCollision(uint8_t collidee, uint8_t collider)
         return dir;
     }
   }
-  
+
   // no overlapping pixels
   return 0;
 }
