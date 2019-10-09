@@ -193,11 +193,10 @@ int keybuf_r = 0;
 int keybuf_w = 0;
 
 static uint8_t key_state[256];
-void hook_usb_keyboard_report(hid_keyboard_report_t *rep)
-{
+void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
   uint8_t old_state[256];
   printf("kbdrep mod %02X keys ", rep->modifier);
-  for (int i=0; i < 6; ++i) {
+  for (int i = 0; i < 6; ++i) {
     printf("%02X ", rep->keycode[i]);
   }
   putchar('\n');
@@ -208,7 +207,8 @@ void hook_usb_keyboard_report(hid_keyboard_report_t *rep)
   for (int i = 0; i < 6; ++i) {
     uint8_t kc = rep->keycode[i];
     key_state[kc] = 1;
-    if (old_state[kc] != key_state[kc] && (keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
+    if (old_state[kc] != key_state[kc] &&
+        (keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
       keyEvent *kev = &keybuf[keybuf_w];
       memset(kev, 0, sizeof(*kev));
 
@@ -220,7 +220,7 @@ void hook_usb_keyboard_report(hid_keyboard_report_t *rep)
 
       if (!kev->code) {
         kev->KEY = 1;
-        for (size_t i = 0; i < sizeof(ps2_to_usb)/sizeof(*ps2_to_usb); ++i) {
+        for (size_t i = 0; i < sizeof(ps2_to_usb) / sizeof(*ps2_to_usb); ++i) {
           if (ps2_to_usb[i] == kc) {
             kev->code = i;
             break;
@@ -277,7 +277,8 @@ keyEvent TKeyboard::read() {
   }
 }
 
-uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED, uint8_t layout) {
+uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
+                         uint8_t layout) {
   return 0;
 }
 
