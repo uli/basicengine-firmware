@@ -29,7 +29,7 @@
 
 //#define DEBUG
 
-void    endPS2();
+void endPS2();
 
 void setupPS2(uint8_t kb_type);
 
@@ -42,12 +42,12 @@ void setupPS2(uint8_t kb_type);
 void tTVscreen::MOVE(uint8_t y, uint8_t x) {
   uint8_t c;
   if (enableCursor && flgCur) {
-    c = VPEEK(pos_x,pos_y);
+    c = VPEEK(pos_x, pos_y);
     pixel_t f = VPEEK_FG(pos_x, pos_y);
     pixel_t b = VPEEK_BG(pos_x, pos_y);
-    tv_write_color(pos_x, pos_y, c?c:32, f, b);  
+    tv_write_color(pos_x, pos_y, c ? c : 32, f, b);
     tv_drawCurs(x, y);
-  } 
+  }
   m_cursor_count = 0;
   m_cursor_state = false;
   pos_x = x;
@@ -56,7 +56,7 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
 
 // 文字の表示
 void tTVscreen::WRITE(uint8_t x, uint8_t y, uint8_t c) {
-   tv_write(x, y, c); // 画面表示
+  tv_write(x, y, c);  // 画面表示
 }
 
 // 画面全消去
@@ -86,7 +86,6 @@ void tTVscreen::INSLINE(uint8_t l) {
 
 //****************************************************************************
 
-
 // スクリーンの初期設定
 // 引数
 //  w  : スクリーン横文字数
@@ -95,7 +94,6 @@ void tTVscreen::INSLINE(uint8_t l) {
 // 戻り値
 //  なし
 void tTVscreen::init(uint16_t ln, int16_t NTSCajst, uint8_t vmode) {
-  
   // ビデオ出力設定
   tv_init(NTSCajst, vmode);
   tscreenBase::init(tv_get_gwidth() / MIN_FONT_SIZE_X,
@@ -131,13 +129,12 @@ void tTVscreen::newLine() {
 void tTVscreen::refresh_line(uint16_t l) {
   CLEAR_LINE(l);
   for (uint16_t j = 0; j < width; j++) {
-    if( IS_PRINT( VPEEK(j,l) )) { 
+    if (IS_PRINT(VPEEK(j, l))) {
       tv_write_color(j, l, VPEEK(j, l), VPEEK_FG(j, l), VPEEK_BG(j, l));
     }
   }
 }
 
-	
 // キー入力チェック&キーの取得
 bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 #ifdef DEBUG
@@ -152,7 +149,7 @@ void process_events(void);
 // 文字入力
 uint16_t tTVscreen::get_ch() {
   uint16_t c;
-  while(1) {
+  while (1) {
     process_events();
 #ifdef DEBUG
     if (Serial.available()) {
@@ -176,16 +173,15 @@ uint16_t tTVscreen::get_ch() {
 // カーソルの表示/非表示
 // flg: カーソル非表示 0、表示 1、強調表示 2
 void tTVscreen::drawCursor(uint8_t flg) {
-    flgCur = flg;
+  flgCur = flg;
 
-    if(!flgCur)
-      draw_cls_curs();
-    else if (enableCursor)
-      tv_drawCurs(pos_x, pos_y);  
+  if (!flgCur)
+    draw_cls_curs();
+  else if (enableCursor)
+    tv_drawCurs(pos_x, pos_y);
 }
 
-void ICACHE_RAM_ATTR tTVscreen::updateCursor()
-{
+void ICACHE_RAM_ATTR tTVscreen::updateCursor() {
   if (!m_cursor_count) {
     m_cursor_state = !m_cursor_state;
     if (enableCursor)
@@ -202,24 +198,21 @@ void tTVscreen::show_curs(uint8_t flg) {
 
 // カーソルの消去
 void tTVscreen::draw_cls_curs() {
-  uint8_t c = VPEEK(pos_x,pos_y);
+  uint8_t c = VPEEK(pos_x, pos_y);
   pixel_t f = VPEEK_FG(pos_x, pos_y);
   pixel_t b = VPEEK_BG(pos_x, pos_y);
-  tv_write_color(pos_x, pos_y, c?c:32, f, b);
+  tv_write_color(pos_x, pos_y, c ? c : 32, f, b);
 }
-	
+
 void tv_setcolor(pixel_t fc, pixel_t bc);
 
-void tTVscreen::setColor(pixel_t fc, pixel_t bc)
-{
+void tTVscreen::setColor(pixel_t fc, pixel_t bc) {
   tv_setcolor(fc, bc);
 }
 
-void tTVscreen::setColorIndexed(ipixel_t fc, ipixel_t bc)
-{
+void tTVscreen::setColorIndexed(ipixel_t fc, ipixel_t bc) {
   tv_setcolor(csp.fromIndexed(fc), csp.fromIndexed(bc));
 }
-
 
 // スクリーン編集
 uint8_t tTVscreen::edit() {
@@ -228,7 +221,7 @@ uint8_t tTVscreen::edit() {
 
   do {
     //MOVE(pos_y, pos_x);
-    ch = get_ch ();
+    ch = get_ch();
     k = ps2last();
     if (k.CTRL && ch >= SC_KEY_F(1) && ch <= SC_KEY_F(12)) {
       ipixel_t hue = (ipixel_t)(15 + ch - SC_KEY_F(1) + (k.ALT ? 12 : 0));
@@ -250,16 +243,16 @@ uint8_t tTVscreen::edit() {
 
       case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
         cls();
-        locate(0,0);
+        locate(0, 0);
         Serial_Ctrl(SC_KEY_CTRL_L);
         break;
  
       case SC_KEY_HOME:      // [HOMEキー] 行先頭移動
         locate(0, pos_y);
         break;
-        
-      case SC_KEY_NPAGE:     // [PageDown] 表示プログラム最終行に移動
-        if (pos_x == 0 && pos_y == height-1) {
+
+      case SC_KEY_NPAGE:  // [PageDown] 表示プログラム最終行に移動
+        if (pos_x == 0 && pos_y == height - 1) {
           edit_scrollUp();
         } else {
           moveBottom();
@@ -277,19 +270,19 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
         refresh();  break;
 
-      case SC_KEY_END:       // [ENDキー] 行の右端移動
-         moveLineEnd();
-         break;
+      case SC_KEY_END:  // [ENDキー] 行の右端移動
+        moveLineEnd();
+        break;
 
       case SC_KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
         break;        
 
       case SC_KEY_BACKSPACE:  // [BS]キー
-          movePosPrevChar();
-          delete_char();
-         Serial_Ctrl(SC_KEY_BACKSPACE);
-        break;        
+        movePosPrevChar();
+        delete_char();
+        Serial_Ctrl(SC_KEY_BACKSPACE);
+        break;
 
       case SC_KEY_DC:         // [Del]キー
       case SC_KEY_CTRL_X:
@@ -328,7 +321,7 @@ uint8_t tTVscreen::edit() {
 
       case SC_KEY_CTRL_C:
         break;
-      
+
       case SC_KEY_PRINT:
         saveScreenshot();
         break;
@@ -336,8 +329,8 @@ uint8_t tTVscreen::edit() {
       default:             // その他
         Insert_char(ch);
         break;
-    }
-  } while(1);
+      }
+  } while (1);
 }
 
 void SMALL tTVscreen::saveScreenshot() {
@@ -354,21 +347,21 @@ void SMALL tTVscreen::saveScreenshot() {
 // シリアルポートスクリーン制御出力
 void tTVscreen::Serial_Ctrl(int16_t ch) {
 #ifdef DEBUG
-  char* s=NULL;
-  switch(ch) {
-    case SC_KEY_BACKSPACE:
-     s = "\x08\x1b[P";
-     break;
-    case SC_KEY_CTRL_L:
-     s = "\x1b[2J\x1b[H";
-     break;
+  char *s = NULL;
+  switch (ch) {
+  case SC_KEY_BACKSPACE:
+    s = "\x08\x1b[P";
+    break;
+  case SC_KEY_CTRL_L:
+    s = "\x1b[2J\x1b[H";
+    break;
   }
-  if(s) {
+  if (s) {
     // Serial.print(s);     // USBシリアル出力
-    while(*s) {
+    while (*s) {
       Serial.write(*s);
       s++;
-    }  
+    }
   }
 #endif
 }
@@ -414,17 +407,16 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
       break;
   }
   uint8_t c;
-  for (uint8_t i = 0; i < h; i++) 
-    for (uint8_t j=0; j < w; j++) {
-      c = VPEEK(x+j,y+i);
-      pixel_t f = VPEEK_FG(x+j, y+i);
-      pixel_t b = VPEEK_BG(x+j, y+i);
-      tv_write_color(x+j,y+i, c?c:32, f, b);
+  for (uint8_t i = 0; i < h; i++)
+    for (uint8_t j = 0; j < w; j++) {
+      c = VPEEK(x + j, y + i);
+      pixel_t f = VPEEK_FG(x + j, y + i);
+      pixel_t b = VPEEK_BG(x + j, y + i);
+      tv_write_color(x + j, y + i, c ? c : 32, f, b);
     }
 }
 
-void tTVscreen::setFont(const uint8_t *font)
-{
+void tTVscreen::setFont(const uint8_t *font) {
   tv_setFont(font);
   whole_width = tv_get_cwidth();
   whole_height = tv_get_cheight();
@@ -435,7 +427,7 @@ void tTVscreen::setFont(const uint8_t *font)
   width = w;
   height = h;
   if (pos_x >= width)
-    pos_x = width-1;
+    pos_x = width - 1;
   if (pos_y >= height)
-    pos_y = height-1;
+    pos_y = height - 1;
 }
