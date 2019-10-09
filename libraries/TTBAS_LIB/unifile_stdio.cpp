@@ -7,8 +7,7 @@
 
 extern "C" {
 
-FILE *_fopen(const char *path, const char *mode)
-{
+FILE *_fopen(const char *path, const char *mode) {
   int flags;
   switch (mode[0]) {
   case 'a':	flags = UFILE_WRITE; break;
@@ -24,16 +23,14 @@ FILE *_fopen(const char *path, const char *mode)
   return NULL;
 }
 
-int _fclose(FILE *stream)
-{
+int _fclose(FILE *stream) {
   Unifile *f = (Unifile *)stream;
   f->close();
   delete f;
   return 0;
 }
 
-size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
-{
+size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
   Unifile *f = (Unifile *)stream;
   ssize_t ret = f->read((char *)ptr, size * nmemb);
   if (ret < 0)
@@ -41,8 +38,7 @@ size_t _fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
   return ret / size;
 }
 
-size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
-{
+size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
   Unifile *f = (Unifile *)stream;
   ssize_t ret = f->write((char *)ptr, size * nmemb);
   if (ret < 0)
@@ -50,8 +46,7 @@ size_t _fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
   return ret / size;
 }
 
-int _fputs(const char *s, FILE *stream)
-{
+int _fputs(const char *s, FILE *stream) {
   size_t len = strlen(s);
   if (fwrite(s, 1, len, stream) == len)
     return 0;
@@ -71,26 +66,22 @@ int _fseek(FILE *stream, int offset, int whence) {
   return !ret;
 }
 
-long _ftell(FILE *stream)
-{
+long _ftell(FILE *stream) {
   Unifile *f = (Unifile *)stream;
   return f->position();
 }
 
-int _feof(FILE *stream)
-{
+int _feof(FILE *stream) {
   Unifile *f = (Unifile *)stream;
   return !f->available();
 }
 
-int _getc(FILE *stream)
-{
+int _getc(FILE *stream) {
   Unifile *f = (Unifile *)stream;
   return f->read();
 }
 
-int _ungetc(int c, FILE *stream)
-{
+int _ungetc(int c, FILE *stream) {
   Unifile *f = (Unifile *)stream;
   // XXX: This is not really what ungetc() does, but it's how it is usually
   // used. YMMV.
@@ -98,8 +89,7 @@ int _ungetc(int c, FILE *stream)
   return c;
 }
 
-int _putc(int c, FILE *stream)
-{
+int _putc(int c, FILE *stream) {
   Unifile *f = (Unifile *)stream;
   if (f->write((char)c) < 0)
     return EOF;
@@ -107,26 +97,22 @@ int _putc(int c, FILE *stream)
     return c;
 }
 
-int _fflush(FILE *stream)
-{
+int _fflush(FILE *stream) {
   Unifile *f = (Unifile *)stream;
   f->sync();
   return 0;
 }
 
-int _ferror(FILE *stream)
-{
+int _ferror(FILE *stream) {
   // XXX: stream status unimplemented
   return 0;
 }
 
-void _clearerr(FILE *stream)
-{
+void _clearerr(FILE *stream) {
   // XXX: stream status unimplemented
 }
 
-DIR *_opendir(const char *name)
-{
+DIR *_opendir(const char *name) {
   Unifile *d = new Unifile;
   *d = Unifile::openDir(name);
   if (!*d) {
@@ -136,16 +122,14 @@ DIR *_opendir(const char *name)
   return (DIR *)d;
 }
 
-int _closedir(DIR *dir)
-{
+int _closedir(DIR *dir) {
   Unifile *d = (Unifile *)dir;
   d->close();
   delete d;
   return 0;
 }
 
-struct dirent *_readdir(DIR *dir)
-{
+struct dirent *_readdir(DIR *dir) {
   static struct dirent de;
   Unifile *d = (Unifile *)dir;
 
@@ -156,46 +140,40 @@ struct dirent *_readdir(DIR *dir)
   de.d_type = ude.is_directory ? DT_DIR : DT_REG;
   memset(de.d_name, 0, sizeof(de.d_name));
   strncpy(de.d_name, ude.name.c_str(), sizeof(de.d_name) - 1);
-  
+
   return &de;
 }
 
-int _remove(const char *pathname)
-{
+int _remove(const char *pathname) {
   if (Unifile::remove(pathname))
     return 0;
   else
     return -1;
 }
 
-int _rename(const char *oldpath, const char *newpath)
-{
+int _rename(const char *oldpath, const char *newpath) {
   if (Unifile::rename(oldpath, newpath))
     return 0;
   else
     return -1;
 }
-
 }
 
-int _chdir(const char *path)
-{
+int _chdir(const char *path) {
   if (Unifile::chDir(path))
     return 0;
   else
     return -1;
 }
 
-char *_getcwd(char *buf, size_t size)
-{
+char *_getcwd(char *buf, size_t size) {
   UnifileString cwd = Unifile::cwd();
   memset(buf, 0, size);
-  strncpy(buf, cwd.c_str(), size-1);
+  strncpy(buf, cwd.c_str(), size - 1);
   return buf;
 }
 
-int _stat(const char *pathname, struct stat *buf)
-{
+int _stat(const char *pathname, struct stat *buf) {
   Unifile f = Unifile::open(pathname, UFILE_READ);
   if (!f) {
     errno = ENOENT;
@@ -204,19 +182,17 @@ int _stat(const char *pathname, struct stat *buf)
   memset(buf, 0, sizeof(struct stat));
   buf->st_size = f.fileSize();
   buf->st_mode = f.isDirectory() ? S_IFDIR : S_IFREG;
-  
+
   return 0;
 }
 
 extern sdfiles bfs;
-int _mkdir(const char *pathname, mode_t mode)
-{
+int _mkdir(const char *pathname, mode_t mode) {
   (void)mode;
   return bfs.mkdir(pathname);
 }
 
-int _rmdir(const char *pathname)
-{
+int _rmdir(const char *pathname) {
   return bfs.rmdir((char *)pathname);
 }
 
