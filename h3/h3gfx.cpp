@@ -12,29 +12,28 @@
 H3GFX vs23;
 
 const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
-	{460, 224, 16, 16, 1},
-	{436, 216, 16, 16, 1},
-	{320, 216, 16, 16, 2},	// VS23 NTSC demo
-	{320, 200, 16, 16, 2},	// (M)CGA, Commodore et al.
-	{256, 224, 16, 16, 25},	// SNES
-	{256, 192, 16, 16, 25},	// MSX, Spectrum, NDS
-	{160, 200, 16, 16, 4},	// Commodore/PCjr/CPC
-						// multi-color
-	// "Overscan modes"
-	{352, 240, 16, 16, 2},	// PCE overscan (barely)
-	{282, 240, 16, 16, 2},	// PCE overscan (underscan on PAL)
-	{508, 240, 16, 16, 1},
-	// ESP32GFX modes
-	{320, 256, 16, 16, 2},	// maximum PAL at 2 clocks per pixel
-	{320, 240, 16, 16, 2},	// DawnOfAV demo, Mode X
-	{640, 256, 16, 16, 1},
-	// default H3 mode
-	{480, 270, 16, 16, 1},
+  { 460, 224, 16, 16, 1 },
+  { 436, 216, 16, 16, 1 },
+  { 320, 216, 16, 16, 2 },   // VS23 NTSC demo
+  { 320, 200, 16, 16, 2 },   // (M)CGA, Commodore et al.
+  { 256, 224, 16, 16, 25 },  // SNES
+  { 256, 192, 16, 16, 25 },  // MSX, Spectrum, NDS
+  { 160, 200, 16, 16, 4 },   // Commodore/PCjr/CPC
+                             // multi-color
+  // "Overscan modes"
+  { 352, 240, 16, 16, 2 },  // PCE overscan (barely)
+  { 282, 240, 16, 16, 2 },  // PCE overscan (underscan on PAL)
+  { 508, 240, 16, 16, 1 },
+  // ESP32GFX modes
+  { 320, 256, 16, 16, 2 },  // maximum PAL at 2 clocks per pixel
+  { 320, 240, 16, 16, 2 },  // DawnOfAV demo, Mode X
+  { 640, 256, 16, 16, 1 },
+  // default H3 mode
+  { 480, 270, 16, 16, 1 },
 };
 
 #include <usb.h>
-void H3GFX::begin(bool interlace, bool lowpass, uint8_t system)
-{
+void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
@@ -50,16 +49,16 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system)
   m_display_enabled = true;
 }
 
-void H3GFX::reset()
-{
+void H3GFX::reset() {
   BGEngine::reset();
   for (int i = 0; i < m_last_line; ++i)
     memset(m_pixels[i], 0, m_current_mode.x * 4);
   setColorSpace(0);
 }
 
-void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
-{
+void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                      uint16_t y_dst, uint16_t width, uint16_t height,
+                      uint8_t dir) {
 #ifdef DEBUG
   uint32_t m = micros();
   uint16_t h = height;
@@ -90,8 +89,7 @@ void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y
 
 static uint32_t *backbuffer = 0;
 
-bool H3GFX::setMode(uint8_t mode)
-{
+bool H3GFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
   free(m_pixels);
@@ -111,22 +109,25 @@ bool H3GFX::setMode(uint8_t mode)
                                   (m_last_line + m_current_mode.top));
 
   for (int i = 0; i < m_last_line; ++i) {
-    m_pixels[i] = backbuffer + (m_current_mode.x + m_current_mode.left * 2) * (i + m_current_mode.top) + m_current_mode.left;
+    m_pixels[i] = backbuffer +
+                  (m_current_mode.x + m_current_mode.left * 2) *
+                          (i + m_current_mode.top) +
+                  m_current_mode.left;
   }
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
-  display_set_mode(m_current_mode.x, m_current_mode.y, m_current_mode.left, m_current_mode.top);
+  display_set_mode(m_current_mode.x, m_current_mode.y, m_current_mode.left,
+                   m_current_mode.top);
 
   m_display_enabled = true;
-  
+
   return true;
 }
 
 //#define PROFILE_BG
 
-void H3GFX::updateBg()
-{
+void H3GFX::updateBg() {
   static uint32_t last_frame = 0;
 
   if (frame() <= last_frame + m_frameskip)
@@ -180,12 +181,12 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          memcpy(&m_pixels[y+owy][x+owx], &m_pixels[t_y][t_x], tsx * 4);
+          memcpy(&m_pixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * 4);
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          m_pixels[y+owy][x+owx] = m_pixels[t_y][t_x];
+          m_pixels[y + owy][x + owx] = m_pixels[t_y][t_x];
         }
       }
     }
@@ -210,15 +211,19 @@ next:
     // consider flipped axes
     int dx, offx;
     if (s->p.flip_x) {
-      dx = -1; offx = s->p.w - 1;
+      dx = -1;
+      offx = s->p.w - 1;
     } else {
-      dx = 1; offx = 0;
+      dx = 1;
+      offx = 0;
     }
     int dy, offy;
     if (s->p.flip_y) {
-      dy = -1; offy = s->p.h - 1;
+      dy = -1;
+      offy = s->p.h - 1;
     } else {
-      dy = 1; offy = 0;
+      dy = 1;
+      offy = 0;
     }
 
     // sprite pattern start coordinates
@@ -233,7 +238,7 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        uint8_t p = m_pixels[py+y*dy][px+x*dx];
+        uint8_t p = m_pixels[py + y * dy][px + x * dx];
         // draw only non-keyed pixels
         if (p != s->p.key)
           m_pixels[yy][xx] = p;
@@ -243,13 +248,12 @@ next:
 }
 
 #ifdef USE_BG_ENGINE
-uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider)
-{
-  uint8_t dir = 0x40;	// indicates collision
+uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
 
   const sprite_t *us = &m_sprite[collidee];
   const sprite_t *them = &m_sprite[collider];
-  
+
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
   if (them->pos_x + them->p.w < us->pos_x)
@@ -258,7 +262,7 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider)
     return 0;
   if (them->pos_y + them->p.h < us->pos_y)
     return 0;
-  
+
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
   if (them->pos_x < us->pos_x) {
@@ -300,7 +304,7 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider)
         return dir;
     }
   }
-  
+
   // no overlapping pixels
   return 0;
 }
