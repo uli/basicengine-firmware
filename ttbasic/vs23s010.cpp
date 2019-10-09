@@ -868,6 +868,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
 
     for (int i = 0; i < p->len; ++i) {
       if (p->pixels[p->off + i] == s->p.key) {
+        solid_block = false;
         p->type = LINE_BROKEN;
         break;
       }
