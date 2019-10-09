@@ -8,11 +8,10 @@
 
 #include <TPS2.h>
 
-class DOSAudio
-{
+class DOSAudio {
 public:
   void begin();
-  
+
   void init(int sample_rate);
 
   inline void setBlockSize(int size) {
@@ -41,7 +40,7 @@ public:
 
   inline void pumpEvents() {
     if (m_backend == AU_PCI)
-    	doFillPciBuffer();
+      doFillPciBuffer();
   }
 
 private:
