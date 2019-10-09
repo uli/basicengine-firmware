@@ -32,8 +32,7 @@ struct palette {
 #include <N-0C-B62-A63-Y33-N10.h>
 #include <P-EE-A22-B22-Y44-N10.h>
 
-static void my_exit(void)
-{
+static void my_exit(void) {
   fprintf(stderr, "my_exit\n");
 }
 
@@ -41,12 +40,11 @@ static void my_exit(void)
 
 extern "C" void init_idle();
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   atexit(my_exit);
 
   init_idle();
-  
+
   if (allegro_init() != 0)
     return 1;
 

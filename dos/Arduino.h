@@ -28,9 +28,9 @@
 #define noInterrupts()
 #define interrupts()
 
-#define isDigit isdigit
-#define isAlpha isalpha
-#define isAlphaNumeric isalnum
+#define isDigit            isdigit
+#define isAlpha            isalpha
+#define isAlphaNumeric     isalnum
 #define isHexadecimalDigit isxdigit
 
 typedef unsigned int word;
@@ -50,19 +50,19 @@ uclock_t my_uclock(void);
 #endif
 
 static uint32_t micros() {
-	return my_uclock() * 1000000 / UCLOCKS_PER_SEC;
+  return my_uclock() * 1000000 / UCLOCKS_PER_SEC;
 }
 static uint32_t millis() {
-	return micros() / 1000;
+  return micros() / 1000;
 }
 
 #define delay(ms) delayMicroseconds((ms)*1000)
 static void delayMicroseconds(unsigned int us) {
-	uint32_t until = micros() + us;
-	while (micros() < until) {}
+  uint32_t until = micros() + us;
+  while (micros() < until) {}
 }
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 
 enum SerialConfig {
   SERIAL_8N1,
@@ -70,7 +70,7 @@ enum SerialConfig {
 
 class HardwareSerial {
 public:
-  static void begin(unsigned long baud, SerialConfig c=SERIAL_8N1) {
+  static void begin(unsigned long baud, SerialConfig c = SERIAL_8N1) {
   }
   static void println(const char *p) {
     puts(p); putchar('\n');
@@ -92,7 +92,7 @@ static HardwareSerial Serial;
 
 #include "Esp.h"
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
 void digitalWrite(uint8_t pin, uint8_t val);
 int digitalRead(uint8_t pin);
@@ -102,7 +102,7 @@ void pinMode(uint8_t pin, uint8_t mode);
 static inline long _random(long v) {
   return rand() % v;
 }
-#define random _random
+#define random     _random
 #define randomSeed srand
 
 #ifdef __cplusplus
@@ -110,10 +110,10 @@ static inline long _random(long v) {
 #include <memory>
 #endif
 
-#define _min(a,b) ((a)<(b)?(a):(b))
-#define _max(a,b) ((a)>(b)?(a):(b))
-#define min _min
-#define max _max
+#define _min(a, b) ((a) < (b) ? (a) : (b))
+#define _max(a, b) ((a) > (b) ? (a) : (b))
+#define min        _min
+#define max        _max
 
 #include "binary.h"
 
