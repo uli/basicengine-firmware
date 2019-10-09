@@ -10,13 +10,13 @@ SdFat sdfat::SD;
 char full_path[1024];
 
 const char *apsd(const char *p) {
-    sprintf(full_path, FS_PREFIX "/sd%s", p);
-    printf("FP %s\n",full_path);
-    return full_path;
+  sprintf(full_path, FS_PREFIX "/sd%s", p);
+  printf("FP %s\n", full_path);
+  return full_path;
 }
 const char *apfs(const char *p) {
-    sprintf(full_path, FS_PREFIX "/flash%s", p);
-    return full_path;
+  sprintf(full_path, FS_PREFIX "/flash%s", p);
+  return full_path;
 }
 
 File File::openNextFile(uint8_t mode) {
@@ -33,16 +33,14 @@ File File::openNextFile(uint8_t mode) {
   return File();
 }
 
-int sdfat::smart_fclose(FILE *stream)
-{
+int sdfat::smart_fclose(FILE *stream) {
   if (stream)
     return fclose(stream);
   else
     return EOF;
 }
 
-int sdfat::smart_closedir(DIR *dirp)
-{
+int sdfat::smart_closedir(DIR *dirp) {
   if (dirp)
     return closedir(dirp);
   else
