@@ -45,13 +45,11 @@ struct palette {
 #include <N-0C-B62-A63-Y33-N10.h>
 #include <P-EE-A22-B22-Y44-N10.h>
 
-static void my_exit(void)
-{
+static void my_exit(void) {
   fprintf(stderr, "my_exit\n");
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   atexit(my_exit);
   setup();
   for (;;)
@@ -69,8 +67,7 @@ void platform_process_events() {
   sd_detect();
 }
 
-extern "C" size_t umm_free_heap_size( void )
-{
+extern "C" size_t umm_free_heap_size(void) {
   return 42000;
 }
 
