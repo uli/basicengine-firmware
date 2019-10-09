@@ -175,7 +175,7 @@ KEY_F12,	// PS2KEY_F12 	123	// [F12]
 };
 
 bool TKeyboard::state(uint8_t keycode) {
-  if (keycode < sizeof(ps2_to_allegro)/sizeof(*ps2_to_allegro))
+  if (keycode < sizeof(ps2_to_allegro) / sizeof(*ps2_to_allegro))
     return key[ps2_to_allegro[keycode]];
   else
     return false;
@@ -187,8 +187,7 @@ keyEvent ps22tty_last_key;
 
 int peeked_key = -1;
 
-uint16_t ps2read()
-{
+uint16_t ps2read() {
   if (peeked_key >= 0) {
     uint16_t k = peeked_key;
     peeked_key = -1;
@@ -200,10 +199,10 @@ uint16_t ps2read()
     ps22tty_last_key.CTRL = !!(key_shifts & KB_CTRL_FLAG);
     ps22tty_last_key.ALT = !!(key_shifts & KB_ALT_FLAG);
     ps22tty_last_key.SHIFT = !!(key_shifts & KB_SHIFT_FLAG);
-    
+
     int scancode;
     int ukey = ureadkey(&scancode);
-    
+
     if (ukey == 0 && scancode) {
       switch (scancode) {
       case KEY_UP:	ukey = SC_KEY_UP; break;
@@ -243,8 +242,7 @@ uint16_t ps2read()
   return 0;
 }
 
-uint16_t ps2peek()
-{
+uint16_t ps2peek() {
   if (peeked_key >= 0)
     return peeked_key;
 
@@ -252,7 +250,7 @@ uint16_t ps2peek()
     peeked_key = ps2read();
     return peeked_key;
   }
-  
+
   return 0;
 }
 
