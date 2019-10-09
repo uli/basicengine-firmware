@@ -24,17 +24,17 @@
 #define OUTPUT            0x01
 #define OUTPUT_OPEN_DRAIN 0x03
 
-#define PS2CLK	4
-#define PS2DAT	5
+#define PS2CLK 4
+#define PS2DAT 5
 
 #define os_memcpy memcpy
 
 #define noInterrupts()
 #define interrupts()
 
-#define isDigit isdigit
-#define isAlpha isalpha
-#define isAlphaNumeric isalnum
+#define isDigit            isdigit
+#define isAlpha            isalpha
+#define isAlphaNumeric     isalnum
 #define isHexadecimalDigit isxdigit
 
 typedef unsigned int word;
@@ -61,7 +61,7 @@ static void delayMicroseconds(unsigned int us) {
   while (micros() < until) {}
 }
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 
 enum SerialConfig {
   SERIAL_8N1,
@@ -69,10 +69,11 @@ enum SerialConfig {
 
 class HardwareSerial {
 public:
-  static void begin(unsigned long baud, SerialConfig c=SERIAL_8N1) {
+  static void begin(unsigned long baud, SerialConfig c = SERIAL_8N1) {
   }
   static void println(const char *p) {
-    puts(p); putchar('\n');
+    puts(p);
+    putchar('\n');
   }
   static void write(char c) {
     putchar(c);
@@ -107,7 +108,7 @@ struct vs23_int {
 };
 extern struct vs23_int vs23_int;
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
 void digitalWrite(uint8_t pin, uint8_t val);
 void pinMode(uint8_t pin, uint8_t mode);
@@ -116,7 +117,7 @@ void pinMode(uint8_t pin, uint8_t mode);
 static inline long _random(long v) {
   return random() % v;
 }
-#define random _random
+#define random     _random
 #define randomSeed srand
 
 #ifdef __cplusplus
@@ -124,17 +125,17 @@ static inline long _random(long v) {
 #include <memory>
 #endif
 
-#define _min(a,b) ((a)<(b)?(a):(b))
-#define _max(a,b) ((a)>(b)?(a):(b))
-#define min _min
-#define max _max
+#define _min(a, b) ((a) < (b) ? (a) : (b))
+#define _max(a, b) ((a) > (b) ? (a) : (b))
+#define min        _min
+#define max        _max
 
 #include "binary.h"
 
 uint32_t timer0_read();
 void timer0_write(uint32_t count);
 void timer0_isr_init();
-typedef void(*timercallback)(void);
+typedef void (*timercallback)(void);
 void timer0_attachInterrupt(timercallback userFunc);
 void timer0_detachInterrupt(void);
 
