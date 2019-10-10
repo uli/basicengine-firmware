@@ -18,13 +18,12 @@ bool restore_text_window = false;
 uint8_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE
-void BASIC_INT Basic::event_handle_sprite()
-{
+void BASIC_INT Basic::event_handle_sprite() {
   uint8_t dir;
   for (int i = 0; i < MAX_SPRITES; ++i) {
     if (!vs23.spriteEnabled(i))
       continue;
-    for (int j = i+1; j < MAX_SPRITES; ++j) {
+    for (int j = i + 1; j < MAX_SPRITES; ++j) {
       if (!vs23.spriteEnabled(j))
         continue;
       if ((dir = vs23.spriteCollision(i, j))) {
@@ -33,7 +32,7 @@ void BASIC_INT Basic::event_handle_sprite()
         push_num_arg(j);
         push_num_arg(dir);
         do_call(event_sprite_proc_idx);
-        event_sprite_proc_idx = NO_PROC;	// prevent interrupt storms
+        event_sprite_proc_idx = NO_PROC;  // prevent interrupt storms
         return;
       }
     }
@@ -86,7 +85,8 @@ void Basic::ibg() {
     return;
   }
 
-  if (getParam(m, 0, MAX_BG, I_NONE)) return;
+  if (getParam(m, 0, MAX_BG, I_NONE))
+    return;
 
   // Background modified, do not restore the saved values when CONTing.
   original_bg_height[m] = -1;
@@ -163,30 +163,30 @@ void Basic::iloadbg() {
     return;
   if (!(filename = getParamFname()))
     return;
-  
+
   FILE *f = fopen(filename.c_str(), "r");
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
   }
-  
+
   w = getc(f);
   h = getc(f);
   tsx = getc(f);
   tsy = getc(f);
-  
+
   if (!w || !h || !tsx || !tsy) {
     err = ERR_FORMAT;
     goto out;
   }
-  
+
   vs23.setBgTileSize(bg, tsx, tsy);
   if (vs23.setBgSize(bg, w, h)) {
     err = ERR_OOM;
     goto out;
   }
 
-  if (fread((char *)vs23.bgTiles(bg), 1, w*h, f) != w*h) {
+  if (fread((char *)vs23.bgTiles(bg), 1, w * h, f) != w * h) {
     err = ERR_FILE_READ;
     goto out;
   }
@@ -220,19 +220,21 @@ void Basic::isavebg() {
     return;
   if (!(filename = getParamFname()))
     return;
-  
+
   FILE *f = fopen(filename.c_str(), "w");
   if (!f) {
     err = ERR_FILE_OPEN;
     return;
   }
 
-  w = vs23.bgWidth(bg); h = vs23.bgHeight(bg);
-  putc(w, f); putc(h, f);
+  w = vs23.bgWidth(bg);
+  h = vs23.bgHeight(bg);
+  putc(w, f);
+  putc(h, f);
   putc(vs23.bgTileSizeX(bg), f);
   putc(vs23.bgTileSizeY(bg), f);
-  
-  fwrite((char *)vs23.bgTiles(bg), 1, w*h, f);
+
+  fwrite((char *)vs23.bgTiles(bg), 1, w * h, f);
 
   fclose(f);
 #else
@@ -255,11 +257,14 @@ maps wrap around if the display window extends beyond the map boundaries.
 void BASIC_FP Basic::imovebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y;
-  if (getParam(bg, 0, MAX_BG, I_TO)) return;
+  if (getParam(bg, 0, MAX_BG, I_TO))
+    return;
   // XXX: arbitrary limitation?
-  if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA)) return;
-  if (getParam(y, INT32_MIN, INT32_MAX, I_NONE)) return;
-  
+  if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA))
+    return;
+  if (getParam(y, INT32_MIN, INT32_MAX, I_NONE))
+    return;
+
   vs23.scroll(bg, x, y);
 #else
   err = ERR_NOT_SUPPORTED;
@@ -317,8 +322,9 @@ void BASIC_INT Basic::isprite() {
     return;
   }
 
-  if (getParam(num, 0, MAX_SPRITES, I_NONE)) return;
-  
+  if (getParam(num, 0, MAX_SPRITES, I_NONE))
+    return;
+
   frame_x = vs23.spriteFrameX(num);
   frame_y = vs23.spriteFrameY(num);
   flags = (vs23.spriteOpaque(num) << 0) |
@@ -353,7 +359,8 @@ void BASIC_INT Basic::isprite() {
     break;
   case I_FLAGS: {
       int32_t new_flags;
-      if (getParam(new_flags, 0, 7, I_NONE)) return;
+      if (getParam(new_flags, 0, 7, I_NONE))
+        return;
       if (new_flags != flags) {
         if ((new_flags & 1) != (flags & 1))
           set_opacity = true;
@@ -405,17 +412,19 @@ mode will not be drawn.
 void BASIC_FP Basic::imovesprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pos_x, pos_y;
-  if (getParam(num, 0, MAX_SPRITES, I_TO)) return;
-  if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA)) return;
-  if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE)) return;
+  if (getParam(num, 0, MAX_SPRITES, I_TO))
+    return;
+  if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA))
+    return;
+  if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE))
+    return;
   vs23.moveSprite(num, pos_x, pos_y);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
 }
 
-void BASIC_FP Basic::imove()
-{
+void BASIC_FP Basic::imove() {
   if (*cip == I_SPRITE) {
     ++cip;
     imovesprite();
@@ -469,7 +478,8 @@ PLOT 0,5,10,"XOOOXXOO"
 void Basic::iplot() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y, t;
-  if (getParam(bg, 0, MAX_BG, I_NONE)) return;
+  if (getParam(bg, 0, MAX_BG, I_NONE))
+    return;
   if (!vs23.bgTiles(bg)) {
     // BG not defined
     err = ERR_RANGE;
@@ -477,19 +487,24 @@ void Basic::iplot() {
   }
   if (*cip == I_MAP) {
     ++cip;
-    if (getParam(x, 0, 255, I_TO)) return;
-    if (getParam(y, 0, 255, I_NONE)) return;
+    if (getParam(x, 0, 255, I_TO))
+      return;
+    if (getParam(y, 0, 255, I_NONE))
+      return;
     vs23.mapBgTile(bg, x, y);
   } else if (*cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
   } else {
-    if (getParam(x, 0, INT_MAX, I_COMMA)) return;
-    if (getParam(y, 0, INT_MAX, I_COMMA)) return;
+    if (getParam(x, 0, INT_MAX, I_COMMA))
+      return;
+    if (getParam(y, 0, INT_MAX, I_COMMA))
+      return;
     if (is_strexp()) {
       BString dat = istrexp();
       vs23.setBgTiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
     } else {
-      if (getParam(t, 0, 255, I_NONE)) return;
+      if (getParam(t, 0, 255, I_NONE))
+        return;
       vs23.setBgTile(bg, x, y, t);
     }
   }
@@ -515,7 +530,8 @@ be so within a single TV frame.
 void Basic::iframeskip() {
 #ifdef USE_BG_ENGINE
   int32_t skip;
-  if (getParam(skip, 0, 60, I_NONE)) return;
+  if (getParam(skip, 0, 60, I_NONE))
+    return;
   vs23.setFrameskip(skip);
 #else
   err = ERR_NOT_SUPPORTED;
@@ -554,11 +570,16 @@ Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate.
 num_t BASIC_FP Basic::ntilecoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b, c;
-  if (checkOpen()) return 0;
-  if (getParam(a, 0, MAX_SPRITES, I_COMMA)) return 0;
-  if (getParam(b, 0, MAX_BG, I_COMMA)) return 0;
-  if (getParam(c, 0, 255, I_NONE)) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(a, 0, MAX_SPRITES, I_COMMA))
+    return 0;
+  if (getParam(b, 0, MAX_BG, I_COMMA))
+    return 0;
+  if (getParam(c, 0, 255, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
   return vs23.spriteTileCollision(a, b, c);
 #else
   err = ERR_NOT_SUPPORTED;
@@ -600,10 +621,14 @@ up/left of sprite 1.)
 num_t BASIC_FP Basic::nsprcoll() {
 #ifdef USE_BG_ENGINE
   int32_t a, b;
-  if (checkOpen()) return 0;
-  if (getParam(a, 0, MAX_SPRITES, I_COMMA)) return 0;
-  if (getParam(b, 0, MAX_SPRITES, I_NONE)) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(a, 0, MAX_SPRITES, I_COMMA))
+    return 0;
+  if (getParam(b, 0, MAX_SPRITES, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
   if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
     return vs23.spriteCollision(a, b);
   else
@@ -627,8 +652,7 @@ num_t BASIC_FP Basic::nsprx() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
-  if (checkOpen() ||
-      getParam(spr, 0, MAX_SPRITES, I_CLOSE))
+  if (checkOpen() || getParam(spr, 0, MAX_SPRITES, I_CLOSE))
     return 0;
 
   return vs23.spriteX(spr);
@@ -650,8 +674,7 @@ num_t BASIC_FP Basic::nspry() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
-  if (checkOpen() ||
-      getParam(spr, 0, MAX_SPRITES, I_CLOSE))
+  if (checkOpen() || getParam(spr, 0, MAX_SPRITES, I_CLOSE))
     return 0;
 
   return vs23.spriteY(spr);
@@ -674,8 +697,7 @@ num_t BASIC_FP Basic::nbscrx() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 
-  if (checkOpen() ||
-      getParam(bg, 0, MAX_BG-1, I_CLOSE))
+  if (checkOpen() || getParam(bg, 0, MAX_BG - 1, I_CLOSE))
     return 0;
 
   return vs23.bgScrollX(bg);
@@ -697,8 +719,7 @@ num_t BASIC_FP Basic::nbscry() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 
-  if (checkOpen() ||
-      getParam(bg, 0, MAX_BG-1, I_CLOSE))
+  if (checkOpen() || getParam(bg, 0, MAX_BG - 1, I_CLOSE))
     return 0;
 
   return vs23.bgScrollY(bg);
@@ -708,8 +729,7 @@ num_t BASIC_FP Basic::nbscry() {
 #endif
 }
 
-void SMALL resize_windows()
-{
+void SMALL resize_windows() {
 #ifdef USE_BG_ENGINE
   int x, y, w, h;
   sc0.getWindow(x, y, w, h);
@@ -731,11 +751,11 @@ void SMALL resize_windows()
         vs23.disableBg(i);
         turn_bg_back_on[i] = true;
         restore_bgs = true;
-      }
-      else if (vs23.bgWinY(i) + vs23.bgWinHeight(i) >= top_y) {
+      } else if (vs23.bgWinY(i) + vs23.bgWinHeight(i) >= top_y) {
         original_bg_height[i] = vs23.bgWinHeight(i);
         vs23.setBgWin(i, vs23.bgWinX(i), vs23.bgWinY(i), vs23.bgWinWidth(i),
-                      vs23.bgWinHeight(i) - vs23.bgWinY(i) - vs23.bgWinHeight(i) + top_y);
+                      vs23.bgWinHeight(i) - vs23.bgWinY(i) -
+                              vs23.bgWinHeight(i) + top_y);
         obscured = true;
         turn_bg_back_on[i] = false;
         restore_bgs = true;
@@ -749,7 +769,7 @@ void SMALL resize_windows()
       original_text_pos[1] = sc0.c_y();
       sc0.setWindow(x, y + sc0.getScreenHeight() - 5, w, 5);
       sc0.setScroll(true);
-      sc0.locate(0,0);
+      sc0.locate(0, 0);
       sc0.cls();
       restore_text_window = true;
     }
@@ -757,8 +777,7 @@ void SMALL resize_windows()
 #endif
 }
 
-void SMALL restore_windows()
-{
+void SMALL restore_windows() {
 #ifdef USE_BG_ENGINE
   if (restore_text_window) {
     restore_text_window = false;
@@ -779,4 +798,3 @@ void SMALL restore_windows()
   }
 #endif
 }
-
