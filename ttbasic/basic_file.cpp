@@ -24,21 +24,21 @@ void SMALL basic_init_file_early() {
 #ifdef ESP32
   bfs.init(5);
 #else
-  bfs.init(16);		// CS on GPIO16
+  bfs.init(16);  // CS on GPIO16
 #endif
 
 #ifdef H3
   // Also done in arch_process_events(), but that's too late for us here.
   sd_detect();
 #endif
-  
+
 #ifdef SDL
   char *root = getenv("ENGINEBASIC_ROOT");
   if (root)
     _chdir(root);
 #else
   if (_chdir(SD_PREFIX)) {
-    if(_chdir(FLASH_PREFIX)) {
+    if (_chdir(FLASH_PREFIX)) {
       // Can't really do anything if this fails, nothing is initialized yet.
     }
   } else
@@ -132,8 +132,7 @@ depending on whether the entry is a directory itself.
 \error
 An error is generated if `dir_num` is not open or not a directory.
 ***/
-BString Basic::sdir()
-{
+BString Basic::sdir() {
   int32_t fnum = getparam();
   if (err)
     goto out;
@@ -155,12 +154,8 @@ out:
   dirent *dir_entry;
   do {
     dir_entry = _readdir(user_files[fnum].d);
-  } while (dir_entry &&
-           (
-             !strcmp_P(dir_entry->d_name, PSTR(".")) ||
-             !strcmp_P(dir_entry->d_name, PSTR(".."))
-           )
-          );
+  } while (dir_entry && (!strcmp_P(dir_entry->d_name, PSTR(".")) ||
+                         !strcmp_P(dir_entry->d_name, PSTR(".."))));
 
   if (!dir_entry)
     return BString();
@@ -184,17 +179,19 @@ Returns a string of characters read from a specified file.
 \ret Data read from file.
 \ref INPUT
 ***/
-BString Basic::sinput()
-{
+BString Basic::sinput() {
   int32_t len, fnum;
   BString value;
   ssize_t rd;
 
-  if (checkOpen()) goto out;
-  if (getParam(len, I_COMMA)) goto out;
+  if (checkOpen())
+    goto out;
+  if (getParam(len, I_COMMA))
+    goto out;
   if (*cip == I_SHARP)
     ++cip;
-  if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE)) goto out;
+  if (getParam(fnum, 0, MAX_USER_FILES - 1, I_CLOSE))
+    goto out;
   if (!user_files[fnum].f) {
     err = ERR_FILE_NOT_OPEN;
     goto out;
@@ -233,7 +230,7 @@ Redirection will automatically be reset if a file redirected to is closed
 used file number), or when returning to the command prompt.
 \ref OPEN CLOSE
 ***/
-void Basic::icmd () {
+void Basic::icmd() {
   bool is_input;
   int32_t redir;
   if (*cip == I_OUTPUT) {
@@ -284,7 +281,7 @@ Changes the current directory.
 ***/
 void Basic::ichdir() {
   BString new_cwd;
-  if(!(new_cwd = getParamFname())) {
+  if (!(new_cwd = getParamFname())) {
     return;
   }
   if (_chdir(new_cwd.c_str()))
@@ -298,7 +295,8 @@ Returns the current working directory.
 \ref CHDIR
 ***/
 BString Basic::scwd() {
-  if (checkOpen() || checkClose()) return BString();
+  if (checkOpen() || checkClose())
+    return BString();
   char cwd[64];
   if (_getcwd(cwd, 64))
     return BString(cwd);
@@ -325,12 +323,12 @@ OPEN file$ [FOR <INPUT|OUTPUT|APPEND|DIRECTORY>] AS [#]file_num
 ***/
 void Basic::iopen() {
   BString filename;
-  const char * flags = "r";
+  const char *flags = "r";
   int32_t filenum;
 
   if (!(filename = getParamFname()))
     return;
-  
+
   if (*cip == I_FOR) {
     ++cip;
     switch (*cip++) {
@@ -341,7 +339,7 @@ void Basic::iopen() {
     default:		SYNTAX_T("exp file mode"); return;
     }
   }
-  
+
   if (*cip++ != I_AS) {
     E_SYNTAX(I_AS);
     return;
@@ -351,7 +349,7 @@ void Basic::iopen() {
 
   if (getParam(filenum, 0, MAX_USER_FILES - 1, I_NONE))
     return;
-  
+
   if (user_files[filenum].f) {
     fclose(user_files[filenum].f);
     if (redirect_output_file == filenum)
@@ -463,8 +461,8 @@ Displays the contents of the current or a specified directory.
 void Basic::ifiles() {
   BString fname;
   char wildcard[SD_PATH_LEN];
-  char* wcard = NULL;
-  char* ptr = NULL;
+  char *wcard = NULL;
+  char *ptr = NULL;
   uint8_t flgwildcard = 0;
   int16_t rc;
 
@@ -474,7 +472,7 @@ void Basic::ifiles() {
     fname = getParamFname();
 
   if (fname.length() > 0) {
-    for (int8_t i = fname.length()-1; i >= 0; i--) {
+    for (int8_t i = fname.length() - 1; i >= 0; i--) {
       if (fname[i] == '/') {
         ptr = &fname[i];
         break;
@@ -483,9 +481,9 @@ void Basic::ifiles() {
         flgwildcard = 1;
     }
     if (ptr != NULL && flgwildcard == 1) {
-      strcpy(wildcard, ptr+1);
+      strcpy(wildcard, ptr + 1);
       wcard = wildcard;
-      *(ptr+1) = 0;
+      *(ptr + 1) = 0;
     } else if (ptr == NULL && flgwildcard == 1) {
       strcpy(wildcard, fname.c_str());
       wcard = wildcard;
@@ -493,7 +491,7 @@ void Basic::ifiles() {
     }
   }
 
-  rc = bfs.flist((char *)fname.c_str(), wcard, sc0.getWidth()/14);
+  rc = bfs.flist((char *)fname.c_str(), wcard, sc0.getWidth() / 14);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -511,7 +509,7 @@ void Basic::imkdir() {
   uint8_t rc;
   BString fname;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
@@ -536,7 +534,7 @@ void Basic::irmdir() {
   BString fname;
   uint8_t rc;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
@@ -595,13 +593,13 @@ Does not support wildcard patterns.
 void Basic::iremove() {
   BString fname;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
   bool rc = _remove(fname.c_str());
   if (rc) {
-    err = ERR_FILE_WRITE;	// XXX: something more descriptive?
+    err = ERR_FILE_WRITE;  // XXX: something more descriptive?
     return;
   }
 }
@@ -650,7 +648,8 @@ of the difference between the first pair of bytes that differ in `file1$`
 and `file2$`.
 ***/
 num_t Basic::ncompare() {
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   BString one = getParamFname();
   if (err)
     return 0;
@@ -659,7 +658,8 @@ num_t Basic::ncompare() {
     return 0;
   }
   BString two = getParamFname();
-  if (err || checkClose()) return 0;
+  if (err || checkClose())
+    return 0;
   return bfs.compare(one.c_str(), two.c_str());
 }
 
@@ -684,7 +684,7 @@ void SMALL Basic::ibsave() {
   BString fname;
   uint8_t rc;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
@@ -693,17 +693,19 @@ void SMALL Basic::ibsave() {
     return;
   }
   cip++;
-  if ( getParam(vadr, I_COMMA) ) return;  // アドレスの取得
-  if ( getParam(len, I_NONE) ) return;             // データ長の取得
+  if (getParam(vadr, I_COMMA))
+    return;  // アドレスの取得
+  if (getParam(len, I_NONE))
+    return;  // データ長の取得
 
   // アドレスの範囲チェック
-  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
+  if (!sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0)) {
     err = ERR_RANGE;
     return;
   }
 
   // ファイルオープン
-  rc = bfs.tmpOpen((char *)fname.c_str(),1);
+  rc = bfs.tmpOpen((char *)fname.c_str(), 1);
   if (rc) {
     err = rc;
     return;
@@ -713,7 +715,7 @@ void SMALL Basic::ibsave() {
     // データの書込み
     for (uint32_t i = 0; i < len; i += 4) {
       uint32_t c = *(uint32_t *)(unsigned long)vadr;
-      if(bfs.tmpWrite((char *)&c, 4)) {
+      if (bfs.tmpWrite((char *)&c, 4)) {
         err = ERR_FILE_WRITE;
         goto DONE;
       }
@@ -722,7 +724,7 @@ void SMALL Basic::ibsave() {
   } else {
     // データの書込み
     for (uint32_t i = 0; i < len; i++) {
-      if(bfs.putch(*(uint8_t *)(unsigned long)vadr)) {
+      if (bfs.putch(*(uint8_t *)(unsigned long)vadr)) {
         err = ERR_FILE_WRITE;
         goto DONE;
       }
@@ -757,7 +759,7 @@ void SMALL Basic::ibload() {
   BString fname;
   uint8_t rc;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
@@ -766,27 +768,29 @@ void SMALL Basic::ibload() {
     return;
   }
   cip++;
-  if ( getParam(vadr, I_NONE) ) return;  // アドレスの取得
+  if (getParam(vadr, I_NONE))
+    return;  // アドレスの取得
   if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(len, I_NONE) ) return;              // データ長の取得
+    if (getParam(len, I_NONE))
+      return;  // データ長の取得
   }
 
   // ファイルオープン
-  rc = bfs.tmpOpen((char *)fname.c_str(),0);
+  rc = bfs.tmpOpen((char *)fname.c_str(), 0);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
   } else if (rc == SD_ERR_OPEN_FILE) {
-    err =  ERR_FILE_OPEN;
+    err = ERR_FILE_OPEN;
     return;
   }
-  
+
   if (len == -1)
     len = bfs.tmpSize();
 
   // アドレスの範囲チェック
-  if ( !sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0) ) {
+  if (!sanitize_addr(vadr, 0) || !sanitize_addr(vadr + len, 0)) {
     err = ERR_RANGE;
     goto DONE;
   }
@@ -805,7 +809,7 @@ void SMALL Basic::ibload() {
     // データの読込み
     for (ssize_t i = 0; i < len; i++) {
       c = bfs.read();
-      if (c <0 ) {
+      if (c < 0) {
         err = ERR_FILE_READ;
         goto DONE;
       }
@@ -825,7 +829,7 @@ has been printed, it pauses and waits for a key press.
 \args
 @file$	name of the file
 ***/
-void  Basic::itype() {
+void Basic::itype() {
   //char fname[SD_PATH_LEN];
   //uint8_t rc;
   int32_t line = 0;
@@ -834,11 +838,11 @@ void  Basic::itype() {
   BString fname;
   int8_t rc;
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
-  while(1) {
+  while (1) {
     rc = bfs.textOut((char *)fname.c_str(), line, sc0.getHeight());
     if (rc < 0) {
       err = -rc;
@@ -849,7 +853,7 @@ void  Basic::itype() {
 
     PRINT_P("== More?('Y' or SPACE key) =="); newline();
     c = c_getch();
-    if (c != 'y' && c!= 'Y' && c != 32)
+    if (c != 'y' && c != 'Y' && c != 32)
       break;
     line += sc0.getHeight();
   }
