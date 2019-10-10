@@ -61,27 +61,27 @@ void tTVscreen::WRITE(uint8_t x, uint8_t y, uint8_t c) {
 
 // 画面全消去
 void tTVscreen::CLEAR() {
-  tv_cls();      
+  tv_cls();
 }
 
 // 行の消去
 void tTVscreen::CLEAR_LINE(uint8_t l, int from) {
-  tv_clerLine(l, from);  
+  tv_clerLine(l, from);
 }
 
 // スクロールアップ
 void tTVscreen::SCROLL_UP() {
-  tv_scroll_up();  
+  tv_scroll_up();
 }
 
 // スクロールダウン
 void tTVscreen::SCROLL_DOWN() {
-  tv_scroll_down(); 
+  tv_scroll_down();
 }
 
 // 指定行に1行挿入(下スクロール)
 void tTVscreen::INSLINE(uint8_t l) {
-  tv_insLine(l);               
+  tv_insLine(l);
 }
 
 //****************************************************************************
@@ -117,7 +117,7 @@ void tTVscreen::reset_kbd(uint8_t kbd_type) {
 }
 
 // 改行
-void tTVscreen::newLine() {  
+void tTVscreen::newLine() {
   tscreenBase::newLine();
 #ifdef DEBUG
   Serial.write(0x0d);
@@ -141,7 +141,7 @@ bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
   return Serial.available();
 #endif
 #if PS2DEV == 1
- return ps2kbhit();
+  return ps2kbhit();
 #endif
 }
 
@@ -167,7 +167,7 @@ uint16_t tTVscreen::get_ch() {
 #endif
     yield();
   }
-  return c;  
+  return c;
 }
 
 // カーソルの表示/非表示
@@ -232,7 +232,8 @@ uint8_t tTVscreen::edit() {
         Insert_char(ch - 64);
       else if (ch >= '`' && ch <= '~')
         Insert_char(ch + 32);
-    } else switch(ch) {
+    } else
+      switch (ch) {
       case SC_KEY_CR:         // [Enter]キー
         if (k.CTRL) {
           int lines = enter_text();
@@ -241,42 +242,43 @@ uint8_t tTVscreen::edit() {
         } else
           return enter_text() + 1;
 
-      case SC_KEY_CTRL_L:  // [CTRL+L] 画面クリア
+      case SC_KEY_CTRL_L:     // [CTRL+L] 画面クリア
         cls();
         locate(0, 0);
         Serial_Ctrl(SC_KEY_CTRL_L);
         break;
- 
-      case SC_KEY_HOME:      // [HOMEキー] 行先頭移動
+
+      case SC_KEY_HOME:       // [HOMEキー] 行先頭移動
         locate(0, pos_y);
         break;
 
-      case SC_KEY_NPAGE:  // [PageDown] 表示プログラム最終行に移動
+      case SC_KEY_NPAGE:      // [PageDown] 表示プログラム最終行に移動
         if (pos_x == 0 && pos_y == height - 1) {
           edit_scrollUp();
         } else {
           moveBottom();
         }
         break;
-        
-      case SC_KEY_PPAGE:     // [PageUP] 画面(0,0)に移動
+
+      case SC_KEY_PPAGE:      // [PageUP] 画面(0,0)に移動
         if (pos_x == 0 && pos_y == 0) {
           edit_scrollDown();
         } else {
           locate(0, 0);
-        }  
+        }
         break;
 
-      case SC_KEY_CTRL_R: // [CTRL_R(F5)] 画面更新
-        refresh();  break;
+      case SC_KEY_CTRL_R:     // [CTRL_R(F5)] 画面更新
+        refresh();
+        break;
 
-      case SC_KEY_END:  // [ENDキー] 行の右端移動
+      case SC_KEY_END:        // [ENDキー] 行の右端移動
         moveLineEnd();
         break;
 
       case SC_KEY_IC:         // [Insert]キー
         flgIns = !flgIns;
-        break;        
+        break;
 
       case SC_KEY_BACKSPACE:  // [BS]キー
         movePosPrevChar();
@@ -287,8 +289,8 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_DC:         // [Del]キー
       case SC_KEY_CTRL_X:
         delete_char();
-        break;        
-      
+        break;
+
       case SC_KEY_RIGHT:      // [→]キー
         movePosNextChar();
         break;
@@ -303,7 +305,7 @@ uint8_t tTVscreen::edit() {
       case SC_KEY_SHIFT_DOWN:
         movePosNextLineChar(true);
         break;
-      
+
       case SC_KEY_UP:         // [↑]キー
         movePosPrevLineChar();
         break;
@@ -311,11 +313,11 @@ uint8_t tTVscreen::edit() {
         movePosPrevLineChar(true);
         break;
 
-      case SC_KEY_CTRL_N:  // 行挿入 
-        Insert_newLine(pos_y);       
+      case SC_KEY_CTRL_N:     // 行挿入
+        Insert_newLine(pos_y);
         break;
 
-      case SC_KEY_CTRL_D:  // 行削除
+      case SC_KEY_CTRL_D:     // 行削除
         clerLine(pos_y);
         break;
 
@@ -326,7 +328,7 @@ uint8_t tTVscreen::edit() {
         saveScreenshot();
         break;
 
-      default:             // その他
+      default:                // その他
         Insert_char(ch);
         break;
       }
@@ -366,45 +368,44 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
 #endif
 }
 
-
 // キャラクタ画面スクロール
 void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
-  switch(d) {
-    case 0: // 上
-      for (uint16_t i= 0; i < h-1; i++) {
-        memcpy(&VPEEK(x,y+i), &VPEEK(x,y+i+1), w);
-        VMOVE_C(x,y+i+1, x,y+i, w, 1);
-      }
-      memset(&VPEEK(x, y + h - 1), 0, w);
-      VSET_C(x, y+h-1, fg_color, bg_color, w);
-      break;            
+  switch (d) {
+  case 0:  // 上
+    for (uint16_t i = 0; i < h - 1; i++) {
+      memcpy(&VPEEK(x, y + i), &VPEEK(x, y + i + 1), w);
+      VMOVE_C(x, y + i + 1, x, y + i, w, 1);
+    }
+    memset(&VPEEK(x, y + h - 1), 0, w);
+    VSET_C(x, y + h - 1, fg_color, bg_color, w);
+    break;
 
-    case 1: // 下
-      for (uint16_t i= 0; i < h-1; i++) {
-        memcpy(&VPEEK(x,y + h-1-i), &VPEEK(x,y+h-1-i-1), w);
-        VMOVE_C(x,y+h-1-i-1, x,y+h-1-i, w, 1);
-      }
-      memset(&VPEEK(x, y), 0, w);
-      VSET_C(x, y, fg_color, bg_color, w);
-      break;            
+  case 1:  // 下
+    for (uint16_t i = 0; i < h - 1; i++) {
+      memcpy(&VPEEK(x, y + h - 1 - i), &VPEEK(x, y + h - 1 - i - 1), w);
+      VMOVE_C(x, y + h - 1 - i - 1, x, y + h - 1 - i, w, 1);
+    }
+    memset(&VPEEK(x, y), 0, w);
+    VSET_C(x, y, fg_color, bg_color, w);
+    break;
 
-    case 2: // 右
-      for (uint16_t i=0; i < h; i++) {
-        memmove(&VPEEK(x+1, y+i) ,&VPEEK(x,y+i), w-1);
-        VMOVE_C(x,y+i, x+1,y+i, w-1, 1);
-        VPOKE(x,y+i,0);
-        VPOKE_CCOL(x, y+i);
-      }
-      break;
-      
-    case 3: // 左
-      for (uint16_t i=0; i < h; i++) {
-        memmove(&VPEEK(x,y+i) ,&VPEEK(x+1,y+i), w-1);
-        VMOVE_C(x+1,y+i, x,y+i, w-1, 1);
-        VPOKE(x+w-1,y+i,0);
-        VPOKE_CCOL(x+w-1,y+i);
-      }
-      break;
+  case 2:  // 右
+    for (uint16_t i = 0; i < h; i++) {
+      memmove(&VPEEK(x + 1, y + i), &VPEEK(x, y + i), w - 1);
+      VMOVE_C(x, y + i, x + 1, y + i, w - 1, 1);
+      VPOKE(x, y + i, 0);
+      VPOKE_CCOL(x, y + i);
+    }
+    break;
+
+  case 3:  // 左
+    for (uint16_t i = 0; i < h; i++) {
+      memmove(&VPEEK(x, y + i), &VPEEK(x + 1, y + i), w - 1);
+      VMOVE_C(x + 1, y + i, x, y + i, w - 1, 1);
+      VPOKE(x + w - 1, y + i, 0);
+      VPOKE_CCOL(x + w - 1, y + i);
+    }
+    break;
   }
   uint8_t c;
   for (uint8_t i = 0; i < h; i++)
