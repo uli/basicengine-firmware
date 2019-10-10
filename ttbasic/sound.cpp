@@ -68,8 +68,7 @@ uint8_t *BasicSound::m_beep_env;
 uint16_t BasicSound::m_beep_pos;
 
 #ifdef HAVE_TSF
-void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
-{
+void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks) {
   if (!m_tsf || ch >= SOUND_CHANNELS)
     return;
   uint32_t now = millis();
@@ -89,14 +88,11 @@ void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks)
 #endif
 
 #ifdef HAVE_MML
-inline uint32_t BasicSound::mmlGetNoteLength(int ch, uint32_t note_ticks)
-{
+inline uint32_t BasicSound::mmlGetNoteLength(int ch, uint32_t note_ticks) {
   return (60000) * note_ticks / m_bpm[ch] / m_mml_opt[ch].bticks;
 }
-  
 
-void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
-{
+void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj) {
   uint32_t now = millis();
   int ch = (int)extobj;
   m_next_event[ch] = now;
@@ -188,13 +184,13 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj)
 #endif
   }
 }
-#endif	// HAVE_MML
+#endif  // HAVE_MML
 
 #ifdef HAVE_TSF
 int BasicSound::tsfile_read(void *data, void *ptr, unsigned int size) {
   return fread((char *)ptr, 1, size, (FILE *)data);
 }
-int BasicSound:: tsfile_tell(void *data) {
+int BasicSound::tsfile_tell(void *data) {
   return ftell((FILE *)data);
 }
 int BasicSound::tsfile_skip(void *data, unsigned int count) {
@@ -217,8 +213,7 @@ struct tsf_stream BasicSound::m_sf2;
 FILE *BasicSound::m_sf2_file;
 tsf *BasicSound::m_tsf;
 
-void BasicSound::loadFont()
-{
+void BasicSound::loadFont() {
 #ifdef SDL
   char *root = getenv("ENGINEBASIC_ROOT");
   if (root && m_font_name[0] != '/')
@@ -256,17 +251,15 @@ void BasicSound::loadFont()
   audio.setBlockSize(SOUND_BUFLEN);
 }
 
-void GROUP(basic_sound) BasicSound::unloadFont()
-{
+void GROUP(basic_sound) BasicSound::unloadFont() {
   if (m_tsf) {
     tsf_close(m_tsf);
     m_tsf = NULL;
   }
 }
-#endif	// HAVE_TSF
+#endif  // HAVE_TSF
 
-void BasicSound::begin(void)
-{
+void BasicSound::begin(void) {
 #ifdef HAVE_TSF
   m_font_name = F("1mgm.sf2");
 #endif
@@ -282,8 +275,7 @@ void BasicSound::begin(void)
 }
 
 #ifdef HAVE_MML
-void BasicSound::defaults(int ch)
-{
+void BasicSound::defaults(int ch) {
   m_off_time[ch] = 0;
   m_ch_inst[ch] = ch * 3;
   m_next_event[ch] = 0;
@@ -291,8 +283,7 @@ void BasicSound::defaults(int ch)
   m_velocity[ch] = 15;
 }
 
-void BasicSound::playMml(int ch, const char *data)
-{
+void BasicSound::playMml(int ch, const char *data) {
   if (!m_tsf)
     loadFont();
   mml_setup(&m_mml[ch], &m_mml_opt[ch], (char *)data);
@@ -300,8 +291,7 @@ void BasicSound::playMml(int ch, const char *data)
   m_next_event[ch] = millis();
 }
 
-void BasicSound::stopMml(int ch)
-{
+void BasicSound::stopMml(int ch) {
   m_next_event[ch] = 0;
 }
 #endif
@@ -310,8 +300,7 @@ void BasicSound::stopMml(int ch)
 static short staging_buf[SOUND_BUFLEN];
 #endif
 
-void GROUP(basic_sound) BasicSound::pumpEvents()
-{
+void GROUP(basic_sound) BasicSound::pumpEvents() {
 #if defined(HAVE_TSF) || defined(HAVE_MML)
   uint32_t now = millis();
 #endif
@@ -331,7 +320,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
     }
   }
 #endif
-  
+
 #ifdef HAVE_TSF
   // Unload driver if nothing has been played for a few seconds.
   if (m_tsf && !tsf_playing(m_tsf)) {
@@ -356,8 +345,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents()
 }
 
 #ifdef HAVE_TSF
-void GROUP(basic_sound) BasicSound::render()
-{
+void GROUP(basic_sound) BasicSound::render() {
   // This can not be done in the I2S interrupt handler because it may need
   // soundfont file access to cache samples.
   if (m_sam && audio.currBufPos() == 0) {
@@ -393,8 +381,7 @@ void GROUP(basic_sound) BasicSound::render()
   }
 }
 
-BString BasicSound::instName(int index)
-{
+BString BasicSound::instName(int index) {
   BString name;
 
   if (!m_tsf)
@@ -411,8 +398,7 @@ BString BasicSound::instName(int index)
 }
 #endif
 
-void BasicSound::setBeep(int period, int vol)
-{
+void BasicSound::setBeep(int period, int vol) {
   if (vol > 15)
     vol = 15;
   else if (vol < 0)
@@ -434,8 +420,7 @@ void BasicSound::setBeep(int period, int vol)
 #endif
 }
 
-void BasicSound::beep(int period, int vol, const uint8_t *env)
-{
+void BasicSound::beep(int period, int vol, const uint8_t *env) {
   if (period == 0) {
     noBeep();
     return;
@@ -453,8 +438,7 @@ void BasicSound::beep(int period, int vol, const uint8_t *env)
   }
 }
 
-void BasicSound::noBeep()
-{
+void BasicSound::noBeep() {
   free(m_beep_env);
   m_beep_env = NULL;
 #if !defined(HOSTED)

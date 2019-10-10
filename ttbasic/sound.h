@@ -55,18 +55,23 @@ static inline void *dbg_malloc(size_t s, int line) {
   return x;
 }
 #define TSF_MALLOC(a) dbg_malloc((a), __LINE__)
-#define TSF_REALLOC(a, b) (printf("realloc %p -> %d@%d\r\n", (a), (b), __LINE__), realloc((a),(b)))
-#define TSF_FREE(a) do { printf("free %p@%d\r\n", (a), __LINE__); free((a)); } while(0)
+#define TSF_REALLOC(a, b) \
+  (printf("realloc %p -> %d@%d\r\n", (a), (b), __LINE__), realloc((a), (b)))
+#define TSF_FREE(a)                          \
+  do {                                       \
+    printf("free %p@%d\r\n", (a), __LINE__); \
+    free((a));                               \
+  } while (0)
 #endif
 
 #define TSF_NO_STDIO
 #include "tsf.h"
 
-#endif	// HAVE_TSF
+#endif  // HAVE_TSF
 
 #include "ESP8266SAM.h"
 
-#define SOUND_CHANNELS	3
+#define SOUND_CHANNELS 3
 
 #include "basic.h"
 
