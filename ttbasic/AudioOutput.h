@@ -5,11 +5,8 @@
 
 #include <TPS2.h>
 
-class AudioOutput
-{
-  public:
-//  AudioSystem *audioSystem;
-  
+class AudioOutput {
+public:
   void init(int sample_rate);
 
   inline void setBlockSize(int size) {
@@ -42,9 +39,8 @@ private:
 
   static int m_block_size;
   static uint8_t m_sound_buf[2][SOUND_BUFLEN];
-
 };
 
 extern AudioOutput audio;
 
-#endif	// _AUDIOOUTPUT_H
+#endif  // _AUDIOOUTPUT_H
