@@ -85,8 +85,8 @@ public:
   inline int size() {
     return m_size;
   }
-  
-  inline struct proc_t& proc(uint8_t index) {
+
+  inline struct proc_t &proc(uint8_t index) {
     return m_proc[index];
   }
 
@@ -100,7 +100,7 @@ public:
     }
     return -1;
   }
-  
+
   inline int getStrArg(uint8_t index, uint8_t arg) {
     if (index >= m_size)
       return -1;
@@ -125,7 +125,7 @@ public:
     pr.locs_num[pr.locc_num++] = loc;
     return pr.locc_num - 1;
   }
-  
+
   inline int getStrLoc(uint8_t index, uint8_t loc) {
     if (index >= m_size)
       return -1;
@@ -190,8 +190,8 @@ public:
   inline int size() {
     return m_size;
   }
-  
-  inline struct label_t& label(uint8_t index) {
+
+  inline struct label_t &label(uint8_t index) {
     return m_lab[index];
   }
 
