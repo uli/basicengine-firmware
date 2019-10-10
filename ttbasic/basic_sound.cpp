@@ -6,8 +6,7 @@
 bool event_play_enabled;
 uint8_t event_play_proc_idx[SOUND_CHANNELS];
 
-void BASIC_INT Basic::event_handle_play(int ch)
-{
+void BASIC_INT Basic::event_handle_play(int ch) {
   if (event_play_proc_idx[ch] == NO_PROC)
     return;
   init_stack_frame();
@@ -35,7 +34,8 @@ void Basic::iplay() {
   int32_t ch = 0;
 
   if (!is_strexp())
-    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
+    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA))
+      return;
 
   sound.stopMml(ch);
   mml_text[ch] = istrexp();
@@ -86,8 +86,10 @@ Checks if a sound is playing a on wavetable synthesizer channel.
 num_t BASIC_FP Basic::nplay() {
 #ifdef HAVE_MML
   int32_t a, b;
-  if (checkOpen()) return 0;
-  if (getParam(a, -1, SOUND_CHANNELS - 1, I_CLOSE)) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(a, -1, SOUND_CHANNELS - 1, I_CLOSE))
+    return 0;
   if (a == -1) {
     b = 0;
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
@@ -143,10 +145,12 @@ void Basic::ibeep() {
   BString env;
   uint8_t *env_ptr = NULL;
 
-  if ( getParam(period, 0, SOUND_BUFLEN, I_NONE) ) return;
-  if(*cip == I_COMMA) {
+  if (getParam(period, 0, SOUND_BUFLEN, I_NONE))
+    return;
+  if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(vol, 0, 15, I_NONE) ) return;
+    if (getParam(vol, 0, 15, I_NONE))
+      return;
   }
   if (*cip == I_COMMA) {
     cip++;
@@ -196,20 +200,25 @@ void Basic::isound() {
   } else {
     int32_t ch, inst, note, len = 1000;
     num_t vel = 1;
-    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA)) return;
+    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA))
+      return;
     int instcnt = sound.instCount();
     if (!instcnt) {
       err = ERR_TSF;
       return;
     }
-    if (getParam(inst, 0, instcnt - 1, I_COMMA)) return;
-    if (getParam(note, 0, INT32_MAX, I_NONE)) return;
+    if (getParam(inst, 0, instcnt - 1, I_COMMA))
+      return;
+    if (getParam(note, 0, INT32_MAX, I_NONE))
+      return;
     if (*cip == I_COMMA) {
       ++cip;
-      if (getParam(len, 0, INT32_MAX, I_NONE)) return;
+      if (getParam(len, 0, INT32_MAX, I_NONE))
+        return;
       if (*cip == I_COMMA) {
         ++cip;
-        if (getParam(vel, 0, 1.0, I_NONE)) return;
+        if (getParam(vel, 0, 1.0, I_NONE))
+          return;
       }
     }
     sound.noteOn(ch, inst, note, vel, len);
@@ -218,4 +227,3 @@ void Basic::isound() {
   err = ERR_NOT_SUPPORTED;
 #endif
 }
-
