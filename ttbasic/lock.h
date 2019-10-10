@@ -13,13 +13,11 @@
 
 extern volatile int spi_lock;
 
-static inline void SpiLock(void)
-{
+static inline void SpiLock(void) {
   ++spi_lock;
 }
 
-static inline void SpiUnlock(void)
-{
+static inline void SpiUnlock(void) {
   --spi_lock;
   if (spi_lock < 0) {
 #ifdef DEBUG_LOCK
@@ -29,8 +27,7 @@ static inline void SpiUnlock(void)
   }
 }
 
-static inline bool SpiLocked(void)
-{
+static inline bool SpiLocked(void) {
   return spi_lock > 0;
 }
 
