@@ -4,7 +4,7 @@
 #include "basic.h"
 
 // *** フォント参照 ***************
-const uint8_t* ttbasic_font = TV_DISPLAY_FONT;
+const uint8_t *ttbasic_font = TV_DISPLAY_FONT;
 
 const uint8_t *fonts[NUM_FONTS] = {
   console_font_6x8,
@@ -14,7 +14,7 @@ const uint8_t *fonts[NUM_FONTS] = {
 };
 
 #include "tTVscreen.h"
-tTVscreen   sc0; 
+tTVscreen sc0;
 
 // **** スクリーン管理 *************
 uint8_t scmode = 0;
@@ -22,7 +22,8 @@ uint8_t scmode = 0;
 bool screen_putch_disable_escape_codes = false;
 
 // XXX: 168 byte jump table
-void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t c, bool lazy) {
+void BASIC_INT __attribute__((optimize("no-jump-tables")))
+screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
   static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;
@@ -68,7 +69,7 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t
         }
         break;
       case 'N':
-        if (reverse) { 
+        if (reverse) {
           reverse = false;
           sc0.flipColors();
         }
@@ -93,7 +94,7 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t
         if (sc0.c_y() < sc0.getHeight() - 1)
           sc0.locate(sc0.c_x(), sc0.c_y() + 1);
         break;
-      case 'c':	sc0.cls();	// fallthrough
+      case 'c': sc0.cls();  // fallthrough
       case 'h': sc0.locate(0, 0); break;
       case 'f':
         hex_digit = 1;
@@ -107,12 +108,12 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t
         hex_digit = 1;
         hex_type = 2;
         break;
-      default:	break;
+      default: break;
       }
     } else {
       switch (c) {
-      case '\n':newline(); break;
-      case '\r':sc0.locate(0, sc0.c_y()); break;
+      case '\n': newline(); break;
+      case '\r': sc0.locate(0, sc0.c_y()); break;
       case '\b':
         if (sc0.c_x() > 0) {
           sc0.locate(sc0.c_x() - 1);
@@ -120,7 +121,7 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) screen_putch(uint8_t
           sc0.locate(sc0.c_x() - 1);
         }
         break;
-      default:	sc0.putch(c, lazy); break;
+      default: sc0.putch(c, lazy); break;
       }
     }
   }
@@ -161,14 +162,18 @@ void BASIC_INT Basic::iwindow() {
     return;
   }
 
-  if ( getParam(x,  0, sc0.getScreenWidth() - 1, I_COMMA) ) return;   // x
-  if ( getParam(y,  0, sc0.getScreenHeight() - 1, I_COMMA) ) return;        // y
-  if ( getParam(w,  1, sc0.getScreenWidth() - x, I_COMMA) ) return;   // w
-  if ( getParam(h,  1, sc0.getScreenHeight() - y, I_NONE) ) return;        // h
+  if (getParam(x, 0, sc0.getScreenWidth() - 1, I_COMMA))
+    return;
+  if (getParam(y, 0, sc0.getScreenHeight() - 1, I_COMMA))
+    return;
+  if (getParam(w, 1, sc0.getScreenWidth() - x, I_COMMA))
+    return;
+  if (getParam(h, 1, sc0.getScreenHeight() - y, I_NONE))
+    return;
 
   sc0.setWindow(x, y, w, h);
   sc0.setScroll(h > 1 ? true : false);
-  sc0.locate(0,0);
+  sc0.locate(0, 0);
   sc0.show_curs(false);
 }
 
@@ -235,7 +240,8 @@ The following modes are available:
 void SMALL Basic::iscreen() {
   int32_t m;
 
-  if ( getParam(m,  1, vs23.numModes(), I_NONE) ) return;   // m
+  if (getParam(m, 1, vs23.numModes(), I_NONE))
+    return;
 
 #ifdef USE_BG_ENGINE
   // Discard dimensions saved for CONTing.
@@ -248,7 +254,7 @@ void SMALL Basic::iscreen() {
   if (scmode == m) {
     sc0.reset();
     sc0.setFont(fonts[CONFIG.font]);
-    sc0.locate(0,0);
+    sc0.locate(0, 0);
     sc0.cls();
     sc0.show_curs(false);
     return;
@@ -259,17 +265,17 @@ void SMALL Basic::iscreen() {
     E_ERR(IO, "cannot set screen mode");
     return;
   }
-    
+
   sc0.end();
   scmode = m;
 
-  sc0.init(SIZE_LINE,CONFIG.NTSC, m - 1);
+  sc0.init(SIZE_LINE, CONFIG.NTSC, m - 1);
 
   sc0.setFont(fonts[CONFIG.font]);
   sc0.cls();
   sc0.show_curs(false);
   sc0.draw_cls_curs();
-  sc0.locate(0,0);
+  sc0.locate(0, 0);
   sc0.refresh();
 }
 
@@ -296,14 +302,19 @@ Conversion fix-ups are enabled by default.
 ***/
 void Basic::ipalette() {
   int32_t p, hw, sw, vw, f;
-  if (getParam(p, 0, CSP_NUM_COLORSPACES - 1, I_NONE)) return;
+  if (getParam(p, 0, CSP_NUM_COLORSPACES - 1, I_NONE))
+    return;
   vs23.setColorSpace(p);
   if (*cip == I_COMMA) {
     cip++;
-    if (getParam(hw, 0, 7, I_COMMA) ) return;
-    if (getParam(sw, 0, 7, I_COMMA) ) return;
-    if (getParam(vw, 0, 7, I_COMMA) ) return;
-    if (getParam(f, 0, 1, I_NONE)) return;
+    if (getParam(hw, 0, 7, I_COMMA))
+      return;
+    if (getParam(sw, 0, 7, I_COMMA))
+      return;
+    if (getParam(vw, 0, 7, I_COMMA))
+      return;
+    if (getParam(f, 0, 1, I_NONE))
+      return;
     csp.setColorConversion(p, hw, sw, vw, !!f);
   }
 }
@@ -326,12 +337,16 @@ trial and error.
 ***/
 void Basic::iborder() {
   int32_t y, uv, x, w;
-  if (getParam(uv, 0, 255, I_COMMA)) return;
-  if (getParam(y, 0, 255 - 0x66, I_NONE)) return;
+  if (getParam(uv, 0, 255, I_COMMA))
+    return;
+  if (getParam(y, 0, 255 - 0x66, I_NONE))
+    return;
   if (*cip == I_COMMA) {
     ++cip;
-    if (getParam(x, 0, vs23.borderWidth(), I_COMMA)) return;
-    if (getParam(w, 0, vs23.borderWidth() - x, I_NONE)) return;
+    if (getParam(x, 0, vs23.borderWidth(), I_COMMA))
+      return;
+    if (getParam(w, 0, vs23.borderWidth() - x, I_NONE))
+      return;
     vs23.setBorder(y, uv, x, w);
   } else
     vs23.setBorder(y, uv);
@@ -365,9 +380,8 @@ void Basic::ivsync() {
   uint32_t tm;
   if (end_of_statement())
     tm = vs23.frame() + 1;
-  else
-    if ( getParam(tm, 0, INT32_MAX, I_NONE) )
-      return;
+  else if (getParam(tm, 0, INT32_MAX, I_NONE))
+    return;
 
   while (vs23.frame() < tm) {
     process_events();
@@ -410,14 +424,16 @@ void BASIC_INT Basic::ivreg() {
   int32_t opcode;
   int vals;
 
-  if (getParam(opcode, 1, 255, I_NONE)) return;
+  if (getParam(opcode, 1, 255, I_NONE))
+    return;
 
-  for(uint i = 0; i <= sizeof(vs23_write_regs); i++) {
-    if (i == sizeof(vs23_write_regs)) { // out of data
+  for (uint i = 0; i <= sizeof(vs23_write_regs); i++) {
+    if (i == sizeof(vs23_write_regs)) {  // out of data
       err = ERR_VALUE;
       return;
     }
-    if (pgm_read_byte(&vs23_write_regs[i]) == opcode) break;
+    if (pgm_read_byte(&vs23_write_regs[i]) == opcode)
+      break;
   }
 
   if (opcode != BLOCKMV_S && *cip++ != I_COMMA) {
@@ -461,7 +477,8 @@ Returns the number of video frames since power-on.
 \ref VSYNC
 ***/
 num_t BASIC_FP Basic::nframe() {
-  if (checkOpen()||checkClose()) return 0;
+  if (checkOpen() || checkClose())
+    return 0;
   return vs23.frame();
 }
 
@@ -478,21 +495,21 @@ Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`.
 num_t BASIC_INT Basic::nvreg() {
 #ifdef USE_VS23
   uint32_t opcode = getparam();
-  switch(opcode) {
-    case 0x05:
-    case 0x84:
-    case 0x86:
-    case 0xB7: return SpiRamReadRegister8(opcode);
-    case 0x53:
-    case 0x9F: return SpiRamReadRegister(opcode);
-    default:   err = ERR_VALUE; return 0;
+  switch (opcode) {
+  case 0x05:
+  case 0x84:
+  case 0x86:
+  case 0xB7: return SpiRamReadRegister8(opcode);
+  case 0x53:
+  case 0x9F: return SpiRamReadRegister(opcode);
+  default:   err = ERR_VALUE; return 0;
   }
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
 #endif
 }
-  
+
 /***bf scr VPEEK
 Read a location in video memory.
 \usage v = VPEEK(video_addr)
@@ -529,20 +546,22 @@ produce invalid output, with may cause damage to older CRT displays.
 void BASIC_INT Basic::ivpoke() {
 #ifdef USE_VS23
   int32_t addr, value;
-  if (getParam(addr, 0, 131071, I_COMMA)) return;
+  if (getParam(addr, 0, 131071, I_COMMA))
+    return;
   if (is_strexp()) {
     BString str = istrexp();
     if ((value = str.length()))
       SpiRamWriteBytes(addr, (uint8_t *)str.c_str(), value);
     return;
   }
-  if (getParam(value, 0, 255, I_NONE)) return;
+  if (getParam(value, 0, 255, I_NONE))
+    return;
   SpiRamWriteByte(addr, value);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
 }
-  
+
 /***bc scr LOCATE
 Moves the text cursor to the specified position.
 \usage LOCATE x_pos, y_pos
@@ -554,15 +573,19 @@ Moves the text cursor to the specified position.
 \ref CSIZE()
 ***/
 void Basic::ilocate() {
-  int32_t x,  y;
-  if ( getParam(x, I_COMMA) ) return;
-  if ( getParam(y, I_NONE) ) return;
-  if ( x >= sc0.getWidth() )   // xの有効範囲チェック
+  int32_t x, y;
+  if (getParam(x, I_COMMA))
+    return;
+  if (getParam(y, I_NONE))
+    return;
+  if (x >= sc0.getWidth())  // xの有効範囲チェック
     x = sc0.getWidth() - 1;
-  else if (x < 0) x = 0;
-  if( y >= sc0.getHeight() )   // yの有効範囲チェック
+  else if (x < 0)
+    x = 0;
+  if (y >= sc0.getHeight())  // yの有効範囲チェック
     y = sc0.getHeight() - 1;
-  else if(y < 0) y = 0;
+  else if (y < 0)
+    y = 0;
 
   // カーソル移動
   sc0.locate((uint16_t)x, (uint16_t)y);
@@ -611,16 +634,19 @@ Changes the foreground and background color for text output.
 \ref RGB()
 ***/
 void Basic::icolor() {
-  int32_t fc,  bgc = 0;
+  int32_t fc, bgc = 0;
   // XXX: allow 32-bit colors
-  if ( getParam(fc, 0, 255, I_NONE) ) return;
-  if(*cip == I_COMMA) {
+  if (getParam(fc, 0, 255, I_NONE))
+    return;
+  if (*cip == I_COMMA) {
     cip++;
-    if ( getParam(bgc, 0, 255, I_NONE) ) return;
+    if (getParam(bgc, 0, 255, I_NONE))
+      return;
     if (*cip == I_COMMA) {
       ++cip;
       int32_t cc;
-      if (getParam(cc, 0, 255, I_NONE)) return;
+      if (getParam(cc, 0, 255, I_NONE))
+        return;
       sc0.setCursorColor(csp.fromIndexed((ipixel_t)cc));
     }
   }
@@ -705,10 +731,14 @@ int32_t BASIC_INT Basic::ncharfun() {
   int32_t value; // 値
   int32_t x, y;  // 座標
 
-  if (checkOpen()) return 0;
-  if ( getParam(x, I_COMMA) ) return 0;
-  if ( getParam(y, I_NONE) ) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(x, I_COMMA))
+    return 0;
+  if (getParam(y, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
   value = (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
   return value;
 }
@@ -725,9 +755,12 @@ No sanity checks are performed on arguments.
 ***/
 void BASIC_FP Basic::ichar() {
   int32_t x, y, c;
-  if ( getParam(x, I_COMMA) ) return;
-  if ( getParam(y, I_COMMA) ) return;
-  if ( getParam(c, I_NONE) ) return;
+  if (getParam(x, I_COMMA))
+    return;
+  if (getParam(y, I_COMMA))
+    return;
+  if (getParam(c, I_NONE))
+    return;
   sc0.write(x, y, c);
 }
 
@@ -752,16 +785,21 @@ Valid values for `direction` are:
 Colors are lost when scrolling.
 \ref BLIT GSCROLL CSIZE()
 ***/
-void  Basic::icscroll() {
-  int32_t x1,y1,x2,y2,d;
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
+void Basic::icscroll() {
+  int32_t x1, y1, x2, y2, d;
+  if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
+      getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
+      getParam(d, I_NONE))
     return;
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getWidth() || y2 >= sc0.getHeight())  {
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 ||
+      x2 >= sc0.getWidth() ||
+      y2 >= sc0.getHeight()) {
     err = ERR_VALUE;
     return;
   }
-  if (d < 0 || d > 3) d = 0;
-  sc0.cscroll(x1, y1, x2-x1+1, y2-y1+1, d);
+  if (d < 0 || d > 3)
+    d = 0;
+  sc0.cscroll(x1, y1, x2 - x1 + 1, y2 - y1 + 1, d);
 }
 
 /***bc pix GSCROLL
@@ -784,17 +822,20 @@ Valid values for `direction` are:
 \ref BLIT CSCROLL PSIZE()
 ***/
 void Basic::igscroll() {
-  int32_t x1,y1,x2,y2,d;
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(d, I_NONE))
+  int32_t x1, y1, x2, y2, d;
+  if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
+      getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
+      getParam(d, I_NONE))
     return;
-  if (x1 < 0 || y1 < 0 ||
-      x2 <= x1 || y2 <= y1 ||
-      x2 >= sc0.getGWidth() || y2 >= vs23.lastLine()) {
+  if (x1 < 0 || y1 < 0 || x2 <= x1 || y2 <= y1 ||
+      x2 >= sc0.getGWidth() ||
+      y2 >= vs23.lastLine()) {
     err = ERR_VALUE;
     return;
   }
-  if (d < 0 || d > 3) d = 0;
-  sc0.gscroll(x1,y1,x2-x1+1, y2-y1+1, d);
+  if (d < 0 || d > 3)
+    d = 0;
+  sc0.gscroll(x1, y1, x2 - x1 + 1, y2 - y1 + 1, d);
 }
 
 /***bf pix POINT
@@ -807,11 +848,15 @@ Returns the color of the pixel at the given coordinates.
 ***/
 num_t BASIC_INT Basic::npoint() {
   int32_t x, y;  // 座標
-  if (checkOpen()) return 0;
-  if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA)) return 0;
-  if ( getParam(y, 0, vs23.lastLine()-1, I_NONE) ) return 0;
-  if (checkClose()) return 0;
-  return (num_t)(PIXEL_TYPE)vs23.getPixel(x,y);
+  if (checkOpen())
+    return 0;
+  if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA))
+    return 0;
+  if (getParam(y, 0, vs23.lastLine() - 1, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
+  return (num_t)(PIXEL_TYPE)vs23.getPixel(x, y);
 }
 
 /***bc pix GPRINT
@@ -833,10 +878,12 @@ off-screen pixel memory.
 \ref PRINT
 ***/
 void Basic::igprint() {
-  int32_t x,y;
-  if ( getParam(x, 0, sc0.getGWidth()-1, I_COMMA) ) return;
-  if ( getParam(y, 0, vs23.lastLine()-1, I_COMMA) ) return;
-  sc0.set_gcursor(x,y);
+  int32_t x, y;
+  if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA))
+    return;
+  if (getParam(y, 0, vs23.lastLine() - 1, I_COMMA))
+    return;
+  sc0.set_gcursor(x, y);
   iprint(2);
 }
 
@@ -850,17 +897,21 @@ Draws a pixel.
 \ref RGB()
 ***/
 void GROUP(basic_video) Basic::ipset() {
-  int32_t x,y,c;
-  if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(c, I_NONE))
+  int32_t x, y, c;
+  if (getParam(x, I_COMMA) || getParam(y, I_COMMA) || getParam(c, I_NONE))
     return;
 
   c = csp.fromIndexed(c);
 
-  if (x < 0) x = 0;
-  if (y < 0) y = 0;
-  if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
-  if (y >= vs23.lastLine()) y = vs23.lastLine()-1;
-  sc0.pset(x,y,c);
+  if (x < 0)
+    x = 0;
+  if (y < 0)
+    y = 0;
+  if (x >= sc0.getGWidth())
+    x = sc0.getGWidth() - 1;
+  if (y >= vs23.lastLine())
+    y = vs23.lastLine() - 1;
+  sc0.pset(x, y, c);
 }
 
 /***bc pix LINE
@@ -882,9 +933,10 @@ Coordinates that exceed the valid pixel memory area will be clamped.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::iline() {
-  int32_t x1,x2,y1,y2,c;
+  int32_t x1, x2, y1, y2, c;
 
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_NONE))
+  if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
+      getParam(x2, I_COMMA) || getParam(y2, I_NONE))
     return;
 
   if (*cip == I_COMMA) {
@@ -927,7 +979,8 @@ Coordinates that exceed the valid pixel memory area will be clamped.
 ***/
 void GROUP(basic_video) Basic::icircle() {
   int32_t x, y, r, c, f;
-  if (getParam(x, I_COMMA)||getParam(y, I_COMMA)||getParam(r, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
+  if (getParam(x, I_COMMA) || getParam(y, I_COMMA) || getParam(r, I_COMMA) ||
+      getParam(c, I_COMMA) || getParam(f, I_NONE))
     return;
 
   c = csp.fromIndexed(c);
@@ -963,19 +1016,23 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::irect() {
-  int32_t x1,y1,x2,y2,c,f;
-  if (getParam(x1, I_COMMA)||getParam(y1, I_COMMA)||getParam(x2, I_COMMA)||getParam(y2, I_COMMA)||getParam(c, I_COMMA)||getParam(f, I_NONE))
+  int32_t x1, y1, x2, y2, c, f;
+  if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
+      getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
+      getParam(c, I_COMMA) || getParam(f, I_NONE))
     return;
 
   c = csp.fromIndexed(c);
   if (f != -1)
     f = csp.fromIndexed(f);
 
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 || x2 >= sc0.getGWidth() || y2 >= vs23.lastLine())  {
+  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 ||
+      x2 >= sc0.getGWidth() ||
+      y2 >= vs23.lastLine()) {
     err = ERR_VALUE;
     return;
   }
-  sc0.rect(x1, y1, x2-x1+1, y2-y1+1, c, f);
+  sc0.rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, c, f);
 }
 
 /***bc pix BLIT
@@ -998,14 +1055,20 @@ The default transfer direction is down.
 \ref GSCROLL
 ***/
 void GROUP(basic_video) Basic::iblit() {
-  int32_t x,y,w,h,dx,dy;
+  int32_t x, y, w, h, dx, dy;
   int32_t dir = 0;
-  if (getParam(x, 0, sc0.getGWidth(), I_COMMA)) return;
-  if (getParam(y, 0, vs23.lastLine(), I_TO)) return;
-  if (getParam(dx, 0, sc0.getGWidth(), I_COMMA)) return;
-  if (getParam(dy, 0, vs23.lastLine(), I_SIZE)) return;
-  if (getParam(w, 0, sc0.getGWidth()-x, I_COMMA)) return;
-  if (getParam(h, 0, vs23.lastLine()-y, I_NONE)) return;
+  if (getParam(x,  0, sc0.getGWidth(), I_COMMA))
+    return;
+  if (getParam(y,  0, vs23.lastLine(), I_TO))
+    return;
+  if (getParam(dx, 0, sc0.getGWidth(), I_COMMA))
+    return;
+  if (getParam(dy, 0, vs23.lastLine(), I_SIZE))
+    return;
+  if (getParam(w,  0, sc0.getGWidth() - x, I_COMMA))
+    return;
+  if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
+    return;
   if (*cip == I_UP) {
     ++cip;
     dir = 1;
@@ -1013,6 +1076,6 @@ void GROUP(basic_video) Basic::iblit() {
     ++cip;
     dir = 0;
   }
-    
+
   vs23.MoveBlock(x, y, dx, dy, w, h, dir);
 }
