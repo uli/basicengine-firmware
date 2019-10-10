@@ -17,27 +17,25 @@
 #include "proc.h"
 #include "sound.h"
 
-#define SIZE_LINE 256    // コマンドライン入力バッファサイズ + NULL
-#define SIZE_IBUF 256    // 中間コード変換バッファサイズ
+#define SIZE_LINE 256  // コマンドライン入力バッファサイズ + NULL
+#define SIZE_IBUF 256  // 中間コード変換バッファサイズ
 
 extern char lbuf[SIZE_LINE];
 extern char tbuf[SIZE_LINE];
 extern int32_t tbuf_pos;
 extern unsigned char ibuf[SIZE_IBUF];
 
-extern uint8_t err; // Error message index
-
+extern uint8_t err;  // Error message index
 
 // メモリ書き込みポインタのクリア
 static inline void cleartbuf() {
-  tbuf_pos=0;
-  memset(tbuf,0,SIZE_LINE);
+  tbuf_pos = 0;
+  memset(tbuf, 0, SIZE_LINE);
 }
 
-
 void c_putch(uint8_t c, uint8_t devno = 0);
-void c_puts(const char *s, uint8_t devno=0);
-void c_puts_P(const char *s, uint8_t devno=0);
+void c_puts  (const char *s, uint8_t devno = 0);
+void c_puts_P(const char *s, uint8_t devno = 0);
 void screen_putch(uint8_t c, bool lazy = false);
 extern bool screen_putch_disable_escape_codes;
 
@@ -45,12 +43,12 @@ extern bool screen_putch_disable_escape_codes;
 
 #define dbg_printf(x, y...) printf_P(PSTR(x), y)
 
-void putnum(num_t value, int8_t d, uint8_t devno=0);
-void putint(int value, int8_t d, uint8_t devno=0);
-void putHexnum(uint32_t value, uint8_t d, uint8_t devno=0);
+void putnum   (num_t    value, int8_t  d, uint8_t devno = 0);
+void putint   (int      value, int8_t  d, uint8_t devno = 0);
+void putHexnum(uint32_t value, uint8_t d, uint8_t devno = 0);
 uint16_t BASIC_INT hex2value(char c);
 
-void newline(uint8_t devno=0);
+void newline(uint8_t devno = 0);
 
 #define NUM_FONTS 4
 
@@ -64,35 +62,40 @@ uint32_t getTopLineNum();
 
 BString getstr(uint8_t eoi = '\r');
 
-num_t& BASIC_FP get_lvar(uint8_t arg);
-BString& get_lsvar(uint8_t arg);
+num_t &BASIC_FP get_lvar(uint8_t arg);
+BString &get_lsvar(uint8_t arg);
 
 void BASIC_FP ivar();
 void BASIC_FP ilvar();
 
 #define MAX_VAR_NAME 32  // maximum length of variable names
-#define SIZE_GSTK 10     // GOSUB stack size
-#define SIZE_LSTK 10     // FOR stack size
-#define SIZE_ASTK 16	// argument stack
+#define SIZE_GSTK    10  // GOSUB stack size
+#define SIZE_LSTK    10  // FOR stack size
+#define SIZE_ASTK    16  // argument stack
 
 #define MAX_RETVALS 4
 
 #define basic_bool(x) ((x) ? -1 : 0)
 
-#define NEW_ALL		0
-#define NEW_PROG	1
-#define NEW_VAR		2
+#define NEW_ALL  0
+#define NEW_PROG 1
+#define NEW_VAR  2
 
 extern void E_SYNTAX(unsigned char token);
-#define SYNTAX_T(exp) do { static const char __msg[] PROGMEM = exp; \
-                           err = ERR_SYNTAX; err_expected = __msg; \
-                      } while(0)
+#define SYNTAX_T(exp)                        \
+  do {                                       \
+    static const char __msg[] PROGMEM = exp; \
+    err = ERR_SYNTAX;                        \
+    err_expected = __msg;                    \
+  } while (0)
 extern void E_VALUE(int32_t from, int32_t to);
 
-#define E_ERR(code, exp) do { \
-  static const char __msg[] PROGMEM = exp; \
-  err = ERR_ ## code; err_expected = __msg; \
-  } while(0)
+#define E_ERR(code, exp)                     \
+  do {                                       \
+    static const char __msg[] PROGMEM = exp; \
+    err = ERR_##code;                        \
+    err_expected = __msg;                    \
+  } while (0)
 
 class Basic {
 public:
@@ -102,16 +105,16 @@ public:
   void event_handle_sprite();
   void event_handle_pad();
   void event_handle_play(int ch);
-  char* getLineStr(uint32_t lineno, uint8_t devno = 3);
+  char *getLineStr(uint32_t lineno, uint8_t devno = 3);
   uint32_t getPrevLineNo(uint32_t lineno);
   uint32_t getNextLineNo(uint32_t lineno);
 
 private:
   int list_free();
-  unsigned char* getlp(uint32_t lineno);
+  unsigned char *getlp(uint32_t lineno);
   uint32_t getlineIndex(uint32_t lineno);
-  uint8_t* getELSEptr(uint8_t* p, bool endif_only = false, int adjust = 0);
-  uint8_t* getWENDptr(uint8_t* p);
+  uint8_t *getELSEptr(uint8_t *p, bool endif_only = false, int adjust = 0);
+  uint8_t *getWENDptr(uint8_t *p);
   uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX);
 
   void inslist();
@@ -119,7 +122,7 @@ private:
   uint8_t toktoi(bool find_prg_text = true);
   void irenum();
 
-  int SMALL putlist(unsigned char* ip, uint8_t devno = 0);
+  int SMALL putlist(unsigned char *ip, uint8_t devno = 0);
 
   int get_array_dims(int *idxs);
   num_t getparam();
@@ -131,18 +134,18 @@ private:
   void data_push();
   void data_pop();
 
-  void iprint(uint8_t devno = 0,uint8_t nonewln = 0);
+  void iprint(uint8_t devno = 0, uint8_t nonewln = 0);
 
   void do_trace();
   uint8_t ilrun();
   void clear_execution_state(bool clear);
-  void irun(uint8_t* start_clp = NULL, bool cont = false, bool clear = true);
+  void irun(uint8_t *start_clp = NULL, bool cont = false, bool clear = true);
 
   void inew(uint8_t mode = NEW_ALL);
 
   bool get_range(uint32_t &start, uint32_t &end);
 
-  void SMALL ilist(uint8_t devno=0, BString *search = NULL);
+  void SMALL ilist(uint8_t devno = 0, BString *search = NULL);
 
   void iloadbg();
   void isavebg();
@@ -159,7 +162,7 @@ private:
 
   num_t nplay();
 
-  uint8_t SMALL loadPrgText(char* fname, uint8_t newmode = NEW_ALL);
+  uint8_t SMALL loadPrgText(char *fname, uint8_t newmode = NEW_ALL);
   BString sinput();
 
   void init_stack_frame();
@@ -201,9 +204,9 @@ private:
 
   num_t nsvar_a(BString &);
   int get_num_local_offset(uint8_t arg, bool &is_local);
-  num_t& get_lvar(uint8_t arg);
+  num_t &get_lvar(uint8_t arg);
   int get_str_local_offset(uint8_t arg, bool &is_local);
-  BString& get_lsvar(uint8_t arg);
+  BString &get_lsvar(uint8_t arg);
   void set_svar(bool is_lsvar);
 
   num_t ivalue();
@@ -233,44 +236,51 @@ private:
   BString snetinput();
   BString snetget();
 
-  unsigned char* iexe(int stk = -1);
+  unsigned char *iexe(int stk = -1);
   uint8_t SMALL icom();
 
   // '('チェック関数
   inline uint8_t checkOpen() {
-    if (*cip != I_OPEN) err = ERR_PAREN;
-    else cip++;
+    if (*cip != I_OPEN)
+      err = ERR_PAREN;
+    else
+      cip++;
     return err;
   }
 
   // ')'チェック関数
   inline uint8_t checkClose() {
-    if (*cip != I_CLOSE) err = ERR_PAREN;
-    else cip++;
+    if (*cip != I_CLOSE)
+      err = ERR_PAREN;
+    else
+      cip++;
     return err;
   }
 
 #ifdef FLOAT_NUMS
-  uint8_t BASIC_FP getParam(int32_t& prm, token_t next_token);
-  uint8_t BASIC_FP getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token);
+  uint8_t BASIC_FP getParam(int32_t &prm, token_t next_token);
+  uint8_t BASIC_FP getParam(int32_t &prm, int32_t v_min, int32_t v_max,
+                            token_t next_token);
 #endif
 
   // コマンド引数取得(int32_t,引数チェックあり)
-  uint8_t BASIC_FP getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token);
-  uint32_t BASIC_FP getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token);
-  uint8_t BASIC_FP getParam(uint32_t& prm, token_t next_token);
-  uint8_t BASIC_FP getParam(num_t& prm, token_t next_token);
+  uint8_t BASIC_FP getParam(num_t &prm, num_t v_min, num_t v_max,
+                            token_t next_token);
+  uint32_t BASIC_FP getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
+                             token_t next_token);
+  uint8_t BASIC_FP getParam(uint32_t &prm, token_t next_token);
+  uint8_t BASIC_FP getParam(num_t &prm, token_t next_token);
 
   BString getParamFname();
 
-  inline bool end_of_statement()
-  {
-    return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE || *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
+  inline bool end_of_statement() {
+    return *cip == I_EOL || *cip == I_COLON || *cip == I_ELSE ||
+           *cip == I_IMPLICITENDIF || *cip == I_SQUOT;
   }
 
   uint64_t getFreeMemory();
 
-  unsigned char ibuf[SIZE_IBUF];    // i-code conversion buffer
+  unsigned char ibuf[SIZE_IBUF];  // i-code conversion buffer
 
   int size_list;
 
@@ -294,18 +304,18 @@ private:
   VarNames label_names;
   Labels labels;
 
-  unsigned char *listbuf; // Pointer to program list area
+  unsigned char *listbuf;  // Pointer to program list area
 
-  unsigned char* clp;               // Pointer current line
-  unsigned char* cip;               // Pointer current Intermediate code
+  unsigned char *clp;  // Pointer current line
+  unsigned char *cip;  // Pointer current Intermediate code
   struct {
     uint8_t *lp;
     uint8_t *ip;
     uint8_t num_args;
     uint8_t str_args;
     uint8_t proc_idx;
-  } gstk[SIZE_GSTK];   // GOSUB stack
-  unsigned char gstki;              // GOSUB stack index
+  } gstk[SIZE_GSTK];    // GOSUB stack
+  unsigned char gstki;  // GOSUB stack index
 
   // Arguments/locals stack
   num_t astk_num[SIZE_ASTK];
@@ -320,14 +330,14 @@ private:
     num_t vstep;
     int16_t index;
     bool local;
-  } lstk[SIZE_LSTK];   // loop stack
-  unsigned char lstki;              // loop stack index
+  } lstk[SIZE_LSTK];    // loop stack
+  unsigned char lstki;  // loop stack index
 
   uint8_t *cont_clp = NULL;
   uint8_t *cont_cip = NULL;
 
-  num_t retval[MAX_RETVALS];        // multi-value returns (numeric)
-  BString retstr[MAX_RETVALS];	    // multi-value returns (string)
+  num_t   retval[MAX_RETVALS];  // multi-value returns (numeric)
+  BString retstr[MAX_RETVALS];  // multi-value returns (string)
 
   bool event_error_enabled;
   unsigned char *event_error_lp;
@@ -359,10 +369,10 @@ int token_size(uint8_t *code);
 extern uint8_t err;
 extern const char *err_expected;
 
-void* BASIC_INT sanitize_addr(uint32_t vadr, int type);
+void *BASIC_INT sanitize_addr(uint32_t vadr, int type);
 
 #ifdef ESP8266
-extern "C" size_t umm_free_heap_size( void );
+extern "C" size_t umm_free_heap_size(void);
 #else
 extern int try_malloc();
 #endif
@@ -392,7 +402,7 @@ static inline uint16_t c_getch() {
     return sc0.get_ch();
 }
 
-#define c_kbhit( ) sc0.isKeyIn()
+#define c_kbhit() sc0.isKeyIn()
 
 #include <TKeyboard.h>
 extern TKeyboard kb;
@@ -411,7 +421,7 @@ num_t nplay();
 void loadConfig();
 void iloadconfig();
 
-#define COL(n)	(csp.colorFromRgb(CONFIG.color_scheme[COL_ ## n]))
+#define COL(n) (csp.colorFromRgb(CONFIG.color_scheme[COL_##n]))
 
 extern bool event_play_enabled;
 extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
