@@ -127,11 +127,11 @@
 #else
 
 #ifdef ESP8266_NOWIFI
-#define GROUP(g) __attribute__((section(".irom." #g)))
+#define GROUP(g)   __attribute__((section(".irom." #g)))
 #define GROUP_DATA GROUP
-#define BASIC_FP ICACHE_RAM_ATTR
+#define BASIC_FP   ICACHE_RAM_ATTR
 #else
-#define GROUP(g) __attribute__((section(".text." #g)))
+#define GROUP(g)      __attribute__((section(".text." #g)))
 #define GROUP_DATA(g) __attribute__((section(".irom.text")))
 #define BASIC_FP
 #endif
@@ -198,16 +198,16 @@
 #ifdef UNIFILE_STDIO
 #include <unifile_stdio.h>
 #else
-#define _opendir opendir
+#define _opendir  opendir
 #define _closedir closedir
-#define _readdir readdir
-#define _remove remove
-#define _rename rename
-#define _chdir chdir
-#define _getcwd getcwd
-#define _stat stat
-#define _mkdir mkdir
-#define _rmdir rmdir
+#define _readdir  readdir
+#define _remove   remove
+#define _rename   rename
+#define _chdir    chdir
+#define _getcwd   getcwd
+#define _stat     stat
+#define _mkdir    mkdir
+#define _rmdir    rmdir
 #endif
 
 #endif
