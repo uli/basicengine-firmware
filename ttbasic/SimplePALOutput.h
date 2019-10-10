@@ -6,11 +6,10 @@
 const int memSamples = 856;
 const int imageSamples = 640;
 
-#define SPO_NUM_MODES	13
+#define SPO_NUM_MODES 13
 
-class SimplePALOutput
-{
-  public:    
+class SimplePALOutput {
+public:
   unsigned short longSync[memSamples];
   unsigned short shortSync[memSamples];
   unsigned short line[2][memSamples];
@@ -25,7 +24,7 @@ class SimplePALOutput
   short yuv2y[256];
 
   static const i2s_port_t I2S_PORT = (i2s_port_t)I2S_NUM_0;
-    
+
   void setMode(const struct video_mode_t &mode);
   void setColorSpace(uint8_t palette);
   void init();
