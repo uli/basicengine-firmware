@@ -16,35 +16,31 @@
 typedef PIXEL_TYPE pixel_t;
 typedef uint8_t ipixel_t;
 #else
-class pixel_t
-{
+class pixel_t {
 public:
-  pixel_t() {};
+  pixel_t() {}
   explicit pixel_t(uint8_t val) : m_value(val) {}
-  operator uint32_t() const noexcept
-  {
+  operator uint32_t() const noexcept {
     return m_value;
   }
-  explicit operator uint8_t() const noexcept
-  {
+  explicit operator uint8_t() const noexcept {
     return m_value;
   }
+
 private:
   PIXEL_TYPE m_value;
 };
-class ipixel_t
-{
+class ipixel_t {
 public:
   ipixel_t() {}
   explicit ipixel_t(uint32_t val) : m_value(val) {}
-  operator uint8_t() const noexcept
-  {
+  operator uint8_t() const noexcept {
     return m_value;
   }
-  explicit operator uint32_t() const noexcept
-  {
+  explicit operator uint32_t() const noexcept {
     return m_value;
   }
+
 private:
   uint8_t m_value;
 };
@@ -72,21 +68,23 @@ public:
     m_line_adjust = line_adjust;
   }
 
-  inline int lastLine() { return m_last_line; }
+  inline int lastLine() {
+    return m_last_line;
+  }
 
   bool allocBacking(int w, int h, int &x, int &y);
   void freeBacking(int x, int y, int w, int h);
 
 #if defined(H3)
-    inline uint32_t frame() {
-      return tick_counter;
-    }
+  inline uint32_t frame() {
+    return tick_counter;
+  }
 #elif defined(HOSTED)
-    uint32_t frame();
+  uint32_t frame();
 #else
-    inline uint32_t frame() {
-      return m_frame;
-    }
+  inline uint32_t frame() {
+    return m_frame;
+  }
 #endif
 
   void setColorSpace(uint8_t palette);
@@ -103,4 +101,4 @@ protected:
   GuillotineBinPack m_bin;
 };
 
-#endif	// _VIDEO_DRIVER_H
+#endif  // _VIDEO_DRIVER_H
