@@ -52,7 +52,7 @@
 #include "net.h"
 
 // size by which the list buffer is incremented when full
-#define LISTBUF_INC	128
+#define LISTBUF_INC 128
 
 struct unaligned_num_t {
   num_t n;
@@ -73,7 +73,7 @@ sdfiles bfs;
 
 #ifdef FLOAT_NUMS
 // Get command arguments (uint32_t, no argument check)
-uint8_t BASIC_FP Basic::getParam(int32_t& prm, token_t next_token) {
+uint8_t BASIC_FP Basic::getParam(int32_t &prm, token_t next_token) {
   num_t p = iexp();
   prm = p;
   if (!err && next_token != I_NONE && *cip++ != next_token) {
@@ -82,7 +82,8 @@ uint8_t BASIC_FP Basic::getParam(int32_t& prm, token_t next_token) {
   return err;
 }
 // Get command argument (int32_t, with argument check)
-uint8_t BASIC_FP Basic::getParam(int32_t& prm, int32_t v_min,  int32_t v_max, token_t next_token) {
+uint8_t BASIC_FP Basic::getParam(int32_t &prm, int32_t v_min, int32_t v_max,
+                                 token_t next_token) {
   prm = iexp();
   if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
@@ -94,9 +95,10 @@ uint8_t BASIC_FP Basic::getParam(int32_t& prm, int32_t v_min,  int32_t v_max, to
 #endif
 
 // Get command argument (int32_t, with argument check)
-uint8_t BASIC_FP Basic::getParam(num_t& prm, num_t v_min,  num_t v_max, token_t next_token) {
+uint8_t BASIC_FP Basic::getParam(num_t &prm, num_t v_min, num_t v_max,
+                                 token_t next_token) {
   prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
+  if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
@@ -104,9 +106,10 @@ uint8_t BASIC_FP Basic::getParam(num_t& prm, num_t v_min,  num_t v_max, token_t 
   return err;
 }
 
-uint32_t BASIC_FP Basic::getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max, token_t next_token) {
+uint32_t BASIC_FP Basic::getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
+                                  token_t next_token) {
   prm = iexp();
-  if (!err &&  (prm < v_min || prm > v_max))
+  if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
@@ -115,7 +118,7 @@ uint32_t BASIC_FP Basic::getParam(uint32_t& prm, uint32_t v_min, uint32_t v_max,
 }
 
 // Get command arguments (int32_t, no argument check)
-uint8_t BASIC_FP Basic::getParam(uint32_t& prm, token_t next_token) {
+uint8_t BASIC_FP Basic::getParam(uint32_t &prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
@@ -124,7 +127,7 @@ uint8_t BASIC_FP Basic::getParam(uint32_t& prm, token_t next_token) {
 }
 
 // Get command arguments (uint32_t, no argument check)
-uint8_t BASIC_FP Basic::getParam(num_t& prm, token_t next_token) {
+uint8_t BASIC_FP Basic::getParam(num_t &prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     if (next_token == I_OPEN || next_token == I_CLOSE)
@@ -173,7 +176,7 @@ extern inline void c_putch(uint8_t c, uint8_t devno) {
 }
 
 void BASIC_INT newline(uint8_t devno) {
-  if (devno==0) {
+  if (devno == 0) {
     if (redirect_output_file >= 0) {
       putc('\n', user_files[redirect_output_file].f);
       return;
@@ -195,7 +198,7 @@ void BASIC_INT newline(uint8_t devno) {
 
 // Support function for tick
 void Basic::iclt() {
-//  systick_uptime_millis = 0;
+  //systick_uptime_millis = 0;
 }
 
 /***bf m RND
@@ -218,7 +221,7 @@ num_t BASIC_FP getrnd(int value) {
   if (value < 0)
     randomSeed(value);
   if (value <= 1)
-    return ((num_t)random(RAND_MAX)/(num_t)RAND_MAX);
+    return ((num_t)random(RAND_MAX) / (num_t)RAND_MAX);
   else
     return random(value);
 }
@@ -275,10 +278,10 @@ const uint8_t i_dual[] BASIC_DAT = {
 // clang-format on
 
 // exception search function
-char sstyle(uint8_t code,
-            const uint8_t *table, uint8_t count) {
-  while(count--) //中間コードの数だけ繰り返す
-    if (code == pgm_read_byte(&table[count]))	// if there is a corresponding intermediate code
+char sstyle(uint8_t code, const uint8_t *table, uint8_t count) {
+  while (count--)  //中間コードの数だけ繰り返す
+    // if there is a corresponding intermediate code
+    if (code == pgm_read_byte(&table[count]))
       return 1;
   return 0;
 }
@@ -286,19 +289,19 @@ char sstyle(uint8_t code,
 // exception search macro
 #define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa))
 #define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb))
-#define spacef(c) sstyle(c, i_sf, sizeof(i_sf))
-#define dual(c) sstyle(c, i_dual, sizeof(i_dual))
+#define spacef(c)   sstyle(c, i_sf, sizeof(i_sf))
+#define dual(c)     sstyle(c, i_dual, sizeof(i_dual))
 
 // Error message definition
-uint8_t err; // Error message index
-const char *err_expected;	// Clarification for the user
+uint8_t err;               // Error message index
+const char *err_expected;  // Clarification for the user
 
-#define ESTR(n,s) static const char _errmsg_ ## n[] PROGMEM = s;
+#define ESTR(n, s) static const char _errmsg_##n[] PROGMEM = s;
 #include "errdef.h"
 
 #undef ESTR
-#define ESTR(n,s) _errmsg_ ## n,
-static const char* const errmsg[] PROGMEM = {
+#define ESTR(n, s) _errmsg_##n,
+static const char *const errmsg[] PROGMEM = {
 #include "errdef.h"
 };
 
@@ -328,8 +331,8 @@ void SMALL E_SYNTAX(unsigned char token) {
   err_expected = tbuf;
 }
 // RAM mapping
-char lbuf[SIZE_LINE];          // Command input buffer
-char tbuf[SIZE_LINE];          // Text display buffer
+char lbuf[SIZE_LINE];  // Command input buffer
+char tbuf[SIZE_LINE];  // Text display buffer
 int32_t tbuf_pos = 0;
 
 // BASIC line number descriptor.
@@ -359,13 +362,13 @@ inline void mem_putch(uint8_t c) {
 // XXX: We pull in ctype anyway, can do away with these.
 char c_isprint(char c) {
   //return(c >= 32 && c <= 126);
-  return(c >= 32 && c!=127 );
+  return (c >= 32 && c != 127);
 }
 
 // Delete whitespace on the right side of the string
-char* tlimR(char* str) {
+char *tlimR(char *str) {
   uint32_t len = strlen(str);
-  for (uint32_t i = len - 1; i>0; i--) {
+  for (uint32_t i = len - 1; i > 0; i--) {
     if (str[i] == ' ') {
       str[i] = 0;
     } else {
@@ -376,10 +379,12 @@ char* tlimR(char* str) {
 }
 
 void c_puts(const char *s, uint8_t devno) {
-  while (*s) c_putch(*s++, devno);
+  while (*s)
+    c_putch(*s++, devno);
 }
 void c_puts_P(const char *s, uint8_t devno) {
-  while (pgm_read_byte(s)) c_putch(pgm_read_byte(s++), devno);
+  while (pgm_read_byte(s))
+    c_putch(pgm_read_byte(s++), devno);
 }
 
 // Print numeric specified columns
@@ -443,7 +448,7 @@ void putHexnum(uint32_t value, uint8_t d, uint8_t devno) {
   char s[] = "%0.X";
   s[2] = '0' + d;
   sprintf(lbuf, s, value);
-  c_puts(lbuf,devno);
+  c_puts(lbuf, devno);
 }
 
 // Binary output
@@ -456,30 +461,30 @@ void putHexnum(uint32_t value, uint8_t d, uint8_t devno) {
 //   0 complement when digit is specified by d
 //   Does not consider sign.
 //
-void putBinnum(uint32_t value, uint8_t d, uint8_t devno=0) {
+void putBinnum(uint32_t value, uint8_t d, uint8_t devno = 0) {
   uint32_t bin = (uint32_t)value;  // Interpreted as unsigned hexadecimal
   uint32_t b;
   uint32_t dig = 0;
 
   for (uint8_t i = 0; i < 16; i++) {
-    b =(bin>>(15-i)) & 1;
+    b = (bin >> (15 - i)) & 1;
     lbuf[i] = b ? '1' : '0';
     if (!dig && b)
-      dig = 16-i;
+      dig = 16 - i;
   }
   lbuf[16] = 0;
 
   if (d > dig)
     dig = d;
-  c_puts(&lbuf[16-dig],devno);
+  c_puts(&lbuf[16 - dig], devno);
 }
 
 void get_input(bool numeric, uint8_t eoi) {
-  char c; //文字
-  uint8_t len; //文字数
+  char c;       //文字
+  uint8_t len;  //文字数
 
-  len = 0; //文字数をクリア
-  while(1) {
+  len = 0;  //文字数をクリア
+  while (1) {
     c = c_getch();
     if (c == eoi || (eoi == '\r' && redirect_input_file >= 0 && c == '\n')) {
       break;
@@ -497,8 +502,9 @@ void get_input(bool numeric, uint8_t eoi) {
           sc0.delete_char();
         }
       }
-    } else if (len < SIZE_LINE - 1 && (!numeric || c == '.' ||
-        c == '+' || c == '-' || isDigit(c) || c == 'e' || c == 'E') ) {
+    } else if (len < SIZE_LINE - 1 &&
+               (!numeric || c == '.' || c == '+' || c == '-' || isDigit(c) ||
+                c == 'e' || c == 'E')) {
       lbuf[len++] = c;
       c_putch(c);
     } else {
@@ -510,7 +516,7 @@ void get_input(bool numeric, uint8_t eoi) {
     newline();
   else
     c_putch(eoi);
-  lbuf[len] = 0; //終端を置く
+  lbuf[len] = 0;  //終端を置く
 }
 
 // 数値の入力
@@ -533,7 +539,7 @@ BString getstr(uint8_t eoi) {
 //[戻り値]
 //  該当なし   : -1
 //  見つかった : キーワードコード
-int lookup(char* str) {
+int lookup(char *str) {
   for (uint8_t i = 0; i < SIZE_KWTBL; ++i) {
     if (kwtbl[i]) {
       int l = strlen_P(kwtbl[i]);
@@ -553,7 +559,7 @@ int lookup(char* str) {
       // therefore been omitted here.
       // FN is here because there are tests relying on it being glued to
       // function identifiers.
-      if (!CONFIG.keyword_sep_optional && isAlpha(str[l-1]) &&
+      if (!CONFIG.keyword_sep_optional && isAlpha(str[l - 1]) &&
           i != I_ELSE && i != I_FN &&
           (isAlphaNumeric(str[l]) || str[l] == '_'))
         continue;
@@ -563,7 +569,7 @@ int lookup(char* str) {
   }
   return -1;
 }
-int lookup_ext(char* str) {
+int lookup_ext(char *str) {
   for (uint8_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
     if (kwtbl_ext[i]) {
       int l = strlen_P(kwtbl_ext[i]);
@@ -572,7 +578,7 @@ int lookup_ext(char* str) {
         continue;
 
       // See lookup().
-      if (!CONFIG.keyword_sep_optional && isAlpha(str[l-1]) &&
+      if (!CONFIG.keyword_sep_optional && isAlpha(str[l - 1]) &&
           i != I_ELSE && i != I_FN &&
           (isAlphaNumeric(str[l]) || str[l] == '_'))
         continue;
@@ -590,8 +596,8 @@ uint8_t parse_identifier(char *ptok, char *vname) {
   do {
     v = vname[var_len++] = *p++;
   } while ((isAlpha(v) || (var_len > 1 && (isAlphaNumeric(v) || v == '_'))) &&
-           var_len < MAX_VAR_NAME-1);
-  vname[--var_len] = 0;     // terminate C string
+           var_len < MAX_VAR_NAME - 1);
+  vname[--var_len] = 0;  // terminate C string
   return var_len;
 }
 
@@ -608,23 +614,24 @@ uint32_t getlineno(unsigned char *lp);
 uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
   int16_t i;
   int key;
-  int len = 0;	// length of sequence of intermediate code
-  char *ptok;		// pointer to the inside of one word
-  char *s = lbuf;	// pointer to the inside of the string buffer
-  char c;		// Character used to enclose string (")
-  num_t value;		// constant
-  uint32_t hex;		// hexadecimal constant
-  uint16_t hcnt;	// hexadecimal digit count
-  uint8_t var_len;	// variable name length
-  char vname [MAX_VAR_NAME];	// variable name
+  int len = 0;               // length of sequence of intermediate code
+  char *ptok;                // pointer to the inside of one word
+  char *s = lbuf;            // pointer to the inside of the string buffer
+  char c;                    // Character used to enclose string (")
+  num_t value;               // constant
+  uint32_t hex;              // hexadecimal constant
+  uint16_t hcnt;             // hexadecimal digit count
+  uint8_t var_len;           // variable name length
+  char vname[MAX_VAR_NAME];  // variable name
   bool had_if = false;
   int implicit_endif = 0;
 
   bool is_prg_text = false;
 
-  while (*s) {                  //文字列1行分の終端まで繰り返す
-    while (isspace(*s)) s++;  //空白を読み飛ばす
-    if (!*s)			// Abort if nothing left after skipping whitespace.
+  while (*s) {           //文字列1行分の終端まで繰り返す
+    while (isspace(*s))  //空白を読み飛ばす
+      s++;
+    if (!*s)  // Abort if nothing left after skipping whitespace.
       break;
 
     bool isext = false;
@@ -641,13 +648,13 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
     }
     if (key >= 0) {
       // 該当キーワードあり
-      if (len >= SIZE_IBUF - 2) {      // もし中間コードが長すぎたら
-	err = ERR_IBUFOF;              // エラー番号をセット
-	return 0;                      // 0を持ち帰る
+      if (len >= SIZE_IBUF - 2) {  // もし中間コードが長すぎたら
+        err = ERR_IBUFOF;          // エラー番号をセット
+        return 0;                  // 0を持ち帰る
       }
       // translate "END IF" to "ENDIF"
-      if (key == I_IF && len > 0 && ibuf[len-1] == I_END)
-        ibuf[len-1] = I_ENDIF;
+      if (key == I_IF && len > 0 && ibuf[len - 1] == I_END)
+        ibuf[len - 1] = I_ENDIF;
       else {
         if (key == I_IF)
           had_if = true;
@@ -659,11 +666,12 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
             --implicit_endif;
           }
         }
-        ibuf[len++] = key;                 // 中間コードを記録
+        ibuf[len++] = key;  // 中間コードを記録
       }
       if (had_if && !isext && (key == I_THEN || key == I_GOTO)) {
-        had_if = false;	// prevent multiple implicit endifs for "THEN GOTO"
-        while (isspace(*s)) s++;
+        had_if = false;  // prevent multiple implicit endifs for "THEN GOTO"
+        while (isspace(*s))
+          s++;
         if (*s) {
           // Handle "IF ... THEN ' comment" properly
           // XXX: Should "IF ... THEN : REM comment" also be considered?
@@ -680,29 +688,29 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
     // Try hexadecimal conversion $XXXX
     if (key == I_DOLLAR) {
       if (isHexadecimalDigit(*s)) {
-	hex = 0;
-	hcnt = 0;             // Number of digits
-	do {
-	  hex = (hex<<4) + hex2value(*s++);
-	  hcnt++;
-	} while (isHexadecimalDigit(*s));
+        hex = 0;
+        hcnt = 0;  // Number of digits
+        do {
+          hex = (hex << 4) + hex2value(*s++);
+          hcnt++;
+        } while (isHexadecimalDigit(*s));
 
-	if (hcnt > 8) {      // Overflow check
-	  err = ERR_VOF;
-	  return 0;
-	}
+        if (hcnt > 8) {  // Overflow check
+          err = ERR_VOF;
+          return 0;
+        }
 
-	if (len >= SIZE_IBUF - 5) { // もし中間コードが長すぎたら
-	  err = ERR_IBUFOF;         // エラー番号をセット
-	  return 0;                 // 0を持ち帰る
-	}
-	//s = ptok; // 文字列の処理ずみの部分を詰める
-	len--;    // I_DALLARを置き換えるために格納位置を移動
-	ibuf[len++] = I_HEXNUM;  //中間コードを記録
-	ibuf[len++] = hex & 255; //定数の下位バイトを記録
-	ibuf[len++] = hex >> 8;  //定数の上位バイトを記録
-	ibuf[len++] = hex >> 16;
-	ibuf[len++] = hex >> 24;
+        if (len >= SIZE_IBUF - 5) {  // もし中間コードが長すぎたら
+          err = ERR_IBUFOF;          // エラー番号をセット
+          return 0;                  // 0を持ち帰る
+        }
+        //s = ptok;               // 文字列の処理ずみの部分を詰める
+        len--;                    // I_DALLARを置き換えるために格納位置を移動
+        ibuf[len++] = I_HEXNUM;   //中間コードを記録
+        ibuf[len++] = hex & 255;  //定数の下位バイトを記録
+        ibuf[len++] = hex >> 8;   //定数の上位バイトを記録
+        ibuf[len++] = hex >> 16;
+        ibuf[len++] = hex >> 24;
       }
     }
 
@@ -712,24 +720,24 @@ uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
     }
 
     //コメントへの変換を試みる
-    if(key == I_REM|| key == I_SQUOT) {       // もし中間コードがI_REMなら
-      while (isspace(*s)) s++;         // 空白を読み飛ばす
-      ptok = s;                          // コメントの先頭を指す
+    if (key == I_REM || key == I_SQUOT) {  // もし中間コードがI_REMなら
+      while (isspace(*s))                  // 空白を読み飛ばす
+        s++;
+      ptok = s;  // コメントの先頭を指す
 
-      for (i = 0; *ptok++; i++) ;        // コメントの文字数を得る
-      if (len >= SIZE_IBUF - 3 - i) {    // もし中間コードが長すぎたら
-	err = ERR_IBUFOF;                // エラー番号をセット
-	return 0;                        // 0を持ち帰る
+      for (i = 0; *ptok++; i++) {}     // コメントの文字数を得る
+      if (len >= SIZE_IBUF - 3 - i) {  // もし中間コードが長すぎたら
+        err = ERR_IBUFOF;              // エラー番号をセット
+        return 0;                      // 0を持ち帰る
       }
 
-      ibuf[len++] = i;                   // コメントの文字数を記録
-      while (i--) {                      // コメントの文字数だけ繰り返す
-	ibuf[len++] = *s++;              // コメントを記録
+      ibuf[len++] = i;       // コメントの文字数を記録
+      while (i--) {          // コメントの文字数だけ繰り返す
+        ibuf[len++] = *s++;  // コメントを記録
       }
-      break;                             // 文字列の処理を打ち切る（終端の処理へ進む）
+      break;                 // 文字列の処理を打ち切る（終端の処理へ進む）
     } else if (key == I_PROC) {
-// XXX: No better place to put this...
-// clang-format off
+      // XXX: No better place to put this...
 /***bc bas PROC
 Define a procedure or function.
 \usage PROC name[(<num_arg|str_arg$>[, <num_arg|str_arg$> ...])]
@@ -775,17 +783,17 @@ It is not currently possible to use complex data types (arrays and lists)
 as local variables or arguments.
 \ref CALL FN RETURN
 ***/
-// clang-format on
       if (!is_prg_text) {
         err = ERR_COM;
         return 0;
       }
-      if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
-	err = ERR_IBUFOF;
-	return 0;
+      if (len >= SIZE_IBUF - 2) {  //もし中間コードが長すぎたら
+        err = ERR_IBUFOF;
+        return 0;
       }
 
-      while (isspace(*s)) s++;
+      while (isspace(*s))
+        s++;
       s += parse_identifier(s, vname);
 
       int idx = proc_names.assign(vname, true);
@@ -795,12 +803,13 @@ as local variables or arguments.
         return 0;
       }
     } else if (key == I_LABEL) {
-      if (len >= SIZE_IBUF - 2) { //もし中間コードが長すぎたら
-	err = ERR_IBUFOF;
-	return 0;
+      if (len >= SIZE_IBUF - 2) {  //もし中間コードが長すぎたら
+        err = ERR_IBUFOF;
+        return 0;
       }
 
-      while (isspace(*s)) s++;
+      while (isspace(*s))
+        s++;
       s += parse_identifier(s, vname);
 
       int idx = label_names.assign(vname, true);
@@ -810,7 +819,8 @@ as local variables or arguments.
         return 0;
       }
     } else if (key == I_CALL || key == I_FN) {
-      while (isspace(*s)) s++;
+      while (isspace(*s))
+        s++;
       s += parse_identifier(s, vname);
       int idx = proc_names.assign(vname, is_prg_text);
       if (procs.reserve(proc_names.varTop())) {
@@ -818,8 +828,8 @@ as local variables or arguments.
         return 0;
       }
       if (len >= SIZE_IBUF - 2) {
-	err = ERR_IBUFOF;
-	return 0;
+        err = ERR_IBUFOF;
+        return 0;
       }
       ibuf[len++] = idx;
     }
@@ -831,11 +841,12 @@ as local variables or arguments.
     }
 
     // Attempt to convert to constant
-    ptok = s;                            // Points to the beginning of a word
+    ptok = s;  // Points to the beginning of a word
     if (isDigit(*ptok) || *ptok == '.') {
-      if (len >= SIZE_IBUF - sizeof(num_t) - 2) { // If the intermediate code is too long
-	err = ERR_IBUFOF;
-	return 0;
+      if (len >= SIZE_IBUF - sizeof(num_t) - 2) {
+        // the intermediate code is too long
+        err = ERR_IBUFOF;
+        return 0;
       }
       value = strtonum(ptok, &ptok);
       if (s == ptok) {
@@ -843,35 +854,35 @@ as local variables or arguments.
         SYNTAX_T("invalid number");
         return 0;
       }
-      s = ptok;			// Stuff the processed part of the character string
-      ibuf[len++] = I_NUM;	// Record intermediate code
-      UNALIGNED_NUM_T(ibuf+len) = value;
+      s = ptok;             // Stuff the processed part of the character string
+      ibuf[len++] = I_NUM;  // Record intermediate code
+      UNALIGNED_NUM_T(ibuf + len) = value;
       len += sizeof(num_t);
       if (find_prg_text) {
         is_prg_text = true;
         find_prg_text = false;
       }
-    } else if (*s == '\"' ) {
+    } else if (*s == '\"') {
       // Attempt to convert to a character string
 
-      c = *s++;		// Remember " and go to the next character
-      ptok = s;		// Points to the beginning of the string
+      c = *s++;  // Remember " and go to the next character
+      ptok = s;  // Points to the beginning of the string
 
       // Get the number of characters in a string
       for (i = 0; *ptok && (*ptok != c); i++)
-	ptok++;
+        ptok++;
 
-      if (len >= SIZE_IBUF - 3 - i) { // if the intermediate code is too long
-	err = ERR_IBUFOF;
-	return 0;
+      if (len >= SIZE_IBUF - 3 - i) {  // if the intermediate code is too long
+        err = ERR_IBUFOF;
+        return 0;
       }
 
       ibuf[len++] = I_STR;
-      ibuf[len++] = i; // record the number of characters in the string
+      ibuf[len++] = i;  // record the number of characters in the string
       while (i--) {
-	ibuf[len++] = *s++; // Record character
+        ibuf[len++] = *s++;  // Record character
       }
-      if (*s == c)	// If the character is ", go to the next character
+      if (*s == c)  // If the character is ", go to the next character
         s++;
     } else if (*ptok == '@' || *ptok == '~' || isAlpha(*ptok)) {
       // Try converting to variable
@@ -879,16 +890,18 @@ as local variables or arguments.
       bool is_list = false;
       if (*ptok == '@') {
         is_local = true;
-        ++ptok; ++s;
+        ++ptok;
+        ++s;
       } else if (*ptok == '~') {
         is_list = true;
-        ++ptok; ++s;
+        ++ptok;
+        ++s;
       }
 
       var_len = parse_identifier(ptok, vname);
-      if (len >= SIZE_IBUF - 3) { // if the intermediate code is too long
-	err = ERR_IBUFOF;
-	return 0;
+      if (len >= SIZE_IBUF - 3) {  // if the intermediate code is too long
+        err = ERR_IBUFOF;
+        return 0;
       }
 
       char *p = ptok + var_len;
@@ -910,7 +923,7 @@ as local variables or arguments.
           goto oom;
         ibuf[len++] = idx;
         if ((!is_list && str_arr.reserve(str_arr_names.varTop())) ||
-            ( is_list && str_lst.reserve(str_lst_names.varTop())))
+            (is_list && str_lst.reserve(str_lst_names.varTop())))
           goto oom;
         s += var_len + 2;
         ptok += 2;
@@ -923,20 +936,20 @@ as local variables or arguments.
         else
           tok = I_SVAR;
         ibuf[len++] = tok;
-	int idx;
-	if (is_list) {
-	  idx = str_lst_names.assign(vname, is_prg_text);
-	} else {
-	  idx = svar_names.assign(vname, is_prg_text);
+        int idx;
+        if (is_list) {
+          idx = str_lst_names.assign(vname, is_prg_text);
+        } else {
+          idx = svar_names.assign(vname, is_prg_text);
         }
-	if (idx < 0)
-	  goto oom;
-	ibuf[len++] = idx;
-	if ((!is_list && svar.reserve(svar_names.varTop())) ||
-	    ( is_list && str_lst.reserve(str_lst_names.varTop())))
-	  goto oom;
-	s += var_len + 1;
-	ptok++;
+        if (idx < 0)
+          goto oom;
+        ibuf[len++] = idx;
+        if ((!is_list && svar.reserve(svar_names.varTop())) ||
+            (is_list && str_lst.reserve(str_lst_names.varTop())))
+          goto oom;
+        s += var_len + 1;
+        ptok++;
       } else if (*p == '(') {
         if (is_local) {
           err = ERR_NOT_SUPPORTED;
@@ -954,12 +967,12 @@ as local variables or arguments.
           goto oom;
         ibuf[len++] = idx;
         if ((!is_list && num_arr.reserve(num_arr_names.varTop())) ||
-            ( is_list && num_lst.reserve(num_lst_names.varTop())))
+            (is_list && num_lst.reserve(num_lst_names.varTop())))
           goto oom;
         s += var_len + 1;
         ptok++;
       } else {
-	// Convert to intermediate code
+        // Convert to intermediate code
         uint8_t tok;
         if (is_local)
           tok = I_LVAR;
@@ -967,22 +980,22 @@ as local variables or arguments.
           tok = I_NUMLSTREF;
         else
           tok = I_VAR;
-	ibuf[len++] = tok;
-	int idx;
-	if (is_list) {
-	  idx = num_lst_names.assign(vname, is_prg_text);
-	} else {
-	  idx = nvar_names.assign(vname, is_prg_text);
+        ibuf[len++] = tok;
+        int idx;
+        if (is_list) {
+          idx = num_lst_names.assign(vname, is_prg_text);
+        } else {
+          idx = nvar_names.assign(vname, is_prg_text);
         }
-	if (idx < 0)
-	  goto oom;
-	ibuf[len++] = idx;
-	if ((!is_list && nvar.reserve(nvar_names.varTop())) ||
-	    ( is_list && num_lst.reserve(num_lst_names.varTop())))
-	  goto oom;
-	s += var_len;
+        if (idx < 0)
+          goto oom;
+        ibuf[len++] = idx;
+        if ((!is_list && nvar.reserve(nvar_names.varTop())) ||
+            (is_list && num_lst.reserve(num_lst_names.varTop())))
+          goto oom;
+        s += var_len;
       }
-    } else { // if none apply
+    } else {  // if none apply
       err = ERR_SYNTAX;
       return 0;
     }
@@ -1000,43 +1013,44 @@ oom:
   return 0;
 }
 
-
 // Return free memory size
 int Basic::list_free() {
-  unsigned char* lp;
+  unsigned char *lp;
 
-  for (lp = listbuf; *lp; lp += *lp) ;  // Move the pointer to the end of the list
-  return listbuf + size_list - lp - 1; // Calculate the rest and return it
+  // Move the pointer to the end of the list
+  for (lp = listbuf; *lp; lp += *lp) {}
+
+  return listbuf + size_list - lp - 1;  // Calculate the rest and return it
 }
 
 // Get line numbere by line pointer
 uint32_t BASIC_FP getlineno(unsigned char *lp) {
   line_desc_t *ld = (line_desc_t *)lp;
-  if(ld->next == 0) //もし末尾だったら
+  if (ld->next == 0)  //もし末尾だったら
     return (uint32_t)-1;
   return ld->line;
 }
 
 // Search line by line number
-unsigned char* BASIC_FP Basic::getlp(uint32_t lineno) {
-  unsigned char *lp; //ポインタ
+unsigned char *BASIC_FP Basic::getlp(uint32_t lineno) {
+  unsigned char *lp;  //ポインタ
 
-  for (lp = listbuf; *lp; lp += *lp) // Repeat from top to bottom
+  for (lp = listbuf; *lp; lp += *lp)  // Repeat from top to bottom
     if (getlineno(lp) >= lineno)
       break;
 
-  return lp; //ポインタを持ち帰る
+  return lp;  //ポインタを持ち帰る
 }
 
 // Get line index from line number
 uint32_t Basic::getlineIndex(uint32_t lineno) {
-  unsigned char *lp; //ポインタ
+  unsigned char *lp;  //ポインタ
   uint32_t index = 0;
   uint32_t rc = INT32_MAX;
-  for (lp = listbuf; *lp; lp += *lp) { // 先頭から末尾まで繰り返す
-    if (getlineno(lp) >= lineno) {         // もし指定の行番号以上なら
+  for (lp = listbuf; *lp; lp += *lp) {  // 先頭から末尾まで繰り返す
+    if (getlineno(lp) >= lineno) {      // もし指定の行番号以上なら
       rc = index;
-      break;                                   // 繰り返しを打ち切る
+      break;  // 繰り返しを打ち切る
     }
     index++;
   }
@@ -1048,23 +1062,24 @@ uint32_t Basic::getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t* BASIC_INT Basic::getELSEptr(uint8_t* p, bool endif_only, int adjust) {
-  uint8_t* rc = NULL;
-  uint8_t* lp;
+uint8_t *BASIC_INT Basic::getELSEptr(uint8_t *p, bool endif_only, int adjust) {
+  uint8_t *rc = NULL;
+  uint8_t *lp;
   unsigned char lifstki = 1 + adjust;
-  uint8_t *stlp = clp; uint8_t *stip = cip;
+  uint8_t *stlp = clp;
+  uint8_t *stip = cip;
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
-  for (lp = p; ; ) {
-    switch(*lp) {
-    case I_IF:    // IF命令
+  for (lp = p;;) {
+    switch (*lp) {
+    case I_IF:  // IF命令
       lp++;
       lifstki++;
       break;
     case I_ELSE:  // ELSE命令
       if (lifstki == 1 && !endif_only) {
         // Found the highest-level ELSE, we're done.
-        rc = lp+1;
+        rc = lp + 1;
         goto DONE;
       }
       lp++;
@@ -1077,7 +1092,8 @@ uint8_t* BASIC_INT Basic::getELSEptr(uint8_t* p, bool endif_only, int adjust) {
       // Continue at next line.
       clp += *clp;
       if (!*clp) {
-        clp = stlp; cip = stip;
+        clp = stlp;
+        cip = stip;
         err = ERR_NOENDIF;
         return NULL;
       }
@@ -1093,7 +1109,7 @@ uint8_t* BASIC_INT Basic::getELSEptr(uint8_t* p, bool endif_only, int adjust) {
         goto DONE;
       }
       break;
-    default:        // その他
+    default:  // その他
       lp += token_size(lp);
       break;
     }
@@ -1102,13 +1118,13 @@ DONE:
   return rc;
 }
 
-uint8_t* BASIC_INT Basic::getWENDptr(uint8_t* p) {
-  uint8_t* rc = NULL;
-  uint8_t* lp;
+uint8_t *BASIC_INT Basic::getWENDptr(uint8_t *p) {
+  uint8_t *rc = NULL;
+  uint8_t *lp;
   unsigned char lifstki = 1;
 
-  for (lp = p; ; ) {
-    switch(*lp) {
+  for (lp = p;;) {
+    switch (*lp) {
     case I_WHILE:
       if (lp[-1] != I_LOOP)
         lifstki++;
@@ -1117,7 +1133,7 @@ uint8_t* BASIC_INT Basic::getWENDptr(uint8_t* p) {
     case I_WEND:
       if (lifstki == 1) {
         // Found the highest-level WEND, we're done.
-        rc = lp+1;
+        rc = lp + 1;
         goto DONE;
       }
       lp++;
@@ -1144,14 +1160,14 @@ DONE:
 
 // プログラム行数を取得する
 uint32_t Basic::countLines(uint32_t st, uint32_t ed) {
-  unsigned char *lp; //ポインタ
+  unsigned char *lp;  //ポインタ
   uint32_t cnt = 0;
   uint32_t lineno;
-  for (lp = listbuf; *lp; lp += *lp)  {
+  for (lp = listbuf; *lp; lp += *lp) {
     lineno = getlineno(lp);
     if (lineno == (uint32_t)-1)
       break;
-    if ( (lineno >= st) && (lineno <= ed))
+    if ((lineno >= st) && (lineno <= ed))
       cnt++;
   }
   return cnt;
@@ -1164,7 +1180,7 @@ uint32_t Basic::countLines(uint32_t st, uint32_t ed) {
 void Basic::inslist() {
   unsigned char *insp;     // 挿入位置ポインタ
   unsigned char *p1, *p2;  // 移動先と移動元ポインタ
-  int len;               // 移動の長さ
+  int len;                 // 移動の長さ
 
   cont_clp = cont_cip = NULL;
   procs.reset();
@@ -1173,7 +1189,7 @@ void Basic::inslist() {
   // Empty check (If this is the case, it may be impossible to delete lines
   // when only line numbers are entered when there is insufficient space ..)
   // @Tamakichi)
-  if (list_free() < *ibuf) { // If the vacancy is insufficient
+  if (list_free() < *ibuf) {  // If the vacancy is insufficient
     int inc_mem = (*ibuf + LISTBUF_INC - 1) / LISTBUF_INC * LISTBUF_INC;
     listbuf = (unsigned char *)realloc(listbuf, size_list + inc_mem);
     if (!listbuf) {
@@ -1190,40 +1206,41 @@ void Basic::inslist() {
   ld->line = lin;
   ld->indent = 0;
 
-  insp = getlp(getlineno(ibuf)); // 挿入位置ポインタを取得
+  insp = getlp(getlineno(ibuf));  // 挿入位置ポインタを取得
 
   // 同じ行番号の行が存在したらとりあえず削除
-  if (getlineno(insp) == getlineno(ibuf)) { // もし行番号が一致したら
-    p1 = insp;                              // p1を挿入位置に設定
-    p2 = p1 + *p1;                          // p2を次の行に設定
-    while ((len = *p2) != 0) {              // 次の行の長さが0でなければ繰り返す
-      while (len--)                         // 次の行の長さだけ繰り返す
-	*p1++ = *p2++;                      // 前へ詰める
+  if (getlineno(insp) == getlineno(ibuf)) {  // もし行番号が一致したら
+    p1 = insp;                               // p1を挿入位置に設定
+    p2 = p1 + *p1;                           // p2を次の行に設定
+    while ((len = *p2) != 0) {  // 次の行の長さが0でなければ繰り返す
+      while (len--)             // 次の行の長さだけ繰り返す
+        *p1++ = *p2++;          // 前へ詰める
     }
-    *p1 = 0; // リストの末尾に0を置く
+    *p1 = 0;  // リストの末尾に0を置く
   }
 
   // 行番号だけが入力された場合はここで終わる
-  if (*ibuf == sizeof(num_t)+2) // もし長さが4（[長さ][I_NUM][行番号]のみ）なら
+  // もし長さが4（[長さ][I_NUM][行番号]のみ）なら
+  if (*ibuf == sizeof(num_t) + 2)
     return;
 
   // 挿入のためのスペースを空ける
 
-  for (p1 = insp; *p1; p1 += *p1) ;  // p1をリストの末尾へ移動
-  len = p1 - insp + 1;             // 移動する幅を計算
-  p2 = p1 + *ibuf;                 // p2を末尾より1行の長さだけ後ろに設定
-  while (len--)                    // 移動する幅だけ繰り返す
-    *p2-- = *p1--;                 // 後ろへズラす
+  for (p1 = insp; *p1; p1 += *p1) {}  // p1をリストの末尾へ移動
+  len = p1 - insp + 1;                // 移動する幅を計算
+  p2 = p1 + *ibuf;  // p2を末尾より1行の長さだけ後ろに設定
+  while (len--)     // 移動する幅だけ繰り返す
+    *p2-- = *p1--;  // 後ろへズラす
 
   // 行を転送する
-  len = *ibuf;     // 中間コードの長さを設定
-  p1 = insp;       // 転送先を設定
-  p2 = ibuf;       // 転送元を設定
-  while (len--)    // 中間コードの長さだけ繰り返す
+  len = *ibuf;      // 中間コードの長さを設定
+  p1 = insp;        // 転送先を設定
+  p2 = ibuf;        // 転送元を設定
+  while (len--)     // 中間コードの長さだけ繰り返す
     *p1++ = *p2++;  // 転送
 }
 
-#define MAX_INDENT 10
+#define MAX_INDENT  10
 #define INDENT_STEP 2
 
 static int8_t indent_level;
@@ -1231,11 +1248,13 @@ static int8_t indent_level;
 // tokens that increase indentation
 inline bool is_indent(uint8_t *c) {
   return (*c == I_IF && c[-1] != I_ELSE) || *c == I_DO || *c == I_WHILE ||
-        (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT && c[1] != I_APPEND && c[1] != I_DIRECTORY);
+         (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT &&
+          c[1] != I_APPEND && c[1] != I_DIRECTORY);
 }
 // tokens that reduce indentation
 inline bool is_unindent(uint8_t c) {
-  return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP || c == I_WEND;
+  return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP ||
+         c == I_WEND;
 }
 // tokens that temporarily reduce indentation
 inline bool is_reindent(uint8_t c) {
@@ -1248,9 +1267,9 @@ void SMALL recalc_indent_line(unsigned char *lp) {
   line_desc_t *ld = (line_desc_t *)lp;
   unsigned char *ip = lp + sizeof(line_desc_t);
 
-  re_indent = is_reindent(*ip);	// must be reverted at the end of the line
+  re_indent = is_reindent(*ip);  // must be reverted at the end of the line
   if (is_unindent(*ip) || re_indent) {
-    skip_indent = true;	// don't do this again in the main loop
+    skip_indent = true;  // don't do this again in the main loop
     indent_level -= INDENT_STEP;
   }
 
@@ -1292,7 +1311,7 @@ void SMALL Basic::recalc_indent() {
 }
 
 // Text output of specified intermediate code line record
-int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
+int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
   uint8_t var_code;
@@ -1330,19 +1349,19 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip+1) != I_COLON && (*(ip+1) != I_OPEN || !dual(*ip)))
-	if ( (!nospacea(*ip) || spacef(*(ip+1))) &&
-	     *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL)
-	  c_putch(' ',devno);
+      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual(*ip)))
+        if ((!nospacea(*ip) || spacef(*(ip + 1))) && *ip != I_COLON &&
+            *ip != I_SQUOT && *ip != I_LABEL)
+          c_putch(' ', devno);
 
-      if (*ip == I_REM||*ip == I_SQUOT) { //もし中間コードがI_REMなら
-	ip++; //ポインタを文字数へ進める
-	i = *ip++; //文字数を取得してポインタをコメントへ進める
-	sc0.setColor(COL(COMMENT), COL(BG));
-	while (i--) //文字数だけ繰り返す
-	  c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
+      if (*ip == I_REM || *ip == I_SQUOT) {  //もし中間コードがI_REMなら
+        ip++;       //ポインタを文字数へ進める
+        i = *ip++;  //文字数を取得してポインタをコメントへ進める
+        sc0.setColor(COL(COMMENT), COL(BG));
+        while (i--)               //文字数だけ繰り返す
+          c_putch(*ip++, devno);  //ポインタを進めながら文字を表示
         sc0.setColor(COL(FG), COL(BG));
-	return mark;
+        return mark;
       } else if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
         sc0.setColor(COL(PROC), COL(BG));
@@ -1355,28 +1374,20 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
         sc0.setColor(COL(FG), COL(BG));
       }
 
-      ip++; //ポインタを次の中間コードへ進める
-    }
-    else
-
-    //定数の処理
-    if (*ip == I_NUM) { //もし定数なら
-      ip++; //ポインタを値へ進める
+      ip++;  //ポインタを次の中間コードへ進める
+    } else if (*ip == I_NUM) {  //Process of constant
+      ip++;                     //Advance the pointer to the value
       num_t n = UNALIGNED_NUM_T(ip);
       sc0.setColor(COL(NUM), COL(BG));
-      putnum(n, 0,devno); //値を取得して表示
+      putnum(n, 0, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
-      ip += sizeof(num_t); //ポインタを次の中間コードへ進める
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
-    }
-    else
-
-    //16進定数の処理
-    if (*ip == I_HEXNUM) { //もし16進定数なら
-      ip++; //ポインタを値へ進める
+      ip += sizeof(num_t);    //ポインタを次の中間コードへ進める
+      if (!nospaceb(*ip))     //もし例外にあたらなければ
+        c_putch(' ', devno);  //空白を表示
+    } else if (*ip == I_HEXNUM) {  //Processing hexadecimal constants
+      ip++;                        //ポインタを値へ進める
       sc0.setColor(COL(NUM), COL(BG));
-      c_putch('$',devno); //空白を表示
+      c_putch('$', devno);  //空白を表示
       uint32_t num = ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24);
       int digits;
       if (num < 256)
@@ -1385,24 +1396,24 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
         digits = 4;
       else
         digits = 8;
-      putHexnum(num, digits, devno); //値を取得して表示
+      putHexnum(num, digits, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
-      ip += 4; //ポインタを次の中間コードへ進める
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
-    } else if (*ip == I_VAR || *ip == I_LVAR) { //もし定数なら
+      ip += 4;                //ポインタを次の中間コードへ進める
+      if (!nospaceb(*ip))     //もし例外にあたらなければ
+        c_putch(' ', devno);  //空白を表示
+    } else if (*ip == I_VAR || *ip == I_LVAR) {  //もし定数なら
       if (*ip == I_LVAR) {
         sc0.setColor(COL(LVAR), COL(BG));
         c_putch('@', devno);
       } else
         sc0.setColor(COL(VAR), COL(BG));
-      ip++; //ポインタを変数番号へ進める
+      ip++;  //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(nvar_names.name(var_code), devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
+      if (!nospaceb(*ip))     //もし例外にあたらなければ
+        c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_VARARR || *ip == I_NUMLST) {
       ip++;
       var_code = *ip++;
@@ -1428,14 +1439,14 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
         c_putch('@', devno);
       } else
         sc0.setColor(COL(VAR), COL(BG));
-      ip++; //ポインタを変数番号へ進める
+      ip++;  //ポインタを変数番号へ進める
       var_code = *ip++;
       c_puts(svar_names.name(var_code), devno);
       c_putch('$', devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb(*ip)) //もし例外にあたらなければ
-	c_putch(' ',devno);  //空白を表示
+      if (!nospaceb(*ip))     //もし例外にあたらなければ
+        c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_STRARR || *ip == I_STRLST) {
       ip++;
       var_code = *ip++;
@@ -1464,30 +1475,31 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
       char c; //文字列の括りに使われている文字（「"」または「'」）
 
       //文字列の括りに使われている文字を調べる
-      c = '\"'; //文字列の括りを仮に「"」とする
-      ip++; //ポインタを文字数へ進める
-      for (i = *ip; i; i--) //文字数だけ繰り返す
-	if (*(ip + i) == '\"') { //もし「"」があれば
-	  c = '\''; //文字列の括りは「'」
-	  break; //繰り返しを打ち切る
-	}
+      c = '\"';                   //文字列の括りを仮に「"」とする
+      ip++;                       //ポインタを文字数へ進める
+      for (i = *ip; i; i--)       //文字数だけ繰り返す
+        if (*(ip + i) == '\"') {  //もし「"」があれば
+          c = '\'';               //文字列の括りは「'」
+          break;                  //繰り返しを打ち切る
+        }
 
       sc0.setColor(COL(STR), COL(BG));
       //文字列を表示する
-      c_putch(c,devno); //文字列の括りを表示
-      i = *ip++; //文字数を取得してポインタを文字列へ進める
-      while (i--) //文字数だけ繰り返す
-	c_putch(*ip++,devno);  //ポインタを進めながら文字を表示
-      c_putch(c,devno); //文字列の括りを表示
+      c_putch(c, devno);  //文字列の括りを表示
+      i = *ip++;          //文字数を取得してポインタを文字列へ進める
+      while (i--)               //文字数だけ繰り返す
+        c_putch(*ip++, devno);  //ポインタを進めながら文字を表示
+      c_putch(c, devno);        //文字列の括りを表示
       sc0.setColor(COL(FG), COL(BG));
       // XXX: Why I_VAR? Such code wouldn't make sense anyway.
-      if (*ip == I_VAR || *ip ==I_ELSE || *ip == I_AS || *ip == I_TO || *ip == I_THEN || *ip == I_FOR)
-	c_putch(' ',devno);
+      if (*ip == I_VAR || *ip == I_ELSE || *ip == I_AS || *ip == I_TO ||
+          *ip == I_THEN || *ip == I_FOR)
+        c_putch(' ', devno);
     } else if (*ip == I_IMPLICITENDIF) {
       // invisible
       ip++;
-    } else { //どれにも当てはまらなかった場合
-      err = ERR_SYS; //エラー番号をセット
+    } else {          //どれにも当てはまらなかった場合
+      err = ERR_SYS;  //エラー番号をセット
       return mark;
     }
     if (ip <= cip)
@@ -1498,11 +1510,14 @@ int SMALL Basic::putlist(unsigned char* ip, uint8_t devno) {
 
 // Get argument in parenthesis
 num_t BASIC_FP Basic::getparam() {
-  num_t value; //値
-  if (checkOpen()) return 0;
-  if (getParam(value, I_NONE) ) return 0;
-  if (checkClose()) return 0;
-  return value; //値を持ち帰る
+  num_t value;  //値
+  if (checkOpen())
+    return 0;
+  if (getParam(value, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
+  return value;  //値を持ち帰る
 }
 
 // INPUT handler
@@ -1511,9 +1526,9 @@ void SMALL Basic::iinput() {
   int idxs[MAX_ARRAY_DIMS];
   num_t value;
   BString str_value;
-  short index;          // Array subscript or variable number
+  short index;  // Array subscript or variable number
   int32_t filenum = -1;
-  uint8_t eoi;	// end-of-input character
+  uint8_t eoi;  // end-of-input character
 
   if (*cip == I_SHARP) {
     cip++;
@@ -1523,7 +1538,7 @@ void SMALL Basic::iinput() {
       err = ERR_FILE_NOT_OPEN;
       return;
     }
-  } else if(is_strexp() && *cip != I_SVAR && *cip != I_STRARR) {
+  } else if (is_strexp() && *cip != I_SVAR && *cip != I_STRARR) {
     // We have to exclude string variables here because they may be lvalues.
     c_puts(istrexp().c_str());
 
@@ -1536,7 +1551,7 @@ void SMALL Basic::iinput() {
     ++cip;
 
   sc0.show_curs(1);
-  for(;;) {
+  for (;;) {
     // Processing input values
     switch (*cip++) {
     case I_VAR:
@@ -1639,27 +1654,27 @@ void SMALL Basic::iinput() {
 
       break;
 
-    default: // 以上のいずれにも該当しなかった場合
+    default:  // 以上のいずれにも該当しなかった場合
       SYNTAX_T("exp variable");
       //return;            // 終了
       goto DONE;
-    } // 中間コードで分岐の末尾
+    }  // 中間コードで分岐の末尾
 
     //値の入力を連続するかどうか判定する処理
     if (end_of_statement())
       goto DONE;
     else {
-      switch (*cip) { // 中間コードで分岐
+      switch (*cip) {  // 中間コードで分岐
       case I_COMMA:    // コンマの場合
         cip++;         // 中間コードポインタを次へ進める
         break;         // 打ち切る
-      default:      // 以上のいずれにも該当しなかった場合
+      default:         // 以上のいずれにも該当しなかった場合
         SYNTAX_T("exp separator");
         //return;           // 終了
         goto DONE;
-      } // 中間コードで分岐の末尾
+      }  // 中間コードで分岐の末尾
     }
-  }   // 無限に繰り返すの末尾
+  }  // 無限に繰り返すの末尾
 
 DONE:
   sc0.show_curs(0);
@@ -1667,12 +1682,9 @@ DONE:
 
 int BASIC_FP token_size(uint8_t *code) {
   switch (*code) {
-  case I_STR:
-    return code[1] + 2;
-  case I_NUM:
-    return sizeof(num_t) + 1;
-  case I_HEXNUM:
-    return 5;
+  case I_STR:    return code[1] + 2;
+  case I_NUM:    return sizeof(num_t) + 1;
+  case I_HEXNUM: return 5;
   case I_LVAR:
   case I_VAR:
   case I_LSVAR:
@@ -1686,12 +1698,10 @@ int BASIC_FP token_size(uint8_t *code) {
   case I_CALL:
   case I_FN:
   case I_PROC:
-  case I_LABEL:
-    return 2;
+  case I_LABEL: return 2;
   case I_EOL:
   case I_REM:
-  case I_SQUOT:
-    return -1;
+  case I_SQUOT: return -1;
   case I_GOTO:
   case I_GOSUB:
   case I_COMMA:
@@ -1700,13 +1710,12 @@ int BASIC_FP token_size(uint8_t *code) {
       return 3;
     else
       return 1;
-  default:
-    return 1;
+  default: return 1;
   }
 }
 
-void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsigned char tok)
-{
+void find_next_token(unsigned char **start_clp, unsigned char **start_cip,
+                     unsigned char tok) {
   unsigned char *sclp = *start_clp;
   unsigned char *scip = *start_cip;
   int next;
@@ -1734,11 +1743,11 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip, unsig
   *start_cip = scip;
 }
 
-void Basic::initialize_proc_pointers(void)
-{
+void Basic::initialize_proc_pointers(void) {
   unsigned char *lp, *ip;
 
-  lp = listbuf; ip = NULL;
+  lp = listbuf;
+  ip = NULL;
 
   for (int i = 0; i < procs.size(); ++i) {
     procs.proc(i).lp = NULL;
@@ -1756,7 +1765,8 @@ void Basic::initialize_proc_pointers(void)
 
     if (pr.lp) {
       err = ERR_DUPPROC;
-      clp = lp; cip = ip;
+      clp = lp;
+      cip = ip;
       return;
     }
 
@@ -1773,7 +1783,8 @@ void Basic::initialize_proc_pointers(void)
         case I_VAR:
           if (pr.argc_num >= MAX_PROC_ARGS) {
             err = ERR_ASTKOF;
-            clp = lp; cip = ip;
+            clp = lp;
+            cip = ip;
             return;
           }
           pr.args_num[pr.argc_num] = *ip++;
@@ -1782,7 +1793,8 @@ void Basic::initialize_proc_pointers(void)
         case I_SVAR:
           if (pr.argc_str >= MAX_PROC_ARGS) {
             err = ERR_ASTKOF;
-            clp = lp; cip = ip;
+            clp = lp;
+            cip = ip;
             return;
           }
           pr.args_str[pr.argc_str] = *ip++;
@@ -1790,7 +1802,8 @@ void Basic::initialize_proc_pointers(void)
           break;
         default:
           SYNTAX_T("exp variable");
-          clp = lp; cip = ip;
+          clp = lp;
+          cip = ip;
           return;
         }
       } while (*ip++ == I_COMMA);
@@ -1800,7 +1813,8 @@ void Basic::initialize_proc_pointers(void)
           err = ERR_UNDEFARG;
         else
           E_SYNTAX(I_CLOSE);
-        clp = lp; cip = ip;
+        clp = lp;
+        cip = ip;
         return;
       }
     }
@@ -1810,11 +1824,11 @@ void Basic::initialize_proc_pointers(void)
   }
 }
 
-void Basic::initialize_label_pointers(void)
-{
+void Basic::initialize_label_pointers(void) {
   unsigned char *lp, *ip;
 
-  lp = listbuf; ip = NULL;
+  lp = listbuf;
+  ip = NULL;
 
   for (int i = 0; i < labels.size(); ++i) {
     labels.label(i).lp = NULL;
@@ -1831,7 +1845,8 @@ void Basic::initialize_label_pointers(void)
     label_t &lb = labels.label(label_id);
     if (lb.lp) {
       err = ERR_DUPLABEL;
-      clp = lp; cip = ip;
+      clp = lp;
+      cip = ip;
       return;
     }
 
@@ -1938,7 +1953,7 @@ void BASIC_INT Basic::iread() {
     return;
   }
 
-  auto data_exp = [&] () {
+  auto data_exp = [&]() {
     num_t v = 0;
     data_push();
     if (*cip != I_COMMA && !end_of_statement()) {
@@ -1948,7 +1963,7 @@ void BASIC_INT Basic::iread() {
     return v;
   };
 
-  auto data_strexp = [&] () {
+  auto data_strexp = [&]() {
     BString v;
     data_push();
     if (*cip != I_COMMA && !end_of_statement()) {
@@ -1958,83 +1973,81 @@ void BASIC_INT Basic::iread() {
     return v;
   };
 
-  for (;;) switch (*cip++) {
-  case I_VAR:
-    value = data_exp();
-    if (err)
-      return;
-    nvar.var(*cip++) = value;
-    break;
+  for (;;)
+    switch (*cip++) {
+    case I_VAR:
+      value = data_exp();
+      if (err)
+        return;
+      nvar.var(*cip++) = value;
+      break;
 
-  case I_VARARR:
-  case I_NUMLST:
-    {
-    bool is_list = cip[-1] == I_NUMLST;
-    int idxs[MAX_ARRAY_DIMS];
-    int dims = 0;
+    case I_VARARR:
+    case I_NUMLST: {
+      bool is_list = cip[-1] == I_NUMLST;
+      int idxs[MAX_ARRAY_DIMS];
+      int dims = 0;
 
-    index = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims < 0 || (is_list && dims != 1))
-      return;
+      index = *cip++;
+      dims = get_array_dims(idxs);
+      if (dims < 0 || (is_list && dims != 1))
+        return;
 
-    value = data_exp();
-    if (err)
-      return;
+      value = data_exp();
+      if (err)
+        return;
 
-    num_t &n = is_list ?
-                  num_lst.var(index).var(idxs[0]) :
-                  num_arr.var(index).var(dims, idxs);
-    if (err)
-      return;
-    n = value;
-    break;
+      num_t &n = is_list ? num_lst.var(index).var(idxs[0]) :
+                           num_arr.var(index).var(dims, idxs);
+      if (err)
+        return;
+      n = value;
+      break;
     }
 
-  case I_SVAR:
-    svalue = data_strexp();
-    if (err)
-      return;
-    svar.var(*cip++) = svalue;
-    break;
+    case I_SVAR:
+      svalue = data_strexp();
+      if (err)
+        return;
+      svar.var(*cip++) = svalue;
+      break;
 
-  case I_STRARR:
-  case I_STRLST: {
-    bool is_list = cip[-1] == I_STRLST;
-    int idxs[MAX_ARRAY_DIMS];
-    int dims = 0;
+    case I_STRARR:
+    case I_STRLST: {
+      bool is_list = cip[-1] == I_STRLST;
+      int idxs[MAX_ARRAY_DIMS];
+      int dims = 0;
 
-    index = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims < 0 || (is_list && dims != 1))
-      return;
+      index = *cip++;
+      dims = get_array_dims(idxs);
+      if (dims < 0 || (is_list && dims != 1))
+        return;
 
-    svalue = data_strexp();
-    if (err)
-      return;
+      svalue = data_strexp();
+      if (err)
+        return;
 
-    BString &s = is_list ?
-                    str_lst.var(index).var(idxs[0]) :
-                    str_arr.var(index).var(dims, idxs);
-    if (err)
-      return;
-    s = svalue;
-    break;
-  }
+      BString &s = is_list ? str_lst.var(index).var(idxs[0]) :
+                             str_arr.var(index).var(dims, idxs);
+      if (err)
+        return;
+      s = svalue;
+      break;
+    }
 
-  case I_COMMA:
-    if (!find_next_data()) {
-      err = ERR_OOD;
+    case I_COMMA:
+      if (!find_next_data()) {
+        err = ERR_OOD;
+        return;
+      }
+      break;
+
+    default:
+      --cip;
+      if (!end_of_statement())
+        SYNTAX_T("exp variable");
       return;
     }
-    break;
-
-  default:
-    --cip;
-    if (!end_of_statement())
-      SYNTAX_T("exp variable");
-    return;
-  }
 }
 
 /***bc bas RESTORE
@@ -2071,7 +2084,11 @@ void Basic::do_trace() {
   putnum(getlineno(clp), 0);
   c_putch(' ');
 }
-#define TRACE do { if (trace_enabled) do_trace(); } while(0)
+#define TRACE          \
+  do {                 \
+    if (trace_enabled) \
+      do_trace();      \
+  } while (0)
 
 void Basic::itron() {
   trace_enabled = true;
@@ -2080,8 +2097,7 @@ void Basic::itroff() {
   trace_enabled = false;
 }
 
-void Basic::clear_execution_state(bool clear)
-{
+void Basic::clear_execution_state(bool clear) {
   initialize_proc_pointers();
   initialize_label_pointers();
   event_sprite_proc_idx = NO_PROC;
@@ -2096,8 +2112,8 @@ void Basic::clear_execution_state(bool clear)
   if (err)
     return;
 
-  gstki = 0;         // GOSUBスタックインデクスを0に初期化
-  lstki = 0;         // FORスタックインデクスを0に初期化
+  gstki = 0;  // GOSUBスタックインデクスを0に初期化
+  lstki = 0;  // FORスタックインデクスを0に初期化
   astk_num_i = 0;
   astk_str_i = 0;
   data_lp = data_ip = NULL;
@@ -2152,8 +2168,8 @@ void Basic::irun_() {
 }
 
 // RUN command handler
-void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
-  uint8_t*   lp;     // 行ポインタの一時的な記憶場所
+void BASIC_FP Basic::irun(uint8_t *start_clp, bool cont, bool clear) {
+  uint8_t *lp;  // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
       clp = cont_clp;
@@ -2172,16 +2188,16 @@ void BASIC_FP Basic::irun(uint8_t* start_clp, bool cont, bool clear) {
   if (start_clp != NULL) {
     clp = start_clp;
   } else {
-    clp = listbuf;   // 行ポインタをプログラム保存領域の先頭に設定
+    clp = listbuf;  // 行ポインタをプログラム保存領域の先頭に設定
   }
 
-  while (*clp) {     // 行ポインタが末尾を指すまで繰り返す
+  while (*clp) {  // 行ポインタが末尾を指すまで繰り返す
     TRACE;
-    cip = clp + sizeof(line_desc_t);   // 中間コードポインタを行番号の後ろに設定
+    cip = clp + sizeof(line_desc_t);  // 中間コードポインタを行番号の後ろに設定
 
-resume:
-    lp = iexe();     // 中間コードを実行して次の行の位置を得る
-    if (err) {         // もしエラーを生じたら
+  resume:
+    lp = iexe();  // 中間コードを実行して次の行の位置を得る
+    if (err) {    // もしエラーを生じたら
       event_error_resume_lp = NULL;
       if (err == ERR_CHAIN) {
         // reset continue pointers, but keep running
@@ -2191,7 +2207,7 @@ resume:
         retval[1] = getlineno(clp);
         retval[2] = -1;
         err = 0;
-        err_expected = NULL;	// prevent stale "expected" messages
+        err_expected = NULL;  // prevent stale "expected" messages
         event_error_enabled = false;
         event_error_resume_lp = clp;
         event_error_resume_ip = cip;
@@ -2206,21 +2222,21 @@ resume:
         return;
       }
     } else
-      clp = lp;         // 行ポインタを次の行の位置へ移動
+      clp = lp;  // 行ポインタを次の行の位置へ移動
   }
 }
 
 num_t BASIC_FP imul();
 
-bool Basic::get_range(uint32_t &start, uint32_t &end)
-{
+bool Basic::get_range(uint32_t &start, uint32_t &end) {
   start = 0;
   end = UINT32_MAX;
   if (!end_of_statement()) {
     if (*cip == I_MINUS) {
       // -<num> -> from start to line <num>
       cip++;
-      if (getParam(end, I_NONE)) return false;
+      if (getParam(end, I_NONE))
+        return false;
     } else {
       // <num>, <num>-, <num>-<num>
 
@@ -2238,7 +2254,8 @@ bool Basic::get_range(uint32_t &start, uint32_t &end)
         cip++;
         if (!end_of_statement()) {
           // <num>-<num> -> list specified range
-          if (getParam(end, start, UINT32_MAX, I_NONE)) return false;
+          if (getParam(end, start, UINT32_MAX, I_NONE))
+            return false;
         } else {
           // <num>- -> list from line <num> to the end
         }
@@ -2253,22 +2270,22 @@ bool Basic::get_range(uint32_t &start, uint32_t &end)
 
 // LIST command
 void SMALL Basic::ilist(uint8_t devno, BString *search) {
-  uint32_t lineno;			// start line number
-  uint32_t endlineno;	// end line number
-  uint32_t prnlineno;			// output line number
+  uint32_t lineno;     // start line number
+  uint32_t endlineno;  // end line number
+  uint32_t prnlineno;  // output line number
   unsigned char *lp;
 
   if (!get_range(lineno, endlineno))
     return;
 
   // Skip until we reach the start line.
-  for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) ;
+  for (lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {}
 
   screen_putch_disable_escape_codes = true;
   //リストを表示する
-  while (*lp) {               // 行ポインタが末尾を指すまで繰り返す
-    prnlineno = getlineno(lp); // 行番号取得
-    if (prnlineno > endlineno) // 表示終了行番号に達したら抜ける
+  while (*lp) {                 // 行ポインタが末尾を指すまで繰り返す
+    prnlineno = getlineno(lp);  // 行番号取得
+    if (prnlineno > endlineno)  // 表示終了行番号に達したら抜ける
       break;
     if (search) {
       char *l = getLineStr(prnlineno);
@@ -2278,14 +2295,14 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
       }
     }
     sc0.setColor(COL(LINENUM), COL(BG));
-    putnum(prnlineno, 0,devno); // 行番号を表示
+    putnum(prnlineno, 0, devno);  // 行番号を表示
     sc0.setColor(COL(FG), COL(BG));
-    c_putch(' ',devno);        // 空白を入れる
-    putlist(lp,devno);    // 行番号より後ろを文字列に変換して表示
-    if (err)                   // もしエラーが生じたら
-      break;                   // 繰り返しを打ち切る
-    newline(devno);            // 改行
-    lp += *lp;               // 行ポインタを次の行へ進める
+    c_putch(' ', devno); // 空白を入れる
+    putlist(lp, devno);  // 行番号より後ろを文字列に変換して表示
+    if (err)             // もしエラーが生じたら
+      break;             // 繰り返しを打ち切る
+    newline(devno);      // 改行
+    lp += *lp;           // 行ポインタを次の行へ進める
   }
   screen_putch_disable_escape_codes = false;
 }
@@ -2311,7 +2328,7 @@ void Basic::inew(uint8_t mode) {
   }
 
   // Initialization of variables and arrays
-  if (mode == NEW_ALL|| mode == NEW_VAR) {
+  if (mode == NEW_ALL || mode == NEW_VAR) {
     // forget variables assigned in direct mode
 
     // XXX: These reserve() calls always downsize (or same-size) the
@@ -2349,8 +2366,8 @@ void Basic::inew(uint8_t mode) {
       labels.reserve(0);
     }
 
-    gstki = 0; //GOSUBスタックインデクスを0に初期化
-    lstki = 0; //FORスタックインデクスを0に初期化
+    gstki = 0;  //GOSUBスタックインデクスを0に初期化
+    lstki = 0;  //FORスタックインデクスを0に初期化
     astk_num_i = 0;
     astk_str_i = 0;
 
@@ -2367,7 +2384,7 @@ void Basic::inew(uint8_t mode) {
       return;
     }
     size_list = LISTBUF_INC;
-    clp = listbuf; //行ポインタをプログラム保存領域の先頭に設定
+    clp = listbuf;  //行ポインタをプログラム保存領域の先頭に設定
     if (!direct_mode) {
       cip = clp + sizeof(line_desc_t);
       *cip = I_EOL;
@@ -2388,13 +2405,13 @@ cannot be renumbered correctly.
 void SMALL Basic::irenum() {
   int32_t startLineNo = 10;  // 開始行番号
   int32_t increase = 10;     // 増分
-  uint8_t* ptr;               // プログラム領域参照ポインタ
-  uint32_t len;               // 行長さ
-  uint32_t i;                 // 中間コード参照位置
-  num_t newnum;            // 新しい行番号
-  uint32_t num;               // 現在の行番号
-  uint32_t index;             // 行インデックス
-  uint32_t cnt;               // プログラム行数
+  uint8_t *ptr;              // プログラム領域参照ポインタ
+  uint32_t len;              // 行長さ
+  uint32_t i;                // 中間コード参照位置
+  num_t newnum;              // 新しい行番号
+  uint32_t num;              // 現在の行番号
+  uint32_t index;            // 行インデックス
+  uint32_t cnt;              // プログラム行数
   int toksize;
 
   if (!end_of_statement()) {
@@ -2406,7 +2423,7 @@ void SMALL Basic::irenum() {
   }
 
   // 引数の有効性チェック
-  cnt = countLines()-1;
+  cnt = countLines() - 1;
   if (startLineNo < 0 || increase <= 0) {
     err = ERR_RANGE;
     return;
@@ -2417,58 +2434,57 @@ void SMALL Basic::irenum() {
   }
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
-  for (  clp = listbuf; *clp; clp += *clp) {
+  for (clp = listbuf; *clp; clp += *clp) {
     ptr = clp;
     len = *ptr;
     ptr += sizeof(line_desc_t);
-    i=0;
+    i = 0;
     // 行内検索
-    while( i < len-1 ) {
-      switch(ptr[i]) {
+    while (i < len - 1) {
+      switch (ptr[i]) {
       case I_GOTO:
       case I_GOSUB:
       case I_THEN:
       case I_RESTORE:
-	i++;
-	if (ptr[i] == I_NUM) {		// XXX: I_HEXNUM? :)
-	  num = UNALIGNED_NUM_T(&ptr[i+1]);
-	  index = getlineIndex(num);
-	  if (index == INT32_MAX) {
-	    // 該当する行が見つからないため、変更は行わない
-	    i += sizeof(num_t) + 1;
-	    continue;
-	  } else {
-	    // とび先行番号を付け替える
-	    newnum = startLineNo + increase*index;
-	    UNALIGNED_NUM_T(&ptr[i+1]) = newnum;
-	    i += sizeof(num_t) + 1;
-	    continue;
-	  }
-	} else if (ptr[i] == I_LABEL) {
-	  ++i;
+        i++;
+        if (ptr[i] == I_NUM) {  // XXX: I_HEXNUM? :)
+          num = UNALIGNED_NUM_T(&ptr[i + 1]);
+          index = getlineIndex(num);
+          if (index == INT32_MAX) {
+            // 該当する行が見つからないため、変更は行わない
+            i += sizeof(num_t) + 1;
+            continue;
+          } else {
+            // とび先行番号を付け替える
+            newnum = startLineNo + increase * index;
+            UNALIGNED_NUM_T(&ptr[i + 1]) = newnum;
+            i += sizeof(num_t) + 1;
+            continue;
+          }
+        } else if (ptr[i] == I_LABEL) {
+          ++i;
         }
-	break;
+        break;
       default:
-        toksize = token_size(ptr+i);
+        toksize = token_size(ptr + i);
         if (toksize < 0)
-          i = len + 1;	// skip rest of line
+          i = len + 1;  // skip rest of line
         else
-          i += toksize;	// next token
-	break;
+          i += toksize;  // next token
+        break;
       }
     }
   }
 
   // 各行の行番号の付け替え
   index = 0;
-  for (  clp = listbuf; *clp; clp += *clp ) {
+  for (clp = listbuf; *clp; clp += *clp) {
     newnum = startLineNo + increase * index;
     line_desc_t *ld = (line_desc_t *)clp;
     ld->line = newnum;
     index++;
   }
 }
-
 
 /***bc bas SAVE
 Saves the BASIC program in memory to storage.
@@ -2496,17 +2512,17 @@ void Basic::isave() {
     return;
   }
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
   // SDカードへの保存
-  rc = bfs.tmpOpen((char *)fname.c_str(),1);
+  rc = bfs.tmpOpen((char *)fname.c_str(), 1);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
     return;
   } else if (rc == SD_ERR_OPEN_FILE) {
-    err =  ERR_FILE_OPEN;
+    err = ERR_FILE_OPEN;
     return;
   }
   ilist(4);
@@ -2520,7 +2536,7 @@ void Basic::isave() {
 // 戻り値
 //   0:正常終了
 //   1:異常終了
-uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
+uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode) {
   int32_t len;
   uint8_t rc = 0;
   uint32_t last_line = 0;
@@ -2529,15 +2545,16 @@ uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
   procs.reset();
   labels.reset();
 
-  err = bfs.tmpOpen(fname,0);
+  err = bfs.tmpOpen(fname, 0);
   if (err)
     return 1;
 
   if (newmode != NEW_VAR)
     inew(newmode);
-  while(bfs.readLine(lbuf)) {
+  while (bfs.readLine(lbuf)) {
     char *sbuf = lbuf;
-    while (isspace(*sbuf)) sbuf++;
+    while (isspace(*sbuf))
+      sbuf++;
     if (!isDigit(*sbuf)) {
       // Insert a line number before tokenizing.
       if (strlen(lbuf) > SIZE_LINE - 12) {
@@ -2547,7 +2564,7 @@ uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
         break;
       }
       memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
-      memset(lbuf,' ', 11);
+      memset(lbuf, ' ', 11);
       last_line += 1;
       int lnum_size = sprintf(lbuf, "%d", last_line);
       lbuf[lnum_size] = ' ';
@@ -2564,9 +2581,9 @@ uint8_t SMALL Basic::loadPrgText(char* fname, uint8_t newmode) {
       *ibuf = len;
       inslist();
       if (err) {
-	error(true);
-	rc = 1;
-	break;
+        error(true);
+        rc = 1;
+        break;
       }
       last_line = ((line_desc_t *)ibuf)->line;
     } else {
@@ -2597,7 +2614,7 @@ WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
 ***/
 void SMALL Basic::idelete() {
   uint32_t sNo, eNo;
-  uint8_t  *lp;      // 削除位置ポインタ
+  uint8_t *lp;       // 削除位置ポインタ
   uint8_t *p1, *p2;  // 移動先と移動元ポインタ
   int32_t len;       // 移動の長さ
 
@@ -2620,30 +2637,30 @@ void SMALL Basic::idelete() {
   }
 
   if (eNo == sNo) {
-    lp = getlp(eNo); // 削除位置ポインタを取得
+    lp = getlp(eNo);  // 削除位置ポインタを取得
     if (getlineno(lp) == sNo) {
       // 削除
-      p1 = lp;                              // p1を挿入位置に設定
-      p2 = p1 + *p1;                        // p2を次の行に設定
-      while ((len = *p2) != 0) {            // 次の行の長さが0でなければ繰り返す
-	while (len--)                       // 次の行の長さだけ繰り返す
-	  *p1++ = *p2++;                    // 前へ詰める
+      p1 = lp;                    // p1を挿入位置に設定
+      p2 = p1 + *p1;              // p2を次の行に設定
+      while ((len = *p2) != 0) {  // 次の行の長さが0でなければ繰り返す
+        while (len--)             // 次の行の長さだけ繰り返す
+          *p1++ = *p2++;          // 前へ詰める
       }
-      *p1 = 0; // リストの末尾に0を置く
+      *p1 = 0;  // リストの末尾に0を置く
     }
   } else {
     for (uint32_t i = sNo; i <= eNo; i++) {
-      lp = getlp(i); // 削除位置ポインタを取得
+      lp = getlp(i);  // 削除位置ポインタを取得
       if (!*lp)
         break;
-      if (getlineno(lp) == i) {               // もし行番号が一致したら
-	p1 = lp;                              // p1を挿入位置に設定
-	p2 = p1 + *p1;                        // p2を次の行に設定
-	while ((len = *p2) != 0) {            // 次の行の長さが0でなければ繰り返す
-	  while (len--)                       // 次の行の長さだけ繰り返す
-	    *p1++ = *p2++;                    // 前へ詰める
-	}
-	*p1 = 0; // リストの末尾に0を置く
+      if (getlineno(lp) == i) {     // もし行番号が一致したら
+        p1 = lp;                    // p1を挿入位置に設定
+        p2 = p1 + *p1;              // p2を次の行に設定
+        while ((len = *p2) != 0) {  // 次の行の長さが0でなければ繰り返す
+          while (len--)             // 次の行の長さだけ繰り返す
+            *p1++ = *p2++;          // 前へ詰める
+        }
+        *p1 = 0;  // リストの末尾に0を置く
       }
     }
   }
@@ -2665,16 +2682,15 @@ Clears the current text window.
 void Basic::icls() {
   if (redirect_output_file < 0) {
     sc0.cls();
-    sc0.locate(0,0);
+    sc0.locate(0, 0);
   }
 }
 
 static bool profile_enabled;
 
-void BASIC_FP Basic::init_stack_frame()
-{
-  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
-    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
+void BASIC_FP Basic::init_stack_frame() {
+  if (gstki > 0 && gstk[gstki - 1].proc_idx != NO_PROC) {
+    struct proc_t &p = procs.proc(gstk[gstki - 1].proc_idx);
     astk_num_i += p.locc_num;
     astk_str_i += p.locc_str;
   }
@@ -2682,8 +2698,7 @@ void BASIC_FP Basic::init_stack_frame()
   gstk[gstki].str_args = 0;
 }
 
-void BASIC_FP Basic::push_num_arg(num_t n)
-{
+void BASIC_FP Basic::push_num_arg(num_t n) {
   if (astk_num_i >= SIZE_ASTK) {
     err = ERR_ASTKOF;
     return;
@@ -2692,8 +2707,7 @@ void BASIC_FP Basic::push_num_arg(num_t n)
   gstk[gstki].num_args++;
 }
 
-void BASIC_FP Basic::do_call(uint8_t proc_idx)
-{
+void BASIC_FP Basic::do_call(uint8_t proc_idx) {
   struct proc_t &proc_loc = procs.proc(proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
@@ -2701,8 +2715,8 @@ void BASIC_FP Basic::do_call(uint8_t proc_idx)
     return;
   }
 
-  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
-    err = ERR_GSTKOF;                       // エラー番号をセット
+  if (gstki >= SIZE_GSTK) {  // もしGOSUBスタックがいっぱいなら
+    err = ERR_GSTKOF;        // エラー番号をセット
     return;
   }
 
@@ -2723,14 +2737,13 @@ void BASIC_FP Basic::do_call(uint8_t proc_idx)
 #define EVENT_PROFILE_SAMPLES 7
 uint32_t event_profile[EVENT_PROFILE_SAMPLES];
 
-void BASIC_INT Basic::draw_profile(void)
-{
+void BASIC_INT Basic::draw_profile(void) {
   int x = 0;
   int bw = vs23.borderWidth();
-  int scale = 1000000/60/bw + 1;
+  int scale = 1000000 / 60 / bw + 1;
 
   for (int i = 1; i < EVENT_PROFILE_SAMPLES; ++i) {
-    int pixels = (event_profile[i] - event_profile[i-1]) / scale;
+    int pixels = (event_profile[i] - event_profile[i - 1]) / scale;
     if (x + pixels > bw)
       pixels = bw - x;
     if (pixels > 0)
@@ -2742,9 +2755,7 @@ void BASIC_INT Basic::draw_profile(void)
     vs23.setBorder(0x20, 0, x, bw - x);
 }
 
-
-void BASIC_FP process_events(void)
-{
+void BASIC_FP process_events(void) {
   static uint32_t last_frame;
 #if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
   platform_process_events();
@@ -2811,9 +2822,12 @@ Returns one of the numeric return values of the last function call.
 num_t BASIC_FP Basic::nret() {
   int32_t r;
 
-  if (checkOpen()) return 0;
-  if ( getParam(r, 0, MAX_RETVALS-1, I_NONE) ) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(r, 0, MAX_RETVALS - 1, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
 
   return retval[r];
 }
@@ -2836,13 +2850,16 @@ num_t BASIC_FP Basic::narg() {
     err = ERR_UNDEFARG;
     return 0;
   }
-  uint16_t argc = gstk[gstki-1].num_args;
+  uint16_t argc = gstk[gstki - 1].num_args;
 
-  if (checkOpen()) return 0;
-  if ( getParam(a, 0, argc-1, I_NONE) ) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(a, 0, argc - 1, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
 
-  return astk_num[astk_num_i-argc+a];
+  return astk_num[astk_num_i - argc + a];
 }
 
 /***bf bas ARG$
@@ -2863,13 +2880,16 @@ BString Basic::sarg() {
     err = ERR_UNDEFARG;
     return BString();
   }
-  uint16_t argc = gstk[gstki-1].str_args;
+  uint16_t argc = gstk[gstki - 1].str_args;
 
-  if (checkOpen()) return BString();
-  if ( getParam(a, 0, argc-1, I_NONE) ) return BString();
-  if (checkClose()) return BString();
+  if (checkOpen())
+    return BString();
+  if (getParam(a, 0, argc - 1, I_NONE))
+    return BString();
+  if (checkClose())
+    return BString();
 
-  return BString(astk_str[astk_str_i-argc+a]);
+  return BString(astk_str[astk_str_i - argc + a]);
 }
 
 /***bf bas ARGC
@@ -2888,9 +2908,9 @@ num_t BASIC_FP Basic::nargc() {
   if (!gstki)
     return 0;
   if (type == 0)
-    return gstk[gstki-1].num_args;
+    return gstk[gstki - 1].num_args;
   else
-    return gstk[gstki-1].str_args;
+    return gstk[gstki - 1].str_args;
 }
 
 /***bf bas HEX$
@@ -2902,7 +2922,7 @@ Returns a string containing the hexadecimal representation of a number.
 \ref BIN$()
 ***/
 BString Basic::shex() {
-  int32_t value; // 値
+  int32_t value;  // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
   BString hex((unsigned int)value, 16);
@@ -2919,11 +2939,14 @@ Returns a string containing the binary representation of a number.
 \ref HEX$()
 ***/
 BString Basic::sbin() {
-  int32_t value; // 値
+  int32_t value;  // 値
 
-  if (checkOpen()) goto out;
-  if (getParam(value, I_NONE)) goto out;
-  if (checkClose()) goto out;
+  if (checkOpen())
+    goto out;
+  if (getParam(value, I_NONE))
+    goto out;
+  if (checkClose())
+    goto out;
   return BString(value, 2);
 out:
   return BString();
@@ -2943,18 +2966,21 @@ Re-maps a value from one range to another
 Restricts `value` to the range `l1`-`h1`, which is arbitrary.
 ***/
 num_t BASIC_FP SMALL Basic::nmap() {
-  int32_t value,l1,h1,l2,h2,rc;
-  if (checkOpen()) return 0;
-  if ( getParam(value, I_COMMA)||getParam(l1, I_COMMA)||getParam(h1, I_COMMA)||getParam(l2, I_COMMA)||getParam(h2, I_NONE) )
+  int32_t value, l1, h1, l2, h2, rc;
+  if (checkOpen())
     return 0;
-  if (checkClose()) return 0;
+  if (getParam(value, I_COMMA) || getParam(l1, I_COMMA) ||
+      getParam(h1, I_COMMA) || getParam(l2, I_COMMA) || getParam(h2, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
   if (l1 >= h1 || l2 >= h2) {
     err = ERR_RANGE;
     return 0;
   } else if (value < l1 || value > h1) {
     E_VALUE(l1, h1);
   }
-  rc = (value-l1)*(h2-l2)/(h1-l1)+l2;
+  rc = (value - l1) * (h2 - l2) / (h1 - l1) + l2;
   return rc;
 }
 
@@ -2971,7 +2997,8 @@ Generates an error if `s$` is empty.
 num_t BASIC_INT Basic::nasc() {
   int32_t value;
 
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   BString a = istrexp();
   if (a.length() < 1) {
     E_ERR(VALUE, "empty string");
@@ -3011,90 +3038,104 @@ is reached.
 \ref CMD GPRINT
 ***/
 void Basic::iprint(uint8_t devno, uint8_t nonewln) {
-  num_t value;     //値
+  num_t value;  //値
   int32_t filenum;
   BString str;
-  BString format = F("%0.9g");	// default format without USING
+  BString format = F("%0.9g");  // default format without USING
 
   while (!end_of_statement()) {
     if (is_strexp()) {
       str = istrexp();
       c_puts(str.c_str(), devno);
-    } else  switch (*cip) { //中間コードで分岐
-    case I_USING: { //「#
-      cip++;
-      str = istrexp();
-      bool had_point = false;	// encountered a decimal point
-      bool had_digit = false;	// encountered a #
-      int leading = 0;
-      int trailing = 0;		// decimal places
-      BString prefix, suffix;	// random literal characters
-      for (unsigned int i = 0; i < str.length(); ++i) {
-        switch (str[i]) {
-        case '#':
-          if (!had_point) leading++; else trailing++;
-          had_digit = true;
-          break;
+    } else
+      switch (*cip) {  //中間コードで分岐
+      case I_USING: {  //「#
+        cip++;
+        str = istrexp();
+        bool had_point = false;  // encountered a decimal point
+        bool had_digit = false;  // encountered a #
+        int leading = 0;
+        int trailing = 0;        // decimal places
+        BString prefix, suffix;  // random literal characters
+        for (unsigned int i = 0; i < str.length(); ++i) {
+          switch (str[i]) {
+          case '#':
+            if (!had_point)
+              leading++;
+            else
+              trailing++;
+            had_digit = true;
+            break;
 #ifdef FLOAT_NUMS
-        case '.':
-          if (had_point) {
-            E_ERR(USING, "multiple periods");
-            return;
-          } else
-            had_point = true;
-          break;
+          case '.':
+            if (had_point) {
+              E_ERR(USING, "multiple periods");
+              return;
+            } else
+              had_point = true;
+            break;
 #endif
-        case '%': if (!had_point && !had_digit) prefix += F("%%"); else suffix += F("%%"); break;
-        default:  if (!had_point && !had_digit) prefix += str[i]; else suffix += str[i]; break;
+          case '%':
+            if (!had_point && !had_digit)
+              prefix += F("%%");
+            else
+              suffix += F("%%");
+            break;
+          default:
+            if (!had_point && !had_digit)
+              prefix += str[i];
+            else
+              suffix += str[i];
+            break;
+          }
         }
-      }
 #ifdef FLOAT_NUMS
-      format = prefix + '%' + (trailing + leading + (trailing ? 1 : 0)) + '.' + trailing + 'f' + suffix;
+        format = prefix + '%' + (trailing + leading + (trailing ? 1 : 0)) +
+                 '.' + trailing + 'f' + suffix;
 #else
-      format = prefix + '%' + leading + 'd' + suffix;
+        format = prefix + '%' + leading + 'd' + suffix;
 #endif
-      if (err || *cip != I_SEMI)
-	return;
-      break;
-    }
-    case I_SHARP:
-      cip++;
-      if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
-        return;
-      if (!user_files[filenum].f) {
-        err = ERR_FILE_NOT_OPEN;
-        return;
+        if (err || *cip != I_SEMI)
+          return;
+        break;
       }
-      bfs.setTempFile(user_files[filenum].f);
-      devno = 4;
-      continue;
+      case I_SHARP:
+        cip++;
+        if (getParam(filenum, 0, MAX_USER_FILES, I_COMMA))
+          return;
+        if (!user_files[filenum].f) {
+          err = ERR_FILE_NOT_OPEN;
+          return;
+        }
+        bfs.setTempFile(user_files[filenum].f);
+        devno = 4;
+        continue;
 
-    case I_TAB: {
-      ++cip;
-      int32_t col = getparam();
-      if (col < 0)
-        col = 0;
-      col = col % sc0.getWidth();
-      if (redirect_output_file < 0 && sc0.c_x() < col)
-        sc0.locate(col, sc0.c_y());
-      break;
-    }
-
-    case I_COMMA:
-      break;
-
-    default:	// anything else is assumed to be a numeric expression
-      value = iexp();
-      if (err) {
-	newline();
-	return;
+      case I_TAB: {
+        ++cip;
+        int32_t col = getparam();
+        if (col < 0)
+          col = 0;
+        col = col % sc0.getWidth();
+        if (redirect_output_file < 0 && sc0.c_x() < col)
+          sc0.locate(col, sc0.c_y());
+        break;
       }
-      sprintf(lbuf, format.c_str(), value);
-      c_puts(lbuf, devno);
-      break;
-    }
 
-    if (err)  {
+      case I_COMMA: break;
+
+      default:  // anything else is assumed to be a numeric expression
+        value = iexp();
+        if (err) {
+          newline();
+          return;
+        }
+        sprintf(lbuf, format.c_str(), value);
+        c_puts(lbuf, devno);
+        break;
+      }
+
+    if (err) {
       newline(devno);
       return;
     }
@@ -3125,12 +3166,12 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
     } else if (*cip == I_SEMI) {
       cip++;
       if (end_of_statement())
-	return;
+        return;
     } else {
       if (!end_of_statement()) {
         SYNTAX_T("exp separator");
-	newline(devno);
-	return;
+        newline(devno);
+        return;
       }
     }
   }
@@ -3163,23 +3204,27 @@ Saves a portion of pixel memory to storage as a PCX file.
 ***/
 void SMALL Basic::isavepcx() {
   BString fname;
-  int32_t x = 0,y = 0;
+  int32_t x = 0, y = 0;
   int32_t w = sc0.getGWidth();
   int32_t h = sc0.getGHeight();
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
   for (;;) {
     if (*cip == I_POS) {
       cip++;
-      if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA)) return;
-      if (getParam(y, 0, vs23.lastLine() - 1, I_NONE)) return;
+      if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA))
+        return;
+      if (getParam(y, 0, vs23.lastLine() - 1, I_NONE))
+        return;
     } else if (*cip == I_SIZE) {
       cip++;
-      if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA)) return;
-      if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE)) return;
+      if (getParam(w, 0, sc0.getGWidth() - x - 1, I_COMMA))
+        return;
+      if (getParam(h, 0, vs23.lastLine() - y - 1, I_NONE))
+        return;
     } else
       break;
   }
@@ -3226,41 +3271,43 @@ If a color key is specified, pixels of the given color will not be drawn.
 void SMALL Basic::ildbmp() {
   BString fname;
   int32_t dx = -1, dy = -1;
-  int32_t x = 0,y = 0,w = -1, h = -1;
+  int32_t x = 0, y = 0, w = -1, h = -1;
 #ifdef USE_BG_ENGINE
   uint32_t spr_from, spr_to;
   bool define_bg = false, define_spr = false;
   int32_t bg;
 #endif
-  int32_t key = -1;	// no keying
+  int32_t key = -1;  // no keying
 
-  if(!(fname = getParamFname())) {
+  if (!(fname = getParamFname())) {
     return;
   }
 
-  for (;; ) {
+  for (;;) {
     if (*cip == I_AS) {
 #ifdef USE_BG_ENGINE
       cip++;
-      if (*cip == I_BG) {		// AS BG ...
+      if (*cip == I_BG) {  // AS BG ...
         ++cip;
         dx = dy = -1;
-        if (getParam(bg,  0, MAX_BG-1, I_NONE)) return;
+        if (getParam(bg, 0, MAX_BG - 1, I_NONE))
+          return;
         define_bg = true;
-      } else if (*cip == I_SPRITE) {	// AS SPRITE ...
+      } else if (*cip == I_SPRITE) {  // AS SPRITE ...
         ++cip;
         dx = dy = -1;
         define_spr = true;
-        if (!get_range(spr_from, spr_to)) return;
+        if (!get_range(spr_from, spr_to))
+          return;
         if (spr_to == UINT32_MAX)
           spr_to = MAX_SPRITES - 1;
-        if (spr_to > MAX_SPRITES-1 || spr_from > spr_to) {
+        if (spr_to > MAX_SPRITES - 1 || spr_from > spr_to) {
           err = ERR_RANGE;
           return;
         }
       } else {
         SYNTAX_T("exp BG or SPRITE");
-	return;
+        return;
       }
 #else
       err = ERR_NOT_SUPPORTED;
@@ -3269,22 +3316,29 @@ void SMALL Basic::ildbmp() {
     } else if (*cip == I_TO) {
       // TO dx,dy
       cip++;
-      if ( getParam(dx,  0, INT32_MAX, I_COMMA) ) return;
-      if ( getParam(dy,  0, INT32_MAX, I_NONE) ) return;
+      if (getParam(dx, 0, INT32_MAX, I_COMMA))
+        return;
+      if (getParam(dy, 0, INT32_MAX, I_NONE))
+        return;
     } else if (*cip == I_OFF) {
       // OFF x,y
       cip++;
-      if ( getParam(x,  0, INT32_MAX, I_COMMA) ) return;
-      if ( getParam(y,  0, INT32_MAX, I_NONE) ) return;
+      if (getParam(x, 0, INT32_MAX, I_COMMA))
+        return;
+      if (getParam(y, 0, INT32_MAX, I_NONE))
+        return;
     } else if (*cip == I_SIZE) {
       // SIZE w,h
       cip++;
-      if ( getParam(w,  0, INT32_MAX, I_COMMA) ) return;
-      if ( getParam(h,  0, INT32_MAX, I_NONE) ) return;
+      if (getParam(w, 0, INT32_MAX, I_COMMA))
+        return;
+      if (getParam(h, 0, INT32_MAX, I_NONE))
+        return;
     } else if (*cip == I_KEY) {
       // KEY c
       cip++;
-      if (getParam(key, 0, 255, I_NONE)) return;
+      if (getParam(key, 0, 255, I_NONE))
+        return;
     } else {
       break;
     }
@@ -3369,16 +3423,16 @@ Unlike `EXEC`, `CHAIN` does not allow returning to the original program.
 uint8_t SMALL Basic::ilrun() {
   uint32_t lineno = (uint32_t)-1;
   uint8_t *lp;
-  int8_t fg;               // File format 0: Binary format 1: Text format
+  int8_t fg;  // File format 0: Binary format 1: Text format
   bool islrun = true;
   bool ismerge = false;
   uint8_t newmode = NEW_PROG;
   BString fname;
 
   // Command identification
-  if (*(cip-1) == I_LOAD || *(cip-1) == I_RUN) {
-    islrun  = false;
-    lineno  = 0;
+  if (*(cip - 1) == I_LOAD || *(cip - 1) == I_RUN) {
+    islrun = false;
+    lineno = 0;
     newmode = NEW_ALL;
   } else if (cip[-1] == I_MERGE) {
     islrun = false;
@@ -3388,7 +3442,7 @@ uint8_t SMALL Basic::ilrun() {
 
   // Get file name
   if (is_strexp()) {
-    if(!(fname = getParamFname())) {
+    if (!(fname = getParamFname())) {
       return 0;
     }
   } else {
@@ -3399,17 +3453,18 @@ uint8_t SMALL Basic::ilrun() {
   if (islrun || ismerge) {
     // LRUN or MERGE
     // Obtain the second argument line number
-    if(*cip == I_COMMA) {
-      islrun = true;	// MERGE + line number => run!
+    if (*cip == I_COMMA) {
+      islrun = true;  // MERGE + line number => run!
       cip++;
-      if ( getParam(lineno, I_NONE) ) return 0;
+      if (getParam(lineno, I_NONE))
+        return 0;
     } else {
       lineno = 0;
     }
   }
 
   // Load program from storage
-  fg = bfs.IsText((char *)fname.c_str()); // Format check
+  fg = bfs.IsText((char *)fname.c_str());  // Format check
   if (fg < 0) {
     // Abnormal form (形式異常)
     err = -fg;
@@ -3418,14 +3473,14 @@ uint8_t SMALL Basic::ilrun() {
     err = ERR_NOT_SUPPORTED;
   } else if (fg == 1) {
     // Text format load from SD card
-    loadPrgText((char *)fname.c_str(),newmode);
+    loadPrgText((char *)fname.c_str(), newmode);
   }
   if (err)
     return 0;
 
   // Processing of line number
   if (lineno == 0) {
-    clp = listbuf; // Set the line pointer to start of program buffer
+    clp = listbuf;  // Set the line pointer to start of program buffer
   } else {
     // Jump to specified line
     lp = getlp(lineno);
@@ -3436,10 +3491,10 @@ uint8_t SMALL Basic::ilrun() {
     clp = lp;
   }
   if (!err) {
-    if (islrun || (cip >= listbuf && cip < listbuf+size_list)) {
+    if (islrun || (cip >= listbuf && cip < listbuf + size_list)) {
       initialize_proc_pointers();
       initialize_label_pointers();
-      cip = clp+sizeof(line_desc_t);
+      cip = clp + sizeof(line_desc_t);
       if (islrun)
         err = ERR_CHAIN;
     }
@@ -3470,7 +3525,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
       c_puts_P(errmsg[err]);
       sc0.setColor(COL(FG), COL(BG));
       PRINT_P(" in ");
-      putnum(getlineno(clp), 0); // 行番号を調べて表示
+      putnum(getlineno(clp), 0);  // 行番号を調べて表示
       if (err_expected) {
         PRINT_P(" (");
         c_puts_P(err_expected);
@@ -3496,21 +3551,21 @@ void SMALL Basic::error(uint8_t flgCmd) {
       }
       //err = 0;
       //return;
-    } else {                   // 指示の実行中なら
-      c_puts_P(errmsg[err]);     // エラーメッセージを表示
+    } else {                  // 指示の実行中なら
+      c_puts_P(errmsg[err]);  // エラーメッセージを表示
       if (err_expected) {
         PRINT_P(" (");
         c_puts_P(err_expected);
         PRINT_P(")");
       }
-      newline();               // 改行
+      newline();  // 改行
       //err = 0;               // エラー番号をクリア
       //return;
     }
   }
-  c_puts_P(errmsg[0]);           //「OK」を表示
-  newline();                   // 改行
-  err = 0;                     // エラー番号をクリア
+  c_puts_P(errmsg[0]);  //「OK」を表示
+  newline();            // 改行
+  err = 0;              // エラー番号をクリア
   err_expected = NULL;
 }
 
@@ -3518,7 +3573,8 @@ BString BASIC_INT Basic::ilrstr(bool right) {
   BString value;
   int32_t len;
 
-  if (checkOpen()) goto out;
+  if (checkOpen())
+    goto out;
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
@@ -3526,7 +3582,8 @@ BString BASIC_INT Basic::ilrstr(bool right) {
     goto out;
   }
 
-  if (getParam(len, I_CLOSE)) goto out;
+  if (getParam(len, I_CLOSE))
+    goto out;
   if (len < 0) {
     E_ERR(VALUE, "negative substring length");
     goto out;
@@ -3592,7 +3649,8 @@ BString BASIC_INT Basic::smid() {
   int32_t start;
   int32_t len;
 
-  if (checkOpen()) goto out;
+  if (checkOpen())
+    goto out;
 
   value = istrexp();
   if (*cip++ != I_COMMA) {
@@ -3600,18 +3658,21 @@ BString BASIC_INT Basic::smid() {
     goto out;
   }
 
-  if (getParam(start, I_NONE)) goto out;
+  if (getParam(start, I_NONE))
+    goto out;
   if (start < 0) {
     E_ERR(VALUE, "negative string offset");
     goto out;
   }
   if (*cip == I_COMMA) {
     ++cip;
-    if (getParam(len, I_NONE)) goto out;
+    if (getParam(len, I_NONE))
+      goto out;
   } else {
     len = value.length() - start;
   }
-  if (checkClose()) goto out;
+  if (checkClose())
+    goto out;
 
   value = value.substring(start, start + len);
 
@@ -3630,8 +3691,10 @@ Returns the character corresponding to a specified ASCII code.
 BString Basic::schr() {
   int32_t nv;
   BString value;
-  if (checkOpen()) return value;
-  if (getParam(nv, 0,255, I_NONE)) return value;
+  if (checkOpen())
+    return value;
+  if (getParam(nv, 0, 255, I_NONE))
+    return value;
   value = BString((char)nv);
   checkClose();
   return value;
@@ -3647,7 +3710,8 @@ Returns a string representation of a number.
 ***/
 BString Basic::sstr() {
   BString value;
-  if (checkOpen()) return value;
+  if (checkOpen())
+    return value;
   // The BString ctor for doubles is not helpful because it uses dtostrf()
   // which can only do a fixed number of decimal places. That is not
   // the BASIC Way(tm).
@@ -3669,7 +3733,7 @@ call.
 BString BASIC_INT Basic::sret() {
   int32_t n = getparam();
   if (n < 0 || n >= MAX_RETVALS) {
-    E_VALUE(0, MAX_RETVALS-1);
+    E_VALUE(0, MAX_RETVALS - 1);
     return BString(F(""));
   }
   return retstr[n];
@@ -3714,8 +3778,10 @@ BString Basic::sstring() {
   BString out;
   int32_t count;
   int32_t c;
-  if (checkOpen()) return out;
-  if (getParam(count, I_COMMA)) return out;
+  if (checkOpen())
+    return out;
+  if (getParam(count, I_COMMA))
+    return out;
   if (count < 0) {
     E_ERR(VALUE, "negative length");
     return out;
@@ -3729,9 +3795,11 @@ BString Basic::sstring() {
       return cs;
     }
     c = cs[0];
-    if (checkClose()) return cs;
+    if (checkClose())
+      return cs;
   } else {
-    if (getParam(c, 0, 255, I_CLOSE)) return out;
+    if (getParam(c, 0, 255, I_CLOSE))
+      return out;
   }
   if (!out.reserve(count)) {
     err = ERR_OOM;
@@ -3744,7 +3812,6 @@ BString Basic::sstring() {
   return out;
 }
 
-
 bool BASIC_FP Basic::is_strexp() {
   // XXX: does not detect string comparisons (numeric)
   return ((*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) ||
@@ -3755,12 +3822,10 @@ bool BASIC_FP Basic::is_strexp() {
           *cip == I_STRSTR ||
           *cip == I_INPUTSTR ||
           (*cip == I_NET && (cip[1] == I_INPUTSTR || cip[1] == I_GETSTR)) ||
-          *cip == I_ERRORSTR
-         );
+          *cip == I_ERRORSTR);
 }
 
-BString BASIC_INT Basic::istrvalue()
-{
+BString BASIC_INT Basic::istrvalue() {
   BString value;
   int len, dims;
   uint8_t i;
@@ -3768,95 +3833,90 @@ BString BASIC_INT Basic::istrvalue()
 
   if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
     return (this->*strfuntbl[*cip++ - STRFUN_FIRST])();
-  } else switch (*cip++) {
-  case I_STR:
-    len = value.fromBasic(cip);
-    cip += len;
-    if (!len)
-      err = ERR_OOM;
-    break;
+  } else
+    switch (*cip++) {
+    case I_STR:
+      len = value.fromBasic(cip);
+      cip += len;
+      if (!len)
+        err = ERR_OOM;
+      break;
 
-  case I_SVAR:
-    value = svar.var(*cip++);
-    break;
+    case I_SVAR:  value = svar.var(*cip++); break;
+    case I_LSVAR: value = get_lsvar(*cip++); break;
 
-  case I_LSVAR:
-    value = get_lsvar(*cip++);
-    break;
+    case I_STRARR:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      value = str_arr.var(i).var(dims, idxs);
+      break;
 
-  case I_STRARR:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    value = str_arr.var(i).var(dims, idxs);
-    break;
+    case I_STRLST:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      if (dims != 1) {
+        SYNTAX_T("invalid list index");
+      } else {
+        value = str_lst.var(i).var(idxs[0]);
+      }
+      break;
 
-  case I_STRLST:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims != 1) {
-      SYNTAX_T("invalid list index");
-    } else {
-      value = str_lst.var(i).var(idxs[0]);
-    }
-    break;
-
-  case I_INPUTSTR:	value = sinput(); break;
-  case I_ERRORSTR:	value = serror(); break;
-  case I_NET:
+    case I_INPUTSTR: value = sinput(); break;
+    case I_ERRORSTR: value = serror(); break;
+    case I_NET:
 #ifndef HAVE_NETWORK
-    err = ERR_NOT_SUPPORTED;
+      err = ERR_NOT_SUPPORTED;
 #else
-    if (*cip == I_INPUTSTR) {
-      ++cip;
-      value = snetinput();
-    } else if (*cip == I_GETSTR) {
-      ++cip;
-      value = snetget();
-    } else
-      SYNTAX_T("exp network function");
+      if (*cip == I_INPUTSTR) {
+        ++cip;
+        value = snetinput();
+      } else if (*cip == I_GETSTR) {
+        ++cip;
+        value = snetget();
+      } else
+        SYNTAX_T("exp network function");
 #endif
-    break;
+      break;
 
-  default:
-    cip--;
-    // Check if a numeric expression follows, so we can give a more
-    // helpful error message.
-    err = 0;
-    iexp();
-    if (!err)
-      err = ERR_TYPE;
-    else
-      SYNTAX_T("exp string expr");
-    break;
-  }
+    default:
+      cip--;
+      // Check if a numeric expression follows, so we can give a more
+      // helpful error message.
+      err = 0;
+      iexp();
+      if (!err)
+        err = ERR_TYPE;
+      else
+        SYNTAX_T("exp string expr");
+      break;
+    }
   if (err)
     return BString();
   else
     return value;
 }
 
-BString BASIC_INT Basic::istrexp()
-{
+BString BASIC_INT Basic::istrexp() {
   BString value, tmp;
 
   value = istrvalue();
 
-  for (;;) switch(*cip) {
+  for (;;)
+    switch (*cip) {
 /***bo sop + (strings)
 String concatenation operator.
 \usage a$ + b$
 \res Concatenation of `a$` and `b$`.
 ***/
-  case I_PLUS:
-    cip++;
-    tmp = istrvalue();
-    if (err)
-      return BString();
-    value += tmp;
-    break;
-  default:
-    return value;
-  }
+    case I_PLUS:
+      cip++;
+      tmp = istrvalue();
+      if (err)
+        return BString();
+      value += tmp;
+      break;
+    default: return value;
+    }
 }
 
 /***bf bas LEN
@@ -3873,7 +3933,8 @@ ll = LEN(~list)
 ***/
 num_t BASIC_INT Basic::nlen() {
   int32_t value;
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   if (*cip == I_STRLSTREF) {
     ++cip;
     value = str_lst.var(*cip++).size();
@@ -3889,7 +3950,7 @@ num_t BASIC_INT Basic::nlen() {
 
 // see getrnd() for basicdoc
 num_t BASIC_FP Basic::nrnd() {
-  num_t value = getparam(); //括弧の値を取得
+  num_t value = getparam();  //括弧の値を取得
   if (!err)
     value = getrnd(value);
   return value;
@@ -3903,7 +3964,7 @@ Returns the absolute value of a number.
 \ret Absolute value of `num`.
 ***/
 num_t BASIC_FP Basic::nabs() {
-  num_t value = getparam(); //括弧の値を取得
+  num_t value = getparam();  //括弧の値を取得
   if (value == INT32_MIN) {
     err = ERR_VOF;
     return 0;
@@ -3922,7 +3983,8 @@ Converts a number contained in a string to a numeric value.
 \ref STR$()
 ***/
 num_t BASIC_INT Basic::nval() {
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   num_t value = strtonum(istrexp().c_str(), NULL);
   checkClose();
   return value;
@@ -3944,7 +4006,8 @@ found start at `1`.
 ***/
 num_t BASIC_INT Basic::ninstr() {
   BString haystack, needle;
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   haystack = istrexp();
   if (err)
     return 0;
@@ -3953,7 +4016,8 @@ num_t BASIC_INT Basic::ninstr() {
     return 0;
   }
   needle = istrexp();
-  if (checkClose()) return 0;
+  if (checkClose())
+    return 0;
   const char *res = strstr(haystack.c_str(), needle.c_str());
   if (!res)
     return -1;
@@ -3977,8 +4041,8 @@ num_t BASIC_INT Basic::nsvar_a(BString &value) {
 
 // Get value
 num_t BASIC_FP Basic::ivalue() {
-  num_t value = 0; // 値
-  uint8_t i;   // 文字数
+  num_t value = 0;  // 値
+  uint8_t i;        // 文字数
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
 
@@ -3987,84 +4051,86 @@ num_t BASIC_FP Basic::ivalue() {
   } else if (is_strexp()) {
     // string comparison (or error)
     value = irel_string();
-  } else switch (*cip++) {
-  //定数の取得
-  case I_NUM:    // 定数
-    value = UNALIGNED_NUM_T(cip);
-    cip += sizeof(num_t);
-    break;
+  } else
+    switch (*cip++) {
+    //定数の取得
+    case I_NUM:  // 定数
+      value = UNALIGNED_NUM_T(cip);
+      cip += sizeof(num_t);
+      break;
 
-  case I_HEXNUM: // 16進定数
-    value = cip[0] | (cip[1] << 8) | (cip[2] << 16) | (cip[3] << 24); //定数を取得
-    cip += 4;
-    break;
+    case I_HEXNUM:  // 16進定数
+      // get the constant
+      value = cip[0] | (cip[1] << 8) | (cip[2] << 16) | (cip[3] << 24);
+      cip += 4;
+      break;
 
-  //変数の値の取得
-  case I_VAR: //変数
-    value = nvar.var(*cip++);
-    break;
+    //変数の値の取得
+    case I_VAR:  //変数
+      value = nvar.var(*cip++);
+      break;
 
-  case I_LVAR:
-    value = get_lvar(*cip++);
-    break;
+    case I_LVAR:
+      value = get_lvar(*cip++);
+      break;
 
-  case I_VARARR:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    value = num_arr.var(i).var(dims, idxs);
-    break;
+    case I_VARARR:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      value = num_arr.var(i).var(dims, idxs);
+      break;
 
-  case I_SVAR:
-    value = nsvar_a(svar.var(*cip++));
-    break;
+    case I_SVAR:
+      value = nsvar_a(svar.var(*cip++));
+      break;
 
-  case I_LSVAR:
-    value = nsvar_a(get_lsvar(*cip++));
-    break;
+    case I_LSVAR:
+      value = nsvar_a(get_lsvar(*cip++));
+      break;
 
-  case I_STRARR:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    value = nsvar_a(str_arr.var(i).var(dims, idxs));
-    break;
+    case I_STRARR:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      value = nsvar_a(str_arr.var(i).var(dims, idxs));
+      break;
 
-  case I_STRLST:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims != 1) {
-      SYNTAX_T("invalid list index");
-    } else {
-      value = nsvar_a(str_lst.var(i).var(idxs[0]));
-    }
-    break;
+    case I_STRLST:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      if (dims != 1) {
+        SYNTAX_T("invalid list index");
+      } else {
+        value = nsvar_a(str_lst.var(i).var(idxs[0]));
+      }
+      break;
 
-  //括弧の値の取得
-  case I_OPEN: //「(」
-    cip--;
-    value = getparam(); //括弧の値を取得
-    break;
+    //括弧の値の取得
+    case I_OPEN:  //「(」
+      cip--;
+      value = getparam();  //括弧の値を取得
+      break;
 
-  case I_CHAR: value = ncharfun(); break; //関数CHAR
+    case I_CHAR: value = ncharfun(); break;  //関数CHAR
 
-  case I_SYS: value = nsys(); break;
+    case I_SYS:  value = nsys(); break;
 
 /***bn io DOWN
 Value of the "down" direction for input devices.
 \ref PAD() UP LEFT RIGHT
 ***/
-  case I_DOWN:  value = joyDown; break;
+    case I_DOWN: value = joyDown; break;
 
-  case I_PLAY:	value = nplay(); break;
+    case I_PLAY: value = nplay(); break;
 
-  case I_NUMLST:
-    i = *cip++;
-    dims = get_array_dims(idxs);
-    if (dims != 1) {
-      SYNTAX_T("invalid list index");
-    } else {
-      value = num_lst.var(i).var(idxs[0]);
-    }
-    break;
+    case I_NUMLST:
+      i = *cip++;
+      dims = get_array_dims(idxs);
+      if (dims != 1) {
+        SYNTAX_T("invalid list index");
+      } else {
+        value = num_lst.var(i).var(idxs[0]);
+      }
+      break;
 
 /***bn bas FN
 Call a procedure and get its return value.
@@ -4094,34 +4160,34 @@ PROC f(x): RETURN @x * 2
 ====
 \ref CALL
 ***/
-  case I_FN: {
-    unsigned char *lp;
-    icall();
-    i = gstki;
-    if (err)
-      break;
-    for (;;) {
-      lp = iexe(i);
-      if (!lp || err)
+    case I_FN: {
+      unsigned char *lp;
+      icall();
+      i = gstki;
+      if (err)
         break;
-      clp = lp;
-      cip = clp + sizeof(line_desc_t);
-      TRACE;
+      for (;;) {
+        lp = iexe(i);
+        if (!lp || err)
+          break;
+        clp = lp;
+        cip = clp + sizeof(line_desc_t);
+        TRACE;
+      }
+      value = retval[0];
+      break;
     }
-    value = retval[0];
-    break;
-  }
 
-  case I_VREG:	value = nvreg(); break;
+    case I_VREG: value = nvreg(); break;
 
-  default:
-    cip--;
-    if (is_strexp())
-      err = ERR_TYPE;
-    else
-      SYNTAX_T("exp numeric expr");
-    return 0;
-  }
+    default:
+      cip--;
+      if (is_strexp())
+        err = ERR_TYPE;
+      else
+        SYNTAX_T("exp numeric expr");
+      return 0;
+    }
 
 #if defined(ESP8266_NOWIFI) && !defined(HOSTED)
   // XXX: So, yes, it's weird that the I2S could would be responsible for
@@ -4152,7 +4218,8 @@ Exponentiation operator.
 }
 
 // XXX: 40 byte jump table
-num_t BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::irel_string() {
+num_t BASIC_INT __attribute__((optimize("no-jump-tables")))
+Basic::irel_string() {
   BString lhs = istrexp();
   BString rhs;
   switch (*cip++) {
@@ -4218,13 +4285,13 @@ alphabetically, `0` otherwise.
 
 // Get number of line at top left of the screen
 uint32_t getTopLineNum() {
-  uint8_t* ptr = sc0.getScreenWindow();
+  uint8_t *ptr = sc0.getScreenWindow();
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
     n *= 10;
-    n+= *ptr-'0';
-    if (n>INT32_MAX) {
+    n += *ptr - '0';
+    if (n > INT32_MAX) {
       n = 0;
       break;
     }
@@ -4239,13 +4306,14 @@ uint32_t getTopLineNum() {
 
 // Get number of line at the bottom left of the screen
 uint32_t getBottomLineNum() {
-  uint8_t* ptr = sc0.getScreenWindow()+sc0.getStride()*(sc0.getHeight()-1);
+  uint8_t *ptr =
+          sc0.getScreenWindow() + sc0.getStride() * (sc0.getHeight() - 1);
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
     n *= 10;
-    n+= *ptr-'0';
-    if (n>INT32_MAX) {
+    n += *ptr - '0';
+    if (n > INT32_MAX) {
       n = 0;
       break;
     }
@@ -4260,9 +4328,9 @@ uint32_t getBottomLineNum() {
 
 // Get the number of the line preceding the specified line
 uint32_t Basic::getPrevLineNo(uint32_t lineno) {
-  uint8_t* lp, *prv_lp = NULL;
+  uint8_t *lp, *prv_lp = NULL;
   int32_t rc = -1;
-  for ( lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
+  for (lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
     prv_lp = lp;
   }
   if (prv_lp)
@@ -4272,21 +4340,21 @@ uint32_t Basic::getPrevLineNo(uint32_t lineno) {
 
 // Get the number of the line succeeding the specified line
 uint32_t Basic::getNextLineNo(uint32_t lineno) {
-  uint8_t* lp;
+  uint8_t *lp;
   int32_t rc = -1;
 
   lp = getlp(lineno);
   if (lineno == getlineno(lp)) {
     // Move to the next line
-    lp+=*lp;
+    lp += *lp;
     rc = getlineno(lp);
   }
   return rc;
 }
 
 // Get the program text of the specified line
-char* Basic::getLineStr(uint32_t lineno, uint8_t devno) {
-  uint8_t* lp = getlp(lineno);
+char *Basic::getLineStr(uint32_t lineno, uint8_t devno) {
+  uint8_t *lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;
 
@@ -4306,23 +4374,25 @@ char* Basic::getLineStr(uint32_t lineno, uint8_t devno) {
   putlist(lp, devno);
 
   if (devno == 3)
-    c_putch(0,devno);        // zero-terminate tbuf
+    c_putch(0, devno);  // zero-terminate tbuf
   else if (devno == 0)
     screen_putch_disable_escape_codes = false;
 
   return tbuf;
 }
 
-void BASIC_FP Basic::do_goto(uint32_t line)
-{
+void BASIC_FP Basic::do_goto(uint32_t line) {
   uint8_t *lp = getlp(line);
-  if (line != getlineno(lp)) {            // もし分岐先が存在しなければ
-    err = ERR_ULN;                          // エラー番号をセット
+  if (line != getlineno(lp)) {  // もし分岐先が存在しなければ
+    err = ERR_ULN;              // エラー番号をセット
     return;
   }
 
-  clp = lp;        // 行ポインタを分岐先へ更新
-  cip = clp + sizeof(line_desc_t); // 中間コードポインタを先頭の中間コードに更新
+  // Update the line pointer to the branch destination.
+  clp = lp;
+  // Update the intermediate code pointer to the beginning of the
+  // intermediate code.
+  cip = clp + sizeof(line_desc_t);
   TRACE;
 }
 
@@ -4339,7 +4409,7 @@ procedure calls instead.
 \ref ON_GOTO
 ***/
 void BASIC_FP Basic::igoto() {
-  uint32_t lineno;    // 行番号
+  uint32_t lineno;  // 行番号
 
   if (*cip == I_LABEL) {
     ++cip;
@@ -4354,33 +4424,33 @@ void BASIC_FP Basic::igoto() {
   } else {
     // 引数の行番号取得
     lineno = iexp();
-    if (err) return;
+    if (err)
+      return;
     do_goto(lineno);
   }
 }
 
-void BASIC_FP Basic::do_gosub_p(unsigned char *lp, unsigned char *ip)
-{
+void BASIC_FP Basic::do_gosub_p(unsigned char *lp, unsigned char *ip) {
   //ポインタを退避
-  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
-    err = ERR_GSTKOF;                       // エラー番号をセット
+  if (gstki >= SIZE_GSTK) {  // もしGOSUBスタックがいっぱいなら
+    err = ERR_GSTKOF;        // エラー番号をセット
     return;
   }
-  gstk[gstki].lp = clp;                      // 行ポインタを退避
-  gstk[gstki].ip = cip;                      // 中間コードポインタを退避
+  gstk[gstki].lp = clp;  // 行ポインタを退避
+  gstk[gstki].ip = cip;  // 中間コードポインタを退避
   gstk[gstki].num_args = 0;
   gstk[gstki].str_args = 0;
   gstk[gstki++].proc_idx = NO_PROC;
 
-  clp = lp;                                 // 行ポインタを分岐先へ更新
+  clp = lp;  // 行ポインタを分岐先へ更新
   cip = ip;
   TRACE;
 }
 
 void BASIC_FP Basic::do_gosub(uint32_t lineno) {
   uint8_t *lp = getlp(lineno);
-  if (lineno != getlineno(lp)) {            // もし分岐先が存在しなければ
-    err = ERR_ULN;                          // エラー番号をセット
+  if (lineno != getlineno(lp)) {  // もし分岐先が存在しなければ
+    err = ERR_ULN;                // エラー番号をセット
     return;
   }
   do_gosub_p(lp, lp + sizeof(line_desc_t));
@@ -4415,7 +4485,7 @@ RETURN
 \ref CALL ON_GOSUB PROC RETURN
 ***/
 void BASIC_FP Basic::igosub() {
-  uint32_t lineno;    // 行番号
+  uint32_t lineno;  // 行番号
 
   if (*cip == I_LABEL) {
     ++cip;
@@ -4455,8 +4525,7 @@ continues execution there.
 Call one of several subroutines, depending on the value of an expression.
 \ref ON_GOTO GOSUB
 ***/
-void BASIC_FP Basic::on_go(bool is_gosub, int cas)
-{
+void BASIC_FP Basic::on_go(bool is_gosub, int cas) {
   unsigned char *lp = NULL, *ip = NULL;
   --cas;
   for (;;) {
@@ -4503,8 +4572,7 @@ void BASIC_FP Basic::on_go(bool is_gosub, int cas)
   }
 }
 
-void BASIC_INT Basic::ion()
-{
+void BASIC_INT Basic::ion() {
   if (*cip == I_SPRITE) {
 /***bc bg ON SPRITE
 Defines an event handler for sprite collisions.
@@ -4705,8 +4773,7 @@ statement that generated the error.
 It is not possible to repeat the statement that has generated the error.
 \ref ON_ERROR
 ***/
-void Basic::iresume()
-{
+void Basic::iresume() {
   if (!event_error_resume_lp) {
     err = ERR_CONT;
   } else {
@@ -4758,8 +4825,8 @@ void BASIC_FP Basic::icall() {
     return;
   }
 
-  if (gstki >= SIZE_GSTK) {              // もしGOSUBスタックがいっぱいなら
-    err = ERR_GSTKOF;                       // エラー番号をセット
+  if (gstki >= SIZE_GSTK) {  // もしGOSUBスタックがいっぱいなら
+    err = ERR_GSTKOF;        // エラー番号をセット
     return;
   }
 
@@ -4769,8 +4836,8 @@ void BASIC_FP Basic::icall() {
   // because that would mess with the stack frame of the caller.
   int new_astk_num_i = astk_num_i;
   int new_astk_str_i = astk_str_i;
-  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
-    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
+  if (gstki > 0 && gstk[gstki - 1].proc_idx != NO_PROC) {
+    struct proc_t &p = procs.proc(gstk[gstki - 1].proc_idx);
     new_astk_num_i += p.locc_num;
     new_astk_str_i += p.locc_str;
   }
@@ -4779,28 +4846,29 @@ void BASIC_FP Basic::icall() {
     QList<BString> strargs;
     QList<num_t> numargs;
 
-    if (*cip != I_CLOSE) for(;;) {
-      if (is_strexp()) {
-        BString b = istrexp();
-        if (err)
-          return;
-        if (new_astk_str_i >= SIZE_ASTK)
-          goto overflow;
-        strargs.push_back(b);
-        ++str_args;
-      } else {
-        n = iexp();
-        if (err)
-          return;
-        if (new_astk_num_i >= SIZE_ASTK)
-          goto overflow;
-        numargs.push_back(n);
-        ++num_args;
+    if (*cip != I_CLOSE)
+      for (;;) {
+        if (is_strexp()) {
+          BString b = istrexp();
+          if (err)
+            return;
+          if (new_astk_str_i >= SIZE_ASTK)
+            goto overflow;
+          strargs.push_back(b);
+          ++str_args;
+        } else {
+          n = iexp();
+          if (err)
+            return;
+          if (new_astk_num_i >= SIZE_ASTK)
+            goto overflow;
+          numargs.push_back(n);
+          ++num_args;
+        }
+        if (*cip != I_COMMA)
+          break;
+        ++cip;
       }
-      if (*cip != I_COMMA)
-        break;
-      ++cip;
-    }
 
     if (checkClose())
       return;
@@ -4814,8 +4882,7 @@ void BASIC_FP Basic::icall() {
   }
   astk_num_i = new_astk_num_i;
   astk_str_i = new_astk_str_i;
-  if (num_args < proc_loc.argc_num ||
-      str_args < proc_loc.argc_str) {
+  if (num_args < proc_loc.argc_num || str_args < proc_loc.argc_str) {
     err = ERR_ARGS;
     return;
   }
@@ -4858,8 +4925,8 @@ string) can be returned to the caller.
 \ref CALL FN GOSUB PROC
 ***/
 void BASIC_FP Basic::ireturn() {
-  if (!gstki) {    // もしGOSUBスタックが空なら
-    err = ERR_GSTKUF; // エラー番号をセット
+  if (!gstki) {        // もしGOSUBスタックが空なら
+    err = ERR_GSTKUF;  // エラー番号をセット
     return;
   }
 
@@ -4867,7 +4934,7 @@ void BASIC_FP Basic::ireturn() {
   if (!end_of_statement()) {
     int rcnt = 0, rscnt = 0;
     num_t my_retval[MAX_RETVALS];
-    BString *my_retstr[MAX_RETVALS];	// don't want to always construct all strings
+    BString *my_retstr[MAX_RETVALS];  // don't want to always construct all strings
     do {
       if (is_strexp())
         my_retstr[rscnt++] = new BString(istrexp());
@@ -4884,10 +4951,10 @@ void BASIC_FP Basic::ireturn() {
 
   astk_num_i -= gstk[--gstki].num_args;
   astk_str_i -= gstk[gstki].str_args;
-  if (gstki > 0 && gstk[gstki-1].proc_idx != NO_PROC) {
+  if (gstki > 0 && gstk[gstki - 1].proc_idx != NO_PROC) {
     // XXX: This can change if the parent procedure was called by this one
     // (directly or indirectly)!
-    struct proc_t &p = procs.proc(gstk[gstki-1].proc_idx);
+    struct proc_t &p = procs.proc(gstk[gstki - 1].proc_idx);
     astk_num_i -= p.locc_num;
     astk_str_i -= p.locc_str;
   }
@@ -4895,8 +4962,8 @@ void BASIC_FP Basic::ireturn() {
     struct proc_t &p = procs.proc(gstk[gstki].proc_idx);
     p.profile_total += ESP.getCycleCount() - p.profile_current;
   }
-  clp = gstk[gstki].lp; //中間コードポインタを復帰
-  cip = gstk[gstki].ip; //行ポインタを復帰
+  clp = gstk[gstki].lp;  //中間コードポインタを復帰
+  cip = gstk[gstki].ip;  //行ポインタを復帰
   TRACE;
   return;
 }
@@ -5071,46 +5138,46 @@ NEXT i
 ***/
 void BASIC_FP Basic::ifor() {
   int index;
-  num_t vto, vstep; // FOR文の変数番号、終了値、増分
+  num_t vto, vstep;  // FOR文の変数番号、終了値、増分
 
   // 変数名を取得して開始値を代入（例I=1）
-  if (*cip == I_VAR) { // もし変数がなかったら
-    index = *++cip; // 変数名を取得
-    ivar();       // 代入文を実行
+  if (*cip == I_VAR) {  // もし変数がなかったら
+    index = *++cip;     // 変数名を取得
+    ivar();             // 代入文を実行
     lstk[lstki].local = false;
   } else if (*cip == I_LVAR) {
     index = *++cip;
     ilvar();
     lstk[lstki].local = true;
   } else {
-    err = ERR_FORWOV;    // エラー番号をセット
+    err = ERR_FORWOV;  // エラー番号をセット
   }
-  if (err)      // もしエラーが生じたら
+  if (err)  // もしエラーが生じたら
     return;
 
   // 終了値を取得（例TO 5）
-  if (*cip == I_TO) { // もしTOだったら
-    cip++;             // 中間コードポインタを次へ進める
-    vto = iexp();      // 終了値を取得
-  } else {             // TOではなかったら
-    err = ERR_FORWOTO; //エラー番号をセット
+  if (*cip == I_TO) {   // もしTOだったら
+    cip++;              // 中間コードポインタを次へ進める
+    vto = iexp();       // 終了値を取得
+  } else {              // TOではなかったら
+    err = ERR_FORWOTO;  //エラー番号をセット
     return;
   }
 
   // 増分を取得（例STEP 1）
-  if (*cip == I_STEP) { // もしSTEPだったら
-    cip++;              // 中間コードポインタを次へ進める
-    vstep = iexp();     // 増分を取得
-  } else                // STEPではなかったら
-    vstep = 1;          // 増分を1に設定
+  if (*cip == I_STEP) {  // もしSTEPだったら
+    cip++;               // 中間コードポインタを次へ進める
+    vstep = iexp();      // 増分を取得
+  } else                 // STEPではなかったら
+    vstep = 1;           // 増分を1に設定
 
   // 繰り返し条件を退避
-  if (lstki >= SIZE_LSTK) { // もしFORスタックがいっぱいなら
-    err = ERR_LSTKOF;          // エラー番号をセット
+  if (lstki >= SIZE_LSTK) {  // もしFORスタックがいっぱいなら
+    err = ERR_LSTKOF;        // エラー番号をセット
     return;
   }
-  lstk[lstki].lp = clp; // 行ポインタを退避
-  lstk[lstki].ip = cip; // 中間コードポインタを退避
+  lstk[lstki].lp = clp;  // 行ポインタを退避
+  lstk[lstki].ip = cip;  // 中間コードポインタを退避
 
   // FORスタックに終了値、増分、変数名を退避
   // Special thanks hardyboy
@@ -5149,8 +5216,7 @@ void BASIC_FP Basic::iloop() {
     ++cip;
     num_t exp = iexp();
 
-    if ((cond == I_WHILE && exp != 0) ||
-        (cond == I_UNTIL && exp == 0)) {
+    if ((cond == I_WHILE && exp != 0) || (cond == I_UNTIL && exp == 0)) {
       // Condition met, loop.
       cip = lstk[lstki - 1].ip;
       clp = lstk[lstki - 1].lp;
@@ -5173,23 +5239,23 @@ Increments and tests the counter in a `FOR` loop.
 \ref FOR
 ***/
 void BASIC_FP Basic::inext() {
-  int want_index;	// variable we want to NEXT, if specified
+  int want_index;  // variable we want to NEXT, if specified
   bool want_local;
-  int index;		// loop variable index we will actually use
+  int index;       // loop variable index we will actually use
   bool local;
-  num_t vto;		// end of loop value
-  num_t vstep;		// increment value
+  num_t vto;       // end of loop value
+  num_t vstep;     // increment value
 
-  if (!lstki) {    // FOR stack is empty
+  if (!lstki) {  // FOR stack is empty
     err = ERR_LSTKUF;
     return;
   }
 
   if (*cip != I_VAR && *cip != I_LVAR)
-    want_index = -1;		// just use whatever is TOS
+    want_index = -1;  // just use whatever is TOS
   else {
     want_local = *cip++ == I_LVAR;
-    want_index = *cip++;	// NEXT a specific loop variable
+    want_index = *cip++;  // NEXT a specific loop variable
   }
 
   while (lstki) {
@@ -5208,7 +5274,7 @@ void BASIC_FP Basic::inext() {
 
   if (!lstki) {
     // Didn't find anything that matches the NEXT.
-    err = ERR_LSTKUF;	// XXX: have something more descriptive
+    err = ERR_LSTKUF;  // XXX: have something more descriptive
     return;
   }
 
@@ -5219,8 +5285,7 @@ void BASIC_FP Basic::inext() {
   vto = lstk[lstki - 1].vto;
 
   // Is this loop finished?
-  if (((vstep < 0) && (loop_var < vto)) ||
-      ((vstep > 0) && (loop_var > vto))) {
+  if (((vstep < 0) && (loop_var < vto)) || ((vstep > 0) && (loop_var > vto))) {
     lstki--;  // drop it from FOR stack
     return;
   }
@@ -5257,17 +5322,17 @@ is, as two commands). If the sequence `END IF` is entered or loaded in a
 program, Engine BASIC will convert it to `ENDIF`.
 ***/
 void BASIC_FP Basic::iif() {
-  num_t condition;    // IF文の条件値
-  uint8_t* newip;       // ELSE文以降の処理対象ポインタ
+  num_t condition;  // IF文の条件値
+  uint8_t *newip;   // ELSE文以降の処理対象ポインタ
 
-  condition = iexp(); // 真偽を取得
+  condition = iexp();  // 真偽を取得
   if (err)
     return;
 
   bool have_goto = false;
   if (*cip == I_THEN) {
     ++cip;
-    if (*cip == I_NUM)	// XXX: should be "if not command"
+    if (*cip == I_NUM)  // XXX: should be "if not command"
       have_goto = true;
   } else if (*cip == I_GOTO) {
     ++cip;
@@ -5277,7 +5342,7 @@ void BASIC_FP Basic::iif() {
     return;
   }
 
-  if (condition) {    // もし真なら
+  if (condition) {  // もし真なら
     if (have_goto)
       igoto();
     return;
@@ -5285,7 +5350,7 @@ void BASIC_FP Basic::iif() {
     newip = getELSEptr(cip);
     if (newip) {
       if (*newip == I_NUM) {
-        do_goto(UNALIGNED_NUM_T(newip+1));
+        do_goto(UNALIGNED_NUM_T(newip + 1));
       } else {
         cip = newip;
       }
@@ -5297,16 +5362,14 @@ void BASIC_FP Basic::iif() {
 Ends a muli-line `IF` statement.
 \ref IF
 ***/
-void BASIC_FP Basic::iendif()
-{
+void BASIC_FP Basic::iendif() {
 }
 
 /***bc bas ELSE
 Introduces the `ELSE` branch of an `IF` statement.
 \ref IF
 ***/
-void BASIC_FP Basic::ielse()
-{
+void BASIC_FP Basic::ielse() {
   // Special handling for "ELSE IF": Skip one level of nesting. This avoids
   // having to have an ENDIF for each ELSE at the end of an IF ... ELSE IF
   // ... cascade.
@@ -5320,8 +5383,8 @@ void BASIC_FP Basic::ielse()
 
 // スキップ
 void BASIC_FP Basic::iskip() {
-  while (*cip != I_EOL) // I_EOLに達するまで繰り返す
-    cip++;              // 中間コードポインタを次へ進める
+  while (*cip != I_EOL)  // I_EOLに達するまで繰り返す
+    cip++;               // 中間コードポインタを次へ進める
 }
 
 void BASIC_FP Basic::ilabel() {
@@ -5449,7 +5512,8 @@ void Basic::iprofile() {
     for (int i = 0; i < procs.size(); ++i) {
       struct proc_t &p = procs.proc(i);
       sprintf(lbuf, "%10d %s", p.profile_total, proc_names.name(i));
-      c_puts(lbuf); newline();
+      c_puts(lbuf);
+      newline();
     }
     break;
   default:
@@ -5506,7 +5570,7 @@ void Basic::iexec() {
       event_error_resume_lp = NULL;
       clp = event_error_lp;
       cip = event_error_ip;
-      err_expected = NULL;	// prevent stale "expected" messages
+      err_expected = NULL;  // prevent stale "expected" messages
       return;
     } else {
       // Print the error in the context of the subprogram.
@@ -5526,21 +5590,21 @@ void BASIC_INT Basic::iextend() {
 
 // execute intermediate code
 // Return value: next program execution position (line start)
-unsigned char* BASIC_FP Basic::iexe(int stk) {
-  uint8_t c;               // 入力キー
+unsigned char *BASIC_FP Basic::iexe(int stk) {
+  uint8_t c;  // 入力キー
   err = 0;
 
   while (*cip != I_EOL) {
     //強制的な中断の判定
-    if ((c = sc0.peekKey())) { // If there are unread characters
+    if ((c = sc0.peekKey())) {  // If there are unread characters
       if (process_hotkeys(c)) {
-	err_expected = NULL;
-	break;
+        err_expected = NULL;
+        break;
       }
     }
 
     // Execute intermediate code
-    if (*cip < sizeof(funtbl)/sizeof(funtbl[0])) {
+    if (*cip < sizeof(funtbl) / sizeof(funtbl[0])) {
       (this->*funtbl[*cip++])();
     } else
       SYNTAX_T("exp command");
@@ -5557,17 +5621,19 @@ unsigned char* BASIC_FP Basic::iexe(int stk) {
 //Command precessor
 uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
-  cip = ibuf;          // Set the intermediate code pointer to the beginning of the intermediate code buffer
+  cip = ibuf;  // Set the intermediate code pointer to the beginning of the intermediate code buffer
 
-  switch (*cip++) {    // Branch by the intermediate code pointed to by the intermediate code pointer
+  switch (*cip++) {  // Branch by the intermediate code pointed to by the intermediate code pointer
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;
 
-  case I_CHAIN:  if(ilrun()) {
+  case I_CHAIN:
+    if (ilrun()) {
       if (err == ERR_CHAIN)
         err = 0;
-      sc0.show_curs(0); irun(clp);
+      sc0.show_curs(0);
+      irun(clp);
     }
     break;
   case I_RUN:
@@ -5581,7 +5647,7 @@ uint8_t SMALL Basic::icom() {
       // XXX: This means the file name is evaluated twice. Not sure if that
       // will be a problem in practice.
       unsigned char *save_cip = cip;
-      istrexp();	// dump file name
+      istrexp();  // dump file name
       int nr = 0, sr = 0;
       for (int i = 0; i < MAX_RETVALS; ++i) {
         retval[i] = 0;
@@ -5648,13 +5714,11 @@ program was interrupted.
       irun(clp, true);
     }
     break;
-  case I_RENUM:
-    irenum();
-    break;
+  case I_RENUM:  irenum(); break;
 
-  case I_DELETE:     idelete();  break;
-  case I_FORMAT:     iformat(); break;
-  case I_FLASH:      iflash(); break;
+  case I_DELETE: idelete(); break;
+  case I_FORMAT: iformat(); break;
+  case I_FLASH:  iflash(); break;
 
   default: {
     cip--;
@@ -5718,8 +5782,8 @@ extern "C" {
    The BASIC entry point
  */
 void SMALL Basic::basic() {
-  unsigned char len; // Length of intermediate code
-  char* textline;    // input line
+  unsigned char len;  // Length of intermediate code
+  char *textline;     // input line
   uint8_t rc;
 
   basic_init_file_early();
@@ -5749,24 +5813,24 @@ void SMALL Basic::basic() {
   // Want to make sure we get the right hue.
   csp.setColorConversion(0, 7, 2, 4, true);
   show_logo();
-  vs23.setColorSpace(0);	// reset color conversion
+  vs23.setColorSpace(0);  // reset color conversion
 
   // Startup screen
   // Epigram
   sc0.setFont(fonts[1]);
-  sc0.setColor(csp.colorFromRgb(72,72,72), COL(BG));
+  sc0.setColor(csp.colorFromRgb(72, 72, 72), COL(BG));
   srand(ESP.getCycleCount());
-  c_puts_P(epigrams[random(sizeof(epigrams)/sizeof(*epigrams))]);
+  c_puts_P(epigrams[random(sizeof(epigrams) / sizeof(*epigrams))]);
   newline();
 
   // Banner
-  sc0.setColor(csp.colorFromRgb(192,0,0), COL(BG));
+  sc0.setColor(csp.colorFromRgb(192, 0, 0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
   sc0.setFont(fonts[CONFIG.font]);
 
   // Platform/version
-  sc0.setColor(csp.colorFromRgb(64,64,64), COL(BG));
+  sc0.setColor(csp.colorFromRgb(64, 64, 64), COL(BG));
   static const char __e[] PROGMEM = STR_EDITION;
   sc0.locate(sc0.getWidth() - strlen_P(__e), 7);
   c_puts_P(__e);
@@ -5777,7 +5841,7 @@ void SMALL Basic::basic() {
   basic_init_file_late();
   // Free memory
   sc0.setColor(COL(FG), COL(BG));
-  sc0.locate(0,2);
+  sc0.locate(0, 2);
 
   uint64_t free_mem = getFreeMemory();
   if (free_mem < 0)
@@ -5813,7 +5877,7 @@ void SMALL Basic::basic() {
 
   sc0.show_curs(1);
   err_expected = NULL;
-  error();          // "OK" or display an error message and clear the error number
+  error();  // "OK" or display an error message and clear the error number
 
   sc0.forget();
 
@@ -5823,24 +5887,24 @@ void SMALL Basic::basic() {
     redirect_output_file = -1;
     rc = sc0.edit();
     if (rc) {
-      textline = (char*)sc0.getText();
+      textline = (char *)sc0.getText();
       int textlen = strlen(textline);
       if (!textlen) {
         free(textline);
-	newline();
-	continue;
+        newline();
+        continue;
       }
       if (textlen >= SIZE_LINE) {
         free(textline);
-	err = ERR_LONG;
-	newline();
-	error();
-	continue;
+        err = ERR_LONG;
+        newline();
+        error();
+        continue;
       }
 
       strcpy(lbuf, textline);
       free(textline);
-      tlimR((char*)lbuf);
+      tlimR((char *)lbuf);
       while (--rc)
         newline();
     } else {
@@ -5870,17 +5934,17 @@ void SMALL Basic::basic() {
     }
 
     // If the intermediate code is a program line
-    if (*ibuf == I_NUM) { // the beginning of the code buffer is a line number
-      *ibuf = len;        // overwrite the token with the length
-      inslist();          // Insert one line of intermediate code into the list
+    if (*ibuf == I_NUM) {  // the beginning of the code buffer is a line number
+      *ibuf = len;         // overwrite the token with the length
+      inslist();           // Insert one line of intermediate code into the list
       recalc_indent();
       if (err)
-	error();          // display program mode error message
+        error();  // display program mode error message
       continue;
     }
 
     // If the intermediate code is a direct mode command
-    if (icom())		// execute
-      error(false);	// display direct mode error message
+    if (icom())      // execute
+      error(false);  // display direct mode error message
   }
 }
