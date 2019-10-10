@@ -16,8 +16,7 @@ static int m_read_pos;
 uint8_t SDLAudio::m_sound_buf[2][SOUND_BUFLEN];
 int SDLAudio::m_block_size;
 
-void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len)
-{
+void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len) {
   static int off = 0;
 
   for (int i = 0; i < len; ++i) {
@@ -33,8 +32,7 @@ void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len)
     off = (off + len) % m_block_size;
 }
 
-void SDLAudio::init(int sample_rate)
-{
+void SDLAudio::init(int sample_rate) {
   static bool inited = false;
 
   if (inited) {
@@ -64,6 +62,5 @@ void SDLAudio::init(int sample_rate)
   }
 }
 
-void SDLAudio::begin()
-{
+void SDLAudio::begin() {
 }

@@ -8,11 +8,10 @@
 
 #define SOUND_BUFLEN 512
 
-class SDLAudio
-{
+class SDLAudio {
 public:
   void begin();
-  
+
   void init(int sample_rate);
 
   inline void setBlockSize(int size) {
@@ -52,4 +51,4 @@ private:
 
 extern SDLAudio audio;
 
-#endif	// _SDLAUDIO_H
+#endif  // _SDLAUDIO_H
