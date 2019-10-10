@@ -32,8 +32,7 @@ struct palette {
 #include <N-0C-B62-A63-Y33-N10.h>
 #include <P-EE-A22-B22-Y44-N10.h>
 
-static void my_exit(void)
-{
+static void my_exit(void) {
   SDL_Quit();
 }
 
@@ -45,8 +44,7 @@ const SDL_VideoInfo *sdl_info;
 int sdl_flags;
 bool sdl_keep_res = false;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   int opt;
 
   char *path = getcwd(NULL, 0);
@@ -62,12 +60,8 @@ int main(int argc, char **argv)
 
   while ((opt = getopt(argc, argv, "fdr:")) != -1) {
     switch (opt) {
-    case 'f':
-      sdl_flags |= SDL_FULLSCREEN;
-      break;
-    case 'd':
-      sdl_keep_res = true;
-      break;
+    case 'f': sdl_flags |= SDL_FULLSCREEN; break;
+    case 'd': sdl_keep_res = true; break;
     case 'r':
       path = realpath(optarg, NULL);
       if (path) {
@@ -100,17 +94,17 @@ extern int sound_reinit_rate;
 
 void platform_process_events() {
   SDL_Event event;
-  
+
   audio.pumpEvents();
   SDL_PumpEvents();
   while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
     switch (event.type) {
-      case SDL_QUIT:
-        exit(0);
-        break;
-      default:
-        //printf("SDL event %d\n", event.type);
-        break;
+    case SDL_QUIT:
+      exit(0);
+      break;
+    default:
+      //printf("SDL event %d\n", event.type);
+      break;
     }
     SDL_PumpEvents();
   }
