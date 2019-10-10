@@ -130,7 +130,7 @@ num_t BASIC_FP Basic::nsgn() {
 num_t BASIC_FP Basic::imul() {
   num_t value, tmp; //値と演算値
 
-  while(1) {
+  while (1) {
     switch (*cip++) {
 /***bo op - (unary)
 Negation operator.
@@ -138,8 +138,8 @@ Negation operator.
 \res The negative of `a`.
 \prec 2
 ***/
-    case I_MINUS: //「-」
-      return 0 - imul(); //値を取得して負の値に変換
+    case I_MINUS:         //「-」
+      return 0 - imul();  //値を取得して負の値に変換
       break;
 /***bo op + (unary)
 Identity operator.
@@ -163,8 +163,8 @@ out:
   if (err)
     return -1;
 
-  while (1) //無限に繰り返す
-    switch(*cip++) { //中間コードで分岐
+  while (1)            //無限に繰り返す
+    switch (*cip++) {  //中間コードで分岐
 
 /***bo op *
 Multiplication operator.
@@ -211,7 +211,7 @@ Bit-shift operator, left.
 ***/
     case I_LSHIFT: // シフト演算 "<<" の場合
       tmp = ivalue();
-      value =((uint32_t)value)<<(uint32_t)tmp;
+      value = ((uint32_t)value) << (uint32_t)tmp;
       break;
 
 /***bo op >>
@@ -222,7 +222,7 @@ Bit-shift operator, right.
 ***/
     case I_RSHIFT: // シフト演算 ">>" の場合
       tmp = ivalue();
-      value =((uint32_t)value)>>(uint32_t)tmp;
+      value = ((uint32_t)value) >> (uint32_t)tmp;
       break;
 
     default:
@@ -233,13 +233,13 @@ Bit-shift operator, right.
 
 // add or subtract calculation
 num_t BASIC_FP Basic::iplus() {
-  num_t value, tmp; //値と演算値
-  value = imul(); //値を取得
+  num_t value, tmp;  //値と演算値
+  value = imul();    //値を取得
   if (err)
     return -1;
 
   while (1)
-    switch(*cip) {
+    switch (*cip) {
 /***bo op +
 Numeric addition operator.
 \usage a + b
@@ -284,7 +284,7 @@ num_t BASIC_FP Basic::irel() {
 
   // conditional expression
   while (1)
-    switch(*cip++) {
+    switch (*cip++) {
 /***bo op =
 Equality operator.
 \usage a = b
@@ -362,7 +362,7 @@ a >= b
 num_t BASIC_FP Basic::iand() {
   num_t value, tmp;
 
-  switch(*cip++) {
+  switch (*cip++) {
 /***bo op NOT
 Bitwise inversion operator.
 \usage NOT a
@@ -383,7 +383,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
     return -1;
 
   while (1)
-    switch(*cip++) {
+    switch (*cip++) {
     case I_AND:
 /***bo op AND
 Bitwise AND operator.
@@ -395,7 +395,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical AND" operator; instead, the bitwise operator is used.
 ***/
       tmp = iand();
-      value = ((int32_t)value)&((int32_t)tmp);
+      value = ((int32_t)value) & ((int32_t)tmp);
       break;
     default:
       cip--;
@@ -412,7 +412,7 @@ num_t BASIC_FP Basic::iexp() {
     return -1;
 
   while (1)
-    switch(*cip++) {
+    switch (*cip++) {
 /***bo op OR
 Bitwise OR operator.
 \usage a OR b
