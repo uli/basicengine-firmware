@@ -23,10 +23,12 @@ Sets the state of a general-purpose I/O pin.
 \ref GPIN()
 ***/
 void Basic::idwrite() {
-  int32_t pinno,  data;
+  int32_t pinno, data;
 
-  if ( getParam(pinno, 0, 15, I_COMMA) ) return;
-  if ( getParam(data, I_NONE) ) return;
+  if (getParam(pinno, 0, 15, I_COMMA))
+    return;
+  if (getParam(data, I_NONE))
+    return;
   data = !!data;
 
   pcf_state = (pcf_state & ~(1 << pinno)) | (data << pinno);
@@ -63,10 +65,13 @@ num_t BASIC_INT Basic::ni2cw() {
   int32_t i2cAdr;
   BString out;
 
-  if (checkOpen()) return 0;
-  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(i2cAdr, 0, 0x7f, I_COMMA))
+    return 0;
   out = istrexp();
-  if (checkClose()) return 0;
+  if (checkClose())
+    return 0;
 
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish
   // to avoid interference.
@@ -100,14 +105,17 @@ BString Basic::si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
 
-  if (checkOpen()) goto out;
-  if (getParam(i2cAdr, 0, 0x7f, I_COMMA)) goto out;
+  if (checkOpen())
+    goto out;
+  if (getParam(i2cAdr, 0, 0x7f, I_COMMA))
+    goto out;
   out = istrexp();
   if (*cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
     goto out;
   }
-  if (getParam(rdlen, 0, INT32_MAX, I_CLOSE)) goto out;
+  if (getParam(rdlen, 0, INT32_MAX, I_CLOSE))
+    goto out;
 
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish
   // to avoid interference.
@@ -142,7 +150,8 @@ pollution.
 ***/
 void Basic::iswrite() {
   int32_t c;
-  if ( getParam(c, I_NONE) ) return;
+  if (getParam(c, I_NONE))
+    return;
   Serial.write(c);
 }
 
@@ -162,10 +171,12 @@ and cannot be relied on to remain stable.
 ***/
 void SMALL Basic::ismode() {
   int32_t baud, flags = SERIAL_8N1;
-  if ( getParam(baud, 0, 921600, I_NONE) ) return;
+  if (getParam(baud, 0, 921600, I_NONE))
+    return;
   if (*cip == I_COMMA) {
     ++cip;
-    if (getParam(flags, 0, 0x3f, I_NONE)) return;
+    if (getParam(flags, 0, 0x3f, I_NONE))
+      return;
   }
   Serial.begin(baud,
 #ifdef ESP8266
@@ -186,9 +197,12 @@ Reads the state of a general-purpose I/O pin.
 ***/
 num_t BASIC_INT Basic::ngpin() {
   int32_t a;
-  if (checkOpen()) return 0;
-  if (getParam(a, 0, 15, I_NONE)) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(a, 0, 15, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
 
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish
   // to avoid interference.
@@ -213,9 +227,11 @@ num_t BASIC_FP Basic::nana() {
   err = ERR_NOT_SUPPORTED;
   return 0;
 #else
-  if (checkOpen()) return 0;
-  if (checkClose()) return 0;
-  return analogRead(A0);    // 入力値取得
+  if (checkOpen())
+    return 0;
+  if (checkClose())
+    return 0;
+  return analogRead(A0);  // 入力値取得
 #endif
 }
 
@@ -231,7 +247,8 @@ to support serial input.
 \ref SREADY()
 ***/
 num_t BASIC_INT Basic::nsread() {
-  if (checkOpen()||checkClose()) return 0;
+  if (checkOpen() || checkClose())
+    return 0;
   return Serial.read();
 }
 
@@ -247,7 +264,8 @@ to support serial input.
 \ref SREAD()
 ***/
 num_t BASIC_INT Basic::nsready() {
-  if (checkOpen()||checkClose()) return 0;
+  if (checkOpen() || checkClose())
+    return 0;
   return Serial.available();
 }
 
