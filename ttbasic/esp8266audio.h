@@ -14,8 +14,7 @@ extern const uint32_t fakePwm[];
 
 #define SOUND_BUFLEN I2S_BUFLEN
 
-class ESP8266Audio
-{
+class ESP8266Audio {
 public:
   void init(int sample_rate) {
     InitI2S(sample_rate);
@@ -25,7 +24,7 @@ public:
   inline void setBlockSize(int size) {
     nosdk_i2s_set_blocksize(size * 4);
   }
-  
+
   inline void queueSample(uint8_t sample) {
     nosdk_i2s_curr_buf[nosdk_i2s_curr_buf_pos++] =
       pgm_read_dword(&fakePwm[sample >> 3]);
@@ -34,10 +33,9 @@ public:
   inline int currBufPos() {
     return nosdk_i2s_curr_buf_pos;
   }
-  
+
   void setSampleAt(int buf, int idx, uint8_t sample) {
-    i2sBufDesc[buf].buf_ptr[idx] =
-      pgm_read_dword(&fakePwm[sample >> 3]);
+    i2sBufDesc[buf].buf_ptr[idx] = pgm_read_dword(&fakePwm[sample >> 3]);
   }
 
   void clearBufs() {
