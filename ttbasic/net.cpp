@@ -64,7 +64,7 @@ void Basic::isetap() {
     return;
   }
   BString password = istrexp();
-  
+
   wm.addAP(ssid.c_str(), password.c_str());
 }
 
@@ -85,7 +85,7 @@ static int open_url(BString &url) {
   }
   http = new HTTPClient;
   if (!http) {
-    err = ERR_OOM;	// I guess...
+    err = ERR_OOM;  // I guess...
     return -1;
   }
   http->begin(url.c_str());
@@ -144,7 +144,8 @@ BString Basic::snetinput() {
 
 BString Basic::snetget() {
   BString rx;
-  if (checkOpen()) return rx;
+  if (checkOpen())
+    return rx;
   BString url = istrexp();
   if (err || checkClose())
     return rx;
@@ -214,24 +215,12 @@ void Basic::inetget() {
 
 void Basic::inet() {
   switch (*cip++) {
-  case I_CONFIG:
-    isetap();
-    break;
-  case I_CONNECT:
-    iconnect();
-    break;
-  case I_OPEN:
-    inetopen();
-    break;
-  case I_CLOSE:
-    inetclose();
-    break;
-  case I_GET:
-    inetget();
-    break;
-  default:
-    E_ERR(SYNTAX, "exp network command");
-    break;
+  case I_CONFIG:  isetap();    break;
+  case I_CONNECT: iconnect();  break;
+  case I_OPEN:    inetopen();  break;
+  case I_CLOSE:   inetclose(); break;
+  case I_GET:     inetget();   break;
+  default:        E_ERR(SYNTAX, "exp network command"); break;
   }
 }
 
