@@ -1,7 +1,6 @@
 #include "basic.h"
 
-static inline bool is_var(unsigned char tok)
-{
+static inline bool is_var(unsigned char tok) {
   return tok >= I_VAR && tok <= I_STRLSTREF;
 }
 
@@ -23,9 +22,9 @@ void BASIC_FP Basic::ivar() {
   }
   cip++;
   //値の取得と代入
-  value = iexp(); //式の値を取得
-  if (err) //もしエラーが生じたら
-    return;  //終了
+  value = iexp();  //式の値を取得
+  if (err)         //もしエラーが生じたら
+    return;        //終了
   nvar.var(index) = value;
 }
 
@@ -46,15 +45,14 @@ void BASIC_FP Basic::ivar() {
 // what a procedure's stack frame looks like at compile time because we may
 // have to compile code out-of-order.
 
-int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local)
-{
+int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local) {
   is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  uint8_t proc_idx = gstk[gstki - 1].proc_idx;
   if (proc_idx == NO_PROC) {
     err = ERR_GLOBAL;
     return 0;
@@ -71,8 +69,7 @@ int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local)
   return local_offset;
 }
 
-num_t& BASIC_FP Basic::get_lvar(uint8_t arg)
-{
+num_t &BASIC_FP Basic::get_lvar(uint8_t arg) {
   bool is_local;
   int local_offset = get_num_local_offset(arg, is_local);
   if (err)
@@ -84,7 +81,7 @@ num_t& BASIC_FP Basic::get_lvar(uint8_t arg)
     }
     return astk_num[astk_num_i + local_offset];
   } else {
-    uint16_t argc = gstk[gstki-1].num_args;
+    uint16_t argc = gstk[gstki - 1].num_args;
     return astk_num[astk_num_i - argc + local_offset];
   }
 }
@@ -112,7 +109,7 @@ void BASIC_FP Basic::ilvar() {
 int BASIC_FP Basic::get_array_dims(int *idxs) {
   int dims = 0;
   while (dims < MAX_ARRAY_DIMS) {
-    if (getParam((int32_t&)idxs[dims], I_NONE))
+    if (getParam((int32_t &)idxs[dims], I_NONE))
       return -1;
     dims++;
     if (*cip == I_CLOSE)
@@ -166,7 +163,7 @@ void Basic::idim() {
       idxs[i]++;
 
     if ((!is_string && num_arr.var(index).reserve(dims, idxs)) ||
-        (is_string  && str_arr.var(index).reserve(dims, idxs))) {
+        (is_string && str_arr.var(index).reserve(dims, idxs))) {
       err = ERR_OOM;
       return;
     }
@@ -193,7 +190,7 @@ void Basic::idim() {
               return;
             s = svalue;
             cnt++;
-          } while(*cip == I_COMMA);
+          } while (*cip == I_COMMA);
         } else {
           num_t value;
           int cnt = 0;
@@ -207,7 +204,7 @@ void Basic::idim() {
               return;
             n = value;
             cnt++;
-          } while(*cip == I_COMMA);
+          } while (*cip == I_COMMA);
         }
         if (*cip++ != I_SQCLOSE) {
           E_SYNTAX(I_SQCLOSE);
@@ -240,27 +237,26 @@ void BASIC_FP Basic::ivararr() {
   if (err)
     return;
 
-  if (*cip != I_EQ) { //もし「=」でなければ
-    err = ERR_VWOEQ; //エラー番号をセット
+  if (*cip != I_EQ) {  //もし「=」でなければ
+    err = ERR_VWOEQ;   //エラー番号をセット
     return;
   }
   cip++;
   //値の取得と代入
-  value = iexp(); //式の値を取得
-  if (err) //もしエラーが生じたら
-    return;  //終了
+  value = iexp();  //式の値を取得
+  if (err)         //もしエラーが生じたら
+    return;        //終了
   n = value;
 }
 
-int Basic::get_str_local_offset(uint8_t arg, bool &is_local)
-{
+int Basic::get_str_local_offset(uint8_t arg, bool &is_local) {
   is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  uint8_t proc_idx = gstk[gstki-1].proc_idx;
+  uint8_t proc_idx = gstk[gstki - 1].proc_idx;
   if (proc_idx == NO_PROC) {
     err = ERR_GLOBAL;
     return 0;
@@ -277,8 +273,7 @@ int Basic::get_str_local_offset(uint8_t arg, bool &is_local)
   return local_offset;
 }
 
-BString& Basic::get_lsvar(uint8_t arg)
-{
+BString &Basic::get_lsvar(uint8_t arg) {
   bool is_local;
   int local_offset = get_str_local_offset(arg, is_local);
   if (err)
@@ -290,7 +285,7 @@ BString& Basic::get_lsvar(uint8_t arg)
     }
     return astk_str[astk_str_i + local_offset];
   } else {
-    uint16_t argc = gstk[gstki-1].str_args;
+    uint16_t argc = gstk[gstki - 1].str_args;
     return astk_str[astk_str_i - argc + local_offset];
   }
 }
@@ -313,7 +308,7 @@ void Basic::set_svar(bool is_lsvar) {
       return;
     }
     cip++;
-    
+
     sval = iexp();
     if (is_lsvar) {
       BString &str = get_lsvar(index);
@@ -380,7 +375,7 @@ void Basic::istrarr() {
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
   uint8_t index;
-  
+
   index = *cip++;
 
   dims = get_array_dims(idxs);
@@ -403,7 +398,7 @@ void Basic::istrarr() {
       return;
     }
     cip++;
-    
+
     uint8_t sval = iexp();
     if (err)
       return;
@@ -432,7 +427,7 @@ void Basic::istrlst() {
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
   uint8_t index;
-  
+
   index = *cip++;
 
   dims = get_array_dims(idxs);
@@ -463,7 +458,7 @@ void Basic::inumlst() {
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
   uint8_t index;
-  
+
   index = *cip++;
 
   dims = get_array_dims(idxs);
@@ -510,7 +505,7 @@ void Basic::inumlstref() {
     num_lst.var(index).append(value);
     if (err)
       return;
-  } while(*cip == I_COMMA);
+  } while (*cip == I_COMMA);
 
   if (*cip++ != I_SQCLOSE) {
     E_SYNTAX(I_SQCLOSE);
@@ -540,7 +535,7 @@ void Basic::istrlstref() {
     str_lst.var(index).append(value);
     if (err)
       return;
-  } while(*cip == I_COMMA);
+  } while (*cip == I_COMMA);
 
   if (*cip++ != I_SQCLOSE) {
     E_SYNTAX(I_SQCLOSE);
@@ -638,11 +633,11 @@ consumes additional memory and compute resources without providing
 any benefit.
 ***/
 // XXX: 32-byte jump table
-void BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::ilet() {
-  switch (*cip) { //中間コードで分岐
-  case I_VAR: // 変数の場合
-    cip++;     // 中間コードポインタを次へ進める
-    ivar();    // 変数への代入を実行
+void BASIC_INT __attribute__((optimize("no-jump-tables"))) Basic::ilet() {
+  switch (*cip) {  //中間コードで分岐
+  case I_VAR:      // 変数の場合
+    cip++;         // 中間コードポインタを次へ進める
+    ivar();        // 変数への代入を実行
     break;
 
   case I_LVAR:
@@ -690,9 +685,9 @@ void BASIC_INT __attribute__((optimize ("no-jump-tables"))) Basic::ilet() {
     istrlstref();
     break;
 
-  default:      // 以上のいずれにも該当しなかった場合
-    err = ERR_LETWOV; // エラー番号をセット
-    break;            // 打ち切る
+  default:             // 以上のいずれにも該当しなかった場合
+    err = ERR_LETWOV;  // エラー番号をセット
+    break;             // 打ち切る
   }
 
   if (err == ERR_UNK) {
@@ -717,7 +712,8 @@ An error is generated if `~list` is empty.
 ***/
 num_t BASIC_FP Basic::npopf() {
   num_t value;
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   if (*cip++ == I_NUMLSTREF) {
     value = num_lst.var(*cip).front();
     num_lst.var(*cip++).pop_front();
@@ -728,7 +724,8 @@ num_t BASIC_FP Basic::npopf() {
       SYNTAX_T("exp numeric list reference");
     return 0;
   }
-  if (checkClose()) return 0;
+  if (checkClose())
+    return 0;
   return value;
 }
 
@@ -744,7 +741,8 @@ An error is generated if `~list` is empty.
 ***/
 num_t BASIC_FP Basic::npopb() {
   num_t value;
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
   if (*cip++ == I_NUMLSTREF) {
     value = num_lst.var(*cip).back();
     num_lst.var(*cip++).pop_back();
@@ -755,7 +753,8 @@ num_t BASIC_FP Basic::npopb() {
       SYNTAX_T("exp numeric list reference");
     return 0;
   }
-  if (checkClose()) return 0;
+  if (checkClose())
+    return 0;
   return value;
 }
 
@@ -771,7 +770,8 @@ An error is generated if `~list$` is empty.
 ***/
 BString BASIC_INT Basic::spopf() {
   BString value;
-  if (checkOpen()) return value;
+  if (checkOpen())
+    return value;
   if (*cip++ == I_STRLSTREF) {
     value = str_lst.var(*cip).front();
     str_lst.var(*cip++).pop_front();
@@ -798,7 +798,8 @@ An error is generated if `~list$` is empty.
 ***/
 BString BASIC_INT Basic::spopb() {
   BString value;
-  if (checkOpen()) return value;
+  if (checkOpen())
+    return value;
   if (*cip++ == I_STRLSTREF) {
     value = str_lst.var(*cip).back();
     str_lst.var(*cip++).pop_back();
@@ -812,4 +813,3 @@ BString BASIC_INT Basic::spopb() {
   checkClose();
   return value;
 }
-
