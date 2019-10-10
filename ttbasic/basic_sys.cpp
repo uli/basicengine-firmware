@@ -8,7 +8,7 @@
 
 // **** RTC用宣言 ********************
 #ifdef USE_INNERRTC
-  #include <Time.h>
+#include <Time.h>
 #endif
 
 /***bc sys WAIT
@@ -20,7 +20,8 @@ Pause for a specific amount of time.
 ***/
 void Basic::iwait() {
   int32_t tm;
-  if ( getParam(tm, 0, INT32_MAX, I_NONE) ) return;
+  if (getParam(tm, 0, INT32_MAX, I_NONE))
+    return;
   uint32_t end = tm + millis();
   while (millis() < end) {
     process_events();
@@ -32,7 +33,7 @@ void Basic::iwait() {
   }
 }
 
-void* BASIC_INT sanitize_addr(uint32_t vadr, int type) {
+void *BASIC_INT sanitize_addr(uint32_t vadr, int type) {
 #ifdef ESP8266
   // Unmapped memory, causes exception
   if (vadr < 0x20000000UL) {
@@ -94,21 +95,23 @@ Sanity checks for `addr` are insufficient.
 ***/
 int32_t Basic::ipeek(int type) {
   int32_t value = 0, vadr;
-  void* radr;
+  void *radr;
 
-  if (checkOpen()) return 0;
-  if ( getParam(vadr, I_NONE) ) return 0;
-  if (checkClose()) return 0;
+  if (checkOpen())
+    return 0;
+  if (getParam(vadr, I_NONE))
+    return 0;
+  if (checkClose())
+    return 0;
   radr = sanitize_addr(vadr, type);
   if (radr) {
     switch (type) {
-    case 0: value = *(uint8_t*)radr; break;
-    case 1: value = *(uint16_t*)radr; break;
-    case 2: value = *(uint32_t*)radr; break;
+    case 0: value = *(uint8_t *)radr; break;
+    case 1: value = *(uint16_t *)radr; break;
+    case 2: value = *(uint32_t *)radr; break;
     default: err = ERR_SYS; break;
     }
-  }
-  else
+  } else
     err = ERR_RANGE;
   return value;
 }
@@ -152,13 +155,18 @@ Sanity checks for `addr` are insufficient.
 \ref POKE POKEW
 ***/
 void BASIC_FP Basic::do_poke(int type) {
-  void* adr;
+  void *adr;
   int32_t value;
   int32_t vadr;
 
   // アドレスの指定
-  vadr = iexp(); if(err) return;
-  if(*cip != I_COMMA) { E_SYNTAX(I_COMMA); return; }
+  vadr = iexp();
+  if (err)
+    return;
+  if (*cip != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    return;
+  }
 
   // 例: 1,2,3,4,5 の連続設定処理
   do {
@@ -167,16 +175,17 @@ void BASIC_FP Basic::do_poke(int type) {
       err = ERR_RANGE;
       break;
     }
-    cip++;          // 中間コードポインタを次へ進める
-    if (getParam(value, I_NONE)) return;
+    cip++;  // 中間コードポインタを次へ進める
+    if (getParam(value, I_NONE))
+      return;
     switch (type) {
-    case 0: *((uint8_t*)adr) = value; break;
+    case 0: *((uint8_t *)adr) = value; break;
     case 1: *((uint16_t *)adr) = value; break;
     case 2: *((uint32_t *)adr) = value; break;
     default: err = ERR_SYS; break;
     }
     vadr++;
-  } while(*cip == I_COMMA);
+  } while (*cip == I_COMMA);
 }
 
 void BASIC_FP Basic::ipoke() {
@@ -246,8 +255,10 @@ void Basic::iset() {
     return;
   } else if (*cip == I_FLAGS) {
     ++cip;
-    if (getParam(flag, 0, 0, I_COMMA)) return;
-    if (getParam(val, 0, 1, I_NONE)) return;
+    if (getParam(flag, 0, 0, I_COMMA))
+      return;
+    if (getParam(val, 0, 1, I_NONE))
+      return;
 
     switch (flag) {
     case 0:	math_exceptions_disabled = val; break;
@@ -287,19 +298,20 @@ void Basic::igetDate() {
     weekday(tt),
   };
 
-  for (uint8_t i=0; i <4; i++) {
+  for (uint8_t i = 0; i < 4; i++) {
     if (*cip == I_VAR) {          // 変数の場合
-      cip++; index = *cip;        // 変数インデックスの取得
+      cip++;
+      index = *cip;               // 変数インデックスの取得
       nvar.var(index) = v[i];
       cip++;
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
       return;
     }
-    if(i != 3) {
+    if (i != 3) {
       if (*cip != I_COMMA) {      // ','のチェック
-	err = ERR_SYNTAX;
-	return;
+        err = ERR_SYNTAX;
+        return;
       }
       cip++;
     }
@@ -336,19 +348,20 @@ void Basic::igetTime() {
     second(tt),
   };
 
-  for (uint8_t i=0; i <3; i++) {
+  for (uint8_t i = 0; i < 3; i++) {
     if (*cip == I_VAR) {          // 変数の場合
-      cip++; index = *cip;        // 変数インデックスの取得
+      cip++;
+      index = *cip;               // 変数インデックスの取得
       nvar.var(index) = v[i];
       cip++;
     } else {
       err = ERR_SYNTAX;           // 変数・配列でない場合はエラーとする
       return;
     }
-    if(i != 2) {
+    if (i != 2) {
       if (*cip != I_COMMA) {      // ','のチェック
-	err = ERR_SYNTAX;
-	return;
+        err = ERR_SYNTAX;
+        return;
       }
       cip++;
     }
@@ -379,7 +392,7 @@ implementations and may be changed in future releases.
 \ref GET_DATE SET_DATE
 ***/
 // XXX: 32 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) Basic::idate() {
+void __attribute__((optimize("no-jump-tables"))) Basic::idate() {
 #ifdef USE_INNERRTC
   time_t tt = now();
 
@@ -476,8 +489,7 @@ num_t Basic::nsys() {
 #include <sys/sysinfo.h>
 #endif
 
-uint64_t SMALL Basic::getFreeMemory()
-{
+uint64_t SMALL Basic::getFreeMemory() {
 #ifdef ESP8266
   return umm_free_heap_size();
 #elif defined(H3)
@@ -502,7 +514,8 @@ Get free memory size.
 \ret Number of bytes free.
 ***/
 num_t BASIC_FP Basic::nfree() {
-  if (checkOpen()||checkClose()) return 0;
+  if (checkOpen() || checkClose())
+    return 0;
   return getFreeMemory();
 }
 
@@ -518,16 +531,16 @@ num_t BASIC_FP Basic::ntick() {
   if ((*cip == I_OPEN) && (*(cip + 1) == I_CLOSE)) {
     // 引数無し
     value = 0;
-    cip+=2;
+    cip += 2;
   } else {
     value = getparam(); // 括弧の値を取得
     if (err)
       return 0;
   }
-  if(value == 0) {
+  if (value == 0) {
     value = millis();              // 0～INT32_MAX ms
   } else if (value == 1) {
-    value = millis()/1000;         // 0～INT32_MAX s
+    value = millis() / 1000;       // 0～INT32_MAX s
   } else {
     E_VALUE(0, 1);
   }
@@ -570,7 +583,7 @@ void SMALL Basic::isysinfo() {
 
   newline();
   PRINT_P("Variables:\n");
-  
+
   PRINT_P(" Numerical: ");
   putnum(nvar.size(), 0);
   PRINT_P(", ");
@@ -586,7 +599,7 @@ void SMALL Basic::isysinfo() {
   PRINT_P(" arrays, ");
   putnum(str_lst.size(), 0);
   PRINT_P(" lists\n");
-  
+
   newline();
   PRINT_P("Loop stack:   ");
   putnum(lstki, 0);
@@ -645,10 +658,10 @@ void Basic::iboot() {
 #ifdef ESP8266_NOWIFI
   // SDKnoWiFi does not have system_restart*(). The only working
   // alternative I could find is triggering the WDT.
-  ets_wdt_enable(2,1,1);
-  for(;;);
+  ets_wdt_enable(2, 1, 1);
+  for (;;);
 #else
-  ESP.reset();        // UNTESTED!
+  ESP.reset();  // UNTESTED!
 #endif
 #else
   err = ERR_NOT_SUPPORTED;
@@ -676,20 +689,18 @@ void Basic::isystem() {
 
 lua_State *lua = NULL;
 
-static void lhook(lua_State *L, lua_Debug *ar)
-{
+static void lhook(lua_State *L, lua_Debug *ar) {
   int c;
   (void)ar;
   if ((c = sc0.peekKey())) {
-        if (process_hotkeys(c)) {
-          luaL_error(L, "interrupted!");
-        }
+    if (process_hotkeys(c)) {
+      luaL_error(L, "interrupted!");
+    }
   }
   process_events();
 }
 
-void Basic::ilua()
-{
+void Basic::ilua() {
   lua = luaL_newstate();
   if (!lua) {
     err = ERR_SYS;
