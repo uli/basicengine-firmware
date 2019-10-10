@@ -11,7 +11,8 @@ int event_pad_last[MAX_PADS];
 
 void SMALL basic_init_input() {
 #ifdef USE_PSX_GPIO
-  joy.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN, PSX_DELAY);
+  joy.setupPins(PSX_DATA_PIN, PSX_CMD_PIN, PSX_ATTN_PIN, PSX_CLK_PIN,
+                PSX_DELAY);
 #else
   joy.begin();
 #endif
@@ -41,8 +42,7 @@ int32_t BASIC_FP iinkey() {
   return rc;
 }
 
-static int BASIC_INT cursor_pad_state()
-{
+static int BASIC_INT cursor_pad_state() {
   // The state is kept up-to-date by the interpreter polling for Ctrl-C.
   return kb.state(PS2KEY_L_Arrow) << joyLeftShift |
          kb.state(PS2KEY_R_Arrow) << joyRightShift |
@@ -54,12 +54,11 @@ static int BASIC_INT cursor_pad_state()
          kb.state(PS2KEY_Z) << joySquShift;
 }
 
-int BASIC_INT pad_state(int num)
-{
+int BASIC_INT pad_state(int num) {
   switch (num) {
-  case 0:	return (joy.read() & 0xffff) | cursor_pad_state();
-  case 1:	return cursor_pad_state();
-  case 2:	return joy.read() & 0xffff;
+  case 0: return (joy.read() & 0xffff) | cursor_pad_state();
+  case 1: return cursor_pad_state();
+  case 2: return joy.read() & 0xffff;
   }
   return 0;
 }
@@ -119,13 +118,16 @@ num_t BASIC_INT Basic::npad() {
   int32_t num;
   int32_t state = 0;
 
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
 
-  if (getParam(num, 0, 2, I_NONE)) return 0;
+  if (getParam(num, 0, 2, I_NONE))
+    return 0;
 
   if (*cip == I_COMMA) {
     ++cip;
-    if (getParam(state, 0, 3, I_NONE)) return 0;
+    if (getParam(state, 0, 3, I_NONE))
+      return 0;
   }
 
   if (checkClose())
@@ -284,15 +286,16 @@ Key codes are fixed and do not change with the configured keyboard layout.
 num_t BASIC_INT Basic::nkey() {
   int32_t scancode;
 
-  if (checkOpen()) return 0;
+  if (checkOpen())
+    return 0;
 
-  if (getParam(scancode, 0, 255, I_CLOSE)) return 0;
+  if (getParam(scancode, 0, 255, I_CLOSE))
+    return 0;
 
   return kb.state(scancode);
 }
 
-void BASIC_INT Basic::event_handle_pad()
-{
+void BASIC_INT Basic::event_handle_pad() {
   for (int i = 0; i < MAX_PADS; ++i) {
     if (event_pad_proc_idx[i] == NO_PROC)
       continue;
@@ -370,7 +373,7 @@ Reads a character from the keyboard and returns its numeric value.
 \ref INKEY$
 ***/
 num_t BASIC_FP Basic::ninkey() {
-  if (checkOpen()||checkClose()) return 0;
-  return iinkey(); // キー入力値の取得
+  if (checkOpen() || checkClose())
+    return 0;
+  return iinkey();  // キー入力値の取得
 }
-
