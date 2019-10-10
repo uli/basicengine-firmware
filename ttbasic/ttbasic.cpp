@@ -82,7 +82,7 @@ void setup() {
   // the keyboard failing to initialize. This does not happen when resetting
   // the powered system. This suggests a power issue, although scoping the
   // supplies did not reveal anything suspicious.
-  delay(1000);	// 1s seems to always do the trick; 500ms is not reliable.
+  delay(1000);  // 1s seems to always do the trick; 500ms is not reliable.
 
   Serial.begin(GPIO_S1_BAUD);
   SpiLock();
@@ -93,8 +93,9 @@ void setup() {
 #endif
 }
 
-void loop(void){
-  Serial.println(F("\nStarting")); Serial.flush();
+void loop(void) {
+  Serial.println(F("\nStarting"));
+  Serial.flush();
 
 #ifdef ESP8266
   SPI.pins(14, 12, 13, 15);
@@ -118,15 +119,15 @@ void loop(void){
 
   bc = new Basic;
   memset(bc, 0, sizeof(*bc));
-  bc->basic();	// does not return
+  bc->basic();  // does not return
 }
 
 #ifdef HAVE_PROFILE
-extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_enter(void *this_fn, void *call_site)
-{
+extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_enter(void *this_fn,
+                                                         void *call_site) {
 }
 
-extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_exit(void *this_fn, void *call_site)
-{
+extern "C" void ICACHE_RAM_ATTR __cyg_profile_func_exit(void *this_fn,
+                                                        void *call_site) {
 }
 #endif
