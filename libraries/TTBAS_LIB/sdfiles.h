@@ -73,12 +73,12 @@ extern FastROMFilesystem fs;
 #endif
 
 #ifdef UNIFILE_USE_FS
-#define UFILE_READ 42
-#define UFILE_WRITE 43
+#define UFILE_READ      42
+#define UFILE_WRITE     43
 #define UFILE_OVERWRITE 44
 #else
-#define UFILE_WRITE FILE_WRITE
-#define UFILE_READ FILE_READ
+#define UFILE_WRITE     FILE_WRITE
+#define UFILE_READ      FILE_READ
 #define UFILE_OVERWRITE FILE_OVERWRITE
 #endif
 
@@ -109,7 +109,7 @@ public:
     UnifileString name;
     ssize_t size;
     bool is_directory;
-    
+
     operator bool() {
       return size >= 0;
     }
@@ -123,7 +123,7 @@ public:
 #endif
   }
 
-#ifdef UNIFILE_USE_FS  
+#ifdef UNIFILE_USE_FS
   Unifile(File f) {
     m_sd_file = f;
     m_type = SD;
@@ -131,9 +131,9 @@ public:
     m_fs_file = NULL;
     m_fs_dir = NULL;
 #endif
-  }  
+  }
 #endif
-  
+
 #ifdef UNIFILE_USE_SDFAT
   Unifile(sdfat::File f) {
     m_sdfat_file = f;
@@ -142,9 +142,9 @@ public:
     m_fs_file = NULL;
     m_fs_dir = NULL;
 #endif
-  }  
+  }
 #endif
-  
+
 #ifdef UNIFILE_USE_OLD_SPIFFS
   Unifile(fs::File f) {
     m_fs_file = f;
@@ -164,7 +164,7 @@ public:
       m_type = INVALID;
     m_fs_dir = NULL;
   }
-  
+
   Unifile(FastROMFSDir *f) {
     m_fs_dir = f;
     if (f)
@@ -292,7 +292,7 @@ public:
     }
   }
 
-  ssize_t read(char* buf, size_t size) {
+  ssize_t read(char *buf, size_t size) {
     switch (m_type) {
 #ifdef UNIFILE_USE_SDFAT
     case SDFAT: { SD_BEGIN(); size_t ret = m_sdfat_file.read(buf, size); SD_END(); return ret; }
@@ -309,7 +309,7 @@ public:
     }
   }
 
-  ssize_t fgets(char* str, int num) {
+  ssize_t fgets(char *str, int num) {
     switch (m_type) {
 #ifdef UNIFILE_USE_SDFAT
     case SDFAT: { SD_BEGIN(); size_t ret = m_sdfat_file.fgets(str, num); SD_END(); return ret; }
@@ -383,7 +383,7 @@ public:
     default: return -1;
     }
   }
-  
+
   bool available() {
     switch (m_type) {
 #ifdef UNIFILE_USE_SDFAT
@@ -442,7 +442,7 @@ public:
       File sd_entry = m_sd_file.openNextFile();
       if (sd_entry) {
         e.name = sd_entry.name();
-        e.name = e.name.substring(e.name.lastIndexOf('/')+1);
+        e.name = e.name.substring(e.name.lastIndexOf('/') + 1);
         e.is_directory = sd_entry.isDirectory();
         e.size = sd_entry.size();
       }
@@ -458,14 +458,14 @@ public:
         e.size = m_fs_dir.fileSize();
       }
 #elif defined(UNIFILE_USE_FASTROMFS)
-      {
-        struct FastROMFSDirent *de = fs.readdir(m_fs_dir);
-        if (de) {
-          e.name = de->name;
-          e.is_directory = false;
-          e.size = de->len;
-        }
+    {
+      struct FastROMFSDirent *de = fs.readdir(m_fs_dir);
+      if (de) {
+        e.name = de->name;
+        e.is_directory = false;
+        e.size = de->len;
       }
+    }
 #endif
       break;
     default:
@@ -505,10 +505,10 @@ public:
                                                                           , 256);
       const char *fl;
       switch (flags) {
-      case UFILE_WRITE:		fl = "a"; break;
-      case UFILE_OVERWRITE:	fl = "w"; break;
-      case UFILE_READ:		fl = "r"; break;
-      default:			return Unifile();
+      case UFILE_WRITE:     fl = "a"; break;
+      case UFILE_OVERWRITE: fl = "w"; break;
+      case UFILE_READ:      fl = "r"; break;
+      default:              return Unifile();
       }
 #ifdef UNIFILE_USE_OLD_SPIFFS
       fs::File f = SPIFFS.open(spiffs_name.c_str(), fl);
@@ -531,10 +531,10 @@ public:
 #elif defined(UNIFILE_USE_NEW_SD)
       const char *fl;
       switch (flags) {
-      case UFILE_WRITE:		fl = "a"; break;
-      case UFILE_OVERWRITE:	fl = "w"; break;
-      case UFILE_READ:		fl = "r"; break;
-      default:			return Unifile();
+      case UFILE_WRITE:     fl = "a"; break;
+      case UFILE_OVERWRITE: fl = "w"; break;
+      case UFILE_READ:      fl = "r"; break;
+      default:              return Unifile();
       }
       File f = ::SD.open(sdfat_name.c_str(), fl);
 #endif
@@ -545,7 +545,7 @@ public:
         return Unifile();
     }
   }
-  
+
   static Unifile open(const UnifileString &name, int flags) {
     return open(name.c_str(), flags);
   }
@@ -557,20 +557,25 @@ public:
       return true;
     if (isSPIFFS(abs_from))
 #ifdef UNIFILE_USE_OLD_SPIFFS
-      return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
+      return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1,
+                           abs_to.c_str() + FLASH_PREFIX_LEN + 1);
 #elif defined(UNIFILE_USE_FASTROMFS)
-      return fs.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1, abs_to.c_str() + FLASH_PREFIX_LEN + 1);
+      return fs.rename(abs_from.c_str() + FLASH_PREFIX_LEN + 1,
+                       abs_to.c_str() + FLASH_PREFIX_LEN + 1);
 #elif defined(UNIFILE_USE_NEW_SPIFFS)
-      return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN, abs_to.c_str() + FLASH_PREFIX_LEN);
+      return SPIFFS.rename(abs_from.c_str() + FLASH_PREFIX_LEN,
+                           abs_to.c_str() + FLASH_PREFIX_LEN);
 #else
       return false;
 #endif
     else {
       SD_BEGIN();
 #ifdef UNIFILE_USE_SDFAT
-      bool ret = sdf.rename(abs_from.c_str() + SD_PREFIX_LEN, abs_to.c_str() + SD_PREFIX_LEN);
+      bool ret = sdf.rename(abs_from.c_str() + SD_PREFIX_LEN,
+                            abs_to.c_str() + SD_PREFIX_LEN);
 #elif defined(UNIFILE_USE_NEW_SD)
-      bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN, abs_to.c_str() + SD_PREFIX_LEN);
+      bool ret = ::SD.rename(abs_from.c_str() + SD_PREFIX_LEN,
+                             abs_to.c_str() + SD_PREFIX_LEN);
 #else
       ret = false;
 #endif
@@ -578,7 +583,7 @@ public:
       return ret;
     }
   }
-  
+
   static inline bool isSPIFFS(UnifileString file) {
     return file.startsWith(FLASH_PREFIX);
   }
@@ -617,7 +622,7 @@ public:
       SD_END();
       return ret;
     }
-  }  
+  }
 
   static bool chDir(const char *p) {
     UnifileString new_cwd = path(p);
@@ -626,7 +631,7 @@ public:
     m_cwd = new_cwd;
     return true;
   }
-  
+
   static const char *cwd() {
     return m_cwd.c_str();
   }
@@ -671,7 +676,7 @@ public:
       return uf;
 #else
       return Unifile();
-#endif      
+#endif
     } else {
       SD_BEGIN();
 #ifdef UNIFILE_USE_NEW_SD
@@ -687,7 +692,7 @@ public:
 #elif defined(UNIFILE_USE_NEW_SD)
           !f.isDirectory()
 #endif
-         ) {
+      ) {
         f.close();
         SD_END();
         return Unifile();
@@ -723,7 +728,7 @@ private:
   static UnifileString m_cwd;
 };
 
-#else	// use Unifile
+#else  // use Unifile
 #include <sys/stat.h>
 #include <dirent.h>
 
@@ -732,11 +737,11 @@ private:
 static const char FLASH_PREFIX[] = "A:";
 #define FLASH_PREFIX_LEN 2
 const char SD_PREFIX[] = "C:";
-#define SD_PREFIX_LEN 2
+#define SD_PREFIX_LEN    2
 
 #endif
 
-#endif	// use Unifile
+#endif  // use Unifile
 
 class sdfiles {
 private:
@@ -779,10 +784,12 @@ public:
   }
 
   void fakeTime();
-    
+
   // ビットマップファイルのロード
-  uint8_t loadBitmap(char* fname, int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y, int32_t &w,int32_t &h, int mask = -1);
-  uint8_t saveBitmap(char* fname, int32_t src_x, int32_t src_y, int32_t w,int32_t h);
+  uint8_t loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y, int32_t x,
+                     int32_t y, int32_t &w, int32_t &h, int mask = -1);
+  uint8_t saveBitmap(char *fname, int32_t src_x, int32_t src_y, int32_t w,
+                     int32_t h);
 };
 
 #endif
