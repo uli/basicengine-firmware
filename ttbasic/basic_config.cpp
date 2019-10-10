@@ -56,13 +56,16 @@ background colors.
 The default border color is not used.
 \ref COLOR CONFIG SAVE_CONFIG
 ***/
-void SMALL Basic::config_color()
-{
+void SMALL Basic::config_color() {
   int32_t idx, r, g, b;
-  if (getParam(idx, 0, CONFIG_COLS - 1, I_COMMA)) return;
-  if (getParam(r, 0, 255, I_COMMA)) return;
-  if (getParam(g, 0, 255, I_COMMA)) return;
-  if (getParam(b, 0, 255, I_NONE)) return;
+  if (getParam(idx, 0, CONFIG_COLS - 1, I_COMMA))
+    return;
+  if (getParam(r, 0, 255, I_COMMA))
+    return;
+  if (getParam(g, 0, 255, I_COMMA))
+    return;
+  if (getParam(b, 0, 255, I_NONE))
+    return;
   CONFIG.color_scheme[idx][0] = r;
   CONFIG.color_scheme[idx][1] = g;
   CONFIG.color_scheme[idx][2] = b;
@@ -160,18 +163,20 @@ void SMALL Basic::iconfig() {
     return;
   }
 
-  if ( getParam(itemNo, I_COMMA) ) return;
-  if ( getParam(value, I_NONE) ) return;
-  switch(itemNo) {
-  case 0: // NTSC, PAL, PAL60 (XXX: unimplemented)
-    if (value <0 || value >2)  {
+  if (getParam(itemNo, I_COMMA))
+    return;
+  if (getParam(value, I_NONE))
+    return;
+  switch (itemNo) {
+  case 0:  // NTSC, PAL, PAL60 (XXX: unimplemented)
+    if (value < 0 || value > 2) {
       E_VALUE(0, 2);
     } else {
       CONFIG.NTSC = value;
     }
     break;
-  case 1: // キーボード補正
-    if (value < 0 || value > 3)  {
+  case 1:  // キーボード補正
+    if (value < 0 || value > 3) {
       E_VALUE(0, 3);
     } else {
 #if !defined(HOSTED) && !defined(H3) && !defined(__DJGPP__) && !defined(SDL)
@@ -241,10 +246,11 @@ void iloadconfig() {
 
 // システム環境設定のロード
 void loadConfig() {
-  CONFIG.NTSC      =  0;
+  CONFIG.NTSC = 0;
   CONFIG.line_adjust = 0;
-  CONFIG.KEYBOARD  =  1;
-  memcpy_P(CONFIG.color_scheme, default_color_scheme, sizeof(CONFIG.color_scheme));
+  CONFIG.KEYBOARD = 1;
+  memcpy_P(CONFIG.color_scheme, default_color_scheme,
+           sizeof(CONFIG.color_scheme));
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
   CONFIG.keyword_sep_optional = false;
@@ -256,7 +262,7 @@ void loadConfig() {
     CONFIG.cursor_color = (pixel_t)0x00009500UL;
 
   CONFIG.beep_volume = 15;
-  
+
   FILE *f = fopen(CONFIG_FILE.c_str(), "r");
   if (!f)
     return;
