@@ -42,7 +42,11 @@ typedef int32_t num_t;
 
 //#define DEBUG_VAR
 #ifdef DEBUG_VAR
-#define dbg_var(x...) do {Serial.printf(x);Serial.flush();} while(0)
+#define dbg_var(x...) \
+  do {                \
+    Serial.printf(x); \
+    Serial.flush();   \
+  } while (0)
 #else
 #define dbg_var(x...)
 #endif
@@ -96,10 +100,9 @@ public:
     m_var_top = m_prg_var_top;
   }
 
-  int find(const char *name)
-  {
+  int find(const char *name) {
     dbg_var("vnames find %s\r\n", name);
-    for (int i=0; i < m_var_top; ++i) {
+    for (int i = 0; i < m_var_top; ++i) {
       if (!strcasecmp(name, m_var_name[i])) {
 #ifdef DEBUG_VAR
         Serial.printf("found %d\r\n", i);
@@ -110,8 +113,7 @@ public:
     return -1;
   }
 
-  int assign(const char *name, bool is_prg_text)
-  {
+  int assign(const char *name, bool is_prg_text) {
     dbg_var("vnames assign %s text %d\r\n", name, is_prg_text);
 #ifdef DEBUG_VAR
     Serial.printf("assign %s ", name);
@@ -126,14 +128,14 @@ public:
       return v;
     }
 
-    if (reserve(m_var_top+1))
+    if (reserve(m_var_top + 1))
       return -1;
 
     m_var_name[m_var_top++] = strdup(name);
     if (is_prg_text)
       m_prg_var_top = m_var_top;
-    dbg_var("got %d\r\n", m_var_top-1);
-    return m_var_top-1;
+    dbg_var("got %d\r\n", m_var_top - 1);
+    return m_var_top - 1;
   }
 
   inline const char *name(uint8_t idx) {
@@ -738,4 +740,3 @@ private:
   int m_size;
   BasicList<T> **m_var;
 };
-
