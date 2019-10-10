@@ -35,7 +35,11 @@
 //#define DEBUG
 
 #ifdef DEBUG
-#define dbg_col(x...) do {Serial.printf(x);Serial.flush();} while(0)
+#define dbg_col(x...) \
+  do {                \
+    Serial.printf(x); \
+    Serial.flush();   \
+  } while (0)
 #else
 #define dbg_col(x...)
 #endif
@@ -46,8 +50,8 @@ struct palette {
 #include "P-EE-A22-B22-Y44-N10.h"
 #include "N-0C-B62-A63-Y33-N10.h"
 
-static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b, int *h, int *s, int *v)
-{
+static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b,
+                       int *h, int *s, int *v) {
   *v = max(max(r, g), b);
   if (*v == 0) {
     *s = 0;
@@ -63,9 +67,9 @@ static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b, int *h, int *s, int *v)
     if (*v == r)
       *h = 60 * (g - b) / d;
     else if (*v == g)
-      *h = 120 + 60 * (b-r) / d;
+      *h = 120 + 60 * (b - r) / d;
     else
-      *h = 240 + 60 * (r-g) / d;
+      *h = 240 + 60 * (r - g) / d;
   }
   if (*h < 0)
     *h += 360;
@@ -91,13 +95,12 @@ struct color_cache {
 };
 struct color_cache color_cache[COLOR_CACHE_SIZE];
 
-static void clear_color_cache(void)
-{
+static void clear_color_cache(void) {
   memset(color_cache, 0, sizeof(color_cache));
 }
 
-void Colorspace::setColorConversion(int yuvpal, int h_weight, int s_weight, int v_weight, bool fixup)
-{
+void Colorspace::setColorConversion(int yuvpal, int h_weight, int s_weight,
+                                    int v_weight, bool fixup) {
   color_cache_state.yuvpal = pals[yuvpal];
   color_cache_state.h_weight = h_weight;
   color_cache_state.s_weight = s_weight;
@@ -106,8 +109,7 @@ void Colorspace::setColorConversion(int yuvpal, int h_weight, int s_weight, int 
   clear_color_cache();
 }
 
-ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
-{
+ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b) {
   int h, s, v;
   uint8_t best = 0;
 
@@ -131,25 +133,22 @@ ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
       // very dark -> grey
       s = 0;
       adj_hw = -color_cache_state.h_weight;
-    }
-    else if (s < 10) {
+    } else if (s < 10) {
       // extremely pale colors -> grey
       s = 0;
       adj_hw = -color_cache_state.h_weight;
-    }
-    else if ((s+v < 190 || s < 60 || v < 60) &&
-        h > 185 && h < 265) {
+    } else if ((s + v < 190 || s < 60 || v < 60) && h > 185 && h < 265) {
       // very pale bluish -> light grey
       s = 0;
       adj_hw = -color_cache_state.h_weight;
     }
   }
 
-  for (int i=0; i<256; ++i) {
+  for (int i = 0; i < 256; ++i) {
     int _r = pgm_read_byte(&color_cache_state.yuvpal[i].r);
     int _g = pgm_read_byte(&color_cache_state.yuvpal[i].g);
     int _b = pgm_read_byte(&color_cache_state.yuvpal[i].b);
-    int _h,_s,_v;
+    int _h, _s, _v;
     int diff;
 
     if (_r == r && _g == g && b == _b) {
@@ -159,9 +158,9 @@ ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
 
     rgb_to_hsv(_r, _g, _b, &_h, &_s, &_v);
 
-    diff = ((color_cache_state.h_weight+adj_hw)*abs(h-_h)+
-            (color_cache_state.s_weight+adj_sw)*abs(s-_s)+
-            (color_cache_state.v_weight+adj_vw)*abs(v-_v));
+    diff = ((color_cache_state.h_weight + adj_hw) * abs(h - _h) +
+            (color_cache_state.s_weight + adj_sw) * abs(s - _s) +
+            (color_cache_state.v_weight + adj_vw) * abs(v - _v));
 
     if (diff < mindiff) {
       mindiff = diff;
@@ -190,8 +189,8 @@ ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b)
   return (ipixel_t)best;
 }
 
-ipixel_t ICACHE_RAM_ATTR Colorspace::indexedColorFromRgb(uint8_t r, uint8_t g, uint8_t b)
-{
+ipixel_t ICACHE_RAM_ATTR Colorspace::indexedColorFromRgb(uint8_t r, uint8_t g,
+                                                         uint8_t b) {
   uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
   struct color_cache *cache_entry = &color_cache[cache_hash];
   if (r == cache_entry->r && g == cache_entry->g && b == cache_entry->b) {
@@ -201,8 +200,7 @@ ipixel_t ICACHE_RAM_ATTR Colorspace::indexedColorFromRgb(uint8_t r, uint8_t g, u
   return indexedColorFromRgbSlow(r, g, b);
 }
 
-uint8_t *Colorspace::paletteData(uint8_t colorspace)
-{
+uint8_t *Colorspace::paletteData(uint8_t colorspace) {
   return (uint8_t *)pals[colorspace];
 }
 
@@ -210,8 +208,7 @@ uint8_t *Colorspace::paletteData(uint8_t colorspace)
 #include <video.h>
 #endif
 
-pixel_t Colorspace::fromIndexed(ipixel_t c)
-{
+pixel_t Colorspace::fromIndexed(ipixel_t c) {
   if (sizeof(pixel_t) == sizeof(ipixel_t))
     return (pixel_t)c;
   else {
@@ -225,8 +222,7 @@ pixel_t Colorspace::fromIndexed(ipixel_t c)
   }
 }
 
-pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b)
-{
+pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
   if (sizeof(pixel_t) == sizeof(ipixel_t))
     return (pixel_t)indexedColorFromRgb(r, g, b);
   else
