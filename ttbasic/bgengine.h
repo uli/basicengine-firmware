@@ -11,10 +11,10 @@
 
 #define MAX_BG	4
 
-#define MAX_SPRITES 32
+#define MAX_SPRITES  32
 #define MAX_SPRITE_W 32
 #define MAX_SPRITE_H 32
-#define MAX_PRIO	(MAX_BG-1)
+#define MAX_PRIO     (MAX_BG - 1)
 
 class BGEngine : public Video {
 #ifdef USE_BG_ENGINE
@@ -29,24 +29,27 @@ public:
   }
 
   void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
-  void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles, int count);
+  void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles,
+                  int count);
   void mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to);
 
-  inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x, uint8_t tile_size_y) {
+  inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x,
+                            uint8_t tile_size_y) {
     struct bg_t *bg = &m_bg[bg_idx];
     bg->tile_size_x = tile_size_x;
     bg->tile_size_y = tile_size_y;
     m_bg_modified = true;
   }
 
-  inline void setBgPattern(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y, uint16_t pat_w) {
+  inline void setBgPattern(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y,
+                           uint16_t pat_w) {
     struct bg_t *bg = &m_bg[bg_idx];
     bg->pat_x = pat_x;
     bg->pat_y = pat_y;
     bg->pat_w = pat_w;
     m_bg_modified = true;
   }
-  
+
   inline void setBgPriority(uint8_t bg_idx, uint8_t prio) {
     m_bg[bg_idx].prio = prio;
     m_bg_modified = true;
@@ -95,7 +98,7 @@ public:
   inline int bgScrollY(uint8_t bg) {
     return m_bg[bg].scroll_y;
   }
-  
+
   inline void scroll(uint8_t bg_idx, int x, int y) {
     struct bg_t *bg = &m_bg[bg_idx];
     while (x < 0)
@@ -113,7 +116,8 @@ public:
   void resetBgs();
 
   void setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y);
-  void setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y = 0, bool flip_x = false, bool flip_y = false);
+  void setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y = 0,
+                      bool flip_x = false, bool flip_y = false);
   void setSpriteKey(uint8_t num, int16_t key);
   void moveSprite(uint8_t num, int16_t x, int16_t y);
   void enableSprite(uint8_t num);
@@ -157,7 +161,7 @@ public:
   inline void forceRedraw() {
     m_bg_modified = true;
   }
-  
+
   inline void setFrameskip(uint32_t v) {
     m_frameskip = v;
   }
@@ -165,7 +169,8 @@ public:
     return m_frameskip;
   }
 
-  void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles, uint8_t num_tiles);
+  void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles,
+                           uint8_t num_tiles);
   uint8_t spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile);
 
   void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
@@ -204,10 +209,10 @@ protected:
   };
 
   struct sprite_pattern {
-      struct sprite_props p;
-      uint32_t last;
-      uint8_t ref;
-      struct sprite_line lines[0];
+    struct sprite_props p;
+    uint32_t last;
+    uint8_t ref;
+    struct sprite_line lines[0];
   };
 
   struct sprite_t {
@@ -226,4 +231,4 @@ protected:
 #endif
 };
 
-#endif // _BGENGINE_H
+#endif  // _BGENGINE_H
