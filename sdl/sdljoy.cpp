@@ -4,8 +4,7 @@
 #include <joystick.h>
 #include <SDL/SDL.h>
 
-int Joystick::read()
-{
+int Joystick::read() {
   if (!m_joy)
     return 0;
 
@@ -49,8 +48,7 @@ int Joystick::read()
   return ret;
 }
 
-void Joystick::begin()
-{
+void Joystick::begin() {
   m_joy = NULL;
 
   if (SDL_NumJoysticks() == 0)
