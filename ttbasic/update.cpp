@@ -38,8 +38,7 @@
 
 extern "C" void startup(void);
 
-static void flash_user(BString filename, int sector)
-{
+static void flash_user(BString filename, int sector) {
   uint8_t *buf;
   int x, y, count;
 
@@ -109,7 +108,8 @@ static void flash_user(BString filename, int sector)
     if (!redd)
       break;
     noInterrupts();
-    if (!ESP.flashWrite(sector * SPI_FLASH_SEC_SIZE + count, (uint32_t *)buf, redd)) {
+    if (!ESP.flashWrite(sector * SPI_FLASH_SEC_SIZE + count, (uint32_t *)buf,
+                        redd)) {
       interrupts();
       err = ERR_IO;
       goto out;
@@ -125,21 +125,19 @@ out:
   sc0.show_curs(1);
 }
 
-void Basic::iflash()
-{
+void Basic::iflash() {
   BString filename;
   bool success;
   uint8_t *buf;
   int x, y, count;
-  
+
   pixel_t col_warn = csp.colorFromRgb(255, 64, 0);
   pixel_t col_normal = csp.colorFromRgb(255, 255, 255);
   pixel_t col_black = csp.colorFromRgb(0, 0, 0);
 
   // Check that there is at least 32k of memory available,
   // just to be on the safe side.
-  if (umm_free_heap_size() < 32768 ||
-      !(buf = (uint8_t *)malloc(4096))) {
+  if (umm_free_heap_size() < 32768 || !(buf = (uint8_t *)malloc(4096))) {
     err = ERR_OOM;
     return;
   }
@@ -150,7 +148,8 @@ void Basic::iflash()
   int32_t sector = 0;
   if (*cip == I_COMMA) {
     ++cip;
-    getParam(sector, 524288 / SPI_FLASH_SEC_SIZE, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE);
+    getParam(sector, 524288 / SPI_FLASH_SEC_SIZE,
+             1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE);
     if (err)
       return;
     flash_user(filename, sector);
@@ -242,10 +241,10 @@ void Basic::iflash()
 #ifdef ESP8266_NOWIFI
     // SDKnoWiFi does not have system_restart*(). The only working
     // alternative I could find is triggering the WDT.
-    ets_wdt_enable(2,3,3);
-    for(;;);
+    ets_wdt_enable(2, 3, 3);
+    for (;;);
 #else
-    ESP.reset();	// UNTESTED!
+    ESP.reset();  // UNTESTED!
 #endif
   } else {
     PRINT_P("Staging error: ");
@@ -261,7 +260,7 @@ out:
   sc0.show_curs(1);
 }
 
-#else	// !HOSTED
+#else  // !HOSTED
 void Basic::iflash() {
   err = ERR_NOT_SUPPORTED;
 }
