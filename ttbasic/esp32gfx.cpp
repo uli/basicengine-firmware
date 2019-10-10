@@ -11,39 +11,27 @@
 
 ESP32GFX vs23;
 
-static void pal_core(void *data)
-{
+static void pal_core(void *data) {
   for (;;)
     vs23.render();
 }
 
-void ESP32GFX::render()
-{
+void ESP32GFX::render() {
   if (!m_display_enabled)
     delay(16);
   else {
     switch (m_current_mode.vclkpp) {
-      case 1:
-        m_pal.sendFrame1ppc(&m_current_mode, m_pixels);
-        break;
-      case 2:
-        m_pal.sendFrame(&m_current_mode, m_pixels);
-        break;
-      case 4:
-        m_pal.sendFrame4ppc(&m_current_mode, m_pixels);
-        break;
-      case 25:
-        m_pal.sendFrame2pp5c(&m_current_mode, m_pixels);
-        break;
-      default:
-        break;
+    case 1:  m_pal.sendFrame1ppc( &m_current_mode, m_pixels); break;
+    case 2:  m_pal.sendFrame(     &m_current_mode, m_pixels); break;
+    case 4:  m_pal.sendFrame4ppc( &m_current_mode, m_pixels); break;
+    case 25: m_pal.sendFrame2pp5c(&m_current_mode, m_pixels); break;
+    default: break;
     }
   }
   m_frame++;
 }
 
-void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system)
-{
+void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
@@ -60,23 +48,23 @@ void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system)
   // it causes temporary display corruption by disabling interrupts during
   // allocation.  This is not normally a problem because the PRO core is
   // busy creating the video signal and thus does not pose a threat for the
-  // heap, but (I guess) the OS allocates memory when starting that task. 
+  // heap, but (I guess) the OS allocates memory when starting that task.
   // We therefore do this in a feeble attempt to avoid interfering with it:
   delay(16);
 
   m_display_enabled = true;
 }
 
-void ESP32GFX::reset()
-{
+void ESP32GFX::reset() {
   BGEngine::reset();
   for (int i = 0; i < m_last_line; ++i)
     memset(m_pixels[i], 0, m_current_mode.x);
   setColorSpace(0);
 }
 
-void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
-{
+void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                         uint16_t y_dst, uint16_t width, uint16_t height,
+                         uint8_t dir) {
   if (dir) {
     x_src -= width - 1;
     x_dst -= width - 1;
@@ -97,8 +85,7 @@ void ESP32GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_
 }
 
 #include <esp_heap_alloc_caps.h>
-bool ESP32GFX::setMode(uint8_t mode)
-{
+bool ESP32GFX::setMode(uint8_t mode) {
   m_display_enabled = false;
   delay(16);
 
@@ -116,7 +103,8 @@ bool ESP32GFX::setMode(uint8_t mode)
   m_last_line = _max(131072 / m_current_mode.x,
                      m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
 
-  m_pixels = (pixel_t **)pvPortMallocCaps(sizeof(*m_pixels) * m_last_line, MALLOC_CAP_32BIT);
+  m_pixels = (pixel_t **)pvPortMallocCaps(sizeof(*m_pixels) * m_last_line,
+                                          MALLOC_CAP_32BIT);
   for (int i = 0; i < m_last_line; ++i) {
     m_pixels[i] = (pixel_t *)calloc(sizeof(pixel_t), m_current_mode.x);
   }
@@ -124,14 +112,13 @@ bool ESP32GFX::setMode(uint8_t mode)
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   m_display_enabled = true;
-  
+
   return true;
 }
 
 //#define PROFILE_BG
 
-void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg()
-{
+void IRAM_ATTR __attribute__((optimize("O3"))) ESP32GFX::updateBg() {
   static uint32_t last_frame = 0;
 
   if (m_frame <= last_frame + m_frameskip || !m_bg_modified)
@@ -173,12 +160,12 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          memcpy(&m_pixels[y+owy][x+owx], &m_pixels[t_y][t_x], tsx);
+          memcpy(&m_pixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx);
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          m_pixels[y+owy][x+owx] = m_pixels[t_y][t_x];
+          m_pixels[y + owy][x + owx] = m_pixels[t_y][t_x];
         }
       }
     }
@@ -203,15 +190,19 @@ next:
     // consider flipped axes
     int dx, offx;
     if (s->p.flip_x) {
-      dx = -1; offx = s->p.w - 1;
+      dx = -1;
+      offx = s->p.w - 1;
     } else {
-      dx = 1; offx = 0;
+      dx = 1;
+      offx = 0;
     }
     int dy, offy;
     if (s->p.flip_y) {
-      dy = -1; offy = s->p.h - 1;
+      dy = -1;
+      offy = s->p.h - 1;
     } else {
-      dy = 1; offy = 0;
+      dy = 1;
+      offy = 0;
     }
 
     // sprite pattern start coordinates
@@ -226,7 +217,7 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        pixel_t p = m_pixels[py+y*dy][px+x*dx];
+        pixel_t p = m_pixels[py + y * dy][px + x * dx];
         // draw only non-keyed pixels
         if (p != s->p.key)
           m_pixels[yy][xx] = p;
@@ -236,13 +227,13 @@ next:
 }
 
 #ifdef USE_BG_ENGINE
-uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_t collider)
-{
-  uint8_t dir = 0x40;	// indicates collision
+uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee,
+                                                        uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
 
   const sprite_t *us = &m_sprite[collidee];
   const sprite_t *them = &m_sprite[collider];
-  
+
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
   if (them->pos_x + them->p.w < us->pos_x)
@@ -251,7 +242,7 @@ uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_
     return 0;
   if (them->pos_y + them->p.h < us->pos_y)
     return 0;
-  
+
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
   if (them->pos_x < us->pos_x) {
@@ -293,10 +284,10 @@ uint8_t GROUP(basic_esp32gfx) ESP32GFX::spriteCollision(uint8_t collidee, uint8_
         return dir;
     }
   }
-  
+
   // no overlapping pixels
   return 0;
 }
-#endif	// USE_BG_ENGINE
+#endif  // USE_BG_ENGINE
 
-#endif	// ESP32
+#endif  // ESP32

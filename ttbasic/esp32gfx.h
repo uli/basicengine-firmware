@@ -53,12 +53,14 @@ public:
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
     setPixel(x, y, (pixel_t)c);
   }
-  void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
+  void setPixelRgb(uint16_t xpos, uint16_t ypos,
+                   uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return m_pixels[y][x];
   }
 
-  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir);
+  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
+                 uint16_t width, uint16_t height, uint8_t dir);
 
   inline void setInterlace(bool interlace) {
     //m_interlace = interlace;
@@ -86,11 +88,11 @@ public:
     writeBytes(address, (uint8_t *)data, len);
   }
 
-  inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
+  inline uint32_t pixelAddr(int x, int y) {  // XXX: uint32_t? ouch...
     return (uint32_t)&m_pixels[y][x];
   }
   inline uint32_t piclineByteAddress(int line) {
-      return (uint32_t)&m_pixels[line][0];
+    return (uint32_t)&m_pixels[line][0];
   }
 
   void render();
