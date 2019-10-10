@@ -45,38 +45,34 @@
 
 #ifdef DEBUG_PATTERNS
 #define dbg_pat(x...) printf(x)
-extern "C" size_t umm_free_heap_size( void );
+extern "C" size_t umm_free_heap_size(void);
 #else
 #define dbg_pat(x...)
 #endif
 
 uint16_t ICACHE_RAM_ATTR VS23S010::currentLine() {
-    uint16_t cl = SpiRamReadRegister(CURLINE) & 0xfff;
-    if (m_interlace && cl >= 262)
-      cl -= 262;
-    return cl;
+  uint16_t cl = SpiRamReadRegister(CURLINE) & 0xfff;
+  if (m_interlace && cl >= 262)
+    cl -= 262;
+  return cl;
 }
 
-void GROUP(basic_video) VS23S010::setPixel(uint16_t x, uint16_t y, pixel_t c)
-{
+void GROUP(basic_video) VS23S010::setPixel(uint16_t x, uint16_t y, pixel_t c) {
   uint32_t byteaddress = pixelAddr(x, y);
   SpiRamWriteByte(byteaddress, c);
 }
 
-pixel_t GROUP(basic_video) VS23S010::getPixel(uint16_t x, uint16_t y)
-{
+pixel_t GROUP(basic_video) VS23S010::getPixel(uint16_t x, uint16_t y) {
   uint32_t byteaddress = pixelAddr(x, y);
   return (pixel_t)SpiRamReadByte(byteaddress);
 }
 
-void VS23S010::adjust(int16_t cnt)
-{
+void VS23S010::adjust(int16_t cnt) {
   // XXX: Huh?
 }
 
 #ifdef USE_BG_ENGINE
-void VS23S010::resetSprites()
-{
+void VS23S010::resetSprites() {
   BGEngine::resetSprites();
   for (int i = 0; i < MAX_SPRITES; ++i) {
     if (m_patterns[i]) {
@@ -89,8 +85,7 @@ void VS23S010::resetSprites()
 }
 #endif
 
-void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
-{
+void VS23S010::begin(bool interlace, bool lowpass, uint8_t system) {
   m_vsync_enabled = false;
   m_interlace = interlace;
   m_lowpass = lowpass;
@@ -117,7 +112,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   SpiRamWriteRegister(0x82, m_gpio_state);
 
   SpiUnlock();
-  
+
   csp.setColorConversion(0, 7, 3, 6, true);
   csp.setColorSpace(0);
   m_line_adjust = 0;
@@ -125,8 +120,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system)
   setMode(SC_DEFAULT);
 }
 
-void VS23S010::end()
-{
+void VS23S010::end() {
   m_bin.Init(0, 0);
 #ifdef USE_BG_ENGINE
   for (int i = 0; i < MAX_BG; ++i) {
@@ -135,14 +129,12 @@ void VS23S010::end()
 #endif
 }
 
-void VS23S010::reset()
-{
+void VS23S010::reset() {
   BGEngine::reset();
   setColorSpace(0);
 }
 
-bool SMALL VS23S010::setMode(uint8_t mode)
-{
+bool SMALL VS23S010::setMode(uint8_t mode) {
 retry:
 #ifdef USE_BG_ENGINE
   m_bg_modified = true;
@@ -186,12 +178,11 @@ retry:
   // stuff before they had a chance to synchronize with the new mode, so we
   // wait a few frames.
   delay(160);
-  
+
   return true;
 }
 
-void VS23S010::calibrateVsync()
-{
+void VS23S010::calibrateVsync() {
   uint32_t now, now2, cycles;
   while (currentLine() != 100) {};
   now = ESP.getCycleCount();
@@ -210,8 +201,7 @@ void VS23S010::calibrateVsync()
   m_cycles_per_frame = m_cycles_per_frame_calculated = cycles;
 }
 
-void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
-{
+void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void) {
   uint32_t now = ESP.getCycleCount();
   uint32_t next = now + vs23.m_cycles_per_frame;
 #ifdef ESP8266_NOWIFI
@@ -219,10 +209,10 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   if (!(vs23.m_frame & 15) && !SpiLocked()) {
     line = vs23.currentLine();
     if (line < vs23.m_sync_line) {
-      next += (vs23.m_cycles_per_frame / 262) * (vs23.m_sync_line-line);
+      next += (vs23.m_cycles_per_frame / 262) * (vs23.m_sync_line - line);
       vs23.m_cycles_per_frame += 10;
     } else if (line > vs23.m_sync_line) {
-      next -= (vs23.m_cycles_per_frame / 262) * (line-vs23.m_sync_line);
+      next -= (vs23.m_cycles_per_frame / 262) * (line - vs23.m_sync_line);
       vs23.m_cycles_per_frame -= 10;
     }
     if (vs23.m_cycles_per_frame > vs23.m_cycles_per_frame_calculated * 5 / 4 ||
@@ -234,7 +224,7 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
 #ifdef DEBUG_SYNC
     if (vs23.m_sync_line != line) {
       Serial.print("deviation ");
-      Serial.print(line-vs23.m_sync_line);
+      Serial.print(line - vs23.m_sync_line);
       Serial.print(" at ");
       Serial.println(millis());
     }
@@ -244,15 +234,14 @@ void ICACHE_RAM_ATTR VS23S010::vsyncHandler(void)
   else
     Serial.println("spilocked");
 #endif
-#endif	// ESP8266_NOWIFI
+#endif  // ESP8266_NOWIFI
   vs23.m_frame++;
 
   // See you next frame:
   timer0_write(next);
 }
 
-void VS23S010::setSyncLine(uint16_t line)
-{
+void VS23S010::setSyncLine(uint16_t line) {
 #ifdef USE_BG_ENGINE
   m_bg_modified = true;
 #endif
@@ -265,7 +254,7 @@ void VS23S010::setSyncLine(uint16_t line)
     timer0_isr_init();
     timer0_attachInterrupt(&vsyncHandler);
     // Make sure interrupt is triggered soon.
-    timer0_write(ESP.getCycleCount()+100000);
+    timer0_write(ESP.getCycleCount() + 100000);
     m_vsync_enabled = true;
   }
 }
@@ -275,204 +264,204 @@ void VS23S010::setSyncLine(uint16_t line)
 #ifdef HOSTED
 #include <hosted_spi.h>
 #else
-static inline void GROUP(basic_video) SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count)
-{
-  uint8_t cmd[count+4];
+static inline void GROUP(basic_video)
+        SpiRamReadBytesFast(uint32_t address, uint8_t *data, uint32_t count) {
+  uint8_t cmd[count + 4];
   cmd[0] = 3;
   cmd[1] = address >> 16;
   cmd[2] = address >> 8;
   cmd[3] = address;
   VS23_SELECT;
-  SPI.transferBytes(cmd, cmd, count+4);
+  SPI.transferBytes(cmd, cmd, count + 4);
   VS23_DESELECT;
-  os_memcpy(data, cmd+4, count);
+  os_memcpy(data, cmd + 4, count);
 }
 
-static inline void GROUP(basic_video) SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len)
-{
-  uint8_t cmd[len+4];
+static inline void GROUP(basic_video)
+        SpiRamWriteBytesFast(uint32_t address, uint8_t *data, uint32_t len) {
+  uint8_t cmd[len + 4];
   cmd[0] = 2;
   cmd[1] = address >> 16;
   cmd[2] = address >> 8;
   cmd[3] = address;
   os_memcpy(&cmd[4], data, len);
   VS23_SELECT;
-  SPI.writeBytes(cmd, len+4);
+  SPI.writeBytes(cmd, len + 4);
   VS23_DESELECT;
 }
 #endif
 
 #define SpiRamWriteBM1Ctrl(a, b, c) SpiRamWriteBMCtrl(BLOCKMVC1, (a), (b), (c))
-void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2)
-{
-//  re/draw tiled background within window limitations
-//
-//  Vertical blitting is limited to 256 lines, with a tile limit of 32 lines there
-//  is no conflict here. Each background section [y1, y2[ is simply drawn line by
-//  line with the top and/or bottom line having potentially less than full height.
-//
-//  Horizontally we have a width limit of 5 pixels which can be reliably transferred.
-//  Below that it primarily depends on the destination alignment how much is in fact
-//  transferred. Which means that tile widths below 5 are upgraded to 5 pixels and
-//  - in the case of the RHS tile - have their start offset adjusted (-ve).
-//
-//  In both cases we end up with unwanted pixel data which is simply overwritten by
-//  the middle tiles or for sufficiently small windows LHS and RHS have to sort this
-//  out among themselves.
-//
-//  = determine LHS, MID and RHS offset/length pairs, there is always a LHS tile
-//    even if it's full width
-//  = draw LHS/RHS first, draw the shorter one first, this leaves us with
-//    - LHS only    ops: 4/%100
-//    - LHS+RHS     ops: 3/%011
-//    - RHS+LHS     ops: 6/%110
-//  = if there're any MIDdle tiles to be drawn, do so
-//
-//  The latter have all the same w/h setup so that's only done once (BMC2). The start
-//  address setup benefits when the bit pattern for bits 0 doesn't change (BMC1 is a
-//  1+5 byte sequence which - when shortened - will reuse the previously latched 6th
-//  byte). Whether 5 or 6 bytes are sent is determined within the BMC1 call (LSB cache).
+void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2) {
+  //  re/draw tiled background within window limitations
+  //
+  //  Vertical blitting is limited to 256 lines, with a tile limit of 32 lines there
+  //  is no conflict here. Each background section [y1, y2[ is simply drawn line by
+  //  line with the top and/or bottom line having potentially less than full height.
+  //
+  //  Horizontally we have a width limit of 5 pixels which can be reliably transferred.
+  //  Below that it primarily depends on the destination alignment how much is in fact
+  //  transferred. Which means that tile widths below 5 are upgraded to 5 pixels and
+  //  - in the case of the RHS tile - have their start offset adjusted (-ve).
+  //
+  //  In both cases we end up with unwanted pixel data which is simply overwritten by
+  //  the middle tiles or for sufficiently small windows LHS and RHS have to sort this
+  //  out among themselves.
+  //
+  //  = determine LHS, MID and RHS offset/length pairs, there is always a LHS tile
+  //    even if it's full width
+  //  = draw LHS/RHS first, draw the shorter one first, this leaves us with
+  //    - LHS only    ops: 4/%100
+  //    - LHS+RHS     ops: 3/%011
+  //    - RHS+LHS     ops: 6/%110
+  //  = if there're any MIDdle tiles to be drawn, do so
+  //
+  //  The latter have all the same w/h setup so that's only done once (BMC2). The start
+  //  address setup benefits when the bit pattern for bits 0 doesn't change (BMC1 is a
+  //  1+5 byte sequence which - when shortened - will reuse the previously latched 6th
+  //  byte). Whether 5 or 6 bytes are sent is determined within the BMC1 call (LSB cache).
 
-    int32_t LHS_offset, LHS_length;
-    int32_t MID_offset, MID_length;
-    int32_t RHS_offset, RHS_length;
+  int32_t LHS_offset, LHS_length;
+  int32_t MID_offset, MID_length;
+  int32_t RHS_offset, RHS_length;
 
-    uint8_t LSB, ops = 2;
+  uint8_t LSB, ops = 2;
 
-    int32_t tx, tsx = bg->tile_size_x;
-    int32_t ty, tsy = bg->tile_size_y;
+  int32_t tx, tsx = bg->tile_size_x;
+  int32_t ty, tsy = bg->tile_size_y;
 
-    // split hline
-    MID_length  = bg->win_w;
+  // split hline
+  MID_length = bg->win_w;
 
-    LHS_offset  = bg->scroll_x % tsx;
-    LHS_length  = min(tsx - LHS_offset, MID_length);
+  LHS_offset = bg->scroll_x % tsx;
+  LHS_length = min(tsx - LHS_offset, MID_length);
 
-    MID_length -= LHS_length;
+  MID_length -= LHS_length;
 
-    RHS_offset  = 0;
-    RHS_length  = MID_length % tsx;
+  RHS_offset = 0;
+  RHS_length = MID_length % tsx;
 
-    MID_offset  = LHS_length;
-    MID_length -= RHS_length;
+  MID_offset = LHS_length;
+  MID_length -= RHS_length;
 
-    // determine draw order
-    if (RHS_length) ops |= 1;
-    if (LHS_length > RHS_length) ops <<= 1;
+  // determine draw order
+  if (RHS_length)
+    ops |= 1;
+  if (LHS_length > RHS_length)
+    ops <<= 1;
 
-    // handle h/w bug, block widths < 5 don't work
-    // 4: 6/16, 3: 3/16, 2: 1/16, 1: 0/16
-    // ... but they look interesting ...
-    if (LHS_length) {
-        LHS_length  = max(5, LHS_length);
-    }
+  // handle h/w bug, block widths < 5 don't work
+  // 4: 6/16, 3: 3/16, 2: 1/16, 1: 0/16
+  // ... but they look interesting ...
+  if (LHS_length) {
+    LHS_length = max(5, LHS_length);
+  }
 
-    if (RHS_length) {
-        RHS_offset  = RHS_length - max(5, RHS_length);
-        RHS_length -= RHS_offset;
-    }
+  if (RHS_length) {
+    RHS_offset = RHS_length - max(5, RHS_length);
+    RHS_length -= RHS_offset;
+  }
 #if 0
-    printf("%3d %3d | %3d %3d | %3d %3d: %02X\n",
-        LHS_offset, LHS_length,
-        MID_offset, MID_length,
-        RHS_offset, RHS_length,
-        ops);
+  printf("%3d %3d | %3d %3d | %3d %3d: %02X\n",
+         LHS_offset, LHS_length,
+         MID_offset, MID_length,
+         RHS_offset, RHS_length,
+         ops);
 #endif
-    int32_t offset_y = bg->scroll_y + (y1 - bg->win_y);
-    int32_t tile, ROW_height, ROW_offset = offset_y % tsy;
+  int32_t offset_y = bg->scroll_y + (y1 - bg->win_y);
+  int32_t tile, ROW_height, ROW_offset = offset_y % tsy;
 
-    while (y1 < y2) {
-        // destination address for this row
-        uint32_t tmp_addr, src_addr, dst_addr = pixelAddr(bg->win_x, y1);
+  while (y1 < y2) {
+    // destination address for this row
+    uint32_t tmp_addr, src_addr, dst_addr = pixelAddr(bg->win_x, y1);
 
-        ROW_height = min(tsy - ROW_offset, y2 - y1);
+    ROW_height = min(tsy - ROW_offset, y2 - y1);
 
-        // top left map tile indices
-        int32_t xs = (bg->scroll_x / tsx) % bg->w;
-        int32_t ys = (offset_y     / tsy) % bg->h;
+    // top left map tile indices
+    int32_t xs = (bg->scroll_x / tsx) % bg->w;
+    int32_t ys = (offset_y / tsy) % bg->h;
 
-        // plot border tiles, left[/right]
-        switch (ops) {
-        case 3:
-            // plot LHS
-            // relative x: 0
-            tile = bg->tiles[ys * bg->w + xs];
-            tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
-            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-            src_addr = pixelAddr(tx, ty);
+    // plot border tiles, left[/right]
+    switch (ops) {
+    case 3:
+      // plot LHS
+      // relative x: 0
+      tile = bg->tiles[ys * bg->w + xs];
+      tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+      src_addr = pixelAddr(tx, ty);
 
-            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-            while (!blockFinished()) {}
-            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-            SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height -1);
-            startBlockMove();
+      while (!blockFinished()) {}
+      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+      SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
+      startBlockMove();
 
-        case 6:
-            // plot RHS
-            // relative x: MID_offset + MID_length + RHS_offset
-            tile = bg->tiles[ys * bg->w + ((xs + 1 + MID_length / tsx) % bg->w)];
-            tx = (tile % bg->pat_w) * tsx + bg->pat_x + RHS_offset;
-            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-            src_addr = pixelAddr(tx, ty);
+    case 6:
+      // plot RHS
+      // relative x: MID_offset + MID_length + RHS_offset
+      tile = bg->tiles[ys * bg->w + ((xs + 1 + MID_length / tsx) % bg->w)];
+      tx = (tile % bg->pat_w) * tsx + bg->pat_x + RHS_offset;
+      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+      src_addr = pixelAddr(tx, ty);
 
-            tmp_addr = dst_addr + MID_offset + MID_length + RHS_offset;
-            LSB = ((src_addr & 1) << 2) | ((tmp_addr & 1) << 1) | lowpass();
+      tmp_addr = dst_addr + MID_offset + MID_length + RHS_offset;
+      LSB = ((src_addr & 1) << 2) | ((tmp_addr & 1) << 1) | lowpass();
 
-            while (!blockFinished()) {}
-            SpiRamWriteBM1Ctrl(src_addr >> 1, tmp_addr >> 1, LSB);
-            SpiRamWriteBM2Ctrl(m_pitch - RHS_length, RHS_length, ROW_height -1);
-            startBlockMove();
+      while (!blockFinished()) {}
+      SpiRamWriteBM1Ctrl(src_addr >> 1, tmp_addr >> 1, LSB);
+      SpiRamWriteBM2Ctrl(m_pitch - RHS_length, RHS_length, ROW_height - 1);
+      startBlockMove();
 
-            if (ops & 1) break;
-        case 4:
-            // plot LHS
-            // relative x: 0
-            tile = bg->tiles[ys * bg->w + xs];
-            tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
-            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-            src_addr = pixelAddr(tx, ty);
+      if (ops & 1)
+        break;
+    case 4:
+      // plot LHS
+      // relative x: 0
+      tile = bg->tiles[ys * bg->w + xs];
+      tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+      src_addr = pixelAddr(tx, ty);
 
-            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-            while (!blockFinished()) {}
-            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-            SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height -1);
-            startBlockMove();
+      while (!blockFinished()) {}
+      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+      SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
+      startBlockMove();
 
-        default:
-            break;
-        }
-
-        while (!blockFinished()) {}
-        SpiRamWriteBM2Ctrl(m_pitch - tsx, tsx, ROW_height -1);
-
-        // plot middle part
-        dst_addr += MID_offset;
-        for (int i = 0; i < MID_length; i += tsx) {
-            tile = bg->tiles[ys * bg->w + (++xs % bg->w)];
-            tx = (tile % bg->pat_w) * tsx + bg->pat_x;
-            ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-            src_addr = pixelAddr(tx, ty);
-
-            LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
-
-            while (!blockFinished()) {}
-            SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-            startBlockMove();
-
-            dst_addr += tsx;
-        }
-
-        // advance
-        ROW_offset = 0;
-        offset_y  += ROW_height;
-        y1        += ROW_height;
+    default: break;
     }
+
+    while (!blockFinished()) {}
+    SpiRamWriteBM2Ctrl(m_pitch - tsx, tsx, ROW_height - 1);
+
+    // plot middle part
+    dst_addr += MID_offset;
+    for (int i = 0; i < MID_length; i += tsx) {
+      tile = bg->tiles[ys * bg->w + (++xs % bg->w)];
+      tx = (tile % bg->pat_w) * tsx + bg->pat_x;
+      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+      src_addr = pixelAddr(tx, ty);
+
+      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+
+      while (!blockFinished()) {}
+      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+      startBlockMove();
+
+      dst_addr += tsx;
+    }
+
+    // advance
+    ROW_offset = 0;
+    offset_y += ROW_height;
+    y1 += ROW_height;
+  }
 }
 
-void GROUP(basic_video) VS23S010::updateBg()
-{
+void GROUP(basic_video) VS23S010::updateBg() {
   static uint32_t last_frame = 0;
 #ifdef PROFILE_BG
   uint32_t mxx;
@@ -528,8 +517,10 @@ void GROUP(basic_video) VS23S010::updateBg()
           continue;
 
         // draw the relevant portion of the background from y1 (incl) to y2 (excl)
-        if (pass == 0) drawBg(bg, bg->win_y, min(bg->win_y + bg->win_h, last_pix_split_y));
-        else           drawBg(bg, max(bg->win_y, last_pix_split_y), bg->win_y + bg->win_h);
+        if (pass == 0)
+          drawBg(bg, bg->win_y, min(bg->win_y + bg->win_h, last_pix_split_y));
+        else
+          drawBg(bg, max(bg->win_y, last_pix_split_y), bg->win_y + bg->win_h);
 
 #ifdef PROFILE_BG
         lines[1] = currentLine();
@@ -572,7 +563,8 @@ void GROUP(basic_video) VS23S010::updateBg()
         if (s->pat) {
           s->pat->last = m_frame;
           int sx = s->pos_x;
-          uint32_t spr_addr = m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
+          uint32_t spr_addr =
+                  m_first_line_addr + max(0, s->pos_y) * m_pitch + max(0, sx);
 
           int draw_w = s->p.w;
           int draw_h = s->p.h;
@@ -595,7 +587,8 @@ void GROUP(basic_video) VS23S010::updateBg()
           // in the first pass, bottom half in the second pass.
           if (pass == 0 && s->pos_y + draw_h > last_pix_split_y)
             draw_h = last_pix_split_y - s->pos_y;
-          if (pass == 1 && s->pos_y < last_pix_split_y && s->pos_y + draw_h > last_pix_split_y) {
+          if (pass == 1 && s->pos_y < last_pix_split_y &&
+              s->pos_y + draw_h > last_pix_split_y) {
             draw_h -= last_pix_split_y - s->pos_y;
             offset_y += last_pix_split_y - s->pos_y;
             spr_addr += offset_y * m_pitch;
@@ -604,17 +597,18 @@ void GROUP(basic_video) VS23S010::updateBg()
           for (int sy = 0; sy < draw_h; ++sy) {
             // We try our best to minimize the number of bytes that have to
             // be sent to the VS23.
-            struct sprite_line *sl = &s->pat->lines[sy+offset_y];
-            int width = sl->len;		// non-BG sprite pixel count
-            if (offset_x > sl->off)		// need to clip from the left
+            struct sprite_line *sl = &s->pat->lines[sy + offset_y];
+            int width = sl->len;     // non-BG sprite pixel count
+            if (offset_x > sl->off)  // need to clip from the left
               width -= offset_x - sl->off;
-            else if (draw_w + offset_x < sl->len + sl->off)	// need to clip from the right
+            else if (draw_w + offset_x <
+                     sl->len + sl->off)  // need to clip from the right
               width -= sl->len + sl->off - draw_w - offset_x;
-            if (width <= 0)			// anything left?
+            if (width <= 0)  // anything left?
               continue;
 
-            uint32_t sa = spr_addr + sy*m_pitch;	// line to draw to
-            pixel_t *sb;				// what to draw
+            uint32_t sa = spr_addr + sy * m_pitch;  // line to draw to
+            pixel_t *sb;                            // what to draw
             if (sl->type == LINE_BROKEN) {
               // Copy sprite data to SPI send buffer so it can be masked.
               os_memcpy(sbuf, sl->pixels + sl->off, sl->len);
@@ -693,7 +687,7 @@ void GROUP(basic_video) VS23S010::updateBg()
         }
       }
 #endif
-    } // prio
+    }  // prio
 
     // Adjust sync line to avoid flicker due to either the bottom half
     // being drawn too early or the top half being drawn too late.
@@ -703,13 +697,14 @@ void GROUP(basic_video) VS23S010::updateBg()
       bool pass0_wraparound = pass0_end_line < m_sync_line;
       uint16_t cl = currentLine();
       if (!(!pass0_wraparound && cl >= pass0_end_line) &&
-          cl > m_current_mode.y / 3 && 
+          cl > m_current_mode.y / 3 &&
           m_sync_line > m_current_mode.y * 2 / 3) {
         m_sync_line--;
 #ifdef DEBUG_SYNC
         Serial.printf("sync-- %d\n", m_sync_line);
 #endif
-      } else if (!pass0_wraparound && pass0_end_line < m_current_mode.y + m_current_mode.top) {
+      } else if (!pass0_wraparound &&
+                 pass0_end_line < m_current_mode.y + m_current_mode.top) {
         m_sync_line++;
 #ifdef DEBUG_SYNC
         Serial.printf("sync++ %d\n", m_sync_line);
@@ -718,9 +713,10 @@ void GROUP(basic_video) VS23S010::updateBg()
     }
 
 #ifdef PROFILE_BG
-    Serial.printf("%d %d %d %d %d %d\n", lines[0], lines[1], lines[2], lines[3], lines[4], cl);
+    Serial.printf("%d %d %d %d %d %d\n", lines[0], lines[1], lines[2], lines[3],
+                  lines[4], cl);
 #endif
-  } // pass
+  }  // pass
 #ifdef PROFILE_BG
   if (millis() > mxx)
     Serial.println(millis() - mxx);
@@ -730,15 +726,16 @@ void GROUP(basic_video) VS23S010::updateBg()
   SpiUnlock();
 }
 
-struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_props *p)
-{
-  void *smem = malloc(p->h * sizeof(struct sprite_line) +	// line meta data
-                      p->w * p->h + 				// line pixel data
-                      sizeof(struct sprite_pattern));		// pattern meta data
+struct VS23S010::sprite_pattern *
+VS23S010::allocateSpritePattern(struct sprite_props *p) {
+  void *smem = malloc(p->h * sizeof(struct sprite_line) +  // line meta data
+                      p->w * p->h +                        // line pixel data
+                      sizeof(struct sprite_pattern));      // pattern meta data
   if (!smem)
     return NULL;
   struct sprite_pattern *pat = (struct sprite_pattern *)smem;
-  pixel_t *pix = (pixel_t *)smem + p->h * sizeof(struct sprite_line) + sizeof(struct sprite_pattern);
+  pixel_t *pix = (pixel_t *)smem + p->h * sizeof(struct sprite_line) +
+                 sizeof(struct sprite_pattern);
   for (int i = 0; i < p->h; ++i)
     pat->lines[i].pixels = pix + i * p->w;
   pat->ref = 1;
@@ -746,8 +743,7 @@ struct VS23S010::sprite_pattern* VS23S010::allocateSpritePattern(struct sprite_p
   return pat;
 }
 
-bool VS23S010::loadSpritePattern(uint8_t num)
-{
+bool VS23S010::loadSpritePattern(uint8_t num) {
   struct sprite_t *s = &m_sprite[num];
 
   s->must_reload = false;
@@ -835,7 +831,7 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     else
       pline = sy;
 
-    SpiRamReadBytes(tile_addr + pline*m_pitch, (uint8_t *)p->pixels, s->p.w);
+    SpiRamReadBytes(tile_addr + pline * m_pitch, (uint8_t *)p->pixels, s->p.w);
 
     if (s->p.flip_x) {
       for (int i = 0; i < s->p.w / 2; ++i) {
@@ -874,7 +870,8 @@ bool VS23S010::loadSpritePattern(uint8_t num)
       }
     }
 #ifdef DEBUG_SPRITES
-    Serial.printf("  def line %d off %d len %d type %d\n", sy, p->off, p->len, p->type);
+    Serial.printf("  def line %d off %d len %d type %d\n",
+                  sy, p->off, p->len, p->type);
 #endif
   }
   setSpiClock(spi_clock_default);
@@ -886,17 +883,17 @@ bool VS23S010::loadSpritePattern(uint8_t num)
     s->pat = NULL;
   }
   s->p.opaque = solid_block;
-  
+
   return true;
 }
 
-uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t collider)
-{
-  uint8_t dir = 0x40;	// indicates collision
+uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee,
+                                                     uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
 
   sprite_t *us = &m_sprite[collidee];
   sprite_t *them = &m_sprite[collider];
-  
+
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
   if (them->pos_x + them->p.w < us->pos_x)
@@ -905,7 +902,7 @@ uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t c
     return 0;
   if (them->pos_y + them->p.h < us->pos_y)
     return 0;
-  
+
   // sprite frame as bounding box; we may want something more flexible...
   if (them->pos_x < us->pos_x)
     dir |= joyLeft;
@@ -934,7 +931,7 @@ uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t c
       upper_len = upper->p.w;
       upper_off = 0;
     }
-    if (lower->pat) {      
+    if (lower->pat) {
       sprite_line *lower_line = &lower->pat->lines[lower_py];
       lower_len = lower_line->len;
       lower_off = lower_line->off;
@@ -965,7 +962,7 @@ uint8_t GROUP(basic_video) VS23S010::spriteCollision(uint8_t collidee, uint8_t c
 
   return dir;
 }
-#endif	// USE_BG_ENGINE
+#endif  // USE_BG_ENGINE
 
 VS23S010 vs23;
-#endif	// USE_VS23
+#endif  // USE_VS23
