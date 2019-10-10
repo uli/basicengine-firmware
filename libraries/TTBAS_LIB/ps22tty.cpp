@@ -10,7 +10,7 @@
 #include <TKeyboard.h>
 #include "tTVscreen.h"
 
-#ifndef __DJGPP__	// DOS uses Allegro keyboard system
+#ifndef __DJGPP__  // DOS uses Allegro keyboard system
 
 #if (defined(ESP8266) || defined(ESP32)) && !defined(__FLASH__)
 #define __FLASH__ PROGMEM
@@ -30,15 +30,15 @@ static const uint8_t PS2DAT = 5;
 
 #include "ps22tty.h"
 
-const int IRQpin =  PS2CLK;  // CLK(D+)
-const int DataPin = PS2DAT;  // Data(D-) 
+const int IRQpin = PS2CLK;   // CLK(D+)
+const int DataPin = PS2DAT;  // Data(D-)
 
-TKeyboard kb;               // PS/2キーボードドライバ
-uint8_t  flgKana = false;    // カナ入力モード
-struct   ring_buffer kbuf;   // キーバッファ
-uint16_t  kdata[16];  
+TKeyboard kb;             // PS/2キーボードドライバ
+uint8_t flgKana = false;  // カナ入力モード
+struct ring_buffer kbuf;  // キーバッファ
+uint16_t kdata[16];
 
-#define RK_ENTRY_NUM (sizeof(RomaKama)/sizeof(RomaKama[0]))
+#define RK_ENTRY_NUM (sizeof(RomaKama) / sizeof(RomaKama[0]))
 
 //子音状態遷移コード
 // clang-format off
@@ -115,42 +115,52 @@ const char RomaKama[][5][4] PROGMEM =  {
 // clang-format on
 
 // 例外([nn])
-const char RomaKama_nn[4] __FLASH__ ="\xdd"; // 'ﾝ'
+const char RomaKama_nn[4] __FLASH__ = "\xdd";  // 'ﾝ'
 
 // 母音テーブル
-const char BoonTable[] __FLASH__ = { 
-  'a','e','i','o','u',
+const char BoonTable[] __FLASH__ = {
+  'a', 'e', 'i', 'o', 'u',
 };
 
 // 子音テーブル
 const char ShionTable[] __FLASH__ = {
-  'b' ,'c' ,'d' ,'f' ,'g' ,'h' ,'j' ,'k' ,'l' ,'m' ,'n' ,'p' ,'q' ,'r' ,'s' ,'t' ,'v' ,'w' ,'x' ,'y' ,'z',
+  'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n',
+  'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
 };
 
 // 2文字子音テーブル Xh系列
 const char Shion_Xh_Table[][2] __FLASH__ = {
-  { _romaji_c, _romaji_ch },{ _romaji_d, _romaji_dh },{ _romaji_s, _romaji_sh }, { _romaji_t, _romaji_th },
-  { _romaji_w, _romaji_wh },  
+  { _romaji_c, _romaji_ch }, { _romaji_d, _romaji_dh },
+  { _romaji_s, _romaji_sh }, { _romaji_t, _romaji_th },
+  { _romaji_w, _romaji_wh },
 };
 
 // 2文字子音テーブル Xw系列
 const char Shion_Xw_Table[][2] __FLASH__ = {
-  { _romaji_d, _romaji_dw },{ _romaji_f, _romaji_fw },{ _romaji_g, _romaji_gw },{ _romaji_k, _romaji_kw }, 
-  { _romaji_q, _romaji_qw },{ _romaji_s, _romaji_sw },{ _romaji_t, _romaji_tw }, 
+  { _romaji_d, _romaji_dw }, { _romaji_f, _romaji_fw },
+  { _romaji_g, _romaji_gw }, { _romaji_k, _romaji_kw },
+  { _romaji_q, _romaji_qw }, { _romaji_s, _romaji_sw },
+  { _romaji_t, _romaji_tw },
 };
 
 // 2文字子音テーブル Xt系列
 const char Shion_Xt_Table[][2] __FLASH__ = {
-  {  _romaji_x, _romaji_xt } ,  {  _romaji_l, _romaji_lt } ,
+  { _romaji_x, _romaji_xt },
+  { _romaji_l, _romaji_lt },
 };
 
 // 2文字子音テーブル Xy系列
 const char Shion_Xy_Table[][2] __FLASH__ = {
-  { _romaji_b, _romaji_by },{ _romaji_c, _romaji_xy },{ _romaji_d, _romaji_dy },{ _romaji_f, _romaji_fy },
-  { _romaji_g, _romaji_gy },{ _romaji_h, _romaji_hy },{ _romaji_j, _romaji_jy },{ _romaji_k, _romaji_ky },
-  { _romaji_l, _romaji_ly },{ _romaji_m, _romaji_my },{ _romaji_n, _romaji_ny },{ _romaji_p, _romaji_py }, 
-  { _romaji_q, _romaji_qy },{ _romaji_r, _romaji_ry },{ _romaji_s, _romaji_sy },{ _romaji_t, _romaji_ty },
-  { _romaji_v, _romaji_vy },{ _romaji_x, _romaji_xy },{ _romaji_z, _romaji_zy }, 
+  { _romaji_b, _romaji_by }, { _romaji_c, _romaji_xy },
+  { _romaji_d, _romaji_dy }, { _romaji_f, _romaji_fy },
+  { _romaji_g, _romaji_gy }, { _romaji_h, _romaji_hy },
+  { _romaji_j, _romaji_jy }, { _romaji_k, _romaji_ky },
+  { _romaji_l, _romaji_ly }, { _romaji_m, _romaji_my },
+  { _romaji_n, _romaji_ny }, { _romaji_p, _romaji_py },
+  { _romaji_q, _romaji_qy }, { _romaji_r, _romaji_ry },
+  { _romaji_s, _romaji_sy }, { _romaji_t, _romaji_ty },
+  { _romaji_v, _romaji_vy }, { _romaji_x, _romaji_xy },
+  { _romaji_z, _romaji_zy },
 };
 
 int16_t romaji_sts = _romaji_top;  // 状態遷移コード
@@ -159,25 +169,25 @@ char kataStr[6];                   // 確定カタカナ文字列
 
 // 文字コードから母音コード(0～4)に変換する
 inline int16_t charToBoonCode(uint8_t c) {
-  for (uint8_t i=0; i < sizeof(BoonTable); i++)
+  for (uint8_t i = 0; i < sizeof(BoonTable); i++)
     if (c == pgm_read_byte(&BoonTable[i]))
-       return i;
+      return i;
   return -1;
 }
 
 // 文字コードから子音コードに変換する
 inline int16_t charToShionCode(uint8_t c) {
-  for (uint8_t i=0; i < sizeof(ShionTable); i++)
+  for (uint8_t i = 0; i < sizeof(ShionTable); i++)
     if (c == pgm_read_byte(&ShionTable[i]))
-       return i+1;
+      return i + 1;
   return -1;
 }
 
 // ローマ字カタカタ変換
 // 直前の状態遷移から次の状態に遷移する
-char* pRomaji2Kana(uint8_t c) {
+char *pRomaji2Kana(uint8_t c) {
   int16_t code;
-  char*   ptr;
+  char *ptr;
 
   // 小文字変換
   if (c >= 'A' && c <= 'Z')
@@ -187,43 +197,43 @@ char* pRomaji2Kana(uint8_t c) {
   // (後で長音・濁音・半濁音・句点・読点の許可する対応の追加)
   if (c < 'a' || c > 'z')
     goto STS_ERROR;
-  
-  code = charToBoonCode(c); // 母音チェック
+
+  code = charToBoonCode(c);  // 母音チェック
   if (code >= 0) {
     // 母音の場合,文字列を確定する
     if (romaji_sts >= _romaji_top && romaji_sts <= _romaji_zy) {
-      ptr = (char*)RomaKama[romaji_sts][code];
-      goto STS_DONE;    // 変換完了
+      ptr = (char *)RomaKama[romaji_sts][code];
+      goto STS_DONE;  // 変換完了
     } else
       goto STS_ERROR;  // 変換エラー
   } else {
     // 母音でない場合、子音コードを取得
     code = charToShionCode(c);
-    if (code < 0) 
-       goto STS_ERROR; // 子音でない(エラー)         
+    if (code < 0)
+      goto STS_ERROR;  // 子音でない(エラー)
     if (romaji_sts == _romaji_top) {
       // 初期状態で子音コードなら次の状態に遷移
       romaji_sts = code;
       goto STS_NEXT;
     } else if (romaji_sts >= _romaji_b && romaji_sts <= _romaji_z) {
       // 1文字子音受理済みからの子音入力の対応
-      if ( romaji_sts == code) {
+      if (romaji_sts == code) {
         // 同じ子音が連続
         if (!flgTsu) {
-           if (code == _romaji_n) {
-             // nn('ﾝ')の場合
-             ptr = (char*)RomaKama_nn;
-             goto STS_DONE;    // 変換完了             
-           } else {
-             flgTsu = true;  // 小さい'ﾂ'の先頭付加フラグの設定
-             goto STS_NEXT;
-           }
+          if (code == _romaji_n) {
+            // nn('ﾝ')の場合
+            ptr = (char *)RomaKama_nn;
+            goto STS_DONE;  // 変換完了
+          } else {
+            flgTsu = true;  // 小さい'ﾂ'の先頭付加フラグの設定
+            goto STS_NEXT;
+          }
         } else
           // 既に小さい'ﾂ'の先頭付加フラグがセットされている場合はエラー
           goto STS_ERROR;
       } else {
         // 2文字子音への遷移チェック
-        switch(code) {
+        switch (code) {
         case _romaji_h:
           for (uint16_t i=0; i < (sizeof(Shion_Xh_Table)/sizeof(Shion_Xh_Table[0])); i++)
             if ( pgm_read_byte(&Shion_Xh_Table[i][0]) == romaji_sts) {
@@ -258,7 +268,7 @@ char* pRomaji2Kana(uint8_t c) {
       }
     }
   }
-  
+
 STS_NEXT:  // 次の状態へ
   return NULL;
   
@@ -266,27 +276,26 @@ STS_ERROR: // [状態遷移エラー]
   romaji_sts = _romaji_top;  // 状態の初期化
   flgTsu = false;            // 小さい'ﾂ'の先頭付加フラグクリア
   return NULL;
-  
+
 STS_DONE:  // [ローマ字カタカナ変換 遷移完了]
   if (flgTsu) {
-    kataStr[0] = 0xaf; // 'ｯ' の設定
-    strcpy(kataStr+1, ptr);
+    kataStr[0] = 0xaf;  // 'ｯ' の設定
+    strcpy(kataStr + 1, ptr);
     ptr = kataStr;
   }
   romaji_sts = _romaji_top;  // 状態の初期化
   flgTsu = false;            // 小さい'ﾂ'の先頭付加フラグクリア
   return ptr;
-
 }
 
 // PS/2 keyboard setup
 void setupPS2(uint8_t kb_type = 0) {
   // Initialize keyboard with LED control enabled
-  if ( kb.begin(IRQpin, DataPin, true, kb_type) ) {
+  if (kb.begin(IRQpin, DataPin, true, kb_type)) {
     //Serial.println("PS/2 Keyboard initialize error.");
-  } 
-  
-  rb_init(&kbuf, sizeof(kdata)/sizeof(kdata[0]), kdata);
+  }
+
+  rb_init(&kbuf, sizeof(kdata) / sizeof(kdata[0]), kdata);
   //kb.setPriority(0);
 }
 
@@ -294,12 +303,11 @@ void endPS2() {
   kb.end();
 }
 
-
 // PS/2キーボード入力処理
 uint16_t cnv2tty(keyEvent k) {
   uint16_t rc = 0;
   if (!k.code || k.BREAK)
-      return 0;
+    return 0;
 
   if (k.KEY && k.code >= PS2KEY_F1 && k.code <= PS2KEY_F12) {
     return SC_KEY_F(k.code - PS2KEY_F1 + 1);
@@ -308,7 +316,7 @@ uint16_t cnv2tty(keyEvent k) {
   // CTRLとの併用
   if (k.CTRL) {
     //Serial.println(k.code,DEC);
-    if(!k.KEY) {
+    if (!k.KEY) {
       if (k.code >= 'a' && k.code <= 'z') {
         rc = k.code - 'a' + 1;
       } else if (k.code >= 'A' && k.code <= 'Z') {
@@ -334,13 +342,13 @@ uint16_t cnv2tty(keyEvent k) {
       return rc;
     }
   }
-  
+
   // 通常のASCIIコード
-  if(!k.KEY) {
+  if (!k.KEY) {
     rc = k.code;
     return rc;
   }
-  
+
   // 特殊キーの場合
   switch(k.code) {
     case PS2KEY_Insert:     rc = SC_KEY_IC;       break;
@@ -374,10 +382,10 @@ keyEvent ps22tty_last_key;
 
 // キー入力文字の取得
 uint16_t ICACHE_RAM_ATTR ps2read() {
-  char* ptr;
+  char *ptr;
   uint16_t c;
   uint8_t len;
-  
+
   if (pb.available() && (ps22tty_last_key = kb.read(), ps22tty_last_key.code))
     c = cnv2tty(ps22tty_last_key);
   else
@@ -387,14 +395,14 @@ uint16_t ICACHE_RAM_ATTR ps2read() {
     if (!rb_is_empty(&kbuf))
       return rb_remove(&kbuf);
     else
-      return 0;       
+      return 0;
   }
-  
+
   if (flgKana) {
     ptr = pRomaji2Kana(c);
     if (ptr) {
       len = strlen_P(ptr);
-      for (int16_t i = 0 ; i < len; i++) {
+      for (int16_t i = 0; i < len; i++) {
         rb_insert(&kbuf, pgm_read_byte(&ptr[i]));
       }
     } else {
@@ -409,11 +417,11 @@ uint16_t ICACHE_RAM_ATTR ps2read() {
           case '-': c = 0xb0;break;
         }
         return c;
-        
-      } else 
+
+      } else
         return 0;
     }
-    
+
     if (!rb_is_empty(&kbuf)) {
       return rb_remove(&kbuf);
     } else {
@@ -423,8 +431,7 @@ uint16_t ICACHE_RAM_ATTR ps2read() {
   return c;
 }
 
-uint16_t ICACHE_RAM_ATTR ps2peek()
-{
+uint16_t ICACHE_RAM_ATTR ps2peek() {
   uint16_t c;
   if (ps2kbhit()) {
     c = ps2read();
@@ -435,6 +442,6 @@ uint16_t ICACHE_RAM_ATTR ps2peek()
       return kbuf.buf[kbuf.head];
   }
   return 0;
-}  
+}
 
 #endif
