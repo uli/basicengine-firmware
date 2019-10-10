@@ -11,39 +11,37 @@
 SDLGFX vs23;
 
 const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
-	{460, 224, 16, 16, 1},
-	{436, 216, 16, 16, 1},
-	{320, 216, 16, 16, 2},	// VS23 NTSC demo
-	{320, 200, 0, 0, 2},	// (M)CGA, Commodore et al.
-	{256, 224, 16, 16, 25},	// SNES
-	{256, 192, (200-192)/2, (320-256)/2, 25},	// MSX, Spectrum, NDS
-	{160, 200, 16, 16, 4},	// Commodore/PCjr/CPC
-						// multi-color
-	// "Overscan modes"
-	{352, 240, 16, 16, 2},	// PCE overscan (barely)
-	{282, 240, 16, 16, 2},	// PCE overscan (underscan on PAL)
-	{508, 240, 16, 16, 1},
-	// ESP32GFX modes
-	{320, 256, 16, 16, 2},	// maximum PAL at 2 clocks per pixel
-	{320, 240, 0, 0, 2},	// DawnOfAV demo, Mode X
-	{640, 256, (480-256)/2, 0, 1},
-	// default H3 mode
-	{480, 270, 16, 16, 1},
-	// default SDL mode
-	{640, 480, 0, 0, 0},
-        {800, 600, 0, 0, 0},
-        {1024, 768, 0, 0, 0},
-        {1280, 720, 0, 0, 0},
-        {1280, 1024, 0, 0, 0},
-        {1920, 1080, 0, 0, 0},
+  { 460, 224, 16, 16, 1 },
+  { 436, 216, 16, 16, 1 },
+  { 320, 216, 16, 16, 2 },   // VS23 NTSC demo
+  { 320, 200, 0, 0, 2 },     // (M)CGA, Commodore et al.
+  { 256, 224, 16, 16, 25 },  // SNES
+  { 256, 192, (200 - 192) / 2, (320 - 256) / 2, 25 },  // MSX, Spectrum, NDS
+  { 160, 200, 16, 16, 4 },   // Commodore/PCjr/CPC multi-color
+  // "Overscan modes"
+  { 352, 240, 16, 16, 2 },  // PCE overscan (barely)
+  { 282, 240, 16, 16, 2 },  // PCE overscan (underscan on PAL)
+  { 508, 240, 16, 16, 1 },
+  // ESP32GFX modes
+  { 320, 256, 16, 16, 2 },  // maximum PAL at 2 clocks per pixel
+  { 320, 240, 0, 0, 2 },    // DawnOfAV demo, Mode X
+  { 640, 256, (480 - 256) / 2, 0, 1 },
+  // default H3 mode
+  { 480, 270, 16, 16, 1 },
+  // default SDL mode
+  { 640, 480, 0, 0, 0 },
+  { 800, 600, 0, 0, 0 },
+  { 1024, 768, 0, 0, 0 },
+  { 1280, 720, 0, 0, 0 },
+  { 1280, 1024, 0, 0, 0 },
+  { 1920, 1080, 0, 0, 0 },
 };
 
 extern const SDL_VideoInfo *sdl_info;
 extern int sdl_flags;
 extern bool sdl_keep_res;
 
-Uint32 SDLGFX::timerCallback(Uint32 t)
-{
+Uint32 SDLGFX::timerCallback(Uint32 t) {
   SDL_Event ev;
   ev.type = SDL_USEREVENT;
   SDL_PushEvent(&ev);
@@ -53,8 +51,7 @@ Uint32 SDLGFX::timerCallback(Uint32 t)
 
 #include <config.h>
 
-void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
-{
+void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   m_last_line = 0;
   printf("set mode\n");
@@ -73,17 +70,19 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system)
   SDL_SetTimer(16, timerCallback);
 }
 
-void SDLGFX::reset()
-{
+void SDLGFX::reset() {
   BGEngine::reset();
   setColorSpace(0);
 }
 
-void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir)
-{
+void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                       uint16_t y_dst, uint16_t width, uint16_t height,
+                       uint8_t dir) {
   if (dir) {
-    x_src -= width - 1; x_dst -= width - 1;
-    y_src -= height - 1; y_dst -= height - 1;
+    x_src -= width - 1;
+    x_dst -= width - 1;
+    y_src -= height - 1;
+    y_dst -= height - 1;
   }
   SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };
   SDL_Rect dst = { (Sint16)x_dst, (Sint16)y_dst, width, height };
@@ -91,8 +90,7 @@ void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t 
   m_dirty = true;
 }
 
-bool SDLGFX::setMode(uint8_t mode)
-{
+bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
@@ -101,8 +99,11 @@ bool SDLGFX::setMode(uint8_t mode)
                      modes_pal[mode].y + modes_pal[mode].y / MIN_FONT_SIZE_Y);
 
   m_last_line++;
-  printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2, modes_pal[mode].y + modes_pal[mode].top * 2, modes_pal[mode].x + modes_pal[mode].left * 2, m_last_line);
-  
+  printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2,
+         modes_pal[mode].y + modes_pal[mode].top * 2,
+         modes_pal[mode].x + modes_pal[mode].left * 2,
+         m_last_line);
+
   m_current_mode = modes_pal[mode];
 
   SDL_Rect **modes;
@@ -141,7 +142,8 @@ bool SDLGFX::setMode(uint8_t mode)
           min_diff = diff;
         }
         if (max_w < w) {
-          max_w = w; max_h = h;
+          max_w = w;
+          max_h = h;
         }
       }
     }
@@ -176,7 +178,7 @@ bool SDLGFX::setMode(uint8_t mode)
   // XXX: handle fail
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
-  
+
   setColorSpace(0);
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
@@ -185,12 +187,11 @@ bool SDLGFX::setMode(uint8_t mode)
   m_dirty = true;
 
   setBorder(0, 0, 0, m_screen->w);
-  
+
   return true;
 }
 
-void SDLGFX::toggleFullscreen()
-{
+void SDLGFX::toggleFullscreen() {
   if (m_screen) {
     SDL_WM_ToggleFullScreen(m_screen);
     sdl_flags ^= SDL_FULLSCREEN;
@@ -199,17 +200,17 @@ void SDLGFX::toggleFullscreen()
 
 #include <border_pal.h>
 
-void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w)
-{
+void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {
   // couldn't find a working transformation, using a palette
   // generated by VS23Palette06.exe
-  y /= 4;	// palette uses 6-bit luminance
+  y /= 4;  // palette uses 6-bit luminance
   int v = 15 - (uv >> 4);
   int u = 15 - (uv & 0xf);
 
-  pixel_t color = border_pal[((u&0xf) << 6) | ((v&0xf) << 10) | y];
+  pixel_t color = border_pal[((u & 0xf) << 6) | ((v & 0xf) << 10) | y];
 #if SDL_BPP != 32
-  color = SDL_MapRGB(m_surface->format, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+  color = SDL_MapRGB(m_surface->format, (color >> 16) & 0xff,
+                     (color >> 8) & 0xff, color & 0xff);
 #endif
 
   for (int y = 0; y < m_screen->h; ++y) {
@@ -219,17 +220,17 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w)
   }
 }
 
-void SDLGFX::setColorSpace(uint8_t palette)
-{
+void SDLGFX::setColorSpace(uint8_t palette) {
   Video::setColorSpace(palette);
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
 #if SDL_BPP == 8
-    SDL_Color c = { pal[i*3], pal[i*3+1], pal[i*3+2] };
-    SDL_SetColors(m_screen, &c, i, 1);
+    SDL_Color c = { pal[i * 3], pal[i * 3 + 1], pal[i * 3 + 2] };
+    SDL_SetColors(m_screen,  &c, i, 1);
     SDL_SetColors(m_surface, &c, i, 1);
 #else
-    m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i*3], pal[i*3+1], pal[i*3+2]);
+    m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i * 3],
+                                      pal[i * 3 + 1], pal[i * 3 + 2]);
 #endif
   }
 }
@@ -238,8 +239,7 @@ void SDLGFX::setColorSpace(uint8_t palette)
 
 #include "scalers.h"
 
-void SDLGFX::updateBg()
-{
+void SDLGFX::updateBg() {
   static uint32_t last_frame = 0;
 
   if (frame() <= last_frame + m_frameskip)
@@ -292,10 +292,12 @@ void SDLGFX::updateBg()
     tile_start_y = bg->scroll_y / tsy;
     tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
     tile_start_x = bg->scroll_x / bg->tile_size_x;
-    tile_end_x = tile_start_x + (bg->win_w + tsx-1) / tsx + 1;
+    tile_end_x = tile_start_x + (bg->win_w + tsx - 1) / tsx + 1;
 
-    SDL_Rect clip = { (Sint16)bg->win_x, (Sint16)bg->win_y,
-                      bg->win_w, bg->win_h };
+    SDL_Rect clip = {
+      (Sint16)bg->win_x, (Sint16)bg->win_y,
+      bg->win_w,         bg->win_h
+    };
     SDL_SetClipRect(m_surface, &clip);
 
     for (int y = tile_start_y; y < tile_end_y; ++y) {
@@ -308,11 +310,14 @@ void SDLGFX::updateBg()
         SDL_Rect dst;
         dst.x = x * tsx + owx;
         dst.y = y * tsy + owy;
-        dst.w = tsx; dst.h = tsy;
+        dst.w = tsx;
+        dst.h = tsy;
 
         SDL_Rect src;
-        src.x = t_x; src.y = t_y;
-        src.w = tsx; src.h = tsy;
+        src.x = t_x;
+        src.y = t_y;
+        src.w = tsx;
+        src.h = tsy;
 
         SDL_BlitSurface(m_surface, &src, m_surface, &dst);
       }
@@ -340,15 +345,19 @@ void SDLGFX::updateBg()
     // consider flipped axes
     int dx, offx;
     if (s->p.flip_x) {
-      dx = -1; offx = s->p.w - 1;
+      dx = -1;
+      offx = s->p.w - 1;
     } else {
-      dx = 1; offx = 0;
+      dx = 1;
+      offx = 0;
     }
     int dy, offy;
     if (s->p.flip_y) {
-      dy = -1; offy = s->p.h - 1;
+      dy = -1;
+      offy = s->p.h - 1;
     } else {
-      dy = 1; offy = 0;
+      dy = 1;
+      offy = 0;
     }
 
     // sprite pattern start coordinates
@@ -369,7 +378,7 @@ void SDLGFX::updateBg()
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        pixel_t p = getPixel(px+x*dx, py+y*dy);
+        pixel_t p = getPixel(px + x * dx, py + y * dy);
         // draw only non-keyed pixels
         if (p != skey)
           setPixel(xx, yy, p);
@@ -379,13 +388,12 @@ void SDLGFX::updateBg()
 }
 
 #ifdef USE_BG_ENGINE
-uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
-{
-  uint8_t dir = 0x40;	// indicates collision
+uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
 
   const sprite_t *us = &m_sprite[collidee];
   const sprite_t *them = &m_sprite[collider];
-  
+
   if (us->pos_x + us->p.w < them->pos_x)
     return 0;
   if (them->pos_x + them->p.w < us->pos_x)
@@ -394,7 +402,7 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
     return 0;
   if (them->pos_y + them->p.h < us->pos_y)
     return 0;
-  
+
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
   if (them->pos_x < us->pos_x) {
@@ -445,8 +453,8 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider)
         return dir;
     }
   }
-  
+
   // no overlapping pixels
   return 0;
 }
-#endif	// USE_BG_ENGINE
+#endif  // USE_BG_ENGINE

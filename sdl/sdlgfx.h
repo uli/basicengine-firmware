@@ -11,15 +11,13 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
-#define SC_DEFAULT 14
+#define SC_DEFAULT           14
 #define SC_DEFAULT_SECONDARY 3
 
 #define SDL_SCREEN_MODES 20
 
-#define PIXEL(x, y) ( \
-  ((pixel_t*)m_surface->pixels)[ \
-    x + y * m_surface->pitch / sizeof(pixel_t) \
-  ] )
+#define PIXEL(x, y) \
+  (((pixel_t *)m_surface->pixels)[x + y * m_surface->pitch / sizeof(pixel_t)])
 
 class SDLGFX : public BGEngine {
 public:
@@ -74,12 +72,14 @@ public:
 #endif
     m_dirty = true;
   }
-  void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
+  void setPixelRgb(uint16_t xpos, uint16_t ypos,
+                   uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return PIXEL(x, y);
   }
 
-  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst, uint16_t width, uint16_t height, uint8_t dir);
+  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
+                 uint16_t width, uint16_t height, uint8_t dir);
 
   inline void setInterlace(bool interlace) {
     //m_interlace = interlace;
@@ -102,7 +102,7 @@ public:
     uint32_t y = address & 0xffff;
 
     for (uint32_t i = 0; i < len; ++i)
-      PIXEL(x+i, y) = data[i];
+      PIXEL(x + i, y) = data[i];
 
     m_dirty = true;
   }
@@ -113,16 +113,16 @@ public:
 
     for (uint32_t i = 0; i < len; ++i)
 #if SDL_BPP == 8
-      PIXEL(x+i, y) = data[i];
+      PIXEL(x + i, y) = data[i];
 #else
-      PIXEL(x+i, y) = m_current_palette[data[i]];
+      PIXEL(x + i, y) = m_current_palette[data[i]];
 #endif
 
     m_dirty = true;
   }
 
-  inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
-    return (uint32_t)(x << 16)|(y & 0xffff);
+  inline uint32_t pixelAddr(int x, int y) {  // XXX: uint32_t? ouch...
+    return (uint32_t)(x << 16) | (y & 0xffff);
   }
   inline uint32_t piclineByteAddress(int line) {
     return (uint32_t)(line & 0xffff);
@@ -146,7 +146,7 @@ private:
   SDL_Surface *m_screen;
   SDL_Surface *m_surface;
   bool m_dirty;
-  
+
 #if SDL_BPP != 8
   pixel_t m_current_palette[256];
 #endif
