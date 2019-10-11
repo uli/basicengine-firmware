@@ -33,12 +33,13 @@ const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
 };
 
 #include <usb.h>
+#include <config.h>
 void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
   m_pixels = NULL;
-  setMode(SC_DEFAULT);
+  setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
 
