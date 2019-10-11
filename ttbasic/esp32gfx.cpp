@@ -31,12 +31,14 @@ void ESP32GFX::render() {
   m_frame++;
 }
 
+#include "config.h"
+
 void ESP32GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   delay(16);
   m_last_line = 0;
   m_pixels = NULL;
-  setMode(SC_DEFAULT);
+  setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
 
