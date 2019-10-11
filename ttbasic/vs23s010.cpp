@@ -85,6 +85,8 @@ void VS23S010::resetSprites() {
 }
 #endif
 
+#include "config.h"
+
 void VS23S010::begin(bool interlace, bool lowpass, uint8_t system) {
   m_vsync_enabled = false;
   m_interlace = interlace;
@@ -117,7 +119,7 @@ void VS23S010::begin(bool interlace, bool lowpass, uint8_t system) {
   csp.setColorSpace(0);
   m_line_adjust = 0;
 
-  setMode(SC_DEFAULT);
+  setMode(CONFIG.mode - 1);
 }
 
 void VS23S010::end() {
