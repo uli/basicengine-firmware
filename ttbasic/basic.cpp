@@ -5399,6 +5399,8 @@ Ends the program.
 void Basic::iend() {
   while (*clp)    // 行の終端まで繰り返す
     clp += *clp;  // 行ポインタを次へ進める
+  while (*cip != I_EOL)
+    ++cip;
 }
 
 void Basic::ecom() {
