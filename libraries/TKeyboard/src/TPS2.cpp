@@ -17,7 +17,6 @@ volatile uint8_t _clkPin; // CLKピン
 volatile static uint8_t _datPin; // DATピン
 volatile static uint8_t _clkDir; // CLK入出力方向
 volatile static uint8_t _datDir; // CLK入出力方向
-volatile static uint8_t _bus;    // バス状態
 volatile static uint8_t _err;    // 直前のAPIエラー
 
 static uint8_t  _queue[QUEUESIZE];  // 受信バッファ
