@@ -60,7 +60,7 @@ void GROUP(basic_video) Graphics::drawRect(int x0, int y0, int w, int h,
 
     if (w >= 0)
       for (int i = y0; i < y0 + h; i++) {
-        drawLine(x0, i, x0 + w, i, fc);
+        drawLine(x0, i, x0 + w, i, (pixel_t)fc);
       }
   }
 }
@@ -76,7 +76,7 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius,
 
   //there is a fill color
   if (fc != -1)
-    drawLine(x0 - radius, y0, x0 + radius, y0, fc);
+    drawLine(x0 - radius, y0, x0 + radius, y0, (pixel_t)fc);
 
   setPixelSafe(x0, y0 + radius, c);
   setPixelSafe(x0, y0 - radius, c);
@@ -97,13 +97,13 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius,
     if (fc != -1) {
       //prevent double draws on the same rows
       if (pyy != y) {
-        drawLine(x0 - x, y0 + y, x0 + x, y0 + y, fc);
-        drawLine(x0 - x, y0 - y, x0 + x, y0 - y, fc);
+        drawLine(x0 - x, y0 + y, x0 + x, y0 + y, (pixel_t)fc);
+        drawLine(x0 - x, y0 - y, x0 + x, y0 - y, (pixel_t)fc);
       }
 
       if (pyx != x && x != y) {
-        drawLine(x0 - y, y0 + x, x0 + y, y0 + x, fc);
-        drawLine(x0 - y, y0 - x, x0 + y, y0 - x, fc);
+        drawLine(x0 - y, y0 + x, x0 + y, y0 + x, (pixel_t)fc);
+        drawLine(x0 - y, y0 - x, x0 + y, y0 - x, (pixel_t)fc);
       }
 
       pyy = y;
