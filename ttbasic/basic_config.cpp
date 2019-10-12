@@ -209,7 +209,7 @@ void SMALL Basic::iconfig() {
     if (value < 0 || value >= (1 << sizeof(pixel_t) * 8))
       E_VALUE(0, (1 << sizeof(pixel_t) * 8) - 1);
     else
-      CONFIG.cursor_color = value;
+      CONFIG.cursor_color = csp.fromIndexed((ipixel_t)value);
     break;
   case 7:
     if (value < 0 || value > 15)
