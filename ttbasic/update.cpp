@@ -52,6 +52,7 @@ static void flash_user(BString filename, int sector) {
   Unifile f = Unifile::open(filename, UFILE_READ);
   if (!f) {
     err = ERR_FILE_OPEN;
+    free(buf);
     return;
   }
 
@@ -84,7 +85,7 @@ static void flash_user(BString filename, int sector) {
       interrupts();
       newline();
       err = ERR_IO;
-      return;
+      goto out;
     }
     interrupts();
   }
@@ -142,15 +143,18 @@ void Basic::iflash() {
     return;
   }
 
-  if (!(filename = getParamFname()))
+  if (!(filename = getParamFname())) {
+    free(buf);
     return;
+  }
 
   int32_t sector = 0;
   if (*cip == I_COMMA) {
     ++cip;
     getParam(sector, 524288 / SPI_FLASH_SEC_SIZE,
              1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE);
-    if (err)
+    free(buf);
+    if (!err)
       return;
     flash_user(filename, sector);
     return;
@@ -159,6 +163,7 @@ void Basic::iflash() {
   Unifile f = Unifile::open(filename, UFILE_READ);
   if (!f) {
     err = ERR_FILE_OPEN;
+    free(buf);
     return;
   }
 
