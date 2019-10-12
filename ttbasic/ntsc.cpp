@@ -151,8 +151,7 @@ void GROUP(basic_video) SpiRamReadBytes(uint32_t address, uint8_t * data,
 	vs23Deselect();
 }
 
-void SpiRamWriteByte(register uint32_t address, uint8_t data)
-{
+void SpiRamWriteByte(uint32_t address, uint8_t data) {
 	uint8_t req[5];
 
 	req[0] = 2;
@@ -217,9 +216,7 @@ void SpiRamWriteWord(uint16_t waddress, uint16_t data)
 	vs23Deselect();
 }
 
-void SpiRamWriteProgram(register uint16_t opcode, register uint16_t data1,
-			uint16_t data2)
-{
+void SpiRamWriteProgram(uint16_t opcode, uint16_t data1, uint16_t data2) {
 	// Serial.printf("PROG:%04x%04xh\n",data1,data2);
 	vs23Select();
 	SPI.transfer(opcode);
