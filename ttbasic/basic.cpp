@@ -5862,7 +5862,7 @@ void SMALL Basic::basic() {
     c_puts_P("none");
   else
     c_puts(cwd);
-  delete cwd;
+  delete[] cwd;
   newline();
 
   // XXX: make sound font configurable
