@@ -1402,7 +1402,7 @@ static void GROUP(basic_sound) tsf_voice_render_fast(tsf* f, struct tsf_voice* v
       int32_t val32 = (int)val * (int)gainMonoFP;
 
       *outL++ += val32>>16;
-      if (f->outputmode != TSF_MONO) *outR++ += val32>>16;
+      if (f->outputmode == TSF_STEREO_UNWEAVED) *outR++ += val32>>16;
 
       // Next sample.
       tmpSourceSamplePositionF32P32 += pitchRatioF32P32;
