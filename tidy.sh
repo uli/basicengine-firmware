@@ -38,6 +38,9 @@ elif test "$PLATFORM" == H3 ; then
 	GCCVER="8.3.0"
 	TOOLCHAIN_DIR=~/x-tools/${GNUPF}
 	PFLAGS="-DH3 -I../h3 -I../arduino_compat -I ${OSDIR} -I ${OSDIR}/tinyusb/src -I ${TOOLCHAIN_DIR}/${GNUPF}/include -DATTR_CONST= -DATTR_ALWAYS_INLINE="
+elif test "$PLATFORM" == SDL ; then
+	PFLAGS="-DSDL -D__linux__ -I../sdl -I../arduino_compat"
+	NOSTDINC=""
 fi
 
 test -z "$TOOLCHAIN_DIR" && TOOLCHAIN_DIR=${ARDUINO_BSP}/tools/${GNUPF}
