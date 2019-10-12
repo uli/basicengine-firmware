@@ -1,17 +1,20 @@
 #!/bin/bash
 ARDUINO_DIR=../tools/esp8266/arduino-1.8.5
 ARDUINO_BSP=../tools/esp8266/arduino-1.8.5/hardware/esp8266com/esp8266_nowifi
+TTBASIC_DIR=.
+LIBS_DIR=../libraries
 
 test -z "$PLATFORM" && PLATFORM="ESP8266_NOWIFI"
 
+NOSTDINC="-nostdinc"
 if test "$PLATFORM" == ESP8266_NOWIFI ; then
- 	PFLAGS="-DARDUINO -D__XTENSA__ -DESP8266 -DESP8266_NOWIFI"
+	PFLAGS="-DARDUINO -D__XTENSA__ -DESP8266 -DESP8266_NOWIFI -I${LIBS_DIR}/Psx"
 	GNUPF="xtensa-lx106-elf"
 	GCCVER="4.8.2"
 	ARDUINO_CORE="esp8266"
 elif test "$PLATFORM" == ESP8266 ; then
 	ARDUINO_BSP=../tools/esp8266/arduino-1.8.5/hardware/esp8266com/esp8266
-	PFLAGS="-DARDUINO -D__XTENSA__ -DESP8266"
+	PFLAGS="-DARDUINO -D__XTENSA__ -DESP8266 -I${LIBS_DIR}/Psx"
 	GNUPF="xtensa-lx106-elf"
 	GCCVER="4.8.2"
 	ARDUINO_CORE="esp8266"
@@ -28,7 +31,7 @@ elif test "$PLATFORM" == ESP32 ; then
 	PFLAGS="$PFLAGS -I../tools/esp32/p/build/include -I${ESP32INC}/esp32"
 	PFLAGS="$PFLAGS -I${ESP32INC}/soc -I${ARDUINO_BSP}/tools/${GNUPF}/${GNUPF}/include"
 	PFLAGS="$PFLAGS -I${ESP32INC}/heap -I${ESP32INC}/driver"
-	PFLAGS="$PFLAGS -I${ESP32INC}/log -I${ARDUINO_BSP}/variants/esp32"
+	PFLAGS="$PFLAGS -I${ESP32INC}/log -I${ARDUINO_BSP}/variants/esp32 -I${LIBS_DIR}/Psx"
 elif test "$PLATFORM" == H3 ; then
 	OSDIR=~/devel/orangepi/allwinner-bare-metal
 	GNUPF="arm-unknown-eabihf"
@@ -39,10 +42,8 @@ fi
 
 test -z "$TOOLCHAIN_DIR" && TOOLCHAIN_DIR=${ARDUINO_BSP}/tools/${GNUPF}
 
-LIBS_DIR=../libraries
-
-clang-tidy-6.0 "$@" -- \
-  -nostdinc \
+clang-tidy-10 "$@" -- \
+  ${NOSTDINC} -I${TTBASIC_DIR} \
   -I${ARDUINO_DIR}/libraries/Time \
   -I${TOOLCHAIN_DIR}/${GNUPF}/include/c++/${GCCVER}/${GNUPF} \
   -I${TOOLCHAIN_DIR}/${GNUPF}/include/c++/${GCCVER} \
