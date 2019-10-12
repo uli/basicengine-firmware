@@ -4026,7 +4026,6 @@ num_t BASIC_INT Basic::ninstr() {
 }
 
 num_t BASIC_INT Basic::nsvar_a(BString &value) {
-  uint8_t i;
   int32_t a;
   // String character accessor
   if (*cip++ != I_SQOPEN) {
