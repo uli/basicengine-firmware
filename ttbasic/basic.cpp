@@ -2757,9 +2757,6 @@ void BASIC_INT Basic::draw_profile(void) {
 
 void BASIC_FP process_events(void) {
   static uint32_t last_frame;
-#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
-  platform_process_events();
-#endif
   if (vs23.frame() == last_frame) {
 #if defined(HAVE_TSF) && !defined(HOSTED) && !defined(SDL)
     // Wasn't able to get this to work without underruns in SDL-based builds.
@@ -2770,6 +2767,10 @@ void BASIC_FP process_events(void) {
 #endif
     return;
   }
+
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
+  platform_process_events();
+#endif
 
   last_frame = vs23.frame();
 
