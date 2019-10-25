@@ -388,50 +388,53 @@ void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2) {
     case 3:
       // plot LHS
       // relative x: 0
-      tile = bg->tiles[ys * bg->w + xs];
-      tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
-      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-      src_addr = pixelAddr(tx, ty);
+      if ((tile = bg->tiles[ys * bg->w + xs]) != 0xFF) {
+        tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+        ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+        src_addr = pixelAddr(tx, ty);
 
-      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+        LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-      while (!blockFinished()) {}
-      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-      SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
-      startBlockMove();
+        while (!blockFinished()) {}
+        SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+        SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
+        startBlockMove();
+      }
 
     case 6:
       // plot RHS
       // relative x: MID_offset + MID_length + RHS_offset
-      tile = bg->tiles[ys * bg->w + ((xs + 1 + MID_length / tsx) % bg->w)];
-      tx = (tile % bg->pat_w) * tsx + bg->pat_x + RHS_offset;
-      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-      src_addr = pixelAddr(tx, ty);
+      if ((tile = bg->tiles[ys * bg->w + ((xs + 1 + MID_length / tsx) % bg->w)]) != 0xFF) {
+        tx = (tile % bg->pat_w) * tsx + bg->pat_x + RHS_offset;
+        ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+        src_addr = pixelAddr(tx, ty);
 
-      tmp_addr = dst_addr + MID_offset + MID_length + RHS_offset;
-      LSB = ((src_addr & 1) << 2) | ((tmp_addr & 1) << 1) | lowpass();
+        tmp_addr = dst_addr + MID_offset + MID_length + RHS_offset;
+        LSB = ((src_addr & 1) << 2) | ((tmp_addr & 1) << 1) | lowpass();
 
-      while (!blockFinished()) {}
-      SpiRamWriteBM1Ctrl(src_addr >> 1, tmp_addr >> 1, LSB);
-      SpiRamWriteBM2Ctrl(m_pitch - RHS_length, RHS_length, ROW_height - 1);
-      startBlockMove();
+        while (!blockFinished()) {}
+        SpiRamWriteBM1Ctrl(src_addr >> 1, tmp_addr >> 1, LSB);
+        SpiRamWriteBM2Ctrl(m_pitch - RHS_length, RHS_length, ROW_height - 1);
+        startBlockMove();
+      }
 
       if (ops & 1)
         break;
     case 4:
       // plot LHS
       // relative x: 0
-      tile = bg->tiles[ys * bg->w + xs];
-      tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
-      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-      src_addr = pixelAddr(tx, ty);
+      if ((tile = bg->tiles[ys * bg->w + xs]) != 0xFF) {
+        tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
+        ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+        src_addr = pixelAddr(tx, ty);
 
-      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+        LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-      while (!blockFinished()) {}
-      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-      SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
-      startBlockMove();
+        while (!blockFinished()) {}
+        SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+        SpiRamWriteBM2Ctrl(m_pitch - LHS_length, LHS_length, ROW_height - 1);
+        startBlockMove();
+      }
 
     default: break;
     }
@@ -442,17 +445,17 @@ void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2) {
     // plot middle part
     dst_addr += MID_offset;
     for (int i = 0; i < MID_length; i += tsx) {
-      tile = bg->tiles[ys * bg->w + (++xs % bg->w)];
-      tx = (tile % bg->pat_w) * tsx + bg->pat_x;
-      ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
-      src_addr = pixelAddr(tx, ty);
+      if ((tile = bg->tiles[ys * bg->w + (++xs % bg->w)]) != 0xFF) {
+        tx = (tile % bg->pat_w) * tsx + bg->pat_x;
+        ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
+        src_addr = pixelAddr(tx, ty);
 
-      LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
+        LSB = ((src_addr & 1) << 2) | ((dst_addr & 1) << 1) | lowpass();
 
-      while (!blockFinished()) {}
-      SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
-      startBlockMove();
-
+        while (!blockFinished()) {}
+        SpiRamWriteBM1Ctrl(src_addr >> 1, dst_addr >> 1, LSB);
+        startBlockMove();
+      }
       dst_addr += tsx;
     }
 
