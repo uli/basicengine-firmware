@@ -425,7 +425,8 @@ void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2) {
     case 4:
       // plot LHS
       // relative x: 0
-      if ((tile = bg->tiles[ys * bg->w + xs]) != 0xFF) {
+      tile = bg->tiles[ys * bg->w + xs];
+      if (tile != 0xff) {
         tx = (tile % bg->pat_w) * tsx + bg->pat_x + LHS_offset;
         ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
         src_addr = pixelAddr(tx, ty);
@@ -447,7 +448,8 @@ void GROUP(basic_video) VS23S010::drawBg(struct bg_t *bg, int y1, int y2) {
     // plot middle part
     dst_addr += MID_offset;
     for (int i = 0; i < MID_length; i += tsx) {
-      if ((tile = bg->tiles[ys * bg->w + (++xs % bg->w)]) != 0xFF) {
+      tile = bg->tiles[ys * bg->w + (++xs % bg->w)];
+      if (tile != 0xff) {
         tx = (tile % bg->pat_w) * tsx + bg->pat_x;
         ty = (tile / bg->pat_w) * tsy + bg->pat_y + ROW_offset;
         src_addr = pixelAddr(tx, ty);
