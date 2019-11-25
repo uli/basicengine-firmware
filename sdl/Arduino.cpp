@@ -55,8 +55,23 @@ int main(int argc, char **argv) {
 
   sdl_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
 
-  SDL_Init(SDL_INIT_EVERYTHING);
+  if (SDL_Init(SDL_INIT_VIDEO)) {
+    fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
+    exit(1);
+  }
+
   sdl_info = SDL_GetVideoInfo();
+  if (!sdl_info) {
+    fprintf(stderr, "SDL_GetVideoInfo() failed: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  if (SDL_InitSubSystem(SDL_INIT_AUDIO))
+    fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
+  if (SDL_InitSubSystem(SDL_INIT_TIMER))
+    fprintf(stderr, "Cannot initialize SDL timer: %s\n", SDL_GetError());
+  if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
+    fprintf(stderr, "Cannot initialize SDL joystick: %s\n", SDL_GetError());
 
   while ((opt = getopt(argc, argv, "fdr:")) != -1) {
     switch (opt) {
