@@ -912,4 +912,16 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 	last_dir = dir;
 }
 
+void ICACHE_RAM_ATTR VS23S010::blitRect(uint16_t x_src, uint16_t y_src,
+					uint16_t x_dst, uint16_t y_dst,
+					uint8_t width, uint8_t height) {
+        if ((y_dst > y_src && y_dst < y_src + height) ||
+            (y_src == y_dst && x_dst > x_src && x_dst < x_src + width))
+            MoveBlock(x_src + width - 1, y_src + height - 1,
+                      x_dst + width - 1, y_dst + height - 1,
+                      width, height, 1);
+        else
+            MoveBlock(x_src, y_src, x_dst, y_dst, width, height, 0);
+}
+
 #endif	// USE_VS23
