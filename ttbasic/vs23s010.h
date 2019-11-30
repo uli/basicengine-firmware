@@ -111,8 +111,6 @@ public:
                          uint16_t *texture, uint16_t color);
   void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
                  uint8_t width, uint8_t height);
-  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
-                 uint8_t width, uint8_t height, uint8_t dir);
 
   inline void writeBytes(uint32_t address, uint8_t *data, uint32_t len) {
     SpiRamWriteBytes(address, data, len);
@@ -239,6 +237,9 @@ public:
 #ifndef HOSTED
 private:
 #endif
+  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
+                 uint8_t width, uint8_t height, uint8_t dir);
+
   static void ICACHE_RAM_ATTR vsyncHandler(void);
   bool m_vsync_enabled;
   uint32_t m_cycles_per_frame;
