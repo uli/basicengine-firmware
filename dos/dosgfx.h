@@ -71,8 +71,8 @@ public:
     return 0;//_getpixel(screen, x + m_current_mode.left, y + m_current_mode.top);
   }
 
-  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
-                 uint16_t width, uint16_t height, uint8_t dir);
+  void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
+                uint16_t width, uint16_t height);
 
   inline void setInterlace(bool interlace) {
     //m_interlace = interlace;

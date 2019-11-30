@@ -68,15 +68,15 @@ void DOSGFX::reset() {
   setColorSpace(0);
 }
 
-void DOSGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
-                       uint16_t y_dst, uint16_t width, uint16_t height,
-                       uint8_t dir) {
+void DOSGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                      uint16_t y_dst, uint16_t width, uint16_t height) {
   uint8_t *m_pixels = (uint8_t *)vbesurface_ptr->offscreen_ptr;
   int sw = m_current_mode.x;
   int sh = m_current_mode.y;
-  if (dir) {
-    x_src -= width - 1;
-    x_dst -= width - 1;
+  if ((y_dst > y_src) ||
+      (y_dst == y_src && x_dst > x_src)) {
+    y_dst += height - 1;
+    y_src += height - 1;
     while (height) {
       _movedatal(vbesurface_ptr->lfb_selector, y_src * sw + x_src,
                  vbesurface_ptr->lfb_selector, y_dst * sw + x_dst,
