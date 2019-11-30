@@ -55,12 +55,12 @@
 } while (0)
 
 #define VMOVE_C(X1, Y1, X2, Y2, W, H) do { \
-  vs23.MoveBlock(colmem_fg_x + (X1), colmem_fg_y + (Y1), \
+  vs23.blitRect(colmem_fg_x + (X1), colmem_fg_y + (Y1), \
                  colmem_fg_x + (X2), colmem_fg_y + (Y2), \
-                 (W), (H), 0); \
-  vs23.MoveBlock(colmem_bg_x + (X1), colmem_bg_y + (Y1), \
+                 (W), (H)); \
+  vs23.blitRect(colmem_bg_x + (X1), colmem_bg_y + (Y1), \
                  colmem_bg_x + (X2), colmem_bg_y + (Y2), \
-                 (W), (H), 0); \
+                 (W), (H)); \
 } while (0)
 
 #define VSET_C(X,Y,F,B,W) do { \
