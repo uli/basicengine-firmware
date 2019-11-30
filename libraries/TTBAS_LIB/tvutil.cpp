@@ -251,14 +251,12 @@ void tv_insLine(uint16_t l) {
   } else if (l == win_c_height-1) {
     tv_clerLine(l);
   } else {
-    vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
-              win_x + win_width-1, win_y + win_height-1,
-              win_width/2, win_height-f_height - l * f_height,
-              1);
-    vs23.MoveBlock(win_x + win_width/2-1, win_y + win_height-f_height-1,
-              win_x + win_width/2-1, win_y + win_height-1,
-              win_width/2, win_height-f_height - l * f_height,
-              1);
+    vs23.blitRect(win_x, win_y + f_height * l,
+                  win_x, win_y + f_height * (l + 1),
+                  win_width/2, win_height - f_height - l * f_height);
+    vs23.blitRect(win_x + win_width / 2, win_y + f_height * l,
+                  win_x + win_width / 2, win_y + f_height * (l + 1),
+                  win_width/2, win_height - f_height - l * f_height);
     tv_clerLine(l);
   }
 }
