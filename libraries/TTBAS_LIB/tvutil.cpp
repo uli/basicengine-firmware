@@ -238,8 +238,8 @@ void tv_clerLine(uint16_t l, int from) {
   int width = win_width - from * f_width;
   // Assumption: Screen data is followed by empty line in memory.
   tv_set_clear_line_col(bg_color);
-  vs23.MoveBlock(clrline_x, clrline_y, left, win_y + l * f_height, width/2, f_height, 0);
-  vs23.MoveBlock(clrline_x, clrline_y, left + width/2, win_y + l * f_height, width/2, f_height, 0);
+  vs23.blitRect(clrline_x, clrline_y, left, win_y + l * f_height, width/2, f_height);
+  vs23.blitRect(clrline_x, clrline_y, left + width/2, win_y + l * f_height, width/2, f_height);
 }
 
 //
