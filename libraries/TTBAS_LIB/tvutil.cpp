@@ -263,21 +263,23 @@ void tv_insLine(uint16_t l) {
 
 // Screen scroll up for one line
 void GROUP(basic_video) tv_scroll_up() {
-  vs23.MoveBlock(win_x, win_y + f_height, win_x, win_y, win_width/2, win_height-f_height, 0);
-  vs23.MoveBlock(win_x + win_width/2, win_y + f_height, win_x + win_width/2, win_y, win_width/2, win_height-f_height, 0);
+  vs23.blitRect(win_x, win_y + f_height,
+                win_x, win_y,
+                win_width/2, win_height - f_height);
+  vs23.blitRect(win_x + win_width / 2, win_y + f_height,
+                win_x + win_width / 2, win_y,
+                win_width/2, win_height-f_height);
   tv_clerLine(win_c_height-1);
 }
 
 // Screen scroll down for one line
 void GROUP(basic_video) tv_scroll_down() {
-  vs23.MoveBlock(win_x + win_width-1, win_y + win_height-f_height-1,
-            win_x + win_width-1, win_y + win_height-1,
-            win_width/2, win_height-f_height,
-            1);
-  vs23.MoveBlock(win_x + win_width/2-1, win_y + win_height-f_height-1,
-            win_x + win_width/2-1, win_y + win_height-1,
-            win_width/2, win_height-f_height,
-            1);
+  vs23.blitRect(win_x, win_y,
+                win_x, win_y + f_height,
+                win_width/2, win_height-f_height);
+  vs23.blitRect(win_x + win_width / 2, win_y,
+                win_x + win_width / 2, win_y + f_height,
+                win_width/2, win_height-f_height);
   tv_clerLine(0);
 }
 
