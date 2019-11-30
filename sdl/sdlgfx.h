@@ -80,8 +80,6 @@ public:
 
   void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
                  uint16_t width, uint16_t height);
-  void MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
-                 uint16_t width, uint16_t height, uint8_t dir);
 
   inline void setInterlace(bool interlace) {
     //m_interlace = interlace;

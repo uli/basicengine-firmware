@@ -75,21 +75,6 @@ void SDLGFX::reset() {
   setColorSpace(0);
 }
 
-void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
-                       uint16_t y_dst, uint16_t width, uint16_t height,
-                       uint8_t dir) {
-  if (dir) {
-    x_src -= width - 1;
-    x_dst -= width - 1;
-    y_src -= height - 1;
-    y_dst -= height - 1;
-  }
-  SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };
-  SDL_Rect dst = { (Sint16)x_dst, (Sint16)y_dst, width, height };
-  SDL_BlitSurface(m_surface, &src, m_surface, &dst);
-  m_dirty = true;
-}
-
 void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
                       uint16_t y_dst, uint16_t width, uint16_t height) {
   SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };

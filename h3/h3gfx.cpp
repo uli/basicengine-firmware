@@ -57,37 +57,6 @@ void H3GFX::reset() {
   setColorSpace(0);
 }
 
-void H3GFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
-                      uint16_t y_dst, uint16_t width, uint16_t height,
-                      uint8_t dir) {
-#ifdef DEBUG
-  uint32_t m = micros();
-  uint16_t h = height;
-#endif
-  if (dir) {
-    x_src -= width - 1;
-    x_dst -= width - 1;
-    while (height) {
-      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * 4);
-      y_dst--;
-      y_src--;
-      height--;
-    }
-  } else {
-    while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * 4);
-      y_dst++;
-      y_src++;
-      height--;
-    }
-  }
-#ifdef DEBUG
-  uint32_t elapsed = micros() - m;
-  if (elapsed > 10)
-    printf("blit %dx%d %d micros\n", width, h, micros() - m);
-#endif
-}
-
 void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
                      uint16_t y_dst, uint16_t width, uint16_t height) {
   if ((y_dst > y_src) ||
