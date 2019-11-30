@@ -319,24 +319,24 @@ void GROUP(basic_video) tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, u
   pixel_t col_black = (pixel_t)0;
   switch (mode) {
     case 0:	// up
-      vs23.MoveBlock(x,	        y + 1, x,         y, w / 2, h - 1, 0);
-      vs23.MoveBlock(x + w / 2, y + 1, x + w / 2, y, w / 2, h - 1, 0);
+      vs23.blitRect(x,	       y + 1, x,         y, w / 2, h - 1);
+      vs23.blitRect(x + w / 2, y + 1, x + w / 2, y, w / 2, h - 1);
       gfx.drawLine(x, y + h - 1, x + w - 1, y + h - 1, col_black);
       break;
     case 1:	// down
-      vs23.MoveBlock(x + w / 2 - 1, y + h - 1 - 1, x + w / 2 - 1, y + h - 1, w / 2, h - 1, 1);
-      vs23.MoveBlock(x + w - 1,     y + h - 1 - 1, x + w - 1,     y + h - 1, w / 2, h - 1, 1);
+      vs23.blitRect(x,         y, x,         y + 1, w / 2, h - 1);
+      vs23.blitRect(x + w / 2, y, x + w / 2, y + 1, w / 2, h - 1);
       gfx.drawLine(x, y, x + w - 1, y, col_black);
       break;
     case 2:	// left
-      vs23.MoveBlock(x + 1,     y, x,             y, w / 2 - 1, h, 0);
-      vs23.MoveBlock(x + w / 2, y, x + w / 2 - 1, y, w / 2,     h, 0);
-      gfx.drawLine(x, y, x, y + h - 1, col_black);
+      vs23.blitRect(x + 1,     y, x,             y, w / 2 - 1, h);
+      vs23.blitRect(x + w / 2, y, x + w / 2 - 1, y, w / 2,     h);
+      gfx.drawLine(x + w - 1, y, x + w - 1, y + h - 1, col_black);
       break;
     case 3:	// right
-      vs23.MoveBlock(x + w - 1 - 1, y + h - 1, x + w - 1,         y + h - 1, w / 2 - 1, h, 1);
-      vs23.MoveBlock(x + w / 2 - 1, y + h - 1, x + w / 2 + 1 - 1, y + h - 1, w / 2,     h, 1);
-      gfx.drawLine(x + w - 1, y, x + w - 1, y + h - 1, col_black);
+      vs23.blitRect(x + w / 2, y, x + w / 2 + 1, y, w / 2 - 1, h);
+      vs23.blitRect(x,         y, x + 1,         y, w / 2,     h);
+      gfx.drawLine(x, y, x, y + h - 1, col_black);
       break;
   }
 }
