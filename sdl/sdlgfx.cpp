@@ -90,6 +90,14 @@ void SDLGFX::MoveBlock(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
   m_dirty = true;
 }
 
+void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
+                      uint16_t y_dst, uint16_t width, uint16_t height) {
+  SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };
+  SDL_Rect dst = { (Sint16)x_dst, (Sint16)y_dst, width, height };
+  SDL_BlitSurface(m_surface, &src, m_surface, &dst);
+  m_dirty = true;
+}
+
 bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
