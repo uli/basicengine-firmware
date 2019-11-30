@@ -1037,7 +1037,7 @@ void GROUP(basic_video) Basic::irect() {
 
 /***bc pix BLIT
 Copies a rectangular area of pixel memory to another area.
-\usage BLIT x, y TO dest_x, dest_y SIZE width, height [<UP|DOWN>]
+\usage BLIT x, y TO dest_x, dest_y SIZE width, height
 \args
 @x	source area, X coordinate [`0` to `PSIZE(0)-1`]
 @y	source area, Y coordinate [`0` to `PSIZE(2)-1`]
@@ -1045,13 +1045,9 @@ Copies a rectangular area of pixel memory to another area.
 @dest_y	destination area, Y coordinate [`0` to `PSIZE(2)-1`]
 @width	area width [`0` to `PSIZE(0)-x`]
 @height	area height [`0` to `PSIZE(2)-y`]
-\note
-The default transfer direction is down.
 \bugs
-* Transfers only work up to sizes of 255 in each dimension.
-* The semantics are very much tied to the hardware and not
-  at all obvious. They are likely to be changed in future
-  releases.
+* On some platforms, transfers only work up to sizes of 255
+  in each dimension.
 \ref GSCROLL
 ***/
 void GROUP(basic_video) Basic::iblit() {
@@ -1069,13 +1065,6 @@ void GROUP(basic_video) Basic::iblit() {
     return;
   if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
     return;
-  if (*cip == I_UP) {
-    ++cip;
-    dir = 1;
-  } else if (*cip == I_DOWN) {
-    ++cip;
-    dir = 0;
-  }
 
-  vs23.MoveBlock(x, y, dx, dy, w, h, dir);
+  vs23.blitRect(x, y, dx, dy, w, h);
 }
