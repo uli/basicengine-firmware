@@ -885,6 +885,11 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 {
 	static uint8_t last_dir = 0;
 
+	// stay in the first line of the source rectangle
+	// if bit 1 of dir is set
+	uint8_t inc_src = (dir & 2) ? 0 : 1;
+	dir &= 1;
+
 #ifdef DEBUG
 	if (x_src < 0 || x_dst < 0 || x_src + width > m_current_mode->x ||
 	    x_dst + width > m_current_mode->x || y_src < 0 || y_dst < 0 ||
@@ -907,7 +912,7 @@ void ICACHE_RAM_ATTR VS23S010::MoveBlock(uint16_t x_src, uint16_t y_src,
 	if (!last_dir)
 		while (!blockFinished()) {
 		}
-	SpiRamWriteBM2Ctrl(m_pitch - width, width, height - 1);
+	SpiRamWriteBM2Ctrl((m_pitch - width) * inc_src, width, height - 1);
 	startBlockMove();
 	last_dir = dir;
 }
