@@ -33,3 +33,8 @@ void Video::setColorSpace(uint8_t palette) {
   }
   csp.setColorSpace(palette);
 }
+
+void Video::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                     pixel_t col) {
+  gfx.drawRect(x1, y1, x2 - x1, y2 - y1, col, col);
+}

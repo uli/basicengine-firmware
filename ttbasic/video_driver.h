@@ -60,6 +60,8 @@ struct video_mode_t {
 #endif
 };
 
+#include "graphics.h"
+
 class Video {
 public:
   virtual void reset();
@@ -74,6 +76,9 @@ public:
 
   bool allocBacking(int w, int h, int &x, int &y);
   void freeBacking(int x, int y, int w, int h);
+
+  void fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                pixel_t color);
 
 #if defined(H3)
   inline uint32_t frame() {
