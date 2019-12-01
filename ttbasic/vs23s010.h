@@ -107,6 +107,8 @@ public:
                               uint16_t *pixels);
   uint16_t *SpiRamWriteByteStripe(uint16_t x, uint16_t y, uint16_t width,
                                   uint16_t *pixels);
+  void fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                pixel_t color);
   void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
                  uint8_t width, uint8_t height);
 

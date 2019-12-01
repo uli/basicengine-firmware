@@ -67,6 +67,39 @@ pixel_t GROUP(basic_video) VS23S010::getPixel(uint16_t x, uint16_t y) {
   return (pixel_t)SpiRamReadByte(byteaddress);
 }
 
+void GROUP(basic_video) VS23S010::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                                           pixel_t color) {
+  const int seg_width = 8;
+  int width = x2 - x1;
+  const int height = y2 - y1;
+  const int width_segs = width / seg_width;
+
+  // fill top pixels with background
+  while (!blockFinished()) {}
+  // line at most two chars then duplicate with blitter
+  int preset = seg_width + ((width_segs == 1) ? 0 : seg_width);
+  gfx.drawLine(x1, y1, x1 + preset - 1, y1, color);
+
+  // Apparently source and destination address have to be
+  // at least 4 bytes apart. Alignment is not an issue.
+  if (width_segs > 2) {
+    int adjust = width - width_segs * seg_width;
+    int length = width_segs - ((adjust) ? 1 : 2);
+    int target = x1 + seg_width + ((adjust) ? adjust : seg_width);
+
+    // special mode: skip disabled
+    vs23.MoveBlock(x1, y1, target, y1, seg_width, length, 2);
+  }
+
+  // duplicate top line
+  while (width >= 256) {
+    vs23.MoveBlock(x1, y1, x1, y1 + 1, 240, height - 1, 0);
+    x1 += 240;       // we can do 255 but we need
+    width -= 240;    // at least 5 for the tail below
+  }
+  vs23.MoveBlock(x1, y1, x1, y1 + 1, width, height - 1, 0);
+}
+
 void VS23S010::adjust(int16_t cnt) {
   // XXX: Huh?
 }
