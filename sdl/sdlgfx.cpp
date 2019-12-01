@@ -83,6 +83,12 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
   m_dirty = true;
 }
 
+void SDLGFX::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
+                      pixel_t color) {
+  SDL_Rect dst = { (Sint16)x1, (Sint16)y1, x2 - x1, y2 - y1 };
+  SDL_FillRect(m_surface, &dst, color);
+}
+
 bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
