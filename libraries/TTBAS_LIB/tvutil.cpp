@@ -33,12 +33,10 @@ uint16_t g_width;    // Screen horizontal pixels
 uint16_t g_height;   // Screen vertical pixels
 uint16_t win_x, win_y, win_width, win_height;
 uint16_t win_c_width, win_c_height;
-int clrline_x, clrline_y;
 
 pixel_t fg_color = (pixel_t)-1;
 pixel_t bg_color = (pixel_t)0;
 pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
-pixel_t clrline_color;
 
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
@@ -74,7 +72,6 @@ static void allocate_system_bufs()
   // allocating a larger font later.
   vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_fg_x, colmem_fg_y);
   vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_bg_x, colmem_bg_y);
-  vs23.allocBacking(g_width / 2, 8, clrline_x, clrline_y);
 }
 
 //
@@ -85,7 +82,6 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   g_height = vs23.height();          // Number of vertical pixels
 
   allocate_system_bufs();
-  clrline_color = (pixel_t)0;
 
   win_x = 0;
   win_y = 0;
@@ -95,19 +91,10 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   tv_fontInit();
 }
 
-static void tv_set_clear_line_col(pixel_t cc)
-{
-  if (clrline_color != cc) {
-    gfx.drawRect(clrline_x, clrline_y, g_width / 2, 8, cc, cc);
-    clrline_color = cc;
-  }
-}
-
 void tv_reinit()
 {
   vs23.reset();
   allocate_system_bufs();
-  clrline_color = (pixel_t)0;
   tv_window_reset();
 }
 
@@ -235,11 +222,9 @@ void tv_cls() {
 //
 void tv_clerLine(uint16_t l, int from) {
   int left = win_x + from * f_width;
+  int top = win_y + l * f_height;
   int width = win_width - from * f_width;
-  // Assumption: Screen data is followed by empty line in memory.
-  tv_set_clear_line_col(bg_color);
-  vs23.blitRect(clrline_x, clrline_y, left, win_y + l * f_height, width/2, f_height);
-  vs23.blitRect(clrline_x, clrline_y, left + width/2, win_y + l * f_height, width/2, f_height);
+  vs23.fillRect(left, top, left + width, top + f_height, bg_color);
 }
 
 //
