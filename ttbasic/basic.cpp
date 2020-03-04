@@ -535,10 +535,10 @@ BString getstr(uint8_t eoi) {
   return BString(lbuf);
 }
 
-// キーワード検索
-//[戻り値]
-//  該当なし   : -1
-//  見つかった : キーワードコード
+// Keyword search K
+//[Return value]
+//  N / A: -1
+//  Found: Keyword code
 int lookup(char *str) {
   for (uint8_t i = 0; i < SIZE_KWTBL; ++i) {
     if (kwtbl[i]) {
