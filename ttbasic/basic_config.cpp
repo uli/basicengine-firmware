@@ -6,7 +6,7 @@
 SystemConfig CONFIG;
 
 static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
-  {   0,   0,   0 },	// BG
+  {   0,   0, 170 },	// C=64 BG
   { 192, 192, 192 },	// FG
   { 255, 255, 255 },	// KEYWORD
   { 128, 128, 128 },	// LINENUM
@@ -17,7 +17,7 @@ static const uint8_t default_color_scheme[CONFIG_COLS][3] PROGMEM = {
   {  50,  50, 255 },	// STR (blue)
   { 238, 137,  17 },	// PROC (orange)
   {  84, 255,   0 },	// COMMENT (green)
-  {   0,   0,   0 },	// BORDER
+  {   0, 136, 255 },	// C=64 BORDER
 };
 
 /***bc sys CONFIG COLOR
@@ -79,7 +79,7 @@ have been saved using <<SAVE CONFIG>>. Changing power-on default options does no
 affect the system until the options are saved and the system is restarted.
 \usage CONFIG option, value
 \args
-@option	configuration option to be set [`0` to `8`]
+@option	configuration option to be set [`0` to `11`]
 @value	option value
 \sec OPTIONS
 The following options exist:
@@ -140,6 +140,9 @@ at the expense of sharpness.
 +
 WARNING: It is not clear if this option is useful in practice, and it may be
 removed in future releases.
+* '9': do not require separation of keywords to allow more permissive variable
+  declaration formats.  Especailly useful when loading another dialect's
+  program listing
 
 \note
 To restore the default configuration, run the command `REMOVE
@@ -175,7 +178,7 @@ void SMALL Basic::iconfig() {
       CONFIG.NTSC = value;
     }
     break;
-  case 1:  // キーボード補正
+  case 1:  // Keyboard correction
     if (value < 0 || value > 3) {
       E_VALUE(0, 3);
     } else {
@@ -244,7 +247,7 @@ void iloadconfig() {
 #define CONFIG_FILE BString(F("/flash/.config"))
 #endif
 
-// システム環境設定のロード
+// Loading system preferences
 void loadConfig() {
   CONFIG.NTSC = 0;
   CONFIG.line_adjust = 0;
@@ -262,6 +265,7 @@ void loadConfig() {
     CONFIG.cursor_color = (pixel_t)0x00009500UL;
 
   CONFIG.beep_volume = 15;
+
 
   FILE *f = fopen(CONFIG_FILE.c_str(), "r");
   if (!f)

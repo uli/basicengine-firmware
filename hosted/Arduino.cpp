@@ -236,6 +236,10 @@ int main(int argc, char **argv) {
     loop();
 }
 
+// reinit sound again to try and get the welcome sound to play
+reinit_sound();
+
+
 #include "border_pal.h"
 
 uint64_t total_frames = 0;

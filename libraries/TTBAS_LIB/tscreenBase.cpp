@@ -56,7 +56,7 @@ void tscreenBase::end() {
   }
 }
 
-// 指定行の1行分クリア
+// Clear one specified line
 void tscreenBase::clerLine(uint16_t l, int from) {
   memset(&VPEEK(from, l), 0, width - from);
   VSET_C(from, l, fg_color, bg_color, width - from);

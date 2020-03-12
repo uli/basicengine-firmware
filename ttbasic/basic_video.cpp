@@ -260,7 +260,7 @@ void SMALL Basic::iscreen() {
     return;
   }
 
-  // NTSCスクリーン設定
+  // NTSC screen settings
   if (!vs23.setMode(m - 1)) {
     E_ERR(IO, "cannot set screen mode");
     return;

@@ -242,17 +242,21 @@ uint8_t tTVscreen::edit() {
         } else
           return enter_text() + 1;
 
-      case SC_KEY_CTRL_L:     // [CTRL+L] 画面クリア
+      case SC_KEY_CTRL_L:     // [CTRL+L] Screen clear
         cls();
         locate(0, 0);
         Serial_Ctrl(SC_KEY_CTRL_L);
         break;
 
-      case SC_KEY_HOME:       // [HOMEキー] 行先頭移動
+      case SC_KEY_F1:     // Test a keybinding
+        locate(0,0);
+        fprintf("PRINT ");
+
+      case SC_KEY_HOME:       // [HOMEキー] Move to beginning of line
         locate(0, pos_y);
         break;
 
-      case SC_KEY_NPAGE:      // [PageDown] 表示プログラム最終行に移動
+      case SC_KEY_NPAGE:      // [PageDown] Move to last line of display program
         if (pos_x == 0 && pos_y == height - 1) {
           edit_scrollUp();
         } else {
@@ -268,15 +272,15 @@ uint8_t tTVscreen::edit() {
         }
         break;
 
-      case SC_KEY_CTRL_R:     // [CTRL_R(F5)] 画面更新
+      case SC_KEY_CTRL_R:     // [CTRL_R(F5)] Screen update
         refresh();
         break;
 
-      case SC_KEY_END:        // [ENDキー] 行の右端移動
+      case SC_KEY_END:        // [ENDキー] Move right edge of line
         moveLineEnd();
         break;
 
-      case SC_KEY_IC:         // [Insert]キー
+      case SC_KEY_IC:         // [Insert] key
         flgIns = !flgIns;
         break;
 
@@ -328,7 +332,7 @@ uint8_t tTVscreen::edit() {
         saveScreenshot();
         break;
 
-      default:                // その他
+      default:                // Other
         Insert_char(ch);
         break;
       }
@@ -346,7 +350,7 @@ void SMALL tTVscreen::saveScreenshot() {
   bfs.saveBitmap(screen_file, 0, 0, getGWidth(), getGHeight());
 }
 
-// シリアルポートスクリーン制御出力
+// Serial port screen control output
 void tTVscreen::Serial_Ctrl(int16_t ch) {
 #ifdef DEBUG
   char *s = NULL;
@@ -359,7 +363,7 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
     break;
   }
   if (s) {
-    // Serial.print(s);     // USBシリアル出力
+    // Serial.print(s);     // USB serial output
     while (*s) {
       Serial.write(*s);
       s++;
@@ -368,7 +372,7 @@ void tTVscreen::Serial_Ctrl(int16_t ch) {
 #endif
 }
 
-// キャラクタ画面スクロール
+// Character screen scroll
 void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   switch (d) {
   case 0:  // 上

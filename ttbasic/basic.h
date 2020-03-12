@@ -17,8 +17,8 @@
 #include "proc.h"
 #include "sound.h"
 
-#define SIZE_LINE 256  // コマンドライン入力バッファサイズ + NULL
-#define SIZE_IBUF 256  // 中間コード変換バッファサイズ
+#define SIZE_LINE 256  // Command line input buffer sizez + NULL
+#define SIZE_IBUF 256  // Intermediate code conversion buffer size
 
 extern char lbuf[SIZE_LINE];
 extern char tbuf[SIZE_LINE];
@@ -27,7 +27,7 @@ extern unsigned char ibuf[SIZE_IBUF];
 
 extern uint8_t err;  // Error message index
 
-// メモリ書き込みポインタのクリア
+// Clear memory write pointer
 static inline void cleartbuf() {
   tbuf_pos = 0;
   memset(tbuf, 0, SIZE_LINE);
@@ -239,7 +239,7 @@ private:
   unsigned char *iexe(int stk = -1);
   uint8_t SMALL icom();
 
-  // '('チェック関数
+  // '(' Check function
   inline uint8_t checkOpen() {
     if (*cip != I_OPEN)
       err = ERR_PAREN;
@@ -248,7 +248,7 @@ private:
     return err;
   }
 
-  // ')'チェック関数
+  // ')' Check function
   inline uint8_t checkClose() {
     if (*cip != I_CLOSE)
       err = ERR_PAREN;
@@ -263,7 +263,7 @@ private:
                             token_t next_token);
 #endif
 
-  // コマンド引数取得(int32_t,引数チェックあり)
+  // Get command arguments (int32_t, with argument check)
   uint8_t BASIC_FP getParam(num_t &prm, num_t v_min, num_t v_max,
                             token_t next_token);
   uint32_t BASIC_FP getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
@@ -356,7 +356,7 @@ extern Basic *bc;
 
 int token_size(uint8_t *code);
 
-// キーワードテーブル
+// Keyword table
 #include "kwtbl.h"
 
 // Keyword count

@@ -1,4 +1,4 @@
-// 
+//
 // スクリーン制御基本クラス ヘッダーファイル
 // 作成日 2017/06/27 by たま吉さん
 //
@@ -77,20 +77,20 @@
 
 class tscreenBase {
   protected:
-    uint8_t* screen = NULL;     // スクリーン用バッファ
+    uint8_t* screen = NULL;     // Screen buffer
     uint16_t width;             // text window width
     uint16_t height;            // text window height
     uint16_t whole_width, whole_height;	// full screen width/height (chars)
     uint16_t win_x, win_y;	// text window position
-    uint16_t maxllen;           // 1行最大長さ
-    uint16_t pos_x;             // カーソル横位置
-    uint16_t pos_y;             // カーソル縦位置
-    uint8_t*  text;             // 行確定文字列
-    uint8_t dev;                // 文字入力デバイス
-    uint8_t flgCur:1;             // カーソル表示設定
-    bool flgIns:1;             // 編集モード
+    uint16_t maxllen;           // Maximum length of one line
+    uint16_t pos_x;             // Cursor horizontal position
+    uint16_t pos_y;             // Cursor vertical position
+    uint8_t*  text;             // Line confirmation character string
+    uint8_t dev;                // Character input device
+    uint8_t flgCur:1;             // Cursor display settings
+    bool flgIns:1;             // Edit mode
     bool flgScroll:1;
-	
+
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
 	virtual void END_DEV() {};                                // デバイスの終了
@@ -101,7 +101,7 @@ protected:
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
     virtual void SCROLL_DOWN() = 0;                           // スクロールダウン
     virtual void INSLINE(uint8_t l) = 0;                      // 指定行に1行挿入(下スクロール)
-    
+
   public:
 	virtual void beep() {};                              // BEEP音の発生
     virtual void show_curs(uint8_t flg) = 0;                 // カーソルの表示/非表示
@@ -111,7 +111,7 @@ protected:
 
 	//virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
     virtual inline uint8_t IS_PRINT(uint8_t ch) {
-      return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
+      return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
     };
     void init(uint16_t w=0,uint16_t h=0,uint16_t ln=128, uint8_t* extmem=NULL); // スクリーンの初期設定
 	virtual void end();                               // スクリーン利用終了
@@ -121,7 +121,7 @@ protected:
     void refresh();                                   // スクリーンリフレッシュ表示
     virtual void refresh_line(uint16_t l) { (void)l; }            // 行の再表示
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ
-    void scroll_down();                               // 1行分スクリーンのスクロールダウン 
+    void scroll_down();                               // 1行分スクリーンのスクロールダウン
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得        ***********
     void Insert_char(uint8_t c);                      // 現在のカーソル位置に文字を挿入
@@ -131,20 +131,20 @@ protected:
     void movePosNextLineChar(bool force = false);     // カーソルを次行に移動
     void movePosPrevLineChar(bool force = false);     // カーソルを前行に移動
     void moveLineEnd();                               // カーソルを行末に移動
-    void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動 
+    void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動
     void locate(uint16_t x, int16_t y = -1);              // カーソルを指定位置に移動
     uint8_t enter_text();                             // 行入力確定ハンドラ
     virtual void newLine();                           // 改行出力
-    void Insert_newLine(uint16_t l);                  // 指定行に空白挿入 
+    void Insert_newLine(uint16_t l);                  // 指定行に空白挿入
     void edit_scrollUp();                             // スクロールして前行の表示
     void edit_scrollDown();                           // スクロールして次行の表示
     // カーソル位置の文字コード取得
     inline uint16_t vpeek(uint16_t x, uint16_t y) {
-      if (x >= width || y >= height) 
+      if (x >= width || y >= height)
          return 0;
       return VPEEK(x,y);
     }
-    
+
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
     inline uint8_t *getScreen() { return screen; }   // スクリーン用バッファアドレス参照
     inline uint8_t *getScreenWindow() { return &VPEEK(0, 0); }
@@ -162,4 +162,3 @@ protected:
 };
 
 #endif
-
