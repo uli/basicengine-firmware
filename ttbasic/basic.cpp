@@ -235,7 +235,7 @@ num_t BASIC_FP getrnd(int value) {
 // clang-format off
 const uint8_t i_nsa[] BASIC_DAT = {
   I_CSIZE, I_PSIZE,
-  I_INKEY,I_CHAR, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
+  I_INKEY, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_POW,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT,
@@ -273,7 +273,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const uint8_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD,
+  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD, I_CHAR
 };
 // clang-format on
 
