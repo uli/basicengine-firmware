@@ -5776,6 +5776,21 @@ static void show_logo() {
              sc0.getGWidth() - 160 - 0, 0, 0, 2, 160, 62, 0);
 }
 
+void Basic::autoexec() {
+  struct stat st;
+  BString autoexec(F("AUTOEXEC.BAS"));
+  if (_stat(autoexec.c_str(), &st) == 0) {
+    sc0.peekKey();	// update internal key state
+    if (pad_state(0) == 0) {
+      Basic sub;
+      exec_sub(sub, autoexec.c_str());
+      free(sub.listbuf);
+    } else {
+      PRINT_P("Skipping AUTOEXEC.BAS\n");
+    }
+  }
+}
+
 #include "lua_defs.h"
 
 #ifdef __DJGPP__
@@ -5882,6 +5897,7 @@ void SMALL Basic::basic() {
     sound.beep(15, CONFIG.beep_volume, startup_env);
   }
 
+  autoexec();
   sc0.show_curs(1);
   err_expected = NULL;
   error();  // "OK" or display an error message and clear the error number

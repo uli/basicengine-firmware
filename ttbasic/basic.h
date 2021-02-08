@@ -352,6 +352,7 @@ private:
   bool in_data;
 
   void exec_sub(Basic &sub, const char *filename);
+  void autoexec();
 };
 
 extern Basic *bc;
@@ -432,6 +433,8 @@ extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
 extern bool event_pad_enabled;
 extern uint8_t event_pad_proc_idx[MAX_PADS];
 extern int event_pad_last[MAX_PADS];
+
+int BASIC_INT pad_state(int num);
 
 extern uint8_t event_sprite_proc_idx;
 
