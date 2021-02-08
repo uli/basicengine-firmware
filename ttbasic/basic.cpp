@@ -5866,7 +5866,7 @@ void SMALL Basic::basic() {
   sc0.locate(0, 2);
 
   uint64_t free_mem = getFreeMemory();
-  if (free_mem < 0)
+  if (free_mem == (uint64_t)-1)
     PRINT_P("unknown memory size\n");
   else if (free_mem < 1048576) {
     putnum(free_mem, 0);
