@@ -1052,7 +1052,7 @@ Copies a rectangular area of pixel memory to another area.
 ***/
 void GROUP(basic_video) Basic::iblit() {
   int32_t x, y, w, h, dx, dy;
-  int32_t dir = 0;
+
   if (getParam(x,  0, sc0.getGWidth(), I_COMMA))
     return;
   if (getParam(y,  0, vs23.lastLine(), I_TO))
