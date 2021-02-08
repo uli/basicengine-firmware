@@ -5536,6 +5536,7 @@ void Basic::exec_sub(Basic &sub, const char *filename) {
       // line number in the context of the subprogram.
       int sub_line = getlineno(sub.clp);
       free(sub.listbuf);
+      sub.listbuf = NULL;
       retval[0] = err;
       retval[1] = getlineno(clp);
       retval[2] = sub_line;
