@@ -5524,6 +5524,35 @@ void Basic::iprofile() {
   }
 }
 
+void Basic::exec_sub(Basic &sub, const char *filename) {
+  sub.listbuf = NULL;
+  sub.loadPrgText((char *)filename, NEW_ALL);
+  sub.clp = sub.listbuf;
+  sub.cip = sub.clp + sizeof(line_desc_t);
+  sub.irun(sub.clp);
+  if (err) {
+    if (event_error_enabled) {
+      // This replicates the code in irun() because we have to get the error
+      // line number in the context of the subprogram.
+      int sub_line = getlineno(sub.clp);
+      free(sub.listbuf);
+      retval[0] = err;
+      retval[1] = getlineno(clp);
+      retval[2] = sub_line;
+      err = 0;
+      event_error_enabled = false;
+      event_error_resume_lp = NULL;
+      clp = event_error_lp;
+      cip = event_error_ip;
+      err_expected = NULL;  // prevent stale "expected" messages
+      return;
+    } else {
+      // Print the error in the context of the subprogram.
+      error();
+    }
+  }
+}
+
 /***bc bas EXEC
 Executes a BASIC program as a child process.
 \usage EXEC program_file$
@@ -5553,32 +5582,7 @@ void Basic::iexec() {
     return;
   }
   Basic sub;
-  sub.listbuf = NULL;
-  sub.loadPrgText((char *)file.c_str(), NEW_ALL);
-  sub.clp = sub.listbuf;
-  sub.cip = sub.clp + sizeof(line_desc_t);
-  sub.irun(sub.clp);
-  if (err) {
-    if (event_error_enabled) {
-      // This replicates the code in irun() because we have to get the error
-      // line number in the context of the subprogram.
-      int sub_line = getlineno(sub.clp);
-      free(sub.listbuf);
-      retval[0] = err;
-      retval[1] = getlineno(clp);
-      retval[2] = sub_line;
-      err = 0;
-      event_error_enabled = false;
-      event_error_resume_lp = NULL;
-      clp = event_error_lp;
-      cip = event_error_ip;
-      err_expected = NULL;  // prevent stale "expected" messages
-      return;
-    } else {
-      // Print the error in the context of the subprogram.
-      error();
-    }
-  }
+  exec_sub(sub, file.c_str());
   free(sub.listbuf);
 }
 

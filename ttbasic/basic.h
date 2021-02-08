@@ -350,6 +350,8 @@ private:
   unsigned char *data_lp;
   unsigned char *data_ip;
   bool in_data;
+
+  void exec_sub(Basic &sub, const char *filename);
 };
 
 extern Basic *bc;
