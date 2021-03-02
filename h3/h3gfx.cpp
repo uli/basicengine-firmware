@@ -230,7 +230,7 @@ next:
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        uint8_t p = m_pixels[py + y * dy][px + x * dx];
+        pixel_t p = m_pixels[py + y * dy][px + x * dx];
         // draw only non-keyed pixels
         if (p != s->p.key)
           m_pixels[yy][xx] = p;
