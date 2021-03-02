@@ -27,7 +27,17 @@ void H3Audio::init(int sample_rate) {
 }
 
 extern "C" void hook_audio_get_sample(int16_t *l, int16_t *r) {
-  *l = *r = audio.m_sound_buf[m_read_buf][m_read_pos++] * 10 - 32768;
+  static int repeat = 0;
+  static int16_t last;
+
+  // convert 16 kHz to 48 kHz by repeating samples
+  if (repeat++ < 2) {
+    *l = *r = last;
+    return;
+  }
+
+  repeat = 0;
+  *l = *r = last = audio.m_sound_buf[m_read_buf][m_read_pos++] * 257 - 32768;
   if (m_read_pos >= audio.m_block_size) {
     m_read_buf ^= 1;
     audio.m_curr_buf = audio.m_sound_buf[m_read_buf ^ 1];
