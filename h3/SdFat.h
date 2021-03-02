@@ -195,7 +195,7 @@ public:
   }
   bool exists(const char *path) {
     struct stat st;
-    return false;//lstat(apsd(path), &st) == 0;
+    return stat(apsd(path), &st) == 0;
   }
   bool remove(const char *path) {
     return unlink(apsd(path)) == 0;
