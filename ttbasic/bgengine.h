@@ -197,7 +197,7 @@ protected:
     uint16_t pat_x, pat_y;
     uint8_t w, h;
     uint8_t frame_x, frame_y;
-    uint8_t key;
+    pixel_t key;
     bool flip_x:1, flip_y:1, opaque:1;
   };
 

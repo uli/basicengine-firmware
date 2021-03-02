@@ -5,6 +5,7 @@
 #ifdef USE_BG_ENGINE
 
 #include "bgengine.h"
+#include "colorspace.h"
 #include <Arduino.h>
 
 void BGEngine::enableBg(uint8_t bg) {
@@ -170,8 +171,10 @@ void GROUP(basic_video) BGEngine::setSpriteFrame(uint8_t num, uint8_t frame_x,
 
 void BGEngine::setSpriteKey(uint8_t num, int16_t key) {
   struct sprite_t *s = &m_sprite[num];
-  if (s->p.key != key) {
-    s->p.key = key;
+  pixel_t pkey = csp.fromIndexed((ipixel_t)key);
+
+  if (s->p.key != pkey) {
+    s->p.key = pkey;
     s->must_reload = true;
     m_bg_modified = true;
   }
