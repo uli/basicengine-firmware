@@ -1,5 +1,7 @@
 TARGET = basic
 
+INIT_FS_DIR = ../basicengine_demos
+
 OSDIR = $(HOME)/devel/orangepi/allwinner-bare-metal
 
 SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
