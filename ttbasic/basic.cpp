@@ -5908,7 +5908,11 @@ void SMALL Basic::basic() {
   while (1) {
     redirect_input_file = -1;
     redirect_output_file = -1;
+
+    if (lua)
+      PRINT_P("ok\n");
     rc = sc0.edit();
+
     if (rc) {
       textline = (char *)sc0.getText();
       int textlen = strlen(textline);
@@ -5967,7 +5971,7 @@ void SMALL Basic::basic() {
     }
 
     // If the intermediate code is a direct mode command
-    if (icom())      // execute
+    if (icom() && !lua)      // execute
       error(false);  // display direct mode error message
   }
 }
