@@ -13,4 +13,6 @@ extern lua_State *lua;
 int luaopen_be(lua_State *l);
 int luaopen_video(lua_State *l);
 
+void do_lua_line(lua_State *lua, const char *lbuf);
+
 #endif

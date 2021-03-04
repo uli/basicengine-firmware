@@ -5939,17 +5939,7 @@ void SMALL Basic::basic() {
     }
 
     if (lua) {
-      if (luaL_dostring(lua, lbuf)) {
-        const char *err_str = lua_tostring(lua, -1);
-        if (strstr_P(err_str, PSTR("return to basic"))) {
-          lua_close(lua);
-          lua = NULL;
-        } else {
-          PRINT_P("error: ");
-          c_puts(err_str);
-          newline();
-        }
-      }
+      do_lua_line(lua, lbuf);
       sc0.show_curs(1);
       continue;
     }
