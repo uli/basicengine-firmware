@@ -5950,6 +5950,7 @@ void SMALL Basic::basic() {
           newline();
         }
       }
+      sc0.show_curs(1);
       continue;
     }
 
