@@ -103,9 +103,9 @@ int c_screen(int32_t m) {
 
 int c_palette(int32_t p, int32_t hw, int32_t sw, int32_t vw, bool f) {
   if (check_param(p, 0, CSP_NUM_COLORSPACES - 1) ||
-      check_param(hw, 0, 7) ||
-      check_param(sw, 0, 7) ||
-      check_param(vw, 0, 7))
+      check_param(hw, -1, 7) ||
+      check_param(sw, -1, 7) ||
+      check_param(vw, -1, 7))
     return -1;
 
   vs23.setColorSpace(p);
