@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2017-2019 Ulrich Hecht
+// Copyright (c) 2017-2021 Ulrich Hecht
 
 #include "basic.h"
+#include "c_video.h"
 
 // *** フォント参照 ***************
 const uint8_t *ttbasic_font = TV_DISPLAY_FONT;
@@ -15,9 +16,6 @@ const uint8_t *fonts[NUM_FONTS] = {
 
 #include "tTVscreen.h"
 tTVscreen sc0;
-
-// **** スクリーン管理 *************
-uint8_t scmode = 0;
 
 bool screen_putch_disable_escape_codes = false;
 
@@ -157,24 +155,20 @@ void BASIC_INT Basic::iwindow() {
 
   if (*cip == I_OFF) {
     ++cip;
-    sc0.setWindow(0, 0, sc0.getScreenWidth(), sc0.getScreenHeight());
-    sc0.setScroll(true);
+    c_window_off();
     return;
   }
 
-  if (getParam(x, 0, sc0.getScreenWidth() - 1, I_COMMA))
+  if (getParam(x, I_COMMA))
     return;
-  if (getParam(y, 0, sc0.getScreenHeight() - 1, I_COMMA))
+  if (getParam(y, I_COMMA))
     return;
-  if (getParam(w, 1, sc0.getScreenWidth() - x, I_COMMA))
+  if (getParam(w, I_COMMA))
     return;
-  if (getParam(h, 1, sc0.getScreenHeight() - y, I_NONE))
+  if (getParam(h, I_NONE))
     return;
 
-  sc0.setWindow(x, y, w, h);
-  sc0.setScroll(h > 1 ? true : false);
-  sc0.locate(0, 0);
-  sc0.show_curs(false);
+  c_window(x, y, w, h);
 }
 
 /***bc scr FONT
@@ -198,8 +192,8 @@ void Basic::ifont() {
   int32_t idx;
   if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
     return;
-  sc0.setFont(fonts[idx]);
-  sc0.forget();
+
+  c_font(idx);
 }
 
 /***bc scr SCREEN
@@ -240,43 +234,10 @@ The following modes are available:
 void SMALL Basic::iscreen() {
   int32_t m;
 
-  if (getParam(m, 1, vs23.numModes(), I_NONE))
+  if (getParam(m, I_NONE))
     return;
 
-#ifdef USE_BG_ENGINE
-  // Discard dimensions saved for CONTing.
-  restore_bgs = false;
-  restore_text_window = false;
-#endif
-
-  vs23.reset();
-
-  if (scmode == m) {
-    sc0.reset();
-    sc0.setFont(fonts[CONFIG.font]);
-    sc0.locate(0, 0);
-    sc0.cls();
-    sc0.show_curs(false);
-    return;
-  }
-
-  // NTSCスクリーン設定
-  if (!vs23.setMode(m - 1)) {
-    E_ERR(IO, "cannot set screen mode");
-    return;
-  }
-
-  sc0.end();
-  scmode = m;
-
-  sc0.init(SIZE_LINE, CONFIG.NTSC, m - 1);
-
-  sc0.setFont(fonts[CONFIG.font]);
-  sc0.cls();
-  sc0.show_curs(false);
-  sc0.draw_cls_curs();
-  sc0.locate(0, 0);
-  sc0.refresh();
+  c_screen(m);
 }
 
 /***bc scr PALETTE
@@ -301,22 +262,23 @@ Conversion fix-ups are enabled by default.
 \ref RGB() SCREEN
 ***/
 void Basic::ipalette() {
-  int32_t p, hw, sw, vw, f;
+  int32_t p, hw = -1, sw = -1, vw = -1, f = -1;
   if (getParam(p, 0, CSP_NUM_COLORSPACES - 1, I_NONE))
     return;
-  vs23.setColorSpace(p);
+
   if (*cip == I_COMMA) {
     cip++;
-    if (getParam(hw, 0, 7, I_COMMA))
+    if (getParam(hw, I_COMMA))
       return;
-    if (getParam(sw, 0, 7, I_COMMA))
+    if (getParam(sw, I_COMMA))
       return;
-    if (getParam(vw, 0, 7, I_COMMA))
+    if (getParam(vw, I_COMMA))
       return;
     if (getParam(f, 0, 1, I_NONE))
       return;
-    csp.setColorConversion(p, hw, sw, vw, !!f);
   }
+
+  c_palette(p, hw, sw, vw, !!f);
 }
 
 /***bc scr BORDER
@@ -336,20 +298,20 @@ There is no way to find the allowed range of values for `x` and `w` without
 trial and error.
 ***/
 void Basic::iborder() {
-  int32_t y, uv, x, w;
-  if (getParam(uv, 0, 255, I_COMMA))
+  int32_t y, uv, x = -1, w = -1;
+  if (getParam(uv, I_COMMA))
     return;
-  if (getParam(y, 0, 255 - 0x66, I_NONE))
+  if (getParam(y, I_NONE))
     return;
   if (*cip == I_COMMA) {
     ++cip;
-    if (getParam(x, 0, vs23.borderWidth(), I_COMMA))
+    if (getParam(x, I_COMMA))
       return;
-    if (getParam(w, 0, vs23.borderWidth() - x, I_NONE))
+    if (getParam(w, I_NONE))
       return;
-    vs23.setBorder(y, uv, x, w);
-  } else
-    vs23.setBorder(y, uv);
+  }
+
+  c_border(y, uv, x, w);
 }
 
 /***bc scr VSYNC
@@ -379,18 +341,11 @@ LOOP
 void Basic::ivsync() {
   uint32_t tm;
   if (end_of_statement())
-    tm = vs23.frame() + 1;
+    tm = 0;
   else if (getParam(tm, 0, INT32_MAX, I_NONE))
     return;
 
-  while (vs23.frame() < tm) {
-    process_events();
-    uint16_t c = sc0.peekKey();
-    if (process_hotkeys(c)) {
-      break;
-    }
-    yield();
-  }
+  c_vsync(tm);
 }
 
 static const uint8_t vs23_write_regs[] PROGMEM = {
@@ -479,7 +434,7 @@ Returns the number of video frames since power-on.
 num_t BASIC_FP Basic::nframe() {
   if (checkOpen() || checkClose())
     return 0;
-  return vs23.frame();
+  return c_frame();
 }
 
 /***bf scr VREG
@@ -578,17 +533,8 @@ void Basic::ilocate() {
     return;
   if (getParam(y, I_NONE))
     return;
-  if (x >= sc0.getWidth())  // xの有効範囲チェック
-    x = sc0.getWidth() - 1;
-  else if (x < 0)
-    x = 0;
-  if (y >= sc0.getHeight())  // yの有効範囲チェック
-    y = sc0.getHeight() - 1;
-  else if (y < 0)
-    y = 0;
 
-  // カーソル移動
-  sc0.locate((uint16_t)x, (uint16_t)y);
+  c_locate(x, y);
 }
 
 /***bf scr RGB
@@ -611,17 +557,19 @@ with different color palettes.
 The color conversion method used is optimized for use with pixel art.
 Its results can be tweaked by setting conversion coefficients with
 the `PALETTE` command.
+
+Component values that are out of range will be silently clamped.
 \ref PALETTE COLOR
 ***/
 num_t BASIC_FP Basic::nrgb() {
   int32_t r, g, b;
   if (checkOpen() ||
-      getParam(r, 0, 255, I_COMMA) ||
-      getParam(g, 0, 255, I_COMMA) ||
-      getParam(b, 0, 255, I_CLOSE)) {
+      getParam(r, I_COMMA) ||
+      getParam(g, I_COMMA) ||
+      getParam(b, I_CLOSE)) {
     return 0;
   }
-  return csp.indexedColorFromRgb(r, g, b);
+  return c_rgb_indexed(r, g, b);
 }
 
 /***bc scr COLOR
@@ -647,11 +595,10 @@ void Basic::icolor() {
       int32_t cc;
       if (getParam(cc, 0, 255, I_NONE))
         return;
-      sc0.setCursorColor(csp.fromIndexed((ipixel_t)cc));
+      c_cursor_color(csp.fromIndexed((ipixel_t)cc));
     }
   }
-  // 文字色の設定
-  sc0.setColor(csp.fromIndexed((ipixel_t)fc), csp.fromIndexed((ipixel_t)bgc));
+  c_color(csp.fromIndexed((ipixel_t)fc), csp.fromIndexed((ipixel_t)bgc));
 }
 
 /***bf scr CSIZE
@@ -668,8 +615,8 @@ num_t BASIC_FP Basic::ncsize() {
   // 画面サイズ定数の参照
   int32_t a = getparam();
   switch (a) {
-  case 0:	return sc0.getWidth();
-  case 1:	return sc0.getHeight();
+  case 0:	return c_csize_width();
+  case 1:	return c_csize_height();
   default:	E_VALUE(0, 1); return 0;
   }
 }
@@ -688,9 +635,9 @@ Returns the dimensions of the current screen mode in pixels.
 num_t BASIC_FP Basic::npsize() {
   int32_t a = getparam();
   switch (a) {
-  case 0:	return sc0.getGWidth();
-  case 1:	return sc0.getGHeight();
-  case 2:	return vs23.lastLine();
+  case 0:	return c_psize_width();
+  case 1:	return c_psize_height();
+  case 2:	return c_psize_lastline();
   default:	E_VALUE(0, 2); return 0;
   }
 }
@@ -739,8 +686,8 @@ int32_t BASIC_INT Basic::ncharfun() {
     return 0;
   if (checkClose())
     return 0;
-  value = (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
-  return value;
+  
+  return c_char_get(x, y);
 }
 
 /***bc scr CHAR
@@ -750,8 +697,8 @@ Prints a single character to the screen.
 @x	X coordinate, characters [`0` to `CSIZE(0)`]
 @y	Y coordinate, characters [`0` to `CSIZE(1)`]
 @c	character [`0` to `255`]
-\bugs
-No sanity checks are performed on arguments.
+\note
+This command does nothing if the coordinates are outside the screen limits.
 ***/
 void BASIC_FP Basic::ichar() {
   int32_t x, y, c;
@@ -761,7 +708,7 @@ void BASIC_FP Basic::ichar() {
     return;
   if (getParam(c, I_NONE))
     return;
-  sc0.write(x, y, c);
+  c_char_set(x, y, c);
 }
 
 /***bc scr CSCROLL
@@ -791,15 +738,7 @@ void Basic::icscroll() {
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
       getParam(d, I_NONE))
     return;
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 ||
-      x2 >= sc0.getWidth() ||
-      y2 >= sc0.getHeight()) {
-    err = ERR_VALUE;
-    return;
-  }
-  if (d < 0 || d > 3)
-    d = 0;
-  sc0.cscroll(x1, y1, x2 - x1 + 1, y2 - y1 + 1, d);
+  c_cscroll(x1, y1, x2, y2, d);
 }
 
 /***bc pix GSCROLL
@@ -827,15 +766,7 @@ void Basic::igscroll() {
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
       getParam(d, I_NONE))
     return;
-  if (x1 < 0 || y1 < 0 || x2 <= x1 || y2 <= y1 ||
-      x2 >= sc0.getGWidth() ||
-      y2 >= vs23.lastLine()) {
-    err = ERR_VALUE;
-    return;
-  }
-  if (d < 0 || d > 3)
-    d = 0;
-  sc0.gscroll(x1, y1, x2 - x1 + 1, y2 - y1 + 1, d);
+  c_gscroll(x1, y1, x2, y2, d);
 }
 
 /***bf pix POINT
@@ -845,18 +776,20 @@ Returns the color of the pixel at the given coordinates.
 @x	X coordinate, pixels [`0` to `PSIZE(0)-1`]
 @y	Y coordinate, pixels [`0` to `PSIZE(2)-1`]
 \ret Pixel color [`0` to `255`]
+\note
+If the coordinates exceed the dimensions of the pixel memory area, `0` will be returned.
 ***/
 num_t BASIC_INT Basic::npoint() {
   int32_t x, y;  // 座標
   if (checkOpen())
     return 0;
-  if (getParam(x, 0, sc0.getGWidth() - 1, I_COMMA))
+  if (getParam(x, I_COMMA))
     return 0;
-  if (getParam(y, 0, vs23.lastLine() - 1, I_NONE))
+  if (getParam(y, I_NONE))
     return 0;
   if (checkClose())
     return 0;
-  return (num_t)(PIXEL_TYPE)vs23.getPixel(x, y);
+  return c_point(x, y);
 }
 
 /***bc pix GPRINT
@@ -902,16 +835,7 @@ void GROUP(basic_video) Basic::ipset() {
     return;
 
   c = csp.fromIndexed(c);
-
-  if (x < 0)
-    x = 0;
-  if (y < 0)
-    y = 0;
-  if (x >= sc0.getGWidth())
-    x = sc0.getGWidth() - 1;
-  if (y >= vs23.lastLine())
-    y = vs23.lastLine() - 1;
-  sc0.pset(x, y, c);
+  c_pset(x, y, c);
 }
 
 /***bc pix LINE
@@ -928,8 +852,10 @@ LINE x1_coord, y1_coord, x2_coord, y2_coord[, color]
 @y2_coord Y coordinate of the line's end point +
           [`0` to `PSIZE(2)-1`]
 @color	  color of the line [default: text foreground color]
-\note
+\bugs
 Coordinates that exceed the valid pixel memory area will be clamped.
+This can change the slope of the line and is not the behavior one would
+expect.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::iline() {
@@ -944,17 +870,8 @@ void GROUP(basic_video) Basic::iline() {
     getParam(c, I_NONE);
     c = csp.fromIndexed(c);
   } else
-    c = fg_color;
-
-  if (x1 < 0) x1 =0;
-  if (y1 < 0) y1 =0;
-  if (x2 < 0) x1 =0;
-  if (y2 < 0) y1 =0;
-  if (x1 >= sc0.getGWidth()) x1 = sc0.getGWidth()-1;
-  if (y1 >= vs23.lastLine()) y1 = vs23.lastLine()-1;
-  if (x2 >= sc0.getGWidth()) x2 = sc0.getGWidth()-1;
-  if (y2 >= vs23.lastLine()) y2 = vs23.lastLine()-1;
-  sc0.line(x1, y1, x2, y2, c);
+    c = -1;
+  c_line(x1, y1, x2, y2, c);
 }
 
 /***bc pix CIRCLE
@@ -971,10 +888,8 @@ Draws a circle.
 @color		color of the circle's outline [`0` to `255`]
 @fill_color	color of the circle's body +
                 [`0` to `255`, or `-1` for an unfilled circle]
-\note
-Coordinates that exceed the valid pixel memory area will be clamped.
 \bugs
-`fill_color` cannot be omitted.
+* `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::icircle() {
@@ -986,13 +901,8 @@ void GROUP(basic_video) Basic::icircle() {
   c = csp.fromIndexed(c);
   if (f != -1)
     f = csp.fromIndexed(f);
-
-  if (x < 0) x =0;
-  if (y < 0) y =0;
-  if (x >= sc0.getGWidth()) x = sc0.getGWidth()-1;
-  if (y >= vs23.lastLine()) y = vs23.lastLine()-1;
-  if (r < 0) r = -r;
-  sc0.circle(x, y, r, c, f);
+  
+  c_circle(x, y, r, c, f);
 }
 
 /***bc pix RECT
@@ -1012,7 +922,7 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
 @fill_color color of the rectangle's body +
             [`0` to `255`, or `-1` for an unfilled rectangle]
 \bugs
-`fill_color` cannot be omitted.
+* `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::irect() {
@@ -1026,13 +936,7 @@ void GROUP(basic_video) Basic::irect() {
   if (f != -1)
     f = csp.fromIndexed(f);
 
-  if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 ||
-      x2 >= sc0.getGWidth() ||
-      y2 >= vs23.lastLine()) {
-    err = ERR_VALUE;
-    return;
-  }
-  sc0.rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, c, f);
+  c_rect(x1, y1, x2, y2, c, f);
 }
 
 /***bc pix BLIT
@@ -1066,5 +970,5 @@ void GROUP(basic_video) Basic::iblit() {
   if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
     return;
 
-  vs23.blitRect(x, y, dx, dy, w, h);
+  c_blit(x, y, dx, dy, w, h);
 }
