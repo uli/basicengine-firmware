@@ -93,8 +93,8 @@ Read a word (32 bits) of data from an address in memory.
 Sanity checks for `addr` are insufficient.
 \ref PEEK() PEEKW()
 ***/
-int32_t Basic::ipeek(int type) {
-  int32_t value = 0, vadr;
+uint32_t Basic::ipeek(int type) {
+  uint32_t value = 0, vadr;
   void *radr;
 
   if (checkOpen())
@@ -156,8 +156,8 @@ Sanity checks for `addr` are insufficient.
 ***/
 void BASIC_FP Basic::do_poke(int type) {
   void *adr;
-  int32_t value;
-  int32_t vadr;
+  uint32_t value;
+  uint32_t vadr;
 
   // アドレスの指定
   vadr = iexp();

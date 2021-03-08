@@ -217,7 +217,7 @@ private:
   num_t iand();
 
   num_t nsys();
-  int32_t ipeek(int type);
+  uint32_t ipeek(int type);
   void do_poke(int type);
 
   void isetDate();
