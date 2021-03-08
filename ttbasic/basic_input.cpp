@@ -54,11 +54,17 @@ static int BASIC_INT cursor_pad_state() {
          kb.state(PS2KEY_Z) << joySquShift;
 }
 
+#ifdef USE_PSX_GPIO
+#define JOY_MASK 0xffff
+#else
+#define JOY_MASK 0x3ffff
+#endif
+
 int BASIC_INT pad_state(int num) {
   switch (num) {
-  case 0: return (joy.read() & 0xffff) | cursor_pad_state();
+  case 0: return (joy.read() & JOY_MASK) | cursor_pad_state();
   case 1: return cursor_pad_state();
-  case 2: return joy.read() & 0xffff;
+  case 2: return joy.read() & JOY_MASK;
   }
   return 0;
 }

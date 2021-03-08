@@ -8,6 +8,8 @@
 #define joyDownShift	1
 #define joyRightShift	2
 #define joyUpShift	3
+
+#define joyFirstButtonShift	joyStrtShift
 #define joyStrtShift	4
 #define joySlctShift	5
 
@@ -26,6 +28,8 @@
 #define joyL1Shift	13
 #define joyR2Shift	14
 #define joyL2Shift	15
+#define joyR3Shift	16
+#define joyL3Shift	17
 
 #define joySqu		(1 << joySquShift)
 #define joyX		(1 << joyXShift)
@@ -35,6 +39,8 @@
 #define joyL1		(1 << joyL1Shift)
 #define joyR2		(1 << joyR2Shift)
 #define joyL2		(1 << joyL2Shift)
+#define joyR3		(1 << joyR3Shift)
+#define joyL3		(1 << joyL3Shift)
 
 #include <platform_joystick.h>
 extern Joystick joy;
