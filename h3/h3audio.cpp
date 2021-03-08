@@ -4,6 +4,7 @@
 #ifdef H3
 
 #include "h3audio.h"
+#include <audio.h>
 
 H3Audio audio;
 
@@ -26,7 +27,7 @@ void H3Audio::init(int sample_rate) {
   m_block_size = SOUND_BUFLEN;
 }
 
-extern "C" void hook_audio_get_sample(int16_t *l, int16_t *r) {
+void hook_audio_get_sample(int16_t *l, int16_t *r) {
   static int repeat = 0;
   static int16_t last;
 
