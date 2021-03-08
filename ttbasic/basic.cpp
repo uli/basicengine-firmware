@@ -2282,6 +2282,9 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
   for (lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {}
 
   screen_putch_disable_escape_codes = true;
+  pixel_t saved_fg_color = sc0.getFgColor();
+  pixel_t saved_bg_color = sc0.getBgColor();
+
   //リストを表示する
   while (*lp) {                 // 行ポインタが末尾を指すまで繰り返す
     prnlineno = getlineno(lp);  // 行番号取得
@@ -2304,6 +2307,8 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
     newline(devno);      // 改行
     lp += *lp;           // 行ポインタを次の行へ進める
   }
+
+  sc0.setColor(saved_fg_color, saved_bg_color);
   screen_putch_disable_escape_codes = false;
 }
 
