@@ -113,6 +113,33 @@ public:
     }
   }
 
+  void remove(const T item)
+  {
+    node *tmp = start;
+    while (tmp) {
+      node *next = tmp->next;
+      node *prev = tmp->prev;
+
+      if (tmp->item == item) {
+        if (prev)
+          prev->next = next;
+        else
+          start = next;
+
+        if (next)
+          next->prev = prev;
+        else
+          end = prev;
+
+        delete tmp;
+        len--;
+
+        return;
+      }
+      tmp = next;
+    }
+  }
+
   // Get item from front
   T front()
   {
