@@ -252,7 +252,7 @@ void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
 }
 
 bool TKeyboard::state(uint8_t keycode) {
-  if (keycode < sizeof(ps2_to_usb))
+  if (keycode < sizeof(ps2_to_usb) / sizeof(*ps2_to_usb))
     return key_state[ps2_to_usb[keycode]];
   else
     return false;
