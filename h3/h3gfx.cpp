@@ -289,8 +289,8 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
          x++) {
       int leftpx = leftpatx + x - left->pos_x;
       int rightpx = rightpatx + x - right->pos_x;
-      int leftpixel = m_pixels[leftpy][leftpx];
-      int rightpixel = m_pixels[rightpy][rightpx];
+      pixel_t leftpixel = m_pixels[leftpy][leftpx];
+      pixel_t rightpixel = m_pixels[rightpy][rightpx];
 
       if (leftpixel != left->p.key && rightpixel != right->p.key)
         return dir;
