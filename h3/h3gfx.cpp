@@ -133,6 +133,10 @@ void H3GFX::updateBg() {
          (m_current_mode.x + m_current_mode.left * 2) *
          (m_current_mode.y + m_current_mode.top) *
          sizeof(pixel_t));
+  // repeat top background (backbuffer contains off-screen pixels that should not be seen)
+  memcpy((pixel_t *)active_buffer + (m_current_mode.x + m_current_mode.left * 2) * (m_current_mode.y + m_current_mode.top),
+         backbuffer,
+         (m_current_mode.x + m_current_mode.left * 2) * m_current_mode.top * sizeof(pixel_t));
 
   buffer_swap();
 
