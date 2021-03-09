@@ -109,8 +109,10 @@ bool H3GFX::setMode(uint8_t mode) {
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
-  display_set_mode(m_current_mode.x, m_current_mode.y, m_current_mode.left,
-                   m_current_mode.top);
+  display_single_buffer = true;
+  display_set_mode(m_current_mode.x + m_current_mode.left * 2,
+                   m_current_mode.y + m_current_mode.top * 2,
+                   0, 0);
 
   m_display_enabled = true;
 
