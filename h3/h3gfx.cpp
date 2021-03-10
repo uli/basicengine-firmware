@@ -4,32 +4,44 @@
 #ifdef H3
 
 #include <Arduino.h>
-#include <display.h>
 #include "h3gfx.h"
 #include "colorspace.h"
 #include <joystick.h>
 
 H3GFX vs23;
 
+#define FILTER_OFF	(0 << 0)
+#define FILTER_ON	(1 << 0)
+
+#define ASPECT_4_3	(0 << 1)
+#define ASPECT_16_9	(1 << 1)
+
 const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
-  { 460, 224, 16, 16, 1 },
-  { 436, 216, 16, 16, 1 },
-  { 320, 216, 16, 16, 2 },   // VS23 NTSC demo
-  { 320, 200, 16, 16, 2 },   // (M)CGA, Commodore et al.
-  { 256, 224, 16, 16, 25 },  // SNES
-  { 256, 192, 16, 16, 25 },  // MSX, Spectrum, NDS
-  { 160, 200, 16, 16, 4 },   // Commodore/PCjr/CPC
+  { 460, 224, 0, 0, ASPECT_4_3 },
+  { 436, 216, 0, 0, ASPECT_4_3 },
+  { 320, 216, 0, 0, ASPECT_4_3 },   // VS23 NTSC demo
+  { 320, 200, 0, 0, ASPECT_4_3 },   // (M)CGA, Commodore et al.
+  { 256, 224, 0, 0, ASPECT_4_3 },  // SNES
+  { 256, 192, 0, 0, ASPECT_4_3 },  // MSX, Spectrum, NDS
+  { 160, 200, 0, 0, ASPECT_4_3 },   // Commodore/PCjr/CPC
                              // multi-color
   // "Overscan modes"
-  { 352, 240, 16, 16, 2 },  // PCE overscan (barely)
-  { 282, 240, 16, 16, 2 },  // PCE overscan (underscan on PAL)
-  { 508, 240, 16, 16, 1 },
+  { 352, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (barely)
+  { 282, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (underscan on PAL)
+  { 508, 240, 0, 0, ASPECT_4_3 },
   // ESP32GFX modes
-  { 320, 256, 16, 16, 2 },  // maximum PAL at 2 clocks per pixel
-  { 320, 240, 16, 16, 2 },  // DawnOfAV demo, Mode X
-  { 640, 256, 16, 16, 1 },
+  { 320, 256, 0, 0, ASPECT_4_3 },  // maximum PAL at 2 clocks per pixel
+  { 320, 240, 0, 0, ASPECT_4_3 },  // DawnOfAV demo, Mode X
+  { 640, 256, 0, 0, ASPECT_4_3 },
   // default H3 mode
-  { 480, 270, 16, 16, 1 },
+  { 480, 270, 0, 0, ASPECT_4_3 },
+  // default SDL mode
+  { 640, 480, 0, 0, ASPECT_4_3 | FILTER_ON },
+  { 800, 600, 0, 0, ASPECT_4_3 | FILTER_ON },
+  { 1024, 768, 0, 0, ASPECT_4_3 | FILTER_ON },
+  { 1280, 720, 0, 0, ASPECT_16_9 | FILTER_ON },
+  { 1280, 1024, 0, 0, ASPECT_4_3 | FILTER_ON },
+  { 1920, 1080, 0, 0, ASPECT_16_9 },
 };
 
 #include <usb.h>
@@ -88,6 +100,54 @@ bool H3GFX::setMode(uint8_t mode) {
   free(backbuffer);
 
   m_current_mode = modes_pal[mode];
+
+  // Find a suitable border size. For unfiltered modes we want it to be scaled by
+  // an integral factor in both directions, and keep the aspect ratio as
+  // close as possible. For filtered modes, we want the aspect ratio to be
+  // precise.
+  switch (m_current_mode.vclkpp) {
+  case ASPECT_4_3 | FILTER_OFF:
+    if (m_force_filter) {
+      m_current_mode.top = 0;
+      m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
+    } else {
+      // find an integral scale factor
+      int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
+      m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
+                           / yscale					// correct for scaling by video driver
+                           / 2;						// only one side, the other side is implicit
+      int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
+      m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
+                           / xscale
+                           / 2;
+    }
+    display_enable_filter(m_force_filter);
+    break;
+  case ASPECT_4_3 | FILTER_ON:
+    m_current_mode.top = 0;
+    m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
+    display_enable_filter(true);
+    break;
+  case ASPECT_16_9 | FILTER_OFF:
+    if (m_force_filter) {
+      m_current_mode.top = 0;
+      m_current_mode.left = 0;
+    } else {
+      int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
+      m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+      int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
+      m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+    }
+    display_enable_filter(m_force_filter);
+    break;
+  case ASPECT_16_9 | FILTER_ON:
+    m_current_mode.top = 0;
+    m_current_mode.left = 0;
+    display_enable_filter(true);
+    break;
+  default:
+    break;
+  }
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
   // the specified resolution plus color memory.

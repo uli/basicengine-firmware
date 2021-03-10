@@ -9,10 +9,11 @@
 #include "colorspace.h"
 
 #include <string.h>
+#include <display.h>
 
 #define SC_DEFAULT 13
 
-#define H3_SCREEN_MODES 14
+#define H3_SCREEN_MODES 20
 
 class H3GFX : public BGEngine {
 public:
@@ -69,10 +70,11 @@ public:
                 uint16_t width, uint16_t height);
 
   inline void setInterlace(bool interlace) {
-    //m_interlace = interlace;
   }
+
   inline void setLowpass(bool lowpass) {
-    //m_lowpass = lowpass;
+    m_force_filter = lowpass;
+    display_enable_filter(m_force_filter);
   }
 
   void setSpiClock(uint32_t div) {
@@ -105,6 +107,7 @@ public:
 private:
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
+  bool m_force_filter;
 
   pixel_t **m_pixels;
 
