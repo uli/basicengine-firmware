@@ -4066,7 +4066,7 @@ num_t BASIC_FP Basic::ivalue() {
 
     case I_HEXNUM:  // 16進定数
       // get the constant
-      value = cip[0] | (cip[1] << 8) | (cip[2] << 16) | (cip[3] << 24);
+      value = (uint32_t)cip[0] | ((uint32_t)cip[1] << 8) | ((uint32_t)cip[2] << 16) | ((uint32_t)cip[3] << 24);
       cip += 4;
       break;
 
