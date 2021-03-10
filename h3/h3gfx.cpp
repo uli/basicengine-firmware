@@ -198,7 +198,7 @@ void H3GFX::updateBg() {
          backbuffer,
          (m_current_mode.x + m_current_mode.left * 2) * m_current_mode.top * sizeof(pixel_t));
 
-  buffer_swap();
+  display_swap_buffers();
 
   if (!m_bg_modified)
     return;
