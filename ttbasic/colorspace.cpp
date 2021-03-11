@@ -209,9 +209,11 @@ uint8_t *Colorspace::paletteData(uint8_t colorspace) {
 #endif
 
 pixel_t Colorspace::fromIndexed(ipixel_t c) {
-  if (sizeof(pixel_t) == sizeof(ipixel_t))
+#ifdef TRUE_COLOR
+  if (m_colorspace == 2)
     return (pixel_t)c;
   else {
+#endif
     const palette *p = pals[m_colorspace];
     // XXX: generalize
 #ifdef SDL
@@ -219,13 +221,12 @@ pixel_t Colorspace::fromIndexed(ipixel_t c) {
 #else
     return (pixel_t)(p[c].r << 16 | p[c].g << 8 | p[c].b);
 #endif
+#ifdef TRUE_COLOR
   }
+#endif
 }
 
 pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
-  if (sizeof(pixel_t) == sizeof(ipixel_t))
-    return (pixel_t)indexedColorFromRgb(r, g, b);
-  else
     // XXX: generalize
 #ifdef SDL
     return vs23.colorFromRgb(r, g, b);

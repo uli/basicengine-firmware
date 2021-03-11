@@ -7,7 +7,13 @@
 #include "video_driver.h"
 #include <stdint.h>
 
+#include "ttconfig.h"
+
+#ifdef TRUE_COLOR
+#define CSP_NUM_COLORSPACES 3
+#else
 #define CSP_NUM_COLORSPACES 2
+#endif
 
 class Colorspace {
 public:
