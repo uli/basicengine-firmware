@@ -72,6 +72,18 @@ void H3GFX::reset() {
 
 void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
                      uint16_t y_dst, uint16_t width, uint16_t height) {
+  // optimize the common case of scrolling the whole screen
+  if (x_src == 0 && x_dst == 0 &&		// starts at the end of the line
+      y_src > y_dst &&				// goes upwards
+      width == m_current_mode.x &&		// whole screen width
+      y_src + height <= m_current_mode.y	// does not go beyond the real framebuffer
+  ) {
+    memcpy(m_pixels[y_dst] - m_current_mode.left,
+           m_pixels[y_src] - m_current_mode.left,
+           height * (m_current_mode.x + m_current_mode.left * 2) * sizeof(pixel_t));
+    return;
+  }
+
   if ((y_dst > y_src) ||
       (y_dst == y_src && x_dst > x_src)) {
     y_dst += height - 1;
