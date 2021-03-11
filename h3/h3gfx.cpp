@@ -131,7 +131,9 @@ bool H3GFX::setMode(uint8_t mode) {
   // precise.
   switch (m_current_mode.vclkpp) {
   case ASPECT_4_3 | FILTER_OFF:
-    if (m_force_filter) {
+    if (m_force_filter ||
+        (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
+         DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
       m_current_mode.top = 0;
       m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
     } else {
