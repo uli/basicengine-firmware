@@ -193,9 +193,16 @@ static const uint8_t usb2ascii[] = {
 keyEvent keybuf[KEYBUF_SIZE];
 int keybuf_r = 0;
 int keybuf_w = 0;
+hid_keyboard_report_t last_report;
+
+#define REPEAT_DELAY 20
+#define REPEAT_INTERVAL 3
+
+static int repeat_countdown = 0;
 
 static uint8_t key_state[256];
 void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
+  bool any_key = false;
   uint8_t old_state[256];
 #ifdef DEBUG_REPORT
   printf("kbdrep mod %02X keys ", rep->modifier);
@@ -210,6 +217,10 @@ void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
 
   for (int i = 0; i < 6; ++i) {
     uint8_t kc = rep->keycode[i];
+
+    if (kc)
+      any_key = true;
+
     key_state[kc] = 1;
     if (old_state[kc] != key_state[kc] &&
         (keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
@@ -252,6 +263,12 @@ void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
       key_state[224 + i] = 1;
   }
 
+  last_report = *rep;
+  if (any_key)
+    repeat_countdown = REPEAT_DELAY;
+  else
+    repeat_countdown = 0;
+
   key_state[0] = 0;
 }
 
@@ -287,4 +304,20 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
 }
 
 void TKeyboard::end() {
+}
+
+void kbd_repeat(void) {
+  if (!repeat_countdown)
+    return;
+
+  repeat_countdown--;
+
+  if (repeat_countdown)
+    return;
+
+  hid_keyboard_report_t l = last_report;
+  hid_keyboard_report_t empty = {};
+  hook_usb_keyboard_report(&empty);
+  hook_usb_keyboard_report(&l);
+  repeat_countdown = REPEAT_INTERVAL;
 }

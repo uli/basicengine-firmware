@@ -62,9 +62,12 @@ uint64_t total_frames = 0;
 extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
+void kbd_repeat(void);
+
 void platform_process_events() {
   usb_task();
   sd_detect();
+  kbd_repeat();
 }
 
 extern "C" size_t umm_free_heap_size(void) {
