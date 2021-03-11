@@ -7,6 +7,7 @@
 #include "h3gfx.h"
 #include "colorspace.h"
 #include <joystick.h>
+#include <mmu.h>
 
 H3GFX vs23;
 
@@ -89,9 +90,20 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
       height--;
     }
   }
+
+  mmu_flush_dcache();
 }
 
 static uint32_t *backbuffer = 0;
+
+void H3GFX::resetLinePointers() {
+  for (int i = 0; i < m_current_mode.y; ++i) {
+    m_pixels[i] = (pixel_t *)display_active_buffer +
+                  (m_current_mode.x + m_current_mode.left * 2) *
+                          (i + m_current_mode.top) +
+                  m_current_mode.left;
+  }
+}
 
 bool H3GFX::setMode(uint8_t mode) {
   m_display_enabled = false;
@@ -157,22 +169,21 @@ bool H3GFX::setMode(uint8_t mode) {
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
 
   backbuffer = (uint32_t *)calloc(sizeof(pixel_t),
-                                  (m_current_mode.x + m_current_mode.left * 2) *
-                                  (m_last_line + m_current_mode.top));
+                                  m_current_mode.x * (m_last_line - m_current_mode.y));
 
-  for (int i = 0; i < m_last_line; ++i) {
-    m_pixels[i] = backbuffer +
-                  (m_current_mode.x + m_current_mode.left * 2) *
-                          (i + m_current_mode.top) +
-                  m_current_mode.left;
+  for (int i = m_current_mode.y; i < m_last_line; ++i) {
+    m_pixels[i] = backbuffer + m_current_mode.x * (i - m_current_mode.y);
   }
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
-  display_single_buffer = true;
   display_set_mode(m_current_mode.x + m_current_mode.left * 2,
                    m_current_mode.y + m_current_mode.top * 2,
                    0, 0);
+  display_single_buffer = true;
+  display_swap_buffers();
+
+  resetLinePointers();
 
   m_display_enabled = true;
 
@@ -181,29 +192,76 @@ bool H3GFX::setMode(uint8_t mode) {
 
 //#define PROFILE_BG
 
+inline void H3GFX::blitBuffer(void *buf) {
+  memcpy((void *)display_active_buffer, buf,
+         (m_current_mode.x + m_current_mode.left * 2) *
+         (m_current_mode.y + m_current_mode.top * 2) *
+         sizeof(pixel_t));
+}
+
+void H3GFX::updateStatus() {
+  bool enabled = false;
+  for (int i = 0; i < MAX_BG; ++i) {
+    if (bgEnabled(i))
+      enabled = true;
+  }
+  if (enabled != m_engine_enabled) {
+    if (m_engine_enabled) {
+      // We're running multi-buffered and are switching to single-buffered mode.
+      // We need to copy what is currently visible to the single buffer if they
+      // are not the same.
+      void *latest_content = display_visible_buffer;
+      display_single_buffer = true;
+      display_swap_buffers();
+      if (display_active_buffer != latest_content) {
+        blitBuffer(latest_content);
+      }
+    } else {
+      // We're running single-buffered and are switching to multi-buffered mode.
+      // We need to copy the single buffer to all buffers to avoid flickering.
+      void *latest_content = display_visible_buffer;
+      display_single_buffer = false;
+      display_swap_buffers();
+      blitBuffer(latest_content);
+    }
+    resetLinePointers();
+  }
+  m_engine_enabled = enabled;
+}
+
 void H3GFX::updateBg() {
   static uint32_t last_frame = 0;
+  static int post_render_count = 0;
 
   if (frame() <= last_frame + m_frameskip)
     return;
 
   last_frame = frame();
 
-  memcpy((void *)active_buffer, backbuffer,
-         (m_current_mode.x + m_current_mode.left * 2) *
-         (m_current_mode.y + m_current_mode.top) *
-         sizeof(pixel_t));
-  // repeat top background (backbuffer contains off-screen pixels that should not be seen)
-  memcpy((pixel_t *)active_buffer + (m_current_mode.x + m_current_mode.left * 2) * (m_current_mode.y + m_current_mode.top),
-         backbuffer,
-         (m_current_mode.x + m_current_mode.left * 2) * m_current_mode.top * sizeof(pixel_t));
+  if (!m_bg_modified) {
+    mmu_flush_dcache();
+    if (display_single_buffer)
+      return;
+    // need to render a few extra frames to make sure we can actually see
+    // the current state
+    if (post_render_count > 2)
+      return;
+    post_render_count++;
+  }
 
-  display_swap_buffers();
-
-  if (!m_bg_modified)
-    return;
+  if (m_dupe_active) {
+    if (!display_single_buffer) {
+      void *active = display_active_buffer;
+      display_swap_buffers();
+      blitBuffer(active);
+      display_swap_buffers();
+      m_dupe_active = false;
+    }
+    m_dupe_active = false;
+  }
 
   m_bg_modified = false;
+  post_render_count = 0;
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
@@ -303,6 +361,9 @@ next:
       }
     }
   }
+
+  display_swap_buffers();
+  resetLinePointers();
 }
 
 #ifdef USE_BG_ENGINE

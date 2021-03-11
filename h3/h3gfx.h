@@ -56,9 +56,11 @@ public:
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     m_pixels[y][x] = c;
+    m_dupe_active = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
     m_pixels[y][x] = m_current_palette[c];
+    m_dupe_active = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
                    uint8_t b);
@@ -88,11 +90,13 @@ public:
 
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
     memcpy((pixel_t *)address, data, len * sizeof(pixel_t));
+    m_dupe_active = true;
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
     pixel_t *pa = (pixel_t *)address;
     for (uint32_t i = 0; i < len; ++i)
       *pa++ = m_current_palette[*data++];
+    m_dupe_active = true;
   }
 
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
@@ -104,10 +108,18 @@ public:
 
   void render();
 
+protected:
+  void updateStatus() override;
+
 private:
+  inline void blitBuffer(void *buf);
+  void resetLinePointers();
+
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
   bool m_force_filter;
+  bool m_engine_enabled;
+  bool m_dupe_active;
 
   pixel_t **m_pixels;
 
