@@ -222,7 +222,7 @@ void H3GFX::updateStatus() {
       // We're running multi-buffered and are switching to single-buffered mode.
       // We need to copy what is currently visible to the single buffer if they
       // are not the same.
-      void *latest_content = display_visible_buffer;
+      void *latest_content = (void *)display_visible_buffer;
       display_single_buffer = true;
       display_swap_buffers();
       if (display_active_buffer != latest_content) {
@@ -231,7 +231,7 @@ void H3GFX::updateStatus() {
     } else {
       // We're running single-buffered and are switching to multi-buffered mode.
       // We need to copy the single buffer to all buffers to avoid flickering.
-      void *latest_content = display_visible_buffer;
+      void *latest_content = (void *)display_visible_buffer;
       display_single_buffer = false;
       display_swap_buffers();
       blitBuffer(latest_content);
@@ -263,7 +263,7 @@ void H3GFX::updateBg() {
 
   if (m_dupe_active) {
     if (!display_single_buffer) {
-      void *active = display_active_buffer;
+      void *active = (void *)display_active_buffer;
       display_swap_buffers();
       blitBuffer(active);
       display_swap_buffers();
