@@ -214,6 +214,7 @@ pixel_t Colorspace::fromIndexed(ipixel_t c) {
     return (pixel_t)c;
   else {
 #endif
+    c %= 256;
     const palette *p = pals[m_colorspace];
     // XXX: generalize
 #ifdef SDL
