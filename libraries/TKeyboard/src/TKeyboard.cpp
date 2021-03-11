@@ -311,8 +311,7 @@ uint8_t TKeyboard::findcode(uint8_t c) {
 //     255
 //
 // XXX: 136 byte jump table
-uint16_t __attribute__((optimize("no-jump-tables")))
-TKeyboard::scanToKeycode() {
+uint16_t NOJUMP TKeyboard::scanToKeycode() {
   static uint8_t state = STS_SYOKI;
   static uint8_t scIndex = 0;
   uint16_t c, code = 0;
@@ -482,7 +481,7 @@ uint8_t TKeyboard::m_key_state[256 / 8];
 //
 // Returned value: input information
 //
-keyEvent __attribute__((optimize("no-jump-tables"))) TKeyboard::read() {
+keyEvent NOJUMP TKeyboard::read() {
   static keyinfo sts_state = { .value = 0 };
   static uint8_t sts_numlock   = LOCK_Start; // NumLock state
   static uint8_t sts_CapsLock  = LOCK_Start; // CapsLock state

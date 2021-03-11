@@ -20,8 +20,7 @@ tTVscreen sc0;
 bool screen_putch_disable_escape_codes = false;
 
 // XXX: 168 byte jump table
-void BASIC_INT __attribute__((optimize("no-jump-tables")))
-screen_putch(uint8_t c, bool lazy) {
+void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
   static uint8_t hex_digit = 0, hex_value, hex_type;
   static bool reverse = false;

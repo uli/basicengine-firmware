@@ -392,7 +392,7 @@ implementations and may be changed in future releases.
 \ref GET_DATE SET_DATE
 ***/
 // XXX: 32 byte jump table
-void __attribute__((optimize("no-jump-tables"))) Basic::idate() {
+void NOJUMP Basic::idate() {
 #ifdef USE_INNERRTC
   time_t tt = now();
 

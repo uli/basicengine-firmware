@@ -633,7 +633,7 @@ consumes additional memory and compute resources without providing
 any benefit.
 ***/
 // XXX: 32-byte jump table
-void BASIC_INT __attribute__((optimize("no-jump-tables"))) Basic::ilet() {
+void BASIC_INT NOJUMP Basic::ilet() {
   switch (*cip) {  //中間コードで分岐
   case I_VAR:      // 変数の場合
     cip++;         // 中間コードポインタを次へ進める

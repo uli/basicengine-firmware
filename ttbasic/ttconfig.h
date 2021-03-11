@@ -21,6 +21,8 @@
 #define PIXEL_TYPE uint8_t
 #define LOWMEM
 #define USE_PSX_GPIO
+#define USE_SMALL
+#define NO_JUMP_TABLES
 #endif
 
 #ifdef ESP32
@@ -115,7 +117,17 @@
 #include "amstrad_8x8.h"
 #include "cbm_ascii_8x8.h"
 
+#ifdef USE_SMALL
 #define SMALL __attribute__((optimize("Os")))
+#else
+#define SMALL
+#endif
+
+#ifdef NO_JUMP_TABLES
+#define NOJUMP __attribute__((optimize("no-jump-tables")))
+#else
+#define NOJUMP
+#endif
 
 #if defined(H3) || defined(__DJGPP__)
 #define GROUP(g)
