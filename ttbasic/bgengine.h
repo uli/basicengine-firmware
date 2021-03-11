@@ -178,6 +178,7 @@ public:
 
 protected:
   uint32_t m_frameskip;
+  virtual void updateStatus();
 
   bool m_bg_modified;
 

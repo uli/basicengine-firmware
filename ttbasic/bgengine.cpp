@@ -13,11 +13,13 @@ void BGEngine::enableBg(uint8_t bg) {
   if (m_bg[bg].tiles) {
     m_bg[bg].enabled = true;
   }
+  updateStatus();
 }
 
 void BGEngine::disableBg(uint8_t bg) {
   m_bg_modified = true;
   m_bg[bg].enabled = false;
+  updateStatus();
 }
 
 void BGEngine::freeBg(uint8_t bg_idx) {
@@ -32,6 +34,7 @@ void BGEngine::freeBg(uint8_t bg_idx) {
     free(bg->tile_map);
     bg->tile_map = NULL;
   }
+  updateStatus();
 }
 
 void BGEngine::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w,
@@ -250,6 +253,8 @@ bool BGEngine::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height) {
   bg->win_x = bg->win_y = 0;
   bg->win_w = m_current_mode.x;
   bg->win_h = m_current_mode.y;
+
+  updateStatus();
   return false;
 }
 
@@ -289,6 +294,9 @@ void BGEngine::reset() {
   resetBgs();
 
   Video::reset();
+}
+
+void BGEngine::updateStatus() {
 }
 
 #endif  // USE_BG_ENGINE
