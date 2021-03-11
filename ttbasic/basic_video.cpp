@@ -19,10 +19,25 @@ tTVscreen sc0;
 
 bool screen_putch_disable_escape_codes = false;
 
+static inline bool is_hex(uint8_t c) {
+  return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
+static void put_hex_digit(uint32_t hex_value, uint8_t hex_type, bool lazy)
+{
+  if (hex_type == 0)
+    sc0.setColor(sc0.getFgColor(), csp.fromIndexed(hex_value));
+  else if (hex_type == 1)
+    sc0.setColor(csp.fromIndexed(hex_value), sc0.getBgColor());
+  else
+    sc0.putch(hex_value, lazy);
+}
+
 // XXX: 168 byte jump table
 void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
-  static uint8_t hex_digit = 0, hex_value, hex_type;
+  static uint8_t hex_digit = 0, hex_type, hex_max_len;
+  static ipixel_t hex_value;
   static bool reverse = false;
 
   if (kb.state(PS2KEY_L_Alt)) {
@@ -38,26 +53,31 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
   if (c == '\\') {
     if (!escape) {
       escape = true;
+      if (hex_digit) {
+        put_hex_digit(hex_value, hex_type, lazy);
+        hex_digit = 0;
+      }
       return;
     }
     sc0.putch('\\');
   } else {
     if (hex_digit > 0) {
-      if (hex_digit == 1) {
-        hex_value = hex2value(c);
-        hex_digit++;
-      } else {
+      if (hex_digit == 1)
+        hex_value = 0;
+      if (is_hex(c) && hex_digit <= hex_max_len) {
         hex_value = (hex_value << 4) | hex2value(c);
-        if (hex_type == 0)
-          sc0.setColor(sc0.getFgColor(), csp.fromIndexed((ipixel_t)hex_value));
-        else if (hex_type == 1)
-          sc0.setColor(csp.fromIndexed((ipixel_t)hex_value), sc0.getBgColor());
-        else
-          sc0.putch(hex_value, lazy);
-
-        hex_digit = 0;
+        hex_digit++;
+        goto out;
       }
-    } else if (escape) {
+      if (!is_hex(c) || hex_digit > hex_max_len) {
+        put_hex_digit(hex_value, hex_type, lazy);
+        hex_digit = 0;
+        if (is_hex(c) && hex_digit > hex_max_len)
+          goto out;
+      }
+    }
+
+    if (escape) {
       switch (c) {
       case 'R':
         if (!reverse) {
@@ -96,16 +116,21 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
       case 'f':
         hex_digit = 1;
         hex_type = 1;
+        hex_max_len = csp.getColorSpace() < 2 ? 2 : sizeof(ipixel_t) * 2;
         break;
       case 'b':
         hex_digit = 1;
         hex_type = 0;
+        hex_max_len = csp.getColorSpace() < 2 ? 2 : sizeof(ipixel_t) * 2;
         break;
       case 'x':
         hex_digit = 1;
         hex_type = 2;
+        hex_max_len = 2;
         break;
-      default: break;
+      default:
+        sc0.putch(c, lazy);
+        break;
       }
     } else {
       switch (c) {
@@ -122,6 +147,7 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
       }
     }
   }
+out:
   escape = false;
 }
 
