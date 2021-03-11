@@ -37,6 +37,8 @@
 #define USE_H3GFX 1
 #define USE_BG_ENGINE
 #define PIXEL_TYPE uint32_t
+#define IPIXEL_TYPE uint32_t
+#define TRUE_COLOR
 #define BUFFERED_SCREEN
 #define SINGLE_BLIT
 #endif
