@@ -81,7 +81,7 @@ typedef size_t (* drpcx_read_proc)(void* userData, void* bufferOut, size_t bytes
 // Loads a PCX file using the given callbacks.
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y,
                      int* internalComponents, int desiredComponents,
-                     int dst_x, int dst_y, int off_x, int off_y, int w, int h, int mask = -1);
+                     int dst_x, int dst_y, int off_x, int off_y, int w, int h, dr_uint32 mask = (uint32_t)-1);
 
 // Frees memory returned by drpcx_load() and family.
 void drpcx_free(void* pReturnValueFromLoad);
@@ -140,7 +140,7 @@ typedef struct
     int dst_x, dst_y;
     int off_x, off_y;
     int w, h;
-    int mask;
+    dr_uint32 mask;
 } drpcx;
 
 
@@ -485,6 +485,8 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
         {
             // Parse the whole file once to get to the palette.
             dr_uint8 *palette256 = (dr_uint8 *)malloc(256 * 3);
+            ipixel_t palettei[256];
+
             if (!palette256)
               return DR_FALSE;
 
@@ -514,8 +516,9 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 // Convert to YUV422
                 // XXX: Needless loss of quality on platforms with 32-bit colorspace
                 for (int i = 0; i < 256; ++i) {
-                  palette256[i] = csp.indexedColorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
+                  palettei[i] = csp.indexedColorFromRgb(palette256[i*3], palette256[i*3+1], palette256[i*3+2]);
                 }
+                free(palette256);
             }
 
             // Go back to the image data.
@@ -524,8 +527,8 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
                 ipixel_t *ln = 0;
-                if (pPCX->mask < 0)
-                  ln = (ipixel_t *)malloc(pPCX->header.bytesPerLine);
+                if (pPCX->mask == (dr_uint32)-1)
+                  ln = (ipixel_t *)malloc(pPCX->header.bytesPerLine * sizeof(ipixel_t));
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
                     if (rleCount == 0) {
@@ -536,23 +539,22 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                     if (y >= oy && y < oy+h && x >= ox && x < ox+w && x < pPCX->width) {
                       ipixel_t c;
                       if (paletteMarker == 0x0c) {
-                        c = (ipixel_t)palette256[rleValue];
+                        c = palettei[rleValue];
                       } else {
                         c = (ipixel_t)(rleValue >> 4);
                       }
-                      if (pPCX->mask < 0) {
+                      if (pPCX->mask == (dr_uint32)-1) {
                         ln[x] = c;
                       } else if (c != pPCX->mask)
                         vs23.setPixelIndexed(dx + x-ox, dy + y-oy, c);
                     }
                 }
-                if (pPCX->mask < 0 && y >= oy && y < oy+h) {
+                if (pPCX->mask == (dr_uint32)-1 && y >= oy && y < oy+h) {
                   vs23.setPixelsIndexed(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
                 }
-                if (pPCX->mask < 0)
+                if (pPCX->mask == (dr_uint32)-1)
                   free(ln);
             }
-            free(palette256);
 
             return DR_TRUE;
         }
@@ -586,7 +588,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 if (y >= oy && y < oy+h) {
                   dr_uint32 x;
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
-                  if (pPCX->mask < 0) {
+                  if (pPCX->mask == (dr_uint32)-1) {
                     // XXX: Needless loss of quality on platforms with 32-bit colorspace
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       pRow_[x-ox] = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
@@ -595,7 +597,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   } else {
                     for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       ipixel_t ci = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
-                      if (pPCX->mask < 0 || ci != pPCX->mask) {
+                      if (pPCX->mask == (dr_uint32)-1 || ci != pPCX->mask) {
                         pixel_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                         vs23.setPixel(dx+x, dy+y-oy, c);
                       }
@@ -645,7 +647,7 @@ bool drpcx_info(drpcx_read_proc onRead, void* pUserData, int* x, int* y, int* in
 }
 
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y, int* internalComponents, int desiredComponents,
-                     int dx, int dy, int ox, int oy, int w, int h, int mask)
+                     int dx, int dy, int ox, int oy, int w, int h, dr_uint32 mask)
 {
     if (onRead == NULL) return false;
     if (desiredComponents > 4) return false;

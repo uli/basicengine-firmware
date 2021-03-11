@@ -787,7 +787,7 @@ public:
 
   // ビットマップファイルのロード
   uint8_t loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y, int32_t x,
-                     int32_t y, int32_t &w, int32_t &h, int mask = -1);
+                     int32_t y, int32_t &w, int32_t &h, uint32_t mask = (uint32_t)-1);
   uint8_t saveBitmap(char *fname, int32_t src_x, int32_t src_y, int32_t w,
                      int32_t h);
 };

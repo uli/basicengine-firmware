@@ -3283,7 +3283,7 @@ void SMALL Basic::ildbmp() {
   bool define_bg = false, define_spr = false;
   int32_t bg;
 #endif
-  int32_t key = -1;  // no keying
+  uint32_t key = (uint32_t)-1;  // no keying
 
   if (!(fname = getParamFname())) {
     return;
@@ -3343,7 +3343,7 @@ void SMALL Basic::ildbmp() {
     } else if (*cip == I_KEY) {
       // KEY c
       cip++;
-      if (getParam(key, 0, 255, I_NONE))
+      if (getParam(key, 0, UINT32_MAX, I_NONE))
         return;
     } else {
       break;
