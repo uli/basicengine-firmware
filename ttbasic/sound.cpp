@@ -325,7 +325,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents() {
   // Unload driver if nothing has been played for a few seconds.
   if (m_tsf && !tsf_playing(m_tsf)) {
     if (m_all_done_time) {
-      if (now > m_all_done_time + 5000)
+      if (now > m_all_done_time + SOUND_IDLE_TIMEOUT)
         unloadFont();
     } else
       m_all_done_time = now;
@@ -352,7 +352,7 @@ void GROUP(basic_sound) BasicSound::render() {
     if (m_sam->finished()) {
       if (!m_sam_done_time) {
         m_sam_done_time = millis();
-      } else if (millis() > m_sam_done_time + 5000) {
+      } else if (millis() > m_sam_done_time + SOUND_IDLE_TIMEOUT) {
         delete m_sam;
         m_sam = NULL;
         audio.init(16000);

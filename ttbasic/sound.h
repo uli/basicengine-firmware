@@ -46,6 +46,12 @@
 #define dbg_snd(x...) do {} while(0)
 #endif
 
+#ifdef LOWMEM
+#define SOUND_IDLE_TIMEOUT 5000
+#else
+#define SOUND_IDLE_TIMEOUT 300000
+#endif
+
 #ifdef HAVE_TSF
 
 #ifdef DEBUG_TSF_MEMORY
