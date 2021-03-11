@@ -313,7 +313,8 @@ usually a good idea to place the `ON` attribute at the end if used.
 ***/
 void BASIC_INT Basic::isprite() {
 #ifdef USE_BG_ENGINE
-  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, key, prio;
+  int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, prio;
+  uint32_t key;
   bool set_frame = false, set_opacity = false;
 
   if (*cip == I_OFF) {
@@ -371,7 +372,7 @@ void BASIC_INT Basic::isprite() {
     }
     break;
   case I_KEY:
-    if (getParam(key, 0, 255, I_NONE)) return;
+    if (getParam(key, 0, IPIXEL_MAX, I_NONE)) return;
     vs23.setSpriteKey(num, key);
     break;
   case I_PRIO:

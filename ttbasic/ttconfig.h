@@ -62,6 +62,10 @@
 #define BUFFERED_SCREEN
 #endif
 
+#ifndef IPIXEL_TYPE
+#define IPIXEL_TYPE uint8_t
+#endif
+
 // ** Default screen size in terminal mode ************************
 // ※ While moving, can be changed by WIDTH command (default: 80x25)
 // XXX: I don't think this works anymore.

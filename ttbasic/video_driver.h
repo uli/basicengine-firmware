@@ -14,7 +14,7 @@
 
 #ifndef STATIC_ANALYSIS
 typedef PIXEL_TYPE pixel_t;
-typedef uint8_t ipixel_t;
+typedef IPIXEL_TYPE ipixel_t;
 #else
 class pixel_t {
 public:
@@ -44,6 +44,14 @@ public:
 private:
   uint8_t m_value;
 };
+#endif
+
+#if IPIXEL_TYPE == uint32_t
+#define IPIXEL_MAX UINT32_MAX
+#elif PIXEL_TYPE == uint8_t
+#define IPIXEL_MAX UINT8_MAX
+#else
+#error unknown range for IPIXEL_TYPE
 #endif
 
 struct video_mode_t {

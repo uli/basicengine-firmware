@@ -576,24 +576,24 @@ num_t BASIC_FP Basic::nrgb() {
 Changes the foreground and background color for text output.
 \usage COLOR fg_color[, bg_color [, cursor_color]]
 \args
-@fg_color	foreground color [`0` to `255`]
-@bg_color	background color [`0` to `255`, default: `0`]
-@cursor_color	cursor color [`0` to `255`]
+@fg_color	foreground color [range depends on color space]
+@bg_color	background color [range depends on color space, default: `0`]
+@cursor_color	cursor color [range depends on color space]
 \ref RGB()
 ***/
 void Basic::icolor() {
-  int32_t fc, bgc = 0;
+  uint32_t fc, bgc = 0;
   // XXX: allow 32-bit colors
-  if (getParam(fc, 0, 255, I_NONE))
+  if (getParam(fc, 0, IPIXEL_MAX, I_NONE))
     return;
   if (*cip == I_COMMA) {
     cip++;
-    if (getParam(bgc, 0, 255, I_NONE))
+    if (getParam(bgc, 0, IPIXEL_MAX, I_NONE))
       return;
     if (*cip == I_COMMA) {
       ++cip;
       int32_t cc;
-      if (getParam(cc, 0, 255, I_NONE))
+      if (getParam(cc, 0, IPIXEL_MAX, I_NONE))
         return;
       c_cursor_color(csp.fromIndexed((ipixel_t)cc));
     }
@@ -826,7 +826,7 @@ Draws a pixel.
 \args
 @x_coord X coordinate of the pixel
 @y_coord Y coordinate of the pixel
-@color	 color of the pixel [`0` to `255`]
+@color	 color of the pixel [range depends on color space]
 \ref RGB()
 ***/
 void GROUP(basic_video) Basic::ipset() {
@@ -859,7 +859,8 @@ expect.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::iline() {
-  int32_t x1, x2, y1, y2, c;
+  int32_t x1, x2, y1, y2;
+  ipixel_t c;
 
   if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
       getParam(x2, I_COMMA) || getParam(y2, I_NONE))
@@ -885,21 +886,22 @@ Draws a circle.
 @y_coord	Y coordinate of the circle's center +
                 [`0` to `PSIZE(2)-1`]
 @radius		circle's radius
-@color		color of the circle's outline [`0` to `255`]
+@color		color of the circle's outline [range depends on color space]
 @fill_color	color of the circle's body +
-                [`0` to `255`, or `-1` for an unfilled circle]
+                [range depends on color space, `-1` for an unfilled circle]
 \bugs
 * `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::icircle() {
-  int32_t x, y, r, c, f;
+  int32_t x, y, r;
+  ipixel_t c, f;
   if (getParam(x, I_COMMA) || getParam(y, I_COMMA) || getParam(r, I_COMMA) ||
       getParam(c, I_COMMA) || getParam(f, I_NONE))
     return;
 
   c = csp.fromIndexed(c);
-  if (f != -1)
+  if (f != (ipixel_t)-1)
     f = csp.fromIndexed(f);
   
   c_circle(x, y, r, c, f);
@@ -920,20 +922,21 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
           [`0` to `PSIZE(2)-1`]
 @color	  color of the rectangle's outline
 @fill_color color of the rectangle's body +
-            [`0` to `255`, or `-1` for an unfilled rectangle]
+            [range depends on color space, `-1` for an unfilled rectangle]
 \bugs
 * `fill_color` cannot be omitted.
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::irect() {
-  int32_t x1, y1, x2, y2, c, f;
+  int32_t x1, y1, x2, y2;
+  ipixel_t c, f;
   if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
       getParam(c, I_COMMA) || getParam(f, I_NONE))
     return;
 
   c = csp.fromIndexed(c);
-  if (f != -1)
+  if (f != (ipixel_t)-1)
     f = csp.fromIndexed(f);
 
   c_rect(x1, y1, x2, y2, c, f);
