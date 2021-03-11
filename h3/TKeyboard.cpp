@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
 
+//#define DEBUG_REPORT
+
 #include <TKeyboard.h>
 #include "TPS2.h"
 #include <usb.h>
@@ -195,11 +197,13 @@ int keybuf_w = 0;
 static uint8_t key_state[256];
 void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
   uint8_t old_state[256];
-  //printf("kbdrep mod %02X keys ", rep->modifier);
+#ifdef DEBUG_REPORT
+  printf("kbdrep mod %02X keys ", rep->modifier);
   for (int i = 0; i < 6; ++i) {
     printf("%02X ", rep->keycode[i]);
   }
   putchar('\n');
+#endif
 
   memcpy(old_state, key_state, 256);
   memset(key_state, 0, 256);
