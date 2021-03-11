@@ -36,6 +36,7 @@
 #define USE_BG_ENGINE
 #define PIXEL_TYPE uint32_t
 #define BUFFERED_SCREEN
+#define SINGLE_BLIT
 #endif
 
 #ifdef __DJGPP__

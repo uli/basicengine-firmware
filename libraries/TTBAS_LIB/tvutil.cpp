@@ -248,12 +248,18 @@ void tv_insLine(uint16_t l) {
 
 // Screen scroll up for one line
 void GROUP(basic_video) tv_scroll_up() {
+#ifdef SINGLE_BLIT
+  vs23.blitRect(win_x, win_y + f_height,
+                win_x, win_y,
+                win_width, win_height - f_height);
+#else
   vs23.blitRect(win_x, win_y + f_height,
                 win_x, win_y,
                 win_width/2, win_height - f_height);
   vs23.blitRect(win_x + win_width / 2, win_y + f_height,
                 win_x + win_width / 2, win_y,
                 win_width/2, win_height-f_height);
+#endif
   tv_clerLine(win_c_height-1);
 }
 
