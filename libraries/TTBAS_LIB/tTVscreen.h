@@ -54,19 +54,19 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 
   protected:
     void INIT_DEV(){};                           // デバイスの初期化
-    void MOVE(uint8_t y, uint8_t x);             // キャラクタカーソル移動 **
-    void WRITE(uint8_t x, uint8_t y, uint8_t c); // 文字の表示
+    void MOVE(uint16_t y, uint16_t x);             // キャラクタカーソル移動 **
+    void WRITE(uint16_t x, uint16_t y, uint8_t c); // 文字の表示
     void CLEAR();                                // 画面全消去
-    void CLEAR_LINE(uint8_t l, int from = 0);                  // 行の消去
+    void CLEAR_LINE(uint16_t l, int from = 0);                  // 行の消去
     void SCROLL_UP();                            // スクロールアップ
     void SCROLL_DOWN();                          // スクロールダウン
-    void INSLINE(uint8_t l);                     // 指定行に1行挿入(下スクロール)
+    void INSLINE(uint16_t l);                     // 指定行に1行挿入(下スクロール)
 
   public:
     uint16_t prev_pos_x;        // カーソル横位置
     uint16_t prev_pos_y;        // カーソル縦位置
  
-    inline void write(uint8_t x, uint8_t y, uint8_t c) {
+    inline void write(uint16_t x, uint16_t y, uint8_t c) {
       tv_write(x, y, c);
       VPOKE(x, y, c);
       VPOKE_CCOL(x, y);
@@ -126,7 +126,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
 
     void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
 
-    inline void setWindow(uint8_t x, uint8_t y, uint8_t w, uint8_t h) {
+    inline void setWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
       tv_window_set(x, y, w, h);
       win_x = x; win_y = y;
       width = w; height = h;
@@ -140,10 +140,10 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
       setWindow(0, 0, whole_width, whole_height);
     }
 
-    inline uint8_t getScreenWidth() {
+    inline uint16_t getScreenWidth() {
       return tv_get_cwidth();
     }
-    inline uint8_t getScreenHeight() {
+    inline uint16_t getScreenHeight() {
       return tv_get_cheight();
     }
     void setFont(const uint8_t *font);

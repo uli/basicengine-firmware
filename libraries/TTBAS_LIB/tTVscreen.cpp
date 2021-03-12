@@ -39,7 +39,7 @@ void setupPS2(uint8_t kb_type);
 
 // カーソルの移動
 // ※pos_x,pos_yは本関数のみでのみ変更可能
-void tTVscreen::MOVE(uint8_t y, uint8_t x) {
+void tTVscreen::MOVE(uint16_t y, uint16_t x) {
   uint8_t c;
   if (enableCursor && flgCur) {
     c = VPEEK(pos_x, pos_y);
@@ -55,7 +55,7 @@ void tTVscreen::MOVE(uint8_t y, uint8_t x) {
 }
 
 // 文字の表示
-void tTVscreen::WRITE(uint8_t x, uint8_t y, uint8_t c) {
+void tTVscreen::WRITE(uint16_t x, uint16_t y, uint8_t c) {
   tv_write(x, y, c);  // 画面表示
 }
 
@@ -65,7 +65,7 @@ void tTVscreen::CLEAR() {
 }
 
 // 行の消去
-void tTVscreen::CLEAR_LINE(uint8_t l, int from) {
+void tTVscreen::CLEAR_LINE(uint16_t l, int from) {
   tv_clerLine(l, from);
 }
 
@@ -80,7 +80,7 @@ void tTVscreen::SCROLL_DOWN() {
 }
 
 // 指定行に1行挿入(下スクロール)
-void tTVscreen::INSLINE(uint8_t l) {
+void tTVscreen::INSLINE(uint16_t l) {
   tv_insLine(l);
 }
 

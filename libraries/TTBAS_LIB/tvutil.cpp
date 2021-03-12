@@ -98,7 +98,7 @@ void tv_reinit()
   tv_window_reset();
 }
 
-void GROUP(basic_video) tv_window_set(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+void GROUP(basic_video) tv_window_set(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
   win_x = x * f_width;
   win_y = y * f_height;
@@ -137,20 +137,20 @@ const uint8_t* tv_getFontAdr() {
 }
 
 // Screen characters sideways
-uint8_t GROUP(basic_video) tv_get_cwidth() {
+uint16_t GROUP(basic_video) tv_get_cwidth() {
   return c_width;
 }
 
 // Screen characters downwards
-uint8_t GROUP(basic_video) tv_get_cheight() {
+uint16_t GROUP(basic_video) tv_get_cheight() {
   return c_height;
 }
 
-uint8_t GROUP(basic_video) tv_get_win_cwidth() {
+uint16_t GROUP(basic_video) tv_get_win_cwidth() {
   return win_c_width;
 }
 
-uint8_t GROUP(basic_video) tv_get_win_cheight() {
+uint16_t GROUP(basic_video) tv_get_win_cheight() {
   return win_c_height;
 }
 
@@ -167,7 +167,7 @@ uint16_t GROUP(basic_video) tv_get_gheight() {
 //
 // Cursor display
 //
-void GROUP(basic_video) tv_drawCurs(uint8_t x, uint8_t y) {
+void GROUP(basic_video) tv_drawCurs(uint16_t x, uint16_t y) {
   pixel_t pix[f_width];
   for (int i = 0; i < f_width; ++i)
     pix[i] = cursor_color;
@@ -195,11 +195,11 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
   }
 }
 
-void ICACHE_RAM_ATTR tv_write(uint8_t x, uint8_t y, uint8_t c) {
+void ICACHE_RAM_ATTR tv_write(uint16_t x, uint16_t y, uint8_t c) {
   tv_write_px(win_x + x*f_width, win_y + y*f_height, c);
 }
 
-void ICACHE_RAM_ATTR tv_write_color(uint8_t x, uint8_t y, uint8_t c, pixel_t fg, pixel_t bg)
+void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg)
 {
   pixel_t sfg = fg_color;
   pixel_t sbg = bg_color;

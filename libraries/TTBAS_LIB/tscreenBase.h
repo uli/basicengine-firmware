@@ -94,13 +94,13 @@ class tscreenBase {
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
 	virtual void END_DEV() {};                                // デバイスの終了
-    virtual void MOVE(uint8_t y, uint8_t x) = 0;              // キャラクタカーソル移動
-    virtual void WRITE(uint8_t x, uint8_t y, uint8_t c) = 0;  // 文字の表示
+    virtual void MOVE(uint16_t y, uint16_t x) = 0;              // キャラクタカーソル移動
+    virtual void WRITE(uint16_t x, uint16_t y, uint8_t c) = 0;  // 文字の表示
     virtual void CLEAR() = 0;                                 // 画面全消去
-    virtual void CLEAR_LINE(uint8_t l, int from = 0)  = 0;                  // 行の消去
+    virtual void CLEAR_LINE(uint16_t l, int from = 0)  = 0;                  // 行の消去
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
     virtual void SCROLL_DOWN() = 0;                           // スクロールダウン
-    virtual void INSLINE(uint8_t l) = 0;                      // 指定行に1行挿入(下スクロール)
+    virtual void INSLINE(uint16_t l) = 0;                      // 指定行に1行挿入(下スクロール)
     
   public:
 	virtual void beep() {};                              // BEEP音の発生

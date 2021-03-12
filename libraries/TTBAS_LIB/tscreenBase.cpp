@@ -178,7 +178,7 @@ void tscreenBase::delete_char() {
   VPOKE(top_x, top_y, 0);
   VPOKE_CCOL(top_x, top_y);
 
-  for (uint8_t i = 0; i < (pos_x + ln) / width + 1; i++)
+  for (uint16_t i = 0; i < (pos_x + ln) / width + 1; i++)
     refresh_line(pos_y + i);
   MOVE(pos_y, pos_x);
   return;
@@ -276,7 +276,7 @@ void tscreenBase::Insert_char(uint8_t c) {
     movePosNextNewChar();
 
     // 挿入した行の再表示
-    for (uint8_t i = 0; i < (pos_x + ln) / width + 1; i++)
+    for (uint16_t i = 0; i < (pos_x + ln) / width + 1; i++)
       refresh_line(pos_y + i);
     MOVE(pos_y, pos_x);
   }
@@ -344,7 +344,7 @@ void tscreenBase::movePosNextLineChar(bool force) {
   if (bc && pos_y + 1 < height) {
     if (force) {
       char *text;
-      uint8_t y = pos_y;
+      uint16_t y = pos_y;
       while (y && VPEEK(width - 1, y - 1))
         y--;
       int lineno = getLineNum(y);
@@ -394,7 +394,7 @@ void tscreenBase::movePosPrevLineChar(bool force) {
   if (bc && pos_y > 0) {
     if (force) {
       char *text;
-      uint8_t y = pos_y;
+      uint16_t y = pos_y;
       while (y && VPEEK(width - 1, y - 1))
         y--;
       int lineno = getLineNum(y);
@@ -566,7 +566,7 @@ void tscreenBase::edit_scrollUp() {
   // 1行分スクロールアップを試みる
   int32_t lineno, nm, len;
   char *text;
-  uint8_t y = height - 1;
+  uint16_t y = height - 1;
   while (y && VPEEK(width - 1, y - 1))
     y--;
   lineno = getLineNum(y);
@@ -577,7 +577,7 @@ void tscreenBase::edit_scrollUp() {
       // 次の行が存在する
       text = bc->getLineStr(nm);
       len = strlen(text);
-      for (uint8_t i = 0; i < len / width + 1; i++) {
+      for (uint16_t i = 0; i < len / width + 1; i++) {
         scroll_up();
       }
       // print to screen
@@ -608,7 +608,7 @@ void tscreenBase::edit_scrollDown() {
     if (prv_nm > 0) {
       text = bc->getLineStr(prv_nm);
       len = strlen(text);
-      for (uint8_t i = 0; i < len / width + 1; i++) {
+      for (uint16_t i = 0; i < len / width + 1; i++) {
         scroll_down();
       }
       // print to screen
