@@ -57,7 +57,6 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_bin.Init(0, 0);
 
   m_frame = 0;
-//  m_pal.init();
   reset();
 
   m_display_enabled = true;
