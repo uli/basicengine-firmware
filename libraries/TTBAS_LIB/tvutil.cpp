@@ -236,12 +236,18 @@ void tv_insLine(uint16_t l) {
   } else if (l == win_c_height-1) {
     tv_clerLine(l);
   } else {
+#ifdef SINGLE_BLIT
+    vs23.blitRect(win_x, win_y + f_height * l,
+                  win_x, win_y + f_height * (l + 1),
+                  win_width, win_height - f_height - l * f_height);
+#else
     vs23.blitRect(win_x, win_y + f_height * l,
                   win_x, win_y + f_height * (l + 1),
                   win_width/2, win_height - f_height - l * f_height);
     vs23.blitRect(win_x + win_width / 2, win_y + f_height * l,
                   win_x + win_width / 2, win_y + f_height * (l + 1),
                   win_width/2, win_height - f_height - l * f_height);
+#endif
     tv_clerLine(l);
   }
 }
@@ -265,12 +271,18 @@ void GROUP(basic_video) tv_scroll_up() {
 
 // Screen scroll down for one line
 void GROUP(basic_video) tv_scroll_down() {
+#ifdef SINGLE_BLIT
+  vs23.blitRect(win_x, win_y,
+                win_x, win_y + f_height,
+                win_width, win_height-f_height);
+#else
   vs23.blitRect(win_x, win_y,
                 win_x, win_y + f_height,
                 win_width/2, win_height-f_height);
   vs23.blitRect(win_x + win_width / 2, win_y,
                 win_x + win_width / 2, win_y + f_height,
                 win_width/2, win_height-f_height);
+#endif
   tv_clerLine(0);
 }
 
