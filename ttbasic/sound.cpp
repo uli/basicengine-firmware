@@ -227,11 +227,13 @@ void BasicSound::loadFont() {
     m_sf2_file = fopen(
       (BString(SD_PREFIX) + BString('/') + m_font_name).c_str(),
       "r");
+#ifndef H3
     if (!m_sf2_file) {
       m_sf2_file = fopen(
         (BString(FLASH_PREFIX) + BString('/') + m_font_name).c_str(),
         "r");
     }
+#endif
   }
 #endif
   if (!m_sf2_file)

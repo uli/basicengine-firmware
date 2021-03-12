@@ -178,8 +178,7 @@
 #endif
 
 #ifdef H3
-#define UNIFILE_USE_OLD_SPIFFS
-#define UNIFILE_USE_SDFAT
+#define SD_PREFIX "/sd"
 #define __FLASH__
 #endif
 

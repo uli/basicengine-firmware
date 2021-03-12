@@ -36,6 +36,9 @@ void SMALL basic_init_file_early() {
   char *root = getenv("ENGINEBASIC_ROOT");
   if (root)
     _chdir(root);
+#elif defined(H3)
+  if (!_chdir(SD_PREFIX))
+    bfs.fakeTime();
 #else
   if (_chdir(SD_PREFIX)) {
     if (_chdir(FLASH_PREFIX)) {

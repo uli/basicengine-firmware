@@ -2,7 +2,6 @@
 // Copyright (c) 2018, 2019 Ulrich Hecht
 
 #include "Arduino.h"
-#include "SdFat.h"
 #include "FS.h"
 #include "SPI.h"
 #include <malloc.h>
