@@ -62,6 +62,8 @@
 #define PIXEL_TYPE uint16_t
 #else
 #define PIXEL_TYPE uint32_t
+#define TRUE_COLOR
+#define IPIXEL_TYPE uint32_t
 #endif
 #define BUFFERED_SCREEN
 #endif
