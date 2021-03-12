@@ -253,9 +253,10 @@ void H3GFX::updateBg() {
   last_frame = frame();
 
   if (!m_bg_modified) {
-    mmu_flush_dcache();
-    if (display_single_buffer)
+    if (display_single_buffer) {
+      mmu_flush_dcache();
       return;
+    }
     // need to render a few extra frames to make sure we can actually see
     // the current state
     if (post_render_count > 2)
