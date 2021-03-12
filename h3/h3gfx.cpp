@@ -69,39 +69,42 @@ void H3GFX::reset() {
   setColorSpace(0);
 }
 
+//#define PROFILE_BLIT
 void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
                      uint16_t y_dst, uint16_t width, uint16_t height) {
-  // optimize the common case of scrolling the whole screen
-  if (x_src == 0 && x_dst == 0 &&		// starts at the end of the line
-      y_src > y_dst &&				// goes upwards
-      width == m_current_mode.x &&		// whole screen width
-      y_src + height <= m_current_mode.y	// does not go beyond the real framebuffer
-  ) {
-    memcpy(m_pixels[y_dst] - m_current_mode.left,
-           m_pixels[y_src] - m_current_mode.left,
-           height * (m_current_mode.x + m_current_mode.left * 2) * sizeof(pixel_t));
-    return;
-  }
-
-  if ((y_dst > y_src) ||
-      (y_dst == y_src && x_dst > x_src)) {
-    y_dst += height - 1;
-    y_src += height - 1;
-    while (height) {
-      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
-      y_dst--;
-      y_src--;
-      height--;
-    }
-  } else {
+#ifdef PROFILE_BLIT
+  uint32_t s = micros();
+#endif
+  if (y_dst == y_src && x_dst > x_src) {
     while (height) {
       memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
       y_dst++;
       y_src++;
       height--;
     }
+  } else if ((y_dst > y_src) ||
+      (y_dst == y_src && x_dst > x_src)) {
+    y_dst += height - 1;
+    y_src += height - 1;
+    while (height) {
+      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
+      y_dst--;
+      y_src--;
+      height--;
+    }
+  } else {
+    while (height) {
+      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
+      y_dst++;
+      y_src++;
+      height--;
+    }
   }
-
+#ifdef PROFILE_BLIT
+  uint32_t e = micros();
+  if (e - s > 1000)
+    printf("blit %d us\n", e - s);
+#endif
   mmu_flush_dcache();
 }
 
