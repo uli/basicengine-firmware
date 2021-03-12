@@ -65,7 +65,7 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
 void H3GFX::reset() {
   BGEngine::reset();
   for (int i = 0; i < m_last_line; ++i)
-    memset(m_pixels[i], 0, m_current_mode.x * 4);
+    memset(m_pixels[i], 0, m_current_mode.x * sizeof(pixel_t));
   setColorSpace(0);
 }
 
@@ -311,7 +311,7 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          memcpy(&m_pixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * 4);
+          memcpy(&m_pixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
           x += tsx;
           tile_x++;
           goto next;
