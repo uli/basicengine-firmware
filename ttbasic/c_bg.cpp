@@ -79,7 +79,7 @@ int c_bg_disable(int bg) {
 
 int c_bg_set_priority(int bg, int priority) {
   if (check_param(bg, 0, MAX_BG - 1) ||
-      check_param(priority, 0, sc0.getGWidth() - 1))
+      check_param(priority, 0, MAX_PRIO))
     return -1;
 
   vs23.setBgPriority(bg, priority);
