@@ -2,6 +2,7 @@
 // Copyright (c) 2017-2019 Ulrich Hecht
 
 #include "basic.h"
+#include "c_bg.h"
 
 // Saved background and text window dimensions.
 // These values are set when a program is interrupted and the text window is
@@ -21,12 +22,12 @@ uint8_t event_sprite_proc_idx;
 void BASIC_INT Basic::event_handle_sprite() {
   uint8_t dir;
   for (int i = 0; i < MAX_SPRITES; ++i) {
-    if (!vs23.spriteEnabled(i))
+    if (!c_sprite_enabled(i))
       continue;
     for (int j = i + 1; j < MAX_SPRITES; ++j) {
-      if (!vs23.spriteEnabled(j))
+      if (!c_sprite_enabled(j))
         continue;
-      if ((dir = vs23.spriteCollision(i, j))) {
+      if ((dir = c_sprite_collision(i, j))) {
         init_stack_frame();
         push_num_arg(i);
         push_num_arg(j);
@@ -81,11 +82,11 @@ void Basic::ibg() {
 
   if (*cip == I_OFF) {
     ++cip;
-    vs23.resetBgs();
+    c_bg_off();
     return;
   }
 
-  if (getParam(m, 0, MAX_BG, I_NONE))
+  if (getParam(m, I_NONE))
     return;
 
   // Background modified, do not restore the saved values when CONTing.
@@ -94,43 +95,39 @@ void Basic::ibg() {
 
   for (;;) switch (*cip++) {
   case I_TILES:
-    // XXX: valid range depends on tile size
-    if (getParam(w, 0, sc0.getGWidth(), I_COMMA)) return;
-    if (getParam(h, 0, sc0.getGWidth(), I_NONE)) return;
-    if (vs23.setBgSize(m, w, h)) {
-      err = ERR_OOM;
+    if (getParam(w, I_COMMA)) return;
+    if (getParam(h, I_NONE)) return;
+    if (c_bg_set_size(m, w, h))
       return;
-    }
     break;
   case I_PATTERN:
-    if (getParam(px, 0, sc0.getGWidth(), I_COMMA)) return;
-    if (getParam(py, 0, vs23.lastLine(), I_COMMA)) return;
-    // XXX: valid range depends on tile size
-    if (getParam(pw, 0, sc0.getGWidth(), I_NONE)) return;
-    vs23.setBgPattern(m, px, py, pw);
+    if (getParam(px, I_COMMA)) return;
+    if (getParam(py, I_COMMA)) return;
+    if (getParam(pw, I_NONE)) return;
+    c_bg_set_pattern(m, px, py, pw);
     break;
   case I_SIZE:
-    if (getParam(tx, 8, 32, I_COMMA)) return;
-    if (getParam(ty, 8, 32, I_NONE)) return;
-    vs23.setBgTileSize(m, tx, ty);
+    if (getParam(tx, I_COMMA)) return;
+    if (getParam(ty, I_NONE)) return;
+    c_bg_set_tile_size(m, tx, ty);
     break;
   case I_WINDOW:
-    if (getParam(wx, 0, sc0.getGWidth() - 1, I_COMMA)) return;
-    if (getParam(wy, 0, sc0.getGHeight() - 1, I_COMMA)) return;
-    if (getParam(ww, 9, sc0.getGWidth() - wx, I_COMMA)) return;
-    if (getParam(wh, 0, sc0.getGHeight() - wy, I_NONE)) return;
-    vs23.setBgWin(m, wx, wy, ww, wh);
+    if (getParam(wx, I_COMMA)) return;
+    if (getParam(wy, I_COMMA)) return;
+    if (getParam(ww, I_COMMA)) return;
+    if (getParam(wh, I_NONE)) return;
+    c_bg_set_window(m, wx, wy, ww, wh);
     break;
   case I_ON:
     // XXX: do sanity check before enabling
-    vs23.enableBg(m);
+    c_bg_enable(m);
     break;
   case I_OFF:
-    vs23.disableBg(m);
+    c_bg_disable(m);
     break;
   case I_PRIO:
-    if (getParam(prio, 0, MAX_PRIO, I_NONE)) return;
-    vs23.setBgPriority(m, prio);
+    if (getParam(prio, I_NONE)) return;
+    c_bg_set_priority(m, prio);
     break;
   default:
     cip--;
@@ -154,45 +151,16 @@ Loads a background map from storage.
 void Basic::iloadbg() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
-  uint8_t w, h, tsx, tsy;
   BString filename;
 
   cip++;
 
-  if (getParam(bg, 0, MAX_BG, I_COMMA))
+  if (getParam(bg, I_COMMA))
     return;
   if (!(filename = getParamFname()))
     return;
 
-  FILE *f = fopen(filename.c_str(), "r");
-  if (!f) {
-    err = ERR_FILE_OPEN;
-    return;
-  }
-
-  w = getc(f);
-  h = getc(f);
-  tsx = getc(f);
-  tsy = getc(f);
-
-  if (!w || !h || !tsx || !tsy) {
-    err = ERR_FORMAT;
-    goto out;
-  }
-
-  vs23.setBgTileSize(bg, tsx, tsy);
-  if (vs23.setBgSize(bg, w, h)) {
-    err = ERR_OOM;
-    goto out;
-  }
-
-  if (fread((char *)vs23.bgTiles(bg), 1, w * h, f) != w * h) {
-    err = ERR_FILE_READ;
-    goto out;
-  }
-
-out:
-  fclose(f);
+  c_bg_load(bg, filename.c_str());
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -211,32 +179,16 @@ Does not check if the specified background is properly defined.
 void Basic::isavebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
-  uint8_t w, h;
   BString filename;
 
   cip++;
 
-  if (getParam(bg, 0, MAX_BG, I_TO))
+  if (getParam(bg, I_TO))
     return;
   if (!(filename = getParamFname()))
     return;
 
-  FILE *f = fopen(filename.c_str(), "w");
-  if (!f) {
-    err = ERR_FILE_OPEN;
-    return;
-  }
-
-  w = vs23.bgWidth(bg);
-  h = vs23.bgHeight(bg);
-  putc(w, f);
-  putc(h, f);
-  putc(vs23.bgTileSizeX(bg), f);
-  putc(vs23.bgTileSizeY(bg), f);
-
-  fwrite((char *)vs23.bgTiles(bg), 1, w * h, f);
-
-  fclose(f);
+  c_bg_save(bg, filename.c_str());
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -257,15 +209,14 @@ maps wrap around if the display window extends beyond the map boundaries.
 void BASIC_FP Basic::imovebg() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y;
-  if (getParam(bg, 0, MAX_BG, I_TO))
+  if (getParam(bg, I_TO))
     return;
-  // XXX: arbitrary limitation?
-  if (getParam(x, INT32_MIN, INT32_MAX, I_COMMA))
+  if (getParam(x, I_COMMA))
     return;
-  if (getParam(y, INT32_MIN, INT32_MAX, I_NONE))
+  if (getParam(y, I_NONE))
     return;
 
-  vs23.scroll(bg, x, y);
+  c_bg_move(bg, x, y);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -319,44 +270,44 @@ void BASIC_INT Basic::isprite() {
 
   if (*cip == I_OFF) {
     ++cip;
-    vs23.resetSprites();
+    c_sprite_off();
     return;
   }
 
   if (getParam(num, 0, MAX_SPRITES, I_NONE))
     return;
 
-  frame_x = vs23.spriteFrameX(num);
-  frame_y = vs23.spriteFrameY(num);
-  flags = (vs23.spriteOpaque(num) << 0) |
-          (vs23.spriteFlipX(num) << 1) |
-          (vs23.spriteFlipY(num) << 2);
+  frame_x = c_sprite_frame_x(num);
+  frame_y = c_sprite_frame_y(num);
+  flags = (c_sprite_opaque(num) << 0) |
+          (c_sprite_flip_x(num) << 1) |
+          (c_sprite_flip_y(num) << 2);
 
   for (;;) switch (*cip++) {
   case I_PATTERN:
-    if (getParam(pat_x, 0, sc0.getGWidth(), I_COMMA)) return;
-    if (getParam(pat_y, 0, 1023, I_NONE)) return;
-    vs23.setSpritePattern(num, pat_x, pat_y);
+    if (getParam(pat_x, I_COMMA)) return;
+    if (getParam(pat_y, I_NONE)) return;
+    c_sprite_set_pattern(num, pat_x, pat_y);
     break;
   case I_SIZE:
-    if (getParam(w, 1, MAX_SPRITE_W, I_COMMA)) return;
-    if (getParam(h, 1, MAX_SPRITE_H, I_NONE)) return;
-    vs23.resizeSprite(num, w, h);
+    if (getParam(w, I_COMMA)) return;
+    if (getParam(h, I_NONE)) return;
+    c_sprite_set_size(num, w, h);
     break;
   case I_FRAME:
-    if (getParam(frame_x, 0, 255, I_NONE)) return;
+    if (getParam(frame_x, I_NONE)) return;
     if (*cip == I_COMMA) {
       ++cip;
-      if (getParam(frame_y, 0, 255, I_NONE)) return;
+      if (getParam(frame_y, I_NONE)) return;
     } else
       frame_y = 0;
     set_frame = true;
     break;
   case I_ON:
-    vs23.enableSprite(num);
+    c_sprite_enable(num);
     break;
   case I_OFF:
-    vs23.disableSprite(num);
+    c_sprite_disable(num);
     break;
   case I_FLAGS: {
       int32_t new_flags;
@@ -372,12 +323,12 @@ void BASIC_INT Basic::isprite() {
     }
     break;
   case I_KEY:
-    if (getParam(key, 0, IPIXEL_MAX, I_NONE)) return;
-    vs23.setSpriteKey(num, key);
+    if (getParam(key, I_NONE)) return;
+    c_sprite_set_key(num, key);
     break;
   case I_PRIO:
-    if (getParam(prio, 0, MAX_PRIO, I_NONE)) return;
-    vs23.setSpritePriority(num, prio);
+    if (getParam(prio, I_NONE)) return;
+    c_sprite_set_priority(num, prio);
     break;
   default:
     // XXX: throw an error if nothing has been done
@@ -385,11 +336,13 @@ void BASIC_INT Basic::isprite() {
     if (!end_of_statement())
       SYNTAX_T("exp sprite parameter");
     if (set_frame)
-      vs23.setSpriteFrame(num, frame_x, frame_y, flags & 2, flags & 4);
+      c_sprite_set_frame(num, frame_x, frame_y, flags & 2, flags & 4);
     if (set_opacity || (set_frame && (flags & 1)))
-      vs23.setSpriteOpaque(num, flags & 1);
-    if (!vs23.spriteReload(num))
-      err = ERR_OOM;
+      c_sprite_set_opacity(num, flags & 1);
+    if (c_sprite_reload(num)) {
+      if (!err)
+        err = ERR_OOM;
+    }
     return;
   }
 #else
@@ -413,13 +366,13 @@ mode will not be drawn.
 void BASIC_FP Basic::imovesprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pos_x, pos_y;
-  if (getParam(num, 0, MAX_SPRITES, I_TO))
+  if (getParam(num, I_TO))
     return;
-  if (getParam(pos_x, INT32_MIN, INT32_MAX, I_COMMA))
+  if (getParam(pos_x, I_COMMA))
     return;
-  if (getParam(pos_y, INT32_MIN, INT32_MAX, I_NONE))
+  if (getParam(pos_y, I_NONE))
     return;
-  vs23.moveSprite(num, pos_x, pos_y);
+  c_sprite_move(num, pos_x, pos_y);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -479,34 +432,34 @@ PLOT 0,5,10,"XOOOXXOO"
 void Basic::iplot() {
 #ifdef USE_BG_ENGINE
   int32_t bg, x, y, t;
-  if (getParam(bg, 0, MAX_BG, I_NONE))
+  if (getParam(bg, I_NONE))
     return;
-  if (!vs23.bgTiles(bg)) {
+  if (!c_bg_get_tiles(bg)) {
     // BG not defined
     err = ERR_RANGE;
     return;
   }
   if (*cip == I_MAP) {
     ++cip;
-    if (getParam(x, 0, 255, I_TO))
+    if (getParam(x, I_TO))
       return;
-    if (getParam(y, 0, 255, I_NONE))
+    if (getParam(y, I_NONE))
       return;
-    vs23.mapBgTile(bg, x, y);
+    c_bg_map_tile(bg, x, y);
   } else if (*cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
   } else {
-    if (getParam(x, 0, INT_MAX, I_COMMA))
+    if (getParam(x, I_COMMA))
       return;
-    if (getParam(y, 0, INT_MAX, I_COMMA))
+    if (getParam(y, I_COMMA))
       return;
     if (is_strexp()) {
       BString dat = istrexp();
-      vs23.setBgTiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
+      c_bg_set_tiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
     } else {
-      if (getParam(t, 0, 255, I_NONE))
+      if (getParam(t, I_NONE))
         return;
-      vs23.setBgTile(bg, x, y, t);
+      c_bg_set_tile(bg, x, y, t);
     }
   }
 #else
@@ -531,9 +484,9 @@ be so within a single TV frame.
 void Basic::iframeskip() {
 #ifdef USE_BG_ENGINE
   int32_t skip;
-  if (getParam(skip, 0, 60, I_NONE))
+  if (getParam(skip, I_NONE))
     return;
-  vs23.setFrameskip(skip);
+  c_frameskip(skip);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -581,7 +534,7 @@ num_t BASIC_FP Basic::ntilecoll() {
     return 0;
   if (checkClose())
     return 0;
-  return vs23.spriteTileCollision(a, b, c);
+  return c_sprite_tile_collision(a, b, c);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -624,14 +577,14 @@ num_t BASIC_FP Basic::nsprcoll() {
   int32_t a, b;
   if (checkOpen())
     return 0;
-  if (getParam(a, 0, MAX_SPRITES, I_COMMA))
+  if (getParam(a, I_COMMA))
     return 0;
-  if (getParam(b, 0, MAX_SPRITES, I_NONE))
+  if (getParam(b, I_NONE))
     return 0;
   if (checkClose())
     return 0;
-  if (vs23.spriteEnabled(a) && vs23.spriteEnabled(b))
-    return vs23.spriteCollision(a, b);
+  if (c_sprite_enabled(a) && c_sprite_enabled(b))
+    return c_sprite_collision(a, b);
   else
     return 0;
 #else
@@ -653,10 +606,10 @@ num_t BASIC_FP Basic::nsprx() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
-  if (checkOpen() || getParam(spr, 0, MAX_SPRITES, I_CLOSE))
+  if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return vs23.spriteX(spr);
+  return c_sprite_x(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -675,10 +628,10 @@ num_t BASIC_FP Basic::nspry() {
 #ifdef USE_BG_ENGINE
   int32_t spr;
 
-  if (checkOpen() || getParam(spr, 0, MAX_SPRITES, I_CLOSE))
+  if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return vs23.spriteY(spr);
+  return c_sprite_y(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -698,10 +651,10 @@ num_t BASIC_FP Basic::nbscrx() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 
-  if (checkOpen() || getParam(bg, 0, MAX_BG - 1, I_CLOSE))
+  if (checkOpen() || getParam(bg, I_CLOSE))
     return 0;
 
-  return vs23.bgScrollX(bg);
+  return c_bg_x(bg);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -720,10 +673,10 @@ num_t BASIC_FP Basic::nbscry() {
 #ifdef USE_BG_ENGINE
   int32_t bg;
 
-  if (checkOpen() || getParam(bg, 0, MAX_BG - 1, I_CLOSE))
+  if (checkOpen() || getParam(bg, I_CLOSE))
     return 0;
 
-  return vs23.bgScrollY(bg);
+  return c_bg_y(bg);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -746,17 +699,17 @@ void SMALL resize_windows() {
     bool obscured = false;
     int top_y = (y + (sc0.getScreenHeight() - 5)) * sc0.getFontHeight();
     for (int i = 0; i < MAX_BG; ++i) {
-      if (!vs23.bgEnabled(i))
+      if (!c_bg_enabled(i))
         continue;
-      if (vs23.bgWinY(i) >= top_y) {
-        vs23.disableBg(i);
+      if (c_bg_win_y(i) >= top_y) {
+        c_bg_disable(i);
         turn_bg_back_on[i] = true;
         restore_bgs = true;
-      } else if (vs23.bgWinY(i) + vs23.bgWinHeight(i) >= top_y) {
-        original_bg_height[i] = vs23.bgWinHeight(i);
-        vs23.setBgWin(i, vs23.bgWinX(i), vs23.bgWinY(i), vs23.bgWinWidth(i),
-                      vs23.bgWinHeight(i) - vs23.bgWinY(i) -
-                              vs23.bgWinHeight(i) + top_y);
+      } else if (c_bg_win_y(i) + c_bg_win_height(i) >= top_y) {
+        original_bg_height[i] = c_bg_win_height(i);
+        c_bg_set_win(i, c_bg_win_x(i), c_bg_win_y(i), c_bg_win_width(i),
+                      c_bg_win_height(i) - c_bg_win_y(i) -
+                              c_bg_win_height(i) + top_y);
         obscured = true;
         turn_bg_back_on[i] = false;
         restore_bgs = true;
@@ -790,9 +743,9 @@ void SMALL restore_windows() {
     restore_bgs = false;
     for (int i = 0; i < MAX_BG; ++i) {
       if (turn_bg_back_on[i]) {
-        vs23.enableBg(i);
+        c_bg_enable(i);
       } else if (original_bg_height[i] >= 0) {
-        vs23.setBgWin(i, vs23.bgWinX(i), vs23.bgWinY(i), vs23.bgWinWidth(i),
+        c_bg_set_win(i, c_bg_win_x(i), c_bg_win_y(i), c_bg_win_width(i),
                       original_bg_height[i]);
       }
     }
