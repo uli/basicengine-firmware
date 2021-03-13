@@ -3,19 +3,12 @@
 
 #include "basic.h"
 #include "c_video.h"
+#include "c_api.h"
 
 extern "C" {
 
 // **** スクリーン管理 *************
 static uint8_t scmode = 0;
-
-static bool check_param(int32_t p, int32_t min, int32_t max) {
-  if (p < min || p > max) {
-    E_VALUE(min, max);
-    return true;
-  }
-  return false;
-}
 
 void c_locate(int32_t x, int32_t y) {
   if (x >= sc0.getWidth())  // xの有効範囲チェック
