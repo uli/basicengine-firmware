@@ -708,6 +708,7 @@ void Basic::ilua() {
   }
   luaL_openlibs(lua);
   luaopen_be(lua);
+  luaopen_bg(lua);
   luaopen_video(lua);
   lua_sethook(lua, lhook, LUA_MASKCOUNT, 1000);
 }

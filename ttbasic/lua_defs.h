@@ -11,6 +11,7 @@
 extern lua_State *lua;
 
 int luaopen_be(lua_State *l);
+int luaopen_bg(lua_State *l);
 int luaopen_video(lua_State *l);
 
 static void lua_pushret(lua_State *l, int ret) {
