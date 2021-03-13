@@ -20,6 +20,6 @@ static void lua_pushret(lua_State *l, int ret) {
         lua_pushboolean(l, 1);
 }
 
-void do_lua_line(lua_State *lua, const char *lbuf);
+void do_lua_line(const char *lbuf);
 
 #endif

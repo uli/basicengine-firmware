@@ -5943,7 +5943,7 @@ void SMALL Basic::basic() {
     }
 
     if (lua) {
-      do_lua_line(lua, lbuf);
+      do_lua_line(lbuf);
       sc0.show_curs(1);
       continue;
     }

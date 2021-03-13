@@ -23,7 +23,7 @@ int luaopen_be(lua_State *l) {
   return 0;
 }
 
-void do_lua_line(lua_State *lua, const char *lbuf) {
+void do_lua_line(const char *lbuf) {
   BString retline("return ");
   retline += lbuf;
   retline += ";";
