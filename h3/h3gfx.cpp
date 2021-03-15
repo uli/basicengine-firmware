@@ -8,6 +8,7 @@
 #include "colorspace.h"
 #include <joystick.h>
 #include <mmu.h>
+#include <smp.h>
 
 H3GFX vs23;
 
@@ -45,6 +46,17 @@ const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
   { 1920, 1080, 0, 0, ASPECT_16_9 },
 };
 
+#define DISPLAY_CORE	1
+#define DISPLAY_CORE_STACK_SIZE	0x1000
+static void *display_core_stack;
+
+extern "C" void task_updatebg(void) {
+  for (;;) {
+    smp_wait_for_event();
+    vs23.updateBgTask();
+  }
+}
+
 #include <usb.h>
 #include <config.h>
 void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
@@ -59,7 +71,18 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_frame = 0;
   reset();
 
+  display_core_stack = malloc(DISPLAY_CORE_STACK_SIZE);
+  if (!display_core_stack) {
+    // Hopeless.
+    printf("OOM in display initialization, giving up\n");
+    for (;;);
+  }
+
+  m_buffer_lock = false;
   m_display_enabled = true;
+
+  smp_start_secondary_core(DISPLAY_CORE, task_updatebg,
+                           display_core_stack, DISPLAY_CORE_STACK_SIZE);
 }
 
 void H3GFX::reset() {
@@ -222,6 +245,7 @@ void H3GFX::updateStatus() {
       enabled = true;
   }
   if (enabled != m_engine_enabled) {
+    spin_lock(&m_buffer_lock);
     if (m_engine_enabled) {
       // We're running multi-buffered and are switching to single-buffered mode.
       // We need to copy what is currently visible to the single buffer if they
@@ -240,16 +264,18 @@ void H3GFX::updateStatus() {
       display_swap_buffers();
       blitBuffer(latest_content);
     }
+    mmu_flush_dcache();
     resetLinePointers();
+    spin_unlock(&m_buffer_lock);
   }
   m_engine_enabled = enabled;
 }
 
-void H3GFX::updateBg() {
+void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
   static int post_render_count = 0;
 
-  if (frame() <= last_frame + m_frameskip)
+  if (frame() <= last_frame + m_frameskip || m_frame_ready)
     return;
 
   last_frame = frame();
@@ -266,16 +292,7 @@ void H3GFX::updateBg() {
     post_render_count++;
   }
 
-  if (m_dupe_active) {
-    if (!display_single_buffer) {
-      void *active = (void *)display_active_buffer;
-      display_swap_buffers();
-      blitBuffer(active);
-      display_swap_buffers();
-      m_dupe_active = false;
-    }
-    m_dupe_active = false;
-  }
+  spin_lock(&m_buffer_lock);
 
   m_bg_modified = false;
   post_render_count = 0;
@@ -379,10 +396,40 @@ next:
     }
   }
 
-  display_swap_buffers();
-  resetLinePointers();
+  // Do not swap the buffers, mark the rendered frame as ready to display.
+  // This is to avoid pulling the rug from any single-buffered rendering that
+  // may be going on on the main core.
+  m_frame_ready = true;
+
+  spin_unlock(&m_buffer_lock);
+
+  // Not doing this produces a nice distortion effect...
+  mmu_flush_dcache();
 }
 
+void H3GFX::updateBg() {
+  if (m_dupe_active) {
+    // Replicate the active buffer to avoid having pixels from
+    // single-buffered rendering in one and not the other.
+    if (!display_single_buffer) {
+      void *active = (void *)display_active_buffer;
+      display_swap_buffers();
+      blitBuffer(active);
+      display_swap_buffers();
+      m_dupe_active = false;
+    }
+    m_dupe_active = false;
+  }
+
+  if (m_frame_ready) {
+    display_swap_buffers();
+    resetLinePointers();
+    m_frame_ready = false;
+  } else
+    mmu_flush_dcache();	// commit single-buffer renderings to DRAM
+
+  smp_send_event();
+}
 #ifdef USE_BG_ENGINE
 uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   uint8_t dir = 0x40;  // indicates collision

@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <display.h>
+#include <spinlock.h>
 
 #define SC_DEFAULT 13
 
@@ -40,6 +41,7 @@ public:
 
 #ifdef USE_BG_ENGINE
   void updateBg();
+  void updateBgTask();
 
   inline void setSpriteOpaque(uint8_t num, bool enable) {
     m_sprite[num].p.opaque = enable;
@@ -120,6 +122,8 @@ private:
   bool m_force_filter;
   bool m_engine_enabled;
   bool m_dupe_active;
+  spinlock_t m_buffer_lock;
+  bool m_frame_ready;
 
   pixel_t **m_pixels;
 
