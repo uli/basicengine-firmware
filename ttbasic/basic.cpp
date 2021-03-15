@@ -2776,17 +2776,25 @@ void BASIC_FP process_events(void) {
   last_frame = vs23.frame();
 
   event_profile[0] = micros();
+
+  // Do this before the updateBg() call to make sure it is included in
+  // the next screen update.
+  sc0.updateCursor();
+
+  event_profile[1] = micros();
+
 #ifdef USE_BG_ENGINE
   vs23.updateBg();
 #endif
 
-  event_profile[1] = micros();
+  event_profile[2] = micros();
+
 #if defined(HAVE_TSF) && !defined(HOSTED) && !defined(SDL)
   if (sound.needSamples())
     sound.render();
 #endif
   sound.pumpEvents();
-  event_profile[2] = micros();
+  event_profile[3] = micros();
 #ifdef HAVE_MML
   if (event_play_enabled) {
     for (int i = 0; i < SOUND_CHANNELS; ++i) {
@@ -2795,9 +2803,7 @@ void BASIC_FP process_events(void) {
     }
   }
 #endif
-  event_profile[3] = micros();
 
-  sc0.updateCursor();
   event_profile[4] = micros();
 
 #ifdef USE_BG_ENGINE
