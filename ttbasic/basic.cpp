@@ -2773,10 +2773,6 @@ void BASIC_FP process_events(void) {
     return;
   }
 
-#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
-  platform_process_events();
-#endif
-
   last_frame = vs23.frame();
 
   event_profile[0] = micros();
@@ -2815,6 +2811,10 @@ void BASIC_FP process_events(void) {
 
   if (bc && profile_enabled)
     bc->draw_profile();
+
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
+  platform_process_events();
+#endif
 }
 
 /***bf bas RET
