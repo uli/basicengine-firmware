@@ -361,13 +361,25 @@ void GROUP(basic_sound) BasicSound::render() {
       } else if (millis() > m_sam_done_time + SOUND_IDLE_TIMEOUT) {
         delete m_sam;
         m_sam = NULL;
+#ifdef ESP8266
         audio.init(AUDIO_SAMPLE_RATE);
+#endif
       }
     }
     if (m_sam) {
+#ifdef AUDIO_16BIT
+      for (int i = 0; i < SOUND_BUFLEN / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
+        int s = m_sam->getSample() * 257 - 32768;
+#if AUDIO_SAMPLE_RATE > 32000
+        audio.queueSample(s);
+#endif
+        audio.queueSample(s);
+      }
+#else
       for (int i = 0; i < SOUND_BUFLEN; ++i) {
         audio.queueSample(m_sam->getSample());
       }
+#endif
     }
   } else if (m_tsf && audio.currBufPos() == 0) {
     tsf_render_short_fast(m_tsf, staging_buf, SOUND_BUFLEN, TSF_FALSE);
@@ -377,12 +389,16 @@ void GROUP(basic_sound) BasicSound::render() {
       return;
     }
     for (int i = 0; i < SOUND_BUFLEN; ++i) {
+#ifdef AUDIO_16BIT
+      audio.queueSample(max(-32768, min(staging_buf[i] * 8, 32767)));
+#else
       int idx = (staging_buf[i] >> 5) + 128;
       if (idx < 0)
         idx = 0;
       else if (idx > 255)
         idx = 255;
       audio.queueSample(idx);
+#endif
     }
   }
 }
@@ -412,14 +428,22 @@ void BasicSound::setBeep(int period, int vol) {
   else if (vol < 0)
     vol = 0;
 
+#ifdef AUDIO_16BIT
+  int32_t sample = vol * 2184;
+#else
   uint32_t sample = vol * 17;
+#endif
 
   audio.setBlockSize(period);
 
 #ifndef HOSTED
   for (int b = 0; b < 2; ++b) {
     for (int i = 0; i < period / 2; ++i) {
+#ifdef AUDIO_16BIT
+      audio.setSampleAt(b, i, -sample);
+#else
       audio.setSampleAt(b, i, 0);
+#endif
     }
     for (int i = period / 2; i < period; ++i) {
       audio.setSampleAt(b, i, sample);

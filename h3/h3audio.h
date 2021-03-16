@@ -6,7 +6,8 @@
 
 #define SOUND_BUFLEN 160
 
-#include <TPS2.h>
+#include "../ttbasic/audio.h"
+#include <string.h>
 
 extern "C" void hook_audio_get_sample(int16_t *l, int16_t *r);
 
@@ -23,10 +24,10 @@ public:
     return m_block_size;
   }
 
-  inline void queueSample(uint8_t sample) {
+  inline void queueSample(sample_t sample) {
     m_curr_buf[m_curr_buf_pos++] = sample;
   }
-  inline void setSampleAt(int buf, int idx, uint8_t sample) {
+  inline void setSampleAt(int buf, int idx, sample_t sample) {
     m_sound_buf[buf][idx] = sample;
   }
 
@@ -44,10 +45,10 @@ private:
   static void timerInterrupt(H3Audio *audioOutput);
 
   static int m_curr_buf_pos;
-  static uint8_t *m_curr_buf;
+  static sample_t *m_curr_buf;
 
   static int m_block_size;
-  static uint8_t m_sound_buf[2][SOUND_BUFLEN];
+  static sample_t m_sound_buf[2][SOUND_BUFLEN];
 };
 
 extern H3Audio audio;

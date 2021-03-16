@@ -3,6 +3,13 @@
 
 #include "ttconfig.h"
 
+#include <stdint.h>
+#ifdef AUDIO_16BIT
+typedef int16_t sample_t;
+#else
+typedef uint8_t sample_t;
+#endif
+
 #ifdef ESP32
 #include "AudioOutput.h"
 #elif defined(H3)

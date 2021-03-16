@@ -4,16 +4,15 @@
 #ifdef H3
 
 #include "h3audio.h"
-#include <audio.h>
 
 H3Audio audio;
 
 int H3Audio::m_curr_buf_pos;
-uint8_t *H3Audio::m_curr_buf;
+sample_t *H3Audio::m_curr_buf;
 static int m_read_buf;
 static int m_read_pos;
 
-uint8_t H3Audio::m_sound_buf[2][SOUND_BUFLEN];
+sample_t H3Audio::m_sound_buf[2][SOUND_BUFLEN];
 int H3Audio::m_block_size;
 
 void H3Audio::timerInterrupt(H3Audio *audioOutput) {
@@ -28,9 +27,9 @@ void H3Audio::init(int sample_rate) {
 }
 
 void hook_audio_get_sample(int16_t *l, int16_t *r) {
-  static int16_t last;
+  static sample_t last;
 
-  *l = *r = last = audio.m_sound_buf[m_read_buf][m_read_pos++] * 257 - 32768;
+  *l = *r = last = audio.m_sound_buf[m_read_buf][m_read_pos++];
   if (m_read_pos >= audio.m_block_size) {
     m_read_buf ^= 1;
     audio.m_curr_buf = audio.m_sound_buf[m_read_buf ^ 1];

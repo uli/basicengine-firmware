@@ -42,6 +42,7 @@
 #define BUFFERED_SCREEN
 #define SINGLE_BLIT
 #define AUDIO_SAMPLE_RATE 48000
+#define AUDIO_16BIT
 #endif
 
 #ifdef __DJGPP__
