@@ -358,7 +358,7 @@ void GROUP(basic_sound) BasicSound::render() {
     if (m_sam->finished()) {
       if (!m_sam_done_time) {
         m_sam_done_time = millis();
-      } else if (millis() > m_sam_done_time + SOUND_IDLE_TIMEOUT) {
+      } else if (millis() > m_sam_done_time + 3000) {
         delete m_sam;
         m_sam = NULL;
 #ifdef ESP8266
