@@ -193,6 +193,11 @@ static const uint8_t usb2ascii[] = {
 keyEvent keybuf[KEYBUF_SIZE];
 int keybuf_r = 0;
 int keybuf_w = 0;
+
+hid_keyboard_report_t report_queue[KEYBUF_SIZE];
+int report_r = 0;
+int report_w = 0;
+
 hid_keyboard_report_t last_report;
 
 #define REPEAT_DELAY 20
@@ -201,9 +206,27 @@ hid_keyboard_report_t last_report;
 static int repeat_countdown = 0;
 
 static uint8_t key_state[256];
+
+// runs in IRQ context
 void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
+  int next_w = (report_w + 1) % KEYBUF_SIZE;
+
+  if (next_w == report_r)	// queue full
+    return;
+
+  // XXX: GCC optimizes assignments of large compound types to memcpy()
+  // calls, and newlib's memcpy() seems to use FP registers, which are not
+  // saved by the baremetal IRQ handler. This is not a problem _for now_
+  // because hid_keyboard_report_t is only 8 bytes, but it would be good
+  // to have a way to reliably prevent it from doing that.
+  report_queue[report_w] = *rep;
+
+  report_w = next_w;
+}
+
+void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
   bool any_key = false;
-  uint8_t old_state[256];
+  static uint8_t old_state[256];
 #ifdef DEBUG_REPORT
   printf("kbdrep mod %02X keys ", rep->modifier);
   for (int i = 0; i < 6; ++i) {
@@ -320,4 +343,12 @@ void kbd_repeat(void) {
   hook_usb_keyboard_report(&empty);
   hook_usb_keyboard_report(&l);
   repeat_countdown = REPEAT_INTERVAL;
+}
+
+void kbd_task(void) {
+  while (report_r != report_w) {
+    process_usb_keyboard_report(&report_queue[report_r]);
+    report_r = (report_r + 1) % KEYBUF_SIZE;
+  }
+  kbd_repeat();
 }
