@@ -41,6 +41,7 @@
 #define TRUE_COLOR
 #define BUFFERED_SCREEN
 #define SINGLE_BLIT
+#define AUDIO_SAMPLE_RATE 48000
 #endif
 
 #ifdef __DJGPP__
@@ -104,7 +105,7 @@
 
 #elif FONTSELECT == 3
   // 8x8 IchigoJam font (optional feature required font)
-  #define TV_DISPLAY_FONT ichigoFont8x8 
+  #define TV_DISPLAY_FONT ichigoFont8x8
   #include <ichigoFont8x8.h>
 #endif
 

@@ -30,6 +30,10 @@
 #include "sound.h"
 #include "audio.h"
 
+#ifndef AUDIO_SAMPLE_RATE
+#define AUDIO_SAMPLE_RATE 16000
+#endif
+
 #ifdef HAVE_TSF
 #define TSF_NO_STDIO
 #define TSF_IMPLEMENTATION
@@ -248,7 +252,7 @@ void BasicSound::loadFont() {
   m_sf2.size = tsfile_size;
   m_tsf = tsf_load(&m_sf2);
   if (m_tsf)
-    tsf_set_output(m_tsf, TSF_MONO, 16000, -10);
+    tsf_set_output(m_tsf, TSF_MONO, AUDIO_SAMPLE_RATE, -10);
   m_all_done_time = 0;
   audio.setBlockSize(SOUND_BUFLEN);
 }
@@ -357,7 +361,7 @@ void GROUP(basic_sound) BasicSound::render() {
       } else if (millis() > m_sam_done_time + SOUND_IDLE_TIMEOUT) {
         delete m_sam;
         m_sam = NULL;
-        audio.init(16000);
+        audio.init(AUDIO_SAMPLE_RATE);
       }
     }
     if (m_sam) {
@@ -401,6 +405,8 @@ BString BasicSound::instName(int index) {
 #endif
 
 void BasicSound::setBeep(int period, int vol) {
+  period = period * AUDIO_SAMPLE_RATE / 16000;
+
   if (vol > 15)
     vol = 15;
   else if (vol < 0)
