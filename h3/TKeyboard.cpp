@@ -340,8 +340,8 @@ void kbd_repeat(void) {
 
   hid_keyboard_report_t l = last_report;
   hid_keyboard_report_t empty = {};
-  hook_usb_keyboard_report(&empty);
-  hook_usb_keyboard_report(&l);
+  process_usb_keyboard_report(&empty);
+  process_usb_keyboard_report(&l);
   repeat_countdown = REPEAT_INTERVAL;
 }
 
