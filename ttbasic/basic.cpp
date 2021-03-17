@@ -2948,10 +2948,12 @@ Returns a string containing the binary representation of a number.
 \args
 @num	numeric expression
 \ret Binary number as text.
+\note
+Numbers are converted to an unsigned 32-bit value first.
 \ref HEX$()
 ***/
 BString Basic::sbin() {
-  int32_t value;  // 値
+  uint32_t value;  // 値
 
   if (checkOpen())
     goto out;
