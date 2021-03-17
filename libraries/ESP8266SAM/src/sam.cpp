@@ -1174,7 +1174,7 @@ pos48644:
 	mem56 = pgm_read_byte(&flags[index]);
 
       // not a consonant
-      if ((pgm_read_byte(&flags[index]) & 64) == 0)
+      if ((mem56 & 64) == 0)
       {
 	// RX or LX?
 	if ((index == 18) || (index == 19))                          // 'RX' & 'LX'
