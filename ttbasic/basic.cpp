@@ -72,7 +72,7 @@ sdfiles bfs;
 #undef DECL_TABLE
 
 #ifdef FLOAT_NUMS
-// Get command arguments (uint32_t, no argument check)
+// Get command arguments (int32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(int32_t &prm, token_t next_token) {
   num_t p = iexp();
   prm = p;
@@ -94,7 +94,7 @@ uint8_t BASIC_FP Basic::getParam(int32_t &prm, int32_t v_min, int32_t v_max,
 }
 #endif
 
-// Get command argument (int32_t, with argument check)
+// Get command argument (num_t, with argument check)
 uint8_t BASIC_FP Basic::getParam(num_t &prm, num_t v_min, num_t v_max,
                                  token_t next_token) {
   prm = iexp();
@@ -106,9 +106,10 @@ uint8_t BASIC_FP Basic::getParam(num_t &prm, num_t v_min, num_t v_max,
   return err;
 }
 
+// Get command argument (uint32_t, with argument check)
 uint32_t BASIC_FP Basic::getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
                                   token_t next_token) {
-  prm = iexp();
+  prm = (uint32_t)(int32_t)iexp();
   if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
@@ -117,16 +118,16 @@ uint32_t BASIC_FP Basic::getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
   return err;
 }
 
-// Get command arguments (int32_t, no argument check)
+// Get command arguments (uint32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(uint32_t &prm, token_t next_token) {
-  prm = iexp();
+  prm = (uint32_t)(int32_t)iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
   }
   return err;
 }
 
-// Get command arguments (uint32_t, no argument check)
+// Get command arguments (num_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(num_t &prm, token_t next_token) {
   prm = iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
