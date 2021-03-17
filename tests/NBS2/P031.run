@@ -13,17 +13,11 @@ TO PASS THIS TEST:
 
                BEGIN TEST
 
-VALUE SUPPLIED = -inf
+VALUE SUPPLIED = inf
 
-*** TEST FAILED: VALUE SUPPLIED LESS THAN MINIMUM
-    POSITIVE MACHINE INFINITY. ***
-Except that that is not how anything actually behaves:
-- CBM BASIC: A = 0
-- MSX BASIC: Division by zero
-- C++: -inf
-=> We go with C++, because that's consistent with
-MSX BASIC when FP exceptions are enabled, and doesn't
-require extra code.
+IF VALUE SUPPLIED = POSITIVE MACHINE INFINITY, AND
+   EXCEPTION REPORTED, THEN
+*** TEST PASSED ***
 
                 END TEST
 
