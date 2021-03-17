@@ -4,7 +4,7 @@
   130 rem
   131 GOTO 300
   200 PROC a( X )
-  210   print "X=";@X
+  210   rem print "X=";@X
   220   RETURN FN a( @X + 1 )
   300 let x = fna( 1 )
   999 end
