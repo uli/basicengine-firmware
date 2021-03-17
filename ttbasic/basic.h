@@ -69,9 +69,16 @@ void BASIC_FP ivar();
 void BASIC_FP ilvar();
 
 #define MAX_VAR_NAME 32  // maximum length of variable names
+#ifdef LOWMEM
 #define SIZE_GSTK    10  // GOSUB stack size
 #define SIZE_LSTK    10  // FOR stack size
 #define SIZE_ASTK    16  // argument stack
+#else
+// raise as needed...
+#define SIZE_GSTK    64
+#define SIZE_LSTK    64
+#define SIZE_ASTK    64
+#endif
 
 #define MAX_RETVALS 4
 
