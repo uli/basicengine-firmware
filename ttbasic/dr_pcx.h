@@ -25,7 +25,7 @@
 //     drpcx_free(pImageData);
 //
 // The boolean parameter (second argument in the above example) is whether or not the image should be flipped upside down.
-// 
+//
 //
 //
 // OPTIONS
@@ -267,7 +267,7 @@ dr_bool32 drpcx__decode_1bit(drpcx* pPCX)
                       pPCX->header.palette16[paletteIndex*3 + 1],
                       pPCX->header.palette16[paletteIndex*3 + 2]
                     ));
-                    
+
                     pRow++;
                 }
             }
@@ -359,7 +359,7 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
                     // TODO: Implement Me.
                 }
             }
-            
+
             return DR_TRUE;
         };
 
@@ -400,7 +400,7 @@ dr_bool32 drpcx__decode_2bit(drpcx* pPCX)
                     for (dr_uint32 c = 0; c < pPCX->header.bitPlanes; ++c) {
                         pRow[c] = pPCX->header.palette16[paletteIndex*3 + c];
                     }
-                    
+
                     pRow += pPCX->components;
                 }
             }
@@ -443,7 +443,7 @@ dr_bool32 drpcx__decode_4bit(drpcx* pPCX)
                     dr_uint8 mask = (4 << (1 - nibble));
                     dr_uint8 paletteIndex = (rleValue & mask) >> (1 - nibble);
 
-                    pRow[0] |= ((paletteIndex & 0x0F) << (c*4)); 
+                    pRow[0] |= ((paletteIndex & 0x0F) << (c*4));
                     pRow += pPCX->components;
                 }
             }
@@ -457,7 +457,7 @@ dr_bool32 drpcx__decode_4bit(drpcx* pPCX)
             for (dr_uint32 c = 0; c < pPCX->components; ++c) {
                 pRow[c] = pPCX->header.palette16[paletteIndex*3 + c];
             }
-                    
+
             pRow += pPCX->components;
         }
     }
@@ -478,7 +478,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
     dr_uint32 oy = pPCX->off_y;
     dr_uint32 w = pPCX->w ? : pPCX->width;
     dr_uint32 h = pPCX->h ? : pPCX->height;
-    
+
     switch (pPCX->header.bitPlanes)
     {
         case 1:
@@ -562,13 +562,13 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
         case 3:
         case 4:
         {
-            dr_uint8 *pRow_ = (dr_uint8 *)malloc(stride);
+            ipixel_t *pRow_ = (ipixel_t *)malloc(stride * sizeof(ipixel_t));
             if (!pRow_)
               return DR_FALSE;
 
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
-                dr_uint8* pRow;
+                ipixel_t* pRow;
                 for (dr_uint32 c = 0; c < pPCX->components; ++c)
                 {
                     pRow = pRow_;
@@ -642,7 +642,7 @@ bool drpcx_info(drpcx_read_proc onRead, void* pUserData, int* x, int* y, int* in
     if (x) *x = pcx.width;
     if (y) *y = pcx.height;
     if (internalComponents)	*internalComponents = pcx.components;
-    
+
     return true;
 }
 
