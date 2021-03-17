@@ -202,46 +202,16 @@ TESTCASE #79	E=1	R$=[]	X=-862908000	A$=[    X ]
 TESTCASE #80	E=1	R$=[]	X=-3.4101e+09	A$=[    %   ]
 	F=1	S$=[]
 *** TEST PASSED ***
-TESTCASE #81	E=1	R$=[]	X=3.3889e+09	A$=[  ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #82	E=1	R$=[]	X=2.49826e+09	A$=[ 5555   ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #83	E=1	R$=[]	X=2.3491e+09	A$=[FFFF   ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #84	E=1	R$=[]	X=194745000	A$=[     %%  ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #85	E=1	R$=[]	X=2.02475e+09	A$=[     ]
-	F=1	S$=[]
-*** TEST PASSED ***
 TESTCASE #86	E=1	R$=[]	X=-2.26748e+09	A$=[  ~~~~    ]
 	F=1	S$=[]
 *** TEST PASSED ***
 TESTCASE #87	E=1	R$=[]	X=-2.10587e+09	A$=[   ||    ]
 	F=1	S$=[]
 *** TEST PASSED ***
-TESTCASE #88	E=1	R$=[]	X=4.23585e+09	A$=[     SSS     ]
-	F=1	S$=[]
-*** TEST PASSED ***
 TESTCASE #89	E=1	R$=[]	X=-2.66524e+09	A$=[   6666 ]
 	F=1	S$=[]
 *** TEST PASSED ***
-TESTCASE #90	E=1	R$=[]	X=4.01052e+09	A$=[    ww   ]
-	F=1	S$=[]
-*** TEST PASSED ***
 TESTCASE #91	E=1	R$=[]	X=-4.87912e+09	A$=[  1111   ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #92	E=1	R$=[]	X=1.77556e+09	A$=[ K ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #93	E=1	R$=[]	X=287705000	A$=[  ttttt ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #94	E=1	R$=[]	X=199977000	A$=[ OOOOO   ]
 	F=1	S$=[]
 *** TEST PASSED ***
 TESTCASE #95	E=1	R$=[]	X=-3.39941e+09	A$=[ E  ]
@@ -253,13 +223,7 @@ TESTCASE #96	E=1	R$=[]	X=-3.49119e+09	A$=[ PPPPP   ]
 TESTCASE #97	E=1	R$=[]	X=-2.86324e+09	A$=[    == ]
 	F=1	S$=[]
 *** TEST PASSED ***
-TESTCASE #98	E=1	R$=[]	X=4.20418e+09	A$=[ VVVV    ]
-	F=1	S$=[]
-*** TEST PASSED ***
 TESTCASE #99	E=1	R$=[]	X=-3.1518e+09	A$=[ c   ]
-	F=1	S$=[]
-*** TEST PASSED ***
-TESTCASE #100	E=1	R$=[]	X=4.60615e+09	A$=[    yyyy     ]
 	F=1	S$=[]
 *** TEST PASSED ***
 *** ALL TESTS PASSED ***
