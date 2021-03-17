@@ -31,9 +31,11 @@ public:
   bool setMode(uint8_t mode);
   inline void setColorSpace(uint8_t palette) {
     Video::setColorSpace(palette);
-    uint8_t *pal = csp.paletteData(palette);
-    for (int i = 0; i < 256; ++i) {
-      m_current_palette[i] = (pixel_t)((pal[i*3] << 16) | (pal[i*3+1] << 8) | pal[i*3+2]);
+    if (palette < 2) {
+      uint8_t *pal = csp.paletteData(palette);
+      for (int i = 0; i < 256; ++i) {
+        m_current_palette[i] = (pixel_t)((pal[i*3] << 16) | (pal[i*3+1] << 8) | pal[i*3+2]);
+      }
     }
   }
 
