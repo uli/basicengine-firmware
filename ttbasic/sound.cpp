@@ -423,6 +423,9 @@ BString BasicSound::instName(int index) {
 void BasicSound::setBeep(int period, int vol) {
   period = period * AUDIO_SAMPLE_RATE / 16000;
 
+  if (period > SOUND_BUFLEN)
+    return;
+
   if (vol > 15)
     vol = 15;
   else if (vol < 0)
