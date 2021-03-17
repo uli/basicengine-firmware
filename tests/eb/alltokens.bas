@@ -38,7 +38,7 @@
 320@b=char(@c,4)
 330vpoke 20,30
 340sys tem
-350system=1
+350systm=1
 360while whiler=4:?error$(42):wend
 370say something$+chr$(asc("!"))
 380x=sin(pi)+sins(666)

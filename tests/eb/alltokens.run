@@ -33,7 +33,7 @@
 320 @b=CHAR(@c,4)
 330 VPOKE 20,30
 340 SYS tem
-350 system=1
+350 systm=1
 360 WHILE whiler=4:?ERROR$(42):WEND 
 370 SAY something$+CHR$(ASC("!"))
 380 x=SIN(pi)+sins(666)
