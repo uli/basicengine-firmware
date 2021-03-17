@@ -4,7 +4,7 @@
 #ifndef _H3AUDIO_H
 #define _H3AUDIO_H
 
-#define SOUND_BUFLEN 160
+#define SOUND_BUFLEN 480
 
 #include "../ttbasic/audio.h"
 #include <string.h>
