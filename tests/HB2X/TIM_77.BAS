@@ -11,5 +11,9 @@
 151 t=TICK()
   200 for i = 1 to 2E6
   210 next i
-  300 PRINT "On my system, this should be between 4 and 6 seconds: ";int((TICK()-t)/1000)
+  220 if TICK()-t <= 0 THEN
+  230   PRINT "no ticks, something is wrong"
+  240 ELSE
+  250   PRINT "time passes..."
+  260 ENDIF
   999 END
