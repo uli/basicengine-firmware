@@ -223,7 +223,7 @@ public:
     default: break;
     }
   }
-    
+
   ssize_t write(char *s) {
     switch (m_type) {
 #ifdef UNIFILE_USE_SDFAT
@@ -764,7 +764,7 @@ public:
   inline ssize_t tmpRead(char* buf, size_t size) {
     return fread(buf, 1, size, tfile);
   }
-  uint8_t putch(char c);                                // 1バイト出力 
+  uint8_t putch(char c);                                // 1バイト出力
   int8_t  IsText(char* tfname);                         // ファイルがテキストファイルかチェック
   int16_t readLine(char* str);                          // 1行分読込み
   int8_t  textOut(char* fname, int16_t sline, int16_t ln); // テキストファイルの出力
@@ -788,6 +788,9 @@ public:
   // ビットマップファイルのロード
   uint8_t loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y, int32_t x,
                      int32_t y, int32_t &w, int32_t &h, uint32_t mask = (uint32_t)-1);
+  uint8_t loadImage(FILE *img_file, int32_t img_w, int32_t img_h,
+                    int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y,
+                    int32_t &w, int32_t &h, uint32_t mask);
   uint8_t saveBitmap(char *fname, int32_t src_x, int32_t src_y, int32_t w,
                      int32_t h);
 };

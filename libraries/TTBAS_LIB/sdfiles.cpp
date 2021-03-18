@@ -438,17 +438,92 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
   return fread((char *)buf, 1, bytesToRead, pcx_file);
 }
 
+#ifdef TRUE_COLOR
+extern "C" {
+#include <stb_image.h>
+}
+
+uint8_t sdfiles::loadImage(FILE *img_file,
+                           int32_t img_w, int32_t img_h,
+                           int32_t &dst_x, int32_t &dst_y,
+                           int32_t x, int32_t y,
+                           int32_t &w, int32_t &h,
+                           pixel_t mask) {
+  uint8_t rc = 1;
+  int components;
+  uint32_t *data = 0;
+  fseek(img_file, 0, SEEK_SET);
+
+  if (w == -1) {
+    if (h != -1) {
+      rc = ERR_RANGE;
+      goto out;
+    }
+    w = img_w - x;
+    h = img_h - y;
+  }
+  if (dst_x == -1) {
+    if (dst_y != -1) {
+      rc = ERR_RANGE;
+      goto out;
+    }
+    if (!vs23.allocBacking(w, h, (int &)dst_x, (int &)dst_y)) {
+      rc = ERR_SCREEN_FULL;
+      goto out;
+    }
+  }
+
+  if (dst_x + w > vs23.width() || dst_y + h > vs23.lastLine()) {
+    rc = ERR_RANGE;
+    goto out;
+  }
+
+  data = (uint32_t *)stbi_load_from_file(img_file, (int *)&img_w, (int *)&img_h, &components, 4);
+
+  if (data) {
+    rc = 0;
+
+    // Blit image to screen.
+    for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
+      int sx = x;
+
+      for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
+        uint32_t d = data[y*img_w + sx];
+        pixel_t p = csp.colorFromRgb(d >> 24, d >> 16, d >> 8);
+        if ((d & 0xff) > 0x80 && (mask == (pixel_t)-1 || p != mask))
+          vs23.setPixel(dx, dy, p);
+      }
+    }
+
+    free(data);
+  } else
+    rc = SD_ERR_READ_FILE;  // XXX: or OOM...
+
+out:
+  fclose(img_file);
+  return rc;
+}
+#endif
+
 uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
                             int32_t x, int32_t y, int32_t &w, int32_t &h,
                             uint32_t mask) {
   uint8_t rc = 1;
+  int width, height, components;
 
   pcx_file = fopen(fname, "r");
+
   if (!pcx_file) {
     return SD_ERR_OPEN_FILE;
   }
 
-  int width, height, components;
+#ifdef TRUE_COLOR
+  if (stbi_info_from_file(pcx_file, &width, &height, &components)) {
+    rc = loadImage(pcx_file, width, height, dst_x, dst_y, x, y, w, h, mask);
+    pcx_file = NULL;
+    return rc;
+  }
+#endif
 
   if (w == -1) {
     if (h != -1) {
