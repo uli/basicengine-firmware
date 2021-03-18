@@ -2508,7 +2508,7 @@ void Basic::isave() {
   if (*cip == I_BG) {
     isavebg();
     return;
-  } else if (*cip == I_PCX) {
+  } else if (*cip == I_PCX || *cip == I_IMAGE) {
     ++cip;
     isavepcx();
     return;
@@ -5471,7 +5471,7 @@ void Basic::ilist_() {
 }
 
 void Basic::ilrun_() {
-  if (*cip == I_PCX) {
+  if (*cip == I_PCX || *cip == I_IMAGE) {
     cip++;
     ildbmp();
   } else if (*cip == I_BG) {

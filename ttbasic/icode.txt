@@ -80,11 +80,9 @@ MOVE	I_MOVE		imove
 PLOT	I_PLOT		iplot
 DIM	I_DIM		idim
 PALETTE	I_PALETTE	ipalette
-EDIT	I_EDIT		iedit
 BORDER	I_BORDER	iborder
 ON	I_ON		ion
 STOP	I_STOP		istop
-CHDIR	I_CHDIR		ichdir
 TRON	I_TRON		itron
 TROFF	I_TROFF		itroff
 OPEN	I_OPENCMD	iopen
@@ -131,6 +129,8 @@ _none	I_EXTEND	iextend
 CREDITS	X_CREDITS	icredits
 XYZZY	X_XYZZY		ixyzzy
 LUA	X_LUA		ilua
+EDIT	X_EDIT		iedit
+CHDIR	X_CHDIR		ichdir
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
@@ -236,6 +236,7 @@ EOR	I_XOR		esyntax
 [	I_SQOPEN	esyntax
 ]	I_SQCLOSE	esyntax
 PCX	I_PCX		esyntax
+IMAGE	I_IMAGE		esyntax
 AS	I_AS		esyntax
 OFF	I_OFF		esyntax
 SIZE	I_SIZE		esyntax
