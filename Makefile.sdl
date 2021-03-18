@@ -6,7 +6,7 @@ SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls l
 	$(shell ls sdl/*.cpp) \
 	$(shell ls arduino_compat/*.cpp)
 
-SOURCES_C = $(shell ls ttbasic/*.c)
+SOURCES_C = $(shell ls ttbasic/*.c) $(shell ls libraries/stb/*.c)
 
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
 
@@ -20,7 +20,7 @@ CC=$(CROSS_COMPILE)gcc
 CXX=$(CROSS_COMPILE)g++
 
 INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
-	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua
+	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb
 ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
 	   -Wall -Wno-unused -D_GNU_SOURCE -DSDL
 CFLAGS += $(ARDFLAGS)
