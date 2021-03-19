@@ -39,6 +39,10 @@ public:
     }
   }
 
+  inline pixel_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
+    return (pixel_t)(r << 16 | g << 8 | b);
+  }
+
   bool blockFinished() { return true; }
 
 #ifdef USE_BG_ENGINE
