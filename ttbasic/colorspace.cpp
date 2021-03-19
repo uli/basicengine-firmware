@@ -191,6 +191,12 @@ ipixel_t Colorspace::indexedColorFromRgbSlow(uint8_t r, uint8_t g, uint8_t b) {
 
 ipixel_t ICACHE_RAM_ATTR Colorspace::indexedColorFromRgb(uint8_t r, uint8_t g,
                                                          uint8_t b) {
+#ifdef TRUE_COLOR
+  if (m_colorspace == 2) {
+    return colorFromRgb(r, g, b);
+  }
+#endif
+
   uint8_t cache_hash = (r ^ g ^ b) & (COLOR_CACHE_SIZE - 1);
   struct color_cache *cache_entry = &color_cache[cache_hash];
   if (r == cache_entry->r && g == cache_entry->g && b == cache_entry->b) {
