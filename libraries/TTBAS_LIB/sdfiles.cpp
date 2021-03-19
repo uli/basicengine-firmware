@@ -489,8 +489,8 @@ uint8_t sdfiles::loadImage(FILE *img_file,
 
       for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
         uint32_t d = data[y*img_w + sx];
-        pixel_t p = csp.colorFromRgb(d >> 24, d >> 16, d >> 8);
-        if ((d & 0xff) > 0x80 && (mask == (pixel_t)-1 || p != mask))
+        pixel_t p = csp.colorFromRgb(d, d >> 8, d >> 16);
+        if ((d >> 24) > 0x80 && (mask == (pixel_t)-1 || p != mask))
           vs23.setPixel(dx, dy, p);
       }
     }
