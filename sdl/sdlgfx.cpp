@@ -173,7 +173,7 @@ bool SDLGFX::setMode(uint8_t mode) {
     fmt->Bmask,
     fmt->Amask
   );
-  
+
   // XXX: handle fail
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
@@ -363,11 +363,7 @@ void SDLGFX::updateBg() {
     int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
     int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
 
-#if SDL_BPP == 8
     pixel_t skey = s->p.key;
-#else
-    pixel_t skey = s->p.key == -1 ? 0xffffffff : m_current_palette[s->p.key];
-#endif
 
     for (int y = 0; y != s->p.h; ++y) {
       int yy = y + s->pos_y;
@@ -426,13 +422,8 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
 
   pixel_t lkey, rkey;
-#if SDL_BPP == 8
   lkey = left->p.key;
   rkey = right->p.key;
-#else
-  lkey = left->p.key == -1 ? 0xffffffff : m_current_palette[left->p.key];
-  rkey = right->p.key == -1 ? 0xffffffff : m_current_palette[right->p.key];
-#endif
 
   for (int y = lower->pos_y;
        y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);
