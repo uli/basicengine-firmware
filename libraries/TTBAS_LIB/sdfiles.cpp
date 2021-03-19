@@ -566,8 +566,65 @@ out:
   return rc;
 }
 
+#ifdef TRUE_COLOR
+extern "C" {
+#include <stb_image_write.h>
+}
+#endif
+
 uint8_t sdfiles::saveBitmap(char *fname, int32_t src_x, int32_t src_y,
                             int32_t w, int32_t h) {
+  if (strlen(fname) < 4) {
+    return ERR_BAD_FNAME;
+  }
+
+  char *ext = fname + strlen(fname) - 3;
+  int ret;
+
+  if (!strcasecmp(ext, "pcx"))
+    return saveBitmapPcx(fname, src_x, src_y, w, h);
+#ifndef TRUE_COLOR
+  else
+    return ERR_BAD_FNAME;	// only PCX supported
+#endif
+
+#ifdef TRUE_COLOR
+  pixel_t *data = (pixel_t *)malloc(w * h * 4);
+  if (!data)
+    return ERR_OOM;
+
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      uint8_t r, g, b, a;
+      vs23.rgbaFromColor(vs23.getPixel(x, y), r, g, b, a);
+      data[y * w + x] = r | (g << 8) | (b << 16) | (a << 24);
+    }
+  }
+
+  if (!strcasecmp(ext, "jpg") || !strcasecmp(ext, "jpeg"))
+    ret = stbi_write_jpg(fname, w, h, 4, (const void *)data, 95);
+  else if (!strcasecmp(ext, "png"))
+    ret = stbi_write_png(fname, w, h, 4, (const void *)data, w * sizeof(pixel_t));
+  else if (!strcasecmp(ext, "bmp"))
+    ret = stbi_write_bmp(fname, w, h, 4, (const void *)data);
+  else if (!strcasecmp(ext, "tga"))
+    ret = stbi_write_tga(fname, w, h, 4, (const void *)data);
+  else {
+    free(data);
+    return ERR_BAD_FNAME;
+  }
+
+  free(data);
+
+  if (ret)
+    return 0;
+  else
+    return ERR_IO;	// ...I guess
+#endif
+}
+
+uint8_t sdfiles::saveBitmapPcx(char *fname, int32_t src_x, int32_t src_y,
+                               int32_t w, int32_t h) {
   uint8_t rc = 0;
   drpcx_header hdr;
 

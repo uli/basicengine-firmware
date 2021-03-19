@@ -793,6 +793,8 @@ public:
                     int32_t &w, int32_t &h, uint32_t mask);
   uint8_t saveBitmap(char *fname, int32_t src_x, int32_t src_y, int32_t w,
                      int32_t h);
+  uint8_t saveBitmapPcx(char *fname, int32_t src_x, int32_t src_y, int32_t w,
+                     int32_t h);
 };
 
 #endif
