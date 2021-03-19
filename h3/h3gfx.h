@@ -63,6 +63,10 @@ public:
     m_dupe_active = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
+    if (csp.getColorSpace() == 2) {
+      setPixel(x, y, c);
+      return;
+    }
     m_pixels[y][x] = m_current_palette[c];
     m_dupe_active = true;
   }
@@ -97,6 +101,10 @@ public:
     m_dupe_active = true;
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+    if (csp.getColorSpace() == 2) {
+      setPixels(address, data, len);
+      return;
+    }
     pixel_t *pa = (pixel_t *)address;
     for (uint32_t i = 0; i < len; ++i)
       *pa++ = m_current_palette[*data++];
