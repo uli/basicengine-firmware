@@ -115,7 +115,11 @@ void loop(void) {
   SpiUnlock();
 
   // Initialize I2S to default sample rate, start transmission.
+#ifdef AUDIO_SAMPLE_RATE
+  audio.init(AUDIO_SAMPLE_RATE);
+#else
   audio.init(16000);
+#endif
 
   bc = new Basic;
   memset(bc, 0, sizeof(*bc));
