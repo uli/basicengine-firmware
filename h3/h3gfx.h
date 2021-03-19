@@ -42,6 +42,12 @@ public:
   inline pixel_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
     return (pixel_t)(r << 16 | g << 8 | b);
   }
+  inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) {
+    r = (p >> 16) & 0xff;
+    g = (p >> 8) & 0xff;
+    b = p & 0xff;
+    a = 0xff;	// not supported (yet)
+  }
 
   bool blockFinished() { return true; }
 

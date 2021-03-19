@@ -38,6 +38,9 @@ public:
   inline pixel_t colorFromRgb(int r, int g, int b) {
     return (pixel_t)SDL_MapRGB(m_surface->format, r, g, b);
   }
+  inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) {
+    SDL_GetRGBA(p, m_surface->format, &r, &g, &b, &a);
+  }
 
   bool blockFinished() { return true; }
 
