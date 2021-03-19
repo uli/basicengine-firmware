@@ -625,6 +625,9 @@ uint8_t sdfiles::saveBitmap(char *fname, int32_t src_x, int32_t src_y,
 
 uint8_t sdfiles::saveBitmapPcx(char *fname, int32_t src_x, int32_t src_y,
                                int32_t w, int32_t h) {
+#ifdef TRUE_COLOR
+  return ERR_NOT_SUPPORTED;
+#else
   uint8_t rc = 0;
   drpcx_header hdr;
 
@@ -686,6 +689,7 @@ uint8_t sdfiles::saveBitmapPcx(char *fname, int32_t src_x, int32_t src_y,
   pcx_file = NULL;
 
   return rc;
+#endif
 }
 
 //
