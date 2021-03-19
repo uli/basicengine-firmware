@@ -68,6 +68,8 @@
 #define IPIXEL_TYPE uint32_t
 #endif
 #define BUFFERED_SCREEN
+#define AUDIO_SAMPLE_RATE 48000
+#define AUDIO_16BIT
 #endif
 
 #ifndef IPIXEL_TYPE

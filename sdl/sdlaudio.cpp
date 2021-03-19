@@ -9,27 +9,28 @@
 SDLAudio audio;
 
 int SDLAudio::m_curr_buf_pos;
-uint8_t *SDLAudio::m_curr_buf;
+sample_t *SDLAudio::m_curr_buf;
 static int m_read_buf;
 static int m_read_pos;
 
-uint8_t SDLAudio::m_sound_buf[2][SOUND_BUFLEN];
+sample_t SDLAudio::m_sound_buf[2][SOUND_BUFLEN];
 int SDLAudio::m_block_size;
 
 void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len) {
   static int off = 0;
+  sample_t *str = (sample_t *)stream;
 
-  for (int i = 0; i < len; ++i) {
+  for (int i = 0; i < len / sizeof(sample_t); ++i) {
     if ((i + off) % m_block_size == 0) {
       m_curr_buf_pos = 0;
       sound.render();
     }
-    stream[i] = m_curr_buf[(i + off) % m_block_size];
+    str[i] = m_curr_buf[(i + off) % m_block_size];
   }
-  if (len == m_block_size)
+  if (len / sizeof(sample_t) == m_block_size)
     off = 0;
   else
-    off = (off + len) % m_block_size;
+    off = (off + len / sizeof(sample_t)) % m_block_size;
 }
 
 void SDLAudio::init(int sample_rate) {
@@ -49,7 +50,7 @@ void SDLAudio::init(int sample_rate) {
 
   SDL_AudioSpec desired;
   desired.freq = sample_rate;
-  desired.format = AUDIO_U8;
+  desired.format = AUDIO_S16;
   desired.channels = 1;
   desired.samples = SOUND_BUFLEN;
   desired.callback = fillAudioBuffer;
