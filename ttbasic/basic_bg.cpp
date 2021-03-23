@@ -266,6 +266,10 @@ void BASIC_INT Basic::isprite() {
 #ifdef USE_BG_ENGINE
   int32_t num, pat_x, pat_y, w, h, frame_x, frame_y, flags, prio;
   uint32_t key;
+#ifdef USE_ROTOZOOM
+  num_t angle, scale_x, scale_y;
+#endif
+
   bool set_frame = false, set_opacity = false;
 
   if (*cip == I_OFF) {
@@ -330,6 +334,22 @@ void BASIC_INT Basic::isprite() {
     if (getParam(prio, I_NONE)) return;
     c_sprite_set_priority(num, prio);
     break;
+#ifdef USE_ROTOZOOM
+  case I_ANGLE:
+    if (getParam(angle, I_NONE)) return;
+    c_sprite_set_angle(num, angle);
+    break;
+  case I_SCALE:
+    if (getParam(scale_x, I_NONE)) return;
+    if (*cip == I_COMMA) {
+      ++cip;
+      if (getParam(scale_y, I_NONE)) return;
+    } else
+      scale_y = scale_x;
+    c_sprite_set_scale_x(num, scale_x);
+    c_sprite_set_scale_y(num, scale_y);
+    break;
+#endif
   default:
     // XXX: throw an error if nothing has been done
     cip--;

@@ -42,9 +42,6 @@ GPOUT	I_DOUT		idwrite
 SMODE	I_SMODE		ismode
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
-MKDIR	I_MKDIR		imkdir
-RMDIR	I_RMDIR		irmdir
-RENAME	I_RENAME	irename
 COPY	I_COPY		icopy
 TYPE	I_TYPE		itype
 REMOVE	I_REMOVE	iremove
@@ -131,6 +128,9 @@ XYZZY	X_XYZZY		ixyzzy
 LUA	X_LUA		ilua
 EDIT	X_EDIT		iedit
 CHDIR	X_CHDIR		ichdir
+MKDIR	X_MKDIR		imkdir
+RMDIR	X_RMDIR		irmdir
+RENAME	X_RENAME	irename
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
@@ -246,6 +246,8 @@ TILES	I_TILES		esyntax
 PATTERN I_PATTERN	esyntax
 FLAGS	I_FLAGS		esyntax
 PRIO	I_PRIO		esyntax
+ANGLE	I_ANGLE		esyntax
+SCALE	I_SCALE		esyntax
 FN	I_FN		esyntax
 DIRECTORY	I_DIRECTORY	esyntax
 TAB	I_TAB		esyntax
