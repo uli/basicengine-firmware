@@ -333,6 +333,20 @@ static int l_sprite_y(lua_State *l) {
   return 1;
 }
 
+static int l_sprite_w(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+
+  lua_pushinteger(l, c_sprite_w(s));
+  return 1;
+}
+
+static int l_sprite_h(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+
+  lua_pushinteger(l, c_sprite_h(s));
+  return 1;
+}
+
 static int l_sprite_frame_x(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
@@ -454,6 +468,10 @@ int luaopen_bg(lua_State *l) {
   lua_setglobal_P(l, "sprite_x");
   lua_pushcfunction(l, l_sprite_y);
   lua_setglobal_P(l, "sprite_y");
+  lua_pushcfunction(l, l_sprite_w);
+  lua_setglobal_P(l, "sprite_w");
+  lua_pushcfunction(l, l_sprite_h);
+  lua_setglobal_P(l, "sprite_h");
   lua_pushcfunction(l, l_sprite_frame_x);
   lua_setglobal_P(l, "sprite_frame_x");
   lua_pushcfunction(l, l_sprite_frame_y);
