@@ -57,6 +57,8 @@ Sets the mode of a general-purpose I/O pin.
   or output, respectively. A value of `7` disables the pin.
 * For the functions of other modes, consult the Allwinner H3 datasheet,
   chapter 3.2 ("GPIO Multiplexing Functions").
+* WARNING: Improper use of this command can cause permanent damage to the
+  system and/or attached devices.
 \ref GPIN() GPOUT
 ***/
 void Basic::igpmode() {
