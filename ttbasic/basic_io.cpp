@@ -3,11 +3,13 @@
 #include <Wire.h>
 
 void SMALL basic_init_io() {
+#ifdef ESP8266
   Wire.begin(2, 0);
   // ESP8266 Wire code assumes that SCL and SDA pins are set low, instead
   // of taking care of that itself. WTF?!?
   digitalWrite(0, LOW);
   digitalWrite(2, LOW);
+#endif
 }
 
 uint16_t pcf_state = 0xffff;
