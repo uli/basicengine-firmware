@@ -235,6 +235,32 @@ int c_sprite_set_opacity(int s, int onoff) {
   return 0;
 }
 
+#ifdef USE_ROTOZOOM
+int c_sprite_set_angle(int s, double angle) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  vs23.setSpriteAngle(s, angle);
+  return 0;
+}
+
+int c_sprite_set_scale_x(int s, double scale_x) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  vs23.setSpriteScaleX(s, scale_x);
+  return 0;
+}
+
+int c_sprite_set_scale_y(int s, double scale_y) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  vs23.setSpriteScaleY(s, scale_y);
+  return 0;
+}
+#endif
+
 int c_sprite_reload(int s) {
   if (check_param(s, 0, MAX_SPRITES))
     return -1;

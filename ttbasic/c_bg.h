@@ -26,6 +26,11 @@ int c_sprite_set_key(int s, ipixel_t key);
 int c_sprite_set_priority(int s, int prio);
 int c_sprite_set_frame(int s, int frame_x, int frame_y, int flip_x, int flip_y);
 int c_sprite_set_opacity(int s, int onoff);
+#ifdef USE_ROTOZOOM
+int c_sprite_set_angle(int s, double angle);
+int c_sprite_set_scale_x(int s, double scale_x);
+int c_sprite_set_scale_y(int s, double scale_y);
+#endif
 int c_sprite_reload(int s);
 int c_sprite_move(int s, int x, int y);
 
