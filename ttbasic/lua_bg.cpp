@@ -255,6 +255,30 @@ static int l_sprite_set_opacity(lua_State *l) {
   return 1;
 }
 
+static int l_sprite_set_angle(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+  double angle = luaL_checknumber(l, 2);
+
+  c_sprite_set_angle(s, angle);
+  return 0;
+}
+
+static int l_sprite_set_scale_x(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+  double scale_x = luaL_checknumber(l, 2);
+
+  c_sprite_set_scale_x(s, scale_x);
+  return 0;
+}
+
+static int l_sprite_set_scale_y(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+  double scale_y = luaL_checknumber(l, 2);
+
+  c_sprite_set_scale_y(s, scale_y);
+  return 0;
+}
+
 static int l_sprite_reload(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
@@ -412,6 +436,12 @@ int luaopen_bg(lua_State *l) {
   lua_setglobal_P(l, "sprite_set_opacity");
   lua_pushcfunction(l, l_sprite_reload);
   lua_setglobal_P(l, "sprite_reload");
+  lua_pushcfunction(l, l_sprite_set_angle);
+  lua_setglobal_P(l, "sprite_set_angle");
+  lua_pushcfunction(l, l_sprite_set_scale_x);
+  lua_setglobal_P(l, "sprite_set_scale_x");
+  lua_pushcfunction(l, l_sprite_set_scale_y);
+  lua_setglobal_P(l, "sprite_set_scale_y");
   lua_pushcfunction(l, l_sprite_move);
   lua_setglobal_P(l, "sprite_move");
   lua_pushcfunction(l, l_sprite_tile_collision);
