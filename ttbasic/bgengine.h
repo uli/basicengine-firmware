@@ -145,6 +145,22 @@ public:
   inline int16_t spriteY(uint8_t num) {
     return m_sprite[num].pos_y;
   }
+  inline int16_t spriteWidth(uint8_t num) {
+#ifdef USE_ROTOZOOM
+    if (m_sprite[num].surf)
+      return m_sprite[num].surf->w;
+    else
+#endif
+      return m_sprite[num].p.w;
+  }
+  inline int16_t spriteHeight(uint8_t num) {
+#ifdef USE_ROTOZOOM
+    if (m_sprite[num].surf)
+      return m_sprite[num].surf->h;
+    else
+#endif
+      return m_sprite[num].p.h;
+  }
 
   inline bool spriteEnabled(uint8_t num) {
     return m_sprite[num].enabled;
