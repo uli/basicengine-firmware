@@ -658,6 +658,64 @@ num_t BASIC_FP Basic::nspry() {
 #endif
 }
 
+/***bf bg SPRW
+Returns the width of a given sprite.
+\usage p = SPRW(spr)
+\args
+@spr	sprite number [`0` to `{MAX_SPRITES_m1}`]
+\ret
+Width of sprite `spr`.
+\note
+On platforms with rotozoom support, the function returns the dimension after
+transformations have been applied.
+\bugs
+When rotation and/or scale are changed, the new dimensions may not be
+reflected here until the next video frame is rendered.
+\ref SPRH()
+***/
+num_t BASIC_FP Basic::nsprw() {
+#ifdef USE_BG_ENGINE
+  int32_t spr;
+
+  if (checkOpen() || getParam(spr, I_CLOSE))
+    return 0;
+
+  return c_sprite_w(spr);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
+/***bf bg SPRH
+Returns the height of a given sprite.
+\usage p = SPRH(spr)
+\args
+@spr	sprite number [`0` to `{MAX_SPRITES_m1}`]
+\ret
+Height of sprite `spr`.
+\note
+On platforms with rotozoom support, the function returns the dimension after
+transformations have been applied.
+\bugs
+When rotation and/or scale are changed, the new dimensions may not be
+reflected here until the next video frame is rendered.
+\ref SPRW()
+***/
+num_t BASIC_FP Basic::nsprh() {
+#ifdef USE_BG_ENGINE
+  int32_t spr;
+
+  if (checkOpen() || getParam(spr, I_CLOSE))
+    return 0;
+
+  return c_sprite_h(spr);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return 0;
+#endif
+}
+
 /***bf bg BSCRX
 Returns the horizontal scrolling offset of a given background layer.
 \usage p = BSCRX(bg)

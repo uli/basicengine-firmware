@@ -42,9 +42,6 @@ GPOUT	I_DOUT		idwrite
 SMODE	I_SMODE		ismode
 SPRINT	I_SPRINT	isprint
 SWRITE	I_SWRITE	iswrite
-COPY	I_COPY		icopy
-TYPE	I_TYPE		itype
-REMOVE	I_REMOVE	iremove
 BEEP	I_BEEP		ibeep
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
@@ -131,6 +128,9 @@ CHDIR	X_CHDIR		ichdir
 MKDIR	X_MKDIR		imkdir
 RMDIR	X_RMDIR		irmdir
 RENAME	X_RENAME	irename
+COPY	X_COPY		icopy
+TYPE	X_TYPE		itype
+REMOVE	X_REMOVE	iremove
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
@@ -188,6 +188,8 @@ TILECOLL	I_TILECOLL	ntilecoll
 SPRCOLL	I_SPRCOLL	nsprcoll
 SPRX	I_SPRX		nsprx
 SPRY	I_SPRY		nspry
+SPRW	I_SPRW		nsprw
+SPRH	I_SPRH		nsprh
 BSCRX	I_BSCRX		nbscrx
 BSCRY	I_BSCRY		nbscry
 POPF	I_POPF		npopf
