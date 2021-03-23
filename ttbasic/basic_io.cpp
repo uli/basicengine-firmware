@@ -1,4 +1,5 @@
 #include "basic.h"
+#include "c_io.h"
 
 #include <Wire.h>
 
@@ -12,45 +13,35 @@ void SMALL basic_init_io() {
 #endif
 }
 
-uint16_t pcf_state = 0xffff;
-
 /***bc io GPOUT
 Sets the state of a general-purpose I/O pin.
-\usage GPOUT pin, value
+\usage
+GPOUT pin, value (ESP8266)
+
+GPOUT port, pin, value (H3)
 \args
-@pin	pin number [`0` to `15`]
-@value	pin state [`0` for "off", anything else for "on"]
+@port	port number [`0` to `7`]
+@pin	pin number [`0` to `15` (ESP8266) or `31` (H3)]
+@value	pin state [`0` for "low", anything else for "high"]
 \note
-`GPOUT` allows access to pins on the I2C I/O extender only.
-\ref GPIN()
+* This command is only implemented on the ESP8266 and H3 platforms.
+* On the ESP8266 platform, `GPOUT` allows access to pins on the I2C I/O
+  extender only.
+\ref GPIN() GPMODE
 ***/
 void Basic::idwrite() {
-  int32_t pinno, data;
+  uint32_t portno = 0;
+  uint32_t pinno, data;
 
-  if (getParam(pinno, 0, 15, I_COMMA))
-    return;
-  if (getParam(data, I_NONE))
-    return;
-  data = !!data;
-
-  pcf_state = (pcf_state & ~(1 << pinno)) | (data << pinno);
-
-  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
-  // to avoid interference.
-  while (!blockFinished()) {}
-
-  // XXX: frequency is higher when running at 160 MHz because F_CPU is wrong
-  Wire.beginTransmission(0x20);
-  Wire.write(pcf_state & 0xff);
-  Wire.write(pcf_state >> 8);
-
-#ifdef DEBUG_GPIO
-  int ret = 
+  if (
+#ifndef ESP8266
+      getParam(portno, I_COMMA) ||
 #endif
-  Wire.endTransmission();
-#ifdef DEBUG_GPIO
-  Serial.printf("wire st %d pcf 0x%x\n", ret, pcf_state);
-#endif
+      getParam(pinno, I_COMMA) ||
+      getParam(data, I_NONE))
+    return;
+
+  c_gpio_set_pin(portno, pinno, !!data);
 }
 
 /***bf io I2CW
@@ -191,32 +182,27 @@ void SMALL Basic::ismode() {
 Reads the state of a general-purpose I/O pin.
 \usage s = GPIN(pin)
 \args
+@portno	port number [`0` to `7`]
 @pin	pin number [`0` to `15`]
 \ret State of pin: `0` for low, `1` for high.
 \note
-`GPIN()` allows access to pins on the I2C I/O extender only.
-\ref GPOUT
+* This function is only implemented on the ESP8266 and H3 platforms.
+* On the ESP8266 platform, `GPIN()` allows access to pins on the I2C I/O
+  extender only.
+\ref GPOUT GPMODE
 ***/
 num_t BASIC_INT Basic::ngpin() {
-  int32_t a;
+  uint32_t portno = 0;
+  uint32_t pinno;
   if (checkOpen())
     return 0;
-  if (getParam(a, 0, 15, I_NONE))
-    return 0;
-  if (checkClose())
-    return 0;
+#ifndef ESP8266
+  if (getParam(portno, I_COMMA)) return 0;
+#endif
+  if (getParam(pinno, 0, 15, I_NONE)) return 0;
+  if (checkClose()) return 0;
 
-  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
-  // to avoid interference.
-  while (!blockFinished()) {}
-
-  if (Wire.requestFrom(0x20, 2) != 2) {
-    err = ERR_IO;
-    return 0;
-  }
-  uint16_t state = Wire.read();
-  state |= Wire.read() << 8;
-  return !!(state & (1 << a));
+  return c_gpio_get_pin(portno, pinno);
 }
 
 /***bf io ANA
