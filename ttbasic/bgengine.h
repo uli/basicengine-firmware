@@ -155,6 +155,10 @@ public:
   }
 
   inline bool spriteReload(uint8_t num) {
+    m_sprite[num].must_reload = true;
+    if (m_sprite[num].enabled)
+      m_bg_modified = true;
+
     return true;
   }
 
