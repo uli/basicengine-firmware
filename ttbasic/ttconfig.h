@@ -43,6 +43,7 @@
 #define SINGLE_BLIT
 #define AUDIO_SAMPLE_RATE 48000
 #define AUDIO_16BIT
+#define USE_ROTOZOOM
 #endif
 
 #ifdef __DJGPP__
@@ -66,6 +67,7 @@
 #define PIXEL_TYPE uint32_t
 #define TRUE_COLOR
 #define IPIXEL_TYPE uint32_t
+#define USE_ROTOZOOM
 #endif
 #define BUFFERED_SCREEN
 #define SINGLE_BLIT
