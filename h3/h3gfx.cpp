@@ -358,37 +358,38 @@ next:
         s->pos_y >= height())
       continue;
 
-    // consider flipped axes
-    int dx, offx;
-    if (s->p.flip_x) {
-      dx = -1;
-      offx = s->p.w - 1;
-    } else {
-      dx = 1;
-      offx = 0;
-    }
-    int dy, offy;
-    if (s->p.flip_y) {
-      dy = -1;
-      offy = s->p.h - 1;
-    } else {
-      dy = 1;
-      offy = 0;
-    }
-
     // sprite pattern start coordinates
-    int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
-    int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
+    int px = s->p.pat_x + s->p.frame_x * s->p.w;
+    int py = s->p.pat_y + s->p.frame_y * s->p.h;
 
-    for (int y = 0; y != s->p.h; ++y) {
+    if (s->must_reload || !s->surf) {
+      // XXX: do this asynchronously
+      if (s->surf)
+        delete s->surf;
+
+      int pitch = m_current_mode.x;
+      if (py < m_current_mode.y)
+        pitch += m_current_mode.left * 2;
+
+      rz_surface_t in(s->p.w, s->p.h, (uint32_t*)(&m_pixels[py][px]),
+                      pitch * sizeof(pixel_t));
+
+      rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
+                                            s->p.flip_x ? -s->scale_x : s->scale_x,
+                                            s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+      s->surf = out;
+      s->must_reload = false;
+    }
+
+    for (int y = 0; y != s->surf->h; ++y) {
       int yy = y + s->pos_y;
       if (yy < 0 || yy >= height())
         continue;
-      for (int x = 0; x != s->p.w; ++x) {
+      for (int x = 0; x != s->surf->w; ++x) {
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
-        pixel_t p = m_pixels[py + y * dy][px + x * dx];
+        pixel_t p = s->surf->getPixel(x, y);
         // draw only non-keyed pixels
         if (p != s->p.key)
           m_pixels[yy][xx] = p;
@@ -435,55 +436,65 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   uint8_t dir = 0x40;  // indicates collision
 
   const sprite_t *us = &m_sprite[collidee];
+  const rz_surface_t *us_surf = m_sprite[collidee].surf;
   const sprite_t *them = &m_sprite[collider];
+  const rz_surface_t *them_surf = m_sprite[collider].surf;
 
-  if (us->pos_x + us->p.w < them->pos_x)
+  if (!us_surf || !them_surf)
     return 0;
-  if (them->pos_x + them->p.w < us->pos_x)
+
+  if (us->pos_x + us_surf->w < them->pos_x)
     return 0;
-  if (us->pos_y + us->p.h < them->pos_y)
+  if (them->pos_x + them_surf->w < us->pos_x)
     return 0;
-  if (them->pos_y + them->p.h < us->pos_y)
+  if (us->pos_y + us_surf->h < them->pos_y)
+    return 0;
+  if (them->pos_y + them_surf->h < us->pos_y)
     return 0;
 
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
+  rz_surface_t *left_surf, *right_surf;
   if (them->pos_x < us->pos_x) {
     dir |= joyLeft;
     left = them;
     right = us;
-  } else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
+  } else if (them->pos_x + them_surf->w > us->pos_x + us_surf->w)
     dir |= joyRight;
+  left_surf = left->surf;
+  right_surf = right->surf;
 
   const sprite_t *upper = us, *lower = them;
+  const rz_surface_t *upper_surf, *lower_surf;
   if (them->pos_y < us->pos_y) {
     dir |= joyUp;
     upper = them;
     lower = us;
-  } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
+  } else if (them->pos_y + them_surf->h > us->pos_y + us_surf->h)
     dir |= joyDown;
+  upper_surf = upper->surf;
+  lower_surf = lower->surf;
 
   // Check for pixels in overlapping area.
-  const int leftpatx = left->p.pat_x + left->p.frame_x * left->p.w;
-  const int leftpaty = left->p.pat_y + left->p.frame_y * left->p.h;
-  const int rightpatx = right->p.pat_x + right->p.frame_x * right->p.w;
-  const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
+  pixel_t lkey, rkey;
+  lkey = left->p.key;
+  rkey = right->p.key;
 
   for (int y = lower->pos_y;
-       y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);
+       y < _min(lower->pos_y + lower_surf->h, upper->pos_y + upper_surf->h);
        y++) {
-    int leftpy = leftpaty + y - left->pos_y;
-    int rightpy = rightpaty + y - right->pos_y;
+    int leftpy = y - left->pos_y;
+    int rightpy = y - right->pos_y;
 
     for (int x = right->pos_x;
-         x < _min(right->pos_x + right->p.w, left->pos_x + left->p.w);
+         x < _min(right->pos_x + right_surf->w, left->pos_x + left_surf->w);
          x++) {
-      int leftpx = leftpatx + x - left->pos_x;
-      int rightpx = rightpatx + x - right->pos_x;
-      pixel_t leftpixel = m_pixels[leftpy][leftpx];
-      pixel_t rightpixel = m_pixels[rightpy][rightpx];
+      int leftpx = x - left->pos_x;
+      int rightpx = x - right->pos_x;
+      pixel_t leftpixel = left_surf->getPixel(leftpx, leftpy);
+      pixel_t rightpixel = right_surf->getPixel(rightpx, rightpy);
 
-      if (leftpixel != left->p.key && rightpixel != right->p.key)
+      if (leftpixel != lkey && rightpixel != rkey)
         return dir;
     }
   }
