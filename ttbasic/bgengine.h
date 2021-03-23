@@ -8,6 +8,7 @@
 #include <joystick.h>
 #include "video_driver.h"
 #include <stdint.h>
+#include "rotozoom.h"
 
 #define MAX_BG	4
 
@@ -154,6 +155,23 @@ public:
     m_bg_modified = true;
   }
 
+#ifdef USE_ROTOZOOM
+  inline void setSpriteAngle(uint8_t num, double angle) {
+    m_sprite[num].angle = angle;
+    spriteReload(num);
+  }
+
+  inline void setSpriteScaleX(uint8_t num, double scale_x) {
+    m_sprite[num].scale_x = scale_x;
+    spriteReload(num);
+  }
+
+  inline void setSpriteScaleY(uint8_t num, double scale_y) {
+    m_sprite[num].scale_y = scale_y;
+    spriteReload(num);
+  }
+#endif
+
   inline bool spriteReload(uint8_t num) {
     m_sprite[num].must_reload = true;
     if (m_sprite[num].enabled)
@@ -224,6 +242,11 @@ protected:
     struct sprite_props p;
     int16_t pos_x, pos_y;
     struct sprite_pattern *pat;
+#ifdef USE_ROTOZOOM
+    double angle;
+    double scale_x, scale_y;
+    rz_surface_t *surf;
+#endif
     uint8_t prio;
     bool enabled:1, must_reload:1;
   };
