@@ -131,6 +131,7 @@ RENAME	X_RENAME	irename
 COPY	X_COPY		icopy
 TYPE	X_TYPE		itype
 REMOVE	X_REMOVE	iremove
+GPMODE	X_GPMODE	igpmode
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin

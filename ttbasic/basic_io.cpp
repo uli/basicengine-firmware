@@ -44,6 +44,37 @@ void Basic::idwrite() {
   c_gpio_set_pin(portno, pinno, !!data);
 }
 
+/***bc io GPMODE
+Sets the mode of a general-purpose I/O pin.
+\usage GPMODE port, pin, value
+\args
+@port	port number [`0` to `7`]
+@pin	pin number [`0` to `31`]
+@mode	pin mode [`0` to `7`]
+\note
+* This command is only implemented on the H3 platform.
+* A `mode` value of `0` or `1` configures the pin as a general-purpose input
+  or output, respectively. A value of `7` disables the pin.
+* For the functions of other modes, consult the Allwinner H3 datasheet,
+  chapter 3.2 ("GPIO Multiplexing Functions").
+\ref GPIN() GPOUT
+***/
+void Basic::igpmode() {
+#ifdef H3
+  uint32_t portno = 0;
+  uint32_t pinno, mode;
+
+  if (getParam(portno, I_COMMA) ||
+      getParam(pinno, I_COMMA) ||
+      getParam(mode, I_NONE))
+    return;
+
+  c_gpio_set_pin_mode(portno, pinno, mode);
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
+}
+
 /***bf io I2CW
 Sends data to an I2C device.
 \usage res = I2CW(i2c_addr, out_data)
