@@ -46,6 +46,8 @@ int c_sprite_collision(int s1, int s2);
 int c_sprite_enabled(int s);
 int c_sprite_x(int s);
 int c_sprite_y(int s);
+int c_sprite_w(int s);
+int c_sprite_h(int s);
 
 int c_bg_x(int bg);
 int c_bg_y(int bg);

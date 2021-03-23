@@ -361,6 +361,20 @@ int c_sprite_y(int s) {
   return vs23.spriteY(s);
 }
 
+int c_sprite_w(int s) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  return vs23.spriteWidth(s);
+}
+
+int c_sprite_h(int s) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  return vs23.spriteHeight(s);
+}
+
 int c_bg_x(int bg) {
   if (check_param(bg, 0, MAX_BG - 1))
     return -1;
