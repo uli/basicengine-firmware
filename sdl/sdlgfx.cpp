@@ -386,7 +386,7 @@ void SDLGFX::updateBg() {
 
       rz_surface_t in(s->p.w, s->p.h,
                       &((uint32_t*)m_surface->pixels)[py * m_surface->pitch/4 + px],
-                      m_surface->pitch);
+                      m_surface->pitch, s->p.key);
 
       rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
                                             s->p.flip_x ? -s->scale_x : s->scale_x,

@@ -372,7 +372,7 @@ next:
         pitch += m_current_mode.left * 2;
 
       rz_surface_t in(s->p.w, s->p.h, (uint32_t*)(&m_pixels[py][px]),
-                      pitch * sizeof(pixel_t));
+                      pitch * sizeof(pixel_t), s->p.key);
 
       rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
                                             s->p.flip_x ? -s->scale_x : s->scale_x,
