@@ -237,6 +237,9 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 //#define PROFILE_BG
 
 #include "scalers.h"
+#ifdef USE_ROTOZOOM
+#include "rotozoom.h"
+#endif
 
 void SDLGFX::updateBg() {
   static uint32_t last_frame = 0;
@@ -332,6 +335,7 @@ void SDLGFX::updateBg() {
 
   for (int si = 0; si < MAX_SPRITES; ++si) {
     sprite_t *s = &m_sprite[si];
+
     // skip if not visible
     if (!s->enabled)
       continue;
@@ -341,7 +345,9 @@ void SDLGFX::updateBg() {
         s->pos_y >= height())
       continue;
 
+#ifndef USE_ROTOZOOM
     // consider flipped axes
+    // rotozoom bakes this into the surface
     int dx, offx;
     if (s->p.flip_x) {
       dx = -1;
@@ -358,22 +364,59 @@ void SDLGFX::updateBg() {
       dy = 1;
       offy = 0;
     }
+#endif
 
     // sprite pattern start coordinates
+#ifdef USE_ROTOZOOM
+    int px = s->p.pat_x + s->p.frame_x * s->p.w;
+    int py = s->p.pat_y + s->p.frame_y * s->p.h;
+#else
     int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
     int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
+#endif
 
     pixel_t skey = s->p.key;
 
-    for (int y = 0; y != s->p.h; ++y) {
+#ifdef USE_ROTOZOOM
+    // refresh surface as necessary
+    if (s->must_reload || !s->surf) {
+      // XXX: do this asynchronously
+      if (s->surf)
+        delete s->surf;
+
+      rz_surface_t in(s->p.w, s->p.h,
+                      &((uint32_t*)m_surface->pixels)[py * m_surface->pitch/4 + px],
+                      m_surface->pitch);
+
+      rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
+                                            s->p.flip_x ? -s->scale_x : s->scale_x,
+                                            s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+      s->surf = out;
+      s->must_reload = false;
+    }
+#endif
+
+#ifdef USE_ROTOZOOM
+    int sprite_w = s->surf->w;
+    int sprite_h = s->surf->h;
+#else
+    int sprite_w = s->p.w;
+    int sprite_h = s->p.h;
+#endif
+
+    for (int y = 0; y != sprite_h; ++y) {
       int yy = y + s->pos_y;
       if (yy < 0 || yy >= height())
         continue;
-      for (int x = 0; x != s->p.w; ++x) {
+      for (int x = 0; x != sprite_w; ++x) {
         int xx = x + s->pos_x;
         if (xx < 0 || xx >= width())
           continue;
+#ifdef USE_ROTOZOOM
+        pixel_t p = s->surf->getPixel(x, y);
+#else
         pixel_t p = getPixel(px + x * dx, py + y * dy);
+#endif
         // draw only non-keyed pixels
         if (p != skey)
           setPixel(xx, yy, p);
@@ -383,6 +426,84 @@ void SDLGFX::updateBg() {
 }
 
 #ifdef USE_BG_ENGINE
+
+#ifdef USE_ROTOZOOM
+
+// implementation based on RZ surface
+uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
+  uint8_t dir = 0x40;  // indicates collision
+
+  const sprite_t *us = &m_sprite[collidee];
+  const rz_surface_t *us_surf = m_sprite[collidee].surf;
+  const sprite_t *them = &m_sprite[collider];
+  const rz_surface_t *them_surf = m_sprite[collider].surf;
+
+  if (!us_surf || !them_surf)
+    return 0;
+
+  if (us->pos_x + us_surf->w < them->pos_x)
+    return 0;
+  if (them->pos_x + them_surf->w < us->pos_x)
+    return 0;
+  if (us->pos_y + us_surf->h < them->pos_y)
+    return 0;
+  if (them->pos_y + them_surf->h < us->pos_y)
+    return 0;
+
+  // sprite frame as bounding box; we may want something more flexible...
+  const sprite_t *left = us, *right = them;
+  rz_surface_t *left_surf, *right_surf;
+  if (them->pos_x < us->pos_x) {
+    dir |= joyLeft;
+    left = them;
+    right = us;
+  } else if (them->pos_x + them_surf->w > us->pos_x + us_surf->w)
+    dir |= joyRight;
+  left_surf = left->surf;
+  right_surf = right->surf;
+
+  const sprite_t *upper = us, *lower = them;
+  const rz_surface_t *upper_surf, *lower_surf;
+  if (them->pos_y < us->pos_y) {
+    dir |= joyUp;
+    upper = them;
+    lower = us;
+  } else if (them->pos_y + them_surf->h > us->pos_y + us_surf->h)
+    dir |= joyDown;
+  upper_surf = upper->surf;
+  lower_surf = lower->surf;
+
+  // Check for pixels in overlapping area.
+  pixel_t lkey, rkey;
+  lkey = left->p.key;
+  rkey = right->p.key;
+
+  for (int y = lower->pos_y;
+       y < _min(lower->pos_y + lower_surf->h, upper->pos_y + upper_surf->h);
+       y++) {
+    int leftpy = y - left->pos_y;
+    int rightpy = y - right->pos_y;
+
+    for (int x = right->pos_x;
+         x < _min(right->pos_x + right_surf->w, left->pos_x + left_surf->w);
+         x++) {
+      int leftpx = x - left->pos_x;
+      int rightpx = x - right->pos_x;
+      pixel_t leftpixel = left_surf->getPixel(leftpx, leftpy);
+      pixel_t rightpixel = right_surf->getPixel(rightpx, rightpy);
+
+      if (leftpixel != lkey && rightpixel != rkey)
+        return dir;
+    }
+  }
+
+  // no overlapping pixels
+  return 0;
+}
+
+#else // USE_ROTOZOOM
+
+// implementation based on pattern in video memory
 uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   uint8_t dir = 0x40;  // indicates collision
 
@@ -447,4 +568,7 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   // no overlapping pixels
   return 0;
 }
+
+#endif	// USE_ROTOZOOM
+
 #endif  // USE_BG_ENGINE
