@@ -10,6 +10,7 @@
 #include <Arduino.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "ttconfig.h"
 #include "video.h"
 #include "sound.h"
