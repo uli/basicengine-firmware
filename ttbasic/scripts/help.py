@@ -17,6 +17,7 @@ for t in tt:
     toktrans[name] = enum
 
 print('#include "help.h"\n')
+print('#pragma GCC diagnostic ignored "-Wmissing-field-initializers"\n')
 print('const struct help_t help[] = {')
 
 # expects input preprocessed with bdoc_1.sed
