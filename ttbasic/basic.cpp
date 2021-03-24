@@ -388,6 +388,15 @@ void c_puts_P(const char *s, uint8_t devno) {
     c_putch(pgm_read_byte(s++), devno);
 }
 
+void c_printf(const char *f, ...) {
+  char *out;
+  va_list ap;
+  va_start(ap, f);
+  vasprintf(&out, f, ap);
+  va_end(ap);
+  c_puts(out);
+}
+
 // Print numeric specified columns
 // arguments
 //  value : Output target value

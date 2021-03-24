@@ -36,6 +36,7 @@ static inline void cleartbuf() {
 void c_putch(uint8_t c, uint8_t devno = 0);
 void c_puts  (const char *s, uint8_t devno = 0);
 void c_puts_P(const char *s, uint8_t devno = 0);
+void c_printf(const char *f, ...);
 void screen_putch(uint8_t c, bool lazy = false);
 extern bool screen_putch_disable_escape_codes;
 
