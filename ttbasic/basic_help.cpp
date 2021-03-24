@@ -60,58 +60,42 @@ static void print_help(const struct help_t *h) {
     pixel_t saved_fg_color = sc0.getFgColor();
     pixel_t saved_bg_color = sc0.getBgColor();
 
-    sc0.setColor(COL(COMMENT), COL(BG));
-    c_printf("\n%s ", h->command);
-    sc0.setColor(COL(LINENUM), COL(BG));
-    c_printf("(%s, %s)\n\n", type_names[h->type], section_names[h->section]);
-    sc0.setColor(COL(FG), COL(BG));
+    c_printf("\n\\Fc%s ", h->command);
+    c_printf("\\Fl(%s, %s)\\Ff\n\n", type_names[h->type], section_names[h->section]);
     print_wrapped(h->brief);
 
     if (h->usage) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nUsage:\n\n  ");
-        sc0.setColor(COL(NUM), COL(BG));
+        c_puts("\n\\FkUsage:\\Fn\n\n  ");
         print_wrapped(h->usage);
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\\Fk");
     }
 
     if (h->args[0].name) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nArguments:\n\n");
+        c_puts("\n\\FkArguments:\n\n");
         for (int i = 0; h->args[i].name; ++i) {
-            sc0.setColor(COL(LVAR), COL(BG));
-            c_printf("  %s\t", h->args[i].name);
-            sc0.setColor(COL(FG), COL(BG));
+            c_printf("  \\FL%s\t\\Ff", h->args[i].name);
             print_wrapped(h->args[i].descr);
         }
         sc0.setColor(COL(FG), COL(BG));
     }
 
     if (h->ret) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nReturn value:\n\n  ");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkReturn value:\\Ff\n\n  ");
         print_wrapped(h->ret);
     }
 
     if (h->note) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nNote:\n\n  ");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkNote:\\Ff\n\n  ");
         print_wrapped(h->note);
     }
 
     if (h->bugs) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nBugs:\n\n  ");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkBugs:\\Ff\n\n  ");
         print_wrapped(h->bugs);
     }
 
     if (h->ref[0]) {
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nSee also:\n\n");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkSee also:\\Ff\n\n");
         for (int i = 0; h->ref[i]; ++i) {
             c_printf("  HELP %s\n", h->ref[i]);
         }
@@ -160,18 +144,14 @@ void Basic::ihelp() {
         pixel_t saved_fg_color = sc0.getFgColor();
         pixel_t saved_bg_color = sc0.getBgColor();
 
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nMatching commands:\n\n");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkMatching commands:\\Ff\n\n");
         for (int i = 0; i < hints.length(); ++i) {
             if (hints[i]->command) {
                 c_printf("  HELP %s\n", hints[i]->command);
             }
         }
 
-        sc0.setColor(COL(KEYWORD), COL(BG));
-        c_puts("\nSee also:\n\n");
-        sc0.setColor(COL(FG), COL(BG));
+        c_puts("\n\\FkSee also:\\Ff\n\n");
         for (int i = 0; i < hints.length(); ++i) {
             if (hints[i]->ref[0]) {
                 for (int j = 0; hints[i]->ref[j]; ++j) {
