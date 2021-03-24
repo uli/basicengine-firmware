@@ -22,6 +22,12 @@ print('const struct help_t help[] = {')
 # expects input preprocessed with bdoc_1.sed
 cmds = stdin.read().strip().strip('/***').strip('***/').split('***/\n/***')
 
+def colorize_code(d):
+    d = re.sub('`([^`]+)`', '\\\\\\\\Fn\g<1>\\\\\\\\Ff', d)
+    d = re.sub('(IMPORTANT:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
+    d = re.sub('(WARNING:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
+    return d
+
 for c in cmds:
     lines = c.split('\n')
     typ, section, token = lines[0].split(' ', 2)
@@ -57,6 +63,7 @@ for c in cmds:
     for section, data in item_data.items():
         if section == 'args':
             data = data.strip().replace('"', '\\"')[1:].split('@')
+            data = [colorize_code(d) for d in data]
         elif section == 'ref':
             data = data.split(' ')
             data = [t.replace('_', ' ') for t in data]
@@ -74,6 +81,7 @@ for c in cmds:
                              replace('==LF==', '\n').	# translate ==LF== back to real LFs
                              replace('"', '\\"'))	# escape quotation marks
                 data = re.sub(' +', ' ', data)		# drop asciidoc continuation character
+                data = colorize_code(data)
 
         item_data[section] = data
 
