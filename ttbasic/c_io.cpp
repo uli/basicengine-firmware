@@ -74,7 +74,7 @@ int c_gpio_get_pin(int portno, int pinno) {
     return -1;
   return get_pin_data(PIO_PORT(portno), pinno);
 #else
-  err = E_NOT_SUPPORTED;
+  err = ERR_NOT_SUPPORTED;
   return -1;
 #endif
 }
@@ -88,7 +88,7 @@ int c_gpio_set_pin_mode(int portno, int pinno, int mode) {
   set_pin_mode(PIO_PORT(portno), pinno, mode);
   return 0;
 #else
-  err = E_NOT_SUPPORTED;
+  err = ERR_NOT_SUPPORTED;
   return -1;
 #endif
 }
