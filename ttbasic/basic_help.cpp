@@ -159,8 +159,18 @@ void Basic::ihelp() {
     if (hints.length() > 0) {
         pixel_t saved_fg_color = sc0.getFgColor();
         pixel_t saved_bg_color = sc0.getBgColor();
+
         sc0.setColor(COL(KEYWORD), COL(BG));
         c_puts("\nMatching commands:\n\n");
+        sc0.setColor(COL(FG), COL(BG));
+        for (int i = 0; i < hints.length(); ++i) {
+            if (hints[i]->command) {
+                c_printf("  HELP %s\n", hints[i]->command);
+            }
+        }
+
+        sc0.setColor(COL(KEYWORD), COL(BG));
+        c_puts("\nSee also:\n\n");
         sc0.setColor(COL(FG), COL(BG));
         for (int i = 0; i < hints.length(); ++i) {
             if (hints[i]->ref[0]) {
