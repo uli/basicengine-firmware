@@ -36,6 +36,7 @@ static void put_hex_digit(uint32_t hex_value, uint8_t hex_type, bool lazy)
 // XXX: 168 byte jump table
 void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
   static bool escape = false;
+  static int predef_color = -1;
   static uint8_t hex_digit = 0, hex_type, hex_max_len;
   static ipixel_t hex_value;
   static bool reverse = false;
@@ -61,7 +62,33 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
     }
     sc0.putch('\\');
   } else {
-    if (hex_digit > 0) {
+    if (predef_color != -1) {
+      int color = 0;
+
+      switch (c) {
+      case 'b':	color = COL(BG); break;
+      case 'f':	color = COL(FG); break;
+      case 'k':	color = COL(KEYWORD); break;
+      case 'l':	color = COL(LINENUM); break;
+      case 'n':	color = COL(NUM); break;
+      case 'v':	color = COL(VAR); break;
+      case 'L':	color = COL(LVAR); break;
+      case 'o':	color = COL(OP); break;
+      case 's':	color = COL(STR); break;
+      case 'p':	color = COL(PROC); break;
+      case 'c':	color = COL(COMMENT); break;
+      case 'B':	color = COL(BORDER); break;
+      default: break;
+      }
+
+      if (predef_color == 'F')
+        sc0.setColor(color, sc0.getBgColor());
+      else
+        sc0.setColor(sc0.getFgColor(), color);
+
+      predef_color = -1;
+      goto out;
+    } else if (hex_digit > 0) {
       if (hex_digit == 1)
         hex_value = 0;
       if (is_hex(c) && hex_digit <= hex_max_len) {
@@ -117,6 +144,10 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
         hex_digit = 1;
         hex_type = 1;
         hex_max_len = csp.getColorSpace() < 2 ? 2 : sizeof(ipixel_t) * 2;
+        break;
+      case 'F':
+      case 'B':
+        predef_color = c;
         break;
       case 'b':
         hex_digit = 1;
