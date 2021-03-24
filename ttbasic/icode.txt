@@ -132,6 +132,7 @@ COPY	X_COPY		icopy
 TYPE	X_TYPE		itype
 REMOVE	X_REMOVE	iremove
 GPMODE	X_GPMODE	igpmode
+HELP	X_HELP		ihelp
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
