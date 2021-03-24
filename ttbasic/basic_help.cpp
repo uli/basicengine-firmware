@@ -181,6 +181,14 @@ void Basic::ihelp() {
         }
         newline();
         sc0.setColor(saved_fg_color, saved_bg_color);
-    } else
-        err = ERR_UNK;
+    } else {
+        for (int i = 0; i < tokens.length(); ++i) {
+            if ((tokens[i] < 256  && !kwtbl[tokens[i]]) ||
+                (tokens[i] >= 256 && !kwtbl_ext[tokens[i] - 256])) {
+                err = ERR_UNK;
+                return;
+            }
+        }
+        c_printf("No help available\n");
+    }
 }
