@@ -93,7 +93,7 @@ for c in cmds:
 
         item_data[section] = data
 
-    for e in ['brief', 'usage', 'args', 'ret', 'note', 'bugs', 'ref']:
+    for e in ['brief', 'usage', 'args', 'ret', 'desc', 'note', 'bugs', 'ref']:
         print('  .' + e + ' = ', end='')
         try:
             # if this succeeds, a regular plain-text item is available

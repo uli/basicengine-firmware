@@ -41,6 +41,7 @@ struct help_t {
     const char *usage;
     struct arg_t args[16];
     const char *ret;
+    const char *desc;
     const char *note;
     const char *bugs;
     const char *ref[8];

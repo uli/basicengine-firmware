@@ -84,6 +84,11 @@ static void print_help(const struct help_t *h) {
         print_wrapped(h->ret);
     }
 
+    if (h->desc) {
+        c_puts("\n\\FkDescription:\\Ff\n\n  ");
+        print_wrapped(h->desc);
+    }
+
     if (h->note) {
         c_puts("\n\\FkNote:\\Ff\n\n  ");
         print_wrapped(h->note);
