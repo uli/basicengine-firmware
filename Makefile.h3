@@ -37,6 +37,9 @@ gcov:
 	rm -f *.gcov
 	gcov $(SOURCES) $(SOURCES_C)
 
+ttbasic/helptext.cpp: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
+	$(MAKE) -C ttbasic -f autogen.mk helptext.cpp
+
 ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
 $(OBJS): ttbasic/funtbl.h
