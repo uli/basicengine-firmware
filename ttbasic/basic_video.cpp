@@ -143,6 +143,14 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
           sc0.locate(sc0.c_x() - 1);
         }
         break;
+      case '\t': {
+        int skip = 8 - sc0.c_x() % 8;
+        if (skip == 0)
+          skip = 8;
+        for (int i = 0; i < skip; ++i)
+          sc0.putch(' ');
+        }
+        break;
       default: sc0.putch(c, lazy); break;
       }
     }
@@ -711,7 +719,7 @@ int32_t BASIC_INT Basic::ncharfun() {
     return 0;
   if (checkClose())
     return 0;
-  
+
   return c_char_get(x, y);
 }
 
@@ -928,7 +936,7 @@ void GROUP(basic_video) Basic::icircle() {
   c = csp.fromIndexed(c);
   if (f != (ipixel_t)-1)
     f = csp.fromIndexed(f);
-  
+
   c_circle(x, y, r, c, f);
 }
 
