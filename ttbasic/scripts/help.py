@@ -28,6 +28,12 @@ def colorize_code(d):
     d = re.sub('(WARNING:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
     return d
 
+def stringify_macros(d):
+    # XXX: This results in strings like "4-1" instead of "3".
+    d = re.sub('{([^}]+)_m1}', '" XSTR(\g<1>-1) "', d)
+    d = re.sub('{([^}]+)}', '" XSTR(\g<1>) "', d)
+    return d
+
 for c in cmds:
     lines = c.split('\n')
     typ, section, token = lines[0].split(' ', 2)
@@ -64,6 +70,7 @@ for c in cmds:
         if section == 'args':
             data = data.strip().replace('"', '\\"')[1:].split('@')
             data = [colorize_code(d) for d in data]
+            data = [stringify_macros(d) for d in data]
         elif section == 'ref':
             data = data.split(' ')
             data = [t.replace('_', ' ') for t in data]
@@ -82,6 +89,7 @@ for c in cmds:
                              replace('"', '\\"'))	# escape quotation marks
                 data = re.sub(' +', ' ', data)		# drop asciidoc continuation character
                 data = colorize_code(data)
+                data = stringify_macros(data)
 
         item_data[section] = data
 

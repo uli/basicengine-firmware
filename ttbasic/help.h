@@ -48,4 +48,7 @@ struct help_t {
 
 extern const struct help_t help[];
 
+#define XSTR(x) STR(x)
+#define STR(x) #x
+
 #endif
