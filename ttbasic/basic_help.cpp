@@ -123,6 +123,15 @@ void Basic::ihelp() {
         tokens.push_back(token);
     }
 
+    if (tokens.length() == 0) {
+        c_printf("\n\\FkAvailable commands:\\Ff\n\n");
+        for (int i = 0; help[i].command; ++i) {
+            c_printf("%s\t", help[i].command);
+        }
+        newline();
+        return;
+    }
+
     for (int i = 0; help[i].command; ++i) {
         int tokens_found = 0;
         for (int k = 0; k < tokens.length(); ++k) {
