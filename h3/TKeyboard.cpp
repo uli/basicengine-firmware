@@ -199,6 +199,8 @@ int report_r = 0;
 int report_w = 0;
 
 hid_keyboard_report_t last_report;
+int last_keyboard_hcd;
+uint8_t last_keyboard_dev_addr;
 
 #define REPEAT_DELAY 20
 #define REPEAT_INTERVAL 3
@@ -208,7 +210,10 @@ static int repeat_countdown = 0;
 static uint8_t key_state[256];
 
 // runs in IRQ context
-void hook_usb_keyboard_report(hid_keyboard_report_t *rep) {
+void hook_usb_keyboard_report(int hcd, uint8_t dev_addr, hid_keyboard_report_t *rep) {
+  last_keyboard_hcd = hcd;
+  last_keyboard_dev_addr = dev_addr;
+
   int next_w = (report_w + 1) % KEYBUF_SIZE;
 
   if (next_w == report_r)	// queue full
