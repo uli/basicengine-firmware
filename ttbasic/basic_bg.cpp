@@ -231,7 +231,8 @@ prority, special effects, and turn it on and off.
 `SPRITE OFF` turns all sprites off.
 \usage
 SPRITE num [PATTERN pat_x, pat_y][SIZE w, h][FRAME frame_x, frame_y]
-           [FLAGS flags][KEY key][PRIO priority][<ON|OFF>]
+           [FLAGS flags][KEY key][PRIO priority][ANGLE angle]
+           [SCALE scale_x[,scale_y]][<ON|OFF>]
 
 SPRITE OFF
 \args
@@ -248,6 +249,9 @@ SPRITE OFF
                 [`0` to `255`]
 @priority	sprite priority in relation to background layers +
                 [`0` to `{MAX_BG_m1}`]
+@angle		rotation angle in degrees [default `0`]
+@scale_x	horizontal scaling factor [default `1`]
+@scale_y	vertical scaling factor [default `1`]
 
 \sec FLAGS
 The `FLAGS` attribute is the sum of any of the following bit values:
@@ -260,6 +264,9 @@ The `FLAGS` attribute is the sum of any of the following bit values:
 \note
 The `SPRITE` command's attributes can be specified in any order, but it is
 usually a good idea to place the `ON` attribute at the end if used.
+\bugs
+Having to specify the rotation angle in degrees is cumbersome when using other
+trigonometric operations to calculate it.
 \ref LOAD_PCX MOVE_SPRITE
 ***/
 void BASIC_INT Basic::isprite() {
