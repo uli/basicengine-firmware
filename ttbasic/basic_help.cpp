@@ -38,7 +38,7 @@ static void print_wrapped(const char *text) {
                 c_putch('\b');
                 --tp;
             }
-            newline();
+            c_putch('\n');
             while (sc0.c_x() < indent)
                 c_putch(' ');
             if (*tp == ' ')
@@ -53,7 +53,7 @@ static void print_wrapped(const char *text) {
             c_putch(*tp++);
     }
 
-    newline();
+    c_putch('\n');
 }
 
 static void print_help(const struct help_t *h) {
@@ -106,7 +106,7 @@ static void print_help(const struct help_t *h) {
         }
     }
 
-    newline();
+    c_putch('\n');
 
     sc0.setColor(saved_fg_color, saved_bg_color);
 }
@@ -123,16 +123,18 @@ void Basic::ihelp() {
         tokens.push_back(token);
     }
 
+    bool found_something = false;
+    screen_putch_paging_counter = 0;
+
     if (tokens.length() == 0) {
         c_printf("\n\\FkAvailable commands:\\Ff\n\n");
         for (int i = 0; help[i].command; ++i) {
             c_printf("%s\t", help[i].command);
         }
-        newline();
-        return;
+        c_putch('\n');
+        goto out;
     }
 
-    bool found_something = false;
 
     for (int i = 0; help[i].command; ++i) {
         int tokens_found = 0;
@@ -157,7 +159,7 @@ void Basic::ihelp() {
     }
 
     if (found_something)
-        return;
+        goto out;
 
     if (hints.length() > 0) {
         pixel_t saved_fg_color = sc0.getFgColor();
@@ -178,16 +180,19 @@ void Basic::ihelp() {
                 }
             }
         }
-        newline();
+        c_putch('\n');
         sc0.setColor(saved_fg_color, saved_bg_color);
     } else {
         for (int i = 0; i < tokens.length(); ++i) {
             if ((tokens[i] < 256  && !kwtbl[tokens[i]]) ||
                 (tokens[i] >= 256 && !kwtbl_ext[tokens[i] - 256])) {
                 err = ERR_UNK;
-                return;
+                goto out;
             }
         }
         c_printf("No help available\n");
     }
+
+out:
+    screen_putch_paging_counter = -1;
 }
