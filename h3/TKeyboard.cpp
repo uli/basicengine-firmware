@@ -229,6 +229,23 @@ void hook_usb_keyboard_report(int hcd, uint8_t dev_addr, hid_keyboard_report_t *
   report_w = next_w;
 }
 
+enum locks {
+  NUM_LOCK = 1,
+  CAPS_LOCK = 2,
+  SCROLL_LOCK = 4,
+};
+
+static uint8_t locks = 0;
+
+static void update_leds(void) {
+  usb_keyboard_set_leds(last_keyboard_hcd, last_keyboard_dev_addr, locks);
+}
+
+static void toggle_caps_lock(void) {
+  locks ^= CAPS_LOCK;
+  update_leds();
+}
+
 void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
   bool any_key = false;
   static uint8_t old_state[256];
@@ -255,10 +272,15 @@ void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
       keyEvent *kev = &keybuf[keybuf_w];
       memset(kev, 0, sizeof(*kev));
 
+      if (kc == 57)
+        toggle_caps_lock();
+
       uint8_t kc_off = kc + ((rep->modifier & (2 | 32)) ? 0x80 : 0);
-      if (kc_off < sizeof(usb2ascii))
+      if (kc_off < sizeof(usb2ascii)) {
         kev->code = usb2ascii[kc_off];
-      else
+        if (locks & CAPS_LOCK)
+          kev->code = toupper(kev->code);
+      } else
         kev->code = 0;
 
       if (!kev->code) {
