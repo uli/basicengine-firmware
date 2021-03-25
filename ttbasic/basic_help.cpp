@@ -132,6 +132,8 @@ void Basic::ihelp() {
         return;
     }
 
+    bool found_something = false;
+
     for (int i = 0; help[i].command; ++i) {
         int tokens_found = 0;
         for (int k = 0; k < tokens.length(); ++k) {
@@ -150,9 +152,12 @@ void Basic::ihelp() {
         }
         if (tokens_found == tokens.length()) {
             print_help(&help[i]);
-            return;
+            found_something = true;
         }
     }
+
+    if (found_something)
+        return;
 
     if (hints.length() > 0) {
         pixel_t saved_fg_color = sc0.getFgColor();
