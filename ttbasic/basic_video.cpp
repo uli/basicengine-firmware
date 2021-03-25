@@ -18,6 +18,7 @@ const uint8_t *fonts[NUM_FONTS] = {
 tTVscreen sc0;
 
 bool screen_putch_disable_escape_codes = false;
+int screen_putch_paging_counter = -1;
 
 static inline bool is_hex(uint8_t c) {
   return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
@@ -165,7 +166,24 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
       }
     } else {
       switch (c) {
-      case '\n': newline(); break;
+      case '\n': {
+          if (screen_putch_paging_counter != -1) {
+            // XXX: This fails to take wraparound into account. (Not a problem
+            // for the (currently) only user (HELP), which does word-wrapping
+            // manually.)
+            if (screen_putch_paging_counter++ >= sc0.getHeight() - 2) {
+              newline();
+              c_puts("\\RPress any key to continue\\N");
+              while (!c_getch()) {
+                yield();
+              }
+              c_puts("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+              screen_putch_paging_counter = 0;
+            }
+          }
+          newline();
+        }
+        break;
       case '\r': sc0.locate(0, sc0.c_y()); break;
       case '\b':
         if (sc0.c_x() > 0) {
