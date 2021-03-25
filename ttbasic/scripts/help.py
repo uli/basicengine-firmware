@@ -25,8 +25,10 @@ cmds = stdin.read().strip().strip('/***').strip('***/').split('***/\n/***')
 
 def colorize_code(d):
     d = re.sub('`([^`]+)`', '\\\\\\\\Fn\g<1>\\\\\\\\Ff', d)
+    d = re.sub('<<([^`]+)>>', '\\\\\\\\Fn\g<1>\\\\\\\\Ff', d)
     d = re.sub('(IMPORTANT:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
     d = re.sub('(WARNING:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
+    d = re.sub('kbd:\[([^\]]*)]', '\\\\\\\\Fp[\g<1>]\\\\\\\\Ff', d)
     return d
 
 def stringify_macros(d):
