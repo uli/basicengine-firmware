@@ -8,6 +8,7 @@
 #include <SDL/SDL.h>
 
 #define SOUND_BUFLEN 512
+#define SOUND_CHANNELS 2
 
 class SDLAudio {
 public:
@@ -47,7 +48,7 @@ private:
   static sample_t *m_curr_buf;
 
   static int m_block_size;
-  static sample_t m_sound_buf[2][SOUND_BUFLEN];
+  static sample_t m_sound_buf[2][SOUND_BUFLEN * SOUND_CHANNELS];
 };
 
 extern SDLAudio audio;

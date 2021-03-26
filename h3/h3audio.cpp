@@ -12,7 +12,7 @@ sample_t *H3Audio::m_curr_buf;
 static int m_read_buf;
 static int m_read_pos;
 
-sample_t H3Audio::m_sound_buf[2][SOUND_BUFLEN];
+sample_t H3Audio::m_sound_buf[2][SOUND_BUFLEN * SOUND_CHANNELS];
 int H3Audio::m_block_size;
 
 void H3Audio::timerInterrupt(H3Audio *audioOutput) {
@@ -27,9 +27,10 @@ void H3Audio::init(int sample_rate) {
 }
 
 void hook_audio_get_sample(int16_t *l, int16_t *r) {
-  static sample_t last;
+  *l = audio.m_sound_buf[m_read_buf][m_read_pos * SOUND_CHANNELS];
+  *r = audio.m_sound_buf[m_read_buf][m_read_pos * SOUND_CHANNELS + 1];
+  m_read_pos++;
 
-  *l = *r = last = audio.m_sound_buf[m_read_buf][m_read_pos++];
   if (m_read_pos >= audio.m_block_size) {
     m_read_buf ^= 1;
     audio.m_curr_buf = audio.m_sound_buf[m_read_buf ^ 1];
