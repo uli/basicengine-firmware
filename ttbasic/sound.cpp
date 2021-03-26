@@ -53,6 +53,14 @@ uint32_t BasicSound::m_all_done_time;
 #endif
 uint32_t BasicSound::m_sam_done_time;
 
+sample_t BasicSound::m_beep_buf[SOUND_BUFLEN * 2];
+sample_t BasicSound::m_sam_buf[SOUND_BUFLEN * 2];
+sample_t BasicSound::m_tsf_buf[SOUND_BUFLEN * 2];
+sts_mixer_stream_t BasicSound::m_beep_stream;
+sts_mixer_stream_t BasicSound::m_sam_stream;
+sts_mixer_stream_t BasicSound::m_tsf_stream;
+sts_mixer_t BasicSound::m_mixer;
+
 #ifdef HAVE_MML
 uint32_t BasicSound::m_off_time[MML_CHANNELS];
 uint8_t BasicSound::m_off_key[MML_CHANNELS];
@@ -266,6 +274,8 @@ void GROUP(basic_sound) BasicSound::unloadFont() {
 #endif  // HAVE_TSF
 
 void BasicSound::begin(void) {
+  sts_mixer_init(&m_mixer, AUDIO_SAMPLE_RATE, STS_MIXER_SAMPLE_FORMAT_16);
+
 #ifdef HAVE_TSF
   m_font_name = F("1mgm.sf2");
 #endif
@@ -278,6 +288,24 @@ void BasicSound::begin(void) {
 #endif
   m_beep_env = NULL;
   m_sam = NULL;
+
+  m_tsf_stream.userdata = &sound;
+  m_tsf_stream.sample.frequency = AUDIO_SAMPLE_RATE;
+  m_tsf_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
+  m_tsf_stream.sample.length = SOUND_BUFLEN * 2;
+  m_tsf_stream.sample.data = m_tsf_buf;
+
+  m_sam_stream.userdata = &sound;
+  m_sam_stream.sample.frequency = AUDIO_SAMPLE_RATE;
+  m_sam_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
+  m_sam_stream.sample.length = SOUND_BUFLEN * 2;
+  m_sam_stream.sample.data = m_sam_buf;
+
+  m_beep_stream.userdata = &sound;
+  m_beep_stream.sample.frequency = AUDIO_SAMPLE_RATE;
+  m_beep_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
+  m_beep_stream.sample.length = SOUND_BUFLEN * 2;
+  m_beep_stream.sample.data = m_beep_buf;
 }
 
 #ifdef HAVE_MML

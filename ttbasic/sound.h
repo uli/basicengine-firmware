@@ -81,6 +81,14 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #include "basic.h"
 
+extern "C" {
+#include <sts_mixer.h>
+}
+
+void refill_stream_beep(sts_mixer_sample_t *sample, void *userdata);
+void refill_stream_sam(sts_mixer_sample_t *sample, void *userdata);
+void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata);
+
 class BasicSound {
 public:
     static void begin(void);
@@ -106,7 +114,7 @@ public:
     static inline bool needSamples() {
         return audio.currBufPos() == 0;
     }
-    
+
     static inline int instCount() {
         if (!m_tsf)
           loadFont();
@@ -145,9 +153,13 @@ private:
     static uint16_t m_beep_pos;
     static uint16_t m_beep_period;
     static uint8_t m_beep_vol;
+    static sample_t m_beep_buf[SOUND_BUFLEN * 2];
+    static sts_mixer_stream_t m_beep_stream;
 
 #ifdef HAVE_TSF
     static tsf *m_tsf;
+    static sample_t m_tsf_buf[SOUND_BUFLEN * 2];
+    static sts_mixer_stream_t m_tsf_stream;
     static struct tsf_stream m_sf2;
     static FILE *m_sf2_file;
     static int tsfile_read(void *data, void *ptr, unsigned int size);
@@ -182,6 +194,13 @@ private:
 
     static uint32_t m_sam_done_time;
     static ESP8266SAM *m_sam;
+    static sample_t m_sam_buf[SOUND_BUFLEN * 2];
+    static sts_mixer_stream_t m_sam_stream;
+
+    static sts_mixer_t m_mixer;
+    friend void ::refill_stream_beep(sts_mixer_sample_t *sample, void *userdata);
+    friend void ::refill_stream_sam(sts_mixer_sample_t *sample, void *userdata);
+    friend void ::refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata);
 };
 
 extern BasicSound sound;
