@@ -26,7 +26,8 @@ ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -Isdl
 CFLAGS += $(ARDFLAGS)
 #CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage
-CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
+#CFLAGS += -fsanitize=undefined -fsanitize-address-use-after-scope
+CXXFLAGS += $(CFLAGS) -fpermissive -std=c++11 -fno-exceptions
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
