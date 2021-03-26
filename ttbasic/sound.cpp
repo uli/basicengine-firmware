@@ -263,10 +263,14 @@ void BasicSound::loadFont() {
     tsf_set_output(m_tsf, TSF_MONO, AUDIO_SAMPLE_RATE, -10);
   m_all_done_time = 0;
   audio.setBlockSize(SOUND_BUFLEN);
+
+  memset(m_tsf_buf, 0, sizeof(m_tsf_buf));
+  sts_mixer_play_stream(&m_mixer, &m_tsf_stream, 0.7f);
 }
 
 void GROUP(basic_sound) BasicSound::unloadFont() {
   if (m_tsf) {
+    sts_mixer_stop_stream(&m_mixer, &m_tsf_stream);
     tsf_close(m_tsf);
     m_tsf = NULL;
   }
@@ -290,12 +294,14 @@ void BasicSound::begin(void) {
   m_sam = NULL;
 
   m_tsf_stream.userdata = &sound;
+  m_tsf_stream.callback = refill_stream_tsf;
   m_tsf_stream.sample.frequency = AUDIO_SAMPLE_RATE;
   m_tsf_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
   m_tsf_stream.sample.length = SOUND_BUFLEN * 2;
   m_tsf_stream.sample.data = m_tsf_buf;
 
   m_sam_stream.userdata = &sound;
+  m_sam_stream.callback = refill_stream_sam;
   m_sam_stream.sample.frequency = AUDIO_SAMPLE_RATE;
   m_sam_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
   m_sam_stream.sample.length = SOUND_BUFLEN * 2;
@@ -360,8 +366,8 @@ void GROUP(basic_sound) BasicSound::pumpEvents() {
   // Unload driver if nothing has been played for a few seconds.
   if (m_tsf && !tsf_playing(m_tsf)) {
     if (m_all_done_time) {
-      if (now > m_all_done_time + SOUND_IDLE_TIMEOUT)
-        unloadFont();
+      // XXX: We would have to start that again somewhere, somehow...
+      //sts_mixer_stop_stream(&bs->m_mixer, &bs->m_tsf_stream);
     } else
       m_all_done_time = now;
   } else
@@ -378,54 +384,69 @@ void GROUP(basic_sound) BasicSound::pumpEvents() {
 
 #ifdef HAVE_TSF
 void GROUP(basic_sound) BasicSound::render() {
-  // This can not be done in the I2S interrupt handler because it may need
-  // soundfont file access to cache samples.
-  if (m_sam && audio.currBufPos() == 0) {
-    if (m_sam->finished()) {
-      if (!m_sam_done_time) {
-        m_sam_done_time = millis();
-      } else if (millis() > m_sam_done_time + 3000) {
-        delete m_sam;
-        m_sam = NULL;
-#ifdef ESP8266
-        audio.init(AUDIO_SAMPLE_RATE);
-#endif
+  if (!audio.isBufEmpty() != 0)
+    return;
+  sts_mixer_mix_audio(&m_mixer, audio.currBuf(), SOUND_BUFLEN);
+  audio.setBufFull();
+}
+
+ESP8266SAM *BasicSound::sam() {
+  if (!m_sam) {
+    m_sam = new ESP8266SAM;
+    memset(m_sam_buf, 0, sizeof(m_sam_buf));
+    sts_mixer_play_stream(&m_mixer, &m_sam_stream, 0.7f);
+  }
+  m_sam_done_time = 0;
+  return m_sam;
+}
+
+void refill_stream_sam(sts_mixer_sample_t *sample, void *userdata) {
+  BasicSound *bs = (BasicSound *)userdata;
+  sample_t *data = bs->m_sam_buf;
+
+  if (bs->m_sam) {
+    if (bs->m_sam->finished()) {
+      if (!bs->m_sam_done_time) {
+        bs->m_sam_done_time = millis();
+      } else if (millis() > bs->m_sam_done_time + 3000) {
+        // XXX: sts_mixer doesn't like us doing that in the refill callback
+        //sts_mixer_stop_stream(&bs->m_mixer, &bs->m_sam_stream);
       }
     }
-    if (m_sam) {
-#ifdef AUDIO_16BIT
-      for (int i = 0; i < SOUND_BUFLEN / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
-        int s = m_sam->getSample() * 257 - 32768;
+    if (bs->m_sam) {
+      for (int i = 0; i < sample->length / 2 / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
+        int s = bs->m_sam->getSample() * 257 - 32768;
 #if AUDIO_SAMPLE_RATE > 32000
-        audio.queueSample(s);
+        *data++ = s;
+        *data++ = s;
 #endif
-        audio.queueSample(s);
+        *data++ = s;
+        *data++ = s;
       }
-#else
-      for (int i = 0; i < SOUND_BUFLEN; ++i) {
-        audio.queueSample(m_sam->getSample());
-      }
-#endif
     }
-  } else if (m_tsf && audio.currBufPos() == 0) {
-    tsf_render_short_fast(m_tsf, staging_buf, SOUND_BUFLEN, TSF_FALSE);
-    if (m_tsf->out_of_memory) {
-      unloadFont();
+  } else {
+    memset(data, 0, sample->length * sizeof(sample_t));
+  }
+}
+
+void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata) {
+  BasicSound *bs = (BasicSound *)userdata;
+  sample_t *data = bs->m_tsf_buf;
+
+  if (bs->m_tsf) {
+    tsf_render_short_fast(bs->m_tsf, staging_buf, sample->length / 2, TSF_FALSE);
+    if (bs->m_tsf->out_of_memory) {
+      bs->unloadFont();
       err = ERR_OOM;
       return;
     }
-    for (int i = 0; i < SOUND_BUFLEN; ++i) {
-#ifdef AUDIO_16BIT
-      audio.queueSample(max(-32768, min(staging_buf[i] * 8, 32767)));
-#else
-      int idx = (staging_buf[i] >> 5) + 128;
-      if (idx < 0)
-        idx = 0;
-      else if (idx > 255)
-        idx = 255;
-      audio.queueSample(idx);
-#endif
+    for (int i = 0; i < sample->length / 2; ++i) {
+      sample_t s = max(-32768, min(staging_buf[i] * 8, 32767));
+      *data++ = s;
+      *data++ = s;
     }
+  } else {
+    memset(data, 0, sample->length * sizeof(sample_t));
   }
 }
 

@@ -136,15 +136,7 @@ public:
     static void beep(int period, int vol = 15, const uint8_t *env = NULL);
     static void noBeep();
 
-    static ESP8266SAM *sam() {
-      if (!m_sam)
-        m_sam = new ESP8266SAM;
-      m_sam_done_time = 0;
-#ifdef ESP8266
-      InitI2S(22050);
-#endif
-      return m_sam;
-    }
+    static ESP8266SAM *sam();
 
 private:
     static void setBeep(int period, int vol);
