@@ -302,6 +302,7 @@ void BasicSound::begin(void) {
   m_sam_stream.sample.data = m_sam_buf;
 
   m_beep_stream.userdata = &sound;
+  m_beep_stream.callback = refill_stream_beep;
   m_beep_stream.sample.frequency = AUDIO_SAMPLE_RATE;
   m_beep_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
   m_beep_stream.sample.length = SOUND_BUFLEN * 2;
@@ -368,13 +369,10 @@ void GROUP(basic_sound) BasicSound::pumpEvents() {
 #endif
 
   if (m_beep_env) {
-    uint8_t vol = m_beep_env[m_beep_pos];
-    if (!vol) {
+    if (m_beep_env[m_beep_pos] == 0)
       noBeep();
-    } else {
-      setBeep(m_beep_period, vol * m_beep_vol / 16);
+    else
       m_beep_pos++;
-    }
   }
 }
 
@@ -448,66 +446,50 @@ BString BasicSound::instName(int index) {
 }
 #endif
 
-void BasicSound::setBeep(int period, int vol) {
-  period = period * AUDIO_SAMPLE_RATE / 16000;
+void refill_stream_beep(sts_mixer_sample_t *sample, void *userdata) {
+  BasicSound *bs = (BasicSound *)userdata;
+  sample_t *data = bs->m_beep_buf;
+  static int offset = 0;
+  int to_fill = sample->length / 2;
+  int period = bs->m_beep_period * AUDIO_SAMPLE_RATE / 16000;
 
-  if (period > SOUND_BUFLEN)
-    return;
+  if (bs->m_beep_env) {
+    uint8_t vol = max(0, min(15, bs->m_beep_env[bs->m_beep_pos]));
+    int32_t sample = vol * 2184;
 
-  if (vol > 15)
-    vol = 15;
-  else if (vol < 0)
-    vol = 0;
-
-#ifdef AUDIO_16BIT
-  int32_t sample = vol * 2184;
-#else
-  uint32_t sample = vol * 17;
-#endif
-
-  audio.setBlockSize(period);
-
-#ifndef HOSTED
-  for (int b = 0; b < 2; ++b) {
-    for (int i = 0; i < period / 2; ++i) {
-#ifdef AUDIO_16BIT
-      audio.setSampleAt(b, i, -sample);
-#else
-      audio.setSampleAt(b, i, 0);
-#endif
+    for (int o = 0; o < to_fill; ++o) {
+      sample_t sn = offset < period / 2 ? -sample : sample;
+      data[o * 2] = sn;
+      data[o * 2 + 1] = sn;
+      offset = (offset + 1) % period;
     }
-    for (int i = period / 2; i < period; ++i) {
-      audio.setSampleAt(b, i, sample);
-    }
+  } else {
+    memset(data, 0, sample->length * sizeof(sample_t));
   }
-#endif
 }
 
 void BasicSound::beep(int period, int vol, const uint8_t *env) {
-  if (period == 0) {
+  if (period == 0 || !env) {
     noBeep();
     return;
   }
-  setBeep(period, vol);
-  if (env) {
-    free(m_beep_env);
-    m_beep_env = (uint8_t *)strdup((const char *)env);
-    m_beep_pos = 0;
-    m_beep_period = period;
-    m_beep_vol = vol;
-  } else {
-    free(m_beep_env);
-    m_beep_env = NULL;
-  }
+
+  bool start_up = m_beep_env ? false : true;
+
+  free(m_beep_env);
+  m_beep_env = (uint8_t *)strdup((const char *)env);
+  m_beep_pos = 0;
+  m_beep_period = period;
+  m_beep_vol = vol;
+
+  if (start_up)
+    sts_mixer_play_stream(&m_mixer, &m_beep_stream, 0.7f);
 }
 
 void BasicSound::noBeep() {
+  sts_mixer_stop_stream(&m_mixer, &m_beep_stream);
   free(m_beep_env);
   m_beep_env = NULL;
-#if !defined(HOSTED)
-  audio.clearBufs();
-  audio.setBlockSize(SOUND_BUFLEN);
-#endif
 }
 
 ESP8266SAM *BasicSound::m_sam;
