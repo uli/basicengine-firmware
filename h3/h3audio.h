@@ -25,15 +25,19 @@ public:
     return m_block_size;
   }
 
-  inline void queueSample(sample_t sample) {
-    m_curr_buf[m_curr_buf_pos++] = sample;
+  inline sample_t *currBuf() {
+    return m_curr_buf;
   }
-  inline void setSampleAt(int buf, int idx, sample_t sample) {
-    m_sound_buf[buf][idx] = sample;
-  }
-
   inline int currBufPos() {
     return m_curr_buf_pos;
+  }
+
+  inline bool isBufEmpty() {
+    return m_curr_buf_pos == 0;
+  }
+
+  inline void setBufFull() {
+    m_curr_buf_pos = m_block_size;
   }
 
   inline void clearBufs() {
