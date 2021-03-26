@@ -2808,7 +2808,7 @@ void BASIC_FP process_events(void) {
   event_profile[3] = micros();
 #ifdef HAVE_MML
   if (event_play_enabled) {
-    for (int i = 0; i < SOUND_CHANNELS; ++i) {
+    for (int i = 0; i < MML_CHANNELS; ++i) {
       if (bc && sound.isFinished(i))
         bc->event_handle_play(i);
     }
@@ -4641,7 +4641,7 @@ ON PLAY channel CALL handler
 
 ON PLAY channel OFF
 \args
-@channel	a sound channel [`0` to `{SOUND_CHANNELS_m1}`]
+@channel	a sound channel [`0` to `{MML_CHANNELS_m1}`]
 @handler	a procedure defined with `PROC`
 \sec HANDLER
 The event handler will receive the number of the channel that has
@@ -4658,8 +4658,8 @@ An event on one channel will disable handling on all channels. That is stupid.
 ***/
     ++cip;
     int ch = getparam();
-    if (ch < 0 || ch >= SOUND_CHANNELS) {
-      E_VALUE(0, SOUND_CHANNELS - 1);
+    if (ch < 0 || ch >= MML_CHANNELS) {
+      E_VALUE(0, MML_CHANNELS - 1);
       return;
     }
     if (*cip == I_OFF) {

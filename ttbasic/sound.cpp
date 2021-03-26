@@ -43,10 +43,10 @@
 #endif
 
 #ifdef HAVE_MML
-MML BasicSound::m_mml[SOUND_CHANNELS];
-MML_OPTION BasicSound::m_mml_opt[SOUND_CHANNELS];
-uint32_t BasicSound::m_next_event[SOUND_CHANNELS];
-bool BasicSound::m_finished[SOUND_CHANNELS];
+MML BasicSound::m_mml[MML_CHANNELS];
+MML_OPTION BasicSound::m_mml_opt[MML_CHANNELS];
+uint32_t BasicSound::m_next_event[MML_CHANNELS];
+bool BasicSound::m_finished[MML_CHANNELS];
 #endif
 #ifdef HAVE_TSF
 uint32_t BasicSound::m_all_done_time;
@@ -54,12 +54,12 @@ uint32_t BasicSound::m_all_done_time;
 uint32_t BasicSound::m_sam_done_time;
 
 #ifdef HAVE_MML
-uint32_t BasicSound::m_off_time[SOUND_CHANNELS];
-uint8_t BasicSound::m_off_key[SOUND_CHANNELS];
-uint8_t BasicSound::m_off_inst[SOUND_CHANNELS];
-uint8_t BasicSound::m_ch_inst[SOUND_CHANNELS];
-uint16_t BasicSound::m_bpm[SOUND_CHANNELS];
-uint8_t BasicSound::m_velocity[SOUND_CHANNELS];
+uint32_t BasicSound::m_off_time[MML_CHANNELS];
+uint8_t BasicSound::m_off_key[MML_CHANNELS];
+uint8_t BasicSound::m_off_inst[MML_CHANNELS];
+uint8_t BasicSound::m_ch_inst[MML_CHANNELS];
+uint16_t BasicSound::m_bpm[MML_CHANNELS];
+uint8_t BasicSound::m_velocity[MML_CHANNELS];
 #endif
 
 #ifdef HAVE_TSF
@@ -73,7 +73,7 @@ uint16_t BasicSound::m_beep_pos;
 
 #ifdef HAVE_TSF
 void BasicSound::noteOn(int ch, int inst, int note, float vel, int ticks) {
-  if (!m_tsf || ch >= SOUND_CHANNELS)
+  if (!m_tsf || ch >= MML_CHANNELS)
     return;
   uint32_t now = millis();
   if (m_off_time[ch]) {
@@ -270,7 +270,7 @@ void BasicSound::begin(void) {
   m_font_name = F("1mgm.sf2");
 #endif
 #ifdef HAVE_MML
-  for (int i = 0; i < SOUND_CHANNELS; ++i) {
+  for (int i = 0; i < MML_CHANNELS; ++i) {
     mml_init(&m_mml[i], mmlCallback, (void *)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
     defaults(i);
@@ -311,7 +311,7 @@ void GROUP(basic_sound) BasicSound::pumpEvents() {
   uint32_t now = millis();
 #endif
 #ifdef HAVE_MML
-  for (int i = 0; i < SOUND_CHANNELS; ++i) {
+  for (int i = 0; i < MML_CHANNELS; ++i) {
     m_finished[i] = false;
     if (m_next_event[i] && now >= m_next_event[i]) {
       if (mml_fetch(&m_mml[i]) != MML_RESULT_OK) {

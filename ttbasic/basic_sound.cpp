@@ -4,7 +4,7 @@
 #include "basic.h"
 
 bool event_play_enabled;
-uint8_t event_play_proc_idx[SOUND_CHANNELS];
+uint8_t event_play_proc_idx[MML_CHANNELS];
 
 void BASIC_INT Basic::event_handle_play(int ch) {
   if (event_play_proc_idx[ch] == NO_PROC)
@@ -16,14 +16,14 @@ void BASIC_INT Basic::event_handle_play(int ch) {
 }
 
 #ifdef HAVE_MML
-BString mml_text[SOUND_CHANNELS];
+BString mml_text[MML_CHANNELS];
 #endif
 /***bc snd PLAY
 Plays a piece of music in Music Macro Language (MML) using the
 wavetable synthesizer.
 \usage PLAY [ch, ]mml$
 \args
-@ch	sound channel [`0` to `{SOUND_CHANNELS_m1}`, default: `0`]
+@ch	sound channel [`0` to `{MML_CHANNELS_m1}`, default: `0`]
 @mml$	score in MML format
 \bugs
 * MML syntax undocumented.
@@ -34,7 +34,7 @@ void Basic::iplay() {
   int32_t ch = 0;
 
   if (!is_strexp())
-    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA))
+    if (getParam(ch, 0, MML_CHANNELS - 1, I_COMMA))
       return;
 
   sound.stopMml(ch);
@@ -79,7 +79,7 @@ Checks if a sound is playing a on wavetable synthesizer channel.
 \usage p = PLAY(channel)
 \args
 @channel	sound channel +
-                [`0` to `{SOUND_CHANNELS_m1}`, or `-1` to check all channels]
+                [`0` to `{MML_CHANNELS_m1}`, or `-1` to check all channels]
 \ret `1` if sound is playing, `0` otherwise.
 \ref PLAY SOUND
 ***/
@@ -88,11 +88,11 @@ num_t BASIC_FP Basic::nplay() {
   int32_t a, b;
   if (checkOpen())
     return 0;
-  if (getParam(a, -1, SOUND_CHANNELS - 1, I_CLOSE))
+  if (getParam(a, -1, MML_CHANNELS - 1, I_CLOSE))
     return 0;
   if (a == -1) {
     b = 0;
-    for (int i = 0; i < SOUND_CHANNELS; ++i) {
+    for (int i = 0; i < MML_CHANNELS; ++i) {
       b |= sound.isPlaying(i);
     }
     return b;
@@ -184,7 +184,7 @@ No sanity checks are performed before setting the sound font.
 Generates a sound using the wavetable synthesizer.
 \usage SOUND ch, inst, note[, len[, vel]]
 \args
-@ch	sound channel [`0` to `{SOUND_CHANNELS_m1}`]
+@ch	sound channel [`0` to `{MML_CHANNELS_m1}`]
 @inst	instrument number
 @note	note pitch
 @len	note duration, milliseconds [default: `1000`]
@@ -200,7 +200,7 @@ void Basic::isound() {
   } else {
     int32_t ch, inst, note, len = 1000;
     num_t vel = 1;
-    if (getParam(ch, 0, SOUND_CHANNELS - 1, I_COMMA))
+    if (getParam(ch, 0, MML_CHANNELS - 1, I_COMMA))
       return;
     int instcnt = sound.instCount();
     if (!instcnt) {

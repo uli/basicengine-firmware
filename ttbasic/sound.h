@@ -77,7 +77,7 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #include "ESP8266SAM.h"
 
-#define SOUND_CHANNELS 3
+#define MML_CHANNELS 3
 
 #include "basic.h"
 
@@ -163,17 +163,17 @@ private:
     static void ICACHE_RAM_ATTR mmlCallback(MML_INFO *p, void *extobj);
     static uint32_t mmlGetNoteLength(int ch, uint32_t note_ticks);
 
-    static MML m_mml[SOUND_CHANNELS];
-    static MML_OPTION m_mml_opt[SOUND_CHANNELS];
-    static uint32_t m_next_event[SOUND_CHANNELS];
+    static MML m_mml[MML_CHANNELS];
+    static MML_OPTION m_mml_opt[MML_CHANNELS];
+    static uint32_t m_next_event[MML_CHANNELS];
 
-    static uint32_t m_off_time[SOUND_CHANNELS];
-    static uint8_t m_off_key[SOUND_CHANNELS];
-    static uint8_t m_off_inst[SOUND_CHANNELS];
-    static uint8_t m_ch_inst[SOUND_CHANNELS];
-    static bool m_finished[SOUND_CHANNELS];
-    static uint16_t m_bpm[SOUND_CHANNELS];
-    static uint8_t m_velocity[SOUND_CHANNELS];
+    static uint32_t m_off_time[MML_CHANNELS];
+    static uint8_t m_off_key[MML_CHANNELS];
+    static uint8_t m_off_inst[MML_CHANNELS];
+    static uint8_t m_ch_inst[MML_CHANNELS];
+    static bool m_finished[MML_CHANNELS];
+    static uint16_t m_bpm[MML_CHANNELS];
+    static uint8_t m_velocity[MML_CHANNELS];
 #endif
 #ifdef HAVE_TSF
     static uint32_t m_all_done_time;

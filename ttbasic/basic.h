@@ -436,7 +436,7 @@ void iloadconfig();
 #define COL(n) (csp.colorFromRgb(CONFIG.color_scheme[COL_##n]))
 
 extern bool event_play_enabled;
-extern uint8_t event_play_proc_idx[SOUND_CHANNELS];
+extern uint8_t event_play_proc_idx[MML_CHANNELS];
 
 #define MAX_PADS 3
 extern bool event_pad_enabled;

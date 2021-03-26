@@ -15,7 +15,7 @@ import_def CSP_NUM_COLORSPACES
 import_def NUM_FONTS
 import_def MAX_RETVALS
 import_def MAX_USER_FILES
-import_def SOUND_CHANNELS
+import_def MML_CHANNELS
 import_def CONFIG_COLS
 import_def MAX_PADS
 echo ":max_err: $((`wc -l <errdef.h`-1))" >>$REFDOC
