@@ -1184,7 +1184,7 @@ pos48644:
 	  index = phonemeindex[X];
 
 	  // next phoneme a consonant?
-	  if ((pgm_read_byte(&flags[index]) & 64) != 0) {
+	  if (index < sizeof(flags) && (pgm_read_byte(&flags[index]) & 64) != 0) {
 	    // RULE: <VOWEL> RX | LX <CONSONANT>
 
 
