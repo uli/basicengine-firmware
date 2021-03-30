@@ -18,7 +18,6 @@ void SMALL basic_init_file_early() {
 #elif defined(UNIFILE_USE_NEW_SPIFFS)
   SPIFFS.begin();
 #endif
-  loadConfig();
 
   // Initialize SD card file system
 #ifdef ESP32
@@ -47,6 +46,8 @@ void SMALL basic_init_file_early() {
   } else
     bfs.fakeTime();
 #endif
+
+  loadConfig();
 }
 
 void SMALL basic_init_file_late() {
