@@ -240,6 +240,8 @@ void iloadconfig() {
 
 #ifdef SDL
 #define CONFIG_FILE (BString(getenv("ENGINEBASIC_ROOT")) + BString("/.config"))
+#elif defined(H3)
+#define CONFIG_FILE BString("/sd/.config")
 #else
 #define CONFIG_FILE BString(F("/flash/.config"))
 #endif
