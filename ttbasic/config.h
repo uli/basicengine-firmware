@@ -30,6 +30,9 @@ typedef struct {
   pixel_t cursor_color;
   uint8_t beep_volume;
   bool keyword_sep_optional;  // do not require separation of keywords
+#ifdef H3
+  uint32_t phys_mode;
+#endif
 } SystemConfig;
 
 extern SystemConfig CONFIG;

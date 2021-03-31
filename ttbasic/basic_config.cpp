@@ -228,8 +228,13 @@ void SMALL Basic::iconfig() {
   case 9:
     CONFIG.keyword_sep_optional = value != 0;
     break;
+#ifdef H3
+  case 10:
+    CONFIG.phys_mode = value;
+    break;
+#endif
   default:
-    E_VALUE(0, 9);
+    E_VALUE(0, 10);
     break;
   }
 }
@@ -256,6 +261,9 @@ void loadConfig() {
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
   CONFIG.keyword_sep_optional = false;
+#ifdef H3
+  CONFIG.phys_mode = 0;
+#endif
 
   // XXX: colorspace is not initialized yet, cannot use conversion methods
   if (sizeof(pixel_t) == 1)
