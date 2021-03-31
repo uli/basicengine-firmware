@@ -12,9 +12,6 @@
 
 H3GFX vs23;
 
-#define FILTER_OFF	(0 << 0)
-#define FILTER_ON	(1 << 0)
-
 #define ASPECT_4_3	(0 << 1)
 #define ASPECT_16_9	(1 << 1)
 
@@ -38,11 +35,11 @@ const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
   // default H3 mode
   { 480, 270, 0, 0, ASPECT_4_3 },
   // default SDL mode
-  { 640, 480, 0, 0, ASPECT_4_3 | FILTER_ON },
-  { 800, 600, 0, 0, ASPECT_4_3 | FILTER_ON },
-  { 1024, 768, 0, 0, ASPECT_4_3 | FILTER_ON },
-  { 1280, 720, 0, 0, ASPECT_16_9 | FILTER_ON },
-  { 1280, 1024, 0, 0, ASPECT_4_3 | FILTER_ON },
+  { 640, 480, 0, 0, ASPECT_4_3 },
+  { 800, 600, 0, 0, ASPECT_4_3 },
+  { 1024, 768, 0, 0, ASPECT_4_3 },
+  { 1280, 720, 0, 0, ASPECT_16_9 },
+  { 1280, 1024, 0, 0, ASPECT_4_3 },
   { 1920, 1080, 0, 0, ASPECT_16_9 },
 };
 
@@ -172,50 +169,80 @@ bool H3GFX::setMode(uint8_t mode) {
   // an integral factor in both directions, and keep the aspect ratio as
   // close as possible. For filtered modes, we want the aspect ratio to be
   // precise.
-  switch (m_current_mode.vclkpp) {
-  case ASPECT_4_3 | FILTER_OFF:
-    if (m_force_filter ||
-        (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
-         DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
-      m_current_mode.top = 0;
-      m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
-    } else {
-      // find an integral scale factor
-      int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
-      m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
-                           / yscale					// correct for scaling by video driver
-                           / 2;						// only one side, the other side is implicit
-      int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
-      m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
-                           / xscale
-                           / 2;
+  if ((double)DISPLAY_HDMI_RES_X / (double)DISPLAY_HDMI_RES_Y > 1.55) {
+    // widescreen
+    switch (m_current_mode.vclkpp) {
+    case ASPECT_4_3:
+      if (m_force_filter ||
+          (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
+           DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
+        m_current_mode.top = 0;
+        m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
+      } else {
+        // find an integral scale factor
+        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
+        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
+                             / yscale					// correct for scaling by video driver
+                             / 2;						// only one side, the other side is implicit
+        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
+        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
+                             / xscale
+                             / 2;
+      }
+      display_enable_filter(m_force_filter);
+      break;
+    case ASPECT_16_9:
+      if (m_force_filter) {
+        m_current_mode.top = 0;
+        m_current_mode.left = 0;
+      } else {
+        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
+        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
+        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+      }
+      display_enable_filter(m_force_filter);
+      break;
+    default:
+      break;
     }
-    display_enable_filter(m_force_filter);
-    break;
-  case ASPECT_4_3 | FILTER_ON:
-    m_current_mode.top = 0;
-    m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
-    display_enable_filter(true);
-    break;
-  case ASPECT_16_9 | FILTER_OFF:
-    if (m_force_filter) {
-      m_current_mode.top = 0;
-      m_current_mode.left = 0;
-    } else {
-      int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
-      m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
-      int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
-      m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+  } else {
+    // not so widescreen
+    switch (m_current_mode.vclkpp) {
+    case ASPECT_16_9:
+      if (m_force_filter ||
+          (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
+           DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
+        m_current_mode.top = 0.1666667d * m_current_mode.y;	// letter-boxing
+        m_current_mode.left = 0;
+      } else {
+        // find an integral scale factor
+        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
+        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
+                             / yscale					// correct for scaling by video driver
+                             / 2;						// only one side, the other side is implicit
+        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.777777d;	// scale corrected for aspect ratio, rounded down
+        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
+                             / xscale
+                             / 2;
+      }
+      display_enable_filter(m_force_filter);
+      break;
+    case ASPECT_4_3:
+      if (m_force_filter) {
+        m_current_mode.top = 0;
+        m_current_mode.left = 0;
+      } else {
+        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
+        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
+        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+      }
+      display_enable_filter(m_force_filter);
+      break;
+    default:
+      break;
     }
-    display_enable_filter(m_force_filter);
-    break;
-  case ASPECT_16_9 | FILTER_ON:
-    m_current_mode.top = 0;
-    m_current_mode.left = 0;
-    display_enable_filter(true);
-    break;
-  default:
-    break;
   }
 
   // Try to allocate no more than 128k, but make sure it's enough to hold
