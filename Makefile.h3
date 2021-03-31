@@ -1,8 +1,9 @@
+# point this to the opi branch of https://github.com/uli/allwinner-bare-metal
+OSDIR = $(HOME)/devel/orangepi/allwinner-bare-metal
+
 TARGET = basic
 
 INIT_FS_DIR = ../basicengine_demos
-
-OSDIR = $(HOME)/devel/orangepi/allwinner-bare-metal
 
 SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
 	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
