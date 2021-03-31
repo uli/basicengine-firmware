@@ -46,6 +46,15 @@ const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
   { 1920, 1080, 0, 0, ASPECT_16_9 },
 };
 
+const struct display_phys_mode_t phys_modes[] = {
+  { 148500000, 1920,  88,  44, 148, 0, 1080,  4, 5, 36, 0, 1 },
+  { 108000000, 1280,  48, 112, 248, 0, 1024,  1, 3, 38, 0, 0 },
+  {  74250000, 1280, 110,  40, 220, 0,  720,  5, 5, 20, 0, 1 },
+  {  40000000,  800,  40, 128,  88, 0,  600,  1, 4, 23, 0, 0 },
+  {  25175000,  640,  16,  96,  48, 1,  480, 10, 2, 33, 1, 0 },
+  { 193160000, 1920, 128, 208, 336, 0, 1200,  1, 3, 38, 0, 1 },
+};
+
 #define DISPLAY_CORE	1
 #define DISPLAY_CORE_STACK_SIZE	0x1000
 static void *display_core_stack;
@@ -64,6 +73,15 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   delay(16);
   m_last_line = 0;
   m_pixels = NULL;
+
+  const struct display_phys_mode_t *phys_mode;
+  if (CONFIG.phys_mode < sizeof(phys_modes) / sizeof(*phys_modes))
+    phys_mode = &phys_modes[CONFIG.phys_mode];
+  else
+    phys_mode = &phys_modes[0];
+
+  display_init(phys_mode);
+
   setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
