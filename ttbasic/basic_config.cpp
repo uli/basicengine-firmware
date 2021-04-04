@@ -155,7 +155,7 @@ To restore the default configuration, run the command `REMOVE
 ***/
 void SMALL Basic::iconfig() {
   int32_t itemNo;
-  int32_t value;
+  num_t value;
 
   if (*cip == I_COLOR) {
     ++cip;
@@ -206,8 +206,8 @@ void SMALL Basic::iconfig() {
       CONFIG.font = value;
     break;
   case 6:
-    if (value < 0 || value >= (1 << sizeof(pixel_t) * 8))
-      E_VALUE(0, (1 << sizeof(pixel_t) * 8) - 1);
+    if (value < 0 || value >= (1ULL << sizeof(pixel_t) * 8))
+      E_VALUE(0, (1ULL << sizeof(pixel_t) * 8) - 1);
     else
       CONFIG.cursor_color = csp.fromIndexed((ipixel_t)value);
     break;
