@@ -143,7 +143,7 @@ removed in future releases.
 
 \note
 To restore the default configuration, run the command `REMOVE
-"/flash/.config"` and restart the system.
+"/sd/config.ini"` and restart the system.
 \bugs
 * Changing the low-pass filter option (`3`) only takes effect at the time
   of the next block move, which happens for instance when scrolling the
@@ -244,11 +244,11 @@ void iloadconfig() {
 }
 
 #ifdef SDL
-#define CONFIG_FILE (BString(getenv("ENGINEBASIC_ROOT")) + BString("/.config"))
+#define CONFIG_FILE (BString(getenv("ENGINEBASIC_ROOT")) + BString("/config.ini"))
 #elif defined(H3)
-#define CONFIG_FILE BString("/sd/.config")
+#define CONFIG_FILE BString("/sd/config.ini")
 #else
-#define CONFIG_FILE BString(F("/flash/.config"))
+#define CONFIG_FILE BString(F("/flash/config.ini"))
 #endif
 
 // システム環境設定のロード
