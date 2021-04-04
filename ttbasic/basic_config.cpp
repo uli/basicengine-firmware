@@ -276,7 +276,41 @@ void loadConfig() {
   FILE *f = fopen(CONFIG_FILE.c_str(), "r");
   if (!f)
     return;
-  fread((char *)&CONFIG, 1, sizeof(CONFIG), f);
+
+  char *line = NULL;
+  size_t len = 0;
+#ifdef H3
+  while (__getline(&line, &len, f) != -1) {
+#else
+  while (getline(&line, &len, f) != -1) {
+#endif
+    char *v = strrchr(line, '=');
+    if (!v)
+      continue;
+    *v++ = 0;
+    if (!strncasecmp(line, "color", 5)) {
+      uint32_t idx = atoi(line + 5);
+      if (idx >= CONFIG_COLS)
+        continue;
+      char *comp = strtok(v, ",");
+      if (comp) CONFIG.color_scheme[idx][0] = atoi(comp);
+      comp = strtok(NULL, ",");
+      if (comp) CONFIG.color_scheme[idx][1] = atoi(comp);
+      comp = strtok(NULL, ",");
+      if (comp) CONFIG.color_scheme[idx][2] = atoi(comp);
+    } else {
+      if (!strcasecmp(line, "keyboard")) CONFIG.KEYBOARD = atoi(v);
+      if (!strcasecmp(line, "mode")) CONFIG.mode = atoi(v);
+      if (!strcasecmp(line, "font")) CONFIG.font = atoi(v);
+      if (!strcasecmp(line, "keyword_sep_optional")) CONFIG.keyword_sep_optional = !!atoi(v);
+      if (!strcasecmp(line, "filter")) CONFIG.lowpass = !!atoi(v);
+      if (!strcasecmp(line, "cursor_color")) CONFIG.cursor_color = strtoul(v, NULL, 0);
+      if (!strcasecmp(line, "beep_volume")) CONFIG.beep_volume = atoi(v);
+#ifdef H3
+      if (!strcasecmp(line, "phys_mode")) CONFIG.phys_mode = atoi(v);
+#endif
+    }
+  }
   fclose(f);
 }
 
@@ -292,6 +326,22 @@ void isaveconfig() {
   if (!f) {
     err = ERR_FILE_OPEN;
   }
-  fwrite((char *)&CONFIG, 1, sizeof(CONFIG), f);
+
+  fprintf(f, "keyboard=%d\n", CONFIG.KEYBOARD);
+  fprintf(f, "mode=%d\n", CONFIG.mode);
+  fprintf(f, "font=%d\n", CONFIG.font);
+  fprintf(f, "keyword_sep_optional=%d\n", CONFIG.keyword_sep_optional);
+  fprintf(f, "filter=%d\n", CONFIG.lowpass);
+  fprintf(f, "cursor_color=0x%lx\n", CONFIG.cursor_color);
+  fprintf(f, "beep_volume=%d\n", CONFIG.beep_volume);
+#ifdef H3
+  fprintf(f, "phys_mode=%lu\n", CONFIG.phys_mode);
+#endif
+  for (int i = 0; i < CONFIG_COLS; ++i)
+    fprintf(f, "color%d=%d,%d,%d\n", i,
+      CONFIG.color_scheme[i][0],
+      CONFIG.color_scheme[i][1],
+      CONFIG.color_scheme[i][2]);
+
   fclose(f);
 }
