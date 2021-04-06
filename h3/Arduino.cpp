@@ -62,11 +62,13 @@ extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
 void kbd_task(void);
+extern "C" void network_task(void);
 
 void platform_process_events() {
   usb_task();
   sd_detect();
   kbd_task();
+  network_task();
 }
 
 extern "C" size_t umm_free_heap_size(void) {

@@ -44,6 +44,7 @@
 #define AUDIO_SAMPLE_RATE 48000
 #define AUDIO_16BIT
 #define USE_ROTOZOOM
+#define HAVE_NETWORK
 #endif
 
 #ifdef __DJGPP__
