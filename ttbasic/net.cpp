@@ -26,7 +26,7 @@
  *****************************************************************************/
 
 #include "ttconfig.h"
-#ifdef HAVE_NETWORK
+#if defined(HAVE_NETWORK) && (defined(ESP8266) || defined(ESP32))
 
 #include <Arduino.h>
 
@@ -224,15 +224,4 @@ void Basic::inet() {
   }
 }
 
-#else
-
-#include "basic.h"
-
-void Basic::inet() {
-  err = ERR_NOT_SUPPORTED;
-}
-num_t Basic::nconnect() {
-  err = ERR_NOT_SUPPORTED;
-  return 0;
-}
 #endif
