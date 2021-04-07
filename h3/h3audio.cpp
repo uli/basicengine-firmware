@@ -4,6 +4,7 @@
 #ifdef H3
 
 #include "h3audio.h"
+#include <h3_codec.h>
 
 H3Audio audio;
 
@@ -24,6 +25,9 @@ void H3Audio::init(int sample_rate) {
   m_read_buf = 0;
   m_curr_buf = m_sound_buf[m_read_buf ^ 1];
   m_block_size = SOUND_BUFLEN;
+
+  h3_codec_set_buffer_length(SOUND_BUFLEN * SOUND_CHANNELS);
+  h3_codec_start();
 }
 
 void hook_audio_get_sample(int16_t *l, int16_t *r) {
@@ -36,6 +40,7 @@ void hook_audio_get_sample(int16_t *l, int16_t *r) {
     audio.m_curr_buf = audio.m_sound_buf[m_read_buf ^ 1];
     audio.m_curr_buf_pos = 0;
     m_read_pos = 0;
+    h3_codec_push_data(audio.m_curr_buf);
   }
 }
 
