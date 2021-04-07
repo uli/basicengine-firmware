@@ -17,3 +17,19 @@ void Basic::iwget() {
 }
 
 #endif
+
+#if !defined(HAVE_NETWORK) || !defined(HAVE_TFTP)
+
+void Basic::itftpd() {
+  err = ERR_NOT_SUPPORTED;
+}
+
+void Basic::itftpget() {
+  err = ERR_NOT_SUPPORTED;
+}
+
+void Basic::itftpput() {
+  err = ERR_NOT_SUPPORTED;
+}
+
+#endif

@@ -133,6 +133,9 @@ TYPE	X_TYPE		itype
 REMOVE	X_REMOVE	iremove
 GPMODE	X_GPMODE	igpmode
 HELP	X_HELP		ihelp
+TFTPD	X_TFTPD		itftpd
+TFTPGET	X_TFTPGET	itftpget
+TFTPPUT	X_TFTPPUT	itftpput
 WGET	X_WGET		iwget
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
