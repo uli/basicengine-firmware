@@ -12,4 +12,8 @@ num_t Basic::nconnect() {
   return 0;
 }
 
+void Basic::iwget() {
+  err = ERR_NOT_SUPPORTED;
+}
+
 #endif

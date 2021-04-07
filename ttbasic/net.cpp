@@ -165,7 +165,7 @@ BString Basic::snetget() {
   return rx;
 }
 
-void Basic::inetget() {
+void Basic::iwget() {
   BString url = istrexp();
   BString file;
   if (*cip == I_TO) {
@@ -221,7 +221,6 @@ void Basic::inet() {
   case I_CONNECT: iconnect();  break;
   case I_OPEN:    inetopen();  break;
   case I_CLOSE:   inetclose(); break;
-  case I_GET:     inetget();   break;
   default:        E_ERR(SYNTAX, "exp network command"); break;
   }
 }

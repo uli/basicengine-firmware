@@ -133,6 +133,7 @@ TYPE	X_TYPE		itype
 REMOVE	X_REMOVE	iremove
 GPMODE	X_GPMODE	igpmode
 HELP	X_HELP		ihelp
+WGET	X_WGET		iwget
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
