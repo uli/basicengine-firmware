@@ -45,6 +45,7 @@
 #define AUDIO_16BIT
 #define USE_ROTOZOOM
 #define HAVE_NETWORK
+#define HAVE_TFTP
 #endif
 
 #ifdef __DJGPP__
