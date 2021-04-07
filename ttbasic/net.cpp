@@ -26,7 +26,19 @@
  *****************************************************************************/
 
 #include "ttconfig.h"
-#if defined(HAVE_NETWORK) && (defined(ESP8266) || defined(ESP32))
+#if defined(HAVE_NETWORK)
+
+#include "basic.h"
+#include "net.h"
+
+void E_NETWORK(const BString &msg) {
+  static BString net_err;
+  err = ERR_NETWORK;
+  net_err = msg;
+  err_expected = net_err.c_str();
+}
+
+#if defined(ESP8266) || defined(ESP32)
 
 #include <Arduino.h>
 
@@ -41,19 +53,9 @@ typedef ESP8266WiFiMulti WiFiMulti;
 #include <HTTPClient.h>
 #endif
 
-#include "basic.h"
-#include "net.h"
-
 WiFiMulti wm;
 static HTTPClient *http = NULL;
 static WiFiClient *stream = NULL;
-
-static void E_NETWORK(const BString &msg) {
-  static BString net_err;
-  err = ERR_NETWORK;
-  net_err = msg;
-  err_expected = net_err.c_str();
-}
 
 void Basic::isetap() {
   BString ssid = istrexp();
@@ -224,4 +226,7 @@ void Basic::inet() {
   }
 }
 
-#endif
+#endif	// ESP8266 || ESP32
+
+#endif	// HAVE_NETWORK
+
