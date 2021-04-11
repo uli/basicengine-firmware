@@ -170,23 +170,23 @@ bool H3GFX::setMode(uint8_t mode) {
   // an integral factor in both directions, and keep the aspect ratio as
   // close as possible. For filtered modes, we want the aspect ratio to be
   // precise.
-  if ((double)DISPLAY_HDMI_RES_X / (double)DISPLAY_HDMI_RES_Y > 1.55) {
+  if ((double)DISPLAY_PHYS_RES_X / (double)DISPLAY_PHYS_RES_Y > 1.55) {
     // widescreen
     switch (m_current_mode.vclkpp) {
     case ASPECT_4_3:
       if (m_force_filter ||
-          (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
-           DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
+          (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
+           DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
         m_current_mode.top = 0;
         m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
       } else {
         // find an integral scale factor
-        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
-        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;			// scale, rounded down
+        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
                              / yscale					// correct for scaling by video driver
                              / 2;						// only one side, the other side is implicit
-        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
-        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
+        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x)
                              / xscale
                              / 2;
       }
@@ -197,10 +197,10 @@ bool H3GFX::setMode(uint8_t mode) {
         m_current_mode.top = 0;
         m_current_mode.left = 0;
       } else {
-        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
-        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
-        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
-        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;		// scale, rounded down
+        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;		// scale, rounded down
+        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
       display_enable_filter(m_force_filter);
       break;
@@ -212,18 +212,18 @@ bool H3GFX::setMode(uint8_t mode) {
     switch (m_current_mode.vclkpp) {
     case ASPECT_16_9:
       if (m_force_filter ||
-          (DISPLAY_HDMI_RES_X / m_current_mode.x >= 3 &&
-           DISPLAY_HDMI_RES_Y / m_current_mode.y >= 3)) {
+          (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
+           DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
         m_current_mode.top = 0.1666667d * m_current_mode.y;	// letter-boxing
         m_current_mode.left = 0;
       } else {
         // find an integral scale factor
-        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;			// scale, rounded down
-        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;			// scale, rounded down
+        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
                              / yscale					// correct for scaling by video driver
                              / 2;						// only one side, the other side is implicit
-        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x / 1.777777d;	// scale corrected for aspect ratio, rounded down
-        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x)
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.777777d;	// scale corrected for aspect ratio, rounded down
+        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x)
                              / xscale
                              / 2;
       }
@@ -234,10 +234,10 @@ bool H3GFX::setMode(uint8_t mode) {
         m_current_mode.top = 0;
         m_current_mode.left = 0;
       } else {
-        int yscale = DISPLAY_HDMI_RES_Y / m_current_mode.y;		// scale, rounded down
-        m_current_mode.top = (DISPLAY_HDMI_RES_Y - yscale * m_current_mode.y) / yscale / 2;
-        int xscale = DISPLAY_HDMI_RES_X / m_current_mode.x;		// scale, rounded down
-        m_current_mode.left = (DISPLAY_HDMI_RES_X - xscale * m_current_mode.x) / xscale / 2;
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;		// scale, rounded down
+        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;		// scale, rounded down
+        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
       display_enable_filter(m_force_filter);
       break;
