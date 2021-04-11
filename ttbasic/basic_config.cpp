@@ -308,6 +308,7 @@ void loadConfig() {
       if (!strcasecmp(line, "beep_volume")) CONFIG.beep_volume = atoi(v);
 #ifdef H3
       if (!strcasecmp(line, "phys_mode")) CONFIG.phys_mode = atoi(v);
+      if (!strcasecmp(line, "tv_norm")) CONFIG.NTSC = atoi(v);
 #endif
     }
   }
@@ -336,6 +337,7 @@ void isaveconfig() {
   fprintf(f, "beep_volume=%d\n", CONFIG.beep_volume);
 #ifdef H3
   fprintf(f, "phys_mode=%lu\n", CONFIG.phys_mode);
+  fprintf(f, "tv_norm=%u\n", CONFIG.NTSC);
 #endif
   for (int i = 0; i < CONFIG_COLS; ++i)
     fprintf(f, "color%d=%d,%d,%d\n", i,
