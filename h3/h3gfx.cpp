@@ -78,6 +78,9 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   else
     phys_mode = &phys_modes[0];
 
+  if (!display_is_digital)
+    tve_init(CONFIG.NTSC == 0 ? TVE_NORM_NTSC : TVE_NORM_PAL);
+
   display_init(phys_mode);
 
   setMode(CONFIG.mode - 1);

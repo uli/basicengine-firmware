@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <display.h>
+#include <tve.h>
 #include <spinlock.h>
 
 #define SC_DEFAULT 13
