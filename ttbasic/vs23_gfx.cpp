@@ -30,7 +30,7 @@
 #include "graphics.h"
 
 // XXX: This should be provided by the graphics drivers.
-static inline void setPixelSafe(uint16_t x, uint16_t y, pixel_t c) {
+void Graphics::setPixelSafe(uint16_t x, uint16_t y, pixel_t c) {
   if (x < vs23.width() && y < vs23.lastLine())
     vs23.setPixel(x, y, c);
 }

@@ -7,6 +7,9 @@ public:
                           uint8_t r, uint8_t g, uint8_t b);
   static void drawRect(int x0, int y0, int w, int h, pixel_t c, int fc);
   static void drawCircle(int x0, int y0, int radius, pixel_t c, int fc);
+
+  // XXX: This should be provided by the graphics drivers.
+  static void setPixelSafe(uint16_t x, uint16_t y, pixel_t c);
 };
 
 extern Graphics gfx;
