@@ -372,99 +372,101 @@ void H3GFX::updateBgTask() {
 #ifdef PROFILE_BG
   uint32_t start = micros();
 #endif
-  for (int b = 0; b < MAX_BG; ++b) {
-    bg_t *bg = &m_bg[b];
-    if (!bg->enabled)
-      continue;
+  for (int prio = 0; prio <= MAX_PRIO; ++prio) {
+    for (int b = 0; b < MAX_BG; ++b) {
+      bg_t *bg = &m_bg[b];
+      if (!bg->enabled || bg->prio != prio)
+        continue;
 
-    int tsx = bg->tile_size_x;
-    int tsy = bg->tile_size_y;
+      int tsx = bg->tile_size_x;
+      int tsy = bg->tile_size_y;
 
-    // start/end coordinates of the visible BG window, relative to the
-    // BG's origin, in pixels
-    int sx = bg->scroll_x;
-    int ex = bg->win_w + bg->scroll_x;
-    int sy = bg->scroll_y;
-    int ey = bg->win_h + bg->scroll_y;
+      // start/end coordinates of the visible BG window, relative to the
+      // BG's origin, in pixels
+      int sx = bg->scroll_x;
+      int ex = bg->win_w + bg->scroll_x;
+      int sy = bg->scroll_y;
+      int ey = bg->win_h + bg->scroll_y;
 
-    // offset to add to BG-relative coordinates to get screen coordinates
-    int owx = -sx + bg->win_x;
-    int owy = -sy + bg->win_y;
+      // offset to add to BG-relative coordinates to get screen coordinates
+      int owx = -sx + bg->win_x;
+      int owy = -sy + bg->win_y;
 
-    for (int y = sy; y < ey; ++y) {
-      for (int x = sx; x < ex; ++x) {
-        int off_x = x % tsx;
-        int off_y = y % tsy;
-        int tile_x = x / tsx;
-        int tile_y = y / tsy;
-next:
-        uint8_t tile = bg->tiles[tile_x % bg->w + (tile_y % bg->h) * bg->w];
-        int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
-        int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
-        if (!off_x && x < ex - tsx) {
-          // can draw a whole tile line
-          memcpy(&m_bgpixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
-          x += tsx;
-          tile_x++;
-          goto next;
-        } else {
-          m_bgpixels[y + owy][x + owx] = m_pixels[t_y][t_x];
+      for (int y = sy; y < ey; ++y) {
+        for (int x = sx; x < ex; ++x) {
+          int off_x = x % tsx;
+          int off_y = y % tsy;
+          int tile_x = x / tsx;
+          int tile_y = y / tsy;
+  next:
+          uint8_t tile = bg->tiles[tile_x % bg->w + (tile_y % bg->h) * bg->w];
+          int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
+          int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
+          if (!off_x && x < ex - tsx) {
+            // can draw a whole tile line
+            memcpy(&m_bgpixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
+            x += tsx;
+            tile_x++;
+            goto next;
+          } else {
+            m_bgpixels[y + owy][x + owx] = m_pixels[t_y][t_x];
+          }
         }
       }
     }
-  }
 
-#ifdef PROFILE_BG
-  uint32_t taken = micros() - start;
-  Serial.printf("rend %d\r\n", taken);
-#endif
+  #ifdef PROFILE_BG
+    uint32_t taken = micros() - start;
+    Serial.printf("rend %d\r\n", taken);
+  #endif
 
-  for (int si = 0; si < MAX_SPRITES; ++si) {
-    sprite_t *s = &m_sprite[si];
-    // skip if not visible
-    if (!s->enabled)
-      continue;
-    if (s->pos_x + s->p.w < 0 ||
-        s->pos_x >= width() ||
-        s->pos_y + s->p.h < 0 ||
-        s->pos_y >= height())
-      continue;
-
-    // sprite pattern start coordinates
-    int px = s->p.pat_x + s->p.frame_x * s->p.w;
-    int py = s->p.pat_y + s->p.frame_y * s->p.h;
-
-    if (s->must_reload || !s->surf) {
-      // XXX: do this asynchronously
-      if (s->surf)
-        delete s->surf;
-
-      int pitch = m_current_mode.x;
-      if (py < m_current_mode.y)
-        pitch += m_current_mode.left * 2;
-
-      rz_surface_t in(s->p.w, s->p.h, (uint32_t*)(&m_pixels[py][px]),
-                      pitch * sizeof(pixel_t), s->p.key);
-
-      rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
-                                            s->p.flip_x ? -s->scale_x : s->scale_x,
-                                            s->p.flip_y ? -s->scale_y : s->scale_y, 0);
-      s->surf = out;
-      s->must_reload = false;
-    }
-
-    for (int y = 0; y != s->surf->h; ++y) {
-      int yy = y + s->pos_y;
-      if (yy < 0 || yy >= height())
+    for (int si = 0; si < MAX_SPRITES; ++si) {
+      sprite_t *s = &m_sprite[si];
+      // skip if not visible
+      if (!s->enabled || s->prio != prio)
         continue;
-      for (int x = 0; x != s->surf->w; ++x) {
-        int xx = x + s->pos_x;
-        if (xx < 0 || xx >= width())
+      if (s->pos_x + s->p.w < 0 ||
+          s->pos_x >= width() ||
+          s->pos_y + s->p.h < 0 ||
+          s->pos_y >= height())
+        continue;
+
+      // sprite pattern start coordinates
+      int px = s->p.pat_x + s->p.frame_x * s->p.w;
+      int py = s->p.pat_y + s->p.frame_y * s->p.h;
+
+      if (s->must_reload || !s->surf) {
+        // XXX: do this asynchronously
+        if (s->surf)
+          delete s->surf;
+
+        int pitch = m_current_mode.x;
+        if (py < m_current_mode.y)
+          pitch += m_current_mode.left * 2;
+
+        rz_surface_t in(s->p.w, s->p.h, (uint32_t*)(&m_pixels[py][px]),
+                        pitch * sizeof(pixel_t), s->p.key);
+
+        rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
+                                              s->p.flip_x ? -s->scale_x : s->scale_x,
+                                              s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+        s->surf = out;
+        s->must_reload = false;
+      }
+
+      for (int y = 0; y != s->surf->h; ++y) {
+        int yy = y + s->pos_y;
+        if (yy < 0 || yy >= height())
           continue;
-        pixel_t p = s->surf->getPixel(x, y);
-        // draw only non-keyed pixels
-        if (p != s->p.key)
-          m_bgpixels[yy][xx] = p;
+        for (int x = 0; x != s->surf->w; ++x) {
+          int xx = x + s->pos_x;
+          if (xx < 0 || xx >= width())
+            continue;
+          pixel_t p = s->surf->getPixel(x, y);
+          // draw only non-keyed pixels
+          if (p != s->p.key)
+            m_bgpixels[yy][xx] = p;
+        }
       }
     }
   }
