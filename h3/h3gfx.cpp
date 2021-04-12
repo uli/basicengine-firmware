@@ -307,6 +307,15 @@ void H3GFX::updateStatus() {
     if (bgEnabled(i))
       enabled = true;
   }
+  if (!enabled) {
+    for (int i = 0; i < MAX_SPRITES; ++i) {
+      if (spriteEnabled(i)) {
+        enabled = true;
+        break;
+      }
+    }
+  }
+
   if (enabled != m_engine_enabled) {
     spin_lock(&m_buffer_lock);
     if (m_engine_enabled) {
