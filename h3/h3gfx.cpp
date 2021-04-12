@@ -64,6 +64,10 @@ extern "C" void task_updatebg(void) {
   }
 }
 
+void hook_display_vblank(void) {
+  smp_send_event();
+}
+
 #include <usb.h>
 #include <config.h>
 void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
