@@ -2,6 +2,8 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "basic.h"
+#include "graphics.h"
+
 #include "c_video.h"
 #include "c_api.h"
 
@@ -35,7 +37,7 @@ int c_window(int32_t x, int32_t y, int32_t w, int32_t h) {
       check_param(w, 1, sc0.getScreenWidth() - x) ||
       check_param(h, 1, sc0.getScreenHeight() - y))
     return -1;
-      
+
   sc0.setWindow(x, y, w, h);
   sc0.setScroll(h > 1 ? true : false);
   sc0.locate(0, 0);
@@ -90,7 +92,7 @@ int c_screen(int32_t m) {
   sc0.draw_cls_curs();
   sc0.locate(0, 0);
   sc0.refresh();
-  
+
   return 0;
 }
 
@@ -119,14 +121,14 @@ int c_border(int32_t y, int32_t uv, int32_t x, int32_t w) {
     vs23.setBorder(y, uv, x, w);
   else
     vs23.setBorder(y, uv);
-  
+
   return 0;
 }
 
 void c_vsync(uint32_t tm) {
   if (tm == 0)
     tm = vs23.frame() + 1;
-  
+
   while (vs23.frame() < tm) {
     process_events();
     uint16_t c = sc0.peekKey();
@@ -239,11 +241,7 @@ pixel_t c_point(int32_t x, int32_t y) {
 }
 
 void c_pset(int32_t x, int32_t y, pixel_t c) {
-  if (check_param(x, 0, sc0.getGWidth() - 1) ||
-      check_param(y, 0, vs23.lastLine() - 1))
-    return;
-
-  sc0.pset(x, y, c);
+  Graphics::setPixelSafe(x, y, c);
 }
 
 void c_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2, pixel_t c) {
@@ -270,7 +268,7 @@ int c_blit(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) {
       check_param(w, 0, min(sc0.getGWidth() - x, sc0.getGWidth() - dx)) ||
       check_param(h, 0, min(vs23.lastLine() - y, vs23.lastLine() - dy)))
     return -1;
-  
+
   vs23.blitRect(x, y, dx, dy, w, h);
   return 0;
 }
