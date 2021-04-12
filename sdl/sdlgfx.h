@@ -16,8 +16,10 @@
 
 #define SDL_SCREEN_MODES 20
 
-#define PIXEL(x, y) \
-  (((pixel_t *)m_surface->pixels)[x + y * m_surface->pitch / sizeof(pixel_t)])
+#define PIXELT(x, y) \
+  (((pixel_t *)m_text_surface->pixels)[x + y * m_text_surface->pitch / sizeof(pixel_t)])
+#define PIXELC(x, y) \
+  (((pixel_t *)m_composite_surface->pixels)[x + y * m_composite_surface->pitch / sizeof(pixel_t)])
 
 class SDLGFX : public BGEngine {
 public:
@@ -36,10 +38,10 @@ public:
   void setColorSpace(uint8_t palette);
 
   inline pixel_t colorFromRgb(int r, int g, int b) {
-    return (pixel_t)SDL_MapRGB(m_surface->format, r, g, b);
+    return (pixel_t)SDL_MapRGB(m_text_surface->format, r, g, b);
   }
   inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) {
-    SDL_GetRGBA(p, m_surface->format, &r, &g, &b, &a);
+    SDL_GetRGBA(p, m_text_surface->format, &r, &g, &b, &a);
   }
 
   bool blockFinished() { return true; }
@@ -64,21 +66,21 @@ public:
   inline uint16_t borderWidth() { return m_screen->w; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
-    PIXEL(x, y) = c;
+    PIXELT(x, y) = c;
     m_dirty = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
 #if SDL_BPP == 8
-    PIXEL(x, y) = c;
+    PIXELT(x, y) = c;
 #else
-    PIXEL(x, y) = m_current_palette[c];
+    PIXELT(x, y) = m_current_palette[c];
 #endif
     m_dirty = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos,
                    uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
-    return PIXEL(x, y);
+    return PIXELT(x, y);
   }
 
   void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
@@ -107,7 +109,7 @@ public:
     uint32_t y = address & 0xffff;
 
     for (uint32_t i = 0; i < len; ++i)
-      PIXEL(x + i, y) = data[i];
+      PIXELT(x + i, y) = data[i];
 
     m_dirty = true;
   }
@@ -118,9 +120,9 @@ public:
 
     for (uint32_t i = 0; i < len; ++i)
 #if SDL_BPP == 8
-      PIXEL(x + i, y) = data[i];
+      PIXELT(x + i, y) = data[i];
 #else
-      PIXEL(x + i, y) = m_current_palette[data[i]];
+      PIXELT(x + i, y) = m_current_palette[data[i]];
 #endif
 
     m_dirty = true;
@@ -149,7 +151,8 @@ private:
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
   SDL_Surface *m_screen;
-  SDL_Surface *m_surface;
+  SDL_Surface *m_text_surface;
+  SDL_Surface *m_composite_surface;
   bool m_dirty;
 
 #if SDL_BPP != 8

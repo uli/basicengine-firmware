@@ -79,14 +79,14 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
                       uint16_t y_dst, uint16_t width, uint16_t height) {
   SDL_Rect src = { (Sint16)x_src, (Sint16)y_src, width, height };
   SDL_Rect dst = { (Sint16)x_dst, (Sint16)y_dst, width, height };
-  SDL_BlitSurface(m_surface, &src, m_surface, &dst);
+  SDL_BlitSurface(m_text_surface, &src, m_text_surface, &dst);
   m_dirty = true;
 }
 
 void SDLGFX::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
                       pixel_t color) {
   SDL_Rect dst = { (Sint16)x1, (Sint16)y1, x2 - x1, y2 - y1 };
-  SDL_FillRect(m_surface, &dst, color);
+  SDL_FillRect(m_text_surface, &dst, color);
 }
 
 bool SDLGFX::setMode(uint8_t mode) {
@@ -160,11 +160,22 @@ bool SDLGFX::setMode(uint8_t mode) {
 
   m_screen = SDL_SetVideoMode(final_w, final_h, SDL_BPP, sdl_flags);
 
-  if (m_surface)
-    SDL_FreeSurface(m_surface);
+  if (m_text_surface)
+    SDL_FreeSurface(m_text_surface);
+  if (m_composite_surface)
+    SDL_FreeSurface(m_composite_surface);
 
   SDL_PixelFormat *fmt = m_screen->format;
-  m_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+  m_text_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+    m_current_mode.x,
+    m_last_line,
+    fmt->BitsPerPixel,
+    fmt->Rmask,
+    fmt->Gmask,
+    fmt->Bmask,
+    fmt->Amask
+  );
+  m_composite_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
     m_current_mode.x,
     m_last_line,
     fmt->BitsPerPixel,
@@ -208,7 +219,7 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {
 
   pixel_t color = border_pal[((u & 0xf) << 6) | ((v & 0xf) << 10) | y];
 #if SDL_BPP != 32
-  color = SDL_MapRGB(m_surface->format, (color >> 16) & 0xff,
+  color = SDL_MapRGB(m_text_surface->format, (color >> 16) & 0xff,
                      (color >> 8) & 0xff, color & 0xff);
 #endif
 
@@ -226,9 +237,10 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 #if SDL_BPP == 8
     SDL_Color c = { pal[i * 3], pal[i * 3 + 1], pal[i * 3 + 2] };
     SDL_SetColors(m_screen,  &c, i, 1);
-    SDL_SetColors(m_surface, &c, i, 1);
+    SDL_SetColors(m_text_surface, &c, i, 1);
+    SDL_SetColors(m_composite_surface, &c, i, 1);
 #else
-    m_current_palette[i] = SDL_MapRGB(m_surface->format, pal[i * 3],
+    m_current_palette[i] = SDL_MapRGB(m_text_surface->format, pal[i * 3],
                                       pal[i * 3 + 1], pal[i * 3 + 2]);
 #endif
   }
@@ -249,20 +261,22 @@ void SDLGFX::updateBg() {
 
   last_frame = frame();
 
+  if (!m_bg_modified && !m_dirty)
+    return;
+
   if (m_dirty) {
     if (SDL_BPP == 8)
-      scale_integral_8(m_surface, m_screen, m_current_mode.y);
+      scale_integral_8(m_composite_surface, m_screen, m_current_mode.y);
     else if (SDL_BPP == 16)
-      scale_integral_16(m_surface, m_screen, m_current_mode.y);
+      scale_integral_16(m_composite_surface, m_screen, m_current_mode.y);
     else
-      scale_integral_32(m_surface, m_screen, m_current_mode.y);
+      scale_integral_32(m_composite_surface, m_screen, m_current_mode.y);
 
     SDL_Flip(m_screen);
     m_dirty = false;
   }
 
-  if (!m_bg_modified)
-    return;
+  SDL_BlitSurface(m_text_surface, NULL, m_composite_surface, NULL);
 
   m_bg_modified = false;
   m_dirty = true;
@@ -300,7 +314,7 @@ void SDLGFX::updateBg() {
       (Sint16)bg->win_x, (Sint16)bg->win_y,
       bg->win_w,         bg->win_h
     };
-    SDL_SetClipRect(m_surface, &clip);
+    SDL_SetClipRect(m_composite_surface, &clip);
 
     for (int y = tile_start_y; y < tile_end_y; ++y) {
       for (int x = tile_start_x; x < tile_end_x; ++x) {
@@ -321,11 +335,11 @@ void SDLGFX::updateBg() {
         src.w = tsx;
         src.h = tsy;
 
-        SDL_BlitSurface(m_surface, &src, m_surface, &dst);
+        SDL_BlitSurface(m_text_surface, &src, m_composite_surface, &dst);
       }
     }
 
-    SDL_SetClipRect(m_surface, NULL);
+    SDL_SetClipRect(m_composite_surface, NULL);
   }
 
 #ifdef PROFILE_BG
@@ -385,8 +399,8 @@ void SDLGFX::updateBg() {
         delete s->surf;
 
       rz_surface_t in(s->p.w, s->p.h,
-                      &((uint32_t*)m_surface->pixels)[py * m_surface->pitch/4 + px],
-                      m_surface->pitch, s->p.key);
+                      &((uint32_t*)m_text_surface->pixels)[py * m_text_surface->pitch/4 + px],
+                      m_text_surface->pitch, s->p.key);
 
       rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
                                             s->p.flip_x ? -s->scale_x : s->scale_x,
@@ -419,7 +433,7 @@ void SDLGFX::updateBg() {
 #endif
         // draw only non-keyed pixels
         if (p != skey)
-          setPixel(xx, yy, p);
+          PIXELC(xx, yy) = p;
       }
     }
   }
