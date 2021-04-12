@@ -75,6 +75,9 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   delay(16);
   m_last_line = 0;
   m_pixels = NULL;
+  m_bgpixels = NULL;
+  m_textmode_buffer = NULL;
+  m_offscreenbuffer = NULL;
 
   const struct display_phys_mode_t *phys_mode;
   if (CONFIG.phys_mode < sizeof(phys_modes) / sizeof(*phys_modes))
@@ -103,6 +106,9 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
   m_buffer_lock = false;
   m_display_enabled = true;
+  m_engine_enabled = false;
+  m_bg_modified = false;
+  m_textmode_buffer_modified = false;
 
   smp_start_secondary_core(DISPLAY_CORE, task_updatebg,
                            display_core_stack, DISPLAY_CORE_STACK_SIZE);
@@ -110,6 +116,7 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
 void H3GFX::reset() {
   BGEngine::reset();
+  // XXX: does this make sense?
   for (int i = 0; i < m_last_line; ++i)
     memset(m_pixels[i], 0, m_current_mode.x * sizeof(pixel_t));
   setColorSpace(0);
@@ -154,11 +161,9 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
   mmu_flush_dcache();
 }
 
-static uint32_t *backbuffer = 0;
-
-void H3GFX::resetLinePointers() {
+void H3GFX::resetLinePointers(pixel_t **pixels, pixel_t *buffer) {
   for (int i = 0; i < m_current_mode.y; ++i) {
-    m_pixels[i] = (pixel_t *)display_active_buffer +
+    pixels[i] = buffer +
                   (m_current_mode.x + m_current_mode.left * 2) *
                           (i + m_current_mode.top) +
                   m_current_mode.left;
@@ -169,7 +174,8 @@ bool H3GFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
   free(m_pixels);
-  free(backbuffer);
+  free(m_textmode_buffer);
+  free(m_offscreenbuffer);
 
   m_current_mode = modes_pal[mode];
 
@@ -259,12 +265,15 @@ bool H3GFX::setMode(uint8_t mode) {
                      m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
 
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
+  m_bgpixels = (uint32_t **)malloc(sizeof(*m_bgpixels) * m_last_line);
 
-  backbuffer = (uint32_t *)calloc(sizeof(pixel_t),
-                                  m_current_mode.x * (m_last_line - m_current_mode.y));
+  m_textmode_buffer = (uint32_t *)calloc(sizeof(pixel_t),
+                                  (m_current_mode.x + m_current_mode.left * 2) * (m_last_line + m_current_mode.top * 2));
+  m_offscreenbuffer = (uint32_t *)calloc(sizeof(pixel_t), m_current_mode.x * (m_last_line - m_current_mode.y));
 
   for (int i = m_current_mode.y; i < m_last_line; ++i) {
-    m_pixels[i] = backbuffer + m_current_mode.x * (i - m_current_mode.y);
+    m_pixels[i] = m_offscreenbuffer + m_current_mode.x * (i - m_current_mode.y);
+    m_bgpixels[i] = m_offscreenbuffer + m_current_mode.x * (i - m_current_mode.y);
   }
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
@@ -275,7 +284,8 @@ bool H3GFX::setMode(uint8_t mode) {
   display_single_buffer = true;
   display_swap_buffers();
 
-  resetLinePointers();
+  resetLinePointers(m_pixels, (pixel_t *)display_active_buffer);
+  resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   m_display_enabled = true;
 
@@ -284,8 +294,8 @@ bool H3GFX::setMode(uint8_t mode) {
 
 //#define PROFILE_BG
 
-inline void H3GFX::blitBuffer(void *buf) {
-  memcpy((void *)display_active_buffer, buf,
+inline void H3GFX::blitBuffer(pixel_t *dst, pixel_t *buf) {
+  memcpy((void *)dst, buf,
          (m_current_mode.x + m_current_mode.left * 2) *
          (m_current_mode.y + m_current_mode.top * 2) *
          sizeof(pixel_t));
@@ -301,54 +311,54 @@ void H3GFX::updateStatus() {
     spin_lock(&m_buffer_lock);
     if (m_engine_enabled) {
       // We're running multi-buffered and are switching to single-buffered mode.
-      // We need to copy what is currently visible to the single buffer if they
-      // are not the same.
-      void *latest_content = (void *)display_visible_buffer;
+      // We need to copy what is in the backbuffer to the visible buffer.
       display_single_buffer = true;
       display_swap_buffers();
-      if (display_active_buffer != latest_content) {
-        blitBuffer(latest_content);
-      }
+      resetLinePointers(m_pixels, (pixel_t *)display_visible_buffer);
+      blitBuffer((pixel_t *)display_visible_buffer, m_textmode_buffer);
     } else {
       // We're running single-buffered and are switching to multi-buffered mode.
-      // We need to copy the single buffer to all buffers to avoid flickering.
-      void *latest_content = (void *)display_visible_buffer;
+      pixel_t *latest_content = (pixel_t *)display_visible_buffer;
       display_single_buffer = false;
       display_swap_buffers();
-      blitBuffer(latest_content);
+      resetLinePointers(m_pixels, m_textmode_buffer);
+      resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
+      blitBuffer(m_textmode_buffer, latest_content);
     }
     mmu_flush_dcache();
-    resetLinePointers();
+    m_engine_enabled = enabled;
     spin_unlock(&m_buffer_lock);
   }
-  m_engine_enabled = enabled;
 }
 
 void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
-  static int post_render_count = 0;
 
-  if (frame() <= last_frame + m_frameskip || m_frame_ready)
+  if (tick_counter <= last_frame + m_frameskip)
     return;
 
-  last_frame = frame();
+  last_frame = tick_counter;
 
-  if (!m_bg_modified) {
-    if (display_single_buffer) {
-      mmu_flush_dcache();
-      return;
-    }
-    // need to render a few extra frames to make sure we can actually see
-    // the current state
-    if (post_render_count > 2)
-      return;
-    post_render_count++;
+  if (!m_bg_modified && (!m_textmode_buffer_modified || display_single_buffer)) {
+    m_frame++;
+    smp_send_event();
+    return;
   }
 
   spin_lock(&m_buffer_lock);
+  // While we were waiting for the lock, the BG engine might have been
+  // turned off, and we are not allowed to draw to the framebuffer any
+  // longer.
+  if (!m_engine_enabled) {
+    spin_unlock(&m_buffer_lock);
+    return;
+  }
+
+  // Text screen layer goes at the bottom.
+  m_textmode_buffer_modified = false;
+  blitBuffer((pixel_t *)display_active_buffer, m_textmode_buffer);
 
   m_bg_modified = false;
-  post_render_count = 0;
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
@@ -384,12 +394,12 @@ next:
         int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
         if (!off_x && x < ex - tsx) {
           // can draw a whole tile line
-          memcpy(&m_pixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
+          memcpy(&m_bgpixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
           x += tsx;
           tile_x++;
           goto next;
         } else {
-          m_pixels[y + owy][x + owx] = m_pixels[t_y][t_x];
+          m_bgpixels[y + owy][x + owx] = m_pixels[t_y][t_x];
         }
       }
     }
@@ -445,45 +455,28 @@ next:
         pixel_t p = s->surf->getPixel(x, y);
         // draw only non-keyed pixels
         if (p != s->p.key)
-          m_pixels[yy][xx] = p;
+          m_bgpixels[yy][xx] = p;
       }
     }
   }
 
-  // Do not swap the buffers, mark the rendered frame as ready to display.
-  // This is to avoid pulling the rug from any single-buffered rendering that
-  // may be going on on the main core.
-  m_frame_ready = true;
+  // Not doing this produces a nice distortion effect...
+  mmu_flush_dcache();
+
+  display_swap_buffers();
+  resetLinePointers(m_bgpixels, display_active_buffer);
 
   spin_unlock(&m_buffer_lock);
 
-  // Not doing this produces a nice distortion effect...
-  mmu_flush_dcache();
+  m_frame++;
+  smp_send_event();
 }
 
 void H3GFX::updateBg() {
-  if (m_dupe_active) {
-    // Replicate the active buffer to avoid having pixels from
-    // single-buffered rendering in one and not the other.
-    if (!display_single_buffer) {
-      void *active = (void *)display_active_buffer;
-      display_swap_buffers();
-      blitBuffer(active);
-      display_swap_buffers();
-      m_dupe_active = false;
-    }
-    m_dupe_active = false;
-  }
-
-  if (m_frame_ready) {
-    display_swap_buffers();
-    resetLinePointers();
-    m_frame_ready = false;
-  } else
+  if (!m_engine_enabled)
     mmu_flush_dcache();	// commit single-buffer renderings to DRAM
-
-  smp_send_event();
 }
+
 #ifdef USE_BG_ENGINE
 uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   uint8_t dir = 0x40;  // indicates collision

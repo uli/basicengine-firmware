@@ -71,7 +71,7 @@ public:
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     m_pixels[y][x] = c;
-    m_dupe_active = true;
+    m_textmode_buffer_modified = true;
   }
   inline void setPixelIndexed(uint16_t x, uint16_t y, ipixel_t c) {
     if (csp.getColorSpace() == 2) {
@@ -79,7 +79,7 @@ public:
       return;
     }
     m_pixels[y][x] = m_current_palette[c];
-    m_dupe_active = true;
+    m_textmode_buffer_modified = true;
   }
   void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
                    uint8_t b);
@@ -109,7 +109,7 @@ public:
 
   inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
     memcpy((pixel_t *)address, data, len * sizeof(pixel_t));
-    m_dupe_active = true;
+    m_textmode_buffer_modified = true;
   }
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
     if (csp.getColorSpace() == 2) {
@@ -119,7 +119,7 @@ public:
     pixel_t *pa = (pixel_t *)address;
     for (uint32_t i = 0; i < len; ++i)
       *pa++ = m_current_palette[*data++];
-    m_dupe_active = true;
+    m_textmode_buffer_modified = true;
   }
 
   inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
@@ -135,20 +135,29 @@ protected:
   void updateStatus() override;
 
 private:
-  inline void blitBuffer(void *buf);
-  void resetLinePointers();
+  inline void blitBuffer(pixel_t *dst, pixel_t *buf);
+  void resetLinePointers(pixel_t **pixels, pixel_t *buffer);
 
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
   bool m_force_filter;
   bool m_engine_enabled;
-  bool m_dupe_active;
+  bool m_textmode_buffer_modified;
   spinlock_t m_buffer_lock;
-  bool m_frame_ready;
 
+  // Used by text mode, pixel graphics functions. Points to
+  // m_textmode_buffer's pixels when BG engine is on, and display device
+  // frame buffer when BG engine is off
   pixel_t **m_pixels;
+  // Used by BG engine; points to currently hidden device framebuffer.
+  pixel_t **m_bgpixels;
+
+  pixel_t *m_textmode_buffer;  // text-mode pixel memory used when BG engine is on
+  pixel_t *m_offscreenbuffer;  // off-screen pixel memory
 
   pixel_t m_current_palette[256];
+
+  friend void ::hook_display_vblank(void);
 };
 
 extern H3GFX vs23;

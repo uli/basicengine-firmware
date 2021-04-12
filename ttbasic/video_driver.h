@@ -88,11 +88,7 @@ public:
   void fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
                 pixel_t color);
 
-#if defined(H3)
-  inline uint32_t frame() {
-    return tick_counter;
-  }
-#elif defined(HOSTED)
+#if defined(HOSTED)
   uint32_t frame();
 #else
   inline uint32_t frame() {
