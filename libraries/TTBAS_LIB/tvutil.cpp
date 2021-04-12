@@ -76,8 +76,8 @@ static void allocate_system_bufs()
 
 //
 // Default setting for NTSC display
-// 
-void tv_init(int16_t ajst, uint8_t vmode) { 
+//
+void tv_init(int16_t ajst, uint8_t vmode) {
   g_width  = vs23.width();           // Horizontal pixel number
   g_height = vs23.height();          // Number of vertical pixels
 
@@ -87,7 +87,7 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   win_y = 0;
   win_width = g_width;
   win_height = g_height;
-	
+
   tv_fontInit();
 }
 
@@ -128,7 +128,7 @@ void GROUP(basic_video) tv_window_get(int &x, int &y, int &w, int &h)
 
 //
 // End of NTSC display
-// 
+//
 void tv_end() {
 }
 
@@ -212,8 +212,16 @@ void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, uint8_t c, pixel_t f
 // Clear screen
 //
 void tv_cls() {
-  for (int i = 0; i < win_c_height; ++i) {
-    tv_clerLine(i);
+  // If the window covers the entire screen, erase it in one go. This helps
+  // avoid leaving behind breadcrumbs on screens where the font dimensions
+  // are not evenly divisible by the screen dimensions.
+  if (win_x == 0 && win_y == 0 && win_width + f_width > g_width &&
+      win_height + f_height > g_height) {
+    vs23.fillRect(0, 0, g_width, g_height, bg_color);
+  } else {
+    for (int i = 0; i < win_c_height; ++i) {
+      tv_clerLine(i);
+    }
   }
 }
 
@@ -290,7 +298,7 @@ void GROUP(basic_video) tv_scroll_down() {
 void GROUP(basic_video) tv_pset(int16_t x, int16_t y, pixel_t c) {
   vs23.setPixel(x, y, c);
 }
-  
+
 // Draw a line
 void GROUP(basic_video) tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
   gfx.drawLine(x1, y1, x2, y2, c);
