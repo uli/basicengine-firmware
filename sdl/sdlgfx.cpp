@@ -284,156 +284,158 @@ void SDLGFX::updateBg() {
 #ifdef PROFILE_BG
   uint32_t start = micros();
 #endif
-  for (int b = 0; b < MAX_BG; ++b) {
-    bg_t *bg = &m_bg[b];
-    if (!bg->enabled)
-      continue;
+  for (int prio = 0; prio <= MAX_PRIO; ++prio) {
+    for (int b = 0; b < MAX_BG; ++b) {
+      bg_t *bg = &m_bg[b];
+      if (!bg->enabled || bg->prio != prio)
+        continue;
 
-    int tsx = bg->tile_size_x;
-    int tsy = bg->tile_size_y;
-    int ypoff = bg->scroll_y % tsy;
+      int tsx = bg->tile_size_x;
+      int tsy = bg->tile_size_y;
+      int ypoff = bg->scroll_y % tsy;
 
-    // start/end coordinates of the visible BG window, relative to the
-    // BG's origin, in pixels
-    int sx = bg->scroll_x;
-    int sy = bg->scroll_y;
+      // start/end coordinates of the visible BG window, relative to the
+      // BG's origin, in pixels
+      int sx = bg->scroll_x;
+      int sy = bg->scroll_y;
 
-    // offset to add to BG-relative coordinates to get screen coordinates
-    int owx = -sx + bg->win_x;
-    int owy = -sy + bg->win_y;
+      // offset to add to BG-relative coordinates to get screen coordinates
+      int owx = -sx + bg->win_x;
+      int owy = -sy + bg->win_y;
 
-    int tile_start_x, tile_start_y;
-    int tile_end_x, tile_end_y;
+      int tile_start_x, tile_start_y;
+      int tile_end_x, tile_end_y;
 
-    tile_start_y = bg->scroll_y / tsy;
-    tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
-    tile_start_x = bg->scroll_x / bg->tile_size_x;
-    tile_end_x = tile_start_x + (bg->win_w + tsx - 1) / tsx + 1;
+      tile_start_y = bg->scroll_y / tsy;
+      tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
+      tile_start_x = bg->scroll_x / bg->tile_size_x;
+      tile_end_x = tile_start_x + (bg->win_w + tsx - 1) / tsx + 1;
 
-    SDL_Rect clip = {
-      (Sint16)bg->win_x, (Sint16)bg->win_y,
-      bg->win_w,         bg->win_h
-    };
-    SDL_SetClipRect(m_composite_surface, &clip);
+      SDL_Rect clip = {
+        (Sint16)bg->win_x, (Sint16)bg->win_y,
+        bg->win_w,         bg->win_h
+      };
+      SDL_SetClipRect(m_composite_surface, &clip);
 
-    for (int y = tile_start_y; y < tile_end_y; ++y) {
-      for (int x = tile_start_x; x < tile_end_x; ++x) {
-        uint8_t tile = bg->tiles[x % bg->w + (y % bg->h) * bg->w];
+      for (int y = tile_start_y; y < tile_end_y; ++y) {
+        for (int x = tile_start_x; x < tile_end_x; ++x) {
+          uint8_t tile = bg->tiles[x % bg->w + (y % bg->h) * bg->w];
 
-        int t_x = bg->pat_x + (tile % bg->pat_w) * tsx;
-        int t_y = bg->pat_y + (tile / bg->pat_w) * tsy;
+          int t_x = bg->pat_x + (tile % bg->pat_w) * tsx;
+          int t_y = bg->pat_y + (tile / bg->pat_w) * tsy;
 
-        SDL_Rect dst;
-        dst.x = x * tsx + owx;
-        dst.y = y * tsy + owy;
-        dst.w = tsx;
-        dst.h = tsy;
+          SDL_Rect dst;
+          dst.x = x * tsx + owx;
+          dst.y = y * tsy + owy;
+          dst.w = tsx;
+          dst.h = tsy;
 
-        SDL_Rect src;
-        src.x = t_x;
-        src.y = t_y;
-        src.w = tsx;
-        src.h = tsy;
+          SDL_Rect src;
+          src.x = t_x;
+          src.y = t_y;
+          src.w = tsx;
+          src.h = tsy;
 
-        SDL_BlitSurface(m_text_surface, &src, m_composite_surface, &dst);
+          SDL_BlitSurface(m_text_surface, &src, m_composite_surface, &dst);
+        }
       }
-    }
 
-    SDL_SetClipRect(m_composite_surface, NULL);
-  }
+      SDL_SetClipRect(m_composite_surface, NULL);
+    }
 
 #ifdef PROFILE_BG
-  uint32_t taken = micros() - start;
-  Serial.printf("rend %d\r\n", taken);
+    uint32_t taken = micros() - start;
+    Serial.printf("rend %d\r\n", taken);
 #endif
 
-  for (int si = 0; si < MAX_SPRITES; ++si) {
-    sprite_t *s = &m_sprite[si];
+    for (int si = 0; si < MAX_SPRITES; ++si) {
+      sprite_t *s = &m_sprite[si];
 
-    // skip if not visible
-    if (!s->enabled)
-      continue;
-    if (s->pos_x + s->p.w < 0 ||
-        s->pos_x >= width() ||
-        s->pos_y + s->p.h < 0 ||
-        s->pos_y >= height())
-      continue;
+      // skip if not visible
+      if (!s->enabled || s->prio != prio)
+        continue;
+      if (s->pos_x + s->p.w < 0 ||
+          s->pos_x >= width() ||
+          s->pos_y + s->p.h < 0 ||
+          s->pos_y >= height())
+        continue;
 
 #ifndef USE_ROTOZOOM
-    // consider flipped axes
-    // rotozoom bakes this into the surface
-    int dx, offx;
-    if (s->p.flip_x) {
-      dx = -1;
-      offx = s->p.w - 1;
-    } else {
-      dx = 1;
-      offx = 0;
-    }
-    int dy, offy;
-    if (s->p.flip_y) {
-      dy = -1;
-      offy = s->p.h - 1;
-    } else {
-      dy = 1;
-      offy = 0;
-    }
+      // consider flipped axes
+      // rotozoom bakes this into the surface
+      int dx, offx;
+      if (s->p.flip_x) {
+        dx = -1;
+        offx = s->p.w - 1;
+      } else {
+        dx = 1;
+        offx = 0;
+      }
+      int dy, offy;
+      if (s->p.flip_y) {
+        dy = -1;
+        offy = s->p.h - 1;
+      } else {
+        dy = 1;
+        offy = 0;
+      }
 #endif
 
-    // sprite pattern start coordinates
+      // sprite pattern start coordinates
 #ifdef USE_ROTOZOOM
-    int px = s->p.pat_x + s->p.frame_x * s->p.w;
-    int py = s->p.pat_y + s->p.frame_y * s->p.h;
+      int px = s->p.pat_x + s->p.frame_x * s->p.w;
+      int py = s->p.pat_y + s->p.frame_y * s->p.h;
 #else
-    int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
-    int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
+      int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
+      int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
 #endif
 
-    pixel_t skey = s->p.key;
+      pixel_t skey = s->p.key;
 
 #ifdef USE_ROTOZOOM
-    // refresh surface as necessary
-    if (s->must_reload || !s->surf) {
-      // XXX: do this asynchronously
-      if (s->surf)
-        delete s->surf;
+      // refresh surface as necessary
+      if (s->must_reload || !s->surf) {
+        // XXX: do this asynchronously
+        if (s->surf)
+          delete s->surf;
 
-      rz_surface_t in(s->p.w, s->p.h,
-                      &((uint32_t*)m_text_surface->pixels)[py * m_text_surface->pitch/4 + px],
-                      m_text_surface->pitch, s->p.key);
+        rz_surface_t in(s->p.w, s->p.h,
+                        &((uint32_t*)m_text_surface->pixels)[py * m_text_surface->pitch/4 + px],
+                        m_text_surface->pitch, s->p.key);
 
-      rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
-                                            s->p.flip_x ? -s->scale_x : s->scale_x,
-                                            s->p.flip_y ? -s->scale_y : s->scale_y, 0);
-      s->surf = out;
-      s->must_reload = false;
-    }
+        rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
+                                              s->p.flip_x ? -s->scale_x : s->scale_x,
+                                              s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+        s->surf = out;
+        s->must_reload = false;
+      }
 #endif
 
 #ifdef USE_ROTOZOOM
-    int sprite_w = s->surf->w;
-    int sprite_h = s->surf->h;
+      int sprite_w = s->surf->w;
+      int sprite_h = s->surf->h;
 #else
-    int sprite_w = s->p.w;
-    int sprite_h = s->p.h;
+      int sprite_w = s->p.w;
+      int sprite_h = s->p.h;
 #endif
 
-    for (int y = 0; y != sprite_h; ++y) {
-      int yy = y + s->pos_y;
-      if (yy < 0 || yy >= height())
-        continue;
-      for (int x = 0; x != sprite_w; ++x) {
-        int xx = x + s->pos_x;
-        if (xx < 0 || xx >= width())
+      for (int y = 0; y != sprite_h; ++y) {
+        int yy = y + s->pos_y;
+        if (yy < 0 || yy >= height())
           continue;
+        for (int x = 0; x != sprite_w; ++x) {
+          int xx = x + s->pos_x;
+          if (xx < 0 || xx >= width())
+            continue;
 #ifdef USE_ROTOZOOM
-        pixel_t p = s->surf->getPixel(x, y);
+          pixel_t p = s->surf->getPixel(x, y);
 #else
-        pixel_t p = getPixel(px + x * dx, py + y * dy);
+          pixel_t p = getPixel(px + x * dx, py + y * dy);
 #endif
-        // draw only non-keyed pixels
-        if (p != skey)
-          PIXELC(xx, yy) = p;
+          // draw only non-keyed pixels
+          if (p != skey)
+            PIXELC(xx, yy) = p;
+        }
       }
     }
   }
