@@ -39,7 +39,7 @@ BraceWrapping:
   AfterObjCDeclaration: false
   AfterStruct: false
   AfterUnion: false
-  #AfterExternBlock: false # Unknown to clang-format-5.0
+  AfterExternBlock: false # Unknown to clang-format-5.0
   BeforeCatch: false
   BeforeElse: false
   IndentBraces: false
@@ -63,7 +63,7 @@ ContinuationIndentWidth: 8
 Cpp11BracedListStyle: false
 DerivePointerAlignment: false
 DisableFormat: false
-ExperimentalAutoDetectBinPacking: false
+ExperimentalAutoDetectBinPacking: true
 #FixNamespaceComments: false # Unknown to clang-format-4.0
 
 #IncludeBlocks: Preserve # Unknown to clang-format-5.0
@@ -72,7 +72,7 @@ IncludeCategories:
     Priority: 1
 IncludeIsMainRegex: '(Test)?$'
 IndentCaseLabels: false
-#IndentPPDirectives: None # Unknown to clang-format-5.0
+IndentPPDirectives: None # Unknown to clang-format-5.0
 IndentWidth: 2
 IndentWrappedFunctionNames: false
 JavaScriptQuotes: Leave
@@ -89,11 +89,11 @@ ObjCSpaceBeforeProtocolList: true
 
 # Taken from git's rules
 #PenaltyBreakAssignment: 10 # Unknown to clang-format-4.0
-PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakBeforeFirstCallParameter: 20
 PenaltyBreakComment: 10
 PenaltyBreakFirstLessLess: 0
-PenaltyBreakString: 10
-PenaltyExcessCharacter: 100
+PenaltyBreakString: 20
+PenaltyExcessCharacter: 10
 PenaltyReturnTypeOnItsOwnLine: 60
 
 PointerAlignment: Right
@@ -104,9 +104,9 @@ SpaceAfterCStyleCast: false
 SpaceAfterTemplateKeyword: true
 SpaceBeforeAssignmentOperators: true
 #SpaceBeforeCtorInitializerColon: true # Unknown to clang-format-5.0
-#SpaceBeforeInheritanceColon: true # Unknown to clang-format-5.0
+SpaceBeforeInheritanceColon: true # Unknown to clang-format-5.0
 SpaceBeforeParens: ControlStatements
-#SpaceBeforeRangeBasedForLoopColon: true # Unknown to clang-format-5.0
+SpaceBeforeRangeBasedForLoopColon: true # Unknown to clang-format-5.0
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
 SpacesInAngles: false
