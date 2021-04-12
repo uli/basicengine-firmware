@@ -473,7 +473,7 @@ next:
   mmu_flush_dcache();
 
   display_swap_buffers();
-  resetLinePointers(m_bgpixels, display_active_buffer);
+  resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   spin_unlock(&m_buffer_lock);
 
