@@ -663,6 +663,8 @@ void Basic::iboot() {
 #else
   ESP.reset();  // UNTESTED!
 #endif
+#elif defined(H3)
+  sys_reset();
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
