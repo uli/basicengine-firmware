@@ -280,6 +280,9 @@ void BGEngine::resetSprites() {
       s->surf = NULL;
     }
 #endif
+#ifdef TRUE_COLOR
+    s->alpha = 0xff;
+#endif
   }
 }
 

@@ -188,6 +188,13 @@ public:
   }
 #endif
 
+#ifdef TRUE_COLOR
+  inline void setSpriteAlpha(uint8_t num, uint8_t alpha) {
+    m_sprite[num].alpha = alpha;
+    spriteReload(num);
+  }
+#endif
+
   inline bool spriteReload(uint8_t num) {
     m_sprite[num].must_reload = true;
     if (m_sprite[num].enabled)
@@ -262,6 +269,9 @@ protected:
     double angle;
     double scale_x, scale_y;
     rz_surface_t *surf;
+#endif
+#ifdef TRUE_COLOR
+    uint8_t alpha;
 #endif
     uint8_t prio;
     bool enabled:1, must_reload:1;
