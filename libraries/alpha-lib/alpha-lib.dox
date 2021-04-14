@@ -1,0 +1,20 @@
+/**
+ * @defgroup    overlay_alpha Alpha Overlay
+ * @brief   Functions for overlaying a foreground image with an alpha channel
+ *          on top of a background channel.
+ */
+
+/// @addtogroup overlay_alpha
+/// @{
+
+/**
+ * @defgroup    rescale255 Rescale
+ * @brief   Functions to rescale the color values by dividing by 255.
+ */
+
+/**
+ * @defgroup    overlay_alpha_c C Wrappers
+ * @brief   C language wrappers for the alpha overlay functions.
+ */
+
+/// @}
