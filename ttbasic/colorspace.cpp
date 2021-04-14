@@ -229,5 +229,8 @@ pixel_t Colorspace::fromIndexed(ipixel_t c) {
 pixel_t Colorspace::colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
     return vs23.colorFromRgb(r, g, b);
 }
+pixel_t Colorspace::colorFromRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    return vs23.colorFromRgba(r, g, b, a);
+}
 
 Colorspace csp;

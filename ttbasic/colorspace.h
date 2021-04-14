@@ -18,6 +18,7 @@
 class Colorspace {
 public:
   pixel_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b);
+  pixel_t colorFromRgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
   inline pixel_t colorFromRgb(uint8_t *c) {
     return colorFromRgb(c[0], c[1], c[2]);
   }
