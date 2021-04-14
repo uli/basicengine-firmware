@@ -479,6 +479,7 @@ void H3GFX::updateBgTask() {
           pitch += m_current_mode.left * 2;
 
         // XXX: shouldn't this happen on the rotozoom surface?
+        pixel_t alpha = s->alpha << 24;
         if (s->p.key != 0) {
           for (int y = 0; y < s->p.h; ++y) {
             for (int x = 0; x < s->p.w; ++x) {
@@ -486,7 +487,7 @@ void H3GFX::updateBgTask() {
                 m_pixels[py + y][px + x] = m_pixels[py + y][px + x] & 0xffffff;
               } else
                 m_pixels[py + y][px + x] =
-                        (m_pixels[py + y][px + x] & 0xffffff) | 0xff000000UL;
+                        (m_pixels[py + y][px + x] & 0xffffff) | alpha;
             }
           }
         }
