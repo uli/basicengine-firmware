@@ -279,6 +279,14 @@ static int l_sprite_set_scale_y(lua_State *l) {
   return 0;
 }
 
+static int l_sprite_set_alpha(lua_State *l) {
+  int32_t s = luaL_checknumber(l, 1);
+  int32_t alpha = luaL_checkinteger(l, 2);
+
+  c_sprite_set_alpha(s, alpha);
+  return 0;
+}
+
 static int l_sprite_reload(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
@@ -456,6 +464,8 @@ int luaopen_bg(lua_State *l) {
   lua_setglobal_P(l, "sprite_set_scale_x");
   lua_pushcfunction(l, l_sprite_set_scale_y);
   lua_setglobal_P(l, "sprite_set_scale_y");
+  lua_pushcfunction(l, l_sprite_set_alpha);
+  lua_setglobal_P(l, "sprite_set_alpha");
   lua_pushcfunction(l, l_sprite_move);
   lua_setglobal_P(l, "sprite_move");
   lua_pushcfunction(l, l_sprite_tile_collision);
