@@ -594,10 +594,6 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   lower_surf = lower->surf;
 
   // Check for pixels in overlapping area.
-  pixel_t lkey, rkey;
-  lkey = left->p.key;
-  rkey = right->p.key;
-
   for (int y = lower->pos_y;
        y < _min(lower->pos_y + lower_surf->h, upper->pos_y + upper_surf->h);
        y++) {
@@ -612,7 +608,7 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
       pixel_t leftpixel = left_surf->getPixel(leftpx, leftpy);
       pixel_t rightpixel = right_surf->getPixel(rightpx, rightpy);
 
-      if (leftpixel != lkey && rightpixel != rkey)
+      if (alphaFromColor(leftpixel) >= 0x80 && alphaFromColor(rightpixel) >= 0x80)
         return dir;
     }
   }
