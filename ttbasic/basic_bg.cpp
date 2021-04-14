@@ -771,6 +771,10 @@ num_t BASIC_FP Basic::nbscry() {
 void SMALL resize_windows() {
 #ifdef USE_BG_ENGINE
   int x, y, w, h;
+
+  if (restore_bgs || restore_text_window)
+    return;  // we have already resized
+
   sc0.getWindow(x, y, w, h);
   restore_bgs = false;
   restore_text_window = false;
