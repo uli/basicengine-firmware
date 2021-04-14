@@ -298,8 +298,6 @@ bool H3GFX::setMode(uint8_t mode) {
   return true;
 }
 
-//#define PROFILE_BG
-
 // Blit a full screen's worth (including borders) from buf to dst.
 inline void H3GFX::blitBuffer(pixel_t *dst, pixel_t *buf) {
   memcpy((void *)dst, buf,
@@ -347,6 +345,8 @@ void H3GFX::updateStatus() {
   }
 }
 
+//#define PROFILE_BG
+
 #include <alpha-lib/overlay_alpha.h>
 
 void H3GFX::updateBgTask() {
@@ -374,6 +374,10 @@ void H3GFX::updateBgTask() {
     return;
   }
 
+#ifdef PROFILE_BG
+  uint32_t start = micros();
+#endif
+
   // Text screen layer goes at the bottom.
   m_textmode_buffer_modified = false;
   blitBuffer((pixel_t *)display_active_buffer, m_textmode_buffer);
@@ -381,7 +385,7 @@ void H3GFX::updateBgTask() {
   m_bg_modified = false;
 
 #ifdef PROFILE_BG
-  uint32_t start = micros();
+  uint32_t textblit = micros() - start;
 #endif
   for (int prio = 0; prio <= MAX_PRIO; ++prio) {
     for (int b = 0; b < MAX_BG; ++b) {
@@ -451,11 +455,6 @@ void H3GFX::updateBgTask() {
         }
       }
     }
-
-  #ifdef PROFILE_BG
-    uint32_t taken = micros() - start;
-    Serial.printf("rend %d\r\n", taken);
-  #endif
 
     for (int si = 0; si < MAX_SPRITES; ++si) {
       sprite_t *s = &m_sprite[si];
@@ -532,6 +531,10 @@ void H3GFX::updateBgTask() {
     }
   }
 
+#ifdef PROFILE_BG
+  uint32_t background = micros() - start - textblit;
+#endif
+
   // Not doing this produces a nice distortion effect...
   mmu_flush_dcache();
 
@@ -539,6 +542,12 @@ void H3GFX::updateBgTask() {
   resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   spin_unlock(&m_buffer_lock);
+
+#ifdef PROFILE_BG
+  uint32_t finish = micros() - start - textblit - background;
+  printf("textblit %lu background %lu finish %lu total %lu\n", textblit,
+         background, finish, textblit + background + finish);
+#endif
 
   m_frame++;
   smp_send_event();
