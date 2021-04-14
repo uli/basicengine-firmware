@@ -119,7 +119,7 @@ public:
   void setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y);
   void setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y = 0,
                       bool flip_x = false, bool flip_y = false);
-  void setSpriteKey(uint8_t num, int16_t key);
+  void setSpriteKey(uint8_t num, ipixel_t key);
   void moveSprite(uint8_t num, int16_t x, int16_t y);
   void enableSprite(uint8_t num);
   void disableSprite(uint8_t num);
