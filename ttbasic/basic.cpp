@@ -270,7 +270,7 @@ const uint8_t i_sf[] BASIC_DAT  = {
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
   I_RETURN,I_RUN,I_SAVE,I_SET,I_WAIT,
   I_PSET, I_LINE, I_RECT, I_CIRCLE, I_BLIT, I_SWRITE, I_SPRINT,I_SMODE,
-  I_BEEP, I_CSCROLL, I_GSCROLL, I_MOD, I_SIZE, I_FOR,
+  I_BEEP, I_CSCROLL, I_MOD, I_SIZE, I_FOR,
 };
 
 // tokens that can be functions (no space before paren) or something else

@@ -232,7 +232,7 @@ prority, special effects, and turn it on and off.
 \usage
 SPRITE num [PATTERN pat_x, pat_y][SIZE w, h][FRAME frame_x, frame_y]
            [FLAGS flags][KEY key][PRIO priority][ANGLE angle]
-           [SCALE scale_x[,scale_y]][<ON|OFF>]
+           [SCALE scale_x[,scale_y]][ALPHA alpha][<ON|OFF>]
 
 SPRITE OFF
 \args
@@ -245,13 +245,13 @@ SPRITE OFF
 @frame_y	Y coordinate of the pattern section to be used,
                 in multiples of sprite height
 @flags		special effect flags [`0` to `7`]
-@key		key color value to be used for transparency masking +
-                [`0` to `255`]
+@key		key color value to be used for transparency masking
 @priority	sprite priority in relation to background layers +
                 [`0` to `{MAX_BG_m1}`]
 @angle		rotation angle in degrees [default `0`]
 @scale_x	horizontal scaling factor [default `1`]
 @scale_y	vertical scaling factor [default `1`]
+@alpha		sprite opacity [`0` to `255`, default `255`]
 
 \sec FLAGS
 The `FLAGS` attribute is the sum of any of the following bit values:
@@ -262,8 +262,9 @@ The `FLAGS` attribute is the sum of any of the following bit values:
 | `4` | Vertical flip
 \endtable
 \note
-The `SPRITE` command's attributes can be specified in any order, but it is
-usually a good idea to place the `ON` attribute at the end if used.
+* The `SPRITE` command's attributes can be specified in any order, but it is
+  usually a good idea to place the `ON` attribute at the end if used.
+* The `ALPHA` attribute is only available on true-color platforms.
 \bugs
 Having to specify the rotation angle in degrees is cumbersome when using other
 trigonometric operations to calculate it.
@@ -275,6 +276,9 @@ void BASIC_INT Basic::isprite() {
   uint32_t key;
 #ifdef USE_ROTOZOOM
   num_t angle, scale_x, scale_y;
+#endif
+#ifdef TRUE_COLOR
+  int32_t alpha;
 #endif
 
   bool set_frame = false, set_opacity = false;
@@ -355,6 +359,12 @@ void BASIC_INT Basic::isprite() {
       scale_y = scale_x;
     c_sprite_set_scale_x(num, scale_x);
     c_sprite_set_scale_y(num, scale_y);
+    break;
+#endif
+#ifdef TRUE_COLOR
+  case I_ALPHA:
+    if (getParam(alpha, I_NONE)) return;
+    c_sprite_set_alpha(num, alpha);
     break;
 #endif
   default:

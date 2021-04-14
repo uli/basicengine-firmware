@@ -36,8 +36,6 @@ LINE	I_LINE		iline
 RECT	I_RECT		irect
 CIRCLE	I_CIRCLE	icircle
 BLIT	I_BLIT		iblit
-GPRINT	I_GPRINT	igprint
-GSCROLL	I_GSCROLL	igscroll
 GPOUT	I_DOUT		idwrite
 SMODE	I_SMODE		ismode
 SPRINT	I_SPRINT	isprint
@@ -137,6 +135,8 @@ TFTPD	X_TFTPD		itftpd
 TFTPGET	X_TFTPGET	itftpget
 TFTPPUT	X_TFTPPUT	itftpput
 WGET	X_WGET		iwget
+GPRINT	X_GPRINT	igprint
+GSCROLL	X_GSCROLL	igscroll
 ARG$	I_ARGSTR	sarg
 CHR$	I_CHR		schr
 BIN$	I_BIN		sbin
@@ -256,6 +256,7 @@ FLAGS	I_FLAGS		esyntax
 PRIO	I_PRIO		esyntax
 ANGLE	I_ANGLE		esyntax
 SCALE	I_SCALE		esyntax
+ALPHA	I_ALPHA		esyntax
 FN	I_FN		esyntax
 DIRECTORY	I_DIRECTORY	esyntax
 TAB	I_TAB		esyntax
