@@ -3302,7 +3302,7 @@ void SMALL Basic::ildbmp() {
   bool define_bg = false, define_spr = false;
   int32_t bg;
 #endif
-  uint32_t key = (uint32_t)-1;  // no keying
+  uint32_t key = 0;  // no keying
 
   if (!(fname = getParamFname())) {
     return;

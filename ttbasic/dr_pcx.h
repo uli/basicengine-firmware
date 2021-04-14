@@ -81,7 +81,7 @@ typedef size_t (* drpcx_read_proc)(void* userData, void* bufferOut, size_t bytes
 // Loads a PCX file using the given callbacks.
 bool drpcx_load(drpcx_read_proc onRead, void* pUserData, dr_bool32 flipped, int* x, int* y,
                      int* internalComponents, int desiredComponents,
-                     int dst_x, int dst_y, int off_x, int off_y, int w, int h, dr_uint32 mask = (uint32_t)-1);
+                     int dst_x, int dst_y, int off_x, int off_y, int w, int h, dr_uint32 mask = 0);
 
 // Frees memory returned by drpcx_load() and family.
 void drpcx_free(void* pReturnValueFromLoad);
@@ -527,7 +527,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
             for (dr_uint32 y = 0; y < pPCX->height; ++y)
             {
                 ipixel_t *ln = 0;
-                if (pPCX->mask == (dr_uint32)-1)
+                if (pPCX->mask == 0)
                   ln = (ipixel_t *)malloc(pPCX->header.bytesPerLine * sizeof(ipixel_t));
                 for (dr_uint32 x = 0; x < pPCX->header.bytesPerLine; ++x)
                 {
@@ -543,16 +543,16 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                       } else {
                         c = (ipixel_t)(rleValue >> 4);
                       }
-                      if (pPCX->mask == (dr_uint32)-1) {
+                      if (pPCX->mask == 0) {
                         ln[x] = c;
                       } else if (c != pPCX->mask)
                         vs23.setPixelIndexed(dx + x-ox, dy + y-oy, c);
                     }
                 }
-                if (pPCX->mask == (dr_uint32)-1 && y >= oy && y < oy+h) {
+                if (pPCX->mask == 0 && y >= oy && y < oy+h) {
                   vs23.setPixelsIndexed(vs23.pixelAddr(dx, dy+y-oy), ln+ox, w);
                 }
-                if (pPCX->mask == (dr_uint32)-1)
+                if (pPCX->mask == 0)
                   free(ln);
             }
 
@@ -588,7 +588,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                 if (y >= oy && y < oy+h) {
                   dr_uint32 x;
                   pRow = pRow_ + pPCX->components - 3 + ox * pPCX->components;
-                  if (pPCX->mask == (dr_uint32)-1) {
+                  if (pPCX->mask == 0) {
                     // XXX: Needless loss of quality on platforms with 32-bit colorspace
                     for (x = ox; x < ox+w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       pRow_[x-ox] = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
@@ -597,7 +597,7 @@ dr_bool32 drpcx__decode_8bit(drpcx* pPCX)
                   } else {
                     for (x = 0; x < w && x < pPCX->header.bytesPerLine; ++x, pRow+=pPCX->components) {
                       ipixel_t ci = csp.indexedColorFromRgb(pRow[0], pRow[1], pRow[2]);
-                      if (pPCX->mask == (dr_uint32)-1 || ci != pPCX->mask) {
+                      if (pPCX->mask == 0 || ci != pPCX->mask) {
                         pixel_t c = csp.colorFromRgb(pRow[0], pRow[1], pRow[2]);
                         vs23.setPixel(dx+x, dy+y-oy, c);
                       }
