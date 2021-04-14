@@ -12,18 +12,18 @@
 
 H3GFX vs23;
 
-#define ASPECT_4_3	(0 << 1)
-#define ASPECT_16_9	(1 << 1)
+#define ASPECT_4_3  (0 << 1)
+#define ASPECT_16_9 (1 << 1)
 
 const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
   { 460, 224, 0, 0, ASPECT_4_3 },
   { 436, 216, 0, 0, ASPECT_4_3 },
-  { 320, 216, 0, 0, ASPECT_4_3 },   // VS23 NTSC demo
-  { 320, 200, 0, 0, ASPECT_4_3 },   // (M)CGA, Commodore et al.
+  { 320, 216, 0, 0, ASPECT_4_3 },  // VS23 NTSC demo
+  { 320, 200, 0, 0, ASPECT_4_3 },  // (M)CGA, Commodore et al.
   { 256, 224, 0, 0, ASPECT_4_3 },  // SNES
   { 256, 192, 0, 0, ASPECT_4_3 },  // MSX, Spectrum, NDS
-  { 160, 200, 0, 0, ASPECT_4_3 },   // Commodore/PCjr/CPC
-                             // multi-color
+  { 160, 200, 0, 0, ASPECT_4_3 },  // Commodore/PCjr/CPC
+                                   // multi-color
   // "Overscan modes"
   { 352, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (barely)
   { 282, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (underscan on PAL)
@@ -53,8 +53,8 @@ const struct display_phys_mode_t phys_modes[] = {
   { 193160000, 1920, 128, 208, 336, 0, 1200,  1, 3, 38, 0, 1 },
 };
 
-#define DISPLAY_CORE	1
-#define DISPLAY_CORE_STACK_SIZE	0x1000
+#define DISPLAY_CORE            1
+#define DISPLAY_CORE_STACK_SIZE 0x1000
 static void *display_core_stack;
 
 extern "C" void task_updatebg(void) {
@@ -101,7 +101,8 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   if (!display_core_stack) {
     // Hopeless.
     printf("OOM in display initialization, giving up\n");
-    for (;;);
+    for (;;)
+      ;
   }
 
   m_buffer_lock = false;
@@ -110,8 +111,8 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_bg_modified = false;
   m_textmode_buffer_modified = false;
 
-  smp_start_secondary_core(DISPLAY_CORE, task_updatebg,
-                           display_core_stack, DISPLAY_CORE_STACK_SIZE);
+  smp_start_secondary_core(DISPLAY_CORE, task_updatebg, display_core_stack,
+                           DISPLAY_CORE_STACK_SIZE);
 }
 
 void H3GFX::reset() {
@@ -130,24 +131,26 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
 #endif
   if (y_dst == y_src && x_dst > x_src) {
     while (height) {
-      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
+      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+              width * sizeof(pixel_t));
       y_dst++;
       y_src++;
       height--;
     }
-  } else if ((y_dst > y_src) ||
-      (y_dst == y_src && x_dst > x_src)) {
+  } else if ((y_dst > y_src) || (y_dst == y_src && x_dst > x_src)) {
     y_dst += height - 1;
     y_src += height - 1;
     while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
+      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+             width * sizeof(pixel_t));
       y_dst--;
       y_src--;
       height--;
     }
   } else {
     while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src, width * sizeof(pixel_t));
+      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+             width * sizeof(pixel_t));
       y_dst++;
       y_src++;
       height--;
@@ -164,9 +167,9 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
 void H3GFX::resetLinePointers(pixel_t **pixels, pixel_t *buffer) {
   for (int i = 0; i < m_current_mode.y; ++i) {
     pixels[i] = buffer +
-                  (m_current_mode.x + m_current_mode.left * 2) *
-                          (i + m_current_mode.top) +
-                  m_current_mode.left;
+                (m_current_mode.x + m_current_mode.left * 2) *
+                        (i + m_current_mode.top) +
+                m_current_mode.left;
   }
 }
 
@@ -187,11 +190,10 @@ bool H3GFX::setMode(uint8_t mode) {
     // widescreen
     switch (m_current_mode.vclkpp) {
     case ASPECT_4_3:
-      if (m_force_filter ||
-          (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
-           DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
+      if (m_force_filter || (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
+                             DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
         m_current_mode.top = 0;
-        m_current_mode.left = 0.1666667d * m_current_mode.x;	// pillar-boxing
+        m_current_mode.left = 0.1666667d * m_current_mode.x;  // pillar-boxing
       } else {
         // find an integral scale factor
         int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;			// scale, rounded down
@@ -210,10 +212,12 @@ bool H3GFX::setMode(uint8_t mode) {
         m_current_mode.top = 0;
         m_current_mode.left = 0;
       } else {
-        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;		// scale, rounded down
-        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
-        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;		// scale, rounded down
-        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;  // scale, rounded down
+        m_current_mode.top =
+                (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;  // scale, rounded down
+        m_current_mode.left =
+                (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
       display_enable_filter(m_force_filter);
       break;
@@ -224,10 +228,9 @@ bool H3GFX::setMode(uint8_t mode) {
     // not so widescreen
     switch (m_current_mode.vclkpp) {
     case ASPECT_16_9:
-      if (m_force_filter ||
-          (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
-           DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
-        m_current_mode.top = 0.1666667d * m_current_mode.y;	// letter-boxing
+      if (m_force_filter || (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
+                             DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
+        m_current_mode.top = 0.1666667d * m_current_mode.y;  // letter-boxing
         m_current_mode.left = 0;
       } else {
         // find an integral scale factor
@@ -236,9 +239,8 @@ bool H3GFX::setMode(uint8_t mode) {
                              / yscale					// correct for scaling by video driver
                              / 2;						// only one side, the other side is implicit
         int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.777777d;	// scale corrected for aspect ratio, rounded down
-        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x)
-                             / xscale
-                             / 2;
+        m_current_mode.left =
+                (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
       display_enable_filter(m_force_filter);
       break;
@@ -247,10 +249,12 @@ bool H3GFX::setMode(uint8_t mode) {
         m_current_mode.top = 0;
         m_current_mode.left = 0;
       } else {
-        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;		// scale, rounded down
-        m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
-        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;		// scale, rounded down
-        m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
+        int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;  // scale, rounded down
+        m_current_mode.top =
+                (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y) / yscale / 2;
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x;  // scale, rounded down
+        m_current_mode.left =
+                (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
       display_enable_filter(m_force_filter);
       break;
@@ -267,9 +271,12 @@ bool H3GFX::setMode(uint8_t mode) {
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
   m_bgpixels = (uint32_t **)malloc(sizeof(*m_bgpixels) * m_last_line);
 
-  m_textmode_buffer = (uint32_t *)calloc(sizeof(pixel_t),
-                                  (m_current_mode.x + m_current_mode.left * 2) * (m_last_line + m_current_mode.top * 2));
-  m_offscreenbuffer = (uint32_t *)calloc(sizeof(pixel_t), m_current_mode.x * (m_last_line - m_current_mode.y));
+  m_textmode_buffer =
+          (uint32_t *)calloc(sizeof(pixel_t),
+                             (m_current_mode.x + m_current_mode.left * 2) *
+                                     (m_last_line + m_current_mode.top * 2));
+  m_offscreenbuffer = (uint32_t *)calloc(
+          sizeof(pixel_t), m_current_mode.x * (m_last_line - m_current_mode.y));
 
   for (int i = m_current_mode.y; i < m_last_line; ++i) {
     m_pixels[i] = m_offscreenbuffer + m_current_mode.x * (i - m_current_mode.y);
@@ -279,8 +286,7 @@ bool H3GFX::setMode(uint8_t mode) {
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 
   display_set_mode(m_current_mode.x + m_current_mode.left * 2,
-                   m_current_mode.y + m_current_mode.top * 2,
-                   0, 0);
+                   m_current_mode.y + m_current_mode.top * 2, 0, 0);
   display_single_buffer = true;
   display_swap_buffers();
 
@@ -294,6 +300,7 @@ bool H3GFX::setMode(uint8_t mode) {
 
 //#define PROFILE_BG
 
+// Blit a full screen's worth (including borders) from buf to dst.
 inline void H3GFX::blitBuffer(pixel_t *dst, pixel_t *buf) {
   memcpy((void *)dst, buf,
          (m_current_mode.x + m_current_mode.left * 2) *
@@ -427,10 +434,8 @@ void H3GFX::updateBgTask() {
       // skip if not visible
       if (!s->enabled || s->prio != prio)
         continue;
-      if (s->pos_x + s->p.w < 0 ||
-          s->pos_x >= width() ||
-          s->pos_y + s->p.h < 0 ||
-          s->pos_y >= height())
+      if (s->pos_x + s->p.w < 0 || s->pos_x >= width() ||
+          s->pos_y + s->p.h < 0 || s->pos_y >= height())
         continue;
 
       // sprite pattern start coordinates
@@ -487,7 +492,7 @@ void H3GFX::updateBgTask() {
 
 void H3GFX::updateBg() {
   if (!m_engine_enabled)
-    mmu_flush_dcache();	// commit single-buffer renderings to DRAM
+    mmu_flush_dcache();  // commit single-buffer renderings to DRAM
 }
 
 #ifdef USE_BG_ENGINE
@@ -561,6 +566,7 @@ uint8_t H3GFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   // no overlapping pixels
   return 0;
 }
-#endif	// USE_BG_ENGINE
 
-#endif	// H3
+#endif  // USE_BG_ENGINE
+
+#endif  // H3
