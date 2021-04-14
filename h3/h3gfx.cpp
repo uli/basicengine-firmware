@@ -359,7 +359,9 @@ void H3GFX::updateBgTask() {
   // turned off, and we are not allowed to draw to the framebuffer any
   // longer.
   if (!m_engine_enabled) {
+    m_frame++;
     spin_unlock(&m_buffer_lock);
+    smp_send_event();
     return;
   }
 
