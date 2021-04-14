@@ -261,6 +261,16 @@ int c_sprite_set_scale_y(int s, double scale_y) {
 }
 #endif
 
+#ifdef TRUE_COLOR
+int c_sprite_set_alpha(int s, uint8_t a) {
+  if (check_param(s, 0, MAX_SPRITES))
+    return -1;
+
+  vs23.setSpriteAlpha(s, a);
+  return 0;
+}
+#endif
+
 int c_sprite_reload(int s) {
   if (check_param(s, 0, MAX_SPRITES))
     return -1;

@@ -31,6 +31,9 @@ int c_sprite_set_angle(int s, double angle);
 int c_sprite_set_scale_x(int s, double scale_x);
 int c_sprite_set_scale_y(int s, double scale_y);
 #endif
+#ifdef TRUE_COLOR
+int c_sprite_set_alpha(int s, uint8_t a);
+#endif
 int c_sprite_reload(int s);
 int c_sprite_move(int s, int x, int y);
 
