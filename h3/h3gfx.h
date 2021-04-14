@@ -35,22 +35,35 @@ public:
     if (palette < 2) {
       uint8_t *pal = csp.paletteData(palette);
       for (int i = 0; i < 256; ++i) {
-        m_current_palette[i] = (pixel_t)((pal[i*3] << 16) | (pal[i*3+1] << 8) | pal[i*3+2]);
+        m_current_palette[i] = (pixel_t)((0xff << 24) | (pal[i * 3] << 16) |
+                                         (pal[i * 3 + 1] << 8) | pal[i * 3 + 2]);
       }
     }
   }
 
   inline pixel_t colorFromRgb(uint8_t r, uint8_t g, uint8_t b) {
-    return (pixel_t)(r << 16 | g << 8 | b);
+    return (pixel_t)(0xff << 24 | r << 16 | g << 8 | b);
   }
-  inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) {
+
+  inline pixel_t colorFromRgba(uint8_t r, uint8_t g, uint8_t b, uint32_t a) {
+    return (pixel_t)(a << 24 | r << 16 | g << 8 | b);
+  }
+
+  inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b,
+                            uint8_t &a) {
     r = (p >> 16) & 0xff;
     g = (p >> 8) & 0xff;
     b = p & 0xff;
-    a = 0xff;	// not supported (yet)
+    a = p >> 24;
   }
 
-  bool blockFinished() { return true; }
+  inline uint8_t alphaFromColor(pixel_t p) {
+    return p >> 24;
+  }
+
+  bool blockFinished() {
+    return true;
+  }
 
 #ifdef USE_BG_ENGINE
   void updateBg();
@@ -81,8 +94,7 @@ public:
     m_pixels[y][x] = m_current_palette[c];
     m_textmode_buffer_modified = true;
   }
-  void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g,
-                   uint8_t b);
+  void setPixelRgb(uint16_t xpos, uint16_t ypos, uint8_t r, uint8_t g, uint8_t b);
   inline pixel_t getPixel(uint16_t x, uint16_t y) {
     return m_pixels[y][x];
   }
@@ -122,7 +134,7 @@ public:
     m_textmode_buffer_modified = true;
   }
 
-  inline uint32_t pixelAddr(int x, int y) {	// XXX: uint32_t? ouch...
+  inline uint32_t pixelAddr(int x, int y) {  // XXX: uint32_t? ouch...
     return (uint32_t)&m_pixels[y][x];
   }
   inline uint32_t piclineByteAddress(int line) {
