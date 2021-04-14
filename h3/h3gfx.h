@@ -80,7 +80,9 @@ public:
 
   void setBorder(uint8_t y, uint8_t uv) {}
   void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {}
-  inline uint16_t borderWidth() { return 42; }
+  inline uint16_t borderWidth() {
+    return m_current_mode.x + m_current_mode.left * 2;
+  }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     m_pixels[y][x] = c;
