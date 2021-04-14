@@ -1092,7 +1092,7 @@ rz_surface_t *rotozoomSurfaceXY(rz_surface_t * src, double angle, double zoomx, 
 		rz_dst->h = dstheight;
 
 		if (colorKeyAvailable == 1){
-			colorkey = vs23.colorFromRgb(r, g, b);
+			colorkey = vs23.colorFromRgba(r, g, b, a);
 			rz_dst->fill(colorkey);
 		}
 
