@@ -347,6 +347,8 @@ void H3GFX::updateStatus() {
   }
 }
 
+#include <alpha-lib/overlay_alpha.h>
+
 void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
 
@@ -387,39 +389,65 @@ void H3GFX::updateBgTask() {
       if (!bg->enabled || bg->prio != prio)
         continue;
 
-      int tsx = bg->tile_size_x;
-      int tsy = bg->tile_size_y;
+      int tile_size_x = bg->tile_size_x;
+      int tile_size_y = bg->tile_size_y;
+
+      int ypoff = bg->scroll_y % tile_size_y;
 
       // start/end coordinates of the visible BG window, relative to the
       // BG's origin, in pixels
-      int sx = bg->scroll_x;
-      int ex = bg->win_w + bg->scroll_x;
-      int sy = bg->scroll_y;
-      int ey = bg->win_h + bg->scroll_y;
+      int start_x = bg->scroll_x;
+      int start_y = bg->scroll_y;
 
       // offset to add to BG-relative coordinates to get screen coordinates
-      int owx = -sx + bg->win_x;
-      int owy = -sy + bg->win_y;
+      int offset_window_x = -start_x + bg->win_x;
+      int offset_window_y = -start_y + bg->win_y;
 
-      for (int y = sy; y < ey; ++y) {
-        for (int x = sx; x < ex; ++x) {
-          int off_x = x % tsx;
-          int off_y = y % tsy;
-          int tile_x = x / tsx;
-          int tile_y = y / tsy;
-  next:
-          uint8_t tile = bg->tiles[tile_x % bg->w + (tile_y % bg->h) * bg->w];
-          int t_x = bg->pat_x + (tile % bg->pat_w) * tsx + off_x;
-          int t_y = bg->pat_y + (tile / bg->pat_w) * tsy + off_y;
-          if (!off_x && x < ex - tsx) {
-            // can draw a whole tile line
-            memcpy(&m_bgpixels[y + owy][x + owx], &m_pixels[t_y][t_x], tsx * sizeof(pixel_t));
-            x += tsx;
-            tile_x++;
-            goto next;
-          } else {
-            m_bgpixels[y + owy][x + owx] = m_pixels[t_y][t_x];
-          }
+      int tile_start_x, tile_start_y;
+      int tile_end_x, tile_end_y;
+
+      tile_start_y = bg->scroll_y / tile_size_y;
+      tile_end_y = tile_start_y + (bg->win_h + ypoff) / tile_size_y + 1;
+      tile_start_x = bg->scroll_x / bg->tile_size_x;
+      tile_end_x = tile_start_x + (bg->win_w + tile_size_x - 1) / tile_size_x + 1;
+
+      for (int y = tile_start_y; y < tile_end_y; ++y) {
+        for (int x = tile_start_x; x < tile_end_x; ++x) {
+          uint8_t tile = bg->tiles[x % bg->w + (y % bg->h) * bg->w];
+
+          int tile_x = bg->pat_x + (tile % bg->pat_w) * tile_size_x;
+          int tile_y = bg->pat_y + (tile / bg->pat_w) * tile_size_y;
+
+          int dst_x = x * tile_size_x + offset_window_x;
+          int dst_y = y * tile_size_y + offset_window_y;
+          int blit_width = tile_size_x;
+          int blit_height = tile_size_y;
+
+          // clip width, height and adjust source and destination if the tile
+          // crosses the BG window limits
+          if (dst_y < bg->win_y) {
+            tile_y -= dst_y - bg->win_y;
+            blit_height += dst_y - bg->win_y;
+            dst_y = bg->win_y;
+          } else if (dst_y + blit_height >= bg->win_y + bg->win_h)
+            blit_height = bg->win_y + bg->win_h - dst_y;
+
+          if (dst_x < bg->win_x) {
+            tile_x -= dst_x - bg->win_x;
+            blit_width += dst_x - bg->win_x;
+            dst_x = bg->win_x;
+          } else if (dst_x + blit_width >= bg->win_x + bg->win_w)
+            blit_width = bg->win_x + bg->win_w - dst_x;
+
+          if (blit_width <= 0 || blit_height <= 0)
+            continue;
+
+          overlay_alpha_stride_div255_round_approx(
+                  (uint8_t *)&m_bgpixels[dst_y][dst_x],
+                  (uint8_t *)&m_pixels[tile_y][tile_x],
+                  (uint8_t *)&m_bgpixels[dst_y][dst_x],
+                  m_current_mode.x + m_current_mode.left * 2, blit_height,
+                  blit_width, m_current_mode.x);
         }
       }
     }
@@ -451,30 +479,56 @@ void H3GFX::updateBgTask() {
         if (py < m_current_mode.y)
           pitch += m_current_mode.left * 2;
 
-        rz_surface_t in(s->p.w, s->p.h, (uint32_t*)(&m_pixels[py][px]),
-                        pitch * sizeof(pixel_t), s->p.key);
+        // XXX: shouldn't this happen on the rotozoom surface?
+        if (s->p.key != 0) {
+          for (int y = 0; y < s->p.h; ++y) {
+            for (int x = 0; x < s->p.w; ++x) {
+              if ((m_pixels[py + y][px + x] & 0xffffff) == (s->p.key & 0xffffff)) {
+                m_pixels[py + y][px + x] = m_pixels[py + y][px + x] & 0xffffff;
+              } else
+                m_pixels[py + y][px + x] =
+                        (m_pixels[py + y][px + x] & 0xffffff) | 0xff000000UL;
+            }
+          }
+        }
 
-        rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
-                                              s->p.flip_x ? -s->scale_x : s->scale_x,
-                                              s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+        rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&m_pixels[py][px]),
+                        pitch * sizeof(pixel_t), 0);
+
+        rz_surface_t *out = rotozoomSurfaceXY(
+                &in, s->angle, s->p.flip_x ? -s->scale_x : s->scale_x,
+                s->p.flip_y ? -s->scale_y : s->scale_y, 0);
         s->surf = out;
         s->must_reload = false;
       }
 
-      for (int y = 0; y != s->surf->h; ++y) {
-        int yy = y + s->pos_y;
-        if (yy < 0 || yy >= height())
-          continue;
-        for (int x = 0; x != s->surf->w; ++x) {
-          int xx = x + s->pos_x;
-          if (xx < 0 || xx >= width())
-            continue;
-          pixel_t p = s->surf->getPixel(x, y);
-          // draw only non-keyed pixels
-          if (p != s->p.key)
-            m_bgpixels[yy][xx] = p;
-        }
-      }
+      int dst_x = s->pos_x;
+      int dst_y = s->pos_y;
+      int blit_width = s->surf->w;
+      int blit_height = s->surf->h;
+      int src_x = 0;
+      int src_y = 0;
+
+      if (dst_x < 0) {
+        blit_width += dst_x;
+        src_x -= dst_x;
+        dst_x = 0;
+      } else if (dst_x + blit_width >= m_current_mode.x)
+        blit_width = m_current_mode.x - dst_x;
+
+      if (dst_y < 0) {
+        blit_height += dst_y;
+        src_y -= dst_y;
+        dst_y = 0;
+      } else if (dst_y + blit_height >= m_current_mode.y)
+        blit_height = m_current_mode.y - dst_y;
+
+      overlay_alpha_stride_div255_round_approx(
+              (uint8_t *)&m_bgpixels[dst_y][dst_x],
+              (uint8_t *)&s->surf->pixels[src_y * s->surf->w + src_x],
+              (uint8_t *)&m_bgpixels[dst_y][dst_x],
+              m_current_mode.x + m_current_mode.left * 2, blit_height,
+              blit_width, s->surf->w);
     }
   }
 
