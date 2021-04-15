@@ -1731,6 +1731,7 @@ int BASIC_FP token_size(icode_t *code) {
       return 3;
     else
       return 1;
+  case I_EXTEND: return 2;
   default: return 1;
   }
 }
