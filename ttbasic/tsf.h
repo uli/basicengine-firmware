@@ -919,6 +919,7 @@ static void tsf_voice_envelope_nextsegment(struct tsf_voice_envelope* e, int act
 				e->slope = 0.0;
 				return;
 			}
+			/* fall through */
 		case TSF_SEGMENT_DELAY:
 			e->samplesUntilNextSegment = (int)(e->parameters.attack * outSampleRate);
 			if (e->samplesUntilNextSegment > 0)
@@ -929,6 +930,7 @@ static void tsf_voice_envelope_nextsegment(struct tsf_voice_envelope* e, int act
 				e->slope = 1.0f / e->samplesUntilNextSegment;
 				return;
 			}
+			/* fall through */
 		case TSF_SEGMENT_ATTACK:
 			e->samplesUntilNextSegment = (int)(e->parameters.hold * outSampleRate);
 			if (e->samplesUntilNextSegment > 0)
@@ -939,6 +941,7 @@ static void tsf_voice_envelope_nextsegment(struct tsf_voice_envelope* e, int act
 				e->slope = 0.0;
 				return;
 			}
+			/* fall through */
 		case TSF_SEGMENT_HOLD:
 			e->samplesUntilNextSegment = (int)(e->parameters.decay * outSampleRate);
 			if (e->samplesUntilNextSegment > 0)
@@ -968,6 +971,7 @@ static void tsf_voice_envelope_nextsegment(struct tsf_voice_envelope* e, int act
 				}
 				return;
 			}
+			/* fall through */
 		case TSF_SEGMENT_DECAY:
 			e->segment = TSF_SEGMENT_SUSTAIN;
 			e->level = e->parameters.sustain / 100.0f;
