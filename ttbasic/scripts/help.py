@@ -29,6 +29,8 @@ def colorize_code(d):
     d = re.sub('(IMPORTANT:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
     d = re.sub('(WARNING:)', '\\\\\\\\Fp\g<1>\\\\\\\\Ff', d)
     d = re.sub('kbd:\[([^\]]*)]', '\\\\\\\\Fp[\g<1>]\\\\\\\\Ff', d)
+    d = re.sub('\\\\endtable', '===', d)
+    d = re.sub('\\\\table', '===', d)
     return d
 
 def stringify_macros(d):
@@ -70,6 +72,7 @@ for c in cmds:
 
     # preprocess collected items
     for section, data in item_data.items():
+        data = data.replace('\\]', ']')
         if section == 'args':
             data = data.strip().replace('"', '\\"')[1:].split('@')
             data = [colorize_code(d) for d in data]
