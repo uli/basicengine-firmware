@@ -20,14 +20,14 @@ void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len) {
   static int off = 0;
   sample_t *str = (sample_t *)stream;
 
-  for (int i = 0; i < len / sizeof(sample_t); ++i) {
+  for (unsigned int i = 0; i < len / sizeof(sample_t); ++i) {
     if ((i + off) % (m_block_size * SOUND_CHANNELS) == 0) {
       m_curr_buf_pos = 0;
       sound.render();
     }
     str[i] = m_curr_buf[(i + off) % (m_block_size * SOUND_CHANNELS)];
   }
-  if (len / sizeof(sample_t) == m_block_size * SOUND_CHANNELS)
+  if (len / (int)sizeof(sample_t) == m_block_size * SOUND_CHANNELS)
     off = 0;
   else
     off = (off + len / sizeof(sample_t)) % (m_block_size * SOUND_CHANNELS);
