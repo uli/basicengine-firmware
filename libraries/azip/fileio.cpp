@@ -62,7 +62,7 @@ void AZIP::open_story( const char *game_name )
         fatal(PSTR("cannot open mem\n"));
     }
 
-    if ( game_in = fopen( game_name, "r" ) )
+    if ( (game_in = fopen( game_name, "r" )) )
     {
         fseek(game_in, 0, SEEK_SET);
         while ( ( count = fread( (char *)stack, 1, sizeof(stack), game_in ) ) > 0 )
@@ -256,7 +256,7 @@ int AZIP::get_file_name( char *file_name, char *default_name, int flag )
 
 int AZIP::save_restore( const char *file_name, int flag )
 {
-    FILE *tfp;
+    FILE *tfp = NULL;
 
     int scripting_flag = 0, status = 0;
 

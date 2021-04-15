@@ -22,10 +22,10 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *       
+ *
  * --------------------------------------------------------------------
  */
- 
+
  /*
   * Modified by Louis Davis April, 2012
   * Arduino support.
@@ -261,7 +261,7 @@ void AZIP::z_je( int count, zword_t * operand )
             conditional_jump( TRUE );
             return;
         }
-        conditional_jump( FALSE );
+    conditional_jump( FALSE );
 }
 
 /*
