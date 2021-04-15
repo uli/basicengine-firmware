@@ -489,7 +489,7 @@ uint8_t sdfiles::loadImage(FILE *img_file,
 
       for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
         uint32_t d = data[y*img_w + sx];
-        pixel_t p = csp.colorFromRgb(d, d >> 8, d >> 16);
+        pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
         if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
           vs23.setPixel(dx, dy, p);
       }
