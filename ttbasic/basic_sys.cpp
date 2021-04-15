@@ -33,7 +33,7 @@ void Basic::iwait() {
   }
 }
 
-void *BASIC_INT sanitize_addr(uint32_t vadr, int type) {
+void *BASIC_INT sanitize_addr(intptr_t vadr, int type) {
 #ifdef ESP8266
   // Unmapped memory, causes exception
   if (vadr < 0x20000000UL) {
@@ -475,8 +475,8 @@ num_t Basic::nsys() {
   if (err)
     return 0;
   switch (item) {
-  case 0:	return (uint32_t)listbuf;
-  case 1:	return (uint32_t)sc0.getfontadr();
+  case 0:	return (num_t)(intptr_t)listbuf;
+  case 1:	return (num_t)(intptr_t)sc0.getfontadr();
   default:	E_VALUE(0, 1); return 0;
   }
 }
@@ -575,7 +575,7 @@ pollution.
 ***/
 void SMALL Basic::isysinfo() {
   char top = 't';
-  uint32_t adr = (uint32_t)&top;
+  intptr_t adr = (intptr_t)&top;
 
   PRINT_P("Program size: ");
   putnum(size_list, 0);
@@ -611,7 +611,7 @@ void SMALL Basic::isysinfo() {
   // スタック領域先頭アドレスの表示
   newline();
   PRINT_P("CPU stack: ");
-  putHexnum(adr, 8);
+  putHexnum(adr, sizeof(intptr_t));
   newline();
 
   // SRAM未使用領域の表示

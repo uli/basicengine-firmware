@@ -333,7 +333,7 @@ void isaveconfig() {
   fprintf(f, "font=%d\n", CONFIG.font);
   fprintf(f, "keyword_sep_optional=%d\n", CONFIG.keyword_sep_optional);
   fprintf(f, "filter=%d\n", CONFIG.lowpass);
-  fprintf(f, "cursor_color=0x%lx\n", CONFIG.cursor_color);
+  fprintf(f, "cursor_color=0x%x\n", (unsigned int)CONFIG.cursor_color);
   fprintf(f, "beep_volume=%d\n", CONFIG.beep_volume);
 #ifdef H3
   fprintf(f, "phys_mode=%lu\n", CONFIG.phys_mode);

@@ -389,7 +389,7 @@ int token_size(icode_t *code);
 extern uint8_t err;
 extern const char *err_expected;
 
-void *BASIC_INT sanitize_addr(uint32_t vadr, int type);
+void *BASIC_INT sanitize_addr(intptr_t vadr, int type);
 
 #ifdef ESP8266
 extern "C" size_t umm_free_heap_size(void);
