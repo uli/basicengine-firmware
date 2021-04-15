@@ -1315,6 +1315,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
   uint8_t var_code;
+  bool is_extended_token;
   line_desc_t *ld = (line_desc_t *)ip;
   ip += sizeof(line_desc_t);
 
@@ -1323,6 +1324,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
 
   while (*ip != I_EOL) {
     // keyword processing
+    is_extended_token = false;
     if ((*ip < SIZE_KWTBL && kwtbl[*ip]) || *ip == I_EXTEND) {
       // if it is a keyword
       const char *kw;
@@ -1333,6 +1335,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
           return 0;
         }
         kw = kwtbl_ext[*ip];
+        is_extended_token = true;
       } else {
         kw = kwtbl[*ip];
       }
@@ -1350,8 +1353,8 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       sc0.setColor(COL(FG), COL(BG));
 
       if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual(*ip)))
-        if ((!nospacea(*ip) || spacef(*(ip + 1))) && *ip != I_COLON &&
-            *ip != I_SQUOT && *ip != I_LABEL)
+        if ((!nospacea(*ip) || spacef(*(ip + 1)) || is_extended_token) &&
+            *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL)
           c_putch(' ', devno);
 
       if (*ip == I_REM || *ip == I_SQUOT) {  //もし中間コードがI_REMなら
