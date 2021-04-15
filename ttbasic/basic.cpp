@@ -235,7 +235,7 @@ num_t BASIC_FP getrnd(int value) {
 // List formatting condition
 // Intermediate code without trailing blank
 // clang-format off
-const uint8_t i_nsa[] BASIC_DAT = {
+const token_t i_nsa[] BASIC_DAT = {
   I_CSIZE, I_PSIZE,
   I_INKEY, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
@@ -257,14 +257,14 @@ const uint8_t i_nsa[] BASIC_DAT = {
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
-const uint8_t i_nsb[] BASIC_DAT = {
+const token_t i_nsb[] BASIC_DAT = {
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_LSHIFT, I_RSHIFT, I_POW,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2,I_LT,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT, I_EOL, I_SQOPEN, I_SQCLOSE,
 };
 
 // insert a blank before intermediate code
-const uint8_t i_sf[] BASIC_DAT  = {
+const token_t i_sf[] BASIC_DAT  = {
   I_CLS, I_COLOR, I_DATE, I_END, I_FILES, I_TO, I_STEP,I_QUEST,I_AND, I_OR, I_XOR,
   I_GET,I_TIME,I_GOSUB,I_GOTO,I_INPUT,I_LET,I_LIST,I_ELSE,I_THEN,
   I_LOAD,I_LOCATE,I_NEW,I_DOUT,I_POKE,I_PRINT,I_REFLESH,I_REM,I_RENUM,I_CLT,
@@ -274,25 +274,29 @@ const uint8_t i_sf[] BASIC_DAT  = {
 };
 
 // tokens that can be functions (no space before paren) or something else
-const uint8_t i_dual[] BASIC_DAT = {
+const token_t i_dual[] BASIC_DAT = {
   I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD, I_CHAR
 };
 // clang-format on
 
 // exception search function
-char sstyle(uint8_t code, const uint8_t *table, uint8_t count) {
+char sstyle(token_t code, const token_t *table, uint8_t count) {
   while (count--)  //中間コードの数だけ繰り返す
     // if there is a corresponding intermediate code
+#ifdef LOWMEM
     if (code == pgm_read_byte(&table[count]))
+#else
+    if (code == table[count])
+#endif
       return 1;
   return 0;
 }
 
 // exception search macro
-#define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa))
-#define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb))
-#define spacef(c)   sstyle(c, i_sf, sizeof(i_sf))
-#define dual(c)     sstyle(c, i_dual, sizeof(i_dual))
+#define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa) / sizeof(token_t))
+#define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb) / sizeof(token_t))
+#define spacef(c)   sstyle(c, i_sf, sizeof(i_sf) / sizeof(token_t))
+#define dual(c)     sstyle(c, i_dual, sizeof(i_dual) / sizeof(token_t))
 
 // Error message definition
 uint8_t err;               // Error message index
@@ -325,7 +329,7 @@ void SMALL E_VALUE(int32_t from, int32_t to) {
   err_expected = tbuf;
 }
 
-void SMALL E_SYNTAX(unsigned char token) {
+void SMALL E_SYNTAX(token_t token) {
   err = ERR_SYNTAX;
   strcpy_P(tbuf, PSTR("expected \""));
   strcat_P(tbuf, kwtbl[token]);
