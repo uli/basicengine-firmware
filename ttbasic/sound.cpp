@@ -106,7 +106,7 @@ inline uint32_t BasicSound::mmlGetNoteLength(int ch, uint32_t note_ticks) {
 
 void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj) {
   uint32_t now = millis();
-  int ch = (int)extobj;
+  int ch = (intptr_t)extobj;
   m_next_event[ch] = now;
 
   switch (p->type) {
@@ -285,7 +285,7 @@ void BasicSound::begin(void) {
 #endif
 #ifdef HAVE_MML
   for (int i = 0; i < MML_CHANNELS; ++i) {
-    mml_init(&m_mml[i], mmlCallback, (void *)i);
+    mml_init(&m_mml[i], mmlCallback, (void *)(intptr_t)i);
     MML_OPTION_INITIALIZER_DEFAULT(&m_mml_opt[i]);
     defaults(i);
   }
@@ -414,7 +414,7 @@ void refill_stream_sam(sts_mixer_sample_t *sample, void *userdata) {
       }
     }
     if (bs->m_sam) {
-      for (int i = 0; i < sample->length / 2 / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
+      for (unsigned int i = 0; i < sample->length / 2 / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
         int s = bs->m_sam->getSample() * 257 - 32768;
 #if AUDIO_SAMPLE_RATE > 32000
         *data++ = s;
@@ -440,7 +440,7 @@ void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata) {
       err = ERR_OOM;
       return;
     }
-    for (int i = 0; i < sample->length / 2; ++i) {
+    for (unsigned int i = 0; i < sample->length / 2; ++i) {
       sample_t s = max(-32768, min(staging_buf[i] * 8, 32767));
       *data++ = s;
       *data++ = s;
