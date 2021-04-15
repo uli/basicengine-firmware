@@ -321,11 +321,11 @@ void SMALL E_VALUE(int32_t from, int32_t to) {
   static const char __fmt_f[] PROGMEM = "min %d";
   err = ERR_VALUE;
   if (from == INT32_MIN)
-    sprintf_P(tbuf, __fmt_t, to);
+    sprintf_P(tbuf, __fmt_t, (int)to);
   else if (to == INT32_MAX)
-    sprintf_P(tbuf, __fmt_f, from);
+    sprintf_P(tbuf, __fmt_f, (int)from);
   else
-    sprintf_P(tbuf, __fmt_ft, from, to);
+    sprintf_P(tbuf, __fmt_ft, (int)from, (int)to);
   err_expected = tbuf;
 }
 
@@ -2593,7 +2593,7 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode) {
       memmove(lbuf + 11, lbuf, strlen(lbuf) + 1);
       memset(lbuf, ' ', 11);
       last_line += 1;
-      int lnum_size = sprintf(lbuf, "%d", last_line);
+      int lnum_size = sprintf(lbuf, "%u", (unsigned int)last_line);
       lbuf[lnum_size] = ' ';
     }
     tlimR(lbuf);  // 2017/07/31 追記
@@ -5547,7 +5547,7 @@ void Basic::iprofile() {
   case I_LIST:
     for (int i = 0; i < procs.size(); ++i) {
       struct proc_t &p = procs.proc(i);
-      sprintf(lbuf, "%10d %s", p.profile_total, proc_names.name(i));
+      sprintf(lbuf, "%10u %s", (unsigned int)p.profile_total, proc_names.name(i));
       c_puts(lbuf);
       newline();
     }
