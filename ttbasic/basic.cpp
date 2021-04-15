@@ -3872,7 +3872,7 @@ BString BASIC_INT Basic::istrvalue() {
   } else
     switch (*cip++) {
     case I_STR:
-      len = value.fromBasic(cip);
+      len = value.fromBasic((TOKEN_TYPE *)cip);
       cip += len;
       if (!len)
         err = ERR_OOM;

@@ -7,13 +7,8 @@
 #include "ttconfig.h"
 #include <stdint.h>
 
-#ifdef LOWMEM
-typedef uint8_t  icode_t;
-typedef uint8_t  index_t;
-#else
-typedef uint32_t icode_t;
-typedef uint32_t index_t;
-#endif
+typedef TOKEN_TYPE icode_t;
+typedef TOKEN_TYPE index_t;
 
 #define icodes_per_num() (sizeof(num_t) / sizeof(icode_t))
 

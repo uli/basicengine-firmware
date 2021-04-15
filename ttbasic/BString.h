@@ -83,11 +83,7 @@ class BString {
         explicit BString(double, unsigned char decimalPlaces = 2);
         ~BString(void);
 
-#ifdef LOWMEM
-        int fromBasic(unsigned char *s) {
-#else
-        int fromBasic(unsigned int *s) {
-#endif
+        int fromBasic(TOKEN_TYPE *s) {
           len = *s++;
           if (!reserve(len)) {
             invalidate();
