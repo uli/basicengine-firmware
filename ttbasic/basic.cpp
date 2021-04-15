@@ -423,7 +423,7 @@ static const char num_prec_fmt[] PROGMEM = "%%%s%d.%dg";
 static const char num_fmt[] PROGMEM = "%%%s%dd";
 #endif
 void putnum(num_t value, int8_t d, uint8_t devno) {
-  char f[8];
+  char f[13];
   const char *l;
 
   if (d < 0) {
