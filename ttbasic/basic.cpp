@@ -5226,7 +5226,7 @@ Iterates a `DO` loop.
 \ref DO
 ***/
 void BASIC_FP Basic::iloop() {
-  uint8_t cond;
+  token_t cond;
 
   if (!lstki) {
     err = ERR_LSTKUF;
@@ -5245,7 +5245,7 @@ void BASIC_FP Basic::iloop() {
     return;
   }
 
-  cond = *cip;
+  cond = (token_t)*cip;
   if (cond == I_WHILE || cond == I_UNTIL) {
     ++cip;
     num_t exp = iexp();
