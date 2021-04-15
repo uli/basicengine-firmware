@@ -90,7 +90,7 @@ void BASIC_FP ilvar();
 #define NEW_PROG 1
 #define NEW_VAR  2
 
-extern void E_SYNTAX(unsigned char token);
+extern void E_SYNTAX(token_t token);
 #define SYNTAX_T(exp)                        \
   do {                                       \
     static const char __msg[] PROGMEM = exp; \

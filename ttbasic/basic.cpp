@@ -943,7 +943,7 @@ as local variables or arguments.
         s += var_len + 2;
         ptok += 2;
       } else if (*p == '$') {
-        uint8_t tok;
+        token_t tok;
         if (is_local)
           tok = I_LSVAR;
         else if (is_list)
@@ -988,7 +988,7 @@ as local variables or arguments.
         ptok++;
       } else {
         // Convert to intermediate code
-        uint8_t tok;
+        token_t tok;
         if (is_local)
           tok = I_LVAR;
         else if (is_list)
@@ -1267,12 +1267,12 @@ inline bool is_indent(uint8_t *c) {
           c[1] != I_APPEND && c[1] != I_DIRECTORY);
 }
 // tokens that reduce indentation
-inline bool is_unindent(uint8_t c) {
+inline bool is_unindent(token_t c) {
   return c == I_ENDIF || c == I_IMPLICITENDIF || c == I_NEXT || c == I_LOOP ||
          c == I_WEND;
 }
 // tokens that temporarily reduce indentation
-inline bool is_reindent(uint8_t c) {
+inline bool is_reindent(token_t c) {
   return c == I_ELSE;
 }
 
@@ -1282,8 +1282,8 @@ void SMALL recalc_indent_line(unsigned char *lp) {
   line_desc_t *ld = (line_desc_t *)lp;
   unsigned char *ip = lp + sizeof(line_desc_t);
 
-  re_indent = is_reindent(*ip);  // must be reverted at the end of the line
-  if (is_unindent(*ip) || re_indent) {
+  re_indent = is_reindent((token_t)*ip);  // must be reverted at the end of the line
+  if (is_unindent((token_t)*ip) || re_indent) {
     skip_indent = true;  // don't do this again in the main loop
     indent_level -= INDENT_STEP;
   }
@@ -1299,7 +1299,7 @@ void SMALL recalc_indent_line(unsigned char *lp) {
     else {
       if (is_indent(ip))
         indent_level += INDENT_STEP;
-      else if (is_unindent(*ip))
+      else if (is_unindent((token_t)*ip))
         indent_level -= INDENT_STEP;
     }
     int ts = token_size(ip);
@@ -1364,8 +1364,8 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual(*ip)))
-        if ((!nospacea(*ip) || spacef(*(ip + 1))) && *ip != I_COLON &&
+      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual((token_t)*ip)))
+        if ((!nospacea((token_t)*ip) || spacef((token_t)*(ip + 1))) && *ip != I_COLON &&
             *ip != I_SQUOT && *ip != I_LABEL)
           c_putch(' ', devno);
 
@@ -1397,7 +1397,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       putnum(n, 0, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
       ip += sizeof(num_t);    //ポインタを次の中間コードへ進める
-      if (!nospaceb(*ip))     //もし例外にあたらなければ
+      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
         c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_HEXNUM) {  //Processing hexadecimal constants
       ip++;                        //ポインタを値へ進める
@@ -1414,7 +1414,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       putHexnum(num, digits, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
       ip += 4;                //ポインタを次の中間コードへ進める
-      if (!nospaceb(*ip))     //もし例外にあたらなければ
+      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
         c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_VAR || *ip == I_LVAR) {  //もし定数なら
       if (*ip == I_LVAR) {
@@ -1427,7 +1427,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       c_puts(nvar_names.name(var_code), devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb(*ip))     //もし例外にあたらなければ
+      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
         c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_VARARR || *ip == I_NUMLST) {
       ip++;
@@ -1460,7 +1460,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       c_putch('$', devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb(*ip))     //もし例外にあたらなければ
+      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
         c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_STRARR || *ip == I_STRLST) {
       ip++;
