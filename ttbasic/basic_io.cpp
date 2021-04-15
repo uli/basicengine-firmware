@@ -205,9 +205,7 @@ void SMALL Basic::ismode() {
       return;
   }
   Serial.begin(baud,
-#ifdef ESP8266
     (SerialConfig)
-#endif
     flags);
 }
 
