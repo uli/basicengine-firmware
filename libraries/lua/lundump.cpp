@@ -45,7 +45,7 @@ static l_noret __error_P (LoadState *S, const char *why) {
   char wwhy[64];
   wwhy[63] = 0;
   strncpy_P(wwhy, why, 63);
-  return error(S, wwhy);
+  error(S, wwhy);
 }
 #define error_P(S, why) __error_P(S, PSTR(why))
 
