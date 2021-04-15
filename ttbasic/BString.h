@@ -83,13 +83,18 @@ class BString {
         explicit BString(double, unsigned char decimalPlaces = 2);
         ~BString(void);
 
+#ifdef LOWMEM
         int fromBasic(unsigned char *s) {
+#else
+        int fromBasic(unsigned int *s) {
+#endif
           len = *s++;
           if (!reserve(len)) {
             invalidate();
             return 0;
           }
-          os_memcpy(buffer, s, len);
+          for (unsigned int i = 0; i < len; i++)
+              buffer[i] = s[i];
           buffer[len] = 0;
           return len + 1;
         }

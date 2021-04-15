@@ -5,8 +5,16 @@
 #define __BASIC_H
 
 #include "ttconfig.h"
-
 #include <stdint.h>
+
+#ifdef LOWMEM
+typedef uint8_t  icode_t;
+#else
+typedef uint32_t icode_t;
+#endif
+
+#define icodes_per_num() (sizeof(num_t) / sizeof(icode_t))
+
 #include <string.h>
 #include <sdfiles.h>
 #include "BString.h"
@@ -23,7 +31,7 @@
 extern char lbuf[SIZE_LINE];
 extern char tbuf[SIZE_LINE];
 extern int32_t tbuf_pos;
-extern unsigned char ibuf[SIZE_IBUF];
+extern icode_t ibuf[SIZE_IBUF];
 
 extern uint8_t err;  // Error message index
 
@@ -120,10 +128,10 @@ public:
 
 private:
   int list_free();
-  unsigned char *getlp(uint32_t lineno);
+  icode_t *getlp(uint32_t lineno);
   uint32_t getlineIndex(uint32_t lineno);
-  uint8_t *getELSEptr(uint8_t *p, bool endif_only = false, int adjust = 0);
-  uint8_t *getWENDptr(uint8_t *p);
+  icode_t *getELSEptr(icode_t *p, bool endif_only = false, int adjust = 0);
+  icode_t *getWENDptr(icode_t *p);
   uint32_t countLines(uint32_t st = 0, uint32_t ed = UINT32_MAX);
 
   void inslist();
@@ -131,7 +139,7 @@ private:
   uint8_t toktoi(bool find_prg_text = true);
   void irenum();
 
-  int SMALL putlist(unsigned char *ip, uint8_t devno = 0);
+  int SMALL putlist(icode_t *ip, uint8_t devno = 0);
 
   int get_array_dims(int *idxs);
   num_t getparam();
@@ -148,7 +156,7 @@ private:
   void do_trace();
   uint8_t ilrun();
   void clear_execution_state(bool clear);
-  void irun(uint8_t *start_clp = NULL, bool cont = false, bool clear = true);
+  void irun(icode_t *start_clp = NULL, bool cont = false, bool clear = true);
 
   void inew(uint8_t mode = NEW_ALL);
 
@@ -178,7 +186,7 @@ private:
   void push_num_arg(num_t n);
   void do_call(uint8_t proc_idx);
   void do_goto(uint32_t line);
-  void do_gosub_p(unsigned char *lp, unsigned char *ip);
+  void do_gosub_p(icode_t *lp, icode_t *ip);
   void do_gosub(uint32_t lineno);
   void on_go(bool is_gosub, int cas);
 
@@ -245,7 +253,7 @@ private:
   BString snetinput();
   BString snetget();
 
-  unsigned char *iexe(int stk = -1);
+  icode_t *iexe(int stk = -1);
   uint8_t SMALL icom();
 
   // '('チェック関数
@@ -289,7 +297,7 @@ private:
 
   uint64_t getFreeMemory();
 
-  unsigned char ibuf[SIZE_IBUF];  // i-code conversion buffer
+  icode_t ibuf[SIZE_IBUF];  // i-code conversion buffer
 
   int size_list;
 
@@ -313,13 +321,13 @@ private:
   VarNames label_names;
   Labels labels;
 
-  unsigned char *listbuf;  // Pointer to program list area
+  icode_t *listbuf;  // Pointer to program list area
 
-  unsigned char *clp;  // Pointer current line
-  unsigned char *cip;  // Pointer current Intermediate code
+  icode_t *clp;  // Pointer current line
+  icode_t *cip;  // Pointer current Intermediate code
   struct {
-    uint8_t *lp;
-    uint8_t *ip;
+    icode_t *lp;
+    icode_t *ip;
     uint8_t num_args;
     uint8_t str_args;
     uint8_t proc_idx;
@@ -333,8 +341,8 @@ private:
   unsigned char astk_str_i;
 
   struct {
-    uint8_t *lp;
-    uint8_t *ip;
+    icode_t *lp;
+    icode_t *ip;
     num_t vto;
     num_t vstep;
     int16_t index;
@@ -342,22 +350,22 @@ private:
   } lstk[SIZE_LSTK];    // loop stack
   unsigned char lstki;  // loop stack index
 
-  uint8_t *cont_clp = NULL;
-  uint8_t *cont_cip = NULL;
+  icode_t *cont_clp = NULL;
+  icode_t *cont_cip = NULL;
 
   num_t   retval[MAX_RETVALS];  // multi-value returns (numeric)
   BString retstr[MAX_RETVALS];  // multi-value returns (string)
 
   bool event_error_enabled;
-  unsigned char *event_error_lp;
-  unsigned char *event_error_ip;
-  unsigned char *event_error_resume_lp;
-  unsigned char *event_error_resume_ip;
+  icode_t *event_error_lp;
+  icode_t *event_error_ip;
+  icode_t *event_error_resume_lp;
+  icode_t *event_error_resume_ip;
 
   bool math_exceptions_disabled;
 
-  unsigned char *data_lp;
-  unsigned char *data_ip;
+  icode_t *data_lp;
+  icode_t *data_ip;
   bool in_data;
 
   void exec_sub(Basic &sub, const char *filename);
@@ -366,7 +374,7 @@ private:
 
 extern Basic *bc;
 
-int token_size(uint8_t *code);
+int token_size(icode_t *code);
 
 // キーワードテーブル
 #include "kwtbl.h"

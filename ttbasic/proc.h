@@ -33,8 +33,8 @@
 #define NO_PROC ((uint8_t)-1)
 
 struct proc_t {
-  unsigned char *lp;
-  unsigned char *ip;
+  icode_t *lp;
+  icode_t *ip;
   unsigned char args_num[MAX_PROC_ARGS];
   unsigned char args_str[MAX_PROC_ARGS];
   unsigned char locs_num[MAX_PROC_ARGS];
@@ -146,8 +146,8 @@ private:
 };
 
 struct label_t {
-  unsigned char *lp;
-  unsigned char *ip;
+  icode_t *lp;
+  icode_t *ip;
 };
 
 class Labels {

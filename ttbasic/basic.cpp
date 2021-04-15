@@ -342,9 +342,13 @@ char tbuf[SIZE_LINE];  // Text display buffer
 int32_t tbuf_pos = 0;
 
 // BASIC line number descriptor.
-// NB: A lot of code relies on this being of size "sizeof(num_t)+1".
+// NB: A lot of code relies on next being the first element.
 typedef struct {
-  uint8_t next;
+#ifdef LOWMEM
+  uint8_t  next;
+#else
+  uint32_t next;
+#endif
   union {
     num_t raw_line;
     struct {
@@ -353,6 +357,8 @@ typedef struct {
     };
   };
 } __attribute__((packed)) line_desc_t;
+
+#define icodes_per_line_desc() (sizeof(line_desc_t) / sizeof(icode_t))
 
 Basic *bc = NULL;
 
@@ -616,7 +622,7 @@ uint8_t parse_identifier(char *ptok, char *vname) {
   return var_len;
 }
 
-uint32_t getlineno(unsigned char *lp);
+uint32_t getlineno(icode_t *lp);
 
 //
 // Convert text to intermediate code
@@ -858,7 +864,7 @@ as local variables or arguments.
     // Attempt to convert to constant
     ptok = s;  // Points to the beginning of a word
     if (isDigit(*ptok) || *ptok == '.') {
-      if (len >= SIZE_IBUF - sizeof(num_t) - 2) {
+      if (len >= SIZE_IBUF - icodes_per_num() - 2) {
         // the intermediate code is too long
         err = ERR_IBUFOF;
         return 0;
@@ -872,7 +878,7 @@ as local variables or arguments.
       s = ptok;             // Stuff the processed part of the character string
       ibuf[len++] = I_NUM;  // Record intermediate code
       UNALIGNED_NUM_T(ibuf + len) = value;
-      len += sizeof(num_t);
+      len += icodes_per_num();
       if (find_prg_text) {
         is_prg_text = true;
         find_prg_text = false;
@@ -1030,7 +1036,7 @@ oom:
 
 // Return free memory size
 int Basic::list_free() {
-  unsigned char *lp;
+  icode_t *lp;
 
   // Move the pointer to the end of the list
   for (lp = listbuf; *lp; lp += *lp) {}
@@ -1039,7 +1045,7 @@ int Basic::list_free() {
 }
 
 // Get line numbere by line pointer
-uint32_t BASIC_FP getlineno(unsigned char *lp) {
+uint32_t BASIC_FP getlineno(icode_t *lp) {
   line_desc_t *ld = (line_desc_t *)lp;
   if (ld->next == 0)  //もし末尾だったら
     return (uint32_t)-1;
@@ -1047,8 +1053,8 @@ uint32_t BASIC_FP getlineno(unsigned char *lp) {
 }
 
 // Search line by line number
-unsigned char *BASIC_FP Basic::getlp(uint32_t lineno) {
-  unsigned char *lp;  //ポインタ
+icode_t *BASIC_FP Basic::getlp(uint32_t lineno) {
+  icode_t *lp;  //ポインタ
 
   for (lp = listbuf; *lp; lp += *lp)  // Repeat from top to bottom
     if (getlineno(lp) >= lineno)
@@ -1059,7 +1065,7 @@ unsigned char *BASIC_FP Basic::getlp(uint32_t lineno) {
 
 // Get line index from line number
 uint32_t Basic::getlineIndex(uint32_t lineno) {
-  unsigned char *lp;  //ポインタ
+  icode_t *lp;  //ポインタ
   uint32_t index = 0;
   uint32_t rc = INT32_MAX;
   for (lp = listbuf; *lp; lp += *lp) {  // 先頭から末尾まで繰り返す
@@ -1077,12 +1083,12 @@ uint32_t Basic::getlineIndex(uint32_t lineno) {
 // 戻り値 : NULL 見つからない
 //          NULL以外 LESEの次のポインタ
 //
-uint8_t *BASIC_INT Basic::getELSEptr(uint8_t *p, bool endif_only, int adjust) {
-  uint8_t *rc = NULL;
-  uint8_t *lp;
+icode_t *BASIC_INT Basic::getELSEptr(icode_t *p, bool endif_only, int adjust) {
+  icode_t *rc = NULL;
+  icode_t *lp;
   unsigned char lifstki = 1 + adjust;
-  uint8_t *stlp = clp;
-  uint8_t *stip = cip;
+  icode_t *stlp = clp;
+  icode_t *stip = cip;
 
   // ブログラム中のGOTOの飛び先行番号を付け直す
   for (lp = p;;) {
@@ -1112,7 +1118,7 @@ uint8_t *BASIC_INT Basic::getELSEptr(uint8_t *p, bool endif_only, int adjust) {
         err = ERR_NOENDIF;
         return NULL;
       }
-      lp = cip = clp + sizeof(line_desc_t);
+      lp = cip = clp + icodes_per_line_desc();
       break;
     case I_ENDIF:
     case I_IMPLICITENDIF:
@@ -1133,9 +1139,9 @@ DONE:
   return rc;
 }
 
-uint8_t *BASIC_INT Basic::getWENDptr(uint8_t *p) {
-  uint8_t *rc = NULL;
-  uint8_t *lp;
+icode_t *BASIC_INT Basic::getWENDptr(icode_t *p) {
+  icode_t *rc = NULL;
+  icode_t *lp;
   unsigned char lifstki = 1;
 
   for (lp = p;;) {
@@ -1162,7 +1168,7 @@ uint8_t *BASIC_INT Basic::getWENDptr(uint8_t *p) {
         err = ERR_WHILEWOW;
         return NULL;
       }
-      lp = cip = clp + sizeof(line_desc_t);
+      lp = cip = clp + icodes_per_line_desc();
       break;
     default:
       lp += token_size(lp);
@@ -1175,7 +1181,7 @@ DONE:
 
 // プログラム行数を取得する
 uint32_t Basic::countLines(uint32_t st, uint32_t ed) {
-  unsigned char *lp;  //ポインタ
+  icode_t *lp;  //ポインタ
   uint32_t cnt = 0;
   uint32_t lineno;
   for (lp = listbuf; *lp; lp += *lp) {
@@ -1193,8 +1199,8 @@ uint32_t Basic::countLines(uint32_t st, uint32_t ed) {
 //  [ibuf]: [1: data length] [1: I_NUM] [2: line number] [intermediate code]
 //
 void Basic::inslist() {
-  unsigned char *insp;     // 挿入位置ポインタ
-  unsigned char *p1, *p2;  // 移動先と移動元ポインタ
+  icode_t *insp;     // 挿入位置ポインタ
+  icode_t *p1, *p2;  // 移動先と移動元ポインタ
   int len;                 // 移動の長さ
 
   cont_clp = cont_cip = NULL;
@@ -1204,9 +1210,9 @@ void Basic::inslist() {
   // Empty check (If this is the case, it may be impossible to delete lines
   // when only line numbers are entered when there is insufficient space ..)
   // @Tamakichi)
-  if (list_free() < *ibuf) {  // If the vacancy is insufficient
+  if (list_free() < (int)*ibuf) {  // If the vacancy is insufficient
     int inc_mem = (*ibuf + LISTBUF_INC - 1) / LISTBUF_INC * LISTBUF_INC;
-    listbuf = (unsigned char *)realloc(listbuf, size_list + inc_mem);
+    listbuf = (icode_t *)realloc(listbuf, (size_list + inc_mem) * sizeof(icode_t));
     if (!listbuf) {
       err = ERR_OOM;
       size_list = 0;
@@ -1236,7 +1242,7 @@ void Basic::inslist() {
 
   // 行番号だけが入力された場合はここで終わる
   // もし長さが4（[長さ][I_NUM][行番号]のみ）なら
-  if (*ibuf == sizeof(num_t) + 2)
+  if (*ibuf == icodes_per_num() + 2)
     return;
 
   // 挿入のためのスペースを空ける
@@ -1261,7 +1267,7 @@ void Basic::inslist() {
 static int8_t indent_level;
 
 // tokens that increase indentation
-inline bool is_indent(uint8_t *c) {
+inline bool is_indent(icode_t *c) {
   return (*c == I_IF && c[-1] != I_ELSE) || *c == I_DO || *c == I_WHILE ||
          (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT &&
           c[1] != I_APPEND && c[1] != I_DIRECTORY);
@@ -1276,11 +1282,11 @@ inline bool is_reindent(token_t c) {
   return c == I_ELSE;
 }
 
-void SMALL recalc_indent_line(unsigned char *lp) {
+void SMALL recalc_indent_line(icode_t *lp) {
   bool re_indent = false;
   bool skip_indent = false;
   line_desc_t *ld = (line_desc_t *)lp;
-  unsigned char *ip = lp + sizeof(line_desc_t);
+  icode_t *ip = lp + icodes_per_line_desc();
 
   re_indent = is_reindent((token_t)*ip);  // must be reverted at the end of the line
   if (is_unindent((token_t)*ip) || re_indent) {
@@ -1314,7 +1320,7 @@ void SMALL recalc_indent_line(unsigned char *lp) {
 }
 
 void SMALL Basic::recalc_indent() {
-  unsigned char *lp = listbuf;
+  icode_t *lp = listbuf;
   indent_level = 0;
 
   while (*lp) {
@@ -1326,12 +1332,12 @@ void SMALL Basic::recalc_indent() {
 }
 
 // Text output of specified intermediate code line record
-int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
+int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
   uint8_t var_code;
   line_desc_t *ld = (line_desc_t *)ip;
-  ip += sizeof(line_desc_t);
+  ip += icodes_per_line_desc();
 
   for (i = 0; i < ld->indent && i < MAX_INDENT; ++i)
     c_putch(' ', devno);
@@ -1359,7 +1365,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       else
         sc0.setColor(COL(OP), COL(BG));
       // indent single-quote comment unless at start of line
-      if (*ip == I_SQUOT && ip != (unsigned char *)&ld[1])
+      if (*ip == I_SQUOT && ip != (icode_t *)&ld[1])
         PRINT_P("  ");
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
@@ -1396,7 +1402,7 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
       sc0.setColor(COL(NUM), COL(BG));
       putnum(n, 0, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
-      ip += sizeof(num_t);    //ポインタを次の中間コードへ進める
+      ip += icodes_per_num();    //ポインタを次の中間コードへ進める
       if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
         c_putch(' ', devno);  //空白を表示
     } else if (*ip == I_HEXNUM) {  //Processing hexadecimal constants
@@ -1695,11 +1701,11 @@ DONE:
   sc0.show_curs(0);
 }
 
-int BASIC_FP token_size(uint8_t *code) {
+int BASIC_FP token_size(icode_t *code) {
   switch (*code) {
   case I_STR:    return code[1] + 2;
-  case I_NUM:    return sizeof(num_t) + 1;
-  case I_HEXNUM: return 5;
+  case I_NUM:    return icodes_per_num() + 1;
+  case I_HEXNUM: return 4 / sizeof(icode_t) + 1;
   case I_LVAR:
   case I_VAR:
   case I_LSVAR:
@@ -1729,10 +1735,10 @@ int BASIC_FP token_size(uint8_t *code) {
   }
 }
 
-void find_next_token(unsigned char **start_clp, unsigned char **start_cip,
-                     unsigned char tok) {
-  unsigned char *sclp = *start_clp;
-  unsigned char *scip = *start_cip;
+void find_next_token(icode_t **start_clp, icode_t **start_cip,
+                     token_t tok) {
+  icode_t *sclp = *start_clp;
+  icode_t *scip = *start_cip;
   int next;
 
   *start_clp = *start_cip = NULL;
@@ -1741,7 +1747,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip,
     return;
 
   if (!scip)
-    scip = sclp + sizeof(line_desc_t);
+    scip = sclp + icodes_per_line_desc();
 
   while (*scip != tok) {
     next = token_size(scip);
@@ -1749,7 +1755,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip,
       sclp += *sclp;
       if (!*sclp)
         return;
-      scip = sclp + sizeof(line_desc_t);
+      scip = sclp + icodes_per_line_desc();
     } else
       scip += next;
   }
@@ -1759,7 +1765,7 @@ void find_next_token(unsigned char **start_clp, unsigned char **start_cip,
 }
 
 void Basic::initialize_proc_pointers(void) {
-  unsigned char *lp, *ip;
+  icode_t *lp, *ip;
 
   lp = listbuf;
   ip = NULL;
@@ -1840,7 +1846,7 @@ void Basic::initialize_proc_pointers(void) {
 }
 
 void Basic::initialize_label_pointers(void) {
-  unsigned char *lp, *ip;
+  icode_t *lp, *ip;
 
   lp = listbuf;
   ip = NULL;
@@ -1882,7 +1888,7 @@ bool BASIC_INT Basic::find_next_data() {
       return false;
   }
   if (!data_ip) {
-    data_ip = data_lp + sizeof(line_desc_t);
+    data_ip = data_lp + icodes_per_line_desc();
   }
 
   while (*data_ip != I_DATA && (!in_data || *data_ip != I_COMMA)) {
@@ -1892,7 +1898,7 @@ bool BASIC_INT Basic::find_next_data() {
       data_lp += *data_lp;
       if (!*data_lp)
         return false;
-      data_ip = data_lp + sizeof(line_desc_t);
+      data_ip = data_lp + icodes_per_line_desc();
     } else
       data_ip += next;
   }
@@ -1919,13 +1925,13 @@ void Basic::idata() {
       clp += *clp;
       if (!*clp)
         return;
-      cip = clp + sizeof(line_desc_t);
+      cip = clp + icodes_per_line_desc();
     } else
       cip += next;
   }
 }
 
-static unsigned char *data_cip_save;
+static icode_t *data_cip_save;
 void BASIC_INT Basic::data_push() {
   data_cip_save = cip;
   cip = data_ip + 1;
@@ -2089,7 +2095,7 @@ void Basic::irestore() {
     if (err)
       return;
     data_lp = getlp(line);
-    data_ip = data_lp + sizeof(line_desc_t);
+    data_ip = data_lp + icodes_per_line_desc();
   }
 }
 
@@ -2170,7 +2176,7 @@ void Basic::irun_() {
   } else if (getParam(lineno, I_NONE))
     return;
 
-  unsigned char *lp = getlp(lineno);
+  icode_t *lp = getlp(lineno);
   if (!lp) {
     err = ERR_ULN;
     return;
@@ -2178,20 +2184,20 @@ void Basic::irun_() {
 
   clear_execution_state(false);
   clp = lp;
-  cip = clp + sizeof(line_desc_t);
+  cip = clp + icodes_per_line_desc();
   err = ERR_CHAIN;
 }
 
 // RUN command handler
-void BASIC_FP Basic::irun(uint8_t *start_clp, bool cont, bool clear) {
-  uint8_t *lp;  // 行ポインタの一時的な記憶場所
+void BASIC_FP Basic::irun(icode_t *start_clp, bool cont, bool clear) {
+  icode_t *lp;  // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
       clp = cont_clp;
       cip = cont_cip;
     } else {
       clp = start_clp;
-      cip = clp + sizeof(line_desc_t);
+      cip = clp + icodes_per_line_desc();
     }
     goto resume;
   }
@@ -2208,7 +2214,7 @@ void BASIC_FP Basic::irun(uint8_t *start_clp, bool cont, bool clear) {
 
   while (*clp) {  // 行ポインタが末尾を指すまで繰り返す
     TRACE;
-    cip = clp + sizeof(line_desc_t);  // 中間コードポインタを行番号の後ろに設定
+    cip = clp + icodes_per_line_desc();  // 中間コードポインタを行番号の後ろに設定
 
   resume:
     lp = iexe();  // 中間コードを実行して次の行の位置を得る
@@ -2288,7 +2294,7 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
   uint32_t lineno;     // start line number
   uint32_t endlineno;  // end line number
   uint32_t prnlineno;  // output line number
-  unsigned char *lp;
+  icode_t *lp;
 
   if (!get_range(lineno, endlineno))
     return;
@@ -2396,7 +2402,7 @@ void Basic::inew(uint8_t mode) {
     if (listbuf)
       free(listbuf);
     // XXX: Should we be more generous here to avoid fragmentation?
-    listbuf = (unsigned char *)calloc(1, LISTBUF_INC);
+    listbuf = (icode_t *)calloc(1, LISTBUF_INC * sizeof(icode_t));
     if (!listbuf) {
       err = ERR_OOM;
       size_list = 0;
@@ -2406,7 +2412,7 @@ void Basic::inew(uint8_t mode) {
     size_list = LISTBUF_INC;
     clp = listbuf;  //行ポインタをプログラム保存領域の先頭に設定
     if (!direct_mode) {
-      cip = clp + sizeof(line_desc_t);
+      cip = clp + icodes_per_line_desc();
       *cip = I_EOL;
     }
   }
@@ -2425,7 +2431,7 @@ cannot be renumbered correctly.
 void SMALL Basic::irenum() {
   int32_t startLineNo = 10;  // 開始行番号
   int32_t increase = 10;     // 増分
-  uint8_t *ptr;              // プログラム領域参照ポインタ
+  icode_t *ptr;              // プログラム領域参照ポインタ
   uint32_t len;              // 行長さ
   uint32_t i;                // 中間コード参照位置
   num_t newnum;              // 新しい行番号
@@ -2457,7 +2463,7 @@ void SMALL Basic::irenum() {
   for (clp = listbuf; *clp; clp += *clp) {
     ptr = clp;
     len = *ptr;
-    ptr += sizeof(line_desc_t);
+    ptr += icodes_per_line_desc();
     i = 0;
     // 行内検索
     while (i < len - 1) {
@@ -2472,13 +2478,13 @@ void SMALL Basic::irenum() {
           index = getlineIndex(num);
           if (index == INT32_MAX) {
             // 該当する行が見つからないため、変更は行わない
-            i += sizeof(num_t) + 1;
+            i += icodes_per_num() + 1;
             continue;
           } else {
             // とび先行番号を付け替える
             newnum = startLineNo + increase * index;
             UNALIGNED_NUM_T(&ptr[i + 1]) = newnum;
-            i += sizeof(num_t) + 1;
+            i += icodes_per_num() + 1;
             continue;
           }
         } else if (ptr[i] == I_LABEL) {
@@ -2634,8 +2640,8 @@ WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
 ***/
 void SMALL Basic::idelete() {
   uint32_t sNo, eNo;
-  uint8_t *lp;       // 削除位置ポインタ
-  uint8_t *p1, *p2;  // 移動先と移動元ポインタ
+  icode_t *lp;       // 削除位置ポインタ
+  icode_t *p1, *p2;  // 移動先と移動元ポインタ
   int32_t len;       // 移動の長さ
 
   cont_clp = cont_cip = NULL;
@@ -2690,7 +2696,7 @@ void SMALL Basic::idelete() {
   // continue on the next line, in the likely case the DELETE command didn't
   // delete itself
   clp = getlp(current_line + 1);
-  cip = clp + sizeof(line_desc_t);
+  cip = clp + icodes_per_line_desc();
   TRACE;
 }
 
@@ -3451,7 +3457,7 @@ Unlike `EXEC`, `CHAIN` does not allow returning to the original program.
 //
 uint8_t SMALL Basic::ilrun() {
   uint32_t lineno = (uint32_t)-1;
-  uint8_t *lp;
+  icode_t *lp;
   int8_t fg;  // File format 0: Binary format 1: Text format
   bool islrun = true;
   bool ismerge = false;
@@ -3523,7 +3529,7 @@ uint8_t SMALL Basic::ilrun() {
     if (islrun || (cip >= listbuf && cip < listbuf + size_list)) {
       initialize_proc_pointers();
       initialize_label_pointers();
-      cip = clp + sizeof(line_desc_t);
+      cip = clp + icodes_per_line_desc();
       if (islrun)
         err = ERR_CHAIN;
     }
@@ -4084,7 +4090,7 @@ num_t BASIC_FP Basic::ivalue() {
     //定数の取得
     case I_NUM:  // 定数
       value = UNALIGNED_NUM_T(cip);
-      cip += sizeof(num_t);
+      cip += icodes_per_num();
       break;
 
     case I_HEXNUM:  // 16進定数
@@ -4189,7 +4195,7 @@ PROC f(x): RETURN @x * 2
 \ref CALL
 ***/
     case I_FN: {
-      unsigned char *lp;
+      icode_t *lp;
       icall();
       i = gstki;
       if (err)
@@ -4199,7 +4205,7 @@ PROC f(x): RETURN @x * 2
         if (!lp || err)
           break;
         clp = lp;
-        cip = clp + sizeof(line_desc_t);
+        cip = clp + icodes_per_line_desc();
         TRACE;
       }
       value = retval[0];
@@ -4355,7 +4361,7 @@ uint32_t getBottomLineNum() {
 
 // Get the number of the line preceding the specified line
 uint32_t Basic::getPrevLineNo(uint32_t lineno) {
-  uint8_t *lp, *prv_lp = NULL;
+  icode_t *lp, *prv_lp = NULL;
   int32_t rc = -1;
   for (lp = listbuf; *lp && (getlineno(lp) < lineno); lp += *lp) {
     prv_lp = lp;
@@ -4367,7 +4373,7 @@ uint32_t Basic::getPrevLineNo(uint32_t lineno) {
 
 // Get the number of the line succeeding the specified line
 uint32_t Basic::getNextLineNo(uint32_t lineno) {
-  uint8_t *lp;
+  icode_t *lp;
   int32_t rc = -1;
 
   lp = getlp(lineno);
@@ -4381,7 +4387,7 @@ uint32_t Basic::getNextLineNo(uint32_t lineno) {
 
 // Get the program text of the specified line
 char *Basic::getLineStr(uint32_t lineno, uint8_t devno) {
-  uint8_t *lp = getlp(lineno);
+  icode_t *lp = getlp(lineno);
   if (lineno != getlineno(lp))
     return NULL;
 
@@ -4409,7 +4415,7 @@ char *Basic::getLineStr(uint32_t lineno, uint8_t devno) {
 }
 
 void BASIC_FP Basic::do_goto(uint32_t line) {
-  uint8_t *lp = getlp(line);
+  icode_t *lp = getlp(line);
   if (line != getlineno(lp)) {  // もし分岐先が存在しなければ
     err = ERR_ULN;              // エラー番号をセット
     return;
@@ -4419,7 +4425,7 @@ void BASIC_FP Basic::do_goto(uint32_t line) {
   clp = lp;
   // Update the intermediate code pointer to the beginning of the
   // intermediate code.
-  cip = clp + sizeof(line_desc_t);
+  cip = clp + icodes_per_line_desc();
   TRACE;
 }
 
@@ -4457,7 +4463,7 @@ void BASIC_FP Basic::igoto() {
   }
 }
 
-void BASIC_FP Basic::do_gosub_p(unsigned char *lp, unsigned char *ip) {
+void BASIC_FP Basic::do_gosub_p(icode_t *lp, icode_t *ip) {
   //ポインタを退避
   if (gstki >= SIZE_GSTK) {  // もしGOSUBスタックがいっぱいなら
     err = ERR_GSTKOF;        // エラー番号をセット
@@ -4475,12 +4481,12 @@ void BASIC_FP Basic::do_gosub_p(unsigned char *lp, unsigned char *ip) {
 }
 
 void BASIC_FP Basic::do_gosub(uint32_t lineno) {
-  uint8_t *lp = getlp(lineno);
+  icode_t *lp = getlp(lineno);
   if (lineno != getlineno(lp)) {  // もし分岐先が存在しなければ
     err = ERR_ULN;                // エラー番号をセット
     return;
   }
-  do_gosub_p(lp, lp + sizeof(line_desc_t));
+  do_gosub_p(lp, lp + icodes_per_line_desc());
 }
 
 /***bc bas GOSUB
@@ -4553,7 +4559,7 @@ Call one of several subroutines, depending on the value of an expression.
 \ref ON_GOTO GOSUB
 ***/
 void BASIC_FP Basic::on_go(bool is_gosub, int cas) {
-  unsigned char *lp = NULL, *ip = NULL;
+  icode_t *lp = NULL, *ip = NULL;
   --cas;
   for (;;) {
     if (*cip == I_LABEL) {
@@ -4571,7 +4577,7 @@ void BASIC_FP Basic::on_go(bool is_gosub, int cas) {
           err = ERR_ULN;
           return;
         }
-        ip = lp + sizeof(line_desc_t);
+        ip = lp + icodes_per_line_desc();
       }
     }
 
@@ -4768,7 +4774,7 @@ there is one.
     } else {
       int line = iexp();
       event_error_lp = getlp(line);
-      event_error_ip = event_error_lp + sizeof(line_desc_t);
+      event_error_ip = event_error_lp + icodes_per_line_desc();
     }
   } else {
     uint32_t cas = iexp();
@@ -5072,7 +5078,7 @@ void BASIC_FP Basic::iwhile() {
     lstk[lstki].index = -2;
     lstk[lstki++].local = false;
   } else {
-    unsigned char *newip = getWENDptr(cip);
+    icode_t *newip = getWENDptr(cip);
     if (newip) {
       cip = newip;
     } else {
@@ -5104,8 +5110,8 @@ void BASIC_FP Basic::iwend() {
     return;
   }
 
-  unsigned char *tmp_ip = cip;
-  unsigned char *tmp_lp = clp;
+  icode_t *tmp_ip = cip;
+  icode_t *tmp_lp = clp;
 
   // Jump to condition
   cip = lstk[lstki - 1].ip;
@@ -5350,7 +5356,7 @@ program, Engine BASIC will convert it to `ENDIF`.
 ***/
 void BASIC_FP Basic::iif() {
   num_t condition;  // IF文の条件値
-  uint8_t *newip;   // ELSE文以降の処理対象ポインタ
+  icode_t *newip;   // ELSE文以降の処理対象ポインタ
 
   condition = iexp();  // 真偽を取得
   if (err)
@@ -5403,7 +5409,7 @@ void BASIC_FP Basic::ielse() {
   int adjust = 0;
   if (*cip == I_IF)
     adjust = -1;
-  uint8_t *newip = getELSEptr(cip, true, adjust);
+  icode_t *newip = getELSEptr(cip, true, adjust);
   if (newip)
     cip = newip;
 }
@@ -5555,7 +5561,7 @@ void Basic::exec_sub(Basic &sub, const char *filename) {
   sub.listbuf = NULL;
   sub.loadPrgText((char *)filename, NEW_ALL);
   sub.clp = sub.listbuf;
-  sub.cip = sub.clp + sizeof(line_desc_t);
+  sub.cip = sub.clp + icodes_per_line_desc();
   sub.irun(sub.clp);
   if (err) {
     if (event_error_enabled) {
@@ -5624,7 +5630,7 @@ void BASIC_INT Basic::iextend() {
 
 // execute intermediate code
 // Return value: next program execution position (line start)
-unsigned char *BASIC_FP Basic::iexe(int stk) {
+icode_t *BASIC_FP Basic::iexe(int stk) {
   uint8_t c;  // 入力キー
   err = 0;
 
@@ -5680,7 +5686,7 @@ uint8_t SMALL Basic::icom() {
       // name and discard everything else.
       // XXX: This means the file name is evaluated twice. Not sure if that
       // will be a problem in practice.
-      unsigned char *save_cip = cip;
+      icode_t *save_cip = cip;
       istrexp();  // dump file name
       int nr = 0, sr = 0;
       for (int i = 0; i < MAX_RETVALS; ++i) {
