@@ -85,7 +85,10 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
 
 void SDLGFX::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
                       pixel_t color) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"	// I refuse to "fix" this.
   SDL_Rect dst = { (Sint16)x1, (Sint16)y1, x2 - x1, y2 - y1 };
+#pragma GCC diagnostic pop
   SDL_FillRect(m_text_surface, &dst, color);
 }
 
