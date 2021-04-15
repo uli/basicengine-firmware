@@ -9,8 +9,10 @@
 
 #ifdef LOWMEM
 typedef uint8_t  icode_t;
+typedef uint8_t  index_t;
 #else
 typedef uint32_t icode_t;
+typedef uint32_t index_t;
 #endif
 
 #define icodes_per_num() (sizeof(num_t) / sizeof(icode_t))
@@ -72,8 +74,8 @@ uint32_t getTopLineNum();
 
 BString getstr(uint8_t eoi = '\r');
 
-num_t &BASIC_FP get_lvar(uint8_t arg);
-BString &get_lsvar(uint8_t arg);
+num_t &BASIC_FP get_lvar(index_t arg);
+BString &get_lsvar(index_t arg);
 
 void BASIC_FP ivar();
 void BASIC_FP ilvar();
@@ -136,7 +138,7 @@ private:
 
   void inslist();
   void recalc_indent();
-  uint8_t toktoi(bool find_prg_text = true);
+  unsigned int toktoi(bool find_prg_text = true);
   void irenum();
 
   int SMALL putlist(icode_t *ip, uint8_t devno = 0);
@@ -184,7 +186,7 @@ private:
 
   void init_stack_frame();
   void push_num_arg(num_t n);
-  void do_call(uint8_t proc_idx);
+  void do_call(index_t proc_idx);
   void do_goto(uint32_t line);
   void do_gosub_p(icode_t *lp, icode_t *ip);
   void do_gosub(uint32_t lineno);
@@ -220,10 +222,10 @@ private:
   num_t irel_string();
 
   num_t nsvar_a(BString &);
-  int get_num_local_offset(uint8_t arg, bool &is_local);
-  num_t &get_lvar(uint8_t arg);
-  int get_str_local_offset(uint8_t arg, bool &is_local);
-  BString &get_lsvar(uint8_t arg);
+  int get_num_local_offset(index_t arg, bool &is_local);
+  num_t &get_lvar(index_t arg);
+  int get_str_local_offset(index_t arg, bool &is_local);
+  BString &get_lsvar(index_t arg);
   void set_svar(bool is_lsvar);
 
   num_t ivalue();
@@ -253,7 +255,7 @@ private:
   BString snetinput();
   BString snetget();
 
-  icode_t *iexe(int stk = -1);
+  icode_t *iexe(index_t stk = 0);
   uint8_t SMALL icom();
 
   // '('チェック関数
@@ -328,17 +330,17 @@ private:
   struct {
     icode_t *lp;
     icode_t *ip;
-    uint8_t num_args;
-    uint8_t str_args;
-    uint8_t proc_idx;
+    index_t num_args;
+    index_t str_args;
+    index_t proc_idx;
   } gstk[SIZE_GSTK];    // GOSUB stack
-  unsigned char gstki;  // GOSUB stack index
+  index_t gstki;  // GOSUB stack index
 
   // Arguments/locals stack
   num_t astk_num[SIZE_ASTK];
-  unsigned char astk_num_i;
+  index_t astk_num_i;
   BString astk_str[SIZE_ASTK];
-  unsigned char astk_str_i;
+  index_t astk_str_i;
 
   struct {
     icode_t *lp;
@@ -348,7 +350,7 @@ private:
     int16_t index;
     bool local;
   } lstk[SIZE_LSTK];    // loop stack
-  unsigned char lstki;  // loop stack index
+  index_t lstki;  // loop stack index
 
   icode_t *cont_clp = NULL;
   icode_t *cont_cip = NULL;

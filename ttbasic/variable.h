@@ -65,7 +65,7 @@ public:
     deleteAll();
   }
 
-  inline bool reserve(int count) {
+  inline bool reserve(unsigned int count) {
     dbg_var("vnames reserve %d\r\n", count);
     if (count > m_size)
       return doReserve(count);
@@ -73,9 +73,9 @@ public:
       return false;
   }
 
-  void deleteDownTo(uint8_t idx) {
+  void deleteDownTo(index_t idx) {
     dbg_var("vnames del dto %d\r\n", idx);
-    for (int i = idx; i < m_var_top; ++i) {
+    for (index_t i = idx; i < m_var_top; ++i) {
       if (m_var_name[i]) {
         free((void *)m_var_name[i]);
         m_var_name[i] = NULL;
@@ -102,7 +102,7 @@ public:
 
   int find(const char *name) {
     dbg_var("vnames find %s\r\n", name);
-    for (int i = 0; i < m_var_top; ++i) {
+    for (index_t i = 0; i < m_var_top; ++i) {
       if (!strcasecmp(name, m_var_name[i])) {
 #ifdef DEBUG_VAR
         Serial.printf("found %d\r\n", i);
@@ -123,7 +123,7 @@ public:
       // This variable may have been created in direct mode, but it is now
       // referenced in program mode, so we have to make sure it is
       // preserved.
-      if (is_prg_text && m_prg_var_top < v + 1)
+      if (is_prg_text && m_prg_var_top < (unsigned int)v + 1)
         m_prg_var_top = v + 1;
       return v;
     }
@@ -138,7 +138,7 @@ public:
     return m_var_top - 1;
   }
 
-  inline const char *name(uint8_t idx) {
+  inline const char *name(index_t idx) {
     return m_var_name[idx];
   }
 
@@ -150,19 +150,19 @@ public:
   }
 
 protected:
-  int m_var_top;
-  int m_prg_var_top;
-  int m_size;
+  unsigned int m_var_top;
+  unsigned int m_prg_var_top;
+  unsigned int m_size;
 
 private:
-  bool doReserve(int count) {
+  bool doReserve(unsigned int count) {
     m_var_name = varRealloc(m_var_name, count);
     if (!m_var_name) {
       err = ERR_OOM;
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i)
+    for (index_t i = m_size; i < count; ++i)
       m_var_name[i] = NULL;
     m_size = count;
     return false;
@@ -183,11 +183,11 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
+    for (index_t i = 0; i < m_size; ++i)
       m_var[i] = 0;
   }
 
-  bool reserve(uint8_t count) {
+  bool reserve(index_t count) {
     dbg_var("nv reserve %d\r\n", count);
     if (count == 0) {
       free(m_var);
@@ -201,22 +201,22 @@ public:
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i)
+    for (index_t i = m_size; i < count; ++i)
       m_var[i] = 0;
     m_size = count;
     return false;
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_size;
   }
 
-  inline num_t& var(uint8_t index) {
+  inline num_t& var(index_t index) {
     return m_var[index];
   }
 
 private:
-  int m_size;
+  unsigned int m_size;
   num_t *m_var;
 };
 
@@ -273,7 +273,7 @@ public:
       err = ERR_OOM;
       return true;
     }
-    for (int i = 0; i < m_total; ++i) {
+    for (index_t i = 0; i < m_total; ++i) {
       m_var[i] = 0;
     }
     return false;
@@ -310,7 +310,7 @@ public:
 
 private:
   int m_dims;
-  int m_total;
+  unsigned int m_total;
   int *m_sizes;
   T *m_var;
   T bull;
@@ -328,14 +328,14 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
+    for (index_t i = 0; i < m_size; ++i)
       m_var[i]->reset();
   }
 
-  bool reserve(uint8_t count) {
+  bool reserve(index_t count) {
     dbg_var("na reserve %d\r\n", count);
     if (count == 0) {
-      for (int i = 0; i < m_size; ++i) {
+      for (index_t i = 0; i < m_size; ++i) {
         delete m_var[i];
       }
       free(m_var);
@@ -345,7 +345,7 @@ public:
     }
 
     if (count < m_size) {
-      for (int i = count; i < m_size; ++i) {
+      for (index_t i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
@@ -358,10 +358,10 @@ public:
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i) {
+    for (index_t i = m_size; i < count; ++i) {
       m_var[i] = new NumArray<T>();
       if (!m_var[i]) {
-        for (int j = m_size; j < i; ++j)
+        for (index_t j = m_size; j < i; ++j)
           delete m_var[j];
         err = ERR_OOM;
         return true;
@@ -371,16 +371,16 @@ public:
     return false;
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_size;
   }
 
-  inline NumArray<T>& var(uint8_t index) {
+  inline NumArray<T>& var(index_t index) {
     return *m_var[index];
   }
 
 private:
-  int m_size;
+  unsigned int m_size;
   NumArray<T> **m_var;
 };
 
@@ -396,14 +396,14 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
+    for (index_t i = 0; i < m_size; ++i)
       *m_var[i] = "";
   }
 
-  bool reserve(uint8_t count) {
+  bool reserve(index_t count) {
     dbg_var("sv reserve %d\r\n", count);
     if (count == 0) {
-      for (int i = 0; i < m_size; ++i) {
+      for (index_t i = 0; i < m_size; ++i) {
         delete m_var[i];
       }
       free(m_var);
@@ -412,7 +412,7 @@ public:
       return false;
     }
     if (count < m_size) {
-      for (int i = count; i < m_size; ++i) {
+      for (index_t i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
@@ -424,10 +424,10 @@ public:
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i) {
+    for (index_t i = m_size; i < count; ++i) {
       m_var[i] = new BString();
       if (!m_var[i]) {
-        for (int j = m_size; j < i; ++j)
+        for (index_t j = m_size; j < i; ++j)
           delete m_var[j];
         err = ERR_OOM;
         return true;
@@ -438,16 +438,16 @@ public:
     return false;
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_size;
   }
 
-  inline BString& var(uint8_t index) {
+  inline BString& var(index_t index) {
     return *m_var[index];
   }
 
 private:
-  int m_size;
+  unsigned int m_size;
   BString **m_var;
 };
 
@@ -558,14 +558,14 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
+    for (index_t i = 0; i < m_size; ++i)
       m_var[i]->reset();
   }
 
-  bool reserve(uint8_t count) {
+  bool reserve(index_t count) {
     dbg_var("sa reserve %d\r\n", count);
     if (count == 0) {
-      for (int i = 0; i < m_size; ++i) {
+      for (index_t i = 0; i < m_size; ++i) {
         delete m_var[i];
       }
       free(m_var);
@@ -575,7 +575,7 @@ public:
     }
 
     if (count < m_size) {
-      for (int i = count; i < m_size; ++i) {
+      for (index_t i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
@@ -588,10 +588,10 @@ public:
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i) {
+    for (index_t i = m_size; i < count; ++i) {
       m_var[i] = new StringArray<T>();
       if (!m_var[i]) {
-        for (int j = m_size; j < i; ++j)
+        for (index_t j = m_size; j < i; ++j)
           delete m_var[j];
         err = ERR_OOM;
         return true;
@@ -601,16 +601,16 @@ public:
     return false;
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_size;
   }
 
-  inline StringArray<T>& var(uint8_t index) {
+  inline StringArray<T>& var(index_t index) {
     return *m_var[index];
   }
 
 private:
-  int m_size;
+  unsigned int m_size;
   StringArray<T> **m_var;
 };
 
@@ -637,7 +637,7 @@ public:
     return m_list.at(idx);
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_list.size();
   }
 
@@ -685,14 +685,14 @@ public:
   }
 
   void reset() {
-    for (int i = 0; i < m_size; ++i)
+    for (index_t i = 0; i < m_size; ++i)
       m_var[i]->reset();
   }
 
-  bool reserve(uint8_t count) {
+  bool reserve(index_t count) {
     dbg_var("sl reserve %d\r\n", count);
     if (count == 0) {
-      for (int i = 0; i < m_size; ++i) {
+      for (index_t i = 0; i < m_size; ++i) {
         delete m_var[i];
       }
       free(m_var);
@@ -702,7 +702,7 @@ public:
     }
 
     if (count < m_size) {
-      for (int i = count; i < m_size; ++i) {
+      for (index_t i = count; i < m_size; ++i) {
         delete m_var[i];
       }
     }
@@ -715,10 +715,10 @@ public:
       m_size = 0;
       return true;
     }
-    for (int i = m_size; i < count; ++i) {
+    for (index_t i = m_size; i < count; ++i) {
       m_var[i] = new BasicList<T>();
       if (!m_var[i]) {
-        for (int j = m_size; j < i; ++j)
+        for (index_t j = m_size; j < i; ++j)
           delete m_var[j];
         err = ERR_OOM;
         return true;
@@ -728,15 +728,15 @@ public:
     return false;
   }
 
-  inline int size() {
+  inline unsigned int size() {
     return m_size;
   }
 
-  inline BasicList<T>& var(uint8_t index) {
+  inline BasicList<T>& var(index_t index) {
     return *m_var[index];
   }
 
 private:
-  int m_size;
+  unsigned int m_size;
   BasicList<T> **m_var;
 };

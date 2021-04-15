@@ -280,7 +280,7 @@ const token_t i_dual[] BASIC_DAT = {
 // clang-format on
 
 // exception search function
-char sstyle(token_t code, const token_t *table, uint8_t count) {
+char sstyle(token_t code, const token_t *table, uint32_t count) {
   while (count--)  //中間コードの数だけ繰り返す
     // if there is a corresponding intermediate code
 #ifdef LOWMEM
@@ -502,7 +502,7 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno = 0) {
 
 void get_input(bool numeric, uint8_t eoi) {
   char c;       //文字
-  uint8_t len;  //文字数
+  uint32_t len;  //文字数
 
   len = 0;  //文字数をクリア
   while (1) {
@@ -561,7 +561,7 @@ BString getstr(uint8_t eoi) {
 //  該当なし   : -1
 //  見つかった : キーワードコード
 int lookup(char *str) {
-  for (uint8_t i = 0; i < SIZE_KWTBL; ++i) {
+  for (uint32_t i = 0; i < SIZE_KWTBL; ++i) {
     if (kwtbl[i]) {
       int l = strlen_P(kwtbl[i]);
 
@@ -591,7 +591,7 @@ int lookup(char *str) {
   return -1;
 }
 int lookup_ext(char *str) {
-  for (uint8_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
+  for (uint32_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
     if (kwtbl_ext[i]) {
       int l = strlen_P(kwtbl_ext[i]);
 
@@ -627,13 +627,13 @@ uint32_t getlineno(icode_t *lp);
 //
 // Convert text to intermediate code
 // [Return value]
-// 0 or intermediate code number of bytes
+// 0 or intermediate code number of items
 //
 // If find_prg_text is true (default), variable and procedure names
 // are designated as belonging to the program; if not, they are considered
 // temporary, even if the input line starts with a number.
-uint8_t BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
-  int16_t i;
+unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
+  unsigned int i;
   int key;
   unsigned int len = 0;      // length of sequence of intermediate code
   char *ptok;                // pointer to the inside of one word
@@ -833,7 +833,7 @@ as local variables or arguments.
         s++;
       s += parse_identifier(s, vname);
 
-      int idx = label_names.assign(vname, true);
+      index_t idx = label_names.assign(vname, true);
       ibuf[len++] = idx;
       if (labels.reserve(label_names.varTop())) {
         err = ERR_OOM;
@@ -1086,7 +1086,7 @@ uint32_t Basic::getlineIndex(uint32_t lineno) {
 icode_t *BASIC_INT Basic::getELSEptr(icode_t *p, bool endif_only, int adjust) {
   icode_t *rc = NULL;
   icode_t *lp;
-  unsigned char lifstki = 1 + adjust;
+  index_t lifstki = 1 + adjust;
   icode_t *stlp = clp;
   icode_t *stip = cip;
 
@@ -1142,7 +1142,7 @@ DONE:
 icode_t *BASIC_INT Basic::getWENDptr(icode_t *p) {
   icode_t *rc = NULL;
   icode_t *lp;
-  unsigned char lifstki = 1;
+  index_t lifstki = 1;
 
   for (lp = p;;) {
     switch (*lp) {
@@ -1335,7 +1335,7 @@ void SMALL Basic::recalc_indent() {
 int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
-  uint8_t var_code;
+  index_t var_code;
   line_desc_t *ld = (line_desc_t *)ip;
   ip += icodes_per_line_desc();
 
@@ -1780,7 +1780,7 @@ void Basic::initialize_proc_pointers(void) {
     if (!lp)
       return;
 
-    uint8_t proc_id = ip[1];
+    index_t proc_id = ip[1];
     ip += 2;
 
     proc_t &pr = procs.proc(proc_id);
@@ -1861,7 +1861,7 @@ void Basic::initialize_label_pointers(void) {
     if (!lp)
       return;
 
-    uint8_t label_id = ip[1];
+    index_t label_id = ip[1];
     ip += 2;
 
     label_t &lb = labels.label(label_id);
@@ -1968,7 +1968,7 @@ the `RESTORE` command.
 void BASIC_INT Basic::iread() {
   num_t value;
   BString svalue;
-  uint8_t index;
+  index_t index;
 
   if (!find_next_data()) {
     err = ERR_OOD;
@@ -2734,7 +2734,7 @@ void BASIC_FP Basic::push_num_arg(num_t n) {
   gstk[gstki].num_args++;
 }
 
-void BASIC_FP Basic::do_call(uint8_t proc_idx) {
+void BASIC_FP Basic::do_call(index_t proc_idx) {
   struct proc_t &proc_loc = procs.proc(proc_idx);
 
   if (!proc_loc.lp || !proc_loc.ip) {
@@ -3864,7 +3864,7 @@ bool BASIC_FP Basic::is_strexp() {
 BString BASIC_INT Basic::istrvalue() {
   BString value;
   int len, dims;
-  uint8_t i;
+  index_t i;
   int idxs[MAX_ARRAY_DIMS];
 
   if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
@@ -4077,7 +4077,7 @@ num_t BASIC_INT Basic::nsvar_a(BString &value) {
 // Get value
 num_t BASIC_FP Basic::ivalue() {
   num_t value = 0;  // 値
-  uint8_t i;        // 文字数
+  index_t i;        // 文字数
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
 
@@ -4850,7 +4850,7 @@ declaration. Additional arguments can be accessed using `ARG()` and
 ***/
 void BASIC_FP Basic::icall() {
   num_t n;
-  uint8_t proc_idx = *cip++;
+  index_t proc_idx = *cip++;
 
   struct proc_t &proc_loc = procs.proc(proc_idx);
 
@@ -5631,7 +5631,7 @@ void BASIC_INT Basic::iextend() {
 
 // execute intermediate code
 // Return value: next program execution position (line start)
-icode_t *BASIC_FP Basic::iexe(int stk) {
+icode_t *BASIC_FP Basic::iexe(index_t stk) {
   uint8_t c;  // 入力キー
   err = 0;
 
@@ -5764,10 +5764,10 @@ program was interrupted.
   default: {
     cip--;
     sc0.show_curs(0);
-    unsigned char gstki_save = gstki;
-    unsigned char lstki_save = lstki;
-    unsigned char astk_num_i_save = astk_num_i;
-    unsigned char astk_str_i_save = astk_str_i;
+    index_t gstki_save = gstki;
+    index_t lstki_save = lstki;
+    index_t astk_num_i_save = astk_num_i;
+    index_t astk_str_i_save = astk_str_i;
     iexe();
     gstki = gstki_save;
     lstki = lstki_save;
@@ -5838,7 +5838,7 @@ extern "C" {
    The BASIC entry point
  */
 void SMALL Basic::basic() {
-  unsigned char len;  // Length of intermediate code
+  int len;  // Length of intermediate code
   char *textline;     // input line
   uint8_t rc;
 

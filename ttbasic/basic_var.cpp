@@ -45,14 +45,14 @@ void BASIC_FP Basic::ivar() {
 // what a procedure's stack frame looks like at compile time because we may
 // have to compile code out-of-order.
 
-int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local) {
+int BASIC_FP Basic::get_num_local_offset(index_t arg, bool &is_local) {
   is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  uint8_t proc_idx = gstk[gstki - 1].proc_idx;
+  index_t proc_idx = gstk[gstki - 1].proc_idx;
   if (proc_idx == NO_PROC) {
     err = ERR_GLOBAL;
     return 0;
@@ -69,7 +69,7 @@ int BASIC_FP Basic::get_num_local_offset(uint8_t arg, bool &is_local) {
   return local_offset;
 }
 
-num_t &BASIC_FP Basic::get_lvar(uint8_t arg) {
+num_t &BASIC_FP Basic::get_lvar(index_t arg) {
   bool is_local;
   int local_offset = get_num_local_offset(arg, is_local);
   if (err)
@@ -138,7 +138,7 @@ void Basic::idim() {
   int dims = 0;
   int idxs[MAX_ARRAY_DIMS];
   bool is_string;
-  uint8_t index;
+  index_t index;
 
   for (;;) {
     if (*cip != I_VARARR && *cip != I_STRARR) {
@@ -226,8 +226,8 @@ void BASIC_FP Basic::ivararr() {
   num_t value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
-  uint8_t index;
-  
+  index_t index;
+
   index = *cip++; //変数番号を取得して次へ進む
 
   dims = get_array_dims(idxs);
@@ -249,14 +249,14 @@ void BASIC_FP Basic::ivararr() {
   n = value;
 }
 
-int Basic::get_str_local_offset(uint8_t arg, bool &is_local) {
+int Basic::get_str_local_offset(index_t arg, bool &is_local) {
   is_local = false;
   if (!gstki) {
     // not in a subroutine
     err = ERR_GLOBAL;
     return 0;
   }
-  uint8_t proc_idx = gstk[gstki - 1].proc_idx;
+  index_t proc_idx = gstk[gstki - 1].proc_idx;
   if (proc_idx == NO_PROC) {
     err = ERR_GLOBAL;
     return 0;
@@ -273,7 +273,7 @@ int Basic::get_str_local_offset(uint8_t arg, bool &is_local) {
   return local_offset;
 }
 
-BString &Basic::get_lsvar(uint8_t arg) {
+BString &Basic::get_lsvar(index_t arg) {
   bool is_local;
   int local_offset = get_str_local_offset(arg, is_local);
   if (err)
@@ -292,7 +292,7 @@ BString &Basic::get_lsvar(uint8_t arg) {
 
 void Basic::set_svar(bool is_lsvar) {
   BString value;
-  uint8_t index = *cip++;
+  index_t index = *cip++;
   int32_t offset;
   uint8_t sval;
 
@@ -374,7 +374,7 @@ void Basic::istrarr() {
   BString value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
-  uint8_t index;
+  index_t index;
 
   index = *cip++;
 
@@ -426,7 +426,7 @@ void Basic::istrlst() {
   BString value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
-  uint8_t index;
+  index_t index;
 
   index = *cip++;
 
@@ -457,7 +457,7 @@ void Basic::inumlst() {
   num_t value;
   int idxs[MAX_ARRAY_DIMS];
   int dims = 0;
-  uint8_t index;
+  index_t index;
 
   index = *cip++;
 
@@ -484,7 +484,7 @@ void Basic::inumlst() {
 }
 
 void Basic::inumlstref() {
-  uint8_t index = *cip++;
+  index_t index = *cip++;
   num_t value;
 
   if (*cip++ != I_EQ) {
@@ -514,7 +514,7 @@ void Basic::inumlstref() {
 }
 
 void Basic::istrlstref() {
-  uint8_t index = *cip++;
+  index_t index = *cip++;
   BString value;
 
   if (*cip++ != I_EQ) {
@@ -551,7 +551,7 @@ Appends an element to the end of a list.
 @value	a numeric or string expression
 ***/
 void Basic::iappend() {
-  uint8_t index;
+  index_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
@@ -588,7 +588,7 @@ Adds an element to the start of a list.
 @value	a numeric or string expression
 ***/
 void Basic::iprepend() {
-  uint8_t index;
+  index_t index;
   if (*cip == I_STRLSTREF) {
     index = *++cip;
     if (*++cip != I_COMMA) {
@@ -618,7 +618,7 @@ void Basic::iprepend() {
 }
 
 /***bc bas LET
-Assigns the value of an expression to a variable. 
+Assigns the value of an expression to a variable.
 \usage LET variable = expression
 \args
 @variable	any variable
