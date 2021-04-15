@@ -122,7 +122,7 @@ void loop(void) {
 #endif
 
   bc = new Basic;
-  memset(bc, 0, sizeof(*bc));
+  *bc = {};
   bc->basic();  // does not return
 }
 
