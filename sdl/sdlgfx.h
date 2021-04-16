@@ -40,11 +40,17 @@ public:
   inline pixel_t colorFromRgb(int r, int g, int b) {
     return (pixel_t)SDL_MapRGB(m_text_surface->format, r, g, b);
   }
+
   inline pixel_t colorFromRgba(int r, int g, int b, int a) {
     return (pixel_t)SDL_MapRGBA(m_text_surface->format, r, g, b, a);
   }
+
   inline void rgbaFromColor(pixel_t p, uint8_t &r, uint8_t &g, uint8_t &b, uint8_t &a) {
     SDL_GetRGBA(p, m_text_surface->format, &r, &g, &b, &a);
+  }
+
+  inline uint8_t alphaFromColor(pixel_t p) {
+    return p >> 24;  // XXX: will break when changing surface format
   }
 
   bool blockFinished() { return true; }
