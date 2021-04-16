@@ -485,14 +485,40 @@ uint8_t sdfiles::loadImage(FILE *img_file,
     rc = 0;
 
     // Blit image to screen.
-    for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
-      int sx = x;
+    if (dst_y >= vs23.height()) {
+      // goes to off-screen pixel memory
+      // ignore what is already there, preserve/create alpha channel
+      for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
+        int sx = x;
 
-      for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
-        uint32_t d = data[y * img_w + sx];
-        pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
-        if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
-          vs23.setPixel(dx, dy, p);
+        for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
+          uint32_t d = data[y * img_w + sx];
+
+          uint8_t r = d;
+          uint8_t g = d >> 8;
+          uint8_t b = d >> 16;
+          uint8_t alpha = d >> 24;
+
+          pixel_t p_src = csp.colorFromRgba(r, g, b, alpha);
+          if (p_src == mask)
+            alpha = 0;
+
+          pixel_t p_dst = csp.colorFromRgba(r, g, b, alpha);
+          vs23.setPixel(dx, dy, p_dst);
+        }
+      }
+    } else {
+      // goes to visible screen
+      // blend with what is already there
+      for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
+        int sx = x;
+
+        for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
+          uint32_t d = data[y * img_w + sx];
+          pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
+          if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
+            vs23.setPixel(dx, dy, p);
+        }
       }
     }
 
@@ -555,10 +581,35 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
     goto out;
   }
 
+#ifdef TRUE_COLOR
   if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
-                 dst_x, dst_y, x, y, w, h, mask))
+                 dst_x, dst_y, x, y, w, h, 0)) {
+    if (mask != 0 && dst_y >= vs23.height()) {
+      // goes to off-screen pixel memory
+      // create alpha channel
+      for (int dy = dst_y; dy < dst_y + h; ++dy) {
+        for (int dx = dst_x; dx < dst_x + w; ++dx) {
+          pixel_t p_src = vs23.getPixel(dx, dy);
+
+          uint8_t r, g, b, a;
+          vs23.rgbaFromColor(p_src, r, g, b, a);
+
+          if (p_src == mask)
+            a = 0;
+
+          pixel_t p_dst = csp.colorFromRgba(r, g, b, a);
+          //printf("p_src 0x%x p_dst 0x%x a 0x%x\n", p_src, p_dst, a);
+          vs23.setPixel(dx, dy, p_dst);
+        }
+      }
+    }
+#else
+  if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
+                 dst_x, dst_y, x, y, w, h, mask)) {
+#endif
+
     rc = 0;
-  else
+  } else
     rc = SD_ERR_READ_FILE;  // XXX: or OOM...
 
 out:
