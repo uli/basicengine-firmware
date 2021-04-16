@@ -76,6 +76,10 @@ public:
 #if SDL_BPP == 8
     PIXELT(x, y) = c;
 #else
+    if (csp.getColorSpace() == 2) {
+      setPixel(x, y, c);
+      return;
+    }
     PIXELT(x, y) = m_current_palette[c];
 #endif
     m_dirty = true;
@@ -118,6 +122,12 @@ public:
   }
 
   inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+#if SDL_BPP > 8
+    if (csp.getColorSpace() == 2) {
+      setPixels(address, data, len);
+      return;
+    }
+#endif
     uint32_t x = address >> 16;
     uint32_t y = address & 0xffff;
 

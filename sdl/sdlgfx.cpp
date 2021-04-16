@@ -235,6 +235,10 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {
 
 void SDLGFX::setColorSpace(uint8_t palette) {
   Video::setColorSpace(palette);
+#if SDL_BPP > 8
+  if (palette > 1)
+    return;
+#endif
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
 #if SDL_BPP == 8
