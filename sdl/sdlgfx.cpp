@@ -284,9 +284,9 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 //#define PROFILE_BG
 
 #include "scalers.h"
-#ifdef USE_ROTOZOOM
 #include "rotozoom.h"
-#endif
+
+#include <alpha-lib/overlay_alpha.h>
 
 void SDLGFX::updateBg() {
   static uint32_t last_frame = 0;
@@ -311,7 +311,8 @@ void SDLGFX::updateBg() {
     m_dirty = false;
   }
 
-  memcpy(m_composite_surface->pixels, m_text_surface->pixels, m_text_surface->pitch * m_current_mode.y);
+  memcpy(m_composite_surface->pixels, m_text_surface->pixels,
+         m_text_surface->pitch * m_current_mode.y);
 
   m_bg_modified = false;
   m_dirty = true;
@@ -325,9 +326,9 @@ void SDLGFX::updateBg() {
       if (!bg->enabled || bg->prio != prio)
         continue;
 
-      int tsx = bg->tile_size_x;
-      int tsy = bg->tile_size_y;
-      int ypoff = bg->scroll_y % tsy;
+      int tile_size_x = bg->tile_size_x;
+      int tile_size_y = bg->tile_size_y;
+      int ypoff = bg->scroll_y % tile_size_y;
 
       // start/end coordinates of the visible BG window, relative to the
       // BG's origin, in pixels
@@ -335,47 +336,56 @@ void SDLGFX::updateBg() {
       int sy = bg->scroll_y;
 
       // offset to add to BG-relative coordinates to get screen coordinates
-      int owx = -sx + bg->win_x;
-      int owy = -sy + bg->win_y;
+      int offset_window_x = -sx + bg->win_x;
+      int offset_window_y = -sy + bg->win_y;
 
       int tile_start_x, tile_start_y;
       int tile_end_x, tile_end_y;
 
-      tile_start_y = bg->scroll_y / tsy;
-      tile_end_y = tile_start_y + (bg->win_h + ypoff) / tsy + 1;
+      tile_start_y = bg->scroll_y / tile_size_y;
+      tile_end_y = tile_start_y + (bg->win_h + ypoff) / tile_size_y + 1;
       tile_start_x = bg->scroll_x / bg->tile_size_x;
-      tile_end_x = tile_start_x + (bg->win_w + tsx - 1) / tsx + 1;
-
-      SDL_Rect clip = {
-        (Sint16)bg->win_x, (Sint16)bg->win_y,
-        bg->win_w,         bg->win_h
-      };
-      SDL_SetClipRect(m_composite_surface, &clip);
+      tile_end_x = tile_start_x + (bg->win_w + tile_size_x - 1) / tile_size_x + 1;
 
       for (int y = tile_start_y; y < tile_end_y; ++y) {
         for (int x = tile_start_x; x < tile_end_x; ++x) {
           uint8_t tile = bg->tiles[x % bg->w + (y % bg->h) * bg->w];
 
-          int t_x = bg->pat_x + (tile % bg->pat_w) * tsx;
-          int t_y = bg->pat_y + (tile / bg->pat_w) * tsy;
+          int tile_x = bg->pat_x + (tile % bg->pat_w) * tile_size_x;
+          int tile_y = bg->pat_y + (tile / bg->pat_w) * tile_size_y;
 
-          SDL_Rect dst;
-          dst.x = x * tsx + owx;
-          dst.y = y * tsy + owy;
-          dst.w = tsx;
-          dst.h = tsy;
+          int dst_x = x * tile_size_x + offset_window_x;
+          int dst_y = y * tile_size_y + offset_window_y;
+          int blit_width = tile_size_x;
+          int blit_height = tile_size_y;
 
-          SDL_Rect src;
-          src.x = t_x;
-          src.y = t_y;
-          src.w = tsx;
-          src.h = tsy;
+          // clip width, height and adjust source and destination if the tile
+          // crosses the BG window limits
+          if (dst_y < bg->win_y) {
+            tile_y -= dst_y - bg->win_y;
+            blit_height += dst_y - bg->win_y;
+            dst_y = bg->win_y;
+          } else if (dst_y + blit_height >= bg->win_y + bg->win_h)
+            blit_height = bg->win_y + bg->win_h - dst_y;
 
-          SDL_BlitSurface(m_text_surface, &src, m_composite_surface, &dst);
+          if (dst_x < bg->win_x) {
+            tile_x -= dst_x - bg->win_x;
+            blit_width += dst_x - bg->win_x;
+            dst_x = bg->win_x;
+          } else if (dst_x + blit_width >= bg->win_x + bg->win_w)
+            blit_width = bg->win_x + bg->win_w - dst_x;
+
+          if (blit_width <= 0 || blit_height <= 0)
+            continue;
+
+          overlay_alpha_stride_div255_round_approx(
+                  (uint8_t *)&PIXELC(dst_x, dst_y),
+                  (uint8_t *)&PIXELT(tile_x, tile_y),
+                  (uint8_t *)&PIXELC(dst_x, dst_y),
+                  m_composite_surface->pitch / sizeof(pixel_t), blit_height,
+                  blit_width, m_text_surface->pitch / sizeof(pixel_t));
         }
       }
-
-      SDL_SetClipRect(m_composite_surface, NULL);
     }
 
 #ifdef PROFILE_BG
@@ -389,96 +399,83 @@ void SDLGFX::updateBg() {
       // skip if not visible
       if (!s->enabled || s->prio != prio)
         continue;
-      if (s->pos_x + s->p.w < 0 ||
-          s->pos_x >= width() ||
-          s->pos_y + s->p.h < 0 ||
-          s->pos_y >= height())
+      if (s->pos_x + s->p.w < 0 || s->pos_x >= width() ||
+          s->pos_y + s->p.h < 0 || s->pos_y >= height())
         continue;
 
-#ifndef USE_ROTOZOOM
-      // consider flipped axes
-      // rotozoom bakes this into the surface
-      int dx, offx;
-      if (s->p.flip_x) {
-        dx = -1;
-        offx = s->p.w - 1;
-      } else {
-        dx = 1;
-        offx = 0;
-      }
-      int dy, offy;
-      if (s->p.flip_y) {
-        dy = -1;
-        offy = s->p.h - 1;
-      } else {
-        dy = 1;
-        offy = 0;
-      }
-#endif
-
       // sprite pattern start coordinates
-#ifdef USE_ROTOZOOM
       int px = s->p.pat_x + s->p.frame_x * s->p.w;
       int py = s->p.pat_y + s->p.frame_y * s->p.h;
-#else
-      int px = s->p.pat_x + s->p.frame_x * s->p.w + offx;
-      int py = s->p.pat_y + s->p.frame_y * s->p.h + offy;
-#endif
 
       pixel_t skey = s->p.key;
 
-#ifdef USE_ROTOZOOM
       // refresh surface as necessary
       if (s->must_reload || !s->surf) {
         // XXX: do this asynchronously
         if (s->surf)
           delete s->surf;
 
-        rz_surface_t in(s->p.w, s->p.h,
-                        &((uint32_t*)m_text_surface->pixels)[py * m_text_surface->pitch/4 + px],
-                        m_text_surface->pitch, s->p.key);
+        // XXX: shouldn't this happen on the rotozoom surface?
+        pixel_t alpha = s->alpha << 24;
+        if (s->p.key != 0) {
+          for (int y = 0; y < s->p.h; ++y) {
+            for (int x = 0; x < s->p.w; ++x) {
+              if ((PIXELT(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
+                PIXELT(px + x, py + y) = PIXELT(px + x, py + y) & 0xffffff;
+              } else {
+                PIXELT(px + x, py + y) =
+                        (PIXELT(px + x, py + y) & 0xffffff) | alpha;
+              }
+            }
+          }
+        }
 
-        rz_surface_t *out = rotozoomSurfaceXY(&in, s->angle,
-                                              s->p.flip_x ? -s->scale_x : s->scale_x,
-                                              s->p.flip_y ? -s->scale_y : s->scale_y, 0);
+        rz_surface_t in(s->p.w, s->p.h,
+                        &((uint32_t *)m_text_surface
+                                  ->pixels)[py * m_text_surface->pitch / 4 + px],
+                        m_text_surface->pitch, 0);
+
+        rz_surface_t *out = rotozoomSurfaceXY(
+                &in, s->angle, s->p.flip_x ? -s->scale_x : s->scale_x,
+                s->p.flip_y ? -s->scale_y : s->scale_y, 0);
         s->surf = out;
         s->must_reload = false;
       }
-#endif
 
-#ifdef USE_ROTOZOOM
-      int sprite_w = s->surf->w;
-      int sprite_h = s->surf->h;
-#else
-      int sprite_w = s->p.w;
-      int sprite_h = s->p.h;
-#endif
+      int dst_x = s->pos_x;
+      int dst_y = s->pos_y;
 
-      for (int y = 0; y != sprite_h; ++y) {
-        int yy = y + s->pos_y;
-        if (yy < 0 || yy >= height())
-          continue;
-        for (int x = 0; x != sprite_w; ++x) {
-          int xx = x + s->pos_x;
-          if (xx < 0 || xx >= width())
-            continue;
-#ifdef USE_ROTOZOOM
-          pixel_t p = s->surf->getPixel(x, y);
-#else
-          pixel_t p = getPixel(px + x * dx, py + y * dy);
-#endif
-          // draw only non-keyed pixels
-          if (p != skey)
-            PIXELC(xx, yy) = p;
-        }
-      }
+      int blit_width = s->surf->w;
+      int blit_height = s->surf->h;
+
+      int src_x = 0;
+      int src_y = 0;
+
+      if (dst_x < 0) {
+        blit_width += dst_x;
+        src_x -= dst_x;
+        dst_x = 0;
+      } else if (dst_x + blit_width >= m_current_mode.x)
+        blit_width = m_current_mode.x - dst_x;
+
+      if (dst_y < 0) {
+        blit_height += dst_y;
+        src_y -= dst_y;
+        dst_y = 0;
+      } else if (dst_y + blit_height >= m_current_mode.y)
+        blit_height = m_current_mode.y - dst_y;
+
+      overlay_alpha_stride_div255_round_approx(
+              (uint8_t *)&PIXELC(dst_x, dst_y),
+              (uint8_t *)&s->surf->pixels[src_y * s->surf->w + src_x],
+              (uint8_t *)&PIXELC(dst_x, dst_y),
+              m_composite_surface->pitch / sizeof(pixel_t), blit_height,
+              blit_width, s->surf->w);
     }
   }
 }
 
 #ifdef USE_BG_ENGINE
-
-#ifdef USE_ROTOZOOM
 
 // implementation based on RZ surface
 uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
@@ -525,10 +522,6 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   lower_surf = lower->surf;
 
   // Check for pixels in overlapping area.
-  pixel_t lkey, rkey;
-  lkey = left->p.key;
-  rkey = right->p.key;
-
   for (int y = lower->pos_y;
        y < _min(lower->pos_y + lower_surf->h, upper->pos_y + upper_surf->h);
        y++) {
@@ -543,7 +536,7 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
       pixel_t leftpixel = left_surf->getPixel(leftpx, leftpy);
       pixel_t rightpixel = right_surf->getPixel(rightpx, rightpy);
 
-      if (leftpixel != lkey && rightpixel != rkey)
+      if (alphaFromColor(leftpixel) >= 0x80 && alphaFromColor(rightpixel) >= 0x80)
         return dir;
     }
   }
@@ -551,75 +544,5 @@ uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
   // no overlapping pixels
   return 0;
 }
-
-#else // USE_ROTOZOOM
-
-// implementation based on pattern in video memory
-uint8_t SDLGFX::spriteCollision(uint8_t collidee, uint8_t collider) {
-  uint8_t dir = 0x40;  // indicates collision
-
-  const sprite_t *us = &m_sprite[collidee];
-  const sprite_t *them = &m_sprite[collider];
-
-  if (us->pos_x + us->p.w < them->pos_x)
-    return 0;
-  if (them->pos_x + them->p.w < us->pos_x)
-    return 0;
-  if (us->pos_y + us->p.h < them->pos_y)
-    return 0;
-  if (them->pos_y + them->p.h < us->pos_y)
-    return 0;
-
-  // sprite frame as bounding box; we may want something more flexible...
-  const sprite_t *left = us, *right = them;
-  if (them->pos_x < us->pos_x) {
-    dir |= joyLeft;
-    left = them;
-    right = us;
-  } else if (them->pos_x + them->p.w > us->pos_x + us->p.w)
-    dir |= joyRight;
-
-  const sprite_t *upper = us, *lower = them;
-  if (them->pos_y < us->pos_y) {
-    dir |= joyUp;
-    upper = them;
-    lower = us;
-  } else if (them->pos_y + them->p.h > us->pos_y + us->p.h)
-    dir |= joyDown;
-
-  // Check for pixels in overlapping area.
-  const int leftpatx = left->p.pat_x + left->p.frame_x * left->p.w;
-  const int leftpaty = left->p.pat_y + left->p.frame_y * left->p.h;
-  const int rightpatx = right->p.pat_x + right->p.frame_x * right->p.w;
-  const int rightpaty = right->p.pat_y + right->p.frame_y * right->p.h;
-
-  pixel_t lkey, rkey;
-  lkey = left->p.key;
-  rkey = right->p.key;
-
-  for (int y = lower->pos_y;
-       y < _min(lower->pos_y + lower->p.h, upper->pos_y + upper->p.h);
-       y++) {
-    int leftpy = leftpaty + y - left->pos_y;
-    int rightpy = rightpaty + y - right->pos_y;
-
-    for (int x = right->pos_x;
-         x < _min(right->pos_x + right->p.w, left->pos_x + left->p.w);
-         x++) {
-      int leftpx = leftpatx + x - left->pos_x;
-      int rightpx = rightpatx + x - right->pos_x;
-      pixel_t leftpixel = getPixel(leftpx, leftpy);
-      pixel_t rightpixel = getPixel(rightpx, rightpy);
-
-      if (leftpixel != lkey && rightpixel != rkey)
-        return dir;
-    }
-  }
-
-  // no overlapping pixels
-  return 0;
-}
-
-#endif	// USE_ROTOZOOM
 
 #endif  // USE_BG_ENGINE

@@ -3,6 +3,7 @@ TARGET = basic.sdl
 SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
 	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
 	$(shell ls libraries/azip/*.cpp) \
+	$(shell ls libraries/alpha-lib/src/*.cpp) \
 	$(shell ls sdl/*.cpp) \
 	$(shell ls arduino_compat/*.cpp)
 
@@ -20,9 +21,10 @@ CC=$(CROSS_COMPILE)gcc
 CXX=$(CROSS_COMPILE)g++
 
 INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
-	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb
+	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
+	-Ilibraries/alpha-lib/include
 ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
-	   -Wall -Wno-unused -D_GNU_SOURCE -DSDL
+	   -Wall -Wno-unused -D_GNU_SOURCE -DSDL -DDISABLE_NEON
 CFLAGS += $(ARDFLAGS)
 #CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage

@@ -69,8 +69,8 @@
 #define PIXEL_TYPE uint32_t
 #define TRUE_COLOR
 #define IPIXEL_TYPE uint32_t
-#define USE_ROTOZOOM
 #endif
+#define USE_ROTOZOOM
 #define BUFFERED_SCREEN
 #define SINGLE_BLIT
 #define AUDIO_SAMPLE_RATE 48000
