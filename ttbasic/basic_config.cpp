@@ -269,7 +269,7 @@ void loadConfig() {
   if (sizeof(pixel_t) == 1)
     CONFIG.cursor_color = (pixel_t)0x92;
   else
-    CONFIG.cursor_color = (pixel_t)0x00009500UL;
+    CONFIG.cursor_color = (pixel_t)0xff009500UL;
 
   CONFIG.beep_volume = 15;
 
