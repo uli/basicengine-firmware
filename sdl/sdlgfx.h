@@ -17,9 +17,9 @@
 #define SDL_SCREEN_MODES 20
 
 #define PIXELT(x, y) \
-  (((pixel_t *)m_text_surface->pixels)[x + y * m_text_surface->pitch / sizeof(pixel_t)])
+  (((pixel_t *)m_text_surface->pixels)     [(x) + (y) * m_text_surface->pitch      / sizeof(pixel_t)])
 #define PIXELC(x, y) \
-  (((pixel_t *)m_composite_surface->pixels)[x + y * m_composite_surface->pitch / sizeof(pixel_t)])
+  (((pixel_t *)m_composite_surface->pixels)[(x) + (y) * m_composite_surface->pitch / sizeof(pixel_t)])
 
 class SDLGFX : public BGEngine {
 public:
