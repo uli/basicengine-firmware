@@ -728,10 +728,14 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
         //s = ptok;               // 文字列の処理ずみの部分を詰める
         len--;                    // I_DALLARを置き換えるために格納位置を移動
         ibuf[len++] = I_HEXNUM;   //中間コードを記録
+#if TOKEN_TYPE == uint32_t
+        ibuf[len++] = hex;
+#else
         ibuf[len++] = hex & 255;  //定数の下位バイトを記録
         ibuf[len++] = hex >> 8;   //定数の上位バイトを記録
         ibuf[len++] = hex >> 16;
         ibuf[len++] = hex >> 24;
+#endif
       }
     }
 
@@ -1406,14 +1410,20 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       sc0.setColor(COL(NUM), COL(BG));
       putnum(n, 0, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
-      ip += icodes_per_num();    //ポインタを次の中間コードへ進める
-      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
-        c_putch(' ', devno);  //空白を表示
-    } else if (*ip == I_HEXNUM) {  //Processing hexadecimal constants
-      ip++;                        //ポインタを値へ進める
+      ip += icodes_per_num();  //ポインタを次の中間コードへ進める
+      if (!nospaceb((token_t)*ip))  //もし例外にあたらなければ
+        c_putch(' ', devno);        //空白を表示
+    } else if (*ip == I_HEXNUM) {   //Processing hexadecimal constants
+      ip++;                         //ポインタを値へ進める
       sc0.setColor(COL(NUM), COL(BG));
       c_putch('$', devno);  //空白を表示
+#if TOKEN_TYPE == uint32_t
+      uint32_t num = ip[0];
+      ++ip;
+#else
       uint32_t num = ip[0] | (ip[1] << 8) | (ip[2] << 16) | (ip[3] << 24);
+      ip += 4;  //ポインタを次の中間コードへ進める
+#endif
       int digits;
       if (num < 256)
         digits = 2;
@@ -1423,9 +1433,8 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
         digits = 8;
       putHexnum(num, digits, devno);  //値を取得して表示
       sc0.setColor(COL(FG), COL(BG));
-      ip += 4;                //ポインタを次の中間コードへ進める
-      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
-        c_putch(' ', devno);  //空白を表示
+      if (!nospaceb((token_t)*ip))  //もし例外にあたらなければ
+        c_putch(' ', devno);        //空白を表示
     } else if (*ip == I_VAR || *ip == I_LVAR) {  //もし定数なら
       if (*ip == I_LVAR) {
         sc0.setColor(COL(LVAR), COL(BG));
@@ -1437,8 +1446,8 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       c_puts(nvar_names.name(var_code), devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
-        c_putch(' ', devno);  //空白を表示
+      if (!nospaceb((token_t)*ip))  //もし例外にあたらなければ
+        c_putch(' ', devno);        //空白を表示
     } else if (*ip == I_VARARR || *ip == I_NUMLST) {
       ip++;
       var_code = *ip++;
@@ -1470,8 +1479,8 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       c_putch('$', devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (!nospaceb((token_t)*ip))     //もし例外にあたらなければ
-        c_putch(' ', devno);  //空白を表示
+      if (!nospaceb((token_t)*ip))  //もし例外にあたらなければ
+        c_putch(' ', devno);        //空白を表示
     } else if (*ip == I_STRARR || *ip == I_STRLST) {
       ip++;
       var_code = *ip++;
@@ -1511,7 +1520,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       sc0.setColor(COL(STR), COL(BG));
       //文字列を表示する
       c_putch(c, devno);  //文字列の括りを表示
-      i = *ip++;          //文字数を取得してポインタを文字列へ進める
+      i = *ip++;  //文字数を取得してポインタを文字列へ進める
       while (i--)               //文字数だけ繰り返す
         c_putch(*ip++, devno);  //ポインタを進めながら文字を表示
       c_putch(c, devno);        //文字列の括りを表示
@@ -4100,8 +4109,13 @@ num_t BASIC_FP Basic::ivalue() {
 
     case I_HEXNUM:  // 16進定数
       // get the constant
+#if TOKEN_TYPE == uint32_t
+      value = cip[0];
+      ++cip;
+#else
       value = (uint32_t)cip[0] | ((uint32_t)cip[1] << 8) | ((uint32_t)cip[2] << 16) | ((uint32_t)cip[3] << 24);
       cip += 4;
+#endif
       break;
 
     //変数の値の取得
