@@ -478,7 +478,8 @@ uint8_t sdfiles::loadImage(FILE *img_file,
     goto out;
   }
 
-  data = (uint32_t *)stbi_load_from_file(img_file, (int *)&img_w, (int *)&img_h, &components, 4);
+  data = (uint32_t *)stbi_load_from_file(img_file, (int *)&img_w, (int *)&img_h,
+                                         &components, sizeof(pixel_t));
 
   if (data) {
     rc = 0;
@@ -488,7 +489,7 @@ uint8_t sdfiles::loadImage(FILE *img_file,
       int sx = x;
 
       for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
-        uint32_t d = data[y*img_w + sx];
+        uint32_t d = data[y * img_w + sx];
         pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
         if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
           vs23.setPixel(dx, dy, p);
@@ -589,7 +590,7 @@ uint8_t sdfiles::saveBitmap(char *fname, int32_t src_x, int32_t src_y,
 #endif
 
 #ifdef TRUE_COLOR
-  pixel_t *data = (pixel_t *)malloc(w * h * 4);
+  pixel_t *data = (pixel_t *)malloc(w * h * sizeof(pixel_t));
   if (!data)
     return ERR_OOM;
 
