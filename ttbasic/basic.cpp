@@ -110,7 +110,7 @@ uint8_t BASIC_FP Basic::getParam(num_t &prm, num_t v_min, num_t v_max,
 // Get command argument (uint32_t, with argument check)
 uint32_t BASIC_FP Basic::getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
                                   token_t next_token) {
-  prm = (uint32_t)(int32_t)iexp();
+  prm = (uint32_t)(int64_t)iexp();
   if (!err && (prm < v_min || prm > v_max))
     E_VALUE(v_min, v_max);
   else if (next_token != I_NONE && *cip++ != next_token) {
@@ -121,7 +121,7 @@ uint32_t BASIC_FP Basic::getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
 
 // Get command arguments (uint32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(uint32_t &prm, token_t next_token) {
-  prm = (uint32_t)(int32_t)iexp();
+  prm = (uint32_t)(int64_t)iexp();
   if (!err && next_token != I_NONE && *cip++ != next_token) {
     E_SYNTAX(next_token);
   }
