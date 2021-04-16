@@ -314,7 +314,7 @@ void SDLGFX::updateBg() {
     m_dirty = false;
   }
 
-  SDL_BlitSurface(m_text_surface, NULL, m_composite_surface, NULL);
+  memcpy(m_composite_surface->pixels, m_text_surface->pixels, m_text_surface->pitch * m_current_mode.y);
 
   m_bg_modified = false;
   m_dirty = true;
