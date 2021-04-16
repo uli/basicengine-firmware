@@ -200,23 +200,24 @@ bool SDLGFX::setMode(uint8_t mode) {
     SDL_FreeSurface(m_composite_surface);
 
   SDL_PixelFormat *fmt = m_screen->format;
+
   m_text_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
     m_current_mode.x,
     m_last_line,
-    fmt->BitsPerPixel,
-    fmt->Rmask,
-    fmt->Gmask,
-    fmt->Bmask,
-    fmt->Amask
+    32,
+    0x000000ffUL,
+    0x0000ff00UL,
+    0x00ff0000UL,
+    0xff000000UL
   );
   m_composite_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
     m_current_mode.x,
     m_last_line,
-    fmt->BitsPerPixel,
-    fmt->Rmask,
-    fmt->Gmask,
-    fmt->Bmask,
-    fmt->Amask
+    32,
+    0x000000ffUL,
+    0x0000ff00UL,
+    0x00ff0000UL,
+    0
   );
 
   // XXX: handle fail
@@ -266,21 +267,17 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {
 
 void SDLGFX::setColorSpace(uint8_t palette) {
   Video::setColorSpace(palette);
-#if SDL_BPP > 8
   if (palette > 1)
     return;
-#endif
+
   uint8_t *pal = csp.paletteData(palette);
   for (int i = 0; i < 256; ++i) {
 #if SDL_BPP == 8
     SDL_Color c = { pal[i * 3], pal[i * 3 + 1], pal[i * 3 + 2] };
-    SDL_SetColors(m_screen,  &c, i, 1);
-    SDL_SetColors(m_text_surface, &c, i, 1);
-    SDL_SetColors(m_composite_surface, &c, i, 1);
-#else
+    SDL_SetColors(m_screen, &c, i, 1);
+#endif
     m_current_palette[i] = SDL_MapRGB(m_text_surface->format, pal[i * 3],
                                       pal[i * 3 + 1], pal[i * 3 + 2]);
-#endif
   }
 }
 
