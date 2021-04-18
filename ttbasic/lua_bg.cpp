@@ -12,7 +12,7 @@ static int l_bg_set_size(lua_State *l) {
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_bg_set_size(bg, x, y));
+  lua_pushret(l, eb_bg_set_size(bg, x, y));
   return 1;
 }
 
@@ -22,7 +22,7 @@ static int l_bg_set_pattern(lua_State *l) {
   int32_t y = luaL_checknumber(l, 3);
   int32_t w = luaL_checknumber(l, 4);
 
-  c_bg_set_pattern(bg, x, y, w);
+  eb_bg_set_pattern(bg, x, y, w);
   return 0;
 }
 
@@ -31,7 +31,7 @@ static int l_bg_set_tile_size(lua_State *l) {
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
 
-  c_bg_set_tile_size(bg, x, y);
+  eb_bg_set_tile_size(bg, x, y);
   return 0;
 }
 
@@ -42,7 +42,7 @@ static int l_bg_set_window(lua_State *l) {
   int32_t w = luaL_checknumber(l, 4);
   int32_t h = luaL_checknumber(l, 5);
 
-  c_bg_set_window(bg, x, y, w, h);
+  eb_bg_set_window(bg, x, y, w, h);
   return 0;
 }
 
@@ -50,26 +50,26 @@ static int l_bg_set_priority(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
   int32_t p = luaL_checknumber(l, 2);
 
-  c_bg_set_priority(bg, p);
+  eb_bg_set_priority(bg, p);
   return 0;
 }
 
 static int l_bg_enable(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_enable(bg));
+  lua_pushret(l, eb_bg_enable(bg));
   return 1;
 }
 
 static int l_bg_disable(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_disable(bg));
+  lua_pushret(l, eb_bg_disable(bg));
   return 1;
 }
 
 static int l_bg_off(lua_State *l) {
-  c_bg_off();
+  eb_bg_off();
   return 0;
 }
 
@@ -77,7 +77,7 @@ static int l_bg_load(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
   const char *file = luaL_checkstring(l, 2);
 
-  lua_pushret(l, c_bg_load(bg, file));
+  lua_pushret(l, eb_bg_load(bg, file));
   return 1;
 }
 
@@ -85,7 +85,7 @@ static int l_bg_save(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
   const char *file = luaL_checkstring(l, 2);
 
-  lua_pushret(l, c_bg_save(bg, file));
+  lua_pushret(l, eb_bg_save(bg, file));
   return 1;
 }
 
@@ -94,7 +94,7 @@ static int l_bg_move(lua_State *l) {
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
 
-  c_bg_move(bg, x, y);
+  eb_bg_move(bg, x, y);
   return 0;
 }
 
@@ -103,7 +103,7 @@ static int l_bg_map_tile(lua_State *l) {
   int32_t from = luaL_checknumber(l, 2);
   int32_t to = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_bg_map_tile(bg, from, to));
+  lua_pushret(l, eb_bg_map_tile(bg, from, to));
   return 1;
 }
 
@@ -115,56 +115,56 @@ static int l_bg_set_tile(lua_State *l) {
   int32_t y = luaL_checknumber(l, 3);
   int32_t t = luaL_checknumber(l, 4);
 
-  lua_pushret(l, c_bg_set_tile(bg, x, y, t));
+  lua_pushret(l, eb_bg_set_tile(bg, x, y, t));
   return 1;
 }
 
 static int l_bg_x(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_x(bg));
+  lua_pushret(l, eb_bg_x(bg));
   return 1;
 }
 
 static int l_bg_y(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_y(bg));
+  lua_pushret(l, eb_bg_y(bg));
   return 1;
 }
 
 static int l_bg_win_x(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_win_x(bg));
+  lua_pushret(l, eb_bg_win_x(bg));
   return 1;
 }
 
 static int l_bg_win_y(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_win_y(bg));
+  lua_pushret(l, eb_bg_win_y(bg));
   return 1;
 }
 
 static int l_bg_win_width(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_win_width(bg));
+  lua_pushret(l, eb_bg_win_width(bg));
   return 1;
 }
 
 static int l_bg_win_height(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_win_height(bg));
+  lua_pushret(l, eb_bg_win_height(bg));
   return 1;
 }
 
 static int l_bg_enabled(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_bg_enabled(bg));
+  lua_pushret(l, eb_bg_enabled(bg));
   return 1;
 }
 
@@ -175,7 +175,7 @@ static int l_bg_set_win(lua_State *l) {
   int32_t w = luaL_checknumber(l, 4);
   int32_t h = luaL_checknumber(l, 5);
 
-  lua_pushret(l, c_bg_set_win(bg, x, y, w, h));
+  lua_pushret(l, eb_bg_set_win(bg, x, y, w, h));
   return 1;
 }
 
@@ -190,7 +190,7 @@ static int l_sprite_set_pattern(lua_State *l) {
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_sprite_set_pattern(s, x, y));
+  lua_pushret(l, eb_sprite_set_pattern(s, x, y));
   return 1;
 }
 
@@ -199,21 +199,21 @@ static int l_sprite_set_size(lua_State *l) {
   int32_t w = luaL_checknumber(l, 2);
   int32_t h = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_sprite_set_size(s, w, h));
+  lua_pushret(l, eb_sprite_set_size(s, w, h));
   return 1;
 }
 
 static int l_sprite_enable(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_sprite_enable(s));
+  lua_pushret(l, eb_sprite_enable(s));
   return 1;
 }
 
 static int l_sprite_disable(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_sprite_disable(s));
+  lua_pushret(l, eb_sprite_disable(s));
   return 1;
 }
 
@@ -221,7 +221,7 @@ static int l_sprite_set_key(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   ipixel_t key = luaL_checknumber(l, 2);
 
-  lua_pushret(l, c_sprite_set_key(s, key));
+  lua_pushret(l, eb_sprite_set_key(s, key));
   return 1;
 }
 
@@ -229,7 +229,7 @@ static int l_sprite_set_priority(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   int32_t prio = luaL_checknumber(l, 2);
 
-  lua_pushret(l, c_sprite_set_priority(s, prio));
+  lua_pushret(l, eb_sprite_set_priority(s, prio));
   return 1;
 }
 
@@ -242,7 +242,7 @@ static int l_sprite_set_frame(lua_State *l) {
   luaL_checktype(l, 5, LUA_TBOOLEAN);
   bool flip_y = lua_toboolean(l, 5);
 
-  lua_pushret(l, c_sprite_set_frame(s, frame_x, frame_y, flip_x, flip_y));
+  lua_pushret(l, eb_sprite_set_frame(s, frame_x, frame_y, flip_x, flip_y));
   return 1;
 }
 
@@ -251,7 +251,7 @@ static int l_sprite_set_opacity(lua_State *l) {
   luaL_checktype(l, 2, LUA_TBOOLEAN);
   bool onoff = lua_toboolean(l, 2);
 
-  lua_pushret(l, c_sprite_set_opacity(s, onoff));
+  lua_pushret(l, eb_sprite_set_opacity(s, onoff));
   return 1;
 }
 
@@ -259,7 +259,7 @@ static int l_sprite_set_angle(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   double angle = luaL_checknumber(l, 2);
 
-  c_sprite_set_angle(s, angle);
+  eb_sprite_set_angle(s, angle);
   return 0;
 }
 
@@ -267,7 +267,7 @@ static int l_sprite_set_scale_x(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   double scale_x = luaL_checknumber(l, 2);
 
-  c_sprite_set_scale_x(s, scale_x);
+  eb_sprite_set_scale_x(s, scale_x);
   return 0;
 }
 
@@ -275,7 +275,7 @@ static int l_sprite_set_scale_y(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   double scale_y = luaL_checknumber(l, 2);
 
-  c_sprite_set_scale_y(s, scale_y);
+  eb_sprite_set_scale_y(s, scale_y);
   return 0;
 }
 
@@ -283,14 +283,14 @@ static int l_sprite_set_alpha(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
   int32_t alpha = luaL_checkinteger(l, 2);
 
-  c_sprite_set_alpha(s, alpha);
+  eb_sprite_set_alpha(s, alpha);
   return 0;
 }
 
 static int l_sprite_reload(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushret(l, c_sprite_reload(s));
+  lua_pushret(l, eb_sprite_reload(s));
   return 1;
 }
 
@@ -299,7 +299,7 @@ static int l_sprite_move(lua_State *l) {
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_sprite_move(s, x, y));
+  lua_pushret(l, eb_sprite_move(s, x, y));
   return 1;
 }
 
@@ -308,7 +308,7 @@ static int l_sprite_tile_collision(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 2);
   int32_t tile = luaL_checknumber(l, 3);
 
-  lua_pushret(l, c_sprite_tile_collision(s, bg, tile));
+  lua_pushret(l, eb_sprite_tile_collision(s, bg, tile));
   return 1;
 }
 
@@ -316,84 +316,84 @@ static int l_sprite_collision(lua_State *l) {
   int32_t s1 = luaL_checknumber(l, 1);
   int32_t s2 = luaL_checknumber(l, 2);
 
-  lua_pushret(l, c_sprite_collision(s1, s2));
+  lua_pushret(l, eb_sprite_collision(s1, s2));
   return 1;
 }
 
 static int l_sprite_enabled(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushboolean(l, c_sprite_enabled(s));
+  lua_pushboolean(l, eb_sprite_enabled(s));
   return 1;
 }
 
 static int l_sprite_x(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_x(s));
+  lua_pushinteger(l, eb_sprite_x(s));
   return 1;
 }
 
 static int l_sprite_y(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_y(s));
+  lua_pushinteger(l, eb_sprite_y(s));
   return 1;
 }
 
 static int l_sprite_w(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_w(s));
+  lua_pushinteger(l, eb_sprite_w(s));
   return 1;
 }
 
 static int l_sprite_h(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_h(s));
+  lua_pushinteger(l, eb_sprite_h(s));
   return 1;
 }
 
 static int l_sprite_frame_x(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_frame_x(s));
+  lua_pushinteger(l, eb_sprite_frame_x(s));
   return 1;
 }
 
 static int l_sprite_frame_y(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_frame_y(s));
+  lua_pushinteger(l, eb_sprite_frame_y(s));
   return 1;
 }
 
 static int l_sprite_flip_x(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_flip_x(s));
+  lua_pushinteger(l, eb_sprite_flip_x(s));
   return 1;
 }
 
 static int l_sprite_flip_y(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_flip_y(s));
+  lua_pushinteger(l, eb_sprite_flip_y(s));
   return 1;
 }
 
 static int l_sprite_opaque(lua_State *l) {
   int32_t s = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_sprite_opaque(s));
+  lua_pushinteger(l, eb_sprite_opaque(s));
   return 1;
 }
 
 static int l_frameskip(lua_State *l) {
   int32_t skip = luaL_checknumber(l, 1);
 
-  lua_pushinteger(l, c_frameskip(skip));
+  lua_pushinteger(l, eb_frameskip(skip));
   return 1;
 }
 

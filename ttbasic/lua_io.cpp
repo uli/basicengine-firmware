@@ -9,7 +9,7 @@ static int l_gpio_set_pin(lua_State *l) {
   uint32_t pinno = luaL_checkinteger(l, 2);
   uint32_t data = luaL_checkinteger(l, 3);
 
-  lua_pushret(l, c_gpio_set_pin(portno, pinno, data));
+  lua_pushret(l, eb_gpio_set_pin(portno, pinno, data));
   return 1;
 }
 
@@ -17,7 +17,7 @@ static int l_gpio_get_pin(lua_State *l) {
   uint32_t portno = luaL_checkinteger(l, 1);
   uint32_t pinno = luaL_checkinteger(l, 2);
 
-  lua_pushret(l, c_gpio_get_pin(portno, pinno));
+  lua_pushret(l, eb_gpio_get_pin(portno, pinno));
   return 1;
 }
 
@@ -26,7 +26,7 @@ static int l_gpio_set_pin_mode(lua_State *l) {
   uint32_t pinno = luaL_checkinteger(l, 2);
   uint32_t mode = luaL_checkinteger(l, 3);
 
-  lua_pushret(l, c_gpio_set_pin_mode(portno, pinno, mode));
+  lua_pushret(l, eb_gpio_set_pin_mode(portno, pinno, mode));
   return 1;
 }
 

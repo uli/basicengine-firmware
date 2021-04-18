@@ -237,7 +237,7 @@ void BASIC_INT Basic::iwindow() {
 
   if (*cip == I_OFF) {
     ++cip;
-    c_window_off();
+    eb_window_off();
     return;
   }
 
@@ -250,7 +250,7 @@ void BASIC_INT Basic::iwindow() {
   if (getParam(h, I_NONE))
     return;
 
-  c_window(x, y, w, h);
+  eb_window(x, y, w, h);
 }
 
 /***bc scr FONT
@@ -275,7 +275,7 @@ void Basic::ifont() {
   if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
     return;
 
-  c_font(idx);
+  eb_font(idx);
 }
 
 /***bc scr SCREEN
@@ -319,7 +319,7 @@ void SMALL Basic::iscreen() {
   if (getParam(m, I_NONE))
     return;
 
-  c_screen(m);
+  eb_screen(m);
 }
 
 /***bc scr PALETTE
@@ -360,7 +360,7 @@ void Basic::ipalette() {
       return;
   }
 
-  c_palette(p, hw, sw, vw, !!f);
+  eb_palette(p, hw, sw, vw, !!f);
 }
 
 /***bc scr BORDER
@@ -393,7 +393,7 @@ void Basic::iborder() {
       return;
   }
 
-  c_border(y, uv, x, w);
+  eb_border(y, uv, x, w);
 }
 
 /***bc scr VSYNC
@@ -427,7 +427,7 @@ void Basic::ivsync() {
   else if (getParam(tm, 0, INT32_MAX, I_NONE))
     return;
 
-  c_vsync(tm);
+  eb_vsync(tm);
 }
 
 static const uint8_t vs23_write_regs[] PROGMEM = {
@@ -516,7 +516,7 @@ Returns the number of video frames since power-on.
 num_t BASIC_FP Basic::nframe() {
   if (checkOpen() || checkClose())
     return 0;
-  return c_frame();
+  return eb_frame();
 }
 
 /***bf scr VREG
@@ -616,7 +616,7 @@ void Basic::ilocate() {
   if (getParam(y, I_NONE))
     return;
 
-  c_locate(x, y);
+  eb_locate(x, y);
 }
 
 /***bf scr RGB
@@ -651,7 +651,7 @@ num_t BASIC_FP Basic::nrgb() {
       getParam(b, I_CLOSE)) {
     return 0;
   }
-  return c_rgb_indexed(r, g, b);
+  return eb_rgb_indexed(r, g, b);
 }
 
 /***bc scr COLOR
@@ -677,10 +677,10 @@ void Basic::icolor() {
       int32_t cc;
       if (getParam(cc, 0, IPIXEL_MAX, I_NONE))
         return;
-      c_cursor_color(csp.fromIndexed((ipixel_t)cc));
+      eb_cursor_color(csp.fromIndexed((ipixel_t)cc));
     }
   }
-  c_color(csp.fromIndexed((ipixel_t)fc), csp.fromIndexed((ipixel_t)bgc));
+  eb_color(csp.fromIndexed((ipixel_t)fc), csp.fromIndexed((ipixel_t)bgc));
 }
 
 /***bf scr CSIZE
@@ -697,8 +697,8 @@ num_t BASIC_FP Basic::ncsize() {
   // 画面サイズ定数の参照
   int32_t a = getparam();
   switch (a) {
-  case 0:	return c_csize_width();
-  case 1:	return c_csize_height();
+  case 0:	return eb_csize_width();
+  case 1:	return eb_csize_height();
   default:	E_VALUE(0, 1); return 0;
   }
 }
@@ -717,9 +717,9 @@ Returns the dimensions of the current screen mode in pixels.
 num_t BASIC_FP Basic::npsize() {
   int32_t a = getparam();
   switch (a) {
-  case 0:	return c_psize_width();
-  case 1:	return c_psize_height();
-  case 2:	return c_psize_lastline();
+  case 0:	return eb_psize_width();
+  case 1:	return eb_psize_height();
+  case 2:	return eb_psize_lastline();
   default:	E_VALUE(0, 2); return 0;
   }
 }
@@ -769,7 +769,7 @@ int32_t BASIC_INT Basic::ncharfun() {
   if (checkClose())
     return 0;
 
-  return c_char_get(x, y);
+  return eb_char_get(x, y);
 }
 
 /***bc scr CHAR
@@ -790,7 +790,7 @@ void BASIC_FP Basic::ichar() {
     return;
   if (getParam(c, I_NONE))
     return;
-  c_char_set(x, y, c);
+  eb_char_set(x, y, c);
 }
 
 /***bc scr CSCROLL
@@ -820,7 +820,7 @@ void Basic::icscroll() {
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
       getParam(d, I_NONE))
     return;
-  c_cscroll(x1, y1, x2, y2, d);
+  eb_cscroll(x1, y1, x2, y2, d);
 }
 
 /***bc pix GSCROLL
@@ -848,7 +848,7 @@ void Basic::igscroll() {
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
       getParam(d, I_NONE))
     return;
-  c_gscroll(x1, y1, x2, y2, d);
+  eb_gscroll(x1, y1, x2, y2, d);
 }
 
 /***bf pix POINT
@@ -871,7 +871,7 @@ num_t BASIC_INT Basic::npoint() {
     return 0;
   if (checkClose())
     return 0;
-  return c_point(x, y);
+  return eb_point(x, y);
 }
 
 /***bc pix GPRINT
@@ -917,7 +917,7 @@ void GROUP(basic_video) Basic::ipset() {
     return;
 
   c = csp.fromIndexed(c);
-  c_pset(x, y, c);
+  eb_pset(x, y, c);
 }
 
 /***bc pix LINE
@@ -954,7 +954,7 @@ void GROUP(basic_video) Basic::iline() {
     c = csp.fromIndexed(c);
   } else
     c = -1;
-  c_line(x1, y1, x2, y2, c);
+  eb_line(x1, y1, x2, y2, c);
 }
 
 /***bc pix CIRCLE
@@ -986,7 +986,7 @@ void GROUP(basic_video) Basic::icircle() {
   if (f != (ipixel_t)-1)
     f = csp.fromIndexed(f);
 
-  c_circle(x, y, r, c, f);
+  eb_circle(x, y, r, c, f);
 }
 
 /***bc pix RECT
@@ -1021,7 +1021,7 @@ void GROUP(basic_video) Basic::irect() {
   if (f != (ipixel_t)-1)
     f = csp.fromIndexed(f);
 
-  c_rect(x1, y1, x2, y2, c, f);
+  eb_rect(x1, y1, x2, y2, c, f);
 }
 
 /***bc pix BLIT
@@ -1055,5 +1055,5 @@ void GROUP(basic_video) Basic::iblit() {
   if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
     return;
 
-  c_blit(x, y, dx, dy, w, h);
+  eb_blit(x, y, dx, dy, w, h);
 }

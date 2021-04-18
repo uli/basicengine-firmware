@@ -41,7 +41,7 @@ void Basic::idwrite() {
       getParam(data, I_NONE))
     return;
 
-  c_gpio_set_pin(portno, pinno, !!data);
+  eb_gpio_set_pin(portno, pinno, !!data);
 }
 
 /***bc io GPMODE
@@ -71,7 +71,7 @@ void Basic::igpmode() {
       getParam(mode, I_NONE))
     return;
 
-  c_gpio_set_pin_mode(portno, pinno, mode);
+  eb_gpio_set_pin_mode(portno, pinno, mode);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -219,7 +219,7 @@ num_t BASIC_INT Basic::ngpin() {
   if (getParam(pinno, 0, 15, I_NONE)) return 0;
   if (checkClose()) return 0;
 
-  return c_gpio_get_pin(portno, pinno);
+  return eb_gpio_get_pin(portno, pinno);
 }
 
 /***bf io ANA

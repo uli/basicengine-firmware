@@ -9,12 +9,12 @@ static int l_locate(lua_State *l) {
   int32_t x = luaL_checknumber(l, 1);
   int32_t y = luaL_checknumber(l, 2);
 
-  c_locate(x, y);
+  eb_locate(x, y);
   return 0;
 }
 
 static int l_window_off(lua_State *l) {
-  c_window_off();
+  eb_window_off();
   return 0;
 }
 
@@ -24,19 +24,19 @@ static int l_window(lua_State *l) {
   int32_t w = luaL_checknumber(l, 3);
   int32_t h = luaL_checknumber(l, 4);
 
-  lua_pushret(l, c_window(x, y, w, h));
+  lua_pushret(l, eb_window(x, y, w, h));
   return 1;
 }
 
 static int l_font(lua_State *l) {
   int32_t idx = luaL_checknumber(l, 1);
-  lua_pushret(l, c_font(idx));
+  lua_pushret(l, eb_font(idx));
   return 1;
 }
 
 static int l_screen(lua_State *l) {
   int32_t m = luaL_checknumber(l, 1);
-  lua_pushret(l, c_screen(m));
+  lua_pushret(l, eb_screen(m));
   return 1;
 }
 
@@ -53,7 +53,7 @@ static int l_palette(lua_State *l) {
     f = lua_toboolean(l, 5);
   }
 
-  lua_pushret(l, c_palette(p, hw, sw, vw, f));
+  lua_pushret(l, eb_palette(p, hw, sw, vw, f));
   return 0;
 }
 
@@ -65,7 +65,7 @@ int l_border(lua_State *l) {
     x = luaL_checknumber(l, 3);
     w = luaL_checknumber(l, 4);
   }
-  c_border(y, uv, x, w);
+  eb_border(y, uv, x, w);
   return 0;
 }
 
@@ -74,12 +74,12 @@ int l_vsync(lua_State *l) {
   if (lua_gettop(l) > 0) {
     tm = luaL_checkinteger(l, 1);
   }
-  c_vsync(tm);
+  eb_vsync(tm);
   return 0;
 }
 
 int l_frame(lua_State *l) {
-  lua_pushinteger(l, c_frame());
+  lua_pushinteger(l, eb_frame());
   return 1;
 }
 
@@ -87,7 +87,7 @@ int l_rgb(lua_State *l) {
   int32_t r = luaL_checknumber(l, 1);
   int32_t g = luaL_checknumber(l, 2);
   int32_t b = luaL_checknumber(l, 3);
-  lua_pushinteger(l, c_rgb(r, g, b));
+  lua_pushinteger(l, eb_rgb(r, g, b));
   return 1;
 }
 
@@ -99,52 +99,52 @@ int l_color(lua_State *l) {
   }
   if (lua_gettop(l) > 2) {
     cc = luaL_checknumber(l, 2);
-    c_cursor_color(cc);
+    eb_cursor_color(cc);
   }
 
-  c_color(fc, bgc);
+  eb_color(fc, bgc);
   return 0;
 }
 
 int l_csize_height(lua_State *l) {
-  lua_pushinteger(l, c_csize_height());
+  lua_pushinteger(l, eb_csize_height());
   return 1;
 }
 
 int l_csize_width(lua_State *l) {
-  lua_pushinteger(l, c_csize_width());
+  lua_pushinteger(l, eb_csize_width());
   return 1;
 }
 
 int l_psize_height(lua_State *l) {
-  lua_pushinteger(l, c_psize_height());
+  lua_pushinteger(l, eb_psize_height());
   return 1;
 }
 
 int l_psize_width(lua_State *l) {
-  lua_pushinteger(l, c_psize_width());
+  lua_pushinteger(l, eb_psize_width());
   return 1;
 }
 
 int l_psize_lastline(lua_State *l) {
-  lua_pushinteger(l, c_psize_lastline());
+  lua_pushinteger(l, eb_psize_lastline());
   return 1;
 }
 
 int l_pos_x(lua_State *l) {
-  lua_pushinteger(l, c_pos_x());
+  lua_pushinteger(l, eb_pos_x());
   return 1;
 }
 
 int l_pos_y(lua_State *l) {
-  lua_pushinteger(l, c_pos_y());
+  lua_pushinteger(l, eb_pos_y());
   return 1;
 }
 
 int l_char_get(lua_State *l) {
   int32_t x = luaL_checknumber(l, 1);
   int32_t y = luaL_checknumber(l, 2);
-  lua_pushinteger(l, c_char_get(x, y));
+  lua_pushinteger(l, eb_char_get(x, y));
   return 1;
 }
 
@@ -153,7 +153,7 @@ int l_char_set(lua_State *l) {
   int32_t y = luaL_checknumber(l, 2);
   pixel_t c = luaL_checknumber(l, 3);
 
-  c_char_set(x, y, c);
+  eb_char_set(x, y, c);
   return 0;
 }
 
@@ -163,7 +163,7 @@ int l_cscroll(lua_State *l) {
   int32_t x2 = luaL_checknumber(l, 3);
   int32_t y2 = luaL_checknumber(l, 4);
   int32_t d = luaL_checknumber(l, 5);
-  lua_pushret(l, c_cscroll(x1, y1, x2, y2, d));
+  lua_pushret(l, eb_cscroll(x1, y1, x2, y2, d));
   return 1;
 }
 
@@ -173,14 +173,14 @@ int l_gscroll(lua_State *l) {
   int32_t x2 = luaL_checknumber(l, 3);
   int32_t y2 = luaL_checknumber(l, 4);
   int32_t d = luaL_checknumber(l, 5);
-  lua_pushret(l, c_gscroll(x1, y1, x2, y2, d));
+  lua_pushret(l, eb_gscroll(x1, y1, x2, y2, d));
   return 1;
 }
 
 int l_point(lua_State *l) {
   int32_t x = luaL_checknumber(l, 1);
   int32_t y = luaL_checknumber(l, 2);
-  lua_pushinteger(l, c_point(x, y));
+  lua_pushinteger(l, eb_point(x, y));
   return 1;
 }
 
@@ -188,7 +188,7 @@ int l_pset(lua_State *l) {
   int32_t x = luaL_checknumber(l, 1);
   int32_t y = luaL_checknumber(l, 2);
   pixel_t c = luaL_checkinteger(l, 3);
-  c_pset(x, y, c);
+  eb_pset(x, y, c);
   return 0;
 }
 
@@ -200,7 +200,7 @@ int l_line(lua_State *l) {
   pixel_t c = (pixel_t)-1;
   if (lua_gettop(l) > 4)
     c = luaL_checkinteger(l, 5);
-  c_line(x1, y1, x2, y2, c);
+  eb_line(x1, y1, x2, y2, c);
   return 0;
 }
 
@@ -210,7 +210,7 @@ int l_circle(lua_State *l) {
   int32_t r = luaL_checknumber(l, 3);
   pixel_t c = luaL_checkinteger(l, 4);
   pixel_t f = luaL_checkinteger(l, 5);
-  c_circle(x, y, r, c, f);
+  eb_circle(x, y, r, c, f);
   return 0;
 }
 
@@ -221,7 +221,7 @@ int l_rect(lua_State *l) {
   int32_t y2 = luaL_checknumber(l, 4);
   pixel_t c = luaL_checkinteger(l, 5);
   pixel_t f = luaL_checkinteger(l, 6);
-  c_rect(x1, y1, x2, y2, c, f);
+  eb_rect(x1, y1, x2, y2, c, f);
   return 0;
 }
 
@@ -232,7 +232,7 @@ int l_blit(lua_State *l) {
   int32_t dy = luaL_checkinteger(l, 4);
   int32_t w = luaL_checkinteger(l, 5);
   int32_t h = luaL_checkinteger(l, 6);
-  lua_pushret(l, c_blit(x, y, dx, dy, w, h));
+  lua_pushret(l, eb_blit(x, y, dx, dy, w, h));
   return 1;
 }
 

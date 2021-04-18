@@ -22,12 +22,12 @@ uint8_t event_sprite_proc_idx;
 void BASIC_INT Basic::event_handle_sprite() {
   uint8_t dir;
   for (int i = 0; i < MAX_SPRITES; ++i) {
-    if (!c_sprite_enabled(i))
+    if (!eb_sprite_enabled(i))
       continue;
     for (int j = i + 1; j < MAX_SPRITES; ++j) {
-      if (!c_sprite_enabled(j))
+      if (!eb_sprite_enabled(j))
         continue;
-      if ((dir = c_sprite_collision(i, j))) {
+      if ((dir = eb_sprite_collision(i, j))) {
         init_stack_frame();
         push_num_arg(i);
         push_num_arg(j);
@@ -82,7 +82,7 @@ void Basic::ibg() {
 
   if (*cip == I_OFF) {
     ++cip;
-    c_bg_off();
+    eb_bg_off();
     return;
   }
 
@@ -97,37 +97,37 @@ void Basic::ibg() {
   case I_TILES:
     if (getParam(w, I_COMMA)) return;
     if (getParam(h, I_NONE)) return;
-    if (c_bg_set_size(m, w, h))
+    if (eb_bg_set_size(m, w, h))
       return;
     break;
   case I_PATTERN:
     if (getParam(px, I_COMMA)) return;
     if (getParam(py, I_COMMA)) return;
     if (getParam(pw, I_NONE)) return;
-    c_bg_set_pattern(m, px, py, pw);
+    eb_bg_set_pattern(m, px, py, pw);
     break;
   case I_SIZE:
     if (getParam(tx, I_COMMA)) return;
     if (getParam(ty, I_NONE)) return;
-    c_bg_set_tile_size(m, tx, ty);
+    eb_bg_set_tile_size(m, tx, ty);
     break;
   case I_WINDOW:
     if (getParam(wx, I_COMMA)) return;
     if (getParam(wy, I_COMMA)) return;
     if (getParam(ww, I_COMMA)) return;
     if (getParam(wh, I_NONE)) return;
-    c_bg_set_window(m, wx, wy, ww, wh);
+    eb_bg_set_window(m, wx, wy, ww, wh);
     break;
   case I_ON:
     // XXX: do sanity check before enabling
-    c_bg_enable(m);
+    eb_bg_enable(m);
     break;
   case I_OFF:
-    c_bg_disable(m);
+    eb_bg_disable(m);
     break;
   case I_PRIO:
     if (getParam(prio, I_NONE)) return;
-    c_bg_set_priority(m, prio);
+    eb_bg_set_priority(m, prio);
     break;
   default:
     cip--;
@@ -160,7 +160,7 @@ void Basic::iloadbg() {
   if (!(filename = getParamFname()))
     return;
 
-  c_bg_load(bg, filename.c_str());
+  eb_bg_load(bg, filename.c_str());
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -188,7 +188,7 @@ void Basic::isavebg() {
   if (!(filename = getParamFname()))
     return;
 
-  c_bg_save(bg, filename.c_str());
+  eb_bg_save(bg, filename.c_str());
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -216,7 +216,7 @@ void BASIC_FP Basic::imovebg() {
   if (getParam(y, I_NONE))
     return;
 
-  c_bg_move(bg, x, y);
+  eb_bg_move(bg, x, y);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -285,29 +285,29 @@ void BASIC_INT Basic::isprite() {
 
   if (*cip == I_OFF) {
     ++cip;
-    c_sprite_off();
+    eb_sprite_off();
     return;
   }
 
   if (getParam(num, 0, MAX_SPRITES, I_NONE))
     return;
 
-  frame_x = c_sprite_frame_x(num);
-  frame_y = c_sprite_frame_y(num);
-  flags = (c_sprite_opaque(num) << 0) |
-          (c_sprite_flip_x(num) << 1) |
-          (c_sprite_flip_y(num) << 2);
+  frame_x = eb_sprite_frame_x(num);
+  frame_y = eb_sprite_frame_y(num);
+  flags = (eb_sprite_opaque(num) << 0) |
+          (eb_sprite_flip_x(num) << 1) |
+          (eb_sprite_flip_y(num) << 2);
 
   for (;;) switch (*cip++) {
   case I_PATTERN:
     if (getParam(pat_x, I_COMMA)) return;
     if (getParam(pat_y, I_NONE)) return;
-    c_sprite_set_pattern(num, pat_x, pat_y);
+    eb_sprite_set_pattern(num, pat_x, pat_y);
     break;
   case I_SIZE:
     if (getParam(w, I_COMMA)) return;
     if (getParam(h, I_NONE)) return;
-    c_sprite_set_size(num, w, h);
+    eb_sprite_set_size(num, w, h);
     break;
   case I_FRAME:
     if (getParam(frame_x, I_NONE)) return;
@@ -319,10 +319,10 @@ void BASIC_INT Basic::isprite() {
     set_frame = true;
     break;
   case I_ON:
-    c_sprite_enable(num);
+    eb_sprite_enable(num);
     break;
   case I_OFF:
-    c_sprite_disable(num);
+    eb_sprite_disable(num);
     break;
   case I_FLAGS: {
       int32_t new_flags;
@@ -339,16 +339,16 @@ void BASIC_INT Basic::isprite() {
     break;
   case I_KEY:
     if (getParam(key, I_NONE)) return;
-    c_sprite_set_key(num, key);
+    eb_sprite_set_key(num, key);
     break;
   case I_PRIO:
     if (getParam(prio, I_NONE)) return;
-    c_sprite_set_priority(num, prio);
+    eb_sprite_set_priority(num, prio);
     break;
 #ifdef USE_ROTOZOOM
   case I_ANGLE:
     if (getParam(angle, I_NONE)) return;
-    c_sprite_set_angle(num, angle);
+    eb_sprite_set_angle(num, angle);
     break;
   case I_SCALE:
     if (getParam(scale_x, I_NONE)) return;
@@ -357,14 +357,14 @@ void BASIC_INT Basic::isprite() {
       if (getParam(scale_y, I_NONE)) return;
     } else
       scale_y = scale_x;
-    c_sprite_set_scale_x(num, scale_x);
-    c_sprite_set_scale_y(num, scale_y);
+    eb_sprite_set_scale_x(num, scale_x);
+    eb_sprite_set_scale_y(num, scale_y);
     break;
 #endif
 #ifdef TRUE_COLOR
   case I_ALPHA:
     if (getParam(alpha, I_NONE)) return;
-    c_sprite_set_alpha(num, alpha);
+    eb_sprite_set_alpha(num, alpha);
     break;
 #endif
   default:
@@ -373,10 +373,10 @@ void BASIC_INT Basic::isprite() {
     if (!end_of_statement())
       SYNTAX_T("exp sprite parameter");
     if (set_frame)
-      c_sprite_set_frame(num, frame_x, frame_y, flags & 2, flags & 4);
+      eb_sprite_set_frame(num, frame_x, frame_y, flags & 2, flags & 4);
     if (set_opacity || (set_frame && (flags & 1)))
-      c_sprite_set_opacity(num, flags & 1);
-    if (c_sprite_reload(num)) {
+      eb_sprite_set_opacity(num, flags & 1);
+    if (eb_sprite_reload(num)) {
       if (!err)
         err = ERR_OOM;
     }
@@ -409,7 +409,7 @@ void BASIC_FP Basic::imovesprite() {
     return;
   if (getParam(pos_y, I_NONE))
     return;
-  c_sprite_move(num, pos_x, pos_y);
+  eb_sprite_move(num, pos_x, pos_y);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -471,7 +471,7 @@ void Basic::iplot() {
   int32_t bg, x, y, t;
   if (getParam(bg, I_NONE))
     return;
-  if (!c_bg_get_tiles(bg)) {
+  if (!eb_bg_get_tiles(bg)) {
     // BG not defined
     err = ERR_RANGE;
     return;
@@ -482,7 +482,7 @@ void Basic::iplot() {
       return;
     if (getParam(y, I_NONE))
       return;
-    c_bg_map_tile(bg, x, y);
+    eb_bg_map_tile(bg, x, y);
   } else if (*cip++ != I_COMMA) {
     E_SYNTAX(I_COMMA);
   } else {
@@ -492,11 +492,11 @@ void Basic::iplot() {
       return;
     if (is_strexp()) {
       BString dat = istrexp();
-      c_bg_set_tiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
+      eb_bg_set_tiles(bg, x, y, (const uint8_t *)dat.c_str(), dat.length());
     } else {
       if (getParam(t, I_NONE))
         return;
-      c_bg_set_tile(bg, x, y, t);
+      eb_bg_set_tile(bg, x, y, t);
     }
   }
 #else
@@ -523,7 +523,7 @@ void Basic::iframeskip() {
   int32_t skip;
   if (getParam(skip, I_NONE))
     return;
-  c_frameskip(skip);
+  eb_frameskip(skip);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
@@ -571,7 +571,7 @@ num_t BASIC_FP Basic::ntilecoll() {
     return 0;
   if (checkClose())
     return 0;
-  return c_sprite_tile_collision(a, b, c);
+  return eb_sprite_tile_collision(a, b, c);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -620,8 +620,8 @@ num_t BASIC_FP Basic::nsprcoll() {
     return 0;
   if (checkClose())
     return 0;
-  if (c_sprite_enabled(a) && c_sprite_enabled(b))
-    return c_sprite_collision(a, b);
+  if (eb_sprite_enabled(a) && eb_sprite_enabled(b))
+    return eb_sprite_collision(a, b);
   else
     return 0;
 #else
@@ -646,7 +646,7 @@ num_t BASIC_FP Basic::nsprx() {
   if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return c_sprite_x(spr);
+  return eb_sprite_x(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -668,7 +668,7 @@ num_t BASIC_FP Basic::nspry() {
   if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return c_sprite_y(spr);
+  return eb_sprite_y(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -697,7 +697,7 @@ num_t BASIC_FP Basic::nsprw() {
   if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return c_sprite_w(spr);
+  return eb_sprite_w(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -726,7 +726,7 @@ num_t BASIC_FP Basic::nsprh() {
   if (checkOpen() || getParam(spr, I_CLOSE))
     return 0;
 
-  return c_sprite_h(spr);
+  return eb_sprite_h(spr);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -749,7 +749,7 @@ num_t BASIC_FP Basic::nbscrx() {
   if (checkOpen() || getParam(bg, I_CLOSE))
     return 0;
 
-  return c_bg_x(bg);
+  return eb_bg_x(bg);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -771,7 +771,7 @@ num_t BASIC_FP Basic::nbscry() {
   if (checkOpen() || getParam(bg, I_CLOSE))
     return 0;
 
-  return c_bg_y(bg);
+  return eb_bg_y(bg);
 #else
   err = ERR_NOT_SUPPORTED;
   return 0;
@@ -798,17 +798,17 @@ void SMALL resize_windows() {
     bool obscured = false;
     int top_y = (y + (sc0.getScreenHeight() - 5)) * sc0.getFontHeight();
     for (int i = 0; i < MAX_BG; ++i) {
-      if (!c_bg_enabled(i))
+      if (!eb_bg_enabled(i))
         continue;
-      if (c_bg_win_y(i) >= top_y) {
-        c_bg_disable(i);
+      if (eb_bg_win_y(i) >= top_y) {
+        eb_bg_disable(i);
         turn_bg_back_on[i] = true;
         restore_bgs = true;
-      } else if (c_bg_win_y(i) + c_bg_win_height(i) >= top_y) {
-        original_bg_height[i] = c_bg_win_height(i);
-        c_bg_set_win(i, c_bg_win_x(i), c_bg_win_y(i), c_bg_win_width(i),
-                      c_bg_win_height(i) - c_bg_win_y(i) -
-                              c_bg_win_height(i) + top_y);
+      } else if (eb_bg_win_y(i) + eb_bg_win_height(i) >= top_y) {
+        original_bg_height[i] = eb_bg_win_height(i);
+        eb_bg_set_win(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
+                      eb_bg_win_height(i) - eb_bg_win_y(i) -
+                              eb_bg_win_height(i) + top_y);
         obscured = true;
         turn_bg_back_on[i] = false;
         restore_bgs = true;
@@ -842,9 +842,9 @@ void SMALL restore_windows() {
     restore_bgs = false;
     for (int i = 0; i < MAX_BG; ++i) {
       if (turn_bg_back_on[i]) {
-        c_bg_enable(i);
+        eb_bg_enable(i);
       } else if (original_bg_height[i] >= 0) {
-        c_bg_set_win(i, c_bg_win_x(i), c_bg_win_y(i), c_bg_win_width(i),
+        eb_bg_set_win(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
                       original_bg_height[i]);
       }
     }

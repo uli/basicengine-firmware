@@ -14,7 +14,7 @@ uint16_t pcf_state = 0xffff;
 #include <h3_i2c.h>
 #endif
 
-int c_gpio_set_pin(int portno, int pinno, int data) {
+int eb_gpio_set_pin(int portno, int pinno, int data) {
 #ifdef ESP8266
   if (check_param(pinno, 0, 15))
     return -1;
@@ -57,7 +57,7 @@ int c_gpio_set_pin(int portno, int pinno, int data) {
 #endif
 }
 
-int c_gpio_get_pin(int portno, int pinno) {
+int eb_gpio_get_pin(int portno, int pinno) {
 #ifdef ESP8266
   if (check_param(pinno, 0, 15)) return -1;
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish
@@ -82,7 +82,7 @@ int c_gpio_get_pin(int portno, int pinno) {
 #endif
 }
 
-int c_gpio_set_pin_mode(int portno, int pinno, int mode) {
+int eb_gpio_set_pin_mode(int portno, int pinno, int mode) {
 #ifdef H3
   if (check_param(portno, 0, 7) ||
       check_param(pinno, 0, 31) ||
