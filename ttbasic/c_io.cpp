@@ -5,10 +5,13 @@
 #include "c_io.h"
 
 #ifdef ESP8266
+#include <Wire.h>
 uint16_t pcf_state = 0xffff;
 #endif
+
 #ifdef H3
 #include <ports.h>
+#include <h3_i2c.h>
 #endif
 
 int c_gpio_set_pin(int portno, int pinno, int data) {
@@ -90,5 +93,47 @@ int c_gpio_set_pin_mode(int portno, int pinno, int mode) {
 #else
   err = ERR_NOT_SUPPORTED;
   return -1;
+#endif
+}
+
+int eb_i2c_write(unsigned char addr, const char *data, int count) {
+#ifdef ESP8266
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
+
+  // I2Cデータ送信
+  Wire.beginTransmission(i2cAdr);
+  if (out.length()) {
+    for (uint32_t i = 0; i < out.length(); i++)
+      Wire.write(out[i]);
+  }
+  return Wire.endTransmission();
+#elif defined(H3)
+  h3_i2c_set_slave_address(addr);
+  return h3_i2c_write(data, count);
+#endif
+}
+
+int eb_i2c_read(unsigned char addr, char *data, int count) {
+  BString in;
+
+#ifdef ESP8266
+  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
+  // to avoid interference.
+  while (!blockFinished()) {}
+
+  // I2Cデータ送受信
+  Wire.beginTransmission(i2cAdr);
+  Wire.requestFrom(i2cAdr, rdlen);
+  int idx = 0;
+  while (Wire.available()) {
+    data[idx++] = Wire.read();
+  }
+
+  return Wire.endTransmission();
+#elif defined(H3)
+  h3_i2c_set_slave_address(addr);
+  return h3_i2c_read(data, count);
 #endif
 }
