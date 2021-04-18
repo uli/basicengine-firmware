@@ -99,17 +99,9 @@ num_t BASIC_INT Basic::ni2cw() {
   if (checkClose())
     return 0;
 
-  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
-  // to avoid interference.
-  while (!blockFinished()) {}
-
-  // I2Cデータ送信
-  Wire.beginTransmission(i2cAdr);
-  if (out.length()) {
-    for (uint32_t i = 0; i < out.length(); i++)
-      Wire.write(out[i]);
-  }
-  return Wire.endTransmission();
+  int ret = eb_i2c_write(i2cAdr, out.c_str(), out.length());
+  // XXX: should we process that a little?
+  return ret;
 }
 
 /***bf io I2CR
@@ -130,6 +122,7 @@ If `out_data` is an empty string, no data is sent before the read request.
 BString Basic::si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
+  char in_buf[rdlen];
 
   if (checkOpen())
     goto out;
@@ -143,23 +136,16 @@ BString Basic::si2cr() {
   if (getParam(rdlen, 0, INT32_MAX, I_CLOSE))
     goto out;
 
-  // SDA is multiplexed with MVBLK0, so we wait for block move to finish
-  // to avoid interference.
-  while (!blockFinished()) {}
-
-  // I2Cデータ送受信
-  Wire.beginTransmission(i2cAdr);
-
-  // 送信
-  if (out.length()) {
-    Wire.write((const uint8_t *)out.c_str(), out.length());
-  }
-  if ((retval[0] = Wire.endTransmission()))
+  if (out.length() && eb_i2c_write(i2cAdr, out.c_str(), out.length()) != 0)
     goto out;
-  Wire.requestFrom(i2cAdr, rdlen);
-  while (Wire.available()) {
-    in += (char)Wire.read();
+
+  if (eb_i2c_read(i2cAdr, in_buf, rdlen) == 0) {
+    // XXX: need a BString ctor for binary arrays
+    for (int i = 0; i < rdlen; ++i) {
+      in += in_buf[i];
+    }
   }
+
 out:
   return in;
 }
