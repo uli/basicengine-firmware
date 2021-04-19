@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
-#include "c_io.h"
+#include "eb_io.h"
 #include "lua_defs.h"
 
 static int l_gpio_set_pin(lua_State *l) {

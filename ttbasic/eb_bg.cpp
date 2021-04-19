@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "basic.h"
-#include "c_bg.h"
-#include "c_api.h"
+#include "eb_bg.h"
+#include "eb_api.h"
 
 #ifdef USE_BG_ENGINE
 

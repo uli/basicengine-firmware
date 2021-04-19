@@ -2,7 +2,7 @@
 // Copyright (c) 2019-2021 Ulrich Hecht
 
 #include "basic.h"
-#include "c_video.h"
+#include "eb_video.h"
 #include "lua_defs.h"
 
 static int l_locate(lua_State *l) {

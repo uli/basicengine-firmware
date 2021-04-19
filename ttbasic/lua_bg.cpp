@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "basic.h"
-#include "c_bg.h"
+#include "eb_bg.h"
 #include "lua_defs.h"
 
 #ifdef USE_BG_ENGINE

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
-#include "c_api.h"
-#include "c_io.h"
+#include "eb_api.h"
+#include "eb_io.h"
 
 #ifdef ESP8266
 #include <Wire.h>

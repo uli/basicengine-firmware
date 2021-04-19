@@ -4,8 +4,8 @@
 #include "basic.h"
 #include "graphics.h"
 
-#include "c_video.h"
-#include "c_api.h"
+#include "eb_video.h"
+#include "eb_api.h"
 
 extern "C" {
 

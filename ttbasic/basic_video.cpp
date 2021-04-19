@@ -2,7 +2,7 @@
 // Copyright (c) 2017-2021 Ulrich Hecht
 
 #include "basic.h"
-#include "c_video.h"
+#include "eb_video.h"
 
 // *** フォント参照 ***************
 const uint8_t *ttbasic_font = TV_DISPLAY_FONT;

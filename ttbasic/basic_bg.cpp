@@ -2,7 +2,7 @@
 // Copyright (c) 2017-2019 Ulrich Hecht
 
 #include "basic.h"
-#include "c_bg.h"
+#include "eb_bg.h"
 
 // Saved background and text window dimensions.
 // These values are set when a program is interrupted and the text window is
