@@ -12,6 +12,7 @@ extern lua_State *lua;
 
 int luaopen_be(lua_State *l);
 int luaopen_bg(lua_State *l);
+int luaopen_input(lua_State *l);
 int luaopen_video(lua_State *l);
 int luaopen_hwio(lua_State *l);
 
