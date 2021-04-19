@@ -806,7 +806,7 @@ void SMALL resize_windows() {
         restore_bgs = true;
       } else if (eb_bg_win_y(i) + eb_bg_win_height(i) >= top_y) {
         original_bg_height[i] = eb_bg_win_height(i);
-        eb_bg_set_win(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
+        eb_bg_set_window(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
                       eb_bg_win_height(i) - eb_bg_win_y(i) -
                               eb_bg_win_height(i) + top_y);
         obscured = true;
@@ -844,7 +844,7 @@ void SMALL restore_windows() {
       if (turn_bg_back_on[i]) {
         eb_bg_enable(i);
       } else if (original_bg_height[i] >= 0) {
-        eb_bg_set_win(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
+        eb_bg_set_window(i, eb_bg_win_x(i), eb_bg_win_y(i), eb_bg_win_width(i),
                       original_bg_height[i]);
       }
     }

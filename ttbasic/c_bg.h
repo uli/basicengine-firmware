@@ -60,8 +60,6 @@ int eb_bg_win_width(int bg);
 int eb_bg_win_height(int bg);
 int eb_bg_enabled(int bg);
 
-int eb_bg_set_win(int bg, int x, int y, int w, int h);
-
 int eb_sprite_frame_x(int s);
 int eb_sprite_frame_y(int s);
 int eb_sprite_flip_x(int s);

@@ -35,17 +35,6 @@ static int l_bg_set_tile_size(lua_State *l) {
   return 0;
 }
 
-static int l_bg_set_window(lua_State *l) {
-  int32_t bg = luaL_checknumber(l, 1);
-  int32_t x = luaL_checknumber(l, 2);
-  int32_t y = luaL_checknumber(l, 3);
-  int32_t w = luaL_checknumber(l, 4);
-  int32_t h = luaL_checknumber(l, 5);
-
-  eb_bg_set_window(bg, x, y, w, h);
-  return 0;
-}
-
 static int l_bg_set_priority(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
   int32_t p = luaL_checknumber(l, 2);
@@ -168,14 +157,14 @@ static int l_bg_enabled(lua_State *l) {
   return 1;
 }
 
-static int l_bg_set_win(lua_State *l) {
+static int l_bg_set_window(lua_State *l) {
   int32_t bg = luaL_checknumber(l, 1);
   int32_t x = luaL_checknumber(l, 2);
   int32_t y = luaL_checknumber(l, 3);
   int32_t w = luaL_checknumber(l, 4);
   int32_t h = luaL_checknumber(l, 5);
 
-  lua_pushret(l, eb_bg_set_win(bg, x, y, w, h));
+  lua_pushret(l, eb_bg_set_window(bg, x, y, w, h));
   return 1;
 }
 
@@ -406,6 +395,8 @@ int luaopen_bg(lua_State *l) {
   lua_setglobal_P(l, "bg_set_tile_size");
   lua_pushcfunction(l, l_bg_set_priority);
   lua_setglobal_P(l, "bg_set_priority");
+  lua_pushcfunction(l, l_bg_set_window);
+  lua_setglobal_P(l, "bg_set_window");
   lua_pushcfunction(l, l_bg_enable);
   lua_setglobal_P(l, "bg_enable");
   lua_pushcfunction(l, l_bg_disable);
@@ -436,8 +427,6 @@ int luaopen_bg(lua_State *l) {
   lua_setglobal_P(l, "bg_win_height");
   lua_pushcfunction(l, l_bg_enabled);
   lua_setglobal_P(l, "bg_enabled");
-  lua_pushcfunction(l, l_bg_set_win);
-  lua_setglobal_P(l, "bg_set_win");
   lua_pushcfunction(l, l_sprite_off);
   lua_setglobal_P(l, "sprite_off");
   lua_pushcfunction(l, l_sprite_set_pattern);

@@ -434,15 +434,6 @@ int eb_bg_enabled(int bg) {
   return vs23.bgEnabled(bg);
 }
 
-int eb_bg_set_win(int bg, int x, int y, int w, int h) {
-  if (check_param(bg, 0, MAX_BG - 1))
-    return -1;
-
-  vs23.setBgWin(bg, x, y, w, h);
-  return 0;
-}
-
-
 int eb_sprite_frame_x(int s) {
   if (check_param(s, 0, MAX_SPRITES))
     return -1;
