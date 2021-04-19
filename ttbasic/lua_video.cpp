@@ -188,7 +188,7 @@ int l_pset(lua_State *l) {
   int32_t x = luaL_checknumber(l, 1);
   int32_t y = luaL_checknumber(l, 2);
   pixel_t c = luaL_checkinteger(l, 3);
-  eb_pset(x, y, c);
+  eb_pset(x, y, csp.fromIndexed(c));
   return 0;
 }
 
@@ -200,7 +200,7 @@ int l_line(lua_State *l) {
   pixel_t c = (pixel_t)-1;
   if (lua_gettop(l) > 4)
     c = luaL_checkinteger(l, 5);
-  eb_line(x1, y1, x2, y2, c);
+  eb_line(x1, y1, x2, y2, csp.fromIndexed(c));
   return 0;
 }
 
@@ -210,7 +210,7 @@ int l_circle(lua_State *l) {
   int32_t r = luaL_checknumber(l, 3);
   pixel_t c = luaL_checkinteger(l, 4);
   pixel_t f = luaL_checkinteger(l, 5);
-  eb_circle(x, y, r, c, f);
+  eb_circle(x, y, r, csp.fromIndexed(c), csp.fromIndexed(f));
   return 0;
 }
 
@@ -221,7 +221,7 @@ int l_rect(lua_State *l) {
   int32_t y2 = luaL_checknumber(l, 4);
   pixel_t c = luaL_checkinteger(l, 5);
   pixel_t f = luaL_checkinteger(l, 6);
-  eb_rect(x1, y1, x2, y2, c, f);
+  eb_rect(x1, y1, x2, y2, csp.fromIndexed(c), csp.fromIndexed(f));
   return 0;
 }
 
