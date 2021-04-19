@@ -15,6 +15,8 @@
 #include "video.h"
 #include "sound.h"
 
+#include "eb_input.h"
+
 #include "epigrams.h"
 
 #ifdef ESP8266
@@ -5833,7 +5835,7 @@ void Basic::autoexec() {
   BString autoexec(F("AUTOEXEC.BAS"));
   if (_stat(autoexec.c_str(), &st) == 0) {
     sc0.peekKey();	// update internal key state
-    if (pad_state(0) == 0) {
+    if (eb_pad_state(0) == 0) {
       Basic sub;
       exec_sub(sub, autoexec.c_str());
       free(sub.listbuf);

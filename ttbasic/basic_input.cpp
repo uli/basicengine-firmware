@@ -2,6 +2,7 @@
 // Copyright (c) 2017-2019 Ulrich Hecht
 
 #include "basic.h"
+#include "eb_input.h"
 
 bool event_pad_enabled;
 uint8_t event_pad_proc_idx[MAX_PADS];
@@ -32,26 +33,7 @@ uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump) {
 }
 
 int32_t BASIC_FP iinkey() {
-  int32_t rc = 0;
-
-  if (c_kbhit()) {
-    rc = sc0.tryGetChar();
-    process_hotkeys(rc);
-  }
-
-  return rc;
-}
-
-static int BASIC_INT cursor_pad_state() {
-  // The state is kept up-to-date by the interpreter polling for Ctrl-C.
-  return kb.state(PS2KEY_L_Arrow) << joyLeftShift |
-         kb.state(PS2KEY_R_Arrow) << joyRightShift |
-         kb.state(PS2KEY_Down_Arrow) << joyDownShift |
-         kb.state(PS2KEY_Up_Arrow) << joyUpShift |
-         kb.state(PS2KEY_X) << joyXShift |
-         kb.state(PS2KEY_A) << joyTriShift |
-         kb.state(PS2KEY_S) << joyOShift |
-         kb.state(PS2KEY_Z) << joySquShift;
+  return eb_inkey();
 }
 
 #ifdef USE_PSX_GPIO
@@ -59,15 +41,6 @@ static int BASIC_INT cursor_pad_state() {
 #else
 #define JOY_MASK 0x3ffff
 #endif
-
-int BASIC_INT pad_state(int num) {
-  switch (num) {
-  case 0: return (joy.read() & JOY_MASK) | cursor_pad_state();
-  case 1: return cursor_pad_state();
-  case 2: return joy.read() & JOY_MASK;
-  }
-  return 0;
-}
 
 /***bf io PAD
 Get the state of the game controller(s) and cursor pad.
@@ -139,7 +112,7 @@ num_t BASIC_INT Basic::npad() {
   if (checkClose())
     return 0;
 
-  int ps = pad_state(num);
+  int ps = eb_pad_state(num);
   if (state) {
     int cs = ps ^ event_pad_last[num];
     retval[1] = cs & ~ps;
@@ -292,20 +265,18 @@ Key codes are fixed and do not change with the configured keyboard layout.
 num_t BASIC_INT Basic::nkey() {
   int32_t scancode;
 
-  if (checkOpen())
+  if (checkOpen() ||
+      getParam(scancode, I_CLOSE))
     return 0;
 
-  if (getParam(scancode, 0, 255, I_CLOSE))
-    return 0;
-
-  return kb.state(scancode);
+  return eb_key_state(scancode);
 }
 
 void BASIC_INT Basic::event_handle_pad() {
   for (int i = 0; i < MAX_PADS; ++i) {
     if (event_pad_proc_idx[i] == NO_PROC)
       continue;
-    int new_state = pad_state(i);
+    int new_state = eb_pad_state(i);
     int old_state = event_pad_last[i];
     event_pad_last[i] = new_state;
     if (new_state != old_state) {
