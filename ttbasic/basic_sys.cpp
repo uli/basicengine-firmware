@@ -711,6 +711,7 @@ void Basic::ilua() {
   luaL_openlibs(lua);
   luaopen_be(lua);
   luaopen_bg(lua);
+  luaopen_img(lua);
   luaopen_input(lua);
   luaopen_video(lua);
   luaopen_hwio(lua);
