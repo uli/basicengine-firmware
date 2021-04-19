@@ -582,9 +582,9 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
   }
 
 #ifdef TRUE_COLOR
-  if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
-                 dst_x, dst_y, x, y, w, h, 0)) {
-    if (mask != 0 && dst_y >= vs23.height()) {
+  if (mask != 0 && dst_y >= vs23.height()) {
+    if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
+                   dst_x, dst_y, x, y, w, h, 0)) {
       // goes to off-screen pixel memory
       // create alpha channel
       for (int dy = dst_y; dy < dst_y + h; ++dy) {
@@ -602,15 +602,25 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
           vs23.setPixel(dx, dy, p_dst);
         }
       }
-    }
+      rc = 0;
+    } else
+      rc = SD_ERR_READ_FILE;	// XXX: or OOM...
+  } else {
+    // goes to visible screen and/or has no color key;  use drpcx masking
+    if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
+                   dst_x, dst_y, x, y, w, h, mask))
+      rc = 0;
+    else
+      rc = SD_ERR_READ_FILE;	// XXX: or OOM...
+  }
 #else
   if (drpcx_load(read_image_bytes, NULL, false, &width, &height, &components, 0,
-                 dst_x, dst_y, x, y, w, h, mask)) {
+                 dst_x, dst_y, x, y, w, h, mask))
+    rc = 0;
+  else
+    rc = SD_ERR_READ_FILE;  // XXX: or OOM...
 #endif
 
-    rc = 0;
-  } else
-    rc = SD_ERR_READ_FILE;  // XXX: or OOM...
 
 out:
   fclose(pcx_file);
