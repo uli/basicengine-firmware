@@ -714,4 +714,7 @@ void Basic::ilua() {
   luaopen_video(lua);
   luaopen_hwio(lua);
   lua_sethook(lua, lhook, LUA_MASKCOUNT, 1000);
+
+  // make sure there are no BASIC event handlers registered
+  clear_execution_state(false);
 }
