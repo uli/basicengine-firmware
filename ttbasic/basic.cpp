@@ -6005,6 +6005,7 @@ void SMALL Basic::basic() {
     }
 
     if (lua) {
+      sc0.show_curs(0);
       do_lua_line(lbuf);
       sc0.show_curs(1);
       continue;
