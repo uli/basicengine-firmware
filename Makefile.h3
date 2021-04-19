@@ -1,6 +1,8 @@
 # point this to the opi branch of https://github.com/uli/allwinner-bare-metal
 OSDIR = $(HOME)/devel/orangepi/allwinner-bare-metal
 
+OBJDIR = build_h3
+
 TARGET = basic
 
 INIT_FS_DIR = ../basicengine_demos
@@ -33,19 +35,20 @@ CFLAGS += $(ARDFLAGS)
 CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
 
 clean:
-	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
+	rm -fr build_h3
+	@rm -f $(PROF)
 	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
 gcov:
 	rm -f *.gcov
 	gcov $(SOURCES) $(SOURCES_C)
 
-ttbasic/basic_help.o: ttbasic/helptext.o
+$(OBJDIR)/ttbasic/basic_help.o: $(OBJDIR)/ttbasic/helptext.o
 ttbasic/helptext.cpp: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
 	$(MAKE) -C ttbasic -f autogen.mk helptext.cpp
 
 ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
-$(OBJS): ttbasic/funtbl.h
+$(OUT_OBJS): ttbasic/funtbl.h
 
 -include $(OBJS:%.o=%.d)
