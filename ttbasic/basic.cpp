@@ -15,6 +15,8 @@
 #include "video.h"
 #include "sound.h"
 
+#include "eb_bg.h"
+#include "eb_img.h"
 #include "eb_input.h"
 
 #include "epigrams.h"
@@ -3341,7 +3343,7 @@ void SMALL Basic::ildbmp() {
       if (*cip == I_BG) {  // AS BG ...
         ++cip;
         dx = dy = -1;
-        if (getParam(bg, 0, MAX_BG - 1, I_NONE))
+        if (getParam(bg, I_NONE))
           return;
         define_bg = true;
       } else if (*cip == I_SPRITE) {  // AS SPRITE ...
@@ -3396,21 +3398,31 @@ void SMALL Basic::ildbmp() {
   }
 
   // 画像のロード
-  err = bfs.loadBitmap((char *)fname.c_str(), dx, dy, x, y, w, h, key);
+  struct eb_image_spec loc = {
+    .dst_x = dx,
+    .dst_y = dy,
+    .src_x = x,
+    .src_y = y,
+    .w = w,
+    .h = h,
+    .key = key,
+  };
+
+  err = eb_load_image(fname.c_str(), &loc);
   if (!err) {
 #ifdef USE_BG_ENGINE
     if (define_bg)
-      vs23.setBgPattern(bg, dx, dy, w / vs23.bgTileSizeX(bg));
+      eb_bg_set_pattern(bg, loc.dst_x, loc.dst_y, loc.w / vs23.bgTileSizeX(bg));
     if (define_spr) {
       for (uint32_t i = spr_from; i < spr_to + 1; ++i) {
-        vs23.setSpritePattern(i, dx, dy);
+        eb_sprite_set_pattern(i, loc.dst_x, loc.dst_y);
       }
     }
 #endif
-    retval[0] = dx;
-    retval[1] = dy;
-    retval[2] = w;
-    retval[3] = h;
+    retval[0] = loc.dst_x;
+    retval[1] = loc.dst_y;
+    retval[2] = loc.w;
+    retval[3] = loc.h;
   }
 }
 
