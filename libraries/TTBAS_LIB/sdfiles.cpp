@@ -526,7 +526,21 @@ uint8_t sdfiles::loadImage(FILE *img_file, int32_t img_w, int32_t img_h,
       rc = ERR_SCREEN_FULL;
       goto out;
     }
+  } else {
+    if (dst_x < 0) {
+      w += dst_x;
+      x -= dst_x;
+      dst_x = 0;
+    }
+    if (dst_y < 0) {
+      h += dst_y;
+      y -= dst_y;
+      dst_y = 0;
+    }
   }
+
+  if (x >= img_w || y >= img_h || w <= 0 || h <= 0)
+    goto out;
 
   if (dst_x + w > vs23.width()) {
     w = vs23.width() - dst_x;
@@ -617,16 +631,17 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
     goto out;
   }
 
+  if (!drpcx_info(read_image_bytes, NULL, &width, &height, &components)) {
+    rc = SD_ERR_READ_FILE;
+    goto out;
+  }
+  fseek(pcx_file, 0, SEEK_SET);
+
   if (w == -1) {
     if (h != -1) {
       rc = ERR_RANGE;
       goto out;
     }
-    if (!drpcx_info(read_image_bytes, NULL, &width, &height, &components)) {
-      rc = SD_ERR_READ_FILE;
-      goto out;
-    }
-    fseek(pcx_file, 0, SEEK_SET);
     w = width - x;
     h = height - y;
   }
@@ -639,7 +654,21 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
       rc = ERR_SCREEN_FULL;
       goto out;
     }
+  } else {
+    if (dst_x < 0) {
+      w += dst_x;
+      x -= dst_x;
+      dst_x = 0;
+    }
+    if (dst_y < 0) {
+      h += dst_y;
+      y -= dst_y;
+      dst_y = 0;
+    }
   }
+
+  if (x >= width || y >= height || w <= 0 || h <= 0)
+    goto out;
 
   if (dst_x + w > vs23.width() || dst_y + h > vs23.lastLine()) {
     rc = ERR_RANGE;
