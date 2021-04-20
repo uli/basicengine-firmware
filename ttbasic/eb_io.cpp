@@ -137,3 +137,37 @@ int eb_i2c_read(unsigned char addr, char *data, int count) {
   return h3_i2c_read(data, count);
 #endif
 }
+
+#ifdef H3
+#include <h3_spi.h>
+#endif
+
+void eb_spi_write(const char *out_data, unsigned int count) {
+#ifdef H3
+  h3_spi_writenb(out_data, count);
+#endif
+}
+
+void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count) {
+#ifdef H3
+  h3_spi_transfernb((char *)out_data, in_data, count);
+#endif
+}
+
+void eb_spi_set_bit_order(int bit_order) {
+#ifdef H3
+  h3_spi_setBitOrder((h3_spi_bit_order_t)bit_order);
+#endif
+}
+
+void eb_spi_set_freq(int freq) {
+#ifdef H3
+  h3_spi_set_speed_hz(freq);
+#endif
+}
+
+void eb_spi_set_mode(int mode) {
+#ifdef H3
+  h3_spi_setDataMode(mode);
+#endif
+}
