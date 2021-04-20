@@ -539,25 +539,21 @@ uint8_t sdfiles::loadImage(FILE *img_file, int32_t img_w, int32_t img_h,
     }
   }
 
+  rc = 0;
+
   if (x >= img_w || y >= img_h || w <= 0 || h <= 0)
     goto out;
 
-  if (dst_x + w > vs23.width()) {
+  if (dst_x + w >= vs23.width()) {
     w = vs23.width() - dst_x;
-    if (w < 0) {
-      rc = ERR_RANGE;
+    if (w <= 0)
       goto out;
-    }
   }
-  if (dst_y + h > vs23.lastLine()) {
+  if (dst_y + h >= vs23.lastLine()) {
     h = vs23.lastLine() - dst_y;
-    if (h < 0) {
-      rc = ERR_RANGE;
+    if (h <= 0)
       goto out;
-    }
   }
-
-  rc = 0;
 
   // Blit image to screen.
   if (dst_y >= vs23.height()) {
@@ -667,12 +663,20 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
     }
   }
 
+  rc = 0;
+
   if (x >= width || y >= height || w <= 0 || h <= 0)
     goto out;
 
-  if (dst_x + w > vs23.width() || dst_y + h > vs23.lastLine()) {
-    rc = ERR_RANGE;
-    goto out;
+  if (dst_x + w >= vs23.width()) {
+    w = vs23.width() - dst_x;
+    if (w <= 0)
+      goto out;
+  }
+  if (dst_y + h >= vs23.lastLine()) {
+    h = vs23.lastLine() - dst_y;
+    if (h <= 0)
+      goto out;
   }
 
 #ifdef TRUE_COLOR
