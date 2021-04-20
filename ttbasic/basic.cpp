@@ -2537,7 +2537,7 @@ Saves the BASIC program in memory to storage.
 @file$	name of file to be saved
 \note
 BASIC programs are saved in plain text (ASCII) format.
-\ref SAVE_BG SAVE_CONFIG SAVE_PCX
+\ref SAVE_BG SAVE_CONFIG SAVE_IMAGE
 ***/
 void Basic::isave() {
   BString fname;
@@ -3240,9 +3240,9 @@ BString Basic::getParamFname() {
   return fname;
 }
 
-/***bc scr SAVE PCX
-Saves a portion of pixel memory to storage as a PCX file.
-\usage SAVE PCX image$ [POS x, y] [SIZE w, h]
+/***bc scr SAVE IMAGE
+Saves a portion of pixel memory to storage as an image file.
+\usage SAVE IMAGE image$ [POS x, y] [SIZE w, h]
 \args
 @image$	name of image file to be created
 @x	left of pixel memory section, pixels +
@@ -3253,7 +3253,7 @@ Saves a portion of pixel memory to storage as a PCX file.
         [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]
 @h	height of pixel memory section, pixels +
         [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]
-\ref LOAD_PCX
+\ref LOAD_IMAGE
 ***/
 void SMALL Basic::isavepcx() {
   BString fname;
@@ -3286,8 +3286,8 @@ void SMALL Basic::isavepcx() {
   return;
 }
 
-/***bc scr LOAD PCX
-Loads a PCX image file in whole or in parts from storage to pixel memory.
+/***bc scr LOAD IMAGE
+Loads an image file in whole or in parts from storage to pixel memory.
 \usage
 LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
          [SIZE width, height] [KEY col]
@@ -3319,7 +3319,7 @@ range of sprites as their sprite patterns.
 IMPORTANT: `AS BG` and `AS SPRITE` are not available in the network build.
 
 If a color key is specified, pixels of the given color will not be drawn.
-\ref BG SAVE_PCX SPRITE
+\ref BG SAVE_IMAGE SPRITE
 ***/
 void SMALL Basic::ildbmp() {
   BString fname;
@@ -3454,7 +3454,7 @@ Load a program from storage.
 \usage LOAD file$
 \args
 @file$	name of the BASIC program
-\ref LOAD_BG LOAD_PCX SAVE
+\ref LOAD_BG LOAD_IMAGE SAVE
 ***/
 /***bc bas MERGE
 Merge a program in storage with the program currently in memory.
