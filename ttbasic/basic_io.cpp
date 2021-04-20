@@ -277,3 +277,69 @@ num_t BASIC_INT Basic::nsready() {
 void Basic::isprint() {
   iprint(1);
 }
+
+/***bc io SPIW
+Sends data to an SPI device.
+\usage SPIW out$
+\args
+@out$	data to be transmitted
+\ref SPIRW$() SPICONFIG
+***/
+void Basic::ispiw() {
+  BString data = istrexp();
+  eb_spi_write(data.c_str(), data.length());
+}
+
+/***bc io SPICONFIG
+Configures the SPI controller.
+\usage SPICONFIG bit_order, freq, mode
+\args
+@bit_order	data bit order [`0` = LSB first, `1` = MSB first]
+@freq		transfer frequency in Hz
+@mode		SPI mode [`0` to `3`]
+\ref SPIW SPIRW$()
+***/
+void Basic::ispiconfig() {
+  int32_t bit_order, freq, mode;
+
+  if (getParam(bit_order, I_COMMA) ||
+      getParam(freq, I_COMMA) ||
+      getParam(mode, I_NONE))
+    return;
+
+  eb_spi_set_bit_order(bit_order);
+  eb_spi_set_freq(freq);
+  eb_spi_set_mode(mode);
+}
+
+/***bf io SPIRW$
+Send and receive data to and from an SPI device.
+\usage in$ = SPIRW$(out$)
+\args
+@out$		data to be transmitted
+\ret
+Returns a string containing the received data that is of the same length
+as out$.
+\ref SPIW SPICONFIG
+***/
+BString Basic::sspirw() {
+  BString in_data;
+
+  if (checkOpen())
+    return in_data;
+
+  BString out_data = istrexp();
+  if (checkClose())
+    return in_data;
+
+  char in_buf[out_data.length()];
+
+  eb_spi_transfer(out_data.c_str(), in_buf, out_data.length());
+
+  // XXX: need a BString ctor for binary arrays
+  for (unsigned int i = 0; i < out_data.length(); ++i) {
+    in_data += in_buf[i];
+  }
+
+  return in_data;
+}

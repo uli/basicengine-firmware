@@ -106,6 +106,8 @@ ERROR	I_ERROR		ierror
 SET	I_SET		iset
 SEEK	I_SEEK		iseek
 SAY	I_SAY		isay
+SPIW	I_SPIW		ispiw
+SPICONFIG	I_SPICONFIG	ispiconfig
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
@@ -154,6 +156,7 @@ INST$	I_INSTSTR	sinst
 I2CR	I_I2CR		si2cr
 RET$	I_RETSTR	sret
 STRING$	I_STRINGSTR	sstring
+SPIRW$	I_SPIRWSTR	sspirw
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
 ARG	I_ARG		narg
