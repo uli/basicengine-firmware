@@ -3289,8 +3289,8 @@ void SMALL Basic::isavepcx() {
 /***bc scr LOAD IMAGE
 Loads an image file in whole or in parts from storage to pixel memory.
 \usage
-LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
-         [SIZE width, height] [KEY col]
+LOAD IMAGE image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
+           [SIZE width, height] [KEY col] [SCALE scale_x, scale_y]
 \args
 @bg		background number [`0` to `{MAX_BG_m1}`]
 @range		sprite range [limits between `0` and `{MAX_SPRITES_m1}`]
@@ -3303,6 +3303,8 @@ LOAD PCX image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
 @width		width of image portion to be loaded, pixels [default: image width]
 @height		height of image portion to be loaded, pixels [default: image height]
 @col		color key for transparency [default: no transparency]
+@scale_x	scaling factor [default: `1`]
+@scale_y	scaling factor [default: `1`]
 \ret
 Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as width and
 height in `RET(2)` and `RET(3)`, respectively.
@@ -3316,9 +3318,16 @@ as its tile set.
 If `AS SPRITE` is used, the loaded image portion will be assigned to the specified
 range of sprites as their sprite patterns.
 
-IMPORTANT: `AS BG` and `AS SPRITE` are not available in the network build.
-
 If a color key is specified, pixels of the given color will not be drawn.
+
+If the scaling factor for a dimension is `-1`, it will be scaled to the
+screen size. If it is `-2`, it will be scaled so that the aspect ratio is
+preserved.
+
+If the scaling factor for both dimensions is `-2`, the image will be fit to
+the screen dimensions while preserving the aspect ratio.
+
+IMPORTANT: Scaling is not supported for images in PCX format.
 \ref BG SAVE_IMAGE SPRITE
 ***/
 void SMALL Basic::ildbmp() {
@@ -3331,6 +3340,7 @@ void SMALL Basic::ildbmp() {
   int32_t bg;
 #endif
   uint32_t key = 0;  // no keying
+  double scale_x = 1, scale_y = 1;
 
   if (!(fname = getParamFname())) {
     return;
@@ -3392,6 +3402,12 @@ void SMALL Basic::ildbmp() {
       cip++;
       if (getParam(key, 0, UINT32_MAX, I_NONE))
         return;
+    } else if (*cip == I_SCALE) {
+      // SCALE x,y
+      cip++;
+      if (getParam(scale_x, I_COMMA) ||
+          getParam(scale_y, I_NONE))
+        return;
     } else {
       break;
     }
@@ -3405,6 +3421,8 @@ void SMALL Basic::ildbmp() {
     .src_y = y,
     .w = w,
     .h = h,
+    .scale_x = scale_x,
+    .scale_y = scale_y,
     .key = key,
   };
 
