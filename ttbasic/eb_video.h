@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 void eb_locate(int32_t x, int32_t y);
 
@@ -37,4 +39,6 @@ void eb_circle(int32_t x, int32_t y, int32_t r, pixel_t c, pixel_t f);
 void eb_rect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, pixel_t c, pixel_t f);
 int eb_blit(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h);
 
+#ifdef __cplusplus
 }
+#endif
