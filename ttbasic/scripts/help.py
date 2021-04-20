@@ -80,6 +80,7 @@ for c in cmds:
         elif section == 'ref':
             data = data.split(' ')
             data = [t.replace('_', ' ') for t in data]
+            data = [t.replace('()', '') for t in data]
         else:
             # keep \table and \endtable on their own lines
             data = re.sub(r'\n(\\[a-z ]*)\n', '==LF==\g<1>==LF==', data)
