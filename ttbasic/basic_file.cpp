@@ -904,3 +904,39 @@ void Basic::iformat() {
   err = ERR_NOT_SUPPORTED;
 #endif
 }
+
+#include <stb_image.h>
+
+/***bc fs IMGINFO
+Returns dimensions and component count of an image file.
+\usage IMGINFO file$
+\args
+@file$	name of the file
+\ret
+Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the
+number of components in `RET(2)`.
+\bugs
+This command does not work with PCX files.
+***/
+void Basic::iimginfo() {
+  int width, height, components;
+
+  BString filename = getParamFname();
+  if (err)
+    return;
+
+  FILE *fp = fopen(filename.c_str(), "rb");
+  if (!fp) {
+    err = ERR_FILE_OPEN;
+    return;
+  }
+
+  if (stbi_info_from_file(fp, &width, &height, &components)) {
+    retval[0] = width;
+    retval[1] = height;
+    retval[2] = components;
+  } else
+    err = ERR_FORMAT;
+
+  fclose(fp);
+}

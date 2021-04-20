@@ -108,6 +108,7 @@ SEEK	I_SEEK		iseek
 SAY	I_SAY		isay
 SPIW	I_SPIW		ispiw
 SPICONFIG	I_SPICONFIG	ispiconfig
+IMGINFO	I_IMGINFO	iimginfo
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
