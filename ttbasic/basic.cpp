@@ -3379,9 +3379,9 @@ void SMALL Basic::ildbmp() {
     } else if (*cip == I_TO) {
       // TO dx,dy
       cip++;
-      if (getParam(dx, 0, INT32_MAX, I_COMMA))
+      if (getParam(dx, I_COMMA))
         return;
-      if (getParam(dy, 0, INT32_MAX, I_NONE))
+      if (getParam(dy, I_NONE))
         return;
     } else if (*cip == I_OFF) {
       // OFF x,y
