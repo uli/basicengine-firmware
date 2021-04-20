@@ -441,18 +441,73 @@ static size_t read_image_bytes(void *user_data, void *buf, size_t bytesToRead) {
 #ifdef TRUE_COLOR
 extern "C" {
 #include <stb_image.h>
+#include <stb_image_resize.h>
 }
 
-uint8_t sdfiles::loadImage(FILE *img_file,
-                           int32_t img_w, int32_t img_h,
-                           int32_t &dst_x, int32_t &dst_y,
-                           int32_t x, int32_t y,
-                           int32_t &w, int32_t &h,
-                           pixel_t mask) {
+uint8_t sdfiles::loadImage(FILE *img_file, int32_t img_w, int32_t img_h,
+                           int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y,
+                           int32_t &w, int32_t &h, double scale_x,
+                           double scale_y, pixel_t mask) {
   uint8_t rc = 1;
   int components;
   uint32_t *data = 0;
   fseek(img_file, 0, SEEK_SET);
+
+  data = (uint32_t *)stbi_load_from_file(img_file, (int *)&img_w, (int *)&img_h,
+                                         &components, sizeof(pixel_t));
+
+  double image_aspect = (double)img_w / (double)img_h;
+
+  if (!data) {
+    rc = SD_ERR_READ_FILE;  // or OOM
+    goto out;
+  }
+
+  if (scale_x == -2 && scale_y == -2) {
+    // fit to screen
+    double screen_aspect = (double)vs23.width() / (double)vs23.height();
+    if (screen_aspect > image_aspect)
+      scale_y = -1;
+    else
+      scale_x = -1;
+  }
+
+  if (scale_x != 1 || scale_y != 1) {
+    int32_t out_img_w = img_w;
+    int32_t out_img_h = img_h;
+
+    if (scale_x == -1)
+      out_img_w = vs23.width();
+    else if (scale_x != -2)
+      out_img_w = img_w * scale_x;
+
+    if (scale_y == -1)
+      out_img_h = vs23.height();
+    else if (scale_y != -2)
+      out_img_h = img_h * scale_y;
+
+    // preserve aspect?
+    if (scale_x == -2)
+      out_img_w = image_aspect * out_img_h;
+    else if (scale_y == -2)
+      out_img_h = out_img_w / image_aspect;
+
+    uint32_t *scaled =
+            (uint32_t *)malloc(out_img_w * out_img_h * sizeof(pixel_t));
+    if (!scaled) {
+      rc = ERR_OOM;
+      goto out;
+    }
+
+    stbir_resize_uint8((unsigned char *)data, img_w, img_h, 0,
+                       (unsigned char *)scaled, out_img_w, out_img_h, 0,
+                       sizeof(pixel_t));
+
+    free(data);
+    data = scaled;
+    img_w = out_img_w;
+    img_h = out_img_h;
+  }
 
   if (w == -1) {
     if (h != -1) {
@@ -473,58 +528,62 @@ uint8_t sdfiles::loadImage(FILE *img_file,
     }
   }
 
-  if (dst_x + w > vs23.width() || dst_y + h > vs23.lastLine()) {
-    rc = ERR_RANGE;
-    goto out;
+  if (dst_x + w > vs23.width()) {
+    w = vs23.width() - dst_x;
+    if (w < 0) {
+      rc = ERR_RANGE;
+      goto out;
+    }
+  }
+  if (dst_y + h > vs23.lastLine()) {
+    h = vs23.lastLine() - dst_y;
+    if (h < 0) {
+      rc = ERR_RANGE;
+      goto out;
+    }
   }
 
-  data = (uint32_t *)stbi_load_from_file(img_file, (int *)&img_w, (int *)&img_h,
-                                         &components, sizeof(pixel_t));
+  rc = 0;
 
-  if (data) {
-    rc = 0;
+  // Blit image to screen.
+  if (dst_y >= vs23.height()) {
+    // goes to off-screen pixel memory
+    // ignore what is already there, preserve/create alpha channel
+    for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
+      int sx = x;
 
-    // Blit image to screen.
-    if (dst_y >= vs23.height()) {
-      // goes to off-screen pixel memory
-      // ignore what is already there, preserve/create alpha channel
-      for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
-        int sx = x;
+      for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
+        uint32_t d = data[y * img_w + sx];
 
-        for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
-          uint32_t d = data[y * img_w + sx];
+        uint8_t r = d;
+        uint8_t g = d >> 8;
+        uint8_t b = d >> 16;
+        uint8_t alpha = d >> 24;
 
-          uint8_t r = d;
-          uint8_t g = d >> 8;
-          uint8_t b = d >> 16;
-          uint8_t alpha = d >> 24;
+        pixel_t p_src = csp.colorFromRgba(r, g, b, alpha);
+        if (p_src == mask)
+          alpha = 0;
 
-          pixel_t p_src = csp.colorFromRgba(r, g, b, alpha);
-          if (p_src == mask)
-            alpha = 0;
-
-          pixel_t p_dst = csp.colorFromRgba(r, g, b, alpha);
-          vs23.setPixel(dx, dy, p_dst);
-        }
-      }
-    } else {
-      // goes to visible screen
-      // blend with what is already there
-      for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
-        int sx = x;
-
-        for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
-          uint32_t d = data[y * img_w + sx];
-          pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
-          if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
-            vs23.setPixel(dx, dy, p);
-        }
+        pixel_t p_dst = csp.colorFromRgba(r, g, b, alpha);
+        vs23.setPixel(dx, dy, p_dst);
       }
     }
+  } else {
+    // goes to visible screen
+    // blend with what is already there
+    for (int dy = dst_y; dy < dst_y + h; ++y, ++dy) {
+      int sx = x;
 
-    free(data);
-  } else
-    rc = SD_ERR_READ_FILE;  // XXX: or OOM...
+      for (int dx = dst_x; dx < dst_x + w; ++sx, ++dx) {
+        uint32_t d = data[y * img_w + sx];
+        pixel_t p = csp.colorFromRgba(d, d >> 8, d >> 16, d >> 24);
+        if ((d >> 24) > 0x80 && (mask == 0 || p != mask))
+          vs23.setPixel(dx, dy, p);
+      }
+    }
+  }
+
+  free(data);
 
 out:
   fclose(img_file);
@@ -534,6 +593,7 @@ out:
 
 uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
                             int32_t x, int32_t y, int32_t &w, int32_t &h,
+                            double scale_x, double scale_y,
                             uint32_t mask) {
   uint8_t rc = 1;
   int width, height, components;
@@ -546,11 +606,16 @@ uint8_t sdfiles::loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y,
 
 #ifdef TRUE_COLOR
   if (stbi_info_from_file(pcx_file, &width, &height, &components)) {
-    rc = loadImage(pcx_file, width, height, dst_x, dst_y, x, y, w, h, mask);
+    rc = loadImage(pcx_file, width, height, dst_x, dst_y, x, y, w, h, scale_x, scale_y, mask);
     pcx_file = NULL;
     return rc;
   }
 #endif
+
+  if (scale_x != 1 || scale_y != 1) {
+    rc = ERR_RANGE;
+    goto out;
+  }
 
   if (w == -1) {
     if (h != -1) {

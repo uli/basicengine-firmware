@@ -787,10 +787,12 @@ public:
 
   // ビットマップファイルのロード
   uint8_t loadBitmap(char *fname, int32_t &dst_x, int32_t &dst_y, int32_t x,
-                     int32_t y, int32_t &w, int32_t &h, uint32_t mask = (uint32_t)-1);
+                     int32_t y, int32_t &w, int32_t &h, double scale_x,
+                     double scale_y, uint32_t mask = (uint32_t)-1);
   uint8_t loadImage(FILE *img_file, int32_t img_w, int32_t img_h,
                     int32_t &dst_x, int32_t &dst_y, int32_t x, int32_t y,
-                    int32_t &w, int32_t &h, uint32_t mask);
+                    int32_t &w, int32_t &h, double scale_x, double scale_y,
+                    uint32_t mask);
   uint8_t saveBitmap(char *fname, int32_t src_x, int32_t src_y, int32_t w,
                      int32_t h);
   uint8_t saveBitmapPcx(char *fname, int32_t src_x, int32_t src_y, int32_t w,

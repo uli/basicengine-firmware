@@ -9,6 +9,7 @@ struct eb_image_spec {
   int dst_x, dst_y;
   int src_x, src_y;
   int w, h;
+  double scale_x, scale_y;
   unsigned int key;
 };
 

@@ -13,6 +13,8 @@ struct eb_image_spec eb_image_spec_default = {
   .src_y = 0,
   .w = -1,
   .h = -1,
+  .scale_x = 1.0,
+  .scale_y = 1.0,
   .key = 0,
 };
 
@@ -26,7 +28,7 @@ int eb_load_image(const char *filename, struct eb_image_spec *loc) {
   int32_t h = loc->h;
 
   int err = bfs.loadBitmap((char *)filename, dx, dy, loc->src_x, loc->src_y, w,
-                           h, loc->key);
+                           h, loc->scale_x, loc->scale_y, loc->key);
 
   if (err == 0) {
     loc->dst_x = dx;
