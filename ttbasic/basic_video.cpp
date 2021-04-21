@@ -1026,7 +1026,7 @@ void GROUP(basic_video) Basic::irect() {
 
 /***bc pix BLIT
 Copies a rectangular area of pixel memory to another area.
-\usage BLIT x, y TO dest_x, dest_y SIZE width, height
+\usage BLIT x, y TO dest_x, dest_y SIZE width, height [ALPHA]
 \args
 @x	source area, X coordinate [`0` to `PSIZE(0)-1`]
 @y	source area, Y coordinate [`0` to `PSIZE(2)-1`]
@@ -1034,9 +1034,9 @@ Copies a rectangular area of pixel memory to another area.
 @dest_y	destination area, Y coordinate [`0` to `PSIZE(2)-1`]
 @width	area width [`0` to `PSIZE(0)-x`]
 @height	area height [`0` to `PSIZE(2)-y`]
-\bugs
-* On some platforms, transfers only work up to sizes of 255
-  in each dimension.
+\note
+By default an opaque blit is performed, ignoring the alpha channel of the
+source area. To enable alpha-blending, `ALPHA` must be appended at the end.
 \ref GSCROLL
 ***/
 void GROUP(basic_video) Basic::iblit() {
@@ -1055,5 +1055,9 @@ void GROUP(basic_video) Basic::iblit() {
   if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
     return;
 
-  eb_blit(x, y, dx, dy, w, h);
+  if (*cip == I_ALPHA) {
+    ++cip;
+    eb_blit_alpha(x, y, dx, dy, w, h);
+  } else
+    eb_blit(x, y, dx, dy, w, h);
 }
