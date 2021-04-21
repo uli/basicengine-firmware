@@ -163,6 +163,8 @@ protected:
   void updateStatus() override;
 
 private:
+  void drawBg(bg_t *bg);
+
   inline void blitBuffer(pixel_t *dst, pixel_t *buf);
   void resetLinePointers(pixel_t **pixels, pixel_t *buffer);
 

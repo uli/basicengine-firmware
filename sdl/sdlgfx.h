@@ -179,6 +179,8 @@ private:
     return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/sizeof(pixel_t) + x];
   }
 
+  void drawBg(bg_t *bg);
+
   static Uint32 timerCallback(Uint32 t);
 
   static const struct video_mode_t modes_pal[];
