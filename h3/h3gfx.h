@@ -28,6 +28,13 @@ public:
     return m_bgpixels[y][x];
   }
 
+  inline int offscreenPitch() {
+    return m_current_mode.x;
+  }
+  inline int compositePitch() {
+    return m_current_mode.x + m_current_mode.left * 2;
+  }
+
   inline uint16_t width() {
     return m_current_mode.x;
   }

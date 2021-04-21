@@ -32,6 +32,13 @@ public:
     return PIXELC(x, y);
   }
 
+  inline int offscreenPitch() {
+    return m_text_surface->pitch / sizeof(pixel_t);
+  }
+  inline int compositePitch() {
+    return m_composite_surface->pitch / sizeof(pixel_t);
+  }
+
   inline uint16_t width() {
     return m_current_mode.x;
   }
