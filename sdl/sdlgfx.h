@@ -119,6 +119,8 @@ public:
 
   void blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
                  uint16_t width, uint16_t height);
+  void blitRectAlpha(uint16_t x_src, uint16_t y_src, uint16_t x_dst, uint16_t y_dst,
+                 uint16_t width, uint16_t height);
   void fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
                 pixel_t color);
 
