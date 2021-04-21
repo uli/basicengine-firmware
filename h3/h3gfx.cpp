@@ -119,7 +119,7 @@ void H3GFX::reset() {
   BGEngine::reset();
   // XXX: does this make sense?
   for (int i = 0; i < m_last_line; ++i)
-    memset(m_pixels[i], 0, m_current_mode.x * sizeof(pixel_t));
+    memset(&pixelText(0, i), 0, m_current_mode.x * sizeof(pixel_t));
   setColorSpace(0);
 }
 
@@ -131,7 +131,7 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
 #endif
   if (y_dst == y_src && x_dst > x_src) {
     while (height) {
-      memmove(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+      memmove(&pixelText(x_dst, y_dst), &pixelText(x_src, y_src),
               width * sizeof(pixel_t));
       y_dst++;
       y_src++;
@@ -141,7 +141,7 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
     y_dst += height - 1;
     y_src += height - 1;
     while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+      memcpy(&pixelText(x_dst, y_dst), &pixelText(x_src, y_src),
              width * sizeof(pixel_t));
       y_dst--;
       y_src--;
@@ -149,7 +149,7 @@ void H3GFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
     }
   } else {
     while (height) {
-      memcpy(m_pixels[y_dst] + x_dst, m_pixels[y_src] + x_src,
+      memcpy(&pixelText(x_dst, y_dst), &pixelText(x_src, y_dst),
              width * sizeof(pixel_t));
       y_dst++;
       y_src++;
@@ -447,9 +447,9 @@ void H3GFX::updateBgTask() {
             continue;
 
           overlay_alpha_stride_div255_round_approx(
-                  (uint8_t *)&m_bgpixels[dst_y][dst_x],
-                  (uint8_t *)&m_pixels[tile_y][tile_x],
-                  (uint8_t *)&m_bgpixels[dst_y][dst_x],
+                  (uint8_t *)&pixelComp(dst_x, dst_y),
+                  (uint8_t *)&pixelText(tile_x, tile_y),
+                  (uint8_t *)&pixelComp(dst_x, dst_y),
                   m_current_mode.x + m_current_mode.left * 2, blit_height,
                   blit_width, m_current_mode.x);
         }
@@ -483,16 +483,16 @@ void H3GFX::updateBgTask() {
         if (s->p.key != 0) {
           for (int y = 0; y < s->p.h; ++y) {
             for (int x = 0; x < s->p.w; ++x) {
-              if ((m_pixels[py + y][px + x] & 0xffffff) == (s->p.key & 0xffffff)) {
-                m_pixels[py + y][px + x] = m_pixels[py + y][px + x] & 0xffffff;
+              if ((pixelText(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
+                pixelText(px + x, py + y) = pixelText(px + x, py + y) & 0xffffff;
               } else
-                m_pixels[py + y][px + x] =
-                        (m_pixels[py + y][px + x] & 0xffffff) | alpha;
+                pixelText(px + x, py + y) =
+                        (pixelText(px + x, py + y) & 0xffffff) | alpha;
             }
           }
         }
 
-        rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&m_pixels[py][px]),
+        rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&pixelText(px, py)),
                         pitch * sizeof(pixel_t), 0);
 
         rz_surface_t *out = rotozoomSurfaceXY(
@@ -524,9 +524,9 @@ void H3GFX::updateBgTask() {
         blit_height = m_current_mode.y - dst_y;
 
       overlay_alpha_stride_div255_round_approx(
-              (uint8_t *)&m_bgpixels[dst_y][dst_x],
+              (uint8_t *)&pixelComp(dst_x, dst_y),
               (uint8_t *)&s->surf->pixels[src_y * s->surf->w + src_x],
-              (uint8_t *)&m_bgpixels[dst_y][dst_x],
+              (uint8_t *)&pixelComp(dst_x, dst_y),
               m_current_mode.x + m_current_mode.left * 2, blit_height,
               blit_width, s->surf->w);
     }

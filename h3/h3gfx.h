@@ -21,6 +21,13 @@ class H3GFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
 
+  inline pixel_t& pixelText(uint16_t x, uint16_t y) {
+    return m_pixels[y][x];
+  }
+  inline pixel_t& pixelComp(uint16_t x, uint16_t y) {
+    return m_bgpixels[y][x];
+  }
+
   inline uint16_t width() {
     return m_current_mode.x;
   }
