@@ -25,6 +25,13 @@ class SDLGFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
 
+  inline pixel_t& pixelText(int x, int y) {
+    return PIXELT(x, y);
+  }
+  inline pixel_t& pixelComp(int x, int y) {
+    return PIXELC(x, y);
+  }
+
   inline uint16_t width() {
     return m_current_mode.x;
   }

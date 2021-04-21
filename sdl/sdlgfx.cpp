@@ -82,7 +82,7 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
 #endif
   if (y_dst == y_src && x_dst > x_src) {
     while (height) {
-      memmove(&PIXELT(x_dst, y_dst), &PIXELT(x_src, y_src),
+      memmove(&pixelText(x_dst, y_dst), &pixelText(x_src, y_src),
               width * sizeof(pixel_t));
       y_dst++;
       y_src++;
@@ -92,7 +92,7 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
     y_dst += height - 1;
     y_src += height - 1;
     while (height) {
-      memcpy(&PIXELT(x_dst, y_dst), &PIXELT(x_src, y_src),
+      memcpy(&pixelText(x_dst, y_dst), &pixelText(x_src, y_src),
              width * sizeof(pixel_t));
       y_dst--;
       y_src--;
@@ -100,7 +100,7 @@ void SDLGFX::blitRect(uint16_t x_src, uint16_t y_src, uint16_t x_dst,
     }
   } else {
     while (height) {
-      memcpy(&PIXELT(x_dst, y_dst), &PIXELT(x_src, y_src),
+      memcpy(&pixelText(x_dst, y_dst), &pixelText(x_src, y_src),
              width * sizeof(pixel_t));
       y_dst++;
       y_src++;
@@ -379,9 +379,9 @@ void SDLGFX::updateBg() {
             continue;
 
           overlay_alpha_stride_div255_round_approx(
-                  (uint8_t *)&PIXELC(dst_x, dst_y),
-                  (uint8_t *)&PIXELT(tile_x, tile_y),
-                  (uint8_t *)&PIXELC(dst_x, dst_y),
+                  (uint8_t *)&pixelComp(dst_x, dst_y),
+                  (uint8_t *)&pixelText(tile_x, tile_y),
+                  (uint8_t *)&pixelComp(dst_x, dst_y),
                   m_composite_surface->pitch / sizeof(pixel_t), blit_height,
                   blit_width, m_text_surface->pitch / sizeof(pixel_t));
         }
@@ -420,19 +420,17 @@ void SDLGFX::updateBg() {
         if (s->p.key != 0) {
           for (int y = 0; y < s->p.h; ++y) {
             for (int x = 0; x < s->p.w; ++x) {
-              if ((PIXELT(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
-                PIXELT(px + x, py + y) = PIXELT(px + x, py + y) & 0xffffff;
+              if ((pixelText(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
+                pixelText(px + x, py + y) = pixelText(px + x, py + y) & 0xffffff;
               } else {
-                PIXELT(px + x, py + y) =
-                        (PIXELT(px + x, py + y) & 0xffffff) | alpha;
+                pixelText(px + x, py + y) =
+                        (pixelText(px + x, py + y) & 0xffffff) | alpha;
               }
             }
           }
         }
 
-        rz_surface_t in(s->p.w, s->p.h,
-                        &((uint32_t *)m_text_surface
-                                  ->pixels)[py * m_text_surface->pitch / 4 + px],
+        rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&pixelText(px, py)),
                         m_text_surface->pitch, 0);
 
         rz_surface_t *out = rotozoomSurfaceXY(
@@ -466,9 +464,9 @@ void SDLGFX::updateBg() {
         blit_height = m_current_mode.y - dst_y;
 
       overlay_alpha_stride_div255_round_approx(
-              (uint8_t *)&PIXELC(dst_x, dst_y),
+              (uint8_t *)&pixelComp(dst_x, dst_y),
               (uint8_t *)&s->surf->pixels[src_y * s->surf->w + src_x],
-              (uint8_t *)&PIXELC(dst_x, dst_y),
+              (uint8_t *)&pixelComp(dst_x, dst_y),
               m_composite_surface->pitch / sizeof(pixel_t), blit_height,
               blit_width, s->surf->w);
     }
