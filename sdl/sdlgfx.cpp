@@ -90,12 +90,8 @@ void SDLGFX::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
 bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
-  // Try to allocate no more than 128k, but make sure it's enough to hold
-  // the specified resolution plus color memory.
-  m_last_line = _max(524288 / modes_pal[mode].x,
-                     modes_pal[mode].y + modes_pal[mode].y / MIN_FONT_SIZE_Y);
+  m_last_line = modes_pal[mode].y * 2;
 
-  m_last_line++;
   printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2,
          modes_pal[mode].y + modes_pal[mode].top * 2,
          modes_pal[mode].x + modes_pal[mode].left * 2,

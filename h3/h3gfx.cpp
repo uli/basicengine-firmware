@@ -224,10 +224,7 @@ bool H3GFX::setMode(uint8_t mode) {
     }
   }
 
-  // Try to allocate no more than 128k, but make sure it's enough to hold
-  // the specified resolution plus color memory.
-  m_last_line = _max(524288 / m_current_mode.x,
-                     m_current_mode.y + m_current_mode.y / MIN_FONT_SIZE_Y);
+  m_last_line = m_current_mode.y * 2;
 
   m_pixels = (uint32_t **)malloc(sizeof(*m_pixels) * m_last_line);
   m_bgpixels = (uint32_t **)malloc(sizeof(*m_bgpixels) * m_last_line);
