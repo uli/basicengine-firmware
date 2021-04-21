@@ -273,4 +273,17 @@ int eb_blit(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) 
   return 0;
 }
 
+int eb_blit_alpha(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) {
+  if (check_param(x, 0, sc0.getGWidth() - 1) ||
+      check_param(y, 0, vs23.lastLine() - 1) ||
+      check_param(dx, 0, sc0.getGWidth() - 1) ||
+      check_param(dy, 0, vs23.lastLine() - 1) ||
+      check_param(w, 0, min(sc0.getGWidth() - x, sc0.getGWidth() - dx)) ||
+      check_param(h, 0, min(vs23.lastLine() - y, vs23.lastLine() - dy)))
+    return -1;
+
+  vs23.blitRectAlpha(x, y, dx, dy, w, h);
+  return 0;
+}
+
 } // extern "C"
