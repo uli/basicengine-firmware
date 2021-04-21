@@ -12,7 +12,7 @@ extern "C" {
 // **** スクリーン管理 *************
 static uint8_t scmode = 0;
 
-void eb_locate(int32_t x, int32_t y) {
+void eb_locate(int x, int y) {
   if (x >= sc0.getWidth())  // xの有効範囲チェック
     x = sc0.getWidth() - 1;
   else if (x < 0)
@@ -31,7 +31,7 @@ void eb_window_off(void) {
   sc0.setScroll(true);
 }
 
-int eb_window(int32_t x, int32_t y, int32_t w, int32_t h) {
+int eb_window(int x, int y, int w, int h) {
   if (check_param(x, 0, sc0.getScreenWidth() - 1) ||
       check_param(y, 0, sc0.getScreenHeight() - 1) ||
       check_param(w, 1, sc0.getScreenWidth() - x) ||
@@ -46,7 +46,7 @@ int eb_window(int32_t x, int32_t y, int32_t w, int32_t h) {
   return 0;
 }
 
-int eb_font(int32_t idx) {
+int eb_font(int idx) {
   if (check_param(idx, 0, NUM_FONTS - 1))
     return -1;
   sc0.setFont(fonts[idx]);
@@ -54,7 +54,7 @@ int eb_font(int32_t idx) {
   return 0;
 }
 
-int eb_screen(int32_t m) {
+int eb_screen(int m) {
 #ifdef USE_BG_ENGINE
   // Discard dimensions saved for CONTing.
   restore_bgs = false;
@@ -96,7 +96,7 @@ int eb_screen(int32_t m) {
   return 0;
 }
 
-int eb_palette(int32_t p, int32_t hw, int32_t sw, int32_t vw, bool f) {
+int eb_palette(int p, int hw, int sw, int vw, bool f) {
   if (check_param(p, 0, CSP_NUM_COLORSPACES - 1) ||
       check_param(hw, -1, 7) ||
       check_param(sw, -1, 7) ||
@@ -110,7 +110,7 @@ int eb_palette(int32_t p, int32_t hw, int32_t sw, int32_t vw, bool f) {
   return 0;
 }
 
-int eb_border(int32_t y, int32_t uv, int32_t x, int32_t w) {
+int eb_border(int y, int uv, int x, int w) {
   if (check_param(uv, 0, 255) ||
       check_param(y, 0, 255 - 0x66) ||
       check_param(x, -1, vs23.borderWidth()) ||
@@ -125,7 +125,7 @@ int eb_border(int32_t y, int32_t uv, int32_t x, int32_t w) {
   return 0;
 }
 
-void eb_vsync(uint32_t tm) {
+void eb_vsync(unsigned int tm) {
   if (tm == 0)
     tm = vs23.frame() + 1;
 
@@ -139,11 +139,11 @@ void eb_vsync(uint32_t tm) {
   }
 }
 
-uint32_t eb_frame(void) {
+unsigned int eb_frame(void) {
   return vs23.frame();
 }
 
-ipixel_t eb_rgb_indexed(int32_t r, int32_t g, int32_t b) {
+ipixel_t eb_rgb_indexed(int r, int g, int b) {
   if (r < 0) r = 0; else if (r > 255) r = 255;
   if (g < 0) g = 0; else if (g > 255) g = 255;
   if (b < 0) b = 0; else if (b > 255) b = 255;
@@ -151,7 +151,7 @@ ipixel_t eb_rgb_indexed(int32_t r, int32_t g, int32_t b) {
   return csp.indexedColorFromRgb(r, g, b);
 }
 
-pixel_t eb_rgb(int32_t r, int32_t g, int32_t b) {
+pixel_t eb_rgb(int r, int g, int b) {
   if (r < 0) r = 0; else if (r > 255) r = 255;
   if (g < 0) g = 0; else if (g > 255) g = 255;
   if (b < 0) b = 0; else if (b > 255) b = 255;
@@ -167,46 +167,46 @@ void eb_cursor_color(pixel_t cc) {
   sc0.setCursorColor(cc);
 }
 
-int32_t eb_csize_height(void) {
+int eb_csize_height(void) {
   return sc0.getHeight();
 }
 
-int32_t eb_csize_width(void) {
+int eb_csize_width(void) {
   return sc0.getWidth();
 }
 
-int32_t eb_psize_height(void) {
+int eb_psize_height(void) {
   return sc0.getGHeight();
 }
 
-int32_t eb_psize_width(void) {
+int eb_psize_width(void) {
   return sc0.getGWidth();
 }
 
-int32_t eb_psize_lastline(void) {
+int eb_psize_lastline(void) {
   return vs23.lastLine();
 }
 
-int32_t eb_pos_x(void) {
+int eb_pos_x(void) {
   return sc0.c_x();
 }
 
-int32_t eb_pos_y(void) {
+int eb_pos_y(void) {
   return sc0.c_y();
 }
 
-uint16_t eb_char_get(int32_t x, int32_t y) {
+uint16_t eb_char_get(int x, int y) {
   return (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
 }
 
-void eb_char_set(int32_t x, int32_t y, uint16_t c) {
+void eb_char_set(int x, int y, uint16_t c) {
   if (check_param(x, 0, sc0.getWidth() - 1) ||
       check_param(y, 0, sc0.getHeight() - 1))
     return;
   sc0.write(x, y, c);
 }
 
-int eb_cscroll(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t d) {
+int eb_cscroll(int x1, int y1, int x2, int y2, int d) {
   if (x1 < 0 || y1 < 0 || x2 < x1 || y2 < y1 ||
       x2 >= sc0.getWidth() ||
       y2 >= sc0.getHeight()) {
@@ -219,7 +219,7 @@ int eb_cscroll(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t d) {
   return 0;
 }
 
-int eb_gscroll(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t d) {
+int eb_gscroll(int x1, int y1, int x2, int y2, int d) {
   if (x1 < 0 || y1 < 0 || x2 <= x1 || y2 <= y1 ||
       x2 >= sc0.getGWidth() ||
       y2 >= vs23.lastLine()) {
@@ -232,7 +232,7 @@ int eb_gscroll(int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t d) {
   return 0;
 }
 
-pixel_t eb_point(int32_t x, int32_t y) {
+pixel_t eb_point(int x, int y) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1))
     return 0;
@@ -240,23 +240,23 @@ pixel_t eb_point(int32_t x, int32_t y) {
   return vs23.getPixel(x, y);
 }
 
-void eb_pset(int32_t x, int32_t y, pixel_t c) {
+void eb_pset(int x, int y, pixel_t c) {
   Graphics::setPixelSafe(x, y, c);
 }
 
-void eb_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2, pixel_t c) {
+void eb_line(int x1, int y1, int x2, int y2, pixel_t c) {
   if (c == (pixel_t)-1)
     c = fg_color;
 
   sc0.line(x1, y1, x2, y2, c);
 }
 
-void eb_circle(int32_t x, int32_t y, int32_t r, pixel_t c, pixel_t f) {
+void eb_circle(int x, int y, int r, pixel_t c, pixel_t f) {
   if (r < 0) r = -r;
   sc0.circle(x, y, r, c, f);
 }
 
-void eb_rect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, pixel_t c, pixel_t f) {
+void eb_rect(int x1, int y1, int x2, int y2, pixel_t c, pixel_t f) {
   sc0.rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, c, f);
 }
 
@@ -297,7 +297,7 @@ int eb_blit(int x, int y, int dx, int dy, int w, int h) {
   return 0;
 }
 
-int eb_blit_alpha(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) {
+int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1) ||
       check_param(w, 0, sc0.getGWidth()) ||
