@@ -35,6 +35,8 @@ static int l_load_image(lua_State *l) {
     .src_y = sy,
     .w = w,
     .h = h,
+    .scale_x = 1,
+    .scale_y = 1,
     .key = key,
   };
 
