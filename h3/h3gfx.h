@@ -28,6 +28,9 @@ public:
     return m_bgpixels[y][x];
   }
 
+  inline int textPitch() {
+    return m_current_mode.x + m_current_mode.left * 2;
+  }
   inline int offscreenPitch() {
     return m_current_mode.x;
   }
@@ -164,6 +167,7 @@ protected:
 
 private:
   void drawBg(bg_t *bg);
+  void drawSprite(sprite_t *s);
 
   inline void blitBuffer(pixel_t *dst, pixel_t *buf);
   void resetLinePointers(pixel_t **pixels, pixel_t *buffer);

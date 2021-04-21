@@ -32,6 +32,9 @@ public:
     return PIXELC(x, y);
   }
 
+  inline int textPitch() {
+    return m_text_surface->pitch / sizeof(pixel_t);
+  }
   inline int offscreenPitch() {
     return m_text_surface->pitch / sizeof(pixel_t);
   }
@@ -180,6 +183,7 @@ private:
   }
 
   void drawBg(bg_t *bg);
+  void drawSprite(sprite_t *s);
 
   static Uint32 timerCallback(Uint32 t);
 

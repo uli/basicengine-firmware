@@ -342,76 +342,8 @@ void SDLGFX::updateBg() {
       // skip if not visible
       if (!s->enabled || s->prio != prio)
         continue;
-      if (s->pos_x + s->p.w < 0 || s->pos_x >= width() ||
-          s->pos_y + s->p.h < 0 || s->pos_y >= height())
-        continue;
 
-      // sprite pattern start coordinates
-      int px = s->p.pat_x + s->p.frame_x * s->p.w;
-      int py = s->p.pat_y + s->p.frame_y * s->p.h;
-
-      pixel_t skey = s->p.key;
-
-      // refresh surface as necessary
-      if (s->must_reload || !s->surf) {
-        // XXX: do this asynchronously
-        if (s->surf)
-          delete s->surf;
-
-        // XXX: shouldn't this happen on the rotozoom surface?
-        pixel_t alpha = s->alpha << 24;
-        if (s->p.key != 0) {
-          for (int y = 0; y < s->p.h; ++y) {
-            for (int x = 0; x < s->p.w; ++x) {
-              if ((pixelText(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
-                pixelText(px + x, py + y) = pixelText(px + x, py + y) & 0xffffff;
-              } else {
-                pixelText(px + x, py + y) =
-                        (pixelText(px + x, py + y) & 0xffffff) | alpha;
-              }
-            }
-          }
-        }
-
-        rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&pixelText(px, py)),
-                        m_text_surface->pitch, 0);
-
-        rz_surface_t *out = rotozoomSurfaceXY(
-                &in, s->angle, s->p.flip_x ? -s->scale_x : s->scale_x,
-                s->p.flip_y ? -s->scale_y : s->scale_y, 0);
-        s->surf = out;
-        s->must_reload = false;
-      }
-
-      int dst_x = s->pos_x;
-      int dst_y = s->pos_y;
-
-      int blit_width = s->surf->w;
-      int blit_height = s->surf->h;
-
-      int src_x = 0;
-      int src_y = 0;
-
-      if (dst_x < 0) {
-        blit_width += dst_x;
-        src_x -= dst_x;
-        dst_x = 0;
-      } else if (dst_x + blit_width >= m_current_mode.x)
-        blit_width = m_current_mode.x - dst_x;
-
-      if (dst_y < 0) {
-        blit_height += dst_y;
-        src_y -= dst_y;
-        dst_y = 0;
-      } else if (dst_y + blit_height >= m_current_mode.y)
-        blit_height = m_current_mode.y - dst_y;
-
-      overlay_alpha_stride_div255_round_approx(
-              (uint8_t *)&pixelComp(dst_x, dst_y),
-              (uint8_t *)&s->surf->pixels[src_y * s->surf->w + src_x],
-              (uint8_t *)&pixelComp(dst_x, dst_y),
-              m_composite_surface->pitch / sizeof(pixel_t), blit_height,
-              blit_width, s->surf->w);
+      drawSprite(s);
     }
   }
 }
