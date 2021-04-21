@@ -2973,7 +2973,7 @@ Returns a string containing the hexadecimal representation of a number.
 \ref BIN$()
 ***/
 BString Basic::shex() {
-  int32_t value;  // 値
+  uint32_t value;  // 値
   if (checkOpen() || getParam(value, I_CLOSE))
     return BString();
   BString hex((unsigned int)value, 16);
