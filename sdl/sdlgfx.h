@@ -42,6 +42,10 @@ public:
     return m_composite_surface->pitch / sizeof(pixel_t);
   }
 
+  inline void cleanCache() {
+    // nothing to do
+  }
+
   inline uint16_t width() {
     return m_current_mode.x;
   }

@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <display.h>
+#include <mmu.h>
 #include <tve.h>
 #include <spinlock.h>
 
@@ -36,6 +37,10 @@ public:
   }
   inline int compositePitch() {
     return m_current_mode.x + m_current_mode.left * 2;
+  }
+
+  void cleanCache() {
+    mmu_flush_dcache();
   }
 
   inline uint16_t width() {

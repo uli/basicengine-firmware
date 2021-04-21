@@ -7,7 +7,6 @@
 #include "h3gfx.h"
 #include "colorspace.h"
 #include <joystick.h>
-#include <mmu.h>
 #include <smp.h>
 
 H3GFX vs23;
@@ -339,7 +338,7 @@ void H3GFX::updateStatus() {
       resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
       blitBuffer(m_textmode_buffer, latest_content);
     }
-    mmu_flush_dcache();
+    cleanCache();
     m_engine_enabled = enabled;
     spin_unlock(&m_buffer_lock);
   }
@@ -412,7 +411,7 @@ void H3GFX::updateBgTask() {
 #endif
 
   // Not doing this produces a nice distortion effect...
-  mmu_flush_dcache();
+  cleanCache();
 
   display_swap_buffers();
   resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
@@ -431,7 +430,7 @@ void H3GFX::updateBgTask() {
 
 void H3GFX::updateBg() {
   if (!m_engine_enabled)
-    mmu_flush_dcache();  // commit single-buffer renderings to DRAM
+    cleanCache();  // commit single-buffer renderings to DRAM
 }
 
 #ifdef USE_BG_ENGINE
