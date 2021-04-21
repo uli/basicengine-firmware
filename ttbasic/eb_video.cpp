@@ -260,29 +260,55 @@ void eb_rect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, pixel_t c, pixel_t 
   sc0.rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, c, f);
 }
 
-int eb_blit(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) {
+static void clampRect(int &x, int &y, int &dx, int &dy, int &w, int &h) {
+  if (x + w >= sc0.getGWidth())
+    w = sc0.getGWidth() - x;
+  if (y + h >= vs23.lastLine())
+    h = vs23.lastLine() - y;
+
+  if (dx < 0) {
+    w += dx;
+    x -= dx;
+    dx = 0;
+  }
+  if (dy < 0) {
+    h += dy;
+    y -= dy;
+    dy = 0;
+  }
+  if (dx + w >= sc0.getGWidth())
+    w = sc0.getGWidth() - dx;
+  if (dy + h >= vs23.lastLine())
+    h = vs23.lastLine() - dy;
+}
+
+int eb_blit(int x, int y, int dx, int dy, int w, int h) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1) ||
-      check_param(dx, 0, sc0.getGWidth() - 1) ||
-      check_param(dy, 0, vs23.lastLine() - 1) ||
-      check_param(w, 0, min(sc0.getGWidth() - x, sc0.getGWidth() - dx)) ||
-      check_param(h, 0, min(vs23.lastLine() - y, vs23.lastLine() - dy)))
+      check_param(w, 0, sc0.getGWidth()) ||
+      check_param(h, 0, vs23.lastLine()))
     return -1;
 
-  vs23.blitRect(x, y, dx, dy, w, h);
+  clampRect(x, y, dx, dy, w, h);
+
+  if (w > 0 && h > 0)
+    vs23.blitRect(x, y, dx, dy, w, h);
+
   return 0;
 }
 
 int eb_blit_alpha(int32_t x, int32_t y, int32_t dx, int32_t dy, int32_t w, int32_t h) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1) ||
-      check_param(dx, 0, sc0.getGWidth() - 1) ||
-      check_param(dy, 0, vs23.lastLine() - 1) ||
-      check_param(w, 0, min(sc0.getGWidth() - x, sc0.getGWidth() - dx)) ||
-      check_param(h, 0, min(vs23.lastLine() - y, vs23.lastLine() - dy)))
+      check_param(w, 0, sc0.getGWidth()) ||
+      check_param(h, 0, vs23.lastLine()))
     return -1;
 
-  vs23.blitRectAlpha(x, y, dx, dy, w, h);
+  clampRect(x, y, dx, dy, w, h);
+
+  if (w > 0 && h > 0)
+    vs23.blitRectAlpha(x, y, dx, dy, w, h);
+
   return 0;
 }
 
