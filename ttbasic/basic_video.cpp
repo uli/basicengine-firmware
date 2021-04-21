@@ -1042,17 +1042,12 @@ source area. To enable alpha-blending, `ALPHA` must be appended at the end.
 void GROUP(basic_video) Basic::iblit() {
   int32_t x, y, w, h, dx, dy;
 
-  if (getParam(x,  0, sc0.getGWidth(), I_COMMA))
-    return;
-  if (getParam(y,  0, vs23.lastLine(), I_TO))
-    return;
-  if (getParam(dx, 0, sc0.getGWidth(), I_COMMA))
-    return;
-  if (getParam(dy, 0, vs23.lastLine(), I_SIZE))
-    return;
-  if (getParam(w,  0, sc0.getGWidth() - x, I_COMMA))
-    return;
-  if (getParam(h,  0, vs23.lastLine() - y, I_NONE))
+  if (getParam(x, I_COMMA) ||
+      getParam(y, I_TO) ||
+      getParam(dx, I_COMMA) ||
+      getParam(dy, I_SIZE) ||
+      getParam(w, I_COMMA) ||
+      getParam(h, I_NONE))
     return;
 
   if (*cip == I_ALPHA) {
