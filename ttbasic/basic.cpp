@@ -5896,7 +5896,7 @@ void SMALL Basic::basic() {
 
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
   vs23.setLineAdjust(CONFIG.line_adjust);
-  vs23.setColorSpace(0);
+  vs23.setColorSpace(DEFAULT_COLORSPACE);
 
   basic_init_input();
 
@@ -5919,7 +5919,7 @@ void SMALL Basic::basic() {
   // Want to make sure we get the right hue.
   csp.setColorConversion(0, 7, 2, 4, true);
   show_logo();
-  vs23.setColorSpace(0);  // reset color conversion
+  vs23.setColorSpace(DEFAULT_COLORSPACE);  // reset color conversion
 
   // Startup screen
   // Epigram

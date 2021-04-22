@@ -87,6 +87,12 @@
 #define TOKEN_TYPE uint32_t
 #endif
 
+#ifdef TRUE_COLOR
+#define DEFAULT_COLORSPACE 2
+#else
+#define DEFAULT_COLORSPACE 0
+#endif
+
 // ** Default screen size in terminal mode ************************
 // ※ While moving, can be changed by WIDTH command (default: 80x25)
 // XXX: I don't think this works anymore.
