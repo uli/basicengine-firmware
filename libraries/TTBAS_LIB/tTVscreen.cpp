@@ -374,7 +374,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   case 0:  // 上
     for (uint16_t i = 0; i < h - 1; i++) {
       memcpy(&VPEEK(x, y + i), &VPEEK(x, y + i + 1), w);
-      VMOVE_C(x, y + i + 1, x, y + i, w, 1);
+      VMOVE_C(x, y + i + 1, x, y + i, w);
     }
     memset(&VPEEK(x, y + h - 1), 0, w);
     VSET_C(x, y + h - 1, fg_color, bg_color, w);
@@ -383,7 +383,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   case 1:  // 下
     for (uint16_t i = 0; i < h - 1; i++) {
       memcpy(&VPEEK(x, y + h - 1 - i), &VPEEK(x, y + h - 1 - i - 1), w);
-      VMOVE_C(x, y + h - 1 - i - 1, x, y + h - 1 - i, w, 1);
+      VMOVE_C(x, y + h - 1 - i - 1, x, y + h - 1 - i, w);
     }
     memset(&VPEEK(x, y), 0, w);
     VSET_C(x, y, fg_color, bg_color, w);
@@ -392,7 +392,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   case 2:  // 右
     for (uint16_t i = 0; i < h; i++) {
       memmove(&VPEEK(x + 1, y + i), &VPEEK(x, y + i), w - 1);
-      VMOVE_C(x, y + i, x + 1, y + i, w - 1, 1);
+      VMOVE_C(x, y + i, x + 1, y + i, w - 1);
       VPOKE(x, y + i, 0);
       VPOKE_CCOL(x, y + i);
     }
@@ -401,7 +401,7 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   case 3:  // 左
     for (uint16_t i = 0; i < h; i++) {
       memmove(&VPEEK(x, y + i), &VPEEK(x + 1, y + i), w - 1);
-      VMOVE_C(x + 1, y + i, x, y + i, w - 1, 1);
+      VMOVE_C(x + 1, y + i, x, y + i, w - 1);
       VPOKE(x + w - 1, y + i, 0);
       VPOKE_CCOL(x + w - 1, y + i);
     }

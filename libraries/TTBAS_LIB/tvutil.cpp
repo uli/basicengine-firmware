@@ -65,23 +65,12 @@ void tv_setFont(const uint8_t *font)
 int colmem_fg_x, colmem_fg_y;
 int colmem_bg_x, colmem_bg_y;
 
-static void allocate_system_bufs()
-{
-  // XXX: assumes font height == 8
-  // We don't want to allocate this last because it will be in the way when
-  // allocating a larger font later.
-  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_fg_x, colmem_fg_y);
-  vs23.allocBacking(g_width / MIN_FONT_SIZE_X, g_height / MIN_FONT_SIZE_Y, colmem_bg_x, colmem_bg_y);
-}
-
 //
 // Default setting for NTSC display
 //
 void tv_init(int16_t ajst, uint8_t vmode) {
   g_width  = vs23.width();           // Horizontal pixel number
   g_height = vs23.height();          // Number of vertical pixels
-
-  allocate_system_bufs();
 
   win_x = 0;
   win_y = 0;
@@ -94,7 +83,6 @@ void tv_init(int16_t ajst, uint8_t vmode) {
 void tv_reinit()
 {
   vs23.reset();
-  allocate_system_bufs();
   tv_window_reset();
 }
 

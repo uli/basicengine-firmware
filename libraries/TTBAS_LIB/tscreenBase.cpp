@@ -19,9 +19,13 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, uint8_t *extmem) {
   if (screen && (w != whole_width || h != whole_height)) {
     free(screen);
     screen = NULL;
+    free(colmem);
+    colmem = NULL;
   }
-  if (!screen)
+  if (!screen) {
     screen = (uint8_t *)calloc(w * h, sizeof(*screen));
+    colmem = (pixel_t *)calloc(w * h * 2, sizeof(pixel_t));
+  }
 
   whole_width = width = w;
   whole_height = height = h;
@@ -53,6 +57,8 @@ void tscreenBase::end() {
   if (screen != NULL) {
     free(screen);
     screen = NULL;
+    free(colmem);
+    colmem = NULL;
   }
 }
 
@@ -93,7 +99,7 @@ void tscreenBase::scroll_up() {
     return;
   for (int i = 1; i < height; ++i) {
     memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width);
-    VMOVE_C(0, i, 0, i - 1, width, 1);
+    VMOVE_C(0, i, 0, i - 1, width);
   }
   if (flgCur)
     draw_cls_curs();
@@ -108,7 +114,7 @@ void tscreenBase::scroll_down() {
     return;
   for (int i = height - 2; i >= 0; --i) {
     memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
-    VMOVE_C(0, i, 0, i + 1, width, 1);
+    VMOVE_C(0, i, 0, i + 1, width);
   }
   if (flgCur)
     draw_cls_curs();
@@ -122,7 +128,7 @@ void tscreenBase::Insert_newLine(uint16_t l) {
   if (l < height - 1) {
     for (int i = height - 2; i >= l + 1; --i) {
       memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
-      VMOVE_C(0, i, 0, i + 1, width, 1);
+      VMOVE_C(0, i, 0, i + 1, width);
     }
   }
   memset(&VPEEK(0, l + 1), 0, width);

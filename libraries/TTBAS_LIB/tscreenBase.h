@@ -1,4 +1,4 @@
-// 
+//
 // スクリーン制御基本クラス ヘッダーファイル
 // 作成日 2017/06/27 by たま吉さん
 //
@@ -8,6 +8,7 @@
 
 #define DEPEND_TTBASIC           1     // 豊四季TinyBASIC依存部利用の有無 0:利用しない 1:利用する
 
+#include "ttconfig.h"
 #include <Arduino.h>
 
 // Definition of edit key
@@ -47,28 +48,23 @@
 #define VPOKE(X,Y,C)    (screen[whole_width*((Y)+win_y) + (X)+win_x]=(C))
 
 // color memory access macros
-#define VPEEK_FG(X, Y)	vs23.getPixel(colmem_fg_x + (X), colmem_fg_y + (Y))
-#define VPEEK_BG(X, Y)	vs23.getPixel(colmem_bg_x + (X), colmem_bg_y + (Y))
+#define COLMEM(X, Y) (&colmem[(whole_width * (Y) + (X)) * 2])
+
+#define VPEEK_FG(X, Y)	(COLMEM(X, Y)[0])
+#define VPEEK_BG(X, Y)	(COLMEM(X, Y)[1])
 #define VPOKE_FGBG(X,Y,F,B) do { \
-  vs23.setPixel(colmem_fg_x + (X), colmem_fg_y + (Y), (F)); \
-  vs23.setPixel(colmem_bg_x + (X), colmem_bg_y + (Y), (B)); \
+  COLMEM(X, Y)[0] = (F); \
+  COLMEM(X, Y)[1] = (B); \
 } while (0)
 
-#define VMOVE_C(X1, Y1, X2, Y2, W, H) do { \
-  vs23.blitRect(colmem_fg_x + (X1), colmem_fg_y + (Y1), \
-                 colmem_fg_x + (X2), colmem_fg_y + (Y2), \
-                 (W), (H)); \
-  vs23.blitRect(colmem_bg_x + (X1), colmem_bg_y + (Y1), \
-                 colmem_bg_x + (X2), colmem_bg_y + (Y2), \
-                 (W), (H)); \
+#define VMOVE_C(X1, Y1, X2, Y2, W) do { \
+  memmove(COLMEM(X2, Y2), COLMEM(X1, Y1), (W) * sizeof(IPIXEL_TYPE) * 2); \
 } while (0)
 
 #define VSET_C(X,Y,F,B,W) do { \
-  for (int _x = colmem_fg_x + (X); _x < colmem_fg_x + (X)+(W); ++_x) { \
-    vs23.setPixel(_x, colmem_fg_y + (Y), (F)); \
-  } \
-  for (int _x = colmem_bg_x + (X); _x < colmem_bg_x + (X)+(W); ++_x) { \
-    vs23.setPixel(_x, colmem_bg_y + (Y), (B)); \
+  for (int _x = (X); _x < (X)+(W); ++_x) { \
+    COLMEM(_x, (Y))[0] = (F); \
+    COLMEM(_x, (Y))[1] = (B); \
   } \
 } while (0)
 
@@ -78,6 +74,7 @@
 class tscreenBase {
   protected:
     uint8_t* screen = NULL;     // スクリーン用バッファ
+    IPIXEL_TYPE *colmem = NULL;
     uint16_t width;             // text window width
     uint16_t height;            // text window height
     uint16_t whole_width, whole_height;	// full screen width/height (chars)
@@ -90,7 +87,7 @@ class tscreenBase {
     uint8_t flgCur:1;             // カーソル表示設定
     bool flgIns:1;             // 編集モード
     bool flgScroll:1;
-	
+
 protected:
     virtual void INIT_DEV() = 0;                              // デバイスの初期化
 	virtual void END_DEV() {};                                // デバイスの終了
@@ -101,7 +98,7 @@ protected:
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
     virtual void SCROLL_DOWN() = 0;                           // スクロールダウン
     virtual void INSLINE(uint16_t l) = 0;                      // 指定行に1行挿入(下スクロール)
-    
+
   public:
 	virtual void beep() {};                              // BEEP音の発生
     virtual void show_curs(uint8_t flg) = 0;                 // カーソルの表示/非表示
