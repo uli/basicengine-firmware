@@ -28,7 +28,7 @@ INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/sr
 	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
 	-Ilibraries/alpha-lib/include -Igfx
 ARDFLAGS = -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
-	   -Wall -Wno-unused -D_GNU_SOURCE -DENABLE_NEON
+	   -Wall -Wno-unused -D_GNU_SOURCE -DENABLE_NEON -DSTBI_NEON
 CFLAGS += $(ARDFLAGS)
 #CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage
