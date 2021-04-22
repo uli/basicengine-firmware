@@ -373,7 +373,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical NOT" operator; instead, the bitwise operator is used.
 ***/
   case I_BITREV: // NOT
-    return ~((int32_t)irel());
+    return ~((uint32_t)(int64_t)irel());
   default:
     cip--;
     value = irel();
@@ -395,7 +395,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 "logical AND" operator; instead, the bitwise operator is used.
 ***/
       tmp = iand();
-      value = ((int32_t)value) & ((int32_t)tmp);
+      value = ((uint32_t)(int64_t)value) & ((uint32_t)(int64_t)tmp);
       break;
     default:
       cip--;
@@ -424,7 +424,7 @@ Like most BASIC implementations, Engine BASIC does not have a dedicated
 ***/
     case I_OR:
       tmp = iand();
-      value = ((int32_t)value) | ((int32_t)tmp);
+      value = ((uint32_t)(int64_t)value) | ((uint32_t)(int64_t)tmp);
       break;
 /***bo op EOR
 Bitwise exclusive-OR operator.
@@ -434,7 +434,7 @@ Bitwise exclusive-OR operator.
 ***/
     case I_XOR:
       tmp = iand();
-      value = ((int32_t)value) ^ ((int32_t)tmp);
+      value = ((uint32_t)(int64_t)value) ^ ((uint32_t)(int64_t)tmp);
       break;
     default:
       cip--;
