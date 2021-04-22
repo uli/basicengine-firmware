@@ -912,7 +912,8 @@ Draws a pixel.
 \ref RGB()
 ***/
 void GROUP(basic_video) Basic::ipset() {
-  int32_t x, y, c;
+  int32_t x, y;
+  ipixel_t c;
   if (getParam(x, I_COMMA) || getParam(y, I_COMMA) || getParam(c, I_NONE))
     return;
 
