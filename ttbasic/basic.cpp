@@ -1026,6 +1026,21 @@ as local variables or arguments.
           goto oom;
         s += var_len;
       }
+    } else if (*ptok == '|') {
+      ++ptok;
+      ++s;
+      s += parse_identifier(s, vname);
+      void *sym = get_symbol(vname);
+      if (!sym) {
+        err = ERR_UNDEFSYM;
+        strcpy(tbuf, vname);
+        err_expected = tbuf;
+        return 0;
+      }
+      ibuf[len++] = I_NFC;
+      *(uintptr_t *)(ibuf + len) = (uintptr_t)sym;
+      len += icodes_per_ptr();
+      ptok++;
     } else {  // if none apply
       err = ERR_SYNTAX;
       return 0;
@@ -1538,6 +1553,15 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
     } else if (*ip == I_IMPLICITENDIF) {
       // invisible
       ip++;
+    } else if (*ip == I_NFC) {
+      c_putch('|');
+      ++ip;
+      void *addr = *((void **)ip);
+      ip += icodes_per_ptr();
+      const char *sym = get_name(addr);
+      c_puts(sym);
+      if (!nospaceb((token_t)*ip))
+        c_putch(' ', devno);
     } else {          //どれにも当てはまらなかった場合
       err = ERR_SYS;  //エラー番号をセット
       return mark;
@@ -1751,6 +1775,7 @@ int BASIC_FP token_size(icode_t *code) {
     else
       return 1;
   case I_EXTEND: return 2;
+  case I_NFC: return icodes_per_ptr() + 1;
   default: return 1;
   }
 }
@@ -4265,6 +4290,8 @@ PROC f(x): RETURN @x * 2
       break;
     }
 
+    case I_NFC: value = nnfc(); break;
+
     case I_VREG: value = nvreg(); break;
 
     default:
@@ -5970,6 +5997,8 @@ void SMALL Basic::basic() {
     c_puts(cwd);
   delete[] cwd;
   newline();
+
+  init_tcc();
 
   // XXX: make sound font configurable
   sound.begin();
