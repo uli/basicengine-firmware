@@ -23,7 +23,7 @@
 /* only native compiler supports -run */
 #ifdef TCC_IS_NATIVE
 
-#if !defined _WIN32 && !defined ENGINEBASIC
+#if !defined _WIN32 && (!defined ENGINEBASIC || defined SDL)
 # include <sys/mman.h>
 #endif
 
@@ -279,7 +279,7 @@ static int tcc_relocate_ex(TCCState *s1, void *ptr, addr_t ptr_diff)
 
 static void set_pages_executable(void *ptr, unsigned long length)
 {
-#ifdef ENGINEBASIC
+#if defined ENGINEBASIC && !defined SDL
     // XXX: icache flush?
 #else
 #ifdef _WIN32
