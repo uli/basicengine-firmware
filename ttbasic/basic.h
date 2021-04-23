@@ -11,6 +11,7 @@ typedef TOKEN_TYPE icode_t;
 typedef TOKEN_TYPE index_t;
 
 #define icodes_per_num() (sizeof(num_t) / sizeof(icode_t))
+#define icodes_per_ptr() (sizeof(void *) / sizeof(icode_t))
 
 #include <string.h>
 #include <sdfiles.h>
