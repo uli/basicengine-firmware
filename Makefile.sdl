@@ -1,53 +1,39 @@
 TARGET = basic.sdl
+OBJDIR = build_sdl
 
-SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
-	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
-	$(shell ls libraries/azip/*.cpp) \
-	$(shell ls libraries/alpha-lib/src/*.cpp) \
-	$(shell ls sdl/*.cpp) \
-	$(shell ls arduino_compat/*.cpp)
+all: $(TARGET)
 
-SOURCES_C = $(shell ls ttbasic/*.c) $(shell ls libraries/stb/*.c)
+include common.mk
+
+SOURCES = $(COMMON_SOURCES) $(shell ls sdl/*.cpp)
+
+SOURCES_C = $(COMMON_SOURCES_C)
 
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
+OUT_OBJS = $(addprefix $(OBJDIR)/, $(OBJS))
 
-PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
-	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
-
-LIBS = -lstdc++ -lSDL -lSDL_gfx
+LIBS = -lstdc++ -lSDL -lSDL_gfx -L$(OBJDIR)/dyncall/dyncall -ldyncall_s
 
 CROSS_COMPILE=
 CC=$(CROSS_COMPILE)gcc
 CXX=$(CROSS_COMPILE)g++
 
-INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
-	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
-	-Ilibraries/alpha-lib/include -Igfx
-ARDFLAGS = -g -MMD -O3 -funroll-loops -fomit-frame-pointer -fno-exceptions -Isdl -Iarduino_compat -Ittbasic $(INCLUDE) \
-	   -Wall -Wno-unused -DENGINEBASIC -D_GNU_SOURCE -DSDL -DDISABLE_NEON
-CFLAGS += $(ARDFLAGS)
+INCLUDE = $(COMMON_INCLUDE)
+ARDFLAGS = $(COMMON_ARDFLAGS) -MMD -funroll-loops -fomit-frame-pointer -Isdl \
+	   -DSDL -DDISABLE_NEON
+
+CFLAGS += $(ARDFLAGS) -Wno-pointer-sign
 #CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage
 #CFLAGS += -fsanitize=undefined -fsanitize-address-use-after-scope
-CXXFLAGS += $(CFLAGS) -fpermissive -std=c++11 -fno-exceptions
+CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+$(TARGET): $(OUT_OBJS) $(OBJDIR)/dyncall/dyncall/libdyncall_s.a
+	$(CXX) $(CFLAGS) -o $(TARGET) $(OUT_OBJS) $(LIBS)
 
 clean:
-	rm -f $(OBJS) $(OBJS:%.o=%.d) $(PROF)
+	rm -fr build_sdl
+	@rm -f $(PROF)
 	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
-gcov:
-	rm -f *.gcov
-	$(CROSS_COMPILE)gcov $(SOURCES) $(SOURCES_C)
-
-ttbasic/basic_help.o: ttbasic/helptext.o
-ttbasic/helptext.cpp: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
-	$(MAKE) -C ttbasic -f autogen.mk helptext.cpp
-
-ttbasic/funtbl.h: ttbasic/icode.txt
-	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
-$(OBJS): ttbasic/funtbl.h
-
--include $(OBJS:%.o=%.d)
+-include $(OUT_OBJS:%.o=%.d)

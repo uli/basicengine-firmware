@@ -2,34 +2,26 @@
 OSDIR = $(HOME)/devel/orangepi/allwinner-bare-metal
 
 OBJDIR = build_h3
-
 TARGET = basic
+
+all: $(TARGET).bin
 
 INIT_FS_DIR = ../basicengine_demos
 
-SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(shell ls libraries/TTBAS_LIB/*.cpp) \
-	$(shell ls libraries/ESP8266SAM/src/*.cpp) $(shell ls libraries/TTVoutfonts/*.cpp) \
-	$(shell ls libraries/azip/*.cpp) \
-	$(shell ls libraries/alpha-lib/src/*.cpp) \
-	$(shell ls h3/*.cpp) \
-	$(shell ls arduino_compat/*.cpp)
+SOURCES = $(COMMON_SOURCES) $(shell ls h3/*.cpp)
+SOURCES_C = $(COMMON_SOURCES_C)
 
-SOURCES_C = $(shell ls ttbasic/*.c) $(shell ls libraries/stb/*.c)
+include common.mk
+
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
-
-PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
-	$(SOURCES_C:.c=.gcda) $(SOURCES_C:.c=.gcno)
-
-LIBS = -lstdc++
 
 include $(OSDIR)/build.mk
 
-INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
-	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
-	-Ilibraries/alpha-lib/include -Igfx
-ARDFLAGS = -DENGINEBASIC -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
-	   -Wall -Wno-unused -Wno-sign-compare -Wno-implicit-fallthrough \
-	   -D_GNU_SOURCE -DENABLE_NEON -DSTBI_NEON \
+LIBS = -lstdc++ -L$(OBJDIR)/dyncall/dyncall -ldyncall_s
+
+INCLUDE = $(COMMON_INCLUDE)
+ARDFLAGS = $(COMMON_ARDFLAGS) -DH3 -Ih3 -Ittbasic \
+	   -DENABLE_NEON -DSTBI_NEON \
 	   -U __UINT32_TYPE__ -U__INT32_TYPE__ -D__UINT32_TYPE__="unsigned int" -D__INT32_TYPE__=int
 
 CFLAGS += $(ARDFLAGS) -Wno-pointer-sign
@@ -42,16 +34,6 @@ clean:
 	@rm -f $(PROF)
 	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
-gcov:
-	rm -f *.gcov
-	gcov $(SOURCES) $(SOURCES_C)
-
-$(OBJDIR)/ttbasic/basic_help.o: $(OBJDIR)/ttbasic/helptext.o
-ttbasic/helptext.cpp: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
-	$(MAKE) -C ttbasic -f autogen.mk helptext.cpp
-
-ttbasic/funtbl.h: ttbasic/icode.txt
-	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
-$(OUT_OBJS): ttbasic/funtbl.h
+$(TARGET).elf: $(OBJDIR)/dyncall/dyncall/libdyncall_s.a
 
 -include $(OUT_OBJS:%.o=%.d)
