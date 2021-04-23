@@ -1,0 +1,6 @@
+#define ONE_SOURCE	1
+#define CONFIG_TCC_STATIC
+#define TCC_ARM_VFP
+#define TCC_VERSION "0.9.27"
+#define TCC_IS_NATIVE
+#define CONFIG_TCCBOOT

@@ -23,7 +23,7 @@
 /* only native compiler supports -run */
 #ifdef TCC_IS_NATIVE
 
-#ifndef _WIN32
+#if !defined _WIN32 && !defined ENGINEBASIC
 # include <sys/mman.h>
 #endif
 
@@ -279,6 +279,9 @@ static int tcc_relocate_ex(TCCState *s1, void *ptr, addr_t ptr_diff)
 
 static void set_pages_executable(void *ptr, unsigned long length)
 {
+#ifdef ENGINEBASIC
+    // XXX: icache flush?
+#else
 #ifdef _WIN32
     unsigned long old_protect;
     VirtualProtect(ptr, length, PAGE_EXECUTE_READWRITE, &old_protect);
@@ -298,6 +301,7 @@ static void set_pages_executable(void *ptr, unsigned long length)
 # if defined TCC_TARGET_ARM || defined TCC_TARGET_ARM64
     __clear_cache(ptr, (char *)ptr + length);
 # endif
+#endif
 #endif
 }
 

@@ -3304,6 +3304,9 @@ static int macro_subst_tok(
         cstrval = file->filename;
         goto add_cstr;
     } else if (tok == TOK___DATE__ || tok == TOK___TIME__) {
+#ifdef ENGINEBASIC
+        cstrval = "unknown";
+#else
         time_t ti;
         struct tm *tm;
 
@@ -3317,6 +3320,7 @@ static int macro_subst_tok(
                      tm->tm_hour, tm->tm_min, tm->tm_sec);
         }
         cstrval = buf;
+#endif
     add_cstr:
         t1 = TOK_STR;
     add_cstr1:

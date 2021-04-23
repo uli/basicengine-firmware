@@ -21,7 +21,9 @@
 #ifndef _TCC_H
 #define _TCC_H
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include "config.h"
 
 #include <stdlib.h>
