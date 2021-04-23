@@ -3339,7 +3339,7 @@ void SMALL Basic::ildbmp() {
 #ifdef USE_BG_ENGINE
   uint32_t spr_from, spr_to;
   bool define_bg = false, define_spr = false;
-  int32_t bg;
+  int32_t bg = 0;
 #endif
   uint32_t key = 0;  // no keying
   double scale_x = 1, scale_y = 1;
