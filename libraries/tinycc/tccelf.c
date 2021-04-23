@@ -455,6 +455,30 @@ ST_FUNC int find_elf_sym(Section *s, const char *name)
     return 0;
 }
 
+ST_FUNC const char *find_elf_sym_by_addr(Section *s, addr_t addr)
+{
+    ElfW(Sym) *sym;
+    Section *hs;
+    int nbuckets, sym_index, h;
+    const char *name1;
+
+    hs = s->hash;
+    if (!hs)
+        return 0;
+    nbuckets = ((int *)hs->data)[0];
+    for (h = 0; h < nbuckets; ++h) {
+        sym_index = ((int *)hs->data)[2 + h];
+        while (sym_index != 0) {
+            sym = &((ElfW(Sym) *)s->data)[sym_index];
+            name1 = (char *) s->link->data + sym->st_name;
+            if (addr == sym->st_value)
+                return name1;
+            sym_index = ((int *)hs->data)[2 + nbuckets + sym_index];
+        }
+    }
+    return NULL;
+}
+
 /* return elf symbol value, signal error if 'err' is nonzero */
 ST_FUNC addr_t get_elf_sym_addr(TCCState *s, const char *name, int err)
 {
@@ -475,6 +499,12 @@ ST_FUNC addr_t get_elf_sym_addr(TCCState *s, const char *name, int err)
 LIBTCCAPI void *tcc_get_symbol(TCCState *s, const char *name)
 {
     return (void*)(uintptr_t)get_elf_sym_addr(s, name, 0);
+}
+
+/* return elf symbol value, signal error if 'err' is nonzero */
+LIBTCCAPI const char *tcc_get_name(TCCState *s, void *addr)
+{
+    return find_elf_sym_by_addr(s->symtab, (addr_t)addr);
 }
 
 #if defined TCC_IS_NATIVE || defined TCC_TARGET_PE
