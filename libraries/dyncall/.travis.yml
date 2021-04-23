@@ -1,0 +1,157 @@
+git:
+  depth: 1
+env:
+  global:
+  - secure: "pD469J6GBmmwW4XAT5xBXkyAgC3bM14IdfYAAyoXBSm5SsydKieQbYxq2FvtTsj+ldySfdglsVWCAZo2Mc6/2keK1JMv35dQLxQ1/oAOibW4XKIks32UieRDaJHogodCa7WTgkLqgqEjW1e66cAQZ7enBJv0yUdvbRogIwTrUNHlaOshTrpl39CIbr5DqpBMIHhTOeUo4LwluQ2s/dEdX//fg6FSYjhNbKamaM4UeIjp4gfbWqix9/JoQY3drSpcI5oRyhVATrwmy+naddYY3McytbS7KI4mYaj/Hl5zDJ6PjSq8veUQylZRP7SB7KpbgRt3B5dZubgG9knIDjjyLnEXg/ByVdhPuRf4rb4cPcyB47mBWgsw1Zvh3orruua7q/Ds49+ets7nENTz/BpnOoTy0kYm+LdG0g7crEynPDfa/kaSpeZCUBaqIrr951g/sRd4T0SMpm8eOoHaXLtshOU6E03C/d8ao0AiJCyuvOYkh7wiFm6MNHrnjdHOq/hTvwhDEUUo2G/RkrIK0qaVMZzsri05fYsR1wkdukw0eW/f6g0Sew6TWtQOmvKr6AwlME9HiBCUIrASB7MUMdome+s5pNMeldxvGMd+NwubJZdXJ+u1Sf7RNHKb7qPimlk6MmCvhw5Knv/LZtYPfq7uZkta35F8bJb5oE9ReX+9CGM="
+  - secure: "sYnqdCAZn1n9nZSm9SAzhiVVCQCVMxBszKC/jLO0u3MMrJHoZ9PZFxHfs9c3dx5TByNSYO8kq8W92TxDu0sKf7TziZ9LjYRmHxwpmqk8K4yMZeUP5/XuIvrxvW17eeifZswhTTJy0gqRd6SvXbfQ74q7ilhVso3qlLUPi+j2bK6WTb9P/y5X/2H/mgfyZS8tEobxpBQUeyqg6g3rBfgtXNVlJlLPMDmsYbXf5bXjhjiEmCDo7ST2KxtOuXEHpHtiHcWkUwiqyMlXWtvlaUWPlhYR1QVnjiOubYpx+8NJ10ShXUdNzQJ9QeGbORwZjzz9nXLzj8xKINRNBhEfPfBulTbBll1oK4tCVUaCae/qU1V5F592lK7bOdXkviE+3D53de8gWI5VeR6M9A3cZduaJkab4vwTN4ssbWuG1gsvxds4WdYfU8v4aR+Y/02AZELeQ2uPtfeLYVDpXgEn1E/oMHr2iU+xWY8ZFO/K6vQ0sVYv64o2ab/VQE9UnWEjZBrKNZbLXBMmpRJX2Pnjl4ZXqpILXtRxfwGzSCx3Voz2zjAWs1Dlo0QXOsxwaW7tp+StEpdzR7wvsGnwsbR1WORbm6Ha7dJZL1pRPuDU9wTbvzrbPMeNPZIXoopYAsoiYwFYPEBb+Et0tb3xCdHvozZ7Scz1URoJbRHB450w+Hr0zho="
+  - AWS_DEFAULT_REGION: "us-east-1"
+  - S3_PARAMS: '"--acl public-read --cache-control \"public,must-revalidate,proxy-revalidate,max-age=0\""'
+
+matrix:
+  include:
+
+  # -----------------
+  - name: "Linux x64"
+  # -----------------
+    dist: xenial
+    language: c
+    compiler: gcc
+
+    addons:
+      apt:
+        packages:
+        - cmake
+        - gcc-4.8
+
+    before_install:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+
+    script:
+    - mkdir build
+    - cd build
+    - CC="gcc-4.8" cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/linux/x64/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/linux/x64/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/linux/x64/core/ $S3_PARAMS"
+
+  # -----------------
+  - name: "Linux arm32"
+  # -----------------
+    dist: xenial
+    language: c
+    compiler: gcc
+
+    addons:
+      apt:
+        packages:
+        - cmake
+        - gcc-4.8-arm-linux-gnueabihf
+        - libc6-dev-armhf-cross
+
+    before_install:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+
+    script:
+    - mkdir build
+    - cd build
+    - CC="arm-linux-gnueabihf-gcc-4.8" cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/linux/arm32/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/linux/arm32/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/linux/arm32/core/ $S3_PARAMS"
+
+  # -----------------
+  - name: "Linux arm64"
+  # -----------------
+    dist: xenial
+    language: c
+    compiler: gcc
+
+    addons:
+      apt:
+        packages:
+        - cmake
+        - gcc-4.8-aarch64-linux-gnu
+        - libc6-dev-arm64-cross
+
+    before_install:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+
+    script:
+    - mkdir build
+    - cd build
+    - CC="aarch64-linux-gnu-gcc-4.8" cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/linux/arm64/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/linux/arm64/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/linux/arm64/core/ $S3_PARAMS"
+
+  # -----------------
+  - name: "Linux mips64"
+  # -----------------
+    dist: xenial
+    language: c
+    compiler: gcc
+
+    addons:
+      apt:
+        packages:
+        - cmake
+        - gcc-5-mips64el-linux-gnuabi64
+        - g++-5-mips64el-linux-gnuabi64
+        - libc6-dev-mips64el-cross
+
+    before_install:
+    - pip install --user awscli
+    - export PATH=$PATH:$HOME/.local/bin
+
+    script:
+    - mkdir build
+    - cd build
+    - CC="mips64el-linux-gnuabi64-gcc-5" cmake -DCMAKE_BUILD_TYPE=Release ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/linux/mips64/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/linux/mips64/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/linux/mips64/core/ $S3_PARAMS"
+
+  # -----------------
+  - name: "macOS x64"
+  # -----------------
+    os: osx
+    osx_image: xcode12.2
+    compiler: clang
+
+    install:
+    - brew install awscli
+
+    script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/macosx/x64/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/macosx/x64/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/macosx/x64/core/ $S3_PARAMS"
+
+  # -----------------
+  - name: "macOS arm64"
+  # -----------------
+    os: osx
+    osx_image: xcode12.2
+    compiler: clang
+
+    install:
+    - brew install awscli
+
+    script:
+    - mkdir build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 -DCMAKE_OSX_ARCHITECTURES=arm64 ..
+    - cmake --build .
+    - "aws s3 cp dyncall/libdyncall_s.a s3://build.lwjgl.org/nightly/macosx/arm64/core/ $S3_PARAMS"
+    - "aws s3 cp dyncallback/libdyncallback_s.a s3://build.lwjgl.org/nightly/macosx/arm64/core/ $S3_PARAMS"
+    - "aws s3 cp dynload/libdynload_s.a s3://build.lwjgl.org/nightly/macosx/arm64/core/ $S3_PARAMS"

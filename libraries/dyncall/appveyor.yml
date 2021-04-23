@@ -1,0 +1,45 @@
+version: '{build}'
+skip_tags: true
+image: Visual Studio 2019
+clone_depth: 3
+environment:
+  AWS_ACCESS_KEY_ID:
+    secure: 7jhk0oV/vjFsOcsAHLMUcNGUGLuGmnuPxGH0ce/Vky8=
+  AWS_SECRET_ACCESS_KEY:
+    secure: 5KKYpsIHwYHHh5ud0U7Ss0rLumv6G8tkS6abh1B9aq4wY6+1kq5fN/3E5BsdBVKy
+  AWS_DEFAULT_REGION: us-east-1
+  S3_CONFIG_VOLATILE: --acl public-read --cache-control "public, must-revalidate, proxy-revalidate, max-age=0"
+  GIT_FORMAT: '%%H'
+  matrix:
+  - ARCH: x64
+    PLATFORM: x64
+  - ARCH: x86
+    PLATFORM: Win32
+  - ARCH: arm64
+    PLATFORM: ARM64
+matrix:
+  fast_finish: true
+build_script:
+- cmd: >-
+    mkdir build
+
+    cd build
+
+    cmake -G "Visual Studio 16 2019" -A %PLATFORM% -DCMAKE_C_FLAGS_RELEASE:STRING="/EHsc /Ox /GF /Gy /GR- /MT /DNDEBUG" ..
+
+    cmake --build . --config Release
+
+    aws s3 cp dyncall\Release\dyncall_s.lib s3://build.lwjgl.org/nightly/windows/%ARCH%/core/ %S3_CONFIG_VOLATILE%
+
+    aws s3 cp dyncallback\Release\dyncallback_s.lib s3://build.lwjgl.org/nightly/windows/%ARCH%/core/ %S3_CONFIG_VOLATILE%
+
+    aws s3 cp dynload\Release\dynload_s.lib s3://build.lwjgl.org/nightly/windows/%ARCH%/core/ %S3_CONFIG_VOLATILE%
+test: off
+notifications:
+- provider: Email
+  to:
+  - iotsakp@gmail.com
+  subject: dyncall CI
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
