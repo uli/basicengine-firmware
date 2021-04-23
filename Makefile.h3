@@ -30,6 +30,8 @@ INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/sr
 ARDFLAGS = -DENGINEBASIC -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
 	   -Wall -Wno-unused -Wno-sign-compare -Wno-implicit-fallthrough \
 	   -D_GNU_SOURCE -DENABLE_NEON -DSTBI_NEON \
+	   -U __UINT32_TYPE__ -U__INT32_TYPE__ -D__UINT32_TYPE__="unsigned int" -D__INT32_TYPE__=int
+
 CFLAGS += $(ARDFLAGS) -Wno-pointer-sign
 #CFLAGS += -m32
 #CFLAGS += -fprofile-arcs -ftest-coverage
