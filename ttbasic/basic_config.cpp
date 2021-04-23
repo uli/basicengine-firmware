@@ -336,7 +336,7 @@ void isaveconfig() {
   fprintf(f, "cursor_color=0x%x\n", (unsigned int)CONFIG.cursor_color);
   fprintf(f, "beep_volume=%d\n", CONFIG.beep_volume);
 #ifdef H3
-  fprintf(f, "phys_mode=%lu\n", CONFIG.phys_mode);
+  fprintf(f, "phys_mode=%u\n", CONFIG.phys_mode);
   fprintf(f, "tv_norm=%u\n", CONFIG.NTSC);
 #endif
   for (int i = 0; i < CONFIG_COLS; ++i)
