@@ -22,20 +22,9 @@ int eb_load_image(const char *filename, struct eb_image_spec *loc) {
   if (!loc)
     return -1;
 
-  int32_t dx = loc->dst_x;
-  int32_t dy = loc->dst_y;
-  int32_t w = loc->w;
-  int32_t h = loc->h;
-
-  int err = bfs.loadBitmap((char *)filename, dx, dy, loc->src_x, loc->src_y, w,
-                           h, loc->scale_x, loc->scale_y, loc->key);
-
-  if (err == 0) {
-    loc->dst_x = dx;
-    loc->dst_y = dy;
-    loc->w = w;
-    loc->h = h;
-  }
+  int err = bfs.loadBitmap((char *)filename, loc->dst_x, loc->dst_y, loc->src_x,
+                           loc->src_y, loc->w, loc->h, loc->scale_x,
+                           loc->scale_y, loc->key);
 
   return err;
 }
