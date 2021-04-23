@@ -121,7 +121,7 @@ void timer0_detachInterrupt(void);
 #include "WString.h"
 
 static inline void yield() {
-  asm("wfi");
+  asm("wfe");
 }
 
 void platform_process_events();
