@@ -120,6 +120,7 @@ _none	I_STRLST	istrlst
 _none	I_NUMLSTREF	inumlstref
 _none	I_STRLSTREF	istrlstref
 _none	I_IMPLICITENDIF	iendif
+_none	I_NFC		infc
 _none	I_EXTEND	iextend
 CREDITS	X_CREDITS	icredits
 XYZZY	X_XYZZY		ixyzzy

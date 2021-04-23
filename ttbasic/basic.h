@@ -251,6 +251,11 @@ private:
   BString snetinput();
   BString snetget();
 
+  num_t nnfc();
+  void init_tcc();
+  const char *get_name(void *addr);
+  void *get_symbol(const char *name);
+
   icode_t *iexe(index_t stk = 0);
   uint8_t SMALL icom();
 
@@ -368,6 +373,18 @@ private:
 
   void exec_sub(Basic &sub, const char *filename);
   void autoexec();
+
+  struct nfc_result {
+    int type;
+    union {
+      int rint;
+      unsigned int ruint;
+      void *rptr;
+      double rdbl;
+    };
+  };
+
+  struct nfc_result do_nfc(void *sym);
 };
 
 extern Basic *bc;
