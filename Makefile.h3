@@ -27,7 +27,7 @@ include $(OSDIR)/build.mk
 INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
 	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
 	-Ilibraries/alpha-lib/include -Igfx
-ARDFLAGS = -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
+ARDFLAGS = -DENGINEBASIC -DH3 -O2 -g -Ih3 -Iarduino_compat -Ittbasic $(INCLUDE) \
 	   -Wall -Wno-unused -Wno-sign-compare -Wno-implicit-fallthrough \
 	   -D_GNU_SOURCE -DENABLE_NEON -DSTBI_NEON \
 CFLAGS += $(ARDFLAGS) -Wno-pointer-sign
