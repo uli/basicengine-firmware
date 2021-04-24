@@ -79,3 +79,39 @@ int eb_cscroll(int x1, int y1, int x2, int y2, int d) {
   sc0.cscroll(x1, y1, x2 - x1 + 1, y2 - y1 + 1, d);
   return 0;
 }
+
+int eb_csize_height(void) {
+  return sc0.getHeight();
+}
+
+int eb_csize_width(void) {
+  return sc0.getWidth();
+}
+
+int eb_getch(void) {
+    return c_getch();
+}
+
+void eb_putch(int c) {
+    c_putch(c);
+}
+
+void eb_clrtoeol(void) {
+    sc0.clerLine(sc0.c_y(), sc0.c_x());
+}
+
+void eb_cls(void) {
+    sc0.cls();
+}
+
+void eb_puts(const char *s) {
+    c_puts(s);
+}
+
+void eb_show_cursor(int enable) {
+    sc0.show_curs(enable);
+}
+
+void eb_enable_scrolling(int enable) {
+    sc0.setScroll(enable);
+}
