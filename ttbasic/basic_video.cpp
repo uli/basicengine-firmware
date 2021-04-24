@@ -2,6 +2,7 @@
 // Copyright (c) 2017-2021 Ulrich Hecht
 
 #include "basic.h"
+#include "eb_conio.h"
 #include "eb_video.h"
 
 // *** フォント参照 ***************

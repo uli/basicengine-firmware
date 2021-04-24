@@ -3,6 +3,7 @@
 
 #include "basic.h"
 #include "eb_video.h"
+#include "eb_conio.h"
 #include "lua_defs.h"
 
 static int l_locate(lua_State *l) {
