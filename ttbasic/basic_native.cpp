@@ -44,6 +44,15 @@ static TCCState *new_tcc() {
   tcc_set_output_type(tcc, TCC_OUTPUT_MEMORY);
   tcc_set_options(tcc, "-nostdlib");
 
+  BString default_include_path =
+#ifdef SDL
+    BString(getenv("ENGINEBASIC_ROOT")) +
+#endif
+    BString("/include");
+  tcc_add_include_path(tcc, default_include_path.c_str());
+
+  tcc_define_symbol(tcc, "ENGINEBASIC", "1");
+
   for (auto sym : export_syms) {
     tcc_add_symbol(tcc, sym.name, sym.addr);
   }
