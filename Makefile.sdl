@@ -7,7 +7,7 @@ include common.mk
 
 SOURCES = $(COMMON_SOURCES) $(shell ls sdl/*.cpp)
 
-SOURCES_C = $(COMMON_SOURCES_C)
+SOURCES_C = $(COMMON_SOURCES_C) libraries/tinycc/lib/va_list.c
 
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
 OUT_OBJS = $(addprefix $(OBJDIR)/, $(OBJS))
