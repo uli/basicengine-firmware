@@ -23,6 +23,8 @@ typedef TOKEN_TYPE index_t;
 #include "proc.h"
 #include "sound.h"
 
+#include <dyncall.h>
+
 #define SIZE_LINE 256  // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 256  // 中間コード変換バッファサイズ
 
@@ -385,6 +387,8 @@ private:
   };
 
   struct nfc_result do_nfc(void *sym);
+
+  DCCallVM* callvm;
 };
 
 extern Basic *bc;

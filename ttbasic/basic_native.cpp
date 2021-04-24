@@ -9,7 +9,6 @@
 #include <dyncall.h>
 
 std::vector<TCCState *> modules;
-DCCallVM* callvm;
 
 extern "C" void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
