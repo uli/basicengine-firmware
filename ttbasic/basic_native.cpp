@@ -15,8 +15,17 @@ extern "C" void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
 }
 
+#include "eb_conio.h"
+#include "eb_video.h"
+#include <stdarg.h>
+
 #define S(n) { #n, (void *)n },
 #define R(n, m) { #n, (void *)m },
+
+#ifdef __x86_64__
+extern "C" void __va_arg(void);
+extern "C" void __va_start(void);
+#endif
 
 const struct {
   const char *name;
