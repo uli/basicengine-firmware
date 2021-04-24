@@ -34,6 +34,7 @@ const struct {
 };
 
 #undef S
+#undef R
 
 static TCCState *new_tcc() {
   TCCState *tcc = tcc_new();
