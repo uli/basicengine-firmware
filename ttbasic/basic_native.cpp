@@ -68,6 +68,47 @@ void Basic::init_tcc() {
   modules.push_back(new_tcc());
 }
 
+static TCCState *current_tcc;
+
+void Basic::itcc() {
+  TCCState *tcc;
+  if (current_tcc)
+    tcc = current_tcc;
+  else {
+    tcc  = new_tcc();
+    if (!tcc) {
+      err = ERR_OOM;
+      return;
+    }
+    current_tcc = tcc;
+  }
+
+  tcc_set_error_func(tcc, this, print_tcc_error);
+
+  BString file = getParamFname();
+
+  if (tcc_add_file(tcc, file.c_str()) < 0) {
+    err = ERR_COMPILE;
+    err_expected = "translation failed";
+    tcc_delete(tcc);
+    current_tcc = NULL;
+    return;
+  }
+
+  modules.push_back(tcc);
+}
+
+void Basic::itcclink() {
+  if (!current_tcc || tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
+    err = ERR_COMPILE;
+    err_expected = "relocation failed";
+    return;
+  }
+
+  modules.push_back(current_tcc);
+  current_tcc = NULL;
+}
+
 void *Basic::get_symbol(const char *sym_name) {
   for (auto tcc : modules) {
     void *sym = tcc_get_symbol(tcc, sym_name);
