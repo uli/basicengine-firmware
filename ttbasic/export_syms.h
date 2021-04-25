@@ -29,6 +29,8 @@ S(eb_enable_scrolling)
 S(eb_show_cursor)
 S(eb_kbhit)
 
+S(eb_wait)
+
 S(atoi)
 
 S(strcpy)
