@@ -5,6 +5,7 @@
 
 #include "basic.h"
 #include "credits.h"
+#include "eb_sys.h"
 
 // **** RTC用宣言 ********************
 #ifdef USE_INNERRTC
@@ -20,17 +21,9 @@ Pause for a specific amount of time.
 ***/
 void Basic::iwait() {
   int32_t tm;
-  if (getParam(tm, 0, INT32_MAX, I_NONE))
+  if (getParam(tm, 0, UINT32_MAX, I_NONE))
     return;
-  uint32_t end = tm + millis();
-  while (millis() < end) {
-    process_events();
-    uint16_t c = sc0.peekKey();
-    if (process_hotkeys(c)) {
-      break;
-    }
-    yield();
-  }
+  eb_wait(tm);
 }
 
 void *BASIC_INT sanitize_addr(intptr_t vadr, int type) {
