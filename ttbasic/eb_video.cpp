@@ -54,7 +54,7 @@ int eb_screen(int m) {
   return 0;
 }
 
-int eb_palette(int p, int hw, int sw, int vw, bool f) {
+int eb_palette(int p, int hw, int sw, int vw, int f) {
   if (check_param(p, 0, CSP_NUM_COLORSPACES - 1) ||
       check_param(hw, -1, 7) ||
       check_param(sw, -1, 7) ||

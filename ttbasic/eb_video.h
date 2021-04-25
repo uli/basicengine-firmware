@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 int eb_screen(int mode);
-int eb_palette(int p, int hw, int sw, int vw, bool f);
+int eb_palette(int p, int hw, int sw, int vw, int f);
 int eb_border(int y, int uv, int x, int w);
 void eb_vsync(unsigned int tm);
 unsigned int eb_frame(void);
