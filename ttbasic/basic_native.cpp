@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "basic.h"
+#include "basic_native.h"
 
 #include "../libraries/tinycc/libtcc.h"
 #include <dyncall.h>
@@ -14,27 +15,6 @@ extern "C" void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
 }
 
-#include "eb_conio.h"
-#include "eb_video.h"
-#include <stdarg.h>
-
-#define S(n) { #n, (void *)n },
-#define R(n, m) { #n, (void *)m },
-
-#ifdef __x86_64__
-extern "C" void __va_arg(void);
-extern "C" void __va_start(void);
-#endif
-
-const struct {
-  const char *name;
-  const void *addr;
-} export_syms[] = {
-#include "export_syms.h"
-};
-
-#undef S
-#undef R
 
 static TCCState *new_tcc() {
   TCCState *tcc = tcc_new();
@@ -53,8 +33,8 @@ static TCCState *new_tcc() {
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");
 
-  for (auto sym : export_syms) {
-    tcc_add_symbol(tcc, sym.name, sym.addr);
+  for (const struct symtab *sym = export_syms; sym->name; ++sym) {
+    tcc_add_symbol(tcc, sym->name, sym->addr);
   }
 
   return tcc;
