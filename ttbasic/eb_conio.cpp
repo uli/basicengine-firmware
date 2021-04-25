@@ -115,3 +115,7 @@ void eb_show_cursor(int enable) {
 void eb_enable_scrolling(int enable) {
     sc0.setScroll(enable);
 }
+
+int eb_kbhit(void) {
+    return c_kbhit();
+}

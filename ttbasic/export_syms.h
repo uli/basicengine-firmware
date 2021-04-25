@@ -27,6 +27,7 @@ S(eb_csize_height)
 S(eb_csize_width)
 S(eb_enable_scrolling)
 S(eb_show_cursor)
+S(eb_kbhit)
 
 S(atoi)
 
