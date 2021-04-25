@@ -89,6 +89,7 @@ S(memset)
 S(memmove)
 S(bcopy)
 S(bzero)
+S(memrchr)
 
 S(putenv)
 S(getenv)

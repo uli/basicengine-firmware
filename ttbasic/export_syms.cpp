@@ -1,5 +1,14 @@
 #include <stdio.h>
 
+#ifdef __GLIBC__
+// avoid special C++ prototype for memrchr() in glibc
+#undef __cplusplus
+extern "C" {
+#include <string.h>
+}
+#define __cplusplus 201103L
+#endif
+
 #include "basic.h"
 #include "basic_native.h"
 
