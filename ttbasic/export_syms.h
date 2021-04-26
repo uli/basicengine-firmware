@@ -17,6 +17,8 @@ S(realloc)
 S(calloc)
 
 S(eb_locate)
+S(eb_pos_x)
+S(eb_pos_y)
 S(eb_putch)
 S(eb_getch)
 S(eb_clrtoeol)
@@ -29,7 +31,17 @@ S(eb_enable_scrolling)
 S(eb_show_cursor)
 S(eb_kbhit)
 
+S(eb_rgb)
+S(eb_color)
+
 S(eb_wait)
+S(eb_tick)
+
+S(eb_file_exists)
+S(eb_is_directory)
+S(eb_is_file)
+
+S(eb_theme_color)
 
 S(atoi)
 
