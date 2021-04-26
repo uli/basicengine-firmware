@@ -77,6 +77,9 @@ S(closedir)
 S(opendir)
 S(getcwd)
 S(chdir)
+//S(stat)	struct stat differs between platforms
+//S(realpath)	not in newlib
+
 S(fopen)
 S(fclose)
 S(fputc)
@@ -90,9 +93,10 @@ S(fseek)
 S(ftell)
 S(fwrite)
 S(fdopen)
+//S(fstat)	struct stat differs between platforms
 S(fileno)
 
-S(open)
+//S(open)	flags differ between platforms
 S(close)
 S(read)
 S(write)
