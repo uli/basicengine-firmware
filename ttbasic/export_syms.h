@@ -9,7 +9,7 @@ S(snprintf)
 S(vasprintf)
 S(asprintf)
 
-S(exit)
+R(exit, be_exit)
 
 S(malloc)
 S(free)

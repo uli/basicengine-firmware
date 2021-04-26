@@ -16,6 +16,7 @@ typedef unsigned int pixel_t;
 typedef unsigned int ipixel_t;
 
 #include "eb_conio.h"
+#include "eb_file.h"
 #include "eb_sys.h"
 #include "eb_video.h"
 #include <stdarg.h>
@@ -37,6 +38,11 @@ extern "C" void __va_start(void);
 
 static int *__errno(void) { return &errno; }
 #endif
+
+extern "C" void be_exit(int ret) {
+     // XXX: How do we know what our BASIC context is?
+     bc->exit(ret);
+}
 
 void delayMicroseconds(unsigned int us);
 
