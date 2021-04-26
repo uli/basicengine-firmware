@@ -5743,7 +5743,8 @@ uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
   cip = ibuf;  // Set the intermediate code pointer to the beginning of the intermediate code buffer
 
-  switch (*cip++) {  // Branch by the intermediate code pointed to by the intermediate code pointer
+  // Branch by the intermediate code pointed to by the intermediate code pointer
+  if (setjmp(jump) == 0) switch (*cip++) {
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;

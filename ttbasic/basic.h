@@ -24,6 +24,7 @@ typedef TOKEN_TYPE index_t;
 #include "sound.h"
 
 #include <dyncall.h>
+#include <setjmp.h>
 
 #define SIZE_LINE 256  // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 256  // 中間コード変換バッファサイズ
@@ -125,6 +126,10 @@ public:
   char *getLineStr(uint32_t lineno, uint8_t devno = 3);
   uint32_t getPrevLineNo(uint32_t lineno);
   uint32_t getNextLineNo(uint32_t lineno);
+
+  void exit(int e) {
+    longjmp(jump, e);
+  }
 
 private:
   int list_free();
@@ -389,6 +394,7 @@ private:
   struct nfc_result do_nfc(void *sym);
 
   DCCallVM* callvm;
+  jmp_buf jump;
 };
 
 extern Basic *bc;
