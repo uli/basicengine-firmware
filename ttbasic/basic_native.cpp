@@ -140,6 +140,8 @@ struct Basic::nfc_result Basic::do_nfc(void *sym) {
     --cip;
   }
 
+  dcArgPointer(callvm, NULL);
+
   ret.type = 0;
   ret.rint = dcCallInt(callvm, sym);
 
