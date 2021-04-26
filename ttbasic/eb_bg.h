@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include "eb_types.h"
+
 int eb_bg_set_size(int bg, int tiles_w, int tiles_h);
 int eb_bg_set_pattern(int bg, int pattern_x, int pattern_y, int pattern_w);
 int eb_bg_set_tile_size(int bg, int tile_size_x, int tile_size_y);
