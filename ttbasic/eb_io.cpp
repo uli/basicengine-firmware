@@ -112,6 +112,9 @@ int eb_i2c_write(unsigned char addr, const char *data, int count) {
 #elif defined(H3)
   h3_i2c_set_slave_address(addr);
   return h3_i2c_write(data, count);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return -1;
 #endif
 }
 
@@ -135,6 +138,9 @@ int eb_i2c_read(unsigned char addr, char *data, int count) {
 #elif defined(H3)
   h3_i2c_set_slave_address(addr);
   return h3_i2c_read(data, count);
+#else
+  err = ERR_NOT_SUPPORTED;
+  return -1;
 #endif
 }
 
