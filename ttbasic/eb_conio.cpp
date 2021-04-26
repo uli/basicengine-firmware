@@ -89,7 +89,13 @@ int eb_csize_width(void) {
 }
 
 int eb_getch(void) {
-    return c_getch();
+  return c_getch();
+}
+
+int eb_last_key_event(void) {
+  keyinfo ki;
+  ki.kevt = ps2last();
+  return ki.value;
 }
 
 void eb_putch(int c) {

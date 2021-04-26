@@ -30,6 +30,7 @@ S(eb_csize_width)
 S(eb_enable_scrolling)
 S(eb_show_cursor)
 S(eb_kbhit)
+S(eb_last_key_event)
 
 S(eb_rgb)
 S(eb_color)
