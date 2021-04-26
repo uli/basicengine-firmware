@@ -32,6 +32,13 @@ static TCCState *new_tcc() {
   tcc_add_include_path(tcc, default_include_path.c_str());
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");
+  tcc_define_symbol(tcc, "_GNU_SOURCE", "1");
+#define xstr(s) str(s)
+#define str(s) #s
+  tcc_define_symbol(tcc, "PIXEL_TYPE", xstr(PIXEL_TYPE));
+  tcc_define_symbol(tcc, "IPIXEL_TYPE", xstr(IPIXEL_TYPE));
+#undef str
+#undef xstr
 
   for (const struct symtab *sym = export_syms; sym->name; ++sym) {
     tcc_add_symbol(tcc, sym->name, sym->addr);
