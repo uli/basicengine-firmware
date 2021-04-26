@@ -12,3 +12,7 @@ void eb_wait(unsigned int ms) {
     yield();
   }
 }
+
+unsigned int eb_tick(void) {
+  return millis();
+}
