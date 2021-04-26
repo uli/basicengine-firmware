@@ -70,6 +70,8 @@ S(rename)
 S(mkdir)
 S(rmdir)
 
+S(__errno)
+
 S(readdir)
 S(closedir)
 S(opendir)
