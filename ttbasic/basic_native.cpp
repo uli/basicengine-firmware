@@ -84,10 +84,7 @@ void Basic::itcc() {
     err_expected = "translation failed";
     tcc_delete(tcc);
     current_tcc = NULL;
-    return;
   }
-
-  modules.push_back(tcc);
 }
 
 void Basic::itcclink() {
