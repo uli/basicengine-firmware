@@ -1,6 +1,9 @@
 /* gap.c, Atto Emacs, Public Domain, Hugh Barney, 2016, Derived from: Anthony's Editor January 93 */
 
 #include <sys/stat.h>
+#ifdef ENGINEBASIC
+#include <eb_file.h>
+#endif
 #include "header.h"
 
 /* Enlarge gap by n chars, position of gap cannot change */
@@ -140,24 +143,33 @@ int insert_file(char *fn, int modflag)
 {
 	FILE *fp;
 	size_t len;
+#ifdef ENGINEBASIC
+	if (!eb_file_exists(fn)) {
+#else
 	struct stat sb;
-
 	if (stat(fn, &sb) < 0) {
+#endif
 		msg("Failed to find file \"%s\".", fn);
 		return (FALSE);
 	}
-	if (MAX_SIZE_T < sb.st_size) {
+
+#ifdef ENGINEBASIC
+	int size = eb_file_size(fn);
+#else
+	int size = sb.st_size;
+#endif
+	if (MAX_SIZE_T < size) {
 		msg("File \"%s\" is too big to load.", fn);
 		return (FALSE);
 	}
-	if (curbp->b_egap - curbp->b_gap < sb.st_size * sizeof (char_t) && !growgap(curbp, sb.st_size))
+	if (curbp->b_egap - curbp->b_gap < size * sizeof (char_t) && !growgap(curbp, size))
 		return (FALSE);
 	if ((fp = fopen(fn, "r")) == NULL) {
 		msg("Failed to open file \"%s\".", fn);
 		return (FALSE);
 	}
 	curbp->b_point = movegap(curbp, curbp->b_point);
-	curbp->b_gap += len = fread(curbp->b_gap, sizeof (char), (size_t) sb.st_size, fp);
+	curbp->b_gap += len = fread(curbp->b_gap, sizeof (char), (size_t) size, fp);
 
 	if (fclose(fp) != 0) {
 		msg("Failed to close file \"%s\".", fn);

@@ -37,8 +37,9 @@ int getfilename(char *prompt, char *buf, int nbuf)
 			buf[0] = '\0';
 			break;
 
-do_tab: 
+do_tab:
 		case 0x09: /* TAB, complete file name */
+#ifndef ENGINEBASIC
 			/* scan backwards for a wild card and set */
 			iswild=0;
 			while (cpos > 0) {
@@ -73,6 +74,7 @@ do_tab:
 			if (c != ' ') rewind(fp);
 			didtry = 1;
 			break;
+#endif
 
 		default:
 			if (cpos < nbuf - 1) {

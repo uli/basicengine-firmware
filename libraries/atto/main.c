@@ -20,10 +20,26 @@ buffer_t *bheadp;			/* head of list of buffers */
 window_t *curwp;
 window_t *wheadp;
 
+#ifdef ENGINEBASIC
+const unsigned short color_pairs[] = {
+	[ID_DEFAULT]  = F_CYAN | B_BLACK,
+	[ID_SYMBOL]   = F_WHITE | B_BLACK,
+	[ID_MODELINE] = F_BLACK | B_WHITE,
+	[ID_DIGITS]   = F_YELLOW | B_BLACK,
+	[ID_BLOCK_COMMENT] = F_GREEN | B_BLACK,
+	[ID_LINE_COMMENT] = F_GREEN | B_BLACK,
+	[ID_SINGLE_STRING] = F_YELLOW | B_BLACK,
+	[ID_DOUBLE_STRING] = F_YELLOW | B_BLACK,
+};
+#endif
+
 int main(int argc, char **argv)
 {
+#ifndef ENGINEBASIC
 	setlocale(LC_ALL, "") ; /* required for 3,4 byte UTF8 chars */
+#endif
 	if (initscr() == NULL) fatal("%s: Failed to initialize the screen.\n");
+#ifndef ENGINEBASIC
 	raw();
 	noecho();
 	idlok(stdscr, TRUE);
@@ -37,7 +53,8 @@ int main(int argc, char **argv)
 	init_pair(ID_LINE_COMMENT, COLOR_GREEN, COLOR_BLACK);    /* line comments */
 	init_pair(ID_SINGLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* single quoted strings */
 	init_pair(ID_DOUBLE_STRING, COLOR_YELLOW, COLOR_BLACK);  /* double quoted strings */
-	
+#endif
+
 	if (1 < argc) {
 		curbp = find_buffer(argv[1], TRUE);
 		(void) insert_file(argv[1], FALSE);
@@ -56,6 +73,9 @@ int main(int argc, char **argv)
 	if (!growgap(curbp, CHUNK)) fatal("%s: Failed to allocate required memory.\n");
 	key_map = keymap;
 
+#ifdef ENGINEBASIC
+	curs_set(1);
+#endif
 	while (!done) {
 		update_display();
 		input = get_key(key_map, &key_return);
@@ -76,13 +96,16 @@ int main(int argc, char **argv)
 	if (scrap != NULL) free(scrap);
 	move(LINES-1, 0);
 	refresh();
+#ifndef ENGINEBASIC
 	noraw();
+#endif
 	endwin();
 	return 0;
 }
 
 void fatal(char *msg)
 {
+#ifndef ENGINEBASIC
 	if (curscr != NULL) {
 		move(LINES-1, 0);
 		refresh();
@@ -90,6 +113,7 @@ void fatal(char *msg)
 		endwin();
 		putchar('\n');
 	}
+#endif
 	fprintf(stderr, msg, PROG_NAME);
 	exit(1);
 }

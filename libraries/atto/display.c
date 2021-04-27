@@ -112,6 +112,9 @@ void display(window_t *wp, int flag)
 			bp->b_page = upup(bp, bp->b_page);
 	}
 
+#ifdef ENGINEBASIC
+	curs_set(0);
+#endif
 	move(wp->w_top, 0); /* start from top of window */
 	i = wp->w_top;
 	j = 0;
@@ -138,9 +141,17 @@ void display(window_t *wp, int flag)
 				j += wcwidth(c) < 0 ? 1 : wcwidth(c);
 				display_utf8(bp, *p, nch);
 			} else if (isprint(*p) || *p == '\t' || *p == '\n') {
+#ifdef ENGINEBASIC
+				if (*p == '\n')
+					clrtoeol();
+#endif
 				j += *p == '\t' ? 8-(j&7) : 1;
 				token_type = parse_text(bp, bp->b_epage);
+#ifdef ENGINEBASIC
+				attrset(COLOR_PAIR(token_type));
+#else
 				attron(COLOR_PAIR(token_type));
+#endif
 				addch(*p);
 			} else {
 				const char *ctrl = unctrl(*p);
@@ -166,13 +177,20 @@ void display(window_t *wp, int flag)
 
 	b2w(wp); /* save buffer stuff on window */
 	modeline(wp);
+#ifdef ENGINEBASIC
+	attrset(COLOR_PAIR(ID_SYMBOL));
+#endif
 	if (wp == curwp && flag) {
 		dispmsg();
 		move(bp->b_row, bp->b_col); /* set cursor */
 		refresh();
 	}
 	wp->w_update = FALSE;
+#ifdef ENGINEBASIC
+	curs_set(1);
+#else
 	attron(COLOR_PAIR(ID_SYMBOL));
+#endif
 }
 
 void display_utf8(buffer_t *bp, char_t c, int n)
@@ -190,8 +208,13 @@ void modeline(window_t *wp)
 {
 	int i;
 	char lch, mch, och;
-	
+
+#ifdef ENGINEBASIC
+	attrset(COLOR_PAIR(ID_MODELINE));
+#else
 	attron(COLOR_PAIR(ID_MODELINE));
+#endif
+
 	move(wp->w_top + wp->w_rows, 0);
 	lch = (wp == curwp ? '=' : '-');
 	mch = ((wp->w_bufp->b_flags & B_MODIFIED) ? '*' : lch);
@@ -208,7 +231,11 @@ void dispmsg()
 {
 	move(MSGLINE, 0);
 	if (msgflag) {
+#ifdef ENGINEBASIC
+		attrset(COLOR_PAIR(ID_SYMBOL));
+#else
 		attron(COLOR_PAIR(ID_SYMBOL));
+#endif
 		addstr(msgline);
 		msgflag = FALSE;
 	}

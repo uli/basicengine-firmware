@@ -42,14 +42,36 @@ keymap_t keymap[] = {
 	{"esc @ set-mark           ", "\x1B\x40", iblock },  /* esc-@ */
 	{"esc < beg-of-buf         ", "\x1B\x3C", top },
 	{"esc > end-of-buf         ", "\x1B\x3E", bottom },
+#ifdef ENGINEBASIC
+	{"esc home, beg-of-buf     ", "\x1B\x1B\x5B\x84", top },
+	{"esc end, end-of-buf      ", "\x1B\x1B\x5B\x89", bottom },
+	{"esc up, beg-of-buf       ", "\x1B\x1B\x5B\x81", top },
+	{"esc down, end-of-buf     ", "\x1B\x1B\x5B\x80", bottom },
+#else
 	{"esc home, beg-of-buf     ", "\x1B\x1B\x4F\x48", top },
 	{"esc end, end-of-buf      ", "\x1B\x1B\x4F\x46", bottom },
 	{"esc up, beg-of-buf       ", "\x1B\x1B\x5B\x41", top },
 	{"esc down, end-of-buf     ", "\x1B\x1B\x5B\x42", bottom },
+#endif
 	{"esc esc show-version     ", "\x1B\x1B", version },
+#ifdef ENGINEBASIC
+	{"ins toggle-overwrite-mode", "\x1B\x5B\x86", toggle_overwrite_mode }, /* Ins key */
+	{"del forward-delete-char  ", "\x1B\x5B\x85", delete }, /* Del key */
+#else
 	{"ins toggle-overwrite-mode", "\x1B\x5B\x32\x7E", toggle_overwrite_mode }, /* Ins key */
 	{"del forward-delete-char  ", "\x1B\x5B\x33\x7E", delete }, /* Del key */
+#endif
 	{"backspace delete-left    ", "\x7f", backsp },
+#ifdef ENGINEBASIC
+	{"up previous-line         ", "\x1B\x5B\x81", up },
+	{"down next-line           ", "\x1B\x5B\x80", down },
+	{"left backward-character  ", "\x1B\x5B\x82", left },
+	{"right forward-character  ", "\x1B\x5B\x83", right },
+	{"home beginning-of-line   ", "\x1B\x5B\x84", lnbegin },
+	{"end end-of-line          ", "\x1B\x5B\x89", lnend },
+	{"pgup backward-page       ", "\x1B\x5B\x88",pgup }, /* PgUp key */
+	{"pgdn forward-page        ", "\x1B\x5B\x87", pgdown }, /* PgDn key */
+#else
 	{"up previous-line         ", "\x1B\x5B\x41", up },
 	{"down next-line           ", "\x1B\x5B\x42", down },
 	{"left backward-character  ", "\x1B\x5B\x44", left },
@@ -60,6 +82,7 @@ keymap_t keymap[] = {
 	{"end end-of-line          ", "\x1B\x5B\x46", lnend },
 	{"pgup backward-page       ", "\x1B\x5B\x35\x7E",pgup }, /* PgUp key */
 	{"pgdn forward-page        ", "\x1B\x5B\x36\x7E", pgdown }, /* PgDn key */
+#endif
         {"resize resize-terminal   ", "\x9A",     resize_terminal },
 	{"K_ERROR                  ", NULL, NULL }
 };
@@ -84,7 +107,21 @@ char_t *get_key(keymap_t *keys, keymap_t **key_return)
 	do {
 		assert(K_BUFFER_LENGTH > record - buffer);
 		/* read and record one byte. */
+#ifndef ENGINEBASIC
 		*record++ = (unsigned)getch();
+#else
+		int scancode = getch();
+		int evt = eb_last_key_event();
+
+		if (evt & KEY_EVENT_ALT)
+			*record++ = 0x1b;
+		if (scancode > 0xff) {
+			*record++ = 0x1b;
+			*record++ = 0x5b;
+			*record++ = scancode & 0xff;
+		} else
+			*record++ = scancode & 0xff;
+#endif
 		*record = '\0';
 
 		/* if recorded bytes match any multi-byte sequence... */

@@ -1,10 +1,16 @@
 /* header.h, Atto Emacs, Public Domain, Hugh Barney, 2016, Derived from: Anthony's Editor January 93 */
+#ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE
+#endif
 #include <locale.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
+#ifdef ENGINEBASIC
+#include <mcurses.h>
+#else
 #include <curses.h>
+#endif
 #include <stdio.h>
 #include <sys/types.h>
 #include <ctype.h>
@@ -13,6 +19,27 @@
 #include <unistd.h>
 #include <wchar.h>
 int mkstemp(char *);
+
+#ifdef ENGINEBASIC
+
+#undef assert
+#define assert(n) do {} while(0)
+
+static const char *unctrl(int c) {
+	static char s[3];
+	s[0] = '^';
+	s[1] = c + 64;
+	s[2] = 0;
+	return s;
+}
+
+#undef flushinp
+#define flushinp(x) do {} while (0)
+
+extern const unsigned short color_pairs[];
+#define COLOR_PAIR(n) color_pairs[n]
+
+#endif	// ENGINEBASIC
 
 #define VERSION	 "Atto 1.22, Public Domain, Dec 2020, by Hugh Barney,  No warranty."
 #define PROG_NAME "atto"
