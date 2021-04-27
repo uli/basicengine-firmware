@@ -27,3 +27,12 @@ int eb_is_file(const char *name)
     else
         return S_ISREG(st.st_mode);
 }
+
+int eb_file_size(const char *name)
+{
+    struct stat st;
+    if (_stat(name, &st))
+        return -1;
+    else
+        return st.st_size;
+}

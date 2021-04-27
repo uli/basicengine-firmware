@@ -39,6 +39,7 @@ S(eb_wait)
 S(eb_tick)
 
 S(eb_file_exists)
+S(eb_file_size)
 S(eb_is_directory)
 S(eb_is_file)
 
