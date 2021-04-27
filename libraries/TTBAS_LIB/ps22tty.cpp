@@ -317,7 +317,9 @@ uint16_t cnv2tty(keyEvent k) {
   if (k.CTRL) {
     //Serial.println(k.code,DEC);
     if (!k.KEY) {
-      if (k.code >= 'a' && k.code <= 'z') {
+      if (k.code == '\r')
+        rc =  '\r';
+      else if (k.code >= 'a' && k.code <= 'z') {
         rc = k.code - 'a' + 1;
       } else if (k.code >= 'A' && k.code <= 'Z') {
         rc = k.code - 'A' + 1;
