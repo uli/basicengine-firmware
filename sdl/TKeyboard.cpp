@@ -219,6 +219,7 @@ keyEvent TKeyboard::read() {
     if (event.type == SDL_KEYUP)
       ki.kevt.BREAK = 1;
     ki.kevt.ALT = !!(event.key.keysym.mod & (KMOD_LALT | KMOD_RALT));
+    ki.kevt.CTRL = !!(event.key.keysym.mod & (KMOD_LCTRL | KMOD_RCTRL));
   }
   return ki.kevt;
 }
