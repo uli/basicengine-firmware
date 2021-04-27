@@ -11,37 +11,7 @@
 #include "ttconfig.h"
 #include <Arduino.h>
 
-// Definition of edit key
-#define SC_KEY_TAB       '\t'   // [TAB] key
-#define SC_KEY_CR        '\r'   // [Enter] key
-#define SC_KEY_BACKSPACE '\b'   // [Backspace] key
-#define SC_KEY_ESCAPE    0x1B   // [ESC] key
-#define SC_KEY_DOWN      0x180   // [↓] key
-#define SC_KEY_UP        0x181   // [↑] key
-#define SC_KEY_LEFT      0x182   // [←] key
-#define SC_KEY_RIGHT     0x183   // [→] key
-#define SC_KEY_HOME      0x184   // [Home] key
-#define SC_KEY_DC        0x185   // [Delete] key
-#define SC_KEY_IC        0x186   // [Insert] key
-#define SC_KEY_NPAGE     0x187   // [PageDown] key
-#define SC_KEY_PPAGE     0x188   // [PageUp] key
-#define SC_KEY_END       0x189   // [End] key
-#define SC_KEY_BTAB      0x18A   // [Back tab] key
-#define SC_KEY_F1                  0x18B            // Function key F1
-#define SC_KEY_F(n)                (SC_KEY_F1+(n)-1)  // Space for additional 12 function keys
-
-#define SC_KEY_PRINT     0x1A0
-
-#define SC_KEY_SHIFT_DOWN	SC_KEY_DOWN | 0x40
-#define SC_KEY_SHIFT_UP	SC_KEY_UP | 0x40
-
-// Definition of control key code
-#define SC_KEY_CTRL_L   12  // 画面を消去
-#define SC_KEY_CTRL_R   18  // 画面を再表示
-#define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
-#define SC_KEY_CTRL_C    3  // break
-#define SC_KEY_CTRL_D    4  // 行削除
-#define SC_KEY_CTRL_N   14  // 行挿入
+#include "eb_conio.h"
 
 // text memory access macros
 #define VPEEK(X,Y)      (screen[whole_width*((Y)+win_y) + (X)+win_x])
@@ -108,7 +78,7 @@ protected:
 
 	//virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
     virtual inline uint8_t IS_PRINT(uint8_t ch) {
-      return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
+      return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
     };
     void init(uint16_t w=0,uint16_t h=0,uint16_t ln=128, uint8_t* extmem=NULL); // スクリーンの初期設定
 	virtual void end();                               // スクリーン利用終了
@@ -118,7 +88,7 @@ protected:
     void refresh();                                   // スクリーンリフレッシュ表示
     virtual void refresh_line(uint16_t l) { (void)l; }            // 行の再表示
     void scroll_up();                                 // 1行分スクリーンのスクロールアップ
-    void scroll_down();                               // 1行分スクリーンのスクロールダウン 
+    void scroll_down();                               // 1行分スクリーンのスクロールダウン
     void delete_char() ;                              // 現在のカーソル位置の文字削除
     inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得        ***********
     void Insert_char(uint8_t c);                      // 現在のカーソル位置に文字を挿入
@@ -128,20 +98,20 @@ protected:
     void movePosNextLineChar(bool force = false);     // カーソルを次行に移動
     void movePosPrevLineChar(bool force = false);     // カーソルを前行に移動
     void moveLineEnd();                               // カーソルを行末に移動
-    void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動 
+    void moveBottom();                                // スクリーン表示の最終表示の行先頭に移動
     void locate(uint16_t x, int16_t y = -1);              // カーソルを指定位置に移動
     uint8_t enter_text();                             // 行入力確定ハンドラ
     virtual void newLine();                           // 改行出力
-    void Insert_newLine(uint16_t l);                  // 指定行に空白挿入 
+    void Insert_newLine(uint16_t l);                  // 指定行に空白挿入
     void edit_scrollUp();                             // スクロールして前行の表示
     void edit_scrollDown();                           // スクロールして次行の表示
     // カーソル位置の文字コード取得
     inline uint16_t vpeek(uint16_t x, uint16_t y) {
-      if (x >= width || y >= height) 
+      if (x >= width || y >= height)
          return 0;
       return VPEEK(x,y);
     }
-    
+
     inline uint8_t *getText() { return &text[0]; };   // 確定入力の行データアドレス参照
     inline uint8_t *getScreen() { return screen; }   // スクリーン用バッファアドレス参照
     inline uint8_t *getScreenWindow() { return &VPEEK(0, 0); }

@@ -37,6 +37,38 @@ int eb_last_key_event(void);
 #define KEY_EVENT_ALTGR 0x2000
 #define KEY_EVENT_GUI   0x4000
 
+// Definition of edit key
+#define SC_KEY_TAB       '\t'   // [TAB] key
+#define SC_KEY_CR        '\r'   // [Enter] key
+#define SC_KEY_BACKSPACE '\b'   // [Backspace] key
+#define SC_KEY_ESCAPE    0x1B   // [ESC] key
+#define SC_KEY_DOWN      0x180   // [↓] key
+#define SC_KEY_UP        0x181   // [↑] key
+#define SC_KEY_LEFT      0x182   // [←] key
+#define SC_KEY_RIGHT     0x183   // [→] key
+#define SC_KEY_HOME      0x184   // [Home] key
+#define SC_KEY_DC        0x185   // [Delete] key
+#define SC_KEY_IC        0x186   // [Insert] key
+#define SC_KEY_NPAGE     0x187   // [PageDown] key
+#define SC_KEY_PPAGE     0x188   // [PageUp] key
+#define SC_KEY_END       0x189   // [End] key
+#define SC_KEY_BTAB      0x18A   // [Back tab] key
+#define SC_KEY_F1                  0x18B            // Function key F1
+#define SC_KEY_F(n)                (SC_KEY_F1+(n)-1)  // Space for additional 12 function keys
+
+#define SC_KEY_PRINT     0x1A0
+
+#define SC_KEY_SHIFT_DOWN	SC_KEY_DOWN | 0x40
+#define SC_KEY_SHIFT_UP	SC_KEY_UP | 0x40
+
+// Definition of control key code
+#define SC_KEY_CTRL_L   12  // 画面を消去
+#define SC_KEY_CTRL_R   18  // 画面を再表示
+#define SC_KEY_CTRL_X   24  // 1文字削除(DEL)
+#define SC_KEY_CTRL_C    3  // break
+#define SC_KEY_CTRL_D    4  // 行削除
+#define SC_KEY_CTRL_N   14  // 行挿入
+
 #ifdef __cplusplus
 }
 #endif
