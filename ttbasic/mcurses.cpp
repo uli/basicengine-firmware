@@ -208,6 +208,8 @@ mymove (uint_fast8_t y, uint_fast8_t x)
     sc0.locate(x, y);
 }
 
+static pixel_t color_to_theme_map[0xf];
+
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * MCURSES: initialize
  *---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -219,6 +221,25 @@ initscr (void)
 
     start_fg = sc0.getFgColor();
     start_bg = sc0.getBgColor();
+
+#define INITCOL_THEME(c, t)	color_to_theme_map[(c) >> 8] = COL(t)
+#define INITCOL_RGB(c, r, g, b) color_to_theme_map[(c) >> 8] = csp.colorFromRgb(r, g, b)
+
+    INITCOL_THEME(F_BLACK, BG);
+    INITCOL_THEME(F_WHITE, FG);
+    INITCOL_RGB(F_BRIGHTWHITE, 255, 255, 255);
+    INITCOL_THEME(F_GREY, LINENUM);
+    INITCOL_THEME(F_CYAN, NUM);
+    INITCOL_THEME(F_LIGHTGRAY, VAR);
+    INITCOL_THEME(F_BEIGE, LVAR);
+    INITCOL_THEME(F_MAGENTA, OP);
+    INITCOL_THEME(F_BLUE, STR);
+    INITCOL_THEME(F_ORANGE, PROC);
+    INITCOL_THEME(F_GREEN, COMMENT);
+    INITCOL_RGB(F_YELLOW, 255, 255, 0);
+
+#undef INITCOL_THEME
+#undef INITCOL_RGB
 
     attrs = (uint8_t *)calloc(sc0.getWidth() * sc0.getHeight(), 1);
     if (!attrs)
@@ -278,7 +299,6 @@ addstr_P (const char * str)
     }
 }
 
-
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
  * MCURSES: set attribute(s)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -294,16 +314,16 @@ attrset (uint_fast16_t attr)
 
         idx = (attr & F_COLOR) >> 8;
 
-        if (idx >= 1 && idx <= 0xb)
+        if (idx >= 1 && idx <= 0xc)
         {
-            sc0.setColor(csp.colorFromRgb(CONFIG.color_scheme[idx-1]), sc0.getBgColor());
+            sc0.setColor(color_to_theme_map[idx], sc0.getBgColor());
         }
 
         idx = (attr & B_COLOR) >> 12;
 
-        if (idx >= 1 && idx <= 8)
+        if (idx >= 1 && idx <= 0xc)
         {
-            sc0.setColor(sc0.getFgColor(), csp.colorFromRgb(CONFIG.color_scheme[idx-1]));
+            sc0.setColor(sc0.getFgColor(), color_to_theme_map[idx]);
         }
 
         if (attr & A_REVERSE)

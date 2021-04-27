@@ -66,6 +66,7 @@ extern "C"
 #define F_BLUE                  0x0900                                              // foreground blue
 #define F_ORANGE                0x0A00                                              // foreground orange
 #define F_GREEN                 0x0B00                                              // foreground green
+#define F_YELLOW                0x0C00                                              // foreground yellow
 #define F_COLOR                 0x0F00                                              // foreground mask
 
 #define B_BLACK                 0x1000                                              // background black
@@ -79,6 +80,7 @@ extern "C"
 #define B_BLUE                  0x9000                                              // background blue
 #define B_ORANGE                0xA000                                              // background orange
 #define B_GREEN                 0xB000                                              // background green
+#define B_YELLOW                0xC000                                              // background yellow
 #define B_COLOR                 0xF000                                              // background mask
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
