@@ -94,6 +94,48 @@ void Basic::itcclink() {
     return;
   }
 
+  BString name;
+  if (is_strexp())
+    name = istrexp();
+  else
+    name = BString("mod") + BString(modules.size());
+
+  if (tcc_get_symbol(current_tcc, "main") &&
+      !tcc_get_symbol(current_tcc, name.c_str())) {
+    // Add a wrapper function with the name of the module that takes a
+    // variable number of string arguments, combines them into an argv array
+    // and calls main().
+    char *wrapper;
+    asprintf(&wrapper,
+             "#include <stdarg.h>"
+             "int main(int argc, char **argv);"
+             "int %s(const char *opt, ...) {"
+             "        int argc = 2;"
+             "        const char *args[16];"
+             "        char *o;"
+             "        args[0] = \"%s\";"
+             "        args[1] = opt;"
+             ""
+             "        if (opt == 0) {"
+             "                --argc;"
+             "        } else {"
+             "                va_list ap;"
+             "                va_start(ap, opt);"
+             "                while (argc < 16) {"
+             "                        o = va_arg(ap, char *);"
+             "                        if (o)"
+             "                                args[argc++] = o;"
+             "                        else"
+             "                                break;"
+             "                }"
+             "        }"
+             "        va_end(ap);"
+             "        return main(argc, args);"
+             "}",
+             name.c_str(), name.c_str());
+    tcc_compile_string(current_tcc, wrapper);
+  }
+
   if (tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
     err = ERR_COMPILE;
     err_expected = "relocation failed";
