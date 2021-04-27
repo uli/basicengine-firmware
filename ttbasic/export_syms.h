@@ -2,12 +2,13 @@ R(printf, c_printf)
 
 R(usleep, delayMicroseconds)
 
+S(asprintf)
+S(snprintf)
 S(sprintf)
 S(strncpy)
-S(vsnprintf)
-S(snprintf)
 S(vasprintf)
-S(asprintf)
+S(vsnprintf)
+S(vsprintf)
 
 R(exit, be_exit)
 
@@ -139,6 +140,9 @@ S(isupper)
 S(isxdigit)
 S(toupper)
 S(tolower)
+
+S(mbtowc)
+S(wcwidth)
 
 #ifdef __x86_64__
 S(__va_start)
