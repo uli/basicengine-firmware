@@ -1,22 +1,25 @@
-R(printf, c_printf)
-
+// unistd time
 R(usleep, delayMicroseconds)
 
+// stdio string formatting
+R(printf, c_printf)
 S(asprintf)
 S(snprintf)
 S(sprintf)
-S(strncpy)
 S(vasprintf)
 S(vsnprintf)
 S(vsprintf)
 
+// wrapper that jumps back to BASIC prompt
 R(exit, be_exit)
 
+// stdlib memory allocation
 S(malloc)
 S(free)
 S(realloc)
 S(calloc)
 
+// eb conio
 S(eb_locate)
 S(eb_pos_x)
 S(eb_pos_y)
@@ -33,12 +36,15 @@ S(eb_show_cursor)
 S(eb_kbhit)
 S(eb_last_key_event)
 
+// eb_video
 S(eb_rgb)
 S(eb_color)
 
+// eb_sys
 S(eb_wait)
 S(eb_tick)
 
+// eb_file
 S(eb_file_exists)
 S(eb_file_size)
 S(eb_is_directory)
@@ -46,8 +52,10 @@ S(eb_is_file)
 
 S(eb_theme_color)
 
+// stdlib type conversion
 S(atoi)
 
+// string functions
 S(strcpy)
 S(strlen)
 S(strcat)
@@ -62,27 +70,34 @@ S(strdup)
 S(strerror)
 S(strspn)
 S(strcspn)
+S(strncpy)
 S(strndup)
 S(strcasecmp)
 
-S(write)
-
+// unistd file ops
 S(unlink)
 S(mkstemp)
 S(rename)
 S(mkdir)
 S(rmdir)
+S(chdir)
 
-S(__errno)
-
+// dirent directory functions
 S(readdir)
 S(closedir)
 S(opendir)
 S(getcwd)
-S(chdir)
+
+//S(fnmatch)	in newlib, but only built for posix targets
+
+// newlib-style errno wrapper
+S(__errno)
+
+
 //S(stat)	struct stat differs between platforms
 //S(realpath)	not in newlib
 
+// stdio stream interface
 S(fopen)
 S(fclose)
 S(fputc)
@@ -99,15 +114,18 @@ S(fdopen)
 //S(fstat)	struct stat differs between platforms
 S(fileno)
 
+// stdio streams
+R(stdout, &stdout)
+R(stdin, &stdin)
+R(stderr, &stderr)
+
+// unistd file I/O
 //S(open)	flags differ between platforms
 S(close)
 S(read)
 S(write)
 
-R(stdout, &stdout)
-R(stdin, &stdin)
-R(stderr, &stderr)
-
+// memory
 S(memcmp)
 S(memcpy)
 S(memset)
@@ -116,16 +134,21 @@ S(bcopy)
 S(bzero)
 S(memrchr)
 
+// stdlib environment
+// XXX: do these actually work in a useful manner?
 S(putenv)
 S(getenv)
 
+// stdlib miscellaneous
 S(qsort)
 R(abs, __builtin_abs)
 
+// unistd getopt
 S(getopt)
 R(optarg, &optarg)
 R(optind, &optind)
 
+// ctype
 S(isdigit)
 S(isalnum)
 S(isalpha)
@@ -156,6 +179,7 @@ S(initscr)
 S(move)
 S(refresh)
 
+// stdlib multi-byte functions
 S(mbtowc)
 S(wcwidth)
 
