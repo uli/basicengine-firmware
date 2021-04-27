@@ -108,6 +108,7 @@ void Basic::itcclink() {
     char *wrapper;
     asprintf(&wrapper,
              "#include <stdarg.h>"
+             "extern int optind;"
              "int main(int argc, char **argv);"
              "int %s(const char *opt, ...) {"
              "        int argc = 2;"
@@ -130,6 +131,7 @@ void Basic::itcclink() {
              "                }"
              "        }"
              "        va_end(ap);"
+             "        optind = 1;"
              "        return main(argc, args);"
              "}",
              name.c_str(), name.c_str());
