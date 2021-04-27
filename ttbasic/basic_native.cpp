@@ -9,7 +9,11 @@
 #include "../libraries/tinycc/libtcc.h"
 #include <dyncall.h>
 
-std::vector<TCCState *> modules;
+struct module {
+  TCCState *tcc;
+  BString name;
+};
+std::vector<struct module> modules;
 
 extern "C" void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
@@ -52,7 +56,8 @@ void Basic::init_tcc() {
   dcMode(callvm, DC_CALL_C_DEFAULT);
 
   // add empty module to make default symbols visible to BASIC
-  modules.push_back(new_tcc());
+  struct module system = { new_tcc(), "system" };
+  modules.push_back(system);
 }
 
 static TCCState *current_tcc;
@@ -62,7 +67,7 @@ void Basic::itcc() {
   if (current_tcc)
     tcc = current_tcc;
   else {
-    tcc  = new_tcc();
+    tcc = new_tcc();
     if (!tcc) {
       err = ERR_OOM;
       return;
@@ -100,13 +105,15 @@ void Basic::itcclink() {
     return;
   }
 
-  modules.push_back(current_tcc);
+  struct module new_mod = { current_tcc, name };
+  modules.push_back(new_mod);
+
   current_tcc = NULL;
 }
 
 void *Basic::get_symbol(const char *sym_name) {
-  for (auto tcc : modules) {
-    void *sym = tcc_get_symbol(tcc, sym_name);
+  for (auto mod : modules) {
+    void *sym = tcc_get_symbol(mod.tcc, sym_name);
     if (sym)
       return sym;
   }
@@ -114,8 +121,8 @@ void *Basic::get_symbol(const char *sym_name) {
 }
 
 const char *Basic::get_name(void *addr) {
-  for (auto tcc : modules) {
-    const char *sym = tcc_get_name(tcc, addr);
+  for (auto mod : modules) {
+    const char *sym = tcc_get_name(mod.tcc, addr);
     if (sym)
       return sym;
   }
