@@ -38,6 +38,7 @@ ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
 $(OUT_OBJS): ttbasic/funtbl.h
 $(SOURCES): ttbasic/funtbl.h
+$(COMMON_SOURCES): ttbasic/funtbl.h
 
 $(OBJDIR)/dyncall/Makefile.config:
 	mkdir -p $(OBJDIR)/dyncall
