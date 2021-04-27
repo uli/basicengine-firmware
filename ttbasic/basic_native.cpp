@@ -86,9 +86,17 @@ void Basic::itcc() {
 }
 
 void Basic::itcclink() {
-  if (!current_tcc || tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
+  if (!current_tcc) {
+    err = ERR_COMPILE;
+    err_expected = "nothing to link";
+    return;
+  }
+
+  if (tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
     err = ERR_COMPILE;
     err_expected = "relocation failed";
+    tcc_delete(current_tcc);
+    current_tcc = NULL;
     return;
   }
 
