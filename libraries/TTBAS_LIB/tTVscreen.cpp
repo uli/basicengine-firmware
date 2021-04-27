@@ -338,7 +338,7 @@ uint8_t tTVscreen::edit() {
 void SMALL tTVscreen::saveScreenshot() {
   char screen_file[22];
   for (int i = 0; i < 10000; ++i) {
-    sprintf_P(screen_file, PSTR("screen_%04d.pcx"), i);
+    sprintf(screen_file, "screen_%04d.png", i);
     struct stat st;
     if (_stat(screen_file, &st))
       break;
