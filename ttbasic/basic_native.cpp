@@ -12,6 +12,8 @@
 struct module {
   TCCState *tcc;
   BString name;
+  void *init_data;
+  int init_len;
 };
 std::vector<struct module> modules;
 
@@ -108,12 +110,16 @@ void Basic::itcclink() {
     char *wrapper;
     asprintf(&wrapper,
              "#include <stdarg.h>"
+             "#include <string.h>"
              "extern int optind;"
+             "extern char _etext, _end;"
+             "volatile void *_initial_data;"
              "int main(int argc, char **argv);"
              "int %s(const char *opt, ...) {"
              "        int argc = 2;"
              "        const char *args[16];"
              "        char *o;"
+             "        volatile void *tmp;"
              "        args[0] = \"%s\";"
              "        args[1] = opt;"
              ""
@@ -132,6 +138,9 @@ void Basic::itcclink() {
              "        }"
              "        va_end(ap);"
              "        optind = 1;"
+             "        tmp = _initial_data;"
+             "        memcpy(&_etext, (void *)_initial_data, &_end - &_etext);"
+             "        _initial_data = tmp;"
              "        return main(argc, args);"
              "}",
              name.c_str(), name.c_str());
@@ -146,7 +155,16 @@ void Basic::itcclink() {
     return;
   }
 
-  struct module new_mod = { current_tcc, name };
+  char *etext = (char *)tcc_get_symbol(current_tcc, "_etext");
+  char *end   = (char *)tcc_get_symbol(current_tcc, "_end");
+
+  char *initial_data = (char *)malloc(end - etext);
+  memcpy(initial_data, etext, end - etext);
+
+  void **init_ptr = (void **)tcc_get_symbol(current_tcc, "_initial_data");
+  *init_ptr = initial_data;
+
+  struct module new_mod = { current_tcc, name, initial_data, (int)(end - etext) };
   modules.push_back(new_mod);
 
   current_tcc = NULL;
