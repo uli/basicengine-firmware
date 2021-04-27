@@ -15,14 +15,15 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#ifdef __cplusplus
-//extern "C"
-//{
-	#endif
 
-	#ifndef __MCURSES__
-	#define __MCURSES__
-	
+#ifndef __MCURSES__
+#define __MCURSES__
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdint.h>
 
 #include "mcurses-config.h"
@@ -170,10 +171,8 @@ void 			 scrl(int whence);
 #define ACS_BULLET              0x9e                                                // DEC graphic 0x7e: bullet
 
 
-
-	
-	#endif // __MCURSES__
-
-	#ifdef __cplusplus
-//}
+#ifdef __cplusplus
+}
 #endif
+
+#endif // __MCURSES__

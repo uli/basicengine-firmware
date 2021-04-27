@@ -15,10 +15,8 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
-#include "video.h"
-#include <tTVscreen.h>
-#include <tscreenBase.h>
+#include "eb_conio.h"
+#include "eb_video.h"
 
-extern tTVscreen sc0;
-#define MCURSES_LINES               (sc0.getHeight())              // 24 lines
-#define MCURSES_COLS                (sc0.getWidth())              // 80 columns
+#define MCURSES_LINES               (eb_csize_height())              // 24 lines
+#define MCURSES_COLS                (eb_csize_width())              // 80 columns

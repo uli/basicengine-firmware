@@ -15,6 +15,7 @@
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 
+#include "ttconfig.h"
 #include "mcurses-config.h"
 #include "basic.h"
 
@@ -29,7 +30,7 @@
 #ifndef pgm_read_byte
 	#define pgm_read_byte(s)                        (*s)
 #endif
-#endif 
+#endif
 
 #include "mcurses.h"
 
@@ -68,7 +69,7 @@ static uint_fast8_t mcurses_phyio_init (void)
  */
 static void mcurses_phyio_done (void)
 {
-	
+
 }
 
 #define mcurses_phyio_getc c_getch
@@ -96,7 +97,7 @@ static void mcurses_phyio_halfdelay (uint_fast8_t tenths)
  */
 static void mcurses_phyio_flush_output ()
 {
-	
+
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------
