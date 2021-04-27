@@ -141,6 +141,21 @@ S(isxdigit)
 S(toupper)
 S(tolower)
 
+// mcurses
+// XXX: Some of these have _very_ generic names and might collide with user
+// programs...
+S(addch)
+S(addstr)
+S(attrset)
+S(clear)
+S(clrtoeol)
+S(curs_set)
+S(endwin)
+S(getch)
+S(initscr)
+S(move)
+S(refresh)
+
 S(mbtowc)
 S(wcwidth)
 

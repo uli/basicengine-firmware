@@ -19,6 +19,7 @@ typedef unsigned int ipixel_t;
 #include "eb_file.h"
 #include "eb_sys.h"
 #include "eb_video.h"
+#include "mcurses.h"
 #include <stdarg.h>
 #include <libgen.h>
 #include <sys/fcntl.h>
