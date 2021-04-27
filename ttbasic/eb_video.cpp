@@ -230,4 +230,12 @@ int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h) {
   return 0;
 }
 
+pixel_t eb_get_fg_color(void) {
+  return sc0.getFgColor();
+}
+
+pixel_t eb_get_bg_color(void) {
+  return sc0.getBgColor();
+}
+
 } // extern "C"

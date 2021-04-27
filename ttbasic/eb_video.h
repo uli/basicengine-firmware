@@ -28,6 +28,8 @@ void eb_circle(int x, int y, int r, pixel_t c, pixel_t f);
 void eb_rect(int x1, int y1, int x2, int y2, pixel_t c, pixel_t f);
 int eb_blit(int x, int y, int dx, int dy, int w, int h);
 int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h);
+pixel_t eb_get_fg_color(void);
+pixel_t eb_get_bg_color(void);
 
 #ifdef __cplusplus
 }
