@@ -5824,7 +5824,7 @@ program was interrupted.
     if (!err) {
       restore_windows();
       sc0.show_curs(0);
-      irun(clp, true);
+      irun(clp, true, false);
     }
     break;
   case I_RESUME:
