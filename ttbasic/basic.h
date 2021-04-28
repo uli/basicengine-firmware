@@ -161,7 +161,8 @@ private:
   void do_trace();
   uint8_t ilrun();
   void clear_execution_state(bool clear);
-  void irun(icode_t *start_clp = NULL, bool cont = false, bool clear = true);
+  void irun(icode_t *start_clp = NULL, bool cont = false, bool clear = true,
+            icode_t *start_cip = NULL);
 
   void inew(uint8_t mode = NEW_ALL);
 

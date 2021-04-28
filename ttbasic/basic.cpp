@@ -2234,7 +2234,8 @@ void Basic::irun_() {
 }
 
 // RUN command handler
-void BASIC_FP Basic::irun(icode_t *start_clp, bool cont, bool clear) {
+void BASIC_FP Basic::irun(icode_t *start_clp, bool cont, bool clear,
+                          icode_t *start_cip) {
   icode_t *lp;  // 行ポインタの一時的な記憶場所
   if (cont) {
     if (!start_clp) {
@@ -2242,7 +2243,7 @@ void BASIC_FP Basic::irun(icode_t *start_clp, bool cont, bool clear) {
       cip = cont_cip;
     } else {
       clp = start_clp;
-      cip = clp + icodes_per_line_desc();
+      cip = start_cip ? start_cip : clp + icodes_per_line_desc();
     }
     goto resume;
   }
@@ -5825,6 +5826,24 @@ program was interrupted.
       restore_windows();
       sc0.show_curs(0);
       irun(clp, true, false);
+    }
+    break;
+  case I_CALL:
+    initialize_proc_pointers();
+    initialize_label_pointers();
+
+    // icall() puts the current clp/cip on the call stack; we want irun() to
+    // end execution after the procedure has completed, which it does if we
+    // make clp point to the end of the program here.
+    while (*clp)
+      clp += *clp;
+
+    icall();
+
+    if (!err) {
+      restore_windows();
+      sc0.show_curs(0);
+      irun(clp, true, false, cip);
     }
     break;
   case I_RESUME:
