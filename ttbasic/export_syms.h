@@ -85,7 +85,11 @@ S(rmdir)
 S(chdir)
 
 // dirent directory functions
+#ifdef ALLWINNER_BARE_METAL
 S(readdir)
+#else
+R(readdir, be_readdir)
+#endif
 S(closedir)
 S(opendir)
 S(getcwd)
