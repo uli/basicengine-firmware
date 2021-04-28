@@ -74,7 +74,7 @@ const char *__locale_ctype_ptr (void);
 
 # define __CTYPE_PTR	(__locale_ctype_ptr ())
 
-#ifndef __cplusplus
+#if 0 //ndef __cplusplus
 /* These macros are intentionally written in a manner that will trigger
    a gcc -Wall warning if the user mistakenly passes a 'char' instead
    of an int containing an 'unsigned char'.  Note that the sizeof will
