@@ -267,7 +267,7 @@ void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
       any_key = true;
 
     key_state[kc] = 1;
-    if (old_state[kc] != key_state[kc] &&
+    if (kc && old_state[kc] != key_state[kc] &&
         (keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
       keyEvent *kev = &keybuf[keybuf_w];
       memset(kev, 0, sizeof(*kev));
