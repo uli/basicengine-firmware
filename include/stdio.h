@@ -646,6 +646,8 @@ FILE *_fopencookie_r (struct _reent *, void *__cookie,
 		const char *__mode, cookie_io_functions_t __functions);
 #endif /* __GNU_VISIBLE */
 
+#if 0
+
 #ifndef __CUSTOM_FILE_IO__
 /*
  * The __sfoo macros are here so that we can 
@@ -798,6 +800,8 @@ _END_STD_C
 
 #if __SSP_FORTIFY_LEVEL > 0
 #include <ssp/stdio.h>
+#endif
+
 #endif
 
 #endif /* _STDIO_H_ */
