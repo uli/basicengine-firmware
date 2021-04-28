@@ -35,7 +35,7 @@ uint16_t win_x, win_y, win_width, win_height;
 uint16_t win_c_width, win_c_height;
 
 pixel_t fg_color = (pixel_t)-1;
-pixel_t bg_color = (pixel_t)0;
+pixel_t bg_color = (pixel_t)0xff000000;
 pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
 
 uint16_t gcurs_x = 0;
