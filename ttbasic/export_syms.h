@@ -43,6 +43,7 @@ S(eb_color)
 // eb_sys
 S(eb_wait)
 S(eb_tick)
+R(eb_process_events, process_events)
 
 // eb_file
 S(eb_file_exists)

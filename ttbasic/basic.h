@@ -493,7 +493,7 @@ void BASIC_FP push_num_arg(num_t n);
 
 extern const uint8_t *fonts[NUM_FONTS];
 
-void BASIC_FP process_events(void);
+extern "C" void BASIC_FP process_events(void);
 
 void basic_init_io();
 void basic_init_input();

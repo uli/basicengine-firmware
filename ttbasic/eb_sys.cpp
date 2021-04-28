@@ -16,3 +16,10 @@ void eb_wait(unsigned int ms) {
 unsigned int eb_tick(void) {
   return millis();
 }
+
+// NB: process_events() is directly exported to native modules as
+// eb_process_events(), so changing this will not necessarily have the
+// desired effect.
+void eb_process_events(void) {
+  process_events();
+}
