@@ -189,3 +189,15 @@ S(wcwidth)
 S(__va_start)
 S(__va_arg)
 #endif
+
+#ifdef __arm__
+S(__aeabi_idiv)
+S(__aeabi_idivmod)
+S(__aeabi_lasr)
+S(__aeabi_ldivmod)
+S(__aeabi_llsl)
+S(__aeabi_llsr)
+S(__aeabi_memcpy4)
+S(__aeabi_memcpy8)
+S(__aeabi_uidiv)
+#endif

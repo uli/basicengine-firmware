@@ -40,6 +40,18 @@ extern "C" void __va_start(void);
 static int *__errno(void) { return &errno; }
 #endif
 
+#ifdef __arm__
+extern "C" void __aeabi_idiv(void);
+extern "C" void __aeabi_idivmod(void);
+extern "C" void __aeabi_lasr(void);
+extern "C" void __aeabi_ldivmod(void);
+extern "C" void __aeabi_llsl(void);
+extern "C" void __aeabi_llsr(void);
+extern "C" void __aeabi_memcpy4(void);
+extern "C" void __aeabi_memcpy8(void);
+extern "C" void __aeabi_uidiv(void);
+#endif
+
 extern "C" void be_exit(int ret) {
      // XXX: How do we know what our BASIC context is?
      bc->exit(ret);
