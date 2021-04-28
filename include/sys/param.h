@@ -19,6 +19,14 @@
 # define PATHSIZE (1024)
 #endif
 
+#ifndef MAXPATHLEN
+#define MAXPATHLEN PATHSIZE
+#endif
+
+#ifndef MAXNAMLEN
+#define MAXNAMLEN PATHSIZE
+#endif
+
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 
