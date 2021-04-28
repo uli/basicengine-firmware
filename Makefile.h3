@@ -6,7 +6,8 @@ TARGET = basic
 
 all: $(TARGET).bin
 
-INIT_FS_DIR = ../basicengine_demos
+INIT_FS_DIR = init_dir
+DEMOS_DIR = ../basicengine_demos
 
 SOURCES = $(COMMON_SOURCES) $(shell ls h3/*.cpp)
 SOURCES_C = $(COMMON_SOURCES_C)
@@ -32,8 +33,19 @@ CXXFLAGS += $(ARDFLAGS) -fpermissive -std=c++11 -fno-exceptions
 clean:
 	rm -fr build_h3
 	@rm -f $(PROF)
+	rm -fr init_dir
 	$(MAKE) -C ttbasic -f autogen.mk autogen_clean
 
 $(TARGET).elf: $(OBJDIR)/dyncall/dyncall/libdyncall_s.a
+
+$(TARGET)_sd.img: init_dir
+
+init_dir:
+	mkdir init_dir
+	rsync -av $(DEMOS_DIR)/* init_dir/ || true
+	rsync -av include/ init_dir/include/
+	cp -p ttbasic/eb_*.h init_dir/include/
+	cp -p ttbasic/mcurses*.h init_dir/include/
+	cp -p libraries/tinycc/include/*.h init_dir/include/
 
 -include $(OUT_OBJS:%.o=%.d)
