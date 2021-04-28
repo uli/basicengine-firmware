@@ -18,6 +18,7 @@ typedef signed long int int64_t;
 #else
 typedef signed long long int int64_t;
 #endif
+#define _INT64_T_DECLARED
 typedef unsigned char uint8_t;
 typedef unsigned short int uint16_t;
 typedef unsigned int uint32_t;
@@ -26,6 +27,7 @@ typedef unsigned long int uint64_t;
 #else
 typedef unsigned long long int uint64_t;
 #endif
+#define _UINT64_T_DECLARED
 #endif
 
 #ifndef NULL
