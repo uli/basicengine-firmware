@@ -24,6 +24,7 @@ typedef __int8_t int8_t ;
 typedef __uint8_t uint8_t ;
 #define _UINT8_T_DECLARED
 #endif
+#undef __int8_t_defined
 #define __int8_t_defined 1
 #endif /* ___int8_t_defined */
 
