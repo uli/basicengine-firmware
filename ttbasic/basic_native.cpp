@@ -199,7 +199,8 @@ struct Basic::nfc_result Basic::do_nfc(void *sym) {
   if (!end_of_statement()) {
     do {
       if (is_strexp()) {
-        char *arg = strdup(istrexp().c_str());
+        BString arg_str = istrexp();
+        char *arg = strdup(arg_str.c_str());
         if (err)
           goto out;
         string_list.push_back(arg);
