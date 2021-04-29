@@ -172,8 +172,11 @@ mcurses_addch_or_insch (uint_fast8_t ch, uint_fast8_t insert)
         if (ch == '\\')
             screen_putch(ch);
         attrs[attr_idx] = mcurses_attr;
-    } else
+    } else {
         screen_putch(ch, true);
+        if (ch == '\\')
+            screen_putch(ch, true);
+    }
     mcurses_curx++;
 }
 
