@@ -9,6 +9,7 @@ void eb_cls(void);
 void eb_puts(const char *s);
 void eb_show_cursor(int enable);
 void eb_enable_scrolling(int enable);
+void eb_enable_escape_codes(int enable);
 
 void eb_locate(int x, int y);
 

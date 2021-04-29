@@ -122,6 +122,10 @@ void eb_enable_scrolling(int enable) {
     sc0.setScroll(enable);
 }
 
+void eb_enable_escape_codes(int enable) {
+    screen_putch_disable_escape_codes = !enable;
+}
+
 int eb_kbhit(void) {
     return c_kbhit();
 }
