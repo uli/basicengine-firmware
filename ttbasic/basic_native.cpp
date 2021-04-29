@@ -39,6 +39,7 @@ static TCCState *new_tcc() {
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");
   tcc_define_symbol(tcc, "_GNU_SOURCE", "1");
+  tcc_define_symbol(tcc, "__DYNAMIC_REENT__", "1");
 #define xstr(s) str(s)
 #define str(s) #s
   tcc_define_symbol(tcc, "PIXEL_TYPE", xstr(PIXEL_TYPE));
@@ -248,4 +249,9 @@ num_t Basic::nnfc() {
     return 0;
 
   return ret.rint;
+}
+
+extern "C" void be_exit(int ret) {
+     // XXX: How do we know what our BASIC context is?
+     bc->exit(ret);
 }

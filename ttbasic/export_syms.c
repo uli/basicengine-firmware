@@ -1,13 +1,5 @@
 #include <stdio.h>
-
-#ifdef __GLIBC__
-// avoid special C++ prototype for memrchr() in glibc
-#undef __cplusplus
-extern "C" {
 #include <string.h>
-}
-#define __cplusplus 201103L
-#endif
 
 // Wrap functions that pass platform-specific data structures ONLY if:
 // - no alternative standard function exists (counter-example:
@@ -18,7 +10,14 @@ extern "C" {
 
 // This macro hell allows us to include both the host platform's dirent.h
 // and the native dirent.h.
-#ifndef ALLWINNER_BARE_METAL
+
+#ifdef ALLWINNER_BARE_METAL
+
+// no translation required
+#include <dirent.h>
+
+#else
+
 #define dirent   _native_dirent
 #define DIR      _native_DIR
 #define opendir  _native_opendir
@@ -36,7 +35,7 @@ extern "C" {
 #undef dirent
 #include <dirent.h>
 
-extern "C" struct _native_dirent *be_readdir(DIR *dirp) {
+struct _native_dirent *be_readdir(DIR *dirp) {
   static struct _native_dirent trans_dir;
 
   struct dirent *dir = readdir(dirp);
@@ -55,19 +54,16 @@ extern "C" struct _native_dirent *be_readdir(DIR *dirp) {
 
   return NULL;
 }
-#endif
 
-#include "basic.h"
+#endif // ALLWINNER_BARE_METAL
+
+extern void be_exit(int ret);
+extern int c_printf(const char *f, ...);
+
+#include "ttconfig.h"
 #include "basic_native.h"
 
-extern "C" void be_exit(int ret) {
-     // XXX: How do we know what our BASIC context is?
-     bc->exit(ret);
-}
-
-typedef unsigned int pixel_t;
-typedef unsigned int ipixel_t;
-
+#include "eb_config.h"
 #include "eb_conio.h"
 #include "eb_file.h"
 #include "eb_sys.h"
@@ -78,34 +74,50 @@ typedef unsigned int ipixel_t;
 #include <sys/fcntl.h>
 #include <fnmatch.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
+#include <wchar.h>
 
 #define S(n) { #n, (void *)n },
 #define R(n, m) { #n, (void *)m },
 
-#ifdef __x86_64__
-extern "C" void __va_arg(void);
-extern "C" void __va_start(void);
+#ifdef SDL
+extern void __va_arg(void);
+extern void __va_start(void);
 
 static int *__errno(void) { return &errno; }
+
+// emulate newlib's reent structure
+struct fake_reent {
+  int _errno;
+  FILE *_stdin, *_stdout, *_stderr;
+};
+static struct fake_reent fake_reent;
+
+struct fake_reent *__getreent(void) {
+  fake_reent._stdin = stdin;
+  fake_reent._stdout = stdout;
+  fake_reent._stderr = stderr;
+  return &fake_reent;
+}
+
 #endif
 
 #ifdef __arm__
-extern "C" void __aeabi_idiv(void);
-extern "C" void __aeabi_idivmod(void);
-extern "C" void __aeabi_lasr(void);
-extern "C" void __aeabi_ldivmod(void);
-extern "C" void __aeabi_llsl(void);
-extern "C" void __aeabi_llsr(void);
-extern "C" void __aeabi_memcpy4(void);
-extern "C" void __aeabi_memcpy8(void);
-extern "C" void __aeabi_uidiv(void);
+extern void __aeabi_idiv(void);
+extern void __aeabi_idivmod(void);
+extern void __aeabi_lasr(void);
+extern void __aeabi_ldivmod(void);
+extern void __aeabi_llsl(void);
+extern void __aeabi_llsr(void);
+extern void __aeabi_memcpy4(void);
+extern void __aeabi_memcpy8(void);
+extern void __aeabi_uidiv(void);
 #endif
-
-void delayMicroseconds(unsigned int us);
 
 const struct symtab export_syms[] = {
 #include "export_syms.h"

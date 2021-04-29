@@ -1,5 +1,5 @@
 // unistd time
-R(usleep, delayMicroseconds)
+R(usleep, eb_udelay)
 
 // stdio string formatting
 R(printf, c_printf)
@@ -44,7 +44,7 @@ S(eb_color)
 // eb_sys
 S(eb_wait)
 S(eb_tick)
-R(eb_process_events, process_events)
+S(eb_process_events)
 
 // eb_file
 S(eb_file_exists)
@@ -121,9 +121,7 @@ S(fdopen)
 S(fileno)
 
 // stdio streams
-R(stdout, &stdout)
-R(stdin, &stdin)
-R(stderr, &stderr)
+S(__getreent)
 
 // unistd file I/O
 //S(open)	flags differ between platforms
