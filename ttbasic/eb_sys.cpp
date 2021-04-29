@@ -17,6 +17,10 @@ unsigned int eb_tick(void) {
   return millis();
 }
 
+void eb_udelay(unsigned int us) {
+  return delayMicroseconds(us);
+}
+
 // NB: process_events() is directly exported to native modules as
 // eb_process_events(), so changing this will not necessarily have the
 // desired effect.
