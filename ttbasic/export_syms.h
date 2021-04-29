@@ -9,6 +9,7 @@ S(sprintf)
 S(vasprintf)
 S(vsnprintf)
 S(vsprintf)
+S(sscanf)
 
 // wrapper that jumps back to BASIC prompt
 R(exit, be_exit)
@@ -57,6 +58,7 @@ S(eb_theme_color)
 
 // stdlib type conversion
 S(atoi)
+S(atol)
 
 // string functions
 S(strcpy)
@@ -66,6 +68,7 @@ S(strcmp)
 S(strncmp)
 S(strtol)
 S(strtoll)
+S(strtod)
 R(strchr, __builtin_strchr)
 R(strstr, __builtin_strstr)
 R(strrchr, __builtin_strrchr)
@@ -120,6 +123,8 @@ S(fwrite)
 S(fdopen)
 //S(fstat)	struct stat differs between platforms
 S(fileno)
+S(fflush)
+S(ungetc)
 
 // stdio streams
 S(__getreent)
@@ -147,6 +152,8 @@ S(getenv)
 // stdlib miscellaneous
 S(qsort)
 R(abs, __builtin_abs)
+S(random)
+S(labs)
 
 // unistd getopt
 S(getopt)
