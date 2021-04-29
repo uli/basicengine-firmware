@@ -157,16 +157,9 @@ typedef _fpos64_t fpos64_t;
 
 #define	TMP_MAX		26
 
-#if 0
 #define	stdin	(_REENT->_stdin)
 #define	stdout	(_REENT->_stdout)
 #define	stderr	(_REENT->_stderr)
-#else
-// XXX: is this safe?
-extern FILE *stdin;
-extern FILE *stdout;
-extern FILE *stderr;
-#endif
 
 #define _stdin_r(x)	((x)->_stdin)
 #define _stdout_r(x)	((x)->_stdout)
