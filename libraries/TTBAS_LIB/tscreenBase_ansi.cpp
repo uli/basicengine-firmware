@@ -38,6 +38,10 @@ void tscreenBase::term_queue_input(const char *s) {
 
 void tscreenBase::term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p) {
   tscreenBase *sc = (tscreenBase *)p;
+  sc->term_handler(m, vt, a);
+}
+
+void tscreenBase::term_handler(tmt_msg_t m, TMT *vt, const void *a) {
   /* grab a pointer to the virtual screen */
   const TMTSCREEN *s = tmt_screen(vt);
   const TMTPOINT *c = tmt_cursor(vt);
@@ -63,7 +67,7 @@ void tscreenBase::term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p) {
           pixel_t bg = chr->a.reverse ? colorFromTMT(&chr->a, true) :
                                         colorFromTMT(&chr->a, false);
 
-          sc->WRITE_COLOR(c, r, chr->c, fg, bg);
+          WRITE_COLOR(c, r, chr->c, fg, bg);
         }
       }
     }
@@ -76,18 +80,18 @@ void tscreenBase::term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p) {
     /* the terminal has a response to give to the program; a is a
      * pointer to a string */
     printf("terminal answered %s\n", str);
-    sc->term_queue_input(str);
+    term_queue_input(str);
     break;
 
   case TMT_MSG_MOVED:
     /* the cursor moved; a is a pointer to the cursor's TMTPOINT */
-    sc->MOVE(c->r, c->c);
+    MOVE(c->r, c->c);
     break;
   case TMT_MSG_CURSOR:
     if (str[0] == 't')
-      sc->show_curs(1);
+      show_curs(1);
     else
-      sc->show_curs(0);
+      show_curs(0);
     break;
   }
 }

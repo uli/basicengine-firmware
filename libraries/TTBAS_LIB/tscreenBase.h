@@ -83,6 +83,7 @@ protected:
   virtual void SCROLL_DOWN() = 0;        // スクロールダウン
   virtual void INSLINE(uint16_t l) = 0;  // 指定行に1行挿入(下スクロール)
   static void term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p);
+  void term_handler(tmt_msg_t m, TMT *vt, const void *a);
   void term_queue_input(const char *s);
   virtual uint16_t get_ch() = 0;  // 文字の取得
 
