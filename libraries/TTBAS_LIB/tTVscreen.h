@@ -56,6 +56,7 @@ class tTVscreen : public tscreenBase, public tGraphicDev {
     void INIT_DEV(){};                           // デバイスの初期化
     void MOVE(uint16_t y, uint16_t x);             // キャラクタカーソル移動 **
     void WRITE(uint16_t x, uint16_t y, uint8_t c); // 文字の表示
+    void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg);
     void CLEAR();                                // 画面全消去
     void CLEAR_LINE(uint16_t l, int from = 0);                  // 行の消去
     void SCROLL_UP();                            // スクロールアップ

@@ -59,6 +59,10 @@ void tTVscreen::WRITE(uint16_t x, uint16_t y, uint8_t c) {
   tv_write(x, y, c);  // 画面表示
 }
 
+void tTVscreen::WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg) {
+  tv_write_color(x, y, c, fg, bg);  // 画面表示
+}
+
 // 画面全消去
 void tTVscreen::CLEAR() {
   tv_cls();

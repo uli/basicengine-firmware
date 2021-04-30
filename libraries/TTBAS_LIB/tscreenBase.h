@@ -12,6 +12,7 @@
 #include <Arduino.h>
 
 #include "eb_conio.h"
+#include "eb_types.h"
 
 // text memory access macros
 #define VPEEK(X,Y)      (screen[whole_width*((Y)+win_y) + (X)+win_x])
@@ -63,6 +64,7 @@ protected:
 	virtual void END_DEV() {};                                // デバイスの終了
     virtual void MOVE(uint16_t y, uint16_t x) = 0;              // キャラクタカーソル移動
     virtual void WRITE(uint16_t x, uint16_t y, uint8_t c) = 0;  // 文字の表示
+    virtual void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg) = 0;
     virtual void CLEAR() = 0;                                 // 画面全消去
     virtual void CLEAR_LINE(uint16_t l, int from = 0)  = 0;                  // 行の消去
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
