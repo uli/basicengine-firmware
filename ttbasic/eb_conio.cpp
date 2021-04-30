@@ -129,3 +129,11 @@ void eb_enable_escape_codes(int enable) {
 int eb_kbhit(void) {
     return c_kbhit();
 }
+
+int eb_term_getch(void) {
+  return sc0.term_getch();
+}
+
+void eb_term_putch(char c) {
+  sc0.term_putch(c);
+}
