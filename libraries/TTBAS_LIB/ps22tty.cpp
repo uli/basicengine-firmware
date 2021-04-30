@@ -49,7 +49,7 @@ enum {
   _romaji_z, _romaji_by,_romaji_ch,_romaji_cy,_romaji_dh, _romaji_dw,_romaji_dy,_romaji_fw,_romaji_fy,_romaji_gw,
   _romaji_gy,_romaji_hy,_romaji_jy,_romaji_kw,_romaji_ky, _romaji_lt,_romaji_ly,_romaji_my,_romaji_ny,_romaji_py,
   _romaji_qw,_romaji_qy,_romaji_ry,_romaji_sh,_romaji_sw,_romaji_sy, _romaji_th,_romaji_ts,_romaji_tw,_romaji_ty,
-  _romaji_vy,_romaji_wh,_romaji_xt,_romaji_xy,_romaji_zy,  
+  _romaji_vy,_romaji_wh,_romaji_xt,_romaji_xy,_romaji_zy,
 };
 
 // カタカタ文字列変換テーブル
@@ -264,14 +264,14 @@ char *pRomaji2Kana(uint8_t c) {
           goto STS_ERROR;
         default:
           goto STS_ERROR;
-        }     
+        }
       }
     }
   }
 
 STS_NEXT:  // 次の状態へ
   return NULL;
-  
+
 STS_ERROR: // [状態遷移エラー]
   romaji_sts = _romaji_top;  // 状態の初期化
   flgTsu = false;            // 小さい'ﾂ'の先頭付加フラグクリア
@@ -328,18 +328,10 @@ uint16_t cnv2tty(keyEvent k) {
           case PS2KEY_AT:         rc = 0;    break;
           case PS2KEY_L_brackets: rc = 0x1b; break;
           case PS2KEY_Pipe2:      rc = 0x1c; break;
-          case PS2KEY_R_brackets: rc = 0x1d; break;  
-          case PS2KEY_Hat:        rc = 0x1e; break;  
+          case PS2KEY_R_brackets: rc = 0x1d; break;
+          case PS2KEY_Hat:        rc = 0x1e; break;
           case PS2KEY_Ro:         rc = 0x1f; break;
         }
-      }
-      if (rc == 11) {
-        if (flgKana) {
-          flgKana = false;
-        } else {
-          flgKana = true;
-        }
-        return 0;
       }
       return rc;
     }
@@ -368,7 +360,7 @@ uint16_t cnv2tty(keyEvent k) {
     case PS2KEY_Backspace:  rc = SC_KEY_BACKSPACE;break;
     case PS2KEY_Delete:     rc = SC_KEY_DC;       break;
     case PS2KEY_Enter:	    rc = SC_KEY_CR;       break;
-    case PS2KEY_Romaji: 
+    case PS2KEY_Romaji:
       if (flgKana) {
         flgKana = false;
       } else {
