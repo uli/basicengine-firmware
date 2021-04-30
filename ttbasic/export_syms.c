@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 
-// This macro hell allows us to include both the host platform's dirent.h
-// and the native dirent.h.
-
 #ifdef ALLWINNER_BARE_METAL
 
 // no dirent or stat translation required
 #include <dirent.h>
 
 #else
+
+// ===== Translate host dirent to native dirent
+
+// This macro hell allows us to include both the host platform's dirent.h
+// and the native dirent.h.
 
 #define dirent   _native_dirent
 #define DIR      _native_DIR
@@ -34,15 +36,15 @@ struct _native_dirent *be_readdir(DIR *dirp) {
   struct dirent *dir = readdir(dirp);
 
   if (dir) {
-   strcpy(trans_dir.d_name, dir->d_name);
+    strcpy(trans_dir.d_name, dir->d_name);
 
-   switch (dir->d_type) {
-   case DT_REG: trans_dir.d_type = _native_DT_REG; break;
-   case DT_DIR: trans_dir.d_type = _native_DT_DIR; break;
-   default: trans_dir.d_type = 0;
-   }
+    switch (dir->d_type) {
+    case DT_REG: trans_dir.d_type = _native_DT_REG; break;
+    case DT_DIR: trans_dir.d_type = _native_DT_DIR; break;
+    default: trans_dir.d_type = 0;
+    }
 
-   return &trans_dir;
+    return &trans_dir;
   }
 
   return NULL;
@@ -97,11 +99,14 @@ static int _native_lstat(const char *pathname, struct _native_stat *statbuf) {
 
 #endif // ALLWINNER_BARE_METAL
 
+
 extern void be_exit(int ret);
 extern int c_printf(const char *f, ...);
 
 #include "ttconfig.h"
-#include "basic_native.h"
+#include "basic_native.h"  // provides be_exit()
+
+// ===== include all the stuff we are going to export
 
 #include "eb_config.h"
 #include "eb_conio.h"
@@ -109,17 +114,17 @@ extern int c_printf(const char *f, ...);
 #include "eb_sys.h"
 #include "eb_video.h"
 #include "mcurses.h"
-#include <stdarg.h>
-#include <libgen.h>
-#include <sys/fcntl.h>
-#include <fnmatch.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <math.h>
 #include <ctype.h>
+#include <errno.h>
+#include <fnmatch.h>
+#include <libgen.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <wchar.h>
 
 // ===== CPU architecture-specific exports
