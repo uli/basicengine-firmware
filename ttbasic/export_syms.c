@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
-// Wrap functions that pass platform-specific data structures ONLY if:
-// - no alternative standard function exists (counter-example:
-//   fopen()/fileno() can be used instead of open())
-// - they cannot be replaced with a simple Engine BASIC-specific alternative
-//   (counter-example: eb_file_exists() etc. fulfill the typical use of
-//   stat())
-
 // This macro hell allows us to include both the host platform's dirent.h
 // and the native dirent.h.
 
 #ifdef ALLWINNER_BARE_METAL
 
-// no translation required
+// no dirent or stat translation required
 #include <dirent.h>
 
 #else
@@ -53,6 +46,53 @@ struct _native_dirent *be_readdir(DIR *dirp) {
   }
 
   return NULL;
+}
+
+// ===== Translate host {f,l,}stat() to native {f,l,}stat()
+
+#include <sys/stat.h>
+
+// discount version of newlib's struct stat
+struct _native_stat {
+  dev_t         st_dev;
+  ino_t         st_ino;
+  mode_t        st_mode;
+  nlink_t       st_nlink;
+  uid_t         st_uid;
+  gid_t         st_gid;
+  dev_t         st_rdev;
+  off_t         st_size;
+};
+
+// XXX: Does not translate timestamps.
+static void translate_stat(struct _native_stat *nsb, struct stat *sb) {
+  memset(nsb, 0, sizeof(struct _native_stat));
+  nsb->st_mode = sb->st_mode;
+  nsb->st_size = sb->st_size;
+}
+
+static int _native_stat(const char *pathname, struct _native_stat *statbuf) {
+  struct stat sb;
+  int ret = stat(pathname, &sb);
+  if (!ret)
+    translate_stat(statbuf, &sb);
+  return ret;
+}
+
+static int _native_fstat(int fd, struct _native_stat *statbuf) {
+  struct stat sb;
+  int ret = fstat(fd, &sb);
+  if (!ret)
+    translate_stat(statbuf, &sb);
+  return ret;
+}
+
+static int _native_lstat(const char *pathname, struct _native_stat *statbuf) {
+  struct stat sb;
+  int ret = lstat(pathname, &sb);
+  if (!ret)
+    translate_stat(statbuf, &sb);
+  return ret;
 }
 
 #endif // ALLWINNER_BARE_METAL

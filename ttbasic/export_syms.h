@@ -136,6 +136,15 @@ S(__getreent)
 S(close)
 S(read)
 S(write)
+#ifdef ALLWINNER_BARE_METAL
+S(stat)
+S(fstat)
+//S(lstat)	not in newlib
+#else
+R(stat, _native_stat)
+R(fstat, _native_fstat)
+//R(lstat, _native_lstat)
+#endif
 
 // memory
 S(memcmp)
