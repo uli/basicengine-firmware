@@ -21,13 +21,14 @@ extern "C" void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
 }
 
+int output_type = TCC_OUTPUT_MEMORY;
 
 static TCCState *new_tcc(bool init_syms = true) {
   TCCState *tcc = tcc_new();
   if (!tcc)
     return NULL;
 
-  tcc_set_output_type(tcc, TCC_OUTPUT_MEMORY);
+  tcc_set_output_type(tcc, output_type);
   tcc_set_options(tcc, "-nostdlib");
 
   BString default_include_path =
@@ -79,7 +80,7 @@ void Basic::itcc() {
   if (current_tcc)
     tcc = current_tcc;
   else {
-    tcc = new_tcc();
+    tcc = new_tcc(output_type == TCC_OUTPUT_MEMORY);
     if (!tcc) {
       err = ERR_OOM;
       return;
@@ -159,25 +160,34 @@ void Basic::itcclink() {
     tcc_compile_string(current_tcc, wrapper);
   }
 
-  if (tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
-    err = ERR_COMPILE;
-    err_expected = "relocation failed";
-    tcc_delete(current_tcc);
-    current_tcc = NULL;
-    return;
+  if (output_type == TCC_OUTPUT_MEMORY) {
+    if (tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
+      err = ERR_COMPILE;
+      err_expected = "relocation failed";
+      tcc_delete(current_tcc);
+      current_tcc = NULL;
+      return;
+    }
+
+    char *etext = (char *)tcc_get_symbol(current_tcc, "_etext");
+    char *end   = (char *)tcc_get_symbol(current_tcc, "_end");
+
+    char *initial_data = (char *)malloc(end - etext);
+    memcpy(initial_data, etext, end - etext);
+
+    void **init_ptr = (void **)tcc_get_symbol(current_tcc, "_initial_data");
+    *init_ptr = initial_data;
+
+    struct module new_mod = { current_tcc, name, initial_data, (int)(end - etext) };
+    modules.push_back(new_mod);
+  } else {
+    if (tcc_output_file(current_tcc, name.c_str()) < 0) {
+      err = ERR_COMPILE;
+      err_expected = "failed to output file";
+      tcc_delete(current_tcc);
+    }
+    output_type = TCC_OUTPUT_MEMORY;
   }
-
-  char *etext = (char *)tcc_get_symbol(current_tcc, "_etext");
-  char *end   = (char *)tcc_get_symbol(current_tcc, "_end");
-
-  char *initial_data = (char *)malloc(end - etext);
-  memcpy(initial_data, etext, end - etext);
-
-  void **init_ptr = (void **)tcc_get_symbol(current_tcc, "_initial_data");
-  *init_ptr = initial_data;
-
-  struct module new_mod = { current_tcc, name, initial_data, (int)(end - etext) };
-  modules.push_back(new_mod);
 
   current_tcc = NULL;
 }
