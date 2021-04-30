@@ -260,4 +260,6 @@ S(__aeabi_llsr)
 S(__aeabi_memcpy4)
 S(__aeabi_memcpy8)
 S(__aeabi_uidiv)
+S(__aeabi_d2lz)
+S(__aeabi_uidivmod)
 #endif
