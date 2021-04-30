@@ -181,8 +181,8 @@ void Basic::itcclink() {
 }
 
 void *Basic::get_symbol(const char *sym_name) {
-  for (auto mod : modules) {
-    void *sym = tcc_get_symbol(mod.tcc, sym_name);
+  for(int i = modules.size(); i-- > 0; --i) {
+    void *sym = tcc_get_symbol(modules[i].tcc, sym_name);
     if (sym)
       return sym;
   }
