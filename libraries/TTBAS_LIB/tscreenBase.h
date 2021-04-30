@@ -8,6 +8,8 @@
 
 #define DEPEND_TTBASIC           1     // 豊四季TinyBASIC依存部利用の有無 0:利用しない 1:利用する
 
+#include <queue>
+
 #include "ttconfig.h"
 #include <Arduino.h>
 
@@ -54,6 +56,7 @@ protected:
   uint8_t *screen = NULL;  // スクリーン用バッファ
   IPIXEL_TYPE *colmem = NULL;
   TMT *vt = NULL;
+  std::queue<char> vt_inbuf;
   uint16_t width;                      // text window width
   uint16_t height;                     // text window height
   uint16_t whole_width, whole_height;  // full screen width/height (chars)
@@ -80,6 +83,8 @@ protected:
   virtual void SCROLL_DOWN() = 0;        // スクロールダウン
   virtual void INSLINE(uint16_t l) = 0;  // 指定行に1行挿入(下スクロール)
   static void term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p);
+  void term_queue_input(const char *s);
+  virtual uint16_t get_ch() = 0;  // 文字の取得
 
 public:
   virtual void beep(){};                     // BEEP音の発生
@@ -169,6 +174,7 @@ public:
   }
 
   void term_putch(char c);
+  int term_getch(void);
 };
 
 #endif

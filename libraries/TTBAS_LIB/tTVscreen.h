@@ -86,7 +86,7 @@ public:
 #endif
   }
 
-  uint16_t get_ch();  // 文字の取得
+  virtual uint16_t get_ch();  // 文字の取得
   inline uint16_t tryGetChar() {
     return ps2read();
   }
