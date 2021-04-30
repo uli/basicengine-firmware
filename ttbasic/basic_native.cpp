@@ -22,7 +22,7 @@ extern "C" void print_tcc_error(void *b, const char *msg) {
 }
 
 
-static TCCState *new_tcc() {
+static TCCState *new_tcc(bool init_syms = true) {
   TCCState *tcc = tcc_new();
   if (!tcc)
     return NULL;
@@ -47,8 +47,10 @@ static TCCState *new_tcc() {
 #undef str
 #undef xstr
 
-  for (const struct symtab *sym = export_syms; sym->name; ++sym) {
-    tcc_add_symbol(tcc, sym->name, sym->addr);
+  if (init_syms) {
+    for (const struct symtab *sym = export_syms; sym->name; ++sym) {
+      tcc_add_symbol(tcc, sym->name, sym->addr);
+    }
   }
 
   return tcc;
