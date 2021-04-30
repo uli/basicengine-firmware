@@ -102,6 +102,7 @@ static inline long _random(long v) {
 #ifdef __cplusplus
 // workaround to avoid mix-ups with our min()/max() macros
 #include <memory>
+#include <queue>
 #endif
 
 #define _min(a, b) ((a) < (b) ? (a) : (b))
