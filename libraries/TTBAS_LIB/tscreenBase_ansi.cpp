@@ -67,6 +67,8 @@ void tscreenBase::term_handler(tmt_msg_t m, TMT *vt, const void *a) {
           pixel_t bg = chr->a.reverse ? colorFromTMT(&chr->a, true) :
                                         colorFromTMT(&chr->a, false);
 
+          VPOKE(c, r, chr->c);
+          VPOKE_FGBG(c, r, fg, bg);
           WRITE_COLOR(c, r, chr->c, fg, bg);
         }
       }
