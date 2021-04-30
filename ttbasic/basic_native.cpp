@@ -112,10 +112,11 @@ void Basic::itcclink() {
     asprintf(&wrapper,
              "#include <stdarg.h>"
              "#include <string.h>"
+             "#include <unistd.h>"
              "extern int optind;"
              "extern char _etext, _end;"
              "volatile void *_initial_data;"
-             "int main(int argc, char **argv);"
+             "int main(int argc, char **argv, char **environ);"
              "int %s(const char *opt, ...) {"
              "        int argc = 2;"
              "        const char *args[16];"
@@ -129,7 +130,7 @@ void Basic::itcclink() {
              "        } else {"
              "                va_list ap;"
              "                va_start(ap, opt);"
-             "                while (argc < 16) {"
+             "                while (argc < 15) {"
              "                        o = va_arg(ap, char *);"
              "                        if (o)"
              "                                args[argc++] = o;"
@@ -138,11 +139,12 @@ void Basic::itcclink() {
              "                }"
              "        }"
              "        va_end(ap);"
+             "        args[argc] = NULL;"
              "        optind = 1;"
              "        tmp = _initial_data;"
              "        memcpy(&_etext, (void *)_initial_data, &_end - &_etext);"
              "        _initial_data = tmp;"
-             "        return main(argc, args);"
+             "        return main(argc, args, environ);"
              "}",
              name.c_str(), name.c_str());
     tcc_compile_string(current_tcc, wrapper);
