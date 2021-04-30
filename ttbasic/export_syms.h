@@ -173,6 +173,9 @@ S(getopt)
 R(optarg, &optarg)
 R(optind, &optind)
 
+// unistd misc
+R(environ, &environ)
+
 // ctype
 S(isdigit)
 S(isalnum)
