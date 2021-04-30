@@ -32,130 +32,136 @@
 #include "tGraphicDev.h"
 
 // PS/2キーボードの利用 0:利用しない 1:利用する
-#define PS2DEV     1  
+#define PS2DEV 1
 #include "ps22tty.h"
 
 //uint8_t* tv_getFontAdr() ;
 
 // スクリーン定義
-#define SC_FIRST_LINE  0  // スクロール先頭行
+#define SC_FIRST_LINE 0  // スクロール先頭行
 //#define SC_LAST_LINE  24  // スクロール最終行
 
-#define SC_TEXTNUM   256  // 1行確定文字列長さ
+#define SC_TEXTNUM 256  // 1行確定文字列長さ
 
 #include "tvutil.h"
 
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
-  private:
-    uint8_t enableCursor;
-    uint8_t m_cursor_count;
-    bool m_cursor_state;
+private:
+  uint8_t enableCursor;
+  uint8_t m_cursor_count;
+  bool m_cursor_state;
 
-  protected:
-    void INIT_DEV(){};                           // デバイスの初期化
-    void MOVE(uint16_t y, uint16_t x);             // キャラクタカーソル移動 **
-    void WRITE(uint16_t x, uint16_t y, uint8_t c); // 文字の表示
-    void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg);
-    void CLEAR();                                // 画面全消去
-    void CLEAR_LINE(uint16_t l, int from = 0);                  // 行の消去
-    void SCROLL_UP();                            // スクロールアップ
-    void SCROLL_DOWN();                          // スクロールダウン
-    void INSLINE(uint16_t l);                     // 指定行に1行挿入(下スクロール)
+protected:
+  void INIT_DEV(){};                  // デバイスの初期化
+  void MOVE(uint16_t y, uint16_t x);  // キャラクタカーソル移動 **
+  void WRITE(uint16_t x, uint16_t y, uint8_t c);  // 文字の表示
+  void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg);
+  void CLEAR();                               // 画面全消去
+  void CLEAR_LINE(uint16_t l, int from = 0);  // 行の消去
+  void SCROLL_UP();                           // スクロールアップ
+  void SCROLL_DOWN();                         // スクロールダウン
+  void INSLINE(uint16_t l);  // 指定行に1行挿入(下スクロール)
 
-  public:
-    uint16_t prev_pos_x;        // カーソル横位置
-    uint16_t prev_pos_y;        // カーソル縦位置
- 
-    inline void write(uint16_t x, uint16_t y, uint8_t c) {
-      tv_write(x, y, c);
-      VPOKE(x, y, c);
-      VPOKE_CCOL(x, y);
-    }
-    void init( uint16_t ln=256,
-    	       int16_t NTSCajst=0,
-               uint8_t vmode=SC_DEFAULT);                // スクリーンの初期設定
-    void end();                                          // スクリーンの利用の終了
-    void Serial_Ctrl(int16_t ch);
-    void reset_kbd(uint8_t kbd_type=false);
+public:
+  uint16_t prev_pos_x;  // カーソル横位置
+  uint16_t prev_pos_y;  // カーソル縦位置
 
-    inline void putch(uint8_t c, bool lazy = false) {
-      tscreenBase::putch(c, lazy);
-    #ifdef DEBUG
-      Serial.write(c);       // シリアル出力
-    #endif
-    }
+  inline void write(uint16_t x, uint16_t y, uint8_t c) {
+    tv_write(x, y, c);
+    VPOKE(x, y, c);
+    VPOKE_CCOL(x, y);
+  }
+  void init(uint16_t ln = 256,
+            int16_t NTSCajst = 0,
+            uint8_t vmode = SC_DEFAULT);  // スクリーンの初期設定
+  void end();                             // スクリーンの利用の終了
+  void Serial_Ctrl(int16_t ch);
+  void reset_kbd(uint8_t kbd_type = false);
 
-    uint16_t get_ch();                                 // 文字の取得
-    inline uint16_t tryGetChar() {
-      return ps2read();
-    }
-    inline uint8_t getDevice() {return dev;};         // 文字入力元デバイス種別の取得
-    bool isKeyIn();                                // キー入力チェック 
-    inline uint16_t peekKey() {
-      return ps2peek();
-    }
-    uint8_t edit();                                   // スクリーン編集
-    void newLine();                                   // 改行出力
-    void refresh_line(uint16_t l);                    // 行の再表示
-	
-    void drawCursor(uint8_t flg);
-    void updateCursor();
-    void show_curs(uint8_t flg);                      // カーソルの表示/非表示制御
-    void draw_cls_curs();                             // カーソルの消去
+  inline void putch(uint8_t c, bool lazy = false) {
+    tscreenBase::putch(c, lazy);
+#ifdef DEBUG
+    Serial.write(c);  // シリアル出力
+#endif
+  }
 
-    void setColor(pixel_t fc, pixel_t bc);          // 文字色指定
-    void setColorIndexed(ipixel_t fc, ipixel_t bc);
-    inline void flipColors() {
-      tv_flipcolors();
-    }
-    inline pixel_t getFgColor() {
-      return fg_color;
-    }
-    inline pixel_t getBgColor() {
-      return bg_color;
-    }
-    inline void setCursorColor(pixel_t cc) {
-      tv_setcursorcolor(cc);
-    }
-    void beep() {/*addch(0x07);*/};
+  uint16_t get_ch();  // 文字の取得
+  inline uint16_t tryGetChar() {
+    return ps2read();
+  }
+  inline uint8_t getDevice() {  // 文字入力元デバイス種別の取得
+    return dev;
+  }
+  bool isKeyIn();  // キー入力チェック
+  inline uint16_t peekKey() {
+    return ps2peek();
+  }
+  uint8_t edit();                 // スクリーン編集
+  void newLine();                 // 改行出力
+  void refresh_line(uint16_t l);  // 行の再表示
 
-    inline uint8_t IS_PRINT(uint8_t ch) {
-      //return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0)); 
-      return (ch > 0); 
-    };
+  void drawCursor(uint8_t flg);
+  void updateCursor();
+  void show_curs(uint8_t flg);  // カーソルの表示/非表示制御
+  void draw_cls_curs();         // カーソルの消去
 
-    void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
+  void setColor(pixel_t fc, pixel_t bc);  // 文字色指定
+  void setColorIndexed(ipixel_t fc, ipixel_t bc);
+  inline void flipColors() {
+    tv_flipcolors();
+  }
+  inline pixel_t getFgColor() {
+    return fg_color;
+  }
+  inline pixel_t getBgColor() {
+    return bg_color;
+  }
+  inline void setCursorColor(pixel_t cc) {
+    tv_setcursorcolor(cc);
+  }
+  void beep(){
+    /*addch(0x07);*/
+  };
 
-    inline void setWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
-      tv_window_set(x, y, w, h);
-      win_x = x; win_y = y;
-      width = w; height = h;
-    }
-    inline void getWindow(int &x, int &y, int &w, int &h) {
-      tv_window_get(x, y, w, h);
-    }
-    inline void reset() {
-      tv_reinit();
-      tscreenBase::init(whole_width, whole_height, maxllen, screen);
-      setWindow(0, 0, whole_width, whole_height);
-    }
+  inline uint8_t IS_PRINT(uint8_t ch) {
+    //return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
+    return (ch > 0);
+  };
 
-    inline uint16_t getScreenWidth() {
-      return tv_get_cwidth();
-    }
-    inline uint16_t getScreenHeight() {
-      return tv_get_cheight();
-    }
-    void setFont(const uint8_t *font);
-    inline int getFontHeight() {
-      return tv_font_height();
-    }
-    inline int getFontWidth() {
-      return tv_font_width();
-    }
+  void cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d);
 
-    void saveScreenshot();
+  inline void setWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+    tv_window_set(x, y, w, h);
+    win_x = x;
+    win_y = y;
+    width = w;
+    height = h;
+  }
+  inline void getWindow(int &x, int &y, int &w, int &h) {
+    tv_window_get(x, y, w, h);
+  }
+  inline void reset() {
+    tv_reinit();
+    tscreenBase::init(whole_width, whole_height, maxllen, screen);
+    setWindow(0, 0, whole_width, whole_height);
+  }
+
+  inline uint16_t getScreenWidth() {
+    return tv_get_cwidth();
+  }
+  inline uint16_t getScreenHeight() {
+    return tv_get_cheight();
+  }
+  void setFont(const uint8_t *font);
+  inline int getFontHeight() {
+    return tv_font_height();
+  }
+  inline int getFontWidth() {
+    return tv_font_width();
+  }
+
+  void saveScreenshot();
 };
 
 #endif
