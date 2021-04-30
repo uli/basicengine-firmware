@@ -67,6 +67,7 @@ void Basic::init_tcc() {
 #else
   setenv("HOME", "/", 1);
 #endif
+  setenv("TERM", "ansi", 1);
 }
 
 static TCCState *current_tcc;
