@@ -91,9 +91,11 @@ void tscreenBase::term_handler(tmt_msg_t m, TMT *vt, const void *a) {
     break;
   case TMT_MSG_CURSOR:
     if (str[0] == 't')
-      show_curs(1);
+      vt_cursor_on = true;
     else
-      show_curs(0);
+      vt_cursor_on = false;
+
+    show_curs(vt_cursor_on);
     break;
   }
 }
@@ -103,6 +105,10 @@ void tscreenBase::term_putch(char c) {
 }
 
 int tscreenBase::term_getch(void) {
+  if (cursor_enabled() != vt_cursor_on) {
+    show_curs(vt_cursor_on);
+  }
+
   if (vt_inbuf.empty()) {
     int c = get_ch();
     switch (c) {

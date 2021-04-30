@@ -57,6 +57,7 @@ protected:
   IPIXEL_TYPE *colmem = NULL;
   TMT *vt = NULL;
   std::queue<char> vt_inbuf;
+  bool vt_cursor_on;
   uint16_t width;                      // text window width
   uint16_t height;                     // text window height
   uint16_t whole_width, whole_height;  // full screen width/height (chars)
