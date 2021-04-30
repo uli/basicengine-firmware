@@ -237,6 +237,10 @@ S(atanh)
 S(erf)
 S(erfc)
 
+// time
+S(time)
+S(gettimeofday)
+S(localtime)
 
 #ifdef __x86_64__
 S(__va_start)

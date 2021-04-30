@@ -124,6 +124,8 @@ extern int c_printf(const char *f, ...);
 #include <string.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 #include <wchar.h>
 
