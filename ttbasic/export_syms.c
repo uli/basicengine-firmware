@@ -122,16 +122,35 @@ extern int c_printf(const char *f, ...);
 #include <ctype.h>
 #include <wchar.h>
 
-#define S(n) { #n, (void *)n },
-#define R(n, m) { #n, (void *)m },
+// ===== CPU architecture-specific exports
 
-#ifdef SDL
+#ifdef __x86_64__
 extern void __va_arg(void);
 extern void __va_start(void);
+#endif
+
+#ifdef __arm__
+extern void __aeabi_idiv(void);
+extern void __aeabi_idivmod(void);
+extern void __aeabi_lasr(void);
+extern void __aeabi_ldivmod(void);
+extern void __aeabi_llsl(void);
+extern void __aeabi_llsr(void);
+extern void __aeabi_memcpy4(void);
+extern void __aeabi_memcpy8(void);
+extern void __aeabi_uidiv(void);
+#endif
+
+#ifdef SDL
+
+// We are running on a random C library, but our native code uses newlib
+// header files, which define macros to access errno and stdio streams. We
+// therefore have to emulate the underlying implementation for things to
+// work correctly.
 
 static int *__errno(void) { return &errno; }
 
-// emulate newlib's reent structure
+// discount version of newlib's reent structure
 struct fake_reent {
   int _errno;
   FILE *_stdin, *_stdout, *_stderr;
@@ -147,17 +166,8 @@ struct fake_reent *__getreent(void) {
 
 #endif
 
-#ifdef __arm__
-extern void __aeabi_idiv(void);
-extern void __aeabi_idivmod(void);
-extern void __aeabi_lasr(void);
-extern void __aeabi_ldivmod(void);
-extern void __aeabi_llsl(void);
-extern void __aeabi_llsr(void);
-extern void __aeabi_memcpy4(void);
-extern void __aeabi_memcpy8(void);
-extern void __aeabi_uidiv(void);
-#endif
+#define S(n) { #n, (void *)n },
+#define R(n, m) { #n, (void *)m },
 
 const struct symtab export_syms[] = {
 #include "export_syms.h"
