@@ -21,10 +21,14 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, uint8_t *extmem) {
     screen = NULL;
     free(colmem);
     colmem = NULL;
+    if (vt)
+      tmt_close(vt);
   }
   if (!screen) {
     screen = (uint8_t *)calloc(w * h, sizeof(*screen));
     colmem = (pixel_t *)calloc(w * h * 2, sizeof(pixel_t));
+    vt = tmt_open(h, w, term_callback, this, NULL);
+    vt_inbuf_r = vt_inbuf_w;
   }
 
   whole_width = width = w;

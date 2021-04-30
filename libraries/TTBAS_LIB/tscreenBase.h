@@ -14,6 +14,10 @@
 #include "eb_conio.h"
 #include "eb_types.h"
 
+extern "C" {
+#include "tmt.h"
+}
+
 // text memory access macros
 #define VPEEK(X,Y)      (screen[whole_width*((Y)+win_y) + (X)+win_x])
 #define VPOKE(X,Y,C)    (screen[whole_width*((Y)+win_y) + (X)+win_x]=(C))
@@ -46,6 +50,7 @@ class tscreenBase {
   protected:
     uint8_t* screen = NULL;     // スクリーン用バッファ
     IPIXEL_TYPE *colmem = NULL;
+    TMT *vt = NULL;
     uint16_t width;             // text window width
     uint16_t height;            // text window height
     uint16_t whole_width, whole_height;	// full screen width/height (chars)
@@ -70,6 +75,7 @@ protected:
     virtual void SCROLL_UP()  = 0;                            // スクロールアップ
     virtual void SCROLL_DOWN() = 0;                           // スクロールダウン
     virtual void INSLINE(uint16_t l) = 0;                      // 指定行に1行挿入(下スクロール)
+    static void term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p);
 
   public:
 	virtual void beep() {};                              // BEEP音の発生
@@ -128,6 +134,8 @@ protected:
     int16_t getLineNum(int16_t l);                    // 指定行の行番号の取得
 
     inline void setScroll(bool enabled) { flgScroll = enabled; }
+
+    void term_putch(char c);
 };
 
 #endif
