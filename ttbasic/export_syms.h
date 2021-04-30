@@ -134,8 +134,10 @@ S(__getreent)
 // unistd file I/O
 //S(open)	flags differ between platforms
 S(close)
+//S(creat)	not in newlib
 S(read)
 S(write)
+S(lseek)	// assumes "whence" defines to be identical across platforms
 #ifdef ALLWINNER_BARE_METAL
 S(stat)
 S(fstat)
