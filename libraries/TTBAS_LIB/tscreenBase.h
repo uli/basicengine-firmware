@@ -90,6 +90,7 @@ protected:
 public:
   virtual void beep(){};                     // BEEP音の発生
   virtual void show_curs(uint8_t flg) = 0;   // カーソルの表示/非表示
+  virtual bool cursor_enabled() = 0;
   virtual void draw_cls_curs() = 0;          // カーソルの消去
   void putch(uint8_t c, bool lazy = false);  // 文字の出力
   virtual bool isKeyIn() = 0;                // キー入力チェック

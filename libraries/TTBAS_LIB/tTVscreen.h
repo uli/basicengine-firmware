@@ -104,6 +104,9 @@ public:
   void drawCursor(uint8_t flg);
   void updateCursor();
   void show_curs(uint8_t flg);  // カーソルの表示/非表示制御
+  bool cursor_enabled() {
+    return enableCursor;
+  }
   void draw_cls_curs();         // カーソルの消去
 
   void setColor(pixel_t fc, pixel_t bc);  // 文字色指定
