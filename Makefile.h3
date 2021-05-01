@@ -47,5 +47,6 @@ init_dir:
 	cp -p ttbasic/eb_*.h init_dir/include/
 	cp -p ttbasic/mcurses*.h init_dir/include/
 	cp -p libraries/tinycc/include/*.h init_dir/include/
+	cp -p libraries/stb/*.h init_dir/include/
 
 -include $(OUT_OBJS:%.o=%.d)

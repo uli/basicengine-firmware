@@ -128,6 +128,10 @@ extern int c_printf(const char *f, ...);
 #include <time.h>
 #include <unistd.h>
 #include <wchar.h>
+#include <sts_mixer.h>
+#include <stb_image.h>
+#include <stb_image_resize.h>
+#include <stb_image_write.h>
 
 // ===== CPU architecture-specific exports
 
