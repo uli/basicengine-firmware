@@ -240,6 +240,7 @@ OR	I_OR		esyntax
 AND	I_AND		esyntax
 >=	I_GTE		esyntax
 #	I_SHARP		esyntax
+!	I_BANG		esyntax
 =	I_EQ		esyntax
 <=	I_LTE		esyntax
 ><	I_NEQ		esyntax

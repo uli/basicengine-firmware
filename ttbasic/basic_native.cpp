@@ -210,9 +210,9 @@ const char *Basic::get_name(void *addr) {
   return NULL;
 }
 
-struct Basic::nfc_result Basic::do_nfc(void *sym) {
+Basic::nfc_result Basic::do_nfc(void *sym, enum return_type rtype) {
   static float empty[16] = {};
-  struct nfc_result ret;
+  nfc_result ret;
 
   dcReset(callvm);
 
@@ -220,7 +220,25 @@ struct Basic::nfc_result Basic::do_nfc(void *sym) {
 
   if (!end_of_statement()) {
     do {
-      if (is_strexp()) {
+      if (*cip == I_SHARP) {
+        ++cip;
+        double arg = iexp();
+        if (err)
+          goto out;
+        dcArgDouble(callvm, arg);
+      } else if (*cip == I_BANG) {
+        ++cip;
+        float arg = iexp();
+        if (err)
+          goto out;
+        dcArgFloat(callvm, arg);
+      } else if (*cip == I_MUL) {
+        ++cip;
+        void *arg = (void *)(uintptr_t)iexp();
+        if (err)
+          goto out;
+        dcArgPointer(callvm, arg);
+      } else if (is_strexp()) {
         BString arg_str = istrexp();
         char *arg = strdup(arg_str.c_str());
         if (err)
@@ -239,8 +257,13 @@ struct Basic::nfc_result Basic::do_nfc(void *sym) {
 
   dcArgPointer(callvm, NULL);
 
-  ret.type = 0;
-  ret.rint = dcCallInt(callvm, sym);
+  switch (rtype) {
+    case RET_INT: ret.rint = dcCallInt(callvm, sym); break;
+    case RET_UINT: ret.ruint = dcCallInt(callvm, sym); break;
+    case RET_POINTER: ret.rptr = dcCallPointer(callvm, sym); break;
+    case RET_FLOAT: ret.rflt = dcCallFloat(callvm, sym); break;
+    case RET_DOUBLE: ret.rdbl = dcCallDouble(callvm, sym); break;
+  }
 
 out:
   for (auto s : string_list) {
@@ -261,15 +284,35 @@ num_t Basic::nnfc() {
   void *sym = *((void **)cip);
   cip += icodes_per_ptr();
 
+  return_type rtype = RET_INT;
+
+  if (*cip == I_SHARP) {
+    ++cip;
+    rtype = RET_DOUBLE;
+  } else if (*cip == I_BANG) {
+    ++cip;
+    rtype = RET_FLOAT;
+  } else if (*cip == I_MUL) {
+    ++cip;
+    rtype = RET_POINTER;
+  };
+
   if (checkOpen())
     return 0;
 
-  struct nfc_result ret = do_nfc(sym);
+  nfc_result ret = do_nfc(sym, rtype);
 
   if (checkClose())
     return 0;
 
-  return ret.rint;
+  switch (rtype) {
+    case RET_INT: return ret.rint;
+    case RET_UINT: return ret.ruint;
+    case RET_POINTER: return (uintptr_t)ret.rptr;
+    case RET_FLOAT: return ret.rflt;
+    case RET_DOUBLE: return ret.rdbl;
+    default: err = ERR_SYS; return 0;
+  }
 }
 
 extern "C" void be_exit(int ret) {

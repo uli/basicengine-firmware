@@ -382,17 +382,23 @@ private:
   void exec_sub(Basic &sub, const char *filename);
   void autoexec();
 
-  struct nfc_result {
-    int type;
-    union {
-      int rint;
-      unsigned int ruint;
-      void *rptr;
-      double rdbl;
-    };
+  enum return_type {
+    RET_INT = 0,
+    RET_UINT,
+    RET_POINTER,
+    RET_FLOAT,
+    RET_DOUBLE
   };
 
-  struct nfc_result do_nfc(void *sym);
+  union nfc_result {
+    int rint;
+    unsigned int ruint;
+    void *rptr;
+    float rflt;
+    double rdbl;
+  };
+
+  nfc_result do_nfc(void *sym, enum return_type rtype = RET_INT);
 
   DCCallVM* callvm;
   jmp_buf jump;
