@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <utf8.h>
 #include "tmt.h"
 
 #define BUF_MAX 100
@@ -434,16 +435,33 @@ static inline size_t
 testmbchar(TMT *vt)
 {
     mbstate_t ts = vt->ms;
-    return vt->nmb? mbrtowc(NULL, vt->mb, vt->nmb, &ts) : (size_t)-2;
+
+    if (!vt->nmb)
+        return -2;
+
+    size_t s = utf8codepointcalcsize(vt->mb);
+
+    if (vt->nmb < s)
+        return -2;
+
+    if (!utf8nvalid(vt->mb, s))
+        return s;
+    else
+        return -1;
 }
 
 static inline wchar_t
 getmbchar(TMT *vt)
 {
-    wchar_t c = 0;
-    size_t n = mbrtowc(&c, vt->mb, vt->nmb, &vt->ms);
+    size_t s = vt->nmb;
     vt->nmb = 0;
-    return (n == (size_t)-1 || n == (size_t)-2)? TMT_INVALID_CHAR : c;
+
+    if (!utf8nvalid(vt->mb, s)) {
+        utf8_int32_t c;
+        utf8codepoint(vt->mb, &c);
+        return c;
+    } else
+        return TMT_INVALID_CHAR;
 }
 
 void
