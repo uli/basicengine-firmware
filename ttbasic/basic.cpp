@@ -5970,7 +5970,7 @@ void SMALL Basic::basic() {
 
   // Startup screen
   // Epigram
-  sc0.setFont(fonts[1]);
+  sc0.setFont(fonts[1].data, fonts[1].w, fonts[1].h);
   sc0.setColor(csp.colorFromRgb(72, 72, 72), COL(BG));
   srand(ESP.getCycleCount());
   c_puts_P(epigrams[random(sizeof(epigrams) / sizeof(*epigrams))]);
@@ -5980,7 +5980,7 @@ void SMALL Basic::basic() {
   sc0.setColor(csp.colorFromRgb(192, 0, 0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
-  sc0.setFont(fonts[CONFIG.font]);
+  sc0.setFont(fonts[CONFIG.font].data, fonts[CONFIG.font].w, fonts[CONFIG.font].h);
 
   // Platform/version
   sc0.setColor(csp.colorFromRgb(64, 64, 64), COL(BG));

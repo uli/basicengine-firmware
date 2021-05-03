@@ -497,7 +497,12 @@ void SMALL restore_windows();
 void BASIC_FP init_stack_frame();
 void BASIC_FP push_num_arg(num_t n);
 
-extern const uint8_t *fonts[NUM_FONTS];
+struct font_t {
+  const uint8_t *data;
+  uint8_t w, h;
+};
+
+extern struct font_t fonts[NUM_FONTS];
 
 extern "C" void BASIC_FP process_events(void);
 

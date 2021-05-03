@@ -159,7 +159,7 @@ public:
   inline uint16_t getScreenHeight() {
     return tv_get_cheight();
   }
-  void setFont(const uint8_t *font);
+  void setFont(const uint8_t *font, int w, int h);
   inline int getFontHeight() {
     return tv_font_height();
   }

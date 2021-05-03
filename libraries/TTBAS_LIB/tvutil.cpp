@@ -21,8 +21,11 @@
 #include "../../ttbasic/video.h"
 #include "../../ttbasic/graphics.h"
 #include "tTVscreen.h"
+#define STB_TRUETYPE_IMPLEMENTATION
+#include <stb_truetype.h>
 
 extern uint8_t* ttbasic_font;
+stbtt_fontinfo ttf;
 
 const uint8_t* tvfont = 0;     // Font to use
 uint16_t c_width;    // Screen horizontal characters
@@ -41,14 +44,27 @@ pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
 
+struct unimap {
+  uint8_t *bitmap;
+  uint8_t w, h;
+  int off_x, off_y;
+};
+struct unimap *unimap = NULL;
+
 // フォント利用設定
 void SMALL tv_fontInit() {
-  if (!tvfont)
+  if (!tvfont) {
     tvfont = console_font_6x8;
+    f_width = 6;
+    f_height = 8;
+  }
+  if (!unimap)
+    unimap = (struct unimap *)calloc(1, 0x110000 * sizeof(*unimap));
+  else
+    memset(unimap, 0, 0x110000 * sizeof(*unimap));
 
-  // Font dimensions, pixels
-  f_width  = pgm_read_byte(tvfont+0);
-  f_height = pgm_read_byte(tvfont+1);
+  stbtt_InitFont(&ttf, tvfont, stbtt_GetFontOffsetForIndex(tvfont,0));
+
   // Screen dimensions, characters
   c_width  = g_width  / f_width;
   c_height = g_height / f_height;
@@ -56,9 +72,11 @@ void SMALL tv_fontInit() {
   win_c_height = win_height / f_height;
 }
 
-void tv_setFont(const uint8_t *font)
+void tv_setFont(const uint8_t *font, int w, int h)
 {
     tvfont = font;
+    f_width = w;
+    f_height = h;
     tv_fontInit();
 }
 
@@ -170,15 +188,47 @@ void GROUP(basic_video) tv_drawCurs(uint16_t x, uint16_t y) {
 // Display character
 //
 static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) {
-  const uint8_t *chp = tvfont+3+c*f_height;
-  for (int i=0;i<f_height;++i) {
-    pixel_t pix[f_width];
-    uint8_t ch = pgm_read_byte(chp+i);
-    for (int j=0;j<f_width;++j) {
-      pix[j] = ch&0x80 ? fg_color : bg_color;
-      ch <<= 1;
+  int w = f_width, h = f_height;
+  int off_x = 0, off_y = 0;
+
+  if (!unimap[c].bitmap) {
+    float scale = stbtt_ScaleForPixelHeight(&ttf, f_height);
+
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&ttf, &ascent, &descent, &lineGap);
+    ascent *= scale;
+    descent *= scale;
+
+    unimap[c].bitmap =
+            stbtt_GetCodepointBitmap(&ttf, 0, scale, c, &w, &h, &off_x, &off_y);
+
+    if (!unimap[c].bitmap) {
+      unimap[c].w = unimap[c].h = 0;
+    } else {
+      unimap[c].w = w;
+      unimap[c].h = h;
+      unimap[c].off_x = off_x;
+      unimap[c].off_y = off_y + f_height + descent;
     }
-    uint32_t byteaddress = vs23.pixelAddr(x, y+i);
+  }
+
+  const uint8_t *chp = unimap[c].bitmap;
+  w = unimap[c].w;
+  h = unimap[c].h;
+  off_x = unimap[c].off_x;
+  off_y = unimap[c].off_y;
+
+  for (int i = 0; i < f_height; ++i) {
+    pixel_t pix[f_width];
+    for (int j = 0; j < f_width; ++j) {
+      if (i < off_y || j < off_x || !w || !h)
+        pix[j] = bg_color;
+      else if (i >= off_y + h || j >= off_x + w)
+        pix[j] = bg_color;
+      else
+        pix[j] = chp[(j - off_x) + (i - off_y) * w] ? fg_color : bg_color;
+    }
+    uint32_t byteaddress = vs23.pixelAddr(x, y + i);
     vs23.setPixels(byteaddress, pix, f_width);
   }
 }

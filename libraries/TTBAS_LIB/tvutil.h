@@ -22,7 +22,7 @@ void	tv_reinit();
 void	tv_window_set(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 void	tv_window_get(int &x, int &y, int &w, int &h);
 void	tv_window_reset();
-void	tv_setFont(const uint8_t *font);
+void	tv_setFont(const uint8_t *font, int w, int h);
 
 uint16_t tv_get_gwidth();
 uint16_t tv_get_gheight();

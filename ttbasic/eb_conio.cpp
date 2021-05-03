@@ -43,7 +43,7 @@ int eb_window(int x, int y, int w, int h) {
 int eb_font(int idx) {
   if (check_param(idx, 0, NUM_FONTS - 1))
     return -1;
-  sc0.setFont(fonts[idx]);
+  sc0.setFont(fonts[idx].data, fonts[idx].w, fonts[idx].h);
   sc0.forget();
   return 0;
 }
