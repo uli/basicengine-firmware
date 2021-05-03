@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 //#define DEBUG_USB_JOYSTICK
-#define DEBUG_USB_REPORT
+//#define DEBUG_USB_REPORT
 
 #ifdef DEBUG_USB_JOYSTICK
 #define dbg_joy(x...) printf(x)
@@ -277,7 +277,7 @@ bool Joystick::parseReportDesc(usb_pad *pad)
             if (pad->report_id == -1) {
                 pad->report_id = arg;
             } else {
-                printf("WARNING: extra report ID %lu ignored\n", arg);
+                printf("WARNING: extra report ID %u ignored\n", arg);
                 break;
             }
         } else if (tag == 0xa0) {	// Collection
