@@ -169,7 +169,7 @@ void GROUP(basic_video) tv_drawCurs(uint16_t x, uint16_t y) {
 //
 // Display character
 //
-static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
+static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) {
   const uint8_t *chp = tvfont+3+c*f_height;
   for (int i=0;i<f_height;++i) {
     pixel_t pix[f_width];
@@ -183,11 +183,11 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, uint8_t c) {
   }
 }
 
-void ICACHE_RAM_ATTR tv_write(uint16_t x, uint16_t y, uint8_t c) {
+void ICACHE_RAM_ATTR tv_write(uint16_t x, uint16_t y, utf8_int32_t c) {
   tv_write_px(win_x + x*f_width, win_y + y*f_height, c);
 }
 
-void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg)
+void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg, pixel_t bg)
 {
   pixel_t sfg = fg_color;
   pixel_t sbg = bg_color;
@@ -307,7 +307,7 @@ void GROUP(basic_video) tv_set_gcursor(uint16_t x, uint16_t y) {
   gcurs_y = y;
 }
 
-void GROUP(basic_video) tv_write(uint8_t c) {
+void GROUP(basic_video) tv_write(utf8_int32_t c) {
   if (gcurs_x < g_width - f_width)
     tv_write_px(gcurs_x, gcurs_y, c);
   gcurs_x += f_width;

@@ -6,6 +6,7 @@
 
 #include "tscreenBase.h"
 #include "../../ttbasic/basic.h"
+#include <utf8.h>
 
 // スクリーンの初期設定
 // 引数
@@ -15,7 +16,7 @@
 //  extmem : 外部獲得メモリアドレス NULL:なし NULL以外 あり
 // 戻り値
 //  なし
-void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, uint8_t *extmem) {
+void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem) {
   if (screen && (w != whole_width || h != whole_height)) {
     free(screen);
     screen = NULL;
@@ -25,7 +26,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, uint8_t *extmem) {
       tmt_close(vt);
   }
   if (!screen) {
-    screen = (uint8_t *)calloc(w * h, sizeof(*screen));
+    screen = (utf8_int32_t *)calloc(w * h, sizeof(*screen));
     colmem = (pixel_t *)calloc(w * h * 2, sizeof(pixel_t));
     vt = tmt_open(h, w, term_callback, this, NULL);
     vt_inbuf = std::queue<char>();
@@ -69,7 +70,7 @@ void tscreenBase::end() {
 
 // 指定行の1行分クリア
 void tscreenBase::clerLine(uint16_t l, int from) {
-  memset(&VPEEK(from, l), 0, width - from);
+  memset(&VPEEK(from, l), 0, (width - from) * sizeof(utf8_int32_t));
   VSET_C(from, l, fg_color, bg_color, width - from);
   CLEAR_LINE(l, from);
   MOVE(pos_y, pos_x);
@@ -86,7 +87,7 @@ void tscreenBase::cls() {
 
 void tscreenBase::forget() {
   for (int i = 0; i < height; ++i) {
-    memset(&VPEEK(0, i), 0, width);
+    memset(&VPEEK(0, i), 0, width * sizeof(utf8_int32_t));
     VSET_C(0, i, fg_color, bg_color, width);
   }
 }
@@ -103,7 +104,7 @@ void tscreenBase::scroll_up() {
   if (!flgScroll)
     return;
   for (int i = 1; i < height; ++i) {
-    memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width);
+    memmove(&VPEEK(0, i - 1), &VPEEK(0, i), width * sizeof(utf8_int32_t));
     VMOVE_C(0, i, 0, i - 1, width);
   }
   if (flgCur)
@@ -118,7 +119,7 @@ void tscreenBase::scroll_down() {
   if (!flgScroll)
     return;
   for (int i = height - 2; i >= 0; --i) {
-    memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
+    memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width * sizeof(utf8_int32_t));
     VMOVE_C(0, i, 0, i + 1, width);
   }
   if (flgCur)
@@ -132,11 +133,11 @@ void tscreenBase::scroll_down() {
 void tscreenBase::Insert_newLine(uint16_t l) {
   if (l < height - 1) {
     for (int i = height - 2; i >= l + 1; --i) {
-      memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width);
+      memcpy(&VPEEK(0, i + 1), &VPEEK(0, i), width * sizeof(utf8_int32_t));
       VMOVE_C(0, i, 0, i + 1, width);
     }
   }
-  memset(&VPEEK(0, l + 1), 0, width);
+  memset(&VPEEK(0, l + 1), 0, width * sizeof(utf8_int32_t));
   VSET_C(0, l + 1, fg_color, bg_color, width);
   INSLINE(l + 1);
 }
@@ -196,7 +197,7 @@ void tscreenBase::delete_char() {
 }
 
 // 文字の出力
-void tscreenBase::putch(uint8_t c, bool lazy) {
+void tscreenBase::putch(utf8_int32_t c, bool lazy) {
   if (!lazy || VPEEK(pos_x, pos_y) != c ||
       VPEEK_FG(pos_x, pos_y) != fg_color ||
       VPEEK_BG(pos_x, pos_y) != bg_color) {
@@ -209,7 +210,7 @@ void tscreenBase::putch(uint8_t c, bool lazy) {
 }
 
 // 現在のカーソル位置に文字を挿入
-void tscreenBase::Insert_char(uint8_t c) {
+void tscreenBase::Insert_char(utf8_int32_t c) {
   int start_adr_x = pos_x;
   int start_adr_y = pos_y;
   int last_x = start_adr_x;
@@ -257,7 +258,7 @@ void tscreenBase::Insert_char(uint8_t c) {
     int lln = ln;
     int ssx = start_adr_x;
     int ssy = start_adr_y;
-    uint8_t cn = VPEEK(ssx, ssy);
+    utf8_int32_t cn = VPEEK(ssx, ssy);
     pixel_t cnfg = VPEEK_FG(ssx, ssy);
     pixel_t cnbg = VPEEK_BG(ssx, ssy);
     while (lln) {
@@ -269,7 +270,7 @@ void tscreenBase::Insert_char(uint8_t c) {
         if (next_y >= height)
           break;
       }
-      uint8_t ncn = VPEEK(next_x, next_y);
+      utf8_int32_t ncn = VPEEK(next_x, next_y);
       pixel_t ncnfg = VPEEK_FG(next_x, next_y);
       pixel_t ncnbg = VPEEK_BG(next_x, next_y);
       VPOKE(next_x, next_y, cn);
@@ -548,7 +549,7 @@ uint8_t tscreenBase::enter_text() {
 
 // 指定行の行番号の取得
 int16_t tscreenBase::getLineNum(int16_t l) {
-  uint8_t *ptr = &VPEEK(0, l);
+  utf8_int32_t *ptr = &VPEEK(0, l);
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {

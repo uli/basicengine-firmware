@@ -25,6 +25,8 @@
 #include "../../ttbasic/ttconfig.h"
 
 #include <Arduino.h>
+#include <utf8.h>
+
 #if USE_VS23 == 1
 #include "../../ttbasic/video.h"
 #endif
@@ -55,8 +57,8 @@ private:
 protected:
   void INIT_DEV(){};                  // デバイスの初期化
   void MOVE(uint16_t y, uint16_t x);  // キャラクタカーソル移動 **
-  void WRITE(uint16_t x, uint16_t y, uint8_t c);  // 文字の表示
-  void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg);
+  void WRITE(uint16_t x, uint16_t y, utf8_int32_t c);  // 文字の表示
+  void WRITE_COLOR(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg, pixel_t bg);
   void CLEAR();                               // 画面全消去
   void CLEAR_LINE(uint16_t l, int from = 0);  // 行の消去
   void SCROLL_UP();                           // スクロールアップ
@@ -67,7 +69,7 @@ public:
   uint16_t prev_pos_x;  // カーソル横位置
   uint16_t prev_pos_y;  // カーソル縦位置
 
-  inline void write(uint16_t x, uint16_t y, uint8_t c) {
+  inline void write(uint16_t x, uint16_t y, utf8_int32_t c) {
     tv_write(x, y, c);
     VPOKE(x, y, c);
     VPOKE_CCOL(x, y);
@@ -79,22 +81,22 @@ public:
   void Serial_Ctrl(int16_t ch);
   void reset_kbd(uint8_t kbd_type = false);
 
-  inline void putch(uint8_t c, bool lazy = false) {
+  inline void putch(utf8_int32_t c, bool lazy = false) {
     tscreenBase::putch(c, lazy);
 #ifdef DEBUG
     Serial.write(c);  // シリアル出力
 #endif
   }
 
-  virtual uint16_t get_ch();  // 文字の取得
-  inline uint16_t tryGetChar() {
+  virtual utf8_int32_t get_ch();  // 文字の取得
+  inline utf8_int32_t tryGetChar() {
     return ps2read();
   }
   inline uint8_t getDevice() {  // 文字入力元デバイス種別の取得
     return dev;
   }
   bool isKeyIn();  // キー入力チェック
-  inline uint16_t peekKey() {
+  inline utf8_int32_t peekKey() {
     return ps2peek();
   }
   uint8_t edit();                 // スクリーン編集
@@ -127,8 +129,9 @@ public:
     /*addch(0x07);*/
   };
 
-  inline uint8_t IS_PRINT(uint8_t ch) {
+  inline uint8_t IS_PRINT(utf8_int32_t ch) {
     //return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
+    // XXX: w0t?
     return (ch > 0);
   };
 

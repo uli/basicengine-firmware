@@ -1,9 +1,10 @@
 #include "../../ttbasic/video.h"
+#include <utf8.h>
 
 void tv_init(int16_t ajst, uint8_t vmode=SC_DEFAULT);
 void tv_end();
-void    tv_write(uint16_t x, uint16_t y, uint8_t c);
-void    tv_write_color(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg);
+void    tv_write(uint16_t x, uint16_t y, utf8_int32_t c);
+void    tv_write_color(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg, pixel_t bg);
 void    tv_drawCurs(uint16_t x, uint16_t y);
 void    tv_clerLine(uint16_t l, int from = 0) ;
 void    tv_insLine(uint16_t l);
@@ -16,7 +17,7 @@ uint16_t tv_get_gwidth();
 uint16_t tv_get_gheight();
 uint16_t tv_get_win_cwidth();
 uint16_t tv_get_win_cheight();
-void    tv_write(uint8_t c);
+void    tv_write(utf8_int32_t c);
 void	tv_reinit();
 void	tv_window_set(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 void	tv_window_get(int &x, int &y, int &w, int &h);
@@ -32,7 +33,7 @@ void    tv_rect(int16_t x, int16_t y, int16_t h, int16_t w, pixel_t c, int f) ;
 void    tv_bitmap(int16_t x, int16_t y, uint8_t* adr, uint16_t index, uint16_t w, uint16_t h, uint16_t d);
 void    tv_set_gcursor(uint16_t x, uint16_t y);
 void    tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) ;
-void    tv_write(uint8_t c);
+void    tv_write(utf8_int32_t c);
 
 extern uint16_t f_width;
 extern uint16_t f_height;

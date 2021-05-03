@@ -12,6 +12,7 @@
 
 #include "ttconfig.h"
 #include <Arduino.h>
+#include <utf8.h>
 
 #include "eb_conio.h"
 #include "eb_types.h"
@@ -53,7 +54,7 @@ extern "C" {
 
 class tscreenBase {
 protected:
-  uint8_t *screen = NULL;  // スクリーン用バッファ
+  utf8_int32_t *screen = NULL;  // スクリーン用バッファ
   IPIXEL_TYPE *colmem = NULL;
   TMT *vt = NULL;
   std::queue<char> vt_inbuf;
@@ -75,8 +76,8 @@ protected:
   virtual void INIT_DEV() = 0;                    // デバイスの初期化
   virtual void END_DEV(){};                       // デバイスの終了
   virtual void MOVE(uint16_t y, uint16_t x) = 0;  // キャラクタカーソル移動
-  virtual void WRITE(uint16_t x, uint16_t y, uint8_t c) = 0;  // 文字の表示
-  virtual void WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg,
+  virtual void WRITE(uint16_t x, uint16_t y, utf8_int32_t c) = 0;  // 文字の表示
+  virtual void WRITE_COLOR(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg,
                            pixel_t bg) = 0;
   virtual void CLEAR() = 0;                               // 画面全消去
   virtual void CLEAR_LINE(uint16_t l, int from = 0) = 0;  // 行の消去
@@ -86,22 +87,22 @@ protected:
   static void term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p);
   void term_handler(tmt_msg_t m, TMT *vt, const void *a);
   void term_queue_input(const char *s);
-  virtual uint16_t get_ch() = 0;  // 文字の取得
+  virtual utf8_int32_t get_ch() = 0;  // 文字の取得
 
 public:
   virtual void beep(){};                     // BEEP音の発生
   virtual void show_curs(uint8_t flg) = 0;   // カーソルの表示/非表示
   virtual bool cursor_enabled() = 0;
   virtual void draw_cls_curs() = 0;          // カーソルの消去
-  void putch(uint8_t c, bool lazy = false);  // 文字の出力
+  void putch(utf8_int32_t c, bool lazy = false);  // 文字の出力
   virtual bool isKeyIn() = 0;                // キー入力チェック
 
   //virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
-  virtual inline uint8_t IS_PRINT(uint8_t ch) {
+  virtual inline uint8_t IS_PRINT(utf8_int32_t ch) {
     return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
   };
   void init(uint16_t w = 0, uint16_t h = 0, uint16_t ln = 128,
-            uint8_t *extmem = NULL);        // スクリーンの初期設定
+            utf8_int32_t *extmem = NULL);        // スクリーンの初期設定
   virtual void end();                       // スクリーン利用終了
   void clerLine(uint16_t l, int from = 0);  // 1行分クリア
   void cls();                               // スクリーンのクリア
@@ -116,7 +117,7 @@ public:
   inline uint8_t getDevice() {  // 文字入力元デバイス種別の取得
     return dev;
   }
-  void Insert_char(uint8_t c);  // 現在のカーソル位置に文字を挿入
+  void Insert_char(utf8_int32_t c);  // 現在のカーソル位置に文字を挿入
   void movePosNextNewChar();    // カーソルを１文字分次に移動
   void movePosPrevChar();       // カーソルを1文字分前に移動
   void movePosNextChar();       // カーソルを1文字分次に移動
@@ -131,7 +132,7 @@ public:
   void edit_scrollUp();    // スクロールして前行の表示
   void edit_scrollDown();  // スクロールして次行の表示
   // カーソル位置の文字コード取得
-  inline uint16_t vpeek(uint16_t x, uint16_t y) {
+  inline utf8_int32_t vpeek(uint16_t x, uint16_t y) {
     if (x >= width || y >= height)
       return 0;
     return VPEEK(x, y);
@@ -140,10 +141,10 @@ public:
   inline uint8_t *getText() {  // 確定入力の行データアドレス参照
     return &text[0];
   }
-  inline uint8_t *getScreen() {  // スクリーン用バッファアドレス参照
+  inline utf8_int32_t *getScreen() {  // スクリーン用バッファアドレス参照
     return screen;
   }
-  inline uint8_t *getScreenWindow() {
+  inline utf8_int32_t *getScreenWindow() {
     return &VPEEK(0, 0);
   }
   inline uint16_t getStride() {

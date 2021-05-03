@@ -40,7 +40,7 @@ void setupPS2(uint8_t kb_type);
 // カーソルの移動
 // ※pos_x,pos_yは本関数のみでのみ変更可能
 void tTVscreen::MOVE(uint16_t y, uint16_t x) {
-  uint8_t c;
+  utf8_int32_t c;
   if (enableCursor && flgCur) {
     c = VPEEK(pos_x, pos_y);
     pixel_t f = VPEEK_FG(pos_x, pos_y);
@@ -55,11 +55,11 @@ void tTVscreen::MOVE(uint16_t y, uint16_t x) {
 }
 
 // 文字の表示
-void tTVscreen::WRITE(uint16_t x, uint16_t y, uint8_t c) {
+void tTVscreen::WRITE(uint16_t x, uint16_t y, utf8_int32_t c) {
   tv_write(x, y, c);  // 画面表示
 }
 
-void tTVscreen::WRITE_COLOR(uint16_t x, uint16_t y, uint8_t c, pixel_t fg, pixel_t bg) {
+void tTVscreen::WRITE_COLOR(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg, pixel_t bg) {
   tv_write_color(x, y, c, fg, bg);  // 画面表示
 }
 
@@ -151,8 +151,8 @@ bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 
 void process_events(void);
 // 文字入力
-uint16_t tTVscreen::get_ch() {
-  uint16_t c;
+utf8_int32_t tTVscreen::get_ch() {
+  utf8_int32_t c;
   while (1) {
     process_events();
 #ifdef DEBUG
@@ -202,7 +202,7 @@ void tTVscreen::show_curs(uint8_t flg) {
 
 // カーソルの消去
 void tTVscreen::draw_cls_curs() {
-  uint8_t c = VPEEK(pos_x, pos_y);
+  utf8_int32_t c = VPEEK(pos_x, pos_y);
   pixel_t f = VPEEK_FG(pos_x, pos_y);
   pixel_t b = VPEEK_BG(pos_x, pos_y);
   tv_write_color(pos_x, pos_y, c ? c : 32, f, b);
@@ -220,7 +220,7 @@ void tTVscreen::setColorIndexed(ipixel_t fc, ipixel_t bc) {
 
 // スクリーン編集
 uint8_t tTVscreen::edit() {
-  uint16_t ch;  // 入力文字
+  utf8_int32_t ch;  // 入力文字
   keyEvent k;
 
   do {
@@ -377,25 +377,25 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
   switch (d) {
   case 0:  // 上
     for (uint16_t i = 0; i < h - 1; i++) {
-      memcpy(&VPEEK(x, y + i), &VPEEK(x, y + i + 1), w);
+      memcpy(&VPEEK(x, y + i), &VPEEK(x, y + i + 1), w * sizeof(utf8_int32_t));
       VMOVE_C(x, y + i + 1, x, y + i, w);
     }
-    memset(&VPEEK(x, y + h - 1), 0, w);
+    memset(&VPEEK(x, y + h - 1), 0, w * sizeof(utf8_int32_t));
     VSET_C(x, y + h - 1, fg_color, bg_color, w);
     break;
 
   case 1:  // 下
     for (uint16_t i = 0; i < h - 1; i++) {
-      memcpy(&VPEEK(x, y + h - 1 - i), &VPEEK(x, y + h - 1 - i - 1), w);
+      memcpy(&VPEEK(x, y + h - 1 - i), &VPEEK(x, y + h - 1 - i - 1), w * sizeof(utf8_int32_t));
       VMOVE_C(x, y + h - 1 - i - 1, x, y + h - 1 - i, w);
     }
-    memset(&VPEEK(x, y), 0, w);
+    memset(&VPEEK(x, y), 0, w * sizeof(utf8_int32_t));
     VSET_C(x, y, fg_color, bg_color, w);
     break;
 
   case 2:  // 右
     for (uint16_t i = 0; i < h; i++) {
-      memmove(&VPEEK(x + 1, y + i), &VPEEK(x, y + i), w - 1);
+      memmove(&VPEEK(x + 1, y + i), &VPEEK(x, y + i), (w - 1) * sizeof(utf8_int32_t));
       VMOVE_C(x, y + i, x + 1, y + i, w - 1);
       VPOKE(x, y + i, 0);
       VPOKE_CCOL(x, y + i);
@@ -404,14 +404,14 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
 
   case 3:  // 左
     for (uint16_t i = 0; i < h; i++) {
-      memmove(&VPEEK(x, y + i), &VPEEK(x + 1, y + i), w - 1);
+      memmove(&VPEEK(x, y + i), &VPEEK(x + 1, y + i), (w - 1) * sizeof(utf8_int32_t));
       VMOVE_C(x + 1, y + i, x, y + i, w - 1);
       VPOKE(x + w - 1, y + i, 0);
       VPOKE_CCOL(x + w - 1, y + i);
     }
     break;
   }
-  uint8_t c;
+  utf8_int32_t c;
   for (uint8_t i = 0; i < h; i++)
     for (uint8_t j = 0; j < w; j++) {
       c = VPEEK(x + j, y + i);
