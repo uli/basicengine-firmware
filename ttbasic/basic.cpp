@@ -537,7 +537,12 @@ void get_input(bool numeric, uint8_t eoi) {
     } else if (len < SIZE_LINE - 1 &&
                (!numeric || c == '.' || c == '+' || c == '-' || isDigit(c) ||
                 c == 'e' || c == 'E')) {
-      lbuf[len++] = c;
+      if (utf8catcodepoint(&lbuf[len], c, SIZE_LINE - len))
+        len += utf8codepointsize(c);
+      else {
+        err = ERR_LONG;
+        return;
+      }
       c_putch(c);
     } else {
       if (redirect_output_file < 0)
