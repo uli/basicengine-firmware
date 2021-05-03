@@ -142,7 +142,7 @@ void Basic::idim() {
 
   for (;;) {
     if (*cip != I_VARARR && *cip != I_STRARR) {
-      SYNTAX_T("not an array variable");
+      SYNTAX_T(_("not an array variable"));
       return;
     }
     is_string = *cip == I_STRARR;
@@ -154,7 +154,7 @@ void Basic::idim() {
     if (dims < 0)
       return;
     if (dims == 0) {
-      SYNTAX_T("missing dimensions");
+      SYNTAX_T(_("missing dimensions"));
       return;
     }
 
@@ -432,7 +432,7 @@ void Basic::istrlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    SYNTAX_T("invalid list index");
+    SYNTAX_T(_("invalid list index"));
     return;
   }
 
@@ -463,7 +463,7 @@ void Basic::inumlst() {
 
   dims = get_array_dims(idxs);
   if (dims != 1) {
-    SYNTAX_T("invalid list index");
+    SYNTAX_T(_("invalid list index"));
     return;
   }
 
@@ -575,7 +575,7 @@ void Basic::iappend() {
       return;
     num_lst.var(index).append(value);
   } else {
-    SYNTAX_T("exp list reference");
+    SYNTAX_T(_("expected list reference"));
   }
   return;
 }
@@ -612,7 +612,7 @@ void Basic::iprepend() {
       return;
     num_lst.var(index).prepend(value);
   } else {
-    SYNTAX_T("exp list reference");
+    SYNTAX_T(_("expected list reference"));
   }
   return;
 }
@@ -721,7 +721,7 @@ num_t BASIC_FP Basic::npopf() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("exp numeric list reference");
+      SYNTAX_T(_("expected numeric list reference"));
     return 0;
   }
   if (checkClose())
@@ -750,7 +750,7 @@ num_t BASIC_FP Basic::npopb() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("exp numeric list reference");
+      SYNTAX_T(_("expected numeric list reference"));
     return 0;
   }
   if (checkClose())
@@ -779,7 +779,7 @@ BString BASIC_INT Basic::spopf() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("exp string list reference");
+      SYNTAX_T(_("expected string list reference"));
     return value;
   }
   checkClose();
@@ -807,7 +807,7 @@ BString BASIC_INT Basic::spopb() {
     if (is_var(cip[-1]))
       err = ERR_TYPE;
     else
-      SYNTAX_T("exp string list reference");
+      SYNTAX_T(_("expected string list reference"));
     return value;
   }
   checkClose();

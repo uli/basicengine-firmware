@@ -132,7 +132,7 @@ void Basic::ibg() {
   default:
     cip--;
     if (!end_of_statement())
-      SYNTAX_T("exp BG parameter");
+      SYNTAX_T(_("expected BG parameter"));
     return;
   }
 #else
@@ -371,7 +371,7 @@ void BASIC_INT Basic::isprite() {
     // XXX: throw an error if nothing has been done
     cip--;
     if (!end_of_statement())
-      SYNTAX_T("exp sprite parameter");
+      SYNTAX_T(_("expected sprite parameter"));
     if (set_frame)
       eb_sprite_set_frame(num, frame_x, frame_y, flags & 2, flags & 4);
     if (set_opacity || (set_frame && (flags & 1)))
@@ -423,7 +423,7 @@ void BASIC_FP Basic::imove() {
     ++cip;
     imovebg();
   } else
-    SYNTAX_T("exp BG or SPRITE");
+    SYNTAX_T(_("expected BG or SPRITE"));
 }
 
 /***bc bg PLOT

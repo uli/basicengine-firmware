@@ -249,7 +249,7 @@ void Basic::icmd() {
     redirect_output_file = -1;
     return;
   } else {
-    SYNTAX_T("exp INPUT, OUTPUT or OFF");
+    SYNTAX_T(_("expected INPUT, OUTPUT or OFF"));
     return;
   }
 
@@ -340,7 +340,7 @@ void Basic::iopen() {
     case I_INPUT:	flags = "r"; break;
     case I_APPEND:	flags = "a"; break;
     case I_DIRECTORY:	flags = NULL; break;
-    default:		SYNTAX_T("exp file mode"); return;
+    default:		SYNTAX_T(_("expected file mode")); return;
     }
   }
 

@@ -258,7 +258,7 @@ void Basic::iset() {
     default:	break;
     }
   } else {
-    SYNTAX_T("exp DATE or FLAGS");
+    SYNTAX_T(_("expected DATE or FLAGS"));
   }
 }
 
@@ -372,7 +372,7 @@ void Basic::iget() {
     ++cip;
     igetTime();
   } else {
-    SYNTAX_T("exp DATE or TIME");
+    SYNTAX_T(_("expected DATE or TIME"));
   }
 }
 

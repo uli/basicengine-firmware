@@ -221,7 +221,7 @@ void Basic::inet() {
   case I_CONNECT: iconnect();  break;
   case I_OPEN:    inetopen();  break;
   case I_CLOSE:   inetclose(); break;
-  default:        E_ERR(SYNTAX, "exp network command"); break;
+  default:        E_ERR(SYNTAX, _("expected network command")); break;
   }
 }
 
