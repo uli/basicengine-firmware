@@ -42,12 +42,12 @@
 #ifdef __linux__
 #define STR_EDITION "Linux/SDL"
 #else
-#define STR_EDITION "unknown/SDL"
+#define STR_EDITION _("unknown/SDL")
 #endif
 
 #else
 
-#define STR_EDITION "unknown"
+#define STR_EDITION _("unknown")
 
 #endif
 
@@ -320,22 +320,19 @@ static const char *const errmsg[] PROGMEM = {
 #include "error.h"
 
 void SMALL E_VALUE(int32_t from, int32_t to) {
-  static const char __fmt_ft[] PROGMEM = "from %d to %d";
-  static const char __fmt_t[] PROGMEM = "max %d";
-  static const char __fmt_f[] PROGMEM = "min %d";
   err = ERR_VALUE;
   if (from == INT32_MIN)
-    sprintf_P(tbuf, __fmt_t, (int)to);
+    sprintf_P(tbuf, _("max %d"), (int)to);
   else if (to == INT32_MAX)
-    sprintf_P(tbuf, __fmt_f, (int)from);
+    sprintf_P(tbuf, _("min %d"), (int)from);
   else
-    sprintf_P(tbuf, __fmt_ft, (int)from, (int)to);
+    sprintf_P(tbuf, _("from %d to %d"), (int)from, (int)to);
   err_expected = tbuf;
 }
 
 void SMALL E_SYNTAX(token_t token) {
   err = ERR_SYNTAX;
-  strcpy_P(tbuf, PSTR("expected \""));
+  strcpy_P(tbuf, _("expected \""));
   strcat_P(tbuf, kwtbl[token]);
   strcat_P(tbuf, PSTR("\""));
   err_expected = tbuf;
@@ -882,7 +879,7 @@ as local variables or arguments.
       value = strtonum(ptok, &ptok);
       if (s == ptok) {
         // nothing parsed, most likely a random single period
-        SYNTAX_T("invalid number");
+        SYNTAX_T(_("invalid number"));
         return 0;
       }
       s = ptok;             // Stuff the processed part of the character string
@@ -1628,7 +1625,7 @@ void SMALL Basic::iinput() {
         // XXX: check if dims matches array
       } else if (cip[-2] == I_NUMLST) {
         if (get_array_dims(idxs) != 1) {
-          SYNTAX_T("invalid list index");
+          SYNTAX_T(_("invalid list index"));
           return;
         }
         dims = -1;
@@ -1683,7 +1680,7 @@ void SMALL Basic::iinput() {
         // XXX: check if dims matches array
       } else if (cip[-2] == I_STRLST) {
         if (get_array_dims(idxs) != 1) {
-          SYNTAX_T("invalid list index");
+          SYNTAX_T(_("invalid list index"));
           return;
         }
         dims = -1;
@@ -1719,7 +1716,7 @@ void SMALL Basic::iinput() {
       break;
 
     default:  // 以上のいずれにも該当しなかった場合
-      SYNTAX_T("exp variable");
+      SYNTAX_T(_("expected variable"));
       //return;            // 終了
       goto DONE;
     }  // 中間コードで分岐の末尾
@@ -1732,8 +1729,8 @@ void SMALL Basic::iinput() {
       case I_COMMA:    // コンマの場合
         cip++;         // 中間コードポインタを次へ進める
         break;         // 打ち切る
-      default:         // 以上のいずれにも該当しなかった場合
-        SYNTAX_T("exp separator");
+      default:         // 以のいずれにも該当しなかった場合
+        SYNTAX_T(_("expected separator"));
         //return;           // 終了
         goto DONE;
       }  // 中間コードで分岐の末尾
@@ -1867,7 +1864,7 @@ void Basic::initialize_proc_pointers(void) {
           pr.argc_str++;
           break;
         default:
-          SYNTAX_T("exp variable");
+          SYNTAX_T(_("expected variable"));
           clp = lp;
           cip = ip;
           return;
@@ -1990,7 +1987,7 @@ void BASIC_INT Basic::data_pop() {
   }
   if (!end_of_statement() && *cip != I_COMMA) {
     clp = data_lp;
-    SYNTAX_T("malformed DATA");
+    SYNTAX_T(_("malformed DATA"));
     return;
   }
   data_ip = cip;
@@ -2111,7 +2108,7 @@ void BASIC_INT Basic::iread() {
     default:
       --cip;
       if (!end_of_statement())
-        SYNTAX_T("exp variable");
+        SYNTAX_T(_("expected variable"));
       return;
     }
 }
@@ -2659,7 +2656,7 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode) {
       }
       last_line = ((line_desc_t *)ibuf)->line;
     } else {
-      SYNTAX_T("invalid program line");
+      SYNTAX_T(_("invalid program line"));
       error(true);
       rc = 1;
       break;
@@ -2699,7 +2696,7 @@ void SMALL Basic::idelete() {
   if (!get_range(sNo, eNo))
     return;
   if (!end_of_statement()) {
-    SYNTAX_T("exp end of statement");
+    SYNTAX_T(_("expected end of statement"));
     return;
   }
 
@@ -3082,7 +3079,7 @@ num_t BASIC_INT Basic::nasc() {
     return 0;
   BString a = istrexp();
   if (a.length() < 1) {
-    E_ERR(VALUE, "empty string");
+    E_ERR(VALUE, _("empty string"));
     return 0;
   }
   value = a[0];
@@ -3150,7 +3147,7 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
 #ifdef FLOAT_NUMS
           case '.':
             if (had_point) {
-              E_ERR(USING, "multiple periods");
+              E_ERR(USING, _("multiple periods"));
               return;
             } else
               had_point = true;
@@ -3250,7 +3247,7 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
         return;
     } else {
       if (!end_of_statement()) {
-        SYNTAX_T("exp separator");
+        SYNTAX_T(_("expected separator"));
         newline(devno);
         return;
       }
@@ -3397,7 +3394,7 @@ void SMALL Basic::ildbmp() {
           return;
         }
       } else {
-        SYNTAX_T("exp BG or SPRITE");
+        SYNTAX_T(_("expected BG or SPRITE"));
         return;
       }
 #else
@@ -3555,7 +3552,7 @@ uint8_t SMALL Basic::ilrun() {
       return 0;
     }
   } else {
-    SYNTAX_T("exp file name");
+    SYNTAX_T(_("expected file name"));
     return 0;
   }
 
@@ -3631,9 +3628,9 @@ void SMALL Basic::error(uint8_t flgCmd) {
     if (cip >= listbuf && cip < listbuf + size_list && *clp && !flgCmd) {
       // エラーメッセージを表示
       sc0.setColor(COL(PROC), COL(BG));
-      c_puts_P(errmsg[err]);
+      c_puts_P(_(errmsg[err]));
       sc0.setColor(COL(FG), COL(BG));
-      PRINT_P(" in ");
+      PRINT_P(_(" in "));
       putnum(getlineno(clp), 0);  // 行番号を調べて表示
       if (err_expected) {
         PRINT_P(" (");
@@ -3661,7 +3658,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
       //err = 0;
       //return;
     } else {                  // 指示の実行中なら
-      c_puts_P(errmsg[err]);  // エラーメッセージを表示
+      c_puts_P(_(errmsg[err]));  // エラーメッセージを表示
       if (err_expected) {
         PRINT_P(" (");
         c_puts_P(err_expected);
@@ -3672,7 +3669,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
       //return;
     }
   }
-  c_puts_P(errmsg[0]);  //「OK」を表示
+  c_puts_P(_(errmsg[0]));  //「OK」を表示
   newline();            // 改行
   err = 0;              // エラー番号をクリア
   err_expected = NULL;
@@ -3694,7 +3691,7 @@ BString BASIC_INT Basic::ilrstr(bool right) {
   if (getParam(len, I_CLOSE))
     goto out;
   if (len < 0) {
-    E_ERR(VALUE, "negative substring length");
+    E_ERR(VALUE, _("negative substring length"));
     goto out;
   }
 
@@ -3770,7 +3767,7 @@ BString BASIC_INT Basic::smid() {
   if (getParam(start, I_NONE))
     goto out;
   if (start < 0) {
-    E_ERR(VALUE, "negative string offset");
+    E_ERR(VALUE, _("negative string offset"));
     goto out;
   }
   if (*cip == I_COMMA) {
@@ -3862,7 +3859,7 @@ BString Basic::serror() {
     E_VALUE(0, sizeof(errmsg) / sizeof(*errmsg) - 1);
     return BString(F(""));
   } else
-    return BString(FPSTR(errmsg[code]));
+    return BString(_(errmsg[code]));
 }
 
 /***bf bas STRING$
@@ -3892,7 +3889,7 @@ BString Basic::sstring() {
   if (getParam(count, I_COMMA))
     return out;
   if (count < 0) {
-    E_ERR(VALUE, "negative length");
+    E_ERR(VALUE, _("negative length"));
     return out;
   }
   if (is_strexp()) {
@@ -3900,7 +3897,7 @@ BString Basic::sstring() {
     if (err)
       return cs;
     if (cs.length() < 1) {
-      E_ERR(VALUE, "need min 1 character");
+      E_ERR(VALUE, _("need min 1 character"));
       return cs;
     }
     c = cs[0];
@@ -3964,7 +3961,7 @@ BString BASIC_INT Basic::istrvalue() {
       i = *cip++;
       dims = get_array_dims(idxs);
       if (dims != 1) {
-        SYNTAX_T("invalid list index");
+        SYNTAX_T(_("invalid list index"));
       } else {
         value = str_lst.var(i).var(idxs[0]);
       }
@@ -3983,7 +3980,7 @@ BString BASIC_INT Basic::istrvalue() {
         ++cip;
         value = snetget();
       } else
-        SYNTAX_T("exp network function");
+        SYNTAX_T(_("expected network function"));
 #endif
       break;
 
@@ -3996,7 +3993,7 @@ BString BASIC_INT Basic::istrvalue() {
       if (!err)
         err = ERR_TYPE;
       else
-        SYNTAX_T("exp string expr");
+        SYNTAX_T(_("expected string expr"));
       break;
     }
   if (err)
@@ -4211,7 +4208,7 @@ num_t BASIC_FP Basic::ivalue() {
       i = *cip++;
       dims = get_array_dims(idxs);
       if (dims != 1) {
-        SYNTAX_T("invalid list index");
+        SYNTAX_T(_("invalid list index"));
       } else {
         value = nsvar_a(str_lst.var(i).var(idxs[0]));
       }
@@ -4239,7 +4236,7 @@ Value of the "down" direction for input devices.
       i = *cip++;
       dims = get_array_dims(idxs);
       if (dims != 1) {
-        SYNTAX_T("invalid list index");
+        SYNTAX_T(_("invalid list index"));
       } else {
         value = num_lst.var(i).var(idxs[0]);
       }
@@ -4300,7 +4297,7 @@ PROC f(x): RETURN @x * 2
       if (is_strexp())
         err = ERR_TYPE;
       else
-        SYNTAX_T("exp numeric expr");
+        SYNTAX_T(_("expected numeric expr"));
       return 0;
     }
 
@@ -4866,7 +4863,7 @@ there is one.
       ++cip;
       on_go(true, cas);
     } else {
-      SYNTAX_T("exp GOTO or GOSUB");
+      SYNTAX_T(_("expected GOTO or GOSUB"));
     }
   }
 }
@@ -5452,7 +5449,7 @@ void BASIC_FP Basic::iif() {
     ++cip;
     have_goto = true;
   } else {
-    SYNTAX_T("exp THEN or GOTO");
+    SYNTAX_T(_("expected THEN or GOTO"));
     return;
   }
 
@@ -5633,7 +5630,7 @@ void Basic::iprofile() {
     }
     break;
   default:
-    SYNTAX_T("exp ON, OFF or LIST");
+    SYNTAX_T(_("expected ON, OFF or LIST"));
     break;
   }
 }
@@ -5693,7 +5690,7 @@ void Basic::iexec() {
     err = -is_text;
     return;
   } else if (!is_text) {
-    E_ERR(FORMAT, "not a BASIC program");
+    E_ERR(FORMAT, _("not a BASIC program"));
     return;
   }
   Basic sub;
@@ -5728,7 +5725,7 @@ icode_t *BASIC_FP Basic::iexe(index_t stk) {
     if (*cip < sizeof(funtbl) / sizeof(funtbl[0])) {
       (this->*funtbl[*cip++])();
     } else
-      SYNTAX_T("exp command");
+      SYNTAX_T(_("expected command"));
 
     process_events();
 
@@ -5919,7 +5916,7 @@ void Basic::autoexec() {
       exec_sub(sub, autoexec.c_str());
       free(sub.listbuf);
     } else {
-      PRINT_P("Skipping AUTOEXEC.BAS\n");
+      PRINT_P(_("Skipping AUTOEXEC.BAS\n"));
     }
   }
 }
@@ -6000,19 +5997,19 @@ void SMALL Basic::basic() {
 
   uint64_t free_mem = getFreeMemory();
   if (free_mem == (uint64_t)-1)
-    PRINT_P("unknown memory size\n");
+    PRINT_P(_("unknown memory size\n"));
   else if (free_mem < 1048576) {
     putnum(free_mem, 0);
-    PRINT_P(" bytes free\n");
+    PRINT_P(_(" bytes free\n"));
   } else {
     putnum(free_mem / 1048576, 0);
-    PRINT_P(" MB free\n");
+    PRINT_P(_(" MB free\n"));
   }
 
-  PRINT_P("Directory ");
+  PRINT_P(_("Directory "));
   char *cwd = new char[256];
   if (_getcwd(cwd, 256) == NULL)
-    c_puts_P("none");
+    c_puts_P(_("none"));
   else
     c_puts(cwd);
   delete[] cwd;
@@ -6045,7 +6042,7 @@ void SMALL Basic::basic() {
     redirect_output_file = -1;
 
     if (lua)
-      PRINT_P("ok\n");
+      PRINT_P(_("ok\n"));
     rc = sc0.edit();
 
     if (rc) {

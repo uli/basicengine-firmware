@@ -251,4 +251,5 @@
 #define _rmdir    rmdir
 #endif
 
+#define _(s) s
 #endif
