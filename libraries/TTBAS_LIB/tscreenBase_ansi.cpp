@@ -130,7 +130,13 @@ int tscreenBase::term_getch(void) {
     case SC_KEY_F(8): term_queue_input(TMT_KEY_F8); break;
     case SC_KEY_F(9): term_queue_input(TMT_KEY_F9); break;
     case SC_KEY_F(10): term_queue_input(TMT_KEY_F10); break;
-    default: vt_inbuf.push(c); break;
+    default: {
+        char tmp[5];
+        char *end = (char *)utf8catcodepoint(tmp, c, 5);
+        *end = 0;
+        term_queue_input(tmp);
+      }
+      break;
     }
   }
   int c = vt_inbuf.front();
