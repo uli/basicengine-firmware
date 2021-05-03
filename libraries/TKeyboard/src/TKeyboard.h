@@ -185,7 +185,7 @@
 
 // キーボードイベント構造体
 typedef struct {
-  uint8_t code  : 8;  // code
+  uint32_t code  : 8;  // code
   uint8_t BREAK : 1;  // BREAKコード
   uint8_t KEY   : 1;  // KEYコード判定
   uint8_t SHIFT : 1;  // SHIFTあり
