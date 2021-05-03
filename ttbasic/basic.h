@@ -102,17 +102,15 @@ void BASIC_FP ilvar();
 extern void E_SYNTAX(token_t token);
 #define SYNTAX_T(exp)                        \
   do {                                       \
-    static const char __msg[] PROGMEM = exp; \
     err = ERR_SYNTAX;                        \
-    err_expected = __msg;                    \
+    err_expected = exp;                      \
   } while (0)
 extern void E_VALUE(int32_t from, int32_t to);
 
 #define E_ERR(code, exp)                     \
   do {                                       \
-    static const char __msg[] PROGMEM = exp; \
     err = ERR_##code;                        \
-    err_expected = __msg;                    \
+    err_expected = exp;                      \
   } while (0)
 
 class Basic {
