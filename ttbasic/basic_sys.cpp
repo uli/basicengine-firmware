@@ -20,7 +20,7 @@ Pause for a specific amount of time.
 \ref TICK()
 ***/
 void Basic::iwait() {
-  int32_t tm;
+  uint32_t tm;
   if (getParam(tm, 0, UINT32_MAX, I_NONE))
     return;
   eb_wait(tm);
