@@ -1552,8 +1552,27 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       //文字列を表示する
       c_putch(c, devno);  //文字列の括りを表示
       i = *ip++;  //文字数を取得してポインタを文字列へ進める
-      while (i--)               //文字数だけ繰り返す
-        c_putch(*ip++, devno);  //ポインタを進めながら文字を表示
+      while (i) {               //文字数だけ繰り返す
+        // String constants are stored as UTF-8, with the bytes cast to
+        // icode_t. We create a temp string with "real" bytes and have that
+        // decoded.
+        utf8_int32_t codepoint;
+
+        char tmp_utf8[4];
+        char *tmp_ptr = tmp_utf8;
+
+        // the first byte is sufficient to find out how big the codepoint is
+        *tmp_ptr = *ip;
+        int cpsize = utf8codepointcalcsize(tmp_utf8);
+        i -= cpsize;
+
+        while (cpsize--) {
+          *tmp_ptr++ = *ip++;
+        }
+
+        utf8codepoint(tmp_utf8, &codepoint);
+        c_putch(codepoint, devno);  //ポインタを進めながら文字を表示
+      }
       c_putch(c, devno);        //文字列の括りを表示
       sc0.setColor(COL(FG), COL(BG));
       // XXX: Why I_VAR? Such code wouldn't make sense anyway.
