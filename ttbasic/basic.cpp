@@ -393,12 +393,19 @@ char *tlimR(char *str) {
 }
 
 void c_puts(const char *s, uint8_t devno) {
-  while (*s)
-    c_putch(*s++, devno);
+  utf8_int32_t c;
+  while (*s) {
+    s = (const char *)utf8codepoint(s, &c);
+    c_putch(c, devno);
+  }
 }
+
 void c_puts_P(const char *s, uint8_t devno) {
-  while (pgm_read_byte(s))
-    c_putch(pgm_read_byte(s++), devno);
+  utf8_int32_t c;
+  while (pgm_read_byte(s)) {
+    s = (const char *)utf8codepoint(s, &c);
+    c_putch(c, devno);
+  }
 }
 
 int c_printf(const char *f, ...) {
