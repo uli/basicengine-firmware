@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "help.h"
+#include <utf8.h>
 
 static const char *section_names[] = {
     [SECTION_BAS] = "BASIC core",
@@ -30,13 +31,17 @@ static void print_wrapped(const char *text) {
 
     const char *tp = text;
     while (*tp) {
-        if (isspace(*tp))
+        utf8_int32_t c;
+        utf8codepoint(tp, &c);
+
+        if (isspace(c))
             last_space = sc0.c_x();
 
         if (sc0.c_x() == sc0.getWidth() - 1) {
             while (sc0.c_x() > last_space && tp > text) {
                 c_putch('\b');
-                --tp;
+                utf8_int32_t dummy;
+                tp = (const char *)utf8rcodepoint(tp, &dummy);
             }
             c_putch('\n');
             while (sc0.c_x() < indent)
@@ -45,12 +50,15 @@ static void print_wrapped(const char *text) {
                 ++tp;
         }
 
-        if (*tp == '\n') {
-            c_putch(*tp++);
+        utf8codepoint(tp, &c);
+        if (c == '\n') {
+            c_putch(c);
             while (sc0.c_x() < indent)
                 c_putch(' ');
-        } else
-            c_putch(*tp++);
+        } else {
+            c_putch(c);
+        }
+        tp += utf8codepointsize(c);
     }
 
     c_putch('\n');
