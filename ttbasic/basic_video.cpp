@@ -21,7 +21,7 @@ tTVscreen sc0;
 bool screen_putch_disable_escape_codes = false;
 int screen_putch_paging_counter = -1;
 
-static inline bool is_hex(uint8_t c) {
+static inline bool is_hex(utf8_int32_t c) {
   return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
@@ -36,7 +36,7 @@ static void put_hex_digit(uint32_t hex_value, uint8_t hex_type, bool lazy)
 }
 
 // XXX: 168 byte jump table
-void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
+void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
   static bool escape = false;
   static int predef_color = -1;
   static uint8_t hex_digit = 0, hex_type, hex_max_len;
@@ -159,7 +159,7 @@ void BASIC_INT NOJUMP screen_putch(uint8_t c, bool lazy) {
       case 'x':
         hex_digit = 1;
         hex_type = 2;
-        hex_max_len = 2;
+        hex_max_len = 6;
         break;
       default:
         sc0.putch(c, lazy);
