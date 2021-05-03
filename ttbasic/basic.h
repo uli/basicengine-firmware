@@ -475,16 +475,16 @@ void iloadconfig();
 #define COL(n) (csp.colorFromRgb(CONFIG.color_scheme[COL_##n]))
 
 extern bool event_play_enabled;
-extern uint8_t event_play_proc_idx[MML_CHANNELS];
+extern index_t event_play_proc_idx[MML_CHANNELS];
 
 #define MAX_PADS 3
 extern bool event_pad_enabled;
-extern uint8_t event_pad_proc_idx[MAX_PADS];
+extern index_t event_pad_proc_idx[MAX_PADS];
 extern int event_pad_last[MAX_PADS];
 
 int BASIC_INT pad_state(int num);
 
-extern uint8_t event_sprite_proc_idx;
+extern index_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE
 extern bool restore_text_window;

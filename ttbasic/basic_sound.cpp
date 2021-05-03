@@ -4,7 +4,7 @@
 #include "basic.h"
 
 bool event_play_enabled;
-uint8_t event_play_proc_idx[MML_CHANNELS];
+index_t event_play_proc_idx[MML_CHANNELS];
 
 void BASIC_INT Basic::event_handle_play(int ch) {
   if (event_play_proc_idx[ch] == NO_PROC)

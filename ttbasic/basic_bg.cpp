@@ -16,7 +16,7 @@ static uint16_t original_text_pos[2];
 bool restore_text_window = false;
 #endif
 
-uint8_t event_sprite_proc_idx;
+index_t event_sprite_proc_idx;
 
 #ifdef USE_BG_ENGINE
 void BASIC_INT Basic::event_handle_sprite() {

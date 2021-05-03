@@ -5,7 +5,7 @@
 #include "eb_input.h"
 
 bool event_pad_enabled;
-uint8_t event_pad_proc_idx[MAX_PADS];
+index_t event_pad_proc_idx[MAX_PADS];
 int event_pad_last[MAX_PADS];
 
 #include <joystick.h>
