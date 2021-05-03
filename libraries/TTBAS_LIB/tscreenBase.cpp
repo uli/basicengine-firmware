@@ -361,11 +361,11 @@ void tscreenBase::movePosNextLineChar(bool force) {
         y--;
       int lineno = getLineNum(y);
       if (lineno > 0) {
-        int curlen = strlen(bc->getLineStr(lineno));
+        int curlen = utf8len(bc->getLineStr(lineno));
         int nm = bc->getNextLineNo(lineno);
         if (nm > 0) {
           text = bc->getLineStr(nm);
-          int len = strlen(text);
+          int len = utf8len(text);
 
           // scroll up if the line doesn't fit
           int remaining_lines = height - y - curlen / width;
@@ -414,7 +414,7 @@ void tscreenBase::movePosPrevLineChar(bool force) {
         int nm = bc->getPrevLineNo(lineno);
         if (nm > 0) {
           text = bc->getLineStr(nm);
-          int len = strlen(text);
+          int len = utf8len(text);
 
           // scroll down if the line doesn't fit
           int remaining_lines = y;
@@ -528,14 +528,15 @@ uint8_t tscreenBase::enter_text() {
   }
 
   // Copy screen text into a contiguous buffer.
-  text = (uint8_t *)malloc((1 + end_y - top_y) * width);
+  // assume max UTF-8 character size is 5
+  text = (uint8_t *)malloc((1 + end_y - top_y) * width * 5);
   uint8_t *t = text;
   int ptr_x = top_x;
   int ptr_y = top_y;
   uint8_t c;
   do {
     c = VPEEK(ptr_x, ptr_y);
-    *t++ = c;
+    t = (uint8_t *)utf8catcodepoint(t, c, (1 + end_y - top_y) * width * 5);
     ptr_x++;
     if (ptr_x >= width) {
       ptr_x = 0;
@@ -588,7 +589,7 @@ void tscreenBase::edit_scrollUp() {
     if (nm > 0) {
       // 次の行が存在する
       text = bc->getLineStr(nm);
-      len = strlen(text);
+      len = utf8len(text);
       for (uint16_t i = 0; i < len / width + 1; i++) {
         scroll_up();
       }
@@ -619,7 +620,7 @@ void tscreenBase::edit_scrollDown() {
     prv_nm = bc->getPrevLineNo(lineno);
     if (prv_nm > 0) {
       text = bc->getLineStr(prv_nm);
-      len = strlen(text);
+      len = utf8len(text);
       for (uint16_t i = 0; i < len / width + 1; i++) {
         scroll_down();
       }

@@ -99,6 +99,7 @@ public:
 
   //virtual int16_t peek_ch();                           // キー入力チェック(文字参照)
   virtual inline uint8_t IS_PRINT(utf8_int32_t ch) {
+    // XXX: does that hold up for unicode?
     return (((ch) >= 32 && (ch) < 0x7F) || ((ch) >= 0xA0));
   };
   void init(uint16_t w = 0, uint16_t h = 0, uint16_t ln = 128,
