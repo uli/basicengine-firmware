@@ -56,11 +56,11 @@ int eb_pos_y(void) {
   return sc0.c_y();
 }
 
-uint16_t eb_char_get(int x, int y) {
+unsigned int eb_char_get(int x, int y) {
   return (x < 0 || y < 0 || x >=sc0.getWidth() || y >=sc0.getHeight()) ? 0 : sc0.vpeek(x, y);
 }
 
-void eb_char_set(int x, int y, uint16_t c) {
+void eb_char_set(int x, int y, unsigned int c) {
   if (check_param(x, 0, sc0.getWidth() - 1) ||
       check_param(y, 0, sc0.getHeight() - 1))
     return;
