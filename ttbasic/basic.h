@@ -6,6 +6,7 @@
 
 #include "ttconfig.h"
 #include <stdint.h>
+#include <utf8.h>
 
 typedef TOKEN_TYPE icode_t;
 typedef TOKEN_TYPE index_t;
@@ -42,11 +43,11 @@ static inline void cleartbuf() {
   memset(tbuf, 0, SIZE_LINE);
 }
 
-void c_putch(uint8_t c, uint8_t devno = 0);
+void c_putch(utf8_int32_t c, uint8_t devno = 0);
 void c_puts  (const char *s, uint8_t devno = 0);
 void c_puts_P(const char *s, uint8_t devno = 0);
 extern "C" int c_printf(const char *f, ...);
-void screen_putch(uint8_t c, bool lazy = false);
+void screen_putch(utf8_int32_t c, bool lazy = false);
 extern bool screen_putch_disable_escape_codes;
 extern int screen_putch_paging_counter;
 
@@ -445,7 +446,7 @@ extern tTVscreen sc0;
 extern int redirect_output_file;
 extern int redirect_input_file;
 
-static inline uint16_t c_getch() {
+static inline utf8_int32_t c_getch() {
   if (redirect_input_file >= 0)
     return getc(user_files[redirect_input_file].f);
   else

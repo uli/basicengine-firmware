@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <utf8.h>
 #include "ttconfig.h"
 #include "video.h"
 #include "sound.h"
@@ -146,7 +147,7 @@ uint8_t BASIC_FP Basic::getParam(num_t &prm, token_t next_token) {
 
 // prototype
 void isaveconfig();
-void mem_putch(uint8_t c);
+void mem_putch(utf8_int32_t c);
 num_t BASIC_FP iexp(void);
 void error(uint8_t flgCmd);
 
@@ -165,7 +166,7 @@ int redirect_output_file = -1;
 int redirect_input_file = -1;
 
 // Character output
-extern inline void c_putch(uint8_t c, uint8_t devno) {
+extern inline void c_putch(utf8_int32_t c, uint8_t devno) {
   if (devno == 0) {
     if (redirect_output_file >= 0)
       putc(c, user_files[redirect_output_file].f);
@@ -364,7 +365,7 @@ typedef struct {
 Basic *bc = NULL;
 
 // メモリへの文字出力
-inline void mem_putch(uint8_t c) {
+inline void mem_putch(utf8_int32_t c) {
   if (tbuf_pos < SIZE_LINE) {
     tbuf[tbuf_pos] = c;
     tbuf_pos++;
@@ -373,7 +374,7 @@ inline void mem_putch(uint8_t c) {
 
 // Standard C library (about) same functions
 // XXX: We pull in ctype anyway, can do away with these.
-char c_isprint(char c) {
+char c_isprint(utf8_int32_t c) {
   //return(c >= 32 && c <= 126);
   return (c >= 32 && c != 127);
 }
@@ -504,7 +505,7 @@ void putBinnum(uint32_t value, uint8_t d, uint8_t devno = 0) {
 }
 
 void get_input(bool numeric, uint8_t eoi) {
-  char c;       //文字
+  utf8_int32_t c;       //文字
   uint32_t len;  //文字数
 
   len = 0;  //文字数をクリア
@@ -4396,7 +4397,7 @@ alphabetically, `0` otherwise.
 
 // Get number of line at top left of the screen
 uint32_t getTopLineNum() {
-  uint8_t *ptr = sc0.getScreenWindow();
+  utf8_int32_t *ptr = sc0.getScreenWindow();
   uint32_t n = 0;
   int rc = -1;
   while (isDigit(*ptr)) {
@@ -4417,7 +4418,7 @@ uint32_t getTopLineNum() {
 
 // Get number of line at the bottom left of the screen
 uint32_t getBottomLineNum() {
-  uint8_t *ptr =
+  utf8_int32_t *ptr =
           sc0.getScreenWindow() + sc0.getStride() * (sc0.getHeight() - 1);
   uint32_t n = 0;
   int rc = -1;
