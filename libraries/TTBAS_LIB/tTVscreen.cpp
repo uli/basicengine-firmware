@@ -231,11 +231,6 @@ uint8_t tTVscreen::edit() {
       ipixel_t hue = (ipixel_t)(15 + ch - SC_KEY_F(1) + (k.ALT ? 12 : 0));
       ipixel_t col = (ipixel_t)(((hue & 0xf) << 4) | (k.SHIFT ? 10 : 13));
       setColor(csp.fromIndexed(col), sc0.getBgColor());
-    } else if (k.ALT) {
-      if (ch >= 'A' && ch <= '_')
-        Insert_char(ch - 64);
-      else if (ch >= '`' && ch <= '~')
-        Insert_char(ch + 32);
     } else
       switch (ch) {
       case SC_KEY_CR:         // [Enter]キー

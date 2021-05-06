@@ -288,6 +288,79 @@ STS_DONE:  // [ローマ字カタカナ変換 遷移完了]
   return ptr;
 }
 
+struct cbm_map {
+  unsigned int key;
+  utf8_int32_t map;
+};
+
+static const cbm_map cbm_alt_keymap[] = {
+  { '^', 0x03c0 },
+  { '*', 0x2500 },
+  { '-', 0x2502 },
+  { '+', 0x253c },
+  { 'a', 0x2660 },
+  { 'b', 0x2502 },
+  { 'c', 0x2500 },
+  { 'd', 0xe0c4 },
+  { 'e', 0xe0c5 },
+  { 'f', 0xe0c6 },
+  { 'g', 0xe0c7 },
+  { 'h', 0xe0c8 },
+  { 'i', 0x256e },
+  { 'j', 0x2570 },
+  { 'k', 0x256f },
+  { 'l', 0xe0cc },
+  { 'm', 0x2572 },
+  { 'n', 0x2571 },
+  { 'o', 0xe0cf },
+  { 'p', 0xe0d0 },
+  { 'q', 0x25cf },
+  { 'r', 0xe0d2 },
+  { 's', 0x2665 },
+  { 't', 0xe0d4 },
+  { 'u', 0x256d },
+  { 'v', 0x2573 },
+  { 'w', 0x25cb },
+  { 'x', 0x2663 },
+  { 'y', 0xe0d9 },
+  { 'z', 0x2666 },
+  // XXX: shift-pound == 0x25e4
+};
+
+static const cbm_map cbm_gui_keymap[] = {
+  { '@', 0x2581 },
+  { '+', 0x2592 },
+  { '*', 0x25e5 },
+  { '-', 0xe0dc },
+  { 'a', 0x250c },
+  { 'b', 0x259a },
+  { 'c', 0x259d },
+  { 'd', 0x2597 },
+  { 'e', 0x2534 },
+  { 'f', 0x2596 },
+  { 'g', 0x258e },
+  { 'h', 0x258e },
+  { 'i', 0x2584 },
+  { 'j', 0x258d },
+  { 'k', 0x258c },
+  { 'l', 0x258b },
+  { 'm', 0x258a },
+  { 'n', 0x258a },
+  { 'o', 0x2583 },
+  { 'p', 0x2582 },
+  { 'q', 0x251c },
+  { 'r', 0x252c },
+  { 's', 0x2510 },
+  { 't', 0x2594 },
+  { 'u', 0x2585 },
+  { 'v', 0x2598 },
+  { 'w', 0x2524 },
+  { 'x', 0x2518 },
+  { 'y', 0x2586 },
+  { 'z', 0x2514 },
+  // XXX: CBM+pound == 0xe0a8
+};
+
 // PS/2 keyboard setup
 void setupPS2(uint8_t kb_type = 0) {
   // Initialize keyboard with LED control enabled
@@ -334,6 +407,16 @@ uint16_t cnv2tty(keyEvent k) {
         }
       }
       return rc;
+    }
+  } else if (k.ALT && k.SHIFT && !k.KEY) {
+    for (auto m : cbm_gui_keymap) {
+      if (m.key == tolower(k.code))
+        return m.map;
+    }
+  } else if (k.ALT && !k.KEY) {
+    for (auto m : cbm_alt_keymap) {
+      if (m.key == k.code)
+        return m.map;
     }
   }
 
