@@ -111,6 +111,7 @@ SPICONFIG	I_SPICONFIG	ispiconfig
 IMGINFO	I_IMGINFO	iimginfo
 TCC	I_TCC		itcc
 TCCLINK	I_TCCLINK	itcclink
+TCCMODE I_TCCMODE	itccmode
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr

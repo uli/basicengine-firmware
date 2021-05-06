@@ -192,6 +192,13 @@ void Basic::itcclink() {
   current_tcc = NULL;
 }
 
+void Basic::itccmode() {
+  int32_t mode;
+  if (getParam(mode, 1, 4, I_NONE))
+   return;
+  output_type = mode;
+}
+
 void *Basic::get_symbol(const char *sym_name) {
   for(int i = modules.size(); i-- > 0; --i) {
     void *sym = tcc_get_symbol(modules[i].tcc, sym_name);
