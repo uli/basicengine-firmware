@@ -2637,6 +2637,30 @@ void Basic::isave() {
   bfs.tmpClose();
 }
 
+#include "codepages.h"
+
+void Basic::transcodeLineToUTF8(char *lbuf, encoding_t enc) {
+  const utf8_int32_t *table;
+
+  switch (enc) {
+  case ENC_CP437: table = cp437_to_utf8; break;
+  default: return;
+  }
+
+  uint8_t *in_buf = (uint8_t *)strdup(lbuf);
+  const uint8_t *in = in_buf;
+
+  void *out = (void *)lbuf;
+  memset(lbuf, 0, SIZE_LINE);
+
+  while (*in && out) {
+    out = utf8catcodepoint(out, table[*in], SIZE_LINE - (in - in_buf));
+    ++in;
+  }
+
+  free(in_buf);
+}
+
 // テキスト形式のプログラムのロード
 // 引数
 //   fname  :  ファイル名
@@ -2644,7 +2668,7 @@ void Basic::isave() {
 // 戻り値
 //   0:正常終了
 //   1:異常終了
-uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode) {
+uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode, encoding_t enc) {
   int32_t len;
   uint8_t rc = 0;
   uint32_t last_line = 0;
@@ -2660,9 +2684,13 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode) {
   if (newmode != NEW_VAR)
     inew(newmode);
   while (bfs.readLine(lbuf)) {
+    if (enc != ENC_UTF8)
+      transcodeLineToUTF8(lbuf, enc);
+
     char *sbuf = lbuf;
     while (isspace(*sbuf))
       sbuf++;
+
     if (!isDigit(*sbuf)) {
       // Insert a line number before tokenizing.
       if (strlen(lbuf) > SIZE_LINE - 12) {
@@ -3533,9 +3561,15 @@ void Basic::iedit() {
 
 /***bc bas LOAD
 Load a program from storage.
-\usage LOAD file$
+\usage LOAD file$ [FONT n]
 \args
 @file$	name of the BASIC program
+@font	font (encoding) used for UTF-8 conversion [`0` to `{NUM_FONTS_m1}`]
+\note
+If the `FONT` parameter is specified, the program will be converted from the
+legacy single-byte encoding for the specified font to UTF-8. Use this to
+load programs written for the original BASIC Engine ESP8266 platform on
+next-generation systems.
 \ref LOAD_BG LOAD_IMAGE SAVE
 ***/
 /***bc bas MERGE
@@ -3618,7 +3652,14 @@ uint8_t SMALL Basic::ilrun() {
     err = ERR_NOT_SUPPORTED;
   } else if (fg == 1) {
     // Text format load from SD card
-    loadPrgText((char *)fname.c_str(), newmode);
+    int32_t encoding = ENC_UTF8;
+    if (*cip == I_FONT) {
+      ++cip;
+      if (getParam(encoding, 0, NUM_FONTS, I_NONE))
+        return 0;
+      ++encoding;
+    }
+    loadPrgText((char *)fname.c_str(), newmode, (encoding_t)encoding);
   }
   if (err)
     return 0;

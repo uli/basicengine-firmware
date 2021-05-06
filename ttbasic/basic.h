@@ -184,7 +184,16 @@ private:
 
   num_t nplay();
 
-  uint8_t SMALL loadPrgText(char *fname, uint8_t newmode = NEW_ALL);
+  enum encoding_t {
+    ENC_UTF8 = 0,
+    ENC_CP437 = 1,
+    ENC_AMSTRAD = 2,
+    ENC_PETASCII = 3,
+  };
+
+  void transcodeLineToUTF8(char *buf, encoding_t enc);
+  uint8_t SMALL loadPrgText(char *fname, uint8_t newmode = NEW_ALL,
+                            encoding_t encoding = ENC_UTF8);
   BString sinput();
 
   void init_stack_frame();
