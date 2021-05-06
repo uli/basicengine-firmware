@@ -2659,8 +2659,17 @@ void Basic::transcodeLineToUTF8(char *lbuf, encoding_t enc) {
   memset(lbuf, 0, SIZE_LINE);
 
   while (*in && out) {
-    out = utf8catcodepoint(out, table[*in], SIZE_LINE - (in - in_buf));
-    ++in;
+    uint8_t c = 0;
+
+    if (*in == '\\' && in[1] == 'x') {
+      in += 2;
+      while (isHexadecimalDigit(*in)) {
+        c = c << 4 | hex2value(*in++);
+      }
+    } else
+      c = *in++;
+
+    out = utf8catcodepoint(out, table[c], SIZE_LINE - (in - in_buf));
   }
 
   free(in_buf);
