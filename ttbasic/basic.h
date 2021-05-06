@@ -44,7 +44,7 @@ static inline void cleartbuf() {
 }
 
 void c_putch(utf8_int32_t c, uint8_t devno = 0);
-void c_puts  (const char *s, uint8_t devno = 0);
+void c_puts(const char *s, uint8_t devno = 0);
 void c_puts_P(const char *s, uint8_t devno = 0);
 extern "C" int c_printf(const char *f, ...);
 void screen_putch(utf8_int32_t c, bool lazy = false);
@@ -55,8 +55,8 @@ extern int screen_putch_paging_counter;
 
 #define dbg_printf(x, y...) printf_P(PSTR(x), y)
 
-void putnum   (num_t    value, int8_t  d, uint8_t devno = 0);
-void putint   (int      value, int8_t  d, uint8_t devno = 0);
+void putnum(num_t value, int8_t d, uint8_t devno = 0);
+void putint(int value, int8_t d, uint8_t devno = 0);
 void putHexnum(uint32_t value, uint8_t d, uint8_t devno = 0);
 uint16_t BASIC_INT hex2value(char c);
 
@@ -82,14 +82,14 @@ void BASIC_FP ilvar();
 
 #define MAX_VAR_NAME 32  // maximum length of variable names
 #ifdef LOWMEM
-#define SIZE_GSTK    10  // GOSUB stack size
-#define SIZE_LSTK    10  // FOR stack size
-#define SIZE_ASTK    16  // argument stack
+#define SIZE_GSTK 10  // GOSUB stack size
+#define SIZE_LSTK 10  // FOR stack size
+#define SIZE_ASTK 16  // argument stack
 #else
 // raise as needed...
-#define SIZE_GSTK    64
-#define SIZE_LSTK    64
-#define SIZE_ASTK    64
+#define SIZE_GSTK 64
+#define SIZE_LSTK 64
+#define SIZE_ASTK 64
 #endif
 
 #define MAX_RETVALS 4
@@ -101,17 +101,17 @@ void BASIC_FP ilvar();
 #define NEW_VAR  2
 
 extern void E_SYNTAX(token_t token);
-#define SYNTAX_T(exp)                        \
-  do {                                       \
-    err = ERR_SYNTAX;                        \
-    err_expected = exp;                      \
+#define SYNTAX_T(exp)   \
+  do {                  \
+    err = ERR_SYNTAX;   \
+    err_expected = exp; \
   } while (0)
 extern void E_VALUE(int32_t from, int32_t to);
 
-#define E_ERR(code, exp)                     \
-  do {                                       \
-    err = ERR_##code;                        \
-    err_expected = exp;                      \
+#define E_ERR(code, exp) \
+  do {                   \
+    err = ERR_##code;    \
+    err_expected = exp;  \
   } while (0)
 
 class Basic {
@@ -325,7 +325,7 @@ private:
   StringVariables svar;
   VarNames svar_names;
 
-  #define MAX_ARRAY_DIMS 4
+#define MAX_ARRAY_DIMS 4
   NumArrayVariables<num_t> num_arr;
   VarNames num_arr_names;
   StringArrayVariables<BString> str_arr;
@@ -350,8 +350,8 @@ private:
     index_t num_args;
     index_t str_args;
     index_t proc_idx;
-  } gstk[SIZE_GSTK];    // GOSUB stack
-  index_t gstki;  // GOSUB stack index
+  } gstk[SIZE_GSTK];  // GOSUB stack
+  index_t gstki;      // GOSUB stack index
 
   // Arguments/locals stack
   num_t astk_num[SIZE_ASTK];
@@ -366,13 +366,13 @@ private:
     num_t vstep;
     int16_t index;
     bool local;
-  } lstk[SIZE_LSTK];    // loop stack
-  index_t lstki;  // loop stack index
+  } lstk[SIZE_LSTK];  // loop stack
+  index_t lstki;      // loop stack index
 
   icode_t *cont_clp = NULL;
   icode_t *cont_cip = NULL;
 
-  num_t   retval[MAX_RETVALS];  // multi-value returns (numeric)
+  num_t retval[MAX_RETVALS];    // multi-value returns (numeric)
   BString retstr[MAX_RETVALS];  // multi-value returns (string)
 
   bool event_error_enabled;
@@ -408,7 +408,7 @@ private:
 
   nfc_result do_nfc(void *sym, enum return_type rtype = RET_INT);
 
-  DCCallVM* callvm;
+  DCCallVM *callvm;
   jmp_buf jump;
 };
 
@@ -420,7 +420,7 @@ int token_size(icode_t *code);
 #include "kwtbl.h"
 
 // Keyword count
-#define SIZE_KWTBL (sizeof(kwtbl) / sizeof(const char*))
+#define SIZE_KWTBL     (sizeof(kwtbl) / sizeof(const char *))
 #define SIZE_KWTBL_EXT (sizeof(kwtbl_ext) / sizeof(const char *))
 
 // i-code(Intermediate code) assignment
