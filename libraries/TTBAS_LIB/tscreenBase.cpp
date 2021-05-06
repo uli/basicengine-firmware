@@ -534,7 +534,7 @@ uint8_t tscreenBase::enter_text() {
   uint8_t *t = text;
   int ptr_x = top_x;
   int ptr_y = top_y;
-  uint8_t c;
+  utf8_int32_t c;
   do {
     c = VPEEK(ptr_x, ptr_y);
     t = (uint8_t *)utf8catcodepoint(t, c, (1 + end_y - top_y) * width * 5);
