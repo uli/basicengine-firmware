@@ -1,0 +1,129 @@
+
+  Б              А                           А              Б
+  лА             ллБ                       Влл             Ал
+  лл             ллллВБ                 БВлллл             лл
+  ллл            лллллллВ             Вллллллл            ллл
+  лллВ           лллллллллВБ       БВллллллллл           Вллл
+  ллллБ          ллллллллллллВ   Влллллллллллл          Влллл
+  лллллБ         ллллллллллллллВлллллллллллллл         Бллллл
+  ллллллА        ллллллллллллВ   Влллллллллллл        Алллллл
+  ллллллл        лллллллллВБ       БВллллллллл        ллллллл
+  лллллллл       ллллллВВ             ВВлллллл       лллллллл
+  ллллллллл      ллллБА                 АБлллл      ллллллллл
+  лллллллллВ     ллБ                       Влл     Вллллллллл
+  ллллллллллБ    А            млм            А    Блллллллллл
+  лллллллллллА               ллллл               Аллллллллллл
+  лллллллллллл                плп                лллллллллллл
+  ллллллллллллл                                 ллллллллллллл
+  лллллллллллллл                               лллллллллллллл
+  ллллллллллллллл                             ллллллллллллллл
+  лллллллллллллллВ            млм            Вллллллллллллллл
+  ллллллллллллллллБ          ллллл          Блллллллллллллллл
+  лллллллллллллллллБ          плп          Бллллллллллллллллл
+  ллллллллллллллллллА                     Алллллллллллллллллл
+  ллллллллллллллллллл                     ллллллллллллллллллл
+  лллллллллллллллллллл                   лллллллллллллллллллл
+  ллллллллллллллллллллВ       млм       Влллллллллллллллллллл
+  лллллллллллллллллллллВ     ллллл     Вллллллллллллллллллллл
+  ллллллллллллллллллллллБ     плп     Блллллллллллллллллллллл
+  лллллллллллллллллллллллА           Аллллллллллллллллллллллл
+  лллллллллллллллллллллллл           лллллллллллллллллллллллл
+  ллллллллллллллллллллллллл         ллллллллллллллллллллллллл
+  лллллллллллллллллллллллллл       лллллллллллллллллллллллллл
+  ллллллллллллллллллллллллллл     ллллллллллллллллллллллллллл
+  лллллллллллллллллллллллллллВ   Вллллллллллллллллллллллллллл
+  ллллллллллллллллллллллллллллВ Влллллллллллллллллллллллллллл
+  лллллллллллллллллллллллллллллВллллллллллллллллллллллллллллл
+
+     лллА    лллллллллА   лллА    лллА   лллА        лллллллА
+    лллА     лллллллллА   лллА    лллА   лллА        лллллллА
+   лллА         лллА       лллА  лллА    лллА        лллА
+   лллА         лллА       лллА  лллА    лллА        лллА
+    лллА        лллА        ллВ ВллА     лллА        лллА
+     лллА       лллА        ллл лллА     лллА        лллА
+      лллА      лллА         лллллА      лллА        лллллллА
+       лллА     лллА         лллллА      лллА        лллллллА
+        лллА    лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+         лллА   лллА          лллА       лллА        лллА
+        лллА    лллА          лллА       лллА        лллА
+       лллА     лллА          лллА       лллА        лллА
+     ллллА      лллА          лллА       лллллллА    лллллллА
+    лллА        лллА          лллА       лллллллА    лллллллА
+
+  п ппппппппппппппппппппппппппппппппппппппппппппппппппппппп п
+     title: C64 TrueType v1.2.1           type: fonts
+      date: April 15, 2019            platform: Any OS/web
+  м ммммммммммммммммммммммммммммммммммммммммммммммммммммммм м
+
+
+   >> What the hell is it?
+
+     Our C64 TrueType fonts provide monospace and
+    variable pitch versions of the legendary C64
+    character set.  For programmers, each font contains
+    Unicode mappings to accomodate either a direct
+    PETSCII mapping or a screencode mapping. For users,
+    the fonts map to some obvious code points (like the
+    Unicode box drawing range) and should also support
+    easy mapping from applicable code points in cp437
+    and cp1252. Our goal is to provide all 304 necessary
+    glyphs in the C64 character set in as small a file
+    as possible while still being programmer-friendly.
+    Finally, six additional glyphs are included to round
+    out the US-ASCII table with \, ^, `, {, }, and ~ for
+    the sake of providing a usable PETSCII experience
+    in code editors/IDEs.
+
+     This update corrects some bounding box issues as
+    reported in the updated Microsoft Font Validator,
+    left side bearing on one glyph, and updates some
+    PS names.
+
+     This update also adds a 'proper' OpenType format
+    (.otf) with CFF outlines. All files should be
+    smaller than the previous release. SVG format
+    has been dropped.
+   
+     "C64 Pro Mono" is the fixed pitch while "C64 Pro"
+    is a variable pitch (propertional) version. In the
+    legacy folder you can also find "C64 Elite Mono"
+    which was used in DirMaster v2.x - we don't
+    recommend using it for anything else other than
+    if you need it for running an older version of
+    DirMaster. The "C64 Pro Mono" in this release is
+    the same as what ships with DirMaster v3.1.2 but
+    will work with any older 3.x version of DirMaster.
+
+
+   >> What does the future hold?
+
+     The Unicode Consortium (or acolytes thereof)
+    recently tackled the issue of missing legacy
+    computing character sets. The first attempt
+    has omitted several of the C64's vertical and
+    horizontal 'quarter-bar' characters. Pending
+    the final outcome we'll add whatever new
+    mappings that are relevant to the C64 when
+    the next Unicode update drops.
+
+
+   >> Previous releases:
+
+      v1.0 - Oct 1, 2010
+      v1.2 - Sep 2, 2014	
+
+
+   >> For more information:
+ 
+                http://style64.org/c64-truetype
+
+            http://style64.org/c64-truetype/license
+
+                  http://style64.org/petscii
+
+
+  п ппппппппппппппппппппппппппппппппппппппппппппппппппппппп п
+                   Keep scene spirit alive!
+  м ммммммммммммммммммммммммммммммммммммммммммммммммммммммм м
