@@ -172,14 +172,21 @@ extern inline void c_putch(utf8_int32_t c, uint8_t devno) {
       putc(c, user_files[redirect_output_file].f);
     else
       screen_putch(c);
-  } else if (devno == 1)
-    Serial.write(c);
-  else if (devno == 2)
+  } else if (devno == 2)
     sc0.gputch(c);
-  else if (devno == 3)
-    mem_putch(c);
-  else if (devno == 4)
-    bfs.putch(c);
+  else {
+    char utfbuf[4];
+    char *start = utfbuf;
+    char *end = (char *)utf8catcodepoint((void *)start, c, 4);
+    while (start < end) {
+      if (devno == 1)
+        Serial.write(*start++);
+      else if (devno == 3)
+        mem_putch(*start++);
+      else if (devno == 4)
+        bfs.putch(*start++);
+    }
+  }
 }
 
 void BASIC_INT newline(uint8_t devno) {
