@@ -12,7 +12,7 @@ struct font_t fonts[NUM_FONTS] = {
   { console_font_6x8, 6, 8 },
   { console_font_8x8, 8, 8 },
   { cbm_ascii_font_8x8, 8, 8 },
-  { font6x8tt, 6, 8 },
+  { font6x8tt, 8, 8 },
 };
 
 #include "tTVscreen.h"
