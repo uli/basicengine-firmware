@@ -2644,7 +2644,12 @@ void Basic::transcodeLineToUTF8(char *lbuf, encoding_t enc) {
 
   switch (enc) {
   case ENC_CP437: table = cp437_to_utf8; break;
-  default: return;
+  case ENC_PETASCII: table = petascii_to_utf8; break;
+  case ENC_AMSTRAD: table = amstradcpc_to_utf8; break;
+  default:
+    err = ERR_NOT_SUPPORTED;
+    err_expected = "conversion not implemented";
+    return;
   }
 
   uint8_t *in_buf = (uint8_t *)strdup(lbuf);
