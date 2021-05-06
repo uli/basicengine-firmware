@@ -44,6 +44,8 @@ pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
 
+#define UNIMAP_SIZE 0x110000
+
 struct unimap {
   uint8_t *bitmap;
   uint8_t w, h;
@@ -59,9 +61,9 @@ void SMALL tv_fontInit() {
     f_height = 8;
   }
   if (!unimap)
-    unimap = (struct unimap *)calloc(1, 0x110000 * sizeof(*unimap));
+    unimap = (struct unimap *)calloc(1, UNIMAP_SIZE * sizeof(*unimap));
   else
-    memset(unimap, 0, 0x110000 * sizeof(*unimap));
+    memset(unimap, 0, UNIMAP_SIZE * sizeof(*unimap));
 
   stbtt_InitFont(&ttf, tvfont, stbtt_GetFontOffsetForIndex(tvfont,0));
 
@@ -190,6 +192,9 @@ void GROUP(basic_video) tv_drawCurs(uint16_t x, uint16_t y) {
 static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) {
   int w = f_width, h = f_height;
   int off_x = 0, off_y = 0;
+
+  if (c < 0 || c > UNIMAP_SIZE)
+    c = 0xfffd;
 
   if (!unimap[c].bitmap) {
     float scale = stbtt_ScaleForPixelHeight(&ttf, f_height);
