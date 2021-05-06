@@ -222,6 +222,8 @@ keyEvent TKeyboard::read() {
 
     if (ki.kevt.KEY == 1 || ki.kevt.code == '\r')
       ki.kevt.CTRL = !!(event.key.keysym.mod & (KMOD_LCTRL | KMOD_RCTRL));
+
+    ki.kevt.SHIFT = !!(event.key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT));
   }
   return ki.kevt;
 }
