@@ -25,6 +25,12 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
     if (vt)
       tmt_close(vt);
   }
+
+  whole_width = width = w;
+  whole_height = height = h;
+  win_x = win_y = 0;  // note: does not reset the TV window
+  maxllen = l;
+
   if (!screen) {
     screen = (utf8_int32_t *)calloc(w * h, sizeof(*screen));
     colmem = (pixel_t *)calloc(w * h * 2, sizeof(pixel_t));
@@ -32,11 +38,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
     vt_inbuf = std::queue<char>();
     vt_cursor_on = true;
   }
-
-  whole_width = width = w;
-  whole_height = height = h;
-  win_x = win_y = 0;  // note: does not reset the TV window
-  maxllen = l;
 
   // デバイスの初期化
   INIT_DEV();
