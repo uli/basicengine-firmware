@@ -2600,7 +2600,7 @@ Saves the BASIC program in memory to storage.
 \args
 @file$	name of file to be saved
 \note
-BASIC programs are saved in plain text (ASCII) format.
+BASIC programs are saved in plain text (UTF-8) format.
 \ref SAVE_BG SAVE_CONFIG SAVE_IMAGE
 ***/
 void Basic::isave() {
