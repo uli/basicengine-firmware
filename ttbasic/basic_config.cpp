@@ -155,6 +155,10 @@ removed in future releases.
   It is necessary to save the configuration and reboot the system for
   this option to take effect.
 
+* `11`: Language +
+  The following languages are supported for system messages: +
+  `0` (US English, default), `1` (German), `2` (French), `3` (Spanish).
+
 \note
 To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
@@ -250,6 +254,12 @@ void SMALL Basic::iconfig() {
       CONFIG.phys_mode = value;
     break;
 #endif
+  case 11:
+    if (value < 0 || value > 3)
+      E_VALUE(0, 3);
+    else
+      CONFIG.language = value;
+    break;
   default:
     E_VALUE(0, 10);
     break;
@@ -278,6 +288,7 @@ void loadConfig() {
   CONFIG.mode = SC_DEFAULT + 1;
   CONFIG.font = 0;
   CONFIG.keyword_sep_optional = false;
+  CONFIG.language = 0;
 #ifdef H3
   CONFIG.phys_mode = 0;
 #endif
@@ -320,6 +331,7 @@ void loadConfig() {
       if (!strcasecmp(line, "mode")) CONFIG.mode = atoi(v);
       if (!strcasecmp(line, "font")) CONFIG.font = atoi(v);
       if (!strcasecmp(line, "keyword_sep_optional")) CONFIG.keyword_sep_optional = !!atoi(v);
+      if (!strcasecmp(line, "language")) CONFIG.language = atoi(v);
       if (!strcasecmp(line, "filter")) CONFIG.lowpass = !!atoi(v);
       if (!strcasecmp(line, "cursor_color")) CONFIG.cursor_color = strtoul(v, NULL, 0);
       if (!strcasecmp(line, "beep_volume")) CONFIG.beep_volume = atoi(v);
@@ -349,6 +361,7 @@ void isaveconfig() {
   fprintf(f, "mode=%d\n", CONFIG.mode);
   fprintf(f, "font=%d\n", CONFIG.font);
   fprintf(f, "keyword_sep_optional=%d\n", CONFIG.keyword_sep_optional);
+  fprintf(f, "language=%d\n", CONFIG.language);
   fprintf(f, "filter=%d\n", CONFIG.lowpass);
   fprintf(f, "cursor_color=0x%x\n", (unsigned int)CONFIG.cursor_color);
   fprintf(f, "beep_volume=%d\n", CONFIG.beep_volume);

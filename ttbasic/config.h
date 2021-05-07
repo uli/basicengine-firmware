@@ -16,6 +16,7 @@ typedef struct {
   pixel_t cursor_color;
   uint8_t beep_volume;
   bool keyword_sep_optional;  // do not require separation of keywords
+  uint8_t language;
 #ifdef H3
   uint32_t phys_mode;
 #endif
