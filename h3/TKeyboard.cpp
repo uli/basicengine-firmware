@@ -6,6 +6,7 @@
 #include <TKeyboard.h>
 #include "TPS2.h"
 #include <usb.h>
+#include <utf8.h>
 
 TPS2 pb;
 
@@ -176,7 +177,7 @@ static const int ps2_to_usb[] = {
 
 static int keyboard_layout = 0;
 
-static const uint8_t usb2jp[] = {
+static const utf8_int32_t usb2jp[] = {
      0,   0,   0,   0, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2',
    '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ', '-', '^', '@',
@@ -194,7 +195,7 @@ static const uint8_t usb2jp[] = {
      0,   0,   0,   0, '_',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const uint8_t usb2us[] = {
+static const utf8_int32_t usb2us[] = {
      0,   0,   0,   0, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2',
    '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ', '-', '=', '[',
@@ -212,61 +213,61 @@ static const uint8_t usb2us[] = {
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const uint8_t usb2de[] = {
+static const utf8_int32_t usb2de[] = {
      0,   0,   0,   0, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'z', 'y', '1', '2',
-   '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ',0xe1,0xef,0x81,
-   '+', '#',   0,0x94,0x84, '^', ',', '.', '-',   0,   0,   0,   0,   0,   0,   0,
+   '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ',U'ß',U'´',U'ü',
+   '+', '#',   0,U'ö',U'ä', '^', ',', '.', '-',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '/', '*', '-', '+','\r', '1', '2', '3', '4', '5', '6', '7',
    '8', '9', '0', '.', '<',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '"',
-  0xf5, '$', '%', '&', '/', '(', ')', '=',   0,   0,   0,   0,   0, '?', '`',0x9a,
-   '*','\'',   0,0x99,0x8e,0xf8, ';', ':', '_',   0,   0,   0,   0,   0,   0,   0,
+  U'§', '$', '%', '&', '/', '(', ')', '=',   0,   0,   0,   0,   0, '?', '`',U'Ü',
+   '*','\'',   0,U'Ö',U'Ä',U'°', ';', ':', '_',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const uint8_t usb2fr[] = {
+static const utf8_int32_t usb2fr[] = {
      0,   0,   0,   0, 'q', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-   ',', 'n', 'o', 'p', 'a', 'r', 's', 't', 'u', 'v', 'z', 'x', 'y', 'w', '&',0x82,
-   '"','\'', '(', '-',0x8a, '_',0x80,0x85,'\r',   0,   0,   0, ' ', ')', '=',0x7f,
-   '$', '*',   0, 'm',0x97, '`', ';', ':', '!',   0,   0,   0,   0,   0,   0,   0,
+   ',', 'n', 'o', 'p', 'a', 'r', 's', 't', 'u', 'v', 'z', 'x', 'y', 'w', '&',U'é',
+   '"','\'', '(', '-',U'è', '_',U'ç',U'à','\r',   0,   0,   0, ' ', ')', '=', '^',
+   '$', '*',   0, 'm',U'ù', '`', ';', ':', '!',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '/', '*', '-', '+','\r', '1', '2', '3', '4', '5', '6', '7',
    '8', '9', '0', '.', '<',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, 'Q', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
    '?', 'N', 'O', 'P', 'A', 'R', 'S', 'T', 'U', 'V', 'Z', 'X', 'Y', 'W', '1', '2',
-   '3', '4', '5', '6', '7', '8', '9', '0',   0,   0,   0,   0,   0,0xf8, '+',0x7f,
-  0x9c,0xe6,   0, 'M', '%', '~', '.', '/',0x7f,   0,   0,   0,   0,   0,   0,   0,
+   '3', '4', '5', '6', '7', '8', '9', '0',   0,   0,   0,   0,   0,U'°', '+',U'¨',
+  U'£',U'µ',   0, 'M', '%', '~', '.', '/',U'§',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const uint8_t usb2es[] = {
+static const utf8_int32_t usb2es[] = {
      0,   0,   0,   0, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2',
-   '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ','\'',0xad, '`',
-   '+',0x87,   0,0xa4,   0, '`', ',', '.', '-',   0,   0,   0,   0,   0,   0,   0,
+   '3', '4', '5', '6', '7', '8', '9', '0','\r',   0,   0,   0, ' ','\'',U'¡', '`',
+   '+',U'ç',   0,U'ñ',   0, '`', ',', '.', '-',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '/', '*', '-', '+','\r', '1', '2', '3', '4', '5', '6', '7',
    '8', '9', '0', '.', '<',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '@',
-   '#', '$', '%', '&', '/', '(', ')', '=',   0,   0,   0,   0,   0, '?',0xa8, '^',
-   '*',0x80,   0,0xa5,   0, '~', ';', ':', '_',   0,   0,   0,   0,   0,   0,   0,
+   '#', '$', '%', '&', '/', '(', ')', '=',   0,   0,   0,   0,   0, '?',U'¿', '^',
+   '*',U'Ç',   0,U'Ñ',   0, '~', ';', ':', '_',   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const uint8_t *usb2ascii[] = {
+static const utf8_int32_t *usb2ascii[] = {
   usb2jp,
   usb2us,
   usb2de,
@@ -377,16 +378,16 @@ void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
         // German Alt Gr combos
         switch (kc) {
         case 0x14: kev->code = '@'; break;	// Q
-        case 0x08: kev->code = 0xa4; break;	// Euro
+        case 0x08: kev->code = U'€'; break;	// E
         case 0x64: kev->code = '|'; break;	// 102nd key
-        case 0x1f: kev->code = 0xfd; break;	// 2/squared
-        // doesn't exist in cp437 case 0x20: kev->code = 0xfc; break;	// 3/cubed
+        case 0x1f: kev->code = U'²'; break;	// 2
+        case 0x20: kev->code = U'³'; break;	// 3/cubed
         case 0x24: kev->code = '{'; break;	// 7
         case 0x25: kev->code = '['; break;	// 8
         case 0x26: kev->code = ']'; break;	// 9
         case 0x27: kev->code = '}'; break;	// 0
-        case 0x2d: kev->code = '\\'; break;	// sz
-        case 0x10: kev->code = 0xe6; break;	// mu
+        case 0x2d: kev->code = '\\'; break;	// - (sharp s)
+        case 0x10: kev->code = U'µ'; break;	// M
         case 0x30: kev->code = '~'; break;	// ]
         default: kev->code = 0; break;
         }
@@ -414,16 +415,16 @@ void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
         case 0x1f: kev->code = '@'; break;	// 2
         case 0x20: kev->code = '#'; break;	// 3
         case 0x21: kev->code = '~'; break;	// 4	XXX; dead key
-        case 0x22: kev->code = 0xa4; break;	// 5 -> Euro
-        case 0x08: kev->code = 0xa4; break;	// e -> Euro (srsly?)
-        case 0x23: kev->code = 0xaa; break;	// 6 -> "not"
+        case 0x22: kev->code = U'½'; break;	// 5
+        case 0x08: kev->code = U'€'; break;	// e
+        case 0x23: kev->code = U'¬'; break;	// 6
         case 0x2f: kev->code = '['; break;	// [
         case 0x30: kev->code = ']'; break;	// ]
         case 0x34: kev->code = '{'; break;	// '
         case 0x31: kev->code = '}'; break;	// backslash
         default: kev->code = 0; break;
         }
-      } else if (kc_off < sizeof(usb2us)) {
+      } else if (kc_off < sizeof(usb2us) / sizeof(usb2us[0])) {
         kev->code = usb2ascii[keyboard_layout][kc_off];
         if (locks & CAPS_LOCK)
           kev->code = toupper(kev->code);
