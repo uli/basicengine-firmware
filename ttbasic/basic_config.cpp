@@ -142,6 +142,19 @@ at the expense of sharpness.
 WARNING: It is not clear if this option is useful in practice, and it may be
 removed in future releases.
 
+* `9`: Keyword separation optional [`0` or `1` (default)] +
+  Controls if BASIC keywords need to be separated from other language
+  elements containing alphanumeric characters with a space (`1`), or if they
+  can be adjacent to those like in traditional BASIC dialects (`0`).
+
+* `10`: Physical screen mode (H3 platform only) [`0` (default) to `6`] +
+  Sets the physical screen resolution: +
+  `0` (1920x1080 HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3` +
+  (1024x768 DVI), `4` (800x600 DVI), `5` (640x480 DVI) or `6` +
+  (1920x1200 HDMI). +
+  It is necessary to save the configuration and reboot the system for
+  this option to take effect.
+
 \note
 To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
@@ -231,7 +244,10 @@ void SMALL Basic::iconfig() {
     break;
 #ifdef H3
   case 10:
-    CONFIG.phys_mode = value;
+    if (value < 0 || value > 6)
+      E_VALUE(0, 6);
+    else
+      CONFIG.phys_mode = value;
     break;
 #endif
   default:
