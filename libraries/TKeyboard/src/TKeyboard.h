@@ -185,7 +185,7 @@
 
 // キーボードイベント構造体
 typedef struct {
-  uint32_t code  : 8;  // code
+  uint16_t code;      // code
   uint8_t BREAK : 1;  // BREAKコード
   uint8_t KEY   : 1;  // KEYコード判定
   uint8_t SHIFT : 1;  // SHIFTあり
@@ -194,11 +194,12 @@ typedef struct {
   uint8_t ALTGR : 1;
   uint8_t GUI   : 1;  // GUIあり
   uint8_t dumy  : 1;  // ダミー
+  uint8_t superdumy;
 } keyEvent;
 
 // キーボードイベント共用体
 typedef union {
-  uint16_t value;
+  uint32_t value;
   keyEvent kevt;
 } keyinfo;
 
