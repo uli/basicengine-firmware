@@ -251,5 +251,6 @@
 #define _rmdir    rmdir
 #endif
 
-#define _(s) s
+const char *gettext(const char *msg);
+#define _(s) gettext(s)
 #endif
