@@ -18,6 +18,8 @@ for t in tt:
 
 print('#include "help.h"\n')
 print('#pragma GCC diagnostic ignored "-Wmissing-field-initializers"\n')
+print('#undef _\n')
+print('#define _(s) (s)\n')
 print('const struct help_t help[] = {')
 
 # expects input preprocessed with bdoc_1.sed
@@ -38,6 +40,9 @@ def stringify_macros(d):
     d = re.sub('{([^}]+)_m1}', '" XSTR(\g<1>-1) "', d)
     d = re.sub('{([^}]+)}', '" XSTR(\g<1>) "', d)
     return d
+
+def gt(s):
+    return '_("' + s + '")'
 
 for c in cmds:
     lines = c.split('\n')
@@ -106,7 +111,10 @@ for c in cmds:
             # if this succeeds, a regular plain-text item is available
             # convert to C string
             x = item_data[e].strip().replace('\n', '\\n"\n    "')
-            print('"' + x + '",')
+            if e == 'usage':
+              print('"' + x + '",')
+            else:
+              print(gt(x) + ',')
         except KeyError:
             # item not available, print a suitable NULL entry
             if e in ['ref', 'args']:
@@ -136,9 +144,10 @@ for c in cmds:
                         descr = ''
                     # unformat description (XXX: is that still necessary here?)
                     descr = descr.strip().replace('\n', ' ')
-                    print('    { "' + name.strip() + '", "' + descr + '" },')
+                    print('    { "' + name.strip() + '", ' + gt(descr) + ' },')
                 print('    { NULL, NULL }\n  },')	# sentinel
             else:
                 stderr.write('WARNING: unknown list object ' + e + '\n')
     print('},')
 print('\n{},\n\n};\n')
+print('#undef _\n')
