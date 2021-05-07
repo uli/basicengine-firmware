@@ -272,9 +272,9 @@ uint8_t sdfiles::flist(char *_dir, char *wildcard, uint8_t clmnum) {
 
   newline();
   putnum(cnt, 0);
-  PRINT_P(" files, ");
+  PRINT_P(_(" files, "));
   putnum(total_size, 0);
-  PRINT_P(" bytes.\n");
+  PRINT_P(_(" bytes.\n"));
 
   return rc;
 }
