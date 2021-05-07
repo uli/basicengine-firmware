@@ -86,7 +86,7 @@ tftp_error(void* handle, int err, const char* msg, int size)
     memset(message, 0, sizeof(message));
     MEMCPY(message, msg, LWIP_MIN(sizeof(message)-1, (size_t)size));
 
-    E_NETWORK(BString("TFTP error ") + BString(err) +
+    E_NETWORK(BString(_("TFTP error ")) + BString(err) +
               BString(" (") + BString(message) + BString(')'));
 }
 
@@ -118,19 +118,19 @@ void Basic::itftpget() {
 
     int ret = ipaddr_aton(host.c_str(), &srv);
     if (ret != 1) {
-        E_NETWORK("ipaddr_aton failed");
+        E_NETWORK(_("ipaddr_aton failed"));
         return;
     }
 
     err = tftp_init_client(&tftp);
     if (err != lwip_ERR_OK) {
-        E_NETWORK("could not init TFTP client");
+        E_NETWORK(_("could not initialize TFTP client"));
         return;
     }
 
     f = tftp_open_file(file.c_str(), 1);
     if (f == NULL) {
-        E_NETWORK("failed to create file");
+        E_NETWORK(_("failed to create file"));
         return;
     }
 
@@ -160,19 +160,19 @@ void Basic::itftpput() {
 
     int ret = ipaddr_aton(host.c_str(), &srv);
     if (ret != 1) {
-        E_NETWORK("ipaddr_aton failed");
+        E_NETWORK(_("ipaddr_aton failed"));
         return;
     }
 
     err = tftp_init_client(&tftp);
     if (err != lwip_ERR_OK) {
-        E_NETWORK("could not init TFTP client");
+        E_NETWORK(_("could not initialize TFTP client"));
         return;
     }
 
     f = tftp_open_file(file.c_str(), 0);
     if (f == NULL) {
-        E_NETWORK("failed to open file");
+        E_NETWORK(_("failed to open file"));
         return;
     }
 
@@ -180,7 +180,7 @@ void Basic::itftpput() {
 
     err = tftp_put(f, &srv, TFTP_PORT, file.c_str(), TFTP_MODE_OCTET);
     if (err != lwip_ERR_OK) {
-        E_NETWORK("failed to send file");
+        E_NETWORK(_("failed to send file"));
         return;
     }
 
@@ -196,5 +196,5 @@ void Basic::itftpd() {
         tftp_cleanup();
         ++cip;
     } else
-        SYNTAX_T("exp ON or OFF");
+        SYNTAX_T(_("expected ON or OFF"));
 }

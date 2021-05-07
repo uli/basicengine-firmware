@@ -40,7 +40,7 @@ static void httpc_result(void *arg, httpc_result_t httpc_result, u32_t rx_conten
 static bool split_url(BString &url, BString &protocol, BString &hostname, BString &path) {
   int colon = url.indexOf("://");
   if (colon < 0) {
-    E_NETWORK("invalid URL");
+    E_NETWORK(_("invalid URL"));
     return false;
   }
 
@@ -88,7 +88,7 @@ void Basic::iwget() {
     return;
 
   if (!netif_is_link_up(&netif_eth0)) {
-    E_NETWORK(F("not connected"));
+    E_NETWORK(_("not connected"));
     return;
   }
 
@@ -131,7 +131,7 @@ void Basic::inet() {
     idisconnect();
     break;
   default:
-    E_ERR(SYNTAX, "exp network command");
+    E_ERR(SYNTAX, _("expected network command"));
     break;
   }
 }
