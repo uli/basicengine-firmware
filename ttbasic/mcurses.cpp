@@ -145,7 +145,7 @@ mcurses_puti (uint_fast8_t i)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 static void
-mcurses_addch_or_insch (uint_fast8_t ch, uint_fast8_t insert)
+mcurses_addch_or_insch (utf8_int32_t ch, uint_fast8_t insert)
 {
     static uint_fast8_t  insert_mode = FALSE;
 
@@ -268,7 +268,7 @@ initscr (void)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 void
-addch (uint_fast8_t ch)
+addch (utf8_int32_t ch)
 {
     mcurses_addch_or_insch (ch, FALSE);
 }
@@ -282,7 +282,9 @@ addstr (const char * str)
 {
     while (*str)
     {
-        mcurses_addch_or_insch (*str++, FALSE);
+        utf8_int32_t cp;
+        str = utf8codepoint((void *)str, &cp);
+        mcurses_addch_or_insch (cp, FALSE);
     }
 }
 
@@ -293,7 +295,7 @@ addstr (const char * str)
 void
 addstr_P (const char * str)
 {
-    uint_fast8_t ch;
+    utf8_int32_t ch;
 
     while ((ch = pgm_read_byte(str)) != '\0')
     {
@@ -458,7 +460,7 @@ delch (void)
  *---------------------------------------------------------------------------------------------------------------------------------------------------
  */
 void
-insch (uint_fast8_t ch)
+insch (utf8_int32_t ch)
 {
     mcurses_addch_or_insch (ch, TRUE);
 }

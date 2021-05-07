@@ -25,6 +25,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
+#include <utf8.h>
 
 #include "mcurses-config.h"
 
@@ -98,7 +99,7 @@ extern uint8_t             mcurses_curx;                                       /
 uint_fast8_t             initscr (void);                                     // initialize mcurses
 void                     move (uint_fast8_t, uint_fast8_t);                  // move cursor to line, column (home = 0, 0)
 void                     attrset (uint_fast16_t);                            // set attribute(s)
-void                     addch (uint_fast8_t);                               // add a character
+void                     addch (utf8_int32_t);                               // add a character
 void                     addstr (const char *);                              // add a string
 void                     addstr_P (const char *);                            // add a string (PROGMEM)
 void                     getnstr (char * str, uint_fast8_t maxlen);          // read a string (with mini editor functionality)
@@ -110,7 +111,7 @@ void                     clear (void);                                       // 
 void                     clrtobot (void);                                    // clear screen from current line to bottom
 void                     clrtoeol (void);                                    // clear from current column to end of line
 void                     delch (void);                                       // delete character at current position
-void                     insch (uint_fast8_t);                               // insert character at current position
+void                     insch (utf8_int32_t);                               // insert character at current position
 void                     nodelay (uint_fast8_t);                             // set/reset nodelay
 void                     halfdelay (uint_fast8_t);                           // set/reset halfdelay
 int                      getch (void);                                       // read key
