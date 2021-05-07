@@ -1,6 +1,7 @@
 /* key.c, Atto Emacs, Public Domain, Hugh Barney, 2016, Derived from: Anthony's Editor January 93 */
 
 #include "header.h"
+#include <utf8.h>
 
 /* desc, keys, func */
 keymap_t keymap[] = {
@@ -29,7 +30,7 @@ keymap_t keymap[] = {
 	{"C-x C-n next-buffer      ", "\x18\x0E", next_buffer },
 	{"C-x n next-buffer        ", "\x18\x6E", next_buffer },
 	{"C-x C-f find-file        ", "\x18\x06", readfile },
-	{"C-x C-s save-buffer      ", "\x18\x13", savebuffer },  
+	{"C-x C-s save-buffer      ", "\x18\x13", savebuffer },
 	{"C-x C-w write-file       ", "\x18\x17", writefile },  /* write and prompt for name */
 	{"C-x C-c exit             ", "\x18\x03", quit_ask },
 	{"esc b back-word          ", "\x1B\x62", wleft },
@@ -105,7 +106,7 @@ char_t *get_key(keymap_t *keys, keymap_t **key_return)
 	record = buffer;
 
 	do {
-		assert(K_BUFFER_LENGTH > record - buffer);
+		assert(K_BUFFER_LENGTH > record - buffer + 4);
 		/* read and record one byte. */
 #ifndef ENGINEBASIC
 		*record++ = (unsigned)getch();
@@ -115,12 +116,12 @@ char_t *get_key(keymap_t *keys, keymap_t **key_return)
 
 		if (evt & KEY_EVENT_ALT)
 			*record++ = 0x1b;
-		if (scancode > 0xff) {
+		if (scancode >= SC_KEY_DOWN && scancode <= SC_KEY_PRINT) {
 			*record++ = 0x1b;
 			*record++ = 0x5b;
 			*record++ = scancode & 0xff;
 		} else
-			*record++ = scancode & 0xff;
+			record = utf8catcodepoint((void *)record, scancode, 4);
 #endif
 		*record = '\0';
 
