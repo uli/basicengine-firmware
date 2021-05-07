@@ -283,7 +283,7 @@ addstr (const char * str)
     while (*str)
     {
         utf8_int32_t cp;
-        str = utf8codepoint((void *)str, &cp);
+        str = (const char *)utf8codepoint((void *)str, &cp);
         mcurses_addch_or_insch (cp, FALSE);
     }
 }
