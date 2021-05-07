@@ -4,26 +4,28 @@
 #include "help.h"
 #include <utf8.h>
 
+#define __(s) (s)
 static const char *section_names[] = {
-    [SECTION_BAS] = "BASIC core",
-    [SECTION_M] = "math",
-    [SECTION_OP] = "numeric",
-    [SECTION_SOP] = "string",
-    [SECTION_IO] = "input/output",
-    [SECTION_FS] = "file system",
-    [SECTION_BG] = "sprite/background engine",
-    [SECTION_PIX] = "pixel graphics",
-    [SECTION_SCR] = "screen handling",
-    [SECTION_SND] = "sound",
-    [SECTION_SYS] = "system",
+    [SECTION_BAS] = __("BASIC core"),
+    [SECTION_M] = __("math"),
+    [SECTION_OP] = __("numeric"),
+    [SECTION_SOP] = __("string"),
+    [SECTION_IO] = __("input/output"),
+    [SECTION_FS] = __("file system"),
+    [SECTION_BG] = __("sprite/background engine"),
+    [SECTION_PIX] = __("pixel graphics"),
+    [SECTION_SCR] = __("screen handling"),
+    [SECTION_SND] = __("sound"),
+    [SECTION_SYS] = __("system"),
 };
 
 static const char *type_names [] = {
-    [TYPE_BC] = "command",
-    [TYPE_BF] = "function",
-    [TYPE_BN] = "constant",
-    [TYPE_BO] = "operator",
+    [TYPE_BC] = __("command"),
+    [TYPE_BF] = __("function"),
+    [TYPE_BN] = __("constant"),
+    [TYPE_BO] = __("operator"),
 };
+#undef __
 
 static void print_wrapped(const char *text) {
     int indent = sc0.c_x();
@@ -69,46 +71,60 @@ static void print_help(const struct help_t *h) {
     pixel_t saved_bg_color = sc0.getBgColor();
 
     c_printf("\n\\Fc%s ", h->command);
-    c_printf("\\Fl(%s, %s)\\Ff\n\n", type_names[h->type], section_names[h->section]);
+    c_printf("\\Fl(%s, %s)\\Ff\n\n", _(type_names[h->type]), _(section_names[h->section]));
     print_wrapped(h->brief);
 
     if (h->usage) {
-        c_puts("\n\\FkUsage:\\Fn\n\n  ");
+        c_puts("\n\\Fk");
+        c_puts(_("Usage:"));
+        c_puts("\\Fn\n\n  ");
         print_wrapped(h->usage);
         c_puts("\\Fk");
     }
 
     if (h->args[0].name) {
-        c_puts("\n\\FkArguments:\n\n");
+        c_puts("\n\\Fk");
+        c_puts(_("Arguments:"));
+        c_puts("\n\n");
         for (int i = 0; h->args[i].name; ++i) {
             c_printf("  \\FL%s\t\\Ff", h->args[i].name);
-            print_wrapped(h->args[i].descr);
+            print_wrapped(_(h->args[i].descr));
         }
         sc0.setColor(COL(FG), COL(BG));
     }
 
     if (h->ret) {
-        c_puts("\n\\FkReturn value:\\Ff\n\n  ");
-        print_wrapped(h->ret);
+        c_puts("\n\\Fk");
+        c_puts(_("Return value:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->ret));
     }
 
     if (h->desc) {
-        c_puts("\n\\FkDescription:\\Ff\n\n  ");
-        print_wrapped(h->desc);
+        c_puts("\n\\Fk");
+        c_puts(_("Description:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->desc));
     }
 
     if (h->note) {
-        c_puts("\n\\FkNote:\\Ff\n\n  ");
-        print_wrapped(h->note);
+        c_puts("\n\\Fk");
+        c_puts(_("Note:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->note));
     }
 
     if (h->bugs) {
-        c_puts("\n\\FkBugs:\\Ff\n\n  ");
-        print_wrapped(h->bugs);
+        c_puts("\n\\Fk");
+        c_puts(_("Bugs:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->bugs));
     }
 
     if (h->ref[0]) {
-        c_puts("\n\\FkSee also:\\Ff\n\n");
+        c_puts("\n\\Fk");
+        c_puts(_("See also:"));
+        c_puts("\\Ff\n\n");
         for (int i = 0; h->ref[i]; ++i) {
             c_printf("  HELP %s\n", h->ref[i]);
         }
@@ -135,7 +151,9 @@ void Basic::ihelp() {
     screen_putch_paging_counter = 0;
 
     if (tokens.length() == 0) {
-        c_printf("\n\\FkAvailable commands:\\Ff\n\n");
+        c_puts("\n\\Fk");
+        c_puts(_("Available commands:"));
+        c_puts("\\Ff\n\n");
         for (int i = 0; help[i].command; ++i) {
             c_printf("%s\t", help[i].command);
         }
@@ -173,14 +191,18 @@ void Basic::ihelp() {
         pixel_t saved_fg_color = sc0.getFgColor();
         pixel_t saved_bg_color = sc0.getBgColor();
 
-        c_puts("\n\\FkMatching commands:\\Ff\n\n");
+        c_puts("\n\\Fk");
+        c_puts(_("Matching commands:"));
+        c_puts("\\Ff\n\n");
         for (int i = 0; i < hints.length(); ++i) {
             if (hints[i]->command) {
                 c_printf("  HELP %s\n", hints[i]->command);
             }
         }
 
-        c_puts("\n\\FkSee also:\\Ff\n\n");
+        c_puts("\n\\Fk");
+        c_puts(_("See also:"));
+        c_puts("\\Ff\n\n");
         for (int i = 0; i < hints.length(); ++i) {
             if (hints[i]->ref[0]) {
                 for (int j = 0; hints[i]->ref[j]; ++j) {
@@ -198,7 +220,7 @@ void Basic::ihelp() {
                 goto out;
             }
         }
-        c_printf("No help available\n");
+        c_printf(_("No help available\n"));
     }
 
 out:
