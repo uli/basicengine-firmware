@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #ifdef ENGINEBASIC
+#include "ttconfig.h"
 #include <mcurses.h>
 #else
 #include <curses.h>
@@ -121,7 +122,7 @@ extern window_t *wheadp;
 
 /*
  * Some compilers define size_t as a unsigned 16 bit number while
- * point_t and off_t might be defined as a signed 32 bit number.  
+ * point_t and off_t might be defined as a signed 32 bit number.
  * malloc(), realloc(), fread(), and fwrite() take size_t parameters,
  * which means there will be some size limits because size_t is too
  * small of a type.

@@ -10,6 +10,7 @@ COMMON_SOURCES = $(shell ls libraries/lua/*.cpp) $(shell ls ttbasic/*.cpp) $(she
 
 COMMON_SOURCES_C = $(shell ls ttbasic/*.c) $(shell ls libraries/stb/*.c) \
 	$(shell ls libraries/TTBAS_LIB/*.c) \
+	$(shell ls libraries/atto/*.c) \
 	libraries/tinycc/libtcc.c
 
 PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \

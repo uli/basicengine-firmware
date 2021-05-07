@@ -3550,7 +3550,7 @@ void SMALL Basic::ildbmp() {
   }
 }
 
-int e_main(int argc, char **argv);
+extern "C" int e_main(int argc, char **argv);
 
 /***bc sys EDIT
 Runs the ASCII text editor.

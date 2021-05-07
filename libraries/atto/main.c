@@ -33,7 +33,7 @@ const unsigned short color_pairs[] = {
 };
 #endif
 
-int main(int argc, char **argv)
+int e_main(int argc, char **argv)
 {
 #ifndef ENGINEBASIC
 	setlocale(LC_ALL, "") ; /* required for 3,4 byte UTF8 chars */
