@@ -1,0 +1,707 @@
+#
+msgid ""
+msgstr ""
+
+#. [OK]
+# from Google
+msgid "OK"
+msgstr "OK"
+
+#. [division with zero]
+# from Argos
+msgid "Division by zero"
+msgstr "Division durch Null"
+
+#. [Flow-point exception]
+# from Google
+msgid "Floating point exception"
+msgstr "Fließkomma-Ausnahme"
+
+#. [Overflow]
+# from Argos
+msgid "Overflow"
+msgstr "Überlauf"
+
+#. [Index outside the area]
+# from Google
+msgid "Subscript out of range"
+msgstr "Index außerhalb des Bereichs"
+
+#. [Icode buffer full]
+# from Google
+msgid "Icode buffer full"
+msgstr "Icode-Puffer voll"
+
+#. [Return stacking]
+# from Argos
+msgid "RETURN stack underflow"
+msgstr "RETURN-Stapelunterlauf"
+
+#. [Argument stack overflow]
+# from Google
+msgid "Argument stack overflow"
+msgstr "Argumentstapelüberlauf"
+
+#. [Undefined argument]
+# from Argos
+msgid "Undefined argument"
+msgstr "Unbekanntes Argument"
+
+#. [Next without for]
+# from Argos
+msgid "NEXT without FOR"
+msgstr "NEXT ohne FOR"
+
+#. [For without variable.]
+# from Google
+msgid "FOR without variable"
+msgstr "FOR ohne Variable"
+
+#. [LET without variable]
+# from Argos
+msgid "LET without variable"
+msgstr "LET ohne Variable"
+
+#. [IF without condition]
+# from Argos
+msgid "IF without condition"
+msgstr "IF ohne Bedingung"
+
+#. [IF stacking]
+# from Argos
+msgid "IF stack underflow"
+msgstr "IF-Stapelunterlauf"
+
+msgid "Undefined line number"
+msgstr "Unbekannte Zeilennummer"
+
+#. [\ '(\' or \ ') \' expects]
+# from Google
+msgid "\\'(\\' or \\')\\' expected"
+msgstr "\\'(\\' oder \\')\\' erwartet"
+
+#. [\ = \ 'expects]
+# from Argos
+msgid "\\'=\\' expected"
+msgstr "\\'=\\' erwartet"
+
+#. [System command can not be used]
+# from Google
+msgid "Cannot use system command"
+msgstr "Systembefehl kann nicht verwendet werden"
+
+#. [Illegal value]
+# from Google
+msgid "Illegal value"
+msgstr "Illegaler Wert"
+
+msgid "Out of range value"
+msgstr "Wert außerhalb des erlaubten Bereichs"
+
+#. [Program not found]
+# from Argos
+msgid "Program not found"
+msgstr "Programm nicht gefunden"
+
+msgid "Syntax error"
+msgstr "Syntaxfehler"
+
+#. [Internal error]
+# from Argos
+msgid "Internal error"
+msgstr "Interner Fehler"
+
+#. [Interruption]
+# from Google
+msgid "Break"
+msgstr "Unterbrechung"
+
+#. [Line too long]
+# from Google
+msgid "Line too long"
+msgstr "Zeile zu lang"
+
+#. [File typo]
+# from Google
+msgid "File write error"
+msgstr "File-Schreibfehler"
+
+#. [GPIO function can not be used]
+# from Google
+msgid "Cannot use GPIO function"
+msgstr "GPIO-Funktion kann nicht verwendet werden"
+
+#. [Too long path]
+# from Google
+msgid "Too long path"
+msgstr "Zu langer Pfad"
+
+#. [File not open]
+# from Google
+msgid "File not open"
+msgstr "Datei nicht geöffnet"
+
+#. [SD I / O error]
+# from Argos
+msgid "SD I/O error"
+msgstr "SD I/O-Fehler"
+
+#. [Bad filename]
+# from Google
+msgid "Bad file name"
+msgstr "Schlechter Dateiname"
+
+#. [Unsupported]
+# from Argos
+msgid "Not supported"
+msgstr "Nicht unterstützt"
+
+#. [Can not continue]
+# from Google
+msgid "Can't continue"
+msgstr "Kann nicht fortfahren"
+
+#. [Undefined array]
+# from Argos
+msgid "Undefined array"
+msgstr "Undefiniertes Array"
+
+msgid "Undefined label"
+msgstr "Unbekanntes Label"
+
+#. [I / O error]
+# from Argos
+msgid "I/O error"
+msgstr "I/O-Fehler"
+
+msgid "Type mismatch"
+msgstr "Typ-Mismatch"
+
+msgid "Local variable outside procedure"
+msgstr "Lokale Variable außerhalb einer Prozedur"
+
+#. [Blank list]
+# from Argos
+msgid "Empty list"
+msgstr "Leere Liste"
+
+#. [Endif not found]
+# from Argos
+msgid "ENDIF not found"
+msgstr "ENDIF nicht gefunden"
+
+#. [Not enough arguments]
+# from Argos
+msgid "Not enough arguments"
+msgstr "Nicht genug Argumente"
+
+msgid "File format error"
+msgstr "Dateiformatfehler"
+
+#. [Network error]
+# from Argos
+msgid "Network error"
+msgstr "Netzwerkfehler"
+
+#. [No directory]
+# from Google
+msgid "Not a directory"
+msgstr "Kein Verzeichnis"
+
+msgid "WHILE without WEND"
+msgstr "WHILE ohne WEND"
+
+#. [If stack overflow]
+# from Google
+msgid "IF stack overflow"
+msgstr "IF-Stapelüberlauf"
+
+msgid "Undefined procedure"
+msgstr "Unbekannte Prozedur"
+
+#. [System stack overflow]
+# from Google
+msgid "System stack overflow"
+msgstr "Systemstapelüberlauf"
+
+#. [unknown command]
+# from Argos
+msgid "Unknown command"
+msgstr "Unbekannter Befehl"
+
+#. [Proc without call / fn]
+# from Argos
+msgid "PROC without CALL/FN"
+msgstr "PROC ohne CALL/FN"
+
+#. [Chain has failed]
+# from Argos
+msgid "CHAIN failed"
+msgstr "CHAIN ist gescheitert"
+
+#. [Path]
+# from Google
+msgid "Path too long"
+msgstr "Pfad zu lang"
+
+#. [Undefined symbol]
+# from Argos
+msgid "Undefined symbol"
+msgstr "Undefiniertes Symbol"
+
+#. [Compiler error]
+# from Google
+msgid "Compiler error"
+msgstr "Compiler-Fehler"
+
+#. [Unknown / SDL]
+# from Argos
+msgid "unknown/SDL"
+msgstr "unbekannt/SDL"
+
+#. [unknown]
+# from Argos
+msgid "unknown"
+msgstr "unbekannt"
+
+#. [from% D to% D]
+# from Argos
+msgid "from %d to %d"
+msgstr "von %d bis %d"
+
+#. [Expected: \ "]
+# from Argos
+msgid "expected: \\\""
+msgstr "erwartet: \\\""
+
+#. [Invalid number]
+# from Google
+msgid "invalid number"
+msgstr "ungültige Nummer"
+
+#. [Invalid list index.]
+# from Google
+msgid "invalid list index"
+msgstr "ungültiger Listenindex"
+
+#. [Expected: variable.]
+# from Google
+msgid "expected: variable"
+msgstr "erwartet: Variable"
+
+#. [Expected: Separator]
+# from Argos
+msgid "expected: separator"
+msgstr "erwartet: Separator"
+
+#. [Invalid program line]
+# from Google
+msgid "invalid program line"
+msgstr "ungültige Programmzeile"
+
+#. [empty string]
+# from Argos
+msgid "empty string"
+msgstr "leerer String"
+
+#. [Expected: BG or Sprite]
+# from Argos
+msgid "expected: BG or SPRITE"
+msgstr "erwartet: BG oder SPRITE"
+
+#. [Expected: filename]
+# from Argos
+msgid "expected: file name"
+msgstr "erwartet: Dateiname"
+
+#. [Negative string offset.]
+# from Google
+msgid "negative string offset"
+msgstr "negativer String-Offset"
+
+#. [negative length]
+# from Argos
+msgid "negative length"
+msgstr "negative Länge"
+
+#. [Need min 1 characters]
+# from Google
+msgid "need min 1 character"
+msgstr "brauche min 1 Zeichen"
+
+#. [Expected: network function]
+# from Argos
+msgid "expected: network function"
+msgstr "erwartet: Netzwerkfunktion"
+
+#. [Expected: Goto or Gosub]
+# from Argos
+msgid "expected: GOTO or GOSUB"
+msgstr "erwartet: GOTO oder GOSUB"
+
+msgid "FOR too many nested"
+msgstr "zu viele verschachtelte FOR"
+
+msgid "FOR without TO"
+msgstr "FOR ohne TO"
+
+msgid "File read error"
+msgstr "Dateilesefehler"
+
+msgid "Out of video memory"
+msgstr "Videospeicher voll"
+
+msgid "Out of memory"
+msgstr "Speicher voll"
+
+msgid "Duplicate procedure"
+msgstr "Prozedur existiert schon"
+
+msgid "File seek error"
+msgstr "Dateisuchfehler"
+
+msgid "max %d"
+msgstr "max %d"
+
+msgid "min %d"
+msgstr "min %d"
+
+msgid "malformed DATA"
+msgstr "fehlerhaftes DATA"
+
+#. [Expected: End of the explanation]
+# from Argos
+msgid "expected: end of statement"
+msgstr "erwartet: Ende der Erklärung"
+
+msgid "multiple periods"
+msgstr "mehrere Dezimalpunkte"
+
+msgid " in "
+msgstr " in "
+
+msgid "expected: numeric expr"
+msgstr "erwartet: numerischer Ausdruck"
+
+#. [Expected: Then or Goto]
+# from Argos
+msgid "expected: THEN or GOTO"
+msgstr "erwartet: THEN oder GOTO"
+
+msgid "expected: ON, OFF or LIST"
+msgstr "erwartet: ON, OFF oder LIST"
+
+msgid "not a BASIC program"
+msgstr "kein BASIC-Programm"
+
+#. [Expected: command]
+# from Google
+msgid "expected: command"
+msgstr "erwartet: Befehl"
+
+#. [Unknown memory size]
+# from Argos
+msgid "unknown memory size\n"
+msgstr "unbekannte Speichergröße\n"
+
+#. [Bytes free]
+# from Argos
+msgid " bytes free\n"
+msgstr " Bytes frei\n"
+
+#. [Free MB]
+# from Argos
+msgid " MB free\n"
+msgstr " MB frei\n"
+
+#. [directory]
+# from Argos
+msgid "Directory "
+msgstr "Verzeichnis "
+
+#. [none]
+# from Google
+msgid "none"
+msgstr "keiner"
+
+#. [OK]
+# from Argos
+msgid "ok\n"
+msgstr "ok\n"
+
+#. [Expected: BG parameters]
+# from Argos
+msgid "expected: BG parameter"
+msgstr "erwartet: BG-Parameter"
+
+#. [Expected: Sprite parameters]
+# from Google
+msgid "expected: sprite parameter"
+msgstr "Erwartet: Sprite-Parameter"
+
+#. [Expected: Input, Output or Off]
+# from Argos
+msgid "expected: INPUT, OUTPUT or OFF"
+msgstr "erwartet: INPUT, OUTPUT oder AUS"
+
+#. [Expected: File mode]
+# from Argos
+msgid "expected: file mode"
+msgstr "erwartet: Dateimodus"
+
+#. [Use:]
+# from Argos
+msgid "Usage:"
+msgstr "Verwendung:"
+
+#. [Arguments:]
+# from Argos
+msgid "Arguments:"
+msgstr "Argumente:"
+
+#. [Return value:]
+# from Argos
+msgid "Return value:"
+msgstr "Rückgabewert:"
+
+#. [Description:]
+# from Argos
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#. [Annotation:]
+# from Argos
+msgid "Note:"
+msgstr "Anmerkung:"
+
+#. [Error:]
+# from Argos
+msgid "Bugs:"
+msgstr "Fehler:"
+
+#. [See also:]
+# from Argos
+msgid "See also:"
+msgstr "Siehe auch:"
+
+#. [Available commands:]
+# from Argos
+msgid "Available commands:"
+msgstr "Verfügbare Befehle:"
+
+#. [Matching commands:]
+# from Argos
+msgid "Matching commands:"
+msgstr "Passende Befehle:"
+
+#. [No help available]
+# from Argos
+msgid "No help available\n"
+msgstr "Keine Hilfe verfügbar\n"
+
+#. [Expected: Date or Flags]
+# from Argos
+msgid "expected: DATE or FLAGS"
+msgstr "erwartet: DATE oder FLAGS"
+
+#. [Expected: Date or Time]
+# from Argos
+msgid "expected: DATE or TIME"
+msgstr "erwartet: DATE oder TIME"
+
+#. [No array variable]
+# from Google
+msgid "not an array variable"
+msgstr "keine Array-Variable"
+
+#. [missing dimensions]
+# from Google
+msgid "missing dimensions"
+msgstr "fehlende Dimensionen"
+
+#. [Expected: List Reference]
+# from Argos
+msgid "expected: list reference"
+msgstr "erwartet: Listenreferenz"
+
+#. [Expected: numerical list reference]
+# from Argos
+msgid "expected: numeric list reference"
+msgstr "erwartet: numerische Listenreferenz"
+
+#. [Expected: String List Reference]
+# from Argos
+msgid "expected: string list reference"
+msgstr "erwartet: Stringlistenreferenz"
+
+#. [Invalid URL]
+# from Google
+msgid "invalid URL"
+msgstr "ungültige URL"
+
+#. [not connected]
+# from Google
+msgid "not connected"
+msgstr "nicht verbunden"
+
+#. [Expected: Network command]
+# from Argos
+msgid "expected: network command"
+msgstr "erwartet: Netzwerk-Befehl"
+
+#. [Tftp error]
+# from Argos
+msgid "TFTP error "
+msgstr "TFTP-Fehler "
+
+#. [ipaddr_aton failed]
+# from Google
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton fehlgeschlagen"
+
+#. [The TFTP client could not be initialized]
+# from Google
+msgid "could not initialize TFTP client"
+msgstr "Der TFTP-Client konnte nicht initialisiert werden."
+
+#. [Creation of the file failed]
+# from Google
+msgid "failed to create file"
+msgstr "Erstellung der Datei fehlgeschlagen"
+
+#. [file could not be opened]
+# from Google
+msgid "failed to open file"
+msgstr "Datei konnte nicht geöffnet werden"
+
+#. [File could not be sent]
+# from Google
+msgid "failed to send file"
+msgstr "Datei konnte nicht gesendet werden"
+
+#. [Expected: ON or OFF]
+# from Argos
+msgid "expected: ON or OFF"
+msgstr "erwartet: ON oder OFF"
+
+#. [Files,]
+# from Argos
+msgid " files, "
+msgstr " Dateien, "
+
+#. [Bytes.]
+# from Argos
+msgid " bytes.\n"
+msgstr " Bytes.\n"
+
+msgid "File open error"
+msgstr "Dateiöffnungsfehler"
+
+msgid "Duplicate label"
+msgstr "Doppeltes Label"
+
+msgid "Out of data"
+msgstr "Daten zu Ende"
+
+msgid "USING format error"
+msgstr "USING-Formatfehler"
+
+msgid "Failed to init synth"
+msgstr "Synthesizer-Initialisierung fehlgeschlagen"
+
+msgid "negative substring length"
+msgstr "negative Teilstringlänge"
+
+msgid "expected: string expr"
+msgstr "erwartet: Stringausdruck"
+
+msgid "Skipping AUTOEXEC.BAS\n"
+msgstr "Überspringe AUTOEXEC.BAS\n"
+
+#. [Too many nested Gosub]
+# from Argos
+msgid "too many nested GOSUB"
+msgstr "zu viele geschachtelte GOSUB"
+
+msgid "too many nested FOR"
+msgstr "zu viele geschachtelte FOR"
+
+#. [Synthesizer could not be initialized]
+# from Google
+msgid "Failed to initialize synthesizer"
+msgstr "Synthesizer konnte nicht initialisiert werden"
+
+#. [Basic]
+# from Argos
+msgid "BASIC core"
+msgstr "BASIC-Kern"
+
+#. [Handler:]
+# from Argos
+msgid "Handler:"
+msgstr "Handler:"
+
+#. [command]
+# from Argos
+msgid "command"
+msgstr "Befehl"
+
+#. [constant]
+# from Google
+msgid "constant"
+msgstr "Konstante"
+
+#. [File system]
+# from Argos
+msgid "file system"
+msgstr "Dateisystem"
+
+#. [function]
+# from Argos
+msgid "function"
+msgstr "Funktion"
+
+#. [Enter / output]
+# from Argos
+msgid "input/output"
+msgstr "Eingabe/Ausgabe"
+
+#. [maths]
+# from Argos
+msgid "math"
+msgstr "Mathe"
+
+#. [numeric]
+# from Google
+msgid "numeric"
+msgstr "numerisch"
+
+#. [google fail]
+# from Google
+msgid "operator"
+msgstr "operator"
+
+#. [Pixel graphic.]
+# from Google
+msgid "pixel graphics"
+msgstr "Pixelgrafik"
+
+#. [Screen handling]
+# from Google
+msgid "screen handling"
+msgstr "Bildschirmhandling"
+
+#. [volume]
+# from Argos
+msgid "sound"
+msgstr "Ton"
+
+#. [String]
+# from Argos
+msgid "string"
+msgstr "String"
+
+#. [system]
+# from Argos
+msgid "system"
+msgstr "System"
