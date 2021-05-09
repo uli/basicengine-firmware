@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
 
+#ifndef _CONFIG_H
+#define _CONFIG_H
+
 #include <stdint.h>
 #include "eb_config.h"
 
@@ -23,3 +26,5 @@ typedef struct {
 } SystemConfig;
 
 extern SystemConfig CONFIG;
+
+#endif
