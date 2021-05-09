@@ -2595,7 +2595,7 @@ void SMALL Basic::irenum() {
 }
 
 /***bc bas SAVE
-Saves the BASIC program in memory to storage.
+Saves the BASIC program in memory to a file.
 \usage SAVE file$
 \args
 @file$	name of file to be saved
@@ -2751,7 +2751,7 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode, encoding_t enc) {
 /***bc bas DELETE
 Delete specified line(s) from the BASIC program in memory.
 
-WARNING: Do not confuse with `REMOVE`, which deletes files from storage.
+WARNING: Do not confuse with `REMOVE`, which deletes files.
 \usage DELETE range
 \args
 @range	a range of BASIC program lines
@@ -3347,7 +3347,7 @@ BString Basic::getParamFname() {
 }
 
 /***bc scr SAVE IMAGE
-Saves a portion of pixel memory to storage as an image file.
+Saves a portion of pixel memory as an image file.
 \usage SAVE IMAGE image$ [POS x, y] [SIZE w, h]
 \args
 @image$	name of image file to be created
@@ -3393,7 +3393,7 @@ void SMALL Basic::isavepcx() {
 }
 
 /***bc scr LOAD IMAGE
-Loads an image file in whole or in parts from storage to pixel memory.
+Loads an image file in whole or in parts to pixel memory.
 \usage
 LOAD IMAGE image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
            [SIZE width, height] [KEY col] [SCALE scale_x, scale_y]
@@ -3574,7 +3574,7 @@ void Basic::iedit() {
 }
 
 /***bc bas LOAD
-Load a program from storage.
+Load a program from a file.
 \usage LOAD file$ [FONT n]
 \args
 @file$	name of the BASIC program
@@ -3587,7 +3587,7 @@ next-generation systems.
 \ref LOAD_BG LOAD_IMAGE SAVE
 ***/
 /***bc bas MERGE
-Merge a program in storage with the program currently in memory.
+Merge a program in a file with the program currently in memory.
 \usage MERGE file$[, line_num]
 \args
 @file$		name of the BASIC program to be merged

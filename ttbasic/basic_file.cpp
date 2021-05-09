@@ -580,7 +580,7 @@ void Basic::irename() {
 }
 
 /***bc fs REMOVE
-Deletes a file from storage.
+Deletes a file.
 
 WARNING: `REMOVE` does not ask for confirmation before deleting the
          specified file.

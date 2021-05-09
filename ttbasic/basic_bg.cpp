@@ -141,7 +141,7 @@ void Basic::ibg() {
 }
 
 /***bc bg LOAD BG
-Loads a background map from storage.
+Loads a background map from a file.
 \usage LOAD BG bg, file$
 \args
 @bg	background number. [`0` to `{MAX_BG_m1}`]
@@ -167,7 +167,7 @@ void Basic::iloadbg() {
 }
 
 /***bc bg SAVE BG
-Saves a background map to storage.
+Saves a background map to a file.
 \usage SAVE BG bg TO file$
 \args
 @bg	background number. [`0` to `{MAX_BG_m1}`]
