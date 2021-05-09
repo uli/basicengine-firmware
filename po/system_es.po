@@ -1,0 +1,644 @@
+#
+msgid ""
+msgstr ""
+
+#. [in Ordnung]
+# from Argos
+msgid "OK"
+msgstr "OK"
+
+#. [Durch Null teilen.]
+# from Argos
+msgid "Division by zero"
+msgstr "División por cero"
+
+#. [Fließkomma-Ausnahme]
+# from Argos
+msgid "Floating point exception"
+msgstr "Excepción de punto flotante"
+
+#. [Überlauf]
+# from Argos
+msgid "Overflow"
+msgstr "Desbordamiento"
+
+#. [Subindex außerhalb des Bereichs]
+# from Google
+msgid "Subscript out of range"
+msgstr "Subíndice fuera de rango"
+
+#. [Zu viele Gosub verschachtelte]
+# from Argos
+msgid "too many nested GOSUB"
+msgstr "demasiados GOSUB anidados"
+
+#. [Undefined Argument]
+# from Google
+msgid "Undefined argument"
+msgstr "Argumento indefinido"
+
+#. [Weiter ohne von]
+# from Google
+msgid "NEXT without FOR"
+msgstr "NEXT sin FOR"
+
+#. [Für keine Variable]
+# from Google
+msgid "FOR without variable"
+msgstr "FOR sin variable"
+
+#. [Denn ohne]
+# from Google
+msgid "FOR without TO"
+msgstr "FOR sin TO"
+
+#. [Ohne Variable]
+# from Argos
+msgid "LET without variable"
+msgstr "LET sin variable"
+
+#. [Wenn ohne Bedingungen]
+# from Argos
+msgid "IF without condition"
+msgstr "IF sin condiciones"
+
+#. [Nicht definierte Zeilennummer]
+# from Google
+msgid "Undefined line number"
+msgstr "Número de línea no definido"
+
+#. ['(\' oder \ ')' erwartet]
+# from Google
+msgid "\\'(\\' or \\')\\' expected"
+msgstr "\\'(\\' o \\')\\' esperado"
+
+#. ['= \' erwartet]
+# from Google
+msgid "\\'=\\' expected"
+msgstr "\\'=\\' esperado"
+
+#. [Sie können den Systembefehl nicht verwenden]
+# from Argos
+msgid "Cannot use system command"
+msgstr "No puede usar el comando del sistema"
+
+#. [Illegaler Wert]
+# from Google
+msgid "Illegal value"
+msgstr "Valor ilegal"
+
+#. [Wert außerhalb des Bereichs]
+# from Google
+msgid "Out of range value"
+msgstr "Valor fuera de rango"
+
+#. [Programm nicht gefunden]
+# from Argos
+msgid "Program not found"
+msgstr "Programa no encontrado"
+
+#. [Syntax-Fehler]
+# from Argos
+msgid "Syntax error"
+msgstr "Error de sintaxis"
+
+#. [Interner Fehler]
+# from Argos
+msgid "Internal error"
+msgstr "Error interno"
+
+#. [Zeile zu lang]
+# from Argos
+msgid "Line too long"
+msgstr "Línea demasiado larga"
+
+#. [File Schreibfehler.]
+# from Argos
+msgid "File write error"
+msgstr "Error de escritura de archivo"
+
+#. [Dateilesefehler]
+# from Google
+msgid "File read error"
+msgstr "Error de lectura del archivo"
+
+#. [Sie können die GPIO-Funktion nicht verwenden]
+# from Argos
+msgid "Cannot use GPIO function"
+msgstr "No puede usar la función GPIO"
+
+#. [Straße zu lange]
+# from Argos
+msgid "Path too long"
+msgstr "Camino demasiado largo"
+
+#. [File Open Fehler.]
+# from Argos
+msgid "File open error"
+msgstr "Error abierto de archivo"
+
+#. [Datei nicht geöffnet]
+# from Argos
+msgid "File not open"
+msgstr "Archivo no abierto"
+
+#. [Fehler sd i / o]
+# from Argos
+msgid "SD I/O error"
+msgstr "Error SD I/O"
+
+#. [Schlechter Dateiname]
+# from Argos
+msgid "Bad file name"
+msgstr "Nombre de archivo malo"
+
+#. [Nicht unterstützt]
+# from Argos
+msgid "Not supported"
+msgstr "No apoyado"
+
+#. [Kein Videospeicher]
+# from Google
+msgid "Out of video memory"
+msgstr "Sin memoria de vídeo"
+
+#. [Aus der Erinnerung]
+# from Argos
+msgid "Out of memory"
+msgstr "Fuera de memoria"
+
+#. [Ich kann nicht fortfahren]
+# from Argos
+msgid "Can't continue"
+msgstr "No puedo continuar"
+
+#. [Undefiniertes Verfahren]
+# from Argos
+msgid "Undefined procedure"
+msgstr "Procedimiento indefinido"
+
+#. [Unbestimmter Etikett]
+# from Google
+msgid "Undefined label"
+msgstr "Etiqueta indefinida"
+
+#. [Doppelverfahren]
+# from Argos
+msgid "Duplicate procedure"
+msgstr "Procedimiento duplicado"
+
+#. [Duplikatetikett]
+# from Google
+msgid "Duplicate label"
+msgstr "Etiqueta duplicada"
+
+#. [Aus den Daten]
+# from Google
+msgid "Out of data"
+msgstr "Fuera de los datos"
+
+#. [O / I-Fehler]
+# from Argos
+msgid "I/O error"
+msgstr "Error de la O/I"
+
+#. [Leere Liste]
+# from Google
+msgid "Empty list"
+msgstr "Lista vacía"
+
+#. [EndIf nicht gefunden]
+# from Argos
+msgid "ENDIF not found"
+msgstr "ENDIF no encontrado"
+
+#. [Es gibt nicht genug Argumente]
+# from Argos
+msgid "Not enough arguments"
+msgstr "No hay suficientes argumentos"
+
+#. [Fehlerformatfehler.]
+# from Argos
+msgid "File format error"
+msgstr "Error de formato de archivo"
+
+#. [Netzwerkfehler]
+# from Argos
+msgid "Network error"
+msgstr "Error de red"
+
+#. [Kein Verzeichnis]
+# from Google
+msgid "Not a directory"
+msgstr "No un directorio"
+
+msgid "WHILE without WEND"
+msgstr "WHILE sin WEND"
+
+#. [Überlauf des Systemstapels]
+# from Google
+msgid "System stack overflow"
+msgstr "Desbordamiento de la pila del sistema"
+
+#. [Fehlersuchefehler.]
+# from Argos
+msgid "File seek error"
+msgstr "Error de búsqueda de archivos"
+
+#. [Fehler beim Initialisieren des Synthesizers]
+# from Google
+msgid "Failed to initialize synthesizer"
+msgstr "Error al inicializar el sintetizador"
+
+#. [Unbekannter Befehl]
+# from Google
+msgid "Unknown command"
+msgstr "Comando desconocido"
+
+msgid "PROC without CALL/FN"
+msgstr "PROC sin CALL/FN"
+
+#. [Kette fehlgeschlagen]
+# from Argos
+msgid "CHAIN failed"
+msgstr "CHAIN falló"
+
+#. [Unbestimmter Symbol]
+# from Google
+msgid "Undefined symbol"
+msgstr "Símbolo indefinido"
+
+#. [Compiler-Fehler]
+# from Google
+msgid "Compiler error"
+msgstr "Error del compilador"
+
+#. [Unbekannt / sdl.]
+# from Google
+msgid "unknown/SDL"
+msgstr "desconocido/SDL"
+
+#. [Unbekannt]
+# from Argos
+msgid "unknown"
+msgstr "desconocida"
+
+#. [Max% D.]
+# from Argos
+msgid "max %d"
+msgstr "max %d"
+
+#. [Verstand.]
+# from Argos
+msgid "min %d"
+msgstr "min %d"
+
+#. [von% d A% d]
+# from Argos
+msgid "from %d to %d"
+msgstr "de %d a %d"
+
+#. [Erwartet: \ "]
+# from Argos
+msgid "expected: \\\""
+msgstr "esperado: \\\""
+
+#. [ungültige Nummer]
+# from Google
+msgid "invalid number"
+msgstr "número invalido"
+
+#. [Ungültiger Listenindex.]
+# from Argos
+msgid "invalid list index"
+msgstr "Índice de lista inválida"
+
+#. [Erwartet: Variable.]
+# from Argos
+msgid "expected: variable"
+msgstr "esperada: variable"
+
+#. [Erwartet: Separator]
+# from Argos
+msgid "expected: separator"
+msgstr "esperada: separador"
+
+msgid "malformed DATA"
+msgstr "DATA malformado"
+
+#. [Ungültige Programmzeile]
+# from Argos
+msgid "invalid program line"
+msgstr "línea de programa inválida"
+
+#. [Erwartet: Ende der Erklärung]
+# from Google
+msgid "expected: end of statement"
+msgstr "esperado: fin de la declaración"
+
+#. [Erwartet: bg oder sprite]
+# from Argos
+msgid "expected: BG or SPRITE"
+msgstr "esperada: BG o SPRITE"
+
+#. [Erwartet: Dateiname]
+# from Argos
+msgid "expected: file name"
+msgstr "esperado: nombre de archivo"
+
+#. [auf]
+# from Google
+msgid " in "
+msgstr " en "
+
+#. [Negative Länge]
+# from Argos
+msgid "negative length"
+msgstr "longitud negativa"
+
+#. [brauche min 1 Zeichen]
+# from Argos
+msgid "need min 1 character"
+msgstr "necesidad min 1 carácter"
+
+#. [Erwartet: Netzwerkfunktion]
+# from Argos
+msgid "expected: network function"
+msgstr "esperada: función de red"
+
+#. [Erwartet: Kette Expr]
+# from Argos
+msgid "expected: string expr"
+msgstr "esperada: expr de cadena"
+
+#. [Erwartet: goto oder gosub]
+# from Argos
+msgid "expected: GOTO or GOSUB"
+msgstr "esperada: GOTO o GOSUB"
+
+#. [Erwartet: dann oder goto]
+# from Argos
+msgid "expected: THEN or GOTO"
+msgstr "esperada: THEN o GOTO"
+
+#. [Erwartet: EIN, AUS oder LISTE]
+# from Argos
+msgid "expected: ON, OFF or LIST"
+msgstr "esperada: ON, OFF o LIST"
+
+#. [Es ist kein grundlegendes Programm]
+# from Argos
+msgid "not a BASIC program"
+msgstr "no es un programa BASIC"
+
+#. [Erwartet: Befehl.]
+# from Argos
+msgid "expected: command"
+msgstr "esperado: comando"
+
+#. [Skip AutoExec.bas überspringen.]
+# from Argos
+msgid "Skipping AUTOEXEC.BAS\n"
+msgstr "Saltar AUTOEXEC.BAS\n"
+
+#. [Unbekannte Speichergröße]
+# from Argos
+msgid "unknown memory size\n"
+msgstr "tamaño de memoria desconocido\n"
+
+#. [Verzeichnis]
+# from Argos
+msgid "Directory "
+msgstr "Directorio "
+
+#. [keiner]
+# from Argos
+msgid "none"
+msgstr "ninguno"
+
+#. [Erwartet: Parameter BG]
+# from Argos
+msgid "expected: BG parameter"
+msgstr "esperado: parámetro BG"
+
+#. [Erwartet: Sprite-Parameter]
+# from Argos
+msgid "expected: sprite parameter"
+msgstr "esperado: parámetro sprite"
+
+#. [Erwartet: Eingang, Ausgang oder Aus]
+# from Google
+msgid "expected: INPUT, OUTPUT or OFF"
+msgstr "esperado: INPUT, OUTPUT o OFF"
+
+#. [Erwartet: Dateimodus]
+# from Argos
+msgid "expected: file mode"
+msgstr "esperado: modo de archivo"
+
+#. [Benutzen:]
+# from Google
+msgid "Usage:"
+msgstr "Uso:"
+
+#. [Argumente:]
+# from Argos
+msgid "Arguments:"
+msgstr "Argumentos:"
+
+#. [Rückgabewert:]
+# from Argos
+msgid "Return value:"
+msgstr "Valor de retorno:"
+
+#. [Beschreibung:]
+# from Argos
+msgid "Description:"
+msgstr "Descripción:"
+
+#. [Hinweis:]
+# from Argos
+msgid "Note:"
+msgstr "Nota:"
+
+#. [Fehler:]
+# from Argos
+msgid "Bugs:"
+msgstr "Errores:"
+
+#. [Siehe auch:]
+# from Argos
+msgid "See also:"
+msgstr "Véase también:"
+
+#. [Verfügbare Befehle:]
+# from Argos
+msgid "Available commands:"
+msgstr "Comandos disponibles:"
+
+#. [Keine Hilfe verfügbar]
+# from Argos
+msgid "No help available\n"
+msgstr "No hay ayuda disponible\n"
+
+msgid "expected: DATE or FLAGS"
+msgstr "esperada: DATE o FLAGS"
+
+msgid "expected: DATE or TIME"
+msgstr "esperada: DATE o TIME"
+
+#. [Keine Matrixvariable]
+# from Argos
+msgid "not an array variable"
+msgstr "no una variable de matriz"
+
+#. [Fehlende Dimensionen]
+# from Google
+msgid "missing dimensions"
+msgstr "dimensiones faltantes"
+
+#. [Erwartung: Listenreferenz]
+# from Google
+msgid "expected: list reference"
+msgstr "esperado: referencia de lista"
+
+#. [Erwartet: Referenz aus der numerischen Liste]
+# from Argos
+msgid "expected: numeric list reference"
+msgstr "esperada: referencia de la lista numérica"
+
+#. [Erwartet: Referenz aus der Liste der Ketten]
+# from Argos
+msgid "expected: string list reference"
+msgstr "esperada: referencia de la lista de cadenas"
+
+#. [Ungültige URL.]
+# from Argos
+msgid "invalid URL"
+msgstr "URL inválida"
+
+#. [nicht verbunden]
+# from Argos
+msgid "not connected"
+msgstr "no conectado"
+
+#. [Erwartet: Netzwerkbefehl]
+# from Argos
+msgid "expected: network command"
+msgstr "esperado: comando de red"
+
+#. [TFTP-Fehler]
+# from Argos
+msgid "TFTP error "
+msgstr "Error TFTP "
+
+#. [ipaddr_aton ist fehlgeschlagen]
+# from Argos
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton falló"
+
+#. [Sie können den TFTP-Client nicht initialisieren]
+# from Argos
+msgid "could not initialize TFTP client"
+msgstr "no puede inicializar cliente TFTP"
+
+#. [Erstellung der Datei fehlgeschlagen]
+# from Argos
+msgid "failed to create file"
+msgstr "falló en crear archivo"
+
+#. [Datei konnte nicht geöffnet werden]
+# from Argos
+msgid "failed to open file"
+msgstr "falló a abrir archivo"
+
+#. [Die Datei konnte nicht gesendet werden]
+# from Argos
+msgid "failed to send file"
+msgstr "falló en enviar el archivo"
+
+#. [Erwartet: ein- oder aus]
+# from Argos
+msgid "expected: ON or OFF"
+msgstr "esperada: ON o OFF"
+
+#. [Dateien,]
+# from Argos
+msgid " files, "
+msgstr " archivos, "
+
+#. [Bytes]
+# from Argos
+msgid " bytes.\n"
+msgstr " bytes.\n"
+
+msgid " MB free\n"
+msgstr " MB libres\n"
+
+msgid " bytes free\n"
+msgstr " bytes libres\n"
+
+#. [Grundkern]
+# from Google
+msgid "BASIC core"
+msgstr "núcleo BASIC"
+
+#. [Befehl]
+# from Argos
+msgid "command"
+msgstr "comando"
+
+#. [Konstante]
+# from Argos
+msgid "constant"
+msgstr "constante"
+
+#. [Dateisystem]
+# from Argos
+msgid "file system"
+msgstr "sistema de archivos"
+
+#. [Funktion]
+# from Argos
+msgid "function"
+msgstr "función"
+
+#. [Eingang Ausgang]
+# from Argos
+msgid "input/output"
+msgstr "entrada/salida"
+
+#. [Mathematik]
+# from Argos
+msgid "math"
+msgstr "matemáticas"
+
+#. [numerisch]
+# from Argos
+msgid "numeric"
+msgstr "numérico"
+
+#. [Operator]
+# from Argos
+msgid "operator"
+msgstr "operador"
+
+#. [Pixelgrafik.]
+# from Google
+msgid "pixel graphics"
+msgstr "gráficos de píxeles"
+
+#. [Bildschirmhandling]
+# from Argos
+msgid "screen handling"
+msgstr "manejo de pantalla"
+
+#. [Klang]
+# from Argos
+msgid "sound"
+msgstr "sonido"
+
+#. [System]
+# from Argos
+msgid "system"
+msgstr "sistema"
