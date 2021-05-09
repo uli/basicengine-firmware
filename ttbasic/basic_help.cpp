@@ -100,6 +100,20 @@ static void print_help(const struct help_t *h) {
         print_wrapped(_(h->ret));
     }
 
+    if (h->ret) {
+        c_puts("\n\\Fk");
+        c_puts(_("Types:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->types));
+    }
+
+    if (h->ret) {
+        c_puts("\n\\Fk");
+        c_puts(_("Handler:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->handler));
+    }
+
     if (h->desc) {
         c_puts("\n\\Fk");
         c_puts(_("Description:"));
