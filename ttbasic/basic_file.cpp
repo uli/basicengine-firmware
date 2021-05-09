@@ -305,7 +305,7 @@ BString Basic::scwd() {
   if (_getcwd(cwd, 64))
     return BString(cwd);
   else {
-    err = ERR_LONG_PATH;
+    err = ERR_LONGPATH;
     return BString();
   }
 }
@@ -372,7 +372,7 @@ void Basic::iopen() {
     f.d = _opendir(filename.c_str());
     char cwd[64];
     if (_getcwd(cwd, 64) == NULL) {
-      err = ERR_LONG_PATH;
+      err = ERR_LONGPATH;
       if (f.d)
         _closedir(f.d);
       return;

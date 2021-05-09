@@ -30,7 +30,7 @@ ESTR(ERR_LONG, "Line too long")
 ESTR(ERR_FILE_WRITE, "File write error") //  追加
 ESTR(ERR_FILE_READ, "File read error") //  追加
 ESTR(ERR_GPIO, "Cannot use GPIO function") //  追加
-ESTR(ERR_LONGPATH, "Too long path") //  追加
+ESTR(ERR_LONGPATH, "Path too long") //  追加
 ESTR(ERR_FILE_OPEN, "File open error") //  追加
 ESTR(ERR_FILE_NOT_OPEN, "File not open")
 ESTR(ERR_SD_NOT_READY, "SD I/O error") //  追加
@@ -62,6 +62,5 @@ ESTR(ERR_TSF, "Failed to init synth")
 ESTR(ERR_UNK, "Unknown command")
 ESTR(ERR_PROCWOC, "PROC without CALL/FN")
 ESTR(ERR_CHAIN, "CHAIN failed")
-ESTR(ERR_LONG_PATH, "Path too long")
 ESTR(ERR_UNDEFSYM, "Undefined symbol")
 ESTR(ERR_COMPILE, "Compiler error")
