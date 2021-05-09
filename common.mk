@@ -32,9 +32,9 @@ $(OBJDIR)/%.o: %.S
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(OBJDIR)/ttbasic/basic_help.o: $(OBJDIR)/ttbasic/helptext.o
-ttbasic/helptext.cpp: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
-	$(MAKE) -C ttbasic -f autogen.mk helptext.cpp
+$(OBJDIR)/ttbasic/basic_help.o: ttbasic/helptext_en.h
+ttbasic/helptext_en.h: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp)
+	$(MAKE) -C ttbasic -f autogen.mk helptext_en.h msgs_de.h
 
 ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h

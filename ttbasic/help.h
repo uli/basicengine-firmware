@@ -49,7 +49,10 @@ struct help_t {
     const char *ref[8];
 };
 
-extern const struct help_t help[];
+extern const struct help_t help_en[];
+extern const struct help_t help_de[];
+extern const struct help_t help_fr[];
+extern const struct help_t help_es[];
 
 #define XSTR(x) STR(x)
 #define STR(x) #x

@@ -2,7 +2,13 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "help.h"
+#include "config.h"
 #include <utf8.h>
+
+#include "helptext_en.h"
+#include "helptext_de.h"
+#include "helptext_fr.h"
+#include "helptext_es.h"
 
 #define __(s) (s)
 static const char *section_names[] = {
@@ -149,9 +155,22 @@ static void print_help(const struct help_t *h) {
     sc0.setColor(saved_fg_color, saved_bg_color);
 }
 
+const struct help_t *helps[] = {
+    help_en,
+    help_de,
+    help_fr,
+    help_es,
+};
+
 void Basic::ihelp() {
     QList<int> tokens;
     QList<const struct help_t *> hints;
+    const struct help_t *help;
+
+    if (CONFIG.language < sizeof(helps)/sizeof(helps[0]))
+        help = helps[CONFIG.language];
+    else
+        help = help_en;
 
     while (!end_of_statement()) {
         int token = *cip++;

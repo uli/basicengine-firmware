@@ -1,8 +1,33 @@
-# This script creates helptext.cpp, the file containing the content for the
-# HELP command.
+# This script creates helptext_${lang}.cpp, the file containing the content
+# for the HELP command.
+# first parameter: output file name
+# second parameter: target language (default "en")
+# third parameter: 'int' for interactive mode (default: non-interactive)
 
 import re
-from sys import stdin, stderr
+from sys import stdin, stderr, argv
+from trans import translate, init_trans, load_trans
+
+import polib
+
+out_file_name = argv[1]
+of = open(out_file_name, 'w')
+
+try:
+    target_lang = argv[2]
+except:
+    target_lang = 'en'
+
+try:
+    pof = polib.pofile('../po/helptext_' + target_lang + '.po')
+except:
+    pof = polib.POFile()
+
+init_trans(target_lang, pof)
+if len(argv) > 3 and argv[3] == 'int':
+  can_translate = load_trans()
+else:
+  can_translate = False
 
 # create dict that maps token names to enums
 tt = open("icode.txt", 'r').readlines()
@@ -16,11 +41,9 @@ for t in tt:
         enum = '256 + ' + enum
     toktrans[name] = enum
 
-print('#include "help.h"\n')
-print('#pragma GCC diagnostic ignored "-Wmissing-field-initializers"\n')
-print('#undef _\n')
-print('#define _(s) (s)\n')
-print('const struct help_t help[] = {')
+of.write('#include "help.h"\n\n')
+of.write('#pragma GCC diagnostic ignored "-Wmissing-field-initializers"\n\n')
+of.write('const struct help_t help_' + target_lang + '[] = {\n')
 
 # expects input preprocessed with bdoc_1.sed
 cmds = stdin.read().strip().strip('/***').strip('***/').split('***/\n/***')
@@ -42,7 +65,7 @@ def stringify_macros(d):
     return d
 
 def gt(s):
-    return '_("' + s + '")'
+    return '"' + s + '"'
 
 for c in cmds:
     lines = c.split('\n')
@@ -57,9 +80,18 @@ for c in cmds:
     for l in lines[1:]:
         if l.startswith('\\') and not (l.startswith('\\table') or l.startswith('\\endtable')):
             # new item
-            current_item = l.split(' ')[0][1:]
+            #print(l)
+            sp = l.split(' ', 1)
+            #print(sp)
+            current_item = sp[0][1:]
+            if current_item == 'sec':
+              sp = sp[1].lstrip().split(' ', 1)
+              current_item = sp[0].lower()
             # rest of the line can be content
-            item_data[current_item] = l.lstrip('\\abcdefghijklmnopqrstuvwxyz').lstrip() + '\n'
+            if len(sp) > 1:
+                item_data[current_item] = sp[1].lstrip() + '\n'
+            else:
+                item_data[current_item] = ''
             continue
 
         item_data[current_item] += l + '\n'
@@ -72,14 +104,18 @@ for c in cmds:
             pass
 
     # emit command
-    print('\n{\n  .command = "' + token + '",\n  .tokens = { ' + ', '.join(token_enums) + ', 0 },\n' +
-          '  .section = SECTION_' + section.upper() + ',\n  .type = TYPE_' + typ.upper() + ',')
+    of.write('\n{\n  .command = "' + token + '",\n  .tokens = { ' + ', '.join(token_enums) + ', 0 },\n' +
+          '  .section = SECTION_' + section.upper() + ',\n  .type = TYPE_' + typ.upper() + ',\n')
 
     # preprocess collected items
     for section, data in item_data.items():
         data = data.replace('\\]', ']')
         if section == 'args':
             data = data.strip().replace('"', '\\"')[1:].split('@')
+            try:
+                data = ['\t'.join([d.split('\t', 1)[0], translate(d.split('\t', 1)[1].strip())]) for d in data]
+            except IndexError:
+                pass
             data = [colorize_code(d) for d in data]
             data = [stringify_macros(d) for d in data]
         elif section == 'ref':
@@ -97,41 +133,51 @@ for c in cmds:
                              replace('\n|', '==LF==|'). # table entries
                              replace('\n*', '==LF==*'). # itemized lists
                              replace('\n', ' ').	# drop all other LFs
-                             replace('==LF==', '\n').	# translate ==LF== back to real LFs
-                             replace('"', '\\"'))	# escape quotation marks
+                             replace('==LF==', '\n'))	# translate ==LF== back to real LFs
                 data = re.sub(' +', ' ', data)		# drop asciidoc continuation character
+                if not section in ['usage', 'ref']:
+                    out=[]
+                    for m in data.split('\n'):
+                        m = m.strip()
+                        if m == '' or m.startswith('\\') or '====' in m or '----' in m:
+                          out += [m]
+                          continue
+                        out += [translate(m)]
+                    data = '\n'.join(out)
+                        
+                data = data.replace('"', '\\"')	# escape quotation marks
                 data = colorize_code(data)
                 data = stringify_macros(data)
 
         item_data[section] = data
 
-    for e in ['brief', 'usage', 'args', 'ret', 'desc', 'note', 'bugs', 'ref']:
-        print('  .' + e + ' = ', end='')
+    for e in ['brief', 'usage', 'args', 'ret', 'types', 'handler', 'desc', 'note', 'bugs', 'ref']:
+        of.write('  .' + e + ' = ')
         try:
             # if this succeeds, a regular plain-text item is available
             # convert to C string
             x = item_data[e].strip().replace('\n', '\\n"\n    "')
             if e == 'usage':
-              print('"' + x + '",')
+              of.write('"' + x + '",\n')
             else:
-              print(gt(x) + ',')
+              of.write(gt(x) + ',\n')
         except KeyError:
             # item not available, print a suitable NULL entry
             if e in ['ref', 'args']:
-                print('{ NULL, },')	# sentinel
+                of.write('{ NULL, },\n')	# sentinel
             else:
-                print('NULL,')
+                of.write('NULL,\n')
         except AttributeError:
             # list item ; must be ref or args
             if e == 'ref':
                 # array of strings
-                print('{', end='')
+                of.write('{')
                 for i in item_data[e]:
-                    print(' "' + i.strip() + '",', end='')
-                print(' NULL },')
+                    of.write(' "' + i.strip() + '",')
+                of.write(' NULL },\n')
             elif e == 'args':
                 # array of arg_t
-                print('{')
+                of.write('{\n')
                 for i in item_data[e]:
                     # unformat item
                     i = re.sub('\s+', ' ', i)
@@ -144,10 +190,9 @@ for c in cmds:
                         descr = ''
                     # unformat description (XXX: is that still necessary here?)
                     descr = descr.strip().replace('\n', ' ')
-                    print('    { "' + name.strip() + '", ' + gt(descr) + ' },')
-                print('    { NULL, NULL }\n  },')	# sentinel
+                    of.write('    { "' + name.strip() + '", ' + gt(descr) + ' },\n')
+                of.write('    { NULL, NULL }\n  },\n')	# sentinel
             else:
                 stderr.write('WARNING: unknown list object ' + e + '\n')
-    print('},')
-print('\n{},\n\n};\n')
-print('#undef _\n')
+    of.write('},\n')
+of.write('\n{},\n\n};\n\n')
