@@ -111,6 +111,7 @@ for c in cmds:
     for section, data in item_data.items():
         data = data.replace('\\]', ']')
         if section == 'args':
+            data = re.sub(' +', ' ', data.replace(' +\n', '').replace('\n', ''))
             data = data.strip().replace('"', '\\"')[1:].split('@')
             try:
                 data = ['\t'.join([d.split('\t', 1)[0], translate(d.split('\t', 1)[1].strip())]) for d in data]
