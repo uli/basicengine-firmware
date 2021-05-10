@@ -97,7 +97,7 @@ def translate(m):
         e = pof.find(m)
         #stderr.write('found ' + e.msgid + ' as ' + e.msgstr + '\n')
         return e.msgstr
-    except:
+    except AttributeError:
         pass
 
     if can_translate == False:
