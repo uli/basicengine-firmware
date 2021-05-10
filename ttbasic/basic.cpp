@@ -227,8 +227,8 @@ of `mod`:
 \table
 | `mod` > 1 | a random integer number between 0 and 2147483647
 | `mod` between 0 and 1 | a random fractional number between 0 and 1
-| `mod` < 0 | a random fractional number between 0 and 1; a specific
-              value of `mod` will always yield the same random number
+| `mod` < 0 | A random fractional number between 0 and 1. A specific
+              value of `mod` will always yield the same random number.
 \endtable
 ***/
 num_t BASIC_FP getrnd(int value) {
@@ -803,7 +803,7 @@ the `@` sigil will be treated as a local variable that is valid only within
 the scope of the procedure. Setting such a variable will not affect global
 variables or local variables in other procedures.
 \error
-Procedures can only be called using `CALL` or `FN`. If a `PROC` statement
+Procedures can only be called using `CALL` or `FN`. If a `PROC` instruction
 is encountered during normal program flow, an error is generated.
 \example
 ====
@@ -1988,12 +1988,12 @@ bool BASIC_INT Basic::find_next_data() {
 }
 
 /***bc bas DATA
-Specifies values to be read by subsequent `READ` statements.
+Specifies values to be read by subsequent `READ` instructions.
 \usage DATA expr[, expr...]
 \args
 @expr	a numeric or string expression
 \note
-When a DATA statement is executed, nothing happens.
+When a DATA instruction is executed, nothing happens.
 \ref READ RESTORE
 ***/
 void Basic::idata() {
@@ -2034,7 +2034,7 @@ void BASIC_INT Basic::data_pop() {
 }
 
 /***bc bas READ
-Reads values specified in `DATA` statements and assigns them to variables.
+Reads values specified in `DATA` instructions and assigns them to variables.
 \usage READ var[, var...]
 \args
 @var	numeric or string variable
@@ -2758,7 +2758,7 @@ WARNING: Do not confuse with `REMOVE`, which deletes files.
 \note
 * Using `DELETE` does not affect variables.
 * When called from a running program, execution will continue at the next
-  program line, i.e. statements following `DELETE` on the same line are
+  program line, i.e. instructions following `DELETE` on the same line are
   disregarded.
 \ref REMOVE
 ***/
@@ -3187,10 +3187,10 @@ expressions list:
 * `TAB(num)` (inserts spaces until the cursor is at or beyond the
   column `num`)
 
-Expressions have to be separated by either a semicolon (`;`) or
-a comma (`,`). The former concatenates expressions directly,
-while the later inserts spaces until the next tabulator stop
-is reached.
+You have to separate expressions by either a semicolon (`;`) or a comma
+(`,`). When you use a semicolon, the expressions are printed without
+separation. When you use a comma, spaces will be inserted until the next
+tabulator stop is reached.
 \bugs
 `TAB()` does not work when output is redirected to a file using
 `CMD`.
@@ -3400,9 +3400,9 @@ LOAD IMAGE image$ [AS <BG bg|SPRITE *range*>] [TO dest_x, dest_y] [OFF x, y]
 \args
 @bg		background number [`0` to `{MAX_BG_m1}`]
 @range		sprite range [limits between `0` and `{MAX_SPRITES_m1}`]
-@dest_x		destination X coordinate, pixels +
+@dest_x		X-coordinate of destination, pixels +
                 [`0` (default) to `PSIZE(0)-w`]
-@dest_y		destination Y coordinate, pixels +
+@dest_y		Y-coordinate of destination, pixels +
                 [`0` (default) to `PSIZE(2)-h`]
 @x		offset within image file, X axis, pixels [default: `0`]
 @y		offset within image file, Y axis, pixels [default: `0`]
@@ -3426,14 +3426,14 @@ range of sprites as their sprite patterns.
 
 If a color key is specified, pixels of the given color will not be drawn.
 
-If the scaling factor for a dimension is `-1`, it will be scaled to the
-screen size. If it is `-2`, it will be scaled so that the aspect ratio is
+If the scaling factor for a dimension is `-1`, it will be resized to the
+screen size. If it is `-2`, it will be resized so that the aspect ratio is
 preserved.
 
 If the scaling factor for both dimensions is `-2`, the image will be fit to
-the screen dimensions while preserving the aspect ratio.
+the screen while preserving the aspect ratio.
 
-IMPORTANT: Scaling is not supported for images in PCX format.
+IMPORTANT: Resizing is not supported for images in PCX format.
 \ref BG SAVE_IMAGE SPRITE
 ***/
 void SMALL Basic::ildbmp() {
@@ -3580,10 +3580,9 @@ Load a program from a file.
 @file$	name of the BASIC program
 @font	font (encoding) used for UTF-8 conversion [`0` to `{NUM_FONTS_m1}`]
 \note
-If the `FONT` parameter is specified, the program will be converted from the
-legacy single-byte encoding for the specified font to UTF-8. Use this to
-load programs written for the original BASIC Engine ESP8266 platform on
-next-generation systems.
+If you specify the `FONT` parameter, `LOAD` will convert the program from
+the single-byte encoding for that font to UTF-8. Use this to load programs
+written for the BASIC Engine ESP8266 platform on next-generation systems.
 \ref LOAD_BG LOAD_IMAGE SAVE
 ***/
 /***bc bas MERGE
@@ -3804,7 +3803,7 @@ Returns a specified number of leftmost characters in a string.
 \args
 @l	any string expression
 @num	number of characters to return [min `0`]
-\ret Substring of at most the length specified in `num`.
+\ret Substring of `num` characters or less.
 \note
 If `l$` is shorter than `num` characters, the return value is `l$`.
 \ref MID$() RIGHT$()
@@ -3818,7 +3817,7 @@ Returns a specified number of rightmost characters in a string.
 \args
 @r	any string expression
 @num	number of characters to return [min `0`]
-\ret Substring of at most `num` characters.
+\ret Substring of `num` characters or less.
 \note
 If `r$` is shorter than `num` characters, the return value is `r$`.
 \ref LEFT$() MID$()
@@ -3834,14 +3833,14 @@ Returns part of a string (a substring).
 @m$	any string expression
 @start	position of the first character in the substring being returned
 @len	number of characters in the substring [default: `LEN(m$)-start`]
-\ret Substring of at most `len` characters.
+\ret Substring of `len` characters or less.
 \note
 * If `m$` is shorter than `len` characters, the return value is `m$`.
 * Unlike with other BASIC implementations, `start` is zero-based, i.e. the
   first character is 0, not 1.
 \bugs
-`MID$()` cannot be used as the target of an assignment, as is possible in
-other BASIC implementations.
+You cannot assign values to `MID$()`, which is possible in some other BASIC
+implementations.
 \ref LEFT$() LEN() RIGHT$()
 ***/
 BString BASIC_INT Basic::smid() {
@@ -4608,7 +4607,7 @@ Branches to a specified line or label.
 @line_number	a BASIC program line number
 @&label		a BASIC program label
 \note
-It is recommended to use `GOTO` sparingly as it tends to make programs
+Try not to use `GOTO` often as it tends to make programs
 more difficult to understand. If possible, use loop constructs and
 procedure calls instead.
 \ref ON_GOTO
@@ -4664,9 +4663,9 @@ void BASIC_FP Basic::do_gosub(uint32_t lineno) {
 /***bc bas GOSUB
 Calls a subroutine.
 \desc
-`GOSUB` puts the current position in the program on a stack and then
-branches to the given location. It is then possible to return to
-the statement after the `GOSUB` command by using `RETURN`.
+`GOSUB` puts the current position in the program on a stack and then jumps
+to the given location. It is then possible to return to the instruction after
+the `GOSUB` command by using `RETURN`.
 \usage GOSUB <line_number|&label>
 \args
 @line_number	a BASIC program line number
@@ -4720,7 +4719,7 @@ Branches to one of several locations, depending on the value of an expression.
 `ON GOTO` and `ON GOSUB` will branch to the first given line number or label
 if `expression` is `1`, to the second if `expression` is `2`, and so forth.
 If `expression` is `0`, it will do nothing, and execution will continue with
-the next statement.
+the next instruction.
 
 `ON GOSUB` calls the given location as a subroutine, while `ON GOTO` simply
 continues execution there.
@@ -4816,7 +4815,7 @@ WARNING: This command has never been tested.
 /***bc snd ON PLAY
 Defines an event handler triggered by the end of the current MML pattern.
 
-The handler is called once the MML pattern of any sound channel has
+The handler is called when the MML pattern of any sound channel has
 finished playing. It can be disabled using `ON PLAY ... OFF`.
 \usage
 ON PLAY channel CALL handler
@@ -4912,16 +4911,17 @@ ON ERROR OFF
 \sec HANDLER
 The error code is passed to the handler in `RET(0)`, and the line number in `RET(1)`.
 
-When an error has been forwarded from a sub-program run with `EXEC`, the line
-number of the sub-program in which the error has been triggered is passed in `RET(2)`.
+When an error has been forwarded from a sub-program that has been started
+with `EXEC`, the line number of the sub-program in which the error has been
+triggered is passed in `RET(2)`.
 \note
 Unlike other event handlers, `ON ERROR` does not call the error handler as a procedure,
 and it is not possible to use `RETURN` to resume execution. `RESUME` must be used
 instead.
 
-When a program is executed using `EXEC` and does not define its own error handler, any
-errors occurring there will be forwarded to the calling program's error handler, if
-there is one.
+When a program is executed using `EXEC` and does not define its own error
+handler, any errors occurring in the child program will be forwarded to the
+parent program's error handler, if there is one.
 \ref EXEC RESUME
 ***/
     ++cip;
@@ -4966,16 +4966,16 @@ there is one.
 Resume program execution after an error has been handled.
 \desc
 When an error has been caught by a handler set up using `ON ERROR`,
-it is possible to resume execution after the statement that caused the
+it is possible to resume execution after the instruction that caused the
 error using `RESUME`.
 \usage RESUME
 \note
-In other BASIC implementations, `RESUME` will retry the statement that
-has caused the error, while continuing after the error is possible
-using `RESUME NEXT`. In Engine BASIC, `RESUME` will always skip the
-statement that generated the error.
+In other BASIC implementations, `RESUME` will retry the instruction that has
+caused the error, and it is possible to continue after the error using
+`RESUME NEXT`. In Engine BASIC, `RESUME` will always skip the instruction that
+generated the error.
 \bugs
-It is not possible to repeat the statement that has generated the error.
+It is not possible to repeat the instruction that has generated the error.
 \ref ON_ERROR
 ***/
 void Basic::iresume() {
@@ -5174,20 +5174,20 @@ void BASIC_FP Basic::ireturn() {
 }
 
 /***bc bas DO
-Repeats a block of statements while a condition is true or until a condition
+Repeats a block of instructions while a condition is true or until a condition
 becomes true.
 \usage
 DO
-  statement_block
+  instruction_block
 LOOP [<WHILE|UNTIL> condition]
 \args
-@statement_block one or more statements on one or more lines
+@instruction_block one or more instructions on one or more lines
 @condition	a numeric expression
 \note
 If `condition` is prefixed by `WHILE`, the loop will repeat if `condition`
 is "true" (non-zero). If `condition` is prefixed by `UNTIL`, the loop will
 continue if `condition` is "false" (zero). In any other case, the loop will
-be exited and execution will continue with the statement following the
+be exited and execution will continue with the instruction following the
 `LOOP` command.
 
 If no condition is specified, the loop will repeat forever.
@@ -5217,19 +5217,19 @@ void BASIC_FP Basic::ido() {
 }
 
 /***bc bas WHILE
-Executes a series of statements as long as a specified condition is "true".
+Executes a series of instructions as long as a specified condition is "true".
 
 \usage WHILE condition
 \args
 @condition	any numeric expression
 \note
 `condition` is evaluated at the start of the loop. If it is "false",
-execution continues after the corresponding `WEND` statement. (Note that
+execution continues after the corresponding `WEND` instruction. (Note that
 all kinds of loops can be nested, so this may not be the nearest `WEND`
-statement.)
+instruction.)
 
-If `condition` is "true", the statements following the `WHILE` statement
-will be executed, until the corresponding `WEND` statement is reached,
+If `condition` is "true", the instructions following the `WHILE` instruction
+will be executed, until the corresponding `WEND` instruction is reached,
 at which point `condition` will be evaluated again to determine whether
 to continue the loop.
 
@@ -5305,17 +5305,17 @@ void BASIC_FP Basic::iwend() {
 }
 
 /***bc bas FOR
-Starts a loop repeating a block of statements a specified number of times.
+Starts a loop repeating a block of instructions a specified number of times.
 \usage
 FOR loop_variable = start TO end [STEP increment]
-  statement_block
+  instruction_block
 NEXT [loop_variable]
 \args
 @loop_variable	a numeric variable used as the loop counter
 @start		initial value of the loop counter
 @increment	amount the counter is changed each time through the loop +
                 [default: `1`]
-@statement_block one or more statements on one or more lines
+@instruction_block one or more instructions on one or more lines
 \note
 Both `end` and `increment` are only evaluated once, at the start of the
 loop. Any changes to these expressions afterwards will not have any effect
@@ -5502,22 +5502,22 @@ void BASIC_FP Basic::inext() {
 }
 
 /***bc bas IF
-Executes a statement or statement block depending on specified conditions.
+Executes a instruction or instruction block depending on specified conditions.
 \usage
 IF condition THEN
-  statement_block
+  instruction_block
 [ELSE IF condition THEN
-  statement_block]
+  instruction_block]
 ...
 [ELSE
-  statement_block]
+  instruction_block]
 ENDIF
 
-IF condition THEN statements [ELSE statements]
+IF condition THEN instructions [ELSE instructions]
 \args
 @condition		any numeric expression
-@statement_block	one or more statements on one or more lines
-@statements		one or more statements, separated by colons
+@instruction_block	one or more instructions on one or more lines
+@instructions		one or more instructions, separated by colons
 \note
 A `condition` is considered "false" if it is zero, and "true" in any other
 case.
@@ -5564,14 +5564,14 @@ void BASIC_FP Basic::iif() {
 }
 
 /***bc bas ENDIF
-Ends a muli-line `IF` statement.
+Ends a muli-line `IF` instruction.
 \ref IF
 ***/
 void BASIC_FP Basic::iendif() {
 }
 
 /***bc bas ELSE
-Introduces the `ELSE` branch of an `IF` statement.
+Introduces the `ELSE` branch of an `IF` instruction.
 \ref IF
 ***/
 void BASIC_FP Basic::ielse() {
