@@ -2,23 +2,18 @@
 msgid ""
 msgstr ""
 
-#. [IN ORDNUNG.]
-# from Argos
-msgid "OK"
-msgstr "OK"
-
-#. [Nulldivision.]
-# from Argos
+#. [Durch Null teilen]
+# bulk translation
 msgid "Division by zero"
 msgstr "Division par zéro"
 
-#. [Fließkomma-Ausnahme]
-# from Google
+#. [Gleitkomma-Ausnahme]
+# bulk translation
 msgid "Floating point exception"
-msgstr "Exception de point flottante"
+msgstr "Exception à virgule flottante"
 
 #. [Überlauf]
-# from Argos
+# bulk translation
 msgid "Overflow"
 msgstr "Débordement"
 
@@ -27,45 +22,39 @@ msgstr "Débordement"
 msgid "Argument stack overflow"
 msgstr "Débordement de pile d'arguments"
 
-#. [Unbestimmte Argument]
-# from Google
-msgid "Undefined argument"
-msgstr "Argument indéfini"
+msgid "Icode buffer full"
+msgstr "Tampon Icode plein"
 
-#. [Weiter ohne]
-# from Google
+#. [zu viele verschachtelte GOSUBs]
+# bulk translation
+msgid "too many nested GOSUB"
+msgstr "trop de GOSUB imbriqués"
+
+#. [Undefiniertes Argument]
+# bulk translation
+msgid "Undefined argument"
+msgstr "Argument non défini"
+
 msgid "NEXT without FOR"
 msgstr "NEXT sans FOR"
 
-#. [Für keine Variable]
-# from Google
+# bulk translation
 msgid "FOR without variable"
 msgstr "FOR sans variable"
 
-#. [Für ohne]
-# from Argos
 msgid "FOR without TO"
 msgstr "FOR sans TO"
 
-#. [Zu viel Gosub eingebettet]
-# from Argos
-msgid "too many nested GOSUB"
-msgstr "trop de GOSUB niché"
-
-#. [Variable]
-# from Argos
+# bulk translation
 msgid "LET without variable"
 msgstr "LET sans variable"
 
-#. [FAI ohne Zustand.]
-# from Argos
 msgid "IF without condition"
 msgstr "IF sans condition"
 
-#. [Nicht definierte Zeilennummer]
-# from Argos
+# bulk translation
 msgid "Undefined line number"
-msgstr "Numéro de ligne non défini"
+msgstr "Numéro de ligne indéfini"
 
 #. [\ '(\' oder \ ')' erwartet]
 # from Argos
@@ -77,15 +66,20 @@ msgstr "\\'(\\' ou \\')\\' attendu"
 msgid "\\'=\\' expected"
 msgstr "\\'=\\' attendu"
 
-#. [Kann den Systembefehl nicht verwenden]
-# from Google
+#. [Systembefehl kann nicht verwendet werden]
+# bulk translation
 msgid "Cannot use system command"
 msgstr "Impossible d'utiliser la commande système"
 
-#. [Illegaler Wert]
-# from Argos
+#. [Unzulässiger Wert]
+# bulk translation
 msgid "Illegal value"
 msgstr "Valeur illégale"
+
+#. [Wert außerhalb des Bereichs]
+# bulk translation
+msgid "Out of range value"
+msgstr "Valeur hors plage"
 
 #. [Programm nicht gefunden]
 # from Argos
@@ -93,12 +87,12 @@ msgid "Program not found"
 msgstr "Programme non trouvé"
 
 #. [Syntax-Fehler]
-# from Google
+# bulk translation
 msgid "Syntax error"
 msgstr "Erreur de syntaxe"
 
 #. [Interner Fehler]
-# from Argos
+# bulk translation
 msgid "Internal error"
 msgstr "Erreur interne"
 
@@ -107,48 +101,63 @@ msgstr "Erreur interne"
 msgid "Break"
 msgstr "Break"
 
-#. [Zeile zu lang]
-# from Argos
+#. [Linie zu lang]
+# bulk translation
 msgid "Line too long"
 msgstr "Ligne trop longue"
 
-#. [File-Schreibfehler]
-# from Google
+#. [Fehler beim Schreiben der Datei]
+# bulk translation
 msgid "File write error"
 msgstr "Erreur d'écriture de fichier"
 
-#. [Dateiwiedergabefehler]
-# from Argos
+#. [Fehler beim Lesen der Datei]
+# bulk translation
 msgid "File read error"
 msgstr "Erreur de lecture de fichier"
 
-#. [Kann die GPIO-Funktion nicht verwenden]
-# from Argos
+#. [GPIO-Funktion kann nicht verwendet werden]
+# bulk translation
 msgid "Cannot use GPIO function"
-msgstr "Ne peut pas utiliser la fonction GPIO"
+msgstr "Impossible d'utiliser la fonction GPIO"
 
-#. [Ungeöffnet]
-# from Argos
+#. [Viel zu lang]
+# bulk translation
+msgid "Path too long"
+msgstr "Chemin trop long"
+
+#. [Fehler beim Öffnen der Datei]
+# bulk translation
+msgid "File open error"
+msgstr "Erreur d'ouverture de fichier"
+
+#. [Ungeöffnete Datei]
+# bulk translation
 msgid "File not open"
 msgstr "Fichier non ouvert"
 
-#. [E / A-SD-Fehler]
-# from Google
+#. [SD-E / A-Fehler]
+# bulk translation
 msgid "SD I/O error"
-msgstr "Erreur I/O SD"
+msgstr "Erreur d'E/S SD"
+
+#. [Falscher Dateiname]
+# bulk translation
+msgid "Bad file name"
+msgstr "Nom de fichier incorrect"
 
 #. [Nicht unterstützt]
-# from Argos
+# bulk translation
 msgid "Not supported"
-msgstr "Non supportée"
+msgstr "Non supporté"
 
-#. [Aus dem Videospeicher]
-# from Google
+#. [Unzureichender Videospeicher]
+# bulk translation
 msgid "Out of video memory"
-msgstr "Hors de la mémoire vidéo"
+msgstr "Mémoire vidéo insuffisante"
 
 #. [Zu wenig Speicher]
-# from Google
+# bulk translation
 msgid "Out of memory"
 msgstr "Mémoire insuffisante"
 
@@ -157,23 +166,21 @@ msgstr "Mémoire insuffisante"
 msgid "Can't continue"
 msgstr "Ne peut pas continuer"
 
-#. [Tabelle nicht definiert]
-# from Google
+#. [Undefinierte Tabelle]
+# bulk translation
 msgid "Undefined array"
-msgstr "Tableau non défini"
+msgstr "Tableau indéfini"
 
-#. [Undefiniertes Verfahren]
-# from Google
+#. [Undefinierte Prozedur]
+# bulk translation
 msgid "Undefined procedure"
-msgstr "Procédure non définie"
+msgstr "Procédure indéfinie"
 
-#. [Undefiniertes Etikett]
-# from Argos
 msgid "Undefined label"
 msgstr "Étiquette non définie"
 
-#. [Duplikat]
-# from Google
+#. [Doppelverfahren]
+# bulk translation
 msgid "Duplicate procedure"
 msgstr "Procédure en double"
 
@@ -188,57 +195,77 @@ msgid "Out of data"
 msgstr "Hors de données"
 
 #. [E / A-Fehler]
-# from Argos
+# bulk translation
 msgid "I/O error"
-msgstr "Erreur I/O"
+msgstr "Erreur d'E/S"
 
-#. [Typ Inkompatibilität]
-# from Google
+#. [Geben Sie eine Nichtübereinstimmung ein]
+# bulk translation
 msgid "Type mismatch"
 msgstr "Incompatibilité de type"
 
-#. [EndIf nicht gefunden]
-# from Google
+#. [Lokale Variable außerhalb der Prozedur]
+# bulk translation
+msgid "Local variable outside procedure"
+msgstr "Variable locale en dehors de la procédure"
+
+#. [Leere Liste]
+# bulk translation
+msgid "Empty list"
+msgstr "Liste vide"
+
+#. [ENDIF nicht gefunden]
+# bulk translation
 msgid "ENDIF not found"
 msgstr "ENDIF introuvable"
 
 #. [Nicht genug Argumente]
-# from Argos
+# bulk translation
 msgid "Not enough arguments"
 msgstr "Pas assez d'arguments"
 
-#. [Fehlerformatfehler.]
-# from Argos
+#. [Dateiformatfehler]
+# bulk translation
 msgid "File format error"
 msgstr "Erreur de format de fichier"
 
+#. [USING Formatfehler]
+# bulk translation
+msgid "USING format error"
+msgstr "Erreur de format USING"
+
 #. [Netzwerkfehler]
-# from Argos
+# bulk translation
 msgid "Network error"
-msgstr "Erreur de réseau"
+msgstr "Erreur réseau"
 
 #. [Kein Verzeichnis]
-# from Argos
+# from Google
 msgid "Not a directory"
 msgstr "Pas un répertoire"
 
-#. [Während ohne wend.]
-# from Argos
+#. [WÄHREND ohne WEND]
+# bulk translation
 msgid "WHILE without WEND"
 msgstr "WHILE sans WEND"
 
-#. [Fehlersuchefehler.]
-# from Google
+#. [Systemstapelüberlauf]
+# bulk translation
+msgid "System stack overflow"
+msgstr "Dépassement de la pile système"
+
+#. [Dateisuchfehler]
+# bulk translation
 msgid "File seek error"
-msgstr "Erreur de recherche de fichiers"
+msgstr "Erreur de recherche de fichier"
 
-#. [Kann den Synthesizer nicht initialisieren]
-# from Google
+#. [Die Synthesizer-Initialisierung ist fehlgeschlagen]
+# bulk translation
 msgid "Failed to initialize synthesizer"
-msgstr "Impossible d'initialiser le synthétiseur"
+msgstr "Échec de l'initialisation du synthétiseur"
 
-#. [Unbekannte Bestellung]
-# from Argos
+#. [Unbekannter Befehl]
+# bulk translation
 msgid "Unknown command"
 msgstr "Commande inconnue"
 
@@ -247,353 +274,220 @@ msgstr "Commande inconnue"
 msgid "PROC without CALL/FN"
 msgstr "PROC sans CALL/FN"
 
-#. [Gestrandete Kette.]
-# from Argos
+#. [KETTE fehlgeschlagen]
+# bulk translation
 msgid "CHAIN failed"
 msgstr "CHAIN échoué"
 
-#. [Unbestimmter Symbol]
-# from Argos
+#. [Undefiniertes Symbol]
+# bulk translation
 msgid "Undefined symbol"
 msgstr "Symbole indéfini"
 
-#. [Compiler-Fehler]
-# from Argos
+#. [Compilerfehler]
+# bulk translation
 msgid "Compiler error"
-msgstr "Erreur de compilateur"
+msgstr "Erreur du compilateur"
 
-#. [Unbekannt / sdl.]
-# from Argos
-msgid "unknown/SDL"
-msgstr "inconnu/SDL"
-
-#. [Unbekannt]
-# from Argos
-msgid "unknown"
-msgstr "inconnu"
-
-#. [Max.% d.]
-# from Argos
-msgid "max %d"
-msgstr "max. %d"
-
-#. [Verstand]
-# from Argos
-msgid "min %d"
-msgstr "min %d"
-
-#. [% d%]
-# from Argos
-msgid "from %d to %d"
-msgstr "de %d à %d"
-
-#. [Erwartet: \ "]
-# from Argos
-msgid "expected: \\\""
-msgstr "attendu: \\\""
-
-msgid "invalid number"
-msgstr "nombre invalide"
-
-#. [Ungültiger Listenindex.]
-# from Google
-msgid "invalid list index"
-msgstr "indice de liste non valide"
-
-#. [Weiß: Variable.]
-# from Argos
-msgid "expected: variable"
-msgstr "attendu: variable"
-
-#. [Weiß: Separator]
-# from Argos
-msgid "expected: separator"
-msgstr "attendu: séparateur"
-
-#. [Daten fehlerhaft]
-# from Argos
-msgid "malformed DATA"
-msgstr "DATA malformé"
-
-#. [Ungültige Programmzeile]
-# from Argos
-msgid "invalid program line"
-msgstr "ligne de programme invalide"
-
-#. [Während das Ende der Erklärung]
-# from Argos
-msgid "expected: end of statement"
-msgstr "attendu : fin de la déclaration"
-
-#. [leere Kette]
-# from Argos
-msgid "empty string"
-msgstr "chaîne vide"
-
-#. [mehrere Perioden]
-# from Argos
-msgid "multiple periods"
-msgstr "plusieurs périodes"
-
-#. [Während: BG oder Sprite]
-# from Argos
-msgid "expected: BG or SPRITE"
-msgstr "attendu: BG ou SPRITE"
-
-#. [Welcher: Dateiname]
-# from Argos
-msgid "expected: file name"
-msgstr "attendu: nom du fichier"
-
-msgid " in "
-msgstr " en "
-
-#. [negative Länge]
-# from Google
-msgid "negative length"
-msgstr "longueur négative"
-
-#. [Brauche 1 Charakter.]
-# from Argos
-msgid "need min 1 character"
-msgstr "besoin de 1 caractère"
-
-#. [Welches: Netzwerkfunktion]
-# from Argos
-msgid "expected: network function"
-msgstr "attendu: fonction réseau"
-
-#. [Außer Reichweite]
-# from Argos
-msgid "Out of range value"
-msgstr "Valeur hors plage"
-
-#. [Viel zu lang]
-# from Google
-msgid "Path too long"
-msgstr "Chemin trop long"
-
-#. [Welches: goto oder gosub]
-# from Argos
-msgid "expected: GOTO or GOSUB"
-msgstr "attendu: GOTO ou GOSUB"
-
-msgid "expected: THEN or GOTO"
-msgstr "attendu: THEN ou GOTO"
-
-#. [Welches: EIN, AUS oder LIST]
-# from Argos
-msgid "expected: ON, OFF or LIST"
-msgstr "attendu: ON, OFF ou LIST"
-
-msgid "not a BASIC program"
-msgstr "pas un programme BASIC"
-
-#. [Weiß: Bestellung]
-# from Argos
-msgid "expected: command"
-msgstr "attendu: commande"
-
-#. [Sauter autoexec.bas.]
-# from Google
-msgid "Skipping AUTOEXEC.BAS\n"
-msgstr "Sauter AUTOEXEC.BAS\n"
-
-#. [Unbekannte Speichergröße]
-# from Argos
-msgid "unknown memory size\n"
-msgstr "taille de mémoire inconnue\n"
-
-#. [kostenlose Bytes]
-# from Google
+#. [ freie Bytes]
+# bulk translation
 msgid " bytes free\n"
-msgstr " octets libre\n"
+msgstr " octets libres\n"
 
-#. [Nein]
-# from Argos
-msgid "none"
-msgstr "aucun"
+#. [ Bytes.]
+# bulk translation
+msgid " bytes.\n"
+msgstr " octets.\n"
 
-#. [Welcher: BG-Parameter]
-# from Argos
-msgid "expected: BG parameter"
-msgstr "attendu: paramètre BG"
+#. [ Dateien,]
+# bulk translation
+msgid " files, "
+msgstr " des dossiers, "
 
-#. [Welcher: Sprite-Parameter]
-# from Argos
-msgid "expected: sprite parameter"
-msgstr "attendu: paramètre sprite"
-
-#. [Erwartet: Eingabe, Ausgabe oder Aus]
-# from Argos
-msgid "expected: INPUT, OUTPUT or OFF"
-msgstr "attendu: INPUT, OUTPUT ou OFF"
-
-#. [Welcher: Dateimodus]
-# from Argos
-msgid "expected: file mode"
-msgstr "attendu: mode fichier"
-
-#. [Benutzen:]
-# from Argos
-msgid "Usage:"
-msgstr "Utilisation:"
+#. [ im]
+# bulk translation
+msgid " in "
+msgstr " dans "
 
 #. [Argumente:]
-# from Argos
+# bulk translation
 msgid "Arguments:"
 msgstr "Arguments:"
 
-#. [Rückgabewert:]
-# from Argos
-msgid "Return value:"
-msgstr "Valeur de retour:"
+#. [Verfügbare Befehle:]
+# bulk translation
+msgid "Available commands:"
+msgstr "Commandes disponibles:"
+
+#. [Bugs:]
+# bulk translation
+msgid "Bugs:"
+msgstr "Bugs:"
 
 #. [Beschreibung:]
 # from Argos
 msgid "Description:"
 msgstr "Description:"
 
-#. [Hinweis:]
-# from Argos
-msgid "Note:"
-msgstr "Note:"
+#. [Manager:]
+# bulk translation
+msgid "Handler:"
+msgstr "Gestionnaire:"
+
+#. [Entsprechende Befehle:]
+# bulk translation
+msgid "Matching commands:"
+msgstr "Commandes correspondantes:"
+
+#. [Keine Hilfe verfügbar]
+# bulk translation
+msgid "No help available\n"
+msgstr "Aucune aide disponible\n"
+
+#. [Rückgabewert:]
+# bulk translation
+msgid "Return value:"
+msgstr "Valeur de retour:"
 
 #. [Sehen Sie sich auch an:]
 # from Argos
 msgid "See also:"
 msgstr "Voir aussi:"
 
-#. [Verfügbare Befehle:]
+#. [Typen:]
 # from Argos
-msgid "Available commands:"
-msgstr "Commandes disponibles:"
+msgid "Types:"
+msgstr "Types:"
 
-#. [Entsprechende Befehle:]
-# from Google
-msgid "Matching commands:"
-msgstr "Commandes correspondantes:"
-
-#. [Keine Hilfe verfügbar]
-# from Google
-msgid "No help available\n"
-msgstr "Aucune aide disponible"
-
-#. [Erwartet: Datum oder Flaggen]
+#. [Benutzen:]
 # from Argos
+msgid "Usage:"
+msgstr "Utilisation:"
+
+#. [Konstante]
+# bulk translation
+msgid "constant"
+msgstr "constant"
+
+#. [leerer String]
+# bulk translation
+msgid "empty string"
+msgstr "chaîne vide"
+
+#. [erwartet: \ "]
+# bulk translation
+msgid "expected: \\\""
+msgstr "attendu: \\\""
+
+msgid "invalid number"
+msgstr "nombre invalide"
+
+# bulk translation
+msgid "expected: BG or SPRITE"
+msgstr "attendu: BG ou SPRITE"
+
+#. [erwartet: BG-Parameter]
+# bulk translation
+msgid "expected: BG parameter"
+msgstr "attendu: paramètre BG"
+
 msgid "expected: DATE or FLAGS"
-msgstr "attendus: DATE ou FLAGS"
+msgstr "attendu: DATE ou FLAGS"
 
-msgid "expected: DATE or TIME"
-msgstr "attendu: DATE ou TIME"
+#. [erwartet: GOTO oder GOSUB]
+# bulk translation
+msgid "expected: GOTO or GOSUB"
+msgstr "attendu: GOTO ou GOSUB"
 
-#. [keine Tabellenvariable]
-# from Argos
-msgid "not an array variable"
-msgstr "pas une variable de tableau"
+#. [erwartet: INPUT, OUTPUT oder OFF]
+# bulk translation
+msgid "expected: INPUT, OUTPUT or OFF"
+msgstr "attendu: INPUT, OUTPUT ou OFF"
 
-#. [Fehlende Dimensionen]
-# from Argos
-msgid "missing dimensions"
-msgstr "dimensions manquantes"
+#. [erwartet: EIN, AUS oder LISTE]
+# bulk translation
+msgid "expected: ON, OFF or LIST"
+msgstr "attendu: ON, OFF ou LIST"
 
-#. [Erwartet: Kettenlistenreferenz]
-# from Google
-msgid "expected: string list reference"
-msgstr "attendu: référence de liste de chaînes"
+#. [erwartet: Befehl]
+# bulk translation
+msgid "expected: command"
+msgstr "attendu: commande"
 
-#. [Ungültige URL]
-# from Argos
-msgid "invalid URL"
-msgstr "URL invalide"
+#. [erwartet: Ende der Erklärung]
+# bulk translation
+msgid "expected: end of statement"
+msgstr "attendu: fin de déclaration"
 
-#. [nicht verbunden]
-# from Google
-msgid "not connected"
-msgstr "pas connecté"
+#. [erwartet: Dateimodus]
+# bulk translation
+msgid "expected: file mode"
+msgstr "attendu: mode fichier"
 
-#. [Welcher: Netzwerkbefehl]
-# from Argos
-msgid "expected: network command"
-msgstr "attendu: commande réseau"
+#. [erwartet: Dateiname]
+# bulk translation
+msgid "expected: file name"
+msgstr "attendu: nom de fichier"
 
-#. [TFTP-Fehler]
-# from Argos
-msgid "TFTP error "
-msgstr "Erreur TFTP"
-
-#. [ipaddr_aton ist fehlgeschlagen]
-# from Argos
-msgid "ipaddr_aton failed"
-msgstr "ipaddr_aton a échoué"
-
-#. [kann den TFTP-Client nicht initialisieren]
-# from Argos
-msgid "could not initialize TFTP client"
-msgstr "ne peut pas initialiser le client TFTP"
-
-#. [Die Erstellung der Datei ist fehlgeschlagen]
-# from Google
-msgid "failed to create file"
-msgstr "la création du fichier a échoué"
-
-#. [Kann keine Datei senden]
-# from Google
-msgid "failed to send file"
-msgstr "impossible d'envoyer un fichier"
-
-#. [Während oder aus]
-# from Argos
-msgid "expected: ON or OFF"
-msgstr "attendu: ON ou OFF"
-
-#. [Dateien,]
-# from Argos
-msgid " files, "
-msgstr " des fichiers, "
-
-#. [Bytes.]
-# from Google
-msgid " bytes.\n"
-msgstr " octets.\n"
-
-#. [Welches: Referenz der Liste]
-# from Argos
+#. [erwartet: Listenreferenz]
+# bulk translation
 msgid "expected: list reference"
 msgstr "attendu: référence de la liste"
 
-#. [Während: Digitale Listenreferenz]
-# from Argos
+#. [erwartet: Netzwerkbefehl]
+# bulk translation
+msgid "expected: network command"
+msgstr "attendu: commande réseau"
+
+#. [erwartet: Netzwerkfunktion]
+# bulk translation
+msgid "expected: network function"
+msgstr "attendu: fonction réseau"
+
+#. [erwartet: numerischer Ausdruck]
+# bulk translation
+msgid "expected: numeric expression"
+msgstr "attendu: expression numérique"
+
+#. [erwartet: numerische Listenreferenz]
+# bulk translation
 msgid "expected: numeric list reference"
-msgstr "attendu: référence de la liste numérique"
+msgstr "attendu: référence de liste numérique"
 
-#. [Fehler beim Öffnen der Datei]
-# from Google
-msgid "failed to open file"
-msgstr "échec de l'ouverture du fichier"
+#. [erwartet: Trennzeichen]
+# bulk translation
+msgid "expected: separator"
+msgstr "attendu: séparateur"
 
-msgid " MB free\n"
-msgstr " Mo libre\n"
+#. [erwartet: Sprite-Parameter]
+# bulk translation
+msgid "expected: sprite parameter"
+msgstr "attendu: paramètre de sprite"
 
-#. [Verzeichnis]
-# from Argos
-msgid "Directory "
-msgstr "Répertoire "
+#. [erwartet: Zeichenfolgenausdruck]
+# bulk translation
+msgid "expected: string expression"
+msgstr "attendu: expression de chaîne"
 
-#. [Fehler:]
-# from Argos
-msgid "Bugs:"
-msgstr "Bugs:"
+#. [erwartet: Stringlistenreferenz]
+# bulk translation
+msgid "expected: string list reference"
+msgstr "attendu: référence de la liste de chaînes"
 
-#. [Konstante]
-# from Argos
-msgid "constant"
-msgstr "constante"
+#. [erwartet: variabel]
+# bulk translation
+msgid "expected: variable"
+msgstr "attendu: variable"
 
 #. [Dateisystem]
-# from Argos
+# bulk translation
 msgid "file system"
 msgstr "système de fichiers"
+
+#. [% d%]
+# from Argos
+msgid "from %d to %d"
+msgstr "de %d à %d"
 
 #. [Funktion]
 # from Argos
@@ -605,37 +499,160 @@ msgstr "fonction"
 msgid "input/output"
 msgstr "entrée/sortie"
 
+#. [Ungültige URL]
+# bulk translation
+msgid "invalid URL"
+msgstr "URL invalide"
+
+#. [ungültiger Listenindex]
+# bulk translation
+msgid "invalid list index"
+msgstr "index de liste non valide"
+
+#. [ungültige Programmzeile]
+# bulk translation
+msgid "invalid program line"
+msgstr "ligne de programme invalide"
+
+#. [Daten fehlerhaft]
+# from Argos
+msgid "malformed DATA"
+msgstr "DATA malformé"
+
+#. [Mathematik]
+# bulk translation
+msgid "math"
+msgstr "math"
+
+# bulk translation
+msgid "missing dimensions"
+msgstr "dimensions manquantes"
+
+#. [brauche mindestens 1 Zeichen]
+# bulk translation
+msgid "need min 1 character"
+msgstr "besoin de 1 caractère minimum"
+
+#. [negative Länge]
+# bulk translation
+msgid "negative length"
+msgstr "longueur négative"
+
+#. [negativer Kettenversatz]
+# bulk translation
+msgid "negative string offset"
+msgstr "décalage de chaîne négatif"
+
+#. [negative Teilstringlänge]
+# bulk translation
+msgid "negative substring length"
+msgstr "longueur de sous-chaîne négative"
+
+#. [kein BASIC-Programm]
+# bulk translation
+msgid "not a BASIC program"
+msgstr "pas un programme BASIC"
+
+#. [keine Array-Variable]
+# bulk translation
+msgid "not an array variable"
+msgstr "pas une variable de tableau"
+
+#. [nicht verbunden]
+# bulk translation
+msgid "not connected"
+msgstr "pas connecté"
+
 #. [Digital]
-# from Google
+# bulk translation
 msgid "numeric"
 msgstr "numérique"
 
 #. [Operator]
-# from Argos
+# bulk translation
 msgid "operator"
 msgstr "opérateur"
 
-#. [Pixelgrafik.]
-# from Argos
+#. [Pixelgrafiken]
+# bulk translation
 msgid "pixel graphics"
-msgstr "graphiques de pixels"
+msgstr "graphiques en pixels"
 
-#. [Umgang mit dem Bildschirm]
-# from Google
+#. [Bildschirmmanipulation]
+# bulk translation
 msgid "screen handling"
 msgstr "manipulation de l'écran"
 
-#. [Sprite / Hintergrundmotor]
-# from Argos
+#. [Sprite / Hintergrund-Engine]
+# bulk translation
 msgid "sprite/background engine"
-msgstr "moteur sprite/background"
+msgstr "moteur de sprite/arrière-plan"
 
 #. [Kette]
-# from Google
+# bulk translation
 msgid "string"
 msgstr "chaîne"
 
 #. [System]
-# from Argos
+# bulk translation
 msgid "system"
 msgstr "système"
+
+#. [Unbekannt]
+# bulk translation
+msgid "unknown"
+msgstr "inconnu"
+
+#. [unbekannte Speichergröße]
+# bulk translation
+msgid "unknown memory size\n"
+msgstr "taille de mémoire inconnue\n"
+
+#. [Unbekannt / sdl.]
+# from Argos
+msgid "unknown/SDL"
+msgstr "inconnu/SDL"
+
+msgid "too many nested FOR"
+msgstr "trop de FOR imbriqués"
+
+#. [IF-Stapelüberlauf]
+# bulk translation
+msgid "IF stack overflow"
+msgstr "Débordement de pile IF"
+
+msgid " MB free\n"
+msgstr " Mo libres\n"
+
+#. [BASIC Kern]
+# bulk translation
+msgid "BASIC core"
+msgstr "Noyau de BASIC"
+
+msgid "Directory "
+msgstr "Répertoire "
+
+#. [Hinweis:]
+# from Argos
+msgid "Note:"
+msgstr "Note:"
+
+msgid "command"
+msgstr "commande"
+
+msgid "expected: DATE or TIME"
+msgstr "attendu: DATE ou TIME"
+
+msgid "expected: THEN or GOTO"
+msgstr "attendu: THEN ou GOTO"
+
+msgid "multiple periods"
+msgstr "plusieurs points décimaux"
+
+#. [Nein]
+# from Argos
+msgid "none"
+msgstr "aucun"
+
+msgid "sound"
+msgstr "son"
