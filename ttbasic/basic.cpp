@@ -4086,7 +4086,7 @@ BString BASIC_INT Basic::istrvalue() {
       if (!err)
         err = ERR_TYPE;
       else
-        SYNTAX_T(_("expected string expr"));
+        SYNTAX_T(_("expected string expression"));
       break;
     }
   if (err)
@@ -4390,7 +4390,7 @@ PROC f(x): RETURN @x * 2
       if (is_strexp())
         err = ERR_TYPE;
       else
-        SYNTAX_T(_("expected numeric expr"));
+        SYNTAX_T(_("expected numeric expression"));
       return 0;
     }
 
