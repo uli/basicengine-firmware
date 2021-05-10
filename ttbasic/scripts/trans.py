@@ -86,7 +86,7 @@ O='\033[33m'
 B='\033[34m'
 
 def translate(m):
-    if target_lang == 'en':
+    if target_lang == 'en' or len(m) == 0:
         return m
 
     try:
