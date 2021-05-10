@@ -11,9 +11,13 @@ retrans_lang = 'de'
 can_translate = False
 
 def init_trans(tl, p):
-    global target_lang, pof
+    global target_lang, pof, bakpof, bulkpof
     target_lang = tl
     pof = p
+    try:
+      bulkpof = polib.pofile('../bulk_' + tl + '.po')
+    except:
+      bulkpof = None
 
 def load_trans():
     global target_lang, retrans_lang, can_translate, latr, backtr, trans
@@ -111,14 +115,30 @@ def translate(m):
     stderr.write(tm2 +'\n')
     stderr.write('['+btr2 +']\n')
     stderr.write('['+bbtr2 +']\n')
-    rep = getpass.getpass('\n'+B+'==>'+W+' Choose a/g/n:')
-    if rep == 'n' or not rep in ['a', 'g', 'n']:
+
+    try:
+      tm3e = bulkpof.find(m)
+      tm3 = tm3e.msgstr
+      bbtr3 = tm3e.comment
+      stderr.write(O+'+++'+W+' bulk\n')
+      stderr.write(tm3 + '\n')
+      stderr.write('[' + bbtr3 + ']\n')
+    except AttributeError:
+      tm3 = '*not found*'
+      bbtr3 = ''
+
+    rep = getpass.getpass('\n'+B+'==>'+W+' Choose a/b/g/n:')
+    if rep == 'n' or not rep in ['a', 'g', 'n', 'b']:
         return m
 
     if rep == 'a':
         good = tm
         goodsrc = 'from Argos'
         goodbbtr = bbtr
+    elif rep == 'b':
+        good = tm3
+        goodsrc = 'bulk translation'
+        goodbbtr = bbtr3
     else:
         good = tm2
         goodsrc = 'from Google'
