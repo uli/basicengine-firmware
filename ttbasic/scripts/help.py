@@ -140,10 +140,14 @@ for c in cmds:
                     out=[]
                     for m in data.split('\n'):
                         m = m.strip()
+
+                        # don't bother with formatting lines
                         if m == '' or m.startswith('\\') or '====' in m or '----' in m:
                           out += [m]
                           continue
-                        out += [translate(m)]
+
+                        # split at | to translate table columns separately
+                        out += ['|'.join( [translate(mm) for mm in m.split('|')] )]
                     data = '\n'.join(out)
                         
                 data = data.replace('"', '\\"')	# escape quotation marks
