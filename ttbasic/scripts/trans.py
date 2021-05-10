@@ -124,6 +124,12 @@ def translate(m):
         goodsrc = 'from Google'
         goodbbtr = bbtr2
 
+    # translators often drop leading and trailing whitespace
+    if m.startswith(' ') and not good.startswith(' '):
+      good = ' ' + good
+    if m.endswith(' ') and not good.endswith(' '):
+      good = good + ' '
+
     e = polib.POEntry(msgid=m, msgstr=good, comment='[' + goodbbtr + ']', tcomment=goodsrc)
     pof.append(e)
     pof.save()
