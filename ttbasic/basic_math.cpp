@@ -200,7 +200,7 @@ Modulus operator.
       tmp = ivalue();
       if (err)
         return -1;
-      value = (int32_t)value % (int32_t)tmp; //割り算を実行
+      value = (int64_t)value % (int64_t)tmp; //割り算を実行
       break;
 
 /***bo op <<
