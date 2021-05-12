@@ -22,8 +22,10 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
     screen = NULL;
     free(colmem);
     colmem = NULL;
-    if (vt)
+    if (vt) {
       tmt_close(vt);
+      vt = NULL;
+    }
   }
 
   whole_width = width = w;
@@ -34,9 +36,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
   if (!screen) {
     screen = (utf8_int32_t *)calloc(w * h, sizeof(*screen));
     colmem = (pixel_t *)calloc(w * h * 2, sizeof(pixel_t));
-    vt = tmt_open(h, w, term_callback, this, NULL);
-    vt_inbuf = std::queue<char>();
-    vt_cursor_on = true;
   }
 
   // デバイスの初期化
@@ -44,6 +43,12 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
 
   if (pos_x >= w || pos_y >= h) {
     pos_x = 0; pos_y = 0;
+  }
+
+  if (!vt) {
+    vt = tmt_open(h, w, term_callback, this, NULL);
+    vt_inbuf = std::queue<char>();
+    vt_cursor_on = true;
   }
 
   cls();
