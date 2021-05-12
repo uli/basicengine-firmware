@@ -27,8 +27,8 @@
 
 #include <stdlib.h>
 
-#define MAX_PROC_ARGS 8
-#define MAX_PROC_LOCS 8
+#define MAX_PROC_ARGS 32
+#define MAX_PROC_LOCS 32
 
 #define NO_PROC ((uint8_t)-1)
 
