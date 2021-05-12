@@ -72,7 +72,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
 void SDLGFX::reset() {
   BGEngine::reset();
-  setColorSpace(0);
+  setColorSpace(DEFAULT_COLORSPACE);
 }
 
 #define GFXCLASS SDLGFX
@@ -184,7 +184,7 @@ bool SDLGFX::setMode(uint8_t mode) {
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
 
-  setColorSpace(0);
+  setColorSpace(DEFAULT_COLORSPACE);
 
   m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
 

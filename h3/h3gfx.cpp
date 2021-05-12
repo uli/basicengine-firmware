@@ -119,7 +119,7 @@ void H3GFX::reset() {
   // XXX: does this make sense?
   for (int i = 0; i < m_last_line; ++i)
     memset(&pixelText(0, i), 0, m_current_mode.x * sizeof(pixel_t));
-  setColorSpace(0);
+  setColorSpace(DEFAULT_COLORSPACE);
 }
 
 #define GFXCLASS H3GFX
