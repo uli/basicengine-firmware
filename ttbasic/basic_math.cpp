@@ -211,7 +211,7 @@ Bit-shift operator, left.
 ***/
     case I_LSHIFT: // シフト演算 "<<" の場合
       tmp = ivalue();
-      value = ((uint32_t)value) << (uint32_t)tmp;
+      value = ((uint64_t)value) << (uint64_t)tmp;
       break;
 
 /***bo op >>
@@ -222,7 +222,7 @@ Bit-shift operator, right.
 ***/
     case I_RSHIFT: // シフト演算 ">>" の場合
       tmp = ivalue();
-      value = ((uint32_t)value) >> (uint32_t)tmp;
+      value = ((uint64_t)value) >> (uint64_t)tmp;
       break;
 
     default:
