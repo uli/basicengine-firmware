@@ -3,11 +3,11 @@ ERL=130, ERR=2, ERR$=Floating point exception
 ERL=130, ERR=3, ERR$=Overflow
 ERL=130, ERR=4, ERR$=Subscript out of range
 ERL=130, ERR=5, ERR$=Icode buffer full
-ERL=130, ERR=6, ERR$=GOSUB too many nested
+ERL=130, ERR=6, ERR$=too many nested GOSUB
 ERL=130, ERR=7, ERR$=RETURN stack underflow
 ERL=130, ERR=8, ERR$=Argument stack overflow
 ERL=130, ERR=9, ERR$=Undefined argument
-ERL=130, ERR=10, ERR$=FOR too many nested
+ERL=130, ERR=10, ERR$=too many nested FOR
 ERL=130, ERR=11, ERR$=NEXT without FOR
 ERL=130, ERR=12, ERR$=FOR without variable
 ERL=130, ERR=13, ERR$=FOR without TO
@@ -29,7 +29,7 @@ ERL=130, ERR=28, ERR$=Line too long
 ERL=130, ERR=29, ERR$=File write error
 ERL=130, ERR=30, ERR$=File read error
 ERL=130, ERR=31, ERR$=Cannot use GPIO function
-ERL=130, ERR=32, ERR$=Too long path
+ERL=130, ERR=32, ERR$=Path too long
 ERL=130, ERR=33, ERR$=File open error
 ERL=130, ERR=34, ERR$=File not open
 ERL=130, ERR=35, ERR$=SD I/O error
