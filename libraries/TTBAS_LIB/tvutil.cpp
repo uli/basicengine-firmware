@@ -44,7 +44,7 @@ pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
 
-#define UNIMAP_SIZE 0x110000
+#define UNIMAP_SIZE 0x30000
 
 struct unimap {
   uint8_t *bitmap;
@@ -193,7 +193,7 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) 
   int w = f_width, h = f_height;
   int off_x = 0, off_y = 0;
 
-  if (c < 0 || c > UNIMAP_SIZE)
+  if (c < 0 || c >= UNIMAP_SIZE)
     c = 0xfffd;
 
   if (!unimap[c].bitmap) {
