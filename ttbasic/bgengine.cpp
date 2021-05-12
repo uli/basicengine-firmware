@@ -203,6 +203,7 @@ void BGEngine::enableSprite(uint8_t num) {
     s->enabled = true;
     m_bg_modified = true;
   }
+  updateStatus();
 }
 
 void BGEngine::disableSprite(uint8_t num) {
@@ -211,6 +212,7 @@ void BGEngine::disableSprite(uint8_t num) {
     s->enabled = false;
     m_bg_modified = true;
   }
+  updateStatus();
 }
 
 void GROUP(basic_video) BGEngine::moveSprite(uint8_t num, int16_t x,
@@ -284,6 +286,7 @@ void BGEngine::resetSprites() {
     s->alpha = 0xff;
 #endif
   }
+  updateStatus();
 }
 
 void BGEngine::resetBgs() {
