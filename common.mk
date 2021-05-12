@@ -34,7 +34,11 @@ $(OBJDIR)/%.o: %.S
 
 $(OBJDIR)/ttbasic/basic_help.o: ttbasic/helptext_en.h
 ttbasic/helptext_en.h: ttbasic/scripts/help.py $(shell ls ttbasic/basic*.cpp) $(shell ls po/helptext_*.po)
-	$(MAKE) -C ttbasic -f autogen.mk helptext_en.h msgs_de.h
+	$(MAKE) -C ttbasic -f autogen.mk helptext_en.h
+
+$(OBJDIR)/ttbasic/translate.o: ttbasic/msgs_de.h
+ttbasic/msgs_de.h: ttbasic/scripts/msgs.py $(shell ls ttbasic/basic*.cpp) $(shell ls po/system_*.po)
+	$(MAKE) -C ttbasic -f autogen.mk msgs_de.h
 
 ttbasic/funtbl.h: ttbasic/icode.txt
 	$(MAKE) -C ttbasic -f autogen.mk funtbl.h epigrams.h version.h
