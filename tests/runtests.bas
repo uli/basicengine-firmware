@@ -53,11 +53,11 @@
 360     ENDIF 
 361     ttal=ttal+1
 362     IF COMPARE(@of$,@rn$)=0 THEN 
-363       PRINT " \f9cPASS\f0f"
+363       PRINT " \f00ff00PASS\fc0c0c0"
 364       REMOVE @of$
 365       passed=passed+1
 366     ELSE 
-367       PRINT " \fe3FAIL\f0f"
+367       PRINT " \fff0000FAIL\fc0c0c0"
 368       failed=failed+1
 369     ENDIF 
 370   ENDIF 
