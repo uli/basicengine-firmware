@@ -6562,7 +6562,7 @@ msgstr " kbd:[Leerzeichen]\t\t"
 #. [ kbd:[\]]
 # bulk translation
 msgid " kbd:[&#x5c;]\t\t"
-msgstr " kbd:[\\]\t\t"
+msgstr " kbd:[\\\\]\t\t"
 
 #. [ Keyboard kbd:[=]]
 # bulk translation
