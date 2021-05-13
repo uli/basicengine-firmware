@@ -4,7 +4,7 @@
 # second parameter: target language (default "en")
 # third parameter: 'int' for interactive mode (default: non-interactive)
 
-import re
+import re, os
 from sys import stdin, stderr, argv
 from trans import translate, init_trans, load_trans
 
@@ -18,16 +18,18 @@ try:
 except:
     target_lang = 'en'
 
-try:
+input_po_name = '../po/helptext_' + target_lang + '.po'
+
+if os.path.exists(input_po_name):
     pof = polib.pofile('../po/helptext_' + target_lang + '.po')
-except:
+else:
     pof = polib.POFile()
 
 init_trans(target_lang, pof)
 if len(argv) > 3 and argv[3] == 'int':
-  can_translate = load_trans()
+    can_translate = load_trans()
 else:
-  can_translate = False
+    can_translate = False
 
 # create dict that maps token names to enums
 tt = open("icode.txt", 'r').readlines()
