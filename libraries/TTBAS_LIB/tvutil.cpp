@@ -62,8 +62,12 @@ void SMALL tv_fontInit() {
   }
   if (!unimap)
     unimap = (struct unimap *)calloc(1, UNIMAP_SIZE * sizeof(*unimap));
-  else
+  else {
+    for (int i = 0; i < UNIMAP_SIZE; ++i) {
+      free(unimap[i].bitmap);
+    }
     memset(unimap, 0, UNIMAP_SIZE * sizeof(*unimap));
+  }
 
   stbtt_InitFont(&ttf, tvfont, stbtt_GetFontOffsetForIndex(tvfont,0));
 
