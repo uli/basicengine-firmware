@@ -60,6 +60,10 @@ struct unimap {
 };
 struct unimap *unimap = NULL;
 
+int tv_font_count(void) {
+  return fonts.size();
+}
+
 // フォント利用設定
 void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
   // allocate/reset conversion map

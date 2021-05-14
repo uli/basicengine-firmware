@@ -166,6 +166,9 @@ public:
   inline int getFontWidth() {
     return tv_font_width();
   }
+  inline int fontCount() {
+    return tv_font_count();
+  }
 
   void saveScreenshot();
 };
