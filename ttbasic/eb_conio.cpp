@@ -43,10 +43,9 @@ int eb_window(int x, int y, int w, int h) {
 }
 
 int eb_font(int idx) {
-  if (check_param(idx, 0, NUM_FONTS - 1))
+  if (check_param(idx, 0, eb_font_count() - 1))
     return -1;
-  sc0.setFont(builtin_fonts[idx].data,
-              builtin_fonts[idx].w, builtin_fonts[idx].h);
+  sc0.setFontByIndex(idx);
   sc0.forget();
   return 0;
 }
