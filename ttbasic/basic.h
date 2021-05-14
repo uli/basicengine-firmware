@@ -468,8 +468,6 @@ uint8_t BASIC_FP process_hotkeys(uint16_t c, bool dont_dump = false);
 
 num_t BASIC_FP ivalue();
 
-void iloadbg();
-
 int32_t ncharfun();
 num_t nvreg();
 num_t nplay();
