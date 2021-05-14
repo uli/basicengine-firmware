@@ -270,6 +270,8 @@ private:
   const char *get_name(void *addr);
   void *get_symbol(const char *name);
 
+  void iloadfont();
+
   icode_t *iexe(index_t stk = 0);
   uint8_t SMALL icom();
 

@@ -1050,3 +1050,39 @@ void GROUP(basic_video) Basic::iblit() {
   } else
     eb_blit(x, y, dx, dy, w, h);
 }
+
+/***bc bg LOAD FONT
+Loads a TrueType font from a file and activates it.
+\usage LOAD FONT file$ SIZE width,height
+\args
+@file$	name of TrueType font file
+@w	font width
+@h	font height
+\ret
+Returns the font index of the loaded font in `RET(0)`.
+\bugs
+Proportional fonts and fonts that are not specifically designed for use on
+low-resolution screens will not look very good.
+\ref FONT
+***/
+void Basic::iloadfont() {
+  BString fname;
+  int32_t w, h;
+
+  ++cip;
+
+  if (!(fname = getParamFname()))
+    return;
+
+  if (*cip++ != I_SIZE) {
+    E_SYNTAX(I_SIZE);
+    return;
+  }
+
+  if (getParam(w, 4, 64, I_COMMA) ||
+      getParam(h, 4, 64, I_NONE))
+    return;
+
+  int font_idx = eb_load_font(fname.c_str(), w, h);
+  retval[0] = font_idx;
+}

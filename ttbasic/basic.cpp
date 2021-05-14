@@ -5672,6 +5672,8 @@ void Basic::ilrun_() {
     iloadbg();
   } else if (*cip == I_CONFIG) {
     iloadconfig();
+  } else if (*cip == I_FONT) {
+    iloadfont();
   } else
     ilrun();
 }
