@@ -420,6 +420,15 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
 
 void tTVscreen::setFont(const uint8_t *font, int w, int h) {
   tv_setFont(font, w, h);
+  updateWindow();
+}
+
+void tTVscreen::setFontByIndex(int idx) {
+  tv_setFontByIndex(idx);
+  updateWindow();
+}
+
+void tTVscreen::updateWindow() {
   whole_width = tv_get_cwidth();
   whole_height = tv_get_cheight();
   int x, y, ww, wh;

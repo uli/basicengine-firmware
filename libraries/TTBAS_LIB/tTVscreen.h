@@ -65,6 +65,8 @@ protected:
   void SCROLL_DOWN();                         // スクロールダウン
   void INSLINE(uint16_t l);  // 指定行に1行挿入(下スクロール)
 
+  void updateWindow();
+
 public:
   uint16_t prev_pos_x;  // カーソル横位置
   uint16_t prev_pos_y;  // カーソル縦位置
@@ -160,6 +162,7 @@ public:
     return tv_get_cheight();
   }
   void setFont(const uint8_t *font, int w, int h);
+  void setFontByIndex(int idx);
   inline int getFontHeight() {
     return tv_font_height();
   }
@@ -168,6 +171,9 @@ public:
   }
   inline int fontCount() {
     return tv_font_count();
+  }
+  inline int currentFontIndex() {
+    return tv_current_font_index();
   }
 
   void saveScreenshot();
