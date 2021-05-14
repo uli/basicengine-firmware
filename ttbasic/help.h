@@ -44,6 +44,7 @@ struct help_t {
     const char *types;
     const char *handler;
     const char *desc;
+    const char *options;
     const char *note;
     const char *bugs;
     const char *ref[8];

@@ -158,7 +158,7 @@ for c in cmds:
 
         item_data[section] = data
 
-    for e in ['brief', 'usage', 'args', 'ret', 'types', 'handler', 'desc', 'note', 'bugs', 'ref']:
+    for e in ['brief', 'usage', 'args', 'ret', 'types', 'handler', 'desc', 'options', 'note', 'bugs', 'ref']:
         of.write('  .' + e + ' = ')
         try:
             # if this succeeds, a regular plain-text item is available

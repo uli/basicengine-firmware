@@ -127,6 +127,13 @@ static void print_help(const struct help_t *h) {
         print_wrapped(_(h->desc));
     }
 
+    if (h->options) {
+        c_puts("\n\\Fk");
+        c_puts(_("Options:"));
+        c_puts("\\Ff\n\n  ");
+        print_wrapped(_(h->options));
+    }
+
     if (h->note) {
         c_puts("\n\\Fk");
         c_puts(_("Note:"));
