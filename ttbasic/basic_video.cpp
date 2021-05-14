@@ -265,7 +265,7 @@ The font set at power-on can be set using the `CONFIG` command.
 ***/
 void Basic::ifont() {
   int32_t idx;
-  if (getParam(idx, 0, NUM_FONTS - 1, I_NONE))
+  if (getParam(idx, 0, eb_font_count() - 1, I_NONE))
     return;
 
   eb_font(idx);
