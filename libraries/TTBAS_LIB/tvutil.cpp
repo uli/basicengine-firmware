@@ -28,18 +28,18 @@ extern uint8_t* ttbasic_font;
 stbtt_fontinfo ttf;
 
 const uint8_t* tvfont = 0;     // Font to use
-uint16_t c_width;    // Screen horizontal characters
-uint16_t c_height;   // Screen vertical characters
-uint16_t f_width;    // Font width (pixels)
-uint16_t f_height;   // Font height (pixels)
-uint16_t g_width;    // Screen horizontal pixels
-uint16_t g_height;   // Screen vertical pixels
+uint16_t c_width;   // Screen horizontal characters
+uint16_t c_height;  // Screen vertical characters
+uint16_t f_width;   // Font width (pixels)
+uint16_t f_height;  // Font height (pixels)
+uint16_t g_width;   // Screen horizontal pixels
+uint16_t g_height;  // Screen vertical pixels
 uint16_t win_x, win_y, win_width, win_height;
 uint16_t win_c_width, win_c_height;
 
 pixel_t fg_color = (pixel_t)-1;
 pixel_t bg_color = (pixel_t)0xff000000;
-pixel_t cursor_color = (pixel_t)0x92;	// XXX: wrong on 32-bit colorspaces
+pixel_t cursor_color = (pixel_t)0x92;  // XXX: wrong on 32-bit colorspaces
 
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
@@ -72,7 +72,7 @@ void SMALL tv_fontInit() {
   stbtt_InitFont(&ttf, tvfont, stbtt_GetFontOffsetForIndex(tvfont,0));
 
   // Screen dimensions, characters
-  c_width  = g_width  / f_width;
+  c_width = g_width / f_width;
   c_height = g_height / f_height;
   win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
@@ -93,8 +93,8 @@ int colmem_bg_x, colmem_bg_y;
 // Default setting for NTSC display
 //
 void tv_init(int16_t ajst, uint8_t vmode) {
-  g_width  = vs23.width();           // Horizontal pixel number
-  g_height = vs23.height();          // Number of vertical pixels
+  g_width = vs23.width();    // Horizontal pixel number
+  g_height = vs23.height();  // Number of vertical pixels
 
   win_x = 0;
   win_y = 0;
@@ -104,34 +104,30 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   tv_fontInit();
 }
 
-void tv_reinit()
-{
+void tv_reinit() {
   vs23.reset();
   tv_window_reset();
 }
 
-void GROUP(basic_video) tv_window_set(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
-{
+void tv_window_set(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   win_x = x * f_width;
   win_y = y * f_height;
   win_width = w * f_width;
   win_height = h * f_height;
-  win_c_width  = win_width  / f_width;
+  win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
 }
 
-void GROUP(basic_video) tv_window_reset()
-{
+void tv_window_reset() {
   win_x = 0;
   win_y = 0;
   win_width = g_width;
   win_height = g_height;
-  win_c_width  = win_width  / f_width;
+  win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
 }
 
-void GROUP(basic_video) tv_window_get(int &x, int &y, int &w, int &h)
-{
+void tv_window_get(int &x, int &y, int &w, int &h) {
   x = win_x / f_width;
   y = win_y / f_height;
   w = win_width / f_width;
@@ -149,43 +145,44 @@ const uint8_t* tv_getFontAdr() {
 }
 
 // Screen characters sideways
-uint16_t GROUP(basic_video) tv_get_cwidth() {
+uint16_t tv_get_cwidth() {
   return c_width;
 }
 
 // Screen characters downwards
-uint16_t GROUP(basic_video) tv_get_cheight() {
+uint16_t tv_get_cheight() {
   return c_height;
 }
 
-uint16_t GROUP(basic_video) tv_get_win_cwidth() {
+uint16_t tv_get_win_cwidth() {
   return win_c_width;
 }
 
-uint16_t GROUP(basic_video) tv_get_win_cheight() {
+uint16_t tv_get_win_cheight() {
   return win_c_height;
 }
 
 // Screen graphic horizontal pixels
-uint16_t GROUP(basic_video) tv_get_gwidth() {
+uint16_t tv_get_gwidth() {
   return g_width;
 }
 
 // Screen graphic vertical pixels
-uint16_t GROUP(basic_video) tv_get_gheight() {
+uint16_t tv_get_gheight() {
   return g_height;
 }
 
 //
 // Cursor display
 //
-void GROUP(basic_video) tv_drawCurs(uint16_t x, uint16_t y) {
+void tv_drawCurs(uint16_t x, uint16_t y) {
   pixel_t pix[f_width];
   for (int i = 0; i < f_width; ++i)
     pix[i] = cursor_color;
 
   for (int i = 0; i < f_height; ++i) {
-    uint32_t byteaddress = vs23.pixelAddr(win_x + x*f_width, win_y + y*f_height+i);
+    uint32_t byteaddress =
+            vs23.pixelAddr(win_x + x * f_width, win_y + y * f_height + i);
     vs23.setPixels(byteaddress, pix, f_width);
   }
 }
@@ -243,16 +240,18 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) 
 }
 
 void ICACHE_RAM_ATTR tv_write(uint16_t x, uint16_t y, utf8_int32_t c) {
-  tv_write_px(win_x + x*f_width, win_y + y*f_height, c);
+  tv_write_px(win_x + x * f_width, win_y + y * f_height, c);
 }
 
-void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, utf8_int32_t c, pixel_t fg, pixel_t bg)
-{
+void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, utf8_int32_t c,
+                                    pixel_t fg, pixel_t bg) {
   pixel_t sfg = fg_color;
   pixel_t sbg = bg_color;
-  fg_color = fg; bg_color = bg;
+  fg_color = fg;
+  bg_color = bg;
   tv_write(x, y, c);
-  fg_color = sfg; bg_color = sbg;
+  fg_color = sfg;
+  bg_color = sbg;
 }
 
 //
@@ -286,9 +285,9 @@ void tv_clerLine(uint16_t l, int from) {
 // Insert one line at specified line (downward scroll)
 //
 void tv_insLine(uint16_t l) {
-  if (l > win_c_height-1) {
+  if (l > win_c_height - 1) {
     return;
-  } else if (l == win_c_height-1) {
+  } else if (l == win_c_height - 1) {
     tv_clerLine(l);
   } else {
 #ifdef SINGLE_BLIT
@@ -298,17 +297,17 @@ void tv_insLine(uint16_t l) {
 #else
     vs23.blitRect(win_x, win_y + f_height * l,
                   win_x, win_y + f_height * (l + 1),
-                  win_width/2, win_height - f_height - l * f_height);
+                  win_width / 2, win_height - f_height - l * f_height);
     vs23.blitRect(win_x + win_width / 2, win_y + f_height * l,
                   win_x + win_width / 2, win_y + f_height * (l + 1),
-                  win_width/2, win_height - f_height - l * f_height);
+                  win_width / 2, win_height - f_height - l * f_height);
 #endif
     tv_clerLine(l);
   }
 }
 
 // Screen scroll up for one line
-void GROUP(basic_video) tv_scroll_up() {
+void tv_scroll_up() {
 #ifdef SINGLE_BLIT
   vs23.blitRect(win_x, win_y + f_height,
                 win_x, win_y,
@@ -321,11 +320,11 @@ void GROUP(basic_video) tv_scroll_up() {
                 win_x + win_width / 2, win_y,
                 win_width/2, win_height-f_height);
 #endif
-  tv_clerLine(win_c_height-1);
+  tv_clerLine(win_c_height - 1);
 }
 
 // Screen scroll down for one line
-void GROUP(basic_video) tv_scroll_down() {
+void tv_scroll_down() {
 #ifdef SINGLE_BLIT
   vs23.blitRect(win_x, win_y,
                 win_x, win_y + f_height,
@@ -342,38 +341,38 @@ void GROUP(basic_video) tv_scroll_down() {
 }
 
 // Point drawing
-void GROUP(basic_video) tv_pset(int16_t x, int16_t y, pixel_t c) {
+void tv_pset(int16_t x, int16_t y, pixel_t c) {
   vs23.setPixel(x, y, c);
 }
 
 // Draw a line
-void GROUP(basic_video) tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
+void tv_line(int16_t x1, int16_t y1, int16_t x2, int16_t y2, pixel_t c) {
   gfx.drawLine(x1, y1, x2, y2, c);
 }
 
 // Drawing a circle
-void GROUP(basic_video) tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
+void tv_circle(int16_t x, int16_t y, int16_t r, pixel_t c, int f) {
   gfx.drawCircle(x, y, r, c, f);
 }
 
 // Draw a square
-void GROUP(basic_video) tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
+void tv_rect(int16_t x, int16_t y, int16_t w, int16_t h, pixel_t c, int f) {
   gfx.drawRect(x, y, w, h, c, f);
 }
 
-void GROUP(basic_video) tv_set_gcursor(uint16_t x, uint16_t y) {
+void tv_set_gcursor(uint16_t x, uint16_t y) {
   gcurs_x = x;
   gcurs_y = y;
 }
 
-void GROUP(basic_video) tv_write(utf8_int32_t c) {
+void tv_write(utf8_int32_t c) {
   if (gcurs_x < g_width - f_width)
     tv_write_px(gcurs_x, gcurs_y, c);
   gcurs_x += f_width;
 }
 
 // Graphic horizontal scroll
-void GROUP(basic_video) tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
+void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   pixel_t col_black = (pixel_t)0;
   switch (mode) {
     case 0:	// up
@@ -399,14 +398,12 @@ void GROUP(basic_video) tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, u
   }
 }
 
-void GROUP(basic_video) tv_setcolor(pixel_t fc, pixel_t bc)
-{
+void tv_setcolor(pixel_t fc, pixel_t bc) {
   fg_color = fc;
   bg_color = bc;
 }
 
-void GROUP(basic_video) tv_flipcolors()
-{
+void tv_flipcolors() {
   pixel_t tmp = fg_color;
   fg_color = bg_color;
   bg_color = tmp;
