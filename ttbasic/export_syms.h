@@ -40,6 +40,8 @@ S(eb_kbhit)
 S(eb_last_key_event)
 S(eb_term_getch)
 S(eb_term_putch)
+S(eb_load_font)
+S(eb_font_count)
 
 // eb_video
 S(eb_rgb)

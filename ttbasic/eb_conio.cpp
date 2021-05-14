@@ -3,6 +3,7 @@
 
 #include "eb_api.h"
 #include "eb_conio.h"
+#include "eb_file.h"
 
 #include "basic.h"
 #include <fonts.h>
@@ -48,6 +49,36 @@ int eb_font(int idx) {
               builtin_fonts[idx].w, builtin_fonts[idx].h);
   sc0.forget();
   return 0;
+}
+
+int eb_load_font(const char *file_name, int w, int h) {
+  int ret = -1;
+  int size = eb_file_size(file_name);
+  if (size < 0) {
+    err = ERR_FILE_OPEN;
+    return ret;
+  }
+
+  FILE *ttf = fopen(file_name, "rb");
+  if (!ttf) {
+    err = ERR_FILE_OPEN;
+    return ret;
+  }
+
+  uint8_t *font = new uint8_t[size];
+  if (fread(font, size, 1, ttf) != 1)
+    err = ERR_FILE_READ;
+  else {
+    sc0.setFont(font, w, h);
+    ret = sc0.currentFontIndex();
+  }
+
+  fclose(ttf);
+  return ret;
+}
+
+int eb_font_count(void) {
+  return sc0.fontCount();
 }
 
 int eb_pos_x(void) {
