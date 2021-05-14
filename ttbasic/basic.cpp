@@ -6079,9 +6079,8 @@ void SMALL Basic::basic() {
 
   // Platform/version
   sc0.setColor(csp.colorFromRgb(64, 64, 64), COL(BG));
-  static const char __e[] PROGMEM = STR_EDITION;
-  sc0.locate(sc0.getWidth() - strlen_P(__e), 7);
-  c_puts_P(__e);
+  sc0.locate(sc0.getWidth() - strlen_P(STR_EDITION), 7);
+  c_puts_P(STR_EDITION);
   static const char __v[] PROGMEM = STR_VARSION;
   sc0.locate(sc0.getWidth() - strlen_P(__v), 8);
   c_puts_P(__v);
