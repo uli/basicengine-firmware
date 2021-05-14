@@ -250,18 +250,20 @@ void BASIC_INT Basic::iwindow() {
 Sets the current text font.
 \usage FONT font_num
 \args
-@font_num	font number [`0` to `{NUM_FONTS_m1}`]
+@font_num	font number
 \sec FONTS
-The following fonts are available:
+The following fonts are built-in:
 \table
-| 0 | ATI console font, 6x8 pixels (default)
+| 0 | HP 100 LX font, 6x8 pixels (default)
 | 1 | CPC font, 8x8 pixels
 | 2 | PETSCII font, 8x8 pixels
-| 3 | Japanese font, 6x8 pixels
+| 3 | Japanese font, 8x8 pixels
+| 4 | HP 100 LX font, 8x8 pixels
 \endtable
 \note
-The font set at power-on can be set using the `CONFIG` command.
-\ref CONFIG
+* Additional fonts will be assigned consecutive font indices.
+* The font set at power-on can be set using the `CONFIG` command.
+\ref CONFIG LOAD_FONT
 ***/
 void Basic::ifont() {
   int32_t idx;
