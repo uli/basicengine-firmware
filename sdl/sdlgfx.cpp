@@ -6,8 +6,6 @@
 #include "colorspace.h"
 #include <joystick.h>
 
-#include <SDL/SDL_gfxPrimitives.h>
-
 SDLGFX vs23;
 
 const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {

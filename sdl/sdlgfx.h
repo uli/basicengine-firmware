@@ -9,7 +9,6 @@
 #include "colorspace.h"
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h>
 
 #define SC_DEFAULT           14
 #define SC_DEFAULT_SECONDARY 3
