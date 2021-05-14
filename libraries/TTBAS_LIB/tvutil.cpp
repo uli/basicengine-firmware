@@ -26,10 +26,15 @@
 #include <stb_truetype.h>
 #include <fonts.h>
 
-extern uint8_t* ttbasic_font;
-stbtt_fontinfo ttf;
+struct font_t {
+  const uint8_t *font;
+  int w, h;
+  stbtt_fontinfo ttf;
+};
 
-const uint8_t* tvfont = 0;     // Font to use
+static std::vector<struct font_t> fonts;
+struct font_t *tvfont;
+
 uint16_t c_width;   // Screen horizontal characters
 uint16_t c_height;  // Screen vertical characters
 uint16_t f_width;   // Font width (pixels)
@@ -56,12 +61,8 @@ struct unimap {
 struct unimap *unimap = NULL;
 
 // フォント利用設定
-void SMALL tv_fontInit() {
-  if (!tvfont) {
-    tvfont = console_font_6x8;
-    f_width = 6;
-    f_height = 8;
-  }
+void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
+  // allocate/reset conversion map
   if (!unimap)
     unimap = (struct unimap *)calloc(1, UNIMAP_SIZE * sizeof(*unimap));
   else {
@@ -71,7 +72,22 @@ void SMALL tv_fontInit() {
     memset(unimap, 0, UNIMAP_SIZE * sizeof(*unimap));
   }
 
-  stbtt_InitFont(&ttf, tvfont, stbtt_GetFontOffsetForIndex(tvfont,0));
+  // do we have this font already?
+  bool must_init = true;
+  for (auto &i : fonts) {
+    if (i.font == font) {
+      must_init = false;
+      tvfont = &i;
+      break;
+    }
+  }
+
+  if (must_init) {
+    font_t new_font = { font, w, h };
+    stbtt_InitFont(&new_font.ttf, font, stbtt_GetFontOffsetForIndex(font, 0));
+    fonts.push_back(new_font);
+    tvfont = &fonts.back();
+  }
 
   // Screen dimensions, characters
   c_width = g_width / f_width;
@@ -80,12 +96,10 @@ void SMALL tv_fontInit() {
   win_c_height = win_height / f_height;
 }
 
-void tv_setFont(const uint8_t *font, int w, int h)
-{
-    tvfont = font;
-    f_width = w;
-    f_height = h;
-    tv_fontInit();
+void tv_setFont(const uint8_t *font, int w, int h) {
+  f_width = w;
+  f_height = h;
+  tv_fontInit(font, w, h);
 }
 
 int colmem_fg_x, colmem_fg_y;
@@ -103,7 +117,14 @@ void tv_init(int16_t ajst, uint8_t vmode) {
   win_width = g_width;
   win_height = g_height;
 
-  tv_fontInit();
+  if (fonts.size() == 0) {
+    // populate with built-in fonts to make sure we always have the fallbacks
+    for (int i = NUM_FONTS; i-- > 0;) {
+      f_width = builtin_fonts[i].w;
+      f_height = builtin_fonts[i].h;
+      tv_fontInit(builtin_fonts[i].data, f_width, f_height);
+    }
+  }
 }
 
 void tv_reinit() {
@@ -142,8 +163,8 @@ void tv_window_get(int &x, int &y, int &w, int &h) {
 void tv_end() {
 }
 
-const uint8_t* tv_getFontAdr() {
-  return tvfont;
+const uint8_t *tv_getFontAdr() {
+  return tvfont->font;
 }
 
 // Screen characters sideways
@@ -199,24 +220,42 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) 
   if (c < 0 || c >= UNIMAP_SIZE)
     c = 0xfffd;
 
-  if (!unimap[c].bitmap) {
-    float scale = stbtt_ScaleForPixelHeight(&ttf, f_height);
+  if (!unimap[c].bitmap && c != ' ') {
+    float scale = stbtt_ScaleForPixelHeight(&tvfont->ttf, f_height);
 
     int ascent, descent, lineGap;
-    stbtt_GetFontVMetrics(&ttf, &ascent, &descent, &lineGap);
+    stbtt_GetFontVMetrics(&tvfont->ttf, &ascent, &descent, &lineGap);
     ascent *= scale;
     descent *= scale;
 
-    unimap[c].bitmap =
-            stbtt_GetCodepointBitmap(&ttf, 0, scale, c, &w, &h, &off_x, &off_y);
-
-    if (!unimap[c].bitmap) {
-      unimap[c].w = unimap[c].h = 0;
-    } else {
+    int glyph_idx = stbtt_FindGlyphIndex(&tvfont->ttf, c);
+    if (glyph_idx != 0) {
+      unimap[c].bitmap = stbtt_GetCodepointBitmap(&tvfont->ttf, 0, scale, c, &w,
+                                                  &h, &off_x, &off_y);
       unimap[c].w = w;
       unimap[c].h = h;
       unimap[c].off_x = off_x;
       unimap[c].off_y = off_y + f_height + descent;
+    } else {
+      for (auto i : fonts) {
+        if (i.h == f_height && i.w == f_width &&
+            stbtt_FindGlyphIndex(&i.ttf, c) != 0) {
+          scale = stbtt_ScaleForPixelHeight(&i.ttf, f_height);
+          stbtt_GetFontVMetrics(&i.ttf, &ascent, &descent, &lineGap);
+          ascent *= scale;
+          descent *= scale;
+          unimap[c].bitmap = stbtt_GetCodepointBitmap(&i.ttf, 0, scale, c, &w,
+                                                      &h, &off_x, &off_y);
+          unimap[c].w = w;
+          unimap[c].h = h;
+          unimap[c].off_x = off_x;
+          unimap[c].off_y = off_y + f_height + descent;
+          break;
+        }
+      }
+      if (!unimap[c].bitmap) {
+        unimap[c].w = unimap[c].h = 0;
+      }
     }
   }
 
