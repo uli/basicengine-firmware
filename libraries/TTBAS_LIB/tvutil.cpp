@@ -106,6 +106,22 @@ void tv_setFont(const uint8_t *font, int w, int h) {
   tv_fontInit(font, w, h);
 }
 
+void tv_setFontByIndex(int idx) {
+  if (idx < fonts.size()) {
+    f_width = fonts[idx].w;
+    f_height = fonts[idx].h;
+    tv_fontInit(fonts[idx].font, f_width, f_height);
+  }
+}
+
+int tv_current_font_index(void) {
+  for (int i = 0; i < fonts.size(); ++i) {
+    if (tvfont == &fonts[i])
+      return i;
+  }
+  return -1;
+}
+
 int colmem_fg_x, colmem_fg_y;
 int colmem_bg_x, colmem_bg_y;
 
@@ -123,7 +139,7 @@ void tv_init(int16_t ajst, uint8_t vmode) {
 
   if (fonts.size() == 0) {
     // populate with built-in fonts to make sure we always have the fallbacks
-    for (int i = NUM_FONTS; i-- > 0;) {
+    for (int i = 0; i < NUM_FONTS; ++i) {
       f_width = builtin_fonts[i].w;
       f_height = builtin_fonts[i].h;
       tv_fontInit(builtin_fonts[i].data, f_width, f_height);
