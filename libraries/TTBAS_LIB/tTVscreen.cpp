@@ -27,6 +27,8 @@
 #include <string.h>
 #include "tTVscreen.h"
 
+#include <fonts.h>
+
 //#define DEBUG
 
 void endPS2();

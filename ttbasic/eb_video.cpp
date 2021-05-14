@@ -26,7 +26,7 @@ int eb_screen(int m) {
 
   if (scmode == m) {
     sc0.reset();
-    sc0.setFont(fonts[CONFIG.font].data, fonts[CONFIG.font].w, fonts[CONFIG.font].h);
+    eb_font(CONFIG.font);
     sc0.locate(0, 0);
     sc0.cls();
     sc0.show_curs(false);
@@ -44,7 +44,7 @@ int eb_screen(int m) {
 
   sc0.init(SIZE_LINE, CONFIG.NTSC, m - 1);
 
-  sc0.setFont(fonts[CONFIG.font].data, fonts[CONFIG.font].w, fonts[CONFIG.font].h);
+  eb_font(CONFIG.font);
   sc0.cls();
   sc0.show_curs(false);
   sc0.draw_cls_curs();

@@ -21,8 +21,10 @@
 #include "../../ttbasic/video.h"
 #include "../../ttbasic/graphics.h"
 #include "tTVscreen.h"
+
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb_truetype.h>
+#include <fonts.h>
 
 extern uint8_t* ttbasic_font;
 stbtt_fontinfo ttf;

@@ -105,42 +105,11 @@
 // ** Use of built-in RTC 0: Not use 1: Use *****************************
 #define USE_INNERRTC   1 // (Default: 1) ※ Always set to 1 when using an SD card
 
-// ** Font data specification ******************************************************
-#define FONTSELECT  1  // 0 to 3 (default: 1)
-
-#if FONTSELECT == 0
-  // 6x8 TVout font
-  #define TV_DISPLAY_FONT font6x8
-  #include <font6x8.h>
-
-#elif FONTSELECT == 1
-  // 6x8 pixel original font (default)
-  #define TV_DISPLAY_FONT font6x8tt
-  #include <font6x8tt.h>
-
-#elif FONTSELECT == 2
-  // 8x8 TVout font
-  #define TV_DISPLAY_FONT font8x8
-  #include <font8x8.h>
-
-#elif FONTSELECT == 3
-  // 8x8 IchigoJam font (optional feature required font)
-  #define TV_DISPLAY_FONT ichigoFont8x8
-  #include <ichigoFont8x8.h>
-#endif
-
-#define MIN_FONT_SIZE_X 6
-#define MIN_FONT_SIZE_Y 8
-
 #ifdef HAVE_PROFILE
 #define NOINS __attribute__((no_instrument_function))
 #endif
 
 //#define ENABLE_GDBSTUB
-
-#include "ati_6x8.h"
-#include "amstrad_8x8.h"
-#include "cbm_ascii_8x8.h"
 
 #ifdef USE_SMALL
 #define SMALL __attribute__((optimize("Os")))
