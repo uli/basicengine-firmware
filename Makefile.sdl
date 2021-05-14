@@ -12,7 +12,7 @@ SOURCES_C = $(COMMON_SOURCES_C) libraries/tinycc/lib/va_list.c
 OBJS = $(SOURCES:.cpp=.o) $(SOURCES_C:.c=.o)
 OUT_OBJS = $(addprefix $(OBJDIR)/, $(OBJS))
 
-LIBS = -lstdc++ -lSDL -lSDL_gfx -L$(OBJDIR)/dyncall/dyncall -ldyncall_s
+LIBS = -lstdc++ `sdl-config --libs` -L$(OBJDIR)/dyncall/dyncall -ldyncall_s -lm
 
 CROSS_COMPILE=
 CC=$(CROSS_COMPILE)gcc
@@ -20,7 +20,7 @@ CXX=$(CROSS_COMPILE)g++
 
 INCLUDE = $(COMMON_INCLUDE)
 ARDFLAGS = $(COMMON_ARDFLAGS) -MMD -funroll-loops -fomit-frame-pointer -Isdl \
-	   -DSDL -DDISABLE_NEON
+	   -DSDL -DDISABLE_NEON `sdl-config --cflags`
 
 CFLAGS += $(ARDFLAGS) -Wno-pointer-sign
 #CFLAGS += -m32
