@@ -169,10 +169,7 @@ int redirect_input_file = -1;
 
 // Character output
 extern inline void c_putch(utf8_int32_t c, uint8_t devno) {
-  if (devno == 0) {
-    if (redirect_output_file >= 0)
-      putc(c, user_files[redirect_output_file].f);
-    else
+  if (devno == 0 && redirect_output_file < 0) {
       screen_putch(c);
   } else if (devno == 2)
     sc0.gputch(c);
@@ -181,6 +178,8 @@ extern inline void c_putch(utf8_int32_t c, uint8_t devno) {
     char *start = utfbuf;
     char *end = (char *)utf8catcodepoint((void *)start, c, 4);
     while (start < end) {
+      if (devno == 0)
+        putc(*start++, user_files[redirect_output_file].f);
       if (devno == 1)
         Serial.write(*start++);
       else if (devno == 3)
