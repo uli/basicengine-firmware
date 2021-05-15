@@ -4256,7 +4256,7 @@ num_t BASIC_INT Basic::nsvar_a(BString &value) {
   }
   if (getParam(a, 0, value.length(), I_SQCLOSE))
     return 0;
-  return value[a];
+  return (uint8_t)value[a];
 }
 
 // Get value
