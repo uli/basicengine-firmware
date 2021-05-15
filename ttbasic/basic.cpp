@@ -3839,6 +3839,35 @@ BString BASIC_INT Basic::sright() {
   return ilrstr(true);
 }
 
+/***bf bas BLEFT$
+Returns a specified number of leftmost bytes in a byte string.
+\usage s$ = BLEFT$(l$, num)
+\args
+@l	any string expression
+@num	number of bytes to return [min `0`]
+\ret Substring of `num` bytes or less.
+\note
+If `l$` is shorter than `num` bytes, the return value is `l$`.
+\ref BMID$() BRIGHT$()
+***/
+BString BASIC_INT Basic::sbleft() {
+  return ilrstr(false, true);
+}
+/***bf bas BRIGHT$
+Returns a specified number of rightmost bytes in a byte string.
+\usage s$ = RIGHT$(r$, num)
+\args
+@r	any string expression
+@num	number of bytes to return [min `0`]
+\ret Substring of `num` bytes or less.
+\note
+If `r$` is shorter than `num` bytes, the return value is `r$`.
+\ref BLEFT$() BMID$()
+***/
+BString BASIC_INT Basic::sbright() {
+  return ilrstr(true, true);
+}
+
 /***bf bas MID$
 Returns part of a string (a substring).
 \usage s$ = MID$(m$, start[, len])

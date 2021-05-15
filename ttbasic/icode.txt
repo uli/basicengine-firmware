@@ -150,7 +150,9 @@ BIN$	I_BIN		sbin
 HEX$	I_HEX		shex
 STR$	I_STRSTR	sstr
 LEFT$	I_LEFTSTR	sleft
+BLEFT$	I_BLEFTSTR	sbleft
 RIGHT$	I_RIGHTSTR	sright
+BRIGHT$	I_BRIGHTSTR	sbright
 MID$	I_MIDSTR	smid
 CWD$	I_CWD		scwd
 DIR$	I_DIRSTR	sdir
