@@ -8,7 +8,7 @@
   170 REM --------------------
   180 PRINT " I", " L", " A"
   190 PRINT " ===", " ===", " ==="
-  200 FOR I = 0 TO 255
+  200 FOR I = 1 TO 255
   210   LET A$ = CHR$(I)
   220   LET L  = LEN(A$)
   230   LET A  = ASC(A$)

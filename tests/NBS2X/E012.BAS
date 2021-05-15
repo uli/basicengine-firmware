@@ -3,7 +3,7 @@
 1020 rem  Purpose: Verify CHR()
 1100 rem ------------------------------------------
 1110 let R$ = ""
-1120 for I = 0 to 255
+1120 for I = 1 to 255
 1130   let A$ = CHR$( I )
 1140   let B = ASC( A$ )
 1150   if B <> I then goto &TestFailed
