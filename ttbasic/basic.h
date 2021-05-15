@@ -207,7 +207,7 @@ private:
   void esyntax();
   void eunimp();
 
-  BString ilrstr(bool right);
+  BString ilrstr(bool right, bool bytewise = false);
 
   typedef BString (Basic::*strfun_t)();
   static const strfun_t strfuntbl[];

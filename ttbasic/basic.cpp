@@ -3774,7 +3774,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
   err_expected = NULL;
 }
 
-BString BASIC_INT Basic::ilrstr(bool right) {
+BString BASIC_INT Basic::ilrstr(bool right, bool bytewise) {
   BString value;
   int32_t len;
 
@@ -3794,10 +3794,17 @@ BString BASIC_INT Basic::ilrstr(bool right) {
     goto out;
   }
 
-  if (right) {
-    value = value.substring(_max(0, (int)value.length() - len), value.length());
-  } else
-    value = value.substring(0, len);
+  if (bytewise) {
+    if (right) {
+      value = value.substring(_max(0, (int)value.length() - len), value.length());
+    } else
+      value = value.substring(0, len);
+  } else {
+    if (right) {
+      value = value.substringMB(_max(0, (int)value.lengthMB() - len), value.lengthMB());
+    } else
+      value = value.substringMB(0, len);
+  }
 
 out:
   return value;
