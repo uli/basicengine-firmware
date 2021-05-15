@@ -3776,6 +3776,7 @@ void SMALL Basic::error(uint8_t flgCmd) {
 
 BString BASIC_INT Basic::ilrstr(bool right, bool bytewise) {
   BString value;
+  num_t nlen;
   int32_t len;
 
   if (checkOpen())
@@ -3787,12 +3788,15 @@ BString BASIC_INT Basic::ilrstr(bool right, bool bytewise) {
     goto out;
   }
 
-  if (getParam(len, I_CLOSE))
+  if (getParam(nlen, I_CLOSE))
     goto out;
-  if (len < 0) {
+
+  if (ceil(nlen) < 0) {
     E_ERR(VALUE, _("negative substring length"));
     goto out;
   }
+
+  len = nlen;
 
   if (bytewise) {
     if (right) {
