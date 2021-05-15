@@ -3222,8 +3222,8 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
         int leading = 0;
         int trailing = 0;        // decimal places
         BString prefix, suffix;  // random literal characters
-        for (unsigned int i = 0; i < str.length(); ++i) {
-          switch (str[i]) {
+        for (unsigned int i = 0; i < str.lengthMB(); ++i) {
+          switch (str.codepointAt(i)) {
           case '#':
             if (!had_point)
               leading++;
@@ -3248,9 +3248,9 @@ void Basic::iprint(uint8_t devno, uint8_t nonewln) {
             break;
           default:
             if (!had_point && !had_digit)
-              prefix += str[i];
+              prefix += str.substringMB(i, i + 1);
             else
-              suffix += str[i];
+              suffix += str.substringMB(i, i + 1);
             break;
           }
         }
