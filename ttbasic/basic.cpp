@@ -3886,11 +3886,16 @@ out:
 }
 
 /***bf bas CHR$
-Returns the character corresponding to a specified ASCII code.
+Returns a string containing the UTF-8 encoding of the specified Unicode
+codepoint.
 \usage char = CHR$(val)
 \args
-@val	ASCII code
+@val	Unicode codepoint
 \ret Single-character string.
+\note
+* `CHR$(0)` returns an empty string.
+* To construct string from a byte value without UTF-8 encoding, use the
+  `a$ = [byte]` syntax.
 \ref ASC()
 ***/
 BString Basic::schr() {
@@ -3898,9 +3903,13 @@ BString Basic::schr() {
   BString value;
   if (checkOpen())
     return value;
-  if (getParam(nv, 0, 255, I_NONE))
+  if (getParam(nv, 0, 0x10ffff, I_NONE))
     return value;
-  value = BString((char)nv);
+
+  char nvstr[5];
+  *(char *)utf8catcodepoint(nvstr, nv, 4) = 0;
+  value = BString(nvstr);
+
   checkClose();
   return value;
 }
