@@ -3887,6 +3887,64 @@ implementations.
 ***/
 BString BASIC_INT Basic::smid() {
   BString value;
+  num_t nstart;
+  int32_t start;
+  num_t nlen;
+  int32_t len;
+
+  if (checkOpen())
+    goto out;
+
+  value = istrexp();
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    goto out;
+  }
+
+  if (getParam(nstart, I_NONE))
+    goto out;
+  if (ceil(nstart) < 0) {
+    E_ERR(VALUE, _("negative string offset"));
+    goto out;
+  }
+  start = nstart;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(nlen, I_NONE))
+      goto out;
+    if (nlen > INT_MAX)
+      len = INT_MAX;
+    else
+      len = nlen;
+  } else {
+    len = value.lengthMB() - start;
+  }
+  if (checkClose())
+    goto out;
+
+  value = value.substringMB(start, start + len);
+
+out:
+  return value;
+}
+
+/***bf bas BMID$
+Returns part of a byte string.
+\usage s$ = BMID$(m$, start[, len])
+\args
+@m$	any string expression
+@start	position of the first byte in the substring being returned
+@len	number of bytes in the substring [default: `BLEN(m$)-start`]
+\ret Substring of `len` bytes or less.
+\note
+* If `m$` is shorter than `len` bytes, the return value is `m$`.
+* Unlike with other BASIC implementations, `start` is zero-based, i.e. the
+  first byte is 0, not 1.
+\ref BLEFT$() BLEN() BRIGHT$()
+***/
+BString BASIC_INT Basic::sbmid() {
+  BString value;
   int32_t start;
   int32_t len;
 
