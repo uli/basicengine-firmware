@@ -550,6 +550,16 @@ char BString::operator[](unsigned int index) const {
     return buffer[index];
 }
 
+utf8_int32_t BString::codepointAt(unsigned int index) const {
+    char *start = buffer;
+    while (start && *start && index--) {
+        start += utf8codepointcalcsize(start);
+    }
+    utf8_int32_t c;
+    utf8codepoint(start, &c);
+    return c;
+}
+
 void BString::getBytes(unsigned char *buf, unsigned int bufsize, unsigned int index) const {
     if(!bufsize || !buf)
         return;
@@ -641,6 +651,30 @@ BString BString::substring(unsigned int left, unsigned int right) const {
     if(right > len)
         right = len;
     out.copy(buffer + left, right - left);
+    return out;
+}
+
+BString BString::substringMB(unsigned int left, unsigned int right) const {
+    if(left > right) {
+        unsigned int temp = right;
+        right = left;
+        left = temp;
+    }
+    BString out;
+    if(left >= utf8len(buffer))
+        return out;
+    if(right > utf8len(buffer))
+        right = utf8len(buffer);
+
+    char *start = buffer;
+    for (int i = 0; i < left && start && *start; ++i) {
+        start += utf8codepointcalcsize(start);
+    }
+    char *end = start;
+    for (int i = 0; i < right - left && end && *end; ++i) {
+        end += utf8codepointcalcsize(end);
+    }
+    out.copy(start, end - start);
     return out;
 }
 

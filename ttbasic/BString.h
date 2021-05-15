@@ -29,6 +29,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <pgmspace.h>
+#include <utf8.h>
 #include "ttconfig.h"
 
 
@@ -106,6 +107,12 @@ class BString {
             } else {
                 return 0;
             }
+        }
+        inline unsigned int lengthMB(void) const {
+            if (buffer)
+                return utf8len(buffer);
+            else
+                return 0;
         }
         inline void resetLength(unsigned int size) {
             len = size;
@@ -231,6 +238,7 @@ class BString {
         void setCharAt(unsigned int index, char c);
         char operator [](unsigned int index) const;
         char& operator [](unsigned int index);
+        utf8_int32_t codepointAt(unsigned int index) const;
         void getBytes(unsigned char *buf, unsigned int bufsize, unsigned int index = 0) const;
         void toCharArray(char *buf, unsigned int bufsize, unsigned int index = 0) const {
             getBytes((unsigned char *) buf, bufsize, index);
@@ -255,6 +263,11 @@ class BString {
         }
         ;
         BString substring(unsigned int beginIndex, unsigned int endIndex) const;
+        BString substringMB(unsigned int beginIndex) const {
+            return substringMB(beginIndex, utf8len(buffer));
+        }
+        ;
+        BString substringMB(unsigned int beginIndex, unsigned int endIndex) const;
 
         // modification
         void replace(char find, char replace);
