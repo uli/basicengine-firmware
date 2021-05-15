@@ -4163,8 +4163,25 @@ num_t BASIC_INT Basic::nlen() {
     ++cip;
     value = num_lst.var(*cip++).size();
   } else {
-    value = istrexp().length();
+    value = istrexp().lengthMB();
   }
+  checkClose();
+  return value;
+}
+
+/***bf bas BLEN
+Returns the number of bytes in a byte string.
+\usage
+sl = BLEN(string$)
+\args
+@string$	any string expression
+\ret Length in bytes.
+***/
+num_t BASIC_INT Basic::nblen() {
+  int32_t value;
+  if (checkOpen())
+    return 0;
+  value = istrexp().length();
   checkClose();
   return value;
 }

@@ -181,6 +181,7 @@ FREE	I_FREE		nfree
 RND	I_RND		nrnd
 INKEY	I_INKEY		ninkey
 LEN	I_LEN		nlen
+BLEN	I_BLEN		nblen
 TICK	I_TICK		ntick
 PEEKW	I_PEEKW		npeekw
 PEEKD	I_PEEKD		npeekd
