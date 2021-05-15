@@ -5,6 +5,6 @@
   150 REM  
   200 print "This is is calling program"
   210 let X$ = "some parameter value"
-  220 chain "/sd/tests/I70/USE.BAS":rem , X$
+  220 chain "I70/USE.BAS":rem , X$
   230 print "Still in the calling program"
   999 end
