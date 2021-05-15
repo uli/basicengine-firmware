@@ -3145,13 +3145,18 @@ num_t BASIC_FP SMALL Basic::nmap() {
 }
 
 /***bf bas ASC
-Returns the ASCII code for the first character in a string expression.
+Returns the Unicode codepoint for the first character in a string expression.
 \usage val = ASC(s$)
 \args
 @s$	string expression
-\ret ASCII code of the first character.
+\ret Unicode codepoint of the first character.
 \error
 Generates an error if `s$` is empty.
+\note
+* Unlike its counterparts in single-byte BASIC implementations, this
+  function may return values larger than 255.
+* To get access to individual bytes without UTF-8 decoding, use the
+  `a$[num]` syntax.
 \ref CHR$()
 ***/
 num_t BASIC_INT Basic::nasc() {
@@ -3160,11 +3165,11 @@ num_t BASIC_INT Basic::nasc() {
   if (checkOpen())
     return 0;
   BString a = istrexp();
-  if (a.length() < 1) {
+  if (a.lengthMB() < 1) {
     E_ERR(VALUE, _("empty string"));
     return 0;
   }
-  value = a[0];
+  value = a.codepointAt(0);
   checkClose();
 
   return value;
