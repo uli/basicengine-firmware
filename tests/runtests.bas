@@ -57,7 +57,7 @@
 364       REMOVE @of$
 365       passed=passed+1
 366     ELSE 
-367       PRINT " \fff0000FAIL\fc0c0c0"
+367       PRINT " \f000000ffFAIL\fc0c0c0"
 368       failed=failed+1
 369     ENDIF 
 370   ENDIF 
