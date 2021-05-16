@@ -33,8 +33,37 @@ const unsigned short color_pairs[] = {
 };
 #endif
 
+extern int win_cnt, state, next_state, skip_count;
+static void clear_all(void)
+{
+	done = 0;
+	nscrap = 0;
+	scrap = NULL;
+
+	input = NULL;
+	msgflag = 0;
+	memset(msgline, 0, TEMPBUF);
+	memset(temp, 0, TEMPBUF);
+	memset(searchtext, 0, STRBUF_M);
+	memset(replace, 0, STRBUF_M);
+
+	key_return = NULL;
+	key_map = NULL;
+	curbp = NULL;
+	bheadp = NULL;
+	curwp = NULL;
+	wheadp = NULL;
+
+	win_cnt = 0;
+
+	state = ID_DEFAULT;
+	next_state = ID_DEFAULT;
+	skip_count = 0;
+}
+
 int e_main(int argc, char **argv)
 {
+	clear_all();
 #ifndef ENGINEBASIC
 	setlocale(LC_ALL, "") ; /* required for 3,4 byte UTF8 chars */
 #endif
