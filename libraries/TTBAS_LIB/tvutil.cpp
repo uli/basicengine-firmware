@@ -17,7 +17,6 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "../../ttbasic/ntsc.h"
 #include "../../ttbasic/video.h"
 #include "../../ttbasic/graphics.h"
 #include "tTVscreen.h"
