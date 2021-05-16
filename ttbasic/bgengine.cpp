@@ -114,34 +114,33 @@ void BGEngine::spriteTileCollision(uint8_t sprite, uint8_t bg_idx,
   int bg_left_x = bg->scroll_x - bg->win_x + spr->pos_x;
   int bg_top_y = bg->scroll_y - bg->win_y + spr->pos_y;
 
-  // Calculate offset, width and height in tiles.
-  // round down top/left
-  int bg_first_tile_off = bg_left_x / tsx + bg->w * (bg_top_y / tsy);
-  // round up width/height
-  int bg_tile_width = (spr->p.w + tsx - 1) / tsx;
-  int bg_tile_height = (spr->p.h + tsy - 1) / tsy;
+  int bg_right_x = bg_left_x + spr->p.w;
+  int bg_bottom_y = bg_top_y + spr->p.h;
 
-  int bg_last_tile_off =
-          bg_first_tile_off + bg_tile_width + bg_tile_height * bg->w;
+  // Calculate offset, width and height in tiles.
+  int bg_first_tile_off_x = bg_left_x / tsx;
+  int bg_first_tile_off_y = bg_top_y / tsy;
+
+  int bg_last_tile_off_x = (bg_left_x + spr->p.w) / tsx;
+  int bg_last_tile_off_y = (bg_top_y + spr->p.h) / tsy;
 
   // Iterate over all tiles overlapping the sprite and record in what way they are
   // overlapping.
   // For every line
-  for (int t = bg_first_tile_off, ty = bg_top_y; t < bg_last_tile_off;
-       t += bg->w, ty += tsy) {
+  for (int ty = bg_first_tile_off_y; ty <= bg_last_tile_off_y; ++ty) {
     // For every column
-    for (int tt = t, tx = bg_left_x; tt < t + bg->w; ++tt, tx += tsx) {
+    for (int tx = bg_first_tile_off_x; tx <= bg_last_tile_off_x; ++tx) {
       // For every tile code to be checked
       for (int m = 0; m < num_tiles; ++m) {
-        if (tiles[m] == bg->tiles[tt % (bg->w * bg->h)]) {
+        if (tiles[m] == bg->tiles[(tx + ty * bg->w) % (bg->w * bg->h)]) {
           res[m] = 0x40;  // indicates collision in general
-          if (tx < spr->pos_x)
+          if (tx * tsx < spr->pos_x)
             res[m] |= joyLeft;
-          else if (tx + tsx > spr->pos_x + spr->p.w)
+          else if ((tx + 1) * tsx > spr->pos_x + spr->p.w)
             res[m] |= joyRight;
-          if (ty < spr->pos_y)
+          if (ty * tsy < spr->pos_y)
             res[m] |= joyUp;
-          else if (ty + tsy > spr->pos_y + spr->p.h)
+          else if ((ty + 1) * tsy > spr->pos_y + spr->p.h)
             res[m] |= joyDown;
         }
       }
