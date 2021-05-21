@@ -138,6 +138,10 @@ public:
 
     static ESP8266SAM *sam();
 
+    static sts_mixer_t *getMixer() {
+      return &m_mixer;
+    }
+
 private:
     static void setBeep(int period, int vol);
 
