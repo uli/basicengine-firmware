@@ -53,6 +53,22 @@ def stringify_macros(d):
 def gt(s):
     return '"' + s + '"'
 
+def quote(s):
+    escape = False
+    ret = ''
+    for i in s:
+        if escape:
+            ret += i
+            escape = False
+        elif i == '\\':
+            escape = True
+            ret += i
+        elif i == '"':
+            ret += '\\"'
+        else:
+            ret += i
+    return ret
+
 first_cmd = True
 for c in cmds:
     if first_cmd:
@@ -197,7 +213,7 @@ for c in cmds:
                         descr = ''
                     # unformat description (XXX: is that still necessary here?)
                     descr = descr.strip().replace('\n', ' ')
-                    of.write('    "' + name.strip() + '": ' + gt(descr))
+                    of.write('    "' + name.strip() + '": ' + gt(quote(descr)))
                 of.write('\n  }')
             else:
                 stderr.write('WARNING: unknown list object ' + e + '\n')
