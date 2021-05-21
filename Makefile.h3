@@ -40,13 +40,14 @@ $(TARGET).elf: $(OBJDIR)/dyncall/dyncall/libdyncall_s.a
 
 $(TARGET)_sd.img: init_dir
 
-init_dir:
-	mkdir init_dir
+init_dir: ttbasic/helptext_en.json
+	mkdir -p init_dir/help
 	rsync -av $(DEMOS_DIR)/* init_dir/ || true
 	rsync -av include/ init_dir/include/
 	cp -p ttbasic/eb_*.h init_dir/include/
 	cp -p ttbasic/mcurses*.h init_dir/include/
 	cp -p libraries/tinycc/include/*.h init_dir/include/
 	cp -p libraries/stb/*.h init_dir/include/
+	cp -p ttbasic/helptext_*.json init_dir/help/
 
 -include $(OUT_OBJS:%.o=%.d)
