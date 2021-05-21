@@ -176,7 +176,8 @@ void Basic::itcclink() {
     memcpy(initial_data, etext, end - etext);
 
     void **init_ptr = (void **)tcc_get_symbol(current_tcc, "_initial_data");
-    *init_ptr = initial_data;
+    if (init_ptr)
+      *init_ptr = initial_data;
 
     struct module new_mod = { current_tcc, name, initial_data, (int)(end - etext) };
     modules.push_back(new_mod);
