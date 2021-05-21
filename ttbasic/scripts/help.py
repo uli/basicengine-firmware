@@ -31,21 +31,7 @@ if len(argv) > 3 and argv[3] == 'int':
 else:
     can_translate = False
 
-# create dict that maps token names to enums
-tt = open("icode.txt", 'r').readlines()
-toktrans = {}
-for t in tt:
-    try:
-        name, enum, func = re.sub('\t+', '\t', t).split('\t')
-    except ValueError:
-        name, enum = re.sub('\t+', '\t', t).split('\t')
-    if enum.startswith('X_'):		# extended token
-        enum = '256 + ' + enum
-    toktrans[name] = enum
-
-of.write('#include "help.h"\n\n')
-of.write('#pragma GCC diagnostic ignored "-Wmissing-field-initializers"\n\n')
-of.write('const struct help_t help_' + target_lang + '[] = {\n')
+of.write('{\n"commands": [\n')
 
 # expects input preprocessed with bdoc_1.sed
 cmds = stdin.read().strip().strip('/***').strip('***/').split('***/\n/***')
@@ -62,14 +48,17 @@ def colorize_code(d):
 
 def stringify_macros(d):
     # XXX: This results in strings like "4-1" instead of "3".
-    d = re.sub('{([^}]+)_m1}', '" XSTR(\g<1>-1) "', d)
-    d = re.sub('{([^}]+)}', '" XSTR(\g<1>) "', d)
     return d
 
 def gt(s):
     return '"' + s + '"'
 
+first_cmd = True
 for c in cmds:
+    if first_cmd:
+        first_cmd = False
+    else:
+        of.write(',\n')
     lines = c.split('\n')
     typ, section, token = lines[0].split(' ', 2)
     token = token.replace('\\', '')
@@ -87,7 +76,7 @@ for c in cmds:
             #print(sp)
             current_item = sp[0][1:]
             if current_item == 'sec':
-              sp = sp[1].lstrip().split(' ', 1)
+              sp = [sp[1].lstrip()]
               current_item = sp[0].lower()
             # rest of the line can be content
             if len(sp) > 1:
@@ -101,13 +90,13 @@ for c in cmds:
     token_enums = []	# list of token enums
     for t in tokens:
         try:
-            token_enums += [toktrans[t]]
+            token_enums += [t]
         except:
             pass
 
     # emit command
-    of.write('\n{\n  .command = "' + token + '",\n  .tokens = { ' + ', '.join(token_enums) + ', 0 },\n' +
-          '  .section = SECTION_' + section.upper() + ',\n  .type = TYPE_' + typ.upper() + ',\n')
+    of.write('\n{\n  "command": "' + token + '",\n  "tokens": [ "' + '", "'.join(token_enums) + '" ],\n' +
+          '  "section": "' + section + '",\n  "type": "' + typ + '"')
 
     # preprocess collected items
     for section, data in item_data.items():
@@ -158,34 +147,45 @@ for c in cmds:
 
         item_data[section] = data
 
-    for e in ['brief', 'usage', 'args', 'ret', 'types', 'handler', 'desc', 'fonts', 'options', 'note', 'bugs', 'ref']:
-        of.write('  .' + e + ' = ')
+    first_sec = False
+    for e in item_data.keys():
         try:
             # if this succeeds, a regular plain-text item is available
             # convert to C string
-            x = item_data[e].strip().replace('\n', '\\n"\n    "')
-            if e == 'usage':
-              of.write('"' + x + '",\n')
+            x = item_data[e].strip().replace('\n', '\\n').replace('\t', '\\t')
+            if first_sec:
+                first_sec = False
             else:
-              of.write(gt(x) + ',\n')
+                of.write(',\n')
+            of.write('  "' + e + '": ')
+            if e == 'usage':
+              of.write('"' + x + '"')
+            else:
+              of.write(gt(x))
         except KeyError:
             # item not available, print a suitable NULL entry
-            if e in ['ref', 'args']:
-                of.write('{ NULL, },\n')	# sentinel
-            else:
-                of.write('NULL,\n')
+            pass
         except AttributeError:
+            if first_sec:
+                first_sec = False
+            else:
+                of.write(',\n')
             # list item ; must be ref or args
             if e == 'ref':
                 # array of strings
-                of.write('{')
-                for i in item_data[e]:
-                    of.write(' "' + i.strip() + '",')
-                of.write(' NULL },\n')
+                of.write('  "ref": [ ')
+                of.write(', '.join(['"' + i.strip() + '"' for i in item_data[e]]))
+                of.write(' ]')
             elif e == 'args':
                 # array of arg_t
-                of.write('{\n')
+                of.write('  "args": {')
+                first = True
                 for i in item_data[e]:
+                    if not first:
+                        of.write(',')
+                    else:
+                        first = False
+                    of.write('\n')
                     # unformat item
                     i = re.sub('\s+', ' ', i)
                     # split name and description
@@ -197,9 +197,9 @@ for c in cmds:
                         descr = ''
                     # unformat description (XXX: is that still necessary here?)
                     descr = descr.strip().replace('\n', ' ')
-                    of.write('    { "' + name.strip() + '", ' + gt(descr) + ' },\n')
-                of.write('    { NULL, NULL }\n  },\n')	# sentinel
+                    of.write('    "' + name.strip() + '": ' + gt(descr))
+                of.write('\n  }')
             else:
                 stderr.write('WARNING: unknown list object ' + e + '\n')
-    of.write('},\n')
-of.write('\n{},\n\n};\n\n')
+    of.write('\n}')
+of.write('\n]\n}\n')
