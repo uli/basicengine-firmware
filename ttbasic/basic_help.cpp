@@ -173,6 +173,7 @@ static void print_help(sjson_node *h) {
 
         c_puts("\n\\Fk");
         c_puts(_(item_name(item->key)));
+        c_putch(':');
         if (!strcmp(item->key, "usage"))
             c_puts("\\Fn\n\n");
         else
