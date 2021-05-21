@@ -296,10 +296,15 @@ void Basic::ihelp() {
 
     while (!end_of_statement()) {
         int token = *cip++;
-        if (token == I_EXTEND)
-            tokens.push_back(kwtbl_ext[*cip++]);
-        else
-            tokens.push_back(kwtbl[token]);
+        if (token == I_EXTEND && kwtbl_ext[*cip])
+          tokens.push_back(kwtbl_ext[*cip++]);
+        else if (kwtbl[token])
+          tokens.push_back(kwtbl[token]);
+        else {
+          err = ERR_UNK;
+          err_expected = NULL;
+          return;
+        }
     }
 
     bool found_something = false;
