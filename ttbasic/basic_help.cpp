@@ -252,11 +252,17 @@ static sjson_node *get_json(int lang) {
             continue;
         }
 
-        char json_text[size+1];
+        char *json_text = new char[size + 1];
+        if (!json_text) {
+            err = ERR_OOM;
+            return NULL;
+        }
+
         if (fread(json_text, 1, size, fp) != size) {
             err = ERR_FILE_READ;
             err_expected = _("could not read help file");
             fclose(fp);
+            free(json_text);
             continue;
         }
         fclose(fp);
@@ -268,10 +274,13 @@ static sjson_node *get_json(int lang) {
             err = ERR_FORMAT;
             err_expected = _("could not decode help file");
             sjson_destroy_context(json_ctx);
+            free(json_text);
             continue;
         }
 
         err = ERR_OK;
+        free(json_text);
+        helps_json[lang] = root;
         return root;
     }
     return NULL;
