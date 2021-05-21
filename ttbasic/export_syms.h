@@ -276,6 +276,7 @@ S(sts_mixer_stop_voice)
 S(sts_mixer_stop_sample)
 S(sts_mixer_stop_stream)
 S(sts_mixer_mix_audio)
+S(eb_get_mixer)
 
 // stb_image
 S(stbi_load_from_memory)
