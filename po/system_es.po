@@ -299,8 +299,8 @@ msgstr " en "
 
 #. [Argumente:]
 # bulk translation
-msgid "Arguments:"
-msgstr "Argumentos:"
+msgid "Arguments"
+msgstr "Argumentos"
 
 #. [Verfügbare Befehle:]
 # bulk translation
@@ -309,13 +309,13 @@ msgstr "Comandos disponibles:"
 
 #. [Fehler:]
 # from Argos
-msgid "Bugs:"
-msgstr "Errores:"
+msgid "Bugs"
+msgstr "Errores"
 
 #. [Beschreibung:]
 # bulk translation
-msgid "Description:"
-msgstr "Descripción:"
+msgid "Description"
+msgstr "Descripción"
 
 #. [Verzeichnis]
 # bulk translation
@@ -334,18 +334,18 @@ msgstr "No hay ayuda disponible\n"
 
 #. [Hinweis:]
 # bulk translation
-msgid "Note:"
-msgstr "Nota:"
+msgid "Note"
+msgstr "Nota"
 
 #. [Rückgabewert:]
 # bulk translation
-msgid "Return value:"
-msgstr "Valor devuelto:"
+msgid "Return value"
+msgstr "Valor devuelto"
 
 #. [Siehe auch:]
 # bulk translation
-msgid "See also:"
-msgstr "Ver también:"
+msgid "See also"
+msgstr "Ver también"
 
 #. [Umgehen von AUTOEXEC.BAS]
 # bulk translation
@@ -354,13 +354,13 @@ msgstr "Omitiendo AUTOEXEC.BAS\n"
 
 #. [Typen:]
 # bulk translation
-msgid "Types:"
-msgstr "Tipos:"
+msgid "Types"
+msgstr "Tipos"
 
 #. [Benutzen:]
 # bulk translation
-msgid "Usage:"
-msgstr "Uso:"
+msgid "Usage"
+msgstr "Uso"
 
 #. [Befehl]
 # bulk translation

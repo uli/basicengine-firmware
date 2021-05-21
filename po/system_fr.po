@@ -311,8 +311,8 @@ msgstr " dans "
 
 #. [Argumente:]
 # bulk translation
-msgid "Arguments:"
-msgstr "Arguments:"
+msgid "Arguments"
+msgstr "Arguments"
 
 #. [Verfügbare Befehle:]
 # bulk translation
@@ -321,18 +321,18 @@ msgstr "Commandes disponibles:"
 
 #. [Bugs:]
 # bulk translation
-msgid "Bugs:"
-msgstr "Bugs:"
+msgid "Bugs"
+msgstr "Bugs"
 
 #. [Beschreibung:]
 # from Argos
-msgid "Description:"
-msgstr "Description:"
+msgid "Description"
+msgstr "Description"
 
 #. [Manager:]
 # bulk translation
-msgid "Handler:"
-msgstr "Gestionnaire:"
+msgid "Handler"
+msgstr "Gestionnaire"
 
 #. [Entsprechende Befehle:]
 # bulk translation
@@ -346,23 +346,23 @@ msgstr "Aucune aide disponible\n"
 
 #. [Rückgabewert:]
 # bulk translation
-msgid "Return value:"
-msgstr "Valeur de retour:"
+msgid "Return value"
+msgstr "Valeur de retour"
 
 #. [Sehen Sie sich auch an:]
 # from Argos
-msgid "See also:"
-msgstr "Voir aussi:"
+msgid "See also"
+msgstr "Voir aussi"
 
 #. [Typen:]
 # from Argos
-msgid "Types:"
-msgstr "Types:"
+msgid "Types"
+msgstr "Types"
 
 #. [Benutzen:]
 # from Argos
-msgid "Usage:"
-msgstr "Utilisation:"
+msgid "Usage"
+msgstr "Utilisation"
 
 #. [Konstante]
 # bulk translation

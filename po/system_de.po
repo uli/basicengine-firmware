@@ -326,8 +326,8 @@ msgstr " in "
 
 #. [Arguments:]
 # bulk translation
-msgid "Arguments:"
-msgstr "Argumente:"
+msgid "Arguments"
+msgstr "Argumente"
 
 #. [Available commands:]
 # bulk translation
@@ -341,13 +341,13 @@ msgstr "BASIC-Kern"
 
 #. [Bugs:]
 # bulk translation
-msgid "Bugs:"
-msgstr "Bugs:"
+msgid "Bugs"
+msgstr "Bugs"
 
 #. [Description:]
 # bulk translation
-msgid "Description:"
-msgstr "Beschreibung:"
+msgid "Description"
+msgstr "Beschreibung"
 
 #. [directory]
 # bulk translation
@@ -356,8 +356,8 @@ msgstr "Verzeichnis "
 
 #. [Handler:]
 # bulk translation
-msgid "Handler:"
-msgstr "Handler:"
+msgid "Handler"
+msgstr "Handler"
 
 #. [Matching commands:]
 # from Argos
@@ -371,31 +371,31 @@ msgstr "Keine Hilfe verfügbar\n"
 
 #. [Note:]
 # bulk translation
-msgid "Note:"
-msgstr "Hinweis:"
+msgid "Note"
+msgstr "Hinweis"
 
 #. [Return value:]
 # bulk translation
-msgid "Return value:"
-msgstr "Rückgabewert:"
+msgid "Return value"
+msgstr "Rückgabewert"
 
 #. [See also:]
 # bulk translation
-msgid "See also:"
-msgstr "Siehe auch:"
+msgid "See also"
+msgstr "Siehe auch"
 
 msgid "Skipping AUTOEXEC.BAS\n"
 msgstr "Überspringe AUTOEXEC.BAS\n"
 
 #. [Types:]
 # bulk translation
-msgid "Types:"
-msgstr "Typen:"
+msgid "Types"
+msgstr "Typen"
 
 #. [Use:]
 # bulk translation
-msgid "Usage:"
-msgstr "Verwendung:"
+msgid "Usage"
+msgstr "Verwendung"
 
 #. [command]
 # bulk translation
