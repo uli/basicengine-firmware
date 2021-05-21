@@ -127,7 +127,7 @@ static void print_wrapped(const char *text) {
             last_space = sc0.c_x();
 
         if (sc0.c_x() == sc0.getWidth() - 1) {
-            while (sc0.c_x() > last_space && tp > text) {
+            while (sc0.c_x() > last_space && tp > tps.c_str()) {
                 c_putch('\b');
                 utf8_int32_t dummy;
                 tp = (const char *)utf8rcodepoint(tp, &dummy);
