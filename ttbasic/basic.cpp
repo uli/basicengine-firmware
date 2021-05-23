@@ -4196,6 +4196,8 @@ BString BASIC_INT Basic::istrvalue() {
 #endif
       break;
 
+    case I_NFC: value = snfc(); break;
+
     default:
       cip--;
       // Check if a numeric expression follows, so we can give a more

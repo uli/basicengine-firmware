@@ -266,6 +266,7 @@ private:
   BString snetget();
 
   num_t nnfc();
+  BString snfc();
   void init_tcc();
   const char *get_name(void *addr);
   void *get_symbol(const char *name);

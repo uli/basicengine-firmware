@@ -323,6 +323,28 @@ num_t Basic::nnfc() {
   }
 }
 
+BString Basic::snfc() {
+  BString out;
+
+  void *sym = *((void **)cip);
+  cip += icodes_per_ptr();
+
+  return_type rtype = RET_POINTER;
+  if (*cip == I_MUL)
+    ++cip;
+
+  if (checkOpen())
+    return out;
+
+  nfc_result ret = do_nfc(sym, rtype);
+
+  if (checkClose())
+    return out;
+
+  out = (char *)ret.rptr;
+  return out;
+}
+
 extern "C" void be_exit(int ret) {
      // XXX: How do we know what our BASIC context is?
      bc->exit(ret);
