@@ -8,6 +8,7 @@
 #include "bgengine.h"
 #include "colorspace.h"
 
+#include <Arduino.h>
 #include <SDL/SDL.h>
 
 #define SC_DEFAULT           14
@@ -179,6 +180,7 @@ public:
   void render();
 
   inline uint32_t frame() {
+    m_frame = micros() / 16667;
     return m_frame;
   }
 

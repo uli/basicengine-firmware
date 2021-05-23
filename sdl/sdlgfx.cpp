@@ -39,14 +39,6 @@ extern const SDL_VideoInfo *sdl_info;
 extern int sdl_flags;
 extern bool sdl_keep_res;
 
-Uint32 SDLGFX::timerCallback(Uint32 t) {
-  SDL_Event ev;
-  ev.type = SDL_USEREVENT;
-  SDL_PushEvent(&ev);
-  vs23.m_frame++;
-  return t;
-}
-
 #include <config.h>
 
 void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
@@ -64,8 +56,6 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   reset();
 
   m_display_enabled = true;
-
-  SDL_SetTimer(16, timerCallback);
 }
 
 void SDLGFX::reset() {

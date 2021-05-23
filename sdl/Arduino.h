@@ -142,9 +142,9 @@ void timer0_attachInterrupt(timercallback userFunc);
 void timer0_detachInterrupt(void);
 
 #include "WString.h"
-
+#include <unistd.h>
 static inline void yield() {
-  SDL_WaitEvent(NULL);
+  usleep(1000);
 }
 
 void platform_process_events();
