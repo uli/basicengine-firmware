@@ -104,6 +104,7 @@ S(eb_font_count)
 // eb_video
 S(eb_rgb)
 S(eb_color)
+S(eb_frame)
 
 // eb_sys
 S(eb_wait)
