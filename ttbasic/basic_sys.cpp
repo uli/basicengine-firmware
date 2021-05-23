@@ -87,13 +87,13 @@ Sanity checks for `addr` are insufficient.
 \ref PEEK() PEEKW()
 ***/
 uint32_t Basic::ipeek(int type) {
-  uint32_t value = 0, vadr;
+  uint32_t value = 0;
+  intptr_t vadr;
   void *radr;
 
   if (checkOpen())
     return 0;
-  if (getParam(vadr, I_NONE))
-    return 0;
+  vadr = iexp();
   if (checkClose())
     return 0;
   radr = sanitize_addr(vadr, type);
@@ -150,7 +150,7 @@ Sanity checks for `addr` are insufficient.
 void BASIC_FP Basic::do_poke(int type) {
   void *adr;
   uint32_t value;
-  uint32_t vadr;
+  intptr_t vadr;
 
   // アドレスの指定
   vadr = iexp();
