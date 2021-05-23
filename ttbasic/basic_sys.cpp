@@ -59,7 +59,7 @@ Read a byte of data from an address in memory.
 Memory at `addr` must allow byte-wise access.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref PEEKD() PEEKW()
+\ref PEEKD() PEEKW() PEEK$()
 ***/
 /***bf sys PEEKW
 Read a half-word (16 bits) of data from an address in memory.
@@ -72,7 +72,7 @@ Memory at `addr` must allow byte-wise access, and `addr` must be 2-byte
 aligned.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref PEEK() PEEKD()
+\ref PEEK() PEEKD() PEEK$()
 ***/
 /***bf sys PEEKD
 Read a word (32 bits) of data from an address in memory.
@@ -84,7 +84,7 @@ Read a word (32 bits) of data from an address in memory.
 `addr` must be 4-byte aligned.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref PEEK() PEEKW()
+\ref PEEK() PEEKW() PEEK$()
 ***/
 uint32_t Basic::ipeek(int type) {
   uint32_t value = 0;
@@ -579,6 +579,57 @@ num_t BASIC_FP Basic::npeekw() {
 }
 num_t BASIC_FP Basic::npeekd() {
   return ipeek(2);
+}
+
+/***bf sys PEEK$
+Reads a byte string of data from an address in memory.
+\usage data$ = PEEK$(addr, length)
+\args
+@addr	memory address
+@length	number of bytes to read, or 0
+\ret Byte string containing `length` bytes of data starting at `addr`.
+\note
+* Memory at `addr` must allow byte-wise access.
+* When `length` is `0`, data is read until a `0`-byte is encountered. Use
+  this to read C-style strings.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref PEEK() PEEKD() PEEKW()
+***/
+BString Basic::speek() {
+  uint32_t value = 0;
+  int len = 0;
+  intptr_t vadr;
+  char *radr;
+  BString in;
+
+  if (checkOpen())
+    return in;
+  vadr = iexp();
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    return in;
+  }
+  if (getParam(len, I_CLOSE))
+    return in;
+  if (len < 0) {
+    err = ERR_RANGE;
+    return in;
+  }
+
+  radr = (char *)sanitize_addr(vadr, 1);
+
+  if (len == 0) {
+    while (*radr) {
+      in.concat(*radr++);
+    }
+  } else {
+    for (int i = 0; i < len; ++i) {
+      in.concat(*radr++);
+    }
+  }
+
+  return in;
 }
 
 /***bc sys SYSINFO

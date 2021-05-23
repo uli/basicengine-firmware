@@ -166,6 +166,7 @@ I2CR	I_I2CR		si2cr
 RET$	I_RETSTR	sret
 STRING$	I_STRINGSTR	sstring
 SPIRW$	I_SPIRWSTR	sspirw
+PEEK$	I_PEEKSTR	speek
 RET	I_RET		nret
 ARGC	I_ARGC		nargc
 ARG	I_ARG		narg
