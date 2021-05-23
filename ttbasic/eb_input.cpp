@@ -28,7 +28,8 @@ static int cursor_pad_state() {
          kb.state(PS2KEY_Down_Arrow) << EB_JOY_DOWN_SHIFT |
          kb.state(PS2KEY_Up_Arrow) << EB_JOY_UP_SHIFT |
          kb.state(PS2KEY_X) << EB_JOY_X_SHIFT | kb.state(PS2KEY_A) << EB_JOY_TRIANGLE_SHIFT |
-         kb.state(PS2KEY_S) << EB_JOY_O_SHIFT | kb.state(PS2KEY_Z) << EB_JOY_SQUARE_SHIFT;
+         kb.state(PS2KEY_S) << EB_JOY_O_SHIFT | kb.state(PS2KEY_Z) << EB_JOY_SQUARE_SHIFT |
+         kb.state(PS2KEY_Tab) << EB_JOY_SELECT_SHIFT | kb.state(PS2KEY_Enter) << EB_JOY_START_SHIFT;
 }
 
 int eb_pad_state(int num) {
