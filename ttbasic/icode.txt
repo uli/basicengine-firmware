@@ -21,6 +21,7 @@ CLT	I_CLT		iclt
 WAIT	I_WAIT		iwait
 POKEW	I_POKEW		ipokew
 POKED	I_POKED		ipoked
+POKE$	I_POKESTR	ipokestr
 POKE	I_POKE		ipoke
 PRINT	I_PRINT		iprint_
 ?	I_QUEST		iprint_

@@ -119,7 +119,7 @@ Write a byte to an address in memory.
 `addr` must be mapped writable and must allow byte-wise access.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref POKED POKEW
+\ref POKED POKEW POKE$
 ***/
 /***bc sys POKEW
 Write a half-word (16 bits) to an address in memory.
@@ -132,7 +132,7 @@ Write a half-word (16 bits) to an address in memory.
 It must be 2-byte aligned.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref POKE POKED
+\ref POKE POKED POKE$
 ***/
 /***bc sys POKED
 Write a word (32 bits) to an address in memory.
@@ -145,7 +145,7 @@ Write a word (32 bits) to an address in memory.
 It must be 4-byte aligned.
 \bugs
 Sanity checks for `addr` are insufficient.
-\ref POKE POKEW
+\ref POKE POKEW POKE$
 ***/
 void BASIC_FP Basic::do_poke(int type) {
   void *adr;
@@ -188,6 +188,38 @@ void BASIC_FP Basic::ipokew() {
 }
 void BASIC_FP Basic::ipoked() {
   do_poke(2);
+}
+
+/***bc sys POKE$
+Write a byte string to an address in memory.
+\usage POKE$ addr, data$
+\args
+@addr	memory address
+@data$	data to be written
+\note
+* `addr` must be mapped writable and must allow byte-wise access.
+* When writing a string that is to be used by a C function you have to make
+  sure to add a `0`-byte at the end, e.g. `"text" + CHR$(0)`.
+\bugs
+Sanity checks for `addr` are insufficient.
+\ref POKE POKED POKEW
+***/
+void Basic::ipokestr() {
+  intptr_t vadr = iexp();
+  if (err)
+    return;
+  if (*cip++ != I_COMMA) {
+    E_SYNTAX(I_COMMA);
+    return;
+  }
+
+  BString out_str = istrexp();
+  uint8_t *out = (uint8_t *)vadr;
+
+  uint8_t *in = (uint8_t *)out_str.c_str();
+  for (int i = 0; i < out_str.length(); ++i, ++in, ++out) {
+    *out = *in;
+  }
 }
 
 /***bc sys SYS
