@@ -3991,7 +3991,6 @@ codepoint.
 @val	Unicode codepoint
 \ret Single-character string.
 \note
-* `CHR$(0)` returns an empty string.
 * To construct string from a byte value without UTF-8 encoding, use the
   `a$ = [byte]` syntax.
 \ref ASC()
@@ -4003,13 +4002,20 @@ BString Basic::schr() {
     return value;
   if (getParam(nv, 0, 0x10ffff, I_NONE))
     return value;
-
-  char nvstr[5];
-  *(char *)utf8catcodepoint(nvstr, nv, 4) = 0;
-  value = BString(nvstr);
-
   checkClose();
-  return value;
+  if (err)
+    return value;
+
+  if (nv == 0)
+    return BString((char)0);
+  else {
+    char nvstr[5];
+
+    *(char *)utf8catcodepoint(nvstr, nv, 4) = 0;
+    value = BString(nvstr);
+
+    return value;
+  }
 }
 
 /***bf bas STR$
