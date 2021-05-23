@@ -32,7 +32,7 @@ const struct video_mode_t H3GFX::modes_pal[H3_SCREEN_MODES] = {
   { 320, 240, 0, 0, ASPECT_4_3 },  // DawnOfAV demo, Mode X
   { 640, 256, 0, 0, ASPECT_4_3 },
   // default H3 mode
-  { 480, 270, 0, 0, ASPECT_4_3 },
+  { 480, 270, 0, 0, ASPECT_16_9 },
   // default SDL mode
   { 640, 480, 0, 0, ASPECT_4_3 },
   { 800, 600, 0, 0, ASPECT_4_3 },
