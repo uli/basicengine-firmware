@@ -1591,12 +1591,12 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       // invisible
       ip++;
     } else if (*ip == I_NFC) {
-      c_putch('|');
+      c_putch('|', devno);
       ++ip;
       void *addr = *((void **)ip);
       ip += icodes_per_ptr();
       const char *sym = get_name(addr);
-      c_puts(sym);
+      c_puts(sym, devno);
       if (!nospaceb((token_t)*ip))
         c_putch(' ', devno);
     } else {          //どれにも当てはまらなかった場合
