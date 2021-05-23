@@ -151,6 +151,7 @@ extern void __aeabi_llsl(void);
 extern void __aeabi_llsr(void);
 extern void __aeabi_memcpy4(void);
 extern void __aeabi_memcpy8(void);
+extern void __aeabi_memmove(void);
 extern void __aeabi_uidiv(void);
 extern void __aeabi_d2lz(void);
 extern void __aeabi_uidivmod(void);
