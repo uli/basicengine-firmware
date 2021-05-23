@@ -346,6 +346,23 @@ BString Basic::snfc() {
 }
 
 extern "C" void be_exit(int ret) {
-     // XXX: How do we know what our BASIC context is?
-     bc->exit(ret);
+  // XXX: How do we know what our BASIC context is?
+  bc->exit(ret);
+}
+
+/***bf sys GETSYM
+Returns a pointer to a native symbol.
+\usage ptr = GETSYM(name$)
+\args
+@name$	name of a native symbol
+\ret Pointer to requested symbol, or 0 if not found.
+***/
+num_t Basic::ngetsym() {
+  if (checkOpen())
+    return 0;
+  BString sym = istrexp();
+  if (checkClose())
+    return 0;
+
+  return (uintptr_t)get_symbol(sym.c_str());
 }
