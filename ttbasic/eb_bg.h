@@ -68,6 +68,11 @@ int eb_sprite_flip_x(int s);
 int eb_sprite_flip_y(int s);
 int eb_sprite_opaque(int s);
 
+typedef void (*eb_layer_painter_t)(pixel_t *surf, int w, int h, int pitch, void *userdata);
+
+int eb_add_bg_layer(eb_layer_painter_t layer_painter, int prio, void *userdata);
+void eb_remove_bg_layer(int id);
+
 #ifdef __cplusplus
 }
 #endif

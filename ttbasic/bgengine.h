@@ -9,6 +9,8 @@
 #include "video_driver.h"
 #include <stdint.h>
 #include "rotozoom.h"
+#include "eb_bg.h"
+#include <vector>
 
 #define MAX_BG	4
 
@@ -221,6 +223,9 @@ public:
   void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
   virtual void resetSprites();
 
+  int addBgLayer(eb_layer_painter_t painter, int prio, void *userdata);
+  void removeBgLayer(int id);
+
 protected:
   uint32_t m_frameskip;
   virtual void updateStatus();
@@ -282,6 +287,13 @@ protected:
   struct sprite_t *m_sprites_ordered[MAX_SPRITES];
   static int cmp_sprite_y(const void *one, const void *two);
 
+  struct external_layer_t {
+      eb_layer_painter_t painter;
+      void *userdata;
+      int prio;
+  };
+
+  std::vector<external_layer_t> m_external_layers;
 #endif
 };
 

@@ -271,6 +271,12 @@ void H3GFX::updateStatus() {
       enabled = true;
   }
   if (!enabled) {
+    for (auto l : m_external_layers) {
+      if (l.prio != -1)
+        enabled = true;
+    }
+  }
+  if (!enabled) {
     for (int i = 0; i < MAX_SPRITES; ++i) {
       if (spriteEnabled(i)) {
         enabled = true;
@@ -354,6 +360,13 @@ void H3GFX::updateBgTask() {
       if (!bg->enabled || bg->prio != prio)
         continue;
       drawBg(bg);
+    }
+    for (auto l : m_external_layers) {
+      if (l.prio == prio) {
+        l.painter(&pixelComp(0, 0), m_current_mode.x, m_current_mode.y,
+                  compositePitch(), l.userdata);
+        m_bg_modified = true;
+      }
     }
 
     for (int si = 0; si < MAX_SPRITES; ++si) {

@@ -306,11 +306,24 @@ void BGEngine::reset() {
   m_bg_modified = true;
   resetSprites();
   resetBgs();
+  m_external_layers.clear();
 
   Video::reset();
 }
 
 void BGEngine::updateStatus() {
+}
+
+int BGEngine::addBgLayer(eb_layer_painter_t painter, int prio, void *userdata) {
+  struct external_layer_t layer = { painter, userdata, prio };
+  m_external_layers.push_back(layer);
+  updateStatus();
+  return m_external_layers.size() - 1;
+}
+
+void BGEngine::removeBgLayer(int id) {
+  m_external_layers[id].prio = -1;
+  updateStatus();
 }
 
 #endif  // USE_BG_ENGINE

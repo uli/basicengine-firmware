@@ -469,4 +469,12 @@ int eb_sprite_opaque(int s) {
   return vs23.spriteOpaque(s);
 }
 
+int eb_add_bg_layer(eb_layer_painter_t painter, int prio, void *userdata) {
+  return vs23.addBgLayer(painter, prio, userdata);
+}
+
+void eb_remove_bg_layer(int id) {
+  vs23.removeBgLayer(id);
+}
+
 #endif

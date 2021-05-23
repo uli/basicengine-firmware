@@ -247,7 +247,7 @@ void SDLGFX::updateBg() {
 
   last_frame = frame();
 
-  if (!m_bg_modified && !m_dirty)
+  if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0)
     return;
 
   if (m_dirty) {
@@ -277,6 +277,11 @@ void SDLGFX::updateBg() {
       if (!bg->enabled || bg->prio != prio)
         continue;
       drawBg(bg);
+    }
+    for (auto l : m_external_layers) {
+      if (l.prio == prio)
+        l.painter(&pixelComp(0, 0), m_current_mode.x, m_current_mode.y,
+                  compositePitch(), l.userdata);
     }
 
 #ifdef PROFILE_BG

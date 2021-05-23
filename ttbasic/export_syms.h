@@ -78,6 +78,9 @@ S(eb_sprite_flip_x)
 S(eb_sprite_flip_y)
 S(eb_sprite_opaque)
 
+S(eb_add_bg_layer)
+S(eb_remove_bg_layer)
+
 // eb conio
 S(eb_locate)
 S(eb_pos_x)
