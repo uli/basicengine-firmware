@@ -135,13 +135,13 @@ void BGEngine::spriteTileCollision(uint8_t sprite, uint8_t bg_idx,
         if (tiles[m] == bg->tiles[(tx + ty * bg->w) % (bg->w * bg->h)]) {
           res[m] = 0x40;  // indicates collision in general
           if (tx * tsx < spr->pos_x)
-            res[m] |= joyLeft;
+            res[m] |= EB_JOY_LEFT;
           else if ((tx + 1) * tsx > spr->pos_x + spr->p.w)
-            res[m] |= joyRight;
+            res[m] |= EB_JOY_RIGHT;
           if (ty * tsy < spr->pos_y)
-            res[m] |= joyUp;
+            res[m] |= EB_JOY_UP;
           else if ((ty + 1) * tsy > spr->pos_y + spr->p.h)
-            res[m] |= joyDown;
+            res[m] |= EB_JOY_DOWN;
         }
       }
     }

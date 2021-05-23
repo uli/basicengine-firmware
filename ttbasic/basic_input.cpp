@@ -325,7 +325,7 @@ Value of the "up" direction for input devices.
 ***/
 num_t BASIC_FP Basic::nup() {
   // カーソル・スクロール等の方向
-  return joyUp;
+  return EB_JOY_UP;
 }
 
 /***bn io RIGHT
@@ -333,14 +333,14 @@ Value of the "right" direction for input devices.
 \ref PAD() UP DOWN LEFT
 ***/
 num_t BASIC_FP Basic::nright() {
-  return joyRight;
+  return EB_JOY_RIGHT;
 }
 /***bn io LEFT
 Value of the "left" direction for input devices.
 \ref PAD() UP DOWN RIGHT
 ***/
 num_t BASIC_FP Basic::nleft() {
-  return joyLeft;
+  return EB_JOY_LEFT;
 }
 
 /***bf io INKEY

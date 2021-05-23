@@ -4459,7 +4459,7 @@ num_t BASIC_FP Basic::ivalue() {
 Value of the "down" direction for input devices.
 \ref PAD() UP LEFT RIGHT
 ***/
-    case I_DOWN: value = joyDown; break;
+    case I_DOWN: value = EB_JOY_DOWN; break;
 
     case I_PLAY: value = nplay(); break;
 

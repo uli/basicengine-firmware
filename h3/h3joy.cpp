@@ -76,14 +76,14 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
     }
 
     if (pad->axes.length() >= 2) {
-        if (get_bits(data, pad->axes[axis_x].bit_pos, pad->axes[axis_x].bit_width) < 0x40) joy.m_state |= joyLeft; else joy.m_state &= ~joyLeft;
-        if (get_bits(data, pad->axes[axis_x].bit_pos, pad->axes[axis_x].bit_width) > 0xc0) joy.m_state |= joyRight; else joy.m_state &= ~joyRight;
-        if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) < 0x40) joy.m_state |= joyUp; else joy.m_state &= ~joyUp;
-        if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) > 0xc0) joy.m_state |= joyDown; else joy.m_state &= ~joyDown;
+        if (get_bits(data, pad->axes[axis_x].bit_pos, pad->axes[axis_x].bit_width) < 0x40) joy.m_state |= EB_JOY_LEFT; else joy.m_state &= ~EB_JOY_LEFT;
+        if (get_bits(data, pad->axes[axis_x].bit_pos, pad->axes[axis_x].bit_width) > 0xc0) joy.m_state |= EB_JOY_RIGHT; else joy.m_state &= ~EB_JOY_RIGHT;
+        if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) < 0x40) joy.m_state |= EB_JOY_UP; else joy.m_state &= ~EB_JOY_UP;
+        if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) > 0xc0) joy.m_state |= EB_JOY_DOWN; else joy.m_state &= ~EB_JOY_DOWN;
     }
 
     for (int i = 0; i < pad->buttons.length(); ++i) {
-        uint32_t bit = 1 << (pad->buttons[i].mapped_to + joyFirstButtonShift);
+        uint32_t bit = 1 << (pad->buttons[i].mapped_to + EB_JOY_FIRSTBUTTON_SHIFT);
         if (get_bit(data, pad->buttons[i].bit_pos))
             joy.m_state |= bit;
         else
@@ -165,8 +165,8 @@ usb_pad *Joystick::getPad(int hcd, uint8_t dev_addr, int &index)
 // mapping is for a DragonRise generic gamepad and kinda sorta works for other
 // devices as well.
 static const uint8_t default_button_map[] = {
-    joyTriShift, joyOShift, joyXShift, joySquShift, joyL1Shift, joyR1Shift,
-    joyL2Shift, joyR2Shift, joyStrtShift, joySlctShift, joyL3Shift, joyR3Shift,
+    EB_JOY_TRIANGLE_SHIFT, EB_JOY_O_SHIFT, EB_JOY_X_SHIFT, EB_JOY_SQUARE_SHIFT, EB_JOY_L1_SHIFT, EB_JOY_R1_SHIFT,
+    EB_JOY_L2_SHIFT, EB_JOY_R2_SHIFT, EB_JOY_START_SHIFT, EB_JOY_SELECT_SHIFT, EB_JOY_L3_SHIFT, EB_JOY_R3_SHIFT,
 };
 
 // This report descriptor parser deliberately ignores a lot of the complexity
@@ -254,7 +254,7 @@ bool Joystick::parseReportDesc(usb_pad *pad)
                         };
 
                         if (buttons_count < (int)sizeof(default_button_map))
-                            button.mapped_to = default_button_map[buttons_count] - joyFirstButtonShift;
+                            button.mapped_to = default_button_map[buttons_count] - EB_JOY_FIRSTBUTTON_SHIFT;
 
                         dbg_rep("button @ %d mapped to %d\n", report_offset, button.mapped_to);
 

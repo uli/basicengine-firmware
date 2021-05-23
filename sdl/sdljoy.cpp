@@ -19,9 +19,9 @@ int Joystick::read() {
     // Map SDL button to PSX button.
     int internal_button;
     if (i < 8)
-      internal_button = i + joySquShift;
+      internal_button = i + EB_JOY_SQUARE_SHIFT;
     else
-      internal_button = i - 8 + joyStrtShift;
+      internal_button = i - 8 + EB_JOY_START_SHIFT;
 
     if (SDL_JoystickGetButton(m_joy, i))
       ret |= 1 << internal_button;
@@ -35,14 +35,14 @@ int Joystick::read() {
     int y = SDL_JoystickGetAxis(m_joy, 1);
 
     if (x < -16384)
-      ret |= joyLeft;
+      ret |= EB_JOY_LEFT;
     else if (x > 16384)
-      ret |= joyRight;
+      ret |= EB_JOY_RIGHT;
 
     if (y < -16384)
-      ret |= joyUp;
+      ret |= EB_JOY_UP;
     else if (y > 16384)
-      ret |= joyDown;
+      ret |= EB_JOY_DOWN;
   }
 
   return ret;

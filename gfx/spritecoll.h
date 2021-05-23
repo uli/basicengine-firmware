@@ -22,22 +22,22 @@ uint8_t GFXCLASS::spriteCollision(uint8_t collidee, uint8_t collider) {
   const sprite_t *left = us, *right = them;
   rz_surface_t *left_surf, *right_surf;
   if (them->pos_x < us->pos_x) {
-    dir |= joyLeft;
+    dir |= EB_JOY_LEFT;
     left = them;
     right = us;
   } else if (them->pos_x + them_surf->w > us->pos_x + us_surf->w)
-    dir |= joyRight;
+    dir |= EB_JOY_RIGHT;
   left_surf = left->surf;
   right_surf = right->surf;
 
   const sprite_t *upper = us, *lower = them;
   const rz_surface_t *upper_surf, *lower_surf;
   if (them->pos_y < us->pos_y) {
-    dir |= joyUp;
+    dir |= EB_JOY_UP;
     upper = them;
     lower = us;
   } else if (them->pos_y + them_surf->h > us->pos_y + us_surf->h)
-    dir |= joyDown;
+    dir |= EB_JOY_DOWN;
   upper_surf = upper->surf;
   lower_surf = lower->surf;
 

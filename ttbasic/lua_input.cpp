@@ -29,13 +29,13 @@ int luaopen_input(lua_State *l) {
   lua_setglobal(l, "pad_state");
   lua_pushcfunction(l, l_key_state);
   lua_setglobal(l, "key_state");
-  lua_pushinteger(l, joyUp);
+  lua_pushinteger(l, EB_JOY_UP);
   lua_setglobal(l, "PAD_UP");
-  lua_pushinteger(l, joyDown);
+  lua_pushinteger(l, EB_JOY_DOWN);
   lua_setglobal(l, "PAD_DOWN");
-  lua_pushinteger(l, joyLeft);
+  lua_pushinteger(l, EB_JOY_LEFT);
   lua_setglobal(l, "PAD_LEFT");
-  lua_pushinteger(l, joyRight);
+  lua_pushinteger(l, EB_JOY_RIGHT);
   lua_setglobal(l, "PAD_RIGHT");
   return 0;
 }

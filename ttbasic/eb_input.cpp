@@ -23,12 +23,12 @@ int eb_inkey(void) {
 
 static int cursor_pad_state() {
   // The state is kept up-to-date by the interpreter polling for Ctrl-C.
-  return kb.state(PS2KEY_L_Arrow) << joyLeftShift |
-         kb.state(PS2KEY_R_Arrow) << joyRightShift |
-         kb.state(PS2KEY_Down_Arrow) << joyDownShift |
-         kb.state(PS2KEY_Up_Arrow) << joyUpShift |
-         kb.state(PS2KEY_X) << joyXShift | kb.state(PS2KEY_A) << joyTriShift |
-         kb.state(PS2KEY_S) << joyOShift | kb.state(PS2KEY_Z) << joySquShift;
+  return kb.state(PS2KEY_L_Arrow) << EB_JOY_LEFT_SHIFT |
+         kb.state(PS2KEY_R_Arrow) << EB_JOY_RIGHT_SHIFT |
+         kb.state(PS2KEY_Down_Arrow) << EB_JOY_DOWN_SHIFT |
+         kb.state(PS2KEY_Up_Arrow) << EB_JOY_UP_SHIFT |
+         kb.state(PS2KEY_X) << EB_JOY_X_SHIFT | kb.state(PS2KEY_A) << EB_JOY_TRIANGLE_SHIFT |
+         kb.state(PS2KEY_S) << EB_JOY_O_SHIFT | kb.state(PS2KEY_Z) << EB_JOY_SQUARE_SHIFT;
 }
 
 int eb_pad_state(int num) {
