@@ -172,12 +172,11 @@ void BASIC_FP Basic::do_poke(int type) {
     if (getParam(value, I_NONE))
       return;
     switch (type) {
-    case 0: *((uint8_t *)adr) = value; break;
-    case 1: *((uint16_t *)adr) = value; break;
-    case 2: *((uint32_t *)adr) = value; break;
+    case 0: *((uint8_t *)adr) = value; vadr += 1; break;
+    case 1: *((uint16_t *)adr) = value; vadr += 2; break;
+    case 2: *((uint32_t *)adr) = value; vadr += 4; break;
     default: err = ERR_SYS; break;
     }
-    vadr++;
   } while (*cip == I_COMMA);
 }
 
