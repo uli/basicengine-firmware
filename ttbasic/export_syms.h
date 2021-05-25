@@ -193,6 +193,11 @@ S(fileno)
 S(fflush)
 S(ungetc)
 
+#ifndef ALLWINNER_BARE_METAL	// XXX: should probably be "if not newlib"
+S(putchar)
+S(puts)
+#endif
+
 // stdio streams
 S(__getreent)
 
