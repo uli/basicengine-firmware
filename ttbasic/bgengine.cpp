@@ -306,7 +306,6 @@ void BGEngine::reset() {
   m_bg_modified = true;
   resetSprites();
   resetBgs();
-  m_external_layers.clear();
 
   Video::reset();
 }

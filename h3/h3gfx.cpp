@@ -245,6 +245,7 @@ bool H3GFX::setMode(uint8_t mode) {
 
   display_set_mode(m_current_mode.x + m_current_mode.left * 2,
                    m_current_mode.y + m_current_mode.top * 2, 0, 0);
+
   display_single_buffer = true;
   display_swap_buffers();
 
@@ -252,6 +253,14 @@ bool H3GFX::setMode(uint8_t mode) {
   resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   m_display_enabled = true;
+
+  // Unlike internal layers and sprites, external BG layers survive mode
+  // switches, so we have to make sure that we end up in the right buffering
+  // mode.
+  // XXX: Maybe internal BG layers and sprites should also survive mode
+  // switches?
+  m_engine_enabled = false;
+  updateStatus();
 
   return true;
 }
