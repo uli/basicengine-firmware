@@ -501,6 +501,16 @@ LIBTCCAPI void *tcc_get_symbol(TCCState *s, const char *name)
     return (void*)(uintptr_t)get_elf_sym_addr(s, name, 0);
 }
 
+LIBTCCAPI int tcc_have_symbol(TCCState *s, const char *name)
+{
+    int sym_index = find_elf_sym(s->symtab, name);
+    ElfW(Sym) *sym = &((ElfW(Sym) *)s->symtab->data)[sym_index];
+    if (!sym_index || sym->st_shndx == SHN_UNDEF)
+        return 0;
+    else
+        return 1;
+}
+
 /* return elf symbol value, signal error if 'err' is nonzero */
 LIBTCCAPI const char *tcc_get_name(TCCState *s, void *addr)
 {
