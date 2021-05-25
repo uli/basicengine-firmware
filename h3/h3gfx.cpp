@@ -137,6 +137,8 @@ void H3GFX::resetLinePointers(pixel_t **pixels, pixel_t *buffer) {
 bool H3GFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
+  spin_lock(&m_buffer_lock);
+
   free(m_pixels);
   free(m_textmode_buffer);
   free(m_offscreenbuffer);
@@ -253,6 +255,8 @@ bool H3GFX::setMode(uint8_t mode) {
   resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   m_display_enabled = true;
+
+  spin_unlock(&m_buffer_lock);
 
   // Unlike internal layers and sprites, external BG layers survive mode
   // switches, so we have to make sure that we end up in the right buffering
