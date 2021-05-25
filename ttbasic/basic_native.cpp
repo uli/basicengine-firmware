@@ -113,8 +113,8 @@ void Basic::itcclink() {
   else
     name = BString("mod") + BString(modules.size());
 
-  if (tcc_get_symbol(current_tcc, "main") &&
-      !tcc_get_symbol(current_tcc, name.c_str())) {
+  if (tcc_have_symbol(current_tcc, "main") &&
+      !tcc_have_symbol(current_tcc, name.c_str())) {
     // Add a wrapper function with the name of the module that takes a
     // variable number of string arguments, combines them into an argv array
     // and calls main().
