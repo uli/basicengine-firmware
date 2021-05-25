@@ -1,1 +1,1 @@
-extern unsigned char cbm_ascii_font_8x8[];
+extern const unsigned char cbm_ascii_font_8x8[];
