@@ -689,15 +689,6 @@ void SMALL Basic::isysinfo() {
   putHexnum(adr, sizeof(intptr_t));
   newline();
 
-  // SRAM未使用領域の表示
-  PRINT_P("SRAM Free: ");
-#ifdef ESP8266
-  putnum(umm_free_heap_size(), 0);
-#else
-  putnum(9999, 0);
-#endif
-  newline();
-
 #ifdef USE_VS23
   newline();
   PRINT_P("Video timing: ");
