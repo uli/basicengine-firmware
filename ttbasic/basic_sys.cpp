@@ -704,32 +704,13 @@ void SMALL Basic::isysinfo() {
 #include <spi_flash.h>
 #endif
 /***bc sys BOOT
-Boots the system from the specified flash page.
-\usage BOOT page
-\args
-@page	flash page to boot from [`0` to `255`]
+Reboots the system.
+\usage BOOT
 \note
-The `BOOT` command does not verify if valid firmware code is installed at
-the given flash page. Use with caution.
+Only implemented on the H3 platform.
 ***/
 void Basic::iboot() {
-#if !defined(HOSTED) && defined(ESP8266)
-  int32_t sector;
-  if (getParam(sector, 0, 1048576 / SPI_FLASH_SEC_SIZE - 1, I_NONE))
-    return;
-  eboot_command ebcmd;
-  ebcmd.action = ACTION_LOAD_APP;
-  ebcmd.args[0] = sector * SPI_FLASH_SEC_SIZE;
-  eboot_command_write(&ebcmd);
-#ifdef ESP8266_NOWIFI
-  // SDKnoWiFi does not have system_restart*(). The only working
-  // alternative I could find is triggering the WDT.
-  ets_wdt_enable(2, 1, 1);
-  for (;;);
-#else
-  ESP.reset();  // UNTESTED!
-#endif
-#elif defined(H3)
+#if defined(H3)
   sys_reset();
 #else
   err = ERR_NOT_SUPPORTED;
