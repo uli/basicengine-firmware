@@ -717,6 +717,23 @@ void Basic::iboot() {
 #endif
 }
 
+/***bc sys CPUSPEED
+Sets the CPU clock frequency.
+\usage CPUSPEED speed
+\args
+@speed	CPU speed in percent of maximum.
+\note
+* Only implemented on the H3 platform.
+* Will not generate an error on platforms that do not support it.
+* When `speed` is `-1` the CPU speed will be reset to the power-on default.
+***/
+void Basic::icpuspeed() {
+  int percent = iexp();
+  if (err)
+    return;
+  eb_set_cpu_speed(percent);
+}
+
 void syspanic(const char *txt) {
   redirect_output_file = -1;
   c_puts_P(txt);
