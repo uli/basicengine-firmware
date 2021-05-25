@@ -113,6 +113,7 @@ S(eb_frame)
 S(eb_wait)
 S(eb_tick)
 S(eb_process_events)
+S(eb_set_cpu_speed)
 
 // eb_file
 S(eb_file_exists)

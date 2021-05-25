@@ -27,3 +27,18 @@ void eb_udelay(unsigned int us) {
 void eb_process_events(void) {
   process_events();
 }
+
+void eb_set_cpu_speed(int percent) {
+#ifdef H3
+  int factor;
+
+  if (percent < 0)
+    factor = SYS_CPU_MULTIPLIER_DEFAULT;
+  else
+    factor = SYS_CPU_MULTIPLIER_MAX * percent / 100;
+
+  sys_set_cpu_multiplier(factor);
+#else
+  // unsupported, ignore silently
+#endif
+}
