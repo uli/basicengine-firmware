@@ -6248,8 +6248,6 @@ void SMALL Basic::basic() {
   delete[] cwd;
   newline();
 
-  init_tcc();
-
   // XXX: make sound font configurable
   sound.begin();
 
@@ -6331,4 +6329,8 @@ void SMALL Basic::basic() {
     if (icom() && !lua)      // execute
       error(false);  // display direct mode error message
   }
+}
+
+Basic::Basic() {
+  init_tcc();
 }
