@@ -1,1 +1,1 @@
-extern unsigned char console_font_8x8[];
+extern const unsigned char console_font_8x8[];
