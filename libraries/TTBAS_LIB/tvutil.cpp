@@ -46,6 +46,7 @@ uint16_t win_c_width, win_c_height;
 pixel_t fg_color = (pixel_t)-1;
 pixel_t bg_color = (pixel_t)0xff000000;
 pixel_t cursor_color = (pixel_t)0x92;  // XXX: wrong on 32-bit colorspaces
+static pixel_t gradient[256];  // gradient from background to foreground color, for TTF rendering
 
 uint16_t gcurs_x = 0;
 uint16_t gcurs_y = 0;
@@ -229,6 +230,28 @@ void tv_drawCurs(uint16_t x, uint16_t y) {
   }
 }
 
+void tv_setcolor(pixel_t fc, pixel_t bc) {
+  fg_color = fc;
+  bg_color = bc;
+
+  uint8_t fr, fg, fb, fa;
+  vs23.rgbaFromColor(fc, fr, fg, fb, fa);
+  uint8_t br, bg, bb, ba;
+  vs23.rgbaFromColor(bc, br, bg, bb, ba);
+
+  double scale_r = (br - fr) / 255.0;
+  double scale_g = (bg - fg) / 255.0;
+  double scale_b = (bb - fb) / 255.0;
+
+  for (int i = 0; i < 256; ++i) {
+    gradient[i] = csp.colorFromRgb(br - i * scale_r, bg - i * scale_g, bb - i * scale_b);
+  }
+}
+
+void tv_flipcolors() {
+  tv_setcolor(bg_color, fg_color);
+}
+
 //
 // Display character
 //
@@ -292,7 +315,7 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) 
       else if (i >= off_y + h || j >= off_x + w)
         pix[j] = bg_color;
       else
-        pix[j] = chp[(j - off_x) + (i - off_y) * w] ? fg_color : bg_color;
+        pix[j] = gradient[chp[(j - off_x) + (i - off_y) * w]];
     }
     uint32_t byteaddress = vs23.pixelAddr(x, y + i);
     vs23.setPixels(byteaddress, pix, f_width);
@@ -305,13 +328,14 @@ void ICACHE_RAM_ATTR tv_write(uint16_t x, uint16_t y, utf8_int32_t c) {
 
 void ICACHE_RAM_ATTR tv_write_color(uint16_t x, uint16_t y, utf8_int32_t c,
                                     pixel_t fg, pixel_t bg) {
-  pixel_t sfg = fg_color;
-  pixel_t sbg = bg_color;
-  fg_color = fg;
-  bg_color = bg;
-  tv_write(x, y, c);
-  fg_color = sfg;
-  bg_color = sbg;
+  if (fg != fg_color || bg != bg_color) {
+    pixel_t sfg = fg_color;
+    pixel_t sbg = bg_color;
+    tv_setcolor(fg, bg);
+    tv_write(x, y, c);
+    tv_setcolor(sfg, sbg);
+  } else
+    tv_write(x, y, c);
 }
 
 //
@@ -458,13 +482,3 @@ void tv_gscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t mode) {
   }
 }
 
-void tv_setcolor(pixel_t fc, pixel_t bc) {
-  fg_color = fc;
-  bg_color = bc;
-}
-
-void tv_flipcolors() {
-  pixel_t tmp = fg_color;
-  fg_color = bg_color;
-  bg_color = tmp;
-}
