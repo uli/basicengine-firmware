@@ -1354,10 +1354,12 @@ int SMALL Basic::putlist(unsigned char *ip, uint8_t devno) {
 
       if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual(*ip)))
         if ((!nospacea(*ip) || spacef(*(ip + 1)) || is_extended_token) &&
-            *ip != I_COLON && *ip != I_SQUOT && *ip != I_LABEL)
+            *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_LABEL)
           c_putch(' ', devno);
 
       if (*ip == I_REM || *ip == I_SQUOT) {  //もし中間コードがI_REMなら
+        if (*ip == I_REM)
+          c_putch(' ', devno);
         ip++;       //ポインタを文字数へ進める
         i = *ip++;  //文字数を取得してポインタをコメントへ進める
         sc0.setColor(COL(COMMENT), COL(BG));
