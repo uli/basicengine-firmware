@@ -273,9 +273,9 @@ void BGEngine::resetSprites() {
     s->p.flip_x = s->p.flip_y = false;
     s->p.opaque = false;
 #ifdef USE_ROTOZOOM
-    s->angle = 0.0d;
-    s->scale_x = 1.0d;
-    s->scale_y = 1.0d;
+    s->angle = 0.0;
+    s->scale_x = 1.0;
+    s->scale_y = 1.0;
     if (s->surf) {
       delete s->surf;
       s->surf = NULL;
