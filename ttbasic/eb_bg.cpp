@@ -167,7 +167,7 @@ void eb_sprite_off(void) {
 int eb_sprite_set_pattern(int s, int pat_x, int pat_y) {
   if (check_param(s, 0, MAX_SPRITES) ||
       check_param(pat_x, 0, sc0.getGWidth()) ||
-      check_param(pat_y, 0, 1023))
+      check_param(pat_y, 0, vs23.lastLine()))
     return -1;
 
   vs23.setSpritePattern(s, pat_x, pat_y);
