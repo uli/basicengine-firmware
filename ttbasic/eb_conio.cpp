@@ -50,6 +50,14 @@ int eb_font(int idx) {
   return 0;
 }
 
+int eb_font_by_name(const char *name, int w, int h) {
+  if (!sc0.setFontByName(name, w, h)) {
+    err = ERR_FONT;
+    return -1;
+  }
+  return 0;
+}
+
 int eb_load_font(const char *file_name, int w, int h) {
   int ret = -1;
   int size = eb_file_size(file_name);
