@@ -66,3 +66,5 @@ init_dir: ttbasic/helptext_en.json
 	cp -p libraries/tinycc/include/*.h init_dir/include/
 	cp -p libraries/stb/*.h init_dir/include/
 	cp -p ttbasic/helptext_*.json init_dir/help/
+	mkdir -p init_dir/fonts
+	cp -p fonts/k8x12w.ttf fonts/misaki_mincho_w.ttf init_dir/fonts/
