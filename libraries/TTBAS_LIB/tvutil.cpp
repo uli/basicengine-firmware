@@ -27,6 +27,7 @@
 
 struct font_t {
   const uint8_t *font;
+  const char *name;
   int w, h;
   stbtt_fontinfo ttf;
 };
@@ -65,7 +66,7 @@ int tv_font_count(void) {
 }
 
 // フォント利用設定
-void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
+void SMALL tv_fontInit(const uint8_t *font, const char *name, int w, int h) {
   // allocate/reset conversion map
   if (!unimap)
     unimap = (struct unimap *)calloc(1, UNIMAP_SIZE * sizeof(*unimap));
@@ -79,7 +80,7 @@ void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
   // do we have this font already?
   bool must_init = true;
   for (auto &i : fonts) {
-    if (i.font == font) {
+    if (!strcmp(i.name, name)) {
       must_init = false;
       tvfont = &i;
       break;
@@ -87,7 +88,7 @@ void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
   }
 
   if (must_init) {
-    font_t new_font = { font, w, h };
+    font_t new_font = { font, strdup(name), w, h };
     stbtt_InitFont(&new_font.ttf, font, stbtt_GetFontOffsetForIndex(font, 0));
     fonts.push_back(new_font);
     tvfont = &fonts.back();
@@ -100,18 +101,28 @@ void SMALL tv_fontInit(const uint8_t *font, int w, int h) {
   win_c_height = win_height / f_height;
 }
 
-void tv_setFont(const uint8_t *font, int w, int h) {
+void tv_setFont(const uint8_t *font, const char *name, int w, int h) {
   f_width = w;
   f_height = h;
-  tv_fontInit(font, w, h);
+  tv_fontInit(font, name, w, h);
 }
 
 void tv_setFontByIndex(int idx) {
   if (idx < fonts.size()) {
     f_width = fonts[idx].w;
     f_height = fonts[idx].h;
-    tv_fontInit(fonts[idx].font, f_width, f_height);
+    tv_fontInit(fonts[idx].font, fonts[idx].name, f_width, f_height);
   }
+}
+
+bool tv_setFontByName(const char *name, int w, int h) {
+  for (int i = 0; i < fonts.size(); ++i) {
+    if (!strcmp(fonts[i].name, name) && fonts[i].w == w && fonts[i].h == h) {
+      tv_setFontByIndex(i);
+      return true;
+    }
+  }
+  return false;
 }
 
 int tv_current_font_index(void) {
@@ -142,7 +153,7 @@ void tv_init(int16_t ajst, uint8_t vmode) {
     for (int i = 0; i < NUM_FONTS; ++i) {
       f_width = builtin_fonts[i].w;
       f_height = builtin_fonts[i].h;
-      tv_fontInit(builtin_fonts[i].data, f_width, f_height);
+      tv_fontInit(builtin_fonts[i].data, builtin_fonts[i].name, f_width, f_height);
     }
   }
 }

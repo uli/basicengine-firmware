@@ -58,6 +58,14 @@ int eb_load_font(const char *file_name, int w, int h) {
     return ret;
   }
 
+  BString filestr = BString(file_name);
+  int base_index = filestr.lastIndexOf('/') + 1;
+
+  BString font_name = filestr.substring(base_index);
+
+  if (sc0.setFontByName(font_name.c_str(), w, h))
+    return 0;
+
   FILE *ttf = fopen(file_name, "rb");
   if (!ttf) {
     err = ERR_FILE_OPEN;
@@ -68,7 +76,7 @@ int eb_load_font(const char *file_name, int w, int h) {
   if (fread(font, size, 1, ttf) != 1)
     err = ERR_FILE_READ;
   else {
-    sc0.setFont(font, w, h);
+    sc0.setFont(font, font_name.c_str(), w, h);
     ret = sc0.currentFontIndex();
     sc0.forget();
   }
