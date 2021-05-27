@@ -248,17 +248,23 @@ void BASIC_INT Basic::iwindow() {
 
 /***bc scr FONT
 Sets the current text font.
-\usage FONT font_num
+\usage
+FONT font_num
+
+FONT font_name$ SIZE width, height
 \args
 @font_num	font number
+@font_name$	font name
+@width		font width (pixels)
+@height		font height (pixels)
 \sec FONTS
 The following fonts are built-in:
 \table
-| 0 | HP 100 LX font, 6x8 pixels (default)
-| 1 | CPC font, 8x8 pixels
-| 2 | PETSCII font, 8x8 pixels
-| 3 | Japanese font, 8x8 pixels
-| 4 | HP 100 LX font, 8x8 pixels
+| 0 | "hp100lx" | HP 100 LX font, 6x8 pixels (default)
+| 1 | "cpc"     | CPC font, 8x8 pixels
+| 2 | "bescii"  | PETSCII-style font, 8x8 pixels
+| 3 | "tt"      | Japanese font, 8x8 pixels
+| 4 | "hp100lx" | HP 100 LX font, 8x8 pixels
 \endtable
 \note
 * Additional fonts will be assigned consecutive font indices.
@@ -267,10 +273,26 @@ The following fonts are built-in:
 ***/
 void Basic::ifont() {
   int32_t idx;
-  if (getParam(idx, 0, eb_font_count() - 1, I_NONE))
-    return;
 
-  eb_font(idx);
+  if (is_strexp()) {
+    BString name = istrexp();
+    if (*cip++ != I_SIZE) {
+      E_SYNTAX(I_SIZE);
+      return;
+    }
+
+    int32_t w, h;
+    if (getParam(w, 4, 64, I_COMMA) ||
+        getParam(h, 4, 64, I_NONE))
+      return;
+
+    eb_font_by_name(name.c_str(), w, h);
+  } else {
+    if (getParam(idx, 0, eb_font_count() - 1, I_NONE))
+      return;
+
+    eb_font(idx);
+  }
 }
 
 /***bc scr SCREEN
