@@ -445,7 +445,7 @@ void tscreenBase::moveLineEnd() {
   while (1) {
     if (IS_PRINT(VPEEK(x, pos_y)))
       break;
-    if (x > 0)
+    if (x >= 0)
       x--;
     else
       break;
