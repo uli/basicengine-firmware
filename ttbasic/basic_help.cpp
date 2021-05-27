@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
-#include "help.h"
+#include "basic.h"
 #include "config.h"
 #include "eb_file.h"
 #include <fonts.h>
