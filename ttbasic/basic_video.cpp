@@ -1062,6 +1062,9 @@ Loads a TrueType font from a file and activates it.
 @h	font height
 \ret
 Returns the font index of the loaded font in `RET(0)`.
+\note
+If you want to use the same font in different sizes, you have to load it
+once for each size.
 \bugs
 Proportional fonts and fonts that are not specifically designed for use on
 low-resolution screens will not look very good.
