@@ -70,6 +70,7 @@ int eb_load_font(const char *file_name, int w, int h) {
   else {
     sc0.setFont(font, w, h);
     ret = sc0.currentFontIndex();
+    sc0.forget();
   }
 
   fclose(ttf);
