@@ -36,6 +36,8 @@ int eb_last_key_event(void);
 int eb_term_getch(void);
 void eb_term_putch(char c);
 
+int eb_load_lang_resources(int lang);
+
 #define KEY_EVENT_BREAK 0x0100
 #define KEY_EVENT_KEY   0x0200
 #define KEY_EVENT_SHIFT 0x0400

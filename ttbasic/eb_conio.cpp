@@ -97,6 +97,23 @@ int eb_font_count(void) {
   return sc0.fontCount();
 }
 
+int eb_load_lang_resources(int lang) {
+  BString font_root = BString(getenv("HOME")) + BString("/fonts/");
+  int ret = -1;
+  if (lang == 4) {
+    BString font = font_root + BString("misaki_mincho_w.ttf");
+    int min_ret = eb_load_font(font.c_str(), 8, 8);
+
+    font = font_root + BString("k8x12w.ttf");
+    int k_ret = eb_load_font(font.c_str(), 8, 12);
+
+    ret = k_ret != -1 ? k_ret : min_ret;
+  } else
+    ret = 0;
+
+  return ret;
+}
+
 int eb_pos_x(void) {
   return sc0.c_x();
 }
