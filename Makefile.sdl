@@ -3,6 +3,8 @@ OBJDIR = build_sdl
 
 all: $(TARGET)
 
+DEMOS_DIR = ../basicengine_demos
+
 include common.mk
 
 SOURCES = $(COMMON_SOURCES) $(shell ls sdl/*.cpp)
