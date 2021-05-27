@@ -46,7 +46,7 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
   }
 
   if (!vt) {
-    vt = tmt_open(h, w, term_callback, this, NULL);
+    vt = tmt_open(tv_get_cheight(), tv_get_cwidth(), term_callback, this, NULL);
     vt_inbuf = std::queue<char>();
     vt_cursor_on = true;
   }
