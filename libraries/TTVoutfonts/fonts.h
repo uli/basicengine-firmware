@@ -4,6 +4,7 @@
 
 struct builtin_font_t {
   const uint8_t *data;
+  const char *name;
   uint8_t w, h;
 };
 
