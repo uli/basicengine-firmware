@@ -6193,6 +6193,11 @@ void SMALL Basic::basic() {
   sc0.init(SIZE_LINE, CONFIG.NTSC, CONFIG.mode - 1);
   sc0.reset_kbd(CONFIG.KEYBOARD);
 
+  // See if we have the required fonts for the configured language.
+  int rec_font = eb_load_lang_resources(CONFIG.language);
+  if (rec_font < 0)
+    CONFIG.language = 0;  // fall back to English
+
   basic_init_io();
 
   icls();
@@ -6205,7 +6210,7 @@ void SMALL Basic::basic() {
 
   // Startup screen
   // Epigram
-  eb_font(1);
+  eb_font(rec_font > 0 ? rec_font : 1);
   sc0.setColor(csp.colorFromRgb(72, 72, 72), COL(BG));
   srand(ESP.getCycleCount());
   c_puts_P(epigrams[random(sizeof(epigrams) / sizeof(*epigrams))]);
@@ -6215,7 +6220,7 @@ void SMALL Basic::basic() {
   sc0.setColor(csp.colorFromRgb(192, 0, 0), COL(BG));
   static const char engine_basic[] PROGMEM = "Engine BASIC";
   c_puts_P(engine_basic);
-  eb_font(CONFIG.font);
+  eb_font(rec_font > 0 ? rec_font : CONFIG.font);
 
   // Platform/version
   sc0.setColor(csp.colorFromRgb(64, 64, 64), COL(BG));

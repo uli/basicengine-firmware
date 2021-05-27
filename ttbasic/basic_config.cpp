@@ -2,6 +2,7 @@
 // Copyright (c) 2017-2019 Ulrich Hecht
 
 #include "basic.h"
+#include "eb_conio.h"
 #include <fonts.h>
 
 SystemConfig CONFIG;
@@ -260,6 +261,11 @@ void SMALL Basic::iconfig() {
       E_VALUE(0, 3);
     else
       CONFIG.language = value;
+    if (eb_load_lang_resources(CONFIG.language) < 0) {
+      err = ERR_FILE_OPEN;
+      err_expected = "could not load font files";
+      CONFIG.language = 0;
+    }
     break;
   default:
     E_VALUE(0, 10);
