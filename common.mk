@@ -56,3 +56,13 @@ $(OBJDIR)/dyncall/dyncall/libdyncall_s.a: $(OBJDIR)/dyncall/Makefile.config
 gcov:
 	rm -f *.gcov
 	gcov $(SOURCES) $(SOURCES_C)
+
+init_dir: ttbasic/helptext_en.json
+	mkdir -p init_dir/help
+	rsync -av $(DEMOS_DIR)/* init_dir/ || true
+	rsync -av include/ init_dir/include/
+	cp -p ttbasic/eb_*.h init_dir/include/
+	cp -p ttbasic/mcurses*.h init_dir/include/
+	cp -p libraries/tinycc/include/*.h init_dir/include/
+	cp -p libraries/stb/*.h init_dir/include/
+	cp -p ttbasic/helptext_*.json init_dir/help/
