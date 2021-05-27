@@ -157,14 +157,14 @@ bool H3GFX::setMode(uint8_t mode) {
       if (m_force_filter || (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
                              DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
         m_current_mode.top = 0;
-        m_current_mode.left = 0.1666667d * m_current_mode.x;  // pillar-boxing
+        m_current_mode.left = 0.1666667 * m_current_mode.x;  // pillar-boxing
       } else {
         // find an integral scale factor
         int yscale = DISPLAY_PHYS_RES_Y / m_current_mode.y;			// scale, rounded down
         m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
-                             / yscale					// correct for scaling by video driver
+                             / yscale						// correct for scaling by video driver
                              / 2;						// only one side, the other side is implicit
-        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.333333d;	// scale corrected for aspect ratio, rounded down
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.333333;	// scale corrected for aspect ratio, rounded down
         m_current_mode.left = (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x)
                              / xscale
                              / 2;
@@ -194,7 +194,7 @@ bool H3GFX::setMode(uint8_t mode) {
     case ASPECT_16_9:
       if (m_force_filter || (DISPLAY_PHYS_RES_X / m_current_mode.x >= 3 &&
                              DISPLAY_PHYS_RES_Y / m_current_mode.y >= 3)) {
-        m_current_mode.top = 0.1666667d * m_current_mode.y;  // letter-boxing
+        m_current_mode.top = 0.1666667 * m_current_mode.y;  // letter-boxing
         m_current_mode.left = 0;
       } else {
         // find an integral scale factor
@@ -202,7 +202,7 @@ bool H3GFX::setMode(uint8_t mode) {
         m_current_mode.top = (DISPLAY_PHYS_RES_Y - yscale * m_current_mode.y)	// pixels to add to fill up the screen
                              / yscale					// correct for scaling by video driver
                              / 2;						// only one side, the other side is implicit
-        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.777777d;	// scale corrected for aspect ratio, rounded down
+        int xscale = DISPLAY_PHYS_RES_X / m_current_mode.x / 1.777777;	// scale corrected for aspect ratio, rounded down
         m_current_mode.left =
                 (DISPLAY_PHYS_RES_X - xscale * m_current_mode.x) / xscale / 2;
       }
