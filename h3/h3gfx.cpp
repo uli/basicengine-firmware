@@ -140,6 +140,7 @@ bool H3GFX::setMode(uint8_t mode) {
   spin_lock(&m_buffer_lock);
 
   free(m_pixels);
+  free(m_bgpixels);
   free(m_textmode_buffer);
   free(m_offscreenbuffer);
 
