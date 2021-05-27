@@ -257,6 +257,7 @@ bool H3GFX::setMode(uint8_t mode) {
 
   m_display_enabled = true;
 
+  m_engine_enabled = false;
   spin_unlock(&m_buffer_lock);
 
   // Unlike internal layers and sprites, external BG layers survive mode
@@ -264,7 +265,6 @@ bool H3GFX::setMode(uint8_t mode) {
   // mode.
   // XXX: Maybe internal BG layers and sprites should also survive mode
   // switches?
-  m_engine_enabled = false;
   updateStatus();
 
   return true;
