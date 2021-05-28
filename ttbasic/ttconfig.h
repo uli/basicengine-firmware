@@ -222,4 +222,7 @@
 
 const char *gettext(const char *msg);
 #define _(s) gettext(s)
+
+#define NUM_LANGS 5
+
 #endif

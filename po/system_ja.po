@@ -1,0 +1,648 @@
+#
+msgid ""
+msgstr ""
+
+#. [OK]
+# bulk translation
+msgid "OK"
+msgstr "OK"
+
+#. [Durch Null teilen]
+# bulk translation
+msgid "Division by zero"
+msgstr "ゼロ除算"
+
+#. [Gleitkomma-Ausnahme]
+# bulk translation
+msgid "Floating point exception"
+msgstr "浮動小数点例外"
+
+#. [Überlauf]
+# bulk translation
+msgid "Overflow"
+msgstr "オーバーフロー"
+
+#. [Der Index liegt außerhalb des Bereichs]
+# bulk translation
+msgid "Subscript out of range"
+msgstr "添え字が範囲外"
+
+#. [Der Icode-Puffer ist voll]
+# bulk translation
+msgid "Icode buffer full"
+msgstr "Icodeバッファがいっぱいです"
+
+#. [Zu viele verschachtelte GOSUBs]
+# bulk translation
+msgid "too many nested GOSUB"
+msgstr "ネストされたGOSUBが多すぎます"
+
+#. [RETURN Stack-Unterlauf]
+# bulk translation
+msgid "RETURN stack underflow"
+msgstr "RETURNスタックアンダーフロー"
+
+#. [Überlauf des Argumentstapels]
+# bulk translation
+msgid "Argument stack overflow"
+msgstr "引数スタックオーバーフロー"
+
+#. [Undefinierte Argumente]
+# bulk translation
+msgid "Undefined argument"
+msgstr "未定義の引数"
+
+#. [Zu viele verschachtelte FORs]
+# bulk translation
+msgid "too many nested FOR"
+msgstr "ネストされたFORが多すぎます"
+
+#. [NÄCHSTER ohne FOR]
+# bulk translation
+msgid "NEXT without FOR"
+msgstr "FORなしのNEXT"
+
+#. [FOR ohne Variablen]
+# bulk translation
+msgid "FOR without variable"
+msgstr "変数なしのFOR"
+
+#. [LET ohne Variablen]
+# bulk translation
+msgid "LET without variable"
+msgstr "変数なしのLET"
+
+#. [Konditionslos if.]
+# from Argos
+msgid "IF without condition"
+msgstr "条件のないIF"
+
+#. [IF-Stapelüberlauf]
+# bulk translation
+msgid "IF stack overflow"
+msgstr "IFスタックオーバーフロー"
+
+#. [IF-Stack-Unterlauf]
+# bulk translation
+msgid "IF stack underflow"
+msgstr "IFスタックアンダーフロー"
+
+#. [Undefinierte Zeilennummer]
+# bulk translation
+msgid "Undefined line number"
+msgstr "未定義の行番号"
+
+#. [\ '(\' Oder \ ') \' ist erforderlich]
+# bulk translation
+msgid "\\'(\\' or \\')\\' expected"
+msgstr "\\'(\\'または\\')\\'が必要"
+
+#. [\ '= \' Wird erwartet]
+# bulk translation
+msgid "\\'=\\' expected"
+msgstr "\\'=\\'が期待されます"
+
+#. [Systembefehl kann nicht verwendet werden]
+# bulk translation
+msgid "Cannot use system command"
+msgstr "システムコマンドを使用できません"
+
+#. [Unzulässiger Wert]
+# bulk translation
+msgid "Illegal value"
+msgstr "不正な値"
+
+#. [Wert außerhalb des Bereichs]
+# bulk translation
+msgid "Out of range value"
+msgstr "範囲外の値"
+
+#. [Programm nicht gefunden]
+# bulk translation
+msgid "Program not found"
+msgstr "プログラムが見つかりません"
+
+#. [Syntax-Fehler]
+# bulk translation
+msgid "Syntax error"
+msgstr "構文エラー"
+
+#. [Interner Fehler]
+# bulk translation
+msgid "Internal error"
+msgstr "内部エラー"
+
+#. [Unterbrechung]
+# bulk translation
+msgid "Break"
+msgstr "ブレーク"
+
+#. [Fehler beim Schreiben der Datei]
+# bulk translation
+msgid "File write error"
+msgstr "ファイル書き込みエラー"
+
+#. [Fehler beim Lesen der Datei]
+# bulk translation
+msgid "File read error"
+msgstr "ファイル読み取りエラー"
+
+#. [Die GPIO-Funktion kann nicht verwendet werden]
+# bulk translation
+msgid "Cannot use GPIO function"
+msgstr "GPIO機能は使用できません"
+
+#. [Der Weg ist zu lang]
+# bulk translation
+msgid "Path too long"
+msgstr "パスが長すぎます"
+
+#. [Fehler beim Öffnen der Datei]
+# bulk translation
+msgid "File open error"
+msgstr "ファイルオープンエラー"
+
+#. [Datei ist nicht geöffnet]
+# bulk translation
+msgid "File not open"
+msgstr "ファイルが開かれていません"
+
+#. [SD-E / A-Fehler]
+# bulk translation
+msgid "SD I/O error"
+msgstr "SD I/Oエラー"
+
+#. [Unzulässiger Dateiname]
+# bulk translation
+msgid "Bad file name"
+msgstr "不正なファイル名"
+
+#. [Nicht unterstützt]
+# bulk translation
+msgid "Not supported"
+msgstr "サポートされていません"
+
+#. [Unzureichender Videospeicher]
+# bulk translation
+msgid "Out of video memory"
+msgstr "ビデオメモリが不足しています"
+
+#. [Kann nicht weitermachen]
+# bulk translation
+msgid "Can't continue"
+msgstr "続行できません"
+
+#. [Undefiniertes Array]
+# bulk translation
+msgid "Undefined array"
+msgstr "未定義の配列"
+
+#. [Undefinierte Prozedur]
+# bulk translation
+msgid "Undefined procedure"
+msgstr "未定義の手順"
+
+#. [Undefiniertes Label]
+# bulk translation
+msgid "Undefined label"
+msgstr "未定義のラベル"
+
+#. [Doppelverfahren]
+# from Argos
+msgid "Duplicate procedure"
+msgstr "重複手順"
+
+#. [Duplikatetikett]
+# from Argos
+msgid "Duplicate label"
+msgstr "重複ラベル"
+
+#. [E / A-Fehler]
+# from Argos
+msgid "I/O error"
+msgstr "I/O エラー"
+
+#. [Lokale Variablen außerhalb der Prozedur]
+# bulk translation
+msgid "Local variable outside procedure"
+msgstr "プロシージャ外のローカル変数"
+
+#. [Leere Liste]
+# bulk translation
+msgid "Empty list"
+msgstr "空のリスト"
+
+#. [ENDIF nicht gefunden]
+# bulk translation
+msgid "ENDIF not found"
+msgstr "ENDIFが見つかりません"
+
+#. [Dateiformatfehler]
+# bulk translation
+msgid "File format error"
+msgstr "ファイル形式エラー"
+
+#. [USING Formatfehler]
+# bulk translation
+msgid "USING format error"
+msgstr "USINGフォーマットエラー"
+
+#. [Netzwerkfehler]
+# bulk translation
+msgid "Network error"
+msgstr "ネットワークエラー"
+
+#. [Kein Verzeichnis]
+# bulk translation
+msgid "Not a directory"
+msgstr "ディレクトリではありません"
+
+#. [Systemstapelüberlauf]
+# bulk translation
+msgid "System stack overflow"
+msgstr "システムスタックオーバーフロー"
+
+#. [Dateisuchfehler]
+# bulk translation
+msgid "File seek error"
+msgstr "ファイルシークエラー"
+
+#. [Die Synthesizer-Initialisierung ist fehlgeschlagen]
+# bulk translation
+msgid "Failed to initialize synthesizer"
+msgstr "シンセサイザーの初期化に失敗しました"
+
+#. [Unbekannter Befehl]
+# bulk translation
+msgid "Unknown command"
+msgstr "不明なコマンド"
+
+#. [PROC ohne CALL / FN]
+# bulk translation
+msgid "PROC without CALL/FN"
+msgstr "CALL/FNなしのPROC"
+
+#. [Undefiniertes Symbol]
+# bulk translation
+msgid "Undefined symbol"
+msgstr "未定義のシンボル"
+
+#. [Compilerfehler]
+# bulk translation
+msgid "Compiler error"
+msgstr "コンパイラエラー"
+
+#. [ MB frei]
+# bulk translation
+msgid " MB free\n"
+msgstr " MB無料\n"
+
+#. [ Freie Bytes]
+# bulk translation
+msgid " bytes free\n"
+msgstr " バイト空き\n"
+
+#. [ Teilzeit-Job.]
+# bulk translation
+msgid " bytes.\n"
+msgstr " バイト。\n"
+
+#. [ Datei,]
+# bulk translation
+msgid " files, "
+msgstr " ファイル、"
+
+#. [Verfügbare Befehle:]
+# bulk translation
+msgid "Available commands:"
+msgstr "使用可能なコマンド："
+
+#. [BASIC Kern]
+# bulk translation
+msgid "BASIC core"
+msgstr "BASICコア"
+
+#. [Fehler:]
+# bulk translation
+msgid "Bugs:"
+msgstr "バグ："
+
+#. [Beschreibung:]
+# bulk translation
+msgid "Description:"
+msgstr "説明："
+
+#. [Verzeichnis]
+# bulk translation
+msgid "Directory "
+msgstr "ディレクトリ "
+
+#. [Schriftart:]
+# bulk translation
+msgid "Fonts"
+msgstr "フォント"
+
+#. [Handler:]
+# bulk translation
+msgid "Handler"
+msgstr "ハンドラ"
+
+#. [Übereinstimmender Befehl:]
+# bulk translation
+msgid "Matching commands:"
+msgstr "マッチングコマンド："
+
+#. [Keine Hilfe verfügbar]
+# bulk translation
+msgid "No help available\n"
+msgstr "利用可能なヘルプはありません\n"
+
+#. [Vorsicht:]
+# bulk translation
+msgid "Note"
+msgstr "注意"
+
+#. [Möglichkeit:]
+# bulk translation
+msgid "Options"
+msgstr "オプション"
+
+#. [Rückgabewert:]
+# bulk translation
+msgid "Return value"
+msgstr "戻り値"
+
+#. [Referenz:]
+# bulk translation
+msgid "See also"
+msgstr "参照"
+
+#. [AUTOEXEC.BAS überspringen]
+# bulk translation
+msgid "Skipping AUTOEXEC.BAS\n"
+msgstr "AUTOEXEC.BASをスキップする\n"
+
+#. [Art:]
+# bulk translation
+msgid "Types"
+msgstr "タイプ"
+
+#. [wie benutzt man:]
+# bulk translation
+msgid "Usage"
+msgstr "使用法"
+
+#. [Befehl]
+# bulk translation
+msgid "command"
+msgstr "コマンド"
+
+#. [Kontinuierlich]
+# bulk translation
+msgid "constant"
+msgstr "絶え間ない"
+
+#. [Leerer String]
+# bulk translation
+msgid "empty string"
+msgstr "空の文字列"
+
+#. [Erwartet: \ "]
+# bulk translation
+msgid "expected: \\\""
+msgstr "予想：\\\""
+
+#. [Prognose: BG oder SPRITE]
+# bulk translation
+msgid "expected: BG or SPRITE"
+msgstr "予想：BGまたはSPRITE"
+
+#. [Prognose: BG-Parameter]
+# bulk translation
+msgid "expected: BG parameter"
+msgstr "予想：BGパラメーター"
+
+#. [Vorhersage: GOTO oder GOSUB]
+# bulk translation
+msgid "expected: GOTO or GOSUB"
+msgstr "予想：GOTOまたはGOSUB"
+
+#. [Erwartungen: DANN oder GOTO]
+# bulk translation
+msgid "expected: THEN or GOTO"
+msgstr "期待：THENまたはGOTO"
+
+#. [Erwartung: Befehl]
+# from Google
+msgid "expected: command"
+msgstr "期待：コマンド"
+
+#. [Annahme: Ende der Erklärung]
+# from Argos
+msgid "expected: end of statement"
+msgstr "想定: ステートメントの終了"
+
+#. [Erwartet: Dateimodus]
+# bulk translation
+msgid "expected: file mode"
+msgstr "予想：ファイルモード"
+
+#. [Erwartet: Dateiname]
+# bulk translation
+msgid "expected: file name"
+msgstr "予想：ファイル名"
+
+#. [Prognose: Siehe Liste]
+# bulk translation
+msgid "expected: list reference"
+msgstr "予想：リスト参照"
+
+#. [Erwartet: Netzwerkbefehl]
+# bulk translation
+msgid "expected: network command"
+msgstr "予想：ネットワークコマンド"
+
+#. [Erwartet: Netzwerkfunktion]
+# from Google
+msgid "expected: network function"
+msgstr "予想：ネットワーク機能"
+
+#. [Erwartet: Numerischer Ausdruck]
+# from Google
+msgid "expected: numeric expression"
+msgstr "予想：数字式"
+
+#. [Prognose: Siehe Nummernliste]
+# bulk translation
+msgid "expected: numeric list reference"
+msgstr "予想：数値リスト参照"
+
+#. [Erwartet: Separator]
+# bulk translation
+msgid "expected: separator"
+msgstr "予想：セパレータ"
+
+#. [Erwartungen: Sprite-Parameter]
+# bulk translation
+msgid "expected: sprite parameter"
+msgstr "予想：スプライトパラメータ"
+
+#. [Erwartung: String-Typ]
+# from Google
+msgid "expected: string expression"
+msgstr "期待：文字列式"
+
+#. [Erwartet: Variable.]
+# from Google
+msgid "expected: variable"
+msgstr "予想：変数"
+
+#. [Dateisystem]
+# bulk translation
+msgid "file system"
+msgstr "ファイルシステム"
+
+#. [Von% d bis% d]
+# bulk translation
+msgid "from %d to %d"
+msgstr "%dから%dへ"
+
+#. [Input-Output]
+# bulk translation
+msgid "input/output"
+msgstr "入出力"
+
+#. [ungültige URL]
+# bulk translation
+msgid "invalid URL"
+msgstr "無効なURL"
+
+#. [Ungültiger Listenindex]
+# bulk translation
+msgid "invalid list index"
+msgstr "無効なリストインデックス"
+
+#. [Ungültige Nummer]
+# bulk translation
+msgid "invalid number"
+msgstr "無効な番号"
+
+#. [Ungültige Programmzeile]
+# bulk translation
+msgid "invalid program line"
+msgstr "無効なプログラム行"
+
+#. [Mathematik]
+# bulk translation
+msgid "math"
+msgstr "数学"
+
+#. [Maximum% d]
+# bulk translation
+msgid "max %d"
+msgstr "最大%d"
+
+#. [Minimum% d]
+# bulk translation
+msgid "min %d"
+msgstr "最小%d"
+
+#. [Fehlende Dimensionen]
+# from Google
+msgid "missing dimensions"
+msgstr "欠けている寸法"
+
+#. [Benötigt mindestens 1 Zeichen]
+# bulk translation
+msgid "need min 1 character"
+msgstr "最小1文字が必要"
+
+#. [Negative Länge]
+# bulk translation
+msgid "negative length"
+msgstr "負の長さ"
+
+#. [Negativer String-Offset]
+# bulk translation
+msgid "negative string offset"
+msgstr "負の文字列オフセット"
+
+#. [Negative Teilstringlänge]
+# bulk translation
+msgid "negative substring length"
+msgstr "負の部分文字列の長さ"
+
+#. [Keiner]
+# bulk translation
+msgid "none"
+msgstr "無し"
+
+#. [Kein BASIC-Programm]
+# bulk translation
+msgid "not a BASIC program"
+msgstr "BASICプログラムではありません"
+
+#. [Keine Array-Variable]
+# bulk translation
+msgid "not an array variable"
+msgstr "配列変数ではありません"
+
+#. [Nicht verbunden]
+# bulk translation
+msgid "not connected"
+msgstr "接続されていません"
+
+#. [Numerischer Wert]
+# bulk translation
+msgid "numeric"
+msgstr "数値"
+
+#. [Operator]
+# bulk translation
+msgid "operator"
+msgstr "オペレーター"
+
+#. [Pixelgrafiken]
+# bulk translation
+msgid "pixel graphics"
+msgstr "ピクセルグラフィックス"
+
+#. [Bildschirmverarbeitung]
+# bulk translation
+msgid "screen handling"
+msgstr "画面処理"
+
+#. [Klang]
+# bulk translation
+msgid "sound"
+msgstr "音"
+
+#. [Sprite / Hintergrund-Engine]
+# bulk translation
+msgid "sprite/background engine"
+msgstr "スプライト/バックグラウンドエンジン"
+
+#. [Zeichenfolge]
+# bulk translation
+msgid "string"
+msgstr "ストリング"
+
+#. [System]
+# bulk translation
+msgid "system"
+msgstr "システム"
+
+#. [weiß nicht]
+# bulk translation
+msgid "unknown"
+msgstr "わからない"
+
+#. [Unbekannte Speichergröße]
+# bulk translation
+msgid "unknown memory size\n"
+msgstr "不明なメモリサイズ\n"
+
+#. [Unbekannt / SDL]
+# bulk translation
+msgid "unknown/SDL"
+msgstr "不明/SDL"

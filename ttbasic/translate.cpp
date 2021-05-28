@@ -8,11 +8,13 @@ struct msg {
 #include "msgs_de.h"
 #include "msgs_fr.h"
 #include "msgs_es.h"
+#include "msgs_ja.h"
 
-const struct msg *translations[] = {
+const struct msg *translations[NUM_LANGS - 1] = {
     msgs_de,
     msgs_fr,
     msgs_es,
+    msgs_ja,
 };
 
 const char *gettext(const char *msg) {

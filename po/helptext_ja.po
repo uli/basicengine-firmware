@@ -1,0 +1,5879 @@
+#
+msgid ""
+msgstr ""
+
+#. [Definiert die Eigenschaften des gekachelten Hintergrunds.]
+# bulk translation
+msgid "Defines a tiled background's properties."
+msgstr "タイル状の背景のプロパティを定義します。"
+
+#. [Sie können "Hintergrund" verwenden, um eine gekachelte Hintergrundkarte
+#. und
+#. Kachelgröße, einen Kachelsatz, eine Fenstergröße und -position sowie eine
+#. Priorität zu definieren und diese ein- oder auszuschalten.]
+# bulk translation
+msgid ""
+"Using `BG`, you can define a tiled background's map and tile size, tile set,"
+" window size and position, and priority, as well as turn it on or off."
+msgstr ""
+"`BG`を使用すると、タイル状の背景のマップとタイルサイズ、タイルセット、ウィンドウサイズと位置、優先度を定義したり、オンまたはオフにしたりできます。"
+
+#. [`BG OFF` schaltet alle Hintergründe aus.]
+# bulk translation
+msgid "`BG OFF` turns off all backgrounds."
+msgstr "`BG OFF`は、すべての背景をオフにします。"
+
+#. [Hintergrundnummer [`0` bis` {MAX_BG_m1}`]]
+# bulk translation
+msgid "background number [`0` to `{MAX_BG_m1}`]"
+msgstr "バックグラウンド番号[`0`から`{MAX_BG_m1}`]"
+
+#. [Hintergrundkartenbreite, Kacheleinheit]
+# bulk translation
+msgid "background map width, in tiles"
+msgstr "背景マップの幅、タイル単位"
+
+#. [Hintergrundkartenhöhe, Kacheleinheit]
+# bulk translation
+msgid "background map height, in tiles"
+msgstr "背景マップの高さ、タイル単位"
+
+#. [Kachelsatz X-Koordinaten, Pixel [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "タイルセットX座標、ピクセル[`0`から`PSIZE(0)-1`]"
+
+#. [Kachelsatz Y-Koordinate, Pixel [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "tile set Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "タイルセットY座標、ピクセル[`0`から`PSIZE(2)-1`]"
+
+#. [Kachelbreite, Pixel [`8` (Standard) bis` 32`]]
+# bulk translation
+msgid "tile width, pixels [`8` (default) to `32`]"
+msgstr "タイル幅、ピクセル[`8`（デフォルト）から`32`]"
+
+#. [Kachelhöhe, Pixel [`8` (Standard) bis` 32`]]
+# bulk translation
+msgid "tile height, pixels [`8` (default) to `32`]"
+msgstr "タイルの高さ、ピクセル[`8`（デフォルト）から`32`]"
+
+#. [Fenster X-Koordinate, Pixel [`0` (Standard) bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]"
+msgstr "ウィンドウのX座標、ピクセル[`0`（デフォルト）から`PSIZE(0)-1`]"
+
+#. [Fenster-Y-Koordinate, Pixel [`0` (Standard) bis` PSIZE(1)-1`]]
+# bulk translation
+msgid "window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]"
+msgstr "ウィンドウのY座標、ピクセル[`0`（デフォルト）から`PSIZE(1)-1`]"
+
+#. [Fensterbreite, Pixel [`9` bis` PSIZE(0)-wx` (Standard)]]
+# bulk translation
+msgid "window width, pixels [`9` to `PSIZE(0)-wx` (default)]"
+msgstr "ウィンドウ幅、ピクセル[`9`から`PSIZE(0)-wx`（デフォルト）]"
+
+#. [Fensterhöhe, Pixel [`0` bis` PSIZE(1)-wy` (Standard)]]
+# bulk translation
+msgid "window height, pixels [`0` to `PSIZE(1)-wy` (default)]"
+msgstr "ウィンドウの高さ、ピクセル[`0`から`PSIZE(1)-wy`（デフォルト）]"
+
+#. [* Die Attribute des Befehls "BG" können in beliebiger Reihenfolge
+#. angegeben
+#. werden. Es wird jedoch normalerweise empfohlen, das Attribut "ON" am Ende
+#. zu platzieren, wenn Sie es verwenden.]
+# bulk translation
+msgid ""
+"* The `BG` command's attributes can be specified in any order, but it is "
+"usually a good idea to place the `ON` attribute at the end if used."
+msgstr "* `BG`コマンドの属性は任意の順序で指定できますが、使用する場合は通常、最後に`ON`属性を配置することをお勧めします。"
+
+#. [* Der Hintergrund kann nur aktiviert werden, wenn mindestens das Attribut
+#. "TILES" festgelegt ist. Sie müssen wahrscheinlich auch das Attribut
+#. `PATTERN` angeben, um eine sinnvolle Ausgabe zu erhalten.]
+# bulk translation
+msgid ""
+"* A background cannot be turned on unless at least the `TILES` attribute is "
+"set. In order to get sensible output, it will probably be necessary to "
+"specify the `PATTERN` attribute as well."
+msgstr ""
+"*少なくとも `TILES`属性が設定されていない限り、バックグラウンドをオンにすることはできません。賢明な出力を得るには、おそらく "
+"`PATTERN`属性も指定する必要があります。"
+
+#. [Wenn der Hintergrund nicht eingeschaltet werden kann, wird kein Fehler
+#. generiert.]
+# bulk translation
+msgid "If a background cannot be turned on, no error is generated."
+msgstr "バックグラウンドをオンにできない場合、エラーは生成されません。"
+
+#. [Laden Sie die Hintergrundkarte aus der Datei.]
+# bulk translation
+msgid "Loads a background map from a file."
+msgstr "ファイルから背景マップをロードします。"
+
+#. [Hintergrundnummer. [Von "0" bis "{MAX_BG_m1}"]]
+# bulk translation
+msgid "background number. [`0` to `{MAX_BG_m1}`]"
+msgstr "背景番号。[`0`から`{MAX_BG_m1}`]"
+
+#. [Der Name der Hintergrundkartendatei]
+# bulk translation
+msgid "name of background map file"
+msgstr "背景マップファイルの名前"
+
+#. [Speichern Sie die Hintergrundkarte in einer Datei.]
+# bulk translation
+msgid "Saves a background map to a file."
+msgstr "背景マップをファイルに保存します。"
+
+#. [Überprüft nicht, ob der angegebene Hintergrund korrekt definiert ist.]
+# bulk translation
+msgid "Does not check if the specified background is properly defined."
+msgstr "指定された背景が正しく定義されているかどうかをチェックしません。"
+
+#. [Scrollen Sie durch den gekachelten Hintergrund.]
+# bulk translation
+msgid "Scrolls a tiled background."
+msgstr "タイル状の背景をスクロールします。"
+
+#. [Versatz der oberen / linken Ecke horizontal, Pixel]
+# bulk translation
+msgid "top/left corner offset horizontal, pixels"
+msgstr "上/左隅のオフセット水平、ピクセル"
+
+#. [Versatz der oberen / linken Ecke vertikal, Pixel]
+# bulk translation
+msgid "top/left corner offset vertical, pixels"
+msgstr "上/左隅のオフセット垂直、ピクセル"
+
+#. [Es gibt keine Einschränkungen für die Koordinaten, die verwendet werden
+#. können. Wenn das Anzeigefenster die Kartengrenzen überschreitet, wird die
+#. Hintergrundkarte umbrochen.]
+# bulk translation
+msgid ""
+"There are no restrictions on the coordinates that can be used; backgrounds "
+"maps wrap around if the display window extends beyond the map boundaries."
+msgstr "使用できる座標に制限はありません。表示ウィンドウがマップの境界を超えている場合、背景マップは折り返されます。"
+
+#. [Definiert Sprite-Eigenschaften.]
+# bulk translation
+msgid "Defines a sprite's properties."
+msgstr "スプライトのプロパティを定義します。"
+
+#. [Mit "SPRITE" können Sie das Erscheinungsbild, die Größe, den
+#. Animationsrahmen, die Farbtasten, die Proität und die Spezialeffekte des
+#. Sprites definieren und ein- und ausschalten.]
+# bulk translation
+msgid ""
+"Using `SPRITE`, you can define a sprite's appearance, size, animation frame,"
+" color key, prority, special effects, and turn it on and off."
+msgstr ""
+"`SPRITE`を使用すると、スプライトの外観、サイズ、アニメーションフレーム、カラーキー、プロリティ、特殊効果を定義し、オンとオフを切り替えることができます。"
+
+#. [`SPRITE OFF` schaltet alle Sprites aus.]
+# bulk translation
+msgid "`SPRITE OFF` turns all sprites off."
+msgstr "`SPRITE OFF`は、すべてのスプライトをオフにします。"
+
+#. [Koordinaten des oberen / linken Sprite-Musters, Pixel]
+# from Google
+msgid "coordinate of the top/left sprite pattern, pixels"
+msgstr "上/左スプライトパターンの座標、ピクセル"
+
+#. [Sprite-Breite, Pixel [`0` bis` {MAX_SPRITE_W_m1}`]]
+# bulk translation
+msgid "sprite width, pixels [`0` to `{MAX_SPRITE_W_m1}`]"
+msgstr "スプライト幅、ピクセル[`0`から`{MAX_SPRITE_W_m1}`]"
+
+#. [Sprite-Höhe, Pixel [`0` bis` {MAX_SPRITE_H_m1}`]]
+# bulk translation
+msgid "sprite height, pixels [`0` to `{MAX_SPRITE_H_m1}`]"
+msgstr "スプライトの高さ、ピクセル[`0`から`{MAX_SPRITE_H_m1}`]"
+
+#. [X-Koordinate des zu verwendenden Musterabschnitts (Vielfaches der Sprite-
+#. Breite)]
+# bulk translation
+msgid ""
+"X coordinate of the pattern section to be used, in multiples of sprite width"
+msgstr "使用するパターンセクションのX座標（スプライト幅の倍数）"
+
+#. [Y-Koordinate des zu verwendenden Musterabschnitts, ein Vielfaches der
+#. Sprite-Höhe]
+# bulk translation
+msgid ""
+"Y coordinate of the pattern section to be used, in multiples of sprite "
+"height"
+msgstr "使用するパターンセクションのY座標、スプライトの高さの倍数"
+
+#. [Spezialeffekt-Flag [`0` bis` 7`]]
+# bulk translation
+msgid "special effect flags [`0` to `7`]"
+msgstr "特殊効果フラグ[`0`から`7`]"
+
+#. [Schlüsselfarbwert für die Transparenzmaskierung]
+# bulk translation
+msgid "key color value to be used for transparency masking"
+msgstr "透明度マスキングに使用されるキーカラー値"
+
+#. [Sprite-Priorität in Bezug auf die Hintergrundebene [`0` bis`
+#. {MAX_BG_m1}`]]
+# bulk translation
+msgid ""
+"sprite priority in relation to background layers [`0` to `{MAX_BG_m1}`]"
+msgstr "背景レイヤーに関連するスプライトの優先度[`0`から`{MAX_BG_m1}`]"
+
+#. [Drehwinkel (in Grad) [Standard ist "0"]]
+# bulk translation
+msgid "rotation angle in degrees [default `0`]"
+msgstr "回転角（度単位）[デフォルトは `0`]"
+
+#. [Horizontaler Skalierungsfaktor [Default `1"]
+# from Google
+msgid "horizontal scaling factor [default `1`]"
+msgstr "水平スケーリング係数[デフォルト`1`"
+
+#. [Vertikaler Skalierungsfaktor [Default `1"]
+# from Google
+msgid "vertical scaling factor [default `1`]"
+msgstr "垂直スケーリング係数[デフォルト `1`"
+
+#. [Sprite-Deckkraft [`0` bis` 255`, Standard` 255`]]
+# bulk translation
+msgid "sprite opacity [`0` to `255`, default `255`]"
+msgstr "スプライトの不透明度[`0`から`255`、デフォルトは `255`]"
+
+#. [Das Attribut `FLAGS` ist die Summe eines der folgenden Bitwerte:]
+# bulk translation
+msgid "The `FLAGS` attribute is the sum of any of the following bit values:"
+msgstr "`FLAGS`属性は、次のビット値のいずれかの合計です。"
+
+#. [ Bitwert]
+# bulk translation
+msgid " Bit value "
+msgstr " ビット値 "
+
+#. [ bewirken]
+# bulk translation
+msgid " Effect"
+msgstr " 効果"
+
+#. [ Horizontaler Flip]
+# bulk translation
+msgid " Horizontal flip"
+msgstr " 水平フリップ"
+
+#. [ Vertikaler Flip]
+# bulk translation
+msgid " Vertical flip"
+msgstr " 垂直フリップ"
+
+#. [* Die Attribute des Befehls "SPRITE" können in beliebiger Reihenfolge
+#. angegeben werden. Es wird jedoch allgemein empfohlen, das Attribut "ON" am
+#. Ende zu platzieren, wenn Sie es verwenden.]
+# bulk translation
+msgid ""
+"* The `SPRITE` command's attributes can be specified in any order, but it is"
+" usually a good idea to place the `ON` attribute at the end if used."
+msgstr "* `SPRITE`コマンドの属性は任意の順序で指定できますが、使用する場合は通常、最後に`ON`属性を配置することをお勧めします。"
+
+#. [* Das Attribut "ALPHA" ist nur auf True Color-Plattformen verfügbar.]
+# bulk translation
+msgid "* The `ALPHA` attribute is only available on true-color platforms."
+msgstr "* `ALPHA`属性は、トゥルーカラープラットフォームでのみ使用できます。"
+
+#. [Bei der Berechnung des Drehwinkels mit anderen trigonometrischen
+#. Funktionen
+#. ist es mühsam, den Drehwinkel in Grad anzugeben.]
+# bulk translation
+msgid ""
+"Having to specify the rotation angle in degrees is cumbersome when using "
+"other trigonometric operations to calculate it."
+msgstr "他の三角関数を使用して回転角を計算する場合、回転角を度で指定する必要があるのは面倒です。"
+
+#. [Bewegen Sie das Sprite.]
+# bulk translation
+msgid "Moves a sprite."
+msgstr "スプライトを移動します。"
+
+#. [Es gibt keine Einschränkungen für die Koordinaten, die verwendet werden
+#. können. Sprites, die vollständig außerhalb der aktuellen
+#. Bildschirmmodusabmessungen platziert sind, werden nicht gezeichnet.]
+# bulk translation
+msgid ""
+"There are no restrictions on the coordinates that can be used; sprites that "
+"are placed completely outside the dimensions of the current screen mode will"
+" not be drawn."
+msgstr "使用できる座標に制限はありません。現在の画面モードの寸法の完全に外側に配置されたスプライトは描画されません。"
+
+#. [Legt den Wert einer oder mehrerer Hintergrundkacheln fest.]
+# bulk translation
+msgid "Sets the value of one or more background tiles."
+msgstr "1つ以上の背景タイルの値を設定します。"
+
+#. [Kachelkennung [`0` bis` 255`]]
+# bulk translation
+msgid "tile identifier [`0` to `255`]"
+msgstr "タイル識別子[`0`から`255`]"
+
+#. [Kachel-ID]
+# bulk translation
+msgid "tile identifiers"
+msgstr "タイル識別子"
+
+#. [Das numerische Argument "Kachel" legt eine einzelne Kachel fest. Wenn eine
+#. Kachelzeichenfolge (`tile$`) übergeben wird, werden Kacheln für jedes
+#. Element der Zeichenfolge festgelegt, beginnend bei den angegebenen
+#. Kachelkoordinaten und horizontal.]
+# bulk translation
+msgid ""
+"If the numeric `tile` argument is given, a single tile will be set. If a "
+"string of tiles (`tile$`) is passed, a tile will be set for each of the "
+"elements of the string, starting from the specified tile coordinates and "
+"proceeding horizontally."
+msgstr ""
+"数値の `tile`引数を指定すると、単一のタイルが設定されます。タイルの文字列（ `tile "
+"$`）が渡されると、指定されたタイル座標から始まり、水平方向に進む、文字列の各要素にタイルが設定されます。"
+
+#. [Erstellen Sie eine Zuordnung von einer Kachel zur anderen.]
+# bulk translation
+msgid "Creates a mapping from one tile to another."
+msgstr "あるタイルから別のタイルへのマッピングを作成します。"
+
+#. [Kachelnummern hängen von der Position der Grafikdaten im Speicher ab und
+#. stellen normalerweise keine druckbaren Zeichen dar, was die Verarbeitung im
+#. Programmtext häufig erschwert. Durch die Neuzuordnung druckbarer Zeichen zu
+#. Kacheln, wie sie durch Grafikdaten dargestellt werden, kann das Programm
+#. die für Menschen lesbaren Zeichen verwenden, sodass sie leichter zu
+#. schreiben und zu verstehen sind.]
+# bulk translation
+msgid ""
+"Tile numbers depend on the locations of graphics data in memory and do not "
+"usually represent printable characters, often making it difficult to handle "
+"them in program text. By remapping a printable character to a tile as "
+"represented by the graphics data, it is possible to use that human-readable "
+"character in your program, making it easier to write and to understand."
+msgstr ""
+"タイル番号は、メモリ内のグラフィックデータの場所に依存し、通常は印刷可能な文字を表さないため、プログラムテキストでの処理が困難になることがよくあります。グラフィックデータで表されるように、印刷可能な文字をタイルに再マッピングすることにより、プログラムでその人間が読める文字を使用することが可能になり、記述と理解が容易になります。"
+
+#. [Kachelnummer zum erneuten Zuordnen von [`0` zu` 255`]]
+# bulk translation
+msgid "tile number to remap [`0` to `255`]"
+msgstr "再マップするタイル番号[`0`から`255`]"
+
+#. [Legt die Anzahl der Frames fest, die übersprungen werden müssen, bevor die
+#. BG / Sprite-Engine einen neuen Frame rendert.]
+# bulk translation
+msgid ""
+"Sets the number of frames that should be skipped before a new frame is "
+"rendered by the BG/sprite engine."
+msgstr "BG /スプライトエンジンによって新しいフレームがレンダリングされる前にスキップする必要があるフレームの数を設定します。"
+
+#. [Dies trägt zur Erhöhung der in BASIC verfügbaren CPU-Leistung bei, indem
+#. die vom Grafiksubsystem verursachte Last verringert wird.]
+# bulk translation
+msgid ""
+"This serves to increase the available CPU power to BASIC by reducing the "
+"load imposed by the graphics subsystem."
+msgstr "これは、グラフィックサブシステムによって課せられる負荷を減らすことにより、BASICで使用可能なCPUパワーを増やすのに役立ちます。"
+
+#. [Anzahl der zu überspringenden Frames [`0` (Standard) auf` 60`]]
+# bulk translation
+msgid "number of frames to be skipped [`0` (default) to `60`]"
+msgstr "スキップするフレーム数[`0`（デフォルト）から`60`]"
+
+#. [Da sich jedes tatsächlich gerenderte Bild innerhalb eines einzelnen TV-
+#. Rahmens befinden muss, kann "FRAMESKIP" nicht verwendet werden, um das
+#. durch Überlastung der Grafik-Engine verursachte Flimmern zu verringern.]
+# bulk translation
+msgid ""
+"It is not possible to mitigate flickering caused by overloading the graphics"
+" engine using `FRAMESKIP` because each frame that is actually rendered must "
+"be so within a single TV frame."
+msgstr ""
+"実際にレンダリングされる各フレームは単一のTVフレーム内にある必要があるため、 "
+"`FRAMESKIP`を使用してグラフィックエンジンの過負荷によって引き起こされるちらつきを軽減することはできません。"
+
+#. [Überprüfen Sie, ob das Sprite mit der Hintergrundkachel kollidiert.]
+# bulk translation
+msgid "Checks if a sprite has collided with a background tile."
+msgstr "スプライトが背景タイルに衝突したかどうかを確認します。"
+
+#. [Sprite-Nummer [`0` bis` {MAX_SPRITES_m1}`]]
+# bulk translation
+msgid "sprite number [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "スプライト番号[`0`から`{MAX_SPRITES_m1}`]"
+
+#. [Kachelnummer [`0` bis` 255`]]
+# bulk translation
+msgid "tile number [`0` to `255`]"
+msgstr "タイル番号[`0`から`255`]"
+
+#. [Wenn der Rückgabewert "0" ist, ist keine Kollision aufgetreten.
+#. Andernfalls
+#. ist der Rückgabewert die Summe aus "64" und einem der folgenden Bitwerte:]
+# bulk translation
+msgid ""
+"If the return value is `0`, no collision has taken place. Otherwise the "
+"return value is the sum of `64` and any of the following bit values:"
+msgstr "戻り値が `0`の場合、衝突は発生していません。それ以外の場合、戻り値は `64`と次のビット値のいずれかの合計です。"
+
+#. [ Bedeutung]
+# bulk translation
+msgid " Meaning"
+msgstr " 意味"
+
+#. [ Die Kachel befindet sich auf der linken Seite des Sprites.]
+# bulk translation
+msgid " The tile is left of the sprite."
+msgstr " タイルはスプライトの左側にあります。"
+
+#. [ Die Kacheln befinden sich unter dem Sprite.]
+# bulk translation
+msgid " The tile is below the sprite."
+msgstr " タイルはスプライトの下にあります。"
+
+#. [ Die Kachel befindet sich rechts vom Sprite.]
+# bulk translation
+msgid " The tile is right of the sprite."
+msgstr " タイルはスプライトの右側にあります。"
+
+#. [ Die Kachel befindet sich oben auf dem Sprite.]
+# bulk translation
+msgid " The tile is above the sprite."
+msgstr " タイルはスプライトの上にあります。"
+
+#. [Warnung: Diese Funktion wurde nicht getestet.]
+# bulk translation
+msgid "WARNING: This function has never been tested."
+msgstr "警告：この機能はテストされていません。"
+
+#. [Im Gegensatz zu "SPRCOLL ()" ist die Kachelkollisionserkennung nicht
+#. pixelgenau.]
+# bulk translation
+msgid "Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate."
+msgstr "`SPRCOLL()`とは異なり、タイルの衝突検出はピクセル精度ではありません。"
+
+#. [Überprüfen Sie, ob ein Sprite mit einem anderen Sprite kollidiert ist.]
+# bulk translation
+msgid "Checks if a sprite has collided with another sprite."
+msgstr "スプライトが別のスプライトと衝突したかどうかを確認します。"
+
+#. [Sprite Nummer 1 [`0` bis` {MAX_SPRITES_m1}`]]
+# bulk translation
+msgid "sprite number 1 [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "スプライト番号1 [`0`から`{MAX_SPRITES_m1}`]"
+
+#. [Sprite Nummer 2 [`0` bis` {MAX_SPRITES_m1}`]]
+# bulk translation
+msgid "sprite number 2 [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "スプライト番号2 [`0`から`{MAX_SPRITES_m1}`]"
+
+#. [ Sprite 2 befindet sich links von Sprite 1.]
+# bulk translation
+msgid " Sprite 2 is left of sprite 1."
+msgstr " スプライト2はスプライト1の左側にあります。"
+
+#. [ Sprite 2 liegt unter Sprite 1.]
+# bulk translation
+msgid " Sprite 2 is below sprite 1."
+msgstr " スプライト2はスプライト1の下にあります。"
+
+#. [ Sprite 2 befindet sich rechts von Sprite 1.]
+# bulk translation
+msgid " Sprite 2 is right of sprite 1."
+msgstr " スプライト2はスプライト1の右側です。"
+
+#. [ Sprite 2 liegt über Sprite 1.]
+# bulk translation
+msgid " Sprite 2 is above sprite 1."
+msgstr " スプライト2はスプライト1の上にあります。"
+
+#. [* Kollisionen werden nur erkannt, wenn beide Sprites aktiviert sind.]
+# bulk translation
+msgid "* Collisions are only detected if both sprites are enabled."
+msgstr "*衝突は、両方のスプライトが有効になっている場合にのみ検出されます。"
+
+#. [* Die Sprite / Sprite-Kollisionserkennung ist pixelgenau. Das heißt,
+#. Kollisionen werden nur erkannt, wenn sich die sichtbaren Pixel zweier
+#. Sprites überlappen.]
+# bulk translation
+msgid ""
+"* Sprite/sprite collision detection is pixel-accurate, i.e. a collision is "
+"only detected if visible pixels of two sprites overlap."
+msgstr "*スプライト/スプライトの衝突検出はピクセル精度です。つまり、衝突は2つのスプライトの可視ピクセルが重なっている場合にのみ検出されます。"
+
+#. [Gibt die horizontale Position des angegebenen Sprites zurück.]
+# bulk translation
+msgid "Returns the horizontal position of a given sprite."
+msgstr "指定されたスプライトの水平位置を返します。"
+
+#. [Die X-Koordinate des Sprites `spr`.]
+# bulk translation
+msgid "X coordinate of sprite `spr`."
+msgstr "スプライト `spr`のX座標。"
+
+#. [Gibt die vertikale Position des angegebenen Sprites zurück.]
+# bulk translation
+msgid "Returns the vertical position of a given sprite."
+msgstr "指定されたスプライトの垂直位置を返します。"
+
+#. [Die Y-Koordinate des Sprites `spr`.]
+# bulk translation
+msgid "Y coordinate of sprite `spr`."
+msgstr "スプライト `spr`のY座標。"
+
+#. [Gibt die Breite des angegebenen Sprites zurück.]
+# bulk translation
+msgid "Returns the width of a given sprite."
+msgstr "指定されたスプライトの幅を返します。"
+
+#. [Die Breite des Sprites `spr`.]
+# bulk translation
+msgid "Width of sprite `spr`."
+msgstr "スプライト `spr`の幅。"
+
+#. [Auf Plattformen, die Rotozoom unterstützen, gibt die Funktion die
+#. Dimension
+#. zurück, nachdem die Transformation angewendet wurde.]
+# bulk translation
+msgid ""
+"On platforms with rotozoom support, the function returns the dimension after"
+" transformations have been applied."
+msgstr "rotozoomをサポートするプラットフォームでは、関数は変換が適用された後にディメンションを返します。"
+
+#. [Wenn sich die Drehung oder Skalierung ändert, werden die neuen Abmessungen
+#. hier möglicherweise erst wiedergegeben, wenn das nächste Videobild
+#. gerendert wird.]
+# bulk translation
+msgid ""
+"When rotation and/or scale are changed, the new dimensions may not be "
+"reflected here until the next video frame is rendered."
+msgstr "回転やスケールが変更された場合、次のビデオフレームがレンダリングされるまで、新しい寸法がここに反映されない場合があります。"
+
+#. [Gibt die Höhe des angegebenen Sprites zurück.]
+# bulk translation
+msgid "Returns the height of a given sprite."
+msgstr "指定されたスプライトの高さを返します。"
+
+#. [Die Höhe des Sprites `spr`.]
+# bulk translation
+msgid "Height of sprite `spr`."
+msgstr "スプライト `spr`の高さ。"
+
+#. [Gibt den horizontalen Roll-Offset der angegebenen Hintergrundschicht
+#. zurück.]
+# from Google
+msgid "Returns the horizontal scrolling offset of a given background layer."
+msgstr "与えられた背景レイヤの水平スクロールオフセットを返します。"
+
+#. [X Scroll Offset für Hintergrund `bg`.]
+# bulk translation
+msgid "X scrolling offset of background `bg`."
+msgstr "背景 `bg`のXスクロールオフセット。"
+
+#. [Gibt den vertikalen Bildlaufversatz der angegebenen Hintergrundebene
+#. zurück.]
+# bulk translation
+msgid "Returns the vertical scrolling offset of a given background layer."
+msgstr "指定された背景レイヤーの垂直スクロールオフセットを返します。"
+
+#. [Y-Bildlaufversatz für Hintergrund `bg`.]
+# bulk translation
+msgid "Y scrolling offset of background `bg`."
+msgstr "背景 `bg`のYスクロールオフセット。"
+
+#. [Ändern Sie das Farbschema.]
+# bulk translation
+msgid "Changes the color scheme."
+msgstr "配色を変更します。"
+
+#. [Ein Farbschema ist eine Reihe von Farben, die zum Drucken von
+#. Systemmeldungen und BASIC-Programmlisten verwendet werden. Es enthält auch
+#. die Standardfarben für Vordergrund und Hintergrund.]
+# bulk translation
+msgid ""
+"The color scheme is a set of colors that are used to print system messages "
+"and BASIC program listings. It also contains the default foreground and "
+"background colors."
+msgstr ""
+"配色は、システムメッセージとBASICプログラムリストを印刷するために使用される色のセットです。また、デフォルトの前景色と背景色も含まれています。"
+
+#. [Farbcode [`0` bis` {CONFIG_COLS_m1}`]]
+# bulk translation
+msgid "color code [`0` to `{CONFIG_COLS_m1}`]"
+msgstr "カラーコード[`0`から`{CONFIG_COLS_m1}`]"
+
+#. [Rote Komponente [0-255]]
+# bulk translation
+msgid "red component [0 to 255]"
+msgstr "赤い成分[0から255]"
+
+#. [Grüne Komponente [0-255]]
+# bulk translation
+msgid "green component [0 to 255]"
+msgstr "緑の成分[0から255]"
+
+#. [Blaue Komponente [0 bis 255]]
+# bulk translation
+msgid "blue component [0 to 255]"
+msgstr "青い成分[0から255]"
+
+#. [Code]
+# bulk translation
+msgid "CODES"
+msgstr "コード"
+
+#. [ 0]
+# bulk translation
+msgid " 0 "
+msgstr " 0 "
+
+#. [ Standardhintergrund]
+# bulk translation
+msgid " Default background"
+msgstr " デフォルトの背景"
+
+#. [ 1]
+# bulk translation
+msgid " 1 "
+msgstr " 1 "
+
+#. [ Standardvordergrund]
+# bulk translation
+msgid " Default foreground"
+msgstr " デフォルトのフォアグラウンド"
+
+#. [ 2]
+# bulk translation
+msgid " 2 "
+msgstr " 2 "
+
+#. [ Syntax: BASIC-Schlüsselwort]
+# bulk translation
+msgid " Syntax: BASIC keywords"
+msgstr " 構文：BASICキーワード"
+
+#. [ 3]
+# bulk translation
+msgid " 3 "
+msgstr " 3 "
+
+#. [ Syntax: Zeilennummer]
+# bulk translation
+msgid " Syntax: line numbers"
+msgstr " 構文：行番号"
+
+#. [ Vier]
+# bulk translation
+msgid " 4 "
+msgstr " 4 "
+
+#. [Syntax: Zahlen]
+# from Argos
+msgid " Syntax: numbers"
+msgstr " 構文:数字"
+
+#. [ Fünf]
+# bulk translation
+msgid " 5 "
+msgstr " 5 "
+
+#. [ Syntax: Globale Variablen]
+# bulk translation
+msgid " Syntax: global variables"
+msgstr " 構文：グローバル変数"
+
+#. [ 6]
+# bulk translation
+msgid " 6 "
+msgstr " 6 "
+
+#. [ Syntax: Lokale Variablen und Argumente]
+# bulk translation
+msgid " Syntax: local variables and arguments"
+msgstr " 構文：ローカル変数と引数"
+
+#. [ 7]
+# bulk translation
+msgid " 7 "
+msgstr " 7 "
+
+#. [ Syntax: Operand]
+# bulk translation
+msgid " Syntax: operands"
+msgstr " 構文：オペランド"
+
+#. [ 8]
+# bulk translation
+msgid " 8 "
+msgstr " 8 "
+
+#. [ Syntax: String-Konstante]
+# bulk translation
+msgid " Syntax: string constants"
+msgstr " 構文：文字列定数"
+
+#. [ 9]
+# bulk translation
+msgid " 9 "
+msgstr " 9 "
+
+#. [ Syntax: Prozedurname]
+# bulk translation
+msgid " Syntax: procedure names"
+msgstr " 構文：プロシージャ名"
+
+#. [ Zehn]
+# bulk translation
+msgid " 10 "
+msgstr " 10 "
+
+#. [ Syntax: Kommentar]
+# bulk translation
+msgid " Syntax: comments"
+msgstr " 構文：コメント"
+
+#. [ 11]
+# bulk translation
+msgid " 11 "
+msgstr " 11 "
+
+#. [ Standardrandfarbe]
+# bulk translation
+msgid " Default border color"
+msgstr " デフォルトの境界線の色"
+
+#. [* Im Gegensatz zum Befehl "COLOR" müssen Sie für "CONFIGCOLOR" die Farbe
+#. im
+#. RGB-Format angeben. Dies soll sicherstellen, dass das Farbschema in allen
+#. YUV-Farbräumen funktioniert.]
+# bulk translation
+msgid ""
+"* Unlike the `COLOR` command, `CONFIG COLOR` requires the colors to be given"
+" in RGB format; this is to ensure that the color scheme works with all YUV "
+"colorspaces."
+msgstr ""
+"* `COLOR`コマンドとは異なり、`"
+"CONFIG COLOR`では色をRGB形式で指定する必要があります。これは、配色がすべてのYUVカラースペースで機能することを保証するためです。"
+
+#. [* Verwenden Sie "SAVECONFIG", um das aktuelle Farbschema als Standard
+#. festzulegen.]
+# bulk translation
+msgid "* To set the current color scheme as the default, use `SAVE CONFIG`."
+msgstr "*現在の配色をデフォルトとして設定するには、`SAVECONFIG`を使用します。"
+
+#. [Die Standardrahmenfarbe wird nicht verwendet.]
+# bulk translation
+msgid "The default border color is not used."
+msgstr "デフォルトの境界線の色は使用されません。"
+
+#. [Ändern Sie die Konfigurationsoptionen.]
+# bulk translation
+msgid "Changes configuration options."
+msgstr "構成オプションを変更します。"
+
+#. [Konfigurationsoptionen zum Setzen von [`0` auf` 8`]]
+# bulk translation
+msgid "configuration option to be set [`0` to `8`]"
+msgstr "設定する構成オプション[`0`から`8`]"
+
+#. [Optionswert]
+# bulk translation
+msgid "option value"
+msgstr "オプション値"
+
+#. [Es gibt folgende Optionen:]
+# from Google
+msgid "The following options exist:"
+msgstr "次のオプションが存在します。"
+
+#. [* `0`: TV-Norm + Stellen Sie die TV-Norm auf NTSC (` 0`), PAL (`1`) oder
+#. PAL60 (` 2`) ein. + WARNUNG: Diese Konfigurationsoption macht wenig Sinn.
+#. Die verfügbaren TV-Standards hängen vom installierten Farbburstkristall ab
+#. und werden automatisch erkannt. Der PAL60-Modus ist derzeit nicht
+#. implementiert. + Daher kann sich die Semantik dieser Option in Zukunft
+#. ändern.]
+# bulk translation
+msgid ""
+"* `0`: TV norm + Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`). +"
+" WARNING: This configuration option does not make much sense; the available "
+"TV norm depends on the installed color burst crystal and is automatically "
+"detected; PAL60 mode is not currently implemented. + The semantics of this "
+"option are therefore likely to change in the future."
+msgstr ""
+"* `0`：TVノルム+ TVノルムをNTSC（`0`）、PAL（ `1`）、またはPAL60（`"
+"2`）に設定します。+警告：この構成オプションはあまり意味がありません。利用可能なTV基準は、インストールされているカラーバーストクリスタルによって異なり、自動的に検出されます。PAL60モードは現在実装されていません。+したがって、このオプションのセマンティクスは将来変更される可能性があります。"
+
+#. [* `1`: Tastaturlayout + 4 verschiedene Tastaturlayouts werden unterstützt:
+#. +` 0` (Japanisch), `1` (US-Englisch, Standard),` 2` (Deutsch), `3`
+#. (Französisch),` 4` (Spanisch).]
+# bulk translation
+msgid ""
+"* `1`: Keyboard layout + Four different keyboard layouts are supported: + "
+"`0` (Japanese), `1` (US English, default), `2` (German), `3` (French) and "
+"`4` (Spanish)."
+msgstr ""
+"* `1`：キーボードレイアウト+ 4つの異なるキーボードレイアウトがサポートされています：+ `0`（日本語）、 `1`（米国英語、デフォルト）、`"
+"2`（ドイツ語）、 `3`（フランス語）、`4` （スペイン語）。"
+
+#. [* `3`: Luminanz-Tiefpassfilter + Diese Option aktiviert (` 1`) oder
+#. deaktiviert (`0`, Standard) den Tiefpassfilter für die Videohelligkeit. Die
+#. empfohlenen Einstellungen hängen von den Eigenschaften Ihres Anzeigegeräts
+#. ab. + Viele moderne Fernseher können mit hohen Auflösungen gut umgehen. Für
+#. solche Geräte wird empfohlen, den Tiefpassfilter für eine übersichtlichere
+#. Anzeige auszuschalten. + Auf anderen (normalerweise älteren) Fernsehgeräten
+#. können hochauflösende Bilder übermäßige Farbartefakte ("Regenbogen"
+#. -Effekt) oder Flackern verursachen. Bei solchen Geräten ist es ratsam, den
+#. Tiefpassfilter einzuschalten, um diese Effekte auf Kosten der Schärfe zu
+#. verringern.]
+# bulk translation
+msgid ""
+"* `3`: Luminance low-pass filter + This option enables (`1`) or disables "
+"(`0`, default) the video luminance low-pass filter. The recommended setting "
+"depends on the properties of the display device used. + Many recent TVs are "
+"able to handle high resolutions well; with such devices, it is recommended "
+"to turn the low-pass filter off to achieve a more crisp display. + On other "
+"(usually older) TVs, high-resolution images may cause excessive color "
+"artifacting (a \"rainbow\" effect) or flicker; with such devices, it is "
+"recommended to turn the low-pass filter on to reduce these effects, at the "
+"expense of sharpness."
+msgstr ""
+"* `3`：輝度ローパスフィルター+このオプションは、ビデオ輝度ローパスフィルターを有効（`1`）または無効（ "
+"`0`、デフォルト）にします。推奨される設定は、使用するディスプレイデバイスのプロパティによって異なります。+最近のテレビの多くは、高解像度をうまく処理できます。このようなデバイスでは、より鮮明な表示を実現するために、ローパスフィルターをオフにすることをお勧めします。+他の（通常は古い）テレビでは、高解像度の画像が過度の色のアーティファクト（「虹」効果）またはちらつきを引き起こす可能性があります。このようなデバイスでは、シャープネスを犠牲にして、これらの影響を減らすためにローパスフィルターをオンにすることをお勧めします。"
+
+#. [* `4`: Einschaltbildschirmmodus [` 1` (Standard) `10`] + Stellen Sie den
+#. System-Standardbildschirmmodus beim Einschalten ein.]
+# bulk translation
+msgid ""
+"* `4`: Power-on screen mode [`1` (default) to `10`] + Sets the screen mode "
+"the system defaults to at power-on."
+msgstr "* `4`：電源投入時の画面モード[`1`（デフォルト）を `10`] +電源投入時のシステムのデフォルトの画面モードを設定します。"
+
+#. [* `5`: Bildschirmschrift beim Einschalten [` 0` (Standard)
+#. `{NUM_FONTS_m1}`] + Legen Sie die vom System beim Einschalten standardmäßig
+#. festgelegte Bildschirmschrift fest.]
+# bulk translation
+msgid ""
+"* `5`: Power-on screen font [`0` (default) to `{NUM_FONTS_m1}`] + Sets the "
+"screen font the system defaults to at power-on."
+msgstr ""
+"* `5`：電源投入時の画面フォント[`0`（デフォルト）を `{NUM_FONTS_m1}`] "
+"+電源投入時にシステムがデフォルトで設定する画面フォントを設定します。"
+
+#. [* `6`: Cursorfarbe beim Einschalten [` 0` bis `255`] + Legt die
+#. Cursorfarbe
+#. fest, die das System beim Einschalten standardmäßig verwendet.]
+# bulk translation
+msgid ""
+"* `6`: Power-on cursor color [`0` to `255`] + Sets the cursor color the "
+"system defaults to at power-on."
+msgstr "* `6`：電源投入時のカーソルの色[`0`から`255`] +電源投入時にシステムがデフォルトで設定するカーソルの色を設定します。"
+
+#. [* `7`: Summerlautstärke [` 0` bis `15` (Standard)] + Stellen Sie die
+#. Lautstärke der" Summer "-Sound-Engine ein, die beim Start auf Jingles
+#. angewendet wird.]
+# bulk translation
+msgid ""
+"* `7`: Beeper sound volume [`0` to `15` (default)] + Sets the volume of the "
+"\"beeper\" sound engine, which applies, among other things, to the start-up "
+"jingle."
+msgstr ""
+"* `7`：ブザーの音量[`0`から`15`（デフォルト）] +起動時のジングルなどに適用される「ブザー」サウンドエンジンの音量を設定します。"
+
+#. [Um zu den Standardeinstellungen zurückzukehren, führen Sie den Befehl
+#. `REMOVE" /sd/config.ini "` aus und starten Sie das System neu.]
+# bulk translation
+msgid ""
+"To restore the default configuration, run the command `REMOVE "
+"\"/sd/config.ini\"` and restart the system."
+msgstr "デフォルト設定に戻すには、コマンド `REMOVE \"/sd/config.ini\"`を実行し、システムを再起動します。"
+
+#. [Speichert die aktuellen Konfigurationsoptionen als Standard.]
+# bulk translation
+msgid "Saves the current set of configuration options as default."
+msgstr "現在の構成オプションのセットをデフォルトとして保存します。"
+
+#. [Die Einstellungen werden als Datei mit dem Namen "/ flash / .config"
+#. gespeichert.]
+# bulk translation
+msgid ""
+"The configuration will be saved as a file under the name `/flash/.config`."
+msgstr "設定は `/ flash / .config`という名前でファイルとして保存されます。"
+
+#. [Gibt eine Zufallszahl zurück.]
+# bulk translation
+msgid "Returns a random number."
+msgstr "乱数を返します。"
+
+#. [Modifikator, der den Typ der zu generierenden Zufallszahl bestimmt]
+# bulk translation
+msgid "modifier determining the type of random number to generate"
+msgstr "生成する乱数のタイプを決定する修飾子"
+
+#. [Zufallszahl des ausgewählten Typs.]
+# bulk translation
+msgid "A random number of the selected type."
+msgstr "選択したタイプの乱数。"
+
+#. [Abhängig vom Wert von "mod" werden die folgenden Arten von Zufallszahlen
+#. generiert:]
+# bulk translation
+msgid ""
+"The following types of random numbers are generated depending on the value "
+"of `mod`:"
+msgstr "`mod`の値に応じて、次のタイプの乱数が生成されます。"
+
+#. [ `mod`> 1]
+# bulk translation
+msgid " `mod` > 1 "
+msgstr " `mod`> 1 "
+
+#. [ Zufällige Ganzzahl von 0 bis 2147483647]
+# bulk translation
+msgid " a random integer number between 0 and 2147483647"
+msgstr " 0から2147483647までのランダムな整数"
+
+#. [ `Mod` zwischen 0 und 1]
+# bulk translation
+msgid " `mod` between 0 and 1 "
+msgstr " 0と1の間の`mod` "
+
+#. [Zufällige Dezimalzahl zwischen 0 und 1]
+# from Google
+msgid " a random fractional number between 0 and 1"
+msgstr " 0から1の間のランダムな小数数"
+
+#. [ Zufallszahl von 0 bis 1. Bestimmte Werte von `mod` erzeugen immer die
+#. gleichen Zufallszahlen.]
+# bulk translation
+msgid ""
+" A random fractional number between 0 and 1. A specific value of `mod` will "
+"always yield the same random number."
+msgstr " 0から1までの乱数。`mod`の特定の値は、常に同じ乱数を生成します。"
+
+#. [Definieren Sie eine Prozedur oder Funktion.]
+# bulk translation
+msgid "Define a procedure or function."
+msgstr "プロシージャまたは関数を定義します。"
+
+#. [Prozedurname]
+# bulk translation
+msgid "procedure name"
+msgstr "プロシージャ名"
+
+#. [Der Name der numerischen Argumentvariablen]
+# bulk translation
+msgid "name of a numeric argument variable"
+msgstr "数値引数変数の名前"
+
+#. [Der Name der Zeichenfolgenargumentvariablen]
+# bulk translation
+msgid "name of a string argument variable"
+msgstr "文字列引数変数の名前"
+
+#. [`PROC` definiert eine Prozedur oder Funktion, die mit` CALL` oder` FN`
+#. aufgerufen werden kann. Wenn eine Prozedur oder Funktion Argumente enthält,
+#. können sie mit `@` sigil als lokale Variablen referenziert werden.]
+# bulk translation
+msgid ""
+"`PROC` defines a procedure or function that can be called using `CALL` or "
+"`FN`. If a procedure or function has arguments, they can be referenced as "
+"local variables using the `@` sigil."
+msgstr ""
+"`PROC`は、`CALL`または "
+"`FN`を使用して呼び出すことができるプロシージャまたは関数を定義します。プロシージャまたは関数に引数がある場合、それらは "
+"`@`シジルを使用してローカル変数として参照できます。"
+
+#. [Innerhalb einer Prozedur oder Funktion werden numerische oder
+#. Zeichenfolgenvariablen mit vorangestelltem @ @ -sigil als lokale Variablen
+#. behandelt, die nur im Rahmen der Prozedur gültig sind. Das Festlegen
+#. solcher Variablen wirkt sich in anderen Schritten nicht auf globale oder
+#. lokale Variablen aus.]
+# bulk translation
+msgid ""
+"Within a procedure or function, any numeric or string variable prefixed with"
+" the `@` sigil will be treated as a local variable that is valid only within"
+" the scope of the procedure. Setting such a variable will not affect global "
+"variables or local variables in other procedures."
+msgstr ""
+"プロシージャまたは関数内では、 "
+"`@`シジルが前に付いた数値変数または文字列変数は、プロシージャのスコープ内でのみ有効なローカル変数として扱われます。このような変数を設定しても、他の手順のグローバル変数やローカル変数には影響しません。"
+
+#. [Prozeduren können nur mit "CALL" oder "FN" aufgerufen werden. Wenn während
+#. des normalen Programmablaufs ein PROC-Befehl erkannt wird, wird ein Fehler
+#. generiert.]
+# bulk translation
+msgid ""
+"Procedures can only be called using `CALL` or `FN`. If a `PROC` instruction "
+"is encountered during normal program flow, an error is generated."
+msgstr ""
+"プロシージャは、 `CALL`または`FN`を使用してのみ呼び出すことができます。通常のプログラムフロー中に "
+"`PROC`命令が検出されると、エラーが生成されます。"
+
+#. [Derzeit können komplexe Datentypen (Arrays und Listen) nicht als lokale
+#. Variablen oder Argumente verwendet werden.]
+# bulk translation
+msgid ""
+"It is not currently possible to use complex data types (arrays and lists) as"
+" local variables or arguments."
+msgstr "現在、複雑なデータ型（配列とリスト）をローカル変数または引数として使用することはできません。"
+
+#. [Gibt den Wert an, der von der nachfolgenden Anweisung "READ" gelesen
+#. wird.]
+# bulk translation
+msgid "Specifies values to be read by subsequent `READ` instructions."
+msgstr "後続の `READ`命令によって読み取られる値を指定します。"
+
+#. [Numerischer oder Zeichenfolgenausdruck]
+# bulk translation
+msgid "a numeric or string expression"
+msgstr "数値式または文字列式"
+
+#. [Wenn ich den DATA-Befehl ausführe, passiert nichts.]
+# bulk translation
+msgid "When a DATA instruction is executed, nothing happens."
+msgstr "DATA命令を実行しても、何も起こりません。"
+
+#. [Liest die in der Anweisung `DATA` angegebenen Werte und weist sie
+#. Variablen
+#. zu.]
+# bulk translation
+msgid ""
+"Reads values specified in `DATA` instructions and assigns them to variables."
+msgstr "`DATA`命令で指定された値を読み取り、それらを変数に割り当てます。"
+
+#. [Numerische Variable oder Stringvariable]
+# bulk translation
+msgid "numeric or string variable"
+msgstr "数値変数または文字列変数"
+
+#. [Setzen Sie den Datenzeiger auf eine bestimmte Position.]
+# bulk translation
+msgid "Sets the data pointer to a given location."
+msgstr "データポインタを特定の場所に設定します。"
+
+#. [Beschriftung oder Zeilennummer [Standard: Programm starten]]
+# bulk translation
+msgid "a label or line number [default: start of program]"
+msgstr "ラベルまたは行番号[デフォルト：プログラムの開始]"
+
+#. [Führen Sie das Programm im Speicher aus.]
+# bulk translation
+msgid "Runs the progam in memory."
+msgstr "プログラムをメモリ内で実行します。"
+
+#. [Wenn Sie einen Dateinamen angeben, wird das Programm zuerst in den
+#. Speicher
+#. geladen. Wenn eine Zeilennummer angegeben ist, beginnt die Ausführung in
+#. der angegebenen Zeile. Andernfalls beginnt die Ausführung in der ersten
+#. Zeile.]
+# bulk translation
+msgid ""
+"If a file name is given, that program will be loaded to memory first. If a "
+"line number is given, execution will begin at the specified line. Otherwise,"
+" execution will start at the first line."
+msgstr ""
+"ファイル名を指定すると、そのプログラムが最初にメモリにロードされます。行番号が指定されている場合、実行は指定された行から開始されます。それ以外の場合、実行は最初の行から開始されます。"
+
+#. [Der Name des BASIC-Programms, das geladen und ausgeführt werden soll]
+# bulk translation
+msgid "name of the BASIC program to be loaded and run"
+msgstr "ロードして実行するBASICプログラムの名前"
+
+#. [Zeilennummer zum Starten der Ausführung [Standard: Erste Zeile]]
+# bulk translation
+msgid "line number at which execution will start [default: first line]"
+msgstr "実行を開始する行番号[デフォルト：最初の行]"
+
+#. [`RUN` verhält sich etwas anders, wenn es aus dem Programm heraus
+#. ausgeführt
+#. wird und wenn es im direkten Modus verwendet wird.]
+# bulk translation
+msgid ""
+"`RUN` behaves slightly differently when executed from within a program than "
+"when used in direct mode."
+msgstr "`RUN`は、プログラム内から実行した場合とダイレクトモードで使用した場合とでは動作が少し異なります。"
+
+#. [Im Direktmodus löscht RUN alle Variablen, jedoch nicht im Programm. Dies
+#. dient dazu, das Programm neu zu starten, wobei alle Schleifenstapel und
+#. Unterprogrammstapel gelöscht sind, die Variablen jedoch erhalten bleiben.]
+# bulk translation
+msgid ""
+"In direct mode, `RUN` clears all variables, whereas within a program, it "
+"does not. The purpose of this is to allow a program to restart itself with "
+"all loop and subroutine stacks cleared, but with the variables still intact."
+msgstr ""
+"ダイレクトモードでは、 "
+"`RUN`はすべての変数をクリアしますが、プログラム内ではクリアしません。これの目的は、すべてのループスタックとサブルーチンスタックをクリアした状態でプログラムを再起動できるようにすることですが、変数はそのままです。"
+
+#. [* Die Syntax `RUN file$` funktioniert nicht innerhalb des Programms.
+#. Verwenden Sie stattdessen "CHAIN".]
+# bulk translation
+msgid ""
+"* The syntax `RUN file$` does not work from within a program. Use `CHAIN` "
+"instead."
+msgstr "*構文 `RUN file$`は、プログラム内からは機能しません。代わりに `CHAIN`を使用してください。"
+
+#. [Nummerieren Sie die BASIC-Programme im Speicher neu.]
+# bulk translation
+msgid "Renumber BASIC program in memory."
+msgstr "メモリ内のBASICプログラムの番号を付け直します。"
+
+#. [Zeilennummerninkrement [Minimum `0`, Standard:` 10`]]
+# bulk translation
+msgid "line number increment [min `0`, default: `10`]"
+msgstr "行番号の増分[最小 `0`、デフォルト：`10`]"
+
+#. [Die berechneten Verzweigungen (`GOTO`- und` GOSUB`-Befehle mit variablen
+#. Argumenten) können nicht korrekt neu nummeriert werden.]
+# bulk translation
+msgid ""
+"Computed branches (`GOTO` and `GOSUB` commands with variable arguments) "
+"cannot be renumbered correctly."
+msgstr "計算されたブランチ（可変引数を持つ `GOTO`および`GOSUB`コマンド）は正しく番号を付け直すことができません。"
+
+#. [Speichern Sie das grundlegende Programm im Speicher in einer Datei.]
+# from Argos
+msgid "Saves the BASIC program in memory to a file."
+msgstr "メモリ内のBASICプログラムをファイルに保存します。"
+
+#. [Der Name der zu speichernden Datei]
+# bulk translation
+msgid "name of file to be saved"
+msgstr "保存するファイルの名前"
+
+#. [BASIC-Programme werden im UTF-8-Format (Nur-Text) gespeichert.]
+# bulk translation
+msgid "BASIC programs are saved in plain text (UTF-8) format."
+msgstr "BASICプログラムは、プレーンテキスト（UTF-8）形式で保存されます。"
+
+#. [Löscht die angegebene Zeile aus dem BASIC-Programm im Speicher.]
+# bulk translation
+msgid "Delete specified line(s) from the BASIC program in memory."
+msgstr "メモリ内のBASICプログラムから指定された行を削除します。"
+
+#. [WARNUNG: Nicht mit "ENTFERNEN" verwechseln, wodurch Dateien gelöscht
+#. werden.]
+# bulk translation
+msgid "WARNING: Do not confuse with `REMOVE`, which deletes files."
+msgstr "警告：ファイルを削除する `REMOVE`と混同しないでください。"
+
+#. [Eine Reihe von BASIC-Programmzeilen]
+# bulk translation
+msgid "a range of BASIC program lines"
+msgstr "一連のBASICプログラム行"
+
+#. [* Die Verwendung von "LÖSCHEN" wirkt sich nicht auf Variablen aus.]
+# bulk translation
+msgid "* Using `DELETE` does not affect variables."
+msgstr "* `DELETE`を使用しても変数には影響しません。"
+
+#. [* Beim Aufruf von einem laufenden Programm wird die Ausführung ab der
+#. nächsten Programmzeile fortgesetzt. Das heißt, die Anweisungen nach
+#. "LÖSCHEN" in derselben Zeile werden ignoriert.]
+# bulk translation
+msgid ""
+"* When called from a running program, execution will continue at the next "
+"program line, i.e. instructions following `DELETE` on the same line are "
+"disregarded."
+msgstr ""
+"*実行中のプログラムから呼び出されると、実行は次のプログラム行から続行されます。つまり、同じ行の `DELETE`に続く命令は無視されます。"
+
+#. [Löscht das aktuelle Textfenster.]
+# bulk translation
+msgid "Clears the current text window."
+msgstr "現在のテキストウィンドウをクリアします。"
+
+#. [Gibt einen der numerischen Rückgabewerte des letzten Funktionsaufrufs
+#. zurück.]
+# bulk translation
+msgid "Returns one of the numeric return values of the last function call."
+msgstr "最後の関数呼び出しの数値戻り値の1つを返します。"
+
+#. [Anzahl der numerischen Rückgabewerte [`0` bis` {MAX_RETVALS_m1}`]]
+# bulk translation
+msgid "number of the numeric return value [`0` to `{MAX_RETVALS_m1}`]"
+msgstr "数値戻り値の数[`0`から`{MAX_RETVALS_m1}`]"
+
+#. [Der angeforderte Rückgabewert.]
+# bulk translation
+msgid "Requested return value."
+msgstr "要求された戻り値。"
+
+#. [Gibt die numerischen Argumente zurück, die an die Prozedur übergeben
+#. wurden.]
+# bulk translation
+msgid "Returns a numeric argument passed to a procedure."
+msgstr "プロシージャに渡された数値引数を返します。"
+
+#. [Anzahl der numerischen Argumente]
+# bulk translation
+msgid "number of the numeric argument"
+msgstr "数値引数の数"
+
+#. [Argumentwert.]
+# bulk translation
+msgid "Argument value."
+msgstr "引数値。"
+
+#. [Ein Fehler wird generiert, wenn keine numerischen Argumente übergeben
+#. werden, wenn "num" größer oder gleich "ARGC (0)" ist oder wenn die Funktion
+#. außerhalb der Prozedur ausgewertet wird.]
+# bulk translation
+msgid ""
+"An error is generated if no numeric arguments have been passed, `num` is "
+"equal to or larger than `ARGC(0)`, or the function is evaluated outside a "
+"procedure."
+msgstr ""
+"数値引数が渡されなかった場合、 `num`が`ARGC(0)`以上の場合、または関数がプロシージャの外部で評価された場合、エラーが生成されます。"
+
+#. [Gibt das an die Prozedur übergebene Zeichenfolgenargument zurück.]
+# bulk translation
+msgid "Returns a string argument passed to a procedure."
+msgstr "プロシージャに渡された文字列引数を返します。"
+
+#. [Anzahl der Zeichenfolgenargumente]
+# bulk translation
+msgid "number of the string argument"
+msgstr "文字列引数の数"
+
+#. [Ein Fehler wird generiert, wenn keine Zeichenfolgenargumente übergeben
+#. werden, wenn "num" größer oder gleich "ARGC (1)" ist oder wenn die Funktion
+#. außerhalb der Prozedur ausgewertet wird.]
+# bulk translation
+msgid ""
+"An error is generated if no string arguments have been passed, `num` is "
+"equal to or larger than `ARGC(1)`, or the function is evaluated outside a "
+"procedure."
+msgstr ""
+"文字列引数が渡されなかった場合、 `num`が`ARGC(1) `以上の場合、または関数がプロシージャの外部で評価された場合、エラーが生成されます。"
+
+#. [Gibt die Anzahl der Argumente für numerische Variablen und
+#. Zeichenfolgenvariablen zurück, die an die Prozedur übergeben wurden.]
+# bulk translation
+msgid ""
+"Returns the argument count for numeric and string variables passed to a "
+"procedure."
+msgstr "プロシージャに渡される数値変数と文字列変数の引数数を返します。"
+
+#. [Argumenttyp [`0` für Zahlen,` 1` für Zeichenfolgen]]
+# bulk translation
+msgid "type of argument [`0` for numeric, `1` for string]"
+msgstr "引数のタイプ[数値の場合は `0`、文字列の場合は`1`]"
+
+#. [Anzahl der Argumente.]
+# bulk translation
+msgid "Argument count."
+msgstr "引数の数。"
+
+#. [Gibt "0" zurück, wenn es außerhalb der Prozedur aufgerufen wird.]
+# bulk translation
+msgid "Returns `0` if called outside a procedure."
+msgstr "プロシージャの外部で呼び出された場合は `0`を返します。"
+
+#. [Gibt eine Zeichenfolge zurück, die eine hexadezimale Darstellung einer
+#. Zahl
+#. enthält.]
+# bulk translation
+msgid ""
+"Returns a string containing the hexadecimal representation of a number."
+msgstr "数値の16進表現を含む文字列を返します。"
+
+#. [Numerischer Ausdruck]
+# from Google
+msgid "numeric expression"
+msgstr "数字式"
+
+#. [Hexadezimal als Text.]
+# bulk translation
+msgid "Hexadecimal number as text."
+msgstr "テキストとしての16進数。"
+
+#. [Gibt eine Zeichenfolge zurück, die eine binäre Darstellung einer Zahl
+#. enthält.]
+# bulk translation
+msgid "Returns a string containing the binary representation of a number."
+msgstr "数値のバイナリ表現を含む文字列を返します。"
+
+#. [Binärzahl als Text.]
+# bulk translation
+msgid "Binary number as text."
+msgstr "テキストとしての2進数。"
+
+#. [Die Nummer wird zuerst in einen vorzeichenlosen 32-Bit-Wert konvertiert.]
+# bulk translation
+msgid "Numbers are converted to an unsigned 32-bit value first."
+msgstr "数値は最初に符号なし32ビット値に変換されます。"
+
+#. [Ordnen Sie die Werte von einem Bereich zum anderen neu zu]
+# bulk translation
+msgid "Re-maps a value from one range to another"
+msgstr "ある範囲から別の範囲に値を再マップします"
+
+#. [Wert, der neu zugeordnet werden soll]
+# bulk translation
+msgid "value to be re-mapped"
+msgstr "再マッピングされる値"
+
+#. [Untergrenze des aktuellen Wertebereichs]
+# bulk translation
+msgid "lower bound of the value's current range"
+msgstr "値の現在の範囲の下限"
+
+#. [Obergrenze des aktuellen Wertebereichs]
+# bulk translation
+msgid "upper bound of the value's current range"
+msgstr "値の現在の範囲の上限"
+
+#. [Untergrenze des Zielwertbereichs]
+# bulk translation
+msgid "lower bound of the value's target range"
+msgstr "値のターゲット範囲の下限"
+
+#. [Obergrenze des Zielwertbereichs]
+# bulk translation
+msgid "upper bound of the value's target range"
+msgstr "値のターゲット範囲の上限"
+
+#. [Der neu zugeordnete Wert.]
+# bulk translation
+msgid "Re-mapped value."
+msgstr "再マップされた値。"
+
+#. [Begrenzen Sie `value` auf den Bereich` l1`-`h1`. Dies ist optional.]
+# bulk translation
+msgid "Restricts `value` to the range `l1`-`h1`, which is arbitrary."
+msgstr "`value`を`l1`-`h1`の範囲に制限します。これは任意です。"
+
+#. [Gibt den Unicode-Codepunkt des ersten Zeichens eines
+#. Zeichenfolgenausdrucks
+#. zurück.]
+# bulk translation
+msgid ""
+"Returns the Unicode codepoint for the first character in a string "
+"expression."
+msgstr "文字列式の最初の文字のUnicodeコードポイントを返します。"
+
+#. [Zeichenfolgenausdruck]
+# bulk translation
+msgid "string expression"
+msgstr "文字列式"
+
+#. [Unicode-Codepunkt für das erste Zeichen.]
+# bulk translation
+msgid "Unicode codepoint of the first character."
+msgstr "最初の文字のUnicodeコードポイント。"
+
+#. [Wenn `s$` leer ist, wird ein Fehler generiert.]
+# bulk translation
+msgid "Generates an error if `s$` is empty."
+msgstr "`s$`が空の場合、エラーを生成します。"
+
+#. [* Im Gegensatz zur entsprechenden Einzelbyte-BASIC-Implementierung kann
+#. diese Funktion einen Wert größer als 255 zurückgeben.]
+# bulk translation
+msgid ""
+"* Unlike its counterparts in single-byte BASIC implementations, this "
+"function may return values larger than 255."
+msgstr "*シングルバイトBASIC実装の対応するものとは異なり、この関数は255より大きい値を返す場合があります。"
+
+#. [* Um auf einzelne Bytes ohne UTF-8-Decodierung zuzugreifen, verwenden Sie
+#. die Syntax `a$[num]`.]
+# bulk translation
+msgid ""
+"* To get access to individual bytes without UTF-8 decoding, use the "
+"`a$[num]` syntax."
+msgstr "* UTF-8デコードなしで個々のバイトにアクセスするには、 `a$[num]`構文を使用します。"
+
+#. [Druckt die Daten auf das aktuelle Ausgabegerät (normalerweise den
+#. Bildschirm) oder eine bestimmte Datei.]
+# bulk translation
+msgid ""
+"Prints data to the current output device (usually the screen) or to a given "
+"file."
+msgstr "現在の出力デバイス（通常は画面）または特定のファイルにデータを印刷します。"
+
+#. [Zu druckende Dateinummer [`0` ~` {MAX_USER_FILES_m1}`, Standard:
+#. aktuelles
+#. Ausgabegerät]]
+# bulk translation
+msgid ""
+"file number to be printed to [`0` to `{MAX_USER_FILES_m1}`, default: current"
+" output device]"
+msgstr "印刷するファイル番号[`0`〜`{MAX_USER_FILES_m1}`、デフォルト：現在の出力デバイス]"
+
+#. [Eine Liste von Ausdrücken, die angeben, was gedruckt werden soll]
+# bulk translation
+msgid "list of expressions specifying what to print"
+msgstr "印刷するものを指定する式のリスト"
+
+#. [Sie können die folgenden Arten von Ausdrücken in der Befehlsausdrucksliste
+#. "PRINT" verwenden:]
+# bulk translation
+msgid ""
+"The following types of expressions can be used in a `PRINT` command "
+"expressions list:"
+msgstr "`PRINT`コマンド式リストでは、次のタイプの式を使用できます。"
+
+#. [* Numerischer Ausdruck]
+# from Argos
+msgid "* Numeric expressions"
+msgstr "* 数値式"
+
+#. [* String-Ausdruck]
+# bulk translation
+msgid "* String expressions"
+msgstr "*文字列式"
+
+#. [* `TAB (num)` (Leerzeichen einfügen, bis der Cursor größer oder gleich der
+#. Spalte `num` ist)]
+# bulk translation
+msgid ""
+"* `TAB(num)` (inserts spaces until the cursor is at or beyond the column "
+"`num`)"
+msgstr "* `TAB（num）`（カーソルが列 `num`以上になるまでスペースを挿入します）"
+
+#. [Ausdrücke müssen durch Semikolons (`;`) oder Kommas (`,`) getrennt werden.
+#. Wenn Sie ein Semikolon verwenden, wird der Ausdruck ohne Unterbrechungen
+#. gedruckt. Verwenden Sie Kommas, um Leerzeichen einzufügen, bis Sie die
+#. nächste Tabulatortaste erreichen.]
+# bulk translation
+msgid ""
+"You have to separate expressions by either a semicolon (`;`) or a comma "
+"(`,`). When you use a semicolon, the expressions are printed without "
+"separation. When you use a comma, spaces will be inserted until the next "
+"tabulator stop is reached."
+msgstr ""
+"式はセミコロン（ `;`）またはコンマ（ "
+"`、`）で区切る必要があります。セミコロンを使用すると、式は区切りなしで印刷されます。コンマを使用すると、次のタブキーストップに到達するまでスペースが挿入されます。"
+
+#. [`TAB ()` funktioniert nicht, wenn die Ausgabe mit` CMD` in eine Datei
+#. umgeleitet wird.]
+# bulk translation
+msgid "`TAB()` does not work when output is redirected to a file using `CMD`."
+msgstr "`CMD`を使用して出力がファイルにリダイレクトされる場合、`TAB()`は機能しません。"
+
+#. [Speichern Sie einen Teil des Pixelspeichers als Bilddatei.]
+# bulk translation
+msgid "Saves a portion of pixel memory as an image file."
+msgstr "ピクセルメモリの一部を画像ファイルとして保存します。"
+
+#. [Der Name der zu erstellenden Bilddatei]
+# bulk translation
+msgid "name of image file to be created"
+msgstr "作成する画像ファイルの名前"
+
+#. [Linke Seite des Pixelspeicherabschnitts, Pixel [`0` (Standard) bis` PSIZE
+#. (0)-1`]]
+# bulk translation
+msgid "left of pixel memory section, pixels [`0` (default) to `PSIZE(0)-1`]"
+msgstr "ピクセルメモリセクションの左側、ピクセル[`0`（デフォルト）から`PSIZE(0)-1`]"
+
+#. [Pixel [`0` (Standard) bis` PSIZE(2)-1`] oben im Pixelspeicherbereich]
+# bulk translation
+msgid "top of pixel memory section, pixels [`0` (default) to `PSIZE(2)-1`]"
+msgstr "ピクセルメモリセクションの上部、ピクセル[`0`（デフォルト）から`PSIZE(2)-1`]"
+
+#. [Pixelspeicherabschnittsbreite, Pixel [`0` bis` PSIZE(0)-x-1`, Standard:`
+#. PSIZE(0) `]]
+# bulk translation
+msgid ""
+"width of pixel memory section, pixels [`0` to `PSIZE(0)-x-1`, default: "
+"`PSIZE(0)`]"
+msgstr "ピクセルメモリセクションの幅、ピクセル[`0`から`PSIZE(0)-x-1`、デフォルト： `PSIZE(0）`]"
+
+#. [Pixelspeicherabschnittshöhe, Pixel [`0` bis` PSIZE(2)-y-1`, Standard:`
+#. PSIZE(1) `]]
+# bulk translation
+msgid ""
+"height of pixel memory section, pixels [`0` to `PSIZE(2)-y-1`, default: "
+"`PSIZE(1)`]"
+msgstr "ピクセルメモリセクションの高さ、ピクセル[`0`から`PSIZE(2)-y-1`、デフォルト： `PSIZE(1）`]"
+
+#. [Lädt die gesamte oder einen Teil der Bilddatei in den Pixelspeicher.]
+# bulk translation
+msgid "Loads an image file in whole or in parts to pixel memory."
+msgstr "画像ファイルの全部または一部をピクセルメモリにロードします。"
+
+#. [Sprite-Bereich [Grenzwert zwischen `0` und` {MAX_SPRITES_m1}`]]
+# bulk translation
+msgid "sprite range [limits between `0` and `{MAX_SPRITES_m1}`]"
+msgstr "スプライト範囲[`0`と`{MAX_SPRITES_m1}`の間の制限]"
+
+#. [Ziel-X-Koordinate, Pixel [`0` (Standard) bis` PSIZE(0)-w`]]
+# bulk translation
+msgid "X-coordinate of destination, pixels [`0` (default) to `PSIZE(0)-w`]"
+msgstr "宛先のX座標、ピクセル[`0`（デフォルト）から`PSIZE(0)-w`]"
+
+#. [Ziel-Y-Koordinate, Pixel [`0` (Standard) bis` PSIZE(2)-h`]]
+# bulk translation
+msgid "Y-coordinate of destination, pixels [`0` (default) to `PSIZE(2)-h`]"
+msgstr "宛先のY座標、ピクセル[`0`（デフォルト）から`PSIZE(2)-h`]"
+
+#. [Offset in der Bilddatei, x-Achse, Pixel [Default: `0`]]
+# from Argos
+msgid "offset within image file, X axis, pixels [default: `0`]"
+msgstr "画像ファイル内のオフセット、X軸、ピクセル[デフォルト:`0`]"
+
+#. [Offset in der Bilddatei, y-Achse, Pixel [Default: `0`]]
+# from Argos
+msgid "offset within image file, Y axis, pixels [default: `0`]"
+msgstr "画像ファイル内のオフセット、Y軸、ピクセル[デフォルト:`0`]"
+
+#. [Breite des zu ladenden Bildteils, Pixel [Standard: Bildbreite]]
+# bulk translation
+msgid "width of image portion to be loaded, pixels [default: image width]"
+msgstr "ロードする画像部分の幅、ピクセル[デフォルト：画像幅]"
+
+#. [Höhe des zu ladenden Bildteils, Pixel [Standard: Bildhöhe]]
+# bulk translation
+msgid "height of image portion to be loaded, pixels [default: image height]"
+msgstr "ロードする画像部分の高さ、ピクセル[デフォルト：画像の高さ]"
+
+#. [Transparenzfarbschlüssel [Standard: Keine Transparenz]]
+# bulk translation
+msgid "color key for transparency [default: no transparency]"
+msgstr "透明度のカラーキー[デフォルト：透明度なし]"
+
+#. [Skalierungsfaktor [Default: `1`]]
+# from Argos
+msgid "scaling factor [default: `1`]"
+msgstr "スケール係数 [デフォルト: `1`]"
+
+#. [Gibt die Zielkoordinaten mit "RET (0)" und "RET (1)" zurück und gibt die
+#. Breite und Höhe mit "RET (2)" bzw. "RET (3)" zurück.]
+# bulk translation
+msgid ""
+"Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as "
+"width and height in `RET(2)` and `RET(3)`, respectively."
+msgstr "宛先座標を `RET(0)`と `RET(1)`で返し、幅と高さをそれぞれ `RET(2)`と `RET(3)`で返します。"
+
+#. [Wenn kein Ziel angegeben ist, wird automatisch ein Bereich des Offscreen-
+#. Speichers zugewiesen.]
+# bulk translation
+msgid ""
+"If no destination is specified, an area of off-screen memory will be "
+"allocated automatically."
+msgstr "宛先が指定されていない場合、オフスクリーンメモリの領域が自動的に割り当てられます。"
+
+#. [Mit "AS BG" wird der geladene Bildteil dem als Kachelsatz angegebenen
+#. Hintergrund zugewiesen.]
+# bulk translation
+msgid ""
+"If `AS BG` is used, the loaded image portion will be assigned to the "
+"specified background as its tile set."
+msgstr "`AS BG`を使用すると、読み込まれた画像部分がタイルセットとして指定された背景に割り当てられます。"
+
+#. [Mit "AS SPRITE" wird der geladene Bildteil als Sprite-Muster dem
+#. angegebenen Sprite-Bereich zugewiesen.]
+# bulk translation
+msgid ""
+"If `AS SPRITE` is used, the loaded image portion will be assigned to the "
+"specified range of sprites as their sprite patterns."
+msgstr "`AS SPRITE`を使用すると、ロードされた画像部分が指定された範囲のスプライトにスプライトパターンとして割り当てられます。"
+
+#. [Wenn Sie einen Farbschlüssel angeben, werden Pixel der angegebenen Farbe
+#. nicht gezeichnet.]
+# bulk translation
+msgid ""
+"If a color key is specified, pixels of the given color will not be drawn."
+msgstr "カラーキーを指定した場合、指定した色のピクセルは描画されません。"
+
+#. [Wichtig: Die Größenänderung von Bildern im PCX-Format wird nicht
+#. unterstützt.]
+# bulk translation
+msgid "IMPORTANT: Resizing is not supported for images in PCX format."
+msgstr "重要：PCX形式の画像のサイズ変更はサポートされていません。"
+
+#. [Führen Sie einen ASCII-Texteditor aus.]
+# bulk translation
+msgid "Runs the ASCII text editor."
+msgstr "ASCIIテキストエディタを実行します。"
+
+#. [Zu bearbeitender Dateiname [Standard: Neue Datei]]
+# bulk translation
+msgid "name of file to be edited [default: new file]"
+msgstr "編集するファイル名[デフォルト：新規ファイル]"
+
+#. [Laden Sie das Programm aus einer Datei.]
+# bulk translation
+msgid "Load a program from a file."
+msgstr "ファイルからプログラムをロードします。"
+
+#. [BASIC Programmname]
+# bulk translation
+msgid "name of the BASIC program"
+msgstr "BASICプログラムの名前"
+
+#. [Schriftart (Codierung) für die UTF-8-Konvertierung [`0` in`
+#. {NUM_FONTS_m1}`]]
+# bulk translation
+msgid "font (encoding) used for UTF-8 conversion [`0` to `{NUM_FONTS_m1}`]"
+msgstr "UTF-8変換に使用されるフォント（エンコーディング）[`0`から`{NUM_FONTS_m1}`]"
+
+#. [Wenn Sie den Parameter `FONT` angeben, konvertiert` LOAD` das Programm von
+#. der Einzelbyte-Codierung dieser Schriftart in UTF-8. Verwenden Sie diese
+#. Option, um Programme, die für die BASIC Engine ESP8266-Plattform
+#. geschrieben wurden, in Systeme der nächsten Generation zu laden.]
+# bulk translation
+msgid ""
+"If you specify the `FONT` parameter, `LOAD` will convert the program from "
+"the single-byte encoding for that font to UTF-8. Use this to load programs "
+"written for the BASIC Engine ESP8266 platform on next-generation systems."
+msgstr ""
+"`FONT`パラメータを指定すると、`"
+"LOAD`はプログラムをそのフォントのシングルバイトエンコーディングからUTF-8に変換します。これを使用して、BASIC "
+"EngineESP8266プラットフォーム用に作成されたプログラムを次世代システムにロードします。"
+
+#. [Fügt das Programm in der Datei mit dem aktuell im Speicher befindlichen
+#. Programm zusammen.]
+# bulk translation
+msgid "Merge a program in a file with the program currently in memory."
+msgstr "ファイル内のプログラムを現在メモリ内にあるプログラムとマージします。"
+
+#. [Der Name des zusammenzuführenden BASIC-Programms]
+# bulk translation
+msgid "name of the BASIC program to be merged"
+msgstr "マージするBASICプログラムの名前"
+
+#. [Zeilennummer, um die Ausführung fortzusetzen [Standard: Erste Zeile]]
+# bulk translation
+msgid "line number at which to contine execution [default: first line]"
+msgstr "実行を継続する行番号[デフォルト：最初の行]"
+
+#. [Beim Aufruf aus einem Programm setzt `MERGE` die Ausführung von Zeile`
+#. line_num` nach dem Zusammenführen fort (oder startet das Programm, wenn`
+#. line_num` nicht angegeben ist).]
+# bulk translation
+msgid ""
+"If called from within a program, `MERGE` will continue execution from line "
+"`line_num` after the merge (or the beginning of the program if `line_num` is"
+" not specified)."
+msgstr ""
+"プログラム内から呼び出された場合、 `MERGE`は、マージ後（または、`line_num`が指定されていない場合はプログラムの開始）、行 "
+"`line_num`から実行を継続します。"
+
+#. [Beim Aufruf aus dem Programm setzt `MERGE` alle Variablen zurück. Dies
+#. schränkt wahrscheinlich seine Nützlichkeit ein.]
+# bulk translation
+msgid ""
+"When called from within a program, `MERGE` resets all variables. This "
+"probably limits its usefulness."
+msgstr "プログラム内から呼び出されると、 `MERGE`はすべての変数をリセットします。これはおそらくその有用性を制限します。"
+
+#. [Lädt und führt ein neues Programm aus und behält den aktuellen Satz von
+#. Variablen bei.]
+# bulk translation
+msgid "Loads a new program and runs it, keeping the current set of variables."
+msgstr "新しいプログラムをロードして実行し、現在の変数のセットを保持します。"
+
+#. [Der Name des auszuführenden BASIC-Programms]
+# bulk translation
+msgid "name of the BASIC program to be executed"
+msgstr "実行するBASICプログラムの名前"
+
+#. [Im Gegensatz zu "EXEC" können Sie mit "CHAIN" nicht zum ursprünglichen
+#. Programm zurückkehren.]
+# bulk translation
+msgid ""
+"Unlike `EXEC`, `CHAIN` does not allow returning to the original program."
+msgstr "`EXEC`とは異なり、`CHAIN`は元のプログラムに戻ることを許可しません。"
+
+#. [Gibt die angegebene Anzahl von Zeichen am linken Ende der Zeichenfolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of leftmost characters in a string."
+msgstr "文字列の左端の指定された数の文字を返します。"
+
+#. [Beliebiger Zeichenfolgenausdruck]
+# bulk translation
+msgid "any string expression"
+msgstr "任意の文字列式"
+
+#. [Anzahl der zurückzugebenden Zeichen [min`0`]]
+# bulk translation
+msgid "number of characters to return [min `0`]"
+msgstr "返す文字数[min`0`]"
+
+#. [Ein Teilstring, der kleiner oder gleich dem Zeichen "num" ist.]
+# bulk translation
+msgid "Substring of `num` characters or less."
+msgstr "`num`文字以下の部分文字列。"
+
+#. [Wenn "l$" kürzer als das "num" -Zeichen ist, ist der Rückgabewert "l$".]
+# bulk translation
+msgid "If `l$` is shorter than `num` characters, the return value is `l$`."
+msgstr "`l$`が`num`文字より短い場合、戻り値は`l$`です。"
+
+#. [Gibt das Zeichen ganz rechts der angegebenen Zahl in der Zeichenfolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of rightmost characters in a string."
+msgstr "文字列内の指定された数の右端の文字を返します。"
+
+#. [Wenn "r$" kürzer als das "num" -Zeichen ist, ist der Rückgabewert "r$".]
+# bulk translation
+msgid "If `r$` is shorter than `num` characters, the return value is `r$`."
+msgstr "`r$`が `num`文字より短い場合、戻り値は`r$`です。"
+
+#. [Byte Gibt die angegebene Anzahl von Bytes am linken Ende der Zeichenfolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of leftmost bytes in a byte string."
+msgstr "バイト文字列の左端の指定された数のバイトを返します。"
+
+#. [Anzahl der zurückzugebenden Bytes [min`0`]]
+# bulk translation
+msgid "number of bytes to return [min `0`]"
+msgstr "返すバイト数[min`0`]"
+
+#. [Ein Teilstring von "num" Bytes oder weniger.]
+# bulk translation
+msgid "Substring of `num` bytes or less."
+msgstr "`num`バイト以下のサブストリング。"
+
+#. [Wenn "l$" kleiner als "num" Bytes ist, ist der Rückgabewert "l$".]
+# bulk translation
+msgid "If `l$` is shorter than `num` bytes, the return value is `l$`."
+msgstr "`l$`が `num`バイトより短い場合、戻り値は`l$`です。"
+
+#. [Byte Gibt die angegebene Anzahl von Bytes am rechten Ende der Zeichenfolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of rightmost bytes in a byte string."
+msgstr "バイト文字列の右端の指定された数のバイトを返します。"
+
+#. [Wenn `r$` kleiner als `num` Bytes ist, ist der Rückgabewert` r$`.]
+# bulk translation
+msgid "If `r$` is shorter than `num` bytes, the return value is `r$`."
+msgstr "`r$`が `num`バイトより短い場合、戻り値は`r$`です。"
+
+#. [Gibt einen Teil (Teilstring) eines Strings zurück.]
+# bulk translation
+msgid "Returns part of a string (a substring)."
+msgstr "文字列の一部（部分文字列）を返します。"
+
+#. [Position des ersten Zeichens in der zurückgegebenen Teilzeichenfolge]
+# bulk translation
+msgid "position of the first character in the substring being returned"
+msgstr "返される部分文字列の最初の文字の位置"
+
+#. [Anzahl der Zeichen in der Teilzeichenfolge [Standard: `LEN (m$)-start`]]
+# bulk translation
+msgid "number of characters in the substring [default: `LEN(m$)-start`]"
+msgstr "サブストリングの文字数[デフォルト： `LEN（m$)-start`]"
+
+#. [Ein Teilstring, der kleiner oder gleich dem "len" -Zeichen ist.]
+# bulk translation
+msgid "Substring of `len` characters or less."
+msgstr "`len`文字以下の部分文字列。"
+
+#. [* Im Gegensatz zu anderen BASIC-Implementierungen basiert "start" auf
+#. Null.
+#. Das heißt, das erste Zeichen ist 0 anstelle von 1.]
+# bulk translation
+msgid ""
+"* Unlike with other BASIC implementations, `start` is zero-based, i.e. the "
+"first character is 0, not 1."
+msgstr "*他のBASIC実装とは異なり、 `start`はゼロベースです。つまり、最初の文字は1ではなく0です。"
+
+#. [Sie können `MID$()` keinen Wert zuweisen. Dies ist mit einigen anderen
+#. BASIC-Implementierungen möglich.]
+# bulk translation
+msgid ""
+"You cannot assign values to `MID$()`, which is possible in some other BASIC "
+"implementations."
+msgstr "`MID$()`に値を割り当てることはできません。これは、他の一部のBASIC実装で可能です。"
+
+#. [Gibt einen Teil einer Byte-Zeichenfolge zurück.]
+# bulk translation
+msgid "Returns part of a byte string."
+msgstr "バイト文字列の一部を返します。"
+
+#. [Position des ersten Bytes des zurückgegebenen Teilstrings]
+# bulk translation
+msgid "position of the first byte in the substring being returned"
+msgstr "返される部分文字列の最初のバイトの位置"
+
+#. [Teilstring-Bytes [Standard: `BLEN (m$)-start`]]
+# bulk translation
+msgid "number of bytes in the substring [default: `BLEN(m$)-start`]"
+msgstr "サブストリングのバイト数[デフォルト： `BLEN（m$)-start`]"
+
+#. [Ein Teilstring von "len" Bytes oder weniger.]
+# bulk translation
+msgid "Substring of `len` bytes or less."
+msgstr "`len`バイト以下の部分文字列。"
+
+#. [* Wenn `m$` kürzer als `len` Bytes ist, ist der Rückgabewert` m$`.]
+# bulk translation
+msgid "* If `m$` is shorter than `len` bytes, the return value is `m$`."
+msgstr "* `m$`が `len`バイトより短い場合、戻り値は`m$`です。"
+
+#. [* Im Gegensatz zu anderen BASIC-Implementierungen basiert "start" auf
+#. Null.
+#. Das heißt, das erste Byte ist 0 anstelle von 1.]
+# bulk translation
+msgid ""
+"* Unlike with other BASIC implementations, `start` is zero-based, i.e. the "
+"first byte is 0, not 1."
+msgstr "*他のBASIC実装とは異なり、 `start`はゼロベースです。つまり、最初のバイトは1ではなく0です。"
+
+#. [Gibt eine Zeichenfolge zurück, die die UTF-8-Codierung des angegebenen
+#. Unicode-Codepunkts enthält.]
+# bulk translation
+msgid ""
+"Returns a string containing the UTF-8 encoding of the specified Unicode "
+"codepoint."
+msgstr "指定されたUnicodeコードポイントのUTF-8エンコーディングを含む文字列を返します。"
+
+#. [Unicode-Codepunkt]
+# bulk translation
+msgid "Unicode codepoint"
+msgstr "Unicodeコードポイント"
+
+#. [Eine einstellige Zeichenfolge.]
+# bulk translation
+msgid "Single-character string."
+msgstr "1文字の文字列。"
+
+#. [* `CHR$(0)` gibt eine leere Zeichenfolge zurück.]
+# bulk translation
+msgid "* `CHR$(0)` returns an empty string."
+msgstr "* `CHR$(0)`は空の文字列を返します。"
+
+#. [* Um eine Zeichenfolge aus Bytewerten ohne UTF-8-Codierung zu erstellen,
+#. verwenden Sie die Syntax `a$= [Byte]`.]
+# bulk translation
+msgid ""
+"* To construct string from a byte value without UTF-8 encoding, use the `a$ "
+"= [byte]` syntax."
+msgstr "* UTF-8エンコーディングを使用せずにバイト値から文字列を作成するには、 `a$= [byte]`構文を使用します。"
+
+#. [Gibt eine Zeichenfolgendarstellung einer Zahl zurück.]
+# bulk translation
+msgid "Returns a string representation of a number."
+msgstr "数値の文字列表現を返します。"
+
+#. [Jeder numerische Ausdruck]
+# from Argos
+msgid "any numeric expression"
+msgstr "任意の数値式"
+
+#. [Eine Zeichenfolgendarstellung von `num`.]
+# bulk translation
+msgid "String representation of `num`."
+msgstr "`num`の文字列表現。"
+
+#. [Gibt einen der Rückgabewerte der Zeichenfolge zurück, die vom letzten
+#. Funktionsaufruf zurückgegeben wurde.]
+# bulk translation
+msgid ""
+"Returns one of the string return values returned by the last function call."
+msgstr "最後の関数呼び出しによって返された文字列の戻り値の1つを返します。"
+
+#. [Anzahl der String-Rückgabewerte [`0` bis` {MAX_RETVALS_m1}`]]
+# bulk translation
+msgid "number of the string return value [`0` to `{MAX_RETVALS_m1}`]"
+msgstr "文字列の戻り値の数[`0`から`{MAX_RETVALS_m1}`]"
+
+#. [Gibt die Fehlermeldung zurück, die der angegebenen Fehlernummer zugeordnet
+#. ist.]
+# bulk translation
+msgid "Returns the error message associated with a given error number."
+msgstr "指定されたエラー番号に関連付けられたエラーメッセージを返します。"
+
+#. [Fehlernummer [`0` bis` {max_err}`]]
+# bulk translation
+msgid "error number [`0` to `{max_err}`]"
+msgstr "エラー番号[`0`から`{max_err}`]"
+
+#. [Fehlermeldung.]
+# bulk translation
+msgid "Error message."
+msgstr "エラーメッセージ。"
+
+#. [Gibt eine Zeichenfolge der angegebenen Länge zurück, die aus sich
+#. wiederholenden Zeichen besteht.]
+# bulk translation
+msgid ""
+"Returns a string of a specified length made up of a repeating character."
+msgstr "繰り返し文字で構成される指定された長さの文字列を返します。"
+
+#. [Anzahl der Zeichen [mindestens `0`]]
+# bulk translation
+msgid "number of characters [at least `0`]"
+msgstr "文字数[少なくとも `0`]"
+
+#. [Nicht leerer Zeichenfolgenausdruck]
+# bulk translation
+msgid "any non-empty string expression"
+msgstr "空でない文字列式"
+
+#. [* Wenn `char$` mehr als ein Zeichen enthält, wird nur das erste Zeichen
+#. berücksichtigt.]
+# bulk translation
+msgid ""
+"* If `char$` contains more than one character, only the first will be "
+"considered."
+msgstr "* `char$`に複数の文字が含まれている場合、最初の文字のみが考慮されます。"
+
+#. [* Wenn `count`` 0` ist, wird eine leere Zeichenfolge zurückgegeben.]
+# bulk translation
+msgid "* If `count` is `0`, an empty string will be returned."
+msgstr "* `count`が`0`の場合、空の文字列が返されます。"
+
+#. [String-Verkettungsoperator.]
+# bulk translation
+msgid "String concatenation operator."
+msgstr "文字列連結演算子。"
+
+#. [Verkettung von "a$" und "b$".]
+# bulk translation
+msgid "Concatenation of `a$` and `b$`."
+msgstr "`a$`と `b$`の連結。"
+
+#. [Gibt die Anzahl der Zeichen in einer Zeichenfolge oder die Anzahl der
+#. Elemente in einer Liste zurück.]
+# bulk translation
+msgid ""
+"Returns the number of characters in a string or the number of elements in a "
+"list."
+msgstr "文字列の文字数またはリストの要素数を返します。"
+
+#. [Ein Verweis auf eine numerische oder Zeichenfolgenliste]
+# bulk translation
+msgid "reference to a numeric or string list"
+msgstr "数値リストまたは文字列リストへの参照"
+
+#. [Länge in Zeichen- (Zeichenfolge) oder Element- (Listen-) Einheiten.]
+# bulk translation
+msgid "Length in characters (string) or elements (list)."
+msgstr "文字（文字列）または要素（リスト）単位の長さ。"
+
+#. [Byte Gibt die Anzahl der Bytes in der Zeichenfolge zurück.]
+# bulk translation
+msgid "Returns the number of bytes in a byte string."
+msgstr "バイト文字列のバイト数を返します。"
+
+#. [Länge in Bytes.]
+# bulk translation
+msgid "Length in bytes."
+msgstr "バイト単位の長さ。"
+
+#. [Gibt den absoluten Wert einer Zahl zurück.]
+# bulk translation
+msgid "Returns the absolute value of a number."
+msgstr "数値の絶対値を返します。"
+
+#. [Absolutwert von `num`.]
+# bulk translation
+msgid "Absolute value of `num`."
+msgstr "`num`の絶対値。"
+
+#. [Konvertiert eine in einer Zeichenfolge enthaltene Zahl in eine Zahl.]
+# bulk translation
+msgid "Converts a number contained in a string to a numeric value."
+msgstr "文字列に含まれる数値を数値に変換します。"
+
+#. [Ein Zeichenfolgenausdruck, der eine Textdarstellung einer Zahl enthält]
+# bulk translation
+msgid "a string expression containing the text representation of a number"
+msgstr "数値のテキスト表現を含む文字列式"
+
+#. [Die Anzahl von `num$`.]
+# bulk translation
+msgid "Numeric value of `num$`."
+msgstr "`num$`の数値。"
+
+#. [Ruft die Position ab, in der die Zeichenfolge in einer anderen
+#. Zeichenfolge zuerst aufgetreten ist.]
+# from Google
+msgid ""
+"Get the position of the first occurrence of a string in another string."
+msgstr "別の文字列に文字列が最初に発生した位置を取得します。"
+
+#. [Zu suchende Zeichenkette]
+# bulk translation
+msgid "string to search for"
+msgstr "検索する文字列"
+
+#. [Das erste Auftreten von "Nadel$" (beginnend mit "0") oder "-1", wenn
+#. nicht
+#. gefunden.]
+# bulk translation
+msgid ""
+"Position of first occurence of `needle$` (starting with `0`), or `-1` if it "
+"could not be found."
+msgstr "`needle$`の最初の出現位置（ `0`で始まる）、または見つからなかった場合は`-1`。"
+
+#. [Hinweis: Die Bedeutung des Rückgabewerts unterscheidet sich von anderen
+#. BASIC-Implementierungen. Normalerweise zeigt eine "0" an, dass die
+#. Zeichenfolge nicht gefunden werden kann, und wo sie gefunden wird, beginnt
+#. sie mit einer "1".]
+# bulk translation
+msgid ""
+"NOTE: The meaning of the return value differs from other BASIC "
+"implementations, in which `0` usually indicates that the string has not been"
+" found, and locations found start at `1`."
+msgstr "注：戻り値の意味は、他のBASIC実装とは異なります。通常、`0`は文字列が見つからないことを示し、見つかった場所は`1`から始まります。"
+
+#. [Der "down" -Wert des Eingabegeräts.]
+# bulk translation
+msgid "Value of the \"down\" direction for input devices."
+msgstr "入力デバイスの「下」方向の値。"
+
+#. [Rufen Sie die Prozedur auf, um den Rückgabewert abzurufen.]
+# bulk translation
+msgid "Call a procedure and get its return value."
+msgstr "プロシージャを呼び出して、その戻り値を取得します。"
+
+#. [Wertet den ersten Rückgabewert der Prozedur aus.]
+# bulk translation
+msgid "Evaluates to the first return value of a procedure."
+msgstr "プロシージャの最初の戻り値に評価されます。"
+
+#. [Der Name der mit "PROC" deklarierten Prozedur]
+# bulk translation
+msgid "name of a procedure declared with `PROC`"
+msgstr "`PROC`で宣言されたプロシージャの名前"
+
+#. [Zeichenfolge oder numerischer Ausdruck]
+# from Google
+msgid "a string or numeric expression"
+msgstr "文字列または数値式"
+
+#. [Der erste Rückgabewert der aufgerufenen Prozedur.]
+# bulk translation
+msgid "First return value of called procedure."
+msgstr "呼び出されたプロシージャの最初の戻り値。"
+
+#. [Bei den meisten BASIC-Implementierungen können Sie Funktionen mit DEFFN
+#. deklarieren, einer Syntax, die von Engine BASIC nicht unterstützt wird. Sie
+#. müssen die Funktionsdeklaration neu schreiben, um das gleiche Ergebnis zu
+#. erhalten.]
+# bulk translation
+msgid ""
+"Most implementations of BASIC allow declaration of functions using `DEF FN`,"
+" a syntax that is not supported by Engine BASIC. To achieve the same result,"
+" you will have to rewrite the function declaration:"
+msgstr ""
+"BASICのほとんどの実装では、EngineBASICでサポートされていない構文である "
+"`DEFFN`を使用して関数を宣言できます。同じ結果を得るには、関数宣言を書き直す必要があります。"
+
+#. [Potenzierungsoperator.]
+# bulk translation
+msgid "Exponentiation operator."
+msgstr "べき乗演算子。"
+
+#. [`a` ist eine Potenz von` b`.]
+# bulk translation
+msgid "`a` raised to the power of `b`."
+msgstr "`a`は`b`の累乗になります。"
+
+#. [1]
+# bulk translation
+msgid "1"
+msgstr "1"
+
+#. [String-Gleichheitsoperator.]
+# bulk translation
+msgid "String equality operator."
+msgstr "文字列等価演算子。"
+
+#. ["-1", wenn der Wert von "a$" der gleiche ist wie der Wert von "b$",
+#. andernfalls "0".]
+# bulk translation
+msgid ""
+"`-1` if the value of `a$` is identical to the value of `b$`, `0` otherwise."
+msgstr "`a$`の値が `b$`の値と同じである場合は `-1`、それ以外の場合は`0`。"
+
+#. [Fünf]
+# bulk translation
+msgid "5"
+msgstr "5"
+
+#. [String-Ungleichungsoperator.]
+# bulk translation
+msgid "String inequality operator."
+msgstr "文字列不等式演算子。"
+
+#. ["-1", wenn sich der Wert von "a$" vom Wert von "b$" unterscheidet,
+#. andernfalls "0".]
+# bulk translation
+msgid ""
+"`-1` if the value of `a$` is different from the value of `b$`, `0` "
+"otherwise."
+msgstr "`a$`の値が `b$`の値と異なる場合は `-1`、それ以外の場合は`0`。"
+
+#. [String kleinerer Operator.]
+# bulk translation
+msgid "String less-than operator."
+msgstr "文字列の小なり演算子。"
+
+#. ["-1", wenn der Wert von "a$" vor dem Wert von "b$" steht, wenn er
+#. alphabetisch sortiert ist, andernfalls "0".]
+# bulk translation
+msgid ""
+"`-1` if the value of `a$` precedes the value of `b$` when sorted "
+"alphabetically, `0` otherwise."
+msgstr "アルファベット順にソートしたときに `a$`の値が `b$`の値よりも前にある場合は `-1`、それ以外の場合は`0`。"
+
+#. [Größer als Zeichenfolge.]
+# bulk translation
+msgid "String greater-than operator."
+msgstr "大なり記号の文字列。"
+
+#. ["-1", wenn der Wert von "a$" dem Wert von "b$" folgt, wenn er
+#. alphabetisch sortiert ist, andernfalls "0".]
+# bulk translation
+msgid ""
+"`-1` if the value of `a$` succeeds the value of `b$` when sorted "
+"alphabetically, `0` otherwise."
+msgstr "アルファベット順にソートしたときに `a$`の値が `b$`の値の後に続く場合は `-1`、それ以外の場合は`0`。"
+
+#. [Verzweigt zur angegebenen Zeile oder Beschriftung.]
+# bulk translation
+msgid "Branches to a specified line or label."
+msgstr "指定された行またはラベルに分岐します。"
+
+#. [BASIC Programmzeilennummer]
+# bulk translation
+msgid "a BASIC program line number"
+msgstr "BASICプログラムの行番号"
+
+#. [BASIC Programmbezeichnung]
+# bulk translation
+msgid "a BASIC program label"
+msgstr "BASICプログラムラベル"
+
+#. [Vermeiden Sie die häufige Verwendung von "GOTO", da dies das Verständnis
+#. des Programms erschwert. Verwenden Sie nach Möglichkeit stattdessen
+#. Schleifenstrukturen und Prozeduraufrufe.]
+# bulk translation
+msgid ""
+"Try not to use `GOTO` often as it tends to make programs more difficult to "
+"understand. If possible, use loop constructs and procedure calls instead."
+msgstr ""
+"プログラムを理解しにくくする傾向があるため、 "
+"`GOTO`を頻繁に使用しないようにしてください。可能であれば、代わりにループ構造とプロシージャ呼び出しを使用してください。"
+
+#. [Rufen Sie eine Unterroutine auf.]
+# bulk translation
+msgid "Calls a subroutine."
+msgstr "サブルーチンを呼び出します。"
+
+#. [`GOSUB` setzt die aktuelle Position im Programm auf den Stapel und springt
+#. zur angegebenen Position. Sie können dann `RETURN` verwenden, um nach dem
+#. Befehl` GOSUB` zur Anweisung zurückzukehren.]
+# bulk translation
+msgid ""
+"`GOSUB` puts the current position in the program on a stack and then jumps "
+"to the given location. It is then possible to return to the instruction "
+"after the `GOSUB` command by using `RETURN`."
+msgstr ""
+"`GOSUB`は、プログラム内の現在の位置をスタックに置き、指定された場所にジャンプします。その後、 `RETURN`を使用して`"
+"GOSUB`コマンドの後に命令に戻ることができます。"
+
+#. [Stattdessen kann es bequemer sein, die Prozedur "PROC" und den Befehl
+#. "CALL" zu verwenden.]
+# bulk translation
+msgid ""
+"It may be more convenient to use `PROC` procedures and the `CALL` command "
+"instead."
+msgstr "代わりに、 `PROC`プロシージャと`CALL`コマンドを使用する方が便利な場合があります。"
+
+#. [Verzweigt sich an eine von mehreren Stellen, abhängig vom Wert des
+#. Ausdrucks.]
+# bulk translation
+msgid ""
+"Branches to one of several locations, depending on the value of an "
+"expression."
+msgstr "式の値に応じて、いくつかの場所の1つに分岐します。"
+
+#. [`ON GOSUB` ruft den angegebenen Ort als Unterprogramm auf, aber` ONGOTO`
+#. setzt dort einfach die Ausführung fort.]
+# bulk translation
+msgid ""
+"`ON GOSUB` calls the given location as a subroutine, while `ON GOTO` simply "
+"continues execution there."
+msgstr "`ON GOSUB`は指定された場所をサブルーチンとして呼び出しますが、`ON GOTO`は単にそこで実行を継続します。"
+
+#. [Rufen Sie je nach Wert des Ausdrucks eine von mehreren Unterroutinen auf.]
+# bulk translation
+msgid ""
+"Call one of several subroutines, depending on the value of an expression."
+msgstr "式の値に応じて、いくつかのサブルーチンの1つを呼び出します。"
+
+#. [Definiert einen Ereignishandler für Sprite-Kollisionen.]
+# bulk translation
+msgid "Defines an event handler for sprite collisions."
+msgstr "スプライト衝突のイベントハンドラーを定義します。"
+
+#. [Der Handler wird bei jeder Kollision zwischen zwei Sprites einmal
+#. aufgerufen. Handler können mit "ONSPRITE OFF" deaktiviert werden.]
+# bulk translation
+msgid ""
+"The handler is called once for each collision between two sprites. The "
+"handler can be disabled using `ON SPRITE OFF`."
+msgstr "ハンドラーは、2つのスプライト間の衝突ごとに1回呼び出されます。ハンドラーは、`ON SPRITE OFF`を使用して無効にできます。"
+
+#. [Verfahren definiert durch "PROC"]
+# bulk translation
+msgid "a procedure defined with `PROC`"
+msgstr "`PROC`で定義されたプロシージャ"
+
+#. [Drei numerische Argumente werden an den Ereignishandler übergeben. Die
+#. Sprite-ID des zugeordneten Sprites und die Richtung der von SPRCOLL ()
+#. zurückgegebenen Kollision.]
+# bulk translation
+msgid ""
+"The event handler will be passed three numeric arguments: The sprite IDs of "
+"the involved sprites, and the direction of the collision, as would be "
+"returned by `SPRCOLL()`."
+msgstr ""
+"イベントハンドラーには、3つの数値引数が渡されます。関連するスプライトのスプライトIDと、 `SPRCOLL()`によって返される衝突の方向です。"
+
+#. [Der Handler wird bei jeder Sprite-Kollision einmal aufgerufen. Sie müssen
+#. den Handler jedoch jedes Mal mit "ONSPRITECALL" erneut aktivieren, um
+#. Ereignisstürme zu vermeiden.]
+# bulk translation
+msgid ""
+"The handler will be called once for each sprite collision, but it has to be "
+"re-enabled using `ON SPRITE CALL` each time to prevent event storms."
+msgstr ""
+"ハンドラーはスプライトの衝突ごとに1回呼び出されますが、イベントストームを防ぐために、毎回`ON SPRITE CALL`を使用してハンドラーを再度有効にする必要があります。"
+
+#. [Warnung: Dieser Befehl wurde nicht getestet.]
+# bulk translation
+msgid "WARNING: This command has never been tested."
+msgstr "警告：このコマンドはテストされていません。"
+
+#. [Definiert einen Ereignishandler, der am Ende des aktuellen MML-Musters
+#. ausgelöst wird.]
+# bulk translation
+msgid ""
+"Defines an event handler triggered by the end of the current MML pattern."
+msgstr "現在のMMLパターンの終了によってトリガーされるイベントハンドラーを定義します。"
+
+#. [Der Handler wird aufgerufen, wenn das MML-Pattern des Soundkanals die
+#. Wiedergabe beendet hat. Es kann mit "ON PLAY ... OFF" deaktiviert werden.]
+# bulk translation
+msgid ""
+"The handler is called when the MML pattern of any sound channel has finished"
+" playing. It can be disabled using `ON PLAY ... OFF`."
+msgstr ""
+"ハンドラーは、サウンドチャネルのMMLパターンの再生が終了したときに呼び出されます。`ON PLAY ... "
+"OFF`を使用して無効にすることができます。"
+
+#. [Tonkanal [`0` bis` {MML_CHANNELS_m1}`]]
+# bulk translation
+msgid "a sound channel [`0` to `{MML_CHANNELS_m1}`]"
+msgstr "サウンドチャネル[`0`から`{MML_CHANNELS_m1}`]"
+
+#. [Der Ereignishandler empfängt die Nummer des terminierten Kanals als
+#. numerisches Argument.]
+# bulk translation
+msgid ""
+"The event handler will receive the number of the channel that has ended as a"
+" numeric argument."
+msgstr "イベントハンドラーは、終了したチャネルの番号を数値引数として受け取ります。"
+
+#. [Alle Musikbeendigungs-Handler sind deaktiviert, wenn einer von ihnen
+#. aufgerufen wird, und müssen bei Bedarf mit "ONPLAY CALL" wieder aktiviert
+#. werden.]
+# bulk translation
+msgid ""
+"All end-of-music handlers will be disabled when one of them is called, and "
+"they therefore have to be re-enabled using `ON PLAY CALL` if so desired."
+msgstr ""
+"すべての音楽終了ハンドラーは、そのうちの1つが呼び出されると無効になるため、必要に応じて`ON PLAY CALL`を使用して再度有効にする必要があります。"
+
+#. [Wenn ein Ereignis auf einem Kanal auftritt, ist die Verarbeitung auf allen
+#. Kanälen deaktiviert. Das ist blöd.]
+# bulk translation
+msgid ""
+"An event on one channel will disable handling on all channels. That is "
+"stupid."
+msgstr "1つのチャネルでイベントが発生すると、すべてのチャネルでの処理が無効になります。それは愚かです。"
+
+#. [Definiert einen Game-Controller-Eingabehandler, der durch eine Änderung
+#. des
+#. Schaltflächenstatus eines bestimmten Controllers ausgelöst wird.]
+# bulk translation
+msgid ""
+"Defines a game controller input handler triggered by changes in the state of"
+" the buttons of a given controller."
+msgstr "特定のコントローラーのボタンの状態の変化によってトリガーされるゲームコントローラー入力ハンドラーを定義します。"
+
+#. [Die Verarbeitung von Gamecontroller-Eingangsereignissen kann mit "ONPAD
+#. OFF" deaktiviert werden.]
+# bulk translation
+msgid ""
+"Game controller input event handling can be disabled using `ON PAD OFF`."
+msgstr "ゲームコントローラの入力イベント処理は、`ON PAD OFF`を使用して無効にできます。"
+
+#. [Gamecontrollernummer [`0` bis` {MAX_PADS_m1}`]]
+# bulk translation
+msgid "number of the game controller [`0` to `{MAX_PADS_m1}`]"
+msgstr "ゲームコントローラの番号[`0`から`{MAX_PADS_m1}`]"
+
+#. [Der Ereignishandler empfängt zwei numerische Argumente, die Nummer des
+#. Gamecontrollers, dessen Status sich geändert hat, und das Bitmuster, das
+#. die geänderte Schaltfläche angibt.]
+# bulk translation
+msgid ""
+"The event handler will receive two numeric arguments: the number of the game"
+" controller that has changed state, and a bit pattern indicating which "
+"buttons have changed."
+msgstr "イベントハンドラーは、状態が変更されたゲームコントローラーの番号と、変更されたボタンを示すビットパターンの2つの数値引数を受け取ります。"
+
+#. [Im Gegensatz zu einigen anderen Ereignishandlern bleibt der
+#. Gamecontroller-
+#. Handler nach der Verarbeitung des Ereignisses gültig und muss nicht erneut
+#. vorbereitet werden.]
+# bulk translation
+msgid ""
+"Unlike some other event handlers, the game controller handler remains "
+"enabled after an event has been processed and does not have to be re-armed."
+msgstr ""
+"他のいくつかのイベントハンドラーとは異なり、ゲームコントローラーハンドラーは、イベントが処理された後も有効のままであり、再度準備する必要はありません。"
+
+#. [Aktiviert die Fehlerbehandlung und weist das Programm an, zu einer
+#. Fehlerbehandlungsroutine zu verzweigen, wenn ein Laufzeitfehler auftritt.]
+# bulk translation
+msgid ""
+"Enables error handling and, when a run-time error occurs, directs your "
+"program to branch to an error-handling routine."
+msgstr "エラー処理を有効にし、実行時エラーが発生すると、プログラムをエラー処理ルーチンに分岐するように指示します。"
+
+#. [Die Fehlerbehandlung kann mit "ONERROROFF" deaktiviert werden.]
+# bulk translation
+msgid "Error handling can be disabled using `ON ERROR OFF`."
+msgstr "エラー処理は、`ON ERROR OFF`を使用して無効にできます。"
+
+#. [Zeilennummer oder Label]
+# from Google
+msgid "a line number or a label"
+msgstr "行番号またはラベル"
+
+#. [Der Fehlercode wird mit "RET (0)" an den Handler übergeben, und die
+#. Zeilennummer wird mit "RET (1)" übergeben.]
+# bulk translation
+msgid ""
+"The error code is passed to the handler in `RET(0)`, and the line number in "
+"`RET(1)`."
+msgstr "エラーコードは `RET(0)`でハンドラーに渡され、 `RET(1)`で行番号が渡されます。"
+
+#. [Wenn ein Fehler von einem mit EXEC gestarteten Unterprogramm übertragen
+#. wird, wird die Zeilennummer des Unterprogramms, in dem der Fehler
+#. aufgetreten ist, an RET (2) übergeben.]
+# bulk translation
+msgid ""
+"When an error has been forwarded from a sub-program that has been started "
+"with `EXEC`, the line number of the sub-program in which the error has been "
+"triggered is passed in `RET(2)`."
+msgstr "`EXEC`で起動したサブプログラムからエラーが転送された場合、エラーが発生したサブプログラムの行番号が`RET(2)`に渡されます。"
+
+#. [Im Gegensatz zu anderen Ereignishandlern ruft "ON ERROR" den Fehlerhandler
+#. nicht als Prozedur auf, sodass Sie "RETURN" nicht verwenden können, um die
+#. Ausführung fortzusetzen. Sie sollten stattdessen "RESUME" verwenden.]
+# bulk translation
+msgid ""
+"Unlike other event handlers, `ON ERROR` does not call the error handler as a"
+" procedure, and it is not possible to use `RETURN` to resume execution. "
+"`RESUME` must be used instead."
+msgstr ""
+"他のイベントハンドラーとは異なり、 `ON ERROR`はエラーハンドラーをプロシージャとして呼び出さないため、`"
+"RETURN`を使用して実行を再開することはできません。代わりに `RESUME`を使用する必要があります。"
+
+#. [Wenn das Programm mit "EXEC" ausgeführt wird und keine eindeutige
+#. Fehlerbehandlungsroutine definiert ist, werden alle Fehler, die im
+#. untergeordneten Programm auftreten, an die Fehlerbehandlungsroutine des
+#. übergeordneten Programms weitergeleitet (falls vorhanden).]
+# bulk translation
+msgid ""
+"When a program is executed using `EXEC` and does not define its own error "
+"handler, any errors occurring in the child program will be forwarded to the "
+"parent program's error handler, if there is one."
+msgstr ""
+"プログラムが "
+"`EXEC`を使用して実行され、独自のエラーハンドラーが定義されていない場合、子プログラムで発生したエラーは、親プログラムのエラーハンドラー（存在する場合）に転送されます。"
+
+#. [Nachdem der Fehler behoben wurde, setzt das Programm die Ausführung fort.]
+# bulk translation
+msgid "Resume program execution after an error has been handled."
+msgstr "エラーが処理された後、プログラムの実行を再開します。"
+
+#. [Wenn ein mit "ON ERROR" konfigurierter Handler einen Fehler abfängt,
+#. können
+#. Sie mit "RESUME" die Ausführung nach der Anweisung fortsetzen, die den
+#. Fehler verursacht hat.]
+# bulk translation
+msgid ""
+"When an error has been caught by a handler set up using `ON ERROR`, it is "
+"possible to resume execution after the instruction that caused the error "
+"using `RESUME`."
+msgstr ""
+"`ON ERROR`を使用して設定されたハンドラーによってエラーがキャッチされた場合、`"
+"RESUME`を使用してエラーの原因となった命令の後に実行を再開することができます。"
+
+#. [In anderen BASIC-Implementierungen kann "RESUME" die Anweisung, die den
+#. Fehler verursacht hat, wiederholen und "RESUMENEXT" verwenden, um nach dem
+#. Fehler fortzufahren. In Engine BASIC überspringt "RESUME" immer die
+#. Anweisung, die den Fehler generiert hat.]
+# bulk translation
+msgid ""
+"In other BASIC implementations, `RESUME` will retry the instruction that has"
+" caused the error, and it is possible to continue after the error using "
+"`RESUME NEXT`. In Engine BASIC, `RESUME` will always skip the instruction "
+"that generated the error."
+msgstr ""
+"他のBASIC実装では、 `RESUME`はエラーの原因となった命令を再試行し、`"
+"RESUME NEXT`を使用してエラーの後で続行することができます。Engine BASICでは、 "
+"`RESUME`は常にエラーを生成した命令をスキップします。"
+
+#. [Die Anweisung, in der der Fehler aufgetreten ist, kann nicht wiederholt
+#. werden.]
+# bulk translation
+msgid ""
+"It is not possible to repeat the instruction that has generated the error."
+msgstr "エラーが発生した命令を繰り返すことはできません。"
+
+#. [Fehler auslösen.]
+# bulk translation
+msgid "Triggers an error."
+msgstr "エラーをトリガーします。"
+
+#. [Fehlercode]
+# bulk translation
+msgid "error code"
+msgstr "エラーコード"
+
+#. [Rufen Sie die Prozedur auf.]
+# bulk translation
+msgid "Calls a procedure."
+msgstr "プロシージャを呼び出します。"
+
+#. [Sie müssen mindestens die Anzahl der in der Prozedurdeklaration
+#. definierten
+#. Argumente angeben. Auf zusätzliche Argumente kann mit "ARG ()" und "ARG$
+#. ()" zugegriffen werden.]
+# bulk translation
+msgid ""
+"At least as many arguments must be given as defined in the procedure "
+"declaration. Additional arguments can be accessed using `ARG()` and "
+"`ARG$()`."
+msgstr ""
+"少なくとも、プロシージャ宣言で定義されている数の引数を指定する必要があります。追加の引数には、 `ARG()`および `ARG "
+"$()`を使用してアクセスできます。"
+
+#. [Kehrt aus einer Unterprogramme oder einem Verfahren zurück.]
+# from Google
+msgid "Return from a subroutine or procedure."
+msgstr "サブルーチンまたは手順から戻ります。"
+
+#. [Gibt von einer Unterroutine zurück, die von "GOSUB" aufgerufen wird, oder
+#. von einer Prozedur, die von "PROC" definiert und von "CALL" oder "FN"
+#. aufgerufen wird.]
+# bulk translation
+msgid ""
+"Returns from a subroutine called by `GOSUB` or from a procedure defined by "
+"`PROC` and called with `CALL` or `FN`."
+msgstr ""
+"`GOSUB`によって呼び出されたサブルーチン、または`PROC`によって定義され、 `CALL`または`"
+"FN`で呼び出されたプロシージャから戻ります。"
+
+#. [Wiederholen Sie den Anweisungsblock, während die Bedingung erfüllt ist
+#. oder
+#. bis die Bedingung erfüllt ist.]
+# bulk translation
+msgid ""
+"Repeats a block of instructions while a condition is true or until a "
+"condition becomes true."
+msgstr "条件が真である間、または条件が真になるまで、命令のブロックを繰り返します。"
+
+#. [Wenn "Bedingung" "WHILE" vorangestellt ist und "Bedingung" "wahr" ist
+#. (nicht Null), wird die Schleife wiederholt. Wenn vor "Bedingung" "UNTIL"
+#. steht und "Bedingung" "falsch" (Null) ist, wird die Schleife fortgesetzt.
+#. Andernfalls endet die Schleife und die Ausführung wird mit der Anweisung
+#. fortgesetzt, die dem Befehl `LOOP` folgt.]
+# bulk translation
+msgid ""
+"If `condition` is prefixed by `WHILE`, the loop will repeat if `condition` "
+"is \"true\" (non-zero). If `condition` is prefixed by `UNTIL`, the loop will"
+" continue if `condition` is \"false\" (zero). In any other case, the loop "
+"will be exited and execution will continue with the instruction following "
+"the `LOOP` command."
+msgstr ""
+"`condition`の前に`WHILE`が付いている場合、 `condition`が\" true "
+"\"（ゼロ以外）の場合、ループが繰り返されます。`condition`の前に`UNTIL`が付いている場合、 `condition`が\" false"
+" \"（ゼロ）の場合、ループは続行されます。それ以外の場合、ループは終了し、 `LOOP`コマンドに続く命令で実行が続行されます。"
+
+#. [Wenn keine Bedingung angegeben ist, wird die Schleife für immer
+#. wiederholt.]
+# bulk translation
+msgid "If no condition is specified, the loop will repeat forever."
+msgstr "条件が指定されていない場合、ループは永久に繰り返されます。"
+
+#. [Führt eine Reihe von Anweisungen aus, solange die angegebene Bedingung
+#. "true" ist.]
+# bulk translation
+msgid ""
+"Executes a series of instructions as long as a specified condition is "
+"\"true\"."
+msgstr "指定された条件が「真」である限り、一連の命令を実行します。"
+
+#. [`condition` wird am Anfang der Schleife ausgewertet. Bei "false" wird die
+#. Ausführung nach der entsprechenden Anweisung "WEND" fortgesetzt. (Beachten
+#. Sie, dass dies möglicherweise nicht die nächstgelegene WEND-Anweisung ist,
+#. da Sie alle Arten von Schleifen verschachteln können.)]
+# bulk translation
+msgid ""
+"`condition` is evaluated at the start of the loop. If it is \"false\", "
+"execution continues after the corresponding `WEND` instruction. (Note that "
+"all kinds of loops can be nested, so this may not be the nearest `WEND` "
+"instruction.)"
+msgstr ""
+"`condition`はループの開始時に評価されます。「false」の場合、対応する "
+"`WEND`命令の後に実行が続行されます。（すべての種類のループをネストできるため、これが最も近い "
+"`WEND`命令ではない可能性があることに注意してください。）"
+
+#. [Wenn "Bedingung" "wahr" ist, wird der Befehl, der auf den Befehl "WHILE"
+#. folgt, ausgeführt, bis der entsprechende Befehl "WEND" erreicht ist. Wenn
+#. es erreicht ist, wird die "Bedingung" erneut ausgewertet, um zu bestimmen,
+#. ob die Schleife fortgesetzt werden soll.]
+# bulk translation
+msgid ""
+"If `condition` is \"true\", the instructions following the `WHILE` "
+"instruction will be executed, until the corresponding `WEND` instruction is "
+"reached, at which point `condition` will be evaluated again to determine "
+"whether to continue the loop."
+msgstr ""
+"`condition`が\" true \"の場合、対応する`WEND`命令に到達するまで、 "
+"`WHILE`命令に続く命令が実行されます。到達した時点で、`condition`が再度評価され、ループを続行するかどうかが決定されます。"
+
+#. [Das Schlüsselwort `WHILE` kann auch Teil des Befehls` LOOP` sein.]
+# bulk translation
+msgid "The `WHILE` keyword can also form part of a `LOOP` command."
+msgstr "`WHILE`キーワードは、`LOOP`コマンドの一部を形成することもできます。"
+
+#. [Wiederholen Sie die WHILE-Schleife.]
+# bulk translation
+msgid "Iterates a `WHILE` loop."
+msgstr "`WHILE`ループを繰り返します。"
+
+#. [Startet eine Schleife, die den Anweisungsblock so oft wiederholt.]
+# bulk translation
+msgid ""
+"Starts a loop repeating a block of instructions a specified number of times."
+msgstr "指定された回数だけ命令のブロックを繰り返すループを開始します。"
+
+#. [Numerische Variable, die als Schleifenzähler verwendet wird]
+# bulk translation
+msgid "a numeric variable used as the loop counter"
+msgstr "ループカウンターとして使用される数値変数"
+
+#. [Anfangswert des Schleifenzählers]
+# bulk translation
+msgid "initial value of the loop counter"
+msgstr "ループカウンタの初期値"
+
+#. [Sowohl "Ende" als auch "Inkrement" werden zu Beginn der Schleife nur
+#. einmal
+#. ausgewertet. Nachträgliche Änderungen dieser Ausdrücke haben keine
+#. Auswirkung.]
+# bulk translation
+msgid ""
+"Both `end` and `increment` are only evaluated once, at the start of the "
+"loop. Any changes to these expressions afterwards will not have any effect "
+"on it."
+msgstr "`end`と`increment`はどちらも、ループの開始時に1回だけ評価されます。その後、これらの式を変更しても、影響はありません。"
+
+#. [Wenn im Befehl "NEXT" keine Schleifenvariable angegeben ist, wird die FOR-
+#. Schleife der obersten Ebene (dh die zuletzt gestartete Schleife) des
+#. Schleifenstapels wiederholt. Wenn angegeben, wird die der angegebenen
+#. Variablen zugeordnete FOR-Schleife wiederholt und alle darunter
+#. verschachtelten Schleifen werden verworfen.]
+# bulk translation
+msgid ""
+"If no loop variable is specified in the `NEXT` command, the top-most `FOR` "
+"loop on the loop stack (that is, the one started last) will be iterated. If "
+"it is specified, the `FOR` loop associated with the given variable will be "
+"iterated, and any nested loops below it will be discarded."
+msgstr ""
+"`NEXT`コマンドでループ変数が指定されていない場合、ループスタックの最上位の`"
+"FOR`ループ（つまり、最後に開始されたループ）が繰り返されます。指定した場合、指定された変数に関連付けられた "
+"`FOR`ループが繰り返され、その下にネストされたループはすべて破棄されます。"
+
+#. [Wiederholen Sie die DO-Schleife.]
+# bulk translation
+msgid "Iterates a `DO` loop."
+msgstr "`DO`ループを繰り返します。"
+
+#. [Führt abhängig von den angegebenen Bedingungen einen Befehl oder
+#. Befehlsblock aus.]
+# bulk translation
+msgid ""
+"Executes a instruction or instruction block depending on specified "
+"conditions."
+msgstr "指定された条件に応じて、命令または命令ブロックを実行します。"
+
+#. [Eine oder mehrere Anweisungen in einer oder mehreren Zeilen]
+# bulk translation
+msgid "one or more instructions on one or more lines"
+msgstr "1行以上の1つ以上の指示"
+
+#. [Eine oder mehrere durch Doppelpunkte getrennte Anweisungen]
+# bulk translation
+msgid "one or more instructions, separated by colons"
+msgstr "コロンで区切られた1つ以上の指示"
+
+#. ["Bedingung" wird als "falsch" betrachtet, wenn sie Null ist, und
+#. andernfalls als "wahr".]
+# bulk translation
+msgid ""
+"A `condition` is considered \"false\" if it is zero, and \"true\" in any "
+"other case."
+msgstr "`condition`は、ゼロの場合は「false」と見なされ、それ以外の場合は「true」と見なされます。"
+
+#. [Wichtig: In vielen BASIC-Implementierungen wird "END IF" als "END IF" (dh
+#. als zwei Befehle) geschrieben. Wenn die Sequenz "END IF" eingegeben oder in
+#. das Programm geladen wird, konvertiert Engine BASIC sie in "END IF".]
+# bulk translation
+msgid ""
+"IMPORTANT: In many BASIC implementations, `ENDIF` is spelled `END IF` (that "
+"is, as two commands). If the sequence `END IF` is entered or loaded in a "
+"program, Engine BASIC will convert it to `ENDIF`."
+msgstr ""
+"重要：多くのBASIC実装では、 `ENDIF`は`END IF`と綴られます（つまり、2つのコマンドとして）。シーケンス `END "
+"IF`がプログラムに入力またはロードされると、EngineBASICはそれを`ENDIF`に変換します。"
+
+#. [Beendet den mehrzeiligen IF-Befehl.]
+# bulk translation
+msgid "Ends a muli-line `IF` instruction."
+msgstr "マルチラインの `IF`命令を終了します。"
+
+#. [Führt den Zweig "ELSE" der Anweisung "IF" ein.]
+# bulk translation
+msgid "Introduces the `ELSE` branch of an `IF` instruction."
+msgstr "`IF`命令の`ELSE`ブランチを導入します。"
+
+#. [Beenden Sie das Programm.]
+# bulk translation
+msgid "Ends the program."
+msgstr "プログラムを終了します。"
+
+#. [Zeichnen Sie den Textbildschirm neu.]
+# bulk translation
+msgid "Redraw the text screen."
+msgstr "テキスト画面を再描画します。"
+
+#. [Überschreibt die Anzeige auf dem Bildschirm mit den im Textpuffer
+#. gespeicherten Zeichen.]
+# bulk translation
+msgid ""
+"Overwrites anything displayed on-screen with the characters stored in the "
+"text buffer."
+msgstr "画面に表示されているものを、テキストバッファに保存されている文字で上書きします。"
+
+#. [Löschen Sie das Programm und alle Variablen im Speicher.]
+# bulk translation
+msgid "Deletes the program in memory as well as all variables."
+msgstr "メモリ内のプログラムとすべての変数を削除します。"
+
+#. [Löschen Sie alle Variablen.]
+# bulk translation
+msgid "Deletes all variables."
+msgstr "すべての変数を削除します。"
+
+#. [Beenden Sie das Programm.]
+# bulk translation
+msgid "Halts the program."
+msgstr "プログラムを停止します。"
+
+#. [Mit dem Befehl `STOP` gestoppte Programme können mit` CONT` neu gestartet
+#. werden.]
+# bulk translation
+msgid "A program stopped by a `STOP` command can be resumed using `CONT`."
+msgstr "`STOP`コマンドで停止したプログラムは、`CONT`を使用して再開できます。"
+
+#. [Aktiviert oder deaktiviert den System- und Prozedurprofiler.]
+# bulk translation
+msgid "Enables or disables the system and procedure profiler."
+msgstr "システムおよびプロシージャプロファイラを有効または無効にします。"
+
+#. [Der Systemprofiler zeigt am Rand des Bildschirms eine Leiste an, in der
+#. die
+#. CPU-Zeit angezeigt wird, die für verschiedene Aufgaben in den Grafik- und
+#. Sound-Subsystemen aufgewendet wurde. Hilft bei der Ermittlung der Ursache
+#. für Systemüberlastungen, die zu Grafik- und Tonstörungen führen.]
+# bulk translation
+msgid ""
+"The system profiler shows a bar in the border of the screen indicating how "
+"much CPU time is spent on the various tasks of the grahpics and sound "
+"subsystems. It helps in determining the cause of system overloads that lead "
+"to graphics and/or sound glitches."
+msgstr ""
+"システムプロファイラーは、画面の境界にバーを表示し、グラフィックスおよびサウンドサブシステムのさまざまなタスクに費やされたCPU時間を示します。グラフィックやサウンドの不具合につながるシステムの過負荷の原因を特定するのに役立ちます。"
+
+#. [`PROFILE ON` aktiviert den Profiler und` PROFILE OFF` deaktiviert den
+#. Profiler.]
+# bulk translation
+msgid "`PROFILE ON` enables the profiler, `PROFILE OFF` disables it."
+msgstr "`PROFILE ON`はプロファイラーを有効にし、`PROFILE OFF`はプロファイラーを無効にします。"
+
+#. [`PROFILE ON` aktiviert auch einen Prozedurprofiler, mit dessen Hilfe die
+#. Anzahl der von jeder BASIC-Prozedur verwendeten CPU-Zyklen bestimmt werden
+#. kann. Nach dem Ausführen des Programms können Sie mit "PROFILELIST" die
+#. Ergebnisse anzeigen.]
+# bulk translation
+msgid ""
+"`PROFILE ON` also enables the procedure profiler that helps determine the "
+"number of CPU cycles used in each BASIC procedure. After the program has "
+"been run, the results can be viewed using `PROFILE LIST`."
+msgstr ""
+"`PROFILE "
+"ON`は、各BASICプロシージャで使用されるCPUサイクル数を決定するのに役立つプロシージャプロファイラも有効にします。プログラムの実行後、 "
+"`PROFILELIST`を使用して結果を表示できます。"
+
+#. [Sie können die System- und Prozedurprofilerstellung nicht einzeln ein- und
+#. ausschalten.]
+# bulk translation
+msgid ""
+"It is not possible to switch the system and procedure profiling on and off "
+"independently."
+msgstr "システムと手順のプロファイリングのオンとオフを個別に切り替えることはできません。"
+
+#. [Führen Sie das BASIC-Programm als untergeordneten Prozess aus.]
+# bulk translation
+msgid "Executes a BASIC program as a child process."
+msgstr "子プロセスとしてBASICプログラムを実行します。"
+
+#. [Der Name der auszuführenden BASIC-Programmdatei]
+# bulk translation
+msgid "name of the BASIC program file to be executed"
+msgstr "実行するBASICプログラムファイルの名前"
+
+#. [Programme, die über EXEC ausgeführt werden, werden in ihrem eigenen
+#. Programm und Variablenbereich ausgeführt und wirken sich nur in den
+#. folgenden Fällen auf das aufrufende Programm oder seine Variablen aus:]
+# bulk translation
+msgid ""
+"A program run via `EXEC` runs in its own program and variable space, and "
+"nothing it does affects the calling program or its variables, with the "
+"exception of the following:"
+msgstr ""
+"`EXEC`を介して実行されるプログラムは、独自のプログラムと変数スペースで実行され、次の場合を除いて、呼び出し元のプログラムまたはその変数に影響を与えることはありません。"
+
+#. [** Geöffnete Dateien * werden von übergeordneten und untergeordneten
+#. Programmen gemeinsam genutzt. Die Änderungen werden in beiden Programmen
+#. sichtbar.]
+# bulk translation
+msgid ""
+"* *Open files* are shared between the parent and child program. Any changes "
+"will be visible to both programs."
+msgstr "**開いているファイル*は親プログラムと子プログラムの間で共有されます。変更は両方のプログラムに表示されます。"
+
+#. [Der im * übergeordneten Programm * festgelegte * Fehlerhandler * wird
+#. durch
+#. einen Fehler im untergeordneten Programm ausgelöst, sofern er nicht vom
+#. untergeordneten Programm behandelt wird.]
+# bulk translation
+msgid ""
+"* *Error handlers* set in the parent program will be triggered by errors in "
+"the child program, unless they are handled by the child."
+msgstr "*親プログラムに設定された*エラーハンドラー*は、子プログラムで処理されない限り、子プログラムのエラーによってトリガーされます。"
+
+#. [Es gibt keine generalisierte Möglichkeit, Daten zwischen Elternprogrammen
+#. und untergeordneten Programmen zu teilen.]
+# from Google
+msgid ""
+"There is no generalized way to share data between parent and child program."
+msgstr "親プログラムと子プログラム間でデータを共有する一般化された方法はありません。"
+
+#. [Setzen Sie das angehaltene Programm fort.]
+# bulk translation
+msgid "Continues an interrupted program."
+msgstr "中断されたプログラムを続行します。"
+
+#. [Mit `CONT` kann die Ausführung eines Programms fortgesetzt werden, das
+#. durch den Befehl kbd: [Strg + C] oder` STOP` unterbrochen wurde. Bei
+#. automatischer Anpassung bei Programmunterbrechung werden das Textfenster
+#. und das gekachelte Hintergrundlayout zurückgesetzt.]
+# bulk translation
+msgid ""
+"`CONT` can be used to resume a program run that has been interrupted by "
+"kbd:[Ctrl+C] or by the `STOP` command. It will reset text window and tiled "
+"background layouts if they have been automatically adjusted when the program"
+" was interrupted."
+msgstr ""
+"`CONT`は、kbd:[Ctrl + C]または`"
+"STOP`コマンドによって中断されたプログラムの実行を再開するために使用できます。プログラムが中断されたときに自動的に調整された場合、テキストウィンドウとタイル状の背景レイアウトがリセットされます。"
+
+#. [Überprüfen Sie, ob Sie das Ende der Datei erreicht haben.]
+# bulk translation
+msgid "Checks whether the end of a file has been reached."
+msgstr "ファイルの終わりに到達したかどうかを確認します。"
+
+#. ["-1", wenn das Ende der Datei erreicht ist, andernfalls "0".]
+# bulk translation
+msgid "`-1` if the end of the file has been reached, `0` otherwise."
+msgstr "ファイルの終わりに達した場合は `-1`、それ以外の場合は`0`。"
+
+#. [Gibt die Länge der Datei in Bytes zurück.]
+# bulk translation
+msgid "Returns the length of a file in bytes."
+msgstr "ファイルの長さをバイト単位で返します。"
+
+#. [Dateilänge.]
+# bulk translation
+msgid "Length of file."
+msgstr "ファイルの長さ。"
+
+#. [Gibt die aktuelle Position in der Datei zurück.]
+# bulk translation
+msgid "Returns the current position within a file."
+msgstr "ファイル内の現在の位置を返します。"
+
+#. [Wo das nächste Byte gelesen oder geschrieben wird.]
+# bulk translation
+msgid "Position at which the next byte will be read or written."
+msgstr "次のバイトが読み取られるか書き込まれる位置。"
+
+#. [Gibt den nächsten Eintrag im geöffneten Verzeichnis zurück.]
+# bulk translation
+msgid "Returns the next entry of an open directory."
+msgstr "開いているディレクトリの次のエントリを返します。"
+
+#. [Gibt einen Verzeichniseintrag als Wert der Funktion zurück.]
+# bulk translation
+msgid "Returns the directory entry as the value of the function."
+msgstr "関数の値としてディレクトリエントリを返します。"
+
+#. [Wenn das Ende des Verzeichnisses erreicht ist, wird eine leere
+#. Zeichenfolge
+#. zurückgegeben.]
+# bulk translation
+msgid "Returns an empty string if the end of the directory has been reached."
+msgstr "ディレクトリの終わりに達した場合は、空の文字列を返します。"
+
+#. [Es gibt auch die Größe des Eintrags in "RET (0)" und "0" oder "1" in RET
+#. (1) zurück, je nachdem, ob der Eintrag das Verzeichnis selbst ist.]
+# bulk translation
+msgid ""
+"Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1) depending"
+" on whether the entry is a directory itself."
+msgstr ""
+"また、エントリがディレクトリ自体であるかどうかに応じて、エントリのサイズを「RET(0)」に返し、`0`または`1`をRET(1)に返します。"
+
+#. [Wenn `dir_num` nicht geöffnet ist oder das Verzeichnis nicht existiert,
+#. wird ein Fehler generiert.]
+# bulk translation
+msgid "An error is generated if `dir_num` is not open or not a directory."
+msgstr "`dir_num`が開いていないか、ディレクトリがない場合、エラーが生成されます。"
+
+#. [Gibt die aus der angegebenen Datei gelesene Zeichenfolge zurück.]
+# bulk translation
+msgid "Returns a string of characters read from a specified file."
+msgstr "指定されたファイルから読み取られた文字列を返します。"
+
+#. [Anzahl der zu lesenden Bytes]
+# bulk translation
+msgid "number of bytes to read"
+msgstr "読み取るバイト数"
+
+#. [Die aus der Datei gelesenen Daten.]
+# bulk translation
+msgid "Data read from file."
+msgstr "ファイルから読み取られたデータ。"
+
+#. [Bildschirm-E / A in eine Datei umleiten.]
+# bulk translation
+msgid "Redirect screen I/O to a file."
+msgstr "画面I / Oをファイルにリダイレクトします。"
+
+#. [Sie können "CMD" verwenden, um Standard-Textausgabe- oder -Eingabevorgänge
+#. in eine Datei umzuleiten.]
+# bulk translation
+msgid ""
+"`CMD` allows to redirect standard text output or input operations to files."
+msgstr "`CMD`を使用すると、標準のテキスト出力または入力操作をファイルにリダイレクトできます。"
+
+#. [Sie können die Umleitung deaktivieren, indem Sie die Dateinummer durch
+#. "AUS" ersetzen. `CMD OFF` schaltet sowohl die Eingangs- als auch die
+#. Ausgangsumleitung aus.]
+# bulk translation
+msgid ""
+"Redirection can be disabled by replacing the file number with `OFF`. `CMD "
+"OFF` turns off both input and output redirection."
+msgstr ""
+"ファイル番号を `OFF`に置き換えることでリダイレクトを無効にすることができます。`CMD "
+"OFF`は、入力リダイレクトと出力リダイレクトの両方をオフにします。"
+
+#. [Die Umleitung wird automatisch zurückgesetzt, wenn die umgeleitete Datei
+#. geschlossen wird (entweder explizit oder implizit durch Öffnen einer neuen
+#. Datei mit der aktuell verwendeten Dateinummer) oder wenn Sie zur
+#. Eingabeaufforderung zurückkehren.]
+# bulk translation
+msgid ""
+"Redirection will automatically be reset if a file redirected to is closed "
+"(either explicitly or implicitly, by opening a new file using the currently "
+"used file number), or when returning to the command prompt."
+msgstr ""
+"リダイレクト先のファイルが閉じられた場合（明示的または暗黙的に、現在使用されているファイル番号を使用して新しいファイルを開くことにより）、またはコマンドプロンプトに戻った場合、リダイレクトは自動的にリセットされます。"
+
+#. [Ändern Sie das aktuelle Verzeichnis.]
+# bulk translation
+msgid "Changes the current directory."
+msgstr "現在のディレクトリを変更します。"
+
+#. [Pfad zum neuen aktuellen Verzeichnis]
+# bulk translation
+msgid "path to the new current directory"
+msgstr "新しい現在のディレクトリへのパス"
+
+#. [Gibt das aktuelle Arbeitsverzeichnis zurück.]
+# bulk translation
+msgid "Returns the current working directory."
+msgstr "現在の作業ディレクトリを返します。"
+
+#. [Aktuelles Arbeitsverzeichnis.]
+# bulk translation
+msgid "Current working directory."
+msgstr "現在の作業ディレクトリ。"
+
+#. [Öffnen Sie eine Datei oder ein Verzeichnis.]
+# bulk translation
+msgid "Opens a file or directory."
+msgstr "ファイルまたはディレクトリを開きます。"
+
+#. [Der Name der Datei oder des Verzeichnisses]
+# bulk translation
+msgid "name of the file or directory"
+msgstr "ファイルまたはディレクトリの名前"
+
+#. [Zu verwendende Dateinummer [`0` ~` {MAX_USER_FILES_m1}`]]
+# bulk translation
+msgid "file number to be used [`0` to `{MAX_USER_FILES_m1}`]"
+msgstr "使用するファイル番号[`0`〜`{MAX_USER_FILES_m1}`]"
+
+#. [* `* INPUT *` öffnet die Datei zum Lesen. (Dies ist die
+#. Standardeinstellung, wenn kein Modus angegeben ist.)]
+# bulk translation
+msgid ""
+"* `*INPUT*` opens the file for reading. (This is the default if no mode is "
+"specified.)"
+msgstr "* `* INPUT *`は、読み取り用にファイルを開きます。（これは、モードが指定されていない場合のデフォルトです。）"
+
+#. [* `* OUTPUT *` Leere die Datei und öffne sie zum Schreiben.]
+# bulk translation
+msgid "* `*OUTPUT*` empties the file and opens it for writing."
+msgstr "* `* OUTPUT *`はファイルを空にし、書き込み用に開きます。"
+
+#. [* `* APPEND *` öffnet die Datei zum Schreiben und behält ihren Inhalt
+#. bei.]
+# bulk translation
+msgid "* `*APPEND*` opens the file for writing while keeping its content."
+msgstr "* `* APPEND *`は、内容を保持したまま、書き込み用にファイルを開きます。"
+
+#. [* `* DIRECTORY *` öffnet `file$` als Verzeichnis.]
+# bulk translation
+msgid "* `*DIRECTORY*` opens `file$` as a directory."
+msgstr "* `* DIRECTORY *`は `file$`をディレクトリとして開きます。"
+
+#. [Schließen Sie eine geöffnete Datei oder ein geöffnetes Verzeichnis.]
+# bulk translation
+msgid "Closes an open file or directory."
+msgstr "開いているファイルまたはディレクトリを閉じます。"
+
+#. [Legt den Speicherort für das nächste Lesen oder Schreiben fest.]
+# bulk translation
+msgid "Sets the file position for the next read or write."
+msgstr "次の読み取りまたは書き込みのファイル位置を設定します。"
+
+#. [Wo das nächste Lesen oder Schreiben stattfinden wird]
+# bulk translation
+msgid "position where the next read or write should occur"
+msgstr "次の読み取りまたは書き込みが発生する位置"
+
+#. [Wenn `file_num` nicht geöffnet ist oder der Vorgang fehlschlägt, generiert
+#. der Befehl einen Fehler.]
+# bulk translation
+msgid ""
+"The command will generate an error if `file_num` is not open or the "
+"operation is unsuccessful."
+msgstr "`file_num`が開いていないか、操作が失敗した場合、コマンドはエラーを生成します。"
+
+#. [Zeigt den Inhalt des aktuellen Verzeichnisses oder des angegebenen
+#. Verzeichnisses an.]
+# bulk translation
+msgid "Displays the contents of the current or a specified directory."
+msgstr "現在のディレクトリまたは指定したディレクトリの内容を表示します。"
+
+#. [Dateinamen oder Pfade können Platzhalterzeichen enthalten [Standard: Alle
+#. Dateien im aktuellen Verzeichnis]]
+# bulk translation
+msgid ""
+"a filename or path, may include wildcard characters [default: all files in "
+"the current directory]"
+msgstr "ファイル名またはパスには、ワイルドカード文字を含めることができます[デフォルト：現在のディレクトリ内のすべてのファイル]"
+
+#. [Erstellen Sie ein Verzeichnis.]
+# bulk translation
+msgid "Creates a directory."
+msgstr "ディレクトリを作成します。"
+
+#. [Pfad zum neuen Verzeichnis]
+# bulk translation
+msgid "path to the new directory"
+msgstr "新しいディレクトリへのパス"
+
+#. [Löschen Sie das Verzeichnis.]
+# bulk translation
+msgid "Deletes a directory."
+msgstr "ディレクトリを削除します。"
+
+#. [Der Name des zu löschenden Verzeichnisses]
+# bulk translation
+msgid "name of directory to be deleted"
+msgstr "削除するディレクトリの名前"
+
+#. [Platzhaltermuster werden nicht unterstützt.]
+# bulk translation
+msgid "Does not support wildcard patterns."
+msgstr "ワイルドカードパターンはサポートしていません。"
+
+#. [Benennen Sie die Datei oder das Verzeichnis um.]
+# bulk translation
+msgid "Changes the name of a file or directory."
+msgstr "ファイルまたはディレクトリの名前を変更します。"
+
+#. [Aktueller Dateiname]
+# bulk translation
+msgid "current file name"
+msgstr "現在のファイル名"
+
+#. [Neuer Dateiname]
+# bulk translation
+msgid "new file name"
+msgstr "新しいファイル名"
+
+#. [Löschen Sie die Datei.]
+# bulk translation
+msgid "Deletes a file."
+msgstr "ファイルを削除します。"
+
+#. [Warnung: `REMOVE` fordert keine Bestätigung an, bevor die angegebene Datei
+#. gelöscht wird.]
+# bulk translation
+msgid ""
+"WARNING: `REMOVE` does not ask for confirmation before deleting the "
+"specified file."
+msgstr "警告： `REMOVE`は、指定されたファイルを削除する前に確認を求めません。"
+
+#. [Warnung: Nicht mit `DELETE` verwechseln, wodurch eine Zeile aus einem
+#. Programm im Speicher gelöscht wird.]
+# bulk translation
+msgid ""
+"WARNING: Do not confuse with `DELETE`, which deletes lines from the program "
+"in memory."
+msgstr "警告：メモリ内のプログラムから行を削除する `DELETE`と混同しないでください。"
+
+#. [Zu löschende Dateien]
+# bulk translation
+msgid "file to be deleted"
+msgstr "削除するファイル"
+
+#. [Kopieren Sie die Datei.]
+# bulk translation
+msgid "Copies a file."
+msgstr "ファイルをコピーします。"
+
+#. [Zu kopierende Datei]
+# bulk translation
+msgid "file to be copied"
+msgstr "コピーするファイル"
+
+#. [Kopieren Sie die zu erstellende Datei]
+# bulk translation
+msgid "copy of the file to be created"
+msgstr "作成するファイルのコピー"
+
+#. [Vergleichen Sie zwei Dateien.]
+# from Google
+msgid "Compares two files."
+msgstr "2つのファイルを比較します。"
+
+#. [Der Name der ersten zu vergleichenden Datei]
+# bulk translation
+msgid "name of first file to compare"
+msgstr "比較する最初のファイルの名前"
+
+#. [Wenn beide Dateien gleich sind, ist der Rückgabewert "0". Andernfalls ist
+#. der Rückgabewert "-1" oder "1".]
+# bulk translation
+msgid ""
+"If both files are equal, the return value is `0`. Otherwise, the return "
+"value is `-1` or `1`."
+msgstr "両方のファイルが等しい場合、戻り値は`0`です。それ以外の場合、戻り値は `-1`または`1`です。"
+
+#. [Wenn die Dateien nicht gleich sind, wird das Vorzeichen des Ergebnisses
+#. durch das Vorzeichen der Differenz zwischen dem ersten Bytepaar bestimmt,
+#. wobei `file1$` und `file2$` unterschiedlich sind.]
+# bulk translation
+msgid ""
+"If the files are not equal, the sign of the result is determined by the sign"
+" of the difference between the first pair of bytes that differ in `file1$` "
+"and `file2$`."
+msgstr ""
+"ファイルが等しくない場合、結果の符号は、 `file1$`と `file2$`が異なる最初のバイトペア間の差の符号によって決定されます。"
+
+#. [Speichert einen Speicherbereich in einer Datei.]
+# bulk translation
+msgid "Saves an area of memory to a file."
+msgstr "メモリの領域をファイルに保存します。"
+
+#. [Name der Binärdatei]
+# from Google
+msgid "name of binary file"
+msgstr "バイナリファイルの名前"
+
+#. [Speicherstartadresse]
+# bulk translation
+msgid "memory start address"
+msgstr "メモリ開始アドレス"
+
+#. [Anzahl der zu speichernden Bytes]
+# bulk translation
+msgid "number of bytes to be saved"
+msgstr "保存するバイト数"
+
+#. [`BSAVE` verwendet 32-Bit-Speicherzugriff, wenn` addr` und` len` Vielfache
+#. von 4 sind, andernfalls 8-Bit-Zugriff.]
+# bulk translation
+msgid ""
+"`BSAVE` will use 32-bit memory accesses if `addr` and `len` are multiples of"
+" 4, and 8-bit accesses otherwise."
+msgstr ""
+"`BSAVE`は`addr`と`len`が4の倍数である場合は32ビットのメモリアクセスを使用し、それ以外の場合は8ビットのアクセスを使用します。"
+
+#. [Der Befehl "BSAVE" führt eine grundlegende Überprüfung der Integrität der
+#. angegebenen Parameter durch, kann jedoch aufgrund seiner Verwendung keine
+#. Systemstörungen vorhersagen. Bitte mit Vorsicht verwenden.]
+# bulk translation
+msgid ""
+"While the `BSAVE` command does a basic sanity check of the given parameters,"
+" it cannot predict any system malfunctions resulting from its use. Use with "
+"caution."
+msgstr ""
+"`BSAVE`コマンドは、指定されたパラメータの基本的な健全性チェックを実行しますが、その使用に起因するシステムの誤動作を予測することはできません。注意して使用してください。"
+
+#. [Laden Sie die Binärdatei in den Speicher.]
+# bulk translation
+msgid "Loads a binary file to memory."
+msgstr "バイナリファイルをメモリにロードします。"
+
+#. [Anzahl der Bytes zum Laden [Default: Gesamtdatei]]
+# from Google
+msgid "number of bytes to be loaded [default: whole file]"
+msgstr "ロードするバイト数[デフォルト：全体ファイル]"
+
+#. [`BLOAD` verwendet 32-Bit-Speicherzugriff, wenn` addr` und` len` Vielfache
+#. von 4 sind, andernfalls 8-Bit-Zugriff.]
+# bulk translation
+msgid ""
+"`BLOAD` will use 32-bit memory accesses if `addr` and `len` are multiples of"
+" 4, and 8-bit accesses otherwise."
+msgstr ""
+"`BLOAD`は`addr`と`len`が4の倍数である場合は32ビットのメモリアクセスを使用し、それ以外の場合は8ビットのアクセスを使用します。"
+
+#. [Der Befehl "BLOAD" führt eine grundlegende Überprüfung der Integrität der
+#. angegebenen Parameter durch, kann jedoch aufgrund seiner Verwendung keine
+#. Systemstörungen vorhersagen. Bitte mit Vorsicht verwenden.]
+# bulk translation
+msgid ""
+"While the `BLOAD` command does a basic sanity check of the given parameters,"
+" it cannot predict any system malfunctions resulting from its use. Use with "
+"caution."
+msgstr ""
+"`BLOAD`コマンドは、指定されたパラメータの基本的な健全性チェックを実行しますが、その使用に起因するシステムの誤動作を予測することはできません。注意して使用してください。"
+
+#. [Schreiben Sie den Inhalt der Datei auf den Bildschirm. Wenn der
+#. Bildschirmtext gedruckt wird, halten Sie an und warten Sie, bis die Taste
+#. gedrückt wird.]
+# bulk translation
+msgid ""
+"Writes the contents of a file to the screen. When a screen's worth of text "
+"has been printed, it pauses and waits for a key press."
+msgstr "ファイルの内容を画面に書き込みます。画面に相当するテキストが印刷されると、一時停止してキーが押されるのを待ちます。"
+
+#. [Dateiname]
+# bulk translation
+msgid "name of the file"
+msgstr "ファイルの名前"
+
+#. [Formatiert das angegebene Dateisystem.]
+# bulk translation
+msgid "Formats the specified file system."
+msgstr "指定されたファイルシステムをフォーマットします。"
+
+#. [WARNUNG: Dieser Befehl löscht alle im formatierten Dateisystem
+#. gespeicherten Dateien, einschließlich Systemdateien und gespeicherter
+#. Konfigurationen (falls vorhanden).]
+# bulk translation
+msgid ""
+"WARNING: This command will erase any files stored on the formatted file "
+"system, including system files and the saved configuration, if any."
+msgstr ""
+"警告：このコマンドは、システムファイルや保存された構成（存在する場合）など、フォーマットされたファイルシステムに保存されているすべてのファイルを消去します。"
+
+#. [Wichtig: Derzeit funktioniert die Formatierung des SD-Kartendateisystems
+#. nicht.]
+# bulk translation
+msgid "IMPORTANT: Formatting the SD card file system does not currently work."
+msgstr "重要：現在、SDカードファイルシステムのフォーマットは機能しません。"
+
+#. [Das SD-Kartenformat ist derzeit beschädigt. Verwenden Sie ein anderes
+#. Gerät, um die von der BASIC-Engine verwendete SD-Karte zu formatieren.]
+# bulk translation
+msgid ""
+"SD card formatting is currently broken; use another device to format SD "
+"cards for use with the BASIC Engine."
+msgstr "SDカードのフォーマットは現在壊れています。別のデバイスを使用して、BASICエンジンで使用するSDカードをフォーマットします。"
+
+#. [Gibt die Größe der Bilddatei und die Anzahl der Komponenten zurück.]
+# bulk translation
+msgid "Returns dimensions and component count of an image file."
+msgstr "画像ファイルのサイズとコンポーネント数を返します。"
+
+#. [Gibt die Breite in Pixel auf "RET (0)", die Höhe auf "RET (1)" und die
+#. Anzahl der Komponenten auf "RET (2)" zurück.]
+# bulk translation
+msgid ""
+"Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the "
+"number of components in `RET(2)`."
+msgstr "幅をピクセル単位で `RET(0)`に、高さを `RET(1)`に、コンポーネントの数を `RET(2)`に返します。"
+
+#. [Dieser Befehl funktioniert nicht mit PCX-Dateien.]
+# bulk translation
+msgid "This command does not work with PCX files."
+msgstr "このコマンドはPCXファイルでは機能しません。"
+
+#. [Ruft den Status des Gamecontrollers und des Cursor-Pads ab.]
+# bulk translation
+msgid "Get the state of the game controller(s) and cursor pad."
+msgstr "ゲームコントローラとカーソルパッドの状態を取得します。"
+
+#. [Sie können PAD () verwenden, um einen realen Gamecontroller oder einen
+#. "virtuellen" Controller abzufragen, der mit den Cursor- und
+#. Buchstabentasten auf Ihrer Tastatur simuliert wurde.]
+# bulk translation
+msgid ""
+"`PAD()` can be used to query actual game controllers, or a \"virtual\" "
+"controller simulated with cursor and letter keys on the keyboard."
+msgstr ""
+"`PAD()`を使用して、実際のゲームコントローラー、またはキーボードのカーソルキーと文字キーでシミュレートされた「仮想」コントローラーを照会できます。"
+
+#. [Die spezielle Controller-Nummer "0" gibt den kombinierten Status aller
+#. (realen und virtuellen) Controller zurück, wodurch das Schreiben von
+#. Programmen, die mit oder ohne Gamecontroller funktionieren, vereinfacht
+#. wird.]
+# bulk translation
+msgid ""
+"The special controller number `0` returns the combined state of all (real "
+"and virtual) controllers, making it easier to write programs that work with "
+"and without a game controller."
+msgstr ""
+"特別なコントローラー番号 "
+"`0`は、すべての（実数と仮想）コントローラーの結合状態を返し、ゲームコントローラーの有無にかかわらず動作するプログラムを簡単に作成できるようにします。"
+
+#. [Ein Bitfeld, das den Status der angeforderten Controller-Schaltfläche
+#. darstellt. Dieser Wert ist die Summe eines der folgenden Bitwerte:]
+# bulk translation
+msgid ""
+"Bit field representing the button states of the requested controller(s). The"
+" value is the sum of any of the following bit values:"
+msgstr "要求されたコントローラーのボタンの状態を表すビットフィールド。この値は、次のビット値のいずれかの合計です。"
+
+#. [ Joystick / Joypad-Controller]
+# bulk translation
+msgid " Joystick/joypad Controller "
+msgstr " ジョイスティック/ジョイパッドコントローラー "
+
+#. [ Tastatur]
+# bulk translation
+msgid " Keyboard"
+msgstr " キーボード"
+
+#. [ kbd: Taste [◄]]
+# bulk translation
+msgid " kbd:[&#x25c4;] button "
+msgstr " kbd:[◄]ボタン "
+
+#. [ kbd: Taste [▼]]
+# bulk translation
+msgid " kbd:[&#x25bc;] button "
+msgstr " kbd:[▼]ボタン "
+
+#. [ kbd: Taste [►]]
+# bulk translation
+msgid " kbd:[&#x25ba;] button "
+msgstr " kbd:[►]ボタン "
+
+#. [ kbd: Taste [▲]]
+# bulk translation
+msgid " kbd:[&#x25b2;] button "
+msgstr " kbd:[▲]ボタン "
+
+#. [ kbd: Schaltfläche [Start]]
+# bulk translation
+msgid " kbd:[Start] button "
+msgstr " kbd:[スタート]ボタン "
+
+#. [ Unzutreffend]
+# bulk translation
+msgid " n/a"
+msgstr " 該当なし"
+
+#. [ kbd: Taste [□]]
+# bulk translation
+msgid " kbd:[&#x25a1;] button "
+msgstr " kbd:[□]ボタン "
+
+#. [ kbd: [Z] -Taste]
+# bulk translation
+msgid " kbd:[Z] key"
+msgstr " kbd:[Z]キー"
+
+#. [ kbd: Taste [✕]]
+# bulk translation
+msgid " kbd:[&#x2715;] button "
+msgstr " kbd:[✕]ボタン "
+
+#. [ kbd: [X] -Taste]
+# bulk translation
+msgid " kbd:[X] key"
+msgstr " kbd:[X]キー"
+
+#. [ kbd: Schaltfläche [○]]
+# bulk translation
+msgid " kbd:[&#x25cb;] button "
+msgstr " kbd:[○]ボタン "
+
+#. [ kbd: [S] -Taste]
+# bulk translation
+msgid " kbd:[S] key"
+msgstr " kbd:[S]キー"
+
+#. [ kbd: Taste [△]]
+# bulk translation
+msgid " kbd:[&#x25b3;] button "
+msgstr " kbd:[△]ボタン "
+
+#. [ kbd: [A] -Taste]
+# bulk translation
+msgid " kbd:[A] key"
+msgstr " kbd:[A]キー"
+
+#. [ kbd: Taste [R1]]
+# bulk translation
+msgid " kbd:[R1] button "
+msgstr " kbd:[R1]ボタン "
+
+#. [ kbd: Taste [L1]]
+# bulk translation
+msgid " kbd:[L1] button "
+msgstr " kbd:[L1]ボタン "
+
+#. [ kbd: [R2] -Taste]
+# bulk translation
+msgid " kbd:[R2] button "
+msgstr " kbd:[R2]ボタン "
+
+#. [ kbd: Taste [L2]]
+# bulk translation
+msgid " kbd:[L2] button "
+msgstr " kbd:[L2]ボタン "
+
+#. [Abhängig vom "Zustand" werden diese Bitwerte gesetzt, wenn jede Taste
+#. gerade gedrückt ("0") oder neu gedrückt ("1") wird.]
+# bulk translation
+msgid ""
+"Depending on `state`, these bit values are set if the respective buttons are"
+" currently pressed (`0`) or newly pressed (`1`)."
+msgstr ""
+"`state`に応じて、これらのビット値は、それぞれのボタンが現在押されているか（`0`）、または新しく押された（ `1`）場合に設定されます。"
+
+#. [Wenn `state`` 1` ist, wird ein zusätzlicher Wert zurückgegeben.]
+# bulk translation
+msgid "If `state` is `1`, additional values are returned:"
+msgstr "`state`が`1`の場合、追加の値が返されます。"
+
+#. [* `RET (1)` enthält die neu freigegebene Taste.]
+# bulk translation
+msgid "* `RET(1)` contains buttons that are newly released,"
+msgstr "* `RET(1)`には、新しくリリースされたボタンが含まれています。"
+
+#. [* `RET (2)` enthält den aktuellen Schaltflächenstatus.]
+# bulk translation
+msgid "* `RET(2)` contains the current button state."
+msgstr "* `RET(2)`には、現在のボタンの状態が含まれます。"
+
+#. [Warnung: Wenn Sie "PAD ()" verwenden, um ein Schaltflächenereignis
+#. abzurufen ("state" ist nicht "0"), interagiert es mit der
+#. Ereignisbehandlung über "ONPAD". Wir empfehlen nicht, beide gleichzeitig zu
+#. verwenden.]
+# bulk translation
+msgid ""
+"WARNING: Using `PAD()` to retrieve button events (`state` is not `0`) "
+"interacts with the event handling via `ON PAD`. It is not recommended to use"
+" both at the same time."
+msgstr ""
+"警告： `PAD()`を使用してボタンイベントを取得すると（ `state`は`0`ではありません）、 "
+"`ON PAD`を介してイベント処理と相互作用します。両方を同時に使用することはお勧めしません。"
+
+#. [Ruft den Status der angegebenen Tastaturtaste ab.]
+# bulk translation
+msgid "Get the state of the specified keyboard key."
+msgstr "指定されたキーボードキーの状態を取得します。"
+
+#. [Die Details des Schlüsselcodes sind in der folgenden Tabelle aufgeführt.
+#. Die Verfügbarkeit jedes Schlüssels hängt von der Engine BASIC-Plattform
+#. ab.]
+# bulk translation
+msgid ""
+"The key codes are detailed in the table below. Availability of each key "
+"depends on the Engine BASIC platform."
+msgstr "キーコードの詳細を以下の表に示します。各キーの可用性は、EngineBASICプラットフォームによって異なります。"
+
+#. [ Schlüssel]
+# bulk translation
+msgid " Key\t\t\t"
+msgstr " キー\t\t\t"
+
+#. [ Schlüsselcode]
+# bulk translation
+msgid " Key code\t"
+msgstr " キーコード\t"
+
+#. [ Hinweis]
+# bulk translation
+msgid " Notes"
+msgstr " ノート"
+
+#. [ kbd: [Links Alt]]
+# bulk translation
+msgid " kbd:[Left Alt]\t"
+msgstr " kbd:[左Alt]\t"
+
+#. [ kbd: [Linke Strg]]
+# bulk translation
+msgid " kbd:[Left Ctrl]\t"
+msgstr " kbd:[左Ctrl]\t"
+
+#. [ kbd: [Rechts Alt]]
+# bulk translation
+msgid " kbd:[Right Alt]\t"
+msgstr " kbd:[右Alt]\t"
+
+#. [ kbd: [Rechte Strg]]
+# bulk translation
+msgid " kbd:[Right Ctrl]\t"
+msgstr " kbd:[右Ctrl]\t"
+
+#. [ kbd: [Linke GUI]]
+# bulk translation
+msgid " kbd:[Left GUI]\t"
+msgstr " kbd:[左GUI]\t"
+
+#. [ kbd: [Rechte GUI]]
+# bulk translation
+msgid " kbd:[Right GUI]\t"
+msgstr " kbd:[右GUI]\t"
+
+#. [ kbd: [NumLock]]
+# bulk translation
+msgid " kbd:[NumLock]\t\t"
+msgstr " kbd:[NumLock]\t\t"
+
+#. [ kbd: [Bildlaufsperre]]
+# bulk translation
+msgid " kbd:[Scroll Lock]\t"
+msgstr " kbd:[スクロールロック]\t"
+
+#. [KBD: [Cap Lock]]
+# from Argos
+msgid " kbd:[Caps Lock]\t"
+msgstr " kbd:[キャップロック]"
+
+#. [ kbd: [Home]]
+# bulk translation
+msgid " kbd:[Home]\t\t"
+msgstr " kbd:[ホーム]\t\t"
+
+#. [KBD: "groß"]
+# from Google
+msgid " kbd:[Romaji]\t\t"
+msgstr " kbd:[Romaji]"
+
+#. [ kbd: [App]]
+# bulk translation
+msgid " kbd:[App]\t\t"
+msgstr " kbd:[アプリ]\t\t"
+
+#. [ kbd: [Henkan]]
+# bulk translation
+msgid " kbd:[Henkan]\t\t"
+msgstr " kbd:[ヘンカン]\t\t"
+
+#. [ kbd: [Muhenkan]]
+# bulk translation
+msgid " kbd:[Muhenkan]\t"
+msgstr " kbd:[ムヘンカン]\t"
+
+#. [ kbd: [Bild auf]]
+# bulk translation
+msgid " kbd:[Page Up]\t\t"
+msgstr " kbd:[ページアップ]\t\t"
+
+#. [KBD: [Seite nach unten]]
+# from Argos
+msgid " kbd:[Page Down]\t"
+msgstr " kbd:[ページダウン]"
+
+#. [ kbd: [Pfeil nach rechts]]
+# bulk translation
+msgid " kbd:[Right Arrow]\t"
+msgstr " kbd:[右矢印]\t"
+
+#. [ kbd: [Pfeil nach unten]]
+# bulk translation
+msgid " kbd:[Down Arrow]\t"
+msgstr " kbd:[下矢印]\t"
+
+#. [ kbd: [tab]]
+# bulk translation
+msgid " kbd:[Tab]\t\t"
+msgstr " kbd:[タブ]\t\t"
+
+#. [ kbd: [Rücktaste]]
+# bulk translation
+msgid " kbd:[Backspace]\t"
+msgstr " kbd:[バックスペース]\t"
+
+#. [ kbd: [Leerzeichen]]
+# bulk translation
+msgid " kbd:[Space]\t\t"
+msgstr " kbd:[スペース]\t\t"
+
+#. [ Tastatur kbd: [=]]
+# bulk translation
+msgid " Keypad kbd:[=]\t"
+msgstr " キーパッドkbd:[=]\t"
+
+#. [ Tastatur kbd: [Enter]]
+# bulk translation
+msgid " Keypad kbd:[Enter]\t"
+msgstr " キーパッドkbd:[Enter]\t"
+
+#. [ Tastatur kbd: [0]]
+# bulk translation
+msgid " Keypad kbd:[0]\t"
+msgstr " キーパッドkbd:[0]\t"
+
+#. [ Tastatur kbd: [1]]
+# bulk translation
+msgid " Keypad kbd:[1]\t"
+msgstr " キーパッドkbd:[1]\t"
+
+#. [ Tastatur kbd: [2]]
+# bulk translation
+msgid " Keypad kbd:[2]\t"
+msgstr " キーパッドkbd:[2]\t"
+
+#. [ Tastatur kbd: [3]]
+# bulk translation
+msgid " Keypad kbd:[3]\t"
+msgstr " キーパッドkbd:[3]\t"
+
+#. [ Tastatur kbd: [4]]
+# bulk translation
+msgid " Keypad kbd:[4]\t"
+msgstr " キーパッドkbd:[4]\t"
+
+#. [ Tastatur kbd: [5]]
+# bulk translation
+msgid " Keypad kbd:[5]\t"
+msgstr " キーパッドkbd:[5]\t"
+
+#. [ Tastatur kbd: [6]]
+# bulk translation
+msgid " Keypad kbd:[6]\t"
+msgstr " キーパッドkbd:[6]\t"
+
+#. [ Tastatur kbd: [7]]
+# bulk translation
+msgid " Keypad kbd:[7]\t"
+msgstr " キーパッドkbd:[7]\t"
+
+#. [ Tastatur kbd: [8]]
+# bulk translation
+msgid " Keypad kbd:[8]\t"
+msgstr " キーパッドkbd:[8]\t"
+
+#. [ Tastatur kbd: [9]]
+# bulk translation
+msgid " Keypad kbd:[9]\t"
+msgstr " キーパッドkbd:[9]\t"
+
+#. [ Tastatur kbd: [*]]
+# bulk translation
+msgid " Keypad kbd:[*]\t"
+msgstr " キーパッドkbd:[*]\t"
+
+#. [ Tastatur kbd: [+]]
+# bulk translation
+msgid " Keypad kbd:[+]\t"
+msgstr " キーパッドkbd:[+]\t"
+
+#. [ Tastatur kbd: [,]]
+# bulk translation
+msgid " Keypad kbd:[,]\t"
+msgstr " キーパッドkbd:[、]\t"
+
+#. [ Nicht verfügbar für brasilianische Tastatur, SDL]
+# bulk translation
+msgid " Brazilian keyboard, not available on SDL"
+msgstr " ブラジルのキーボード、SDLでは使用できません"
+
+#. [ Tastatur kbd: [-]]
+# bulk translation
+msgid " Keypad kbd:[-]\t"
+msgstr " キーパッドkbd:[-]\t"
+
+#. [ Tastatur kbd: [. ]]]
+# bulk translation
+msgid " Keypad kbd:[.]\t"
+msgstr " キーパッドkbd:[。]\t"
+
+#. [ Tastatur kbd: [/]]
+# bulk translation
+msgid " Keypad kbd:[/]\t"
+msgstr " キーパッドkbd:[/]\t"
+
+#. [ kbd: [Macht]]
+# bulk translation
+msgid " kbd:[Power]\t\t"
+msgstr " kbd:[パワー]\t\t"
+
+#. [Die Tastencodes sind fest und werden durch das konfigurierte
+#. Tastaturlayout
+#. nicht geändert.]
+# bulk translation
+msgid ""
+"Key codes are fixed and do not change with the configured keyboard layout."
+msgstr "キーコードは固定されており、構成されたキーボードレイアウトによって変更されません。"
+
+#. [* Nicht alle auf internationalen (insbesondere japanischen) Tastaturen
+#. verfügbaren Tasten sind auf allen Plattformen korrekt zugeordnet.]
+# bulk translation
+msgid ""
+"* Not all keys available on international (especially Japanese) keyboard are"
+" correctly mapped on all platforms."
+msgstr "*国際（特に日本語）キーボードで使用できるすべてのキーが、すべてのプラットフォームで正しくマッピングされているわけではありません。"
+
+#. []Schlüssel.]
+# bulk translation
+msgid "] key."
+msgstr "]キー。"
+
+#. [* Tastaturereignisverarbeitung Ähnlich wie << Pad >> für Game Pad Input
+#. ist derzeit nein.]
+# from Google
+msgid ""
+"* There is currently no keyboard event handling similar to <<ON PAD>> for "
+"game pad input."
+msgstr "*ゲームパッド入力のための<<ON PAD>>に似たキーボードイベント処理は現在ありません。"
+
+#. [Lesen Sie die Zeichen von der Tastatur.]
+# bulk translation
+msgid "Reads a character from the keyboard."
+msgstr "キーボードから文字を読み取ります。"
+
+#. [Gibt entweder zurück]
+# bulk translation
+msgid "Returns either"
+msgstr "どちらかを返します"
+
+#. [* Leere Zeichenfolge, wenn keine Tastatureingabe vorhanden ist,]
+# bulk translation
+msgid "* an empty string if there is no keyboard input,"
+msgstr "*キーボード入力がない場合は空の文字列、"
+
+#. [* 1 Zeichenfolge für normale Schlüssel,]
+# bulk translation
+msgid "* a single-character string for regular keys,"
+msgstr "*通常のキーの場合は1文字の文字列、"
+
+#. [* Zweistellige Zeichenfolge für erweiterte Schlüssel.]
+# bulk translation
+msgid "* a two-character string for extended keys."
+msgstr "*拡張キーの場合は2文字の文字列。"
+
+#. ["Erweiterte Tasten" sind Tasten, die nicht über die allgemeine ASCII-
+#. Darstellung verfügen, z. B. Cursortasten und Funktionstasten.]
+# bulk translation
+msgid ""
+"An \"extended key\" is a key that does not have a common ASCII "
+"representation, such as cursor or function keys."
+msgstr "「拡張キー」とは、カーソルキーやファンクションキーなど、一般的なASCII表現を持たないキーです。"
+
+#. [Der "up" -Wert des Eingabegeräts.]
+# bulk translation
+msgid "Value of the \"up\" direction for input devices."
+msgstr "入力デバイスの「上」方向の値。"
+
+#. [Der Wert in der rechten Richtung des Eingabegeräts.]
+# from Google
+msgid "Value of the \"right\" direction for input devices."
+msgstr "入力装置の「右」方向の値。"
+
+#. [Der "linke" Wert des Eingabegeräts.]
+# bulk translation
+msgid "Value of the \"left\" direction for input devices."
+msgstr "入力デバイスの「左」方向の値。"
+
+#. [Liest ein Zeichen von der Tastatur und gibt diese Nummer zurück.]
+# bulk translation
+msgid "Reads a character from the keyboard and returns its numeric value."
+msgstr "キーボードから文字を読み取り、その数値を返します。"
+
+#. [Schlüsselcode [`0` bis` 65535`]]
+# bulk translation
+msgid "Key code [`0` to `65535`]"
+msgstr "キーコード[`0`から`65535`]"
+
+#. [Legt den Status des generischen E / A-Pins fest.]
+# bulk translation
+msgid "Sets the state of a general-purpose I/O pin."
+msgstr "汎用I / Oピンの状態を設定します。"
+
+#. [Portnummer [`0` bis` 7`]]
+# bulk translation
+msgid "port number [`0` to `7`]"
+msgstr "ポート番号[`0`から`7`]"
+
+#. [PIN-Nummer [`0` bis` 15` (ESP8266) oder` 31` (H3)]]
+# bulk translation
+msgid "pin number [`0` to `15` (ESP8266) or `31` (H3)]"
+msgstr "ピン番号[`0`から`15`（ESP8266）または `31`（H3）]"
+
+#. [Pin-Status ["0" für "niedrig", andere für "hoch"]]
+# bulk translation
+msgid "pin state [`0` for \\\"low\\\", anything else for \\\"high\\\"]"
+msgstr "ピンの状態[「低」の場合は`0`、「高」の場合はその他]"
+
+#. [* Dieser Befehl ist nur auf ESP8266- und H3-Plattformen implementiert.]
+# bulk translation
+msgid "* This command is only implemented on the ESP8266 and H3 platforms."
+msgstr "*このコマンドは、ESP8266およびH3プラットフォームでのみ実装されています。"
+
+#. [* Auf der ESP8266-Plattform ermöglicht "GPOUT" nur den Zugriff auf I2C-E /
+#. A-Extender-Pins.]
+# bulk translation
+msgid ""
+"* On the ESP8266 platform, `GPOUT` allows access to pins on the I2C I/O "
+"extender only."
+msgstr "* ESP8266プラットフォームでは、`GPOUT`は、I2C I / Oエクステンダーのピンへのアクセスのみを許可します。"
+
+#. [Stellen Sie den Modus der generischen E / A-Pin ein.]
+# from Google
+msgid "Sets the mode of a general-purpose I/O pin."
+msgstr "汎用のI / Oピンのモードを設定します。"
+
+#. [PIN-Nummer [`0` bis` 31`]]
+# bulk translation
+msgid "pin number [`0` to `31`]"
+msgstr "ピン番号[`0`から`31`]"
+
+#. [Pin-Modus [`0` bis` 7`]]
+# bulk translation
+msgid "pin mode [`0` to `7`]"
+msgstr "ピンモード[`0`から`7`]"
+
+#. [* Dieser Befehl ist nur auf der H3-Plattform implementiert.]
+# bulk translation
+msgid "* This command is only implemented on the H3 platform."
+msgstr "*このコマンドはH3プラットフォームでのみ実装されています。"
+
+#. [* Wenn der "Modus" -Wert "0" oder "1" ist, werden die Pins als generische
+#. Ein- bzw. Ausgänge konfiguriert. Ein Wert von "7" deaktiviert den Pin.]
+# bulk translation
+msgid ""
+"* A `mode` value of `0` or `1` configures the pin as a general-purpose input"
+" or output, respectively. A value of `7` disables the pin."
+msgstr "* `mode`値が`0`または `1`の場合、ピンはそれぞれ汎用入力または出力として構成されます。`7`の値はピンを無効にします。"
+
+#. [* Weitere MODE-Funktionen finden Sie in Allwinner H3-Datenblatt, 3.2 (GPIO
+#. Multiplexing-Funktion).]
+# from Google
+msgid ""
+"* For the functions of other modes, consult the Allwinner H3 datasheet, "
+"chapter 3.2 (\"GPIO Multiplexing Functions\")."
+msgstr "*他のモードの機能については、Allwinner H3データシート、3.2（「GPIO多重化機能」）を参照してください。"
+
+#. [* WARNUNG: Eine unsachgemäße Verwendung dieses Befehls kann das System und
+#. die angeschlossenen Geräte dauerhaft beschädigen.]
+# bulk translation
+msgid ""
+"* WARNING: Improper use of this command can cause permanent damage to the "
+"system and/or attached devices."
+msgstr "*警告：このコマンドを不適切に使用すると、システムや接続されているデバイスに恒久的な損傷を与える可能性があります。"
+
+#. [Senden Sie Daten an das I2C-Gerät.]
+# bulk translation
+msgid "Sends data to an I2C device."
+msgstr "I2Cデバイスにデータを送信します。"
+
+#. [I2C-Adresse [`0` bis`$7F`]]
+# bulk translation
+msgid "I2C address [`0` to `$7F`]"
+msgstr "I2Cアドレス[`0`から`$ 7F`]"
+
+#. [Zu sendende Daten]
+# bulk translation
+msgid "data to be transmitted"
+msgstr "送信するデータ"
+
+#. [Statuscode senden.]
+# from Google
+msgid "Status code of the transmission."
+msgstr "送信のステータスコード。"
+
+#. [Fordern Sie Daten von einem I2C-Gerät an.]
+# bulk translation
+msgid "Request data from I2C device."
+msgstr "I2Cデバイスからデータを要求します。"
+
+#. [Anzahl der zu empfangenden Bytes]
+# bulk translation
+msgid "number of bytes to be received"
+msgstr "受信するバイト数"
+
+#. [Gibt die empfangenen Daten als Wert des Funktionsaufrufs zurück.]
+# bulk translation
+msgid "Returns the received data as the value of the function call."
+msgstr "受信したデータを関数呼び出しの値として返します。"
+
+#. [Außerdem gibt `RET (0)` den Sendestatuscode zurück.]
+# bulk translation
+msgid "Also returns the status code of the outward transmission in `RET(0)`."
+msgstr "また、 `RET(0)`で送信のステータスコードを返します。"
+
+#. [Wenn `out_data` eine leere Zeichenfolge ist, werden vor der
+#. Leseanforderung
+#. keine Daten gesendet.]
+# bulk translation
+msgid ""
+"If `out_data` is an empty string, no data is sent before the read request."
+msgstr "`out_data`が空の文字列の場合、読み取り要求の前にデータは送信されません。"
+
+#. [Schreiben Sie Bytes in die serielle Schnittstelle.]
+# bulk translation
+msgid "Writes a byte to the serial port."
+msgstr "シリアルポートにバイトを書き込みます。"
+
+#. [Warnung: Dieser Befehl wird möglicherweise in Zukunft umbenannt, um die
+#. Verschmutzung des Namespace zu verringern.]
+# bulk translation
+msgid ""
+"WARNING: This command may be renamed in the future to reduce namespace "
+"pollution."
+msgstr "警告：このコマンドは、名前空間の汚染を減らすために、将来名前が変更される可能性があります。"
+
+#. [Zu schreibende Bytes]
+# bulk translation
+msgid "byte to be written"
+msgstr "書き込まれるバイト"
+
+#. [Ändern Sie die Konfiguration der seriellen Schnittstelle.]
+# bulk translation
+msgid "Changes the serial port configuration."
+msgstr "シリアルポートの構成を変更します。"
+
+#. [Warnung: Dieser Befehl wird möglicherweise in Zukunft umbenannt, um die
+#. Verschmutzung des Namespace zu verringern.]
+# bulk translation
+msgid ""
+"WARNING: This command is likely to be renamed in the future to reduce "
+"namespace pollution."
+msgstr "警告：このコマンドは、名前空間の汚染を減らすために、将来名前が変更される可能性があります。"
+
+#. [Baudrate [`0` bis` 921600`]]
+# bulk translation
+msgid "baud rate [`0` to `921600`]"
+msgstr "ボーレート[`0`から`921600`]"
+
+#. [Flag für die serielle Schnittstelle]
+# bulk translation
+msgid "serial port flags"
+msgstr "シリアルポートフラグ"
+
+#. [Die Bedeutung von "Flags" wird durch den "Enum" -Wert des Arduino-Kerns
+#. bestimmt und kann nicht als vertrauenswürdig eingestuft werden, um die
+#. Stabilität aufrechtzuerhalten.]
+# bulk translation
+msgid ""
+"The meaning of `flags` is determined by `enum` values in the Arduino core "
+"and cannot be relied on to remain stable."
+msgstr "`flags`の意味は、Arduinoコアの`enum`値によって決定され、安定性を維持するために信頼することはできません。"
+
+#. [Liest den Status von Allzweck-E / A-Pins.]
+# bulk translation
+msgid "Reads the state of a general-purpose I/O pin."
+msgstr "汎用I / Oピンの状態を読み取ります。"
+
+#. [PIN-Nummer [`0` bis` 15`]]
+# bulk translation
+msgid "pin number [`0` to `15`]"
+msgstr "ピン番号[`0`から`15`]"
+
+#. [Pin-Status: "0" für niedrig, "1" für hoch.]
+# bulk translation
+msgid "State of pin: `0` for low, `1` for high."
+msgstr "ピンの状態：ローの場合は`0`、ハイの場合は`1`。"
+
+#. [* Diese Funktion ist nur auf ESP8266- und H3-Plattformen implementiert.]
+# bulk translation
+msgid "* This function is only implemented on the ESP8266 and H3 platforms."
+msgstr "*この機能は、ESP8266およびH3プラットフォームでのみ実装されています。"
+
+#. [* Auf der ESP8266-Plattform ermöglicht GPIN () nur den Zugriff auf I2C-E /
+#. A-Extender-Pins.]
+# bulk translation
+msgid ""
+"* On the ESP8266 platform, `GPIN()` allows access to pins on the I2C I/O "
+"extender only."
+msgstr "* ESP8266プラットフォームでは、 `GPIN()`はI2C I / Oエクステンダーのピンへのアクセスのみを許可します。"
+
+#. [Lesen Sie den Wert vom Analogeingangspin ab.]
+# bulk translation
+msgid "Reads value from the analog input pin."
+msgstr "アナログ入力ピンから値を読み取ります。"
+
+#. [Der gelesene Analogwert.]
+# bulk translation
+msgid "Analog value read."
+msgstr "読み取ったアナログ値。"
+
+#. [Lesen Sie die Bytes von der seriellen Schnittstelle.]
+# bulk translation
+msgid "Reads bytes from the serial port."
+msgstr "シリアルポートからバイトを読み取ります。"
+
+#. [Datenbyte oder "-1" -Byte, wenn keine Daten vorhanden sind.]
+# from Google
+msgid "Byte of data read, or `-1` if there was no data available."
+msgstr "データのバイト、またはデータがない場合は `-1`のバイト。"
+
+#. [Überprüfen Sie die an der seriellen Schnittstelle verfügbaren Bytes.]
+# bulk translation
+msgid "Checks for available bytes on the serial port."
+msgstr "シリアルポートで使用可能なバイトをチェックします。"
+
+#. [Die Anzahl der Bytes, die gelesen werden können.]
+# bulk translation
+msgid "Number of bytes available to read."
+msgstr "読み取ることができるバイト数。"
+
+#. [Sendet Daten an das SPI-Gerät.]
+# bulk translation
+msgid "Sends data to an SPI device."
+msgstr "SPIデバイスにデータを送信します。"
+
+#. [Konfigurieren Sie den SPI-Controller.]
+# bulk translation
+msgid "Configures the SPI controller."
+msgstr "SPIコントローラーを構成します。"
+
+#. [Datenbitreihenfolge [`0` = LSB zuerst,` 1` = MSB zuerst]]
+# bulk translation
+msgid "data bit order [`0` = LSB first, `1` = MSB first]"
+msgstr "データビット順序[`0` = LSBファースト、`1` = MSBファースト]"
+
+#. [Übertragungsfrequenz (Hz)]
+# bulk translation
+msgid "transfer frequency in Hz"
+msgstr "転送周波数（Hz）"
+
+#. [SPI-Modus [`0` bis` 3`]]
+# bulk translation
+msgid "SPI mode [`0` to `3`]"
+msgstr "SPIモード[`0`から`3`]"
+
+#. [Sendet und empfängt Daten an und von SPI-Geräten.]
+# bulk translation
+msgid "Send and receive data to and from an SPI device."
+msgstr "SPIデバイスとの間でデータを送受信します。"
+
+#. [Gibt eine Zeichenfolge zurück, die die empfangenen Daten mit der gleichen
+#. Länge wie out$enthält.]
+# bulk translation
+msgid ""
+"Returns a string containing the received data that is of the same length as "
+"out$."
+msgstr "out$と同じ長さの受信データを含む文字列を返します。"
+
+#. [Gibt den Sinus des angegebenen Winkels zurück.]
+# bulk translation
+msgid "Returns the sine of a specified angle."
+msgstr "指定された角度の正弦を返します。"
+
+#. [Winkel im Bogenmaß dargestellt]
+# bulk translation
+msgid "an angle expressed in radians"
+msgstr "ラジアンで表される角度"
+
+#. ["Winkel" Sinus]
+# from Google
+msgid "Sine of `angle`."
+msgstr "「角度」の正弦"
+
+#. [Gibt den Cosinus des angegebenen Winkels zurück.]
+# bulk translation
+msgid "Returns the cosine of a specified angle."
+msgstr "指定された角度のコサインを返します。"
+
+#. ["Winkel" Cosinus]
+# from Google
+msgid "Cosine of `angle`."
+msgstr "「角度」の余弦"
+
+#. [Gibt _e_ in der angegebenen Potenz zurück. Wobei _e_ die Basis des
+#. natürlichen Logarithmus ist.]
+# bulk translation
+msgid ""
+"Returns _e_ raised to a specified power, where _e_ is the base of natural "
+"logarithms."
+msgstr "_e_を指定された累乗で返します。ここで、_e_は自然対数の底です。"
+
+#. [Exponentialwert von `pow`.]
+# bulk translation
+msgid "Exponential value of `pow`."
+msgstr "`pow`の指数値。"
+
+#. [Arktangensfunktion.]
+# bulk translation
+msgid "Arc tangent function."
+msgstr "アークタンジェント関数。"
+
+#. [`ATN ()` berechnet den Hauptwert des Arkustangens von` x`. Dies ist der
+#. Wert, bei dem die Tangente "x" ist.]
+# bulk translation
+msgid ""
+"`ATN()` calculates the principal value of the arc tangent of `x`; that is "
+"the value whose tangent is `x`."
+msgstr "`ATN()`は `x`のアークタンジェントの主値を計算します。これは、タンジェントが `x`である値です。"
+
+#. [Hauptwert (Bogenmaß) des Arkustangens von "x".]
+# bulk translation
+msgid "The principal value of the arc tangent of `x` in radians."
+msgstr "`x`のアークタンジェントの主値（ラジアン）。"
+
+#. [Arkustangensfunktion zweier Variablen.]
+# bulk translation
+msgid "Arc tangent function of two variables."
+msgstr "2つの変数のアークタンジェント関数。"
+
+#. [Berechnen Sie den Hauptwert der Bogen-Tangente von "y" / "x" unter
+#. Verwendung des Vorzeichens der beiden Argumente, um den resultierenden
+#. Quadranten zu bestimmen.]
+# bulk translation
+msgid ""
+"Calculates the principal value of the arc tangent of `y`/`x`, using the "
+"signs of the two arguments to determine the quadrant of the result."
+msgstr "結果の象限を決定するために2つの引数の符号を使用して、`y`/`x`の円弧接線の主値を計算します。"
+
+#. [Die Bogen-Tangente von "y" / "x".]
+# bulk translation
+msgid "Arc tangent of `y`/`x`."
+msgstr "`y` /` x`の円弧接線。"
+
+#. [Quadratwurzelfunktion.]
+# bulk translation
+msgid "Square root function."
+msgstr "平方根関数。"
+
+#. [`0- oder höherer numerischer Ausdruck]
+# from Google
+msgid "any numeric expression larger than or equal to `0`"
+msgstr "`0`以上の数値式"
+
+#. [Die nicht negative Quadratwurzel von `num`.]
+# bulk translation
+msgid "The nonnegative square root of `num`."
+msgstr "`num`の非負の平方根。"
+
+#. [Gibt die Tangente im angegebenen Winkel zurück.]
+# bulk translation
+msgid "Returns the tangent of a specified angle."
+msgstr "指定された角度の接線を返します。"
+
+#. [Tangente des "Winkels".]
+# bulk translation
+msgid "Tangent of `angle`."
+msgstr "「角度」の接線。"
+
+#. [Gibt den natürlichen Logarithmus der Formel zurück.]
+# bulk translation
+msgid "Returns the natural logarithm of a numeric expression."
+msgstr "数式の自然対数を返します。"
+
+#. [Der natürliche Logarithmus von `num`.]
+# bulk translation
+msgid "The natural logarithm of `num`."
+msgstr "`num`の自然対数。"
+
+#. [Gibt die größte Ganzzahl zurück, die kleiner oder gleich der Formel ist.]
+# bulk translation
+msgid ""
+"Returns the largest integer less than or equal to a numeric expression."
+msgstr "数式以下の最大の整数を返します。"
+
+#. [`num` wird auf die nächste ganze Zahl abgeschnitten.]
+# bulk translation
+msgid "`num` rounded down to the nearest integer."
+msgstr "`num`は最も近い整数に切り捨てられます。"
+
+#. [Gibt einen Wert zurück, der das Vorzeichen der Formel angibt.]
+# bulk translation
+msgid "Returns a value indicating the sign of a numeric expression."
+msgstr "数式の符号を示す値を返します。"
+
+#. [Wenn der Ausdruck positiv ist, ist er "1", wenn er Null ist, ist er "0"
+#. und
+#. wenn er negativ ist, ist er "-1".]
+# bulk translation
+msgid ""
+"`1` if the expression is positive, `0` if it is zero, or `-1` if it is "
+"negative."
+msgstr "式が正の場合は`1`、ゼロの場合は`0`、負の場合は「-1」。"
+
+#. [Negative Zahl von "a".]
+# bulk translation
+msgid "The negative of `a`."
+msgstr "`a`の負数。"
+
+#. [2]
+# bulk translation
+msgid "2"
+msgstr "2"
+
+#. [Identitätsoperator.]
+# bulk translation
+msgid "Identity operator."
+msgstr "恒等演算子。"
+
+#. [`a`.]
+# bulk translation
+msgid "`a`."
+msgstr "`a`。"
+
+#. [Dieser Operator arbeitet nur zu dekorativen Zwecken.]
+# bulk translation
+msgid "This operator serves decorative purposes only."
+msgstr "このオペレーターは装飾目的でのみ機能します。"
+
+#. [Multiplikationsoperator.]
+# bulk translation
+msgid "Multiplication operator."
+msgstr "乗算演算子。"
+
+#. [Das Produkt von "a" und "b".]
+# bulk translation
+msgid "Product of `a` and `b`."
+msgstr "`a`と`b`の積。"
+
+#. [3]
+# bulk translation
+msgid "3"
+msgstr "3"
+
+#. [Der Quotient von "a" und "b".]
+# bulk translation
+msgid "Quotient of `a` and `b`."
+msgstr "`a`と`b`の商。"
+
+#. [MODULUS-Operator]
+# from Google
+msgid "Modulus operator."
+msgstr "モジュラス演算子"
+
+#. [Der Rest der Teilung von "a" und "b".]
+# bulk translation
+msgid "Remainder of division of `a` and `b`."
+msgstr "`a`と`b`の除算の余り。"
+
+#. [Bitverschiebungsoperator links.]
+# bulk translation
+msgid "Bit-shift operator, left."
+msgstr "ビットシフト演算子、左。"
+
+#. [Bitverschiebungsoperator, rechts.]
+# bulk translation
+msgid "Bit-shift operator, right."
+msgstr "ビットシフト演算子、右。"
+
+#. [Operator für numerische Additionen.]
+# bulk translation
+msgid "Numeric addition operator."
+msgstr "数値加算演算子。"
+
+#. [Die Summe von "a" und "b".]
+# bulk translation
+msgid "Sum of `a` and `b`."
+msgstr "`a`と`b`の合計。"
+
+#. [Vier]
+# bulk translation
+msgid "4"
+msgstr "4"
+
+#. [Numerischer Subtraktionsoperator.]
+# bulk translation
+msgid "Numeric subtraction operator."
+msgstr "数値減算演算子。"
+
+#. [Der Unterschied zwischen "a" und "b".]
+# bulk translation
+msgid "Difference of `a` and `b`."
+msgstr "`a`と`b`の違い。"
+
+#. [Gleichheitsoperator.]
+# bulk translation
+msgid "Equality operator."
+msgstr "等式演算子。"
+
+#. [`-1` wenn` a` und` b` gleich sind, sonst` 0`.]
+# bulk translation
+msgid "`-1` if `a` and `b` are equal, `0` otherwise."
+msgstr "`a`と`b`が等しい場合は `-1`、そうでない場合は`0`。"
+
+#. [6]
+# bulk translation
+msgid "6"
+msgstr "6"
+
+#. [Ungleichungsoperator.]
+# bulk translation
+msgid "Inequality operator."
+msgstr "不等式演算子。"
+
+#. [`-1` wenn` a` und` b` nicht gleich sind, sonst `0`.]
+# bulk translation
+msgid "`-1` if `a` and `b` are not equal, `0` otherwise."
+msgstr "`a`と`b`が等しくない場合は `-1`、そうでない場合は`0`。"
+
+#. [Kleinerer Betreiber.]
+# bulk translation
+msgid "Less-than operator."
+msgstr "より小さい演算子。"
+
+#. [`-1` wenn` a` kleiner als` b` ist, sonst` 0`.]
+# bulk translation
+msgid "`-1` if `a` is less than `b`, `0` otherwise."
+msgstr "`a`が`b`より小さい場合は `-1`、それ以外の場合は`0`。"
+
+#. [`-1` wenn` a` kleiner oder gleich` b` ist, sonst `0`.]
+# bulk translation
+msgid "`-1` if `a` is less than or equal to `b`, `0` otherwise."
+msgstr "`a`が`b`以下の場合は `-1`、それ以外の場合は`0`。"
+
+#. [`-1` wenn` a` größer als` b` ist, sonst `0`.]
+# bulk translation
+msgid "`-1` if `a` is greater than `b`, `0` otherwise."
+msgstr "`a`が`b`より大きい場合は `-1`、それ以外の場合は`0`。"
+
+#. ["-1", wenn "a" größer oder gleich "b" ist, andernfalls "0".]
+# bulk translation
+msgid "`-1` if `a` is greater than or equal to `b`, `0` otherwise."
+msgstr "`a`が`b`以上の場合は `-1`、それ以外の場合は`0`。"
+
+#. [Bit für Bit Inversionsoperator.]
+# bulk translation
+msgid "Bitwise inversion operator."
+msgstr "ビットごとの反転演算子。"
+
+#. [Bitweise Inversion von `a`.]
+# bulk translation
+msgid "Bitwise inversion of `a`."
+msgstr "`a`のビット単位の反転。"
+
+#. [7]
+# bulk translation
+msgid "7"
+msgstr "7"
+
+#. [Wie die meisten BASIC-Implementierungen verfügt Engine BASIC nicht über
+#. einen eigenen "logischen NOT" -Operator. Stattdessen wird der Bitoperator
+#. verwendet.]
+# bulk translation
+msgid ""
+"Like most BASIC implementations, Engine BASIC does not have a dedicated "
+"\"logical NOT\" operator; instead, the bitwise operator is used."
+msgstr "ほとんどのBASIC実装と同様に、EngineBASICには専用の「論理NOT」演算子がありません。代わりに、ビット演算子が使用されます。"
+
+#. [Bit für Bit UND-Operator.]
+# bulk translation
+msgid "Bitwise AND operator."
+msgstr "ビットごとのAND演算子。"
+
+#. [Bitweise Konjunktionen für "a" und "b".]
+# bulk translation
+msgid "Bitwise conjunction of `a` and `b`."
+msgstr "`a`と`b`のビット単位の接続詞。"
+
+#. [Wie die meisten BASIC-Implementierungen verfügt Engine BASIC nicht über
+#. einen eigenen "logischen UND" -Operator. Stattdessen wird der Bitoperator
+#. verwendet.]
+# bulk translation
+msgid ""
+"Like most BASIC implementations, Engine BASIC does not have a dedicated "
+"\"logical AND\" operator; instead, the bitwise operator is used."
+msgstr "ほとんどのBASIC実装と同様に、EngineBASICには専用の「論理AND」演算子がありません。代わりに、ビット演算子が使用されます。"
+
+#. [Bit für Bit ODER-Operator.]
+# bulk translation
+msgid "Bitwise OR operator."
+msgstr "ビットごとのOR演算子。"
+
+#. [Bitweises ODER von "a" und "b".]
+# bulk translation
+msgid "Bitwise inclusive disjunction of `a` and `b`."
+msgstr "`a`と`b`のビット単位の論理和。"
+
+#. [8]
+# bulk translation
+msgid "8"
+msgstr "8"
+
+#. [Wie die meisten BASIC-Implementierungen verfügt Engine BASIC nicht über
+#. einen eigenen "logischen ODER" -Operator. Stattdessen wird der Bitoperator
+#. verwendet.]
+# bulk translation
+msgid ""
+"Like most BASIC implementations, Engine BASIC does not have a dedicated "
+"\"logical OR\" operator; instead, the bitwise operator is used."
+msgstr "ほとんどのBASIC実装と同様に、EngineBASICには専用の「論理OR」演算子がありません。代わりに、ビット演算子が使用されます。"
+
+#. [Bitweiser exklusiver ODER-Operator.]
+# bulk translation
+msgid "Bitwise exclusive-OR operator."
+msgstr "ビット単位の排他的論理和演算子。"
+
+#. [Verwenden Sie den Wavetable-Synthesizer, um Musik in Music Macro Language
+#. (MML) abzuspielen.]
+# bulk translation
+msgid ""
+"Plays a piece of music in Music Macro Language (MML) using the wavetable "
+"synthesizer."
+msgstr "ウェーブテーブルシンセサイザーを使用して、Music Macro Language（MML）で音楽を再生します。"
+
+#. [Tonkanal [`0` bis` {MML_CHANNELS_m1}`, Standard: `0`]]
+# bulk translation
+msgid "sound channel [`0` to `{MML_CHANNELS_m1}`, default: `0`]"
+msgstr "サウンドチャネル[`0`から`{MML_CHANNELS_m1}`、デフォルト：`0`]"
+
+#. [* Die MML-Syntax ist nicht dokumentiert.]
+# bulk translation
+msgid "* MML syntax undocumented."
+msgstr "* MML構文は文書化されていません。"
+
+#. [* Wenn der Synthesizer nicht initialisiert werden kann, schlägt er
+#. stillschweigend fehl.]
+# bulk translation
+msgid "* Fails silently if the synthesizer could not be initialized."
+msgstr "*シンセサイザーを初期化できなかった場合、サイレントに失敗します。"
+
+#. [Sprechen Sie den angegebenen Text.]
+# bulk translation
+msgid "Speaks the given text."
+msgstr "与えられたテキストを話します。"
+
+#. [Gesprochener Text]
+# bulk translation
+msgid "text to be spoken"
+msgstr "話されるテキスト"
+
+#. [Es wird angenommen, dass `text$` auf Englisch ist.]
+# bulk translation
+msgid "`text$` is assumed to be in English."
+msgstr "`text$`は英語であると想定されています。"
+
+#. [* Spracheingabe wird nicht unterstützt.]
+# bulk translation
+msgid "* Does not support phonetic input."
+msgstr "*音声入力はサポートしていません。"
+
+#. [* Synthesizer-Parameter können nicht geändert werden.]
+# bulk translation
+msgid "* No possibility to change synthesizer parameters."
+msgstr "*シンセサイザーのパラメーターを変更することはできません。"
+
+#. [Überprüfen Sie, ob der Sound auf dem Wavetable Synthesizer-Kanal
+#. abgespielt
+#. wird.]
+# bulk translation
+msgid "Checks if a sound is playing a on wavetable synthesizer channel."
+msgstr "サウンドがウェーブテーブルシンセサイザーチャンネルで再生されているかどうかを確認します。"
+
+#. ["1", wenn der Ton abgespielt wird, andernfalls "0".]
+# bulk translation
+msgid "`1` if sound is playing, `0` otherwise."
+msgstr "サウンドが再生されている場合は`1`、それ以外の場合は`0`。"
+
+#. [Gibt den Namen des angegebenen Wavetable-Synthesizer-Instruments zurück.]
+# bulk translation
+msgid "Returns the name of the specified wavetable synthesizer instrument."
+msgstr "指定されたウェーブテーブルシンセサイザーインストゥルメントの名前を返します。"
+
+#. [Instrumentennummer]
+# bulk translation
+msgid "instrument number"
+msgstr "楽器番号"
+
+#. [Instrumentenname.]
+# bulk translation
+msgid "Instrument name."
+msgstr "楽器名。"
+
+#. [Wenn das Instrument im aktuellen SoundFont nicht definiert ist, wird eine
+#. leere Zeichenfolge zurückgegeben.]
+# bulk translation
+msgid ""
+"If an instrument is not defined in the current sound font, an empty string "
+"is returned."
+msgstr "楽器が現在のサウンドフォントで定義されていない場合は、空の文字列が返されます。"
+
+#. [Erzeugt Sound mit der "Summer" -Sound-Engine.]
+# bulk translation
+msgid "Produces a sound using the \"beeper\" sound engine."
+msgstr "「ブザー」サウンドエンジンを使用してサウンドを生成します。"
+
+#. [Volume-Hüllkurve [`CHR$(0)" TO `CHR$(15)`, Standardeinstellung:
+#. Konstantvolumen]]
+# from Google
+msgid ""
+"volume envelope\t[characters from `CHR$(0)` to `CHR$(15)`, default: constant"
+" volume]"
+msgstr "ボリュームエンベロープ[`chr$(0)\"から `chr$(15)`、デフォルト：定数ボリューム]"
+
+#. [SF2 Sound Font Font Dateiname]
+# from Google
+msgid "name of the SF2 sound font file"
+msgstr "SF2サウンドフォントファイルの名前"
+
+#. [Der Standard-Sound-Schriftname ist "1 mgm.sf2".]
+# from Google
+msgid "The default sound font name is `1mgm.sf2`."
+msgstr "デフォルトのサウンドフォント名は `1mgm.sf2`です。"
+
+#. [Soundkanal [`0`` {mml_channels_m1}`]]
+# from Argos
+msgid "sound channel [`0` to `{MML_CHANNELS_m1}`]"
+msgstr "サウンドチャンネル [`0`から`{MML_CHANNELS_m1}`]"
+
+#. [Angeforderter Zeichenfolge Rückgabewert]
+# from Google
+msgid "String return value requested."
+msgstr "要求された文字列戻り値"
+
+#. [ Sprite-Deckkraft (undurchsichtig, falls eingestellt)]
+# bulk translation
+msgid " Sprite opacity (opaque if set)"
+msgstr " スプライトの不透明度（設定されている場合は不透明）"
+
+#. [Wenn Sprite 1 größer als Sprite 2 ist und eine vollständige Abdeckung
+#. aufweist, werden diese Bits möglicherweise auch im Falle einer Kollision
+#. nicht gesetzt (dh wenn der Rückgabewert "64" ist).]
+# bulk translation
+msgid ""
+"It is possible that none of these bits are set even if a collision has taken"
+" place (i.e., the return value is `64`) if sprite 1 is larger than sprite 2 "
+"and covers it completely."
+msgstr ""
+"スプライト1がスプライト2よりも大きく、完全にカバーしている場合、衝突が発生した場合でも（つまり、戻り値が`64`である場合）、これらのビットが設定されない可能性があります。"
+
+#. [ kbd: [nach rechts verschieben]]
+# bulk translation
+msgid " kbd:[Right Shift]\t"
+msgstr " kbd:[右シフト]\t"
+
+#. [Bitweises exklusives ODER von "a" und "b".]
+# bulk translation
+msgid "Bitwise exclusive disjunction of `a` and `b`."
+msgstr "`a`と`b`のビット単位の排他的論理和。"
+
+#. [Tonlautstärke [`0` bis` 15`, Standard: wie in der Systemkonfiguration
+#. eingestellt]]
+# bulk translation
+msgid "tone volume [`0` to `15`, default: as set in system configuration]"
+msgstr "トーンボリューム[`0`から`15`、デフォルト：システム構成で設定されたとおり]"
+
+#. [Legt den vom Wavetable-Synthesizer verwendeten SoundFont fest.]
+# bulk translation
+msgid "Sets the sound font to be used by the wavetable synthesizer."
+msgstr "ウェーブテーブルシンセサイザーで使用するサウンドフォントを設定します。"
+
+#. [Wenn ein relativer Pfad angegeben ist, versucht EngineBASIC, den SoundFont
+#. zuerst von `/ sd` und dann von` / flash` zu laden.]
+# bulk translation
+msgid ""
+"If a relative path is specified, Engine BASIC will first attempt to load the"
+" sound font from `/sd`, then from `/flash`."
+msgstr ""
+"相対パスが指定されている場合、EngineBASICは最初に`/sd`から、次に`/flash`からサウンドフォントをロードしようとします。"
+
+#. [Vor dem Einstellen des SoundFont wird keine Überprüfung der Integrität
+#. durchgeführt.]
+# bulk translation
+msgid "No sanity checks are performed before setting the sound font."
+msgstr "サウンドフォントを設定する前に、健全性チェックは実行されません。"
+
+#. [Erzeugen Sie Sound mit einem Wavetable-Synthesizer.]
+# bulk translation
+msgid "Generates a sound using the wavetable synthesizer."
+msgstr "ウェーブテーブルシンセサイザーを使用してサウンドを生成します。"
+
+#. [Pausiert für eine bestimmte Zeit.]
+# bulk translation
+msgid "Pause for a specific amount of time."
+msgstr "特定の時間一時停止します。"
+
+#. [Zeit in Millisekunden]
+# bulk translation
+msgid "time in milliseconds"
+msgstr "ミリ秒単位の時間"
+
+#. [Liest 1 Byte Daten von einer Adresse im Speicher.]
+# bulk translation
+msgid "Read a byte of data from an address in memory."
+msgstr "メモリ内のアドレスから1バイトのデータを読み取ります。"
+
+#. [Speicheradresse]
+# bulk translation
+msgid "memory address"
+msgstr "メモリアドレス"
+
+#. [Der Inhalt der Speicheradresse.]
+# bulk translation
+msgid "Content of memory address."
+msgstr "メモリアドレスの内容。"
+
+#. [Der Speicher von `addr` muss byteweisen Zugriff ermöglichen.]
+# bulk translation
+msgid "Memory at `addr` must allow byte-wise access."
+msgstr "`addr`のメモリは、バイト単位のアクセスを許可する必要があります。"
+
+#. [Der Gesundheitscheck für "addr" ist unzureichend.]
+# bulk translation
+msgid "Sanity checks for `addr` are insufficient."
+msgstr "`addr`の健全性チェックは不十分です。"
+
+#. [Liest Halbwortdaten (16 Bit) von einer Adresse im Speicher.]
+# bulk translation
+msgid "Read a half-word (16 bits) of data from an address in memory."
+msgstr "メモリ内のアドレスからハーフワード（16ビット）のデータを読み取ります。"
+
+#. [Der Speicher von "addr" muss einen byteweisen Zugriff ermöglichen, und
+#. "addr" muss nach 2 Bytes sortiert sein.]
+# bulk translation
+msgid ""
+"Memory at `addr` must allow byte-wise access, and `addr` must be 2-byte "
+"aligned."
+msgstr "`addr`のメモリはバイト単位のアクセスを許可する必要があり、`addr`は2バイトで整列されている必要があります。"
+
+#. [Liest ein Datenwort (32 Bit) von einer Adresse im Speicher.]
+# bulk translation
+msgid "Read a word (32 bits) of data from an address in memory."
+msgstr "メモリ内のアドレスからデータのワード（32ビット）を読み取ります。"
+
+#. [`addr` muss auf 4 Bytes ausgerichtet sein.]
+# bulk translation
+msgid "`addr` must be 4-byte aligned."
+msgstr "`addr`は4バイトに揃える必要があります。"
+
+#. [Schreibt ein Byte in eine Adresse im Speicher.]
+# bulk translation
+msgid "Write a byte to an address in memory."
+msgstr "メモリ内のアドレスにバイトを書き込みます。"
+
+#. [Wert geschrieben werden]
+# bulk translation
+msgid "value to be written"
+msgstr "書き込まれる値"
+
+#. [`addr` muss beschreibbar zugeordnet sein und byteweisen Zugriff
+#. ermöglichen.]
+# bulk translation
+msgid "`addr` must be mapped writable and must allow byte-wise access."
+msgstr "`addr`は書き込み可能にマップされ、バイト単位のアクセスを許可する必要があります。"
+
+#. [Schreibt ein Halbwort (16 Bit) in eine Adresse im Speicher.]
+# bulk translation
+msgid "Write a half-word (16 bits) to an address in memory."
+msgstr "メモリ内のアドレスにハーフワード（16ビット）を書き込みます。"
+
+#. [Die `addr` muss beschreibbar zugeordnet sein, um den Zugriff auf
+#. Halbwörter
+#. zu ermöglichen. Muss auf 2 Bytes ausgerichtet sein.]
+# bulk translation
+msgid ""
+"`addr` must be mapped writable and must allow half-word-wise access. It must"
+" be 2-byte aligned."
+msgstr "`addr`は書き込み可能にマップされ、ハーフワード単位のアクセスを許可する必要があります。2バイトに揃える必要があります。"
+
+#. [Schreibt ein Wort (32 Bit) an eine Adresse im Speicher.]
+# bulk translation
+msgid "Write a word (32 bits) to an address in memory."
+msgstr "メモリ内のアドレスにワード（32ビット）を書き込みます。"
+
+#. [Die `addr` muss beschreibbar zugeordnet sein, um den Zugriff auf
+#. Halbwörter
+#. zu ermöglichen. Muss auf 4 Bytes ausgerichtet sein.]
+# bulk translation
+msgid ""
+"`addr` must be mapped writable and must allow half-word-wise access. It must"
+" be 4-byte aligned."
+msgstr "`addr`は書き込み可能にマップされ、ハーフワード単位のアクセスを許可する必要があります。4バイトに揃える必要があります。"
+
+#. [Ruft eine Maschinensprachenroutine auf.]
+# bulk translation
+msgid "Call a machine language routine."
+msgstr "機械語ルーチンを呼び出します。"
+
+#. [WARNUNG: Eine falsche Verwendung dieses Befehls kann zum Absturz des
+#. Systems oder sogar noch schlimmer führen.]
+# bulk translation
+msgid ""
+"WARNING: Using this command incorrectly may crash the system, or worse."
+msgstr "警告：このコマンドを誤って使用すると、システムがクラッシュするか、さらに悪い場合があります。"
+
+#. [An der Adresse wird keine Überprüfung der geistigen Gesundheit
+#. durchgeführt.]
+# bulk translation
+msgid "No sanity checks are performed on the address."
+msgstr "アドレスに対して健全性チェックは実行されません。"
+
+#. [Stellen Sie das aktuelle Datum und die aktuelle Uhrzeit ein.]
+# bulk translation
+msgid "Sets the current date and time."
+msgstr "現在の日付と時刻を設定します。"
+
+#. [Numerischer Ausdruck [`1900` 2036`]]
+# from Argos
+msgid "numeric expression [`1900` to `2036`]"
+msgstr "数値式 [`1900`から`2036`]"
+
+#. [Numerischer Ausdruck [`1` von` 12`]]
+# from Argos
+msgid "numeric expression [`1` to `12`]"
+msgstr "数値式 [`1`から`12`]"
+
+#. [Numerischer Ausdruck [`1` von` 31`]]
+# from Argos
+msgid "numeric expression [`1` to `31`]"
+msgstr "数値式 [`1`から`31`]"
+
+#. [Numerischer Ausdruck [`0` to` 23]]]
+# from Argos
+msgid "numeric expression [`0` to `23`]"
+msgstr "数値式 [`0`から`23`]"
+
+#. [Numerischer Ausdruck [`0` to` 59`]]
+# from Argos
+msgid "numeric expression [`0` to `59`]"
+msgstr "数値式 [`0`から`59`]"
+
+#. [Numerischer Ausdruck [`0`` 61`]]
+# from Argos
+msgid "numeric expression [`0` to `61`]"
+msgstr "数値式 [`0`から`61`]"
+
+#. [Es ist unklar, warum der Maximalwert für "Sekunde" 61 statt 59 ist.]
+# bulk translation
+msgid "It is unclear why the maximum value for `second` is 61 and not 59."
+msgstr "`second`の最大値が59ではなく61である理由は不明です。"
+
+#. [Ruft das aktuelle Datum ab.]
+# bulk translation
+msgid "Get the current date."
+msgstr "現在の日付を取得します。"
+
+#. [Numerische Variable]
+# bulk translation
+msgid "numeric variable"
+msgstr "数値変数"
+
+#. [Unterstützt nur skalare Variablen, keine Array- oder Listenmitglieder.]
+# bulk translation
+msgid "Only supports scalar variables, not array or list members."
+msgstr "配列またはリストのメンバーではなく、スカラー変数のみをサポートします。"
+
+#. [Warnung: Die Syntax und Semantik dieses Befehls stimmen nicht mit anderen
+#. BASIC-Implementierungen überein und können sich in zukünftigen Versionen
+#. ändern.]
+# bulk translation
+msgid ""
+"WARNING: The syntax and semantics of this command are not consistent with "
+"other BASIC implementations and may be changed in future releases."
+msgstr "警告：このコマンドの構文とセマンティクスは、他のBASIC実装と一貫性がなく、将来のリリースで変更される可能性があります。"
+
+#. [Ruft die aktuelle Uhrzeit ab.]
+# bulk translation
+msgid "Get the current time."
+msgstr "現在の時刻を取得します。"
+
+#. [Die aktuelle Zeit der angegebenen numerischen Variablen.]
+# bulk translation
+msgid "The current time in the given numeric variables."
+msgstr "指定された数値変数の現在の時刻。"
+
+#. [Gibt das aktuelle Datum und die aktuelle Uhrzeit aus.]
+# bulk translation
+msgid "Prints the current date and time."
+msgstr "現在の日付と時刻を出力します。"
+
+#. [Warnung: Die Semantik dieses Befehls stimmt nicht mit anderen BASIC-
+#. Implementierungen überein und kann sich in zukünftigen Versionen ändern.]
+# bulk translation
+msgid ""
+"WARNING: The semantics of this command are not consistent with other BASIC "
+"implementations and may be changed in future releases."
+msgstr "警告：このコマンドのセマンティクスは他のBASIC実装と一致しておらず、将来のリリースで変更される可能性があります。"
+
+#. [Druckt Informationen zu Engine BASIC-Komponenten, deren Erstellern und
+#. Lizenzbedingungen.]
+# bulk translation
+msgid ""
+"Prints information on Engine BASIC's components, its authors and licensing "
+"conditions."
+msgstr "Engine BASICのコンポーネント、その作成者、およびライセンス条件に関する情報を出力します。"
+
+#. [Führen Sie das Z-Maschinenprogramm aus.]
+# bulk translation
+msgid "Run Z-machine program."
+msgstr "Zマシンプログラムを実行します。"
+
+#. [Name der Z-Code-Datei]
+# bulk translation
+msgid "name of a z-code file"
+msgstr "Zコードファイルの名前"
+
+#. [Ruft die interne Systemadresse und die Parameter ab.]
+# bulk translation
+msgid "Retrieve internal system addresses and parameters."
+msgstr "内部システムアドレスとパラメータを取得します。"
+
+#. [Nummer des zu erwerbenden Informationselements]
+# bulk translation
+msgid "number of the item of information to be retrieved"
+msgstr "取得する情報項目の番号"
+
+#. [Die angeforderten Informationen.]
+# bulk translation
+msgid "Requested information."
+msgstr "要求された情報。"
+
+#. [Die folgenden Insider-Informationen erhalten Sie mit `SYS ()`.]
+# bulk translation
+msgid "The following internal information can be retrieved using `SYS()`:"
+msgstr "次の内部情報は、 `SYS()`を使用して取得できます。"
+
+#. [ Speicheradresse des BASIC-Programmpuffers]
+# bulk translation
+msgid " memory address of BASIC program buffer"
+msgstr " BASICプログラムバッファのメモリアドレス"
+
+#. [ Speicheradresse der aktuellen Schriftart]
+# bulk translation
+msgid " memory address of current font"
+msgstr " 現在のフォントのメモリアドレス"
+
+#. [Holen Sie sich die freie Speichergröße.]
+# bulk translation
+msgid "Get free memory size."
+msgstr "空きメモリサイズを取得します。"
+
+#. [Anzahl der freien Bytes.]
+# bulk translation
+msgid "Number of bytes free."
+msgstr "空きバイト数。"
+
+#. [Gibt die seit dem Einschalten verstrichene Zeit zurück.]
+# bulk translation
+msgid "Returns the elapsed time since power-on."
+msgstr "電源投入からの経過時間を返します。"
+
+#. [Zeiteinheit [`0` für Millisekunden,` 1` für Sekunden, Standard: `0`]]
+# bulk translation
+msgid "unit of time [`0` for milliseconds, `1` for seconds, default: `0`]"
+msgstr "時間の単位[ミリ秒の場合は `0`、秒の場合は`1`、デフォルト： `0`]"
+
+#. [Zeigt interne Informationen zum System an.]
+# bulk translation
+msgid "Displays internal information about the system."
+msgstr "システムに関する内部情報を表示します。"
+
+#. [`SYSINFO` zeigt die folgenden Informationen an:]
+# bulk translation
+msgid "`SYSINFO` displays the following information:"
+msgstr "`SYSINFO`は次の情報を表示します。"
+
+#. [* Programmgröße,]
+# bulk translation
+msgid "* Program size,"
+msgstr "*プログラムサイズ、"
+
+#. [* Statistiken zu numerischen und String-Skalarvariablen, Array-Variablen
+#. und Listenvariablen,]
+# bulk translation
+msgid ""
+"* statistics on scalar, array and list variables, both numeric and string,"
+msgstr "*数値変数と文字列の両方のスカラー変数、配列変数、リスト変数に関する統計、"
+
+#. [* Loop- und Return-Stack-Tiefe,]
+# bulk translation
+msgid "* loop and return stack depths,"
+msgstr "*ループとリターンスタックの深さ、"
+
+#. [* CPU-Stapelzeigeradresse,]
+# bulk translation
+msgid "* CPU stack pointer address,"
+msgstr "* CPUスタックポインタアドレス、"
+
+#. [* Die Speichergröße ist kostenlos,]
+# from Argos
+msgid "* free memory size and"
+msgstr "* メモリサイズが無料、"
+
+#. [* Video-Timing-Informationen (nominelle und tatsächliche Zyklen pro
+#. Frame).]
+# bulk translation
+msgid "* video timing information (nominal and actual cycles per frame)."
+msgstr "*ビデオタイミング情報（フレームあたりの公称および実際のサイクル）。"
+
+#. [Startet das System von der angegebenen Flash-Seite.]
+# bulk translation
+msgid "Boots the system from the specified flash page."
+msgstr "指定されたフラッシュページからシステムを起動します。"
+
+#. [Beginnen Sie auf der Flash-Seite [`0` to` 255`]]
+# from Argos
+msgid "flash page to boot from [`0` to `255`]"
+msgstr "フラッシュページから起動する [`0`から`255`]"
+
+#. [Der Befehl `BOOT` prüft nicht, ob auf der angegebenen Flash-Seite ein
+#. gültiger Firmware-Code installiert ist. Bitte mit Vorsicht verwenden.]
+# bulk translation
+msgid ""
+"The `BOOT` command does not verify if valid firmware code is installed at "
+"the given flash page. Use with caution."
+msgstr ""
+"`BOOT`コマンドは、有効なファームウェアコードが指定されたフラッシュページにインストールされているかどうかを確認しません。注意して使用してください。"
+
+#. [Deklarieren Sie ein Array.]
+# bulk translation
+msgid "Declares an array."
+msgstr "配列を宣言します。"
+
+#. [Numerische oder String-Array-Variable]
+# bulk translation
+msgid "an numeric or string array variable"
+msgstr "数値または文字列配列変数"
+
+#. [Eine oder mehrere Dimensionen eines Arrays]
+# bulk translation
+msgid "one or more dimensions of the array"
+msgstr "配列の1つ以上の次元"
+
+#. [Anfangswert des Array-Elements]
+# bulk translation
+msgid "initial value(s) for the array elements"
+msgstr "配列要素の初期値"
+
+#. [Die Initialisierung ist nur mit eindimensionalen Arrays möglich.]
+# bulk translation
+msgid "Initialization is only possible for one-dimensional arrays."
+msgstr "初期化は、1次元配列でのみ可能です。"
+
+#. [Fügen Sie am Ende der Liste ein Element hinzu.]
+# bulk translation
+msgid "Appends an element to the end of a list."
+msgstr "リストの最後に要素を追加します。"
+
+#. [Numerische oder String-Listenvariable]
+# bulk translation
+msgid "a numeric or string list variable"
+msgstr "数値または文字列リスト変数"
+
+#. [Fügen Sie dem Anfang der Liste ein Element hinzu.]
+# from Google
+msgid "Adds an element to the start of a list."
+msgstr "リストの先頭に要素を追加します。"
+
+#. [Weisen Sie den Wert des Ausdrucks einer Variablen zu.]
+# bulk translation
+msgid "Assigns the value of an expression to a variable."
+msgstr "式の値を変数に割り当てます。"
+
+#. [Beliebige Variable]
+# bulk translation
+msgid "any variable"
+msgstr "任意の変数"
+
+#. [Ein Ausdruck des gleichen Typs wie "Variable"]
+# bulk translation
+msgid "any expression that is of the same type as `variable`"
+msgstr "`variable`と同じタイプの式"
+
+#. [Die Verwendung dieses Befehls ist optional. Variablenzuweisungen können
+#. als
+#. "Variable = Ausdruck" ohne das Präfix "LET" geschrieben werden.]
+# bulk translation
+msgid ""
+"The use of this command is optional; any variable assignment can be written "
+"as `variable = expression`, without prefixing it with `LET`."
+msgstr "このコマンドの使用はオプションです。変数の割り当ては、接頭辞`LET`を付けずに「変数=式」と書くことができます。"
+
+#. [Dies wird nur als Kompatibilitätsfunktion mit anderen BASIC-Dialekten
+#. bereitgestellt. Nicht für die Verwendung in neuen Programmen empfohlen. Es
+#. verbraucht zusätzlichen Speicher und Rechenressourcen ohne Nutzen.]
+# bulk translation
+msgid ""
+"It is provided solely as a compatibility feature with other BASIC dialects. "
+"Its use in new programs is not recommended, as it consumes additional memory"
+" and compute resources without providing any benefit."
+msgstr ""
+"これは、他のBASIC方言との互換性機能としてのみ提供されます。新しいプログラムでの使用はお勧めしません。何のメリットももたらさずに、追加のメモリとコンピューティングリソースを消費するからです。"
+
+#. [Entfernt das Element vom Anfang der numerischen Liste.]
+# bulk translation
+msgid "Remove an element from the beginning of a numeric list."
+msgstr "数値リストの先頭から要素を削除します。"
+
+#. [Verweis auf numerische Liste]
+# from Google
+msgid "reference to a numeric list"
+msgstr "数値リストへの参照"
+
+#. [Der Wert des gelöschten Elements.]
+# bulk translation
+msgid "Value of the element removed."
+msgstr "削除された要素の値。"
+
+#. [Wenn `~ list` leer ist, wird ein Fehler generiert.]
+# bulk translation
+msgid "An error is generated if `~list` is empty."
+msgstr "`~list`が空の場合、エラーが生成されます。"
+
+#. [Entfernt das Element vom Ende der numerischen Liste.]
+# bulk translation
+msgid "Remove an element from the end of a numeric list."
+msgstr "数値リストの最後から要素を削除します。"
+
+#. [Entfernt das Element vom Anfang der Zeichenfolgenliste.]
+# bulk translation
+msgid "Remove an element from the beginning of a string list."
+msgstr "文字列リストの先頭から要素を削除します。"
+
+#. [Verweis auf Zeichenfolgenliste]
+# bulk translation
+msgid "reference to a string list"
+msgstr "文字列リストへの参照"
+
+#. [Wenn `~ list$` leer ist, wird ein Fehler generiert.]
+# bulk translation
+msgid "An error is generated if `~list$` is empty."
+msgstr "`list$`が空の場合、エラーが生成されます。"
+
+#. [Entfernt das Element vom Ende der Zeichenfolgenliste.]
+# bulk translation
+msgid "Remove an element from the end of a string list."
+msgstr "文字列リストの最後から要素を削除します。"
+
+#. [Stellen Sie das Textbildschirmfenster ein.]
+# bulk translation
+msgid "Sets the text screen window."
+msgstr "テキスト画面ウィンドウを設定します。"
+
+#. [`WINDOW OFF` setzt das Textfenster zurück, um den gesamten Bildschirm
+#. abzudecken.]
+# bulk translation
+msgid "`WINDOW OFF` resets the text window to cover the entire screen."
+msgstr "`WINDOW OFF`は、画面全体をカバーするようにテキストウィンドウをリセットします。"
+
+#. [Linke Grenze des Textfensters, "` 0 "zu` csize (0)-1`]
+# from Google
+msgid "left boundary of the text window, in characters [`0` to `CSIZE(0)-1`]"
+msgstr "テキストウィンドウの左境界、[`0\"から `csize（0)-1`まで）"
+
+#. [Textfensterbreite, Zeichen [`1" an `csize (0)-x`]]
+# from Google
+msgid "width of the text window, in characters [`1` to `CSIZE(0)-x`]"
+msgstr "テキストウィンドウの幅、文字[`1\"から `csize（0)-x`]"
+
+#. [Legt die aktuelle Textschrift fest.]
+# bulk translation
+msgid "Sets the current text font."
+msgstr "現在のテキストフォントを設定します。"
+
+#. [Schriftnummer]
+# bulk translation
+msgid "font number"
+msgstr "フォント番号"
+
+#. [Die folgenden Schriftarten sind enthalten:]
+# bulk translation
+msgid "The following fonts are built-in:"
+msgstr "次のフォントが組み込まれています。"
+
+#. [ HP 100 LX-Schriftart, 6 x 8 Pixel (Standard)]
+# bulk translation
+msgid " HP 100 LX font, 6x8 pixels (default)"
+msgstr " HP 100 LXフォント、6x8ピクセル（デフォルト）"
+
+#. [ CPC-Schriftart, 8 x 8 Pixel]
+# bulk translation
+msgid " CPC font, 8x8 pixels"
+msgstr " CPCフォント、8x8ピクセル"
+
+#. [ PETSCII-Schriftart, 8 x 8 Pixel]
+# bulk translation
+msgid " PETSCII font, 8x8 pixels"
+msgstr " PETSCIIフォント、8x8ピクセル"
+
+#. [ Japanische Schrift, 8x8 Pixel]
+# bulk translation
+msgid " Japanese font, 8x8 pixels"
+msgstr " 日本語フォント、8x8ピクセル"
+
+#. [ HP 100 LX-Schriftart, 8 x 8 Pixel]
+# bulk translation
+msgid " HP 100 LX font, 8x8 pixels"
+msgstr " HP 100 LXフォント、8x8ピクセル"
+
+#. [* Zusätzliche Schriftarten erhalten einen zusammenhängenden Schriftindex.]
+# bulk translation
+msgid "* Additional fonts will be assigned consecutive font indices."
+msgstr "*追加のフォントには、連続したフォントインデックスが割り当てられます。"
+
+#. [* Die Schriftart, die beim Einschalten eingestellt werden soll, kann mit
+#. dem Befehl `CONFIG` eingestellt werden.]
+# bulk translation
+msgid "* The font set at power-on can be set using the `CONFIG` command."
+msgstr "※電源投入時に設定するフォントは、 `CONFIG`コマンドで設定できます。"
+
+#. [Ändern Sie die Bildschirmauflösung.]
+# bulk translation
+msgid "Change the screen resolution."
+msgstr "画面の解像度を変更します。"
+
+#. [Folgende Modi stehen zur Verfügung:]
+# bulk translation
+msgid "The following modes are available:"
+msgstr "次のモードを使用できます。"
+
+#. [ Modus]
+# bulk translation
+msgid " Mode "
+msgstr " モード "
+
+#. [ Lösung]
+# bulk translation
+msgid " Resolution "
+msgstr " 解決 "
+
+#. [ Kommentar]
+# bulk translation
+msgid " Comment"
+msgstr " コメント"
+
+#. [Die größte verfügbare Auflösung im NTSC-Modus.]
+# from Argos
+msgid " Maximum usable resolution in NTSC mode."
+msgstr " NTSC モードの最大の使用可能な解像度。"
+
+#. [ Etwas kleiner als Modus 1. Dies ist nützlich, wenn auf dem Display nicht
+#. der gesamte Modus 1 angezeigt wird.]
+# bulk translation
+msgid ""
+" Slightly smaller than mode 1; helpful if the display does not show the "
+"entirety of mode 1."
+msgstr " モード1よりわずかに小さい。ディスプレイにモード1全体が表示されない場合に役立ちます。"
+
+#. [ Gemeinsame Auflösung in vielen Heimcomputersystemen.]
+# bulk translation
+msgid " Common resolution on many home computer systems."
+msgstr " 多くの家庭用コンピュータシステムでの一般的な解像度。"
+
+#. [ Kompatibel mit SNES-Systemen.]
+# bulk translation
+msgid " Compatible with the SNES system."
+msgstr " SNESシステムと互換性があります。"
+
+#. [ Allgemeine Auflösung, die in MSX, ZX Spectrum usw. verwendet wird.]
+# bulk translation
+msgid " Common resolution used by MSX, ZX Spectrum and others."
+msgstr " MSX、ZXSpectrumなどで使用される一般的な解像度。"
+
+#. [ Ein Modus mit niedriger Auflösung, der auf einigen Heimcomputersystemen
+#. üblich ist.]
+# bulk translation
+msgid " Common low-resolution mode on several home computer systems."
+msgstr " いくつかの家庭用コンピュータシステムで一般的な低解像度モード。"
+
+#. [ PC-Engine-kompatibler Overscan-Modus]
+# bulk translation
+msgid " PC Engine-compatible overscan mode"
+msgstr " PCエンジン互換のオーバースキャンモード"
+
+#. [ Maximale Auflösung im PAL-Modus verfügbar. (Overscan auf NTSC-System.)]
+# bulk translation
+msgid " Maximum usable resolution in PAL mode. (Overscan on NTSC systems.)"
+msgstr " PALモードで使用可能な最大解像度。（NTSCシステムでのオーバースキャン。）"
+
+#. [* Die Auflösung ist für NTSC- und PAL-Konfigurationen gleich, die
+#. tatsächliche Größe und das Seitenverhältnis variieren jedoch je nach TV-
+#. System.]
+# bulk translation
+msgid ""
+"* While the resolutions are the same for NTSC and PAL configurations, the "
+"actual sizes and aspect ratios vary depending on the TV system."
+msgstr "*解像度はNTSCとPALの構成で同じですが、実際のサイズとアスペクト比はTVシステムによって異なります。"
+
+#. [* Die Auflösung wurde so gewählt, dass sie mit der auf anderen Systemen
+#. verwendeten übereinstimmt, um die Portierung vorhandener Programme zu
+#. erleichtern.]
+# bulk translation
+msgid ""
+"* Resolutions have been chosen to match those used in other systems to "
+"facilitate porting of existing programs."
+msgstr "*解像度は、既存のプログラムの移植を容易にするために、他のシステムで使用されているものと一致するように選択されています。"
+
+#. [* Abgesehen von der Änderung der Modi löscht "BILDSCHIRM" den Bildschirm,
+#. setzt Schriftarten und Farbräume (Paletten) auf die Standardeinstellungen
+#. zurück und deaktiviert Sprites und gekachelte Hintergründe.]
+# bulk translation
+msgid ""
+"* Apart from changing the mode, `SCREEN` clears the screen, resets the font "
+"and color space (palette) to their defaults, and disables sprites and tiled "
+"backgrounds."
+msgstr ""
+"*モードの変更とは別に、 "
+"`SCREEN`は画面をクリアし、フォントと色空間（パレット）をデフォルトにリセットし、スプライトとタイル状の背景を無効にします。"
+
+#. [Legt den Farbraum ("Palette") des aktuellen Bildschirmmodus und die
+#. Koeffizienten der Farbkonvertierungsfunktion "RGB ()" fest.]
+# bulk translation
+msgid ""
+"Sets the color space (\"palette\") for the current screen mode, as well as "
+"coefficients for the color conversion function `RGB()`."
+msgstr "現在の画面モードの色空間（「パレット」）と、色変換関数 `RGB()`の係数を設定します。"
+
+#. [Farbraumnummer [`0` oder` 1`]]
+# bulk translation
+msgid "colorspace number [`0` or `1`]"
+msgstr "色空間番号[`0`または`1`]"
+
+#. [Farbtongewichte für die Farbkonvertierung [`0` bis` 7`]]
+# bulk translation
+msgid "hue weight for color conversion [`0` to `7`]"
+msgstr "色変換の色相の重み[`0`から`7`]"
+
+#. [Farbkonvertierungssättigungsgewichte [`0` bis` 7`]]
+# bulk translation
+msgid "saturation weight for color conversion [`0` to `7`]"
+msgstr "色変換の彩度の重み[`0`から`7`]"
+
+#. [Farbkonvertierungswertgewichte [`0` bis` 7`]]
+# bulk translation
+msgid "value weight for color conversion [`0` to `7`]"
+msgstr "色変換の値の重み[`0`から`7`]"
+
+#. [Die Standardkomponentengewichte hängen vom Farbraum ab. Sie sind:]
+# bulk translation
+msgid "The default component weights depend on the color space. They are:"
+msgstr "デフォルトのコンポーネントの重みは、色空間によって異なります。彼らです："
+
+#. [Farbraum]
+# bulk translation
+msgid "Color space "
+msgstr "色空間 "
+
+#. [ H.]
+# bulk translation
+msgid " H "
+msgstr " H "
+
+#. [ S.]
+# bulk translation
+msgid " S "
+msgstr " S "
+
+#. [ V.]
+# bulk translation
+msgid " V"
+msgstr " V"
+
+#. [ 6]
+# bulk translation
+msgid " 6"
+msgstr " 6"
+
+#. [ 7]
+# bulk translation
+msgid " 7"
+msgstr " 7"
+
+#. [Konvertierungskorrekturen sind standardmäßig aktiviert.]
+# bulk translation
+msgid "Conversion fix-ups are enabled by default."
+msgstr "変換の修正はデフォルトで有効になっています。"
+
+#. [Legt die Farbe des Bildschirmrahmens fest.]
+# bulk translation
+msgid "Sets the color of the screen border."
+msgstr "画面の境界線の色を設定します。"
+
+#. [Sie können die Farbe für jede Bildschirmspalte einzeln einstellen.]
+# bulk translation
+msgid "The color can be set individually for each screen column."
+msgstr "画面列ごとに個別に色を設定できます。"
+
+#. [Randfarbe UV-Komponente [`0` ~` 255`]]
+# bulk translation
+msgid "UV component of the border color [`0` to `255`]"
+msgstr "ボーダーカラーのUV成分[`0`〜`255`]"
+
+#. [Randfarbe Y-Komponente [`0` ~` 255`]]
+# bulk translation
+msgid "Y component of the border color [`0` to `255`]"
+msgstr "ボーダーカラーのY成分[`0`〜`255`]"
+
+#. [Erste zu setzende Spalte [Standard: `0`]]
+# bulk translation
+msgid "first column to set [default: `0`]"
+msgstr "設定する最初の列[デフォルト： `0`]"
+
+#. [Anzahl der einzustellenden Spalten [Standard: Alle]]
+# bulk translation
+msgid "number of columns to set [default: all]"
+msgstr "設定する列数[デフォルト：すべて]"
+
+#. [Rand- und Bildschirmfarbwerte stimmen nicht direkt überein.]
+# bulk translation
+msgid ""
+"There is no direct correspondence between border and screen color values."
+msgstr "境界線と画面の色の値は直接対応していません。"
+
+#. [Es gibt keine Möglichkeit, den Toleranzbereich für "x" und "w" ohne
+#. Versuch
+#. und Irrtum zu finden.]
+# bulk translation
+msgid ""
+"There is no way to find the allowed range of values for `x` and `w` without "
+"trial and error."
+msgstr "試行錯誤せずに`x`と`w`の許容値の範囲を見つける方法はありません。"
+
+#. [Synchronisieren Sie mit der Videoausgabe.]
+# bulk translation
+msgid "Synchronize with video output."
+msgstr "ビデオ出力と同期します。"
+
+#. [Wartet, bis der Video-Frame-Zähler den angegebenen Wert erreicht oder
+#. überschreitet, oder bis zum nächsten Frame, wenn nichts angegeben ist.]
+# bulk translation
+msgid ""
+"Waits until the video frame counter has reached or exceeded a given value, "
+"or until the next frame if none is specified."
+msgstr "ビデオフレームカウンタが指定された値に達するか超えるまで、または何も指定されていない場合は次のフレームまで待機します。"
+
+#. [Schreiben Sie in das Video-Controller-Register.]
+# bulk translation
+msgid "Writes to a video controller register."
+msgstr "ビデオコントローラレジスタに書き込みます。"
+
+#. [Videocontroller-Registernummer]
+# from Google
+msgid "video controller register number"
+msgstr "ビデオコントローラレジスタ番号"
+
+#. [Wert [`0` bis` 65535`]]
+# bulk translation
+msgid "value [`0` to `65535`]"
+msgstr "値[`0`から`65535`]"
+
+#. [Die Anzahl der erforderlichen Werte hängt von dem Register ab, auf das Sie
+#. zugreifen.]
+# bulk translation
+msgid "The number of values required depends on the register accessed:"
+msgstr "必要な値の数は、アクセスするレジスタによって異なります。"
+
+#. [ 3 Werte]
+# bulk translation
+msgid " 3 values"
+msgstr " 3つの値"
+
+#. [ Kein Wert]
+# bulk translation
+msgid " no value"
+msgstr " 値なし"
+
+#. [ Zwei Werte]
+# bulk translation
+msgid " 2 values"
+msgstr " 2つの値"
+
+#. [ Alles andere]
+# bulk translation
+msgid " all others "
+msgstr " 他のすべて "
+
+#. [ 1 Wert]
+# bulk translation
+msgid " 1 value"
+msgstr " 1つの値"
+
+#. [Gibt die Anzahl der Videobilder nach dem Einschalten zurück.]
+# bulk translation
+msgid "Returns the number of video frames since power-on."
+msgstr "電源投入後のビデオフレーム数を返します。"
+
+#. [Anzahl der Frames.]
+# bulk translation
+msgid "Frame count."
+msgstr "フレーム数。"
+
+#. [Lesen Sie das Video-Controller-Register.]
+# bulk translation
+msgid "Read a video controller register."
+msgstr "ビデオコントローラレジスタを読み取ります。"
+
+#. [Lesen Sie den Speicherort im Videospeicher.]
+# bulk translation
+msgid "Read a location in video memory."
+msgstr "ビデオメモリ内の場所を読み取ります。"
+
+#. [Videospeicher-Byteadresse. [`0` bis` 131071`]]
+# bulk translation
+msgid "Byte address in video memory. [`0` to `131071`]"
+msgstr "ビデオメモリのバイトアドレス。[`0`から`131071`]"
+
+#. [Speicherinhalt.]
+# bulk translation
+msgid "Memory content."
+msgstr "メモリコンテンツ。"
+
+#. [Schreiben Sie Daten in den Videospeicher.]
+# bulk translation
+msgid "Write data to video memory."
+msgstr "ビデオメモリにデータを書き込みます。"
+
+#. [Videospeicheradresse [`0` bis` 131071`]]
+# bulk translation
+msgid "video memory address [`0` to `131071`]"
+msgstr "ビデオメモリアドレス[`0`から`131071`]"
+
+#. [Numerischer Wert [`0` ~` 255`] oder Zeichenfolgenausdruck]
+# bulk translation
+msgid "numeric value [`0` to `255`] or string expression"
+msgstr "数値[`0`〜`255`]または文字列式"
+
+#. [Bewegt den Textcursor an die angegebene Position.]
+# bulk translation
+msgid "Moves the text cursor to the specified position."
+msgstr "テキストカーソルを指定した位置に移動します。"
+
+#. [Cursor X-Koordinate [`0` bis` CSIZE(0)-1`]]
+# bulk translation
+msgid "cursor X coordinate [`0` to `CSIZE(0)-1`]"
+msgstr "カーソルX座標[`0`から`CSIZE(0)-1`]"
+
+#. [Cursor-Y-Koordinate [`0` bis` CSIZE(1)-1`]]
+# bulk translation
+msgid "cursor Y coordinate [`0` to `CSIZE(1)-1`]"
+msgstr "カーソルY座標[`0`から`CSIZE(1)-1`]"
+
+#. [Konvertiert RGB-Werte in Hardware-Farbwerte.]
+# bulk translation
+msgid "Converts RGB value to hardware color value."
+msgstr "RGB値をハードウェアカラー値に変換します。"
+
+#. [Mit RGB () können Hardware-Farbwerte aus dem verständlicheren RGB-Format
+#. berechnet werden. Es ist auch nützlich für Programme, die mit verschiedenen
+#. Farbpaletten arbeiten müssen.]
+# bulk translation
+msgid ""
+"RGB() can be used to calculate hardware color values from the more easily "
+"understood RGB format, and can also help with programs that need to work "
+"with different color palettes."
+msgstr ""
+"RGB()は、より理解しやすいRGB形式からハードウェアの色の値を計算するために使用できます。また、さまざまなカラーパレットを操作する必要があるプログラムにも役立ちます。"
+
+#. [YUV-Farbwert]
+# bulk translation
+msgid "YUV color value"
+msgstr "YUVカラー値"
+
+#. [Das verwendete Farbkonvertierungsverfahren ist für die Verwendung in der
+#. Pixelkunst optimiert. Das Ergebnis kann durch Einstellen des
+#. Umrechnungsfaktors mit dem Befehl `PALETTE` verfeinert werden.]
+# bulk translation
+msgid ""
+"The color conversion method used is optimized for use with pixel art. Its "
+"results can be tweaked by setting conversion coefficients with the `PALETTE`"
+" command."
+msgstr ""
+"使用される色変換方法は、ピクセルアートでの使用に最適化されています。その結果は、 `PALETTE`コマンドで変換係数を設定することで微調整できます。"
+
+#. [Komponentenwerte außerhalb des Bereichs werden lautlos geklemmt.]
+# bulk translation
+msgid "Component values that are out of range will be silently clamped."
+msgstr "範囲外のコンポーネント値は、サイレントにクランプされます。"
+
+#. [Ändern Sie die Vordergrund- und Hintergrundfarbe der Textausgabe.]
+# bulk translation
+msgid "Changes the foreground and background color for text output."
+msgstr "テキスト出力の前景色と背景色を変更します。"
+
+#. [Vordergrundfarbe [Bereich hängt vom Farbraum ab]]
+# bulk translation
+msgid "foreground color [range depends on color space]"
+msgstr "前景色[範囲は色空間によって異なります]"
+
+#. [Hintergrundfarbe [Der Bereich hängt vom Farbraum ab. Standard: `0`]]
+# bulk translation
+msgid "background color [range depends on color space, default: `0`]"
+msgstr "背景色[範囲は色空間によって異なります。デフォルト： `0`]"
+
+#. [Cursorfarbe [Bereich hängt vom Farbraum ab]]
+# bulk translation
+msgid "cursor color [range depends on color space]"
+msgstr "カーソルの色[範囲は色空間によって異なります]"
+
+#. [Gibt die Größe des aktuellen Bildschirmmodus in Textzeichen zurück.]
+# bulk translation
+msgid "Returns the dimensions of the current screen mode in text characters."
+msgstr "現在の画面モードのサイズをテキスト文字で返します。"
+
+#. [Angeforderte Bildschirmgröße: `0`: Textbildschirmbreite` 1`:
+#. Textbildschirmhöhe]
+# bulk translation
+msgid ""
+"requested screen dimension: `0`: text screen width `1`: text screen height"
+msgstr "要求された画面のサイズ： `0`：テキスト画面の幅`1`：テキスト画面の高さ"
+
+#. [Die Größe in Zeichen.]
+# bulk translation
+msgid "Size in characters."
+msgstr "文字単位のサイズ。"
+
+#. [Gibt die Größe des aktuellen Bildschirmmodus in Pixel zurück.]
+# bulk translation
+msgid "Returns the dimensions of the current screen mode in pixels."
+msgstr "現在の画面モードのサイズをピクセル単位で返します。"
+
+#. [Angeforderte Bildschirmgröße: `0`: Bildschirmbreite` 1`: Angezeigte
+#. Bildschirmhöhe` 2`: Gesamtbildschirmhöhe]
+# bulk translation
+msgid ""
+"requested screen dimension: `0`: screen width `1`: visible screen height "
+"`2`: total screen height"
+msgstr "要求された画面のサイズ： `0`：画面の幅`1`：表示される画面の高さ `2`：画面の全高"
+
+#. [Größe in Pixel.]
+# bulk translation
+msgid "Size in pixels."
+msgstr "ピクセル単位のサイズ。"
+
+#. [Gibt die Position des Textcursors zurück.]
+# bulk translation
+msgid "Returns the text cursor position."
+msgstr "テキストカーソルの位置を返します。"
+
+#. [Erforderliche Achse: `0`: horizontal` 1`: vertikal]
+# bulk translation
+msgid "requested axis: `0`: horizontal `1`: vertical"
+msgstr "要求された軸： `0`：水平`1`：垂直"
+
+#. [Position in Buchstaben.]
+# bulk translation
+msgid "Position in characters."
+msgstr "文字での位置。"
+
+#. [Gibt das Textzeichen an der angegebenen Position auf dem Bildschirm
+#. zurück.]
+# bulk translation
+msgid "Returns the text character on screen at a given position."
+msgstr "画面上の指定された位置にあるテキスト文字を返します。"
+
+#. [X-Koordinaten, Zeichen]
+# bulk translation
+msgid "X coordinate, characters"
+msgstr "X座標、文字"
+
+#. [Y-Koordinate, Buchstabe]
+# bulk translation
+msgid "Y coordinate, characters"
+msgstr "Y座標、文字"
+
+#. [Zeichencode.]
+# bulk translation
+msgid "Character code."
+msgstr "文字コード。"
+
+#. [* Wenn die Koordinaten die Größe des Textbildschirms überschreiten, wird
+#. "0" zurückgegeben.]
+# bulk translation
+msgid ""
+"* If the coordinates exceed the dimensions of the text screen, `0` will be "
+"returned."
+msgstr "※座標がテキスト画面の大きさを超える場合は`0`を返します。"
+
+#. [* Der zurückgegebene Wert repräsentiert das aktuelle Zeichen im
+#. Textbildschirmspeicher. Bei der Verwendung mit Pixelgrafikfunktionen wie
+#. "GPRINT" wird möglicherweise nicht dargestellt, was tatsächlich auf dem
+#. Bildschirm angezeigt wird.]
+# bulk translation
+msgid ""
+"* The value returned represents the current character in text screen memory."
+" It may not represent what is actually visible on screen if it has been "
+"manipulated using pixel graphics functions, such as `GPRINT`."
+msgstr ""
+"*返される値は、テキスト画面メモリ内の現在の文字を表します。`GPRINT`などのピクセルグラフィックス関数を使用して操作された場合、画面に実際に表示されるものを表していない可能性があります。"
+
+#. [Druckt ein Zeichen auf dem Bildschirm.]
+# bulk translation
+msgid "Prints a single character to the screen."
+msgstr "画面に1文字を印刷します。"
+
+#. [X-Koordinate, Zeichen [`0` bis` CSIZE(0)`]]
+# bulk translation
+msgid "X coordinate, characters [`0` to `CSIZE(0)`]"
+msgstr "X座標、文字[`0`から`CSIZE(0） `]"
+
+#. [Y-Koordinate, Zeichen [`0` bis` CSIZE(1)`]]
+# bulk translation
+msgid "Y coordinate, characters [`0` to `CSIZE(1)`]"
+msgstr "Y座標、文字[`0`から`CSIZE(1） `]"
+
+#. [Zeichen [`0` bis` 255`]]
+# bulk translation
+msgid "character [`0` to `255`]"
+msgstr "文字[`0`から`255`]"
+
+#. [Wenn die Koordinaten außerhalb der Bildschirmgrenzen liegen, führt dieser
+#. Befehl nichts aus.]
+# bulk translation
+msgid ""
+"This command does nothing if the coordinates are outside the screen limits."
+msgstr "座標が画面の制限外にある場合、このコマンドは何もしません。"
+
+#. [Scrollt den Inhalt des Textbildschirms in die angegebene Richtung.]
+# bulk translation
+msgid "Scrolls the text screen contents in the given direction."
+msgstr "テキスト画面の内容を指定された方向にスクロールします。"
+
+#. [Beginn des Bildschirmbereichs, X-Koordinate, Zeichen [`0` bis` CSIZE(0)
+#. -1`]]
+# bulk translation
+msgid ""
+"start of the screen region, X coordinate, characters [`0` to `CSIZE(0)-1`]"
+msgstr "画面領域の開始、X座標、文字[`0`から`CSIZE(0)-1`]"
+
+#. [Beginn des Bildschirmbereichs, Y-Koordinate, Zeichen [`0` bis` CSIZE(1)
+#. -1`]]
+# bulk translation
+msgid ""
+"start of the screen region, Y coordinate, characters [`0` to `CSIZE(1)-1`]"
+msgstr "画面領域の開始、Y座標、文字[`0`から`CSIZE(1)-1`]"
+
+#. [Ende des Bildschirmbereichs, X-Koordinaten, Zeichen [`x1 + 1` bis` CSIZE
+#. (0)-1`]]
+# bulk translation
+msgid ""
+"end of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]"
+msgstr "画面領域の終わり、X座標、文字[`x1 + 1`から`CSIZE(0)-1`]"
+
+#. [Ende des Bildschirmbereichs, Y-Koordinate, Buchstaben [`y1 + 1` bis` CSIZE
+#. (1)-1`]]
+# bulk translation
+msgid ""
+"end of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]"
+msgstr "画面領域の終わり、Y座標、文字[`y1 + 1`から`CSIZE(1)-1`]"
+
+#. [Richtung]
+# bulk translation
+msgid "direction"
+msgstr "方向"
+
+#. [Die gültigen Werte für "Richtung" sind:]
+# bulk translation
+msgid "Valid values for `direction` are:"
+msgstr "`direction`の有効な値は次のとおりです。"
+
+#. [ oben]
+# bulk translation
+msgid " up"
+msgstr " アップ"
+
+#. [ Nieder]
+# bulk translation
+msgid " down"
+msgstr " ダウン"
+
+#. [ links]
+# bulk translation
+msgid " left"
+msgstr " 左"
+
+#. [ richtig]
+# bulk translation
+msgid " right"
+msgstr " 正しい"
+
+#. [Farben gehen beim Scrollen verloren.]
+# from Google
+msgid "Colors are lost when scrolling."
+msgstr "スクロール時に色が失われます。"
+
+#. [Scrollt einige Bildschirminhalte in die gewünschte Richtung.]
+# bulk translation
+msgid "Scroll a portion screen contents in the given direction."
+msgstr "一部の画面コンテンツを所定の方向にスクロールします。"
+
+#. [Beginn des Bildschirmbereichs, X-Koordinate, Pixel [`0` bis` PSIZE(0)
+#. -1`]]
+# bulk translation
+msgid "start of the screen region, X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "画面領域の開始、X座標、ピクセル[`0`から`PSIZE(0)-1`]"
+
+#. [Beginn des Bildschirmbereichs, Y-Koordinate, Pixel [`0` bis` PSIZE(2)
+#. -1`]]
+# bulk translation
+msgid "start of the screen region, Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "画面領域の開始、Y座標、ピクセル[`0`から`PSIZE(2)-1`]"
+
+#. [Ende des Bildschirmbereichs, X-Koordinate, Pixel [`x1 + 1` bis` PSIZE(0)
+#. -1`]]
+# bulk translation
+msgid ""
+"end of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]"
+msgstr "画面領域の終わり、X座標、ピクセル[`x1 + 1`から`PSIZE(0)-1`]"
+
+#. [Ende des Bildschirmbereichs, Y-Koordinate, Pixel [`y1 + 1` bis` PSIZE(2)
+#. -1`]]
+# bulk translation
+msgid ""
+"end of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]"
+msgstr "画面領域の終わり、Y座標、ピクセル[`y1 + 1`から`PSIZE(2)-1`]"
+
+#. [Gibt die Farbe des Pixels an den angegebenen Koordinaten zurück.]
+# bulk translation
+msgid "Returns the color of the pixel at the given coordinates."
+msgstr "指定された座標でのピクセルの色を返します。"
+
+#. [X-Koordinate, Pixel [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X座標、ピクセル[`0`から`PSIZE(0)-1`]"
+
+#. [Y-Koordinate, Pixel [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y座標、ピクセル[`0`から`PSIZE(2)-1`]"
+
+#. [Pixelfarbe [`0` bis` 255`]]
+# bulk translation
+msgid "Pixel color [`0` to `255`]"
+msgstr "ピクセルカラー[`0`から`255`]"
+
+#. [Wenn die Koordinaten die Abmessungen des Pixelspeicherbereichs
+#. überschreiten, wird "0" zurückgegeben.]
+# bulk translation
+msgid ""
+"If the coordinates exceed the dimensions of the pixel memory area, `0` will "
+"be returned."
+msgstr "座標がピクセルメモリ領域の寸法を超える場合、 `0`が返されます。"
+
+#. [Gibt eine Zeichenfolge an der angegebenen Pixelposition aus.]
+# bulk translation
+msgid "Prints a string of characters at the specified pixel position."
+msgstr "指定されたピクセル位置に文字列を出力します。"
+
+#. [Sie können "GPRINT" verwenden, um Zeichen außerhalb eines festen
+#. Textgitters zu drucken, z. B. außerhalb des Bildschirmspeichers.]
+# bulk translation
+msgid ""
+"`GPRINT` allows printing characters outside the fixed text grid, including "
+"off-screen pixel memory."
+msgstr "`GPRINT`を使用すると、画面外のピクセルメモリなど、固定テキストグリッドの外側に文字を印刷できます。"
+
+#. [Startpunkt, X-Koordinate, Pixel [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "始点、X座標、ピクセル[`0`から`PSIZE(0)-1`]"
+
+#. [Startpunkt, Y-Koordinate, Pixel [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "start point, Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "始点、Y座標、ピクセル[`0`から`PSIZE(2)-1`]"
+
+#. [* Das "Zeilenumbruch" -Zeichen, das normalerweise am Ende des Befehls
+#. "DRUCKEN" hinzugefügt wird, wird buchstäblich von "GPRINT" gezeichnet und
+#. erscheint am Ende des gezeichneten Textes als interessantes Zeichen. Dies
+#. kann vermieden werden, indem den Druckparametern ein Semikolon (`;`)
+#. hinzugefügt wird.]
+# bulk translation
+msgid ""
+"* The \"new line\" character that is generally appended at the end of a "
+"`PRINT` command is drawn literally by `GPRINT`, showing up as a funny "
+"character at the end of the drawn text. This can be avoided by appending a "
+"semicolon (`;`) to the print parameters."
+msgstr ""
+"*`PRINT`コマンドの最後に通常追加される「改行」文字は、文字通り`GPRINT`によって描画され、描画されたテキストの最後に面白い文字として表示されます。これは、印刷パラメータにセミコロン（"
+" `;`）を追加することで回避できます。"
+
+#. [Zeichne ein Pixel.]
+# bulk translation
+msgid "Draws a pixel."
+msgstr "ピクセルを描画します。"
+
+#. [Zeichne eine Linie.]
+# bulk translation
+msgid "Draws a line."
+msgstr "線を引きます。"
+
+#. [Koordinaten, die den gültigen Pixelspeicherbereich überschreiten, werden
+#. geklemmt. Dies ist nicht das erwartete Verhalten, da es die Steigung der
+#. Linie ändern kann.]
+# bulk translation
+msgid ""
+"Coordinates that exceed the valid pixel memory area will be clamped. This "
+"can change the slope of the line and is not the behavior one would expect."
+msgstr "有効なピクセルメモリ領域を超える座標はクランプされます。これは線の傾きを変える可能性があり、期待される動作ではありません。"
+
+#. [Zeichne einen Kreis.]
+# bulk translation
+msgid "Draws a circle."
+msgstr "円を描きます。"
+
+#. [X-Koordinate des Mittelpunkts des Kreises [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "X coordinate of the circle's center [`0` to `PSIZE(0)-1`]"
+msgstr "円の中心のX座標[`0`から`PSIZE(0)-1`]"
+
+#. [Y-Koordinate des Mittelpunkts des Kreises [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "Y coordinate of the circle's center [`0` to `PSIZE(2)-1`]"
+msgstr "円の中心のY座標[`0`から`PSIZE(2)-1`]"
+
+#. [Kreisradius]
+# bulk translation
+msgid "circle's radius"
+msgstr "円の半径"
+
+#. [Kreisumrissfarbe [Bereich hängt vom Farbraum ab]]
+# bulk translation
+msgid "color of the circle's outline [range depends on color space]"
+msgstr "円の輪郭の色[範囲は色空間によって異なります]"
+
+#. [Die Farbe des Kreiskörpers [Der Bereich hängt vom Farbraum ab. `-1`] für
+#. ungefüllte Kreise]
+# bulk translation
+msgid ""
+"color of the circle's body [range depends on color space, `-1` for an "
+"unfilled circle]"
+msgstr "円の本体の色[範囲は色空間によって異なります。塗りつぶされていない円の場合は `-1`]"
+
+#. [* `fill_color` kann nicht weggelassen werden.]
+# bulk translation
+msgid "* `fill_color` cannot be omitted."
+msgstr "* `fill_color`は省略できません。"
+
+#. [Zeichnen Sie ein Rechteck.]
+# bulk translation
+msgid "Draws a rectangle."
+msgstr "長方形を描画します。"
+
+#. [Kopiert einen rechteckigen Bereich des Pixelspeichers in einen anderen
+#. Bereich.]
+# bulk translation
+msgid "Copies a rectangular area of pixel memory to another area."
+msgstr "ピクセルメモリの長方形の領域を別の領域にコピーします。"
+
+#. [Quellbereich, X-Koordinate [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "source area, X coordinate [`0` to `PSIZE(0)-1`]"
+msgstr "ソースエリア、X座標[`0`から`PSIZE(0)-1`]"
+
+#. [Quellbereich, Y-Koordinate [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "source area, Y coordinate [`0` to `PSIZE(2)-1`]"
+msgstr "ソースエリア、Y座標[`0`から`PSIZE(2)-1`]"
+
+#. [Zielbereich, X-Koordinate [`0` bis` PSIZE(0)-1`]]
+# bulk translation
+msgid "destination area, X coordinate [`0` to `PSIZE(0)-1`]"
+msgstr "宛先領域、X座標[`0`から`PSIZE(0)-1`]"
+
+#. [Zielbereich, Y-Koordinate [`0` bis` PSIZE(2)-1`]]
+# bulk translation
+msgid "destination area, Y coordinate [`0` to `PSIZE(2)-1`]"
+msgstr "宛先エリア、Y座標[`0`から`PSIZE(2)-1`]"
+
+#. [Flächenbreite [`0` bis` PSIZE(0)-x`]]
+# bulk translation
+msgid "area width [`0` to `PSIZE(0)-x`]"
+msgstr "エリア幅[`0`から`PSIZE(0)-x`]"
+
+#. [Flächenhöhe [`0` bis` PSIZE(2)-y`]]
+# bulk translation
+msgid "area height [`0` to `PSIZE(2)-y`]"
+msgstr "エリアの高さ[`0`から`PSIZE(2)-y`]"
+
+#. [Lädt und aktiviert TrueType-Schriftarten aus Dateien.]
+# bulk translation
+msgid "Loads a TrueType font from a file and activates it."
+msgstr "ファイルからTrueTypeフォントをロードし、アクティブ化します。"
+
+#. [Name der TrueType-Schriftartdatei]
+# bulk translation
+msgid "name of TrueType font file"
+msgstr "TrueTypeフォントファイルの名前"
+
+#. [Schriftbreite]
+# bulk translation
+msgid "font width"
+msgstr "フォント幅"
+
+#. [Schrifthöhe]
+# bulk translation
+msgid "font height"
+msgstr "フォントの高さ"
+
+#. [Gibt den Schriftindex der geladenen Schrift in "RET (0)" zurück.]
+# bulk translation
+msgid "Returns the font index of the loaded font in `RET(0)`."
+msgstr "ロードされたフォントのフォントインデックスを `RET(0)`に返します。"
+
+#. [Proportionale Schriftarten und Schriftarten, die nicht speziell für die
+#. Verwendung auf Bildschirmen mit niedriger Auflösung entwickelt wurden,
+#. sehen nicht gut aus.]
+# bulk translation
+msgid ""
+"Proportional fonts and fonts that are not specifically designed for use on "
+"low-resolution screens will not look very good."
+msgstr "プロポーショナルフォントや、低解像度の画面で使用するために特別に設計されていないフォントは、見栄えがよくありません。"

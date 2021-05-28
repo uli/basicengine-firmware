@@ -257,8 +257,8 @@ void SMALL Basic::iconfig() {
     break;
 #endif
   case 11:
-    if (value < 0 || value > 3)
-      E_VALUE(0, 3);
+    if (value < 0 || value >= NUM_LANGS)
+      E_VALUE(0, NUM_LANGS - 1);
     else
       CONFIG.language = value;
     if (eb_load_lang_resources(CONFIG.language) < 0) {

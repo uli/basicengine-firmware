@@ -206,13 +206,12 @@ static void print_help(sjson_node *h) {
     sc0.setColor(saved_fg_color, saved_bg_color);
 }
 
-#define NUM_LANGS 4
-
 const char *helps[NUM_LANGS] = {
     "en",
     "de",
     "fr",
     "es",
+    "ja",
 };
 
 sjson_node *helps_json[NUM_LANGS] = {};
