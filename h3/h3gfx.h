@@ -145,26 +145,25 @@ public:
   void setSpiClockMax() {
   }
 
-  inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
-    memcpy((pixel_t *)address, data, len * sizeof(pixel_t));
+  inline void setPixels(pixel_t *address, pixel_t *data, uint32_t len) {
+    memcpy(address, data, len * sizeof(pixel_t));
     m_textmode_buffer_modified = true;
   }
-  inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+  inline void setPixelsIndexed(pixel_t *address, ipixel_t *data, uint32_t len) {
     if (csp.getColorSpace() == 2) {
       setPixels(address, data, len);
       return;
     }
-    pixel_t *pa = (pixel_t *)address;
     for (uint32_t i = 0; i < len; ++i)
-      *pa++ = m_current_palette[*data++];
+      *address++ = m_current_palette[*data++];
     m_textmode_buffer_modified = true;
   }
 
-  inline uint32_t pixelAddr(int x, int y) {  // XXX: uint32_t? ouch...
-    return (uint32_t)&m_pixels[y][x];
+  inline pixel_t *pixelAddr(int x, int y) {
+    return &m_pixels[y][x];
   }
-  inline uint32_t piclineByteAddress(int line) {
-    return (uint32_t)&m_pixels[line][0];
+  inline pixel_t *piclineByteAddress(int line) {
+    return &m_pixels[line][0];
   }
 
   void render();

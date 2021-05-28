@@ -140,41 +140,35 @@ public:
   void setSpiClockMax() {
   }
 
-  inline void setPixels(uint32_t address, pixel_t *data, uint32_t len) {
-    uint32_t x = address >> 16;
-    uint32_t y = address & 0xffff;
-
+  inline void setPixels(pixel_t *address, pixel_t *data, uint32_t len) {
     for (uint32_t i = 0; i < len; ++i)
-      PIXELT(x + i, y) = data[i];
+      *address++ = data[i];
 
     m_dirty = true;
   }
 
-  inline void setPixelsIndexed(uint32_t address, ipixel_t *data, uint32_t len) {
+  inline void setPixelsIndexed(pixel_t *address, ipixel_t *data, uint32_t len) {
 #if SDL_BPP > 8
     if (csp.getColorSpace() == 2) {
       setPixels(address, data, len);
       return;
     }
 #endif
-    uint32_t x = address >> 16;
-    uint32_t y = address & 0xffff;
-
     for (uint32_t i = 0; i < len; ++i)
 #if SDL_BPP == 8
-      PIXELT(x + i, y) = data[i];
+      *address++ = data[i];
 #else
-      PIXELT(x + i, y) = m_current_palette[data[i]];
+      *address++ = m_current_palette[data[i]];
 #endif
 
     m_dirty = true;
   }
 
-  inline uint32_t pixelAddr(int x, int y) {  // XXX: uint32_t? ouch...
-    return (uint32_t)(x << 16) | (y & 0xffff);
+  inline pixel_t *pixelAddr(int x, int y) {
+    return &PIXELT(x, y);
   }
-  inline uint32_t piclineByteAddress(int line) {
-    return (uint32_t)(line & 0xffff);
+  inline pixel_t *piclineByteAddress(int line) {
+    return &PIXELT(0, line);
   }
 
   void render();
