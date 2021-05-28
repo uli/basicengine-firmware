@@ -101,7 +101,7 @@ int eb_load_lang_resources(int lang) {
   BString font_root = BString(getenv("HOME")) + BString("/fonts/");
   int ret = -1;
   if (lang == 4) {
-    BString font = font_root + BString("misaki_mincho_w.ttf");
+    BString font = font_root + BString("misaki_gothic_w.ttf");
     int min_ret = eb_load_font(font.c_str(), 8, 8);
 
     font = font_root + BString("k8x12w.ttf");
