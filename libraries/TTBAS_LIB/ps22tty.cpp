@@ -53,69 +53,70 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
-const char RomaKama[][5][4] PROGMEM =  {
-  //  a       e       i       o        u
-  { "\xb1", "\xb4", "\xb2", "\xb5", "\xb3", },                                          //[]  : ｱ ｴ ｲ ｵ ｳ
-  { "\xca\xde", "\xcd\xde", "\xcb\xde", "\xce\xde", "\xcc\xde", },                      //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
-  { "\xb6", "\xbe", "\xbc", "\xba", "\xb8", },                                          //[c] : ｶ ｾ ｼ ｺ ｸ
-  { "\xc0\xde", "\xc3\xde", "\xc1\xde", "\xc4\xde", "\xc2\xde", },                      //[d] : ﾀﾞ ﾃﾞ ﾁﾞ ﾄﾞ ﾂﾞ
-  { "\xcc\xa7", "\xcc\xaa", "\xcc\xa8", "\xcc\xab", "\xcc", },                          //[f] : ﾌｧ ﾌｪ ﾌｨ ﾌｫ ﾌ
-  { "\xb6\xde", "\xb9\xde", "\xb7\xde", "\xba\xde", "\xb8\xde", },                      //[g] : ｶﾞ ｹﾞ ｷﾞ ｺﾞ ｸﾞ
-  { "\xca", "\xcd", "\xcb", "\xce", "\xcc", },                                          //[h] : ﾊ ﾍ ﾋ ﾎ ﾌ
-  { "\xbc\xde\xac", "\xbc\xde\xaa", "\xbc\xde", "\xbc\xde\xae", "\xbc\xde\xad", },      //[j] : ｼﾞｬ ｼﾞｪ ｼﾞ ｼﾞｮ ｼﾞｭ
-  { "\xb6", "\xb9", "\xb7", "\xba", "\xb8", },                                          //[k] : ｶ ｹ ｷ ｺ ｸ
-  { "\xa7", "\xaa", "\xa8", "\xab", "\xa9", },                                          //[l] : ｧ ｪ ｨ ｫ ｩ
-  { "\xcf", "\xd2", "\xd0", "\xd3", "\xd1", },                                          //[m] : ﾏ ﾒ ﾐ ﾓ ﾑ
-  { "\xc5", "\xc8", "\xc6", "\xc9", "\xc7", },                                          //[n] : ﾅ ﾈ ﾆ ﾉ ﾇ
-  { "\xca\xdf", "\xcd\xdf", "\xcb\xdf", "\xce\xdf", "\xcc\xdf", },                      //[p] : ﾊﾟ ﾍﾟ ﾋﾟ ﾎﾟ ﾌﾟ
-  { "\xb8\xa7", "\xb8\xaa", "\xb8\xa8", "\xb8\xab", "\xb8", },                          //[q] : ｸｧ ｸｪ ｸｨ ｸｫ ｸ
-  { "\xd7", "\xda", "\xd8", "\xdb", "\xd9", },                                          //[r] : ﾗ ﾚ ﾘ ﾛ ﾙ
-  { "\xbb", "\xbe", "\xbc", "\xbf", "\xbd", },                                          //[s] : ｻ ｾ ｼ ｿ ｽ
-  { "\xc0", "\xc3", "\xc1", "\xc4", "\xc2", },                                          //[t] : ﾀ ﾃ ﾁ ﾄ ﾂ
-  { "\xb3\xde\xa7", "\xb3\xde\xaa", "\xb3\xde\xa8", "\xb3\xde\xab", "\xb3\xde", },      //[v] : ｳﾞｧ ｳﾞｪ ｳﾞｨ ｳﾞｫ ｳﾞ
-  { "\xdc", "\xb3\xaa", "\xb3\xa8", "\xa6", "\xb3", },                                  //[w] : ﾜ ｳｪ ｳｨ ｦ ｳ
-  { "\xa7", "\xaa", "\xa8", "\xab", "\xa9", },                                          //[x] : ｧ ｪ ｨ ｫ ｩ
-  { "\xd4", "\xa8", "\xb2", "\xd6", "\xd5", },                                          //[y] : ﾔ ｨｪ ｲ ﾖ ﾕ
-  { "\xbb\xde", "\xbe\xde", "\xbc\xde", "\xbf\xde", "\xbd\xde", },                      //[z] : ｻﾞ ｾﾞ ｼﾞ ｿﾞ ｽﾞ
-  { "\xcb\xde\xac", "\xcb\xde\xaa", "\xcb\xde\xa8", "\xcb\xde\xae", "\xcb\xde\xad",},   //[by] : ﾋﾞｬ ﾋﾞｪ ﾋﾞｨ ﾋﾞｮ ﾋﾞｭ
-  { "\xc1\xac", "\xc1\xaa", "\xc1", "\xc1\xae", "\xc1\xad", },                          //[ch] : ﾁｬ ﾁｪ ﾁ ﾁｮ ﾁｭ
-  { "\xc1\xac", "\xc1\xaa", "\xc1\xa8", "\xc1\xae", "\xc1\xad", },                      //[cy] : ﾁｬ ﾁｪ ﾁｨ ﾁｮ ﾁｭ
-  { "\xc3\xde\xac", "\xc3\xde\xaa", "\xc3\xde\xa8", "\xc3\xde\xae", "\xc3\xde\xad", },  //[dh] : ﾃﾞｬ ﾃﾞｪ ﾃﾞｨ ﾃﾞｮ ﾃﾞｭ
-  { "\xc4\xde\xa7", "\xc4\xde\xaa", "\xc4\xde\xa8", "\xc4\xde\xab", "\xc4\xde\xa9", },  //[dw] : ﾄﾞｧ ﾄﾞｪ ﾄﾞｨ ﾄﾞｫ ﾄﾞｩ
-  { "\xc1\xde\xac", "\xc1\xde\xaa", "\xc1\xde\xa8", "\xc1\xde\xae", "\xc1\xde\xad", },  //[dy] : ﾁﾞｬ ﾁﾞｪ ﾁﾞｨ ﾁﾞｮ ﾁﾞｭ
-  { "\xcc\xa7", "\xcc\xaa", "\xcc\xa8", "\xcc\xab", "\xcc\xa9", },                      //[fw] : ﾌｧ ﾌｪ ﾌｨ ﾌｫ ﾌｩ
-  { "\xcc\xac", "\xcc\xaa", "\xcc\xa8", "\xcc\xae", "\xcc\xad", },                      //[fy] : ﾌｬ ﾌｪ ﾌｨ ﾌｮ ﾌｭ
-  { "\xb8\xde\xa7", "\xb8\xde\xaa", "\xb8\xde\xa8", "\xb8\xde\xab", "\xb8\xde\xa9", },  //[gw] : ｸﾞｧ ｸﾞｪ ｸﾞｨ ｸﾞｫ ｸﾞｩ
-  { "\xb7\xde\xac", "\xb7\xde\xaa", "\xb7\xde\xa8", "\xb7\xde\xae", "\xb7\xde\xad", },  //[gy] : ｷﾞｬ ｷﾞｪ ｷﾞｨ ｷﾞｮ ｷﾞｭ
-  { "\xcb\xac", "\xcb\xaa", "\xcb\xa8", "\xcb\xae", "\xcb\xad", },                      //[hy] : ﾋｬ ﾋｪ ﾋｨ ﾋｮ ﾋｭ
-  { "\xbc\xde\xac", "\xbc\xde\xaa", "\xbc\xde\xa8", "\xbc\xde\xae", "\xbc\xde\xad", },  //[jy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
-  { "\xb8\xa7", "\x00", "\x00", "\x00", "\x00", },                                      //[kw] : ｸｧ NG NG NG NG
-  { "\xb7\xac", "\xb7\xaa", "\xb7\xa8", "\xb7\xae", "\xb7\xad", },                      //[ky] : ｷｬ ｷｪ ｷｨ ｷｮ ｷｭ
-  { "\x00", "\x00", "\x00", "\x00", "\xaf", },                                          //[lt] : NG NG NG NG ｯ
-  { "\xac", "\xaa", "\xa8", "\xae", "\xad", },                                          //[ly] : ｬ ｪ ｨ ｮ ｭ
-  { "\xd0\xac", "\xd0\xaa", "\xd0\xa8", "\xd0\xae", "\xd0\xad", },                      //[my] : ﾐｬ ﾐｪ ﾐｨ ﾐｮ ﾐｭ
-  { "\xc6\xac", "\xc6\xaa", "\xc6\xa8", "\xc6\xae", "\xc6\xad", },                      //[ny] : ﾆｬ ﾆｪ ﾆｨ ﾆｮ ﾆｭ
-  { "\xcb\xdf\xac", "\xcb\xdf\xaa", "\xcb\xdf\xa8", "\xcb\xdf\xae", "\xcb\xdf\xad", },  //[py] : ﾋﾟｬ ﾋﾟｪ ﾋﾟｨ ﾋﾟｮ ﾋﾟｭ
-  { "\xb8\xa7", "\xb8\xaa", "\xb8\xa8", "\xb8\xab", "\xb8\xa9", },                      //[qw] : ｸｧ ｸｪ ｸｨ ｸｫ ｸｩ
-  { "\xb8\xac", "\xb8\xaa", "\xb8\xa8", "\xb8\xae", "\xb8\xad", },                      //[qy] : ｸｬ ｸｪ ｸｨ ｸｮ ｸｭ
-  { "\xd8\xac", "\xd8\xaa", "\xd8\xa8", "\xd8\xae", "\xd8\xad", },                      //[ry] : ﾘｬ ﾘｪ ﾘｨ ﾘｮ ﾘｭ
-  { "\xbc\xac", "\xbc\xaa", "\xbc", "\xbc\xae", "\xbc\xad", },                          //[sh] : ｼｬ ｼｪ ｼ ｼｮ ｼｭ
-  { "\xbd\xa7", "\xbd\xaa", "\xbd\xa8", "\xbd\xab", "\xbd\xa9", },                      //[sw] : ｽｧ ｽｪ ｽｨ ｽｫ ｽｩ
-  { "\xbc\xac", "\xbc\xaa", "\xbc\xa8", "\xbc\xae", "\xbc\xad", },                      //[sy] : ｼｬ ｼｪ ｼｨ ｼｮ ｼｭ
-  { "\xc3\xac", "\xc3\xaa", "\xc3\xa8", "\xc3\xae", "\xc3\xad", },                      //[th] : ﾃｬ ﾃｪ ﾃｨ ﾃｮ ﾃｭ
-  { "\xc2\xa7", "\xc2\xaa", "\xc2\xa8", "\xc2\xab", "\xc2", },                          //[ts] : ﾂｧ ﾂｪ ﾂｨ ﾂｫ ﾂ
-  { "\xc4\xa7", "\xc4\xaa", "\xc4\xa8", "\xc4\xab", "\xc4\xa9", },                      //[tw] : ﾄｧ ﾄｪ ﾄｨ ﾄｫ ﾄｩ
-  { "\xc1\xac", "\xc1\xaa", "\xc1\xa8", "\xc1\xae", "\xc1\xad", },                      //[ty] : ﾁｬ ﾁｪ ﾁｨ ﾁｮ ﾁｭ
-  { "\xb3\xde\xac", "\xb3\xde\xaa", "\xb3\xde\xa8", "\xb3\xde\xae", "\xb3\xde\xad", },  //[vy] : ｳﾞｬ ｳﾞｪ ｳﾞｨ ｳﾞｮ ｳﾞｭ
-  { "\xb3\xa7", "\xb3\xaa", "\xb3\xa8", "\xb3\xab", "\xb3", },                          //[wh] : ｳｧ ｳｪ ｳｨ ｳｫ ｳ
-  { "\x00", "\x00", "\x00", "\x00", "\xaf", },                                          //[xt] : NG NG NG NG ｯ
-  { "\xac", "\xaa", "\xaa", "\xae", "\xad", },                                          //[xy] : ｬ ｪ ｪ ｮ ｭ
-  { "\xbc\xde\xac", "\xbc\xde\xaa", "\xbc\xde\xa8", "\xbc\xde\xae", "\xbc\xde\xad", },  //[zy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
+const wchar_t RomaKama[][5][4] PROGMEM =  {
+  //  a      e      i      o      u
+  { L"ア", L"エ", L"イ", L"オ", L"ウ", },               //[]  : ｱ ｴ ｲ ｵ ｳ
+  { L"バ", L"ベ", L"ビ", L"ボ", L"ブ", },               //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
+  { L"カ", L"セ", L"シ", L"コ", L"ク", },               //[c] : ｶ ｾ ｼ ｺ ｸ
+  { L"ダ", L"デ", L"ヂ", L"ド", L"ヅ", },               //[d] : ﾀﾞ ﾃﾞ ﾁﾞ ﾄﾞ ﾂﾞ
+  { L"ファ", L"フェ", L"フィ", L"フォ", L"フ", },       //[f] : ﾌｧ ﾌｪ ﾌｨ ﾌｫ ﾌ
+  { L"ガ", L"ゲ", L"ギ", L"ゴ", L"グ", },               //[g] : ｶﾞ ｹﾞ ｷﾞ ｺﾞ ｸﾞ
+  { L"ハ", L"ヘ", L"ヒ", L"ホ", L"フ", },               //[h] : ﾊ ﾍ ﾋ ﾎ ﾌ
+  { L"ジャ", L"ジェ", L"ジ", L"ジョ", L"ジュ", },       //[j] : ｼﾞｬ ｼﾞｪ ｼﾞ ｼﾞｮ ｼﾞｭ
+  { L"カ", L"ケ", L"キ", L"コ", L"ク", },               //[k] : ｶ ｹ ｷ ｺ ｸ
+  { L"ァ", L"ェ", L"ィ", L"ォ", L"ゥ", },               //[l] : ｧ ｪ ｨ ｫ ｩ
+  { L"マ", L"メ", L"ミ", L"モ", L"ム", },               //[m] : ﾏ ﾒ ﾐ ﾓ ﾑ
+  { L"ナ", L"ネ", L"ニ", L"ノ", L"ヌ", },               //[n] : ﾅ ﾈ ﾆ ﾉ ﾇ
+  { L"パ", L"ペ", L"ピ", L"ポ", L"プ", },               //[p] : ﾊﾟ ﾍﾟ ﾋﾟ ﾎﾟ ﾌﾟ
+  { L"クァ", L"クェ", L"クィ", L"クォ", L"ク", },       //[q] : ｸｧ ｸｪ ｸｨ ｸｫ ｸ
+  { L"ラ", L"レ", L"リ", L"ロ", L"ル", },               //[r] : ﾗ ﾚ ﾘ ﾛ ﾙ
+  { L"サ", L"セ", L"シ", L"ソ", L"ス", },               //[s] : ｻ ｾ ｼ ｿ ｽ
+  { L"タ", L"テ", L"チ", L"ト", L"ツ", },               //[t] : ﾀ ﾃ ﾁ ﾄ ﾂ
+  { L"ヴァ", L"ヴェ", L"ヴィ", L"ヴォ", L"ヴ", },       //[v] : ｳﾞｧ ｳﾞｪ ｳﾞｨ ｳﾞｫ ｳﾞ
+  { L"ワ", L"ウェ", L"ウィ", L"ヲ", L"ウ", },           //[w] : ﾜ ｳｪ ｳｨ ｦ ｳ
+  { L"ァ", L"ェ", L"ィ", L"ォ", L"ゥ", },               //[x] : ｧ ｪ ｨ ｫ ｩ
+  { L"ヤ", L"ィェ", L"イ", L"ヨ", L"ユ", },             //[y] : ﾔ ｨｪ ｲ ﾖ ﾕ
+  { L"ザ", L"ゼ", L"ジ", L"ゾ", L"ズ", },               //[z] : ｻﾞ ｾﾞ ｼﾞ ｿﾞ ｽﾞ
+  { L"ビャ", L"ビェ", L"ビィ", L"ビョ", L"ビュ"},       //[by] : ﾋﾞｬ ﾋﾞｪ ﾋﾞｨ ﾋﾞｮ ﾋﾞｭ
+  { L"チャ", L"チェ", L"チ", L"チョ", L"チュ", },       //[ch] : ﾁｬ ﾁｪ ﾁ ﾁｮ ﾁｭ
+  { L"チャ", L"チェ", L"チィ", L"チョ", L"チュ", },     //[cy] : ﾁｬ ﾁｪ ﾁｨ ﾁｮ ﾁｭ
+  { L"デャ", L"デェ", L"ディ", L"デョ", L"デュ", },     //[dh] : ﾃﾞｬ ﾃﾞｪ ﾃﾞｨ ﾃﾞｮ ﾃﾞｭ
+  { L"ドァ", L"ドェ", L"ドィ", L"ドォ", L"ドゥ", },     //[dw] : ﾄﾞｧ ﾄﾞｪ ﾄﾞｨ ﾄﾞｫ ﾄﾞｩ
+  { L"ヂャ", L"ヂェ", L"ヂィ", L"ヂョ", L"ヂュ", },     //[dy] : ﾁﾞｬ ﾁﾞｪ ﾁﾞｨ ﾁﾞｮ ﾁﾞｭ
+  { L"ファ", L"フェ", L"フィ", L"フォ", L"フゥ", },     //[fw] : ﾌｧ ﾌｪ ﾌｨ ﾌｫ ﾌｩ
+  { L"フャ", L"フェ", L"フィ", L"フョ", L"フュ", },     //[fy] : ﾌｬ ﾌｪ ﾌｨ ﾌｮ ﾌｭ
+  { L"グァ", L"グェ", L"グィ", L"グォ", L"グゥ", },     //[gw] : ｸﾞｧ ｸﾞｪ ｸﾞｨ ｸﾞｫ ｸﾞｩ
+  { L"ギャ", L"ギェ", L"ギィ", L"ギョ", L"ギュ", },     //[gy] : ｷﾞｬ ｷﾞｪ ｷﾞｨ ｷﾞｮ ｷﾞｭ
+  { L"ヒャ", L"ヒェ", L"ヒィ", L"ヒョ", L"ヒュ", },     //[hy] : ﾋｬ ﾋｪ ﾋｨ ﾋｮ ﾋｭ
+  { L"ジャ", L"ジェ", L"ジィ", L"ジョ", L"ジュ", },     //[jy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
+  { L"クァ", L"", L"", L"", L"", },                     //[kw] : ｸｧ NG NG NG NG
+  { L"キャ", L"キェ", L"キィ", L"キョ", L"キュ", },     //[ky] : ｷｬ ｷｪ ｷｨ ｷｮ ｷｭ
+  { L"", L"", L"", L"", L"ッ", },                       //[lt] : NG NG NG NG ｯ
+  { L"ャ", L"ェ", L"ィ", L"ョ", L"ュ", },               //[ly] : ｬ ｪ ｨ ｮ ｭ
+  { L"ミャ", L"ミェ", L"ミィ", L"ミョ", L"ミュ", },     //[my] : ﾐｬ ﾐｪ ﾐｨ ﾐｮ ﾐｭ
+  { L"ニャ", L"ニェ", L"ニィ", L"ニョ", L"ニュ", },     //[ny] : ﾆｬ ﾆｪ ﾆｨ ﾆｮ ﾆｭ
+  { L"ピャ", L"ピェ", L"ピィ", L"ピョ", L"ピュ", },     //[py] : ﾋﾟｬ ﾋﾟｪ ﾋﾟｨ ﾋﾟｮ ﾋﾟｭ
+  { L"クァ", L"クェ", L"クィ", L"クォ", L"クゥ", },     //[qw] : ｸｧ ｸｪ ｸｨ ｸｫ ｸｩ
+  { L"クャ", L"クェ", L"クィ", L"クョ", L"クュ", },     //[qy] : ｸｬ ｸｪ ｸｨ ｸｮ ｸｭ
+  { L"リャ", L"リェ", L"リィ", L"リョ", L"リュ", },     //[ry] : ﾘｬ ﾘｪ ﾘｨ ﾘｮ ﾘｭ
+  { L"シャ", L"シェ", L"シ", L"ショ", L"シュ", },       //[sh] : ｼｬ ｼｪ ｼ ｼｮ ｼｭ
+  { L"スァ", L"スェ", L"スィ", L"スォ", L"スゥ", },     //[sw] : ｽｧ ｽｪ ｽｨ ｽｫ ｽｩ
+  { L"シャ", L"シェ", L"シィ", L"ショ", L"シュ", },     //[sy] : ｼｬ ｼｪ ｼｨ ｼｮ ｼｭ
+  { L"テャ", L"テェ", L"ティ", L"テョ", L"テュ", },     //[th] : ﾃｬ ﾃｪ ﾃｨ ﾃｮ ﾃｭ
+  { L"ツァ", L"ツェ", L"ツィ", L"ツォ", L"ツ", },       //[ts] : ﾂｧ ﾂｪ ﾂｨ ﾂｫ ﾂ
+  { L"トァ", L"トェ", L"トィ", L"トォ", L"トゥ", },     //[tw] : ﾄｧ ﾄｪ ﾄｨ ﾄｫ ﾄｩ
+  { L"チャ", L"チェ", L"チィ", L"チョ", L"チュ", },     //[ty] : ﾁｬ ﾁｪ ﾁｨ ﾁｮ ﾁｭ
+  { L"ヴャ", L"ヴェ", L"ヴィ", L"ヴョ", L"ヴュ", },     //[vy] : ｳﾞｬ ｳﾞｪ ｳﾞｨ ｳﾞｮ ｳﾞｭ
+  { L"ウァ", L"ウェ", L"ウィ", L"ウォ", L"ウ", },       //[wh] : ｳｧ ｳｪ ｳｨ ｳｫ ｳ
+  { L"", L"", L"", L"", L"ッ", },                       //[xt] : NG NG NG NG ｯ
+  { L"ャ", L"ェ", L"ィ", L"ョ", L"ュ", },               //[xy] : ｬ ｪ ｪ ｮ ｭ
+  { L"ジャ", L"ジェ", L"ジィ", L"ジョ", L"ジュ", },     //[zy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
+};
 };
 // clang-format on
 
 // 例外([nn])
-const char RomaKama_nn[4] __FLASH__ = "\xdd";  // 'ﾝ'
+const wchar_t RomaKama_nn[4] __FLASH__ = L"ン";
 
 // 母音テーブル
 const char BoonTable[] __FLASH__ = {
@@ -163,9 +164,9 @@ const char Shion_Xy_Table[][2] __FLASH__ = {
   { _romaji_z, _romaji_zy },
 };
 
-int16_t romaji_sts = _romaji_top;  // 状態遷移コード
+int16_t romaji_sts = _romaji_top;  // State transition code
 uint8_t flgTsu = false;            // 小さいﾂ付加フラグ
-char kataStr[6];                   // 確定カタカナ文字列
+wchar_t kataStr[6];                // 確定カタカナ文字列
 
 // 文字コードから母音コード(0～4)に変換する
 inline int16_t charToBoonCode(uint8_t c) {
@@ -183,11 +184,11 @@ inline int16_t charToShionCode(uint8_t c) {
   return -1;
 }
 
-// ローマ字カタカタ変換
-// 直前の状態遷移から次の状態に遷移する
-char *pRomaji2Kana(uint8_t c) {
+// Romaji Katakana conversion
+// Transition from the previous state transition to the next state
+wchar_t *pRomaji2Kana(uint8_t c) {
   int16_t code;
-  char *ptr;
+  wchar_t *ptr;
 
   // 小文字変換
   if (c >= 'A' && c <= 'Z')
@@ -202,7 +203,7 @@ char *pRomaji2Kana(uint8_t c) {
   if (code >= 0) {
     // 母音の場合,文字列を確定する
     if (romaji_sts >= _romaji_top && romaji_sts <= _romaji_zy) {
-      ptr = (char *)RomaKama[romaji_sts][code];
+      ptr = (wchar_t *)RomaKama[romaji_sts][code];
       goto STS_DONE;  // 変換完了
     } else
       goto STS_ERROR;  // 変換エラー
@@ -222,7 +223,7 @@ char *pRomaji2Kana(uint8_t c) {
         if (!flgTsu) {
           if (code == _romaji_n) {
             // nn('ﾝ')の場合
-            ptr = (char *)RomaKama_nn;
+            ptr = (wchar_t *)RomaKama_nn;
             goto STS_DONE;  // 変換完了
           } else {
             flgTsu = true;  // 小さい'ﾂ'の先頭付加フラグの設定
@@ -277,14 +278,14 @@ STS_ERROR: // [状態遷移エラー]
   flgTsu = false;            // 小さい'ﾂ'の先頭付加フラグクリア
   return NULL;
 
-STS_DONE:  // [ローマ字カタカナ変換 遷移完了]
+STS_DONE:  // [Romaji Katakana conversion transition completed]
   if (flgTsu) {
-    kataStr[0] = 0xaf;  // 'ｯ' の設定
-    strcpy(kataStr + 1, ptr);
+    kataStr[0] = L'ッ';  // 'ｯ' setting
+    wcscpy(kataStr + 1, ptr);
     ptr = kataStr;
   }
-  romaji_sts = _romaji_top;  // 状態の初期化
-  flgTsu = false;            // 小さい'ﾂ'の先頭付加フラグクリア
+  romaji_sts = _romaji_top;  // State initialization
+  flgTsu = false;            // Clear the flag added to the beginning of a small'tsu'
   return ptr;
 }
 
@@ -443,13 +444,7 @@ uint16_t cnv2tty(keyEvent k) {
     case PS2KEY_Backspace:  rc = SC_KEY_BACKSPACE;break;
     case PS2KEY_Delete:     rc = SC_KEY_DC;       break;
     case PS2KEY_Enter:	    rc = SC_KEY_CR;       break;
-    case PS2KEY_Romaji:
-      if (flgKana) {
-        flgKana = false;
-      } else {
-        flgKana = true;
-      }
-      break;
+    case PS2KEY_Romaji:     flgKana = !flgKana;  break;
     case PS2KEY_PrintScreen: rc = SC_KEY_PRINT; break;
   }
   return rc;
@@ -459,7 +454,7 @@ keyEvent ps22tty_last_key;
 
 // キー入力文字の取得
 uint16_t ICACHE_RAM_ATTR ps2read() {
-  char *ptr;
+  wchar_t *ptr;
   uint16_t c;
   uint8_t len;
 
@@ -478,9 +473,9 @@ uint16_t ICACHE_RAM_ATTR ps2read() {
   if (flgKana) {
     ptr = pRomaji2Kana(c);
     if (ptr) {
-      len = strlen_P(ptr);
+      len = wcslen(ptr);
       for (int16_t i = 0; i < len; i++) {
-        rb_insert(&kbuf, pgm_read_byte(&ptr[i]));
+        rb_insert(&kbuf, ptr[i]);
       }
     } else {
       if (romaji_sts == _romaji_top) {
