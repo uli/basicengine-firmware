@@ -117,6 +117,10 @@ S(eb_tick)
 S(eb_process_events)
 S(eb_set_cpu_speed)
 
+S(eb_add_command)
+S(eb_add_numfun)
+S(eb_add_strfun)
+
 // eb_file
 S(eb_file_exists)
 S(eb_file_size)

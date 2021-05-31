@@ -108,6 +108,7 @@ extern int c_printf(const char *f, ...);
 
 // ===== include all the stuff we are going to export
 
+#include "eb_basic.h"
 #include "eb_bg.h"
 #include "eb_config.h"
 #include "eb_conio.h"

@@ -27,6 +27,8 @@ typedef TOKEN_TYPE index_t;
 #include <dyncall.h>
 #include <setjmp.h>
 
+#include "eb_basic.h"
+
 #define SIZE_LINE 256  // コマンドライン入力バッファサイズ + NULL
 #define SIZE_IBUF 256  // 中間コード変換バッファサイズ
 
@@ -413,6 +415,9 @@ private:
 
   DCCallVM *callvm;
   jmp_buf jump;
+
+  void parse_params(token_t token, token_t *syntax, std::vector<eb_param_t> &params);
+  void delete_params(std::vector<eb_param_t> &params);
 };
 
 extern Basic *bc;

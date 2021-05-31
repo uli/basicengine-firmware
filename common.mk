@@ -61,7 +61,7 @@ init_dir: ttbasic/helptext_en.json
 	mkdir -p init_dir/help
 	rsync -av $(DEMOS_DIR)/* init_dir/ || true
 	rsync -av include/ init_dir/include/
-	cp -p ttbasic/eb_*.h init_dir/include/
+	cp -p ttbasic/eb_*.h init_dir/include/ ; rm -f init_dir/include/eb_*_int.h
 	cp -p ttbasic/mcurses*.h init_dir/include/
 	cp -p libraries/tinycc/include/*.h init_dir/include/
 	cp -p libraries/stb/*.h init_dir/include/

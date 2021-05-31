@@ -78,6 +78,8 @@ sdfiles bfs;
 #include "strfuntbl.h"
 #include "funtbl.h"
 #undef DECL_TABLE
+#include "eb_basic.h"
+#include "eb_basic_int.h"
 
 #ifdef FLOAT_NUMS
 // Get command arguments (int32_t, no argument check)
@@ -4153,6 +4155,16 @@ BString BASIC_INT Basic::istrvalue() {
 
   if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
     return (this->*strfuntbl[*cip++ - STRFUN_FIRST])();
+  } else if (*cip >= SIZE_KWTBL) {
+    std::vector<eb_param_t> params;
+    token_t sf = (token_t)*cip++;
+
+    parse_params(sf, eb_strfun_syntax(sf), params);
+
+    if (!err)
+      value = eb_handle_strfun(sf, &params[0]);
+
+    delete_params(params);
   } else
     switch (*cip++) {
     case I_STR:
@@ -4386,6 +4398,16 @@ num_t BASIC_FP Basic::ivalue() {
 
   if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
     value = (this->*numfuntbl[*cip++ - NUMFUN_FIRST])();
+  } else if (*cip >= SIZE_KWTBL) {
+    std::vector<eb_param_t> params;
+    token_t nf = (token_t)*cip++;
+
+    parse_params(nf, eb_numfun_syntax(nf), params);
+
+    if (!err)
+      value = eb_handle_numfun(nf, &params[0]);
+
+    delete_params(params);
   } else if (is_strexp()) {
     // string comparison (or error)
     value = irel_string();
@@ -5942,6 +5964,47 @@ void BASIC_INT Basic::iextend() {
   (this->*funtbl_ext[*cip++])();
 }
 
+void Basic::parse_params(token_t token, token_t *syntax, std::vector<eb_param_t> &params) {
+  if (!syntax) {
+    SYNTAX_T("type mismatch");
+    return;
+  }
+
+  token_t el;
+  eb_param_t param;
+
+  while ((el = *syntax++) != I_EOL) {
+    param.type = el;
+    switch (el) {
+    case I_VAR: {
+        num_t value = iexp();
+        param.num = value;
+        params.push_back(param);
+      }
+      break;
+    case I_STR: {
+        BString value = istrexp();
+        param.str = strdup(value.c_str());
+        params.push_back(param);
+      }
+      break;
+    default:
+      if (*cip++ != el) {
+        E_SYNTAX(el);
+        return;
+      }
+      break;
+    }
+  }
+}
+
+void Basic::delete_params(std::vector<eb_param_t> &params) {
+  for (auto p : params) {
+    if (p.type == I_STR)
+      free(p.str);
+  }
+}
+
 // execute intermediate code
 // Return value: next program execution position (line start)
 icode_t *BASIC_FP Basic::iexe(index_t stk) {
@@ -5960,6 +6023,16 @@ icode_t *BASIC_FP Basic::iexe(index_t stk) {
     // Execute intermediate code
     if (*cip < sizeof(funtbl) / sizeof(funtbl[0])) {
       (this->*funtbl[*cip++])();
+    } else if (*cip >= SIZE_KWTBL) {
+      std::vector<eb_param_t> params;
+      token_t cmd = (token_t)*cip++;
+
+      parse_params(cmd, eb_command_syntax(cmd), params);
+
+      if (!err)
+        eb_handle_command(cmd, &params[0]);
+
+      delete_params(params);
     } else
       SYNTAX_T(_("expected command"));
 
