@@ -440,7 +440,12 @@ uint16_t cnv2tty(keyEvent k) {
     case PS2KEY_Down_Arrow: rc = k.SHIFT ? SC_KEY_SHIFT_DOWN : SC_KEY_DOWN;	break;
     case PS2KEY_ESC:        rc = SC_KEY_ESCAPE;   break;
     case PS2KEY_Tab:        rc = SC_KEY_TAB;      break;
-    case PS2KEY_Space:      rc = 32;           break;
+    case PS2KEY_Space:
+      if (k.CTRL)
+        flgKana = !flgKana;
+      else
+        rc = ' ';
+      break;
     case PS2KEY_Backspace:  rc = SC_KEY_BACKSPACE;break;
     case PS2KEY_Delete:     rc = SC_KEY_DC;       break;
     case PS2KEY_Enter:	    rc = SC_KEY_CR;       break;
