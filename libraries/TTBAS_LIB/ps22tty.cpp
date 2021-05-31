@@ -34,11 +34,11 @@ const int IRQpin = PS2CLK;   // CLK(D+)
 const int DataPin = PS2DAT;  // Data(D-)
 
 TKeyboard kb;             // PS/2キーボードドライバ
-uint8_t flgKana = false;  // カナ入力モード
+uint8_t flgKana = 0;  // カナ入力モード
 struct ring_buffer kbuf;  // キーバッファ
 uint16_t kdata[16];
 
-#define RK_ENTRY_NUM (sizeof(RomaKama) / sizeof(RomaKama[0]))
+#define RK_ENTRY_NUM (sizeof(RomaKatakana) / sizeof(RomaKatakana[0]))
 
 //子音状態遷移コード
 // clang-format off
@@ -53,7 +53,7 @@ enum {
 };
 
 // カタカタ文字列変換テーブル
-const wchar_t RomaKama[][5][4] PROGMEM =  {
+const wchar_t RomaKatakana[][5][3] PROGMEM =  {
   //  a      e      i      o      u
   { L"ア", L"エ", L"イ", L"オ", L"ウ", },               //[]  : ｱ ｴ ｲ ｵ ｳ
   { L"バ", L"ベ", L"ビ", L"ボ", L"ブ", },               //[b] : ﾊﾞ ﾍﾞ ﾋﾞ ﾎﾞ ﾌﾞ
@@ -112,11 +112,71 @@ const wchar_t RomaKama[][5][4] PROGMEM =  {
   { L"ャ", L"ェ", L"ィ", L"ョ", L"ュ", },               //[xy] : ｬ ｪ ｪ ｮ ｭ
   { L"ジャ", L"ジェ", L"ジィ", L"ジョ", L"ジュ", },     //[zy] : ｼﾞｬ ｼﾞｪ ｼﾞｨ ｼﾞｮ ｼﾞｭ
 };
+
+const wchar_t RomaHiragana[][5][3] PROGMEM =  {
+  //  a      e      i      o      u
+  { L"あ", L"え", L"い", L"お", L"う", },
+  { L"ば", L"べ", L"び", L"ぼ", L"ぶ", },
+  { L"か", L"せ", L"し", L"こ", L"く", },
+  { L"だ", L"で", L"ぢ", L"ど", L"づ", },
+  { L"ふぁ", L"ふぇ", L"ふぃ", L"ふぉ", L"ふ", },
+  { L"が", L"げ", L"ぎ", L"ご", L"ぐ", },
+  { L"は", L"へ", L"ひ", L"ほ", L"ふ", },
+  { L"じゃ", L"じぇ", L"じ", L"じょ", L"じゅ", },
+  { L"か", L"け", L"き", L"こ", L"く", },
+  { L"ぁ", L"ぇ", L"ぃ", L"ぉ", L"ぅ", },
+  { L"ま", L"め", L"み", L"も", L"む", },
+  { L"な", L"ね", L"に", L"の", L"ぬ", },
+  { L"ぱ", L"ぺ", L"ぴ", L"ぽ", L"ぷ", },
+  { L"くぁ", L"くぇ", L"くぃ", L"くぉ", L"く", },
+  { L"ら", L"れ", L"り", L"ろ", L"る", },
+  { L"さ", L"せ", L"し", L"そ", L"す", },
+  { L"た", L"て", L"ち", L"と", L"つ", },
+  { L"", L"", L"", L"", L"", },
+  { L"わ", L"うぇ", L"うぃ", L"を", L"う", },
+  { L"ぁ", L"ぇ", L"ぃ", L"ぉ", L"ぅ", },
+  { L"や", L"ぃぇ", L"い", L"よ", L"ゆ", },
+  { L"ざ", L"ぜ", L"じ", L"ぞ", L"ず", },
+  { L"びゃ", L"びぇ", L"びぃ", L"びょ", L"びゅ"},
+  { L"ちゃ", L"ちぇ", L"ち", L"ちょ", L"ちゅ", },
+  { L"ちゃ", L"ちぇ", L"ちぃ", L"ちょ", L"ちゅ", },
+  { L"でゃ", L"でぇ", L"でぃ", L"でょ", L"でゅ", },
+  { L"どぁ", L"どぇ", L"どぃ", L"どぉ", L"どぅ", },
+  { L"ぢゃ", L"ぢぇ", L"ぢぃ", L"ぢょ", L"ぢゅ", },
+  { L"ふぁ", L"ふぇ", L"ふぃ", L"ふぉ", L"ふぅ", },
+  { L"ふゃ", L"ふぇ", L"ふぃ", L"ふょ", L"ふゅ", },
+  { L"ぐぁ", L"ぐぇ", L"ぐぃ", L"ぐぉ", L"ぐぅ", },
+  { L"ぎゃ", L"ぎぇ", L"ぎぃ", L"ぎょ", L"ぎゅ", },
+  { L"ひゃ", L"ひぇ", L"ひぃ", L"ひょ", L"ひゅ", },
+  { L"じゃ", L"じぇ", L"じぃ", L"じょ", L"じゅ", },
+  { L"くぁ", L"", L"", L"", L"", },
+  { L"きゃ", L"きぇ", L"きぃ", L"きょ", L"きゅ", },
+  { L"", L"", L"", L"", L"っ", },
+  { L"ゃ", L"ぇ", L"ぃ", L"ょ", L"ゅ", },
+  { L"みゃ", L"みぇ", L"みぃ", L"みょ", L"みゅ", },
+  { L"にゃ", L"にぇ", L"にぃ", L"にょ", L"にゅ", },
+  { L"ぴゃ", L"ぴぇ", L"ぴぃ", L"ぴょ", L"ぴゅ", },
+  { L"くぁ", L"くぇ", L"くぃ", L"くぉ", L"くぅ", },
+  { L"くゃ", L"くぇ", L"くぃ", L"くょ", L"くゅ", },
+  { L"りゃ", L"りぇ", L"りぃ", L"りょ", L"りゅ", },
+  { L"しゃ", L"しぇ", L"し", L"しょ", L"しゅ", },
+  { L"すぁ", L"すぇ", L"すぃ", L"すぉ", L"すぅ", },
+  { L"しゃ", L"しぇ", L"しぃ", L"しょ", L"しゅ", },
+  { L"てゃ", L"てぇ", L"てぃ", L"てょ", L"てゅ", },
+  { L"つぁ", L"つぇ", L"つぃ", L"つぉ", L"つ", },
+  { L"とぁ", L"とぇ", L"とぃ", L"とぉ", L"とぅ", },
+  { L"ちゃ", L"ちぇ", L"ちぃ", L"ちょ", L"ちゅ", },
+  { L"", L"", L"", L"", L"", },
+  { L"うぁ", L"うぇ", L"うぃ", L"うぉ", L"う", },
+  { L"", L"", L"", L"", L"っ", },
+  { L"ゃ", L"ぇ", L"ぃ", L"ょ", L"ゅ", },
+  { L"じゃ", L"じぇ", L"じぃ", L"じょ", L"じゅ", },
 };
 // clang-format on
 
 // 例外([nn])
-const wchar_t RomaKama_nn[4] __FLASH__ = L"ン";
+const wchar_t RomaKatakana_nn[4] __FLASH__ = L"ン";
+const wchar_t RomaHiragana_nn[4] __FLASH__ = L"ん";
 
 // 母音テーブル
 const char BoonTable[] __FLASH__ = {
@@ -203,7 +263,7 @@ wchar_t *pRomaji2Kana(uint8_t c) {
   if (code >= 0) {
     // 母音の場合,文字列を確定する
     if (romaji_sts >= _romaji_top && romaji_sts <= _romaji_zy) {
-      ptr = (wchar_t *)RomaKama[romaji_sts][code];
+      ptr = (wchar_t *)(flgKana == 1 ? RomaKatakana : RomaHiragana)[romaji_sts][code];
       goto STS_DONE;  // 変換完了
     } else
       goto STS_ERROR;  // 変換エラー
@@ -223,7 +283,7 @@ wchar_t *pRomaji2Kana(uint8_t c) {
         if (!flgTsu) {
           if (code == _romaji_n) {
             // nn('ﾝ')の場合
-            ptr = (wchar_t *)RomaKama_nn;
+            ptr = (wchar_t *)(flgKana == 1 ? RomaKatakana_nn : RomaHiragana_nn);
             goto STS_DONE;  // 変換完了
           } else {
             flgTsu = true;  // 小さい'ﾂ'の先頭付加フラグの設定
@@ -280,7 +340,7 @@ STS_ERROR: // [状態遷移エラー]
 
 STS_DONE:  // [Romaji Katakana conversion transition completed]
   if (flgTsu) {
-    kataStr[0] = L'ッ';  // 'ｯ' setting
+    kataStr[0] = flgKana == 1 ? L'ッ' : L'っ';  // 'ｯ' setting
     wcscpy(kataStr + 1, ptr);
     ptr = kataStr;
   }
@@ -442,14 +502,14 @@ uint16_t cnv2tty(keyEvent k) {
     case PS2KEY_Tab:        rc = SC_KEY_TAB;      break;
     case PS2KEY_Space:
       if (k.CTRL)
-        flgKana = !flgKana;
+        flgKana = (flgKana + 1) % 3;
       else
         rc = ' ';
       break;
     case PS2KEY_Backspace:  rc = SC_KEY_BACKSPACE;break;
     case PS2KEY_Delete:     rc = SC_KEY_DC;       break;
     case PS2KEY_Enter:	    rc = SC_KEY_CR;       break;
-    case PS2KEY_Romaji:     flgKana = !flgKana;  break;
+    case PS2KEY_Romaji:     flgKana = (flgKana + 1) % 3; break;
     case PS2KEY_PrintScreen: rc = SC_KEY_PRINT; break;
   }
   return rc;
@@ -475,7 +535,7 @@ uint16_t ICACHE_RAM_ATTR ps2read() {
       return 0;
   }
 
-  if (flgKana) {
+  if (flgKana != 0) {
     ptr = pRomaji2Kana(c);
     if (ptr) {
       len = wcslen(ptr);
