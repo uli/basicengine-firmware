@@ -585,7 +585,7 @@ BString getstr(uint8_t eoi) {
 //  該当なし   : -1
 //  見つかった : キーワードコード
 int lookup(char *str) {
-  for (uint32_t i = 0; i < SIZE_KWTBL; ++i) {
+  for (uint32_t i = 0; i < kwtbl.size(); ++i) {
     if (kwtbl[i]) {
       int l = strlen_P(kwtbl[i]);
 
@@ -1389,7 +1389,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
   while (*ip != I_EOL) {
     // keyword processing
     is_extended_token = false;
-    if ((*ip < SIZE_KWTBL && kwtbl[*ip]) || *ip == I_EXTEND) {
+    if ((*ip < kwtbl.size() && kwtbl[*ip]) || *ip == I_EXTEND) {
       // if it is a keyword
       const char *kw;
       if (*ip == I_EXTEND) {
@@ -6165,6 +6165,8 @@ extern "C" {
 };
 #endif
 
+std::vector<const char *> kwtbl;
+
 /*
    TOYOSHIKI Tiny BASIC
    The BASIC entry point
@@ -6173,6 +6175,8 @@ void SMALL Basic::basic() {
   int len;  // Length of intermediate code
   char *textline;     // input line
   uint8_t rc;
+
+  kwtbl.assign(kwtbl_init, kwtbl_init + sizeof(kwtbl_init) / sizeof(*kwtbl_init));
 
   basic_init_file_early();
 

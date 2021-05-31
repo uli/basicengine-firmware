@@ -422,8 +422,10 @@ int token_size(icode_t *code);
 // キーワードテーブル
 #include "kwtbl.h"
 
+extern std::vector<const char *> kwtbl;
+
 // Keyword count
-#define SIZE_KWTBL     (sizeof(kwtbl) / sizeof(const char *))
+#define SIZE_KWTBL     (sizeof(kwtbl_init) / sizeof(const char *))
 #define SIZE_KWTBL_EXT (sizeof(kwtbl_ext) / sizeof(const char *))
 
 // i-code(Intermediate code) assignment

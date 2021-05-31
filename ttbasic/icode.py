@@ -55,7 +55,7 @@ for l in f.readlines():
     ext_count += 1
 
 
-cmdf.write('\nstatic const char * const kwtbl[] PROGMEM = {\n')
+cmdf.write('\nstatic const char * const kwtbl_init[] PROGMEM = {\n')
 for i in range(0, count):
   if i % 8 == 0:
     cmdf.write('  ')
