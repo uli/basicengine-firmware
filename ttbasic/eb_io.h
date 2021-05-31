@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 Ulrich Hecht
+
 #ifdef __cplusplus
 extern "C" {
 #endif

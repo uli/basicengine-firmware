@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 Ulrich Hecht
+
 #ifndef _EB_TYPES_H
 #define _EB_TYPES_H
 
