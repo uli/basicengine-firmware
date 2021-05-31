@@ -169,6 +169,10 @@ void Basic::itcclink() {
       return;
     }
 
+    auto initcall = (void (*)(void))tcc_get_symbol(current_tcc, "__initcall");
+    if (initcall)
+      initcall();
+
     char *etext = (char *)tcc_get_symbol(current_tcc, "_etext");
     char *end   = (char *)tcc_get_symbol(current_tcc, "_end");
 
