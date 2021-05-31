@@ -28,7 +28,7 @@ static const int ps2_to_usb[] = {
 73,	// PS2KEY_Insert		  14	// [Insert]
 74,	// PS2KEY_Home		    15	// [Home]
 72,	// PS2KEY_Pause		    16	// [Pause]
-135,	// PS2KEY_Romaji		17	// [カタカナ ひらがな ローマ字]
+136,	// PS2KEY_Romaji		17	// [カタカナ ひらがな ローマ字]
 101,	// PS2KEY_APP	18	// [メニューキー]
 138,	// PS2KEY_Henkan		  19	// [変換]
 139,	// PS2KEY_Muhenkan	  20	// [無変換]
