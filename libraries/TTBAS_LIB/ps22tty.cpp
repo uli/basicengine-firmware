@@ -465,6 +465,7 @@ uint16_t cnv2tty(keyEvent k) {
           case PS2KEY_R_brackets: rc = 0x1d; break;
           case PS2KEY_Hat:        rc = 0x1e; break;
           case PS2KEY_Ro:         rc = 0x1f; break;
+          case ' ':               flgKana = (flgKana + 1) % 3; rc = 0; break;
         }
       }
       return rc;
