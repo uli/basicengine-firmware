@@ -146,7 +146,8 @@ void display(window_t *wp, int flag)
 					clrtoeol();
 #endif
 				j += *p == '\t' ? 8-(j&7) : 1;
-				token_type = parse_text(bp, bp->b_epage);
+				token_type = parse_text_basic(bp, bp->b_epage);
+//				token_type = parse_text_c(bp, bp->b_epage);
 #ifdef ENGINEBASIC
 				attrset(COLOR_PAIR(token_type));
 #else

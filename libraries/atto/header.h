@@ -66,6 +66,11 @@ extern const unsigned short color_pairs[];
 #define ID_BLOCK_COMMENT   6
 #define ID_DOUBLE_STRING   7
 #define ID_SINGLE_STRING   8
+#define ID_VAR             9
+#define ID_PROC            10
+#define ID_LVAR            11
+#define ID_LINENUM         12
+#define ID_KEYWORD         13
 
 typedef unsigned char char_t;
 typedef long point_t;
@@ -232,5 +237,6 @@ extern void associate_b2w(buffer_t *, window_t *);
 extern void disassociate_b(window_t *);
 extern void set_parse_state(buffer_t *, point_t);
 extern void set_parse_state2(buffer_t *, point_t);
-extern int parse_text(buffer_t *, point_t);
+extern int parse_text_basic(buffer_t *, point_t);
+extern int parse_text_c(buffer_t *, point_t);
 extern void resize_terminal();
