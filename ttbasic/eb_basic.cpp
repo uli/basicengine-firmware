@@ -102,3 +102,11 @@ BString eb_handle_strfun(enum token_t token, const eb_param_t *params) {
     err = ERR_SYS;
     return BString();
 }
+
+const char **eb_kwtbl(void) {
+    return &kwtbl[0];
+}
+
+int eb_kwtbl_size(void) {
+    return kwtbl.size();
+}

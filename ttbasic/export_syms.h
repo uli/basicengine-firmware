@@ -120,6 +120,8 @@ S(eb_set_cpu_speed)
 S(eb_add_command)
 S(eb_add_numfun)
 S(eb_add_strfun)
+S(eb_kwtbl)
+S(eb_kwtbl_size)
 
 // eb_file
 S(eb_file_exists)

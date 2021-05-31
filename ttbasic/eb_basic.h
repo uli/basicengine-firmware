@@ -26,6 +26,9 @@ int eb_add_command(const char *name, enum token_t *syntax, eb_command_handler_t 
 int eb_add_numfun(const char *name, enum token_t *syntax, eb_numfun_handler_t handler);
 int eb_add_strfun(const char *name, enum token_t *syntax, eb_strfun_handler_t handler);
 
+const char **eb_kwtbl(void);
+int eb_kwtbl_size(void);
+
 #ifdef __cplusplus
 }
 #endif
