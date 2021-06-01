@@ -94,8 +94,13 @@ int eb_load_font(const char *file_name) {
   if (fread(font, size, 1, ttf) != 1)
     err = ERR_FILE_READ;
   else {
-    sc0.addFont(font, font_name.c_str());
-    ret = 0;
+    int fret = sc0.addFont(font, font_name.c_str());
+    if (fret < 0) {
+      err = ERR_FONT;
+      if (fret == -2)
+        err_expected = _("not a valid TrueType font file");
+    } else
+      ret = 0;
   }
 
   fclose(ttf);

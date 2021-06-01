@@ -131,14 +131,16 @@ bool tv_fontInit(const char *name, int w, int h) {
   return true;
 }
 
-bool tv_addFont(const uint8_t *font, const char *name) {
+int tv_addFont(const uint8_t *font, const char *name) {
   if (tv_have_font(name))
-    return false;
+    return -1;
+  if (stbtt_GetNumberOfFonts(font) < 1)
+    return -2;
 
   ttf_font_t ttf_font = { font, strdup(name) };
   ttf_fonts.push_back(ttf_font);
 
-  return true;
+  return 0;
 }
 
 void tv_setFontByIndex(int idx) {
