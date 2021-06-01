@@ -69,9 +69,14 @@ int eb_load_font(const char *file_name) {
   }
 
   BString filestr = BString(file_name);
+
   int base_index = filestr.lastIndexOf('/') + 1;
 
-  BString font_name = filestr.substring(base_index);
+  int ext_index = filestr.lastIndexOf('.');
+  if (ext_index <= base_index)
+    ext_index = -1;
+
+  BString font_name = filestr.substring(base_index, ext_index);
 
   if (sc0.haveFont(font_name.c_str())) {
     err = ERR_FONT;
@@ -108,12 +113,12 @@ int eb_load_lang_resources(int lang) {
     BString font = font_root + BString("misaki_gothic_w.ttf");
     int min_ret = eb_load_font(font.c_str());
     if (!min_ret)
-      min_ret = eb_font_by_name("misaki_gothic_w.ttf", 8, 8);
+      min_ret = eb_font_by_name("misaki_gothic_w", 8, 8);
 
     font = font_root + BString("k8x12w.ttf");
     int k_ret = eb_load_font(font.c_str());
     if (!k_ret)
-      k_ret = eb_font_by_name("k8x12w.ttf", 8, 12);
+      k_ret = eb_font_by_name("k8x12w", 8, 12);
 
     ret = k_ret != -1 ? k_ret : min_ret;
   } else
