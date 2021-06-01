@@ -25,14 +25,20 @@
 #include <stb_truetype.h>
 #include <fonts.h>
 
-struct font_t {
+struct ttf_font_t {
   const uint8_t *font;
   const char *name;
+};
+
+struct font_t {
+  struct ttf_font_t ttf_font;
   int w, h;
   stbtt_fontinfo ttf;
 };
 
+static std::vector<struct ttf_font_t> ttf_fonts;
 static std::vector<struct font_t> fonts;
+
 struct font_t *tvfont;
 
 uint16_t c_width;   // Screen horizontal characters
@@ -65,8 +71,16 @@ int tv_font_count(void) {
   return fonts.size();
 }
 
+bool tv_have_font(const char *name) {
+  for (auto &i : ttf_fonts) {
+    if (!strcmp(i.name, name))
+      return true;
+  }
+  return false;
+}
+
 // フォント利用設定
-void SMALL tv_fontInit(const uint8_t *font, const char *name, int w, int h) {
+bool tv_fontInit(const char *name, int w, int h) {
   // allocate/reset conversion map
   if (!unimap)
     unimap = (struct unimap *)calloc(1, UNIMAP_SIZE * sizeof(*unimap));
@@ -80,7 +94,7 @@ void SMALL tv_fontInit(const uint8_t *font, const char *name, int w, int h) {
   // do we have this font already?
   bool must_init = true;
   for (auto &i : fonts) {
-    if (!strcmp(i.name, name)) {
+    if (!strcmp(i.ttf_font.name, name) && i.w == w && i.h == h) {
       must_init = false;
       tvfont = &i;
       break;
@@ -88,41 +102,55 @@ void SMALL tv_fontInit(const uint8_t *font, const char *name, int w, int h) {
   }
 
   if (must_init) {
-    font_t new_font = { font, strdup(name), w, h };
-    stbtt_InitFont(&new_font.ttf, font, stbtt_GetFontOffsetForIndex(font, 0));
+    ttf_font_t *ttf_font = NULL;
+    for (auto &i : ttf_fonts) {
+      if (!strcmp(i.name, name)) {
+        ttf_font = &i;
+        break;
+      }
+    }
+
+    if (!ttf_font)
+      return false;
+
+    font_t new_font = { *ttf_font, w, h, };
+    stbtt_InitFont(&new_font.ttf, ttf_font->font, stbtt_GetFontOffsetForIndex(ttf_font->font, 0));
     fonts.push_back(new_font);
     tvfont = &fonts.back();
   }
+
+  f_height = h;
+  f_width = w;
 
   // Screen dimensions, characters
   c_width = g_width / f_width;
   c_height = g_height / f_height;
   win_c_width = win_width / f_width;
   win_c_height = win_height / f_height;
+
+  return true;
 }
 
-void tv_setFont(const uint8_t *font, const char *name, int w, int h) {
-  f_width = w;
-  f_height = h;
-  tv_fontInit(font, name, w, h);
+bool tv_addFont(const uint8_t *font, const char *name) {
+  if (tv_have_font(name))
+    return false;
+
+  ttf_font_t ttf_font = { font, strdup(name) };
+  ttf_fonts.push_back(ttf_font);
+
+  return true;
 }
 
 void tv_setFontByIndex(int idx) {
   if (idx < fonts.size()) {
     f_width = fonts[idx].w;
     f_height = fonts[idx].h;
-    tv_fontInit(fonts[idx].font, fonts[idx].name, f_width, f_height);
+    tv_fontInit(fonts[idx].ttf_font.name, f_width, f_height);
   }
 }
 
 bool tv_setFontByName(const char *name, int w, int h) {
-  for (int i = 0; i < fonts.size(); ++i) {
-    if (!strcmp(fonts[i].name, name) && fonts[i].w == w && fonts[i].h == h) {
-      tv_setFontByIndex(i);
-      return true;
-    }
-  }
-  return false;
+  return tv_fontInit(name, w, h);
 }
 
 int tv_current_font_index(void) {
@@ -153,7 +181,8 @@ void tv_init(int16_t ajst, uint8_t vmode) {
     for (int i = 0; i < NUM_FONTS; ++i) {
       f_width = builtin_fonts[i].w;
       f_height = builtin_fonts[i].h;
-      tv_fontInit(builtin_fonts[i].data, builtin_fonts[i].name, f_width, f_height);
+      tv_addFont(builtin_fonts[i].data, builtin_fonts[i].name);
+      tv_fontInit(builtin_fonts[i].name, f_width, f_height);
     }
   }
 }
@@ -195,7 +224,7 @@ void tv_end() {
 }
 
 const uint8_t *tv_getFontAdr() {
-  return tvfont->font;
+  return tvfont->ttf_font.font;
 }
 
 // Screen characters sideways

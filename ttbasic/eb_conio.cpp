@@ -53,12 +53,14 @@ int eb_font(int idx) {
 int eb_font_by_name(const char *name, int w, int h) {
   if (!sc0.setFontByName(name, w, h)) {
     err = ERR_FONT;
+    err_expected = _("unknown font");
     return -1;
   }
-  return 0;
+  sc0.forget();
+  return sc0.currentFontIndex();
 }
 
-int eb_load_font(const char *file_name, int w, int h) {
+int eb_load_font(const char *file_name) {
   int ret = -1;
   int size = eb_file_size(file_name);
   if (size < 0) {
@@ -71,8 +73,11 @@ int eb_load_font(const char *file_name, int w, int h) {
 
   BString font_name = filestr.substring(base_index);
 
-  if (sc0.setFontByName(font_name.c_str(), w, h))
-    return 0;
+  if (sc0.haveFont(font_name.c_str())) {
+    err = ERR_FONT;
+    err_expected = _("font already exists");
+    return -1;
+  }
 
   FILE *ttf = fopen(file_name, "rb");
   if (!ttf) {
@@ -84,9 +89,8 @@ int eb_load_font(const char *file_name, int w, int h) {
   if (fread(font, size, 1, ttf) != 1)
     err = ERR_FILE_READ;
   else {
-    sc0.setFont(font, font_name.c_str(), w, h);
-    ret = sc0.currentFontIndex();
-    sc0.forget();
+    sc0.addFont(font, font_name.c_str());
+    ret = 0;
   }
 
   fclose(ttf);
@@ -102,10 +106,14 @@ int eb_load_lang_resources(int lang) {
   int ret = -1;
   if (lang == 4) {
     BString font = font_root + BString("misaki_gothic_w.ttf");
-    int min_ret = eb_load_font(font.c_str(), 8, 8);
+    int min_ret = eb_load_font(font.c_str());
+    if (!min_ret)
+      min_ret = eb_font_by_name("misaki_gothic_w.ttf", 8, 8);
 
     font = font_root + BString("k8x12w.ttf");
-    int k_ret = eb_load_font(font.c_str(), 8, 12);
+    int k_ret = eb_load_font(font.c_str());
+    if (!k_ret)
+      k_ret = eb_font_by_name("k8x12w.ttf", 8, 12);
 
     ret = k_ret != -1 ? k_ret : min_ret;
   } else

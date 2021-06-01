@@ -162,7 +162,10 @@ public:
     return tv_get_cheight();
   }
 
-  void setFont(const uint8_t *font, const char *name, int w, int h);
+  bool addFont(const uint8_t *font, const char *name);
+  bool haveFont(const char *name) {
+    return tv_have_font(name);
+  }
   void setFontByIndex(int idx);
   bool setFontByName(const char *name, int w, int h);
 

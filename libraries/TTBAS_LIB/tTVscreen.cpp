@@ -418,9 +418,8 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
     }
 }
 
-void tTVscreen::setFont(const uint8_t *font, const char *name, int w, int h) {
-  tv_setFont(font, name, w, h);
-  updateWindow();
+bool tTVscreen::addFont(const uint8_t *font, const char *name) {
+  return tv_addFont(font, name);
 }
 
 void tTVscreen::setFontByIndex(int idx) {

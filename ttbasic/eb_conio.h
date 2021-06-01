@@ -20,7 +20,7 @@ void eb_window_off(void);
 int eb_window(int x, int y, int w, int h);
 int eb_font(int idx);
 int eb_font_by_name(const char *name, int w, int h);
-int eb_load_font(const char *file_name, int w, int h);
+int eb_load_font(const char *file_name);
 int eb_font_count(void);
 
 int eb_csize_height(void);

@@ -257,6 +257,8 @@ FONT font_name$ SIZE width, height
 @font_name$	font name
 @width		font width (pixels)
 @height		font height (pixels)
+\ret
+Returns the index of the selected font in `RET(0)`.
 \sec FONTS
 The following fonts are built-in:
 \table
@@ -286,12 +288,15 @@ void Basic::ifont() {
         getParam(h, 4, 64, I_NONE))
       return;
 
-    eb_font_by_name(name.c_str(), w, h);
+    int ret = eb_font_by_name(name.c_str(), w, h);
+    if (ret >= 0)
+      retval[0] = ret;
   } else {
     if (getParam(idx, 0, eb_font_count() - 1, I_NONE))
       return;
 
     eb_font(idx);
+    retval[0] = idx;
   }
 }
 
@@ -1076,17 +1081,10 @@ void GROUP(basic_video) Basic::iblit() {
 }
 
 /***bc bg LOAD FONT
-Loads a TrueType font from a file and activates it.
-\usage LOAD FONT file$ SIZE width,height
+Loads a TrueType font from a file.
+\usage LOAD FONT file$
 \args
 @file$	name of TrueType font file
-@w	font width
-@h	font height
-\ret
-Returns the font index of the loaded font in `RET(0)`.
-\note
-If you want to use the same font in different sizes, you have to load it
-once for each size.
 \bugs
 Proportional fonts and fonts that are not specifically designed for use on
 low-resolution screens will not look very good.
@@ -1101,15 +1099,5 @@ void Basic::iloadfont() {
   if (!(fname = getParamFname()))
     return;
 
-  if (*cip++ != I_SIZE) {
-    E_SYNTAX(I_SIZE);
-    return;
-  }
-
-  if (getParam(w, 4, 64, I_COMMA) ||
-      getParam(h, 4, 64, I_NONE))
-    return;
-
-  int font_idx = eb_load_font(fname.c_str(), w, h);
-  retval[0] = font_idx;
+  eb_load_font(fname.c_str());
 }
