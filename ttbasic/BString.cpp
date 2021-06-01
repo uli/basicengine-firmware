@@ -708,14 +708,14 @@ void BString::replace(const BString& find, const BString& replace) {
         char *writeTo = buffer;
         while((foundAt = strstr(readFrom, find.buffer)) != NULL) {
             unsigned int n = foundAt - readFrom;
-            memcpy(writeTo, readFrom, n);
+            memmove(writeTo, readFrom, n);
             writeTo += n;
-            memcpy(writeTo, replace.buffer, replace.len);
+            memmove(writeTo, replace.buffer, replace.len);
             writeTo += replace.len;
             readFrom = foundAt + find.len;
             len += diff;
         }
-        strcpy(writeTo, readFrom);
+        memmove(writeTo, readFrom, strlen(readFrom) + 1);
     } else {
         unsigned int size = len; // compute size needed for result
         while((foundAt = strstr(readFrom, find.buffer)) != NULL) {
@@ -730,9 +730,10 @@ void BString::replace(const BString& find, const BString& replace) {
         while(index >= 0 && (index = lastIndexOf(find, index)) >= 0) {
             readFrom = buffer + index + find.len;
             memmove(readFrom + diff, readFrom, len - (readFrom - buffer));
-            len += diff;
+            int newLen = len + diff;
+            memmove(buffer + index, replace.buffer, replace.len);
+            len = newLen;
             buffer[len] = 0;
-            memcpy(buffer + index, replace.buffer, replace.len);
             index--;
         }
     }
