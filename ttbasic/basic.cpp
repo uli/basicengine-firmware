@@ -6419,4 +6419,9 @@ void SMALL Basic::basic() {
 
 Basic::Basic() {
   init_tcc();
+  listbuf = NULL;
+}
+
+Basic::~Basic() {
+  free(listbuf);
 }

@@ -117,6 +117,7 @@ extern void E_VALUE(int32_t from, int32_t to);
 class Basic {
 public:
   Basic();
+  ~Basic();
 
   void basic();
 
