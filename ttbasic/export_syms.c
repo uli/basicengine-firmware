@@ -104,7 +104,7 @@ extern void be_exit(int ret);
 extern int c_printf(const char *f, ...);
 
 #include "ttconfig.h"
-#include "basic_native.h"  // provides be_exit()
+#include "basic_native.h"  // provides struct symtab
 
 // ===== include all the stuff we are going to export
 
