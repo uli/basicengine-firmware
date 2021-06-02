@@ -276,6 +276,11 @@ The following fonts are built-in:
 void Basic::ifont() {
   int32_t idx;
 
+  double h = sc0.getFontHeight();
+  double w = sc0.getFontWidth();
+  int x = sc0.c_x();
+  int y = sc0.c_y();
+
   if (is_strexp()) {
     BString name = istrexp();
     if (*cip++ != I_SIZE) {
@@ -298,6 +303,11 @@ void Basic::ifont() {
     eb_font(idx);
     retval[0] = idx;
   }
+
+  double sy = h / (double)sc0.getFontHeight();
+  double sx = w / (double)sc0.getFontWidth();
+
+  eb_locate(ceil(x * sx), ceil(y * sy));
 }
 
 /***bc scr SCREEN
