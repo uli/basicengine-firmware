@@ -30,6 +30,24 @@ void basic_init_environment() {
   setenv("TERM", "ansi", 1);
 }
 
+/***bf sys ENVIRON$
+Returns the value of an environment variable.
+\usage e$ = ENVIRON$(varname$)
+\args
+@varname$	name of environment variable
+\ret
+Value of the specified environment variable.
+***/
+BString Basic::senviron() {
+  BString name;
+  if (checkOpen())
+    return name;
+  name = istrexp();
+  if (checkClose())
+    return name;
+  return BString(getenv(name.c_str()));
+}
+
 /***bc sys WAIT
 Pause for a specific amount of time.
 \usage WAIT ms
