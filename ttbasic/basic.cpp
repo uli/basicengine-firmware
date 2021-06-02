@@ -5893,19 +5893,26 @@ void Basic::iprofile() {
   }
 }
 
-void Basic::exec_sub(Basic &sub, const char *filename) {
-  sub.listbuf = NULL;
-  sub.loadPrgText((char *)filename, NEW_ALL);
-  sub.clp = sub.listbuf;
-  sub.cip = sub.clp + icodes_per_line_desc();
-  sub.irun(sub.clp);
+int Basic::exec(const char *filename) {
+    free(listbuf);
+    listbuf = NULL;
+    loadPrgText((char *)filename, NEW_ALL);
+    clp = listbuf;
+    cip = clp + icodes_per_line_desc();
+    irun(clp);
+    return err;
+}
+
+void Basic::exec_sub(const char *filename) {
+  Basic *sub = new Basic;
+  err = sub->exec(filename);
+
   if (err) {
     if (event_error_enabled) {
       // This replicates the code in irun() because we have to get the error
       // line number in the context of the subprogram.
-      int sub_line = getlineno(sub.clp);
-      free(sub.listbuf);
-      sub.listbuf = NULL;
+      int sub_line = getlineno(sub->clp);
+      delete sub;
       retval[0] = err;
       retval[1] = getlineno(clp);
       retval[2] = sub_line;
@@ -5951,9 +5958,7 @@ void Basic::iexec() {
     E_ERR(FORMAT, _("not a BASIC program"));
     return;
   }
-  Basic sub;
-  exec_sub(sub, file.c_str());
-  free(sub.listbuf);
+  exec_sub(file.c_str());
 }
 
 void BASIC_INT Basic::iextend() {
@@ -6221,9 +6226,7 @@ void Basic::autoexec() {
   if (_stat(autoexec.c_str(), &st) == 0) {
     sc0.peekKey();	// update internal key state
     if (eb_pad_state(0) == 0) {
-      Basic sub;
-      exec_sub(sub, autoexec.c_str());
-      free(sub.listbuf);
+      exec_sub(autoexec.c_str());
     } else {
       PRINT_P(_("Skipping AUTOEXEC.BAS\n"));
     }

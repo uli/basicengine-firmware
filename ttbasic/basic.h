@@ -133,6 +133,8 @@ public:
     longjmp(jump, e);
   }
 
+  int exec(const char *filename);
+
 private:
   int list_free();
   icode_t *getlp(uint32_t lineno);
@@ -393,7 +395,8 @@ private:
   icode_t *data_ip;
   bool in_data;
 
-  void exec_sub(Basic &sub, const char *filename);
+  void exec_sub(const char *filename);
+
   void autoexec();
 
   enum return_type {
