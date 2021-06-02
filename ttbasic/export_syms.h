@@ -128,6 +128,7 @@ S(eb_file_exists)
 S(eb_file_size)
 S(eb_is_directory)
 S(eb_is_file)
+S(eb_unzip)
 
 S(eb_theme_color)
 
