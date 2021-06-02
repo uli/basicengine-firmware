@@ -6,26 +6,6 @@
 FILEDIR user_files[MAX_USER_FILES];
 
 void SMALL basic_init_file_early() {
-  // try to mount SPIFFS, ignore failure (do not format)
-#ifdef UNIFILE_USE_OLD_SPIFFS
-#ifdef ESP8266_NOWIFI
-  SPIFFS.begin(false);
-#else
-  SPIFFS.begin();
-#endif
-#elif defined(UNIFILE_USE_FASTROMFS)
-  fs.mount();
-#elif defined(UNIFILE_USE_NEW_SPIFFS)
-  SPIFFS.begin();
-#endif
-
-  // Initialize SD card file system
-#ifdef ESP32
-  bfs.init(5);
-#else
-  bfs.init(16);  // CS on GPIO16
-#endif
-
 #ifdef H3
   // Also done in arch_process_events(), but that's too late for us here.
   sd_detect();
@@ -38,30 +18,12 @@ void SMALL basic_init_file_early() {
 #elif defined(H3)
   if (!_chdir(SD_PREFIX))
     bfs.fakeTime();
-#else
-  if (_chdir(SD_PREFIX)) {
-    if (_chdir(FLASH_PREFIX)) {
-      // Can't really do anything if this fails, nothing is initialized yet.
-    }
-  } else
-    bfs.fakeTime();
 #endif
 
   loadConfig();
 }
 
 void SMALL basic_init_file_late() {
-  // Initialize file systems, format SPIFFS if necessary
-#ifdef UNIFILE_USE_OLD_SPIFFS
-  SPIFFS.begin();
-#elif defined(UNIFILE_USE_NEW_SPIFFS)
-  SPIFFS.begin(true);
-#elif defined(UNIFILE_USE_FASTROMFS)
-  if (!fs.mount()) {
-    fs.mkfs();
-    fs.mount();
-  }
-#endif
 }
 
 int BASIC_INT Basic::get_filenum_param() {
