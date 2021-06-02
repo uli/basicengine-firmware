@@ -117,11 +117,15 @@ S(eb_tick)
 S(eb_process_events)
 S(eb_set_cpu_speed)
 
+// eb_basic
 S(eb_add_command)
 S(eb_add_numfun)
 S(eb_add_strfun)
 S(eb_kwtbl)
 S(eb_kwtbl_size)
+S(eb_new_basic_context)
+S(eb_delete_basic_context)
+S(eb_exec_basic)
 
 // eb_file
 S(eb_file_exists)

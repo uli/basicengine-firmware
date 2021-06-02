@@ -29,6 +29,10 @@ int eb_add_strfun(const char *name, enum token_t *syntax, eb_strfun_handler_t ha
 const char **eb_kwtbl(void);
 int eb_kwtbl_size(void);
 
+int eb_exec_basic(void *bc, const char *filename);
+void *eb_new_basic_context(void);
+void eb_delete_basic_context(void *bc);
+
 #ifdef __cplusplus
 }
 #endif

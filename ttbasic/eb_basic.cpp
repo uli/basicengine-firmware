@@ -110,3 +110,15 @@ const char **eb_kwtbl(void) {
 int eb_kwtbl_size(void) {
     return kwtbl.size();
 }
+
+void *eb_new_basic_context(void) {
+    return (void *) new Basic;
+}
+
+void eb_delete_basic_context(void *bc) {
+    delete (Basic *)bc;
+}
+
+int eb_exec_basic(void *bc, const char *filename) {
+    return ((Basic *)bc)->exec(filename);
+}
