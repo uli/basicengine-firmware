@@ -6249,6 +6249,8 @@ void SMALL Basic::basic() {
   char *textline;     // input line
   uint8_t rc;
 
+  basic_init_environment();
+
   kwtbl.assign(kwtbl_init, kwtbl_init + sizeof(kwtbl_init) / sizeof(*kwtbl_init));
 
   basic_init_file_early();

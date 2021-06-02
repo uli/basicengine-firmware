@@ -518,6 +518,7 @@ extern "C" void BASIC_FP process_events(void);
 
 void basic_init_io();
 void basic_init_input();
+void basic_init_environment();
 void basic_init_file_early();
 void basic_init_file_late();
 

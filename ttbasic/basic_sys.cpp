@@ -12,6 +12,24 @@
 #include <Time.h>
 #endif
 
+void basic_init_environment() {
+#ifdef __x86_64__
+  setenv("HOSTTYPE", "x86_64", 1);
+#elif defined(__arm__)
+  setenv("HOSTTYPE", "arm", 1);
+#else
+  setenv("HOSTTYPE", "unknown", 1);
+#endif
+
+#ifdef SDL
+  setenv("HOME", getenv("ENGINEBASIC_ROOT"), 1);
+#else
+  setenv("HOME", "/", 1);
+#endif
+
+  setenv("TERM", "ansi", 1);
+}
+
 /***bc sys WAIT
 Pause for a specific amount of time.
 \usage WAIT ms

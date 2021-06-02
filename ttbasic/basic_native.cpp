@@ -64,13 +64,6 @@ void Basic::init_tcc() {
   // add empty module to make default symbols visible to BASIC
   struct module system = { new_tcc(), "system", NULL, 0 };
   modules.push_back(system);
-
-#ifdef SDL
-  setenv("HOME", getenv("ENGINEBASIC_ROOT"), 1);
-#else
-  setenv("HOME", "/", 1);
-#endif
-  setenv("TERM", "ansi", 1);
 }
 
 static TCCState *current_tcc;
