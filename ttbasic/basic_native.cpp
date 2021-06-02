@@ -5,6 +5,7 @@
 
 #include "basic.h"
 #include "basic_native.h"
+#include "eb_native.h"
 
 #include <dyncall.h>
 
@@ -17,35 +18,12 @@ extern "C" void print_tcc_error(void *b, const char *msg) {
 int output_type = TCC_OUTPUT_MEMORY;
 
 static TCCState *new_tcc(bool init_syms = true) {
-  TCCState *tcc = tcc_new();
+  TCCState *tcc = eb_tcc_new(output_type);
   if (!tcc)
     return NULL;
 
-  tcc_set_output_type(tcc, output_type);
-  tcc_set_options(tcc, "-nostdlib");
-
-  BString default_include_path =
-#ifdef SDL
-    BString(getenv("ENGINEBASIC_ROOT")) +
-#endif
-    BString("/sys/include");
-  tcc_add_include_path(tcc, default_include_path.c_str());
-
-  tcc_define_symbol(tcc, "ENGINEBASIC", "1");
-  tcc_define_symbol(tcc, "_GNU_SOURCE", "1");
-  tcc_define_symbol(tcc, "__DYNAMIC_REENT__", "1");
-#define xstr(s) str(s)
-#define str(s) #s
-  tcc_define_symbol(tcc, "PIXEL_TYPE", xstr(PIXEL_TYPE));
-  tcc_define_symbol(tcc, "IPIXEL_TYPE", xstr(IPIXEL_TYPE));
-#undef str
-#undef xstr
-
-  if (init_syms) {
-    for (const struct symtab *sym = export_syms; sym->name; ++sym) {
-      tcc_add_symbol(tcc, sym->name, sym->addr);
-    }
-  }
+  if (init_syms)
+    eb_tcc_initialize_symbols(tcc);
 
   return tcc;
 }
@@ -66,18 +44,21 @@ void Basic::itcc() {
   if (current_tcc)
     tcc = current_tcc;
   else {
-    tcc = new_tcc(output_type == TCC_OUTPUT_MEMORY);
+    tcc = eb_tcc_new(output_type);
     if (!tcc) {
       err = ERR_OOM;
       return;
     }
+
+    if (output_type == TCC_OUTPUT_MEMORY)
+      eb_tcc_initialize_symbols(tcc);
+
     current_tcc = tcc;
   }
 
   tcc_set_error_func(tcc, this, print_tcc_error);
 
   BString file = getParamFname();
-
   if (tcc_add_file(tcc, file.c_str()) < 0) {
     err = ERR_COMPILE;
     err_expected = "translation failed";
@@ -99,84 +80,8 @@ void Basic::itcclink() {
   else
     name = BString("mod") + BString(modules.size());
 
-  if (tcc_have_symbol(current_tcc, "main") &&
-      !tcc_have_symbol(current_tcc, name.c_str())) {
-    // Add a wrapper function with the name of the module that takes a
-    // variable number of string arguments, combines them into an argv array
-    // and calls main().
-    char *wrapper;
-    asprintf(&wrapper,
-             "#include <stdarg.h>"
-             "#include <string.h>"
-             "#include <unistd.h>"
-             "extern int optind;"
-             "extern char _etext, _end;"
-             "volatile void *_initial_data;"
-             "int main(int argc, char **argv, char **environ);"
-             "int %s(const char *opt, ...) {"
-             "        int argc = 2;"
-             "        const char *args[16];"
-             "        char *o;"
-             "        volatile void *tmp;"
-             "        args[0] = \"%s\";"
-             "        args[1] = opt;"
-             ""
-             "        if (opt == 0) {"
-             "                --argc;"
-             "        } else {"
-             "                va_list ap;"
-             "                va_start(ap, opt);"
-             "                while (argc < 15) {"
-             "                        o = va_arg(ap, char *);"
-             "                        if (o)"
-             "                                args[argc++] = o;"
-             "                        else"
-             "                                break;"
-             "                }"
-             "        }"
-             "        va_end(ap);"
-             "        args[argc] = NULL;"
-             "        optind = 1;"
-             "        tmp = _initial_data;"
-             "        memcpy(&_etext, (void *)_initial_data, &_end - &_etext);"
-             "        _initial_data = tmp;"
-             "        return main(argc, args, environ);"
-             "}",
-             name.c_str(), name.c_str());
-    tcc_compile_string(current_tcc, wrapper);
-  }
-
-  if (output_type == TCC_OUTPUT_MEMORY) {
-    if (tcc_relocate(current_tcc, TCC_RELOCATE_AUTO) < 0) {
-      err = ERR_COMPILE;
-      err_expected = "relocation failed";
-      tcc_delete(current_tcc);
-      current_tcc = NULL;
-      return;
-    }
-
-    auto initcall = (void (*)(void))tcc_get_symbol(current_tcc, "__initcall");
-    if (initcall)
-      initcall();
-
-    char *etext = (char *)tcc_get_symbol(current_tcc, "_etext");
-    char *end   = (char *)tcc_get_symbol(current_tcc, "_end");
-
-    char *initial_data = (char *)malloc(end - etext);
-    memcpy(initial_data, etext, end - etext);
-
-    void **init_ptr = (void **)tcc_get_symbol(current_tcc, "_initial_data");
-    if (init_ptr)
-      *init_ptr = initial_data;
-
-    struct module new_mod = { current_tcc, name, initial_data, (int)(end - etext) };
-    modules.push_back(new_mod);
-  } else {
-    if (tcc_output_file(current_tcc, name.c_str()) < 0) {
-      err = ERR_COMPILE;
-      err_expected = "failed to output file";
-      tcc_delete(current_tcc);
-    }
+  if (eb_tcc_link(current_tcc, name.c_str(), output_type) < 0) {
+    tcc_delete(current_tcc);
     output_type = TCC_OUTPUT_MEMORY;
   }
 
