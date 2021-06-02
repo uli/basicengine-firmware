@@ -18,7 +18,8 @@ PROF = $(SOURCES:.cpp=.gcda) $(SOURCES:.cpp=.gcno) \
 
 COMMON_INCLUDE = -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \
 	-Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/lua -Ilibraries/stb \
-	-Ilibraries/alpha-lib/include -Igfx -Ilibraries/dyncall/dyncall
+	-Ilibraries/alpha-lib/include -Igfx -Ilibraries/dyncall/dyncall \
+	-Ilibraries/tinycc
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
@@ -64,6 +65,7 @@ init_dir: ttbasic/helptext_en.json
 	cp -p ttbasic/eb_*.h init_dir/sys/include/ ; rm -f init_dir/sys/include/eb_*_int.h
 	cp -p ttbasic/mcurses*.h init_dir/sys/include/
 	cp -p libraries/tinycc/include/*.h init_dir/sys/include/
+	cp -p libraries/tinycc/libtcc.h init_dir/sys/include/
 	cp -p libraries/stb/*.h init_dir/sys/include/
 	cp -p ttbasic/helptext_*.json init_dir/sys/help/
 	mkdir -p init_dir/sys/fonts
