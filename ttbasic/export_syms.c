@@ -113,6 +113,7 @@ extern int c_printf(const char *f, ...);
 #include "eb_config.h"
 #include "eb_conio.h"
 #include "eb_file.h"
+#include "eb_native.h"
 #include "eb_sound.h"
 #include "eb_sys.h"
 #include "eb_video.h"

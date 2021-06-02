@@ -136,6 +136,11 @@ S(eb_unzip)
 
 S(eb_theme_color)
 
+// eb_native
+S(eb_tcc_new)
+S(eb_tcc_initialize_symbols)
+S(eb_tcc_link)
+
 // stdlib type conversion
 S(atoi)
 S(atol)

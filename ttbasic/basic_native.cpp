@@ -6,15 +6,8 @@
 #include "basic.h"
 #include "basic_native.h"
 
-#include "../libraries/tinycc/libtcc.h"
 #include <dyncall.h>
 
-struct module {
-  TCCState *tcc;
-  BString name;
-  void *init_data;
-  int init_len;
-};
 std::vector<struct module> modules;
 
 extern "C" void print_tcc_error(void *b, const char *msg) {
