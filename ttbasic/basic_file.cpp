@@ -3,6 +3,8 @@
 #include <fs.h>
 #endif
 
+#include "eb_file.h"
+
 FILEDIR user_files[MAX_USER_FILES];
 
 void SMALL basic_init_file_early() {
@@ -901,4 +903,12 @@ void Basic::iimginfo() {
     err = ERR_FORMAT;
 
   fclose(fp);
+}
+
+void Basic::iunzip() {
+  BString filename = getParamFname();
+  if (err)
+    return;
+
+  eb_unzip(filename.c_str(), 1);
 }
