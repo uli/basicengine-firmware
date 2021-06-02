@@ -265,10 +265,13 @@ Returns the current working directory.
 BString Basic::scwd() {
   if (checkOpen() || checkClose())
     return BString();
-  char cwd[64];
-  if (_getcwd(cwd, 64))
-    return BString(cwd);
-  else {
+  char *cwd = new char[FILENAME_MAX];
+  if (getcwd(cwd, FILENAME_MAX)) {
+    BString cwd_str(cwd);
+    delete[] cwd;
+    return cwd_str;
+  } else {
+    delete[] cwd;
     err = ERR_LONGPATH;
     return BString();
   }
@@ -334,14 +337,16 @@ void Basic::iopen() {
   FILEDIR f = { NULL, NULL, "" };
   if (flags == NULL) {
     f.d = _opendir(filename.c_str());
-    char cwd[64];
-    if (_getcwd(cwd, 64) == NULL) {
+    char *cwd = new char[FILENAME_MAX];
+    if (_getcwd(cwd, FILENAME_MAX) == NULL) {
+      delete[] cwd;
       err = ERR_LONGPATH;
       if (f.d)
         _closedir(f.d);
       return;
     }
     f.dir_name = BString(cwd) + BString(F("/")) + filename;
+    delete[] cwd;
   } else
     f.f = fopen(filename.c_str(), flags);
   if (!f.f && !f.d)

@@ -6329,8 +6329,8 @@ void SMALL Basic::basic() {
   }
 
   PRINT_P(_("Directory "));
-  char *cwd = new char[256];
-  if (_getcwd(cwd, 256) == NULL)
+  char *cwd = new char[FILENAME_MAX];
+  if (_getcwd(cwd, FILENAME_MAX) == NULL)
     c_puts_P(_("none"));
   else
     c_puts(cwd);
