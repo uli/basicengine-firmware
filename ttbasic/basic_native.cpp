@@ -35,7 +35,7 @@ static TCCState *new_tcc(bool init_syms = true) {
 #ifdef SDL
     BString(getenv("ENGINEBASIC_ROOT")) +
 #endif
-    BString("/include");
+    BString("/sys/include");
   tcc_add_include_path(tcc, default_include_path.c_str());
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");

@@ -112,7 +112,7 @@ int eb_font_count(void) {
 }
 
 int eb_load_lang_resources(int lang) {
-  BString font_root = BString(getenv("HOME")) + BString("/fonts/");
+  BString font_root = BString(getenv("HOME")) + BString("/sys/fonts/");
   int ret = -1;
   if (lang == 4) {
     BString font = font_root + BString("misaki_gothic_w.ttf");

@@ -58,13 +58,13 @@ gcov:
 	gcov $(SOURCES) $(SOURCES_C)
 
 init_dir: ttbasic/helptext_en.json
-	mkdir -p init_dir/help
+	mkdir -p init_dir/sys/help
 	rsync -av $(DEMOS_DIR)/* init_dir/ || true
-	rsync -av include/ init_dir/include/
-	cp -p ttbasic/eb_*.h init_dir/include/ ; rm -f init_dir/include/eb_*_int.h
-	cp -p ttbasic/mcurses*.h init_dir/include/
-	cp -p libraries/tinycc/include/*.h init_dir/include/
-	cp -p libraries/stb/*.h init_dir/include/
-	cp -p ttbasic/helptext_*.json init_dir/help/
-	mkdir -p init_dir/fonts
-	cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf init_dir/fonts/
+	rsync -av include/ init_dir/sys/include/
+	cp -p ttbasic/eb_*.h init_dir/sys/include/ ; rm -f init_dir/sys/include/eb_*_int.h
+	cp -p ttbasic/mcurses*.h init_dir/sys/include/
+	cp -p libraries/tinycc/include/*.h init_dir/sys/include/
+	cp -p libraries/stb/*.h init_dir/sys/include/
+	cp -p ttbasic/helptext_*.json init_dir/sys/help/
+	mkdir -p init_dir/sys/fonts
+	cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf init_dir/sys/fonts/

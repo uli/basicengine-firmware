@@ -221,13 +221,13 @@ static sjson_node *get_json(int lang) {
         return helps_json[lang];
 
     std::vector<BString> paths;
-    paths.push_back("/help");
+    paths.push_back("/sys/help");
 #ifdef SDL
-    paths.push_back(BString(getenv("ENGINEBASIC_ROOT")) + BString("/help"));
+    paths.push_back(BString(getenv("ENGINEBASIC_ROOT")) + BString("/sys/help"));
 #else
-    paths.push_back(BString("/sd/help"));
-    paths.push_back(BString("/flash/help"));
-    paths.push_back(BString("/usb0/help"));
+    paths.push_back(BString("/sd/sys/help"));
+    paths.push_back(BString("/flash/sys/help"));
+    paths.push_back(BString("/usb0/sys/help"));
 #endif
 
     for (auto p : paths) {
