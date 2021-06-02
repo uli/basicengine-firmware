@@ -347,10 +347,10 @@ msgstr "Valor devuelto"
 msgid "See also"
 msgstr "Ver también"
 
-#. [Umgehen von AUTOEXEC.BAS]
+#. [Umgehen von autoexec.bas]
 # bulk translation
-msgid "Skipping AUTOEXEC.BAS\n"
-msgstr "Omitiendo AUTOEXEC.BAS\n"
+msgid "Skipping autoexec.bas\n"
+msgstr "Omitiendo autoexec.bas\n"
 
 #. [Typen:]
 # bulk translation

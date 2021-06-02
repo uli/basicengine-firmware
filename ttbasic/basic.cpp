@@ -6222,13 +6222,13 @@ static void show_logo() {
 
 void Basic::autoexec() {
   struct stat st;
-  BString autoexec(F("AUTOEXEC.BAS"));
+  BString autoexec(F("autoexec.bas"));
   if (_stat(autoexec.c_str(), &st) == 0) {
     sc0.peekKey();	// update internal key state
     if (eb_pad_state(0) == 0) {
       exec_sub(autoexec.c_str());
     } else {
-      PRINT_P(_("Skipping AUTOEXEC.BAS\n"));
+      PRINT_P(_("Skipping autoexec.bas\n"));
     }
   }
 }

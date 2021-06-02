@@ -377,10 +377,10 @@ msgstr "戻り値"
 msgid "See also"
 msgstr "参照"
 
-#. [AUTOEXEC.BAS überspringen]
+#. [autoexec.bas überspringen]
 # bulk translation
-msgid "Skipping AUTOEXEC.BAS\n"
-msgstr "AUTOEXEC.BASをスキップする\n"
+msgid "Skipping autoexec.bas\n"
+msgstr "autoexec.basをスキップする\n"
 
 #. [Art:]
 # bulk translation

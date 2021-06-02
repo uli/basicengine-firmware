@@ -384,8 +384,8 @@ msgstr "Rückgabewert"
 msgid "See also"
 msgstr "Siehe auch"
 
-msgid "Skipping AUTOEXEC.BAS\n"
-msgstr "Überspringe AUTOEXEC.BAS\n"
+msgid "Skipping autoexec.bas\n"
+msgstr "Überspringe autoexec.bas\n"
 
 #. [Types:]
 # bulk translation
