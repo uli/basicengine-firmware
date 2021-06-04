@@ -114,6 +114,9 @@ TCC	I_TCC		itcc
 TCCLINK	I_TCCLINK	itcclink
 TCCMODE I_TCCMODE	itccmode
 CPUSPEED	I_CPUSPEED	icpuspeed
+INSTALL	I_INSTALL	iinstall
+LOADMOD	I_LOADMOD	iloadmod
+LISTMOD	I_LISTMOD	ilistmod
 UNZIP	I_UNZIP		iunzip
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar

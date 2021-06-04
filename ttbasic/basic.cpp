@@ -5834,6 +5834,9 @@ void Basic::ilrun_() {
     iloadconfig();
   } else if (*cip == I_FONT) {
     iloadfont();
+  } else if (*cip == I_MOD) {
+    ++cip;
+    iloadmod();
   } else
     ilrun();
 }

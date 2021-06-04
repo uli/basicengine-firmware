@@ -820,3 +820,39 @@ void Basic::ilua() {
   // make sure there are no BASIC event handlers registered
   clear_execution_state(false);
 }
+
+/***bc sys INSTALL
+Installs a packaged module to the system module directory.
+\usage INSTALL filename$
+\args
+@filename$	name of a packaged module file
+\ref LISTMOD LOADMOD
+***/
+void Basic::iinstall() {
+  BString mod = getParamFname();
+  eb_install_module(mod.c_str());
+}
+
+/***bc sys LOADMOD
+Loads a module from the system module directory.
+\usage LOADMOD module$
+\args
+@module$	name of an installed module
+\ref INSTALL LISTMOD
+***/
+void Basic::iloadmod() {
+  BString mod = istrexp();
+  eb_load_module(mod.c_str());
+}
+
+/***bc sys LISTMOD
+Shows the names of all modules currently loaded.
+\usage LISTMOD
+\ref INSTALL LOADMOD
+***/
+void Basic::ilistmod() {
+  const char *name;
+  for (int i = 0; (name = eb_module_name(i)); ++i) {
+    c_printf("%s\n", name);
+  }
+}
