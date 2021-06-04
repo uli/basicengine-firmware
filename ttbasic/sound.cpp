@@ -291,6 +291,7 @@ void BasicSound::begin(void) {
   }
 #endif
   m_beep_env = NULL;
+  m_beep_period = 0;
   m_sam = NULL;
 
   m_tsf_stream.userdata = &sound;
@@ -467,50 +468,51 @@ BString BasicSound::instName(int index) {
 }
 #endif
 
-void refill_stream_beep(sts_mixer_sample_t *sample, void *userdata) {
+void refill_stream_beep(sts_mixer_sample_t *samples, void *userdata) {
   BasicSound *bs = (BasicSound *)userdata;
   sample_t *data = bs->m_beep_buf;
   static int offset = 0;
-  int to_fill = sample->length / 2;
+  int to_fill = samples->length / 2;
   int period = bs->m_beep_period * AUDIO_SAMPLE_RATE / 16000;
 
-  if (bs->m_beep_env) {
-    uint8_t vol = max(0, min(15, bs->m_beep_env[bs->m_beep_pos]));
-    int32_t sample = vol * 2184;
+  uint8_t vol;
+  if (bs->m_beep_env)
+    vol = max(0, min(15, bs->m_beep_env[bs->m_beep_pos]));
+  else
+    vol = bs->m_beep_vol;
 
-    for (int o = 0; o < to_fill; ++o) {
-      sample_t sn = offset < period / 2 ? -sample : sample;
-      data[o * 2] = sn;
-      data[o * 2 + 1] = sn;
-      offset = (offset + 1) % period;
-    }
-  } else {
-    memset(data, 0, sample->length * sizeof(sample_t));
+  int32_t sample = vol * 2184;
+
+  for (int o = 0; o < to_fill; ++o) {
+    sample_t sn = offset < period / 2 ? -sample : sample;
+    data[o * 2] = sn;
+    data[o * 2 + 1] = sn;
+    offset = (offset + 1) % period;
   }
 }
 
 void BasicSound::beep(int period, int vol, const uint8_t *env) {
-  if (period == 0 || !env) {
+  if (period == 0 || vol == 0) {
     noBeep();
     return;
   }
 
-  bool start_up = m_beep_env ? false : true;
-
   free(m_beep_env);
-  m_beep_env = (uint8_t *)strdup((const char *)env);
+  m_beep_env = env ? (uint8_t *)strdup((const char *)env) : NULL;
   m_beep_pos = 0;
-  m_beep_period = period;
   m_beep_vol = vol;
 
-  if (start_up)
+  if (m_beep_period == 0)
     sts_mixer_play_stream(&m_mixer, &m_beep_stream, 0.7f);
+
+  m_beep_period = period;
 }
 
 void BasicSound::noBeep() {
   sts_mixer_stop_stream(&m_mixer, &m_beep_stream);
   free(m_beep_env);
   m_beep_env = NULL;
+  m_beep_period = 0;
 }
 
 ESP8266SAM *BasicSound::m_sam;
