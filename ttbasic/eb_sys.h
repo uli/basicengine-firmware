@@ -11,6 +11,11 @@ void eb_process_events(void);
 void eb_udelay(unsigned int us);
 void eb_set_cpu_speed(int percent);
 
+int eb_install_module(const char *filename);
+int eb_load_module(const char *name);
+int eb_module_count(void);
+const char *eb_module_name(int index);
+
 #ifdef __cplusplus
 }
 #endif
