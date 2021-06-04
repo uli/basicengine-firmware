@@ -15,16 +15,16 @@ TCCState *eb_tcc_new(int output_type) {
 
   BString default_include_path =
 #ifdef SDL
-    BString(getenv("ENGINEBASIC_ROOT")) +
+          BString(getenv("ENGINEBASIC_ROOT")) +
 #endif
-    BString("/sys/include");
+          BString("/sys/include");
   tcc_add_include_path(tcc, default_include_path.c_str());
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");
   tcc_define_symbol(tcc, "_GNU_SOURCE", "1");
   tcc_define_symbol(tcc, "__DYNAMIC_REENT__", "1");
 #define xstr(s) str(s)
-#define str(s) #s
+#define str(s)  #s
   tcc_define_symbol(tcc, "PIXEL_TYPE", xstr(PIXEL_TYPE));
   tcc_define_symbol(tcc, "IPIXEL_TYPE", xstr(IPIXEL_TYPE));
 #undef str
@@ -34,14 +34,13 @@ TCCState *eb_tcc_new(int output_type) {
 }
 
 void eb_tcc_initialize_symbols(TCCState *tcc) {
-    for (const struct symtab *sym = export_syms; sym->name; ++sym) {
-      tcc_add_symbol(tcc, sym->name, sym->addr);
-    }
+  for (const struct symtab *sym = export_syms; sym->name; ++sym) {
+    tcc_add_symbol(tcc, sym->name, sym->addr);
+  }
 }
 
 int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
-  if (tcc_have_symbol(tcc, "main") &&
-      !tcc_have_symbol(tcc, name)) {
+  if (tcc_have_symbol(tcc, "main") && !tcc_have_symbol(tcc, name)) {
     // Add a wrapper function with the name of the module that takes a
     // variable number of string arguments, combines them into an argv array
     // and calls main().
@@ -99,7 +98,7 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
       initcall();
 
     char *etext = (char *)tcc_get_symbol(tcc, "_etext");
-    char *end   = (char *)tcc_get_symbol(tcc, "_end");
+    char *end = (char *)tcc_get_symbol(tcc, "_end");
 
     char *initial_data = (char *)malloc(end - etext);
     memcpy(initial_data, etext, end - etext);
