@@ -341,13 +341,17 @@ void SMALL E_VALUE(int32_t from, int32_t to) {
   err_expected = tbuf;
 }
 
-void SMALL E_SYNTAX(token_t token) {
+void E_SYNTAX(token_t token) {
   err = ERR_SYNTAX;
-  strcpy_P(tbuf, _("expected \""));
-  strcat_P(tbuf, kwtbl[token]);
-  strcat_P(tbuf, PSTR("\""));
-  err_expected = tbuf;
+  if (token < kwtbl.size() && kwtbl[token]) {
+    strcpy_P(tbuf, _("expected \""));
+    strcat_P(tbuf, kwtbl[token]);
+    strcat_P(tbuf, PSTR("\""));
+    err_expected = tbuf;
+  } else
+    err_expected = NULL;
 }
+
 // RAM mapping
 char lbuf[SIZE_LINE];  // Command input buffer
 char tbuf[SIZE_LINE];  // Text display buffer
