@@ -441,3 +441,43 @@ alphabetically, `0` otherwise.
     return -1;
   }
 }
+
+/***bf bas LCASE$
+Converts string to all-lowercase letters.
+\usage s$ = LCASE$(s$)
+\args
+@s	string to convert
+\ret
+Value of `s$` with all letters replaced with their lowercase equivalents.
+\ref UCASE$
+***/
+BString Basic::slcase() {
+  BString s;
+  if (checkOpen())
+    return s;
+  s = istrexp();
+  if (err || checkClose())
+    return s;
+  utf8lwr(s.begin());
+  return s;
+}
+
+/***bf bas UCASE$
+Converts string to all-uppercase letters.
+\usage s$ = UCASE$(s$)
+\args
+@s	string to convert
+\ret
+Value of `s$` with all letters replaced with their uppercase equivalents.
+\ref LCASE$
+***/
+BString Basic::sucase() {
+  BString s;
+  if (checkOpen())
+    return s;
+  s = istrexp();
+  if (err || checkClose())
+    return s;
+  utf8upr(s.begin());
+  return s;
+}
