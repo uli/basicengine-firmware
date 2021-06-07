@@ -5533,7 +5533,7 @@ void BASIC_INT Basic::iextend() {
   (this->*funtbl_ext[*cip++])();
 }
 
-void Basic::parse_params(token_t token, token_t *syntax, std::vector<eb_param_t> &params) {
+void Basic::parse_params(token_t token, const token_t *syntax, std::vector<eb_param_t> &params) {
   if (!syntax) {
     SYNTAX_T("type mismatch");
     return;

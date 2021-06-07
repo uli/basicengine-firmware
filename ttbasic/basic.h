@@ -420,7 +420,7 @@ private:
   DCCallVM *callvm;
   jmp_buf jump;
 
-  void parse_params(token_t token, token_t *syntax, std::vector<eb_param_t> &params);
+  void parse_params(token_t token, const token_t *syntax, std::vector<eb_param_t> &params);
   void delete_params(std::vector<eb_param_t> &params);
 };
 
