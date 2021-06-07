@@ -5549,7 +5549,8 @@ void Basic::parse_params(token_t token, const token_t *syntax, std::vector<eb_pa
   while ((el = *syntax++) != I_EOL) {
     param.type = el;
     switch (el) {
-    case I_VAR: {
+    case I_VAR:
+    case I_NUM: {
         num_t value = iexp();
         param.num = value;
         params.push_back(param);
