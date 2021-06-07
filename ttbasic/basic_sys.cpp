@@ -856,3 +856,27 @@ void Basic::ilistmod() {
     c_printf("%s\n", name);
   }
 }
+
+/***bc sys #REQUIRE
+Ensures that a given module is loaded.
+\usage #REQUIRE "module_name"
+\args
+@"module_name"	module name
+\desc
+Checks if a module called `module_name` has alredy been loaded. If not, it
+will search for the module in `/sys/modules/module_name` and load it. If no
+module is found, it will generate an error.
+\note
+The behavior of `#REQUIRE` differs from that of other BASIC commands. It is
+executed as soon as it is spotted by the interpreter, for instance when
+loading a program.
+
+This means that `#REQUIRE` will already generate an error when loading a
+program if the specified module cannot be found.
+
+When executed during normal program flow, `#REQUIRE` will not do anything.
+\ref INSTALL LOADMOD
+***/
+void Basic::irequire() {
+  istrexp();
+}

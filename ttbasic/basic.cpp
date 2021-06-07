@@ -19,6 +19,7 @@
 #include "eb_bg.h"
 #include "eb_img.h"
 #include "eb_input.h"
+#include "eb_sys.h"
 
 #include "epigrams.h"
 
@@ -678,10 +679,17 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
   int implicit_endif = 0;
 
   bool is_prg_text = false;
+  bool is_require = false;
 
   while (*s) {           //文字列1行分の終端まで繰り返す
     while (isspace(*s))  //空白を読み飛ばす
       s++;
+
+    if (is_require && *s != '"') {
+      SYNTAX_T("expected module name");
+      return 0;
+    }
+
     if (!*s)  // Abort if nothing left after skipping whitespace.
       break;
 
@@ -698,6 +706,8 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
       s += strlen_P(kwtbl[key]);
     }
     if (key >= 0) {
+      if (key == I_REQUIRE)
+        is_require = true;
       // 該当キーワードあり
       if (len >= SIZE_IBUF - 2) {  // もし中間コードが長すぎたら
         err = ERR_IBUFOF;          // エラー番号をセット
@@ -917,7 +927,7 @@ as local variables or arguments.
         is_prg_text = true;
         find_prg_text = false;
       }
-    } else if (*s == '\"') {
+    } else if (*s == '"') {
       // Attempt to convert to a character string
 
       c = *s++;  // Remember " and go to the next character
@@ -932,11 +942,20 @@ as local variables or arguments.
         return 0;
       }
 
+      BString sstr;
       ibuf[len++] = I_STR;
       ibuf[len++] = i;  // record the number of characters in the string
       while (i--) {
+        sstr.concat(*s);
         ibuf[len++] = *s++;  // Record character
       }
+
+      if (is_require) {
+        if (eb_load_module(sstr.c_str()) < 0)
+          return 0;
+        is_require = false;
+      }
+
       if (*s == c)  // If the character is ", go to the next character
         s++;
     } else if (*ptok == '@' || *ptok == '~' || isAlpha(*ptok)) {

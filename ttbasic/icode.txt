@@ -118,6 +118,7 @@ INSTALL	I_INSTALL	iinstall
 LOADMOD	I_LOADMOD	iloadmod
 LISTMOD	I_LISTMOD	ilistmod
 UNZIP	I_UNZIP		iunzip
+#REQUIRE I_REQUIRE	irequire
 _none	I_VAR		ivar
 _none	I_LVAR		ilvar
 _none	I_VARARR	ivararr
