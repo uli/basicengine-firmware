@@ -33,6 +33,9 @@ int eb_exec_basic(void *bc, const char *filename);
 void *eb_new_basic_context(void);
 void eb_delete_basic_context(void *bc);
 
+void eb_set_error(int error, const char *expected);
+int eb_get_error(void);
+
 #ifdef __cplusplus
 }
 #endif

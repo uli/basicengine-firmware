@@ -122,3 +122,12 @@ void eb_delete_basic_context(void *bc) {
 int eb_exec_basic(void *bc, const char *filename) {
     return ((Basic *)bc)->exec(filename);
 }
+
+void eb_set_error(int error, const char *expected) {
+    err = error;
+    err_expected = expected;
+}
+
+int eb_get_error(void) {
+    return err;
+}

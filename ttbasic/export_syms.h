@@ -126,6 +126,8 @@ S(eb_kwtbl_size)
 S(eb_new_basic_context)
 S(eb_delete_basic_context)
 S(eb_exec_basic)
+S(eb_set_error)
+S(eb_get_error)
 
 // eb_file
 S(eb_file_exists)
