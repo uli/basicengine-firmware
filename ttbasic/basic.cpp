@@ -3780,7 +3780,7 @@ BString Basic::serror() {
 
 bool BASIC_FP Basic::is_strexp() {
   // XXX: does not detect string comparisons (numeric)
-  return ((*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) ||
+  return ((strfuntbl[*cip] != NULL) ||
           *cip == I_STR ||
           ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
           *cip == I_STRARR ||
@@ -3797,8 +3797,8 @@ BString BASIC_INT Basic::istrvalue() {
   index_t i;
   int idxs[MAX_ARRAY_DIMS];
 
-  if (*cip >= STRFUN_FIRST && *cip < STRFUN_LAST) {
-    return (this->*strfuntbl[*cip++ - STRFUN_FIRST])();
+  if (strfuntbl[*cip] != NULL) {
+    return (this->*strfuntbl[*cip++])();
   } else if (*cip >= SIZE_KWTBL) {
     std::vector<eb_param_t> params;
     token_t sf = (token_t)*cip++;
@@ -4005,8 +4005,8 @@ num_t BASIC_FP Basic::ivalue() {
   int dims;
   static int idxs[MAX_ARRAY_DIMS];
 
-  if (*cip >= NUMFUN_FIRST && *cip < NUMFUN_LAST) {
-    value = (this->*numfuntbl[*cip++ - NUMFUN_FIRST])();
+  if (numfuntbl[*cip] != NULL) {
+    value = (this->*numfuntbl[*cip++])();
   } else if (*cip >= SIZE_KWTBL) {
     std::vector<eb_param_t> params;
     token_t nf = (token_t)*cip++;
