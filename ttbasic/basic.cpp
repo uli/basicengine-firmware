@@ -621,25 +621,6 @@ int lookup(char *str) {
   }
   return -1;
 }
-int lookup_ext(char *str) {
-  for (uint32_t i = 0; i < SIZE_KWTBL_EXT; ++i) {
-    if (kwtbl_ext[i]) {
-      int l = strlen_P(kwtbl_ext[i]);
-
-      if (strncasecmp_P(str, kwtbl_ext[i], l))
-        continue;
-
-      // See lookup().
-      if (!CONFIG.keyword_sep_optional && isAlpha(str[l - 1]) &&
-          i != I_ELSE && i != I_FN &&
-          (isAlphaNumeric(str[l]) || str[l] == '_'))
-        continue;
-
-      return i;
-    }
-  }
-  return -1;
-}
 
 uint8_t parse_identifier(char *ptok, char *vname) {
   uint8_t var_len = 0;
@@ -696,12 +677,6 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
     bool isext = false;
     key = lookup(s);
     if (key < 0) {
-      key = lookup_ext(s);
-      if (key >= 0) {
-        isext = true;
-        ibuf[len++] = I_EXTEND;
-        s += strlen_P(kwtbl_ext[key]);
-      }
     } else {
       s += strlen_P(kwtbl[key]);
     }
@@ -1404,7 +1379,6 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
   int mark = -1;
   unsigned char i;
   index_t var_code;
-  bool is_extended_token;
   line_desc_t *ld = (line_desc_t *)ip;
   ip += icodes_per_line_desc();
 
@@ -1413,21 +1387,9 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
 
   while (*ip != I_EOL) {
     // keyword processing
-    is_extended_token = false;
-    if ((*ip < kwtbl.size() && kwtbl[*ip]) || *ip == I_EXTEND) {
+    if ((*ip < kwtbl.size() && kwtbl[*ip])) {
       // if it is a keyword
-      const char *kw;
-      if (*ip == I_EXTEND) {
-        ip++;
-        if (*ip >= SIZE_KWTBL_EXT) {
-          err = ERR_SYS;
-          return 0;
-        }
-        kw = kwtbl_ext[*ip];
-        is_extended_token = true;
-      } else {
-        kw = kwtbl[*ip];
-      }
+      const char *kw = kwtbl[*ip];
 
       if (isAlpha(pgm_read_byte(&kw[0])))
         sc0.setColor(COL(KEYWORD), COL(BG));
@@ -1442,8 +1404,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       sc0.setColor(COL(FG), COL(BG));
 
       if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual((token_t)*ip)))
-        if ((!nospacea((token_t)*ip) || spacef((token_t) * (ip + 1)) ||
-             is_extended_token) &&
+        if ((!nospacea((token_t)*ip) || spacef((token_t) * (ip + 1))) &&
             *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_LABEL)
           c_putch(' ', devno);
 
@@ -1838,7 +1799,6 @@ int BASIC_FP token_size(icode_t *code) {
       return 3;
     else
       return 1;
-  case I_EXTEND: return 2;
   case I_NFC: return icodes_per_ptr() + 1;
   default: return 1;
   }
@@ -5546,14 +5506,6 @@ void Basic::iexec() {
     return;
   }
   exec_sub(file.c_str());
-}
-
-void BASIC_INT Basic::iextend() {
-  if (*cip >= sizeof(funtbl_ext) / sizeof(funtbl_ext[0])) {
-    err = ERR_SYS;
-    return;
-  }
-  (this->*funtbl_ext[*cip++])();
 }
 
 void Basic::parse_params(token_t token, const token_t *syntax, std::vector<eb_param_t> &params) {
