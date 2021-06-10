@@ -328,6 +328,14 @@ num_t BASIC_FP Basic::nup() {
   return EB_JOY_UP;
 }
 
+/***bn io DOWN
+Value of the "down" direction for input devices.
+\ref PAD() UP LEFT RIGHT
+***/
+num_t Basic::ndown() {
+  return EB_JOY_DOWN;
+}
+
 /***bn io RIGHT
 Value of the "right" direction for input devices.
 \ref PAD() UP DOWN LEFT

@@ -199,7 +199,6 @@ private:
   void transcodeLineToUTF8(char *buf, encoding_t enc);
   uint8_t SMALL loadPrgText(char *fname, uint8_t newmode = NEW_ALL,
                             encoding_t encoding = ENC_UTF8);
-  BString sinput();
 
   void init_stack_frame();
   void push_num_arg(num_t n);
@@ -210,7 +209,6 @@ private:
   void on_go(bool is_gosub, int cas);
 
   void SMALL error(uint8_t flgCmd = false);
-  BString serror();
   void esyntax();
   void eunimp();
 
@@ -231,7 +229,6 @@ private:
 #include "strfuntbl.h"
 #include "funtbl.h"
 #undef DECL_FUNCS
-#define esyntax_workaround esyntax
 
   bool is_strexp();
   BString istrvalue();

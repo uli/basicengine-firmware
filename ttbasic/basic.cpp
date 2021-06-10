@@ -3837,8 +3837,6 @@ BString BASIC_INT Basic::istrvalue() {
       }
       break;
 
-    case I_INPUTSTR: value = sinput(); break;
-    case I_ERRORSTR: value = serror(); break;
     case I_NET:
 #ifndef HAVE_NETWORK
       err = ERR_NOT_SUPPORTED;
@@ -4087,12 +4085,6 @@ num_t BASIC_FP Basic::ivalue() {
     case I_CHAR: value = ncharfun(); break;  //関数CHAR
 
     case I_SYS:  value = nsys(); break;
-
-/***bn io DOWN
-Value of the "down" direction for input devices.
-\ref PAD() UP LEFT RIGHT
-***/
-    case I_DOWN: value = EB_JOY_DOWN; break;
 
     case I_PLAY: value = nplay(); break;
 

@@ -4,7 +4,7 @@ RETURN	I_RETURN	ireturn
 FORMAT	I_FORMAT	ecom
 FOR	I_FOR		ifor
 NEXT	I_NEXT		inext
-DOWN	I_DOWN		esyntax_workaround
+DOWN	I_DOWN		ndown
 DO	I_DO		ido
 LOOP	I_LOOP		iloop
 IF	I_IF		iif
@@ -25,7 +25,7 @@ POKE$	I_POKESTR	ipokestr
 POKE	I_POKE		ipoke
 PRINT	I_PRINT		iprint_
 ?	I_QUEST		iprint_
-INPUT$	I_INPUTSTR	esyntax_workaround
+INPUT$	I_INPUTSTR	sinput
 INPUT	I_INPUT		iinput
 CLS	I_CLS		icls
 COLOR	I_COLOR		icolor
@@ -45,7 +45,7 @@ BEEP	I_BEEP		ibeep
 PLAY	I_PLAY		iplay
 SOUND	I_SOUND		isound
 DATE	I_DATE		idate
-GET$	I_GETSTR	esyntax_workaround
+GET$	I_GETSTR	esyntax
 GET	I_GET		iget
 LOAD	I_LOAD		ilrun_
 SAVE	I_SAVE		isave
@@ -102,7 +102,7 @@ EXEC	I_EXEC		iexec
 CMD	I_CMD		icmd
 WHILE	I_WHILE		iwhile
 WEND	I_WEND		iwend
-ERROR$	I_ERRORSTR	esyntax_workaround
+ERROR$	I_ERRORSTR	serror
 ERROR	I_ERROR		ierror
 SET	I_SET		iset
 SEEK	I_SEEK		iseek
