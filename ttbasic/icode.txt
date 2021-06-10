@@ -282,7 +282,7 @@ ANGLE	I_ANGLE		esyntax
 SCALE	I_SCALE		esyntax
 ALPHA	I_ALPHA		esyntax
 FN	I_FN		esyntax
-DIRECTORY	I_DIRECTORY	esyntax
+DIRECTORY	I_DIRECTORY	ifiles
 TAB	I_TAB		esyntax
 TIME	I_TIME		esyntax
 OK	I_OK		esyntax
