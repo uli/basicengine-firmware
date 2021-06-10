@@ -11,7 +11,7 @@ cmds = []
 strfuns = []
 numfuns = []
 for l in f.readlines():
-  if len(l) == 0 or l.startswith('rem'):
+  if l == '\n' or l.startswith('rem'):
     continue
   cmd, enum, fun = l.split()
   enumf.write(enum + ',')
