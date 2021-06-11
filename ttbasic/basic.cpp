@@ -5558,7 +5558,7 @@ icode_t *BASIC_FP Basic::iexe(index_t stk) {
     }
 
     // Execute intermediate code
-    if (*cip < sizeof(funtbl) / sizeof(funtbl[0])) {
+    if (funtbl[*cip] != NULL) {
       (this->*funtbl[*cip++])();
     } else if (*cip >= SIZE_KWTBL) {
       std::vector<eb_param_t> params;
