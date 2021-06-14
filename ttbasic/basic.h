@@ -215,14 +215,24 @@ private:
   BString ilrstr(bool right, bool bytewise = false);
 
   typedef BString (Basic::*strfun_t)();
-  static const strfun_t strfuntbl[];
+  static const strfun_t strfuntbl_init[];
+  static std::vector<strfun_t> strfuntbl;
 
   typedef void (Basic::*cmd_t)();
-  static const Basic::cmd_t funtbl[];
-  static const Basic::cmd_t funtbl_ext[];
+  static const cmd_t funtbl_init[];
+  static std::vector<cmd_t> funtbl;
 
   typedef num_t (Basic::*numfun_t)();
-  static const Basic::numfun_t numfuntbl[];
+  static const numfun_t numfuntbl_init[];
+  static std::vector<numfun_t> numfuntbl;
+
+  num_t iextvalue();
+  BString iextstrvalue();
+  void iextcmd();
+
+  friend int ::eb_add_command(const char *name, const enum token_t *syntax, eb_command_handler_t handler);
+  friend int ::eb_add_numfun(const char *name, const enum token_t *syntax, eb_numfun_handler_t handler);
+  friend int ::eb_add_strfun(const char *name, const enum token_t *syntax, eb_strfun_handler_t handler);
 
 #define DECL_FUNCS
 #include "numfuntbl.h"

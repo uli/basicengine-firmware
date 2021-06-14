@@ -82,6 +82,10 @@ sdfiles bfs;
 #include "eb_basic.h"
 #include "eb_basic_int.h"
 
+std::vector<Basic::cmd_t> Basic::funtbl;
+std::vector<Basic::numfun_t> Basic::numfuntbl;
+std::vector<Basic::strfun_t> Basic::strfuntbl;
+
 #ifdef FLOAT_NUMS
 // Get command arguments (int32_t, no argument check)
 uint8_t BASIC_FP Basic::getParam(int32_t &prm, token_t next_token) {
@@ -3780,7 +3784,7 @@ BString Basic::serror() {
 
 bool BASIC_FP Basic::is_strexp() {
   // XXX: does not detect string comparisons (numeric)
-  return ((strfuntbl[*cip] != NULL) ||
+  return (strfuntbl[*cip] != NULL ||
           *cip == I_STR ||
           ((*cip == I_SVAR || *cip == I_LSVAR) && cip[2] != I_SQOPEN) ||
           *cip == I_STRARR ||
@@ -3791,6 +3795,22 @@ bool BASIC_FP Basic::is_strexp() {
           *cip == I_ERRORSTR);
 }
 
+BString Basic::iextstrvalue() {
+  BString value;
+
+  std::vector<eb_param_t> params;
+  token_t sf = (token_t)cip[-1];
+
+  parse_params(sf, eb_strfun_syntax(sf), params);
+
+  if (!err)
+    value = eb_handle_strfun(sf, &params[0]);
+
+  delete_params(params);
+
+  return value;
+}
+
 BString BASIC_INT Basic::istrvalue() {
   BString value;
   int len, dims;
@@ -3799,16 +3819,6 @@ BString BASIC_INT Basic::istrvalue() {
 
   if (strfuntbl[*cip] != NULL) {
     return (this->*strfuntbl[*cip++])();
-  } else if (*cip >= SIZE_KWTBL) {
-    std::vector<eb_param_t> params;
-    token_t sf = (token_t)*cip++;
-
-    parse_params(sf, eb_strfun_syntax(sf), params);
-
-    if (!err)
-      value = eb_handle_strfun(sf, &params[0]);
-
-    delete_params(params);
   } else
     switch (*cip++) {
     case I_STR:
@@ -3996,6 +4006,22 @@ num_t BASIC_INT Basic::nsvar_a(BString &value) {
   return (uint8_t)value[a];
 }
 
+num_t Basic::iextvalue() {
+  num_t value = 0;
+
+  std::vector<eb_param_t> params;
+  token_t nf = (token_t)cip[-1];
+
+  parse_params(nf, eb_numfun_syntax(nf), params);
+
+  if (!err)
+    value = eb_handle_numfun(nf, &params[0]);
+
+  delete_params(params);
+
+  return value;
+}
+
 // Get value
 num_t BASIC_FP Basic::ivalue() {
   num_t value = 0;  // 値
@@ -4005,16 +4031,6 @@ num_t BASIC_FP Basic::ivalue() {
 
   if (numfuntbl[*cip] != NULL) {
     value = (this->*numfuntbl[*cip++])();
-  } else if (*cip >= SIZE_KWTBL) {
-    std::vector<eb_param_t> params;
-    token_t nf = (token_t)*cip++;
-
-    parse_params(nf, eb_numfun_syntax(nf), params);
-
-    if (!err)
-      value = eb_handle_numfun(nf, &params[0]);
-
-    delete_params(params);
   } else if (is_strexp()) {
     // string comparison (or error)
     value = irel_string();
@@ -5542,6 +5558,18 @@ void Basic::delete_params(std::vector<eb_param_t> &params) {
   }
 }
 
+void Basic::iextcmd(void) {
+  std::vector<eb_param_t> params;
+  token_t cmd = (token_t)cip[-1];
+
+  parse_params(cmd, eb_command_syntax(cmd), params);
+
+  if (!err)
+    eb_handle_command(cmd, &params[0]);
+
+  delete_params(params);
+}
+
 // execute intermediate code
 // Return value: next program execution position (line start)
 icode_t *BASIC_FP Basic::iexe(index_t stk) {
@@ -5560,16 +5588,6 @@ icode_t *BASIC_FP Basic::iexe(index_t stk) {
     // Execute intermediate code
     if (funtbl[*cip] != NULL) {
       (this->*funtbl[*cip++])();
-    } else if (*cip >= SIZE_KWTBL) {
-      std::vector<eb_param_t> params;
-      token_t cmd = (token_t)*cip++;
-
-      parse_params(cmd, eb_command_syntax(cmd), params);
-
-      if (!err)
-        eb_handle_command(cmd, &params[0]);
-
-      delete_params(params);
     } else
       SYNTAX_T(_("expected command"));
 
@@ -5787,6 +5805,10 @@ void SMALL Basic::basic() {
   basic_init_environment();
 
   kwtbl.assign(kwtbl_init, kwtbl_init + sizeof(kwtbl_init) / sizeof(*kwtbl_init));
+
+  funtbl.assign(funtbl_init, funtbl_init + sizeof(funtbl_init) / sizeof(*funtbl_init));
+  numfuntbl.assign(numfuntbl_init, numfuntbl_init + sizeof(numfuntbl_init) / sizeof(*numfuntbl_init));
+  strfuntbl.assign(strfuntbl_init, strfuntbl_init + sizeof(strfuntbl_init) / sizeof(*strfuntbl_init));
 
   basic_init_file_early();
 

@@ -32,6 +32,11 @@ int eb_add_command(const char *name, const token_t *syntax, eb_command_handler_t
     eb_command_t cmd = { (token_t)kwtbl.size(), syntax, handler };
     custom_commands.push_back(cmd);
     kwtbl.push_back(strdup(name));
+
+    Basic::funtbl.push_back(&Basic::iextcmd);
+    Basic::numfuntbl.push_back(NULL);
+    Basic::strfuntbl.push_back(NULL);
+
     return 0;
 }
 
@@ -39,6 +44,11 @@ int eb_add_numfun(const char *name, const token_t *syntax, eb_numfun_handler_t h
     eb_numfun_t nf = { (token_t)kwtbl.size(), syntax, handler };
     custom_numfuns.push_back(nf);
     kwtbl.push_back(strdup(name));
+
+    Basic::funtbl.push_back(NULL);
+    Basic::numfuntbl.push_back(&Basic::iextvalue);
+    Basic::strfuntbl.push_back(NULL);
+
     return 0;
 }
 
@@ -46,6 +56,11 @@ int eb_add_strfun(const char *name, const token_t *syntax, eb_strfun_handler_t h
     eb_strfun_t sf = { (token_t)kwtbl.size(), syntax, handler };
     custom_strfuns.push_back(sf);
     kwtbl.push_back(strdup(name));
+
+    Basic::funtbl.push_back(NULL);
+    Basic::numfuntbl.push_back(NULL);
+    Basic::strfuntbl.push_back(&Basic::iextstrvalue);
+
     return 0;
 }
 

@@ -53,7 +53,7 @@ for i in range(0, count):
     funf.write('void ' + cmds[i][2] + '();\n')
     dup += [cmds[i][2]]
 
-funf.write('#endif\n#ifdef DECL_TABLE\nconst Basic::cmd_t Basic::funtbl[] = {\n')
+funf.write('#endif\n#ifdef DECL_TABLE\nconst Basic::cmd_t Basic::funtbl_init[] = {\n')
 
 for i in range(0, count):
   if cmds[i][2] == 'NULL':
@@ -72,7 +72,7 @@ for i in range(0, count):
     strfunf.write("BString " + strfuns[i][1] + '();\n')
     dup += [strfuns[i][1]]
 
-strfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::strfun_t Basic::strfuntbl[] = {\n')
+strfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::strfun_t Basic::strfuntbl_init[] = {\n')
 for i in range(0, count):
   if i % 8 == 0:
     strfunf.write(' ')
@@ -92,7 +92,7 @@ for i in range(0, count):
     numfunf.write("num_t " + numfuns[i][1] + '();\n')
     dup += [numfuns[i][1]]
 
-numfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::numfun_t Basic::numfuntbl[] = {\n')
+numfunf.write('\n#endif\n#ifdef DECL_TABLE\nconst Basic::numfun_t Basic::numfuntbl_init[] = {\n')
 for i in range(0, count):
   if i % 8 == 0:
     numfunf.write(' ')
