@@ -145,18 +145,38 @@ extern void __va_start(void);
 #endif
 
 #ifdef __arm__
+extern void __aeabi_d2lz(void);
+extern void __aeabi_d2ulz(void);
+extern void __aeabi_dadd(void);
+extern void __aeabi_drsub(void);
+extern void __aeabi_dsub(void);
+extern void __aeabi_f2d(void);
+extern void __aeabi_f2lz(void);
+extern void __aeabi_f2ulz(void);
+extern void __aeabi_i2d(void);
 extern void __aeabi_idiv(void);
+extern void __aeabi_idiv0(void);
 extern void __aeabi_idivmod(void);
+extern void __aeabi_l2d(void);
+extern void __aeabi_l2f(void);
 extern void __aeabi_lasr(void);
+extern void __aeabi_ldiv0(void);
 extern void __aeabi_ldivmod(void);
 extern void __aeabi_llsl(void);
 extern void __aeabi_llsr(void);
+extern void __aeabi_memcpy(void);
 extern void __aeabi_memcpy4(void);
 extern void __aeabi_memcpy8(void);
 extern void __aeabi_memmove(void);
+extern void __aeabi_memmove4(void);
+extern void __aeabi_memmove8(void);
+extern void __aeabi_memset(void);
+extern void __aeabi_ui2d(void);
 extern void __aeabi_uidiv(void);
-extern void __aeabi_d2lz(void);
 extern void __aeabi_uidivmod(void);
+extern void __aeabi_ul2d(void);
+extern void __aeabi_ul2f(void);
+extern void __aeabi_uldivmod(void);
 #endif
 
 #ifdef SDL
