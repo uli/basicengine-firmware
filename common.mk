@@ -71,3 +71,4 @@ init_dir: ttbasic/helptext_en.json
 	cp -p ttbasic/helptext_*.json init_dir/sys/help/
 	mkdir -p init_dir/sys/fonts
 	cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf init_dir/sys/fonts/
+	rsync -av tests/ init_dir/tests/
