@@ -5977,6 +5977,7 @@ void SMALL Basic::basic() {
 Basic::Basic() {
   init_tcc();
   listbuf = NULL;
+  event_error_enabled = false;
 }
 
 Basic::~Basic() {
