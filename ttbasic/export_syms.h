@@ -361,6 +361,9 @@ S(localtime)
 #ifdef __x86_64__
 S(__va_start)
 S(__va_arg)
+S(__fixunsxfdi)
+S(__fixunssfdi)
+S(__fixunsdfdi)
 #endif
 
 #ifdef __arm__

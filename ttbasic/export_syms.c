@@ -142,6 +142,9 @@ extern int c_printf(const char *f, ...);
 #ifdef __x86_64__
 extern void __va_arg(void);
 extern void __va_start(void);
+extern void __fixunsxfdi(void);
+extern void __fixunssfdi(void);
+extern void __fixunsdfdi(void);
 #endif
 
 #ifdef __arm__
