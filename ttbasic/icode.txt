@@ -8,8 +8,8 @@ rem the latter in order to maintain compatibility with "no space between tokens"
 rem mode.
 
 !	I_BANG		esyntax
+#REQUIRE	I_REQUIRE	irequire
 #	I_SHARP		esyntax
-#REQUIRE I_REQUIRE	irequire
 $	I_DOLLAR	esyntax
 &	I_LABEL		ilabel
 '	I_SQUOT		iskip
