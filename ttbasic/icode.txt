@@ -22,15 +22,15 @@ $	I_DOLLAR	esyntax
 /	I_DIV		esyntax
 :	I_COLON		inil
 ;	I_SEMI		esyntax
-<	I_LT		esyntax
 <<	I_LSHIFT	esyntax
 <=	I_LTE		esyntax
 <>	I_NEQ2		esyntax
+<	I_LT		esyntax
 =	I_EQ		esyntax
->	I_GT		esyntax
 ><	I_NEQ		esyntax
 >=	I_GTE		esyntax
 >>	I_RSHIFT	esyntax
+>	I_GT		esyntax
 ?	I_QUEST		iprint_
 ABS	I_ABS		nabs
 ALPHA	I_ALPHA		esyntax
