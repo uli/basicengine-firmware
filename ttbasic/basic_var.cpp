@@ -1,6 +1,6 @@
 #include "basic.h"
 
-static inline bool is_var(unsigned char tok) {
+static inline bool is_var(icode_t tok) {
   return tok >= I_VAR && tok <= I_STRLSTREF;
 }
 
