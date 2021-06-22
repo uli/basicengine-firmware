@@ -28,14 +28,10 @@ int eb_sprite_set_key(int s, ipixel_t key);
 int eb_sprite_set_priority(int s, int prio);
 int eb_sprite_set_frame(int s, int frame_x, int frame_y, int flip_x, int flip_y);
 int eb_sprite_set_opacity(int s, int onoff);
-#ifdef USE_ROTOZOOM
 int eb_sprite_set_angle(int s, double angle);
 int eb_sprite_set_scale_x(int s, double scale_x);
 int eb_sprite_set_scale_y(int s, double scale_y);
-#endif
-#ifdef TRUE_COLOR
 int eb_sprite_set_alpha(int s, uint8_t a);
-#endif
 int eb_sprite_reload(int s);
 int eb_sprite_move(int s, int x, int y);
 
