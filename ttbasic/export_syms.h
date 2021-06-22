@@ -179,9 +179,15 @@ S(strncmp)
 S(strtol)
 S(strtoll)
 S(strtod)
+#ifdef __clang__
+S(strchr)
+S(strstr)
+S(strrchr)
+#else
 R(strchr, __builtin_strchr)
 R(strstr, __builtin_strstr)
 R(strrchr, __builtin_strrchr)
+#endif
 S(strdup)
 S(strerror)
 S(strspn)
@@ -277,7 +283,11 @@ S(getenv)
 
 // stdlib miscellaneous
 S(qsort)
+#ifdef __clang__
+S(abs)
+#else
 R(abs, __builtin_abs)
+#endif
 S(random)
 S(labs)
 
