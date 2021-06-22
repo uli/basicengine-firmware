@@ -19,6 +19,7 @@ TCCState *eb_tcc_new(int output_type) {
 #endif
           BString("/sys/include");
   tcc_add_include_path(tcc, default_include_path.c_str());
+  tcc_add_include_path(tcc, (default_include_path + "/tcc").c_str());
 
   tcc_define_symbol(tcc, "ENGINEBASIC", "1");
   tcc_define_symbol(tcc, "_GNU_SOURCE", "1");
