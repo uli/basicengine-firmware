@@ -4,6 +4,7 @@
 #include "eb_io.h"
 #include "lua_defs.h"
 #include "ltable.h"
+#include <stdint.h>
 
 static int l_gpio_set_pin(lua_State *l) {
   uint32_t portno = luaL_checkinteger(l, 1);
