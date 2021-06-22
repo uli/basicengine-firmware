@@ -271,7 +271,7 @@ static const char *checkoption (lua_State *L, const char *conv,
     }
   }
   luaL_argerror(L, 1,
-    lua_pushfstring_P(L, "invalid conversion specifier '%%%s'", conv));
+    lua_pushfstring(L, "invalid conversion specifier '%%%s'", conv));
   return conv;  /* to avoid warnings */
 }
 
@@ -385,37 +385,22 @@ static int os_exit (lua_State *L) {
 }
 #endif
 
-#if 0
-static const char __clock[] PROGMEM = "clock";
-static const char __date[] PROGMEM = "date";
-static const char __difftime[] PROGMEM = "difftime";
-static const char __execute[] PROGMEM = "execute";
-static const char __exit[] PROGMEM = "exit";
-static const char __getenv[] PROGMEM = "getenv";
-#endif
-static const char __remove[] PROGMEM = "remove";
-static const char __rename[] PROGMEM = "rename";
-#if 0
-static const char __setlocale[] PROGMEM = "setlocale";
-static const char __time[] PROGMEM = "time";
-static const char __tmpname[] PROGMEM = "tmpname";
-#endif
 
-static const luaL_Reg syslib[] PROGMEM = {
+static const luaL_Reg syslib[] = {
 #if 0
-  {__clock,     os_clock},
-  {__date,      os_date},
-  {__difftime,  os_difftime},
-  {__execute,   os_execute},
-  {__exit,      os_exit},
-  {__getenv,    os_getenv},
+  {"clock",     os_clock},
+  {"date",      os_date},
+  {"difftime",  os_difftime},
+  {"execute",   os_execute},
+  {"exit",      os_exit},
+  {"getenv",    os_getenv},
 #endif
-  {__remove,    os_remove},
-  {__rename,    os_rename},
+  {"remove",    os_remove},
+  {"rename",    os_rename},
 #if 0
-  {__setlocale, os_setlocale},
-  {__time,      os_time},
-  {__tmpname,   os_tmpname},
+  {"setlocale", os_setlocale},
+  {"time",      os_time},
+  {"tmpname",   os_tmpname},
 #endif
   {NULL, NULL}
 };

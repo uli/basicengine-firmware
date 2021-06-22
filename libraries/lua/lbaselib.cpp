@@ -20,19 +20,6 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#include <basic.h>
-
-static void be_lua_writestring(const char *s, int l) {
-  while (l--) {
-    c_putch(*s++);
-  }
-}
-
-void be_lua_writestringerror(const char *fmt, const char *msg) {
-  char str[strlen_P(fmt)+strlen(msg)+1];
-  sprintf_P(str, fmt, msg);
-  c_puts(str);
-}
 
 static int luaB_print (lua_State *L) {
   int n = lua_gettop(L);  /* number of arguments */
@@ -190,26 +177,16 @@ static int luaB_rawset (lua_State *L) {
 
 
 static int pushmode (lua_State *L, int oldmode) {
-  __lua_pushstring_P(L, (oldmode == LUA_GCINC) ? PSTR("incremental") : PSTR("generational"));
+  lua_pushstring(L, (oldmode == LUA_GCINC) ? "incremental" : "generational");
   return 1;
 }
 
-static const char __stop[] PROGMEM = "stop";
-static const char __restart[] PROGMEM = "restart";
-static const char __collect[] PROGMEM = "collect";
-static const char __count[] PROGMEM = "count";
-static const char __step[] PROGMEM = "step";
-static const char __setpause[] PROGMEM = "setpause";
-static const char __setstepmul[] PROGMEM = "setstepmul";
-static const char __isrunning[] PROGMEM = "isrunning";
-static const char __generational[] PROGMEM = "generational";
-static const char __incremental[] PROGMEM = "incremental";
 
-static int __attribute__((optimize ("no-jump-tables"))) luaB_collectgarbage (lua_State *L) {
-  static const char *const opts[] PROGMEM = {__stop, __restart, __collect,
-    __count, __step, __setpause, __setstepmul,
-    __isrunning, __generational, __incremental, NULL};
-  static const int optsnum[] PROGMEM = {LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
+static int luaB_collectgarbage (lua_State *L) {
+  static const char *const opts[] = {"stop", "restart", "collect",
+    "count", "step", "setpause", "setstepmul",
+    "isrunning", "generational", "incremental", NULL};
+  static const int optsnum[] = {LUA_GCSTOP, LUA_GCRESTART, LUA_GCCOLLECT,
     LUA_GCCOUNT, LUA_GCSTEP, LUA_GCSETPAUSE, LUA_GCSETSTEPMUL,
     LUA_GCISRUNNING, LUA_GCGEN, LUA_GCINC};
   int o = optsnum[luaL_checkoption(L, 1, "collect", opts)];
@@ -365,7 +342,7 @@ static int luaB_loadfile (lua_State *L) {
 */
 static const char *generic_reader (lua_State *L, void *ud, size_t *size) {
   (void)(ud);  /* not used */
-  luaL_checkstack_P(L, 2, "too many nested functions");
+  luaL_checkstack(L, 2, "too many nested functions");
   lua_pushvalue(L, 1);  /* get function */
   lua_call(L, 0, 1);  /* call it */
   if (lua_isnil(L, -1)) {
@@ -498,60 +475,34 @@ static int luaB_tostring (lua_State *L) {
   return 1;
 }
 
-static const char __l_assert[] PROGMEM = "assert";
-static const char __collectgarbage[] PROGMEM = "collectgarbage";
-static const char __dofile[] PROGMEM = "dofile";
-static const char __error[] PROGMEM = "error";
-static const char __getmetatable[] PROGMEM = "getmetatable";
-static const char __ipairs[] PROGMEM = "ipairs";
-static const char __loadfile[] PROGMEM = "loadfile";
-static const char __load[] PROGMEM = "load";
-static const char __next[] PROGMEM = "next";
-static const char __pairs[] PROGMEM = "pairs";
-static const char __pcall[] PROGMEM = "pcall";
-static const char __print[] PROGMEM = "print";
-static const char __warn[] PROGMEM = "warn";
-static const char __rawequal[] PROGMEM = "rawequal";
-static const char __rawlen[] PROGMEM = "rawlen";
-static const char __rawget[] PROGMEM = "rawget";
-static const char __rawset[] PROGMEM = "rawset";
-static const char __select[] PROGMEM = "select";
-static const char __setmetatable[] PROGMEM = "setmetatable";
-static const char __tonumber[] PROGMEM = "tonumber";
-static const char __tostring[] PROGMEM = "tostring";
-static const char __type[] PROGMEM = "type";
-static const char __xpcall[] PROGMEM = "xpcall";
-  /* placeholders */
-static const char __LUA_GNAME[] PROGMEM = LUA_GNAME;
-static const char ___VERSION[] PROGMEM = "_VERSION";
 
-static const luaL_Reg base_funcs[] PROGMEM = {
-  {__l_assert, luaB_assert},
-  {__collectgarbage, luaB_collectgarbage},
-  {__dofile, luaB_dofile},
-  {__error, luaB_error},
-  {__getmetatable, luaB_getmetatable},
-  {__ipairs, luaB_ipairs},
-  {__loadfile, luaB_loadfile},
-  {__load, luaB_load},
-  {__next, luaB_next},
-  {__pairs, luaB_pairs},
-  {__pcall, luaB_pcall},
-  {__print, luaB_print},
-  {__warn, luaB_warn},
-  {__rawequal, luaB_rawequal},
-  {__rawlen, luaB_rawlen},
-  {__rawget, luaB_rawget},
-  {__rawset, luaB_rawset},
-  {__select, luaB_select},
-  {__setmetatable, luaB_setmetatable},
-  {__tonumber, luaB_tonumber},
-  {__tostring, luaB_tostring},
-  {__type, luaB_type},
-  {__xpcall, luaB_xpcall},
+static const luaL_Reg base_funcs[] = {
+  {"assert", luaB_assert},
+  {"collectgarbage", luaB_collectgarbage},
+  {"dofile", luaB_dofile},
+  {"error", luaB_error},
+  {"getmetatable", luaB_getmetatable},
+  {"ipairs", luaB_ipairs},
+  {"loadfile", luaB_loadfile},
+  {"load", luaB_load},
+  {"next", luaB_next},
+  {"pairs", luaB_pairs},
+  {"pcall", luaB_pcall},
+  {"print", luaB_print},
+  {"warn", luaB_warn},
+  {"rawequal", luaB_rawequal},
+  {"rawlen", luaB_rawlen},
+  {"rawget", luaB_rawget},
+  {"rawset", luaB_rawset},
+  {"select", luaB_select},
+  {"setmetatable", luaB_setmetatable},
+  {"tonumber", luaB_tonumber},
+  {"tostring", luaB_tostring},
+  {"type", luaB_type},
+  {"xpcall", luaB_xpcall},
   /* placeholders */
-  {__LUA_GNAME, NULL},
-  {___VERSION, NULL},
+  {LUA_GNAME, NULL},
+  {"_VERSION", NULL},
   {NULL, NULL}
 };
 
@@ -562,10 +513,10 @@ LUAMOD_API int luaopen_base (lua_State *L) {
   luaL_setfuncs(L, base_funcs, 0);
   /* set global _G */
   lua_pushvalue(L, -1);
-  lua_setfield_P(L, -2, LUA_GNAME);
+  lua_setfield(L, -2, LUA_GNAME);
   /* set global _VERSION */
   lua_pushliteral(L, LUA_VERSION);
-  lua_setfield_P(L, -2, "_VERSION");
+  lua_setfield(L, -2, "_VERSION");
   return 1;
 }
 

@@ -112,12 +112,8 @@ static int luaB_yield (lua_State *L) {
 #define COS_YIELD	2
 #define COS_NORM	3
 
-static const char __running[] PROGMEM = "running";
-static const char __dead[] PROGMEM = "dead";
-static const char __suspended[] PROGMEM = "suspended";
-static const char __normal[] PROGMEM = "normal";
 
-const char * const statname[] PROGMEM = {__running, __dead, __suspended, __normal};
+static const char *statname[] = {"running", "dead", "suspended", "normal"};
 
 
 static int auxstatus (lua_State *L, lua_State *co) {
@@ -144,7 +140,7 @@ static int auxstatus (lua_State *L, lua_State *co) {
 
 static int luaB_costatus (lua_State *L) {
   lua_State *co = getco(L);
-  __lua_pushstring_P(L, statname[auxstatus(L, co)]);
+  lua_pushstring(L, statname[auxstatus(L, co)]);
   return 1;
 }
 
@@ -178,31 +174,21 @@ static int luaB_kill (lua_State *L) {
         return 2;
       }
     }
-    default: { /* normal or running coroutine */
-      char st[32]; st[31] = 0;
-      strncpy_P(st, statname[status], 31);
-      return luaL_error(L, "cannot kill a %s coroutine", st);
-    }
+    default:  /* normal or running coroutine */
+      return luaL_error(L, "cannot kill a %s coroutine", statname[status]);
   }
 }
 
-static const char __create[] PROGMEM = "create";
-static const char __resume[] PROGMEM = "resume";
-static const char __status[] PROGMEM = "status";
-static const char __wrap[] PROGMEM = "wrap";
-static const char __yield[] PROGMEM = "yield";
-static const char __isyieldable[] PROGMEM = "isyieldable";
-static const char __kill[] PROGMEM = "kill";
 
-static const luaL_Reg co_funcs[] PROGMEM = {
-  {__create, luaB_cocreate},
-  {__resume, luaB_coresume},
-  {__running, luaB_corunning},
-  {__status, luaB_costatus},
-  {__wrap, luaB_cowrap},
-  {__yield, luaB_yield},
-  {__isyieldable, luaB_yieldable},
-  {__kill, luaB_kill},
+static const luaL_Reg co_funcs[] = {
+  {"create", luaB_cocreate},
+  {"resume", luaB_coresume},
+  {"running", luaB_corunning},
+  {"status", luaB_costatus},
+  {"wrap", luaB_cowrap},
+  {"yield", luaB_yield},
+  {"isyieldable", luaB_yieldable},
+  {"kill", luaB_kill},
   {NULL, NULL}
 };
 

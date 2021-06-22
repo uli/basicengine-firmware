@@ -39,40 +39,26 @@
 ** these libs are loaded by lua.c and are readily available to any Lua
 ** program
 */
-static const char __LUA_GNAME[] PROGMEM = LUA_GNAME;
-static const char __LUA_LOADLIBNAME[] PROGMEM = LUA_LOADLIBNAME;
-static const char __LUA_COLIBNAME[] PROGMEM = LUA_COLIBNAME;
-static const char __LUA_TABLIBNAME[] PROGMEM = LUA_TABLIBNAME;
-static const char __LUA_IOLIBNAME[] PROGMEM = LUA_IOLIBNAME;
-static const char __LUA_OSLIBNAME[] PROGMEM = LUA_OSLIBNAME;
-static const char __LUA_STRLIBNAME[] PROGMEM = LUA_STRLIBNAME;
-static const char __LUA_MATHLIBNAME[] PROGMEM = LUA_MATHLIBNAME;
-static const char __LUA_UTF8LIBNAME[] PROGMEM = LUA_UTF8LIBNAME;
-static const char __LUA_DBLIBNAME[] PROGMEM = LUA_DBLIBNAME;
-
-static const luaL_Reg loadedlibs[] PROGMEM = {
-  {__LUA_GNAME, luaopen_base},
-  {__LUA_LOADLIBNAME, luaopen_package},
-  {__LUA_COLIBNAME, luaopen_coroutine},
-  {__LUA_TABLIBNAME, luaopen_table},
-  {__LUA_IOLIBNAME, luaopen_io},
-  {__LUA_OSLIBNAME, luaopen_os},
-  {__LUA_STRLIBNAME, luaopen_string},
-  {__LUA_MATHLIBNAME, luaopen_math},
-  {__LUA_UTF8LIBNAME, luaopen_utf8},
-  {__LUA_DBLIBNAME, luaopen_debug},
+static const luaL_Reg loadedlibs[] = {
+  {LUA_GNAME, luaopen_base},
+  {LUA_LOADLIBNAME, luaopen_package},
+  {LUA_COLIBNAME, luaopen_coroutine},
+  {LUA_TABLIBNAME, luaopen_table},
+  {LUA_IOLIBNAME, luaopen_io},
+  {LUA_OSLIBNAME, luaopen_os},
+  {LUA_STRLIBNAME, luaopen_string},
+  {LUA_MATHLIBNAME, luaopen_math},
+  {LUA_UTF8LIBNAME, luaopen_utf8},
+  {LUA_DBLIBNAME, luaopen_debug},
   {NULL, NULL}
 };
 
 
 LUALIB_API void luaL_openlibs (lua_State *L) {
-  char buf[128];
-  buf[127] = 0;
   const luaL_Reg *lib;
   /* "require" functions from 'loadedlibs' and set results to global table */
   for (lib = loadedlibs; lib->func; lib++) {
-    strncpy_P(buf, lib->name, 127);
-    luaL_requiref(L, buf, lib->func, 1);
+    luaL_requiref(L, lib->name, lib->func, 1);
     lua_pop(L, 1);  /* remove lib */
   }
 }

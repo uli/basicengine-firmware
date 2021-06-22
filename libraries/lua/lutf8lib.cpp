@@ -121,7 +121,7 @@ static int codepoint (lua_State *L) {
   if (pose - posi >= INT_MAX)  /* (lua_Integer -> int) overflow? */
     return luaL_error(L, "string slice too long");
   n = (int)(pose -  posi) + 1;  /* upper bound for number of returns */
-  luaL_checkstack_P(L, n, "string slice too long");
+  luaL_checkstack(L, n, "string slice too long");
   n = 0;  /* count the number of returns */
   se = s + pose;  /* string end */
   for (s += posi - 1; s < se;) {
@@ -139,7 +139,7 @@ static int codepoint (lua_State *L) {
 static void pushutfchar (lua_State *L, int arg) {
   lua_Integer code = luaL_checkinteger(L, arg);
   luaL_argcheck(L, 0 <= code && code <= MAXUNICODE, arg, "value out of range");
-  lua_pushfstring_P(L, "%U", (long)code);
+  lua_pushfstring(L, "%U", (long)code);
 }
 
 
@@ -245,22 +245,15 @@ static int iter_codes (lua_State *L) {
 /* pattern to match a single UTF-8 character */
 #define UTF8PATT	"[\0-\x7F\xC2-\xF4][\x80-\xBF]*"
 
-static const char __offset[] PROGMEM = "offset";
-static const char __codepoint[] PROGMEM = "codepoint";
-static const char __char[] PROGMEM = "char";
-static const char __len[] PROGMEM = "len";
-static const char __codes[] PROGMEM = "codes";
-  /* placeholders */
-static const char __charpattern[] PROGMEM = "charpattern";
 
-static const luaL_Reg funcs[] PROGMEM = {
-  {__offset, byteoffset},
-  {__codepoint, codepoint},
-  {__char, utfchar},
-  {__len, utflen},
-  {__codes, iter_codes},
+static const luaL_Reg funcs[] = {
+  {"offset", byteoffset},
+  {"codepoint", codepoint},
+  {"char", utfchar},
+  {"len", utflen},
+  {"codes", iter_codes},
   /* placeholders */
-  {__charpattern, NULL},
+  {"charpattern", NULL},
   {NULL, NULL}
 };
 
@@ -268,7 +261,7 @@ static const luaL_Reg funcs[] PROGMEM = {
 LUAMOD_API int luaopen_utf8 (lua_State *L) {
   luaL_newlib(L, funcs);
   lua_pushlstring(L, UTF8PATT, sizeof(UTF8PATT)/sizeof(char) - 1);
-  lua_setfield_P(L, -2, "charpattern");
+  lua_setfield(L, -2, "charpattern");
   return 1;
 }
 

@@ -48,7 +48,6 @@ LUALIB_API int (luaL_getmetafield) (lua_State *L, int obj, const char *e);
 LUALIB_API int (luaL_callmeta) (lua_State *L, int obj, const char *e);
 LUALIB_API const char *(luaL_tolstring) (lua_State *L, int idx, size_t *len);
 LUALIB_API int (luaL_argerror) (lua_State *L, int arg, const char *extramsg);
-#define luaL_argerror_P(L, arg, extramsg) luaL_argerror(L, arg, PSTR(extramsg))
 LUALIB_API int (luaL_typeerror) (lua_State *L, int arg, const char *tname);
 LUALIB_API const char *(luaL_checklstring) (lua_State *L, int arg,
                                                           size_t *l);
@@ -62,7 +61,6 @@ LUALIB_API lua_Integer (luaL_optinteger) (lua_State *L, int arg,
                                           lua_Integer def);
 
 LUALIB_API void (luaL_checkstack) (lua_State *L, int sz, const char *msg);
-#define luaL_checkstack_P(L, sz, msg) luaL_checkstack(L, sz, PSTR(msg))
 LUALIB_API void (luaL_checktype) (lua_State *L, int arg, int t);
 LUALIB_API void (luaL_checkany) (lua_State *L, int arg);
 
@@ -72,8 +70,7 @@ LUALIB_API void *(luaL_testudata) (lua_State *L, int ud, const char *tname);
 LUALIB_API void *(luaL_checkudata) (lua_State *L, int ud, const char *tname);
 
 LUALIB_API void (luaL_where) (lua_State *L, int lvl);
-LUALIB_API int (__luaL_error) (lua_State *L, const char *fmt, ...);
-#define luaL_error(L, fmt, ...) __luaL_error(L, PSTR(fmt), ##__VA_ARGS__)
+LUALIB_API int (luaL_error) (lua_State *L, const char *fmt, ...);
 
 LUALIB_API int (luaL_checkoption) (lua_State *L, int arg, const char *def,
                                    const char *const lst[]);
@@ -129,7 +126,7 @@ LUALIB_API void (luaL_requiref) (lua_State *L, const char *modname,
   (luaL_checkversion(L), luaL_newlibtable(L,l), luaL_setfuncs(L,l,0))
 
 #define luaL_argcheck(L, cond,arg,extramsg)	\
-		((void)((cond) || luaL_argerror_P(L, (arg), (extramsg))))
+		((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
 
 #define luaL_argexpected(L,cond,arg,tname)	\
 		((void)((cond) || luaL_typeerror(L, (arg), (tname))))

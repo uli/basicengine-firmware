@@ -19,7 +19,6 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
-#undef nvar
 
 /*
 ** The hook table at registry[&HOOKKEY] maps threads to their current
@@ -109,23 +108,20 @@ static lua_State *getthread (lua_State *L, int *arg) {
 ** from 'lua_getinfo' into result table. Key is always a string;
 ** value can be a string, an int, or a boolean.
 */
-static void __settabss (lua_State *L, const char *k, const char *v) {
+static void settabss (lua_State *L, const char *k, const char *v) {
   lua_pushstring(L, v);
-  __lua_setfield_P(L, -2, k);
+  lua_setfield(L, -2, k);
 }
-#define settabss(L, k, v) __settabss(L, PSTR(k), v)
 
-static void __settabsi (lua_State *L, const char *k, int v) {
+static void settabsi (lua_State *L, const char *k, int v) {
   lua_pushinteger(L, v);
-  __lua_setfield_P(L, -2, k);
+  lua_setfield(L, -2, k);
 }
-#define settabsi(L, k, v) __settabsi(L, PSTR(k), v)
 
-static void __settabsb (lua_State *L, const char *k, int v) {
+static void settabsb (lua_State *L, const char *k, int v) {
   lua_pushboolean(L, v);
-  __lua_setfield_P(L, -2, k);
+  lua_setfield(L, -2, k);
 }
-#define settabsb(L, k, v) __settabsb(L, PSTR(k), v)
 
 
 /*
@@ -140,9 +136,9 @@ static void treatstackoption (lua_State *L, lua_State *L1, const char *fname) {
     lua_rotate(L, -2, 1);  /* exchange object and table */
   else
     lua_xmove(L1, L, 1);  /* move object to the "main" stack */
-  __lua_setfield_P(L, -2, fname);  /* put object into table */
+  lua_setfield(L, -2, fname);  /* put object into table */
 }
-#define treatstackoption_P(L, L1, fname) treatstackoption(L, L1, PSTR(fname))
+
 
 /*
 ** Calls 'lua_getinfo' and collects all results in a new table.
@@ -157,7 +153,7 @@ static int db_getinfo (lua_State *L) {
   const char *options = luaL_optstring(L, arg+2, "flnSrtu");
   checkstack(L, L1, 3);
   if (lua_isfunction(L, arg + 1)) {  /* info about a function? */
-    options = lua_pushfstring_P(L, ">%s", options);  /* add '>' to 'options' */
+    options = lua_pushfstring(L, ">%s", options);  /* add '>' to 'options' */
     lua_pushvalue(L, arg + 1);  /* move function to 'L1' stack */
     lua_xmove(L, L1, 1);
   }
@@ -168,7 +164,7 @@ static int db_getinfo (lua_State *L) {
     }
   }
   if (!lua_getinfo(L1, options, &ar))
-    return luaL_argerror_P(L, arg+2, "invalid option");
+    return luaL_argerror(L, arg+2, "invalid option");
   lua_newtable(L);  /* table to collect results */
   if (strchr(options, 'S')) {
     settabss(L, "source", ar.source);
@@ -195,9 +191,9 @@ static int db_getinfo (lua_State *L) {
   if (strchr(options, 't'))
     settabsb(L, "istailcall", ar.istailcall);
   if (strchr(options, 'L'))
-    treatstackoption_P(L, L1, "activelines");
+    treatstackoption(L, L1, "activelines");
   if (strchr(options, 'f'))
-    treatstackoption_P(L, L1, "func");
+    treatstackoption(L, L1, "func");
   return 1;  /* return table */
 }
 
@@ -216,7 +212,7 @@ static int db_getlocal (lua_State *L) {
   else {  /* stack-level argument */
     int level = (int)luaL_checkinteger(L, arg + 1);
     if (!lua_getstack(L1, level, &ar))  /* out of range? */
-      return luaL_argerror_P(L, arg+1, "level out of range");
+      return luaL_argerror(L, arg+1, "level out of range");
     checkstack(L, L1, 1);
     name = lua_getlocal(L1, &ar, nvar);
     if (name) {
@@ -241,7 +237,7 @@ static int db_setlocal (lua_State *L) {
   int level = (int)luaL_checkinteger(L, arg + 1);
   int nvar = (int)luaL_checkinteger(L, arg + 2);
   if (!lua_getstack(L1, level, &ar))  /* out of range? */
-    return luaL_argerror_P(L, arg+1, "level out of range");
+    return luaL_argerror(L, arg+1, "level out of range");
   luaL_checkany(L, arg+3);
   lua_settop(L, arg+3);
   checkstack(L, L1, 1);
@@ -315,18 +311,12 @@ static int db_upvaluejoin (lua_State *L) {
 ** thread (if there is one)
 */
 static void hookf (lua_State *L, lua_Debug *ar) {
-  static const char __call[] PROGMEM = "call";
-  static const char __return[] PROGMEM = "return";
-  static const char __line[] PROGMEM = "line";
-  static const char __count[] PROGMEM = "count";
-  static const char __tail_call[] PROGMEM = "tail call";
-  static const char *const hooknames[] PROGMEM =
-    {__call, __return, __line, __count, __tail_call};
-
+  static const char *const hooknames[] =
+    {"call", "return", "line", "count", "tail call"};
   lua_rawgetp(L, LUA_REGISTRYINDEX, &HOOKKEY);
   lua_pushthread(L);
   if (lua_rawget(L, -2) == LUA_TFUNCTION) {  /* is there a hook function? */
-    __lua_pushstring_P(L, hooknames[(int)ar->event]);  /* push event name */
+    lua_pushstring(L, hooknames[(int)ar->event]);  /* push event name */
     if (ar->currentline >= 0)
       lua_pushinteger(L, ar->currentline);  /* push current line */
     else lua_pushnil(L);
@@ -381,7 +371,7 @@ static int db_sethook (lua_State *L) {
     lua_pushvalue(L, -1);
     lua_rawsetp(L, LUA_REGISTRYINDEX, &HOOKKEY);  /* set it in position */
     lua_pushstring(L, "k");
-    lua_setfield_P(L, -2, "__mode");  /** hooktable.__mode = "k" */
+    lua_setfield(L, -2, "__mode");  /** hooktable.__mode = "k" */
     lua_pushvalue(L, -1);
     lua_setmetatable(L, -2);  /* setmetatable(hooktable) = hooktable */
   }
@@ -417,7 +407,6 @@ static int db_gethook (lua_State *L) {
 }
 
 
-#if 0
 static int db_debug (lua_State *L) {
   for (;;) {
     char buffer[250];
@@ -431,7 +420,6 @@ static int db_debug (lua_State *L) {
     lua_settop(L, 0);  /* remove eventual returns */
   }
 }
-#endif
 
 
 static int db_traceback (lua_State *L) {
@@ -447,40 +435,24 @@ static int db_traceback (lua_State *L) {
   return 1;
 }
 
-static const char __debug[] PROGMEM = "debug";
-static const char __getuservalue[] PROGMEM = "getuservalue";
-static const char __gethook[] PROGMEM = "gethook";
-static const char __getinfo[] PROGMEM = "getinfo";
-static const char __getlocal[] PROGMEM = "getlocal";
-static const char __getregistry[] PROGMEM = "getregistry";
-static const char __getmetatable[] PROGMEM = "getmetatable";
-static const char __getupvalue[] PROGMEM = "getupvalue";
-static const char __upvaluejoin[] PROGMEM = "upvaluejoin";
-static const char __upvalueid[] PROGMEM = "upvalueid";
-static const char __setuservalue[] PROGMEM = "setuservalue";
-static const char __sethook[] PROGMEM = "sethook";
-static const char __setlocal[] PROGMEM = "setlocal";
-static const char __setmetatable[] PROGMEM = "setmetatable";
-static const char __setupvalue[] PROGMEM = "setupvalue";
-static const char __traceback[] PROGMEM = "traceback";
 
-static const luaL_Reg dblib[] PROGMEM = {
-//  {__debug, db_debug},
-  {__getuservalue, db_getuservalue},
-  {__gethook, db_gethook},
-  {__getinfo, db_getinfo},
-  {__getlocal, db_getlocal},
-  {__getregistry, db_getregistry},
-  {__getmetatable, db_getmetatable},
-  {__getupvalue, db_getupvalue},
-  {__upvaluejoin, db_upvaluejoin},
-  {__upvalueid, db_upvalueid},
-  {__setuservalue, db_setuservalue},
-  {__sethook, db_sethook},
-  {__setlocal, db_setlocal},
-  {__setmetatable, db_setmetatable},
-  {__setupvalue, db_setupvalue},
-  {__traceback, db_traceback},
+static const luaL_Reg dblib[] = {
+  {"debug", db_debug},
+  {"getuservalue", db_getuservalue},
+  {"gethook", db_gethook},
+  {"getinfo", db_getinfo},
+  {"getlocal", db_getlocal},
+  {"getregistry", db_getregistry},
+  {"getmetatable", db_getmetatable},
+  {"getupvalue", db_getupvalue},
+  {"upvaluejoin", db_upvaluejoin},
+  {"upvalueid", db_upvalueid},
+  {"setuservalue", db_setuservalue},
+  {"sethook", db_sethook},
+  {"setlocal", db_setlocal},
+  {"setmetatable", db_setmetatable},
+  {"setupvalue", db_setupvalue},
+  {"traceback", db_traceback},
   {NULL, NULL}
 };
 

@@ -59,7 +59,7 @@ int luaO_fb2int (int x) {
 ** Computes ceil(log2(x))
 */
 int luaO_ceillog2 (unsigned int x) {
-  static const lu_byte log_2[256] PROGMEM = {  /* log_2[i] = ceil(log2(i - 1)) */
+  static const lu_byte log_2[256] = {  /* log_2[i] = ceil(log2(i - 1)) */
     0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
     6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
     7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
@@ -72,11 +72,10 @@ int luaO_ceillog2 (unsigned int x) {
   int l = 0;
   x--;
   while (x >= 256) { l += 8; x >>= 8; }
-  return l + pgm_read_byte(&log_2[x]);
+  return l + log_2[x];
 }
 
 
-// XXX: 56 byte jump table
 static lua_Integer intarith (lua_State *L, int op, lua_Integer v1,
                                                    lua_Integer v2) {
   switch (op) {
@@ -97,7 +96,6 @@ static lua_Integer intarith (lua_State *L, int op, lua_Integer v1,
 }
 
 
-// XXX: 56 byte jump table
 static lua_Number numarith (lua_State *L, int op, lua_Number v1,
                                                   lua_Number v2) {
   switch (op) {
@@ -395,7 +393,7 @@ static void pushstr (lua_State *L, const char *str, size_t l) {
 ** this function handles only '%d', '%c', '%f', '%p', and '%s'
    conventional formats, plus Lua-specific '%I' and '%U'
 */
-const char * __attribute__((optimize ("no-jump-tables"))) luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
+const char *luaO_pushvfstring (lua_State *L, const char *fmt, va_list argp) {
   int n = 0;  /* number of strings in the stack to concatenate */
   const char *e;  /* points to next conversion specifier */
   while ((e = strchr(fmt, '%')) != NULL) {
@@ -412,7 +410,7 @@ const char * __attribute__((optimize ("no-jump-tables"))) luaO_pushvfstring (lua
         if (lisprint(cast_uchar(buff)))
           pushstr(L, &buff, 1);
         else  /* non-printable character; print its code */
-          luaO_pushfstring_P(L, "<\\%d>", cast_uchar(buff));
+          luaO_pushfstring(L, "<\\%d>", cast_uchar(buff));
         break;
       }
       case 'd': {  /* an 'int' */
@@ -464,18 +462,6 @@ const char * __attribute__((optimize ("no-jump-tables"))) luaO_pushvfstring (lua
   return svalue(s2v(L->top - 1));
 }
 
-
-const char *__luaO_pushfstring_P (lua_State *L, const char *fmt, ...) {
-  char ffmt[128];
-  strncpy_P(ffmt, fmt, 127);
-  ffmt[127] = 0;
-  const char *msg;
-  va_list argp;
-  va_start(argp, fmt);
-  msg = luaO_pushvfstring(L, ffmt, argp);
-  va_end(argp);
-  return msg;
-}
 
 const char *luaO_pushfstring (lua_State *L, const char *fmt, ...) {
   const char *msg;

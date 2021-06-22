@@ -281,9 +281,3 @@ Udata *luaS_newudata (lua_State *L, size_t s, int nuvalue) {
   return u;
 }
 
-TString *__luaS_newliteral_P (lua_State *L, const char *s) {
-  char ss[64];
-  ss[63] = 0;
-  strncpy_P(ss, s, 63);
-  return luaS_newlstr(L, ss, strlen(ss));
-}

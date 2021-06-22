@@ -28,7 +28,7 @@
 #include "lstring.h"
 #include "ltable.h"
 
-#undef clp
+
 
 /* maximum number of local variables per function (must be smaller
    than 250, due to the bytecode format) */
@@ -67,7 +67,7 @@ static void expr (LexState *ls, expdesc *v);
 
 static l_noret error_expected (LexState *ls, int token) {
   luaX_syntaxerror(ls,
-      luaO_pushfstring_P(ls->L, "%s expected", luaX_token2str(ls, token)));
+      luaO_pushfstring(ls->L, "%s expected", luaX_token2str(ls, token)));
 }
 
 
@@ -77,8 +77,8 @@ static l_noret errorlimit (FuncState *fs, int limit, const char *what) {
   int line = fs->f->linedefined;
   const char *where = (line == 0)
                       ? "main function"
-                      : luaO_pushfstring_P(L, "function at line %d", line);
-  msg = luaO_pushfstring_P(L, "too many %s (limit is %d) in %s",
+                      : luaO_pushfstring(L, "function at line %d", line);
+  msg = luaO_pushfstring(L, "too many %s (limit is %d) in %s",
                              what, limit, where);
   luaX_syntaxerror(fs->ls, msg);
 }
@@ -119,7 +119,7 @@ static void checknext (LexState *ls, int c) {
 }
 
 
-#define check_condition(ls,c,msg)	{ if (!(c)) luaX_syntaxerror_P(ls, msg); }
+#define check_condition(ls,c,msg)	{ if (!(c)) luaX_syntaxerror(ls, msg); }
 
 
 /*
@@ -132,7 +132,7 @@ static void check_match (LexState *ls, int what, int who, int where) {
     if (where == ls->linenumber)  /* all in the same line? */
       error_expected(ls, what);  /* do not need a complex message */
     else {
-      luaX_syntaxerror(ls, luaO_pushfstring_P(ls->L,
+      luaX_syntaxerror(ls, luaO_pushfstring(ls->L,
              "%s expected (to close %s at line %d)",
               luaX_token2str(ls, what), luaX_token2str(ls, who), where));
     }
@@ -381,9 +381,8 @@ static void adjust_assign (LexState *ls, int nvars, int nexps, expdesc *e) {
 */
 static l_noret jumpscopeerror (LexState *ls, Labeldesc *gt) {
   const char *varname = getstr(getlocvar(ls->fs, gt->nactvar)->varname);
-  const char *msg = luaO_pushfstring_P(ls->L,
-    "<goto %s> at line %d jumps into the scope of local '%s'",
-    getstr(gt->name), gt->line, varname);
+  const char *msg = "<goto %s> at line %d jumps into the scope of local '%s'";
+  msg = luaO_pushfstring(ls->L, msg, getstr(gt->name), gt->line, varname);
   luaK_semerror(ls, msg);  /* raise the error */
 }
 
@@ -526,12 +525,13 @@ static void enterblock (FuncState *fs, BlockCnt *bl, lu_byte isloop) {
 */
 static l_noret undefgoto (LexState *ls, Labeldesc *gt) {
   const char *msg;
-  if (eqstr(gt->name, luaS_newliteral_P(ls->L, "break"))) {
-    msg = luaO_pushfstring_P(ls->L, "break outside loop at line %d", gt->line);
+  if (eqstr(gt->name, luaS_newliteral(ls->L, "break"))) {
+    msg = "break outside loop at line %d";
+    msg = luaO_pushfstring(ls->L, msg, gt->line);
   }
   else {
-    msg = luaO_pushfstring_P(ls->L, "no visible label '%s' for <goto> at line %d",
-      getstr(gt->name), gt->line);
+    msg = "no visible label '%s' for <goto> at line %d";
+    msg = luaO_pushfstring(ls->L, msg, getstr(gt->name), gt->line);
   }
   luaK_semerror(ls, msg);
 }
@@ -542,7 +542,7 @@ static void leaveblock (FuncState *fs) {
   LexState *ls = fs->ls;
   int hasclose = 0;
   if (bl->isloop)  /* fix pending breaks? */
-    hasclose = createlabel(ls, luaS_newliteral_P(ls->L, "break"), 0, 0);
+    hasclose = createlabel(ls, luaS_newliteral(ls->L, "break"), 0, 0);
   if (!hasclose && bl->previous && bl->upval)
     luaK_codeABC(fs, OP_CLOSE, bl->nactvar, 0, 0);
   fs->bl = bl->previous;
@@ -840,7 +840,7 @@ static void parlist (LexState *ls) {
           isvararg = 1;
           break;
         }
-        default: luaX_syntaxerror_P(ls, "<name> or '...' expected");
+        default: luaX_syntaxerror(ls, "<name> or '...' expected");
       }
     } while (!isvararg && testnext(ls, ','));
   }
@@ -913,7 +913,7 @@ static void funcargs (LexState *ls, expdesc *f, int line) {
       break;
     }
     default: {
-      luaX_syntaxerror_P(ls, "function arguments expected");
+      luaX_syntaxerror(ls, "function arguments expected");
     }
   }
   lua_assert(f->k == VNONRELOC);
@@ -957,7 +957,7 @@ static void primaryexp (LexState *ls, expdesc *v) {
       return;
     }
     default: {
-      luaX_syntaxerror_P(ls, "unexpected symbol");
+      luaX_syntaxerror(ls, "unexpected symbol");
     }
   }
 }
@@ -1101,7 +1101,7 @@ static BinOpr getbinopr (int op) {
 static const struct {
   lu_byte left;  /* left priority for each binary operator */
   lu_byte right; /* right priority */
-} priority[] PROGMEM = {  /* ORDER OPR */
+} priority[] = {  /* ORDER OPR */
    {10, 10}, {10, 10},           /* '+' '-' */
    {11, 11}, {11, 11},           /* '*' '%' */
    {14, 13},                  /* '^' (right associative) */
@@ -1135,14 +1135,14 @@ static BinOpr subexpr (LexState *ls, expdesc *v, int limit) {
   else simpleexp(ls, v);
   /* expand while operators have priorities higher than 'limit' */
   op = getbinopr(ls->t.token);
-  while (op != OPR_NOBINOPR && pgm_read_byte(&priority[op].left) > limit) {
+  while (op != OPR_NOBINOPR && priority[op].left > limit) {
     expdesc v2;
     BinOpr nextop;
     int line = ls->linenumber;
     luaX_next(ls);  /* skip operator */
     luaK_infix(ls->fs, op, v);
     /* read sub-expression with higher priority */
-    nextop = subexpr(ls, &v2, pgm_read_byte(&priority[op].right));
+    nextop = subexpr(ls, &v2, priority[op].right);
     luaK_posfix(ls->fs, op, v, &v2, line);
     op = nextop;
   }
@@ -1298,7 +1298,7 @@ static void gotostat (LexState *ls) {
 static void breakstat (LexState *ls) {
   int line = ls->linenumber;
   luaX_next(ls);  /* skip break */
-  newgotoentry(ls, luaS_newliteral_P(ls->L, "break"), line, luaK_jump(ls->fs));
+  newgotoentry(ls, luaS_newliteral(ls->L, "break"), line, luaK_jump(ls->fs));
 }
 
 
@@ -1308,8 +1308,8 @@ static void breakstat (LexState *ls) {
 static void checkrepeated (LexState *ls, TString *name) {
   Labeldesc *lb = findlabel(ls, name);
   if (unlikely(lb != NULL)) {  /* already defined? */
-    const char *msg = luaO_pushfstring_P(ls->L,
-      "label '%s' already defined on line %d", getstr(name), lb->line);
+    const char *msg = "label '%s' already defined on line %d";
+    msg = luaO_pushfstring(ls->L, msg, getstr(name), lb->line);
     luaK_semerror(ls, msg);  /* error */
   }
 }
@@ -1397,7 +1397,7 @@ static void fixforjump (FuncState *fs, int pc, int dest, int back) {
   if (back)
     offset = -offset;
   if (unlikely(offset > MAXARG_Bx))
-    luaX_syntaxerror_P(fs->ls, "control structure too long");
+    luaX_syntaxerror(fs->ls, "control structure too long");
   SETARG_Bx(*jmp, offset);
 }
 
@@ -1499,7 +1499,7 @@ static void forstat (LexState *ls, int line) {
   switch (ls->t.token) {
     case '=': fornum(ls, varname, line); break;
     case ',': case TK_IN: forlist(ls, varname); break;
-    default: luaX_syntaxerror_P(ls, "'=' or 'in' expected");
+    default: luaX_syntaxerror(ls, "'=' or 'in' expected");
   }
   check_match(ls, TK_END, TK_FOR, line);
   leaveblock(fs);  /* loop scope ('break' jumps to this point) */
@@ -1516,7 +1516,7 @@ static void forstat (LexState *ls, int line) {
 */
 static int issinglejump (LexState *ls, TString **label, int *target) {
   if (testnext(ls, TK_BREAK)) {  /* a break? */
-    *label = luaS_newliteral_P(ls->L, "break");
+    *label = luaS_newliteral(ls->L, "break");
     return 1;
   }
   else if (ls->t.token != TK_GOTO || luaX_lookahead(ls) != TK_NAME)
@@ -1630,7 +1630,7 @@ static void tocloselocalstat (LexState *ls) {
   TString *attr = str_checkname(ls);
   if (strcmp(getstr(attr), "toclose") != 0)
     luaK_semerror(ls,
-      luaO_pushfstring_P(ls->L, "unknown attribute '%s'", getstr(attr)));
+      luaO_pushfstring(ls->L, "unknown attribute '%s'", getstr(attr)));
   new_localvar(ls, str_checkname(ls));
   checknext(ls, '=');
   exp1(ls, 0);

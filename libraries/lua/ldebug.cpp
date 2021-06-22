@@ -517,7 +517,7 @@ static const char *gxf (const Proto *p, int pc, Instruction i, int isup) {
 }
 
 
- const char * __attribute__((optimize ("no-jump-tables"))) getobjname (const Proto *p, int lastpc, int reg,
+ const char *getobjname (const Proto *p, int lastpc, int reg,
                          const char **name) {
   int pc;
   *name = luaF_getlocalname(p, reg + 1, lastpc);
@@ -694,16 +694,13 @@ static const char *varinfo (lua_State *L, const TValue *o) {
       kind = getobjname(ci_func(ci)->p, currentpc(ci),
                         cast_int(cast(StkId, o) - (ci->func + 1)), &name);
   }
-  return (kind) ? luaO_pushfstring_P(L, " (%s '%s')", kind, name) : "";
+  return (kind) ? luaO_pushfstring(L, " (%s '%s')", kind, name) : "";
 }
 
 
 l_noret luaG_typeerror (lua_State *L, const TValue *o, const char *op) {
-  char oop[128];
-  oop[127] = 0;
-  strncpy_P(oop, op, 127);
   const char *t = luaT_objtypename(L, o);
-  luaG_runerror(L, "attempt to %s a %s value%s", oop, t, varinfo(L, o));
+  luaG_runerror(L, "attempt to %s a %s value%s", op, t, varinfo(L, o));
 }
 
 
@@ -715,7 +712,7 @@ l_noret luaG_forerror (lua_State *L, const TValue *o, const char *what) {
 
 l_noret luaG_concaterror (lua_State *L, const TValue *p1, const TValue *p2) {
   if (ttisstring(p1) || cvt2str(p1)) p1 = p2;
-  luaG_typeerror_P(L, p1, "concatenate");
+  luaG_typeerror(L, p1, "concatenate");
 }
 
 
@@ -757,7 +754,7 @@ const char *luaG_addinfo (lua_State *L, const char *msg, TString *src,
   else {  /* no source available; use "?" instead */
     buff[0] = '?'; buff[1] = '\0';
   }
-  return luaO_pushfstring_P(L, "%s:%d: %s", buff, line, msg);
+  return luaO_pushfstring(L, "%s:%d: %s", buff, line, msg);
 }
 
 
@@ -774,16 +771,13 @@ l_noret luaG_errormsg (lua_State *L) {
 }
 
 
-l_noret __luaG_runerror (lua_State *L, const char *fmt, ...) {
-  char ffmt[128];
-  strncpy_P(ffmt, fmt, 127);
-  ffmt[127] = 0;
+l_noret luaG_runerror (lua_State *L, const char *fmt, ...) {
   CallInfo *ci = L->ci;
   const char *msg;
   va_list argp;
   luaC_checkGC(L);  /* error message uses memory */
   va_start(argp, fmt);
-  msg = luaO_pushvfstring(L, ffmt, argp);  /* format message */
+  msg = luaO_pushvfstring(L, fmt, argp);  /* format message */
   va_end(argp);
   if (isLua(ci))  /* if Lua function, add source:line information */
     luaG_addinfo(L, msg, ci_func(ci)->p->source, currentline(ci));

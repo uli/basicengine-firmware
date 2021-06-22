@@ -317,8 +317,7 @@ LUAI_FUNC void luaE_freeCI (lua_State *L);
 LUAI_FUNC void luaE_shrinkCI (lua_State *L);
 LUAI_FUNC void luaE_enterCcall (lua_State *L);
 LUAI_FUNC void luaE_warning (lua_State *L, const char *msg);
-LUAI_FUNC void __luaE_warning_P (lua_State *L, const char *msg);
-#define luaE_warning_P(L, msg) __luaE_warning_P(L, PSTR(msg))
+
 
 #define luaE_exitCcall(L)	((L)->nCcalls--)
 

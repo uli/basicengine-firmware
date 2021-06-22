@@ -37,17 +37,10 @@ typedef struct {
 
 
 static l_noret error (LoadState *S, const char *why) {
-  luaO_pushfstring_P(S->L, "%s: %s precompiled chunk", S->name, why);
+  luaO_pushfstring(S->L, "%s: %s precompiled chunk", S->name, why);
   luaD_throw(S->L, LUA_ERRSYNTAX);
 }
 
-static l_noret __error_P (LoadState *S, const char *why) {
-  char wwhy[64];
-  wwhy[63] = 0;
-  strncpy_P(wwhy, why, 63);
-  error(S, wwhy);
-}
-#define error_P(S, why) __error_P(S, PSTR(why))
 
 /*
 ** All high-level loads go through LoadVector; you can change it to
@@ -57,7 +50,7 @@ static l_noret __error_P (LoadState *S, const char *why) {
 
 static void LoadBlock (LoadState *S, void *b, size_t size) {
   if (luaZ_read(S->Z, b, size) != 0)
-    error_P(S, "truncated");
+    error(S, "truncated");
 }
 
 
@@ -67,7 +60,7 @@ static void LoadBlock (LoadState *S, void *b, size_t size) {
 static lu_byte LoadByte (LoadState *S) {
   int b = zgetc(S->Z);
   if (b == EOZ)
-    error_P(S, "truncated");
+    error(S, "truncated");
   return cast_byte(b);
 }
 
@@ -128,7 +121,7 @@ static TString *LoadStringN (LoadState *S) {
 static TString *LoadString (LoadState *S) {
   TString *st = LoadStringN(S);
   if (st == NULL)
-    error_P(S, "bad format for constant string");
+    error(S, "bad format for constant string");
   return st;
 }
 
@@ -251,18 +244,18 @@ static void LoadFunction (LoadState *S, Proto *f, TString *psource) {
 }
 
 
-static void __checkliteral (LoadState *S, const char *s, const char *msg) {
+static void checkliteral (LoadState *S, const char *s, const char *msg) {
   char buff[sizeof(LUA_SIGNATURE) + sizeof(LUAC_DATA)]; /* larger than both */
   size_t len = strlen(s);
   LoadVector(S, buff, len);
   if (memcmp(s, buff, len) != 0)
-    __error_P(S, msg);
+    error(S, msg);
 }
-#define checkliteral(S, s, msg) __checkliteral(S, s, PSTR(msg))
+
 
 static void fchecksize (LoadState *S, size_t size, const char *tname) {
   if (LoadByte(S) != size)
-    error(S, luaO_pushfstring_P(S->L, "%s size mismatch in", tname));
+    error(S, luaO_pushfstring(S->L, "%s size mismatch in", tname));
 }
 
 
@@ -271,9 +264,9 @@ static void fchecksize (LoadState *S, size_t size, const char *tname) {
 static void checkHeader (LoadState *S) {
   checkliteral(S, LUA_SIGNATURE + 1, "not a");  /* 1st char already checked */
   if (LoadByte(S) != LUAC_VERSION)
-    error_P(S, "version mismatch in");
+    error(S, "version mismatch in");
   if (LoadByte(S) != LUAC_FORMAT)
-    error_P(S, "format mismatch in");
+    error(S, "format mismatch in");
   checkliteral(S, LUAC_DATA, "corrupted");
   checksize(S, int);
   checksize(S, size_t);
@@ -281,9 +274,9 @@ static void checkHeader (LoadState *S) {
   checksize(S, lua_Integer);
   checksize(S, lua_Number);
   if (LoadInteger(S) != LUAC_INT)
-    error_P(S, "endianness mismatch in");
+    error(S, "endianness mismatch in");
   if (LoadNumber(S) != LUAC_NUM)
-    error_P(S, "float format mismatch in");
+    error(S, "float format mismatch in");
 }
 
 

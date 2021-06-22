@@ -792,7 +792,7 @@ static int gc_color (lua_State *L) {
   luaL_checkany(L, 1);
   o = obj_at(L, 1);
   if (!iscollectable(o))
-    lua_pushstring_P(L, "no collectable");
+    lua_pushstring(L, "no collectable");
   else {
     GCObject *obj = gcvalue(o);
     lua_pushstring(L, isdead(G(L), obj) ? "dead" :
@@ -808,7 +808,7 @@ static int gc_age (lua_State *L) {
   luaL_checkany(L, 1);
   o = obj_at(L, 1);
   if (!iscollectable(o))
-    lua_pushstring_P(L, "no collectable");
+    lua_pushstring(L, "no collectable");
   else {
     static const char *gennames[] = {"new", "survival", "old0", "old1",
                                      "old", "touched1", "touched2"};
@@ -1066,7 +1066,7 @@ static lua_State *getstate (lua_State *L) {
 
 
 static int loadlib (lua_State *L) {
-  static const luaL_Reg libs[] PROGMEM = {
+  static const luaL_Reg libs[] = {
     {LUA_GNAME, luaopen_base},
     {"coroutine", luaopen_coroutine},
     {"debug", luaopen_debug},
@@ -1171,7 +1171,7 @@ static int checkpanic (lua_State *L) {
   }
   lua_atpanic(L1, panicback);  /* set its panic function */
   lua_pushlightuserdata(L1, &b);
-  lua_setfield_P(L1, LUA_REGISTRYINDEX, "_jmpbuf");  /* store 'Aux' struct */
+  lua_setfield(L1, LUA_REGISTRYINDEX, "_jmpbuf");  /* store 'Aux' struct */
   if (setjmp(b.jb) == 0) {  /* set jump buffer */
     runC(L, L1, code);  /* run code unprotected */
     lua_pushliteral(L, "no errors");
@@ -1711,7 +1711,7 @@ static void sethookaux (lua_State *L, int mask, int count, const char *scpt) {
     lua_pop(L, 1);  /* remove previous value */
     lua_newtable(L);  /* create new C_HOOK table */
     lua_pushvalue(L, -1);
-    lua_setfield_P(L, LUA_REGISTRYINDEX, "C_HOOK");  /* register it */
+    lua_setfield(L, LUA_REGISTRYINDEX, "C_HOOK");  /* register it */
   }
   lua_pushlightuserdata(L, L);
   lua_pushstring(L, scpt);
@@ -1756,88 +1756,49 @@ static int coresume (lua_State *L) {
 
 /* }====================================================== */
 
-static const char __checkmemory[] PROGMEM = "checkmemory";
-static const char __closestate[] PROGMEM = "closestate";
-static const char __d2s[] PROGMEM = "d2s";
-static const char __doonnewstack[] PROGMEM = "doonnewstack";
-static const char __doremote[] PROGMEM = "doremote";
-static const char __gccolor[] PROGMEM = "gccolor";
-static const char __gcage[] PROGMEM = "gcage";
-static const char __gcstate[] PROGMEM = "gcstate";
-static const char __pobj[] PROGMEM = "pobj";
-static const char __getref[] PROGMEM = "getref";
-static const char __hash[] PROGMEM = "hash";
-static const char __int2fb[] PROGMEM = "int2fb";
-static const char __log2[] PROGMEM = "log2";
-static const char __limits[] PROGMEM = "limits";
-static const char __listcode[] PROGMEM = "listcode";
-static const char __printcode[] PROGMEM = "printcode";
-static const char __listk[] PROGMEM = "listk";
-static const char __listabslineinfo[] PROGMEM = "listabslineinfo";
-static const char __listlocals[] PROGMEM = "listlocals";
-static const char __loadlib[] PROGMEM = "loadlib";
-static const char __checkpanic[] PROGMEM = "checkpanic";
-static const char __newstate[] PROGMEM = "newstate";
-static const char __newuserdata[] PROGMEM = "newuserdata";
-static const char __num2int[] PROGMEM = "num2int";
-static const char __pushuserdata[] PROGMEM = "pushuserdata";
-static const char __querystr[] PROGMEM = "querystr";
-static const char __querytab[] PROGMEM = "querytab";
-static const char __ref[] PROGMEM = "ref";
-static const char __resume[] PROGMEM = "resume";
-static const char __s2d[] PROGMEM = "s2d";
-static const char __sethook[] PROGMEM = "sethook";
-static const char __stacklevel[] PROGMEM = "stacklevel";
-static const char __testC[] PROGMEM = "testC";
-static const char __makeCfunc[] PROGMEM = "makeCfunc";
-static const char __totalmem[] PROGMEM = "totalmem";
-static const char __alloccount[] PROGMEM = "alloccount";
-static const char __trick[] PROGMEM = "trick";
-static const char __udataval[] PROGMEM = "udataval";
-static const char __unref[] PROGMEM = "unref";
-static const char __upvalue[] PROGMEM = "upvalue";
 
-static const struct luaL_Reg tests_funcs[] PROGMEM = {
-  {__checkmemory, lua_checkmemory},
-  {__closestate, closestate},
-  {__d2s, d2s},
-  {__doonnewstack, doonnewstack},
-  {__doremote, doremote},
-  {__gccolor, gc_color},
-  {__gcage, gc_age},
-  {__gcstate, gc_state},
-  {__pobj, gc_printobj},
-  {__getref, getref},
-  {__hash, hash_query},
-  {__int2fb, int2fb_aux},
-  {__log2, log2_aux},
-  {__limits, get_limits},
-  {__listcode, listcode},
-  {__printcode, printcode},
-  {__listk, listk},
-  {__listabslineinfo, listabslineinfo},
-  {__listlocals, listlocals},
-  {__loadlib, loadlib},
-  {__checkpanic, checkpanic},
-  {__newstate, newstate},
-  {__newuserdata, newuserdata},
-  {__num2int, num2int},
-  {__pushuserdata, pushuserdata},
-  {__querystr, string_query},
-  {__querytab, table_query},
-  {__ref, tref},
-  {__resume, coresume},
-  {__s2d, s2d},
-  {__sethook, sethook},
-  {__stacklevel, stacklevel},
-  {__testC, testC},
-  {__makeCfunc, makeCfunc},
-  {__totalmem, mem_query},
-  {__alloccount, alloc_count},
-  {__trick, settrick},
-  {__udataval, udataval},
-  {__unref, unref},
-  {__upvalue, upvalue},
+
+static const struct luaL_Reg tests_funcs[] = {
+  {"checkmemory", lua_checkmemory},
+  {"closestate", closestate},
+  {"d2s", d2s},
+  {"doonnewstack", doonnewstack},
+  {"doremote", doremote},
+  {"gccolor", gc_color},
+  {"gcage", gc_age},
+  {"gcstate", gc_state},
+  {"pobj", gc_printobj},
+  {"getref", getref},
+  {"hash", hash_query},
+  {"int2fb", int2fb_aux},
+  {"log2", log2_aux},
+  {"limits", get_limits},
+  {"listcode", listcode},
+  {"printcode", printcode},
+  {"listk", listk},
+  {"listabslineinfo", listabslineinfo},
+  {"listlocals", listlocals},
+  {"loadlib", loadlib},
+  {"checkpanic", checkpanic},
+  {"newstate", newstate},
+  {"newuserdata", newuserdata},
+  {"num2int", num2int},
+  {"pushuserdata", pushuserdata},
+  {"querystr", string_query},
+  {"querytab", table_query},
+  {"ref", tref},
+  {"resume", coresume},
+  {"s2d", s2d},
+  {"sethook", sethook},
+  {"stacklevel", stacklevel},
+  {"testC", testC},
+  {"makeCfunc", makeCfunc},
+  {"totalmem", mem_query},
+  {"alloccount", alloc_count},
+  {"trick", settrick},
+  {"udataval", udataval},
+  {"unref", unref},
+  {"upvalue", upvalue},
   {NULL, NULL}
 };
 

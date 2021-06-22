@@ -15,7 +15,6 @@
 #include <math.h>
 #include <stdlib.h>
 //#include <time.h>
-#include <Arduino.h>
 
 #include "lua.h"
 
@@ -607,12 +606,9 @@ static int math_randomseed (lua_State *L) {
 }
 
 
-static const char _l__random [] PROGMEM = "random";
-static const char _l__randomseed [] PROGMEM = "randomseed";
-
-static const luaL_Reg randfuncs[] PROGMEM = {
-  {_l__random, math_random},
-  {_l__randomseed, math_randomseed},
+static const luaL_Reg randfuncs[] = {
+  {"random", math_random},
+  {"randomseed", math_randomseed},
   {NULL, NULL}
 };
 
@@ -686,81 +682,46 @@ static int math_log10 (lua_State *L) {
 /* }================================================================== */
 
 
-static const char _l__abs [] PROGMEM = "abs";
-static const char _l__acos [] PROGMEM = "acos";
-static const char _l__asin [] PROGMEM = "asin";
-static const char _l__atan [] PROGMEM = "atan";
-static const char _l__ceil [] PROGMEM = "ceil";
-static const char _l__cos [] PROGMEM = "cos";
-static const char _l__deg [] PROGMEM = "deg";
-static const char _l__exp [] PROGMEM = "exp";
-static const char _l__tointeger [] PROGMEM = "tointeger";
-static const char _l__floor [] PROGMEM = "floor";
-static const char _l__fmod [] PROGMEM = "fmod";
-static const char _l__ult [] PROGMEM = "ult";
-static const char _l__log [] PROGMEM = "log";
-static const char _l__max [] PROGMEM = "max";
-static const char _l__min [] PROGMEM = "min";
-static const char _l__modf [] PROGMEM = "modf";
-static const char _l__rad [] PROGMEM = "rad";
-static const char _l__sin [] PROGMEM = "sin";
-static const char _l__sqrt [] PROGMEM = "sqrt";
-static const char _l__tan [] PROGMEM = "tan";
-static const char _l__type [] PROGMEM = "type";
-#if defined(LUA_COMPAT_MATHLIB)
-static const char _l__atan2 [] PROGMEM = "atan2";
-static const char _l__cosh [] PROGMEM = "cosh";
-static const char _l__sinh [] PROGMEM = "sinh";
-static const char _l__tanh [] PROGMEM = "tanh";
-static const char _l__pow [] PROGMEM = "pow";
-static const char _l__frexp [] PROGMEM = "frexp";
-static const char _l__ldexp [] PROGMEM = "ldexp";
-static const char _l__log10 [] PROGMEM = "log10";
-#endif
-static const char _l__pi [] PROGMEM = "pi";
-static const char _l__huge [] PROGMEM = "huge";
-static const char _l__maxinteger [] PROGMEM = "maxinteger";
-static const char _l__mininteger [] PROGMEM = "mininteger";
 
-static const luaL_Reg mathlib[] PROGMEM = {
-  {_l__abs,   math_abs},
-  {_l__acos,  math_acos},
-  {_l__asin,  math_asin},
-  {_l__atan,  math_atan},
-  {_l__ceil,  math_ceil},
-  {_l__cos,   math_cos},
-  {_l__deg,   math_deg},
-  {_l__exp,   math_exp},
-  {_l__tointeger, math_toint},
-  {_l__floor, math_floor},
-  {_l__fmod,   math_fmod},
-  {_l__ult,   math_ult},
-  {_l__log,   math_log},
-  {_l__max,   math_max},
-  {_l__min,   math_min},
-  {_l__modf,   math_modf},
-  {_l__rad,   math_rad},
-  {_l__sin,   math_sin},
-  {_l__sqrt,  math_sqrt},
-  {_l__tan,   math_tan},
-  {_l__type, math_type},
+static const luaL_Reg mathlib[] = {
+  {"abs",   math_abs},
+  {"acos",  math_acos},
+  {"asin",  math_asin},
+  {"atan",  math_atan},
+  {"ceil",  math_ceil},
+  {"cos",   math_cos},
+  {"deg",   math_deg},
+  {"exp",   math_exp},
+  {"tointeger", math_toint},
+  {"floor", math_floor},
+  {"fmod",   math_fmod},
+  {"ult",   math_ult},
+  {"log",   math_log},
+  {"max",   math_max},
+  {"min",   math_min},
+  {"modf",   math_modf},
+  {"rad",   math_rad},
+  {"sin",   math_sin},
+  {"sqrt",  math_sqrt},
+  {"tan",   math_tan},
+  {"type", math_type},
 #if defined(LUA_COMPAT_MATHLIB)
-  {_l__atan2, math_atan},
-  {_l__cosh,   math_cosh},
-  {_l__sinh,   math_sinh},
-  {_l__tanh,   math_tanh},
-  {_l__pow,   math_pow},
-  {_l__frexp, math_frexp},
-  {_l__ldexp, math_ldexp},
-  {_l__log10, math_log10},
+  {"atan2", math_atan},
+  {"cosh",   math_cosh},
+  {"sinh",   math_sinh},
+  {"tanh",   math_tanh},
+  {"pow",   math_pow},
+  {"frexp", math_frexp},
+  {"ldexp", math_ldexp},
+  {"log10", math_log10},
 #endif
   /* placeholders */
-  {_l__random, NULL},
-  {_l__randomseed, NULL},
-  {_l__pi, NULL},
-  {_l__huge, NULL},
-  {_l__maxinteger, NULL},
-  {_l__mininteger, NULL},
+  {"random", NULL},
+  {"randomseed", NULL},
+  {"pi", NULL},
+  {"huge", NULL},
+  {"maxinteger", NULL},
+  {"mininteger", NULL},
   {NULL, NULL}
 };
 
@@ -771,13 +732,13 @@ static const luaL_Reg mathlib[] PROGMEM = {
 LUAMOD_API int luaopen_math (lua_State *L) {
   luaL_newlib(L, mathlib);
   lua_pushnumber(L, PI);
-  lua_setfield_P(L, -2, "pi");
+  lua_setfield(L, -2, "pi");
   lua_pushnumber(L, (lua_Number)HUGE_VAL);
-  lua_setfield_P(L, -2, "huge");
+  lua_setfield(L, -2, "huge");
   lua_pushinteger(L, LUA_MAXINTEGER);
-  lua_setfield_P(L, -2, "maxinteger");
+  lua_setfield(L, -2, "maxinteger");
   lua_pushinteger(L, LUA_MININTEGER);
-  lua_setfield_P(L, -2, "mininteger");
+  lua_setfield(L, -2, "mininteger");
   setrandfunc(L);
   return 1;
 }

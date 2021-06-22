@@ -9,8 +9,9 @@
 
 #include "lprefix.h"
 
+#ifdef __DJGPP__
 #include <time.h>
-#include <Arduino.h>
+#endif
 
 #include <limits.h>
 #include <stddef.h>
@@ -36,10 +37,9 @@
 
 
 static int checkfield (lua_State *L, const char *key, int n) {
-  __lua_pushstring_P(L, key);
+  lua_pushstring(L, key);
   return (lua_rawget(L, -n) != LUA_TNIL);
 }
-#define checkfield_P(L, key, n) checkfield(L, PSTR(key), n)
 
 
 /*
@@ -50,9 +50,9 @@ static void checktab (lua_State *L, int arg, int what) {
   if (lua_type(L, arg) != LUA_TTABLE) {  /* is it not a table? */
     int n = 1;  /* number of elements to pop */
     if (lua_getmetatable(L, arg) &&  /* must have metatable */
-        (!(what & TAB_R) || checkfield_P(L, "__index", ++n)) &&
-        (!(what & TAB_W) || checkfield_P(L, "__newindex", ++n)) &&
-        (!(what & TAB_L) || checkfield_P(L, "__len", ++n))) {
+        (!(what & TAB_R) || checkfield(L, "__index", ++n)) &&
+        (!(what & TAB_W) || checkfield(L, "__newindex", ++n)) &&
+        (!(what & TAB_L) || checkfield(L, "__len", ++n))) {
       lua_pop(L, n);  /* pop metatable and tested metamethods */
     }
     else
@@ -184,7 +184,7 @@ static int tpack (lua_State *L) {
   for (i = n; i >= 1; i--)  /* assign elements */
     lua_seti(L, 1, i);
   lua_pushinteger(L, n);
-  lua_setfield_P(L, 1, "n");  /* t.n = number of elements */
+  lua_setfield(L, 1, "n");  /* t.n = number of elements */
   return 1;  /* return table */
 }
 
@@ -407,22 +407,15 @@ static int sort (lua_State *L) {
 
 /* }====================================================== */
 
-static const char __concat[] PROGMEM = "concat";
-static const char __insert[] PROGMEM = "insert";
-static const char __pack[] PROGMEM = "pack";
-static const char __unpack[] PROGMEM = "unpack";
-static const char __remove[] PROGMEM = "remove";
-static const char __move[] PROGMEM = "move";
-static const char __sort[] PROGMEM = "sort";
 
-static const luaL_Reg tab_funcs[] PROGMEM = {
-  {__concat, tconcat},
-  {__insert, tinsert},
-  {__pack, tpack},
-  {__unpack, tunpack},
-  {__remove, tremove},
-  {__move, tmove},
-  {__sort, sort},
+static const luaL_Reg tab_funcs[] = {
+  {"concat", tconcat},
+  {"insert", tinsert},
+  {"pack", tpack},
+  {"unpack", tunpack},
+  {"remove", tremove},
+  {"move", tmove},
+  {"sort", sort},
   {NULL, NULL}
 };
 

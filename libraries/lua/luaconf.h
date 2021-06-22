@@ -10,13 +10,6 @@
 
 #include <limits.h>
 #include <stddef.h>
-#include <pgmspace.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-#include "../../ttbasic/ttconfig.h"
-
-#undef panic
 
 #define LUA_USE_LONGJMP
 
@@ -24,13 +17,7 @@
 
 
 #define l_lockfile(f)           ((void)0)
-#define l_unlockfile(f)         ((void)0)  
-
-#define lua_writestring(s, l) be_lua_writestring(s, l)
-
-#define lua_writeline() newline()
-void be_lua_writestringerror(const char *fmt, const char *msg);
-#define lua_writestringerror(f,m) be_lua_writestringerror(PSTR(f),m)
+#define l_unlockfile(f)         ((void)0)
 
 #define lua_getlocaledecpoint() '.'
 

@@ -129,7 +129,7 @@ static void fixjump (FuncState *fs, int pc, int dest) {
   int offset = dest - (pc + 1);
   lua_assert(dest != NO_JUMP);
   if (!(-OFFSET_sJ <= offset && offset <= MAXARG_sJ - OFFSET_sJ))
-    luaX_syntaxerror_P(fs->ls, "control structure too long");
+    luaX_syntaxerror(fs->ls, "control structure too long");
   lua_assert(GET_OPCODE(*jmp) == OP_JMP);
   SETARG_sJ(*jmp, offset);
 }
@@ -436,7 +436,7 @@ void luaK_checkstack (FuncState *fs, int n) {
   int newstack = fs->freereg + n;
   if (newstack > fs->f->maxstacksize) {
     if (newstack >= MAXREGS)
-      luaX_syntaxerror_P(fs->ls,
+      luaX_syntaxerror(fs->ls,
         "function or expression needs too many registers");
     fs->f->maxstacksize = cast_byte(newstack);
   }
@@ -675,8 +675,7 @@ void luaK_setoneret (FuncState *fs, expdesc *e) {
 ** Ensure that expression 'e' is not a variable.
 ** (Expression still may have jump lists.)
 */
-// XXX: 40 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_dischargevars (FuncState *fs, expdesc *e) {
+void luaK_dischargevars (FuncState *fs, expdesc *e) {
   switch (e->k) {
     case VLOCAL: {  /* already in a register */
       e->k = VNONRELOC;  /* becomes a non-relocatable value */
@@ -724,8 +723,7 @@ void __attribute__((optimize ("no-jump-tables"))) luaK_dischargevars (FuncState 
 ** 'e' will become a non-relocatable expression).
 ** (Expression still may have jump lists.)
 */
-// XXX: 64 byte jump table
-static void __attribute__((optimize ("no-jump-tables"))) discharge2reg (FuncState *fs, expdesc *e, int reg) {
+static void discharge2reg (FuncState *fs, expdesc *e, int reg) {
   luaK_dischargevars(fs, e);
   switch (e->k) {
     case VNIL: {
@@ -886,8 +884,7 @@ void luaK_exp2val (FuncState *fs, expdesc *e) {
 ** Try to make 'e' a K expression with an index in the range of R/K
 ** indices. Return true iff succeeded.
 */
-// XXX: 24 byte jump table
-static int __attribute__((optimize ("no-jump-tables"))) luaK_exp2K (FuncState *fs, expdesc *e) {
+static int luaK_exp2K (FuncState *fs, expdesc *e) {
   if (!hasjumps(e)) {
     int info;
     switch (e->k) {  /* move constants to 'k' */
@@ -936,8 +933,7 @@ static void codeABRK (FuncState *fs, OpCode o, int a, int b,
 /*
 ** Generate code to store result of expression 'ex' into variable 'var'.
 */
-// XXX: 24 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
+void luaK_storevar (FuncState *fs, expdesc *var, expdesc *ex) {
   switch (var->k) {
     case VLOCAL: {
       freeexp(fs, ex);
@@ -1440,8 +1436,7 @@ static void codeeq (FuncState *fs, BinOpr opr, expdesc *e1, expdesc *e2) {
 /*
 ** Apply prefix operation 'op' to expression 'e'.
 */
-// XXX: 64 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
+void luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
   static const expdesc ef = {VKINT, {0}, NO_JUMP, NO_JUMP};
   switch (op) {
     case OPR_MINUS: case OPR_BNOT:  /* use 'ef' as fake 2nd operand */
@@ -1461,8 +1456,7 @@ void __attribute__((optimize ("no-jump-tables"))) luaK_prefix (FuncState *fs, Un
 ** Process 1st operand 'v' of binary operation 'op' before reading
 ** 2nd operand.
 */
-// XXX: 80 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_infix (FuncState *fs, BinOpr op, expdesc *v) {
+void luaK_infix (FuncState *fs, BinOpr op, expdesc *v) {
   switch (op) {
     case OPR_AND: {
       luaK_goiftrue(fs, v);  /* go ahead only if 'v' is true */
@@ -1529,8 +1523,7 @@ static void codeconcat (FuncState *fs, expdesc *e1, expdesc *e2, int line) {
 /*
 ** Finalize code for binary operation, after reading 2nd operand.
 */
-// XXX: 80 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_posfix (FuncState *fs, BinOpr opr,
+void luaK_posfix (FuncState *fs, BinOpr opr,
                   expdesc *e1, expdesc *e2, int line) {
   switch (opr) {
     case OPR_AND: {
@@ -1633,7 +1626,7 @@ void luaK_setlist (FuncState *fs, int base, int nelems, int tostore) {
     codeextraarg(fs, c);
   }
   else
-    luaX_syntaxerror_P(fs->ls, "constructor too long");
+    luaX_syntaxerror(fs->ls, "constructor too long");
   fs->freereg = base + 1;  /* free registers with list values */
 }
 
@@ -1658,8 +1651,7 @@ static int finaltarget (Instruction *code, int i) {
 ** Do a final pass over the code of a function, doing small peephole
 ** optimizations and adjustments.
 */
-// XXX: 64 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaK_finish (FuncState *fs) {
+void luaK_finish (FuncState *fs) {
   int i;
   Proto *p = fs->f;
   for (i = 0; i < fs->pc; i++) {

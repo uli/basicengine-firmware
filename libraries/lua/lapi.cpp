@@ -430,8 +430,7 @@ LUA_API lua_State *lua_tothread (lua_State *L, int idx) {
 }
 
 
-// XXX: 216 byte jump table (WTF?)
-LUA_API const void * __attribute__((optimize ("no-jump-tables"))) lua_topointer (lua_State *L, int idx) {
+LUA_API const void *lua_topointer (lua_State *L, int idx) {
   const TValue *o = index2value(L, idx);
   switch (ttypetag(o)) {
     case LUA_TTABLE: return hvalue(o);
@@ -509,12 +508,6 @@ LUA_API const char *lua_pushstring (lua_State *L, const char *s) {
   return s;
 }
 
-LUA_API const char *__lua_pushstring_P (lua_State *L, const char *s) {
-  char ss[128];
-  ss[127] = 0;
-  strncpy_P(ss, s, 127);
-  return lua_pushstring(L, ss);
-}
 
 LUA_API const char *lua_pushvfstring (lua_State *L, const char *fmt,
                                       va_list argp) {
@@ -529,13 +522,10 @@ LUA_API const char *lua_pushvfstring (lua_State *L, const char *fmt,
 
 LUA_API const char *lua_pushfstring (lua_State *L, const char *fmt, ...) {
   const char *ret;
-  char ffmt[128];
-  ffmt[127] = 0;
-  strncpy_P(ffmt, fmt, 127);
   va_list argp;
   lua_lock(L);
   va_start(argp, fmt);
-  ret = luaO_pushvfstring(L, ffmt, argp);
+  ret = luaO_pushvfstring(L, fmt, argp);
   va_end(argp);
   luaC_checkGC(L);
   lua_unlock(L);
@@ -802,11 +792,6 @@ LUA_API void lua_setglobal (lua_State *L, const char *name) {
   auxsetstr(L, luaH_getint(reg, LUA_RIDX_GLOBALS), name);
 }
 
-LUA_API void __lua_setglobal_P (lua_State *L, const char *name) {
-  char nname[128]; nname[127] = 0;
-  strncpy_P(nname, name, 127);
-  lua_setglobal(L, nname);
-}
 
 LUA_API void lua_settable (lua_State *L, int idx) {
   TValue *t;
@@ -829,13 +814,6 @@ LUA_API void lua_setfield (lua_State *L, int idx, const char *k) {
   auxsetstr(L, index2value(L, idx), k);
 }
 
-LUA_API void __lua_setfield_P (lua_State *L, int idx, const char *k) {
-  char kk[128];
-  kk[127] = 0;
-  strncpy_P(kk, k, 127);
-  lua_lock(L);  /* unlock done in 'auxsetstr' */
-  auxsetstr(L, index2value(L, idx), kk);
-}
 
 LUA_API void lua_seti (lua_State *L, int idx, lua_Integer n) {
   TValue *t;
@@ -1098,8 +1076,7 @@ LUA_API int lua_status (lua_State *L) {
 /*
 ** Garbage-collection function
 */
-// XXX: 48 byte jump table
-LUA_API int __attribute__((optimize ("no-jump-tables"))) lua_gc (lua_State *L, int what, ...) {
+LUA_API int lua_gc (lua_State *L, int what, ...) {
   va_list argp;
   int res = 0;
   global_State *g = G(L);

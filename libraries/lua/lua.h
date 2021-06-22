@@ -235,12 +235,9 @@ LUA_API void        (lua_pushnumber) (lua_State *L, lua_Number n);
 LUA_API void        (lua_pushinteger) (lua_State *L, lua_Integer n);
 LUA_API const char *(lua_pushlstring) (lua_State *L, const char *s, size_t len);
 LUA_API const char *(lua_pushstring) (lua_State *L, const char *s);
-LUA_API const char *(__lua_pushstring_P) (lua_State *L, const char *s);
-#define lua_pushstring_P(L, s) __lua_pushstring_P(L, PSTR(s))
 LUA_API const char *(lua_pushvfstring) (lua_State *L, const char *fmt,
                                                       va_list argp);
 LUA_API const char *(lua_pushfstring) (lua_State *L, const char *fmt, ...);
-#define lua_pushfstring_P(L, fmt, ...) lua_pushfstring(L, PSTR(fmt), ##__VA_ARGS__)
 LUA_API void  (lua_pushcclosure) (lua_State *L, lua_CFunction fn, int n);
 LUA_API void  (lua_pushboolean) (lua_State *L, int b);
 LUA_API void  (lua_pushlightuserdata) (lua_State *L, void *p);
@@ -268,12 +265,8 @@ LUA_API int  (lua_getiuservalue) (lua_State *L, int idx, int n);
 ** set functions (stack -> Lua)
 */
 LUA_API void  (lua_setglobal) (lua_State *L, const char *name);
-LUA_API void  (__lua_setglobal_P) (lua_State *L, const char *name);
-#define lua_setglobal_P(L, name) __lua_setglobal_P(L, PSTR(name))
 LUA_API void  (lua_settable) (lua_State *L, int idx);
 LUA_API void  (lua_setfield) (lua_State *L, int idx, const char *k);
-LUA_API void  (__lua_setfield_P) (lua_State *L, int idx, const char *k);
-#define lua_setfield_P(L, idx, k) __lua_setfield_P(L, idx, PSTR(k))
 LUA_API void  (lua_seti) (lua_State *L, int idx, lua_Integer n);
 LUA_API void  (lua_rawset) (lua_State *L, int idx);
 LUA_API void  (lua_rawseti) (lua_State *L, int idx, lua_Integer n);
@@ -385,7 +378,7 @@ LUA_API void  (lua_toclose) (lua_State *L, int idx);
 #define lua_isnone(L,n)		(lua_type(L, (n)) == LUA_TNONE)
 #define lua_isnoneornil(L, n)	(lua_type(L, (n)) <= 0)
 
-#define lua_pushliteral(L, s)	lua_pushstring_P(L, "" s)
+#define lua_pushliteral(L, s)	lua_pushstring(L, "" s)
 
 #define lua_pushglobaltable(L)  \
 	((void)lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS))

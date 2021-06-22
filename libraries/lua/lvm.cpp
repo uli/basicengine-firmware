@@ -197,7 +197,7 @@ void luaV_finishget (lua_State *L, const TValue *t, TValue *key, StkId val,
       lua_assert(!ttistable(t));
       tm = luaT_gettmbyobj(L, t, TM_INDEX);
       if (unlikely(notm(tm)))
-        luaG_typeerror_P(L, t, "index");  /* no metamethod */
+        luaG_typeerror(L, t, "index");  /* no metamethod */
       /* else will try the metamethod */
     }
     else {  /* 't' is a table */
@@ -254,7 +254,7 @@ void luaV_finishset (lua_State *L, const TValue *t, TValue *key,
     else {  /* not a table; check metamethod */
       tm = luaT_gettmbyobj(L, t, TM_NEWINDEX);
       if (unlikely(notm(tm)))
-        luaG_typeerror_P(L, t, "index");
+        luaG_typeerror(L, t, "index");
     }
     /* try the metamethod */
     if (ttisfunction(tm)) {
@@ -474,8 +474,7 @@ int luaV_lessequal (lua_State *L, const TValue *l, const TValue *r) {
 ** Main operation for equality of Lua values; return 't1 == t2'.
 ** L == NULL means raw equality (no metamethods)
 */
-// XXX: 160 byte jump table
-int __attribute__((optimize ("no-jump-tables"))) luaV_equalobj (lua_State *L, const TValue *t1, const TValue *t2) {
+int luaV_equalobj (lua_State *L, const TValue *t1, const TValue *t2) {
   const TValue *tm;
   if (ttypetag(t1) != ttypetag(t2)) {  /* not the same variant? */
     if (ttype(t1) != ttype(t2) || ttype(t1) != LUA_TNUMBER)
@@ -607,7 +606,7 @@ void luaV_objlen (lua_State *L, StkId ra, const TValue *rb) {
     default: {  /* try metamethod */
       tm = luaT_gettmbyobj(L, rb, TM_LEN);
       if (unlikely(notm(tm)))  /* no metamethod? */
-        luaG_typeerror_P(L, rb, "get length of");
+        luaG_typeerror(L, rb, "get length of");
       break;
     }
   }
@@ -709,8 +708,7 @@ static void pushclosure (lua_State *L, Proto *p, UpVal **encup, StkId base,
 /*
 ** finish execution of an opcode interrupted by a yield
 */
-// XXX: 232 byte jump table
-void __attribute__((optimize ("no-jump-tables"))) luaV_finishOp (lua_State *L) {
+void luaV_finishOp (lua_State *L) {
   CallInfo *ci = L->ci;
   StkId base = ci->func + 1;
   Instruction inst = *(ci->u.l.savedpc - 1);  /* interrupted instruction */

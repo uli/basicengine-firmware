@@ -158,7 +158,7 @@ static int str_byte (lua_State *L) {
   if (pose - posi >= INT_MAX)  /* arithmetic overflow? */
     return luaL_error(L, "string slice too long");
   n = (int)(pose -  posi) + 1;
-  luaL_checkstack_P(L, n, "string slice too long");
+  luaL_checkstack(L, n, "string slice too long");
   for (i=0; i<n; i++)
     lua_pushinteger(L, uchar(s[posi+i-1]));
   return n;
@@ -272,7 +272,7 @@ static int arith_unm (lua_State *L) {
 }
 
 
-static const luaL_Reg stringmetamethods[] PROGMEM = {
+static const luaL_Reg stringmetamethods[] = {
   {"__add", arith_add},
   {"__sub", arith_sub},
   {"__mul", arith_mul},
@@ -366,7 +366,7 @@ static const char *classend (MatchState *ms, const char *p) {
 }
 
 
-static int __attribute__((optimize ("no-jump-tables"))) match_class (int c, int cl) {
+static int match_class (int c, int cl) {
   int res;
   switch (tolower(cl)) {
     case 'a' : res = isalpha(c); break;
@@ -656,7 +656,7 @@ static void push_onecapture (MatchState *ms, int i, const char *s,
 static int push_captures (MatchState *ms, const char *s, const char *e) {
   int i;
   int nlevels = (ms->level == 0 && s) ? 1 : ms->level;
-  luaL_checkstack_P(ms->L, nlevels, "too many captures");
+  luaL_checkstack(ms->L, nlevels, "too many captures");
   for (i = 0; i < nlevels; i++)
     push_onecapture(ms, i, s, e);
   return nlevels;  /* number of strings pushed */
@@ -1072,7 +1072,7 @@ static void addliteral (lua_State *L, luaL_Buffer *b, int arg) {
       break;
     }
     default: {
-      luaL_argerror_P(L, arg, "value has no literal form");
+      luaL_argerror(L, arg, "value has no literal form");
     }
   }
 }
@@ -1113,7 +1113,7 @@ static void addlenmod (char *form, const char *lenmod) {
 }
 
 
-static int __attribute__((optimize ("no-jump-tables"))) str_format (lua_State *L) {
+static int str_format (lua_State *L) {
   int top = lua_gettop(L);
   int arg = 1;
   size_t sfl;
@@ -1131,7 +1131,7 @@ static int __attribute__((optimize ("no-jump-tables"))) str_format (lua_State *L
       char *buff = luaL_prepbuffsize(&b, MAX_ITEM);  /* to put formatted item */
       int nb = 0;  /* number of bytes in added item */
       if (++arg > top)
-        luaL_argerror_P(L, arg, "no value");
+        luaL_argerror(L, arg, "no value");
       strfrmt = scanformat(L, strfrmt, form);
       switch (*strfrmt++) {
         case 'c': {
@@ -1317,7 +1317,7 @@ static void initheader (lua_State *L, Header *h) {
 /*
 ** Read and classify next option. 'size' is filled with option's size.
 */
-static KOption __attribute__((optimize ("no-jump-tables"))) getoption (Header *h, const char **fmt, int *size) {
+static KOption getoption (Header *h, const char **fmt, int *size) {
   int opt = *((*fmt)++);
   *size = 0;  /* default */
   switch (opt) {
@@ -1370,7 +1370,7 @@ static KOption getdetails (Header *h, size_t totalsize,
   int align = *psize;  /* usually, alignment follows size */
   if (opt == Kpaddalign) {  /* 'X' gets alignment from following option */
     if (**fmt == '\0' || getoption(h, fmt, &align) == Kchar || align == 0)
-      luaL_argerror_P(h->L, 1, "invalid next option for option 'X'");
+      luaL_argerror(h->L, 1, "invalid next option for option 'X'");
   }
   if (align <= 1 || opt == Kchar)  /* need no alignment? */
     *ntoalign = 0;
@@ -1378,7 +1378,7 @@ static KOption getdetails (Header *h, size_t totalsize,
     if (align > h->maxalign)  /* enforce maximum alignment */
       align = h->maxalign;
     if ((align & (align - 1)) != 0)  /* is 'align' not a power of 2? */
-      luaL_argerror_P(h->L, 1, "format asks for alignment not power of 2");
+      luaL_argerror(h->L, 1, "format asks for alignment not power of 2");
     *ntoalign = (align - (int)(totalsize & (align - 1))) & (align - 1);
   }
   return opt;
@@ -1426,7 +1426,7 @@ static void copywithendian (volatile char *dest, volatile const char *src,
 }
 
 
-static int __attribute__((optimize ("no-jump-tables"))) str_pack (lua_State *L) {
+static int str_pack (lua_State *L) {
   luaL_Buffer b;
   Header h;
   const char *fmt = luaL_checkstring(L, 1);  /* format string */
@@ -1583,7 +1583,7 @@ static int str_unpack (lua_State *L) {
                     "data string too short");
     pos += ntoalign;  /* skip alignment */
     /* stack space for item + next position */
-    luaL_checkstack_P(L, 2, "too many results");
+    luaL_checkstack(L, 2, "too many results");
     n++;
     switch (opt) {
       case Kint:
@@ -1634,42 +1634,25 @@ static int str_unpack (lua_State *L) {
 
 /* }====================================================== */
 
-static const char __byte[] PROGMEM = "byte";
-static const char __char[] PROGMEM = "char";
-static const char __dump[] PROGMEM = "dump";
-static const char __find[] PROGMEM = "find";
-static const char __format[] PROGMEM = "format";
-static const char __gmatch[] PROGMEM = "gmatch";
-static const char __gsub[] PROGMEM = "gsub";
-static const char __len[] PROGMEM = "len";
-static const char __lower[] PROGMEM = "lower";
-static const char __match[] PROGMEM = "match";
-static const char __rep[] PROGMEM = "rep";
-static const char __reverse[] PROGMEM = "reverse";
-static const char __sub[] PROGMEM = "sub";
-static const char __upper[] PROGMEM = "upper";
-static const char __pack[] PROGMEM = "pack";
-static const char __packsize[] PROGMEM = "packsize";
-static const char __unpack[] PROGMEM = "unpack";
 
-static const luaL_Reg strlib[] PROGMEM = {
-  {__byte, str_byte},
-  {__char, str_char},
-  {__dump, str_dump},
-  {__find, str_find},
-  {__format, str_format},
-  {__gmatch, gmatch},
-  {__gsub, str_gsub},
-  {__len, str_len},
-  {__lower, str_lower},
-  {__match, str_match},
-  {__rep, str_rep},
-  {__reverse, str_reverse},
-  {__sub, str_sub},
-  {__upper, str_upper},
-  {__pack, str_pack},
-  {__packsize, str_packsize},
-  {__unpack, str_unpack},
+static const luaL_Reg strlib[] = {
+  {"byte", str_byte},
+  {"char", str_char},
+  {"dump", str_dump},
+  {"find", str_find},
+  {"format", str_format},
+  {"gmatch", gmatch},
+  {"gsub", str_gsub},
+  {"len", str_len},
+  {"lower", str_lower},
+  {"match", str_match},
+  {"rep", str_rep},
+  {"reverse", str_reverse},
+  {"sub", str_sub},
+  {"upper", str_upper},
+  {"pack", str_pack},
+  {"packsize", str_packsize},
+  {"unpack", str_unpack},
   {NULL, NULL}
 };
 
@@ -1683,7 +1666,7 @@ static void createmetatable (lua_State *L) {
   lua_setmetatable(L, -2);  /* set table as metatable for strings */
   lua_pop(L, 1);  /* pop dummy string */
   lua_pushvalue(L, -2);  /* get string library */
-  lua_setfield_P(L, -2, "__index");  /* metatable.__index = string */
+  lua_setfield(L, -2, "__index");  /* metatable.__index = string */
   lua_pop(L, 1);  /* pop metatable */
 }
 

@@ -167,7 +167,7 @@ static int f_tostring (lua_State *L) {
   if (isclosed(p))
     lua_pushliteral(L, "file (closed)");
   else
-    lua_pushfstring_P(L, "file (%p)", p->f);
+    lua_pushfstring(L, "file (%p)", p->f);
   return 1;
 }
 
@@ -559,7 +559,7 @@ static int g_read (lua_State *L, FILE *f, int first) {
   }
   else {
     /* ensure stack space for all results and for auxlib's buffer */
-    luaL_checkstack_P(L, nargs+LUA_MINSTACK, "too many arguments");
+    luaL_checkstack(L, nargs+LUA_MINSTACK, "too many arguments");
     success = 1;
     for (n = first; nargs-- && success; n++) {
       if (lua_type(L, n) == LUA_TNUMBER) {
@@ -584,7 +584,7 @@ static int g_read (lua_State *L, FILE *f, int first) {
             success = 1; /* always success */
             break;
           default:
-            return luaL_argerror_P(L, n, "invalid format");
+            return luaL_argerror(L, n, "invalid format");
         }
       }
     }
@@ -619,7 +619,7 @@ static int io_readline (lua_State *L) {
   if (isclosed(p))  /* file is already closed? */
     return luaL_error(L, "file is already closed");
   lua_settop(L , 1);
-  luaL_checkstack_P(L, n, "too many arguments");
+  luaL_checkstack(L, n, "too many arguments");
   for (i = 1; i <= n; i++)  /* push arguments to 'g_read' */
     lua_pushvalue(L, lua_upvalueindex(3 + i));
   n = g_read(L, p->f, 2);  /* 'n' is number of results */
@@ -680,8 +680,8 @@ static int f_write (lua_State *L) {
 
 
 static int f_seek (lua_State *L) {
-  static const int mode[] PROGMEM = {SEEK_SET, SEEK_CUR, SEEK_END};
-  static const char *const modenames[] PROGMEM = {"set", "cur", "end", NULL};
+  static const int mode[] = {SEEK_SET, SEEK_CUR, SEEK_END};
+  static const char *const modenames[] = {"set", "cur", "end", NULL};
   FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, "cur", modenames);
   lua_Integer p3 = luaL_optinteger(L, 3, 0);
@@ -699,8 +699,8 @@ static int f_seek (lua_State *L) {
 
 
 static int f_setvbuf (lua_State *L) {
-  static const int mode[] PROGMEM = {_IONBF, _IOFBF, _IOLBF};
-  static const char *const modenames[] PROGMEM = {"no", "full", "line", NULL};
+  static const int mode[] = {_IONBF, _IOFBF, _IOLBF};
+  static const char *const modenames[] = {"no", "full", "line", NULL};
   FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, NULL, modenames);
   lua_Integer sz = luaL_optinteger(L, 3, LUAL_BUFFERSIZE);
@@ -723,31 +723,18 @@ static int f_flush (lua_State *L) {
 /*
 ** functions for 'io' library
 */
-
-static const char __close[] PROGMEM = "close";
-static const char __flush[] PROGMEM = "flush";
-static const char __input[] PROGMEM = "input";
-static const char __lines[] PROGMEM = "lines";
-static const char __open[] PROGMEM = "open";
-static const char __output[] PROGMEM = "output";
-static const char __popen[] PROGMEM = "popen";
-static const char __read[] PROGMEM = "read";
-//static const char __tmpfile[] PROGMEM = "tmpfile";
-static const char __type[] PROGMEM = "type";
-static const char __write[] PROGMEM = "write";
-
-static const luaL_Reg iolib[] PROGMEM = {
-  {__close, io_close},
-  {__flush, io_flush},
-  {__input, io_input},
-  {__lines, io_lines},
-  {__open, io_open},
-  {__output, io_output},
-  {__popen, io_popen},
-  {__read, io_read},
-//  {__tmpfile, io_tmpfile},
-  {__type, io_type},
-  {__write, io_write},
+static const luaL_Reg iolib[] = {
+  {"close", io_close},
+  {"flush", io_flush},
+  {"input", io_input},
+  {"lines", io_lines},
+  {"open", io_open},
+  {"output", io_output},
+  {"popen", io_popen},
+  {"read", io_read},
+//  {"tmpfile", io_tmpfile},
+  {"type", io_type},
+  {"write", io_write},
   {NULL, NULL}
 };
 
@@ -755,29 +742,17 @@ static const luaL_Reg iolib[] PROGMEM = {
 /*
 ** methods for file handles
 */
-
-static const char __xclose[] PROGMEM = "close";
-static const char __xflush[] PROGMEM = "flush";
-static const char __xlines[] PROGMEM = "lines";
-static const char __xread[] PROGMEM = "read";
-static const char __seek[] PROGMEM = "seek";
-//static const char __setvbuf[] PROGMEM = "setvbuf";
-static const char __xwrite[] PROGMEM = "write";
-static const char ____gc[] PROGMEM = "__gc";
-static const char ____close[] PROGMEM = "__close";
-static const char ____tostring[] PROGMEM = "__tostring";
-
-static const luaL_Reg flib[] PROGMEM = {
-  {__xclose, f_close},
-  {__xflush, f_flush},
-  {__xlines, f_lines},
-  {__xread, f_read},
-  {__seek, f_seek},
-//  {__setvbuf, f_setvbuf},
-  {__xwrite, f_write},
-  {____gc, f_gc},
-  {____close, f_gc},
-  {____tostring, f_tostring},
+static const luaL_Reg flib[] = {
+  {"close", f_close},
+  {"flush", f_flush},
+  {"lines", f_lines},
+  {"read", f_read},
+  {"seek", f_seek},
+//  {"setvbuf", f_setvbuf},
+  {"write", f_write},
+  {"__gc", f_gc},
+  {"__close", f_gc},
+  {"__tostring", f_tostring},
   {NULL, NULL}
 };
 
@@ -785,7 +760,7 @@ static const luaL_Reg flib[] PROGMEM = {
 static void createmeta (lua_State *L) {
   luaL_newmetatable(L, LUA_FILEHANDLE);  /* create metatable for file handles */
   lua_pushvalue(L, -1);  /* push metatable */
-  lua_setfield_P(L, -2, "__index");  /* metatable.__index = metatable */
+  lua_setfield(L, -2, "__index");  /* metatable.__index = metatable */
   luaL_setfuncs(L, flib, 0);  /* add file methods to new metatable */
   lua_pop(L, 1);  /* pop new metatable */
 }

@@ -95,7 +95,7 @@ void luaD_seterrorobj (lua_State *L, int errcode, StkId oldtop) {
       break;
     }
     case LUA_ERRERR: {
-      setsvalue2s(L, oldtop, luaS_newliteral_P(L, "error in error handling"));
+      setsvalue2s(L, oldtop, luaS_newliteral(L, "error in error handling"));
       break;
     }
     case CLOSEPROTECT: {
@@ -356,7 +356,7 @@ void luaD_tryfuncTM (lua_State *L, StkId func) {
   const TValue *tm = luaT_gettmbyobj(L, s2v(func), TM_CALL);
   StkId p;
   if (unlikely(!ttisfunction(tm)))
-    luaG_typeerror_P(L, s2v(func), "call");
+    luaG_typeerror(L, s2v(func), "call");
   for (p = L->top; p > func; p--)
     setobjs2s(L, p, p-1);
   L->top++;  /* assume EXTRA_STACK */
@@ -618,17 +618,13 @@ static int recover (lua_State *L, int status) {
 ** of the coroutine itself. (Such errors should not be handled by any
 ** coroutine error handler and should not kill the coroutine.)
 */
-static int __resume_error (lua_State *L, const char *msg, int narg) {
-  char mmsg[128];
-  mmsg[127] = 0;
-  strncpy_P(mmsg, msg, 127);
+static int resume_error (lua_State *L, const char *msg, int narg) {
   L->top -= narg;  /* remove args from the stack */
-  setsvalue2s(L, L->top, luaS_new(L, mmsg));  /* push error message */
+  setsvalue2s(L, L->top, luaS_new(L, msg));  /* push error message */
   api_incr_top(L);
   lua_unlock(L);
   return LUA_ERRRUN;
 }
-#define resume_error(L, msg, narg) __resume_error(L, PSTR(msg), narg)
 
 
 /*
@@ -780,7 +776,7 @@ struct SParser {  /* data to 'f_parser' */
 
 static void checkmode (lua_State *L, const char *mode, const char *x) {
   if (mode && strchr(mode, x[0]) == NULL) {
-    luaO_pushfstring_P(L,
+    luaO_pushfstring(L,
        "attempt to load a %s chunk (mode is '%s')", x, mode);
     luaD_throw(L, LUA_ERRSYNTAX);
   }
