@@ -897,7 +897,7 @@ uint8_t sdfiles::mkdir(const char *fname) {
   }
   SD_END();
 #else  // USE_UNIFILE
-  rc = !mkdir(fname);
+  rc = !::mkdir(fname, 0755);
 #endif
   return rc;
 }
@@ -937,7 +937,7 @@ uint8_t sdfiles::rmdir(const char *fname) {
   }
   SD_END();
 #else
-  rc = !rmdir(fname);
+  rc = !::rmdir(fname);
 #endif
   return rc;
 }
