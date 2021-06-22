@@ -72,7 +72,7 @@ int e_main(int argc, char **argv)
 #ifndef ENGINEBASIC
 	setlocale(LC_ALL, "") ; /* required for 3,4 byte UTF8 chars */
 #endif
-	if (initscr() == NULL) fatal("%s: Failed to initialize the screen.\n");
+	initscr();
 #ifndef ENGINEBASIC
 	raw();
 	noecho();
