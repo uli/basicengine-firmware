@@ -27,7 +27,9 @@
 #include "ltable.h"
 #include "ltm.h"
 
-
+#ifdef ENGINEBASIC
+#include <eb_sys.h>
+#endif
 
 /*
 ** thread state + extra space
@@ -70,7 +72,7 @@ typedef struct LG {
 
 static unsigned int luai_makeseed (lua_State *L) {
   char buff[3 * sizeof(size_t)];
-  unsigned int h = cast_uint(millis() / 1000); //time(NULL));
+  unsigned int h = cast_uint(eb_tick() / 1000); //time(NULL));
   int p = 0;
   addbuff(buff, p, L);  /* heap variable */
   addbuff(buff, p, &h);  /* local variable */

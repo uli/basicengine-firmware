@@ -12,6 +12,9 @@
 #ifdef __DJGPP__
 #include <time.h>
 #endif
+#ifdef ENGINEBASIC
+#include <eb_sys.h>
+#endif
 
 #include <limits.h>
 #include <stddef.h>
@@ -241,8 +244,8 @@ typedef unsigned int IdxT;
 ** is to copy them to an array of a known type and use the array values.
 */
 static unsigned int l_randomizePivot (void) {
-  clock_t c = micros(); //clock();
-  time_t t = millis() / 1000; //time(NULL);
+  clock_t c = eb_utick(); //clock();
+  time_t t = eb_tick() / 1000; //time(NULL);
   unsigned int buff[sof(c) + sof(t)];
   unsigned int i, rnd = 0;
   memcpy(buff, &c, sof(c) * sizeof(unsigned int));
