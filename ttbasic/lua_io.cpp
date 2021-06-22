@@ -114,19 +114,19 @@ static int l_spi_transfer(lua_State *l) {
 
 int luaopen_hwio(lua_State *l) {
   lua_pushcfunction(l, l_gpio_set_pin);
-  lua_setglobal_P(l, "gpio_set_pin");
+  lua_setglobal(l, "gpio_set_pin");
   lua_pushcfunction(l, l_gpio_get_pin);
-  lua_setglobal_P(l, "gpio_get_pin");
+  lua_setglobal(l, "gpio_get_pin");
   lua_pushcfunction(l, l_gpio_set_pin_mode);
-  lua_setglobal_P(l, "gpio_get_pin_mode");
+  lua_setglobal(l, "gpio_get_pin_mode");
   lua_pushcfunction(l, l_i2c_write);
-  lua_setglobal_P(l, "i2c_write");
+  lua_setglobal(l, "i2c_write");
   lua_pushcfunction(l, l_i2c_read);
-  lua_setglobal_P(l, "i2c_read");
+  lua_setglobal(l, "i2c_read");
   lua_pushcfunction(l, l_spi_write);
-  lua_setglobal_P(l, "spi_write");
+  lua_setglobal(l, "spi_write");
   lua_pushcfunction(l, l_spi_transfer);
-  lua_setglobal_P(l, "spi_transfer");
+  lua_setglobal(l, "spi_transfer");
 
   return 0;
 }

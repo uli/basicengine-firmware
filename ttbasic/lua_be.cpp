@@ -17,9 +17,9 @@ static int l_basic(lua_State *l) {
 
 int luaopen_be(lua_State *l) {
   lua_pushcfunction(l, l_cls);
-  lua_setglobal_P(l, "cls");
+  lua_setglobal(l, "cls");
   lua_pushcfunction(l, l_basic);
-  lua_setglobal_P(l, "basic");
+  lua_setglobal(l, "basic");
   return 0;
 }
 
@@ -30,7 +30,7 @@ void do_lua_line(const char *lbuf) {
   if ((luaL_loadstring(lua, retline.c_str()) != LUA_OK &&luaL_loadstring(lua, lbuf) != LUA_OK) ||
       lua_pcall(lua, 0, LUA_MULTRET, 0) != LUA_OK) {
     const char *err_str = lua_tostring(lua, -1);
-    if (strstr_P(err_str, PSTR("return to basic"))) {
+    if (strstr(err_str, PSTR("return to basic"))) {
       lua_close(lua);
       lua = NULL;
     } else {
