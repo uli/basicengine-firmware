@@ -21,6 +21,10 @@ unsigned int eb_tick(void) {
   return millis();
 }
 
+unsigned int eb_utick(void) {
+  return micros();
+}
+
 void eb_udelay(unsigned int us) {
   return delayMicroseconds(us);
 }
