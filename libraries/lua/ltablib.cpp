@@ -13,6 +13,7 @@
 #include <time.h>
 #endif
 #ifdef ENGINEBASIC
+#include <time.h>
 #include <eb_sys.h>
 #endif
 
