@@ -10,6 +10,7 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #define LUA_USE_LONGJMP
 
