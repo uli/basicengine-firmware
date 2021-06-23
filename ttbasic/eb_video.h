@@ -23,7 +23,6 @@ int eb_psize_lastline(void);
 int eb_gscroll(int x1, int y1, int x2, int y2, int d);
 pixel_t eb_point(int x, int y);
 void eb_pset(int x, int y, pixel_t c);
-void eb_set_alpha(int x, int y, unsigned char alpha);
 void eb_line(int x1, int y1, int x2, int y2, pixel_t c);
 void eb_circle(int x, int y, int r, pixel_t c, pixel_t f);
 void eb_rect(int x1, int y1, int x2, int y2, pixel_t c, pixel_t f);
