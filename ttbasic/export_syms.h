@@ -228,23 +228,26 @@ S(__errno)
 //S(realpath)	not in newlib
 
 // stdio stream interface
-S(fopen)
-S(fclose)
-S(fputc)
-S(ferror)
-S(fgets)
-S(fgetc)
 R(getc, fgetc)
-S(fputs)
+S(clearerr)
+S(fclose)
+S(fdopen)
+S(feof)
+S(ferror)
+S(fflush)
+S(fgetc)
+S(fgets)
+S(fileno)
+S(fopen)
 S(fprintf)
+S(fputc)
+S(fputs)
 S(fread)
+S(freopen)
 S(fseek)
+//S(fstat)	struct stat differs between platforms
 S(ftell)
 S(fwrite)
-S(fdopen)
-//S(fstat)	struct stat differs between platforms
-S(fileno)
-S(fflush)
 S(ungetc)
 
 #ifndef ALLWINNER_BARE_METAL	// XXX: should probably be "if not newlib"
