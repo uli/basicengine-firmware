@@ -332,7 +332,6 @@ R(fstat, _native_fstat)
 #endif
 
 // stdlib environment
-// XXX: do these actually work in a useful manner?
 S(putenv)
 S(getenv)
 
@@ -345,6 +344,7 @@ R(abs, __builtin_abs)
 #endif
 S(random)
 S(labs)
+S(abort)  // XXX: does this do anything useful?
 
 // unistd getopt
 S(getopt)
