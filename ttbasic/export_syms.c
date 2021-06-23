@@ -124,6 +124,7 @@ extern int c_printf(const char *f, ...);
 #include <fnmatch.h>
 #include <libgen.h>
 #include <math.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>

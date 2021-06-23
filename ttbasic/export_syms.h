@@ -319,6 +319,10 @@ R(optind, &optind)
 // unistd misc
 R(environ, &environ)
 
+// setjmp
+S(setjmp)
+S(longjmp)
+
 // ctype
 S(isdigit)
 S(isalnum)
