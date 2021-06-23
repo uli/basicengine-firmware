@@ -111,6 +111,11 @@ S(eb_term_putch)
 S(eb_window)
 S(eb_window_off)
 
+// eb_input
+S(eb_inkey)
+S(eb_key_state)
+S(eb_pad_state)
+
 // eb_io
 S(eb_gpio_get_pin)
 S(eb_gpio_set_pin)
