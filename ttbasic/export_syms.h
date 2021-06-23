@@ -220,30 +220,40 @@ S(atoi)
 S(atol)
 
 // string functions
-S(strcpy)
-S(strlen)
+S(bcopy)
+S(bzero)
+S(memchr)
+S(memcmp)
+S(memcpy)
+S(memmove)
+S(memrchr)
+S(memset)
+S(strcasecmp)
 S(strcat)
 S(strcmp)
-S(strncmp)
-S(strtol)
-S(strtoll)
-S(strtod)
-#ifdef __clang__
-S(strchr)
-S(strstr)
-S(strrchr)
-#else
-R(strchr, __builtin_strchr)
-R(strstr, __builtin_strstr)
-R(strrchr, __builtin_strrchr)
-#endif
+S(strcoll)
+S(strcpy)
+S(strcspn)
 S(strdup)
 S(strerror)
-S(strspn)
-S(strcspn)
+S(strlen)
+S(strncmp)
 S(strncpy)
 S(strndup)
-S(strcasecmp)
+S(strpbrk)
+S(strspn)
+S(strtod)
+S(strtol)
+S(strtoll)
+#ifdef __clang__
+S(strchr)
+S(strrchr)
+S(strstr)
+#else
+R(strchr, __builtin_strchr)
+R(strrchr, __builtin_strrchr)
+R(strstr, __builtin_strstr)
+#endif
 
 // unistd file ops
 S(unlink)
@@ -319,15 +329,6 @@ R(stat, _native_stat)
 R(fstat, _native_fstat)
 //R(lstat, _native_lstat)
 #endif
-
-// memory
-S(memcmp)
-S(memcpy)
-S(memset)
-S(memmove)
-S(bcopy)
-S(bzero)
-S(memrchr)
 
 // stdlib environment
 // XXX: do these actually work in a useful manner?
