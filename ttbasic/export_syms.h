@@ -117,6 +117,8 @@ S(eb_frame)
 S(eb_wait)
 S(eb_tick)
 S(eb_process_events)
+S(eb_process_events_check)
+S(eb_process_events_wait)
 S(eb_set_cpu_speed)
 
 // eb_basic

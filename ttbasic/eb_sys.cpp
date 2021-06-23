@@ -36,6 +36,21 @@ void eb_process_events(void) {
   process_events();
 }
 
+int eb_process_events_check(void) {
+  process_events();
+  return process_hotkeys(sc0.peekKey());
+}
+
+int eb_process_events_wait(void) {
+  process_events();
+
+  if (process_hotkeys(sc0.peekKey()))
+    return 1;
+
+  yield();
+  return 0;
+}
+
 void eb_set_cpu_speed(int percent) {
 #ifdef H3
   int factor;
