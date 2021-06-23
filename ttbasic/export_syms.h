@@ -82,9 +82,11 @@ S(eb_add_bg_layer)
 S(eb_remove_bg_layer)
 
 // eb conio
+S(eb_char_get)
 S(eb_char_set)
 S(eb_clrtoeol)
 S(eb_cls)
+S(eb_cscroll)
 S(eb_csize_height)
 S(eb_csize_width)
 S(eb_enable_escape_codes)
@@ -106,6 +108,8 @@ S(eb_show_cursor)
 S(eb_show_cursor)
 S(eb_term_getch)
 S(eb_term_putch)
+S(eb_window)
+S(eb_window_off)
 
 // eb_io
 S(eb_gpio_get_pin)
