@@ -111,6 +111,10 @@ S(eb_term_putch)
 S(eb_window)
 S(eb_window_off)
 
+// eb_img
+S(eb_load_image)
+S(eb_load_image_to)
+
 // eb_input
 S(eb_inkey)
 S(eb_key_state)
