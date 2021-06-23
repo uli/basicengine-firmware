@@ -4,6 +4,7 @@
 #include "basic.h"
 #include "graphics.h"
 
+#include "eb_sys.h"
 #include "eb_video.h"
 #include "eb_api.h"
 
@@ -88,12 +89,8 @@ void eb_vsync(unsigned int tm) {
     tm = vs23.frame() + 1;
 
   while (vs23.frame() < tm) {
-    process_events();
-    uint16_t c = sc0.peekKey();
-    if (process_hotkeys(c)) {
+    if (eb_process_events_wait())
       break;
-    }
-    yield();
   }
 }
 

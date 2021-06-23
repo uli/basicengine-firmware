@@ -8,12 +8,8 @@
 void eb_wait(unsigned int ms) {
   unsigned end = ms + millis();
   while (millis() < end) {
-    process_events();
-    uint16_t c = sc0.peekKey();
-    if (process_hotkeys(c)) {
+    if (eb_process_events_wait())
       break;
-    }
-    yield();
   }
 }
 
