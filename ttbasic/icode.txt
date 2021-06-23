@@ -152,7 +152,7 @@ LOC	I_LOC		nloc
 LOF	I_LOF		nlof
 LOG	I_LOG		nlog
 LOOP	I_LOOP		iloop
-LUA	I_LUA		ilua
+_none	I_DUMMY0	esyntax
 MAP	I_MAP		nmap
 MERGE	I_MERGE		imerge
 MID$	I_MIDSTR	smid

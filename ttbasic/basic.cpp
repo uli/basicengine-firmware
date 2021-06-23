@@ -5792,8 +5792,6 @@ void Basic::autoexec() {
   }
 }
 
-#include "lua_defs.h"
-
 #ifdef __DJGPP__
 extern "C" {
 #include <dpmi.h>
@@ -5924,8 +5922,6 @@ void SMALL Basic::basic() {
     redirect_input_file = -1;
     redirect_output_file = -1;
 
-    if (lua)
-      PRINT_P(_("ok\n"));
     rc = sc0.edit();
 
     if (rc) {
@@ -5953,13 +5949,6 @@ void SMALL Basic::basic() {
       continue;
     }
 
-    if (lua) {
-      sc0.show_curs(0);
-      do_lua_line(lbuf);
-      sc0.show_curs(1);
-      continue;
-    }
-
     // Convert one line of text to a sequence of intermediate code
     len = toktoi();
     if (err) {
@@ -5978,7 +5967,7 @@ void SMALL Basic::basic() {
     }
 
     // If the intermediate code is a direct mode command
-    if (icom() && !lua)      // execute
+    if (icom())      // execute
       error(false);  // display direct mode error message
   }
 }

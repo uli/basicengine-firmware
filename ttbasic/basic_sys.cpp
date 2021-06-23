@@ -787,40 +787,6 @@ void Basic::isystem() {
 #endif
 }
 
-#include "lua_defs.h"
-
-lua_State *lua = NULL;
-
-static void lhook(lua_State *L, lua_Debug *ar) {
-  int c;
-  (void)ar;
-  if ((c = sc0.peekKey())) {
-    if (process_hotkeys(c)) {
-      luaL_error(L, "interrupted!");
-    }
-  }
-  process_events();
-}
-
-void Basic::ilua() {
-  lua = luaL_newstate();
-  if (!lua) {
-    err = ERR_SYS;
-    return;
-  }
-  luaL_openlibs(lua);
-  luaopen_be(lua);
-  luaopen_bg(lua);
-  luaopen_img(lua);
-  luaopen_input(lua);
-  luaopen_video(lua);
-  luaopen_hwio(lua);
-  lua_sethook(lua, lhook, LUA_MASKCOUNT, 1000);
-
-  // make sure there are no BASIC event handlers registered
-  clear_execution_state(false);
-}
-
 /***bc sys INSTALL
 Installs a packaged module to the system module directory.
 \usage INSTALL filename$
