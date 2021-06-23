@@ -158,12 +158,13 @@ S(eb_screen)
 S(eb_vsync)
 
 // eb_sys
-S(eb_wait)
-S(eb_tick)
 S(eb_process_events)
 S(eb_process_events_check)
 S(eb_process_events_wait)
 S(eb_set_cpu_speed)
+S(eb_tick)
+S(eb_utick)
+S(eb_wait)
 
 // eb_basic
 S(eb_add_command)
