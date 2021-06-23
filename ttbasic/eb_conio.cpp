@@ -228,10 +228,11 @@ char *eb_screened_get_line(void) {
     return NULL;
 
   char *textline = (char *)sc0.getText();
-  tlimR(textline);
-
-  if (strlen(textline) == 0)
+  if (strlen(textline) == 0) {
+    free(textline);
     return NULL;
-  else
+  } else {
+    tlimR(textline);
     return textline;
+  }
 }
