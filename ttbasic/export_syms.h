@@ -255,13 +255,14 @@ R(strrchr, __builtin_strrchr)
 R(strstr, __builtin_strstr)
 #endif
 
-// unistd file ops
-S(unlink)
-S(mkstemp)
-S(rename)
-S(mkdir)
-S(rmdir)
+// unistd/stdio file ops
 S(chdir)
+S(mkdir)
+S(mkstemp)
+S(remove)
+S(rename)
+S(rmdir)
+S(unlink)
 
 // dirent directory functions
 #ifdef ALLWINNER_BARE_METAL
