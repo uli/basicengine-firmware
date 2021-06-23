@@ -107,6 +107,18 @@ S(eb_show_cursor)
 S(eb_term_getch)
 S(eb_term_putch)
 
+// eb_io
+S(eb_gpio_get_pin)
+S(eb_gpio_set_pin)
+S(eb_gpio_set_pin_mode)
+S(eb_i2c_read)
+S(eb_i2c_write)
+S(eb_spi_set_bit_order)
+S(eb_spi_set_freq)
+S(eb_spi_set_mode)
+S(eb_spi_transfer)
+S(eb_spi_write)
+
 // eb_video
 S(eb_rgb)
 S(eb_rgb_from_indexed)
