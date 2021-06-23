@@ -221,3 +221,17 @@ int eb_term_getch(void) {
 void eb_term_putch(char c) {
   sc0.term_putch(c);
 }
+
+char *eb_screened_get_line(void) {
+  uint8_t rc = sc0.edit();
+  if (!rc)
+    return NULL;
+
+  char *textline = (char *)sc0.getText();
+  tlimR(textline);
+
+  if (strlen(textline) == 0)
+    return NULL;
+  else
+    return textline;
+}

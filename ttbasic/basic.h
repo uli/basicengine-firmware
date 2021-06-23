@@ -45,6 +45,8 @@ static inline void cleartbuf() {
   memset(tbuf, 0, SIZE_LINE);
 }
 
+char *tlimR(char *str);
+
 void c_putch(utf8_int32_t c, uint8_t devno = 0);
 void c_puts(const char *s, uint8_t devno = 0);
 void c_puts_P(const char *s, uint8_t devno = 0);
