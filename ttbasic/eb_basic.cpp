@@ -88,7 +88,7 @@ const token_t *eb_strfun_syntax(token_t token) {
     return NULL;
 }
 
-void eb_handle_command(enum token_t token, const eb_param_t *params) {
+void Basic::handle_command(enum token_t token, const eb_param_t *params) {
     for (auto cmd : custom_commands) {
         if (cmd.token == token) {
             cmd.handler(params);
@@ -98,7 +98,7 @@ void eb_handle_command(enum token_t token, const eb_param_t *params) {
     err = ERR_SYS;
 }
 
-num_t eb_handle_numfun(enum token_t token, const eb_param_t *params) {
+num_t Basic::handle_numfun(enum token_t token, const eb_param_t *params) {
     for (auto nf : custom_numfuns) {
         if (nf.token == token) {
             return nf.handler(params);
@@ -108,7 +108,7 @@ num_t eb_handle_numfun(enum token_t token, const eb_param_t *params) {
     return 0;
 }
 
-BString eb_handle_strfun(enum token_t token, const eb_param_t *params) {
+BString Basic::handle_strfun(enum token_t token, const eb_param_t *params) {
     for (auto sf : custom_strfuns) {
         if (sf.token == token) {
             return sf.handler(params);

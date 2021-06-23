@@ -431,6 +431,10 @@ private:
 
   void parse_params(token_t token, const token_t *syntax, std::vector<eb_param_t> &params);
   void delete_params(std::vector<eb_param_t> &params);
+
+  void handle_command(enum token_t token, const eb_param_t *params);
+  num_t handle_numfun(enum token_t token, const eb_param_t *params);
+  BString handle_strfun(enum token_t token, const eb_param_t *params);
 };
 
 extern Basic *bc;

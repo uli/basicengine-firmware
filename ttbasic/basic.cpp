@@ -3804,7 +3804,7 @@ BString Basic::iextstrvalue() {
   parse_params(sf, eb_strfun_syntax(sf), params);
 
   if (!err)
-    value = eb_handle_strfun(sf, &params[0]);
+    value = handle_strfun(sf, &params[0]);
 
   delete_params(params);
 
@@ -4015,7 +4015,7 @@ num_t Basic::iextvalue() {
   parse_params(nf, eb_numfun_syntax(nf), params);
 
   if (!err)
-    value = eb_handle_numfun(nf, &params[0]);
+    value = handle_numfun(nf, &params[0]);
 
   delete_params(params);
 
@@ -5565,7 +5565,7 @@ void Basic::iextcmd(void) {
   parse_params(cmd, eb_command_syntax(cmd), params);
 
   if (!err)
-    eb_handle_command(cmd, &params[0]);
+    handle_command(cmd, &params[0]);
 
   delete_params(params);
 }
