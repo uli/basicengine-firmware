@@ -2935,7 +2935,7 @@ void BASIC_FP process_events(void) {
 #ifdef HAVE_MML
   if (event_play_enabled) {
     for (int i = 0; i < MML_CHANNELS; ++i) {
-      if (bc && sound.isFinished(i))
+      if (bc && !bc->basic_events_disabled && sound.isFinished(i))
         bc->event_handle_play(i);
     }
   }
@@ -2944,11 +2944,11 @@ void BASIC_FP process_events(void) {
   event_profile[4] = micros();
 
 #ifdef USE_BG_ENGINE
-  if (bc && event_sprite_proc_idx != NO_PROC)
+  if (bc && !bc->basic_events_disabled && event_sprite_proc_idx != NO_PROC)
     bc->event_handle_sprite();
 #endif
   event_profile[5] = micros();
-  if (bc && event_pad_enabled)
+  if (bc && !bc->basic_events_disabled && event_pad_enabled)
     bc->event_handle_pad();
   event_profile[6] = micros();
 
@@ -3803,8 +3803,11 @@ BString Basic::iextstrvalue() {
 
   parse_params(sf, eb_strfun_syntax(sf), params);
 
-  if (!err)
+  if (!err) {
+    basic_events_disabled = true;
     value = handle_strfun(sf, &params[0]);
+    basic_events_disabled = false;
+  }
 
   delete_params(params);
 
@@ -4014,8 +4017,11 @@ num_t Basic::iextvalue() {
 
   parse_params(nf, eb_numfun_syntax(nf), params);
 
-  if (!err)
+  if (!err) {
+    basic_events_disabled = true;
     value = handle_numfun(nf, &params[0]);
+    basic_events_disabled = false;
+  }
 
   delete_params(params);
 
@@ -5564,8 +5570,11 @@ void Basic::iextcmd(void) {
 
   parse_params(cmd, eb_command_syntax(cmd), params);
 
-  if (!err)
+  if (!err) {
+    basic_events_disabled = true;
     handle_command(cmd, &params[0]);
+    basic_events_disabled = false;
+  }
 
   delete_params(params);
 }
@@ -5978,6 +5987,7 @@ Basic::Basic() {
   init_tcc();
   listbuf = NULL;
   event_error_enabled = false;
+  basic_events_disabled = false;
 }
 
 Basic::~Basic() {

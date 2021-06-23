@@ -116,6 +116,8 @@ extern void E_VALUE(int32_t from, int32_t to);
     err_expected = exp;  \
   } while (0)
 
+extern "C" void BASIC_FP process_events(void);
+
 class Basic {
 public:
   Basic();
@@ -398,6 +400,9 @@ private:
   icode_t *event_error_resume_lp;
   icode_t *event_error_resume_ip;
 
+  bool basic_events_disabled;
+  friend void ::process_events(void);
+
   bool math_exceptions_disabled;
 
   icode_t *data_lp;
@@ -530,8 +535,6 @@ void SMALL restore_windows();
 
 void BASIC_FP init_stack_frame();
 void BASIC_FP push_num_arg(num_t n);
-
-extern "C" void BASIC_FP process_events(void);
 
 void basic_init_io();
 void basic_init_input();
