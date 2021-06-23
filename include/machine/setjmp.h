@@ -101,7 +101,11 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __x86_64__
-# ifdef __CYGWIN__
+/*
+ * We want our jmp_buf to be as large as the largest host jmp_buf to make
+ * sure EB modules run on all hosts.
+ */
+# if 1 //def __CYGWIN__
 #  define _JBTYPE long
 #  define _JBLEN  32
 # else
