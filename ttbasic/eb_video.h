@@ -14,6 +14,7 @@ void eb_vsync(unsigned int tm);
 unsigned int eb_frame(void);
 pixel_t eb_rgb(int r, int g, int b);
 ipixel_t eb_rgb_indexed(int r, int g, int b);
+pixel_t eb_rgb_from_indexed(ipixel_t c);
 void eb_color(pixel_t fc, pixel_t bgc);
 void eb_cursor_color(pixel_t cc);
 int eb_psize_height(void);

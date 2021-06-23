@@ -117,6 +117,10 @@ pixel_t eb_rgb(int r, int g, int b) {
   return csp.colorFromRgb(r, g, b);
 }
 
+pixel_t eb_rgb_from_indexed(ipixel_t c) {
+  return csp.fromIndexed(c);
+}
+
 void eb_color(pixel_t fc, pixel_t bgc) {
   sc0.setColor(fc, bgc);
 }

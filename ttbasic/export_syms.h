@@ -109,6 +109,7 @@ S(eb_term_putch)
 
 // eb_video
 S(eb_rgb)
+S(eb_rgb_from_indexed)
 S(eb_color)
 S(eb_frame)
 
