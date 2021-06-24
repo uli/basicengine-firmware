@@ -216,6 +216,7 @@ S(tcc_have_symbol)
 S(tcc_get_name)
 
 // stdlib type conversion
+S(atof)
 S(atoi)
 S(atol)
 
@@ -229,6 +230,7 @@ S(memmove)
 S(memrchr)
 S(memset)
 S(strcasecmp)
+S(strcasestr)
 S(strcat)
 S(strcmp)
 S(strcoll)
@@ -305,6 +307,7 @@ S(fseek)
 S(ftell)
 S(fwrite)
 S(ungetc)
+S(vfprintf)
 
 #ifndef ALLWINNER_BARE_METAL	// XXX: should probably be "if not newlib"
 S(putchar)
@@ -342,6 +345,7 @@ S(abs)
 #else
 R(abs, __builtin_abs)
 #endif
+S(rand)
 S(random)
 S(labs)
 S(abort)  // XXX: does this do anything useful?
