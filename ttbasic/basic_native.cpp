@@ -33,8 +33,10 @@ void Basic::init_tcc() {
   dcMode(callvm, DC_CALL_C_DEFAULT);
 
   // add empty module to make default symbols visible to BASIC
-  struct module system = { new_tcc(), "system", NULL, 0 };
-  modules.push_back(system);
+  if (modules.size() == 0) {
+    struct module system = { new_tcc(), "system", NULL, 0 };
+    modules.push_back(system);
+  }
 }
 
 static TCCState *current_tcc;
