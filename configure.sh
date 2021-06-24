@@ -137,7 +137,8 @@ rule initdir
             cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf \$out/sys/fonts/ && \$
             rsync -av tests/ \$out/tests/
 
-build $INITFS_DIR: initdir | ttbasic/helptext_en.json $HELPTEXT_IMPLICIT_OUT ttbasic/kwenum.h
+initfs_dir = $INITFS_DIR
+build \$initfs_dir: initdir | ttbasic/helptext_en.json $HELPTEXT_IMPLICIT_OUT ttbasic/kwenum.h
 EOT
 
 # ninja file for H3 platform
@@ -160,6 +161,7 @@ libs = \$common_libs
 
 build basic.bin: bin basic.elf
 build basic.uimg: uimg basic.bin
+build basic_sd.img: sdimg basic.uimg | \$initfs_dir
 
 default basic.uimg
 
