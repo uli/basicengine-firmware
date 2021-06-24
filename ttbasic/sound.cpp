@@ -475,13 +475,11 @@ void refill_stream_beep(sts_mixer_sample_t *samples, void *userdata) {
   int to_fill = samples->length / 2;
   int period = bs->m_beep_period * AUDIO_SAMPLE_RATE / 16000;
 
-  uint8_t vol;
+  int32_t sample;
   if (bs->m_beep_env)
-    vol = max(0, min(15, bs->m_beep_env[bs->m_beep_pos]));
+    sample = max(0, min(32767, bs->m_beep_env[bs->m_beep_pos] * bs->m_beep_vol * 145));
   else
-    vol = bs->m_beep_vol;
-
-  int32_t sample = vol * 2184;
+    sample = bs->m_beep_vol * 2184;
 
   for (int o = 0; o < to_fill; ++o) {
     sample_t sn = offset < period / 2 ? -sample : sample;
