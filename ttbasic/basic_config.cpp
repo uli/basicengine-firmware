@@ -306,7 +306,7 @@ void loadConfig() {
   else
     CONFIG.cursor_color = (pixel_t)0xff009500UL;
 
-  CONFIG.beep_volume = 15;
+  CONFIG.beep_volume = 3;
 
   FILE *f = fopen(CONFIG_FILE.c_str(), "r");
   if (!f)
