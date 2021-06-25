@@ -95,6 +95,9 @@ LIBTCCAPI void *tcc_get_symbol(TCCState *s, const char *name);
 LIBTCCAPI int tcc_have_symbol(TCCState *s, const char *name);
 LIBTCCAPI const char *tcc_get_name(TCCState *s, void *addr);
 
+typedef void (*tcc_enum_func)(const char *name, void *addr, void *userdata);
+LIBTCCAPI void tcc_enumerate_symbols(TCCState *s, tcc_enum_func callback, void *userdata);
+
 #ifdef __cplusplus
 }
 #endif
