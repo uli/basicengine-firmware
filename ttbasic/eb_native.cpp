@@ -40,6 +40,22 @@ void eb_tcc_initialize_symbols(TCCState *tcc) {
   }
 }
 
+struct add_exports_cb_context {
+  TCCState *_new;
+  TCCState *module;
+};
+
+// Adds exports from other modules to the current context.
+void add_exports_cb(const char *name, void *addr, void *userdata) {
+  auto tcc = (struct add_exports_cb_context *)userdata;
+
+  if (!strncmp(name, "__export_", 9) && !tcc_have_symbol(tcc->_new, name + 9)) {
+    name += 9;
+    void *module_addr = tcc_get_symbol(tcc->module, name);
+    tcc_add_symbol(tcc->_new, name, module_addr);
+  }
+};
+
 int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
   if (tcc_have_symbol(tcc, "main") && !tcc_have_symbol(tcc, name)) {
     // Add a wrapper function with the name of the module that takes a
@@ -88,6 +104,12 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
   }
 
   if (output_type == TCC_OUTPUT_MEMORY) {
+    // Add symbols exported from other modules before linking.
+    for(int i = modules.size(); i-- > 1; ) {
+      struct add_exports_cb_context ctx = { tcc, modules[i].tcc };
+      tcc_enumerate_symbols(modules[i].tcc, add_exports_cb, &ctx);
+    }
+
     if (tcc_relocate(tcc, TCC_RELOCATE_AUTO) < 0) {
       err = ERR_COMPILE;
       err_expected = "relocation failed";
