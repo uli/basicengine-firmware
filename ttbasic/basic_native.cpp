@@ -98,7 +98,7 @@ void Basic::itccmode() {
 }
 
 void *Basic::get_symbol(const char *sym_name) {
-  for(int i = modules.size(); i-- > 0; --i) {
+  for(int i = modules.size(); i-- > 0; ) {
     void *sym = tcc_get_symbol(modules[i].tcc, sym_name);
     if (sym)
       return sym;
