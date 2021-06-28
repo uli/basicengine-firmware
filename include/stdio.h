@@ -802,6 +802,8 @@ _END_STD_C
 #include <ssp/stdio.h>
 #endif
 
+#else
+_END_STD_C
 #endif
 
 #endif /* _STDIO_H_ */
