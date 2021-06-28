@@ -186,6 +186,20 @@ extern void __aeabi_ul2f(void);
 extern void __aeabi_uldivmod(void);
 #endif
 
+// === C++ helpers
+
+extern void _ZdlPv(void);
+#ifdef __arm__
+extern void _ZdlPvj(void);
+extern void _Znaj(void);
+extern void _Znwj(void);
+#endif
+#ifdef __x86_64__
+extern void _ZdlPvm(void);
+extern void _Znam(void);
+extern void _Znwm(void);
+#endif
+
 #ifdef SDL
 
 // We are running on a random C library, but our native code uses newlib

@@ -589,3 +589,16 @@ S(utf8uprcodepoint)
 S(utf8rcodepoint)
 S(utf8dup_ex)
 S(utf8ndup_ex)
+
+// C++ new/delete
+S(_ZdlPv)
+#ifdef __arm__
+S(_ZdlPvj)
+S(_Znaj)
+S(_Znwj)
+#endif
+#ifdef __x86_64__
+S(_ZdlPvm)
+S(_Znam)
+S(_Znwm)
+#endif
