@@ -8,6 +8,15 @@
 #include <sys/features.h>
 
 /*
+ * Override defaults in newlib toolchain with something more compatible with
+ * sanity.
+ */
+#undef __UINT32_TYPE__
+#undef __INT32_TYPE__
+#define __UINT32_TYPE__ unsigned int
+#define __INT32_TYPE__ int
+
+/*
  * Guess on types by examining *_MIN / *_MAX defines.
  */
 #if __GNUC_PREREQ (3, 3)
