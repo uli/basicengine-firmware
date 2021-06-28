@@ -75,8 +75,6 @@ static inline void *dbg_malloc(size_t s, int line) {
 
 #endif  // HAVE_TSF
 
-#include "ESP8266SAM.h"
-
 #define MML_CHANNELS 3
 
 #include "basic.h"
@@ -86,7 +84,6 @@ extern "C" {
 }
 
 void refill_stream_beep(sts_mixer_sample_t *sample, void *userdata);
-void refill_stream_sam(sts_mixer_sample_t *sample, void *userdata);
 void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata);
 
 class BasicSound {
@@ -135,8 +132,6 @@ public:
 
     static void beep(int period, int vol = 15, const uint8_t *env = NULL);
     static void noBeep();
-
-    static ESP8266SAM *sam();
 
     static sts_mixer_t *getMixer() {
       return &m_mixer;
@@ -188,14 +183,8 @@ private:
     static BString m_font_name;
 #endif
 
-    static uint32_t m_sam_done_time;
-    static ESP8266SAM *m_sam;
-    static sample_t m_sam_buf[SOUND_BUFLEN * 2];
-    static sts_mixer_stream_t m_sam_stream;
-
     static sts_mixer_t m_mixer;
     friend void ::refill_stream_beep(sts_mixer_sample_t *sample, void *userdata);
-    friend void ::refill_stream_sam(sts_mixer_sample_t *sample, void *userdata);
     friend void ::refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata);
 };
 

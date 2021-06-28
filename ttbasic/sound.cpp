@@ -51,13 +51,10 @@ bool BasicSound::m_finished[MML_CHANNELS];
 #ifdef HAVE_TSF
 uint32_t BasicSound::m_all_done_time;
 #endif
-uint32_t BasicSound::m_sam_done_time;
 
 sample_t BasicSound::m_beep_buf[SOUND_BUFLEN * 2];
-sample_t BasicSound::m_sam_buf[SOUND_BUFLEN * 2];
 sample_t BasicSound::m_tsf_buf[SOUND_BUFLEN * 2];
 sts_mixer_stream_t BasicSound::m_beep_stream;
-sts_mixer_stream_t BasicSound::m_sam_stream;
 sts_mixer_stream_t BasicSound::m_tsf_stream;
 sts_mixer_t BasicSound::m_mixer;
 
@@ -292,7 +289,6 @@ void BasicSound::begin(void) {
 #endif
   m_beep_env = NULL;
   m_beep_period = 0;
-  m_sam = NULL;
 
   m_tsf_stream.userdata = &sound;
   m_tsf_stream.callback = refill_stream_tsf;
@@ -300,13 +296,6 @@ void BasicSound::begin(void) {
   m_tsf_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
   m_tsf_stream.sample.length = SOUND_BUFLEN * 2;
   m_tsf_stream.sample.data = m_tsf_buf;
-
-  m_sam_stream.userdata = &sound;
-  m_sam_stream.callback = refill_stream_sam;
-  m_sam_stream.sample.frequency = AUDIO_SAMPLE_RATE;
-  m_sam_stream.sample.audio_format = STS_MIXER_SAMPLE_FORMAT_16;
-  m_sam_stream.sample.length = SOUND_BUFLEN * 2;
-  m_sam_stream.sample.data = m_sam_buf;
 
   m_beep_stream.userdata = &sound;
   m_beep_stream.callback = refill_stream_beep;
@@ -391,45 +380,6 @@ void GROUP(basic_sound) BasicSound::render() {
   audio.setBufFull();
 }
 
-ESP8266SAM *BasicSound::sam() {
-  if (!m_sam) {
-    m_sam = new ESP8266SAM;
-    memset(m_sam_buf, 0, sizeof(m_sam_buf));
-    sts_mixer_play_stream(&m_mixer, &m_sam_stream, 0.7f);
-  }
-  m_sam_done_time = 0;
-  return m_sam;
-}
-
-void refill_stream_sam(sts_mixer_sample_t *sample, void *userdata) {
-  BasicSound *bs = (BasicSound *)userdata;
-  sample_t *data = bs->m_sam_buf;
-
-  if (bs->m_sam) {
-    if (bs->m_sam->finished()) {
-      if (!bs->m_sam_done_time) {
-        bs->m_sam_done_time = millis();
-      } else if (millis() > bs->m_sam_done_time + 3000) {
-        // XXX: sts_mixer doesn't like us doing that in the refill callback
-        //sts_mixer_stop_stream(&bs->m_mixer, &bs->m_sam_stream);
-      }
-    }
-    if (bs->m_sam) {
-      for (unsigned int i = 0; i < sample->length / 2 / (AUDIO_SAMPLE_RATE > 32000 ? 2 : 1); ++i) {
-        int s = bs->m_sam->getSample() * 257 - 32768;
-#if AUDIO_SAMPLE_RATE > 32000
-        *data++ = s;
-        *data++ = s;
-#endif
-        *data++ = s;
-        *data++ = s;
-      }
-    }
-  } else {
-    memset(data, 0, sample->length * sizeof(sample_t));
-  }
-}
-
 void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata) {
   BasicSound *bs = (BasicSound *)userdata;
   sample_t *data = bs->m_tsf_buf;
@@ -512,7 +462,5 @@ void BasicSound::noBeep() {
   m_beep_env = NULL;
   m_beep_period = 0;
 }
-
-ESP8266SAM *BasicSound::m_sam;
 
 BasicSound sound;

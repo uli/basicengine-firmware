@@ -40,7 +40,7 @@ LANGS="de fr es ja"
 
 # source files common to all builds
 COMMON_SOURCES="`echo ttbasic/*.cpp libraries/TTBAS_LIB/*.cpp \
-	libraries/ESP8266SAM/src/*.cpp libraries/TTVoutfonts/*.cpp libraries/azip/*.cpp \
+	libraries/TTVoutfonts/*.cpp libraries/azip/*.cpp \
 	libraries/alpha-lib/src/*.cpp arduino_compat/*.cpp`"
 
 COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c libraries/TTBAS_LIB/*.c \
@@ -74,7 +74,7 @@ cat <<EOT >build.ninja.common
 warn_flags = -Wall -Wno-unused -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation
 
 common_include = -Ittbasic -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \$
-  -Ilibraries/ESP8266SAM/src -Ilibraries/azip -Ilibraries/stb \$
+  -Ilibraries/azip -Ilibraries/stb \$
   -Ilibraries/alpha-lib/include -Igfx -Ilibraries/dyncall/dyncall \$
   -Ilibraries/tinycc -Iarduino_compat
 

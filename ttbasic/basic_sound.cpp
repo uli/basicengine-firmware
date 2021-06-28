@@ -48,32 +48,6 @@ void Basic::iplay() {
 #endif
 }
 
-/***bc snd SAY
-Speaks the given text.
-\usage SAY text$
-\args
-@text$	text to be spoken
-\note
-`text$` is assumed to be in English.
-
-`SAY` cannot be used concurrently with the wavetable synthesizer
-because they use different sample rates.
-\bugs
-* Does not support phonetic input.
-* No possibility to change synthesizer parameters.
-***/
-void Basic::isay() {
-  BString text = istrexp();
-  if (err)
-    return;
-  ESP8266SAM *sam = sound.sam();
-  if (!sam) {
-    err = ERR_OOM;
-    return;
-  }
-  sam->Say(text.c_str());
-}
-
 /***bf snd PLAY
 Checks if a sound is playing a on wavetable synthesizer channel.
 \usage p = PLAY(channel)

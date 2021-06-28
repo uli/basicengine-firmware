@@ -215,7 +215,7 @@ RMDIR	I_RMDIR		irmdir
 RND	I_RND		nrnd
 RUN	I_RUN		irun_
 SAVE	I_SAVE		isave
-SAY	I_SAY		isay
+_none	I_DUMMY1	esyntax
 SCALE	I_SCALE		esyntax
 SCREEN	I_SCREEN	iscreen
 SEARCH	I_SEARCH	isearch
