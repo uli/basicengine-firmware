@@ -156,6 +156,7 @@ S(eb_rgb_from_indexed)
 S(eb_rgb_indexed)
 S(eb_screen)
 S(eb_vsync)
+S(eb_add_output_filter)
 
 // eb_sys
 S(eb_process_events)

@@ -124,7 +124,19 @@ void tTVscreen::reset_kbd(uint8_t kbd_type) {
 
 // 改行
 void tTVscreen::newLine() {
-  tscreenBase::newLine();
+  int c = '\n';
+
+  for (auto h : output_filters) {
+    c = h.filter(c, h.userdata);
+    if (!c)
+      return;
+  }
+
+  if (c == '\n')
+    tscreenBase::newLine();
+  else
+    putch(c, false);
+
 #ifdef DEBUG
   Serial.write(0x0d);
   Serial.write(0x0a);

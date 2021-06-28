@@ -47,12 +47,19 @@
 
 #include "tvutil.h"
 
+typedef int (*output_filter_ptr)(int c, void *userdata);
+struct output_filter {
+  output_filter_ptr filter;
+  void *userdata;
+};
+
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
 private:
   uint8_t enableCursor;
   uint8_t m_cursor_count;
   bool m_cursor_state;
+  std::vector<output_filter> output_filters;
 
 protected:
   void INIT_DEV(){};                  // デバイスの初期化
@@ -84,10 +91,20 @@ public:
   void reset_kbd(uint8_t kbd_type = false);
 
   inline void putch(utf8_int32_t c, bool lazy = false) {
+    for (auto h : output_filters) {
+      c = h.filter(c, h.userdata);
+      if (!c)
+        return;
+    }
     tscreenBase::putch(c, lazy);
 #ifdef DEBUG
     Serial.write(c);  // シリアル出力
 #endif
+  }
+
+  void add_output_filter(output_filter_ptr filter, void *userdata) {
+    struct output_filter h = { filter, userdata };
+    output_filters.push_back(h);
   }
 
   virtual utf8_int32_t get_ch();  // 文字の取得
