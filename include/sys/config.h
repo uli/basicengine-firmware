@@ -297,4 +297,9 @@
 #define _MB_EXTENDED_CHARSETS_WINDOWS 1
 #endif
 
+/* Engine BASIC always uses dynamic reent */
+#ifndef __DYNAMIC_REENT__
+#define __DYNAMIC_REENT__
+#endif
+
 #endif /* __SYS_CONFIG_H__ */
