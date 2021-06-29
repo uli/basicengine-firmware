@@ -1391,8 +1391,10 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       else
         sc0.setColor(COL(OP), COL(BG));
       // indent single-quote comment unless at start of line
-      if (*ip == I_SQUOT && ip != (icode_t *)&ld[1])
-        PRINT_P("  ");
+      if (*ip == I_SQUOT && ip != (icode_t *)&ld[1]) {
+        c_putch(' ', devno);
+        c_putch(' ', devno);
+      }
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
