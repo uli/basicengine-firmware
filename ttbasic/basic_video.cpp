@@ -167,9 +167,11 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
             if (screen_putch_paging_counter++ >= sc0.getHeight() - 2) {
               newline();
               c_puts("\\RPress any key to continue\\N");
-              while (!c_getch()) {
+              utf8_int32_t c;
+              while (!(c = c_getch())) {
                 yield();
               }
+              process_hotkeys(c);
               c_puts("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
               screen_putch_paging_counter = 0;
             }
