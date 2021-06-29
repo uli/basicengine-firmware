@@ -1,10 +1,13 @@
-= Engine BASIC Reference Manual
+= Engine BASIC NG Reference Manual
 :toc: left
 :toclevels: 3
 :numbered:
 :experimental:
 :imagesdir: ./images
-:toc-title: pass:[<a href="/"><img src="images/be_logo.png"/></a>Engine BASIC Reference Manual]
+:toc-title: pass:[<a href="/"><img src="images/be_logo.png"/></a>Engine BASIC NG Reference Manual]
+
+[red]#*This manual applies to BASIC Engine Next Generation platforms. The
+classic BASIC Engine reference manual can be found link:manual.html[here].*#
 
 == How to Use this Manual
 
