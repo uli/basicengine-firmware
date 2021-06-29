@@ -302,7 +302,7 @@ char sstyle(token_t code, const token_t *table, uint32_t count) {
 
 // exception search macro
 #define nospacea(c) sstyle(c, i_nsa, sizeof(i_nsa) / sizeof(token_t))
-#define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb) / sizeof(token_t))
+#define nospaceb(c) ((c) == I_EOL || (c) == I_IMPLICITENDIF || sstyle(c, i_nsb, sizeof(i_nsb) / sizeof(token_t)))
 #define spacef(c)   sstyle(c, i_sf, sizeof(i_sf) / sizeof(token_t))
 #define dual(c)     sstyle(c, i_dual, sizeof(i_dual) / sizeof(token_t))
 #define isfun(c)    (dual(c) || numfuntbl[c] || strfuntbl[c])
@@ -1398,8 +1398,9 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !isfun((token_t)*ip)))
-        if ((!nospacea((token_t)*ip) || spacef((token_t) * (ip + 1))) &&
+      if (ip[1] != I_EOL && ip[1] != I_IMPLICITENDIF && ip[1] != I_COLON &&
+          (ip[1] != I_OPEN || !isfun((token_t)*ip)))
+        if ((!nospacea((token_t)*ip) || spacef((token_t)ip[1])) &&
             *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_LABEL)
           c_putch(' ', devno);
 
@@ -1543,7 +1544,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       //文字列を表示する
       c_putch(c, devno);  //文字列の括りを表示
       i = *ip++;  //文字数を取得してポインタを文字列へ進める
-      while (i) {               //文字数だけ繰り返す
+      while (i) {  //文字数だけ繰り返す
         // String constants are stored as UTF-8, with the bytes cast to
         // icode_t. We create a temp string with "real" bytes and have that
         // decoded.
@@ -1564,7 +1565,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
         utf8codepoint(tmp_utf8, &codepoint);
         c_putch(codepoint, devno);  //ポインタを進めながら文字を表示
       }
-      c_putch(c, devno);        //文字列の括りを表示
+      c_putch(c, devno);  //文字列の括りを表示
       sc0.setColor(COL(FG), COL(BG));
       // XXX: Why I_VAR? Such code wouldn't make sense anyway.
       if (*ip == I_VAR || *ip == I_ELSE || *ip == I_AS || *ip == I_TO ||
