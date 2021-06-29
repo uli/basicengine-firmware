@@ -5276,7 +5276,7 @@ void BASIC_FP Basic::iif() {
 }
 
 /***bc bas ENDIF
-Ends a muli-line `IF` instruction.
+Ends a multi-line `IF` instruction.
 \ref IF
 ***/
 void BASIC_FP Basic::iendif() {
