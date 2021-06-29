@@ -256,24 +256,12 @@ num_t BASIC_FP getrnd(int value) {
 // Intermediate code without trailing blank
 // clang-format off
 const token_t i_nsa[] BASIC_DAT = {
-  I_CSIZE, I_PSIZE,
-  I_INKEY, I_CHR, I_ASC, I_HEX, I_BIN,I_LEN, I_STRSTR, I_VAL,
   I_COMMA, I_SEMI, I_COLON, I_SQUOT,I_QUEST,
   I_MINUS, I_PLUS, I_MUL, I_DIV, I_OPEN, I_CLOSE, I_DOLLAR, I_LSHIFT, I_RSHIFT, I_POW,
   I_GTE, I_SHARP, I_GT, I_EQ, I_LTE, I_NEQ, I_NEQ2, I_LT,
-  I_RND, I_ABS, I_FREE, I_TICK, I_PEEK, I_PEEKW, I_PEEKD, I_VPEEK, I_I2CW, I_I2CR,
-  I_SIN, I_COS, I_EXP, I_ATN, I_ATN2, I_SQR, I_TAN, I_LOG, I_INT, I_SGN,
-  I_DIN, I_ANA,
-  I_SREAD, I_SREADY, I_POINT,
-  I_RET, I_RETSTR, I_ARG, I_ARGSTR, I_ARGC,
-  I_SPRCOLL, I_SPRX, I_SPRY, I_TILECOLL, I_BSCRX, I_BSCRY,
-  I_DIRSTR, I_INSTR, I_ERRORSTR, I_COMPARE,
   I_SQOPEN, I_SQCLOSE,
-  I_INPUTSTR, I_RGB, I_CWD, I_INKEYSTR,
+  I_INKEYSTR,
   I_UP, I_DOWN, I_LEFT, I_RIGHT, I_TAB,
-  I_EOF, I_LOF, I_LOC,
-  I_INSTSTR, I_STRINGSTR, I_LEFTSTR, I_RIGHTSTR, I_MIDSTR,
-  I_POPF, I_POPFSTR, I_POPB, I_POPBSTR,
 };
 
 // Intermediate code which eliminates previous space when former is constant or variable
@@ -295,7 +283,7 @@ const token_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const token_t i_dual[] BASIC_DAT = {
-  I_FRAME, I_PLAY, I_VREG, I_POS, I_CONNECT, I_SYS, I_MAP, I_KEY, I_PAD, I_CHAR
+  I_CHAR, I_SYS, I_PLAY,
 };
 // clang-format on
 
@@ -317,6 +305,7 @@ char sstyle(token_t code, const token_t *table, uint32_t count) {
 #define nospaceb(c) sstyle(c, i_nsb, sizeof(i_nsb) / sizeof(token_t))
 #define spacef(c)   sstyle(c, i_sf, sizeof(i_sf) / sizeof(token_t))
 #define dual(c)     sstyle(c, i_dual, sizeof(i_dual) / sizeof(token_t))
+#define isfun(c)    (dual(c) || numfuntbl[c] || strfuntbl[c])
 
 // Error message definition
 uint8_t err;               // Error message index
@@ -1407,7 +1396,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       c_puts_P(kw, devno);
       sc0.setColor(COL(FG), COL(BG));
 
-      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !dual((token_t)*ip)))
+      if (*(ip + 1) != I_COLON && (*(ip + 1) != I_OPEN || !isfun((token_t)*ip)))
         if ((!nospacea((token_t)*ip) || spacef((token_t) * (ip + 1))) &&
             *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_LABEL)
           c_putch(' ', devno);
