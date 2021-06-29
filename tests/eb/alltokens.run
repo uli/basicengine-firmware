@@ -1,8 +1,8 @@
-10 GOTO 40:GOSUB 200:RETURN 
+10 GOTO 40:GOSUB 200:RETURN
 20 FOR i=1 TO 20 STEP 3:NEXT i:step3=2
-30 IF a=DOWN THEN DO:LOOP 
-40 IF a=UP THEN 
-45   IF a=upthen THEN PRINT printbesser 
+30 IF a=DOWN THEN DO:LOOP
+40 IF a=UP THEN
+45   IF a=upthen THEN PRINT printbesser
 50 ELSE:ENDIF:END   'foo
 60 &bla:DATA "hans"
 70 READ a$:RESTORE &bla
@@ -26,7 +26,7 @@
 250 onerror=40
 260 ?a$
 270 STOP:stopp$="collaborate"
-280 TRON:tronn=40:TROFF 
+280 TRON:tronn=40:TROFF
 290 APPEND ~top$,"ende"
 300 PREPEND ~list$,"anfang"
 310 SEARCH "text"
@@ -34,7 +34,7 @@
 330 VPOKE 20,30
 340 SYS tem
 350 systm=1
-360 WHILE whiler=4:?ERROR$(42):WEND 
+360 WHILE whiler=4:?ERROR$(42):WEND
 370 PRINT something$+CHR$(ASC("!"))
 380 x=SIN(pi)+sins(666)
 390 x=ARGC(argctype)*ARG(0)+ABS(1)-SIN(2)/COS(coss)^EXP(42)+ATN2(2,3)+ATN(1):y=SQR(4)
@@ -44,9 +44,9 @@
 430 pointer=POINT(pointerx,pointery)+PAD(0)+PAD(padd)+KEY(keyup+UP)
 440 ptr=RGB(red,green,1)+CSIZE(0)+PSIZE(1)+FRAME()
 450 bg0=0
-460 BG bg0 TILES tilesw,tilesh PATTERN patternx,patterny,patternw SIZE sizex,sizey WINDOW windowx,windowy,windoww,windowh PRIO priority ON 
+460 BG bg0 TILES tilesw,tilesh PATTERN patternx,patterny,patternw SIZE sizex,sizey WINDOW windowx,windowy,windoww,windowh PRIO priority ON
 470 BEEP beep30:BEEP 30:PLAY music$+"ccc":PLAY playchan,"cdefg"
-480 SOUND 0,10,20,30:DATE 
+480 SOUND 0,10,20,30:DATE
 490 SAVE pcxprogram$:SAVE PCX "picture.pcx":SAVE PCX pcxfile$
 500 MERGE "program.bas":MERGE merger$
 510 BSAVE bloadfile$,addr:BSAVE "bload.bin",addr,length:BSAVE "bload.bin",0
@@ -57,13 +57,13 @@
 560 SYSINFO:SCREEN 1:SCREEN 2^2:SCREEN mode
 570 WINDOW window1,window2,window3,window4
 580 FONT font1:FONT 1
-590 SPRITE sprite0 PATTERN patternx,patterny,SIN(42) SIZE sizex,sizey FRAME 4,framey FLAGS flags1 KEY key1 PRIO priority_s OFF 
+590 SPRITE sprite0 PATTERN patternx,patterny,SIN(42) SIZE sizex,sizey FRAME 4,framey FLAGS flags1 KEY key1 PRIO priority_s OFF
 600 MOVE SPRITE 0 TO tox,toy
 610 PLOT bg0,tix,tiy,0:PLOT 0,2,2,tile$
 620 PLOT 0 MAP fromtile TO totile
 630 EDIT "file.txt":EDIT file$
 640 BORDER wall,berlin
-650 ON PAD pad0 CALL procedure:STOP 
+650 ON PAD pad0 CALL procedure:STOP
 660 CHDIR "/":CHDIR CWD$()+"/subdir"
 670 OPEN openfile$ FOR INPUT AS openfileno
 672 OPEN "file" FOR OUTPUT AS #3
@@ -71,10 +71,10 @@
 676 OPEN CWD$() FOR DIRECTORY AS 12
 680 CLOSE openfileno
 690 RENUM 0,renumberstep+42
-700 RUN runline:CONT 
+700 RUN runline:CONT
 710 DELETE 100-zweihundert
 720 FLASH "bang.bin"
-730 PROFILE ON:PROFILE OFF 
+730 PROFILE ON:PROFILE OFF
 740 VSYNC FRAME()+10
 750 BOOT bootpage
 760 FRAMESKIP ATN2(3,4):FRAMESKIP 4
@@ -89,7 +89,7 @@
 850 DIM a$(30):a$(20)="zwanzig"
 860 ~stringlst$=["eins","zwei"]:PRINT ~stringlst$(0)
 870 APPEND ~liste,42
-880 CREDITS:XYZZY "zork.z3":LOADMOD "sam" 
+880 CREDITS:XYZZY "zork.z3":LOADMOD "sam"
 890 ?ARG$(0)+BIN$($67)+HEX$(23)+STR$(69)+LEFT$("links",3)+RIGHT$("rechts",4)
 900 ?MID$("mittwoch",3,4)+CWD$()+DIR$(dirhandle)+INKEY$+inkeydinky$
 910 PRINT POPF$(~stringlst$);POPB$(~stringlst$)
@@ -106,9 +106,9 @@
 1010 PRINT INSTR(CWD$(),"/")
 1020 PRINT COMPARE("eins",zwei$),COMPARE(compare1$,compare2$);
 1030 DO:LOOP UNTIL FN dead(meat)
-1040 IF a>=1 OR b<=a OR c<>d OR d><c OR 0 NOT 1 OR not1<>not0 EOR 42 THEN PRINT "w0t?";USING "###";-7 
+1040 IF a>=1 OR b<=a OR c<>d OR d><c OR 0 NOT 1 OR not1<>not0 EOR 42 THEN PRINT "w0t?";USING "###";-7
 1050 GET TIME h,min,sec_:?TAB(10);h
-1060 IF a=1 THEN 
-1070 ELSE IF a=3 THEN 
-1080 ELSE IF a=4 THEN 
-1090 ENDIF 
+1060 IF a=1 THEN
+1070 ELSE IF a=3 THEN
+1080 ELSE IF a=4 THEN
+1090 ENDIF
