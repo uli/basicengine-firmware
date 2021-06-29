@@ -162,6 +162,7 @@ libs = \$common_libs
 build basic.bin: bin basic.elf
 build basic.uimg: uimg basic.bin
 build basic_sd.img: sdimg basic.uimg | \$initfs_dir
+build upload: upload basic.bin
 
 default basic.uimg
 
