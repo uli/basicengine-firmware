@@ -129,7 +129,10 @@ int eb_load_module(const char *name) {
       goto not_found;
 
     TCCState *tcc = eb_tcc_new(TCC_OUTPUT_MEMORY);
+    tcc_set_error_func(tcc, NULL, print_tcc_error);
+
     eb_tcc_initialize_symbols(tcc);
+
     if (tcc_add_file(tcc, objname.c_str()) < 0 ||
         eb_tcc_link(tcc, name, TCC_OUTPUT_MEMORY) < 0) {
       tcc_delete(tcc);

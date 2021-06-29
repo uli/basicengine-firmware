@@ -11,7 +11,7 @@
 
 std::vector<struct module> modules;
 
-extern "C" void print_tcc_error(void *b, const char *msg) {
+void print_tcc_error(void *b, const char *msg) {
   c_puts(msg); newline();
 }
 
