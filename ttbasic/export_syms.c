@@ -184,6 +184,9 @@ extern void __aeabi_uidivmod(void);
 extern void __aeabi_ul2d(void);
 extern void __aeabi_ul2f(void);
 extern void __aeabi_uldivmod(void);
+extern void __aeabi_unwind_cpp_pr0(void);
+extern void __aeabi_unwind_cpp_pr1(void);
+extern void __aeabi_unwind_cpp_pr2(void);
 #endif
 
 // === C++ helpers

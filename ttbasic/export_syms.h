@@ -478,6 +478,9 @@ S(__aeabi_uidivmod)
 S(__aeabi_ul2d)
 S(__aeabi_ul2f)
 S(__aeabi_uldivmod)
+S(__aeabi_unwind_cpp_pr0)
+S(__aeabi_unwind_cpp_pr1)
+S(__aeabi_unwind_cpp_pr2)
 #endif
 
 // sts_mixer
