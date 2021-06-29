@@ -756,7 +756,7 @@ uint8_t sdfiles::saveBitmap(char *fname, int32_t src_x, int32_t src_y,
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
       uint8_t r, g, b, a;
-      vs23.rgbaFromColor(vs23.getPixel(x, y), r, g, b, a);
+      vs23.rgbaFromColor(vs23.pixelComp(x, y), r, g, b, a);
       data[y * w + x] = r | (g << 8) | (b << 16) | (a << 24);
     }
   }
