@@ -35,7 +35,7 @@
 340 SYS tem
 350 systm=1
 360 WHILE whiler=4:?ERROR$(42):WEND 
-370 SAY something$+CHR$(ASC("!"))
+370 PRINT something$+CHR$(ASC("!"))
 380 x=SIN(pi)+sins(666)
 390 x=ARGC(argctype)*ARG(0)+ABS(1)-SIN(2)/COS(coss)^EXP(42)+ATN2(2,3)+ATN(1):y=SQR(4)
 400 zztop=TAN(tannen) MOD modulo<<SGN(sign)>>MAP(3,3,5,x,8)/FREE()
@@ -89,7 +89,7 @@
 850 DIM a$(30):a$(20)="zwanzig"
 860 ~stringlst$=["eins","zwei"]:PRINT ~stringlst$(0)
 870 APPEND ~liste,42
-880 CREDITS:XYZZY "zork.z3":LUA 
+880 CREDITS:XYZZY "zork.z3":LOADMOD "sam" 
 890 ?ARG$(0)+BIN$($67)+HEX$(23)+STR$(69)+LEFT$("links",3)+RIGHT$("rechts",4)
 900 ?MID$("mittwoch",3,4)+CWD$()+DIR$(dirhandle)+INKEY$+inkeydinky$
 910 PRINT POPF$(~stringlst$);POPB$(~stringlst$)

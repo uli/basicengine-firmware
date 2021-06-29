@@ -40,7 +40,7 @@
 340sys tem
 350systm=1
 360while whiler=4:?error$(42):wend
-370say something$+chr$(asc("!"))
+370print something$+chr$(asc("!"))
 380x=sin(pi)+sins(666)
 390x=argc(argctype)*arg(0)+abs(1)-sin(2)/cos(coss)^exp(42)+atn2(2,3)+atn(1):y=sqr(4)
 400zztop=tan(tannen)mod modulo<<sgn(sign)>>map(3,3,5,x,8)/free()
@@ -96,7 +96,7 @@
 850dim a$(30) :a$(20)="zwanzig"
 860~stringlst$=["eins","zwei"]:print ~stringlst$(0)
 870append ~liste,42
-880credits:xyzzy"zork.z3":lua
+880credits:xyzzy"zork.z3":loadmod"sam"
 890?arg$(0)+bin$($67)+hex$(23)+str$(69)+left$("links",3)+right$("rechts",4)
 900?mid$("mittwoch",3,4)+cwd$()+dir$(dirhandle)+inkey$+inkeydinky$
 910print popf$(~stringlst$);popb$(~stringlst$)
