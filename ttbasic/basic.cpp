@@ -5574,7 +5574,7 @@ void Basic::iextcmd(void) {
 // execute intermediate code
 // Return value: next program execution position (line start)
 icode_t *BASIC_FP Basic::iexe(index_t stk) {
-  uint8_t c;  // 入力キー
+  utf8_int32_t c;  // 入力キー
   err = 0;
 
   while (*cip != I_EOL) {
