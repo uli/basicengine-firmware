@@ -24,6 +24,7 @@ void	tv_window_get(int &x, int &y, int &w, int &h);
 void	tv_window_reset();
 int	tv_addFont(const uint8_t *font, const char *name);
 int	tv_font_count(void);
+const char *tv_font_info(int idx, int *w, int *h);
 bool	tv_have_font(const char *name);
 int	tv_current_font_index(void);
 void	tv_setFontByIndex(int idx);

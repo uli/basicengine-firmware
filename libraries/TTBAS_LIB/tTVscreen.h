@@ -207,6 +207,9 @@ public:
   inline int fontCount() {
     return tv_font_count();
   }
+  inline const char *fontInfo(int idx, int *w, int *h) {
+    return tv_font_info(idx, w, h);
+  }
   inline int currentFontIndex() {
     return tv_current_font_index();
   }

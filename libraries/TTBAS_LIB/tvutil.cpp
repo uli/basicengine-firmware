@@ -71,6 +71,15 @@ int tv_font_count(void) {
   return fonts.size();
 }
 
+const char *tv_font_info(int idx, int *w, int *h) {
+  if (w)
+    *w = fonts[idx].w;
+  if (h)
+    *h = fonts[idx].h;
+
+  return fonts[idx].ttf_font.name;
+}
+
 bool tv_have_font(const char *name) {
   for (auto &i : ttf_fonts) {
     if (!strcmp(i.name, name))
