@@ -50,6 +50,10 @@ int eb_font(int idx) {
   return 0;
 }
 
+const char *eb_font_info(int idx, int *w, int *h) {
+  return sc0.fontInfo(idx, w, h);
+}
+
 int eb_font_by_name(const char *name, int w, int h) {
   if (!sc0.setFontByName(name, w, h)) {
     err = ERR_FONT;
