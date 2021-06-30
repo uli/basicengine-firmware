@@ -30,7 +30,6 @@ int eb_blit(int x, int y, int dx, int dy, int w, int h);
 int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h);
 pixel_t eb_get_fg_color(void);
 pixel_t eb_get_bg_color(void);
-void eb_add_output_filter(int (*filter)(int c, void *userdata), void *userdata);
 
 #ifdef __cplusplus
 }

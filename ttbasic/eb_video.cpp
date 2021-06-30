@@ -239,8 +239,4 @@ pixel_t eb_get_bg_color(void) {
   return sc0.getBgColor();
 }
 
-void eb_add_output_filter(int (*filter)(int c, void *userdata), void *userdata) {
-  sc0.add_output_filter(filter, userdata);
-}
-
 } // extern "C"

@@ -82,6 +82,7 @@ S(eb_add_bg_layer)
 S(eb_remove_bg_layer)
 
 // eb conio
+S(eb_add_output_filter)
 S(eb_char_get)
 S(eb_char_set)
 S(eb_clrtoeol)
@@ -156,7 +157,6 @@ S(eb_rgb_from_indexed)
 S(eb_rgb_indexed)
 S(eb_screen)
 S(eb_vsync)
-S(eb_add_output_filter)
 
 // eb_sys
 S(eb_process_events)

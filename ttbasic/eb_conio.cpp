@@ -236,3 +236,7 @@ char *eb_screened_get_line(void) {
     return textline;
   }
 }
+
+void eb_add_output_filter(int (*filter)(int c, void *userdata), void *userdata) {
+  sc0.add_output_filter(filter, userdata);
+}

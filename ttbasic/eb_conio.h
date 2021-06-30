@@ -43,6 +43,8 @@ int eb_load_lang_resources(int lang);
 
 char *eb_screened_get_line(void);
 
+void eb_add_output_filter(int (*filter)(int c, void *userdata), void *userdata);
+
 #define KEY_EVENT_BREAK 0x0100
 #define KEY_EVENT_KEY   0x0200
 #define KEY_EVENT_SHIFT 0x0400
