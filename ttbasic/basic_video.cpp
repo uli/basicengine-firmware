@@ -264,7 +264,7 @@ Returns the index of the selected font in `RET(0)`.
 \sec FONTS
 The following fonts are built-in:
 \table
-| 0 | "hp100lx" | HP 100 LX font, 6x8 pixels (default)
+| 0 | "lexis"   | Lexis font, 6x8 pixels (default)
 | 1 | "cpc"     | CPC font, 8x8 pixels
 | 2 | "bescii"  | PETSCII-style font, 8x8 pixels
 | 3 | "tt"      | Japanese font, 8x8 pixels
