@@ -240,3 +240,7 @@ char *eb_screened_get_line(void) {
 void eb_add_output_filter(int (*filter)(int c, void *userdata), void *userdata) {
   sc0.add_output_filter(filter, userdata);
 }
+
+void eb_add_input_filter(int (*filter)(int c, void *userdata), void *userdata) {
+  sc0.add_input_filter(filter, userdata);
+}

@@ -178,6 +178,9 @@ utf8_int32_t tTVscreen::get_ch() {
 #endif
 #if PS2DEV == 1
     c = ps2read();
+    for (auto f : input_filters) {
+      c = f.filter(c, f.userdata);
+    }
     if (c) {
       dev = 0;
       break;

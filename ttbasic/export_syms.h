@@ -82,6 +82,7 @@ S(eb_add_bg_layer)
 S(eb_remove_bg_layer)
 
 // eb conio
+S(eb_add_input_filter)
 S(eb_add_output_filter)
 S(eb_char_get)
 S(eb_char_set)

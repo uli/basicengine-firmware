@@ -53,6 +53,12 @@ struct output_filter {
   void *userdata;
 };
 
+typedef int (*input_filter_ptr)(int c, void *userdata);
+struct input_filter {
+  input_filter_ptr filter;
+  void *userdata;
+};
+
 //class tTVscreen : public tscreenBase, public tSerialDev, public tGraphicDev {
 class tTVscreen : public tscreenBase, public tGraphicDev {
 private:
@@ -60,6 +66,7 @@ private:
   uint8_t m_cursor_count;
   bool m_cursor_state;
   std::vector<output_filter> output_filters;
+  std::vector<input_filter> input_filters;
 
 protected:
   void INIT_DEV(){};                  // デバイスの初期化
@@ -105,6 +112,11 @@ public:
   void add_output_filter(output_filter_ptr filter, void *userdata) {
     struct output_filter h = { filter, userdata };
     output_filters.push_back(h);
+  }
+
+  void add_input_filter(input_filter_ptr filter, void *userdata) {
+    struct input_filter h = { filter, userdata };
+    input_filters.push_back(h);
   }
 
   virtual utf8_int32_t get_ch();  // 文字の取得
