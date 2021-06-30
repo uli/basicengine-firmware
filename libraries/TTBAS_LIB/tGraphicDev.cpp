@@ -57,6 +57,6 @@ void GROUP(basic_video) tGraphicDev::set_gcursor(uint16_t x, uint16_t y) {
   tv_set_gcursor(x, y);
 }
 
-void GROUP(basic_video) tGraphicDev::gputch(uint8_t c) {
+void GROUP(basic_video) tGraphicDev::gputch(utf8_int32_t c) {
   tv_write(c);
 }
