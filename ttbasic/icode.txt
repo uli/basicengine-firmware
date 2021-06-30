@@ -143,6 +143,7 @@ LEFT	I_LEFT		nleft
 LEN	I_LEN		nlen
 LET	I_LET		ilet
 LINE	I_LINE		iline
+LISTFONTS	I_LISTFONTS	ilistfonts
 LISTMOD	I_LISTMOD	ilistmod
 LIST	I_LIST		ilist_
 LOADMOD	I_LOADMOD	iloadmod

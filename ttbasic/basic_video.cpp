@@ -312,6 +312,22 @@ void Basic::ifont() {
   eb_locate(ceil(x * sx), ceil(y * sy));
 }
 
+/***bc scr LISTFONTS
+Lists installed fonts.
+\usage LISTFONTS
+\desc
+Prints a tab-separated list of the indices, names and sizes of the fonts
+currently loaded.
+\ref FONT
+***/
+void Basic::ilistfonts() {
+  for (int i = 0; i < eb_font_count(); ++i) {
+    int w, h;
+    const char *name = eb_font_info(i, &w, &h);
+    c_printf("%d\t%s\t%dx%d\n", i, name, w, h);
+  }
+}
+
 /***bc scr SCREEN
 Change the screen resolution.
 \usage SCREEN mode
