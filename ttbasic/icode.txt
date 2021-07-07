@@ -301,3 +301,9 @@ _none	I_STRLSTREF	istrlstref
 _none	I_SVAR		isvar
 _none	I_VAR		ivar
 _none	I_VARARR	ivararr
+MOUSEBUTTON	I_MOUSEBUTTON	nmousebutton
+MOUSEDX	I_MOUSEDX	nmousedx
+MOUSEDY	I_MOUSEDY	nmousedy
+MOUSEWHEEL	I_MOUSEWHEEL	nmousewheel
+MOUSEX	I_MOUSEX	nmousex
+MOUSEY	I_MOUSEY	nmousey

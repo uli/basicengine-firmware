@@ -363,3 +363,92 @@ num_t BASIC_FP Basic::ninkey() {
 
   return iinkey();  // キー入力値の取得
 }
+
+/***bf io MOUSEX
+Absolute horizontal coordinate of the mouse cursor.
+\usage x = MOUSEX
+\ret X coordinate of mouse cursor, from `0` to `PSIZE(0)-1`
+\ref MOUSEDX MOUSEY
+***/
+num_t Basic::nmousex() {
+  return eb_mouse_abs_x();
+}
+
+/***bf io MOUSEY
+Absolute vertical coordinate of the mouse cursor.
+\usage y = MOUSEY
+\ret Y coordinate of mouse cursor, from `0` to `PSIZE(1)-1`
+\ref MOUSEDY MOUSEX
+***/
+num_t Basic::nmousey() {
+  return eb_mouse_abs_y();
+}
+
+/***bf io MOUSEDX
+Horizontal movement of the mouse.
+\desc
+Returns a value representing the amount of horizontal movement of the mouse
+since the last call to `MOUSEDX`.
+\usage x = MOUSEDX
+\ret relative horizontal movement of mouse, pixels
+\ref MOUSEDY MOUSEX
+***/
+num_t Basic::nmousedx() {
+  return eb_mouse_rel_x();
+}
+
+/***bf io MOUSEDY
+Vertical movement of the mouse.
+\desc
+Returns a value representing the amount of vertical movement of the mouse
+since the last call to `MOUSEDY`.
+\usage y = MOUSEDY
+\ret relative vertical movement of mouse, pixels
+\ref MOUSEDX MOUSEY
+***/
+num_t Basic::nmousedy() {
+  return eb_mouse_rel_y();
+}
+
+/***bf io MOUSEBUTTON
+State of the specified mouse button.
+\usage state = MOUSEBUTTON(n)
+\args
+@n  number of mouse button [`1` to `32`]
+\ret `1` if the mouse button is held, `0` if it is not.
+\sec BUTTONS
+\table header
+| Number | Mouse button
+| `1` | Left button
+| `2` | Right button
+| `3` | Middle button
+\endtable
+\note
+Other buttons than the ones specified above may be available if the mouse
+connected has more than three buttons.
+\ref MOUSEWHEEL
+***/
+num_t Basic::nmousebutton() {
+  if (checkOpen())
+    return 0;
+  int32_t button;
+  if (getParam(button, 1, 32, I_CLOSE))
+    return 0;
+
+  return eb_mouse_button(button - 1);
+}
+
+/***bf io MOUSEWHEEL
+Movement of the mouse wheel.
+\desc
+Returns a value representing the movement of the mouse wheel since the last
+call to `MOUSEWHEEL`.
+\usage wheel = MOUSEWHEEL
+\ret movement of mouse wheel, clicks
+\bugs
+This function is not implemented on SDL platforms.
+\ref MOUSEBUTTON
+***/
+num_t Basic::nmousewheel() {
+  return eb_mouse_wheel();
+}
