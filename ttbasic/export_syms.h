@@ -243,6 +243,7 @@ S(strcspn)
 S(strdup)
 S(strerror)
 S(strlen)
+S(strncasecmp)
 S(strncat)
 S(strncmp)
 S(strncpy)
@@ -252,6 +253,7 @@ S(strspn)
 S(strtod)
 S(strtol)
 S(strtoll)
+S(strtoul)
 #ifdef __clang__
 S(strchr)
 S(strrchr)
@@ -307,10 +309,12 @@ S(fputc)
 S(fputs)
 S(fread)
 S(freopen)
+S(fscanf)
 S(fseek)
 //S(fstat)	struct stat differs between platforms
 S(ftell)
 S(fwrite)
+S(setvbuf)
 S(ungetc)
 S(vfprintf)
 
@@ -345,16 +349,17 @@ S(putenv)
 S(setenv)
 
 // stdlib miscellaneous
-S(qsort)
+S(abort)  // XXX: does this do anything useful?
 #ifdef __clang__
 S(abs)
 #else
 R(abs, __builtin_abs)
 #endif
+S(labs)
+S(qsort)
 S(rand)
 S(random)
-S(labs)
-S(abort)  // XXX: does this do anything useful?
+S(srand)
 
 // unistd getopt
 S(getopt)
@@ -401,6 +406,7 @@ S(refresh)
 
 // stdlib multi-byte functions
 S(mbtowc)
+S(towlower)
 S(wcwidth)
 
 // math
