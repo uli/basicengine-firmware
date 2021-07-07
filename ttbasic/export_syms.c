@@ -150,6 +150,7 @@ extern void __va_start(void);
 extern void __fixunsxfdi(void);
 extern void __fixunssfdi(void);
 extern void __fixunsdfdi(void);
+extern void __popcountdi2(void);
 #endif
 
 #ifdef __arm__

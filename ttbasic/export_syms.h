@@ -486,6 +486,7 @@ S(__va_arg)
 S(__fixunsxfdi)
 S(__fixunssfdi)
 S(__fixunsdfdi)
+S(__popcountdi2)
 #endif
 
 #ifdef __arm__
