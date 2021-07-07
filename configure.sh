@@ -22,7 +22,7 @@ generate_link() {
 	for s in "$@" ; do
 		echo -n "$objdir/${s%.*}.o "
 	done
-	echo "|| $LINK_DEPS"
+	echo "| $PLATFORM_LINK_DEPS $LINK_DEPS"
 }
 
 generate_build() {
@@ -168,11 +168,13 @@ default basic.uimg
 
 EOT
 
+PLATFORM_LINK_DEPS="$H3_OSDIR/libos.a"
 {
 generate_link basic.elf $H3_OBJDIR $H3_SOURCES $H3_SOURCES_C
 generate_build cc $H3_OBJDIR $H3_SOURCES_C
 generate_build cxx $H3_OBJDIR $H3_SOURCES
 } >>build.ninja.h3
+PLATFORM_LINK_DEPS=
 
 # ninja file for SDL platform
 cat <<EOT >build.ninja.sdl
