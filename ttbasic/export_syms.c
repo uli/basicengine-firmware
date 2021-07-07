@@ -56,14 +56,14 @@ struct _native_dirent *be_readdir(DIR *dirp) {
 
 // discount version of newlib's struct stat
 struct _native_stat {
-  dev_t         st_dev;
-  ino_t         st_ino;
-  mode_t        st_mode;
-  nlink_t       st_nlink;
-  uid_t         st_uid;
-  gid_t         st_gid;
-  dev_t         st_rdev;
-  off_t         st_size;
+  /* dev_t */   short          st_dev;
+  /* ino_t */   unsigned short st_ino;
+  /* mode_t */  uint32_t       st_mode;
+  /* nlink_t */ unsigned short st_nlink;
+  /* uid_t */   unsigned short st_uid;
+  /* gid_t */   unsigned short st_gid;
+  /* dev_t */   unsigned short st_rdev;
+  /* off_t */   long           st_size;
 };
 
 // XXX: Does not translate timestamps.
