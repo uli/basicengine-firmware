@@ -340,8 +340,9 @@ R(fstat, _native_fstat)
 #endif
 
 // stdlib environment
-S(putenv)
 S(getenv)
+S(putenv)
+S(setenv)
 
 // stdlib miscellaneous
 S(qsort)
