@@ -62,12 +62,14 @@ extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
 void kbd_task(void);
+void mouse_task(void);
 extern "C" void network_task(void);
 
 void platform_process_events() {
   usb_task();
   sd_detect();
   kbd_task();
+  mouse_task();
   network_task();
 }
 
