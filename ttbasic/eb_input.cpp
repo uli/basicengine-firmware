@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "basic.h"
+#include "mouse.h"
 #include "eb_input.h"
 #include "eb_api.h"
 
@@ -45,4 +46,34 @@ int eb_key_state(int scancode) {
   if (check_param(scancode, 0, 255))
     return -1;
   return kb.state(scancode);
+}
+
+int eb_mouse_abs_x(void) {
+  return mouse.absX();
+}
+int eb_mouse_abs_y(void) {
+  return mouse.absY();
+}
+
+double eb_mouse_rel_x(void) {
+  return mouse.relX();
+}
+double eb_mouse_rel_y(void) {
+  return mouse.relY();
+}
+
+int eb_mouse_button(int n) {
+  return !!(mouse.buttons() & (1 << n));
+}
+
+int eb_mouse_buttons(void) {
+  return mouse.buttons();
+}
+
+int eb_mouse_wheel(void) {
+  return mouse.wheel();
+}
+
+void eb_mouse_warp(int x, int y) {
+  mouse.warp(x, y);
 }

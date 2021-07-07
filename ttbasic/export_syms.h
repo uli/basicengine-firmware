@@ -122,6 +122,14 @@ S(eb_load_image_to)
 // eb_input
 S(eb_inkey)
 S(eb_key_state)
+S(eb_mouse_abs_x)
+S(eb_mouse_abs_y)
+S(eb_mouse_button)
+S(eb_mouse_buttons)
+S(eb_mouse_rel_x)
+S(eb_mouse_rel_y)
+S(eb_mouse_warp)
+S(eb_mouse_wheel)
 S(eb_pad_state)
 
 // eb_io

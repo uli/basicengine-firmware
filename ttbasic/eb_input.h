@@ -9,6 +9,15 @@ int eb_inkey(void);
 int eb_pad_state(int num);
 int eb_key_state(int scancode);
 
+int eb_mouse_abs_x(void);
+int eb_mouse_abs_y(void);
+double eb_mouse_rel_x(void);
+double eb_mouse_rel_y(void);
+int eb_mouse_button(int n);
+int eb_mouse_buttons(void);
+int eb_mouse_wheel(void);
+void eb_mouse_warp(int x, int y);
+
 // Button Hex Representations:
 #define EB_JOY_LEFT_SHIFT	0
 #define EB_JOY_DOWN_SHIFT	1
