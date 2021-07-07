@@ -107,6 +107,9 @@ uint64_t total_frames = 0;
 extern uint64_t total_samples;
 extern int sound_reinit_rate;
 
+#include <mouse.h>
+Mouse mouse;
+
 void platform_process_events() {
   SDL_Event event;
 
@@ -117,6 +120,19 @@ void platform_process_events() {
     case SDL_QUIT:
       exit(0);
       break;
+    case SDL_MOUSEMOTION:
+      mouse.move(event.motion.xrel, event.motion.yrel);
+      mouse.warp(event.motion.x, event.motion.y);
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP: {
+      int button_bit = 1 << (event.button.button - 1);
+      int buttons = mouse.buttons() & ~button_bit;
+      if (event.button.state)
+        buttons |= button_bit;
+      mouse.setButtons(buttons);
+      break;
+    }
     default:
       //printf("SDL event %d\n", event.type);
       break;
