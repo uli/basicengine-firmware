@@ -247,13 +247,18 @@ WARNING: This function is currently useless because the serial port
 receive pin is used for sound output in the BASIC Engine. It may be
 removed in the future if it turns out that there is no viable way
 to support serial input.
-\usage b = SREAD()
+\usage b = SREAD
 \ret Byte of data read, or `-1` if there was no data available.
-\ref SREADY()
+\note
+The alternative syntax `SREAD()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
+\ref SREADY
 ***/
 num_t BASIC_INT Basic::nsread() {
-  if (checkOpen() || checkClose())
-    return 0;
+  // backwards compatibility with SREAD() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   return Serial.read();
 }
 
@@ -264,13 +269,18 @@ WARNING: This function is currently useless because the serial port
 receive pin is used for sound output in the BASIC Engine. It may be
 removed in the future if it turns out that there is no viable way
 to support serial input.
-\usage n = SREADY()
+\usage n = SREADY
 \ret Number of bytes available to read.
-\ref SREAD()
+\note
+The alternative syntax `SREADY()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
+\ref SREAD
 ***/
 num_t BASIC_INT Basic::nsready() {
-  if (checkOpen() || checkClose())
-    return 0;
+  // backwards compatibility with SREADY() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   return Serial.available();
 }
 

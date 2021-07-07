@@ -459,7 +459,7 @@ Specifying a frame number helps avoid slowdowns by continuing immediately
 if the program is "late", and not wait for another frame.
 ====
 ----
-f = FRAME()
+f = FRAME
 DO
   ' stuff that may take longer than expected
   VSYNC f+1	// <1>
@@ -468,7 +468,7 @@ LOOP
 ----
 <1> This command will not wait if frame `f+1` has already passed.
 ====
-\ref FRAME()
+\ref FRAME
 ***/
 void Basic::ivsync() {
   uint32_t tm;
@@ -559,13 +559,18 @@ void BASIC_INT Basic::ivreg() {
 
 /***bf scr FRAME
 Returns the number of video frames since power-on.
-\usage fr = FRAME()
+\usage fr = FRAME
 \ret Frame count.
+\note
+The alternative syntax `FRAME()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
 \ref VSYNC
 ***/
 num_t BASIC_FP Basic::nframe() {
-  if (checkOpen() || checkClose())
-    return 0;
+  // backwards compatibility with FRAME() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   return eb_frame();
 }
 

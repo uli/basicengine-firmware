@@ -245,7 +245,7 @@ Changes the current directory.
 \usage CHDIR directory$
 \args
 @directory$	path to the new current directory
-\ref CWD$()
+\ref CWD$
 ***/
 void Basic::ichdir() {
   BString new_cwd;
@@ -258,13 +258,18 @@ void Basic::ichdir() {
 
 /***bf fs CWD$
 Returns the current working directory.
-\usage dir$ = CWD$()
+\usage dir$ = CWD$
 \ret Current working directory.
+\note
+The alternative syntax `CWD$()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
 \ref CHDIR
 ***/
 BString Basic::scwd() {
-  if (checkOpen() || checkClose())
-    return BString();
+  // backwards compatibility with CWD$() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   char *cwd = new char[FILENAME_MAX];
   if (getcwd(cwd, FILENAME_MAX)) {
     BString cwd_str(cwd);
@@ -429,7 +434,7 @@ Displays the contents of the current or a specified directory.
 \args
 @filespec$	a filename or path, may include wildcard characters +
                 [default: all files in the current directory]
-\ref CHDIR CWD$()
+\ref CHDIR CWD$
 ***/
 void Basic::ifiles() {
   BString fname;

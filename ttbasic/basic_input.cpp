@@ -303,11 +303,7 @@ Returns either
 
 An "extended key" is a key that does not have a common ASCII representation,
 such as cursor or function keys.
-\note
-`INKEY$` is not consistent with the Engine BASIC convention of following
-functions with parentheses to distinguish them from constants and variables
-in order to remain compatible with other BASIC implementations.
-\ref INKEY()
+\ref INKEY
 ***/
 BString BASIC_INT Basic::sinkey() {
   int32_t c = iinkey();
@@ -353,12 +349,17 @@ num_t BASIC_FP Basic::nleft() {
 
 /***bf io INKEY
 Reads a character from the keyboard and returns its numeric value.
-\usage c = INKEY()
+\usage c = INKEY
 \ret Key code [`0` to `65535`]
+\note
+The alternative syntax `INKEY()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
 \ref INKEY$
 ***/
 num_t BASIC_FP Basic::ninkey() {
-  if (checkOpen() || checkClose())
-    return 0;
+  // backwards compatibility with INKEY() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   return iinkey();  // キー入力値の取得
 }

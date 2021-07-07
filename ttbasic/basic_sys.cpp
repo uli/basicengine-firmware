@@ -570,12 +570,17 @@ uint64_t SMALL Basic::getFreeMemory() {
 
 /***bf bas FREE
 Get free memory size.
-\usage bytes = FREE()
+\usage bytes = FREE
 \ret Number of bytes free.
+\note
+The alternative syntax `FREE()` is supported for backwards compatibility
+with earlier versions of Engine BASIC.
 ***/
 num_t BASIC_FP Basic::nfree() {
-  if (checkOpen() || checkClose())
-    return 0;
+  // backwards compatibility with FREE() syntax
+  if (*cip == I_OPEN && cip[1] == I_CLOSE)
+    cip += 2;
+
   return getFreeMemory();
 }
 
