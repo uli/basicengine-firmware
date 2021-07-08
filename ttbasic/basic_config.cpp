@@ -144,10 +144,10 @@ at the expense of sharpness.
 WARNING: It is not clear if this option is useful in practice, and it may be
 removed in future releases.
 
-* `9`: Keyword separation optional [`0` or `1` (default)] +
+* `9`: Keyword separation optional [`0` (default) or `1`] +
   Controls if BASIC keywords need to be separated from other language
-  elements containing alphanumeric characters with a space (`1`), or if they
-  can be adjacent to those like in traditional BASIC dialects (`0`).
+  elements containing alphanumeric characters with a space (`0`), or if they
+  can be adjacent to those like in traditional BASIC dialects (`1`).
 
 * `10`: Physical screen mode (H3 platform only) [`0` (default) to `6`] +
   Sets the physical screen resolution: +
