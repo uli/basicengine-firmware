@@ -143,7 +143,6 @@ LEFT	I_LEFT		nleft
 LEN	I_LEN		nlen
 LET	I_LET		ilet
 LINE	I_LINE		iline
-LISTFONTS	I_LISTFONTS	ilistfonts
 LISTMOD	I_LISTMOD	ilistmod
 LIST	I_LIST		ilist_
 LOADMOD	I_LOADMOD	iloadmod
@@ -301,6 +300,7 @@ _none	I_STRLSTREF	istrlstref
 _none	I_SVAR		isvar
 _none	I_VAR		ivar
 _none	I_VARARR	ivararr
+LISTFONTS	I_LISTFONTS	ilistfonts
 MOUSEBUTTON	I_MOUSEBUTTON	nmousebutton
 MOUSEDX	I_MOUSEDX	nmousedx
 MOUSEDY	I_MOUSEDY	nmousedy
