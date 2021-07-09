@@ -1,4 +1,3 @@
-#define ONE_SOURCE	1
 #define CONFIG_TCC_STATIC
 #ifdef __arm__
 #define TCC_ARM_VFP

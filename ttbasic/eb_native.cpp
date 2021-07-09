@@ -5,6 +5,14 @@
 #include "basic_native.h"
 #include "eb_native.h"
 
+// We need access to the sections in the TCC state.
+#define ONE_SOURCE 0
+#include "../libraries/tinycc/tcc.h"
+#undef ONE_SOURCE
+#undef strdup
+#undef free
+#undef malloc
+
 TCCState *eb_tcc_new(int output_type) {
   TCCState *tcc = tcc_new();
   if (!tcc)
@@ -132,6 +140,19 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
 
     struct module new_mod = { tcc, name, initial_data, (int)(end - etext) };
     modules.push_back(new_mod);
+
+    // Print a command that can be pasted into GDB to debug this module.
+    for (int i = 0; i < tcc->nb_sections; ++i) {
+      Section *sec = tcc->sections[i];
+      if (sec) {
+        printf("add-symbol-file-all %s/sys/modules/%s/%s_%s.o %p\n",
+          getenv("ENGINEBASIC_ROOT"),
+          name, name, getenv("HOSTTYPE"),
+          (void *)sec->sh_addr
+        );
+        break;
+      }
+    }
   } else {
     if (tcc_output_file(tcc, name) < 0) {
       err = ERR_COMPILE;
