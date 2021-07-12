@@ -242,9 +242,23 @@ BString Basic::snfc() {
   return out;
 }
 
-extern "C" void be_exit(int ret) {
+std::vector<void (*)(void)> atexit_funcs;
+
+extern "C" void be__exit(int ret) {
+  atexit_funcs.clear();
   // XXX: How do we know what our BASIC context is?
   bc->exit(ret);
+}
+
+extern "C" void be_exit(int ret) {
+  for (auto a : atexit_funcs)
+    a();
+
+  be__exit(ret);
+}
+
+extern "C" void be_atexit(void (*function)(void)) {
+  atexit_funcs.push_back(function);
 }
 
 /***bf sys GETSYM
