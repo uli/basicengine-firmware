@@ -68,10 +68,15 @@ ICODE_IMPLICIT_OUT="ttbasic/kwtbl.h ttbasic/kwenum.h ttbasic/strfuntbl.h ttbasic
 AUTOGEN_DEPS="ttbasic/msgs_en.h $MSG_IMPLICIT_OUT ttbasic/funtbl.h $ICODE_IMPLICIT_OUT ttbasic/epigrams.h ttbasic/version.h"
 LINK_DEPS="\$objdir/dyncall/dyncall/libdyncall_s.a"
 
+WARN_FLAGS="-Wall -Wno-unused"
+[[ "$CC" == *gcc || "$CXX" == g++ || "$CXX" == *-g++ ]] \
+  && WARN_FLAGS="$WARN_FLAGS -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation" \
+  || WARN_FLAGS="$WARN_FLAGS -Wno-c99-designator -Wno-char-subscripts"
+
 # ninja file included in all builds
 # NB: Make sure $cc, $cxx and $objdir are defined before including this!
 cat <<EOT >build.ninja.common
-warn_flags = -Wall -Wno-unused -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation
+warn_flags = $WARN_FLAGS
 
 common_include = -Ittbasic -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \$
   -Ilibraries/azip -Ilibraries/stb \$
