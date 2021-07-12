@@ -55,6 +55,9 @@ public:
 
   int numModes() { return SDL_SCREEN_MODES; }
   bool setMode(uint8_t mode);
+  int modeFromSize(int &w, int &h);
+  void modeSize(int m, int &w, int &h);
+
   void toggleFullscreen();
   void setColorSpace(uint8_t palette);
 

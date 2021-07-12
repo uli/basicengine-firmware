@@ -35,6 +35,29 @@ const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
   { 1920, 1080, 0, 0, 0 },
 };
 
+int SDLGFX::modeFromSize(int &w, int &h) {
+  int diff = INT_MAX;
+  int best_mode = 0;
+  for (int i = 0; i < sizeof(modes_pal) / sizeof(modes_pal[0]); ++i) {
+    if (modes_pal[i].x < w || modes_pal[i].y < h)
+      continue;
+
+    int d = modes_pal[i].x - w + modes_pal[i].y - h;
+    if (d < diff) {
+      diff = d;
+      best_mode = i;
+    }
+  }
+  w = modes_pal[best_mode].x;
+  h = modes_pal[best_mode].y;
+  return best_mode;
+}
+
+void SDLGFX::modeSize(int m, int &w, int &h) {
+  w = modes_pal[m].x;
+  h = modes_pal[m].y;
+}
+
 extern const SDL_VideoInfo *sdl_info;
 extern int sdl_flags;
 extern bool sdl_keep_res;

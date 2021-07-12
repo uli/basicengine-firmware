@@ -52,6 +52,9 @@ public:
 
   int numModes() { return H3_SCREEN_MODES; }
   bool setMode(uint8_t mode);
+  int modeFromSize(int &w, int &h);
+  void modeSize(int m, int &w, int &h);
+
   inline void setColorSpace(uint8_t palette) {
     Video::setColorSpace(palette);
     if (palette < 2) {

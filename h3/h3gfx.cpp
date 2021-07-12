@@ -52,6 +52,29 @@ const struct display_phys_mode_t phys_modes[] = {
   { 193160000, 1920, 128, 208, 336, 0, 1200,  1, 3, 38, 0, 1 },
 };
 
+int H3GFX::modeFromSize(int &w, int &h) {
+  int diff = INT_MAX;
+  int best_mode = 0;
+  for (int i = 0; i < sizeof(modes_pal) / sizeof(modes_pal[0]); ++i) {
+    if (modes_pal[i].x < w || modes_pal[i].y < h)
+      continue;
+
+    int d = modes_pal[i].x - w + modes_pal[i].y - h;
+    if (d < diff) {
+      diff = d;
+      best_mode = i;
+    }
+  }
+  w = modes_pal[best_mode].x;
+  h = modes_pal[best_mode].y;
+  return best_mode;
+}
+
+void H3GFX::modeSize(int m, int &w, int &h) {
+  w = modes_pal[m].x;
+  h = modes_pal[m].y;
+}
+
 #define DISPLAY_CORE            1
 #define DISPLAY_CORE_STACK_SIZE 0x1000
 static void *display_core_stack;
