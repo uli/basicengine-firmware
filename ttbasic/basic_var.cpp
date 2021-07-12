@@ -1,7 +1,16 @@
 #include "basic.h"
 
 static inline bool is_var(icode_t tok) {
-  return tok >= I_VAR && tok <= I_STRLSTREF;
+  return tok == I_VAR ||
+         tok == I_LVAR ||
+         tok == I_VARARR ||
+         tok == I_NUMLST ||
+         tok == I_SVAR ||
+         tok == I_LSVAR ||
+         tok == I_STRARR ||
+         tok == I_STRLST ||
+         tok == I_NUMLSTREF ||
+         tok == I_STRLSTREF;
 }
 
 // Variable assignment handler
