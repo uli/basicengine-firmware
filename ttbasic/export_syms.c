@@ -101,6 +101,9 @@ static int _native_lstat(const char *pathname, struct _native_stat *statbuf) {
 
 
 extern void be_exit(int ret);
+extern void be__exit(int ret);
+extern void be_atexit(void (*)(void));
+
 extern int c_printf(const char *f, ...);
 
 #include "ttconfig.h"

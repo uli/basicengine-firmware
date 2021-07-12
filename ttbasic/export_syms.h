@@ -12,8 +12,9 @@ S(vsprintf)
 S(sscanf)
 
 // wrapper that jumps back to BASIC prompt
-R(_exit, be_exit)
-R(exit, be_exit)  // XXX: doesn't handle atexit()/on_exit()!
+R(_exit, be__exit)
+R(exit, be_exit)
+R(atexit, be_atexit)
 
 // stdlib memory allocation
 S(malloc)
