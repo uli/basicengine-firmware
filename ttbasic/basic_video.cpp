@@ -369,7 +369,7 @@ void SMALL Basic::iscreen() {
   if (getParam(m, I_NONE))
     return;
 
-  eb_screen(m);
+  eb_screen(m - 1);
 }
 
 /***bc scr PALETTE

@@ -35,7 +35,7 @@ int eb_screen(int m) {
   }
 
   // NTSCスクリーン設定
-  if (!vs23.setMode(m - 1)) {
+  if (!vs23.setMode(m)) {
     E_ERR(IO, "cannot set screen mode");
     return -1;
   }
