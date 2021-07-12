@@ -31,6 +31,10 @@ int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h);
 pixel_t eb_get_fg_color(void);
 pixel_t eb_get_bg_color(void);
 
+int eb_mode_from_size(int *w, int *h);
+int eb_num_modes(void);
+void eb_mode_size(int m, int *w, int *h);
+
 #ifdef __cplusplus
 }
 #endif

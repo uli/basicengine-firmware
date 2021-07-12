@@ -239,4 +239,16 @@ pixel_t eb_get_bg_color(void) {
   return sc0.getBgColor();
 }
 
+int eb_mode_from_size(int *w, int *h) {
+  return vs23.modeFromSize(*w, *h);
+}
+
+void eb_mode_size(int m, int *w, int *h) {
+  return vs23.modeSize(m, *w, *h);
+}
+
+int eb_num_modes(void) {
+  return vs23.numModes();
+}
+
 } // extern "C"
