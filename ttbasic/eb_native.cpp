@@ -72,6 +72,7 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
     char *wrapper;
     asprintf(&wrapper,
              "#include <stdarg.h>"
+             "#include <stdlib.h>"
              "#include <string.h>"
              "#include <unistd.h>"
              "extern int optind;"
@@ -105,7 +106,7 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
              "        tmp = _initial_data;"
              "        memcpy(&_etext, (void *)_initial_data, &_end - &_etext);"
              "        _initial_data = tmp;"
-             "        return main(argc, args, environ);"
+             "        exit(main(argc, args, environ));"
              "}",
              name, name);
     tcc_compile_string(tcc, wrapper);
