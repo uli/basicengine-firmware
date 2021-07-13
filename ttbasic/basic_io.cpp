@@ -122,7 +122,7 @@ If `out_data` is an empty string, no data is sent before the read request.
 BString Basic::si2cr() {
   int32_t i2cAdr, rdlen;
   BString in, out;
-  char in_buf[rdlen];
+  char *in_buf;
 
   if (checkOpen())
     goto out;
@@ -139,12 +139,14 @@ BString Basic::si2cr() {
   if (out.length() && eb_i2c_write(i2cAdr, out.c_str(), out.length()) != 0)
     goto out;
 
+  in_buf = new char[rdlen];
   if (eb_i2c_read(i2cAdr, in_buf, rdlen) == 0) {
     // XXX: need a BString ctor for binary arrays
     for (int i = 0; i < rdlen; ++i) {
       in += in_buf[i];
     }
   }
+  delete[] in_buf;
 
 out:
   return in;
