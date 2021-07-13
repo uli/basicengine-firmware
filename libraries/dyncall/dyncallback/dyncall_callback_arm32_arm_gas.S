@@ -75,7 +75,7 @@ dcCallbackThunkEntry:
 	/* Return value. */
 	ldmia	%r13, {%r0, %r1}				/* Load return value in r0 and r1. */
 #if defined(DC__ABI_ARM_HF)
-	fldmiad	%r13, {%d0}						/* Same for floating point return value (if any). */
+	vldmia	%r13, {%d0}						/* Same for floating point return value (if any). */
 #endif
 
 	/* Epilog. */

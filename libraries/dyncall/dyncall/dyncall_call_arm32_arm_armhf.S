@@ -59,7 +59,7 @@ ENTRY_C(dcCall_arm32_armhf)
 	add r5,  r1, #16 /* r5 = stack args (after intreg ones) */
 
 	/* Load 16 single-precision registers (= 8 double-precision registers). */
-	fldmiad r3, {d0-d7}
+	vldmia r3, {d0-d7}
 
 	/* prep stack parameter area (includes room for spill area, callee spills if needed) */
 	sub r13, r13, r2

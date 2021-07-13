@@ -68,7 +68,7 @@ ENTRY_C(dcCall_arm32_armhf)
 	mov	r5  , r1	 /* r5 = 'args' (2nd argument is passed in r1). */
 	
 	/* Load 16 single-precision registers (= 8 double-precision registers). */
-	fldmiad	r3, {d0-d7}
+	vldmia	r3, {d0-d7}
 
 	sub	r2 , #16	
 	cmp     r2, #0
