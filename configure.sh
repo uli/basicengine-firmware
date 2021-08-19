@@ -69,9 +69,13 @@ AUTOGEN_DEPS="ttbasic/msgs_en.h $MSG_IMPLICIT_OUT ttbasic/funtbl.h $ICODE_IMPLIC
 LINK_DEPS="\$objdir/dyncall/dyncall/libdyncall_s.a"
 
 WARN_FLAGS="-Wall -Wno-unused"
-[[ "$CC" == *gcc || "$CXX" == g++ || "$CXX" == *-g++ ]] \
-  && WARN_FLAGS="$WARN_FLAGS -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation" \
-  || WARN_FLAGS="$WARN_FLAGS -Wno-c99-designator -Wno-char-subscripts"
+
+if [[ "$CC" == *gcc || "$CXX" == g++ || "$CXX" == *-g++ ]]; then
+  WARN_FLAGS="$WARN_FLAGS -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation"
+else
+  WARN_FLAGS="$WARN_FLAGS -Wno-c99-designator -Wno-char-subscripts"
+  H3_COMPILER_CFLAGS="-DNAME_MAX=255 -I\${aw_sysroot}/include/c++/8.3.0/arm-unknown-eabihf -I\${aw_sysroot}/include/c++/8.3.0"
+fi
 
 # ninja file included in all builds
 # NB: Make sure $cc, $cxx and $objdir are defined before including this!
@@ -117,12 +121,12 @@ build ttbasic/helptext_en.json | $HELPTEXT_IMPLICIT_OUT: helptext $HELPTEXT_DEPS
 
 rule dyncall_config
   command = mkdir -p \$objdir/dyncall ; cd \$objdir/dyncall ; \$
-  CC=\$cc CXX=\$cxx ../../libraries/dyncall/configure
+  CC="\$cc" CXX="\$cxx" ../../libraries/dyncall/configure
 
 build \$objdir/dyncall/Makefile.config: dyncall_config
 
 rule dyncall_build
-  command = CC=\$cc CXX=\$cxx $MAKE -C \$objdir/dyncall/dyncall
+  command = CC="\$cc" CXX="\$cxx" $MAKE -C \$objdir/dyncall/dyncall
 
 build \$objdir/dyncall/dyncall/libdyncall_s.a: dyncall_build || \$objdir/dyncall/Makefile.config
 
@@ -156,7 +160,7 @@ cxx = \$aw_cxx
 
 include build.ninja.common
 
-cflags = -O3 \$common_cflags \$warn_flags \$
+cflags = $H3_COMPILER_CFLAGS -O3 \$common_cflags \$warn_flags \$
   -DH3 -Ih3 \$common_include -DENABLE_NEON -DSTBI_NEON \$
   -U__UINT32_TYPE__ -U__INT32_TYPE__ -D__UINT32_TYPE__="unsigned int" -D__INT32_TYPE__=int
 
