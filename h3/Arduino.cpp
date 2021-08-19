@@ -48,7 +48,7 @@ static void my_exit(void) {
   fprintf(stderr, "my_exit\n");
 }
 
-int main(int argc, char **argv) {
+extern "C" int main(int argc, char **argv) {
   atexit(my_exit);
   setup();
   for (;;)
