@@ -219,5 +219,74 @@ generate_build cc $SDL_OBJDIR $SDL_SOURCES_C
 generate_build cxx $SDL_OBJDIR $SDL_SOURCES
 } >>build.ninja.sdl
 
+# ninja files for clang-tidy
+cat <<EOT >build.ninja.tidy.sdl
+cc = clang-tidy-11
+cxx = clang-tidy-11
+
+include build.ninja.common
+
+cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
+  \$common_include -DSDL -DDISABLE_NEON `sdl-config --cflags` -fcolor-diagnostics -D__x86_64__
+cxxflags = \$cflags \$common_cxxflags
+
+libs = \$common_libs `sdl-config --libs` -lm
+
+rule cc
+  command = \$cc --use-color \$in -- -MD -MF \$out.d \$cflags
+  pool = console
+
+rule cxx
+  command = \$cxx --use-color \$in -- -MD -MF \$out.d \$cxxflags
+  pool = console
+
+rule link
+  command = true
+EOT
+
+LINK_DEPS=
+{
+generate_link basic.phony $SDL_OBJDIR $SDL_SOURCES $SDL_SOURCES_C
+echo "default basic.phony"
+generate_build cc $SDL_OBJDIR $SDL_SOURCES_C
+generate_build cxx $SDL_OBJDIR $SDL_SOURCES
+} >>build.ninja.tidy.sdl
+
+cat <<EOT >build.ninja.tidy.h3
+include $H3_OSDIR/build.ninja.common
+
+objdir = $H3_OBJDIR
+cc = clang-tidy-11
+cxx = clang-tidy-11
+
+include build.ninja.common
+
+cflags = --sysroot \$aw_sysroot -O3 \$common_cflags \$warn_flags \$
+  -DH3 -Ih3 \$common_include -DENABLE_NEON -DSTBI_NEON \$
+  -U__UINT32_TYPE__ -U__INT32_TYPE__ -D__UINT32_TYPE__="unsigned int" -D__INT32_TYPE__=int -D__arm__ -DNAME_MAX=255
+
+cxxflags = \$cflags \$common_cxxflags -I/usr/include/c++/8
+
+libs = \$common_libs
+
+rule tcxx
+  command = \$cxx --use-color \$in -- -MD -MF \$out.d \$aw_cxxflags \$cxxflags
+  #pool = console
+
+rule tcc
+  command = \$cc --use-color \$in -- -MD -MF \$out.d \$aw_cflags \$cflags
+  #pool = console
+
+EOT
+
+PLATFORM_LINK_DEPS=
+{
+generate_link basic.phony $H3_OBJDIR $H3_SOURCES $H3_SOURCES_C
+echo "default basic.phony"
+generate_build tcc $H3_OBJDIR $H3_SOURCES_C
+generate_build tcxx $H3_OBJDIR $H3_SOURCES
+} >>build.ninja.tidy.h3
+
+
 echo "configuration complete"
 echo "run \"ninja -f build.ninja.h3\" or \"ninja -f build.ninja.sdl\" to compile"
