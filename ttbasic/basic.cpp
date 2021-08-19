@@ -5449,10 +5449,11 @@ void Basic::iprofile() {
 int Basic::exec(const char *filename) {
     free(listbuf);
     listbuf = NULL;
-    loadPrgText((char *)filename, NEW_ALL);
-    clp = listbuf;
-    cip = clp + icodes_per_line_desc();
-    irun(clp);
+    if (loadPrgText((char *)filename, NEW_ALL) == 0) {
+      clp = listbuf;
+      cip = clp + icodes_per_line_desc();
+      irun(clp);
+    }
     return err;
 }
 
