@@ -7,7 +7,7 @@
 
 Mouse mouse;
 
-#define MOUSE_BUF_SIZE 16
+#define MOUSE_BUF_SIZE 128
 static hid_mouse_report_t reps[MOUSE_BUF_SIZE];
 static int repidx_r = 0, repidx_w = 0;
 
