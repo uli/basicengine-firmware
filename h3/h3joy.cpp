@@ -48,6 +48,9 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
         return;
 
     uint8_t *data = rep->data;
+    for (int i = 0; i < pad->report_len; ++i) {
+        pad->report_data[i] = data[i];
+    }
 
     if (pad->report_id != -1) {
         // check report ID, then skip over it
@@ -93,21 +96,21 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
     dbg_joy("pad state %08X\n", joy.m_state);
 }
 
-void hook_usb_generic_mounted(int hcd, uint8_t dev_addr, uint8_t *report_desc, int report_len)
+void hook_usb_generic_mounted(const usb_generic_device_t *dev)
 {
-    joy.addPad(hcd, dev_addr, report_desc, report_len);
+    joy.addPad(dev);
 }
 
-void hook_usb_generic_unmounted(int hcd, uint8_t dev_addr)
+void hook_usb_generic_unmounted(const usb_generic_device_t *dev)
 {
-    joy.removePad(hcd, dev_addr);
+    joy.removePad(dev->hcd, dev->dev_addr);
 }
 
-void Joystick::addPad(int hcd, uint8_t dev_addr, uint8_t *report_desc, int report_len)
+void Joystick::addPad(const usb_generic_device_t *dev)
 {
     // Check if the pad doesn't exist already.
     for (int i = 0; i < m_pad_list.length(); ++i) {
-        if (m_pad_list[i]->hcd == hcd && m_pad_list[i]->dev_addr == dev_addr)
+        if (m_pad_list[i]->hcd == dev->hcd && m_pad_list[i]->dev_addr == dev->dev_addr)
             return;
     }
 
@@ -118,20 +121,23 @@ void Joystick::addPad(int hcd, uint8_t dev_addr, uint8_t *report_desc, int repor
     if (!pad)			// OOM
         return;
 
-    pad->hcd = hcd;
-    pad->dev_addr = dev_addr;
-    pad->report_len = report_len;
-    pad->report_desc = new uint8_t[report_len];
-    if (!pad->report_desc)	// OOM
+    pad->hcd = dev->hcd;
+    pad->dev_addr = dev->dev_addr;
+    pad->report_desc_len = dev->report_desc_len;
+    pad->report_desc = new uint8_t[dev->report_desc_len];
+    pad->report_len = dev->report_len;
+    pad->report_data = new uint8_t[dev->report_len];;
+    if (!pad->report_desc || !pad->report_data)	// OOM
         return;
 
-    memcpy(pad->report_desc, report_desc, report_len);
+    memcpy(pad->report_desc, dev->report_desc, dev->report_desc_len);
 
     if (parseReportDesc(pad))
         m_pad_list.push_back(pad);
     else {
         // some other device; we ignore it
         delete pad->report_desc;
+        delete pad->report_data;
         delete pad;
     }
 }
@@ -143,6 +149,7 @@ void Joystick::removePad(int hcd, uint8_t dev_addr)
             usb_pad *pad = m_pad_list[i];
             m_pad_list.remove(pad);
             delete pad->report_desc;
+            delete pad->report_data;
             delete pad;
             return;
         }
@@ -200,7 +207,7 @@ bool Joystick::parseReportDesc(usb_pad *pad)
     QList<int> usage_list;		// records usage tags to identify axes
 
     // parse the report descriptor
-    while (i < pad->report_len) {
+    while (i < pad->report_desc_len) {
         // assumption: the tag is short-form
         int arg_size = rd[i] & 0x3;
         int tag = rd[i] & 0xfc;
@@ -290,7 +297,6 @@ bool Joystick::parseReportDesc(usb_pad *pad)
         i += arg_size + 1;
     }
 
-    pad->report_len = (report_offset + 7) / 8;
     return true;
 }
 

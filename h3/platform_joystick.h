@@ -24,6 +24,8 @@ struct usb_pad {
   uint8_t dev_addr;
 
   uint8_t *report_desc;
+  int report_desc_len;
+  uint8_t *report_data;
   int report_len;
   int report_id;
 
@@ -33,7 +35,7 @@ struct usb_pad {
 
 class Joystick {
 friend void ::hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *data);
-friend void ::hook_usb_generic_mounted(int hcd, uint8_t dev_addr, uint8_t *report_desc, int report_desc_len);
+friend void ::hook_usb_generic_mounted(const usb_generic_device_t *dev);
 public:
   void begin() {
   }
@@ -41,7 +43,7 @@ public:
     return m_state;
   }
 
-  void addPad(int hcd, uint8_t dev_addr, uint8_t *report_desc, int report_desc_len);
+  void addPad(const usb_generic_device_t *dev);
   void removePad(int hcd, uint8_t dev_addr);
   struct usb_pad *getPad(int hcd, uint8_t dev_addr, int &index);
 
