@@ -30,10 +30,12 @@ static int get_bits(uint8_t *data, int off, int n)
         return data[off/8];
 
     int ret = 0;
+    int shift = 0;
     // XXX: better algorithm?
     while (n) {
-        ret = (ret << 1) | get_bit(data, off);
+        ret |= get_bit(data, off) << shift;
         off++;
+        shift++;
         n--;
     }
 
