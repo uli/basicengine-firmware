@@ -277,7 +277,7 @@ bool Joystick::parseReportDesc(usb_pad *pad)
                 // something that is not Data, Variable; probably Constant
                 // or Array (like a keyboard report)
                 // We ignore these, but have to account for their size.
-                report_offset += rep_bits;
+                report_offset += rep_bits * rep_count;
             }
         } else if (tag == 0x84) {	// Report ID
             // XXX: if there is more than one Report ID, we need to treat this as two devices...
