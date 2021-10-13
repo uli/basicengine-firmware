@@ -91,12 +91,20 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
     }
 
     if (axis_hat != -1) {
-        // XXX: Hat Switch is used for the D-Pad on analog controllers, but I
-        // don't know how to decode the data. It differs between controllers
-        // even though the descriptor entries are identical.
-
-        //printf("hat %x\n", get_bits(data, pad->axes[axis_hat].bit_pos,
-        //                            pad->axes[axis_hat].bit_width));
+        // Hat Switch is used for digital controls on analog controllers.
+        // XXX: This could conceivably have different formats on different
+        // controllers, but I have only encountered this one so far.
+        switch (get_bits(data, pad->axes[axis_hat].bit_pos, pad->axes[axis_hat].bit_width)) {
+            case 0: joy.m_state |= EB_JOY_UP; break;
+            case 1: joy.m_state |= EB_JOY_UP | EB_JOY_RIGHT; break;
+            case 2: joy.m_state |= EB_JOY_RIGHT; break;
+            case 3: joy.m_state |= EB_JOY_RIGHT | EB_JOY_DOWN; break;
+            case 4: joy.m_state |= EB_JOY_DOWN; break;
+            case 5: joy.m_state |= EB_JOY_DOWN | EB_JOY_LEFT; break;
+            case 6: joy.m_state |= EB_JOY_LEFT; break;
+            case 7: joy.m_state |= EB_JOY_LEFT | EB_JOY_UP; break;
+            default: break;
+        }
     }
 
     for (int i = 0; i < pad->buttons.length(); ++i) {
