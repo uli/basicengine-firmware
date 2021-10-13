@@ -70,12 +70,15 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
     // we assume they are 0 and 1.
     int axis_x = 0;
     int axis_y = 1;
+    int axis_hat = -1;
 
     for (int i = 0; i < pad->axes.length(); ++i) {
         if (pad->axes[i].usage == 0x30)		// Usage(X)
             axis_x = i;
         else if (pad->axes[i].usage == 0x31)	// Usage(Y)
             axis_y = i;
+        else if (pad->axes[i].usage == 0x39)	// Hat Switch
+            axis_hat = i;
     }
 
     if (pad->axes.length() >= 2) {
@@ -83,6 +86,15 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
         if (get_bits(data, pad->axes[axis_x].bit_pos, pad->axes[axis_x].bit_width) > 0xc0) joy.m_state |= EB_JOY_RIGHT; else joy.m_state &= ~EB_JOY_RIGHT;
         if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) < 0x40) joy.m_state |= EB_JOY_UP; else joy.m_state &= ~EB_JOY_UP;
         if (get_bits(data, pad->axes[axis_y].bit_pos, pad->axes[axis_y].bit_width) > 0xc0) joy.m_state |= EB_JOY_DOWN; else joy.m_state &= ~EB_JOY_DOWN;
+    }
+
+    if (axis_hat != -1) {
+        // XXX: Hat Switch is used for the D-Pad on analog controllers, but I
+        // don't know how to decode the data. It differs between controllers
+        // even though the descriptor entries are identical.
+
+        //printf("hat %x\n", get_bits(data, pad->axes[axis_hat].bit_pos,
+        //                            pad->axes[axis_hat].bit_width));
     }
 
     for (int i = 0; i < pad->buttons.length(); ++i) {
