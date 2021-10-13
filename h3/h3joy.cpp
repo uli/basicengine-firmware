@@ -193,6 +193,7 @@ bool Joystick::parseReportDesc(usb_pad *pad)
     uint8_t rep_count = 0;		// repeat count for the next input
     int axes_count = 0;			// number of axes found
     int buttons_count = 0;		// number of buttons found
+    int usage_page = 0;
 
     // check if this is a joystick
     // XXX: Does this really make sense? What about HID devices that don't
@@ -233,41 +234,45 @@ bool Joystick::parseReportDesc(usb_pad *pad)
                 if (rep_bits > 1) {
                     // Assume everything larger than 1 bit is an axis.
                     for (int k = 0; k < rep_count; ++k) {
-                        struct usb_pad_axis axis = {
-                            .bit_pos = report_offset,
-                            .bit_width = rep_bits,
-                            .mapped_to = axes_count++,
-                            .usage = -1,
-                        };
+                        if (usage_page == 0x01) {
+                            struct usb_pad_axis axis = {
+                                .bit_pos = report_offset,
+                                .bit_width = rep_bits,
+                                .mapped_to = axes_count++,
+                                .usage = -1,
+                            };
 
-                        if (usage_list.length() > 0) {
-                            axis.usage = usage_list.front();
-                            usage_list.pop_front();
+                            if (usage_list.length() > 0) {
+                                axis.usage = usage_list.front();
+                                usage_list.pop_front();
+                            }
+
+                            dbg_rep("axis @ %d width %d usage %02X\n", report_offset, rep_bits, axis.usage);
+
+                            pad->axes.push_back(axis);
                         }
-
-                        dbg_rep("axis @ %d width %d usage %02X\n", report_offset, rep_bits, axis.usage);
-
-                        pad->axes.push_back(axis);
                         report_offset += rep_bits;
                     }
                 } else if (rep_bits == 1) {
                     // All single bit inputs are assumed to be buttons.
                     for (int k = 0; k < rep_count; ++k) {
-                        struct usb_pad_button button = {
-                            .bit_pos = report_offset,
-                            // There are two reserved bits in our joystick bitmap
-                            // that we need to skip over.
-                            .mapped_to = buttons_count + 2,
-                        };
+                        if (usage_page == 0x09 && buttons_count < (int)sizeof(default_button_map)) {
+                            struct usb_pad_button button = {
+                                .bit_pos = report_offset,
+                                // There are two reserved bits in our joystick bitmap
+                                // that we need to skip over.
+                                .mapped_to = buttons_count + 2,
+                            };
 
-                        if (buttons_count < (int)sizeof(default_button_map))
                             button.mapped_to = default_button_map[buttons_count] - EB_JOY_FIRSTBUTTON_SHIFT;
 
-                        dbg_rep("button @ %d mapped to %d\n", report_offset, button.mapped_to);
+                            dbg_rep("button @ %d mapped to %d\n", report_offset, button.mapped_to);
 
-                        buttons_count++;
+                            buttons_count++;
 
-                        pad->buttons.push_back(button);
+                            pad->buttons.push_back(button);
+                        }
+
                         report_offset++;
                     }
                 } else {
@@ -291,6 +296,8 @@ bool Joystick::parseReportDesc(usb_pad *pad)
             usage_list.clear();
         } else if (tag == 0x08)	{	// Usage
             usage_list.push_back(arg);
+        } else if (tag == 0x04) {	// Usage page
+            usage_page = arg;
         }
 
         // skip over current tag and argument to next tag
