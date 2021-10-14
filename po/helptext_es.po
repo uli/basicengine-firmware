@@ -549,8 +549,8 @@ msgid ""
 "* `TAB(num)` (inserts spaces until the cursor is at or beyond the column "
 "`num`)"
 msgstr ""
-"* `TAB(num)` (inserta espacios hasta que el cursor está en o más allá de la"
-" columna `num`)"
+"* `TAB(num)` (inserta espacios hasta que el cursor está en o más allá de la "
+"columna `num`)"
 
 #. [Sie müssen Ausdrücke durch ein Semikolon (`;`) oder ein Komma (`,`)
 #. trennen. Wenn Sie ein Semikolon verwenden, werden die Ausdrücke ohne
@@ -617,8 +617,8 @@ msgid ""
 "height of pixel memory section, pixels [`0` to `PSIZE(2)-y-1`, default: "
 "`PSIZE(1)`]"
 msgstr ""
-"altura de la sección de memoria de píxeles, píxeles [`0` a `PSIZE(2)-y-1`,"
-" predeterminado: `PSIZE(1)`]"
+"altura de la sección de memoria de píxeles, píxeles [`0` a `PSIZE(2)-y-1`, "
+"predeterminado: `PSIZE(1)`]"
 
 #. [Lädt eine Bilddatei ganz oder teilweise in den Pixelspeicher.]
 # bulk translation
@@ -792,8 +792,8 @@ msgstr "nombre del programa BASIC"
 # bulk translation
 msgid "font (encoding) used for UTF-8 conversion [`0` to `{NUM_FONTS_m1}`]"
 msgstr ""
-"fuente (codificación) utilizada para la conversión UTF-8 [`0` a `"
-"{NUM_FONTS_m1} `]"
+"fuente (codificación) utilizada para la conversión UTF-8 [`0` a "
+"`{NUM_FONTS_m1} `]"
 
 #. [Wenn Sie den Parameter `FONT` angeben, konvertiert `LOAD` das Programm von
 #. der Einzelbyte-Codierung für diese Schriftart in UTF-8. Verwenden Sie diese
@@ -1150,8 +1150,8 @@ msgid ""
 "Position of first occurence of `needle$` (starting with `0`), or `-1` if it "
 "could not be found."
 msgstr ""
-"Posición de la primera aparición de `needle$` (comenzando con `0`), o`-1` "
-"si no se pudo encontrar."
+"Posición de la primera aparición de `needle$` (comenzando con `0`), o`-1` si"
+" no se pudo encontrar."
 
 #. [HINWEIS: Die Bedeutung des Rückgabewerts unterscheidet sich von anderen
 #. BASIC-Implementierungen, bei denen "0" im Allgemeinen angibt, dass die
@@ -1545,8 +1545,8 @@ msgid ""
 "The error code is passed to the handler in `RET(0)`, and the line number in "
 "`RET(1)`."
 msgstr ""
-"El código de error se pasa al controlador en `RET(0) ', y el número de "
-"línea en `Ret (1) `."
+"El código de error se pasa al controlador en `RET(0) ', y el número de línea"
+" en `RET(1)`."
 
 #. [Wenn ein Fehler von einem Applet weitergeleitet wurde, das mit "EXEC"
 #. gestartet wurde, wird die Zeilennummer des Applets, in dem der Fehler
@@ -2120,8 +2120,7 @@ msgstr "ancho de ventana, píxeles [`9` a `PSIZE(0)-wx` (predeterminado)]"
 #. [Fensterhöhe, Pixel [`0` a `PSIZE(1)-wy` (Standard)]]
 # bulk translation
 msgid "window height, pixels [`0` to `PSIZE(1)-wy` (default)]"
-msgstr ""
-"altura de la ventana, píxeles [`0` a `PSIZE(1)-wy` (predeterminado)]"
+msgstr "altura de la ventana, píxeles [`0` a `PSIZE(1)-wy` (predeterminado)]"
 
 #. [* Die Attribute des Befehls "BG" können in beliebiger Reihenfolge
 #. angegeben
@@ -2282,8 +2281,8 @@ msgstr ""
 msgid ""
 "sprite priority in relation to background layers [`0` to `{MAX_BG_m1}`]"
 msgstr ""
-"prioridad de los sprites en relación con las capas de fondo [`0` a `"
-"{MAX_BG_m1} `]"
+"prioridad de los sprites en relación con las capas de fondo [`0` a "
+"`{MAX_BG_m1} `]"
 
 #. [Drehwinkel in Grad [Standard "0"]]
 # bulk translation
@@ -3057,8 +3056,8 @@ msgid ""
 "* `6`: Power-on cursor color [`0` to `255`] + Sets the cursor color the "
 "system defaults to at power-on."
 msgstr ""
-"* `6`: Color del cursor de encendido [`0` a `255`] + Establece el color del"
-" cursor que el sistema tiene por defecto al encender."
+"* `6`: Color del cursor de encendido [`0` a `255`] + Establece el color del "
+"cursor que el sistema tiene por defecto al encender."
 
 #. [* `7`: Summer-Lautstärke [`0` bis `15` (Standard)] + Legt die Lautstärke
 #. der" Summer "-Sound-Engine fest, die unter anderem auf den Start-Jingle
@@ -3109,8 +3108,8 @@ msgid ""
 "(640x480 DVI) or `6` + (1920x1200 HDMI). + It is necessary to save the "
 "configuration and reboot the system for this option to take effect."
 msgstr ""
-"* `10`: Modo de pantalla física (solo plataforma H3) [`0` (predeterminado) "
-"a `6`] + Establece la resolución de la pantalla física: + `0` (1920x1080 "
+"* `10`: Modo de pantalla física (solo plataforma H3) [`0` (predeterminado) a"
+" `6`] + Establece la resolución de la pantalla física: + `0` (1920x1080 "
 "HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3` + (1024x768 DVI), `4` "
 "(800x600 DVI), `5` (640x480 DVI) o `6` + (1920x1200 HDMI). + Es necesario "
 "guardar la configuración y reiniciar el sistema para que esta opción surta "
@@ -3242,8 +3241,8 @@ msgid ""
 "Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1) depending"
 " on whether the entry is a directory itself."
 msgstr ""
-"También devuelve el tamaño de la entrada en `RET(0)` y `0` o `1` en RET(1)"
-" dependiendo de si la entrada es un directorio en sí."
+"También devuelve el tamaño de la entrada en `RET(0)` y `0` o `1` en RET(1) "
+"dependiendo de si la entrada es un directorio en sí."
 
 #. [Ein Fehler wird generiert, wenn `dir_num` nicht geöffnet ist oder kein
 #. Verzeichnis ist.]
@@ -3696,8 +3695,8 @@ msgid ""
 "Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the "
 "number of components in `RET(2)`."
 msgstr ""
-"Devuelve el ancho en píxeles en `RET(0)`, la altura en `RET(1)` y el "
-"número de componentes en `RET(2)`."
+"Devuelve el ancho en píxeles en `RET(0)`, la altura en `RET(1)` y el número "
+"de componentes en `RET(2)`."
 
 #. [Dieser Befehl funktioniert nicht mit PCX-Dateien.]
 # bulk translation
@@ -5462,8 +5461,8 @@ msgid ""
 "`ATN()` calculates the principal value of the arc tangent of `x`; that is "
 "the value whose tangent is `x`."
 msgstr ""
-"`ATN()` calcula el valor principal del arco tangente de `x`; ese es el "
-"valor cuya tangente es `x`."
+"`ATN()` calcula el valor principal del arco tangente de `x`; ese es el valor"
+" cuya tangente es `x`."
 
 #. [Der Hauptwert der Bogen-Tangente von "x" im Bogenmaß.]
 # bulk translation
@@ -5958,8 +5957,8 @@ msgid ""
 "volume envelope\t[characters from `CHR$(0)` to `CHR$(15)`, default: constant"
 " volume]"
 msgstr ""
-"envolvente de volumen [caracteres de `CHR$(0)` a `CHR$(15)`, "
-"predeterminado: volumen constante]"
+"envolvente de volumen [caracteres de `CHR$(0)` a `CHR$(15)`, predeterminado:"
+" volumen constante]"
 
 #. [Der Maximalwert von "Periode" hängt vom BASIC-Motortyp ab. Es ist 320 für
 #. den Spielaufbau und 160 für den Netzwerkaufbau.]
@@ -6548,8 +6547,7 @@ msgstr ""
 # bulk translation
 msgid "left boundary of the text window, in characters [`0` to `CSIZE(0)-1`]"
 msgstr ""
-"límite izquierdo de la ventana de texto, en caracteres [`0` a `CSIZE(0) "
-"-1`]"
+"límite izquierdo de la ventana de texto, en caracteres [`0` a `CSIZE(0)-1`]"
 
 #. [Obergrenze des Textfensters in Zeichen [`0` a `CSIZE(1)-1`]]
 # bulk translation
@@ -6982,8 +6980,8 @@ msgid ""
 "understood RGB format, and can also help with programs that need to work "
 "with different color palettes."
 msgstr ""
-"RGB() se puede utilizar para calcular valores de color de hardware a partir"
-" del formato RGB más fácil de entender y también puede ayudar con los "
+"RGB() se puede utilizar para calcular valores de color de hardware a partir "
+"del formato RGB más fácil de entender y también puede ayudar con los "
 "programas que necesitan trabajar con diferentes paletas de colores."
 
 #. [YUV-Farbwert]
@@ -7187,8 +7185,8 @@ msgstr ""
 msgid ""
 "end of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]"
 msgstr ""
-"final de la región de la pantalla, coordenada X, caracteres [`x1 + 1` a `"
-"CSIZE(0)-1`]"
+"final de la región de la pantalla, coordenada X, caracteres [`x1 + 1` a "
+"`CSIZE(0)-1`]"
 
 #. [Ende des Bildschirmbereichs, Y-Koordinate, Zeichen [`y1 + 1` a `CSIZE(1)
 #. -1`]]
@@ -7196,8 +7194,8 @@ msgstr ""
 msgid ""
 "end of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]"
 msgstr ""
-"final de la región de la pantalla, coordenada Y, caracteres [`y1 + 1` a `"
-"CSIZE(1)-1`]"
+"final de la región de la pantalla, coordenada Y, caracteres [`y1 + 1` a "
+"`CSIZE(1)-1`]"
 
 #. [Richtung]
 # bulk translation
@@ -7467,3 +7465,839 @@ msgstr ""
 "De forma predeterminada, se realiza un blit opaco, ignorando el canal alfa "
 "del área fuente. Para habilitar la combinación alfa, se debe agregar "
 "\"ALPHA\" al final."
+
+#. [*failed*]
+# from Argos
+msgid "* Memory at `addr` must allow byte-wise access."
+msgstr "* La memoria en `addr` debe permitir el acceso directo."
+
+#. [Fensterkoordinaten und Pixel [`0 '(Standard) A` PSIZE (1) -1`]]
+# from Google
+msgid "window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]"
+msgstr ""
+"coordenadas de ventana Y, píxeles [`0 '(predeterminado) a `PSIZE(1)-1`]"
+
+#. [* `3`: Luminanz-Tiefpassfilter + Diese Option aktiviert (` 1`) oder
+#. deaktiviert (`0`, Standard) den Videoluminanz-Tiefpassfilter. Die
+#. empfohlenen Einstellungen hängen von den Eigenschaften des verwendeten
+#. Anzeigegeräts ab. + Viele neuere Fernseher können mit hohen Auflösungen gut
+#. umgehen. Bei diesen Geräten wird empfohlen, den Tiefpassfilter
+#. auszuschalten, um eine übersichtlichere Anzeige zu erzielen. + Bei anderen
+#. Fernsehgeräten (normalerweise älter) können hochauflösende Bilder zu
+#. übermäßigem Farbverblassen ("Regenbogen" -Effekt) oder Flackern führen. Bei
+#. diesen Geräten wird empfohlen, den Tiefpassfilter zu aktivieren, um diese
+#. Effekte auf Kosten der Schärfe zu verringern.]
+# bulk translation
+msgid ""
+"* `3`: Luminance low-pass filter + This option enables (`1`) or disables "
+"(`0`, default) the video luminance low-pass filter. The recommended setting "
+"depends on the properties of the display device used. + Many recent TVs are "
+"able to handle high resolutions well; with such devices, it is recommended "
+"to turn the low-pass filter off to achieve a more crisp display. + On other "
+"(usually older) TVs, high-resolution images may cause excessive color "
+"artifacting (a \"rainbow\" effect) or flicker; with such devices, it is "
+"recommended to turn the low-pass filter on to reduce these effects, at the "
+"expense of sharpness."
+msgstr ""
+"* `3`: Filtro de paso bajo de luminancia + Esta opción habilita (`1`) o "
+"deshabilita (`0`, predeterminado) el filtro de paso bajo de luminancia de "
+"video. La configuración recomendada depende de las propiedades del "
+"dispositivo de visualización utilizado. + Muchos televisores recientes "
+"pueden manejar bien altas resoluciones; con estos dispositivos, se "
+"recomienda apagar el filtro de paso bajo para lograr una visualización más "
+"nítida. + En otros televisores (por lo general más antiguos), las imágenes "
+"de alta resolución pueden provocar una alteración excesiva del color (un "
+"efecto de \"arco iris\") o parpadeo; con estos dispositivos, se recomienda "
+"activar el filtro de paso bajo para reducir estos efectos, a expensas de la "
+"nitidez."
+
+#. [Wert, der neu zugewiesen werden soll]
+# from Google
+msgid "value to be re-mapped"
+msgstr "valor para ser re-asignado"
+
+#. [Neu zugewiesener Wert.]
+# bulk translation
+msgid "Re-mapped value."
+msgstr "Valor reasignado."
+
+#. [Gibt den Unicode-Code für das erste Zeichen in einem Kettenausdruck
+#. zurück.]
+# from Google
+msgid ""
+"Returns the Unicode codepoint for the first character in a string "
+"expression."
+msgstr ""
+"Devuelve el codigo unicode para el primer carácter en una expresión de "
+"cadena."
+
+msgid "Unicode codepoint of the first character."
+msgstr "Punto de código Unicode del primer carácter."
+
+#. [* Im Gegensatz zu Ihren Kollegen in Single-Byte-grundlegenden
+#. Implementierungen kann diese Funktion die Werte höher als 255 zurückgeben.]
+# from Argos
+msgid ""
+"* Unlike its counterparts in single-byte BASIC implementations, this "
+"function may return values larger than 255."
+msgstr ""
+"* A diferencia de sus contrapartes en implementaciones BASIC de un solo "
+"byte, esta función puede devolver valores superiores a 255."
+
+#. [* Verwenden Sie zum Zugriff auf einzelne Bytes ohne UTF-8-Dekodierung die
+#. Syntax 'A $ [Num] `.]
+# from Google
+msgid ""
+"* To get access to individual bytes without UTF-8 decoding, use the "
+"`a$[num]` syntax."
+msgstr ""
+"* Para obtener acceso a bytes individuales sin decodificación UTF-8, use la "
+"sintaxis `a$[num]`."
+
+#. [Gibt die Anzahl der Bytes in einer Bytekette zurück.]
+# from Google
+msgid "Returns the number of bytes in a byte string."
+msgstr "Devuelve el número de bytes en una cadena de bytes."
+
+#. [Länge in Bytes.]
+# from Argos
+msgid "Length in bytes."
+msgstr "Longitud en bytes."
+
+#. [`GOSUB` legt die aktuelle Position im Programm auf einen Stapel und
+#. springt
+#. dann zur angegebenen Position. Dann ist es möglich, nach dem Befehl `GOSUB`
+#. mit` RETURN` zur Anweisung zurückzukehren.]
+# bulk translation
+msgid ""
+"`GOSUB` puts the current position in the program on a stack and then jumps "
+"to the given location. It is then possible to return to the instruction "
+"after the `GOSUB` command by using `RETURN`."
+msgstr ""
+"`GOSUB` coloca la posición actual en el programa en una pila y luego salta a"
+" la ubicación dada. Entonces es posible volver a la instrucción después del "
+"comando `GOSUB` usando `RETURN`."
+
+#. [Der Ereignishandler erhält die Kanalnummer, die als numerisches Argument
+#. beendet ist.]
+# from Google
+msgid ""
+"The event handler will receive the number of the channel that has ended as a"
+" numeric argument."
+msgstr ""
+"El manejador de eventos recibirá el número del canal que ha finalizado como "
+"un argumento numérico."
+
+#. [Wenn ein mit "ON ERROR" konfigurierter Controller einen Fehler erkennt,
+#. kann die Ausführung nach der Anweisung fortgesetzt werden, die den Fehler
+#. mit "RESUME" verursacht hat.]
+# bulk translation
+msgid ""
+"When an error has been caught by a handler set up using `ON ERROR`, it is "
+"possible to resume execution after the instruction that caused the error "
+"using `RESUME`."
+msgstr ""
+"Cuando un controlador configurado con `ON ERROR` detecta un error, es "
+"posible reanudar la ejecución después de la instrucción que causó el error "
+"con `RESUME`."
+
+#. [Alternative Syntax `cwd $ ()` ist mit früheren Versionen des Basismotors
+#. kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `CWD$()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `CWD$()` es compatible con versiones anteriores del "
+"Engine BASIC."
+
+#. [Die Schlüsselcodes sind in der folgenden Tabelle aufgeführt. Die
+#. Verfügbarkeit jedes Schlüssels hängt von der Engine BASIC-Plattform ab.]
+# bulk translation
+msgid ""
+"The key codes are detailed in the table below. Availability of each key "
+"depends on the Engine BASIC platform."
+msgstr ""
+"Los códigos de clave se detallan en la siguiente tabla. La disponibilidad de"
+" cada clave depende de la plataforma Engine BASIC."
+
+#. [ Schlüsselcode]
+# bulk translation
+msgid " Key\t\t\t"
+msgstr " Clave\t\t\t"
+
+#. [Schlüsselcode]
+# from Argos
+msgid " Key code\t"
+msgstr " Código clave\t"
+
+#. [ 105]
+# bulk translation
+msgid " 105\t\t"
+msgstr " 105\t\t"
+
+#. [* [[unklar]] Einige Schlüsseldefinitionen sind nicht genau definiert. Die
+#. Taste kbd: [Pipe2] gehört zu einer US-Layout-Tastatur, US-Layouts haben
+#. jedoch keine kbd: []
+# bulk translation
+msgid ""
+"* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key"
+" is documented as belonging to a US layout keyboard, but US layouts do not "
+"have a separate kbd:["
+msgstr ""
+"* [[poco claro]] Algunas definiciones clave no están bien definidas. La "
+"clave kbd:[Pipe2] está documentada como perteneciente a un teclado de "
+"diseño de EE. UU., pero los diseños de EE. UU. no tienen un kbd:["
+
+#. [] Schlüsselcode.]
+# bulk translation
+msgid "] key."
+msgstr "] clave."
+
+#. [* eine einzelne Zeichenfolge für normale Schlüssel,]
+# bulk translation
+msgid "* a single-character string for regular keys,"
+msgstr "* una cadena de un solo carácter para claves normales,"
+
+#. [* eine zweistellige Zeichenfolge für erweiterte Schlüssel.]
+# bulk translation
+msgid "* a two-character string for extended keys."
+msgstr "* una cadena de dos caracteres para claves extendidas."
+
+#. [Schlüsselcode [`0` bis` 65535`]]
+# bulk translation
+msgid "Key code [`0` to `65535`]"
+msgstr "Código de clave [`0` a `65535`]"
+
+#. [Die alternative Syntax `inkey ()` ist mit früheren Versionen des
+#. Basismotors kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `INKEY()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `INKEY()` es compatible con versiones anteriores del"
+" Engine BASIC."
+
+#. [Absolute horizontale Koordinate des Mauszeigers.]
+# from Google
+msgid "Absolute horizontal coordinate of the mouse cursor."
+msgstr "Coordenada horizontal absoluta del cursor del ratón."
+
+#. [X Koordinaten des Mauszeigers, von 0 A` PSIZE (0) -1`]
+# from Google
+msgid "X coordinate of mouse cursor, from `0` to `PSIZE(0)-1`"
+msgstr "X coordenada del cursor del ratón, de `0` a `PSIZE(0)-1`"
+
+#. [Absolute vertikale Koordinate des Mauszeigers.]
+# from Google
+msgid "Absolute vertical coordinate of the mouse cursor."
+msgstr "Coordenada vertical absoluta del cursor del ratón."
+
+#. [Und Koordinate des Mauszeigers, von `0 a` psize (1) -1`]
+# from Google
+msgid "Y coordinate of mouse cursor, from `0` to `PSIZE(1)-1`"
+msgstr "Y coordenada del cursor del ratón, de `0 a `PSIZE(1)-1`"
+
+#. [Gibt einen Wert zurück, der die Menge der horizontalen Bewegung der Maus
+#. vom letzten Anruf auf "Mousedx" darstellt.]
+# from Google
+msgid ""
+"Returns a value representing the amount of horizontal movement of the mouse "
+"since the last call to `MOUSEDX`."
+msgstr ""
+"Devuelve un valor que representa la cantidad de movimiento horizontal del "
+"ratón desde la última llamada a `MOUSEDX`."
+
+#. [Gibt einen Wert zurück, der die Menge der vertikalen Bewegung der Maus
+#. seit dem letzten Anruf zu "Mousdy" darstellt.]
+# from Google
+msgid ""
+"Returns a value representing the amount of vertical movement of the mouse "
+"since the last call to `MOUSEDY`."
+msgstr ""
+"Devuelve un valor que representa la cantidad de movimiento vertical del "
+"ratón desde la última llamada a `MOUSEDY`."
+
+#. ["1" Wenn Sie die Maustaste halten, `0`]
+# from Argos
+msgid "`1` if the mouse button is held, `0` if it is not."
+msgstr "`1` si se mantiene el botón del ratón, `0` si no lo es."
+
+#. [Maustaste]
+# from Argos
+msgid " Mouse button"
+msgstr " Botón de ratón"
+
+#. [Linker Knopf]
+# from Argos
+msgid " Left button"
+msgstr " Botón izquierdo"
+
+#. [Rechter Knopf]
+# from Argos
+msgid " Right button"
+msgstr " Botón derecho"
+
+#. [Halbknopf]
+# from Argos
+msgid " Middle button"
+msgstr " Botón medio"
+
+#. [Andere Schaltflächen, die diese angegeben sind, sind möglicherweise
+#. verfügbar, wenn die angeschlossene Maus mehr als drei Tasten hat.]
+# from Argos
+msgid ""
+"Other buttons than the ones specified above may be available if the mouse "
+"connected has more than three buttons."
+msgstr ""
+"Otros botones que los especificados anteriormente pueden estar disponibles "
+"si el ratón conectado tiene más de tres botones."
+
+#. [Bewegung des Mausrades.]
+# from Argos
+msgid "Movement of the mouse wheel."
+msgstr "Movimiento de la rueda del ratón."
+
+#. [Gibt einen Wert zurück, der die Bewegung des Mausrads vom letzten Anruf
+#. bis zum "Mausrad" darstellt.]
+# from Argos
+msgid ""
+"Returns a value representing the movement of the mouse wheel since the last "
+"call to `MOUSEWHEEL`."
+msgstr ""
+"Devuelve un valor que representa el movimiento de la rueda del ratón desde "
+"la última llamada a `MOUSEWHEEL`."
+
+#. [Mausradbewegung, Klicks]
+# from Argos
+msgid "movement of mouse wheel, clicks"
+msgstr "movimiento de la rueda del ratón, clics"
+
+#. [Diese Funktion ist nicht auf SDL-Plattformen implementiert.]
+# from Argos
+msgid "This function is not implemented on SDL platforms."
+msgstr "Esta función no se implementa en las plataformas SDL."
+
+#. [Alternative Syntax `sread ()` ist mit früheren Versionen des Basismotors
+#. kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `SREAD()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `SREAD()` es compatible con versiones anteriores del"
+" Engine BASIC."
+
+#. [Alternative Syntax `sready ()` ist mit früheren Versionen des Basismotors
+#. kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `SREADY()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `SREADY()` es compatible con versiones anteriores "
+"del Engine BASIC."
+
+#. [Macht, _e_ a anzuheben.]
+# from Argos
+msgid "Power to raise _e_ to."
+msgstr "Poder para elevar _e_ a."
+
+#. [Modulbetreiber.]
+# bulk translation
+msgid "Modulus operator."
+msgstr "Operador de módulo."
+
+#. [Gibt einen Zeiger auf ein natives Symbol zurück.]
+# from Argos
+msgid "Returns a pointer to a native symbol."
+msgstr "Devuelve un puntero a un símbolo nativo."
+
+#. [Name eines nativen Symbols]
+# from Argos
+msgid "name of a native symbol"
+msgstr "nombre de un símbolo nativo"
+
+#. [Zeiger auf das angeforderte Symbol oder 0, wenn es nicht gefunden wird.]
+# from Google
+msgid "Pointer to requested symbol, or 0 if not found."
+msgstr "Puntero al símbolo solicitado, o 0 si no se encuentra."
+
+#. [Notengeschwindigkeit [`0` bis` 1` (Standard)]]
+# bulk translation
+msgid "note velocity [`0` to `1` (default)]"
+msgstr "velocidad de nota [`0` a `1` (predeterminado)]"
+
+#. [Teilzeichenfolge der Zeichen "num" oder weniger.]
+# bulk translation
+msgid "Substring of `num` characters or less."
+msgstr "Subcadena de caracteres `num` o menos."
+
+#. [Gibt eine bestimmte Anzahl von linken Bytes in einer Bytekette zurück.]
+# from Argos
+msgid "Returns a specified number of leftmost bytes in a byte string."
+msgstr ""
+"Devuelve un número específico de bytes izquierdos en una cadena de byte."
+
+#. [Ja `L $` ist kürzer als `num` bytes, der Rückgabewert ist` l $ `.]
+# from Argos
+msgid "If `l$` is shorter than `num` bytes, the return value is `l$`."
+msgstr "Si `l$` es más corto que `num` bytes, el valor de retorno es `l$`."
+
+#. [Gibt eine bestimmte Anzahl von geraden Bytes in einer Bytekette zurück.]
+# from Argos
+msgid "Returns a specified number of rightmost bytes in a byte string."
+msgstr "Devuelve un número específico de bytes derecho en una cadena de byte."
+
+#. [Ja `R $` ist kürzer als `num` Bytes, der Rückgabewert ist" R $ ".]
+# from Argos
+msgid "If `r$` is shorter than `num` bytes, the return value is `r$`."
+msgstr "Si `r$` es más corto que `num` bytes, el valor de retorno es `r$`."
+
+#. [Teilzeichenfolge der Zeichen "len" oder weniger.]
+# bulk translation
+msgid "Substring of `len` characters or less."
+msgstr "Subcadena de caracteres `len` o menos."
+
+#. [Gibt einen Teil einer Kette von Bytes zurück.]
+# from Google
+msgid "Returns part of a byte string."
+msgstr "Devuelve parte de una cadena de bytes."
+
+#. [Position des ersten Bytes im Subcaden, das zurückgegeben wird.]
+# from Google
+msgid "position of the first byte in the substring being returned"
+msgstr "Posición del primer byte en la subcadena que se devuelve."
+
+#. [Anzahl der Bytes in der SubCADA [Default: `bluten (M $) - Home`]]
+# from Google
+msgid "number of bytes in the substring [default: `BLEN(m$)-start`]"
+msgstr ""
+"Número de bytes en la subcadena [Predeterminado: `BLEN(m$)-start`]"
+
+#. [* Ja `M $` ist kürzer als "len" Bytes, der Rückgabewert ist "M $".]
+# from Google
+msgid "* If `m$` is shorter than `len` bytes, the return value is `m$`."
+msgstr "* Si `m$` es más corto que `len` bytes, el valor de retorno es `m$`."
+
+#. [* Im Gegensatz zu anderen grundlegenden Implementierungen ist `Start``
+#. Null-basiert, das heißt, das erste Byte ist 0, nicht 1.]
+# from Argos
+msgid ""
+"* Unlike with other BASIC implementations, `start` is zero-based, i.e. the "
+"first byte is 0, not 1."
+msgstr ""
+"* A diferencia de otras implementaciones BASIC, `start` es basado en cero, "
+"es decir, el primer byte es 0, no 1."
+
+#. [Gibt eine Zeichenfolge zurück, die die UTF-8-Kodierung des angegebenen
+#. Unicode-Codepunkts enthält.]
+# from Argos
+msgid ""
+"Returns a string containing the UTF-8 encoding of the specified Unicode "
+"codepoint."
+msgstr ""
+"Devuelve una cadena que contiene la codificación UTF-8 del punto de código "
+"Unicode especificado."
+
+#. [* Um eine Kette eines Byte-Werts ohne UTF-8-Kodierung zu erstellen,
+#. verwenden Sie die Syntax `bei $ = [Byte]'.]
+# from Google
+msgid ""
+"* To construct string from a byte value without UTF-8 encoding, use the `a$ "
+"= [byte]` syntax."
+msgstr ""
+"* Para construir una cadena de un valor de byte sin la codificación UTF-8, "
+"use la sintaxis `a$ = [byte]`."
+
+#. [Kette zu konvertieren]
+# from Google
+msgid "string to convert"
+msgstr "cadena para convertir"
+
+#. [Wert von S $ `mit allen Buchstaben, die durch seine winzigen Äquivalenten
+#. ersetzt werden.]
+# from Argos
+msgid ""
+"Value of `s$` with all letters replaced with their lowercase equivalents."
+msgstr ""
+"Valor de `s$` con todas las letras sustituidas por sus equivalentes de "
+"minúscula."
+
+#. [Konvertieren Sie die Kette in Großbuchstaben.]
+# from Google
+msgid "Converts string to all-uppercase letters."
+msgstr "Convierte la cadena a las letras mayúsculas."
+
+#. [Wert von s $ `mit allen Buchstaben, die durch seine Großbuchstaben ersetzt
+#. werden.]
+# from Argos
+msgid ""
+"Value of `s$` with all letters replaced with their uppercase equivalents."
+msgstr ""
+"Valor de `s$` con todas las letras sustituidas por sus equivalentes de "
+"mayúscula."
+
+#. [Gibt den Wert einer Umgebungsvariablen zurück.]
+# from Argos
+msgid "Returns the value of an environment variable."
+msgstr "Devuelve el valor de una variable de entorno."
+
+#. [Name der Umgebungsvariablen]
+# from Google
+msgid "name of environment variable"
+msgstr "nombre de la variable de entorno"
+
+#. [Wert der angegebenen Umgebungsvariablen.]
+# from Argos
+msgid "Value of the specified environment variable."
+msgstr "Valor de la variable de entorno especificada."
+
+#. [Schreiben Sie eine Byte-Kette in eine Speicheradresse.]
+# from Argos
+msgid "Write a byte string to an address in memory."
+msgstr "Escribe una cadena de byte a una dirección en memoria."
+
+#. [Daten schriftlich.]
+# from Argos
+msgid "data to be written"
+msgstr "datos por escrito"
+
+#. [* Wenn Sie eine Zeichenfolge schreiben, die von einer Funktion C verwendet
+#. wird, müssen Sie sicherstellen, dass Sie am Ende ein '0'-Byte hinzufügen,
+#. zum Beispiel `" Text "+ CHR $ (0)`.]
+# from Argos
+msgid ""
+"* When writing a string that is to be used by a C function you have to make "
+"sure to add a `0`-byte at the end, e.g. `\"text\" + CHR$(0)`."
+msgstr ""
+"* Al escribir una cadena que va a ser utilizada por una función C tienes que"
+" asegurarte de añadir un `0`-byte al final, por ejemplo `\"text\" + "
+"CHR$(0)`."
+
+#. [Alternative Syntax `free ()` ist mit früheren Versionen des Basismotors
+#. kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `FREE()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `FREE()` es compatible con versiones anteriores del "
+"Engine BASIC."
+
+#. [Lesen Sie eine Byte-Datenzeichenfolge einer Speicheradresse.]
+# from Argos
+msgid "Reads a byte string of data from an address in memory."
+msgstr "Lee una cadena de datos byte de una dirección en memoria."
+
+#. [Anzahl der Bytes zum Lesen oder 0]
+# from Argos
+msgid "number of bytes to read, or 0"
+msgstr "número de bytes a leer, o 0"
+
+#. [Byte-Kette, die "Länge" -Datenbytes enthält, die in 'addr beginnen`.]
+# from Google
+msgid "Byte string containing `length` bytes of data starting at `addr`."
+msgstr ""
+"Cadena de byte que contiene `length` bytes de datos que comienzan en "
+"`addr`."
+
+#. [* Wenn "Länge" ein 0 'ist, werden die Daten gelesen, bis ein "0" Byte.Une
+#. gefunden wird, um C-Strangs zu lesen.]
+# from Google
+msgid ""
+"* When `length` is `0`, data is read until a `0`-byte is encountered. Use "
+"this to read C-style strings."
+msgstr ""
+"* Cuando `length` es `0`, los datos se leen hasta que se encuentre un "
+"byte `0`. Use esto para leer cadenas de estilo C."
+
+#. [Starten Sie das System neu.]
+# from Google
+msgid "Reboots the system."
+msgstr "Reinicia el sistema."
+
+#. [Es wurde nur auf der H3-Plattform implementiert.]
+# from Argos
+msgid "Only implemented on the H3 platform."
+msgstr "Sólo se implementó en la plataforma H3."
+
+msgid "Sets the CPU clock frequency."
+msgstr "Establece la frecuencia del reloj CPU."
+
+#. [* Nur auf der H3-Plattform implementiert.]
+# from Google
+msgid "* Only implemented on the H3 platform."
+msgstr "* Solo implementado en la plataforma H3."
+
+#. [* Es erzeugt keinen Fehler auf Plattformen, die es nicht zugeben.]
+# from Google
+msgid "* Will not generate an error on platforms that do not support it."
+msgstr "* No generará un error en las plataformas que no lo admiten."
+
+#. [Installieren Sie ein verpacktes Modul in das Systemmodulverzeichnis.]
+# from Google
+msgid "Installs a packaged module to the system module directory."
+msgstr "Instala un módulo empaquetado al directorio del módulo del sistema."
+
+#. [Name einer Verpackungsmoduldatei]
+# from Argos
+msgid "name of a packaged module file"
+msgstr "nombre de un archivo de módulo empaquetado"
+
+#. [Laden Sie ein Modul aus dem Systemmodulverzeichnis.]
+# from Argos
+msgid "Loads a module from the system module directory."
+msgstr "Carga un módulo del directorio del módulo del sistema."
+
+#. [Name eines installierten Moduls]
+# from Argos
+msgid "name of an installed module"
+msgstr "nombre de un módulo instalado"
+
+#. [Zeigt die Namen aller derzeit geladenen Module an.]
+# from Argos
+msgid "Shows the names of all modules currently loaded."
+msgstr "Muestra los nombres de todos los módulos actualmente cargados."
+
+#. [Stellt sicher, dass ein bestimmtes Modul geladen wird.]
+# from Google
+msgid "Ensures that a given module is loaded."
+msgstr "Asegura que se cargue un módulo dado."
+
+#. [Name des Moduls]
+# from Argos
+msgid "module name"
+msgstr "nombre del módulo"
+
+#. [Prüfen Sie, ob ein Modul namens `module_name` geladen wurde.Wenn nicht,
+#. sucht es nach dem Modul in `/ sys / modules / module_name` und es lädt sie
+#. auf.Wenn kein Modul gefunden wird, erzeugt es einen Fehler.]
+# from Argos
+msgid ""
+"Checks if a module called `module_name` has alredy been loaded. If not, it "
+"will search for the module in `/sys/modules/module_name` and load it. If no "
+"module is found, it will generate an error."
+msgstr ""
+"Revisa si se ha cargado un módulo llamado `module_name`. Si no, buscará el "
+"módulo en `/sys/modules/module_name` y lo cargará. Si no se encuentra ningún"
+" módulo, generará un error."
+
+#. [Das Verhalten von '#Require' unterscheidet sich von anderen grundlegenden
+#. Befehlen.Es läuft, sobald er vom Dolmetscher gesehen wird, zum Beispiel
+#. beim Laden eines Programms.]
+# from Argos
+msgid ""
+"The behavior of `#REQUIRE` differs from that of other BASIC commands. It is "
+"executed as soon as it is spotted by the interpreter, for instance when "
+"loading a program."
+msgstr ""
+"El comportamiento de `#REQUIRE` difiere del de otros comandos BASIC. Se "
+"ejecuta tan pronto como es visto por el intérprete, por ejemplo al cargar un"
+" programa."
+
+#. [Dies bedeutet, dass beim Laden eines Programms ein Fehler erzeugt wird,
+#. wenn das angegebene Modul nicht gefunden wird.]
+# from Argos
+msgid ""
+"This means that `#REQUIRE` will already generate an error when loading a "
+"program if the specified module cannot be found."
+msgstr ""
+"Esto significa que `#REQUIRE` ya generará un error al cargar un programa si "
+"no se puede encontrar el módulo especificado."
+
+#. [Wenn Sie während des normalen Flusses des Programms läuft, werden Sie
+#. nichts tun.]
+# from Argos
+msgid ""
+"When executed during normal program flow, `#REQUIRE` will not do anything."
+msgstr ""
+"Cuando se ejecute durante el flujo normal del programa, `#REQUIRE` no hará "
+"nada."
+
+#. [Quellnummer]
+# from Google
+msgid "font number"
+msgstr "número de fuente"
+
+#. [Quellenname]
+# from Argos
+msgid "font name"
+msgstr "nombre de fuente"
+
+#. [Quellbreite (Pixel)]
+# from Argos
+msgid "font width (pixels)"
+msgstr "ancho de fuente (pixels)"
+
+#. [Höhe des Brunnens (Pixel)]
+# from Argos
+msgid "font height (pixels)"
+msgstr "altura de la fuente (pixels)"
+
+#. [Gibt den Index der ausgewählten Quelle in `ret (0)` zurück.]
+# from Argos
+msgid "Returns the index of the selected font in `RET(0)`."
+msgstr "Devuelve el índice de la fuente seleccionada en `RET(0)`."
+
+#. [Die folgenden Quellen sind integriert:]
+# from Argos
+msgid "The following fonts are built-in:"
+msgstr "Las siguientes fuentes están incorporadas:"
+
+#. [PetScii-Stilquelle, 8x8 Pixel.]
+# from Google
+msgid " PETSCII-style font, 8x8 pixels"
+msgstr " Fuente de estilo PETSCII, 8x8 píxeles."
+
+#. [Japanische Schrift, 8x8 Pixel]
+# from Argos
+msgid " Japanese font, 8x8 pixels"
+msgstr " Fuente japonesa, 8x8 píxeles"
+
+#. [HP 100 LX-Quelle, 8x8 Pixel]
+# from Google
+msgid " HP 100 LX font, 8x8 pixels"
+msgstr " Fuente HP 100 LX, 8x8 píxeles"
+
+#. [Drucken Sie eine Liste, die durch Registerkarten der Indizes, Namen und
+#. Größen der aktuell geladenen Quellen getrennt ist.]
+# from Google
+msgid ""
+"Prints a tab-separated list of the indices, names and sizes of the fonts "
+"currently loaded."
+msgstr ""
+"Imprime una lista separada por pestañas de los índices, nombres y tamaños de"
+" las fuentes actualmente cargadas."
+
+#. [ 436 x 216]
+# bulk translation
+msgid " 436x216 "
+msgstr " 436x216 "
+
+#. [ 256 x 224]
+# bulk translation
+msgid " 256x224 "
+msgstr " 256x224 "
+
+#. [ 160x200]
+# bulk translation
+msgid " 160x200 "
+msgstr " 160x200 "
+
+#. [ 352 x 240]
+# bulk translation
+msgid " 352x240 "
+msgstr " 352x240 "
+
+#. [ 282 x 240]
+# bulk translation
+msgid " 282x240 "
+msgstr " 282x240 "
+
+#. [ 508 x 240]
+# bulk translation
+msgid " 508x240 "
+msgstr " 508x240 "
+
+#. [ H.]
+# bulk translation
+msgid " H "
+msgstr " H "
+
+#. [ S.]
+# bulk translation
+msgid " S "
+msgstr " S "
+
+#. [ V.]
+# bulk translation
+msgid " V"
+msgstr " V"
+
+#. [ 6]
+# bulk translation
+msgid " 6"
+msgstr " 6"
+
+#. [ 7]
+# bulk translation
+msgid " 7"
+msgstr " 7"
+
+#. [Gültige Datensatznummern sind: `$ 01`,` $ 28 `A" $ 30 ",` $ 34` A "$ 36",
+#. `$ 82`]
+# from Google
+msgid ""
+"Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` "
+"and `$B8`"
+msgstr ""
+"Los números de registros válidos son: `$01`, `$28` a `$30`, `$34` a `$"
+"36`, `$82` y `$B8`"
+
+#. [`34 $,` $ 35`]
+# from Argos
+msgid " `$34`, `$35` "
+msgstr " `$34`, `$35` "
+
+#. [`36 $`]
+# from Argos
+msgid " `$36` "
+msgstr " `$36` "
+
+msgid " `$30` "
+msgstr " `$30` "
+
+#. [Alternative Syntax `Frame ()` ist mit früheren Versionen des Basismotors
+#. kompatibel.]
+# from Argos
+msgid ""
+"The alternative syntax `FRAME()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La sintaxis alternativa `FRAME()` es compatible con versiones anteriores del"
+" Engine BASIC."
+
+#. [Gültige Datensatznummern sind: `05 $,` $ 53`, `$ 84,` $ 86, `$ 9F` und` $
+#. B7`.]
+# from Argos
+msgid ""
+"Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`."
+msgstr ""
+"Los números de registro válidos son: `$05`, `$53`, `$84`, `$86`, `$9F` y "
+"`$B7`."
+
+#. [Alle grundlegenden Motorbefehle, die einen Farbwert erfordern, erwarten,
+#. dass sich der Wert im Video-Treiberformat befindet, der von der Einstellung
+#. abhängt.]
+# from Argos
+msgid ""
+"All Engine BASIC commands that require a color value expect that value to be"
+" in the video controller's format, which depends on the <<PALETTE>> setting."
+msgstr ""
+"Todos los comandos de Engine BASIC que requieren un valor de color esperan "
+"que el valor esté en el formato del controlador de vídeo, que depende del "
+"ajuste de <<PALETTE>>."
+
+#. [Die Koordinaten, die den gültigen Pixelspeicherbereich überschreiten,
+#. werden befestigt.Dies kann die Neigung der Linie ändern, und es ist nicht
+#. das Verhalten, das man erwarten würde.]
+# from Argos
+msgid ""
+"Coordinates that exceed the valid pixel memory area will be clamped. This "
+"can change the slope of the line and is not the behavior one would expect."
+msgstr ""
+"Las coordenadas que superen el área de memoria píxel válida serán sujetadas."
+" Esto puede cambiar la pendiente de la línea y no es el comportamiento que "
+"uno esperaría."
+
+#. [Laden Sie eine TrueType-Schriftart aus einer Datei.]
+# from Argos
+msgid "Loads a TrueType font from a file."
+msgstr "Carga una fuente TrueType de un archivo."
+
+#. [Name der Akte der TrueType-Schriftart]
+# from Google
+msgid "name of TrueType font file"
+msgstr "Nombre del archivo de fuente TrueType"
