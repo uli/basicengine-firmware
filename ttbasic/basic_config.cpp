@@ -159,7 +159,8 @@ removed in future releases.
 
 * `11`: Language +
   The following languages are supported for system messages: +
-  `0` (US English, default), `1` (German), `2` (French), `3` (Spanish).
+  `0` (US English, default), `1` (German), `2` (French), `3` (Spanish),
+  `4` (Japanese).
 
 \note
 To restore the default configuration, run the command `REMOVE

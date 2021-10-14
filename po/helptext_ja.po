@@ -753,8 +753,8 @@ msgid ""
 " in RGB format; this is to ensure that the color scheme works with all YUV "
 "colorspaces."
 msgstr ""
-"* `COLOR`コマンドとは異なり、`"
-"CONFIG COLOR`では色をRGB形式で指定する必要があります。これは、配色がすべてのYUVカラースペースで機能することを保証するためです。"
+"* `COLOR`コマンドとは異なり、`CONFIG "
+"COLOR`では色をRGB形式で指定する必要があります。これは、配色がすべてのYUVカラースペースで機能することを保証するためです。"
 
 #. [* Verwenden Sie "SAVECONFIG", um das aktuelle Farbschema als Standard
 #. festzulegen.]
@@ -5877,3 +5877,18 @@ msgid ""
 "Proportional fonts and fonts that are not specifically designed for use on "
 "low-resolution screens will not look very good."
 msgstr "プロポーショナルフォントや、低解像度の画面で使用するために特別に設計されていないフォントは、見栄えがよくありません。"
+
+#. [ `1`]
+# bulk translation
+msgid " `1` "
+msgstr " `1` "
+
+#. [ `2`]
+# bulk translation
+msgid " `2` "
+msgstr " `2` "
+
+#. [ `4`]
+# bulk translation
+msgid " `4` "
+msgstr " `4` "
