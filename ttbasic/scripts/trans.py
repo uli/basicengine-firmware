@@ -18,6 +18,7 @@ def init_trans(tl, p):
       bulkpof = polib.pofile('../bulk_' + tl + '.po')
     except:
       bulkpof = None
+    bakpof = open('/tmp/bakpof.txt', 'w')
 
 def load_trans():
     global target_lang, retrans_lang, can_translate, latr, backtr, trans
@@ -99,6 +100,11 @@ def translate(m):
         return e.msgstr
     except AttributeError:
         pass
+
+    # Google Translate completely freaks out and corrupts the formatting
+    # when encountering the string "<<". Your guess is as good as mine.
+    if '<<' not in m:
+      bakpof.write(m + '\n\n=====\n\n')
 
     if can_translate == False:
         return m
