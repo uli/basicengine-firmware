@@ -651,3 +651,68 @@ msgstr "DATA mal formado"
 
 msgid "multiple periods"
 msgstr "varios puntos decimales"
+
+#. [Quellfehler]
+# from Google
+msgid "Font error"
+msgstr "Error de fuente"
+
+#. [Ausdrücke]
+# from Google
+msgid "Expressions"
+msgstr "Expresiones"
+
+#. [Quellen]
+# from Google
+msgid "Fonts"
+msgstr "Fuentes"
+
+#. [Typkonflikt]
+# bulk translation
+msgid "Type mismatch"
+msgstr "Falta de coincidencia de tipos"
+
+#. [Modi]
+# bulk translation
+msgid "Modes"
+msgstr "Modos"
+
+#. [Optionen]
+# from Argos
+msgid "Options"
+msgstr "Opciones"
+
+#. [Siehe auch:]
+# bulk translation
+msgid "See also:"
+msgstr "Ver también:"
+
+#. [Hilfedatei konnte nicht dekodiert werden]
+# bulk translation
+msgid "could not decode help file"
+msgstr "no se pudo decodificar el archivo de ayuda"
+
+#. [Hilfedatei konnte nicht geöffnet werden]
+# bulk translation
+msgid "could not open help file"
+msgstr "no se pudo abrir el archivo de ayuda"
+
+#. [die Hilfedatei konnte nicht gelesen werden]
+# bulk translation
+msgid "could not read help file"
+msgstr "no se pudo leer el archivo de ayuda"
+
+#. [fehlen]
+# bulk translation
+msgid "missing"
+msgstr "desaparecido"
+
+#. [unbekannter Abschnitt]
+# bulk translation
+msgid "unknown section"
+msgstr "sección desconocida"
+
+#. [Unbekannter Typ]
+# from Argos
+msgid "unknown type"
+msgstr "tipo desconocido"
