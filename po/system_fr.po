@@ -656,3 +656,78 @@ msgstr "aucun"
 
 msgid "sound"
 msgstr "son"
+
+#. [Index außerhalb des Bereichs]
+# bulk translation
+msgid "Subscript out of range"
+msgstr "Indice hors limites"
+
+#. [Schriftfehler]
+# from Argos
+msgid "Font error"
+msgstr "Erreur de police"
+
+#. [Ausdrücke]
+# from Argos
+msgid "Expressions"
+msgstr "Expressions"
+
+#. [Schriftarten]
+# bulk translation
+msgid "Fonts"
+msgstr "Polices"
+
+#. [Modi]
+# bulk translation
+msgid "Modes"
+msgstr "Modes"
+
+#. [Notiz]
+# from Argos
+msgid "Note"
+msgstr "Note"
+
+#. [Optionen]
+# from Argos
+msgid "Options"
+msgstr "Options"
+
+#. [Sehen Sie sich auch an:]
+# from Argos
+msgid "See also:"
+msgstr "Voir aussi:"
+
+#. [Ignoriere autoexec.bas]
+# bulk translation
+msgid "Skipping autoexec.bas\n"
+msgstr "Ignorer autoexec.bas\n"
+
+#. [Hilfedatei kann nicht dekodiert werden]
+# bulk translation
+msgid "could not decode help file"
+msgstr "impossible de décoder le fichier d'aide"
+
+#. [Hilfedatei kann nicht geöffnet werden]
+# bulk translation
+msgid "could not open help file"
+msgstr "impossible d'ouvrir le fichier d'aide"
+
+#. [kann die hilfedatei nicht lesen]
+# bulk translation
+msgid "could not read help file"
+msgstr "impossible de lire le fichier d'aide"
+
+#. [fehlen]
+# from Argos
+msgid "missing"
+msgstr "manquant"
+
+#. [Unbekannter Abschnitt]
+# from Google
+msgid "unknown section"
+msgstr "section inconnue"
+
+#. [Unbekannter Typ]
+# from Argos
+msgid "unknown type"
+msgstr "type inconnu"
