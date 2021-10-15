@@ -247,8 +247,8 @@ msgid ""
 "* The syntax `RUN file$` does not work from within a program. Use `CHAIN` "
 "instead."
 msgstr ""
-"* La syntaxe `RUN file$` ne fonctionne pas à partir d'un programme. "
-"Utilisez `CHAIN` à la place."
+"* La syntaxe `RUN file$` ne fonctionne pas à partir d'un programme. Utilisez"
+" `CHAIN` à la place."
 
 #. [Nummerieren Sie das BASIC-Programm im Speicher neu.]
 # bulk translation
@@ -374,8 +374,8 @@ msgid ""
 "procedure."
 msgstr ""
 "Une erreur est générée si aucun argument numérique n'a été passé, `num` est "
-"égal ou supérieur à `ARGC(0)`, ou si la fonction est évaluée en dehors "
-"d'une procédure."
+"égal ou supérieur à `ARGC(0)`, ou si la fonction est évaluée en dehors d'une"
+" procédure."
 
 #. [Gibt ein Zeichenfolgenargument zurück, das an eine Prozedur übergeben
 #. wurde.]
@@ -399,8 +399,8 @@ msgid ""
 "procedure."
 msgstr ""
 "Une erreur est générée si aucun argument de chaîne n'a été passé, `num` est "
-"égal ou supérieur à `ARGC(1)`, ou si la fonction est évaluée en dehors "
-"d'une procédure."
+"égal ou supérieur à `ARGC(1)`, ou si la fonction est évaluée en dehors d'une"
+" procédure."
 
 #. [Gibt die Anzahl der Argumente für numerische Variablen und
 #. Zeichenfolgenvariablen zurück, die an eine Prozedur übergeben wurden.]
@@ -572,8 +572,8 @@ msgid ""
 "* `TAB(num)` (inserts spaces until the cursor is at or beyond the column "
 "`num`)"
 msgstr ""
-"* `TAB(num)` (insère des espaces jusqu'à ce que le curseur soit au niveau "
-"ou au-delà de la colonne `num`)"
+"* `TAB(num)` (insère des espaces jusqu'à ce que le curseur soit au niveau ou"
+" au-delà de la colonne `num`)"
 
 #. [Sie müssen Ausdrücke durch ein Semikolon (`;`) oder ein Komma (`,`)
 #. trennen. Wenn Sie ein Semikolon verwenden, werden Ausdrücke ohne Trennung
@@ -596,8 +596,8 @@ msgstr ""
 # bulk translation
 msgid "`TAB()` does not work when output is redirected to a file using `CMD`."
 msgstr ""
-"`TAB()` ne fonctionne pas lorsque la sortie est redirigée vers un fichier "
-"en utilisant `CMD`."
+"`TAB()` ne fonctionne pas lorsque la sortie est redirigée vers un fichier en"
+" utilisant `CMD`."
 
 #. [Speichert einen Teil des Pixelspeichers als Bilddatei.]
 # bulk translation
@@ -614,7 +614,7 @@ msgstr "nom du fichier image à créer"
 # bulk translation
 msgid "top of pixel memory section, pixels [`0` (default) to `PSIZE(2)-1`]"
 msgstr ""
-"haut de la section de mémoire de pixels, pixels [`0` (par défaut) à` PSIZE "
+"haut de la section de mémoire de pixels, pixels [`0` (par défaut) à `PSIZE "
 "(2)-1`]"
 
 #. [Pixelspeicherabschnittsbreite, Pixel ["0" bis "PSIZE(0)-x-1", Standard:
@@ -646,7 +646,7 @@ msgstr ""
 #. [Hintergrundnummer [`0` bis` {MAX_BG_m1}`]]
 # bulk translation
 msgid "background number [`0` to `{MAX_BG_m1}`]"
-msgstr "numéro d'arrière-plan [`0` à` {MAX_BG_m1} `]"
+msgstr "numéro d'arrière-plan [`0` à `{MAX_BG_m1}`]"
 
 #. [Sprite-Bereich [Grenzwerte zwischen "0" und "{MAX_SPRITES_m1}"]]
 # bulk translation
@@ -706,8 +706,8 @@ msgid ""
 "Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as "
 "width and height in `RET(2)` and `RET(3)`, respectively."
 msgstr ""
-"Renvoie les coordonnées de destination dans `RET(0)` et `RET(1)`, ainsi "
-"que la largeur et la hauteur dans `RET(2)` et `RET(3)`, respectivement."
+"Renvoie les coordonnées de destination dans `RET(0)` et `RET(1)`, ainsi que "
+"la largeur et la hauteur dans `RET(2)` et `RET(3)`, respectivement."
 
 #. [Definieren Sie eine Prozedur oder Funktion.]
 # from Google
@@ -918,8 +918,8 @@ msgstr "Sous-chaîne de caractères `num` ou moins."
 # bulk translation
 msgid "If `l$` is shorter than `num` characters, the return value is `l$`."
 msgstr ""
-"Si `l$` est plus court que les caractères `num`, la valeur de retour est `l"
-"$`."
+"Si `l$` est plus court que les caractères `num`, la valeur de retour est "
+"`l$`."
 
 #. [Gibt eine bestimmte Anzahl von Zeichen ganz rechts in einer Zeichenfolge
 #. zurück.]
@@ -982,8 +982,8 @@ msgid ""
 "You cannot assign values to `MID$()`, which is possible in some other BASIC "
 "implementations."
 msgstr ""
-"Vous ne pouvez pas attribuer de valeurs à `MID$()`, ce qui est possible "
-"dans certaines autres implémentations BASIC."
+"Vous ne pouvez pas attribuer de valeurs à `MID$()`, ce qui est possible dans"
+" certaines autres implémentations BASIC."
 
 #. [Gibt das Zeichen zurück, das einem angegebenen ASCII-Code entspricht.]
 # bulk translation
@@ -1027,7 +1027,7 @@ msgstr ""
 #. [String-Rückgabewert Nummer [`0` bis` {MAX_RETVALS_m1}`]]
 # bulk translation
 msgid "number of the string return value [`0` to `{MAX_RETVALS_m1}`]"
-msgstr "numéro de la valeur de retour de chaîne [`0` à` {MAX_RETVALS_m1} `]"
+msgstr "numéro de la valeur de retour de chaîne [`0` à `{MAX_RETVALS_m1}`]"
 
 #. [Rückgabewert der angeforderten Zeichenfolge.]
 # bulk translation
@@ -1044,7 +1044,7 @@ msgstr "Renvoie le message d'erreur associé à un numéro d'erreur donné."
 #. [Fehlernummer [`0` bis` {max_err}`]]
 # bulk translation
 msgid "error number [`0` to `{max_err}`]"
-msgstr "numéro d'erreur [`0` à` {max_err} `]"
+msgstr "numéro d'erreur [`0` à `{max_err}`]"
 
 #. [Fehlermeldung.]
 # bulk translation
@@ -1295,8 +1295,8 @@ msgid ""
 "`-1` if the value of `a$` succeeds the value of `b$` when sorted "
 "alphabetically, `0` otherwise."
 msgstr ""
-"`-1` si la valeur de` a$ `succède à la valeur de` b$ `lorsqu'elle est "
-"triée par ordre alphabétique, `0` dans le cas contraire."
+"`-1` si la valeur de` a$ `succède à la valeur de` b$ `lorsqu'elle est triée "
+"par ordre alphabétique, `0` dans le cas contraire."
 
 #. [Stellt eine Verbindung zu einer bestimmten Zeile oder Beschriftung her.]
 # bulk translation
@@ -1463,7 +1463,7 @@ msgstr ""
 #. [ein Tonkanal [`0` bis` {MML_CHANNELS_m1}`]]
 # bulk translation
 msgid "a sound channel [`0` to `{MML_CHANNELS_m1}`]"
-msgstr "un canal sonore [`0` à` {MML_CHANNELS_m1} `]"
+msgstr "un canal sonore [`0` à `{MML_CHANNELS_m1}`]"
 
 #. [Der Ereignishandler erhält die Nummer des Kanals, der als numerisches
 #. Argument beendet wurde.]
@@ -1520,7 +1520,7 @@ msgstr ""
 #. [Gamecontrollernummer [`0` bis` {MAX_PADS_m1}`]]
 # bulk translation
 msgid "number of the game controller [`0` to `{MAX_PADS_m1}`]"
-msgstr "numéro du contrôleur de jeu [`0` à` {MAX_PADS_m1} `]"
+msgstr "numéro du contrôleur de jeu [`0` à `{MAX_PADS_m1}`]"
 
 #. [Der Ereignishandler erhält zwei numerische Argumente: die Nummer des
 #. Gamecontrollers, dessen Status geändert wurde, und ein Bitmuster, das
@@ -2097,9 +2097,9 @@ msgid ""
 " was interrupted."
 msgstr ""
 "`CONT` peut être utilisé pour reprendre l'exécution d'un programme qui a été"
-" interrompu par kbd:[Ctrl + C] ou par la commande` STOP`. Il réinitialisera"
-" la fenêtre de texte et les dispositions d'arrière-plan en mosaïque si elles"
-" ont été automatiquement ajustées lorsque le programme a été interrompu."
+" interrompu par kbd:[Ctrl + C] ou par la commande `STOP`. Il réinitialisera "
+"la fenêtre de texte et les dispositions d'arrière-plan en mosaïque si elles "
+"ont été automatiquement ajustées lorsque le programme a été interrompu."
 
 #. [Legt die Eigenschaften eines gekachelten Hintergrunds fest.]
 # bulk translation
@@ -2156,14 +2156,12 @@ msgstr "hauteur de la tuile, pixels [`8` (par défaut) à `32`]"
 #. [X-Koordinate des Fensters, Pixel [`0` (Standard) bis` PSIZE(0)-1`]]
 # bulk translation
 msgid "window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]"
-msgstr ""
-"Coordonnée X de la fenêtre, pixels [`0` (par défaut) à` PSIZE(0)-1`]"
+msgstr "Coordonnée X de la fenêtre, pixels [`0` (par défaut) à `PSIZE(0)-1`]"
 
 #. [Y-Koordinate des Fensters, Pixel [`0` (Standard) bei` PSIZE(1)-1`]]
 # bulk translation
 msgid "window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]"
-msgstr ""
-"coordonnée Y de la fenêtre, pixels [`0` (par défaut) à` PSIZE(1)-1`]"
+msgstr "coordonnée Y de la fenêtre, pixels [`0` (par défaut) à `PSIZE(1)-1`]"
 
 #. [Fensterbreite, Pixel ["9" bis "PSIZE(0)-wx" (Standard)]]
 # bulk translation
@@ -2291,12 +2289,12 @@ msgstr "coordonnée du motif de sprite supérieur / gauche, pixels"
 #. [Sprite-Breite, Pixel [`0` bis` {MAX_SPRITE_W_m1}`]]
 # bulk translation
 msgid "sprite width, pixels [`0` to `{MAX_SPRITE_W_m1}`]"
-msgstr "largeur du sprite, pixels [`0` à` {MAX_SPRITE_W_m1} `]"
+msgstr "largeur du sprite, pixels [`0` à `{MAX_SPRITE_W_m1}`]"
 
 #. [Sprite-Höhe, Pixel [`0` bis` {MAX_SPRITE_H_m1}`]]
 # bulk translation
 msgid "sprite height, pixels [`0` to `{MAX_SPRITE_H_m1}`]"
-msgstr "hauteur du sprite, pixels [`0` à` {MAX_SPRITE_H_m1} `]"
+msgstr "hauteur du sprite, pixels [`0` à `{MAX_SPRITE_H_m1}`]"
 
 #. [X-Koordinate des zu verwendenden Musterabschnitts in Vielfachen der
 #. Sprite-
@@ -2329,8 +2327,8 @@ msgstr "valeur de couleur clé à utiliser pour le masquage de transparence"
 msgid ""
 "sprite priority in relation to background layers [`0` to `{MAX_BG_m1}`]"
 msgstr ""
-"priorité du sprite par rapport aux calques d'arrière-plan [`0` à` "
-"{MAX_BG_m1} `]"
+"priorité du sprite par rapport aux calques d'arrière-plan [`0` à `"
+"{MAX_BG_m1}`]"
 
 #. [Drehwinkel in Grad [Standard “0”]]
 # bulk translation
@@ -2563,7 +2561,7 @@ msgstr ""
 #. [Sprite-Nummer [`0` bis` {MAX_SPRITES_m1}`]]
 # bulk translation
 msgid "sprite number [`0` to `{MAX_SPRITES_m1}`]"
-msgstr "numéro de sprite [`0` à` {MAX_SPRITES_m1} `]"
+msgstr "numéro de sprite [`0` à `{MAX_SPRITES_m1}`]"
 
 #. [Kachelnummer ["0" bis "255"]]
 # bulk translation
@@ -2628,12 +2626,12 @@ msgstr "Vérifie si un sprite est entré en collision avec un autre sprite."
 #. [Sprite Nummer 1 [`0` bis` {MAX_SPRITES_m1}`]]
 # bulk translation
 msgid "sprite number 1 [`0` to `{MAX_SPRITES_m1}`]"
-msgstr "sprite numéro 1 [`0` à` {MAX_SPRITES_m1} `]"
+msgstr "sprite numéro 1 [`0` à `{MAX_SPRITES_m1}`]"
 
 #. [Sprite Nummer 2 [`0` bis` {MAX_SPRITES_m1}`]]
 # bulk translation
 msgid "sprite number 2 [`0` to `{MAX_SPRITES_m1}`]"
-msgstr "sprite numéro 2 [`0` à` {MAX_SPRITES_m1} `]"
+msgstr "sprite numéro 2 [`0` à `{MAX_SPRITES_m1}`]"
 
 #. [ Sprite 2 befindet sich links von Sprite 1.]
 # bulk translation
@@ -2809,7 +2807,7 @@ msgstr ""
 #. [Farbcode [`0` bis` {CONFIG_COLS_m1}`]]
 # bulk translation
 msgid "color code [`0` to `{CONFIG_COLS_m1}`]"
-msgstr "code couleur [`0` à` {CONFIG_COLS_m1} `]"
+msgstr "code couleur [`0` à `{CONFIG_COLS_m1}`]"
 
 #. [rote Komponente [0 bis 255]]
 # bulk translation
@@ -2991,28 +2989,6 @@ msgstr "valeur d'option"
 msgid "The following options exist:"
 msgstr "Les options suivantes existent:"
 
-#. [* `0`: TV + Standard Stellt den TV-Standard auf NTSC(`0`), PAL(`1`)
-#. oder
-#. PAL60(`2`) ein. + WARNUNG: Diese Konfigurationsoption ist wenig sinnvoll.
-#. Der verfügbare TV-Standard hängt vom installierten Farbburstkristall ab und
-#. wird automatisch erkannt. Der PAL60-Modus ist derzeit nicht implementiert.
-#. + Die Semantik dieser Option wird sich daher wahrscheinlich in Zukunft
-#. ändern.]
-# bulk translation
-msgid ""
-"* `0`: TV norm + Sets the TV norm to NTSC(`0`), PAL(`1`) or PAL60(`2`). +"
-" WARNING: This configuration option does not make much sense; the available "
-"TV norm depends on the installed color burst crystal and is automatically "
-"detected; PAL60 mode is not currently implemented. + The semantics of this "
-"option are therefore likely to change in the future."
-msgstr ""
-"* `0`: norme TV + Règle la norme TV sur NTSC(`0`), PAL(`1`) ou PAL60(`"
-"2`). + AVERTISSEMENT: cette option de configuration n'a pas beaucoup de "
-"sens; la norme TV disponible dépend du cristal de rafale de couleur installé"
-" et est automatiquement détectée; Le mode PAL60 n'est actuellement pas "
-"implémenté. + La sémantique de cette option est donc susceptible de changer "
-"dans le futur."
-
 #. [* `1`: Tastaturlayout + Es werden vier verschiedene Tastaturlayouts
 #. unterstützt: + `0` (Japanisch), `1` (US-Englisch, Standard), `2` (Deutsch),
 #. `3` (Französisch) und `4` (Spanisch).]
@@ -3114,8 +3090,8 @@ msgid ""
 "* `6`: Power-on cursor color [`0` to `255`] + Sets the cursor color the "
 "system defaults to at power-on."
 msgstr ""
-"* `6`: Couleur du curseur à la mise sous tension [`0` à `255`] + Définit la"
-" couleur du curseur par défaut du système à la mise sous tension."
+"* `6`: Couleur du curseur à la mise sous tension [`0` à `255`] + Définit la "
+"couleur du curseur par défaut du système à la mise sous tension."
 
 #. [* `7`: Piepton-Lautstärke [`0` bis `15` (Standard)] + Stellt die
 #. Lautstärke der" Beep "-Sound-Engine ein, die unter anderem für den Start-
@@ -3166,9 +3142,9 @@ msgid ""
 "(640x480 DVI) or `6` + (1920x1200 HDMI). + It is necessary to save the "
 "configuration and reboot the system for this option to take effect."
 msgstr ""
-"* `10`: Mode écran physique (plate-forme H3 uniquement) [`0` (par défaut) à"
-" `6`] + Règle la résolution physique de l'écran: + `0` (1920x1080 HDMI), `1`"
-" (1280x1024 DVI), `2 `(1280x720 HDMI), `3 `+ (1024x768 DVI), `4 `(800x600 "
+"* `10`: Mode écran physique (plate-forme H3 uniquement) [`0` (par défaut) à "
+"`6`] + Règle la résolution physique de l'écran: + `0` (1920x1080 HDMI), `1` "
+"(1280x1024 DVI), `2 `(1280x720 HDMI), `3 `+ (1024x768 DVI), `4 `(800x600 "
 "DVI), `5 `(640x480 DVI) ou `6 `+ (1920x1200 HDMI). + Il est nécessaire de "
 "sauvegarder la configuration et de redémarrer le système pour que cette "
 "option prenne effet."
@@ -3243,7 +3219,7 @@ msgstr "Vérifie si la fin d'un fichier a été atteinte."
 #. [Nummer einer geöffneten Datei [`0` bis` {MAX_USER_FILES_m1}`]]
 # bulk translation
 msgid "number of an open file [`0` to `{MAX_USER_FILES_m1}`]"
-msgstr "numéro d'un fichier ouvert [`0` à` {MAX_USER_FILES_m1} `]"
+msgstr "numéro d'un fichier ouvert [`0` à `{MAX_USER_FILES_m1}`]"
 
 #. ["-1", wenn das Ende der Datei erreicht ist, andernfalls "0".]
 # bulk translation
@@ -3445,7 +3421,7 @@ msgstr "Ferme un fichier ou un répertoire ouvert."
 # bulk translation
 msgid "number of an open file or directory [`0` to `{MAX_USER_FILES_m1}`]"
 msgstr ""
-"numéro d'un fichier ou d'un répertoire ouvert [`0` à` {MAX_USER_FILES_m1} `]"
+"numéro d'un fichier ou d'un répertoire ouvert [`0` à `{MAX_USER_FILES_m1}`]"
 
 #. [Legt die Position der Datei für das nächste Lesen oder Schreiben fest.]
 # bulk translation
@@ -3750,8 +3726,8 @@ msgid ""
 "Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the "
 "number of components in `RET(2)`."
 msgstr ""
-"Renvoie la largeur en pixels dans `RET(0)`, la hauteur dans `RET(1)` et le"
-" nombre de composants dans `RET(2)`."
+"Renvoie la largeur en pixels dans `RET(0)`, la hauteur dans `RET(1)` et le "
+"nombre de composants dans `RET(2)`."
 
 #. [Dieser Befehl funktioniert nicht mit PCX-Dateien.]
 # bulk translation
@@ -4416,7 +4392,7 @@ msgstr " 43\t\t"
 #. [ kbd:[\]]
 # bulk translation
 msgid " kbd:[&#x5c;]\t\t"
-msgstr " kbd:[\\\]\t\t"
+msgstr " kbd:[\\\\]\t\t"
 
 #. [ 44]
 # bulk translation
@@ -5805,7 +5781,7 @@ msgstr ""
 #. [Audiokanal [`0` bis` {MML_CHANNELS_m1}`, Standard: `0`]]
 # bulk translation
 msgid "sound channel [`0` to `{MML_CHANNELS_m1}`, default: `0`]"
-msgstr "canal audio [`0` à` {MML_CHANNELS_m1} `, par défaut: `0`]"
+msgstr "canal audio [`0` à `{MML_CHANNELS_m1}`, par défaut: `0`]"
 
 #. [Partitur im MML-Format]
 # bulk translation
@@ -5865,7 +5841,7 @@ msgstr "* Aucune possibilité de modifier les paramètres du synthétiseur."
 msgid ""
 "sound channel [`0` to `{MML_CHANNELS_m1}`, or `-1` to check all channels]"
 msgstr ""
-"canal audio [`0` à` {MML_CHANNELS_m1} `, ou`-1` pour vérifier tous les "
+"canal audio [`0` à `{MML_CHANNELS_m1}`, ou`-1` pour vérifier tous les "
 "canaux]"
 
 #. ["1", wenn der Ton abgespielt wird, andernfalls "0".]
@@ -5963,7 +5939,7 @@ msgstr "Génère un son à l'aide du synthétiseur à table d'ondes."
 #. [Audiokanal [`0` bis` {MML_CHANNELS_m1}`]]
 # bulk translation
 msgid "sound channel [`0` to `{MML_CHANNELS_m1}`]"
-msgstr "canal audio [`0` à` {MML_CHANNELS_m1} `]"
+msgstr "canal audio [`0` à `{MML_CHANNELS_m1}`]"
 
 #. [Notendauer, Millisekunden [Standard: "1000"]]
 # bulk translation
@@ -6529,7 +6505,7 @@ msgstr "Définit la police du texte actuelle."
 #. [Richtliniennummer [`0` bis` {NUM_FONTS_m1}`]]
 # bulk translation
 msgid "font number [`0` to `{NUM_FONTS_m1}`]"
-msgstr "numéro de police [`0` à` {NUM_FONTS_m1} `]"
+msgstr "numéro de police [`0` à `{NUM_FONTS_m1}`]"
 
 #. [Folgende Schriftarten stehen zur Verfügung:]
 # bulk translation
@@ -6907,12 +6883,12 @@ msgstr "Déplace le curseur de texte à la position spécifiée."
 #. [X-Koordinate des Cursors [`0` bis` CSIZE(0)-1`]]
 # bulk translation
 msgid "cursor X coordinate [`0` to `CSIZE(0)-1`]"
-msgstr "Coordonnée X du curseur [`0` à` CSIZE(0)-1`]"
+msgstr "Coordonnée X du curseur [`0` à `CSIZE(0)-1`]"
 
 #. [Y-Koordinate des Cursors [`0` bis` CSIZE(1)-1`]]
 # bulk translation
 msgid "cursor Y coordinate [`0` to `CSIZE(1)-1`]"
-msgstr "coordonnée Y du curseur [`0` à` CSIZE(1)-1`]"
+msgstr "coordonnée Y du curseur [`0` à `CSIZE(1)-1`]"
 
 #. [Konvertiert den RGB-Wert in einen Materialfarbwert.]
 # bulk translation
@@ -7131,7 +7107,7 @@ msgstr ""
 msgid ""
 "end of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]"
 msgstr ""
-"fin de la zone d'écran, coordonnée X, caractères [`x1 + 1` à` CSIZE(0)-1`]"
+"fin de la zone d'écran, coordonnée X, caractères [`x1 + 1` à `CSIZE(0)-1`]"
 
 #. [Ende des Bildschirmbereichs, Y-Koordinate, Zeichen [`y1 + 1` bis` CSIZE
 #. (1)
@@ -7140,7 +7116,7 @@ msgstr ""
 msgid ""
 "end of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]"
 msgstr ""
-"fin de la zone d'écran, coordonnée Y, caractères [`y1 + 1` à` CSIZE(1)-1`]"
+"fin de la zone d'écran, coordonnée Y, caractères [`y1 + 1` à `CSIZE(1)-1`]"
 
 #. [Richtung]
 # bulk translation
@@ -7206,7 +7182,7 @@ msgstr "début de la zone d'écran, coordonnée Y, pixels [`0` à `PSIZE(2)-1`]"
 msgid ""
 "end of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]"
 msgstr ""
-"fin de la zone d'écran, coordonnée X, pixels [`x1 + 1` à` PSIZE(0)-1`]"
+"fin de la zone d'écran, coordonnée X, pixels [`x1 + 1` à `PSIZE(0)-1`]"
 
 #. [Ende des Bildschirmbereichs, Y-Koordinate, Pixel [`y1 + 1` bis` PSIZE(2)
 #. -1`]]
@@ -7214,7 +7190,7 @@ msgstr ""
 msgid ""
 "end of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]"
 msgstr ""
-"fin de la zone d'écran, coordonnée Y, pixels [`y1 + 1` à` PSIZE(2)-1`]"
+"fin de la zone d'écran, coordonnée Y, pixels [`y1 + 1` à `PSIZE(2)-1`]"
 
 #. [Gibt die Farbe des Pixels an den angegebenen Koordinaten zurück.]
 # bulk translation
@@ -7405,3 +7381,974 @@ msgstr ""
 "Par défaut, un blit opaque est effectué, en ignorant le canal alpha de la "
 "zone source. Pour activer le mélange alpha, `ALPHA` doit être ajouté à la "
 "fin."
+
+#. [Erstellt eine Zuordnung von einer Kachel zu einer anderen.]
+# bulk translation
+msgid "Creates a mapping from one tile to another."
+msgstr "Crée un mappage d'une tuile à une autre."
+
+#. [Kachelnummer für die Zuordnung zu [`0` bis` 255`]]
+# bulk translation
+msgid "tile number to map to [`0` to `255`]"
+msgstr "numéro de tuile à mapper sur [`0` à `255`]"
+
+#. [* `0`: TV-Standard + Stellt den TV-Standard auf NTSC (`0`), PAL (`1`) oder
+#. PAL60 (`2`) ein. + ACHTUNG: Diese Konfigurationsoption macht wenig Sinn;
+#. der verfügbare TV-Standard hängt vom installierten Farbburstkristall ab und
+#. wird automatisch erkannt; Der PAL60-Modus ist derzeit nicht implementiert.
+#. + Die Semantik dieser Option wird sich daher in Zukunft wahrscheinlich
+#. ändern.]
+# bulk translation
+msgid ""
+"* `0`: TV norm + Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`). +"
+" WARNING: This configuration option does not make much sense; the available "
+"TV norm depends on the installed color burst crystal and is automatically "
+"detected; PAL60 mode is not currently implemented. + The semantics of this "
+"option are therefore likely to change in the future."
+msgstr ""
+"* `0` : Norme TV + Règle la norme TV sur NTSC (`0`), PAL (`1`) ou PAL60 "
+"(`2`). + ATTENTION : Cette option de configuration n'a pas beaucoup de sens "
+"; la norme TV disponible dépend du cristal de rafale de couleur installé et "
+"est automatiquement détectée ; Le mode PAL60 n'est actuellement pas "
+"implémenté. + La sémantique de cette option est donc susceptible de changer "
+"dans le futur."
+
+#. [* `9`: Optionale Schlüsselworttrennung [`0` (Standard) oder `1`] +
+#. Steuert,
+#. ob BASIC-Schlüsselwörter von anderen Sprachelementen mit alphanumerischen
+#. Zeichen mit einem Leerzeichen (`0`) getrennt werden sollen oder ob sie
+#. benachbart sein können zu denen wie in traditionellen BASIC-Dialekten (`
+#. 1`).]
+# bulk translation
+msgid ""
+"* `9`: Keyword separation optional [`0` (default) or `1`] + Controls if "
+"BASIC keywords need to be separated from other language elements containing "
+"alphanumeric characters with a space (`0`), or if they can be adjacent to "
+"those like in traditional BASIC dialects (`1`)."
+msgstr ""
+"* `9` : Séparation des mots clés en option [`0` (par défaut) ou `1`] + "
+"Contrôle si les mots-clés BASIC doivent être séparés des autres éléments du "
+"langage contenant des caractères alphanumériques avec un espace (`0`), ou "
+"s'ils peuvent être adjacents à ceux comme dans les dialectes BASIC "
+"traditionnels (`1`)."
+
+#. [* `11`: Sprache + Folgende Sprachen werden für Systemmeldungen
+#. unterstützt:
+#. +` 0` (US-Englisch, Standard), `1` (Deutsch),` 2` (Französisch), `3`
+#. (Spanisch), '4' (Japanisch).]
+# bulk translation
+msgid ""
+"* `11`: Language + The following languages are supported for system "
+"messages: + `0` (US English, default), `1` (German), `2` (French), `3` "
+"(Spanish), `4` (Japanese)."
+msgstr ""
+"* `11` : langue + Les langues suivantes sont prises en charge pour les "
+"messages système : + `0` (anglais américain, par défaut), `1` (allemand), "
+"`2` (français), `3` (espagnol), `4 ` (japonais)."
+
+msgid " `mod` < 0 "
+msgstr " `mod` < 0 "
+
+#. [Wert neu zuzuordnen]
+# bulk translation
+msgid "value to be re-mapped"
+msgstr "valeur à remapper"
+
+#. [Gibt den Unicode-Codepunkt für das erste Zeichen eines
+#. Zeichenfolgenausdrucks zurück.]
+# bulk translation
+msgid ""
+"Returns the Unicode codepoint for the first character in a string "
+"expression."
+msgstr ""
+"Renvoie le point de code Unicode pour le premier caractère d'une expression "
+"de chaîne."
+
+#. [Unicode-Codepunkt des ersten Zeichens.]
+# bulk translation
+msgid "Unicode codepoint of the first character."
+msgstr "Point de code Unicode du premier caractère."
+
+#. [* Im Gegensatz zu ihren Gegenstücken in Single-Byte-BASIC-
+#. Implementierungen
+#. kann diese Funktion Werte größer als 255 zurückgeben.]
+# bulk translation
+msgid ""
+"* Unlike its counterparts in single-byte BASIC implementations, this "
+"function may return values larger than 255."
+msgstr ""
+"* Contrairement à ses homologues dans les implémentations BASIC mono-octet, "
+"cette fonction peut renvoyer des valeurs supérieures à 255."
+
+#. [* Um auf einzelne Bytes ohne UTF-8-Decodierung zuzugreifen, verwenden Sie
+#. die Syntax `a $ [num]`.]
+# bulk translation
+msgid ""
+"* To get access to individual bytes without UTF-8 decoding, use the "
+"`a$[num]` syntax."
+msgstr ""
+"* Pour accéder à des octets individuels sans décodage UTF-8, utilisez la "
+"syntaxe `a$[num]`."
+
+#. [Gibt die Anzahl der Bytes in einer Byte-Zeichenfolge zurück.]
+# bulk translation
+msgid "Returns the number of bytes in a byte string."
+msgstr "Renvoie le nombre d'octets dans une chaîne d'octets."
+
+#. [Länge in Bytes.]
+# from Argos
+msgid "Length in bytes."
+msgstr "Longueur en octets."
+
+#. [Beendet eine mehrzeilige `IF`-Anweisung.]
+# bulk translation
+msgid "Ends a multi-line `IF` instruction."
+msgstr "Termine une instruction `IF` multiligne."
+
+#. [Die alternative `CWD $ ()`-Syntax wird aus Gründen der
+#. Abwärtskompatibilität mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `CWD$()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `CWD$()` est prise en charge pour une compatibilité "
+"descendante avec les versions antérieures de Engine BASIC."
+
+#. [ kbd: [Linke Verschiebung]]
+# bulk translation
+msgid " kbd:[Left Shift]\t"
+msgstr " kbd:[Maj gauche]\t"
+
+#. [ kbd: [Rechte Verschiebung]]
+# bulk translation
+msgid " kbd:[Right Shift]\t"
+msgstr " kbd:[Maj droit]\t"
+
+#. [ kbd: [Rollensperre]]
+# bulk translation
+msgid " kbd:[Scroll Lock]\t"
+msgstr " kbd:[Scroll Lock]\t"
+
+#. [ kbd: [Feststelltaste]]
+# bulk translation
+msgid " kbd:[Caps Lock]\t"
+msgstr " kbd:[Verrouillage majuscule]\t"
+
+#. [ kbd: [Bildschirm drucken]]
+# bulk translation
+msgid " kbd:[Print Screen]\t"
+msgstr " kbd:[Impr écran]\t"
+
+#. [ kbd: [Bild nach oben]]
+# bulk translation
+msgid " kbd:[Page Up]\t\t"
+msgstr " kbd:[Page Up]\t\t"
+
+#. [ kbd: [Bild nach unten]]
+# bulk translation
+msgid " kbd:[Page Down]\t"
+msgstr " kbd:[Page Down]\t"
+
+#. [Die alternative `INKEY()`-Syntax wird aus Gründen der
+#. Abwärtskompatibilität
+#. mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `INKEY()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `INKEY()` est prise en charge pour une compatibilité "
+"descendante avec les versions antérieures de Engine BASIC."
+
+#. [Absolute horizontale Koordinate des Mauszeigers.]
+# bulk translation
+msgid "Absolute horizontal coordinate of the mouse cursor."
+msgstr "Coordonnée horizontale absolue du curseur de la souris."
+
+#. [X-Koordinate des Mauszeigers, von `0` bis` PSIZE (0) -1`]
+# bulk translation
+msgid "X coordinate of mouse cursor, from `0` to `PSIZE(0)-1`"
+msgstr "Coordonnée X du curseur de la souris, de `0` à `PSIZE(0)-1`"
+
+#. [Absolute vertikale Koordinate des Mauszeigers.]
+# bulk translation
+msgid "Absolute vertical coordinate of the mouse cursor."
+msgstr "Coordonnée verticale absolue du curseur de la souris."
+
+#. [Y-Koordinate des Mauszeigers, von `0` bis` PSIZE (1) -1`]
+# bulk translation
+msgid "Y coordinate of mouse cursor, from `0` to `PSIZE(1)-1`"
+msgstr "Coordonnée Y du curseur de la souris, de `0` à `PSIZE(1)-1`"
+
+#. [Horizontale Bewegung der Maus.]
+# from Argos
+msgid "Horizontal movement of the mouse."
+msgstr "Mouvement horizontal de la souris."
+
+#. [Gibt einen Wert zurück, der die horizontale Mausbewegung seit dem letzten
+#. Aufruf von `MOUSEDX` darstellt.]
+# bulk translation
+msgid ""
+"Returns a value representing the amount of horizontal movement of the mouse "
+"since the last call to `MOUSEDX`."
+msgstr ""
+"Renvoie une valeur représentant la quantité de mouvement horizontal de la "
+"souris depuis le dernier appel à `MOUSEDX`."
+
+#. [Horizontale Bewegung relative Maus, Pixel]
+# from Argos
+msgid "relative horizontal movement of mouse, pixels"
+msgstr "mouvement horizontal relatif de la souris, pixels"
+
+#. [Vertikale Bewegung der Maus.]
+# from Argos
+msgid "Vertical movement of the mouse."
+msgstr "Mouvement vertical de la souris."
+
+#. [Gibt einen Wert zurück, der die vertikale Mausbewegung seit dem letzten
+#. Aufruf von `MOUSEDY` darstellt.]
+# bulk translation
+msgid ""
+"Returns a value representing the amount of vertical movement of the mouse "
+"since the last call to `MOUSEDY`."
+msgstr ""
+"Renvoie une valeur représentant la quantité de mouvement vertical de la "
+"souris depuis le dernier appel à `MOUSEDY`."
+
+#. [Vertikale Bewegung relative Maus, Pixel]
+# from Argos
+msgid "relative vertical movement of mouse, pixels"
+msgstr "mouvement vertical relatif de la souris, pixels"
+
+#. [Zustand der angegebenen Maustaste.]
+# bulk translation
+msgid "State of the specified mouse button."
+msgstr "État du bouton de souris spécifié."
+
+#. ["1", wenn die Maustaste gedrückt gehalten wird, "0", wenn dies nicht der
+#. Fall ist.]
+# bulk translation
+msgid "`1` if the mouse button is held, `0` if it is not."
+msgstr ""
+"`1` si le bouton de la souris est maintenu enfoncé, `0` si ce n'est pas "
+"le cas."
+
+#. [ Nummer]
+# bulk translation
+msgid " Number "
+msgstr " Nombre "
+
+#. [Maustaste]
+# from Argos
+msgid " Mouse button"
+msgstr " Bouton de souris"
+
+#. [Linker Knopf]
+# from Argos
+msgid " Left button"
+msgstr " Bouton gauche"
+
+#. [rechter Knopf]
+# from Argos
+msgid " Right button"
+msgstr " Bouton droit"
+
+#. [ Mittlerer Knopf]
+# bulk translation
+msgid " Middle button"
+msgstr " Bouton du milieu"
+
+#. [Andere Tasten als die oben angegebenen sind möglicherweise verfügbar, wenn
+#. die angeschlossene Maus mehr als drei Tasten hat.]
+# bulk translation
+msgid ""
+"Other buttons than the ones specified above may be available if the mouse "
+"connected has more than three buttons."
+msgstr ""
+"D'autres boutons que ceux spécifiés ci-dessus peuvent être disponibles si la"
+" souris connectée a plus de trois boutons."
+
+#. [Bewegung des Mausrads.]
+# bulk translation
+msgid "Movement of the mouse wheel."
+msgstr "Mouvement de la molette de la souris."
+
+#. [Gibt einen Wert zurück, der die Bewegung des Mausrads seit dem letzten
+#. `MOUSEWHEEL`-Aufruf darstellt.]
+# bulk translation
+msgid ""
+"Returns a value representing the movement of the mouse wheel since the last "
+"call to `MOUSEWHEEL`."
+msgstr ""
+"Renvoie une valeur représentant le mouvement de la molette de la souris "
+"depuis le dernier appel à `MOUSEWHEEL`."
+
+#. [Mausradbewegung, Klicks]
+# bulk translation
+msgid "movement of mouse wheel, clicks"
+msgstr "mouvement de la molette de la souris, clics"
+
+#. [Diese Funktion ist auf SDL-Plattformen nicht implementiert.]
+# bulk translation
+msgid "This function is not implemented on SDL platforms."
+msgstr "Cette fonction n'est pas implémentée sur les plates-formes SDL."
+
+#. [* Ein Moduswert von 0 'oder' 1 'konfiguriert die Spindel als
+#. Allzweckeingang bzw. Ausgabe. Ein Wert von' 7 'deaktiviert die Spindel.]
+# from Google
+msgid ""
+"* A `mode` value of `0` or `1` configures the pin as a general-purpose input"
+" or output, respectively. A value of `7` disables the pin."
+msgstr ""
+"* Une valeur `mode` de `0` ou `1` configure la broche comme entrée ou sortie"
+" à usage général, respectivement.Une valeur de `7` désactive la broche."
+
+#. [Die Bedeutung von "Flags" wird durch die "enum"-Werte im Arduino-Kern
+#. bestimmt und man kann nicht darauf vertrauen, dass sie stabil bleiben.]
+# bulk translation
+msgid ""
+"The meaning of `flags` is determined by `enum` values in the Arduino core "
+"and cannot be relied on to remain stable."
+msgstr ""
+"La signification de `flags` est déterminée par les valeurs `enum` "
+"dans le noyau Arduino et ne peut pas être fiable pour rester stable."
+
+#. [Liest den Zustand eines Allzweck-E/A-Pins.]
+# bulk translation
+msgid "Reads the state of a general-purpose I/O pin."
+msgstr "Lit l'état d'une broche d'E/S à usage général."
+
+#. [Die alternative `SREAD()`-Syntax wird aus Gründen der
+#. Abwärtskompatibilität
+#. mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `SREAD()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `SREAD()` est prise en charge pour une compatibilité "
+"descendante avec les versions antérieures de Engine BASIC."
+
+#. [Die alternative `SREADY()`-Syntax wird aus Gründen der
+#. Abwärtskompatibilität mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `SREADY()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `SREADY()` est prise en charge pour une compatibilité"
+" descendante avec les versions antérieures de Engine BASIC."
+
+#. [`num` auf die nächste ganze Zahl gerundet.]
+# bulk translation
+msgid "`num` rounded down to the nearest integer."
+msgstr "`num` arrondi à l'entier inférieur le plus proche."
+
+#. [Gibt einen Zeiger auf ein natives Symbol zurück.]
+# bulk translation
+msgid "Returns a pointer to a native symbol."
+msgstr "Renvoie un pointeur vers un symbole natif."
+
+#. [Name eines nativen Symbols]
+# from Argos
+msgid "name of a native symbol"
+msgstr "nom d'un symbole natif"
+
+#. [Zeiger auf das angeforderte Symbol oder 0, wenn es nicht gefunden wird.]
+# bulk translation
+msgid "Pointer to requested symbol, or 0 if not found."
+msgstr "Pointeur vers le symbole demandé, ou 0 s'il n'est pas trouvé."
+
+#. [Lautstärke-Hüllkurve [Zeichen von `CHR $ (0)` bis `CHR $ (15)`, Standard:
+#. konstantes Volumen]]
+# bulk translation
+msgid ""
+"volume envelope\t[characters from `CHR$(0)` to `CHR$(15)`, default: constant"
+" volume]"
+msgstr ""
+"enveloppe de volume [caractères de `CHR$(0)` à `CHR$(15)`, par défaut : "
+"volume constant]"
+
+#. [Der Maximalwert von „period“ hängt vom Geschmack der BASIC-Engine ab; es
+#. ist 320 für die Spielversion und 160 für die Netzwerkversion.]
+# bulk translation
+msgid ""
+"The maximum value for `period` depends on the flavor of Engine BASIC; it's "
+"320 for the gaming build, and 160 for the network build."
+msgstr ""
+"La valeur maximale de `period` dépend de la saveur du Engine BASIC ; "
+"c'est 320 pour la version jeu et 160 pour la version réseau."
+
+#. [Tonhöhe beachten]
+# bulk translation
+msgid "note pitch"
+msgstr "hauteur de note"
+
+#. [Gibt eine angegebene Anzahl von Bytes ganz links in einer Byte-
+#. Zeichenfolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of leftmost bytes in a byte string."
+msgstr ""
+"Renvoie un nombre spécifié d'octets les plus à gauche dans une chaîne "
+"d'octets."
+
+#. [Anzahl der zurückzugebenden Bytes [min `0`]]
+# bulk translation
+msgid "number of bytes to return [min `0`]"
+msgstr "nombre d'octets à renvoyer [min `0`]"
+
+#. [Teilzeichenfolge von `num` Bytes oder weniger.]
+# bulk translation
+msgid "Substring of `num` bytes or less."
+msgstr "Sous-chaîne de `num` octets ou moins."
+
+#. [Wenn `l $` kürzer als `num` Bytes ist, ist der Rückgabewert `l $`.]
+# bulk translation
+msgid "If `l$` is shorter than `num` bytes, the return value is `l$`."
+msgstr ""
+"Si `l$` est plus court que `num` octets, la valeur de retour est `l$`."
+
+#. [Gibt eine angegebene Anzahl von Bytes ganz rechts in einer Bytefolge
+#. zurück.]
+# bulk translation
+msgid "Returns a specified number of rightmost bytes in a byte string."
+msgstr ""
+"Renvoie un nombre spécifié d'octets les plus à droite dans une chaîne "
+"d'octets."
+
+#. [Wenn `r $` kürzer als `num` Bytes ist, ist der Rückgabewert `r $`.]
+# bulk translation
+msgid "If `r$` is shorter than `num` bytes, the return value is `r$`."
+msgstr ""
+"Si `r$` est plus court que `num` octets, la valeur de retour est `r$`."
+
+#. [Gibt einen Teil einer Byte-Zeichenfolge zurück.]
+# bulk translation
+msgid "Returns part of a byte string."
+msgstr "Renvoie une partie d'une chaîne d'octets."
+
+#. [Position des ersten Bytes im zurückgegebenen Teilstring]
+# bulk translation
+msgid "position of the first byte in the substring being returned"
+msgstr "position du premier octet dans la sous-chaîne renvoyée"
+
+#. [Anzahl Bytes im Teilstring [Standard: `BLEN (m $) - start`]]
+# bulk translation
+msgid "number of bytes in the substring [default: `BLEN(m$)-start`]"
+msgstr "nombre d'octets dans la sous-chaîne [par défaut : `BLEN(m$)-start`]"
+
+#. [Teilzeichenfolge von "len" oder weniger Bytes.]
+# bulk translation
+msgid "Substring of `len` bytes or less."
+msgstr "Sous-chaîne d'octets `len` ou moins."
+
+#. [* Wenn `m $` kürzer als `l in` Bytes ist, ist der Rückgabewert `m $`.]
+# bulk translation
+msgid "* If `m$` is shorter than `len` bytes, the return value is `m$`."
+msgstr ""
+"* Si `m$` est plus court que `len` octets, la valeur de retour est `m$`."
+
+#. [* Im Gegensatz zu anderen BASIC-Implementierungen ist `start` nullbasiert,
+#. d.h. das erste Byte ist 0, nicht 1.]
+# bulk translation
+msgid ""
+"* Unlike with other BASIC implementations, `start` is zero-based, i.e. the "
+"first byte is 0, not 1."
+msgstr ""
+"* Contrairement aux autres implémentations BASIC, `start` est basé sur zéro,"
+" c'est-à-dire que le premier octet est 0, pas 1."
+
+#. [Gibt eine Zeichenfolge zurück, die die UTF-8-Codierung des angegebenen
+#. Unicode-Codepunkts enthält.]
+# bulk translation
+msgid ""
+"Returns a string containing the UTF-8 encoding of the specified Unicode "
+"codepoint."
+msgstr ""
+"Renvoie une chaîne contenant l'encodage UTF-8 du point de code Unicode "
+"spécifié."
+
+#. [Unicode-Codepunkt]
+# bulk translation
+msgid "Unicode codepoint"
+msgstr "Point de code Unicode"
+
+#. [* Um einen String aus einem Byte-Wert ohne UTF-8-Codierung zu
+#. konstruieren,
+#. verwenden Sie die Syntax `a $ = [Byte]`.]
+# bulk translation
+msgid ""
+"* To construct string from a byte value without UTF-8 encoding, use the `a$ "
+"= [byte]` syntax."
+msgstr ""
+"* Pour construire une chaîne à partir d'une valeur d'octet sans encodage "
+"UTF-8, utilisez la syntaxe `a$ = [byte]`."
+
+#. [Wandelt die Zeichenfolge in Kleinbuchstaben um.]
+# bulk translation
+msgid "Converts string to all-lowercase letters."
+msgstr "Convertit la chaîne en lettres minuscules."
+
+#. [Kette zu konvertieren]
+# from Argos
+msgid "string to convert"
+msgstr "chaîne à convertir"
+
+#. [Wert von `s $`, wobei alle Buchstaben durch ihre Kleinbuchstaben ersetzt
+#. wurden.]
+# bulk translation
+msgid ""
+"Value of `s$` with all letters replaced with their lowercase equivalents."
+msgstr ""
+"Valeur de `s$` avec toutes les lettres remplacées par leurs équivalents en "
+"minuscules."
+
+#. [Wandelt die Zeichenfolge in Großbuchstaben um.]
+# bulk translation
+msgid "Converts string to all-uppercase letters."
+msgstr "Convertit la chaîne en lettres majuscules."
+
+#. [Wert von `s $`, wobei alle Buchstaben durch ihre Entsprechungen in
+#. Großbuchstaben ersetzt wurden.]
+# bulk translation
+msgid ""
+"Value of `s$` with all letters replaced with their uppercase equivalents."
+msgstr ""
+"Valeur de `s$` avec toutes les lettres remplacées par leurs équivalents en "
+"majuscules."
+
+#. [Gibt den Wert einer Umgebungsvariablen zurück.]
+# from Argos
+msgid "Returns the value of an environment variable."
+msgstr "Renvoie la valeur d'une variable d'environnement."
+
+#. [Name der Umgebungsvariablen]
+# bulk translation
+msgid "name of environment variable"
+msgstr "nom de la variable d'environnement"
+
+#. [Wert der angegebenen Umgebungsvariablen.]
+# from Google
+msgid "Value of the specified environment variable."
+msgstr "Valeur de la variable d'environnement spécifiée."
+
+#. [Schreiben Sie eine Zeichenfolge von Bytes an eine Adresse im Speicher.]
+# bulk translation
+msgid "Write a byte string to an address in memory."
+msgstr "Écrire une chaîne d'octets à une adresse en mémoire."
+
+#. [Daten zu schreiben]
+# bulk translation
+msgid "data to be written"
+msgstr "données à écrire"
+
+#. [* Beim Schreiben eines Strings, der von einer C-Funktion verwendet werden
+#. soll, muss am Ende ein `0`-Byte hinzugefügt werden, zum Beispiel` "text" +
+#. CHR $ (0) `.]
+# bulk translation
+msgid ""
+"* When writing a string that is to be used by a C function you have to make "
+"sure to add a `0`-byte at the end, e.g. `\"text\" + CHR$(0)`."
+msgstr ""
+"* Lors de l'écriture d'une chaîne qui doit être utilisée par une fonction C,"
+" vous devez vous assurer d'ajouter un `0`-octet à la fin, par exemple "
+"`\"texte\" + CHR$(0)`."
+
+#. [Die alternative `FREE()`-Syntax wird aus Gründen der Abwärtskompatibilität
+#. mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `FREE()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `FREE()` est prise en charge pour une compatibilité "
+"descendante avec les versions antérieures de Engine BASIC."
+
+#. [Liest eine Zeichenfolge von Datenbytes von einer Adresse im Speicher.]
+# bulk translation
+msgid "Reads a byte string of data from an address in memory."
+msgstr "Lit une chaîne d'octets de données à partir d'une adresse en mémoire."
+
+#. [Anzahl der zu lesenden Bytes oder 0]
+# bulk translation
+msgid "number of bytes to read, or 0"
+msgstr "nombre d'octets à lire, ou 0"
+
+#. [Byte-String mit 'length' Datenbytes beginnend bei 'adr'.]
+# bulk translation
+msgid "Byte string containing `length` bytes of data starting at `addr`."
+msgstr ""
+"Chaîne d'octets contenant `length` octets de données commençant à `addr`."
+
+#. [* Der Speicher an `addr` muss einen by-Byte-Zugriff ermöglichen.]
+# bulk translation
+msgid "* Memory at `addr` must allow byte-wise access."
+msgstr "* La mémoire à `addr` doit permettre un accès par octet."
+
+#. [* Wenn `length` `0` ist, werden Daten gelesen, bis ein `0`-Byte gefunden
+#. wird. Verwenden Sie es, um Saiten im C-Stil zu spielen.]
+# bulk translation
+msgid ""
+"* When `length` is `0`, data is read until a `0`-byte is encountered. Use "
+"this to read C-style strings."
+msgstr ""
+"* Lorsque `length` est `0`, les données sont lues jusqu'à ce qu'un `0`-byte "
+"soit rencontré. Utilisez-le pour lire des chaînes de style C."
+
+#. [Starten Sie das System neu.]
+# bulk translation
+msgid "Reboots the system."
+msgstr "Redémarre le système."
+
+#. [Nur auf der H3-Plattform implementiert.]
+# bulk translation
+msgid "Only implemented on the H3 platform."
+msgstr "Uniquement implémenté sur la plate-forme H3."
+
+#. [Legt die Taktfrequenz des Prozessors fest.]
+# bulk translation
+msgid "Sets the CPU clock frequency."
+msgstr "Définit la fréquence d'horloge du processeur."
+
+#. [Prozessorgeschwindigkeit als Prozentsatz des Maximums.]
+# bulk translation
+msgid "CPU speed in percent of maximum."
+msgstr "Vitesse du processeur en pourcentage du maximum."
+
+#. [* Nur auf der H3-Plattform implementiert.]
+# bulk translation
+msgid "* Only implemented on the H3 platform."
+msgstr "* Uniquement implémenté sur la plate-forme H3."
+
+#. [* Auf Plattformen, die dies nicht unterstützen, wird kein Fehler
+#. generiert.]
+# bulk translation
+msgid "* Will not generate an error on platforms that do not support it."
+msgstr ""
+"* Ne générera pas d'erreur sur les plateformes qui ne le prennent pas en "
+"charge."
+
+#. [* Wenn Geschwindigkeit ist, wird die Geschwindigkeit der CPU auf den
+#. Standard zurückgesetzt.]
+# from Google
+msgid ""
+"* When `speed` is `-1` the CPU speed will be reset to the power-on default."
+msgstr ""
+"* Lorsque `speed` est `-1` La vitesse de la CPU sera réinitialisée à la "
+"valeur par défaut."
+
+#. [Installiert ein verpacktes Modul in das Systemmodulverzeichnis.]
+# bulk translation
+msgid "Installs a packaged module to the system module directory."
+msgstr "Installe un module empaqueté dans le répertoire du module système."
+
+#. [Name einer gepackten Moduldatei]
+# bulk translation
+msgid "name of a packaged module file"
+msgstr "nom d'un fichier de module empaqueté"
+
+#. [Lädt ein Modul aus dem Verzeichnis der Systemmodule.]
+# bulk translation
+msgid "Loads a module from the system module directory."
+msgstr "Charge un module à partir du répertoire des modules système."
+
+#. [Name eines installierten Moduls]
+# bulk translation
+msgid "name of an installed module"
+msgstr "nom d'un module installé"
+
+#. [Zeigt die Namen aller aktuell geladenen Module an.]
+# bulk translation
+msgid "Shows the names of all modules currently loaded."
+msgstr "Affiche les noms de tous les modules actuellement chargés."
+
+#. [Stellt sicher, dass ein bestimmtes Modul geladen wird.]
+# bulk translation
+msgid "Ensures that a given module is loaded."
+msgstr "Assure qu'un module donné est chargé."
+
+#. [Modulname]
+# bulk translation
+msgid "module name"
+msgstr "nom du module"
+
+#. [Prüft, ob ein Modul namens `module_name` bereits geladen wurde.
+#. Andernfalls
+#. wird das Modul in `/sys/modules/module_name` gesucht und geladen. Wenn kein
+#. Modul gefunden wird, wird ein Fehler generiert.]
+# bulk translation
+msgid ""
+"Checks if a module called `module_name` has alredy been loaded. If not, it "
+"will search for the module in `/sys/modules/module_name` and load it. If no "
+"module is found, it will generate an error."
+msgstr ""
+"Vérifie si un module appelé `module_name` a déjà été chargé. Sinon, il "
+"recherchera le module dans `/sys/modules/module_name` et le chargera. Si "
+"aucun module n'est trouvé, il générera une erreur."
+
+#. [Das Verhalten von `# REQUIRE` unterscheidet sich von dem anderer BASIC-
+#. Befehle. Es wird ausgeführt, sobald es vom Interpreter gefunden wird, zB
+#. beim Laden eines Programms.]
+# bulk translation
+msgid ""
+"The behavior of `#REQUIRE` differs from that of other BASIC commands. It is "
+"executed as soon as it is spotted by the interpreter, for instance when "
+"loading a program."
+msgstr ""
+"Le comportement de `#REQUIRE` diffère de celui des autres commandes BASIC. "
+"Il est exécuté dès qu'il est repéré par l'interpréteur, par exemple lors du "
+"chargement d'un programme."
+
+#. [Das bedeutet, dass `# REQUIRE` bereits beim Laden eines Programms einen
+#. Fehler generiert, wenn das angegebene Modul nicht gefunden wird.]
+# bulk translation
+msgid ""
+"This means that `#REQUIRE` will already generate an error when loading a "
+"program if the specified module cannot be found."
+msgstr ""
+"Cela signifie que `#REQUIRE` générera déjà une erreur lors du chargement "
+"d'un programme si le module spécifié est introuvable."
+
+#. [Wenn `# REQUIRE` während des normalen Programmablaufs ausgeführt wird,
+#. wird
+#. es nichts tun.]
+# bulk translation
+msgid ""
+"When executed during normal program flow, `#REQUIRE` will not do anything."
+msgstr ""
+"Lorsqu'il est exécuté pendant le déroulement normal du programme, `#REQUIRE`"
+" ne fera rien."
+
+#. [Schriftartenname]
+# bulk translation
+msgid "font name"
+msgstr "nom de la police"
+
+#. [Schriftbreite (Pixel)]
+# bulk translation
+msgid "font width (pixels)"
+msgstr "largeur de police (pixels)"
+
+#. [Schrifthöhe (Pixel)]
+# bulk translation
+msgid "font height (pixels)"
+msgstr "hauteur de police (pixels)"
+
+#. [Gibt den Index der in `RET (0)` ausgewählten Schriftart zurück.]
+# bulk translation
+msgid "Returns the index of the selected font in `RET(0)`."
+msgstr "Renvoie l'index de la police sélectionnée dans `RET(0)`."
+
+#. [Folgende Schriftarten sind integriert:]
+# bulk translation
+msgid "The following fonts are built-in:"
+msgstr "Les polices suivantes sont intégrées :"
+
+#. [ "Lexik"]
+# bulk translation
+msgid " \"lexis\" "
+msgstr " \"lexis\" "
+
+#. [ Lexis-Schriftart, 6x8 Pixel (Standard)]
+# bulk translation
+msgid " Lexis font, 6x8 pixels (default)"
+msgstr " Police Lexis, 6x8 pixels (par défaut)"
+
+#. [ "cpc"]
+# bulk translation
+msgid " \"cpc\" "
+msgstr " \"cpc\" "
+
+#. [ "bescii"]
+# bulk translation
+msgid " \"bescii\" "
+msgstr " \"bescii\" "
+
+#. [ Schriftart im PETSCII-Stil, 8x8 Pixel]
+# bulk translation
+msgid " PETSCII-style font, 8x8 pixels"
+msgstr " Police de style PETSCII, 8x8 pixels"
+
+#. [ "tt"]
+# bulk translation
+msgid " \"tt\" "
+msgstr " \"tt\" "
+
+#. [ Japanische Schriftart, 8x8 Pixel]
+# bulk translation
+msgid " Japanese font, 8x8 pixels"
+msgstr " Police japonaise, 8x8 pixels"
+
+#. [ "hp100lx"]
+# bulk translation
+msgid " \"hp100lx\" "
+msgstr " \"hp100lx\" "
+
+#. [ HP 100 LX-Schriftart, 8 x 8 Pixel]
+# bulk translation
+msgid " HP 100 LX font, 8x8 pixels"
+msgstr " Police HP 100 LX, 8x8 pixels"
+
+#. [* Zusätzliche Schriftarten werden fortlaufenden Schriftartindizes
+#. zugewiesen.]
+# bulk translation
+msgid "* Additional fonts will be assigned consecutive font indices."
+msgstr ""
+"* Les polices supplémentaires se verront attribuer des indices de police "
+"consécutifs."
+
+#. [* Die beim Einschalten eingestellte Schriftart kann mit dem Befehl
+#. `CONFIG`
+#. eingestellt werden.]
+# bulk translation
+msgid "* The font set at power-on can be set using the `CONFIG` command."
+msgstr ""
+"* La police définie à la mise sous tension peut être définie à l'aide de la "
+"commande `CONFIG`."
+
+#. [Listet die installierten Schriftarten auf.]
+# bulk translation
+msgid "Lists installed fonts."
+msgstr "Répertorie les polices installées."
+
+#. [Druckt eine tabulatorgetrennte Liste mit Indizes, Namen und Größen der
+#. aktuell geladenen Schriftarten.]
+# bulk translation
+msgid ""
+"Prints a tab-separated list of the indices, names and sizes of the fonts "
+"currently loaded."
+msgstr ""
+"Imprime une liste séparée par des tabulations des indices, noms et tailles "
+"des polices actuellement chargées."
+
+#. [ 460x224]
+# bulk translation
+msgid " 460x224 "
+msgstr " 460x224 "
+
+#. [ 436x216]
+# bulk translation
+msgid " 436x216 "
+msgstr " 436x216 "
+
+#. [ 320x216]
+# bulk translation
+msgid " 320x216 "
+msgstr " 320x216 "
+
+#. [ 320x200]
+# bulk translation
+msgid " 320x200 "
+msgstr " 320x200 "
+
+#. [ 256x224]
+# bulk translation
+msgid " 256x224 "
+msgstr " 256x224 "
+
+#. [ 256x192]
+# bulk translation
+msgid " 256x192 "
+msgstr " 256x192 "
+
+#. [ 160x200]
+# bulk translation
+msgid " 160x200 "
+msgstr " 160x200 "
+
+#. [ 352x240]
+# bulk translation
+msgid " 352x240 "
+msgstr " 352x240 "
+
+#. [ 282x240]
+# bulk translation
+msgid " 282x240 "
+msgstr " 282x240 "
+
+#. [ 508x240]
+# bulk translation
+msgid " 508x240 "
+msgstr " 508x240 "
+
+#. [ h]
+# bulk translation
+msgid " H "
+msgstr " H "
+
+#. [ S]
+# bulk translation
+msgid " S "
+msgstr " S "
+
+#. [ V]
+# bulk translation
+msgid " V"
+msgstr " V"
+
+#. [Gültige Registernummern sind: "$ 01", "$ 28" bis "$ 30", "$ 34" bis "$
+#. 36",
+#. "$ 82" und "$ B8"]
+# bulk translation
+msgid ""
+"Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` "
+"and `$B8`"
+msgstr ""
+"Les numéros de registres valides sont : `$01`, `$28` à `$30`, `$34` "
+"à `$36`, `$82` et `$B8`"
+
+#. [Die alternative `FRAME()`-Syntax wird aus Gründen der
+#. Abwärtskompatibilität
+#. mit früheren Versionen von Engine BASIC unterstützt.]
+# bulk translation
+msgid ""
+"The alternative syntax `FRAME()` is supported for backwards compatibility "
+"with earlier versions of Engine BASIC."
+msgstr ""
+"La syntaxe alternative `FRAME()` est prise en charge pour une compatibilité "
+"descendante avec les versions antérieures de Engine BASIC."
+
+#. [Gültige Registrierungsnummern sind: "$ 05", "$ 53", "$ 84", "$ 86", "$ 9F"
+#. und "$ B7".]
+# bulk translation
+msgid ""
+"Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`."
+msgstr ""
+"Les numéros de registre valides sont : `$05`, `$53`, `$84`, `$86`, "
+"`$9F` et `$B7`."
+
+#. [Alle grundlegenden Motorbefehle, die einen Farbwert erfordern, erwarten,
+#. dass sich der Wert im Format des Videoscontrollers befindet, der vom
+#. Parameter << Palette >> abhängt.]
+# from Google
+msgid ""
+"All Engine BASIC commands that require a color value expect that value to be"
+" in the video controller's format, which depends on the <<PALETTE>> setting."
+msgstr ""
+"Toutes les commandes de Engine BASIC nécessitant une valeur de couleur "
+"s'attendent à ce que la valeur soit au format du contrôleur vidéo, qui "
+"dépend du paramètre <<PALETTE>>."
+
+#. [Lädt eine TrueType-Schriftart aus einer Datei.]
+# bulk translation
+msgid "Loads a TrueType font from a file."
+msgstr "Charge une police TrueType à partir d'un fichier."
+
+#. [Dateiname der TrueType-Schriftart]
+# bulk translation
+msgid "name of TrueType font file"
+msgstr "nom du fichier de police TrueType"
+
+#. [Proportionale Schriftarten und Schriftarten, die nicht speziell für die
+#. Verwendung auf Bildschirmen mit niedriger Auflösung entwickelt wurden,
+#. sehen nicht sehr gut aus.]
+# bulk translation
+msgid ""
+"Proportional fonts and fonts that are not specifically designed for use on "
+"low-resolution screens will not look very good."
+msgstr ""
+"Les polices proportionnelles et les polices qui ne sont pas spécifiquement "
+"conçues pour être utilisées sur des écrans à faible résolution ne seront pas"
+" très belles."
