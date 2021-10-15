@@ -646,3 +646,83 @@ msgstr "不明なメモリサイズ\n"
 # bulk translation
 msgid "unknown/SDL"
 msgstr "不明/SDL"
+
+#. [Wend ohne weh]
+# from Argos
+msgid "WHILE without WEND"
+msgstr "WENDのないWHILE"
+
+#. [Schriftfehler]
+# from Argos
+msgid "Font error"
+msgstr "フォントエラー"
+
+#. [Insekt]
+# from Argos
+msgid "Bugs"
+msgstr "バグ"
+
+#. [Erläuterung]
+# bulk translation
+msgid "Description"
+msgstr "説明"
+
+#. [Ausdruck]
+# from Google
+msgid "Expressions"
+msgstr "表現"
+
+#. [Modus]
+# from Argos
+msgid "Modes"
+msgstr "モード"
+
+#. [Hinweis:]
+# from Argos
+msgid "See also:"
+msgstr "参照:"
+
+#. [Die Hilfedatei konnte nicht dekodiert werden]
+# bulk translation
+msgid "could not decode help file"
+msgstr "ヘルプファイルをデコードできませんでした"
+
+#. [Hilfedatei konnte nicht geöffnet werden]
+# bulk translation
+msgid "could not open help file"
+msgstr "ヘルプファイルを開くことができませんでした"
+
+#. [Die Hilfedatei konnte nicht gelesen werden]
+# bulk translation
+msgid "could not read help file"
+msgstr "ヘルプファイルを読み取れませんでした"
+
+#. [Erwartet: Datum oder Flagge]
+# bulk translation
+msgid "expected: DATE or FLAGS"
+msgstr "予想：DATEまたはFLAGS"
+
+#. [Vorhersage: Datum oder Uhrzeit]
+# bulk translation
+msgid "expected: DATE or TIME"
+msgstr "予想：DATEまたはTIME"
+
+#. [Vorhersage: Eingang, Ausgang oder Aus]
+# bulk translation
+msgid "expected: INPUT, OUTPUT or OFF"
+msgstr "予想：INPUT、OUTPUT、またはOFF"
+
+#. [Vorhersage: Ein, Aus oder Liste]
+# bulk translation
+msgid "expected: ON, OFF or LIST"
+msgstr "予想：ON、OFF、またはLIST"
+
+#. [Unbekannter Abschnitt]
+# bulk translation
+msgid "unknown section"
+msgstr "不明なセクション"
+
+#. [Unbekannter Typ]
+# bulk translation
+msgid "unknown type"
+msgstr "不明なタイプ"
