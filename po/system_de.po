@@ -688,3 +688,58 @@ msgstr "keines"
 
 msgid "pixel graphics"
 msgstr "Pixelgrafik"
+
+#. [Font error]
+# bulk translation
+msgid "Font error"
+msgstr "Schriftartfehler"
+
+#. [Expressions]
+# from Argos
+msgid "Expressions"
+msgstr "Ausdrücke"
+
+#. [Fonts]
+# bulk translation
+msgid "Fonts"
+msgstr "Schriftarten"
+
+#. [Modes]
+# bulk translation
+msgid "Modes"
+msgstr "Modi"
+
+#. [Options]
+# from Argos
+msgid "Options"
+msgstr "Optionen"
+
+#. [See also:]
+# from Argos
+msgid "See also:"
+msgstr "Siehe auch:"
+
+#. [Help file could not be decoded]
+# bulk translation
+msgid "could not decode help file"
+msgstr "Hilfedatei konnte nicht dekodiert werden"
+
+#. [Help file could not be opened]
+# bulk translation
+msgid "could not open help file"
+msgstr "Hilfedatei konnte nicht geöffnet werden"
+
+#. [Help file could not be read]
+# from Google
+msgid "could not read help file"
+msgstr "Hilfedatei konnte nicht gelesen werden"
+
+#. [unknown section]
+# from Argos
+msgid "unknown section"
+msgstr "unbekannter Abschnitt"
+
+#. [unknown type]
+# from Argos
+msgid "unknown type"
+msgstr "unbekannter Typ"
