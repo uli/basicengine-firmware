@@ -6482,7 +6482,7 @@ msgstr "* `addr`は書き込み可能にマップされ、バイト単位のア�
 msgid ""
 "* When writing a string that is to be used by a C function you have to make "
 "sure to add a `0`-byte at the end, e.g. `\"text\" + CHR$(0)`."
-msgstr "* C関数で使用される文字列を作成する場合は、末尾に必ず`0`バイトを追加する必要があります（例：`"text" + CHR$(0)`）。"
+msgstr "* C関数で使用される文字列を作成する場合は、末尾に必ず`0`バイトを追加する必要があります（例：`\"text\" + CHR$(0)`）。"
 
 #. [Die alternative Syntax `FREE()` wird aus Gründen der Abwärtskompatibilität
 #. mit früheren Versionen von Engine BASIC unterstützt.]
