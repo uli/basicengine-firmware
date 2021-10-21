@@ -70,7 +70,8 @@ def quote(s):
     return ret
 
 first_cmd = True
-for c in cmds:
+
+for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
     if first_cmd:
         first_cmd = False
     else:
