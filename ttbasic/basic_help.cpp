@@ -61,6 +61,8 @@ struct {
     { "usage", __("Usage") },
     { "args", __("Arguments") },
     { "ret", __("Return value") },
+    { "res", __("Result") },
+    { "prec", __("Precedence") },
     { "type", __("Types") },
     { "handler", __("Handler") },
     { "desc", __("Description") },
