@@ -80,6 +80,7 @@ for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
     typ, section, token = lines[0].split(' ', 2)
     token = token.replace('\\', '')
     tokens = token.split(' ')
+    tokens = [t for t in tokens if t not in ['(unary)', '(strings)']]
 
     item_data = {}
     current_item = "brief"
