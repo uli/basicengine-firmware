@@ -20,8 +20,12 @@ int eb_screen(int m) {
   restore_text_window = false;
 #endif
 
+  // XXX: workaround to produce the right BASIC error message for illegal
+  // values
+  ++m;
   if (check_param(m, 1, vs23.numModes()))
     return -1;
+  --m;
 
   vs23.reset();
 
