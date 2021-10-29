@@ -73,6 +73,7 @@ struct {
     { "ref", __("See also") },
     { "expressions", __("Expressions") },
     { "modes", __("Modes") },
+    { "example", __("Example") },
 };
 
 static const char *item_name(const char *abbrev) {

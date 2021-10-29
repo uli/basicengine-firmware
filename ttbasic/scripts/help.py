@@ -44,6 +44,8 @@ def colorize_code(d):
     d = re.sub('kbd:\[([^\]]*)]', '\\\\\\\\Fp[\g<1>]\\\\\\\\Ff', d)
     d = re.sub('\\\\endtable', '===', d)
     d = re.sub('\\\\table', '===', d)
+    d = re.sub('====\n----\n', '\\\\\\\\Fn', d)
+    d = re.sub('----\n====\n', '\\\\\\\\Ff\\n', d)
     return d
 
 def stringify_macros(d):
@@ -137,6 +139,9 @@ for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
             data = re.sub(r'\n(\\[a-z ]*)\n', '==LF==\g<1>==LF==', data)
             if section == 'usage':
                 data = data.replace('==LF==', '\n').replace('"', '\\"')
+            elif section == 'example':
+                data = data.replace('==LF==', '\n').replace('"', '\\"')
+                data = colorize_code(data)
             else:
                 # translate all LFs that we want to keep to ==LF== and ditch the rest
                 data = (data.replace('\n\n', '==LF==').	# paragraph breaks
