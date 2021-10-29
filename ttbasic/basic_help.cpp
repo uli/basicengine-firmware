@@ -376,7 +376,7 @@ void Basic::ihelp() {
 
         c_puts("\n\\Fk");
         c_puts(_("See also:"));
-        c_puts("\\Ff\n\n");
+        c_puts("\\Ff\n");
         for (int i = 0; i < hints.length(); ++i) {
             sjson_node *refs = sjson_find_member(hints[i], "ref");
             sjson_node *ref;
