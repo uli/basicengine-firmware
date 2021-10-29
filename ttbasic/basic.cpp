@@ -1183,7 +1183,7 @@ icode_t *BASIC_INT Basic::getWENDptr(icode_t *p) {
   for (lp = p;;) {
     switch (*lp) {
     case I_WHILE:
-      if (lp[-1] != I_LOOP)
+      if (lp[-1] != I_LOOP && lp[-1] != I_EXIT)
         lifstki++;
       lp++;
       break;
@@ -1304,9 +1304,10 @@ static int8_t indent_level;
 
 // tokens that increase indentation
 inline bool is_indent(icode_t *c) {
-  return (*c == I_IF && c[-1] != I_ELSE) || *c == I_DO || *c == I_WHILE ||
+  return (*c == I_IF && c[-1] != I_ELSE) || (*c == I_DO && c[-1] != I_EXIT) ||
+         (*c == I_WHILE && c[-1] != I_EXIT) ||
          (*c == I_FOR && c[1] != I_OUTPUT && c[1] != I_INPUT &&
-          c[1] != I_APPEND && c[1] != I_DIRECTORY);
+          c[1] != I_APPEND && c[1] != I_DIRECTORY && c[-1] != I_EXIT);
 }
 // tokens that reduce indentation
 inline bool is_unindent(token_t c) {
@@ -5211,6 +5212,119 @@ void BASIC_FP Basic::inext() {
   cip = lstk[lstki - 1].ip;
   clp = lstk[lstki - 1].lp;
   TRACE;
+}
+
+/***bc bas EXIT
+Exits a DO, FOR or WHILE loop.
+\usage
+EXIT DO
+
+EXIT FOR [loop_variable]
+
+EXIT WHILE
+\args
+@loop_variable	the counter variable of a FOR loop
+\desc
+Exits the top-most loop of the specified type, without regard for its loop
+condition, or the specified `FOR` loop if there is a `loop_variable` argument.
+
+The matching loop is dropped from the loop stack, and execution resumes
+after the end of the loop (the nearest following `LOOP`, `NEXT` or `WEND`
+statement, or the nearest `NEXT loop_variable` statement).
+\note
+`EXIT` only works as intended in loops with a "single end", i.e. loops that are
+not iterated using more than one `LOOP`, `NEXT` or `WEND` statement.
+\ref DO FOR WHILE
+***/
+void BASIC_FP Basic::iexit() {
+  int want_index;  // variable we want to EXIT (for EXIT FOR)
+  bool want_local = false;
+  int index;       // loop variable index we will actually use (for EXIT FOR)
+  bool local;
+
+  if (!lstki) {  // loop stack is empty
+    err = ERR_LSTKUF;
+    return;
+  }
+
+  token_t exit_what = (token_t)*cip++;
+  if (exit_what != I_FOR && exit_what != I_DO && exit_what != I_WHILE) {
+    SYNTAX_T(_("unknown loop type"));
+    return;
+  }
+
+  token_t search_for = I_NEXT;
+
+  if (exit_what == I_DO) {
+    search_for = I_LOOP;
+    want_index = -1;
+  } else if (exit_what == I_WHILE) {
+    search_for = I_WEND;
+    want_index = -2;
+  } else if (*cip != I_VAR && *cip != I_LVAR)
+    want_index = -42;  // just use whatever is TOS
+  else {
+    want_local = *cip++ == I_LVAR;
+    want_index = *cip++;  // NEXT a specific loop variable
+  }
+
+  while (lstki) {
+    // Get index of loop variable on top of stack.
+    index = lstk[lstki - 1].index;
+    local = lstk[lstki - 1].local;
+
+    // Done if it's the one we want (or if none is specified).
+    if ((want_index == -42 && index >= 0) ||		// found unspecific FOR loop
+        (want_index == index && want_local == local))	// found something else that matches
+      break;
+
+    // If nothing that matches can be found we assume we want to EXIT to a
+    // loop higher up the stack.
+    lstki--;
+  }
+
+  if (!lstki) {
+    // Didn't find anything that matches the EXIT.
+    E_ERR(NOEXIT, _("no matching loop"));
+    return;
+  }
+
+  lstki--;  // drop the loop from the loop stack
+
+  // Jump past the end of the loop.
+  icode_t *lp = cip;
+  for (; clp;) {
+    if (*lp == search_for) {
+      icode_t *tlp = lp + 1;
+      if ((want_index == -1 || want_index == -2) ||	// LOOP or WEND
+          (want_index == -42 && *tlp != I_LVAR && *tlp != I_VAR) ||	// unspecific NEXT
+          (local && *tlp++ == I_LVAR && *tlp++ == index) ||	// specific NEXT (local counter)
+          (!local && *tlp++ == I_VAR && *tlp++ == index)) {	// specific NEXT (global counter)
+        cip = tlp;
+        TRACE;
+        return;
+      }
+      // not the loop end we were looking for
+      lp += token_size(lp);
+    } else {
+      switch (*lp) {
+      case I_EOL:
+      case I_REM:
+      case I_SQUOT:
+        // Continue at next line.
+        clp += *clp;
+        if (!*clp) {
+          E_ERR(NOEXIT, _("cannot find end of loop"));
+          return;
+        }
+        lp = cip = clp + icodes_per_line_desc();
+        break;
+      default:
+        lp += token_size(lp);
+        break;
+      }
+    }
+  }
 }
 
 /***bc bas IF
