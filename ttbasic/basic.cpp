@@ -5243,7 +5243,7 @@ void BASIC_FP Basic::iexit() {
   bool local;
 
   if (!lstki) {  // loop stack is empty
-    err = ERR_LSTKUF;
+    E_ERR(NOEXIT, _("no active loops"));
     return;
   }
 
