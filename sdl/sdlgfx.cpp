@@ -61,6 +61,7 @@ void SDLGFX::modeSize(int m, int &w, int &h) {
 extern const SDL_VideoInfo *sdl_info;
 extern int sdl_flags;
 extern bool sdl_keep_res;
+extern int sdl_user_w, sdl_user_h;
 
 #include <config.h>
 
@@ -116,8 +117,8 @@ bool SDLGFX::setMode(uint8_t mode) {
   int final_w = 0, final_h = 0;
 
   if (sdl_keep_res) {
-    final_w = sdl_info->current_w;
-    final_h = sdl_info->current_h;
+    final_w = sdl_user_w;
+    final_h = sdl_user_h;
   } else if (modes != NULL && modes != (SDL_Rect **)-1) {
     // First choice: Modes that are 1x or 2x the desired resolution.
     for (int i = 0; modes[i]; ++i) {

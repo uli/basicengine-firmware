@@ -43,6 +43,7 @@ extern "C" void init_idle();
 const SDL_VideoInfo *sdl_info;
 int sdl_flags;
 bool sdl_keep_res = false;
+int sdl_user_w, sdl_user_h;
 
 int main(int argc, char **argv) {
   int opt;
@@ -65,6 +66,8 @@ int main(int argc, char **argv) {
     fprintf(stderr, "SDL_GetVideoInfo() failed: %s\n", SDL_GetError());
     exit(1);
   }
+  sdl_user_w = sdl_info->current_w;
+  sdl_user_h = sdl_info->current_h;
 
   if (SDL_InitSubSystem(SDL_INIT_AUDIO))
     fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
@@ -73,10 +76,13 @@ int main(int argc, char **argv) {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
     fprintf(stderr, "Cannot initialize SDL joystick: %s\n", SDL_GetError());
 
-  while ((opt = getopt(argc, argv, "fdr:")) != -1) {
+  while ((opt = getopt(argc, argv, "fdr:s:")) != -1) {
     switch (opt) {
     case 'f': sdl_flags |= SDL_FULLSCREEN; break;
     case 'd': sdl_keep_res = true; break;
+    case 's':
+      sscanf(optarg, "%dx%d", &sdl_user_w, &sdl_user_h);
+      break;
     case 'r':
       path = realpath(optarg, NULL);
       if (path) {
@@ -85,7 +91,7 @@ int main(int argc, char **argv) {
       }
       break;
     default: /* '?' */
-      fprintf(stderr, "Usage: %s [-f] [-d] [-r <BASIC root path>]\n",
+      fprintf(stderr, "Usage: %s [-f] [-d] [-s <w>x<h>] [-r <BASIC root path>]\n",
               argv[0]);
       exit(1);
     }
