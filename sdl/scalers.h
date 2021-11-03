@@ -12,7 +12,9 @@
 #define SCALE_FUNC      scale_integral_32
 #define SCALER_SRC_TYPE uint32_t
 #define SCALER_DST_TYPE uint32_t
-#define CONV(p)         (p)
+#define CONV(p)         ((((p) & 0x0000ff) << 16) | \
+                         (((p) & 0x00ff00)) | \
+                         (((p) & 0xff0000) >> 16))
 
 #include "scalers_imp.h"
 
