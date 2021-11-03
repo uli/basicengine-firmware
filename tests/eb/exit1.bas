@@ -23,7 +23,8 @@ do
   print "wtf?"
 loop
 
-while a=1
+a=1
+while a<5
   print "while ";a;
   a=a+1
   if a=3 then exit while
