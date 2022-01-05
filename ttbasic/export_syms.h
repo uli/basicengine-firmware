@@ -459,9 +459,13 @@ S(fmodf)
 S(frexp)
 S(frexpf)
 S(j0)
+#ifndef __UCLIBC__
 S(j0f)
+#endif
 S(j1)
+#ifndef __UCLIBC__
 S(j1f)
+#endif
 S(ldexp)
 S(ldexpf)
 S(log)
@@ -483,9 +487,13 @@ S(tanf)
 S(tanh)
 S(tanhf)
 S(y0)
+#ifndef __UCLIBC__
 S(y0f)
+#endif
 S(y1)
+#ifndef __UCLIBC__
 S(y1f)
+#endif
 
 // time
 S(time)
