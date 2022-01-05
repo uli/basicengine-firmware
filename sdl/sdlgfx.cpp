@@ -65,6 +65,8 @@ extern int sdl_user_w, sdl_user_h;
 
 #include <config.h>
 
+extern "C" int gfx_thread(void *data);
+
 void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = false;
   m_last_line = 0;
@@ -78,6 +80,10 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
   m_frame = 0;
   reset();
+
+  m_scalecond = SDL_CreateCond();
+  m_scalemut = SDL_CreateMutex();
+  SDL_CreateThread(gfx_thread, this);
 
   m_display_enabled = true;
 }
@@ -263,7 +269,25 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 #define GFXCLASS SDLGFX
 #include <drawbg.h>
 
+extern "C" int gfx_thread(void *data) {
+  SDLGFX *gfx = (SDLGFX *)data;
+  for (;;) {
+    SDL_mutexP(gfx->m_scalemut);
+    SDL_CondWait(gfx->m_scalecond, gfx->m_scalemut);
+    gfx->updateBgScale();
+    SDL_mutexV(gfx->m_scalemut);
+  }
+}
+
 void SDLGFX::updateBg() {
+  if (m_ready) {
+    m_ready = false;
+    SDL_Flip(m_screen);
+  }
+  SDL_CondSignal(m_scalecond);
+}
+
+void SDLGFX::updateBgScale() {
   static uint32_t last_frame = 0;
 
   if (frame() <= last_frame + m_frameskip)
@@ -271,26 +295,15 @@ void SDLGFX::updateBg() {
 
   last_frame = frame();
 
-  if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0)
+  if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0) {
     return;
-
-  if (m_dirty) {
-    if (SDL_BPP == 8)
-      scale_integral_8(m_composite_surface, m_screen, m_current_mode.y);
-    else if (SDL_BPP == 16)
-      scale_integral_16(m_composite_surface, m_screen, m_current_mode.y);
-    else
-      scale_integral_32(m_composite_surface, m_screen, m_current_mode.y);
-
-    SDL_Flip(m_screen);
-    m_dirty = false;
   }
 
   memcpy(m_composite_surface->pixels, m_text_surface->pixels,
          m_text_surface->pitch * m_current_mode.y);
 
   m_bg_modified = false;
-  m_dirty = true;
+  m_dirty = false;
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
@@ -323,6 +336,14 @@ void SDLGFX::updateBg() {
       drawSprite(s);
     }
   }
+
+  if (SDL_BPP == 8)
+    scale_integral_8(m_composite_surface, m_screen, m_current_mode.y);
+  else if (SDL_BPP == 16)
+    scale_integral_16(m_composite_surface, m_screen, m_current_mode.y);
+  else
+    scale_integral_32(m_composite_surface, m_screen, m_current_mode.y);
+  m_ready = true;
 }
 
 #ifdef USE_BG_ENGINE

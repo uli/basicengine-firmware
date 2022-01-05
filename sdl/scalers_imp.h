@@ -631,9 +631,8 @@ static void SCALE_FUNC(SDL_Surface *src, SDL_Surface *dst, int src_h)
 		SCALERS_UP[upfactor_x - 1][upfactor_y - 1](sp, dp, src->w, src_h, src_pitch, dst_pitch);
 	else {
 		// 1x1
-		SDL_Rect src_rect = { 0, 0, (Uint16)src->w, (Uint16)src_h };
-		SDL_Rect dst_rect = { (Sint16)off_x, (Sint16)off_y };
-		SDL_BlitSurface(src, &src_rect, dst, &dst_rect);
+		// SDL_Blit() cannot be used in the gfx thread
+		memcpy(dst->pixels, src->pixels, src->pitch * src_h);
 	}
 }
 

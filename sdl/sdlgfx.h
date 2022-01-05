@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 
 #define SC_DEFAULT           14
 #define SC_DEFAULT_SECONDARY 3
@@ -201,6 +202,11 @@ private:
 #if SDL_BPP != 8
   pixel_t m_current_palette[256];
 #endif
+public:
+  SDL_cond *m_scalecond;
+  SDL_mutex *m_scalemut;
+  void updateBgScale();
+  bool m_ready;
 };
 
 #undef PIXEL
