@@ -75,11 +75,11 @@ void hook_usb_generic_report(int hcd, uint8_t dev_addr, hid_generic_report_t *re
     int axis_hat = -1;
 
     for (int i = 0; i < pad->axes.length(); ++i) {
-        if (pad->axes[i].usage == 0x30)		// Usage(X)
+        if (pad->axes[i].usage == HID_USAGE_DESKTOP_X)
             axis_x = i;
-        else if (pad->axes[i].usage == 0x31)	// Usage(Y)
+        else if (pad->axes[i].usage == HID_USAGE_DESKTOP_Y)
             axis_y = i;
-        else if (pad->axes[i].usage == 0x39)	// Hat Switch
+        else if (pad->axes[i].usage == HID_USAGE_DESKTOP_HAT_SWITCH)
             axis_hat = i;
     }
 
@@ -221,7 +221,8 @@ bool Joystick::parseReportDesc(usb_pad *pad)
     // XXX: Does this really make sense? What about HID devices that don't
     // start with Generic Desktop Page?
     if (rd[0] == 0x05 && rd[1] == 0x01 &&			// Generic Desktop Page
-        rd[2] == 0x09 && (rd[3] != 0x04 && rd[3] != 0x05)) {	// Usage ID != Joystick, Gamepad
+        rd[2] == 0x09 &&
+        (rd[3] != HID_USAGE_DESKTOP_JOYSTICK && rd[3] != HID_USAGE_DESKTOP_GAMEPAD)) {
         return false;
     }
 
@@ -251,12 +252,12 @@ bool Joystick::parseReportDesc(usb_pad *pad)
         } else if (tag == 0x94) {	// Report Count
             rep_count = arg;
         } else if (tag == 0x80) {	// Input
-            if ((arg & 0x03) == 0x02) {
-                // Data, Variable. We ignore the various other bits (absolute/relative etc.).
+            if ((arg & 0x03) == (HID_DATA | HID_VARIABLE)) {
+                // We ignore the various other bits (absolute/relative etc.).
                 if (rep_bits > 1) {
                     // Assume everything larger than 1 bit is an axis.
                     for (int k = 0; k < rep_count; ++k) {
-                        if (usage_page == 0x01) {
+                        if (usage_page == HID_USAGE_PAGE_DESKTOP) {
                             struct usb_pad_axis axis = {
                                 .bit_pos = report_offset,
                                 .bit_width = rep_bits,
@@ -278,7 +279,8 @@ bool Joystick::parseReportDesc(usb_pad *pad)
                 } else if (rep_bits == 1) {
                     // All single bit inputs are assumed to be buttons.
                     for (int k = 0; k < rep_count; ++k) {
-                        if (usage_page == 0x09 && buttons_count < (int)sizeof(default_button_map)) {
+                        if (usage_page == HID_USAGE_PAGE_BUTTON &&
+                            buttons_count < (int)sizeof(default_button_map)) {
                             struct usb_pad_button button = {
                                 .bit_pos = report_offset,
                                 // There are two reserved bits in our joystick bitmap
