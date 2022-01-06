@@ -40,10 +40,10 @@ static void my_exit(void) {
 
 extern "C" void init_idle();
 
-const SDL_VideoInfo *sdl_info;
 int sdl_flags;
-bool sdl_keep_res = false;
 int sdl_user_w, sdl_user_h;
+SDL_Window *sdl_window;
+SDL_Renderer *sdl_renderer;
 
 int main(int argc, char **argv) {
   int opt;
@@ -54,20 +54,15 @@ int main(int argc, char **argv) {
     free(path);
   }
 
-  sdl_flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
+  sdl_flags = 0;
 
   if (SDL_Init(SDL_INIT_VIDEO)) {
     fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
     exit(1);
   }
 
-  sdl_info = SDL_GetVideoInfo();
-  if (!sdl_info) {
-    fprintf(stderr, "SDL_GetVideoInfo() failed: %s\n", SDL_GetError());
-    exit(1);
-  }
-  sdl_user_w = sdl_info->current_w;
-  sdl_user_h = sdl_info->current_h;
+  sdl_user_w = 640;
+  sdl_user_h = 480;
 
   if (SDL_InitSubSystem(SDL_INIT_AUDIO))
     fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
@@ -78,8 +73,11 @@ int main(int argc, char **argv) {
 
   while ((opt = getopt(argc, argv, "fdr:s:")) != -1) {
     switch (opt) {
-    case 'f': sdl_flags |= SDL_FULLSCREEN; break;
-    case 'd': sdl_keep_res = true; break;
+    case 'f': sdl_flags |= SDL_WINDOW_FULLSCREEN; break;
+    case 'd':
+      sdl_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+      sdl_user_w = 0; sdl_user_h = 0;
+      break;
     case 's':
       sscanf(optarg, "%dx%d", &sdl_user_w, &sdl_user_h);
       break;
@@ -97,6 +95,9 @@ int main(int argc, char **argv) {
     }
   }
 
+  sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
+    SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
+  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
 
   atexit(my_exit);
 
