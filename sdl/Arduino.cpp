@@ -120,7 +120,7 @@ void platform_process_events() {
 
   audio.pumpEvents();
   SDL_PumpEvents();
-  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_KEYUPMASK|SDL_KEYDOWNMASK)) == 1) {
+  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_QUIT, SDL_QUIT) == 1 || SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL) == 1) {
     switch (event.type) {
     case SDL_QUIT:
       exit(0);
