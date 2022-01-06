@@ -97,7 +97,7 @@ public:
     setBorder(y, uv, 0, borderWidth());
   }
 
-  inline uint16_t borderWidth() { return m_screen->w; }
+  inline uint16_t borderWidth() { return m_current_mode.x; }
 
   inline void setPixel(uint16_t x, uint16_t y, pixel_t c) {
     PIXELT(x, y) = c;
@@ -183,10 +183,6 @@ public:
   }
 
 private:
-  inline pixel_t *screenPixel(int x, int y) {
-    return &((pixel_t *)m_screen->pixels)[y * m_screen->pitch/sizeof(pixel_t) + x];
-  }
-
   void drawBg(bg_t *bg);
   void drawSprite(sprite_t *s);
 

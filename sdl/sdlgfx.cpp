@@ -211,7 +211,7 @@ bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = true;
   m_dirty = true;
 
-  setBorder(0, 0, 0, m_screen->w);
+  setBorder(0, 0, 0, m_current_mode.x);
 
   return true;
 }
@@ -243,11 +243,7 @@ void SDLGFX::setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w) {
                      (color >> 8) & 0xff, color & 0xff);
 #endif
 
-  for (int y = 0; y < m_screen->h; ++y) {
-    for (int xx = x; xx < w + x; ++xx) {
-      *screenPixel(xx, y) = color;
-    }
-  }
+  // XXX: draw border
 }
 
 void SDLGFX::setColorSpace(uint8_t palette) {
