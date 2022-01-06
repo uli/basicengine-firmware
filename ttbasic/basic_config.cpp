@@ -200,7 +200,7 @@ void SMALL Basic::iconfig() {
     if (value < 0 || value > 4) {
       E_VALUE(0, 4);
     } else {
-#if !defined(HOSTED) && !defined(__DJGPP__) && !defined(SDL)
+#if !defined(HOSTED) && !defined(__DJGPP__)
       kb.setLayout(value);
 #endif
       CONFIG.KEYBOARD = value;
