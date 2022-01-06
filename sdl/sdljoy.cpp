@@ -2,7 +2,7 @@
 // Copyright (c) 2019 Ulrich Hecht
 
 #include <joystick.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 int Joystick::read() {
   if (!m_joy)

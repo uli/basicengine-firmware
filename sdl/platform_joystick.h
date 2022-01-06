@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 class Joystick {
 public:

@@ -3,7 +3,7 @@
 
 #include <TKeyboard.h>
 #include "TPS2.h"
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <ring_buffer.h>
 
 TPS2 pb;

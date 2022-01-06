@@ -3,7 +3,7 @@
 
 // 32-bpp to 32-bpp integral factor image scalers.
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #define SCALER(x)       scaler_##x##_32
 #define SCALER_TYPE     scaler_32_t

@@ -4,7 +4,7 @@
 #ifndef _ARDUINO_H
 #define _ARDUINO_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include <math.h>
 #include <ctype.h>

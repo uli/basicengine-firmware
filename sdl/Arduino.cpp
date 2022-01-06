@@ -36,7 +36,7 @@ static void my_exit(void) {
   SDL_Quit();
 }
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 extern "C" void init_idle();
 

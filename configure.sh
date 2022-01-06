@@ -194,10 +194,10 @@ objdir = $SDL_OBJDIR
 include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
-  \$common_include -DSDL -DDISABLE_NEON `sdl-config --cflags`
+  \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags`
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl-config --libs` -lm
+libs = \$common_libs `sdl2-config --libs` -lm
 
 rule cc
   depfile = \$out.d
@@ -227,10 +227,10 @@ cxx = clang-tidy-11
 include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
-  \$common_include -DSDL -DDISABLE_NEON `sdl-config --cflags` -fcolor-diagnostics -D__x86_64__
+  \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags` -fcolor-diagnostics #-D__x86_64__
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl-config --libs` -lm
+libs = \$common_libs `sdl2-config --libs` -lm
 
 rule cc
   command = \$cc --use-color \$in -- -MD -MF \$out.d \$cflags
