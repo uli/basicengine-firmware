@@ -215,9 +215,14 @@ bool SDLGFX::setMode(uint8_t mode) {
 }
 
 void SDLGFX::toggleFullscreen() {
-  if (m_screen) {
-    SDL_WM_ToggleFullScreen(m_screen);
-    sdl_flags ^= SDL_FULLSCREEN;
+  int flags = SDL_GetWindowFlags(sdl_window);
+  if (flags & SDL_WINDOW_FULLSCREEN) {
+    SDL_SetWindowFullscreen(sdl_window, 0);
+  } else {
+    if (sdl_flags & SDL_WINDOW_FULLSCREEN)
+      SDL_SetWindowFullscreen(sdl_window, sdl_flags);
+    else
+      SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
   }
 }
 
