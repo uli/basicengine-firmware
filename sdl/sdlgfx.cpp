@@ -83,7 +83,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
   m_scalecond = SDL_CreateCond();
   m_scalemut = SDL_CreateMutex();
-  SDL_CreateThread(gfx_thread, this);
+  SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   m_display_enabled = true;
 }
