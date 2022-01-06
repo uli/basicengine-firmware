@@ -8,31 +8,35 @@
 
 SDLGFX vs23;
 
+#define ASPECT_4_3  (0 << 1)
+#define ASPECT_16_9 (1 << 1)
+
 const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
-  { 460, 224, 16, 16, 1 },
-  { 436, 216, 16, 16, 1 },
-  { 320, 216, 16, 16, 2 },   // VS23 NTSC demo
-  { 320, 200, 0, 0, 2 },     // (M)CGA, Commodore et al.
-  { 256, 224, 16, 16, 25 },  // SNES
-  { 256, 192, (200 - 192) / 2, (320 - 256) / 2, 25 },  // MSX, Spectrum, NDS
-  { 160, 200, 16, 16, 4 },   // Commodore/PCjr/CPC multi-color
+  { 460, 224, 0, 0, ASPECT_4_3 },
+  { 436, 216, 0, 0, ASPECT_4_3 },
+  { 320, 216, 0, 0, ASPECT_4_3 },  // VS23 NTSC demo
+  { 320, 200, 0, 0, ASPECT_4_3 },  // (M)CGA, Commodore et al.
+  { 256, 224, 0, 0, ASPECT_4_3 },  // SNES
+  { 256, 192, 0, 0, ASPECT_4_3 },  // MSX, Spectrum, NDS
+  { 160, 200, 0, 0, ASPECT_4_3 },  // Commodore/PCjr/CPC
+                                   // multi-color
   // "Overscan modes"
-  { 352, 240, 16, 16, 2 },  // PCE overscan (barely)
-  { 282, 240, 16, 16, 2 },  // PCE overscan (underscan on PAL)
-  { 508, 240, 16, 16, 1 },
+  { 352, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (barely)
+  { 282, 240, 0, 0, ASPECT_4_3 },  // PCE overscan (underscan on PAL)
+  { 508, 240, 0, 0, ASPECT_4_3 },
   // ESP32GFX modes
-  { 320, 256, 16, 16, 2 },  // maximum PAL at 2 clocks per pixel
-  { 320, 240, 0, 0, 2 },    // DawnOfAV demo, Mode X
-  { 640, 256, (480 - 256) / 2, 0, 1 },
+  { 320, 256, 0, 0, ASPECT_4_3 },  // maximum PAL at 2 clocks per pixel
+  { 320, 240, 0, 0, ASPECT_4_3 },  // DawnOfAV demo, Mode X
+  { 640, 256, 0, 0, ASPECT_4_3 },
   // default H3 mode
-  { 480, 270, 16, 16, 1 },
+  { 480, 270, 0, 0, ASPECT_16_9 },
   // default SDL mode
-  { 640, 480, 0, 0, 0 },
-  { 800, 600, 0, 0, 0 },
-  { 1024, 768, 0, 0, 0 },
-  { 1280, 720, 0, 0, 0 },
-  { 1280, 1024, 0, 0, 0 },
-  { 1920, 1080, 0, 0, 0 },
+  { 640, 480, 0, 0, ASPECT_4_3 },
+  { 800, 600, 0, 0, ASPECT_4_3 },
+  { 1024, 768, 0, 0, ASPECT_4_3 },
+  { 1280, 720, 0, 0, ASPECT_16_9 },
+  { 1280, 1024, 0, 0, ASPECT_4_3 },
+  { 1920, 1080, 0, 0, ASPECT_16_9 },
 };
 
 int SDLGFX::modeFromSize(int &w, int &h) {
@@ -58,9 +62,7 @@ void SDLGFX::modeSize(int m, int &w, int &h) {
   h = modes_pal[m].y;
 }
 
-extern const SDL_VideoInfo *sdl_info;
 extern int sdl_flags;
-extern bool sdl_keep_res;
 extern int sdl_user_w, sdl_user_h;
 
 #include <config.h>
@@ -107,6 +109,9 @@ void SDLGFX::fillRect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,
   SDL_FillRect(m_text_surface, &dst, color);
 }
 
+extern SDL_Renderer *sdl_renderer;
+extern SDL_Window *sdl_window;
+
 bool SDLGFX::setMode(uint8_t mode) {
   m_display_enabled = false;
 
@@ -119,67 +124,98 @@ bool SDLGFX::setMode(uint8_t mode) {
 
   m_current_mode = modes_pal[mode];
 
-  SDL_Rect **modes;
-  modes = SDL_ListModes(sdl_info->vfmt, sdl_flags);
+  // Why is this code so horrible? Because I hate this scaling stuff, and I
+  // don't want to deal with it or know any more about it than I absolutely
+  // have to.
 
-  int final_w = 0, final_h = 0;
-
-  if (sdl_keep_res) {
-    final_w = sdl_user_w;
-    final_h = sdl_user_h;
-  } else if (modes != NULL && modes != (SDL_Rect **)-1) {
-    // First choice: Modes that are 1x or 2x the desired resolution.
-    for (int i = 0; modes[i]; ++i) {
-      int w = modes[i]->w, h = modes[i]->h;
-      if ((w == m_current_mode.x && h == m_current_mode.y) ||
-          (w == m_current_mode.x * 2 && h == m_current_mode.y * 2)) {
-        final_w = w;
-        final_h = h;
-        break;
-      }
-    }
-
-    // Second choice: Mode that is large enough and has the smallest
-    // difference in size to the desired resolution.
-    int min_diff = 10000;
-    int max_w = 0, max_h = 0;
-    if (final_w == 0) {
-      for (int i = 0; modes[i]; ++i) {
-        int w = modes[i]->w, h = modes[i]->h;
-        if (w < m_current_mode.x || h < m_current_mode.y)
-          continue;
-        int diff = (w - m_current_mode.x) + (h - m_current_mode.y);
-        if (diff < min_diff) {
-          final_w = w;
-          final_h = h;
-          min_diff = diff;
-        }
-        if (max_w < w) {
-          max_w = w;
-          max_h = h;
-        }
-      }
-    }
-
-    // Still nothing -> we don't have a large enough mode. Try the widest.
-    if (final_w == 0) {
-      final_w = max_w;
-      final_h = max_h;
-    }
+  if (m_lowpass) {
+      if (m_current_mode.vclkpp == ASPECT_4_3)
+        SDL_RenderSetLogicalSize(sdl_renderer, 1280, 1024);
+      else
+        SDL_RenderSetLogicalSize(sdl_renderer, 1920, 1080);
+      SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
   } else {
-    // No mode list -> everything goes.
-    final_w = m_current_mode.x;
-    final_h = m_current_mode.y;
-  }
+      // The strategy is to find the largest integral scale factors that
+      // result in a close-enough aspect ratio.
 
-  m_screen = SDL_SetVideoMode(final_w, final_h, SDL_BPP, sdl_flags);
+      int real_width, real_height;
+      SDL_GetRendererOutputSize(sdl_renderer, &real_width, &real_height);
+      int logical_w, logical_h;
+      logical_w = m_current_mode.x;
+      logical_h = m_current_mode.y;
+
+      float want_aspect = m_current_mode.vclkpp == ASPECT_4_3 ? 4.0/3.0 : 16.0/9.0;
+      float real_aspect = (float)real_width / real_height;
+
+      /* Clear the scale because we're setting viewport in output coordinates */
+      SDL_RenderSetScale(sdl_renderer, 1.0f, 1.0f);
+
+      float scale_x = 1, scale_y = 1;
+
+      float best_aspect_ratio = 42;
+      int best_aspect_ratio_scale_x = 0;
+      int best_aspect_ratio_scale_y = 0;
+
+      float largest_scale = 0;
+      int largest_scale_factor_x = 0;
+      int largest_scale_factor_y = 0;
+      float largest_scale_aspect_ratio = 42;
+
+      for (int sx = 10; sx; --sx) {
+        for (int sy = 10; sy; --sy) {
+          int rx = m_current_mode.x * sx;
+          int ry = m_current_mode.y * sy;
+          if (rx > real_width || ry > real_height)
+            continue;
+          float resaspect = fabs((float)rx / (float)ry - want_aspect);
+          if (resaspect < best_aspect_ratio) {
+            best_aspect_ratio = resaspect;
+            best_aspect_ratio_scale_x = sx;
+            best_aspect_ratio_scale_y = sy;
+          }
+          float fact = ((float)rx / (float)real_width) + ((float)ry / (float)real_height);
+          if (resaspect < 0.22 && fact > largest_scale) {
+            largest_scale = fact;
+            largest_scale_factor_x = sx;
+            largest_scale_factor_y = sy;
+            largest_scale_aspect_ratio = resaspect;
+          }
+        }
+      }
+
+      if (largest_scale > 0) {
+        scale_x = largest_scale_factor_x;
+        scale_y = largest_scale_factor_y;
+      } else if (best_aspect_ratio < 42) {
+        scale_x = best_aspect_ratio_scale_x;
+        scale_y = best_aspect_ratio_scale_y;
+      }
+
+
+      if (scale_x == 1 && scale_y == 1 && (m_current_mode.x != real_width || m_current_mode.y != real_height)) {
+        if (m_current_mode.vclkpp == ASPECT_4_3)
+          SDL_RenderSetLogicalSize(sdl_renderer, 1280, 1024);
+        else
+          SDL_RenderSetLogicalSize(sdl_renderer, 1920, 1080);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
+      } else {
+        SDL_Rect viewport;
+        viewport.w = (int)SDL_floor(logical_w * scale_x);
+        viewport.x = (real_width - viewport.w) / 2;
+        viewport.h = (int)SDL_floor(logical_h * scale_y);
+        viewport.y = (real_height - viewport.h) / 2;
+
+        SDL_RenderSetViewport(sdl_renderer, &viewport);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+      }
+  }
 
   if (m_text_surface)
     SDL_FreeSurface(m_text_surface);
   if (m_composite_surface)
     SDL_FreeSurface(m_composite_surface);
-
-  SDL_PixelFormat *fmt = m_screen->format;
+  if (m_texture)
+    SDL_DestroyTexture(m_texture);
 
   m_text_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
     m_current_mode.x,
@@ -199,6 +235,9 @@ bool SDLGFX::setMode(uint8_t mode) {
     0x00ff0000UL,
     0
   );
+
+  m_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ABGR8888,
+    SDL_TEXTUREACCESS_STREAMING, m_current_mode.x, m_current_mode.y);
 
   // XXX: handle fail
 
@@ -285,7 +324,10 @@ extern "C" int gfx_thread(void *data) {
 void SDLGFX::updateBg() {
   if (m_ready) {
     m_ready = false;
-    SDL_Flip(m_screen);
+    SDL_UpdateTexture(m_texture, NULL, m_composite_surface->pixels, m_composite_surface->pitch);
+    SDL_RenderClear(sdl_renderer);
+    SDL_RenderCopy(sdl_renderer, m_texture, NULL, NULL);
+    SDL_RenderPresent(sdl_renderer);
   }
   SDL_CondSignal(m_scalecond);
 }
@@ -340,12 +382,6 @@ void SDLGFX::updateBgScale() {
     }
   }
 
-  if (SDL_BPP == 8)
-    scale_integral_8(m_composite_surface, m_screen, m_current_mode.y);
-  else if (SDL_BPP == 16)
-    scale_integral_16(m_composite_surface, m_screen, m_current_mode.y);
-  else
-    scale_integral_32(m_composite_surface, m_screen, m_current_mode.y);
   m_ready = true;
 }
 

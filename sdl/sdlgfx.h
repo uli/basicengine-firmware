@@ -190,9 +190,9 @@ private:
 
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
-  SDL_Surface *m_screen;
   SDL_Surface *m_text_surface;
   SDL_Surface *m_composite_surface;
+  SDL_Texture *m_texture;
   bool m_dirty;
 
 #if SDL_BPP != 8
