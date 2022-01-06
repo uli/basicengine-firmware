@@ -132,7 +132,7 @@ public:
     //m_interlace = interlace;
   }
   inline void setLowpass(bool lowpass) {
-    //m_lowpass = lowpass;
+    m_lowpass = lowpass;
   }
 
   void setSpiClock(uint32_t div) {
@@ -207,6 +207,8 @@ public:
   SDL_mutex *m_scalemut;
   void updateBgScale();
   bool m_ready;
+
+  bool m_lowpass;
 };
 
 #undef PIXEL
