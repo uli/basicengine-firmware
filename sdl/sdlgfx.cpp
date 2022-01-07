@@ -87,7 +87,6 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_frame = 0;
   reset();
 
-  m_scalecond = SDL_CreateCond();
   SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   m_lowpass = lowpass;
@@ -320,22 +319,20 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 extern "C" int gfx_thread(void *data) {
   SDLGFX *gfx = (SDLGFX *)data;
   for (;;) {
-    SDL_CondWait(gfx->m_scalecond, gfx->m_scalemut);
-//    SDL_mutexP(gfx->m_bufferlock);
-//    SDL_mutexV(gfx->m_bufferlock);
+    while (gfx->m_ready) {
+    }
     gfx->updateBgScale();
   }
 }
 
 void SDLGFX::updateBg() {
   if (m_ready) {
-    m_ready = false;
     SDL_UpdateTexture(m_texture, NULL, m_composite_surface->pixels, m_composite_surface->pitch);
+    m_ready = false;
     SDL_RenderClear(sdl_renderer);
     SDL_RenderCopy(sdl_renderer, m_texture, NULL, NULL);
     SDL_RenderPresent(sdl_renderer);
   }
-  SDL_CondSignal(m_scalecond);
 }
 
 void SDLGFX::updateBgScale() {
@@ -347,6 +344,8 @@ void SDLGFX::updateBgScale() {
   last_frame = frame();
 
   if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0) {
+    // nothing fancy going on -> save some power
+    SDL_Delay(15);
     return;
   }
 

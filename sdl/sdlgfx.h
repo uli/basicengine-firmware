@@ -25,6 +25,8 @@
 #define PIXELC(x, y) \
   (((pixel_t *)m_composite_surface->pixels)[(x) + (y) * m_composite_surface->pitch / sizeof(pixel_t)])
 
+extern "C" int gfx_thread(void *data);
+
 class SDLGFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
@@ -205,13 +207,14 @@ private:
   pixel_t m_current_palette[256];
 #endif
 public:
-  SDL_cond *m_scalecond;
   SDL_mutex *m_bufferlock;
   SDL_mutex *m_spritelock;
   void updateBgScale();
-  bool m_ready;
+  volatile bool m_ready;
 
   bool m_lowpass;
+
+  friend int ::gfx_thread(void *data);
 };
 
 #undef PIXEL
