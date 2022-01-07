@@ -115,12 +115,14 @@ extern int sound_reinit_rate;
 #include <mouse.h>
 Mouse mouse;
 
+extern std::queue<SDL_Event> kbd_events;
+
 void platform_process_events() {
   SDL_Event event;
 
   audio.pumpEvents();
   SDL_PumpEvents();
-  while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_QUIT, SDL_QUIT) == 1 || SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEWHEEL) == 1) {
+  while (SDL_PollEvent(&event)) {
     switch (event.type) {
     case SDL_QUIT:
       exit(0);
@@ -138,11 +140,14 @@ void platform_process_events() {
       mouse.setButtons(buttons);
       break;
     }
+    case SDL_KEYUP:
+    case SDL_KEYDOWN:
+      kbd_events.push(event);
+      break;
     default:
       //printf("SDL event %d\n", event.type);
       break;
     }
-    SDL_PumpEvents();
   }
 }
 
