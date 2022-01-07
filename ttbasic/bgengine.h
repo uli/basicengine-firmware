@@ -223,6 +223,9 @@ public:
   void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
   virtual void resetSprites();
 
+  virtual void lockSprites();
+  virtual void unlockSprites();
+
   int addBgLayer(eb_layer_painter_t painter, int prio, void *userdata);
   void removeBgLayer(int id);
 

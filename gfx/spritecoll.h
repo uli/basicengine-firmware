@@ -1,22 +1,33 @@
 uint8_t GFXCLASS::spriteCollision(uint8_t collidee, uint8_t collider) {
   uint8_t dir = 0x40;  // indicates collision
 
+  LOCK_SPRITES
   const sprite_t *us = &m_sprite[collidee];
   const rz_surface_t *us_surf = m_sprite[collidee].surf;
   const sprite_t *them = &m_sprite[collider];
   const rz_surface_t *them_surf = m_sprite[collider].surf;
 
-  if (!us_surf || !them_surf)
+  if (!us_surf || !them_surf) {
+    UNLOCK_SPRITES
     return 0;
+    }
 
-  if (us->pos_x + us_surf->w < them->pos_x)
+  if (us->pos_x + us_surf->w < them->pos_x) {
+    UNLOCK_SPRITES
     return 0;
-  if (them->pos_x + them_surf->w < us->pos_x)
+  }
+  if (them->pos_x + them_surf->w < us->pos_x) {
+    UNLOCK_SPRITES
     return 0;
-  if (us->pos_y + us_surf->h < them->pos_y)
+  }
+  if (us->pos_y + us_surf->h < them->pos_y) {
+    UNLOCK_SPRITES
     return 0;
-  if (them->pos_y + them_surf->h < us->pos_y)
+  }
+  if (them->pos_y + them_surf->h < us->pos_y) {
+    UNLOCK_SPRITES
     return 0;
+  }
 
   // sprite frame as bounding box; we may want something more flexible...
   const sprite_t *left = us, *right = them;
@@ -56,11 +67,14 @@ uint8_t GFXCLASS::spriteCollision(uint8_t collidee, uint8_t collider) {
       pixel_t leftpixel = left_surf->getPixel(leftpx, leftpy);
       pixel_t rightpixel = right_surf->getPixel(rightpx, rightpy);
 
-      if (alphaFromColor(leftpixel) >= 0x80 && alphaFromColor(rightpixel) >= 0x80)
+      if (alphaFromColor(leftpixel) >= 0x80 && alphaFromColor(rightpixel) >= 0x80) {
+        UNLOCK_SPRITES
         return dir;
+      }
     }
   }
 
+  UNLOCK_SPRITES
   // no overlapping pixels
   return 0;
 }

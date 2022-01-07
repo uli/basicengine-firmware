@@ -17,6 +17,9 @@
 
 #define SDL_SCREEN_MODES 20
 
+#define LOCK_SPRITES	SDL_LockMutex(m_spritelock);
+#define UNLOCK_SPRITES	SDL_UnlockMutex(m_spritelock);
+
 #define PIXELT(x, y) \
   (((pixel_t *)m_text_surface->pixels)     [(x) + (y) * m_text_surface->pitch      / sizeof(pixel_t)])
 #define PIXELC(x, y) \
@@ -86,6 +89,9 @@ public:
   inline void setSpriteOpaque(uint8_t num, bool enable) {
     m_sprite[num].p.opaque = enable;
   }
+
+  void lockSprites() override;
+  void unlockSprites() override;
 
   uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
 #endif
@@ -201,6 +207,7 @@ private:
 public:
   SDL_cond *m_scalecond;
   SDL_mutex *m_scalemut;
+  SDL_mutex *m_spritelock;
   void updateBgScale();
   bool m_ready;
 

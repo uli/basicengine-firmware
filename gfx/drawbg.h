@@ -63,9 +63,12 @@ void GFXCLASS::drawBg(bg_t *bg) {
 }
 
 void GFXCLASS::drawSprite(sprite_t *s) {
+  LOCK_SPRITES
   if (s->pos_x + s->p.w < 0 || s->pos_x >= width() ||
-      s->pos_y + s->p.h < 0 || s->pos_y >= height())
+      s->pos_y + s->p.h < 0 || s->pos_y >= height()) {
+    UNLOCK_SPRITES
     return;
+  }
 
   // sprite pattern start coordinates
   int px = s->p.pat_x + s->p.frame_x * s->p.w;
@@ -130,4 +133,5 @@ void GFXCLASS::drawSprite(sprite_t *s) {
           (uint8_t *)&pixelComp(dst_x, dst_y),
           compositePitch(), blit_height,
           blit_width, s->surf->w);
+  UNLOCK_SPRITES
 }

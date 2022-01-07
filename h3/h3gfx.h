@@ -18,6 +18,9 @@
 
 #define H3_SCREEN_MODES 20
 
+#define LOCK_SPRITES ;	// XXX
+#define UNLOCK_SPRITES ;
+
 class H3GFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);

@@ -276,10 +276,12 @@ void BGEngine::resetSprites() {
     s->angle = 0.0;
     s->scale_x = 1.0;
     s->scale_y = 1.0;
+    lockSprites();
     if (s->surf) {
       delete s->surf;
       s->surf = NULL;
     }
+    unlockSprites();
 #endif
 #ifdef TRUE_COLOR
     s->alpha = 0xff;
@@ -311,6 +313,12 @@ void BGEngine::reset() {
 }
 
 void BGEngine::updateStatus() {
+}
+
+void BGEngine::lockSprites() {
+}
+
+void BGEngine::unlockSprites() {
 }
 
 int BGEngine::addBgLayer(eb_layer_painter_t painter, int prio, void *userdata) {

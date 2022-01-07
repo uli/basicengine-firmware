@@ -76,6 +76,9 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_current_mode = modes_pal[CONFIG.mode - 1];
 
   SDL_ShowCursor(SDL_DISABLE);
+
+  m_spritelock = SDL_CreateMutex();
+
   setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
@@ -383,6 +386,14 @@ void SDLGFX::updateBgScale() {
   }
 
   m_ready = true;
+}
+
+void SDLGFX::lockSprites() {
+  LOCK_SPRITES
+}
+
+void SDLGFX::unlockSprites() {
+  UNLOCK_SPRITES
 }
 
 #ifdef USE_BG_ENGINE
