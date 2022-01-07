@@ -40,7 +40,7 @@ struct rz_surface_t {
 
 	~rz_surface_t() {
 		if (free_pixels)
-			delete pixels;
+			delete[] pixels;
 	}
 
 	void fill(pixel_t color) {
