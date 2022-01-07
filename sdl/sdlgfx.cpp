@@ -321,13 +321,17 @@ extern "C" int gfx_thread(void *data) {
   for (;;) {
     while (gfx->m_ready) {
     }
+    SDL_LockMutex(gfx->m_bufferlock);
     gfx->updateBgScale();
+    SDL_UnlockMutex(gfx->m_bufferlock);
   }
 }
 
 void SDLGFX::updateBg() {
   if (m_ready) {
+    SDL_LockMutex(m_bufferlock);
     SDL_UpdateTexture(m_texture, NULL, m_composite_surface->pixels, m_composite_surface->pitch);
+    SDL_UnlockMutex(m_bufferlock);
     m_ready = false;
     SDL_RenderClear(sdl_renderer);
     SDL_RenderCopy(sdl_renderer, m_texture, NULL, NULL);
