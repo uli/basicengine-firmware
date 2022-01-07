@@ -184,7 +184,7 @@ public:
   void render();
 
   inline uint32_t frame() {
-    m_frame = micros() / 16667;
+    m_frame = SDL_GetPerformanceCounter() * 60 / SDL_GetPerformanceFrequency();
     return m_frame;
   }
 
