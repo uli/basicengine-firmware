@@ -206,7 +206,7 @@ private:
 #endif
 public:
   SDL_cond *m_scalecond;
-  SDL_mutex *m_scalemut;
+  SDL_mutex *m_bufferlock;
   SDL_mutex *m_spritelock;
   void updateBgScale();
   bool m_ready;

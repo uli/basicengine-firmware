@@ -77,6 +77,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
 
   SDL_ShowCursor(SDL_DISABLE);
 
+  m_bufferlock = SDL_CreateMutex();
   m_spritelock = SDL_CreateMutex();
 
   setMode(CONFIG.mode - 1);
@@ -87,7 +88,6 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   reset();
 
   m_scalecond = SDL_CreateCond();
-  m_scalemut = SDL_CreateMutex();
   SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   m_lowpass = lowpass;
@@ -116,6 +116,7 @@ extern SDL_Renderer *sdl_renderer;
 extern SDL_Window *sdl_window;
 
 bool SDLGFX::setMode(uint8_t mode) {
+  SDL_mutexP(m_bufferlock);
   m_display_enabled = false;
 
   m_last_line = modes_pal[mode].y * 2;
@@ -255,6 +256,8 @@ bool SDLGFX::setMode(uint8_t mode) {
 
   setBorder(0, 0, 0, m_current_mode.x);
 
+  SDL_mutexV(m_bufferlock);
+
   return true;
 }
 
@@ -317,10 +320,10 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 extern "C" int gfx_thread(void *data) {
   SDLGFX *gfx = (SDLGFX *)data;
   for (;;) {
-    SDL_mutexP(gfx->m_scalemut);
     SDL_CondWait(gfx->m_scalecond, gfx->m_scalemut);
+//    SDL_mutexP(gfx->m_bufferlock);
+//    SDL_mutexV(gfx->m_bufferlock);
     gfx->updateBgScale();
-    SDL_mutexV(gfx->m_scalemut);
   }
 }
 
