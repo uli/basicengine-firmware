@@ -68,8 +68,8 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
   if (SDL_InitSubSystem(SDL_INIT_TIMER))
     fprintf(stderr, "Cannot initialize SDL timer: %s\n", SDL_GetError());
-  if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
-    fprintf(stderr, "Cannot initialize SDL joystick: %s\n", SDL_GetError());
+  if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER))
+    fprintf(stderr, "Cannot initialize SDL game controller: %s\n", SDL_GetError());
 
   while ((opt = getopt(argc, argv, "fdr:s:")) != -1) {
     switch (opt) {
@@ -99,6 +99,11 @@ int main(int argc, char **argv) {
     SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
 
+  std::string controller_map = std::string(getenv("ENGINEBASIC_ROOT")) +
+                               std::string("/sys/gamecontrollerdb.txt");
+  SDL_GameControllerAddMappingsFromFile(controller_map.c_str());
+  SDL_GameControllerEventState(SDL_ENABLE);
+
   atexit(my_exit);
 
   setup();
@@ -116,6 +121,7 @@ extern int sound_reinit_rate;
 Mouse mouse;
 
 extern std::queue<SDL_Event> kbd_events;
+extern std::queue<SDL_Event> controller_events;
 
 void platform_process_events() {
   SDL_Event event;
@@ -143,6 +149,14 @@ void platform_process_events() {
     case SDL_KEYUP:
     case SDL_KEYDOWN:
       kbd_events.push(event);
+      break;
+    case SDL_CONTROLLERAXISMOTION:
+    case SDL_CONTROLLERBUTTONDOWN:
+    case SDL_CONTROLLERBUTTONUP:
+    case SDL_CONTROLLERDEVICEADDED:
+    case SDL_CONTROLLERDEVICEREMOVED:
+    case SDL_CONTROLLERDEVICEREMAPPED:
+      controller_events.push(event);
       break;
     default:
       //printf("SDL event %d\n", event.type);

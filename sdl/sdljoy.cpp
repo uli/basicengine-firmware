@@ -3,42 +3,72 @@
 
 #include <joystick.h>
 #include <SDL2/SDL.h>
+#include <list>
+#include <queue>
+
+std::queue<SDL_Event> controller_events;
+std::list<int> controllers;
+
+static uint32_t button_bit[SDL_CONTROLLER_BUTTON_MAX + 1] = {
+  EB_JOY_X,
+  EB_JOY_O,
+  EB_JOY_SQUARE,
+  EB_JOY_TRIANGLE,
+  EB_JOY_SELECT,
+  0,
+  EB_JOY_START,
+  EB_JOY_L3,
+  EB_JOY_R3,
+  EB_JOY_L1,
+  EB_JOY_R1,
+  EB_JOY_UP,
+  EB_JOY_DOWN,
+  EB_JOY_LEFT,
+  EB_JOY_RIGHT,
+};
 
 int Joystick::read() {
-  if (!m_joy)
-    return 0;
+  static int ret = 0;
 
-  int ret = 0;
+  if (controller_events.empty())
+    return ret;
 
-  // Joystick API supports max. 10 buttons.
-  int buttons = SDL_JoystickNumButtons(m_joy);
-  if (buttons > 10)
-    buttons = 10;
-
-  for (int i = 0; i < SDL_JoystickNumButtons(m_joy); ++i) {
-    // Map SDL button to PSX button.
-    int internal_button;
-    if (i < 8)
-      internal_button = i + EB_JOY_SQUARE_SHIFT;
-    else
-      internal_button = i - 8 + EB_JOY_START_SHIFT;
-
-    if (SDL_JoystickGetButton(m_joy, i))
-      ret |= 1 << internal_button;
+  while (!controller_events.empty()) {
+    SDL_Event event = controller_events.front();
+    controller_events.pop();
+    switch (event.type) {
+    case SDL_CONTROLLERBUTTONDOWN:
+      break;
+    case SDL_CONTROLLERDEVICEADDED:
+      SDL_GameControllerOpen(event.cdevice.which);
+      controllers.push_back(event.cdevice.which);
+      break;
+    case SDL_CONTROLLERDEVICEREMOVED:
+      SDL_GameControllerClose(SDL_GameControllerFromInstanceID(event.cdevice.which));
+      controllers.remove(event.cdevice.which);
+      break;
+    default:
+      break;
+    }
   }
 
-  // Only two digital axes supported ATM.
-  int axes = SDL_JoystickNumAxes(m_joy);
+  ret = 0;
 
-  if (axes >= 2) {
-    int x = SDL_JoystickGetAxis(m_joy, 0);
-    int y = SDL_JoystickGetAxis(m_joy, 1);
+  for (auto joy_idx : controllers) {
+    SDL_GameController *controller = SDL_GameControllerFromInstanceID(joy_idx);
+    for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; ++i) {
+      if (SDL_GameControllerGetButton(controller, (SDL_GameControllerButton)i)) {
+        ret |= button_bit[i];
+      }
+    }
 
+    int x = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
     if (x < -16384)
       ret |= EB_JOY_LEFT;
     else if (x > 16384)
       ret |= EB_JOY_RIGHT;
 
+    int y = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
     if (y < -16384)
       ret |= EB_JOY_UP;
     else if (y > 16384)
@@ -49,12 +79,6 @@ int Joystick::read() {
 }
 
 void Joystick::begin() {
-  m_joy = NULL;
-
-  if (SDL_NumJoysticks() == 0)
-    return;
-
-  m_joy = SDL_JoystickOpen(0);
 }
 
 Joystick joy;
