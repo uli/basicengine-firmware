@@ -144,6 +144,7 @@ rule initdir
             cp -p ttbasic/helptext_*.json \$out/sys/help/ && \$
             mkdir -p \$out/sys/fonts && \$
             cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf \$out/sys/fonts/ && \$
+            cp -p sdl/gamecontrollerdb.txt \$out/sys/ && \$
             rsync -av tests/ \$out/tests/
 
 initfs_dir = $INITFS_DIR
