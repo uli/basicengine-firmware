@@ -132,8 +132,8 @@ build \$objdir/dyncall/dyncall/libdyncall_s.a: dyncall_build || \$objdir/dyncall
 
 rule initdir
   command = mkdir -p \$out/sys/help && \$
-            rsync -av $DEMOS_DIR/* \$out/ || true && \$
-            rsync -av include/ \$out/sys/include/ && \$
+            rsync -a $DEMOS_DIR/* \$out/ || true && \$
+            rsync -a include/ \$out/sys/include/ && \$
             mkdir -p \$out/sys/include/tcc && \$
             cp -p ttbasic/eb_*.h \$out/sys/include/ && rm -f \$out/sys/include/eb_*_int.h && \$
             cp -p ttbasic/errdef.h ttbasic/error.h ttbasic/kwenum.h \$out/sys/include/ && \$
@@ -145,7 +145,7 @@ rule initdir
             mkdir -p \$out/sys/fonts && \$
             cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf \$out/sys/fonts/ && \$
             cp -p sdl/gamecontrollerdb.txt \$out/sys/ && \$
-            rsync -av tests/ \$out/tests/
+            rsync -a tests/ \$out/tests/
 
 initfs_dir = $INITFS_DIR
 build \$initfs_dir: initdir | ttbasic/helptext_en.json $HELPTEXT_IMPLICIT_OUT ttbasic/kwenum.h
