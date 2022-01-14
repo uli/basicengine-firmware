@@ -2892,6 +2892,12 @@ void BASIC_INT Basic::draw_profile(void) {
 
 void BASIC_FP process_events(void) {
   static uint32_t last_frame;
+
+#ifdef SDL
+  // Need to do that more than once per frame to avoid input lag.
+  platform_process_events();
+#endif
+
   if (vs23.frame() == last_frame) {
 #if defined(HAVE_TSF) && !defined(HOSTED) && !defined(SDL)
     // Wasn't able to get this to work without underruns in SDL-based builds.
@@ -2948,7 +2954,7 @@ void BASIC_FP process_events(void) {
   if (bc && profile_enabled)
     bc->draw_profile();
 
-#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__)
   platform_process_events();
 #endif
 }
