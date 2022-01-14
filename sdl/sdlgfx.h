@@ -12,8 +12,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_thread.h>
 
-#define SC_DEFAULT           14
-#define SC_DEFAULT_SECONDARY 3
+#define SC_DEFAULT           13
 
 #define SDL_SCREEN_MODES 20
 
