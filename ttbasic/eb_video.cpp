@@ -11,7 +11,7 @@
 extern "C" {
 
 // **** スクリーン管理 *************
-static uint8_t scmode = 0;
+static uint8_t scmode = 255;
 
 int eb_screen(int m) {
 #ifdef USE_BG_ENGINE
