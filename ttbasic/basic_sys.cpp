@@ -5,6 +5,7 @@
 
 #include "basic.h"
 #include "credits.h"
+#include "eb_video.h"
 #include "eb_sys.h"
 
 // **** RTC用宣言 ********************
@@ -850,4 +851,88 @@ When executed during normal program flow, `#REQUIRE` will not do anything.
 ***/
 void Basic::irequire() {
   istrexp();
+}
+
+#include <list>
+
+#ifdef __unix__
+#include <pty.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#endif
+
+void Basic::ishell() {
+#ifdef __unix__
+  std::list<BString> args;
+  char utf8buf[5];
+
+  do {
+    args.push_back(istrexp());
+    if (*cip == I_COMMA)
+      ++cip;
+  } while (!end_of_statement());
+
+  int fd;
+  struct winsize ws = {
+    (unsigned short)eb_csize_height(),
+    (unsigned short)eb_csize_width(),
+    (unsigned short)eb_psize_width(),
+    (unsigned short)eb_psize_height()
+  };
+
+  pid_t pid = forkpty(&fd, NULL, NULL, &ws);
+
+  if (pid == 0) {
+    // shell
+    unsetenv("DISPLAY");
+    setenv("TERM", "ansiw", 1);
+    execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
+    _exit(1);
+  }
+  else if (pid < 0) {
+    // error
+    err = ERR_COM;
+  } else {
+    // us
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+
+    char buf[2] = { 0 };
+    char utf8buf[6] = { 0 };
+
+    for (;;) {
+      int ret = read(fd, buf, 1);
+      if (ret < 0) {
+        if (errno != EAGAIN)
+          break;
+      } else if (ret == 0) {
+        break;
+      } else if (ret > 0) {
+        strcat(utf8buf, buf);
+        if (!utf8nvalid(utf8buf, 5)) {
+          // valid UTF-8 string
+          utf8_int32_t cp;
+          utf8codepoint(utf8buf, &cp);
+          c_putch(cp);
+          utf8buf[0] = 0;
+        } else if (buf[0] >= 0) {	// it's signed...
+          c_putch('?');
+          c_putch(buf[0]);
+          utf8buf[0] = 0;
+        } else if (strlen(utf8buf) >= 5) {
+          c_putch('?');
+          utf8buf[0] = 0;
+        }
+      }
+      process_events();
+      int ch = eb_term_getch();
+      if (ch >= 0) {
+        write(fd, &ch, 1);
+      }
+    }
+    close(fd);
+    wait(NULL);
+  }
+#else	// __unix__
+  err = ERR_NOTSUPPORTED;
+#endif
 }
