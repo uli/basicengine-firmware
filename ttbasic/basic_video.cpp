@@ -11,7 +11,9 @@ tTVscreen sc0;
 #include <fonts.h>
 
 bool screen_putch_disable_escape_codes = false;
+bool screen_putch_enable_ansi_mode = false;
 int screen_putch_paging_counter = -1;
+bool screen_putch_enable_reverse = false;
 
 static inline bool is_hex(utf8_int32_t c) {
   return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
@@ -27,13 +29,14 @@ static void put_hex_digit(uint32_t hex_value, uint8_t hex_type, bool lazy)
     sc0.putch(hex_value, lazy);
 }
 
+extern bool ansi_machine(utf8_int32_t i);
+
 // XXX: 168 byte jump table
 void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
   static bool escape = false;
   static int predef_color = -1;
   static uint8_t hex_digit = 0, hex_type, hex_max_len;
   static ipixel_t hex_value;
-  static bool reverse = false;
 
   if (kb.state(PS2KEY_L_Alt)) {
     sc0.peekKey();
@@ -45,7 +48,14 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
     return;
   }
 
-  if (c == '\\') {
+  // When we see an ESC, we switch to ANSI mode.
+  if (!screen_putch_enable_ansi_mode && c == 0x1b)
+    screen_putch_enable_ansi_mode = true;
+
+  if (screen_putch_enable_ansi_mode && ansi_machine(c))
+    return;
+
+  if (!screen_putch_enable_ansi_mode && c == '\\') {
     if (!escape) {
       escape = true;
       if (hex_digit) {
@@ -101,14 +111,14 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
     if (escape) {
       switch (c) {
       case 'R':
-        if (!reverse) {
-          reverse = true;
+        if (!screen_putch_enable_reverse) {
+          screen_putch_enable_reverse = true;
           sc0.flipColors();
         }
         break;
       case 'N':
-        if (reverse) {
-          reverse = false;
+        if (screen_putch_enable_reverse) {
+          screen_putch_enable_reverse = false;
           sc0.flipColors();
         }
         break;

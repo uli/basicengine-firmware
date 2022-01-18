@@ -214,6 +214,10 @@ void eb_enable_escape_codes(int enable) {
     screen_putch_disable_escape_codes = !enable;
 }
 
+void eb_enable_ansi_mode(int enable) {
+    screen_putch_enable_ansi_mode = !!enable;
+}
+
 int eb_kbhit(void) {
     return c_kbhit();
 }

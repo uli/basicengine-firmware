@@ -53,6 +53,7 @@ void c_puts_P(const char *s, uint8_t devno = 0);
 extern "C" int c_printf(const char *f, ...);
 void screen_putch(utf8_int32_t c, bool lazy = false);
 extern bool screen_putch_disable_escape_codes;
+extern bool screen_putch_enable_ansi_mode;
 extern int screen_putch_paging_counter;
 
 #define PRINT_P(msg) c_puts_P(PSTR((msg)))
