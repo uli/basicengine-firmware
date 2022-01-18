@@ -884,7 +884,7 @@ void Basic::ishell() {
   if (pid == 0) {
     // shell
     unsetenv("DISPLAY");
-    setenv("TERM", "ansiw", 1);
+    setenv("TERM", "ansi", 1);
     execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
     _exit(1);
   }
