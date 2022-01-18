@@ -864,7 +864,6 @@ void Basic::irequire() {
 void Basic::ishell() {
 #ifdef __unix__
   std::list<BString> args;
-  char utf8buf[5];
 
   do {
     args.push_back(istrexp());
@@ -897,7 +896,6 @@ void Basic::ishell() {
     fcntl(fd, F_SETFL, O_NONBLOCK);
 
     char buf[2] = { 0 };
-    char utf8buf[6] = { 0 };
 
     for (;;) {
       int ret = read(fd, buf, 1);
@@ -907,21 +905,7 @@ void Basic::ishell() {
       } else if (ret == 0) {
         break;
       } else if (ret > 0) {
-        strcat(utf8buf, buf);
-        if (!utf8nvalid(utf8buf, 5)) {
-          // valid UTF-8 string
-          utf8_int32_t cp;
-          utf8codepoint(utf8buf, &cp);
-          c_putch(cp);
-          utf8buf[0] = 0;
-        } else if (buf[0] >= 0) {	// it's signed...
-          c_putch('?');
-          c_putch(buf[0]);
-          utf8buf[0] = 0;
-        } else if (strlen(utf8buf) >= 5) {
-          c_putch('?');
-          utf8buf[0] = 0;
-        }
+        eb_term_putch(buf[0]);
       }
       process_events();
       int ch = eb_term_getch();

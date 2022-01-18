@@ -17,10 +17,6 @@
 #include "eb_conio.h"
 #include "eb_types.h"
 
-extern "C" {
-#include "tmt.h"
-}
-
 // text memory access macros
 #define VPEEK(X, Y)    (screen[whole_width * ((Y) + win_y) + (X) + win_x])
 #define VPOKE(X, Y, C) (screen[whole_width * ((Y) + win_y) + (X) + win_x] = (C))
@@ -56,9 +52,7 @@ class tscreenBase {
 protected:
   utf8_int32_t *screen = NULL;  // スクリーン用バッファ
   IPIXEL_TYPE *colmem = NULL;
-  TMT *vt = NULL;
   std::queue<char> vt_inbuf;
-  bool vt_cursor_on;
   uint16_t width;                      // text window width
   uint16_t height;                     // text window height
   uint16_t whole_width, whole_height;  // full screen width/height (chars)
@@ -84,8 +78,6 @@ protected:
   virtual void SCROLL_UP() = 0;          // スクロールアップ
   virtual void SCROLL_DOWN() = 0;        // スクロールダウン
   virtual void INSLINE(uint16_t l) = 0;  // 指定行に1行挿入(下スクロール)
-  static void term_callback(tmt_msg_t m, TMT *vt, const void *a, void *p);
-  void term_handler(tmt_msg_t m, TMT *vt, const void *a);
   void term_queue_input(const char *s);
   virtual utf8_int32_t get_ch() = 0;  // 文字の取得
 

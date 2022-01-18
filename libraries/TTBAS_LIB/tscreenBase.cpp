@@ -22,10 +22,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
     screen = NULL;
     free(colmem);
     colmem = NULL;
-    if (vt) {
-      tmt_close(vt);
-      vt = NULL;
-    }
   }
 
   whole_width = width = w;
@@ -43,12 +39,6 @@ void tscreenBase::init(uint16_t w, uint16_t h, uint16_t l, utf8_int32_t *extmem)
 
   if (pos_x >= w || pos_y >= h) {
     pos_x = 0; pos_y = 0;
-  }
-
-  if (!vt) {
-    vt = tmt_open(tv_get_cheight(), tv_get_cwidth(), term_callback, this, NULL);
-    vt_inbuf = std::queue<char>();
-    vt_cursor_on = true;
   }
 
   cls();
