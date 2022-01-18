@@ -81,6 +81,10 @@ protected:
 
   void updateWindow();
 
+  void sgr();
+  void ed();
+  void el();
+
 public:
   uint16_t prev_pos_x;  // カーソル横位置
   uint16_t prev_pos_y;  // カーソル縦位置
@@ -215,6 +219,8 @@ public:
   }
 
   void saveScreenshot();
+
+  bool ansi_machine(utf8_int32_t i);
 };
 
 #endif

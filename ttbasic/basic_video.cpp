@@ -29,8 +29,6 @@ static void put_hex_digit(uint32_t hex_value, uint8_t hex_type, bool lazy)
     sc0.putch(hex_value, lazy);
 }
 
-extern bool ansi_machine(utf8_int32_t i);
-
 // XXX: 168 byte jump table
 void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
   static bool escape = false;
@@ -52,7 +50,7 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
   if (!screen_putch_enable_ansi_mode && c == 0x1b)
     screen_putch_enable_ansi_mode = true;
 
-  if (screen_putch_enable_ansi_mode && ansi_machine(c))
+  if (screen_putch_enable_ansi_mode && sc0.ansi_machine(c))
     return;
 
   if (!screen_putch_enable_ansi_mode && c == '\\') {
