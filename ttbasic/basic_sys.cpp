@@ -897,6 +897,8 @@ void Basic::ishell() {
 
     char buf[2] = { 0 };
 
+    eb_show_cursor(1);
+
     for (;;) {
       int ret = read(fd, buf, 1);
       if (ret < 0) {
