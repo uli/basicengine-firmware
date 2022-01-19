@@ -859,6 +859,7 @@ void Basic::irequire() {
 #include <pty.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <errno.h>
 #endif
 
 void Basic::ishell() {
