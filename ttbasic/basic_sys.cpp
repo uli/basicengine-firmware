@@ -905,6 +905,7 @@ void Basic::ishell() {
       if (ret < 0) {
         if (errno != EAGAIN)
           break;
+        usleep(10000);
       } else if (ret == 0) {
         break;
       } else if (ret > 0) {
