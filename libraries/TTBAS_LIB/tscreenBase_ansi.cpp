@@ -13,7 +13,7 @@ extern void screen_putch(utf8_int32_t c, bool lazy = false);
 
 void tscreenBase::term_putch(char c) {
   static char utf8buf[6] = { 0 };
-  signed char buf[2] = { c, 0 };
+  char buf[2] = { c, 0 };
 
   strcat(utf8buf, buf);
   if (!utf8nvalid(utf8buf, 5)) {
@@ -22,7 +22,7 @@ void tscreenBase::term_putch(char c) {
     utf8codepoint(utf8buf, &cp);
     screen_putch(cp);
     utf8buf[0] = 0;
-  } else if (buf[0] >= 0) {	// it's signed...
+  } else if ((buf[0] & 0x80) == 0) {
     screen_putch('?');
     screen_putch(buf[0]);
     utf8buf[0] = 0;
