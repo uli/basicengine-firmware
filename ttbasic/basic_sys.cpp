@@ -897,12 +897,12 @@ void Basic::ishell() {
     // us
     fcntl(fd, F_SETFL, O_NONBLOCK);
 
-    char buf[2] = { 0 };
+    char buf[256] = { 0 };
 
     eb_show_cursor(1);
 
     for (;;) {
-      int ret = read(fd, buf, 1);
+      int ret = read(fd, buf, 256);
       if (ret < 0) {
         if (errno != EAGAIN)
           break;
@@ -910,13 +910,21 @@ void Basic::ishell() {
       } else if (ret == 0) {
         break;
       } else if (ret > 0) {
-        eb_term_putch(buf[0]);
+        for (int i = 0; i < ret; ++i)
+          eb_term_putch(buf[i]);
       }
+
       process_events();
-      int ch = eb_term_getch();
-      if (ch >= 0) {
-        write(fd, &ch, 1);
+
+      int ch;
+      ret = 0;
+
+      while ((ch = eb_term_getch()) >= 0) {
+        buf[ret++] = ch;
       }
+
+      if (ret > 0)
+        write(fd, buf, ret);
     }
     close(fd);
     wait(NULL);
