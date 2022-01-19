@@ -163,6 +163,7 @@ bool tTVscreen::ansi_machine(utf8_int32_t i)
     DO(S_ARG, "P",          for (int i = 0; i < P1(0); ++i) delete_char())
     DO(S_ARG, "S",          for (int i = 0; i < P1(0); ++i) scroll_up())
     DO(S_ARG, "T",          for (int i = 0; i < P1(0); ++i) scroll_down())
+    DO(S_ARG, "b",          if (c_x() > 0) { utf8_int32_t c = vpeek(c_x() - 1, c_y()); for (int i = 0; i < P1(0); ++i) putch(c); })//rep(vt));
     DO(S_ARG, "m",          sgr())
 //    DO(S_ARG, "n",          if (P0(0) == 6) dsr(vt))
     DO(S_ARG, "h",          show_curs(true))
