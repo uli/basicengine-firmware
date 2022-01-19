@@ -886,6 +886,7 @@ void Basic::ishell() {
     // shell
     unsetenv("DISPLAY");
     setenv("TERM", "ansi", 1);
+    setenv("LANG", "en_US.UTF-8", 1);
     execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
     _exit(1);
   }
