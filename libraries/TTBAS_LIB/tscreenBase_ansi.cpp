@@ -2,7 +2,6 @@
 // Copyright (c) 2017-2019 Ulrich Hecht
 
 #include "tscreenBase.h"
-#include "colorspace.h"
 
 void tscreenBase::term_queue_input(const char *s) {
   while (*s) {
@@ -14,7 +13,7 @@ extern void screen_putch(utf8_int32_t c, bool lazy = false);
 
 void tscreenBase::term_putch(char c) {
   static char utf8buf[6] = { 0 };
-  char buf[2] = { c, 0 };
+  signed char buf[2] = { c, 0 };
 
   strcat(utf8buf, buf);
   if (!utf8nvalid(utf8buf, 5)) {
