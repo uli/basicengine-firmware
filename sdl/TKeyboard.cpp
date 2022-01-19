@@ -277,12 +277,16 @@ bool TKeyboard::state(uint8_t keycode) {
   return state[sdlcode];
 }
 
-std::queue<SDL_Event> kbd_events;
+std::deque<SDL_Event> kbd_events;
 
 static int key_events_pending = 0;
 
 uint8_t TPS2::available() {
-  return kbd_events.size();
+  for (auto &e : kbd_events) {
+    if (e.type == SDL_KEYDOWN)
+      return 1;
+  }
+  return 0;
 }
 
 #include <sdlgfx.h>
@@ -294,7 +298,7 @@ keyEvent TKeyboard::read() {
 
   if (kbd_events.size() > 0) {
     event = kbd_events.front();
-    kbd_events.pop();
+    kbd_events.pop_front();
     int unicode = 0;
     int kc = event.key.keysym.scancode;
     if (kc >= SDL_SCANCODE_LCTRL && kc <= SDL_SCANCODE_MODE)
