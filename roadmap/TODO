@@ -1,0 +1,18 @@
+- Investigate using pthread_barrier_wait with GPIO
+- Investigate using pread for improved GPIO throughput and polling
+
+- ADC Support
+  - See file ADC
+
+- UART Support
+
+- SPI
+ - Add support for more SPI bus config FLAGS
+
+- GPIO
+ - Support for setting multiple GPIO's
+
+ - I2C
+  - Look at using unsigned long to hold spi rw data
+  - Support single register read write, similar to:
+    - http://bunniestudios.com/blog/images/infocast_i2c.c
