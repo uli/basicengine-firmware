@@ -185,4 +185,8 @@ int eb_i2c_select_bus(unsigned char bus) {
   return 0;
 }
 
+int eb_spi_select_device(unsigned short major, unsigned char minor) {
+  return 0;
+}
+
 #endif	// __linux__

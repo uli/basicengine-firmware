@@ -12,6 +12,7 @@
 
 #include <gpiod.h>
 #include <libsoc_i2c.h>
+#include <libsoc_spi.h>
 
 static std::vector<struct gpiod_chip *> chips;
 
@@ -152,6 +153,77 @@ int eb_i2c_read(unsigned char addr, char *data, int count)
     libsoc_i2c_free(dev);
 
     return ret;
+}
+
+spi *spi_dev = NULL;
+
+int eb_spi_select_device(unsigned short major, unsigned char minor)
+{
+    if (spi_dev)
+        libsoc_spi_free(spi_dev);
+
+    spi_dev = libsoc_spi_init(major, minor);
+    if (!spi_dev) {
+        err = ERR_IO;
+        return -1;
+    }
+    return 0;
+}
+
+void eb_spi_write(const char *out_data, unsigned int count)
+{
+    if (!spi_dev) {
+        err = ERR_IO;
+        err_expected = _("no SPI device selected");
+    }
+
+    return libsoc_spi_write(spi_dev, (uint8_t *)out_data, count) == EXIT_FAILURE;
+}
+
+void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
+{
+    if (!spi_dev) {
+        err = ERR_IO;
+        err_expected = _("no SPI device selected");
+    }
+
+    return libsoc_spi_rw(spi_dev, (uint8_t *)out_data, (uint8_t *)in_data, count) == EXIT_FAILURE;
+}
+
+// SPI bit order is not in libsoc...
+#include <sys/ioctl.h>
+#include <linux/spi/spidev.h>
+void eb_spi_set_bit_order(int bit_order)
+{
+    if (!spi_dev) {
+        err = ERR_IO;
+        err_expected = _("no SPI device selected");
+    }
+
+    uint8_t lsb_first = bit_order == 0;
+
+    if (ioctl(spi_dev->fd, SPI_IOC_WR_LSB_FIRST, &lsb_first) < 0)
+        set_error(_("failed to set bit order"));
+}
+
+void eb_spi_set_freq(int freq)
+{
+    if (!spi_dev) {
+        err = ERR_IO;
+        err_expected = _("no SPI device selected");
+    }
+
+    return libsoc_spi_set_speed(spi_dev, freq) == EXIT_FAILURE;
+}
+
+void eb_spi_set_mode(int mode)
+{
+    if (!spi_dev) {
+        err = ERR_IO;
+        err_expected = _("no SPI device selected");
+    }
+
+    return libsoc_spi_set_mode(spi_dev, (spi_mode)mode) == EXIT_FAILURE;
 }
 
 #endif // __linux__
