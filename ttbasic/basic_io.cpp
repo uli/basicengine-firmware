@@ -310,6 +310,29 @@ void Basic::isprint() {
   iprint(1);
 }
 
+/***bc io SPIDEV
+Selects a SPI device.
+\usage SPIDEV major, minor
+\args
+@major	Major device number
+@minor	Minor device number
+\note
+This command is only implemented on Linux-based platforms.
+\ref SPICONFIG SPIRW$() SPIW
+***/
+void Basic::ispidev() {
+#ifdef __linux__
+  int32_t major, minor;
+  if (getParam(major, 0, 255, I_COMMA) ||
+      getParam(minor, 0, 255, I_NONE))
+    return;
+
+  eb_spi_select_device(major, minor);
+#else
+  return ERR_NOTSUPPORTED;
+#endif
+}
+
 /***bc io SPIW
 Sends data to an SPI device.
 \usage SPIW out$
