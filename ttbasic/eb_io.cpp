@@ -146,7 +146,6 @@ int eb_i2c_read(unsigned char addr, char *data, int count) {
   return -1;
 #endif
 }
-#endif	// __linux__
 
 #ifdef H3
 #include <h3_spi.h>
@@ -181,3 +180,9 @@ void eb_spi_set_mode(int mode) {
   h3_spi_setDataMode(mode);
 #endif
 }
+
+int eb_i2c_select_bus(unsigned char bus) {
+  return 0;
+}
+
+#endif	// __linux__

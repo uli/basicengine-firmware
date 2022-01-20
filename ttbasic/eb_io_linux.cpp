@@ -108,9 +108,17 @@ int eb_gpio_set_pin_mode(int portno, int pinno, int mode)
     return ret;
 }
 
+static int i2c_bus_no = 0;
+
+int eb_i2c_select_bus(unsigned char bus)
+{
+    i2c_bus_no = bus;
+    return 0;
+}
+
 int eb_i2c_write(unsigned char addr, const char *data, int count)
 {
-    i2c *dev = libsoc_i2c_init(0, addr);
+    i2c *dev = libsoc_i2c_init(i2c_bus_no, addr);
     if (!dev) {
         err = ERR_IO;
         return -1;
@@ -129,7 +137,7 @@ int eb_i2c_write(unsigned char addr, const char *data, int count)
 
 int eb_i2c_read(unsigned char addr, char *data, int count)
 {
-    i2c *dev = libsoc_i2c_init(0, addr);
+    i2c *dev = libsoc_i2c_init(i2c_bus_no, addr);
     if (!dev) {
         err = ERR_IO;
         return -1;

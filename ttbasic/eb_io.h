@@ -16,6 +16,8 @@ void eb_spi_set_bit_order(int bit_order);
 void eb_spi_set_freq(int freq);
 void eb_spi_set_mode(int mode);
 
+int eb_i2c_select_bus(unsigned char bus);
+
 #define EB_SPI_BIT_ORDER_LSB 0
 #define EB_SPI_BIT_ORDER_MSB 1
 
