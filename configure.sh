@@ -198,7 +198,7 @@ cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -I
   \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags`
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config --libs` -lm -lutil
+libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
 
 rule cc
   depfile = \$out.d
@@ -231,7 +231,7 @@ cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -I
   \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags` -fcolor-diagnostics #-D__x86_64__
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config --libs` -lm -lutil
+libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
 
 rule cc
   command = \$cc --use-color \$in -- -MD -MF \$out.d \$cflags

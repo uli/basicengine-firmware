@@ -62,7 +62,7 @@ Sets the mode of a general-purpose I/O pin.
 \ref GPIN() GPOUT
 ***/
 void Basic::igpmode() {
-#ifdef H3
+#if defined(H3) || defined(__linux__)
   uint32_t portno = 0;
   uint32_t pinno, mode;
 
