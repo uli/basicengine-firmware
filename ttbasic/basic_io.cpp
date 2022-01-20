@@ -77,6 +77,26 @@ void Basic::igpmode() {
 #endif
 }
 
+/***bf io I2CBUS
+Selects the I2C bus to use.
+\usage I2CBUS bus
+\args
+@bus	I2C bus number [`0` to `255`]
+\note
+This command is only implemented on Linux-based platforms.
+\ref I2CR() I2CW()
+***/
+void Basic::ii2cbus() {
+#ifdef __linux__
+  int32_t bus;
+  if (getParam(bus, 0, 255, I_NONE))
+    return;
+  eb_i2c_select_bus(bus);
+#else
+  err = ERR_NOTSUPPORTED;
+#endif
+}
+
 /***bf io I2CW
 Sends data to an I2C device.
 \usage res = I2CW(i2c_addr, out_data)
