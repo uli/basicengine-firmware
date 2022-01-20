@@ -98,6 +98,7 @@ int eb_gpio_set_pin_mode(int portno, int pinno, int mode) {
 }
 #endif // __linux__
 
+#ifndef __linux__
 int eb_i2c_write(unsigned char addr, const char *data, int count) {
 #ifdef ESP8266
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish
@@ -145,6 +146,7 @@ int eb_i2c_read(unsigned char addr, char *data, int count) {
   return -1;
 #endif
 }
+#endif	// __linux__
 
 #ifdef H3
 #include <h3_spi.h>
