@@ -11,6 +11,7 @@
 #include "eb_io.h"
 
 #include <gpiod.h>
+#include <libsoc_i2c.h>
 
 static std::vector<struct gpiod_chip *> chips;
 
@@ -103,6 +104,44 @@ int eb_gpio_set_pin_mode(int portno, int pinno, int mode)
         set_error(_("failed to configure GPIO line"));
 
     gpiod_line_release(line);
+
+    return ret;
+}
+
+int eb_i2c_write(unsigned char addr, const char *data, int count)
+{
+    i2c *dev = libsoc_i2c_init(0, addr);
+    if (!dev) {
+        err = ERR_IO;
+        return -1;
+    }
+
+    int ret = 0;
+    if (libsoc_i2c_write(dev, (uint8_t *)data, count) == EXIT_FAILURE) {
+        err = ERR_IO;
+        ret = -1;
+    }
+
+    libsoc_i2c_free(dev);
+
+    return ret;
+}
+
+int eb_i2c_read(unsigned char addr, char *data, int count)
+{
+    i2c *dev = libsoc_i2c_init(0, addr);
+    if (!dev) {
+        err = ERR_IO;
+        return -1;
+    }
+
+    int ret = 0;
+    if (libsoc_i2c_read(dev, (uint8_t *)data, count) == EXIT_FAILURE) {
+        err = ERR_IO;
+        ret = -1;
+    }
+
+    libsoc_i2c_free(dev);
 
     return ret;
 }
