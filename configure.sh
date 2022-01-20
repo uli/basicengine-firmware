@@ -51,7 +51,8 @@ H3_SOURCES="$COMMON_SOURCES `ls h3/*.cpp`"
 H3_SOURCES_C="$COMMON_SOURCES_C"
 
 SDL_SOURCES="$COMMON_SOURCES `ls sdl/*.cpp`"
-SDL_SOURCES_C="$COMMON_SOURCES_C libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
+SDL_SOURCES_C="$COMMON_SOURCES_C libraries/libsoc/lib/i2c.c \
+	libraries/libsoc/lib/file.c libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
 
 # implicit outputs of message file and helptext generators
 MSG_IMPLICIT_OUT="ttbasic/msgs_${LANGS// /.h ttbasic/msgs_}.h"
@@ -195,7 +196,7 @@ objdir = $SDL_OBJDIR
 include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
-  \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags`
+  \$common_include -Ilibraries/libsoc/lib/include -DSDL -DDISABLE_NEON `sdl2-config --cflags`
 cxxflags = \$cflags \$common_cxxflags
 
 libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
@@ -228,7 +229,7 @@ cxx = clang-tidy-11
 include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
-  \$common_include -DSDL -DDISABLE_NEON `sdl2-config --cflags` -fcolor-diagnostics #-D__x86_64__
+  \$common_include -Ilibraries/libsoc/lib/include -DSDL -DDISABLE_NEON `sdl2-config --cflags` -fcolor-diagnostics #-D__x86_64__
 cxxflags = \$cflags \$common_cxxflags
 
 libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
