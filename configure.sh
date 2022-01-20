@@ -52,6 +52,7 @@ H3_SOURCES_C="$COMMON_SOURCES_C"
 
 SDL_SOURCES="$COMMON_SOURCES `ls sdl/*.cpp`"
 SDL_SOURCES_C="$COMMON_SOURCES_C libraries/libsoc/lib/i2c.c \
+	libraries/libsoc/lib/spi.c \
 	libraries/libsoc/lib/file.c libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
 
 # implicit outputs of message file and helptext generators
