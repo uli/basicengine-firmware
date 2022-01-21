@@ -185,7 +185,6 @@ public:
   void render();
 
   inline uint32_t frame() {
-    m_frame = SDL_GetPerformanceCounter() * 60 / SDL_GetPerformanceFrequency();
     return m_frame;
   }
 
@@ -201,6 +200,11 @@ private:
   SDL_Surface *m_composite_surface;
   SDL_Texture *m_texture;
   bool m_dirty;
+
+  Uint64 m_last_frame;
+
+  bool setModeInternal(uint8_t mode);
+  volatile int m_new_mode;
 
 #if SDL_BPP != 8
   pixel_t m_current_palette[256];
