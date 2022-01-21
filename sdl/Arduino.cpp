@@ -97,10 +97,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
-  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, 0);
-
   std::string controller_map = std::string(getenv("ENGINEBASIC_ROOT")) +
                                std::string("/sys/gamecontrollerdb.txt");
   SDL_GameControllerAddMappingsFromFile(controller_map.c_str());

@@ -80,14 +80,17 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_bufferlock = SDL_CreateMutex();
   m_spritelock = SDL_CreateMutex();
 
+  m_last_frame = SDL_GetPerformanceCounter();
+  m_frame = 0;
+  m_new_mode = -1;
+
+  SDL_CreateThread(gfx_thread, "gfx_thread", this);
+
   setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
 
-  m_frame = 0;
   reset();
-
-  SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   m_lowpass = lowpass;
 
@@ -115,8 +118,15 @@ extern SDL_Renderer *sdl_renderer;
 extern SDL_Window *sdl_window;
 
 bool SDLGFX::setMode(uint8_t mode) {
-  SDL_mutexP(m_bufferlock);
+  m_new_mode = mode;
+  while (m_new_mode != -1)
+    yield();
+  return true;
+}
+
+bool SDLGFX::setModeInternal(uint8_t mode) {
   m_display_enabled = false;
+  SDL_mutexP(m_bufferlock);
 
   m_last_line = modes_pal[mode].y * 2;
 
@@ -317,26 +327,44 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 #include <drawbg.h>
 
 extern "C" int gfx_thread(void *data) {
+  Uint64 last = 0;
+  Uint64 now, passed;
   SDLGFX *gfx = (SDLGFX *)data;
+
+  sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
+    SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
+  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
+
   for (;;) {
-    while (gfx->m_ready) {
+    if (gfx->m_new_mode != -1) {
+      gfx->setModeInternal(gfx->m_new_mode);
+      gfx->m_new_mode = -1;
     }
-    SDL_LockMutex(gfx->m_bufferlock);
-    gfx->updateBgScale();
-    SDL_UnlockMutex(gfx->m_bufferlock);
+
+    if (gfx->m_display_enabled) {
+      SDL_LockMutex(gfx->m_bufferlock);
+      gfx->updateBgScale();
+      SDL_UnlockMutex(gfx->m_bufferlock);
+      if (gfx->m_ready) {
+        gfx->m_ready = false;
+        SDL_LockMutex(gfx->m_bufferlock);
+        SDL_UpdateTexture(gfx->m_texture, NULL, gfx->m_composite_surface->pixels, gfx->m_composite_surface->pitch);
+        SDL_UnlockMutex(gfx->m_bufferlock);
+      }
+        gfx->m_frame++;
+
+        SDL_RenderClear(sdl_renderer);
+        SDL_RenderCopy(sdl_renderer, gfx->m_texture, NULL, NULL);
+        SDL_RenderPresent(sdl_renderer);
+        now = SDL_GetPerformanceCounter();
+        passed = now - last;
+        last = now;
+    }
+    //printf("frame %d passed %ld\n", gfx->m_frame, passed);
   }
 }
 
 void SDLGFX::updateBg() {
-  if (m_ready) {
-    SDL_LockMutex(m_bufferlock);
-    SDL_UpdateTexture(m_texture, NULL, m_composite_surface->pixels, m_composite_surface->pitch);
-    SDL_UnlockMutex(m_bufferlock);
-    m_ready = false;
-    SDL_RenderClear(sdl_renderer);
-    SDL_RenderCopy(sdl_renderer, m_texture, NULL, NULL);
-    SDL_RenderPresent(sdl_renderer);
-  }
 }
 
 void SDLGFX::updateBgScale() {
@@ -349,7 +377,7 @@ void SDLGFX::updateBgScale() {
 
   if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0) {
     // nothing fancy going on -> save some power
-    SDL_Delay(15);
+    SDL_Delay(10);
     return;
   }
 

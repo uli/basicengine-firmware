@@ -101,7 +101,7 @@ public:
 #ifndef HOSTED
 protected:
 #endif
-  uint32_t m_frame;
+  volatile uint32_t m_frame;
 
   struct video_mode_t m_current_mode;
   int m_last_line;
