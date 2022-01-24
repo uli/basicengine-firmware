@@ -5,6 +5,7 @@
 
 #include <video_driver.h>
 #include "sdlaudio.h"
+#include <eb_sys.h>
 
 #include "Arduino.h"
 #include "FS.h"
@@ -103,6 +104,8 @@ int main(int argc, char **argv) {
   SDL_GameControllerEventState(SDL_ENABLE);
 
   atexit(my_exit);
+
+  eb_set_cpu_speed(75);
 
   setup();
   for (;;)
