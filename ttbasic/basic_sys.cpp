@@ -919,7 +919,7 @@ void Basic::ishell() {
       int ch;
       ret = 0;
 
-      while ((ch = eb_term_getch()) >= 0) {
+      while ((ch = eb_term_getch()) >= 0 && ret < 256) {
         buf[ret++] = ch;
       }
 
