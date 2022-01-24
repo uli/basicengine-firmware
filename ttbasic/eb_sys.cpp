@@ -47,6 +47,7 @@ int eb_process_events_wait(void) {
   return 0;
 }
 
+#ifndef __linux__
 void eb_set_cpu_speed(int percent) {
 #ifdef H3
   int factor;
@@ -61,6 +62,7 @@ void eb_set_cpu_speed(int percent) {
   // unsupported, ignore silently
 #endif
 }
+#endif
 
 #include <miniz.h>
 #include "eb_file.h"
