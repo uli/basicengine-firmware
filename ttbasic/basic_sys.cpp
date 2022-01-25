@@ -933,3 +933,9 @@ void Basic::ishell() {
   err = ERR_NOTSUPPORTED;
 #endif
 }
+
+#ifndef __linux__
+void Basic::idtbload() {
+  err = ERR_NOTSUPPORTED;
+}
+#endif
