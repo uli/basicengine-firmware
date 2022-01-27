@@ -3,12 +3,13 @@
 
 #ifdef __linux__
 
-#include "eb_sys.h"
-
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <fstream>
+
+#include "basic.h"
+#include "eb_sys.h"
 
 void eb_set_cpu_speed(int percent)
 {
@@ -18,10 +19,16 @@ void eb_set_cpu_speed(int percent)
     std::string available = policy + "scaling_available_frequencies";
 
     std::fstream f(available, std::fstream::in);
+    if (f.fail()) {
+        // no frequency scaling, forget about it
+        return;
+    }
+
     std::vector<int> available_freqs;
     std::string s;
     while (getline(f, s, ' '))
         available_freqs.push_back(atoi(s.c_str()));
+
     f.close();
 
     int max_freq = *max_element(std::begin(available_freqs), std::end(available_freqs));
