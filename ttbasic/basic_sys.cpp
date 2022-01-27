@@ -862,15 +862,26 @@ void Basic::irequire() {
 #include <errno.h>
 #endif
 
+static int exec_list(std::list<BString> &args) {
+  std::vector<const char *> argsp;
+
+  for (auto &s : args)
+    argsp.push_back(s.c_str());
+
+  argsp.push_back(NULL);
+
+  return execvp(argsp[0], (char *const *)argsp.data());
+}
+
 void Basic::ishell() {
 #ifdef __unix__
   std::list<BString> args;
 
-  do {
+  while (!end_of_statement()) {
     args.push_back(istrexp());
     if (*cip == I_COMMA)
       ++cip;
-  } while (!end_of_statement());
+  }
 
   int fd;
   struct winsize ws = {
@@ -887,7 +898,12 @@ void Basic::ishell() {
     unsetenv("DISPLAY");
     setenv("TERM", "ansi", 1);
     setenv("LANG", "en_US.UTF-8", 1);
-    execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
+    if (args.size() == 0)
+      execl("/bin/sh", "sh", NULL);
+    else if (args.size() == 1)
+      execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
+    else
+      exec_list(args);
     _exit(1);
   }
   else if (pid < 0) {
