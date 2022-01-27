@@ -2357,7 +2357,7 @@ bool Basic::get_range(uint32_t &start, uint32_t &end) {
 }
 
 // LIST command
-void SMALL Basic::ilist(uint8_t devno, BString *search) {
+void SMALL Basic::ilist(uint8_t devno, BString *search, bool show_lines) {
   uint32_t lineno;     // start line number
   uint32_t endlineno;  // end line number
   uint32_t prnlineno;  // output line number
@@ -2385,10 +2385,14 @@ void SMALL Basic::ilist(uint8_t devno, BString *search) {
         continue;
       }
     }
-    sc0.setColor(COL(LINENUM), COL(BG));
-    putnum(prnlineno, 0, devno);  // 行番号を表示
-    sc0.setColor(COL(FG), COL(BG));
-    c_putch(' ', devno); // 空白を入れる
+
+    if (show_lines) {
+      sc0.setColor(COL(LINENUM), COL(BG));
+      putnum(prnlineno, 0, devno);  // 行番号を表示
+      sc0.setColor(COL(FG), COL(BG));
+      c_putch(' ', devno); // 空白を入れる
+    }
+
     putlist(lp, devno);  // 行番号より後ろを文字列に変換して表示
     if (err)             // もしエラーが生じたら
       break;             // 繰り返しを打ち切る
@@ -2581,16 +2585,19 @@ void SMALL Basic::irenum() {
 
 /***bc bas SAVE
 Saves the BASIC program in memory to a file.
-\usage SAVE file$
+\usage SAVE file$ [LINE <ON|OFF>]
 \args
 @file$	name of file to be saved
 \note
-BASIC programs are saved in plain text (UTF-8) format.
+* Programs are saved without line numbers if `LINE OFF` is specified.
+  Otherwise, line numbers are included.
+* BASIC programs are saved in plain text (UTF-8) format.
 \ref SAVE_BG SAVE_CONFIG SAVE_IMAGE
 ***/
 void Basic::isave() {
   BString fname;
   int8_t rc;
+  bool show_lines = true;
 
   if (*cip == I_BG) {
     isavebg();
@@ -2609,6 +2616,19 @@ void Basic::isave() {
     return;
   }
 
+  if (*cip == I_LINE) {
+    ++cip;
+    if (*cip == I_OFF)
+      show_lines = false;
+    else if (*cip == I_ON)
+      show_lines = true;
+    else {
+      SYNTAX_T(_("expected OFF or ON"));
+      return;
+    }
+    ++cip;
+  }
+
   // SDカードへの保存
   rc = bfs.tmpOpen((char *)fname.c_str(), 1);
   if (rc == SD_ERR_INIT) {
@@ -2618,7 +2638,7 @@ void Basic::isave() {
     err = ERR_FILE_OPEN;
     return;
   }
-  ilist(4);
+  ilist(4, NULL, show_lines);
   bfs.tmpClose();
 }
 
