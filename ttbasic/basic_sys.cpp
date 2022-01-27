@@ -873,6 +873,25 @@ static int exec_list(std::list<BString> &args) {
   return execvp(argsp[0], (char *const *)argsp.data());
 }
 
+/***bc sys SHELL
+Runs operating system commands.
+\usage SHELL [<command>[, <argument> ...]]
+\args
+@command	command to run
+@argument	argument to pass to the command
+\desc
+Runs `command`, or an interactive shell if `command` is not specified.
+
+`command` is executed by the operating system shell if there are no
+`argument` parameters, allowing shell syntax constructs to be used.
+
+If one or more `argument` parameters are specified,
+the command will be executed directly.
+\note
+* `command`-only commands are executed using `execl("/bin/sh", "sh", ...)`.
+* Commands with `argument` parameters are executed using
+  `execvp("<command>", "<command>", "<argument">, ...)`.
+***/
 void Basic::ishell() {
 #ifdef __unix__
   std::list<BString> args;
