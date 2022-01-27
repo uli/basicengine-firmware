@@ -177,7 +177,7 @@ private:
 
   bool get_range(uint32_t &start, uint32_t &end);
 
-  void SMALL ilist(uint8_t devno = 0, BString *search = NULL);
+  void SMALL ilist(uint8_t devno = 0, BString *search = NULL, bool show_lines = true);
 
   void iloadbg();
   void isavebg();
