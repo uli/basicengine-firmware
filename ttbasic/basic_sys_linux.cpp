@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <sys/stat.h>
+#include <libgen.h>
 
 #include "basic.h"
 
@@ -19,8 +20,10 @@ void Basic::idtbload()
         return;
     }
 
+    char basenm[filename.length() + 1];
+    strcpy(basenm, filename.c_str());
     std::string ovl_dir = std::string("/sys/kernel/config/device-tree/overlays/") +
-                          filename.c_str();
+                          basename(basenm);
 
     if (mkdir(ovl_dir.c_str(), 0755) < 0) {
         err = ERR_IO;
