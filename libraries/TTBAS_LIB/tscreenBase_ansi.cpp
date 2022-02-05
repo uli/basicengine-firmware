@@ -68,7 +68,7 @@ int tscreenBase::term_getch(void) {
       break;
     }
   }
-  int c = vt_inbuf.front();
+  int c = (unsigned char)vt_inbuf.front();
   vt_inbuf.pop();
   return c;
 }
