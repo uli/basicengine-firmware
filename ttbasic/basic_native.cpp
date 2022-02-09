@@ -45,10 +45,11 @@ void Basic::itcc() {
   }
 
   if (*cip == I_MOD) {
+    ++cip;
     args.push_back("-shared");
   }
 
-  exec_list(args);
+  run_list(args);
 }
 
 void *Basic::get_symbol(const char *sym_name) {
@@ -215,6 +216,8 @@ num_t Basic::ngetsym() {
   return (uintptr_t)get_symbol(sym.c_str());
 }
 
+#include <sys/wait.h>
+
 int exec_list(std::list<BString> &args) {
   std::vector<const char *> argsp;
 
@@ -224,4 +227,18 @@ int exec_list(std::list<BString> &args) {
   argsp.push_back(NULL);
 
   return execvp(argsp[0], (char *const *)argsp.data());
+}
+
+int run_list(std::list<BString> &args) {
+  pid_t pid = fork();
+  if (pid < 0) {
+    return -1;
+  } else if (pid > 0) {
+    int wstatus;
+    waitpid(pid, &wstatus, 0);
+    return WEXITSTATUS(wstatus);
+  } else {
+    exec_list(args);
+    return -1;
+  }
 }
