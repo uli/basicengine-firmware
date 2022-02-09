@@ -249,8 +249,8 @@ SYSTEM	I_SYSTEM	isystem
 SYS	I_SYS		isys
 TAB	I_TAB		esyntax
 TAN	I_TAN		ntan
-TCCLINK	I_TCCLINK	itcclink
-TCCMODE I_TCCMODE	itccmode
+_none	I_DUMMY2	esyntax
+_none	I_DUMMY3	esyntax
 TCC	I_TCC		itcc
 TFTPD	I_TFTPD		itftpd
 TFTPGET	I_TFTPGET	itftpget

@@ -5,28 +5,11 @@
 
 #include "basic.h"
 #include "basic_native.h"
-#include "eb_native.h"
 
 #include <dyncall.h>
+#include <dlfcn.h>
 
 std::vector<struct module> modules;
-
-void print_tcc_error(void *b, const char *msg) {
-  c_puts(msg); newline();
-}
-
-int output_type = TCC_OUTPUT_MEMORY;
-
-static TCCState *new_tcc(bool init_syms = true) {
-  TCCState *tcc = eb_tcc_new(output_type);
-  if (!tcc)
-    return NULL;
-
-  if (init_syms)
-    eb_tcc_initialize_symbols(tcc);
-
-  return tcc;
-}
 
 void Basic::init_tcc() {
   callvm = dcNewCallVM(4096);
@@ -34,7 +17,7 @@ void Basic::init_tcc() {
 
   // add empty module to make default symbols visible to BASIC
   if (modules.size() == 0) {
-    struct module system = { new_tcc(), "system", NULL, 0 };
+    struct module system = { NULL, "system" };
     modules.push_back(system);
   }
 }
@@ -42,77 +25,52 @@ void Basic::init_tcc() {
 static TCCState *current_tcc;
 
 void Basic::itcc() {
-  TCCState *tcc;
-  if (current_tcc)
-    tcc = current_tcc;
-  else {
-    tcc = eb_tcc_new(output_type);
-    if (!tcc) {
-      err = ERR_OOM;
+  std::list<BString> args;
+  args.push_back("tcc");
+
+  for (;;) {
+    BString file = getParamFname();
+    if (err)
       return;
-    }
-
-    if (output_type == TCC_OUTPUT_MEMORY)
-      eb_tcc_initialize_symbols(tcc);
-
-    current_tcc = tcc;
+    args.push_back(file);
+    if (*cip == I_COMMA)
+      ++cip;
+    else
+      break;
   }
 
-  tcc_set_error_func(tcc, this, print_tcc_error);
-
-  BString file = getParamFname();
-  if (tcc_add_file(tcc, file.c_str()) < 0) {
-    err = ERR_COMPILE;
-    err_expected = "translation failed";
-    tcc_delete(tcc);
-    current_tcc = NULL;
-  }
-}
-
-void Basic::itcclink() {
-  if (!current_tcc) {
-    err = ERR_COMPILE;
-    err_expected = "nothing to link";
-    return;
+  if (*cip == I_TO) {
+    ++cip;
+    BString outfile = getParamFname();
+    args.push_back("-o");
+    args.push_back(outfile);
   }
 
-  BString name;
-  if (is_strexp())
-    name = istrexp();
-  else
-    name = BString("mod") + BString(modules.size());
-
-  if (eb_tcc_link(current_tcc, name.c_str(), output_type) < 0) {
-    tcc_delete(current_tcc);
-    output_type = TCC_OUTPUT_MEMORY;
+  if (*cip == I_MOD) {
+    args.push_back("-shared");
   }
 
-  current_tcc = NULL;
-}
-
-void Basic::itccmode() {
-  int32_t mode;
-  if (getParam(mode, 1, 4, I_NONE))
-   return;
-  output_type = mode;
+  exec_list(args);
 }
 
 void *Basic::get_symbol(const char *sym_name) {
-  for(int i = modules.size(); i-- > 0; ) {
-    void *sym = tcc_get_symbol(modules[i].tcc, sym_name);
-    if (sym)
-      return sym;
-  }
-  return NULL;
+  dlerror();
+
+  void *sym = dlsym(RTLD_DEFAULT, sym_name);
+
+  if (!dlerror())
+    return sym;
+  else
+    return NULL;
 }
 
 const char *Basic::get_name(void *addr) {
-  for (auto mod : modules) {
-    const char *sym = tcc_get_name(mod.tcc, addr);
-    if (sym)
-      return sym;
-  }
-  return NULL;
+  static Dl_info info;
+  if (!dladdr(addr, &info))
+    return NULL;
+
+  // XXX: returns symbol even if addr is not the start address; do we want that?
+  return info.dli_sname;
 }
 
 Basic::nfc_result Basic::do_nfc(void *sym, enum return_type rtype) {
@@ -240,25 +198,6 @@ BString Basic::snfc() {
 
   out = (char *)ret.rptr;
   return out;
-}
-
-std::vector<void (*)(void)> atexit_funcs;
-
-extern "C" void be__exit(int ret) {
-  atexit_funcs.clear();
-  // XXX: How do we know what our BASIC context is?
-  bc->exit(ret);
-}
-
-extern "C" void be_exit(int ret) {
-  for (auto a : atexit_funcs)
-    a();
-
-  be__exit(ret);
-}
-
-extern "C" void be_atexit(void (*function)(void)) {
-  atexit_funcs.push_back(function);
 }
 
 /***bf sys GETSYM

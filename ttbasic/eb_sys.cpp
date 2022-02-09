@@ -104,7 +104,7 @@ int eb_install_module(const char *filename) {
   return 0;
 }
 
-#include "eb_native.h"
+#include <dlfcn.h>
 
 int eb_load_module(const char *name) {
   char cwd[FILENAME_MAX];
@@ -126,21 +126,22 @@ int eb_load_module(const char *name) {
     eb_exec_basic(bc, "loader.bas");
     eb_delete_basic_context(bc);
   } else {
-    BString objname = BString(name) + BString("_") + BString(getenv("HOSTTYPE")) + BString(".o");
+    BString objname = BString(name) + BString("_") + BString(getenv("HOSTTYPE")) + BString(".so");
     if (!eb_file_exists(objname.c_str()))
       goto not_found;
 
-    TCCState *tcc = eb_tcc_new(TCC_OUTPUT_MEMORY);
-    tcc_set_error_func(tcc, NULL, print_tcc_error);
-
-    eb_tcc_initialize_symbols(tcc);
-
-    if (tcc_add_file(tcc, objname.c_str()) < 0 ||
-        eb_tcc_link(tcc, name, TCC_OUTPUT_MEMORY) < 0) {
-      tcc_delete(tcc);
-      err = ERR_COMPILE;
+    void *dl_handle = dlopen(objname.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    if (!dl_handle) {
+      err = ERR_FILE_OPEN;
+      err_expected = dlerror();
       return -1;
     }
+
+    struct module mod = {
+      .dl_handle = dl_handle,
+      .name = objname
+    };
+    modules.push_back(mod);
   }
 
   if (chdir(cwd)) {

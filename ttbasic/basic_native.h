@@ -14,10 +14,8 @@ void print_tcc_error(void *b, const char *msg);
 
 #ifdef __cplusplus
 struct module {
-  TCCState *tcc;
+  void *dl_handle;
   BString name;
-  void *init_data;
-  int init_len;
 };
 extern std::vector<struct module> modules;
 
