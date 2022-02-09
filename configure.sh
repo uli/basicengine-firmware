@@ -135,7 +135,6 @@ build \$objdir/dyncall/dyncall/libdyncall_s.a: dyncall_build || \$objdir/dyncall
 rule initdir
   command = mkdir -p \$out/sys/help && \$
             rsync -a $DEMOS_DIR/* \$out/ || true && \$
-            rsync -a include/ \$out/sys/include/ && \$
             mkdir -p \$out/sys/include && \$
             cp -p ttbasic/eb_*.h \$out/sys/include/ && rm -f \$out/sys/include/eb_*_int.h && \$
             cp -p ttbasic/errdef.h ttbasic/error.h ttbasic/kwenum.h \$out/sys/include/ && \$
