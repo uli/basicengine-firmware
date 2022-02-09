@@ -4,6 +4,7 @@
  */
 
 #include "basic.h"
+#include "basic_native.h"
 #include "credits.h"
 #include "eb_video.h"
 #include "eb_sys.h"
@@ -861,17 +862,6 @@ void Basic::irequire() {
 #include <fcntl.h>
 #include <errno.h>
 #endif
-
-static int exec_list(std::list<BString> &args) {
-  std::vector<const char *> argsp;
-
-  for (auto &s : args)
-    argsp.push_back(s.c_str());
-
-  argsp.push_back(NULL);
-
-  return execvp(argsp[0], (char *const *)argsp.data());
-}
 
 /***bc sys SHELL
 Runs operating system commands.
