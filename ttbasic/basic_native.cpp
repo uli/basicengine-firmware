@@ -277,3 +277,14 @@ num_t Basic::ngetsym() {
 
   return (uintptr_t)get_symbol(sym.c_str());
 }
+
+int exec_list(std::list<BString> &args) {
+  std::vector<const char *> argsp;
+
+  for (auto &s : args)
+    argsp.push_back(s.c_str());
+
+  argsp.push_back(NULL);
+
+  return execvp(argsp[0], (char *const *)argsp.data());
+}
