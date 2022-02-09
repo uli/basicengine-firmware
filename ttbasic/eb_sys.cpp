@@ -106,7 +106,27 @@ int eb_install_module(const char *filename) {
 
 #include <dlfcn.h>
 
+int do_load_module(const char *filename) {
+  void *dl_handle = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
+  if (!dl_handle) {
+    err = ERR_FILE_OPEN;
+    err_expected = dlerror();
+    return -1;
+  }
+
+  struct module mod = {
+    .dl_handle = dl_handle,
+    .name = filename,
+  };
+  modules.push_back(mod);
+  return 0;
+}
+
 int eb_load_module(const char *name) {
+  if (eb_file_exists(name)) {
+    return do_load_module(name);
+  }
+
   char cwd[FILENAME_MAX];
   if (!getcwd(cwd, FILENAME_MAX)) {
     err = ERR_SYS;
@@ -130,18 +150,7 @@ int eb_load_module(const char *name) {
     if (!eb_file_exists(objname.c_str()))
       goto not_found;
 
-    void *dl_handle = dlopen(objname.c_str(), RTLD_NOW | RTLD_GLOBAL);
-    if (!dl_handle) {
-      err = ERR_FILE_OPEN;
-      err_expected = dlerror();
-      return -1;
-    }
-
-    struct module mod = {
-      .dl_handle = dl_handle,
-      .name = objname
-    };
-    modules.push_back(mod);
+    do_load_module(objname.c_str());
   }
 
   if (chdir(cwd)) {
