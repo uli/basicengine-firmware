@@ -44,7 +44,7 @@ COMMON_SOURCES="`echo ttbasic/*.cpp libraries/TTBAS_LIB/*.cpp \
 	libraries/alpha-lib/src/*.cpp arduino_compat/*.cpp`"
 
 COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c \
-	libraries/atto/*.c` libraries/tinycc/libtcc.c"
+	libraries/atto/*.c`"
 
 # platform-specific source files
 H3_SOURCES="$COMMON_SOURCES `ls h3/*.cpp`"
@@ -53,7 +53,7 @@ H3_SOURCES_C="$COMMON_SOURCES_C"
 SDL_SOURCES="$COMMON_SOURCES `ls sdl/*.cpp`"
 SDL_SOURCES_C="$COMMON_SOURCES_C libraries/libsoc/lib/i2c.c \
 	libraries/libsoc/lib/spi.c \
-	libraries/libsoc/lib/file.c libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
+	libraries/libsoc/lib/file.c"
 
 # implicit outputs of message file and helptext generators
 MSG_IMPLICIT_OUT="ttbasic/msgs_${LANGS// /.h ttbasic/msgs_}.h"
@@ -87,7 +87,7 @@ warn_flags = $WARN_FLAGS
 common_include = -Ittbasic -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \$
   -Ilibraries/azip -Ilibraries/stb \$
   -Ilibraries/alpha-lib/include -Igfx -Ilibraries/dyncall/dyncall \$
-  -Ilibraries/tinycc -Iarduino_compat
+  -Iarduino_compat
 
 common_cflags = -g -DENGINEBASIC -D_GNU_SOURCE -fdiagnostics-color=always
 common_cxxflags = -fpermissive -std=c++11 -fno-exceptions
@@ -136,12 +136,10 @@ rule initdir
   command = mkdir -p \$out/sys/help && \$
             rsync -a $DEMOS_DIR/* \$out/ || true && \$
             rsync -a include/ \$out/sys/include/ && \$
-            mkdir -p \$out/sys/include/tcc && \$
+            mkdir -p \$out/sys/include && \$
             cp -p ttbasic/eb_*.h \$out/sys/include/ && rm -f \$out/sys/include/eb_*_int.h && \$
             cp -p ttbasic/errdef.h ttbasic/error.h ttbasic/kwenum.h \$out/sys/include/ && \$
             cp -p ttbasic/mcurses*.h \$out/sys/include/ && \$
-            cp -p libraries/tinycc/include/*.h \$out/sys/include/tcc/ && \$
-            cp -p libraries/tinycc/libtcc.h \$out/sys/include/ && \$
             cp -p libraries/stb/*.h \$out/sys/include/ && \$
             cp -p ttbasic/helptext_*.json \$out/sys/help/ && \$
             mkdir -p \$out/sys/fonts && \$
