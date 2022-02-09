@@ -22,8 +22,6 @@ void Basic::init_tcc() {
   }
 }
 
-static TCCState *current_tcc;
-
 void Basic::itcc() {
   std::list<BString> args;
   args.push_back("tcc");
