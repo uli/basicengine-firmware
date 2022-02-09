@@ -197,10 +197,11 @@ objdir = $SDL_OBJDIR
 include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
-  \$common_include -Ilibraries/libsoc/lib/include -DSDL `sdl2-config --cflags`
+  \$common_include -Ilibraries/libsoc/lib/include -DSDL `sdl2-config --cflags` \
+  -rdynamic -fvisibility=hidden
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
+libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod -ldl
 
 rule cc
   depfile = \$out.d
