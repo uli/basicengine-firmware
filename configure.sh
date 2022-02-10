@@ -40,7 +40,7 @@ LANGS="de fr es ja"
 
 # source files common to all builds
 COMMON_SOURCES="`echo ttbasic/*.cpp libraries/TTBAS_LIB/*.cpp \
-	libraries/TTVoutfonts/*.cpp libraries/azip/*.cpp \
+	libraries/TTVoutfonts/*.cpp \
 	libraries/alpha-lib/src/*.cpp arduino_compat/*.cpp`"
 
 COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c` \
@@ -85,7 +85,7 @@ cat <<EOT >build.ninja.common
 warn_flags = $WARN_FLAGS
 
 common_include = -Ittbasic -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibraries/TKeyboard/src \$
-  -Ilibraries/azip -Ilibraries/stb \$
+  -Ilibraries/stb \$
   -Ilibraries/alpha-lib/include -Igfx -Ilibraries/dyncall/dyncall \$
   -Ilibraries/tinycc -Iarduino_compat
 
