@@ -500,7 +500,6 @@ Run Z-machine program.
 \args
 @file_name$	name of a z-code file
 ***/
-#include <azip.h>
 void Basic::ixyzzy() {
   if (!is_strexp()) {
     PRINT_P("Nothing happens.\n");
@@ -514,9 +513,11 @@ void Basic::ixyzzy() {
     err = ERR_FILE_OPEN;
     return;
   }
-  AZIP azip;
-  azip.load(game.c_str());
-  azip.run();
+
+  std::list<BString> args;
+  args.push_back("frotz");
+  args.push_back(game);
+  shell_list(args);
 }
 
 /***bf sys SYS
