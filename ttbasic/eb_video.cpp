@@ -13,7 +13,7 @@ extern "C" {
 // **** スクリーン管理 *************
 static uint8_t scmode = 255;
 
-int eb_screen(int m) {
+EBAPI int eb_screen(int m) {
 #ifdef USE_BG_ENGINE
   // Discard dimensions saved for CONTing.
   restore_bgs = false;
@@ -61,7 +61,7 @@ int eb_screen(int m) {
   return 0;
 }
 
-int eb_palette(int p, int hw, int sw, int vw, int f) {
+EBAPI int eb_palette(int p, int hw, int sw, int vw, int f) {
   if (check_param(p, 0, CSP_NUM_COLORSPACES - 1) ||
       check_param(hw, -1, 7) ||
       check_param(sw, -1, 7) ||
@@ -75,7 +75,7 @@ int eb_palette(int p, int hw, int sw, int vw, int f) {
   return 0;
 }
 
-int eb_border(int y, int uv, int x, int w) {
+EBAPI int eb_border(int y, int uv, int x, int w) {
   if (check_param(uv, 0, 255) ||
       check_param(y, 0, 255 - 0x66) ||
       check_param(x, -1, vs23.borderWidth()) ||
@@ -90,7 +90,7 @@ int eb_border(int y, int uv, int x, int w) {
   return 0;
 }
 
-void eb_vsync(unsigned int tm) {
+EBAPI void eb_vsync(unsigned int tm) {
   if (tm == 0)
     tm = vs23.frame() + 1;
 
@@ -100,11 +100,11 @@ void eb_vsync(unsigned int tm) {
   }
 }
 
-unsigned int eb_frame(void) {
+EBAPI unsigned int eb_frame(void) {
   return vs23.frame();
 }
 
-ipixel_t eb_rgb_indexed(int r, int g, int b) {
+EBAPI ipixel_t eb_rgb_indexed(int r, int g, int b) {
   if (r < 0) r = 0; else if (r > 255) r = 255;
   if (g < 0) g = 0; else if (g > 255) g = 255;
   if (b < 0) b = 0; else if (b > 255) b = 255;
@@ -112,7 +112,7 @@ ipixel_t eb_rgb_indexed(int r, int g, int b) {
   return csp.indexedColorFromRgb(r, g, b);
 }
 
-pixel_t eb_rgb(int r, int g, int b) {
+EBAPI pixel_t eb_rgb(int r, int g, int b) {
   if (r < 0) r = 0; else if (r > 255) r = 255;
   if (g < 0) g = 0; else if (g > 255) g = 255;
   if (b < 0) b = 0; else if (b > 255) b = 255;
@@ -120,31 +120,31 @@ pixel_t eb_rgb(int r, int g, int b) {
   return csp.colorFromRgb(r, g, b);
 }
 
-pixel_t eb_rgb_from_indexed(ipixel_t c) {
+EBAPI pixel_t eb_rgb_from_indexed(ipixel_t c) {
   return csp.fromIndexed(c);
 }
 
-void eb_color(pixel_t fc, pixel_t bgc) {
+EBAPI void eb_color(pixel_t fc, pixel_t bgc) {
   sc0.setColor(fc, bgc);
 }
 
-void eb_cursor_color(pixel_t cc) {
+EBAPI void eb_cursor_color(pixel_t cc) {
   sc0.setCursorColor(cc);
 }
 
-int eb_psize_height(void) {
+EBAPI int eb_psize_height(void) {
   return sc0.getGHeight();
 }
 
-int eb_psize_width(void) {
+EBAPI int eb_psize_width(void) {
   return sc0.getGWidth();
 }
 
-int eb_psize_lastline(void) {
+EBAPI int eb_psize_lastline(void) {
   return vs23.lastLine();
 }
 
-int eb_gscroll(int x1, int y1, int x2, int y2, int d) {
+EBAPI int eb_gscroll(int x1, int y1, int x2, int y2, int d) {
   if (x1 < 0 || y1 < 0 || x2 <= x1 || y2 <= y1 ||
       x2 >= sc0.getGWidth() ||
       y2 >= vs23.lastLine()) {
@@ -157,7 +157,7 @@ int eb_gscroll(int x1, int y1, int x2, int y2, int d) {
   return 0;
 }
 
-pixel_t eb_point(int x, int y) {
+EBAPI pixel_t eb_point(int x, int y) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1))
     return 0;
@@ -165,23 +165,23 @@ pixel_t eb_point(int x, int y) {
   return vs23.getPixel(x, y);
 }
 
-void eb_pset(int x, int y, pixel_t c) {
+EBAPI void eb_pset(int x, int y, pixel_t c) {
   Graphics::setPixelSafe(x, y, c);
 }
 
-void eb_line(int x1, int y1, int x2, int y2, pixel_t c) {
+EBAPI void eb_line(int x1, int y1, int x2, int y2, pixel_t c) {
   if (c == (pixel_t)-1)
     c = fg_color;
 
   sc0.line(x1, y1, x2, y2, c);
 }
 
-void eb_circle(int x, int y, int r, pixel_t c, pixel_t f) {
+EBAPI void eb_circle(int x, int y, int r, pixel_t c, pixel_t f) {
   if (r < 0) r = -r;
   sc0.circle(x, y, r, c, f);
 }
 
-void eb_rect(int x1, int y1, int x2, int y2, pixel_t c, pixel_t f) {
+EBAPI void eb_rect(int x1, int y1, int x2, int y2, pixel_t c, pixel_t f) {
   sc0.rect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, c, f);
 }
 
@@ -207,7 +207,7 @@ static void clampRect(int &x, int &y, int &dx, int &dy, int &w, int &h) {
     h = vs23.lastLine() - dy;
 }
 
-int eb_blit(int x, int y, int dx, int dy, int w, int h) {
+EBAPI int eb_blit(int x, int y, int dx, int dy, int w, int h) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1) ||
       check_param(w, 0, sc0.getGWidth()) ||
@@ -222,7 +222,7 @@ int eb_blit(int x, int y, int dx, int dy, int w, int h) {
   return 0;
 }
 
-int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h) {
+EBAPI int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h) {
   if (check_param(x, 0, sc0.getGWidth() - 1) ||
       check_param(y, 0, vs23.lastLine() - 1) ||
       check_param(w, 0, sc0.getGWidth()) ||
@@ -237,23 +237,23 @@ int eb_blit_alpha(int x, int y, int dx, int dy, int w, int h) {
   return 0;
 }
 
-pixel_t eb_get_fg_color(void) {
+EBAPI pixel_t eb_get_fg_color(void) {
   return sc0.getFgColor();
 }
 
-pixel_t eb_get_bg_color(void) {
+EBAPI pixel_t eb_get_bg_color(void) {
   return sc0.getBgColor();
 }
 
-int eb_mode_from_size(int *w, int *h) {
+EBAPI int eb_mode_from_size(int *w, int *h) {
   return vs23.modeFromSize(*w, *h);
 }
 
-void eb_mode_size(int m, int *w, int *h) {
+EBAPI void eb_mode_size(int m, int *w, int *h) {
   return vs23.modeSize(m, *w, *h);
 }
 
-int eb_num_modes(void) {
+EBAPI int eb_num_modes(void) {
   return vs23.numModes();
 }
 

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
+#include "eb_api.h"
 #include "eb_sys.h"
 #include "basic.h"
 #include "basic_native.h"
 
-void eb_wait(unsigned int ms) {
+EBAPI void eb_wait(unsigned int ms) {
   unsigned end = ms + millis();
   while (millis() < end) {
     if (eb_process_events_wait())
@@ -13,31 +14,31 @@ void eb_wait(unsigned int ms) {
   }
 }
 
-unsigned int eb_tick(void) {
+EBAPI unsigned int eb_tick(void) {
   return millis();
 }
 
-unsigned int eb_utick(void) {
+EBAPI unsigned int eb_utick(void) {
   return micros();
 }
 
-void eb_udelay(unsigned int us) {
+EBAPI void eb_udelay(unsigned int us) {
   return delayMicroseconds(us);
 }
 
 // NB: process_events() is directly exported to native modules as
 // eb_process_events(), so changing this will not necessarily have the
 // desired effect.
-void eb_process_events(void) {
+EBAPI void eb_process_events(void) {
   process_events();
 }
 
-int eb_process_events_check(void) {
+EBAPI int eb_process_events_check(void) {
   process_events();
   return process_hotkeys(sc0.peekKey());
 }
 
-int eb_process_events_wait(void) {
+EBAPI int eb_process_events_wait(void) {
   process_events();
 
   if (process_hotkeys(sc0.peekKey()))
@@ -48,7 +49,7 @@ int eb_process_events_wait(void) {
 }
 
 #ifndef __linux__
-void eb_set_cpu_speed(int percent) {
+EBAPI void eb_set_cpu_speed(int percent) {
 #ifdef H3
   int factor;
 
@@ -67,7 +68,7 @@ void eb_set_cpu_speed(int percent) {
 #include <miniz.h>
 #include "eb_file.h"
 
-int eb_install_module(const char *filename) {
+EBAPI int eb_install_module(const char *filename) {
   if (!eb_file_exists(filename)) {
     err = ERR_FILE_OPEN;
     return -1;
@@ -106,7 +107,7 @@ int eb_install_module(const char *filename) {
 
 #include <dlfcn.h>
 
-int do_load_module(const char *filename) {
+EBAPI int do_load_module(const char *filename) {
   std::string fn;
   if (filename[0] != '/')
     fn = std::string("./") + filename;
@@ -133,7 +134,7 @@ int do_load_module(const char *filename) {
   return 0;
 }
 
-int eb_load_module(const char *name) {
+EBAPI int eb_load_module(const char *name) {
   if (eb_file_exists(name)) {
     return do_load_module(name);
   }
@@ -177,11 +178,11 @@ not_found:
   return -1;
 }
 
-int eb_module_count(void) {
+EBAPI int eb_module_count(void) {
   return modules.size();
 }
 
-const char *eb_module_name(int index) {
+EBAPI const char *eb_module_name(int index) {
   if (index < modules.size())
     return modules[index].name.c_str();
   else
