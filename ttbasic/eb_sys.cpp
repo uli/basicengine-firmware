@@ -107,7 +107,13 @@ int eb_install_module(const char *filename) {
 #include <dlfcn.h>
 
 int do_load_module(const char *filename) {
-  void *dl_handle = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
+  std::string fn;
+  if (filename[0] != '/')
+    fn = std::string("./") + filename;
+  else
+    fn = filename;
+
+  void *dl_handle = dlopen(fn.c_str(), RTLD_NOW | RTLD_GLOBAL);
   if (!dl_handle) {
     err = ERR_FILE_OPEN;
     err_expected = dlerror();
