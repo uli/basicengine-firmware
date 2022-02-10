@@ -4,7 +4,7 @@
 #include "eb_file.h"
 #include "basic.h"
 
-int eb_file_exists(const char *name)
+EBAPI int eb_file_exists(const char *name)
 {
     struct stat st;
     if (_stat(name, &st))
@@ -13,7 +13,7 @@ int eb_file_exists(const char *name)
         return 1;
 }
 
-int eb_is_directory(const char *name)
+EBAPI int eb_is_directory(const char *name)
 {
     struct stat st;
     if (_stat(name, &st))
@@ -22,7 +22,7 @@ int eb_is_directory(const char *name)
         return S_ISDIR(st.st_mode);
 }
 
-int eb_is_file(const char *name)
+EBAPI int eb_is_file(const char *name)
 {
     struct stat st;
     if (_stat(name, &st))
@@ -31,7 +31,7 @@ int eb_is_file(const char *name)
         return S_ISREG(st.st_mode);
 }
 
-int eb_file_size(const char *name)
+EBAPI int eb_file_size(const char *name)
 {
     struct stat st;
     if (_stat(name, &st))
@@ -42,7 +42,7 @@ int eb_file_size(const char *name)
 
 #include <miniz.h>
 
-int eb_unzip(const char *filename, int verbose) {
+EBAPI int eb_unzip(const char *filename, int verbose) {
   if (!eb_file_exists(filename)) {
     err = ERR_FILE_OPEN;
     return -1;
