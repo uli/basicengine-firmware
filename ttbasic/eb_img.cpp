@@ -18,7 +18,7 @@ struct eb_image_spec eb_image_spec_default = {
   .key = 0,
 };
 
-int eb_load_image(const char *filename, struct eb_image_spec *loc) {
+EBAPI int eb_load_image(const char *filename, struct eb_image_spec *loc) {
   if (!loc)
     return -1;
 
@@ -29,7 +29,7 @@ int eb_load_image(const char *filename, struct eb_image_spec *loc) {
   return err;
 }
 
-int eb_load_image_to(const char *filename, int dx, int dy, unsigned int key) {
+EBAPI int eb_load_image_to(const char *filename, int dx, int dy, unsigned int key) {
   struct eb_image_spec loc = EB_IMAGE_SPEC_DEFAULT;
   loc.key = key;
   loc.dst_x = dx;

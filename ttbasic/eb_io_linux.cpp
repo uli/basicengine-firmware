@@ -57,7 +57,7 @@ static struct gpiod_line *get_line(int portno, int pinno)
     return line;
 }
 
-int eb_gpio_set_pin(int portno, int pinno, int data)
+EBAPI int eb_gpio_set_pin(int portno, int pinno, int data)
 {
     struct gpiod_line *line = get_line(portno, pinno);
     if (!line)
@@ -72,7 +72,7 @@ int eb_gpio_set_pin(int portno, int pinno, int data)
     return ret;
 }
 
-int eb_gpio_get_pin(int portno, int pinno)
+EBAPI int eb_gpio_get_pin(int portno, int pinno)
 {
     struct gpiod_line *line = get_line(portno, pinno);
     if (!line)
@@ -87,7 +87,7 @@ int eb_gpio_get_pin(int portno, int pinno)
     return ret;
 }
 
-int eb_gpio_set_pin_mode(int portno, int pinno, int mode)
+EBAPI int eb_gpio_set_pin_mode(int portno, int pinno, int mode)
 {
     struct gpiod_line *line = get_line(portno, pinno);
     if (!line)
@@ -111,13 +111,13 @@ int eb_gpio_set_pin_mode(int portno, int pinno, int mode)
 
 static int i2c_bus_no = 0;
 
-int eb_i2c_select_bus(unsigned char bus)
+EBAPI int eb_i2c_select_bus(unsigned char bus)
 {
     i2c_bus_no = bus;
     return 0;
 }
 
-int eb_i2c_write(unsigned char addr, const char *data, int count)
+EBAPI int eb_i2c_write(unsigned char addr, const char *data, int count)
 {
     i2c *dev = libsoc_i2c_init(i2c_bus_no, addr);
     if (!dev) {
@@ -136,7 +136,7 @@ int eb_i2c_write(unsigned char addr, const char *data, int count)
     return ret;
 }
 
-int eb_i2c_read(unsigned char addr, char *data, int count)
+EBAPI int eb_i2c_read(unsigned char addr, char *data, int count)
 {
     i2c *dev = libsoc_i2c_init(i2c_bus_no, addr);
     if (!dev) {
@@ -157,7 +157,7 @@ int eb_i2c_read(unsigned char addr, char *data, int count)
 
 spi *spi_dev = NULL;
 
-int eb_spi_select_device(unsigned short major, unsigned char minor)
+EBAPI int eb_spi_select_device(unsigned short major, unsigned char minor)
 {
     if (spi_dev)
         libsoc_spi_free(spi_dev);
@@ -170,7 +170,7 @@ int eb_spi_select_device(unsigned short major, unsigned char minor)
     return 0;
 }
 
-void eb_spi_write(const char *out_data, unsigned int count)
+EBAPI void eb_spi_write(const char *out_data, unsigned int count)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -180,7 +180,7 @@ void eb_spi_write(const char *out_data, unsigned int count)
     return libsoc_spi_write(spi_dev, (uint8_t *)out_data, count) == EXIT_FAILURE;
 }
 
-void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
+EBAPI void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -193,7 +193,7 @@ void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
 // SPI bit order is not in libsoc...
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
-void eb_spi_set_bit_order(int bit_order)
+EBAPI void eb_spi_set_bit_order(int bit_order)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -206,7 +206,7 @@ void eb_spi_set_bit_order(int bit_order)
         set_error(_("failed to set bit order"));
 }
 
-void eb_spi_set_freq(int freq)
+EBAPI void eb_spi_set_freq(int freq)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -216,7 +216,7 @@ void eb_spi_set_freq(int freq)
     return libsoc_spi_set_speed(spi_dev, freq) == EXIT_FAILURE;
 }
 
-void eb_spi_set_mode(int mode)
+EBAPI void eb_spi_set_mode(int mode)
 {
     if (!spi_dev) {
         err = ERR_IO;

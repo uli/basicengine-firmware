@@ -6,7 +6,7 @@
 #include "eb_input.h"
 #include "eb_api.h"
 
-int eb_inkey(void) {
+EBAPI int eb_inkey(void) {
   int32_t rc = 0;
 
   if (c_kbhit()) {
@@ -33,7 +33,7 @@ static int cursor_pad_state() {
          kb.state(PS2KEY_Tab) << EB_JOY_SELECT_SHIFT | kb.state(PS2KEY_Enter) << EB_JOY_START_SHIFT;
 }
 
-int eb_pad_state(int num) {
+EBAPI int eb_pad_state(int num) {
   switch (num) {
   case 0: return (joy.read() & JOY_MASK) | cursor_pad_state();
   case 1: return cursor_pad_state();
@@ -42,38 +42,38 @@ int eb_pad_state(int num) {
   return 0;
 }
 
-int eb_key_state(int scancode) {
+EBAPI int eb_key_state(int scancode) {
   if (check_param(scancode, 0, 255))
     return -1;
   return kb.state(scancode);
 }
 
-int eb_mouse_abs_x(void) {
+EBAPI int eb_mouse_abs_x(void) {
   return mouse.absX();
 }
-int eb_mouse_abs_y(void) {
+EBAPI int eb_mouse_abs_y(void) {
   return mouse.absY();
 }
 
-double eb_mouse_rel_x(void) {
+EBAPI double eb_mouse_rel_x(void) {
   return mouse.relX();
 }
-double eb_mouse_rel_y(void) {
+EBAPI double eb_mouse_rel_y(void) {
   return mouse.relY();
 }
 
-int eb_mouse_button(int n) {
+EBAPI int eb_mouse_button(int n) {
   return !!(mouse.buttons() & (1 << n));
 }
 
-int eb_mouse_buttons(void) {
+EBAPI int eb_mouse_buttons(void) {
   return mouse.buttons();
 }
 
-int eb_mouse_wheel(void) {
+EBAPI int eb_mouse_wheel(void) {
   return mouse.wheel();
 }
 
-void eb_mouse_warp(int x, int y) {
+EBAPI void eb_mouse_warp(int x, int y) {
   mouse.warp(x, y);
 }
