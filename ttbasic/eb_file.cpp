@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
+#include "eb_api.h"
 #include "eb_file.h"
 #include "basic.h"
 

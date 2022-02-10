@@ -2,6 +2,7 @@
 // Copyright (c) 2021 Ulrich Hecht
 
 #include "basic.h"
+#include "eb_api.h"
 #include "eb_img.h"
 
 extern sdfiles bfs;

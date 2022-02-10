@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "basic.h"
+#include "eb_api.h"
 #include "eb_sys.h"
 
 EBAPI void eb_set_cpu_speed(int percent)
