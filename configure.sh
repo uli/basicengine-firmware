@@ -195,7 +195,7 @@ include build.ninja.common
 
 cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -Isdl \$
   \$common_include -Ilibraries/libsoc/lib/include -DSDL `sdl2-config --cflags` \
-  -rdynamic -fvisibility=hidden
+  -fvisibility=hidden
 cxxflags = \$cflags \$common_cxxflags
 
 libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod -ldl
@@ -209,7 +209,7 @@ rule cxx
   command = $CXX -MD -MF \$out.d \$cxxflags -c -o \$out \$in
 
 rule link
-  command = $CC \$in -o \$out \$libs
+  command = $CC -rdynamic \$in -o \$out \$libs
 
 EOT
 
