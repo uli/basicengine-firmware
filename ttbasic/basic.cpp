@@ -3566,7 +3566,8 @@ void SMALL Basic::ildbmp() {
   }
 }
 
-extern "C" int e_main(int argc, char **argv);
+#include <list>
+#include "basic_native.h"
 
 /***bc sys EDIT
 Runs the ASCII text editor.
@@ -3576,16 +3577,20 @@ Runs the ASCII text editor.
 ***/
 void Basic::iedit() {
   BString fn;
-  const char *argv[2] = { NULL, NULL };
-  int argc = 1;
-  if (is_strexp() && (fn = getParamFname())) {
-    ++argc;
-    argv[1] = fn.c_str();
-  }
+  std::list<BString> args;
+
+  if (getenv("EDITOR"))
+    args.push_back(getenv("EDITOR"));
+  else
+    args.push_back("atto");
+
+  if (is_strexp() && (fn = getParamFname()))
+    args.push_back(fn);
   if (err)
     return;
+
   sc0.show_curs(1);
-  e_main(argc, (char **)argv);
+  shell_list(args);
   sc0.show_curs(0);
 }
 
