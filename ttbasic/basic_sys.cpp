@@ -863,36 +863,11 @@ void Basic::irequire() {
 #include <errno.h>
 #endif
 
-/***bc sys SHELL
-Runs operating system commands.
-\usage SHELL [<command>[, <argument> ...]]
-\args
-@command	command to run
-@argument	argument to pass to the command
-\desc
-Runs `command`, or an interactive shell if `command` is not specified.
-
-`command` is executed by the operating system shell if there are no
-`argument` parameters, allowing shell syntax constructs to be used.
-
-If one or more `argument` parameters are specified,
-the command will be executed directly.
-\note
-* `command`-only commands are executed using `execl("/bin/sh", "sh", ...)`.
-* Commands with `argument` parameters are executed using
-  `execvp("<command>", "<command>", "<argument">, ...)`.
-***/
-void Basic::ishell() {
 #ifdef __unix__
-  std::list<BString> args;
-
-  while (!end_of_statement()) {
-    args.push_back(istrexp());
-    if (*cip == I_COMMA)
-      ++cip;
-  }
-
+void shell_list(std::list<BString>& args) {
   int fd;
+  int wstatus = 0;
+
   struct winsize ws = {
     (unsigned short)eb_csize_height(),
     (unsigned short)eb_csize_width(),
@@ -952,9 +927,44 @@ void Basic::ishell() {
         write(fd, buf, ret);
     }
     close(fd);
-    wait(NULL);
+    wait(&wstatus);
+    if (WEXITSTATUS(wstatus) != 0)
+      err = ERR_OS;
   }
-#else	// __unix__
+}
+#endif // __unix__
+
+/***bc sys SHELL
+Runs operating system commands.
+\usage SHELL [<command>[, <argument> ...]]
+\args
+@command	command to run
+@argument	argument to pass to the command
+\desc
+Runs `command`, or an interactive shell if `command` is not specified.
+
+`command` is executed by the operating system shell if there are no
+`argument` parameters, allowing shell syntax constructs to be used.
+
+If one or more `argument` parameters are specified,
+the command will be executed directly.
+\note
+* `command`-only commands are executed using `execl("/bin/sh", "sh", ...)`.
+* Commands with `argument` parameters are executed using
+  `execvp("<command>", "<command>", "<argument">, ...)`.
+***/
+void Basic::ishell() {
+#ifdef __unix__
+  std::list<BString> args;
+
+  while (!end_of_statement()) {
+    args.push_back(istrexp());
+    if (*cip == I_COMMA)
+      ++cip;
+  }
+
+  shell_list(args);
+#else
   err = ERR_NOTSUPPORTED;
 #endif
 }
