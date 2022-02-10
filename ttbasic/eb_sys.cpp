@@ -125,6 +125,11 @@ int do_load_module(const char *filename) {
     .name = filename,
   };
   modules.push_back(mod);
+
+  auto initcall = (void (*)(void))dlsym(dl_handle, "__initcall");
+  if (initcall)
+    initcall();
+
   return 0;
 }
 
