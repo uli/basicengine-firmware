@@ -3,6 +3,8 @@
 
 #include "basic.h"
 
+#define EBAPI __attribute__((visibility("default")))
+
 #ifdef __cplusplus
 extern "C" {
 #endif
