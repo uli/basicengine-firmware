@@ -97,6 +97,12 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_display_enabled = true;
 }
 
+void SDLGFX::end() {
+  m_display_enabled = false;
+  usleep(16666);	// XXX: synchronize properly
+  // XXX: tear everything down properly
+}
+
 void SDLGFX::reset() {
   BGEngine::reset();
   setColorSpace(DEFAULT_COLORSPACE);

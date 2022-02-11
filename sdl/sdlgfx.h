@@ -29,6 +29,7 @@ extern "C" int gfx_thread(void *data);
 class SDLGFX : public BGEngine {
 public:
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
+  void end();
 
   inline pixel_t& pixelText(int x, int y) {
     return PIXELT(x, y);
