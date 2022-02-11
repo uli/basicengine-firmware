@@ -20,7 +20,6 @@ void setup();
 extern SDLGFX vs23;
 static void my_exit(void) {
   vs23.end();
-  SDL_Quit();
 }
 
 #include <SDL2/SDL.h>

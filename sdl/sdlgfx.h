@@ -211,6 +211,7 @@ private:
   bool setModeInternal(uint8_t mode);
   volatile int m_new_mode;
   int m_current_mode_no;
+  SDL_Thread *m_gfx_thread;
   std::string m_controller_map;
 
 #if SDL_BPP != 8

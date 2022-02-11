@@ -84,7 +84,8 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_frame = 0;
   m_new_mode = -1;
 
-  SDL_CreateThread(gfx_thread, "gfx_thread", this);
+  m_end_graphics = false;
+  m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   setMode(CONFIG.mode - 1);
 
@@ -98,9 +99,19 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
 }
 
 void SDLGFX::end() {
+  m_end_graphics = true;
   m_display_enabled = false;
-  usleep(16666);	// XXX: synchronize properly
-  // XXX: tear everything down properly
+  SDL_WaitThread(m_gfx_thread, NULL);
+
+  SDL_DestroyMutex(m_bufferlock);
+  SDL_DestroyMutex(m_spritelock);
+
+  SDL_Quit();
+
+  // Textures are destroyed at this point, make sure we don't reference them anymore.
+  m_texture = NULL;
+}
+
 void SDLGFX::init(const char *controller_map) {
   if (SDL_Init(SDL_INIT_VIDEO)) {
     fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
