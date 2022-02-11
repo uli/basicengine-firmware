@@ -43,20 +43,8 @@ int main(int argc, char **argv) {
 
   sdl_flags = 0;
 
-  if (SDL_Init(SDL_INIT_VIDEO)) {
-    fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
-    exit(1);
-  }
-
   sdl_user_w = 640;
   sdl_user_h = 480;
-
-  if (SDL_InitSubSystem(SDL_INIT_AUDIO))
-    fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
-  if (SDL_InitSubSystem(SDL_INIT_TIMER))
-    fprintf(stderr, "Cannot initialize SDL timer: %s\n", SDL_GetError());
-  if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER))
-    fprintf(stderr, "Cannot initialize SDL game controller: %s\n", SDL_GetError());
 
   while ((opt = getopt(argc, argv, "fdr:s:")) != -1) {
     switch (opt) {
@@ -84,8 +72,8 @@ int main(int argc, char **argv) {
 
   std::string controller_map = std::string(getenv("ENGINEBASIC_ROOT")) +
                                std::string("/sys/gamecontrollerdb.txt");
-  SDL_GameControllerAddMappingsFromFile(controller_map.c_str());
-  SDL_GameControllerEventState(SDL_ENABLE);
+
+  vs23.init(controller_map.c_str());
 
   atexit(my_exit);
 
