@@ -937,7 +937,7 @@ void shell_list(std::list<BString>& args) {
 
 /***bc sys SHELL
 Runs operating system commands.
-\usage SHELL [<command>[, <argument> ...]]
+\usage SHELL [<command>[, <argument> ...]] [OFF]
 \args
 @command	command to run
 @argument	argument to pass to the command
@@ -949,6 +949,10 @@ Runs `command`, or an interactive shell if `command` is not specified.
 
 If one or more `argument` parameters are specified,
 the command will be executed directly.
+
+If the `OFF` keyword is added, Engine BASIC will shut down its graphics,
+sound and input system to allow the executed program to use these
+facilities.
 \note
 * `command`-only commands are executed using `execl("/bin/sh", "sh", ...)`.
 * Commands with `argument` parameters are executed using
@@ -957,14 +961,27 @@ the command will be executed directly.
 void Basic::ishell() {
 #ifdef __unix__
   std::list<BString> args;
+  bool screen_off = false;
 
   while (!end_of_statement()) {
     args.push_back(istrexp());
     if (*cip == I_COMMA)
       ++cip;
+    else if (*cip == I_OFF) {
+      ++cip;
+      screen_off = true;
+      break;
+    }
   }
 
-  shell_list(args);
+  if (screen_off) {
+    vs23.end();
+    run_list(args);
+    vs23.restart();
+  } else {
+    shell_list(args);
+  }
+
 #else
   err = ERR_NOTSUPPORTED;
 #endif
