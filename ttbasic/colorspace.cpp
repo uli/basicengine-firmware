@@ -52,13 +52,13 @@ struct palette {
 
 static void rgb_to_hsv(uint8_t r, uint8_t g, uint8_t b,
                        int *h, int *s, int *v) {
-  *v = max(max(r, g), b);
+  *v = _max(_max(r, g), b);
   if (*v == 0) {
     *s = 0;
     *h = 0;
     return;
   }
-  int m = min(min(r, g), b);
+  int m = _min(_min(r, g), b);
   *s = 255 * (*v - m) / *v;
   if (*v == m) {
     *h = 0;
