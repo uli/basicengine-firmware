@@ -8,32 +8,13 @@
 #include <eb_sys.h>
 
 #include "Arduino.h"
-#include "FS.h"
 #include "SPI.h"
 #include <malloc.h>
 
-void digitalWrite(uint8_t pin, uint8_t val) {
-  printf("DW %d <- %02X\n", pin, val);
-}
-
-int digitalRead(uint8_t pin) {
-  return 0;
-}
-
-void pinMode(uint8_t pin, uint8_t mode) {
-}
-
-fs::FS SPIFFS;
 SPIClass SPI;
 
 void loop();
 void setup();
-
-struct palette {
-  uint8_t r, g, b;
-};
-#include <N-0C-B62-A63-Y33-N10.h>
-#include <P-EE-A22-B22-Y44-N10.h>
 
 #include "sdlgfx.h"
 extern SDLGFX vs23;
@@ -168,6 +149,3 @@ void platform_process_events() {
     }
   }
 }
-
-#include "Wire.h"
-TwoWire Wire;
