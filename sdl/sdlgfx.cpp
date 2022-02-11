@@ -130,6 +130,24 @@ void SDLGFX::init(const char *controller_map) {
   SDL_GameControllerEventState(SDL_ENABLE);
 }
 
+void SDLGFX::restart() {
+  init(m_controller_map.c_str());
+
+  SDL_ShowCursor(SDL_DISABLE);
+
+  m_bufferlock = SDL_CreateMutex();
+  m_spritelock = SDL_CreateMutex();
+
+  m_end_graphics = false;
+  m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
+
+  setMode(m_current_mode_no);
+
+  m_bin.Init(0, 0);
+
+  reset();
+
+  m_display_enabled = true;
 }
 
 void SDLGFX::reset() {

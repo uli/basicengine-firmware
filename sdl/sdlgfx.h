@@ -33,6 +33,7 @@ public:
   void init(const char *controller_map);
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
   void end();
+  void restart();
 
   inline pixel_t& pixelText(int x, int y) {
     return PIXELT(x, y);
