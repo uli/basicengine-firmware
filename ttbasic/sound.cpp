@@ -166,7 +166,7 @@ void GROUP(basic_sound) BasicSound::mmlCallback(MML_INFO *p, void *extobj) {
       {
         MML_ARGS_VOLUME *args = &(p->args.volume);
         dbg_snd("[VOLUME: Value=%3d]\r\n", args->value);
-        m_velocity[ch] = min(0, max(args->value, 15));
+        m_velocity[ch] = _min(0, _max(args->value, 15));
       }
       break;
     case MML_TYPE_OCTAVE:
@@ -392,7 +392,7 @@ void refill_stream_tsf(sts_mixer_sample_t *sample, void *userdata) {
       return;
     }
     for (unsigned int i = 0; i < sample->length / 2; ++i) {
-      sample_t s = max(-32768, min(staging_buf[i] * 8, 32767));
+      sample_t s = _max(-32768, _min(staging_buf[i] * 8, 32767));
       *data++ = s;
       *data++ = s;
     }
@@ -427,7 +427,7 @@ void refill_stream_beep(sts_mixer_sample_t *samples, void *userdata) {
 
   int32_t sample;
   if (bs->m_beep_env)
-    sample = max(0, min(32767, bs->m_beep_env[bs->m_beep_pos] * bs->m_beep_vol * 145));
+    sample = _max(0, _min(32767, bs->m_beep_env[bs->m_beep_pos] * bs->m_beep_vol * 145));
   else
     sample = bs->m_beep_vol * 2184;
 

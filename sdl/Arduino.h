@@ -129,8 +129,6 @@ static inline long _random(long v) {
 
 #define _min(a, b) ((a) < (b) ? (a) : (b))
 #define _max(a, b) ((a) > (b) ? (a) : (b))
-#define min        _min
-#define max        _max
 
 #include "binary.h"
 
