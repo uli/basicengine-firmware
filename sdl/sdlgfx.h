@@ -4,6 +4,8 @@
 #ifndef _SDLGFX_H
 #define _SDLGFX_H
 
+#include <string>
+
 #include "ttconfig.h"
 #include "bgengine.h"
 #include "colorspace.h"
@@ -28,6 +30,7 @@ extern "C" int gfx_thread(void *data);
 
 class SDLGFX : public BGEngine {
 public:
+  void init(const char *controller_map);
   void begin(bool interlace = false, bool lowpass = false, uint8_t system = 0);
   void end();
 
@@ -206,6 +209,7 @@ private:
 
   bool setModeInternal(uint8_t mode);
   volatile int m_new_mode;
+  std::string m_controller_map;
 
 #if SDL_BPP != 8
   pixel_t m_current_palette[256];

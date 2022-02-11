@@ -101,6 +101,24 @@ void SDLGFX::end() {
   m_display_enabled = false;
   usleep(16666);	// XXX: synchronize properly
   // XXX: tear everything down properly
+void SDLGFX::init(const char *controller_map) {
+  if (SDL_Init(SDL_INIT_VIDEO)) {
+    fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  if (SDL_InitSubSystem(SDL_INIT_AUDIO))
+    fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
+  if (SDL_InitSubSystem(SDL_INIT_TIMER))
+    fprintf(stderr, "Cannot initialize SDL timer: %s\n", SDL_GetError());
+  if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER))
+    fprintf(stderr, "Cannot initialize SDL game controller: %s\n", SDL_GetError());
+
+  m_controller_map = controller_map;
+  SDL_GameControllerAddMappingsFromFile(controller_map);
+  SDL_GameControllerEventState(SDL_ENABLE);
+}
+
 }
 
 void SDLGFX::reset() {
