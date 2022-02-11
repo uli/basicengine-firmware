@@ -360,7 +360,7 @@ extern "C" int gfx_thread(void *data) {
     SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
 
-  for (;;) {
+  while (!gfx->m_end_graphics) {
     if (gfx->m_new_mode != -1) {
       gfx->setModeInternal(gfx->m_new_mode);
       gfx->m_new_mode = -1;
@@ -387,6 +387,10 @@ extern "C" int gfx_thread(void *data) {
     }
     //printf("frame %d passed %ld\n", gfx->m_frame, passed);
   }
+
+  SDL_DestroyRenderer(sdl_renderer);
+  SDL_DestroyWindow(sdl_window);
+  return 0;
 }
 
 void SDLGFX::updateBg() {
