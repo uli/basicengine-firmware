@@ -160,6 +160,7 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
          m_last_line);
 
   m_current_mode = modes_pal[mode];
+  m_current_mode_no = mode;
 
   // Why is this code so horrible? Because I hate this scaling stuff, and I
   // don't want to deal with it or know any more about it than I absolutely
