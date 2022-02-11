@@ -35,7 +35,10 @@ struct palette {
 #include <N-0C-B62-A63-Y33-N10.h>
 #include <P-EE-A22-B22-Y44-N10.h>
 
+#include "sdlgfx.h"
+extern SDLGFX vs23;
 static void my_exit(void) {
+  vs23.end();
   SDL_Quit();
 }
 
