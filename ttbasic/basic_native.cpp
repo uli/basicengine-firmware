@@ -5,6 +5,7 @@
 
 #include "basic.h"
 #include "basic_native.h"
+#include "eb_sys.h"
 
 #include <dyncall.h>
 #include <dlfcn.h>
@@ -23,11 +24,17 @@ void Basic::init_tcc() {
 }
 
 void Basic::itcc() {
+  bool run_tmp = false;
+  bool is_mod = false;
+  BString tmpfile;
+  char tmpdir[17] = "/tmp/ebtccXXXXXX";
+
   std::list<BString> args;
   args.push_back("tcc");
   args.push_back("-I");
   args.push_back(BString(getenv("ENGINEBASIC_ROOT")) + BString("/sys/include"));
 
+  // file(s) to compile
   for (;;) {
     BString file = getParamFname();
     if (err)
@@ -39,19 +46,77 @@ void Basic::itcc() {
       break;
   }
 
+  // output file (tmp file if not specified)
   if (*cip == I_TO) {
     ++cip;
     BString outfile = getParamFname();
     args.push_back("-o");
     args.push_back(outfile);
+  } else {
+    run_tmp = true;
+    args.push_back("-o");
+    if (!mkdtemp(tmpdir)) {
+      err = ERR_OS;
+      err_expected = _("unable to create temporary directory");
+      return;
+    }
+    tmpfile = BString(tmpdir) + BString(is_mod ? "/a.so" : "/a.out");
+    args.push_back(tmpfile);
   }
 
+  // module?
   if (*cip == I_MOD) {
     ++cip;
+    is_mod = true;
     args.push_back("-shared");
   }
 
-  run_list(args);
+  // compile
+  if (run_list(args)) {
+    err = ERR_COMPILE;
+    goto cleanup;
+  }
+
+  // if it's a temp file, we want to load/run it immediately
+  if (run_tmp) {
+    if (is_mod) {
+      eb_load_module(tmpfile.c_str());
+    } else {
+      std::list<BString> run_args;
+      run_args.push_back(tmpfile);
+
+      if (*cip == I_ARG) {
+        ++cip;
+
+        while (!end_of_statement()) {
+          BString arg = istrexp();
+          if (err)
+            goto cleanup;
+
+          run_args.push_back(arg);
+
+          if (*cip == I_COMMA)
+            ++cip;
+          else
+            break;
+        }
+      }
+
+      // XXX: I_OFF
+
+      shell_list(run_args);
+    }
+
+  }
+
+cleanup:
+  if (run_tmp) {
+    unlink(tmpfile.c_str());
+    rmdir(tmpdir);
+  }
+
+  if (!end_of_statement())
+    SYNTAX_T(_("expected end of statement"));
 }
 
 void *Basic::get_symbol(const char *sym_name) {
