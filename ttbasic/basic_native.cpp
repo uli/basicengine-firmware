@@ -25,6 +25,8 @@ void Basic::init_tcc() {
 void Basic::itcc() {
   std::list<BString> args;
   args.push_back("tcc");
+  args.push_back("-I");
+  args.push_back(BString(getenv("ENGINEBASIC_ROOT")) + BString("/sys/include"));
 
   for (;;) {
     BString file = getParamFname();
