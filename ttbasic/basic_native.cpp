@@ -12,6 +12,24 @@
 
 std::vector<struct module> modules;
 
+/***bc sys TCC
+Compiles and, optionally, loads or runs C programs.
+\usage
+TCC [<c_file$>[, <c_file$> ...]] [TO <executable$>] [MOD] [ARG <argument$>[, <argument$> ...]]
+\args
+@c_file$	a C source code file to compile
+@executable$	name of executable file to generate
+@argument$	argument to pass to compiled file when run
+\desc
+Compiles the given C source code files to an executable file, or to a
+loadable module if the `MOD` keyword is present.
+
+The compiled program or module is written to `executable$`.
+
+If `executable$` is not specified, the code is compiled to a temporary file
+and immediately executed or loaded. For regular programs, any `argument$`
+parameters will be passed to the program.
+***/
 void Basic::init_tcc() {
   callvm = dcNewCallVM(4096);
   dcMode(callvm, DC_CALL_C_DEFAULT);
