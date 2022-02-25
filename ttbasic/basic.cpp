@@ -2912,10 +2912,16 @@ void BASIC_INT Basic::draw_profile(void) {
 
 void BASIC_FP process_events(void) {
   static uint32_t last_frame;
-
 #ifdef SDL
-  // Need to do that more than once per frame to avoid input lag.
-  platform_process_events();
+  static bool extra_poll = false;
+  // Polling input once after each frame introduces considerable input lag.
+  // Event handling on SDL is relatively expensive, however, so we can only
+  // afford a single extra poll. Fortunately, that seems to be good enough
+  // to prevent excessive lag.
+  if (!extra_poll) {
+    extra_poll = true;
+    platform_process_events();
+  }
 #endif
 
   if (vs23.frame() == last_frame) {
@@ -2928,6 +2934,10 @@ void BASIC_FP process_events(void) {
 #endif
     return;
   }
+
+#ifdef SDL
+  extra_poll = false;
+#endif
 
   last_frame = vs23.frame();
 
@@ -2974,7 +2984,7 @@ void BASIC_FP process_events(void) {
   if (bc && profile_enabled)
     bc->draw_profile();
 
-#if defined(HOSTED) || defined(H3) || defined(__DJGPP__)
+#if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
   platform_process_events();
 #endif
 }
