@@ -7,7 +7,7 @@
 #include <queue>
 
 std::queue<SDL_Event> controller_events;
-std::list<int> controllers;
+std::list<SDL_JoystickID> controllers;
 
 static uint32_t button_bit[SDL_CONTROLLER_BUTTON_MAX + 1] = {
   EB_JOY_X,
@@ -41,10 +41,12 @@ int Joystick::read() {
       break;
     case SDL_CONTROLLERDEVICEADDED:
       SDL_GameControllerOpen(event.cdevice.which);
-      controllers.push_back(event.cdevice.which);
+      // Here, "which" is a joystick index...
+      controllers.push_back(SDL_JoystickGetDeviceInstanceID(event.cdevice.which));
       break;
     case SDL_CONTROLLERDEVICEREMOVED:
       SDL_GameControllerClose(SDL_GameControllerFromInstanceID(event.cdevice.which));
+      // ...and here, it's a joystick ID. FU!
       controllers.remove(event.cdevice.which);
       break;
     default:
