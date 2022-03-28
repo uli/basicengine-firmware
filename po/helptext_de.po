@@ -324,8 +324,8 @@ msgid ""
 "procedure."
 msgstr ""
 "Ein Fehler wird generiert, wenn keine Stringargumente übergeben wurden, "
-"`num` gleich oder größer als `ARGC(1)` ist oder die Funktion außerhalb "
-"einer Prozedur ausgewertet wird."
+"`num` gleich oder größer als `ARGC(1)` ist oder die Funktion außerhalb einer"
+" Prozedur ausgewertet wird."
 
 #. [Returns the number of arguments for numeric and string variables passed to
 #. a procedure.]
@@ -608,8 +608,8 @@ msgid ""
 "Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as "
 "width and height in `RET(2)` and `RET(3)`, respectively."
 msgstr ""
-"Gibt die Zielkoordinaten in `RET(0)` und `RET(1)` sowie Breite und Höhe "
-"in `RET(2)` bzw. `RET(3)` zurück."
+"Gibt die Zielkoordinaten in `RET(0)` und `RET(1)` sowie Breite und Höhe in "
+"`RET(2)` bzw. `RET(3)` zurück."
 
 #. [If no destination is specified, an area of ​​off-screen memory is
 #. automatically allocated.]
@@ -638,8 +638,8 @@ msgid ""
 "If `AS SPRITE` is used, the loaded image portion will be assigned to the "
 "specified range of sprites as their sprite patterns."
 msgstr ""
-"Wenn `AS SPRITE` verwendet wird, wird der geladene Bildteil dem "
-"angegebenen Bereich von Sprites als deren Sprite-Pattern zugewiesen."
+"Wenn `AS SPRITE` verwendet wird, wird der geladene Bildteil dem angegebenen "
+"Bereich von Sprites als deren Sprite-Pattern zugewiesen."
 
 #. [If a color key is specified, pixels of the specified color will not be
 #. drawn.]
@@ -658,8 +658,8 @@ msgid ""
 "If the scaling factor for both dimensions is `-2`, the image will be fit to "
 "the screen while preserving the aspect ratio."
 msgstr ""
-"Wenn der Skalierungsfaktor für beide Dimensionen `-2` beträgt, wird das "
-"Bild unter Beibehaltung des Seitenverhältnisses an den Bildschirm angepasst."
+"Wenn der Skalierungsfaktor für beide Dimensionen `-2` beträgt, wird das Bild"
+" unter Beibehaltung des Seitenverhältnisses an den Bildschirm angepasst."
 
 #. [Important: The size change is not supported for pictures in PCX format.]
 # from Google
@@ -1141,8 +1141,8 @@ msgid ""
 "`-1` if the value of `a$` succeeds the value of `b$` when sorted "
 "alphabetically, `0` otherwise."
 msgstr ""
-"`-1`, wenn der Wert von `a$` dem Wert von `b$` folgt, wenn er alphabetisch"
-" sortiert ist, andernfalls `0`."
+"`-1`, wenn der Wert von `a$` dem Wert von `b$` folgt, wenn er alphabetisch "
+"sortiert ist, andernfalls `0`."
 
 #. [a BASIC program line number]
 # bulk translation
@@ -1202,10 +1202,10 @@ msgid ""
 " If `expression` is `0`, it will do nothing, and execution will continue "
 "with the next instruction."
 msgstr ""
-"`ON GOTO` und `ON GOSUB` verzweigen zur ersten angegebenen Zeilennummer "
-"oder Bezeichnung, wenn `expression` `1` ist, zur zweiten, wenn `expression` "
-"`2` ist, und so weiter. Wenn `expression` `0` ist, wird nichts unternommen "
-"und die Ausführung mit der nächsten Anweisung fortgesetzt."
+"`ON GOTO` und `ON GOSUB` verzweigen zur ersten angegebenen Zeilennummer oder"
+" Bezeichnung, wenn `expression` `1` ist, zur zweiten, wenn `expression` `2` "
+"ist, und so weiter. Wenn `expression` `0` ist, wird nichts unternommen und "
+"die Ausführung mit der nächsten Anweisung fortgesetzt."
 
 #. [`ON GOSUB` calls the specified location as a subroutine, while `ON GOTO`
 #. simply continues execution there.]
@@ -1266,8 +1266,8 @@ msgid ""
 "re-enabled using `ON SPRITE CALL` each time to prevent event storms."
 msgstr ""
 "Der Handler wird bei jeder Sprite-Kollision einmal aufgerufen, muss jedoch "
-"jedes Mal mit `ON SPRITE CALL` wieder aktiviert werden, um Ereignisstürme "
-"zu vermeiden."
+"jedes Mal mit `ON SPRITE CALL` wieder aktiviert werden, um Ereignisstürme zu"
+" vermeiden."
 
 #. [WARNING: This command has never been tested.]
 # bulk translation
@@ -1408,9 +1408,9 @@ msgid ""
 " procedure, and it is not possible to use `RETURN` to resume execution. "
 "`RESUME` must be used instead."
 msgstr ""
-"Im Gegensatz zu anderen Ereignishandlern ruft `ON ERROR` den Fehlerhandler"
-" nicht als Prozedur auf, und es ist nicht möglich, `RETURN` zu verwenden, um"
-" die Ausführung fortzusetzen. Stattdessen muss `RESUME` verwendet werden."
+"Im Gegensatz zu anderen Ereignishandlern ruft `ON ERROR` den Fehlerhandler "
+"nicht als Prozedur auf, und es ist nicht möglich, `RETURN` zu verwenden, um "
+"die Ausführung fortzusetzen. Stattdessen muss `RESUME` verwendet werden."
 
 #. [If a program is executed with "EXEC" and does not define its own error
 #. handler, all errors occurring in the subordinate program are forwarded to
@@ -1652,8 +1652,8 @@ msgid ""
 "A `condition` is considered \"false\" if it is zero, and \"true\" in any "
 "other case."
 msgstr ""
-"Eine `condition` wird als \"falsch\" betrachtet, wenn sie Null ist, und in"
-" jedem anderen Fall als \"wahr\"."
+"Eine `condition` wird als \"falsch\" betrachtet, wenn sie Null ist, und in "
+"jedem anderen Fall als \"wahr\"."
 
 #. [IMPORTANT: In many BASIC implementations, "ENDIF" is written as "END IF"
 #. (that is, as two commands). When the sequence "END IF" is entered or loaded
@@ -1665,9 +1665,8 @@ msgid ""
 "program, Engine BASIC will convert it to `ENDIF`."
 msgstr ""
 "WICHTIG: In vielen BASIC-Implementierungen wird `ENDIF` als `END IF` "
-"geschrieben (dh als zwei Befehle). Wenn die Sequenz `END IF` in ein "
-"Programm eingegeben oder geladen wird, konvertiert Engine BASIC sie in "
-"`ENDIF`."
+"geschrieben (dh als zwei Befehle). Wenn die Sequenz `END IF` in ein Programm"
+" eingegeben oder geladen wird, konvertiert Engine BASIC sie in `ENDIF`."
 
 #. [Ends a multiline IF statement.]
 # bulk translation
@@ -2764,10 +2763,10 @@ msgid ""
 msgstr ""
 "* `10`: Physikalischer Bildschirmmodus (nur H3-Plattform) [`0` (Standard) "
 "auf `6`] + Stellt die physische Bildschirmauflösung ein: + `0` (1920 x 1080 "
-"HDMI), `1` (1280 x 1024 DVI), `2` (1280 x 720 HDMI), `3` + (1024 x 768 "
-"DVI), `4` (800 x 600 DVI), `5` (640 x 480 DVI) oder `6` + (1920 x 1200"
-" HDMI). + Es ist erforderlich, die Konfiguration zu speichern und das System"
-" neu zu starten, damit diese Option wirksam wird."
+"HDMI), `1` (1280 x 1024 DVI), `2` (1280 x 720 HDMI), `3` + (1024 x 768 DVI),"
+" `4` (800 x 600 DVI), `5` (640 x 480 DVI) oder `6` + (1920 x 1200 HDMI). + "
+"Es ist erforderlich, die Konfiguration zu speichern und das System neu zu "
+"starten, damit diese Option wirksam wird."
 
 #. [Run the command `REMOVE" /sd/config.ini "` and reboot the system to
 #. restore
@@ -3264,8 +3263,8 @@ msgid ""
 "Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the "
 "number of components in `RET(2)`."
 msgstr ""
-"Gibt die Breite in Pixel in `RET(0)`, die Höhe in `RET(1)` und die "
-"Anzahl der Komponenten in `RET(2)` zurück."
+"Gibt die Breite in Pixel in `RET(0)`, die Höhe in `RET(1)` und die Anzahl "
+"der Komponenten in `RET(2)` zurück."
 
 #. [This command does not work with PCX files.]
 # bulk translation
@@ -3426,10 +3425,9 @@ msgid ""
 "interacts with the event handling via `ON PAD`. It is not recommended to use"
 " both at the same time."
 msgstr ""
-"WARNUNG: Die Verwendung von `PAD()` zum Abrufen von "
-"Schaltflächenereignissen (`state` ist nicht `0`) interagiert mit der "
-"Ereignisbehandlung über `ON PAD`. Es wird nicht empfohlen, beide "
-"gleichzeitig zu verwenden."
+"WARNUNG: Die Verwendung von `PAD()` zum Abrufen von Schaltflächenereignissen"
+" (`state` ist nicht `0`) interagiert mit der Ereignisbehandlung über `ON "
+"PAD`. Es wird nicht empfohlen, beide gleichzeitig zu verwenden."
 
 #. [Gets the status of the specified keyboard key.]
 # bulk translation
@@ -4275,8 +4273,8 @@ msgid ""
 "`1` if the expression is positive, `0` if it is zero, or `-1` if it is "
 "negative."
 msgstr ""
-"`1`, wenn der Ausdruck positiv ist, `0`, wenn er Null ist, oder `-1`, wenn"
-" er negativ ist."
+"`1`, wenn der Ausdruck positiv ist, `0`, wenn er Null ist, oder `-1`, wenn "
+"er negativ ist."
 
 #. [Negation operator.]
 # bulk translation
@@ -4778,8 +4776,7 @@ msgstr "numerischer Ausdruck [`0` bis `61`]"
 # bulk translation
 msgid "It is unclear why the maximum value for `second` is 61 and not 59."
 msgstr ""
-"Es ist unklar, warum der Maximalwert für `second` 61 und nicht 59 "
-"beträgt."
+"Es ist unklar, warum der Maximalwert für `second` 61 und nicht 59 beträgt."
 
 #. [Get the current date.]
 # bulk translation
@@ -6554,8 +6551,8 @@ msgid ""
 "An \"extended key\" is a key that does not have a common ASCII "
 "representation, such as cursor or function keys."
 msgstr ""
-"Eine \"erweiterte Taste\" ist eine Taste ohne übliche ASCII-Darstellung, z."
-"B. Cursor- oder Funktionstasten."
+"Eine \"erweiterte Taste\" ist eine Taste ohne übliche ASCII-Darstellung, "
+"z.B. Cursor- oder Funktionstasten."
 
 msgid ""
 "`INKEY$` is not consistent with the Engine BASIC convention of following "
@@ -6648,8 +6645,8 @@ msgid ""
 "The maximum value for `period` depends on the flavor of Engine BASIC; it's "
 "320 for the gaming build, and 160 for the network build."
 msgstr ""
-"Der Maximalwert für `period` hängt von der Geschmacksrichtung von Engine BASIC ab. Er ist"
-" 320 für den Gaming-Build und 160 für den Netzwerk-Build."
+"Der Maximalwert für `period` hängt von der Geschmacksrichtung von Engine "
+"BASIC ab. Er ist 320 für den Gaming-Build und 160 für den Netzwerk-Build."
 
 msgid ""
 "If a relative path is specified, Engine BASIC will first attempt to load the"
@@ -7485,3 +7482,249 @@ msgstr ""
 "Proportionale Schriftarten und Schriftarten, die nicht speziell für die "
 "Verwendung auf Bildschirmen mit niedriger Auflösung entwickelt wurden, sehen"
 " nicht sehr gut aus."
+
+#. [X coordinate of the tile set, pixel [`0` to `PSIZE(0)-1`]]
+# bulk translation
+msgid "tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X-Koordinate des Kachelsatzes, Pixel [`0` bis `PSIZE(0)-1`]"
+
+#. [Y coordinate of the tile set, pixel [`0` to `PSIZE(2)-1`]]
+# bulk translation
+msgid "tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y-Koordinate des Kachelsatzes, Pixel [`0` bis `PSIZE(2)-1`]"
+
+#. [* `9`: Key word separation optional [`0` (default) or `1`] + Specifies
+#. whether BASIC key words must be separated from other language elements
+#. containing alphanumeric characters with a blank (`0`), or whether they can
+#. stand next to each other as in traditional BASIC dialects (`1`).]
+# bulk translation
+msgid ""
+"* `9`: Keyword separation optional [`0` (default) or `1`] + Controls if "
+"BASIC keywords need to be separated from other language elements containing "
+"alphanumeric characters with a space (`0`), or if they can be adjacent to "
+"those like in traditional BASIC dialects (`1`)."
+msgstr ""
+"* `9`: Schlüsselworttrennung optional [`0` (Standard) oder `1`] + Legt fest,"
+" ob BASIC-Schlüsselwörter von anderen Sprachelementen, die alphanumerische "
+"Zeichen enthalten, mit einem Leerzeichen getrennt werden müssen (`0`), oder "
+"ob sie wie in traditionellen BASIC-Dialekten nebeneinander stehen können "
+"(`1`)."
+
+#. [downwards]
+# bulk translation
+msgid " down"
+msgstr " abwärts"
+
+#. [Finish a DO, FOR or WHILE loop.]
+# bulk translation
+msgid "Exits a DO, FOR or WHILE loop."
+msgstr "Beendet eine DO-, FOR- oder WHILE-Schleife."
+
+#. [the counter variable of a FOR loop]
+# bulk translation
+msgid "the counter variable of a FOR loop"
+msgstr "die Zählervariable einer FOR-Schleife"
+
+#. [The corresponding loop is removed from the loop stack and the execution is
+#. continued after the end of the loop (the next following `LOOP`, `NEXT` or
+#. `WEND` instruction or the next following `NEXT_ loopable` instruction).]
+# bulk translation
+msgid ""
+"The matching loop is dropped from the loop stack, and execution resumes "
+"after the end of the loop (the nearest following `LOOP`, `NEXT` or `WEND` "
+"statement, or the nearest `NEXT loop_variable` statement)."
+msgstr ""
+"Die entsprechende Schleife wird aus dem Schleifenstapel entfernt und die "
+"Ausführung wird nach dem Ende der Schleife (der nächstfolgenden `LOOP`-, "
+"`NEXT`- oder `WEND`-Anweisung oder der nächstfolgenden `NEXT "
+"loop_variable`-Anweisung) fortgesetzt."
+
+#. [EXIT functions only as provided in loops with a "one end", i.e. loops that
+#. are not iterated with more than one `LOOP`, `NEXT` or `WEND` instruction.]
+# bulk translation
+msgid ""
+"`EXIT` only works as intended in loops with a \"single end\", i.e. loops "
+"that are not iterated using more than one `LOOP`, `NEXT` or `WEND` "
+"statement."
+msgstr ""
+"EXIT\" funktioniert nur wie vorgesehen in Schleifen mit einem \"einzigen "
+"Ende\", d.h. Schleifen, die nicht mit mehr als einer `LOOP`-, `NEXT`- oder "
+"`WEND`-Anweisung iteriert werden."
+
+#. [Potency to which _e_ should be raised.]
+# bulk translation
+msgid "Power to raise _e_ to."
+msgstr "Potenz, auf die _e_ angehoben werden soll."
+
+#. [Selects the I2C bus to use.]
+# bulk translation
+msgid "Selects the I2C bus to use."
+msgstr "Wählt den zu verwendenden I2C-Bus aus."
+
+#. [I2C bus number [`0` to `255`]]
+# bulk translation
+msgid "I2C bus number [`0` to `255`]"
+msgstr "I2C-Bus-Nummer [`0` bis `255`]"
+
+#. [This command is only implemented on Linux-based platforms.]
+# bulk translation
+msgid "This command is only implemented on Linux-based platforms."
+msgstr "Dieser Befehl ist nur auf Linux-basierten Plattformen implementiert."
+
+#. [Left button]
+# bulk translation
+msgid " Left button"
+msgstr " Linke Taste"
+
+#. [Right button]
+# bulk translation
+msgid " Right button"
+msgstr " Rechte Taste"
+
+#. [Medium button]
+# bulk translation
+msgid " Middle button"
+msgstr " Mittlere Taste"
+
+#. [k.A.]
+# bulk translation
+msgid " n/a"
+msgstr " k.A."
+
+#. [writing a byte string to an address in the memory.]
+# bulk translation
+msgid "Write a byte string to an address in memory."
+msgstr "Schreiben eines Byte-Strings an eine Adresse im Speicher."
+
+#. [* Programs are saved without line numbers if `LINE OFF` is specified.
+#. Otherwise, the row numbers are also stored.]
+# bulk translation
+msgid ""
+"* Programs are saved without line numbers if `LINE OFF` is specified. "
+"Otherwise, line numbers are included."
+msgstr ""
+"* Programme werden ohne Zeilennummern gespeichert, wenn `LINE OFF` angegeben"
+" ist. Andernfalls werden die Zeilennummern mitgespeichert."
+
+#. [* BASIC programs are stored in plain text format (UTF-8).]
+# bulk translation
+msgid "* BASIC programs are saved in plain text (UTF-8) format."
+msgstr "* BASIC-Programme werden im Klartextformat (UTF-8) gespeichert."
+
+#. [Performs operating system commands.]
+# from Google
+msgid "Runs operating system commands."
+msgstr "Führt Betriebssystembefehle aus."
+
+#. [Executing command]
+# bulk translation
+msgid "command to run"
+msgstr "Auszuführender Befehl"
+
+#. [argument to hand over to the command]
+# bulk translation
+msgid "argument to pass to the command"
+msgstr "Argument zur Übergabe an den Befehl"
+
+#. [Run `command` or an interactive shell if `command` is not specified.]
+# bulk translation
+msgid "Runs `command`, or an interactive shell if `command` is not specified."
+msgstr ""
+"Führt `command` aus, oder eine interaktive Shell, wenn `command` nicht "
+"angegeben ist."
+
+#. [`command` is executed by the operating system shell if no `argument`
+#. parameters are specified so that shell syntax constructs can be used.]
+# bulk translation
+msgid ""
+"`command` is executed by the operating system shell if there are no "
+"`argument` parameters, allowing shell syntax constructs to be used."
+msgstr ""
+"`command` wird von der Betriebssystem-Shell ausgeführt, wenn keine "
+"`argument`-Parameter angegeben sind, so dass Shell-Syntax-Konstrukte "
+"verwendet werden können."
+
+#. [If one or more `argument` parameters are specified, the command is
+#. executed
+#. directly.]
+# bulk translation
+msgid ""
+"If one or more `argument` parameters are specified, the command will be "
+"executed directly."
+msgstr ""
+"Wenn ein oder mehrere `argument`-Parameter angegeben sind, wird der Befehl "
+"direkt ausgeführt."
+
+#. [When the keyword `OFF` is added, Engine BASIC switches off its graphics,
+#. sound and input system so that the executed program can use these devices.]
+# bulk translation
+msgid ""
+"If the `OFF` keyword is added, Engine BASIC will shut down its graphics, "
+"sound and input system to allow the executed program to use these "
+"facilities."
+msgstr ""
+"Wenn das Schlüsselwort `OFF` hinzugefügt wird, schaltet Engine BASIC sein "
+"Grafik-, Sound- und Eingabesystem ab, damit das ausgeführte Programm diese "
+"Einrichtungen nutzen kann."
+
+msgid ""
+"* Commands with `argument` parameters are executed using "
+"`execvp(\"<command>\", \"<command>\", \"<argument\">, ...)`."
+msgstr ""
+"* Befehle mit `argument`-Parametern werden mit `execvp(\"<command>\", "
+"\"<command>\", \"<argument\">, ...)` ausgeführt."
+
+#. [Selects an SPI device.]
+# bulk translation
+msgid "Selects a SPI device."
+msgstr "Wählt ein SPI-Gerät aus."
+
+#. [a C source code file for compiling]
+# bulk translation
+msgid "a C source code file to compile"
+msgstr "eine C-Quellcode-Datei zum Kompilieren"
+
+#. [Name of the executable file to be generated]
+# bulk translation
+msgid "name of executable file to generate"
+msgstr "Name der zu erzeugenden ausführbaren Datei"
+
+#. [argument that is transferred to the compiled file during execution]
+# bulk translation
+msgid "argument to pass to compiled file when run"
+msgstr ""
+"Argument, das bei der Ausführung an die kompilierte Datei übergeben wird"
+
+#. [Combines the specified C source code files to an executable file or to a
+#. ladable module when the keyword `MOD` is present.]
+# bulk translation
+msgid ""
+"Compiles the given C source code files to an executable file, or to a "
+"loadable module if the `MOD` keyword is present."
+msgstr ""
+"Kompiliert die angegebenen C-Quellcode-Dateien zu einer ausführbaren Datei "
+"oder zu einem ladbaren Modul, wenn das Schlüsselwort `MOD` vorhanden ist."
+
+#. [The compiled program or module is written in `executable$`.]
+# bulk translation
+msgid "The compiled program or module is written to `executable$`."
+msgstr ""
+"Das kompilierte Programm oder Modul wird in `executable$` geschrieben."
+
+#. [If `executable$` is not specified, the code is compiled into a temporary
+#. file and executed or loaded immediately. In regular programs, all
+#. `argument$` parameters are transferred to the program.]
+# bulk translation
+msgid ""
+"If `executable$` is not specified, the code is compiled to a temporary file "
+"and immediately executed or loaded. For regular programs, any `argument$` "
+"parameters will be passed to the program."
+msgstr ""
+"Wenn `executable$` nicht angegeben ist, wird der Code in eine temporäre "
+"Datei kompiliert und sofort ausgeführt oder geladen. Bei regulären "
+"Programmen werden alle `argument$` Parameter an das Programm übergeben."
+
+#. [Register content.]
+# bulk translation
+msgid "Register contents."
+msgstr "Registerinhalt."
