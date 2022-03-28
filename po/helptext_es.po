@@ -7646,8 +7646,8 @@ msgid ""
 "have a separate kbd:["
 msgstr ""
 "* [[poco claro]] Algunas definiciones clave no están bien definidas. La "
-"clave kbd:[Pipe2] está documentada como perteneciente a un teclado de "
-"diseño de EE. UU., pero los diseños de EE. UU. no tienen un kbd:["
+"clave kbd:[Pipe2] está documentada como perteneciente a un teclado de diseño"
+" de EE. UU., pero los diseños de EE. UU. no tienen un kbd:["
 
 #. [] Schlüsselcode.]
 # bulk translation
@@ -7873,8 +7873,7 @@ msgstr "Posición del primer byte en la subcadena que se devuelve."
 #. [Anzahl der Bytes in der SubCADA [Default: `bluten (M $) - Home`]]
 # from Google
 msgid "number of bytes in the substring [default: `BLEN(m$)-start`]"
-msgstr ""
-"Número de bytes en la subcadena [Predeterminado: `BLEN(m$)-start`]"
+msgstr "Número de bytes en la subcadena [Predeterminado: `BLEN(m$)-start`]"
 
 #. [* Ja `M $` ist kürzer als "len" Bytes, der Rückgabewert ist "M $".]
 # from Google
@@ -8000,8 +7999,7 @@ msgstr "número de bytes a leer, o 0"
 # from Google
 msgid "Byte string containing `length` bytes of data starting at `addr`."
 msgstr ""
-"Cadena de byte que contiene `length` bytes de datos que comienzan en "
-"`addr`."
+"Cadena de byte que contiene `length` bytes de datos que comienzan en `addr`."
 
 #. [* Wenn "Länge" ein 0 'ist, werden die Daten gelesen, bis ein "0" Byte.Une
 #. gefunden wird, um C-Strangs zu lesen.]
@@ -8010,8 +8008,8 @@ msgid ""
 "* When `length` is `0`, data is read until a `0`-byte is encountered. Use "
 "this to read C-style strings."
 msgstr ""
-"* Cuando `length` es `0`, los datos se leen hasta que se encuentre un "
-"byte `0`. Use esto para leer cadenas de estilo C."
+"* Cuando `length` es `0`, los datos se leen hasta que se encuentre un byte "
+"`0`. Use esto para leer cadenas de estilo C."
 
 #. [Starten Sie das System neu.]
 # from Google
@@ -8233,8 +8231,8 @@ msgid ""
 "Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` "
 "and `$B8`"
 msgstr ""
-"Los números de registros válidos son: `$01`, `$28` a `$30`, `$34` a `$"
-"36`, `$82` y `$B8`"
+"Los números de registros válidos son: `$01`, `$28` a `$30`, `$34` a `$36`, "
+"`$82` y `$B8`"
 
 #. [`34 $,` $ 35`]
 # from Argos
@@ -8301,3 +8299,403 @@ msgstr "Carga una fuente TrueType de un archivo."
 # from Google
 msgid "name of TrueType font file"
 msgstr "Nombre del archivo de fuente TrueType"
+
+#. [coordinated X of the set of tiles, in pixels [from `0` to `PSIZE(0)-1`]]
+# bulk translation
+msgid "tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr ""
+"coordenada X del conjunto de baldosas, en píxeles [de `0` a `PSIZE(0)-1`]"
+
+#. [coordinated and of the set of tiles, pixels [from `0` to `PSIZE(2)-1`]]
+# bulk translation
+msgid "tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr ""
+"coordenada Y del conjunto de baldosas, píxeles [de `0` a `PSIZE(2)-1`]"
+
+#. [number of bytes to return [min `0`]]
+# bulk translation
+msgid "number of bytes to return [min `0`]"
+msgstr "número de bytes a devolver [min `0`]"
+
+#. [Subchain of `num` bytes or less.]
+# bulk translation
+msgid "Substring of `num` bytes or less."
+msgstr "Subcadena de `num` bytes o menos."
+
+#. [Subchain of `len` bytes or less.]
+# bulk translation
+msgid "Substring of `len` bytes or less."
+msgstr "Subcadena de `len` bytes o menos."
+
+#. [Displacement in X of the bottom `bg`.]
+# bulk translation
+msgid "X scrolling offset of background `bg`."
+msgstr "Desplazamiento en X del fondo `bg`."
+
+#. [Displacement in Y from the bottom `bg`.]
+# bulk translation
+msgid "Y scrolling offset of background `bg`."
+msgstr "Desplazamiento en Y del fondo `bg`."
+
+#. [Unicode Point]
+# bulk translation
+msgid "Unicode codepoint"
+msgstr "Punto de código Unicode"
+
+#. [* `9`: Separation of optional keywords [`0` (by default) or `1`] +
+#. Controls
+#. whether BASIC's keywords should be separated from other elements of
+#. language that contain alphanumeric characters with a space (`0`), or if
+#. they can be adjacent to them as in the traditional dialects of BASIC
+#. (`1`).]
+# bulk translation
+msgid ""
+"* `9`: Keyword separation optional [`0` (default) or `1`] + Controls if "
+"BASIC keywords need to be separated from other language elements containing "
+"alphanumeric characters with a space (`0`), or if they can be adjacent to "
+"those like in traditional BASIC dialects (`1`)."
+msgstr ""
+"* `9`: Separación de palabras clave opcional [`0` (por defecto) o `1`] + "
+"Controla si las palabras clave de BASIC deben ser separadas de otros "
+"elementos del lenguaje que contengan caracteres alfanuméricos con un espacio"
+" (`0`), o si pueden ser adyacentes a las mismas como en los dialectos "
+"tradicionales de BASIC (`1`)."
+
+#. [* `11`: Language + The following languages are allowed for system
+#. messages:
+#. + `0` (US English, by default), `1` (German), `2` (French), `3` (Spanish),
+#. `4` (Japanese).]
+# bulk translation
+msgid ""
+"* `11`: Language + The following languages are supported for system "
+"messages: + `0` (US English, default), `1` (German), `2` (French), `3` "
+"(Spanish), `4` (Japanese)."
+msgstr ""
+"* `11`: Idioma + Se admiten los siguientes idiomas para los mensajes del "
+"sistema: + `0` (inglés estadounidense, por defecto), `1` (alemán), `2` "
+"(francés), `3` (español), `4` (japonés)."
+
+#. [CPU speed in percentage of the maximum.]
+# bulk translation
+msgid "CPU speed in percent of maximum."
+msgstr "Velocidad de la CPU en porcentaje del máximo."
+
+#. [Finish a `IF' instruction of several lines.]
+# bulk translation
+msgid "Ends a multi-line `IF` instruction."
+msgstr "Termina una instrucción `IF` de varias líneas."
+
+#. [It comes from a DO, FOR or WHILE loop.]
+# bulk translation
+msgid "Exits a DO, FOR or WHILE loop."
+msgstr "Sale de un bucle DO, FOR o WHILE."
+
+#. [the metering variable of a FOR loop]
+# bulk translation
+msgid "the counter variable of a FOR loop"
+msgstr "la variable contadora de un bucle FOR"
+
+#. [It comes from the highest loop of the specified type, without taking into
+#. account its loop condition, or the specified `FOR` loop if there is a
+#. `variable_de_bucle' argument.]
+# bulk translation
+msgid ""
+"Exits the top-most loop of the specified type, without regard for its loop "
+"condition, or the specified `FOR` loop if there is a `loop_variable` "
+"argument."
+msgstr ""
+"Sale del bucle más alto del tipo especificado, sin tener en cuenta su "
+"condición de bucle, o del bucle `FOR` especificado si hay un argumento "
+"`variable_de_bucle`."
+
+#. ["lexis"]
+# bulk translation
+msgid " \"lexis\" "
+msgstr " \"lexis\" "
+
+#. [Source Lexis, 6x8 pixels (by default)]
+# bulk translation
+msgid " Lexis font, 6x8 pixels (default)"
+msgstr " Fuente Lexis, 6x8 píxeles (por defecto)"
+
+#. ["cpc"]
+# bulk translation
+msgid " \"cpc\" "
+msgstr " \"cpc\" "
+
+#. ["bescii"]
+# bulk translation
+msgid " \"bescii\" "
+msgstr " \"bescii\" "
+
+#. ["tt"]
+# bulk translation
+msgid " \"tt\" "
+msgstr " \"tt\" "
+
+#. ["hp100lx"]
+# bulk translation
+msgid " \"hp100lx\" "
+msgstr " \"hp100lx\" "
+
+#. [===== Additional sources will be allocated consecutive source indexes.]
+# bulk translation
+msgid "* Additional fonts will be assigned consecutive font indices."
+msgstr ""
+"* A las fuentes adicionales se les asignarán índices de fuentes "
+"consecutivos."
+
+#. [===== The type of letter set when switching on the computer can be
+#. adjusted
+#. by the `CONFIG` command.]
+# bulk translation
+msgid "* The font set at power-on can be set using the `CONFIG` command."
+msgstr ""
+"* El tipo de letra configurado al encender el equipo puede ajustarse "
+"mediante el comando `CONFIG`."
+
+#. [Select the I2C bus to use.]
+# bulk translation
+msgid "Selects the I2C bus to use."
+msgstr "Selecciona el bus I2C a utilizar."
+
+#. [I2C bus number [`0` to `255`]]
+# bulk translation
+msgid "I2C bus number [`0` to `255`]"
+msgstr "Número de bus I2C [`0` a `255`]"
+
+#. [This command is only implemented on Linux-based platforms.]
+# bulk translation
+msgid "This command is only implemented on Linux-based platforms."
+msgstr "Este comando sólo está implementado en plataformas basadas en Linux."
+
+#. [It also returns the outgoing transmission status code into `RET(0)`.]
+# bulk translation
+msgid "Also returns the status code of the outward transmission in `RET(0)`."
+msgstr ""
+"También devuelve el código de estado de la transmisión saliente en `RET(0)`."
+
+#. [kbd:[Left Shift]]
+# bulk translation
+msgid " kbd:[Left Shift]\t"
+msgstr " kbd:[Left Shift]\t"
+
+#. [kbd:[Page Up]]
+# bulk translation
+msgid " kbd:[Page Up]\t\t"
+msgstr " kbd:[Page Up]\t\t"
+
+#. [kbd:[ESC]]
+# bulk translation
+msgid " kbd:[ESC]\t\t"
+msgstr " kbd:[ESC]\t\t"
+
+#. [Convert the string of characters into tiny letters.]
+# bulk translation
+msgid "Converts string to all-lowercase letters."
+msgstr "Convierte la cadena de caracteres en letras minúsculas."
+
+#. [List the installed sources.]
+# bulk translation
+msgid "Lists installed fonts."
+msgstr "Lista las fuentes instaladas."
+
+#. [The proportional fonts and those that are not specifically designed for
+#. use
+#. on low-resolution screens will not look very well.]
+# bulk translation
+msgid ""
+"Proportional fonts and fonts that are not specifically designed for use on "
+"low-resolution screens will not look very good."
+msgstr ""
+"Las fuentes proporcionales y las que no están diseñadas específicamente para"
+" su uso en pantallas de baja resolución no se verán muy bien."
+
+#. [===== If `m$` is shorter than `len` characters, the return value is `m$`.]
+# bulk translation
+msgid "* If `m$` is shorter than `len` characters, the return value is `m$`."
+msgstr ""
+"* Si `m$` es más corto que `len` caracteres, el valor de retorno es `m$`."
+
+#. [Status of the specified mouse button.]
+# bulk translation
+msgid "State of the specified mouse button."
+msgstr "Estado del botón del ratón especificado."
+
+#. [Number]
+# bulk translation
+msgid " Number "
+msgstr " Número "
+
+#. [Horizontal mouse movement.]
+# bulk translation
+msgid "Horizontal movement of the mouse."
+msgstr "Movimiento horizontal del ratón."
+
+#. [Relative Horizontal Mouse Movement, in Pixels]
+# bulk translation
+msgid "relative horizontal movement of mouse, pixels"
+msgstr "Movimiento horizontal relativo del ratón, en píxeles"
+
+#. [Mouse vertical movement.]
+# bulk translation
+msgid "Vertical movement of the mouse."
+msgstr "Movimiento vertical del ratón."
+
+#. [Relative Vertical Mouse Movement, Pixels]
+# bulk translation
+msgid "relative vertical movement of mouse, pixels"
+msgstr "Movimiento vertical relativo del ratón, píxeles"
+
+#. [* `addr` must be mapped and must allow access in the form of bytes.]
+# bulk translation
+msgid "* `addr` must be mapped writable and must allow byte-wise access."
+msgstr ""
+"* `addr` debe ser mapeado escribible y debe permitir el acceso en forma de "
+"bytes."
+
+# bulk translation
+msgid " `mod` > 1 "
+msgstr " `mod` > 1 "
+
+#. [`mod` . 0]
+# bulk translation
+msgid " `mod` < 0 "
+msgstr " `mod` < 0 "
+
+#. [===== Programs are saved without line numbers if specified `LINE OFF`.
+#. Otherwise, line numbers are included.]
+# bulk translation
+msgid ""
+"* Programs are saved without line numbers if `LINE OFF` is specified. "
+"Otherwise, line numbers are included."
+msgstr ""
+"* Los programas se guardan sin números de línea si se especifica `LINE OFF`."
+" En caso contrario, se incluyen los números de línea."
+
+#. [===== BASIC programs are saved in plain text format (UTF-8).]
+# bulk translation
+msgid "* BASIC programs are saved in plain text (UTF-8) format."
+msgstr "* Los programas BASIC se guardan en formato de texto plano (UTF-8)."
+
+#. [460x224]
+# bulk translation
+msgid " 460x224 "
+msgstr " 460x224 "
+
+#. [320x216]
+# bulk translation
+msgid " 320x216 "
+msgstr " 320x216 "
+
+#. [320x200]
+# bulk translation
+msgid " 320x200 "
+msgstr " 320x200 "
+
+#. [256x192]
+# bulk translation
+msgid " 256x192 "
+msgstr " 256x192 "
+
+#. [Run the commands of the operating system.]
+# bulk translation
+msgid "Runs operating system commands."
+msgstr "Ejecuta los comandos del sistema operativo."
+
+#. [command to execute]
+# bulk translation
+msgid "command to run"
+msgstr "comando a ejecutar"
+
+#. [argument to pass to the command]
+# bulk translation
+msgid "argument to pass to the command"
+msgstr "argumento a pasar al comando"
+
+#. [If one or more `argument' parameters are specified, the command will be
+#. executed directly.]
+# bulk translation
+msgid ""
+"If one or more `argument` parameters are specified, the command will be "
+"executed directly."
+msgstr ""
+"Si se especifican uno o más parámetros `argument`, el comando será ejecutado"
+" directamente."
+
+#. [If you add the keyword `OFF', Engine BASIC will turn off your graphics,
+#. sound and input system to allow the executed program to use these
+#. facilities.]
+# bulk translation
+msgid ""
+"If the `OFF` keyword is added, Engine BASIC will shut down its graphics, "
+"sound and input system to allow the executed program to use these "
+"facilities."
+msgstr ""
+"Si se añade la palabra clave `OFF`, Engine BASIC apagará su sistema de "
+"gráficos, sonido y entrada para permitir que el programa ejecutado utilice "
+"estas facilidades."
+
+#. [Select a SPI device.]
+# bulk translation
+msgid "Selects a SPI device."
+msgstr "Selecciona un dispositivo SPI."
+
+#. [Number of larger device]
+# bulk translation
+msgid "Major device number"
+msgstr "Número de dispositivo mayor"
+
+#. [Number of minor device]
+# bulk translation
+msgid "Minor device number"
+msgstr "Número de dispositivo menor"
+
+#. [Compile and, optionally, load or run C programs.]
+# bulk translation
+msgid "Compiles and, optionally, loads or runs C programs."
+msgstr "Compila y, opcionalmente, carga o ejecuta programas C."
+
+#. [Eine Quellcodedatei C zum Kompilieren]
+# from Argos
+msgid "a C source code file to compile"
+msgstr "un archivo de código fuente C para compilar"
+
+#. [file name executable to generate]
+# bulk translation
+msgid "name of executable file to generate"
+msgstr "nombre del archivo ejecutable a generar"
+
+#. [argument to pass to the compiled file when executed]
+# bulk translation
+msgid "argument to pass to compiled file when run"
+msgstr "argumento a pasar al archivo compilado cuando se ejecuta"
+
+#. [Compile the C source files given to an executable file, or a loadable
+#. module if the `MOD` keyword is present.]
+# bulk translation
+msgid ""
+"Compiles the given C source code files to an executable file, or to a "
+"loadable module if the `MOD` keyword is present."
+msgstr ""
+"Compila los archivos de código fuente C dados a un archivo ejecutable, o a "
+"un módulo cargable si la palabra clave `MOD` está presente."
+
+# from Argos
+msgid "The compiled program or module is written to `executable$`."
+msgstr "El programa o módulo compilado está escrito a `executable$`."
+
+# bulk translation
+msgid ""
+"If `executable$` is not specified, the code is compiled to a temporary file "
+"and immediately executed or loaded. For regular programs, any `argument$` "
+"parameters will be passed to the program."
+msgstr ""
+"Si no se especifica `executable$`, el código se compila en un archivo "
+"temporal y se ejecuta o carga inmediatamente. Para los programas regulares, "
+"cualquier parámetro `argument$` será pasado al programa."
+
+#. [Registration contents.]
+# bulk translation
+msgid "Register contents."
+msgstr "Contenido del registro."
