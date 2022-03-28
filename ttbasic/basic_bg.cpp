@@ -56,8 +56,8 @@ BG OFF
 @bg	background number [`0` to `{MAX_BG_m1}`]
 @w	background map width, in tiles
 @h	background map height, in tiles
-@px	tile set X coordinate, pixels [`0` to `PSIZE(0)-1`]
-@py	tile set Y coordinate, pixels [`0` to `PSIZE(2)-1`]
+@px	tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]
+@py	tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]
 @tx	tile width, pixels [`8` (default) to `32`]
 @ty	tile height, pixels [`8` (default) to `32`]
 @wx	window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
