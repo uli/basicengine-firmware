@@ -5913,7 +5913,7 @@ msgid ""
 "far, no displays have turned up that require it, so it may be removed and/or"
 " replaced with a different option in future releases."
 msgstr ""
-"* `2`：インターレース+ビデオ出力をプログレッシブ（`0`）またはインターレース（ "
+"* `2`：インターレース+ビデオ出力をプログレッシブ（`0`）またはインターレース（"
 "`1`）に設定します。このオプションの変更は、次の画面モードの変更時に有効になります。+警告：このオプションの目的は、プログレッシブ信号を適切に処理しないテレビにインターレース信号を提供することです。これまでのところ、それを必要とするディスプレイは表示されていないため、将来のリリースで削除したり、別のオプションに置き換えたりする可能性があります。"
 
 #. [* `8`: Passen Sie die Bildschirmzeilen an [`-128` bis `128`, Standard:`
@@ -5930,8 +5930,8 @@ msgid ""
 "artifacting and flicker on some devices. + WARNING: It is not clear if this "
 "option is useful in practice, and it may be removed in future releases."
 msgstr ""
-"* `8`：画面の行調整[`-128`から `128`、デフォルト：`0`]画面の行数を調整します。正の値は線を追加し、負の値は線を減算します。 +"
-" このオプションは、一部のデバイスでの色のアーティファクトやちらつきの問題を軽減するのに役立つ場合があります。 + "
+"* `8`：画面の行調整[`-128`から `128`、デフォルト：`0`]画面の行数を調整します。正の値は線を追加し、負の値は線を減算します。 + "
+"このオプションは、一部のデバイスでの色のアーティファクトやちらつきの問題を軽減するのに役立つ場合があります。 + "
 "警告：このオプションが実際に役立つかどうかは明確ではなく、将来のリリースで削除される可能性があります。"
 
 #. [Wenn Sie nicht mit << Config speichern >> gespeichert werden, werden die
@@ -5963,8 +5963,8 @@ msgid ""
 "(640x480 DVI) or `6` + (1920x1200 HDMI). + It is necessary to save the "
 "configuration and reboot the system for this option to take effect."
 msgstr ""
-"* `10`：物理画面モード（H3プラットフォームのみ）[`0` (デフォルト) から `6`] + 物理画面の解像度を設定します：+ `"
-"0`（1920x1080 HDMI）、 `1`（1280x1024 DVI）、`2`（1280x720 HDMI）、 `3` +（1024x768 "
+"* `10`：物理画面モード（H3プラットフォームのみ）[`0` (デフォルト) から `6`] + 物理画面の解像度を設定します：+ "
+"`0`（1920x1080 HDMI）、 `1`（1280x1024 DVI）、`2`（1280x720 HDMI）、 `3` +（1024x768 "
 "DVI）、`4`（800x600 DVI）、 `5`（640x480 DVI）または, `6` + （1920x1200 HDMI）。 + "
 "このオプションを有効にするには、構成を保存してシステムを再起動する必要があります。"
 
@@ -5977,8 +5977,8 @@ msgid ""
 "messages: + `0` (US English, default), `1` (German), `2` (French), `3` "
 "(Spanish), `4` (Japanese)."
 msgstr ""
-"* `11`：言語 + システムメッセージでは次の言語がサポートされています： + `0`（米国英語、デフォルト）、`1`（ドイツ語）、`"
-"2`（フランス語）、 `3`（スペイン語）、`4`（日本語）。"
+"* `11`：言語 + システムメッセージでは次の言語がサポートされています： + "
+"`0`（米国英語、デフォルト）、`1`（ドイツ語）、`2`（フランス語）、 `3`（スペイン語）、`4`（日本語）。"
 
 #. [* Änderungen an der Tiefpassfilter-Option (`3`) werden erst beim nächsten
 #. Blockzug wirksam. Dies geschieht beispielsweise beim Scrollen des
@@ -6041,11 +6041,6 @@ msgstr "キーが保持されている場合は`1`、保持されていない場
 
 msgid " kbd:[`]\t\t"
 msgstr " kbd:[`]\t\t"
-
-#. [KBD: [Einfügen]]
-# from Argos
-msgid " kbd:[Insert]\t\t"
-msgstr " kbd:[インサート]\t\t"
 
 #. [ Kann nicht mit japanischer Tastatur oder SDL verwendet werden]
 # bulk translation
@@ -6204,18 +6199,8 @@ msgstr " kbd:[F5]\t\t"
 msgid " kbd:[Up] key"
 msgstr " kbd:[Up] キー"
 
-#. [KBD: [linke Schicht]]
-# from Argos
-msgid " kbd:[Left Shift]\t"
-msgstr " kbd:[左シフト]\t"
-
 msgid " kbd:[ESC]\t\t"
 msgstr " kbd:[ESC]\t\t"
-
-#. [KBD: [ACT]]
-# from Argos
-msgid " kbd:[Enter]\t\t"
-msgstr " kbd:[エント]\t\t"
 
 msgid " kbd:[Pipe2]\t\t"
 msgstr " kbd:[Pipe2]\t\t"
@@ -6518,8 +6503,7 @@ msgstr "* `addr`のメモリは、バイト単位のアクセスを許可する�
 msgid ""
 "* When `length` is `0`, data is read until a `0`-byte is encountered. Use "
 "this to read C-style strings."
-msgstr ""
-"* `length`が`0`の場合、データは`0`バイトに遭遇するまで読み取られます。これを使用して、Cスタイルの文字列を読み取ります。"
+msgstr "* `length`が`0`の場合、データは`0`バイトに遭遇するまで読み取られます。これを使用して、Cスタイルの文字列を読み取ります。"
 
 #. [Starten Sie das System neu.]
 # bulk translation
@@ -6590,8 +6574,7 @@ msgid ""
 "will search for the module in `/sys/modules/module_name` and load it. If no "
 "module is found, it will generate an error."
 msgstr ""
-"`module_name`というモジュールがすでにロードされているかどうかを確認します。そうでない場合は、`/sys/modules/"
-"module_name`でモジュールを検索してロードします。モジュールが見つからない場合は、エラーが生成されます。"
+"`module_name`というモジュールがすでにロードされているかどうかを確認します。そうでない場合は、`/sys/modules/module_name`でモジュールを検索してロードします。モジュールが見つからない場合は、エラーが生成されます。"
 
 #. [Das Verhalten von `# REQUIRE` unterscheidet sich von dem anderer BASIC-
 #. Befehle. Es wird ausgeführt, sobald es vom Interpreter erkannt wird,
@@ -6765,7 +6748,9 @@ msgstr "有効なレジスタ番号: `$05`、`$53`、`$84`、`$86`、`$9F`、`$B
 msgid ""
 "All Engine BASIC commands that require a color value expect that value to be"
 " in the video controller's format, which depends on the <<PALETTE>> setting."
-msgstr "カラー値を必要とするすべてのEngine Basicコマンドは、その値がビデオコントローラのフォーマットにあることを期待しています。これは<<PALETTE>>設定によって異なります。"
+msgstr ""
+"カラー値を必要とするすべてのEngine "
+"Basicコマンドは、その値がビデオコントローラのフォーマットにあることを期待しています。これは<<PALETTE>>設定によって異なります。"
 
 #. [* Die Ausdrucksliste funktioniert genauso wie der `PRINT`-Befehl.]
 # bulk translation
@@ -6776,3 +6761,416 @@ msgstr "* 式リストは、`PRINT`コマンドと同じように機能します
 # from Google
 msgid "Loads a TrueType font from a file."
 msgstr "ファイルからTrueTypeフォントをロードします。"
+
+#. [Negative operator.]
+# bulk translation
+msgid "Negation operator."
+msgstr "否定演算子。"
+
+#. [ ulation operator.]
+# bulk translation
+msgid "Division operator."
+msgstr "除算演算子。"
+
+#. [Convert a` to unsigned integers and shift to the left only `b` bit.]
+# bulk translation
+msgid "`a` converted to an unsigned integer and shifted left by `b` bits."
+msgstr "`a` を符号なし整数に変換し、`b` ビットだけ左にシフトする。"
+
+#. [Large operator.]
+# bulk translation
+msgid "Greater-than operator."
+msgstr "大なり演算子。"
+
+#. [a` is converted to unsigned integers and shifted to the right of `b`
+#. bits.]
+# bulk translation
+msgid "`a` converted to an unsigned integer and shifted right by `b` bits."
+msgstr "`a` は符号なし整数に変換され、`b` ビットだけ右にシフトされる。"
+
+#. [Tone Cycle Cycle (Number of samples) [`0` (Off) to `320`/`160`].]
+# bulk translation
+msgid "tone cycle period in samples [`0` (off) to `320`/`160`]"
+msgstr "トーンサイクル周期（サンプル数） [`0` (オフ) から `320`/`160` まで]."
+
+#. [X coordinates of the tile set, pixels [`0` to `PSIZE(0)-1`].]
+# bulk translation
+msgid "tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "タイルセットのX座標、ピクセル [`0` から `PSIZE(0)-1`]."
+
+#. [Y coordinates of the tile set, pixels [`0` to `PSIZE(2)-1`].]
+# bulk translation
+msgid "tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "タイルセットのY座標、ピクセル [`0` から `PSIZE(2)-1`]."
+
+#. [By default, opaque ットts that ignore the alpha channel in the source area
+#. are executed. To enable alpha blending, you need to add `ALPHA` at the
+#. end.]
+# bulk translation
+msgid ""
+"By default an opaque blit is performed, ignoring the alpha channel of the "
+"source area. To enable alpha-blending, `ALPHA` must be appended at the end."
+msgstr ""
+"デフォルトでは、ソース領域のアルファチャンネルを無視した不透明なブリットが実行されます。アルファブレンディングを有効にするには、末尾に `ALPHA` "
+"を追加する必要があります。"
+
+#. [Load destination memory address]
+# bulk translation
+msgid "memory address to be loaded to"
+msgstr "ロード先メモリアドレス"
+
+#. [* It may be difficult or impossible to disable the system set in an
+#. unusable state because there is no way to overwrite the saved settings.]
+# bulk translation
+msgid ""
+"* There is no way to override a saved configuration, which may make it "
+"difficult or even impossible to fix an system configured to an unusable "
+"state."
+msgstr "* 保存された設定を上書きする方法がないため、使用不可能な状態に設定されたシステムを修正することが困難または不可能になる場合があります。"
+
+#. [CPU speed (percentage to maximum).]
+# bulk translation
+msgid "CPU speed in percent of maximum."
+msgstr "CPU 速度（最大値に対する割合）。"
+
+#. [* CPU speed is reset by default when `speed` is `-1`.]
+# bulk translation
+msgid ""
+"* When `speed` is `-1` the CPU speed will be reset to the power-on default."
+msgstr "* CPU 速度は、`speed` が `-1` の場合、パワーオン時のデフォルトにリセットされます。"
+
+#. [ループs DO, FOR and WHILE loops.]
+# bulk translation
+msgid "Exits a DO, FOR or WHILE loop."
+msgstr "DO、FOR、WHILEループを終了します。"
+
+#. [FOR loop counter variable]
+# bulk translation
+msgid "the counter variable of a FOR loop"
+msgstr "FORループのカウンタ変数"
+
+#. [I re the loop condition and exit the top loop of the specified type.  `s
+#. the specified `FOR` loop if the `loop_variable` argument.]
+# bulk translation
+msgid ""
+"Exits the top-most loop of the specified type, without regard for its loop "
+"condition, or the specified `FOR` loop if there is a `loop_variable` "
+"argument."
+msgstr ""
+"ループ条件を無視して、指定された型の一番上のループを終了する。 `loop_variable` 引数がある場合は、指定された `FOR` "
+"ループを終了する。"
+
+#. [Matched loops are removed from the loop stack and after the loop ends
+#. (closest LOOP`, `NEXT`, `WEND` statement, or `NEXT loop_variable`
+#. statement, closest to `NEXT loop_variable` statement.]
+# bulk translation
+msgid ""
+"The matching loop is dropped from the loop stack, and execution resumes "
+"after the end of the loop (the nearest following `LOOP`, `NEXT` or `WEND` "
+"statement, or the nearest `NEXT loop_variable` statement)."
+msgstr ""
+"マッチしたループはループスタックから削除され、ループの終了後（最も近い `LOOP`、`NEXT`、`WEND` 文、または最も近い `NEXT "
+"loop_variable` 文）、実行が再開されます。"
+
+#. [EXIT` only works as intended in loops that are not repeated using "single
+#. end" loops, i.e. multiple `LOOP`, `NEXT` and `WEND` statements.]
+# bulk translation
+msgid ""
+"`EXIT` only works as intended in loops with a \"single end\", i.e. loops "
+"that are not iterated using more than one `LOOP`, `NEXT` or `WEND` "
+"statement."
+msgstr ""
+"`EXIT` は \"single end\" のループ、つまり複数の `LOOP`、`NEXT`、`WEND` "
+"ステートメントを使用して反復されないループにおいてのみ、意図したとおりに動作します。"
+
+#. [cpc]
+# bulk translation
+msgid " \"cpc\" "
+msgstr " \"cpc\" "
+
+#. [TT]
+# bulk translation
+msgid " \"tt\" "
+msgstr " \"tt\" "
+
+#. [Specify what List of expressions in PRINT format]
+# bulk translation
+msgid "`PRINT`-format list of expressions specifying what to draw"
+msgstr "何を描くかを指定する `PRINT` 形式の式リスト"
+
+#. [Select the I2C bus you want to use.]
+# bulk translation
+msgid "Selects the I2C bus to use."
+msgstr "使用するI2Cバスを選択します。"
+
+#. [I2C bus number [`0` ～ `255`].]
+# bulk translation
+msgid "I2C bus number [`0` to `255`]"
+msgstr "I2Cバス番号 [`0` ～ `255`]."
+
+#. [This command is only implemented on Linux-based platforms.]
+# bulk translation
+msgid "This command is only implemented on Linux-based platforms."
+msgstr "このコマンドは、Linux ベースのプラットフォームでのみ実装されています。"
+
+#. [kbd:[]]
+# bulk translation
+msgid " kbd:[]]\t\t"
+msgstr " kbd:[]]\t\t"
+
+#. [* If `m$` is shorter than `len`, the return value is `m$`.]
+# bulk translation
+msgid "* If `m$` is shorter than `len` characters, the return value is `m$`."
+msgstr "* `m$` が `len` 文字より短い場合、戻り値は `m$` となる。"
+
+#. [Increase and test counters in the FOR loop.]
+# bulk translation
+msgid "Increments and tests the counter in a `FOR` loop."
+msgstr "FOR` ループの中でカウンターを増やし、テストします。"
+
+#. [ON GOTO and ON GOSUB will affect the line number or label given first if
+#. the expression is `1` and `2` if the expression is `2`. If `expression` is
+#. `0`, it does not do anything and continues to execute with the following
+#. command.]
+# bulk translation
+msgid ""
+"`ON GOTO` and `ON GOSUB` will branch to the first given line number or label"
+" if `expression` is `1`, to the second if `expression` is `2`, and so forth."
+" If `expression` is `0`, it will do nothing, and execution will continue "
+"with the next instruction."
+msgstr ""
+"`ON GOTO` と `ON GOSUB` は、`式` が `1` ならば最初に与えられた行番号またはラベルに、`式` が `2` "
+"ならば2番目に、といった具合に分岐します。もし `expression` が `0` ならば、何もせず、次の命令で実行を続けます。"
+
+#. [Enable Conversion Fixup [`0` or `1`].]
+# bulk translation
+msgid "conversion fix-ups enabled [`0` or `1`]"
+msgstr "コンバージョンフィクスアップ有効 [`0` または `1` ]。"
+
+#. [addr length` byte column containing byte data.]
+# bulk translation
+msgid "Byte string containing `length` bytes of data starting at `addr`."
+msgstr "`addr` から始まる `length` バイトのデータを含むバイト列。"
+
+#. [MML]
+# bulk translation
+msgid "score in MML format"
+msgstr "MML形式の楽譜"
+
+#. [Check all channels from `0` to `{MML_CHANNELS_m1}` or `-1`.]
+# bulk translation
+msgid ""
+"sound channel [`0` to `{MML_CHANNELS_m1}`, or `-1` to check all channels]"
+msgstr "サウンドチャンネル [`0` から `{MML_CHANNELS_m1}` まで、または `-1` で全チャンネルをチェック] 。"
+
+#. [Tile X coordinates [from `0` to background width (tile unit)]]
+# bulk translation
+msgid "tile X coordinate [`0` to background width in tiles]"
+msgstr "タイルX座標 [`0` から背景の幅（タイル単位）]まで"
+
+#. [Specify the tile number to select [`0` to `255`].]
+# bulk translation
+msgid "tile number to map to [`0` to `255`]"
+msgstr "マップするタイル番号 [`0` から `255`] を指定します。"
+
+#. [The data is read from the elements following the current "data pointer".
+#. The data pointer is the beginning of the game. Each time the data is
+#. loaded, it is transferred to the following elements: This can be set
+#. directly with the `RESTORE` command.]
+# bulk translation
+msgid ""
+"Data is read from the element that follows the current \"data pointer\". The"
+" data pointer points to the beginning of the program initially. With every "
+"element read it is forwarded to the next one. It can be set directly with "
+"the `RESTORE` command."
+msgstr ""
+"データは、現在の「データポインタ」に続く要素から読み込まれます。データポインタは、最初はプログラムの先頭を指している。データを読み込むたびに、次の要素に転送されます。これは、`RESTORE`コマンドで直接設定することができます。"
+
+#. [If specified, the return value of each type (number or string) can be
+#. returned to the caller up to {MAX_RETVALS}.]
+# bulk translation
+msgid ""
+"If specified, up to {MAX_RETVALS} return values of each type (numeric or "
+"string) can be returned to the caller."
+msgstr "指定された場合、各タイプ（数値または文字列）の戻り値を最大 {MAX_RETVALS} 個まで呼び出し元に返すことができる。"
+
+#. [* If LINE OFF is specified, the program will be saved without a line
+#. number. Otherwise, the line number is included.]
+# bulk translation
+msgid ""
+"* Programs are saved without line numbers if `LINE OFF` is specified. "
+"Otherwise, line numbers are included."
+msgstr "* `LINE OFF` が指定された場合、プログラムは行番号なしで保存されます。それ以外の場合は、行番号が含まれます。"
+
+#. [* The B C program is saved in plain text (UTF-8) format.]
+# bulk translation
+msgid "* BASIC programs are saved in plain text (UTF-8) format."
+msgstr "* BASIC プログラムは、プレーンテキスト（UTF-8）形式で保存されます。"
+
+#. [Run the operating system command.]
+# bulk translation
+msgid "Runs operating system commands."
+msgstr "オペレーティングシステムのコマンドを実行する。"
+
+#. [ ute command]
+# bulk translation
+msgid "command to run"
+msgstr "実行するコマンド"
+
+#. [argument passed to command]
+# bulk translation
+msgid "argument to pass to the command"
+msgstr "コマンドに渡す引数"
+
+#. [execute command`. If `command` is not specified, execute the interactive
+#. shell.]
+# bulk translation
+msgid "Runs `command`, or an interactive shell if `command` is not specified."
+msgstr "`command` を実行する。`command` が指定されていない場合は、対話型のシェルを実行する。"
+
+#. [If there is no argument `argument`, `command` is executed by the shell of
+#. the operating system and can be used with the shell syntax.]
+# bulk translation
+msgid ""
+"`command` is executed by the operating system shell if there are no "
+"`argument` parameters, allowing shell syntax constructs to be used."
+msgstr ""
+"引数 `argument` がない場合、`command` はオペレーティングシステムのシェルによって実行され、シェル構文を使用できるようになります。"
+
+#. [If one or more `argument` parameters are specified, the command is
+#. executed
+#. directly.]
+# bulk translation
+msgid ""
+"If one or more `argument` parameters are specified, the command will be "
+"executed directly."
+msgstr "1つ以上の `argument` パラメータが指定された場合、コマンドは直接実行される。"
+
+#. [When you add a keyword `OFF`, Engine B C will stop the graphics, sound,
+#. and
+#. input system and allow the program to run to use these features.]
+# bulk translation
+msgid ""
+"If the `OFF` keyword is added, Engine BASIC will shut down its graphics, "
+"sound and input system to allow the executed program to use these "
+"facilities."
+msgstr ""
+"キーワード `OFF` を追加すると、Engine BASIC "
+"はグラフィック、サウンド、入力システムを停止し、実行するプログラムがこれらの機能を使用できるようにします。"
+
+#. [* Commands with arguments are executed using `execvp("<command>",
+#. "<command>", "<argument">, ...)`.]
+# bulk translation
+msgid ""
+"* Commands with `argument` parameters are executed using "
+"`execvp(\"<command>\", \"<command>\", \"<argument\">, ...)`."
+msgstr ""
+"* 引数`を持つコマンドは `execvp(\"<command>\", \"<command>\", \"<argument\">, ...)` "
+"を使って実行されます。"
+
+#. [Sound]
+# bulk translation
+msgid "note pitch"
+msgstr "音高"
+
+#. [Length of notes, milliseconds [default: `1000`].]
+# bulk translation
+msgid "note duration, milliseconds [default: `1000`]"
+msgstr "音符の長さ、ミリ秒 [デフォルト: `1000`]."
+
+#. [Select your SPI device.]
+# bulk translation
+msgid "Selects a SPI device."
+msgstr "SPI デバイスを選択します。"
+
+#. [  Device Number]
+# bulk translation
+msgid "Minor device number"
+msgstr "マイナーデバイス番号"
+
+#. [If the sprite 2 is larger than the sprite 1 and completely cover the
+#. sprite
+#. 1, it will not return an intuitive direction. (Indicates that the sprite 2
+#. is on the top/left of the sprite 1).]
+# bulk translation
+msgid ""
+"Does not return an intuitive direction indication if sprite 2 is larger than"
+" sprite 1 and covers it completely. (It will indicate that sprite 2 is "
+"up/left of sprite 1.)"
+msgstr ""
+"スプライト2がスプライト1より大きく、完全にスプライト1を覆っている場合、直感的な方向指示を返さない。(スプライト2がスプライト1の上/左にあることを示します）。"
+
+#. [Mapped memory address as executable]
+# bulk translation
+msgid "a memory address mapped as executable"
+msgstr "実行可能としてマップされたメモリアドレス"
+
+#. [Compile C programs and load or run them optionally.]
+# bulk translation
+msgid "Compiles and, optionally, loads or runs C programs."
+msgstr "Cプログラムをコンパイルし、オプションでロードまたは実行します。"
+
+#. [Compile C source code files]
+# bulk translation
+msgid "a C source code file to compile"
+msgstr "コンパイルするC言語のソースコード・ファイル"
+
+#. [rate executable filename]
+# bulk translation
+msgid "name of executable file to generate"
+msgstr "生成する実行ファイル名"
+
+#. [Arguments to pass when running a実行 file]
+# bulk translation
+msgid "argument to pass to compiled file when run"
+msgstr "コンパイルしたファイルを実行する際に渡す引数"
+
+#. [Compile the given C source code file to the executable file. If you have a
+#. `MOD` keyword, compile it to a loadable module.]
+# bulk translation
+msgid ""
+"Compiles the given C source code files to an executable file, or to a "
+"loadable module if the `MOD` keyword is present."
+msgstr ""
+"与えられた C ソースコードファイルを実行ファイルにコンパイルします。`MOD` キーワードがあれば、ロード可能なモジュールにコンパイルします。"
+
+#. [Theプログラム program or module is written to `executable$`.]
+# bulk translation
+msgid "The compiled program or module is written to `executable$`."
+msgstr "コンパイルされたプログラムまたはモジュールは `executable$` に書き込まれる。"
+
+#. [If executable$` is not specified, it will be実行 to a temporary file and
+#. will
+#. be executed or loaded immediately. In normal programs, any `argument$`
+#. parameter is passed to the program.]
+# bulk translation
+msgid ""
+"If `executable$` is not specified, the code is compiled to a temporary file "
+"and immediately executed or loaded. For regular programs, any `argument$` "
+"parameters will be passed to the program."
+msgstr ""
+"`executable$` が指定されない場合は、一時ファイルにコンパイルされ、直ちに実行またはロードされます。通常のプログラムでは、任意の "
+"`argument$` パラメータがプログラムに渡される。"
+
+#. [If the sprite is larger than the tile size of the background layer given,
+#. and the sprite is completely covered with the tile, even if the collision
+#. occurs, these bits are not set ( Note that the return value is `64`).]
+# bulk translation
+msgid ""
+"Note that it is possible that none of these bits are set even if a collision"
+" has taken place (i.e., the return value is `64`) if the sprite's size is "
+"larger than the tile size of the given background layer, and the sprite "
+"covers the tile completely."
+msgstr ""
+"スプライトのサイズが与えられた背景レイヤーのタイルサイズより大きく、スプライトがタイルを完全に覆っている場合、衝突が起こったとしても、これらのビットが何もセットされない（すなわち、戻り値が"
+" `64` ）可能性があることに注意してください。"
+
+#. [Register]
+# bulk translation
+msgid "Register contents."
+msgstr "レジスタの内容です。"
+
+#. [Frame number to wait]
+# bulk translation
+msgid "frame number to be waited for"
+msgstr "待機するフレーム番号"
