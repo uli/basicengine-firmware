@@ -2327,8 +2327,8 @@ msgstr "valeur de couleur clé à utiliser pour le masquage de transparence"
 msgid ""
 "sprite priority in relation to background layers [`0` to `{MAX_BG_m1}`]"
 msgstr ""
-"priorité du sprite par rapport aux calques d'arrière-plan [`0` à `"
-"{MAX_BG_m1}`]"
+"priorité du sprite par rapport aux calques d'arrière-plan [`0` à "
+"`{MAX_BG_m1}`]"
 
 #. [Drehwinkel in Grad [Standard “0”]]
 # bulk translation
@@ -7631,8 +7631,8 @@ msgstr "État du bouton de souris spécifié."
 # bulk translation
 msgid "`1` if the mouse button is held, `0` if it is not."
 msgstr ""
-"`1` si le bouton de la souris est maintenu enfoncé, `0` si ce n'est pas "
-"le cas."
+"`1` si le bouton de la souris est maintenu enfoncé, `0` si ce n'est pas le "
+"cas."
 
 #. [ Nummer]
 # bulk translation
@@ -7711,8 +7711,8 @@ msgid ""
 "The meaning of `flags` is determined by `enum` values in the Arduino core "
 "and cannot be relied on to remain stable."
 msgstr ""
-"La signification de `flags` est déterminée par les valeurs `enum` "
-"dans le noyau Arduino et ne peut pas être fiable pour rester stable."
+"La signification de `flags` est déterminée par les valeurs `enum` dans le "
+"noyau Arduino et ne peut pas être fiable pour rester stable."
 
 #. [Liest den Zustand eines Allzweck-E/A-Pins.]
 # bulk translation
@@ -7777,8 +7777,8 @@ msgid ""
 "The maximum value for `period` depends on the flavor of Engine BASIC; it's "
 "320 for the gaming build, and 160 for the network build."
 msgstr ""
-"La valeur maximale de `period` dépend de la saveur du Engine BASIC ; "
-"c'est 320 pour la version jeu et 160 pour la version réseau."
+"La valeur maximale de `period` dépend de la saveur du Engine BASIC ; c'est "
+"320 pour la version jeu et 160 pour la version réseau."
 
 #. [Tonhöhe beachten]
 # bulk translation
@@ -8296,8 +8296,8 @@ msgid ""
 "Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` "
 "and `$B8`"
 msgstr ""
-"Les numéros de registres valides sont : `$01`, `$28` à `$30`, `$34` "
-"à `$36`, `$82` et `$B8`"
+"Les numéros de registres valides sont : `$01`, `$28` à `$30`, `$34` à `$36`,"
+" `$82` et `$B8`"
 
 #. [Die alternative `FRAME()`-Syntax wird aus Gründen der
 #. Abwärtskompatibilität
@@ -8316,8 +8316,8 @@ msgstr ""
 msgid ""
 "Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`."
 msgstr ""
-"Les numéros de registre valides sont : `$05`, `$53`, `$84`, `$86`, "
-"`$9F` et `$B7`."
+"Les numéros de registre valides sont : `$05`, `$53`, `$84`, `$86`, `$9F` et "
+"`$B7`."
 
 #. [Alle grundlegenden Motorbefehle, die einen Farbwert erfordern, erwarten,
 #. dass sich der Wert im Format des Videoscontrollers befindet, der vom
@@ -8352,3 +8352,316 @@ msgstr ""
 "Les polices proportionnelles et les polices qui ne sont pas spécifiquement "
 "conçues pour être utilisées sur des écrans à faible résolution ne seront pas"
 " très belles."
+
+#. [Wählt den I2C-Bus zur Verwendung aus.]
+# from Google
+msgid "Selects the I2C bus to use."
+msgstr "Sélectionne le bus I2C à utiliser."
+
+#. [Busnummer I2C [`0` 0` bis 255]]]
+# from Google
+msgid "I2C bus number [`0` to `255`]"
+msgstr "Numéro de bus I2C [`0` à` 255`]"
+
+#. [Dieser Befehl ist nur auf Linux-Plattformen implementiert.]
+# from Google
+msgid "This command is only implemented on Linux-based platforms."
+msgstr "Cette commande n'est implémentée que sur les plates-formes Linux."
+
+#. [ kbd: [Pfeil nach oben]]
+# bulk translation
+msgid " kbd:[Up_Arrow]\t"
+msgstr " kbd:[Up_Arrow]\t"
+
+# bulk translation
+msgid "tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr ""
+"Coordonnée X de l'ensemble des tuiles, en pixels [`0` à `PSIZE(0)-1`]."
+
+#. [Y Koordinaten aller Fliesen, in Pixeln [`0` zu `PSIZE(2)-1`].]
+# bulk translation
+msgid "tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr ""
+"Coordonnée en Y de l'ensemble des tuiles, en pixels [`0` à `PSIZE(2)-1`]."
+
+#. [Lassen Sie eine Schleife DO, FOR oder WHILE.]
+# bulk translation
+msgid "Exits a DO, FOR or WHILE loop."
+msgstr "Quitte une boucle DO, FOR ou WHILE."
+
+#. [der variable Zähler einer FOR-Schleife]
+# bulk translation
+msgid "the counter variable of a FOR loop"
+msgstr "la variable compteur d'une boucle FOR"
+
+#. [Hinterlässt die höchste Schleife des angegebenen Typs, ohne dabei seinen
+#. Schnallenzustand zu berücksichtigen, oder die angegebene `FOR` Schleife,
+#. wenn es ein `loop_variable` Argument gibt.]
+# bulk translation
+msgid ""
+"Exits the top-most loop of the specified type, without regard for its loop "
+"condition, or the specified `FOR` loop if there is a `loop_variable` "
+"argument."
+msgstr ""
+"Quitte la boucle la plus haute du type spécifié, sans tenir compte de sa "
+"condition de boucle, ou la boucle `FOR` spécifiée s'il y a un argument "
+"`loop_variable`."
+
+#. [Die entsprechende Schleife wird aus dem Schleifenstapel entfernt und die
+#. Ausführung wird nach dem Ende der Schleife wieder aufgenommen (die
+#. Anleitung `LOOP`, `NEXT` oder `WEND` nächstes, oder die Anleitung `NEX
+#. loop_variable` nächste).]
+# bulk translation
+msgid ""
+"The matching loop is dropped from the loop stack, and execution resumes "
+"after the end of the loop (the nearest following `LOOP`, `NEXT` or `WEND` "
+"statement, or the nearest `NEXT loop_variable` statement)."
+msgstr ""
+"La boucle correspondante est supprimée de la pile de boucles, et l'exécution"
+" reprend après la fin de la boucle (l'instruction `LOOP`, `NEXT` ou `WEND` "
+"suivante la plus proche, ou l'instruction `NEXT loop_variable` la plus "
+"proche)."
+
+#. [`EXIT` funktioniert wie vorgesehen nur in den Schleifen mit einem
+#. "einfachen Ende", d.h. Schleifen, die nicht mit mehr als einem `LOOP`,
+#. `NEXT` oder `WEND` Befehl iteriert werden.]
+# bulk translation
+msgid ""
+"`EXIT` only works as intended in loops with a \"single end\", i.e. loops "
+"that are not iterated using more than one `LOOP`, `NEXT` or `WEND` "
+"statement."
+msgstr ""
+"`EXIT` ne fonctionne comme prévu que dans les boucles avec une \"fin "
+"unique\", c'est-à-dire les boucles qui ne sont pas itérées en utilisant plus"
+" d'une instruction `LOOP`, `NEXT` ou `WEND`."
+
+#. [Macht, zu der _e_.]
+# bulk translation
+msgid "Power to raise _e_ to."
+msgstr "Puissance à laquelle élever _e_."
+
+#. [Polizeinummer]
+# bulk translation
+msgid "font number"
+msgstr "numéro de police"
+
+# bulk translation
+msgid ""
+"* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key"
+" is documented as belonging to a US layout keyboard, but US layouts do not "
+"have a separate kbd:["
+msgstr ""
+"* [[pas clair]] Certaines définitions de touches ne sont pas bien définies. "
+"La touche kbd:[Pipe2] est documentée comme appartenant à un clavier à "
+"disposition américaine, mais les dispositions américaines n'ont pas de "
+"touche kbd:["
+
+# from Google
+msgid ""
+"* There is currently no keyboard event handling similar to <<ON PAD>> for "
+"game pad input."
+msgstr ""
+"* Il n'y a actuellement aucun manipulation d'événements de clavier similaire"
+" à <<ON PAD>> pour l'entrée de pad de jeu."
+
+#. [Die Koordinaten, die den Speicherbereich der gültigen Pixel überschreiten,
+#. werden gebrochen. Dies kann die Steigung der Linie ändern und ist nicht das
+#. Verhalten, das wir erwarten konnten.]
+# bulk translation
+msgid ""
+"Coordinates that exceed the valid pixel memory area will be clamped. This "
+"can change the slope of the line and is not the behavior one would expect."
+msgstr ""
+"Les coordonnées qui dépassent la zone de mémoire des pixels valides seront "
+"bridées. Cela peut modifier la pente de la ligne et n'est pas le "
+"comportement auquel on pourrait s'attendre."
+
+#. [Es gibt keine Einschränkung der Koordinaten, die verwendet werden
+#. können;Die Hintergrundkarten rollen auf, wenn das Anzeigefenster über die
+#. Grenzen der Karte hinausgeht.]
+# from Argos
+msgid ""
+"There are no restrictions on the coordinates that can be used; backgrounds "
+"maps wrap around if the display window extends beyond the map boundaries."
+msgstr ""
+"Il n'y a aucune restriction sur les coordonnées qui peuvent être utilisées; "
+"les cartes de fond s'enroulent si la fenêtre d'affichage s'étend au-delà des"
+" limites de la carte."
+
+#. [s/o]
+# bulk translation
+msgid " n/a"
+msgstr " s/o"
+
+#. [* Die Programme werden ohne Zeilennummer gespeichert, wenn `LINE OFF`
+#. angegeben ist. Ansonsten sind die Zeilennummern enthalten.]
+# bulk translation
+msgid ""
+"* Programs are saved without line numbers if `LINE OFF` is specified. "
+"Otherwise, line numbers are included."
+msgstr ""
+"* Les programmes sont sauvegardés sans numéro de ligne si `LINE OFF` est "
+"spécifié. Sinon, les numéros de ligne sont inclus."
+
+#. [* BASIC-Programme werden im Rohtextformat (UTF-8) gespeichert.]
+# bulk translation
+msgid "* BASIC programs are saved in plain text (UTF-8) format."
+msgstr "* Les programmes BASIC sont sauvegardés au format texte brut (UTF-8)."
+
+#. [links vom Pixelspeicherabschnitt, Pixel [`0` (Standard) zu `PSIZE(0)-1`]]
+# bulk translation
+msgid "left of pixel memory section, pixels [`0` (default) to `PSIZE(0)-1`]"
+msgstr ""
+"gauche de la section de la mémoire de pixels, pixels [`0` (par défaut) à "
+"`PSIZE(0)-1`]"
+
+#. [Betriebssystembefehle ausführen.]
+# from Google
+msgid "Runs operating system commands."
+msgstr "Exécute des commandes du système d'exploitation."
+
+#. [Befehl zur Ausführung]
+# bulk translation
+msgid "command to run"
+msgstr "Commande à exécuter"
+
+#. [Argument zum Befehl]
+# bulk translation
+msgid "argument to pass to the command"
+msgstr "argument à passer à la commande"
+
+#. [Führen Sie `command` oder eine interaktive Shell, wenn `command` nicht
+#. angegeben ist.]
+# bulk translation
+msgid "Runs `command`, or an interactive shell if `command` is not specified."
+msgstr ""
+"Exécute `command`, ou un shell interactif si `command` n'est pas spécifié."
+
+#. [`command` wird von der Shell des Betriebssystems ausgeführt, wenn es keine
+#. Argumentparameter gibt, die die Syntax-Konstruktionen der Shell verwenden
+#. können.]
+# bulk translation
+msgid ""
+"`command` is executed by the operating system shell if there are no "
+"`argument` parameters, allowing shell syntax constructs to be used."
+msgstr ""
+"`command` est exécutée par le shell du système d'exploitation s'il n'y a pas"
+" de paramètres `argument`, ce qui permet d'utiliser les constructions "
+"syntaxiques du shell."
+
+#. [Wenn ein oder mehrere Argumentparameter angegeben werden, wird der Befehl
+#. direkt ausgeführt.]
+# bulk translation
+msgid ""
+"If one or more `argument` parameters are specified, the command will be "
+"executed directly."
+msgstr ""
+"Si un ou plusieurs paramètres `argument` sont spécifiés, la commande sera "
+"exécutée directement."
+
+#. [Wenn das Keyword `OFF` hinzugefügt wird, wird das BASIC-Gerät sein
+#. Grafik-,
+#. Ton- und Eingabesystem stoppen, damit das ausgeführte Programm diese
+#. Einrichtungen nutzen kann.]
+# bulk translation
+msgid ""
+"If the `OFF` keyword is added, Engine BASIC will shut down its graphics, "
+"sound and input system to allow the executed program to use these "
+"facilities."
+msgstr ""
+"Si le mot-clé `OFF` est ajouté, l'Engine BASIC arrêtera son système "
+"graphique, sonore et d'entrée pour permettre au programme exécuté d'utiliser"
+" ces facilités."
+
+#. [* Die Befehle werden nur mit "execl("/bin/sh", "sh", ...)" ausgeführt.]
+# bulk translation
+msgid ""
+"* `command`-only commands are executed using `execl(\"/bin/sh\", \"sh\", "
+"...)`."
+msgstr ""
+"* Les commandes `command`-seulement sont exécutées en utilisant "
+"`execl(\"/bin/sh\", \"sh\", ...)`."
+
+#. [* Die Befehle mit Argumentparametern werden mit `execvp("<command-
+#. Spannung", "<command-Wert", "< Argument"-Wert, ...) ` ausgeführt.]
+# bulk translation
+msgid ""
+"* Commands with `argument` parameters are executed using "
+"`execvp(\"<command>\", \"<command>\", \"<argument\">, ...)`."
+msgstr ""
+"* Les commandes avec des paramètres `argument` sont exécutées en utilisant "
+"`execvp(\"<command>\", \"<command>\", \"<argument\">, ...)`."
+
+#. [Wählen Sie ein SPI-Gerät aus.]
+# bulk translation
+msgid "Selects a SPI device."
+msgstr "Sélectionne un périphérique SPI."
+
+#. [Mindestgerätenummer]
+# bulk translation
+msgid "Minor device number"
+msgstr "Numéro de périphérique mineur"
+
+#. [Sondereffekte Flaggen [0 bis 7].]
+# bulk translation
+msgid "special effect flags [`0` to `7`]"
+msgstr "drapeaux d'effets spéciaux [0 à 7]."
+
+#. [Generieren und ggf. C-Programme laden oder ausführen.]
+# bulk translation
+msgid "Compiles and, optionally, loads or runs C programs."
+msgstr "Compile et, éventuellement, charge ou exécute des programmes C."
+
+#. [eine C-Quellcode-Datei zum Kompilieren]
+# bulk translation
+msgid "a C source code file to compile"
+msgstr "un fichier de code source C à compiler"
+
+#. [ausführbarer Dateiname zur Generierung]
+# bulk translation
+msgid "name of executable file to generate"
+msgstr "nom du fichier exécutable à générer"
+
+#. [Argument, um zu kompilierten Datei während der Ausführung zu übergeben]
+# bulk translation
+msgid "argument to pass to compiled file when run"
+msgstr "argument à passer au fichier compilé lors de l'exécution"
+
+#. [Generieren Sie die C-Quellcode-Dateien, die in einer ausführbaren Datei
+#. angegeben sind, oder in einem belastbaren Modul, wenn das `MOD` Keyword
+#. vorhanden ist.]
+# bulk translation
+msgid ""
+"Compiles the given C source code files to an executable file, or to a "
+"loadable module if the `MOD` keyword is present."
+msgstr ""
+"Compile les fichiers de code source C donnés en un fichier exécutable, ou en"
+" un module chargeable si le mot-clé `MOD` est présent."
+
+#. [Das kompilierte Programm oder Modul wird in `executable$` geschrieben.]
+# bulk translation
+msgid "The compiled program or module is written to `executable$`."
+msgstr "Le programme ou le module compilé est écrit dans `executable$`."
+
+#. [Wenn `executable$` nicht angegeben ist, wird der Code in eine temporäre
+#. Datei zusammengestellt und sofort ausgeführt oder geladen. Für reguläre
+#. Programme werden alle Argumentparameter an das Programm übergeben.]
+# bulk translation
+msgid ""
+"If `executable$` is not specified, the code is compiled to a temporary file "
+"and immediately executed or loaded. For regular programs, any `argument$` "
+"parameters will be passed to the program."
+msgstr ""
+"Si `executable$` n'est pas spécifié, le code est compilé dans un fichier "
+"temporaire et immédiatement exécuté ou chargé. Pour les programmes "
+"réguliers, tous les paramètres `argument$` seront passés au programme."
+
+#. [Inhalt der Registrierung.]
+# bulk translation
+msgid "Register contents."
+msgstr "Contenu du registre."
+
+#. [Straßenbahn Nummer zu warten]
+# bulk translation
+msgid "frame number to be waited for"
+msgstr "numéro de la trame à attendre"
