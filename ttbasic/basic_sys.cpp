@@ -531,6 +531,8 @@ The following internal information can be retrieved using `SYS()`:
 \table
 | `0` | memory address of BASIC program buffer
 | `1` | memory address of current font
+| `2` | system type; `0` for original (ESP8266), `1` for Shuttle (ESP32),
+        `2` for NG (H3 bare-metal), `3` for LT (Linux-based)
 \endtable
 ***/
 num_t Basic::nsys() {
@@ -540,7 +542,20 @@ num_t Basic::nsys() {
   switch (item) {
   case 0:	return (num_t)(intptr_t)listbuf;
   case 1:	return (num_t)(intptr_t)sc0.getfontadr();
-  default:	E_VALUE(0, 1); return 0;
+  case 2:
+#ifdef ESP8266
+                return 0;
+#elif defined(ESP32)
+                return 1;
+#elif defined(H3)
+                return 2;
+#elif defined(__linux__)
+                return 3;
+#else
+#warning undefined system
+                return -1;
+#endif
+  default:	E_VALUE(0, 2); return 0;
   }
 }
 
