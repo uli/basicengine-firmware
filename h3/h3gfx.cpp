@@ -75,7 +75,12 @@ void H3GFX::modeSize(int m, int &w, int &h) {
   h = modes_pal[m].y;
 }
 
-#define DISPLAY_CORE            1
+#ifdef JAILHOUSE
+#define DISPLAY_CORE            3
+#else
+#define DISPLAY_CORE		1
+#endif
+
 #define DISPLAY_CORE_STACK_SIZE 0x1000
 static void *display_core_stack;
 
