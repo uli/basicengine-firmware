@@ -43,7 +43,8 @@ public:
   }
 
   void cleanCache() {
-    mmu_flush_dcache();
+    mmu_flush_dcache_range((void *)display_active_buffer, m_current_mode.x *
+                           m_current_mode.y * 4, MMU_DCACHE_CLEAN);
   }
 
   inline uint16_t width() {
