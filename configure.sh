@@ -32,6 +32,15 @@ generate_build() {
 	shift
 	for s in "$@"; do
 		echo "build $objdir/${s%.*}.o: $rule $s || $AUTOGEN_DEPS"
+		# Linux ABI and EABI (allegedly) use differently sized
+		# enums; whether that is true or not (it doesn't seem to
+		# make much sense to me), the crosstool-ng toolchain is
+		# built with -fshort-enums, while the SDL server sends SDL
+		# events from Linux with long enums. We therefore have to
+		# compile stuff that includes SDL headers with
+		# -fno-short-enums, while making sure that it doesn't use
+		# any other data structures containing enums... :((
+		[[ "$s" =~ "sdl_client" ]] && echo "  cxxflags = \$cxxflags -fno-short-enums"
 	done
 }
 

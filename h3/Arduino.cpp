@@ -63,14 +63,19 @@ extern int sound_reinit_rate;
 
 void kbd_task(void);
 void mouse_task(void);
+#include "sdl_client.h"
 extern "C" void network_task(void);
 
 void platform_process_events() {
+#ifdef JAILHOUSE
+  sdl_task();
+#else
   usb_task();
   sd_detect();
   kbd_task();
   mouse_task();
   network_task();
+#endif
 }
 
 extern "C" size_t umm_free_heap_size(void) {

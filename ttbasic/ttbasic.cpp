@@ -66,6 +66,10 @@ extern "C" {
 #include <soc/rtc.h>
 #endif
 
+#ifdef JAILHOUSE
+#include <sdl_client.h>
+#endif
+
 #include "basic.h"
 
 uint8_t serialMode;
@@ -96,6 +100,10 @@ void setup() {
 void loop(void) {
   Serial.println(F("\nStarting"));
   Serial.flush();
+
+#ifdef JAILHOUSE
+  sdl_client_init();
+#endif
 
 #ifdef ESP8266
   SPI.pins(14, 12, 13, 15);
