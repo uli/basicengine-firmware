@@ -5,7 +5,7 @@ test -z "$MAKE" && MAKE=make
 test -z "$CC" && CC=${CROSS_COMPILE}gcc
 test -z "$CXX" && CXX=${CROSS_COMPILE}g++
 
-test -z "$H3_OSDIR" && H3_OSDIR=../../orangepi/allwinner-bare-metal
+test -z "$H3_OSDIR" && H3_OSDIR=../allwinner-bare-metal
 test -z "$H3_OBJDIR" && H3_OBJDIR=build_h3
 
 test -z "$SDL_OBJDIR" && SDL_OBJDIR=build_sdl
