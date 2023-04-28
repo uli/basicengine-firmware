@@ -8,7 +8,7 @@
 FILEDIR user_files[MAX_USER_FILES];
 
 void SMALL basic_init_file_early() {
-#ifdef H3
+#if defined(H3) && !defined(JAILHOUSE)
   // Also done in arch_process_events(), but that's too late for us here.
   sd_detect();
 #endif
