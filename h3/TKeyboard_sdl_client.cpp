@@ -1,9 +1,17 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
 
-//#define DEBUG_REPORT
+// WARNING!!
+// This file is compiled with -fno-short-enums and is not ABI-compatible
+// with the rest of the system. Do not use data structures containing enums
+// here!
 
-#ifndef JAILHOUSE
+// XXX: Factor out duplicate code here and in h3/TKeyboard.cpp.
+
+#ifdef JAILHOUSE
+
+#include "sdl_client.h"
+#include "sdl_client_internal.h"
 
 #include <TKeyboard.h>
 #include "TPS2.h"
@@ -282,40 +290,7 @@ keyEvent keybuf[KEYBUF_SIZE];
 int keybuf_r = 0;
 int keybuf_w = 0;
 
-hid_keyboard_report_t report_queue[KEYBUF_SIZE];
-int report_r = 0;
-int report_w = 0;
-
-hid_keyboard_report_t last_report;
-int last_keyboard_hcd;
-uint8_t last_keyboard_dev_addr;
-
-#define REPEAT_DELAY 20
-#define REPEAT_INTERVAL 3
-
-static int repeat_countdown = 0;
-
 static uint8_t key_state[256];
-
-// runs in IRQ context
-void hook_usb_keyboard_report(int hcd, uint8_t dev_addr, hid_keyboard_report_t *rep) {
-  last_keyboard_hcd = hcd;
-  last_keyboard_dev_addr = dev_addr;
-
-  int next_w = (report_w + 1) % KEYBUF_SIZE;
-
-  if (next_w == report_r)	// queue full
-    return;
-
-  // XXX: GCC optimizes assignments of large compound types to memcpy()
-  // calls, and newlib's memcpy() seems to use FP registers, which are not
-  // saved by the baremetal IRQ handler. This is not a problem _for now_
-  // because hid_keyboard_report_t is only 8 bytes, but it would be good
-  // to have a way to reliably prevent it from doing that.
-  report_queue[report_w] = *rep;
-
-  report_w = next_w;
-}
 
 enum locks {
   NUM_LOCK = 1,
@@ -325,140 +300,109 @@ enum locks {
 
 static uint8_t locks = 0;
 
-static void update_leds(void) {
-  usb_keyboard_set_leds(last_keyboard_hcd, last_keyboard_dev_addr, locks);
-}
-
 static void toggle_caps_lock(void) {
+  // XXX: Does this still make sense when SDL is handling the keyboard?
   locks ^= CAPS_LOCK;
-  update_leds();
 }
 
-void process_usb_keyboard_report(hid_keyboard_report_t *rep) {
-  bool any_key = false;
-  static uint8_t old_state[256];
-#ifdef DEBUG_REPORT
-  printf("kbdrep mod %02X keys ", rep->modifier);
-  for (int i = 0; i < 6; ++i) {
-    printf("%02X ", rep->keycode[i]);
+void sdl_process_key_event(SDL_KeyboardEvent &ev) {
+  uint8_t kc = ev.keysym.scancode;
+
+  key_state[kc] = ev.type == SDL_KEYDOWN;
+
+  if (kc >= 224 && kc < 232) {
+    // We don't create events for modifiers only.
+    return;
   }
-  putchar('\n');
-#endif
 
-  memcpy(old_state, key_state, 256);
-  memset(key_state, 0, 256);
+  if ((keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
+    keyEvent *kev = &keybuf[keybuf_w];
+    memset(kev, 0, sizeof(*kev));
 
-  for (int i = 0; i < 6; ++i) {
-    uint8_t kc = rep->keycode[i];
+    kev->BREAK = ev.type == SDL_KEYUP;
+    if (key_state[224] || key_state[224+4])
+      kev->CTRL = 1;
+    if (key_state[224+1] || key_state[224+5])
+      kev->SHIFT = 1;
+    if (key_state[224+2])
+      kev->ALT = 1;
+    if (key_state[224+6])
+      kev->ALTGR = 1;
 
-    if (kc)
-      any_key = true;
+    if (kc == 57)
+      toggle_caps_lock();
 
-    key_state[kc] = 1;
-    if (kc && old_state[kc] != key_state[kc] &&
-        (keybuf_w + 1) % KEYBUF_SIZE != keybuf_r) {
-      keyEvent *kev = &keybuf[keybuf_w];
-      memset(kev, 0, sizeof(*kev));
+    uint8_t kc_off = kc + (kev->SHIFT ? 0x80 : 0);
 
-      if (old_state[kc])
-        kev->BREAK = 1;
-      if (rep->modifier & (1 | 16))
-        kev->CTRL = 1;
-      if (rep->modifier & (2 | 32))
-        kev->SHIFT = 1;
-      if (rep->modifier & 4)
-        kev->ALT = 1;
-      if (rep->modifier & 64)
-        kev->ALTGR = 1;
+    if (keyboard_layout == 2 && kev->ALTGR) {
+      // German Alt Gr combos
+      switch (kc) {
+      case 0x14: kev->code = '@'; break;	// Q
+      case 0x08: kev->code = U'€'; break;	// E
+      case 0x64: kev->code = '|'; break;	// 102nd key
+      case 0x1f: kev->code = U'²'; break;	// 2
+      case 0x20: kev->code = U'³'; break;	// 3/cubed
+      case 0x24: kev->code = '{'; break;	// 7
+      case 0x25: kev->code = '['; break;	// 8
+      case 0x26: kev->code = ']'; break;	// 9
+      case 0x27: kev->code = '}'; break;	// 0
+      case 0x2d: kev->code = '\\'; break;	// - (sharp s)
+      case 0x10: kev->code = U'µ'; break;	// M
+      case 0x30: kev->code = '~'; break;	// ]
+      default: kev->code = 0; break;
+      }
+    } else if (keyboard_layout == 3 && kev->ALTGR) {
+      // French Alt Gr combos
+      switch (kc) {
+      case 0x1f: kev->code = '~'; break;	// 2
+      case 0x20: kev->code = '#'; break;	// 3
+      case 0x21: kev->code = '{'; break;	// 4
+      case 0x22: kev->code = '['; break;	// 5
+      case 0x23: kev->code = '|'; break;	// 6
+      case 0x24: kev->code = '`'; break;	// 7
+      case 0x25: kev->code = '\\'; break;	// 8
+      case 0x26: kev->code = '^'; break;	// 9
+      case 0x27: kev->code = '@'; break;	// 0
+      case 0x2d: kev->code = ']'; break;	// -
+      case 0x2e: kev->code = '}'; break;	// =
+      default: kev->code = 0; break;
+      }
+    } else if (keyboard_layout == 4 && kev->ALTGR) {
+      // Spanish Alt Gr combos
+      switch (kc) {
+      case 0x35: kev->code = '\\'; break;	// grave
+      case 0x1e: kev->code = '|'; break;	// 1
+      case 0x1f: kev->code = '@'; break;	// 2
+      case 0x20: kev->code = '#'; break;	// 3
+      case 0x21: kev->code = '~'; break;	// 4	XXX; dead key
+      case 0x22: kev->code = U'½'; break;	// 5
+      case 0x08: kev->code = U'€'; break;	// e
+      case 0x23: kev->code = U'¬'; break;	// 6
+      case 0x2f: kev->code = '['; break;	// [
+      case 0x30: kev->code = ']'; break;	// ]
+      case 0x34: kev->code = '{'; break;	// '
+      case 0x31: kev->code = '}'; break;	// backslash
+      default: kev->code = 0; break;
+      }
+    } else if (kc_off < sizeof(usb2us) / sizeof(usb2us[0])) {
+      kev->code = usb2ascii[keyboard_layout][kc_off];
+      if (locks & CAPS_LOCK)
+        kev->code = toupper(kev->code);
+    } else
+      kev->code = 0;
 
-      if (kc == 57)
-        toggle_caps_lock();
-
-      uint8_t kc_off = kc + ((rep->modifier & (2 | 32)) ? 0x80 : 0);
-
-      if (keyboard_layout == 2 && kev->ALTGR) {
-        // German Alt Gr combos
-        switch (kc) {
-        case 0x14: kev->code = '@'; break;	// Q
-        case 0x08: kev->code = U'€'; break;	// E
-        case 0x64: kev->code = '|'; break;	// 102nd key
-        case 0x1f: kev->code = U'²'; break;	// 2
-        case 0x20: kev->code = U'³'; break;	// 3/cubed
-        case 0x24: kev->code = '{'; break;	// 7
-        case 0x25: kev->code = '['; break;	// 8
-        case 0x26: kev->code = ']'; break;	// 9
-        case 0x27: kev->code = '}'; break;	// 0
-        case 0x2d: kev->code = '\\'; break;	// - (sharp s)
-        case 0x10: kev->code = U'µ'; break;	// M
-        case 0x30: kev->code = '~'; break;	// ]
-        default: kev->code = 0; break;
-        }
-      } else if (keyboard_layout == 3 && kev->ALTGR) {
-        // French Alt Gr combos
-        switch (kc) {
-        case 0x1f: kev->code = '~'; break;	// 2
-        case 0x20: kev->code = '#'; break;	// 3
-        case 0x21: kev->code = '{'; break;	// 4
-        case 0x22: kev->code = '['; break;	// 5
-        case 0x23: kev->code = '|'; break;	// 6
-        case 0x24: kev->code = '`'; break;	// 7
-        case 0x25: kev->code = '\\'; break;	// 8
-        case 0x26: kev->code = '^'; break;	// 9
-        case 0x27: kev->code = '@'; break;	// 0
-        case 0x2d: kev->code = ']'; break;	// -
-        case 0x2e: kev->code = '}'; break;	// =
-        default: kev->code = 0; break;
-        }
-      } else if (keyboard_layout == 4 && kev->ALTGR) {
-        // Spanish Alt Gr combos
-        switch (kc) {
-        case 0x35: kev->code = '\\'; break;	// grave
-        case 0x1e: kev->code = '|'; break;	// 1
-        case 0x1f: kev->code = '@'; break;	// 2
-        case 0x20: kev->code = '#'; break;	// 3
-        case 0x21: kev->code = '~'; break;	// 4	XXX; dead key
-        case 0x22: kev->code = U'½'; break;	// 5
-        case 0x08: kev->code = U'€'; break;	// e
-        case 0x23: kev->code = U'¬'; break;	// 6
-        case 0x2f: kev->code = '['; break;	// [
-        case 0x30: kev->code = ']'; break;	// ]
-        case 0x34: kev->code = '{'; break;	// '
-        case 0x31: kev->code = '}'; break;	// backslash
-        default: kev->code = 0; break;
-        }
-      } else if (kc_off < sizeof(usb2us) / sizeof(usb2us[0])) {
-        kev->code = usb2ascii[keyboard_layout][kc_off];
-        if (locks & CAPS_LOCK)
-          kev->code = toupper(kev->code);
-      } else
-        kev->code = 0;
-
-      if (!kev->code) {
-        kev->KEY = 1;
-        for (size_t i = 0; i < sizeof(ps2_to_usb) / sizeof(*ps2_to_usb); ++i) {
-          if (ps2_to_usb[i] == kc) {
-            kev->code = i;
-            break;
-          }
+    if (!kev->code) {
+      kev->KEY = 1;
+      for (size_t i = 0; i < sizeof(ps2_to_usb) / sizeof(*ps2_to_usb); ++i) {
+        if (ps2_to_usb[i] == kc) {
+          kev->code = i;
+          break;
         }
       }
-
-      keybuf_w = (keybuf_w + 1) % KEYBUF_SIZE;
     }
+
+    keybuf_w = (keybuf_w + 1) % KEYBUF_SIZE;
   }
-
-  for (int i = 0; i < 8; ++i) {
-    if (rep->modifier & (1 << i))
-      key_state[224 + i] = 1;
-  }
-
-  last_report = *rep;
-  if (any_key)
-    repeat_countdown = REPEAT_DELAY;
-  else
-    repeat_countdown = 0;
-
-  key_state[0] = 0;
 }
 
 bool TKeyboard::state(uint8_t keycode) {
@@ -500,28 +444,5 @@ void TKeyboard::setLayout(uint8_t layout) {
 void TKeyboard::end() {
 }
 
-void kbd_repeat(void) {
-  if (!repeat_countdown)
-    return;
 
-  repeat_countdown--;
-
-  if (repeat_countdown)
-    return;
-
-  hid_keyboard_report_t l = last_report;
-  hid_keyboard_report_t empty = {};
-  process_usb_keyboard_report(&empty);
-  process_usb_keyboard_report(&l);
-  repeat_countdown = REPEAT_INTERVAL;
-}
-
-void kbd_task(void) {
-  while (report_r != report_w) {
-    process_usb_keyboard_report(&report_queue[report_r]);
-    report_r = (report_r + 1) % KEYBUF_SIZE;
-  }
-  kbd_repeat();
-}
-
-#endif	// !JAILHOUSE
+#endif	// JAILHOUSE
