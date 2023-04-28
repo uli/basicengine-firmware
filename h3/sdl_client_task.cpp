@@ -7,8 +7,9 @@
 
 #include "sdl_client.h"
 #include "sdl_client_internal.h"
+#include <fixed_addr.h>
 
-struct sdl_event_buffer *evbuf = (struct sdl_event_buffer *)0x488f1000;//0x4f6f1000;
+struct sdl_event_buffer *evbuf = (struct sdl_event_buffer *)SDL_EVENT_BUFFER_ADDR;
 
 void sdl_task(void) {
   while (evbuf->read_pos != evbuf->write_pos) {
