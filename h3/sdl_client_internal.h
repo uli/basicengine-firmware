@@ -1,12 +1,7 @@
-// XXX: make this configurable
-#include "../../buildroot_jh/output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/SDL2/SDL_events.h"
+#include JAILHOUSE_SDL_HEADER
 
-#define SDL_EVENT_BUFFER_SIZE 128
-
-struct sdl_event_buffer {
-    int read_pos;
-    int write_pos;
-    SDL_Event events[SDL_EVENT_BUFFER_SIZE];
-};
+#define USE_CUSTOM_SDL_HEADERS
+#include <sdl_server.h>
+#undef USE_CUSTOM_SDL_HEADERS
 
 void sdl_process_key_event(SDL_KeyboardEvent &ev);
