@@ -35,9 +35,16 @@ static int cursor_pad_state() {
 
 EBAPI int eb_pad_state(int num) {
   switch (num) {
+#ifdef HAVE_MULTI_PAD
+  case 0: return (joy.read(0) & JOY_MASK) | cursor_pad_state();
+  case 1: return cursor_pad_state();
+  case -1: return joy.count();
+  default: return joy.read(num - 2) & JOY_MASK;
+#else
   case 0: return (joy.read() & JOY_MASK) | cursor_pad_state();
   case 1: return cursor_pad_state();
   case 2: return joy.read() & JOY_MASK;
+#endif
   }
   return 0;
 }

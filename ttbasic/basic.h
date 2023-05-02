@@ -517,7 +517,12 @@ void iloadconfig();
 extern bool event_play_enabled;
 extern index_t event_play_proc_idx[MML_CHANNELS];
 
+#ifdef HAVE_MULTI_PADS
+#define MAX_PADS PLATFORM_MAX_PADS + 3
+#else
 #define MAX_PADS 3
+#endif
+
 extern bool event_pad_enabled;
 extern index_t event_pad_proc_idx[MAX_PADS];
 extern int event_pad_last[MAX_PADS];
