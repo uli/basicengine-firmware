@@ -16,7 +16,9 @@ void sdl_task(void) {
     SDL_Event &ev = evbuf->events[evbuf->read_pos];
     if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
       sdl_process_key_event(ev.key);
-    }
+    } else if (ev.type >= SDL_CONTROLLERAXISMOTION && ev.type <= SDL_CONTROLLERDEVICEREMAPPED)
+      sdl_process_controller_event(ev);
+
     evbuf->read_pos = (evbuf->read_pos + 1) % SDL_EVENT_BUFFER_SIZE;
   }
 }

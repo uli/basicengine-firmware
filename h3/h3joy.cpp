@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
+#ifndef JAILHOUSE
+
 #include <joystick.h>
 #include <stdio.h>
 
@@ -332,3 +334,5 @@ bool Joystick::parseReportDesc(usb_pad *pad)
 }
 
 Joystick joy;
+
+#endif	// !JAILHOUSE

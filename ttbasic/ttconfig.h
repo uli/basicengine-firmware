@@ -46,6 +46,9 @@
 #define USE_ROTOZOOM
 #define HAVE_NETWORK
 #define HAVE_TFTP
+#ifdef JAILHOUSE
+#define HAVE_MULTI_PAD
+#endif
 #endif
 
 #ifdef __DJGPP__

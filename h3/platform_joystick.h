@@ -3,6 +3,35 @@
 
 // USB joystick driver.
 
+#ifdef JAILHOUSE
+
+#include <stdint.h>
+#include <vector>
+
+#define PLATFORM_MAX_PADS 16
+
+class Joystick {
+public:
+  void begin();
+  int read(int num);
+  int count();
+
+  void addInstance(uint32_t id);
+  void delInstance(uint32_t id);
+  void buttonDown(uint32_t id, uint8_t button);
+  void buttonUp(uint32_t id, uint8_t button);
+
+private:
+  void indexFromInstance(int id);
+
+  std::vector<int> m_index;
+  int m_state[PLATFORM_MAX_PADS];
+
+  int m_num_pads;
+};
+
+#else	// JAILHOUSE
+
 #include <stdint.h>
 #include <QList.h>
 #include <usb.h>
@@ -53,3 +82,5 @@ private:
   int m_state;
   QList<usb_pad *> m_pad_list;
 };
+
+#endif	// JAILHOUSE
