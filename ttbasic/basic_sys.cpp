@@ -998,12 +998,12 @@ void Basic::ishell() {
   }
 
 #else
-  err = ERR_NOTSUPPORTED;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
 #ifndef __linux__
 void Basic::idtbload() {
-  err = ERR_NOTSUPPORTED;
+  err = ERR_NOT_SUPPORTED;
 }
 #endif

@@ -93,7 +93,7 @@ void Basic::ii2cbus() {
     return;
   eb_i2c_select_bus(bus);
 #else
-  err = ERR_NOTSUPPORTED;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
@@ -329,7 +329,7 @@ void Basic::ispidev() {
 
   eb_spi_select_device(major, minor);
 #else
-  return ERR_NOTSUPPORTED;
+  err = ERR_NOT_SUPPORTED;
 #endif
 }
 
