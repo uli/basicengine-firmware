@@ -123,7 +123,6 @@ extern int c_printf(const char *f, ...);
 #include "eb_sound.h"
 #include "eb_sys.h"
 #include "eb_video.h"
-#include "mcurses.h"
 #include <ctype.h>
 #include <errno.h>
 #include <fnmatch.h>
