@@ -79,7 +79,7 @@ protected:
   virtual void SCROLL_DOWN() = 0;        // スクロールダウン
   virtual void INSLINE(uint16_t l) = 0;  // 指定行に1行挿入(下スクロール)
   void term_queue_input(const char *s);
-  virtual utf8_int32_t get_ch() = 0;  // 文字の取得
+  virtual utf8_int32_t get_ch(bool non_block = false) = 0;  // 文字の取得
 
 public:
   virtual void beep(){};                     // BEEP音の発生

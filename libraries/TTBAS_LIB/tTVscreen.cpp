@@ -165,7 +165,7 @@ bool ICACHE_RAM_ATTR tTVscreen::isKeyIn() {
 
 void process_events(void);
 // 文字入力
-utf8_int32_t tTVscreen::get_ch() {
+utf8_int32_t tTVscreen::get_ch(bool non_block) {
   utf8_int32_t c;
   while (1) {
     process_events();
@@ -186,6 +186,8 @@ utf8_int32_t tTVscreen::get_ch() {
       break;
     }
 #endif
+    if (non_block)
+      break;
     yield();
   }
   return c;

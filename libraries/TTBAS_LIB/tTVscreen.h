@@ -123,7 +123,7 @@ public:
     input_filters.push_back(h);
   }
 
-  virtual utf8_int32_t get_ch();  // 文字の取得
+  virtual utf8_int32_t get_ch(bool non_block = false);  // 文字の取得
   inline utf8_int32_t tryGetChar() {
     return ps2read();
   }
