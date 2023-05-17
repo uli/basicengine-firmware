@@ -879,7 +879,22 @@ void Basic::irequire() {
 #include <errno.h>
 #endif
 
-#ifdef __unix__
+#ifdef JAILHOUSE
+#include <errno.h>
+#include <sys/wait.h>
+
+// no termios.h in newlib
+struct winsize {
+        unsigned short ws_row;
+        unsigned short ws_col;
+        unsigned short ws_xpixel;
+        unsigned short ws_ypixel;
+};
+
+extern "C" pid_t jhlibc_forkptyexec(int *, struct winsize *, char * const *);
+#endif
+
+#if defined(__unix__) || defined(JAILHOUSE)
 void shell_list(std::list<BString>& args) {
   int fd;
   int wstatus = 0;
@@ -890,6 +905,19 @@ void shell_list(std::list<BString>& args) {
     (unsigned short)eb_psize_width(),
     (unsigned short)eb_psize_height()
   };
+
+#ifdef JAILHOUSE
+
+  std::vector<const char *> argsp;
+
+  for (auto &s : args)
+    argsp.push_back(s.c_str());
+
+  argsp.push_back(NULL);
+
+  pid_t pid = jhlibc_forkptyexec(&fd, &ws, (char * const *)argsp.data());
+
+#else
 
   pid_t pid = forkpty(&fd, NULL, NULL, &ws);
 
@@ -906,12 +934,16 @@ void shell_list(std::list<BString>& args) {
       exec_list(args);
     _exit(1);
   }
-  else if (pid < 0) {
+  else
+#endif	// JAILHOUSE
+  if (pid < 0) {
     // error
     err = ERR_COM;
   } else {
     // us
+#ifndef JAILHOUSE	// JH libc server will do that for us
     fcntl(fd, F_SETFL, O_NONBLOCK);
+#endif
 
     char buf[256] = { 0 };
 
@@ -922,7 +954,11 @@ void shell_list(std::list<BString>& args) {
       if (ret < 0) {
         if (errno != EAGAIN)
           break;
+#ifdef JAILHOUSE
+        yield();
+#else
         usleep(10000);
+#endif
       } else if (ret == 0) {
         break;
       } else if (ret > 0) {
@@ -978,7 +1014,7 @@ facilities.
   `execvp("<command>", "<command>", "<argument">, ...)`.
 ***/
 void Basic::ishell() {
-#ifdef __unix__
+#if defined(__unix__) || defined(JAILHOUSE)
   std::list<BString> args;
   bool screen_off = false;
 
@@ -987,12 +1023,20 @@ void Basic::ishell() {
     if (*cip == I_COMMA)
       ++cip;
     else if (*cip == I_OFF) {
+#ifdef JAILHOUSE
+      err = ERR_NOT_SUPPORTED;
+      return;
+#else
       ++cip;
       screen_off = true;
       break;
+#endif
     }
   }
 
+#ifdef JAILHOUSE
+  shell_list(args);
+#else
   if (screen_off) {
     vs23.end();
     run_list(args);
@@ -1000,6 +1044,7 @@ void Basic::ishell() {
   } else {
     shell_list(args);
   }
+#endif
 
 #else
   err = ERR_NOT_SUPPORTED;
