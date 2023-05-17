@@ -11,7 +11,7 @@
 #include "basic.h"
 #include "eb_sys.h"
 
-void eb_set_cpu_speed(int percent)
+EBAPI void eb_set_cpu_speed(int percent)
 {
     std::string policy = "/sys/devices/system/cpu/cpufreq/policy0/";
     std::string set_min_freq = policy + "scaling_min_freq";
