@@ -43,8 +43,8 @@ COMMON_SOURCES="`echo ttbasic/*.cpp libraries/TTBAS_LIB/*.cpp \
 	libraries/TTVoutfonts/*.cpp libraries/azip/*.cpp \
 	libraries/alpha-lib/src/*.cpp arduino_compat/*.cpp`"
 
-COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c \
-	libraries/atto/*.c` libraries/tinycc/libtcc.c"
+COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c` \
+	libraries/tinycc/libtcc.c"
 
 # platform-specific source files
 H3_SOURCES="$COMMON_SOURCES `ls h3/*.cpp`"
