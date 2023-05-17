@@ -279,6 +279,7 @@ num_t Basic::ngetsym() {
 }
 
 int exec_list(std::list<BString> &args) {
+#ifdef __unix__
   std::vector<const char *> argsp;
 
   for (auto &s : args)
@@ -287,4 +288,7 @@ int exec_list(std::list<BString> &args) {
   argsp.push_back(NULL);
 
   return execvp(argsp[0], (char *const *)argsp.data());
+#else
+  return -1;
+#endif
 }

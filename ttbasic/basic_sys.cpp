@@ -948,6 +948,10 @@ void shell_list(std::list<BString>& args) {
       err = ERR_OS;
   }
 }
+#else	// __unix__
+void shell_list(std::list<BString>& args) {
+  err = ERR_NOT_SUPPORTED;
+}
 #endif // __unix__
 
 /***bc sys SHELL
