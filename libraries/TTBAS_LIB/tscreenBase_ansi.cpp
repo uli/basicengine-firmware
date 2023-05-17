@@ -34,10 +34,10 @@ void tscreenBase::term_putch(char c) {
 
 int tscreenBase::term_getch(void) {
   if (vt_inbuf.empty()) {
-    if (!isKeyIn())
+    int c = get_ch(true);
+    if (c == 0)
       return -1;
 
-    int c = get_ch();
     switch (c) {
     case SC_KEY_DOWN: term_queue_input("\x1b[B"); break;
     case SC_KEY_UP: term_queue_input("\x1b[A"); break;
