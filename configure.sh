@@ -139,7 +139,6 @@ rule initdir
             mkdir -p \$out/sys/include/tcc && \$
             cp -p ttbasic/eb_*.h \$out/sys/include/ && rm -f \$out/sys/include/eb_*_int.h && \$
             cp -p ttbasic/errdef.h ttbasic/error.h ttbasic/kwenum.h \$out/sys/include/ && \$
-            cp -p ttbasic/mcurses*.h \$out/sys/include/ && \$
             cp -p libraries/tinycc/include/*.h \$out/sys/include/tcc/ && \$
             cp -p libraries/tinycc/libtcc.h \$out/sys/include/ && \$
             cp -p libraries/stb/*.h \$out/sys/include/ && \$
