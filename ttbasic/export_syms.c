@@ -143,6 +143,7 @@ extern int c_printf(const char *f, ...);
 #include <stb_image.h>
 #include <stb_image_resize.h>
 #include <stb_image_write.h>
+#include <utf8.h>
 
 // ===== CPU architecture-specific exports
 
