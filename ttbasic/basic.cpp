@@ -5757,13 +5757,19 @@ icode_t *BASIC_FP Basic::iexe(index_t stk) {
   return clp + *clp;
 }
 
+extern "C" void hook_data_abort(void)
+{
+  bc->exit(ERR_EXCEPTION_OFFSET + ERR_DATA_ABORT);
+}
+
 //Command precessor
 uint8_t SMALL Basic::icom() {
   uint8_t rc = 1;
   cip = ibuf;  // Set the intermediate code pointer to the beginning of the intermediate code buffer
 
   // Branch by the intermediate code pointed to by the intermediate code pointer
-  if (setjmp(jump) == 0) switch (*cip++) {
+  int exit_code = setjmp(jump);
+  if (exit_code == 0) switch (*cip++) {
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;
@@ -5879,19 +5885,22 @@ program was interrupted.
   case I_FLASH:  iflash(); break;
 
   default: {
-    cip--;
-    sc0.show_curs(0);
-    index_t gstki_save = gstki;
-    index_t lstki_save = lstki;
-    index_t astk_num_i_save = astk_num_i;
-    index_t astk_str_i_save = astk_str_i;
-    iexe();
-    gstki = gstki_save;
-    lstki = lstki_save;
-    astk_num_i = astk_num_i_save;
-    astk_str_i = astk_str_i_save;
-    break;
-  }
+      cip--;
+      sc0.show_curs(0);
+      index_t gstki_save = gstki;
+      index_t lstki_save = lstki;
+      index_t astk_num_i_save = astk_num_i;
+      index_t astk_str_i_save = astk_str_i;
+      iexe();
+      gstki = gstki_save;
+      lstki = lstki_save;
+      astk_num_i = astk_num_i_save;
+      astk_str_i = astk_str_i_save;
+      break;
+    }
+  } else {
+    if (exit_code > ERR_EXCEPTION_OFFSET)
+      err = exit_code - ERR_EXCEPTION_OFFSET;
   }
 
   if (err) {
