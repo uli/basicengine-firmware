@@ -895,7 +895,7 @@ extern "C" pid_t jhlibc_forkptyexec(int *, struct winsize *, char * const *);
 #endif
 
 #if defined(__unix__) || defined(JAILHOUSE)
-void shell_list(std::list<BString>& args) {
+int shell_list(std::list<BString>& args) {
   int fd;
   int wstatus = 0;
 
@@ -980,9 +980,12 @@ void shell_list(std::list<BString>& args) {
     }
     close(fd);
     wait(&wstatus);
+
     if (WEXITSTATUS(wstatus) != 0)
       err = ERR_OS;
   }
+
+  return WEXITSTATUS(wstatus);
 }
 #else	// __unix__
 void shell_list(std::list<BString>& args) {
