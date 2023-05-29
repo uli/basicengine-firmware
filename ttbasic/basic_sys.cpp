@@ -1051,7 +1051,7 @@ void Basic::ishell() {
 #endif
 }
 
-#ifndef __linux__
+#if !defined(__linux__) && !defined(JAILHOUSE)
 void Basic::idtbload() {
   err = ERR_NOT_SUPPORTED;
 }

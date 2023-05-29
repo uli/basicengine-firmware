@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2022 Ulrich Hecht
 
-#ifdef __linux__
+#if defined(__linux__) || defined(JAILHOUSE)
 
 #include <fstream>
 #include <string>
