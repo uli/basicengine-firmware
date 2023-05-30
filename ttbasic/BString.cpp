@@ -606,11 +606,11 @@ int BString::indexOf(const BString &s2, unsigned int fromIndex) const {
 }
 
 int BString::lastIndexOf(char theChar) const {
-    return lastIndexOf(theChar, len - 1);
+    return lastIndexOf(theChar, len);
 }
 
 int BString::lastIndexOf(char ch, unsigned int fromIndex) const {
-    if(fromIndex >= len)
+    if(fromIndex > len)
         return -1;
     char* temp = (char *)memrchr(buffer, ch, fromIndex);
     if(temp == NULL)
