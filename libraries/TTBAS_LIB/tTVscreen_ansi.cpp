@@ -69,7 +69,8 @@ void tTVscreen::sgr() {
       }
       break;
     case  8: case 28: SGR_UNIMP; break;//vt->attrs.invisible = P0(0) < 20; break;
-    case 10: case 11: SGR_UNIMP; break;//vt->acs             = P0(0) > 10; break;
+    case 10: break;	// no need to warn about that if 11/12 is not implemented either
+    case 11: SGR_UNIMP; break;//vt->acs             = P0(0) > 10; break;
     case 30: case 40: FGBG(BG);            break;
     case 31: case 41: FGBG(PROC);              break;
     case 32: case 42: FGBG(COMMENT);            break;
