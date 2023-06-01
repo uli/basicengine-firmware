@@ -174,8 +174,10 @@ bool tTVscreen::ansi_machine(utf8_int32_t i)
 //    DO(S_ARG, "u",          vt.curs = vt.oldcurs; vt.attrs = vt.oldattrs)
     DO(S_ARG, "@",          cscroll(c_x(), c_y(), getScreenWidth() - c_x(), 1, 2))
 
-  if (vt.state != S_NUL)
+  if (vt.state != S_NUL) {
+    consumearg();
     printf("ANSI: unknown %s %c (p0 %d p1 %d)\n", vt.state == S_ESC ? "esc" : vt.question ? "?arg" : "arg", i, P0(0), P0(1));
+  }
 
   resetparser();
   return false;
