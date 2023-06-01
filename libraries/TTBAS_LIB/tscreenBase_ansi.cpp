@@ -57,8 +57,8 @@ int tscreenBase::term_getch(void) {
     case SC_KEY_F(8): term_queue_input("\x1b[T"); break;
     case SC_KEY_F(9): term_queue_input("\x1b[U"); break;
     case SC_KEY_F(10): term_queue_input("\x1b[V"); break;
-    case SC_KEY_DC: term_queue_input("\x1b[3~"); break;
-    case SC_KEY_BACKSPACE: term_queue_input("\x7f"); break;
+    case SC_KEY_DC: term_queue_input("\x7f"); break;
+    case SC_KEY_BACKSPACE: term_queue_input("\x08"); break;
     default: {
         char tmp[5];
         char *end = (char *)utf8catcodepoint(tmp, c, 5);
