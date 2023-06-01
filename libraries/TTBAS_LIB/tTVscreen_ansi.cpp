@@ -54,10 +54,10 @@ void tTVscreen::sgr() {
       }
       setColor(COL(FG), COL(BG));
       break;
-    case  1: case 22: SGR_UNIMP; break; // XXX: bold
-    case  2: case 23: SGR_UNIMP; break; // XXX: dim
-    case  4: case 24: SGR_UNIMP; break; // XXX: underline
-    case  5: case 25: SGR_UNIMP; break; //vt->attrs.blink     = P0(0) < 20; break;
+    case  1: case 22: /*SGR_UNIMP;*/ break; // XXX: bold
+    case  2: case 23: /*SGR_UNIMP;*/ break; // XXX: dim
+    case  4: case 24: /*SGR_UNIMP;*/ break; // XXX: underline
+    case  5: case 25: /*SGR_UNIMP;*/ break; //vt->attrs.blink     = P0(0) < 20; break;
     case  7:
       if (!screen_putch_enable_reverse) {
         screen_putch_enable_reverse = true;
