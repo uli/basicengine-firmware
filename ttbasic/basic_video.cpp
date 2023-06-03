@@ -35,6 +35,7 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
   static int predef_color = -1;
   static uint8_t hex_digit = 0, hex_type, hex_max_len;
   static ipixel_t hex_value;
+  static bool skip_lf = false;
 
   if (kb.state(PS2KEY_L_Alt)) {
     sc0.peekKey();
@@ -184,7 +185,10 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
               screen_putch_paging_counter = 0;
             }
           }
-          newline();
+          if (!skip_lf)
+            newline();
+          else
+            skip_lf = false;
         }
         break;
       case '\r': sc0.locate(0, sc0.c_y()); break;
@@ -194,6 +198,7 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
           sc0.putch(' ');
           sc0.locate(sc0.c_x() - 1);
         }
+        skip_lf = false;
         break;
       case '\t': {
         int skip = 8 - sc0.c_x() % 8;
@@ -202,8 +207,38 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
         for (int i = 0; i < skip; ++i)
           sc0.putch(' ');
         }
+
+        if (sc0.c_x() == 0 && screen_putch_enable_ansi_mode)
+          skip_lf = true;
+        else
+          skip_lf = false;
+
         break;
-      default: sc0.putch(c, lazy); break;
+      default: {
+        int from_x = sc0.c_x();
+        sc0.putch(c, lazy);
+
+        // BASIC Engine screen editor wraps to the next line when the last
+        // character that fits has been written. ANSI terminals wrap when
+        // the first character that does not fit anymore has been written.
+
+        // Interactive terminal programs therefore do the wrapping manually
+        // so the cursor will not leave the screen at any time.
+
+        // We have to work around that somehow. This is not a good solution.
+
+        // XXX: doesn't work if no ANSI sequences have been encountered yet
+
+        // XXX: doesn't prevent the screen from scrolling up when the last
+        // character on the screen has been written
+        if (screen_putch_enable_ansi_mode &&
+            sc0.c_x() == 0 && from_x == sc0.getWidth() - 1)
+          skip_lf = true;
+        else
+          skip_lf = false;
+
+        break;
+        }
       }
     }
   }
