@@ -45,8 +45,8 @@ int tscreenBase::term_getch(void) {
     case SC_KEY_RIGHT: term_queue_input("\x1b[C"); break;
     case SC_KEY_HOME: term_queue_input("\x1b[H"); break;
     case SC_KEY_END: term_queue_input("\x1b[F"); break;
-    case SC_KEY_NPAGE: term_queue_input("\x1b[6~"); break;
-    case SC_KEY_PPAGE: term_queue_input("\x1b[5~"); break;
+    case SC_KEY_NPAGE: term_queue_input("\x1b[G"); break;
+    case SC_KEY_PPAGE: term_queue_input("\x1b[I"); break;
     case SC_KEY_F(1): term_queue_input("\x1b[M"); break;
     case SC_KEY_F(2): term_queue_input("\x1b[N"); break;
     case SC_KEY_F(3): term_queue_input("\x1b[O"); break;
@@ -57,8 +57,9 @@ int tscreenBase::term_getch(void) {
     case SC_KEY_F(8): term_queue_input("\x1b[T"); break;
     case SC_KEY_F(9): term_queue_input("\x1b[U"); break;
     case SC_KEY_F(10): term_queue_input("\x1b[V"); break;
-    case SC_KEY_DC: term_queue_input("\x7f"); break;
-    case SC_KEY_BACKSPACE: term_queue_input("\x08"); break;
+    case SC_KEY_DC: term_queue_input("\x1b[3~"); break;
+    case SC_KEY_BACKSPACE: term_queue_input("\x7f"); break;
+    case SC_KEY_IC: term_queue_input("\x1b[L"); break;
     default: {
         char tmp[5];
         char *end = (char *)utf8catcodepoint(tmp, c, 5);
