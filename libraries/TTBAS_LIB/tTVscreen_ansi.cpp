@@ -180,6 +180,9 @@ bool tTVscreen::ansi_machine(utf8_int32_t i)
 //    DO(S_ARG, "s",          vt.oldcurs = vt.curs; vt.oldattrs = vt.attrs)
 //    DO(S_ARG, "u",          vt.curs = vt.oldcurs; vt.attrs = vt.oldattrs)
     DO(S_ARG, "@",          cscroll(c_x(), c_y(), getScreenWidth() - c_x(), 1, 2))
+    DO(S_ARG, "X",	    int x=c_x(); int y=c_y(); for (int i = 0; i < P0(0); ++i) putch(' '); locate(x, y);)
+    DO(S_ARG, "`",	    locate(P1(0) - 1, c_y()))
+    DO(S_ARG, "x",	    setColor(COL(FG), COL(BG));)
     DO(S_EQUAL, "C",	    (void)0)	// "Set cursor parameters"(?)
     DO(S_QUEST, "h",        (void)0)	// enable mouse?
     DO(S_QUEST, "l",        (void)0)	// disable mouse?
