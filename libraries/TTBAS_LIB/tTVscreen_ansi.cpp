@@ -10,6 +10,8 @@ enum ansi_state {
   S_NUL = 0,
   S_ESC,
   S_ARG,
+  S_QUEST,
+  S_EQUAL,
 };
 
 #define PAR_MAX 4
@@ -19,7 +21,6 @@ struct {
   int pars[PAR_MAX];
   int arg;
   bool ignored;
-  bool question;
 } vt;
 
 static void consumearg() {
@@ -31,7 +32,6 @@ static void consumearg() {
 static void resetparser() {
   memset(vt.pars, 0, sizeof(vt.pars));
   vt.state = S_NUL; vt.npar = vt.arg = 0; vt.ignored = false;
-  vt.question = false;
 }
 
 #define P0(x) (vt.pars[x])
@@ -148,9 +148,16 @@ bool tTVscreen::ansi_machine(utf8_int32_t i)
     DO(S_ESC, "H",          locate(0, 0))
     ON(S_ESC, "[",          vt.state = S_ARG)
     ON(S_ARG, "\x1b",       vt.state = S_ESC)
+    ON(S_QUEST, "\x1b",       vt.state = S_ESC)
+    ON(S_EQUAL, "\x1b",       vt.state = S_ESC)
     ON(S_ARG, ";",          consumearg())
-    ON(S_ARG, "?",          vt.question = true)
+    ON(S_QUEST, ";",          consumearg())
+    ON(S_EQUAL, ";",          consumearg())
+    ON(S_ARG, "?",          vt.state = S_QUEST)
+    ON(S_ARG, "=",	    vt.state = S_EQUAL)
     ON(S_ARG, "0123456789", vt.arg = vt.arg * 10 + atoi(cs))
+    ON(S_QUEST, "0123456789", vt.arg = vt.arg * 10 + atoi(cs))
+    ON(S_EQUAL, "0123456789", vt.arg = vt.arg * 10 + atoi(cs))
     DO(S_ARG, "A",          locate(c_x(), c_y() - P1(0)))
     DO(S_ARG, "B",          locate(c_x(), c_y() + P1(0)))
     DO(S_ARG, "C",          locate(c_x() + P1(0), c_y()))
@@ -173,10 +180,13 @@ bool tTVscreen::ansi_machine(utf8_int32_t i)
 //    DO(S_ARG, "s",          vt.oldcurs = vt.curs; vt.oldattrs = vt.attrs)
 //    DO(S_ARG, "u",          vt.curs = vt.oldcurs; vt.attrs = vt.oldattrs)
     DO(S_ARG, "@",          cscroll(c_x(), c_y(), getScreenWidth() - c_x(), 1, 2))
+    DO(S_EQUAL, "C",	    (void)0)	// "Set cursor parameters"(?)
+    DO(S_QUEST, "h",        (void)0)	// enable mouse?
+    DO(S_QUEST, "l",        (void)0)	// disable mouse?
 
   if (vt.state != S_NUL) {
     consumearg();
-    printf("ANSI: unknown %s %c (p0 %d p1 %d)\n", vt.state == S_ESC ? "esc" : vt.question ? "?arg" : "arg", i, P0(0), P0(1));
+    printf("ANSI: unknown %d %c (p0 %d p1 %d)\n", vt.state, i, P0(0), P0(1));
   }
 
   resetparser();
