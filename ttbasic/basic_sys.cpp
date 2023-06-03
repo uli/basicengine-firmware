@@ -924,8 +924,9 @@ int shell_list(std::list<BString>& args) {
   if (pid == 0) {
     // shell
     unsetenv("DISPLAY");
-    setenv("TERM", "ansiw", 1);
+    setenv("TERM", "cons25-debian", 1);
     setenv("LANG", "en_US.UTF-8", 1);
+    setenv("HOME", "/sd", 1);
     if (args.size() == 0)
       execl("/bin/sh", "sh", NULL);
     else if (args.size() == 1)
