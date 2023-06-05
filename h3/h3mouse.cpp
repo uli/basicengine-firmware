@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 Ulrich Hecht
 
+#ifndef JAILHOUSE
+
 #include <Arduino.h>
 #include <mouse.h>
 #include <usb.h>
@@ -29,3 +31,5 @@ void mouse_task(void)
     repidx_r = (repidx_r + 1) % MOUSE_BUF_SIZE;
   }
 }
+
+#endif	// !JAILHOUSE
