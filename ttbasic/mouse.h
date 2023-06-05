@@ -5,6 +5,7 @@
 #define _MOUSE_H
 
 #include <ttconfig.h>
+#include <math.h>
 
 #include "eb_input.h"
 #include "eb_video.h"
