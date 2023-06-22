@@ -1,6 +1,14 @@
-# ![BASIC Engine logo](./doc/basic_engine_small.png) BASIC Engine Firmware (Super-ALPHA!)
+# ![BASIC Engine logo](./doc/basic_engine_small.png) BASIC Engine Firmware (ALPHA!)
 
-[This branch is under heavy development!]
+[This branch is under development!]
+
+This branch implements a version of Engine BASIC for Allwinner H3 SoCs that
+runs in the Jailhouse bare metal hypervisor. It runs alongside a Linux
+kernel that provides it with input, file system and networking services.
+
+This dramatically increases hardware compatibility and file system
+performance while retaining the open and real-time nature of bare metal
+Engine BASIC.
 
 The [BASIC Engine](https://basicengine.org/) is a BASIC programming
 environment based on low-cost single-board computers that features advanced
