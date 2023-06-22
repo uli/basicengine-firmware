@@ -1,3 +1,5 @@
+#ifndef JAILHOUSE
+
 #include "ttconfig.h"
 #include "basic.h"
 #include "net.h"
@@ -157,3 +159,5 @@ num_t Basic::nconnect() {
     return 0;
   return netif_is_link_up(&netif_eth0);
 }
+
+#endif
