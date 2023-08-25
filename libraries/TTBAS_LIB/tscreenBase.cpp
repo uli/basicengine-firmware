@@ -76,7 +76,7 @@ void tscreenBase::clerLine(uint16_t l, int from) {
 void tscreenBase::cls() {
   CLEAR();
   for (int i = 0; i < height; ++i) {
-    memset(&VPEEK(0, i), 0, width);
+    memset(&VPEEK(0, i), 0, width * sizeof(utf8_int32_t));
     VSET_C(0, i, fg_color, bg_color, width);
   }
 }
