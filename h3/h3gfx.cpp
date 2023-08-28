@@ -95,6 +95,96 @@ void hook_display_vblank(void) {
   smp_send_event();
 }
 
+#define NUM_CAPTURE_BUFS 2
+
+static void *luma_bufs[NUM_CAPTURE_BUFS];
+static void *chroma_bufs[NUM_CAPTURE_BUFS];
+static int current_cap_buf = 0;
+static uint32_t last_frame_captured = 0;
+const struct display_phys_mode_t *current_phys_mode;
+
+void H3GFX::do_capture(void) {
+  if (!m_capture_enabled)
+    return;
+
+  // We cannot encode faster than 30fps at 1080p, so we skip every other frame.
+  if (m_frame <= last_frame_captured + 1)
+    return;
+
+  last_frame_captured = m_frame;
+  current_cap_buf = (current_cap_buf + 1) % NUM_CAPTURE_BUFS;
+  display_capture_set_out_bufs(luma_bufs[current_cap_buf],
+                               chroma_bufs[current_cap_buf]);
+  display_capture_kick();
+}
+
+struct h264_comm_buffer {
+        void *luma;
+        void *chroma;
+        int frame_no;
+        int w;
+        int h;
+        bool enabled;
+};
+
+#include <fixed_addr.h>
+volatile struct h264_comm_buffer *h264mailbox = (volatile struct h264_comm_buffer *)H264_PORT_ADDR;
+
+void H3GFX::finish_capture(void) {
+  if (!m_capture_enabled)
+    return;
+
+  void *luma, *chroma;
+  if (display_capture_frame_ready(&luma, &chroma)) {
+    int cap_w = (current_phys_mode->hactive + 15) / 16 * 16;
+    int cap_h = (current_phys_mode->vactive + 15) / 16 * 16;
+    mmu_flush_dcache_range(luma,
+                           cap_w * cap_h,
+                           MMU_DCACHE_INVALIDATE);
+    mmu_flush_dcache_range(chroma,
+                           cap_w * cap_h / 2,
+                           MMU_DCACHE_INVALIDATE);
+
+    h264mailbox->luma = luma;
+    h264mailbox->chroma = chroma;
+    h264mailbox->frame_no = last_frame_captured;
+    asm("sev");
+
+    display_capture_ack_frame();
+  }
+}
+
+void H3GFX::startCapture() {
+  int cap_w = (current_phys_mode->hactive + 15) / 16 * 16;
+  int cap_h = (current_phys_mode->vactive + 15) / 16 * 16;
+
+  for (int i = 0; i < NUM_CAPTURE_BUFS; ++i) {
+    luma_bufs[i] = malloc(cap_w * cap_h);
+    chroma_bufs[i] = malloc(cap_w * cap_h / 2);
+  }
+
+  display_capture_init(cap_w, cap_h);
+
+  m_capture_enabled = true;
+  // We do not round these up so the encoder knows what the "real"
+  // resolution is.
+  h264mailbox->w = current_phys_mode->hactive;
+  h264mailbox->h = current_phys_mode->vactive;
+  h264mailbox->enabled = true;
+}
+
+void H3GFX::stopCapture() {
+  h264mailbox->enabled = false;
+  m_capture_enabled = false;
+
+  display_capture_stop();
+
+  for (int i = 0; i < NUM_CAPTURE_BUFS; ++i) {
+    free(luma_bufs[i]);
+    free(chroma_bufs[i]);
+  }
+}
+
 #include <usb.h>
 #include <config.h>
 void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
@@ -116,6 +206,7 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
     tve_init(CONFIG.NTSC == 0 ? TVE_NORM_NTSC : TVE_NORM_PAL);
 
   display_init(phys_mode);
+  current_phys_mode = phys_mode;
 
   setMode(CONFIG.mode - 1);
 
@@ -131,6 +222,8 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
     for (;;)
       ;
   }
+
+  startCapture();
 
   m_buffer_lock = false;
   m_display_enabled = true;
@@ -361,6 +454,8 @@ void H3GFX::updateStatus() {
 void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
 
+  finish_capture();
+
   if (tick_counter <= last_frame + m_frameskip)
     return;
 
@@ -368,6 +463,7 @@ void H3GFX::updateBgTask() {
 
   if (!m_bg_modified && (!m_textmode_buffer_modified || display_single_buffer)) {
     m_frame++;
+    do_capture();
     smp_send_event();
     return;
   }
@@ -378,6 +474,7 @@ void H3GFX::updateBgTask() {
   // longer.
   if (!m_engine_enabled) {
     m_frame++;
+    do_capture();
     spin_unlock(&m_buffer_lock);
     smp_send_event();
     return;
@@ -439,6 +536,7 @@ void H3GFX::updateBgTask() {
 #endif
 
   m_frame++;
+  do_capture();
   smp_send_event();
 }
 

@@ -175,6 +175,9 @@ public:
 
   void render();
 
+  void startCapture();
+  void stopCapture();
+
 protected:
   void updateStatus() override;
 
@@ -185,11 +188,15 @@ private:
   inline void blitBuffer(pixel_t *dst, pixel_t *buf);
   void resetLinePointers(pixel_t **pixels, pixel_t *buffer);
 
+  void do_capture(void);
+  void finish_capture(void);
+
   static const struct video_mode_t modes_pal[];
   bool m_display_enabled;
   bool m_force_filter;
   bool m_engine_enabled;
   bool m_textmode_buffer_modified;
+  bool m_capture_enabled;
   spinlock_t m_buffer_lock;
 
   // Used by text mode, pixel graphics functions. Points to
