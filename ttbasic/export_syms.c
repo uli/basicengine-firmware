@@ -3,6 +3,8 @@
 
 #ifdef ALLWINNER_BARE_METAL
 
+#include <mmu.h>
+
 // no dirent or stat translation required
 #include <dirent.h>
 

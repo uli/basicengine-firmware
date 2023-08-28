@@ -643,6 +643,11 @@ S(utf8rcodepoint)
 S(utf8dup_ex)
 S(utf8ndup_ex)
 
+#ifdef ALLWINNER_BARE_METAL
+// allwinner-bare-metal
+S(mmu_flush_dcache_range)
+#endif
+
 // C++ new/delete
 S(_ZdlPv)
 #ifdef __arm__
