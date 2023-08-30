@@ -118,17 +118,7 @@ void H3GFX::do_capture(void) {
   display_capture_kick();
 }
 
-struct h264_comm_buffer {
-        void *luma;
-        void *chroma;
-        int frame_no;
-        int w;
-        int h;
-        bool enabled;
-};
-
-#include <fixed_addr.h>
-volatile struct h264_comm_buffer *h264mailbox = (volatile struct h264_comm_buffer *)H264_PORT_ADDR;
+#include <video_encoder.h>
 
 void H3GFX::finish_capture(void) {
   if (!m_capture_enabled)
@@ -145,9 +135,9 @@ void H3GFX::finish_capture(void) {
                            cap_w * cap_h / 2,
                            MMU_DCACHE_INVALIDATE);
 
-    h264mailbox->luma = luma;
-    h264mailbox->chroma = chroma;
-    h264mailbox->frame_no = last_frame_captured;
+    video_encoder->video_luma = luma;
+    video_encoder->video_chroma = chroma;
+    video_encoder->video_frame_no = last_frame_captured;
     asm("sev");
 
     display_capture_ack_frame();
@@ -168,13 +158,13 @@ void H3GFX::startCapture() {
   m_capture_enabled = true;
   // We do not round these up so the encoder knows what the "real"
   // resolution is.
-  h264mailbox->w = current_phys_mode->hactive;
-  h264mailbox->h = current_phys_mode->vactive;
-  h264mailbox->enabled = true;
+  video_encoder->video_w = current_phys_mode->hactive;
+  video_encoder->video_h = current_phys_mode->vactive;
+  video_encoder->enabled = true;
 }
 
 void H3GFX::stopCapture() {
-  h264mailbox->enabled = false;
+  video_encoder->enabled = false;
   m_capture_enabled = false;
 
   display_capture_stop();
