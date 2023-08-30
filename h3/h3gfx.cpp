@@ -95,6 +95,8 @@ void hook_display_vblank(void) {
   smp_send_event();
 }
 
+#ifdef JAILHOUSE
+
 #define NUM_CAPTURE_BUFS 2
 
 static void *luma_bufs[NUM_CAPTURE_BUFS];
@@ -174,6 +176,8 @@ void H3GFX::stopCapture() {
     free(chroma_bufs[i]);
   }
 }
+
+#endif // JAILHOUSE
 
 #include <usb.h>
 #include <config.h>
@@ -444,12 +448,16 @@ void H3GFX::updateStatus() {
 void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
 
+#ifdef JAILHOUSE
   finish_capture();
+#endif
 
   if (tick_counter <= last_frame + m_frameskip)
     return;
 
+#ifdef JAILHOUSE
   do_capture();
+#endif
 
   last_frame = tick_counter;
 
