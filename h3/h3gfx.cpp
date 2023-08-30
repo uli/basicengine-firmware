@@ -449,11 +449,12 @@ void H3GFX::updateBgTask() {
   if (tick_counter <= last_frame + m_frameskip)
     return;
 
+  do_capture();
+
   last_frame = tick_counter;
 
   if (!m_bg_modified && (!m_textmode_buffer_modified || display_single_buffer)) {
     m_frame++;
-    do_capture();
     smp_send_event();
     return;
   }
@@ -464,7 +465,6 @@ void H3GFX::updateBgTask() {
   // longer.
   if (!m_engine_enabled) {
     m_frame++;
-    do_capture();
     spin_unlock(&m_buffer_lock);
     smp_send_event();
     return;
@@ -526,7 +526,6 @@ void H3GFX::updateBgTask() {
 #endif
 
   m_frame++;
-  do_capture();
   smp_send_event();
 }
 
