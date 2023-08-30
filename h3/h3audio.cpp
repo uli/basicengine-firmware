@@ -7,6 +7,14 @@
 #include <h3_codec.h>
 #include <audio.h>
 
+#ifdef JAILHOUSE
+#include <video_encoder.h>
+
+#define VENC_BUFFERS 16
+sample_t venc_sound_buffer[VENC_BUFFERS * SOUND_BUFLEN * SOUND_CHANNELS];
+int venc_buf_pos;
+#endif
+
 H3Audio audio;
 
 int H3Audio::m_curr_buf_pos;
@@ -28,6 +36,9 @@ void H3Audio::init(int sample_rate) {
   m_block_size = SOUND_BUFLEN;
 
   audio_start(SOUND_BUFLEN * SOUND_CHANNELS);
+#ifdef JAILHOUSE
+  video_encoder->audio_size = (VENC_BUFFERS * SOUND_BUFLEN / 2) * SOUND_CHANNELS * sizeof(sample_t);
+#endif
 }
 
 void hook_audio_get_sample(int16_t *l, int16_t *r) {
@@ -42,6 +53,27 @@ void hook_audio_get_sample(int16_t *l, int16_t *r) {
     m_read_pos = 0;
 
     h3_codec_push_data(audio.m_curr_buf);
+
+#ifdef JAILHOUSE
+    if (video_encoder->enabled) {
+      // The video encoder cannot handle incoming audio at the rate we're sending it (every 10ms).
+      // We therefore have to buffer it to slow down the frame rate to a reasonable level.
+
+      memcpy(&venc_sound_buffer[venc_buf_pos * SOUND_BUFLEN * SOUND_CHANNELS], audio.m_curr_buf, SOUND_BUFLEN * SOUND_CHANNELS * sizeof(sample_t));
+
+      venc_buf_pos = (venc_buf_pos + 1) % VENC_BUFFERS;
+
+      if (venc_buf_pos == VENC_BUFFERS / 2) {
+        video_encoder->audio_buffer = venc_sound_buffer;
+        ++video_encoder->audio_frame_no;
+        asm("sev");
+      } else if (venc_buf_pos == 0) {
+        video_encoder->audio_buffer = &venc_sound_buffer[VENC_BUFFERS * SOUND_BUFLEN * SOUND_CHANNELS / 2];
+        ++video_encoder->audio_frame_no;
+        asm("sev");
+      }
+    }
+#endif
   }
 }
 
