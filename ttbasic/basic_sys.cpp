@@ -770,7 +770,11 @@ Only implemented on the H3 platform.
 ***/
 void Basic::iboot() {
 #if defined(H3)
+#ifdef JAILHOUSE
+  system("reboot");
+#else
   sys_reset();
+#endif
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
