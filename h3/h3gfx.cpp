@@ -100,7 +100,9 @@ void hook_display_vblank(void) {
 #define NUM_CAPTURE_BUFS 2
 
 static void *luma_bufs[NUM_CAPTURE_BUFS];
+static void *luma_bufs_aligned[NUM_CAPTURE_BUFS];
 static void *chroma_bufs[NUM_CAPTURE_BUFS];
+static void *chroma_bufs_aligned[NUM_CAPTURE_BUFS];
 static int current_cap_buf = 0;
 static uint32_t last_frame_captured = 0;
 const struct display_phys_mode_t *current_phys_mode;
@@ -115,8 +117,8 @@ void H3GFX::do_capture(void) {
 
   last_frame_captured = m_frame;
   current_cap_buf = (current_cap_buf + 1) % NUM_CAPTURE_BUFS;
-  display_capture_set_out_bufs(luma_bufs[current_cap_buf],
-                               chroma_bufs[current_cap_buf]);
+  display_capture_set_out_bufs(luma_bufs_aligned[current_cap_buf],
+                               chroma_bufs_aligned[current_cap_buf]);
   display_capture_kick();
 }
 
@@ -151,8 +153,13 @@ void H3GFX::startCapture() {
   int cap_h = (current_phys_mode->vactive + 15) / 16 * 16;
 
   for (int i = 0; i < NUM_CAPTURE_BUFS; ++i) {
-    luma_bufs[i] = malloc(cap_w * cap_h);
-    chroma_bufs[i] = malloc(cap_w * cap_h / 2);
+    luma_bufs[i] = malloc(cap_w * cap_h + 16);
+    uintptr_t luma = (((uintptr_t)luma_bufs[i]) + 15) / 16 * 16;
+    luma_bufs_aligned[i] = (void *)luma;
+
+    chroma_bufs[i] = malloc(cap_w * cap_h / 2 + 16);
+    uintptr_t chroma = (((uintptr_t)chroma_bufs[i]) + 15) / 16 * 16;
+    chroma_bufs_aligned[i] = (void *)chroma;
   }
 
   display_capture_init(cap_w, cap_h);
