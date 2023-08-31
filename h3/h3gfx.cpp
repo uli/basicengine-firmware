@@ -9,6 +9,9 @@
 #include <joystick.h>
 #include <smp.h>
 
+#include <TKeyboard.h>
+extern TKeyboard kb;
+
 H3GFX vs23;
 
 #define ASPECT_4_3  (0 << 1)
@@ -125,8 +128,16 @@ void H3GFX::do_capture(void) {
 #include <video_encoder.h>
 
 void H3GFX::finish_capture(void) {
-  if (!m_capture_enabled)
+  if (!m_capture_enabled) {
+    if (kb.scrollLock()) {
+      startCapture();
+    }
     return;
+  } else {
+    if (!kb.scrollLock()) {
+      stopCapture();
+    }
+  }
 
   void *luma, *chroma;
   if (display_capture_frame_ready(&luma, &chroma)) {
@@ -227,8 +238,6 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
     for (;;)
       ;
   }
-
-  startCapture();
 
   m_buffer_lock = false;
   m_display_enabled = true;
