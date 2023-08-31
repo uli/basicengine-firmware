@@ -7,6 +7,8 @@
 #define SOUND_BUFLEN 480
 #define SOUND_CHANNELS 2
 
+#define SOUND_BUFFERS 16
+
 #include "../ttbasic/audio.h"
 #include <string.h>
 
@@ -53,7 +55,7 @@ private:
   static sample_t *m_curr_buf;
 
   static int m_block_size;
-  static sample_t m_sound_buf[2][SOUND_BUFLEN * SOUND_CHANNELS];
+  static sample_t m_sound_buf[SOUND_BUFFERS][SOUND_BUFLEN * SOUND_CHANNELS];
 };
 
 extern H3Audio audio;
