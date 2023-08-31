@@ -1406,15 +1406,10 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
           c_putch(' ', devno);
 
       if (*ip == I_REM || *ip == I_SQUOT) {  //もし中間コードがI_REMなら
-        if (*ip == I_REM)
-          c_putch(' ', devno);
-        ip++;       //ポインタを文字数へ進める
-        i = *ip++;  //文字数を取得してポインタをコメントへ進める
-        sc0.setColor(COL(COMMENT), COL(BG));
-        while (i--)               //文字数だけ繰り返す
-          c_putch(*ip++, devno);  //ポインタを進めながら文字を表示
-        sc0.setColor(COL(FG), COL(BG));
-        return mark;
+        // Comments are really strings without quotes and need thus be UTF-8
+        // decoded.
+        // XXX: This should probably be factored out.
+        goto handle_comment_strings;
       } else if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
         ip++;
         sc0.setColor(COL(PROC), COL(BG));
@@ -1530,20 +1525,33 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
 
     //文字列の処理
     if (*ip == I_STR) { //もし文字列なら
+handle_comment_strings:
+      icode_t type = *ip;
+
       char c; //文字列の括りに使われている文字（「"」または「'」）
 
-      //文字列の括りに使われている文字を調べる
-      c = '\"';                   //文字列の括りを仮に「"」とする
       ip++;                       //ポインタを文字数へ進める
-      for (i = *ip; i; i--)       //文字数だけ繰り返す
-        if (*(ip + i) == '\"') {  //もし「"」があれば
-          c = '\'';               //文字列の括りは「'」
-          break;                  //繰り返しを打ち切る
-        }
 
-      sc0.setColor(COL(STR), COL(BG));
-      //文字列を表示する
-      c_putch(c, devno);  //文字列の括りを表示
+      if (type == I_STR) {
+        //文字列の括りに使われている文字を調べる
+        c = '\"';                   //文字列の括りを仮に「"」とする
+        for (i = *ip; i; i--)       //文字数だけ繰り返す
+          if (*(ip + i) == '\"') {  //もし「"」があれば
+            c = '\'';               //文字列の括りは「'」
+            break;                  //繰り返しを打ち切る
+          }
+
+        sc0.setColor(COL(STR), COL(BG));
+
+        //文字列を表示する
+        c_putch(c, devno);  //文字列の括りを表示
+
+      } else
+        sc0.setColor(COL(COMMENT), COL(BG));
+
+      if (type == I_REM)
+        c_putch(' ', devno);
+
       i = *ip++;  //文字数を取得してポインタを文字列へ進める
       while (i) {  //文字数だけ繰り返す
         // String constants are stored as UTF-8, with the bytes cast to
@@ -1566,6 +1574,12 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
         utf8codepoint(tmp_utf8, &codepoint);
         c_putch(codepoint, devno);  //ポインタを進めながら文字を表示
       }
+
+      if (type == I_REM || type == I_SQUOT) {
+        sc0.setColor(COL(FG), COL(BG));
+        return mark;
+      }
+
       c_putch(c, devno);  //文字列の括りを表示
       sc0.setColor(COL(FG), COL(BG));
       // XXX: Why I_VAR? Such code wouldn't make sense anyway.
