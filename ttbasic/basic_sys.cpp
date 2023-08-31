@@ -25,6 +25,9 @@ void basic_init_environment() {
 
 #ifdef SDL
   setenv("HOME", getenv("ENGINEBASIC_ROOT"), 1);
+#elif defined(JAILHOUSE)
+  // XXX: shouldn't that be the same for H3 without Jailhouse
+  setenv("HOME", "/sd", 1);
 #else
   setenv("HOME", "/", 1);
 #endif
