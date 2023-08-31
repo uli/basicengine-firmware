@@ -428,7 +428,7 @@ void tv_insLine(uint16_t l) {
 #ifdef SINGLE_BLIT
     vs23.blitRect(win_x, win_y + f_height * l,
                   win_x, win_y + f_height * (l + 1),
-                  win_width, win_height - f_height - l * f_height);
+                  win_width, (win_c_height - 1 - l) * f_height);
 #else
     vs23.blitRect(win_x, win_y + f_height * l,
                   win_x, win_y + f_height * (l + 1),
@@ -446,7 +446,7 @@ void tv_scroll_up() {
 #ifdef SINGLE_BLIT
   vs23.blitRect(win_x, win_y + f_height,
                 win_x, win_y,
-                win_width, win_height - f_height);
+                win_width, (win_c_height - 1) * f_height);
 #else
   vs23.blitRect(win_x, win_y + f_height,
                 win_x, win_y,
@@ -463,7 +463,7 @@ void tv_scroll_down() {
 #ifdef SINGLE_BLIT
   vs23.blitRect(win_x, win_y,
                 win_x, win_y + f_height,
-                win_width, win_height-f_height);
+                win_width, (win_c_height - 1) * f_height);
 #else
   vs23.blitRect(win_x, win_y,
                 win_x, win_y + f_height,
