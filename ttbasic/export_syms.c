@@ -4,6 +4,7 @@
 #ifdef ALLWINNER_BARE_METAL
 
 #include <mmu.h>
+#include <smp.h>
 
 // no dirent or stat translation required
 #include <dirent.h>

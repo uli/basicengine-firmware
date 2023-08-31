@@ -646,6 +646,11 @@ S(utf8ndup_ex)
 #ifdef ALLWINNER_BARE_METAL
 // allwinner-bare-metal
 S(mmu_flush_dcache_range)
+
+S(smp_start_secondary_core)
+S(smp_stop_secondary_core)
+S(smp_get_core_id)
+
 #endif
 
 // C++ new/delete
