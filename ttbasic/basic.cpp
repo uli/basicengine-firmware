@@ -5866,6 +5866,21 @@ program was interrupted.
       irun(clp, true, false);
     }
     break;
+  case I_GOSUB:
+    initialize_proc_pointers();
+    initialize_label_pointers();
+
+    // See I_CALL.
+    while (*clp)
+      clp += *clp;
+
+    igosub();
+    if (!err) {
+      restore_windows();
+      sc0.show_curs(0);
+      irun(clp, true, false);
+    }
+    break;
   case I_CALL:
     initialize_proc_pointers();
     initialize_label_pointers();
