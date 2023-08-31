@@ -329,7 +329,7 @@ void sdl_process_key_event(SDL_KeyboardEvent &ev) {
     if (key_state[224+6])
       kev->ALTGR = 1;
 
-    if (kc == 57)
+    if (kc == 57 && !kev->BREAK)
       toggle_caps_lock();
 
     uint8_t kc_off = kc + (kev->SHIFT ? 0x80 : 0);
