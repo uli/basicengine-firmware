@@ -301,8 +301,23 @@ enum locks {
 static uint8_t locks = 0;
 
 static void toggle_caps_lock(void) {
-  // XXX: Does this still make sense when SDL is handling the keyboard?
   locks ^= CAPS_LOCK;
+}
+static void toggle_scroll_lock(void) {
+  locks ^= SCROLL_LOCK;
+}
+static void toggle_num_lock(void) {
+  locks ^= NUM_LOCK;
+}
+
+bool TKeyboard::capsLock() {
+  return locks & CAPS_LOCK;
+}
+bool TKeyboard::scrollLock() {
+  return locks & SCROLL_LOCK;
+}
+bool TKeyboard::numLock() {
+  return locks & NUM_LOCK;
 }
 
 void sdl_process_key_event(SDL_KeyboardEvent &ev) {
@@ -331,6 +346,10 @@ void sdl_process_key_event(SDL_KeyboardEvent &ev) {
 
     if (kc == 57 && !kev->BREAK)
       toggle_caps_lock();
+    if (kc == 71 && !kev->BREAK)
+      toggle_scroll_lock();
+    if (kc == 83 && !kev->BREAK)
+      toggle_num_lock();
 
     uint8_t kc_off = kc + (kev->SHIFT ? 0x80 : 0);
 
@@ -443,6 +462,5 @@ void TKeyboard::setLayout(uint8_t layout) {
 
 void TKeyboard::end() {
 }
-
 
 #endif	// JAILHOUSE

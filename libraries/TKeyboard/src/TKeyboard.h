@@ -242,6 +242,10 @@ public:
   inline static void mode_stop();   // 通信禁止
   inline static void mode_send();   // ホスト送信モード
 
+  bool scrollLock();
+  bool numLock();
+  bool capsLock();
+
 #if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
   bool state(uint8_t keycode);
 #else
