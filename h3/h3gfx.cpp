@@ -76,7 +76,7 @@ void H3GFX::modeSize(int m, int &w, int &h) {
 }
 
 #ifdef JAILHOUSE
-#define DISPLAY_CORE            3
+#define DISPLAY_CORE            2
 #else
 #define DISPLAY_CORE		1
 #endif
