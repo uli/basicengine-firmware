@@ -182,8 +182,12 @@ void H3GFX::stopCapture() {
 #include <usb.h>
 #include <config.h>
 void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
+  video_encoder->enabled = false;
+  m_capture_enabled = false;
   m_display_enabled = false;
+
   delay(16);
+
   m_last_line = 0;
   m_pixels = NULL;
   m_bgpixels = NULL;
