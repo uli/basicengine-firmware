@@ -224,6 +224,11 @@ void H3GFX::begin(bool interlace, bool lowpass, uint8_t system) {
   display_init(phys_mode);
   current_phys_mode = phys_mode;
 
+  if (CONFIG.record_at_boot) {
+    startCapture();
+    kb.forceScrollLock(true);
+  }
+
   setMode(CONFIG.mode - 1);
 
   m_bin.Init(0, 0);
