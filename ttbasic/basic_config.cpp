@@ -170,13 +170,6 @@ removed in future releases.
 \note
 To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
-\bugs
-* Changing the low-pass filter option (`3`) only takes effect at the time
-  of the next block move, which happens for instance when scrolling the
-  screen.
-* There is no way to override a saved configuration, which may make it
-  difficult or even impossible to fix an system configured to an unusable
-  state.
 \ref BEEP FONT SAVE_CONFIG SCREEN
 ***/
 void SMALL Basic::iconfig() {
