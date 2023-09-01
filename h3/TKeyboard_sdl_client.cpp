@@ -320,6 +320,13 @@ bool TKeyboard::numLock() {
   return locks & NUM_LOCK;
 }
 
+void TKeyboard::forceScrollLock(bool onoff) {
+  if (onoff)
+    locks |= SCROLL_LOCK;
+  else
+    locks &= ~SCROLL_LOCK;
+}
+
 void sdl_process_key_event(SDL_KeyboardEvent &ev) {
   uint8_t kc = ev.keysym.scancode;
 

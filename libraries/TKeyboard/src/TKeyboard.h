@@ -246,6 +246,8 @@ public:
   bool numLock();
   bool capsLock();
 
+  void forceScrollLock(bool onoff);
+
 #if defined(HOSTED) || defined(H3) || defined(__DJGPP__) || defined(SDL)
   bool state(uint8_t keycode);
 #else
