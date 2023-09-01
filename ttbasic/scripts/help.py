@@ -147,13 +147,13 @@ for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
                 data = (data.replace('\n\n', '==LF==').	# paragraph breaks
                              replace('\n|', '==LF==|'). # table entries
                              replace('\n*', '==LF==*'). # itemized lists
+                             replace(' +\n', '==LF=='). # asciidoc continuation
                              replace('\n', ' ').	# drop all other LFs
                              replace('==LF==', '\n'))	# translate ==LF== back to real LFs
-                data = re.sub(' +', ' ', data)		# drop asciidoc continuation character
                 if not section in ['usage', 'ref']:
                     out=[]
                     for m in data.split('\n'):
-                        m = m.strip()
+                        m = m.rstrip()
 
                         # don't bother with formatting lines
                         if m == '' or m.startswith('\\') or '====' in m or '----' in m:
