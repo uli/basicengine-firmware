@@ -23,6 +23,7 @@ typedef struct {
 #ifdef H3
   uint32_t phys_mode;
 #endif
+  bool record_at_boot;
 } SystemConfig;
 
 extern SystemConfig CONFIG;

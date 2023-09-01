@@ -162,6 +162,11 @@ removed in future releases.
   `0` (US English, default), `1` (German), `2` (French), `3` (Spanish),
   `4` (Japanese).
 
+* `12`: Start screen recording immediately. +
+  When enabled, screen recording will start as soon as Engine BASIC boots. +
+  (Only available on platforms that support screen recording.) +
+  `0` enabled, `1` disabled.
+
 \note
 To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
@@ -268,8 +273,16 @@ void SMALL Basic::iconfig() {
       CONFIG.language = 0;
     }
     break;
+#ifdef HAVE_SCREEN_RECORDING
+  case 12:
+    if (value != 0 && value != 1)
+      E_VALUE(0, 1);
+    else
+      CONFIG.record_at_boot = value;
+    break;
+#endif
   default:
-    E_VALUE(0, 10);
+    E_VALUE(0, 12);
     break;
   }
 }
