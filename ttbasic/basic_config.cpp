@@ -353,6 +353,9 @@ void loadConfig() {
       if (!strcasecmp(line, "phys_mode")) CONFIG.phys_mode = atoi(v);
       if (!strcasecmp(line, "tv_norm")) CONFIG.NTSC = atoi(v);
 #endif
+#ifdef HAVE_SCREEN_RECORDING
+      if (!strcasecmp(line, "record_at_boot")) CONFIG.record_at_boot = atoi(v);
+#endif
     }
   }
   fclose(f);
@@ -382,6 +385,9 @@ void isaveconfig() {
 #ifdef H3
   fprintf(f, "phys_mode=%u\n", CONFIG.phys_mode);
   fprintf(f, "tv_norm=%u\n", CONFIG.NTSC);
+#endif
+#ifdef HAVE_SCREEN_RECORDING
+  fprintf(f, "record_at_boot=%u\n", CONFIG.record_at_boot);
 #endif
   for (int i = 0; i < CONFIG_COLS; ++i)
     fprintf(f, "color%d=%d,%d,%d\n", i,
