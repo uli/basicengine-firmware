@@ -98,7 +98,7 @@ void hook_display_vblank(void) {
   smp_send_event();
 }
 
-#ifdef JAILHOUSE
+#ifdef HAVE_SCREEN_RECORDING
 
 #define NUM_CAPTURE_BUFS 2
 
@@ -195,7 +195,7 @@ void H3GFX::stopCapture() {
   }
 }
 
-#endif // JAILHOUSE
+#endif // HAVE_SCREEN_RECORDING
 
 #include <usb.h>
 #include <config.h>
@@ -468,14 +468,14 @@ void H3GFX::updateStatus() {
 void H3GFX::updateBgTask() {
   static uint32_t last_frame = 0;
 
-#ifdef JAILHOUSE
+#ifdef HAVE_SCREEN_RECORDING
   finish_capture();
 #endif
 
   if (tick_counter <= last_frame + m_frameskip)
     return;
 
-#ifdef JAILHOUSE
+#ifdef HAVE_SCREEN_RECORDING
   do_capture();
 #endif
 

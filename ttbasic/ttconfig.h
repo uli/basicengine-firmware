@@ -48,6 +48,7 @@
 #define HAVE_TFTP
 #ifdef JAILHOUSE
 #define HAVE_MULTI_PAD
+#define HAVE_SCREEN_RECORDING
 #endif
 #endif
 
