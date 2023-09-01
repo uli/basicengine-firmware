@@ -164,11 +164,11 @@ void H3GFX::startCapture() {
   int cap_h = (current_phys_mode->vactive + 15) / 16 * 16;
 
   for (int i = 0; i < NUM_CAPTURE_BUFS; ++i) {
-    luma_bufs[i] = malloc(cap_w * cap_h + 16);
+    luma_bufs[i] = calloc(1, cap_w * cap_h + 16);
     uintptr_t luma = (((uintptr_t)luma_bufs[i]) + 15) / 16 * 16;
     luma_bufs_aligned[i] = (void *)luma;
 
-    chroma_bufs[i] = malloc(cap_w * cap_h / 2 + 16);
+    chroma_bufs[i] = calloc(1, cap_w * cap_h / 2 + 16);
     uintptr_t chroma = (((uintptr_t)chroma_bufs[i]) + 15) / 16 * 16;
     chroma_bufs_aligned[i] = (void *)chroma;
   }
