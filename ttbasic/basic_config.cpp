@@ -174,7 +174,7 @@ To restore the default configuration, run the command `REMOVE
 \ref BEEP FONT SAVE_CONFIG SCREEN
 ***/
 
-#define MAX_CONFIG_IDX 12
+#define MAX_CONFIG_IDX 13
 
 const char *config_option_strings[MAX_CONFIG_IDX + 1] = {
   "tv_norm",
@@ -190,6 +190,7 @@ const char *config_option_strings[MAX_CONFIG_IDX + 1] = {
   "phys_mode",
   "language",
   "record_at_boot",
+  "editor",
 };
 
 void SMALL Basic::iconfig() {
@@ -310,6 +311,12 @@ void SMALL Basic::iconfig() {
       CONFIG.record_at_boot = value;
     break;
 #endif
+
+  case 13:
+    CONFIG.editor = istrexp();
+    setenv("EDITOR", CONFIG.editor.c_str(), 1);
+    break;
+
   default:
     E_VALUE(0, MAX_CONFIG_IDX);
     break;
@@ -342,6 +349,7 @@ void loadConfig() {
 #ifdef H3
   CONFIG.phys_mode = 0;
 #endif
+  CONFIG.editor = BString("joe");
 
   // XXX: colorspace is not initialized yet, cannot use conversion methods
   if (sizeof(pixel_t) == 1)
@@ -392,9 +400,12 @@ void loadConfig() {
 #ifdef HAVE_SCREEN_RECORDING
       if (!strcasecmp(line, "record_at_boot")) CONFIG.record_at_boot = atoi(v);
 #endif
+      if (!strcasecmp(line, "editor")) CONFIG.editor = BString(v);
     }
   }
   fclose(f);
+
+  setenv("EDITOR", CONFIG.editor.c_str(), 1);
 }
 
 /***bc sys SAVE CONFIG
@@ -425,6 +436,7 @@ void isaveconfig() {
 #ifdef HAVE_SCREEN_RECORDING
   fprintf(f, "record_at_boot=%u\n", CONFIG.record_at_boot);
 #endif
+  fprintf(f, "editor=%s\n", CONFIG.editor.c_str());
   for (int i = 0; i < CONFIG_COLS; ++i)
     fprintf(f, "color%d=%d,%d,%d\n", i,
       CONFIG.color_scheme[i][0],

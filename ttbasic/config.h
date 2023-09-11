@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
+// Copyright (c) 2023 Ulrich Hecht
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
 #include <stdint.h>
 #include "eb_config.h"
+
+#include "BString.h"
 
 typedef struct {
   int8_t NTSC;         // NTSC設定 (0,1,2,3)
@@ -24,6 +27,7 @@ typedef struct {
   uint32_t phys_mode;
 #endif
   bool record_at_boot;
+  BString editor;
 } SystemConfig;
 
 extern SystemConfig CONFIG;
