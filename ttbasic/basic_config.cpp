@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2017-2019 Ulrich Hecht
+// Copyright (c) 2023 Ulrich Hecht
 
 #include "basic.h"
 #include "eb_conio.h"
@@ -172,6 +173,25 @@ To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
 \ref BEEP FONT SAVE_CONFIG SCREEN
 ***/
+
+#define MAX_CONFIG_IDX 12
+
+const char *config_option_strings[MAX_CONFIG_IDX + 1] = {
+  "tv_norm",
+  "keyboard",
+  "interlace",
+  "lowpass",
+  "mode",
+  "font",
+  "cursor_color",
+  "beep_volume",
+  "line_adjust",
+  "keyword_sep_optional",
+  "phys_mode",
+  "language",
+  "record_at_boot",
+};
+
 void SMALL Basic::iconfig() {
   int32_t itemNo;
   num_t value;
@@ -182,10 +202,26 @@ void SMALL Basic::iconfig() {
     return;
   }
 
-  if (getParam(itemNo, I_COMMA))
+  if (is_strexp()) {
+    int i;
+    BString optstr = istrexp();
+
+    for (i = 0; i <= MAX_CONFIG_IDX; i++)
+      if (optstr == BString(config_option_strings[i])) {
+        itemNo = i;
+        break;
+      }
+
+    if (i > MAX_CONFIG_IDX) {
+      E_ERR(VALUE, _("unknown configuration variable"));
+      return;
+    }
+  } else if (getParam(itemNo, I_COMMA))
     return;
+
   if (getParam(value, I_NONE))
     return;
+
   switch (itemNo) {
   case 0:  // NTSC, PAL, PAL60 (XXX: unimplemented)
     if (value < 0 || value > 2) {
@@ -275,7 +311,7 @@ void SMALL Basic::iconfig() {
     break;
 #endif
   default:
-    E_VALUE(0, 12);
+    E_VALUE(0, MAX_CONFIG_IDX);
     break;
   }
 }
