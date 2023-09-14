@@ -300,8 +300,6 @@ S(getcwd)
 // newlib-style errno wrapper
 S(__errno)
 
-
-//S(stat)	struct stat differs between platforms
 //S(realpath)	not in newlib
 
 // stdio stream interface
@@ -323,7 +321,6 @@ S(fread)
 S(freopen)
 S(fscanf)
 S(fseek)
-//S(fstat)	struct stat differs between platforms
 S(ftell)
 S(fwrite)
 S(setvbuf)
@@ -339,13 +336,13 @@ S(puts)
 S(__getreent)
 
 // unistd file I/O
-//S(open)	flags differ between platforms
 S(close)
 //S(creat)	not in newlib
 S(read)
 S(write)
 S(lseek)	// assumes "whence" defines to be identical across platforms
 #ifdef ALLWINNER_BARE_METAL
+S(open)
 S(stat)
 S(fstat)
 //S(lstat)	not in newlib
