@@ -3796,7 +3796,9 @@ void SMALL Basic::error(uint8_t flgCmd) {
       //err = 0;
       //return;
     } else {                  // 指示の実行中なら
+      sc0.setColor(COL(PROC), COL(BG));
       c_puts_P(_(errmsg[err]));  // エラーメッセージを表示
+      sc0.setColor(COL(FG), COL(BG));
       if (err_expected) {
         PRINT_P(" (");
         c_puts_P(err_expected);
