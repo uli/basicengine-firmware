@@ -175,7 +175,9 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
             // manually.)
             if (screen_putch_paging_counter++ >= sc0.getHeight() - 2) {
               newline();
-              c_puts("\\RPress any key to continue\\N");
+              c_puts("\\R");
+              c_puts(_("Press any key to continue."));
+              c_puts("\\N");
               utf8_int32_t c;
               while (!(c = c_getch())) {
                 yield();
