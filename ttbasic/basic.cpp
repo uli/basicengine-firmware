@@ -3605,6 +3605,14 @@ Runs the ASCII text editor.
 @file$	name of file to be edited [default: new file]
 ***/
 void Basic::iedit() {
+  if (end_of_statement()) {
+    E_ERR(COM, _("can't edit program while running it"));
+    return ;
+  }
+  iedit_();
+}
+
+void Basic::iedit_() {
   BString fn;
   std::list<BString> args;
 
@@ -3613,8 +3621,55 @@ void Basic::iedit() {
   else
     args.push_back("atto");
 
-  if (is_strexp() && (fn = getParamFname()))
+  if (end_of_statement()) {
+    // EDIT without argument -> edit the program in memory
+    char *tmp_file = tempnam(NULL, "bas");
+    char *backup_file = tempnam(NULL, "bas");
+    BString tmp_file_s(tmp_file);
+
+    do_save(backup_file, true); // XXX: show_lines?
+    do_save(tmp_file, true); // XXX: show_lines?
+
+    args.push_back(tmp_file_s);
+
+    for (;;) {
+      sc0.show_curs(1);
+      int rc = shell_list(args);
+      sc0.show_curs(0);
+
+      if (rc) {	// Something went wrong in the editor.
+        E_ERR(SYS, _("editor exited abnormally"));
+        break;
+      }
+
+      c_puts("\n");
+      if (loadPrgText(tmp_file, NEW_ALL, ENC_UTF8)) {
+        error(true);
+        c_printf(_("Press B to reload the last parsable version.\n"));
+        c_printf(_("Press any other key to continue.\n"));
+        utf8_int32_t c;
+        while (!(c = c_getch())) {
+          yield();
+        }
+
+        if (c == 'b' || c == 'B') {
+          rc = bfs.fcopy(backup_file, tmp_file);
+        }
+
+      } else {
+        break;
+      }
+    }
+
+    unlink(tmp_file);
+    unlink(backup_file);
+    free(tmp_file);
+    free(backup_file);
+
+    return;
+  } else if (is_strexp() && (fn = getParamFname()))
     args.push_back(fn);
+
   if (err)
     return;
 
@@ -5794,6 +5849,11 @@ uint8_t SMALL Basic::icom() {
   case I_LOAD:
   case I_MERGE:
     ilrun_(); break;
+
+  case I_EDIT:
+    // EDIT (without parameters) changes the program in memory and thus cannot
+    // be called like other commands. (It can when editing a file.)
+    iedit_(); break;
 
   case I_CHAIN:
     if (ilrun()) {

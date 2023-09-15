@@ -196,6 +196,8 @@ private:
 
   num_t nplay();
 
+  void iedit_();
+
   enum encoding_t {
     ENC_UTF8 = 0,
     ENC_CP437 = 1,
