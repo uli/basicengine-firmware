@@ -179,6 +179,8 @@ private:
 
   void SMALL ilist(uint8_t devno = 0, BString *search = NULL, bool show_lines = true);
 
+  void do_save(const char *fname, bool show_lines);
+
   void iloadbg();
   void isavebg();
   void isavepcx();

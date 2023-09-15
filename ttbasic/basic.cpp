@@ -5,6 +5,7 @@
    2017/03/22, Modified by Tamakichi、for Arduino STM32
    Modified for BASIC Engine by Ulrich Hecht
    (C) 2017-2019 Ulrich Hecht
+   (C) 2023 Ulrich Hecht
  */
 
 #include <Arduino.h>
@@ -2608,9 +2609,23 @@ Saves the BASIC program in memory to a file.
 * BASIC programs are saved in plain text (UTF-8) format.
 \ref SAVE_BG SAVE_CONFIG SAVE_IMAGE
 ***/
+
+void Basic::do_save(const char *fname, bool show_lines) {
+  // SDカードへの保存
+  int8_t rc = bfs.tmpOpen((char *)fname, 1);
+  if (rc == SD_ERR_INIT) {
+    err = ERR_SD_NOT_READY;
+    return;
+  } else if (rc == SD_ERR_OPEN_FILE) {
+    err = ERR_FILE_OPEN;
+    return;
+  }
+  ilist(4, NULL, show_lines);
+  bfs.tmpClose();
+}
+
 void Basic::isave() {
   BString fname;
-  int8_t rc;
   bool show_lines = true;
 
   if (*cip == I_BG) {
@@ -2643,17 +2658,7 @@ void Basic::isave() {
     ++cip;
   }
 
-  // SDカードへの保存
-  rc = bfs.tmpOpen((char *)fname.c_str(), 1);
-  if (rc == SD_ERR_INIT) {
-    err = ERR_SD_NOT_READY;
-    return;
-  } else if (rc == SD_ERR_OPEN_FILE) {
-    err = ERR_FILE_OPEN;
-    return;
-  }
-  ilist(4, NULL, show_lines);
-  bfs.tmpClose();
+  do_save(fname.c_str(), show_lines);
 }
 
 #include "codepages.h"
