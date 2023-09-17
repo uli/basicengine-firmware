@@ -2968,7 +2968,7 @@ void BASIC_FP process_events(void) {
 
   event_profile[1] = micros();
 
-#ifdef USE_BG_ENGINE
+#if defined(USE_BG_ENGINE) && !defined(USE_H3GFX)
   vs23.updateBg();
 #endif
 

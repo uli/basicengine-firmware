@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2019 Ulrich Hecht
+// Copyright (c) 2023 Ulrich Hecht
 
 #ifdef H3
 
@@ -389,10 +390,10 @@ bool H3GFX::setMode(uint8_t mode) {
   display_set_mode(m_current_mode.x + m_current_mode.left * 2,
                    m_current_mode.y + m_current_mode.top * 2, 0, 0);
 
-  display_single_buffer = true;
+  display_single_buffer = false;
   display_swap_buffers();
 
-  resetLinePointers(m_pixels, (pixel_t *)display_active_buffer);
+  resetLinePointers(m_pixels, (pixel_t *)m_textmode_buffer);
   resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
 
   m_display_enabled = true;
@@ -441,23 +442,6 @@ void H3GFX::updateStatus() {
 
   if (enabled != m_engine_enabled) {
     spin_lock(&m_buffer_lock);
-    if (m_engine_enabled) {
-      // We're running multi-buffered and are switching to single-buffered mode.
-      // We need to copy what is in the backbuffer to the visible buffer.
-      display_single_buffer = true;
-      display_swap_buffers();
-      resetLinePointers(m_pixels, (pixel_t *)display_visible_buffer);
-      blitBuffer((pixel_t *)display_visible_buffer, m_textmode_buffer);
-    } else {
-      // We're running single-buffered and are switching to multi-buffered mode.
-      pixel_t *latest_content = (pixel_t *)display_visible_buffer;
-      display_single_buffer = false;
-      display_swap_buffers();
-      resetLinePointers(m_pixels, m_textmode_buffer);
-      resetLinePointers(m_bgpixels, (pixel_t *)display_active_buffer);
-      blitBuffer(m_textmode_buffer, latest_content);
-    }
-    cleanCache();
     m_engine_enabled = enabled;
     spin_unlock(&m_buffer_lock);
   }
@@ -493,15 +477,6 @@ void H3GFX::updateBgTask() {
   }
 
   spin_lock(&m_buffer_lock);
-  // While we were waiting for the lock, the BG engine might have been
-  // turned off, and we are not allowed to draw to the framebuffer any
-  // longer.
-  if (!m_engine_enabled) {
-    m_frame++;
-    spin_unlock(&m_buffer_lock);
-    smp_send_event();
-    return;
-  }
 
 #ifdef PROFILE_BG
   uint32_t start = micros();
@@ -560,11 +535,6 @@ void H3GFX::updateBgTask() {
 
   m_frame++;
   smp_send_event();
-}
-
-void H3GFX::updateBg() {
-  if (!m_engine_enabled)
-    cleanCache();  // commit single-buffer renderings to DRAM
 }
 
 #ifdef USE_BG_ENGINE

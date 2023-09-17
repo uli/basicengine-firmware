@@ -95,7 +95,6 @@ public:
   }
 
 #ifdef USE_BG_ENGINE
-  void updateBg();
   void updateBgTask();
 
   inline void setSpriteOpaque(uint8_t num, bool enable) {
