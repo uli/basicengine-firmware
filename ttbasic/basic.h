@@ -179,7 +179,7 @@ private:
 
   void SMALL ilist(uint8_t devno = 0, BString *search = NULL, bool show_lines = true);
 
-  void do_save(const char *fname, bool show_lines);
+  void do_save(const char *fname);
 
   void iloadbg();
   void isavebg();
@@ -234,6 +234,8 @@ private:
   typedef num_t (Basic::*numfun_t)();
   static const numfun_t numfuntbl_init[];
   static std::vector<numfun_t> numfuntbl;
+
+  bool uses_line_numbers;
 
   num_t iextvalue();
   BString iextstrvalue();

@@ -2485,6 +2485,8 @@ void Basic::inew(uint8_t mode) {
 
     bool direct_mode = !(cip >= listbuf && cip < listbuf + size_list);
 
+    uses_line_numbers = true;
+
     if (listbuf)
       free(listbuf);
     // XXX: Should we be more generous here to avoid fragmentation?
@@ -2605,12 +2607,16 @@ Saves the BASIC program in memory to a file.
 @file$	name of file to be saved
 \note
 * Programs are saved without line numbers if `LINE OFF` is specified.
-  Otherwise, line numbers are included.
+* Programs are saved with line numbers if `LINE ON` is specified.
+* If neither `LINE OFF` nor `LINE ON` are specified, line numbers are
+  included if any were present when the program was loaded into memory. If
+  a program has been entered entirely in direct mode, it will be saved with
+  line numbers.
 * BASIC programs are saved in plain text (UTF-8) format.
 \ref SAVE_BG SAVE_CONFIG SAVE_IMAGE
 ***/
 
-void Basic::do_save(const char *fname, bool show_lines) {
+void Basic::do_save(const char *fname) {
   // SDカードへの保存
   int8_t rc = bfs.tmpOpen((char *)fname, 1);
   if (rc == SD_ERR_INIT) {
@@ -2620,13 +2626,12 @@ void Basic::do_save(const char *fname, bool show_lines) {
     err = ERR_FILE_OPEN;
     return;
   }
-  ilist(4, NULL, show_lines);
+  ilist(4, NULL, uses_line_numbers);
   bfs.tmpClose();
 }
 
 void Basic::isave() {
   BString fname;
-  bool show_lines = true;
 
   if (*cip == I_BG) {
     isavebg();
@@ -2648,9 +2653,9 @@ void Basic::isave() {
   if (*cip == I_LINE) {
     ++cip;
     if (*cip == I_OFF)
-      show_lines = false;
+      uses_line_numbers = false;
     else if (*cip == I_ON)
-      show_lines = true;
+      uses_line_numbers = true;
     else {
       SYNTAX_T(_("expected OFF or ON"));
       return;
@@ -2658,7 +2663,7 @@ void Basic::isave() {
     ++cip;
   }
 
-  do_save(fname.c_str(), show_lines);
+  do_save(fname.c_str());
 }
 
 #include "codepages.h"
@@ -2719,8 +2724,12 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode, encoding_t enc) {
   if (err)
     return 1;
 
-  if (newmode != NEW_VAR)
+  if (newmode != NEW_VAR) {
     inew(newmode);
+    // Assume no line numbers until we encounter one while loading.
+    uses_line_numbers = false;
+  }
+
   while (bfs.readLine(lbuf)) {
     if (enc != ENC_UTF8)
       transcodeLineToUTF8(lbuf, enc);
@@ -2742,7 +2751,10 @@ uint8_t SMALL Basic::loadPrgText(char *fname, uint8_t newmode, encoding_t enc) {
       last_line += 1;
       int lnum_size = sprintf(lbuf, "%u", (unsigned int)last_line);
       lbuf[lnum_size] = ' ';
+    } else {
+      uses_line_numbers = true;
     }
+
     tlimR(lbuf);  // 2017/07/31 追記
     len = toktoi();
     if (err) {
@@ -3627,8 +3639,8 @@ void Basic::iedit_() {
     char *backup_file = tempnam(NULL, "bas");
     BString tmp_file_s(tmp_file);
 
-    do_save(backup_file, true); // XXX: show_lines?
-    do_save(tmp_file, true); // XXX: show_lines?
+    do_save(backup_file);
+    do_save(tmp_file);
 
     args.push_back(tmp_file_s);
 
@@ -3655,7 +3667,6 @@ void Basic::iedit_() {
         if (c == 'b' || c == 'B') {
           rc = bfs.fcopy(backup_file, tmp_file);
         }
-
       } else {
         break;
       }
@@ -6081,6 +6092,8 @@ void SMALL Basic::basic() {
   size_list = 0;
   listbuf = NULL;
   memset(user_files, 0, sizeof(user_files));
+
+  uses_line_numbers = true;
 
   // Initialize execution environment
   inew();
