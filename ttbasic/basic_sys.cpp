@@ -9,11 +9,6 @@
 #include "eb_video.h"
 #include "eb_sys.h"
 
-// **** RTC用宣言 ********************
-#ifdef USE_INNERRTC
-#include <Time.h>
-#endif
-
 void basic_init_environment() {
 #ifdef __x86_64__
   setenv("HOSTTYPE", "x86_64", 1);
@@ -68,20 +63,6 @@ void Basic::iwait() {
 }
 
 void *BASIC_INT sanitize_addr(intptr_t vadr, int type) {
-#ifdef ESP8266
-  // Unmapped memory, causes exception
-  if (vadr < 0x20000000UL) {
-    E_ERR(VALUE, "unmapped address");
-    return NULL;
-  }
-  // IRAM, flash: 32-bit only
-  if ((vadr >= 0x40100000UL && vadr < 0x40300000UL) && type != 2) {
-    E_ERR(VALUE, "non-32-bit access");
-    return NULL;
-  }
-#else
-  // anything goes
-#endif
   if ((type == 1 && (vadr & 1)) ||
       (type == 2 && (vadr & 3))) {
     E_ERR(VALUE, "misaligned address");
@@ -571,9 +552,7 @@ num_t Basic::nsys() {
 #endif
 
 uint64_t SMALL Basic::getFreeMemory() {
-#ifdef ESP8266
-  return umm_free_heap_size();
-#elif defined(H3)
+#if defined(H3)
   return sys_mem_free();
 #elif defined(__DJGPP__)
   return _go32_dpmi_remaining_physical_memory();
@@ -761,10 +740,6 @@ void SMALL Basic::isysinfo() {
 #endif
 }
 
-#ifdef ESP8266
-#include <eboot_command.h>
-#include <spi_flash.h>
-#endif
 /***bc sys BOOT
 Reboots the system.
 \usage BOOT
