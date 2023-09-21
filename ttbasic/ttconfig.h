@@ -13,26 +13,6 @@
 // XXX: This is non-optional by now and should thus be removed.
 #define USE_NTSC  1  // 0: Not used, 1: Used. (Default: 1)
 
-#ifdef ESP8266
-#define USE_VS23 1
-#ifdef ESP8266_NOWIFI
-#define USE_BG_ENGINE
-#endif
-#define PIXEL_TYPE uint8_t
-#define LOWMEM
-#define USE_PSX_GPIO
-#define USE_SMALL
-#define NO_JUMP_TABLES
-#endif
-
-#ifdef ESP32
-#define USE_ESP32GFX 1
-#define USE_BG_ENGINE
-#define PIXEL_TYPE uint8_t
-#define LOWMEM
-#define USE_PSX_GPIO
-#endif
-
 #ifdef H3
 #define USE_H3GFX 1
 #define USE_BG_ENGINE
@@ -105,9 +85,6 @@
 
 // ** Default speed of Serial port 1 *********************************************
 #define GPIO_S1_BAUD    115200
-
-// ** Use of built-in RTC 0: Not use 1: Use *****************************
-#define USE_INNERRTC   1 // (Default: 1) ※ Always set to 1 when using an SD card
 
 #ifdef HAVE_PROFILE
 #define NOINS __attribute__((no_instrument_function))
