@@ -132,6 +132,14 @@ void tTVscreen::el() {
 
 bool tTVscreen::ansi_machine(utf8_int32_t i)
 {
+#ifdef DEBUG_ANSI
+    if (i < 32)
+      printf("^%c", i + 64);
+    else if (i >= 128)
+      printf("[u%04X]", i);
+    else
+      printf("%c", i);
+#endif
     if (i >= 256)	// or even 128?
       return false;
 
