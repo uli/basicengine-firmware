@@ -426,8 +426,8 @@ void tTVscreen::cscroll(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t d) {
     break;
   }
   utf8_int32_t c;
-  for (uint8_t i = 0; i < h; i++)
-    for (uint8_t j = 0; j < w; j++) {
+  for (int i = 0; i < h; i++)
+    for (int j = 0; j < w; j++) {
       c = VPEEK(x + j, y + i);
       pixel_t f = VPEEK_FG(x + j, y + i);
       pixel_t b = VPEEK_BG(x + j, y + i);
