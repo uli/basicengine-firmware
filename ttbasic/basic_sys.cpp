@@ -270,7 +270,8 @@ Sets the current date and time.
 @minute	numeric expression [`0` to `59`]
 @second	numeric expression [`0` to `61`]
 \bugs
-It is unclear why the maximum value for `second` is 61 and not 59.
+The maximum value for `second` is 61 and not 59 to accommodate a leap
+second.
 \ref DATE GET_DATE
 ***/
 void Basic::isetDate() {
@@ -283,7 +284,6 @@ void Basic::isetDate() {
   if ( getParam(p_day,     1,  31, I_COMMA) ) return;  // 日
   if ( getParam(p_hour,    0,  23, I_COMMA) ) return;  // 時
   if ( getParam(p_min,     0,  59, I_COMMA) ) return;  // 分
-  // 61? WTF?
   if ( getParam(p_sec,     0,  61, I_NONE)) return;  // 秒
 
   setTime(p_hour, p_min, p_sec, p_day, p_mon, p_year);
