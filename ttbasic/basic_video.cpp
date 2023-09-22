@@ -183,7 +183,8 @@ void BASIC_INT NOJUMP screen_putch(utf8_int32_t c, bool lazy) {
                 yield();
               }
               process_hotkeys(c);
-              c_puts("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+              for (int i = 0; i < strlen(_("Press any key to continue.")); ++i)
+                sc0.putch('\b');
               screen_putch_paging_counter = 0;
             }
           }
