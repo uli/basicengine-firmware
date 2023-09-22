@@ -279,7 +279,7 @@ void Basic::isetDate() {
   int32_t p_year, p_mon, p_day;
   int32_t p_hour, p_min, p_sec;
 
-  if ( getParam(p_year, 1900,2036, I_COMMA) ) return;  // 年
+  if ( getParam(p_year, 1900,2500, I_COMMA) ) return;  // 年
   if ( getParam(p_mon,     1,  12, I_COMMA) ) return;  // 月
   if ( getParam(p_day,     1,  31, I_COMMA) ) return;  // 日
   if ( getParam(p_hour,    0,  23, I_COMMA) ) return;  // 時
@@ -333,15 +333,17 @@ other BASIC implementations and may be changed in future releases.
 \ref DATE GET_TIME SET_DATE
 ***/
 void Basic::igetDate() {
-#ifdef USE_INNERRTC
-  int16_t index;
-  time_t tt = now();
+#ifdef HAVE_TIME
+  int index;
+
+  time_t now = time(NULL);
+  struct tm *tim = gmtime(&now);
 
   int v[] = {
-    year(tt),
-    month(tt),
-    day(tt),
-    weekday(tt),
+    tim->tm_year + 1900,
+    tim->tm_mon + 1,
+    tim->tm_mday,
+    tim->tm_wday + 1,
   };
 
   for (uint8_t i = 0; i < 4; i++) {
@@ -384,14 +386,16 @@ other BASIC implementations and may be changed in future releases.
 \ref SET_DATE
 ***/
 void Basic::igetTime() {
-#ifdef USE_INNERRTC
-  int16_t index;
-  time_t tt = now();
+#ifdef HAVE_TIME
+  int index;
+
+  time_t now = time(NULL);
+  struct tm *tim = gmtime(&now);
 
   int v[] = {
-    hour(tt),
-    minute(tt),
-    second(tt),
+    tim->tm_hour,
+    tim->tm_min,
+    tim->tm_sec,
   };
 
   for (uint8_t i = 0; i < 3; i++) {
@@ -412,7 +416,7 @@ void Basic::igetTime() {
       cip++;
     }
   }
-#else
+#else	// HAVE_TIME
   err = ERR_NOT_SUPPORTED;
 #endif
 }
@@ -439,16 +443,17 @@ implementations and may be changed in future releases.
 ***/
 // XXX: 32 byte jump table
 void NOJUMP Basic::idate() {
-#ifdef USE_INNERRTC
-  time_t tt = now();
+#ifdef HAVE_TIME
+  time_t now = time(NULL);
+  struct tm *tim = gmtime(&now);
 
-  putnum(year(tt), -4);
+  putnum(tim->tm_year + 1900, -4);
   c_putch('/');
-  putnum(month(tt), -2);
+  putnum(tim->tm_mon + 1, -2);
   c_putch('/');
-  putnum(day(tt), -2);
+  putnum(tim->tm_mday, -2);
   PRINT_P(" [");
-  switch (weekday(tt)) {
+  switch (tim->tm_wday + 1) {
   case 1: PRINT_P("Sun"); break;
   case 2: PRINT_P("Mon"); break;
   case 3: PRINT_P("Tue"); break;
@@ -458,11 +463,11 @@ void NOJUMP Basic::idate() {
   case 7: PRINT_P("Sat"); break;
   };
   PRINT_P("] ");
-  putnum(hour(tt), -2);
+  putnum(tim->tm_hour, -2);
   c_putch(':');
-  putnum(minute(tt), -2);
+  putnum(tim->tm_min, -2);
   c_putch(':');
-  putnum(second(tt), -2);
+  putnum(tim->tm_sec, -2);
   newline();
 #else
   err = ERR_NOT_SUPPORTED;

@@ -29,6 +29,7 @@
 #ifdef JAILHOUSE
 #define HAVE_MULTI_PAD
 #define HAVE_SCREEN_RECORDING
+#define HAVE_TIME
 #endif
 #endif
 
@@ -59,6 +60,7 @@
 #define SINGLE_BLIT
 #define AUDIO_SAMPLE_RATE 48000
 #define AUDIO_16BIT
+#define HAVE_TIME
 #endif
 
 #ifndef IPIXEL_TYPE
