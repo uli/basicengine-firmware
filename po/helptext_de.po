@@ -29,18 +29,18 @@ msgstr ""
 
 #. [ a random integer between 0 and 2147483647]
 # bulk translation
-msgid " a random integer number between 0 and 2147483647"
-msgstr " eine zufällige Ganzzahl zwischen 0 und 2147483647"
+msgid "a random integer number between 0 and 2147483647"
+msgstr "eine zufällige Ganzzahl zwischen 0 und 2147483647"
 
 #. [ `mod` between 0 and 1]
 # bulk translation
-msgid " `mod` between 0 and 1 "
-msgstr " `mod` zwischen 0 und 1 "
+msgid "`mod` between 0 and 1"
+msgstr "`mod` zwischen 0 und 1"
 
 #. [ a random fraction between 0 and 1]
 # bulk translation
-msgid " a random fractional number between 0 and 1"
-msgstr " eine zufällige Bruchzahl zwischen 0 und 1"
+msgid "a random fractional number between 0 and 1"
+msgstr "eine zufällige Bruchzahl zwischen 0 und 1"
 
 #. [ A random fraction between 0 and 1. A certain value of "mod" always
 #. results
@@ -2103,43 +2103,43 @@ msgstr "Das Attribut `FLAGS` ist die Summe der folgenden Bitwerte:"
 
 #. [ Bit value]
 # bulk translation
-msgid " Bit value "
-msgstr " Bitwert "
+msgid "Bit value"
+msgstr "Bitwert"
 
 #. [effect]
 # from Argos
-msgid " Effect"
-msgstr " Wirkung"
+msgid "Effect"
+msgstr "Wirkung"
 
 #. [ `1`]
 # bulk translation
-msgid " `1` "
-msgstr " `1` "
+msgid "`1`"
+msgstr "`1`"
 
 #. [ Sprite opacity (opaque if set)]
 # bulk translation
-msgid " Sprite opacity (opaque if set)"
-msgstr " Sprite-Deckkraft (undurchsichtig, falls eingestellt)"
+msgid "Sprite opacity (opaque if set)"
+msgstr "Sprite-Deckkraft (undurchsichtig, falls eingestellt)"
 
 #. [ `2`]
 # bulk translation
-msgid " `2` "
-msgstr " `2` "
+msgid "`2`"
+msgstr "`2`"
 
 #. [ Horizontal flip]
 # bulk translation
-msgid " Horizontal flip"
-msgstr " Horizontaler Flip"
+msgid "Horizontal flip"
+msgstr "Horizontaler Flip"
 
 #. [ `4`]
 # bulk translation
-msgid " `4` "
-msgstr " `4` "
+msgid "`4`"
+msgstr "`4`"
 
 #. [ Vertical flip]
 # bulk translation
-msgid " Vertical flip"
-msgstr " Vertikaler Flip"
+msgid "Vertical flip"
+msgstr "Vertikaler Flip"
 
 #. [* The attributes of the "SPRITE" command can be specified in any order.
 #. However, it is usually best to put the "ON" attribute at the end when it is
@@ -2266,23 +2266,23 @@ msgstr ""
 
 #. [ importance]
 # bulk translation
-msgid " Meaning"
-msgstr " Bedeutung"
+msgid "Meaning"
+msgstr "Bedeutung"
 
 #. [ The tile is under the sprite.]
 # bulk translation
-msgid " The tile is below the sprite."
-msgstr " Die Kachel befindet sich unter dem Sprite."
+msgid "The tile is below the sprite."
+msgstr "Die Kachel befindet sich unter dem Sprite."
 
 #. [ The tile is to the right of the sprite.]
 # bulk translation
-msgid " The tile is right of the sprite."
-msgstr " Die Kachel befindet sich rechts vom Sprite."
+msgid "The tile is right of the sprite."
+msgstr "Die Kachel befindet sich rechts vom Sprite."
 
 #. [ The tile is above the sprite.]
 # bulk translation
-msgid " The tile is above the sprite."
-msgstr " Die Kachel befindet sich über dem Sprite."
+msgid "The tile is above the sprite."
+msgstr "Die Kachel befindet sich über dem Sprite."
 
 #. [WARNING: This feature has never been tested.]
 # bulk translation
@@ -2314,23 +2314,23 @@ msgstr "Sprite Nummer 2 [`0` bis `{MAX_SPRITES_m1} `]"
 
 #. [ Sprite 2 is to the left of Sprite 1.]
 # bulk translation
-msgid " Sprite 2 is left of sprite 1."
-msgstr " Sprite 2 ist links von Sprite 1."
+msgid "Sprite 2 is left of sprite 1."
+msgstr "Sprite 2 ist links von Sprite 1."
 
 #. [ Sprite 2 is below Sprite 1.]
 # bulk translation
-msgid " Sprite 2 is below sprite 1."
-msgstr " Sprite 2 liegt unter Sprite 1."
+msgid "Sprite 2 is below sprite 1."
+msgstr "Sprite 2 liegt unter Sprite 1."
 
 #. [ Sprite 2 is to the right of Sprite 1.]
 # bulk translation
-msgid " Sprite 2 is right of sprite 1."
-msgstr " Sprite 2 ist rechts von Sprite 1."
+msgid "Sprite 2 is right of sprite 1."
+msgstr "Sprite 2 ist rechts von Sprite 1."
 
 #. [ Sprite 2 is on top of Sprite 1.]
 # bulk translation
-msgid " Sprite 2 is above sprite 1."
-msgstr " Sprite 2 liegt über Sprite 1."
+msgid "Sprite 2 is above sprite 1."
+msgstr "Sprite 2 liegt über Sprite 1."
 
 #. [* Collisions are only recognized if both sprites are activated.]
 # bulk translation
@@ -2478,63 +2478,63 @@ msgstr "CODES"
 
 #. [ Standard background]
 # bulk translation
-msgid " Default background"
-msgstr " Standardhintergrund"
+msgid "Default background"
+msgstr "Standardhintergrund"
 
 #. [ Standard foreground]
 # bulk translation
-msgid " Default foreground"
-msgstr " Standardvordergrund"
+msgid "Default foreground"
+msgstr "Standardvordergrund"
 
 #. [ Syntax: BASIC keywords]
 # bulk translation
-msgid " Syntax: BASIC keywords"
-msgstr " Syntax: BASIC-Schlüsselwörter"
+msgid "Syntax: BASIC keywords"
+msgstr "Syntax: BASIC-Schlüsselwörter"
 
 #. [ Syntax: line numbers]
 # bulk translation
-msgid " Syntax: line numbers"
-msgstr " Syntax: Zeilennummern"
+msgid "Syntax: line numbers"
+msgstr "Syntax: Zeilennummern"
 
 #. [ Syntax: numbers]
 # bulk translation
-msgid " Syntax: numbers"
-msgstr " Syntax: Zahlen"
+msgid "Syntax: numbers"
+msgstr "Syntax: Zahlen"
 
 #. [ Syntax: global variables]
 # bulk translation
-msgid " Syntax: global variables"
-msgstr " Syntax: globale Variablen"
+msgid "Syntax: global variables"
+msgstr "Syntax: globale Variablen"
 
 #. [ Syntax: local variables and arguments]
 # bulk translation
-msgid " Syntax: local variables and arguments"
-msgstr " Syntax: lokale Variablen und Argumente"
+msgid "Syntax: local variables and arguments"
+msgstr "Syntax: lokale Variablen und Argumente"
 
 #. [ Syntax: operands]
 # bulk translation
-msgid " Syntax: operands"
-msgstr " Syntax: Operanden"
+msgid "Syntax: operands"
+msgstr "Syntax: Operanden"
 
 #. [Syntax: String Constants]
 # from Google
-msgid " Syntax: string constants"
-msgstr " Syntax: String-Konstanten"
+msgid "Syntax: string constants"
+msgstr "Syntax: String-Konstanten"
 
 #. [ Syntax: procedure name]
 # bulk translation
-msgid " Syntax: procedure names"
-msgstr " Syntax: Prozedurnamen"
+msgid "Syntax: procedure names"
+msgstr "Syntax: Prozedurnamen"
 
 #. [ Syntax: comments]
 # bulk translation
-msgid " Syntax: comments"
-msgstr " Syntax: Kommentare"
+msgid "Syntax: comments"
+msgstr "Syntax: Kommentare"
 
 #. [ Standard border color]
 # bulk translation
-msgid " Default border color"
-msgstr " Standardrandfarbe"
+msgid "Default border color"
+msgstr "Standardrandfarbe"
 
 #. [* In contrast to the "COLOR" command, for "CONFIG COLOR" the colors must
 #. be
@@ -3302,93 +3302,93 @@ msgstr ""
 
 #. [ Joystick / joypad controller]
 # bulk translation
-msgid " Joystick/joypad Controller "
-msgstr " Joystick / Joypad-Controller "
+msgid "Joystick/joypad Controller"
+msgstr "Joystick / Joypad-Controller"
 
 #. [ keyboard]
 # bulk translation
-msgid " Keyboard"
-msgstr " Tastatur"
+msgid "Keyboard"
+msgstr "Tastatur"
 
 #. [ kbd: key [◄]]
 # bulk translation
-msgid " kbd:[&#x25c4;] button "
-msgstr " kbd:[◄]-Taste "
+msgid "kbd:[&#x25c4;] button"
+msgstr "kbd:[◄]-Taste"
 
 #. [ kbd: button [left]]
 # bulk translation
-msgid " kbd:[Left] key"
-msgstr " kbd:[Links]-Taste"
+msgid "kbd:[Left] key"
+msgstr "kbd:[Links]-Taste"
 
 #. [ kbd: [▼] key]
 # bulk translation
-msgid " kbd:[&#x25bc;] button "
-msgstr " kbd:[▼]-Taste "
+msgid "kbd:[&#x25bc;] button"
+msgstr "kbd:[▼]-Taste"
 
 #. [ kbd: button [►]]
 # bulk translation
-msgid " kbd:[&#x25ba;] button "
-msgstr " kbd:[►]-Taste "
+msgid "kbd:[&#x25ba;] button"
+msgstr "kbd:[►]-Taste"
 
 #. [ kbd: key [▲]]
 # bulk translation
-msgid " kbd:[&#x25b2;] button "
-msgstr " kbd:[▲]-Taste "
+msgid "kbd:[&#x25b2;] button"
+msgstr "kbd:[▲]-Taste"
 
 #. [ kbd: button [□]]
 # bulk translation
-msgid " kbd:[&#x25a1;] button "
-msgstr " kbd:[□]-Taste "
+msgid "kbd:[&#x25a1;] button"
+msgstr "kbd:[□]-Taste"
 
 #. [ kbd: [Z] key]
 # bulk translation
-msgid " kbd:[Z] key"
-msgstr " kbd:[Z]-Taste"
+msgid "kbd:[Z] key"
+msgstr "kbd:[Z]-Taste"
 
 #. [ kbd: key [✕]]
 # bulk translation
-msgid " kbd:[&#x2715;] button "
-msgstr " kbd:[✕]-Taste "
+msgid "kbd:[&#x2715;] button"
+msgstr "kbd:[✕]-Taste"
 
 #. [ kbd: [X] key]
 # bulk translation
-msgid " kbd:[X] key"
-msgstr " kbd:[X]-Taste"
+msgid "kbd:[X] key"
+msgstr "kbd:[X]-Taste"
 
 #. [ kbd: [S] key]
 # bulk translation
-msgid " kbd:[S] key"
-msgstr " kbd:[S]-Taste"
+msgid "kbd:[S] key"
+msgstr "kbd:[S]-Taste"
 
 #. [ kbd: key [△]]
 # bulk translation
-msgid " kbd:[&#x25b3;] button "
-msgstr " kbd:[△]-Taste "
+msgid "kbd:[&#x25b3;] button"
+msgstr "kbd:[△]-Taste"
 
 #. [ kbd: [A] key]
 # bulk translation
-msgid " kbd:[A] key"
-msgstr " kbd:[A]-Taste"
+msgid "kbd:[A] key"
+msgstr "kbd:[A]-Taste"
 
 #. [ kbd: button [R1]]
 # bulk translation
-msgid " kbd:[R1] button "
-msgstr " kbd:[R1]-Taste "
+msgid "kbd:[R1] button"
+msgstr "kbd:[R1]-Taste"
 
 #. [ kbd: button [L1]]
 # bulk translation
-msgid " kbd:[L1] button "
-msgstr " kbd:[L1]-Taste "
+msgid "kbd:[L1] button"
+msgstr "kbd:[L1]-Taste"
 
 #. [ kbd: [R2] key]
 # bulk translation
-msgid " kbd:[R2] button "
-msgstr " kbd:[R2]-Taste "
+msgid "kbd:[R2] button"
+msgstr "kbd:[R2]-Taste"
 
 #. [ kbd: button [L2]]
 # bulk translation
-msgid " kbd:[L2] button "
-msgstr " kbd:[L2]-Taste "
+msgid "kbd:[L2] button"
+msgstr "kbd:[L2]-Taste"
 
 #. [Depending on the "status", these bit values ​​are set when the respective
 #. keys are currently pressed ("0") or pressed again ("1").]
@@ -3453,388 +3453,388 @@ msgstr ""
 
 #. [ Remarks]
 # bulk translation
-msgid " Notes"
-msgstr " Anmerkungen"
+msgid "Notes"
+msgstr "Anmerkungen"
 
 #. [ kbd: [NumLock]]
 # bulk translation
-msgid " kbd:[NumLock]\t\t"
-msgstr " kbd:[NumLock]\t\t"
+msgid "kbd:[NumLock]"
+msgstr "kbd:[NumLock]"
 
 #. [ kbd: [`]]
 # bulk translation
-msgid " kbd:[`]\t\t"
-msgstr " kbd:[`]\t\t"
+msgid "kbd:[`]"
+msgstr "kbd:[`]"
 
 #. [ kbd: [insert]]
 # bulk translation
-msgid " kbd:[Insert]\t\t"
-msgstr " kbd:[Einfügen]\t\t"
+msgid "kbd:[Insert]"
+msgstr "kbd:[Einfügen]"
 
 #. [ kbd: [pause]]
 # bulk translation
-msgid " kbd:[Pause]\t\t"
-msgstr " kbd:[Pause]\t\t"
+msgid "kbd:[Pause]"
+msgstr "kbd:[Pause]"
 
 #. [ kbd: [Romaji]]
 # bulk translation
-msgid " kbd:[Romaji]\t\t"
-msgstr " kbd:[Romaji]\t\t"
+msgid "kbd:[Romaji]"
+msgstr "kbd:[Romaji]"
 
 #. [Japanese keyboard, not available on SDL]
 # from Google
-msgid " Japanese keyboard, not available on SDL"
-msgstr " Japanische Tastatur, nicht auf SDL verfügbar"
+msgid "Japanese keyboard, not available on SDL"
+msgstr "Japanische Tastatur, nicht auf SDL verfügbar"
 
 #. [ kbd: [app]]
 # bulk translation
-msgid " kbd:[App]\t\t"
-msgstr " kbd:[App]\t\t"
+msgid "kbd:[App]"
+msgstr "kbd:[App]"
 
 #. [ kbd: [Henkan]]
 # bulk translation
-msgid " kbd:[Henkan]\t\t"
-msgstr " kbd:[Henkan]\t\t"
+msgid "kbd:[Henkan]"
+msgstr "kbd:[Henkan]"
 
 #. [ kbd: [Muhenkan]]
 # bulk translation
-msgid " kbd:[Muhenkan]\t"
-msgstr " kbd:[Muhenkan]\t"
+msgid "kbd:[Muhenkan]"
+msgstr "kbd:[Muhenkan]"
 
 #. [ kbd: [end]]
 # bulk translation
-msgid " kbd:[End]\t\t"
-msgstr " kbd:[Ende]\t\t"
+msgid "kbd:[End]"
+msgstr "kbd:[Ende]"
 
 #. [ kbd: [arrow to the left]]
 # bulk translation
-msgid " kbd:[Left Arrow]\t"
-msgstr " kbd:[Pfeil nach links]\t"
+msgid "kbd:[Left Arrow]"
+msgstr "kbd:[Pfeil nach links]"
 
 #. [ kbd: [arrow down]]
 # bulk translation
-msgid " kbd:[Down Arrow]\t"
-msgstr " kbd:[Pfeil nach unten]\t"
+msgid "kbd:[Down Arrow]"
+msgstr "kbd:[Pfeil nach unten]"
 
 #. [ kbd: [ESC]]
 # bulk translation
-msgid " kbd:[ESC]\t\t"
-msgstr " kbd:[ESC]\t\t"
+msgid "kbd:[ESC]"
+msgstr "kbd:[ESC]"
 
 #. [ kbd: [tab]]
 # bulk translation
-msgid " kbd:[Tab]\t\t"
-msgstr " kbd:[Tab]\t\t"
+msgid "kbd:[Tab]"
+msgstr "kbd:[Tab]"
 
 #. [ kbd: [Enter]]
 # bulk translation
-msgid " kbd:[Enter]\t\t"
-msgstr " kbd:[Enter]\t\t"
+msgid "kbd:[Enter]"
+msgstr "kbd:[Enter]"
 
 #. [ kbd: [backspace]]
 # bulk translation
-msgid " kbd:[Backspace]\t"
-msgstr " kbd:[Rücktaste]\t"
+msgid "kbd:[Backspace]"
+msgstr "kbd:[Rücktaste]"
 
 #. [ kbd: [']]
 # bulk translation
-msgid " kbd:[']\t\t"
-msgstr " kbd:[']\t\t"
+msgid "kbd:[']"
+msgstr "kbd:[']"
 
 #. [ kbd: [:]]
 # bulk translation
-msgid " kbd:[:]\t\t"
-msgstr " kbd:[:]\t\t"
+msgid "kbd:[:]"
+msgstr "kbd:[:]"
 
 #. [ kbd: [,]]
 # bulk translation
-msgid " kbd:[,]\t\t"
-msgstr " kbd:[,]\t\t"
+msgid "kbd:[,]"
+msgstr "kbd:[,]"
 
 #. [ kbd: [-]]
 # bulk translation
-msgid " kbd:[-]\t\t"
-msgstr " kbd:[-]\t\t"
+msgid "kbd:[-]"
+msgstr "kbd:[-]"
 
 #. [ kbd: [.]]
 # bulk translation
-msgid " kbd:[.]\t\t"
-msgstr " kbd:[.]\t\t"
+msgid "kbd:[.]"
+msgstr "kbd:[.]"
 
 #. [ kbd: [/]]
 # bulk translation
-msgid " kbd:[/]\t\t"
-msgstr " kbd:[/]\t\t"
+msgid "kbd:[/]"
+msgstr "kbd:[/]"
 
 #. [ kbd: [[]]
 # bulk translation
-msgid " kbd:[[]\t\t"
-msgstr " kbd:[[]\t\t"
+msgid "kbd:[[]"
+msgstr "kbd:[[]"
 
 #. [ kbd: []]]
 # bulk translation
-msgid " kbd:[]]\t\t"
-msgstr " kbd:[]]\t\t"
+msgid "kbd:[]]"
+msgstr "kbd:[]]"
 
 #. [ kbd: [=]]
 # bulk translation
-msgid " kbd:[=]\t\t"
-msgstr " kbd:[=]\t\t"
+msgid "kbd:[=]"
+msgstr "kbd:[=]"
 
 #. [ kbd: [Ro]]
 # bulk translation
-msgid " kbd:[Ro]\t\t"
-msgstr " kbd:[Ro]\t\t"
+msgid "kbd:[Ro]"
+msgstr "kbd:[Ro]"
 
 #. [ kbd: [0]]
 # bulk translation
-msgid " kbd:[0]\t\t"
-msgstr " kbd:[0]\t\t"
+msgid "kbd:[0]"
+msgstr "kbd:[0]"
 
 #. [ kbd: [1]]
 # bulk translation
-msgid " kbd:[1]\t\t"
-msgstr " kbd:[1]\t\t"
+msgid "kbd:[1]"
+msgstr "kbd:[1]"
 
 #. [ kbd: [2]]
 # bulk translation
-msgid " kbd:[2]\t\t"
-msgstr " kbd:[2]\t\t"
+msgid "kbd:[2]"
+msgstr "kbd:[2]"
 
 #. [ kbd: [3]]
 # bulk translation
-msgid " kbd:[3]\t\t"
-msgstr " kbd:[3]\t\t"
+msgid "kbd:[3]"
+msgstr "kbd:[3]"
 
 #. [ kbd: [4]]
 # bulk translation
-msgid " kbd:[4]\t\t"
-msgstr " kbd:[4]\t\t"
+msgid "kbd:[4]"
+msgstr "kbd:[4]"
 
 #. [ kbd: [5]]
 # bulk translation
-msgid " kbd:[5]\t\t"
-msgstr " kbd:[5]\t\t"
+msgid "kbd:[5]"
+msgstr "kbd:[5]"
 
 #. [ kbd: [6]]
 # bulk translation
-msgid " kbd:[6]\t\t"
-msgstr " kbd:[6]\t\t"
+msgid "kbd:[6]"
+msgstr "kbd:[6]"
 
 #. [ kbd: [7]]
 # bulk translation
-msgid " kbd:[7]\t\t"
-msgstr " kbd:[7]\t\t"
+msgid "kbd:[7]"
+msgstr "kbd:[7]"
 
 #. [ kbd: [8]]
 # bulk translation
-msgid " kbd:[8]\t\t"
-msgstr " kbd:[8]\t\t"
+msgid "kbd:[8]"
+msgstr "kbd:[8]"
 
 #. [ kbd: [9]]
 # bulk translation
-msgid " kbd:[9]\t\t"
-msgstr " kbd:[9]\t\t"
+msgid "kbd:[9]"
+msgstr "kbd:[9]"
 
 #. [ kbd: [Pipe2]]
 # bulk translation
-msgid " kbd:[Pipe2]\t\t"
-msgstr " kbd:[Pipe2]\t\t"
+msgid "kbd:[Pipe2]"
+msgstr "kbd:[Pipe2]"
 
 #. [<< unclear, not well defined >>, not available on SDL]
 # from Google
-msgid " <<unclear,not well defined>>, not available on SDL"
-msgstr " << Unklar, nicht gut definiert >>, nicht auf SDL verfügbar"
+msgid "<<unclear,not well defined>>, not available on SDL"
+msgstr "<< Unklar, nicht gut definiert >>, nicht auf SDL verfügbar"
 
 #. [ kbd: [A]]
 # bulk translation
-msgid " kbd:[A]\t\t"
-msgstr " kbd:[A]\t\t"
+msgid "kbd:[A]"
+msgstr "kbd:[A]"
 
 #. [ kbd: [B]]
 # bulk translation
-msgid " kbd:[B]\t\t"
-msgstr " kbd:[B]\t\t"
+msgid "kbd:[B]"
+msgstr "kbd:[B]"
 
 #. [ kbd: [C]]
 # bulk translation
-msgid " kbd:[C]\t\t"
-msgstr " kbd:[C]\t\t"
+msgid "kbd:[C]"
+msgstr "kbd:[C]"
 
 #. [ kbd: [D]]
 # bulk translation
-msgid " kbd:[D]\t\t"
-msgstr " kbd:[D]\t\t"
+msgid "kbd:[D]"
+msgstr "kbd:[D]"
 
 #. [ kbd: [E]]
 # bulk translation
-msgid " kbd:[E]\t\t"
-msgstr " kbd:[E]\t\t"
+msgid "kbd:[E]"
+msgstr "kbd:[E]"
 
 #. [ kbd: [F]]
 # bulk translation
-msgid " kbd:[F]\t\t"
-msgstr " kbd:[F]\t\t"
+msgid "kbd:[F]"
+msgstr "kbd:[F]"
 
 #. [ kbd: [G]]
 # bulk translation
-msgid " kbd:[G]\t\t"
-msgstr " kbd:[G]\t\t"
+msgid "kbd:[G]"
+msgstr "kbd:[G]"
 
 #. [ kbd: [H]]
 # bulk translation
-msgid " kbd:[H]\t\t"
-msgstr " kbd:[H]\t\t"
+msgid "kbd:[H]"
+msgstr "kbd:[H]"
 
 #. [ kbd: [I]]
 # bulk translation
-msgid " kbd:[I]\t\t"
-msgstr " kbd:[I]\t\t"
+msgid "kbd:[I]"
+msgstr "kbd:[I]"
 
 #. [ kbd: [J]]
 # bulk translation
-msgid " kbd:[J]\t\t"
-msgstr " kbd:[J]\t\t"
+msgid "kbd:[J]"
+msgstr "kbd:[J]"
 
 #. [ kbd: [K]]
 # bulk translation
-msgid " kbd:[K]\t\t"
-msgstr " kbd:[K]\t\t"
+msgid "kbd:[K]"
+msgstr "kbd:[K]"
 
 #. [ kbd: [L]]
 # bulk translation
-msgid " kbd:[L]\t\t"
-msgstr " kbd:[L]\t\t"
+msgid "kbd:[L]"
+msgstr "kbd:[L]"
 
 #. [ kbd: [M]]
 # bulk translation
-msgid " kbd:[M]\t\t"
-msgstr " kbd:[M]\t\t"
+msgid "kbd:[M]"
+msgstr "kbd:[M]"
 
 #. [ kbd: [N]]
 # bulk translation
-msgid " kbd:[N]\t\t"
-msgstr " kbd:[N]\t\t"
+msgid "kbd:[N]"
+msgstr "kbd:[N]"
 
 #. [ kbd: [O]]
 # bulk translation
-msgid " kbd:[O]\t\t"
-msgstr " kbd:[O]\t\t"
+msgid "kbd:[O]"
+msgstr "kbd:[O]"
 
 #. [ kbd: [P]]
 # bulk translation
-msgid " kbd:[P]\t\t"
-msgstr " kbd:[P]\t\t"
+msgid "kbd:[P]"
+msgstr "kbd:[P]"
 
 #. [ kbd: [Q]]
 # bulk translation
-msgid " kbd:[Q]\t\t"
-msgstr " kbd:[Q]\t\t"
+msgid "kbd:[Q]"
+msgstr "kbd:[Q]"
 
 #. [ kbd: [R]]
 # bulk translation
-msgid " kbd:[R]\t\t"
-msgstr " kbd:[R]\t\t"
+msgid "kbd:[R]"
+msgstr "kbd:[R]"
 
 #. [ kbd: [S]]
 # bulk translation
-msgid " kbd:[S]\t\t"
-msgstr " kbd:[S]\t\t"
+msgid "kbd:[S]"
+msgstr "kbd:[S]"
 
 #. [ kbd: [T]]
 # bulk translation
-msgid " kbd:[T]\t\t"
-msgstr " kbd:[T]\t\t"
+msgid "kbd:[T]"
+msgstr "kbd:[T]"
 
 #. [ kbd: [U]]
 # bulk translation
-msgid " kbd:[U]\t\t"
-msgstr " kbd:[U]\t\t"
+msgid "kbd:[U]"
+msgstr "kbd:[U]"
 
 #. [ kbd: [V]]
 # bulk translation
-msgid " kbd:[V]\t\t"
-msgstr " kbd:[V]\t\t"
+msgid "kbd:[V]"
+msgstr "kbd:[V]"
 
 #. [ kbd: [W]]
 # bulk translation
-msgid " kbd:[W]\t\t"
-msgstr " kbd:[W]\t\t"
+msgid "kbd:[W]"
+msgstr "kbd:[W]"
 
 #. [ kbd: [X]]
 # bulk translation
-msgid " kbd:[X]\t\t"
-msgstr " kbd:[X]\t\t"
+msgid "kbd:[X]"
+msgstr "kbd:[X]"
 
 #. [ kbd: [Y]]
 # bulk translation
-msgid " kbd:[Y]\t\t"
-msgstr " kbd:[Y]\t\t"
+msgid "kbd:[Y]"
+msgstr "kbd:[Y]"
 
 #. [ kbd: [Z]]
 # bulk translation
-msgid " kbd:[Z]\t\t"
-msgstr " kbd:[Z]\t\t"
+msgid "kbd:[Z]"
+msgstr "kbd:[Z]"
 
 #. [Brazilian keyboard, not available on SD]
 # from Google
-msgid " Brazilian keyboard, not available on SDL"
-msgstr " Brazilianische Tastatur, nicht auf SDL verfügbar"
+msgid "Brazilian keyboard, not available on SDL"
+msgstr "Brazilianische Tastatur, nicht auf SDL verfügbar"
 
 #. [ kbd: [F2]]
 # bulk translation
-msgid " kbd:[F2]\t\t"
-msgstr " kbd:[F2]\t\t"
+msgid "kbd:[F2]"
+msgstr "kbd:[F2]"
 
 #. [ kbd: [F3]]
 # bulk translation
-msgid " kbd:[F3]\t\t"
-msgstr " kbd:[F3]\t\t"
+msgid "kbd:[F3]"
+msgstr "kbd:[F3]"
 
 #. [ kbd: [F4]]
 # bulk translation
-msgid " kbd:[F4]\t\t"
-msgstr " kbd:[F4]\t\t"
+msgid "kbd:[F4]"
+msgstr "kbd:[F4]"
 
 #. [ kbd: [F5]]
 # bulk translation
-msgid " kbd:[F5]\t\t"
-msgstr " kbd:[F5]\t\t"
+msgid "kbd:[F5]"
+msgstr "kbd:[F5]"
 
 #. [ kbd: [F6]]
 # bulk translation
-msgid " kbd:[F6]\t\t"
-msgstr " kbd:[F6]\t\t"
+msgid "kbd:[F6]"
+msgstr "kbd:[F6]"
 
 #. [ kbd: [F7]]
 # bulk translation
-msgid " kbd:[F7]\t\t"
-msgstr " kbd:[F7]\t\t"
+msgid "kbd:[F7]"
+msgstr "kbd:[F7]"
 
 #. [ kbd: [F8]]
 # bulk translation
-msgid " kbd:[F8]\t\t"
-msgstr " kbd:[F8]\t\t"
+msgid "kbd:[F8]"
+msgstr "kbd:[F8]"
 
 #. [ kbd: [F9]]
 # bulk translation
-msgid " kbd:[F9]\t\t"
-msgstr " kbd:[F9]\t\t"
+msgid "kbd:[F9]"
+msgstr "kbd:[F9]"
 
 #. [ kbd: [F10]]
 # bulk translation
-msgid " kbd:[F10]\t\t"
-msgstr " kbd:[F10]\t\t"
+msgid "kbd:[F10]"
+msgstr "kbd:[F10]"
 
 #. [ kbd: [F11]]
 # bulk translation
-msgid " kbd:[F11]\t\t"
-msgstr " kbd:[F11]\t\t"
+msgid "kbd:[F11]"
+msgstr "kbd:[F11]"
 
 #. [ kbd: [F12]]
 # bulk translation
-msgid " kbd:[F12]\t\t"
-msgstr " kbd:[F12]\t\t"
+msgid "kbd:[F12]"
+msgstr "kbd:[F12]"
 
 #. [Key codes are fixed and do not change with the configured keyboard
 #. layout.]
@@ -4879,18 +4879,18 @@ msgstr ""
 
 #. [ `0`]
 # bulk translation
-msgid " `0` "
-msgstr " `0` "
+msgid "`0`"
+msgstr "`0`"
 
 #. [ Memory address of the BASIC program buffer]
 # bulk translation
-msgid " memory address of BASIC program buffer"
-msgstr " Speicheradresse des BASIC-Programmpuffers"
+msgid "memory address of BASIC program buffer"
+msgstr "Speicheradresse des BASIC-Programmpuffers"
 
 #. [ Memory address of the current font]
 # bulk translation
-msgid " memory address of current font"
-msgstr " Speicheradresse der aktuellen Schriftart"
+msgid "memory address of current font"
+msgstr "Speicheradresse der aktuellen Schriftart"
 
 #. [Get free memory space.]
 # bulk translation
@@ -5152,23 +5152,23 @@ msgstr "Folgende Schriftarten stehen zur Verfügung:"
 
 #. [ ATI console font, 6x8 pixels (standard)]
 # bulk translation
-msgid " ATI console font, 6x8 pixels (default)"
-msgstr " ATI-Konsolenschrift, 6x8 Pixel (Standard)"
+msgid "ATI console font, 6x8 pixels (default)"
+msgstr "ATI-Konsolenschrift, 6x8 Pixel (Standard)"
 
 #. [ CPC font, 8 x 8 pixels]
 # bulk translation
-msgid " CPC font, 8x8 pixels"
-msgstr " CPC-Schriftart, 8 x 8 Pixel"
+msgid "CPC font, 8x8 pixels"
+msgstr "CPC-Schriftart, 8 x 8 Pixel"
 
 #. [ PETSCII font, 8 x 8 pixels]
 # bulk translation
-msgid " PETSCII font, 8x8 pixels"
-msgstr " PETSCII-Schriftart, 8 x 8 Pixel"
+msgid "PETSCII font, 8x8 pixels"
+msgstr "PETSCII-Schriftart, 8 x 8 Pixel"
 
 #. [ Japanese font, 6x8 pixels]
 # bulk translation
-msgid " Japanese font, 6x8 pixels"
-msgstr " Japanische Schrift, 6x8 Pixel"
+msgid "Japanese font, 6x8 pixels"
+msgstr "Japanische Schrift, 6x8 Pixel"
 
 #. [The font set when switching on can be set with the command `CONFIG`.]
 # bulk translation
@@ -5189,18 +5189,18 @@ msgstr "Folgende Modi stehen zur Verfügung:"
 
 #. [ resolution]
 # bulk translation
-msgid " Resolution "
-msgstr " Auflösung "
+msgid "Resolution"
+msgstr "Auflösung"
 
 #. [ comment]
 # bulk translation
-msgid " Comment"
-msgstr " Kommentar"
+msgid "Comment"
+msgstr "Kommentar"
 
 #. [ Maximum usable resolution in NTSC mode.]
 # bulk translation
-msgid " Maximum usable resolution in NTSC mode."
-msgstr " Maximal verwendbare Auflösung im NTSC-Modus."
+msgid "Maximum usable resolution in NTSC mode."
+msgstr "Maximal verwendbare Auflösung im NTSC-Modus."
 
 #. [ Slightly smaller than mode 1; useful when the display does not show all
 #. of
@@ -5215,35 +5215,35 @@ msgstr ""
 
 #. [Frequent resolution on many home computer systems.]
 # from Google
-msgid " Common resolution on many home computer systems."
-msgstr " Häufige Auflösung auf vielen Heimcomputersystemen."
+msgid "Common resolution on many home computer systems."
+msgstr "Häufige Auflösung auf vielen Heimcomputersystemen."
 
 #. [ Compatible with the SNES system.]
 # bulk translation
-msgid " Compatible with the SNES system."
-msgstr " Kompatibel mit dem SNES-System."
+msgid "Compatible with the SNES system."
+msgstr "Kompatibel mit dem SNES-System."
 
 #. [ Common resolution used by MSX, ZX Spectrum, and others.]
 # bulk translation
-msgid " Common resolution used by MSX, ZX Spectrum and others."
+msgid "Common resolution used by MSX, ZX Spectrum and others."
 msgstr ""
 " Gemeinsame Auflösung, die von MSX, ZX Spectrum und anderen verwendet wird."
 
 #. [ General low resolution mode on multiple home computer systems.]
 # bulk translation
-msgid " Common low-resolution mode on several home computer systems."
+msgid "Common low-resolution mode on several home computer systems."
 msgstr ""
 " Allgemeiner Modus mit niedriger Auflösung auf mehreren "
 "Heimcomputersystemen."
 
 #. [ PC Engine Compatible Overscan Mode]
 # bulk translation
-msgid " PC Engine-compatible overscan mode"
-msgstr " PC Engine-kompatibler Overscan-Modus"
+msgid "PC Engine-compatible overscan mode"
+msgstr "PC Engine-kompatibler Overscan-Modus"
 
 #. [ Maximum usable resolution in PAL mode. (Overscan on NTSC systems.)]
 # bulk translation
-msgid " Maximum usable resolution in PAL mode. (Overscan on NTSC systems.)"
+msgid "Maximum usable resolution in PAL mode. (Overscan on NTSC systems.)"
 msgstr ""
 " Maximal verwendbare Auflösung im PAL-Modus. (Overscan auf NTSC-Systemen.)"
 
@@ -5309,8 +5309,8 @@ msgstr "Die Standardkomponentengewichte hängen vom Farbraum ab. Sie sind:"
 
 #. [Color space]
 # bulk translation
-msgid "Color space "
-msgstr "Farbraum "
+msgid "Color space"
+msgstr "Farbraum"
 
 #. [Conversion fixes are enabled by default.]
 # bulk translation
@@ -5431,28 +5431,28 @@ msgstr ""
 
 #. [ 3 values]
 # bulk translation
-msgid " 3 values"
-msgstr " 3 Werte"
+msgid "3 values"
+msgstr "3 Werte"
 
 #. [ no value]
 # bulk translation
-msgid " no value"
-msgstr " kein Wert"
+msgid "no value"
+msgstr "kein Wert"
 
 #. [ 2 values]
 # bulk translation
-msgid " 2 values"
-msgstr " 2 Werte"
+msgid "2 values"
+msgstr "2 Werte"
 
 #. [ all other]
 # bulk translation
-msgid " all others "
-msgstr " alle anderen "
+msgid "all others"
+msgstr "alle anderen"
 
 #. [ 1 value]
 # bulk translation
-msgid " 1 value"
-msgstr " 1 Wert"
+msgid "1 value"
+msgstr "1 Wert"
 
 #. [Returns the number of video frames since switching on.]
 # bulk translation
@@ -5744,8 +5744,8 @@ msgstr "Gültige Werte für `Richtung` sind:"
 
 #. [ Left]
 # bulk translation
-msgid " left"
-msgstr " links"
+msgid "left"
+msgstr "links"
 
 #. [Colors are lost when scrolling.]
 # bulk translation
@@ -5784,13 +5784,13 @@ msgstr ""
 
 #. [ above]
 # bulk translation
-msgid " up"
-msgstr " oben"
+msgid "up"
+msgstr "oben"
 
 #. [ `3`]
 # bulk translation
-msgid " `3` "
-msgstr " `3` "
+msgid "`3`"
+msgstr "`3`"
 
 #. [Returns the color of the pixel at the specified coordinates.]
 # bulk translation
@@ -6193,20 +6193,20 @@ msgstr ""
 "Überlastung der Grafik-Engine verursacht wird, da jedes tatsächlich "
 "gerenderte Bild innerhalb eines einzelnen TV-Rahmens fertig sein muss."
 
-msgid " `1` (aka `<<LEFT>>`) "
-msgstr " `1` (alias` <<LEFT>> `) "
+msgid "`1` (aka `<<LEFT>>`)"
+msgstr "`1` (alias` <<LEFT>> `)"
 
-msgid " The tile is left of the sprite."
-msgstr " Die Kachel liegt links vom Sprite."
+msgid "The tile is left of the sprite."
+msgstr "Die Kachel liegt links vom Sprite."
 
-msgid " `2` (aka `<<DOWN>>`) "
-msgstr " `2` (alias `<<DOWN>>`) "
+msgid "`2` (aka `<<DOWN>>`)"
+msgstr "`2` (alias `<<DOWN>>`)"
 
-msgid " `4` (aka `<<RIGHT>>`) "
-msgstr " `4` (alias `<<RIGHT>>`) "
+msgid "`4` (aka `<<RIGHT>>`)"
+msgstr "`4` (alias `<<RIGHT>>`)"
 
-msgid " `8` (aka `<<UP>>`) "
-msgstr " `8` (aka `<<UP>>`) "
+msgid "`8` (aka `<<UP>>`)"
+msgstr "`8` (aka `<<UP>>`)"
 
 msgid ""
 "Note that it is possible that none of these bits are set even if a collision"
@@ -6303,224 +6303,224 @@ msgstr ""
 "Bitfeld, das die Buttonzustände der angeforderten Controller darstellt. Der "
 "Wert ist die Summe eines oder mehrerer der folgenden Bitwerte:"
 
-msgid " kbd:[Down] key"
-msgstr " kbd:[Runter]"
+msgid "kbd:[Down] key"
+msgstr "kbd:[Runter]"
 
-msgid " kbd:[Right] key"
-msgstr " kbd:[Rechts]"
+msgid "kbd:[Right] key"
+msgstr "kbd:[Rechts]"
 
-msgid " kbd:[Up] key"
-msgstr " kbd:[Hoch]"
+msgid "kbd:[Up] key"
+msgstr "kbd:[Hoch]"
 
-msgid " kbd:[Start] button "
-msgstr " kbd:[Start]-Button "
+msgid "kbd:[Start] button"
+msgstr "kbd:[Start]-Button"
 
-msgid " kbd:[Select] button "
-msgstr " kbd:[Select]-Button "
+msgid "kbd:[Select] button"
+msgstr "kbd:[Select]-Button"
 
-msgid " kbd:[&#x25cb;] button "
-msgstr " kbd:[○]-Button "
+msgid "kbd:[&#x25cb;] button"
+msgstr "kbd:[○]-Button"
 
-msgid " Key\t\t\t"
-msgstr " Taste\t\t\t"
+msgid "Key\t"
+msgstr "Taste\t"
 
-msgid " Key code\t"
-msgstr " Tastencode\t"
+msgid "Key code"
+msgstr "Tastencode"
 
 #. [ kbd:[Left Alt]]
 # bulk translation
-msgid " kbd:[Left Alt]\t"
-msgstr " kbd:[Links Alt]\t"
+msgid "kbd:[Left Alt]"
+msgstr "kbd:[Links Alt]"
 
 #. [ kbd:[shift left]]
 # bulk translation
-msgid " kbd:[Left Shift]\t"
-msgstr " kbd:[Linksverschiebung]\t"
+msgid "kbd:[Left Shift]"
+msgstr "kbd:[Linksverschiebung]"
 
 #. [ kbd:[Left Ctrl]]
 # bulk translation
-msgid " kbd:[Left Ctrl]\t"
-msgstr " kbd:[Linke Strg]\t"
+msgid "kbd:[Left Ctrl]"
+msgstr "kbd:[Linke Strg]"
 
 #. [ kbd:[shift to the right]]
 # bulk translation
-msgid " kbd:[Right Shift]\t"
-msgstr " kbd:[Rechtsverschiebung]\t"
+msgid "kbd:[Right Shift]"
+msgstr "kbd:[Rechtsverschiebung]"
 
 #. [ kbd:[Right Alt]]
 # bulk translation
-msgid " kbd:[Right Alt]\t"
-msgstr " kbd:[Rechts Alt]\t"
+msgid "kbd:[Right Alt]"
+msgstr "kbd:[Rechts Alt]"
 
 #. [ kbd:[Right Ctrl]]
 # bulk translation
-msgid " kbd:[Right Ctrl]\t"
-msgstr " kbd:[Rechte Strg]\t"
+msgid "kbd:[Right Ctrl]"
+msgstr "kbd:[Rechte Strg]"
 
 #. [ kbd:[Left GUI]]
 # bulk translation
-msgid " kbd:[Left GUI]\t"
-msgstr " kbd:[Linke GUI]\t"
+msgid "kbd:[Left GUI]"
+msgstr "kbd:[Linke GUI]"
 
 #. [ kbd:[rights GUI]]
 # bulk translation
-msgid " kbd:[Right GUI]\t"
-msgstr " kbd:[Rechte GUI]\t"
+msgid "kbd:[Right GUI]"
+msgstr "kbd:[Rechte GUI]"
 
 #. [ kbd:[scroll lock]]
 # bulk translation
-msgid " kbd:[Scroll Lock]\t"
-msgstr " kbd:[Bildlaufsperre]\t"
+msgid "kbd:[Scroll Lock]"
+msgstr "kbd:[Bildlaufsperre]"
 
 #. [ kbd:[Caps Lock]]
 # bulk translation
-msgid " kbd:[Caps Lock]\t"
-msgstr " kbd:[Feststelltaste]\t"
+msgid "kbd:[Caps Lock]"
+msgstr "kbd:[Feststelltaste]"
 
 #. [ kbd:[print screen]]
 # bulk translation
-msgid " kbd:[Print Screen]\t"
-msgstr " kbd:[Bildschirm drucken]\t"
+msgid "kbd:[Print Screen]"
+msgstr "kbd:[Bildschirm drucken]"
 
 #. [ kbd:[Home]]
 # bulk translation
-msgid " kbd:[Home]\t\t"
-msgstr " kbd:[Home]\t\t"
+msgid "kbd:[Home]"
+msgstr "kbd:[Home]"
 
 #. [ kbd:[picture on]]
 # bulk translation
-msgid " kbd:[Page Up]\t\t"
-msgstr " kbd:[Bild auf]\t\t"
+msgid "kbd:[Page Up]"
+msgstr "kbd:[Bild auf]"
 
 #. [ kbd:[picture down]]
 # bulk translation
-msgid " kbd:[Page Down]\t"
-msgstr " kbd:[Bild ab]\t"
+msgid "kbd:[Page Down]"
+msgstr "kbd:[Bild ab]"
 
 #. [ kbd:[right arrow]]
 # bulk translation
-msgid " kbd:[Right Arrow]\t"
-msgstr " kbd:[rechter Pfeil]\t"
+msgid "kbd:[Right Arrow]"
+msgstr "kbd:[rechter Pfeil]"
 
 #. [ kbd:[delete]]
 # bulk translation
-msgid " kbd:[Delete]\t\t"
-msgstr " kbd:[Löschen]\t\t"
+msgid "kbd:[Delete]"
+msgstr "kbd:[Löschen]"
 
 #. [ kbd:[space]]
 # bulk translation
-msgid " kbd:[Space]\t\t"
-msgstr " kbd:[Leerzeichen]\t\t"
+msgid "kbd:[Space]"
+msgstr "kbd:[Leerzeichen]"
 
 #. [ kbd:[\]]
 # bulk translation
-msgid " kbd:[&#x5c;]\t\t"
-msgstr " kbd:[\\\\]\t\t"
+msgid "kbd:[&#x5c;]"
+msgstr "kbd:[\\\\]"
 
 #. [ Keyboard kbd:[=]]
 # bulk translation
-msgid " Keypad kbd:[=]\t"
-msgstr " Tastatur kbd:[=]\t"
+msgid "Keypad kbd:[=]"
+msgstr "Tastatur kbd:[=]"
 
 #. [ Keyboard kbd:[Enter]]
 # bulk translation
-msgid " Keypad kbd:[Enter]\t"
-msgstr " Tastatur kbd:[Enter]\t"
+msgid "Keypad kbd:[Enter]"
+msgstr "Tastatur kbd:[Enter]"
 
 #. [ Keyboard kbd:[0]]
 # bulk translation
-msgid " Keypad kbd:[0]\t"
-msgstr " Tastatur kbd:[0]\t"
+msgid "Keypad kbd:[0]"
+msgstr "Tastatur kbd:[0]"
 
 #. [ Keyboard kbd:[1]]
 # bulk translation
-msgid " Keypad kbd:[1]\t"
-msgstr " Tastatur kbd:[1]\t"
+msgid "Keypad kbd:[1]"
+msgstr "Tastatur kbd:[1]"
 
 #. [ Keyboard kbd:[2]]
 # bulk translation
-msgid " Keypad kbd:[2]\t"
-msgstr " Tastatur kbd:[2]\t"
+msgid "Keypad kbd:[2]"
+msgstr "Tastatur kbd:[2]"
 
 #. [ Keyboard kbd:[3]]
 # bulk translation
-msgid " Keypad kbd:[3]\t"
-msgstr " Tastatur kbd:[3]\t"
+msgid "Keypad kbd:[3]"
+msgstr "Tastatur kbd:[3]"
 
 #. [ Keyboard kbd:[4]]
 # bulk translation
-msgid " Keypad kbd:[4]\t"
-msgstr " Tastatur kbd:[4]\t"
+msgid "Keypad kbd:[4]"
+msgstr "Tastatur kbd:[4]"
 
 #. [ Keyboard kbd:[5]]
 # bulk translation
-msgid " Keypad kbd:[5]\t"
-msgstr " Tastatur kbd:[5]\t"
+msgid "Keypad kbd:[5]"
+msgstr "Tastatur kbd:[5]"
 
 #. [ Keyboard kbd:[6]]
 # bulk translation
-msgid " Keypad kbd:[6]\t"
-msgstr " Tastatur kbd:[6]\t"
+msgid "Keypad kbd:[6]"
+msgstr "Tastatur kbd:[6]"
 
 #. [ Keyboard kbd:[7]]
 # bulk translation
-msgid " Keypad kbd:[7]\t"
-msgstr " Tastatur kbd:[7]\t"
+msgid "Keypad kbd:[7]"
+msgstr "Tastatur kbd:[7]"
 
 #. [ Keyboard kbd:[8]]
 # bulk translation
-msgid " Keypad kbd:[8]\t"
-msgstr " Tastatur kbd:[8]\t"
+msgid "Keypad kbd:[8]"
+msgstr "Tastatur kbd:[8]"
 
 #. [ Keyboard kbd:[9]]
 # bulk translation
-msgid " Keypad kbd:[9]\t"
-msgstr " Tastatur kbd:[9]\t"
+msgid "Keypad kbd:[9]"
+msgstr "Tastatur kbd:[9]"
 
 #. [ Keyboard kbd:[*]]
 # bulk translation
-msgid " Keypad kbd:[*]\t"
-msgstr " Tastatur kbd:[*]\t"
+msgid "Keypad kbd:[*]"
+msgstr "Tastatur kbd:[*]"
 
 #. [ Keyboard kbd:[+]]
 # bulk translation
-msgid " Keypad kbd:[+]\t"
-msgstr " Tastatur kbd:[+]\t"
+msgid "Keypad kbd:[+]"
+msgstr "Tastatur kbd:[+]"
 
 #. [ Keyboard kbd:[,]]
 # bulk translation
-msgid " Keypad kbd:[,]\t"
-msgstr " Tastatur kbd:[,]\t"
+msgid "Keypad kbd:[,]"
+msgstr "Tastatur kbd:[,]"
 
 #. [ Keyboard kbd:[-]]
 # bulk translation
-msgid " Keypad kbd:[-]\t"
-msgstr " Tastatur kbd:[-]\t"
+msgid "Keypad kbd:[-]"
+msgstr "Tastatur kbd:[-]"
 
 #. [ Keyboard kbd:[.]]
 # bulk translation
-msgid " Keypad kbd:[.]\t"
-msgstr " Tastatur kbd:[.]\t"
+msgid "Keypad kbd:[.]"
+msgstr "Tastatur kbd:[.]"
 
 #. [ Keyboard kbd:[/]]
 # bulk translation
-msgid " Keypad kbd:[/]\t"
-msgstr " Tastatur kbd:[/]\t"
+msgid "Keypad kbd:[/]"
+msgstr "Tastatur kbd:[/]"
 
 #. [ kbd:[F1]]
 # bulk translation
-msgid " kbd:[F1]\t\t"
-msgstr " kbd:[F1]\t\t"
+msgid "kbd:[F1]"
+msgstr "kbd:[F1]"
 
 #. [ 113]
 # bulk translation
-msgid " 113\t\t"
-msgstr " 113\t\t"
+msgid "113"
+msgstr "113"
 
 #. [ kbd:[power]]
 # bulk translation
-msgid " kbd:[Power]\t\t"
-msgstr " kbd:[Macht]\t\t"
+msgid "kbd:[Power]"
+msgstr "kbd:[Macht]"
 
 msgid ""
 "* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key"
@@ -6687,8 +6687,8 @@ msgstr "Flash-Seite zum Booten [`0` bis` 255`]"
 
 #. [ mode]
 # bulk translation
-msgid " Mode "
-msgstr " Modus "
+msgid "Mode"
+msgstr "Modus"
 
 msgid ""
 "* Apart from changing the mode, `SCREEN` clears the screen, resets the font "
@@ -6720,8 +6720,8 @@ msgstr ""
 msgid "Scroll a portion screen contents in the given direction."
 msgstr "Scrollt den Inhalt eines Teilbildschirms in die angegebene Richtung."
 
-msgid " right"
-msgstr " rechts"
+msgid "right"
+msgstr "rechts"
 
 #. [* `11`: Language + The following languages ​​are supported for system
 #. messages: +` 0` (US English, standard), `1` (German),` 2` (French), `3`
@@ -6736,11 +6736,11 @@ msgstr ""
 "+ `0` (US-Englisch, Standard), `1` (Deutsch), `2` (Französisch), `3` "
 "(Spanisch), `4` (Japanisch)."
 
-msgid " `mod` > 1 "
-msgstr " `mod` > 1 "
+msgid "`mod` > 1"
+msgstr "`mod` > 1"
 
-msgid " `mod` < 0 "
-msgstr " `mod` < 0 "
+msgid "`mod` < 0"
+msgstr "`mod` < 0"
 
 #. [Returns the Unicode CodePoint for the first character in a string
 #. expression.]
@@ -6804,8 +6804,8 @@ msgstr ""
 
 #. [ kbd: [arrow up]]
 # bulk translation
-msgid " kbd:[Up_Arrow]\t"
-msgstr " kbd:[Pfeil nach oben]\t"
+msgid "kbd:[Up_Arrow]"
+msgstr "kbd:[Pfeil nach oben]"
 
 #. [The alternative syntax `INKEY ()` is supported for backward compatibility
 #. with earlier versions of Engine BASIC.]
@@ -6890,13 +6890,13 @@ msgstr "`1` wenn die Maustaste gedrückt gehalten wird, `0` wenn nicht."
 
 #. [ number]
 # bulk translation
-msgid " Number "
-msgstr " Nummer "
+msgid "Number"
+msgstr "Nummer"
 
 #. [ Mouse button]
 # bulk translation
-msgid " Mouse button"
-msgstr " Maustaste"
+msgid "Mouse button"
+msgstr "Maustaste"
 
 #. [Buttons other than those listed above may be available if the connected
 #. mouse has more than three buttons.]
@@ -7317,40 +7317,40 @@ msgstr "Gibt den Index der ausgewählten Schriftart in `RET(0)` zurück."
 msgid "The following fonts are built-in:"
 msgstr "Die folgenden Schriftarten sind integriert:"
 
-msgid " \"lexis\" "
-msgstr " \"lexis\" "
+msgid "\"lexis\""
+msgstr "\"lexis\""
 
 #. [ Lexis font, 6x8 pixels (default)]
 # bulk translation
-msgid " Lexis font, 6x8 pixels (default)"
-msgstr " Lexis-Schriftart, 6x8 Pixel (Standard)"
+msgid "Lexis font, 6x8 pixels (default)"
+msgstr "Lexis-Schriftart, 6x8 Pixel (Standard)"
 
-msgid " \"cpc\" "
-msgstr " \"cpc\" "
+msgid "\"cpc\""
+msgstr "\"cpc\""
 
-msgid " \"bescii\" "
-msgstr " \"bescii\" "
+msgid "\"bescii\""
+msgstr "\"bescii\""
 
 #. [ PETSCII style font, 8x8 pixels]
 # bulk translation
-msgid " PETSCII-style font, 8x8 pixels"
-msgstr " Schrift im PETSCII-Stil, 8x8 Pixel"
+msgid "PETSCII-style font, 8x8 pixels"
+msgstr "Schrift im PETSCII-Stil, 8x8 Pixel"
 
-msgid " \"tt\" "
-msgstr " \"tt\" "
+msgid "\"tt\""
+msgstr "\"tt\""
 
 #. [Japanese font, 8x8 pixels]
 # from Argos
-msgid " Japanese font, 8x8 pixels"
-msgstr " Japanische Schriftart, 8x8 Pixel"
+msgid "Japanese font, 8x8 pixels"
+msgstr "Japanische Schriftart, 8x8 Pixel"
 
-msgid " \"hp100lx\" "
-msgstr " \"hp100lx\" "
+msgid "\"hp100lx\""
+msgstr "\"hp100lx\""
 
 #. [HP 100 LX font, 8x8 pixels]
 # from Google
-msgid " HP 100 LX font, 8x8 pixels"
-msgstr " HP 100 LX-Schriftart, 8x8 Pixel"
+msgid "HP 100 LX font, 8x8 pixels"
+msgstr "HP 100 LX-Schriftart, 8x8 Pixel"
 
 msgid "* Additional fonts will be assigned consecutive font indices."
 msgstr ""
@@ -7381,68 +7381,68 @@ msgstr ""
 
 #. [ 460x224]
 # bulk translation
-msgid " 460x224 "
-msgstr " 460x224 "
+msgid "460x224"
+msgstr "460x224"
 
 #. [ 436x216]
 # bulk translation
-msgid " 436x216 "
-msgstr " 436x216 "
+msgid "436x216"
+msgstr "436x216"
 
 #. [ 320x216]
 # bulk translation
-msgid " 320x216 "
-msgstr " 320x216 "
+msgid "320x216"
+msgstr "320x216"
 
 #. [ 320x200]
 # bulk translation
-msgid " 320x200 "
-msgstr " 320x200 "
+msgid "320x200"
+msgstr "320x200"
 
 #. [ 256x224]
 # bulk translation
-msgid " 256x224 "
-msgstr " 256x224 "
+msgid "256x224"
+msgstr "256x224"
 
 #. [ 256x192]
 # bulk translation
-msgid " 256x192 "
-msgstr " 256x192 "
+msgid "256x192"
+msgstr "256x192"
 
 #. [ 160x200]
 # bulk translation
-msgid " 160x200 "
-msgstr " 160x200 "
+msgid "160x200"
+msgstr "160x200"
 
 #. [ 352x240]
 # bulk translation
-msgid " 352x240 "
-msgstr " 352x240 "
+msgid "352x240"
+msgstr "352x240"
 
 #. [ 282x240]
 # bulk translation
-msgid " 282x240 "
-msgstr " 282x240 "
+msgid "282x240"
+msgstr "282x240"
 
 #. [ 508x240]
 # bulk translation
-msgid " 508x240 "
-msgstr " 508x240 "
+msgid "508x240"
+msgstr "508x240"
 
 #. [H]
 # from Argos
-msgid " H "
-msgstr " H "
+msgid "H"
+msgstr "H"
 
 #. [ S.]
 # bulk translation
-msgid " S "
-msgstr " S "
+msgid "S"
+msgstr "S"
 
 #. [ V]
 # bulk translation
-msgid " V"
-msgstr " V"
+msgid "V"
+msgstr "V"
 
 #. [The alternative syntax `FRAME ()` is supported for backward compatibility
 #. with earlier versions of Engine BASIC.]
@@ -7512,8 +7512,8 @@ msgstr ""
 
 #. [downwards]
 # bulk translation
-msgid " down"
-msgstr " abwärts"
+msgid "down"
+msgstr "abwärts"
 
 #. [Finish a DO, FOR or WHILE loop.]
 # bulk translation
@@ -7573,23 +7573,23 @@ msgstr "Dieser Befehl ist nur auf Linux-basierten Plattformen implementiert."
 
 #. [Left button]
 # bulk translation
-msgid " Left button"
-msgstr " Linke Taste"
+msgid "Left button"
+msgstr "Linke Taste"
 
 #. [Right button]
 # bulk translation
-msgid " Right button"
-msgstr " Rechte Taste"
+msgid "Right button"
+msgstr "Rechte Taste"
 
 #. [Medium button]
 # bulk translation
-msgid " Middle button"
-msgstr " Mittlere Taste"
+msgid "Middle button"
+msgstr "Mittlere Taste"
 
 #. [k.A.]
 # bulk translation
-msgid " n/a"
-msgstr " k.A."
+msgid "n/a"
+msgstr "k.A."
 
 #. [writing a byte string to an address in the memory.]
 # bulk translation
