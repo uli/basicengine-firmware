@@ -90,6 +90,43 @@ void Joystick::buttonUp(uint32_t id, uint8_t button) {
     m_state[m_index[id]] &= ~sdl_to_ebjoy(button);
 }
 
+#define AXIS_THRESHOLD 20000
+
+void Joystick::axis(uint32_t id, uint8_t axis, int16_t value) {
+    int *state = &m_state[m_index[id]];
+
+    switch (axis) {
+    case 0:
+        if (value < -AXIS_THRESHOLD)
+            *state |= EB_JOY_LEFT;
+        else
+            *state &= ~EB_JOY_LEFT;
+
+        if (value > AXIS_THRESHOLD)
+            *state |= EB_JOY_RIGHT;
+        else
+            *state &= ~EB_JOY_RIGHT;
+
+        break;
+
+    case 1:
+        if (value < -AXIS_THRESHOLD)
+            *state |= EB_JOY_UP;
+        else
+            *state &= ~EB_JOY_UP;
+
+        if (value > AXIS_THRESHOLD)
+            *state |= EB_JOY_DOWN;
+        else
+            *state &= ~EB_JOY_DOWN;
+
+        break;
+
+    default:
+        break;
+    }
+}
+
 Joystick joy;
 
 void sdl_process_controller_event(SDL_Event &ev) {
@@ -111,6 +148,10 @@ void sdl_process_controller_event(SDL_Event &ev) {
 
     case SDL_CONTROLLERBUTTONUP:
         joy.buttonUp(ev.cbutton.which, ev.cbutton.button);
+        break;
+
+    case SDL_CONTROLLERAXISMOTION:
+        joy.axis(ev.caxis.which, ev.caxis.axis, ev.caxis.value);
         break;
 
     default:

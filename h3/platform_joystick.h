@@ -20,6 +20,7 @@ public:
   void delInstance(uint32_t id);
   void buttonDown(uint32_t id, uint8_t button);
   void buttonUp(uint32_t id, uint8_t button);
+  void axis(uint32_t id, uint8_t axis, int16_t value);
 
 private:
   void indexFromInstance(int id);
