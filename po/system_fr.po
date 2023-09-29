@@ -58,13 +58,13 @@ msgstr "Numéro de ligne indéfini"
 
 #. [\ '(\' oder \ ')' erwartet]
 # from Argos
-msgid "\\'(\\' or \\')\\' expected"
-msgstr "\\'(\\' ou \\')\\' attendu"
+msgid "'(' or ')' expected"
+msgstr "'(' ou ')' attendu"
 
 #. [\ '=' erwartet]
 # from Argos
-msgid "\\'=\\' expected"
-msgstr "\\'=\\' attendu"
+msgid "'=' expected"
+msgstr "'=' attendu"
 
 #. [Systembefehl kann nicht verwendet werden]
 # bulk translation
@@ -376,8 +376,8 @@ msgstr "chaîne vide"
 
 #. [erwartet: \ "]
 # bulk translation
-msgid "expected: \\\""
-msgstr "attendu: \\\""
+msgid "expected: \""
+msgstr "attendu: \""
 
 msgid "invalid number"
 msgstr "nombre invalide"

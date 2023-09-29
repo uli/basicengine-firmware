@@ -94,13 +94,13 @@ msgstr "未定義の行番号"
 
 #. [\ '(\' Oder \ ') \' ist erforderlich]
 # bulk translation
-msgid "\\'(\\' or \\')\\' expected"
-msgstr "\\'(\\'または\\')\\'が必要"
+msgid "'(' or ')' expected"
+msgstr "'('または')'が必要"
 
 #. [\ '= \' Wird erwartet]
 # bulk translation
-msgid "\\'=\\' expected"
-msgstr "\\'=\\'が期待されます"
+msgid "'=' expected"
+msgstr "'='が期待されます"
 
 #. [Systembefehl kann nicht verwendet werden]
 # bulk translation
@@ -409,8 +409,8 @@ msgstr "空の文字列"
 
 #. [Erwartet: \ "]
 # bulk translation
-msgid "expected: \\\""
-msgstr "予想：\\\""
+msgid "expected: \""
+msgstr "予想：\""
 
 #. [Prognose: BG oder SPRITE]
 # bulk translation

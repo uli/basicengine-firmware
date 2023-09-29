@@ -95,13 +95,13 @@ msgstr "Unbekannte Zeilennummer"
 
 #. [\ '(\' or \ ') \' expected]
 # bulk translation
-msgid "\\'(\\' or \\')\\' expected"
-msgstr "\\'(\\' oder \\')\\' erwartet"
+msgid "'(' or ')' expected"
+msgstr "'(' oder ')' erwartet"
 
 #. [\ = \ 'expects]
 # from Argos
-msgid "\\'=\\' expected"
-msgstr "\\'=\\' erwartet"
+msgid "'=' expected"
+msgstr "'=' erwartet"
 
 #. [System command cannot be used]
 # bulk translation
@@ -414,8 +414,8 @@ msgstr "leerer String"
 
 #. [expected: \ "]
 # bulk translation
-msgid "expected: \\\""
-msgstr "erwartet: \\\""
+msgid "expected: \""
+msgstr "erwartet: \""
 
 #. [expected: BG or SPRITE]
 # bulk translation

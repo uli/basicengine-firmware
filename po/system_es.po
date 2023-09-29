@@ -59,13 +59,13 @@ msgstr "Número de línea indefinido"
 
 #. [\ '(\' oder \ ') \' erwartet]
 # bulk translation
-msgid "\\'(\\' or \\')\\' expected"
-msgstr "\\'(\\' o \\')\\' esperado"
+msgid "'(' or ')' expected"
+msgstr "'(' o ')' esperado"
 
 #. [\ '= \' erwartet]
 # bulk translation
-msgid "\\'=\\' expected"
-msgstr "\\'=\\' esperado"
+msgid "'=' expected"
+msgstr "'=' esperado"
 
 #. [Systembefehl kann nicht verwendet werden]
 # bulk translation
@@ -374,8 +374,8 @@ msgstr "constante"
 
 #. [erwartet: \ "]
 # bulk translation
-msgid "expected: \\\""
-msgstr "esperado: \\\""
+msgid "expected: \""
+msgstr "esperado: \""
 
 #. [erwartet: BG oder SPRITE]
 # bulk translation
