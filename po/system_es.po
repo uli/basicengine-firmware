@@ -274,28 +274,28 @@ msgstr "Error del compilador"
 
 #. [ MB frei]
 # bulk translation
-msgid " MB free\n"
-msgstr " MB libres\n"
+msgid "MB free"
+msgstr "MB libres"
 
 #. [ freie Bytes]
 # bulk translation
-msgid " bytes free\n"
-msgstr " bytes libres\n"
+msgid "bytes free"
+msgstr "bytes libres"
 
 #. [ Bytes.]
 # bulk translation
-msgid " bytes.\n"
-msgstr " bytes.\n"
+msgid "bytes."
+msgstr "bytes."
 
 #. [ Dateien,]
 # bulk translation
-msgid " files, "
-msgstr " archivos, "
+msgid "files,"
+msgstr "archivos,"
 
 #. [ auf]
 # bulk translation
-msgid " in "
-msgstr " en "
+msgid "in"
+msgstr "en"
 
 #. [Argumente:]
 # bulk translation
@@ -319,8 +319,8 @@ msgstr "Descripción"
 
 #. [Verzeichnis]
 # bulk translation
-msgid "Directory "
-msgstr "Directorio "
+msgid "Directory"
+msgstr "Directorio"
 
 #. [Übereinstimmende Befehle:]
 # bulk translation
@@ -329,8 +329,8 @@ msgstr "Comandos coincidentes:"
 
 #. [Keine Hilfe verfügbar]
 # bulk translation
-msgid "No help available\n"
-msgstr "No hay ayuda disponible\n"
+msgid "No help available"
+msgstr "No hay ayuda disponible"
 
 #. [Hinweis:]
 # bulk translation
@@ -349,8 +349,8 @@ msgstr "Ver también"
 
 #. [Umgehen von autoexec.bas]
 # bulk translation
-msgid "Skipping autoexec.bas\n"
-msgstr "Omitiendo autoexec.bas\n"
+msgid "Skipping autoexec.bas"
+msgstr "Omitiendo autoexec.bas"
 
 #. [Typen:]
 # bulk translation
@@ -602,8 +602,8 @@ msgstr "desconocido"
 
 #. [unbekannte Speichergröße]
 # bulk translation
-msgid "unknown memory size\n"
-msgstr "tamaño de memoria desconocido\n"
+msgid "unknown memory size"
+msgstr "tamaño de memoria desconocido"
 
 #. [unbekannt / SDL]
 # bulk translation
@@ -719,8 +719,8 @@ msgstr "tipo desconocido"
 
 #. %d extrahierte Dateien
 #.
-msgid "%d files extracted\n"
-msgstr "%d archivos extraídos\n"
+msgid "%d files extracted"
+msgstr "%d archivos extraídos"
 
 #. Datenabbruch
 msgid "Data Abort"
@@ -748,8 +748,8 @@ msgstr "Precedencia"
 
 #. Drücken Sie B, um die neueste analysierbare Version neu zu laden.
 #.
-msgid "Press B to reload the last parsable version.\n"
-msgstr "Presione B para recargar la última versión analizable.\n"
+msgid "Press B to reload the last parsable version."
+msgstr "Presione B para recargar la última versión analizable."
 
 #. Drücken Sie eine beliebige Taste, um fortzufahren.
 msgid "Press any key to continue."
@@ -757,8 +757,8 @@ msgstr "Pulse cualquier tecla para continuar."
 
 #. Drücken Sie eine beliebige andere Taste, um fortzufahren.
 #.
-msgid "Press any other key to continue.\n"
-msgstr "Presione cualquier otra tecla para continuar.\n"
+msgid "Press any other key to continue."
+msgstr "Presione cualquier otra tecla para continuar."
 
 #. Unterlauf des Rückgabestapels
 msgid "RETURN stack underflow"
@@ -769,11 +769,11 @@ msgid "Result"
 msgstr "Resultado"
 
 #. Systemfehler:
-msgid "System error: "
+msgid "System error:"
 msgstr "Error del sistema:"
 
 #. TFTP-Fehler
-msgid "TFTP error "
+msgid "TFTP error"
 msgstr "Error de TFTP"
 
 #. Fehler beim Lesen der ZIP-Datei

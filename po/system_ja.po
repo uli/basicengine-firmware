@@ -294,23 +294,23 @@ msgstr "コンパイラエラー"
 
 #. [ MB frei]
 # bulk translation
-msgid " MB free\n"
-msgstr " MB無料\n"
+msgid "MB free"
+msgstr "MB無料"
 
 #. [ Freie Bytes]
 # bulk translation
-msgid " bytes free\n"
-msgstr " バイト空き\n"
+msgid "bytes free"
+msgstr "バイト空き"
 
 #. [ Teilzeit-Job.]
 # bulk translation
-msgid " bytes.\n"
-msgstr " バイト。\n"
+msgid "bytes."
+msgstr "バイト。"
 
 #. [ Datei,]
 # bulk translation
-msgid " files, "
-msgstr " ファイル、"
+msgid "files,"
+msgstr "ファイル、"
 
 #. [Verfügbare Befehle:]
 # bulk translation
@@ -334,8 +334,8 @@ msgstr "説明："
 
 #. [Verzeichnis]
 # bulk translation
-msgid "Directory "
-msgstr "ディレクトリ "
+msgid "Directory"
+msgstr "ディレクトリ"
 
 #. [Schriftart:]
 # bulk translation
@@ -354,8 +354,8 @@ msgstr "マッチングコマンド："
 
 #. [Keine Hilfe verfügbar]
 # bulk translation
-msgid "No help available\n"
-msgstr "利用可能なヘルプはありません\n"
+msgid "No help available"
+msgstr "利用可能なヘルプはありません"
 
 #. [Vorsicht:]
 # bulk translation
@@ -379,8 +379,8 @@ msgstr "参照"
 
 #. [autoexec.bas überspringen]
 # bulk translation
-msgid "Skipping autoexec.bas\n"
-msgstr "autoexec.basをスキップする\n"
+msgid "Skipping autoexec.bas"
+msgstr "autoexec.basをスキップする"
 
 #. [Art:]
 # bulk translation
@@ -639,8 +639,8 @@ msgstr "わからない"
 
 #. [Unbekannte Speichergröße]
 # bulk translation
-msgid "unknown memory size\n"
-msgstr "不明なメモリサイズ\n"
+msgid "unknown memory size"
+msgstr "不明なメモリサイズ"
 
 #. [Unbekannt / SDL]
 # bulk translation
@@ -729,8 +729,8 @@ msgstr "不明なタイプ"
 
 #. %d Dateien extrahiert
 #.
-msgid "%d files extracted\n"
-msgstr "%d ファイルが抽出されました\n"
+msgid "%d files extracted"
+msgstr "%d ファイルが抽出されました"
 
 #. Beispiel
 msgid "Example"
@@ -762,8 +762,8 @@ msgstr "優先順位"
 
 #. Drücken Sie B, um die letzte analysierbare Version neu zu laden.
 #.
-msgid "Press B to reload the last parsable version.\n"
-msgstr "B を押して、解析可能な最後のバージョンをリロードします。\n"
+msgid "Press B to reload the last parsable version."
+msgstr "B を押して、解析可能な最後のバージョンをリロードします。"
 
 #. Drücken Sie eine beliebige Taste, um fortzufahren.
 msgid "Press any key to continue."
@@ -771,19 +771,19 @@ msgstr "何かキーを押すと続行します。"
 
 #. Drücken Sie eine beliebige andere Taste, um fortzufahren.
 #.
-msgid "Press any other key to continue.\n"
-msgstr "続行するには、他のキーを押してください。\n"
+msgid "Press any other key to continue."
+msgstr "続行するには、他のキーを押してください。"
 
 #. Ergebnis
 msgid "Result"
 msgstr "結果"
 
 #. Systemfehler:
-msgid "System error: "
+msgid "System error:"
 msgstr "システムエラー："
 
 #. TFTP-Fehler
-msgid "TFTP error "
+msgid "TFTP error"
 msgstr "TFTPエラー"
 
 #. Typkonflikt

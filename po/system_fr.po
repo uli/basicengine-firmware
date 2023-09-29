@@ -291,23 +291,23 @@ msgstr "Erreur du compilateur"
 
 #. [ freie Bytes]
 # bulk translation
-msgid " bytes free\n"
-msgstr " octets libres\n"
+msgid "bytes free"
+msgstr "octets libres"
 
 #. [ Bytes.]
 # bulk translation
-msgid " bytes.\n"
-msgstr " octets.\n"
+msgid "bytes."
+msgstr "octets."
 
 #. [ Dateien,]
 # bulk translation
-msgid " files, "
-msgstr " des dossiers, "
+msgid "files,"
+msgstr "des dossiers,"
 
 #. [ im]
 # bulk translation
-msgid " in "
-msgstr " dans "
+msgid "in"
+msgstr "dans"
 
 #. [Argumente:]
 # bulk translation
@@ -341,8 +341,8 @@ msgstr "Commandes correspondantes:"
 
 #. [Keine Hilfe verfügbar]
 # bulk translation
-msgid "No help available\n"
-msgstr "Aucune aide disponible\n"
+msgid "No help available"
+msgstr "Aucune aide disponible"
 
 #. [Rückgabewert:]
 # bulk translation
@@ -605,8 +605,8 @@ msgstr "inconnu"
 
 #. [unbekannte Speichergröße]
 # bulk translation
-msgid "unknown memory size\n"
-msgstr "taille de mémoire inconnue\n"
+msgid "unknown memory size"
+msgstr "taille de mémoire inconnue"
 
 #. [Unbekannt / sdl.]
 # from Argos
@@ -621,16 +621,16 @@ msgstr "trop de FOR imbriqués"
 msgid "IF stack overflow"
 msgstr "Débordement de pile IF"
 
-msgid " MB free\n"
-msgstr " Mo libres\n"
+msgid "MB free"
+msgstr "Mo libres"
 
 #. [BASIC Kern]
 # bulk translation
 msgid "BASIC core"
 msgstr "Noyau de BASIC"
 
-msgid "Directory "
-msgstr "Répertoire "
+msgid "Directory"
+msgstr "Répertoire"
 
 #. [Hinweis:]
 # from Argos
@@ -699,8 +699,8 @@ msgstr "Voir aussi:"
 
 #. [Ignoriere autoexec.bas]
 # bulk translation
-msgid "Skipping autoexec.bas\n"
-msgstr "Ignorer autoexec.bas\n"
+msgid "Skipping autoexec.bas"
+msgstr "Ignorer autoexec.bas"
 
 #. [Hilfedatei kann nicht dekodiert werden]
 # bulk translation
@@ -734,8 +734,8 @@ msgstr "type inconnu"
 
 #. %d extrahierte Dateien
 #.
-msgid "%d files extracted\n"
-msgstr "%d fichiers extraits\n"
+msgid "%d files extracted"
+msgstr "%d fichiers extraits"
 
 #. Beispiel
 msgid "Example"
@@ -754,8 +754,8 @@ msgstr "Priorité"
 
 #. Drücken Sie B, um die neueste scanbare Version neu zu laden.
 #.
-msgid "Press B to reload the last parsable version.\n"
-msgstr "Appuyez sur B pour recharger la dernière version analysable.\n"
+msgid "Press B to reload the last parsable version."
+msgstr "Appuyez sur B pour recharger la dernière version analysable."
 
 #. Drücken Sie eine beliebige Taste, um fortzufahren.
 msgid "Press any key to continue."
@@ -763,8 +763,8 @@ msgstr "Appuyez sur n'importe quelle touche pour continuer."
 
 #. Drücken Sie eine beliebige andere Taste, um fortzufahren.
 #.
-msgid "Press any other key to continue.\n"
-msgstr "Appuyez sur n’importe quelle autre touche pour continuer.\n"
+msgid "Press any other key to continue."
+msgstr "Appuyez sur n’importe quelle autre touche pour continuer."
 
 msgid "RETURN stack underflow"
 msgstr "sous-dépassement de la pile RETURN"
@@ -774,11 +774,11 @@ msgid "Result"
 msgstr "Résultat"
 
 #. Systemfehler:
-msgid "System error: "
+msgid "System error:"
 msgstr "Erreur système:"
 
 #. TFTP-Fehler
-msgid "TFTP error "
+msgid "TFTP error"
 msgstr "Erreur TFTP"
 
 #. Fehler beim Lesen der ZIP-Datei

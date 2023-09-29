@@ -302,28 +302,28 @@ msgstr "Compilerfehler"
 
 #. [ MB free]
 # bulk translation
-msgid " MB free\n"
-msgstr " MB frei\n"
+msgid "MB free"
+msgstr "MB frei"
 
 #. [ Bytes free]
 # bulk translation
-msgid " bytes free\n"
-msgstr " Bytes frei\n"
+msgid "bytes free"
+msgstr "Bytes frei"
 
 #. [ Bytes.]
 # bulk translation
-msgid " bytes.\n"
-msgstr " Bytes.\n"
+msgid "bytes."
+msgstr "Bytes."
 
 #. [ Files,]
 # bulk translation
-msgid " files, "
-msgstr " Dateien, "
+msgid "files,"
+msgstr "Dateien,"
 
 #. [ in the]
 # bulk translation
-msgid " in "
-msgstr " in "
+msgid "in"
+msgstr "in"
 
 #. [Arguments:]
 # bulk translation
@@ -352,8 +352,8 @@ msgstr "Beschreibung"
 
 #. [directory]
 # bulk translation
-msgid "Directory "
-msgstr "Verzeichnis "
+msgid "Directory"
+msgstr "Verzeichnis"
 
 #. [Handler:]
 # bulk translation
@@ -367,8 +367,8 @@ msgstr "Passende Befehle:"
 
 #. [No help available]
 # bulk translation
-msgid "No help available\n"
-msgstr "Keine Hilfe verfügbar\n"
+msgid "No help available"
+msgstr "Keine Hilfe verfügbar"
 
 #. [Note:]
 # bulk translation
@@ -385,8 +385,8 @@ msgstr "Rückgabewert"
 msgid "See also"
 msgstr "Siehe auch"
 
-msgid "Skipping autoexec.bas\n"
-msgstr "Überspringe autoexec.bas\n"
+msgid "Skipping autoexec.bas"
+msgstr "Überspringe autoexec.bas"
 
 #. [Types:]
 # bulk translation
@@ -635,8 +635,8 @@ msgstr "unbekannt"
 
 #. [unknown memory size]
 # bulk translation
-msgid "unknown memory size\n"
-msgstr "unbekannte Speichergröße\n"
+msgid "unknown memory size"
+msgstr "unbekannte Speichergröße"
 
 #. [Unknown / SDL]
 # from Argos
@@ -747,8 +747,8 @@ msgstr "unbekannter Typ"
 
 #. %d files extracted
 #.
-msgid "%d files extracted\n"
-msgstr "%d Dateien extrahiert\n"
+msgid "%d files extracted"
+msgstr "%d Dateien extrahiert"
 
 #. Data termination
 msgid "Data Abort"
@@ -770,8 +770,8 @@ msgstr "Betriebssystemfehler"
 msgid "Precedence"
 msgstr "Vorrang"
 
-msgid "Press B to reload the last parsable version.\n"
-msgstr "Drücken Sie B, um die letzte gültige Version neu zu laden.\n"
+msgid "Press B to reload the last parsable version."
+msgstr "Drücken Sie B, um die letzte gültige Version neu zu laden."
 
 #. Press any key to continue.
 msgid "Press any key to continue."
@@ -779,19 +779,19 @@ msgstr "Drücken Sie eine beliebige Taste, um fortzufahren."
 
 #. Press any other key to continue.
 #.
-msgid "Press any other key to continue.\n"
-msgstr "Drücken Sie eine beliebige andere Taste, um fortzufahren.\n"
+msgid "Press any other key to continue."
+msgstr "Drücken Sie eine beliebige andere Taste, um fortzufahren."
 
 #. Result
 msgid "Result"
 msgstr "Ergebnis"
 
 #. System error:
-msgid "System error: "
+msgid "System error:"
 msgstr "Systemfehler:"
 
 #. TFTP error
-msgid "TFTP error "
+msgid "TFTP error"
 msgstr "TFTP-Fehler"
 
 #. Error reading ZIP file
