@@ -1,6 +1,6 @@
 #
 msgid ""
-msgstr ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 #. [OK]
 # bulk translation
@@ -726,3 +726,190 @@ msgstr "不明なセクション"
 # bulk translation
 msgid "unknown type"
 msgstr "不明なタイプ"
+
+#. %d Dateien extrahiert
+#.
+msgid "%d files extracted\n"
+msgstr "%d ファイルが抽出されました\n"
+
+#. Beispiel
+msgid "Example"
+msgstr "例"
+
+#. FOR ohne TO
+msgid "FOR without TO"
+msgstr "TOなしのFOR"
+
+#. Zeile zu lang
+msgid "Line too long"
+msgstr "行が長すぎます"
+
+#. Betriebssystemfehler
+msgid "OS error"
+msgstr "OSエラー"
+
+#. Fehlen von Daten
+msgid "Out of data"
+msgstr "データ不足"
+
+#. Nicht genügend Speicher
+msgid "Out of memory"
+msgstr "メモリ不足"
+
+#. Priorität
+msgid "Precedence"
+msgstr "優先順位"
+
+#. Drücken Sie B, um die letzte analysierbare Version neu zu laden.
+#.
+msgid "Press B to reload the last parsable version.\n"
+msgstr "B を押して、解析可能な最後のバージョンをリロードします。\n"
+
+#. Drücken Sie eine beliebige Taste, um fortzufahren.
+msgid "Press any key to continue."
+msgstr "何かキーを押すと続行します。"
+
+#. Drücken Sie eine beliebige andere Taste, um fortzufahren.
+#.
+msgid "Press any other key to continue.\n"
+msgstr "続行するには、他のキーを押してください。\n"
+
+#. Ergebnis
+msgid "Result"
+msgstr "結果"
+
+#. Systemfehler:
+msgid "System error: "
+msgstr "システムエラー："
+
+#. TFTP-Fehler
+msgid "TFTP error "
+msgstr "TFTPエラー"
+
+#. Typkonflikt
+msgid "Type mismatch"
+msgstr "型の不一致"
+
+#. Fehler beim Laden der ZIP-Datei
+msgid "ZIP file read error"
+msgstr "ZIPファイルの読み込みエラー"
+
+#. beschädigte Zip-Datei
+msgid "broken ZIP file"
+msgstr "壊れたZIPファイル"
+
+#. Während der Ausführung kann das Programm nicht bearbeitet werden
+msgid "can't edit program while running it"
+msgstr "実行中にプログラムを編集することはできません"
+
+#. Modulverzeichnis kann nicht erstellt werden
+msgid "cannot create module directory"
+msgstr "モジュールディレクトリを作成できません"
+
+#. Ende der Schleife nicht gefunden
+msgid "cannot find end of loop"
+msgstr "ループの終わりが見つかりません"
+
+#. Der TFTP-Client konnte nicht initialisiert werden
+msgid "could not initialize TFTP client"
+msgstr "TFTPクライアントを初期化できませんでした"
+
+#. Der DHCP-Client konnte nicht gestartet werden
+msgid "could not start DHCP client"
+msgstr "DHCP クライアントを開始できませんでした"
+
+#. Der Editor wurde abnormal beendet
+msgid "editor exited abnormally"
+msgstr "エディタが異常終了しました"
+
+#. Erwartet: Stringlistenreferenz
+msgid "expected: string list reference"
+msgstr "予期される: 文字列リスト参照"
+
+#. GPIO-Chip konnte nicht abgerufen werden
+msgid "failed to acquire GPIO chip"
+msgstr "GPIOチップの取得に失敗しました"
+
+#. GPIO-Leitung konnte nicht abgerufen werden
+msgid "failed to acquire GPIO line"
+msgstr "GPIO ラインの取得に失敗しました"
+
+#. Die Konfiguration der GPIO-Leitung ist fehlgeschlagen
+msgid "failed to configure GPIO line"
+msgstr "GPIO ラインの構成に失敗しました"
+
+#. Erstellen der Datei fehlgeschlagen
+msgid "failed to create file"
+msgstr "ファイルの作成に失敗した"
+
+#. GPIO-Status konnte nicht abgerufen werden
+msgid "failed to get GPIO state"
+msgstr "GPIO 状態の取得に失敗しました"
+
+#. Konnte die Datei nicht öffnen
+msgid "failed to open file"
+msgstr "ファイルを開けませんでした"
+
+#. Datei konnte nicht gesendet werden
+msgid "failed to send file"
+msgstr "ファイルの送信に失敗しました"
+
+#. Der GPIO-Status konnte nicht festgelegt werden
+msgid "failed to set GPIO state"
+msgstr "GPIO 状態の設定に失敗しました"
+
+#. Die Bitreihenfolge konnte nicht festgelegt werden
+msgid "failed to set bit order"
+msgstr "ビット順序の設定に失敗しました"
+
+#. Die Datei konnte nicht extrahiert werden
+msgid "file could not be extracted"
+msgstr "ファイルを抽出できませんでした"
+
+#. Schriftart existiert bereits
+msgid "font already exists"
+msgstr "フォントはすでに存在します"
+
+#. ipaddr_aton ist fehlgeschlagen
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton が失敗しました"
+
+#. habe nicht
+msgid "missing"
+msgstr "ない"
+
+#. Modul nicht gefunden
+msgid "module not found"
+msgstr "モジュールが見つかりません"
+
+#. Kein SPI-Gerät ausgewählt
+msgid "no SPI device selected"
+msgstr "SPIデバイスが選択されていません"
+
+#. keine aktiven Schleifen
+msgid "no active loops"
+msgstr "アクティブなループがありません"
+
+#. keine passenden Schleifen
+msgid "no matching loop"
+msgstr "一致するループがありません"
+
+#. Keine ZIP-Datei
+msgid "not a ZIP file"
+msgstr "ZIPファイルではありません"
+
+#. Keine gültige TrueType-Schriftartdatei
+msgid "not a valid TrueType font file"
+msgstr "有効な TrueType フォント ファイルではありません"
+
+#. Unbekannte Konfigurationsvariable
+msgid "unknown configuration variable"
+msgstr "不明な構成変数"
+
+#. unbekannte Schriftart
+msgid "unknown font"
+msgstr "不明なフォント"
+
+#. unbekannter Schleifentyp
+msgid "unknown loop type"
+msgstr "不明なループタイプ"
