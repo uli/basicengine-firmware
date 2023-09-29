@@ -1,6 +1,6 @@
 #
 msgid ""
-msgstr ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 #. [Durch Null teilen]
 # bulk translation
@@ -731,3 +731,178 @@ msgstr "section inconnue"
 # from Argos
 msgid "unknown type"
 msgstr "type inconnu"
+
+#. %d extrahierte Dateien
+#.
+msgid "%d files extracted\n"
+msgstr "%d fichiers extraits\n"
+
+#. Beispiel
+msgid "Example"
+msgstr "Exemple"
+
+msgid "IF stack underflow"
+msgstr "dépassement de pile IF"
+
+#. Betriebssystemfehler
+msgid "OS error"
+msgstr "Erreur du système d'exploitation"
+
+#. Priorität
+msgid "Precedence"
+msgstr "Priorité"
+
+#. Drücken Sie B, um die neueste scanbare Version neu zu laden.
+#.
+msgid "Press B to reload the last parsable version.\n"
+msgstr "Appuyez sur B pour recharger la dernière version analysable.\n"
+
+#. Drücken Sie eine beliebige Taste, um fortzufahren.
+msgid "Press any key to continue."
+msgstr "Appuyez sur n'importe quelle touche pour continuer."
+
+#. Drücken Sie eine beliebige andere Taste, um fortzufahren.
+#.
+msgid "Press any other key to continue.\n"
+msgstr "Appuyez sur n’importe quelle autre touche pour continuer.\n"
+
+msgid "RETURN stack underflow"
+msgstr "sous-dépassement de la pile RETURN"
+
+#. Ergebnis
+msgid "Result"
+msgstr "Résultat"
+
+#. Systemfehler:
+msgid "System error: "
+msgstr "Erreur système:"
+
+#. TFTP-Fehler
+msgid "TFTP error "
+msgstr "Erreur TFTP"
+
+#. Fehler beim Lesen der ZIP-Datei
+msgid "ZIP file read error"
+msgstr "Erreur de lecture du fichier ZIP"
+
+#. defekte ZIP-Datei
+msgid "broken ZIP file"
+msgstr "fichier ZIP cassé"
+
+#. Ich kann das Programm nicht ändern, während es läuft
+msgid "can't edit program while running it"
+msgstr "je ne peux pas modifier le programme pendant son exécution"
+
+#. Modulverzeichnis konnte nicht erstellt werden
+msgid "cannot create module directory"
+msgstr "impossible de créer le répertoire du module"
+
+#. Ich kann das Ende der Schleife nicht finden
+msgid "cannot find end of loop"
+msgstr "je ne trouve pas la fin de la boucle"
+
+#. Der TFTP-Client konnte nicht initialisiert werden
+msgid "could not initialize TFTP client"
+msgstr "impossible d'initialiser le client TFTP"
+
+#. DHCP-Client konnte nicht gestartet werden
+msgid "could not start DHCP client"
+msgstr "impossible de démarrer le client DHCP"
+
+#. Der Herausgeber ist ungewöhnlich gegangen
+msgid "editor exited abnormally"
+msgstr "l'éditeur s'est quitté anormalement"
+
+#. erwartet: AUS oder EIN
+msgid "expected: OFF or ON"
+msgstr "attendu : OFF ou ON"
+
+#. erwartet: EIN oder AUS
+msgid "expected: ON or OFF"
+msgstr "attendu : ON ou OFF"
+
+#. GPIO-Chip-Erfassungsfehler
+msgid "failed to acquire GPIO chip"
+msgstr "échec d'acquisition de la puce GPIO"
+
+#. Der Erwerb der GPIO-Leitung ist fehlgeschlagen
+msgid "failed to acquire GPIO line"
+msgstr "échec d'acquisition de la ligne GPIO"
+
+#. GPIO-Leitungskonfigurationsfehler
+msgid "failed to configure GPIO line"
+msgstr "échec de configuration de la ligne GPIO"
+
+#. Dateierstellung fehlgeschlagen
+msgid "failed to create file"
+msgstr "la création du fichier a échoué"
+
+#. Der GPIO-Status kann nicht abgerufen werden
+msgid "failed to get GPIO state"
+msgstr "impossible d'obtenir l'état GPIO"
+
+#. Datei konnte nicht geöffnet werden
+msgid "failed to open file"
+msgstr "échec de l'ouverture du fichier"
+
+#. Datei konnte nicht gesendet werden
+msgid "failed to send file"
+msgstr "échec de l'envoi du fichier"
+
+#. Fehler beim Festlegen des GPIO-Status
+msgid "failed to set GPIO state"
+msgstr "échec de la définition de l'état GPIO"
+
+#. Fehler beim Festlegen der Bitreihenfolge
+msgid "failed to set bit order"
+msgstr "échec de définition de l'ordre des bits"
+
+#. Die Datei konnte nicht extrahiert werden
+msgid "file could not be extracted"
+msgstr "le fichier n'a pas pu être extrait"
+
+#. Die Schriftart existiert bereits
+msgid "font already exists"
+msgstr "la police existe déjà"
+
+#. ipaddr_aton ist fehlgeschlagen
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton a échoué"
+
+msgid "max %d"
+msgstr "%d max"
+
+msgid "min %d"
+msgstr "%d min"
+
+#. Modul nicht gefunden
+msgid "module not found"
+msgstr "module introuvable"
+
+#. Kein SPI-Gerät ausgewählt
+msgid "no SPI device selected"
+msgstr "aucun périphérique SPI sélectionné"
+
+#. keine passende Schleife
+msgid "no matching loop"
+msgstr "pas de boucle correspondante"
+
+#. keine ZIP-Datei
+msgid "not a ZIP file"
+msgstr "pas un fichier ZIP"
+
+#. Dies ist keine gültige TrueType-Schriftartdatei
+msgid "not a valid TrueType font file"
+msgstr "ce n'est pas un fichier de police TrueType valide"
+
+#. unbekannte Konfigurationsvariable
+msgid "unknown configuration variable"
+msgstr "variable de configuration inconnue"
+
+#. unbekannte Schriftart
+msgid "unknown font"
+msgstr "police inconnue"
+
+#. unbekannter Schleifentyp
+msgid "unknown loop type"
+msgstr "type de boucle inconnu"
