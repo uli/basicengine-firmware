@@ -1,6 +1,7 @@
 #
 msgid ""
 msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
 
 #. [OK]
 # bulk translation
@@ -743,3 +744,176 @@ msgstr "unbekannter Abschnitt"
 # from Argos
 msgid "unknown type"
 msgstr "unbekannter Typ"
+
+#. %d files extracted
+#.
+msgid "%d files extracted\n"
+msgstr "%d Dateien extrahiert\n"
+
+#. Data termination
+msgid "Data Abort"
+msgstr "Datenabbruch"
+
+#. EXIT failed
+msgid "EXIT failed"
+msgstr "EXIT ist fehlgeschlagen"
+
+#. Example
+msgid "Example"
+msgstr "Beispiel"
+
+#. Operating system error
+msgid "OS error"
+msgstr "Betriebssystemfehler"
+
+#. priority
+msgid "Precedence"
+msgstr "Vorrang"
+
+msgid "Press B to reload the last parsable version.\n"
+msgstr "Drücken Sie B, um die letzte gültige Version neu zu laden.\n"
+
+#. Press any key to continue.
+msgid "Press any key to continue."
+msgstr "Drücken Sie eine beliebige Taste, um fortzufahren."
+
+#. Press any other key to continue.
+#.
+msgid "Press any other key to continue.\n"
+msgstr "Drücken Sie eine beliebige andere Taste, um fortzufahren.\n"
+
+#. Result
+msgid "Result"
+msgstr "Ergebnis"
+
+#. System error:
+msgid "System error: "
+msgstr "Systemfehler:"
+
+#. TFTP error
+msgid "TFTP error "
+msgstr "TFTP-Fehler"
+
+#. Error reading ZIP file
+msgid "ZIP file read error"
+msgstr "Fehler beim Lesen der ZIP-Datei"
+
+#. broken ZIP file
+msgid "broken ZIP file"
+msgstr "defekte ZIP-Datei"
+
+#. The program cannot be edited while it is running
+msgid "can't edit program while running it"
+msgstr "Während der Ausführung kann das Programm nicht bearbeitet werden"
+
+#. Unable to create module directory
+msgid "cannot create module directory"
+msgstr "Modulverzeichnis kann nicht erstellt werden"
+
+#. The end of the loop cannot be found
+msgid "cannot find end of loop"
+msgstr "Das Ende der Schleife kann nicht gefunden werden"
+
+#. The TFTP client could not be initialized
+msgid "could not initialize TFTP client"
+msgstr "Der TFTP-Client konnte nicht initialisiert werden"
+
+#. The DHCP client could not be started
+msgid "could not start DHCP client"
+msgstr "Der DHCP-Client konnte nicht gestartet werden"
+
+#. The editor exited abnormally
+msgid "editor exited abnormally"
+msgstr "Der Editor wurde abnormal beendet"
+
+msgid "expected: OFF or ON"
+msgstr "erwartet: OFF oder ON"
+
+msgid "expected: ON or OFF"
+msgstr "erwartet: ON oder OFF"
+
+msgid "failed to acquire GPIO chip"
+msgstr "GPIO-Chip konnte nicht belegt werden"
+
+msgid "failed to acquire GPIO line"
+msgstr "Belegung der GPIO-Leitung fehlgeschlagen"
+
+#. GPIO line could not be configured
+msgid "failed to configure GPIO line"
+msgstr "GPIO-Leitung konnte nicht konfiguriert werden"
+
+#. Failed to create file
+msgid "failed to create file"
+msgstr "Erstellen der Datei fehlgeschlagen"
+
+#. GPIO status could not be obtained
+msgid "failed to get GPIO state"
+msgstr "GPIO-Status konnte nicht abgerufen werden"
+
+#. file could not be opened
+msgid "failed to open file"
+msgstr "Datei konnte nicht geöffnet werden"
+
+#. File could not be sent
+msgid "failed to send file"
+msgstr "Datei konnte nicht gesendet werden"
+
+#. GPIO status could not be set
+msgid "failed to set GPIO state"
+msgstr "Der GPIO-Status konnte nicht festgelegt werden"
+
+#. Bit order could not be set
+msgid "failed to set bit order"
+msgstr "Bitreihenfolge konnte nicht festgelegt werden"
+
+#. File could not be extracted
+msgid "file could not be extracted"
+msgstr "Datei konnte nicht extrahiert werden"
+
+#. Font already exists
+msgid "font already exists"
+msgstr "Schriftart existiert bereits"
+
+#. ipaddr_aton failed
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton ist fehlgeschlagen"
+
+#. miss
+msgid "missing"
+msgstr "fehlen"
+
+#. Module not found
+msgid "module not found"
+msgstr "Modul nicht gefunden"
+
+#. No SPI device selected
+msgid "no SPI device selected"
+msgstr "Kein SPI-Gerät ausgewählt"
+
+#. no active loops
+msgid "no active loops"
+msgstr "keine aktiven Schleifen"
+
+#. no matching loop
+msgid "no matching loop"
+msgstr "keine passende Schleife"
+
+#. no ZIP file
+msgid "not a ZIP file"
+msgstr "keine ZIP-Datei"
+
+#. Not a valid TrueType font file
+msgid "not a valid TrueType font file"
+msgstr "Keine gültige TrueType-Schriftartdatei"
+
+#. unknown configuration variable
+msgid "unknown configuration variable"
+msgstr "unbekannte Konfigurationsvariable"
+
+#. unknown font
+msgid "unknown font"
+msgstr "unbekannte Schriftart"
+
+#. unknown loop type
+msgid "unknown loop type"
+msgstr "unbekannter Schleifentyp"
