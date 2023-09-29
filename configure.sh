@@ -69,7 +69,7 @@ MSG_IMPLICIT_OUT="ttbasic/msgs_${LANGS// /.h ttbasic/msgs_}.h"
 HELPTEXT_IMPLICIT_OUT="ttbasic/helptext_${LANGS// /.json ttbasic/helptext_}.json"
 
 # source files of the former
-MSG_DEPS="`echo ttbasic/basic*.cpp libraries/TTBAS_LIB/sdfiles.cpp h3/net.cpp`"
+MSG_DEPS="`echo ttbasic/*.cpp ttbasic/*.c libraries/TTBAS_LIB/*.cpp h3/*.cpp h3/*.h`"
 HELPTEXT_DEPS="$MSG_DEPS `echo po/helptext_*.po`"
 
 # implicit outputs of icode table generator
