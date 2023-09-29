@@ -97,10 +97,21 @@ def translate(m):
     if target_lang == 'en' or len(m) == 0 or len([c for c in m if c.isalpha()]) == 0:
         return m
 
+    # remember leading and trailing whitespace, then strip it before
+    # translation
+    presp = m[:(len(m) - len(m.lstrip()))]
+    postl = len(m) - len(m.rstrip())
+    if postl > 0:
+      postsp = m[-postl:]
+    else:
+      postsp = ''
+    m = m.strip()
+    #print('+'+presp+'|'+m+'|'+postsp+'+')
+
     try:
         e = pof.find(m)
-        #stderr.write('found ' + e.msgid + ' as ' + e.msgstr + '\n')
-        return e.msgstr
+        #print('found ' + e.msgid + ' as ' + e.msgstr + '\n')
+        return presp + e.msgstr + postsp
     except AttributeError:
         pass
 
@@ -110,7 +121,7 @@ def translate(m):
       bakpof.write(m + '\n\n=====\n\n')
 
     if can_translate == False:
-        return m
+        return presp + m + postsp
 
     stderr.write('\n'+R+'==='+W+' SOURCE\n')
     stderr.write(m +'\n')
@@ -153,13 +164,7 @@ def translate(m):
         goodsrc = 'from Google'
         goodbbtr = bbtr2
 
-    # translators often drop leading and trailing whitespace
-    if m.startswith(' ') and not good.startswith(' '):
-      good = ' ' + good
-    if m.endswith(' ') and not good.endswith(' '):
-      good = good + ' '
-
     e = polib.POEntry(msgid=m, msgstr=good, comment='[' + goodbbtr + ']', tcomment=goodsrc)
     pof.append(e)
     pof.save()
-    return good
+    return presp + good + postsp
