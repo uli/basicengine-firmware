@@ -1,6 +1,6 @@
 #
 msgid ""
-msgstr ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 #. [in Ordnung]
 # bulk translation
@@ -716,3 +716,196 @@ msgstr "sección desconocida"
 # from Argos
 msgid "unknown type"
 msgstr "tipo desconocido"
+
+#. %d extrahierte Dateien
+#.
+msgid "%d files extracted\n"
+msgstr "%d archivos extraídos\n"
+
+#. Datenabbruch
+msgid "Data Abort"
+msgstr "Aborto de datos"
+
+#. EXIT ist fehlgeschlagen
+msgid "EXIT failed"
+msgstr "EXIT fallida"
+
+#. Beispiel
+msgid "Example"
+msgstr "Ejemplo"
+
+#. Manipulator
+msgid "Handler"
+msgstr "Manipulador"
+
+#. Betriebssystemfehler
+msgid "OS error"
+msgstr "error del sistema operativo"
+
+#. Vorrang
+msgid "Precedence"
+msgstr "Precedencia"
+
+#. Drücken Sie B, um die neueste analysierbare Version neu zu laden.
+#.
+msgid "Press B to reload the last parsable version.\n"
+msgstr "Presione B para recargar la última versión analizable.\n"
+
+#. Drücken Sie eine beliebige Taste, um fortzufahren.
+msgid "Press any key to continue."
+msgstr "Pulse cualquier tecla para continuar."
+
+#. Drücken Sie eine beliebige andere Taste, um fortzufahren.
+#.
+msgid "Press any other key to continue.\n"
+msgstr "Presione cualquier otra tecla para continuar.\n"
+
+#. Unterlauf des Rückgabestapels
+msgid "RETURN stack underflow"
+msgstr "Desbordamiento insuficiente de la pila de RETURN"
+
+#. Ergebnis
+msgid "Result"
+msgstr "Resultado"
+
+#. Systemfehler:
+msgid "System error: "
+msgstr "Error del sistema:"
+
+#. TFTP-Fehler
+msgid "TFTP error "
+msgstr "Error de TFTP"
+
+#. Fehler beim Lesen der ZIP-Datei
+msgid "ZIP file read error"
+msgstr "Error de lectura del archivo ZIP"
+
+#. defekte ZIP-Datei
+msgid "broken ZIP file"
+msgstr "archivo ZIP roto"
+
+#. Ich kann das Programm nicht bearbeiten, während es ausgeführt wird.
+msgid "can't edit program while running it"
+msgstr "No puedo editar el programa mientras lo ejecuto."
+
+#. Modulverzeichnis kann nicht erstellt werden
+msgid "cannot create module directory"
+msgstr "no se puede crear el directorio del módulo"
+
+#. Ich kann das Ende der Schleife nicht finden
+msgid "cannot find end of loop"
+msgstr "no puedo encontrar el final del bucle"
+
+#. Der TFTP-Client konnte nicht initialisiert werden
+msgid "could not initialize TFTP client"
+msgstr "no se pudo inicializar el cliente TFTP"
+
+#. Der DHCP-Client konnte nicht gestartet werden
+msgid "could not start DHCP client"
+msgstr "no se pudo iniciar el cliente DHCP"
+
+#. Der Editor wurde abnormal beendet
+msgid "editor exited abnormally"
+msgstr "el editor salió de forma anormal"
+
+#. leerer String
+msgid "empty string"
+msgstr "cuerda vacía"
+
+msgid "expected: OFF or ON"
+msgstr "esperado: OFF o ON"
+
+msgid "expected: ON or OFF"
+msgstr "esperado: ON o OFF"
+
+#. GPIO-Chip konnte nicht erworben werden
+msgid "failed to acquire GPIO chip"
+msgstr "no se pudo adquirir el chip GPIO"
+
+#. GPIO-Leitung konnte nicht erfasst werden
+msgid "failed to acquire GPIO line"
+msgstr "no se pudo adquirir la línea GPIO"
+
+#. GPIO-Leitung konnte nicht konfiguriert werden
+msgid "failed to configure GPIO line"
+msgstr "no se pudo configurar la línea GPIO"
+
+#. Beim Erstellen der Dateien ist ein Fehler aufgetreten
+msgid "failed to create file"
+msgstr "fracasado en la creación de archivos"
+
+#. Der GPIO-Status konnte nicht abgerufen werden
+msgid "failed to get GPIO state"
+msgstr "no se pudo obtener el estado GPIO"
+
+#. Datei konnte nicht geöffnet werden
+msgid "failed to open file"
+msgstr "Fallo al abrir el archivo"
+
+#. Datei konnte nicht gesendet werden
+msgid "failed to send file"
+msgstr "no se pudo enviar el archivo"
+
+#. Der GPIO-Status konnte nicht festgelegt werden
+msgid "failed to set GPIO state"
+msgstr "no se pudo establecer el estado GPIO"
+
+#. Bitreihenfolge konnte nicht festgelegt werden
+msgid "failed to set bit order"
+msgstr "no se pudo establecer el orden de bits"
+
+#. Die Datei konnte nicht extrahiert werden
+msgid "file could not be extracted"
+msgstr "el archivo no se pudo extraer"
+
+#. Die Quelle existiert bereits
+msgid "font already exists"
+msgstr "la fuente ya existe"
+
+#. ipaddr_aton ist fehlgeschlagen
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton falló"
+
+#. Modul nicht gefunden
+msgid "module not found"
+msgstr "módulo no encontrado"
+
+#. Kein SPI-Gerät ausgewählt
+msgid "no SPI device selected"
+msgstr "ningún dispositivo SPI seleccionado"
+
+#. keine aktiven Schleifen
+msgid "no active loops"
+msgstr "sin bucles activos"
+
+#. keine passende Schleife
+msgid "no matching loop"
+msgstr "sin bucle coincidente"
+
+#. es handelt sich nicht um eine ZIP-Datei
+msgid "not a ZIP file"
+msgstr "no es un archivo ZIP"
+
+#. ist keine gültige TrueType-Schriftartdatei
+msgid "not a valid TrueType font file"
+msgstr "no es un archivo de fuente TrueType válido"
+
+#. Sprite-/Hintergrund-Engine
+msgid "sprite/background engine"
+msgstr "motor de sprites/fondo"
+
+#. Kette
+msgid "string"
+msgstr "cadena"
+
+#. unbekannte Konfigurationsvariable
+msgid "unknown configuration variable"
+msgstr "variable de configuración desconocida"
+
+#. unbekannte Quelle
+msgid "unknown font"
+msgstr "fuente desconocida"
+
+#. unbekannter Schleifentyp
+msgid "unknown loop type"
+msgstr "tipo de bucle desconocido"
