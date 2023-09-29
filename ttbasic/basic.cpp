@@ -40,7 +40,11 @@
 
 #elif defined(H3)
 
+#ifdef JAILHOUSE
+#define STR_EDITION "H3 RX"
+#else
 #define STR_EDITION "H3"
+#endif
 
 #elif defined(SDL)
 
