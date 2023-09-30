@@ -148,6 +148,7 @@ for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
                              replace('\n|', '==LF==|'). # table entries
                              replace('\n*', '==LF==*'). # itemized lists
                              replace(' +\n', '==LF=='). # asciidoc continuation
+                             replace('\n+\n', '==LF=='). # asciidoc continuation
                              replace('\n', ' ').	# drop all other LFs
                              replace('==LF==', '\n'))	# translate ==LF== back to real LFs
                 if not section in ['usage', 'ref']:
