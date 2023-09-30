@@ -2792,120 +2792,60 @@ msgstr "componente azul [0 a 255]"
 msgid "CODES"
 msgstr "CODIGOS"
 
-#. [ 0]
-# bulk translation
-msgid "0"
-msgstr "0"
-
 #. [ Standardhintergrund]
 # bulk translation
 msgid "Default background"
 msgstr "Fondo predeterminado"
-
-#. [ 1]
-# bulk translation
-msgid "1"
-msgstr "1"
 
 #. [ Standardvordergrund]
 # bulk translation
 msgid "Default foreground"
 msgstr "Primer plano predeterminado"
 
-#. [ zwei]
-# bulk translation
-msgid "2"
-msgstr "2"
-
 #. [Syntax: Schlüsselwörter Basic]
 # from Argos
 msgid "Syntax: BASIC keywords"
 msgstr "Sintaxis: Palabras clave BASIC"
-
-#. [ 3]
-# bulk translation
-msgid "3"
-msgstr "3"
 
 #. [ Syntax: Zeilennummern]
 # bulk translation
 msgid "Syntax: line numbers"
 msgstr "Sintaxis: números de línea"
 
-#. [ 4]
-# bulk translation
-msgid "4"
-msgstr "4"
-
 #. [ Syntax: Zahlen]
 # bulk translation
 msgid "Syntax: numbers"
 msgstr "Sintaxis: números"
-
-#. [ 5]
-# bulk translation
-msgid "5"
-msgstr "5"
 
 #. [ Syntax: globale Variablen]
 # bulk translation
 msgid "Syntax: global variables"
 msgstr "Sintaxis: variables globales"
 
-#. [ 6]
-# bulk translation
-msgid "6"
-msgstr "6"
-
 #. [ Syntax: lokale Variablen und Argumente]
 # bulk translation
 msgid "Syntax: local variables and arguments"
 msgstr "Sintaxis: variables y argumentos locales"
-
-#. [ 7]
-# bulk translation
-msgid "7"
-msgstr "7"
 
 #. [ Syntax: Operanden]
 # bulk translation
 msgid "Syntax: operands"
 msgstr "Sintaxis: operandos"
 
-#. [ 8]
-# bulk translation
-msgid "8"
-msgstr "8"
-
 #. [ Syntax: Zeichenfolgenkonstanten]
 # bulk translation
 msgid "Syntax: string constants"
 msgstr "Sintaxis: constantes de cadena"
-
-#. [ 9]
-# bulk translation
-msgid "9"
-msgstr "9"
 
 #. [ Syntax: Prozedurnamen]
 # bulk translation
 msgid "Syntax: procedure names"
 msgstr "Sintaxis: nombres de procedimientos"
 
-#. [ 10]
-# bulk translation
-msgid "10"
-msgstr "10"
-
 #. [ Syntax: Kommentare]
 # bulk translation
 msgid "Syntax: comments"
 msgstr "Sintaxis: comentarios"
-
-#. [ elf]
-# bulk translation
-msgid "11"
-msgstr "11"
 
 #. [ Standardrahmenfarbe]
 # bulk translation
@@ -3970,125 +3910,50 @@ msgstr "Notas"
 msgid "kbd:[Left Alt]"
 msgstr "kbd:[Alt Izquierda]"
 
-#. [ 1]
-# bulk translation
-msgid "1"
-msgstr "1"
-
-#. [ zwei]
-# bulk translation
-msgid "2"
-msgstr "2"
-
 #. [ kbd:[Linke Strg]]
 # bulk translation
 msgid "kbd:[Left Ctrl]"
 msgstr "kbd:[Ctrl izquierdo]"
-
-#. [ 3]
-# bulk translation
-msgid "3"
-msgstr "3"
-
-#. [ 4]
-# bulk translation
-msgid "4"
-msgstr "4"
 
 #. [ kbd:[Rechts Alt]]
 # bulk translation
 msgid "kbd:[Right Alt]"
 msgstr "kbd:[Alt derecha]"
 
-#. [ 5]
-# bulk translation
-msgid "5"
-msgstr "5"
-
 #. [ kbd:[Rechte Strg]]
 # bulk translation
 msgid "kbd:[Right Ctrl]"
 msgstr "kbd:[Ctrl derecho]"
-
-#. [ 6]
-# bulk translation
-msgid "6"
-msgstr "6"
 
 #. [ kbd:[linke GUI]]
 # bulk translation
 msgid "kbd:[Left GUI]"
 msgstr "kbd:[GUI izquierda]"
 
-#. [ 7]
-# bulk translation
-msgid "7"
-msgstr "7"
-
 #. [ kbd:[rechte GUI]]
 # bulk translation
 msgid "kbd:[Right GUI]"
 msgstr "kbd:[GUI derecha]"
-
-#. [ 8]
-# bulk translation
-msgid "8"
-msgstr "8"
-
-#. [ 9]
-# bulk translation
-msgid "9"
-msgstr "9"
-
-#. [ 10]
-# bulk translation
-msgid "10"
-msgstr "10"
 
 #. [ kbd:[Feststelltaste]]
 # bulk translation
 msgid "kbd:[Caps Lock]"
 msgstr "kbd:[Bloq Mayús]"
 
-#. [ elf]
-# bulk translation
-msgid "11"
-msgstr "11"
-
-#. [ 12]
-# bulk translation
-msgid "12"
-msgstr "12"
-
 #. [KBD: [`]]
 # from Argos
 msgid "kbd:[`]"
 msgstr "kbd:[`]"
-
-#. [ 13]
-# bulk translation
-msgid "13"
-msgstr "13"
 
 #. [ kbd:[Einfügen]]
 # bulk translation
 msgid "kbd:[Insert]"
 msgstr "kbd:[Insertar]"
 
-#. [ 14]
-# bulk translation
-msgid "14"
-msgstr "14"
-
 #. [ kbd:[Start]]
 # bulk translation
 msgid "kbd:[Home]"
 msgstr "kbd:[Inicio]"
-
-#. [ fünfzehn]
-# bulk translation
-msgid "15"
-msgstr "15"
 
 #. [KBD: [Pause]]
 # from Argos
@@ -5563,11 +5428,6 @@ msgstr "Operador de negación."
 msgid "The negative of `a`."
 msgstr "El negativo de \"a\"."
 
-#. [zwei]
-# bulk translation
-msgid "2"
-msgstr "2"
-
 #. [Identitätsoperator.]
 # bulk translation
 msgid "Identity operator."
@@ -5592,11 +5452,6 @@ msgstr "Operador de multiplicación."
 # bulk translation
 msgid "Product of `a` and `b`."
 msgstr "Producto de `a` y `b`."
-
-#. [3]
-# bulk translation
-msgid "3"
-msgstr "3"
 
 #. [Abteilungsbetreiber.]
 # bulk translation
@@ -5673,11 +5528,6 @@ msgstr "Operador de igualdad."
 # bulk translation
 msgid "`-1` if `a` and `b` are equal, `0` otherwise."
 msgstr "`-1` si `a` y `b` son iguales, `0` en caso contrario."
-
-#. [6]
-# bulk translation
-msgid "6"
-msgstr "6"
 
 #. [Ungleichungsoperator.]
 # bulk translation
@@ -8213,16 +8063,6 @@ msgstr "S"
 # bulk translation
 msgid "V"
 msgstr "V"
-
-#. [ 6]
-# bulk translation
-msgid "6"
-msgstr "6"
-
-#. [ 7]
-# bulk translation
-msgid "7"
-msgstr "7"
 
 #. [Gültige Datensatznummern sind: `$ 01`,` $ 28 `A" $ 30 ",` $ 34` A "$ 36",
 #. `$ 82`]

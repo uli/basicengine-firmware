@@ -2211,11 +2211,6 @@ msgstr ""
 msgid "Loads a background map from a file."
 msgstr "Charge une carte d'arrière-plan à partir d'un fichier."
 
-#. [5]
-# bulk translation
-msgid "5"
-msgstr "5"
-
 #. [Definiert einen Ereignishandler, der am Ende des aktuellen MML-Musters
 #. ausgelöst wird.]
 # from Google
@@ -2839,90 +2834,45 @@ msgstr "0"
 msgid "Default background"
 msgstr "Arrière-plan par défaut"
 
-#. [ 1]
-# bulk translation
-msgid "1"
-msgstr "1"
-
 #. [ Standardvordergrund]
 # bulk translation
 msgid "Default foreground"
 msgstr "Premier plan par défaut"
-
-#. [ 2]
-# bulk translation
-msgid "2"
-msgstr "2"
 
 #. [ Syntax: BASIC-Schlüsselwörter]
 # bulk translation
 msgid "Syntax: BASIC keywords"
 msgstr "Syntaxe: mots-clés BASIC"
 
-#. [ 3]
-# bulk translation
-msgid "3"
-msgstr "3"
-
 #. [ Syntax: Zeilennummern]
 # bulk translation
 msgid "Syntax: line numbers"
 msgstr "Syntaxe: numéros de ligne"
-
-#. [ 4]
-# bulk translation
-msgid "4"
-msgstr "4"
 
 #. [ Syntax: Zahlen]
 # bulk translation
 msgid "Syntax: numbers"
 msgstr "Syntaxe: nombres"
 
-#. [ 5]
-# bulk translation
-msgid "5"
-msgstr "5"
-
 #. [ Syntax: globale Variablen]
 # bulk translation
 msgid "Syntax: global variables"
 msgstr "Syntaxe: variables globales"
-
-#. [ 6]
-# bulk translation
-msgid "6"
-msgstr "6"
 
 #. [ Syntax: lokale Variablen und Argumente]
 # bulk translation
 msgid "Syntax: local variables and arguments"
 msgstr "Syntaxe: variables locales et arguments"
 
-#. [ 7]
-# bulk translation
-msgid "7"
-msgstr "7"
-
 #. [ Syntax: Operanden]
 # bulk translation
 msgid "Syntax: operands"
 msgstr "Syntaxe: opérandes"
 
-#. [ 8]
-# bulk translation
-msgid "8"
-msgstr "8"
-
 #. [ Syntax: String-Konstanten]
 # bulk translation
 msgid "Syntax: string constants"
 msgstr "Syntaxe: constantes de chaîne"
-
-#. [ 9]
-# bulk translation
-msgid "9"
-msgstr "9"
 
 #. [ Syntax: Prozedurnamen]
 # bulk translation
@@ -2933,11 +2883,6 @@ msgstr "Syntaxe: noms de procédure"
 # bulk translation
 msgid "Syntax: comments"
 msgstr "Syntaxe: commentaires"
-
-#. [ 11]
-# bulk translation
-msgid "11"
-msgstr "11"
 
 #. [ Standardrandfarbe]
 # bulk translation

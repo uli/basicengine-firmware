@@ -2070,11 +2070,6 @@ msgstr "べき乗演算子。"
 msgid "`a` raised to the power of `b`."
 msgstr "`a`は`b`の累乗になります。"
 
-#. [1]
-# bulk translation
-msgid "1"
-msgstr "1"
-
 #. [String-Gleichheitsoperator.]
 # bulk translation
 msgid "String equality operator."
@@ -2086,11 +2081,6 @@ msgstr "文字列等価演算子。"
 msgid ""
 "`-1` if the value of `a$` is identical to the value of `b$`, `0` otherwise."
 msgstr "`a$`の値が `b$`の値と同じである場合は `-1`、それ以外の場合は`0`。"
-
-#. [Fünf]
-# bulk translation
-msgid "5"
-msgstr "5"
 
 #. [String-Ungleichungsoperator.]
 # bulk translation
@@ -4163,11 +4153,6 @@ msgstr "式が正の場合は`1`、ゼロの場合は`0`、負の場合は「-1�
 msgid "The negative of `a`."
 msgstr "`a`の負数。"
 
-#. [2]
-# bulk translation
-msgid "2"
-msgstr "2"
-
 #. [Identitätsoperator.]
 # bulk translation
 msgid "Identity operator."
@@ -4192,11 +4177,6 @@ msgstr "乗算演算子。"
 # bulk translation
 msgid "Product of `a` and `b`."
 msgstr "`a`と`b`の積。"
-
-#. [3]
-# bulk translation
-msgid "3"
-msgstr "3"
 
 #. [Der Quotient von "a" und "b".]
 # bulk translation
@@ -4233,11 +4213,6 @@ msgstr "数値加算演算子。"
 msgid "Sum of `a` and `b`."
 msgstr "`a`と`b`の合計。"
 
-#. [Vier]
-# bulk translation
-msgid "4"
-msgstr "4"
-
 #. [Numerischer Subtraktionsoperator.]
 # bulk translation
 msgid "Numeric subtraction operator."
@@ -4257,11 +4232,6 @@ msgstr "等式演算子。"
 # bulk translation
 msgid "`-1` if `a` and `b` are equal, `0` otherwise."
 msgstr "`a`と`b`が等しい場合は `-1`、そうでない場合は`0`。"
-
-#. [6]
-# bulk translation
-msgid "6"
-msgstr "6"
 
 #. [Ungleichungsoperator.]
 # bulk translation
@@ -4308,11 +4278,6 @@ msgstr "ビットごとの反転演算子。"
 msgid "Bitwise inversion of `a`."
 msgstr "`a`のビット単位の反転。"
 
-#. [7]
-# bulk translation
-msgid "7"
-msgstr "7"
-
 #. [Wie die meisten BASIC-Implementierungen verfügt Engine BASIC nicht über
 #. einen eigenen "logischen NOT" -Operator. Stattdessen wird der Bitoperator
 #. verwendet.]
@@ -4350,11 +4315,6 @@ msgstr "ビットごとのOR演算子。"
 # bulk translation
 msgid "Bitwise inclusive disjunction of `a` and `b`."
 msgstr "`a`と`b`のビット単位の論理和。"
-
-#. [8]
-# bulk translation
-msgid "8"
-msgstr "8"
 
 #. [Wie die meisten BASIC-Implementierungen verfügt Engine BASIC nicht über
 #. einen eigenen "logischen ODER" -Operator. Stattdessen wird der Bitoperator
@@ -5224,16 +5184,6 @@ msgstr "S"
 # bulk translation
 msgid "V"
 msgstr "V"
-
-#. [ 6]
-# bulk translation
-msgid "6"
-msgstr "6"
-
-#. [ 7]
-# bulk translation
-msgid "7"
-msgstr "7"
 
 #. [Konvertierungskorrekturen sind standardmäßig aktiviert.]
 # bulk translation
