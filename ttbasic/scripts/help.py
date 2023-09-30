@@ -151,6 +151,11 @@ for c in sorted(cmds, key=lambda c: c.split('\n')[0].split(' ', 2)[2]):
                              replace('\n+\n', '==LF=='). # asciidoc continuation
                              replace('\n', ' ').	# drop all other LFs
                              replace('==LF==', '\n'))	# translate ==LF== back to real LFs
+                while True:
+                    ndata = re.sub('(.)  (.)', r'\1 \2', data)
+                    if ndata == data:
+                        break
+                    data = ndata
                 if not section in ['usage', 'ref']:
                     out=[]
                     for m in data.split('\n'):
