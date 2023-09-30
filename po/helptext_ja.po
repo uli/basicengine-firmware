@@ -7502,3 +7502,429 @@ msgstr "レジスタの内容です。"
 #. [Frame number to wait]
 msgid "frame number to be waited for"
 msgstr "待機するフレーム番号"
+
+#. Der Größer-oder-Gleich-Operator.
+msgid "Greater-than-or-equal operator."
+msgstr "以上演算子。"
+
+#. * Im Gegensatz zur entsprechenden Funktion in der BASIC-Implementierung,
+#. die Einzelbyte-Strings verwendet, kann diese Funktion Werte größer als 255
+#. zurückgeben.
+msgid ""
+"* Unlike its counterparts in BASIC implementations with single-byte strings, "
+"this function may return values larger than 255."
+msgstr ""
+"* シングルバイト文字列を使用する BASIC 実装の対応する関数とは異なり、この関数"
+"は 255 より大きい値を返す場合があります。"
+
+#. Tonzyklusdauer (in Samples) [`0` (aus) bis '480`/`512`/`2048`]
+msgid "tone cycle period in samples [`0` (off) to `480`/`512`/`2048`]"
+msgstr "トーン サイクル期間 (サンプル単位) [`0` (オフ) ～ `480`/`512`/`2048`】"
+
+#. Der Maximalwert für „Zeitraum“ variiert je nach Plattform.
+msgid "The maximum value for `period` varies depending on the platform:"
+msgstr "`period`の最大値はプラットフォームによって異なります。"
+
+#. *H3: 480
+msgid "* H3: 480"
+msgstr "* H3: 480"
+
+#. *SDL:512
+msgid "* SDL: 512"
+msgstr "* SDL: 512"
+
+#. *DOS:2048
+msgid "* DOS: 2048"
+msgstr "* DOS: 2048"
+
+#. * „0“: TV-Standard
+msgid "* `0`: TV norm"
+msgstr "* `0`: テレビ標準"
+
+#. Stellen Sie den TV-Standard auf NTSC („0“), PAL („1“) oder PAL60 („2“) ein.
+msgid "Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`)."
+msgstr "TV 規格を NTSC (`0`)、PAL (`1`)、または PAL60 (`2`) に設定します。"
+
+#. Warnung: Diese Konfigurationsoption hat wenig Bedeutung. Die verfügbaren
+#. TV-Standards hängen vom installierten Farbburst-Kristall ab und werden
+#. automatisch erkannt. Der PAL60-Modus ist derzeit nicht implementiert.
+msgid ""
+"WARNING: This configuration option does not make much sense; the available "
+"TV norm depends on the installed color burst crystal and is automatically "
+"detected; PAL60 mode is not currently implemented."
+msgstr ""
+"警告: この設定オプションはあまり意味がありません。 利用可能な TV 規格は、取り"
+"付けられているカラー バースト クリスタルによって異なり、自動的に検出されま"
+"す。 PAL60 モードは現在実装されていません。"
+
+#. Daher kann sich die Semantik dieser Option in Zukunft ändern.
+msgid ""
+"The semantics of this option are therefore likely to change in the future."
+msgstr ""
+"したがって、このオプションのセマンティクスは将来変更される可能性があります。"
+
+#. * „1“: Tastaturlayout
+msgid "* `1`: Keyboard layout"
+msgstr "* `1`: キーボードレイアウト"
+
+#. Es werden vier verschiedene Tastaturlayouts unterstützt.
+msgid "Four different keyboard layouts are supported:"
+msgstr "4 つの異なるキーボード レイアウトがサポートされています。"
+
+#. „0“ (Japanisch), „1“ (US-Englisch, Standard), „2“ (Deutsch), „3“
+#. (Französisch) und „4“ (Spanisch).
+msgid ""
+"`0` (Japanese), `1` (US English, default), `2` (German), `3` (French) and "
+"`4` (Spanish)."
+msgstr ""
+"`0` (日本語)、`1` (米国英語、デフォルト)、`2` (ドイツ語)、`3` (フランス語)、"
+"および `4` (スペイン語)。"
+
+#. * „2“: Interlaced
+msgid "* `2`: Interlacing"
+msgstr "* `2`: インターレース"
+
+#. Stellt die Videoausgabe auf progressiv (`0`) oder interlaced (`1`) ein.
+#. Änderungen an dieser Option werden wirksam, wenn Sie das nächste Mal den
+#. Bildschirmmodus ändern.
+msgid ""
+"Sets the video output to progressive (`0`) or interlaced (`1`). A change in "
+"this option will become effective on the next screen mode change."
+msgstr ""
+"ビデオ出力をプログレッシブ (`0`) またはインターレース (`1`) に設定します。 こ"
+"のオプションの変更は、次回の画面モード変更時に有効になります。"
+
+#. Warnung: Der Zweck dieser Option besteht darin, Fernsehgeräten, die
+#. progressive Signale nicht richtig verarbeiten können, ein Interlaced-Signal
+#. bereitzustellen. Bisher haben wir keine Displays gefunden, die dies
+#. erfordern. Daher wird es in einer zukünftigen Version möglicherweise
+#. entfernt oder durch eine andere Option ersetzt.
+msgid ""
+"WARNING: The intention of this option is to provide an interlaced signal to "
+"TVs that do not handle a progressive signal well. So far, no displays have "
+"turned up that require it, so it may be removed and/or replaced with a "
+"different option in future releases."
+msgstr ""
+"警告: このオプションの目的は、プログレッシブ信号を適切に処理できない TV にイ"
+"ンターレース信号を提供することです。 これまでのところ、これを必要とするディス"
+"プレイは見つかっていないため、将来のリリースでは削除されたり、別のオプション"
+"に置き換えられる可能性があります。"
+
+#. * „3“: Luminanz-Tiefpassfilter
+msgid "* `3`: Luminance low-pass filter"
+msgstr "* `3`: 輝度ローパスフィルター"
+
+#. Diese Option aktiviert ('1') oder deaktiviert ('0', Standard) den Video-
+#. Luminanz-Tiefpassfilter. Die empfohlenen Einstellungen hängen von den
+#. Eigenschaften des von Ihnen verwendeten Anzeigegeräts ab.
+msgid ""
+"This option enables (`1`) or disables (`0`, default) the video luminance low-"
+"pass filter. The recommended setting depends on the properties of the "
+"display device used."
+msgstr ""
+"このオプションは、ビデオ輝度ローパス フィルターを有効 (「1」) または無効 "
+"(「0」、デフォルト) にします。 推奨される設定は、使用する表示デバイスの特性に"
+"よって異なります。"
+
+#. Viele moderne Fernseher kommen mit hohen Auflösungen gut zurecht. Bei
+#. solchen Geräten empfehlen wir, für eine schärfere Darstellung den
+#. Tiefpassfilter auszuschalten.
+msgid ""
+"Many recent TVs are able to handle high resolutions well; with such devices, "
+"it is recommended to turn the low-pass filter off to achieve a more crisp "
+"display."
+msgstr ""
+"最近のテレビの多くは高解像度を適切に処理できます。 このようなデバイスでは、よ"
+"り鮮明な表示を実現するためにローパス フィルターをオフにすることをお勧めしま"
+"す。"
+
+#. Auf anderen (normalerweise älteren) Fernsehgeräten können hochauflösende
+#. Bilder übermäßige Farbartefakte (einen „Regenbogeneffekt“) und Flimmern
+#. verursachen. Bei solchen Geräten empfehlen wir, einen Tiefpassfilter
+#. einzuschalten, um diese Effekte auf Kosten der Schärfe zu reduzieren.
+msgid ""
+"On other (usually older) TVs, high-resolution images may cause excessive "
+"color artifacting (a \"rainbow\" effect) or flicker; with such devices, it "
+"is recommended to turn the low-pass filter on to reduce these effects, at "
+"the expense of sharpness."
+msgstr ""
+"他の (通常は古い) テレビでは、高解像度の画像が過度の色のアーチファクト "
+"(「虹」効果) やちらつきを引き起こす可能性があります。 このようなデバイスで"
+"は、シャープネスを犠牲にして、ローパス フィルターをオンにしてこれらの影響を軽"
+"減することをお勧めします。"
+
+#. * „4“: Einschaltbildschirmmodus [„1“ (Standard) bis „10“]
+msgid "* `4`: Power-on screen mode [`1` (default) to `10`]"
+msgstr "* `4`: 電源投入時画面モード [`1` (デフォルト) ～ `10`]"
+
+#. Legt den Bildschirmmodus fest, den das System beim Einschalten
+#. standardmäßig verwendet.
+msgid "Sets the screen mode the system defaults to at power-on."
+msgstr "電源投入時にシステムがデフォルトで設定する画面モードを設定します。"
+
+#. * `5`: Schriftart für den Einschaltbildschirm [`0` (Standard) ~
+#. `{NUM_FONTS_m1}`]
+msgid "* `5`: Power-on screen font [`0` (default) to `{NUM_FONTS_m1}`]"
+msgstr "* `5`: 電源投入時画面フォント [`0` (デフォルト) ～ `{NUM_FONTS_m1}`]"
+
+#. Legt die Bildschirmschriftart fest, die das System beim Einschalten
+#. standardmäßig verwendet.
+msgid "Sets the screen font the system defaults to at power-on."
+msgstr ""
+"電源投入時にシステムがデフォルトで使用するスクリーンフォントを設定します。"
+
+#. * „6“: Farbe des Einschaltcursors [„0“ bis „255“]
+msgid "* `6`: Power-on cursor color [`0` to `255`]"
+msgstr "* `6`: パワーオンカーソルの色 [`0` ～ `255`]"
+
+#. Legt die Cursorfarbe fest, die das System beim Einschalten standardmäßig
+#. verwendet.
+msgid "Sets the cursor color the system defaults to at power-on."
+msgstr "電源投入時にシステムがデフォルトで設定するカーソルの色を設定します。"
+
+#. *`7`: Summerlautstärke [`0`~`15` (Standard)]
+msgid "* `7`: Beeper sound volume [`0` to `15` (default)]"
+msgstr "* `7`：ブザー音量[`0`〜`15`（デフォルト）】"
+
+#. Legt die Lautstärke der „Beep“-Sound-Engine fest. Dies gilt insbesondere
+#. für Launch-Jingles.
+msgid ""
+"Sets the volume of the \"beeper\" sound engine, which applies, among other "
+"things, to the start-up jingle."
+msgstr ""
+"「ビープ音」サウンド エンジンの音量を設定します。これは、特に起動ジングルに適"
+"用されます。"
+
+#. * `8`: Anpassung der Bildschirmzeilennummer [`-128` bis `128`, Standard:
+#. `0`] Passen Sie die Bildschirmzeilennummer an. Positive Werte addieren
+#. Zeilen, negative Werte subtrahieren Zeilen.
+msgid ""
+"* `8`: Screen line adjustment [`-128` to `128`, default: `0`] Adjusts the "
+"number of screen lines. A positive value adds lines, a negative value "
+"subtracts them."
+msgstr ""
+"* `8`: スクリーン線数調整 [`-128` ～ `128`、デフォルト: `0`] スクリーン線数を"
+"調整します。 正の値はラインを追加し、負の値はラインを減算します。"
+
+#. Diese Option kann bei einigen Geräten dazu beitragen, Farbartefakte und
+#. Flimmerprobleme zu reduzieren.
+msgid ""
+"This option may be useful to mitigate issues with color artifacting and "
+"flicker on some devices."
+msgstr ""
+"このオプションは、一部のデバイスでの色のアーチファクトやちらつきの問題を軽減"
+"するのに役立つ場合があります。"
+
+#. Warnung: Es ist nicht bekannt, ob diese Option tatsächlich nützlich ist und
+#. möglicherweise in einer zukünftigen Version entfernt wird.
+msgid ""
+"WARNING: It is not clear if this option is useful in practice, and it may be "
+"removed in future releases."
+msgstr ""
+"警告: このオプションが実際に役立つかどうかは不明であり、将来のリリースでは削"
+"除される可能性があります。"
+
+#. Steuert, ob BASIC-Schlüsselwörter durch Leerzeichen von anderen
+#. Sprachelementen mit alphanumerischen Zeichen ('0') getrennt werden müssen
+#. oder wie in traditionellen BASIC-Dialekten benachbart sein können ('1').
+msgid ""
+"Controls if BASIC keywords need to be separated from other language elements "
+"containing alphanumeric characters with a space (`0`), or if they can be "
+"adjacent to those like in traditional BASIC dialects (`1`)."
+msgstr ""
+"BASIC キーワードを、英数字を含む他の言語要素からスペースで区切る必要があるか "
+"(`0`)、または従来の BASIC 方言のように隣接させることができるかどうか "
+"(`1`) を制御します。"
+
+#. * „10“: Physischer Bildschirmmodus (nur H3-Plattform) [„0“ (Standard) bis
+#. „6“]
+msgid "* `10`: Physical screen mode (H3 platform only) [`0` (default) to `6`]"
+msgstr ""
+"* `10`: 物理画面モード (H3 プラットフォームのみ) [`0` (デフォルト) ～ `6`]"
+
+#. Stellen Sie die physische Bildschirmauflösung ein.
+msgid "Sets the physical screen resolution:"
+msgstr "物理画面の解像度を設定します。"
+
+#. „0“ (1920 x 1080 HDMI), „1“ (1280 x 1024 DVI), „2“ (1280 x 720 HDMI), „3“.
+msgid "`0` (1920x1080 HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3`"
+msgstr "`0` (1920x1080 HDMI)、`1` (1280x1024 DVI)、`2` (1280x720 HDMI)、`3`"
+
+#. (1024x768 DVI), „4“ (800x600 DVI), „5“ (640x480 DVI) oder „6“
+msgid "(1024x768 DVI), `4` (800x600 DVI), `5` (640x480 DVI) or `6`"
+msgstr "(1024x768 DVI)、`4` (800x600 DVI)、`5` (640x480 DVI) または`6`"
+
+#. (1920x1200 HDMI).
+msgid "(1920x1200 HDMI)."
+msgstr "(1920x1200 HDMI)。"
+
+#. Sie müssen Ihre Einstellungen speichern und Ihr System neu starten, damit
+#. diese Option wirksam wird.
+msgid ""
+"It is necessary to save the configuration and reboot the system for this "
+"option to take effect."
+msgstr ""
+"このオプションを有効にするには、設定を保存し、システムを再起動する必要があり"
+"ます。"
+
+#. * `11`: Sprache
+msgid "* `11`: Language"
+msgstr "* `11`: 言語"
+
+#. Für Systemmeldungen werden folgende Sprachen unterstützt:
+msgid "The following languages are supported for system messages:"
+msgstr "システム メッセージでは次の言語がサポートされています。"
+
+#. „0“ (US-Englisch, Standard), „1“ (Deutsch), „2“ (Französisch), „3“
+#. (Spanisch), „4“ (Japanisch).
+msgid ""
+"`0` (US English, default), `1` (German), `2` (French), `3` (Spanish), `4` "
+"(Japanese)."
+msgstr ""
+"`0` (米国英語、デフォルト)、`1` (ドイツ語)、`2` (フランス語)、`3` (スペイン"
+"語)、`4` (日本語)。"
+
+#. * „12“: Bildschirmaufnahme sofort starten.
+msgid "* `12`: Start screen recording immediately."
+msgstr "* `12`: すぐに画面記録を開始します。"
+
+#. Wenn diese Option aktiviert ist, beginnt die Bildschirmaufzeichnung, sobald
+#. Engine BASIC gestartet wird.
+msgid ""
+"When enabled, screen recording will start as soon as Engine BASIC boots."
+msgstr "有効にすると、Engine BASIC が起動するとすぐに画面録画が開始されます。"
+
+#. (Nur auf Plattformen verfügbar, die Bildschirmaufzeichnung unterstützen.)
+msgid "(Only available on platforms that support screen recording.)"
+msgstr "(画面録画をサポートするプラットフォームでのみ利用可能です。)"
+
+#. „0“ ist aktiviert, „1“ ist deaktiviert.
+msgid "`0` enabled, `1` disabled."
+msgstr "`0`は有効、`1`は無効です。"
+
+#. kbd:[Bildschirm drucken]
+msgid "kbd:[Print Screen]"
+msgstr "kbd:[プリントスクリーン]"
+
+#. kbd:[Linker Pfeil]
+msgid "kbd:[Left Arrow]"
+msgstr "kbd:[左矢印]"
+
+#. kbd:[Pfeil nach oben]
+msgid "kbd:[Up_Arrow]"
+msgstr "kbd:[上矢印]"
+
+#. kbd:[Eingabe]
+msgid "kbd:[Enter]"
+msgstr "kbd:[入力]"
+
+#. kbd:[[]
+msgid "kbd:[[]"
+msgstr "kbd:[[]"
+
+#. kbd:[b]
+msgid "kbd:[Ro]"
+msgstr "kbd:[ロ]"
+
+#. * [[Unklar]] Einige Schlüsseldefinitionen sind nicht klar definiert. Es ist
+#. dokumentiert, dass die Taste kbd:[Pipe2] zur US-Layout-Tastatur gehört, das
+#. US-Layout verfügt jedoch über einen separaten kbd:[
+msgid ""
+"* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key "
+"is documented as belonging to a US layout keyboard, but US layouts do not "
+"have a separate kbd:["
+msgstr ""
+"* [[不明瞭]] 一部のキー定義が明確に定義されていません。 kbd:[Pipe2] キーは "
+"US レイアウトのキーボードに属するものとして文書化されていますが、US レイアウ"
+"トには別の kbd:["
+
+#. Konvertiert eine Zeichenfolge vollständig in Kleinbuchstaben.
+msgid "Converts string to all-lowercase letters."
+msgstr "文字列をすべて小文字に変換します。"
+
+#. Nummer
+msgid "Number"
+msgstr "番号"
+
+#. kbd:[Links]-Taste
+msgid "kbd:[Left] key"
+msgstr "kbd:[左]キー"
+
+#. kbd: [Ab]-Taste
+msgid "kbd:[Down] key"
+msgstr "kbd:[下]キー"
+
+#. kbd:[Rechts]-Taste
+msgid "kbd:[Right] key"
+msgstr "kbd:[右]キー"
+
+#. kbd:[Auswählen]-Schaltfläche
+msgid "kbd:[Select] button"
+msgstr "kbd:[選択]ボタン"
+
+#. Eine zufällige Dezimalzahl zwischen 0 und 1. Ein bestimmter Wert von „mod“
+#. generiert immer dieselbe Zufallszahl.
+msgid ""
+"A random fractional number between 0 and 1. A specific value of `mod` will "
+"always yield the same random number."
+msgstr ""
+"0 と 1 の間のランダムな小数。`mod`の特定の値は常に同じ乱数を生成します。"
+
+#. *Wenn Sie „LINE OFF“ angeben, wird das Programm ohne Zeilennummern
+#. gespeichert.
+msgid "* Programs are saved without line numbers if `LINE OFF` is specified."
+msgstr "* `LINE OFF`を指定した場合、プログラムは行番号なしで保存されます。"
+
+#. *Wenn Sie „LINE ON“ angeben, wird das Programm mit Zeilennummern
+#. gespeichert.
+msgid "* Programs are saved with line numbers if `LINE ON` is specified."
+msgstr "* `LINE ON`を指定するとプログラムは行番号付きで保存されます。"
+
+#. * Wenn weder „LINE OFF“ noch „LINE ON“ angegeben ist, werden Zeilennummern
+#. einbezogen, wenn sie beim Laden des Programms in den Speicher vorhanden
+#. waren. Wird das gesamte Programm im Direktmodus eingegeben, wird es mit
+#. Zeilennummern gespeichert.
+msgid ""
+"* If neither `LINE OFF` nor `LINE ON` are specified, line numbers are "
+"included if any were present when the program was loaded into memory. If a "
+"program has been entered entirely in direct mode, it will be saved with line "
+"numbers."
+msgstr ""
+"* `LINE OFF` も `LINE ON` も指定されていない場合、プログラムがメモリにロード"
+"されたときに行番号が存在していれば、行番号が含まれます。 プログラム全体がダイ"
+"レクト モードで入力されている場合は、行番号付きで保存されます。"
+
+#. Etwas kleiner als Modus 1. Nützlich, wenn das Display nicht den gesamten
+#. Modus 1 anzeigt.
+msgid ""
+"Slightly smaller than mode 1; helpful if the display does not show the "
+"entirety of mode 1."
+msgstr ""
+"モード 1 よりわずかに小さい。 ディスプレイにモード 1 の全体が表示されない場合"
+"に役立ちます。"
+
+#. * „Nur-Befehle“-Befehle werden mit „execl("/bin/sh", "sh", ...)`
+#. ausgeführt.
+msgid ""
+"* `command`-only commands are executed using `execl(\"/bin/sh\", "
+"\"sh\", ...)`."
+msgstr ""
+"* `command` のみのコマンドは `execl(\"/bin/sh\", \"sh\", ...)` を使用して実行"
+"されます。"
+
+#. Notengeschwindigkeit [`0` ~ `1` (Standard)]
+msgid "note velocity [`0` to `1` (default)]"
+msgstr "ノートベロシティ [`0` ～ `1` (デフォルト)]"
+
+#. Hauptgerätenummer
+msgid "Major device number"
+msgstr "メジャーデバイス番号"
+
+#. Systemtyp; „0“ für Original (ESP8266), „1“ für Shuttle (ESP32), „2“ für NG
+#. (H3-Bare-Metal), „3“ für LT (Linux-basiert)
+msgid ""
+"system type; `0` for original (ESP8266), `1` for Shuttle (ESP32), `2` for NG "
+"(H3 bare-metal), `3` for LT (Linux-based)"
+msgstr ""
+"システムタイプ; オリジナル (ESP8266) の`0`、Shuttle (ESP32) の`1`、NG "
+"(H3 ベアメタル) の`2`、LT (Linux ベース) の`3`"
