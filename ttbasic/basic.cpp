@@ -3208,8 +3208,8 @@ Returns the Unicode codepoint for the first character in a string expression.
 \error
 Generates an error if `s$` is empty.
 \note
-* Unlike its counterparts in single-byte BASIC implementations, this
-  function may return values larger than 255.
+* Unlike its counterparts in BASIC implementations with single-byte strings,
+  this function may return values larger than 255.
 * To get access to individual bytes without UTF-8 decoding, use the
   `a$[num]` syntax.
 \ref CHR$()
