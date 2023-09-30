@@ -8577,3 +8577,420 @@ msgstr "Contenu du registre."
 #. [Straßenbahn Nummer zu warten]
 msgid "frame number to be waited for"
 msgstr "numéro de la trame à attendre"
+
+#. * Im Gegensatz zu ihren Gegenstücken in BASIC-Implementierungen mit
+#. Einzelbyte-Strings kann diese Funktion Werte größer als 255 zurückgeben.
+msgid ""
+"* Unlike its counterparts in BASIC implementations with single-byte strings, "
+"this function may return values larger than 255."
+msgstr ""
+"* Contrairement à ses homologues des implémentations BASIC avec des chaînes "
+"à un octet, cette fonction peut renvoyer des valeurs supérieures à 255."
+
+#. Tonzyklusperiode in Samples [`0` (aus) bis `480`/`512`/`2048`]
+msgid "tone cycle period in samples [`0` (off) to `480`/`512`/`2048`]"
+msgstr ""
+"période de cycle de tonalité en échantillons [`0` (off) à `480`/`512`/`2048`]"
+
+#. Der maximale „Zeitraum“-Wert variiert je nach Plattform:
+msgid "The maximum value for `period` varies depending on the platform:"
+msgstr "La valeur maximale de `period` varie en fonction de la plateforme :"
+
+#. *H3: 480
+msgid "* H3: 480"
+msgstr "*H3 : 480"
+
+#. * SDL: 512
+msgid "* SDL: 512"
+msgstr "* SDL : 512"
+
+#. *Betriebssystem: 2048
+msgid "* DOS: 2048"
+msgstr "*OS : 2048"
+
+#. * „0“: TV-Standard
+msgid "* `0`: TV norm"
+msgstr "* `0` : norme TV"
+
+#. Stellt den TV-Standard auf NTSC (`0`), PAL (`1`) oder PAL60 (`2`) ein.
+msgid "Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`)."
+msgstr "Règle la norme TV sur NTSC (`0`), PAL (`1`) ou PAL60 (`2`)."
+
+#. WARNUNG: Diese Konfigurationsoption macht wenig Sinn; der verfügbare TV-
+#. Standard hängt vom installierten Farbburst-Kristall ab und wird automatisch
+#. erkannt; Der PAL60-Modus ist derzeit nicht implementiert.
+msgid ""
+"WARNING: This configuration option does not make much sense; the available "
+"TV norm depends on the installed color burst crystal and is automatically "
+"detected; PAL60 mode is not currently implemented."
+msgstr ""
+"AVERTISSEMENT : Cette option de configuration n'a pas beaucoup de sens ; la "
+"norme TV disponible dépend du cristal d'éclatement de couleur installé et "
+"est automatiquement détectée ; Le mode PAL60 n’est actuellement pas "
+"implémenté."
+
+#. Die Semantik dieser Option dürfte sich daher in Zukunft ändern.
+msgid ""
+"The semantics of this option are therefore likely to change in the future."
+msgstr ""
+"La sémantique de cette option est donc susceptible de changer dans le futur."
+
+#. * „1“: Tastaturlayout
+msgid "* `1`: Keyboard layout"
+msgstr "* `1` : disposition du clavier"
+
+#. Es werden vier verschiedene Tastaturlayouts unterstützt:
+msgid "Four different keyboard layouts are supported:"
+msgstr "Quatre configurations de clavier différentes sont prises en charge :"
+
+#. „0“ (Japanisch), „1“ (Amerikanisches Englisch, Standard), „2“ (Deutsch),
+#. „3“ (Französisch) und „4“ (Spanisch).
+msgid ""
+"`0` (Japanese), `1` (US English, default), `2` (German), `3` (French) and "
+"`4` (Spanish)."
+msgstr ""
+"`0` (japonais), `1` (anglais américain, par défaut), `2` (allemand), `3` "
+"(français) et `4` (espagnol)."
+
+#. * „2“: Interleaving
+msgid "* `2`: Interlacing"
+msgstr "* `2` : Entrelacement"
+
+#. Stellt die Videoausgabe auf Progressiv (`0`) oder Interlaced (`1`) ein.
+#. Eine Änderung dieser Option wird wirksam, wenn Sie das nächste Mal den
+#. Bildschirmmodus ändern.
+msgid ""
+"Sets the video output to progressive (`0`) or interlaced (`1`). A change in "
+"this option will become effective on the next screen mode change."
+msgstr ""
+"Règle la sortie vidéo sur progressive (`0`) ou entrelacée (`1`). Une "
+"modification de cette option deviendra effective lors du prochain changement "
+"de mode d’écran."
+
+#. WARNUNG: Der Zweck dieser Option besteht darin, Fernsehgeräten, die ein
+#. progressives Signal nicht gut verarbeiten, ein Interlaced-Signal
+#. bereitzustellen. Bisher ist dies für keine Bildschirme erforderlich, sodass
+#. es in zukünftigen Versionen möglicherweise entfernt und/oder durch eine
+#. andere Option ersetzt wird.
+msgid ""
+"WARNING: The intention of this option is to provide an interlaced signal to "
+"TVs that do not handle a progressive signal well. So far, no displays have "
+"turned up that require it, so it may be removed and/or replaced with a "
+"different option in future releases."
+msgstr ""
+"AVERTISSEMENT : le but de cette option est de fournir un signal entrelacé "
+"aux téléviseurs qui ne gèrent pas bien un signal progressif. Jusqu'à "
+"présent, aucun écran ne l'exigeant, il pourrait donc être supprimé et/ou "
+"remplacé par une option différente dans les versions futures."
+
+#. * „3“: Luminanz-Tiefpassfilter
+msgid "* `3`: Luminance low-pass filter"
+msgstr "* `3` : Filtre passe-bas de luminance"
+
+#. Diese Option aktiviert („1“) oder deaktiviert („0“, Standard) den Video-
+#. Luminanz-Tiefpassfilter. Die empfohlene Einstellung hängt von den
+#. Eigenschaften des verwendeten Anzeigegeräts ab.
+msgid ""
+"This option enables (`1`) or disables (`0`, default) the video luminance low-"
+"pass filter. The recommended setting depends on the properties of the "
+"display device used."
+msgstr ""
+"Cette option active (`1`) ou désactive (`0`, par défaut) le filtre passe-bas "
+"de luminance vidéo. Le paramètre recommandé dépend des propriétés du "
+"périphérique d'affichage utilisé."
+
+#. Viele neuere Fernseher beherrschen hohe Auflösungen gut; Bei solchen
+#. Geräten empfiehlt es sich, den Tiefpassfilter auszuschalten, um eine
+#. schärfere Darstellung zu erreichen.
+msgid ""
+"Many recent TVs are able to handle high resolutions well; with such devices, "
+"it is recommended to turn the low-pass filter off to achieve a more crisp "
+"display."
+msgstr ""
+"De nombreux téléviseurs récents sont capables de bien gérer les hautes "
+"résolutions ; avec de tels appareils, il est recommandé de désactiver le "
+"filtre passe-bas pour obtenir un affichage plus net."
+
+#. Auf anderen (normalerweise älteren) Fernsehgeräten können hochauflösende
+#. Bilder übermäßige Farbartefakte (einen „Regenbogeneffekt“) oder Flimmern
+#. verursachen; Bei solchen Geräten empfiehlt es sich, den Tiefpassfilter zu
+#. aktivieren, um diese Effekte auf Kosten der Schärfe zu reduzieren.
+msgid ""
+"On other (usually older) TVs, high-resolution images may cause excessive "
+"color artifacting (a \"rainbow\" effect) or flicker; with such devices, it "
+"is recommended to turn the low-pass filter on to reduce these effects, at "
+"the expense of sharpness."
+msgstr ""
+"Sur d'autres téléviseurs (généralement plus anciens), les images haute "
+"résolution peuvent provoquer des artefacts de couleurs excessifs (un effet "
+"« arc-en-ciel ») ou un scintillement ; avec de tels appareils, il est "
+"recommandé d'activer le filtre passe-bas pour réduire ces effets, au "
+"détriment de la netteté."
+
+#. * „4“: Einschaltbildschirmmodus [„1“ (Standard) bis „10“]
+msgid "* `4`: Power-on screen mode [`1` (default) to `10`]"
+msgstr "* `4` : mode écran de mise sous tension [`1` (par défaut) à `10`]"
+
+#. Legt den Standardbildschirmmodus des Systems beim Einschalten fest.
+msgid "Sets the screen mode the system defaults to at power-on."
+msgstr "Définit le mode d'écran par défaut du système à la mise sous tension."
+
+#. * „5“: Schriftart für den Einschaltbildschirm [„0“ (Standard) bis
+#. „{NUM_FONTS_m1}“]
+msgid "* `5`: Power-on screen font [`0` (default) to `{NUM_FONTS_m1}`]"
+msgstr ""
+"* `5` : police de l'écran de mise sous tension [`0` (par défaut) à "
+"`{NUM_FONTS_m1}`]"
+
+#. Legt die Standardbildschirmschriftart fest, die das System beim Einschalten
+#. verwendet.
+msgid "Sets the screen font the system defaults to at power-on."
+msgstr ""
+"Définit la police d'écran utilisée par défaut par le système à la mise sous "
+"tension."
+
+#. * `6`: Cursorfarbe beim Einschalten [`0` bis `255`]
+msgid "* `6`: Power-on cursor color [`0` to `255`]"
+msgstr "* `6` : Couleur du curseur à la mise sous tension [`0` à `255`]"
+
+#. Legt die Standard-Cursorfarbe des Systems beim Einschalten fest.
+msgid "Sets the cursor color the system defaults to at power-on."
+msgstr ""
+"Définit la couleur du curseur par défaut du système à la mise sous tension."
+
+#. * „7“: Lautstärke des Piepsers [„0“ bis „15“ (Standard)]
+msgid "* `7`: Beeper sound volume [`0` to `15` (default)]"
+msgstr "* `7` : Volume sonore du bipeur [`0` à `15` (par défaut)]"
+
+#. Passt die Lautstärke der „Beep“-Sound-Engine an, die unter anderem für den
+#. Start-Jingle gilt.
+msgid ""
+"Sets the volume of the \"beeper\" sound engine, which applies, among other "
+"things, to the start-up jingle."
+msgstr ""
+"Règle le volume du moteur sonore « bip », qui s'applique, entre autres, au "
+"jingle de démarrage."
+
+#. * `8`: Anpassen der Bildschirmzeilen [`-128` bis `128`, Standard: `0`]
+#. Passt die Anzahl der Bildschirmzeilen an. Ein positiver Wert fügt Zeilen
+#. hinzu, ein negativer Wert subtrahiert sie.
+msgid ""
+"* `8`: Screen line adjustment [`-128` to `128`, default: `0`] Adjusts the "
+"number of screen lines. A positive value adds lines, a negative value "
+"subtracts them."
+msgstr ""
+"* `8` : Ajustement des lignes d'écran [`-128` à `128`, par défaut : `0`] "
+"Ajuste le nombre de lignes d'écran. Une valeur positive ajoute des lignes, "
+"une valeur négative les soustrait."
+
+#. Diese Option kann nützlich sein, um Farbartefakte und Flimmerprobleme auf
+#. einigen Geräten zu lindern.
+msgid ""
+"This option may be useful to mitigate issues with color artifacting and "
+"flicker on some devices."
+msgstr ""
+"Cette option peut être utile pour atténuer les problèmes d’artefacts de "
+"couleur et de scintillement sur certains appareils."
+
+#. WARNUNG: Es ist unklar, ob diese Option in der Praxis nützlich ist und
+#. möglicherweise in zukünftigen Versionen entfernt wird.
+msgid ""
+"WARNING: It is not clear if this option is useful in practice, and it may be "
+"removed in future releases."
+msgstr ""
+"AVERTISSEMENT : il n'est pas clair si cette option est utile en pratique et "
+"elle pourrait être supprimée dans les versions futures."
+
+#. * `9`: optionale Schlüsselworttrennung [`0` (Standard) oder `1`]
+msgid "* `9`: Keyword separation optional [`0` (default) or `1`]"
+msgstr "* `9` : séparation des mots-clés facultative [`0` (par défaut) ou `1`]"
+
+#. Steuert, ob BASIC-Schlüsselwörter von anderen Sprachelementen, die
+#. alphanumerische Zeichen enthalten, durch ein Leerzeichen („0“) getrennt
+#. werden sollen oder ob sie wie in traditionellen BASIC-Dialekten an solche
+#. angrenzen können („1“).
+msgid ""
+"Controls if BASIC keywords need to be separated from other language elements "
+"containing alphanumeric characters with a space (`0`), or if they can be "
+"adjacent to those like in traditional BASIC dialects (`1`)."
+msgstr ""
+"Contrôle si les mots-clés BASIC doivent être séparés des autres éléments du "
+"langage contenant des caractères alphanumériques avec un espace (`0`), ou "
+"s'ils peuvent être adjacents à ceux comme dans les dialectes BASIC "
+"traditionnels (`1`)."
+
+#. * „10“: physischer Bildschirmmodus (nur H3-Plattform) [„0“ (Standard) bis
+#. „6“]
+msgid "* `10`: Physical screen mode (H3 platform only) [`0` (default) to `6`]"
+msgstr ""
+"* `10` : mode d'écran physique (plateforme H3 uniquement) [`0` (par défaut) "
+"à `6`]"
+
+#. Legt die physische Bildschirmauflösung fest:
+msgid "Sets the physical screen resolution:"
+msgstr "Définit la résolution physique de l'écran :"
+
+#. „0“ (HDMI 1920 x 1080), „1“ (DVI 1280 x 1024), „2“ (HDMI 1280 x 720), „3“
+msgid "`0` (1920x1080 HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3`"
+msgstr ""
+"`0` (HDMI 1920 x 1080), `1` (DVI 1280 x 1024), `2` (HDMI 1280 x "
+"720), `3`"
+
+#. (1024 x 768 DVI), „4“ (800 x 600 DVI), „5“ (640 x 480 DVI) oder „6“
+msgid "(1024x768 DVI), `4` (800x600 DVI), `5` (640x480 DVI) or `6`"
+msgstr ""
+"(1024 x 768 DVI), `4` (800 x 600 DVI), `5` (640 x 480 DVI) ou `6`"
+
+#. (HDMI 1920x1200).
+msgid "(1920x1200 HDMI)."
+msgstr "(HDMI 1920 x 1200)."
+
+#. Damit diese Option wirksam wird, müssen Sie die Konfiguration speichern und
+#. das System neu starten.
+msgid ""
+"It is necessary to save the configuration and reboot the system for this "
+"option to take effect."
+msgstr ""
+"Il est nécessaire de sauvegarder la configuration et de redémarrer le "
+"système pour que cette option prenne effet."
+
+#. * `11`: Sprache
+msgid "* `11`: Language"
+msgstr "* `11` : Langue"
+
+#. Für Systemmeldungen werden folgende Sprachen unterstützt:
+msgid "The following languages are supported for system messages:"
+msgstr ""
+"Les langues suivantes sont prises en charge pour les messages système :"
+
+#. „0“ (Amerikanisches Englisch, Standard), „1“ (Deutsch), „2“ (Französisch),
+#. „3“ (Spanisch), „4“ (Japanisch).
+msgid ""
+"`0` (US English, default), `1` (German), `2` (French), `3` (Spanish), `4` "
+"(Japanese)."
+msgstr ""
+"`0` (anglais américain, par défaut), `1` (allemand), `2` (français), `3` "
+"(espagnol), `4` (japonais)."
+
+#. * „12“: Bildschirmaufnahme sofort starten.
+msgid "* `12`: Start screen recording immediately."
+msgstr "* `12` : démarrez immédiatement l'enregistrement d'écran."
+
+#. Wenn aktiviert, beginnt die Bildschirmaufzeichnung, sobald Engine BASIC
+#. startet.
+msgid ""
+"When enabled, screen recording will start as soon as Engine BASIC boots."
+msgstr ""
+"Lorsqu'il est activé, l'enregistrement d'écran démarre dès le démarrage "
+"d'Engine BASIC."
+
+#. (Nur auf Plattformen verfügbar, die Bildschirmaufzeichnung unterstützen.)
+msgid "(Only available on platforms that support screen recording.)"
+msgstr ""
+"(Uniquement disponible sur les plates-formes prenant en charge "
+"l'enregistrement d'écran.)"
+
+#. „0“ aktiviert, „1“ deaktiviert.
+msgid "`0` enabled, `1` disabled."
+msgstr "`0` activé, `1` désactivé."
+
+#. ] Schlüssel.
+msgid "] key."
+msgstr "] clé."
+
+#. Überprüft, ob ein Sound auf einem Wavetable-Synthesizer-Kanal abgespielt
+#. wird.
+msgid "Checks if a sound is playing a on wavetable synthesizer channel."
+msgstr "Vérifie si un son est lu sur un canal de synthétiseur à table d'ondes."
+
+#. * „addr“ muss schreibgeschützt sein und den Zugriff pro Byte ermöglichen.
+msgid "* `addr` must be mapped writable and must allow byte-wise access."
+msgstr ""
+"* `addr` doit être mappé en écriture et doit permettre un accès par octet."
+
+#. Eine zufällige gemischte Zahl zwischen 0 und 1. Ein bestimmter Wert von
+#. „mod“ führt immer zu derselben Zufallszahl.
+msgid ""
+"A random fractional number between 0 and 1. A specific value of `mod` will "
+"always yield the same random number."
+msgstr ""
+"Un nombre fractionnaire aléatoire entre 0 et 1. Une valeur spécifique de `"
+"mod` donnera toujours le même nombre aléatoire."
+
+#. * Sendungen werden ohne Zeilennummern aufgezeichnet, wenn „LINE OFF“
+#. angegeben ist.
+msgid "* Programs are saved without line numbers if `LINE OFF` is specified."
+msgstr ""
+"* Les programmes sont enregistrés sans numéros de ligne si `LINE OFF` est "
+"spécifié."
+
+#. * Programme werden mit Zeilennummern aufgezeichnet, wenn „LINE ON“
+#. angegeben ist.
+msgid "* Programs are saved with line numbers if `LINE ON` is specified."
+msgstr ""
+"* Les programmes sont enregistrés avec les numéros de ligne si `LINE ON` "
+"est spécifié."
+
+#. * Wenn weder „LINE OFF“ noch „LINE ON“ angegeben ist, werden Zeilennummern
+#. einbezogen, wenn sie vorhanden waren, als das Programm in den Speicher
+#. geladen wurde. Wurde ein Programm komplett im Direktmodus eingegeben, wird
+#. es mit Zeilennummern gespeichert.
+msgid ""
+"* If neither `LINE OFF` nor `LINE ON` are specified, line numbers are "
+"included if any were present when the program was loaded into memory. If a "
+"program has been entered entirely in direct mode, it will be saved with line "
+"numbers."
+msgstr ""
+"* Si ni `LINE OFF` ni `LINE ON` ne sont spécifiés, les numéros de ligne sont "
+"inclus s'ils étaient présents lorsque le programme a été chargé en mémoire. "
+"Si un programme a été saisi entièrement en mode direct, il sera sauvegardé "
+"avec les numéros de ligne."
+
+#. Etwas kleiner als Modus 1; nützlich, wenn der Bildschirm nicht den gesamten
+#. Modus 1 anzeigt.
+msgid ""
+"Slightly smaller than mode 1; helpful if the display does not show the "
+"entirety of mode 1."
+msgstr ""
+"Légèrement plus petit que le mode 1 ; utile si l’écran n’affiche pas "
+"l’intégralité du mode 1."
+
+#. Der Höchstwert für „Sekunde“ ist 61, nicht 59, um eine Schaltsekunde zu
+#. ermöglichen.
+msgid ""
+"The maximum value for `second` is 61 and not 59 to accommodate a leap second."
+msgstr ""
+"La valeur maximale pour `second` est de 61 et non de 59 pour permettre "
+"une seconde intercalaire."
+
+#. Notengeschwindigkeit [`0` bis `1` (Standard)]
+msgid "note velocity [`0` to `1` (default)]"
+msgstr "vélocité de la note [`0` à `1` (par défaut)]"
+
+#. Hauptgerätenummer
+msgid "Major device number"
+msgstr "Numéro d'appareil majeur"
+
+#. Systemtyp; „0“ für Original (ESP8266), „1“ für Shuttle (ESP32), „2“ für NG
+#. (H3 Bare-Metal), „3“ für LT (Linux-basiert)
+msgid ""
+"system type; `0` for original (ESP8266), `1` for Shuttle (ESP32), `2` for NG "
+"(H3 bare-metal), `3` for LT (Linux-based)"
+msgstr ""
+"Type de système; `0` pour l'original (ESP8266), `1` pour Shuttle "
+"(ESP32), `2` pour NG (H3 bare-metal), `3` pour LT (basé sur Linux)"
+
+#. Beachten Sie, dass möglicherweise keines dieser Bits gesetzt wird, selbst
+#. wenn eine Kollision aufgetreten ist (d. h. der Rückgabewert ist „64“), wenn
+#. die Sprite-Größe größer als die Größe der Kacheln der angegebenen
+#. Hintergrundebene ist und die Sprite bedeckt die Kacheln vollständig.
+msgid ""
+"Note that it is possible that none of these bits are set even if a collision "
+"has taken place (i.e., the return value is `64`) if the sprite's size is "
+"larger than the tile size of the given background layer, and the sprite "
+"covers the tile completely."
+msgstr ""
+"Notez qu'il est possible qu'aucun de ces bits ne soit défini même si une "
+"collision a eu lieu (c'est-à-dire, la valeur de retour est `64`) si la "
+"taille du sprite est plus grande que la taille des tuiles du calque "
+"d'arrière-plan donné et que le sprite couvre complètement le carrelage."
