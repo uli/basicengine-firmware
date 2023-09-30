@@ -1,6 +1,6 @@
 #
 msgid ""
-msgstr ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 #. [Returns a random number.]
 # bulk translation
