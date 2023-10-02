@@ -35,9 +35,9 @@ are case-sensitive.
 
 === Terminology
 
-* *Video memory* refers to all random-access memory residing on the video
-  controller chip.
-* *Pixel memory* refers to the parts of video memory that represent pixels,
+* *Video memory* refers to the random-access memory that contains the
+  visible screen image.
+* *Pixel memory* refers to the parts of random-access memory that represent pixels,
   including the visible screen and the off-screen area that can be accessed
   by graphics commands and functions.
 * A *range* is a way to specify a set of numbers by giving a start and/or
