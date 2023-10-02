@@ -7,7 +7,7 @@
 :toc-title: pass:[<a href="/"><img src="images/be_logo.png"/></a>Engine BASIC NG Reference Manual]
 
 [red]#*This manual applies to BASIC Engine Next Generation platforms. The
-classic BASIC Engine reference manual can be found link:manual.html[here].*#
+classic BASIC Engine reference manual can be found link:manual_esp8266.html[here].*#
 
 == How to Use this Manual
 
