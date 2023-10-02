@@ -8,7 +8,7 @@
 
 [red]#*This manual applies to BASIC Engine RX platforms. The BASIC Engine NG
 reference manual can be found link:manual_nextgen.html[here]. The
-classic BASIC Engine reference manual can be found link:manual.html[here].*#
+classic BASIC Engine reference manual can be found link:manual_esp8266.html[here].*#
 
 == How to Use this Manual
 
