@@ -1564,7 +1564,7 @@ handle_comment_strings:
         // decoded.
         utf8_int32_t codepoint;
 
-        char tmp_utf8[4];
+        char tmp_utf8[8];
         char *tmp_ptr = tmp_utf8;
 
         // the first byte is sufficient to find out how big the codepoint is
