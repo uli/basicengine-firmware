@@ -116,7 +116,18 @@ EBAPI int eb_load_module(const char *name) {
     return -1;
   }
 
-  BString moddir = BString(getenv("HOME")) + BString("/sys/modules/") + BString(name);
+  BString moddir;
+  BString modname;
+  BString namestr(name);
+
+  if (namestr.indexOf('/') == -1) {
+    moddir = BString(getenv("HOME")) + BString("/sys/modules/") + namestr;
+    modname = namestr;
+  } else {
+    moddir = namestr;
+    modname = namestr.substring(namestr.lastIndexOf('/') + 1, namestr.length());
+  }
+
   if (chdir(moddir.c_str()))
     goto not_found;
 
@@ -129,7 +140,7 @@ EBAPI int eb_load_module(const char *name) {
     eb_exec_basic(bc, "loader.bas");
     eb_delete_basic_context(bc);
   } else {
-    BString objname = BString(name) + BString("_") + BString(getenv("HOSTTYPE")) + BString(".o");
+    BString objname = modname + BString("_") + BString(getenv("HOSTTYPE")) + BString(".o");
     if (!eb_file_exists(objname.c_str()))
       goto not_found;
 
