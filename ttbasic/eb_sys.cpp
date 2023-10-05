@@ -144,6 +144,10 @@ EBAPI int eb_load_module(const char *name) {
       err = ERR_COMPILE;
       return -1;
     }
+
+    void (*initcall)(void) = (void(*)())Basic::get_symbol("__initcall");
+    if (initcall)
+      initcall();
   }
 
   if (chdir(cwd)) {
