@@ -103,7 +103,7 @@ void platform_process_events() {
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
     case SDL_QUIT:
-      exit(0);
+      _exit(0);
       break;
     case SDL_MOUSEMOTION:
       mouse.move(event.motion.xrel, event.motion.yrel);
