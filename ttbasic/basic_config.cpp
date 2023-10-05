@@ -217,6 +217,13 @@ void SMALL Basic::iconfig() {
       E_ERR(VALUE, _("unknown configuration variable"));
       return;
     }
+
+    if (*cip != I_COMMA) {
+      E_SYNTAX(I_COMMA);
+      return;
+    }
+
+    ++cip;
   } else if (getParam(itemNo, I_COMMA))
     return;
 
