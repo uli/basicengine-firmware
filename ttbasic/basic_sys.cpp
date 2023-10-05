@@ -981,6 +981,22 @@ void shell_list(std::list<BString>& args) {
 }
 #endif // __unix__
 
+#if defined(__unix__)
+int run_list(std::list<BString> &args) {
+  pid_t pid = fork();
+  if (pid < 0) {
+    return -1;
+  } else if (pid > 0) {
+    int wstatus;
+    waitpid(pid, &wstatus, 0);
+    return WEXITSTATUS(wstatus);
+  } else {
+    exec_list(args);
+    return -1;
+  }
+}
+#endif
+
 /***bc sys SHELL
 Runs operating system commands.
 \usage SHELL [<command>[, <argument> ...]] [OFF]
