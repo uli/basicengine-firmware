@@ -1,0 +1,15 @@
+site_name: libsoc
+repo_url: http://github.com/jackmitch/libsoc
+site_description: libsoc library documentation
+
+theme: cinder
+
+pages:
+- Introduction: index.md
+- C API:
+  - GPIO: c/gpio.md
+  - SPI (WIP): c/spi.md
+  - I2C: c/i2c.md
+  - PWM: c/pwm.md
+  - DEBUG (WIP): c/debug.md
+- Python Bindings (WIP): python.md
