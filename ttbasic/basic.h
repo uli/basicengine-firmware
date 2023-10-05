@@ -140,6 +140,9 @@ public:
 
   int exec(const char *filename);
 
+  static const char *get_name(void *addr);
+  static void *get_symbol(const char *name);
+
 private:
   int list_free();
   icode_t *getlp(uint32_t lineno);
@@ -293,8 +296,6 @@ private:
   num_t nnfc();
   BString snfc();
   void init_tcc();
-  const char *get_name(void *addr);
-  void *get_symbol(const char *name);
 
   void iloadfont();
 
