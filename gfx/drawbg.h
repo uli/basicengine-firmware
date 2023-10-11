@@ -64,8 +64,8 @@ void GFXCLASS::drawBg(bg_t *bg) {
 
 void GFXCLASS::drawSprite(sprite_t *s) {
   LOCK_SPRITES
-  if (s->pos_x + s->p.w < 0 || s->pos_x >= width() ||
-      s->pos_y + s->p.h < 0 || s->pos_y >= height()) {
+  if (s->pos_x + (int)s->p.w < 0 || s->pos_x >= width() ||
+      s->pos_y + (int)s->p.h < 0 || s->pos_y >= height()) {
     UNLOCK_SPRITES
     return;
   }
