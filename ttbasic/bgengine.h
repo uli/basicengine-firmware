@@ -265,7 +265,6 @@ protected:
   struct sprite_pattern {
     struct sprite_props p;
     uint32_t last;
-    uint8_t ref;
     struct sprite_line lines[0];
   };
 
