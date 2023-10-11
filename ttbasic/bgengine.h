@@ -24,28 +24,28 @@ class BGEngine : public Video {
 public:
   void reset() override;
 
-  inline uint8_t bgWidth(uint8_t bg) {
+  inline uint32_t bgWidth(uint8_t bg) {
     return m_bg[bg].w;
   }
-  inline uint8_t bgHeight(uint8_t bg) {
+  inline uint32_t bgHeight(uint8_t bg) {
     return m_bg[bg].h;
   }
 
-  void setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t);
-  void setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y, const uint8_t *tiles,
+  void setBgTile(uint8_t bg_idx, uint32_t x, uint32_t y, uint8_t t);
+  void setBgTiles(uint8_t bg_idx, uint32_t x, uint32_t y, const uint8_t *tiles,
                   int count);
   void mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to);
 
-  inline void setBgTileSize(uint8_t bg_idx, uint8_t tile_size_x,
-                            uint8_t tile_size_y) {
+  inline void setBgTileSize(uint8_t bg_idx, uint32_t tile_size_x,
+                            uint32_t tile_size_y) {
     struct bg_t *bg = &m_bg[bg_idx];
     bg->tile_size_x = tile_size_x;
     bg->tile_size_y = tile_size_y;
     m_bg_modified = true;
   }
 
-  inline void setBgPattern(uint8_t bg_idx, uint16_t pat_x, uint16_t pat_y,
-                           uint16_t pat_w) {
+  inline void setBgPattern(uint8_t bg_idx, uint32_t pat_x, uint32_t pat_y,
+                           uint32_t pat_w) {
     struct bg_t *bg = &m_bg[bg_idx];
     bg->pat_x = pat_x;
     bg->pat_y = pat_y;
@@ -58,14 +58,14 @@ public:
     m_bg_modified = true;
   }
 
-  inline uint8_t bgTileSizeX(uint8_t bg) {
+  inline uint32_t bgTileSizeX(uint8_t bg) {
     return m_bg[bg].tile_size_x;
   }
-  inline uint8_t bgTileSizeY(uint8_t bg) {
+  inline uint32_t bgTileSizeY(uint8_t bg) {
     return m_bg[bg].tile_size_y;
   }
 
-  inline void getBgTileSize(uint8_t bg_idx, uint8_t &tsx, uint8_t &tsy) {
+  inline void getBgTileSize(uint8_t bg_idx, uint32_t &tsx, uint32_t &tsy) {
     struct bg_t *bg = &m_bg[bg_idx];
     tsx = bg->tile_size_x;
     tsy = bg->tile_size_y;
@@ -79,17 +79,17 @@ public:
   void disableBg(uint8_t bg);
   void freeBg(uint8_t bg);
 
-  void setBgWin(uint8_t bg, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
-  inline uint16_t bgWinX(uint8_t bg) {
+  void setBgWin(uint8_t bg, uint32_t x, uint32_t y, uint32_t w, uint32_t h);
+  inline uint32_t bgWinX(uint8_t bg) {
     return m_bg[bg].win_x;
   }
-  inline uint16_t bgWinY(uint8_t bg) {
+  inline uint32_t bgWinY(uint8_t bg) {
     return m_bg[bg].win_y;
   }
-  inline uint16_t bgWinWidth(uint8_t bg) {
+  inline uint32_t bgWinWidth(uint8_t bg) {
     return m_bg[bg].win_w;
   }
-  inline uint16_t bgWinHeight(uint8_t bg) {
+  inline uint32_t bgWinHeight(uint8_t bg) {
     return m_bg[bg].win_h;
   }
   inline bool bgEnabled(uint8_t bg) {
@@ -115,39 +115,39 @@ public:
     }
   }
 
-  bool setBgSize(uint8_t bg, uint16_t width, uint16_t height);
+  bool setBgSize(uint8_t bg, uint32_t width, uint32_t height);
   void resetBgs();
 
-  void setSpritePattern(uint8_t num, uint16_t pat_x, uint16_t pat_y);
-  void setSpriteFrame(uint8_t num, uint8_t frame_x, uint8_t frame_y = 0,
+  void setSpritePattern(uint32_t num, uint32_t pat_x, uint32_t pat_y);
+  void setSpriteFrame(uint32_t num, uint32_t frame_x, uint32_t frame_y = 0,
                       bool flip_x = false, bool flip_y = false);
-  void setSpriteKey(uint8_t num, ipixel_t key);
-  void moveSprite(uint8_t num, int16_t x, int16_t y);
-  void enableSprite(uint8_t num);
-  void disableSprite(uint8_t num);
+  void setSpriteKey(uint32_t num, ipixel_t key);
+  void moveSprite(uint32_t num, int32_t x, int32_t y);
+  void enableSprite(uint32_t num);
+  void disableSprite(uint32_t num);
 
-  inline uint8_t spriteFrameX(uint8_t num) {
+  inline uint32_t spriteFrameX(uint32_t num) {
     return m_sprite[num].p.frame_x;
   }
-  inline uint8_t spriteFrameY(uint8_t num) {
+  inline uint32_t spriteFrameY(uint32_t num) {
     return m_sprite[num].p.frame_y;
   }
-  inline bool spriteFlipX(uint8_t num) {
+  inline bool spriteFlipX(uint32_t num) {
     return m_sprite[num].p.flip_x;
   }
-  inline bool spriteFlipY(uint8_t num) {
+  inline bool spriteFlipY(uint32_t num) {
     return m_sprite[num].p.flip_y;
   }
-  inline bool spriteOpaque(uint8_t num) {
+  inline bool spriteOpaque(uint32_t num) {
     return m_sprite[num].p.opaque;
   }
-  inline int16_t spriteX(uint8_t num) {
+  inline int32_t spriteX(uint32_t num) {
     return m_sprite[num].pos_x;
   }
-  inline int16_t spriteY(uint8_t num) {
+  inline int32_t spriteY(uint32_t num) {
     return m_sprite[num].pos_y;
   }
-  inline int16_t spriteWidth(uint8_t num) {
+  inline int32_t spriteWidth(uint32_t num) {
 #ifdef USE_ROTOZOOM
     if (m_sprite[num].surf)
       return m_sprite[num].surf->w;
@@ -155,7 +155,7 @@ public:
 #endif
       return m_sprite[num].p.w;
   }
-  inline int16_t spriteHeight(uint8_t num) {
+  inline int32_t spriteHeight(uint32_t num) {
 #ifdef USE_ROTOZOOM
     if (m_sprite[num].surf)
       return m_sprite[num].surf->h;
@@ -164,40 +164,40 @@ public:
       return m_sprite[num].p.h;
   }
 
-  inline bool spriteEnabled(uint8_t num) {
+  inline bool spriteEnabled(uint32_t num) {
     return m_sprite[num].enabled;
   }
 
-  inline void setSpritePriority(uint8_t num, uint8_t prio) {
+  inline void setSpritePriority(uint32_t num, uint8_t prio) {
     m_sprite[num].prio = prio;
     m_bg_modified = true;
   }
 
 #ifdef USE_ROTOZOOM
-  inline void setSpriteAngle(uint8_t num, double angle) {
+  inline void setSpriteAngle(uint32_t num, double angle) {
     m_sprite[num].angle = angle;
     spriteReload(num);
   }
 
-  inline void setSpriteScaleX(uint8_t num, double scale_x) {
+  inline void setSpriteScaleX(uint32_t num, double scale_x) {
     m_sprite[num].scale_x = scale_x;
     spriteReload(num);
   }
 
-  inline void setSpriteScaleY(uint8_t num, double scale_y) {
+  inline void setSpriteScaleY(uint32_t num, double scale_y) {
     m_sprite[num].scale_y = scale_y;
     spriteReload(num);
   }
 #endif
 
 #ifdef TRUE_COLOR
-  inline void setSpriteAlpha(uint8_t num, uint8_t alpha) {
+  inline void setSpriteAlpha(uint32_t num, uint8_t alpha) {
     m_sprite[num].alpha = alpha;
     spriteReload(num);
   }
 #endif
 
-  inline bool spriteReload(uint8_t num) {
+  inline bool spriteReload(uint32_t num) {
     m_sprite[num].must_reload = true;
     if (m_sprite[num].enabled)
       m_bg_modified = true;
@@ -216,11 +216,11 @@ public:
     return m_frameskip;
   }
 
-  void spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t *tiles,
+  void spriteTileCollision(uint32_t sprite, uint8_t bg, uint8_t *tiles,
                            uint8_t num_tiles);
-  uint8_t spriteTileCollision(uint8_t sprite, uint8_t bg, uint8_t tile);
+  uint8_t spriteTileCollision(uint32_t sprite, uint8_t bg, uint8_t tile);
 
-  void resizeSprite(uint8_t num, uint8_t w, uint8_t h);
+  void resizeSprite(uint32_t num, uint32_t w, uint32_t h);
   virtual void resetSprites();
 
   virtual void lockSprites();
@@ -237,29 +237,29 @@ protected:
 
   struct bg_t {
     uint8_t *tiles;
-    uint16_t pat_x, pat_y, pat_w;
-    uint8_t w, h;
-    uint8_t tile_size_x, tile_size_y;
+    uint32_t pat_x, pat_y, pat_w;
+    uint32_t w, h;
+    uint32_t tile_size_x, tile_size_y;
     int scroll_x, scroll_y;
-    uint16_t win_x, win_y, win_w, win_h;
+    uint32_t win_x, win_y, win_w, win_h;
     bool enabled;
     uint8_t prio;
     uint8_t *tile_map;
   } m_bg[MAX_BG];
 
   struct sprite_props {
-    uint16_t pat_x, pat_y;
-    uint8_t w, h;
-    uint8_t frame_x, frame_y;
+    uint32_t pat_x, pat_y;
+    uint32_t w, h;
+    uint32_t frame_x, frame_y;
     pixel_t key;
     bool flip_x:1, flip_y:1, opaque:1;
   };
 
   struct sprite_line {
     pixel_t *pixels;
-    uint8_t off;
-    uint8_t len;
-    uint8_t type;
+    uint32_t off;
+    uint32_t len;
+    uint32_t type;
   };
 
   struct sprite_pattern {
@@ -271,7 +271,7 @@ protected:
 
   struct sprite_t {
     struct sprite_props p;
-    int16_t pos_x, pos_y;
+    int32_t pos_x, pos_y;
     struct sprite_pattern *pat;
 #ifdef USE_ROTOZOOM
     double angle;

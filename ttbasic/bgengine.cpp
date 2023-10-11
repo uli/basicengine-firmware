@@ -37,8 +37,8 @@ void BGEngine::freeBg(uint8_t bg_idx) {
   updateStatus();
 }
 
-void BGEngine::setBgWin(uint8_t bg_idx, uint16_t x, uint16_t y, uint16_t w,
-                        uint16_t h) {
+void BGEngine::setBgWin(uint8_t bg_idx, uint32_t x, uint32_t y, uint32_t w,
+                        uint32_t h) {
   struct bg_t *bg = &m_bg[bg_idx];
   bg->win_x = x;
   bg->win_y = y;
@@ -57,7 +57,7 @@ void BGEngine::mapBgTile(uint8_t bg_idx, uint8_t from, uint8_t to) {
   bg->tile_map[from] = to;
 }
 
-void BGEngine::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t) {
+void BGEngine::setBgTile(uint8_t bg_idx, uint32_t x, uint32_t y, uint8_t t) {
   struct bg_t *bg = &m_bg[bg_idx];
 
   if (bg->tile_map)
@@ -72,7 +72,7 @@ void BGEngine::setBgTile(uint8_t bg_idx, uint16_t x, uint16_t y, uint8_t t) {
   m_bg_modified = true;
 }
 
-void BGEngine::setBgTiles(uint8_t bg_idx, uint16_t x, uint16_t y,
+void BGEngine::setBgTiles(uint8_t bg_idx, uint32_t x, uint32_t y,
                           const uint8_t *tiles, int count) {
   struct bg_t *bg = &m_bg[bg_idx];
 
@@ -91,7 +91,7 @@ int GROUP(basic_video) BGEngine::cmp_sprite_y(const void *one,
   return (*(struct sprite_t **)one)->pos_y - (*(struct sprite_t **)two)->pos_y;
 }
 
-void BGEngine::spriteTileCollision(uint8_t sprite, uint8_t bg_idx,
+void BGEngine::spriteTileCollision(uint32_t sprite, uint8_t bg_idx,
                                    uint8_t *tiles, uint8_t num_tiles) {
   sprite_t *spr = &m_sprite[sprite];
   bg_t *bg = &m_bg[bg_idx];
@@ -149,14 +149,14 @@ void BGEngine::spriteTileCollision(uint8_t sprite, uint8_t bg_idx,
   os_memcpy(tiles, res, num_tiles);
 }
 
-uint8_t BGEngine::spriteTileCollision(uint8_t sprite, uint8_t bg,
+uint8_t BGEngine::spriteTileCollision(uint32_t sprite, uint8_t bg,
                                       uint8_t tile) {
   spriteTileCollision(sprite, bg, &tile, 1);
   return tile;
 }
 
-void GROUP(basic_video) BGEngine::setSpriteFrame(uint8_t num, uint8_t frame_x,
-                                                 uint8_t frame_y, bool flip_x,
+void GROUP(basic_video) BGEngine::setSpriteFrame(uint32_t num, uint32_t frame_x,
+                                                 uint32_t frame_y, bool flip_x,
                                                  bool flip_y) {
   struct sprite_t *s = &m_sprite[num];
   if (frame_x != s->p.frame_x || frame_y != s->p.frame_y ||
@@ -171,7 +171,7 @@ void GROUP(basic_video) BGEngine::setSpriteFrame(uint8_t num, uint8_t frame_x,
   }
 }
 
-void BGEngine::setSpriteKey(uint8_t num, ipixel_t key) {
+void BGEngine::setSpriteKey(uint32_t num, ipixel_t key) {
   struct sprite_t *s = &m_sprite[num];
   pixel_t pkey = csp.fromIndexed(key);
 
@@ -182,8 +182,8 @@ void BGEngine::setSpriteKey(uint8_t num, ipixel_t key) {
   }
 }
 
-void GROUP(basic_video) BGEngine::setSpritePattern(uint8_t num, uint16_t pat_x,
-                                                   uint16_t pat_y) {
+void GROUP(basic_video) BGEngine::setSpritePattern(uint32_t num, uint32_t pat_x,
+                                                   uint32_t pat_y) {
   struct sprite_t *s = &m_sprite[num];
   if (s->p.pat_x != pat_x || s->p.pat_y != pat_y) {
     s->p.pat_x = pat_x;
@@ -195,7 +195,7 @@ void GROUP(basic_video) BGEngine::setSpritePattern(uint8_t num, uint16_t pat_x,
   }
 }
 
-void BGEngine::enableSprite(uint8_t num) {
+void BGEngine::enableSprite(uint32_t num) {
   struct sprite_t *s = &m_sprite[num];
   if (!s->enabled) {
     s->must_reload = true;
@@ -205,7 +205,7 @@ void BGEngine::enableSprite(uint8_t num) {
   updateStatus();
 }
 
-void BGEngine::disableSprite(uint8_t num) {
+void BGEngine::disableSprite(uint32_t num) {
   struct sprite_t *s = &m_sprite[num];
   if (s->enabled) {
     s->enabled = false;
@@ -214,8 +214,8 @@ void BGEngine::disableSprite(uint8_t num) {
   updateStatus();
 }
 
-void GROUP(basic_video) BGEngine::moveSprite(uint8_t num, int16_t x,
-                                             int16_t y) {
+void GROUP(basic_video) BGEngine::moveSprite(uint32_t num, int32_t x,
+                                             int32_t y) {
   sprite_t *s = &m_sprite[num];
   if (s->pos_x != x || s->pos_y != y) {
     s->pos_x = x;
@@ -226,7 +226,7 @@ void GROUP(basic_video) BGEngine::moveSprite(uint8_t num, int16_t x,
   }
 }
 
-void BGEngine::resizeSprite(uint8_t num, uint8_t w, uint8_t h) {
+void BGEngine::resizeSprite(uint32_t num, uint32_t w, uint32_t h) {
   struct sprite_t *s = &m_sprite[num];
   if (w != s->p.w || h != s->p.h) {
     s->p.w = w;
@@ -236,7 +236,7 @@ void BGEngine::resizeSprite(uint8_t num, uint8_t w, uint8_t h) {
   }
 }
 
-bool BGEngine::setBgSize(uint8_t bg_idx, uint16_t width, uint16_t height) {
+bool BGEngine::setBgSize(uint8_t bg_idx, uint32_t width, uint32_t height) {
   struct bg_t *bg = &m_bg[bg_idx];
 
   m_bg_modified = true;
