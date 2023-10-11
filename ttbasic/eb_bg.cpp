@@ -14,8 +14,9 @@ EBAPI void eb_bg_off(void) {
 EBAPI int eb_bg_set_size(int bg, int tiles_w, int tiles_h) {
   if (check_param(bg, 0, MAX_BG - 1) ||
       // XXX: valid range depends on tile size
-      check_param(tiles_w, 0, sc0.getGWidth()) ||
-      check_param(tiles_h, 0, sc0.getGHeight()))
+      // XXX: limited by BG file format
+      check_param(tiles_w, 0, 255) ||
+      check_param(tiles_h, 0, 255))
     return -1;
 
   bool ret = vs23.setBgSize(bg, tiles_w, tiles_h);
@@ -40,9 +41,10 @@ EBAPI int eb_bg_set_pattern(int bg, int pattern_x, int pattern_y, int pattern_w)
 }
 
 EBAPI int eb_bg_set_tile_size(int bg, int tile_size_x, int tile_size_y) {
+  // XXX: tile size limited by BG file format
   if (check_param(bg, 0, MAX_BG - 1) ||
-      check_param(tile_size_x, 8, 32) ||
-      check_param(tile_size_y, 8, 32))
+      check_param(tile_size_x, 8, 255) ||
+      check_param(tile_size_y, 8, 255))
     return -1;
 
   vs23.setBgTileSize(bg, tile_size_x, tile_size_y);
@@ -97,6 +99,7 @@ EBAPI int eb_bg_load(int bg, const char *file) {
     return -1;
   }
 
+  // XXX: limits BG and tile size to 255x255
   w = getc(f);
   h = getc(f);
   tsx = getc(f);
@@ -140,6 +143,7 @@ EBAPI int eb_bg_save(int bg, const char *file) {
   w = vs23.bgWidth(bg);
   h = vs23.bgHeight(bg);
 
+  // XXX: limits BG and tile size to 255x255
   putc(w, f);
   putc(h, f);
   putc(vs23.bgTileSizeX(bg), f);
