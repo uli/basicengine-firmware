@@ -170,7 +170,7 @@ EBAPI int eb_spi_select_device(unsigned short major, unsigned char minor)
     return 0;
 }
 
-EBAPI void eb_spi_write(const char *out_data, unsigned int count)
+EBAPI int eb_spi_write(const char *out_data, unsigned int count)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -180,7 +180,7 @@ EBAPI void eb_spi_write(const char *out_data, unsigned int count)
     return libsoc_spi_write(spi_dev, (uint8_t *)out_data, count) == EXIT_FAILURE;
 }
 
-EBAPI void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
+EBAPI int eb_spi_transfer(const char *out_data, char *in_data, unsigned int count)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -206,7 +206,7 @@ EBAPI void eb_spi_set_bit_order(int bit_order)
         set_error(_("failed to set bit order"));
 }
 
-EBAPI void eb_spi_set_freq(int freq)
+EBAPI int eb_spi_set_freq(int freq)
 {
     if (!spi_dev) {
         err = ERR_IO;
@@ -216,7 +216,7 @@ EBAPI void eb_spi_set_freq(int freq)
     return libsoc_spi_set_speed(spi_dev, freq) == EXIT_FAILURE;
 }
 
-EBAPI void eb_spi_set_mode(int mode)
+EBAPI int eb_spi_set_mode(int mode)
 {
     if (!spi_dev) {
         err = ERR_IO;

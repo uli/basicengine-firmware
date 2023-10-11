@@ -151,16 +151,18 @@ EBAPI int eb_i2c_read(unsigned char addr, char *data, int count) {
 #include <h3_spi.h>
 #endif
 
-EBAPI void eb_spi_write(const char *out_data, unsigned int count) {
+EBAPI int eb_spi_write(const char *out_data, unsigned int count) {
 #ifdef H3
   h3_spi_writenb(out_data, count);
 #endif
+  return 0;
 }
 
-EBAPI void eb_spi_transfer(const char *out_data, char *in_data, unsigned int count) {
+EBAPI int eb_spi_transfer(const char *out_data, char *in_data, unsigned int count) {
 #ifdef H3
   h3_spi_transfernb((char *)out_data, in_data, count);
 #endif
+  return 0;
 }
 
 EBAPI void eb_spi_set_bit_order(int bit_order) {
@@ -169,16 +171,18 @@ EBAPI void eb_spi_set_bit_order(int bit_order) {
 #endif
 }
 
-EBAPI void eb_spi_set_freq(int freq) {
+EBAPI int eb_spi_set_freq(int freq) {
 #ifdef H3
   h3_spi_set_speed_hz(freq);
 #endif
+  return 0;
 }
 
-EBAPI void eb_spi_set_mode(int mode) {
+EBAPI int eb_spi_set_mode(int mode) {
 #ifdef H3
   h3_spi_setDataMode(mode);
 #endif
+  return 0;
 }
 
 EBAPI int eb_i2c_select_bus(unsigned char bus) {
