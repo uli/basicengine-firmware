@@ -12,7 +12,7 @@
 #include "eb_bg.h"
 #include <vector>
 
-#define MAX_BG	4
+#define MAX_BG	16
 
 #define MAX_SPRITES  128
 #define MAX_SPRITE_W 1024
