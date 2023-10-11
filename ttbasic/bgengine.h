@@ -14,9 +14,9 @@
 
 #define MAX_BG	4
 
-#define MAX_SPRITES  32
-#define MAX_SPRITE_W 32
-#define MAX_SPRITE_H 32
+#define MAX_SPRITES  128
+#define MAX_SPRITE_W 1024
+#define MAX_SPRITE_H 1024
 #define MAX_PRIO     (MAX_BG - 1)
 
 class BGEngine : public Video {
