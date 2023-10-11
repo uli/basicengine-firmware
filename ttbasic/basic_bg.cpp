@@ -58,8 +58,8 @@ BG OFF
 @h	background map height, in tiles
 @px	tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]
 @py	tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]
-@tx	tile width, pixels [`8` (default) to `32`]
-@ty	tile height, pixels [`8` (default) to `32`]
+@tx	tile width, pixels [`8` (default) to `255`]
+@ty	tile height, pixels [`8` (default) to `255`]
 @wx	window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]
 @wy	window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]
 @ww	window width, pixels [`9` to `PSIZE(0)-wx` (default)]
@@ -512,11 +512,7 @@ This serves to increase the available CPU power to BASIC by reducing the load
 imposed by the graphics subsystem.
 \usage FRAMESKIP frm
 \args
-@frm	number of frames to be skipped [`0` (default) to `60`]
-\note
-It is not possible to mitigate flickering caused by overloading the graphics
-engine using `FRAMESKIP` because each frame that is actually rendered must
-be so within a single TV frame.
+@frm	number of frames to be skipped [`0` (default) to `59`]
 ***/
 void Basic::iframeskip() {
 #ifdef USE_BG_ENGINE
