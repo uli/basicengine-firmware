@@ -477,7 +477,7 @@ extern "C" size_t umm_free_heap_size(void);
 extern int try_malloc();
 #endif
 
-#define MAX_USER_FILES 16
+#define MAX_USER_FILES 256
 struct FILEDIR {
   FILE *f;
   DIR *d;
