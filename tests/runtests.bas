@@ -31,6 +31,7 @@
 232     @rn$=@d$+"/"+LEFT$ (@f$,@i)+".run"
 240     OPEN @of$ FOR OUTPUT AS #14
 260     @if$=@d$+"/"+LEFT$ (@f$,@i)+".inp"
+265     oldcmd_out=CMD(0):oldcmd_in=CMD(1)
 269     ON ERROR GOTO 279
 270     OPEN @if$ FOR INPUT AS #15
 274     CMD INPUT 15
@@ -40,7 +41,7 @@
 289     @fr=FREE()
 290     EXEC @d$+"/"+@f$
 291     TROFF:@fr2=FREE()
-300     CMD OFF 
+300     CMD OUTPUT oldcmd_out:CMD INPUT oldcmd_in
 310     CLOSE 14:REM CLOSE 15
 312     REM close15
 320     IF 0=1 THEN 
@@ -48,7 +49,7 @@
 340       erl=RET(1)
 345       errsub=RET(2)
 350       PRINT ERROR$(err);" (";err;")@";errsub
-355       CMD OFF 
+355       CMD OUTPUT oldcmd_out:CMD INPUT oldcmd_in
 356       CLOSE 14:REM CLOSE 15
 360     ENDIF 
 361     ttal=ttal+1
