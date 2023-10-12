@@ -1052,7 +1052,8 @@ void GROUP(basic_video) Basic::iline() {
 
   if (*cip == I_COMMA) {
     ++cip;
-    getParam(c, I_NONE);
+    if (getParam(c, I_NONE))
+      return;
     c = csp.fromIndexed(c);
   } else
     c = -1;
