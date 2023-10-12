@@ -240,6 +240,29 @@ void Basic::icmd() {
   }
 }
 
+/***bf fs CMD
+Returns the current file number for screen I/O redirection to a file.
+\usage
+file_num = CMD(which)
+\args
+@which	`0` for OUTPUT, `1` for INPUT
+\ret File number, or `-1` for screen output
+\ref CMD
+***/
+num_t Basic::ncmd() {
+  int32_t which;
+
+  if (checkOpen())
+    return 0;
+  if (getParam(which, 0, 1, I_CLOSE))
+    return 0;
+
+  if (which == 0)
+    return redirect_output_file;
+  else
+    return redirect_input_file;
+}
+
 /***bc fs CHDIR
 Changes the current directory.
 \usage CHDIR directory$

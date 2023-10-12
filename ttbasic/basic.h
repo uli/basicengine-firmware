@@ -198,6 +198,7 @@ private:
   void config_color();
 
   num_t nplay();
+  num_t ncmd();
 
   void iedit_();
 

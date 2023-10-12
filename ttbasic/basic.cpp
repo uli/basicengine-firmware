@@ -288,7 +288,7 @@ const token_t i_sf[] BASIC_DAT  = {
 
 // tokens that can be functions (no space before paren) or something else
 const token_t i_dual[] BASIC_DAT = {
-  I_CHAR, I_SYS, I_PLAY,
+  I_CHAR, I_CMD, I_SYS, I_PLAY,
 };
 // clang-format on
 
@@ -4234,6 +4234,8 @@ num_t BASIC_FP Basic::ivalue() {
     case I_SYS:  value = nsys(); break;
 
     case I_PLAY: value = nplay(); break;
+
+    case I_CMD: value = ncmd(); break;
 
     case I_NUMLST:
       i = *cip++;
