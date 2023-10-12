@@ -193,10 +193,11 @@ CMD OFF
 \args
 @file_num	number of an open file to redirect to [`0` to `{MAX_USER_FILES_m1}`]
 \note
-Redirection will automatically be reset if a file redirected to is closed
-(either explicitly or implicitly, by opening a new file using the currently
-used file number), or when returning to the command prompt.
-\ref OPEN CLOSE
+* Redirection will automatically be reset if a file redirected to is closed
+  (either explicitly or implicitly, by opening a new file using the currently
+  used file number), or when returning to the command prompt.
+* If `-1` is used as `file_num`, redirection is turned off.
+\ref OPEN CLOSE CMD()
 ***/
 void Basic::icmd() {
   bool is_input;
@@ -219,13 +220,18 @@ void Basic::icmd() {
 
   if (*cip == I_OFF) {
     ++cip;
+no_redir:
     if (is_input)
       redirect_input_file = -1;
     else
       redirect_output_file = -1;
     return;
-  } else
-    getParam(redir, 0, MAX_USER_FILES, I_NONE);
+  } else if (getParam(redir, -1, MAX_USER_FILES - 1, I_NONE))
+    return;
+
+  if (redir < 0)
+    goto no_redir;
+
   if (!user_files[redir].f) {
     err = ERR_FILE_NOT_OPEN;
     if (is_input)
