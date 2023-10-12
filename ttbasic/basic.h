@@ -321,18 +321,18 @@ private:
   }
 
 #ifdef FLOAT_NUMS
-  uint8_t BASIC_FP getParam(int32_t &prm, token_t next_token);
-  uint8_t BASIC_FP getParam(int32_t &prm, int32_t v_min, int32_t v_max,
+  uint8_t WARN_IGNORE BASIC_FP getParam(int32_t &prm, token_t next_token);
+  uint8_t WARN_IGNORE BASIC_FP getParam(int32_t &prm, int32_t v_min, int32_t v_max,
                             token_t next_token);
 #endif
 
   // コマンド引数取得(int32_t,引数チェックあり)
-  uint8_t BASIC_FP getParam(num_t &prm, num_t v_min, num_t v_max,
+  uint8_t WARN_IGNORE BASIC_FP getParam(num_t &prm, num_t v_min, num_t v_max,
                             token_t next_token);
-  uint32_t BASIC_FP getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
+  uint32_t WARN_IGNORE BASIC_FP getParam(uint32_t &prm, uint32_t v_min, uint32_t v_max,
                              token_t next_token);
-  uint8_t BASIC_FP getParam(uint32_t &prm, token_t next_token);
-  uint8_t BASIC_FP getParam(num_t &prm, token_t next_token);
+  uint8_t WARN_IGNORE BASIC_FP getParam(uint32_t &prm, token_t next_token);
+  uint8_t WARN_IGNORE BASIC_FP getParam(num_t &prm, token_t next_token);
 
   BString getParamFname();
 

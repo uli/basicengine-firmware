@@ -88,6 +88,8 @@
 // ** Default speed of Serial port 1 *********************************************
 #define GPIO_S1_BAUD    115200
 
+#define WARN_IGNORE __attribute__((warn_unused_result))
+
 #ifdef HAVE_PROFILE
 #define NOINS __attribute__((no_instrument_function))
 #endif
