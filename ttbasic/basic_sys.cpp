@@ -791,7 +791,7 @@ void syspanic(const char *txt) {
 
 void Basic::isystem() {
 #ifdef __unix__
-  ::exit(0);
+  ::_exit(0);
 #else
   err = ERR_NOT_SUPPORTED;
 #endif
