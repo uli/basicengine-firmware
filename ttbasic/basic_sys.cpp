@@ -1058,6 +1058,18 @@ void Basic::ishell() {
 #endif
 }
 
+void Basic::ihash() {
+  BString cmd;
+  int len;
+
+  len = cmd.fromBasic((TOKEN_TYPE *)cip);
+  cip += len;
+
+  std::list<BString> args;
+  args.push_back(cmd);
+  shell_list(args);
+}
+
 #if !defined(__linux__) && !defined(JAILHOUSE)
 void Basic::idtbload() {
   err = ERR_NOT_SUPPORTED;

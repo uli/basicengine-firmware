@@ -656,6 +656,7 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
   char vname[MAX_VAR_NAME];  // variable name
   bool had_if = false;
   int implicit_endif = 0;
+  bool sharp_is_hash = true;
 
   bool is_prg_text = false;
   bool is_require = false;
@@ -700,7 +701,17 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
             --implicit_endif;
           }
         }
+
+        // start of statement; # is a shell command
+        if (key == I_SHARP && sharp_is_hash)
+          key = I_HASH;
+
         ibuf[len++] = key;  // 中間コードを記録
+
+        if (key == I_COLON)	// end of statement, sharp is hash again
+          sharp_is_hash = true;
+        else if (key != I_HASH)	// statement doesn't start with #, sharp is sharp
+          sharp_is_hash = false;
       }
       if (had_if && !isext && (key == I_THEN || key == I_GOTO)) {
         had_if = false;  // prevent multiple implicit endifs for "THEN GOTO"
@@ -758,7 +769,7 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
     }
 
     //コメントへの変換を試みる
-    if (key == I_REM || key == I_SQUOT) {  // もし中間コードがI_REMなら
+    if (key == I_REM || key == I_SQUOT || key == I_HASH) {  // もし中間コードがI_REMなら
       while (isspace(*s))                  // 空白を読み飛ばす
         s++;
       ptok = s;  // コメントの先頭を指す
@@ -1151,6 +1162,7 @@ icode_t *BASIC_INT Basic::getELSEptr(icode_t *p, bool endif_only, int adjust) {
     case I_EOL:
     case I_REM:
     case I_SQUOT:
+    case I_HASH:
       // Continue at next line.
       clp += *clp;
       if (!*clp) {
@@ -1203,6 +1215,7 @@ icode_t *BASIC_INT Basic::getWENDptr(icode_t *p) {
     case I_EOL:
     case I_REM:
     case I_SQUOT:
+    case I_HASH:
       // Continue at next line.
       clp += *clp;
       if (!*clp) {
@@ -1407,10 +1420,10 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       if (ip[1] != I_EOL && ip[1] != I_IMPLICITENDIF && ip[1] != I_COLON &&
           (ip[1] != I_OPEN || !isfun((token_t)*ip)))
         if ((!nospacea((token_t)*ip) || spacef((token_t)ip[1])) &&
-            *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_LABEL)
+            *ip != I_COLON && *ip != I_SQUOT && *ip != I_REM && *ip != I_HASH && *ip != I_LABEL)
           c_putch(' ', devno);
 
-      if (*ip == I_REM || *ip == I_SQUOT) {  //もし中間コードがI_REMなら
+      if (*ip == I_REM || *ip == I_SQUOT || *ip == I_HASH) {  //もし中間コードがI_REMなら
         // Comments are really strings without quotes and need thus be UTF-8
         // decoded.
         // XXX: This should probably be factored out.
@@ -1806,6 +1819,7 @@ int BASIC_FP token_size(icode_t *code) {
   case I_LABEL: return 2;
   case I_EOL:
   case I_REM:
+  case I_HASH:
   case I_SQUOT: return -1;
   case I_GOTO:
   case I_GOSUB:
@@ -5445,6 +5459,7 @@ void BASIC_FP Basic::iexit() {
       case I_EOL:
       case I_REM:
       case I_SQUOT:
+      case I_HASH:
         // Continue at next line.
         clp += *clp;
         if (!*clp) {

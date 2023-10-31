@@ -300,6 +300,7 @@ _none	I_STRLSTREF	istrlstref
 _none	I_SVAR		isvar
 _none	I_VAR		ivar
 _none	I_VARARR	ivararr
+#	I_HASH		ihash
 LISTFONTS	I_LISTFONTS	ilistfonts
 MOUSEBUTTON	I_MOUSEBUTTON	nmousebutton
 MOUSEDX	I_MOUSEDX	nmousedx
