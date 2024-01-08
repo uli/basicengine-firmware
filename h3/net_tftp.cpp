@@ -2,6 +2,8 @@
 #include "basic.h"
 #include "net.h"
 
+#if !defined(JAILHOUSE) && defined(AWBM_PLATFORM_h3)
+
 #define ERR_OK lwip_ERR_OK
 extern "C" {
 #include <lwip/apps/tftp_client.h>
@@ -104,7 +106,10 @@ tftp_example_init_server(void)
     tftp_init_server(&tftp);
 }
 
+#endif	// !defined(JAILHOUSE) && defined(AWBM_PLATFORM_h3)
+
 void Basic::itftpget() {
+#if !defined(JAILHOUSE) && defined(AWBM_PLATFORM_h3)
     BString host = istrexp();
 
     if (*cip++ != I_COMMA)
@@ -144,9 +149,13 @@ void Basic::itftpget() {
 
     wait_for_result();
     tftp_cleanup();
+#else
+    err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void Basic::itftpput() {
+#if !defined(JAILHOUSE) && defined(AWBM_PLATFORM_h3)
     BString host = istrexp();
 
     if (*cip++ != I_COMMA)
@@ -186,9 +195,13 @@ void Basic::itftpput() {
 
     wait_for_result();
     tftp_cleanup();
+#else
+    err = ERR_NOT_SUPPORTED;
+#endif
 }
 
 void Basic::itftpd() {
+#if !defined(JAILHOUSE) && defined(AWBM_PLATFORM_h3)
     if (*cip == I_ON) {
         tftp_init_server(&tftp);
         ++cip;
@@ -197,4 +210,7 @@ void Basic::itftpd() {
         ++cip;
     } else
         SYNTAX_T(_("expected ON or OFF"));
+#else
+  err = ERR_NOT_SUPPORTED;
+#endif
 }
