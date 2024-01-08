@@ -48,7 +48,11 @@ void hook_audio_get_sample(int16_t *l, int16_t *r) {
     audio.m_curr_buf_pos = 0;
     m_read_pos = 0;
 
+#ifdef AWBM_PLATFORM_h3
     h3_codec_push_data(audio.m_curr_buf);
+#else
+    // XXX: unimplemented
+#endif
 
 #ifdef JAILHOUSE
     if (video_encoder->enabled) {
