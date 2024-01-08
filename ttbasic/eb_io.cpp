@@ -112,7 +112,7 @@ EBAPI int eb_i2c_write(unsigned char addr, const char *data, int count) {
       Wire.write(out[i]);
   }
   return Wire.endTransmission();
-#elif defined(H3)
+#elif defined(AWBM_PLATFORM_h3)
   h3_i2c_set_slave_address(addr);
   return h3_i2c_write(data, count);
 #else
@@ -138,7 +138,7 @@ EBAPI int eb_i2c_read(unsigned char addr, char *data, int count) {
   }
 
   return Wire.endTransmission();
-#elif defined(H3)
+#elif defined(AWBM_PLATFORM_h3)
   h3_i2c_set_slave_address(addr);
   return h3_i2c_read(data, count);
 #else
@@ -147,39 +147,39 @@ EBAPI int eb_i2c_read(unsigned char addr, char *data, int count) {
 #endif
 }
 
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
 #include <h3_spi.h>
 #endif
 
 EBAPI int eb_spi_write(const char *out_data, unsigned int count) {
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
   h3_spi_writenb(out_data, count);
 #endif
   return 0;
 }
 
 EBAPI int eb_spi_transfer(const char *out_data, char *in_data, unsigned int count) {
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
   h3_spi_transfernb((char *)out_data, in_data, count);
 #endif
   return 0;
 }
 
 EBAPI void eb_spi_set_bit_order(int bit_order) {
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
   h3_spi_setBitOrder((h3_spi_bit_order_t)bit_order);
 #endif
 }
 
 EBAPI int eb_spi_set_freq(int freq) {
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
   h3_spi_set_speed_hz(freq);
 #endif
   return 0;
 }
 
 EBAPI int eb_spi_set_mode(int mode) {
-#ifdef H3
+#ifdef AWBM_PLATFORM_h3
   h3_spi_setDataMode(mode);
 #endif
   return 0;
