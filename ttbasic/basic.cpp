@@ -41,7 +41,11 @@
 #elif defined(H3)
 
 #ifdef JAILHOUSE
+#ifdef AWBM_PLATFORM_h3
 #define STR_EDITION "H3 RX"
+#elif defined(AWBM_PLATFORM_h616)
+#define STR_EDITION "H616 RX"
+#endif
 #else
 #define STR_EDITION "H3"
 #endif
