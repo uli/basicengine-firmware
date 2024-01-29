@@ -5,7 +5,7 @@
 #define _SDLAUDIO_H
 
 #include "../ttbasic/audio.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #define SOUND_BUFLEN 512
 #define SOUND_CHANNELS 2

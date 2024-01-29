@@ -3,7 +3,7 @@
 
 #include "sdlaudio.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <sound.h>
 
 SDLAudio audio;

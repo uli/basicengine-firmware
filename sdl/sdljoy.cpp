@@ -2,7 +2,7 @@
 // Copyright (c) 2019 Ulrich Hecht
 
 #include <joystick.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <list>
 #include <queue>
 

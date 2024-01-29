@@ -11,8 +11,8 @@
 #include "colorspace.h"
 
 #include <Arduino.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
+#include <SDL.h>
+#include <SDL_thread.h>
 
 #define SC_DEFAULT           13
 

@@ -22,7 +22,7 @@ static void my_exit(void) {
   vs23.end();
 }
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 extern "C" void init_idle();
 
