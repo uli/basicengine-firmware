@@ -520,7 +520,11 @@ void Basic::imkdir() {
     return;
   }
 
-  rc = mkdir(fname.c_str(), 0755);
+  rc = mkdir(fname.c_str()
+#ifndef _WIN32
+                           , 0755
+#endif
+                                 );
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {

@@ -86,7 +86,11 @@ EBAPI int eb_install_module(const char *filename) {
 
   BString moddir = BString(getenv("HOME")) + BString("/sys/modules");
   if (chdir(moddir.c_str())) {
-    if (mkdir(moddir.c_str(), 0755)) {
+    if (mkdir(moddir.c_str()
+#ifndef _WIN32
+                            , 0755
+#endif
+                                  )) {
       err = ERR_IO;
       err_expected = _("cannot create module directory");
       return -1;

@@ -897,7 +897,11 @@ uint8_t sdfiles::mkdir(const char *fname) {
   }
   SD_END();
 #else  // USE_UNIFILE
-  rc = !::mkdir(fname, 0755);
+  rc = !::mkdir(fname
+#ifndef _WIN32
+                     , 0755
+#endif
+                           );
 #endif
   return rc;
 }

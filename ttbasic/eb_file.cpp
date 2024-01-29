@@ -80,7 +80,11 @@ EBAPI int eb_unzip(const char *filename, int verbose) {
       c_printf("%s\n", file_stat.m_filename);
 
     if (mz_zip_reader_is_file_a_directory(&zip_archive, i)) {
-      mkdir(file_stat.m_filename, 0755);
+      mkdir(file_stat.m_filename
+#ifndef _WIN32
+                                 , 0755
+#endif
+                                       );
     } else {
       status = mz_zip_reader_extract_file_to_file(&zip_archive, file_stat.m_filename, file_stat.m_filename, 0);
       if (!status) {
