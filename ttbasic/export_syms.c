@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -41,11 +42,15 @@ struct _native_dirent *be_readdir(DIR *dirp) {
   if (dir) {
     strcpy(trans_dir.d_name, dir->d_name);
 
+#ifdef _DIRENT_HAVE_D_TYPE
     switch (dir->d_type) {
     case DT_REG: trans_dir.d_type = _native_DT_REG; break;
     case DT_DIR: trans_dir.d_type = _native_DT_DIR; break;
     default: trans_dir.d_type = 0;
     }
+#else
+    trans_dir.d_type = -1;	// XXX: what should we do?
+#endif
 
     return &trans_dir;
   }
@@ -92,6 +97,7 @@ static int _native_fstat(int fd, struct _native_stat *statbuf) {
   return ret;
 }
 
+#ifndef _WIN32
 static int _native_lstat(const char *pathname, struct _native_stat *statbuf) {
   struct stat sb;
   int ret = lstat(pathname, &sb);
@@ -99,6 +105,7 @@ static int _native_lstat(const char *pathname, struct _native_stat *statbuf) {
     translate_stat(statbuf, &sb);
   return ret;
 }
+#endif
 
 #endif // ALLWINNER_BARE_METAL
 
@@ -128,7 +135,9 @@ extern int c_printf(const char *f, ...);
 #include "eb_video.h"
 #include <ctype.h>
 #include <errno.h>
+#ifndef _WIN32
 #include <fnmatch.h>
+#endif
 #include <libgen.h>
 #include <math.h>
 #include <setjmp.h>

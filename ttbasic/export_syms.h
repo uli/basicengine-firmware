@@ -237,16 +237,22 @@ S(atoi)
 S(atol)
 
 // string functions
+#ifndef _WIN32
 S(bcopy)
 S(bzero)
+#endif
 S(memchr)
 S(memcmp)
 S(memcpy)
 S(memmove)
+#ifndef _WIN32
 S(memrchr)
+#endif
 S(memset)
 S(strcasecmp)
+#ifndef _WIN32
 S(strcasestr)
+#endif
 S(strcat)
 S(strcmp)
 S(strcoll)
@@ -259,7 +265,9 @@ S(strncasecmp)
 S(strncat)
 S(strncmp)
 S(strncpy)
+#ifndef _WIN32
 S(strndup)
+#endif
 S(strpbrk)
 S(strspn)
 S(strtod)
@@ -355,7 +363,9 @@ R(fstat, _native_fstat)
 // stdlib environment
 S(getenv)
 S(putenv)
+#ifndef _WIN32
 S(setenv)
+#endif
 
 // stdlib miscellaneous
 S(abort)  // XXX: does this do anything useful?
@@ -367,7 +377,9 @@ R(abs, __builtin_abs)
 S(labs)
 S(qsort)
 S(rand)
+#ifndef _WIN32
 S(random)
+#endif
 S(srand)
 
 // unistd getopt
@@ -376,10 +388,14 @@ R(optarg, &optarg)
 R(optind, &optind)
 
 // unistd misc
+#ifndef _WIN32
 R(environ, &environ)
+#endif
 
 // setjmp
+#ifndef _WIN32
 S(setjmp)
+#endif
 S(longjmp)
 
 // ctype
@@ -401,7 +417,9 @@ S(tolower)
 // stdlib multi-byte functions
 S(mbtowc)
 S(towlower)
+#ifndef _WIN32
 S(wcwidth)
+#endif
 
 // math
 S(acos)
@@ -441,11 +459,11 @@ S(fmodf)
 S(frexp)
 S(frexpf)
 S(j0)
-#ifndef __UCLIBC__
+#if !defined(__UCLIBC__) && !defined(_WIN32)
 S(j0f)
 #endif
 S(j1)
-#ifndef __UCLIBC__
+#if !defined(__UCLIBC__) && !defined(_WIN32)
 S(j1f)
 #endif
 S(ldexp)
@@ -469,11 +487,11 @@ S(tanf)
 S(tanh)
 S(tanhf)
 S(y0)
-#ifndef __UCLIBC__
+#if !defined(__UCLIBC__) && !defined(_WIN32)
 S(y0f)
 #endif
 S(y1)
-#ifndef __UCLIBC__
+#if !defined(__UCLIBC__) && !defined(_WIN32)
 S(y1f)
 #endif
 
