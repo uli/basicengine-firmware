@@ -595,6 +595,8 @@ int BString::indexOf(const BString &s2) const {
     return indexOf(s2, 0);
 }
 
+#include "compat.h"
+
 int BString::indexOf(const BString &s2, unsigned int fromIndex) const {
     if(fromIndex >= len)
         return -1;
