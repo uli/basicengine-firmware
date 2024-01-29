@@ -19,7 +19,7 @@
 #define HIGH 0x1
 #define LOW  0x0
 
-#define INPUT             0x00
+//#define INPUT             0x00
 #define INPUT_PULLUP      0x02
 #define OUTPUT            0x01
 #define OUTPUT_OPEN_DRAIN 0x03
