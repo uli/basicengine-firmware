@@ -59,10 +59,21 @@ COMMON_SOURCES_C="`echo ttbasic/*.c libraries/stb/*.c` \
 H3_SOURCES="$COMMON_SOURCES `ls h3/*.cpp`"
 H3_SOURCES_C="$COMMON_SOURCES_C"
 
+if [[ "$CC" =~ mingw ]] ; then
+	SDL_PLATFORM=windows
+else
+	SDL_PLATFORM=linux
+fi
+
 SDL_SOURCES="$COMMON_SOURCES `ls sdl/*.cpp`"
-SDL_SOURCES_C="$COMMON_SOURCES_C libraries/libsoc/lib/i2c.c \
+SDL_SOURCES_C="$COMMON_SOURCES_C"
+if test $SDL_PLATFORM == linux ; then
+SDL_SOURCES_C="$SDL_SOURCES_C libraries/libsoc/lib/i2c.c \
 	libraries/libsoc/lib/spi.c \
-	libraries/libsoc/lib/file.c libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
+	libraries/libsoc/lib/file.c"
+fi
+	
+SDL_SOURCES_C="$SDL_SOURCES_C libraries/tinycc/lib/va_list.c"	# XXX: x86-64 only!
 
 # implicit outputs of message file and helptext generators
 MSG_IMPLICIT_OUT="ttbasic/msgs_${LANGS// /.h ttbasic/msgs_}.h"
@@ -197,6 +208,16 @@ generate_build cxx $H3_OBJDIR $H3_SOURCES
 PLATFORM_LINK_DEPS=
 
 # ninja file for SDL platform
+
+RDYNAMIC="-rdynamic"
+test "$SDL_PLATFORM" == windows && RDYNAMIC=""
+
+UTIL_LIBS="-lutil -lgpiod -ldl"
+test "$SDL_PLATFORM" == windows && UTIL_LIBS="-mconsole"
+
+SDL2_CONFIG_LIBS="--libs"
+test "$SDL_PLATFORM" == windows && SDL2_CONFIG_LIBS="--static-libs"
+
 cat <<EOT >build.ninja.sdl
 cc = $CC
 cxx = $CXX
@@ -209,7 +230,7 @@ cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -I
   -fvisibility=hidden
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod -ldl
+libs = \$common_libs `sdl2-config $SDL2_CONFIG_LIBS` -lm $UTIL_LIBS
 
 rule cc
   depfile = \$out.d
@@ -220,7 +241,7 @@ rule cxx
   command = $CXX -MD -MF \$out.d \$cxxflags -c -o \$out \$in
 
 rule link
-  command = $CC -rdynamic \$in -o \$out \$libs
+  command = $CC $RDYNAMIC \$in -o \$out \$libs
 
 EOT
 
