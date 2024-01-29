@@ -76,7 +76,7 @@ extern "C" {
 #define utf8_nonnull __attribute__((nonnull))
 #define utf8_pure __attribute__((pure))
 #define utf8_restrict __restrict__
-#define utf8_weak __attribute__((weak))
+#define utf8_weak //__attribute__((weak))
 #else
 #error Non clang, non gcc, non MSVC compiler found!
 #endif
@@ -143,7 +143,7 @@ utf8_nonnull utf8_weak void *utf8ncat(void *utf8_restrict dst,
 utf8_nonnull utf8_pure utf8_weak int utf8ncmp(const void *src1,
                                               const void *src2, size_t n);
 
-// Copy the utf8 string src onto the memory allocated in dst.   
+// Copy the utf8 string src onto the memory allocated in dst.
 // Copies at most n bytes. If n falls partway through a utf8
 // codepoint, or if dst doesn't have enough room for a null
 // terminator, the final string will be cut short to preserve
@@ -264,6 +264,8 @@ utf8_weak void *utf8ndup_ex(const void *src, size_t n,
 #undef utf8_weak
 #undef utf8_pure
 #undef utf8_nonnull
+
+#ifdef UTF8_IMPLEMENTATION
 
 int utf8casecmp(const void *src1, const void *src2) {
   utf8_int32_t src1_lwr_cp, src2_lwr_cp, src1_upr_cp, src2_upr_cp, src1_orig_cp,
@@ -1643,6 +1645,8 @@ void *utf8rcodepoint(const void *utf8_restrict str,
 
   return (void *)s;
 }
+
+#endif	// UTF8_IMPLEMENTATION
 
 #undef utf8_restrict
 #undef utf8_null
