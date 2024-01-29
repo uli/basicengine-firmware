@@ -976,7 +976,7 @@ int shell_list(std::list<BString>& args) {
   return WEXITSTATUS(wstatus);
 }
 #else	// __unix__
-void shell_list(std::list<BString>& args) {
+int shell_list(std::list<BString>& args) {
   err = ERR_NOT_SUPPORTED;
 }
 #endif // __unix__
