@@ -756,7 +756,7 @@ unsigned int BASIC_INT SMALL Basic::toktoi(bool find_prg_text) {
         //s = ptok;               // 文字列の処理ずみの部分を詰める
         len--;                    // I_DALLARを置き換えるために格納位置を移動
         ibuf[len++] = I_HEXNUM;   //中間コードを記録
-#if TOKEN_TYPE == uint32_t
+#if EB_TOKEN_TYPE == uint32_t
         ibuf[len++] = hex;
 #else
         ibuf[len++] = hex & 255;  //定数の下位バイトを記録
@@ -1458,7 +1458,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
       ip++;                         //ポインタを値へ進める
       sc0.setColor(COL(NUM), COL(BG));
       c_putch('$', devno);  //空白を表示
-#if TOKEN_TYPE == uint32_t
+#if EB_TOKEN_TYPE == uint32_t
       uint32_t num = ip[0];
       ++ip;
 #else
@@ -3968,7 +3968,7 @@ BString BASIC_INT Basic::istrvalue() {
   } else
     switch (*cip++) {
     case I_STR:
-      len = value.fromBasic((TOKEN_TYPE *)cip);
+      len = value.fromBasic((EB_TOKEN_TYPE *)cip);
       cip += len;
       if (!len)
         err = ERR_OOM;
@@ -4193,7 +4193,7 @@ num_t BASIC_FP Basic::ivalue() {
 
     case I_HEXNUM:  // 16進定数
       // get the constant
-#if TOKEN_TYPE == uint32_t
+#if EB_TOKEN_TYPE == uint32_t
       value = cip[0];
       ++cip;
 #else

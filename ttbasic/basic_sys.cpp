@@ -1062,7 +1062,7 @@ void Basic::ihash() {
   BString cmd;
   int len;
 
-  len = cmd.fromBasic((TOKEN_TYPE *)cip);
+  len = cmd.fromBasic((EB_TOKEN_TYPE *)cip);
   cip += len;
 
   std::list<BString> args;

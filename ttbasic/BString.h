@@ -84,7 +84,7 @@ class BString {
         explicit BString(double, unsigned char decimalPlaces = 2);
         ~BString(void);
 
-        int fromBasic(TOKEN_TYPE *s) {
+        int fromBasic(EB_TOKEN_TYPE *s) {
           len = *s++;
           if (!reserve(len)) {
             invalidate();

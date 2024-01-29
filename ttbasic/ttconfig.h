@@ -68,9 +68,9 @@
 #endif
 
 #ifdef LOWMEM
-#define TOKEN_TYPE uint8_t
+#define EB_TOKEN_TYPE uint8_t
 #else
-#define TOKEN_TYPE uint32_t
+#define EB_TOKEN_TYPE uint32_t
 #endif
 
 #ifdef TRUE_COLOR

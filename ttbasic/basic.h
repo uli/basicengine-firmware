@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <utf8.h>
 
-typedef TOKEN_TYPE icode_t;
-typedef TOKEN_TYPE index_t;
+typedef EB_TOKEN_TYPE icode_t;
+typedef EB_TOKEN_TYPE index_t;
 
 #define icodes_per_num() (sizeof(num_t) / sizeof(icode_t))
 #define icodes_per_ptr() (sizeof(void *) / sizeof(icode_t))
