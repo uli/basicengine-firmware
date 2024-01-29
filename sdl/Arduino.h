@@ -116,7 +116,7 @@ void pinMode(uint8_t pin, uint8_t mode);
 
 #include <stdlib.h>
 static inline long _random(long v) {
-  return random() % v;
+  return rand() % v;
 }
 #define random     _random
 #define randomSeed srand

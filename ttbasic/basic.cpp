@@ -6147,7 +6147,7 @@ void SMALL Basic::basic() {
   eb_font(rec_font > 0 ? rec_font : 1);
   sc0.setColor(csp.colorFromRgb(72, 72, 72), COL(BG));
   srand(ESP.getCycleCount());
-  c_puts_P(epigrams[random(sizeof(epigrams) / sizeof(*epigrams))]);
+  c_puts_P(epigrams[rand() % (sizeof(epigrams) / sizeof(*epigrams))]);
   newline();
 
   // Banner
