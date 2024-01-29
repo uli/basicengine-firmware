@@ -265,7 +265,7 @@ Numeric subtraction operator.
       break;
 
     default:
-      if (!math_exceptions_disabled && !err && !finite(value)) {
+      if (!math_exceptions_disabled && !err && !isfinite(value)) {
         if (isinf(value))
           err = ERR_DIVBY0;
         else
