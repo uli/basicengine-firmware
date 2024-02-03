@@ -62,6 +62,8 @@ H3_SOURCES_C="$COMMON_SOURCES_C"
 
 if [[ "$CC" =~ mingw ]] ; then
 	SDL_PLATFORM=windows
+elif [[ "$CC" =~ darwin ]] ; then
+	SDL_PLATFORM=osx
 else
 	SDL_PLATFORM=linux
 fi
@@ -113,7 +115,7 @@ common_include = -Ittbasic -Ilibraries/TTVoutfonts -Ilibraries/TTBAS_LIB -Ilibra
 common_cflags = -g -DENGINEBASIC -D_GNU_SOURCE -fdiagnostics-color=always
 common_cxxflags = -fpermissive -std=c++11 -fno-exceptions
 
-common_libs = -lstdc++ -L\$objdir/dyncall/dyncall -ldyncall_s
+common_libs = -L\$objdir/dyncall/dyncall -ldyncall_s
 
 rule icode
   command = cd ttbasic ; python icode.py
@@ -189,7 +191,7 @@ cflags = $H3_COMPILER_CFLAGS -O3 \$common_cflags \$warn_flags \$
 
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs
+libs = -lstdc++ \$common_libs
 
 build basic.bin: bin basic.elf
 build basic.uimg: uimg basic.bin
@@ -212,9 +214,14 @@ PLATFORM_LINK_DEPS=
 
 RDYNAMIC="-rdynamic"
 test "$SDL_PLATFORM" == windows && RDYNAMIC=""
+test "$SDL_PLATFORM" == osx && RDYNAMIC=""
 
 UTIL_LIBS="-lutil -lgpiod -ldl"
 test "$SDL_PLATFORM" == windows && UTIL_LIBS="-mconsole"
+test "$SDL_PLATFORM" == osx && UTIL_LIBS=""
+
+CXXLIB=stdc++
+test "$SDL_PLATFORM" == osx && CXXLIB=c++
 
 SDL2_CONFIG_LIBS="--libs"
 test "$SDL_PLATFORM" == windows && SDL2_CONFIG_LIBS="--static-libs"
@@ -231,7 +238,7 @@ cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -I
   -fvisibility=hidden
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config $SDL2_CONFIG_LIBS` -lm $UTIL_LIBS
+libs = -l${CXXLIB} \$common_libs `sdl2-config $SDL2_CONFIG_LIBS` -lm $UTIL_LIBS
 
 rule cc
   depfile = \$out.d
