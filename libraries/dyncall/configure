@@ -106,10 +106,10 @@ case ${TARGET:=`uname`} in
     # to replace ar(5) and ranlib", use it - if it is shadowed by some install of GNU's libtool assume that a foreign environment is
     # intentionally used, and fall back to using 'ar rs' (the equivalent to 'libtool -static'), for compatibility:
     if libtool -V >/dev/null 2>/dev/null; then # Apple's libtool has -V for version, which GNU does not.
-      printf "AR=libtool\n" >>$C
+      AR=libtool
       printf "ARFLAGS=-static -o\n" >>$C
     else
-      printf "AR=ar\n" >>$C
+      test -z "$AR" && AR=ar
       printf "ARFLAGS=rs\n" >>$C # 's' is crucial for universal binary archives
     fi
     if [ `uname -n` = 'iPhone' ]; then # building on iPhone itself, uname yields Darwin (gcc setup for current/correct arch)
@@ -186,13 +186,13 @@ case ${TARGET:=`uname`} in
   Minix)
     printf "CC=gcc\n" >>$C
     printf "CXX=g++\n">>$C
-    printf "AR=ar\n"  >>$C
+    test -z "$AR" && AR=ar
     ;;
   PSP)
     SDKROOT="`psp-config --pspsdk-path`"
     printf "CC=psp-gcc\n" >>$C
     printf "CXX=psp-gcc\n">>$C # don't use psp-g++, buggy
-    printf "AR=psp-ar\n"  >>$C
+    test -z "$AR" && AR=psp-ar
     printf "CFLAGS=-I${SDKROOT}/include/\n" >>$C
     printf "CXXFLAGS=-I${SDKROOT}/include/\n" >>$C
     # Pulling in dyncall libs below is a hack, for some reason psp-ld is super-picky about order.
@@ -206,6 +206,7 @@ case ${TARGET:=`uname`} in
     exit 0
     ;;
 esac
+printf "AR=$AR\n" >>$C
 
 
 # removed, b/c platform support not consistent and ELF flags checked often not having any result

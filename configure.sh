@@ -4,6 +4,7 @@
 test -z "$MAKE" && MAKE=make
 test -z "$CC" && CC=${CROSS_COMPILE}gcc
 test -z "$CXX" && CXX=${CROSS_COMPILE}g++
+test -z "$AR" && AR=${CROSS_COMPILE}ar
 
 test -z "$H3_OSDIR" && H3_OSDIR=../allwinner-bare-metal
 test -z "$H3_OBJDIR" && H3_OBJDIR=build_h3
@@ -143,7 +144,7 @@ build ttbasic/helptext_en.json | $HELPTEXT_IMPLICIT_OUT: helptext $HELPTEXT_DEPS
 
 rule dyncall_config
   command = mkdir -p \$objdir/dyncall ; cd \$objdir/dyncall ; \$
-  CC="\$cc" CXX="\$cxx" ../../libraries/dyncall/configure
+  CC="\$cc" CXX="\$cxx" AR="$AR" ../../libraries/dyncall/configure
 
 build \$objdir/dyncall/Makefile.config: dyncall_config
 
