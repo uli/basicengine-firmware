@@ -9,7 +9,9 @@
 
 #include "Arduino.h"
 #include "SPI.h"
+#ifndef __APPLE__
 #include <malloc.h>
+#endif
 
 SPIClass SPI;
 
