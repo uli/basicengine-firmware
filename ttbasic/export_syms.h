@@ -245,7 +245,7 @@ S(memchr)
 S(memcmp)
 S(memcpy)
 S(memmove)
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__APPLE__)
 S(memrchr)
 #endif
 S(memset)
@@ -388,7 +388,7 @@ R(optarg, &optarg)
 R(optind, &optind)
 
 // unistd misc
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(__APPLE__)
 R(environ, &environ)
 #endif
 
@@ -459,11 +459,11 @@ S(fmodf)
 S(frexp)
 S(frexpf)
 S(j0)
-#if !defined(__UCLIBC__) && !defined(_WIN32)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
 S(j0f)
 #endif
 S(j1)
-#if !defined(__UCLIBC__) && !defined(_WIN32)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
 S(j1f)
 #endif
 S(ldexp)
@@ -487,11 +487,11 @@ S(tanf)
 S(tanh)
 S(tanhf)
 S(y0)
-#if !defined(__UCLIBC__) && !defined(_WIN32)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
 S(y0f)
 #endif
 S(y1)
-#if !defined(__UCLIBC__) && !defined(_WIN32)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
 S(y1f)
 #endif
 
