@@ -197,6 +197,9 @@ private:
   void drawBg(bg_t *bg);
   void drawSprite(sprite_t *s);
 
+  void createWindow();
+  void destroyWindow();
+
   static Uint32 timerCallback(Uint32 t);
 
   static const struct video_mode_t modes_pal[];

@@ -85,6 +85,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_new_mode = -1;
 
   m_end_graphics = false;
+  createWindow();
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   setMode(CONFIG.mode - 1);
@@ -102,6 +103,7 @@ void SDLGFX::end() {
   m_end_graphics = true;
   m_display_enabled = false;
   SDL_WaitThread(m_gfx_thread, NULL);
+  destroyWindow();
 
   SDL_DestroyMutex(m_bufferlock);
   SDL_DestroyMutex(m_spritelock);
@@ -139,6 +141,7 @@ void SDLGFX::restart() {
   m_spritelock = SDL_CreateMutex();
 
   m_end_graphics = false;
+  createWindow();
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   setMode(m_current_mode_no);
@@ -380,14 +383,24 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 #define GFXCLASS SDLGFX
 #include <drawbg.h>
 
+void SDLGFX::createWindow()
+{
+  sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
+                                SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h,
+                                sdl_flags);
+  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
+}
+
+void SDLGFX::destroyWindow()
+{
+  SDL_DestroyRenderer(sdl_renderer);
+  SDL_DestroyWindow(sdl_window);
+}
+
 extern "C" int gfx_thread(void *data) {
   Uint64 last = 0;
   Uint64 now, passed;
   SDLGFX *gfx = (SDLGFX *)data;
-
-  sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h, sdl_flags);
-  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
 
   while (!gfx->m_end_graphics) {
     if (gfx->m_new_mode != -1) {
@@ -417,8 +430,6 @@ extern "C" int gfx_thread(void *data) {
     //printf("frame %d passed %ld\n", gfx->m_frame, passed);
   }
 
-  SDL_DestroyRenderer(sdl_renderer);
-  SDL_DestroyWindow(sdl_window);
   return 0;
 }
 
