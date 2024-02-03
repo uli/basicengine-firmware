@@ -102,7 +102,7 @@ public:
   uint8_t spriteCollision(uint8_t collidee, uint8_t collider);
 #endif
 
-  void reset();
+  void reset() override;
 
   void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w);
   inline void setBorder(uint8_t y, uint8_t uv) {
