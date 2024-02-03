@@ -108,7 +108,7 @@
 #define NOJUMP
 #endif
 
-#if defined(H3) || defined(__DJGPP__)
+#if defined(H3) || defined(__DJGPP__) || defined(__APPLE__)
 #define GROUP(g)
 #define GROUP_DATA
 #define BASIC_FP
