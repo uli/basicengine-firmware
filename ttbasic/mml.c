@@ -408,7 +408,7 @@ static MML_RESULT get_user_event_token(MML *handle, char *buf, int siz, char *tb
 }
 
 // XXX: 56 byte jump table
-MML_RESULT GROUP(basic_sound) __attribute__((optimize ("no-jump-tables"))) mml_fetch(MML *handle)
+MML_RESULT GROUP(basic_sound) mml_fetch(MML *handle)
 {
   MML_RESULT mr;
   char buf1[MML_WORK_BUFFER_SIZE];
