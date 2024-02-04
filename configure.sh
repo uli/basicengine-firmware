@@ -98,7 +98,7 @@ WARN_FLAGS="-Wall -Wno-unused"
 if [[ "$CC" == *gcc || "$CXX" == g++ || "$CXX" == *-g++ ]]; then
   WARN_FLAGS="$WARN_FLAGS -Wno-sign-compare -Wno-implicit-fallthrough -Wno-maybe-uninitialized -Wno-psabi -Wno-format-truncation -Wno-stringop-truncation"
 else
-  WARN_FLAGS="$WARN_FLAGS -Wno-c99-designator -Wno-char-subscripts"
+  WARN_FLAGS="$WARN_FLAGS -Wno-c99-designator -Wno-char-subscripts -Wno-deprecated-declarations"
   H3_COMPILER_CFLAGS="-DNAME_MAX=255 -I\${aw_sysroot}/include/c++/8.3.0/arm-unknown-eabihf -I\${aw_sysroot}/include/c++/8.3.0"
 fi
 
