@@ -358,7 +358,7 @@ void SMALL tTVscreen::saveScreenshot() {
   for (int i = 0; i < 10000; ++i) {
     sprintf(screen_file, "screen_%04d.png", i);
     struct stat st;
-    if (_stat(screen_file, &st))
+    if (stat(screen_file, &st))
       break;
   }
   bfs.saveBitmap(screen_file, 0, 0, getGWidth(), getGHeight());

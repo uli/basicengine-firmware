@@ -229,11 +229,11 @@ uint8_t sdfiles::flist(char *_dir, char *wildcard, uint8_t clmnum) {
   if (strlen(_dir) == 0)
     _dir = (char *)".";
 
-  DIR *dir = _opendir(_dir);
+  DIR *dir = opendir(_dir);
 
   if (dir) {
     while (true) {
-      dirent *next = _readdir(dir);
+      dirent *next = readdir(dir);
       if (!next)
         break;
 
@@ -248,7 +248,7 @@ uint8_t sdfiles::flist(char *_dir, char *wildcard, uint8_t clmnum) {
         // Reduce SPI clock while doing screen writes.
         vs23.setSpiClockWrite();
         struct stat st;
-        _stat((BString(_dir) + BString(F("/")) + fname).c_str(), &st);
+        stat((BString(_dir) + BString(F("/")) + fname).c_str(), &st);
         putnum(st.st_size, 10);
         c_putch(' ');
         total_size += st.st_size;
@@ -265,7 +265,7 @@ uint8_t sdfiles::flist(char *_dir, char *wildcard, uint8_t clmnum) {
         cnt++;
       }
     }
-    _closedir(dir);
+    closedir(dir);
   } else {
     rc = SD_ERR_OPEN_FILE;
   }

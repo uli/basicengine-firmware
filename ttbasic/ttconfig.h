@@ -137,21 +137,6 @@
 
 #endif
 
-#ifdef ESP8266
-#define UNIFILE_USE_OLD_SPIFFS
-//#define UNIFILE_USE_FASTROMFS
-#define UNIFILE_USE_SDFAT
-#ifndef HOSTED
-#define UNIFILE_STDIO
-#endif
-#endif
-
-#ifdef ESP32
-#define UNIFILE_USE_NEW_SPIFFS
-#define UNIFILE_USE_NEW_SD
-#define UNIFILE_STDIO
-#endif
-
 #ifdef H3
 #define SD_PREFIX "/sd"
 #define __FLASH__
@@ -188,21 +173,6 @@
 #define PSX_ATTN_PIN	2
 #define PSX_CLK_PIN	4
 #define PSX_DELAY	1
-#endif
-
-#ifdef UNIFILE_STDIO
-#include <unifile_stdio.h>
-#else
-#define _opendir  opendir
-#define _closedir closedir
-#define _readdir  readdir
-#define _remove   remove
-#define _rename   rename
-#define _chdir    chdir
-#define _getcwd   getcwd
-#define _stat     stat
-#define _mkdir    mkdir
-#define _rmdir    rmdir
 #endif
 
 const char *gettext(const char *msg);

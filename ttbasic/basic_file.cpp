@@ -16,9 +16,9 @@ void SMALL basic_init_file_early() {
 #ifdef SDL
   char *root = getenv("ENGINEBASIC_ROOT");
   if (root)
-    _chdir(root);
+    chdir(root);
 #elif defined(H3)
-  if (!_chdir(SD_PREFIX))
+  if (!chdir(SD_PREFIX))
     bfs.fakeTime();
 #endif
 
@@ -121,7 +121,7 @@ out:
   // read entries, skip "." and ".."
   dirent *dir_entry;
   do {
-    dir_entry = _readdir(user_files[fnum].d);
+    dir_entry = readdir(user_files[fnum].d);
   } while (dir_entry && (!strcmp_P(dir_entry->d_name, PSTR(".")) ||
                          !strcmp_P(dir_entry->d_name, PSTR(".."))));
 
@@ -129,7 +129,7 @@ out:
     return BString();
 
   struct stat st;
-  _stat((user_files[fnum].dir_name + BString(F("/")) +
+  stat((user_files[fnum].dir_name + BString(F("/")) +
        BString(dir_entry->d_name)).c_str(), &st);
 
   retval[0] = st.st_size;
@@ -281,7 +281,7 @@ void Basic::ichdir() {
   if (!(new_cwd = getParamFname())) {
     return;
   }
-  if (_chdir(new_cwd.c_str()))
+  if (chdir(new_cwd.c_str()))
     err = ERR_FILE_OPEN;
 }
 
@@ -363,20 +363,20 @@ void Basic::iopen() {
       redirect_input_file = -1;
     user_files[filenum].f = NULL;
   } else if (user_files[filenum].d) {
-    _closedir(user_files[filenum].d);
+    closedir(user_files[filenum].d);
     user_files[filenum].d = NULL;
     user_files[filenum].dir_name = BString();
   }
 
   FILEDIR f = { NULL, NULL, "" };
   if (flags == NULL) {
-    f.d = _opendir(filename.c_str());
+    f.d = opendir(filename.c_str());
     char *cwd = new char[FILENAME_MAX];
-    if (_getcwd(cwd, FILENAME_MAX) == NULL) {
+    if (getcwd(cwd, FILENAME_MAX) == NULL) {
       delete[] cwd;
       err = ERR_LONGPATH;
       if (f.d)
-        _closedir(f.d);
+        closedir(f.d);
       return;
     }
     f.dir_name = BString(cwd) + BString(F("/")) + filename;
@@ -416,7 +416,7 @@ void Basic::iclose() {
         redirect_input_file = -1;
       user_files[filenum].f = NULL;
     } else {
-      _closedir(user_files[filenum].d);
+      closedir(user_files[filenum].d);
       user_files[filenum].d = NULL;
     }
   }
@@ -520,7 +520,7 @@ void Basic::imkdir() {
     return;
   }
 
-  rc = _mkdir(fname.c_str(), 0755);
+  rc = mkdir(fname.c_str(), 0755);
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -545,7 +545,7 @@ void Basic::irmdir() {
     return;
   }
 
-  rc = _rmdir(fname.c_str());
+  rc = rmdir(fname.c_str());
   if (rc == SD_ERR_INIT) {
     err = ERR_SD_NOT_READY;
   } else if (rc == SD_ERR_OPEN_FILE) {
@@ -577,7 +577,7 @@ void Basic::irename() {
   if (err)
     return;
 
-  rc = _rename(old_fname.c_str(), new_fname.c_str());
+  rc = rename(old_fname.c_str(), new_fname.c_str());
   if (rc)
     err = ERR_FILE_WRITE;
 }
@@ -604,7 +604,7 @@ void Basic::iremove() {
     return;
   }
 
-  bool rc = _remove(fname.c_str());
+  bool rc = remove(fname.c_str());
   if (rc) {
     err = ERR_FILE_WRITE;  // XXX: something more descriptive?
     return;

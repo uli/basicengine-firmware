@@ -6071,7 +6071,7 @@ static void show_logo() {
 void Basic::autoexec() {
   struct stat st;
   BString autoexec(F("autoexec.bas"));
-  if (_stat(autoexec.c_str(), &st) == 0) {
+  if (stat(autoexec.c_str(), &st) == 0) {
     sc0.peekKey();	// update internal key state
     if (eb_pad_state(0) == 0) {
       exec_sub(autoexec.c_str());
@@ -6182,7 +6182,7 @@ void SMALL Basic::basic() {
 
   PRINT_P(_("Directory "));
   char *cwd = new char[FILENAME_MAX];
-  if (_getcwd(cwd, FILENAME_MAX) == NULL)
+  if (getcwd(cwd, FILENAME_MAX) == NULL)
     c_puts_P(_("none"));
   else
     c_puts(cwd);

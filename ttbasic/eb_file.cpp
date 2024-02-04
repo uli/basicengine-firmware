@@ -8,7 +8,7 @@
 EBAPI int eb_file_exists(const char *name)
 {
     struct stat st;
-    if (_stat(name, &st))
+    if (stat(name, &st))
         return 0;
     else
         return 1;
@@ -17,7 +17,7 @@ EBAPI int eb_file_exists(const char *name)
 EBAPI int eb_is_directory(const char *name)
 {
     struct stat st;
-    if (_stat(name, &st))
+    if (stat(name, &st))
         return 0;
     else
         return S_ISDIR(st.st_mode);
@@ -26,7 +26,7 @@ EBAPI int eb_is_directory(const char *name)
 EBAPI int eb_is_file(const char *name)
 {
     struct stat st;
-    if (_stat(name, &st))
+    if (stat(name, &st))
         return 0;
     else
         return S_ISREG(st.st_mode);
@@ -35,7 +35,7 @@ EBAPI int eb_is_file(const char *name)
 EBAPI int eb_file_size(const char *name)
 {
     struct stat st;
-    if (_stat(name, &st))
+    if (stat(name, &st))
         return -1;
     else
         return st.st_size;
