@@ -540,6 +540,10 @@ num_t Basic::nsys() {
                 return 2;
 #elif defined(__linux__)
                 return 3;
+#elif defined(_WIN32)
+                return 4;
+#elif defined(__APPLE__)
+                return 5;
 #else
 #warning undefined system
                 return -1;
