@@ -85,7 +85,9 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_new_mode = -1;
 
   m_end_graphics = false;
+#ifndef __linux__
   createWindow();
+#endif
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   setMode(CONFIG.mode - 1);
@@ -103,7 +105,9 @@ void SDLGFX::end() {
   m_end_graphics = true;
   m_display_enabled = false;
   SDL_WaitThread(m_gfx_thread, NULL);
+#ifndef __linux__
   destroyWindow();
+#endif
 
   SDL_DestroyMutex(m_bufferlock);
   SDL_DestroyMutex(m_spritelock);
@@ -141,7 +145,9 @@ void SDLGFX::restart() {
   m_spritelock = SDL_CreateMutex();
 
   m_end_graphics = false;
+#ifndef __linux__
   createWindow();
+#endif
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
 
   setMode(m_current_mode_no);
@@ -402,6 +408,10 @@ extern "C" int gfx_thread(void *data) {
   Uint64 now, passed;
   SDLGFX *gfx = (SDLGFX *)data;
 
+#ifdef __linux__
+  gfx->createWindow();
+#endif
+
   while (!gfx->m_end_graphics) {
     if (gfx->m_new_mode != -1) {
       gfx->setModeInternal(gfx->m_new_mode);
@@ -429,6 +439,10 @@ extern "C" int gfx_thread(void *data) {
     }
     //printf("frame %d passed %ld\n", gfx->m_frame, passed);
   }
+
+#ifdef __linux__
+  gfx->destroyWindow();
+#endif
 
   return 0;
 }
