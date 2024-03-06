@@ -30,10 +30,10 @@ EBAPI int eb_bg_set_size(int bg, int tiles_w, int tiles_h) {
 
 EBAPI int eb_bg_set_pattern(int bg, int pattern_x, int pattern_y, int pattern_w) {
   if (check_param(bg, 0, MAX_BG - 1) ||
-      check_param(pattern_x, 0, sc0.getGWidth() - 1) ||
-      check_param(pattern_y, 0, vs23.lastLine() - 1) ||
+      check_param(pattern_x, 0, sc0.getGWidth()) ||
+      check_param(pattern_y, 0, vs23.lastLine()) ||
       // XXX: valid range depends on tile size
-      check_param(pattern_w, 0, sc0.getGWidth() - 1))
+      check_param(pattern_w, 0, sc0.getGWidth()))
     return -1;
 
   vs23.setBgPattern(bg, pattern_x, pattern_y, pattern_w);
@@ -55,8 +55,8 @@ EBAPI int eb_bg_set_window(int bg, int win_x, int win_y, int win_w, int win_h) {
   if (check_param(bg, 0, MAX_BG - 1) ||
       check_param(win_x, 0, sc0.getGWidth() - 1) ||
       check_param(win_y, 0, sc0.getGHeight() - 1) ||
-      check_param(win_w, 9, sc0.getGWidth() - win_x - 1) ||
-      check_param(win_h, 0, sc0.getGHeight() - win_y - 1))
+      check_param(win_w, 9, sc0.getGWidth() - win_x) ||
+      check_param(win_h, 0, sc0.getGHeight() - win_y))
     return -1;
 
   vs23.setBgWin(bg, win_x, win_y, win_w, win_h);
@@ -169,9 +169,9 @@ EBAPI void eb_sprite_off(void) {
 }
 
 EBAPI int eb_sprite_set_pattern(int s, int pat_x, int pat_y) {
-  if (check_param(s, 0, MAX_SPRITES - 1) ||
-      check_param(pat_x, 0, sc0.getGWidth() - 1) ||
-      check_param(pat_y, 0, vs23.lastLine() - 1))
+  if (check_param(s, 0, MAX_SPRITES) ||
+      check_param(pat_x, 0, sc0.getGWidth()) ||
+      check_param(pat_y, 0, vs23.lastLine()))
     return -1;
 
   vs23.setSpritePattern(s, pat_x, pat_y);
@@ -179,7 +179,7 @@ EBAPI int eb_sprite_set_pattern(int s, int pat_x, int pat_y) {
 }
 
 EBAPI int eb_sprite_set_size(int s, int w, int h) {
-  if (check_param(s, 0, MAX_SPRITES - 1) ||
+  if (check_param(s, 0, MAX_SPRITES) ||
       check_param(w, 1, MAX_SPRITE_W) ||
       check_param(h, 1, MAX_SPRITE_H))
     return -1;
@@ -189,7 +189,7 @@ EBAPI int eb_sprite_set_size(int s, int w, int h) {
 }
 
 EBAPI int eb_sprite_enable(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.enableSprite(s);
@@ -197,7 +197,7 @@ EBAPI int eb_sprite_enable(int s) {
 }
 
 EBAPI int eb_sprite_disable(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.disableSprite(s);
@@ -205,7 +205,7 @@ EBAPI int eb_sprite_disable(int s) {
 }
 
 EBAPI int eb_sprite_set_key(int s, ipixel_t key) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteKey(s, key);
@@ -213,7 +213,7 @@ EBAPI int eb_sprite_set_key(int s, ipixel_t key) {
 }
 
 EBAPI int eb_sprite_set_priority(int s, int prio) {
-  if (check_param(s, 0, MAX_SPRITES - 1) ||
+  if (check_param(s, 0, MAX_SPRITES) ||
       check_param(prio, 0, MAX_PRIO))
     return -1;
 
@@ -222,7 +222,7 @@ EBAPI int eb_sprite_set_priority(int s, int prio) {
 }
 
 EBAPI int eb_sprite_set_frame(int s, int frame_x, int frame_y, int flip_x, int flip_y) {
-  if (check_param(s, 0, MAX_SPRITES - 1) ||
+  if (check_param(s, 0, MAX_SPRITES) ||
       check_param(frame_x, 0, 255) ||
       check_param(frame_y, 0, 255))
     return -1;
@@ -232,7 +232,7 @@ EBAPI int eb_sprite_set_frame(int s, int frame_x, int frame_y, int flip_x, int f
 }
 
 EBAPI int eb_sprite_set_opacity(int s, int onoff) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteOpaque(s, onoff);
@@ -241,7 +241,7 @@ EBAPI int eb_sprite_set_opacity(int s, int onoff) {
 
 #ifdef USE_ROTOZOOM
 EBAPI int eb_sprite_set_angle(int s, double angle) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteAngle(s, angle);
@@ -249,7 +249,7 @@ EBAPI int eb_sprite_set_angle(int s, double angle) {
 }
 
 EBAPI int eb_sprite_set_scale_x(int s, double scale_x) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteScaleX(s, scale_x);
@@ -257,7 +257,7 @@ EBAPI int eb_sprite_set_scale_x(int s, double scale_x) {
 }
 
 EBAPI int eb_sprite_set_scale_y(int s, double scale_y) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteScaleY(s, scale_y);
@@ -267,7 +267,7 @@ EBAPI int eb_sprite_set_scale_y(int s, double scale_y) {
 
 #ifdef TRUE_COLOR
 EBAPI int eb_sprite_set_alpha(int s, uint8_t a) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.setSpriteAlpha(s, a);
@@ -276,14 +276,14 @@ EBAPI int eb_sprite_set_alpha(int s, uint8_t a) {
 #endif
 
 EBAPI int eb_sprite_reload(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return !vs23.spriteReload(s);
 }
 
 EBAPI int eb_sprite_move(int s, int x, int y) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   vs23.moveSprite(s, x, y);
@@ -330,7 +330,7 @@ EBAPI int eb_bg_set_tile(int bg, int x, int y, int t) {
 }
 
 EBAPI int eb_frameskip(int skip) {
-  if (check_param(skip, 0, 59))
+  if (check_param(skip, 0, 60))
     return -1;
 
   vs23.setFrameskip(skip);
@@ -338,7 +338,7 @@ EBAPI int eb_frameskip(int skip) {
 }
 
 EBAPI int eb_sprite_tile_collision(int s, int bg, int tile) {
-  if (check_param(s, 0, MAX_SPRITES - 1) ||
+  if (check_param(s, 0, MAX_SPRITES) ||
       check_param(bg, 0, MAX_BG - 1) ||
       check_param(tile, 0, 255))
     return -1;
@@ -347,43 +347,43 @@ EBAPI int eb_sprite_tile_collision(int s, int bg, int tile) {
 }
 
 EBAPI int eb_sprite_collision(int s1, int s2) {
-  if (check_param(s1, 0, MAX_SPRITES - 1) ||
-      check_param(s2, 0, MAX_SPRITES - 1))
+  if (check_param(s1, 0, MAX_SPRITES) ||
+      check_param(s2, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteCollision(s1, s2);
 }
 
 EBAPI int eb_sprite_enabled(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteEnabled(s);
 }
 
 EBAPI int eb_sprite_x(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteX(s);
 }
 
 EBAPI int eb_sprite_y(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteY(s);
 }
 
 EBAPI int eb_sprite_w(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteWidth(s);
 }
 
 EBAPI int eb_sprite_h(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteHeight(s);
@@ -439,35 +439,35 @@ EBAPI int eb_bg_enabled(int bg) {
 }
 
 EBAPI int eb_sprite_frame_x(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteFrameX(s);
 }
 
 EBAPI int eb_sprite_frame_y(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteFrameY(s);
 }
 
 EBAPI int eb_sprite_flip_x(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteFlipX(s);
 }
 
 EBAPI int eb_sprite_flip_y(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteFlipY(s);
 }
 
 EBAPI int eb_sprite_opaque(int s) {
-  if (check_param(s, 0, MAX_SPRITES - 1))
+  if (check_param(s, 0, MAX_SPRITES))
     return -1;
 
   return vs23.spriteOpaque(s);
