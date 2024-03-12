@@ -434,6 +434,16 @@ extern "C" int gfx_thread(void *data) {
 
         SDL_RenderClear(sdl_renderer);
         SDL_RenderCopy(sdl_renderer, gfx->m_texture, NULL, NULL);
+
+        // XXX: If we arrive here more than ca. 6 ms into the frame, this
+        // always blocks for an additional frame when using the kmsdrm SDL
+        // driver.
+        // - observed with sun4i DRM driver
+        // - does not happen if SDL_HINT_VIDEO_DOUBLE_BUFFER is off
+        // - does not happen with physical resolutions below 1080p.
+        // - looking at the SDL code, this is likely an issue further down
+        //   the stack
+        // We might need a workaround for that.
         SDL_RenderPresent(sdl_renderer);
         now = SDL_GetPerformanceCounter();
         passed = now - last;
