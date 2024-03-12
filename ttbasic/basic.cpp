@@ -2963,17 +2963,33 @@ void BASIC_INT Basic::draw_profile(void) {
     vs23.setBorder(0x20, 0, x, bw - x);
 }
 
+#ifdef SDL
+#define SDL_POLL_COUNTER_INIT 20
+#define SDL_INPUT_LATENCY_MS 4
+#endif
+
 void BASIC_FP process_events(void) {
   static uint32_t last_frame;
+
 #ifdef SDL
-  static bool extra_poll = false;
   // Polling input once after each frame introduces considerable input lag.
   // Event handling on SDL is relatively expensive, however, so we can only
-  // afford a single extra poll. Fortunately, that seems to be good enough
-  // to prevent excessive lag.
-  if (!extra_poll) {
-    extra_poll = true;
-    platform_process_events();
+  // afford a few extra polls, which we perform at SDL_INPUT_LATENCY_MS
+  // intervals.
+  // This function is called _very_ often, and even SDL_GetTicks64() does
+  // take some cycles to run, so we only check if it's time to poll every
+  // SDL_POLL_COUNTER_INIT calls.
+
+  Uint64 now;
+  static Uint64 last_extra_poll = 0;
+  static int poll_counter = SDL_POLL_COUNTER_INIT;
+  if (--poll_counter <= 0) {
+    Uint64 now = SDL_GetTicks64();
+    if (now >= last_extra_poll + SDL_INPUT_LATENCY_MS) {
+      last_extra_poll = now;
+      platform_process_events();
+    }
+    poll_counter = SDL_POLL_COUNTER_INIT;
   }
 #endif
 
@@ -2989,7 +3005,7 @@ void BASIC_FP process_events(void) {
   }
 
 #ifdef SDL
-  extra_poll = false;
+  last_extra_poll = SDL_GetTicks64();
 #endif
 
   last_frame = vs23.frame();
