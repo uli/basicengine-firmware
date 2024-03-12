@@ -461,8 +461,7 @@ void SDLGFX::updateBgScale() {
   last_frame = frame();
 
   if (!m_bg_modified && !m_dirty && m_external_layers.size() == 0) {
-    // nothing fancy going on -> save some power
-    SDL_Delay(10);
+    // nothing going on
     return;
   }
 
