@@ -391,6 +391,8 @@ void SDLGFX::setColorSpace(uint8_t palette) {
 
 void SDLGFX::createWindow()
 {
+  SDL_SetHint(SDL_HINT_VIDEO_DOUBLE_BUFFER, "1");
+
   sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h,
                                 sdl_flags);
