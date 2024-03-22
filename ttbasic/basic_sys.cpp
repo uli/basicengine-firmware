@@ -521,7 +521,8 @@ The following internal information can be retrieved using `SYS()`:
 | `0` | memory address of BASIC program buffer
 | `1` | memory address of current font
 | `2` | system type; `0` for original (ESP8266), `1` for Shuttle (ESP32),
-        `2` for NG (H3 bare-metal), `3` for LT (Linux-based)
+        `2` for NG (H3 bare-metal), `3` for LT (Linux/SDL-based), `4` for RX
+        (Linux/bare-metal hybrid), `5` for Windows, `6` for MacOS.
 \endtable
 ***/
 num_t Basic::nsys() {
@@ -540,10 +541,12 @@ num_t Basic::nsys() {
                 return 2;
 #elif defined(__linux__)
                 return 3;
-#elif defined(_WIN32)
+#elif defined(JAILHOUSE)
                 return 4;
-#elif defined(__APPLE__)
+#elif defined(_WIN32)
                 return 5;
+#elif defined(__APPLE__)
+                return 6;
 #else
 #warning undefined system
                 return -1;
