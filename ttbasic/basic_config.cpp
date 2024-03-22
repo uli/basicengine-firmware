@@ -168,13 +168,19 @@ removed in future releases.
   (Only available on platforms that support screen recording.) +
   `0` enabled, `1` disabled.
 
+* `13`: Name of audio device to be used. +
+  When set to "default" (which is, unsurprisingly, the default), an
+  appropriate audio device will be chosen automatically. Otherwise, the
+  specified audio device will be used. To find out what audio devices are
+  available you can use the `SYS$(1, index)` function.
+
 \note
 To restore the default configuration, run the command `REMOVE
 "/sd/config.ini"` and restart the system.
 \ref BEEP FONT SAVE_CONFIG SCREEN
 ***/
 
-#define MAX_CONFIG_IDX 13
+#define MAX_CONFIG_IDX 14
 
 const char *config_option_strings[MAX_CONFIG_IDX + 1] = {
   "tv_norm",
@@ -191,6 +197,7 @@ const char *config_option_strings[MAX_CONFIG_IDX + 1] = {
   "language",
   "record_at_boot",
   "editor",
+  "audio_device",
 };
 
 void SMALL Basic::iconfig() {
@@ -324,6 +331,10 @@ void SMALL Basic::iconfig() {
     setenv("EDITOR", CONFIG.editor.c_str(), 1);
     break;
 
+  case 14:
+    CONFIG.audio_device = istrexp();
+    break;
+
   default:
     E_VALUE(0, MAX_CONFIG_IDX);
     break;
@@ -357,6 +368,7 @@ void loadConfig() {
   CONFIG.phys_mode = 0;
 #endif
   CONFIG.editor = BString("joe");
+  CONFIG.audio_device = BString("default");
 
   // XXX: colorspace is not initialized yet, cannot use conversion methods
   if (sizeof(pixel_t) == 1)
@@ -408,6 +420,7 @@ void loadConfig() {
       if (!strcasecmp(line, "record_at_boot")) CONFIG.record_at_boot = atoi(v);
 #endif
       if (!strcasecmp(line, "editor")) CONFIG.editor = BString(v);
+      if (!strcasecmp(line, "audio_device")) CONFIG.audio_device = BString(v);
     }
   }
   fclose(f);
@@ -444,6 +457,7 @@ void isaveconfig() {
   fprintf(f, "record_at_boot=%u\n", CONFIG.record_at_boot);
 #endif
   fprintf(f, "editor=%s\n", CONFIG.editor.c_str());
+  fprintf(f, "audio_device=%s\n", CONFIG.audio_device.c_str());
   for (int i = 0; i < CONFIG_COLS; ++i)
     fprintf(f, "color%d=%d,%d,%d\n", i,
       CONFIG.color_scheme[i][0],

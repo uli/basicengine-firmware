@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include "eb_config.h"
+#include "eb_types.h"
 
 #include "BString.h"
 
@@ -28,6 +29,7 @@ typedef struct {
 #endif
   bool record_at_boot;
   BString editor;
+  BString audio_device;
 } SystemConfig;
 
 extern SystemConfig CONFIG;
