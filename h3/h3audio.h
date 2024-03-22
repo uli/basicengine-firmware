@@ -48,6 +48,20 @@ public:
 
   friend void ::hook_audio_get_sample(int16_t *l, int16_t *r);
 
+  BString deviceAvailable(int idx) {
+    if (idx == 0)
+      return BString("default");
+    else
+      return BString(nullptr);
+  }
+
+  BString deviceUsed() {
+    if (idx == 0)
+      return BString("default");
+    else
+      return BString(nullptr);
+  }
+
 private:
   static void timerInterrupt(H3Audio *audioOutput);
 

@@ -46,6 +46,14 @@ public:
   inline void pumpEvents() {
   }
 
+  BString deviceAvailable(int idx) {
+    return BString(SDL_GetAudioDeviceName(idx, 0));
+  }
+
+  BString deviceUsed() {
+    return BString(SDL_GetAudioDeviceName(m_audio_device_idx, 0));
+  }
+
 private:
   static void fillAudioBuffer(void *userdata, Uint8 *samples, int len);
 
@@ -54,6 +62,8 @@ private:
 
   static int m_block_size;
   static sample_t m_sound_buf[2][SOUND_BUFLEN * SOUND_CHANNELS];
+
+  int m_audio_device_idx;	// index to SDL_GetAudioDeviceName(), not SDL audio device ID!
 };
 
 extern SDLAudio audio;

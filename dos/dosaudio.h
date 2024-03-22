@@ -43,6 +43,20 @@ public:
       doFillPciBuffer();
   }
 
+  BString deviceAvailable(int idx) {
+    if (idx == 0)
+      return BString("default");
+    else
+      return BString(nullptr);
+  }
+
+  BString deviceUsed() {
+    if (idx == 0)
+      return BString("default");
+    else
+      return BString(nullptr);
+  }
+
 private:
   static void timerInterrupt(DOSAudio *audioOutput);
 

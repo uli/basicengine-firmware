@@ -4,6 +4,8 @@
 #include "ttconfig.h"
 
 #include <stdint.h>
+#include "BString.h"
+
 #ifdef AUDIO_16BIT
 typedef int16_t sample_t;
 #else
