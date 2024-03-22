@@ -6124,6 +6124,14 @@ void SMALL Basic::basic() {
 
   basic_init_file_early();
 
+  // Initialize I2S to default sample rate, start transmission.
+#ifdef AUDIO_SAMPLE_RATE
+  audio.init(AUDIO_SAMPLE_RATE);
+#else
+#error fuq
+  audio.init(16000);
+#endif
+
   vs23.begin(CONFIG.interlace, CONFIG.lowpass, CONFIG.NTSC != 0);
   vs23.setLineAdjust(CONFIG.line_adjust);
   vs23.setColorSpace(DEFAULT_COLORSPACE);
