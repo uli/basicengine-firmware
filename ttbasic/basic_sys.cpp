@@ -524,6 +524,7 @@ The following internal information can be retrieved using `SYS()`:
         `2` for NG (H3 bare-metal), `3` for LT (Linux/SDL-based), `4` for RX
         (Linux/bare-metal hybrid), `5` for Windows, `6` for MacOS.
 \endtable
+\ref SYS$
 ***/
 num_t Basic::nsys() {
   int32_t item = getparam();
@@ -553,6 +554,55 @@ num_t Basic::nsys() {
 #endif
   default:	E_VALUE(0, 2); return 0;
   }
+}
+
+/***bf sys SYS$
+Retrieve internal system addresses and parameters.
+\usage a = SYS$(item[, index])
+\args
+@item	number of the item of information to be retrieved
+@index	number of the subitem to be retrieved
+\ret Requested information.
+\sec ITEMS
+The following internal information can be retrieved using `SYS$()`:
+\table
+| `0` | audio device currently used
+| `1` | name of the audio device `index`
+\endtable
+\note
+* The audio device names provided are only meaningful on LT platforms. Other
+  platforms always return the string "default".
+\ref SYS
+***/
+BString Basic::ssys() {
+  if (checkOpen())
+    return BString();
+  int32_t item = iexp();
+  if (err)
+    return BString();
+
+  BString ret;
+
+  switch (item) {
+  case 0:	ret = audio.deviceUsed(); break;
+
+  case 1:	{
+                  if (*cip++ != I_COMMA) {
+                    E_ERR(SYNTAX, "expected audio device ID");
+                    return BString();
+                  }
+                  int32_t idx = iexp();
+                  if (!err)
+                    ret = audio.deviceAvailable(idx);
+                }
+                break;
+
+  default:	E_VALUE(0, 1); break;
+  }
+  if (!err)
+    checkClose();
+
+  return ret;
 }
 
 #ifdef __DJGPP__

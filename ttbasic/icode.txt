@@ -246,6 +246,7 @@ STRING$	I_STRINGSTR	sstring
 SWRITE	I_SWRITE	iswrite
 SYSINFO	I_SYSINFO	isysinfo
 SYSTEM	I_SYSTEM	isystem
+SYS$	I_SYSSTR	ssys
 SYS	I_SYS		isys
 TAB	I_TAB		esyntax
 TAN	I_TAN		ntan
