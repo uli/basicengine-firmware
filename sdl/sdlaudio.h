@@ -64,6 +64,7 @@ private:
   static sample_t m_sound_buf[2][SOUND_BUFLEN * SOUND_CHANNELS];
 
   int m_audio_device_idx;	// index to SDL_GetAudioDeviceName(), not SDL audio device ID!
+  int m_audio_device_id;
 };
 
 extern SDLAudio audio;

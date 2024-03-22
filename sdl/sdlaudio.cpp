@@ -4,6 +4,7 @@
 #include "sdlaudio.h"
 
 #include <SDL.h>
+#include <config.h>
 #include <sound.h>
 
 SDLAudio audio;
@@ -33,12 +34,18 @@ void SDLAudio::fillAudioBuffer(void *userdata, Uint8 *stream, int len) {
     off = (off + len / sizeof(sample_t)) % (m_block_size * SOUND_CHANNELS);
 }
 
+static const char *preferred_devices[] = {
+  "HDMI",
+  "codec",
+  "analog",
+};
+
 void SDLAudio::init(int sample_rate) {
   static bool inited = false;
 
   if (inited) {
     SDL_LockAudio();
-    SDL_CloseAudio();
+    SDL_CloseAudioDevice(m_audio_device_id);
     SDL_UnlockAudio();
   }
 
@@ -48,18 +55,53 @@ void SDLAudio::init(int sample_rate) {
   m_curr_buf = m_sound_buf[m_read_buf ^ 1];
   m_block_size = SOUND_BUFLEN;
 
-  SDL_AudioSpec desired;
+  const char *audio_dev = nullptr;
+
+  if (CONFIG.audio_device == BString("default")) {
+    if (strstr(SDL_GetCurrentAudioDriver(), "alsa")) {
+      // SDL doesn't do a good-enough job on embedded systems to find a
+      // viable output device, so we try to do it ourselves.
+
+      for (auto pref : preferred_devices) {
+        for (int i = 0; i < SDL_GetNumAudioDevices(0); ++i) {
+          const char *dev = SDL_GetAudioDeviceName(i, 0);
+
+          printf("outdev %d %s\n", i, dev);
+          if (strcasestr(dev, pref)) {
+            printf("matches %s\n", pref);
+            audio_dev = dev;
+            break;
+          }
+        }
+
+        if (audio_dev)
+          break;
+      }
+
+      if (!audio_dev) {
+        audio_dev = SDL_GetAudioDeviceName(0, 0);
+        printf("no match, using first device\n");
+      }
+    }
+  } else {
+    audio_dev = CONFIG.audio_device.c_str();
+  }
+
+  printf("chosen audio device: %s\n", audio_dev ? : "default");
+
+  SDL_AudioSpec desired, obtained;
+
   desired.freq = sample_rate;
   desired.format = AUDIO_S16;
   desired.channels = SOUND_CHANNELS;
   desired.samples = SOUND_BUFLEN * SOUND_CHANNELS;
   desired.callback = fillAudioBuffer;
 
-  if (SDL_OpenAudio(&desired, NULL) < 0)
-    fprintf(stderr, "Couldn't open audio: %s", SDL_GetError());
+  if (!(m_audio_device_id = SDL_OpenAudioDevice(audio_dev, 0, &desired, &obtained, 0)))
+    fprintf(stderr, "Couldn't open audio device %s: %s", audio_dev, SDL_GetError());
   else {
     inited = true;
-    SDL_PauseAudio(0);
+    SDL_PauseAudioDevice(m_audio_device_id, 0);
   }
 }
 
