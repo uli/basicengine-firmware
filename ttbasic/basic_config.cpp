@@ -83,7 +83,7 @@ have been saved using <<SAVE CONFIG>>. Changing power-on default options does no
 affect the system until the options are saved and the system is restarted.
 \usage CONFIG option, value
 \args
-@option	configuration option to be set [`0` to `8`]
+@option	configuration option to be set [`0` to `13`]
 @value	option value
 \sec OPTIONS
 The following options exist:
