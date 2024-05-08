@@ -47,7 +47,7 @@ out:
 Returns a specified number of leftmost characters in a string.
 \usage s$ = LEFT$(l$, num)
 \args
-@l	any string expression
+@l$	any string expression
 @num	number of characters to return [min `0`]
 \ret Substring of `num` characters or less.
 \note
@@ -61,7 +61,7 @@ BString BASIC_INT Basic::sleft() {
 Returns a specified number of rightmost characters in a string.
 \usage s$ = RIGHT$(r$, num)
 \args
-@r	any string expression
+@r$	any string expression
 @num	number of characters to return [min `0`]
 \ret Substring of `num` characters or less.
 \note
@@ -76,7 +76,7 @@ BString BASIC_INT Basic::sright() {
 Returns a specified number of leftmost bytes in a byte string.
 \usage s$ = BLEFT$(l$, num)
 \args
-@l	any string expression
+@l$	any string expression
 @num	number of bytes to return [min `0`]
 \ret Substring of `num` bytes or less.
 \note
@@ -90,7 +90,7 @@ BString BASIC_INT Basic::sbleft() {
 Returns a specified number of rightmost bytes in a byte string.
 \usage s$ = RIGHT$(r$, num)
 \args
-@r	any string expression
+@r$	any string expression
 @num	number of bytes to return [min `0`]
 \ret Substring of `num` bytes or less.
 \note
@@ -446,7 +446,7 @@ alphabetically, `0` otherwise.
 Converts string to all-lowercase letters.
 \usage s$ = LCASE$(s$)
 \args
-@s	string to convert
+@s$	string to convert
 \ret
 Value of `s$` with all letters replaced with their lowercase equivalents.
 \ref UCASE$
@@ -466,7 +466,7 @@ BString Basic::slcase() {
 Converts string to all-uppercase letters.
 \usage s$ = UCASE$(s$)
 \args
-@s	string to convert
+@s$	string to convert
 \ret
 Value of `s$` with all letters replaced with their uppercase equivalents.
 \ref LCASE$
