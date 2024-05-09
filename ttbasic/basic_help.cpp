@@ -320,6 +320,12 @@ void Basic::ihelp() {
 
     while (!end_of_statement()) {
         int token = *cip++;
+
+        // CALL and FN are always followed a procedure id, even if no
+        // procedure has been specified, so we need to skip it.
+        if (token == I_CALL || token == I_FN)
+            ++cip;
+
         if (kwtbl[token])
           tokens.push_back(kwtbl[token]);
         else {
