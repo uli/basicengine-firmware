@@ -1,0 +1,4 @@
+5 LIST:END
+10 PRINT"\\ \\"
+20 PRINT"\ \\"
+30 PRINT"\\ \"
