@@ -437,6 +437,17 @@ int c_printf(const char *f, ...) {
   return ret;
 }
 
+int c_printf_devno(uint8_t devno, const char *f, ...) {
+  char *out;
+  va_list ap;
+  va_start(ap, f);
+  int ret = vasprintf(&out, f, ap);
+  va_end(ap);
+  c_puts(out, devno);
+
+  return ret;
+}
+
 // Print numeric specified columns
 // arguments
 //  value : Output target value
@@ -1661,9 +1672,9 @@ handle_comment_strings:
 
         utf8codepoint(tmp_utf8, &codepoint);
         if (codepoint < 32)
-          c_printf("\\x%02x", codepoint);
+          c_printf_devno(devno, "\\x%02x", codepoint);
         else if (codepoint >= ESC_CODE && codepoint < ESC_CODE_END)
-          c_printf("\\%c", codepoint - ESC_CODE);
+          c_printf_devno(devno, "\\%c", codepoint - ESC_CODE);
         else
           c_putch(codepoint, devno);  //ポインタを進めながら文字を表示
       }
