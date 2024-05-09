@@ -20,7 +20,7 @@
 187 CIT=I-1
 190 RESTORE
 210 PRINT C_LS$:FOR I= 1 TO CIT STEP 20:FOR J= 1 TO 20:K=I+J-1:IF CITY$(K)="end" THEN 212 
-211 PRINT USING "###: \                               \";J,CITY$(K):NEXT J
+211 PRINT USING "###: \\                               \\";J,CITY$(K):NEXT J
 212 INPUT "Which city # (#,m=more) ";Z$
 213 IF Z$="m" OR Z$="M" THEN CLS:GOTO 218 ELSE Z=VAL(Z$):IF Z<1 OR Z>20 THEN 218
 214 Z=Z+I-1:DT=LAT(Z,1):MT=LAT(Z,2):ST=LAT(Z,3):DG=LONG(Z,1):MG=LONG(Z,2):SG=LONG(Z,3):CIT$=CITY$(Z):GOTO 240
@@ -37,7 +37,7 @@
 310 SATLONG=ANGLE_(NUM)*PI/180:GOSUB 420
 320 ELD=INT(EL):ELM1=EL-ELD:ELM=INT(ELM1*60):ELS=INT(ELM1*3600-ELM*60+.5)
 330 AZD=INT(AZ):AZM1=AZ-AZD:AZM=INT(AZM1*60):AZS=INT(AZM1*3600-AZM*60+.5)
-340 PRINT USING ":\           \: ###'##'## : ###'##'## :";SAT$(NUM),ELD,ELM,ELS,AZD,AZM,AZS
+340 PRINT USING ":\\           \\: ###'##'## : ###'##'## :";SAT$(NUM),ELD,ELM,ELS,AZD,AZM,AZS
 350 NEXT NUM
 360     PRINT "======================================="
 370 PRINT USING "Latitude    ###'##'##";DT,MT,ST;
