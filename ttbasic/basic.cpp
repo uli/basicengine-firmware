@@ -1675,6 +1675,8 @@ handle_comment_strings:
           c_printf_devno(devno, "\\x%02x", codepoint);
         else if (codepoint >= ESC_CODE && codepoint < ESC_CODE_END)
           c_printf_devno(devno, "\\%c", codepoint - ESC_CODE);
+        else if (codepoint == '\\')
+          c_puts("\\\\", devno);
         else
           c_putch(codepoint, devno);  //ポインタを進めながら文字を表示
       }
