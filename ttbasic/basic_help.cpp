@@ -136,7 +136,15 @@ static void print_wrapped(const char *text) {
                 utf8_int32_t dummy;
                 tp = (const char *)utf8rcodepoint(tp, &dummy);
             }
+
+            // HACK: avoid getting stuck in the middle of a legacy escape sequence
+            // the proper solution is to decode the entire string first and then
+            // run this loop.
+            if (tp > tps.c_str() && isalpha(tp[-1]) && tp[-2] == '\\')
+                tp -= 2;
+
             c_putch('\n');
+
             while (sc0.c_x() < indent)
                 c_putch(' ');
             if (*tp == ' ')
