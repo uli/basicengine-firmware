@@ -931,22 +931,11 @@ as local variables or arguments.
       // Attempt to convert to a character string
 
       c = *s++;  // Remember " and go to the next character
-      ptok = s;  // Points to the beginning of the string
-
-      // Get the number of characters in a string
-      for (i = 0; *ptok && (*ptok != c); i++)
-        ptok++;
-
-      if (len >= SIZE_IBUF - 3 - i) {  // if the intermediate code is too long
-        err = ERR_IBUFOF;
-        return 0;
-      }
-
       BString sstr;
       ibuf[len++] = I_STR;
       int len_idx = len++; // where we will have to record the number of characters later
       bool escape = false;
-      while (i--) {
+      while (*s != 0 && !(*s == '"' && escape == false) && len < SIZE_IBUF - 3) {
         if (*s == '\\' && !escape) {
           escape = true;
           ++s;
@@ -994,6 +983,8 @@ as local variables or arguments.
           ibuf[len++] = *s++;  // Record character
         }
       }
+      ptok = s;
+
       ibuf[len_idx] = len - len_idx - 1;
 
       if (is_require) {
