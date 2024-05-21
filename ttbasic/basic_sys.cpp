@@ -618,6 +618,10 @@ BString Basic::ssys() {
 #include <sys/sysinfo.h>
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 uint64_t SMALL Basic::getFreeMemory() {
 #if defined(H3)
   return sys_mem_free();
@@ -630,6 +634,11 @@ uint64_t SMALL Basic::getFreeMemory() {
   } else {
     return -1;
   }
+#elif defined(_WIN32)
+  MEMORYSTATUSEX status;
+  status.dwLength = sizeof(status);
+  GlobalMemoryStatusEx(&status);
+  return status.ullAvailPhys;
 #else
   return -1;
 #endif
