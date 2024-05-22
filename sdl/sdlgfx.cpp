@@ -328,6 +328,10 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
 
   setBorder(0, 0, 0, m_current_mode.x);
 
+  SDL_RenderClear(sdl_renderer);
+  SDL_RenderPresent(sdl_renderer);
+  SDL_RenderClear(sdl_renderer);
+
   SDL_mutexV(m_bufferlock);
 
   return true;
@@ -432,7 +436,6 @@ extern "C" int gfx_thread(void *data) {
       }
         gfx->m_frame++;
 
-        SDL_RenderClear(sdl_renderer);
         SDL_RenderCopy(sdl_renderer, gfx->m_texture, NULL, NULL);
 
         // XXX: If we arrive here more than ca. 6 ms into the frame, this
