@@ -170,6 +170,8 @@ rule initdir
             cp -p fonts/k8x12w.ttf fonts/misaki_gothic_w.ttf \$out/sys/fonts/ && \$
             mkdir -p \$out/sys/ui && \$
             cp -p ui/* \$out/sys/ui/ && \$
+            mkdir -p \$out/sys/kbd && \$
+            cp -p kbd/* \$out/sys/kbd/ && \$
             cp -p sdl/gamecontrollerdb.txt \$out/sys/ && \$
             rsync -a tests/ \$out/tests/
 
