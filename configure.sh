@@ -46,7 +46,7 @@ generate_build() {
 }
 
 # (non-English) languages
-LANGS="de fr es ja"
+LANGS="de fr es ja ru"
 
 # source files common to all builds
 COMMON_SOURCES="`echo ttbasic/*.cpp libraries/TTBAS_LIB/*.cpp \

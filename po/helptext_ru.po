@@ -1,0 +1,4176 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Stanislav Yudin aka CityAceE\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "Ensures that a given module is loaded."
+msgstr "Обеспечивает загрузку заданного модуля."
+
+msgid "module name"
+msgstr "имя модуля"
+
+msgid "Checks if a module called `module_name` has alredy been loaded. If not, it will search for the module in `/sys/modules/module_name` and load it. If no module is found, it will generate an error."
+msgstr "Проверяет, был ли уже загружен модуль с именем `module_name`. Если нет, то будет искать модуль в `/sys/modules/module_name` и загрузит его. Если модуль не найден, будет выдана ошибка."
+
+msgid "The behavior of `#REQUIRE` differs from that of other BASIC commands. It is executed as soon as it is spotted by the interpreter, for instance when loading a program."
+msgstr "Поведение `#REQUIRE` отличается от поведения других команд BASIC. Она выполняется, как только её обнаруживает интерпретатор, например, при загрузке программы."
+
+msgid "This means that `#REQUIRE` will already generate an error when loading a program if the specified module cannot be found."
+msgstr "Это означает, что `#REQUIRE` будет выдавать ошибку уже при загрузке программы, если указанный модуль не может быть найден."
+
+msgid "When executed during normal program flow, `#REQUIRE` will not do anything."
+msgstr "При выполнении в обычном ходе программы, `#REQUIRE` ничего не делает."
+
+msgid "Multiplication operator."
+msgstr "Оператор умножения."
+
+msgid "Product of `a` and `b`."
+msgstr "Произведение `a` и `b`."
+
+msgid "3"
+msgstr "3"
+
+msgid "Numeric addition operator."
+msgstr "Оператор сложения чисел."
+
+msgid "Sum of `a` and `b`."
+msgstr "Сумма `a` и `b`."
+
+msgid "4"
+msgstr "4"
+
+msgid "String concatenation operator."
+msgstr "Оператор конкатенации строк."
+
+msgid "Concatenation of `a$` and `b$`."
+msgstr "Конкатенация `a$` и `b$`."
+
+msgid "Identity operator."
+msgstr "Оператор идентификации."
+
+msgid "`a`."
+msgstr "`a`."
+
+msgid "This operator serves decorative purposes only."
+msgstr "Этот оператор служит только для оформления."
+
+msgid "2"
+msgstr "2"
+
+msgid "Numeric subtraction operator."
+msgstr "Оператор вычитания чисел."
+
+msgid "Difference of `a` and `b`."
+msgstr "Разница между `a` и `b`."
+
+msgid "Negation operator."
+msgstr "Оператор отрицания."
+
+msgid "The negative of `a`."
+msgstr "Отрицательное `a`."
+
+msgid "Division operator."
+msgstr "Оператор деления."
+
+msgid "Quotient of `a` and `b`."
+msgstr "Частное от `a` и `b`."
+
+msgid "Less-than operator."
+msgstr "Оператор меньше."
+
+msgid "`-1` if `a` is less than `b`, `0` otherwise."
+msgstr "`-1`, если `a` меньше `b`, иначе `0`."
+
+msgid "6"
+msgstr "6"
+
+msgid "String less-than operator."
+msgstr "Строковый оператор меньше."
+
+msgid "`-1` if the value of `a$` precedes the value of `b$` when sorted alphabetically, `0` otherwise."
+msgstr "`-1`, если значение `a$` предшествует значению `b$` при сортировке по алфавиту, иначе `0`."
+
+msgid "5"
+msgstr "5"
+
+msgid "Bit-shift operator, left."
+msgstr "Оператор битового сдвига влево."
+
+msgid "`a` converted to an unsigned integer and shifted left by `b` bits."
+msgstr "`a` преобразуется в беззнаковое целое число и сдвигается влево на `b` бит."
+
+msgid "Inequality operator."
+msgstr "Оператор неравенства."
+
+msgid "`-1` if `a` and `b` are not equal, `0` otherwise."
+msgstr "`-1`, если `a` и `b` не равны, иначе `0`."
+
+msgid "String inequality operator."
+msgstr "Оператор строкового неравенства."
+
+msgid "`-1` if the value of `a$` is different from the value of `b$`, `0` otherwise."
+msgstr "`-1`, если значение `a$` отличается от значения `b$`, иначе `0`."
+
+msgid "Equality operator."
+msgstr "Оператор равенства."
+
+msgid "`-1` if `a` and `b` are equal, `0` otherwise."
+msgstr "`-1`, если `a` и `b` равны, иначе `0`."
+
+msgid "String equality operator."
+msgstr "Оператор строкового равенства."
+
+msgid "`-1` if the value of `a$` is identical to the value of `b$`, `0` otherwise."
+msgstr "`-1`, если значение `a$` идентично значению `b$`, иначе `0`."
+
+msgid "Greater-than operator."
+msgstr "Оператор больше."
+
+msgid "`-1` if `a` is greater than `b`, `0` otherwise."
+msgstr "`-1`, если `a` больше, чем `b`, иначе `0`."
+
+msgid "String greater-than operator."
+msgstr "Строковый оператор больше."
+
+msgid "`-1` if the value of `a$` succeeds the value of `b$` when sorted alphabetically, `0` otherwise."
+msgstr "`-1`, если значение `a$` следует за значением `b$` при сортировке по алфавиту , иначе `0`."
+
+msgid "Greater-than-or-equal operator."
+msgstr "Оператор больше или равно."
+
+msgid "`-1` if `a` is greater than or equal to `b`, `0` otherwise."
+msgstr "`-1`, если `a` больше или равно `b`, иначе `0`."
+
+msgid "Bit-shift operator, right."
+msgstr "Оператор битового сдвига вправо."
+
+msgid "`a` converted to an unsigned integer and shifted right by `b` bits."
+msgstr "`a` преобразуется в беззнаковое целое число и сдвигается вправо на `b` бит."
+
+msgid "Returns the absolute value of a number."
+msgstr "Возвращает абсолютное значение числа."
+
+msgid "any numeric expression"
+msgstr "любое числовое выражение"
+
+msgid "Absolute value of `num`."
+msgstr "Абсолютное значение `num`."
+
+msgid "Reads value from the analog input pin."
+msgstr "Считывает значение с контакта аналогового входа."
+
+msgid "Analog value read."
+msgstr "Прочитанное аналогового значения."
+
+msgid "Bitwise AND operator."
+msgstr "Побитовый оператор И."
+
+msgid "Bitwise conjunction of `a` and `b`."
+msgstr "Побитовая конъюнкция `a` и `b`."
+
+msgid "7"
+msgstr "7"
+
+msgid "Like most BASIC implementations, Engine BASIC does not have a dedicated \"logical AND\" operator; instead, the bitwise operator is used."
+msgstr "Как и в большинстве реализаций BASIC, в BASIC Engine нет специального оператора \"логическое И\"; вместо него используется побитовый оператор."
+
+msgid "Appends an element to the end of a list."
+msgstr "Добавляет элемент в конец списка."
+
+msgid "a numeric or string list variable"
+msgstr "числовая или строковая переменная списка"
+
+msgid "a numeric or string expression"
+msgstr "числовое или строковое выражение"
+
+msgid "Returns a numeric argument passed to a procedure."
+msgstr "Возвращает числовой аргумент, переданный процедуре."
+
+msgid "number of the numeric argument"
+msgstr "номер числового аргумента"
+
+msgid "Argument value."
+msgstr "Значение аргумента."
+
+msgid "An error is generated if no numeric arguments have been passed, `num` is equal to or larger than `ARGC(0)`, or the function is evaluated outside a procedure."
+msgstr "Генерируется ошибка, если не было передано числовых аргументов, `num` равно или больше, чем `ARGC(0)`, или функция вычисляется вне процедуры."
+
+msgid "Returns a string argument passed to a procedure."
+msgstr "Возвращает строковый аргумент, переданный процедуре."
+
+msgid "number of the string argument"
+msgstr "номер строкового аргумента"
+
+msgid "An error is generated if no string arguments have been passed, `num` is equal to or larger than `ARGC(1)`, or the function is evaluated outside a procedure."
+msgstr "Генерируется ошибка, если не было передано строковых аргументов, `num` равно или больше, чем `ARGC(1)`, или функция вычисляется вне процедуры."
+
+msgid "Returns the argument count for numeric and string variables passed to a procedure."
+msgstr "Возвращает количество аргументов для числовых и строковых переменных, переданных в процедуру."
+
+msgid "type of argument [`0` for numeric, `1` for string]"
+msgstr "тип аргумента [`0` для числовых значений, `1` для строковых]"
+
+msgid "Argument count."
+msgstr "Количество аргументов."
+
+msgid "Returns `0` if called outside a procedure."
+msgstr "Возвращает `0`, если вызывается вне процедуры."
+
+msgid "Returns the Unicode codepoint for the first character in a string expression."
+msgstr "Возвращает код Юникода для первого символа строкового выражения."
+
+msgid "string expression"
+msgstr "строковое выражение"
+
+msgid "Unicode codepoint of the first character."
+msgstr "Код Юникода первого символа."
+
+msgid "Generates an error if `s$` is empty."
+msgstr "Генерирует ошибку, если `s$` пустое."
+
+msgid "* Unlike its counterparts in BASIC implementations with single-byte strings, this function may return values larger than 255."
+msgstr "* В отличие от своих аналогов в реализациях BASIC с однобайтовыми строками, эта функция может возвращать значения, превышающие 255."
+
+msgid "* To get access to individual bytes without UTF-8 decoding, use the `a$[num]` syntax."
+msgstr "* Чтобы получить доступ к отдельным байтам без декодирования UTF-8, используйте синтаксис `a$[num]`."
+
+msgid "Arc tangent function."
+msgstr "Функция арктангенса."
+
+msgid "`ATN()` calculates the principal value of the arc tangent of `x`; that is the value whose tangent is `x`."
+msgstr "`ATN()` вычисляет главное значение арктангенса `x`; это значение, тангенс которого равен `x`."
+
+msgid "The principal value of the arc tangent of `x` in radians."
+msgstr "Главное значение арктангенса `x` в радианах."
+
+msgid "Arc tangent function of two variables."
+msgstr "Арктангенс двух переменных."
+
+msgid "Calculates the principal value of the arc tangent of `y`/`x`, using the signs of the two arguments to determine the quadrant of the result."
+msgstr "Вычисляет главное значение арктангенса `y`/`x`, используя знаки двух аргументов для определения квадранта результата."
+
+msgid "Arc tangent of `y`/`x`."
+msgstr "Арктангенс `y`/`x`."
+
+msgid "Produces a sound using the \"beeper\" sound engine."
+msgstr "Издает звук, используя звуковой движок \"бипер\"."
+
+msgid "tone cycle period in samples [`0` (off) to `480`/`512`/`2048`]"
+msgstr "период тонального цикла в сэмплах [от `0` (выкл.) до `480`/`512`/`2048`]"
+
+msgid "tone volume [`0` to `15`, default: as set in system configuration]"
+msgstr "громкость тона [от `0` до `15`, по умолчанию: как установлено в конфигурации системы]"
+
+msgid "volume envelope\t[characters from `CHR$(0)` to `CHR$(15)`, default: constant volume]"
+msgstr "огибающая громкости [символы от `CHR$(0)` до `CHR$(15)`, по умолчанию: постоянная громкость]"
+
+msgid "The maximum value for `period` varies depending on the platform:"
+msgstr "Максимальное значение для `period` зависит от платформы:"
+
+msgid "* H3: 480"
+msgstr "* H3: 480"
+
+msgid "* SDL: 512"
+msgstr "* SDL: 512"
+
+msgid "* DOS: 2048"
+msgstr "* DOS: 2048"
+
+msgid "Defines a tiled background's properties."
+msgstr "Определяет свойства тайлового фона."
+
+msgid "Using `BG`, you can define a tiled background's map and tile size, tile set, window size and position, and priority, as well as turn it on or off."
+msgstr "Используя `BG`, вы можете задать карту тайлового фона, размер тайла, набор тайлов, размер и положение окна, и приоритет, а также включить или выключить его."
+
+msgid "`BG OFF` turns off all backgrounds."
+msgstr "`BG OFF` отключает все фоны."
+
+msgid "background number [`0` to `{MAX_BG_m1}`]"
+msgstr "номер фона [от `0` до `{MAX_BG_m1}`]"
+
+msgid "background map width, in tiles"
+msgstr "ширина карты фона, в тайлах"
+
+msgid "background map height, in tiles"
+msgstr "высота карты фона, в тайлах"
+
+msgid "tile set's X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата набора тайлов, пиксели [от `0` до `PSIZE(0)-1`]."
+
+msgid "tile set's Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата набора тайлов, пиксели [от `0` до `PSIZE(2)-1`]."
+
+msgid "tile width, pixels [`8` (default) to `255`]"
+msgstr "ширина тайла, пиксели [от `8` (по умолчанию) до `255`]"
+
+msgid "tile height, pixels [`8` (default) to `255`]"
+msgstr "высота тайла, пиксели [от `8` (по умолчанию) до `255`]"
+
+msgid "window X coordinate, pixels [`0` (default) to `PSIZE(0)-1`]"
+msgstr "X-координата окна, пиксели [от `0` (по умолчанию) до `PSIZE(0)-1`]"
+
+msgid "window Y coordinate, pixels [`0` (default) to `PSIZE(1)-1`]"
+msgstr "Y-координата окна, пиксели [от `0` (по умолчанию) до `PSIZE(1)-1`]"
+
+msgid "window width, pixels [`9` to `PSIZE(0)-wx` (default)]"
+msgstr "ширина окна, пиксели [от `9` до `PSIZE(0)-wx` (по умолчанию)]"
+
+msgid "window height, pixels [`0` to `PSIZE(1)-wy` (default)]"
+msgstr "высота окна, пиксели [от `0` до `PSIZE(1)-wy` (по умолчанию)]"
+
+msgid "Background priority [`0` to `{MAX_BG_m1}`, default: `bg`]"
+msgstr "приоритет фона [от `0` до `{MAX_BG_m1}`, по умолчанию: `bg`]"
+
+msgid "* The `BG` command's attributes can be specified in any order, but it is usually a good idea to place the `ON` attribute at the end if used."
+msgstr "* Атрибуты команды `BG` могут быть указаны в любом порядке, но обычно рекомендуется размещать атрибут `ON` в конце, если он используется."
+
+msgid "* A background cannot be turned on unless at least the `TILES` attribute is set. In order to get sensible output, it will probably be necessary to specify the `PATTERN` attribute as well."
+msgstr "* Фон может быть активирован только в том случае, если установлен хотя бы атрибут `TILES`. Для получения приемлемых результатов, вероятно, необходимо также указать атрибут `PATTERN`."
+
+msgid "If a background cannot be turned on, no error is generated."
+msgstr "Если фон невозможно включить, ошибка не генерируется."
+
+msgid "Returns a string containing the binary representation of a number."
+msgstr "Возвращает строку, содержащую двоичное представление числа."
+
+msgid "numeric expression"
+msgstr "числовое выражение"
+
+msgid "Binary number as text."
+msgstr "Двоичное число в виде текста."
+
+msgid "Numbers are converted to an unsigned 32-bit value first."
+msgstr "Числа сначала преобразуются в беззнаковое 32-битное значение."
+
+msgid "Returns a specified number of leftmost bytes in a byte string."
+msgstr "Возвращает указанное количество крайних левых байтов в строке байтов."
+
+msgid "any string expression"
+msgstr "любое строковое выражение"
+
+msgid "number of bytes to return [min `0`]"
+msgstr "количество возвращаемых байтов [мин. `0`]"
+
+msgid "Substring of `num` bytes or less."
+msgstr "Подстрока длиной `num` байт или меньше."
+
+msgid "If `l$` is shorter than `num` bytes, the return value is `l$`."
+msgstr "Если `l$` короче `num` байт, возвращаемое значение будет `l$`."
+
+msgid "Returns the number of bytes in a byte string."
+msgstr "Возвращает количество байтов в строке байтов."
+
+msgid "Length in bytes."
+msgstr "Длина в байтах."
+
+msgid "Copies a rectangular area of pixel memory to another area."
+msgstr "Копирует прямоугольную область пиксельной памяти в другую область."
+
+msgid "source area, X coordinate [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата области источника [от `0` до `PSIZE(0)-1`]"
+
+msgid "source area, Y coordinate [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата области источника [от `0` до `PSIZE(2)-1`]"
+
+msgid "destination area, X coordinate [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата области назначения [от `0` до `PSIZE(0)-1`]"
+
+msgid "destination area, Y coordinate [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата области назначения [от `0` до `PSIZE(2)-1`]"
+
+msgid "area width [`0` to `PSIZE(0)-x`]"
+msgstr "ширина области [от `0` до `PSIZE(0)-x`]"
+
+msgid "area height [`0` to `PSIZE(2)-y`]"
+msgstr "высота области [от `0` до `PSIZE(2)-y`]"
+
+msgid "By default an opaque blit is performed, ignoring the alpha channel of the source area. To enable alpha-blending, `ALPHA` must be appended at the end."
+msgstr "По умолчанию выполняется непрозрачное наложение, при котором альфа-канал исходной области игнорируется. Чтобы активировать альфа-смешивание, необходимо добавить `ALPHA` в конце."
+
+msgid "Loads a binary file to memory."
+msgstr "Загружает двоичный файл в память."
+
+msgid "name of binary file"
+msgstr "имя двоичного файла"
+
+msgid "memory address to be loaded to"
+msgstr "адрес памяти для загрузки"
+
+msgid "number of bytes to be loaded [default: whole file]"
+msgstr "количество загружаемых байтов [по умолчанию: весь файл]"
+
+msgid "`BLOAD` will use 32-bit memory accesses if `addr` and `len` are multiples of 4, and 8-bit accesses otherwise."
+msgstr "`BLOAD` будет использовать 32-битный доступ к памяти, если `addr` и `len` кратны 4, и 8-битный доступ в противном случае."
+
+msgid "While the `BLOAD` command does a basic sanity check of the given parameters, it cannot predict any system malfunctions resulting from its use. Use with caution."
+msgstr "Хотя команда `BLOAD` выполняет базовую проверку правильности заданных параметров, она не может предсказать какие-либо сбои в системе, вызванные её использованием. Используйте её с осторожностью."
+
+msgid "Returns part of a byte string."
+msgstr "Возвращает часть строки байтов."
+
+msgid "position of the first byte in the substring being returned"
+msgstr "позиция первого байта в возвращаемой подстроке"
+
+msgid "number of bytes in the substring [default: `BLEN(m$)-start`]"
+msgstr "количество байтов в подстроке [по умолчанию: `BLEN(m$)-start`]"
+
+msgid "Substring of `len` bytes or less."
+msgstr "Подстрока длиной `len` байт или меньше."
+
+msgid "* If `m$` is shorter than `len` bytes, the return value is `m$`."
+msgstr "* Если `m$` короче, чем `len` байт, возвращаемое значение будет `m$`."
+
+msgid "* Unlike with other BASIC implementations, `start` is zero-based, i.e. the first byte is 0, not 1."
+msgstr "* В отличие от других реализаций BASIC, `start` начинается с нуля, т. е. первый байт равен 0, а не 1."
+
+msgid "Reboots the system."
+msgstr "Перезагружает систему."
+
+msgid "Only implemented on the H3 platform."
+msgstr "Реализовано только на платформе H3."
+
+msgid "Sets the color of the screen border."
+msgstr "Устанавливает цвет бордюра экрана."
+
+msgid "The color can be set individually for each screen column."
+msgstr "Цвет можно установить индивидуально для каждого столбца экрана."
+
+msgid "UV component of the border color [`0` to `255`]"
+msgstr "UV-компонент цвета бордюра [от `0` до `255`]"
+
+msgid "Y component of the border color [`0` to `255`]"
+msgstr "Y-компонент цвета бордюра [от `0` до `255`]"
+
+msgid "first column to set [default: `0`]"
+msgstr "первый столбец для установки [по умолчанию: `0`]"
+
+msgid "number of columns to set [default: all]"
+msgstr "количество столбцов для установки [по умолчанию: все]"
+
+msgid "There is no direct correspondence between border and screen color values."
+msgstr "Нет прямого соответствия между значениями цвета бордюра и экрана."
+
+msgid "There is no way to find the allowed range of values for `x` and `w` without trial and error."
+msgstr "Невозможно найти допустимый диапазон значений для `x` и `w` без проб и ошибок."
+
+msgid "Returns a specified number of rightmost bytes in a byte string."
+msgstr "Возвращает указанное количество крайних правых байтов в строке байтов."
+
+msgid "If `r$` is shorter than `num` bytes, the return value is `r$`."
+msgstr "Если `r$` короче `num` байт, возвращаемое значение будет `r$`."
+
+msgid "Saves an area of memory to a file."
+msgstr "Сохраняет область памяти в файл."
+
+msgid "memory start address"
+msgstr "начальный адрес памяти"
+
+msgid "number of bytes to be saved"
+msgstr "количество байтов для сохранения"
+
+msgid "`BSAVE` will use 32-bit memory accesses if `addr` and `len` are multiples of 4, and 8-bit accesses otherwise."
+msgstr "`BSAVE` будет использовать 32-битный доступ к памяти, если `addr` и `len` кратны 4, и 8-битный доступ в противном случае."
+
+msgid "While the `BSAVE` command does a basic sanity check of the given parameters, it cannot predict any system malfunctions resulting from its use. Use with caution."
+msgstr "Хотя команда `BSAVE` выполняет базовую проверку правильности заданных параметров, она не может предсказать какие-либо сбои в системе, вызванные её использованием. Используйте её с осторожностью."
+
+msgid "Returns the horizontal scrolling offset of a given background layer."
+msgstr "Возвращает смещение горизонтальной прокрутки заданного фонового слоя."
+
+msgid "X scrolling offset of background `bg`."
+msgstr "Смещение по оси X прокрутки фона `bg`."
+
+msgid "Returns the vertical scrolling offset of a given background layer."
+msgstr "Возвращает смещение вертикальной прокрутки заданного фонового слоя."
+
+msgid "Y scrolling offset of background `bg`."
+msgstr "Смещение по оси Y прокрутки фона `bg`."
+
+msgid "Calls a procedure."
+msgstr "Вызывает процедуру."
+
+msgid "name of a procedure declared with `PROC`"
+msgstr "имя процедуры, объявленной с помощью `PROC`"
+
+msgid "a string or numeric expression"
+msgstr "строка символов или числовое выражение"
+
+msgid "At least as many arguments must be given as defined in the procedure declaration. Additional arguments can be accessed using `ARG()` and `ARG$()`."
+msgstr "В объявлении процедуры должно быть указано как минимум столько аргументов, сколько их определено. Доступ к дополнительным аргументам можно получить с помощью `ARG()` и `ARG$()`."
+
+msgid "Loads a new program and runs it, keeping the current set of variables."
+msgstr "Загружает новую программу и запускает её, сохраняя текущий набор переменных."
+
+msgid "name of the BASIC program to be executed"
+msgstr "имя выполняемой BASIC-программы"
+
+msgid "line number at which execution will start [default: first line]"
+msgstr "номер строки, с которой начнётся выполнение [по умолчанию: первая строка]"
+
+msgid "Unlike `EXEC`, `CHAIN` does not allow returning to the original program."
+msgstr "В отличие от `EXEC`, `CHAIN` не позволяет вернуться к исходной программе."
+
+msgid "Returns the text character on screen at a given position."
+msgstr "Возвращает текстовый символ на экране в заданной позиции."
+
+msgid "X coordinate, characters"
+msgstr "X-координата, символы"
+
+msgid "Y coordinate, characters"
+msgstr "Y-координата, символы"
+
+msgid "Character code."
+msgstr "Код символа."
+
+msgid "* If the coordinates exceed the dimensions of the text screen, `0` will be returned."
+msgstr "* Если координаты превышают размеры текстового экрана, будет возвращён `0`."
+
+msgid "* The value returned represents the current character in text screen memory. It may not represent what is actually visible on screen if it has been manipulated using pixel graphics functions, such as `GPRINT`."
+msgstr "* Возвращаемое значение представляет собой текущий символ в памяти текстового экрана. Оно может не совпадать с тем, что реально видно на экране, если оно было обработано с помощью функций пиксельной графики, таких как `GPRINT`."
+
+msgid "Prints a single character to the screen."
+msgstr "Выводит на экран один символ."
+
+msgid "X coordinate, characters [`0` to `CSIZE(0)`]"
+msgstr "X-координата, символы [от `0` до `CSIZE(0)`]"
+
+msgid "Y coordinate, characters [`0` to `CSIZE(1)`]"
+msgstr "Y-координата, символы [от `0` до `CSIZE(1)`]"
+
+msgid "character [`0` to `255`]"
+msgstr "символ [от `0` до `255`]"
+
+msgid "This command does nothing if the coordinates are outside the screen limits."
+msgstr "Эта команда ничего не делает, если координаты выходят за пределы экрана."
+
+msgid "Changes the current directory."
+msgstr "Изменяет текущий каталог."
+
+msgid "path to the new current directory"
+msgstr "путь к новому текущему каталогу"
+
+msgid "Returns a string containing the UTF-8 encoding of the specified Unicode codepoint."
+msgstr "Возвращает строку, содержащую кодировку UTF-8 указанного кода Юникода."
+
+msgid "Unicode codepoint"
+msgstr "Код Юникод"
+
+msgid "Single-character string."
+msgstr "Односимвольная строка."
+
+msgid "* To construct string from a byte value without UTF-8 encoding, use the `a$ = [byte]` syntax."
+msgstr "* Чтобы создать строку из байтового значения без кодировки UTF-8, используйте синтаксис `a$ = [byte]`."
+
+msgid "Draws a circle."
+msgstr "Рисует окружность."
+
+msgid "X coordinate of the circle's center [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата центра окружности [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate of the circle's center [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата центра окружности [от `0` до `PSIZE(2)-1`]"
+
+msgid "circle's radius"
+msgstr "радиус окружности"
+
+msgid "color of the circle's outline [range depends on color space]"
+msgstr "цвет контура окружности [диапазон зависит от цветового пространства]"
+
+msgid "color of the circle's body [range depends on color space, `-1` for an unfilled circle]"
+msgstr "цвет заполнения окружности [диапазон зависит от цветового пространства, `-1` для незаполненного круга]"
+
+msgid "* `fill_color` cannot be omitted."
+msgstr "* `fill_color` не может быть опущен."
+
+msgid "Deletes all variables."
+msgstr "Удаляет все переменные."
+
+msgid "Closes an open file or directory."
+msgstr "Закрывает открытый файл или каталог."
+
+msgid "number of an open file or directory [`0` to `{MAX_USER_FILES_m1}`]"
+msgstr "номер открытого файла или каталога [от `0` до `{MAX_USER_FILES_m1}`]"
+
+msgid "Clears the current text window."
+msgstr "Очищает текущее текстовое окно."
+
+msgid "Redirect screen I/O to a file."
+msgstr "Перенаправляет ввод-вывод экрана в файл."
+
+msgid "`CMD` allows to redirect standard text output or input operations to files."
+msgstr "`CMD` позволяет перенаправлять стандартные операции вывода или ввода текста в файлы."
+
+msgid "Redirection can be disabled by replacing the file number with `OFF`. `CMD OFF` turns off both input and output redirection."
+msgstr "Перенаправление можно отключить, заменив номер файла на `OFF`. `CMD OFF` отключает перенаправление как ввода, так и вывода."
+
+msgid "number of an open file to redirect to [`0` to `{MAX_USER_FILES_m1}`]"
+msgstr "номер открытого файла для перенаправления [от `0` до `{MAX_USER_FILES_m1}`]"
+
+msgid "* Redirection will automatically be reset if a file redirected to is closed (either explicitly or implicitly, by opening a new file using the currently used file number), or when returning to the command prompt."
+msgstr "* Перенаправление будет автоматически сброшено, если файл, на который было перенаправлено, будет закрыт (явно или неявно, путем открытия нового файла с использованием текущего номера файла) или при возврате в командную строку."
+
+msgid "* If `-1` is used as `file_num`, redirection is turned off."
+msgstr "* Если в качестве `file_num` используется `-1`, перенаправление отключается."
+
+msgid "Returns the current file number for screen I/O redirection to a file."
+msgstr "Возвращает номер текущего файла для перенаправления экранного ввода/вывода в файл."
+
+msgid "`0` for OUTPUT, `1` for INPUT"
+msgstr "`0` для OUTPUT, `1` для INPUT"
+
+msgid "File number, or `-1` for screen output"
+msgstr "Номер файла, или `-1` для вывода на экран"
+
+msgid "Changes the foreground and background color for text output."
+msgstr "Изменяет цвет переднего плана и фона для вывода текста."
+
+msgid "foreground color [range depends on color space]"
+msgstr "цвет переднего плана [диапазон зависит от цветового пространства]"
+
+msgid "background color [range depends on color space, default: `0`]"
+msgstr "цвет фона [диапазон зависит от цветового пространства, по умолчанию: `0`]"
+
+msgid "cursor color [range depends on color space]"
+msgstr "цвет курсора [диапазон зависит от цветового пространства]"
+
+msgid "Compares two files."
+msgstr "Сравнивает два файла."
+
+msgid "name of first file to compare"
+msgstr "имя первого файла для сравнения"
+
+msgid "name of second file to compare"
+msgstr "имя второго файла для сравнения"
+
+msgid "If both files are equal, the return value is `0`. Otherwise, the return value is `-1` or `1`."
+msgstr "Если оба файла одинаковы, то возвращается значение `0`. В противном случае возвращается значение `-1` или `1`."
+
+msgid "If the files are not equal, the sign of the result is determined by the sign of the difference between the first pair of bytes that differ in `file1$` and `file2$`."
+msgstr "Если файлы различаются, то знак результата определяется знаком разницы между первой парой байтов, отличающихся в `file1$` и `file2$`."
+
+msgid "Changes configuration options."
+msgstr "Изменяет параметры конфигурации."
+
+msgid "The options will be reset to their defaults on system startup unless they have been saved using <<SAVE CONFIG>>. Changing power-on default options does not affect the system until the options are saved and the system is restarted."
+msgstr "При запуске системы параметры будут сброшены до значений по умолчанию, если они не были сохранены с помощью команды <<SAVE CONFIG>>. Изменение параметров по умолчанию при включении питания не влияет на работу системы до тех пор, пока параметры не будут сохранены и система не будет перезагружена."
+
+msgid "configuration option to be set [`0` to `13`]"
+msgstr "параметр конфигурации для установки [от `0` до `13`]"
+
+msgid "option value"
+msgstr "значение опции"
+
+msgid "The following options exist:"
+msgstr "Доступны следующие варианты:"
+
+msgid "* `0`: TV norm"
+msgstr "* `0`: ТВ-стандарт"
+
+msgid "Sets the TV norm to NTSC (`0`), PAL (`1`) or PAL60 (`2`)."
+msgstr "Устанавливает ТВ-стандарт на NTSC (`0`), PAL (`1`) или PAL60 (`2`)."
+
+msgid "WARNING: This configuration option does not make much sense; the available TV norm depends on the installed color burst crystal and is automatically detected; PAL60 mode is not currently implemented."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта опция конфигурации не имеет особого смысла; доступный ТВ-стандарт зависит от установленного кварца цветовой развёртки и определяется автоматически; режим PAL60 в настоящее время не реализован."
+
+msgid "The semantics of this option are therefore likely to change in the future."
+msgstr "Поэтому семантика этой опции может измениться в будущем."
+
+msgid "* `1`: Keyboard layout"
+msgstr "* `1`: Раскладка клавиатуры"
+
+msgid "Four different keyboard layouts are supported:"
+msgstr "Поддерживаются четыре различные раскладки клавиатуры:"
+
+msgid "`0` (Japanese), `1` (US English, default), `2` (German), `3` (French) and `4` (Spanish)."
+msgstr "`0` (японская), `1` (английская США, по умолчанию), `2` (немецкая), `3` (французская) и `4` (испанская)."
+
+msgid "* `2`: Interlacing"
+msgstr "* `2`: Чересстрочная развертка"
+
+msgid "Sets the video output to progressive (`0`) or interlaced (`1`). A change in this option will become effective on the next screen mode change."
+msgstr "Устанавливает прогрессивный (`0`) или чересстрочный (`1`) видеосигнал. Изменение этого параметра вступает в силу при следующем изменении режима экрана."
+
+msgid "WARNING: The intention of this option is to provide an interlaced signal to TVs that do not handle a progressive signal well. So far, no displays have turned up that require it, so it may be removed and/or replaced with a different option in future releases."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта опция предназначена для обеспечения чересстрочного сигнала для телевизоров, которые плохо справляются с прогрессивным сигналом. На данный момент не обнаружено ни одного дисплея, которому бы она потребовалась, поэтому в будущих выпусках она может быть удалена и/или заменена другой опцией."
+
+msgid "* `3`: Luminance low-pass filter"
+msgstr "* `3`: Фильтр низких частот яркости"
+
+msgid "This option enables (`1`) or disables (`0`, default) the video luminance low-pass filter. The recommended setting depends on the properties of the display device used."
+msgstr "Этот параметр включает (`1`) или отключает (`0`, по умолчанию) фильтр низких частот яркости видеосигнала. Рекомендуемая настройка зависит от свойств используемого устройства отображения."
+
+msgid "Many recent TVs are able to handle high resolutions well; with such devices, it is recommended to turn the low-pass filter off to achieve a more crisp display."
+msgstr "Многие современные телевизоры хорошо справляются с высоким разрешением; в таких устройствах рекомендуется отключать фильтр низких частот, чтобы добиться более чёткого изображения."
+
+msgid "On other (usually older) TVs, high-resolution images may cause excessive color artifacting (a \"rainbow\" effect) or flicker; with such devices, it is recommended to turn the low-pass filter on to reduce these effects, at the expense of sharpness."
+msgstr "На других (обычно старых) телевизорах изображения высокого разрешения могут вызывать чрезмерные цветовые артефакты (эффект \"радуги\") или мерцание; на таких устройствах рекомендуется включать фильтр низких частот, чтобы уменьшить эти эффекты за счет снижения резкости."
+
+msgid "* `4`: Power-on screen mode [`1` (default) to `10`]"
+msgstr "* `4`: Режим экрана при включении питания [от `1` (по умолчанию) до `10`]"
+
+msgid "Sets the screen mode the system defaults to at power-on."
+msgstr "Устанавливает режим экрана, который система использует по умолчанию при включении питания."
+
+msgid "* `5`: Power-on screen font [`0` (default) to `{NUM_FONTS_m1}`]"
+msgstr "* `5`: Шрифт экрана при включении питания [от `0` (по умолчанию) до `{NUM_FONTS_m1}`]"
+
+msgid "Sets the screen font the system defaults to at power-on."
+msgstr "Устанавливает экранный шрифт, который система использует по умолчанию при включении питания."
+
+msgid "* `6`: Power-on cursor color [`0` to `255`]"
+msgstr "* `6`: Цвет курсора при включении питания [от `0` до `255`]"
+
+msgid "Sets the cursor color the system defaults to at power-on."
+msgstr "Устанавливает цвет курсора, который система использует по умолчанию при включении питания."
+
+msgid "* `7`: Beeper sound volume [`0` to `15` (default)]"
+msgstr "* `7`: Громкость звука бипера [от `0` до `15` (по умолчанию)]"
+
+msgid "Sets the volume of the \"beeper\" sound engine, which applies, among other things, to the start-up jingle."
+msgstr "Устанавливает громкость звукового движка \"бипер\", который, например, используется для вывода звукового сигнала при старте системы."
+
+msgid "* `8`: Screen line adjustment [`-128` to `128`, default: `0`] Adjusts the number of screen lines. A positive value adds lines, a negative value subtracts them."
+msgstr "* `8`: Регулировка строк экрана [от `-128` до `128`, по умолчанию: `0`] Регулирует количество строк экрана. Положительное значение добавляет строки, отрицательное - вычитает."
+
+msgid "This option may be useful to mitigate issues with color artifacting and flicker on some devices."
+msgstr "Эта опция может быть полезна для уменьшения проблем с артефактами цвета и мерцанием на некоторых устройствах."
+
+msgid "WARNING: It is not clear if this option is useful in practice, and it may be removed in future releases."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Непонятно, полезна ли эта опция на практике, и она может быть удалена в будущих выпусках."
+
+msgid "* `9`: Keyword separation optional [`0` (default) or `1`]"
+msgstr "* `9`: Необязательное разделение ключевых слов [`0` (по умолчанию) или `1`]"
+
+msgid "Controls if BASIC keywords need to be separated from other language elements containing alphanumeric characters with a space (`0`), or if they can be adjacent to those like in traditional BASIC dialects (`1`)."
+msgstr "Определяет, нужно ли отделять ключевые слова BASIC от других элементов языка, содержащих алфавитно-цифровые символы, пробелом (`0`), или они могут располагаться рядом с ними, как в традиционных диалектах BASIC (`1`)."
+
+msgid "* `10`: Physical screen mode (H3 platform only) [`0` (default) to `6`]"
+msgstr "* `10`: Режим физического экрана (только для платформы H3) [от `0` (по умолчанию) до `6`]"
+
+msgid "Sets the physical screen resolution:"
+msgstr "Устанавливает физическое разрешение экрана:"
+
+msgid "`0` (1920x1080 HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3`"
+msgstr "`0` (1920x1080 HDMI), `1` (1280x1024 DVI), `2` (1280x720 HDMI), `3`"
+
+msgid "(1024x768 DVI), `4` (800x600 DVI), `5` (640x480 DVI) or `6`"
+msgstr "(1024x768 DVI), `4` (800x600 DVI), `5` (640x480 DVI) или `6`"
+
+msgid "(1920x1200 HDMI)."
+msgstr "(1920x1200 HDMI)."
+
+msgid "It is necessary to save the configuration and reboot the system for this option to take effect."
+msgstr "Чтобы эта опция вступила в силу, необходимо сохранить конфигурацию и перезагрузить систему."
+
+msgid "* `11`: Language"
+msgstr "* `11`: Язык"
+
+msgid "The following languages are supported for system messages:"
+msgstr "Для системных сообщений поддерживаются следующие языки:"
+
+msgid "`0` (US English, default), `1` (German), `2` (French), `3` (Spanish), `4` (Japanese)."
+msgstr "`0` (английский США, по умолчанию), `1` (немецкий), `2` (французский), `3` (испанский), `4` (японский)."
+
+msgid "* `12`: Start screen recording immediately."
+msgstr "* `12`: Немедленный запуск записи экрана"
+
+msgid "When enabled, screen recording will start as soon as Engine BASIC boots."
+msgstr "Если этот параметр включен, запись экрана начнётся сразу после загрузки BASIC Engine."
+
+msgid "(Only available on platforms that support screen recording.)"
+msgstr "  (Доступно только на платформах, поддерживающих запись экрана.)"
+
+msgid "`0` enabled, `1` disabled."
+msgstr "`0` включено, `1` отключено."
+
+msgid "* `13`: Name of audio device to be used."
+msgstr "* `13`: Имя аудиоустройства для использования"
+
+msgid "When set to \"default\" (which is, unsurprisingly, the default), an appropriate audio device will be chosen automatically. Otherwise, the specified audio device will be used. To find out what audio devices are available you can use the `SYS$(1, index)` function."
+msgstr "  Если установлено значение \"по умолчанию\" (что, как не удивительно, является значением по умолчанию), соответствующее аудиоустройство будет выбрано автоматически. В противном случае будет использовано указанное аудиоустройство. Чтобы узнать, какие аудиоустройства доступны, можно воспользоваться функцией `SYS$(1, index)`."
+
+msgid "To restore the default configuration, run the command `REMOVE \"/sd/config.ini\"` and restart the system."
+msgstr "Чтобы восстановить конфигурацию по умолчанию, выполните команду `REMOVE \"/sd/config.ini\"` и перезагрузите систему."
+
+msgid "Changes the color scheme."
+msgstr "Изменяет цветовую схему."
+
+msgid "The color scheme is a set of colors that are used to print system messages and BASIC program listings. It also contains the default foreground and background colors."
+msgstr "Цветовая схема - это набор цветов, которые используются для печати системных сообщений и листингов BASIC-программ. Она также содержит цвета переднего плана и фона по умолчанию."
+
+msgid "color code [`0` to `{CONFIG_COLS_m1}`]"
+msgstr "цветовой код [от `0` до `{CONFIG_COLS_m1}`]"
+
+msgid "red component [0 to 255]"
+msgstr "красный компонент [от 0 до 255]"
+
+msgid "green component [0 to 255]"
+msgstr "зеленый компонент [от 0 до 255]"
+
+msgid "blue component [0 to 255]"
+msgstr "синий компонент [от 0 до 255]"
+
+msgid "0"
+msgstr "0"
+
+msgid "Default background"
+msgstr "Фон по умолчанию"
+
+msgid "1"
+msgstr "1"
+
+msgid "Default foreground"
+msgstr "Передний план по умолчанию"
+
+msgid "Syntax: BASIC keywords"
+msgstr "Синтаксис: ключевые слова BASIC"
+
+msgid "Syntax: line numbers"
+msgstr "Синтаксис: номера строк"
+
+msgid "Syntax: numbers"
+msgstr "Синтаксис: числа"
+
+msgid "Syntax: global variables"
+msgstr "Синтаксис: глобальные переменные"
+
+msgid "Syntax: local variables and arguments"
+msgstr "Синтаксис: локальные переменные и аргументы"
+
+msgid "Syntax: operands"
+msgstr "Синтаксис: операнды"
+
+msgid "8"
+msgstr "8"
+
+msgid "Syntax: string constants"
+msgstr "Синтаксис: строковые константы"
+
+msgid "9"
+msgstr "9"
+
+msgid "Syntax: procedure names"
+msgstr "Синтаксис: имена процедур"
+
+msgid "10"
+msgstr "10"
+
+msgid "Syntax: comments"
+msgstr "Синтаксис: комментарии"
+
+msgid "11"
+msgstr "11"
+
+msgid "Default border color"
+msgstr "Цвет бордюра по умолчанию"
+
+msgid "* Unlike the `COLOR` command, `CONFIG COLOR` requires the colors to be given in RGB format; this is to ensure that the color scheme works with all YUV colorspaces."
+msgstr "* В отличие от команды `COLOR`, `CONFIG COLOR` требует, чтобы цвета были заданы в формате RGB; это необходимо для того, чтобы цветовая схема работала со всеми цветовыми пространствами YUV."
+
+msgid "* To set the current color scheme as the default, use `SAVE CONFIG`."
+msgstr "* Чтобы установить текущую цветовую схему по умолчанию, используйте `SAVE CONFIG`."
+
+msgid "The default border color is not used."
+msgstr "Цвет бордюра по умолчанию не используется."
+
+msgid "Continues an interrupted program."
+msgstr "Продолжает прерванную программу."
+
+msgid "`CONT` can be used to resume a program run that has been interrupted by kbd:[Ctrl+C] or by the `STOP` command. It will reset text window and tiled background layouts if they have been automatically adjusted when the program was interrupted."
+msgstr "`CONT` можно использовать для возобновления работы программы, которая была прервана командой kbd:[Ctrl+C] или командой `STOP`. Это приведёт к сбросу компоновок текстового окна и тайлового фона, если они были автоматически отрегулированы, когда программа была прервана."
+
+msgid "Copies a file."
+msgstr "Копирует файл."
+
+msgid "file to be copied"
+msgstr "файл для копирования"
+
+msgid "copy of the file to be created"
+msgstr "копия создаваемого файла"
+
+msgid "Does not support wildcard patterns."
+msgstr "Не поддерживает шаблоны подстановочных знаков."
+
+msgid "Returns the cosine of a specified angle."
+msgstr "Возвращает косинус указанного угла."
+
+msgid "an angle expressed in radians"
+msgstr "угол, выраженный в радианах"
+
+msgid "Cosine of `angle`."
+msgstr "Косинус `angle`."
+
+msgid "Sets the CPU clock frequency."
+msgstr "Устанавливает тактовую частоту процессора."
+
+msgid "CPU speed in percent of maximum."
+msgstr "Скорость процессора в процентах от максимальной."
+
+msgid "* Only implemented on the H3 platform."
+msgstr "* Реализовано только на платформе H3."
+
+msgid "* Will not generate an error on platforms that do not support it."
+msgstr "* Не будет генерировать ошибку на платформах, которые её не поддерживают."
+
+msgid "* When `speed` is `-1` the CPU speed will be reset to the power-on default."
+msgstr "* Если `speed` равно `-1`, скорость процессора будет сброшена до значения по умолчанию при включении питания."
+
+msgid "Prints information on Engine BASIC's components, its authors and licensing conditions."
+msgstr "Выводит информацию о компонентах BASIC Engine, его авторах и условиях лицензирования."
+
+msgid "Scrolls the text screen contents in the given direction."
+msgstr "Прокручивает содержимое текстового экрана в заданном направлении."
+
+msgid "start of the screen region, X coordinate, characters [`0` to `CSIZE(0)-1`]"
+msgstr "X-координата начала области экрана, символы [от `0` до `CSIZE(0)-1`]"
+
+msgid "start of the screen region, Y coordinate, characters [`0` to `CSIZE(1)-1`]"
+msgstr "Y-координата начала области экрана, символы [от `0` до `CSIZE(1)-1`]"
+
+msgid "end of the screen region, X coordinate, characters [`x1+1` to `CSIZE(0)-1`]"
+msgstr "X-координата конца области экрана, символы [от `x1+1` до `CSIZE(0)-1`]"
+
+msgid "end of the screen region, Y coordinate, characters [`y1+1` to `CSIZE(1)-1`]"
+msgstr "Y-координата конца области экрана, символы [от `y1+1` до `CSIZE(1)-1`]"
+
+msgid "direction"
+msgstr "направление"
+
+msgid "Valid values for `direction` are:"
+msgstr "Допустимыми значениями для `direction` являются:"
+
+msgid "`0`"
+msgstr "`0`"
+
+msgid "up"
+msgstr "вверх"
+
+msgid "`1`"
+msgstr "`1`"
+
+msgid "down"
+msgstr "вниз"
+
+msgid "`2`"
+msgstr "`2`"
+
+msgid "left"
+msgstr "влево"
+
+msgid "`3`"
+msgstr "`3`"
+
+msgid "right"
+msgstr "вправо"
+
+msgid "Colors are lost when scrolling."
+msgstr "При прокрутке цвета теряются."
+
+msgid "Returns the dimensions of the current screen mode in text characters."
+msgstr "Возвращает размеры текущего режима экрана в текстовых символах."
+
+msgid "requested screen dimension: `0`: text screen width `1`: text screen height"
+msgstr "запрошенный размер экрана: `0`: ширина текстового экрана `1`: высота текстового экрана"
+
+msgid "Size in characters."
+msgstr "Размер в символах."
+
+msgid "Returns the current working directory."
+msgstr "Возвращает текущий рабочий каталог."
+
+msgid "Current working directory."
+msgstr "Текущий рабочий каталог."
+
+msgid "The alternative syntax `CWD$()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `CWD$()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Specifies values to be read by subsequent `READ` instructions."
+msgstr "Определяет значения, которые будут считываться последующими инструкциями `READ`."
+
+msgid "When a DATA instruction is executed, nothing happens."
+msgstr "В процессе выполнения инструкции DATA ничего не происходит."
+
+msgid "Prints the current date and time."
+msgstr "Выводит текущую дату и время."
+
+msgid "WARNING: The semantics of this command are not consistent with other BASIC implementations and may be changed in future releases."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Семантика этой команды несовместима с другими реализациями BASIC и может быть изменена в будущих выпусках."
+
+msgid "Delete specified line(s) from the BASIC program in memory."
+msgstr "Удаляет указанные строки из BASIC-программы в памяти."
+
+msgid "WARNING: Do not confuse with `REMOVE`, which deletes files."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Не путайте с `REMOVE`, которая удаляет файлы."
+
+msgid "a range of BASIC program lines"
+msgstr "диапазон строк BASIC-программы"
+
+msgid "* Using `DELETE` does not affect variables."
+msgstr "* Использование `DELETE` не влияет на переменные."
+
+msgid "* When called from a running program, execution will continue at the next program line, i.e. instructions following `DELETE` on the same line are disregarded."
+msgstr "* При вызове из работающей программы выполнение будет продолжено со следующей строки программы, т.е. инструкции в той же строке, следующие за `DELETE` , игнорируются."
+
+msgid "Declares an array."
+msgstr "Объявляет массив."
+
+msgid "an numeric or string array variable"
+msgstr "числовая или строковая переменная массива"
+
+msgid "one or more dimensions of the array"
+msgstr "одно или несколько измерений массива"
+
+msgid "initial value(s) for the array elements"
+msgstr "начальное значение для элементов массива"
+
+msgid "Initialization is only possible for one-dimensional arrays."
+msgstr "Инициализация возможна только для одномерных массивов."
+
+msgid "Returns the next entry of an open directory."
+msgstr "Возвращает следующую запись открытого каталога."
+
+msgid "number of an open directory"
+msgstr "номер открытого каталога"
+
+msgid "Returns the directory entry as the value of the function."
+msgstr "Возвращает запись каталога как значение функции."
+
+msgid "Returns an empty string if the end of the directory has been reached."
+msgstr "Возвращает пустую строку, если достигнут конец каталога."
+
+msgid "Also returns the entry's size in `RET(0)` and `0` or `1` in RET(1) depending on whether the entry is a directory itself."
+msgstr "Также возвращает размер записи в `RET(0)` и `0` или `1` в RET(1) в зависимости от того, является ли сама запись каталогом."
+
+msgid "An error is generated if `dir_num` is not open or not a directory."
+msgstr "Генерируется ошибка, если `dir_num` не открыт или не является каталогом."
+
+msgid "Repeats a block of instructions while a condition is true or until a condition becomes true."
+msgstr "Повторяет блок инструкций, пока условие истинно или пока условие не станет истинным."
+
+msgid "one or more instructions on one or more lines"
+msgstr "одна или несколько инструкций в одной или нескольких строках"
+
+msgid "a numeric expression"
+msgstr "числовое выражение"
+
+msgid "If `condition` is prefixed by `WHILE`, the loop will repeat if `condition` is \"true\" (non-zero). If `condition` is prefixed by `UNTIL`, the loop will continue if `condition` is \"false\" (zero). In any other case, the loop will be exited and execution will continue with the instruction following the `LOOP` command."
+msgstr "Если `condition` имеет префикс `WHILE`, то цикл будет повторяться, если `condition` будет \"истинным\" (ненулевым). Если `condition` имеет префикс `UNTIL`, то цикл будет продолжен, если `condition` будет \"ложным\" (нулевым). В любом другом случае цикл будет завершен, и выполнение продолжится командой, следующей за командой `LOOP`."
+
+msgid "If no condition is specified, the loop will repeat forever."
+msgstr "Если условие не указано, цикл будет повторяться бесконечно."
+
+msgid "Value of the \"down\" direction for input devices."
+msgstr "Значение направления \"вниз\" для устройств ввода."
+
+msgid "Runs the ASCII text editor."
+msgstr "Запускает текстовый редактор ASCII."
+
+msgid "name of file to be edited [default: new file]"
+msgstr "имя редактируемого файла [по умолчанию: новый файл]"
+
+msgid "Introduces the `ELSE` branch of an `IF` instruction."
+msgstr "Вводит ветвь `ELSE` в инструкции `IF`."
+
+msgid "Ends the program."
+msgstr "Завершает программу."
+
+msgid "Ends a multi-line `IF` instruction."
+msgstr "Завершает многострочную инструкцию `IF`."
+
+msgid "Returns the value of an environment variable."
+msgstr "Возвращает значение переменной окружения."
+
+msgid "name of environment variable"
+msgstr "имя переменной окружения"
+
+msgid "Value of the specified environment variable."
+msgstr "Значение указанной переменной окружения."
+
+msgid "Checks whether the end of a file has been reached."
+msgstr "Проверяет, достигнут ли конец файла."
+
+msgid "number of an open file [`0` to `{MAX_USER_FILES_m1}`]"
+msgstr "номер открытого файла [от `0` до `{MAX_USER_FILES_m1}`]"
+
+msgid "`-1` if the end of the file has been reached, `0` otherwise."
+msgstr "`-1`, если достигнут конец файла, иначе `0`."
+
+msgid "Bitwise exclusive-OR operator."
+msgstr "Побитовый оператор исключающего ИЛИ."
+
+msgid "Bitwise exclusive disjunction of `a` and `b`."
+msgstr "Побитовая эксклюзивная дизъюнкция `a` и `b`."
+
+msgid "Triggers an error."
+msgstr "Вызывает ошибку."
+
+msgid "error code"
+msgstr "код ошибки"
+
+msgid "Returns the error message associated with a given error number."
+msgstr "Возвращает сообщение об ошибке, связанное с заданным номером ошибки."
+
+msgid "error number [`0` to `{max_err}`]"
+msgstr "номер ошибки [от `0` до `{max_err}`]"
+
+msgid "Error message."
+msgstr "Сообщение об ошибке."
+
+msgid "Executes a BASIC program as a child process."
+msgstr "Выполняет BASIC-программу как дочерний процесс."
+
+msgid "name of the BASIC program file to be executed"
+msgstr "имя файла BASIC-программы, которую необходимо выполнить"
+
+msgid "A program run via `EXEC` runs in its own program and variable space, and nothing it does affects the calling program or its variables, with the exception of the following:"
+msgstr "Программа, запускаемая через `EXEC`, выполняется в своем собственном пространстве программ и переменных, и никакие её действия не влияют на вызывающую программу или её переменные, за исключением следующего:"
+
+msgid "* *Open files* are shared between the parent and child program. Any changes will be visible to both programs."
+msgstr "* *Открытые файлы* являются общими для родительской и дочерней программы. Любые изменения будут видны в обеих программах."
+
+msgid "* *Error handlers* set in the parent program will be triggered by errors in the child program, unless they are handled by the child."
+msgstr "* *Обработчики ошибок*, установленные в родительской программе, будут запускаться при ошибках в дочерней программе, если только они не обрабатываются дочерней программой."
+
+msgid "There is no generalized way to share data between parent and child program."
+msgstr "Не существует универсального способа обмена данными между родительской и дочерней программами."
+
+msgid "Exits a DO, FOR or WHILE loop."
+msgstr "Выходит из циклов DO, FOR или WHILE."
+
+msgid "the counter variable of a FOR loop"
+msgstr "переменная счётчика цикла FOR"
+
+msgid "Exits the top-most loop of the specified type, without regard for its loop condition, or the specified `FOR` loop if there is a `loop_variable` argument."
+msgstr "Выходит из самого верхнего цикла указанного типа, не учитывая условия цикла, или из указанного цикла `FOR`, если есть аргумент `loop_variable`."
+
+msgid "The matching loop is dropped from the loop stack, and execution resumes after the end of the loop (the nearest following `LOOP`, `NEXT` or `WEND` statement, or the nearest `NEXT loop_variable` statement)."
+msgstr "Соответствующий цикл удаляется из стека циклов, и выполнение возобновляется после окончания цикла (ближайшего следующего оператора `LOOP`, `NEXT` или `WEND`, или ближайшего оператора `NEXT loop_variable`)."
+
+msgid "`EXIT` only works as intended in loops with a \"single end\", i.e. loops that are not iterated using more than one `LOOP`, `NEXT` or `WEND` statement."
+msgstr "`EXIT` работает по назначению только в циклах с \"одним концом\", то есть в циклах, которые не итерируются с помощью более чем одного оператора `LOOP`, `NEXT` или `WEND`."
+
+msgid "Returns _e_ raised to a specified power, where _e_ is the base of natural logarithms."
+msgstr "Возвращает _e_, возведенное в указанную степень, где _e_ - это основание натуральных логарифмов."
+
+msgid "Power to raise _e_ to."
+msgstr "Степень возведения _e_."
+
+msgid "Exponential value of `pow`."
+msgstr "Экспоненциальное значение `pow`."
+
+msgid "Displays the contents of the current or a specified directory."
+msgstr "Отображает содержимое текущего или указанного каталога."
+
+msgid "a filename or path, may include wildcard characters [default: all files in the current directory]"
+msgstr "имя файла или путь, может включать подстановочные знаки [по умолчанию: все файлы в текущем каталоге]"
+
+msgid "Call a procedure and get its return value."
+msgstr "Вызывает процедуру и получает её возвращаемое значение."
+
+msgid "Evaluates to the first return value of a procedure."
+msgstr "Оценивает первое возвращаемое значение процедуры."
+
+msgid "First return value of called procedure."
+msgstr "Первое возвращаемое значение вызванной процедуры."
+
+msgid "Most implementations of BASIC allow declaration of functions using `DEF FN`, a syntax that is not supported by Engine BASIC. To achieve the same result, you will have to rewrite the function declaration:"
+msgstr "Большинство реализаций BASIC позволяют объявлять функции с помощью `DEF FN`, синтаксис, который не поддерживается в BASIC Engine. Чтобы добиться того же результата, вам придется переписать объявление функции:"
+
+msgid "Sets the current text font."
+msgstr "Устанавливает текущий шрифт текста."
+
+msgid "font number"
+msgstr "номер шрифта"
+
+msgid "font name"
+msgstr "название шрифта"
+
+msgid "font width (pixels)"
+msgstr "ширина шрифта (пиксели)"
+
+msgid "font height (pixels)"
+msgstr "высота шрифта (пиксели)"
+
+msgid "Returns the index of the selected font in `RET(0)`."
+msgstr "Возвращает индекс выбранного шрифта в `RET(0)`."
+
+msgid "The following fonts are built-in:"
+msgstr "Встроены следующие шрифты:"
+
+msgid "\"lexis\""
+msgstr "\"lexis\""
+
+msgid "Lexis font, 6x8 pixels (default)"
+msgstr "шрифт Lexis, 6x8 пикселей (по умолчанию)."
+
+msgid "\"cpc\""
+msgstr "\"cpc\""
+
+msgid "CPC font, 8x8 pixels"
+msgstr "шрифт CPC, 8x8 пикселей"
+
+msgid "\"bescii\""
+msgstr "\"bescii\""
+
+msgid "PETSCII-style font, 8x8 pixels"
+msgstr "шрифт в стиле PETSCII, 8x8 пикселей"
+
+msgid "\"tt\""
+msgstr "\"tt\""
+
+msgid "Japanese font, 8x8 pixels"
+msgstr "японский шрифт, 8x8 пикселей"
+
+msgid "\"hp100lx\""
+msgstr "\"hp100lx\""
+
+msgid "HP 100 LX font, 8x8 pixels"
+msgstr "шрифт HP 100 LX, 8x8 пикселей"
+
+msgid "* Additional fonts will be assigned consecutive font indices."
+msgstr "* Дополнительным шрифтам будут присвоены последовательные индексы шрифтов."
+
+msgid "* The font set at power-on can be set using the `CONFIG` command."
+msgstr "* Шрифт, установленный при включении питания, можно установить с помощью команды `CONFIG`."
+
+msgid "Starts a loop repeating a block of instructions a specified number of times."
+msgstr "Запускает цикл, повторяющий блок инструкций указанное количество раз."
+
+msgid "a numeric variable used as the loop counter"
+msgstr "числовая переменная, используемая в качестве счётчика цикла"
+
+msgid "initial value of the loop counter"
+msgstr "начальное значение счётчика цикла"
+
+msgid "amount the counter is changed each time through the loop [default: `1`]"
+msgstr "значение, на которое изменяется счётчик при каждом прохождении цикла [по умолчанию: `1`]."
+
+msgid "Both `end` and `increment` are only evaluated once, at the start of the loop. Any changes to these expressions afterwards will not have any effect on it."
+msgstr "И `end`, и `increment` оцениваются только один раз, в начале цикла. Любые последующие изменения этих выражений не окажут на него никакого влияния."
+
+msgid "If no loop variable is specified in the `NEXT` command, the top-most `FOR` loop on the loop stack (that is, the one started last) will be iterated. If it is specified, the `FOR` loop associated with the given variable will be iterated, and any nested loops below it will be discarded."
+msgstr "Если в команде `NEXT` не указана переменная цикла, будет повторяться самый верхний цикл `FOR` в стеке циклов (то есть тот, который начался последним). Если переменная указана, то будет выполнен итерационный цикл `FOR`, связанный с данной переменной, а все вложенные циклы ниже него будут отброшены."
+
+msgid "Formats the specified file system."
+msgstr "Форматирует указанную файловую систему."
+
+msgid "WARNING: This command will erase any files stored on the formatted file system, including system files and the saved configuration, if any."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта команда удалит все файлы, хранящиеся в форматируемой файловой системе, включая системные файлы и сохраненную конфигурацию, если таковая имеется."
+
+msgid "IMPORTANT: Formatting the SD card file system does not currently work."
+msgstr "\\\\FpВАЖНО:\\\\Ff Форматирование файловой системы SD-карты в настоящее время не работает."
+
+msgid "SD card formatting is currently broken; use another device to format SD cards for use with the BASIC Engine."
+msgstr "Форматирование SD-карт в настоящее время не работает; используйте другое устройство для форматирования SD-карт для использования с BASIC Engine."
+
+msgid "Returns the number of video frames since power-on."
+msgstr "Возвращает количество видеокадров с момента включения."
+
+msgid "Frame count."
+msgstr "Количество кадров."
+
+msgid "The alternative syntax `FRAME()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `FRAME()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Sets the number of frames that should be skipped before a new frame is rendered by the BG/sprite engine."
+msgstr "Определяет количество кадров, которые будут пропущены прежде тем, как фоновый/спрайтовый движок отрисует новый кадр."
+
+msgid "This serves to increase the available CPU power to BASIC by reducing the load imposed by the graphics subsystem."
+msgstr "Это позволяет увеличить производительность процессора, доступную для BASIC, за счет снижения нагрузки на графическую подсистему."
+
+msgid "number of frames to be skipped [`0` (default) to `59`]"
+msgstr "количество пропускаемых кадров [от `0` (по умолчанию) до `59`]"
+
+msgid "Get free memory size."
+msgstr "Получает объём свободной памяти."
+
+msgid "Number of bytes free."
+msgstr "Количество свободных байтов."
+
+msgid "The alternative syntax `FREE()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `FREE()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Get the current date."
+msgstr "Получает текущую дату."
+
+msgid "numeric variable"
+msgstr "числовая переменная"
+
+msgid "The current date in the given numeric variables."
+msgstr "Текущая дата в заданных числовых переменных."
+
+msgid "Only supports scalar variables, not array or list members."
+msgstr "Поддерживаются только скалярные переменные, но не элементы массива или списка."
+
+msgid "WARNING: The syntax and semantics of this command are not consistent with other BASIC implementations and may be changed in future releases."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Синтаксис и семантика этой команды несовместимы с другими реализациями BASIC и могут быть изменены в будущих выпусках."
+
+msgid "Get the current time."
+msgstr "Получает текущее время."
+
+msgid "The current time in the given numeric variables."
+msgstr "Текущее время в заданных числовых переменных."
+
+msgid "Returns a pointer to a native symbol."
+msgstr "Возвращает указатель на нативный символ."
+
+msgid "name of a native symbol"
+msgstr "имя нативного символа"
+
+msgid "Pointer to requested symbol, or 0 if not found."
+msgstr "Указатель на запрашиваемый символ, или 0, если он не найден."
+
+msgid "Calls a subroutine."
+msgstr "Вызывает подпрограмму."
+
+msgid "`GOSUB` puts the current position in the program on a stack and then jumps to the given location. It is then possible to return to the instruction after the `GOSUB` command by using `RETURN`."
+msgstr "`GOSUB` помещает текущую позицию в программе в стек и затем переходит на указанную позицию. После команды `GOSUB` можно вернуться к инструкции с помощью команды `RETURN`."
+
+msgid "a BASIC program line number"
+msgstr "номер строки BASIC-программы"
+
+msgid "a BASIC program label"
+msgstr "метка BASIC-программы"
+
+msgid "It may be more convenient to use `PROC` procedures and the `CALL` command instead."
+msgstr "Вместо этого может быть удобнее использовать процедуры `PROC` и команду `CALL`."
+
+msgid "Branches to a specified line or label."
+msgstr "Переход к указанной строке или метке."
+
+msgid "Try not to use `GOTO` often as it tends to make programs more difficult to understand. If possible, use loop constructs and procedure calls instead."
+msgstr "Старайтесь не использовать часто `GOTO`, так как это усложняет понимание программ. По возможности используйте конструкции циклов и вызовы процедур."
+
+msgid "Reads the state of a general-purpose I/O pin."
+msgstr "Считывает состояние контакта ввода-вывода общего назначения."
+
+msgid "port number [`0` to `7`]"
+msgstr "номер порта [от `0` до `7`]"
+
+msgid "pin number [`0` to `15`]"
+msgstr "номер контакта [от `0` до `15`]"
+
+msgid "State of pin: `0` for low, `1` for high."
+msgstr "Состояние контакта: `0` - низкий уровень, `1` - высокий уровень."
+
+msgid "* This function is only implemented on the ESP8266 and H3 platforms."
+msgstr "* Эта функция реализована только на платформах ESP8266 и H3."
+
+msgid "* On the ESP8266 platform, `GPIN()` allows access to pins on the I2C I/O extender only."
+msgstr "* На платформе ESP8266 `GPIN()` разрешает доступ только к контактам расширителя ввода-вывода I2C."
+
+msgid "Sets the mode of a general-purpose I/O pin."
+msgstr "Устанавливает режим вывода контакта ввода-вывода общего назначения."
+
+msgid "pin number [`0` to `31`]"
+msgstr "номер контакта [от `0` до `31`]"
+
+msgid "pin mode [`0` to `7`]"
+msgstr "режим контакта [от `0` до `7`]"
+
+msgid "* This command is only implemented on the H3 platform."
+msgstr "* Эта команда реализована только на платформе H3."
+
+msgid "* A `mode` value of `0` or `1` configures the pin as a general-purpose input or output, respectively. A value of `7` disables the pin."
+msgstr "* Значение `mode`, равное `0` или `1`, конфигурирует контакт как вход или выход общего назначения, соответственно. Значение `7` отключает контакт."
+
+msgid "* For the functions of other modes, consult the Allwinner H3 datasheet, chapter 3.2 (\"GPIO Multiplexing Functions\")."
+msgstr "* Информацию о функциях других режимов смотрите в технической документации Allwinner H3, глава 3.2 (\"Функции мультиплексирования GPIO\")."
+
+msgid "* WARNING: Improper use of this command can cause permanent damage to the system and/or attached devices."
+msgstr "* \\\\FpВНИМАНИЕ:\\\\Ff Неправильное использование этой команды может привести к необратимому повреждению системы и/или подключенных устройств."
+
+msgid "Sets the state of a general-purpose I/O pin."
+msgstr "Устанавливает состояние контакта ввода-вывода общего назначения."
+
+msgid "pin number [`0` to `15` (ESP8266) or `31` (H3)]"
+msgstr "номер контакта [от `0` до `15` (ESP8266) или `31` (H3)]"
+
+msgid "pin state [`0` for \"low\", anything else for \"high\"]"
+msgstr "состояние контакта [`0` - \"низкий уровень\", всё остальное - \"высокий уровень\"]"
+
+msgid "* This command is only implemented on the ESP8266 and H3 platforms."
+msgstr "* Эта команда реализована только на платформах ESP8266 и H3."
+
+msgid "* On the ESP8266 platform, `GPOUT` allows access to pins on the I2C I/O extender only."
+msgstr "* На платформе ESP8266 `GPOUT` разрешает доступ только к контактам расширителя ввода-вывода I2C."
+
+msgid "Prints a string of characters at the specified pixel position."
+msgstr "Печатает строку символов с пиксельным позиционированием."
+
+msgid "`GPRINT` allows printing characters outside the fixed text grid, including off-screen pixel memory."
+msgstr "`GPRINT` позволяет печатать символы за пределами фиксированной текстовой сетки, в том числе за пределами экранной пиксельной памяти."
+
+msgid "start point, X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата начальной точки, пиксели [от `0` до `PSIZE(0)-1`]"
+
+msgid "start point, Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата начальной точки, пиксели [от `0` до `PSIZE(2)-1`]"
+
+msgid "`PRINT`-format list of expressions specifying what to draw"
+msgstr "Список выражений в формате `PRINT`, определяющий, что рисовать"
+
+msgid "* The expression list functions as it does in the `PRINT` command."
+msgstr "* Список выражений работает так же, как и в команде `PRINT`."
+
+msgid "* The \"new line\" character that is generally appended at the end of a `PRINT` command is drawn literally by `GPRINT`, showing up as a funny character at the end of the drawn text. This can be avoided by appending a semicolon (`;`) to the print parameters."
+msgstr "* Символ \"новая строка\", который обычно добавляется в конце команды `PRINT`, буквально рисуется командой `GPRINT` и отображается как забавный символ в конце нарисованного текста. Этого можно избежать, добавив в параметры печати точку с запятой (`;`)."
+
+msgid "Scroll a portion screen contents in the given direction."
+msgstr "Прокручивает часть содержимого экрана в заданном направлении."
+
+msgid "start of the screen region, X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата начала области экрана, пиксели [от `0` до `PSIZE(0)-1`]"
+
+msgid "start of the screen region, Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата начала области экрана, пиксели [от `0` до `PSIZE(2)-1`]"
+
+msgid "end of the screen region, X coordinate, pixels [`x1+1` to `PSIZE(0)-1`]"
+msgstr "X-координата конца области экрана, пиксели [от `x1+1` до `PSIZE(0)-1`]"
+
+msgid "end of the screen region, Y coordinate, pixels [`y1+1` to `PSIZE(2)-1`]"
+msgstr "Y-координата конца области экрана, пиксели [от `y1+1` до `PSIZE(2)-1`]"
+
+msgid "Returns a string containing the hexadecimal representation of a number."
+msgstr "Возвращает строку, содержащую шестнадцатеричное представление числа."
+
+msgid "Hexadecimal number as text."
+msgstr "Шестнадцатеричное число в виде текста."
+
+msgid "Selects the I2C bus to use."
+msgstr "Выбирает шину I2C для использования."
+
+msgid "I2C bus number [`0` to `255`]"
+msgstr "Номер шины I2C [от `0` до `255`]"
+
+msgid "This command is only implemented on Linux-based platforms."
+msgstr "Эта команда выполняется только на платформах на базе Linux."
+
+msgid "Request data from I2C device."
+msgstr "Запрашивает данные от устройства I2C."
+
+msgid "I2C address [`0` to `$7F`]"
+msgstr "адрес I2C [от `0` до `$7F`]"
+
+msgid "data to be transmitted"
+msgstr "данные для передачи"
+
+msgid "number of bytes to be received"
+msgstr "количество байтов для получения"
+
+msgid "Returns the received data as the value of the function call."
+msgstr "Возвращает полученные данные как значение вызова функции."
+
+msgid "Also returns the status code of the outward transmission in `RET(0)`."
+msgstr "Также возвращает код состояния исходящей передачи в `RET(0)`."
+
+msgid "If `out_data` is an empty string, no data is sent before the read request."
+msgstr "Если `out_data` - пустая строка, то перед запросом на чтение данные не передаются."
+
+msgid "Sends data to an I2C device."
+msgstr "Отправляет данные на устройство I2C."
+
+msgid "Status code of the transmission."
+msgstr "Код состояния передачи."
+
+msgid "Executes a instruction or instruction block depending on specified conditions."
+msgstr "Выполняет инструкцию или блок инструкций в зависимости от заданных условий."
+
+msgid "one or more instructions, separated by colons"
+msgstr "одна или несколько инструкций, разделенных двоеточиями"
+
+msgid "A `condition` is considered \"false\" if it is zero, and \"true\" in any other case."
+msgstr "`condition` считается \"ложным\", если оно равно нулю, и \"истинным\" в любом другом случае."
+
+msgid "IMPORTANT: In many BASIC implementations, `ENDIF` is spelled `END IF` (that is, as two commands). If the sequence `END IF` is entered or loaded in a program, Engine BASIC will convert it to `ENDIF`."
+msgstr "\\\\FpВАЖНО:\\\\Ff Во многих реализациях BASIC `ENDIF` пишется как `END IF` (то есть, как две команды). Если в программу введена или загружена последовательность `END IF`, BASIC Engine преобразует её в `ENDIF`."
+
+msgid "Returns dimensions and component count of an image file."
+msgstr "Возвращает размеры и количество компонентов файла изображения."
+
+msgid "name of the file"
+msgstr "имя файла"
+
+msgid "Returns the width in pixels in `RET(0)`, the height in `RET(1)` and the number of components in `RET(2)`."
+msgstr "Возвращает ширину `RET(0)` и высоту `RET(1)` в пикселях, а таже количество компонентов в `RET(2)`."
+
+msgid "This command does not work with PCX files."
+msgstr "Эта команда не работает с PCX-файлами."
+
+msgid "Reads a character from the keyboard and returns its numeric value."
+msgstr "Считывает символ с клавиатуры и возвращает его числовое значение."
+
+msgid "Key code [`0` to `65535`]"
+msgstr "Код клавиши [от `0` до `65535`]"
+
+msgid "The alternative syntax `INKEY()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `INKEY()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Reads a character from the keyboard."
+msgstr "Читает символ с клавиатуры."
+
+msgid "Returns either"
+msgstr "Возвращает один из вариантов:"
+
+msgid "* an empty string if there is no keyboard input,"
+msgstr "* пустую строку, если не было ввода с клавиатуры,"
+
+msgid "* a single-character string for regular keys,"
+msgstr "* односимвольную строку для обычных клавиш,"
+
+msgid "* a two-character string for extended keys."
+msgstr "* двухсимвольную строку для расширенных клавиш."
+
+msgid "An \"extended key\" is a key that does not have a common ASCII representation, such as cursor or function keys."
+msgstr "\"Расширенная клавиша\" - это клавиша, не имеющая общего ASCII-представления, например, курсорные или функциональные клавиши."
+
+msgid "Returns a string of characters read from a specified file."
+msgstr "Возвращает строку символов, прочитанную из указанного файла."
+
+msgid "number of bytes to read"
+msgstr "количество байтов для чтения"
+
+msgid "Data read from file."
+msgstr "Данные считанные из файла."
+
+msgid "Returns the name of the specified wavetable synthesizer instrument."
+msgstr "Возвращает имя указанного инструмента таблично-волнового синтезатора."
+
+msgid "instrument number"
+msgstr "номер инструмента"
+
+msgid "Instrument name."
+msgstr "Имя инструмента."
+
+msgid "If an instrument is not defined in the current sound font, an empty string is returned."
+msgstr "Если инструмент не определён в текущем звуковом банке, возвращается пустая строка."
+
+msgid "Installs a packaged module to the system module directory."
+msgstr "Устанавливает упакованный модуль в каталог системных модулей."
+
+msgid "name of a packaged module file"
+msgstr "имя файла упакованного модуля"
+
+msgid "Get the position of the first occurrence of a string in another string."
+msgstr "Получает позицию первого вхождения строки в другую строку."
+
+msgid "string in which to search"
+msgstr "строка, в которой будет производиться поиск"
+
+msgid "string to search for"
+msgstr "строка для поиска"
+
+msgid "Position of first occurence of `needle$` (starting with `0`), or `-1` if it could not be found."
+msgstr "Позиция первого появления `needle$` (начиная с `0`) или `-1`, если его не удалось найти."
+
+msgid "NOTE: The meaning of the return value differs from other BASIC implementations, in which `0` usually indicates that the string has not been found, and locations found start at `1`."
+msgstr "ПРИМЕЧАНИЕ: Значение возвращаемого значения отличается от других реализаций BASIC, в которых `0` обычно указывает, что строка не найдена, а найденные местоположения начинаются с `1`."
+
+msgid "Returns the largest integer less than or equal to a numeric expression."
+msgstr "Возвращает наибольшее целое число, меньшее или равное числовому выражению."
+
+msgid "`num` rounded down to the nearest integer."
+msgstr "`num` округлённое до ближайшего целого числа."
+
+msgid "Get the state of the specified keyboard key."
+msgstr "Получает состояние указанной клавиши клавиатуры."
+
+msgid "Key code [`0` to `255`]"
+msgstr "Код клавиши [от `0` до `255`]"
+
+msgid "`1` if the key is held, `0` if it is not."
+msgstr "`1` - если клавиша удерживается, `0` - если нет."
+
+msgid "The key codes are detailed in the table below. Availability of each key depends on the Engine BASIC platform."
+msgstr "Коды клавиш подробно описаны в таблице ниже. Доступность каждой клавиши зависит от платформы BASIC Engine."
+
+msgid "Key"
+msgstr "Клавиша"
+
+msgid "Key code"
+msgstr "Код клавиши"
+
+msgid "Notes"
+msgstr "Примечания"
+
+msgid "kbd:[Left Alt]"
+msgstr "kbd:[Левый Alt]"
+
+msgid "kbd:[Left Shift]"
+msgstr "kbd:[Левый Shift]"
+
+msgid "kbd:[Left Ctrl]"
+msgstr "kbd:[Левый Ctrl]"
+
+msgid "kbd:[Right Shift]"
+msgstr "kbd:[Правый Shift]"
+
+msgid "kbd:[Right Alt]"
+msgstr "kbd:[Правый Alt]"
+
+msgid "kbd:[Right Ctrl]"
+msgstr "kbd:[Правый Ctrl]"
+
+msgid "kbd:[Left GUI]"
+msgstr "kbd:[Левый GUI]"
+
+msgid "kbd:[Right GUI]"
+msgstr "kbd:[Правый GUI]"
+
+msgid "kbd:[NumLock]"
+msgstr "kbd:[NumLock]"
+
+msgid "kbd:[Scroll Lock]"
+msgstr "kbd:[Scroll Lock]"
+
+msgid "kbd:[Caps Lock]"
+msgstr "kbd:[Caps Lock]"
+
+msgid "kbd:[Print Screen]"
+msgstr "kbd:[Print Screen]"
+
+msgid "12"
+msgstr "12"
+
+msgid "kbd:[`]"
+msgstr "kbd:[`]"
+
+msgid "13"
+msgstr "13"
+
+msgid "kbd:[Insert]"
+msgstr "kbd:[Insert]"
+
+msgid "14"
+msgstr "14"
+
+msgid "kbd:[Home]"
+msgstr "kbd:[Home]"
+
+msgid "15"
+msgstr "15"
+
+msgid "kbd:[Pause]"
+msgstr "kbd:[Pause]"
+
+msgid "16"
+msgstr "16"
+
+msgid "kbd:[Romaji]"
+msgstr "kbd:[Romaji]"
+
+msgid "17"
+msgstr "17"
+
+msgid "Japanese keyboard, not available on SDL"
+msgstr "Японская клавиатура, недоступно в SDL"
+
+msgid "kbd:[App]"
+msgstr "kbd:[App]"
+
+msgid "18"
+msgstr "18"
+
+msgid "kbd:[Henkan]"
+msgstr "kbd:[Henkan]"
+
+msgid "19"
+msgstr "19"
+
+msgid "kbd:[Muhenkan]"
+msgstr "kbd:[Muhenkan]"
+
+msgid "20"
+msgstr "20"
+
+msgid "kbd:[Page Up]"
+msgstr "kbd:[Page Up]"
+
+msgid "21"
+msgstr "21"
+
+msgid "kbd:[Page Down]"
+msgstr "kbd:[Page Down]"
+
+msgid "22"
+msgstr "22"
+
+msgid "kbd:[End]"
+msgstr "kbd:[End]"
+
+msgid "23"
+msgstr "23"
+
+msgid "kbd:[Left Arrow]"
+msgstr "kbd:[Стрелка влево]"
+
+msgid "24"
+msgstr "24"
+
+msgid "kbd:[Up_Arrow]"
+msgstr "kbd:[Стрелка вверх]"
+
+msgid "25"
+msgstr "25"
+
+msgid "kbd:[Right Arrow]"
+msgstr "kbd:[Стрелка вправо]"
+
+msgid "26"
+msgstr "26"
+
+msgid "kbd:[Down Arrow]"
+msgstr "kbd:[Стрелка вниз]"
+
+msgid "27"
+msgstr "27"
+
+msgid "kbd:[ESC]"
+msgstr "kbd:[ESC]"
+
+msgid "30"
+msgstr "30"
+
+msgid "kbd:[Tab]"
+msgstr "kbd:[Tab]"
+
+msgid "31"
+msgstr "31"
+
+msgid "kbd:[Enter]"
+msgstr "kbd:[Enter]"
+
+msgid "32"
+msgstr "32"
+
+msgid "kbd:[Backspace]"
+msgstr "kbd:[Backspace]"
+
+msgid "33"
+msgstr "33"
+
+msgid "kbd:[Delete]"
+msgstr "kbd:[Delete]"
+
+msgid "34"
+msgstr "34"
+
+msgid "kbd:[Space]"
+msgstr "kbd:[Пробел]"
+
+msgid "35"
+msgstr "35"
+
+msgid "kbd:[']"
+msgstr "kbd:[']"
+
+msgid "36"
+msgstr "36"
+
+msgid "kbd:[:]"
+msgstr "kbd:[:]"
+
+msgid "37"
+msgstr "37"
+
+msgid "kbd:[,]"
+msgstr "kbd:[,]"
+
+msgid "38"
+msgstr "38"
+
+msgid "kbd:[-]"
+msgstr "kbd:[-]"
+
+msgid "39"
+msgstr "39"
+
+msgid "kbd:[.]"
+msgstr "kbd:[.]"
+
+msgid "40"
+msgstr "40"
+
+msgid "kbd:[/]"
+msgstr "kbd:[/]"
+
+msgid "41"
+msgstr "41"
+
+msgid "kbd:[[]"
+msgstr "kbd:[[]"
+
+msgid "42"
+msgstr "42"
+
+msgid "kbd:[]]"
+msgstr "kbd:[]]"
+
+msgid "43"
+msgstr "43"
+
+# Нельзя напрямую использовать символ "\", так как это вызывает ошибку чтения файла помощи
+msgid "kbd:[&#x5c;]"
+msgstr "kbd:[Обратный слэш]"
+
+msgid "44"
+msgstr "44"
+
+msgid "45"
+msgstr "45"
+
+msgid "kbd:[=]"
+msgstr "kbd:[=]"
+
+msgid "46"
+msgstr "46"
+
+msgid "kbd:[Ro]"
+msgstr "kbd:[Ro]"
+
+msgid "47"
+msgstr "47"
+
+msgid "kbd:[0]"
+msgstr "kbd:[0]"
+
+msgid "48"
+msgstr "48"
+
+msgid "kbd:[1]"
+msgstr "kbd:[1]"
+
+msgid "49"
+msgstr "49"
+
+msgid "kbd:[2]"
+msgstr "kbd:[2]"
+
+msgid "50"
+msgstr "50"
+
+msgid "kbd:[3]"
+msgstr "kbd:[3]"
+
+msgid "51"
+msgstr "51"
+
+msgid "kbd:[4]"
+msgstr "kbd:[4]"
+
+msgid "52"
+msgstr "52"
+
+msgid "kbd:[5]"
+msgstr "kbd:[5]"
+
+msgid "53"
+msgstr "53"
+
+msgid "kbd:[6]"
+msgstr "kbd:[6]"
+
+msgid "54"
+msgstr "54"
+
+msgid "kbd:[7]"
+msgstr "kbd:[7]"
+
+msgid "55"
+msgstr "55"
+
+msgid "kbd:[8]"
+msgstr "kbd:[8]"
+
+msgid "56"
+msgstr "56"
+
+msgid "kbd:[9]"
+msgstr "kbd:[9]"
+
+msgid "57"
+msgstr "57"
+
+msgid "kbd:[Pipe2]"
+msgstr "kbd:[Pipe2]"
+
+msgid "58"
+msgstr "58"
+
+msgid "<<unclear,not well defined>>, not available on SDL"
+msgstr "<<неясно, нечётко определено>>, недоступно в SDL"
+
+msgid "kbd:[A]"
+msgstr "kbd:[A]"
+
+msgid "65"
+msgstr "65"
+
+msgid "kbd:[B]"
+msgstr "kbd:[B]"
+
+msgid "66"
+msgstr "66"
+
+msgid "kbd:[C]"
+msgstr "kbd:[C]"
+
+msgid "67"
+msgstr "67"
+
+msgid "kbd:[D]"
+msgstr "kbd:[D]"
+
+msgid "68"
+msgstr "68"
+
+msgid "kbd:[E]"
+msgstr "kbd:[E]"
+
+msgid "69"
+msgstr "69"
+
+msgid "kbd:[F]"
+msgstr "kbd:[F]"
+
+msgid "70"
+msgstr "70"
+
+msgid "kbd:[G]"
+msgstr "kbd:[G]"
+
+msgid "71"
+msgstr "71"
+
+msgid "kbd:[H]"
+msgstr "kbd:[H]"
+
+msgid "72"
+msgstr "72"
+
+msgid "kbd:[I]"
+msgstr "kbd:[I]"
+
+msgid "73"
+msgstr "73"
+
+msgid "kbd:[J]"
+msgstr "kbd:[J]"
+
+msgid "74"
+msgstr "74"
+
+msgid "kbd:[K]"
+msgstr "kbd:[K]"
+
+msgid "75"
+msgstr "75"
+
+msgid "kbd:[L]"
+msgstr "kbd:[L]"
+
+msgid "76"
+msgstr "76"
+
+msgid "kbd:[M]"
+msgstr "kbd:[M]"
+
+msgid "77"
+msgstr "77"
+
+msgid "kbd:[N]"
+msgstr "kbd:[N]"
+
+msgid "78"
+msgstr "78"
+
+msgid "kbd:[O]"
+msgstr "kbd:[O]"
+
+msgid "79"
+msgstr "79"
+
+msgid "kbd:[P]"
+msgstr "kbd:[P]"
+
+msgid "80"
+msgstr "80"
+
+msgid "kbd:[Q]"
+msgstr "kbd:[Q]"
+
+msgid "81"
+msgstr "81"
+
+msgid "kbd:[R]"
+msgstr "kbd:[R]"
+
+msgid "82"
+msgstr "82"
+
+msgid "kbd:[S]"
+msgstr "kbd:[S]"
+
+msgid "83"
+msgstr "83"
+
+msgid "kbd:[T]"
+msgstr "kbd:[T]"
+
+msgid "84"
+msgstr "84"
+
+msgid "kbd:[U]"
+msgstr "kbd:[U]"
+
+msgid "85"
+msgstr "85"
+
+msgid "kbd:[V]"
+msgstr "kbd:[V]"
+
+msgid "86"
+msgstr "86"
+
+msgid "kbd:[W]"
+msgstr "kbd:[W]"
+
+msgid "87"
+msgstr "87"
+
+msgid "kbd:[X]"
+msgstr "kbd:[X]"
+
+msgid "88"
+msgstr "88"
+
+msgid "kbd:[Y]"
+msgstr "kbd:[Y]"
+
+msgid "89"
+msgstr "89"
+
+msgid "kbd:[Z]"
+msgstr "kbd:[Z]"
+
+msgid "90"
+msgstr "90"
+
+msgid "Keypad kbd:[=]"
+msgstr "Кейпад kbd:[=]"
+
+msgid "94"
+msgstr "94"
+
+msgid "Keypad kbd:[Enter]"
+msgstr "Кейпад kbd:[Enter]"
+
+msgid "95"
+msgstr "95"
+
+msgid "Keypad kbd:[0]"
+msgstr "Кейпад kbd:[0]"
+
+msgid "96"
+msgstr "96"
+
+msgid "Keypad kbd:[1]"
+msgstr "Кейпад kbd:[1]"
+
+msgid "97"
+msgstr "97"
+
+msgid "Keypad kbd:[2]"
+msgstr "Кейпад kbd:[2]"
+
+msgid "98"
+msgstr "98"
+
+msgid "Keypad kbd:[3]"
+msgstr "Кейпад kbd:[3]"
+
+msgid "99"
+msgstr "99"
+
+msgid "Keypad kbd:[4]"
+msgstr "Кейпад kbd:[4]"
+
+msgid "100"
+msgstr "100"
+
+msgid "Keypad kbd:[5]"
+msgstr "Кейпад kbd:[5]"
+
+msgid "101"
+msgstr "101"
+
+msgid "Keypad kbd:[6]"
+msgstr "Кейпад kbd:[6]"
+
+msgid "102"
+msgstr "102"
+
+msgid "Keypad kbd:[7]"
+msgstr "Кейпад kbd:[7]"
+
+msgid "103"
+msgstr "103"
+
+msgid "Keypad kbd:[8]"
+msgstr "Кейпад kbd:[8]"
+
+msgid "104"
+msgstr "104"
+
+msgid "Keypad kbd:[9]"
+msgstr "Кейпад kbd:[9]"
+
+msgid "105"
+msgstr "105"
+
+msgid "Keypad kbd:[*]"
+msgstr "Кейпад kbd:[*]"
+
+msgid "106"
+msgstr "106"
+
+msgid "Keypad kbd:[+]"
+msgstr "Кейпад kbd:[+]"
+
+msgid "107"
+msgstr "107"
+
+msgid "Keypad kbd:[,]"
+msgstr "Кейпад kbd:[,]"
+
+msgid "108"
+msgstr "108"
+
+msgid "Brazilian keyboard, not available on SDL"
+msgstr "Бразильская клавиатура, недоступно в SDL"
+
+msgid "Keypad kbd:[-]"
+msgstr "Кейпад kbd:[-]"
+
+msgid "109"
+msgstr "109"
+
+msgid "Keypad kbd:[.]"
+msgstr "Кейпад kbd:[.]"
+
+msgid "110"
+msgstr "110"
+
+msgid "Keypad kbd:[/]"
+msgstr "Кейпад kbd:[/]"
+
+msgid "111"
+msgstr "111"
+
+msgid "kbd:[F1]"
+msgstr "kbd:[F1]"
+
+msgid "112"
+msgstr "112"
+
+msgid "kbd:[F2]"
+msgstr "kbd:[F2]"
+
+msgid "113"
+msgstr "113"
+
+msgid "kbd:[F3]"
+msgstr "kbd:[F3]"
+
+msgid "114"
+msgstr "114"
+
+msgid "kbd:[F4]"
+msgstr "kbd:[F4]"
+
+msgid "115"
+msgstr "115"
+
+msgid "kbd:[F5]"
+msgstr "kbd:[F5]"
+
+msgid "116"
+msgstr "116"
+
+msgid "kbd:[F6]"
+msgstr "kbd:[F6]"
+
+msgid "117"
+msgstr "117"
+
+msgid "kbd:[F7]"
+msgstr "kbd:[F7]"
+
+msgid "118"
+msgstr "118"
+
+msgid "kbd:[F8]"
+msgstr "kbd:[F8]"
+
+msgid "119"
+msgstr "119"
+
+msgid "kbd:[F9]"
+msgstr "kbd:[F9]"
+
+msgid "120"
+msgstr "120"
+
+msgid "kbd:[F10]"
+msgstr "kbd:[F10]"
+
+msgid "121"
+msgstr "121"
+
+msgid "kbd:[F11]"
+msgstr "kbd:[F11]"
+
+msgid "122"
+msgstr "122"
+
+msgid "kbd:[F12]"
+msgstr "kbd:[F12]"
+
+msgid "123"
+msgstr "123"
+
+msgid "kbd:[Power]"
+msgstr "kbd:[Power]"
+
+msgid "145"
+msgstr "145"
+
+msgid "Key codes are fixed and do not change with the configured keyboard layout."
+msgstr "Коды клавиш фиксированы и не меняются в зависимости от настроенной раскладки клавиатуры."
+
+msgid "* Not all keys available on international (especially Japanese) keyboard are correctly mapped on all platforms."
+msgstr "* Не все клавиши, доступные на международной (особенно японской) клавиатуре, корректно сопоставлены на всех платформах."
+
+msgid "* [[unclear]] Some key definitions are not well-defined. The kbd:[Pipe2] key is documented as belonging to a US layout keyboard, but US layouts do not have a separate kbd:["
+msgstr "* [[неясно]] Некоторые определения клавиш точно не заданы. Клавиша kbd:[Pipe2] относится к клавиатуре с раскладкой США, но в раскладках США нет клавиши kbd:["
+
+msgid "] key."
+msgstr "]."
+
+msgid "* There is currently no keyboard event handling similar to <<ON PAD>> for game pad input."
+msgstr "* В настоящее время не существует обработки событий клавиатуры, аналогичной <<ON PAD>>, для ввода с геймпада."
+
+msgid "Converts string to all-lowercase letters."
+msgstr "Преобразует строку в строчные буквы."
+
+msgid "string to convert"
+msgstr "строка для преобразования"
+
+msgid "Value of `s$` with all letters replaced with their lowercase equivalents."
+msgstr "Значение `s$` с заменой всех букв на их строчные эквиваленты."
+
+msgid "Value of the \"left\" direction for input devices."
+msgstr "Значение направления \"влево\" для устройств ввода."
+
+msgid "Returns a specified number of leftmost characters in a string."
+msgstr "Возвращает указанное количество крайних левых символов в строке."
+
+msgid "number of characters to return [min `0`]"
+msgstr "количество возвращаемых символов [мин. `0`]"
+
+msgid "Substring of `num` characters or less."
+msgstr "Подстрока, состоящая из `num` символов или меньше."
+
+msgid "If `l$` is shorter than `num` characters, the return value is `l$`."
+msgstr "Если `l$` короче, чем `num` символов, то возвращаемое значение будет `l$`."
+
+msgid "Returns the number of characters in a string or the number of elements in a list."
+msgstr "Возвращает количество символов в строке или количество элементов в списке."
+
+msgid "reference to a numeric or string list"
+msgstr "ссылка на числовой или строковый список"
+
+msgid "Length in characters (string) or elements (list)."
+msgstr "Длина в символах (строка) или элементах (список)."
+
+msgid "Assigns the value of an expression to a variable."
+msgstr "Присваивает значение выражения переменной."
+
+msgid "any variable"
+msgstr "любая переменная"
+
+msgid "any expression that is of the same type as `variable`"
+msgstr "любое выражение того же типа, что и `variable`"
+
+msgid "The use of this command is optional; any variable assignment can be written as `variable = expression`, without prefixing it with `LET`."
+msgstr "Использование этой команды необязательно; любое присваивание переменной может быть записано как `variable = expression`, без префикса `LET`."
+
+msgid "It is provided solely as a compatibility feature with other BASIC dialects. Its use in new programs is not recommended, as it consumes additional memory and compute resources without providing any benefit."
+msgstr "Она предоставляется только как функция совместимости с другими диалектами BASIC. Её не рекомендуется использовать в новых программах, так как она потребляет дополнительную память и вычислительные ресурсы, не принося никакой пользы."
+
+msgid "Draws a line."
+msgstr "Рисует линию."
+
+msgid "X coordinate of the line's starting point [`0` to `PSIZE(0)-1`]"
+msgstr "Х-координата начальной точки линии [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate of the line's starting point [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата начальной точки линии [от `0` до `PSIZE(2)-1`]"
+
+msgid "X coordinate of the line's end point [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата конечной точки линии [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate of the line's end point [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата конечной точки линии [от `0` до `PSIZE(2)-1`]"
+
+msgid "color of the line [default: text foreground color]"
+msgstr "цвет линии [по умолчанию: цвет переднего плана текста]"
+
+msgid "Coordinates that exceed the valid pixel memory area will be clamped. This can change the slope of the line and is not the behavior one would expect."
+msgstr "Координаты, превышающие допустимую область памяти пикселей, будут огрничены. Это может изменить наклон линии, и это не то поведение, которого можно было бы ожидать."
+
+msgid "Lists installed fonts."
+msgstr "Перечисляет установленные шрифты."
+
+msgid "Prints a tab-separated list of the indices, names and sizes of the fonts currently loaded."
+msgstr "Выводит разделенный табуляцией список индексов, имен и размеров шрифтов, загруженных в данный момент."
+
+msgid "Shows the names of all modules currently loaded."
+msgstr "Выводит имена всех модулей, загруженных в данный момент."
+
+msgid "Load a program from a file."
+msgstr "Загружает программу из файла."
+
+msgid "name of the BASIC program"
+msgstr "имя BASIC-программы"
+
+msgid "font (encoding) used for UTF-8 conversion [`0` to `{NUM_FONTS_m1}`]"
+msgstr "шрифт (кодировка) для преобразования в UTF-8 [от `0` до `{NUM_FONTS_m1}`]"
+
+msgid "If you specify the `FONT` parameter, `LOAD` will convert the program from the single-byte encoding for that font to UTF-8. Use this to load programs written for the BASIC Engine ESP8266 platform on next-generation systems."
+msgstr "Если вы укажете параметр `FONT`, `LOAD` преобразует программу из однобайтовой кодировки для этого шрифта в UTF-8. Используйте этот параметр для загрузки программ, написанных для платформы BASIC Engine ESP8266, в системы нового поколения."
+
+msgid "Loads a background map from a file."
+msgstr "Загружает карту фона из файла."
+
+msgid "background number. [`0` to `{MAX_BG_m1}`]"
+msgstr "номер фона [от `0` до `{MAX_BG_m1}`]"
+
+msgid "name of background map file"
+msgstr "имя файла карты фона"
+
+msgid "Loads a TrueType font from a file."
+msgstr "Загружает шрифт TrueType из файла."
+
+msgid "name of TrueType font file"
+msgstr "имя файла шрифта TrueType"
+
+msgid "Proportional fonts and fonts that are not specifically designed for use on low-resolution screens will not look very good."
+msgstr "Пропорциональные шрифты и шрифты, не предназначенные для использования на экранах с низким разрешением, будут выглядеть не очень хорошо."
+
+msgid "Loads an image file in whole or in parts to pixel memory."
+msgstr "Загружает файл изображения целиком или частично в память пикселей."
+
+msgid "sprite range [limits between `0` and `{MAX_SPRITES_m1}`]"
+msgstr "диапазон спрайтов [в пределах от `0` до `{MAX_SPRITES_m1}`]"
+
+msgid "X-coordinate of destination, pixels [`0` (default) to `PSIZE(0)-w`]"
+msgstr "X-координата назначения, пиксели [от `0` (по умолчанию) до `PSIZE(0)-w`]"
+
+msgid "Y-coordinate of destination, pixels [`0` (default) to `PSIZE(2)-h`]"
+msgstr "Y-координата назначения, пиксели [от `0` (по умолчанию) до `PSIZE(2)-h`]"
+
+msgid "offset within image file, X axis, pixels [default: `0`]"
+msgstr "ось X смещения в файле изображения, пиксели [по умолчанию: `0`]"
+
+msgid "offset within image file, Y axis, pixels [default: `0`]"
+msgstr "ось Y смещения в файле изображения, пиксели [по умолчанию: `0`]"
+
+msgid "width of image portion to be loaded, pixels [default: image width]"
+msgstr "ширина загружаемой части изображения, пиксели [по умолчанию: ширина изображения]"
+
+msgid "height of image portion to be loaded, pixels [default: image height]"
+msgstr "высота загружаемой части изображения, пиксели [по умолчанию: высота изображения]"
+
+msgid "color key for transparency [default: no transparency]"
+msgstr "ключевой цвет для прозрачности [по умолчанию: прозрачность отсутствует]"
+
+msgid "scaling factor [default: `1`]"
+msgstr "коэффициент масштабирования [по умолчанию: `1`]"
+
+msgid "Returns the destination coordinates in `RET(0)` and `RET(1)`, as well as width and height in `RET(2)` and `RET(3)`, respectively."
+msgstr "Возвращает целевые координаты в `RET(0)` и `RET(1)`, а также ширину и высоту в `RET(2)` и `RET(3)` соответственно."
+
+msgid "If no destination is specified, an area of off-screen memory will be allocated automatically."
+msgstr "Если цель не указана, область памяти за пределами экрана будет выделена автоматически."
+
+msgid "If `AS BG` is used, the loaded image portion will be assigned to the specified background as its tile set."
+msgstr "Если используется `AS BG`, часть загруженного изображения присваивается фону, который указан в качестве набора тайлов."
+
+msgid "If `AS SPRITE` is used, the loaded image portion will be assigned to the specified range of sprites as their sprite patterns."
+msgstr "Если используется `AS SPRITE`, часть загруженного изображения назначается в указанную область спрайта в качестве шаблона спрайта."
+
+msgid "If a color key is specified, pixels of the given color will not be drawn."
+msgstr "Если задан ключевой цвет, пиксели данного цвета рисоваться не будут."
+
+msgid "If the scaling factor for a dimension is `-1`, it will be resized to the screen size. If it is `-2`, it will be resized so that the aspect ratio is preserved."
+msgstr "Если коэффициент масштабирования для размера равен `-1`, он будет изменен в соответствии с размером экрана. Если коэффициент масштабирования равен `-2`, размер будет изменён с сохранением соотношения сторон."
+
+msgid "If the scaling factor for both dimensions is `-2`, the image will be fit to the screen while preserving the aspect ratio."
+msgstr "Если коэффициент масштабирования для обоих размеров равен `-2`, изображение будет соответствовать размеру экрана с сохранением соотношения сторон."
+
+msgid "IMPORTANT: Resizing is not supported for images in PCX format."
+msgstr "\\\\FpВАЖНО:\\\\Ff Изменение размера изображений в формате PCX не поддерживается."
+
+msgid "Loads a module from the system module directory."
+msgstr "Загружает модуль из каталога системных модулей."
+
+msgid "name of an installed module"
+msgstr "имя устанавливаемого модуля"
+
+msgid "Returns the current position within a file."
+msgstr "Возвращает текущую позицию в файле."
+
+msgid "Position at which the next byte will be read or written."
+msgstr "Позиция, с которой будет прочитан или записан следующий байт."
+
+msgid "Moves the text cursor to the specified position."
+msgstr "Помещает текстовый курсор в указанную позицию."
+
+msgid "cursor X coordinate [`0` to `CSIZE(0)-1`]"
+msgstr "X-координата курсора [от `0` до `CSIZE(0)-1`]"
+
+msgid "cursor Y coordinate [`0` to `CSIZE(1)-1`]"
+msgstr "Y-координата курсора [от `0` до `CSIZE(1)-1`]"
+
+msgid "Returns the length of a file in bytes."
+msgstr "Возвращает длину файла в байтах."
+
+msgid "Length of file."
+msgstr "Длина файла."
+
+msgid "Returns the natural logarithm of a numeric expression."
+msgstr "Возвращает натуральный логарифм числового выражения."
+
+msgid "The natural logarithm of `num`."
+msgstr "Натуральный логарифм от `num`."
+
+msgid "Iterates a `DO` loop."
+msgstr "Выполняет итерацию цикла `DO`."
+
+msgid "Re-maps a value from one range to another"
+msgstr "Переопределяет значение из одного диапазона в другой"
+
+msgid "value to be re-mapped"
+msgstr "значение для переопределения"
+
+msgid "lower bound of the value's current range"
+msgstr "нижняя граница текущего диапазона значений"
+
+msgid "upper bound of the value's current range"
+msgstr "верхняя граница текущего диапазона значений"
+
+msgid "lower bound of the value's target range"
+msgstr "нижняя граница целевого диапазона значения"
+
+msgid "upper bound of the value's target range"
+msgstr "верхняя граница целевого диапазона значения"
+
+msgid "Re-mapped value."
+msgstr "Переназначенное значение."
+
+msgid "Restricts `value` to the range `l1`-`h1`, which is arbitrary."
+msgstr "Ограничивает `val` диапазоном `l1`-`h1`, который является произвольным."
+
+msgid "Merge a program in a file with the program currently in memory."
+msgstr "Объединяет программу из файла с программой, находящейся в памяти."
+
+msgid "name of the BASIC program to be merged"
+msgstr "имя BASIC-программы для объединения"
+
+msgid "line number at which to contine execution [default: first line]"
+msgstr "номер строки для продолжения выполнения [по умолчанию: первая строка]"
+
+msgid "If called from within a program, `MERGE` will continue execution from line `line_num` after the merge (or the beginning of the program if `line_num` is not specified)."
+msgstr "При вызове из программы `MERGE` продолжит выполнение со строки `line_num` после слияния (или с начала программы, если `line_num` не указано)."
+
+msgid "When called from within a program, `MERGE` resets all variables. This probably limits its usefulness."
+msgstr "При вызове из программы `MERGE` сбрасывает все переменные. Вероятно, это ограничивает её полезность."
+
+msgid "Returns part of a string (a substring)."
+msgstr "Возвращает часть строки (подстроку)."
+
+msgid "position of the first character in the substring being returned"
+msgstr "позиция первого символа в возвращаемой подстроке"
+
+msgid "number of characters in the substring [default: `LEN(m$)-start`]"
+msgstr "количество символов в подстроке [по умолчанию: `LEN(m$)-start`]"
+
+msgid "Substring of `len` characters or less."
+msgstr "Подстрока из `len` символов или меньше."
+
+msgid "* If `m$` is shorter than `len` characters, the return value is `m$`."
+msgstr "* Если `m$` короче `len` символов, возвращаемое значение будет `m$`."
+
+msgid "* Unlike with other BASIC implementations, `start` is zero-based, i.e. the first character is 0, not 1."
+msgstr "* В отличие от других реализаций BASIC, `start` начинается с нуля, т.е. первый символ равен 0, а не 1."
+
+msgid "You cannot assign values to `MID$()`, which is possible in some other BASIC implementations."
+msgstr "Вы не можете присваивать значения `MID$()`, что возможно в некоторых других реализациях BASIC."
+
+msgid "Creates a directory."
+msgstr "Создаёт каталог."
+
+msgid "path to the new directory"
+msgstr "путь к новому каталогу"
+
+msgid "Modulus operator."
+msgstr "Оператор модуля."
+
+msgid "Remainder of division of `a` and `b`."
+msgstr "Остаток от деления `a` и `b`."
+
+msgid "State of the specified mouse button."
+msgstr "Состояние указанной кнопки мыши."
+
+msgid "number of mouse button [`1` to `32`]"
+msgstr "номер кнопки мыши [от `1` до `32`]"
+
+msgid "`1` if the mouse button is held, `0` if it is not."
+msgstr "`1` - если кнопка мыши удерживается, `0` - если нет."
+
+msgid "Number"
+msgstr "Номер"
+
+msgid "Mouse button"
+msgstr "Кнопка мыши"
+
+msgid "Left button"
+msgstr "Левая кнопка"
+
+msgid "Right button"
+msgstr "Правая кнопка"
+
+msgid "Middle button"
+msgstr "Средняя кнопка"
+
+msgid "Other buttons than the ones specified above may be available if the mouse connected has more than three buttons."
+msgstr "Если подключенная мышь имеет более трех кнопок, могут быть доступны и другие кнопки, кроме указанных выше."
+
+msgid "Horizontal movement of the mouse."
+msgstr "Опрашивает горизонтальное движение мыши."
+
+msgid "Returns a value representing the amount of horizontal movement of the mouse since the last call to `MOUSEDX`."
+msgstr "Возвращает значение, представляющее величину горизонтального перемещения мыши с момента последнего вызова `MOUSEDX`."
+
+msgid "relative horizontal movement of mouse, pixels"
+msgstr "Относительное горизонтальное перемещение мыши, пиксели"
+
+msgid "Vertical movement of the mouse."
+msgstr "Опрашивает вертикальное движение мыши."
+
+msgid "Returns a value representing the amount of vertical movement of the mouse since the last call to `MOUSEDY`."
+msgstr "Возвращает значение, представляющее величину вертикального перемещения мыши с момента последнего вызова `MOUSEDY`."
+
+msgid "relative vertical movement of mouse, pixels"
+msgstr "Относительное вертикальное перемещение мыши, пиксели"
+
+msgid "Movement of the mouse wheel."
+msgstr "Опрос вращения колёсика мыши."
+
+msgid "Returns a value representing the movement of the mouse wheel since the last call to `MOUSEWHEEL`."
+msgstr "Возвращает значение, представляющее вращение колёсика мыши с момента последнего вызова `MOUSEWHEEL`."
+
+msgid "movement of mouse wheel, clicks"
+msgstr "Вращение колёсика мыши, щелчки"
+
+msgid "This function is not implemented on SDL platforms."
+msgstr "Эта функция не реализована на платформах SDL."
+
+msgid "Absolute horizontal coordinate of the mouse cursor."
+msgstr "Запрашивает абсолютную горизонтальную координату указателя мыши."
+
+msgid "X coordinate of mouse cursor, from `0` to `PSIZE(0)-1`"
+msgstr "X-координата указателя мыши, от `0` до `PSIZE(0)-1`"
+
+msgid "Absolute vertical coordinate of the mouse cursor."
+msgstr "Запрашивает абсолютную вертикальную координату указателя мыши."
+
+msgid "Y coordinate of mouse cursor, from `0` to `PSIZE(1)-1`"
+msgstr "Y-координата указателя мыши, от `0` до `PSIZE(1)-1`"
+
+msgid "Scrolls a tiled background."
+msgstr "Прокручивает тайловый фон."
+
+msgid "top/left corner offset horizontal, pixels"
+msgstr "смещение верхнего/левого угла по горизонтали, пикселей"
+
+msgid "top/left corner offset vertical, pixels"
+msgstr "смещение верхнего/левого угла по вертикали, пикселей"
+
+msgid "There are no restrictions on the coordinates that can be used; backgrounds maps wrap around if the display window extends beyond the map boundaries."
+msgstr "Ограничений на используемые координаты нет; карты фона заворачиваются, если окно отображения выходит за границы карты."
+
+msgid "Moves a sprite."
+msgstr "Перемещает спрайт."
+
+msgid "Sprite number [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "номер спрайта [от `0` до `{MAX_SPRITES_m1}`]"
+
+msgid "Sprite position X coordinate, pixels"
+msgstr "X-координата положения спрайта, пиксели"
+
+msgid "There are no restrictions on the coordinates that can be used; sprites that are placed completely outside the dimensions of the current screen mode will not be drawn."
+msgstr "Нет никаких ограничений на используемые координаты; спрайты, размещенные полностью за пределами размеров текущего режима экрана, не будут нарисованы."
+
+msgid "Deletes the program in memory as well as all variables."
+msgstr "Удаляет программу и все переменные из памяти."
+
+msgid "Increments and tests the counter in a `FOR` loop."
+msgstr "Наращивает и проверяет счётчик в цикле `FOR`."
+
+msgid "Bitwise inversion operator."
+msgstr "Оператор побитовой инверсии."
+
+msgid "Bitwise inversion of `a`."
+msgstr "Побитовая инверсия `a`."
+
+msgid "Like most BASIC implementations, Engine BASIC does not have a dedicated \"logical NOT\" operator; instead, the bitwise operator is used."
+msgstr "Как и в большинстве реализаций BASIC, в BASIC Engine нет специального оператора \"логическое НЕ\"; вместо него используется побитовый оператор."
+
+msgid "Enables error handling and, when a run-time error occurs, directs your program to branch to an error-handling routine."
+msgstr "Включает обработку ошибок и в случае возникновения ошибки во время выполнения предписывает вашей программе перейти к подпрограмме обработки ошибок."
+
+msgid "Error handling can be disabled using `ON ERROR OFF`."
+msgstr "Обработку ошибок можно отключить с помощью `ON ERROR OFF`."
+
+msgid "a line number or a label"
+msgstr "номер строки или метка"
+
+msgid "The error code is passed to the handler in `RET(0)`, and the line number in `RET(1)`."
+msgstr "Код ошибки передается обработчику в `RET(0)`, а номер строки в `RET(1)`."
+
+msgid "When an error has been forwarded from a sub-program that has been started with `EXEC`, the line number of the sub-program in which the error has been triggered is passed in `RET(2)`."
+msgstr "Когда ошибка пересылается из подпрограммы, которая была запущена с помощью `EXEC`, номер строки подпрограммы, в которой возникла ошибка, передается в `RET(2)`."
+
+msgid "Unlike other event handlers, `ON ERROR` does not call the error handler as a procedure, and it is not possible to use `RETURN` to resume execution. `RESUME` must be used instead."
+msgstr "В отличие от других обработчиков событий, `ON ERROR` не вызывает обработчик ошибок как процедуру, и невозможно использовать `RETURN` для возобновления выполнения. Вместо этого следует использовать `RESUME`."
+
+msgid "When a program is executed using `EXEC` and does not define its own error handler, any errors occurring in the child program will be forwarded to the parent program's error handler, if there is one."
+msgstr "Когда программа выполняется с использованием `EXEC` и не определяет свой собственный обработчик ошибок, любые ошибки, возникающие в дочерней программе, будут перенаправлены в обработчик ошибок родительской программы, если таковой имеется."
+
+msgid "Call one of several subroutines, depending on the value of an expression."
+msgstr "Вызывает одну из нескольких подпрограмм в зависимости от значения выражения."
+
+msgid "Branches to one of several locations, depending on the value of an expression."
+msgstr "Переходит в одно из нескольких мест, в зависимости от значения выражения."
+
+msgid "`ON GOTO` and `ON GOSUB` will branch to the first given line number or label if `expression` is `1`, to the second if `expression` is `2`, and so forth. If `expression` is `0`, it will do nothing, and execution will continue with the next instruction."
+msgstr "`ON GOTO` и `ON GOSUB` переходят к первой указанной строке или метке, если `expression` равно `1`, ко второй, если `expression` равно `2` и так далее. Если `expression` равно `0`, ничего не делается, и выполнение продолжается со следующего оператора."
+
+msgid "`ON GOSUB` calls the given location as a subroutine, while `ON GOTO` simply continues execution there."
+msgstr "`ON GOSUB` вызывает указанное место как подпрограмму, а `ON GOTO` просто продолжает выполнение там."
+
+msgid "Defines a game controller input handler triggered by changes in the state of the buttons of a given controller."
+msgstr "Определяет обработчик ввода игрового контроллера, запускаемый изменениями состояния кнопок данного контроллера."
+
+msgid "Game controller input event handling can be disabled using `ON PAD OFF`."
+msgstr "Обработку входных событий игрового контроллера можно отключить используя `ON PAD OFF`."
+
+msgid "number of the game controller [`0` to `{MAX_PADS_m1}`]"
+msgstr "номер игрового контроллера [от `0` до `{MAX_PADS_m1}`]"
+
+msgid "a procedure defined with `PROC`"
+msgstr "процедура, определённая с помощью `PROC`"
+
+msgid "The event handler will receive two numeric arguments: the number of the game controller that has changed state, and a bit pattern indicating which buttons have changed."
+msgstr "Обработчик событий получит два числовых аргумента: номер игрового контроллера, изменившего состояние, и битовую комбинацию, указывающую, какие кнопки изменились."
+
+msgid "Unlike some other event handlers, the game controller handler remains enabled after an event has been processed and does not have to be re-armed."
+msgstr "В отличие от некоторых других обработчиков событий, обработчик игрового контроллера остается включенным после обработки события, и его не нужно повторно активировать."
+
+msgid "WARNING: This command has never been tested."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта команда никогда не тестировалась."
+
+msgid "Defines an event handler triggered by the end of the current MML pattern."
+msgstr "Определяет обработчик событий, запускаемый при завершении текущего паттерна MML."
+
+msgid "The handler is called when the MML pattern of any sound channel has finished playing. It can be disabled using `ON PLAY ... OFF`."
+msgstr "Обработчик вызывается, когда паттерн MML любого звукового канала закончил воспроизведение. Его можно отключить с помощью команды `ON PLAY ... OFF`."
+
+msgid "a sound channel [`0` to `{MML_CHANNELS_m1}`]"
+msgstr "звуковой канал [от `0` до `{MML_CHANNELS_m1}`]"
+
+msgid "The event handler will receive the number of the channel that has ended as a numeric argument."
+msgstr "Обработчик событий получит в качестве числового аргумента номер завершившегося канала."
+
+msgid "All end-of-music handlers will be disabled when one of them is called, and they therefore have to be re-enabled using `ON PLAY CALL` if so desired."
+msgstr "Все обработчики окончания музыки будут отключены при вызове одного из них, и поэтому их нужно снова включить с помощью `ON PLAY CALL`, если это необходимо."
+
+msgid "An event on one channel will disable handling on all channels. That is stupid."
+msgstr "Событие на одном канале отключает обработку на всех каналах. Это глупо."
+
+msgid "Defines an event handler for sprite collisions."
+msgstr "Определяет обработчик событий для столкновений спрайтов."
+
+msgid "The handler is called once for each collision between two sprites. The handler can be disabled using `ON SPRITE OFF`."
+msgstr "Обработчик вызывается один раз для каждого столкновения двух спрайтов. Обработчик может быть отключен с помощью `ON SPRITE OFF`."
+
+msgid "The event handler will be passed three numeric arguments: The sprite IDs of the involved sprites, and the direction of the collision, as would be returned by `SPRCOLL()`."
+msgstr "Обработчику события будут переданы три числовых аргумента: идентификаторы задействованных спрайтов и направление столкновения, которые будут возвращены `SPRCOLL()`."
+
+msgid "The handler will be called once for each sprite collision, but it has to be re-enabled using `ON SPRITE CALL` each time to prevent event storms."
+msgstr "Обработчик будет вызываться один раз для каждого столкновения спрайтов, но его необходимо каждый раз повторно включать с помощью `ON SPRITE CALL`, чтобы предотвратить штормы событий."
+
+msgid "Opens a file or directory."
+msgstr "Открывает файл или каталог."
+
+msgid "name of the file or directory"
+msgstr "имя файла или каталога"
+
+msgid "file number to be used [`0` to `{MAX_USER_FILES_m1}`]"
+msgstr "номер файла для использования [от `0` до `{MAX_USER_FILES_m1}`]"
+
+msgid "* `*INPUT*` opens the file for reading. (This is the default if no mode is specified.)"
+msgstr "* `*INPUT*` открывает файл для чтения. (Это значение используется по умолчанию, если режим не указан.)"
+
+msgid "* `*OUTPUT*` empties the file and opens it for writing."
+msgstr "* `*OUTPUT*` очищает файл и открывает его для записи."
+
+msgid "* `*APPEND*` opens the file for writing while keeping its content."
+msgstr "* `*APPEND*` открывает файл для записи, сохраняя его содержимое."
+
+msgid "* `*DIRECTORY*` opens `file$` as a directory."
+msgstr "* `*DIRECTORY*` открывает `file$` как каталог."
+
+msgid "Bitwise OR operator."
+msgstr "Побитовый оператор ИЛИ."
+
+msgid "Bitwise inclusive disjunction of `a` and `b`."
+msgstr "Побитовая инклюзивная дизъюнкция `a` и `b`."
+
+msgid "Like most BASIC implementations, Engine BASIC does not have a dedicated \"logical OR\" operator; instead, the bitwise operator is used."
+msgstr "Как и в большинстве реализаций BASIC, в BASIC Engine нет специального оператора \"логическое ИЛИ\"; вместо него используется побитовый оператор."
+
+msgid "Get the state of the game controller(s) and cursor pad."
+msgstr "Получение состояния игровых контроллеров и курсорной панели."
+
+msgid "`PAD()` can be used to query actual game controllers, or a \"virtual\" controller simulated with cursor and letter keys on the keyboard."
+msgstr "`PAD()` можно использовать для опроса реальных игровых контроллеров или \"виртуального\" контроллера, смоделированного с помощью курсорных и буквенных клавиш на клавиатуре."
+
+msgid "The special controller number `0` returns the combined state of all (real and virtual) controllers, making it easier to write programs that work with and without a game controller."
+msgstr "Специальный номер контроллера `0` возвращает объединенное состояние всех (реальных и виртуальных) контроллеров, что упрощает написание программ, работающих с игровым контроллером и без него."
+
+msgid "Number of the game controller: `0`: all controllers combined `1`: cursor pad `2`: Joystick/joypad controller"
+msgstr "Номер игрового контроллера: `0`: все контроллеры в совокупности `1`: курсорная панель `2`: джойстик/геймпад"
+
+msgid "`0`: current button state (default) `1`: button-change events"
+msgstr "`0`: текущее состояние кнопки (по умолчанию) `1`: события изменения кнопки"
+
+msgid "Bit field representing the button states of the requested controller(s). The value is the sum of any of the following bit values:"
+msgstr "Битовое поле, представляющее состояния кнопок запрашиваемых контроллеров. Значение является суммой любых из следующих битовых значений:"
+
+msgid "Bit value"
+msgstr "Битовое значение"
+
+msgid "Joystick/joypad Controller"
+msgstr "Джойстик/геймпад"
+
+msgid "Keyboard"
+msgstr "Клавиатура"
+
+msgid "`1` (aka `<<LEFT>>`)"
+msgstr "`1` (так же `<<LEFT>>`)"
+
+msgid "kbd:[&#x25c4;] button"
+msgstr "Кнопка kbd:[Влево]"
+
+msgid "kbd:[Left] key"
+msgstr "Клавиша kbd:[Влево]"
+
+msgid "`2` (aka `<<DOWN>>`)"
+msgstr "`2` (так же `<<DOWN>>`)"
+
+msgid "kbd:[&#x25bc;] button"
+msgstr "Кнопка kbd:[Вниз]"
+
+msgid "kbd:[Down] key"
+msgstr "Клавиша kbd:[Вниз]"
+
+msgid "`4` (aka `<<RIGHT>>`)"
+msgstr "`4` (так же `<<RIGHT>>`)"
+
+msgid "kbd:[&#x25ba;] button"
+msgstr "Кнопка kbd:[Вправо]"
+
+msgid "kbd:[Right] key"
+msgstr "Клавиша kbd:[Вправо]"
+
+msgid "`8` (aka `<<UP>>`)"
+msgstr "`8` (так же `<<UP>>`)"
+
+msgid "kbd:[&#x25b2;] button"
+msgstr "Кнопка kbd:[Вверх]"
+
+msgid "kbd:[Up] key"
+msgstr "Клавиша kbd:[Вверх]"
+
+msgid "`16`"
+msgstr "`16`"
+
+msgid "kbd:[Start] button"
+msgstr "Кнопка kbd:[Start]"
+
+msgid "n/a"
+msgstr "н/д"
+
+msgid "`32`"
+msgstr "`32`"
+
+msgid "kbd:[Select] button"
+msgstr "Кнопка kbd:[Select]"
+
+msgid "`256`"
+msgstr "`256`"
+
+msgid "kbd:[&#x25a1;] button"
+msgstr "Кнопка kbd:[X]"
+
+msgid "kbd:[Z] key"
+msgstr "Клавиша kbd:[Z]"
+
+msgid "`512`"
+msgstr "`512`"
+
+msgid "kbd:[&#x2715;] button"
+msgstr "Кнопка kbd:[A]"
+
+msgid "kbd:[X] key"
+msgstr "Клавиша kbd:[X]"
+
+msgid "`1024`"
+msgstr "`1024`"
+
+msgid "kbd:[&#x25cb;] button"
+msgstr "Кнопка kbd:[B]"
+
+msgid "kbd:[S] key"
+msgstr "Клавиша kbd:[S]"
+
+msgid "`2048`"
+msgstr "`2048`"
+
+msgid "kbd:[&#x25b3;] button"
+msgstr "Кнопка kbd:[Y]"
+
+msgid "kbd:[A] key"
+msgstr "Клавиша kbd:[A]"
+
+msgid "`4096`"
+msgstr "`4096`"
+
+msgid "kbd:[R1] button"
+msgstr "Кнопка kbd:[R1]"
+
+msgid "`8192`"
+msgstr "`8192`"
+
+msgid "kbd:[L1] button"
+msgstr "Кнопка kbd:[L1]"
+
+msgid "`16384`"
+msgstr "`16384`"
+
+msgid "kbd:[R2] button"
+msgstr "Кнопка kbd:[R2]"
+
+msgid "`32768`"
+msgstr "`32768`"
+
+msgid "kbd:[L2] button"
+msgstr "Кнопка kbd:[L2]"
+
+msgid "Depending on `state`, these bit values are set if the respective buttons are currently pressed (`0`) or newly pressed (`1`)."
+msgstr "В зависимости от `state`, эти битовые значения устанавливаются, если соответствующие кнопки нажаты в данный момент (`0`) или недавно (`1`)."
+
+msgid "If `state` is `1`, additional values are returned:"
+msgstr "Если `state` равен `1`, возвращаются дополнительные значения:"
+
+msgid "* `RET(1)` contains buttons that are newly released,"
+msgstr "* `RET(1)` содержит только что отпущенные кнопки,"
+
+msgid "* `RET(2)` contains the current button state."
+msgstr "* `RET(2)` содержит текущее состояние кнопки."
+
+msgid "WARNING: Using `PAD()` to retrieve button events (`state` is not `0`) interacts with the event handling via `ON PAD`. It is not recommended to use both at the same time."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Использование `PAD()` для получения событий от кнопок (`state` не `0`) взаимодействует с обработкой событий через `ON PAD`. Не рекомендуется использовать оба способа одновременно."
+
+msgid "Sets the color space (\"palette\") for the current screen mode, as well as coefficients for the color conversion function `RGB()`."
+msgstr "Устанавливает цветовое пространство (\"палитру\") для текущего режима экрана, а также коэффициенты для функции преобразования цвета `RGB()`."
+
+msgid "colorspace number [`0` or `1`]"
+msgstr "номер цветового пространства [`0` или `1`]"
+
+msgid "hue weight for color conversion [`0` to `7`]"
+msgstr "вес оттенка для преобразования цвета [от `0` до `7`]"
+
+msgid "saturation weight for color conversion [`0` to `7`]"
+msgstr "вес насыщенности для преобразования цвета [от `0` до `7`]"
+
+msgid "value weight for color conversion [`0` to `7`]"
+msgstr "вес значения для преобразования цвета [от `0` до `7`]"
+
+msgid "conversion fix-ups enabled [`0` or `1`]"
+msgstr "включены исправления преобразования [`0` или `1`]"
+
+msgid "The default component weights depend on the color space. They are:"
+msgstr "Вес компонентов по умолчанию зависит от цветового пространства. К ним относятся:"
+
+msgid "Color space"
+msgstr "Цветовое пространство"
+
+msgid "H"
+msgstr "H"
+
+msgid "S"
+msgstr "S"
+
+msgid "V"
+msgstr "V"
+
+msgid "Conversion fix-ups are enabled by default."
+msgstr "Исправления преобразования включены по умолчанию."
+
+msgid "Read a byte of data from an address in memory."
+msgstr "Считывает байт данных из адреса в памяти."
+
+msgid "memory address"
+msgstr "адрес памяти"
+
+msgid "Content of memory address."
+msgstr "Содержимое адреса памяти."
+
+msgid "Memory at `addr` must allow byte-wise access."
+msgstr "Память по адресу `addr` должна разрешать побайтовый доступ."
+
+msgid "Sanity checks for `addr` are insufficient."
+msgstr "Проверки работоспособности `addr` недостаточны."
+
+msgid "Reads a byte string of data from an address in memory."
+msgstr "Считывает строку байтов данных из адресу в памяти."
+
+msgid "number of bytes to read, or 0"
+msgstr "количество байтов для чтения, или 0"
+
+msgid "Byte string containing `length` bytes of data starting at `addr`."
+msgstr "Строка байтов, содержащая `length` байта данных, начиная с `addr`."
+
+msgid "* Memory at `addr` must allow byte-wise access."
+msgstr "* Память по адресу `addr` должна разрешать побайтовый доступ."
+
+msgid "* When `length` is `0`, data is read until a `0`-byte is encountered. Use this to read C-style strings."
+msgstr "* Если `length` равна `0`, данные считываются до тех пор, пока не встретится байт `0`. Используйте это для чтения строк в стиле C."
+
+msgid "Read a word (32 bits) of data from an address in memory."
+msgstr "Считывает слово (32 бита) данных из адреса в памяти."
+
+msgid "`addr` must be 4-byte aligned."
+msgstr "`addr` должен быть выровнен по 4 байтам."
+
+msgid "Read a half-word (16 bits) of data from an address in memory."
+msgstr "Считывает полуслово (16 бит) данных с адреса в памяти."
+
+msgid "Memory at `addr` must allow byte-wise access, and `addr` must be 2-byte aligned."
+msgstr "Память по адресу `addr` должна допускать побайтовый доступ, а `addr` должна быть выровнена по 2 байтам."
+
+msgid "Plays a piece of music in Music Macro Language (MML) using the wavetable synthesizer."
+msgstr "Воспроизводит участок музыки на языке музыкальных макросов (MML) с использованием таблично-волнового синтезатора."
+
+msgid "sound channel [`0` to `{MML_CHANNELS_m1}`, default: `0`]"
+msgstr "звуковой канал [от `0` до `{MML_CHANNELS_m1}`, по умолчанию: `0`]"
+
+msgid "score in MML format"
+msgstr "партитура в MML-формате"
+
+msgid "* MML syntax undocumented."
+msgstr "* MML-cинтаксис недокументирован."
+
+msgid "* Fails silently if the synthesizer could not be initialized."
+msgstr "* Не работает, если синтезатор не может быть инициализирован."
+
+msgid "Checks if a sound is playing a on wavetable synthesizer channel."
+msgstr "Проверяет, воспроизводится ли звук в канале таблично-волнового синтезатора."
+
+msgid "sound channel [`0` to `{MML_CHANNELS_m1}`, or `-1` to check all channels]"
+msgstr "звуковой канал [от `0` до `{MML_CHANNELS_m1}`, или `-1` для проверки всех каналов]"
+
+msgid "`1` if sound is playing, `0` otherwise."
+msgstr "`1`, если звук воспроизводится, иначе `0`."
+
+msgid "Sets the value of one or more background tiles."
+msgstr "Устанавливает значение одного или нескольких тайлов фона."
+
+msgid "tile X coordinate [`0` to background width in tiles]"
+msgstr "X-координата тайла [от `0` до ширины фона в тайлах]"
+
+msgid "tile Y coordinate [`0` to background height in tiles]"
+msgstr "Y-координата тайла [от `0` до высоты фона в тайлах]"
+
+msgid "tile identifier [`0` to `255`]"
+msgstr "идентификатор тайла [от `0` до `255`]"
+
+msgid "tile identifiers"
+msgstr "идентификаторы тайлов"
+
+msgid "If the numeric `tile` argument is given, a single tile will be set. If a string of tiles (`tile$`) is passed, a tile will be set for each of the elements of the string, starting from the specified tile coordinates and proceeding horizontally."
+msgstr "Если указан числовой аргумент `tile`, задается один тайл. Если передана строка тайлов (`tile$`), то для каждого элемента в строке устанавливается тайл, начиная с указанных координат тайла и далее по горизонтали."
+
+msgid "Creates a mapping from one tile to another."
+msgstr "Создаёт сопоставление одного тайла с другим."
+
+msgid "Tile numbers depend on the locations of graphics data in memory and do not usually represent printable characters, often making it difficult to handle them in program text. By remapping a printable character to a tile as represented by the graphics data, it is possible to use that human-readable character in your program, making it easier to write and to understand."
+msgstr "Номера тайлов зависят от положения графических данных в памяти и, как правило, не являются печатаемыми символами, что часто затрудняет их использование в тексте программы. Присвоив тайлу, представленному графическими данными, печатаемый символ, вы можете использовать этот человекочитаемый символ в своей программе, чтобы сделать её более простой для написания и понимания."
+
+msgid "tile number to remap [`0` to `255`]"
+msgstr "номер тайла для переназначения [от `0` до `255`]"
+
+msgid "tile number to map to [`0` to `255`]"
+msgstr "номер тайла для сопоставления с [от `0` до `255`]"
+
+msgid "Returns the color of the pixel at the given coordinates."
+msgstr "Возвращает цвет пикселя по заданным координатам."
+
+msgid "X coordinate, pixels [`0` to `PSIZE(0)-1`]"
+msgstr "X-координата, пиксели [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate, pixels [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата, пиксели [от `0` до `PSIZE(2)-1`]"
+
+msgid "Pixel color [`0` to `255`]"
+msgstr "Цвет пикселя [от `0` до `255`]"
+
+msgid "If the coordinates exceed the dimensions of the pixel memory area, `0` will be returned."
+msgstr "Если координаты превышают размеры области памяти пикселей, будет возвращен `0`."
+
+msgid "Write a byte to an address in memory."
+msgstr "Записывает байт по адресу в памяти."
+
+msgid "value to be written"
+msgstr "записываемое значение"
+
+msgid "`addr` must be mapped writable and must allow byte-wise access."
+msgstr "`addr` должен быть доступен для записи и должен разрешать побайтовый доступ."
+
+msgid "Write a byte string to an address in memory."
+msgstr "Записывает строку байтов по адресу в памяти."
+
+msgid "data to be written"
+msgstr "данные для записи"
+
+msgid "* `addr` must be mapped writable and must allow byte-wise access."
+msgstr "* `addr` должен быть доступен для записи и должен разрешать побайтовый доступ."
+
+msgid "* When writing a string that is to be used by a C function you have to make sure to add a `0`-byte at the end, e.g. `\"text\" + CHR$(0)`."
+msgstr "* При написании строки, которая будет использоваться функцией C, вы должны обязательно добавить в конце байт `0`, например, `\"текст\" + CHR$(0)`."
+
+msgid "Write a word (32 bits) to an address in memory."
+msgstr "Записывает слово (32 бита) по адресу в памяти."
+
+msgid "`addr` must be mapped writable and must allow half-word-wise access. It must be 4-byte aligned."
+msgstr "`addr` должен быть доступен для записи и должен разрешать доступ половинным словом. Он должен быть выровнен по 4 байтам."
+
+msgid "Write a half-word (16 bits) to an address in memory."
+msgstr "Записывает полуслово (16 бит) по адресу в памяти."
+
+msgid "`addr` must be mapped writable and must allow half-word-wise access. It must be 2-byte aligned."
+msgstr "`addr` должен быть доступен для записи и должен разрешать доступ половинным словом. Он должен быть выровнен по 2 байтам."
+
+msgid "Remove an element from the end of a numeric list."
+msgstr "Удаляет элемент из конца числового списка."
+
+msgid "reference to a numeric list"
+msgstr "ссылка на числовой список"
+
+msgid "Value of the element removed."
+msgstr "Значение удалённого элемента."
+
+msgid "An error is generated if `~list` is empty."
+msgstr "Если `~list$` пуст, генерируется ошибка."
+
+msgid "Remove an element from the end of a string list."
+msgstr "Удаляет элемент из конца списка строк."
+
+msgid "reference to a string list"
+msgstr "ссылка на список строк"
+
+msgid "An error is generated if `~list$` is empty."
+msgstr "Если `~list$` пуст, генерируется ошибка."
+
+msgid "Remove an element from the beginning of a numeric list."
+msgstr "Удаляет элемент из начала числового списка."
+
+msgid "Remove an element from the beginning of a string list."
+msgstr "Удаляет элемент из начала списка строк."
+
+msgid "Returns the text cursor position."
+msgstr "Возвращает положение текстового курсора."
+
+msgid "requested axis: `0`: horizontal `1`: vertical"
+msgstr "запрошенная ось: `0`: горизонталь `1`: вертикаль"
+
+msgid "Position in characters."
+msgstr "Положение в символах."
+
+msgid "Adds an element to the start of a list."
+msgstr "Добавляет элемент в начало списка."
+
+msgid "Prints data to the current output device (usually the screen) or to a given file."
+msgstr "Выводит данные на текущее устройство вывода (обычно экран) или в заданный файл."
+
+msgid "file number to be printed to [`0` to `{MAX_USER_FILES_m1}`, default: current output device]"
+msgstr "номер файла для печати [от `0` до `{MAX_USER_FILES_m1}`, по умолчанию: текущее устройство вывода]"
+
+msgid "list of expressions specifying what to print"
+msgstr "список выражений, определяющих, что печатать"
+
+msgid "The following types of expressions can be used in a `PRINT` command expressions list:"
+msgstr "В списке выражений команды `PRINT` можно использовать следующие типы выражений:"
+
+msgid "* Numeric expressions"
+msgstr "* Числовые выражения"
+
+msgid "* String expressions"
+msgstr "* Строковые выражения"
+
+msgid "* `TAB(num)` (inserts spaces until the cursor is at or beyond the column `num`)"
+msgstr "* `TAB(num)` (вставляет пробелы до тех пор, пока курсор не окажется в столбце `num` или за его пределами)"
+
+msgid "You have to separate expressions by either a semicolon (`;`) or a comma (`,`). When you use a semicolon, the expressions are printed without separation. When you use a comma, spaces will be inserted until the next tabulator stop is reached."
+msgstr "Вы должны разделять выражения либо точкой с запятой (`;`), либо запятой (`,`). При использовании точки с запятой выражения печатаются без разделения. При использовании запятой пробелы будут вставляться до следующей позиции табулятора."
+
+msgid "`TAB()` does not work when output is redirected to a file using `CMD`."
+msgstr "`TAB()` не работает, когда вывод перенаправляется в файл с помощью `CMD`."
+
+msgid "Define a procedure or function."
+msgstr "Определение процедуры или функции."
+
+msgid "procedure name"
+msgstr "имя процедуры"
+
+msgid "name of a numeric argument variable"
+msgstr "имя переменной числового аргумента"
+
+msgid "name of a string argument variable"
+msgstr "имя переменной строкового аргумента"
+
+msgid "`PROC` defines a procedure or function that can be called using `CALL` or `FN`. If a procedure or function has arguments, they can be referenced as local variables using the `@` sigil."
+msgstr "`PROC` определяет процедуру или функцию, которую можно вызвать с помощью `CALL` или `FN`. Если процедура или функция имеет аргументы, на них можно ссылаться как на локальные переменные с помощью префикса `@`."
+
+msgid "Within a procedure or function, any numeric or string variable prefixed with the `@` sigil will be treated as a local variable that is valid only within the scope of the procedure. Setting such a variable will not affect global variables or local variables in other procedures."
+msgstr "Внутри процедуры или функции любая числовая или строковая переменная с префиксом `@` будет рассматриваться как локальная переменная, действительная только в пределах области действия процедуры. Установка такой переменной не повлияет на глобальные или локальные переменные в других процедурах."
+
+msgid "Procedures can only be called using `CALL` or `FN`. If a `PROC` instruction is encountered during normal program flow, an error is generated."
+msgstr "Процедуры можно вызывать только с помощью `CALL` или `FN`. Если во время обычного выполнения программы встречается инструкция `PROC`, генерируется ошибка."
+
+msgid "It is not currently possible to use complex data types (arrays and lists) as local variables or arguments."
+msgstr "В настоящее время невозможно использовать сложные типы данных (массивы и списки) в качестве локальных переменных или аргументов."
+
+msgid "Enables or disables the system and procedure profiler."
+msgstr "Включает или отключает профилировщик системы и процедур."
+
+msgid "The system profiler shows a bar in the border of the screen indicating how much CPU time is spent on the various tasks of the grahpics and sound subsystems. It helps in determining the cause of system overloads that lead to graphics and/or sound glitches."
+msgstr "Системный профилировщик отображает полосу на бордюре экрана, показывающую, сколько процессорного времени тратится на выполнение различных задач графической и звуковой подсистем. Это помогает определить причину перегрузок системы, приводящих к сбоям в работе графики и/или звука."
+
+msgid "`PROFILE ON` enables the profiler, `PROFILE OFF` disables it."
+msgstr "`PROFILE ON` включает профилировщик, `PROFILE OFF` отключает его."
+
+msgid "`PROFILE ON` also enables the procedure profiler that helps determine the number of CPU cycles used in each BASIC procedure. After the program has been run, the results can be viewed using `PROFILE LIST`."
+msgstr "`PROFILE ON` также включает профилировщик процедур, который помогает определить количество циклов процессора, используемых в каждой BASIC-процедуре. После выполнения программы результаты можно просмотреть с помощью `PROFILE LIST`."
+
+msgid "It is not possible to switch the system and procedure profiling on and off independently."
+msgstr "Невозможно включить и выключить профилирование системы и процедуры независимо друг от друга."
+
+msgid "Draws a pixel."
+msgstr "Рисует пиксель."
+
+msgid "X coordinate of the pixel"
+msgstr "X-координата пикселя"
+
+msgid "Y coordinate of the pixel"
+msgstr "Y-координата пикселя"
+
+msgid "color of the pixel [range depends on color space]"
+msgstr "цвет пикселя [диапазон зависит от цветового пространства]"
+
+msgid "Returns the dimensions of the current screen mode in pixels."
+msgstr "Возвращает размеры текущего режима экрана в пикселях."
+
+msgid "requested screen dimension: `0`: screen width `1`: visible screen height `2`: total screen height"
+msgstr "запрошенный размер экрана: `0`: ширина экрана `1`: видимая высота экрана `2`: общая высота экрана"
+
+msgid "Size in pixels."
+msgstr "Размер в пикселях."
+
+msgid "Reads values specified in `DATA` instructions and assigns them to variables."
+msgstr "Считывает значения, указанные в инструкциях `DATA`, и присваивает их переменным."
+
+msgid "numeric or string variable"
+msgstr "числовая или строковая переменная"
+
+msgid "Data is read from the element that follows the current \"data pointer\". The data pointer points to the beginning of the program initially. With every element read it is forwarded to the next one. It can be set directly with the `RESTORE` command."
+msgstr "Данные считываются из элемента, который следует за текущим \"указателем данных\". Изначально указатель данных указывает на начало программы. Каждый считанный элемент перенаправляет на следующий. Это можно настроить непосредственно с помощью команды `RESTORE`."
+
+msgid "Draws a rectangle."
+msgstr "Рисует прямоугольник."
+
+msgid "X coordinate of the rectangle's top/left corner [`0` to `PSIZE(0)-1`]"
+msgstr "Х-координата верхнего/левого угла прямоугольника [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate of the rectangle's top/left corner [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата верхнего/левого угла прямоугольника [от `0` до `PSIZE(2)-1`]"
+
+msgid "X coordinate of the rectangle's bottom/right corner [`0` to `PSIZE(0)-1`]"
+msgstr "Х-координата нижнего/правого угла прямоугольника [от `0` до `PSIZE(0)-1`]"
+
+msgid "Y coordinate of the rectangle's bottom/right corner [`0` to `PSIZE(2)-1`]"
+msgstr "Y-координата нижнего/правого угла прямоугольника [от `0` до `PSIZE(2)-1`]"
+
+msgid "color of the rectangle's outline"
+msgstr "цвет контура прямоугольника"
+
+msgid "color of the rectangle's body [range depends on color space, `-1` for an unfilled rectangle]"
+msgstr "цвет заполнения прямоугольника [диапазон зависит от цветового пространства, `-1` для незаполненного прямоугольника]"
+
+msgid "Redraw the text screen."
+msgstr "Перерисовывает текстовый экран."
+
+msgid "Overwrites anything displayed on-screen with the characters stored in the text buffer."
+msgstr "Перезаписывает всё, что отображается на экране, символами, хранящимися в текстовом буфере."
+
+msgid "Deletes a file."
+msgstr "Удаляет файл."
+
+msgid "WARNING: `REMOVE` does not ask for confirmation before deleting the specified file."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff `REMOVE` не запрашивает подтверждения перед удалением указанного файла."
+
+msgid "WARNING: Do not confuse with `DELETE`, which deletes lines from the program in memory."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Не путайте с `DELETE`, которая удаляет строки из памяти программы."
+
+msgid "file to be deleted"
+msgstr "файл для удаления"
+
+msgid "Changes the name of a file or directory."
+msgstr "Изменяет имя файла или каталога."
+
+msgid "current file name"
+msgstr "текущее имя файла"
+
+msgid "new file name"
+msgstr "новое имя файла"
+
+msgid "Renumber BASIC program in memory."
+msgstr "Перенумеровывает BASIC-программу в памяти."
+
+msgid "new line number to start at [min `0`, default: `10`]"
+msgstr "новый номер строки, который начинается с [мин. `0`, по умолчанию: `10`]"
+
+msgid "line number increment [min `0`, default: `10`]"
+msgstr "приращение номера строки [мин. `0`, по умолчанию: `10`]"
+
+msgid "Computed branches (`GOTO` and `GOSUB` commands with variable arguments) cannot be renumbered correctly."
+msgstr "Вычисляемые ответвления (команды `GOTO` и `GOSUB` с переменными аргументами) не могут быть корректно перенумерованы."
+
+msgid "Sets the data pointer to a given location."
+msgstr "Устанавливает указатель данных в заданное место."
+
+msgid "a label or line number [default: start of program]"
+msgstr "метка или номер строки [по умолчанию: начало программы]"
+
+msgid "Resume program execution after an error has been handled."
+msgstr "Возобновляет выполнения программы после обработки ошибки."
+
+msgid "When an error has been caught by a handler set up using `ON ERROR`, it is possible to resume execution after the instruction that caused the error using `RESUME`."
+msgstr "Если обработчик, настроенный с использованием `ON ERROR`, обнаруживает ошибку, то используя `RESUME` можно возобновить выполнение после инструкции, вызвавшей ошибку."
+
+msgid "In other BASIC implementations, `RESUME` will retry the instruction that has caused the error, and it is possible to continue after the error using `RESUME NEXT`. In Engine BASIC, `RESUME` will always skip the instruction that generated the error."
+msgstr "В других реализациях BASIC `RESUME` повторит инструкцию, вызвавшую ошибку, и можно продолжить после ошибки, используя `RESUME NEXT`. В BASIC Engine `RESUME` всегда пропускает инструкцию, вызвавшую ошибку."
+
+msgid "It is not possible to repeat the instruction that has generated the error."
+msgstr "Невозможно повторить инструкцию, вызвавшую ошибку."
+
+msgid "Returns one of the numeric return values of the last function call."
+msgstr "Возвращает одно из числовых значений, возвращённых при последнем вызове функции."
+
+msgid "number of the numeric return value [`0` to `{MAX_RETVALS_m1}`]"
+msgstr "номер возвращаемого числового значения [от `0` до `{MAX_RETVALS_m1}`]"
+
+msgid "Requested return value."
+msgstr "Запрошенное возвращаемое значение."
+
+msgid "Returns one of the string return values returned by the last function call."
+msgstr "Возвращает одно из строковых значений, возвращаемых последним вызовом функции."
+
+msgid "number of the string return value [`0` to `{MAX_RETVALS_m1}`]"
+msgstr "номер возвращаемого значения строки [от `0` до `{MAX_RETVALS_m1}`]"
+
+msgid "String return value requested."
+msgstr "Возвращаемое значение запрошенной строки."
+
+msgid "Return from a subroutine or procedure."
+msgstr "Возвращает из подпрограммы или процедуры."
+
+msgid "Returns from a subroutine called by `GOSUB` or from a procedure defined by `PROC` and called with `CALL` or `FN`."
+msgstr "Возвращает из подпрограммы, вызванной `GOSUB`, или процедуры, определенной `PROC` и вызванной `CALL` или `FN`."
+
+msgid "If specified, up to {MAX_RETVALS} return values of each type (numeric or string) can be returned to the caller."
+msgstr "Вызывающей стороне может быть возвращено до {MAX_RETVALS} значений каждого типа (числового или строкового), если указано."
+
+msgid "Converts RGB value to hardware color value."
+msgstr "Преобразует значение RGB в аппаратное значение цвета."
+
+msgid "All Engine BASIC commands that require a color value expect that value to be in the video controller's format, which depends on the <<PALETTE>> setting."
+msgstr "Все команды BASIC Engine, требующие значения цвета, ожидают, что это значение будет в формате видеоконтроллера, который зависит от настройки <<PALETTE>>."
+
+msgid "RGB() can be used to calculate hardware color values from the more easily understood RGB format, and can also help with programs that need to work with different color palettes."
+msgstr "RGB() можно использовать для расчёта аппаратных значений цвета на основе более понятного формата RGB, а также может помочь в программах, которым необходимо работать с различными цветовыми палитрами."
+
+msgid "YUV color value"
+msgstr "Значение цвета YUV"
+
+msgid "The color conversion method used is optimized for use with pixel art. Its results can be tweaked by setting conversion coefficients with the `PALETTE` command."
+msgstr "Используемый метод преобразования цветов оптимизирован для работы с пиксельной графикой. Его результаты можно настраивать, задавая коэффициенты преобразования с помощью команды `PALETTE`."
+
+msgid "Component values that are out of range will be silently clamped."
+msgstr "Значения компонентов, выходящие за пределы диапазона, будут принудительно ограничены."
+
+msgid "Value of the \"right\" direction for input devices."
+msgstr "Значение направления \"вправо\" для устройств ввода."
+
+msgid "Returns a specified number of rightmost characters in a string."
+msgstr "Возвращает указанное количество крайних правых символов в строке."
+
+msgid "If `r$` is shorter than `num` characters, the return value is `r$`."
+msgstr "Если `r$` короче, чем `num` символов, то возвращаемое значение будет `r$`."
+
+msgid "Deletes a directory."
+msgstr "Удаляет каталог."
+
+msgid "name of directory to be deleted"
+msgstr "имя каталога для удаления"
+
+msgid "Returns a random number."
+msgstr "Возвращает случайное число."
+
+msgid "modifier determining the type of random number to generate"
+msgstr "модификатор, определяющий тип генерируемого случайного числа"
+
+msgid "A random number of the selected type."
+msgstr "Случайное число выбранного типа."
+
+msgid "The following types of random numbers are generated depending on the value of `mod`:"
+msgstr "В зависимости от значения `mod` генерируются следующие типы случайных чисел:"
+
+msgid "`mod` > 1"
+msgstr "`mod` > 1"
+
+msgid "a random integer number between 0 and 2147483647"
+msgstr "случайное целое число между 0 и 2147483647"
+
+msgid "`mod` between 0 and 1"
+msgstr "`mod` между 0 и 1"
+
+msgid "a random fractional number between 0 and 1"
+msgstr "случайное дробное число между 0 и 1"
+
+msgid "`mod` < 0"
+msgstr "`mod` < 0"
+
+msgid "A random fractional number between 0 and 1. A specific value of `mod` will always yield the same random number."
+msgstr "Случайное дробное число между 0 и 1. Заданное значение `mod` всегда генерирует одно и то же случайное число."
+
+msgid "Runs the progam in memory."
+msgstr "Запускает программу из памяти."
+
+msgid "If a file name is given, that program will be loaded to memory first. If a line number is given, execution will begin at the specified line. Otherwise, execution will start at the first line."
+msgstr "Если указано имя файла, то сначала в память будет загружена эта программа. Если указан номер строки, то выполнение начнется с указанной строки. В противном случае выполнение начнётся с первой строки."
+
+msgid "name of the BASIC program to be loaded and run"
+msgstr "имя BASIC-программы, которая будет загружена и запущена"
+
+msgid "`RUN` behaves slightly differently when executed from within a program than when used in direct mode."
+msgstr "`RUN` ведёт себя немного иначе при выполнении из программы, чем при использовании в непосредственном режиме."
+
+msgid "In direct mode, `RUN` clears all variables, whereas within a program, it does not. The purpose of this is to allow a program to restart itself with all loop and subroutine stacks cleared, but with the variables still intact."
+msgstr "В непосредственном режиме `RUN` удаляет все переменные, в то время как в программе это не так. Это используется для перезапуска программы, при этом все стеки циклов и подпрограмм удаляются, но переменные остаются нетронутыми."
+
+msgid "* The syntax `RUN file$` does not work from within a program. Use `CHAIN` instead."
+msgstr "* Синтаксис `RUN file$` не работает внутри программы. Вместо этого используйте `CHAIN`."
+
+msgid "Saves the BASIC program in memory to a file."
+msgstr "Сохраняет BASIC-программу из памяти в файл."
+
+msgid "name of file to be saved"
+msgstr "имя файла для сохранения"
+
+msgid "* Programs are saved without line numbers if `LINE OFF` is specified."
+msgstr "* Программы сохраняются без номеров строк, если указано `LINE OFF`."
+
+msgid "* Programs are saved with line numbers if `LINE ON` is specified."
+msgstr "* Программы сохраняются с номерами строк, если указано `LINE ON`."
+
+msgid "* If neither `LINE OFF` nor `LINE ON` are specified, line numbers are included if any were present when the program was loaded into memory. If a program has been entered entirely in direct mode, it will be saved with line numbers."
+msgstr "* Если не указаны ни `LINE OFF`, ни `LINE ON`, номера строк включаются, если они присутствовали при загрузке программы в память. Если программа была полностью введена в непосредственном режиме, она сохраняется с номерами строк."
+
+msgid "* BASIC programs are saved in plain text (UTF-8) format."
+msgstr "* BASIC-программы сохраняются в текстовом формате (UTF-8)."
+
+msgid "Saves a background map to a file."
+msgstr "Сохраняет карту фона в файл."
+
+msgid "Does not check if the specified background is properly defined."
+msgstr "Не проверяется, правильно ли определён указанный фон."
+
+msgid "Saves the current set of configuration options as default."
+msgstr "Сохраняет текущий набор параметров конфигурации по умолчанию."
+
+msgid "The configuration will be saved as a file under the name `/flash/.config`."
+msgstr "Конфигурация будет сохранена в виде файла под именем `/sd/config.ini`."
+
+msgid "Saves a portion of pixel memory as an image file."
+msgstr "Сохраняет часть пиксельной памяти в виде файла изображения."
+
+msgid "name of image file to be created"
+msgstr "имя создаваемого файла изображения"
+
+msgid "left of pixel memory section, pixels [`0` (default) to `PSIZE(0)-1`]"
+msgstr "левая граница секции памяти пикселей, пиксели [от `0` (по умолчанию) до `PSIZE(0)-1`]"
+
+msgid "top of pixel memory section, pixels [`0` (default) to `PSIZE(2)-1`]"
+msgstr "верхняя граница секции памяти пикселей, пиксели [от `0` (по умолчанию) до `PSIZE(2)-1`]"
+
+msgid "width of pixel memory section, pixels [`0` to `PSIZE(0)-x-1`, default: `PSIZE(0)`]"
+msgstr "ширина секции памяти пикселей, пиксели [от `0` до `PSIZE(0)-x-1`, по умолчанию: `PSIZE(0)`]"
+
+msgid "height of pixel memory section, pixels [`0` to `PSIZE(2)-y-1`, default: `PSIZE(1)`]"
+msgstr "высота секции памяти пикселей, пиксели [от `0` до `PSIZE(2)-y-1`, по умолчанию: `PSIZE(1)`]"
+
+msgid "Change the screen resolution."
+msgstr "Изменяет разрешения экрана."
+
+# // XXX - Похоже на комментарий внутри комментария
+msgid "screen mode [`1` to `10`]// XXX: No convenient way to auto-update the number of modes."
+msgstr "режим экрана [от `1` до `10`]// XXX: Нет удобного способа автоматического обновления количества режимов."
+
+msgid "The following modes are available:"
+msgstr "Доступны следующие режимы:"
+
+msgid "Mode"
+msgstr "Режим"
+
+msgid "Resolution"
+msgstr "Разрешение"
+
+msgid "Comment"
+msgstr "Комментарий"
+
+msgid "460x224"
+msgstr "460x224"
+
+msgid "Maximum usable resolution in NTSC mode."
+msgstr "Максимально допустимое разрешение в режиме NTSC."
+
+msgid "436x216"
+msgstr "436x216"
+
+msgid "Slightly smaller than mode 1; helpful if the display does not show the entirety of mode 1."
+msgstr "Немного меньше, чем в режиме 1; полезен, если на экране не помещается полностью весь режим 1."
+
+msgid "320x216"
+msgstr "320x216"
+
+msgid "320x200"
+msgstr "320x200"
+
+msgid "Common resolution on many home computer systems."
+msgstr "Распространенное разрешение на многих домашних компьютерах."
+
+msgid "256x224"
+msgstr "256x224"
+
+msgid "Compatible with the SNES system."
+msgstr "Совместимо с системой SNES."
+
+msgid "256x192"
+msgstr "256x192"
+
+msgid "Common resolution used by MSX, ZX Spectrum and others."
+msgstr "Обычное разрешение, используемое в MSX, ZX Spectrum и других компьютерах."
+
+msgid "160x200"
+msgstr "160x200"
+
+msgid "Common low-resolution mode on several home computer systems."
+msgstr "Распространенный режим низкого разрешения на некоторых домашних компьютерах."
+
+msgid "352x240"
+msgstr "352x240"
+
+msgid "PC Engine-compatible overscan mode"
+msgstr "PC Engine-совместимый режим оверскана"
+
+msgid "282x240"
+msgstr "282x240"
+
+msgid "508x240"
+msgstr "508x240"
+
+msgid "Maximum usable resolution in PAL mode. (Overscan on NTSC systems.)"
+msgstr "Максимальное полезное разрешение в режиме PAL. (Оверскан в системах NTSC.)"
+
+msgid "* While the resolutions are the same for NTSC and PAL configurations, the actual sizes and aspect ratios vary depending on the TV system."
+msgstr "* Хотя разрешения одинаковы для конфигураций NTSC и PAL, фактические размеры и соотношения сторон зависят от телевизионной системы."
+
+msgid "* Resolutions have been chosen to match those used in other systems to facilitate porting of existing programs."
+msgstr "* Разрешения выбраны в соответствии с используемыми в других системах, чтобы облегчить портирование существующих программ."
+
+msgid "* Apart from changing the mode, `SCREEN` clears the screen, resets the font and color space (palette) to their defaults, and disables sprites and tiled backgrounds."
+msgstr "* Помимо изменения режима, `SCREEN` очищает экран, сбрасывает шрифт и цветовое пространство (палитру) к значениям по умолчанию, а также отключает спрайты и тайловый фон."
+
+msgid "Sets the file position for the next read or write."
+msgstr "Устанавливает позицию файла для следующего чтения или записи."
+
+msgid "position where the next read or write should occur"
+msgstr "позиция, где должно произойти следующее чтение или запись"
+
+msgid "The command will generate an error if `file_num` is not open or the operation is unsuccessful."
+msgstr "Команда выдаст ошибку, если `file_num` не открыт или операция не удалась."
+
+msgid "Sets the current date and time."
+msgstr "Устанавливает текущие дату и время."
+
+msgid "numeric expression [`1900` to `2036`]"
+msgstr "числовое выражение [от `1900` до `2036`]"
+
+msgid "numeric expression [`1` to `12`]"
+msgstr "числовое выражение [от `1` до `12`]"
+
+msgid "numeric expression [`1` to `31`]"
+msgstr "числовое выражение [от `1` до `31`]"
+
+msgid "numeric expression [`0` to `23`]"
+msgstr "числовое выражение [от `0` до `23`]"
+
+msgid "numeric expression [`0` to `59`]"
+msgstr "числовое выражение [от `0` до `59`]"
+
+msgid "numeric expression [`0` to `61`]"
+msgstr "числовое выражение [от `0` до `61`]"
+
+msgid "The maximum value for `second` is 61 and not 59 to accommodate a leap second."
+msgstr "Максимальное значение для `second` - 61, а не 59, чтобы учесть високосную секунду."
+
+msgid "Returns a value indicating the sign of a numeric expression."
+msgstr "Возвращает значение, указывающее знак числового выражения."
+
+msgid "`1` if the expression is positive, `0` if it is zero, or `-1` if it is negative."
+msgstr "`1`, если выражение положительно, `0`, если оно равно нулю, или `-1`, если оно отрицательно."
+
+msgid "Runs operating system commands."
+msgstr "Запускает команды операционной системы."
+
+msgid "command to run"
+msgstr "команда для запуска"
+
+msgid "argument to pass to the command"
+msgstr "аргумент для передачи команде"
+
+msgid "Runs `command`, or an interactive shell if `command` is not specified."
+msgstr "Запускает `command` или интерактивную оболочку, если `command` не указана."
+
+msgid "`command` is executed by the operating system shell if there are no `argument` parameters, allowing shell syntax constructs to be used."
+msgstr "Оболочка операционной системы выполняет `command`, если нет параметров `argument`, что позволяет использовать синтаксические конструкции оболочки."
+
+msgid "If one or more `argument` parameters are specified, the command will be executed directly."
+msgstr "Если указан один или несколько параметров `argument`, команда будет выполнена напрямую."
+
+msgid "If the `OFF` keyword is added, Engine BASIC will shut down its graphics, sound and input system to allow the executed program to use these facilities."
+msgstr "Если добавлено ключевое слово `OFF`, BASIC Engine отключит свою графику, звук и систему ввода, чтобы позволить выполняемой программе использовать эти средства."
+
+msgid "* `command`-only commands are executed using `execl(\"/bin/sh\", \"sh\", ...)`."
+msgstr "* Команды `command` без переметров выполняются с помощью команды `execl(\"/bin/sh\", \"sh\", ...)`."
+
+msgid "* Commands with `argument` parameters are executed using `execvp(\"<command>\", \"<command>\", \"<argument\">, ...)`."
+msgstr "* Команды с параметрами `argument` выполняются с помощью команды `execvp(\"<command>\", \"<command>\", \"<argument>\", ...)`."
+
+msgid "Returns the sine of a specified angle."
+msgstr "Возвращает синус указанного угла."
+
+msgid "Sine of `angle`."
+msgstr "Синус `angle`."
+
+msgid "Changes the serial port configuration."
+msgstr "Изменяет конфигурацию последовательного порта."
+
+msgid "WARNING: This command is likely to be renamed in the future to reduce namespace pollution."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта команда, вероятно, будет переименована в будущем, чтобы уменьшить беспорядок пространства имен."
+
+msgid "baud rate [`0` to `921600`]"
+msgstr "скорость передачи данных [от `0` до `921600`]"
+
+msgid "serial port flags"
+msgstr "флаги последовательного порта"
+
+msgid "The meaning of `flags` is determined by `enum` values in the Arduino core and cannot be relied on to remain stable."
+msgstr "Значение `flags` определяется значениями `enum` в ядре Arduino, и нельзя полагаться на то, что оно останется стабильным."
+
+msgid "Generates a sound using the wavetable synthesizer."
+msgstr "Генерирует звук с помощью таблично-волнового синтезатора."
+
+msgid "sound channel [`0` to `{MML_CHANNELS_m1}`]"
+msgstr "звуковой канал [от `0` до `{MML_CHANNELS_m1}`]"
+
+msgid "note pitch"
+msgstr "высота ноты"
+
+msgid "note duration, milliseconds [default: `1000`]"
+msgstr "длительность ноты, миллисекунды [по умолчанию: `1000`]"
+
+msgid "note velocity [`0` to `1` (default)]"
+msgstr "скорость ноты [от `0` до `1` (по умолчанию)]"
+
+msgid "Sets the sound font to be used by the wavetable synthesizer."
+msgstr "Устанавливает звуковой банк, который будет использоваться таблично-волновым синтезатором."
+
+msgid "name of the SF2 sound font file"
+msgstr "имя файла звукового банка SF2"
+
+msgid "If a relative path is specified, Engine BASIC will first attempt to load the sound font from `/sd`, then from `/flash`."
+msgstr "Если указан относительный путь, BASIC Engine сначала попытается загрузить звуковой банк из `/sd`, а затем из `/flash`."
+
+msgid "The default sound font name is `1mgm.sf2`."
+msgstr "Имя звукового банка по умолчанию - `1mgm.sf2`."
+
+msgid "No sanity checks are performed before setting the sound font."
+msgstr "Перед установкой звукового банка проверка на правильность не выполняется."
+
+msgid "Configures the SPI controller."
+msgstr "Настраивает SPI-контроллер."
+
+msgid "data bit order [`0` = LSB first, `1` = MSB first]"
+msgstr "порядок битов данных [`0` = первый младший бит, `1` = первый старший бит]"
+
+msgid "transfer frequency in Hz"
+msgstr "частота передачи в Гц"
+
+msgid "SPI mode [`0` to `3`]"
+msgstr "SPI-режим [от `0` до `3`]"
+
+msgid "Selects a SPI device."
+msgstr "Выбирает SPI-устройство."
+
+msgid "Major device number"
+msgstr "Номер главного устройства"
+
+msgid "Minor device number"
+msgstr "Номер второстепенного устройства"
+
+msgid "Send and receive data to and from an SPI device."
+msgstr "Отправка и получение данных с SPI-устройства."
+
+msgid "Returns a string containing the received data that is of the same length as out$."
+msgstr "Возвращает строку, содержащую полученные данные, той же длины, что и out$."
+
+msgid "Sends data to an SPI device."
+msgstr "Отправляет данные на SPI-устройство."
+
+msgid "Checks if a sprite has collided with another sprite."
+msgstr "Проверяет, столкнулся ли спрайт с другим спрайтом."
+
+msgid "sprite number 1 [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "спрайт номер 1 [от `0` до `{MAX_SPRITES_m1}`]"
+
+msgid "sprite number 2 [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "спрайт номер 2 [от `0` до `{MAX_SPRITES_m1}`]"
+
+msgid "If the return value is `0`, no collision has taken place. Otherwise the return value is the sum of `64` and any of the following bit values:"
+msgstr "Если возвращаемое значение равно `0`, столкновения не произошло. В противном случае возвращаемое значение представляет собой сумму `64` и одного из следующих битовых значений:"
+
+msgid "Meaning"
+msgstr "Значение"
+
+msgid "Sprite 2 is left of sprite 1."
+msgstr "Спрайт 2 находится левее спрайта 1."
+
+msgid "Sprite 2 is below sprite 1."
+msgstr "Спрайт 2 находится ниже спрайта 1."
+
+msgid "Sprite 2 is right of sprite 1."
+msgstr "Спрайт 2 находится правее спрайта 1."
+
+msgid "Sprite 2 is above sprite 1."
+msgstr "Спрайт 2 находится выше спрайта 1."
+
+msgid "It is possible that none of these bits are set even if a collision has taken place (i.e., the return value is `64`) if sprite 1 is larger than sprite 2 and covers it completely."
+msgstr "Ни один из этих битов не может быть установлен, даже если произошло столкновение (т.е. возвращаемое значение равно `64`), если спрайт 1 больше спрайта 2 и полностью покрывает его."
+
+msgid "* Collisions are only detected if both sprites are enabled."
+msgstr "* Столкновения обнаруживаются, только если включены оба спрайта."
+
+msgid "* Sprite/sprite collision detection is pixel-accurate, i.e. a collision is only detected if visible pixels of two sprites overlap."
+msgstr "* Обнаружение столкновений спрайтов друг с другом осуществляется с точностью до пикселя, т. е. столкновение обнаруживается только в том случае, если видимые пиксели двух спрайтов перекрываются."
+
+msgid "Does not return an intuitive direction indication if sprite 2 is larger than sprite 1 and covers it completely. (It will indicate that sprite 2 is up/left of sprite 1.)"
+msgstr "Не возвращает интуитивно понятное указание направления, если спрайт 2 больше спрайта 1 и полностью его закрывает. (Будет указано, что спрайт 2 находится выше/левее от спрайта 1)."
+
+msgid "Returns the height of a given sprite."
+msgstr "Возвращает высоту заданного спрайта."
+
+msgid "sprite number [`0` to `{MAX_SPRITES_m1}`]"
+msgstr "номер спрайта [от `0` до `{MAX_SPRITES_m1}`]"
+
+msgid "Height of sprite `spr`."
+msgstr "Высота спрайта `spr`."
+
+msgid "On platforms with rotozoom support, the function returns the dimension after transformations have been applied."
+msgstr "На платформах с поддержкой поворотного масштабирования функция возвращает размер после применения преобразований."
+
+msgid "When rotation and/or scale are changed, the new dimensions may not be reflected here until the next video frame is rendered."
+msgstr "При изменении поворота и/или масштаба новые размеры могут не отражаться здесь до следующего видеокадра."
+
+msgid "Defines a sprite's properties."
+msgstr "Определяет свойства спрайта."
+
+msgid "Using `SPRITE`, you can define a sprite's appearance, size, animation frame, color key, prority, special effects, and turn it on and off."
+msgstr "Используя `SPRITE`, вы можете определить внешний вид спрайта, размер, кадр анимации, ключевой цвет, приоритет, специальные эффекты, а также включать и выключать его."
+
+msgid "`SPRITE OFF` turns all sprites off."
+msgstr "`SPRITE OFF` выключает все спрайты."
+
+msgid "X \tcoordinate of the top/left sprite pattern, pixels"
+msgstr "Х-координата верхнего/левого шаблона спрайта, пиксели"
+
+msgid "Y\tcoordinate of the top/left sprite pattern, pixels"
+msgstr "Y-координата верхнего/левого шаблона спрайта, пиксели"
+
+msgid "sprite width, pixels [`0` to `{MAX_SPRITE_W_m1}`]"
+msgstr "ширина спрайта, пиксели [от `0` до `{MAX_SPRITE_W_m1}`]"
+
+msgid "sprite height, pixels [`0` to `{MAX_SPRITE_H_m1}`]"
+msgstr "высота спрайта, пиксели [от `0` до `{MAX_SPRITE_H_m1}`]"
+
+msgid "X coordinate of the pattern section to be used, in multiples of sprite width"
+msgstr "X-координата участка шаблона, который будет использоваться кратно ширине спрайта"
+
+msgid "Y coordinate of the pattern section to be used, in multiples of sprite height"
+msgstr "Y-координата участка шаблона, который будет использоваться кратно высоте спрайта"
+
+msgid "special effect flags [`0` to `7`]"
+msgstr "флаги спецэффектов [от `0` до `7`]"
+
+msgid "key color value to be used for transparency masking"
+msgstr "значение ключевого цвета для маскировки прозрачности"
+
+msgid "sprite priority in relation to background layers [`0` to `{MAX_BG_m1}`]"
+msgstr "приоритет спрайта относительно фоновых слоев [от `0` до `{MAX_BG_m1}`]"
+
+msgid "rotation angle in degrees [default `0`]"
+msgstr "угол поворота в градусах [по умолчанию `0`]"
+
+msgid "horizontal scaling factor [default `1`]"
+msgstr "коэффициент горизонтального масштабирования [по умолчанию `1`]"
+
+msgid "vertical scaling factor [default `1`]"
+msgstr "коэффициент вертикального масштабирования [по умолчанию `1`]"
+
+msgid "sprite opacity [`0` to `255`, default `255`]"
+msgstr "непрозрачность спрайта [от `0` до `255`, по умолчанию `255`]"
+
+msgid "The `FLAGS` attribute is the sum of any of the following bit values:"
+msgstr "Атрибут `FLAGS` представляет собой сумму любого из следующих битовых значений:"
+
+msgid "Effect"
+msgstr "Эффект"
+
+msgid "Sprite opacity (opaque if set)"
+msgstr "Непрозрачность спрайтов (непрозрачный, если установлено)"
+
+msgid "Horizontal flip"
+msgstr "Горизонтальный переворот"
+
+msgid "`4`"
+msgstr "`4`"
+
+msgid "Vertical flip"
+msgstr "Вертикальный переворот"
+
+msgid "* The `SPRITE` command's attributes can be specified in any order, but it is usually a good idea to place the `ON` attribute at the end if used."
+msgstr "* Атрибуты команды `SPRITE` могут быть указаны в любом порядке, но обычно рекомендуется размещать атрибут `ON` в конце, если он используется."
+
+msgid "* The `ALPHA` attribute is only available on true-color platforms."
+msgstr "* Атрибут `ALPHA` доступен только на платформах с полноцветным изображением."
+
+msgid "Having to specify the rotation angle in degrees is cumbersome when using other trigonometric operations to calculate it."
+msgstr "Неудобно указывать угол поворота в градусах, если для вычисления используются другие тригонометрические операции."
+
+msgid "Returns the width of a given sprite."
+msgstr "Возвращает ширину спрайта."
+
+msgid "Width of sprite `spr`."
+msgstr "Ширина спрайта `spr`."
+
+msgid "Returns the horizontal position of a given sprite."
+msgstr "Возвращает горизонтальное положение заданного спрайта."
+
+msgid "X coordinate of sprite `spr`."
+msgstr "X-координата спрайта `spr`."
+
+msgid "Returns the vertical position of a given sprite."
+msgstr "Возвращает вертикальное положение заданного спрайта."
+
+msgid "Y coordinate of sprite `spr`."
+msgstr "Y-координата спрайта `spr`."
+
+msgid "Square root function."
+msgstr "Функция квадратного корня."
+
+msgid "any numeric expression larger than or equal to `0`"
+msgstr "любое числовое выражение, большее или равное `0`"
+
+msgid "The nonnegative square root of `num`."
+msgstr "Неотрицательный квадратный корень из `num`."
+
+msgid "Reads bytes from the serial port."
+msgstr "Читает байты из последовательного порта."
+
+msgid "WARNING: This function is currently useless because the serial port receive pin is used for sound output in the BASIC Engine. It may be removed in the future if it turns out that there is no viable way to support serial input."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff В настоящее время эта функция бесполезна, поскольку контакт приема последовательного порта используется для вывода звука в BASIC Engine. Она может быть удалена в будущем, если окажется, что нет практического способа поддерживать последовательный ввод."
+
+msgid "Byte of data read, or `-1` if there was no data available."
+msgstr "Байт считанных данных, или `-1`, если данных не было."
+
+msgid "The alternative syntax `SREAD()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `SREAD()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Checks for available bytes on the serial port."
+msgstr "Проверяет наличие доступных байтов в последовательном порту."
+
+msgid "Number of bytes available to read."
+msgstr "Количество байтов, доступных для чтения."
+
+msgid "The alternative syntax `SREADY()` is supported for backwards compatibility with earlier versions of Engine BASIC."
+msgstr "Альтернативный синтаксис `SREADY()` поддерживается для обратной совместимости с более ранними версиями BASIC Engine."
+
+msgid "Halts the program."
+msgstr "Останавливает выполнение программы."
+
+msgid "A program stopped by a `STOP` command can be resumed using `CONT`."
+msgstr "Программа, остановленная командой `STOP`, может быть возобновлена с помощью `CONT`."
+
+msgid "Returns a string representation of a number."
+msgstr "Возвращает строковое представление числа."
+
+msgid "String representation of `num`."
+msgstr "Строковое представление `num`."
+
+msgid "Returns a string of a specified length made up of a repeating character."
+msgstr "Возвращает строку указанной длины, состоящую из повторяющихся символов."
+
+msgid "number of characters [at least `0`]"
+msgstr "количество символов [не менее `0`]"
+
+msgid "any non-empty string expression"
+msgstr "любое непустое строковое выражение"
+
+msgid "* If `char$` contains more than one character, only the first will be considered."
+msgstr "* Если `char$` содержит более одного символа, будет учитываться только первый."
+
+msgid "* If `count` is `0`, an empty string will be returned."
+msgstr "* Если `count` равно `0`, будет возвращена пустая строка."
+
+msgid "Writes a byte to the serial port."
+msgstr "Записывает байт в последовательный порт."
+
+msgid "WARNING: This command may be renamed in the future to reduce namespace pollution."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff В будущем эта команда может быть переименована, чтобы уменьшить беспорядок пространства имен."
+
+msgid "byte to be written"
+msgstr "байт для записи"
+
+msgid "Call a machine language routine."
+msgstr "Вызывает процедуру машинного языка."
+
+msgid "WARNING: Using this command incorrectly may crash the system, or worse."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff неправильное использование этой команды может привести к сбою системы или ещё хуже."
+
+msgid "a memory address mapped as executable"
+msgstr "адрес памяти, сопоставленный как исполняемый"
+
+msgid "No sanity checks are performed on the address."
+msgstr "Никаких проверок на правильность адреса не производится."
+
+msgid "Retrieve internal system addresses and parameters."
+msgstr "Получает внутренние системные адреса и параметры."
+
+msgid "number of the item of information to be retrieved"
+msgstr "номер элемента информации для получения"
+
+msgid "Requested information."
+msgstr "Запрашиваемая информация."
+
+msgid "The following internal information can be retrieved using `SYS()`:"
+msgstr "С помощью `SYS()` можно получить следующую внутреннюю информацию:"
+
+msgid "memory address of BASIC program buffer"
+msgstr "адрес памяти буфера BASIC-программы"
+
+msgid "memory address of current font"
+msgstr "адрес памяти текущего шрифта"
+
+msgid "system type; `0` for original (ESP8266), `1` for Shuttle (ESP32), `2` for NG (H3 bare-metal), `3` for LT (Linux/SDL-based), `4` for RX (Linux/bare-metal hybrid), `5` for Windows, `6` for MacOS."
+msgstr "тип системы; `0` для оригинала (ESP8266), `1` для Shuttle (ESP32), `2` для NG (H3 \"голое железо\"), `3` для LT (на базе Linux/SDL), `4` для RX (гибрид Linux/\"голое железо\"), `5` для Windows, `6` для MacOS."
+
+msgid "number of the subitem to be retrieved"
+msgstr "номер подпункта для извлечения"
+
+msgid "The following internal information can be retrieved using `SYS$()`:"
+msgstr "С помощью `SYS$()` можно получить следующую внутреннюю информацию:"
+
+msgid "audio device currently used"
+msgstr "используемое аудиоустройство"
+
+msgid "name of the audio device `index`"
+msgstr "имя аудиоустройства `index`"
+
+msgid "* The audio device names provided are only meaningful on LT platforms. Other platforms always return the string \"default\"."
+msgstr "* Указанные имена аудиоустройств имеют смысл только на LT-платформах. Другие платформы всегда возвращают строку \"по умолчанию\"."
+
+msgid "Displays internal information about the system."
+msgstr "Выводит внутреннюю информацию о системе."
+
+msgid "`SYSINFO` displays the following information:"
+msgstr "`SYSINFO` отображает следующую информацию:"
+
+msgid "* Program size,"
+msgstr "* Размер программы,"
+
+msgid "* statistics on scalar, array and list variables, both numeric and string,"
+msgstr "* статистику по скалярным, массивным и списочным переменным, как числовым, так и строковым,"
+
+msgid "* loop and return stack depths,"
+msgstr "* глубину стека циклов и возвратов,"
+
+msgid "* CPU stack pointer address,"
+msgstr "* адрес указателя стека процессора,"
+
+msgid "* free memory size and"
+msgstr "* объём свободной памяти и"
+
+msgid "* video timing information (nominal and actual cycles per frame)."
+msgstr "* информацию о синхронизации видео (номинальные и фактические циклы на кадр)."
+
+msgid "Returns the tangent of a specified angle."
+msgstr "Возвращает тангенс указанного угла."
+
+msgid "Tangent of `angle`."
+msgstr "Тангенс от `angle`."
+
+msgid "Returns the elapsed time since power-on."
+msgstr "Возвращает время, прошедшее с момента включения."
+
+msgid "unit of time [`0` for milliseconds, `1` for seconds, default: `0`]"
+msgstr "единица времени [`0` для миллисекунд, `1` для секунд, по умолчанию: `0`]"
+
+msgid "Time elapsed."
+msgstr "Прошедшее время."
+
+msgid "Checks if a sprite has collided with a background tile."
+msgstr "Проверяет, не столкнулся ли спрайт с тайлом фона."
+
+msgid "tile number [`0` to `255`]"
+msgstr "номер тайла [от `0` до `255`]"
+
+msgid "The tile is left of the sprite."
+msgstr "Тайл находится левее спрайта."
+
+msgid "The tile is below the sprite."
+msgstr "Тайл находится ниже спрайта."
+
+msgid "The tile is right of the sprite."
+msgstr "Тайл находится правее спрайта."
+
+msgid "The tile is above the sprite."
+msgstr "Тайл находится выше спрайта."
+
+msgid "Note that it is possible that none of these bits are set even if a collision has taken place (i.e., the return value is `64`) if the sprite's size is larger than the tile size of the given background layer, and the sprite covers the tile completely."
+msgstr "Обратите внимание, что ни один из этих битов не может быть установлен, даже если произошло столкновение (т.е. возвращаемое значение равно `64`), если размер спрайта больше заданного размера тайла фонового слоя и спрайт полностью покрывает тайл."
+
+msgid "WARNING: This function has never been tested."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Эта функция никогда не тестировалась."
+
+msgid "Unlike `SPRCOLL()`, tile collision detection is not pixel-accurate."
+msgstr "В отличие от `SPRCOLL()`, обнаружение столкновений тайлов не является пиксельно-точным."
+
+msgid "Writes the contents of a file to the screen. When a screen's worth of text has been printed, it pauses and waits for a key press."
+msgstr "Выводит содержимое файла на экран. Когда текст на экране будет напечатан, программа делает паузу и ожидает нажатия клавиши."
+
+msgid "Converts string to all-uppercase letters."
+msgstr "Преобразует строку в буквы верхнего регистра."
+
+msgid "Value of `s$` with all letters replaced with their uppercase equivalents."
+msgstr "Значение `s$` с заменой всех букв на их заглавные эквиваленты."
+
+msgid "Value of the \"up\" direction for input devices."
+msgstr "Значение направления \"вверх\" для устройств ввода."
+
+msgid "Converts a number contained in a string to a numeric value."
+msgstr "Преобразует число, содержащееся в строке, в числовое значение."
+
+msgid "a string expression containing the text representation of a number"
+msgstr "строковое выражение, содержащее текстовое представление числа"
+
+msgid "Numeric value of `num$`."
+msgstr "Числовое значение `num$`."
+
+msgid "Read a location in video memory."
+msgstr "Читает данные из видеопамяти."
+
+msgid "Byte address in video memory. [`0` to `131071`]"
+msgstr "Адрес байта в видеопамяти. [от `0` до `131071`]"
+
+msgid "Memory content."
+msgstr "Содержимое памяти."
+
+msgid "Write data to video memory."
+msgstr "Записывает данные в видеопамять."
+
+msgid "WARNING: Incorrect use of this command can configure the video controller to produce invalid output, with may cause damage to older CRT displays."
+msgstr "\\\\FpВНИМАНИЕ:\\\\Ff Неправильное использование этой команды может настроить видеоконтроллер на получение недопустимого вывода, что может привести к повреждению старых ЭЛТ-дисплеев."
+
+msgid "video memory address [`0` to `131071`]"
+msgstr "адрес видеопамяти [от `0` до `131071`]"
+
+msgid "numeric value [`0` to `255`] or string expression"
+msgstr "числовое значение [от `0` до `255`] или строковое выражение"
+
+msgid "Writes to a video controller register."
+msgstr "Записывает в регистр видеоконтроллера."
+
+msgid "video controller register number"
+msgstr "номер регистра видеоконтроллера"
+
+msgid "value [`0` to `65535`]"
+msgstr "значение [от `0` до `65535`]"
+
+msgid "Valid registers numbers are: `$01`, `$28` to `$30`, `$34` to `$36`, `$82` and `$B8`"
+msgstr "Допустимыми номерами регистров являются: `$01`, `$28`-`$30`, `$34`-`$36`, `$82` и `$B8`"
+
+msgid "The number of values required depends on the register accessed:"
+msgstr "Количество требуемых значений зависит от регистра, к которому осуществляется доступ:"
+
+msgid "`$34`, `$35`"
+msgstr "`$34`, `$35`"
+
+msgid "3 values"
+msgstr "3 значения"
+
+msgid "`$36`"
+msgstr "`$36`"
+
+msgid "no value"
+msgstr "нет значений"
+
+msgid "`$30`"
+msgstr "`$30`"
+
+msgid "2 values"
+msgstr "2 значения"
+
+msgid "all others"
+msgstr "все остальные"
+
+msgid "1 value"
+msgstr "1 значение"
+
+msgid "Read a video controller register."
+msgstr "Читает регистр видеоконтроллера."
+
+msgid "Register contents."
+msgstr "Содержимое регистра."
+
+msgid "Valid register numbers are: `$05`, `$53`, `$84`, `$86`, `$9F` and `$B7`."
+msgstr "Допустимыми номерами регистра являются: `$05`, `$53`, `$84`, `$86`, `$9F` и `$B7`."
+
+msgid "Synchronize with video output."
+msgstr "Синхронизация с видеовыходом."
+
+msgid "Waits until the video frame counter has reached or exceeded a given value, or until the next frame if none is specified."
+msgstr "Ожидает, пока счётчик видеокадров не достигнет или не превысит заданное значение, или до следующего кадра, если ничего не указано."
+
+msgid "frame number to be waited for"
+msgstr "номер кадра, который следует ожидать"
+
+msgid "Pause for a specific amount of time."
+msgstr "Ставит на паузу на определённое время."
+
+msgid "time in milliseconds"
+msgstr "время в миллисекундах"
+
+msgid "Iterates a `WHILE` loop."
+msgstr "Выполняет цикл `WHILE`."
+
+msgid "Executes a series of instructions as long as a specified condition is \"true\"."
+msgstr "Выполняет серию инструкций, пока указанное условие истинно."
+
+msgid "`condition` is evaluated at the start of the loop. If it is \"false\", execution continues after the corresponding `WEND` instruction. (Note that all kinds of loops can be nested, so this may not be the nearest `WEND` instruction.)"
+msgstr "`condition` оценивается в начале цикла. Если оно \"ложно\", то выполнение продолжается после соответствующей инструкции `WEND`. (Обратите внимание, что все виды циклов могут быть вложенными, поэтому это может быть не ближайшая инструкция `WEND`)."
+
+msgid "If `condition` is \"true\", the instructions following the `WHILE` instruction will be executed, until the corresponding `WEND` instruction is reached, at which point `condition` will be evaluated again to determine whether to continue the loop."
+msgstr "Если `condition` истинно, то инструкции, следующие за инструкцией `WHILE`, будут выполняться до тех пор, пока не будет достигнута соответствующая инструкция `WEND`, и тогда `condition` будет оценено снова, чтобы определить, стоит ли продолжать цикл."
+
+msgid "The `WHILE` keyword can also form part of a `LOOP` command."
+msgstr "Ключевое слово `WHILE` также может быть частью команды `LOOP`."
+
+msgid "Sets the text screen window."
+msgstr "Устанавливает окно текстового экрана."
+
+msgid "`WINDOW OFF` resets the text window to cover the entire screen."
+msgstr "`WINDOW OFF` сбрасывает текстовое окно на весь экран."
+
+msgid "left boundary of the text window, in characters [`0` to `CSIZE(0)-1`]"
+msgstr "левая граница текстового окна, в символах [от `0` до `CSIZE(0)-1`]."
+
+msgid "top boundary of the text window, in characters [`0` to `CSIZE(1)-1`]"
+msgstr "верхняя граница текстового окна, в символах [от `0` до `CSIZE(1)-1`]."
+
+msgid "width of the text window, in characters [`1` to `CSIZE(0)-x`]"
+msgstr "ширина текстового окна, в символах [от `1` до `CSIZE(0)-x`]"
+
+msgid "height of the text window, in characters [`1` to `CSIZE(1)-y`]"
+msgstr "высота текстового окна, в символах [от `1` до `CSIZE(1)-y`]"
+
+msgid "Run Z-machine program."
+msgstr "Запускает программу Z-машины."
+
+msgid "name of a z-code file"
+msgstr "имя файла Z-кода"
+
+msgid "Less-than-or-equal operator."
+msgstr "Оператор меньше или равно."
+
+msgid "`-1` if `a` is less than or equal to `b`, `0` otherwise."
+msgstr "`-1`, если `a` меньше или равно `b`, иначе `0`."
+
+msgid "Exponentiation operator."
+msgstr "Оператор возведения в степень."
+
+msgid "`a` raised to the power of `b`."
+msgstr "`a` возведённое в степень `b`."

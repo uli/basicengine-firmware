@@ -1,0 +1,616 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Stanislav Yudin aka CityAceE\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+msgid "OK"
+msgstr "ОК"
+
+msgid "Division by zero"
+msgstr "Деление на ноль"
+
+msgid "Floating point exception"
+msgstr "Исключение с плавающей запятой"
+
+msgid "Overflow"
+msgstr "Переполнение"
+
+msgid "Subscript out of range"
+msgstr "Индекс вне диапазона"
+
+msgid "Icode buffer full"
+msgstr "Буфер Icode заполнен"
+
+msgid "too many nested GOSUB"
+msgstr "слишком много вложенных GOSUB"
+
+msgid "RETURN stack underflow"
+msgstr "Опустошение стека RETURN"
+
+msgid "Argument stack overflow"
+msgstr "Переполнение стека аргументов"
+
+msgid "Undefined argument"
+msgstr "Неопределенный аргумент"
+
+msgid "too many nested FOR"
+msgstr "слишком много вложенных FOR"
+
+msgid "NEXT without FOR"
+msgstr "NEXT без FOR"
+
+msgid "FOR without variable"
+msgstr "FOR без переменной"
+
+msgid "FOR without TO"
+msgstr "FOR без TO"
+
+msgid "LET without variable"
+msgstr "LET без переменной"
+
+msgid "IF without condition"
+msgstr "IF без условия"
+
+msgid "IF stack overflow"
+msgstr "Переполнение стека IF"
+
+msgid "IF stack underflow"
+msgstr "Опустошение стека IF"
+
+msgid "Undefined line number"
+msgstr "Неопределенный номер строки"
+
+msgid "'(' or ')' expected"
+msgstr "Ожидается '(' или ')'"
+
+msgid "'=' expected"
+msgstr "Ожидается '='"
+
+msgid "Cannot use system command"
+msgstr "Невозможно использовать системную команду"
+
+msgid "Illegal value"
+msgstr "Недопустимое значение"
+
+msgid "Out of range value"
+msgstr "Значение вне диапазона"
+
+msgid "Program not found"
+msgstr "Программа не найдена"
+
+msgid "Syntax error"
+msgstr "Синтаксическая ошибка"
+
+msgid "Internal error"
+msgstr "Внутренняя ошибка"
+
+msgid "Break"
+msgstr "Прервано"
+
+msgid "Line too long"
+msgstr "Слишком длинная строка"
+
+msgid "File write error"
+msgstr "Ошибка записи файла"
+
+msgid "File read error"
+msgstr "Ошибка чтения файла"
+
+msgid "Cannot use GPIO function"
+msgstr "Невозможно использовать функцию GPIO"
+
+msgid "Path too long"
+msgstr "Слишком длинный путь"
+
+msgid "File open error"
+msgstr "Ошибка открытия файла"
+
+msgid "File not open"
+msgstr "Файл не открыт"
+
+msgid "SD I/O error"
+msgstr "Ошибка ввода-вывода SD"
+
+msgid "Bad file name"
+msgstr "Неверное имя файла"
+
+msgid "Not supported"
+msgstr "Не поддерживается"
+
+msgid "Out of video memory"
+msgstr "Недостаточно видеопамяти"
+
+msgid "Out of memory"
+msgstr "Недостаточно памяти"
+
+msgid "Can't continue"
+msgstr "Невозможно продолжить"
+
+msgid "Undefined array"
+msgstr "Неопределенный массив"
+
+msgid "Undefined procedure"
+msgstr "Неопределенная процедура"
+
+msgid "Undefined label"
+msgstr "Неопределенная метка"
+
+msgid "Duplicate procedure"
+msgstr "Дубликат процедуры"
+
+msgid "Duplicate label"
+msgstr "Дубликат метки"
+
+msgid "Out of data"
+msgstr "Нет данных"
+
+msgid "I/O error"
+msgstr "Ошибка ввода-вывода"
+
+msgid "Type mismatch"
+msgstr "Несоответствие типа"
+
+msgid "Local variable outside procedure"
+msgstr "Локальная переменная вне процедуры"
+
+msgid "Empty list"
+msgstr "Пустой список"
+
+msgid "ENDIF not found"
+msgstr "ENDIF не найден"
+
+msgid "Not enough arguments"
+msgstr "Недостаточно аргументов"
+
+msgid "File format error"
+msgstr "Ошибка формата файла"
+
+msgid "USING format error"
+msgstr "Ошибка формата USING"
+
+msgid "Network error"
+msgstr "Ошибка сети"
+
+msgid "Not a directory"
+msgstr "Не каталог"
+
+msgid "WHILE without WEND"
+msgstr "WHILE без WEND"
+
+msgid "System stack overflow"
+msgstr "Переполнение системного стека"
+
+msgid "File seek error"
+msgstr "Ошибка поиска файла"
+
+msgid "Failed to initialize synthesizer"
+msgstr "Не удалось инициализировать синтезатор"
+
+msgid "Unknown command"
+msgstr "Неизвестная команда"
+
+msgid "PROC without CALL/FN"
+msgstr "PROC без CALL/FN"
+
+msgid "CHAIN failed"
+msgstr "CHAIN не сработала"
+
+msgid "Undefined symbol"
+msgstr "Неопределенный символ"
+
+msgid "Compiler error"
+msgstr "Ошибка компилятора"
+
+msgid "Font error"
+msgstr "Ошибка шрифта"
+
+msgid "EXIT failed"
+msgstr "EXIT не удался"
+
+msgid "OS error"
+msgstr "Ошибка ОС"
+
+msgid "Data Abort"
+msgstr "Прерывание данных"
+
+msgid "MB free"
+msgstr "МБ свободно"
+
+msgid "bytes free"
+msgstr "байт свободно"
+
+msgid "bytes."
+msgstr "байт."
+
+msgid "files,"
+msgstr "файлы,"
+
+msgid "in"
+msgstr "в"
+
+msgid "%d files extracted"
+msgstr "%d файлов извлечено"
+
+msgid "Arguments"
+msgstr "Аргументы"
+
+msgid "Available commands:"
+msgstr "Доступные команды:"
+
+msgid "BASIC core"
+msgstr "ядро BASIC"
+
+msgid "Bugs"
+msgstr "Известные проблемы"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Directory"
+msgstr "Каталог"
+
+msgid "Example"
+msgstr "Пример"
+
+msgid "Expressions"
+msgstr "Выражения"
+
+msgid "Fonts"
+msgstr "Шрифты"
+
+msgid "Handler"
+msgstr "Обработчик"
+
+msgid "Matching commands:"
+msgstr "Соответствующие команды:"
+
+msgid "Modes"
+msgstr "Режимы"
+
+msgid "No help available"
+msgstr "Помощь недоступна"
+
+msgid "Note"
+msgstr "Примечание"
+
+msgid "Options"
+msgstr "Параметры"
+
+msgid "Precedence"
+msgstr "Приоритет"
+
+msgid "Press B to reload the last parsable version."
+msgstr "Нажмите B, чтобы перезагрузить последнюю анализируемую версию."
+
+msgid "Press any key to continue."
+msgstr "Нажмите любую клавишу, чтобы продолжить"
+
+msgid "Press any other key to continue."
+msgstr "Нажмите любую другую клавишу, чтобы продолжить"
+
+msgid "Result"
+msgstr "Результат"
+
+msgid "Return value"
+msgstr "Возвращаемое значение"
+
+msgid "See also"
+msgstr "Смотрите также"
+
+msgid "See also:"
+msgstr "Смотрите также:"
+
+msgid "Skipping autoexec.bas"
+msgstr "Пропуск autoexec.bas"
+
+msgid "System error:"
+msgstr "Системная ошибка:"
+
+msgid "TFTP error"
+msgstr "Ошибка TFTP"
+
+msgid "Types"
+msgstr "Типы"
+
+msgid "Usage"
+msgstr "Использование"
+
+msgid "ZIP file read error"
+msgstr "Ошибка чтения ZIP-файла"
+
+msgid "broken ZIP file"
+msgstr "повреждённый ZIP-файл"
+
+msgid "can't edit program while running it"
+msgstr "невозможно редактировать программу во время её работы"
+
+msgid "cannot create module directory"
+msgstr "невозможно создать каталог модуля"
+
+msgid "cannot find end of loop"
+msgstr "невозможно найти конец цикла"
+
+msgid "command"
+msgstr "команда"
+
+msgid "constant"
+msgstr "константа"
+
+msgid "could not decode help file"
+msgstr "не удалось декодировать файл справки"
+
+msgid "could not initialize TFTP client"
+msgstr "не удалось инициализировать TFTP-клиент"
+
+msgid "could not open help file"
+msgstr "не удалось открыть файл справки"
+
+msgid "could not read help file"
+msgstr "не удалось прочитать файл справки"
+
+msgid "could not start DHCP client"
+msgstr "не удалось запустить DHCP-клиент"
+
+msgid "editing program in memory not supported"
+msgstr "редактирование программы в памяти не поддерживается"
+
+msgid "editor exited abnormally"
+msgstr "редактор был завершен с ошибкой"
+
+msgid "empty string"
+msgstr "пустая строка"
+
+msgid "expected: \""
+msgstr "ожидается: \""
+
+msgid "expected: BG or SPRITE"
+msgstr "ожидается: BG или SPRITE"
+
+msgid "expected: BG parameter"
+msgstr "ожидается: параметр BG"
+
+msgid "expected: DATE or FLAGS"
+msgstr "ожидается: DATE или FLAGS"
+
+msgid "expected: DATE or TIME"
+msgstr "ожидается: DATE или TIME"
+
+msgid "expected: GOTO or GOSUB"
+msgstr "ожидается: GOTO или GOSUB"
+
+msgid "expected: INPUT, OUTPUT or OFF"
+msgstr "ожидается: INPUT, OUTPUT или OFF"
+
+msgid "expected: OFF or ON"
+msgstr "ожидается: OFF или ON"
+
+msgid "expected: ON or OFF"
+msgstr "ожидается: ON или OFF"
+
+msgid "expected: ON, OFF or LIST"
+msgstr "ожидается: ON, OFF или LIST"
+
+msgid "expected: THEN or GOTO"
+msgstr "ожидается: THEN или GOTO"
+
+msgid "expected: command"
+msgstr "ожидается: команда"
+
+msgid "expected: end of statement"
+msgstr "ожидается: конец оператора"
+
+msgid "expected: file mode"
+msgstr "ожидается: файловый режим"
+
+msgid "expected: file name"
+msgstr "ожидается: имя файла"
+
+msgid "expected: list reference"
+msgstr "ожидается: ссылка на список"
+
+msgid "expected: network command"
+msgstr "ожидается: сетевая команда"
+
+msgid "expected: network function"
+msgstr "ожидается: сетевая функция"
+
+msgid "expected: numeric expression"
+msgstr "ожидается: числовое выражение"
+
+msgid "expected: numeric list reference"
+msgstr "ожидается: ссылка на числовой список"
+
+msgid "expected: separator"
+msgstr "ожидается: разделитель"
+
+msgid "expected: sprite parameter"
+msgstr "ожидается: параметр спрайта"
+
+msgid "expected: string expression"
+msgstr "ожидается: строковое выражение"
+
+msgid "expected: string list reference"
+msgstr "ожидается: ссылка на список строк"
+
+msgid "expected: variable"
+msgstr "ожидается: переменная"
+
+msgid "failed to acquire GPIO chip"
+msgstr "не удалось получить чип GPIO"
+
+msgid "failed to acquire GPIO line"
+msgstr "не удалось получить линию GPIO"
+
+msgid "failed to configure GPIO line"
+msgstr "не удалось настроить линию GPIO"
+
+msgid "failed to create file"
+msgstr "не удалось создать файл"
+
+msgid "failed to get GPIO state"
+msgstr "не удалось получить состояние GPIO"
+
+msgid "failed to open file"
+msgstr "не удалось открыть файл"
+
+msgid "failed to send file"
+msgstr "не удалось отправить файл"
+
+msgid "failed to set GPIO state"
+msgstr "не удалось установить состояние GPIO"
+
+msgid "failed to set bit order"
+msgstr "не удалось установить порядок битов"
+
+msgid "file could not be extracted"
+msgstr "не удалось извлечь файл"
+
+msgid "file system"
+msgstr "файловая система"
+
+msgid "font already exists"
+msgstr "шрифт уже существует"
+
+msgid "from %d to %d"
+msgstr "от %d до %d"
+
+msgid "function"
+msgstr "функция"
+
+msgid "input/output"
+msgstr "ввод/вывод"
+
+msgid "invalid URL"
+msgstr "неверный URL-адрес"
+
+msgid "invalid list index"
+msgstr "неверный индекс списка"
+
+msgid "invalid number"
+msgstr "неверный номер"
+
+msgid "invalid program line"
+msgstr "неверная строка программы"
+
+msgid "ipaddr_aton failed"
+msgstr "ipaddr_aton не сработал"
+
+msgid "malformed DATA"
+msgstr "неверные DATA"
+
+msgid "math"
+msgstr "математика"
+
+msgid "max %d"
+msgstr "макс. %d"
+
+msgid "min %d"
+msgstr "мин. %d"
+
+msgid "missing"
+msgstr "отсутствует"
+
+msgid "missing dimensions"
+msgstr "отсутствуют размеры"
+
+msgid "module not found"
+msgstr "модуль не найден"
+
+msgid "multiple periods"
+msgstr "многочисленные периоды"
+
+msgid "need min 1 character"
+msgstr "нужен минимум 1 символ"
+
+msgid "negative length"
+msgstr "отрицательная длина"
+
+msgid "negative string offset"
+msgstr "отрицательное смещение строки"
+
+msgid "negative substring length"
+msgstr "отрицательная длина подстроки"
+
+msgid "no SPI device selected"
+msgstr "не выбрано SPI-устройство"
+
+msgid "no active loops"
+msgstr "нет активных циклов"
+
+msgid "no matching loop"
+msgstr "нет подходящего цикла"
+
+msgid "none"
+msgstr "нет"
+
+msgid "not a BASIC program"
+msgstr "не BASIC-программа"
+
+msgid "not a ZIP file"
+msgstr "не ZIP-файл"
+
+msgid "not a valid TrueType font file"
+msgstr "недопустимый файл шрифта TrueType"
+
+msgid "not an array variable"
+msgstr "не переменная массива"
+
+msgid "not connected"
+msgstr "не подключено"
+
+msgid "numeric"
+msgstr "числовой"
+
+msgid "operator"
+msgstr "оператор"
+
+msgid "pixel graphics"
+msgstr "пиксельная графика"
+
+msgid "screen handling"
+msgstr "обработка экрана"
+
+msgid "sound"
+msgstr "звук"
+
+msgid "sprite/background engine"
+msgstr "спрайтовый/фоновый движок"
+
+msgid "string"
+msgstr "строковый"
+
+msgid "system"
+msgstr "система"
+
+msgid "unknown"
+msgstr "неизвестно"
+
+msgid "unknown configuration variable"
+msgstr "неизвестная переменная конфигурации"
+
+msgid "unknown font"
+msgstr "неизвестный шрифт"
+
+msgid "unknown loop type"
+msgstr "неизвестный тип цикла"
+
+msgid "unknown memory size"
+msgstr "неизвестный размер памяти"
+
+msgid "unknown section"
+msgstr "неизвестный раздел"
+
+msgid "unknown type"
+msgstr "неизвестный тип"
+
+msgid "unknown/SDL"
+msgstr "неизвестно/SDL"

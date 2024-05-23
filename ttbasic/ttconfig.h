@@ -178,7 +178,7 @@
 const char *gettext(const char *msg);
 #define _(s) gettext(s)
 
-#define NUM_LANGS 5
+#define NUM_LANGS 6
 
 #ifdef _WIN32
 #define DEFAULT_EDITOR "notepad.exe"

@@ -162,7 +162,7 @@ removed in future releases.
 * `11`: Language +
   The following languages are supported for system messages: +
   `0` (US English, default), `1` (German), `2` (French), `3` (Spanish),
-  `4` (Japanese).
+  `4` (Japanese), `5` (Russian).
 
 * `12`: Start screen recording immediately. +
   When enabled, screen recording will start as soon as Engine BASIC boots. +

@@ -237,6 +237,7 @@ const char *helps[NUM_LANGS] = {
     "fr",
     "es",
     "ja",
+    "ru",
 };
 
 sjson_node *helps_json[NUM_LANGS] = {};
