@@ -392,7 +392,7 @@ keyEvent TKeyboard::read() {
       ki.kevt.ALTGR = 1;
 
     if (event.key.keysym.mod & KMOD_RALT) {
-      unicode = usb2ascii_altgr[keyboard_layout][kc];
+      unicode = usb2ascii_altgr[keyboard_layout][kc_off];
     } else if (kc_off < sizeof(usb2us) / sizeof(usb2us[0])) {
       unicode = usb2ascii[keyboard_layout][kc_off];
       if (event.key.keysym.mod & KMOD_CAPS)
