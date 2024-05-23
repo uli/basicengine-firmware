@@ -60,11 +60,6 @@ uint16_t gcurs_y = 0;
 
 #define UNIMAP_SIZE 0x30000
 
-struct unimap {
-  uint8_t *bitmap;
-  uint8_t w, h;
-  int off_x, off_y;
-};
 struct unimap *unimap = NULL;
 
 int tv_font_count(void) {

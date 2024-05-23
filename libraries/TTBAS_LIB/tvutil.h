@@ -66,3 +66,13 @@ extern pixel_t bg_color;
 
 extern int colmem_fg_x, colmem_fg_y;
 extern int colmem_bg_x, colmem_bg_y;
+
+struct unimap {
+  uint8_t *bitmap;
+  uint8_t w, h;
+  int off_x, off_y;
+};
+
+void tv_unimap(utf8_int32_t c, int f_width, int f_height, struct unimap *umap);
+
+void tv_setcolor(pixel_t fc, pixel_t bc);
