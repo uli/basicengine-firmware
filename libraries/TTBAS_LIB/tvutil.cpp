@@ -303,6 +303,56 @@ void tv_flipcolors() {
   tv_setcolor(bg_color, fg_color);
 }
 
+void tv_unimap(utf8_int32_t c, int f_width, int f_height, struct unimap *umap) {
+  float scale = stbtt_ScaleForPixelHeight(&tvfont->ttf, f_height);
+
+  int ascent_i, descent_i, lineGap;
+  int w, h, off_x, off_y;
+  float ascent, descent;
+
+  stbtt_GetFontVMetrics(&tvfont->ttf, &ascent_i, &descent_i, &lineGap);
+
+  // Assigning the scaled ascent/descent values to the integer variables
+  // and using them below causes an off-by-one on Win32 (and only Win32,
+  // i686-w64-mingw32-gcc (GCC) 12-win32), observable in characters being
+  // shifted one pixel down.
+  // The issue magically disappears when printing the value as debug
+  // output, without any other change to the code.
+  // This is either a bug or undefined behavior I'm not aware of.
+  ascent = (float)ascent_i * scale;
+  descent = (float)descent_i * scale;
+
+  int glyph_idx = stbtt_FindGlyphIndex(&tvfont->ttf, c);
+  if (glyph_idx != 0) {
+    umap->bitmap = stbtt_GetCodepointBitmap(&tvfont->ttf, 0, scale, c, &w,
+                                                &h, &off_x, &off_y);
+    umap->w = w;
+    umap->h = h;
+    umap->off_x = off_x;
+    umap->off_y = off_y + f_height + descent;
+  } else {
+    for (auto i : fonts) {
+      if (i.h == f_height && i.w == f_width &&
+          stbtt_FindGlyphIndex(&i.ttf, c) != 0) {
+        scale = stbtt_ScaleForPixelHeight(&i.ttf, f_height);
+        stbtt_GetFontVMetrics(&i.ttf, &ascent_i, &descent_i, &lineGap);
+        ascent = (float)ascent_i * scale;
+        descent = (float)descent_i * scale;
+        umap->bitmap = stbtt_GetCodepointBitmap(&i.ttf, 0, scale, c, &w,
+                                                    &h, &off_x, &off_y);
+        umap->w = w;
+        umap->h = h;
+        umap->off_x = off_x;
+        umap->off_y = off_y + f_height + descent;
+        break;
+      }
+    }
+    if (!umap->bitmap) {
+      umap->w = umap->h = 0;
+    }
+  }
+}
+
 //
 // Display character
 //
@@ -314,52 +364,7 @@ static void ICACHE_RAM_ATTR tv_write_px(uint16_t x, uint16_t y, utf8_int32_t c) 
     c = 0xfffd;
 
   if (!unimap[c].bitmap && c != ' ') {
-    float scale = stbtt_ScaleForPixelHeight(&tvfont->ttf, f_height);
-
-    int ascent_i, descent_i, lineGap;
-    float ascent, descent;
-
-    stbtt_GetFontVMetrics(&tvfont->ttf, &ascent_i, &descent_i, &lineGap);
-
-    // Assigning the scaled ascent/descent values to the integer variables
-    // and using them below causes an off-by-one on Win32 (and only Win32,
-    // i686-w64-mingw32-gcc (GCC) 12-win32), observable in characters being
-    // shifted one pixel down.
-    // The issue magically disappears when printing the value as debug
-    // output, without any other change to the code.
-    // This is either a bug or undefined behavior I'm not aware of.
-    ascent = (float)ascent_i * scale;
-    descent = (float)descent_i * scale;
-
-    int glyph_idx = stbtt_FindGlyphIndex(&tvfont->ttf, c);
-    if (glyph_idx != 0) {
-      unimap[c].bitmap = stbtt_GetCodepointBitmap(&tvfont->ttf, 0, scale, c, &w,
-                                                  &h, &off_x, &off_y);
-      unimap[c].w = w;
-      unimap[c].h = h;
-      unimap[c].off_x = off_x;
-      unimap[c].off_y = off_y + f_height + descent;
-    } else {
-      for (auto i : fonts) {
-        if (i.h == f_height && i.w == f_width &&
-            stbtt_FindGlyphIndex(&i.ttf, c) != 0) {
-          scale = stbtt_ScaleForPixelHeight(&i.ttf, f_height);
-          stbtt_GetFontVMetrics(&i.ttf, &ascent_i, &descent_i, &lineGap);
-          ascent = (float)ascent_i * scale;
-          descent = (float)descent_i * scale;
-          unimap[c].bitmap = stbtt_GetCodepointBitmap(&i.ttf, 0, scale, c, &w,
-                                                      &h, &off_x, &off_y);
-          unimap[c].w = w;
-          unimap[c].h = h;
-          unimap[c].off_x = off_x;
-          unimap[c].off_y = off_y + f_height + descent;
-          break;
-        }
-      }
-      if (!unimap[c].bitmap) {
-        unimap[c].w = unimap[c].h = 0;
-      }
-    }
+    tv_unimap(c, f_width, f_height, &unimap[c]);
   }
 
   const uint8_t *chp = unimap[c].bitmap;
