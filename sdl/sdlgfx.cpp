@@ -65,6 +65,8 @@ void SDLGFX::modeSize(int m, int &w, int &h) {
 extern int sdl_flags;
 extern int sdl_user_w, sdl_user_h;
 
+SDL_Rect SDLGFX::m_viewport;
+
 #include <config.h>
 
 extern "C" int gfx_thread(void *data);
@@ -269,19 +271,19 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
 
 
       if (scale_x == 1 && scale_y == 1 && (m_current_mode.x != real_width || m_current_mode.y != real_height)) {
+        // XXX: use viewport!
         if (m_current_mode.vclkpp == ASPECT_4_3)
           SDL_RenderSetLogicalSize(sdl_renderer, 1280, 1024);
         else
           SDL_RenderSetLogicalSize(sdl_renderer, 1920, 1080);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
       } else {
-        SDL_Rect viewport;
-        viewport.w = (int)SDL_floor(logical_w * scale_x);
-        viewport.x = (real_width - viewport.w) / 2;
-        viewport.h = (int)SDL_floor(logical_h * scale_y);
-        viewport.y = (real_height - viewport.h) / 2;
+        m_viewport.w = (int)SDL_floor(logical_w * scale_x);
+        m_viewport.x = (real_width - m_viewport.w) / 2;
+        m_viewport.h = (int)SDL_floor(logical_h * scale_y);
+        m_viewport.y = (real_height - m_viewport.h) / 2;
 
-        SDL_RenderSetViewport(sdl_renderer, &viewport);
+        SDL_RenderSetViewport(sdl_renderer, &m_viewport);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
       }
   }

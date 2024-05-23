@@ -229,6 +229,8 @@ public:
 
   bool m_lowpass;
 
+  static SDL_Rect m_viewport;
+
   friend int ::gfx_thread(void *data);
 };
 
