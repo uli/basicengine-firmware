@@ -613,9 +613,80 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
   SDL_RenderSetViewport(renderer, viewport);
 }
 
+#include <dirent.h>
+#include <compat.h>
+
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
                          uint8_t layout) {
   setLayout(layout);
+  std::string layout_dir_path = std::string(getenv("ENGINEBASIC_ROOT")) + std::string("/sys/kbd");
+
+  DIR *kbd_dir = opendir(layout_dir_path.c_str());
+
+  if (!kbd_dir) {
+    printf("WARNING: no keyboard layouts in %s\n", layout_dir_path.c_str());
+    return 0;
+  }
+
+  struct dirent *de;
+  while ((de = readdir(kbd_dir))) {
+    std::string layout_path = layout_dir_path + "/" + de->d_name;
+
+    FILE *kbd_file = fopen(layout_path.c_str(), "r");
+    if (!kbd_file)
+      continue;
+
+    int32_t *usb2sym = (int32_t *)calloc(256, sizeof(int32_t));
+    memcpy(usb2sym, usb2us, 240 * sizeof(int32_t));
+    int32_t *usb2sym_altgr = (int32_t *)calloc(256, sizeof(int32_t));
+    memcpy(usb2sym_altgr, usb2us_altgr, 240 * sizeof(int32_t));
+
+    char *line = NULL;
+    size_t len;
+    bool valid = false;
+    while (getline(&line, &len, kbd_file) != -1) {
+      int scancode = 0;
+      char *sym = 0, *shift = 0, *altgr = 0, *altgr_shift = 0;
+
+      if (sscanf(line, "%i = %ms %ms %ms %ms\n", &scancode, &sym, &shift, &altgr, &altgr_shift) >= 2) {
+        valid = true;
+        if (scancode >= 128) {
+          printf("WARNING: invalid scancode %d in %s\n", scancode, layout_path.c_str());
+          continue;
+        }
+
+        utf8codepoint(sym, &usb2sym[scancode]);
+
+        if (shift)
+          utf8codepoint(shift, &usb2sym[scancode + 128]);
+
+        if (altgr)
+          utf8codepoint(altgr, &usb2sym_altgr[scancode]);
+
+        if (altgr_shift)
+          utf8codepoint(altgr_shift, &usb2sym_altgr[scancode + 128]);
+      }
+      free(sym);
+      free(shift);
+      free(altgr);
+      free(altgr_shift);
+
+      free(line);
+      line = NULL;
+    }
+
+    fclose(kbd_file);
+
+    if (valid) {
+      usb2ascii.push_back(usb2sym);
+      usb2ascii_altgr.push_back(usb2sym_altgr);
+      std::string name = std::string(de->d_name).substr(0, std::string(de->d_name).find_last_of("."));
+      usb2ascii_names.push_back(strdup(name.c_str()));
+    }
+  }
+
+  closedir(kbd_dir);
+
   return 0;
 }
 
