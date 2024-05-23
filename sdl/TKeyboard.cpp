@@ -189,6 +189,10 @@ static const int32_t usb2jp[] = {
      0,   0,   0,   0, '_',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
+static const int32_t usb2jp_altgr[240] = {
+  0
+};
+
 static const int32_t usb2us[] = {
      0,   0,   0,   0, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2',
@@ -205,6 +209,10 @@ static const int32_t usb2us[] = {
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+};
+
+static const int32_t usb2us_altgr[240] = {
+  0
 };
 
 static const int32_t usb2de[] = {
@@ -225,6 +233,24 @@ static const int32_t usb2de[] = {
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
+static const int32_t usb2de_altgr[] = {
+     0,   0,   0,   0,   0,   0,   0,   0,U'€',   0,   0,   0,   0,   0,   0,   0,
+  U'µ',   0,   0,   0, '@',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,U'²',
+  U'³',   0,   0,   0, '{', '[', ']', '}',   0,   0,   0,   0,   0,'\\',   0,   0,
+   '~',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0, '|',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+};
+
 static const int32_t usb2fr[] = {
      0,   0,   0,   0, 'q', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
    ',', 'n', 'o', 'p', 'a', 'r', 's', 't', 'u', 'v', 'z', 'x', 'y', 'w', '&',U'é',
@@ -241,6 +267,24 @@ static const int32_t usb2fr[] = {
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+};
+
+static const int32_t usb2fr_altgr[] = {
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, '~',
+   '#', '{', '[', '|', '`','\\', '^', '@',   0,   0,   0,   0,   0, ']', '}',   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
 static const int32_t usb2es[] = {
@@ -261,12 +305,38 @@ static const int32_t usb2es[] = {
      0,   0,   0,   0, '>',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 };
 
-static const int32_t *usb2ascii[] = {
+static const int32_t usb2es_altgr[] = {
+     0,   0,   0,   0,   0,   0,   0,   0,U'€',   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, '|', '@',
+   '#', '~',U'½',U'¬',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, '[',
+   ']', '}',   0,   0, '{','\\',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+     0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+};
+
+static std::vector<const int32_t *> usb2ascii = {
   usb2jp,
   usb2us,
   usb2de,
   usb2fr,
-  usb2es
+  usb2es,
+};
+
+static std::vector<const int32_t *> usb2ascii_altgr = {
+  usb2jp_altgr,
+  usb2us_altgr,
+  usb2de_altgr,
+  usb2fr_altgr,
+  usb2es_altgr,
 };
 
 bool TKeyboard::state(uint8_t keycode) {
@@ -317,56 +387,8 @@ keyEvent TKeyboard::read() {
     if (event.key.keysym.mod & KMOD_RALT)
       ki.kevt.ALTGR = 1;
 
-    if (keyboard_layout == 2 && event.key.keysym.mod & KMOD_RALT) {
-      // German Alt Gr combos
-      switch (kc) {
-      case 0x14: unicode = '@'; break;	// Q
-      case 0x08: unicode = U'€'; break;	// E
-      case 0x64: unicode = '|'; break;	// 102nd key
-      case 0x1f: unicode = U'²'; break;	// 2
-      case 0x20: unicode = U'³'; break;	// 3/cubed
-      case 0x24: unicode = '{'; break;	// 7
-      case 0x25: unicode = '['; break;	// 8
-      case 0x26: unicode = ']'; break;	// 9
-      case 0x27: unicode = '}'; break;	// 0
-      case 0x2d: unicode = '\\'; break;	// - (sharp s)
-      case 0x10: unicode = U'µ'; break;	// M
-      case 0x30: unicode = '~'; break;	// ]
-      default: unicode = 0; break;
-      }
-    } else if (keyboard_layout == 3 && event.key.keysym.mod & KMOD_RALT) {
-      // French Alt Gr combos
-      switch (kc) {
-      case 0x1f: unicode = '~'; break;	// 2
-      case 0x20: unicode = '#'; break;	// 3
-      case 0x21: unicode = '{'; break;	// 4
-      case 0x22: unicode = '['; break;	// 5
-      case 0x23: unicode = '|'; break;	// 6
-      case 0x24: unicode = '`'; break;	// 7
-      case 0x25: unicode = '\\'; break;	// 8
-      case 0x26: unicode = '^'; break;	// 9
-      case 0x27: unicode = '@'; break;	// 0
-      case 0x2d: unicode = ']'; break;	// -
-      case 0x2e: unicode = '}'; break;	// =
-      default: unicode = 0; break;
-      }
-    } else if (keyboard_layout == 4 && event.key.keysym.mod & KMOD_RALT) {
-      // Spanish Alt Gr combos
-      switch (kc) {
-      case 0x35: unicode = '\\'; break;	// grave
-      case 0x1e: unicode = '|'; break;	// 1
-      case 0x1f: unicode = '@'; break;	// 2
-      case 0x20: unicode = '#'; break;	// 3
-      case 0x21: unicode = '~'; break;	// 4	XXX; dead key
-      case 0x22: unicode = U'½'; break;	// 5
-      case 0x08: unicode = U'€'; break;	// e
-      case 0x23: unicode = U'¬'; break;	// 6
-      case 0x2f: unicode = '['; break;	// [
-      case 0x30: unicode = ']'; break;	// ]
-      case 0x34: unicode = '{'; break;	// '
-      case 0x31: unicode = '}'; break;	// backslash
-      default: unicode = 0; break;
-      }
+    if (event.key.keysym.mod & KMOD_RALT) {
+      unicode = usb2ascii_altgr[keyboard_layout][kc];
     } else if (kc_off < sizeof(usb2us) / sizeof(usb2us[0])) {
       unicode = usb2ascii[keyboard_layout][kc_off];
       if (event.key.keysym.mod & KMOD_CAPS)
@@ -409,7 +431,7 @@ keyEvent TKeyboard::read() {
 }
 
 void TKeyboard::setLayout(uint8_t layout) {
-  keyboard_layout = layout < sizeof(usb2ascii)/sizeof(*usb2ascii) ? layout : 0;
+  keyboard_layout = layout < usb2ascii.size() ? layout : 0;
 
   if (m_layout_surf) {
     uint32_t *surf = m_layout_surf;
