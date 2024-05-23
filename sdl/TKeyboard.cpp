@@ -280,6 +280,7 @@ bool TKeyboard::state(uint8_t keycode) {
 std::deque<SDL_Event> kbd_events;
 
 static int key_events_pending = 0;
+bool TKeyboard::m_layout_visible = false;
 
 uint8_t TPS2::available() {
   for (auto &e : kbd_events) {
@@ -409,6 +410,166 @@ keyEvent TKeyboard::read() {
 
 void TKeyboard::setLayout(uint8_t layout) {
   keyboard_layout = layout < sizeof(usb2ascii)/sizeof(*usb2ascii) ? layout : 0;
+
+  if (m_layout_surf) {
+    uint32_t *surf = m_layout_surf;
+    m_layout_surf = NULL;
+    free(surf);
+  }
+}
+
+void TKeyboard::showLayout(bool onoff) {
+  if (m_layout_visible != onoff) {
+    m_layout_visible = onoff;
+  }
+}
+
+void TKeyboard::toggleLayout() {
+  m_layout_visible = !m_layout_visible;
+}
+
+SDL_Texture *TKeyboard::m_layout_tex;
+uint32_t *TKeyboard::m_layout_surf;
+
+#include <stb_image.h>
+#include <tvutil.h>
+
+// mapping of USB key codes to keyboard rows (-1 is disabled)
+static const int usb_key_row[] = {
+  -1, -1, -1, -1,  3,  4,  4,  3,  2,  3,  3,  3,  2,  3,  3,  3,
+   4,  4,  2,  2,  2,  2,  3,  2,  2,  4,  2,  4,  2,  4,  1,  1,
+   1,  1,  1,  1,  1,  1,  1,  1,  3, -1, -1, -1,  5,  1,  1,  2,
+   2,  3, -1,  3,  3,  1,  4,  4,  4, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1,  1,  1,  1,  3,  5,  4,  4,  4,  3,  3,  3,  2,
+   2,  2,  5,  5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+};
+
+// size of keyboard template
+#define TEMPLATE_WIDTH 900
+#define TEMPLATE_HEIGHT 300
+
+// size of key labels (one glyph)
+#define LABEL_SIZE 16
+
+// key spacing
+#define KEY_SPACE_H 60
+#define KEY_SPACE_V 60
+
+// offsets within the key cell
+#define LABEL_OFF_H (KEY_SPACE_H / 6)
+#define LABEL_OFF_V (KEY_SPACE_V / 6)
+#define LABEL_SHIFT_OFF_V (KEY_SPACE_V * 4 / 10)	// shifted character
+
+// width of first key in each row
+static const int usb_row_shift[] = {
+  (int)KEY_SPACE_H,  (int)KEY_SPACE_H,  90,  105,  75,  90,
+};
+
+// mapping of USB key codes to keyboard columns
+static const int usb_key_col[] = {
+    0,        0,        0,        0,        1 /*a*/,  6 /*b*/,  4 /*c*/,  3 /*d*/,  3 /*e*/,   4 /*f*/,  5 /*g*/,  6 /*h*/,  8 /*i*/,  7 /*j*/,  8 /*k*/,  9 /*l*/,
+    8 /*m*/,  7 /*n*/,  9 /*o*/, 10 /*p*/,  1 /*q*/,  4 /*r*/,  2 /*s*/,  5 /*t*/,  7 /*u*/,   5 /*v*/,  2 /*w*/,  3 /*x*/,  6 /*y*/,  2 /*z*/,  1 /*1*/,  2 /*2*/,
+    3 /*3*/,  4 /*4*/,  5 /*5*/,  6 /*6*/,  7 /*7*/,  8 /*8*/,  9 /*9*/, 10 /*0*/, 13 /*\r*/,  0,        0,        0,        4 /* */, 11 /*-*/, 12 /*=*/, 11 /*[*/,
+   12 /*]*/, 12 /*\*/,  0,       10 /*;*/, 11 /*'*/,  0 /*`*/,  9 /*,*/, 10 /*.*/, 11 /*/*/,   0,        0,        0,        0,        0,        0,        0,
+    0,        0,        0,        0,        0,        0,        0,        0,        0,         0,        0,        0,        0,        0,        0,        0,
+    0,        0,        0,        0,       21 /*/*/, 22 /***/, 23 /*-*/, 23 /*+*/, 23 /*\r*/, 20 /*1*/, 21 /*2*/, 22 /*3*/, 20 /*4*/, 21 /*5*/, 22 /*6*/, 20 /*7*/,
+   21 /*8*/, 22 /*9*/, 20 /*0*/, 22 /*.*/,  0,        0,        0,        0,        0,         0,        0,        0,        0,        0,        0,        0,
+    0,        0,        0,        0,        0,        0,        0,        0,        0,         0,        0,        0,        0,        0,        0,        0,
+};
+
+void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
+  if (!m_layout_visible) {
+    // clean up texture and surface if any
+    if (m_layout_tex) {
+      SDL_DestroyTexture(m_layout_tex);
+      m_layout_tex = NULL;
+    }
+    if (m_layout_surf) {
+      free(m_layout_surf);
+      m_layout_surf = NULL;
+    }
+    return;
+  }
+
+  if (!m_layout_surf) {
+    // draw the keyboard layout to a texture
+    int w,h,ch;
+
+    FILE *lf = fopen((std::string(getenv("ENGINEBASIC_ROOT")) +
+                      std::string("/sys/ui/KB_Template.png")).c_str(), "rb");
+    if (!lf)
+      return;
+
+    m_layout_surf = (uint32_t *)stbi_load_from_file(lf, &w, &h, &ch, 4);
+
+    fclose(lf);
+
+    if (!m_layout_surf)
+      return;
+
+    pixel_t fg_save = fg_color;
+    pixel_t bg_save = bg_color;
+    // XXX: tv_write_px_ex() doesn't support the alpha channel; colored
+    // template background will be overwritten.
+    tv_setcolor(0x00000000, 0xffffffff);
+
+    for (int i = 0; i < sizeof(usb_key_row)/sizeof(usb_key_row[0]); ++i) {
+      if (usb_key_row[i] == -1)
+        continue;
+
+      utf8_int32_t sym = usb2ascii[keyboard_layout][i];
+      utf8_int32_t sym_shift = usb2ascii[keyboard_layout][i + 128];
+      // XXX: AltGr?
+
+      // account for the variably sized keys at the start of each row
+      int shift = usb_key_col[i] == 0 ? 0 : usb_row_shift[usb_key_row[i]] - KEY_SPACE_H;
+
+      int x = shift + KEY_SPACE_H * usb_key_col[i] + LABEL_OFF_H;
+      int y = (usb_key_row[i] - 1) * KEY_SPACE_V + LABEL_OFF_V;
+
+      if (y >= 0 && y < TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_SHIFT_OFF_V && x >= 0 && x <= TEMPLATE_WIDTH - LABEL_SIZE && sym >= 32) {
+        if (sym_shift)
+          tv_write_px_ex(x, y, LABEL_SIZE, LABEL_SIZE, sym_shift, m_layout_surf, TEMPLATE_WIDTH);
+        if (sym)
+          tv_write_px_ex(x, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym, m_layout_surf, TEMPLATE_WIDTH);
+      }
+    }
+
+    tv_setcolor(fg_save, bg_save);
+
+    // blend it in a little
+    for (int i = 0; i < TEMPLATE_WIDTH * TEMPLATE_HEIGHT; ++i) {
+      m_layout_surf[i] = (m_layout_surf[i] & 0x00ffffff) | 0xd0000000;
+    }
+
+    if (m_layout_tex)
+      SDL_DestroyTexture(m_layout_tex);
+
+    m_layout_tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ABGR8888,
+                                     SDL_TEXTUREACCESS_STREAMING, TEMPLATE_WIDTH, TEMPLATE_HEIGHT);
+    if (!m_layout_tex) {
+      free(m_layout_surf);
+      m_layout_surf = NULL;
+      return;
+    }
+
+    SDL_SetTextureBlendMode(m_layout_tex, SDL_BLENDMODE_BLEND);
+
+    SDL_UpdateTexture(m_layout_tex, NULL, m_layout_surf, TEMPLATE_WIDTH * 4);
+  }
+
+  SDL_Rect layout_rect =  {
+    .x = viewport->w / ((960 - TEMPLATE_WIDTH) / 2) + viewport->x,
+    .y = viewport->h - (TEMPLATE_HEIGHT * viewport->h / 540) - viewport->h / 54 + viewport->y,
+    .w = TEMPLATE_WIDTH * viewport->w / 960,
+    .h = TEMPLATE_HEIGHT * viewport->h / 540,
+  };
+
+  SDL_RenderSetViewport(renderer, &layout_rect);
+  SDL_RenderCopy(renderer, m_layout_tex, NULL, NULL);
+  SDL_RenderSetViewport(renderer, viewport);
 }
 
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,

@@ -255,6 +255,15 @@ public:
     return !!(m_key_state[keycode / 8] & (1 << keycode % 8));
   }
 #endif
+
+#if defined(SDL)
+  void toggleLayout();
+  void showLayout(bool onoff);
+  void drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport);
+  static SDL_Texture *m_layout_tex;
+  static uint32_t *m_layout_surf;
+  static bool m_layout_visible;
+#endif
 };
 
 #endif
