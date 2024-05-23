@@ -547,7 +547,8 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
 
       utf8_int32_t sym = usb2ascii[keyboard_layout][i];
       utf8_int32_t sym_shift = usb2ascii[keyboard_layout][i + 128];
-      // XXX: AltGr?
+      utf8_int32_t sym_altgr = usb2ascii_altgr[keyboard_layout][i];
+      utf8_int32_t sym_altgr_shift = usb2ascii_altgr[keyboard_layout][i + 128];
 
       // account for the variably sized keys at the start of each row
       int shift = usb_key_col[i] == 0 ? 0 : usb_row_shift[usb_key_row[i]] - KEY_SPACE_H;
@@ -555,11 +556,15 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
       int x = shift + KEY_SPACE_H * usb_key_col[i] + LABEL_OFF_H;
       int y = (usb_key_row[i] - 1) * KEY_SPACE_V + LABEL_OFF_V;
 
-      if (y >= 0 && y < TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_SHIFT_OFF_V && x >= 0 && x <= TEMPLATE_WIDTH - LABEL_SIZE && sym >= 32) {
-        if (sym_shift)
+      if (y >= 0 && y < TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_SHIFT_OFF_V && x >= 0 && x <= TEMPLATE_WIDTH - LABEL_SIZE) {
+        if (sym_shift >= 32)
           tv_write_px_ex(x, y, LABEL_SIZE, LABEL_SIZE, sym_shift, m_layout_surf, TEMPLATE_WIDTH);
-        if (sym)
+        if (sym >= 32)
           tv_write_px_ex(x, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym, m_layout_surf, TEMPLATE_WIDTH);
+        if (sym_altgr >= 32)
+          tv_write_px_ex(x + LABEL_SHIFT_OFF_V, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym_altgr, m_layout_surf, TEMPLATE_WIDTH);
+        if (sym_altgr_shift >= 32)
+          tv_write_px_ex(x + LABEL_SHIFT_OFF_V, y, LABEL_SIZE, LABEL_SIZE, sym_altgr_shift, m_layout_surf, TEMPLATE_WIDTH);
       }
     }
 
