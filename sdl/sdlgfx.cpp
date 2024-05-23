@@ -411,6 +411,9 @@ void SDLGFX::destroyWindow()
   SDL_DestroyWindow(sdl_window);
 }
 
+#include <TKeyboard.h>
+extern TKeyboard kb;
+
 extern "C" int gfx_thread(void *data) {
   Uint64 last = 0;
   Uint64 now, passed;
@@ -439,6 +442,8 @@ extern "C" int gfx_thread(void *data) {
         gfx->m_frame++;
 
         SDL_RenderCopy(sdl_renderer, gfx->m_texture, NULL, NULL);
+
+        kb.drawLayout(sdl_renderer, &gfx->m_viewport);
 
         // XXX: If we arrive here more than ca. 6 ms into the frame, this
         // always blocks for an additional frame when using the kmsdrm SDL
