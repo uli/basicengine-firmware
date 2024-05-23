@@ -339,6 +339,10 @@ static std::vector<const int32_t *> usb2ascii_altgr = {
   usb2es_altgr,
 };
 
+static std::vector<const char *> usb2ascii_names = {
+  "Japanese", "English (US)", "Deutsch", "Français", "Español",
+};
+
 bool TKeyboard::state(uint8_t keycode) {
   const Uint8 *state = SDL_GetKeyboardState(NULL);
   int sdlcode = 0;
@@ -557,6 +561,16 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
         if (sym)
           tv_write_px_ex(x, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym, m_layout_surf, TEMPLATE_WIDTH);
       }
+    }
+
+    // write layout name on the space bar
+    int cpos = 0;
+    int start_x = 430 - utf8len(usb2ascii_names[keyboard_layout]) * LABEL_SIZE / 2;
+    for (const char *cp = usb2ascii_names[keyboard_layout]; *cp;) {
+      utf8_int32_t c;
+      cp = (const char *)utf8codepoint(cp, &c);
+      tv_write_px_ex(start_x + cpos, TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_OFF_V, LABEL_SIZE, LABEL_SIZE, c, m_layout_surf, TEMPLATE_WIDTH);
+      cpos += LABEL_SIZE;
     }
 
     tv_setcolor(fg_save, bg_save);
