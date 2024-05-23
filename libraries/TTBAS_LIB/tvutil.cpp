@@ -348,6 +348,34 @@ void tv_unimap(utf8_int32_t c, int f_width, int f_height, struct unimap *umap) {
   }
 }
 
+void tv_write_px_ex(int x, int y, int f_width, int f_height, utf8_int32_t c, pixel_t *pixels, int pitch) {
+  int w = f_width, h = f_height;
+  int off_x = 0, off_y = 0;
+
+  struct unimap umap;
+  tv_unimap(c, w, h, &umap);
+
+  const uint8_t *chp = umap.bitmap;
+  w = umap.w;
+  h = umap.h;
+  off_x = umap.off_x;
+  off_y = umap.off_y;
+
+  for (int i = 0; i < f_height; ++i) {
+    pixel_t pix[f_width];
+    for (int j = 0; j < f_width; ++j) {
+      if (i < off_y || j < off_x || !w || !h)
+        pix[j] = bg_color;
+      else if (i >= off_y + h || j >= off_x + w)
+        pix[j] = bg_color;
+      else
+        pix[j] = gradient[chp[(j - off_x) + (i - off_y) * w]];
+    }
+    pixel_t *address = pixels + x + (y + i) * pitch;
+    memcpy(address, pix, f_width * sizeof(pixel_t));
+  }
+}
+
 //
 // Display character
 //

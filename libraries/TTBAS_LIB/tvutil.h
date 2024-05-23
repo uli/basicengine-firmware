@@ -74,5 +74,6 @@ struct unimap {
 };
 
 void tv_unimap(utf8_int32_t c, int f_width, int f_height, struct unimap *umap);
+void tv_write_px_ex(int x, int y, int f_width, int f_height, utf8_int32_t c, pixel_t *pixels, int pitch);
 
 void tv_setcolor(pixel_t fc, pixel_t bc);
