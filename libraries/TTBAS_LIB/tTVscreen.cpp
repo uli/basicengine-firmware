@@ -346,6 +346,12 @@ uint8_t tTVscreen::edit() {
         saveScreenshot();
         break;
 
+#ifdef SDL
+      case SC_KEY_F(1):
+        kb.toggleLayout();
+        break;
+#endif
+
       default:                // その他
         Insert_char(ch);
         break;
