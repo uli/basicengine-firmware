@@ -54,7 +54,7 @@ void GROUP(basic_video) Graphics::drawRect(int x0, int y0, int w, int h,
     }
   }
 
-  if (fc != -1) {
+  if (fc != 0) {
     y0++; h--;
     x0++; w -= 2;
 
@@ -75,7 +75,7 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius,
   int pyy = y, pyx = x;
 
   //there is a fill color
-  if (fc != -1)
+  if (fc != 0)
     drawLine(x0 - radius, y0, x0 + radius, y0, (pixel_t)fc);
 
   setPixelSafe(x0, y0 + radius, c);
@@ -94,7 +94,7 @@ void GROUP(basic_video) Graphics::drawCircle(int x0, int y0, int radius,
     f += ddF_x;
 
     //there is a fill color
-    if (fc != -1) {
+    if (fc != 0) {
       //prevent double draws on the same rows
       if (pyy != y) {
         drawLine(x0 - x, y0 + y, x0 + x, y0 + y, (pixel_t)fc);

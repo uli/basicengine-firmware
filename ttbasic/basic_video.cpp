@@ -1064,9 +1064,9 @@ Draws a circle.
 @radius		circle's radius
 @color		color of the circle's outline [range depends on color space]
 @fill_color	color of the circle's body +
-                [range depends on color space, `-1` for an unfilled circle]
 \bugs
 * `fill_color` cannot be omitted.
+                [range depends on color space, `0` for an unfilled circle]
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::icircle() {
@@ -1077,7 +1077,7 @@ void GROUP(basic_video) Basic::icircle() {
     return;
 
   c = csp.fromIndexed(c);
-  if (f != (ipixel_t)-1)
+  if (f != (ipixel_t)0)
     f = csp.fromIndexed(f);
 
   eb_circle(x, y, r, c, f);
@@ -1098,9 +1098,9 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
           [`0` to `PSIZE(2)-1`]
 @color	  color of the rectangle's outline
 @fill_color color of the rectangle's body +
-            [range depends on color space, `-1` for an unfilled rectangle]
 \bugs
 * `fill_color` cannot be omitted.
+            [range depends on color space, `0` for an unfilled rectangle]
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::irect() {
@@ -1112,7 +1112,7 @@ void GROUP(basic_video) Basic::irect() {
     return;
 
   c = csp.fromIndexed(c);
-  if (f != (ipixel_t)-1)
+  if (f != (ipixel_t)0)
     f = csp.fromIndexed(f);
 
   eb_rect(x1, y1, x2, y2, c, f);
