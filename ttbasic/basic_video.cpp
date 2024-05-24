@@ -1054,7 +1054,7 @@ void GROUP(basic_video) Basic::iline() {
 /***bc pix CIRCLE
 Draws a circle.
 
-\usage CIRCLE x_coord, y_coord, radius, color, fill_color
+\usage CIRCLE x_coord, y_coord, radius, color[, fill_color]
 
 \args
 @x_coord	X coordinate of the circle's center +
@@ -1064,17 +1064,21 @@ Draws a circle.
 @radius		circle's radius
 @color		color of the circle's outline [range depends on color space]
 @fill_color	color of the circle's body +
-\bugs
-* `fill_color` cannot be omitted.
                 [range depends on color space, `0` for an unfilled circle]
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::icircle() {
   int32_t x, y, r;
-  ipixel_t c, f;
+  ipixel_t c, f = 0;
   if (getParam(x, I_COMMA) || getParam(y, I_COMMA) || getParam(r, I_COMMA) ||
-      getParam(c, I_COMMA) || getParam(f, I_NONE))
+      getParam(c, I_NONE))
     return;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(f, I_NONE))
+      return;
+  }
 
   c = csp.fromIndexed(c);
   if (f != (ipixel_t)0)
@@ -1086,7 +1090,7 @@ void GROUP(basic_video) Basic::icircle() {
 /***bc pix RECT
 Draws a rectangle.
 \usage
-RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
+RECT x1_coord, y1_coord, x2_coord, y2_coord, color[, fill_color]
 \args
 @x1_coord X coordinate of the rectangle's top/left corner +
           [`0` to `PSIZE(0)-1`]
@@ -1098,18 +1102,22 @@ RECT x1_coord, y1_coord, x2_coord, y2_coord, color, fill_color
           [`0` to `PSIZE(2)-1`]
 @color	  color of the rectangle's outline
 @fill_color color of the rectangle's body +
-\bugs
-* `fill_color` cannot be omitted.
             [range depends on color space, `0` for an unfilled rectangle]
 \ref PSIZE() RGB()
 ***/
 void GROUP(basic_video) Basic::irect() {
   int32_t x1, y1, x2, y2;
-  ipixel_t c, f;
+  ipixel_t c, f = (ipixel_t)0;
   if (getParam(x1, I_COMMA) || getParam(y1, I_COMMA) ||
       getParam(x2, I_COMMA) || getParam(y2, I_COMMA) ||
-      getParam(c, I_COMMA) || getParam(f, I_NONE))
+      getParam(c, I_NONE))
     return;
+
+  if (*cip == I_COMMA) {
+    ++cip;
+    if (getParam(f, I_NONE))
+      return;
+  }
 
   c = csp.fromIndexed(c);
   if (f != (ipixel_t)0)
