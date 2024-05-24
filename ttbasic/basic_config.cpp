@@ -434,7 +434,8 @@ void loadConfig() {
 Saves the current set of configuration options as default.
 \usage SAVE CONFIG
 \note
-The configuration will be saved as a file under the name `/flash/.config`.
+The configuration will be saved as a file in the Engine BASIC root directory
+under the name `config.ini`.
 \ref CONFIG
 ***/
 void isaveconfig() {
