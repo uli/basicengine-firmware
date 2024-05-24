@@ -8,6 +8,7 @@ extern uint8_t err;
 // エラーコード
 enum {
 #include "errdef.h"
+  ERR_MAX
 };
 
 #undef ESTR

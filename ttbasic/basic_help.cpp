@@ -100,6 +100,7 @@ static struct {
     { "MAX_USER_FILES", MAX_USER_FILES },
     { "MML_CHANNELS", MML_CHANNELS },
     { "NUM_FONTS", NUM_FONTS },
+    { "max_err", ERR_MAX - 1 },
 };
 
 static BString resolve_macros(BString text) {
