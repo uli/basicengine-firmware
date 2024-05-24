@@ -360,8 +360,7 @@ void Basic::ilistfonts() {
 Change the screen resolution.
 \usage SCREEN mode
 \args
-@mode screen mode [`1` to `10`]
-// XXX: No convenient way to auto-update the number of modes.
+@mode screen mode [`1` to `20`]
 \sec MODES
 The following modes are available:
 \table header
@@ -378,6 +377,16 @@ The following modes are available:
 | 9 | 282x240 | PC Engine-compatible overscan mode
 | 10 | 508x240 | Maximum usable resolution in PAL mode. (Overscan on NTSC
                  systems.)
+| 11 | 320x256 |
+| 12 | 320x240 | IBM PC VGA "Mode X"
+| 13 | 640x256 |
+| 14 | 480x270 | 1/8 HD, 16:9, default mode on SDL platforms
+| 15 | 640x480 | IBM PC VGA
+| 16 | 800x600 | IBM PC SVGA
+| 17 | 1024x768 | IBM PC XGA
+| 18 | 1280x720 | HD, 16:9
+| 19 | 1280x1024 | IBM PC SXGA, 5:4
+| 20 | 1920x1080 | Full HD, 1080p, 16:9
 \endtable
 \note
 * While the resolutions are the same for NTSC and PAL configurations, the
