@@ -319,7 +319,7 @@ void Basic::ihelp() {
     if (!root)
         return;
 
-    while (!end_of_statement()) {
+    while (*cip != I_EOL && *cip != I_COLON) {
         int token = *cip++;
 
         // CALL and FN are always followed a procedure id, even if no
