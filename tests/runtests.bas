@@ -39,8 +39,11 @@
 285     @tmp=RND(-1) 'seed RNG for reproducible runs
 288     ON ERROR GOTO 330
 289     @fr=FREE()
-290     EXEC @d$+"/"+@f$
-291     TROFF:@fr2=FREE()
+290	@olddir$=CWD$
+291     CHDIR @d$
+292     EXEC @f$
+293     CHDIR @olddir$
+294     TROFF:@fr2=FREE()
 300     CMD OUTPUT oldcmd_out:CMD INPUT oldcmd_in
 310     CLOSE 14:REM CLOSE 15
 312     REM close15
@@ -50,7 +53,8 @@
 345       errsub=RET(2)
 350       PRINT ERROR$(err);" (";err;")@";errsub
 355       CMD OUTPUT oldcmd_out:CMD INPUT oldcmd_in
-356       CLOSE 14:REM CLOSE 15
+356       ON ERROR GOTO 361
+357       CLOSE 14:REM CLOSE 15
 360     ENDIF 
 361     ttal=ttal+1
 362     IF COMPARE(@of$,@rn$)=0 THEN 
