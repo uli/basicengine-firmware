@@ -375,6 +375,12 @@ keyEvent TKeyboard::read() {
     event = kbd_events.front();
     kbd_events.pop_front();
     int unicode = 0;
+
+    // For the same key some SDL drivers produce SDL_SCANCODE_SYSREQ, some
+    // SDL_SCANCODE_PRINTSCREEN.
+    if (event.key.keysym.scancode == SDL_SCANCODE_SYSREQ)
+      event.key.keysym.scancode = SDL_SCANCODE_PRINTSCREEN;
+
     int kc = event.key.keysym.scancode;
     if (kc >= SDL_SCANCODE_LCTRL && kc <= SDL_SCANCODE_MODE)
       kc = 0;
