@@ -126,6 +126,8 @@ void SDLGFX::init(const char *controller_map) {
     exit(1);
   }
 
+  SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, "1");
+
   if (SDL_InitSubSystem(SDL_INIT_AUDIO))
     fprintf(stderr, "Cannot initialize SDL audio: %s\n", SDL_GetError());
   if (SDL_InitSubSystem(SDL_INIT_TIMER))
@@ -343,11 +345,13 @@ void SDLGFX::toggleFullscreen() {
   int flags = SDL_GetWindowFlags(sdl_window);
   if (flags & SDL_WINDOW_FULLSCREEN) {
     SDL_SetWindowFullscreen(sdl_window, 0);
+    SDL_SetWindowKeyboardGrab(sdl_window, SDL_FALSE);
   } else {
     if (sdl_flags & SDL_WINDOW_FULLSCREEN)
       SDL_SetWindowFullscreen(sdl_window, sdl_flags);
     else
       SDL_SetWindowFullscreen(sdl_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    SDL_SetWindowKeyboardGrab(sdl_window, SDL_TRUE);
   }
 }
 
@@ -402,6 +406,10 @@ void SDLGFX::createWindow()
   sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h,
                                 sdl_flags);
+
+  if (sdl_flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP))
+    SDL_SetWindowKeyboardGrab(sdl_window, SDL_TRUE);
+
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
 }
 
