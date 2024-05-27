@@ -220,7 +220,9 @@ RDYNAMIC="-rdynamic"
 test "$SDL_PLATFORM" == windows && RDYNAMIC=""
 test "$SDL_PLATFORM" == osx && RDYNAMIC=""
 
-UTIL_LIBS="-lutil -lgpiod -ldl"
+test -z "$STATIC_LIBGPIOD" && LIBGPIOD="-lgpiod" || LIBGPIOD="-l:libgpiod.a"
+
+UTIL_LIBS="-lutil $LIBGPIOD -ldl"
 test "$SDL_PLATFORM" == windows && UTIL_LIBS="-mconsole"
 # there is an undefined symbol "___isOSVersionAtLeast" when linking
 # statically on OSX; seems to be an osxcross-related issue; workaround from
@@ -282,7 +284,7 @@ cflags = -O3 \$common_cflags \$warn_flags -funroll-loops -fomit-frame-pointer -I
   \$common_include -Ilibraries/libsoc/lib/include -DSDL `sdl2-config --cflags` -fcolor-diagnostics
 cxxflags = \$cflags \$common_cxxflags
 
-libs = \$common_libs `sdl2-config --libs` -lm -lutil -lgpiod
+libs = \$common_libs `sdl2-config --libs` -lm -lutil $LIBGPIOD
 
 rule cc
   command = \$cc --use-color \$in -- -MD -MF \$out.d \$cflags
