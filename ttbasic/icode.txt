@@ -73,7 +73,7 @@ CMD	I_CMD		icmd
 COLOR	I_COLOR		icolor
 COMPARE	I_COMPARE	ncompare
 CONFIG	I_CONFIG	iconfig
-CONNECT	I_CONNECT	nconnect
+_none	I_DUMMY0	esyntax
 CONT	I_CONT		ecom
 COPY	I_COPY		icopy
 COS	I_COS		ncos
@@ -152,14 +152,14 @@ LOC	I_LOC		nloc
 LOF	I_LOF		nlof
 LOG	I_LOG		nlog
 LOOP	I_LOOP		iloop
-_none	I_DUMMY0	esyntax
+_none	I_DUMMY1	esyntax
 MAP	I_MAP		nmap
 MERGE	I_MERGE		imerge
 MID$	I_MIDSTR	smid
 MKDIR	I_MKDIR		imkdir
 MOD	I_MOD		esyntax
 MOVE	I_MOVE		imove
-NET	I_NET		inet
+_none	I_DUMMY2	esyntax
 NEW	I_NEW		inew_
 NEXT	I_NEXT		inext
 NOT	I_BITREV	esyntax
@@ -215,7 +215,7 @@ RMDIR	I_RMDIR		irmdir
 RND	I_RND		nrnd
 RUN	I_RUN		irun_
 SAVE	I_SAVE		isave
-_none	I_DUMMY1	esyntax
+_none	I_DUMMY3	esyntax
 SCALE	I_SCALE		esyntax
 SCREEN	I_SCREEN	iscreen
 SEARCH	I_SEARCH	isearch
@@ -253,9 +253,9 @@ TAN	I_TAN		ntan
 TCCLINK	I_TCCLINK	itcclink
 TCCMODE I_TCCMODE	itccmode
 TCC	I_TCC		itcc
-TFTPD	I_TFTPD		itftpd
-TFTPGET	I_TFTPGET	itftpget
-TFTPPUT	I_TFTPPUT	itftpput
+_none	I_DUMMY4	esyntax
+_none	I_DUMMY5	esyntax
+_none	I_DUMMY6	esyntax
 THEN	I_THEN		esyntax
 TICK	I_TICK		ntick
 TILECOLL	I_TILECOLL	ntilecoll
@@ -277,7 +277,7 @@ VREG	I_VREG		ivreg
 VSYNC	I_VSYNC		ivsync
 WAIT	I_WAIT		iwait
 WEND	I_WEND		iwend
-WGET	I_WGET		iwget
+_none	I_DUMMY7	esyntax
 WHILE	I_WHILE		iwhile
 WINDOW	I_WINDOW	iwindow
 XYZZY	I_XYZZY		ixyzzy

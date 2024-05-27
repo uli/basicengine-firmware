@@ -4,8 +4,8 @@ epigrams.h: epigrams.txt epi.py
 	python epi.py <epigrams.txt >epigrams.h
 version.h: ../.git/index
 	echo "#define STR_VARSION \"$(shell git describe --abbrev=4 --dirty --always --tags)\"" >$@
-msgs_de.h: scripts/msgs.py $(shell ls basic*.cpp ../libraries/TTBAS_LIB/sdfiles.cpp ../h3/net.cpp)
-	xgettext -k_ -k__ --from-code utf-8 basic.cpp basic_*.cpp ../libraries/TTBAS_LIB/sdfiles.cpp ../h3/net.cpp -s -o tmpmsgs.po
+msgs_de.h: scripts/msgs.py $(shell ls basic*.cpp ../libraries/TTBAS_LIB/sdfiles.cpp)
+	xgettext -k_ -k__ --from-code utf-8 basic.cpp basic_*.cpp ../libraries/TTBAS_LIB/sdfiles.cpp -s -o tmpmsgs.po
 	for i in en de fr es ja ; do cat errdef.h tmpmsgs.po | python3 scripts/msgs.py msgs_$$i.h $$i ; done
 	rm tmpmsgs.po
 helptext_en.json: scripts/help.py $(shell ls basic*.cpp) $(shell ls ../po/helptext_*.po)

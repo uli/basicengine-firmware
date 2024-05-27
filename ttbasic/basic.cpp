@@ -67,7 +67,6 @@
 #include "version.h"
 
 #include "basic.h"
-#include "net.h"
 
 // size by which the list buffer is incremented when full
 #define LISTBUF_INC 128
@@ -4028,7 +4027,6 @@ bool BASIC_FP Basic::is_strexp() {
           *cip == I_STRLST ||
           *cip == I_STRSTR ||
           *cip == I_INPUTSTR ||
-          (*cip == I_NET && (cip[1] == I_INPUTSTR || cip[1] == I_GETSTR)) ||
           *cip == I_ERRORSTR);
 }
 
@@ -4085,21 +4083,6 @@ BString BASIC_INT Basic::istrvalue() {
       } else {
         value = str_lst.var(i).var(idxs[0]);
       }
-      break;
-
-    case I_NET:
-#ifndef HAVE_NETWORK
-      err = ERR_NOT_SUPPORTED;
-#else
-      if (*cip == I_INPUTSTR) {
-        ++cip;
-        value = snetinput();
-      } else if (*cip == I_GETSTR) {
-        ++cip;
-        value = snetget();
-      } else
-        SYNTAX_T(_("expected network function"));
-#endif
       break;
 
     case I_NFC: value = snfc(); break;
