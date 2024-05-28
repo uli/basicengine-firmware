@@ -255,14 +255,14 @@ libs = -l${CXXLIB} \$common_libs `sdl2-config $SDL2_CONFIG_LIBS` -lm $UTIL_LIBS
 
 rule cc
   depfile = \$out.d
-  command = $CC -MD -MF \$out.d \$cflags -c -o \$out \$in
+  command = $CC -MD -MF \$out.d \$cflags $SDL_EXTRA_CFLAGS -c -o \$out \$in
 
 rule cxx
   depfile = \$out.d
-  command = $CXX -MD -MF \$out.d \$cxxflags -c -o \$out \$in
+  command = $CXX -MD -MF \$out.d \$cxxflags $SDL_EXTRA_CFLAGS -c -o \$out \$in
 
 rule link
-  command = $CC $RDYNAMIC \$in -o \$out \$libs
+  command = $CC $SDL_EXTRA_CFLAGS $RDYNAMIC \$in -o \$out \$libs
 
 EOT
 
