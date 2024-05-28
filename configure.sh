@@ -14,6 +14,47 @@ test -z "$SDL_OBJDIR" && SDL_OBJDIR=build_sdl
 test -z "$INITFS_DIR" && INITFS_DIR=init_dir
 test -z "$DEMOS_DIR" && DEMOS_DIR=../basicengine_demos
 
+if test "$1" == "--help" ; then
+	echo "Supported environment variables (default):"
+	echo
+	echo "CROSS_COMPILE	cross-compile tool prefix"
+	echo "CC		($CC)"
+	echo "CXX		($CXX)"
+	echo "AR		($AR)"
+	echo "MAKE		GNU make to use for dyncall ($MAKE)"
+	echo "H3_OSDIR	allwinner-bare-metal framework directory ($H3_OSDIR)"
+	echo "H3_OBJDIR	H3 bare metal object file target directory ($H3_OBJDIR)"
+	echo "SDL_OBJDIR	SDL object file target directory ($SDL_OBJDIR)"
+	echo "INITFS_DIR	system files output directory ($INITFS_DIR)"
+	echo "DEMOS_DIR	location of BASIC Engine demos repo ($DEMOS_DIR)"
+	echo "STATIC_LIBGPIOD	set to link libgpiod statically"
+	echo "SDL_EXTRA_CFLAGS additional compiler flags for SDL build"
+	echo
+	echo "Examples:"
+	echo
+	echo "Native compile for SDL or H3 bare metal targets:"
+	echo "$ ./configure.sh"
+	echo "$ ninja -f build.ninja.h3"
+	echo "or"
+	echo "$ ninja -f build.ninja.sdl"
+	echo
+	echo "Cross-compile for Win32 target:"
+	echo '$ CROSS_COMPILE=i686-w64-mingw32- \'
+	echo 'PATH="$PWD"/../SDL2-2.28.5/i686-w64-mingw32/bin:"$PATH" ./configure.sh'
+	echo "$ ninja -f build.ninja.sdl"
+	echo
+	echo "Cross-compile for Mac OS target:"
+	echo '$ PATH=/usr/local/osxcross/bin:/usr/local/osxcross/macports/pkgs/opt/local/bin:$PATH \'
+	echo 'CC=x86_64-apple-darwin23-clang CXX=x86_64-apple-darwin23-clang++ \'
+	echo 'AR=x86_64-apple-darwin23-ar ./configure.sh'
+	echo "$ ninja -f build.ninja.sdl"
+	echo
+	echo "Native compile for SDL target with gcov support:"
+	echo '$ SDL_EXTRA_CFLAGS="-fprofile-arcs -ftest-coverage" ./configure.sh'
+	echo "$ ninja -f build.ninja.sdl"
+	exit 0
+fi
+
 # functions generating build statements
 generate_link() {
 	echo -n "build $1: link "
