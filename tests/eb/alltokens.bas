@@ -86,7 +86,6 @@
 750boot bootpage
 760frameskip atn2(3,4):frameskip 4
 770resume:vreg $33,10
-780network=net connect()
 790exec executable$:exec"program.bas":exec "program.bas"
 800cmd 4:cmd4=0
 810setdate=5:set date y2k+19,10,setdate,0,0,0
@@ -119,3 +118,5 @@
 1070elseif a=3 then
 1080else if a=4 then
 1090endif
+1100|printf "%f %lf",!1.1,#2.2
+1110shell"rm all"

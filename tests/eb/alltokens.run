@@ -79,7 +79,6 @@
 750 BOOT bootpage
 760 FRAMESKIP ATN2(3,4):FRAMESKIP 4
 770 RESUME:VREG $33,10
-780 network=NET CONNECT()
 790 EXEC executable$:EXEC "program.bas":EXEC "program.bas"
 800 CMD 4:cmd4=0
 810 setdate=5:SET DATE y2k+19,10,setdate,0,0,0
@@ -112,3 +111,5 @@
 1070 ELSE IF a=3 THEN
 1080 ELSE IF a=4 THEN
 1090 ENDIF
+1100 |printf "%f %lf",!1.1,#2.2
+1110 SHELL "rm all"
