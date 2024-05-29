@@ -474,12 +474,16 @@ void tscreenBase::moveBottom() {
 
 // カーソルを指定位置に移動
 void tscreenBase::locate(int16_t x, int16_t y) {
-  if (x >= width)
+  if (x < 0)
+    x = pos_x;
+  else if (x >= width)
     x = width - 1;
+
   if (y < 0)
     y = pos_y;
   else if (y >= height)
     y = height;
+
   MOVE(y, x);
 }
 
