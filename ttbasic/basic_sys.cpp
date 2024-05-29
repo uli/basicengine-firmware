@@ -24,7 +24,15 @@ void basic_init_environment() {
 #endif
 
 #ifdef SDL
-  setenv("HOME", getenv("ENGINEBASIC_ROOT"), 0);
+  // poor man's embedded platform detection: overwrite $HOME if it's "/root"
+  // (run from the console) or "/" (spawned by init)
+  const char *home = getenv("HOME");
+  int overwrite = 0;
+
+  if (home && (strcmp(home, "/root") == 0 || strcmp(home, "/") == 0))
+    overwrite = 1;
+
+  setenv("HOME", getenv("ENGINEBASIC_ROOT"), overwrite);
 #elif defined(JAILHOUSE)
   // XXX: shouldn't that be the same for H3 without Jailhouse
   setenv("HOME", "/sd", 1);
@@ -981,14 +989,21 @@ int shell_list(std::list<BString>& args) {
 
   if (pid == 0) {
     // shell
+
+    // Some programs do funny non-console things when DISPLAY is set. This
+    // is a console-only environment, so we make sure no graphical
+    // shenanigans can happen.
     unsetenv("DISPLAY");
+
     setenv("LANG", "en_US.UTF-8", 1);
+
     if (args.size() == 0)
       execl("/bin/sh", "sh", NULL);
     else if (args.size() == 1)
       execl("/bin/sh", "sh", "-c", args.front().c_str(), (char *) 0);
     else
       exec_list(args);
+
     _exit(1);
   }
   else
