@@ -24,12 +24,12 @@ void basic_init_environment() {
 #endif
 
 #ifdef SDL
-  setenv("HOME", getenv("ENGINEBASIC_ROOT"), 1);
+  setenv("HOME", getenv("ENGINEBASIC_ROOT"), 0);
 #elif defined(JAILHOUSE)
   // XXX: shouldn't that be the same for H3 without Jailhouse
   setenv("HOME", "/sd", 1);
 #else
-  setenv("HOME", "/", 1);
+  setenv("HOME", "/", 0);
 #endif
 
   setenv("TERM", "cons25-debian", 1);
@@ -983,7 +983,6 @@ int shell_list(std::list<BString>& args) {
     // shell
     unsetenv("DISPLAY");
     setenv("LANG", "en_US.UTF-8", 1);
-    setenv("HOME", "/sd", 1);
     if (args.size() == 0)
       execl("/bin/sh", "sh", NULL);
     else if (args.size() == 1)
