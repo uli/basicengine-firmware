@@ -32,7 +32,7 @@ void basic_init_environment() {
   setenv("HOME", "/", 1);
 #endif
 
-  setenv("TERM", "ansi", 1);
+  setenv("TERM", "cons25-debian", 1);
 }
 
 /***bf sys ENVIRON$
@@ -982,7 +982,6 @@ int shell_list(std::list<BString>& args) {
   if (pid == 0) {
     // shell
     unsetenv("DISPLAY");
-    setenv("TERM", "cons25-debian", 1);
     setenv("LANG", "en_US.UTF-8", 1);
     setenv("HOME", "/sd", 1);
     if (args.size() == 0)
