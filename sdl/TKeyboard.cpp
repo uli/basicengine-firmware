@@ -696,6 +696,9 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
       usb2ascii.push_back(usb2sym);
       usb2ascii_altgr.push_back(usb2sym_altgr);
       std::string name = file.substr(0, file.find_last_of("."));
+      int uscore = name.find_first_of("_");
+      if (uscore != std::string::npos)
+        name = name.substr(uscore + 1);
       usb2ascii_names.push_back(strdup(name.c_str()));
     }
   }
