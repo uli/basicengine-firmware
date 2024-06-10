@@ -79,25 +79,29 @@ void GFXCLASS::drawSprite(sprite_t *s) {
     if (s->surf)
       delete s->surf;
 
-    // XXX: shouldn't this happen on the rotozoom surface?
-    pixel_t alpha = s->alpha << 24;
+    // XXX: should the first case be allowed to happen?
+    int pitch = s->p.w;//py < m_current_mode.y ? textPitch() : offscreenPitch();
+
+    rz_surface_t in(s->p.w, s->p.h);
+
     if (s->p.key != 0) {
+      // color keying
       for (int y = 0; y < s->p.h; ++y) {
         for (int x = 0; x < s->p.w; ++x) {
           if ((pixelText(px + x, py + y) & 0xffffff) == (s->p.key & 0xffffff)) {
-            pixelText(px + x, py + y) = pixelText(px + x, py + y) & 0xffffff;
-          } else
-            pixelText(px + x, py + y) =
-                    (pixelText(px + x, py + y) & 0xffffff) | alpha;
+            // keyed pixel, set alpha to 0
+            // XXX: should we set the other channels to 0 as well?
+            in.pixels[y*pitch+x] = pixelText(px + x, py + y) & 0xffffff;
+          } else {
+            // non-keyed pixel, combine pattern's pixel alpha and whole-sprite alpha
+            int pix_a = (pixelText(px + x, py + y) & 0xff000000) >> 24;
+            int target_a = pix_a * s->alpha / 255;
+            in.pixels[y * pitch + x] =
+                    (pixelText(px + x, py + y) & 0xffffff) | (target_a << 24);
+          }
         }
       }
     }
-
-    // XXX: should the first case be allowed to happen?
-    int pitch = py < m_current_mode.y ? textPitch() : offscreenPitch();
-
-    rz_surface_t in(s->p.w, s->p.h, (uint32_t *)(&pixelText(px, py)),
-                    pitch * sizeof(pixel_t), 0);
 
     rz_surface_t *out = rotozoomSurfaceXY(
             &in, s->angle, s->p.flip_x ? -s->scale_x : s->scale_x,
