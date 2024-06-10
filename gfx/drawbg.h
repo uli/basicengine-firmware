@@ -101,6 +101,16 @@ void GFXCLASS::drawSprite(sprite_t *s) {
           }
         }
       }
+    } else {
+      // no color keying, combine pattern's pixel alpha and whole-sprite alpha
+      for (int y = 0; y < s->p.h; ++y) {
+        for (int x = 0; x < s->p.w; ++x) {
+            int pix_a = (pixelText(px + x, py + y) & 0xff000000) >> 24;
+            int target_a = pix_a * s->alpha / 255;
+            in.pixels[y * pitch + x] =
+                    (pixelText(px + x, py + y) & 0xffffff) | (target_a << 24);
+        }
+      }
     }
 
     rz_surface_t *out = rotozoomSurfaceXY(
