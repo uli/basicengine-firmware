@@ -17,6 +17,7 @@ LGPL (c) A. Schiffler
 
 #include <math.h>
 #include <stdint.h>
+#include <cstring>
 #include "ttconfig.h"
 
 // Stand-in for SDL_Surface
@@ -30,6 +31,7 @@ struct rz_surface_t {
 			free_pixels = false;
 		} else {
 			pixels = new pixel_t[width * height];
+			memset(pixels, 0, width * height * sizeof(pixel_t));
 			pitch = width * sizeof(pixel_t);
 			free_pixels = true;
 		}
