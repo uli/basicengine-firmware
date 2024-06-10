@@ -621,6 +621,7 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
 
 #include <dirent.h>
 #include <compat.h>
+#include <algorithm>
 
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
                          uint8_t layout) {
@@ -635,8 +636,15 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
   }
 
   struct dirent *de;
+  std::vector<std::string> files;
   while ((de = readdir(kbd_dir))) {
-    std::string layout_path = layout_dir_path + "/" + de->d_name;
+    files.push_back(std::string(de->d_name));
+  }
+  closedir(kbd_dir);
+  std::sort(files.begin(), files.end());
+
+  for (auto file : files) {
+    std::string layout_path = layout_dir_path + "/" + file;
 
     FILE *kbd_file = fopen(layout_path.c_str(), "r");
     if (!kbd_file)
@@ -672,6 +680,7 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
         if (altgr_shift)
           utf8codepoint(altgr_shift, &usb2sym_altgr[scancode + 128]);
       }
+
       free(sym);
       free(shift);
       free(altgr);
@@ -686,12 +695,10 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
     if (valid) {
       usb2ascii.push_back(usb2sym);
       usb2ascii_altgr.push_back(usb2sym_altgr);
-      std::string name = std::string(de->d_name).substr(0, std::string(de->d_name).find_last_of("."));
+      std::string name = file.substr(0, file.find_last_of("."));
       usb2ascii_names.push_back(strdup(name.c_str()));
     }
   }
-
-  closedir(kbd_dir);
 
   return 0;
 }
