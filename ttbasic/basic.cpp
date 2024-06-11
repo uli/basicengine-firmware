@@ -432,6 +432,7 @@ int c_printf(const char *f, ...) {
   int ret = vasprintf(&out, f, ap);
   va_end(ap);
   c_puts(out);
+  free(out);
 
   return ret;
 }
@@ -443,6 +444,7 @@ int c_printf_devno(uint8_t devno, const char *f, ...) {
   int ret = vasprintf(&out, f, ap);
   va_end(ap);
   c_puts(out, devno);
+  free(out);
 
   return ret;
 }

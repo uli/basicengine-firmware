@@ -31,10 +31,14 @@ int setenv(const char *name, const char *value, int overwrite)
 {
   char *pe;
   asprintf(&pe, "%s=%s", name, value);
-  if (overwrite || getenv(name) == NULL)
-    return putenv(pe);
-  else
+  if (overwrite || getenv(name) == NULL) {
+    int ret = putenv(pe);
+    free(pe);
+    return ret;
+  } else {
+    free(pe);
     return 0;
+  }
 }
 
 typedef intptr_t ssize_t;

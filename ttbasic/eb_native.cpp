@@ -112,6 +112,7 @@ int eb_tcc_link(TCCState *tcc, const char *name, int output_type) {
              "}",
              name, name);
     tcc_compile_string(tcc, wrapper);
+    free(wrapper);
   }
 
   if (output_type == TCC_OUTPUT_MEMORY) {

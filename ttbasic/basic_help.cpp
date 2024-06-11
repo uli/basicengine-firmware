@@ -109,9 +109,11 @@ static BString resolve_macros(BString text) {
         char *repl;
         asprintf(&repl, "%d", c.value);
         text.replace(pat, repl);
+        free(repl);
         pat = BString("{") + BString(c.name) + BString("_m1}");
         asprintf(&repl, "%d", c.value - 1);
         text.replace(pat, repl);
+        free(repl);
     }
     return text;
 }
