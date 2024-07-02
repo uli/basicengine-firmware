@@ -6,6 +6,8 @@
 #include <SDL.h>
 #include <ring_buffer.h>
 
+#define DEAD_KEY 0x200000
+
 TPS2 pb;
 
 static const SDL_Keycode ps2_to_sdl[] = {
@@ -343,6 +345,53 @@ static std::vector<const char *> usb2ascii_names = {
   "Japanese", "English (US)", "Deutsch", "Français", "Español",
 };
 
+struct dead {
+  utf8_int32_t plain;
+  utf8_int32_t dead;
+};
+
+// Commented-out diacritics do not fit a 32-bit character.
+
+static const struct dead grave[] = {
+  {U'a', U'à'}, {U'e', U'è'}, {U'i', U'ì'},/*{U'm', U'm̀'},*/ {U'n', U'ǹ'},
+  {U'o', U'ò'}, {U'u', U'ù'}, {U'w', U'ẁ'}, {U'y', U'ỳ'}, {U' ', U'`'},
+  {-1, -1}
+};
+
+static const struct dead acute[] = {
+  {U'a', U'à'}, {U'c', U'ć'}, {U'e', U'è'}, {U'g', U'ǵ'}, {U'i', U'ì'},
+  /*{U'j', U'j́'},*/ {U'k', U'ḱ'}, {U'l', U'ĺ'}, {U'm', U'ḿ'}, {U'n', U'ń'},
+  {U'o', U'ó'}, {U'p', U'ṕ'}, {U'r', U'ŕ'}, {U's', U'ś'}, {U'u', U'ù'},
+  {U'w', U'ẃ'}, {U'y', U'ý'}, {U'z', U'ź'}, {U' ', U'`'}, {-1, -1}
+};
+
+static const struct dead circumflex[] = {
+  {U'a', U'â'}, {U'c', U'ĉ'}, {U'e', U'ê'}, {U'g', U'ĝ'}, {U'h', U'ĥ'},
+  {U'i', U'î'}, {U'j', U'ĵ'}, {U'o', U'ô'}, {U's', U'ŝ'}, {U'u', U'û'},
+  {U'w', U'ŵ'}, {U'y', U'ŷ'}, {U'z', U'ẑ'}, {-1, -1}
+};
+
+static const struct dead diaeresis[] = {
+  {U'a', U'ä'}, {U'e', U'ë'}, {U'h', U'ḧ'}, {U'i', U'ï'}, {U'o', U'ö'},
+  {U't', U'ẗ'}, {U'u', U'ü'}, {U'w', U'ẅ'}, {U'x', U'ẍ'}, {U'y', U'ÿ'},
+  {-1,-1}
+};
+
+static const struct dead* dead_keys[] = {
+  acute,
+  grave,
+  circumflex,
+  diaeresis,
+};
+
+static const utf8_int32_t dead_idx[] = {
+  U'´',
+  U'`',
+  U'^',
+  U'¨',
+  0
+};
+
 bool TKeyboard::state(uint8_t keycode) {
   const Uint8 *state = SDL_GetKeyboardState(NULL);
   int sdlcode = 0;
@@ -355,6 +404,7 @@ std::deque<SDL_Event> kbd_events;
 
 static int key_events_pending = 0;
 bool TKeyboard::m_layout_visible = false;
+utf8_int32_t TKeyboard::m_dead_key = -1;
 
 uint8_t TPS2::available() {
   for (auto &e : kbd_events) {
@@ -405,6 +455,26 @@ keyEvent TKeyboard::read() {
         unicode = toupper(unicode);
     } else
       unicode = 0;
+
+    if (!ki.kevt.BREAK && unicode != 0) {
+      if (m_dead_key >= 0) {
+        for (int i = 0; dead_idx[i]; ++i) {
+          if (dead_idx[i] == m_dead_key) {
+            for (int j = 0; dead_keys[i][j].plain != -1; ++j) {
+              if (dead_keys[i][j].plain == unicode) {
+                unicode = dead_keys[i][j].dead;
+                break;
+              }
+            }
+            break;
+          }
+        }
+        m_dead_key = -1;
+      } else if (unicode & DEAD_KEY) {
+        m_dead_key = unicode & ~DEAD_KEY;
+        unicode = 0;
+      }
+    }
 
     if ((event.key.keysym.mod & (KMOD_LCTRL | KMOD_RCTRL)) &&
         event.key.keysym.sym == SDLK_PAUSE) {
@@ -623,6 +693,16 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
 #include <compat.h>
 #include <algorithm>
 
+static void decode_sym(const char *sym, int32_t *usb) {
+  if (sym[0] == '\\') {
+    utf8codepoint(sym + 1, usb);
+    if (sym[1] != '\\')
+      *usb |= DEAD_KEY;
+  } else {
+    utf8codepoint(sym, usb);
+  }
+}
+
 uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
                          uint8_t layout) {
   setLayout(layout);
@@ -669,16 +749,16 @@ uint8_t TKeyboard::begin(uint8_t clk, uint8_t dat, uint8_t flgLED,
           continue;
         }
 
-        utf8codepoint(sym, &usb2sym[scancode]);
+        decode_sym(sym, &usb2sym[scancode]);
 
         if (shift)
-          utf8codepoint(shift, &usb2sym[scancode + 128]);
+          decode_sym(shift, &usb2sym[scancode + 128]);
 
         if (altgr)
-          utf8codepoint(altgr, &usb2sym_altgr[scancode]);
+          decode_sym(altgr, &usb2sym_altgr[scancode]);
 
         if (altgr_shift)
-          utf8codepoint(altgr_shift, &usb2sym_altgr[scancode + 128]);
+          decode_sym(altgr_shift, &usb2sym_altgr[scancode + 128]);
       }
 
       free(sym);

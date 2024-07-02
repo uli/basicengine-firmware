@@ -11,6 +11,10 @@
 #include <TPS2.h>
 #include <Arduino.h>
 
+#ifdef SDL
+#include <utf8.h>
+#endif
+
 #if defined(ESP8266) && !defined(__FLASH__)
 #define __FLASH__ ICACHE_RODATA_ATTR
 #elif !defined(__FLASH__)
@@ -263,6 +267,7 @@ public:
   static SDL_Texture *m_layout_tex;
   static uint32_t *m_layout_surf;
   static bool m_layout_visible;
+  static utf8_int32_t m_dead_key;
 #endif
 };
 
