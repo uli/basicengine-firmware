@@ -359,9 +359,9 @@ static const struct dead grave[] = {
 };
 
 static const struct dead acute[] = {
-  {U'a', U'à'}, {U'c', U'ć'}, {U'e', U'è'}, {U'g', U'ǵ'}, {U'i', U'ì'},
+  {U'a', U'á'}, {U'c', U'ć'}, {U'e', U'é'}, {U'g', U'ǵ'}, {U'i', U'í'},
   /*{U'j', U'j́'},*/ {U'k', U'ḱ'}, {U'l', U'ĺ'}, {U'm', U'ḿ'}, {U'n', U'ń'},
-  {U'o', U'ó'}, {U'p', U'ṕ'}, {U'r', U'ŕ'}, {U's', U'ś'}, {U'u', U'ù'},
+  {U'o', U'ó'}, {U'p', U'ṕ'}, {U'r', U'ŕ'}, {U's', U'ś'}, {U'u', U'ú'},
   {U'w', U'ẃ'}, {U'y', U'ý'}, {U'z', U'ź'}, {U' ', U'`'}, {-1, -1}
 };
 
