@@ -581,6 +581,18 @@ static const int usb_key_col[] = {
     0,        0,        0,        0,        0,        0,        0,        0,        0,         0,        0,        0,        0,        0,        0,        0,
 };
 
+static void write_keycap(int x, int y, int xsize, int ysize, utf8_int32_t sym, uint32_t *surf, int width)
+{
+  if (sym & DEAD_KEY) {
+    sym &= ~DEAD_KEY;
+    tv_setcolor(0xffff0000, 0xffffffff);
+  } else {
+    tv_setcolor(0x00000000, 0xffffffff);
+  }
+
+  tv_write_px_ex(x, y, xsize, ysize, sym, surf, width);
+}
+
 void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
   if (!m_layout_visible) {
     // clean up texture and surface if any
@@ -634,15 +646,17 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
 
       if (y >= 0 && y < TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_SHIFT_OFF_V && x >= 0 && x <= TEMPLATE_WIDTH - LABEL_SIZE) {
         if (sym_shift >= 32)
-          tv_write_px_ex(x, y, LABEL_SIZE, LABEL_SIZE, sym_shift, m_layout_surf, TEMPLATE_WIDTH);
+          write_keycap(x, y, LABEL_SIZE, LABEL_SIZE, sym_shift, m_layout_surf, TEMPLATE_WIDTH);
         if (sym >= 32)
-          tv_write_px_ex(x, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym, m_layout_surf, TEMPLATE_WIDTH);
+          write_keycap(x, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym, m_layout_surf, TEMPLATE_WIDTH);
         if (sym_altgr >= 32)
-          tv_write_px_ex(x + LABEL_SHIFT_OFF_V, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym_altgr, m_layout_surf, TEMPLATE_WIDTH);
+          write_keycap(x + LABEL_SHIFT_OFF_V, y + LABEL_SHIFT_OFF_V, LABEL_SIZE, LABEL_SIZE, sym_altgr, m_layout_surf, TEMPLATE_WIDTH);
         if (sym_altgr_shift >= 32)
-          tv_write_px_ex(x + LABEL_SHIFT_OFF_V, y, LABEL_SIZE, LABEL_SIZE, sym_altgr_shift, m_layout_surf, TEMPLATE_WIDTH);
+          write_keycap(x + LABEL_SHIFT_OFF_V, y, LABEL_SIZE, LABEL_SIZE, sym_altgr_shift, m_layout_surf, TEMPLATE_WIDTH);
       }
     }
+
+    tv_setcolor(0x00000000, 0xffffffff);
 
     // write layout name on the space bar
     int cpos = 0;
@@ -650,7 +664,7 @@ void TKeyboard::drawLayout(SDL_Renderer *renderer, SDL_Rect *viewport) {
     for (const char *cp = usb2ascii_names[keyboard_layout]; *cp;) {
       utf8_int32_t c;
       cp = (const char *)utf8codepoint(cp, &c);
-      tv_write_px_ex(start_x + cpos, TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_OFF_V, LABEL_SIZE, LABEL_SIZE, c, m_layout_surf, TEMPLATE_WIDTH);
+      write_keycap(start_x + cpos, TEMPLATE_HEIGHT - LABEL_SIZE - LABEL_OFF_V, LABEL_SIZE, LABEL_SIZE, c, m_layout_surf, TEMPLATE_WIDTH);
       cpos += LABEL_SIZE;
     }
 
