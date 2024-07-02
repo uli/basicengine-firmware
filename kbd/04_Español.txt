@@ -1,0 +1,29 @@
+# Spanish keyboard layout
+# <SDL scancode> <unshifted character> <shifted character> <AltGr character> <shifted AltGr character>
+
+0x35 = º ª \\
+0X1e = 1 ! |
+0x1f = 2 " @
+0x20 = 3 · #
+0x21 = 4 $
+0x22 = 5 %
+0x23 = 6 & ¬
+0x24 = 7 /
+0x25 = 8 (
+0x26 = 9 )
+0x27 = 0 =
+0x2d = ' ?
+0x2e = ¡ ¿
+
+0x2f = \` \^ [
+0x30 = + * ]
+
+0x33 = ñ Ñ
+0x34 = \´ \¨ {
+0x31 = ç Ç }
+
+0x64 = < >
+
+0x36 = , ;
+0x37 = . :
+0x38 = - _
