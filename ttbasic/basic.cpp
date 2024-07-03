@@ -849,7 +849,12 @@ It is not currently possible to use complex data types (arrays and lists)
 as local variables or arguments.
 \ref CALL FN RETURN
 ***/
-      if (!is_prg_text) {
+      // Allow using PROC on its own if it's an argument to HELP.
+      bool help_command = false;
+      if (len > 1 && ibuf[len - 2] == I_HELP)
+        help_command = true;
+
+      if (!is_prg_text && !help_command) {
         err = ERR_COM;
         return 0;
       }
@@ -858,15 +863,17 @@ as local variables or arguments.
         return 0;
       }
 
-      while (isspace(*s))
-        s++;
-      s += parse_identifier(s, vname);
+      if (!help_command) {
+        while (isspace(*s))
+          s++;
+        s += parse_identifier(s, vname);
 
-      int idx = proc_names.assign(vname, true);
-      ibuf[len++] = idx;
-      if (procs.reserve(proc_names.varTop())) {
-        err = ERR_OOM;
-        return 0;
+        int idx = proc_names.assign(vname, true);
+        ibuf[len++] = idx;
+        if (procs.reserve(proc_names.varTop())) {
+          err = ERR_OOM;
+          return 0;
+        }
       }
     } else if (key == I_LABEL) {
       if (len >= SIZE_IBUF - 2) {  //もし中間コードが長すぎたら
