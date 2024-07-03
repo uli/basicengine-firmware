@@ -352,11 +352,20 @@ static const struct dead diaeresis[] = {
   {-1,-1}
 };
 
+static const struct dead tilde[] = {
+  {U'a', U'ã'}, {U'e', U'ẽ'}, {U'i', U'ĩ'}, {U'n', U'ñ'}, {U'o', U'õ'},
+  {U'u', U'ũ'}, {U'v', U'ṽ'}, {U'y', U'ỹ'},
+  {U'A', U'Ã'}, {U'E', U'Ẽ'}, {U'I', U'Ĩ'}, {U'N', U'Ñ'}, {U'O', U'Õ'},
+  {U'U', U'Ũ'}, {U'V', U'Ṽ'}, {U'Y', U'Ỹ'},
+  {-1,-1}
+};
+
 static const struct dead* dead_keys[] = {
   acute,
   grave,
   circumflex,
   diaeresis,
+  tilde,
 };
 
 static const utf8_int32_t dead_idx[] = {
@@ -364,6 +373,7 @@ static const utf8_int32_t dead_idx[] = {
   U'`',
   U'^',
   U'¨',
+  U'~',
   0
 };
 
