@@ -84,7 +84,7 @@ EBAPI int eb_install_module(const char *filename) {
 
   BString absfile = BString(cwd) + BString("/") + BString(filename);
 
-  BString moddir = BString(getenv("HOME")) + BString("/sys/modules");
+  BString moddir = BString(getenv("ENGINEBASIC_ROOT")) + BString("/sys/modules");
   if (chdir(moddir.c_str())) {
     if (mkdir(moddir.c_str()
 #ifndef _WIN32
@@ -125,7 +125,7 @@ EBAPI int eb_load_module(const char *name) {
   BString namestr(name);
 
   if (namestr.indexOf('/') == -1) {
-    moddir = BString(getenv("HOME")) + BString("/sys/modules/") + namestr;
+    moddir = BString(getenv("ENGINEBASIC_ROOT")) + BString("/sys/modules/") + namestr;
     modname = namestr;
   } else {
     moddir = namestr;
