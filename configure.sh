@@ -265,10 +265,7 @@ test -z "$STATIC_LIBGPIOD" && LIBGPIOD="-lgpiod" || LIBGPIOD="-l:libgpiod.a"
 
 UTIL_LIBS="-lutil $LIBGPIOD -ldl"
 test "$SDL_PLATFORM" == windows && UTIL_LIBS="-mconsole"
-# there is an undefined symbol "___isOSVersionAtLeast" when linking
-# statically on OSX; seems to be an osxcross-related issue; workaround from
-# https://github.com/ddnet/ddnet/commit/e8bd8459a6f556594f48f33f4d145033bc89d46f
-test "$SDL_PLATFORM" == osx && UTIL_LIBS="-Wl,-undefined -Wl,dynamic_lookup"
+test "$SDL_PLATFORM" == osx && UTIL_LIBS="-lclang_rt.builtins_x86_64_osx"
 
 CXXLIB=stdc++
 test "$SDL_PLATFORM" == osx && CXXLIB=c++
