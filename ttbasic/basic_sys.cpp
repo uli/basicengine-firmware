@@ -960,7 +960,7 @@ struct winsize {
 extern "C" pid_t jhlibc_forkptyexec(int *, struct winsize *, char * const *);
 #endif
 
-#if defined(__unix__) || defined(JAILHOUSE)
+#if (defined(__unix__) && !defined(ANDROID)) || defined(JAILHOUSE)
 int shell_list(std::list<BString>& args) {
   int fd;
   int wstatus = 0;

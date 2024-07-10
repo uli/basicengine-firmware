@@ -237,7 +237,7 @@ S(atoi)
 S(atol)
 
 // string functions
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(ANDROID)
 S(bcopy)
 S(bzero)
 #endif
@@ -464,11 +464,11 @@ S(fmodf)
 S(frexp)
 S(frexpf)
 S(j0)
-#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__) && !defined(ANDROID)
 S(j0f)
 #endif
 S(j1)
-#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__) && !defined(ANDROID)
 S(j1f)
 #endif
 S(ldexp)
@@ -492,11 +492,11 @@ S(tanf)
 S(tanh)
 S(tanhf)
 S(y0)
-#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__) && !defined(ANDROID)
 S(y0f)
 #endif
 S(y1)
-#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(__UCLIBC__) && !defined(_WIN32) && !defined(__APPLE__) && !defined(ANDROID)
 S(y1f)
 #endif
 
@@ -506,11 +506,15 @@ S(gettimeofday)
 S(localtime)
 
 #ifdef __x86_64__
+#ifndef ANDROID
 S(__va_start)
 S(__va_arg)
+#endif
+#ifndef ANDROID
 S(__fixunsxfdi)
 S(__fixunssfdi)
 S(__fixunsdfdi)
+#endif
 S(__popcountdi2)
 #endif
 

@@ -14,7 +14,7 @@ uint16_t pcf_state = 0xffff;
 #include <h3_i2c.h>
 #endif
 
-#if !defined(__linux__)
+#if !defined(__linux__) || defined(ANDROID)
 EBAPI int eb_gpio_set_pin(int portno, int pinno, int data) {
 #ifdef ESP8266
   if (check_param(pinno, 0, 15))
@@ -98,7 +98,7 @@ EBAPI int eb_gpio_set_pin_mode(int portno, int pinno, int mode) {
 }
 #endif // __linux__
 
-#ifndef __linux__
+#if !defined(__linux__) || defined(ANDROID)
 EBAPI int eb_i2c_write(unsigned char addr, const char *data, int count) {
 #ifdef ESP8266
   // SDA is multiplexed with MVBLK0, so we wait for block move to finish

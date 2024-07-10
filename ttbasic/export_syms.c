@@ -235,7 +235,9 @@ extern void _Znwj(void);
 // therefore have to emulate the underlying implementation for things to
 // work correctly.
 
+#ifndef ANDROID
 static int *__errno(void) { return &errno; }
+#endif
 
 // discount version of newlib's reent structure
 struct fake_reent {
