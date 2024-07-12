@@ -103,6 +103,7 @@ public:
 #endif
 
   void reset() override;
+  void softReset();
   void suspendDisplay() {
     m_display_enabled = false;
   }

@@ -126,6 +126,35 @@ void SDLGFX::end() {
   m_texture = NULL;
 }
 
+// Set this to keep setModeInternal() from touching the surfaces.
+bool setmode_soft_reset = false;
+
+// Tear down and rebuild the entire window/renderer/texture hierarchy
+// because the alleged saving of the graphics context on Android doesn't
+// work.
+void SDLGFX::softReset() {
+  m_end_graphics = true;
+  m_display_enabled = false;
+  SDL_WaitThread(m_gfx_thread, NULL);
+#ifndef CREATE_WIN_IN_GFX_THREAD
+  destroyWindow();
+#endif
+
+  // Textures are destroyed at this point, make sure we don't reference them anymore.
+  m_texture = NULL;
+
+  m_end_graphics = false;
+#ifndef CREATE_WIN_IN_GFX_THREAD
+  createWindow();
+#endif
+  m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
+
+  setmode_soft_reset = true;
+  setMode(m_current_mode_no);
+
+  m_display_enabled = true;
+}
+
 void SDLGFX::init(const char *controller_map) {
   if (SDL_Init(SDL_INIT_VIDEO)) {
     fprintf(stderr, "Cannot initialize SDL video: %s\n", SDL_GetError());
@@ -296,31 +325,33 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
       }
   }
 
-  if (m_text_surface)
+  if (!setmode_soft_reset && m_text_surface)
     SDL_FreeSurface(m_text_surface);
-  if (m_composite_surface)
+  if (!setmode_soft_reset && m_composite_surface)
     SDL_FreeSurface(m_composite_surface);
   if (m_texture)
     SDL_DestroyTexture(m_texture);
 
-  m_text_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-    m_current_mode.x,
-    m_last_line,
-    32,
-    0x000000ffUL,
-    0x0000ff00UL,
-    0x00ff0000UL,
-    0xff000000UL
-  );
-  m_composite_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-    m_current_mode.x,
-    m_last_line,
-    32,
-    0x000000ffUL,
-    0x0000ff00UL,
-    0x00ff0000UL,
-    0
-  );
+  if (!setmode_soft_reset) {
+    m_text_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+      m_current_mode.x,
+      m_last_line,
+      32,
+      0x000000ffUL,
+      0x0000ff00UL,
+      0x00ff0000UL,
+      0xff000000UL
+    );
+    m_composite_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+      m_current_mode.x,
+      m_last_line,
+      32,
+      0x000000ffUL,
+      0x0000ff00UL,
+      0x00ff0000UL,
+      0
+    );
+  }
 
   m_texture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_ABGR8888,
     SDL_TEXTUREACCESS_STREAMING, m_current_mode.x, m_current_mode.y);
@@ -329,13 +360,16 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
 
   //printf("last_line %d x %d y %d fs %d smp %d\n", m_last_line, m_current_mode.x, m_current_mode.y, MIN_FONT_SIZE_Y, sizeof(*m_pixels));
 
-  setColorSpace(DEFAULT_COLORSPACE);
-
-  m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+  if (!setmode_soft_reset) {
+    setColorSpace(DEFAULT_COLORSPACE);
+    m_bin.Init(m_current_mode.x, m_last_line - m_current_mode.y);
+  }
 
   m_display_enabled = true;
   m_dirty = true;
 
+  // XXX: If this is ever actually implemented we need to handle the soft
+  // reset case.
   setBorder(0, 0, 0, m_current_mode.x);
 
   SDL_RenderClear(sdl_renderer);
@@ -344,6 +378,7 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
 
   SDL_mutexV(m_bufferlock);
 
+  setmode_soft_reset = false;
   return true;
 }
 
