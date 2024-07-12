@@ -11,6 +11,12 @@ SDLGFX vs23;
 #define ASPECT_4_3  (0 << 1)
 #define ASPECT_16_9 (1 << 1)
 
+#if defined(__linux__)
+#define CREATE_WIN_IN_GFX_THREAD
+#else
+#undef CREATE_WIN_IN_GFX_THREAD
+#endif
+
 const struct video_mode_t SDLGFX::modes_pal[SDL_SCREEN_MODES] = {
   { 460, 224, 0, 0, ASPECT_4_3 },
   { 436, 216, 0, 0, ASPECT_4_3 },
@@ -87,7 +93,7 @@ void SDLGFX::begin(bool interlace, bool lowpass, uint8_t system) {
   m_new_mode = -1;
 
   m_end_graphics = false;
-#ifndef __linux__
+#ifndef CREATE_WIN_IN_GFX_THREAD
   createWindow();
 #endif
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
@@ -107,7 +113,7 @@ void SDLGFX::end() {
   m_end_graphics = true;
   m_display_enabled = false;
   SDL_WaitThread(m_gfx_thread, NULL);
-#ifndef __linux__
+#ifndef CREATE_WIN_IN_GFX_THREAD
   destroyWindow();
 #endif
 
@@ -149,7 +155,7 @@ void SDLGFX::restart() {
   m_spritelock = SDL_CreateMutex();
 
   m_end_graphics = false;
-#ifndef __linux__
+#ifndef CREATE_WIN_IN_GFX_THREAD
   createWindow();
 #endif
   m_gfx_thread = SDL_CreateThread(gfx_thread, "gfx_thread", this);
@@ -427,7 +433,7 @@ extern "C" int gfx_thread(void *data) {
   Uint64 now, passed;
   SDLGFX *gfx = (SDLGFX *)data;
 
-#ifdef __linux__
+#ifdef CREATE_WIN_IN_GFX_THREAD
   gfx->createWindow();
 #endif
 
@@ -470,7 +476,7 @@ extern "C" int gfx_thread(void *data) {
     //printf("frame %d passed %ld\n", gfx->m_frame, passed);
   }
 
-#ifdef __linux__
+#ifdef CREATE_WIN_IN_GFX_THREAD
   gfx->destroyWindow();
 #endif
 
