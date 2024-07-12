@@ -103,6 +103,9 @@ public:
 #endif
 
   void reset() override;
+  void suspendDisplay() {
+    m_display_enabled = false;
+  }
 
   void setBorder(uint8_t y, uint8_t uv, uint16_t x, uint16_t w);
   inline void setBorder(uint8_t y, uint8_t uv) {
