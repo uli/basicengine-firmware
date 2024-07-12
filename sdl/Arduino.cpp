@@ -137,6 +137,18 @@ void platform_process_events() {
     case SDL_CONTROLLERDEVICEREMAPPED:
       controller_events.push(event);
       break;
+#ifdef ANDROID
+    case SDL_APP_WILLENTERBACKGROUND:
+      vs23.suspendDisplay();
+      break;
+    case SDL_APP_DIDENTERFOREGROUND:
+      vs23.softReset();
+      break;
+    case SDL_RENDER_DEVICE_RESET:
+    case SDL_RENDER_TARGETS_RESET:
+      exit(1);
+      break;
+#endif
     default:
       //printf("SDL event %d\n", event.type);
       break;
