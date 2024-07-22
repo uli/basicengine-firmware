@@ -446,7 +446,11 @@ void SDLGFX::createWindow()
 
   sdl_window = SDL_CreateWindow("EngineBASIC", SDL_WINDOWPOS_UNDEFINED,
                                 SDL_WINDOWPOS_UNDEFINED, sdl_user_w, sdl_user_h,
-                                sdl_flags);
+                                sdl_flags
+#ifdef ANDROID
+                                          | SDL_WINDOW_RESIZABLE	// enables rotation
+#endif
+                               );
 
   if (sdl_flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP))
     SDL_SetWindowKeyboardGrab(sdl_window, SDL_TRUE);
