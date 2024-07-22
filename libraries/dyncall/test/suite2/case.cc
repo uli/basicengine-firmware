@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -30,7 +30,7 @@
 #include "../../dyncall/dyncall_value.h"
 #include "funcinfo.h"
 
-DCValue mValue[MAXARGS];
+static DCValue mValue[MAXARGS];
 
 void clearValues() { for(int i = 0;i<MAXARGS;++i) mValue[i].L = 0xCAFEBABEDEADC0DEULL; }
 
@@ -46,7 +46,7 @@ template<> void g(DCdouble   value, int pos) { mValue[pos].d = value; }
 
 DCValue* getArg(int pos) { return &mValue[pos]; }
 
-int gID;
+static int gID;
 int getId() { return gID; }
 
 extern "C" {
@@ -126,3 +126,4 @@ funcinfo gFuncInfos[] = {
 #include "case.h"
 
 }; 
+

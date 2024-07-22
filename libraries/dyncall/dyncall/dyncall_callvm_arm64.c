@@ -6,7 +6,7 @@
  Description: ARM 64-bit ABI implementation
  License:
 
-   Copyright (c) 2015-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2015-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -26,6 +26,7 @@
 
 #include "dyncall_callvm_arm64.h"
 #include "dyncall_alloc.h"
+#include "dyncall_macros.h"
 
 
 void dcCall_arm64(DCpointer target, DCpointer data, DCsize size, DCpointer regdata);
@@ -58,11 +59,11 @@ static void a_i64(DCCallVM* in_self, DClonglong x)
   }
 }
 
-static void a_bool    (DCCallVM* self, DCbool  x)   { a_i64(self, (DClonglong)x); }
-static void a_char    (DCCallVM* self, DCchar  x)   { a_i64(self, x); }
-static void a_short   (DCCallVM* self, DCshort x)   { a_i64(self, x); }
-static void a_int     (DCCallVM* self, DCint x)     { a_i64(self, x); }
-static void a_long    (DCCallVM* self, DClong  x)   { a_i64(self, x); }
+static void a_bool    (DCCallVM* self, DCbool    x) { a_i64(self, (DClonglong)x); }
+static void a_char    (DCCallVM* self, DCchar    x) { a_i64(self, x); }
+static void a_short   (DCCallVM* self, DCshort   x) { a_i64(self, x); }
+static void a_int     (DCCallVM* self, DCint     x) { a_i64(self, x); }
+static void a_long    (DCCallVM* self, DClong    x) { a_i64(self, x); }
 static void a_pointer (DCCallVM* self, DCpointer x) { a_i64(self, (DClonglong) x ); }
 
 static void a_float(DCCallVM* in_p, DCfloat x)
@@ -74,7 +75,7 @@ static void a_float(DCCallVM* in_p, DCfloat x)
     p->f++;
   } else {
     dcVecAppend(&p->mVecHead, &x, sizeof(DCfloat));
-    dcVecSkip(&p->mVecHead, 4);	/* align to 8-bytes */
+    dcVecSkip(&p->mVecHead, 4);  /* align to 8-bytes */
   }
 }
 
@@ -83,7 +84,7 @@ static void a_double(DCCallVM* in_p, DCdouble x)
   DCCallVM_arm64* p = (DCCallVM_arm64*)in_p;
   if (p->f < 8) {
     p->u.D[ p->f ] = x;
-    p->f++; 
+    p->f++;
   } else {
     dcVecAppend(&p->mVecHead, &x, sizeof(DCdouble));
   }
@@ -92,11 +93,11 @@ static void a_double(DCCallVM* in_p, DCdouble x)
 void call(DCCallVM* in_p, DCpointer target)
 {
   DCCallVM_arm64* p = (DCCallVM_arm64*)in_p;
-  
+
   /*
   ** copy 'size' argument is given in number of 16-byte 'pair' blocks.
   */
-  
+
   dcCall_arm64(target, dcVecData(&p->mVecHead), ( dcVecSize(&p->mVecHead) + 15 ) & -16, &p->u.S[0]);
 }
 
@@ -109,14 +110,14 @@ DCCallVM_vt vt_arm64 =
 , &mode
 , &a_bool
 , &a_char
-, &a_short 
+, &a_short
 , &a_int
 , &a_long
 , &a_i64
 , &a_float
 , &a_double
 , &a_pointer
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &call
 , (DCboolvmfunc*)       &call
 , (DCcharvmfunc*)       &call
@@ -127,8 +128,47 @@ DCCallVM_vt vt_arm64 =
 , (DCfloatvmfunc*)      &call
 , (DCdoublevmfunc*)     &call
 , (DCpointervmfunc*)    &call
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
+
+#ifdef DC__OS_Win64
+/* for variadic, everything is pushed like ints as no FP regs are used, so
+   allocate arguments to an imaginary stack, where the first 64 bytes of
+   the stack are loaded into x0-x7, and any remaining arguments on the stack */
+
+static void var_float (DCCallVM* in_p, DCfloat  x) { DClonglong tmp = 0; *(DCfloat*)&tmp = x; a_i64(in_p, tmp); }
+static void var_double(DCCallVM* in_p, DCdouble x) { a_i64(in_p, *(DClonglong *)&x); }
+
+DCCallVM_vt vt_arm64_win_varargs =
+{
+  &deinit
+, &reset
+, &mode
+, &a_bool
+, &a_char
+, &a_short
+, &a_int
+, &a_long
+, &a_i64
+, &var_float
+, &var_double
+, &a_pointer
+, NULL /* argAggr */
+, (DCvoidvmfunc*)       &call
+, (DCboolvmfunc*)       &call
+, (DCcharvmfunc*)       &call
+, (DCshortvmfunc*)      &call
+, (DCintvmfunc*)        &call
+, (DClongvmfunc*)       &call
+, (DClonglongvmfunc*)   &call
+, (DCfloatvmfunc*)      &call
+, (DCdoublevmfunc*)     &call
+, (DCpointervmfunc*)    &call
+, NULL /* callAggr */
+, NULL /* beginAggr */
+};
+#endif
 
 static void mode(DCCallVM* in_self, DCint mode)
 {
@@ -136,21 +176,26 @@ static void mode(DCCallVM* in_self, DCint mode)
   DCCallVM_vt* vt;
 
   switch(mode) {
-    case DC_CALL_C_DEFAULT:        
-    case DC_CALL_C_ARM64:        
     case DC_CALL_C_ELLIPSIS:
     case DC_CALL_C_ELLIPSIS_VARARGS:
+#ifdef DC__OS_Win64
+      vt = &vt_arm64_win_varargs;
+      break;
+#endif /* if not win64, use below */
+    case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
+    case DC_CALL_C_ARM64:
       vt = &vt_arm64;
       break;
-    default: 
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+    default:
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
   dc_callvm_base_init(&self->mInterface, vt);
 }
 
 /* Public API. */
-DCCallVM* dcNewCallVM(DCsize size) 
+DCCallVM* dcNewCallVM(DCsize size)
 {
   DCCallVM_arm64* p = (DCCallVM_arm64*)dcAllocMem(sizeof(DCCallVM_arm64)+size);
 

@@ -37,7 +37,7 @@ OBJS = dynload_plain.obj
 
 dynload_plain.exe: $(OBJS)
 	echo Linking $@ ...
-	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dynload\libdynload_s.lib $(TOP)\dyncall\libdyncall_s.lib
+	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dynload\dynload_s.lib $(TOP)\dyncall\dyncall_s.lib
 
 $(TEST_U8_SO):
 	echo Building helper lib with UTF-8 path $(TEST_U8_SO) ...

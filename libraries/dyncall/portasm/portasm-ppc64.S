@@ -23,7 +23,7 @@
 */
 
 
-#include "../autovar/autovar_OS.h"
+#include "../dyncall/dyncall_macros.h"
 
 #if DC__ABI_PPC64_ELF_V != 2  /* v1 */
 #define GLOBAL_C(X) \

@@ -6,7 +6,8 @@
  Description: Callback - Implementation Header for ppc64
  License:
 
-   Copyright (c) 2014-2016 Masanori Mitsugi <mitsugi@linux.vnet.ibm.com>
+   Copyright (c) 2014-2016 Masanori Mitsugi <mitsugi@linux.vnet.ibm.com>,
+                      2022 Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
@@ -27,6 +28,7 @@
 #include "dyncall_alloc_wx.h"
 #include "dyncall_thunk.h"
 
+
 /* Callback symbol. */
 extern void dcCallbackThunkEntry();
 
@@ -39,24 +41,22 @@ struct DCCallback                   /*       ELF v1      |       ELF v2      */
 };
 
 
-void dcbInitCallback(DCCallback* pcb, const char* signature, DCCallbackHandler* handler, void* userdata)
+void dcbInitCallback2(DCCallback* pcb, const DCsigchar* signature, DCCallbackHandler* handler, void* userdata, DCaggr *const * aggrs)
 {
-  const char* ptr;
-  char ch;
-
   pcb->handler  = handler;
   pcb->userdata = userdata;
 }
 
-DCCallback* dcbNewCallback(const char* signature, DCCallbackHandler* handler, void* userdata)
+
+DCCallback* dcbNewCallback2(const DCsigchar* signature, DCCallbackHandler* handler, void* userdata, DCaggr *const * aggrs)
 {
   DCCallback* pcb;
-  int err = dcAllocWX(sizeof(DCCallback), (void**) &pcb);
+  int err = dcAllocWX(sizeof(DCCallback), (void**)&pcb);
   if(err)
     return NULL;
 
+  dcbInitCallback2(pcb, signature, handler, userdata, aggrs);
   dcbInitThunk(&pcb->thunk, dcCallbackThunkEntry);
-  dcbInitCallback(pcb, signature, handler, userdata);
 
   err = dcInitExecWX(pcb, sizeof(DCCallback));
   if(err) {
@@ -67,12 +67,3 @@ DCCallback* dcbNewCallback(const char* signature, DCCallbackHandler* handler, vo
   return pcb;
 }
 
-void dcbFreeCallback(DCCallback* pcb)
-{
-  dcFreeWX(pcb, sizeof(DCCallback));
-}
-
-void* dcbGetUserData(DCCallback* pcb)
-{
-  return pcb->userdata;
-}

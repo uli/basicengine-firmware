@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -36,7 +36,7 @@
 #include <cstdarg>
 #endif
 
-DCValue mValue[NARGS];
+static DCValue mValue[NARGS];
 
 void clearValues() { for(int i = 0;i<NARGS;++i) mValue[i].L = 0xCAFEBABEDEADC0DEULL; }
 
@@ -53,7 +53,7 @@ template<> void g(DCpointer value, int pos) { mValue[pos].p = value; }
 
 DCValue* getArg(int pos) { return &mValue[pos]; }
 
-int gID;
+static int gID;
 int getId() { return gID; }
 
 extern "C" {
@@ -98,10 +98,11 @@ extern "C" {
 #define VF9(id,A1,A2,A3,A4,A5,A6,A7,A8,A9,S) (void*)S,
 #define VF10(id,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,S) (void*)S,
 
-DCpointer gFuncTable[] = {
+static DCpointer gFuncTable[] = {
 #include "case.h"
 };
 
 DCpointer getFunc(int x) {
   return gFuncTable[x];
 }
+

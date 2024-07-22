@@ -180,8 +180,17 @@ case ${TARGET:=`uname`} in
     # open distributions often don't come with default cc and CC, check for common alternatives.
     printf "CC=` (which cc gcc clang  ) | grep -v '^no ' | head -1`\n" >>$C
     printf "CXX=`(which CC g++ clang++) | grep -v '^no ' | head -1`\n" >>$C # C++ compiler traditionally named CC
-    printf "CCC=\${CXX}\n" >>$C # Sun make's rules use CCC for c++ compiler
     printf "LDLIBS=-lm -ldl\n" >>$C
+	# make use of native instruction set, many open 64bit distributions execute
+	# 32 bit code and might default to that (also use PIC for 64 bit platforms)
+    if which isainfo >/dev/null && [ `isainfo -b` -eq 64 ]; then
+      printf "CFLAGS=-m64 -fPIC\n" >>$C
+      printf "CXXFLAGS=-m64 -fPIC\n" >>$C
+      printf "ASFLAGS=-m64 -fPIC\n" >>$C
+    fi
+	# Sun make's rules use CCC and CCFLAGS for c++
+    printf "CCC=\${CXX}\n" >>$C
+    printf "CCFLAGS=\${CXXFLAGS}\n" >>$C
     ;;
   Minix)
     printf "CC=gcc\n" >>$C

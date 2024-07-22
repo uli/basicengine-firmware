@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2010 Daniel Adler <dadler@uni-goettingen.de>, 
-#                    Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2010-2022 Daniel Adler <dadler@uni-goettingen.de>, 
+#                         Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -31,7 +31,7 @@ CFLAGS   = -D__Plan9__ -D__${objtype}__ -I$TOP/dyncall -I$TOP/dyncallback -c
 #CXXFLAGS = $CXXFLAGS -D__Plan9__
 #ASFLAGS  = -D__Plan9__
 
-# JUST TEMPORARY AS LONG AS I'M WORKING ON IT - Plan9's sed doesn't support sed comments
+# @@@ used to convert GAS sources
 #        /^$/d                                                               # Remove empty lines.
 #        /^#.*/d                                                             # Remove comments.
 #        s/^\.(globl|intel_syntax|file|section).*//                          # Remove some GAS directives.

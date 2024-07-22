@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2007,2009 Daniel Adler <dadler@uni-goettingen.de>, 
-#                         Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2007,2009      Daniel Adler <dadler@uni-goettingen.de>, 
+#               2007,2009,2022 Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -33,8 +33,8 @@ all: configure build
 
 # Check if library has been 'configured' properly. If not, tell the user and abort.
 !IF !DEFINED(CONFIG_OS) || !DEFINED(CONFIG_ARCH)
-configure: $(TOP)\ConfigVars
-$(TOP)\ConfigVars:
+configure: $(TOP)\Makefile.config
+$(TOP)\Makefile.config:
 	echo "Library not configured properly! Run configure.bat from the library's root directory first!"
 !ELSE
 configure:
@@ -42,14 +42,10 @@ configure:
 
 
 # Include config rules.
-!IF EXISTS($(TOP)\ConfigVars)
-!  INCLUDE $(TOP)\ConfigVars
+!IF EXISTS($(TOP)\Makefile.config)
+!  INCLUDE $(TOP)\Makefile.config
 !ENDIF
 
-# Include site rules.
-!IF EXISTS($(TOP)\SiteVars)
-!  INCLUDE $(TOP)\SiteVars
-!ENDIF
 
 # set BUILD_* from CONFIG_* variables
 !IF !DEFINED(BUILD_HOST)
@@ -66,9 +62,6 @@ BUILD_TOOL = $(CONFIG_TOOL)
 !ENDIF
 !IF !DEFINED(BUILD_ASM)
 BUILD_ASM = $(CONFIG_ASM)
-!ENDIF
-!IF !DEFINED(BUILD_CONFIG)
-BUILD_CONFIG = $(CONFIG_CONFIG)
 !ENDIF
 
 !IF "$(BUILD_TOOL)" != ""

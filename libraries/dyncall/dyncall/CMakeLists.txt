@@ -20,7 +20,10 @@
 
 if(MSVC)
   if(CMAKE_SIZEOF_VOID_P MATCHES 4)
-    set(ASM_SRC dyncall_call_x86_generic_masm.asm)	
+    set(ASM_SRC dyncall_call_x86_generic_masm.asm)
+  elseif("${CMAKE_GENERATOR_PLATFORM}" MATCHES "ARM64")
+    set(ASM_SRC ${CMAKE_SOURCE_DIR}/dyncall/dyncall_call_arm64_masm.asm)
+    compile_asm(TARGET dyncall_s ASM_FILES ${ASM_SRC} OUTPUT_OBJECTS ASM_SRC)
   else()
     set(ASM_SRC dyncall_call_x64_generic_masm.asm)
   endif()
@@ -31,7 +34,7 @@ endif()
 
 add_library(dyncall_s STATIC ${ASM_SRC} 
   dyncall_vector.c 
-  dyncall_struct.c 
+  dyncall_aggregate.c 
   dyncall_api.c 
   dyncall_callvm.c 
   dyncall_callvm_base.c

@@ -17,7 +17,7 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-\newpage
+\clearpage
 \section{Bindings to programming languages}
 
 Through binding of the \product{dyncall} library into a scripting environment,
@@ -105,6 +105,7 @@ Signature character & C/C++ data type \\
 \sigchar{d} & double \\
 \sigchar{p} & void* \\
 \sigchar{Z} & const char* (pointing to C string) \\
+\sigchar{A} & aggregate (struct, union) by-value \\
 \end{tabular*}
 \caption{Type signature encoding for function call data types}
 \label{sigchar}
@@ -132,6 +133,7 @@ The following signature characters exist:
 Signature character & Calling Convention \\
 \hline
 \sigchar{:} & platform's default calling convention \\
+\sigchar{*} & platform's default C++/thiscall calling convention \\
 \sigchar{e} & vararg function \\
 \sigchar{.} & vararg function's variadic/ellipsis part (...), to be specified before first vararg \\
 \sigchar{c} & only on x86: cdecl \\
@@ -154,7 +156,6 @@ Signature character & Calling Convention \\
 \paragraph{Examples of C function prototypes}
 
 \begin{table}[h]
-\begin{center}
 \begin{tabular*}{0.75\textwidth}{rll}
 & C function prototype & dyncall signature \\
 \hline
@@ -163,11 +164,12 @@ int       & f2(int, int);                             & \sigstr{ii)i}\\
 long long & f3(void*);                                & \sigstr{p)L}\\
 void      & f3(int**);                                & \sigstr{p)v}\\
 double    & f4(int, bool, char, double, const char*); & \sigstr{iBcdZ)d}\\
-void      & f5(short a, long long b, ...)             & \sigstr{\_esl\_.di)v} (for (promoted) varargs: double, int)\\
+void      & f5(short, long long, ...);                & \sigstr{\_esl\_.di)v} (for (promoted) varargs: double, int)\\
+struct A  & f6(int, union B);                         & \sigstr{iA)A}\\
+short     & Cls::f(unsigned char, ...);               & \sigstr{\_*p\_eC\_.i)s} (C++: this-ptr as 1st arg, int as vararg)\\
 \end{tabular*}
-\caption{Type signature examples of C function prototypes}
+\caption{Type signature examples of function prototypes}
 \label{sigex}
-\end{center}
 \end{table}
 
 
@@ -234,31 +236,29 @@ temporary string, free it using {\tt FreeCString(value unsafe.Pointer)}.
 \subsection{Python language bindings}
 
 The python module {\tt pydc} implements the Python language bindings,
-namely {\tt load}, {\tt find}, {\tt free}, {\tt call}.
+namely {\tt load}, {\tt find}, {\tt free}, {\tt call}, {\tt new\_callback}, {\tt free\_callback}.
 
 \begin{table}[h]
-\begin{center}
-\begin{tabular*}{0.75\textwidth}{lll}
+\begin{tabular*}{1.0\textwidth}{lll}
 Signature character & accepted Python 2 types & accepted Python 3 types \\
 \hline
-\sigchar{v}              & no return type                 & no return type                    \\
-\sigchar{B}              & bool                           & bool                              \\
-\sigchar{c}, \sigchar{C} & int, string (with single char) & int, string (with single char)    \\
-\sigchar{s}, \sigchar{S} & int                            & int                               \\
-\sigchar{i}, \sigchar{I} & int                            & int                               \\
-\sigchar{j}, \sigchar{J} & int                            & int                               \\
-\sigchar{l}, \sigchar{L} & int, long                      & int                               \\
-\sigchar{f}              & float                          & float                             \\
-\sigchar{d}              & double                         & double                            \\
-\sigchar{p}              & bytearray, int, long           & bytearray (mutable in C), int     \\
-\sigchar{Z}              & string, unicode, bytearray     & string, bytearray (all immutable) \\
+\sigchar{v}              & no return type                                     & no return type                                \\
+\sigchar{B}              & bool                                               & bool                                          \\
+\sigchar{c}, \sigchar{C} & int, string (with single char)                     & int, string (with single char)                \\
+\sigchar{s}, \sigchar{S} & int                                                & int                                           \\
+\sigchar{i}, \sigchar{I} & int                                                & int                                           \\
+\sigchar{j}, \sigchar{J} & int                                                & int                                           \\
+\sigchar{l}, \sigchar{L} & int, long                                          & int                                           \\
+\sigchar{f}              & float                                              & float                                         \\
+\sigchar{d}              & float                                              & float                                         \\
+\sigchar{p}              & bytearray, int, long, None, (PyCObject, PyCapsule) & bytearray, int, None, (PyCObject, PyCapsule)  \\
+\sigchar{Z}              & string, unicode, bytearray                         & string, bytes, bytearray                      \\
 \end{tabular*}
 \caption{Type signature encoding for Python bindings}
 \label{Pysigchar}
-\end{center}
 \end{table}
 
-For more details, refer to the README.txt file of the binding.
+This is a very brief description that omits many details. For more, refer to the README.txt file of the binding.
 
 \pagebreak
 

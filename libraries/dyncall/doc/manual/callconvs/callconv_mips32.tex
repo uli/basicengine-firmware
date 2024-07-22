@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2007-2019 Daniel Adler <dadler@uni-goettingen.de>, 
+% Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -42,7 +42,7 @@ as well as EABI (little-endian/hard-float, which is used on the Homebrew SDK for
 (contrary to the like-minded ARM-THUMB, which is supported). Both, calls and callbacks are supported.
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{MIPS EABI 32-bit Calling Convention}
@@ -88,7 +88,20 @@ Name                                   & Alias                & Brief descriptio
 \item if either integer or float registers are used up, the stack is used
 \item if the callee takes the address of one of the parameters and uses it to address other unnamed parameters (e.g. varargs) it has to copy - in its prolog - the the argument registers to a reserved stack area adjacent to the other parameters on the stack (only the unnamed integer parameters require saving, though) % @@@ seems to *ONLY* spill with varargs, never for any other reason
 \item float registers don't seem to ever need to be saved that way, because floats passed to an ellipsis function are promoted to doubles, which in turn are passed in a? register pairs, so only \$a0-\$a7 are need to be spilled
+\item aggregates (struct, union) \textless=\ 32bit are passed like an integer
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item all other aggregates (struct, union) are passed indirectly, as a pointer to a copy (if needed, and for vararg arguments required to be copied by the caller) of the struct
+\end{itemize}
+
+\paragraph{Return values}
+
+\begin{itemize}
 \item results are returned in \$v0 (32-bit), \$v0 and \$v1 (64-bit), \$f0 or \$f0 and \$f2 (2 $\times$ 32 bit float e.g. complex)
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in \%a0), and callee writes return value to this space; the ptr to the aggregate is returned in \%v0
+\item aggregates (struct, union) \textless=\ 64bit are returned like an integer (aligned within the register according to endianness)
+\item all other aggregates (struct, union) are returned in a space allocated by the caller, with a pointer to it
+passed as first parameter to the function called (meaning in \%a0); the ptr to the aggregate is returned in \%v0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -122,7 +135,7 @@ parameter area                           & \vdots                     &         
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{MIPS O32 32-bit Calling Convention}
@@ -168,9 +181,18 @@ Name                         & Alias                & Brief description\\
 \item only on hard-float targets: if the very first call argument is a float, up to 2 floats or doubles can be passed via \$f12 and \$f14, respectively, for first and second argument
 \item only on hard-float targets: if any arguments are passed via float registers, skip \$a0-\$a3 for subsequent arguments as if the values were passed via them
 \item only on hard-float targets: note that if the first argument is not a float, but the second, it'll get passed via the \$a? registers
+\item single precision float parameters (32 bit) are right-justified in their 8-byte slot on the stack on big endian targets, as they aren't promoted % @@@ verify
+\item aggregates (struct, union) are passed as a sequence of words like integers, no matter the fields or if hard-float target (splitting across registers and stack is allowed)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\end{itemize}
+
+\paragraph{Return values}
+
+\begin{itemize}
 \item results are returned in \$v0 and \$v1, with \$v0 for all values \textless\ 64bit (only integer on hard-float targets)
 \item only on hard-float targets: floating point results are returned in \$f0 (32-bit float), or \$f0 and \$f3 (64bit float)
-\item single precision float parameters (32 bit) are right-justified in their 8-byte slot on the stack on big endian targets, as they aren't promoted @@@
+\item aggregates (struct, union) are returned in a space allocated by the caller, with a pointer to it
+passed as first parameter to the function called (meaning in \%a0); the ptr to the aggregate is returned in \%v0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -203,6 +225,4 @@ parameter area                           & \vdots                     &         
 \end{tabular}
 \caption{Stack layout on MIPS O32 calling convention}
 \end{figure}
-
-\newpage
 

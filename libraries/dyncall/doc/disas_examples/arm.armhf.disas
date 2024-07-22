@@ -87,5 +87,688 @@
   dc:   e24bd004        sub     sp, fp, #4        ; |
   e0:   e8bd8800        pop     {fp, pc}          ; | epilog
 
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd034        sub     sp, sp, #52
+   c:   ed0b0a02        vstr    s0, [fp, #-8]
+  10:   ed0b3b09        vstr    d3, [fp, #-36]
+  14:   eeb06b44        vmov.f64        d6, d4
+  18:   eeb07b45        vmov.f64        d7, d5
+  1c:   ed4b0a04        vstr    s1, [fp, #-16]
+  20:   ed0b1a03        vstr    s2, [fp, #-12]
+  24:   ed4b1a07        vstr    s3, [fp, #-28]
+  28:   ed0b2a06        vstr    s4, [fp, #-24]
+  2c:   ed4b2a05        vstr    s5, [fp, #-20]
+  30:   ed0b6b0d        vstr    d6, [fp, #-52]
+  34:   ed0b7b0b        vstr    d7, [fp, #-44]
+  38:   e1a00000        nop
+  3c:   e28bd000        add     sp, fp, #0
+  40:   e49db004        pop     {fp}
+  44:   e12fff1e        bx      lr
+
+00000048 <main>:
+  48:   e92d4800        push    {fp, lr}              ;
+  4c:   e28db004        add     fp, sp, #4            ;
+  50:   e24dd058        sub     sp, sp, #88           ;
+  54:   ed9f0a29        vldr    s0, [pc, #164]        ; arg 0 (struct A), fetch from data below: (pc:=0x54+0x8)+164=0x100
+  58:   e59f20a4        ldr     r2, [pc, #164]        ;
+  5c:   e24b300c        sub     r3, fp, #12           ;
+  60:   e8920003        ldm     r2, {r0, r1}          ;
+  64:   e8830003        stm     r3, {r0, r1}          ;
+  68:   e59f2098        ldr     r2, [pc, #152]        ;
+  6c:   e24b3018        sub     r3, fp, #24           ;
+  70:   e8920007        ldm     r2, {r0, r1, r2}      ;
+  74:   e8830007        stm     r3, {r0, r1, r2}      ;
+  78:   ed9f3b1e        vldr    d3, [pc, #120]        ; arg 3 (struct D), via fregs, fetch from data below: (pc:=0x78+0x8)+120=0xf8
+  7c:   e59f3088        ldr     r3, [pc, #136]        ;
+  80:   e24bc02c        sub     ip, fp, #44           ;
+  84:   e893000f        ldm     r3, {r0, r1, r2, r3}  ;
+  88:   e88c000f        stm     ip, {r0, r1, r2, r3}  ;
+  8c:   e59f307c        ldr     r3, [pc, #124]        ;
+  90:   e24bc044        sub     ip, fp, #68           ;
+  94:   e1a0e003        mov     lr, r3                ;
+  98:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  9c:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  a0:   e89e0003        ldm     lr, {r0, r1}          ;
+  a4:   e88c0003        stm     ip, {r0, r1}          ;
+  a8:   ed1b6b0b        vldr    d6, [fp, #-44]        ; \ prep arg 5 (struct E)
+  ac:   ed1b7b09        vldr    d7, [fp, #-36]        ; /                                        b
+  b0:   ed5b1a06        vldr    s3, [fp, #-24]        ; \                                a
+  b4:   ed1b2a05        vldr    s4, [fp, #-20]        ; | arg 2 (struct C), via fregs    b
+  b8:   ed5b2a04        vldr    s5, [fp, #-16]        ; /                                c
+  bc:   ed5b0a03        vldr    s1, [fp, #-12]        ; \                                a
+  c0:   ed1b1a02        vldr    s2, [fp, #-8]         ; / arg 1 (struct B), via fregs    b
+  c4:   e1a0e00d        mov     lr, sp                ; \    write ptr (to stack top)
+  c8:   e24bc044        sub     ip, fp, #68           ; |    read ptr
+  cc:   e8bc000f        ldm     ip!, {r0, r1, r2, r3} ; | arg 6 (struct F), entirely via stack (not split)
+  d0:   e8ae000f        stmia   lr!, {r0, r1, r2, r3} ; |
+  d4:   e89c0003        ldm     ip, {r0, r1}          ; |
+  d8:   e88e0003        stm     lr, {r0, r1}          ; /
+  dc:   eeb04b46        vmov.f64        d4, d6        ; \ arg 5 (struct E), via fregs    a
+  e0:   eeb05b47        vmov.f64        d5, d7        ; /                                b
+  e4:   ebfffffe        bl      0 <leaf_call>         ; return address -> r14/lr, and call
+  e8:   e3a03000        mov     r3, #0                ; return value (0) via r3 ... (a bit unoptimal)
+  ec:   e1a00003        mov     r0, r3                ; ... to r0
+  f0:   e24bd004        sub     sp, fp, #4            ; | epilog
+  f4:   e8bd8800        pop     {fp, pc}              ; /
+  f8:   00000000        .word   0x00000000            ; \           |
+  fc:   3ff00000        .word   0x3ff00000            ; |           | 1.0
+ 100:   3f800000        .word   0x3f800000            ; |           1.f
+ 104:   00000000        .word   0x00000000            ; | data
+ 108:   00000008        .word   0x00000008            ; |
+ 10c:   00000018        .word   0x00000018            ; |
+ 110:   00000028        .word   0x00000028            ; |
+
+
+
+; ---------- passing structs with mixed fp/int parts ---------->
+;
+; struct A { float a; char b; };
+; struct B { int a; double b; };
+; struct C { double a, b; int c; };
+; struct D { double a, b, c; long long d; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f,2}, (struct B){2,3.}, (struct C){4.,5.,6}, (struct D){7.,8.,9.,10});
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e24dd008        sub     sp, sp, #8            ;
+   4:   e52db004        push    {fp}                  ;
+   8:   e28db000        add     fp, sp, #0            ;
+   c:   e24dd00c        sub     sp, sp, #12           ;
+  10:   e24bc00c        sub     ip, fp, #12           ;
+  14:   e88c0003        stm     ip, {r0, r1}          ;
+  18:   e28b1004        add     r1, fp, #4            ;
+  1c:   e881000c        stm     r1, {r2, r3}          ;
+  20:   e1a00000        nop                           ;
+  24:   e28bd000        add     sp, fp, #0            ;
+  28:   e49db004        pop     {fp}                  ;
+  2c:   e28dd008        add     sp, sp, #8            ;
+  30:   e12fff1e        bx      lr                    ;
+
+00000034 <main>:
+  34:   e92d4800        push    {fp, lr}              ; |
+  38:   e28db004        add     fp, sp, #4            ; | prolog
+  3c:   e24dd090        sub     sp, sp, #144          ; /
+  40:   e59f20b4        ldr     r2, [pc, #180]        ; \        read ptr to data after func
+  44:   e24b300c        sub     r3, fp, #12           ; |        write ptr to local area
+  48:   e8920003        ldm     r2, {r0, r1}          ; | struct A -> local area
+  4c:   e8830003        stm     r3, {r0, r1}          ; /
+  50:   e59f30a8        ldr     r3, [pc, #168]        ; \      read ptr to data after func
+  54:   e24bc01c        sub     ip, fp, #28           ; |      write ptr
+  58:   e893000f        ldm     r3, {r0, r1, r2, r3}  ; | struct B -> local area
+  5c:   e88c000f        stm     ip, {r0, r1, r2, r3}  ; /
+  60:   e59f309c        ldr     r3, [pc, #156]        ; \      read ptr to data after func
+  64:   e24bc034        sub     ip, fp, #52           ; |      write ptr
+  68:   e1a0e003        mov     lr, r3                ; |
+  6c:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ; | struct C -> local area
+  70:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ; |
+  74:   e89e0003        ldm     lr, {r0, r1}          ; |
+  78:   e88c0003        stm     ip, {r0, r1}          ; /
+  7c:   e59f3084        ldr     r3, [pc, #132]        ; \      read ptr to data after func
+  80:   e24bc054        sub     ip, fp, #84           ; |      write ptr
+  84:   e1a0e003        mov     lr, r3                ; |
+  88:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ; |
+  8c:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ; |
+  90:   e89e000f        ldm     lr, {r0, r1, r2, r3}  ; |
+  94:   e88c000f        stm     ip, {r0, r1, r2, r3}  ; | struct D -> local area
+  98:   e28de020        add     lr, sp, #32           ; |
+  9c:   e24bc054        sub     ip, fp, #84           ; |
+  a0:   e8bc000f        ldm     ip!, {r0, r1, r2, r3} ; |
+  a4:   e8ae000f        stmia   lr!, {r0, r1, r2, r3} ; |
+  a8:   e89c000f        ldm     ip, {r0, r1, r2, r3}  ; |
+  ac:   e88e000f        stm     lr, {r0, r1, r2, r3}  ; /
+  b0:   e28de008        add     lr, sp, #8            ; \
+  b4:   e24bc034        sub     ip, fp, #52           ; |
+  b8:   e8bc000f        ldm     ip!, {r0, r1, r2, r3} ; |
+  bc:   e8ae000f        stmia   lr!, {r0, r1, r2, r3} ; | arg 2 (struct C)
+  c0:   e89c0003        ldm     ip, {r0, r1}          ; |
+  c4:   e88e0003        stm     lr, {r0, r1}          ; /
+  c8:   e1a0200d        mov     r2, sp                ; \                    |
+  cc:   e24b3014        sub     r3, fp, #20           ; |                    | via stack (second half)
+  d0:   e8930003        ldm     r3, {r0, r1}          ; |                    |
+  d4:   e8820003        stm     r2, {r0, r1}          ; | arg 1 (struct B), split via regs and stack as 2 words each
+  d8:   e24b301c        sub     r3, fp, #28           ; |
+  dc:   e893000c        ldm     r3, {r2, r3}          ; /                    via regs (first half)
+  e0:   e24b100c        sub     r1, fp, #12           ; \
+  e4:   e8910003        ldm     r1, {r0, r1}          ; | arg 0 (struct A), via regs as 2 words
+  e8:   ebfffffe        bl      0 <leaf_call>         ; return address -> r14/lr, and call
+  ec:   e3a03000        mov     r3, #0                ; return value (0) via r3 ... (a bit unoptimal)
+  f0:   e1a00003        mov     r0, r3                ; ... to r0
+  f4:   e24bd004        sub     sp, fp, #4            ; |
+  f8:   e8bd8800        pop     {fp, pc}              ; | epilog
+  fc:   00000000        .word   0x00000000            ; 0
+ 100:   00000008        .word   0x00000008            ; 8
+ 104:   00000018        .word   0x00000018            ; 24
+ 108:   00000030        .word   0x00000030            ; 48
+
+
+
+; ---------- passing 3-field fp-only struct (HVA) which is bigger than 16b ---------->
+;
+; struct A { double a, b, c; }; /* bigger than 16b */
+;
+; void leaf_call(struct A a)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.,2.,3.});
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}                  ;
+   4:   e28db000        add     fp, sp, #0            ;
+   8:   e24dd01c        sub     sp, sp, #28           ;
+   c:   eeb05b40        vmov.f64        d5, d0        ;
+  10:   eeb06b41        vmov.f64        d6, d1        ;
+  14:   eeb07b42        vmov.f64        d7, d2        ;
+  18:   ed0b5b07        vstr    d5, [fp, #-28]        ;
+  1c:   ed0b6b05        vstr    d6, [fp, #-20]        ;
+  20:   ed0b7b03        vstr    d7, [fp, #-12]        ;
+  24:   e1a00000        nop                           ;
+  28:   e28bd000        add     sp, fp, #0            ;
+  2c:   e49db004        pop     {fp}                  ;
+  30:   e12fff1e        bx      lr                    ;
+
+00000034 <main>:
+  34:   e92d4800        push    {fp, lr}              ;
+  38:   e28db004        add     fp, sp, #4            ;
+  3c:   e24dd018        sub     sp, sp, #24           ;
+  40:   e59f3040        ldr     r3, [pc, #64]         ;
+  44:   e24bc01c        sub     ip, fp, #28           ;
+  48:   e1a0e003        mov     lr, r3                ;
+  4c:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  50:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  54:   e89e0003        ldm     lr, {r0, r1}          ;
+  58:   e88c0003        stm     ip, {r0, r1}          ;
+  5c:   ed1b5b07        vldr    d5, [fp, #-28]        ;
+  60:   ed1b6b05        vldr    d6, [fp, #-20]        ;
+  64:   ed1b7b03        vldr    d7, [fp, #-12]        ;
+  68:   eeb00b45        vmov.f64        d0, d5        ; |
+  6c:   eeb01b46        vmov.f64        d1, d6        ; | arg 0, via fpregs
+  70:   eeb02b47        vmov.f64        d2, d7        ; |
+  74:   ebfffffe        bl      0 <leaf_call>         ;
+  78:   e3a03000        mov     r3, #0                ;
+  7c:   e1a00003        mov     r0, r3                ;
+  80:   e24bd004        sub     sp, fp, #4            ;
+  84:   e8bd8800        pop     {fp, pc}              ;
+  88:   00000000        .word   0x00000000            ;
+
+
+
+; ---------- passing 5-field fp-only struct (HVA) ---------->
+;
+; struct A { double a, b, c, d, e; };
+;
+; void leaf_call(struct A a)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.,2.,3.,4.,5.});
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e24dd010        sub     sp, sp, #16
+   4:   e52db004        push    {fp}
+   8:   e28db000        add     fp, sp, #0
+   c:   e28bc004        add     ip, fp, #4
+  10:   e88c000f        stm     ip, {r0, r1, r2, r3}
+  14:   e1a00000        nop
+  18:   e28bd000        add     sp, fp, #0
+  1c:   e49db004        pop     {fp}
+  20:   e28dd010        add     sp, sp, #16
+  24:   e12fff1e        bx      lr
+
+00000028 <main>:
+  28:   e92d4800        push    {fp, lr}              ;
+  2c:   e28db004        add     fp, sp, #4            ;
+  30:   e24dd040        sub     sp, sp, #64           ;
+  34:   e59f3050        ldr     r3, [pc, #80]         ;
+  38:   e24bc02c        sub     ip, fp, #44           ;
+  3c:   e1a0e003        mov     lr, r3                ;
+  40:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  44:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  48:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  4c:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  50:   e89e0003        ldm     lr, {r0, r1}          ;
+  54:   e88c0003        stm     ip, {r0, r1}          ;
+  58:   e1a0e00d        mov     lr, sp                ;
+  5c:   e24bc01c        sub     ip, fp, #28           ;
+  60:   e8bc000f        ldm     ip!, {r0, r1, r2, r3} ;
+  64:   e8ae000f        stmia   lr!, {r0, r1, r2, r3} ;
+  68:   e89c0003        ldm     ip, {r0, r1}          ;
+  6c:   e88e0003        stm     lr, {r0, r1}          ;
+  70:   e24b302c        sub     r3, fp, #44           ;
+  74:   e893000f        ldm     r3, {r0, r1, r2, r3}  ; arg 0's a and b passed in int regs, as more than 4 fields, and splitting is allowed
+  78:   ebfffffe        bl      0 <leaf_call>         ;
+  7c:   e3a03000        mov     r3, #0                ;
+  80:   e1a00003        mov     r0, r3                ;
+  84:   e24bd004        sub     sp, fp, #4            ;
+  88:   e8bd8800        pop     {fp, pc}              ;
+  8c:   00000000        .word   0x00000000            ;
+
+
+
+; ---------- returning struct with 4 only-fp fields (HVA) by value ---------->
+;
+; struct A { double a, b, c, d; };
+;
+; struct A leaf_call()
+; {
+;         return (struct A){1.,2.,3.,4.};
+; }
+;
+; int main()
+; {
+;     leaf_call();
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e92d48f0        push    {r4, r5, r6, r7, fp, lr} ;
+   4:   e28db014        add     fp, sp, #20              ;
+   8:   e24dd060        sub     sp, sp, #96              ;
+   c:   e59f304c        ldr     r3, [pc, #76]            ;
+  10:   e24bc034        sub     ip, fp, #52              ;
+  14:   e1a0e003        mov     lr, r3                   ;
+  18:   e8be000f        ldm     lr!, {r0, r1, r2, r3}    ;
+  1c:   e8ac000f        stmia   ip!, {r0, r1, r2, r3}    ;
+  20:   e89e000f        ldm     lr, {r0, r1, r2, r3}     ;
+  24:   e88c000f        stm     ip, {r0, r1, r2, r3}     ;
+  28:   e14b63d4        ldrd    r6, [fp, #-52]           ;
+  2c:   e14b42dc        ldrd    r4, [fp, #-44]           ;
+  30:   e14b02d4        ldrd    r0, [fp, #-36]           ;
+  34:   e14b21dc        ldrd    r2, [fp, #-28]           ;
+  38:   ec476b14        vmov    d4, r6, r7               ;
+  3c:   ec454b15        vmov    d5, r4, r5               ;
+  40:   ec410b16        vmov    d6, r0, r1               ;
+  44:   ec432b17        vmov    d7, r2, r3               ;
+  48:   eeb00b44        vmov.f64        d0, d4           ; |
+  4c:   eeb01b45        vmov.f64        d1, d5           ; |
+  50:   eeb02b46        vmov.f64        d2, d6           ; | return value via regs
+  54:   eeb03b47        vmov.f64        d3, d7           ; |
+  58:   e24bd014        sub     sp, fp, #20              ;
+  5c:   e8bd88f0        pop     {r4, r5, r6, r7, fp, pc} ;
+  60:   00000000        .word   0x00000000               ;
+
+00000064 <main>:
+  64:   e92d4800        push    {fp, lr}
+  68:   e28db004        add     fp, sp, #4
+  6c:   ebfffffe        bl      0 <leaf_call>
+  70:   e3a03000        mov     r3, #0
+  74:   e1a00003        mov     r0, r3
+  78:   e8bd8800        pop     {fp, pc}
+
+
+
+; ---------- returning struct with 5 only-fp fields (HVA) by value, not returned via regs ---------->
+;
+; struct A { double a, b, c, d, e; };
+;
+; struct A leaf_call()
+; {
+;         return (struct A){1.,2.,3.,4.,5.};
+; }
+;
+; int main()
+; {
+;     leaf_call();
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e92d4800        push    {fp, lr}              ;
+   4:   e28db004        add     fp, sp, #4            ;
+   8:   e24dd030        sub     sp, sp, #48           ;
+   c:   e50b0030        str     r0, [fp, #-48]        ;
+  10:   e51b3030        ldr     r3, [fp, #-48]        ;
+  14:   e59f2028        ldr     r2, [pc, #40]         ;
+  18:   e1a0c003        mov     ip, r3                ;
+  1c:   e1a0e002        mov     lr, r2                ;
+  20:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  24:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  28:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  2c:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  30:   e89e0003        ldm     lr, {r0, r1}          ;
+  34:   e88c0003        stm     ip, {r0, r1}          ;
+  38:   e51b0030        ldr     r0, [fp, #-48]        ; hidden arg ptr returned in r0
+  3c:   e24bd004        sub     sp, fp, #4            ;
+  40:   e8bd8800        pop     {fp, pc}              ;
+  44:   00000000        .word   0x00000000            ;
+
+00000048 <main>:
+  48:   e92d4800        push    {fp, lr}              ;
+  4c:   e28db004        add     fp, sp, #4            ;
+  50:   e24dd028        sub     sp, sp, #40           ;
+  54:   e24b302c        sub     r3, fp, #44           ;
+  58:   e1a00003        mov     r0, r3                ; hidden first arg, ptr to retval struct data
+  5c:   ebfffffe        bl      0 <leaf_call>         ;
+  60:   e3a03000        mov     r3, #0                ;
+  64:   e1a00003        mov     r0, r3                ;
+  68:   e24bd004        sub     sp, fp, #4            ;
+  6c:   e8bd8800        pop     {fp, pc}              ;
+
+
+
+; ---------- returning struct of 4b via reg ---------->
+;
+;
+; struct A { short a, b; };
+;
+; struct A leaf_call()
+; {
+;         return (struct A){1,2};
+; }
+;
+; int main()
+; {
+;     leaf_call();
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd00c        sub     sp, sp, #12
+   c:   e59f3040        ldr     r3, [pc, #64]
+  10:   e5933000        ldr     r3, [r3]
+  14:   e50b3008        str     r3, [fp, #-8]
+  18:   e3a03000        mov     r3, #0
+  1c:   e15b20b8        ldrh    r2, [fp, #-8]
+  20:   e1a02802        lsl     r2, r2, #16
+  24:   e1a03823        lsr     r3, r3, #16
+  28:   e1833002        orr     r3, r3, r2
+  2c:   e1a03863        ror     r3, r3, #16
+  30:   e15b20b6        ldrh    r2, [fp, #-6]
+  34:   e1a02802        lsl     r2, r2, #16
+  38:   e1a03803        lsl     r3, r3, #16
+  3c:   e1a03823        lsr     r3, r3, #16
+  40:   e1833002        orr     r3, r3, r2
+  44:   e1a00003        mov     r0, r3
+  48:   e28bd000        add     sp, fp, #0
+  4c:   e49db004        pop     {fp}
+  50:   e12fff1e        bx      lr
+  54:   00000000        .word   0x00000000
+
+00000058 <main>:
+  58:   e92d4800        push    {fp, lr}
+  5c:   e28db004        add     fp, sp, #4
+  60:   ebfffffe        bl      0 <leaf_call>
+  64:   e3a03000        mov     r3, #0
+  68:   e1a00003        mov     r0, r3
+  6c:   e8bd8800        pop     {fp, pc}
+
+
+
+; ---------- returning struct of > 4b indirectly via hidden pointer arg ---------->
+;
+; struct A { short a, b, c; };
+;
+; struct A leaf_call()
+; {
+;         return (struct A){1,2,3};
+; }
+;
+; int main()
+; {
+;     leaf_call();
+;     return 0;
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd014        sub     sp, sp, #20
+   c:   e50b0010        str     r0, [fp, #-16]
+  10:   e51b3010        ldr     r3, [fp, #-16]
+  14:   e59f201c        ldr     r2, [pc, #28]
+  18:   e5920000        ldr     r0, [r2]
+  1c:   e5830000        str     r0, [r3]
+  20:   e1d220b4        ldrh    r2, [r2, #4]
+  24:   e1c320b4        strh    r2, [r3, #4]
+  28:   e51b0010        ldr     r0, [fp, #-16]
+  2c:   e28bd000        add     sp, fp, #0
+  30:   e49db004        pop     {fp}
+  34:   e12fff1e        bx      lr
+  38:   00000000        .word   0x00000000
+
+0000003c <main>:
+  3c:   e92d4800        push    {fp, lr}
+  40:   e28db004        add     fp, sp, #4
+  44:   e24dd008        sub     sp, sp, #8
+  48:   e24b300c        sub     r3, fp, #12
+  4c:   e1a00003        mov     r0, r3
+  50:   ebfffffe        bl      0 <leaf_call>
+  54:   e3a03000        mov     r3, #0
+  58:   e1a00003        mov     r0, r3
+  5c:   e24bd004        sub     sp, fp, #4
+  60:   e8bd8800        pop     {fp, pc}
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+00000000 <f1>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd00c        sub     sp, sp, #12
+   c:   e50b0008        str     r0, [fp, #-8]
+  10:   e1a00000        nop
+  14:   e28bd000        add     sp, fp, #0
+  18:   e49db004        pop     {fp}
+  1c:   e12fff1e        bx      lr
+
+00000020 <f2>:
+  20:   e52db004        push    {fp}
+  24:   e28db000        add     fp, sp, #0
+  28:   e24dd00c        sub     sp, sp, #12
+  2c:   e50b0008        str     r0, [fp, #-8]
+  30:   e1a00000        nop
+  34:   e28bd000        add     sp, fp, #0
+  38:   e49db004        pop     {fp}
+  3c:   e12fff1e        bx      lr
+
+00000040 <f>:
+  40:   e92d4800        push    {fp, lr}                   ; |
+  44:   e28db004        add     fp, sp, #4                 ; | prolog
+  48:   e24dd010        sub     sp, sp, #16                ; /
+  4c:   e24b3014        sub     r3, fp, #20                ; \
+  50:   e1a00003        mov     r0, r3                     ; | this ptr (ptr to n's (NonTrivial) space)
+  54:   ebfffffe        bl      0 <_ZN10NonTrivialC1Ev>    ; | NonTrivial::NonTrivial() / ctor
+  58:   e3a03001        mov     r3, #1                     ; a = 1
+  5c:   e50b3008        str     r3, [fp, #-8]              ; |
+  60:   e51b3008        ldr     r3, [fp, #-8]              ; | a += 123
+  64:   e283307b        add     r3, r3, #123               ; |
+  68:   e50b3008        str     r3, [fp, #-8]              ; |
+  6c:   e51b0010        ldr     r0, [fp, #-16]             ; f1 arg 0 (struct Trivial), via reg as small struct
+  70:   ebfffffe        bl      0 <f1>                     ; call f1(struct Trivial)
+  74:   e51b3008        ldr     r3, [fp, #-8]              ; |
+  78:   e243307b        sub     r3, r3, #123               ; | a -= 123
+  7c:   e50b3008        str     r3, [fp, #-8]              ; /
+  80:   e24b2014        sub     r2, fp, #20                ; \
+  84:   e24b300c        sub     r3, fp, #12                ; |
+  88:   e1a01002        mov     r1, r2                     ; |               ptr to n
+  8c:   e1a00003        mov     r0, r3                     ; | copy n        ptr to dest of copy of n
+  90:   ebfffffe        bl      0 <_ZN10NonTrivialC1ERKS_> ; /               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+  94:   e24b300c        sub     r3, fp, #12                ; \
+  98:   e1a00003        mov     r0, r3                     ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+  9c:   ebfffffe        bl      20 <f2>                    ; call f2(struct NonTrivial)
+  a0:   e51b3008        ldr     r3, [fp, #-8]              ; |
+  a4:   e243300c        sub     r3, r3, #12                ; | a -= 12
+  a8:   e50b3008        str     r3, [fp, #-8]              ; /
+  ac:   e1a00000        nop                                ; \
+  b0:   e24bd004        sub     sp, fp, #4                 ; | epilog
+  b4:   e8bd8800        pop     {fp, pc}                   ; |
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from raspbian-11-armelhf w/ gcc 10.2.1
+
+000103d0 <f1>:
+   103d0:       e52db004        push    {fp}
+   103d4:       e28db000        add     fp, sp, #0
+   103d8:       e3a03000        mov     r3, #0
+   103dc:       e1a00003        mov     r0, r3
+   103e0:       e28bd000        add     sp, fp, #0
+   103e4:       e49db004        pop     {fp}
+   103e8:       e12fff1e        bx      lr
+
+000103ec <_Z2f2v>:
+   103ec:       e92d4800        push    {fp, lr}
+   103f0:       e28db004        add     fp, sp, #4
+   103f4:       e24dd008        sub     sp, sp, #8
+   103f8:       e50b0008        str     r0, [fp, #-8]
+   103fc:       e51b0008        ldr     r0, [fp, #-8]
+   10400:       eb00001f        bl      10484 <_ZN10NonTrivialC1Ev>
+   10404:       e51b0008        ldr     r0, [fp, #-8]  ; ptr to retval space -> r0
+   10408:       e24bd004        sub     sp, fp, #4
+   1040c:       e8bd8800        pop     {fp, pc}
+
+00010410 <f>:
+   10410:       e92d4800        push    {fp, lr}       ; |
+   10414:       e28db004        add     fp, sp, #4     ; | prolog
+   10418:       e24dd010        sub     sp, sp, #16    ; /
+   1041c:       e3a03001        mov     r3, #1         ; \ a = 1
+   10420:       e50b3008        str     r3, [fp, #-8]  ; /
+   10424:       e51b3008        ldr     r3, [fp, #-8]  ; \
+   10428:       e283307b        add     r3, r3, #123   ; | a += 123
+   1042c:       e50b3008        str     r3, [fp, #-8]  ; |
+   10430:       ebffffe6        bl      103d0 <f1>     ; call f1()
+   10434:       e1a03000        mov     r3, r0         ; | retval via r0, as small struct
+   10438:       e50b300c        str     r3, [fp, #-12] ; /
+   1043c:       e51b3008        ldr     r3, [fp, #-8]  ; \
+   10440:       e243307b        sub     r3, r3, #123   ; | a -= 123
+   10444:       e50b3008        str     r3, [fp, #-8]  ; |
+   10448:       e24b3010        sub     r3, fp, #16    ; space to hold non-triv retval -> eax ...
+   1044c:       e1a00003        mov     r0, r3         ; ... as hidden first arg (r0)
+   10450:       ebffffe5        bl      103ec <_Z2f2v> ; call f2()
+   10454:       e51b3008        ldr     r3, [fp, #-8]  ; |
+   10458:       e243300c        sub     r3, r3, #12    ; | a -= 12
+   1045c:       e50b3008        str     r3, [fp, #-8]  ; /
+   10460:       e1a00000        nop                    ; \
+   10464:       e24bd004        sub     sp, fp, #4     ; | epilog
+   10468:       e8bd8800        pop     {fp, pc}       ; |
+
+
+
 ; vim: ft=asm68k
 

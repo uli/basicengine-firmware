@@ -1,0 +1,2563 @@
+; #include <stdlib.h>
+; 
+; void leaf_call(int b, int c, int d, int e, int f, int g, int h)
+; {
+; }
+; 
+; void nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
+; {
+; 	/* use some local data */
+; 	*(char*)alloca(220) = 'L';
+; 	leaf_call(b, c, d, e, f, g, h);
+; }
+; 
+; int main()
+; {
+; 	nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
+; 	return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 79 71         addi    sp, sp, -48
+       2: 06 f4         sd      ra, 40(sp)
+       4: 22 f0         sd      s0, 32(sp)
+       6: 00 18         addi    s0, sp, 48
+       8: 23 26 a4 fe   sw      a0, -20(s0)
+       c: 23 24 b4 fe   sw      a1, -24(s0)
+      10: 23 22 c4 fe   sw      a2, -28(s0)
+      14: 23 20 d4 fe   sw      a3, -32(s0)
+      18: 23 2e e4 fc   sw      a4, -36(s0)
+      1c: 23 2c f4 fc   sw      a5, -40(s0)
+      20: 23 2a 04 fd   sw      a6, -44(s0)
+      24: a2 70         ld      ra, 40(sp)
+      26: 02 74         ld      s0, 32(sp)
+      28: 45 61         addi    sp, sp, 48
+      2a: 82 80         ret
+
+000000000000002c <nonleaf_call>:
+      2c: 6d 71         addi    sp, sp, -272 ; |          open frame, includes space for alloca(220)
+      2e: 06 e6         sd      ra, 264(sp)  ; | prolog
+      30: 22 e2         sd      s0, 256(sp)  ; |
+      32: 00 0a         addi    s0, sp, 272  ; /
+      34: 23 26 a4 fe   sw      a0, -20(s0)  ; \
+      38: 23 24 b4 fe   sw      a1, -24(s0)  ; |
+      3c: 23 22 c4 fe   sw      a2, -28(s0)  ; |
+      40: 23 20 d4 fe   sw      a3, -32(s0)  ; | store arg 0-7 on stack
+      44: 23 2e e4 fc   sw      a4, -36(s0)  ; |
+      48: 23 2c f4 fc   sw      a5, -40(s0)  ; |
+      4c: 23 2a 04 fd   sw      a6, -44(s0)  ; |
+      50: 23 28 14 fd   sw      a7, -48(s0)  ; /
+      54: 13 05 c0 04   li      a0, 76       ; \
+      58: 23 08 a4 ee   sb      a0, -272(s0) ; / store 'L' into alloca'd space
+      5c: 03 25 84 fe   lw      a0, -24(s0)  ; \
+      60: 83 25 44 fe   lw      a1, -28(s0)  ; |
+      64: 03 26 04 fe   lw      a2, -32(s0)  ; |
+      68: 83 26 c4 fd   lw      a3, -36(s0)  ; | arg 0-6, fetch from stack (stored above)
+      6c: 03 27 84 fd   lw      a4, -40(s0)  ; |
+      70: 83 27 44 fd   lw      a5, -44(s0)  ; |
+      74: 03 28 04 fd   lw      a6, -48(s0)  ; /
+      78: 97 00 00 00   auipc   ra, 0        ; \
+      7c: e7 80 00 00   jalr    ra           ; / build relative call addr and call (offset 0 b/c not relocated)
+      80: b2 60         ld      ra, 264(sp)  ; \
+      82: 12 64         ld      s0, 256(sp)  ; |
+      84: 51 61         addi    sp, sp, 272  ; | epilog
+      86: 82 80         ret                  ; |
+
+0000000000000088 <main>:
+      88: 01 11         addi    sp, sp, -32  ; |
+      8a: 06 ec         sd      ra, 24(sp)   ; | prolog
+      8c: 22 e8         sd      s0, 16(sp)   ; |
+      8e: 00 10         addi    s0, sp, 32   ; |
+      90: 01 45         li      a0, 0        ; arg 0
+      92: 23 30 a4 fe   sd      a0, -32(s0)  ; write 0LL to local area on stack, is restored below into a0 on return as retval
+      96: 23 26 a4 fe   sw      a0, -20(s0)  ; write 0 to fp-20 - unsure why
+      9a: 85 45         li      a1, 1        ; arg 1
+      9c: 09 46         li      a2, 2        ; arg 2
+      9e: 8d 46         li      a3, 3        ; arg 3
+      a0: 11 47         li      a4, 4        ; arg 4
+      a2: 95 47         li      a5, 5        ; arg 5
+      a4: 19 48         li      a6, 6        ; arg 6
+      a6: 9d 48         li      a7, 7        ; arg 7
+      a8: 97 00 00 00   auipc   ra, 0        ; |
+      ac: e7 80 00 00   jalr    ra           ; | build relative call addr and call (offset 0 b/c not relocated)
+      b0: 03 35 04 fe   ld      a0, -32(s0)  ; a0 = 0 (stored above), return value
+      b4: e2 60         ld      ra, 24(sp)   ; |
+      b6: 42 64         ld      s0, 16(sp)   ; |
+      b8: 05 61         addi    sp, sp, 32   ; | epilog
+      ba: 82 80         ret                  ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000628 <leaf_call>:
+ 628:   7179                    addi    sp,sp,-48
+ 62a:   f422                    sd      s0,40(sp)
+ 62c:   1800                    addi    s0,sp,48
+ 62e:   832a                    mv      t1,a0
+ 630:   88ae                    mv      a7,a1
+ 632:   8532                    mv      a0,a2
+ 634:   85b6                    mv      a1,a3
+ 636:   863a                    mv      a2,a4
+ 638:   86be                    mv      a3,a5
+ 63a:   8742                    mv      a4,a6
+ 63c:   879a                    mv      a5,t1
+ 63e:   fef42623                sw      a5,-20(s0)
+ 642:   87c6                    mv      a5,a7
+ 644:   fef42423                sw      a5,-24(s0)
+ 648:   87aa                    mv      a5,a0
+ 64a:   fef42223                sw      a5,-28(s0)
+ 64e:   87ae                    mv      a5,a1
+ 650:   fef42023                sw      a5,-32(s0)
+ 654:   87b2                    mv      a5,a2
+ 656:   fcf42e23                sw      a5,-36(s0)
+ 65a:   87b6                    mv      a5,a3
+ 65c:   fcf42c23                sw      a5,-40(s0)
+ 660:   87ba                    mv      a5,a4
+ 662:   fcf42a23                sw      a5,-44(s0)
+ 666:   0001                    nop
+ 668:   7422                    ld      s0,40(sp)
+ 66a:   6145                    addi    sp,sp,48
+ 66c:   8082                    ret
+
+000000000000066e <nonleaf_call>:
+ 66e:   7179                    addi    sp,sp,-48
+ 670:   f406                    sd      ra,40(sp)
+ 672:   f022                    sd      s0,32(sp)
+ 674:   1800                    addi    s0,sp,48
+ 676:   8eaa                    mv      t4,a0
+ 678:   8e2e                    mv      t3,a1
+ 67a:   8332                    mv      t1,a2
+ 67c:   8536                    mv      a0,a3
+ 67e:   85ba                    mv      a1,a4
+ 680:   863e                    mv      a2,a5
+ 682:   86c2                    mv      a3,a6
+ 684:   8746                    mv      a4,a7
+ 686:   87f6                    mv      a5,t4
+ 688:   fef42623                sw      a5,-20(s0)
+ 68c:   87f2                    mv      a5,t3
+ 68e:   fef42423                sw      a5,-24(s0)
+ 692:   879a                    mv      a5,t1
+ 694:   fef42223                sw      a5,-28(s0)
+ 698:   87aa                    mv      a5,a0
+ 69a:   fef42023                sw      a5,-32(s0)
+ 69e:   87ae                    mv      a5,a1
+ 6a0:   fcf42e23                sw      a5,-36(s0)
+ 6a4:   87b2                    mv      a5,a2
+ 6a6:   fcf42c23                sw      a5,-40(s0)
+ 6aa:   87b6                    mv      a5,a3
+ 6ac:   fcf42a23                sw      a5,-44(s0)
+ 6b0:   87ba                    mv      a5,a4
+ 6b2:   fcf42823                sw      a5,-48(s0)
+ 6b6:   7115                    addi    sp,sp,-224
+ 6b8:   878a                    mv      a5,sp
+ 6ba:   07bd                    addi    a5,a5,15
+ 6bc:   8391                    srli    a5,a5,0x4
+ 6be:   0792                    slli    a5,a5,0x4
+ 6c0:   873e                    mv      a4,a5
+ 6c2:   04c00793                li      a5,76
+ 6c6:   00f70023                sb      a5,0(a4)
+ 6ca:   fd042803                lw      a6,-48(s0)
+ 6ce:   fd442783                lw      a5,-44(s0)
+ 6d2:   fd842703                lw      a4,-40(s0)
+ 6d6:   fdc42683                lw      a3,-36(s0)
+ 6da:   fe042603                lw      a2,-32(s0)
+ 6de:   fe442583                lw      a1,-28(s0)
+ 6e2:   fe842503                lw      a0,-24(s0)
+ 6e6:   f43ff0ef                jal     628 <leaf_call>
+ 6ea:   0001                    nop
+ 6ec:   fd040113                addi    sp,s0,-48
+ 6f0:   70a2                    ld      ra,40(sp)
+ 6f2:   7402                    ld      s0,32(sp)
+ 6f4:   6145                    addi    sp,sp,48
+ 6f6:   8082                    ret
+
+00000000000006f8 <main>:
+ 6f8:   1141                    addi    sp,sp,-16
+ 6fa:   e406                    sd      ra,8(sp)
+ 6fc:   e022                    sd      s0,0(sp)
+ 6fe:   0800                    addi    s0,sp,16
+ 700:   489d                    li      a7,7
+ 702:   4819                    li      a6,6
+ 704:   4795                    li      a5,5
+ 706:   4711                    li      a4,4
+ 708:   468d                    li      a3,3
+ 70a:   4609                    li      a2,2
+ 70c:   4585                    li      a1,1
+ 70e:   4501                    li      a0,0
+ 710:   f5fff0ef                jal     66e <nonleaf_call>
+ 714:   4781                    li      a5,0
+ 716:   853e                    mv      a0,a5
+ 718:   60a2                    ld      ra,8(sp)
+ 71a:   6402                    ld      s0,0(sp)
+ 71c:   0141                    addi    sp,sp,16
+ 71e:   8082                    ret
+
+
+
+
+; ---------- same with more args so stack is also used ---------->
+
+; #include <stdlib.h>
+;
+; void leaf_call(int b, int c, int d, int e, int f, int g, int h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
+; {
+;     /* use some local data */
+;     *(char*)alloca(220) = 'L';
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 39 71         addi    sp, sp, -64
+       2: 06 fc         sd      ra, 56(sp)
+       4: 22 f8         sd      s0, 48(sp)
+       6: 80 00         addi    s0, sp, 64
+       8: aa 82         mv      t0, a0
+       a: 08 60         ld      a0, 0(s0)
+       c: 23 26 54 fe   sw      t0, -20(s0)
+      10: 23 24 b4 fe   sw      a1, -24(s0)
+      14: 23 22 c4 fe   sw      a2, -28(s0)
+      18: 23 20 d4 fe   sw      a3, -32(s0)
+      1c: 23 2e e4 fc   sw      a4, -36(s0)
+      20: 23 2c f4 fc   sw      a5, -40(s0)
+      24: 23 2a 04 fd   sw      a6, -44(s0)
+      28: 23 28 14 fd   sw      a7, -48(s0)
+      2c: 23 26 a4 fc   sw      a0, -52(s0)
+      30: e2 70         ld      ra, 56(sp)
+      32: 42 74         ld      s0, 48(sp)
+      34: 21 61         addi    sp, sp, 64
+      36: 82 80         ret
+
+0000000000000038 <nonleaf_call>:
+      38: 69 71         addi    sp, sp, -304
+      3a: 06 f6         sd      ra, 296(sp)
+      3c: 22 f2         sd      s0, 288(sp)
+      3e: 00 1a         addi    s0, sp, 304
+      40: ae 82         mv      t0, a1
+      42: 2a 83         mv      t1, a0
+      44: 08 64         ld      a0, 8(s0)
+      46: 0c 60         ld      a1, 0(s0)
+      48: 23 26 64 fe   sw      t1, -20(s0)
+      4c: 23 24 54 fe   sw      t0, -24(s0)
+      50: 23 22 c4 fe   sw      a2, -28(s0)
+      54: 23 20 d4 fe   sw      a3, -32(s0)
+      58: 23 2e e4 fc   sw      a4, -36(s0)
+      5c: 23 2c f4 fc   sw      a5, -40(s0)
+      60: 23 2a 04 fd   sw      a6, -44(s0)
+      64: 23 28 14 fd   sw      a7, -48(s0)
+      68: 23 26 b4 fc   sw      a1, -52(s0)
+      6c: 23 24 a4 fc   sw      a0, -56(s0)
+      70: 13 05 c0 04   li      a0, 76
+      74: 23 00 a4 ee   sb      a0, -288(s0)
+      78: 03 25 84 fe   lw      a0, -24(s0)
+      7c: 83 25 44 fe   lw      a1, -28(s0)
+      80: 03 26 04 fe   lw      a2, -32(s0)
+      84: 83 26 c4 fd   lw      a3, -36(s0)
+      88: 03 27 84 fd   lw      a4, -40(s0)
+      8c: 83 27 44 fd   lw      a5, -44(s0)
+      90: 03 28 04 fd   lw      a6, -48(s0)
+      94: 83 28 c4 fc   lw      a7, -52(s0)
+      98: 83 22 84 fc   lw      t0, -56(s0)
+      9c: 0a 83         mv      t1, sp
+      9e: 23 30 53 00   sd      t0, 0(t1)
+      a2: 97 00 00 00   auipc   ra, 0
+      a6: e7 80 00 00   jalr    ra
+      aa: b2 70         ld      ra, 296(sp)
+      ac: 12 74         ld      s0, 288(sp)
+      ae: 55 61         addi    sp, sp, 304
+      b0: 82 80         ret
+
+00000000000000b2 <main>:
+      b2: 79 71         addi    sp, sp, -48
+      b4: 06 f4         sd      ra, 40(sp)
+      b6: 22 f0         sd      s0, 32(sp)
+      b8: 00 18         addi    s0, sp, 48
+      ba: 01 45         li      a0, 0
+      bc: 23 30 a4 fe   sd      a0, -32(s0)
+      c0: 23 26 a4 fe   sw      a0, -20(s0)
+      c4: 0a 86         mv      a2, sp
+      c6: a5 45         li      a1, 9
+      c8: 0c e6         sd      a1, 8(a2)
+      ca: a1 45         li      a1, 8
+      cc: 0c e2         sd      a1, 0(a2)
+      ce: 85 45         li      a1, 1
+      d0: 09 46         li      a2, 2
+      d2: 8d 46         li      a3, 3
+      d4: 11 47         li      a4, 4
+      d6: 95 47         li      a5, 5
+      d8: 19 48         li      a6, 6
+      da: 9d 48         li      a7, 7
+      dc: 97 00 00 00   auipc   ra, 0
+      e0: e7 80 00 00   jalr    ra
+      e4: 03 35 04 fe   ld      a0, -32(s0)
+      e8: a2 70         ld      ra, 40(sp)
+      ea: 02 74         ld      s0, 32(sp)
+      ec: 45 61         addi    sp, sp, 48
+      ee: 82 80         ret
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000628 <leaf_call>:
+ 628:   7179                    addi    sp,sp,-48
+ 62a:   f422                    sd      s0,40(sp)
+ 62c:   1800                    addi    s0,sp,48
+ 62e:   8eaa                    mv      t4,a0
+ 630:   8e2e                    mv      t3,a1
+ 632:   8332                    mv      t1,a2
+ 634:   8536                    mv      a0,a3
+ 636:   85ba                    mv      a1,a4
+ 638:   863e                    mv      a2,a5
+ 63a:   86c2                    mv      a3,a6
+ 63c:   8746                    mv      a4,a7
+ 63e:   87f6                    mv      a5,t4
+ 640:   fef42623                sw      a5,-20(s0)
+ 644:   87f2                    mv      a5,t3
+ 646:   fef42423                sw      a5,-24(s0)
+ 64a:   879a                    mv      a5,t1
+ 64c:   fef42223                sw      a5,-28(s0)
+ 650:   87aa                    mv      a5,a0
+ 652:   fef42023                sw      a5,-32(s0)
+ 656:   87ae                    mv      a5,a1
+ 658:   fcf42e23                sw      a5,-36(s0)
+ 65c:   87b2                    mv      a5,a2
+ 65e:   fcf42c23                sw      a5,-40(s0)
+ 662:   87b6                    mv      a5,a3
+ 664:   fcf42a23                sw      a5,-44(s0)
+ 668:   87ba                    mv      a5,a4
+ 66a:   fcf42823                sw      a5,-48(s0)
+ 66e:   0001                    nop
+ 670:   7422                    ld      s0,40(sp)
+ 672:   6145                    addi    sp,sp,48
+ 674:   8082                    ret
+
+0000000000000676 <nonleaf_call>:
+ 676:   7139                    addi    sp,sp,-64
+ 678:   fc06                    sd      ra,56(sp)
+ 67a:   f822                    sd      s0,48(sp)
+ 67c:   0080                    addi    s0,sp,64
+ 67e:   8eaa                    mv      t4,a0
+ 680:   8e2e                    mv      t3,a1
+ 682:   8332                    mv      t1,a2
+ 684:   8536                    mv      a0,a3
+ 686:   85ba                    mv      a1,a4
+ 688:   863e                    mv      a2,a5
+ 68a:   86c2                    mv      a3,a6
+ 68c:   8746                    mv      a4,a7
+ 68e:   87f6                    mv      a5,t4
+ 690:   fef42623                sw      a5,-20(s0)
+ 694:   87f2                    mv      a5,t3
+ 696:   fef42423                sw      a5,-24(s0)
+ 69a:   879a                    mv      a5,t1
+ 69c:   fef42223                sw      a5,-28(s0)
+ 6a0:   87aa                    mv      a5,a0
+ 6a2:   fef42023                sw      a5,-32(s0)
+ 6a6:   87ae                    mv      a5,a1
+ 6a8:   fcf42e23                sw      a5,-36(s0)
+ 6ac:   87b2                    mv      a5,a2
+ 6ae:   fcf42c23                sw      a5,-40(s0)
+ 6b2:   87b6                    mv      a5,a3
+ 6b4:   fcf42a23                sw      a5,-44(s0)
+ 6b8:   87ba                    mv      a5,a4
+ 6ba:   fcf42823                sw      a5,-48(s0)
+ 6be:   7115                    addi    sp,sp,-224
+ 6c0:   081c                    addi    a5,sp,16
+ 6c2:   07bd                    addi    a5,a5,15
+ 6c4:   8391                    srli    a5,a5,0x4
+ 6c6:   0792                    slli    a5,a5,0x4
+ 6c8:   873e                    mv      a4,a5
+ 6ca:   04c00793                li      a5,76
+ 6ce:   00f70023                sb      a5,0(a4)
+ 6d2:   00042883                lw      a7,0(s0)
+ 6d6:   fd042803                lw      a6,-48(s0)
+ 6da:   fd442303                lw      t1,-44(s0)
+ 6de:   fd842703                lw      a4,-40(s0)
+ 6e2:   fdc42683                lw      a3,-36(s0)
+ 6e6:   fe042603                lw      a2,-32(s0)
+ 6ea:   fe442583                lw      a1,-28(s0)
+ 6ee:   fe842503                lw      a0,-24(s0)
+ 6f2:   441c                    lw      a5,8(s0)
+ 6f4:   e03e                    sd      a5,0(sp)
+ 6f6:   879a                    mv      a5,t1
+ 6f8:   f31ff0ef                jal     628 <leaf_call>
+ 6fc:   0001                    nop
+ 6fe:   fc040113                addi    sp,s0,-64
+ 702:   70e2                    ld      ra,56(sp)
+ 704:   7442                    ld      s0,48(sp)
+ 706:   6121                    addi    sp,sp,64
+ 708:   8082                    ret
+
+000000000000070a <main>:
+ 70a:   1101                    addi    sp,sp,-32
+ 70c:   ec06                    sd      ra,24(sp)
+ 70e:   e822                    sd      s0,16(sp)
+ 710:   1000                    addi    s0,sp,32
+ 712:   47a5                    li      a5,9
+ 714:   e43e                    sd      a5,8(sp)
+ 716:   47a1                    li      a5,8
+ 718:   e03e                    sd      a5,0(sp)
+ 71a:   489d                    li      a7,7
+ 71c:   4819                    li      a6,6
+ 71e:   4795                    li      a5,5
+ 720:   4711                    li      a4,4
+ 722:   468d                    li      a3,3
+ 724:   4609                    li      a2,2
+ 726:   4585                    li      a1,1
+ 728:   4501                    li      a0,0
+ 72a:   f4dff0ef                jal     676 <nonleaf_call>
+ 72e:   4781                    li      a5,0
+ 730:   853e                    mv      a0,a5
+ 732:   60e2                    ld      ra,24(sp)
+ 734:   6442                    ld      s0,16(sp)
+ 736:   6105                    addi    sp,sp,32
+ 738:   8082                    ret
+
+
+
+; ---------- for spilling ---------->
+
+; #include <stdlib.h>
+; #include <stdarg.h>
+;
+; void leaf_call(int b, int c, int d, int e, int f, int g, int h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, ...)
+; {
+;     int b,c,d,e,f,g,h,i,j;
+;     va_list ap;
+;     va_start(ap, a);
+;     b = va_arg(ap, int);
+;     c = va_arg(ap, int);
+;     d = va_arg(ap, int);
+;     e = va_arg(ap, int);
+;     f = va_arg(ap, int);
+;     g = va_arg(ap, int);
+;     h = va_arg(ap, int);
+;     i = va_arg(ap, int);
+;     j = va_arg(ap, int);
+;
+;     /* use some local data */
+;     *(char*)alloca(220) = 'L';
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 39 71         addi    sp, sp, -64
+       2: 06 fc         sd      ra, 56(sp)
+       4: 22 f8         sd      s0, 48(sp)
+       6: 80 00         addi    s0, sp, 64
+       8: aa 82         mv      t0, a0
+       a: 08 60         ld      a0, 0(s0)
+       c: 23 26 54 fe   sw      t0, -20(s0)
+      10: 23 24 b4 fe   sw      a1, -24(s0)
+      14: 23 22 c4 fe   sw      a2, -28(s0)
+      18: 23 20 d4 fe   sw      a3, -32(s0)
+      1c: 23 2e e4 fc   sw      a4, -36(s0)
+      20: 23 2c f4 fc   sw      a5, -40(s0)
+      24: 23 2a 04 fd   sw      a6, -44(s0)
+      28: 23 28 14 fd   sw      a7, -48(s0)
+      2c: 23 26 a4 fc   sw      a0, -52(s0)
+      30: e2 70         ld      ra, 56(sp)
+      32: 42 74         ld      s0, 48(sp)
+      34: 21 61         addi    sp, sp, 64
+      36: 82 80         ret
+
+0000000000000038 <nonleaf_call>:
+      38: 49 71         addi    sp, sp, -368 ; |          open frame, includes space for alloca(220)
+      3a: 06 f6         sd      ra, 296(sp)  ; |
+      3c: 22 f2         sd      s0, 288(sp)  ; | prolog (sets frame pointer to beginning of spill area of 64 bytes)
+      3e: 00 1a         addi    s0, sp, 304  ; /
+      40: 23 3c 14 03   sd      a7, 56(s0)   ; \
+      44: 23 38 04 03   sd      a6, 48(s0)   ; |
+      48: 1c f4         sd      a5, 40(s0)   ; |
+      4a: 18 f0         sd      a4, 32(s0)   ; | spill in args 1-7 (named arg 0 not spilled, not needed for vararg logic)
+      4c: 14 ec         sd      a3, 24(s0)   ; |
+      4e: 10 e8         sd      a2, 16(s0)   ; |
+      50: 0c e4         sd      a1, 8(s0)    ; |
+      52: 23 26 a4 fe   sw      a0, -20(s0)  ; store in arg 0 = 0 to local stack area (pointless, as unused, but probably to (re)use a0, freely)
+      56: 13 05 84 00   addi    a0, s0, 8    ; ptr to spilled in arg 1
+      5a: 23 30 a4 fc   sd      a0, -64(s0)  ; store ptr to spilled in arg 1
+      5e: 03 35 04 fc   ld      a0, -64(s0)  ; \                load ptr to in arg 1
+      62: 93 05 85 00   addi    a1, a0, 8    ; | copy in arg    advance ptr to spilled in arg 2 (for next var)
+      66: 23 30 b4 fc   sd      a1, -64(s0)  ; | 1 to local     store ptr
+      6a: 08 41         lw      a0, 0(a0)    ; | stack area     | read spilled in arg 1 into a0
+      6c: 23 24 a4 fe   sw      a0, -24(s0)  ; /                | store value in local stack area
+      70: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      74: 93 05 85 00   addi    a1, a0, 8    ; |
+      78: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 2 (from spill area) to local stack area
+      7c: 08 41         lw      a0, 0(a0)    ; |
+      7e: 23 22 a4 fe   sw      a0, -28(s0)  ; /
+      82: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      86: 93 05 85 00   addi    a1, a0, 8    ; |
+      8a: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 3 (from spill area) to local stack area
+      8e: 08 41         lw      a0, 0(a0)    ; |
+      90: 23 20 a4 fe   sw      a0, -32(s0)  ; /
+      94: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      98: 93 05 85 00   addi    a1, a0, 8    ; |
+      9c: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 4 (from spill area) to local stack area
+      a0: 08 41         lw      a0, 0(a0)    ; |
+      a2: 23 2e a4 fc   sw      a0, -36(s0)  ; /
+      a6: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      aa: 93 05 85 00   addi    a1, a0, 8    ; |
+      ae: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 5 (from spill area) to local stack area
+      b2: 08 41         lw      a0, 0(a0)    ; |
+      b4: 23 2c a4 fc   sw      a0, -40(s0)  ; /
+      b8: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      bc: 93 05 85 00   addi    a1, a0, 8    ; |
+      c0: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 6 (from spill area) to local stack area
+      c4: 08 41         lw      a0, 0(a0)    ; |
+      c6: 23 2a a4 fc   sw      a0, -44(s0)  ; /
+      ca: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      ce: 93 05 85 00   addi    a1, a0, 8    ; |
+      d2: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 7 (from spill area) to local stack area
+      d6: 08 41         lw      a0, 0(a0)    ; |
+      d8: 23 28 a4 fc   sw      a0, -48(s0)  ; /
+      dc: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      e0: 93 05 85 00   addi    a1, a0, 8    ; |
+      e4: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 8 (from param area) to local stack area
+      e8: 08 41         lw      a0, 0(a0)    ; |
+      ea: 23 26 a4 fc   sw      a0, -52(s0)  ; /
+      ee: 03 35 04 fc   ld      a0, -64(s0)  ; \
+      f2: 93 05 85 00   addi    a1, a0, 8    ; |
+      f6: 23 30 b4 fc   sd      a1, -64(s0)  ; | copy in arg 9 (from param area) to local stack area
+      fa: 08 41         lw      a0, 0(a0)    ; |
+      fc: 23 24 a4 fc   sw      a0, -56(s0)  ; /
+     100: 13 05 c0 04   li      a0, 76       ; \
+     104: 23 00 a4 ee   sb      a0, -288(s0) ; / store 'L' into alloca'd space
+     108: 03 25 84 fe   lw      a0, -24(s0)  ; arg 0
+     10c: 83 25 44 fe   lw      a1, -28(s0)  ; arg 1
+     110: 03 26 04 fe   lw      a2, -32(s0)  ; arg 2
+     114: 83 26 c4 fd   lw      a3, -36(s0)  ; arg 3
+     118: 03 27 84 fd   lw      a4, -40(s0)  ; arg 4
+     11c: 83 27 44 fd   lw      a5, -44(s0)  ; arg 5
+     120: 03 28 04 fd   lw      a6, -48(s0)  ; arg 6
+     124: 83 28 c4 fc   lw      a7, -52(s0)  ; arg 7
+     128: 83 22 84 fc   lw      t0, -56(s0)  ; |
+     12c: 0a 83         mv      t1, sp       ; | "push" arg 8 onto stack
+     12e: 23 30 53 00   sd      t0, 0(t1)    ; /
+     132: 97 00 00 00   auipc   ra, 0        ; \
+     136: e7 80 00 00   jalr    ra           ; / build relative call addr and call (offset 0 b/c not relocated)
+     13a: b2 70         ld      ra, 296(sp)  ; \
+     13c: 12 74         ld      s0, 288(sp)  ; |
+     13e: 75 61         addi    sp, sp, 368  ; | epilog
+     140: 82 80         ret                  ; |
+
+0000000000000142 <main>:
+     142: 79 71         addi    sp, sp, -48  ; |
+     144: 06 f4         sd      ra, 40(sp)   ; | prolog
+     146: 22 f0         sd      s0, 32(sp)   ; |
+     148: 00 18         addi    s0, sp, 48   ; |
+     14a: 01 45         li      a0, 0        ; arg 0
+     14c: 23 30 a4 fe   sd      a0, -32(s0)  ; write 0LL to local area on stack, is restored below into a0 on return as retval
+     150: 23 26 a4 fe   sw      a0, -20(s0)  ; write 0 to fp-20 - unsure why
+     154: 0a 86         mv      a2, sp       ; use a2 as addr helper for stack pushes (a bit pointless, b/c one could use sp directly)
+     156: a5 45         li      a1, 9        ; \
+     158: 0c e6         sd      a1, 8(a2)    ; / "push" arg 9 onto stack
+     15a: a1 45         li      a1, 8        ; \
+     15c: 0c e2         sd      a1, 0(a2)    ; / "push" arg 8 onto stack
+     15e: 85 45         li      a1, 1        ; arg 1
+     160: 09 46         li      a2, 2        ; arg 2
+     162: 8d 46         li      a3, 3        ; arg 3
+     164: 11 47         li      a4, 4        ; arg 4
+     166: 95 47         li      a5, 5        ; arg 5
+     168: 19 48         li      a6, 6        ; arg 6
+     16a: 9d 48         li      a7, 7        ; arg 7
+     16c: 97 00 00 00   auipc   ra, 0        ; |
+     170: e7 80 00 00   jalr    ra           ; | build relative call addr and call (offset 0 b/c not relocated)
+     174: 03 35 04 fe   ld      a0, -32(s0)  ; a0 = 0 (stored above), return value
+     178: a2 70         ld      ra, 40(sp)   ; |
+     17a: 02 74         ld      s0, 32(sp)   ; |
+     17c: 45 61         addi    sp, sp, 48   ; | epilog
+     17e: 82 80         ret                  ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000628 <leaf_call>:
+ 628:   7179                    addi    sp,sp,-48
+ 62a:   f422                    sd      s0,40(sp)
+ 62c:   1800                    addi    s0,sp,48
+ 62e:   8eaa                    mv      t4,a0
+ 630:   8e2e                    mv      t3,a1
+ 632:   8332                    mv      t1,a2
+ 634:   8536                    mv      a0,a3
+ 636:   85ba                    mv      a1,a4
+ 638:   863e                    mv      a2,a5
+ 63a:   86c2                    mv      a3,a6
+ 63c:   8746                    mv      a4,a7
+ 63e:   87f6                    mv      a5,t4
+ 640:   fef42623                sw      a5,-20(s0)
+ 644:   87f2                    mv      a5,t3
+ 646:   fef42423                sw      a5,-24(s0)
+ 64a:   879a                    mv      a5,t1
+ 64c:   fef42223                sw      a5,-28(s0)
+ 650:   87aa                    mv      a5,a0
+ 652:   fef42023                sw      a5,-32(s0)
+ 656:   87ae                    mv      a5,a1
+ 658:   fcf42e23                sw      a5,-36(s0)
+ 65c:   87b2                    mv      a5,a2
+ 65e:   fcf42c23                sw      a5,-40(s0)
+ 662:   87b6                    mv      a5,a3
+ 664:   fcf42a23                sw      a5,-44(s0)
+ 668:   87ba                    mv      a5,a4
+ 66a:   fcf42823                sw      a5,-48(s0)
+ 66e:   0001                    nop
+ 670:   7422                    ld      s0,40(sp)
+ 672:   6145                    addi    sp,sp,48
+ 674:   8082                    ret
+
+0000000000000676 <nonleaf_call>:
+ 676:   7135                    addi    sp,sp,-160
+ 678:   ec86                    sd      ra,88(sp)
+ 67a:   e8a2                    sd      s0,80(sp)
+ 67c:   1080                    addi    s0,sp,96
+ 67e:   e40c                    sd      a1,8(s0)
+ 680:   e810                    sd      a2,16(s0)
+ 682:   ec14                    sd      a3,24(s0)
+ 684:   f018                    sd      a4,32(s0)
+ 686:   f41c                    sd      a5,40(s0)
+ 688:   03043823                sd      a6,48(s0)
+ 68c:   03143c23                sd      a7,56(s0)
+ 690:   87aa                    mv      a5,a0
+ 692:   faf42e23                sw      a5,-68(s0)
+ 696:   04040793                addi    a5,s0,64
+ 69a:   faf43823                sd      a5,-80(s0)
+ 69e:   fb043783                ld      a5,-80(s0)
+ 6a2:   fc878793                addi    a5,a5,-56
+ 6a6:   fcf43023                sd      a5,-64(s0)
+ 6aa:   fc043783                ld      a5,-64(s0)
+ 6ae:   00878713                addi    a4,a5,8
+ 6b2:   fce43023                sd      a4,-64(s0)
+ 6b6:   439c                    lw      a5,0(a5)
+ 6b8:   fef42623                sw      a5,-20(s0)
+ 6bc:   fc043783                ld      a5,-64(s0)
+ 6c0:   00878713                addi    a4,a5,8
+ 6c4:   fce43023                sd      a4,-64(s0)
+ 6c8:   439c                    lw      a5,0(a5)
+ 6ca:   fef42423                sw      a5,-24(s0)
+ 6ce:   fc043783                ld      a5,-64(s0)
+ 6d2:   00878713                addi    a4,a5,8
+ 6d6:   fce43023                sd      a4,-64(s0)
+ 6da:   439c                    lw      a5,0(a5)
+ 6dc:   fef42223                sw      a5,-28(s0)
+ 6e0:   fc043783                ld      a5,-64(s0)
+ 6e4:   00878713                addi    a4,a5,8
+ 6e8:   fce43023                sd      a4,-64(s0)
+ 6ec:   439c                    lw      a5,0(a5)
+ 6ee:   fef42023                sw      a5,-32(s0)
+ 6f2:   fc043783                ld      a5,-64(s0)
+ 6f6:   00878713                addi    a4,a5,8
+ 6fa:   fce43023                sd      a4,-64(s0)
+ 6fe:   439c                    lw      a5,0(a5)
+ 700:   fcf42e23                sw      a5,-36(s0)
+ 704:   fc043783                ld      a5,-64(s0)
+ 708:   00878713                addi    a4,a5,8
+ 70c:   fce43023                sd      a4,-64(s0)
+ 710:   439c                    lw      a5,0(a5)
+ 712:   fcf42c23                sw      a5,-40(s0)
+ 716:   fc043783                ld      a5,-64(s0)
+ 71a:   00878713                addi    a4,a5,8
+ 71e:   fce43023                sd      a4,-64(s0)
+ 722:   439c                    lw      a5,0(a5)
+ 724:   fcf42a23                sw      a5,-44(s0)
+ 728:   fc043783                ld      a5,-64(s0)
+ 72c:   00878713                addi    a4,a5,8
+ 730:   fce43023                sd      a4,-64(s0)
+ 734:   439c                    lw      a5,0(a5)
+ 736:   fcf42823                sw      a5,-48(s0)
+ 73a:   fc043783                ld      a5,-64(s0)
+ 73e:   00878713                addi    a4,a5,8
+ 742:   fce43023                sd      a4,-64(s0)
+ 746:   439c                    lw      a5,0(a5)
+ 748:   fcf42623                sw      a5,-52(s0)
+ 74c:   7115                    addi    sp,sp,-224
+ 74e:   081c                    addi    a5,sp,16
+ 750:   07bd                    addi    a5,a5,15
+ 752:   8391                    srli    a5,a5,0x4
+ 754:   0792                    slli    a5,a5,0x4
+ 756:   873e                    mv      a4,a5
+ 758:   04c00793                li      a5,76
+ 75c:   00f70023                sb      a5,0(a4)
+ 760:   fd042883                lw      a7,-48(s0)
+ 764:   fd442803                lw      a6,-44(s0)
+ 768:   fd842303                lw      t1,-40(s0)
+ 76c:   fdc42703                lw      a4,-36(s0)
+ 770:   fe042683                lw      a3,-32(s0)
+ 774:   fe442603                lw      a2,-28(s0)
+ 778:   fe842583                lw      a1,-24(s0)
+ 77c:   fec42503                lw      a0,-20(s0)
+ 780:   fcc42783                lw      a5,-52(s0)
+ 784:   e03e                    sd      a5,0(sp)
+ 786:   879a                    mv      a5,t1
+ 788:   ea1ff0ef                jal     628 <leaf_call>
+ 78c:   0001                    nop
+ 78e:   fa040113                addi    sp,s0,-96
+ 792:   60e6                    ld      ra,88(sp)
+ 794:   6446                    ld      s0,80(sp)
+ 796:   610d                    addi    sp,sp,160
+ 798:   8082                    ret
+
+000000000000079a <main>:
+ 79a:   1101                    addi    sp,sp,-32
+ 79c:   ec06                    sd      ra,24(sp)
+ 79e:   e822                    sd      s0,16(sp)
+ 7a0:   1000                    addi    s0,sp,32
+ 7a2:   47a5                    li      a5,9
+ 7a4:   e43e                    sd      a5,8(sp)
+ 7a6:   47a1                    li      a5,8
+ 7a8:   e03e                    sd      a5,0(sp)
+ 7aa:   489d                    li      a7,7
+ 7ac:   4819                    li      a6,6
+ 7ae:   4795                    li      a5,5
+ 7b0:   4711                    li      a4,4
+ 7b2:   468d                    li      a3,3
+ 7b4:   4609                    li      a2,2
+ 7b6:   4585                    li      a1,1
+ 7b8:   4501                    li      a0,0
+ 7ba:   ebdff0ef                jal     676 <nonleaf_call>
+ 7be:   4781                    li      a5,0
+ 7c0:   853e                    mv      a0,a5
+ 7c2:   60e2                    ld      ra,24(sp)
+ 7c4:   6442                    ld      s0,16(sp)
+ 7c6:   6105                    addi    sp,sp,32
+ 7c8:   8082                    ret
+
+
+
+; ---------- for spilling with a float ---------->
+
+; #include <stdlib.h>
+; #include <stdarg.h>
+;
+; void leaf_call(int b, int c, int d, int e, float f, int g, int h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, ...)
+; {
+;     int b,c,d,e,g,h,i,j;
+;     float f;
+;     va_list ap;
+;     va_start(ap, a);
+;     b = va_arg(ap, int);
+;     c = va_arg(ap, int);
+;     d = va_arg(ap, int);
+;     e = va_arg(ap, int);
+;     f = va_arg(ap, float);
+;     g = va_arg(ap, int);
+;     h = va_arg(ap, int);
+;     i = va_arg(ap, int);
+;     j = va_arg(ap, int);
+;
+;     /* use some local data */
+;     *(char*)alloca(220) = 'L';
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, 5.f, 6, 7, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 39 71         addi    sp, sp, -64
+       2: 06 fc         sd      ra, 56(sp)
+       4: 22 f8         sd      s0, 48(sp)
+       6: 80 00         addi    s0, sp, 64
+       8: 23 26 a4 fe   sw      a0, -20(s0)
+       c: 23 24 b4 fe   sw      a1, -24(s0)
+      10: 23 22 c4 fe   sw      a2, -28(s0)
+      14: 23 20 d4 fe   sw      a3, -32(s0)
+      18: 27 2e a4 fc   fsw     fa0, -36(s0)
+      1c: 23 2c e4 fc   sw      a4, -40(s0)
+      20: 23 2a f4 fc   sw      a5, -44(s0)
+      24: 23 28 04 fd   sw      a6, -48(s0)
+      28: 23 26 14 fd   sw      a7, -52(s0)
+      2c: e2 70         ld      ra, 56(sp)
+      2e: 42 74         ld      s0, 48(sp)
+      30: 21 61         addi    sp, sp, 64
+      32: 82 80         ret
+
+0000000000000034 <nonleaf_call>:
+      34: 0d 71         addi    sp, sp, -352 ; |
+      36: 06 ee         sd      ra, 280(sp)  ; | prolog
+      38: 22 ea         sd      s0, 272(sp)  ; |
+      3a: 00 12         addi    s0, sp, 288  ; /
+      3c: 23 3c 14 03   sd      a7, 56(s0)   ; \
+      40: 23 38 04 03   sd      a6, 48(s0)   ; |
+      44: 1c f4         sd      a5, 40(s0)   ; |
+      46: 18 f0         sd      a4, 32(s0)   ; | spill unnamed args
+      48: 14 ec         sd      a3, 24(s0)   ; |
+      4a: 10 e8         sd      a2, 16(s0)   ; |
+      4c: 0c e4         sd      a1, 8(s0)    ; |
+      4e: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      52: 13 05 84 00   addi    a0, s0, 8    ;
+      56: 23 30 a4 fc   sd      a0, -64(s0)  ;
+      5a: 03 35 04 fc   ld      a0, -64(s0)  ;
+      5e: 93 05 85 00   addi    a1, a0, 8    ;
+      62: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      66: 08 41         lw      a0, 0(a0)    ;
+      68: 23 24 a4 fe   sw      a0, -24(s0)  ;
+      6c: 03 35 04 fc   ld      a0, -64(s0)  ;
+      70: 93 05 85 00   addi    a1, a0, 8    ;
+      74: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      78: 08 41         lw      a0, 0(a0)    ;
+      7a: 23 22 a4 fe   sw      a0, -28(s0)  ;
+      7e: 03 35 04 fc   ld      a0, -64(s0)  ;
+      82: 93 05 85 00   addi    a1, a0, 8    ;
+      86: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      8a: 08 41         lw      a0, 0(a0)    ;
+      8c: 23 20 a4 fe   sw      a0, -32(s0)  ;
+      90: 03 35 04 fc   ld      a0, -64(s0)  ;
+      94: 93 05 85 00   addi    a1, a0, 8    ;
+      98: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      9c: 08 41         lw      a0, 0(a0)    ;
+      9e: 23 2e a4 fc   sw      a0, -36(s0)  ;
+      a2: 03 35 04 fc   ld      a0, -64(s0)  ;
+      a6: 93 05 85 00   addi    a1, a0, 8    ;
+      aa: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      ae: 87 27 05 00   flw     fa5, 0(a0)   ;
+      b2: 27 24 f4 fc   fsw     fa5, -56(s0) ;
+      b6: 03 35 04 fc   ld      a0, -64(s0)  ;
+      ba: 93 05 85 00   addi    a1, a0, 8    ;
+      be: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      c2: 08 41         lw      a0, 0(a0)    ;
+      c4: 23 2c a4 fc   sw      a0, -40(s0)  ;
+      c8: 03 35 04 fc   ld      a0, -64(s0)  ;
+      cc: 93 05 85 00   addi    a1, a0, 8    ;
+      d0: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      d4: 08 41         lw      a0, 0(a0)    ;
+      d6: 23 2a a4 fc   sw      a0, -44(s0)  ;
+      da: 03 35 04 fc   ld      a0, -64(s0)  ;
+      de: 93 05 85 00   addi    a1, a0, 8    ;
+      e2: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      e6: 08 41         lw      a0, 0(a0)    ;
+      e8: 23 28 a4 fc   sw      a0, -48(s0)  ;
+      ec: 03 35 04 fc   ld      a0, -64(s0)  ;
+      f0: 93 05 85 00   addi    a1, a0, 8    ;
+      f4: 23 30 b4 fc   sd      a1, -64(s0)  ;
+      f8: 08 41         lw      a0, 0(a0)    ;
+      fa: 23 26 a4 fc   sw      a0, -52(s0)  ;
+      fe: 13 05 c0 04   li      a0, 76       ; | 'L'
+     102: 23 00 a4 ee   sb      a0, -288(s0) ; | write to alloca'd space
+     106: 03 25 84 fe   lw      a0, -24(s0)  ; arg 0
+     10a: 83 25 44 fe   lw      a1, -28(s0)  ; arg 1
+     10e: 03 26 04 fe   lw      a2, -32(s0)  ; arg 2
+     112: 83 26 c4 fd   lw      a3, -36(s0)  ; arg 3
+     116: 07 25 84 fc   flw     fa0, -56(s0) ; arg 4 (float arg)
+     11a: 03 27 84 fd   lw      a4, -40(s0)  ; arg 5
+     11e: 83 27 44 fd   lw      a5, -44(s0)  ; arg 6
+     122: 03 28 04 fd   lw      a6, -48(s0)  ; arg 7
+     126: 83 28 c4 fc   lw      a7, -52(s0)  ; arg 8 (passed via int reg, b/c arg 4 was in float reg)
+     12a: 97 00 00 00   auipc   ra, 0        ;
+     12e: e7 80 00 00   jalr    ra           ;
+     132: f2 60         ld      ra, 280(sp)  ; |
+     134: 52 64         ld      s0, 272(sp)  ; |
+     136: 35 61         addi    sp, sp, 352  ; | epilog
+     138: 82 80         ret                  ; |
+
+000000000000013a <main>:
+     13a: 79 71         addi    sp, sp, -48 ; |
+     13c: 06 f4         sd      ra, 40(sp)  ; | prolog
+     13e: 22 f0         sd      s0, 32(sp)  ; |
+     140: 00 18         addi    s0, sp, 48  ; |
+     142: 01 45         li      a0, 0       ; arg 0
+     144: 23 30 a4 fe   sd      a0, -32(s0) ; write 0LL to local area on stack, is restored below into a0 on return as retval
+     148: 23 26 a4 fe   sw      a0, -20(s0) ; write 0 to fp-20 - unsure why
+     14c: 0a 86         mv      a2, sp      ; use a2 as addr helper for stack pushes (a bit pointless, b/c one could use sp directly)
+     14e: a5 45         li      a1, 9       ; \
+     150: 0c e6         sd      a1, 8(a2)   ; / "push" arg 9 onto stack
+     152: a1 45         li      a1, 8       ; \
+     154: 0c e2         sd      a1, 0(a2)   ; / "push" arg 8 onto stack
+     156: b7 55 00 01   lui     a1, 4101    ; \
+     15a: 93 97 65 02   slli    a5, a1, 38  ; | arg 5 (float passed in int reg, b/c unnamed vararg)
+     15e: 85 45         li      a1, 1       ; arg 1
+     160: 09 46         li      a2, 2       ; arg 2
+     162: 8d 46         li      a3, 3       ; arg 3
+     164: 11 47         li      a4, 4       ; arg 4
+     166: 19 48         li      a6, 6       ; arg 6
+     168: 9d 48         li      a7, 7       ; arg 7
+     16a: 97 00 00 00   auipc   ra, 0       ; |
+     16e: e7 80 00 00   jalr    ra          ; | build relative call addr and call (offset 0 b/c not relocated)
+     172: 03 35 04 fe   ld      a0, -32(s0) ; a0 = 0 (stored above), return value
+     176: a2 70         ld      ra, 40(sp)  ; |
+     178: 02 74         ld      s0, 32(sp)  ; |
+     17a: 45 61         addi    sp, sp, 48  ; | epilog
+     17c: 82 80         ret                 ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000628 <leaf_call>:
+ 628:   7139                    addi    sp,sp,-64
+ 62a:   fc22                    sd      s0,56(sp)
+ 62c:   0080                    addi    s0,sp,64
+ 62e:   8eaa                    mv      t4,a0
+ 630:   8e2e                    mv      t3,a1
+ 632:   8332                    mv      t1,a2
+ 634:   8536                    mv      a0,a3
+ 636:   fca42e27                fsw     fa0,-36(s0)
+ 63a:   85ba                    mv      a1,a4
+ 63c:   863e                    mv      a2,a5
+ 63e:   86c2                    mv      a3,a6
+ 640:   8746                    mv      a4,a7
+ 642:   87f6                    mv      a5,t4
+ 644:   fef42623                sw      a5,-20(s0)
+ 648:   87f2                    mv      a5,t3
+ 64a:   fef42423                sw      a5,-24(s0)
+ 64e:   879a                    mv      a5,t1
+ 650:   fef42223                sw      a5,-28(s0)
+ 654:   87aa                    mv      a5,a0
+ 656:   fef42023                sw      a5,-32(s0)
+ 65a:   87ae                    mv      a5,a1
+ 65c:   fcf42c23                sw      a5,-40(s0)
+ 660:   87b2                    mv      a5,a2
+ 662:   fcf42a23                sw      a5,-44(s0)
+ 666:   87b6                    mv      a5,a3
+ 668:   fcf42823                sw      a5,-48(s0)
+ 66c:   87ba                    mv      a5,a4
+ 66e:   fcf42623                sw      a5,-52(s0)
+ 672:   0001                    nop
+ 674:   7462                    ld      s0,56(sp)
+ 676:   6121                    addi    sp,sp,64
+ 678:   8082                    ret
+
+000000000000067a <nonleaf_call>:
+ 67a:   7119                    addi    sp,sp,-128
+ 67c:   fc22                    sd      s0,56(sp)
+ 67e:   0080                    addi    s0,sp,64
+ 680:   e40c                    sd      a1,8(s0)
+ 682:   e810                    sd      a2,16(s0)
+ 684:   ec14                    sd      a3,24(s0)
+ 686:   f018                    sd      a4,32(s0)
+ 688:   f41c                    sd      a5,40(s0)
+ 68a:   03043823                sd      a6,48(s0)
+ 68e:   03143c23                sd      a7,56(s0)
+ 692:   87aa                    mv      a5,a0
+ 694:   fcf42623                sw      a5,-52(s0)
+ 698:   04040793                addi    a5,s0,64
+ 69c:   fcf43023                sd      a5,-64(s0)
+ 6a0:   fc043783                ld      a5,-64(s0)
+ 6a4:   fc878793                addi    a5,a5,-56
+ 6a8:   fcf43c23                sd      a5,-40(s0)
+ 6ac:   fd843783                ld      a5,-40(s0)
+ 6b0:   00878713                addi    a4,a5,8
+ 6b4:   fce43c23                sd      a4,-40(s0)
+ 6b8:   439c                    lw      a5,0(a5)
+ 6ba:   fef42623                sw      a5,-20(s0)
+ 6be:   fd843783                ld      a5,-40(s0)
+ 6c2:   00878713                addi    a4,a5,8
+ 6c6:   fce43c23                sd      a4,-40(s0)
+ 6ca:   439c                    lw      a5,0(a5)
+ 6cc:   fef42423                sw      a5,-24(s0)
+ 6d0:   fd843783                ld      a5,-40(s0)
+ 6d4:   00878713                addi    a4,a5,8
+ 6d8:   fce43c23                sd      a4,-40(s0)
+ 6dc:   439c                    lw      a5,0(a5)
+ 6de:   fef42223                sw      a5,-28(s0)
+ 6e2:   fd843783                ld      a5,-40(s0)
+ 6e6:   00878713                addi    a4,a5,8
+ 6ea:   fce43c23                sd      a4,-40(s0)
+ 6ee:   439c                    lw      a5,0(a5)
+ 6f0:   fef42023                sw      a5,-32(s0)
+ 6f4:   9002                    ebreak
+
+00000000000006f6 <main>:
+ 6f6:   1101                    addi    sp,sp,-32
+ 6f8:   ec06                    sd      ra,24(sp)
+ 6fa:   e822                    sd      s0,16(sp)
+ 6fc:   1000                    addi    s0,sp,32
+ 6fe:   00000797                auipc   a5,0x0
+ 702:   04278793                addi    a5,a5,66 # 740 <_IO_stdin_used+0x8>
+ 706:   239c                    fld     fa5,0(a5)
+ 708:   47a5                    li      a5,9
+ 70a:   e43e                    sd      a5,8(sp)
+ 70c:   47a1                    li      a5,8
+ 70e:   e03e                    sd      a5,0(sp)
+ 710:   489d                    li      a7,7
+ 712:   4819                    li      a6,6
+ 714:   e20787d3                fmv.x.d a5,fa5
+ 718:   4711                    li      a4,4
+ 71a:   468d                    li      a3,3
+ 71c:   4609                    li      a2,2
+ 71e:   4585                    li      a1,1
+ 720:   4501                    li      a0,0
+ 722:   f59ff0ef                jal     67a <nonleaf_call>
+ 726:   4781                    li      a5,0
+ 728:   853e                    mv      a0,a5
+ 72a:   60e2                    ld      ra,24(sp)
+ 72c:   6442                    ld      s0,16(sp)
+ 72e:   6105                    addi    sp,sp,32
+ 730:   8082                    ret
+
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 39 71         addi    sp, sp, -64
+       2: 06 fc         sd      ra, 56(sp)
+       4: 22 f8         sd      s0, 48(sp)
+       6: 80 00         addi    s0, sp, 64
+       8: 23 34 f4 fe   sd      a5, -24(s0)
+       c: 23 30 e4 fe   sd      a4, -32(s0)
+      10: 23 2e a4 fc   sw      a0, -36(s0)
+      14: 23 2c b4 fc   sw      a1, -40(s0)
+      18: 23 2a c4 fc   sw      a2, -44(s0)
+      1c: 23 28 d4 fc   sw      a3, -48(s0)
+      20: 23 26 04 fd   sw      a6, -52(s0)
+      24: 23 24 14 fd   sw      a7, -56(s0)
+      28: e2 70         ld      ra, 56(sp)
+      2a: 42 74         ld      s0, 48(sp)
+      2c: 21 61         addi    sp, sp, 64
+      2e: 82 80         ret
+
+0000000000000030 <nonleaf_call>:
+      30: 35 71         addi    sp, sp, -160 ; |
+      32: 06 ed         sd      ra, 152(sp)  ; | prolog
+      34: 22 e9         sd      s0, 144(sp)  ; |
+      36: 00 11         addi    s0, sp, 160  ; |
+      38: c2 82         mv      t0, a6       ;
+      3a: 3e 88         mv      a6, a5       ;
+      3c: aa 87         mv      a5, a0       ;
+      3e: 08 60         ld      a0, 0(s0)    ;
+      40: 23 34 54 fe   sd      t0, -24(s0)  ;
+      44: 23 30 04 ff   sd      a6, -32(s0)  ;
+      48: 23 2e f4 fc   sw      a5, -36(s0)  ;
+      4c: 23 2c b4 fc   sw      a1, -40(s0)  ;
+      50: 23 2a c4 fc   sw      a2, -44(s0)  ;
+      54: 23 28 d4 fc   sw      a3, -48(s0)  ;
+      58: 23 26 e4 fc   sw      a4, -52(s0)  ;
+      5c: 23 24 14 fd   sw      a7, -56(s0)  ;
+      60: 23 22 a4 fc   sw      a0, -60(s0)  ;
+      64: 13 05 04 f6   addi    a0, s0, -160 ;
+      68: 81 45         li      a1, 0        ;
+      6a: 13 06 40 06   li      a2, 100      ;
+      6e: 97 00 00 00   auipc   ra, 0        ;
+      72: e7 80 00 00   jalr    ra           ;
+      76: 13 05 c0 04   li      a0, 76       ;
+      7a: 23 00 a4 f6   sb      a0, -160(s0) ;
+      7e: 03 25 84 fd   lw      a0, -40(s0)  ;
+      82: 83 25 44 fd   lw      a1, -44(s0)  ;
+      86: 03 26 04 fd   lw      a2, -48(s0)  ;
+      8a: 83 26 c4 fc   lw      a3, -52(s0)  ;
+      8e: 03 28 84 fc   lw      a6, -56(s0)  ;
+      92: 83 28 44 fc   lw      a7, -60(s0)  ;
+      96: 83 37 84 fe   ld      a5, -24(s0)  ;
+      9a: 03 37 04 fe   ld      a4, -32(s0)  ;
+      9e: 97 00 00 00   auipc   ra, 0        ;
+      a2: e7 80 00 00   jalr    ra           ;
+      a6: ea 60         ld      ra, 152(sp)  ; |
+      a8: 4a 64         ld      s0, 144(sp)  ; |
+      aa: 0d 61         addi    sp, sp, 160  ; | epilog
+      ac: 82 80         ret                  ; |
+
+00000000000000ae <main>:
+      ae: 39 71         addi    sp, sp, -64  ; |
+      b0: 06 fc         sd      ra, 56(sp)   ; | prolog
+      b2: 22 f8         sd      s0, 48(sp)   ; |        s0 = fp (frame pointer)
+      b4: 80 00         addi    s0, sp, 64   ; |
+      b6: 01 45         li      a0, 0        ; arg 0
+      b8: 23 38 a4 fc   sd      a0, -48(s0)  ; write 0LL to local area on stack, is restored below into a0 on return as retval
+      bc: 23 26 a4 fe   sw      a0, -20(s0)  ; write 0 to fp-20 - unsure why
+      c0: 95 45         li      a1, 5        ; \
+      c2: 23 2c b4 fc   sw      a1, -40(s0)  ; | create struct to pass in local frame
+      c6: 99 45         li      a1, 6        ; |
+      c8: 23 2e b4 fc   sw      a1, -36(s0)  ; |
+      cc: 9d 45         li      a1, 7        ; |
+      ce: 23 30 b4 fe   sd      a1, -32(s0)  ; /
+      d2: 03 38 04 fe   ld      a6, -32(s0)  ; \
+      d6: 83 37 84 fd   ld      a5, -40(s0)  ; / arg 5 (struct A), passed in regs as 2 dword
+      da: 0a 86         mv      a2, sp       ; \
+      dc: a5 45         li      a1, 9        ; | "push" arg 7 onto stack
+      de: 0c e2         sd      a1, 0(a2)    ; /
+      e0: 85 45         li      a1, 1        ; arg 1
+      e2: 09 46         li      a2, 2        ; arg 2
+      e4: 8d 46         li      a3, 3        ; arg 3
+      e6: 11 47         li      a4, 4        ; arg 4
+      e8: a1 48         li      a7, 8        ; arg 6
+      ea: 97 00 00 00   auipc   ra, 0        ; |
+      ee: e7 80 00 00   jalr    ra           ; | build relative call addr and call (offset 0 b/c not relocated)
+      f2: 03 35 04 fd   ld      a0, -48(s0)  ; a0 = 0 (stored above), return value
+      f6: e2 70         ld      ra, 56(sp)   ; |
+      f8: 42 74         ld      s0, 48(sp)   ; |
+      fa: 21 61         addi    sp, sp, 64   ; | epilog
+      fc: 82 80         ret                  ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000628 <leaf_call>:
+ 628:   7139                    addi    sp,sp,-64
+ 62a:   fc22                    sd      s0,56(sp)
+ 62c:   0080                    addi    s0,sp,64
+ 62e:   832a                    mv      t1,a0
+ 630:   852e                    mv      a0,a1
+ 632:   85b2                    mv      a1,a2
+ 634:   8636                    mv      a2,a3
+ 636:   fce43823                sd      a4,-48(s0)
+ 63a:   fcf43c23                sd      a5,-40(s0)
+ 63e:   86c2                    mv      a3,a6
+ 640:   8746                    mv      a4,a7
+ 642:   879a                    mv      a5,t1
+ 644:   fef42623                sw      a5,-20(s0)
+ 648:   87aa                    mv      a5,a0
+ 64a:   fef42423                sw      a5,-24(s0)
+ 64e:   87ae                    mv      a5,a1
+ 650:   fef42223                sw      a5,-28(s0)
+ 654:   87b2                    mv      a5,a2
+ 656:   fef42023                sw      a5,-32(s0)
+ 65a:   87b6                    mv      a5,a3
+ 65c:   fcf42623                sw      a5,-52(s0)
+ 660:   87ba                    mv      a5,a4
+ 662:   fcf42423                sw      a5,-56(s0)
+ 666:   0001                    nop
+ 668:   7462                    ld      s0,56(sp)
+ 66a:   6121                    addi    sp,sp,64
+ 66c:   8082                    ret
+
+000000000000066e <nonleaf_call>:
+ 66e:   7171                    addi    sp,sp,-176
+ 670:   f506                    sd      ra,168(sp)
+ 672:   f122                    sd      s0,160(sp)
+ 674:   1900                    addi    s0,sp,176
+ 676:   832a                    mv      t1,a0
+ 678:   852e                    mv      a0,a1
+ 67a:   85b2                    mv      a1,a2
+ 67c:   8636                    mv      a2,a3
+ 67e:   86ba                    mv      a3,a4
+ 680:   f4f43c23                sd      a5,-168(s0)
+ 684:   f7043023                sd      a6,-160(s0)
+ 688:   8746                    mv      a4,a7
+ 68a:   879a                    mv      a5,t1
+ 68c:   f6f42e23                sw      a5,-132(s0)
+ 690:   87aa                    mv      a5,a0
+ 692:   f6f42c23                sw      a5,-136(s0)
+ 696:   87ae                    mv      a5,a1
+ 698:   f6f42a23                sw      a5,-140(s0)
+ 69c:   87b2                    mv      a5,a2
+ 69e:   f6f42823                sw      a5,-144(s0)
+ 6a2:   87b6                    mv      a5,a3
+ 6a4:   f6f42623                sw      a5,-148(s0)
+ 6a8:   87ba                    mv      a5,a4
+ 6aa:   f6f42423                sw      a5,-152(s0)
+ 6ae:   04c00793                li      a5,76
+ 6b2:   f8f43423                sd      a5,-120(s0)
+ 6b6:   f8043823                sd      zero,-112(s0)
+ 6ba:   f8043c23                sd      zero,-104(s0)
+ 6be:   fa043023                sd      zero,-96(s0)
+ 6c2:   fa043423                sd      zero,-88(s0)
+ 6c6:   fa043823                sd      zero,-80(s0)
+ 6ca:   fa043c23                sd      zero,-72(s0)
+ 6ce:   fc043023                sd      zero,-64(s0)
+ 6d2:   fc043423                sd      zero,-56(s0)
+ 6d6:   fc043823                sd      zero,-48(s0)
+ 6da:   fc043c23                sd      zero,-40(s0)
+ 6de:   fe043023                sd      zero,-32(s0)
+ 6e2:   fe042423                sw      zero,-24(s0)
+ 6e6:   4018                    lw      a4,0(s0)
+ 6e8:   f6842783                lw      a5,-152(s0)
+ 6ec:   f6c42683                lw      a3,-148(s0)
+ 6f0:   f7042603                lw      a2,-144(s0)
+ 6f4:   f7442583                lw      a1,-140(s0)
+ 6f8:   f7842503                lw      a0,-136(s0)
+ 6fc:   88ba                    mv      a7,a4
+ 6fe:   883e                    mv      a6,a5
+ 700:   f5843703                ld      a4,-168(s0)
+ 704:   f6043783                ld      a5,-160(s0)
+ 708:   f21ff0ef                jal     628 <leaf_call>
+ 70c:   0001                    nop
+ 70e:   70aa                    ld      ra,168(sp)
+ 710:   740a                    ld      s0,160(sp)
+ 712:   614d                    addi    sp,sp,176
+ 714:   8082                    ret
+
+0000000000000716 <main>:
+ 716:   7179                    addi    sp,sp,-48
+ 718:   f406                    sd      ra,40(sp)
+ 71a:   f022                    sd      s0,32(sp)
+ 71c:   1800                    addi    s0,sp,48
+ 71e:   4795                    li      a5,5
+ 720:   fef42023                sw      a5,-32(s0)
+ 724:   4799                    li      a5,6
+ 726:   fef42223                sw      a5,-28(s0)
+ 72a:   479d                    li      a5,7
+ 72c:   fef43423                sd      a5,-24(s0)
+ 730:   47a5                    li      a5,9
+ 732:   e03e                    sd      a5,0(sp)
+ 734:   48a1                    li      a7,8
+ 736:   fe043783                ld      a5,-32(s0)
+ 73a:   fe843803                ld      a6,-24(s0)
+ 73e:   4711                    li      a4,4
+ 740:   468d                    li      a3,3
+ 742:   4609                    li      a2,2
+ 744:   4585                    li      a1,1
+ 746:   4501                    li      a0,0
+ 748:   f27ff0ef                jal     66e <nonleaf_call>
+ 74c:   4781                    li      a5,0
+ 74e:   853e                    mv      a0,a5
+ 750:   70a2                    ld      ra,40(sp)
+ 752:   7402                    ld      s0,32(sp)
+ 754:   6145                    addi    sp,sp,48
+ 756:   8082                    ret
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 75 71         addi    sp, sp, -144
+       2: 06 e5         sd      ra, 136(sp)
+       4: 22 e1         sd      s0, 128(sp)
+       6: 00 09         addi    s0, sp, 144
+       8: c6 82         mv      t0, a7
+       a: c2 88         mv      a7, a6
+       c: 36 83         mv      t1, a3
+       e: 32 8e         mv      t3, a2
+      10: ae 83         mv      t2, a1
+      12: 2a 86         mv      a2, a0
+      14: 03 38 84 00   ld      a6, 8(s0)
+      18: 14 60         ld      a3, 0(s0)
+      1a: 08 6c         ld      a0, 24(s0)
+      1c: 0c 68         ld      a1, 16(s0)
+      1e: 23 3c c4 fd   sd      t3, -40(s0)
+      22: 23 38 74 fc   sd      t2, -48(s0)
+      26: 83 23 84 fd   lw      t2, -40(s0)
+      2a: 23 24 74 fe   sw      t2, -24(s0)
+      2e: 83 33 04 fd   ld      t2, -48(s0)
+      32: 23 30 74 fe   sd      t2, -32(s0)
+      36: 27 30 a4 fc   fsd     fa0, -64(s0)
+      3a: 23 34 64 fc   sd      t1, -56(s0)
+      3e: 23 34 54 fa   sd      t0, -88(s0)
+      42: 23 30 14 fb   sd      a7, -96(s0)
+      46: 83 28 84 fa   lw      a7, -88(s0)
+      4a: 23 2c 14 fb   sw      a7, -72(s0)
+      4e: 83 38 04 fa   ld      a7, -96(s0)
+      52: 23 38 14 fb   sd      a7, -80(s0)
+      56: 23 3c 04 f9   sd      a6, -104(s0)
+      5a: 23 38 d4 f8   sd      a3, -112(s0)
+      5e: 23 26 c4 f8   sw      a2, -116(s0)
+      62: 23 24 e4 f8   sw      a4, -120(s0)
+      66: 23 22 f4 f8   sw      a5, -124(s0)
+      6a: 23 20 b4 f8   sw      a1, -128(s0)
+      6e: 23 2e a4 f6   sw      a0, -132(s0)
+      72: aa 60         ld      ra, 136(sp)
+      74: 0a 64         ld      s0, 128(sp)
+      76: 49 61         addi    sp, sp, 144
+      78: 82 80         ret
+
+000000000000007a <nonleaf_call>:
+      7a: 69 71         addi    sp, sp, -304
+      7c: 06 f6         sd      ra, 296(sp)
+      7e: 22 f2         sd      s0, 288(sp)
+      80: 00 1a         addi    s0, sp, 304
+      82: c6 82         mv      t0, a7
+      84: ba 83         mv      t2, a4
+      86: b6 8e         mv      t4, a3
+      88: 32 8e         mv      t3, a2
+      8a: 2e 86         mv      a2, a1
+      8c: aa 86         mv      a3, a0
+      8e: 83 38 04 01   ld      a7, 16(s0)
+      92: 18 64         ld      a4, 8(s0)
+      94: 03 33 04 00   ld      t1, 0(s0)
+      98: 08 70         ld      a0, 32(s0)
+      9a: 0c 6c         ld      a1, 24(s0)
+      9c: 23 3c d4 fd   sd      t4, -40(s0)
+      a0: 23 38 c4 fd   sd      t3, -48(s0)
+      a4: 03 2e 84 fd   lw      t3, -40(s0)
+      a8: 23 24 c4 ff   sw      t3, -24(s0)
+      ac: 03 3e 04 fd   ld      t3, -48(s0)
+      b0: 23 30 c4 ff   sd      t3, -32(s0)
+      b4: 27 30 a4 fc   fsd     fa0, -64(s0)
+      b8: 23 34 74 fc   sd      t2, -56(s0)
+      bc: 23 34 64 fa   sd      t1, -88(s0)
+      c0: 23 30 54 fa   sd      t0, -96(s0)
+      c4: 83 22 84 fa   lw      t0, -88(s0)
+      c8: 23 2c 54 fa   sw      t0, -72(s0)
+      cc: 83 32 04 fa   ld      t0, -96(s0)
+      d0: 23 38 54 fa   sd      t0, -80(s0)
+      d4: 23 3c 14 f9   sd      a7, -104(s0)
+      d8: 23 38 e4 f8   sd      a4, -112(s0)
+      dc: 23 26 d4 f8   sw      a3, -116(s0)
+      e0: 23 24 c4 f8   sw      a2, -120(s0)
+      e4: 23 22 f4 f8   sw      a5, -124(s0)
+      e8: 23 20 04 f9   sw      a6, -128(s0)
+      ec: 23 2e b4 f6   sw      a1, -132(s0)
+      f0: 23 2c a4 f6   sw      a0, -136(s0)
+      f4: 13 05 44 f1   addi    a0, s0, -236
+      f8: 81 45         li      a1, 0
+      fa: 13 06 40 06   li      a2, 100
+      fe: 97 00 00 00   auipc   ra, 0
+     102: e7 80 00 00   jalr    ra
+     106: 13 05 c0 04   li      a0, 76
+     10a: 23 0a a4 f0   sb      a0, -236(s0)
+     10e: 03 25 84 f8   lw      a0, -120(s0)
+     112: 03 27 44 f8   lw      a4, -124(s0)
+     116: 83 27 04 f8   lw      a5, -128(s0)
+     11a: 03 2e c4 f7   lw      t3, -132(s0)
+     11e: 83 2e 84 f7   lw      t4, -136(s0)
+     122: 83 25 84 fe   lw      a1, -24(s0)
+     126: 23 24 b4 f0   sw      a1, -248(s0)
+     12a: 83 35 04 fe   ld      a1, -32(s0)
+     12e: 23 30 b4 f0   sd      a1, -256(s0)
+     132: 03 36 84 f0   ld      a2, -248(s0)
+     136: 83 35 04 f0   ld      a1, -256(s0)
+     13a: 07 35 04 fc   fld     fa0, -64(s0)
+     13e: 83 36 84 fc   ld      a3, -56(s0)
+     142: 03 28 84 fb   lw      a6, -72(s0)
+     146: 23 2c 04 ef   sw      a6, -264(s0)
+     14a: 03 38 04 fb   ld      a6, -80(s0)
+     14e: 23 38 04 ef   sd      a6, -272(s0)
+     152: 83 38 84 ef   ld      a7, -264(s0)
+     156: 03 38 04 ef   ld      a6, -272(s0)
+     15a: 83 32 04 f9   ld      t0, -112(s0)
+     15e: 83 33 84 f9   ld      t2, -104(s0)
+     162: 0a 83         mv      t1, sp
+     164: 23 3c d3 01   sd      t4, 24(t1)
+     168: 23 38 c3 01   sd      t3, 16(t1)
+     16c: 23 34 73 00   sd      t2, 8(t1)
+     170: 23 30 53 00   sd      t0, 0(t1)
+     174: 97 00 00 00   auipc   ra, 0
+     178: e7 80 00 00   jalr    ra
+     17c: b2 70         ld      ra, 296(sp)
+     17e: 12 74         ld      s0, 288(sp)
+     180: 55 61         addi    sp, sp, 304
+     182: 82 80         ret
+
+0000000000000184 <main>:
+     184: 35 71         addi    sp, sp, -160
+     186: 06 ed         sd      ra, 152(sp)
+     188: 22 e9         sd      s0, 144(sp)
+     18a: 00 11         addi    s0, sp, 160
+     18c: 01 45         li      a0, 0
+     18e: 23 34 a4 f8   sd      a0, -120(s0)
+     192: 23 26 a4 fe   sw      a0, -20(s0)
+     196: 89 45         li      a1, 2
+     198: 23 20 b4 fe   sw      a1, -32(s0)
+     19c: 8d 45         li      a1, 3
+     19e: 23 22 b4 fe   sw      a1, -28(s0)
+     1a2: b7 05 80 40   lui     a1, 264192
+     1a6: 23 24 b4 fe   sw      a1, -24(s0)
+     1aa: b7 55 00 01   lui     a1, 4101
+     1ae: 9a 15         slli    a1, a1, 38
+     1b0: 23 38 b4 fc   sd      a1, -48(s0)
+     1b4: 99 45         li      a1, 6
+     1b6: 23 3c b4 fc   sd      a1, -40(s0)
+     1ba: a5 45         li      a1, 9
+     1bc: 23 22 b4 fc   sw      a1, -60(s0)
+     1c0: a9 45         li      a1, 10
+     1c2: 23 24 b4 fc   sw      a1, -56(s0)
+     1c6: b7 05 30 41   lui     a1, 267008
+     1ca: 23 26 b4 fc   sw      a1, -52(s0)
+     1ce: b7 55 80 00   lui     a1, 2053
+     1d2: 9e 15         slli    a1, a1, 39
+     1d4: 23 38 b4 fa   sd      a1, -80(s0)
+     1d8: b5 45         li      a1, 13
+     1da: 23 3c b4 fa   sd      a1, -72(s0)
+     1de: 83 25 84 fe   lw      a1, -24(s0)
+     1e2: 23 24 b4 fa   sw      a1, -88(s0)
+     1e6: 83 65 44 fe   lwu     a1, -28(s0)
+     1ea: 82 15         slli    a1, a1, 32
+     1ec: 03 66 04 fe   lwu     a2, -32(s0)
+     1f0: d1 8d         or      a1, a1, a2
+     1f2: 23 30 b4 fa   sd      a1, -96(s0)
+     1f6: 83 36 84 fa   ld      a3, -88(s0)
+     1fa: 03 36 04 fa   ld      a2, -96(s0)
+     1fe: 07 35 04 fd   fld     fa0, -48(s0)
+     202: 03 37 84 fd   ld      a4, -40(s0)
+     206: 83 25 c4 fc   lw      a1, -52(s0)
+     20a: 23 2c b4 f8   sw      a1, -104(s0)
+     20e: 83 65 84 fc   lwu     a1, -56(s0)
+     212: 82 15         slli    a1, a1, 32
+     214: 83 67 44 fc   lwu     a5, -60(s0)
+     218: dd 8d         or      a1, a1, a5
+     21a: 23 38 b4 f8   sd      a1, -112(s0)
+     21e: 83 38 04 f9   ld      a7, -112(s0)
+     222: 83 35 84 f9   ld      a1, -104(s0)
+     226: 03 38 04 fb   ld      a6, -80(s0)
+     22a: 83 32 84 fb   ld      t0, -72(s0)
+     22e: 8a 87         mv      a5, sp
+     230: 3d 43         li      t1, 15
+     232: 23 b0 67 02   sd      t1, 32(a5)
+     236: 39 43         li      t1, 14
+     238: 23 bc 67 00   sd      t1, 24(a5)
+     23c: 23 b8 57 00   sd      t0, 16(a5)
+     240: 23 b4 07 01   sd      a6, 8(a5)
+     244: 8c e3         sd      a1, 0(a5)
+     246: 85 45         li      a1, 1
+     248: 9d 47         li      a5, 7
+     24a: 21 48         li      a6, 8
+     24c: 97 00 00 00   auipc   ra, 0
+     250: e7 80 00 00   jalr    ra
+     254: 03 35 84 f8   ld      a0, -120(s0)
+     258: ea 60         ld      ra, 152(sp)
+     25a: 4a 64         ld      s0, 144(sp)
+     25c: 0d 61         addi    sp, sp, 160
+     25e: 82 80         ret
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000628 <leaf_call>:
+ 628:   715d                    addi    sp,sp,-80
+ 62a:   e4a2                    sd      s0,72(sp)
+ 62c:   0880                    addi    s0,sp,80
+ 62e:   fcb43c23                sd      a1,-40(s0)
+ 632:   fec43023                sd      a2,-32(s0)
+ 636:   22a507d3                fmv.d   fa5,fa0
+ 63a:   863a                    mv      a2,a4
+ 63c:   873e                    mv      a4,a5
+ 63e:   fb043823                sd      a6,-80(s0)
+ 642:   fb143c23                sd      a7,-72(s0)
+ 646:   87aa                    mv      a5,a0
+ 648:   fef42623                sw      a5,-20(s0)
+ 64c:   fcf43427                fsd     fa5,-56(s0)
+ 650:   fcd43823                sd      a3,-48(s0)
+ 654:   87b2                    mv      a5,a2
+ 656:   fef42423                sw      a5,-24(s0)
+ 65a:   87ba                    mv      a5,a4
+ 65c:   fcf42223                sw      a5,-60(s0)
+ 660:   0001                    nop
+ 662:   6426                    ld      s0,72(sp)
+ 664:   6161                    addi    sp,sp,80
+ 666:   8082                    ret
+
+0000000000000668 <nonleaf_call>:
+ 668:   7115                    addi    sp,sp,-224
+ 66a:   e586                    sd      ra,200(sp)
+ 66c:   e1a2                    sd      s0,192(sp)
+ 66e:   0980                    addi    s0,sp,208
+ 670:   f6c43423                sd      a2,-152(s0)
+ 674:   f6d43823                sd      a3,-144(s0)
+ 678:   22a507d3                fmv.d   fa5,fa0
+ 67c:   863e                    mv      a2,a5
+ 67e:   86c2                    mv      a3,a6
+ 680:   01143423                sd      a7,8(s0)
+ 684:   87aa                    mv      a5,a0
+ 686:   f6f42e23                sw      a5,-132(s0)
+ 68a:   87ae                    mv      a5,a1
+ 68c:   f6f42c23                sw      a5,-136(s0)
+ 690:   f4f43c27                fsd     fa5,-168(s0)
+ 694:   f6e43023                sd      a4,-160(s0)
+ 698:   87b2                    mv      a5,a2
+ 69a:   f4f42a23                sw      a5,-172(s0)
+ 69e:   87b6                    mv      a5,a3
+ 6a0:   f4f42823                sw      a5,-176(s0)
+ 6a4:   04c00793                li      a5,76
+ 6a8:   f8f43423                sd      a5,-120(s0)
+ 6ac:   f8043823                sd      zero,-112(s0)
+ 6b0:   f8043c23                sd      zero,-104(s0)
+ 6b4:   fa043023                sd      zero,-96(s0)
+ 6b8:   fa043423                sd      zero,-88(s0)
+ 6bc:   fa043823                sd      zero,-80(s0)
+ 6c0:   fa043c23                sd      zero,-72(s0)
+ 6c4:   fc043023                sd      zero,-64(s0)
+ 6c8:   fc043423                sd      zero,-56(s0)
+ 6cc:   fc043823                sd      zero,-48(s0)
+ 6d0:   fc043c23                sd      zero,-40(s0)
+ 6d4:   fe043023                sd      zero,-32(s0)
+ 6d8:   fe042423                sw      zero,-24(s0)
+ 6dc:   f5042603                lw      a2,-176(s0)
+ 6e0:   f5442703                lw      a4,-172(s0)
+ 6e4:   f5843787                fld     fa5,-168(s0)
+ 6e8:   f6043683                ld      a3,-160(s0)
+ 6ec:   f7842503                lw      a0,-136(s0)
+ 6f0:   581c                    lw      a5,48(s0)
+ 6f2:   ec3e                    sd      a5,24(sp)
+ 6f4:   541c                    lw      a5,40(s0)
+ 6f6:   e83e                    sd      a5,16(sp)
+ 6f8:   6c1c                    ld      a5,24(s0)
+ 6fa:   e03e                    sd      a5,0(sp)
+ 6fc:   701c                    ld      a5,32(s0)
+ 6fe:   e43e                    sd      a5,8(sp)
+ 700:   00843803                ld      a6,8(s0)
+ 704:   01043883                ld      a7,16(s0)
+ 708:   87b2                    mv      a5,a2
+ 70a:   22f78553                fmv.d   fa0,fa5
+ 70e:   f6843583                ld      a1,-152(s0)
+ 712:   f7043603                ld      a2,-144(s0)
+ 716:   f13ff0ef                jal     628 <leaf_call>
+ 71a:   0001                    nop
+ 71c:   60ae                    ld      ra,200(sp)
+ 71e:   640e                    ld      s0,192(sp)
+ 720:   612d                    addi    sp,sp,224
+ 722:   8082                    ret
+
+0000000000000724 <main>:
+ 724:   7119                    addi    sp,sp,-128
+ 726:   fc86                    sd      ra,120(sp)
+ 728:   f8a2                    sd      s0,112(sp)
+ 72a:   0100                    addi    s0,sp,128
+ 72c:   4789                    li      a5,2
+ 72e:   fef42023                sw      a5,-32(s0)
+ 732:   478d                    li      a5,3
+ 734:   fef42223                sw      a5,-28(s0)
+ 738:   00000797                auipc   a5,0x0
+ 73c:   0a878793                addi    a5,a5,168 # 7e0 <_IO_stdin_used+0x8>
+ 740:   0007a787                flw     fa5,0(a5)
+ 744:   fef42427                fsw     fa5,-24(s0)
+ 748:   00000797                auipc   a5,0x0
+ 74c:   0a078793                addi    a5,a5,160 # 7e8 <_IO_stdin_used+0x10>
+ 750:   239c                    fld     fa5,0(a5)
+ 752:   fcf43827                fsd     fa5,-48(s0)
+ 756:   4799                    li      a5,6
+ 758:   fcf43c23                sd      a5,-40(s0)
+ 75c:   47a5                    li      a5,9
+ 75e:   fcf42023                sw      a5,-64(s0)
+ 762:   47a9                    li      a5,10
+ 764:   fcf42223                sw      a5,-60(s0)
+ 768:   00000797                auipc   a5,0x0
+ 76c:   08878793                addi    a5,a5,136 # 7f0 <_IO_stdin_used+0x18>
+ 770:   0007a787                flw     fa5,0(a5)
+ 774:   fcf42427                fsw     fa5,-56(s0)
+ 778:   00000797                auipc   a5,0x0
+ 77c:   08078793                addi    a5,a5,128 # 7f8 <_IO_stdin_used+0x20>
+ 780:   239c                    fld     fa5,0(a5)
+ 782:   faf43827                fsd     fa5,-80(s0)
+ 786:   47b5                    li      a5,13
+ 788:   faf43c23                sd      a5,-72(s0)
+ 78c:   fd043787                fld     fa5,-48(s0)
+ 790:   fd843703                ld      a4,-40(s0)
+ 794:   47bd                    li      a5,15
+ 796:   f03e                    sd      a5,32(sp)
+ 798:   47b9                    li      a5,14
+ 79a:   ec3e                    sd      a5,24(sp)
+ 79c:   fb043783                ld      a5,-80(s0)
+ 7a0:   e43e                    sd      a5,8(sp)
+ 7a2:   fb843783                ld      a5,-72(s0)
+ 7a6:   e83e                    sd      a5,16(sp)
+ 7a8:   fc842783                lw      a5,-56(s0)
+ 7ac:   c03e                    sw      a5,0(sp)
+ 7ae:   fc043883                ld      a7,-64(s0)
+ 7b2:   4821                    li      a6,8
+ 7b4:   479d                    li      a5,7
+ 7b6:   22f78553                fmv.d   fa0,fa5
+ 7ba:   fe043603                ld      a2,-32(s0)
+ 7be:   fe843683                ld      a3,-24(s0)
+ 7c2:   4585                    li      a1,1
+ 7c4:   4501                    li      a0,0
+ 7c6:   ea3ff0ef                jal     668 <nonleaf_call>
+ 7ca:   4781                    li      a5,0
+ 7cc:   853e                    mv      a0,a5
+ 7ce:   70e6                    ld      ra,120(sp)
+ 7d0:   7446                    ld      s0,112(sp)
+ 7d2:   6109                    addi    sp,sp,128
+ 7d4:   8082                    ret
+
+
+
+; ---------- returning long long ---------->
+;
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <f>:
+       0: 41 11         addi    sp, sp, -16
+       2: 06 e4         sd      ra, 8(sp)
+       4: 22 e0         sd      s0, 0(sp)
+       6: 00 08         addi    s0, sp, 16
+       8: 09 65         lui     a0, 2
+       a: 1b 05 35 c0   addiw   a0, a0, -1021
+       e: a2 60         ld      ra, 8(sp)
+      10: 02 64         ld      s0, 0(sp)
+      12: 41 01         addi    sp, sp, 16
+      14: 82 80         ret
+
+0000000000000016 <main>:
+      16: 01 11         addi    sp, sp, -32
+      18: 06 ec         sd      ra, 24(sp)
+      1a: 22 e8         sd      s0, 16(sp)
+      1c: 00 10         addi    s0, sp, 32
+      1e: 01 45         li      a0, 0
+      20: 23 26 a4 fe   sw      a0, -20(s0)
+      24: 97 00 00 00   auipc   ra, 0
+      28: e7 80 00 00   jalr    ra
+      2c: 01 25         sext.w  a0, a0
+      2e: e2 60         ld      ra, 24(sp)
+      30: 42 64         ld      s0, 16(sp)
+      32: 05 61         addi    sp, sp, 32
+      34: 82 80         ret
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000628 <f>:
+ 628:   1141                    addi    sp,sp,-16
+ 62a:   e422                    sd      s0,8(sp)
+ 62c:   0800                    addi    s0,sp,16
+ 62e:   6789                    lui     a5,0x2
+ 630:   c0378793                addi    a5,a5,-1021 # 1c03 <__FRAME_END__+0x150f>
+ 634:   853e                    mv      a0,a5
+ 636:   6422                    ld      s0,8(sp)
+ 638:   0141                    addi    sp,sp,16
+ 63a:   8082                    ret
+
+000000000000063c <main>:
+ 63c:   1141                    addi    sp,sp,-16
+ 63e:   e406                    sd      ra,8(sp)
+ 640:   e022                    sd      s0,0(sp)
+ 642:   0800                    addi    s0,sp,16
+ 644:   fe5ff0ef                jal     628 <f>
+ 648:   87aa                    mv      a5,a0
+ 64a:   2781                    sext.w  a5,a5
+ 64c:   853e                    mv      a0,a5
+ 64e:   60a2                    ld      ra,8(sp)
+ 650:   6402                    ld      s0,0(sp)
+ 652:   0141                    addi    sp,sp,16
+ 654:   8082                    ret
+
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 1d 71         addi    sp, sp, -96
+       2: 86 ec         sd      ra, 88(sp)
+       4: a2 e8         sd      s0, 80(sp)
+       6: 80 10         addi    s0, sp, 96
+       8: 27 26 a4 fe   fsw     fa0, -20(s0)
+       c: 27 22 b4 fe   fsw     fa1, -28(s0)
+      10: 27 24 c4 fe   fsw     fa2, -24(s0)
+      14: 23 38 b4 fc   sd      a1, -48(s0)
+      18: 23 34 a4 fc   sd      a0, -56(s0)
+      1c: 03 25 04 fd   lw      a0, -48(s0)
+      20: 23 20 a4 fe   sw      a0, -32(s0)
+      24: 03 35 84 fc   ld      a0, -56(s0)
+      28: 23 3c a4 fc   sd      a0, -40(s0)
+      2c: 27 30 d4 fc   fsd     fa3, -64(s0)
+      30: 27 38 e4 fa   fsd     fa4, -80(s0)
+      34: 27 3c f4 fa   fsd     fa5, -72(s0)
+      38: 23 34 c4 fa   sd      a2, -88(s0)
+      3c: e6 60         ld      ra, 88(sp)
+      3e: 46 64         ld      s0, 80(sp)
+      40: 25 61         addi    sp, sp, 96
+      42: 82 80         ret
+
+0000000000000044 <main>:
+      44: 75 71         addi    sp, sp, -144 ; |
+      46: 06 e5         sd      ra, 136(sp)  ; | prolog
+      48: 22 e1         sd      s0, 128(sp)  ; |
+      4a: 00 09         addi    s0, sp, 144  ; /
+      4c: 01 45         li      a0, 0        ; \
+      4e: 23 38 a4 f6   sd      a0, -144(s0) ; | write 0LL to local area on stack, is restored below into a0 on return as retval
+      52: 23 26 a4 fe   sw      a0, -20(s0)  ; store in arg 0 = 0 to local stack area (pointless, as unused, but probably to (re)use a0, freely)
+      56: 37 05 80 3f   lui     a0, 260096   ; |
+      5a: 23 24 a4 fe   sw      a0, -24(s0)  ; / struct A on local stack area
+      5e: 37 05 00 40   lui     a0, 262144   ; \
+      62: 23 20 a4 fe   sw      a0, -32(s0)  ; |
+      66: 37 05 40 40   lui     a0, 263168   ; | struct B on local stack area
+      6a: 23 22 a4 fe   sw      a0, -28(s0)  ; /
+      6e: 37 05 80 40   lui     a0, 264192   ; \
+      72: 23 2a a4 fc   sw      a0, -44(s0)  ; |
+      76: 37 05 a0 40   lui     a0, 264704   ; |
+      7a: 23 2c a4 fc   sw      a0, -40(s0)  ; | struct C on local stack area
+      7e: 37 05 c0 40   lui     a0, 265216   ; |
+      82: 23 2e a4 fc   sw      a0, -36(s0)  ; /
+      86: 13 05 f0 3f   li      a0, 1023     ; \
+      8a: 52 15         slli    a0, a0, 52   ; | struct D on local stack area
+      8c: 23 34 a4 fc   sd      a0, -56(s0)  ; /
+      90: 05 45         li      a0, 1        ; \
+      92: 7a 15         slli    a0, a0, 62   ; |
+      94: 23 3c a4 fa   sd      a0, -72(s0)  ; |
+      98: 37 15 80 00   lui     a0, 2049     ; | struct E on local stack area
+      9c: 1e 15         slli    a0, a0, 39   ; |
+      9e: 23 30 a4 fc   sd      a0, -64(s0)  ; /
+      a2: 13 05 10 40   li      a0, 1025     ; \
+      a6: 52 15         slli    a0, a0, 52   ; |
+      a8: 23 30 a4 fa   sd      a0, -96(s0)  ; |
+      ac: 37 55 00 01   lui     a0, 4101     ; |
+      b0: 1a 15         slli    a0, a0, 38   ; | struct F on local stack area
+      b2: 23 34 a4 fa   sd      a0, -88(s0)  ; |
+      b6: 37 35 80 00   lui     a0, 2051     ; |
+      ba: 1e 15         slli    a0, a0, 39   ; |
+      bc: 23 38 a4 fa   sd      a0, -80(s0)  ; |
+      c0: 07 25 84 fe   flw     fa0, -24(s0) ; arg 0 (struct A)
+      c4: 87 25 04 fe   flw     fa1, -32(s0) ; |
+      c8: 07 26 44 fe   flw     fa2, -28(s0) ; / arg 1 (struct B)
+      cc: 03 25 c4 fd   lw      a0, -36(s0)  ; \
+      d0: 23 2c a4 f8   sw      a0, -104(s0) ; |
+      d4: 03 65 84 fd   lwu     a0, -40(s0)  ; |
+      d8: 02 15         slli    a0, a0, 32   ; |
+      da: 83 65 44 fd   lwu     a1, -44(s0)  ; | arg 2 (struct C, passed in 2 int regs, b/c more than 2 floats and less than 128b)
+      de: 4d 8d         or      a0, a0, a1   ; |
+      e0: 23 38 a4 f8   sd      a0, -112(s0) ; |
+      e4: 83 35 84 f9   ld      a1, -104(s0) ; |
+      e8: 03 35 04 f9   ld      a0, -112(s0) ; |
+      ec: 87 36 84 fc   fld     fa3, -56(s0) ; arg 3 (struct D)
+      f0: 07 37 84 fb   fld     fa4, -72(s0) ; |
+      f4: 87 37 04 fc   fld     fa5, -64(s0) ; / arg 4 (struct E)
+      f8: 03 36 04 fb   ld      a2, -80(s0)  ; \
+      fc: 23 34 c4 f8   sd      a2, -120(s0) ; |
+     100: 03 36 84 fa   ld      a2, -88(s0)  ; |
+     104: 23 30 c4 f8   sd      a2, -128(s0) ; | arg 5 (struct F, passed indirectly, b/c greater than 128b)
+     108: 03 36 04 fa   ld      a2, -96(s0)  ; |
+     10c: 23 3c c4 f6   sd      a2, -136(s0) ; |
+     110: 13 06 84 f7   addi    a2, s0, -136 ; /
+     114: 97 00 00 00   auipc   ra, 0        ; \
+     118: e7 80 00 00   jalr    ra           ; | build relative call addr and call (offset 0 b/c not relocated)
+     11c: 03 35 04 f7   ld      a0, -144(s0) ; a0 = 0 (stored above), return value
+     120: aa 60         ld      ra, 136(sp)  ; |
+     122: 0a 64         ld      s0, 128(sp)  ; |
+     124: 49 61         addi    sp, sp, 144  ; | epilog
+     126: 82 80         ret                  ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000628 <leaf_call>:
+ 628:   715d                    addi    sp,sp,-80
+ 62a:   e4a2                    sd      s0,72(sp)
+ 62c:   0880                    addi    s0,sp,80
+ 62e:   fea42427                fsw     fa0,-24(s0)
+ 632:   fca43823                sd      a0,-48(s0)
+ 636:   fcb43c23                sd      a1,-40(s0)
+ 63a:   fcd43427                fsd     fa3,-56(s0)
+ 63e:   feb42027                fsw     fa1,-32(s0)
+ 642:   fec42227                fsw     fa2,-28(s0)
+ 646:   fae43c27                fsd     fa4,-72(s0)
+ 64a:   fcf43027                fsd     fa5,-64(s0)
+ 64e:   0001                    nop
+ 650:   6426                    ld      s0,72(sp)
+ 652:   6161                    addi    sp,sp,80
+ 654:   8082                    ret
+
+0000000000000656 <main>:
+ 656:   7159                    addi    sp,sp,-112
+ 658:   f486                    sd      ra,104(sp)
+ 65a:   f0a2                    sd      s0,96(sp)
+ 65c:   1880                    addi    s0,sp,112
+ 65e:   00000797                auipc   a5,0x0
+ 662:   0fa78793                addi    a5,a5,250 # 758 <_IO_stdin_used+0x8>
+ 666:   0007a507                flw     fa0,0(a5)
+ 66a:   00000797                auipc   a5,0x0
+ 66e:   0f278793                addi    a5,a5,242 # 75c <_IO_stdin_used+0xc>
+ 672:   0007a787                flw     fa5,0(a5)
+ 676:   fef42427                fsw     fa5,-24(s0)
+ 67a:   00000797                auipc   a5,0x0
+ 67e:   0e678793                addi    a5,a5,230 # 760 <_IO_stdin_used+0x10>
+ 682:   0007a787                flw     fa5,0(a5)
+ 686:   fef42627                fsw     fa5,-20(s0)
+ 68a:   00000797                auipc   a5,0x0
+ 68e:   0da78793                addi    a5,a5,218 # 764 <_IO_stdin_used+0x14>
+ 692:   0007a787                flw     fa5,0(a5)
+ 696:   fcf42c27                fsw     fa5,-40(s0)
+ 69a:   00000797                auipc   a5,0x0
+ 69e:   0ce78793                addi    a5,a5,206 # 768 <_IO_stdin_used+0x18>
+ 6a2:   0007a787                flw     fa5,0(a5)
+ 6a6:   fcf42e27                fsw     fa5,-36(s0)
+ 6aa:   00000797                auipc   a5,0x0
+ 6ae:   0c278793                addi    a5,a5,194 # 76c <_IO_stdin_used+0x1c>
+ 6b2:   0007a787                flw     fa5,0(a5)
+ 6b6:   fef42027                fsw     fa5,-32(s0)
+ 6ba:   00000797                auipc   a5,0x0
+ 6be:   0b678793                addi    a5,a5,182 # 770 <_IO_stdin_used+0x20>
+ 6c2:   2394                    fld     fa3,0(a5)
+ 6c4:   00000797                auipc   a5,0x0
+ 6c8:   0b478793                addi    a5,a5,180 # 778 <_IO_stdin_used+0x28>
+ 6cc:   239c                    fld     fa5,0(a5)
+ 6ce:   fcf43427                fsd     fa5,-56(s0)
+ 6d2:   00000797                auipc   a5,0x0
+ 6d6:   0ae78793                addi    a5,a5,174 # 780 <_IO_stdin_used+0x30>
+ 6da:   239c                    fld     fa5,0(a5)
+ 6dc:   fcf43827                fsd     fa5,-48(s0)
+ 6e0:   00000797                auipc   a5,0x0
+ 6e4:   0a878793                addi    a5,a5,168 # 788 <_IO_stdin_used+0x38>
+ 6e8:   239c                    fld     fa5,0(a5)
+ 6ea:   faf43827                fsd     fa5,-80(s0)
+ 6ee:   00000797                auipc   a5,0x0
+ 6f2:   0a278793                addi    a5,a5,162 # 790 <_IO_stdin_used+0x40>
+ 6f6:   239c                    fld     fa5,0(a5)
+ 6f8:   faf43c27                fsd     fa5,-72(s0)
+ 6fc:   00000797                auipc   a5,0x0
+ 700:   09c78793                addi    a5,a5,156 # 798 <_IO_stdin_used+0x48>
+ 704:   239c                    fld     fa5,0(a5)
+ 706:   fcf43027                fsd     fa5,-64(s0)
+ 70a:   fb043783                ld      a5,-80(s0)
+ 70e:   f8f43823                sd      a5,-112(s0)
+ 712:   fb843783                ld      a5,-72(s0)
+ 716:   f8f43c23                sd      a5,-104(s0)
+ 71a:   fc043783                ld      a5,-64(s0)
+ 71e:   faf43023                sd      a5,-96(s0)
+ 722:   f9040793                addi    a5,s0,-112
+ 726:   fc843707                fld     fa4,-56(s0)
+ 72a:   fd043787                fld     fa5,-48(s0)
+ 72e:   fe842587                flw     fa1,-24(s0)
+ 732:   fec42607                flw     fa2,-20(s0)
+ 736:   863e                    mv      a2,a5
+ 738:   fd843503                ld      a0,-40(s0)
+ 73c:   fe043583                ld      a1,-32(s0)
+ 740:   ee9ff0ef                jal     628 <leaf_call>
+ 744:   4781                    li      a5,0
+ 746:   853e                    mv      a0,a5
+ 748:   70a6                    ld      ra,104(sp)
+ 74a:   7406                    ld      s0,96(sp)
+ 74c:   6165                    addi    sp,sp,112
+ 74e:   8082                    ret
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i,j,k,l; long m; }; /* bigger than 16b */
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 99LL, -99LL, -3102LL, 32 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + b.k + b.m + s.x;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <f0>:
+       0: 01 11         addi    sp, sp, -32
+       2: 06 ec         sd      ra, 24(sp)
+       4: 22 e8         sd      s0, 16(sp)
+       6: 00 10         addi    s0, sp, 32
+       8: 13 05 40 08   li      a0, 132
+       c: a3 07 a4 fe   sb      a0, -17(s0)
+      10: 03 45 f4 fe   lbu     a0, -17(s0)
+      14: e2 60         ld      ra, 24(sp)
+      16: 42 64         ld      s0, 16(sp)
+      18: 05 61         addi    sp, sp, 32
+      1a: 82 80         ret
+
+000000000000001c <f1>:
+      1c: 01 11         addi    sp, sp, -32   ; |
+      1e: 06 ec         sd      ra, 24(sp)    ; | prolog
+      20: 22 e8         sd      s0, 16(sp)    ; |
+      22: 00 10         addi    s0, sp, 32    ; |
+      24: aa 85         mv      a1, a0        ; in arg 0 (ptr to retval struct) -> a1
+      26: 23 34 b4 fe   sd      a1, -24(s0)   ;
+      2a: 01 45         li      a0, 0         ; |
+      2c: 88 f1         sd      a0, 32(a1)    ; |
+      2e: 88 ed         sd      a0, 24(a1)    ; |
+      30: 88 e9         sd      a0, 16(a1)    ; | clear struct Big b
+      32: 88 e5         sd      a0, 8(a1)     ; |
+      34: 88 e1         sd      a0, 0(a1)     ; /
+      36: 09 65         lui     a0, 2         ; \
+      38: 1b 05 35 c0   addiw   a0, a0, -1021 ; | write 7171LL to retval struct space
+      3c: 88 e1         sd      a0, 0(a1)     ; /
+      3e: 13 05 30 06   li      a0, 99        ; \
+      42: 88 e5         sd      a0, 8(a1)     ; / write 99LL to retval struct space
+      44: 13 05 d0 f9   li      a0, -99       ; \
+      48: 88 e9         sd      a0, 16(a1)    ; / write -99LL to retval struct space
+      4a: 7d 75         lui     a0, 1048575   ; \
+      4c: 1b 05 25 3e   addiw   a0, a0, 994   ; | write -3102LL to retval struct space
+      50: 88 ed         sd      a0, 24(a1)    ; /
+      52: 13 05 00 02   li      a0, 32        ; \
+      56: 88 f1         sd      a0, 32(a1)    ; / write 32L to retval struct space
+      58: e2 60         ld      ra, 24(sp)    ; |
+      5a: 42 64         ld      s0, 16(sp)    ; |
+      5c: 05 61         addi    sp, sp, 32    ; | epilog
+      5e: 82 80         ret                   ; |
+
+0000000000000060 <main>:
+      60: 39 71         addi    sp, sp, -64   ; |
+      62: 06 fc         sd      ra, 56(sp)    ; | prolog
+      64: 22 f8         sd      s0, 48(sp)    ; |
+      66: 80 00         addi    s0, sp, 64    ; |
+      68: 01 45         li      a0, 0         ;
+      6a: 23 26 a4 fe   sw      a0, -20(s0)   ;
+      6e: 97 00 00 00   auipc   ra, 0         ; |
+      72: e7 80 00 00   jalr    ra            ; | call f0 (offset 0 b/c not relocated)
+      76: a3 05 a4 fe   sb      a0, -21(s0)   ;
+      7a: 13 05 04 fc   addi    a0, s0, -64   ; ptr to space for big struct passed as implicit first param
+      7e: 97 00 00 00   auipc   ra, 0         ; |
+      82: e7 80 00 00   jalr    ra            ; | call f1 (offset 0 b/c not relocated)
+      86: 03 35 84 fc   ld      a0, -56(s0)   ;
+      8a: 83 35 04 fd   ld      a1, -48(s0)   ;
+      8e: 2d 9d         addw    a0, a0, a1    ;
+      90: 83 35 04 fe   ld      a1, -32(s0)   ;
+      94: 2d 9d         addw    a0, a0, a1    ;
+      96: 83 45 b4 fe   lbu     a1, -21(s0)   ;
+      9a: 2d 9d         addw    a0, a0, a1    ;
+      9c: e2 70         ld      ra, 56(sp)    ; |
+      9e: 42 74         ld      s0, 48(sp)    ; |
+      a0: 21 61         addi    sp, sp, 64    ; | epilog
+      a2: 82 80         ret                   ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000628 <f0>:
+ 628:   1101                    addi    sp,sp,-32
+ 62a:   ec22                    sd      s0,24(sp)
+ 62c:   1000                    addi    s0,sp,32
+ 62e:   f8400793                li      a5,-124
+ 632:   fef40423                sb      a5,-24(s0)
+ 636:   fe844783                lbu     a5,-24(s0)
+ 63a:   853e                    mv      a0,a5
+ 63c:   6462                    ld      s0,24(sp)
+ 63e:   6105                    addi    sp,sp,32
+ 640:   8082                    ret
+
+0000000000000642 <f1>:
+ 642:   715d                    addi    sp,sp,-80
+ 644:   e4a2                    sd      s0,72(sp)
+ 646:   0880                    addi    s0,sp,80
+ 648:   faa43c23                sd      a0,-72(s0)
+ 64c:   00000797                auipc   a5,0x0
+ 650:   0ac78793                addi    a5,a5,172 # 6f8 <_IO_stdin_used+0x8>
+ 654:   638c                    ld      a1,0(a5)
+ 656:   6790                    ld      a2,8(a5)
+ 658:   6b94                    ld      a3,16(a5)
+ 65a:   6f98                    ld      a4,24(a5)
+ 65c:   739c                    ld      a5,32(a5)
+ 65e:   fcb43423                sd      a1,-56(s0)
+ 662:   fcc43823                sd      a2,-48(s0)
+ 666:   fcd43c23                sd      a3,-40(s0)
+ 66a:   fee43023                sd      a4,-32(s0)
+ 66e:   fef43423                sd      a5,-24(s0)
+ 672:   fb843783                ld      a5,-72(s0)
+ 676:   fc843503                ld      a0,-56(s0)
+ 67a:   fd043583                ld      a1,-48(s0)
+ 67e:   fd843603                ld      a2,-40(s0)
+ 682:   fe043683                ld      a3,-32(s0)
+ 686:   fe843703                ld      a4,-24(s0)
+ 68a:   e388                    sd      a0,0(a5)
+ 68c:   e78c                    sd      a1,8(a5)
+ 68e:   eb90                    sd      a2,16(a5)
+ 690:   ef94                    sd      a3,24(a5)
+ 692:   f398                    sd      a4,32(a5)
+ 694:   fb843503                ld      a0,-72(s0)
+ 698:   6426                    ld      s0,72(sp)
+ 69a:   6161                    addi    sp,sp,80
+ 69c:   8082                    ret
+
+000000000000069e <main>:
+ 69e:   7139                    addi    sp,sp,-64
+ 6a0:   fc06                    sd      ra,56(sp)
+ 6a2:   f822                    sd      s0,48(sp)
+ 6a4:   0080                    addi    s0,sp,64
+ 6a6:   f83ff0ef                jal     628 <f0>
+ 6aa:   87aa                    mv      a5,a0
+ 6ac:   fef40423                sb      a5,-24(s0)
+ 6b0:   fc040793                addi    a5,s0,-64
+ 6b4:   853e                    mv      a0,a5
+ 6b6:   f8dff0ef                jal     642 <f1>
+ 6ba:   fc843783                ld      a5,-56(s0)
+ 6be:   0007871b                sext.w  a4,a5
+ 6c2:   fd043783                ld      a5,-48(s0)
+ 6c6:   2781                    sext.w  a5,a5
+ 6c8:   9fb9                    addw    a5,a5,a4
+ 6ca:   0007871b                sext.w  a4,a5
+ 6ce:   fe043783                ld      a5,-32(s0)
+ 6d2:   2781                    sext.w  a5,a5
+ 6d4:   9fb9                    addw    a5,a5,a4
+ 6d6:   0007871b                sext.w  a4,a5
+ 6da:   fe844783                lbu     a5,-24(s0)
+ 6de:   2781                    sext.w  a5,a5
+ 6e0:   9fb9                    addw    a5,a5,a4
+ 6e2:   2781                    sext.w  a5,a5
+ 6e4:   2781                    sext.w  a5,a5
+ 6e6:   853e                    mv      a0,a5
+ 6e8:   70e2                    ld      ra,56(sp)
+ 6ea:   7442                    ld      s0,48(sp)
+ 6ec:   6121                    addi    sp,sp,64
+ 6ee:   8082                    ret
+
+
+
+; ---------- single-field structs by values (and small array fields) ---------->
+;
+; struct C { char c; };
+; struct S { short s; };
+; struct I { int i; };
+; struct F { float f; };
+; struct D { double d; };
+;
+; struct C2 { char c[2]; };
+; struct C3 { char c[3]; };
+;
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <leaf_call>:
+       0: 5d 71         addi    sp, sp, -80
+       2: 86 e4         sd      ra, 72(sp)
+       4: a2 e0         sd      s0, 64(sp)
+       6: 80 08         addi    s0, sp, 80
+       8: 23 30 a4 fe   sd      a0, -32(s0)
+       c: 03 15 04 fe   lh      a0, -32(s0)
+      10: 23 17 a4 fe   sh      a0, -18(s0)
+      14: a3 0f b4 fc   sb      a1, -33(s0)
+      18: 23 1e c4 fc   sh      a2, -36(s0)
+      1c: 23 2c d4 fc   sw      a3, -40(s0)
+      20: 27 2a a4 fc   fsw     fa0, -44(s0)
+      24: 27 34 b4 fc   fsd     fa1, -56(s0)
+      28: 23 3c e4 fa   sd      a4, -72(s0)
+      2c: 03 45 a4 fb   lbu     a0, -70(s0)
+      30: 23 03 a4 fc   sb      a0, -58(s0)
+      34: 03 15 84 fb   lh      a0, -72(s0)
+      38: 23 12 a4 fc   sh      a0, -60(s0)
+      3c: a6 60         ld      ra, 72(sp)
+      3e: 06 64         ld      s0, 64(sp)
+      40: 61 61         addi    sp, sp, 80
+      42: 82 80         ret
+
+0000000000000044 <main>:
+      44: 5d 71         addi    sp, sp, -80  ; |
+      46: 86 e4         sd      ra, 72(sp)   ; | prolog
+      48: a2 e0         sd      s0, 64(sp)   ; |
+      4a: 80 08         addi    s0, sp, 80   ; |
+      4c: 01 45         li      a0, 0        ;
+      4e: 23 38 a4 fa   sd      a0, -80(s0)  ;
+      52: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      56: 23 05 a4 fe   sb      a0, -22(s0)  ;
+      5a: 05 45         li      a0, 1        ;
+      5c: a3 05 a4 fe   sb      a0, -21(s0)  ;
+      60: 09 45         li      a0, 2        ;
+      62: a3 04 a4 fe   sb      a0, -23(s0)  ;
+      66: 0d 45         li      a0, 3        ;
+      68: 23 13 a4 fe   sh      a0, -26(s0)  ;
+      6c: 11 45         li      a0, 4        ;
+      6e: 23 20 a4 fe   sw      a0, -32(s0)  ;
+      72: 37 05 a0 40   lui     a0, 264704   ;
+      76: 23 2e a4 fc   sw      a0, -36(s0)  ;
+      7a: 37 35 80 00   lui     a0, 2051     ;
+      7e: 1e 15         slli    a0, a0, 39   ;
+      80: 23 38 a4 fc   sd      a0, -48(s0)  ;
+      84: 1d 45         li      a0, 7        ;
+      86: a3 06 a4 fc   sb      a0, -51(s0)  ;
+      8a: 21 45         li      a0, 8        ;
+      8c: 23 07 a4 fc   sb      a0, -50(s0)  ;
+      90: 25 45         li      a0, 9        ;
+      92: a3 07 a4 fc   sb      a0, -49(s0)  ;
+      96: 03 45 b4 fe   lbu     a0, -21(s0)  ;
+      9a: 1b 15 85 00   slliw   a0, a0, 8    ;
+      9e: 83 45 a4 fe   lbu     a1, -22(s0)  ;
+      a2: 4d 8d         or      a0, a0, a1   ;
+      a4: 23 10 a4 fc   sh      a0, -64(s0)  ;
+      a8: 03 35 04 fc   ld      a0, -64(s0)  ;
+      ac: 83 45 94 fe   lbu     a1, -23(s0)  ;
+      b0: 03 56 64 fe   lhu     a2, -26(s0)  ;
+      b4: 83 66 04 fe   lwu     a3, -32(s0)  ;
+      b8: 07 25 c4 fd   flw     fa0, -36(s0) ;
+      bc: 87 35 04 fd   fld     fa1, -48(s0) ;
+      c0: 03 47 f4 fc   lbu     a4, -49(s0)  ;
+      c4: 23 0d e4 fa   sb      a4, -70(s0)  ;
+      c8: 03 47 e4 fc   lbu     a4, -50(s0)  ;
+      cc: 1b 17 87 00   slliw   a4, a4, 8    ;
+      d0: 83 47 d4 fc   lbu     a5, -51(s0)  ;
+      d4: 5d 8f         or      a4, a4, a5   ;
+      d6: 23 1c e4 fa   sh      a4, -72(s0)  ;
+      da: 03 37 84 fb   ld      a4, -72(s0)  ;
+      de: 97 00 00 00   auipc   ra, 0        ;
+      e2: e7 80 00 00   jalr    ra           ;
+      e6: 03 35 04 fb   ld      a0, -80(s0)  ;
+      ea: a6 60         ld      ra, 72(sp)   ; |
+      ec: 06 64         ld      s0, 64(sp)   ; |
+      ee: 61 61         addi    sp, sp, 80   ; | epilog
+      f0: 82 80         ret                  ; |
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000628 <leaf_call>:
+ 628:   715d                    addi    sp,sp,-80
+ 62a:   e4a2                    sd      s0,72(sp)
+ 62c:   0880                    addi    s0,sp,80
+ 62e:   fea41423                sh      a0,-24(s0)
+ 632:   feb40023                sb      a1,-32(s0)
+ 636:   fcc41c23                sh      a2,-40(s0)
+ 63a:   fcd42823                sw      a3,-48(s0)
+ 63e:   fca42427                fsw     fa0,-56(s0)
+ 642:   fcb43027                fsd     fa1,-64(s0)
+ 646:   fae43c23                sd      a4,-72(s0)
+ 64a:   0001                    nop
+ 64c:   6426                    ld      s0,72(sp)
+ 64e:   6161                    addi    sp,sp,80
+ 650:   8082                    ret
+
+0000000000000652 <main>:
+ 652:   1101                    addi    sp,sp,-32
+ 654:   ec06                    sd      ra,24(sp)
+ 656:   e822                    sd      s0,16(sp)
+ 658:   1000                    addi    s0,sp,32
+ 65a:   fe040423                sb      zero,-24(s0)
+ 65e:   4785                    li      a5,1
+ 660:   fef404a3                sb      a5,-23(s0)
+ 664:   4589                    li      a1,2
+ 666:   460d                    li      a2,3
+ 668:   4691                    li      a3,4
+ 66a:   00000797                auipc   a5,0x0
+ 66e:   05678793                addi    a5,a5,86 # 6c0 <_IO_stdin_used+0x8>
+ 672:   0007a787                flw     fa5,0(a5)
+ 676:   00000797                auipc   a5,0x0
+ 67a:   05278793                addi    a5,a5,82 # 6c8 <_IO_stdin_used+0x10>
+ 67e:   2398                    fld     fa4,0(a5)
+ 680:   479d                    li      a5,7
+ 682:   fef40023                sb      a5,-32(s0)
+ 686:   47a1                    li      a5,8
+ 688:   fef400a3                sb      a5,-31(s0)
+ 68c:   47a5                    li      a5,9
+ 68e:   fef40123                sb      a5,-30(s0)
+ 692:   fe043703                ld      a4,-32(s0)
+ 696:   22e705d3                fmv.d   fa1,fa4
+ 69a:   20f78553                fmv.s   fa0,fa5
+ 69e:   fe843503                ld      a0,-24(s0)
+ 6a2:   f87ff0ef                jal     628 <leaf_call>
+ 6a6:   4781                    li      a5,0
+ 6a8:   853e                    mv      a0,a5
+ 6aa:   60e2                    ld      ra,24(sp)
+ 6ac:   6442                    ld      s0,16(sp)
+ 6ae:   6105                    addi    sp,sp,32
+ 6b0:   8082                    ret
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <f1>:
+       0: 01 11         addi    sp, sp, -32
+       2: 06 ec         sd      ra, 24(sp)
+       4: 22 e8         sd      s0, 16(sp)
+       6: 00 10         addi    s0, sp, 32
+       8: 23 26 a4 fe   sw      a0, -20(s0)
+       c: e2 60         ld      ra, 24(sp)
+       e: 42 64         ld      s0, 16(sp)
+      10: 05 61         addi    sp, sp, 32
+      12: 82 80         ret
+
+0000000000000014 <f2>:
+      14: 01 11         addi    sp, sp, -32  ; |
+      16: 06 ec         sd      ra, 24(sp)   ; | epilog
+      18: 22 e8         sd      s0, 16(sp)   ; |
+      1a: 00 10         addi    s0, sp, 32   ; |
+      1c: 23 34 a4 fe   sd      a0, -24(s0)  ;
+      20: e2 60         ld      ra, 24(sp)   ; |
+      22: 42 64         ld      s0, 16(sp)   ; |
+      24: 05 61         addi    sp, sp, 32   ; | prolog
+      26: 82 80         ret                  ; |
+
+0000000000000028 <f>:
+      28: 39 71         addi    sp, sp, -64  ; |
+      2a: 06 fc         sd      ra, 56(sp)   ; | prolog
+      2c: 22 f8         sd      s0, 48(sp)   ; |
+      2e: 80 00         addi    s0, sp, 64   ; |
+      30: 13 05 84 fe   addi    a0, s0, -24  ; ptr to local data (for uninitialized 'n') -> a0
+      34: 23 34 a4 fc   sd      a0, -56(s0)  ; store ptr to local stack area
+      38: 97 00 00 00   auipc   ra, 0        ; |
+      3c: e7 80 00 00   jalr    ra           ; | call NonTrivial ctor (offset 0 b/c not relocated), arg 0 is ptr to data
+      40: 05 45         li      a0, 1        ; a = 1
+      42: 23 22 a4 fe   sw      a0, -28(s0)  ; |
+      46: 03 25 44 fe   lw      a0, -28(s0)  ; | pointless save and reload
+      4a: 1b 05 b5 07   addiw   a0, a0, 123  ; a += 123
+      4e: 23 22 a4 fe   sw      a0, -28(s0)  ;
+      52: 03 25 c4 fe   lw      a0, -20(s0)  ;
+      56: 23 20 a4 fe   sw      a0, -32(s0)  ;
+      5a: 03 65 04 fe   lwu     a0, -32(s0)  ;
+      5e: 97 00 00 00   auipc   ra, 0        ; |
+      62: e7 80 00 00   jalr    ra           ; | call f1 (offset 0 b/c not relocated)
+      66: 83 35 84 fc   ld      a1, -56(s0)  ; load ptr to local 't' -> a1
+      6a: 03 25 44 fe   lw      a0, -28(s0)  ;
+      6e: 1b 05 55 f8   addiw   a0, a0, -123 ;
+      72: 23 22 a4 fe   sw      a0, -28(s0)  ;
+      76: 13 05 c4 fd   addi    a0, s0, -36  ;
+      7a: 23 38 a4 fc   sd      a0, -48(s0)  ;
+      7e: 97 00 00 00   auipc   ra, 0        ; |
+      82: e7 80 00 00   jalr    ra           ; | call copy ctor (offset 0 b/c not relocated), arg 0 ist dst, arg 1 is src
+      86: 03 35 04 fd   ld      a0, -48(s0)  ; arg 0 (ptr to non triv struct)
+      8a: 97 00 00 00   auipc   ra, 0        ; |
+      8e: e7 80 00 00   jalr    ra           ; | call f2 (offset 0 b/c not relocated)
+      92: 03 25 44 fe   lw      a0, -28(s0)  ;
+      96: 51 35         addiw   a0, a0, -12  ;
+      98: 23 22 a4 fe   sw      a0, -28(s0)  ;
+      9c: e2 70         ld      ra, 56(sp)   ; |
+      9e: 42 74         ld      s0, 48(sp)   ; |
+      a0: 21 61         addi    sp, sp, 64   ; | epilog
+      a2: 82 80         ret                  ; |
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+0000000000000000 <f1>:
+   0:   1101                    addi    sp,sp,-32
+   2:   ec22                    sd      s0,24(sp)
+   4:   1000                    addi    s0,sp,32
+   6:   fea42423                sw      a0,-24(s0)
+   a:   0001                    nop
+   c:   6462                    ld      s0,24(sp)
+   e:   6105                    addi    sp,sp,32
+  10:   8082                    ret
+
+0000000000000012 <f2>:
+  12:   1101                    addi    sp,sp,-32
+  14:   ec22                    sd      s0,24(sp)
+  16:   1000                    addi    s0,sp,32
+  18:   fea43423                sd      a0,-24(s0)
+  1c:   0001                    nop
+  1e:   6462                    ld      s0,24(sp)
+  20:   6105                    addi    sp,sp,32
+  22:   8082                    ret
+
+0000000000000024 <f>:
+  24:   7179                    addi    sp,sp,-48        ; |
+  26:   f406                    sd      ra,40(sp)        ; | prolog
+  28:   f022                    sd      s0,32(sp)        ; |
+  2a:   1800                    addi    s0,sp,48         ; |
+  2c:   fd840793                addi    a5,s0,-40        ;
+  30:   853e                    mv      a0,a5            ;
+  32:   00000097                auipc   ra,0x0           ; |
+  36:   000080e7                jalr    ra # 32 <f+0xe>  ; | call ctor (offset 0 b/c not relocated)
+  3a:   4785                    li      a5,1             ; a = 1
+  3c:   fef42623                sw      a5,-20(s0)       ; |
+  40:   fec42783                lw      a5,-20(s0)       ; | pointless save and reload
+  44:   07b7879b                addiw   a5,a5,123        ; a += 123
+  48:   fef42623                sw      a5,-20(s0)       ;
+  4c:   fe042783                lw      a5,-32(s0)       ;
+  50:   853e                    mv      a0,a5            ;
+  52:   00000097                auipc   ra,0x0           ;
+  56:   000080e7                jalr    ra # 52 <f+0x2e> ;
+  5a:   fec42783                lw      a5,-20(s0)       ;
+  5e:   f857879b                addiw   a5,a5,-123       ;
+  62:   fef42623                sw      a5,-20(s0)       ;
+  66:   fd840713                addi    a4,s0,-40        ;
+  6a:   fe840793                addi    a5,s0,-24        ;
+  6e:   85ba                    mv      a1,a4            ;
+  70:   853e                    mv      a0,a5            ;
+  72:   00000097                auipc   ra,0x0           ;
+  76:   000080e7                jalr    ra # 72 <f+0x4e> ;
+  7a:   fe840793                addi    a5,s0,-24        ;
+  7e:   853e                    mv      a0,a5            ;
+  80:   00000097                auipc   ra,0x0           ;
+  84:   000080e7                jalr    ra # 80 <f+0x5c> ;
+  88:   fec42783                lw      a5,-20(s0)       ;
+  8c:   37d1                    addiw   a5,a5,-12        ;
+  8e:   fef42623                sw      a5,-20(s0)       ;
+  92:   0001                    nop                      ;
+  94:   70a2                    ld      ra,40(sp)        ; |
+  96:   7402                    ld      s0,32(sp)        ; |
+  98:   6145                    addi    sp,sp,48         ; | epilog
+  9a:   8082                    ret                      ; |
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-14.0-riscv64 w/ clang 17.0.6 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+0000000000000000 <f1>:
+       0: 01 11         addi    sp, sp, -32
+       2: 06 ec         sd      ra, 24(sp)
+       4: 22 e8         sd      s0, 16(sp)
+       6: 00 10         addi    s0, sp, 32
+       8: 01 45         li      a0, 0
+       a: 23 26 a4 fe   sw      a0, -20(s0)
+       e: 03 65 c4 fe   lwu     a0, -20(s0)
+      12: e2 60         ld      ra, 24(sp)
+      14: 42 64         ld      s0, 16(sp)
+      16: 05 61         addi    sp, sp, 32
+      18: 82 80         ret
+
+000000000000001a <_Z2f2v>:
+      1a: 01 11         addi    sp, sp, -32 ; |
+      1c: 06 ec         sd      ra, 24(sp)  ; | prolog
+      1e: 22 e8         sd      s0, 16(sp)  ; |
+      20: 00 10         addi    s0, sp, 32  ; |
+      22: 23 34 a4 fe   sd      a0, -24(s0) ;
+      26: 97 00 00 00   auipc   ra, 0       ; | call ctor
+      2a: e7 80 00 00   jalr    ra          ; /
+      2e: e2 60         ld      ra, 24(sp)  ; \
+      30: 42 64         ld      s0, 16(sp)  ; |
+      32: 05 61         addi    sp, sp, 32  ; | epilog
+      34: 82 80         ret                 ; |
+
+0000000000000036 <f>:
+      36: 01 11         addi    sp, sp, -32  ; |
+      38: 06 ec         sd      ra, 24(sp)   ; | prolog
+      3a: 22 e8         sd      s0, 16(sp)   ; |
+      3c: 00 10         addi    s0, sp, 32   ; |
+      3e: 05 45         li      a0, 1        ;
+      40: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      44: 03 25 c4 fe   lw      a0, -20(s0)  ;
+      48: 1b 05 b5 07   addiw   a0, a0, 123  ;
+      4c: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      50: 97 00 00 00   auipc   ra, 0        ; |
+      54: e7 80 00 00   jalr    ra           ; | call f1 (offset 0 b/c not relocated)
+      58: 23 24 a4 fe   sw      a0, -24(s0)  ;
+      5c: 03 25 c4 fe   lw      a0, -20(s0)  ;
+      60: 1b 05 55 f8   addiw   a0, a0, -123 ;
+      64: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      68: 13 05 44 fe   addi    a0, s0, -28  ; ptr to struct space as implicit first param
+      6c: 97 00 00 00   auipc   ra, 0        ; |
+      70: e7 80 00 00   jalr    ra           ; | call f2 (offset 0 b/c not relocated)
+      74: 03 25 c4 fe   lw      a0, -20(s0)  ;
+      78: 51 35         addiw   a0, a0, -12  ;
+      7a: 23 26 a4 fe   sw      a0, -20(s0)  ;
+      7e: e2 60         ld      ra, 24(sp)   ; |
+      80: 42 64         ld      s0, 16(sp)   ; |
+      82: 05 61         addi    sp, sp, 32   ; | epilog
+      84: 82 80         ret                  ; |
+
+  ; ... snip, removed code of ctor ...
+
+
+
+; output from debian-trixie_20240211-riscv64 w/ gcc 13.2.0 (w/ flags to simplify: -fno-stack-protector)
+
+
+0000000000000000 <f1>:
+   0:   1141                    addi    sp,sp,-16
+   2:   e422                    sd      s0,8(sp)
+   4:   0800                    addi    s0,sp,16
+   6:   4781                    li      a5,0
+   8:   853e                    mv      a0,a5
+   a:   6422                    ld      s0,8(sp)
+   c:   0141                    addi    sp,sp,16
+   e:   8082                    ret
+
+0000000000000010 <_Z2f2v>:
+  10:   1101                    addi    sp,sp,-32
+  12:   ec06                    sd      ra,24(sp)
+  14:   e822                    sd      s0,16(sp)
+  16:   1000                    addi    s0,sp,32
+  18:   fea43423                sd      a0,-24(s0)
+  1c:   fe843503                ld      a0,-24(s0)
+  20:   00000097                auipc   ra,0x0
+  24:   000080e7                jalr    ra # 20 <_Z2f2v+0x10>
+  28:   fe843503                ld      a0,-24(s0)
+  2c:   60e2                    ld      ra,24(sp)
+  2e:   6442                    ld      s0,16(sp)
+  30:   6105                    addi    sp,sp,32
+  32:   8082                    ret
+
+0000000000000034 <f>:
+  34:   1101                    addi    sp,sp,-32
+  36:   ec06                    sd      ra,24(sp)
+  38:   e822                    sd      s0,16(sp)
+  3a:   1000                    addi    s0,sp,32
+  3c:   4785                    li      a5,1
+  3e:   fef42623                sw      a5,-20(s0)
+  42:   fec42783                lw      a5,-20(s0)
+  46:   07b7879b                addiw   a5,a5,123
+  4a:   fef42623                sw      a5,-20(s0)
+  4e:   00000097                auipc   ra,0x0
+  52:   000080e7                jalr    ra # 4e <f+0x1a>
+  56:   87aa                    mv      a5,a0
+  58:   fef42423                sw      a5,-24(s0)
+  5c:   fec42783                lw      a5,-20(s0)
+  60:   f857879b                addiw   a5,a5,-123
+  64:   fef42623                sw      a5,-20(s0)
+  68:   fe040793                addi    a5,s0,-32
+  6c:   853e                    mv      a0,a5
+  6e:   00000097                auipc   ra,0x0
+  72:   000080e7                jalr    ra # 6e <f+0x3a>
+  76:   fec42783                lw      a5,-20(s0)
+  7a:   37d1                    addiw   a5,a5,-12
+  7c:   fef42623                sw      a5,-20(s0)
+  80:   0001                    nop
+  82:   60e2                    ld      ra,24(sp)
+  84:   6442                    ld      s0,16(sp)
+  86:   6105                    addi    sp,sp,32
+  88:   8082                    ret
+
+  ; ... snip, removed code of ctor ...
+
+
+
+; vim: ft=asm68k
+

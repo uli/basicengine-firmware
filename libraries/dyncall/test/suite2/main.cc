@@ -3,10 +3,10 @@
  Package: dyncall
  Library: test
  File: test/suite2/main.cc
- Description: 
+ Description:
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -38,17 +38,14 @@ DCpointer getFunc(int x);
 DCValue* getArg(int pos);
 
 
-typedef double precise;
-
-
-DCbool     valueBool    [MAXARGS];
-DCchar     valueChar    [MAXARGS];
-DCshort    valueShort   [MAXARGS];
-DCint      valueInt     [MAXARGS];
-DClonglong valueLongLong[MAXARGS];
-DCdouble   valueDouble  [MAXARGS];
-DCpointer  valuePointer [MAXARGS];
-DCfloat    valueFloat   [MAXARGS];
+static DCbool     valueBool    [MAXARGS];
+static DCchar     valueChar    [MAXARGS];
+static DCshort    valueShort   [MAXARGS];
+static DCint      valueInt     [MAXARGS];
+static DClonglong valueLongLong[MAXARGS];
+static DCdouble   valueDouble  [MAXARGS];
+static DCpointer  valuePointer [MAXARGS];
+static DCfloat    valueFloat   [MAXARGS];
 
 
 void clearValues();
@@ -88,12 +85,12 @@ bool test(int x)
   const DCsigchar* ptr = sig;
   DCsigchar ch;
   int pos;
- 
+
   pos = 0;
 
   pCall = dcNewCallVM(4096);
   dcReset(pCall);
- 
+
   while ( (ch=*ptr++) != '\0' ) {
     switch(ch) {
       case DC_SIGCHAR_BOOL:     dcArgBool    ( pCall, valueBool    [pos] ); break;
@@ -111,8 +108,8 @@ bool test(int x)
 
   dcCallVoid( pCall, fi->funcptr );
 
- 
-  if ( getId() == x ) { 
+
+  if ( getId() == x ) {
 
     ptr = sig;
     pos = 0;
@@ -137,7 +134,7 @@ bool test(int x)
   }
 
   printf("%d-%s:%d\n", x, sig, r);
-   
+
   dcFree(pCall);
 
   return r;
@@ -162,7 +159,7 @@ int main(int argc, char* argv[])
   init();
   if (argc == 2) {
     int index = atoi(argv[1]);
-    success = run_range( index, index+1 ); 
+    success = run_range( index, index+1 );
   } else if (argc == 3) {
     int from = atoi(argv[1]);
     int to   = atoi(argv[2])+1;
@@ -171,11 +168,11 @@ int main(int argc, char* argv[])
     success = run_range(0,NCASES);
   }
 
-  printf("result: suite2: %s\n", success ? "1" : "0");
+  printf("result: suite2: %d\n", success);
 
   dcTest_deInitPlatform();
 
-  return (success) ? 0 : -1;
+  return !success;
 }
 
 }  // extern "C"

@@ -7,7 +7,7 @@
  License:
 
    Copyright (c) 2007-2015 Olivier Chafik <olivier.chafik@gmail.com>,
-                 2017-2018 refactored completely for stability, API
+                 2017-2021 refactored completely for stability, API
                            consistency and portability by Tassilo Philipp.
 
    Permission to use, copy, modify, and distribute this software for any
@@ -34,16 +34,14 @@
 
 #include "dynload.h"
 #include "dynload_alloc.h"
-#include "../autovar/autovar_ARCH.h"
-#include "../autovar/autovar_OS.h"
+#include "../dyncall/dyncall_macros.h"
 
 #include <mach-o/dyld.h>
 #include <mach-o/nlist.h>
-#include <sys/stat.h>
 #include <dlfcn.h>
 #include <string.h>
 
-#if defined(ARCH_X64) || defined(ARCH_PPC64) || defined(ARCH_ARM64) /*@@@ use dyncall_macros.h*/
+#if defined(DC__Arch_AMD64) || defined(DC__Arch_PPC64) || defined(DC__Arch_ARM64)
 #define MACH_HEADER_TYPE mach_header_64
 #define MACH_HEADER_MAGIC_NR MH_MAGIC_64
 #define SEGMEND_COMMAND_ID LC_SEGMENT_64
@@ -73,12 +71,8 @@ DLSyms* dlSymsInit(const char* libPath)
 	DLLib* pLib;
 	DLSyms* pSyms = NULL;
 	uint32_t i, n;
-	struct stat st0;
 	const struct MACH_HEADER_TYPE* pHeader = NULL;
 	const struct dysymtab_command* dysymtab_cmd = NULL;
-
-	if(stat(libPath, &st0) == -1)
-		return NULL;
 
 	pLib = dlLoadLibrary(libPath);
 	if(!pLib)
@@ -87,18 +81,26 @@ DLSyms* dlSymsInit(const char* libPath)
 	/* Loop over all dynamically linked images to find ours. */
 	for(i = 0, n = _dyld_image_count(); i < n; ++i)
 	{
-		struct stat st1;
 		const char* name = _dyld_get_image_name(i);
 
-		if(name && (stat(name, &st1) != -1))
+		if(name)
 		{
 			/* Don't rely on name comparison alone, as libPath might be relative, symlink, differently */
-			/* cased, etc., but compare inode number with the one of the mapped dyld image. */
-			if(st0.st_ino == st1.st_ino/*!strcmp(name, libPath)*/)
+			/* cased, use weird osx path placeholders, etc., but compare inode number with the one of the mapped dyld image. */
+
+			/* reload already loaded lib to get handle to compare with, should be lightweight and only increase ref count */
+			DLLib* pLib_ = dlLoadLibrary(name);
+			if(pLib_)
 			{
-				pHeader = (const struct MACH_HEADER_TYPE*) _dyld_get_image_header(i);
-//@@@ slide = _dyld_get_image_vmaddr_slide(i);
-				break; /* found header */
+				/* free / refcount-- */
+				dlFreeLibrary(pLib_);
+
+				if(pLib == pLib_)
+				{
+					pHeader = (const struct MACH_HEADER_TYPE*) _dyld_get_image_header(i);
+/*@@@ slide = _dyld_get_image_vmaddr_slide(i);*/
+					break; /* found header */
+				}
 			}
 		}
 	}
@@ -225,7 +227,7 @@ const char* dlSymsName(DLSyms* pSyms, int index)
 
 	/* Return name - handles lookup of indirect names. */
 	return &pSyms->pStringTable[(t == N_INDR ? nl->n_value : nl->n_un.n_strx)
-#if defined(OS_Darwin)
+#if defined(DC__OS_Darwin)
 		+ 1 /* Skip '_'-prefix */
 #endif
 	];

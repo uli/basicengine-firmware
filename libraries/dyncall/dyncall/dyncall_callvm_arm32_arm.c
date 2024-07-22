@@ -6,7 +6,7 @@
  Description: ARM 32-bit "arm" ABI callvm implementation
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -42,8 +42,8 @@
 #include "dyncall_alloc.h"
 
 
-/* 
-** arm32 arm mode calling convention calls 
+/*
+** arm32 arm mode calling convention calls
 **
 ** - hybrid return-type call (bool ... pointer)
 **
@@ -165,14 +165,14 @@ DCCallVM_vt gVT_arm32_arm =
 , &dc_callvm_mode_arm32_arm
 , &dc_callvm_argBool_arm32_arm
 , &dc_callvm_argChar_arm32_arm
-, &dc_callvm_argShort_arm32_arm 
+, &dc_callvm_argShort_arm32_arm
 , &dc_callvm_argInt_arm32_arm
 , &dc_callvm_argLong_arm32_arm
 , &dc_callvm_argLongLong_arm32_arm
 , &dc_callvm_argFloat_arm32_arm
 , &dc_callvm_argDouble_arm32_arm
 , &dc_callvm_argPointer_arm32_arm
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_arm32_arm
 , (DCboolvmfunc*)       &dc_callvm_call_arm32_arm
 , (DCcharvmfunc*)       &dc_callvm_call_arm32_arm
@@ -183,7 +183,8 @@ DCCallVM_vt gVT_arm32_arm =
 , (DCfloatvmfunc*)      &dc_callvm_call_arm32_arm
 , (DCdoublevmfunc*)     &dc_callvm_call_arm32_arm
 , (DCpointervmfunc*)    &dc_callvm_call_arm32_arm
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_arm32_arm_eabi =
@@ -193,14 +194,14 @@ DCCallVM_vt gVT_arm32_arm_eabi =
 , &dc_callvm_mode_arm32_arm
 , &dc_callvm_argBool_arm32_arm
 , &dc_callvm_argChar_arm32_arm
-, &dc_callvm_argShort_arm32_arm 
+, &dc_callvm_argShort_arm32_arm
 , &dc_callvm_argInt_arm32_arm
 , &dc_callvm_argLong_arm32_arm
 , &dc_callvm_argLongLong_arm32_arm_eabi
 , &dc_callvm_argFloat_arm32_arm
 , &dc_callvm_argDouble_arm32_arm_eabi
 , &dc_callvm_argPointer_arm32_arm
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_arm32_arm
 , (DCboolvmfunc*)       &dc_callvm_call_arm32_arm
 , (DCcharvmfunc*)       &dc_callvm_call_arm32_arm
@@ -211,7 +212,8 @@ DCCallVM_vt gVT_arm32_arm_eabi =
 , (DCfloatvmfunc*)      &dc_callvm_call_arm32_arm
 , (DCdoublevmfunc*)     &dc_callvm_call_arm32_arm
 , (DCpointervmfunc*)    &dc_callvm_call_arm32_arm
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 static void dc_callvm_mode_arm32_arm(DCCallVM* in_self, DCint mode)
@@ -224,14 +226,16 @@ static void dc_callvm_mode_arm32_arm(DCCallVM* in_self, DCint mode)
     case DC_CALL_C_ELLIPSIS_VARARGS:
 /* Check OS if we need EABI as default. */
 #if defined(DC__ABI_ARM_EABI)
-    case DC_CALL_C_DEFAULT:       vt = &gVT_arm32_arm_eabi; break;
+    case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:  vt = &gVT_arm32_arm_eabi; break;
 #else
-    case DC_CALL_C_DEFAULT:       vt = &gVT_arm32_arm;      break;
+    case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:  vt = &gVT_arm32_arm;      break;
 #endif
     case DC_CALL_C_ARM_ARM:       vt = &gVT_arm32_arm;      break;
     case DC_CALL_C_ARM_ARM_EABI:  vt = &gVT_arm32_arm_eabi; break;
-    default: 
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+    default:
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
   dc_callvm_base_init(&self->mInterface, vt);

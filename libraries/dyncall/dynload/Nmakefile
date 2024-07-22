@@ -32,7 +32,7 @@ TOP=..
 
 !IF "$(BUILD_OS)" == "windows"
 
-TARGETS = libdynload_s.lib
+TARGETS = dynload_s.lib
 OBJS = dynload.obj dynload_syms.obj
 
 $(TARGETS): $(OBJS)

@@ -34,12 +34,28 @@ OPTION PROLOGUE:NONE, EPILOGUE:NONE
  pop RBP
  ret
 dcCall_x64_sysv ENDP
-dcCall_x64_win64 PROC
+dcCall_x64_sysv_aggr PROC
 OPTION PROLOGUE:NONE, EPILOGUE:NONE
+ push R9
+ call dcCall_x64_sysv
+ pop R9
+ mov qword ptr [R9+0],RAX
+ mov qword ptr [R9+8],RDX
+ movsd qword ptr [R9+16],XMM0
+ movsd qword ptr [R9+24],XMM1
+ ret
+dcCall_x64_sysv_aggr ENDP
+dcCall_x64_win64 PROC FRAME
+OPTION EPILOGUE:NONE
  push RBP
+ .pushreg RBP
  push RSI
+ .pushreg RSI
  push RDI
+ .pushreg RDI
  mov RBP,RSP
+ .setframe RBP, 0
+ .endprolog
  add RCX,15
  and RCX,-16
  sub RSP,RCX
@@ -66,6 +82,15 @@ OPTION PROLOGUE:NONE, EPILOGUE:NONE
  pop RBP
  ret
 dcCall_x64_win64 ENDP
+dcCall_x64_win64_aggr PROC
+OPTION PROLOGUE:NONE, EPILOGUE:NONE
+ sub RSP,8
+ call dcCall_x64_win64
+ add RSP,8
+ mov R8,qword ptr [RSP+40]
+ mov qword ptr [R8+0],RAX
+ ret
+dcCall_x64_win64_aggr ENDP
 dcCall_x64_syscall_sysv PROC
 OPTION PROLOGUE:NONE, EPILOGUE:NONE
  mov RAX,RSI

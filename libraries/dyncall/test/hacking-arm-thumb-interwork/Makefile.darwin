@@ -5,22 +5,22 @@ TARGET_ARCH	+= -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/i
 # TARGET_ARCH	+= -mthumb-interwork 
 CFLAGS		+= -mthumb
 # CFLAGS		= -mthumb-interwork
-# CFLAGS_THUMB	= -mthumb $(CFLAGS)
+# CFLAGS_THUMB	= -mthumb ${CFLAGS}
 # CFLAGS		+= -mthumb-interwork
-all: $(LOADLIBES) test
+all: ${LOADLIBES} test
 
 thumb.o: thumb.c
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(TARGET_ARCH) -mthumb $< -o $@
+	${CC} -c ${CPPFLAGS} ${CFLAGS} ${TARGET_ARCH} -mthumb $< -o $@
 
 arm.o: arm.c
 
 test.o: test.c
 
 test: test.o thumb.o arm.o
-	$(LINK.o) $^ $(OUTPUT_OPTION)
+	${LINK.o} $^ ${OUTPUT_OPTION}
 
 %.s: %.c
-	$(CC) -S $(CPPFLAGS) $(CFLAGS) $(TARGET_ARCH) $< -o $@
+	${CC} -S ${CPPFLAGS} ${CFLAGS} ${TARGET_ARCH} $< -o $@
 
 clean:
-	$(RM) $(TARGETS) *.o
+	${RM} ${TARGETS} *.o

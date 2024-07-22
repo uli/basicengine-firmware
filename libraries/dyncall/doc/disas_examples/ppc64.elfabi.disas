@@ -269,5 +269,660 @@
  180:	00 00 00 01 	.long 0x1                ; data
  184:	80 01 00 01 	lwz     r0,1(r1)         ; unsure@@@. data?
 
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000000000000 <.leaf_call>:
+   0:	fb e1 ff f8 	std     r31,-8(r1)
+   4:	f8 21 ff c1 	stdu    r1,-64(r1)
+   8:	7c 3f 0b 78 	mr      r31,r1
+   c:	7c 60 1b 78 	mr      r0,r3
+  10:	39 7f 00 90 	addi    r11,r31,144
+  14:	f8 eb 00 00 	std     r7,0(r11)
+  18:	f9 0b 00 08 	std     r8,8(r11)
+  1c:	7d 4b 53 78 	mr      r11,r10
+  20:	90 1f 00 70 	stw     r0,112(r31)
+  24:	90 9f 00 78 	stw     r4,120(r31)
+  28:	90 bf 00 80 	stw     r5,128(r31)
+  2c:	90 df 00 88 	stw     r6,136(r31)
+  30:	91 3f 00 a0 	stw     r9,160(r31)
+  34:	91 7f 00 a8 	stw     r11,168(r31)
+  38:	e8 21 00 00 	ld      r1,0(r1)
+  3c:	eb e1 ff f8 	ld      r31,-8(r1)
+  40:	4e 80 00 20 	blr
+	...
+  4c:	80 01 00 01 	lwz     r0,1(r1)
+
+0000000000000050 <.nonleaf_call>:
+  50:	7c 08 02 a6 	mflr    r0
+  54:	fb a1 ff e8 	std     r29,-24(r1)
+  58:	fb e1 ff f8 	std     r31,-8(r1)
+  5c:	f8 01 00 10 	std     r0,16(r1)
+  60:	f8 21 ff 01 	stdu    r1,-256(r1)
+  64:	7c 3f 0b 78 	mr      r31,r1
+  68:	7c 60 1b 78 	mr      r0,r3
+  6c:	39 7f 01 58 	addi    r11,r31,344
+  70:	f9 0b 00 00 	std     r8,0(r11)
+  74:	f9 2b 00 08 	std     r9,8(r11)
+  78:	7d 49 53 78 	mr      r9,r10
+  7c:	90 1f 01 30 	stw     r0,304(r31)
+  80:	90 9f 01 38 	stw     r4,312(r31)
+  84:	90 bf 01 40 	stw     r5,320(r31)
+  88:	90 df 01 48 	stw     r6,328(r31)
+  8c:	90 ff 01 50 	stw     r7,336(r31)
+  90:	91 3f 01 68 	stw     r9,360(r31)
+  94:	38 1f 00 70 	addi    r0,r31,112
+  98:	39 20 00 64 	li      r9,100
+  9c:	7c 03 03 78 	mr      r3,r0
+  a0:	38 80 00 00 	li      r4,0
+  a4:	7d 25 4b 78 	mr      r5,r9
+  a8:	48 00 00 01 	bl      a8 <.nonleaf_call+0x58>
+  ac:	4f ff fb 82 	crmove  4*cr7+so,4*cr7+so
+  b0:	38 00 00 4c 	li      r0,76
+  b4:	98 1f 00 70 	stb     r0,112(r31)
+  b8:	80 1f 01 38 	lwz     r0,312(r31)
+  bc:	7c 08 07 b4 	extsw   r8,r0
+  c0:	80 1f 01 40 	lwz     r0,320(r31)
+  c4:	7c 09 07 b4 	extsw   r9,r0
+  c8:	80 1f 01 48 	lwz     r0,328(r31)
+  cc:	7c 0b 07 b4 	extsw   r11,r0
+  d0:	80 1f 01 50 	lwz     r0,336(r31)
+  d4:	7c 0a 07 b4 	extsw   r10,r0
+  d8:	80 1f 01 68 	lwz     r0,360(r31)
+  dc:	7c 1d 07 b4 	extsw   r29,r0
+  e0:	80 1f 01 74 	lwz     r0,372(r31)
+  e4:	7c 00 07 b4 	extsw   r0,r0
+  e8:	7d 03 43 78 	mr      r3,r8
+  ec:	7d 24 4b 78 	mr      r4,r9
+  f0:	7d 65 5b 78 	mr      r5,r11
+  f4:	7d 46 53 78 	mr      r6,r10
+  f8:	39 3f 01 58 	addi    r9,r31,344
+  fc:	e8 e9 00 00 	ld      r7,0(r9)
+ 100:	e9 09 00 08 	ld      r8,8(r9)
+ 104:	7f a9 eb 78 	mr      r9,r29
+ 108:	7c 0a 03 78 	mr      r10,r0
+ 10c:	48 00 00 01 	bl      10c <.nonleaf_call+0xbc>
+ 110:	e8 21 00 00 	ld      r1,0(r1)
+ 114:	e8 01 00 10 	ld      r0,16(r1)
+ 118:	7c 08 03 a6 	mtlr    r0
+ 11c:	eb a1 ff e8 	ld      r29,-24(r1)
+ 120:	eb e1 ff f8 	ld      r31,-8(r1)
+ 124:	4e 80 00 20 	blr
+ 128:	00 00 00 00 	.long 0x0
+ 12c:	00 00 00 01 	.long 0x1
+ 130:	80 03 00 01 	lwz     r0,1(r3)
+
+0000000000000134 <.main>:
+ 134:	7c 08 02 a6 	mflr    r0               ; |             lr -> gpr0
+ 138:	fb e1 ff f8 	std     r31,-8(r1)       ; |             preseve gpr31 (as used in func as helper addr)
+ 13c:	f8 01 00 10 	std     r0,16(r1)        ; | prolog      store lr
+ 140:	f8 21 ff 61 	stdu    r1,-160(r1)      ; |             open frame
+ 144:	7c 3f 0b 78 	mr      r31,r1           ; use gpr31 as sort of frame pointer, below
+ 148:	e9 22 00 00 	ld      r9,0(r2)         ; |
+ 14c:	e9 49 00 08 	ld      r10,8(r9)        ; | fetch local struct data's 2 doublewords (r2 = TOC ptr) -> r9/r10, and ...
+ 150:	e9 29 00 00 	ld      r9,0(r9)         ; |
+ 154:	f9 3f 00 80 	std     r9,128(r31)      ; | ... write to local area on stack
+ 158:	f9 5f 00 88 	std     r10,136(r31)     ; /
+ 15c:	38 00 00 09 	li      r0,9             ; \ arg 7, ...
+ 160:	f8 01 00 70 	std     r0,112(r1)       ; | ... "pushed" onto stack
+ 164:	38 60 00 00 	li      r3,0             ; arg 0
+ 168:	38 80 00 01 	li      r4,1             ; arg 1
+ 16c:	38 a0 00 02 	li      r5,2             ; arg 2
+ 170:	38 c0 00 03 	li      r6,3             ; arg 3
+ 174:	38 e0 00 04 	li      r7,4             ; arg 4
+ 178:	e9 1f 00 80 	ld      r8,128(r31)      ; |
+ 17c:	e9 3f 00 88 	ld      r9,136(r31)      ; | arg 5 (struct, fetch from local area, pass as 2 doublewords)
+ 180:	39 40 00 08 	li      r10,8            ; arg 6
+ 184:	48 00 00 01 	bl      184 <.main+0x50> ; call and put return address -> lr
+ 188:	38 00 00 00 	li      r0,0             ; return value ...
+ 18c:	7c 03 03 78 	mr      r3,r0            ; ... in gpr3
+ 190:	e8 21 00 00 	ld      r1,0(r1)         ; |
+ 194:	e8 01 00 10 	ld      r0,16(r1)        ; |
+ 198:	7c 08 03 a6 	mtlr    r0               ; | epilog
+ 19c:	eb e1 ff f8 	ld      r31,-8(r1)       ; |
+ 1a0:	4e 80 00 20 	blr                      ; |
+ 1a4:	00 00 00 00 	.long 0x0                ; data
+ 1a8:	00 00 00 01 	.long 0x1                ; data
+ 1ac:	80 01 00 01 	lwz     r0,1(r1)         ; unsure@@@. data?
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000000000000 <.leaf_call>:
+   0:	fb e1 ff f8 	std     r31,-8(r1)
+   4:	f8 21 ff c1 	stdu    r1,-64(r1)
+   8:	7c 3f 0b 78 	mr      r31,r1
+   c:	f8 9f 00 78 	std     r4,120(r31)
+  10:	f8 bf 00 80 	std     r5,128(r31)
+  14:	39 7f 00 88 	addi    r11,r31,136
+  18:	f8 cb 00 00 	std     r6,0(r11)
+  1c:	f8 eb 00 08 	std     r7,8(r11)
+  20:	7d 00 43 78 	mr      r0,r8
+  24:	f9 5f 00 a8 	std     r10,168(r31)
+  28:	90 7f 00 70 	stw     r3,112(r31)
+  2c:	90 1f 00 98 	stw     r0,152(r31)
+  30:	91 3f 00 a0 	stw     r9,160(r31)
+  34:	e8 21 00 00 	ld      r1,0(r1)
+  38:	eb e1 ff f8 	ld      r31,-8(r1)
+  3c:	4e 80 00 20 	blr
+	...
+  48:	80 01 00 01 	lwz     r0,1(r1)
+
+000000000000004c <.nonleaf_call>:
+  4c:	7c 08 02 a6 	mflr    r0
+  50:	fb 81 ff e0 	std     r28,-32(r1)
+  54:	fb a1 ff e8 	std     r29,-24(r1)
+  58:	fb e1 ff f8 	std     r31,-8(r1)
+  5c:	f8 01 00 10 	std     r0,16(r1)
+  60:	f8 21 fe d1 	stdu    r1,-304(r1)
+  64:	7c 3f 0b 78 	mr      r31,r1
+  68:	f8 bf 01 70 	std     r5,368(r31)
+  6c:	f8 df 01 78 	std     r6,376(r31)
+  70:	39 7f 01 80 	addi    r11,r31,384
+  74:	f8 eb 00 00 	std     r7,0(r11)
+  78:	f9 0b 00 08 	std     r8,8(r11)
+  7c:	7d 20 4b 78 	mr      r0,r9
+  80:	7d 49 53 78 	mr      r9,r10
+  84:	90 7f 01 60 	stw     r3,352(r31)
+  88:	90 9f 01 68 	stw     r4,360(r31)
+  8c:	90 1f 01 90 	stw     r0,400(r31)
+  90:	91 3f 01 98 	stw     r9,408(r31)
+  94:	38 1f 00 a0 	addi    r0,r31,160
+  98:	39 20 00 64 	li      r9,100
+  9c:	7c 03 03 78 	mr      r3,r0
+  a0:	38 80 00 00 	li      r4,0
+  a4:	7d 25 4b 78 	mr      r5,r9
+  a8:	48 00 00 01 	bl      a8 <.nonleaf_call+0x5c>
+  ac:	4f ff fb 82 	crmove  4*cr7+so,4*cr7+so
+  b0:	38 00 00 4c 	li      r0,76
+  b4:	98 1f 00 a0 	stb     r0,160(r31)
+  b8:	80 1f 01 68 	lwz     r0,360(r31)
+  bc:	7c 08 07 b4 	extsw   r8,r0
+  c0:	80 1f 01 90 	lwz     r0,400(r31)
+  c4:	7c 1d 07 b4 	extsw   r29,r0
+  c8:	80 1f 01 98 	lwz     r0,408(r31)
+  cc:	7c 1c 07 b4 	extsw   r28,r0
+  d0:	39 3f 01 b0 	addi    r9,r31,432
+  d4:	e9 49 00 08 	ld      r10,8(r9)
+  d8:	e9 29 00 00 	ld      r9,0(r9)
+  dc:	39 61 00 78 	addi    r11,r1,120
+  e0:	f9 2b 00 00 	std     r9,0(r11)
+  e4:	f9 4b 00 08 	std     r10,8(r11)
+  e8:	80 1f 01 c4 	lwz     r0,452(r31)
+  ec:	7c 00 07 b4 	extsw   r0,r0
+  f0:	f8 01 00 88 	std     r0,136(r1)
+  f4:	80 1f 01 cc 	lwz     r0,460(r31)
+  f8:	7c 00 07 b4 	extsw   r0,r0
+  fc:	f8 01 00 90 	std     r0,144(r1)
+ 100:	80 1f 01 a8 	lwz     r0,424(r31)
+ 104:	90 01 00 70 	stw     r0,112(r1)
+ 108:	e9 5f 01 a0 	ld      r10,416(r31)
+ 10c:	7d 03 43 78 	mr      r3,r8
+ 110:	e8 9f 01 70 	ld      r4,368(r31)
+ 114:	e8 bf 01 78 	ld      r5,376(r31)
+ 118:	39 3f 01 80 	addi    r9,r31,384
+ 11c:	e8 c9 00 00 	ld      r6,0(r9)
+ 120:	e8 e9 00 08 	ld      r7,8(r9)
+ 124:	7f a8 eb 78 	mr      r8,r29
+ 128:	7f 89 e3 78 	mr      r9,r28
+ 12c:	48 00 00 01 	bl      12c <.nonleaf_call+0xe0>
+ 130:	e8 21 00 00 	ld      r1,0(r1)
+ 134:	e8 01 00 10 	ld      r0,16(r1)
+ 138:	7c 08 03 a6 	mtlr    r0
+ 13c:	eb 81 ff e0 	ld      r28,-32(r1)
+ 140:	eb a1 ff e8 	ld      r29,-24(r1)
+ 144:	eb e1 ff f8 	ld      r31,-8(r1)
+ 148:	4e 80 00 20 	blr
+ 14c:	00 00 00 00 	.long 0x0
+ 150:	00 00 00 01 	.long 0x1
+ 154:	80 04 00 01 	lwz     r0,1(r4)
+
+0000000000000158 <.main>:
+ 158:	7c 08 02 a6 	mflr    r0               ; |             lr -> gpr0
+ 15c:	fb e1 ff f8 	std     r31,-8(r1)       ; |             preseve gpr31 (as used in func as helper addr)
+ 160:	f8 01 00 10 	std     r0,16(r1)        ; | prolog      store lr
+ 164:	f8 21 ff 11 	stdu    r1,-240(r1)      ; |             open frame
+ 168:	7c 3f 0b 78 	mr      r31,r1           ; use gpr31 as sort of frame pointer, below
+ 16c:	e9 22 00 00 	ld      r9,0(r2)         ; |
+ 170:	e8 09 00 00 	ld      r0,0(r9)         ; | fetch local first struct A data's 2 doublewords (r2 = TOC ptr) -> r9/r10, and ...
+ 174:	81 29 00 08 	lwz     r9,8(r9)         ; |
+ 178:	f8 1f 00 d0 	std     r0,208(r31)      ; | ... write to local area on stack
+ 17c:	91 3f 00 d8 	stw     r9,216(r31)      ; /
+ 180:	e9 22 00 08 	ld      r9,8(r2)         ; \
+ 184:	e9 49 00 08 	ld      r10,8(r9)        ; | fetch local first struct B data's 2 doublewords (r2 = TOC ptr) -> r9/r10, and ...
+ 188:	e9 29 00 00 	ld      r9,0(r9)         ; |
+ 18c:	39 7f 00 c0 	addi    r11,r31,192      ; | ... write to local area on stack
+ 190:	f9 2b 00 00 	std     r9,0(r11)        ; |
+ 194:	f9 4b 00 08 	std     r10,8(r11)       ; /
+ 198:	e9 22 00 10 	ld      r9,16(r2)        ; \
+ 19c:	e8 09 00 00 	ld      r0,0(r9)         ; | fetch local second struct A data's 2 doublewords (r2 = TOC ptr) -> r9/r10, and ...
+ 1a0:	81 29 00 08 	lwz     r9,8(r9)         ; |
+ 1a4:	f8 1f 00 b0 	std     r0,176(r31)      ; | ... write to local area on stack
+ 1a8:	91 3f 00 b8 	stw     r9,184(r31)      ; /
+ 1ac:	e9 22 00 18 	ld      r9,24(r2)        ; \
+ 1b0:	e9 49 00 08 	ld      r10,8(r9)        ; | fetch local second struct B data's 2 doublewords (r2 = TOC ptr) -> r9/r10, and ...
+ 1b4:	e9 29 00 00 	ld      r9,0(r9)         ; |
+ 1b8:	f9 3f 00 a0 	std     r9,160(r31)      ; | ... write to local area on stack
+ 1bc:	f9 5f 00 a8 	std     r10,168(r31)     ; /
+ 1c0:	e8 1f 00 b0 	ld      r0,176(r31)      ; \
+ 1c4:	81 3f 00 b8 	lwz     r9,184(r31)      ; | arg 6 (second struct A, fetch from local area, pushed onto stack, pass as 2 doublewords)
+ 1c8:	f8 01 00 70 	std     r0,112(r1)       ; |
+ 1cc:	91 21 00 78 	stw     r9,120(r1)       ; /
+ 1d0:	e9 3f 00 a0 	ld      r9,160(r31)      ; \
+ 1d4:	e9 5f 00 a8 	ld      r10,168(r31)     ; |
+ 1d8:	39 61 00 80 	addi    r11,r1,128       ; | arg 7 (second struct A, fetch from local area, pushed onto stack, pass as 2 doublewords)
+ 1dc:	f9 2b 00 00 	std     r9,0(r11)        ; |
+ 1e0:	f9 4b 00 08 	std     r10,8(r11)       ; /
+ 1e4:	38 00 00 0e 	li      r0,14            ; arg 8, ...
+ 1e8:	f8 01 00 90 	std     r0,144(r1)       ; ... "pushed" onto stack
+ 1ec:	38 00 00 0f 	li      r0,15            ; arg 9, ...
+ 1f0:	f8 01 00 98 	std     r0,152(r1)       ; ... "pushed" onto stack
+ 1f4:	38 60 00 00 	li      r3,0             ; arg 0
+ 1f8:	38 80 00 01 	li      r4,1             ; arg 1
+ 1fc:	e8 bf 00 d0 	ld      r5,208(r31)      ; | arg 2 (first struct A, fetch from local area, pass as 2 doublewords)
+ 200:	e8 df 00 d8 	ld      r6,216(r31)      ; /
+ 204:	39 3f 00 c0 	addi    r9,r31,192       ; \
+ 208:	e8 e9 00 00 	ld      r7,0(r9)         ; | arg 3 (first struct B, fetch from local area, pass as 2 doublewords)
+ 20c:	e9 09 00 08 	ld      r8,8(r9)         ; |
+ 210:	39 20 00 07 	li      r9,7             ; arg 4
+ 214:	39 40 00 08 	li      r10,8            ; arg 5
+ 218:	48 00 00 01 	bl      218 <.main+0xc0> ; call and put return address -> lr
+ 21c:	38 00 00 00 	li      r0,0             ; return value ...
+ 220:	7c 03 03 78 	mr      r3,r0            ; ... in gpr3
+ 224:	e8 21 00 00 	ld      r1,0(r1)         ; |
+ 228:	e8 01 00 10 	ld      r0,16(r1)        ; |
+ 22c:	7c 08 03 a6 	mtlr    r0               ; | epilog
+ 230:	eb e1 ff f8 	ld      r31,-8(r1)       ; |
+ 234:	4e 80 00 20 	blr                      ; |
+ 238:	00 00 00 00 	.long 0x0                ; data
+ 23c:	00 00 00 01 	.long 0x1                ; data
+ 240:	80 01 00 01 	lwz     r0,1(r1)         ; unsure@@@. data?
+
+
+
+; ---------- returning qwords ---------->
+;
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000000000000 <.f>:
+   0:	fb e1 ff f8 	std     r31,-8(r1)
+   4:	f8 21 ff c1 	stdu    r1,-64(r1)
+   8:	7c 3f 0b 78 	mr      r31,r1
+   c:	38 00 1c 03 	li      r0,7171
+  10:	7c 03 03 78 	mr      r3,r0
+  14:	e8 21 00 00 	ld      r1,0(r1)
+  18:	eb e1 ff f8 	ld      r31,-8(r1)
+  1c:	4e 80 00 20 	blr
+	...
+  28:	80 01 00 01 	lwz     r0,1(r1)
+
+000000000000002c <.main>:
+  2c:	7c 08 02 a6 	mflr    r0
+  30:	fb e1 ff f8 	std     r31,-8(r1)
+  34:	f8 01 00 10 	std     r0,16(r1)
+  38:	f8 21 ff 81 	stdu    r1,-128(r1)
+  3c:	7c 3f 0b 78 	mr      r31,r1
+  40:	48 00 00 01 	bl      40 <.main+0x14>
+  44:	7c 60 1b 78 	mr      r0,r3
+  48:	7c 00 07 b4 	extsw   r0,r0
+  4c:	7c 03 03 78 	mr      r3,r0
+  50:	e8 21 00 00 	ld      r1,0(r1)
+  54:	e8 01 00 10 	ld      r0,16(r1)
+  58:	7c 08 03 a6 	mtlr    r0
+  5c:	eb e1 ff f8 	ld      r31,-8(r1)
+  60:	4e 80 00 20 	blr
+  64:	00 00 00 00 	.long 0x0
+  68:	00 00 00 01 	.long 0x1
+  6c:	80 01 00 01 	lwz     r0,1(r1)
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i; long j; };
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 232 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + s.x;
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000000000000 <.f0>:
+   0:	fb e1 ff f8 	std     r31,-8(r1)
+   4:	f8 21 ff b1 	stdu    r1,-80(r1)
+   8:	7c 3f 0b 78 	mr      r31,r1
+   c:	7c 69 1b 78 	mr      r9,r3
+  10:	38 00 ff 84 	li      r0,-124
+  14:	98 1f 00 30 	stb     r0,48(r31)
+  18:	88 1f 00 30 	lbz     r0,48(r31)
+  1c:	98 09 00 00 	stb     r0,0(r9)
+  20:	7d 23 4b 78 	mr      r3,r9
+  24:	e8 21 00 00 	ld      r1,0(r1)
+  28:	eb e1 ff f8 	ld      r31,-8(r1)
+  2c:	4e 80 00 20 	blr
+	...
+  38:	80 01 00 01 	lwz     r0,1(r1)
+
+000000000000003c <.f1>:
+  3c:	fb e1 ff f8 	std     r31,-8(r1)
+  40:	f8 21 ff b1 	stdu    r1,-80(r1)
+  44:	7c 3f 0b 78 	mr      r31,r1
+  48:	7c 6b 1b 78 	mr      r11,r3
+  4c:	e9 22 00 00 	ld      r9,0(r2)
+  50:	e9 49 00 08 	ld      r10,8(r9)
+  54:	e9 29 00 00 	ld      r9,0(r9)
+  58:	f9 3f 00 30 	std     r9,48(r31)
+  5c:	f9 5f 00 38 	std     r10,56(r31)
+  60:	e9 3f 00 30 	ld      r9,48(r31)
+  64:	e9 5f 00 38 	ld      r10,56(r31)
+  68:	f9 2b 00 00 	std     r9,0(r11)
+  6c:	f9 4b 00 08 	std     r10,8(r11)
+  70:	7d 63 5b 78 	mr      r3,r11
+  74:	e8 21 00 00 	ld      r1,0(r1)
+  78:	eb e1 ff f8 	ld      r31,-8(r1)
+  7c:	4e 80 00 20 	blr
+	...
+  88:	80 01 00 01 	lwz     r0,1(r1)
+
+000000000000008c <.main>:
+  8c:	7c 08 02 a6 	mflr    r0
+  90:	fb e1 ff f8 	std     r31,-8(r1)
+  94:	f8 01 00 10 	std     r0,16(r1)
+  98:	f8 21 ff 61 	stdu    r1,-160(r1)
+  9c:	7c 3f 0b 78 	mr      r31,r1
+  a0:	38 1f 00 70 	addi    r0,r31,112
+  a4:	7c 03 03 78 	mr      r3,r0
+  a8:	48 00 00 01 	bl      a8 <.main+0x1c>
+  ac:	38 1f 00 78 	addi    r0,r31,120
+  b0:	7c 03 03 78 	mr      r3,r0
+  b4:	48 00 00 01 	bl      b4 <.main+0x28>
+  b8:	e8 1f 00 80 	ld      r0,128(r31)
+  bc:	78 09 00 20 	clrldi  r9,r0,32
+  c0:	88 1f 00 70 	lbz     r0,112(r31)
+  c4:	78 00 06 20 	clrldi  r0,r0,56
+  c8:	7c 09 02 14 	add     r0,r9,r0
+  cc:	78 00 00 20 	clrldi  r0,r0,32
+  d0:	7c 00 07 b4 	extsw   r0,r0
+  d4:	7c 03 03 78 	mr      r3,r0
+  d8:	e8 21 00 00 	ld      r1,0(r1)
+  dc:	e8 01 00 10 	ld      r0,16(r1)
+  e0:	7c 08 03 a6 	mtlr    r0
+  e4:	eb e1 ff f8 	ld      r31,-8(r1)
+  e8:	4e 80 00 20 	blr
+  ec:	00 00 00 00 	.long 0x0
+  f0:	00 00 00 01 	.long 0x1
+  f4:	80 01 00 01 	lwz     r0,1(r1)
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000010000828 <.f1>:
+    10000828:   fb e1 ff f8     std     r31,-8(r1)
+    1000082c:   f8 21 ff c1     stdu    r1,-64(r1)
+    10000830:   7c 3f 0b 78     mr      r31,r1
+    10000834:   90 7f 00 70     stw     r3,112(r31)
+    10000838:   e8 21 00 00     ld      r1,0(r1)
+    1000083c:   eb e1 ff f8     ld      r31,-8(r1)
+    10000840:   4e 80 00 20     blr
+    10000844:   00 00 00 00     .long 0x0
+    10000848:   00 09 00 00     .long 0x90000
+    1000084c:   80 01 00 01     lwz     r0,1(r1)
+
+0000000010000850 <.f2>:
+    10000850:   fb e1 ff f8     std     r31,-8(r1)
+    10000854:   f8 21 ff c1     stdu    r1,-64(r1)
+    10000858:   7c 3f 0b 78     mr      r31,r1
+    1000085c:   f8 7f 00 70     std     r3,112(r31)
+    10000860:   e8 21 00 00     ld      r1,0(r1)
+    10000864:   eb e1 ff f8     ld      r31,-8(r1)
+    10000868:   4e 80 00 20     blr
+    1000086c:   00 00 00 00     .long 0x0
+    10000870:   00 09 00 00     .long 0x90000
+    10000874:   80 01 00 01     lwz     r0,1(r1)
+
+0000000010000878 <.f>:
+    10000878:   7c 08 02 a6     mflr    r0                                 ;
+    1000087c:   fb e1 ff f8     std     r31,-8(r1)                         ;
+    10000880:   f8 01 00 10     std     r0,16(r1)                          ;
+    10000884:   f8 21 ff 71     stdu    r1,-144(r1)                        ;
+    10000888:   7c 3f 0b 78     mr      r31,r1                             ;
+    1000088c:   38 1f 00 7c     addi    r0,r31,124                         ;
+    10000890:   7c 03 03 78     mr      r3,r0                              ;
+    10000894:   48 00 00 ad     bl      10000940 <._ZN10NonTrivialC1Ev>    ; NonTrivial::NonTrivial() / ctor
+    10000898:   4f ff fb 82     crmove  4*cr7+so,4*cr7+so                  ;
+    1000089c:   38 00 00 01     li      r0,1                               ;
+    100008a0:   90 1f 00 70     stw     r0,112(r31)                        ;
+    100008a4:   81 3f 00 70     lwz     r9,112(r31)                        ;
+    100008a8:   38 09 00 7b     addi    r0,r9,123                          ;
+    100008ac:   90 1f 00 70     stw     r0,112(r31)                        ;
+    100008b0:   80 7f 00 78     lwz     r3,120(r31)                        ;
+    100008b4:   4b ff ff 75     bl      10000828 <.f1>                     ; call f1(struct Trivial)
+    100008b8:   81 3f 00 70     lwz     r9,112(r31)                        ;
+    100008bc:   38 09 ff 85     addi    r0,r9,-123                         ;
+    100008c0:   90 1f 00 70     stw     r0,112(r31)                        ;
+    100008c4:   38 1f 00 74     addi    r0,r31,116                         ;
+    100008c8:   39 3f 00 7c     addi    r9,r31,124                         ;
+    100008cc:   7c 03 03 78     mr      r3,r0                              ; |               ptr to dest of copy of n
+    100008d0:   7d 24 4b 78     mr      r4,r9                              ; | copy n        ptr to n
+    100008d4:   48 00 00 a1     bl      10000974 <._ZN10NonTrivialC1ERKS_> ; |               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+    100008d8:   4f ff fb 82     crmove  4*cr7+so,4*cr7+so                  ;
+    100008dc:   38 1f 00 74     addi    r0,r31,116                         ; |
+    100008e0:   7c 03 03 78     mr      r3,r0                              ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+    100008e4:   4b ff ff 6d     bl      10000850 <.f2>                     ; call f2(struct NonTrivial)
+    100008e8:   81 3f 00 70     lwz     r9,112(r31)                        ;
+    100008ec:   38 09 ff f4     addi    r0,r9,-12                          ;
+    100008f0:   90 1f 00 70     stw     r0,112(r31)                        ;
+    100008f4:   e8 21 00 00     ld      r1,0(r1)                           ;
+    100008f8:   e8 01 00 10     ld      r0,16(r1)                          ;
+    100008fc:   7c 08 03 a6     mtlr    r0                                 ;
+    10000900:   eb e1 ff f8     ld      r31,-8(r1)                         ;
+    10000904:   4e 80 00 20     blr                                        ;
+    10000908:   00 00 00 00     .long 0x0                                  ;
+    1000090c:   00 09 00 01     .long 0x90001                              ;
+    10000910:   80 01 00 01     lwz     r0,1(r1)                           ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-11.0-ppc64 w/ gcc 4.2.1
+
+0000000010000828 <.f1>:
+    10000828:   fb e1 ff f8     std     r31,-8(r1)                         ; |
+    1000082c:   f8 21 ff c1     stdu    r1,-64(r1)                         ; | prolog
+    10000830:   7c 3f 0b 78     mr      r31,r1                             ; use gpr31 as sort of frame pointer, below
+    10000834:   90 7f 00 70     stw     r3,112(r31)                        ;
+    10000838:   e8 21 00 00     ld      r1,0(r1)                           ; |
+    1000083c:   eb e1 ff f8     ld      r31,-8(r1)                         ; | epilog
+    10000840:   4e 80 00 20     blr                                        ; |
+    10000844:   00 00 00 00     .long 0x0                                  ; data
+    10000848:   00 09 00 00     .long 0x90000                              ; data
+    1000084c:   80 01 00 01     lwz     r0,1(r1)                           ; unsure@@@. data?
+
+0000000010000850 <.f2>:
+    10000850:   fb e1 ff f8     std     r31,-8(r1)                         ; |
+    10000854:   f8 21 ff c1     stdu    r1,-64(r1)                         ; | prolog
+    10000858:   7c 3f 0b 78     mr      r31,r1                             ; use gpr31 as sort of frame pointer, below
+    1000085c:   f8 7f 00 70     std     r3,112(r31)                        ;
+    10000860:   e8 21 00 00     ld      r1,0(r1)                           ; |
+    10000864:   eb e1 ff f8     ld      r31,-8(r1)                         ; | epilog
+    10000868:   4e 80 00 20     blr                                        ; |
+    1000086c:   00 00 00 00     .long 0x0                                  ; data
+    10000870:   00 09 00 00     .long 0x90000                              ; data
+    10000874:   80 01 00 01     lwz     r0,1(r1)                           ; unsure@@@. data?
+
+0000000010000878 <.f>:
+    10000878:   7c 08 02 a6     mflr    r0                                 ;
+    1000087c:   fb e1 ff f8     std     r31,-8(r1)                         ;
+    10000880:   f8 01 00 10     std     r0,16(r1)                          ;
+    10000884:   f8 21 ff 71     stdu    r1,-144(r1)                        ;
+    10000888:   7c 3f 0b 78     mr      r31,r1                             ;
+    1000088c:   38 1f 00 7c     addi    r0,r31,124                         ;
+    10000890:   7c 03 03 78     mr      r3,r0                              ;
+    10000894:   48 00 00 ad     bl      10000940 <._ZN10NonTrivialC1Ev>    ; ctor
+    10000898:   4f ff fb 82     crmove  4*cr7+so,4*cr7+so                  ;
+    1000089c:   38 00 00 01     li      r0,1                               ; | a = 1
+    100008a0:   90 1f 00 70     stw     r0,112(r31)                        ; /
+    100008a4:   81 3f 00 70     lwz     r9,112(r31)                        ; \
+    100008a8:   38 09 00 7b     addi    r0,r9,123                          ; | a += 123
+    100008ac:   90 1f 00 70     stw     r0,112(r31)                        ; |
+    100008b0:   80 7f 00 78     lwz     r3,120(r31)                        ; hidden first arg (ptr to space to hold Trivial retval) @@@ fetches addr from 120(r31)?
+    100008b4:   4b ff ff 75     bl      10000828 <.f1>                     ; call f1()
+    100008b8:   81 3f 00 70     lwz     r9,112(r31)                        ; |
+    100008bc:   38 09 ff 85     addi    r0,r9,-123                         ; | a -= 123
+    100008c0:   90 1f 00 70     stw     r0,112(r31)                        ; |
+    100008c4:   38 1f 00 74     addi    r0,r31,116                         ;
+    100008c8:   39 3f 00 7c     addi    r9,r31,124                         ;
+    100008cc:   7c 03 03 78     mr      r3,r0                              ;
+    100008d0:   7d 24 4b 78     mr      r4,r9                              ;
+    100008d4:   48 00 00 a1     bl      10000974 <._ZN10NonTrivialC1ERKS_> ; copy ctor
+    100008d8:   4f ff fb 82     crmove  4*cr7+so,4*cr7+so                  ;
+    100008dc:   38 1f 00 74     addi    r0,r31,116                         ;
+    100008e0:   7c 03 03 78     mr      r3,r0                              ; hidden first arg (ptr to space to hold NonTrivial retval)
+    100008e4:   4b ff ff 6d     bl      10000850 <.f2>                     ; call f2()
+    100008e8:   81 3f 00 70     lwz     r9,112(r31)                        ; |
+    100008ec:   38 09 ff f4     addi    r0,r9,-12                          ; | a -= 12
+    100008f0:   90 1f 00 70     stw     r0,112(r31)                        ; |
+    100008f4:   e8 21 00 00     ld      r1,0(r1)                           ;
+    100008f8:   e8 01 00 10     ld      r0,16(r1)                          ;
+    100008fc:   7c 08 03 a6     mtlr    r0                                 ;
+    10000900:   eb e1 ff f8     ld      r31,-8(r1)                         ;
+    10000904:   4e 80 00 20     blr                                        ;
+    10000908:   00 00 00 00     .long 0x0                                  ;
+    1000090c:   00 09 00 01     .long 0x90001                              ;
+    10000910:   80 01 00 01     lwz     r0,1(r1)                           ;
+
+
+
 ; vim: ft=asm
 

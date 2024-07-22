@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2007-2019 Daniel Adler <dadler@uni-goettingen.de>,
+% Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -17,9 +17,6 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-% ==================================================
-% ARM32
-% ==================================================
 \subsection{ARM32 Calling Conventions}
 
 \paragraph{Overview}
@@ -46,7 +43,7 @@ For more details, take a look at the ARM-THUMB Procedure Call Standard (ATPCS)
 
 Currently, the \product{dyncall} library supports the ARM and THUMB mode of the
 ARM32 family (ATPCS \cite{ATPCS}, EABI \cite{armeabi}, the ARM hard-float
-(armhf) \cite{armeabi} varian, as well as Apple's calling convention based on
+(armhf) \cite{armeabi} variant, as well as Apple's calling convention based on
 the ATPCS), excluding manually triggered ARM-THUMB interworking calls.\\
 Also supported is armhf, a calling convention with register support to pass
 floating point numbers. FPA and the VFP (scalar mode) procedure call standards,
@@ -91,16 +88,21 @@ Name        & Alias       & Brief description\\
 \item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first four words to a reserved stack area adjacent to the other parameters on the stack
 \item parameters \textless=\ 32 bits are passed as 32 bit words
 \item 64 bit parameters are passed as two 32 bit parts (even partly via the register and partly via the stack, although this doesn't seem to be specified in the ATPCS)
-\item structures and unions are passed by value, with the first four words of the parameters in r0-r3
-\item if return value is a structure, a pointer pointing to the return value's space is passed in r0, the first parameter in r1, etc... (see {\bf return values})
+\item aggregates (struct, union) are passed by value (after rounding up the size to the nearest multiple of 4), as a sequence of words (splitting across registers and stack is allowed)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \item keeping the stack eight-byte aligned can improve memory access performance and is required by LDRD and STRD on ARMv5TE processors which are part of the ARM32 family, so, in order to avoid problems one should always align the stack (tests have shown, that GCC does care about the alignment when using the ellipsis)
 \end{itemize}
 
 \paragraph{Return values}
+
 \begin{itemize}
 \item return values \textless=\ 32 bits use r0
 \item 64 bit return values use r0 and r1
-\item if return value is a structure, the caller allocates space for the return value on the stack in its frame and passes a pointer to it in r0
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
+\item aggregates (struct, union) \textless=\ 32 bits are returned like an integer (in r0)
+\item aggregates (struct, union) \textgreater\ 32 bits the caller allocates space for the return value on the stack in its frame and passes a pointer to it in r0
+\item for all other aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param (meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -135,19 +137,13 @@ parameter area                           & \vdots               &               
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{ATPCS THUMB mode}
 
 
 \paragraph{Status}
-
-\begin{itemize}
-\item The ATPCS THUMB mode is untested.
-\item Ellipsis calls may not work.
-\item C++ this calls do not work.
-\end{itemize}
 
 \paragraph{Registers and register usage}
 
@@ -180,17 +176,22 @@ Name         & Alias       & Brief description\\
 \item subsequent parameters are pushed onto the stack (in right to left order, such that the stack pointer points to the first of the remaining parameters)
 \item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first four words to a reserved stack area adjacent to the other parameters on the stack
 \item parameters \textless=\ 32 bits are passed as 32 bit words
-\item 64 bit parameters are passed as two 32 bit parts (even partly via the register and partly via the stack), although this doesn't seem to be specified in the ATPCS)
-\item structures and unions are passed by value, with the first four words of the parameters in r0-r3
-\item if return value is a structure, a pointer pointing to the return value's space is passed in r0, the first parameter in r1, etc. (see {\bf return values})
+\item 64 bit parameters are passed as two 32 bit parts (even partly via the register and partly via the stack, although this doesn't seem to be specified in the ATPCS)
+\item aggregates (struct, union) are passed by value (after rounding up the size to the nearest multiple of 4), as a sequence of words (splitting across registers and stack is allowed)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \item keeping the stack eight-byte aligned can improve memory access performance and is required by LDRD and STRD on ARMv5TE processors which are part of the ARM32 family, so, in order to avoid problems one should always align the stack (tests have shown, that GCC does care about the alignment when using the ellipsis)
 \end{itemize}
 
 \paragraph{Return values}
+
 \begin{itemize}
 \item return values \textless=\ 32 bits use r0
 \item 64 bit return values use r0 and r1
-\item if return value is a structure, the caller allocates space for the return value on the stack in its frame and passes a pointer to it in r0
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
+\item aggregates (struct, union) \textless=\ 32 bits are returned like an integer (in r0)
+\item aggregates (struct, union) \textgreater\ 32 bits the caller allocates space for the return value on the stack in its frame and passes a pointer to it in r0
+\item for all other aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param (meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -224,7 +225,7 @@ parameter area                           & \vdots               &               
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{EABI (ARM and THUMB mode)}
@@ -238,17 +239,9 @@ passed via register. In order to achieve such an alignment, a register might
 have to be skipped for parameters passed via registers, or 4-bytes on the stack
 for parameters passed via the stack. Refer to the Debian ARM EABI port wiki
 for more information \cite{armeabi}.\\
-\\
-\paragraph{Status}
-
-\begin{itemize}
-\item The EABI THUMB mode is tested and works fine (contrary to the ATPCS).
-\item Ellipsis calls do not work.
-\item C++ this calls do not work.
-\end{itemize}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{ARM on Apple's iOS (Darwin) Platform (ARM and THUMB mode)}
@@ -294,6 +287,8 @@ The ABI is based on the AAPCS but with the following important differences:
 \end{itemize}
 
 
+\clearpage
+
 \paragraph{Stack layout}
 
 % verified/amended: TP nov 2019 (see also doc/disas_examples/arm.darwin_{arm,thumb}.disas)
@@ -322,11 +317,11 @@ local data                               &                      &               
 \hhline{~-~~}                                                  
 parameter area                           & \vdots               &                                      &                              \\
 \end{tabular}
-\caption{Stack layout on arm32}
+\caption{Stack layout on arm32 (Apple)}
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{ARM hard float (armhf)}
@@ -377,18 +372,26 @@ Name         & Alias       &  Brief description\\
 \item float and double vararg function parameters (no matter if in ellipsis part of function, or not) are passed like int or long long parameters, vfp registers aren't used
 \item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first four words (for first 4 integer arguments) to a reserved stack area adjacent to the other parameters on the stack
 \item parameters \textless=\ 32 bits are passed as 32 bit words
-\item structures and unions are passed by value, with the first four words of the parameters in r0-r3
-\item if return value is a structure, a pointer pointing to the return value's space is passed in r0, the first parameter in r1, etc. (see {\bf return values})
+\item aggregates (struct, union) with 1 to 4 identical floating-point members (either float or double) are passed field-by-field, except if passed as a vararg
+\item aggregates that could be passed via floating point register are never split across those and the stack, so if not enough registers are available an aggregate is
+passed entirely via the stack (implying above rule that any still unused float registers will be skipped for any subsequent arg)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item all other aggregates (struct, union), after rounding up the size to the nearest multiple of 4, are passed as a sequence of dwords, like integers (splitting across registers and stack is allowed)
 \item callee spills, caller reserves spill area space, though
 \end{itemize}
 
 \paragraph{Return values}
+
 \begin{itemize}
 \item non floating point return values \textless=\ 32 bits use r0
 \item non floating point 64-bit return values use r0 and r1
-\item single precision floating point return value uses s0
-\item double precision floating point return value uses d0
-\item if return value is a structure, the caller allocates space for the return value on the stack in its frame and passes a pointer to it in r0
+\item floating point return value uses s0 (for float) or d0 (for double), respectively
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
+\item aggregates (struct, union) with 1 to 4 identical floating-point members are returned in s0-s3 (for float) or d0-d3 (for double), respectively
+\item all other aggregates \textless=\ 32 bits are returned via r0
+\item for all other aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in r0), and callee writes return value to this space; the ptr to the aggregate is returned in r0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -423,7 +426,7 @@ parameter area                           & \vdots                     &         
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{Architectures}
@@ -452,7 +455,4 @@ ARMv8  & iPhone 6 and higher                      & 64bit support \\
 \end{tabular*}
 \caption{Overview of ARM Architecture, Platforms and Details}
 \end{table}
-
-
-\newpage
 

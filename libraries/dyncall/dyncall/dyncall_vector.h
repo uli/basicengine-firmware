@@ -47,10 +47,6 @@ typedef struct
 #define dcVecSize(p)        ( (p)->mSize )
 #define dcVecAlign(p,align) (p)->mSize=( (p)->mSize + align-1 ) & -align
 
-/*
-#include <string.h>
- #define dcVecAppend(p,s,n) memcpy( dcVecData(p)+p->mSize, s, n );p->mSize+=n
-*/
 
 void dcVecAppend(DCVecHead* pHead, const void* source, size_t length);
 

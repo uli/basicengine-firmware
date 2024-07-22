@@ -1,13 +1,13 @@
 ; void leaf_call(int a, int b, int c, int d, int e, int f)
 ; {
 ; }
-; 
+;
 ; int nonleaf_call(int a, int b, int c, int d, int e, int f, int g)
 ; {
 ;   leaf_call(b,c,d,e,f,g);
 ;   return 'x';
 ; }
-; 
+;
 ; int main()
 ; {
 ;   nonleaf_call(0,1,2,3,4,5,6);
@@ -35,7 +35,7 @@
 001047    89442410            (7)       MOVL                        AX,16(SP)          ; |
 00104b    8b442438            (7)       MOVL                        g+56(FP),AX        ; |
 00104f    89442414            (7)       MOVL                        AX,20(SP)          ; |
-001053    e8c8ffffff          (7)       CALL                        ,1020+leaf_call    ; push return addrss and call
+001053    e8c8ffffff          (7)       CALL                        ,1020+leaf_call    ; push return address and call
 001058    b878000000          (8)       MOVL                        $120,AX            ; return value: 'x' -> eax
 00105d    83c41c              (8)       ADDL                        $28,SP             ; |
 001060    c3                  (8)       RET                         ,                  ; | epilog
@@ -55,10 +55,342 @@
 001094    89442414            (13)      MOVL                        AX,20(SP)          ;    .
 001098    b806000000          (13)      MOVL                        $6,AX              ; arg 6 -> eax, then ...
 00109d    89442418            (13)      MOVL                        AX,24(SP)          ; ... "pushed" onto stack
-0010a1    e87bffffff          (13)      CALL                        ,1021+nonleaf_call ; push return addrss and call
+0010a1    e87bffffff          (13)      CALL                        ,1021+nonleaf_call ; push return address and call
 0010a6    31c0                (14)      MOVL                        $0,AX              ; return value
 0010a8    83c420              (14)      ADDL                        $32,SP             ; |
 0010ab    c3                  (14)      RET                         ,                  ; | epilog
+
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from plan9-4th_edition-x86 w/ 8c x.c && 8l -a x.8
+
+001020                        (3)  TEXT    leaf_call+0(SB),$0
+001020   c3                   (5)       RET                         ,
+
+001021                        (7)  TEXT    nonleaf_call+0(SB),$148
+001021   81ec94000000         (7)       SUBL                        $148,SP            ; prolog (note, there is no register save area at all)
+001027   8d842494000000       (10)      LEAL                        l+148(SP),AX       ; |
+00102e   89442430             (10)      MOVL                        AX,l+48(SP)        ; |                            loop's write ptr (stored at beginning of char[100] space)
+001032   83442430fc           (10)      ADDL                        $-4,l+48(SP)       ; |                              decr loop ptr in memory
+001037   8b442430             (10)      MOVL                        l+48(SP),AX        ; |                              ptr -> eax
+00103b   c70000000000         (10)      MOVL                        $0,(AX)            ; | zero-init char[100] space    write a 0
+001041   837c243000           (10)      CMPL                        l+48(SP),$0        ; |                              cmp if done
+001046   75ea                 (10)      JNE                         ,1032              ; |                              loop
+001048   c64424304c           (10)      MOVB                        $76,l+48(SP)       ; 'L' -> local area (beginning of char[100] space)
+00104d   8b84249c000000       (11)      MOVL                        b+156(FP),AX       ; |
+001054   890424               (11)      MOVL                        AX,(SP)            ; |
+001057   8b8424a0000000       (11)      MOVL                        c+160(FP),AX       ; |
+00105e   89442404             (11)      MOVL                        AX,4(SP)           ; | fetch in args (ints before struct) from prev frame's param area ...
+001062   8b8424a4000000       (11)      MOVL                        d+164(FP),AX       ; | ... and "push" onto stack
+001069   89442408             (11)      MOVL                        AX,8(SP)           ; |
+00106d   8b8424a8000000       (11)      MOVL                        e+168(FP),AX       ; |
+001074   8944240c             (11)      MOVL                        AX,12(SP)          ; /
+001078   8d7c2410             (11)      LEAL                        16(SP),DI          ; \                                    dst ptr
+00107c   8db424ac000000       (11)      LEAL                        f+172(FP),SI       ; |                                    src ptr
+001083   b904000000           (11)      MOVL                        $4,CX              ; |                                    rep counter (4, for dwords = 16b = sizeof(struct A))
+001088   fc                   (11)      CLD                         ,                  ; | copy struct to next call's stack
+001089   f3                   (11)      REP                         ,                  ; |
+00108a   a5                   (11)      MOVSL                       ,                  ; /
+00108b   8b8424bc000000       (11)      MOVL                        g+188(FP),AX       ; \
+001092   89442420             (11)      MOVL                        AX,32(SP)          ; | fetch remaining in args (ints after struct) from prev frame's param area ...
+001096   8b8424c0000000       (11)      MOVL                        h+192(FP),AX       ; | ... and "push" onto stack
+00109d   89442424             (11)      MOVL                        AX,36(SP)          ; |
+0010a1   e87affffff           (11)      CALL                        ,1020+leaf_call    ; push return address and call
+0010a6   81c494000000         (11)      ADDL                        $148,SP            ; |
+0010ac   c3                   (11)      RET                         ,                  ; | epilog
+
+0010ad                        (14) TEXT    main+0(SB),$52
+0010ad   83ec34               (14)      SUBL                        $52,SP             ; prolog (note, there is no register save area at all)
+0010b0   c7042400000000       (16)      MOVL                        $0,(SP)            ; arg 0 -> "push" onto stack
+0010b7   b801000000           (16)      MOVL                        $1,AX              ; arg 1 -> eax, then ...
+0010bc   89442404             (16)      MOVL                        AX,4(SP)           ; ... "pushed" onto stack
+0010c0   b802000000           (16)      MOVL                        $2,AX              ; arg 2 -> eax, then ...
+0010c5   89442408             (16)      MOVL                        AX,8(SP)           ; ... "pushed" onto stack
+0010c9   b803000000           (16)      MOVL                        $3,AX              ;    .
+0010ce   8944240c             (16)      MOVL                        AX,12(SP)          ;    .
+0010d2   b804000000           (16)      MOVL                        $4,AX              ;    .
+0010d7   89442410             (16)      MOVL                        AX,16(SP)          ;    .
+0010db   8d442414             (16)      LEAL                        20(SP),AX          ; get ptr to next (unused) stack bytes -> eax ...
+0010df   89442430             (16)      MOVL                        AX,.safe+48(SP)    ; ... and write it to very top of stack (seems aligned and not adjacent to last arg)    | looks like callconv keeps a ptr to
+0010e3   8b442430             (16)      MOVL                        .safe+48(SP),AX    ; regetting of same ptr into eax (pointless as same as in eax)                          | each struct params in local area
+0010e7   c70005000000         (16)      MOVL                        $5,(AX)            ; |
+0010ed   8b442430             (16)      MOVL                        .safe+48(SP),AX    ; |
+0010f1   c7400406000000       (16)      MOVL                        $6,4(AX)           ; | copy struct linearly to stack, adjacent to other args
+0010f8   8b442430             (16)      MOVL                        .safe+48(SP),AX    ; |
+0010fc   c7400807000000       (16)      MOVL                        $7,8(AX)           ; |
+001103   c7400c00000000       (16)      MOVL                        $0,12(AX)          ; |                    msbytes of long long
+00110a   b808000000           (16)      MOVL                        $8,AX              ; arg 6 -> eax, then ...
+00110f   89442424             (16)      MOVL                        AX,36(SP)          ; ... "pushed" onto stack
+001113   b809000000           (16)      MOVL                        $9,AX              ; arg 7 -> eax, then ...
+001118   89442428             (16)      MOVL                        AX,40(SP)          ; ... "pushed" onto stack
+00111c   e800ffffff           (16)      CALL                        ,1021+nonleaf_call ; push return address and call
+001121   31c0                 (17)      MOVL                        $0,AX              ; return value
+001123   83c434               (17)      ADDL                        $52,SP             ; |
+001126   c3                   (17)      RET                         ,                  ; | epilog
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from plan9-4th_edition-x86 w/ 8c x.c && 8l -a x.8
+
+001020                        (4)       TEXT leaf_call+0(SB),$0
+001020 c3                     (6)       RET                         ,
+
+001021                        (8)       TEXT nonleaf_call+0(SB),$184
+001021 81ecb8000000           (8)       SUBL                        $184,SP
+001027 8d8424b8000000         (11)      LEAL                        l+184(SP),AX
+00102e 89442454               (11)      MOVL                        AX,l+84(SP)
+001032 83442454fc             (11)      ADDL                        $-4,l+84(SP)
+001037 8b442454               (11)      MOVL                        l+84(SP),AX
+00103b c70000000000           (11)      MOVL                        $0,(AX)
+001041 837c245400             (11)      CMPL                        l+84(SP),$0
+001046 75ea                   (11)      JNE                         ,1032
+001048 c64424544c             (11)      MOVB                        $76,l+84(SP)
+00104d 8b8424c0000000         (12)      MOVL                        b+192(FP),AX
+001054 890424                 (12)      MOVL                        AX,(SP)
+001057 8d7c2404               (12)      LEAL                        4(SP),DI
+00105b 8db424c4000000         (12)      LEAL                        c+196(FP),SI
+001062 b903000000             (12)      MOVL                        $3,CX
+001067 fc                     (12)      CLD                         ,
+001068 f3                     (12)      REP                         ,
+001069 a5                     (12)      MOVSL                       ,
+00106a 8d7c2410               (12)      LEAL                        16(SP),DI
+00106e 8db424d0000000         (12)      LEAL                        d+208(FP),SI
+001075 b904000000             (12)      MOVL                        $4,CX
+00107a fc                     (12)      CLD                         ,
+00107b f3                     (12)      REP                         ,
+00107c a5                     (12)      MOVSL                       ,
+00107d 8b8424e0000000         (12)      MOVL                        e+224(FP),AX
+001084 89442420               (12)      MOVL                        AX,32(SP)
+001088 8b8424e4000000         (12)      MOVL                        f+228(FP),AX
+00108f 89442424               (12)      MOVL                        AX,36(SP)
+001093 8d7c2428               (12)      LEAL                        40(SP),DI
+001097 8db424e8000000         (12)      LEAL                        g+232(FP),SI
+00109e b903000000             (12)      MOVL                        $3,CX
+0010a3 fc                     (12)      CLD                         ,
+0010a4 f3                     (12)      REP                         ,
+0010a5 a5                     (12)      MOVSL                       ,
+0010a6 8d7c2434               (12)      LEAL                        52(SP),DI
+0010aa 8db424f4000000         (12)      LEAL                        h+244(FP),SI
+0010b1 b904000000             (12)      MOVL                        $4,CX
+0010b6 fc                     (12)      CLD                         ,
+0010b7 f3                     (12)      REP                         ,
+0010b8 a5                     (12)      MOVSL                       ,
+0010b9 8b842404010000         (12)      MOVL                        i+260(FP),AX
+0010c0 89442444               (12)      MOVL                        AX,68(SP)
+0010c4 8b842408010000         (12)      MOVL                        j+264(FP),AX
+0010cb 89442448               (12)      MOVL                        AX,72(SP)
+0010cf e84cffffff             (12)      CALL                        ,1020+leaf_call
+0010d4 81c4b8000000           (12)      ADDL                        $184,SP
+0010da c3                     (12)      RET                         ,
+
+0010db                        (15)      TEXT main+0(SB),$100
+0010db 83ec64                 (15)      SUBL                        $100,SP
+0010de c7042400000000         (17)      MOVL                        $0,(SP)
+0010e5 b801000000             (17)      MOVL                        $1,AX
+0010ea 89442404               (17)      MOVL                        AX,4(SP)
+0010ee 8d442408               (17)      LEAL                        8(SP),AX
+0010f2 89442460               (17)      MOVL                        AX,.safe+96(SP)
+0010f6 8b442460               (17)      MOVL                        .safe+96(SP),AX
+0010fa c70002000000           (17)      MOVL                        $2,(AX)
+001100 8b442460               (17)      MOVL                        .safe+96(SP),AX
+001104 c7400403000000         (17)      MOVL                        $3,4(AX)
+00110b dd0500200000           (17)      FMOVD                       $0.40100000+0(SB),F0
+001111 8b442460               (17)      MOVL                        .safe+96(SP),AX
+001115 d95808                 (17)      FMOVFP                      F0,8(AX)
+001118 8d442414               (17)      LEAL                        20(SP),AX
+00111c 8944245c               (17)      MOVL                        AX,.safe+92(SP)
+001120 dd0508200000           (17)      FMOVD                       $0.40140000+0(SB),F0
+001126 8b44245c               (17)      MOVL                        .safe+92(SP),AX
+00112a dd18                   (17)      FMOVDP                      F0,(AX)
+00112c 8b44245c               (17)      MOVL                        .safe+92(SP),AX
+001130 c7400806000000         (17)      MOVL                        $6,8(AX)
+001137 c7400c00000000         (17)      MOVL                        $0,12(AX)
+00113e b807000000             (17)      MOVL                        $7,AX
+001143 89442424               (17)      MOVL                        AX,36(SP)
+001147 b808000000             (17)      MOVL                        $8,AX
+00114c 89442428               (17)      MOVL                        AX,40(SP)
+001150 8d44242c               (17)      LEAL                        44(SP),AX
+001154 89442458               (17)      MOVL                        AX,.safe+88(SP)
+001158 8b442458               (17)      MOVL                        .safe+88(SP),AX
+00115c c70009000000           (17)      MOVL                        $9,(AX)
+001162 8b442458               (17)      MOVL                        .safe+88(SP),AX
+001166 c740040a000000         (17)      MOVL                        $10,4(AX)
+00116d dd0510200000           (17)      FMOVD                       $0.40260000+0(SB),F0
+001173 8b442458               (17)      MOVL                        .safe+88(SP),AX
+001177 d95808                 (17)      FMOVFP                      F0,8(AX)
+00117a 8d442438               (17)      LEAL                        56(SP),AX
+00117e 89442454               (17)      MOVL                        AX,.safe+84(SP)
+001182 dd0518200000           (17)      FMOVD                       $0.40280000+0(SB),F0
+001188 8b442454               (17)      MOVL                        .safe+84(SP),AX
+00118c dd18                   (17)      FMOVDP                      F0,(AX)
+00118e 8b442454               (17)      MOVL                        .safe+84(SP),AX
+001192 c740080d000000         (17)      MOVL                        $13,8(AX)
+001199 c7400c00000000         (17)      MOVL                        $0,12(AX)
+0011a0 b80e000000             (17)      MOVL                        $14,AX
+0011a5 89442448               (17)      MOVL                        AX,72(SP)
+0011a9 b80f000000             (17)      MOVL                        $15,AX
+0011ae 8944244c               (17)      MOVL                        AX,76(SP)
+0011b2 e86afeffff             (17)      CALL                        ,1021+nonleaf_call
+0011b7 31c0                   (18)      MOVL                        $0,AX
+0011b9 83c464                 (18)      ADDL                        $100,SP
+0011bc c3                     (18)      RET                         ,
+
+002000 0000000000001040       (17)      DATA $0.40100000+0(SB)/8,$(40100000,00000000)
+002008 0000000000001440       (17)      DATA $0.40140000+0(SB)/8,$(40140000,00000000)
+002010 0000000000002640       (17)      DATA $0.40260000+0(SB)/8,$(40260000,00000000)
+002018 0000000000002840       (17)      DATA $0.40280000+0(SB)/8,$(40280000,00000000)
+
+
+
+; ---------- returning qwords ---------->
+;
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from plan9-4th_edition-x86 w/ 8c x.c && 8l -a x.8
+
+001020                  (2)     TEXT f1+0(SB),$0
+001020 8b442404         (4)     MOVL                 .ret+4(FP),AX   ; ptr to retval space -> eax
+001024 c700031c0000     (4)     MOVL                 $7171,(AX)      ; |
+00102a c7400400000000   (4)     MOVL                 $0,4(AX)        ; | return value
+001031 c3               (4)     RET                  ,
+
+001032                  (7)     TEXT main+0(SB),$16
+001032 83ec10           (7)     SUBL                 $16,SP          ; prolog
+001035 8d4c2408         (9)     LEAL                 .safe+8(SP),CX  ; | ptr to space for return value ...
+001039 890c24           (9)     MOVL                 CX,(SP)         ; | ... pushed as implicit first arg
+00103c e8dfffffff       (9)     CALL                 ,1020+f1        ; push return address and call
+001041 8b442408         (9)     MOVL                 .safe+8(SP),AX  ; return value
+001045 8b54240c         (9)     MOVL                 .safe+12(SP),DX ; @@@ unsure, b/c we have a cast
+001049 83c410           (9)     ADDL                 $16,SP          ; |
+00104c c3               (9)     RET                  ,               ; | epilog
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i; long j; };
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 232 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + s.x;
+; }
+
+
+
+; output from plan9-4th_edition-x86 w/ 8c x.c && 8l -a x.8
+
+001020                  (5)     TEXT f0+0 (SB),$16
+001020 83ec08           (5)     SUBL                $8,SP          ; prolog
+001023 c644240484       (7)     MOVB                $-124,s+4(SP)  ; struct data in  local area (s.x)
+001028 8b7c240c         (8)     MOVL                .ret+12(FP),DI ; \
+00102c 8d742404         (8)     LEAL                s+4(SP),SI     ; |
+001030 b901000000       (8)     MOVL                $1,CX          ; | copy struct in local area to return
+001035 fc               (8)     CLD                 ,              ; | value (pointed to by implicit first arg)
+001036 f3               (8)     REP                 ,              ; |
+001037 a5               (8)     MOVSL               ,              ; /
+001038 83c408           (8)     ADDL                $8,SP          ; \
+00103b c3               (8)     RET                 ,              ; | epilog
+
+00103c                  (11)    TEXT f1+0(SB),$16
+00103c 83ec10           (11)    SUBL                $16,SP         ; prolog
+00103f c7442404031c0000 (13)    MOVL                $7171,b+4(SP)  ; |                               |
+001047 c744240800000000 (13)    MOVL                $0,b+8(SP)     ; | struct data in local area     | b.i
+00104f c744240ce8000000 (13)    MOVL                $232,b+12(SP)  ; /                               b.j
+001057 8b7c2414         (14)    MOVL                .ret+20(FP),DI ; \
+00105b 8d742404         (14)    LEAL                b+4(SP),SI     ; |
+00105f b903000000       (14)    MOVL                $3,CX          ; | copy struct in local area to return
+001064 fc               (14)    CLD                 ,              ; | value (pointed to by implicit first arg)
+001065 f3               (14)    REP                 ,              ; |
+001066 a5               (14)    MOVSL               ,              ; /
+001067 83c410           (14)    ADDL                $16,SP         ; \
+00106a c3               (14)    RET                 ,              ; | epilog
+
+00106b                  (17)    TEXT main+0(SB),$28
+00106b 83ec1c           (17)    SUBL                $28,SP         ; prolog
+00106e 8d442418         (19)    LEAL                s+24(SP),AX    ; | ptr to space for return value ...
+001072 890424           (19)    MOVL                AX,(SP)        ; | ... pushed as implicit first arg
+001075 e8a6ffffff       (19)    CALL                ,1020+f0       ; push return address and call
+00107a 8d44240c         (20)    LEAL                b+12(SP),AX    ; | ptr to space for return value ...
+00107e 890424           (20)    MOVL                AX,(SP)        ; | ... pushed as implicit first arg
+001081 e8b6ffffff       (20)    CALL                ,103c+f1       ; push return address and call
+001086 0fbe442418       (21)    MOVBLSX             s+24(SP),AX    ; |
+00108b 03442414         (21)    ADDL                b+20(SP),AX    ; / return value
+00108f 83c41c           (21)    ADDL                $28,SP         ; \
+001092 c3               (21)    RET                 ,              ; | epilog
+
+
 
 ; vim: ft=asm
 

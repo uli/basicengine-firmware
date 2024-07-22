@@ -6,7 +6,8 @@
  Description: Callback Thunk entry for x64 (portasm version)
  License:
 
-   Copyright (c) 2011-2018 Daniel Adler <dadler@uni-goettingen.de>
+   Copyright (c) 2011-2022 Daniel Adler <dadler@uni-goettingen.de>,
+                           Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
@@ -29,32 +30,29 @@
 /* structure sizes */
 
 SET(DCThunk_size,24)
-SET(DCArgs_size_win64,80)
-SET(DCArgs_size_sysv,128)
+SET(DCArgs_size_win64,96) /* 8 (stack_ptr) + 4 (reg_count) + 4 (pad_w) + 4 (aggr_return_register) + 4 (pad) + 8*4 (int regs) + 8 (aggrs) + 8*4 (float regs) */
+SET(DCArgs_size_sysv,144) /* 8 (stack_ptr) + 8 (reg_count) +             4 (aggr_return_register) + 4 (pad) + 8*6 (int regs) + 8 (aggrs) + 8*8 (float regs) */
 SET(DCValue_size,8)
+SET(DCRetRegs_SystemV_size,32)
 
-/* frame local variable offsets relative to %rbp*/
+/* frame local variable offsets relative to %rbp */
 
 SET(FRAME_arg0_win64,48)
 SET(FRAME_arg0_sysv,16)
 SET(FRAME_return,8)
 SET(FRAME_parent,0)
-SET(FRAME_DCArgs_sysv,-128)
-SET(FRAME_DCValue_sysv,-136)
-SET(FRAME_DCArgs_win64,-80)
-SET(FRAME_DCValue_win64,-80)
 
-/* struct DCCallback */
+/* struct DCCallback layout, relative to ptr passed to functions below via RAX */
 
 SET(CTX_thunk,0)
 SET(CTX_handler,24)
 SET(CTX_userdata,32)
-SET(DCCallback_size,40)
+SET(CTX_aggr_ret_reg,40)
+SET(CTX_pad,44)
+SET(CTX_aggrs_pp,48)
+SET(DCCallback_size,56)
 
-/* character constants */
 
-#define ASCII_f 102
-#define ASCII_d 100
 
 GLOBAL(dcCallback_x64_sysv)
 BEGIN_PROC(dcCallback_x64_sysv)
@@ -64,54 +62,71 @@ BEGIN_PROC(dcCallback_x64_sysv)
 
 	/* initialize DCArgs */
 
-	/* float parameters (8 registers spill to DCArgs) */
-
+	/* float parameters (8 registers spill to DCArgs.reg_data) */
 	SUB(LIT(8*8),RSP)
+	MOVSD(XMM7, QWORD(RSP,8*7))		/* DCArgs offset 136: float parameter 7 */
+	MOVSD(XMM6, QWORD(RSP,8*6))		/* DCArgs offset 128: float parameter 6 */
+	MOVSD(XMM5, QWORD(RSP,8*5))		/* DCArgs offset 120: float parameter 5 */
+	MOVSD(XMM4, QWORD(RSP,8*4))		/* DCArgs offset 112: float parameter 4 */
+	MOVSD(XMM3, QWORD(RSP,8*3))		/* DCArgs offset 104: float parameter 3 */
+	MOVSD(XMM2, QWORD(RSP,8*2))		/* DCArgs offset  96: float parameter 2 */
+	MOVSD(XMM1, QWORD(RSP,8*1))		/* DCArgs offset  88: float parameter 1 */
+	MOVSD(XMM0, QWORD(RSP,8*0))		/* DCArgs offset  80: float parameter 0 */
 
-	MOVSD(XMM7, QWORD(RSP,8*7))		/* struct offset 120: float parameter 7 */
-	MOVSD(XMM6, QWORD(RSP,8*6))		/* struct offset 112: float parameter 6 */
-	MOVSD(XMM5, QWORD(RSP,8*5))		/* struct offset 104: float parameter 5 */
-	MOVSD(XMM4, QWORD(RSP,8*4))		/* struct offset  96: float parameter 4 */
-	MOVSD(XMM3, QWORD(RSP,8*3))		/* struct offset  88: float parameter 3 */
-	MOVSD(XMM2, QWORD(RSP,8*2))		/* struct offset  80: float parameter 2 */
-	MOVSD(XMM1, QWORD(RSP,8*1))		/* struct offset  72: float parameter 1 */
-	MOVSD(XMM0, QWORD(RSP,8*0))		/* struct offset  64: float parameter 0 */
+	/* integer parameters (6 registers spill to DCArgs.reg_data) */
+	PUSH(R9)				/* DCArgs offset 72: parameter 5 */
+	PUSH(R8)				/* DCArgs offset 64: parameter 4 */
+	PUSH(RCX)				/* DCArgs offset 56: parameter 3 */
+	PUSH(RDX)				/* DCArgs offset 48: parameter 2 */
+	PUSH(RSI)				/* DCArgs offset 40: parameter 1 */
+	PUSH(RDI)				/* DCArgs offset 32: parameter 0 */
 
-	/* integer parameters (6 registers spill to DCArgs) */
+	MOV(QWORD(RAX, CTX_aggrs_pp), R8)
+	PUSH(R8)				/* DCArgs offset 24: **aggrs */
 
-	PUSH(R9)				/* struct offset 56: parameter 5 */
-	PUSH(R8)				/* struct offset 48: parameter 4 */
-	PUSH(RCX)				/* struct offset 40: parameter 3 */
-	PUSH(RDX)				/* struct offset 32: parameter 2 */
-	PUSH(RSI)				/* struct offset 24: parameter 1 */
-	PUSH(RDI)				/* struct offset 16: parameter 0 */
-	
+	/* get val of aggr_return_register from DCCallback struct into r8's LSBs, clear */
+	/* MSBs, write DCarg's pad and  aggr_return_register at once */
+	MOVL(DWORD(RAX, CTX_aggr_ret_reg), R8D)	/* implicitly zeroes the high bits of R8 */
+	PUSH(R8)				/* DCArgs offset 16: pad=0, aggr_return_register=DCCallback.aggr_return_register */
 	/* register counts for integer/pointer and float regs */
+	PUSH(LIT(0))				/* DCArgs offset 12: fcount */
+						/* DCArgs offset  8: icount */
 
-	PUSH(LIT(0))				/* struct offset 12: fcount */
-						/* struct offset  8: icount */
-
-	LEA(QWORD(RBP,FRAME_arg0_sysv),RDX)		/* struct offset  0: stack pointer */
+	LEA(QWORD(RBP,FRAME_arg0_sysv),RDX)	/* DCArgs offset  0: *stack_ptr */
 	PUSH(RDX)
 
 	MOV(RSP,RSI)				/* arg 1 RSI : DCArgs* */
 
-	/* initialize DCValue */
+	/* stack space for DCValue or DCRetRegs_SysV (passed to handler as DCValue*) and padding */
+	SUB(LIT(4*8),RSP)			/* 4 qwords for DCRetRegs_SysV */
 
-	PUSH(LIT(0))				/* struct offset 0: return value (max long long) */
-
-	/* call handler( *ctx, *args, *value, *userdata) */
-
+	/* call handler(*ctx, *args, *value, *userdata) - stack must be 16b aligned, here */
 	MOV(RAX,RDI)				/* arg 0 RDI : DCCallback* (RAX) */
 	MOV(QWORD(RDI,CTX_userdata),RCX)	/* arg 3 RCX : userdata* */
 	MOV(RSP,RDX)				/* arg 2 RDX : DCValue*  */
-	PUSH(LIT(0))				/* align to 16 bytes */
+
 	CALL_REG(QWORD(RAX,CTX_handler))
 
-	/* pass return type via registers, handle ints and floats */
-	
-	MOV(QWORD(RBP,FRAME_DCValue_sysv),RAX)
-	MOVD(RAX,XMM0)
+	/* get info about return type, use to select how to store reg-based retval */
+	CMPL(LIT(-2/*see C*/), DWORD(RSP, 48)) /* rsp+48 = where r8 (aggr_return_register) was pushed */
+
+	/* if retval is small aggregate via regs */
+	JE(CSYM(scalar_retval))
+
+		MOV(QWORD(RSP,0),RAX)
+		MOV(QWORD(RSP,8),RDX)
+		MOVSD(QWORD(RSP,16),XMM0) /* @@@AGGR needed to be put in xmm in this case? @@@ also not what doc/appendix says, actually */
+		MOVSD(QWORD(RSP,24),XMM1) /* @@@AGGR needed to be put in xmm in this case? @@@ also not what doc/appendix says, actually */
+
+	/* else (retval is int, float, or ptr to aggregate) */
+	JMP(CSYM(epilog))
+CSYM(scalar_retval):
+
+		/* pass return type via registers, handle ints and floats */
+		MOV(QWORD(RSP,0),RAX)
+		MOVD(RAX,XMM0)
+
+CSYM(epilog):
 
 	MOV(RBP,RSP)
 	POP(RBP)
@@ -119,55 +134,63 @@ BEGIN_PROC(dcCallback_x64_sysv)
 
 END_PROC(dcCallback_x64_sysv)
 
-GLOBAL(dcCallback_x64_win64)
-BEGIN_PROC(dcCallback_x64_win64)
+
+GLOBAL_FRAME(dcCallback_x64_win64)
+FRAME_BEGIN_PROC(dcCallback_x64_win64)
 
 	PUSH(RBP)
+	FRAME_PUSH_REG(RBP)
 	MOV(RSP,RBP)
+	FRAME_SET(0, RBP)
+	FRAME_ENDPROLOG()
 
 	/* initialize DCArgs */
 
-	/* float parameters (4 registers spill to DCArgs) */
-
+	/* float parameters (4 registers spill to DCArgs.reg_data) */
 	SUB(LIT(4*8),RSP)
+	MOVSD(XMM3, QWORD(RSP,8*3))		/* DCArgs offset  88: float parameter 3 */
+	MOVSD(XMM2, QWORD(RSP,8*2))		/* DCArgs offset  80: float parameter 2 */
+	MOVSD(XMM1, QWORD(RSP,8*1))		/* DCArgs offset  72: float parameter 1 */
+	MOVSD(XMM0, QWORD(RSP,8*0))		/* DCArgs offset  64: float parameter 0 */
 
-	MOVSD(XMM3, QWORD(RSP,8*3))		/* struct offset  72: float parameter 3 */
-	MOVSD(XMM2, QWORD(RSP,8*2))		/* struct offset  64: float parameter 2 */
-	MOVSD(XMM1, QWORD(RSP,8*1))		/* struct offset  56: float parameter 1 */
-	MOVSD(XMM0, QWORD(RSP,8*0))		/* struct offset  48: float parameter 0 */
+	/* integer parameters (4 registers spill to DCArgs.reg_data) */
+	PUSH(R9)				/* DCArgs offset 56: parameter 3 */
+	PUSH(R8)				/* DCArgs offset 48: parameter 2 */
+	PUSH(RDX)				/* DCArgs offset 40: parameter 1 */
+	PUSH(RCX)				/* DCArgs offset 32: parameter 0 */
 
-	/* integer parameters (4 registers spill to DCArgs) */
+	MOV(QWORD(RAX, CTX_aggrs_pp), R8)
+	PUSH(R8)				/* DCArgs offset 24: **aggrs */
 
-	PUSH(R9)				/* struct offset 40: parameter 3 */
-	PUSH(R8)				/* struct offset 32: parameter 2 */
-	PUSH(RDX)				/* struct offset 24: parameter 1 */
-	PUSH(RCX)				/* struct offset 16: parameter 0 */
-	
+	/* get val of aggr_return_register from DCCallback struct into r8's LSBs, clear */
+	/* MSBs, write DCarg's pad and  aggr_return_register at once */
+	MOVL(DWORD(RAX, CTX_aggr_ret_reg), R8D)	/* implicitly zeroes the high bits of R8 */
+	PUSH(R8)				/* DCArgs offset 16: pad=0, aggr_return_register=DCCallback.aggr_return_register */
+
 	/* register counts for integer/pointer and float regs */
+	PUSH(LIT(0))				/* DCArgs offset 12: pad_w */
+						/* DCArgs offset  8: reg_count */
 
-	PUSH(LIT(0))				/* struct offset 12: fcount */
-						/* struct offset  8: icount */
-
-	LEA(QWORD(RBP,FRAME_arg0_win64),RDX)		/* struct offset  0: stack pointer */
+	LEA(QWORD(RBP,FRAME_arg0_win64),RDX)	/* DCArgs offset  0: *stack_ptr */
 	PUSH(RDX)
 
 	MOV(RSP,RDX)				/* arg 1 RDX : DCArgs* */
-	
-	/* initialize DCValue */
 
-	// PUSHQ(LIT(0))				/* struct offset 0: return value (max long long) */
+	/* space for retval (also aligns stack to 16b) */
+	SUB(LIT(2*8),RSP)
 
-	/* call handler( *ctx, *args, *value, *userdata) */
-
+	/* call handler(*ctx, *args, *value, *userdata) - stack must be 16b aligned, here */
 	MOV(RAX,RCX)				/* arg 0 RCX : DCCallback* (RAX) */
-	MOV(QWORD(RAX,CTX_userdata),R9)	/* arg 3 R9  : userdata* */
+	MOV(QWORD(RAX,CTX_userdata),R9)		/* arg 3 R9  : userdata* */
 	MOV(RSP,R8)				/* arg 2 R8  : DCValue*  */
-	SUB(LIT(4*8),RSP)                      /* make room for spill area and call */
+
+	/* spill area */
+	SUB(LIT(4*8),RSP)			/* 4 qwords for spill area */
+
 	CALL_REG(QWORD(RAX,CTX_handler))
 
 	/* pass return type via registers, handle ints and floats */
-	
-	MOV(QWORD(RBP,FRAME_DCValue_win64),RAX)
+	MOV(QWORD(RSP,4*8),RAX)
 	MOVD(RAX,XMM0)
 
 	MOV(RBP,RSP)
@@ -176,5 +199,8 @@ BEGIN_PROC(dcCallback_x64_win64)
 
 END_PROC(dcCallback_x64_win64)
 
+
 END_ASM
+
+/* vim: set ts=8: */
 

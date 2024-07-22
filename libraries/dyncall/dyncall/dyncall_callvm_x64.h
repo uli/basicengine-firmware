@@ -97,11 +97,15 @@ typedef struct
 
 typedef struct
 {
-  DCCallVM       mInterface;  /* This CallVM interface.                                  */
-  DCpointer      mpCallFunc;  /* Function to call.                                       */
-  DCRegCount_x64 mRegCount;   /* Number of int/sse registers used for parameter passing. */
-  DCRegData_x64  mRegData;    /* Parameters to be passed via registers.                  */
-  DCVecHead      mVecHead;    /* Parameters to be pushed onto stack.                     */
+  DCCallVM       mInterface;       /* this CallVM interface                                        */
+  DCpointer      mpCallFunc;       /* function to call                                             */
+  DCint          mAggrReturnReg;   /* reg index for aggregate ret value (if hidden argument)       */
+#if defined(DC_WINDOWS)
+  DCpointer      mpAggrVecCopies;  /* ptr to copies of aggrs passed via hidden ptr (end of vector) */
+#endif
+  DCRegCount_x64 mRegCount;        /* number of int/sse registers used for parameter passing       */
+  DCRegData_x64  mRegData;         /* parameters to be passed via registers                        */
+  DCVecHead      mVecHead;         /* parameters to be pushed onto stack                           */
 } DCCallVM_x64;
 
 #endif /* DYNCALL_CALLVM_X64_H */

@@ -37,7 +37,7 @@ OBJS = test_main.obj
 
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...
-	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\libdyncall_s.lib
+	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\dyncall_s.lib
 
 
 !ELSE IF "$(BUILD_OS)" == "nds"

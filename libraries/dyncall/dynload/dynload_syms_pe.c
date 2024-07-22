@@ -59,7 +59,19 @@ DLSyms* dlSymsInit(const char* libPath)
   base            = (const char*)pLib;
   pDOSHeader      = (IMAGE_DOS_HEADER*)base;
   pNTHeader       = (IMAGE_NT_HEADERS*)(base + pDOSHeader->e_lfanew);
+
+  /* optional header present and big enough? this header should exist as it's only optional for object files */
+  if(pNTHeader->FileHeader.SizeOfOptionalHeader < ((char*)&pNTHeader->OptionalHeader.DataDirectory - (char*)&pNTHeader->OptionalHeader))
+      return NULL;
+
+  /* export table available? */
+  if(pNTHeader->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT)
+      return NULL;
+
   pExportsDataDir = &pNTHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT];
+  if(!pExportsDataDir->VirtualAddress)
+    return NULL;
+
   pExports        = (IMAGE_EXPORT_DIRECTORY*)(base + pExportsDataDir->VirtualAddress);
 
   pSyms         = (DLSyms*)dlAllocMem(sizeof(DLSyms));
@@ -85,12 +97,14 @@ void dlSymsCleanup(DLSyms* pSyms)
 
 int dlSymsCount(DLSyms* pSyms)
 {
-  return (int)pSyms->count;
+    return pSyms ? (int)pSyms->count : 0;
 }
 
 
 const char* dlSymsName(DLSyms* pSyms, int index)
 {
+  if(!pSyms || index < 0 || index >= pSyms->count)
+    return NULL;
   return pSyms->pBase + pSyms->pNames[index];
 }
 

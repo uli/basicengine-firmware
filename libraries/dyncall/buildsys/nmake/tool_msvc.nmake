@@ -37,10 +37,18 @@ AS  =ml
 LD  =link
 
 ASFLAGS  = /c /nologo
+
+!IF "$(BUILD_CONFIG)" == "debug"
+CFLAGS   = /EHsc /GR- /GS- /Od /c /nologo /I$(TOP)\dyncall /I$(TOP)\dyncallback /DEBUG /Z7
+LDFLAGS  = /NOLOGO /DEBUG
+ARFLAGS  = /NOLOGO /DEBUG
+!ELSE
 CFLAGS   = /EHsc /GR- /GS- /Ox /c /nologo /I$(TOP)\dyncall /I$(TOP)\dyncallback
-CXXFLAGS = $(CFLAGS)
 LDFLAGS  = /OPT:REF /OPT:ICF /NOLOGO
 ARFLAGS  = /NOLOGO
+!ENDIF
+
+CXXFLAGS = $(CFLAGS)
 
 
 .SUFFIXES:

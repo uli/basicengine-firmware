@@ -17,7 +17,7 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-\newpage
+\clearpage
 
 \section{Epilog}
 
@@ -69,9 +69,15 @@ function is thread-safe is up to the programmer to verify, of course.
 
 Currently, the \product{dyncall} library supports all of ANSI C's integer,
 floating point and pointer types as function call arguments and return values.
-Additionally, C++'s \capi{bool} and C99's \capi{\_Bool} types are supported.
+Additionally, C++'s \capi{bool} and C99's \capi{\_Bool} types are supported
+across all supported platforms.
 Due to the still rare and often incomplete support of the \capi{long double}
 type on various platforms, the latter is currently not officially supported.
+Also, \capi{\_Complex} is currently not supported.
+
+Passing or returning aggregates (struct, union) by value is supported, but only
+on a limited set of platforms (check if the macro DC\_\_Feature\_AggrByVal is
+defined).
 
 \subsection{Roadmap}
 

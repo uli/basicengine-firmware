@@ -1,4 +1,4 @@
-APP     = malloc_wx
+APP     = malloc_wx${APP_SUFFIX}
 OBJS    = test_wx.o
 SRCTOP  = ${VPATH}/../..
 BLDTOP  = ../..

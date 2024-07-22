@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2011-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2011-2021 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -25,8 +25,8 @@
 
 #include "../../dynload/dynload.h"
 #include "../../dyncall/dyncall_macros.h"
-#include <assert.h>
 #include "../common/platformInit.h"
+#include "../common/platformInit.c" /* Impl. for functions only used in this translation unit */
 
 #ifdef DC_WINDOWS
 #define DLL_EXPORT __declspec( dllexport )
@@ -48,7 +48,14 @@ int main(int argc, char* argv[])
   int status;
   DLSyms* pSyms;
   DLLib* pLib = dlLoadLibrary(NULL);
-  assert(pLib);
+
+  dcTest_initPlatform();
+
+  if(!pLib) {
+    printf("failed to self-load via dlLoadLibrary(NULL)\n");
+    return 1;
+  }
+
   printf("self loaded at %p\n", pLib);
 
   address = dlFindSymbol(pLib, "add_dd_d");
@@ -68,6 +75,9 @@ int main(int argc, char* argv[])
   dlSymsCleanup(pSyms);*/
 
   printf("result: resolve_self: %d\n", status);
-  return 0;
+
+  dcTest_deInitPlatform();
+
+  return !status;
 }
 

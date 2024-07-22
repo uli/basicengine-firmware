@@ -80,6 +80,8 @@
 #    include "dyncall_call_sparc64.s"
 #  elif defined(DC__Arch_Sparc)
 #    include "dyncall_call_sparc.s"
+#  elif defined(DC__Arch_RiscV64)
+#    include "dyncall_call_riscv64.S"
 #  else
 #    error Unsupported Architecture.
 #  endif

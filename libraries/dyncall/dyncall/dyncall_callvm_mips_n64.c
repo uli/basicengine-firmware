@@ -150,7 +150,7 @@ static void dc_callvm_argFloat_mips_n64(DCCallVM* in_self, DCfloat x)
 #else
   DCfloat f[] = {x,0.f};
 # if defined(DC__Endian_BIG)
-  // floats in regs always right justified
+  /* floats in regs always right justified */
   if (((DCCallVM_mips_n64*)in_self)->mRegCount < 8) {
     f[1] = f[0];
     f[0] = 0.f;
@@ -206,7 +206,7 @@ DCCallVM_vt gVT_mips_n64 =
 , &dc_callvm_argFloat_mips_n64
 , &dc_callvm_argDouble_mips_n64
 , &dc_callvm_argPointer_mips_n64
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_mips_n64
 , (DCboolvmfunc*)       &dc_callvm_call_mips_n64
 , (DCcharvmfunc*)       &dc_callvm_call_mips_n64
@@ -217,7 +217,8 @@ DCCallVM_vt gVT_mips_n64 =
 , (DCfloatvmfunc*)      &dc_callvm_call_mips_n64
 , (DCdoublevmfunc*)     &dc_callvm_call_mips_n64
 , (DCpointervmfunc*)    &dc_callvm_call_mips_n64
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_mips_n64_ellipsis =
@@ -234,7 +235,7 @@ DCCallVM_vt gVT_mips_n64_ellipsis =
 , &dc_callvm_argFloat_mips_n64_ellipsis
 , &dc_callvm_argDouble_mips_n64_ellipsis
 , &dc_callvm_argPointer_mips_n64
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_mips_n64
 , (DCboolvmfunc*)       &dc_callvm_call_mips_n64
 , (DCcharvmfunc*)       &dc_callvm_call_mips_n64
@@ -245,7 +246,8 @@ DCCallVM_vt gVT_mips_n64_ellipsis =
 , (DCfloatvmfunc*)      &dc_callvm_call_mips_n64
 , (DCdoublevmfunc*)     &dc_callvm_call_mips_n64
 , (DCpointervmfunc*)    &dc_callvm_call_mips_n64
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 static void dc_callvm_mode_mips_n64(DCCallVM* in_self, DCint mode)
@@ -255,6 +257,7 @@ static void dc_callvm_mode_mips_n64(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_MIPS64_N64:
     case DC_CALL_C_ELLIPSIS:
       vt = &gVT_mips_n64;

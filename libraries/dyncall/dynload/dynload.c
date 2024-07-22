@@ -24,10 +24,10 @@
 */
 
 
-#include "../autovar/autovar_OSFAMILY.h"
-#if defined(OSFAMILY_Windows)
+#include "../dyncall/dyncall_macros.h"
+#if defined(DC_WINDOWS)
 #  include "dynload_windows.c"
-#elif defined(OSFAMILY_Unix)
+#elif defined(DC_UNIX)
 #  include "dynload_unix.c"
 #endif
 

@@ -6,7 +6,7 @@
  Description: Callback - Interface
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -32,20 +32,27 @@
 
 typedef struct DCCallback DCCallback;
 
-// return value is the type encoded as a signature char (character of the set [vBcCsSiIjJlLfd]).
-typedef char (DCCallbackHandler)(DCCallback* pcb, DCArgs* args, DCValue* result, void* userdata);
+/* callback handler:
+   - handlers return value signature char (see dyncall_signature.h) of callback's return value type
+   - callback return value is written to the corresponding type's field of result
+   - if callback return value is an aggregate (by value), use dcbReturnAggr() as a helper to write to result
+*/
+typedef DCsigchar (DCCallbackHandler)(DCCallback* pcb, DCArgs* args, DCValue* result, void* userdata);
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
 
-DCCallback* dcbNewCallback(const char* signature, DCCallbackHandler* funcptr, void* userdata);
-void        dcbInitCallback(DCCallback* pcb, const char* signature, DCCallbackHandler* handler, void* userdata);
-void        dcbFreeCallback(DCCallback* pcb);
-void*       dcbGetUserData (DCCallback* pcb);
+DCCallback* dcbNewCallback  (const DCsigchar* signature, DCCallbackHandler* funcptr, void* userdata);
+DCCallback* dcbNewCallback2 (const DCsigchar* signature, DCCallbackHandler* funcptr, void* userdata, DCaggr *const * aggrs);
+void        dcbInitCallback (DCCallback* pcb, const DCsigchar* signature, DCCallbackHandler* handler, void* userdata);
+void        dcbInitCallback2(DCCallback* pcb, const DCsigchar* signature, DCCallbackHandler* handler, void* userdata, DCaggr *const * aggrs);
+void        dcbFreeCallback (DCCallback* pcb);
+void*       dcbGetUserData  (DCCallback* pcb);
 
 #ifdef __cplusplus
 }
 #endif 
 
 #endif /* DYNCALL_CALLBACK_H */
+

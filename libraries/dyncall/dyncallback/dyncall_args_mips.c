@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Implementation for non-o32 MIPS
  License:
 
-   Copyright (c) 2013-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2013-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -84,4 +84,7 @@ DCdouble dcbArgDouble(DCArgs* p)
   d.i = dcbArgULongLong(p); /* those are passed via int regs */
   return d.result;
 }
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 

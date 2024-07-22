@@ -24,8 +24,8 @@
 
 
 
-#include "../autovar/autovar_OS.h"
-#if defined(OS_Darwin)
+#include "../dyncall/dyncall_macros.h"
+#if defined(DC__OS_Darwin)
 #define GLOBAL_C(X) .globl _##X 
 #define ENTRY_C(X)  _##X:
 #else

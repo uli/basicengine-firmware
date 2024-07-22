@@ -1,0 +1,19 @@
+APP = callback_plain_c++
+OBJS = test_main.o
+
+SRCTOP   = ../..
+BLDTOP   = ${SRCTOP}
+CFLAGS  += -I${SRCTOP}/dyncall
+LDFLAGS += -L${BLDDIR}/dyncallback
+LDLIBS  += -ldyncallback_s -ldyncall_s
+
+all: ${APP}
+
+.PHONY: all clean install
+
+${APP}: ${OBJS}
+	${CXX} ${OBJS} ${LDFLAGS} ${LDLIBS} -o ${APP}
+
+clean:
+	rm -f ${APP} ${OBJS}
+

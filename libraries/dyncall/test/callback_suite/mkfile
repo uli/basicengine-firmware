@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2013 Daniel Adler <dadler@uni-goettingen.de>, 
-#                    Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2013-2022 Daniel Adler <dadler@uni-goettingen.de>, 
+#                         Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -22,9 +22,9 @@ TOP		= ../..
 <$TOP/buildsys/mk/prolog.mk
 
 
-UNITS       = env handler sigstrings invokers do_test main print signature_utils
+UNITS       = globals cases main
 APPLICATION = callback_suite
-LIBS        = $TOP/dyncallback/libdyncallback_s.a$O
+LIBS        = $TOP/dyncallback/libdyncallback_s.a$O $TOP/dyncall/libdyncall_s.a$O
 
 
 <$TOP/buildsys/mk/epilog.mk

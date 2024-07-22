@@ -6,7 +6,7 @@
  Description: Call VM for x86 architecture implementation
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -29,8 +29,8 @@
 #include "dyncall_alloc.h"
 
 
-/* 
-** x86 calling convention calls 
+/*
+** x86 calling convention calls
 **
 ** - hybrid return-type call (bool ... pointer)
 **
@@ -171,14 +171,14 @@ DCCallVM_vt gVT_x86_plan9 =
 , &dc_callvm_mode_x86
 , &dc_callvm_argBool_x86
 , &dc_callvm_argChar_x86
-, &dc_callvm_argShort_x86 
+, &dc_callvm_argShort_x86
 , &dc_callvm_argInt_x86
 , &dc_callvm_argLong_x86
 , &dc_callvm_argLongLong_x86
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_plan9
 , (DCboolvmfunc*)       &dc_callvm_call_x86_plan9
 , (DCcharvmfunc*)       &dc_callvm_call_x86_plan9
@@ -189,7 +189,8 @@ DCCallVM_vt gVT_x86_plan9 =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_plan9
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_plan9
 , (DCpointervmfunc*)    &dc_callvm_call_x86_plan9
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -211,14 +212,14 @@ DCCallVM_vt gVT_x86_cdecl =
 , &dc_callvm_mode_x86
 , &dc_callvm_argBool_x86
 , &dc_callvm_argChar_x86
-, &dc_callvm_argShort_x86 
+, &dc_callvm_argShort_x86
 , &dc_callvm_argInt_x86
 , &dc_callvm_argLong_x86
 , &dc_callvm_argLongLong_x86
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_cdecl
 , (DCboolvmfunc*)       &dc_callvm_call_x86_cdecl
 , (DCcharvmfunc*)       &dc_callvm_call_x86_cdecl
@@ -229,7 +230,8 @@ DCCallVM_vt gVT_x86_cdecl =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_cdecl
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_cdecl
 , (DCpointervmfunc*)    &dc_callvm_call_x86_cdecl
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -260,7 +262,7 @@ DCCallVM_vt gVT_x86_win32_std =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_win32_std
 , (DCboolvmfunc*)       &dc_callvm_call_x86_win32_std
 , (DCcharvmfunc*)       &dc_callvm_call_x86_win32_std
@@ -271,7 +273,8 @@ DCCallVM_vt gVT_x86_win32_std =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_win32_std
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_win32_std
 , (DCpointervmfunc*)    &dc_callvm_call_x86_win32_std
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -365,7 +368,7 @@ DCCallVM_vt gVT_x86_win32_fast_ms =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86_win32_fast_ms
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_win32_fast
 , (DCboolvmfunc*)       &dc_callvm_call_x86_win32_fast
 , (DCcharvmfunc*)       &dc_callvm_call_x86_win32_fast
@@ -376,7 +379,8 @@ DCCallVM_vt gVT_x86_win32_fast_ms =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_win32_fast
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_win32_fast
 , (DCpointervmfunc*)    &dc_callvm_call_x86_win32_fast
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -459,7 +463,7 @@ DCCallVM_vt gVT_x86_win32_fast_gnu =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86_win32_fast_gnu
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_win32_fast
 , (DCboolvmfunc*)       &dc_callvm_call_x86_win32_fast
 , (DCcharvmfunc*)       &dc_callvm_call_x86_win32_fast
@@ -470,7 +474,8 @@ DCCallVM_vt gVT_x86_win32_fast_gnu =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_win32_fast
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_win32_fast
 , (DCpointervmfunc*)    &dc_callvm_call_x86_win32_fast
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -500,7 +505,7 @@ DCCallVM_vt gVT_x86_win32_this_ms =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_win32_this_ms
 , (DCboolvmfunc*)       &dc_callvm_call_x86_win32_this_ms
 , (DCcharvmfunc*)       &dc_callvm_call_x86_win32_this_ms
@@ -511,7 +516,8 @@ DCCallVM_vt gVT_x86_win32_this_ms =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_win32_this_ms
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_win32_this_ms
 , (DCpointervmfunc*)    &dc_callvm_call_x86_win32_this_ms
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 /* --- syscall ------------------------------------------------------------- */
@@ -544,7 +550,7 @@ DCCallVM_vt gVT_x86_syscall_int80h_linux =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_syscall_int80h_linux
 , (DCboolvmfunc*)       &dc_callvm_call_x86_syscall_int80h_linux
 , (DCcharvmfunc*)       &dc_callvm_call_x86_syscall_int80h_linux
@@ -555,7 +561,8 @@ DCCallVM_vt gVT_x86_syscall_int80h_linux =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_syscall_int80h_linux
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_syscall_int80h_linux
 , (DCpointervmfunc*)    &dc_callvm_call_x86_syscall_int80h_linux
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_x86_syscall_int80h_bsd =
@@ -572,7 +579,7 @@ DCCallVM_vt gVT_x86_syscall_int80h_bsd =
 , &dc_callvm_argFloat_x86
 , &dc_callvm_argDouble_x86
 , &dc_callvm_argPointer_x86
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_x86_syscall_int80h_bsd
 , (DCboolvmfunc*)       &dc_callvm_call_x86_syscall_int80h_bsd
 , (DCcharvmfunc*)       &dc_callvm_call_x86_syscall_int80h_bsd
@@ -583,7 +590,8 @@ DCCallVM_vt gVT_x86_syscall_int80h_bsd =
 , (DCfloatvmfunc*)      &dc_callvm_call_x86_syscall_int80h_bsd
 , (DCdoublevmfunc*)     &dc_callvm_call_x86_syscall_int80h_bsd
 , (DCpointervmfunc*)    &dc_callvm_call_x86_syscall_int80h_bsd
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -599,15 +607,21 @@ void dc_callvm_mode_x86(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+#if !defined(DC__C_MSVC) && !defined(DC__RT_MSVCRT)
+    case DC_CALL_C_DEFAULT_THIS:
+#endif
     case DC_CALL_C_ELLIPSIS:
     case DC_CALL_C_ELLIPSIS_VARARGS:
 /* Plan9 (and forks) have their own calling convention (and no support for foreign ones). */
 #if defined(DC_PLAN9)
     case DC_CALL_C_X86_PLAN9:          vt = &gVT_x86_plan9;          break;
 #else
-    case DC_CALL_C_X86_CDECL:          vt = &gVT_x86_cdecl;          break; // also handles DC_CALL_C_X86_WIN32_THIS_GNU
+    case DC_CALL_C_X86_CDECL:          vt = &gVT_x86_cdecl;          break; /* also handles DC_CALL_C_X86_WIN32_THIS_GNU */
     case DC_CALL_C_X86_WIN32_STD:      vt = &gVT_x86_win32_std;      break;
     case DC_CALL_C_X86_WIN32_FAST_MS:  vt = &gVT_x86_win32_fast_ms;  break;
+#if defined(DC__C_MSVC) || defined(DC__RT_MSVCRT)
+    case DC_CALL_C_DEFAULT_THIS:
+#endif
     case DC_CALL_C_X86_WIN32_THIS_MS:  vt = &gVT_x86_win32_this_ms;  break;
     case DC_CALL_C_X86_WIN32_FAST_GNU: vt = &gVT_x86_win32_fast_gnu; break;
     case DC_CALL_SYS_DEFAULT:
@@ -623,7 +637,7 @@ void dc_callvm_mode_x86(DCCallVM* in_self, DCint mode)
     case DC_CALL_SYS_X86_INT80H_LINUX: vt = &gVT_x86_syscall_int80h_linux; break;
     case DC_CALL_SYS_X86_INT80H_BSD:   vt = &gVT_x86_syscall_int80h_bsd;   break;
 #endif
-    default: 
+    default:
       self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }

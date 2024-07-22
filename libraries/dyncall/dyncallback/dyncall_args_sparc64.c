@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Implementation for sparc64 - not yet
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2024 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -24,7 +24,17 @@
 */
 
 
-#include "dyncall_args_sparc64.h"
+#include "dyncall_args.h"
+
+#define DCARGS_SPARC64_NUM_DOUBLE_REGS 16
+struct DCArgs
+{
+	/* Don't change order or types, laid out for asm code to fill in! */
+	DClonglong *arg_ptr;
+	DCdouble   dreg_data[DCARGS_SPARC64_NUM_DOUBLE_REGS];
+	DClonglong i; /* args fetched */
+};
+
 
 DCulonglong dcbArgULongLong(DCArgs* p) { return p->arg_ptr[p->i++]; }
 DClonglong  dcbArgLongLong (DCArgs* p) { return (DClonglong)dcbArgULongLong(p); }
@@ -52,4 +62,7 @@ DCfloat dcbArgFloat(DCArgs* p)
 		? *((DCfloat*)(p->dreg_data + p->i++)+1)  /* +1 bc single-prec fp args are */
 		: *((DCfloat*)(p->arg_ptr   + p->i++)+1); /* right aligned in 64bit slot   */
 }
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 

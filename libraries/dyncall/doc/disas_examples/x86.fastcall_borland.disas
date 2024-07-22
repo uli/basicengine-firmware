@@ -5,7 +5,7 @@
 ;     __int32 i2;
 ; };
 ; #pragma pack(pop)
-; 
+;
 ; TTest __fastcall DoTest()
 ; {
 ;     TTest t;
@@ -13,12 +13,13 @@
 ;     t.i2 = 2;
 ;     return t;
 ; }
-; 
+;
 ; ...
 ; TTest t = DoTest();
 
-; from http://codeverge.com/embarcadero.cppbuilder.cpp/does-fastcall-have-any-bearing-on/1043767
 
+
+; from http://codeverge.com/embarcadero.cppbuilder.cpp/does-fastcall-have-any-bearing-on/1043767
 
 DoTest():
   push ebp                     ; |
@@ -36,6 +37,8 @@ DoTest():
   mov esp,ebp                  ; |
   pop ebp                      ; | epilog
   ret                          ; |
+
+
 
 ; vim: ft=asm
 

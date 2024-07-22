@@ -1,4 +1,4 @@
-APP     = sign
+APP     = sign${APP_SUFFIX}
 OBJS    = sign.o 
 SRCTOP  = ${VPATH}/../..
 BLDTOP  = ../..

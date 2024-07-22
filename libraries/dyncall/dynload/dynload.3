@@ -1,4 +1,4 @@
-.\" Copyright (c) 2007-2017 Daniel Adler <dadler AT uni-goettingen DOT de>, 
+.\" Copyright (c) 2007-2020 Daniel Adler <dadler AT uni-goettingen DOT de>,
 .\"                         Tassilo Philipp <tphilipp AT potion-studios DOT com>
 .\" 
 .\" Permission to use, copy, modify, and distribute this software for any
@@ -100,6 +100,9 @@ and
 are used to lookup symbol names using an index or symbol's address, respectively, returning a null pointer on error. The names are returned as they would appear in C source code (mangled if C++, etc.). The address passed to
 .Fn dlSymsNameFromValue
 must point to a loaded symbol.
+.Sh NOTES
+.Fn dlLoadLibrary
+does handle loading dylibs on macos >= 11.0.1 that aren't on the file system but are provided through the OS' "built-in dynamic linker cache of all system-provided libraries" (to load, use same "path" as one would with dlopen(3)).
 .Sh BUGS
 .Fn dlGetLibraryPath
 is not thread-safe on Darwin (macOS, iOS, ...) and OpenBSD.

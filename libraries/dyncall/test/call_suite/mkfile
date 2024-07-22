@@ -22,7 +22,7 @@ TOP		= ../..
 <$TOP/buildsys/mk/prolog.mk
 
 
-UNITS       = globals invoke cases main
+UNITS       = globals cases main
 APPLICATION = call_suite
 LIBS        = $TOP/dyncall/libdyncall_s.a$O
 

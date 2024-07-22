@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -29,7 +29,7 @@
 #include "config.h"
 #include "../../dyncall/dyncall_value.h"
 
-DCValue mValue[NARGS];
+static DCValue mValue[NARGS];
 
 void clearValues() { int i; for(i=0; i<NARGS; ++i) mValue[i].L = 0xCAFEBABEDEADC0DEULL; }
 
@@ -44,10 +44,10 @@ void g_DCpointer (DCpointer  value, int pos) { mValue[pos].p = value; }
 
 DCValue* getArg(int pos) { return &mValue[pos]; }
 
-int gID;
+static int gID;
 int getId() { return gID; }
 
-// Generate function definitions.
+/* Generate function definitions. */
 #define VF0( id,                               S)  void S(                                                              ) {gID=id;                                                                                                                                    }
 #define VF1( id,A1,                            S)  void S(A1 a1                                                         ) {gID=id;g_##A1(a1,0);                                                                                                                       }
 #define VF2( id,A1,A2,                         S)  void S(A1 a1, A2 a2                                                  ) {gID=id;g_##A1(a1,0);g_##A2(a2,1);                                                                                                          }
@@ -62,7 +62,7 @@ int getId() { return gID; }
 #include "case.h"
 
 
-// Generate function pointer table used for loop.
+/* Generate function pointer table used for loop. */
 #undef VF0
 #undef VF1
 #undef VF2
@@ -88,10 +88,11 @@ int getId() { return gID; }
 #define VF10(id,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,S) (void(*)())(S),
 
 typedef void (*fp)();
-fp gFuncTable[] = {
+static fp gFuncTable[] = {
 #include "case.h"
 };
 
 DCpointer getFunc(int x) {
   return (DCpointer)gFuncTable[x];
 }
+

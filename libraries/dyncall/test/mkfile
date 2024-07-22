@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2010 Daniel Adler <dadler@uni-goettingen.de>, 
-#                    Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2010-2022 Daniel Adler <dadler@uni-goettingen.de>,
+#                         Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -21,8 +21,8 @@
 TOP		= ..
 <$TOP/buildsys/mk/prolog.mk
 
-# only C-stuff for now...
-DIRS = callf plain call_suite suite thunk malloc_wx callback_plain callback_suite  # plain_c++ is not included, b/c C++ on Plan9 is rather inexistant
-#DIRS = suite2 suite3 suite_floats ellipsis
+# only C-stuff for now, b/c C++ on Plan9 is rather inexistant
+DIRS = callf plain call_suite call_suite_aggrs suite thunk malloc_wx callback_plain callback_suite callback_suite_aggrs
+#DIRS = plain_c++ callback_plain_c++ suite2 suite3 suite_floats ellipsis
 
 <$TOP/buildsys/mk/epilog.mk

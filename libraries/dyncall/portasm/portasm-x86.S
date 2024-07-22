@@ -69,8 +69,8 @@
 	.text
 #  define BEGIN_ASM
 #  define END_ASM 
-#  include "../autovar/autovar_ABI.h"
-#  if defined(OS_Win32) || defined(OS_Cygwin) || defined(OS_MinGW) || defined(OS_Darwin) || defined(OS_Minix)
+#  include "../dyncall/dyncall_macros.h"
+#  if defined(DC__OS_Win32) || defined(DC__OS_Cygwin) || defined(DC__OS_MinGW) || defined(DC__OS_Darwin) || defined(DC__OS_Minix)
 #    define CSYM(X) _##X
 #  else
 #    define CSYM(X) X
@@ -110,8 +110,7 @@
 #  define MOVSD movsd
 #  define DWORD(R,OFF) OFF(R)
 #  define QWORD(R,OFF) OFF(R)
-#  include "../autovar/autovar_CC.h"
-#  if defined CC_SUN
+#  if defined DC__C_SUNPRO
 #    define LIT(X) $X
 #  else
 #    define LIT(X) XCONCAT($,X)

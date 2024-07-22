@@ -1,0 +1,147 @@
+%//////////////////////////////////////////////////////////////////////////////
+%
+% Copyright (c) 2024 Tassilo Philipp <tphilipp@potion-studios.com>
+%
+% Permission to use, copy, modify, and distribute this software for any
+% purpose with or without fee is hereby granted, provided that the above
+% copyright notice and this permission notice appear in all copies.
+%
+% THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+% WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+% MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+% ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+% WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+% ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+% OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+%
+%//////////////////////////////////////////////////////////////////////////////
+
+\subsection{RISC-V 64 Calling Conventions}
+
+\paragraph{Overview}
+
+RISC-V 64 uses LP64 as programming model (64-bit pointers and long integers),
+the word size is 32 bits (instructions with 'd' mnemonic indicate 64bit
+operations, 'w' 32bit, 'h' 16bit and 'b' 8bit). It has a modular design, with a
+base ISA and optional extensions. Two default calling conventions are specified
+in \cite{riscvcc}, a standard one (called \emph{RVG calling convention}) and a
+soft-float convention for implementations lacking the floating point extension.
+
+RISC-V 64 features thirty-two 64 bit registers (16 in the embedded RISC-V
+variant), namely {\bf x0-x31}, where x0 is a zero register and the others are
+general purpose registers.
+With the floating point extension, there is an additional set of thirty-two 64
+bit floating point registers, {\bf f0-f31}.
+
+Each register also has a symbolic name which illustrates the calling
+conventions' intended purpose.
+
+\paragraph{\product{dyncall} support}
+
+The \product{dyncall} library supports the RISC-V 64-bit hardware- and software float ABI, for both, calls and callbacks.
+
+\subsubsection{RVG calling convention (hard float)}
+
+\paragraph{Registers and register usage}
+
+Up to eight integer and floating point registers are used to pass parameters.
+
+\begin{table}[h]
+\begin{tabular*}{0.95\textwidth}{lll}
+Name          & Symbolic Name & Brief description\\
+\hline
+{\bf x0}      & {\bf zero}     & hard-wired, always zero\\
+{\bf x1}      & {\bf ra}       & permanent, return address / link register\\
+{\bf x2}      & {\bf sp}       & permanent, stack pointer\\
+{\bf x3}      & {\bf gp}       & scratch, global pointer\\
+{\bf x4}      & {\bf tp}       & scratch, thread pointer\\
+{\bf x5-x7}   & {\bf t0-t2}    & scratch, temporaries\\
+{\bf x8}      & {\bf s0/fp}    & permanent, saved register 0 / frame pointer\\
+{\bf x9}      & {\bf s1}       & permanent, saved register 1\\
+{\bf x10-x11} & {\bf a0-a1}    & scratch, int parameters, return value\\
+{\bf x12-x17} & {\bf a2-a7}    & scratch, int parameters\\
+{\bf x18-x27} & {\bf s2-s11}   & permanent, saved registers\\
+{\bf x28-x31} & {\bf t3-t6}    & scratch, temporaries\\
+{\bf f0-f7}   & {\bf ft0-ft7}  & scratch, fp temporaries\\
+{\bf f8-f9}   & {\bf fs0-fs1}  & permanent, saved fp registers\\
+{\bf f10-f11} & {\bf fa0-fa1}  & scratch, fp parameters, fp return value\\
+{\bf f12-f17} & {\bf fa2-fa7}  & scratch, fp parameters\\
+{\bf f18-f27} & {\bf fs2-fs11} & permanent, saved fp registers\\
+{\bf f28-f31} & {\bf ft8-ft11} & scratch, fp temporaries\\
+
+\end{tabular*}
+\caption{Register usage on riscv64}
+\end{table}
+
+\paragraph{Parameter passing}
+
+\begin{itemize}
+\item stack parameter order: right-to-left
+\item caller cleans up the stack
+\item stack grows down
+\item up to 16 arguments \textless=\ 8 bytes are passed using x10-x17/a0-a7 and f10-f17/fa0-fa7, with floating point arguments using float registers until those are exhausted
+\item 128 bit arguments passed via registers are passed in even-odd register pairs (skipping a register, if necessary, which remains unused)
+\item aggregates (struct, union) \textless=\ 16 bytes in size are passed via registers (but only in float registers if members are either one or two floating point non-union and non-array members)
+\item arguments \textgreater 128 bits are passed as a pointer to the argument (to a copy, if needed)
+\item subsequent parameters are pushed onto the stack
+\item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first 8 integer
+and 8 floating-point registers to a reserved stack area adjacent to the other parameters on the stack (only the unnamed integer parameters require saving, though)
+\item unnamed floating-point arguments to variadic functions are passed in integer registers
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item stack is required throughout to be 16-byte aligned
+\end{itemize}
+
+\paragraph{Return values}
+
+\begin{itemize}
+\item integer return values use x10-x11/a0-a1
+\item floating-point return values use f10-f11/fa0-fa1
+\item aggregates (struct, union) that would be passed via registers if passed as a first param, are returned via those registers
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee via a0 as hidden param, and callee writes return value to this space
+\item for aggregates not returnable via registers (e.g. \textgreater\ 16b, ...), the caller allocates space, passes pointer to it to the callee through
+a0 as hidden param, and callee writes return value to this space
+\end{itemize}
+
+\clearpage
+
+\paragraph{Stack layout}
+
+% verified: TP feb 2024 (see also doc/disas_examples/riscv64.rvg.disas)
+Stack directly after function prolog:\\
+
+\begin{figure}[h]
+\begin{tabular}{5|3|1 1}
+                                         & \vdots                         &                                      &                              \\
+\hhline{~=~~}
+register save area                       & \hspace{4cm}                   &                                      & \mrrbrace{5}{caller's frame} \\
+\hhline{~-~~}
+local data                               &                                &                                      &                              \\
+\hhline{~-~~}
+\mrlbrace{7}{parameter area}             & arg n-1                        & \mrrbrace{3}{stack parameters}       &                              \\
+                                         & \ldots                         &                                      &                              \\
+                                         & first arg passed on stack      &                                      &                              \\
+\hhline{~=~~}
+                                         & a? or fa?                      & \mrrbrace{4}{spill area (if needed)} & \mrrbrace{7}{current frame}  \\
+                                         & \ldots                         &                                      &                              \\
+                                         & first unnamed reg args         &                                      &                              \\
+                                         & named reg args (optional)      &                                      &                              \\
+\hhline{~-~~}
+register save area (with return address) &                                &                                      &                              \\ % fp will point here (to 1st arg)
+\hhline{~-~~}
+local data                               &                                &                                      &                              \\
+\hhline{~-~~}
+parameter area                           & \vdots                         &                                      &                              \\
+\end{tabular}
+\caption{Stack layout on riscv64}
+\end{figure}
+
+\clearpage
+
+
+\subsubsection{Soft-Float calling convention}
+
+The software floating point calling convention is the same as the RVG
+convention, except that no floating point registers are available, and
+floating-point parameters are passed and returned in integer registers,
+following the rules for integer parameters of the same size.
+

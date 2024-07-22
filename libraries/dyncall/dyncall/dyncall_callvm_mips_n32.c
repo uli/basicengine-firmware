@@ -189,7 +189,7 @@ DCCallVM_vt gVT_mips_n32 =
 , &dc_callvm_argFloat_mips_n32
 , &dc_callvm_argDouble_mips_n32
 , &dc_callvm_argPointer_mips_n32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_mips_n32
 , (DCboolvmfunc*)       &dc_callvm_call_mips_n32
 , (DCcharvmfunc*)       &dc_callvm_call_mips_n32
@@ -200,7 +200,8 @@ DCCallVM_vt gVT_mips_n32 =
 , (DCfloatvmfunc*)      &dc_callvm_call_mips_n32
 , (DCdoublevmfunc*)     &dc_callvm_call_mips_n32
 , (DCpointervmfunc*)    &dc_callvm_call_mips_n32
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_mips_n32_ellipsis =
@@ -217,7 +218,7 @@ DCCallVM_vt gVT_mips_n32_ellipsis =
 , &dc_callvm_argFloat_mips_n32_ellipsis
 , &dc_callvm_argDouble_mips_n32_ellipsis
 , &dc_callvm_argPointer_mips_n32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_mips_n32
 , (DCboolvmfunc*)       &dc_callvm_call_mips_n32
 , (DCcharvmfunc*)       &dc_callvm_call_mips_n32
@@ -228,7 +229,8 @@ DCCallVM_vt gVT_mips_n32_ellipsis =
 , (DCfloatvmfunc*)      &dc_callvm_call_mips_n32
 , (DCdoublevmfunc*)     &dc_callvm_call_mips_n32
 , (DCpointervmfunc*)    &dc_callvm_call_mips_n32
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 static void dc_callvm_mode_mips_n32(DCCallVM* in_self, DCint mode)
@@ -238,6 +240,7 @@ static void dc_callvm_mode_mips_n32(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_MIPS64_N32:
     case DC_CALL_C_ELLIPSIS:
       vt = &gVT_mips_n32;

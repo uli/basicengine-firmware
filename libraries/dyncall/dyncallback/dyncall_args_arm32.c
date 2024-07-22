@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Implementation for ARM32 (ARM and THUMB mode)
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2024 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -25,7 +25,20 @@
 
 
 
-#include "dyncall_args_arm32.h"
+#include "dyncall_args.h"
+
+struct DCArgs
+{
+	/* Don't change order! */
+	long  reg_data[4];
+	int   reg_count;
+	long* stack_ptr;
+#if defined(DC__ABI_ARM_HF)
+	DCfloat f[16];
+	int     freg_count;
+	int     dreg_count;
+#endif
+};
 
 
 static void arm_align_64(DCArgs* args)
@@ -115,13 +128,6 @@ static DClonglong arm_longlong(DCArgs* args)
 }
 
 
-
-// ----------------------------------------------------------------------------
-// C API implementation:
-
-
-// base operations:
-
 DClonglong  dcbArgLongLong (DCArgs* p) { return arm_longlong(p); }
 DClong      dcbArgLong     (DCArgs* p) { return *(DClong*)arm_word(p); }
 DCint       dcbArgInt      (DCArgs* p) { return (DCint)   dcbArgLong(p); }
@@ -140,4 +146,7 @@ DCpointer   dcbArgPointer  (DCArgs* p) { return (DCpointer)  dcbArgLong(p); }
 
 DCdouble    dcbArgDouble   (DCArgs* p) { return arm_double(p); }
 DCfloat     dcbArgFloat    (DCArgs* p) { return arm_float(p); }
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 

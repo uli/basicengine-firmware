@@ -23,6 +23,7 @@ Build using buildsys/nmake and MS Visual Studio Tools:
      executed mistakenly for re-generation of test C code)
      timestamps are wrong; workaround: run "svn revert -R ." several times.
 
+
 Build using buildsys/gmake and MinGW or Cygwin:
 -----------------------------------------------
 
@@ -61,4 +62,13 @@ Build using CMake and Visual Studio:
   BROKEN: SAFE EH.
 
   BROKEN: Rules to assemble MASM files are still missing.
+
+
+Build ARM64 using CMake and Visual Studio 2019:
+-----------------------------------------------
+
+   vcvarsall.bat amd64_arm64
+   mkdir build && cd build
+   cmake -G "Visual Studio 16 2019" -A ARM64 ..
+   cmake --build . --config Release
 

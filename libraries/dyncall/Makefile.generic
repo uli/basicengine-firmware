@@ -35,4 +35,8 @@ distclean: clean
 	find . -type f -name "Makefile.generic" | sed s/\.generic$$// | xargs rm
 show-compiler-predefs:
 	${CC} ${CFLAGS} -dM -E - < /dev/null
+show-tool-versions:
+	${CC} -v
+	${LD} -V
+	${MAKE} -v 2>/dev/null || echo ${MAKE} ${MAKE_VERSION}
 

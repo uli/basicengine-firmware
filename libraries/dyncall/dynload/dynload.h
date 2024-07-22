@@ -39,7 +39,7 @@ extern "C" {
 
 /* shared library loading and explicit symbol resolving */
 /* dlLoadLibrary will search for specified lib (e.g. as leaf name, only), */
-/* to the platforms dynamic linking style */
+/* following platforms' dynamic linking style, returns NULL on error */
 
 typedef struct DLLib_ DLLib;
 

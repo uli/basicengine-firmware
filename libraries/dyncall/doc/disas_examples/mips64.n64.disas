@@ -19,7 +19,7 @@
 
 
 
-; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
 
 0000000000000000 <leaf_call>:
    0:   67bdffd0        daddiu  sp,sp,-48
@@ -312,7 +312,7 @@
 
 
 
-; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
 
 0000000000000000 <leaf_call>:
    0:   67bdffd0        daddiu  sp,sp,-48
@@ -685,6 +685,2775 @@
  2a4:   00200825        move    at,at       ; |         branch delay slot (effectively nop)
  2a8:   00200825        move    at,at       ; |         ? @@@
  2ac:   00200825        move    at,at       ; |         ? @@@
+
+
+
+; ---------- simple float arg (uses fp regs on hard-float) ---------->
+;
+; float f(float f) { return f; }
+;
+; int main()
+; {
+;     return !!f(1324.5f);
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <f>:
+   0:	67bdffe0 	daddiu	sp,sp,-32
+   4:	ffbe0018 	sd	s8,24(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	e7cc0000 	swc1	$f12,0(s8)
+  10:	c7c00000 	lwc1	$f0,0(s8)
+  14:	03c0e82d 	move	sp,s8
+  18:	dfbe0018 	ld	s8,24(sp)
+  1c:	67bd0020 	daddiu	sp,sp,32
+  20:	03e00008 	jr	ra
+  24:	00200825 	move	at,at
+
+0000000000000028 <main>:
+  28:	67bdffe0 	daddiu	sp,sp,-32
+  2c:	ffbf0018 	sd	ra,24(sp)
+  30:	ffbe0010 	sd	s8,16(sp)
+  34:	ffbc0008 	sd	gp,8(sp)
+  38:	03a0f02d 	move	s8,sp
+  3c:	3c1c0000 	lui	gp,0x0
+  40:	0399e02d 	daddu	gp,gp,t9
+  44:	679c0000 	daddiu	gp,gp,0
+  48:	df820000 	ld	v0,0(gp)
+  4c:	c4400000 	lwc1	$f0,0(v0)
+  50:	46000306 	mov.s	$f12,$f0
+  54:	df820000 	ld	v0,0(gp)
+  58:	0040c82d 	move	t9,v0
+  5c:	0320f809 	jalr	t9
+  60:	00200825 	move	at,at
+  64:	46000046 	mov.s	$f1,$f0
+  68:	24020001 	li	v0,1
+  6c:	44800000 	mtc1	zero,$f0
+  70:	46000832 	c.eq.s	$f1,$f0
+  74:	45000002 	bc1f	80 <main+0x58>
+  78:	00200825 	move	at,at
+  7c:	0000102d 	move	v0,zero
+  80:	304200ff 	andi	v0,v0,0xff
+  84:	03c0e82d 	move	sp,s8
+  88:	dfbf0018 	ld	ra,24(sp)
+  8c:	dfbe0010 	ld	s8,16(sp)
+  90:	dfbc0008 	ld	gp,8(sp)
+  94:	67bd0020 	daddiu	sp,sp,32
+  98:	03e00008 	jr	ra
+  9c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <f>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   afc40000        sw      a0,0(s8)
+  20:   8fc20000        lw      v0,0(s8)
+  24:   03c0e82d        move    sp,s8
+  28:   dfbe0018        ld      s8,24(sp)
+  2c:   dfbc0010        ld      gp,16(sp)
+  30:   03e00008        jr      ra
+  34:   67bd0020        daddiu  sp,sp,32
+
+0000000000000038 <main>:
+  38:   67bdffd0        daddiu  sp,sp,-48
+  3c:   ffbf0020        sd      ra,32(sp)
+  40:   ffbe0018        sd      s8,24(sp)
+  44:   ffbc0010        sd      gp,16(sp)
+  48:   03a0f02d        move    s8,sp
+  4c:   3c1c0000        lui     gp,0x0
+  50:   0399e02d        daddu   gp,gp,t9
+  54:   679c0000        daddiu  gp,gp,0
+  58:   df820000        ld      v0,0(gp)
+  5c:   8c420000        lw      v0,0(v0)
+  60:   0040202d        move    a0,v0
+  64:   df990000        ld      t9,0(gp)
+  68:   0320f809        jalr    t9
+  6c:   00000000        nop
+  70:   ffc00000        sd      zero,0(s8)
+  74:   0040202d        move    a0,v0
+  78:   0000282d        move    a1,zero
+  7c:   df990000        ld      t9,0(gp)
+  80:   0320f809        jalr    t9
+  84:   00000000        nop
+  88:   14400003        bnez    v0,98 <main+0x60>
+  8c:   00000000        nop
+  90:   10000003        b       a0 <main+0x68>
+  94:   00000000        nop
+  98:   24020001        li      v0,1
+  9c:   ffc20000        sd      v0,0(s8)
+  a0:   dfc20000        ld      v0,0(s8)
+  a4:   03c0e82d        move    sp,s8
+  a8:   dfbf0020        ld      ra,32(sp)
+  ac:   dfbe0018        ld      s8,24(sp)
+  b0:   dfbc0010        ld      gp,16(sp)
+  b4:   03e00008        jr      ra
+  b8:   67bd0030        daddiu  sp,sp,48
+  bc:   00000000        nop
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <f>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   afc40000        sw      a0,0(s8)
+  20:   8fc20000        lw      v0,0(s8)
+  24:   03c0e82d        move    sp,s8
+  28:   dfbe0018        ld      s8,24(sp)
+  2c:   dfbc0010        ld      gp,16(sp)
+  30:   03e00008        jr      ra
+  34:   67bd0020        daddiu  sp,sp,32
+
+0000000000000038 <main>:
+  38:   67bdffd0        daddiu  sp,sp,-48
+  3c:   ffbf0020        sd      ra,32(sp)
+  40:   ffbe0018        sd      s8,24(sp)
+  44:   ffbc0010        sd      gp,16(sp)
+  48:   03a0f02d        move    s8,sp
+  4c:   3c1c0000        lui     gp,0x0
+  50:   0399e02d        daddu   gp,gp,t9
+  54:   679c0000        daddiu  gp,gp,0
+  58:   df820000        ld      v0,0(gp)
+  5c:   8c420000        lw      v0,0(v0)
+  60:   0040202d        move    a0,v0
+  64:   df990000        ld      t9,0(gp)
+  68:   0320f809        jalr    t9
+  6c:   00000000        nop
+  70:   ffc00000        sd      zero,0(s8)
+  74:   0040202d        move    a0,v0
+  78:   0000282d        move    a1,zero
+  7c:   df990000        ld      t9,0(gp)
+  80:   0320f809        jalr    t9
+  84:   00000000        nop
+  88:   14400003        bnez    v0,98 <main+0x60>
+  8c:   00000000        nop
+  90:   10000003        b       a0 <main+0x68>
+  94:   00000000        nop
+  98:   24020001        li      v0,1
+  9c:   ffc20000        sd      v0,0(s8)
+  a0:   dfc20000        ld      v0,0(s8)
+  a4:   03c0e82d        move    sp,s8
+  a8:   dfbf0020        ld      ra,32(sp)
+  ac:   dfbe0018        ld      s8,24(sp)
+  b0:   dfbc0010        ld      gp,16(sp)
+  b4:   03e00008        jr      ra
+  b8:   67bd0030        daddiu  sp,sp,48
+  bc:   00000000        nop
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1 *and* -mhard-float
+
+0000000000000000 <f>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   e7cc0000        swc1    $f12,0(s8)
+  20:   c7c00000        lwc1    $f0,0(s8)
+  24:   03c0e82d        move    sp,s8
+  28:   dfbe0018        ld      s8,24(sp)
+  2c:   dfbc0010        ld      gp,16(sp)
+  30:   03e00008        jr      ra
+  34:   67bd0020        daddiu  sp,sp,32
+
+0000000000000038 <main>:
+  38:   67bdffd0        daddiu  sp,sp,-48
+  3c:   ffbf0020        sd      ra,32(sp)
+  40:   ffbe0018        sd      s8,24(sp)
+  44:   ffbc0010        sd      gp,16(sp)
+  48:   03a0f02d        move    s8,sp
+  4c:   3c1c0000        lui     gp,0x0
+  50:   0399e02d        daddu   gp,gp,t9
+  54:   679c0000        daddiu  gp,gp,0
+  58:   df810000        ld      at,0(gp)
+  5c:   c4200000        lwc1    $f0,0(at)
+  60:   46000306        mov.s   $f12,$f0
+  64:   df990000        ld      t9,0(gp)
+  68:   0320f809        jalr    t9
+  6c:   00000000        nop
+  70:   46000046        mov.s   $f1,$f0
+  74:   24020001        li      v0,1
+  78:   ffc20000        sd      v0,0(s8)
+  7c:   44800000        mtc1    zero,$f0
+  80:   00000000        nop
+  84:   46000832        c.eq.s  $f1,$f0
+  88:   00000000        nop
+  8c:   45000002        bc1f    98 <main+0x60>
+  90:   00000000        nop
+  94:   ffc00000        sd      zero,0(s8)
+  98:   dfc20000        ld      v0,0(s8)
+  9c:   03c0e82d        move    sp,s8
+  a0:   dfbf0020        ld      ra,32(sp)
+  a4:   dfbe0018        ld      s8,24(sp)
+  a8:   dfbc0010        ld      gp,16(sp)
+  ac:   03e00008        jr      ra
+  b0:   67bd0030        daddiu  sp,sp,48
+
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <leaf_call>:
+   0:	67bdffc0 	daddiu	sp,sp,-64
+   4:	ffbe0038 	sd	s8,56(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	0080682d 	move	t1,a0
+  10:	00a0602d 	move	t0,a1
+  14:	00c0282d 	move	a1,a2
+  18:	00e0202d 	move	a0,a3
+  1c:	ffc80010 	sd	a4,16(s8)
+  20:	ffc90018 	sd	a5,24(s8)
+  24:	0140182d 	move	v1,a6
+  28:	0160102d 	move	v0,a7
+  2c:	000d3000 	sll	a2,t1,0x0
+  30:	afc60000 	sw	a2,0(s8)
+  34:	000c3000 	sll	a2,t0,0x0
+  38:	afc60004 	sw	a2,4(s8)
+  3c:	00052800 	sll	a1,a1,0x0
+  40:	afc50008 	sw	a1,8(s8)
+  44:	00042000 	sll	a0,a0,0x0
+  48:	afc4000c 	sw	a0,12(s8)
+  4c:	00031800 	sll	v1,v1,0x0
+  50:	afc30020 	sw	v1,32(s8)
+  54:	00021000 	sll	v0,v0,0x0
+  58:	afc20024 	sw	v0,36(s8)
+  5c:	03c0e82d 	move	sp,s8
+  60:	dfbe0038 	ld	s8,56(sp)
+  64:	67bd0040 	daddiu	sp,sp,64
+  68:	03e00008 	jr	ra
+  6c:	00200825 	move	at,at
+
+0000000000000070 <nonleaf_call>:
+  70:	67bdff40 	daddiu	sp,sp,-192
+  74:	ffbf00b8 	sd	ra,184(sp)
+  78:	ffbe00b0 	sd	s8,176(sp)
+  7c:	ffbc00a8 	sd	gp,168(sp)
+  80:	03a0f02d 	move	s8,sp
+  84:	3c1c0000 	lui	gp,0x0
+  88:	0399e02d 	daddu	gp,gp,t9
+  8c:	679c0000 	daddiu	gp,gp,0
+  90:	0080682d 	move	t1,a0
+  94:	00a0602d 	move	t0,a1
+  98:	00c0282d 	move	a1,a2
+  9c:	00e0202d 	move	a0,a3
+  a0:	0100182d 	move	v1,a4
+  a4:	ffc90088 	sd	a5,136(s8)
+  a8:	ffca0090 	sd	a6,144(s8)
+  ac:	0160102d 	move	v0,a7
+  b0:	000d3000 	sll	a2,t1,0x0
+  b4:	afc60070 	sw	a2,112(s8)
+  b8:	000c3000 	sll	a2,t0,0x0
+  bc:	afc60074 	sw	a2,116(s8)
+  c0:	00052800 	sll	a1,a1,0x0
+  c4:	afc50078 	sw	a1,120(s8)
+  c8:	00042000 	sll	a0,a0,0x0
+  cc:	afc4007c 	sw	a0,124(s8)
+  d0:	00031800 	sll	v1,v1,0x0
+  d4:	afc30080 	sw	v1,128(s8)
+  d8:	00021000 	sll	v0,v0,0x0
+  dc:	afc20084 	sw	v0,132(s8)
+  e0:	ffc00000 	sd	zero,0(s8)
+  e4:	ffc00008 	sd	zero,8(s8)
+  e8:	ffc00010 	sd	zero,16(s8)
+  ec:	ffc00018 	sd	zero,24(s8)
+  f0:	ffc00020 	sd	zero,32(s8)
+  f4:	ffc00028 	sd	zero,40(s8)
+  f8:	ffc00030 	sd	zero,48(s8)
+  fc:	ffc00038 	sd	zero,56(s8)
+ 100:	ffc00040 	sd	zero,64(s8)
+ 104:	ffc00048 	sd	zero,72(s8)
+ 108:	ffc00050 	sd	zero,80(s8)
+ 10c:	ffc00058 	sd	zero,88(s8)
+ 110:	afc00060 	sw	zero,96(s8)
+ 114:	2402004c 	li	v0,76
+ 118:	a3c20000 	sb	v0,0(s8)
+ 11c:	8fc40074 	lw	a0,116(s8)
+ 120:	8fc50078 	lw	a1,120(s8)
+ 124:	8fc6007c 	lw	a2,124(s8)
+ 128:	8fc70080 	lw	a3,128(s8)
+ 12c:	8fc30084 	lw	v1,132(s8)
+ 130:	8fc200c0 	lw	v0,192(s8)
+ 134:	dfc80088 	ld	a4,136(s8)
+ 138:	dfc90090 	ld	a5,144(s8)
+ 13c:	0060502d 	move	a6,v1
+ 140:	0040582d 	move	a7,v0
+ 144:	df820000 	ld	v0,0(gp)
+ 148:	0040c82d 	move	t9,v0
+ 14c:	0320f809 	jalr	t9
+ 150:	00200825 	move	at,at
+ 154:	03c0e82d 	move	sp,s8
+ 158:	dfbf00b8 	ld	ra,184(sp)
+ 15c:	dfbe00b0 	ld	s8,176(sp)
+ 160:	dfbc00a8 	ld	gp,168(sp)
+ 164:	67bd00c0 	daddiu	sp,sp,192
+ 168:	03e00008 	jr	ra
+ 16c:	00200825 	move	at,at
+
+0000000000000170 <main>:
+ 170:	67bdffc0 	daddiu	sp,sp,-64
+ 174:	ffbf0038 	sd	ra,56(sp)
+ 178:	ffbe0030 	sd	s8,48(sp)
+ 17c:	ffbc0028 	sd	gp,40(sp)
+ 180:	03a0f02d 	move	s8,sp
+ 184:	3c1c0000 	lui	gp,0x0
+ 188:	0399e02d 	daddu	gp,gp,t9
+ 18c:	679c0000 	daddiu	gp,gp,0
+ 190:	24020005 	li	v0,5
+ 194:	afc20010 	sw	v0,16(s8)
+ 198:	24020006 	li	v0,6
+ 19c:	afc20014 	sw	v0,20(s8)
+ 1a0:	24020007 	li	v0,7
+ 1a4:	ffc20018 	sd	v0,24(s8)
+ 1a8:	24020009 	li	v0,9
+ 1ac:	ffa20000 	sd	v0,0(sp)
+ 1b0:	0000202d 	move	a0,zero
+ 1b4:	24050001 	li	a1,1
+ 1b8:	24060002 	li	a2,2
+ 1bc:	24070003 	li	a3,3
+ 1c0:	24080004 	li	a4,4
+ 1c4:	dfc90010 	ld	a5,16(s8)
+ 1c8:	dfca0018 	ld	a6,24(s8)
+ 1cc:	240b0008 	li	a7,8
+ 1d0:	df820000 	ld	v0,0(gp)
+ 1d4:	0040c82d 	move	t9,v0
+ 1d8:	0320f809 	jalr	t9
+ 1dc:	00200825 	move	at,at
+ 1e0:	0000102d 	move	v0,zero
+ 1e4:	03c0e82d 	move	sp,s8
+ 1e8:	dfbf0038 	ld	ra,56(sp)
+ 1ec:	dfbe0030 	ld	s8,48(sp)
+ 1f0:	dfbc0028 	ld	gp,40(sp)
+ 1f4:	67bd0040 	daddiu	sp,sp,64
+ 1f8:	03e00008 	jr	ra
+ 1fc:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <leaf_call>:
+   0:   67bdffc0        daddiu  sp,sp,-64
+   4:   ffbe0038        sd      s8,56(sp)
+   8:   ffbc0030        sd      gp,48(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   0080102d        move    v0,a0
+  20:   00a0182d        move    v1,a1
+  24:   00c0202d        move    a0,a2
+  28:   00e0302d        move    a2,a3
+  2c:   ffc80010        sd      a4,16(s8)
+  30:   ffc90018        sd      a5,24(s8)
+  34:   0140282d        move    a1,a6
+  38:   0160382d        move    a3,a7
+  3c:   00021000        sll     v0,v0,0x0
+  40:   afc20000        sw      v0,0(s8)
+  44:   00031000        sll     v0,v1,0x0
+  48:   afc20004        sw      v0,4(s8)
+  4c:   00041000        sll     v0,a0,0x0
+  50:   afc20008        sw      v0,8(s8)
+  54:   00061000        sll     v0,a2,0x0
+  58:   afc2000c        sw      v0,12(s8)
+  5c:   00051000        sll     v0,a1,0x0
+  60:   afc20020        sw      v0,32(s8)
+  64:   00071000        sll     v0,a3,0x0
+  68:   afc20024        sw      v0,36(s8)
+  6c:   03c0e82d        move    sp,s8
+  70:   dfbe0038        ld      s8,56(sp)
+  74:   dfbc0030        ld      gp,48(sp)
+  78:   03e00008        jr      ra
+  7c:   67bd0040        daddiu  sp,sp,64
+
+0000000000000080 <nonleaf_call>:
+  80:   67bdff40        daddiu  sp,sp,-192
+  84:   ffbf00b0        sd      ra,176(sp)
+  88:   ffbe00a8        sd      s8,168(sp)
+  8c:   ffbc00a0        sd      gp,160(sp)
+  90:   03a0f02d        move    s8,sp
+  94:   3c1c0000        lui     gp,0x0
+  98:   0399e02d        daddu   gp,gp,t9
+  9c:   679c0000        daddiu  gp,gp,0
+  a0:   0080102d        move    v0,a0
+  a4:   00a0182d        move    v1,a1
+  a8:   00c0202d        move    a0,a2
+  ac:   00e0282d        move    a1,a3
+  b0:   0100302d        move    a2,a4
+  b4:   ffc90088        sd      a5,136(s8)
+  b8:   ffca0090        sd      a6,144(s8)
+  bc:   0160382d        move    a3,a7
+  c0:   00021000        sll     v0,v0,0x0
+  c4:   afc20070        sw      v0,112(s8)
+  c8:   00031000        sll     v0,v1,0x0
+  cc:   afc20074        sw      v0,116(s8)
+  d0:   00041000        sll     v0,a0,0x0
+  d4:   afc20078        sw      v0,120(s8)
+  d8:   00051000        sll     v0,a1,0x0
+  dc:   afc2007c        sw      v0,124(s8)
+  e0:   00061000        sll     v0,a2,0x0
+  e4:   afc20080        sw      v0,128(s8)
+  e8:   00071000        sll     v0,a3,0x0
+  ec:   afc20098        sw      v0,152(s8)
+  f0:   ffc00000        sd      zero,0(s8)
+  f4:   ffc00008        sd      zero,8(s8)
+  f8:   ffc00010        sd      zero,16(s8)
+  fc:   ffc00018        sd      zero,24(s8)
+ 100:   ffc00020        sd      zero,32(s8)
+ 104:   ffc00028        sd      zero,40(s8)
+ 108:   ffc00030        sd      zero,48(s8)
+ 10c:   ffc00038        sd      zero,56(s8)
+ 110:   ffc00040        sd      zero,64(s8)
+ 114:   ffc00048        sd      zero,72(s8)
+ 118:   ffc00050        sd      zero,80(s8)
+ 11c:   ffc00058        sd      zero,88(s8)
+ 120:   afc00060        sw      zero,96(s8)
+ 124:   2402004c        li      v0,76
+ 128:   a3c20000        sb      v0,0(s8)
+ 12c:   8fc20074        lw      v0,116(s8)
+ 130:   8fc30078        lw      v1,120(s8)
+ 134:   8fc6007c        lw      a2,124(s8)
+ 138:   8fc70080        lw      a3,128(s8)
+ 13c:   8fca0098        lw      a6,152(s8)
+ 140:   8fcb00c0        lw      a7,192(s8)
+ 144:   0040202d        move    a0,v0
+ 148:   0060282d        move    a1,v1
+ 14c:   dfc80088        ld      a4,136(s8)
+ 150:   dfc90090        ld      a5,144(s8)
+ 154:   df990000        ld      t9,0(gp)
+ 158:   0320f809        jalr    t9
+ 15c:   00000000        nop
+ 160:   03c0e82d        move    sp,s8
+ 164:   dfbf00b0        ld      ra,176(sp)
+ 168:   dfbe00a8        ld      s8,168(sp)
+ 16c:   dfbc00a0        ld      gp,160(sp)
+ 170:   03e00008        jr      ra
+ 174:   67bd00c0        daddiu  sp,sp,192
+
+0000000000000178 <main>:
+ 178:   67bdffc0        daddiu  sp,sp,-64
+ 17c:   ffbf0030        sd      ra,48(sp)
+ 180:   ffbe0028        sd      s8,40(sp)
+ 184:   ffbc0020        sd      gp,32(sp)
+ 188:   03a0f02d        move    s8,sp
+ 18c:   3c1c0000        lui     gp,0x0
+ 190:   0399e02d        daddu   gp,gp,t9
+ 194:   679c0000        daddiu  gp,gp,0
+ 198:   df820000        ld      v0,0(gp)
+ 19c:   dc420000        ld      v0,0(v0)
+ 1a0:   df830000        ld      v1,0(gp)
+ 1a4:   dc630000        ld      v1,0(v1)
+ 1a8:   ffc20010        sd      v0,16(s8)
+ 1ac:   ffc30018        sd      v1,24(s8)
+ 1b0:   24020009        li      v0,9
+ 1b4:   ffa20000        sd      v0,0(sp)
+ 1b8:   0000202d        move    a0,zero
+ 1bc:   24050001        li      a1,1
+ 1c0:   24060002        li      a2,2
+ 1c4:   24070003        li      a3,3
+ 1c8:   24080004        li      a4,4
+ 1cc:   dfc90010        ld      a5,16(s8)
+ 1d0:   dfca0018        ld      a6,24(s8)
+ 1d4:   240b0008        li      a7,8
+ 1d8:   df990000        ld      t9,0(gp)
+ 1dc:   0320f809        jalr    t9
+ 1e0:   00000000        nop
+ 1e4:   0000102d        move    v0,zero
+ 1e8:   03c0e82d        move    sp,s8
+ 1ec:   dfbf0030        ld      ra,48(sp)
+ 1f0:   dfbe0028        ld      s8,40(sp)
+ 1f4:   dfbc0020        ld      gp,32(sp)
+ 1f8:   03e00008        jr      ra
+ 1fc:   67bd0040        daddiu  sp,sp,64
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <leaf_call>:
+   0:	67bdffb0 	daddiu	sp,sp,-80
+   4:	ffbe0038 	sd	s8,56(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	0080382d 	move	a3,a0
+  10:	ffc50008 	sd	a1,8(s8)
+  14:	ffc60010 	sd	a2,16(s8)
+  18:	46207806 	mov.d	$f0,$f15
+  1c:	0100202d 	move	a0,a4
+  20:	0120182d 	move	v1,a5
+  24:	0140102d 	move	v0,a6
+  28:	ffcb0048 	sd	a7,72(s8)
+  2c:	00072800 	sll	a1,a3,0x0
+  30:	afc50000 	sw	a1,0(s8)
+  34:	f7c00018 	sdc1	$f0,24(s8)
+  38:	ffc40020 	sd	a0,32(s8)
+  3c:	00031800 	sll	v1,v1,0x0
+  40:	afc30004 	sw	v1,4(s8)
+  44:	00021000 	sll	v0,v0,0x0
+  48:	afc20028 	sw	v0,40(s8)
+  4c:	03c0e82d 	move	sp,s8
+  50:	dfbe0038 	ld	s8,56(sp)
+  54:	67bd0050 	daddiu	sp,sp,80
+  58:	03e00008 	jr	ra
+  5c:	00200825 	move	at,at
+
+0000000000000060 <nonleaf_call>:
+  60:	67bdff10 	daddiu	sp,sp,-240
+  64:	ffbf00e8 	sd	ra,232(sp)
+  68:	ffbe00e0 	sd	s8,224(sp)
+  6c:	ffbc00d8 	sd	gp,216(sp)
+  70:	03a0f02d 	move	s8,sp
+  74:	3c1c0000 	lui	gp,0x0
+  78:	0399e02d 	daddu	gp,gp,t9
+  7c:	679c0000 	daddiu	gp,gp,0
+  80:	0080402d 	move	a4,a0
+  84:	ffc600a8 	sd	a2,168(s8)
+  88:	ffc700b0 	sd	a3,176(s8)
+  8c:	46208006 	mov.d	$f0,$f16
+  90:	0120202d 	move	a0,a5
+  94:	0140182d 	move	v1,a6
+  98:	0160102d 	move	v0,a7
+  9c:	00083000 	sll	a2,a4,0x0
+  a0:	afc600a0 	sw	a2,160(s8)
+  a4:	00052800 	sll	a1,a1,0x0
+  a8:	afc500a4 	sw	a1,164(s8)
+  ac:	f7c000b8 	sdc1	$f0,184(s8)
+  b0:	ffc400c0 	sd	a0,192(s8)
+  b4:	00031800 	sll	v1,v1,0x0
+  b8:	afc300c8 	sw	v1,200(s8)
+  bc:	00021000 	sll	v0,v0,0x0
+  c0:	afc200cc 	sw	v0,204(s8)
+  c4:	ffc00030 	sd	zero,48(s8)
+  c8:	ffc00038 	sd	zero,56(s8)
+  cc:	ffc00040 	sd	zero,64(s8)
+  d0:	ffc00048 	sd	zero,72(s8)
+  d4:	ffc00050 	sd	zero,80(s8)
+  d8:	ffc00058 	sd	zero,88(s8)
+  dc:	ffc00060 	sd	zero,96(s8)
+  e0:	ffc00068 	sd	zero,104(s8)
+  e4:	ffc00070 	sd	zero,112(s8)
+  e8:	ffc00078 	sd	zero,120(s8)
+  ec:	ffc00080 	sd	zero,128(s8)
+  f0:	ffc00088 	sd	zero,136(s8)
+  f4:	afc00090 	sw	zero,144(s8)
+  f8:	2402004c 	li	v0,76
+  fc:	a3c20030 	sb	v0,48(s8)
+ 100:	8fc400a4 	lw	a0,164(s8)
+ 104:	d7c000b8 	ldc1	$f0,184(s8)
+ 108:	dfc800c0 	ld	a4,192(s8)
+ 10c:	8fc900c8 	lw	a5,200(s8)
+ 110:	8fc700cc 	lw	a3,204(s8)
+ 114:	dfc30100 	ld	v1,256(s8)
+ 118:	dfc20108 	ld	v0,264(s8)
+ 11c:	ffa30008 	sd	v1,8(sp)
+ 120:	ffa20010 	sd	v0,16(sp)
+ 124:	8fc20110 	lw	v0,272(s8)
+ 128:	ffa20018 	sd	v0,24(sp)
+ 12c:	8fc20118 	lw	v0,280(s8)
+ 130:	ffa20020 	sd	v0,32(sp)
+ 134:	8fc200f8 	lw	v0,248(s8)
+ 138:	afa20000 	sw	v0,0(sp)
+ 13c:	dfcb00f0 	ld	a7,240(s8)
+ 140:	dfc500a8 	ld	a1,168(s8)
+ 144:	dfc600b0 	ld	a2,176(s8)
+ 148:	462003c6 	mov.d	$f15,$f0
+ 14c:	00e0502d 	move	a6,a3
+ 150:	df820000 	ld	v0,0(gp)
+ 154:	0040c82d 	move	t9,v0
+ 158:	0320f809 	jalr	t9
+ 15c:	00200825 	move	at,at
+ 160:	03c0e82d 	move	sp,s8
+ 164:	dfbf00e8 	ld	ra,232(sp)
+ 168:	dfbe00e0 	ld	s8,224(sp)
+ 16c:	dfbc00d8 	ld	gp,216(sp)
+ 170:	67bd00f0 	daddiu	sp,sp,240
+ 174:	03e00008 	jr	ra
+ 178:	00200825 	move	at,at
+
+000000000000017c <main>:
+ 17c:	67bdff70 	daddiu	sp,sp,-144
+ 180:	ffbf0088 	sd	ra,136(sp)
+ 184:	ffbe0080 	sd	s8,128(sp)
+ 188:	ffbc0078 	sd	gp,120(sp)
+ 18c:	03a0f02d 	move	s8,sp
+ 190:	3c1c0000 	lui	gp,0x0
+ 194:	0399e02d 	daddu	gp,gp,t9
+ 198:	679c0000 	daddiu	gp,gp,0
+ 19c:	df820000 	ld	v0,0(gp)
+ 1a0:	64430000 	daddiu	v1,v0,0
+ 1a4:	68630007 	ldl	v1,7(v1)
+ 1a8:	6c430000 	ldr	v1,0(v0)
+ 1ac:	ffc30060 	sd	v1,96(s8)
+ 1b0:	64420000 	daddiu	v0,v0,0
+ 1b4:	8c420008 	lw	v0,8(v0)
+ 1b8:	afc20068 	sw	v0,104(s8)
+ 1bc:	df820000 	ld	v0,0(gp)
+ 1c0:	dc420000 	ld	v0,0(v0)
+ 1c4:	ffc20050 	sd	v0,80(s8)
+ 1c8:	24020006 	li	v0,6
+ 1cc:	ffc20058 	sd	v0,88(s8)
+ 1d0:	df820000 	ld	v0,0(gp)
+ 1d4:	64430000 	daddiu	v1,v0,0
+ 1d8:	68630007 	ldl	v1,7(v1)
+ 1dc:	6c430000 	ldr	v1,0(v0)
+ 1e0:	ffc30040 	sd	v1,64(s8)
+ 1e4:	64420000 	daddiu	v0,v0,0
+ 1e8:	8c420008 	lw	v0,8(v0)
+ 1ec:	afc20048 	sw	v0,72(s8)
+ 1f0:	df820000 	ld	v0,0(gp)
+ 1f4:	dc420000 	ld	v0,0(v0)
+ 1f8:	ffc20030 	sd	v0,48(s8)
+ 1fc:	2402000d 	li	v0,13
+ 200:	ffc20038 	sd	v0,56(s8)
+ 204:	d7c00050 	ldc1	$f0,80(s8)
+ 208:	dfc80058 	ld	a4,88(s8)
+ 20c:	dfc20040 	ld	v0,64(s8)
+ 210:	ffa20000 	sd	v0,0(sp)
+ 214:	8fc20048 	lw	v0,72(s8)
+ 218:	afa20008 	sw	v0,8(sp)
+ 21c:	dfc30030 	ld	v1,48(s8)
+ 220:	dfc20038 	ld	v0,56(s8)
+ 224:	ffa30010 	sd	v1,16(sp)
+ 228:	ffa20018 	sd	v0,24(sp)
+ 22c:	2402000e 	li	v0,14
+ 230:	ffa20020 	sd	v0,32(sp)
+ 234:	2402000f 	li	v0,15
+ 238:	ffa20028 	sd	v0,40(sp)
+ 23c:	0000202d 	move	a0,zero
+ 240:	24050001 	li	a1,1
+ 244:	dfc60060 	ld	a2,96(s8)
+ 248:	dfc70068 	ld	a3,104(s8)
+ 24c:	46200406 	mov.d	$f16,$f0
+ 250:	0100482d 	move	a5,a4
+ 254:	240a0007 	li	a6,7
+ 258:	240b0008 	li	a7,8
+ 25c:	df820000 	ld	v0,0(gp)
+ 260:	0040c82d 	move	t9,v0
+ 264:	0320f809 	jalr	t9
+ 268:	00200825 	move	at,at
+ 26c:	0000102d 	move	v0,zero
+ 270:	03c0e82d 	move	sp,s8
+ 274:	dfbf0088 	ld	ra,136(sp)
+ 278:	dfbe0080 	ld	s8,128(sp)
+ 27c:	dfbc0078 	ld	gp,120(sp)
+ 280:	67bd0090 	daddiu	sp,sp,144
+ 284:	03e00008 	jr	ra
+ 288:	00200825 	move	at,at
+ 28c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <leaf_call>:
+   0:   67bdffb0        daddiu  sp,sp,-80
+   4:   ffbe0038        sd      s8,56(sp)
+   8:   ffbc0030        sd      gp,48(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   0080102d        move    v0,a0
+  20:   ffc50008        sd      a1,8(s8)
+  24:   ffc60010        sd      a2,16(s8)
+  28:   00e0182d        move    v1,a3
+  2c:   0100202d        move    a0,a4
+  30:   0120282d        move    a1,a5
+  34:   0140302d        move    a2,a6
+  38:   ffcb0048        sd      a7,72(s8)
+  3c:   00021000        sll     v0,v0,0x0
+  40:   afc20000        sw      v0,0(s8)
+  44:   ffc30018        sd      v1,24(s8)
+  48:   ffc40020        sd      a0,32(s8)
+  4c:   00051000        sll     v0,a1,0x0
+  50:   afc20028        sw      v0,40(s8)
+  54:   00061000        sll     v0,a2,0x0
+  58:   afc2002c        sw      v0,44(s8)
+  5c:   03c0e82d        move    sp,s8
+  60:   dfbe0038        ld      s8,56(sp)
+  64:   dfbc0030        ld      gp,48(sp)
+  68:   03e00008        jr      ra
+  6c:   67bd0050        daddiu  sp,sp,80
+
+0000000000000070 <nonleaf_call>:
+  70:   67bdff00        daddiu  sp,sp,-256
+  74:   ffbf00f0        sd      ra,240(sp)
+  78:   ffbe00e8        sd      s8,232(sp)
+  7c:   ffbc00e0        sd      gp,224(sp)
+  80:   03a0f02d        move    s8,sp
+  84:   3c1c0000        lui     gp,0x0
+  88:   0399e02d        daddu   gp,gp,t9
+  8c:   679c0000        daddiu  gp,gp,0
+  90:   0080102d        move    v0,a0
+  94:   00a0182d        move    v1,a1
+  98:   ffc600a8        sd      a2,168(s8)
+  9c:   ffc700b0        sd      a3,176(s8)
+  a0:   0100202d        move    a0,a4
+  a4:   0120282d        move    a1,a5
+  a8:   0140302d        move    a2,a6
+  ac:   0160382d        move    a3,a7
+  b0:   00021000        sll     v0,v0,0x0
+  b4:   afc200a0        sw      v0,160(s8)
+  b8:   00031000        sll     v0,v1,0x0
+  bc:   afc200a4        sw      v0,164(s8)
+  c0:   ffc400b8        sd      a0,184(s8)
+  c4:   ffc500c0        sd      a1,192(s8)
+  c8:   00061000        sll     v0,a2,0x0
+  cc:   afc200c8        sw      v0,200(s8)
+  d0:   00071000        sll     v0,a3,0x0
+  d4:   afc200cc        sw      v0,204(s8)
+  d8:   ffc00030        sd      zero,48(s8)
+  dc:   ffc00038        sd      zero,56(s8)
+  e0:   ffc00040        sd      zero,64(s8)
+  e4:   ffc00048        sd      zero,72(s8)
+  e8:   ffc00050        sd      zero,80(s8)
+  ec:   ffc00058        sd      zero,88(s8)
+  f0:   ffc00060        sd      zero,96(s8)
+  f4:   ffc00068        sd      zero,104(s8)
+  f8:   ffc00070        sd      zero,112(s8)
+  fc:   ffc00078        sd      zero,120(s8)
+ 100:   ffc00080        sd      zero,128(s8)
+ 104:   ffc00088        sd      zero,136(s8)
+ 108:   afc00090        sw      zero,144(s8)
+ 10c:   2402004c        li      v0,76
+ 110:   a3c20030        sb      v0,48(s8)
+ 114:   8fc400a4        lw      a0,164(s8)
+ 118:   dfc700b8        ld      a3,184(s8)
+ 11c:   dfc800c0        ld      a4,192(s8)
+ 120:   8fc900c8        lw      a5,200(s8)
+ 124:   8fca00cc        lw      a6,204(s8)
+ 128:   dfc20110        ld      v0,272(s8)
+ 12c:   dfc30118        ld      v1,280(s8)
+ 130:   ffa20008        sd      v0,8(sp)
+ 134:   ffa30010        sd      v1,16(sp)
+ 138:   8fc20120        lw      v0,288(s8)
+ 13c:   ffa20018        sd      v0,24(sp)
+ 140:   8fc20128        lw      v0,296(s8)
+ 144:   ffa20020        sd      v0,32(sp)
+ 148:   dfc500a8        ld      a1,168(s8)
+ 14c:   9fc300b0        lwu     v1,176(s8)
+ 150:   ffc000d0        sd      zero,208(s8)
+ 154:   24020001        li      v0,1
+ 158:   0002103c        dsll32  v0,v0,0x0
+ 15c:   6442ffff        daddiu  v0,v0,-1
+ 160:   00621824        and     v1,v1,v0
+ 164:   2402ffff        li      v0,-1
+ 168:   0002103c        dsll32  v0,v0,0x0
+ 16c:   dfc600d0        ld      a2,208(s8)
+ 170:   00c21024        and     v0,a2,v0
+ 174:   00431025        or      v0,v0,v1
+ 178:   ffc200d0        sd      v0,208(s8)
+ 17c:   dfc30100        ld      v1,256(s8)
+ 180:   8fc20108        lw      v0,264(s8)
+ 184:   afa20000        sw      v0,0(sp)
+ 188:   dfc600d0        ld      a2,208(s8)
+ 18c:   0060582d        move    a7,v1
+ 190:   df990000        ld      t9,0(gp)
+ 194:   0320f809        jalr    t9
+ 198:   00000000        nop
+ 19c:   03c0e82d        move    sp,s8
+ 1a0:   dfbf00f0        ld      ra,240(sp)
+ 1a4:   dfbe00e8        ld      s8,232(sp)
+ 1a8:   dfbc00e0        ld      gp,224(sp)
+ 1ac:   03e00008        jr      ra
+ 1b0:   67bd0100        daddiu  sp,sp,256
+ 1b4:   00000000        nop
+
+00000000000001b8 <main>:
+ 1b8:   67bdff60        daddiu  sp,sp,-160
+ 1bc:   ffbf0090        sd      ra,144(sp)
+ 1c0:   ffbe0088        sd      s8,136(sp)
+ 1c4:   ffbc0080        sd      gp,128(sp)
+ 1c8:   03a0f02d        move    s8,sp
+ 1cc:   3c1c0000        lui     gp,0x0
+ 1d0:   0399e02d        daddu   gp,gp,t9
+ 1d4:   679c0000        daddiu  gp,gp,0
+ 1d8:   df820000        ld      v0,0(gp)
+ 1dc:   dc420000        ld      v0,0(v0)
+ 1e0:   ffc20060        sd      v0,96(s8)
+ 1e4:   df820000        ld      v0,0(gp)
+ 1e8:   8c420000        lw      v0,0(v0)
+ 1ec:   afc20068        sw      v0,104(s8)
+ 1f0:   df820000        ld      v0,0(gp)
+ 1f4:   dc420000        ld      v0,0(v0)
+ 1f8:   df830000        ld      v1,0(gp)
+ 1fc:   dc630000        ld      v1,0(v1)
+ 200:   ffc20050        sd      v0,80(s8)
+ 204:   ffc30058        sd      v1,88(s8)
+ 208:   df820000        ld      v0,0(gp)
+ 20c:   dc420000        ld      v0,0(v0)
+ 210:   ffc20040        sd      v0,64(s8)
+ 214:   df820000        ld      v0,0(gp)
+ 218:   8c420000        lw      v0,0(v0)
+ 21c:   afc20048        sw      v0,72(s8)
+ 220:   df820000        ld      v0,0(gp)
+ 224:   dc420000        ld      v0,0(v0)
+ 228:   df830000        ld      v1,0(gp)
+ 22c:   dc630000        ld      v1,0(v1)
+ 230:   ffc20030        sd      v0,48(s8)
+ 234:   ffc30038        sd      v1,56(s8)
+ 238:   dfc80050        ld      a4,80(s8)
+ 23c:   dfc90058        ld      a5,88(s8)
+ 240:   dfc20040        ld      v0,64(s8)
+ 244:   ffa20000        sd      v0,0(sp)
+ 248:   8fc20048        lw      v0,72(s8)
+ 24c:   afa20008        sw      v0,8(sp)
+ 250:   dfc20030        ld      v0,48(s8)
+ 254:   dfc30038        ld      v1,56(s8)
+ 258:   ffa20010        sd      v0,16(sp)
+ 25c:   ffa30018        sd      v1,24(sp)
+ 260:   2402000e        li      v0,14
+ 264:   ffa20020        sd      v0,32(sp)
+ 268:   2402000f        li      v0,15
+ 26c:   ffa20028        sd      v0,40(sp)
+ 270:   dfc60060        ld      a2,96(s8)
+ 274:   9fc30068        lwu     v1,104(s8)
+ 278:   ffc00070        sd      zero,112(s8)
+ 27c:   24020001        li      v0,1
+ 280:   0002103c        dsll32  v0,v0,0x0
+ 284:   6442ffff        daddiu  v0,v0,-1
+ 288:   00621824        and     v1,v1,v0
+ 28c:   2402ffff        li      v0,-1
+ 290:   0002103c        dsll32  v0,v0,0x0
+ 294:   dfc40070        ld      a0,112(s8)
+ 298:   00821024        and     v0,a0,v0
+ 29c:   00431025        or      v0,v0,v1
+ 2a0:   ffc20070        sd      v0,112(s8)
+ 2a4:   0000202d        move    a0,zero
+ 2a8:   24050001        li      a1,1
+ 2ac:   dfc70070        ld      a3,112(s8)
+ 2b0:   240a0007        li      a6,7
+ 2b4:   240b0008        li      a7,8
+ 2b8:   df990000        ld      t9,0(gp)
+ 2bc:   0320f809        jalr    t9
+ 2c0:   00000000        nop
+ 2c4:   0000102d        move    v0,zero
+ 2c8:   03c0e82d        move    sp,s8
+ 2cc:   dfbf0090        ld      ra,144(sp)
+ 2d0:   dfbe0088        ld      s8,136(sp)
+ 2d4:   dfbc0080        ld      gp,128(sp)
+ 2d8:   03e00008        jr      ra
+ 2dc:   67bd00a0        daddiu  sp,sp,160
+
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <leaf_call>:
+   0:	67bdff90 	daddiu	sp,sp,-112
+   4:	ffbe0058 	sd	s8,88(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	afc40000 	sw	a0,0(s8)
+  10:	ffc50008 	sd	a1,8(s8)
+  14:	ffc60010 	sd	a2,16(s8)
+  18:	ffc70018 	sd	a3,24(s8)
+  1c:	f7d00040 	sdc1	$f16,64(s8)
+  20:	dfc20040 	ld	v0,64(s8)
+  24:	ffc20038 	sd	v0,56(s8)
+  28:	d7c00038 	ldc1	$f0,56(s8)
+  2c:	f7c00020 	sdc1	$f0,32(s8)
+  30:	46208846 	mov.d	$f1,$f17
+  34:	46209006 	mov.d	$f0,$f18
+  38:	46209886 	mov.d	$f2,$f19
+  3c:	f7c20068 	sdc1	$f2,104(s8)
+  40:	f7c10028 	sdc1	$f1,40(s8)
+  44:	f7c00030 	sdc1	$f0,48(s8)
+  48:	03c0e82d 	move	sp,s8
+  4c:	dfbe0058 	ld	s8,88(sp)
+  50:	67bd0070 	daddiu	sp,sp,112
+  54:	03e00008 	jr	ra
+  58:	00200825 	move	at,at
+
+000000000000005c <main>:
+  5c:	67bdff80 	daddiu	sp,sp,-128
+  60:	ffbf0078 	sd	ra,120(sp)
+  64:	ffbe0070 	sd	s8,112(sp)
+  68:	ffbc0068 	sd	gp,104(sp)
+  6c:	03a0f02d 	move	s8,sp
+  70:	3c1c0000 	lui	gp,0x0
+  74:	0399e02d 	daddu	gp,gp,t9
+  78:	679c0000 	daddiu	gp,gp,0
+  7c:	df820000 	ld	v0,0(gp)
+  80:	8c420000 	lw	v0,0(v0)
+  84:	afc20058 	sw	v0,88(s8)
+  88:	df820000 	ld	v0,0(gp)
+  8c:	64430000 	daddiu	v1,v0,0
+  90:	68630007 	ldl	v1,7(v1)
+  94:	0060202d 	move	a0,v1
+  98:	6c440000 	ldr	a0,0(v0)
+  9c:	0080102d 	move	v0,a0
+  a0:	ffc20050 	sd	v0,80(s8)
+  a4:	df820000 	ld	v0,0(gp)
+  a8:	64430000 	daddiu	v1,v0,0
+  ac:	68630007 	ldl	v1,7(v1)
+  b0:	6c430000 	ldr	v1,0(v0)
+  b4:	ffc30040 	sd	v1,64(s8)
+  b8:	64420000 	daddiu	v0,v0,0
+  bc:	8c420008 	lw	v0,8(v0)
+  c0:	afc20048 	sw	v0,72(s8)
+  c4:	df820000 	ld	v0,0(gp)
+  c8:	dc420000 	ld	v0,0(v0)
+  cc:	ffc20038 	sd	v0,56(s8)
+  d0:	df820000 	ld	v0,0(gp)
+  d4:	dc420000 	ld	v0,0(v0)
+  d8:	ffc20028 	sd	v0,40(s8)
+  dc:	df820000 	ld	v0,0(gp)
+  e0:	dc420000 	ld	v0,0(v0)
+  e4:	ffc20030 	sd	v0,48(s8)
+  e8:	df820000 	ld	v0,0(gp)
+  ec:	dc420000 	ld	v0,0(v0)
+  f0:	ffc20010 	sd	v0,16(s8)
+  f4:	df820000 	ld	v0,0(gp)
+  f8:	dc420000 	ld	v0,0(v0)
+  fc:	ffc20018 	sd	v0,24(s8)
+ 100:	df820000 	ld	v0,0(gp)
+ 104:	dc420000 	ld	v0,0(v0)
+ 108:	ffc20020 	sd	v0,32(s8)
+ 10c:	d7c30038 	ldc1	$f3,56(s8)
+ 110:	d7c20028 	ldc1	$f2,40(s8)
+ 114:	d7c10030 	ldc1	$f1,48(s8)
+ 118:	dfc30018 	ld	v1,24(s8)
+ 11c:	dfc20020 	ld	v0,32(s8)
+ 120:	ffa30000 	sd	v1,0(sp)
+ 124:	ffa20008 	sd	v0,8(sp)
+ 128:	d7c00010 	ldc1	$f0,16(s8)
+ 12c:	462004c6 	mov.d	$f19,$f0
+ 130:	d7c00010 	ldc1	$f0,16(s8)
+ 134:	8fc40058 	lw	a0,88(s8)
+ 138:	dfc50050 	ld	a1,80(s8)
+ 13c:	dfc60040 	ld	a2,64(s8)
+ 140:	dfc70048 	ld	a3,72(s8)
+ 144:	46201c06 	mov.d	$f16,$f3
+ 148:	46201446 	mov.d	$f17,$f2
+ 14c:	46200c86 	mov.d	$f18,$f1
+ 150:	462004c6 	mov.d	$f19,$f0
+ 154:	df820000 	ld	v0,0(gp)
+ 158:	0040c82d 	move	t9,v0
+ 15c:	0320f809 	jalr	t9
+ 160:	00200825 	move	at,at
+ 164:	0000102d 	move	v0,zero
+ 168:	03c0e82d 	move	sp,s8
+ 16c:	dfbf0078 	ld	ra,120(sp)
+ 170:	dfbe0070 	ld	s8,112(sp)
+ 174:	dfbc0068 	ld	gp,104(sp)
+ 178:	67bd0080 	daddiu	sp,sp,128
+ 17c:	03e00008 	jr	ra
+ 180:	00200825 	move	at,at
+ 184:	00200825 	move	at,at
+ 188:	00200825 	move	at,at
+ 18c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <leaf_call>:
+   0:   67bdffa0        daddiu  sp,sp,-96
+   4:   ffbe0048        sd      s8,72(sp)
+   8:   ffbc0040        sd      gp,64(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   afc40000        sw      a0,0(s8)
+  20:   ffc50008        sd      a1,8(s8)
+  24:   ffc60010        sd      a2,16(s8)
+  28:   ffc70018        sd      a3,24(s8)
+  2c:   0100182d        move    v1,a4
+  30:   0120202d        move    a0,a5
+  34:   0140282d        move    a1,a6
+  38:   0160102d        move    v0,a7
+  3c:   ffc20058        sd      v0,88(s8)
+  40:   ffc30020        sd      v1,32(s8)
+  44:   ffc40028        sd      a0,40(s8)
+  48:   ffc50030        sd      a1,48(s8)
+  4c:   03c0e82d        move    sp,s8
+  50:   dfbe0048        ld      s8,72(sp)
+  54:   dfbc0040        ld      gp,64(sp)
+  58:   03e00008        jr      ra
+  5c:   67bd0060        daddiu  sp,sp,96
+
+0000000000000060 <main>:
+  60:   67bdff70        daddiu  sp,sp,-144
+  64:   ffbf0080        sd      ra,128(sp)
+  68:   ffbe0078        sd      s8,120(sp)
+  6c:   ffbc0070        sd      gp,112(sp)
+  70:   03a0f02d        move    s8,sp
+  74:   3c1c0000        lui     gp,0x0
+  78:   0399e02d        daddu   gp,gp,t9
+  7c:   679c0000        daddiu  gp,gp,0
+  80:   df820000        ld      v0,0(gp)
+  84:   8c420000        lw      v0,0(v0)
+  88:   afc20054        sw      v0,84(s8)
+  8c:   df820000        ld      v0,0(gp)
+  90:   dc420000        ld      v0,0(v0)
+  94:   b3c20053        sdl     v0,83(s8)
+  98:   b7c2004c        sdr     v0,76(s8)
+  9c:   df820000        ld      v0,0(gp)
+  a0:   dc420000        ld      v0,0(v0)
+  a4:   ffc20040        sd      v0,64(s8)
+  a8:   df820000        ld      v0,0(gp)
+  ac:   8c420000        lw      v0,0(v0)
+  b0:   afc20048        sw      v0,72(s8)
+  b4:   df820000        ld      v0,0(gp)
+  b8:   dc420000        ld      v0,0(v0)
+  bc:   ffc20038        sd      v0,56(s8)
+  c0:   df820000        ld      v0,0(gp)
+  c4:   dc420000        ld      v0,0(v0)
+  c8:   df830000        ld      v1,0(gp)
+  cc:   dc630000        ld      v1,0(v1)
+  d0:   ffc20028        sd      v0,40(s8)
+  d4:   ffc30030        sd      v1,48(s8)
+  d8:   df820000        ld      v0,0(gp)
+  dc:   dc420000        ld      v0,0(v0)
+  e0:   df830000        ld      v1,0(gp)
+  e4:   dc630000        ld      v1,0(v1)
+  e8:   df840000        ld      a0,0(gp)
+  ec:   dc840000        ld      a0,0(a0)
+  f0:   ffc20010        sd      v0,16(s8)
+  f4:   ffc30018        sd      v1,24(s8)
+  f8:   ffc40020        sd      a0,32(s8)
+  fc:   dfc80038        ld      a4,56(s8)
+ 100:   dfc90028        ld      a5,40(s8)
+ 104:   dfca0030        ld      a6,48(s8)
+ 108:   6bc20053        ldl     v0,83(s8)
+ 10c:   6fc2004c        ldr     v0,76(s8)
+ 110:   0040282d        move    a1,v0
+ 114:   dfc60040        ld      a2,64(s8)
+ 118:   9fc30048        lwu     v1,72(s8)
+ 11c:   ffc00060        sd      zero,96(s8)
+ 120:   24020001        li      v0,1
+ 124:   0002103c        dsll32  v0,v0,0x0
+ 128:   6442ffff        daddiu  v0,v0,-1
+ 12c:   00621824        and     v1,v1,v0
+ 130:   2402ffff        li      v0,-1
+ 134:   0002103c        dsll32  v0,v0,0x0
+ 138:   dfc40060        ld      a0,96(s8)
+ 13c:   00821024        and     v0,a0,v0
+ 140:   00431025        or      v0,v0,v1
+ 144:   ffc20060        sd      v0,96(s8)
+ 148:   dfc20018        ld      v0,24(s8)
+ 14c:   dfc30020        ld      v1,32(s8)
+ 150:   ffa20000        sd      v0,0(sp)
+ 154:   ffa30008        sd      v1,8(sp)
+ 158:   dfc20010        ld      v0,16(s8)
+ 15c:   8fc40054        lw      a0,84(s8)
+ 160:   dfc70060        ld      a3,96(s8)
+ 164:   0040582d        move    a7,v0
+ 168:   df990000        ld      t9,0(gp)
+ 16c:   0320f809        jalr    t9
+ 170:   00000000        nop
+ 174:   0000102d        move    v0,zero
+ 178:   03c0e82d        move    sp,s8
+ 17c:   dfbf0080        ld      ra,128(sp)
+ 180:   dfbe0078        ld      s8,120(sp)
+ 184:   dfbc0070        ld      gp,112(sp)
+ 188:   03e00008        jr      ra
+ 18c:   67bd0090        daddiu  sp,sp,144
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1 *and* -mhard-float
+
+0000000000000000 <leaf_call>:
+   0:   67bdffa0        daddiu  sp,sp,-96
+   4:   ffbe0048        sd      s8,72(sp)
+   8:   ffbc0040        sd      gp,64(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   ffc40000        sd      a0,0(s8)
+  20:   ffc50008        sd      a1,8(s8)
+  24:   ffc60010        sd      a2,16(s8)
+  28:   ffc70018        sd      a3,24(s8)
+  2c:   46208046        mov.d   $f1,$f16
+  30:   46208886        mov.d   $f2,$f17
+  34:   462090c6        mov.d   $f3,$f18
+  38:   46209806        mov.d   $f0,$f19
+  3c:   f7c00058        sdc1    $f0,88(s8)
+  40:   f7c10020        sdc1    $f1,32(s8)
+  44:   f7c20028        sdc1    $f2,40(s8)
+  48:   f7c30030        sdc1    $f3,48(s8)
+  4c:   03c0e82d        move    sp,s8
+  50:   dfbe0048        ld      s8,72(sp)
+  54:   dfbc0040        ld      gp,64(sp)
+  58:   03e00008        jr      ra
+  5c:   67bd0060        daddiu  sp,sp,96
+
+0000000000000060 <main>:
+  60:   67bdff70        daddiu  sp,sp,-144
+  64:   ffbf0080        sd      ra,128(sp)
+  68:   ffbe0078        sd      s8,120(sp)
+  6c:   ffbc0070        sd      gp,112(sp)
+  70:   03a0f02d        move    s8,sp
+  74:   3c1c0000        lui     gp,0x0
+  78:   0399e02d        daddu   gp,gp,t9
+  7c:   679c0000        daddiu  gp,gp,0
+  80:   df810000        ld      at,0(gp)
+  84:   c4200000        lwc1    $f0,0(at)
+  88:   e7c00054        swc1    $f0,84(s8)
+  8c:   df820000        ld      v0,0(gp)
+  90:   dc420000        ld      v0,0(v0)
+  94:   b3c2004c        sdl     v0,76(s8)
+  98:   b7c20053        sdr     v0,83(s8)
+  9c:   df820000        ld      v0,0(gp)
+  a0:   dc420000        ld      v0,0(v0)
+  a4:   ffc20040        sd      v0,64(s8)
+  a8:   df820000        ld      v0,0(gp)
+  ac:   8c420000        lw      v0,0(v0)
+  b0:   afc20048        sw      v0,72(s8)
+  b4:   df810000        ld      at,0(gp)
+  b8:   d4200000        ldc1    $f0,0(at)
+  bc:   f7c00038        sdc1    $f0,56(s8)
+  c0:   df820000        ld      v0,0(gp)
+  c4:   dc420000        ld      v0,0(v0)
+  c8:   df830000        ld      v1,0(gp)
+  cc:   dc630000        ld      v1,0(v1)
+  d0:   ffc20028        sd      v0,40(s8)
+  d4:   ffc30030        sd      v1,48(s8)
+  d8:   df820000        ld      v0,0(gp)
+  dc:   dc420000        ld      v0,0(v0)
+  e0:   df830000        ld      v1,0(gp)
+  e4:   dc630000        ld      v1,0(v1)
+  e8:   df840000        ld      a0,0(gp)
+  ec:   dc840000        ld      a0,0(a0)
+  f0:   ffc20010        sd      v0,16(s8)
+  f4:   ffc30018        sd      v1,24(s8)
+  f8:   ffc40020        sd      a0,32(s8)
+  fc:   d7c10038        ldc1    $f1,56(s8)
+ 100:   d7c20028        ldc1    $f2,40(s8)
+ 104:   d7c30030        ldc1    $f3,48(s8)
+ 108:   6bc2004c        ldl     v0,76(s8)
+ 10c:   6fc20053        ldr     v0,83(s8)
+ 110:   0040282d        move    a1,v0
+ 114:   dfc60040        ld      a2,64(s8)
+ 118:   dfc20048        ld      v0,72(s8)
+ 11c:   0002103e        dsrl32  v0,v0,0x0
+ 120:   ffc00060        sd      zero,96(s8)
+ 124:   0002183c        dsll32  v1,v0,0x0
+ 128:   24020001        li      v0,1
+ 12c:   0002103c        dsll32  v0,v0,0x0
+ 130:   6442ffff        daddiu  v0,v0,-1
+ 134:   dfc40060        ld      a0,96(s8)
+ 138:   00821024        and     v0,a0,v0
+ 13c:   00431025        or      v0,v0,v1
+ 140:   ffc20060        sd      v0,96(s8)
+ 144:   dfc20018        ld      v0,24(s8)
+ 148:   dfc30020        ld      v1,32(s8)
+ 14c:   ffa20000        sd      v0,0(sp)
+ 150:   ffa30008        sd      v1,8(sp)
+ 154:   d7c00010        ldc1    $f0,16(s8)
+ 158:   8fc40054        lw      a0,84(s8)
+ 15c:   0004203c        dsll32  a0,a0,0x0
+ 160:   dfc70060        ld      a3,96(s8)
+ 164:   46200c06        mov.d   $f16,$f1
+ 168:   46201446        mov.d   $f17,$f2
+ 16c:   46201c86        mov.d   $f18,$f3
+ 170:   462004c6        mov.d   $f19,$f0
+ 174:   df990000        ld      t9,0(gp)
+ 178:   0320f809        jalr    t9
+ 17c:   00000000        nop
+ 180:   0000102d        move    v0,zero
+ 184:   03c0e82d        move    sp,s8
+ 188:   dfbf0080        ld      ra,128(sp)
+ 18c:   dfbe0078        ld      s8,120(sp)
+ 190:   dfbc0070        ld      gp,112(sp)
+ 194:   03e00008        jr      ra
+ 198:   67bd0090        daddiu  sp,sp,144
+ 19c:   00000000        nop
+
+
+
+; ---------- returning structs by value ---------->
+; 
+; struct Small { char x; };
+; struct Big { long long i,j,k,l; long m; }; /* bigger than 16b */
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 99LL, -99LL, -3102LL, 32 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + b.k + b.m + s.x;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <f0>:
+   0:	67bdffe0 	daddiu	sp,sp,-32
+   4:	ffbe0018 	sd	s8,24(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	2402ff84 	li	v0,-124
+  10:	a3c20000 	sb	v0,0(s8)
+  14:	93c20000 	lbu	v0,0(s8)
+  18:	03c0e82d 	move	sp,s8
+  1c:	dfbe0018 	ld	s8,24(sp)
+  20:	67bd0020 	daddiu	sp,sp,32
+  24:	03e00008 	jr	ra
+  28:	00200825 	move	at,at
+
+000000000000002c <f1>:
+  2c:	67bdffb0 	daddiu	sp,sp,-80
+  30:	ffbe0048 	sd	s8,72(sp)
+  34:	03a0f02d 	move	s8,sp
+  38:	ffc40030 	sd	a0,48(s8)
+  3c:	24021c03 	li	v0,7171
+  40:	ffc20000 	sd	v0,0(s8)
+  44:	24020063 	li	v0,99
+  48:	ffc20008 	sd	v0,8(s8)
+  4c:	2402ff9d 	li	v0,-99
+  50:	ffc20010 	sd	v0,16(s8)
+  54:	2402f3e2 	li	v0,-3102
+  58:	ffc20018 	sd	v0,24(s8)
+  5c:	24020020 	li	v0,32
+  60:	ffc20020 	sd	v0,32(s8)
+  64:	dfc20030 	ld	v0,48(s8)
+  68:	dfc70000 	ld	a3,0(s8)
+  6c:	dfc60008 	ld	a2,8(s8)
+  70:	dfc50010 	ld	a1,16(s8)
+  74:	dfc40018 	ld	a0,24(s8)
+  78:	dfc30020 	ld	v1,32(s8)
+  7c:	fc470000 	sd	a3,0(v0)
+  80:	fc460008 	sd	a2,8(v0)
+  84:	fc450010 	sd	a1,16(v0)
+  88:	fc440018 	sd	a0,24(v0)
+  8c:	fc430020 	sd	v1,32(v0)
+  90:	dfc20030 	ld	v0,48(s8)
+  94:	03c0e82d 	move	sp,s8
+  98:	dfbe0048 	ld	s8,72(sp)
+  9c:	67bd0050 	daddiu	sp,sp,80
+  a0:	03e00008 	jr	ra
+  a4:	00200825 	move	at,at
+
+00000000000000a8 <main>:
+  a8:	67bdffb0 	daddiu	sp,sp,-80
+  ac:	ffbf0048 	sd	ra,72(sp)
+  b0:	ffbe0040 	sd	s8,64(sp)
+  b4:	ffbc0038 	sd	gp,56(sp)
+  b8:	03a0f02d 	move	s8,sp
+  bc:	3c1c0000 	lui	gp,0x0
+  c0:	0399e02d 	daddu	gp,gp,t9
+  c4:	679c0000 	daddiu	gp,gp,0
+  c8:	df820000 	ld	v0,0(gp)
+  cc:	0040c82d 	move	t9,v0
+  d0:	0320f809 	jalr	t9
+  d4:	00200825 	move	at,at
+  d8:	a3c20000 	sb	v0,0(s8)
+  dc:	67c20008 	daddiu	v0,s8,8
+  e0:	0040202d 	move	a0,v0
+  e4:	df820000 	ld	v0,0(gp)
+  e8:	0040c82d 	move	t9,v0
+  ec:	0320f809 	jalr	t9
+  f0:	00200825 	move	at,at
+  f4:	dfc30010 	ld	v1,16(s8)
+  f8:	dfc20018 	ld	v0,24(s8)
+  fc:	0062182d 	daddu	v1,v1,v0
+ 100:	dfc20028 	ld	v0,40(s8)
+ 104:	0062102d 	daddu	v0,v1,v0
+ 108:	00021000 	sll	v0,v0,0x0
+ 10c:	0040182d 	move	v1,v0
+ 110:	83c20000 	lb	v0,0(s8)
+ 114:	00621021 	addu	v0,v1,v0
+ 118:	03c0e82d 	move	sp,s8
+ 11c:	dfbf0048 	ld	ra,72(sp)
+ 120:	dfbe0040 	ld	s8,64(sp)
+ 124:	dfbc0038 	ld	gp,56(sp)
+ 128:	67bd0050 	daddiu	sp,sp,80
+ 12c:	03e00008 	jr	ra
+ 130:	00200825 	move	at,at
+ 134:	00200825 	move	at,at
+ 138:	00200825 	move	at,at
+ 13c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <f0>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   2402ff84        li      v0,-124
+  20:   a3c20000        sb      v0,0(s8)
+  24:   93c20000        lbu     v0,0(s8)
+  28:   03c0e82d        move    sp,s8
+  2c:   dfbe0018        ld      s8,24(sp)
+  30:   dfbc0010        ld      gp,16(sp)
+  34:   03e00008        jr      ra
+  38:   67bd0020        daddiu  sp,sp,32
+  3c:   00000000        nop
+
+0000000000000040 <f1>:
+  40:   67bdffc0        daddiu  sp,sp,-64
+  44:   ffbe0038        sd      s8,56(sp)
+  48:   ffbc0030        sd      gp,48(sp)
+  4c:   03a0f02d        move    s8,sp
+  50:   3c1c0000        lui     gp,0x0
+  54:   0399e02d        daddu   gp,gp,t9
+  58:   679c0000        daddiu  gp,gp,0
+  5c:   0080102d        move    v0,a0
+  60:   df830000        ld      v1,0(gp)
+  64:   dc630000        ld      v1,0(v1)
+  68:   df840000        ld      a0,0(gp)
+  6c:   dc840000        ld      a0,0(a0)
+  70:   df850000        ld      a1,0(gp)
+  74:   dca50000        ld      a1,0(a1)
+  78:   df860000        ld      a2,0(gp)
+  7c:   dcc60000        ld      a2,0(a2)
+  80:   df870000        ld      a3,0(gp)
+  84:   dce70000        ld      a3,0(a3)
+  88:   ffc30000        sd      v1,0(s8)
+  8c:   ffc40008        sd      a0,8(s8)
+  90:   ffc50010        sd      a1,16(s8)
+  94:   ffc60018        sd      a2,24(s8)
+  98:   ffc70020        sd      a3,32(s8)
+  9c:   dfc30000        ld      v1,0(s8)
+  a0:   dfc40008        ld      a0,8(s8)
+  a4:   dfc50010        ld      a1,16(s8)
+  a8:   dfc60018        ld      a2,24(s8)
+  ac:   dfc70020        ld      a3,32(s8)
+  b0:   fc430000        sd      v1,0(v0)
+  b4:   fc440008        sd      a0,8(v0)
+  b8:   fc450010        sd      a1,16(v0)
+  bc:   fc460018        sd      a2,24(v0)
+  c0:   fc470020        sd      a3,32(v0)
+  c4:   03c0e82d        move    sp,s8
+  c8:   dfbe0038        ld      s8,56(sp)
+  cc:   dfbc0030        ld      gp,48(sp)
+  d0:   03e00008        jr      ra
+  d4:   67bd0040        daddiu  sp,sp,64
+
+00000000000000d8 <main>:
+  d8:   67bdffb0        daddiu  sp,sp,-80
+  dc:   ffbf0040        sd      ra,64(sp)
+  e0:   ffbe0038        sd      s8,56(sp)
+  e4:   ffbc0030        sd      gp,48(sp)
+  e8:   03a0f02d        move    s8,sp
+  ec:   3c1c0000        lui     gp,0x0
+  f0:   0399e02d        daddu   gp,gp,t9
+  f4:   679c0000        daddiu  gp,gp,0
+  f8:   df990000        ld      t9,0(gp)
+  fc:   0320f809        jalr    t9
+ 100:   00000000        nop
+ 104:   a3c20000        sb      v0,0(s8)
+ 108:   67c20008        daddiu  v0,s8,8
+ 10c:   0040202d        move    a0,v0
+ 110:   df990000        ld      t9,0(gp)
+ 114:   0320f809        jalr    t9
+ 118:   00000000        nop
+ 11c:   dfc30010        ld      v1,16(s8)
+ 120:   dfc20018        ld      v0,24(s8)
+ 124:   0062182d        daddu   v1,v1,v0
+ 128:   dfc20028        ld      v0,40(s8)
+ 12c:   0062102d        daddu   v0,v1,v0
+ 130:   00021000        sll     v0,v0,0x0
+ 134:   0040182d        move    v1,v0
+ 138:   83c20000        lb      v0,0(s8)
+ 13c:   00621021        addu    v0,v1,v0
+ 140:   03c0e82d        move    sp,s8
+ 144:   dfbf0040        ld      ra,64(sp)
+ 148:   dfbe0038        ld      s8,56(sp)
+ 14c:   dfbc0030        ld      gp,48(sp)
+ 150:   03e00008        jr      ra
+ 154:   67bd0050        daddiu  sp,sp,80
+        ...
+
+
+
+; ---------- single-field structs by values (and small array fields) ---------->
+;
+; struct C { char c; };
+; struct S { short s; };
+; struct I { int i; };
+; struct F { float f; };
+; struct D { double d; };
+;
+; struct C2 { char c[2]; }; // <= 2 bytes, special alignment
+; struct C3 { char c[3]; }; //  > 2 bytes, normal alignment
+;
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <leaf_call>:
+   0:	67bdffa0 	daddiu	sp,sp,-96
+   4:	ffbe0058 	sd	s8,88(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	0080102d 	move	v0,a0
+  10:	00021000 	sll	v0,v0,0x0
+  14:	a7c20000 	sh	v0,0(s8)
+  18:	a3c50008 	sb	a1,8(s8)
+  1c:	a7c60010 	sh	a2,16(s8)
+  20:	afc70018 	sw	a3,24(s8)
+  24:	afc80020 	sw	a4,32(s8)
+  28:	f7d10040 	sdc1	$f17,64(s8)
+  2c:	dfc20040 	ld	v0,64(s8)
+  30:	ffc20038 	sd	v0,56(s8)
+  34:	d7c00038 	ldc1	$f0,56(s8)
+  38:	f7c00028 	sdc1	$f0,40(s8)
+  3c:	ffca0030 	sd	a6,48(s8)
+  40:	03c0e82d 	move	sp,s8
+  44:	dfbe0058 	ld	s8,88(sp)
+  48:	67bd0060 	daddiu	sp,sp,96
+  4c:	03e00008 	jr	ra
+  50:	00200825 	move	at,at
+
+0000000000000054 <main>:
+  54:	67bdffa0 	daddiu	sp,sp,-96
+  58:	ffbf0058 	sd	ra,88(sp)
+  5c:	ffbe0050 	sd	s8,80(sp)
+  60:	ffbc0048 	sd	gp,72(sp)
+  64:	03a0f02d 	move	s8,sp
+  68:	3c1c0000 	lui	gp,0x0
+  6c:	0399e02d 	daddu	gp,gp,t9
+  70:	679c0000 	daddiu	gp,gp,0
+  74:	a3c00030 	sb	zero,48(s8)
+  78:	24020001 	li	v0,1
+  7c:	a3c20031 	sb	v0,49(s8)
+  80:	24020002 	li	v0,2
+  84:	a3c20028 	sb	v0,40(s8)
+  88:	24020003 	li	v0,3
+  8c:	a7c20020 	sh	v0,32(s8)
+  90:	24020004 	li	v0,4
+  94:	afc20018 	sw	v0,24(s8)
+  98:	df820000 	ld	v0,0(gp)
+  9c:	8c420000 	lw	v0,0(v0)
+  a0:	afc20010 	sw	v0,16(s8)
+  a4:	df820000 	ld	v0,0(gp)
+  a8:	dc420000 	ld	v0,0(v0)
+  ac:	ffc20008 	sd	v0,8(s8)
+  b0:	24020007 	li	v0,7
+  b4:	a3c20000 	sb	v0,0(s8)
+  b8:	24020008 	li	v0,8
+  bc:	a3c20001 	sb	v0,1(s8)
+  c0:	24020009 	li	v0,9
+  c4:	a3c20002 	sb	v0,2(s8)
+  c8:	d7c00008 	ldc1	$f0,8(s8)
+  cc:	dfc40030 	ld	a0,48(s8)
+  d0:	93c50028 	lbu	a1,40(s8)
+  d4:	97c60020 	lhu	a2,32(s8)
+  d8:	8fc70018 	lw	a3,24(s8)
+  dc:	8fc80010 	lw	a4,16(s8)
+  e0:	46200446 	mov.d	$f17,$f0
+  e4:	dfca0000 	ld	a6,0(s8)
+  e8:	df820000 	ld	v0,0(gp)
+  ec:	0040c82d 	move	t9,v0
+  f0:	0320f809 	jalr	t9
+  f4:	00200825 	move	at,at
+  f8:	0000102d 	move	v0,zero
+  fc:	03c0e82d 	move	sp,s8
+ 100:	dfbf0058 	ld	ra,88(sp)
+ 104:	dfbe0050 	ld	s8,80(sp)
+ 108:	dfbc0048 	ld	gp,72(sp)
+ 10c:	67bd0060 	daddiu	sp,sp,96
+ 110:	03e00008 	jr	ra
+ 114:	00200825 	move	at,at
+ 118:	00200825 	move	at,at
+ 11c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <leaf_call>:
+   0:   67bdffc0        daddiu  sp,sp,-64
+   4:   ffbe0038        sd      s8,56(sp)
+   8:   ffbc0030        sd      gp,48(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   a7c40000        sh      a0,0(s8)
+  20:   a3c50008        sb      a1,8(s8)
+  24:   a7c6000a        sh      a2,10(s8)
+  28:   afc7000c        sw      a3,12(s8)
+  2c:   afc80010        sw      a4,16(s8)
+  30:   0120102d        move    v0,a5
+  34:   ffca0020        sd      a6,32(s8)
+  38:   ffc20018        sd      v0,24(s8)
+  3c:   03c0e82d        move    sp,s8
+  40:   dfbe0038        ld      s8,56(sp)
+  44:   dfbc0030        ld      gp,48(sp)
+  48:   03e00008        jr      ra
+  4c:   67bd0040        daddiu  sp,sp,64
+
+0000000000000050 <main>:
+  50:   67bdffb0        daddiu  sp,sp,-80
+  54:   ffbf0040        sd      ra,64(sp)
+  58:   ffbe0038        sd      s8,56(sp)
+  5c:   ffbc0030        sd      gp,48(sp)
+  60:   03a0f02d        move    s8,sp
+  64:   3c1c0000        lui     gp,0x0
+  68:   0399e02d        daddu   gp,gp,t9
+  6c:   679c0000        daddiu  gp,gp,0
+  70:   df820000        ld      v0,0(gp)
+  74:   90420000        lbu     v0,0(v0)
+  78:   a3c2001b        sb      v0,27(s8)
+  7c:   df820000        ld      v0,0(gp)
+  80:   90420000        lbu     v0,0(v0)
+  84:   a3c2001c        sb      v0,28(s8)
+  88:   24020002        li      v0,2
+  8c:   a3c2001a        sb      v0,26(s8)
+  90:   24020003        li      v0,3
+  94:   a7c20018        sh      v0,24(s8)
+  98:   24020004        li      v0,4
+  9c:   afc20014        sw      v0,20(s8)
+  a0:   df820000        ld      v0,0(gp)
+  a4:   8c420000        lw      v0,0(v0)
+  a8:   afc20010        sw      v0,16(s8)
+  ac:   df820000        ld      v0,0(gp)
+  b0:   dc420000        ld      v0,0(v0)
+  b4:   ffc20008        sd      v0,8(s8)
+  b8:   df820000        ld      v0,0(gp)
+  bc:   94420000        lhu     v0,0(v0)
+  c0:   a7c20000        sh      v0,0(s8)
+  c4:   df820000        ld      v0,0(gp)
+  c8:   90420000        lbu     v0,0(v0)
+  cc:   a3c20002        sb      v0,2(s8)
+  d0:   dfc90008        ld      a5,8(s8)
+  d4:   93c3001b        lbu     v1,27(s8)
+  d8:   93c2001c        lbu     v0,28(s8)
+  dc:   00021238        dsll    v0,v0,0x8
+  e0:   00431025        or      v0,v0,v1
+  e4:   ffc00020        sd      zero,32(s8)
+  e8:   3043ffff        andi    v1,v0,0xffff
+  ec:   3c02ffff        lui     v0,0xffff
+  f0:   dfc40020        ld      a0,32(s8)
+  f4:   00821024        and     v0,a0,v0
+  f8:   00431025        or      v0,v0,v1
+  fc:   ffc20020        sd      v0,32(s8)
+ 100:   dfc30000        ld      v1,0(s8)
+ 104:   3c0200ff        lui     v0,0xff
+ 108:   3442ffff        ori     v0,v0,0xffff
+ 10c:   00621824        and     v1,v1,v0
+ 110:   ffc00028        sd      zero,40(s8)
+ 114:   3c0200ff        lui     v0,0xff
+ 118:   3442ffff        ori     v0,v0,0xffff
+ 11c:   00621824        and     v1,v1,v0
+ 120:   3c02ff00        lui     v0,0xff00
+ 124:   dfc40028        ld      a0,40(s8)
+ 128:   00821024        and     v0,a0,v0
+ 12c:   00431025        or      v0,v0,v1
+ 130:   ffc20028        sd      v0,40(s8)
+ 134:   dfc40020        ld      a0,32(s8)
+ 138:   93c5001a        lbu     a1,26(s8)
+ 13c:   97c60018        lhu     a2,24(s8)
+ 140:   8fc70014        lw      a3,20(s8)
+ 144:   8fc80010        lw      a4,16(s8)
+ 148:   dfca0028        ld      a6,40(s8)
+ 14c:   df990000        ld      t9,0(gp)
+ 150:   0320f809        jalr    t9
+ 154:   00000000        nop
+ 158:   0000102d        move    v0,zero
+ 15c:   03c0e82d        move    sp,s8
+ 160:   dfbf0040        ld      ra,64(sp)
+ 164:   dfbe0038        ld      s8,56(sp)
+ 168:   dfbc0030        ld      gp,48(sp)
+ 16c:   03e00008        jr      ra
+ 170:   67bd0050        daddiu  sp,sp,80
+        ...
+
+
+
+; ---------- returning structs by value, focusing on mips64 specifics ---------->
+;
+; /* first to fp fields returned in fregs, *iff* only fp fields and hard-float platform */
+; struct F { float a; };
+; struct D { double a; };
+; struct FC { float a; char b; };
+; struct LF { long long a; float b; };
+; struct FF { float a, b; };
+; struct DF { double a; float b; };
+; union DFu { double a; float b; };
+; union Du  { double a; };
+; 
+; struct F   f_F()   { return (struct F){132.f}; }
+; struct D   f_D()   { return (struct D){132.}; }
+; struct FC  f_FC()  { return (struct FC){132.f,2}; }
+; struct LF  f_LF()  { return (struct LF){-12349,132.f}; }
+; struct FF  f_FF()  { return (struct FF){-349.f,132.f}; }
+; struct DF  f_DF()  { return (struct DF){-349.,132.f}; }
+; union  Du  f_Du()  { return (union Du){-349.}; }        /* not returned in fregs, b/c union*/
+; union  DFu f_DFu() { return (union DFu){-349.}; }       /* not returned in fregs, b/c union*/
+; 
+; int main()
+; {
+;     struct F   a = f_F();
+;     struct D   b = f_D();
+;     struct FC  c = f_FC();
+;     struct LF  d = f_LF();
+;     struct FF  e = f_FF();
+;     struct DF  f = f_DF();
+;     union  Du  g = f_Du();
+;     union  DFu h = f_DFu();
+;     return 0;
+; }
+
+
+
+; output from debian-sid_20150616-malta_mips64el_n64 w/ gcc 4.9.2
+
+0000000000000000 <f_F>:
+   0:	67bdfff0 	daddiu	sp,sp,-16
+   4:	ffbe0008 	sd	s8,8(sp)
+   8:	03a0f02d 	move	s8,sp
+   c:	3c030000 	lui	v1,0x0
+  10:	0079182d 	daddu	v1,v1,t9
+  14:	64630000 	daddiu	v1,v1,0
+  18:	dc620000 	ld	v0,0(v1)
+  1c:	c4400000 	lwc1	$f0,0(v0)
+  20:	03c0e82d 	move	sp,s8
+  24:	dfbe0008 	ld	s8,8(sp)
+  28:	67bd0010 	daddiu	sp,sp,16
+  2c:	03e00008 	jr	ra
+  30:	00200825 	move	at,at
+
+0000000000000034 <f_D>:
+  34:	67bdfff0 	daddiu	sp,sp,-16
+  38:	ffbe0008 	sd	s8,8(sp)
+  3c:	03a0f02d 	move	s8,sp
+  40:	3c030000 	lui	v1,0x0
+  44:	0079182d 	daddu	v1,v1,t9
+  48:	64630000 	daddiu	v1,v1,0
+  4c:	dc620000 	ld	v0,0(v1)
+  50:	d4400000 	ldc1	$f0,0(v0)
+  54:	03c0e82d 	move	sp,s8
+  58:	dfbe0008 	ld	s8,8(sp)
+  5c:	67bd0010 	daddiu	sp,sp,16
+  60:	03e00008 	jr	ra
+  64:	00200825 	move	at,at
+
+0000000000000068 <f_FC>:
+  68:	67bdffe0 	daddiu	sp,sp,-32
+  6c:	ffbe0018 	sd	s8,24(sp)
+  70:	03a0f02d 	move	s8,sp
+  74:	3c050000 	lui	a1,0x0
+  78:	00b9282d 	daddu	a1,a1,t9
+  7c:	64a50000 	daddiu	a1,a1,0
+  80:	dca20000 	ld	v0,0(a1)
+  84:	64430000 	daddiu	v1,v0,0
+  88:	68630007 	ldl	v1,7(v1)
+  8c:	0060202d 	move	a0,v1
+  90:	6c440000 	ldr	a0,0(v0)
+  94:	0080102d 	move	v0,a0
+  98:	ffc20000 	sd	v0,0(s8)
+  9c:	0000102d 	move	v0,zero
+  a0:	9fc30000 	lwu	v1,0(s8)
+  a4:	0003183c 	dsll32	v1,v1,0x0
+  a8:	0003183e 	dsrl32	v1,v1,0x0
+  ac:	2404ffff 	li	a0,-1
+  b0:	0004203c 	dsll32	a0,a0,0x0
+  b4:	00441024 	and	v0,v0,a0
+  b8:	00431025 	or	v0,v0,v1
+  bc:	9fc30004 	lwu	v1,4(s8)
+  c0:	0003183c 	dsll32	v1,v1,0x0
+  c4:	0002103c 	dsll32	v0,v0,0x0
+  c8:	0002103e 	dsrl32	v0,v0,0x0
+  cc:	00431025 	or	v0,v0,v1
+  d0:	03c0e82d 	move	sp,s8
+  d4:	dfbe0018 	ld	s8,24(sp)
+  d8:	67bd0020 	daddiu	sp,sp,32
+  dc:	03e00008 	jr	ra
+  e0:	00200825 	move	at,at
+
+00000000000000e4 <f_LF>:
+  e4:	67bdffe0 	daddiu	sp,sp,-32
+  e8:	ffbe0018 	sd	s8,24(sp)
+  ec:	03a0f02d 	move	s8,sp
+  f0:	3c060000 	lui	a2,0x0
+  f4:	00d9302d 	daddu	a2,a2,t9
+  f8:	64c60000 	daddiu	a2,a2,0
+  fc:	2402cfc3 	li	v0,-12349
+ 100:	ffc20000 	sd	v0,0(s8)
+ 104:	dcc20000 	ld	v0,0(a2)
+ 108:	8c420000 	lw	v0,0(v0)
+ 10c:	afc20008 	sw	v0,8(s8)
+ 110:	0000182d 	move	v1,zero
+ 114:	dfc30000 	ld	v1,0(s8)
+ 118:	0000102d 	move	v0,zero
+ 11c:	dfc20008 	ld	v0,8(s8)
+ 120:	0060202d 	move	a0,v1
+ 124:	0040282d 	move	a1,v0
+ 128:	0080102d 	move	v0,a0
+ 12c:	00a0182d 	move	v1,a1
+ 130:	03c0e82d 	move	sp,s8
+ 134:	dfbe0018 	ld	s8,24(sp)
+ 138:	67bd0020 	daddiu	sp,sp,32
+ 13c:	03e00008 	jr	ra
+ 140:	00200825 	move	at,at
+
+0000000000000144 <f_FF>:
+ 144:	67bdffd0 	daddiu	sp,sp,-48
+ 148:	ffbe0028 	sd	s8,40(sp)
+ 14c:	03a0f02d 	move	s8,sp
+ 150:	3c050000 	lui	a1,0x0
+ 154:	00b9282d 	daddu	a1,a1,t9
+ 158:	64a50000 	daddiu	a1,a1,0
+ 15c:	dca20000 	ld	v0,0(a1)
+ 160:	64430000 	daddiu	v1,v0,0
+ 164:	68630007 	ldl	v1,7(v1)
+ 168:	0060202d 	move	a0,v1
+ 16c:	6c440000 	ldr	a0,0(v0)
+ 170:	0080102d 	move	v0,a0
+ 174:	ffc20000 	sd	v0,0(s8)
+ 178:	c7c10000 	lwc1	$f1,0(s8)
+ 17c:	c7c00004 	lwc1	$f0,4(s8)
+ 180:	46000886 	mov.s	$f2,$f1
+ 184:	46000046 	mov.s	$f1,$f0
+ 188:	46001006 	mov.s	$f0,$f2
+ 18c:	46000886 	mov.s	$f2,$f1
+ 190:	03c0e82d 	move	sp,s8
+ 194:	dfbe0028 	ld	s8,40(sp)
+ 198:	67bd0030 	daddiu	sp,sp,48
+ 19c:	03e00008 	jr	ra
+ 1a0:	00200825 	move	at,at
+
+00000000000001a4 <f_DF>:
+ 1a4:	67bdffd0 	daddiu	sp,sp,-48
+ 1a8:	ffbe0028 	sd	s8,40(sp)
+ 1ac:	03a0f02d 	move	s8,sp
+ 1b0:	3c030000 	lui	v1,0x0
+ 1b4:	0079182d 	daddu	v1,v1,t9
+ 1b8:	64630000 	daddiu	v1,v1,0
+ 1bc:	dc620000 	ld	v0,0(v1)
+ 1c0:	dc420000 	ld	v0,0(v0)
+ 1c4:	ffc20000 	sd	v0,0(s8)
+ 1c8:	dc620000 	ld	v0,0(v1)
+ 1cc:	8c420000 	lw	v0,0(v0)
+ 1d0:	afc20008 	sw	v0,8(s8)
+ 1d4:	d7c10000 	ldc1	$f1,0(s8)
+ 1d8:	c7c00008 	lwc1	$f0,8(s8)
+ 1dc:	46200886 	mov.d	$f2,$f1
+ 1e0:	46000046 	mov.s	$f1,$f0
+ 1e4:	46201006 	mov.d	$f0,$f2
+ 1e8:	46000886 	mov.s	$f2,$f1
+ 1ec:	03c0e82d 	move	sp,s8
+ 1f0:	dfbe0028 	ld	s8,40(sp)
+ 1f4:	67bd0030 	daddiu	sp,sp,48
+ 1f8:	03e00008 	jr	ra
+ 1fc:	00200825 	move	at,at
+
+0000000000000200 <f_Du>:
+ 200:	67bdfff0 	daddiu	sp,sp,-16
+ 204:	ffbe0008 	sd	s8,8(sp)
+ 208:	03a0f02d 	move	s8,sp
+ 20c:	3c02fffc 	lui	v0,0xfffc
+ 210:	3442075d 	ori	v0,v0,0x75d
+ 214:	0002133c 	dsll32	v0,v0,0xc
+ 218:	03c0e82d 	move	sp,s8
+ 21c:	dfbe0008 	ld	s8,8(sp)
+ 220:	67bd0010 	daddiu	sp,sp,16
+ 224:	03e00008 	jr	ra
+ 228:	00200825 	move	at,at
+
+000000000000022c <f_DFu>:
+ 22c:	67bdfff0 	daddiu	sp,sp,-16
+ 230:	ffbe0008 	sd	s8,8(sp)
+ 234:	03a0f02d 	move	s8,sp
+ 238:	3c02fffc 	lui	v0,0xfffc
+ 23c:	3442075d 	ori	v0,v0,0x75d
+ 240:	0002133c 	dsll32	v0,v0,0xc
+ 244:	03c0e82d 	move	sp,s8
+ 248:	dfbe0008 	ld	s8,8(sp)
+ 24c:	67bd0010 	daddiu	sp,sp,16
+ 250:	03e00008 	jr	ra
+ 254:	00200825 	move	at,at
+
+0000000000000258 <main>:
+ 258:	67bdff90 	daddiu	sp,sp,-112
+ 25c:	ffbf0068 	sd	ra,104(sp)
+ 260:	ffbe0060 	sd	s8,96(sp)
+ 264:	ffbc0058 	sd	gp,88(sp)
+ 268:	03a0f02d 	move	s8,sp
+ 26c:	3c1c0000 	lui	gp,0x0
+ 270:	0399e02d 	daddu	gp,gp,t9
+ 274:	679c0000 	daddiu	gp,gp,0
+ 278:	df820000 	ld	v0,0(gp)
+ 27c:	0040c82d 	move	t9,v0
+ 280:	0320f809 	jalr	t9
+ 284:	00200825 	move	at,at
+ 288:	e7c00000 	swc1	$f0,0(s8)
+ 28c:	df820000 	ld	v0,0(gp)
+ 290:	0040c82d 	move	t9,v0
+ 294:	0320f809 	jalr	t9
+ 298:	00200825 	move	at,at
+ 29c:	f7c00008 	sdc1	$f0,8(s8)
+ 2a0:	df820000 	ld	v0,0(gp)
+ 2a4:	0040c82d 	move	t9,v0
+ 2a8:	0320f809 	jalr	t9
+ 2ac:	00200825 	move	at,at
+ 2b0:	ffc20010 	sd	v0,16(s8)
+ 2b4:	df820000 	ld	v0,0(gp)
+ 2b8:	0040c82d 	move	t9,v0
+ 2bc:	0320f809 	jalr	t9
+ 2c0:	00200825 	move	at,at
+ 2c4:	ffc20018 	sd	v0,24(s8)
+ 2c8:	ffc30020 	sd	v1,32(s8)
+ 2cc:	df820000 	ld	v0,0(gp)
+ 2d0:	0040c82d 	move	t9,v0
+ 2d4:	0320f809 	jalr	t9
+ 2d8:	00200825 	move	at,at
+ 2dc:	46000046 	mov.s	$f1,$f0
+ 2e0:	46001006 	mov.s	$f0,$f2
+ 2e4:	e7c10028 	swc1	$f1,40(s8)
+ 2e8:	e7c0002c 	swc1	$f0,44(s8)
+ 2ec:	df820000 	ld	v0,0(gp)
+ 2f0:	0040c82d 	move	t9,v0
+ 2f4:	0320f809 	jalr	t9
+ 2f8:	00200825 	move	at,at
+ 2fc:	46200046 	mov.d	$f1,$f0
+ 300:	46001006 	mov.s	$f0,$f2
+ 304:	f7c10030 	sdc1	$f1,48(s8)
+ 308:	e7c00038 	swc1	$f0,56(s8)
+ 30c:	df820000 	ld	v0,0(gp)
+ 310:	0040c82d 	move	t9,v0
+ 314:	0320f809 	jalr	t9
+ 318:	00200825 	move	at,at
+ 31c:	ffc20040 	sd	v0,64(s8)
+ 320:	df820000 	ld	v0,0(gp)
+ 324:	0040c82d 	move	t9,v0
+ 328:	0320f809 	jalr	t9
+ 32c:	00200825 	move	at,at
+ 330:	ffc20048 	sd	v0,72(s8)
+ 334:	0000102d 	move	v0,zero
+ 338:	03c0e82d 	move	sp,s8
+ 33c:	dfbf0068 	ld	ra,104(sp)
+ 340:	dfbe0060 	ld	s8,96(sp)
+ 344:	dfbc0058 	ld	gp,88(sp)
+ 348:	67bd0070 	daddiu	sp,sp,112
+ 34c:	03e00008 	jr	ra
+ 350:	00200825 	move	at,at
+ 354:	00200825 	move	at,at
+ 358:	00200825 	move	at,at
+ 35c:	00200825 	move	at,at
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64elhf w/ gcc 4.2.1 (*not* using hard-float)
+
+0000000000000000 <f_F>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   df820000        ld      v0,0(gp)
+  20:   8c420000        lw      v0,0(v0)
+  24:   afc20000        sw      v0,0(s8)
+  28:   8fc20000        lw      v0,0(s8)
+  2c:   03c0e82d        move    sp,s8
+  30:   dfbe0018        ld      s8,24(sp)
+  34:   dfbc0010        ld      gp,16(sp)
+  38:   03e00008        jr      ra
+  3c:   67bd0020        daddiu  sp,sp,32
+
+0000000000000040 <f_D>:
+  40:   67bdffe0        daddiu  sp,sp,-32
+  44:   ffbe0018        sd      s8,24(sp)
+  48:   ffbc0010        sd      gp,16(sp)
+  4c:   03a0f02d        move    s8,sp
+  50:   3c1c0000        lui     gp,0x0
+  54:   0399e02d        daddu   gp,gp,t9
+  58:   679c0000        daddiu  gp,gp,0
+  5c:   df820000        ld      v0,0(gp)
+  60:   dc420000        ld      v0,0(v0)
+  64:   ffc20000        sd      v0,0(s8)
+  68:   dfc20000        ld      v0,0(s8)
+  6c:   03c0e82d        move    sp,s8
+  70:   dfbe0018        ld      s8,24(sp)
+  74:   dfbc0010        ld      gp,16(sp)
+  78:   03e00008        jr      ra
+  7c:   67bd0020        daddiu  sp,sp,32
+
+0000000000000080 <f_FC>:
+  80:   67bdffd0        daddiu  sp,sp,-48
+  84:   ffbe0028        sd      s8,40(sp)
+  88:   ffbc0020        sd      gp,32(sp)
+  8c:   03a0f02d        move    s8,sp
+  90:   3c1c0000        lui     gp,0x0
+  94:   0399e02d        daddu   gp,gp,t9
+  98:   679c0000        daddiu  gp,gp,0
+  9c:   df820000        ld      v0,0(gp)
+  a0:   dc420000        ld      v0,0(v0)
+  a4:   ffc20000        sd      v0,0(s8)
+  a8:   dfc20000        ld      v0,0(s8)
+  ac:   ffc20008        sd      v0,8(s8)
+  b0:   ffc00010        sd      zero,16(s8)
+  b4:   9fc30008        lwu     v1,8(s8)
+  b8:   24020001        li      v0,1
+  bc:   0002103c        dsll32  v0,v0,0x0
+  c0:   6442ffff        daddiu  v0,v0,-1
+  c4:   00621824        and     v1,v1,v0
+  c8:   2402ffff        li      v0,-1
+  cc:   0002103c        dsll32  v0,v0,0x0
+  d0:   dfc40010        ld      a0,16(s8)
+  d4:   00821024        and     v0,a0,v0
+  d8:   00431025        or      v0,v0,v1
+  dc:   ffc20010        sd      v0,16(s8)
+  e0:   9fc2000c        lwu     v0,12(s8)
+  e4:   0002183c        dsll32  v1,v0,0x0
+  e8:   24020001        li      v0,1
+  ec:   0002103c        dsll32  v0,v0,0x0
+  f0:   6442ffff        daddiu  v0,v0,-1
+  f4:   dfc40010        ld      a0,16(s8)
+  f8:   00821024        and     v0,a0,v0
+  fc:   00431025        or      v0,v0,v1
+ 100:   ffc20010        sd      v0,16(s8)
+ 104:   dfc20010        ld      v0,16(s8)
+ 108:   03c0e82d        move    sp,s8
+ 10c:   dfbe0028        ld      s8,40(sp)
+ 110:   dfbc0020        ld      gp,32(sp)
+ 114:   03e00008        jr      ra
+ 118:   67bd0030        daddiu  sp,sp,48
+ 11c:   00000000        nop
+
+0000000000000120 <f_LF>:
+ 120:   67bdffc0        daddiu  sp,sp,-64
+ 124:   ffbe0038        sd      s8,56(sp)
+ 128:   ffbc0030        sd      gp,48(sp)
+ 12c:   03a0f02d        move    s8,sp
+ 130:   3c1c0000        lui     gp,0x0
+ 134:   0399e02d        daddu   gp,gp,t9
+ 138:   679c0000        daddiu  gp,gp,0
+ 13c:   df820000        ld      v0,0(gp)
+ 140:   dc420000        ld      v0,0(v0)
+ 144:   df830000        ld      v1,0(gp)
+ 148:   dc630000        ld      v1,0(v1)
+ 14c:   ffc20000        sd      v0,0(s8)
+ 150:   ffc30008        sd      v1,8(s8)
+ 154:   dfc20000        ld      v0,0(s8)
+ 158:   dfc30008        ld      v1,8(s8)
+ 15c:   ffc20010        sd      v0,16(s8)
+ 160:   ffc30018        sd      v1,24(s8)
+ 164:   dfc20010        ld      v0,16(s8)
+ 168:   dfc30018        ld      v1,24(s8)
+ 16c:   ffc20020        sd      v0,32(s8)
+ 170:   ffc30028        sd      v1,40(s8)
+ 174:   dfc20020        ld      v0,32(s8)
+ 178:   0040202d        move    a0,v0
+ 17c:   dfc20028        ld      v0,40(s8)
+ 180:   0040282d        move    a1,v0
+ 184:   0080102d        move    v0,a0
+ 188:   00a0182d        move    v1,a1
+ 18c:   03c0e82d        move    sp,s8
+ 190:   dfbe0038        ld      s8,56(sp)
+ 194:   dfbc0030        ld      gp,48(sp)
+ 198:   03e00008        jr      ra
+ 19c:   67bd0040        daddiu  sp,sp,64
+
+00000000000001a0 <f_FF>:
+ 1a0:   67bdffd0        daddiu  sp,sp,-48
+ 1a4:   ffbe0028        sd      s8,40(sp)
+ 1a8:   ffbc0020        sd      gp,32(sp)
+ 1ac:   03a0f02d        move    s8,sp
+ 1b0:   3c1c0000        lui     gp,0x0
+ 1b4:   0399e02d        daddu   gp,gp,t9
+ 1b8:   679c0000        daddiu  gp,gp,0
+ 1bc:   df820000        ld      v0,0(gp)
+ 1c0:   dc420000        ld      v0,0(v0)
+ 1c4:   ffc20000        sd      v0,0(s8)
+ 1c8:   dfc20000        ld      v0,0(s8)
+ 1cc:   ffc20008        sd      v0,8(s8)
+ 1d0:   8fc20008        lw      v0,8(s8)
+ 1d4:   8fc3000c        lw      v1,12(s8)
+ 1d8:   0060202d        move    a0,v1
+ 1dc:   03c0e82d        move    sp,s8
+ 1e0:   dfbe0028        ld      s8,40(sp)
+ 1e4:   dfbc0020        ld      gp,32(sp)
+ 1e8:   03e00008        jr      ra
+ 1ec:   67bd0030        daddiu  sp,sp,48
+
+00000000000001f0 <f_DF>:
+ 1f0:   67bdffc0        daddiu  sp,sp,-64
+ 1f4:   ffbe0038        sd      s8,56(sp)
+ 1f8:   ffbc0030        sd      gp,48(sp)
+ 1fc:   03a0f02d        move    s8,sp
+ 200:   3c1c0000        lui     gp,0x0
+ 204:   0399e02d        daddu   gp,gp,t9
+ 208:   679c0000        daddiu  gp,gp,0
+ 20c:   df820000        ld      v0,0(gp)
+ 210:   dc420000        ld      v0,0(v0)
+ 214:   df830000        ld      v1,0(gp)
+ 218:   dc630000        ld      v1,0(v1)
+ 21c:   ffc20000        sd      v0,0(s8)
+ 220:   ffc30008        sd      v1,8(s8)
+ 224:   dfc20000        ld      v0,0(s8)
+ 228:   dfc30008        ld      v1,8(s8)
+ 22c:   ffc20010        sd      v0,16(s8)
+ 230:   ffc30018        sd      v1,24(s8)
+ 234:   dfc20010        ld      v0,16(s8)
+ 238:   8fc30018        lw      v1,24(s8)
+ 23c:   0060202d        move    a0,v1
+ 240:   03c0e82d        move    sp,s8
+ 244:   dfbe0038        ld      s8,56(sp)
+ 248:   dfbc0030        ld      gp,48(sp)
+ 24c:   03e00008        jr      ra
+ 250:   67bd0040        daddiu  sp,sp,64
+ 254:   00000000        nop
+
+0000000000000258 <f_Du>:
+ 258:   67bdffe0        daddiu  sp,sp,-32
+ 25c:   ffbe0018        sd      s8,24(sp)
+ 260:   ffbc0010        sd      gp,16(sp)
+ 264:   03a0f02d        move    s8,sp
+ 268:   3c1c0000        lui     gp,0x0
+ 26c:   0399e02d        daddu   gp,gp,t9
+ 270:   679c0000        daddiu  gp,gp,0
+ 274:   ffc00000        sd      zero,0(s8)
+ 278:   df820000        ld      v0,0(gp)
+ 27c:   dc420000        ld      v0,0(v0)
+ 280:   ffc20000        sd      v0,0(s8)
+ 284:   dfc20000        ld      v0,0(s8)
+ 288:   03c0e82d        move    sp,s8
+ 28c:   dfbe0018        ld      s8,24(sp)
+ 290:   dfbc0010        ld      gp,16(sp)
+ 294:   03e00008        jr      ra
+ 298:   67bd0020        daddiu  sp,sp,32
+ 29c:   00000000        nop
+
+00000000000002a0 <f_DFu>:
+ 2a0:   67bdffe0        daddiu  sp,sp,-32
+ 2a4:   ffbe0018        sd      s8,24(sp)
+ 2a8:   ffbc0010        sd      gp,16(sp)
+ 2ac:   03a0f02d        move    s8,sp
+ 2b0:   3c1c0000        lui     gp,0x0
+ 2b4:   0399e02d        daddu   gp,gp,t9
+ 2b8:   679c0000        daddiu  gp,gp,0
+ 2bc:   ffc00000        sd      zero,0(s8)
+ 2c0:   df820000        ld      v0,0(gp)
+ 2c4:   dc420000        ld      v0,0(v0)
+ 2c8:   ffc20000        sd      v0,0(s8)
+ 2cc:   dfc20000        ld      v0,0(s8)
+ 2d0:   03c0e82d        move    sp,s8
+ 2d4:   dfbe0018        ld      s8,24(sp)
+ 2d8:   dfbc0010        ld      gp,16(sp)
+ 2dc:   03e00008        jr      ra
+ 2e0:   67bd0020        daddiu  sp,sp,32
+ 2e4:   00000000        nop
+
+00000000000002e8 <main>:
+ 2e8:   67bdff70        daddiu  sp,sp,-144
+ 2ec:   ffbf0080        sd      ra,128(sp)
+ 2f0:   ffbe0078        sd      s8,120(sp)
+ 2f4:   ffbc0070        sd      gp,112(sp)
+ 2f8:   03a0f02d        move    s8,sp
+ 2fc:   3c1c0000        lui     gp,0x0
+ 300:   0399e02d        daddu   gp,gp,t9
+ 304:   679c0000        daddiu  gp,gp,0
+ 308:   df990000        ld      t9,0(gp)
+ 30c:   0320f809        jalr    t9
+ 310:   00000000        nop
+ 314:   afc20000        sw      v0,0(s8)
+ 318:   df990000        ld      t9,0(gp)
+ 31c:   0320f809        jalr    t9
+ 320:   00000000        nop
+ 324:   ffc20008        sd      v0,8(s8)
+ 328:   df990000        ld      t9,0(gp)
+ 32c:   0320f809        jalr    t9
+ 330:   00000000        nop
+ 334:   0002203c        dsll32  a0,v0,0x0
+ 338:   0004203e        dsrl32  a0,a0,0x0
+ 33c:   24030001        li      v1,1
+ 340:   0003183c        dsll32  v1,v1,0x0
+ 344:   6463ffff        daddiu  v1,v1,-1
+ 348:   00832824        and     a1,a0,v1
+ 34c:   dfc40050        ld      a0,80(s8)
+ 350:   2403ffff        li      v1,-1
+ 354:   0003183c        dsll32  v1,v1,0x0
+ 358:   00831824        and     v1,a0,v1
+ 35c:   00651825        or      v1,v1,a1
+ 360:   ffc30050        sd      v1,80(s8)
+ 364:   0002103e        dsrl32  v0,v0,0x0
+ 368:   0002203c        dsll32  a0,v0,0x0
+ 36c:   dfc30050        ld      v1,80(s8)
+ 370:   24020001        li      v0,1
+ 374:   0002103c        dsll32  v0,v0,0x0
+ 378:   6442ffff        daddiu  v0,v0,-1
+ 37c:   00621024        and     v0,v1,v0
+ 380:   00441025        or      v0,v0,a0
+ 384:   ffc20050        sd      v0,80(s8)
+ 388:   dfc20050        ld      v0,80(s8)
+ 38c:   ffc20010        sd      v0,16(s8)
+ 390:   df990000        ld      t9,0(gp)
+ 394:   0320f809        jalr    t9
+ 398:   00000000        nop
+ 39c:   ffc20058        sd      v0,88(s8)
+ 3a0:   ffc30060        sd      v1,96(s8)
+ 3a4:   dfc20058        ld      v0,88(s8)
+ 3a8:   dfc30060        ld      v1,96(s8)
+ 3ac:   ffc20018        sd      v0,24(s8)
+ 3b0:   ffc30020        sd      v1,32(s8)
+ 3b4:   df990000        ld      t9,0(gp)
+ 3b8:   0320f809        jalr    t9
+ 3bc:   00000000        nop
+ 3c0:   0080182d        move    v1,a0
+ 3c4:   afc20050        sw      v0,80(s8)
+ 3c8:   afc30054        sw      v1,84(s8)
+ 3cc:   dfc20050        ld      v0,80(s8)
+ 3d0:   ffc20028        sd      v0,40(s8)
+ 3d4:   df990000        ld      t9,0(gp)
+ 3d8:   0320f809        jalr    t9
+ 3dc:   00000000        nop
+ 3e0:   0080182d        move    v1,a0
+ 3e4:   ffc20050        sd      v0,80(s8)
+ 3e8:   afc30058        sw      v1,88(s8)
+ 3ec:   dfc20050        ld      v0,80(s8)
+ 3f0:   dfc30058        ld      v1,88(s8)
+ 3f4:   ffc20030        sd      v0,48(s8)
+ 3f8:   ffc30038        sd      v1,56(s8)
+ 3fc:   df990000        ld      t9,0(gp)
+ 400:   0320f809        jalr    t9
+ 404:   00000000        nop
+ 408:   ffc20040        sd      v0,64(s8)
+ 40c:   df990000        ld      t9,0(gp)
+ 410:   0320f809        jalr    t9
+ 414:   00000000        nop
+ 418:   ffc20048        sd      v0,72(s8)
+ 41c:   0000102d        move    v0,zero
+ 420:   03c0e82d        move    sp,s8
+ 424:   dfbf0080        ld      ra,128(sp)
+ 428:   dfbe0078        ld      s8,120(sp)
+ 42c:   dfbc0070        ld      gp,112(sp)
+ 430:   03e00008        jr      ra
+ 434:   67bd0090        daddiu  sp,sp,144
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1 *and* -mhard-float
+
+0000000000000000 <f_F>:
+   0:   67bdffe0        daddiu  sp,sp,-32
+   4:   ffbe0018        sd      s8,24(sp)
+   8:   ffbc0010        sd      gp,16(sp)
+   c:   03a0f02d        move    s8,sp
+  10:   3c1c0000        lui     gp,0x0
+  14:   0399e02d        daddu   gp,gp,t9
+  18:   679c0000        daddiu  gp,gp,0
+  1c:   df810000        ld      at,0(gp)
+  20:   c4200000        lwc1    $f0,0(at)
+  24:   e7c00000        swc1    $f0,0(s8)
+  28:   c7c00000        lwc1    $f0,0(s8)
+  2c:   03c0e82d        move    sp,s8
+  30:   dfbe0018        ld      s8,24(sp)
+  34:   dfbc0010        ld      gp,16(sp)
+  38:   03e00008        jr      ra
+  3c:   67bd0020        daddiu  sp,sp,32
+
+0000000000000040 <f_D>:
+  40:   67bdffe0        daddiu  sp,sp,-32
+  44:   ffbe0018        sd      s8,24(sp)
+  48:   ffbc0010        sd      gp,16(sp)
+  4c:   03a0f02d        move    s8,sp
+  50:   3c1c0000        lui     gp,0x0
+  54:   0399e02d        daddu   gp,gp,t9
+  58:   679c0000        daddiu  gp,gp,0
+  5c:   df810000        ld      at,0(gp)
+  60:   d4200000        ldc1    $f0,0(at)
+  64:   f7c00000        sdc1    $f0,0(s8)
+  68:   d7c00000        ldc1    $f0,0(s8)
+  6c:   03c0e82d        move    sp,s8
+  70:   dfbe0018        ld      s8,24(sp)
+  74:   dfbc0010        ld      gp,16(sp)
+  78:   03e00008        jr      ra
+  7c:   67bd0020        daddiu  sp,sp,32
+
+0000000000000080 <f_FC>:
+  80:   67bdffd0        daddiu  sp,sp,-48
+  84:   ffbe0028        sd      s8,40(sp)
+  88:   ffbc0020        sd      gp,32(sp)
+  8c:   03a0f02d        move    s8,sp
+  90:   3c1c0000        lui     gp,0x0
+  94:   0399e02d        daddu   gp,gp,t9
+  98:   679c0000        daddiu  gp,gp,0
+  9c:   df820000        ld      v0,0(gp)
+  a0:   dc420000        ld      v0,0(v0)
+  a4:   ffc20000        sd      v0,0(s8)
+  a8:   dfc20000        ld      v0,0(s8)
+  ac:   ffc20008        sd      v0,8(s8)
+  b0:   ffc00010        sd      zero,16(s8)
+  b4:   dfc20008        ld      v0,8(s8)
+  b8:   0002103e        dsrl32  v0,v0,0x0
+  bc:   0002183c        dsll32  v1,v0,0x0
+  c0:   24020001        li      v0,1
+  c4:   0002103c        dsll32  v0,v0,0x0
+  c8:   6442ffff        daddiu  v0,v0,-1
+  cc:   dfc40010        ld      a0,16(s8)
+  d0:   00821024        and     v0,a0,v0
+  d4:   00431025        or      v0,v0,v1
+  d8:   ffc20010        sd      v0,16(s8)
+  dc:   dfc30008        ld      v1,8(s8)
+  e0:   24020001        li      v0,1
+  e4:   0002103c        dsll32  v0,v0,0x0
+  e8:   6442ffff        daddiu  v0,v0,-1
+  ec:   00621824        and     v1,v1,v0
+  f0:   24020001        li      v0,1
+  f4:   0002103c        dsll32  v0,v0,0x0
+  f8:   6442ffff        daddiu  v0,v0,-1
+  fc:   00621824        and     v1,v1,v0
+ 100:   2402ffff        li      v0,-1
+ 104:   0002103c        dsll32  v0,v0,0x0
+ 108:   dfc40010        ld      a0,16(s8)
+ 10c:   00821024        and     v0,a0,v0
+ 110:   00431025        or      v0,v0,v1
+ 114:   ffc20010        sd      v0,16(s8)
+ 118:   dfc20010        ld      v0,16(s8)
+ 11c:   03c0e82d        move    sp,s8
+ 120:   dfbe0028        ld      s8,40(sp)
+ 124:   dfbc0020        ld      gp,32(sp)
+ 128:   03e00008        jr      ra
+ 12c:   67bd0030        daddiu  sp,sp,48
+
+0000000000000130 <f_LF>:
+ 130:   67bdffc0        daddiu  sp,sp,-64
+ 134:   ffbe0038        sd      s8,56(sp)
+ 138:   ffbc0030        sd      gp,48(sp)
+ 13c:   03a0f02d        move    s8,sp
+ 140:   3c1c0000        lui     gp,0x0
+ 144:   0399e02d        daddu   gp,gp,t9
+ 148:   679c0000        daddiu  gp,gp,0
+ 14c:   df820000        ld      v0,0(gp)
+ 150:   dc420000        ld      v0,0(v0)
+ 154:   df830000        ld      v1,0(gp)
+ 158:   dc630000        ld      v1,0(v1)
+ 15c:   ffc20000        sd      v0,0(s8)
+ 160:   ffc30008        sd      v1,8(s8)
+ 164:   dfc20000        ld      v0,0(s8)
+ 168:   dfc30008        ld      v1,8(s8)
+ 16c:   ffc20010        sd      v0,16(s8)
+ 170:   ffc30018        sd      v1,24(s8)
+ 174:   dfc20010        ld      v0,16(s8)
+ 178:   dfc30018        ld      v1,24(s8)
+ 17c:   ffc20020        sd      v0,32(s8)
+ 180:   ffc30028        sd      v1,40(s8)
+ 184:   dfc20020        ld      v0,32(s8)
+ 188:   0040202d        move    a0,v0
+ 18c:   dfc20028        ld      v0,40(s8)
+ 190:   0040282d        move    a1,v0
+ 194:   0080102d        move    v0,a0
+ 198:   00a0182d        move    v1,a1
+ 19c:   03c0e82d        move    sp,s8
+ 1a0:   dfbe0038        ld      s8,56(sp)
+ 1a4:   dfbc0030        ld      gp,48(sp)
+ 1a8:   03e00008        jr      ra
+ 1ac:   67bd0040        daddiu  sp,sp,64
+
+00000000000001b0 <f_FF>:
+ 1b0:   67bdffd0        daddiu  sp,sp,-48
+ 1b4:   ffbe0028        sd      s8,40(sp)
+ 1b8:   ffbc0020        sd      gp,32(sp)
+ 1bc:   03a0f02d        move    s8,sp
+ 1c0:   3c1c0000        lui     gp,0x0
+ 1c4:   0399e02d        daddu   gp,gp,t9
+ 1c8:   679c0000        daddiu  gp,gp,0
+ 1cc:   df820000        ld      v0,0(gp)
+ 1d0:   dc420000        ld      v0,0(v0)
+ 1d4:   ffc20000        sd      v0,0(s8)
+ 1d8:   dfc20000        ld      v0,0(s8)
+ 1dc:   ffc20008        sd      v0,8(s8)
+ 1e0:   c7c00008        lwc1    $f0,8(s8)
+ 1e4:   c7c1000c        lwc1    $f1,12(s8)
+ 1e8:   46000886        mov.s   $f2,$f1
+ 1ec:   03c0e82d        move    sp,s8
+ 1f0:   dfbe0028        ld      s8,40(sp)
+ 1f4:   dfbc0020        ld      gp,32(sp)
+ 1f8:   03e00008        jr      ra
+ 1fc:   67bd0030        daddiu  sp,sp,48
+
+0000000000000200 <f_DF>:
+ 200:   67bdffc0        daddiu  sp,sp,-64
+ 204:   ffbe0038        sd      s8,56(sp)
+ 208:   ffbc0030        sd      gp,48(sp)
+ 20c:   03a0f02d        move    s8,sp
+ 210:   3c1c0000        lui     gp,0x0
+ 214:   0399e02d        daddu   gp,gp,t9
+ 218:   679c0000        daddiu  gp,gp,0
+ 21c:   df820000        ld      v0,0(gp)
+ 220:   dc420000        ld      v0,0(v0)
+ 224:   df830000        ld      v1,0(gp)
+ 228:   dc630000        ld      v1,0(v1)
+ 22c:   ffc20000        sd      v0,0(s8)
+ 230:   ffc30008        sd      v1,8(s8)
+ 234:   dfc20000        ld      v0,0(s8)
+ 238:   dfc30008        ld      v1,8(s8)
+ 23c:   ffc20010        sd      v0,16(s8)
+ 240:   ffc30018        sd      v1,24(s8)
+ 244:   d7c00010        ldc1    $f0,16(s8)
+ 248:   c7c10018        lwc1    $f1,24(s8)
+ 24c:   46000886        mov.s   $f2,$f1
+ 250:   03c0e82d        move    sp,s8
+ 254:   dfbe0038        ld      s8,56(sp)
+ 258:   dfbc0030        ld      gp,48(sp)
+ 25c:   03e00008        jr      ra
+ 260:   67bd0040        daddiu  sp,sp,64
+ 264:   00000000        nop
+
+0000000000000268 <f_Du>:
+ 268:   67bdffe0        daddiu  sp,sp,-32
+ 26c:   ffbe0018        sd      s8,24(sp)
+ 270:   ffbc0010        sd      gp,16(sp)
+ 274:   03a0f02d        move    s8,sp
+ 278:   3c1c0000        lui     gp,0x0
+ 27c:   0399e02d        daddu   gp,gp,t9
+ 280:   679c0000        daddiu  gp,gp,0
+ 284:   ffc00000        sd      zero,0(s8)
+ 288:   df810000        ld      at,0(gp)
+ 28c:   d4200000        ldc1    $f0,0(at)
+ 290:   f7c00000        sdc1    $f0,0(s8)
+ 294:   dfc20000        ld      v0,0(s8)
+ 298:   03c0e82d        move    sp,s8
+ 29c:   dfbe0018        ld      s8,24(sp)
+ 2a0:   dfbc0010        ld      gp,16(sp)
+ 2a4:   03e00008        jr      ra
+ 2a8:   67bd0020        daddiu  sp,sp,32
+ 2ac:   00000000        nop
+
+00000000000002b0 <f_DFu>:
+ 2b0:   67bdffe0        daddiu  sp,sp,-32
+ 2b4:   ffbe0018        sd      s8,24(sp)
+ 2b8:   ffbc0010        sd      gp,16(sp)
+ 2bc:   03a0f02d        move    s8,sp
+ 2c0:   3c1c0000        lui     gp,0x0
+ 2c4:   0399e02d        daddu   gp,gp,t9
+ 2c8:   679c0000        daddiu  gp,gp,0
+ 2cc:   ffc00000        sd      zero,0(s8)
+ 2d0:   df810000        ld      at,0(gp)
+ 2d4:   d4200000        ldc1    $f0,0(at)
+ 2d8:   f7c00000        sdc1    $f0,0(s8)
+ 2dc:   dfc20000        ld      v0,0(s8)
+ 2e0:   03c0e82d        move    sp,s8
+ 2e4:   dfbe0018        ld      s8,24(sp)
+ 2e8:   dfbc0010        ld      gp,16(sp)
+ 2ec:   03e00008        jr      ra
+ 2f0:   67bd0020        daddiu  sp,sp,32
+ 2f4:   00000000        nop
+
+00000000000002f8 <main>:
+ 2f8:   67bdff70        daddiu  sp,sp,-144
+ 2fc:   ffbf0080        sd      ra,128(sp)
+ 300:   ffbe0078        sd      s8,120(sp)
+ 304:   ffbc0070        sd      gp,112(sp)
+ 308:   03a0f02d        move    s8,sp
+ 30c:   3c1c0000        lui     gp,0x0
+ 310:   0399e02d        daddu   gp,gp,t9
+ 314:   679c0000        daddiu  gp,gp,0
+ 318:   df990000        ld      t9,0(gp)
+ 31c:   0320f809        jalr    t9
+ 320:   00000000        nop
+ 324:   e7c00000        swc1    $f0,0(s8)
+ 328:   df990000        ld      t9,0(gp)
+ 32c:   0320f809        jalr    t9
+ 330:   00000000        nop
+ 334:   f7c00008        sdc1    $f0,8(s8)
+ 338:   df990000        ld      t9,0(gp)
+ 33c:   0320f809        jalr    t9
+ 340:   00000000        nop
+ 344:   0002183e        dsrl32  v1,v0,0x0
+ 348:   0003283c        dsll32  a1,v1,0x0
+ 34c:   dfc40050        ld      a0,80(s8)
+ 350:   24030001        li      v1,1
+ 354:   0003183c        dsll32  v1,v1,0x0
+ 358:   6463ffff        daddiu  v1,v1,-1
+ 35c:   00831824        and     v1,a0,v1
+ 360:   00651825        or      v1,v1,a1
+ 364:   ffc30050        sd      v1,80(s8)
+ 368:   0002183c        dsll32  v1,v0,0x0
+ 36c:   0003183e        dsrl32  v1,v1,0x0
+ 370:   24020001        li      v0,1
+ 374:   0002103c        dsll32  v0,v0,0x0
+ 378:   6442ffff        daddiu  v0,v0,-1
+ 37c:   00622024        and     a0,v1,v0
+ 380:   dfc30050        ld      v1,80(s8)
+ 384:   2402ffff        li      v0,-1
+ 388:   0002103c        dsll32  v0,v0,0x0
+ 38c:   00621024        and     v0,v1,v0
+ 390:   00441025        or      v0,v0,a0
+ 394:   ffc20050        sd      v0,80(s8)
+ 398:   dfc20050        ld      v0,80(s8)
+ 39c:   ffc20010        sd      v0,16(s8)
+ 3a0:   df990000        ld      t9,0(gp)
+ 3a4:   0320f809        jalr    t9
+ 3a8:   00000000        nop
+ 3ac:   ffc20058        sd      v0,88(s8)
+ 3b0:   ffc30060        sd      v1,96(s8)
+ 3b4:   dfc20058        ld      v0,88(s8)
+ 3b8:   dfc30060        ld      v1,96(s8)
+ 3bc:   ffc20018        sd      v0,24(s8)
+ 3c0:   ffc30020        sd      v1,32(s8)
+ 3c4:   df990000        ld      t9,0(gp)
+ 3c8:   0320f809        jalr    t9
+ 3cc:   00000000        nop
+ 3d0:   46001046        mov.s   $f1,$f2
+ 3d4:   e7c00050        swc1    $f0,80(s8)
+ 3d8:   e7c10054        swc1    $f1,84(s8)
+ 3dc:   dfc20050        ld      v0,80(s8)
+ 3e0:   ffc20028        sd      v0,40(s8)
+ 3e4:   df990000        ld      t9,0(gp)
+ 3e8:   0320f809        jalr    t9
+ 3ec:   00000000        nop
+ 3f0:   46001046        mov.s   $f1,$f2
+ 3f4:   f7c00050        sdc1    $f0,80(s8)
+ 3f8:   e7c10058        swc1    $f1,88(s8)
+ 3fc:   dfc20050        ld      v0,80(s8)
+ 400:   dfc30058        ld      v1,88(s8)
+ 404:   ffc20030        sd      v0,48(s8)
+ 408:   ffc30038        sd      v1,56(s8)
+ 40c:   df990000        ld      t9,0(gp)
+ 410:   0320f809        jalr    t9
+ 414:   00000000        nop
+ 418:   ffc20040        sd      v0,64(s8)
+ 41c:   df990000        ld      t9,0(gp)
+ 420:   0320f809        jalr    t9
+ 424:   00000000        nop
+ 428:   ffc20048        sd      v0,72(s8)
+ 42c:   0000102d        move    v0,zero
+ 430:   03c0e82d        move    sp,s8
+ 434:   dfbf0080        ld      ra,128(sp)
+ 438:   dfbe0078        ld      s8,120(sp)
+ 43c:   dfbc0070        ld      gp,112(sp)
+ 440:   03e00008        jr      ra
+ 444:   67bd0090        daddiu  sp,sp,144
+        ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1
+
+0000000120000b70 <f1>:
+   120000b70:   67bdffe0        daddiu  sp,sp,-32
+   120000b74:   ffbe0018        sd      s8,24(sp)
+   120000b78:   ffbc0010        sd      gp,16(sp)
+   120000b7c:   03a0f02d        move    s8,sp
+   120000b80:   3c1c0002        lui     gp,0x2
+   120000b84:   0399e02d        daddu   gp,gp,t9
+   120000b88:   679c84e0        daddiu  gp,gp,-31520
+   120000b8c:   ffc40000        sd      a0,0(s8)
+   120000b90:   03c0e82d        move    sp,s8
+   120000b94:   dfbe0018        ld      s8,24(sp)
+   120000b98:   dfbc0010        ld      gp,16(sp)
+   120000b9c:   03e00008        jr      ra
+   120000ba0:   67bd0020        daddiu  sp,sp,32
+   120000ba4:   00000000        nop
+
+0000000120000ba8 <f2>:
+   120000ba8:   67bdffe0        daddiu  sp,sp,-32
+   120000bac:   ffbe0018        sd      s8,24(sp)
+   120000bb0:   ffbc0010        sd      gp,16(sp)
+   120000bb4:   03a0f02d        move    s8,sp
+   120000bb8:   3c1c0002        lui     gp,0x2
+   120000bbc:   0399e02d        daddu   gp,gp,t9
+   120000bc0:   679c84a8        daddiu  gp,gp,-31576
+   120000bc4:   ffc40000        sd      a0,0(s8)
+   120000bc8:   03c0e82d        move    sp,s8
+   120000bcc:   dfbe0018        ld      s8,24(sp)
+   120000bd0:   dfbc0010        ld      gp,16(sp)
+   120000bd4:   03e00008        jr      ra
+   120000bd8:   67bd0020        daddiu  sp,sp,32
+   120000bdc:   00000000        nop
+
+0000000120000be0 <f>:
+   120000be0:   67bdffd0        daddiu  sp,sp,-48     ;
+   120000be4:   ffbf0020        sd      ra,32(sp)     ;
+   120000be8:   ffbe0018        sd      s8,24(sp)     ;
+   120000bec:   ffbc0010        sd      gp,16(sp)     ;
+   120000bf0:   03a0f02d        move    s8,sp         ;
+   120000bf4:   3c1c0002        lui     gp,0x2        ;
+   120000bf8:   0399e02d        daddu   gp,gp,t9      ;
+   120000bfc:   679c8470        daddiu  gp,gp,-31632  ;
+   120000c00:   67c2000c        daddiu  v0,s8,12      ;
+   120000c04:   0040202d        move    a0,v0         ;
+   120000c08:   df9980e8        ld      t9,-32536(gp) ;
+   120000c0c:   0320f809        jalr    t9            ;
+   120000c10:   00000000        nop                   ;
+   120000c14:   24020001        li      v0,1          ;
+   120000c18:   afc20000        sw      v0,0(s8)      ;
+   120000c1c:   8fc20000        lw      v0,0(s8)      ;
+   120000c20:   2442007b        addiu   v0,v0,123     ;
+   120000c24:   afc20000        sw      v0,0(s8)      ;
+   120000c28:   8fc40008        lw      a0,8(s8)      ;
+   120000c2c:   0004203c        dsll32  a0,a0,0x0     ;
+   120000c30:   df9980e0        ld      t9,-32544(gp) ;
+   120000c34:   0320f809        jalr    t9            ;
+   120000c38:   00000000        nop                   ;
+   120000c3c:   8fc20000        lw      v0,0(s8)      ;
+   120000c40:   2442ff85        addiu   v0,v0,-123    ;
+   120000c44:   afc20000        sw      v0,0(s8)      ;
+   120000c48:   67c20004        daddiu  v0,s8,4       ;
+   120000c4c:   67c3000c        daddiu  v1,s8,12      ;
+   120000c50:   0040202d        move    a0,v0         ; |               ptr to dest of copy of n
+   120000c54:   0060282d        move    a1,v1         ; |               ptr to n
+   120000c58:   df9980c0        ld      t9,-32576(gp) ; | copy n        |
+   120000c5c:   0320f809        jalr    t9            ; |               | NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+   120000c60:   00000000        nop                   ;
+   120000c64:   67c20004        daddiu  v0,s8,4       ; get ptr to copy of n -> v0
+   120000c68:   0040202d        move    a0,v0         ; f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+   120000c6c:   df9980d0        ld      t9,-32560(gp) ; |
+   120000c70:   0320f809        jalr    t9            ; | call f2(struct NonTrivial)
+   120000c74:   00000000        nop                   ;
+   120000c78:   8fc20000        lw      v0,0(s8)      ;
+   120000c7c:   2442fff4        addiu   v0,v0,-12     ;
+   120000c80:   afc20000        sw      v0,0(s8)      ;
+   120000c84:   03c0e82d        move    sp,s8         ;
+   120000c88:   dfbf0020        ld      ra,32(sp)     ;
+   120000c8c:   dfbe0018        ld      s8,24(sp)     ;
+   120000c90:   dfbc0010        ld      gp,16(sp)     ;
+   120000c94:   03e00008        jr      ra            ;
+   120000c98:   67bd0030        daddiu  sp,sp,48      ;
+   120000c9c:   00000000        nop                   ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from freebsd-12.0_r333647-malta_mips64ebhf w/ gcc 4.2.1
+
+0000000120000b60 <f1>:
+   120000b60:   67bdfff0        daddiu  sp,sp,-16
+   120000b64:   ffbe0008        sd      s8,8(sp)
+   120000b68:   ffbc0000        sd      gp,0(sp)
+   120000b6c:   03a0f02d        move    s8,sp
+   120000b70:   3c1c0002        lui     gp,0x2
+   120000b74:   0399e02d        daddu   gp,gp,t9
+   120000b78:   679c8320        daddiu  gp,gp,-31968
+   120000b7c:   0000102d        move    v0,zero
+   120000b80:   0002103c        dsll32  v0,v0,0x0
+   120000b84:   03c0e82d        move    sp,s8
+   120000b88:   dfbe0008        ld      s8,8(sp)
+   120000b8c:   dfbc0000        ld      gp,0(sp)
+   120000b90:   03e00008        jr      ra
+   120000b94:   67bd0010        daddiu  sp,sp,16
+
+0000000120000b98 <_Z2f2v>:
+   120000b98:   67bdffe0        daddiu  sp,sp,-32
+   120000b9c:   ffbf0018        sd      ra,24(sp)
+   120000ba0:   ffbe0010        sd      s8,16(sp)
+   120000ba4:   ffbc0008        sd      gp,8(sp)
+   120000ba8:   ffb00000        sd      s0,0(sp)
+   120000bac:   03a0f02d        move    s8,sp
+   120000bb0:   3c1c0002        lui     gp,0x2
+   120000bb4:   0399e02d        daddu   gp,gp,t9
+   120000bb8:   679c82e8        daddiu  gp,gp,-32024
+   120000bbc:   0080802d        move    s0,a0
+   120000bc0:   0200102d        move    v0,s0
+   120000bc4:   0040202d        move    a0,v0
+   120000bc8:   df9980e0        ld      t9,-32544(gp)
+   120000bcc:   0320f809        jalr    t9
+   120000bd0:   00000000        nop
+   120000bd4:   0200102d        move    v0,s0         ; ptr to retval space -> v0
+   120000bd8:   03c0e82d        move    sp,s8
+   120000bdc:   dfbf0018        ld      ra,24(sp)
+   120000be0:   dfbe0010        ld      s8,16(sp)
+   120000be4:   dfbc0008        ld      gp,8(sp)
+   120000be8:   dfb00000        ld      s0,0(sp)
+   120000bec:   03e00008        jr      ra
+   120000bf0:   67bd0020        daddiu  sp,sp,32
+   120000bf4:   00000000        nop
+
+0000000120000bf8 <f>:
+   120000bf8:   67bdffd0        daddiu  sp,sp,-48     ;
+   120000bfc:   ffbf0020        sd      ra,32(sp)     ;
+   120000c00:   ffbe0018        sd      s8,24(sp)     ;
+   120000c04:   ffbc0010        sd      gp,16(sp)     ;
+   120000c08:   03a0f02d        move    s8,sp         ;
+   120000c0c:   3c1c0002        lui     gp,0x2        ;
+   120000c10:   0399e02d        daddu   gp,gp,t9      ;
+   120000c14:   679c8288        daddiu  gp,gp,-32120  ;
+   120000c18:   24020001        li      v0,1          ;
+   120000c1c:   afc20000        sw      v0,0(s8)      ;
+   120000c20:   8fc20000        lw      v0,0(s8)      ;
+   120000c24:   2442007b        addiu   v0,v0,123     ;
+   120000c28:   afc20000        sw      v0,0(s8)      ;
+   120000c2c:   df9980d8        ld      t9,-32552(gp) ; | call f1()
+   120000c30:   0320f809        jalr    t9            ; |
+   120000c34:   00000000        nop                   ;
+   120000c38:   0002103f        dsra32  v0,v0,0x0     ; | returned via reg v0, as small and trivial
+   120000c3c:   afc20004        sw      v0,4(s8)      ; |
+   120000c40:   8fc20000        lw      v0,0(s8)      ;
+   120000c44:   2442ff85        addiu   v0,v0,-123    ;
+   120000c48:   afc20000        sw      v0,0(s8)      ;
+   120000c4c:   67c20008        daddiu  v0,s8,8       ;
+   120000c50:   0040202d        move    a0,v0         ; hidden first arg (ptr to space for ret val)
+   120000c54:   df9980e8        ld      t9,-32536(gp) ; | call f2()
+   120000c58:   0320f809        jalr    t9            ; |
+   120000c5c:   00000000        nop                   ;
+   120000c60:   8fc20000        lw      v0,0(s8)      ;
+   120000c64:   2442fff4        addiu   v0,v0,-12     ;
+   120000c68:   afc20000        sw      v0,0(s8)      ;
+   120000c6c:   03c0e82d        move    sp,s8         ;
+   120000c70:   dfbf0020        ld      ra,32(sp)     ;
+   120000c74:   dfbe0018        ld      s8,24(sp)     ;
+   120000c78:   dfbc0010        ld      gp,16(sp)     ;
+   120000c7c:   03e00008        jr      ra            ;
+   120000c80:   67bd0030        daddiu  sp,sp,48      ;
+   120000c84:   00000000        nop                   ;
+
+
 
 ; vim: ft=asm
 

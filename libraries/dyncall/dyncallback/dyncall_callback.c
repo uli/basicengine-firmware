@@ -6,7 +6,7 @@
  Description: Callback - Implementation back-end selector
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -25,6 +25,8 @@
 
 
 #include "../dyncall/dyncall_macros.h"
+#include "../dyncall/dyncall_aggregate.h"
+
 
 #if defined(DC__Arch_Intel_x86)
 #include "dyncall_callback_x86.c"
@@ -44,5 +46,33 @@
 #include "dyncall_callback_sparc64.c"
 #elif defined(DC__Arch_ARM64)
 #include "dyncall_callback_arm64.c"
+#elif defined(DC__Arch_RiscV64)
+#include "dyncall_callback_riscv64.c"
+#else
+#error unsupported platform
 #endif
+
+
+void dcbInitCallback(DCCallback* pcb, const DCsigchar* signature, DCCallbackHandler* handler, void* userdata)
+{
+  dcbInitCallback2(pcb, signature, handler, userdata, NULL);
+}
+
+
+DCCallback* dcbNewCallback(const DCsigchar* signature, DCCallbackHandler* handler, void* userdata)
+{
+  return dcbNewCallback2(signature, handler, userdata, NULL);
+}
+
+
+void dcbFreeCallback(DCCallback* pcb)
+{
+  dcFreeWX(pcb, sizeof(DCCallback));
+}
+
+
+void* dcbGetUserData(DCCallback* pcb)
+{
+  return pcb->userdata;
+}
 

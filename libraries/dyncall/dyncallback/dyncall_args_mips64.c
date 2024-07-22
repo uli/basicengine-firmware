@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Implementation for MIPS64 n32&n64
  License:
 
-   Copyright (c) 2016-2018 Tassilo Philipp <tphilipp@potion-studios.com>
+   Copyright (c) 2016-2022 Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
@@ -78,4 +78,8 @@ DCfloat dcbArgFloat(DCArgs* p)
   }
   return result;
 }
+
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 

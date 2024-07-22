@@ -26,7 +26,7 @@
 
 
 
-#include "../autovar/autovar_OS.h"
+#include "../dyncall/dyncall_macros.h"
 
 /*
  
@@ -35,16 +35,14 @@
 */
 
 #include "dynload.h"
-#if defined(OS_OpenBSD)
+#if defined(DC__OS_OpenBSD)
 #  include <stdint.h>
 #  include <elf_abi.h>
-#elif defined(OS_NetBSD)
+#elif defined(DC__OS_NetBSD)
 #  include <stddef.h>
 #  include <elf.h>
-#elif defined(OS_SunOS)
+#elif defined(DC__OS_SunOS)
 #  include <libelf.h>
-#elif defined(OS_BeOS)
-#  include <elf32.h>
 #else
 #  include <elf.h>
 #endif
@@ -67,44 +65,32 @@
 #include <unistd.h> 
 
 /* run-time configuration 64/32 */
-#if defined(OS_OpenBSD)
+#if defined(DC__OS_OpenBSD)
 #else 
-#  include "../autovar/autovar_ABI.h"
-#  ifdef ABI_ELF64
+#  ifdef DC__Obj_ELF64
 
 typedef Elf64_Ehdr   Elf_Ehdr;
 typedef Elf64_Phdr   Elf_Phdr;
 typedef Elf64_Shdr   Elf_Shdr;
 typedef Elf64_Sym    Elf_Sym;
-#    ifndef OS_SunOS
+#    ifndef DC__OS_SunOS
 typedef Elf64_Dyn    Elf_Dyn;
 #    endif
 typedef Elf64_Sxword Elf_tag;
 typedef Elf64_Addr   Elf_Addr;
 
 #  else
-#    if defined(OS_BeOS)
-typedef struct Elf32_Ehdr   Elf_Ehdr;
-typedef struct Elf32_Phdr   Elf_Phdr;
-typedef struct Elf32_Shdr   Elf_Shdr;
-typedef struct Elf32_Sym    Elf_Sym;
-typedef struct Elf32_Dyn    Elf_Dyn;
-typedef        Elf32_Sword  Elf_tag;
-typedef        Elf32_Addr   Elf_Addr;
-
-#    else
 
 typedef Elf32_Ehdr   Elf_Ehdr;
 typedef Elf32_Phdr   Elf_Phdr;
 typedef Elf32_Shdr   Elf_Shdr;
 typedef Elf32_Sym    Elf_Sym;
-#      ifndef OS_SunOS
+#      ifndef DC__OS_SunOS
 typedef Elf32_Dyn    Elf_Dyn;
 #      endif
 typedef Elf32_Sword  Elf_tag;
 typedef Elf32_Addr   Elf_Addr;
 
-#    endif
 #  endif
 #endif
 
@@ -142,7 +128,7 @@ DLSyms* dlSymsInit(const char* libPath)
   pSyms->fileSize = st.st_size;
   pSyms->pElf_Ehdr = (Elf_Ehdr*) mmap((void*) NULL, pSyms->fileSize, PROT_READ, MAP_SHARED, pSyms->file, 0);
 
-#ifdef ABI_ELF32
+#ifdef DC__Obj_ELF32
   assert(pSyms->pElf_Ehdr->e_ident[EI_CLASS] == ELFCLASS32);
 #else
   assert(pSyms->pElf_Ehdr->e_ident[EI_CLASS] == ELFCLASS64);

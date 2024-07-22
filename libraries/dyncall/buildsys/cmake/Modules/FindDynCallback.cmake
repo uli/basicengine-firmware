@@ -1,4 +1,4 @@
-# - Try to find DynLoad library
+# - Try to find dyncallback library
 #
 #   The following variables will be defined:
 # 
@@ -9,8 +9,8 @@
 # ----------------------------------------------------------------------------
 #
 # Package: dyncall
-# File: buildsys/cmake/Modules/FindDynLoad.cmake
-# Description: CMake Module to find dynload library
+# File: buildsys/cmake/Modules/FindDynCallback.cmake
+# Description: CMake Module to find dyncallback library
 # License:
 #
 # Copyright (c) 2010,2011 Daniel Adler <dadler@uni-goettingen.de>

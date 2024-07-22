@@ -1,4 +1,4 @@
-APP       = syscall
+APP       = syscall${APP_SUFFIX}
 OBJS      = syscall.o
 SRCTOP    = ${VPATH}/../..
 BLDTOP    = ../..

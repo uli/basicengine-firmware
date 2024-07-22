@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2014-2019 Daniel Adler <dadler@uni-goettingen.de>, 
+% Copyright (c) 2014-2022 Daniel Adler <dadler@uni-goettingen.de>, 
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -17,9 +17,6 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-% ==================================================
-% ARM64
-% ==================================================
 \subsection{ARM64 Calling Conventions}
 
 \paragraph{Overview}
@@ -30,7 +27,7 @@ For more details, take a look at the Procedure Call Standard for the ARM 64-bit 
 
 \paragraph{\product{dyncall} support}
 
-The \product{dyncall} library supports the ARM 64-bit AArch64 PCS ABI, as well as Apple's convention derived from it, for calls and callbacks.
+The \product{dyncall} library supports the ARM 64-bit AArch64 PCS ABI, as well as Apple's and Microsoft's conventions which are derived from it, for both, calls and callbacks.
 
 \subsubsection{AAPCS64 Calling Convention}
 
@@ -44,7 +41,8 @@ stack pointer in instructions dealing with the stack ({\bf sp}) or a hardware
 zero register for all other instructions {\bf xzr/wzr}, and {\bf pc}, the
 program counter. Additionally, there are thirty-two 128 bit registers {\bf v0-v31},
 to be used as SIMD and floating point registers, referred to as {\bf q0-q31}, {\bf d0-d31}
-and {\bf s0-s31}, respectively, depending on their use:\\
+and {\bf s0-s31}, respectively (in contrast to AArch32, those do not overlap multiple
+narrower registers), depending on their use:\\
 
 \begin{table}[h]
 \begin{tabular*}{0.95\textwidth}{3 B}
@@ -61,6 +59,10 @@ Name          & Brief description\\
 {\bf x30}     & permanent, link register\\
 {\bf sp}      & permanent, stack pointer\\
 {\bf pc}      & program counter\\
+{\bf v0-v7}   & scratch, float parameters, return value\\
+{\bf v8-v15}  & lower 64 bits are permanent, scratch\\
+{\bf v16-v31} & scratch\\
+{\bf xzr}     & zero register, always zero\\
 \end{tabular*}
 \caption{Register usage on arm64}
 \end{table}
@@ -73,17 +75,26 @@ Name          & Brief description\\
 \item first 8 integer arguments are passed using x0-x7
 \item first 8 floating point arguments are passed using d0-d7
 \item subsequent parameters are pushed onto the stack
-\item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first 8 integer and 8 floating-point registers to a reserved stack area adjacent to the other parameters on the stack (only the unnamed integer parameters require saving, though)
-\item structures and unions are passed by value, with the first four words of the parameters in r0-r3
-\item if return value is a structure, a pointer pointing to the return value's space is passed in r0, the first parameter in r1, etc... (see {\bf return values})
-\item stack is required to be throughout eight-byte aligned
+\item if the callee takes the address of one of the parameters and uses it to address other parameters (e.g. varargs) it has to copy - in its prolog - the first 8 integer
+and 8 floating-point registers to a reserved stack area adjacent to the other parameters on the stack (only the unnamed integer parameters require saving, though)
+\item aggregates (struct, union) with 1 to 4 identical floating-point members (either float or double) are passed field-by-field (8-byte aligned if passed via stack), except if passed as a vararg
+\item other aggregates (struct, union) \textgreater\ 16 bytes in size are passed indirectly, as a pointer to a copy (if needed)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item all other aggregates (struct, union), after rounding up the size to the nearest multiple of 8, are passed as a sequence of dwords, like integers
+\item aggregates are never split across registers and stack, so if not enough registers are available an aggregated is passed via the stack (for aggregates that
+would've been passed as floating point values, any still unused float registers will be skipped for any subsequent arg)
+\item stack is required throughout to be eight-byte aligned
 \end{itemize}
 
 \paragraph{Return values}
+
 \begin{itemize}
 \item integer return values use x0
 \item floating-point return values use d0
-\item otherwise, the caller allocates space, passes pointer to it to the callee through x8, and callee writes return value to this space
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee via x8, and callee writes return value to this space; the ptr to the aggregate is returned in x0
+\item aggregates (struct, union) that would be passed via registers if passed as a first param, are returned via those registers
+\item for aggregates not returnable via registers (e.g. if regs exhausted, or \textgreater\ 16b, ...), the caller allocates space, passes pointer to it to the callee through
+x8, and callee writes return value to this space (note that this is not a hidden first param, as x8 is not used for passing params); the ptr to the aggregate is returned in x0
 \end{itemize}
 
 \paragraph{Stack layout}
@@ -110,7 +121,7 @@ local data                               &                        &             
                                          & \ldots                 &                                      &                              \\
                                          & q0                     &                                      &                              \\
 \hhline{~-~~}                                                                             
-register save area (with return address) &                        &                                      &                              \\ % fp will point here (to 1st arg) @@@ verify
+register save area (with return address) &                        &                                      &                              \\ % fp will point here (to 1st arg)
 \hhline{~-~~}                                                                             
 local data                               &                        &                                      &                              \\
 \hhline{~-~~}                                                                             
@@ -119,10 +130,10 @@ parameter area                           & \vdots                 &             
 \caption{Stack layout on arm64}
 \end{figure}
 
-\newpage
+\clearpage
 
 
-\subsubsection{Apple's ARM64 Function Calling Conventions}
+\subsubsection{Apple's ARM64 Function Calling Convention}
 
 \paragraph{Overview}
 
@@ -130,7 +141,25 @@ Apple's ARM64 calling convention is based on the AAPCS64 standard, however, dive
 Only the differences are listed here, for more details, take a look at Apple's official documentation \cite{AppleARM64}.
 
 \begin{itemize}
-\item arguments passed via stack use only the space they need, but are subject to the type alignment requirements (which is 1 byte for char and bool, 2 for short, 4 for int and 8 for every other type)
+\item arguments passed via stack use only the space they need, but are subject to type alignment requirements (which is 1 byte for char and bool, 2 for short, 4 for int and 8 for every other type)
 \item caller is required to sign and zero-extend arguments smaller than 32bits
+\item empty aggregates (allowed in C++, but non-standard in C, however compiler extensions exist) as parameters:
+\begin{itemize}
+\item allowed to be ignored in C
+\item allowed to be ignored in C++, if aggregate is trivial, otherwise it's treated as an aggregate with one byte field
+\end{itemize}
+\end{itemize}
+
+
+\subsubsection{Microsoft's ARM64 Function Calling Convention}
+
+\paragraph{Overview}
+
+Microsoft's ARM64 calling convention is based on the AAPCS64 standard, however, diverges for variadic functions.
+Only the differences are listed here, for more details, take a look at Microsoft's official documentation \cite{MicrosoftARM64}.
+
+\begin{itemize}
+\item variadic function calls do not use any SIMD or floating point registers (for fixed and variable args), meaning first 8 params are passed via x0-x7, the rest via the stack
+\item a function that returns an aggregate indirectly via a pointer passed to via x8 does not seem to be required to put that address in x0 on return (but should be safe to do so)
 \end{itemize}
 

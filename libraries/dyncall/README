@@ -20,10 +20,9 @@ A typical application for the use of dyncall is the back-end of a FFI
 (foreign function interface) for scripting languages to connect with 
 the C/C++ world.
 
-The binary footprint of the package is approx. 10-20 kb, depending on
-the platform.
-Besides the test suite already mentioned, comprehensive documentation is
-available.
+The binary footprint of the package libraries before linking is approx. 10-60
+kb, depending on the platform.
+Comprehensive documentation is available.
 
 
 Building the libraries
@@ -31,7 +30,7 @@ Building the libraries
 
 Prequisites: 
  - C compiler such as gcc, clang, sunpro or msvc.
- - Assembler such as gas (gnu/apple), fbe or masm.
+ - Assembler such as gas (gnu/apple), llvm as, fbe, nasm or masm.
  - Build system such as 'shell/make', cmake, nmake (windows) or mk (plan9).
 
 
@@ -78,8 +77,8 @@ $ make tests
 $ make run-tests
 
 
-Build 'out-of-source'
----------------------
+Build 'out-of-source' (not for nmake or mk based builds)
+--------------------------------------------------------
 
 $ cd <build_dir>
 $ <src_dir>/configure --prefix=<install_dir>

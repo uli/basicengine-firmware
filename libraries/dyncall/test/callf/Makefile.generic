@@ -1,4 +1,4 @@
-APP     = callf
+APP     = callf${APP_SUFFIX}
 OBJS    = main.o
 SRCTOP  = ${VPATH}/../..
 BLDTOP  = ../..

@@ -1,4 +1,4 @@
-APP       = ellipsis
+APP       = ellipsis${APP_SUFFIX}
 OBJS      = ellipsis.o main.o
 SRCTOP    = ${VPATH}/../..
 BLDTOP    = ../..

@@ -1,0 +1,73 @@
+; ---------- simple C++ thiscall ---------->
+;
+; class C {
+; public:
+;     float m(int i) const { return float(i + 123); }
+; };
+;
+; extern "C" {
+;     float f()
+;     {
+;         C c;
+;         return c.m(27);
+;     }
+; }
+
+
+
+; output from openbsd-4.0-x86 w/ gcc 3.3.5 (propolice)
+
+00000000 <f>:
+   0:   55                      push   %ebp                  ; |
+   1:   89 e5                   mov    %esp,%ebp             ; | prolog
+   3:   83 ec 08                sub    $0x8,%esp             ; /
+   6:   83 ec 08                sub    $0x8,%esp             ;
+   9:   6a 1b                   push   $0x1b                 ; arg 1
+   b:   8d 45 ff                lea    0xffffffff(%ebp),%eax ; |
+   e:   50                      push   %eax                  ; | arg 0 (this ptr)
+   f:   e8 fc ff ff ff          call   10 <f+0x10>           ; call C::m()
+  14:   83 c4 10                add    $0x10,%esp            ;
+  17:   c9                      leave                        ;
+  18:   c3                      ret                          ;
+
+00000000 <_ZNK1C1mEi>:
+   0:   55                      push   %ebp                  ;
+   1:   89 e5                   mov    %esp,%ebp             ;
+   3:   8b 45 0c                mov    0xc(%ebp),%eax        ; |
+   6:   83 c0 7b                add    $0x7b,%eax            ; | in arg + 123, pushed onto stack
+   9:   50                      push   %eax                  ; |
+   a:   db 04 24                fildl  (%esp)                ; float cast and put return value in fp0
+   d:   8d 64 24 04             lea    0x4(%esp),%esp        ;
+  11:   c9                      leave                        ;
+  12:   c3                      ret                          ;
+
+
+
+; output from minix-3.1.8-x86 w/ gcc 4.4.3
+
+00000000 <__ZNK1C1mEi>:
+   0:   55                      push   %ebp                  ;
+   1:   89 e5                   mov    %esp,%ebp             ;
+   3:   83 ec 18                sub    $0x18,%esp            ;
+   6:   8b 45 0c                mov    0xc(%ebp),%eax        ; |
+   9:   83 c0 7b                add    $0x7b,%eax            ; | in arg + 123, pushed onto stack
+   c:   89 04 24                mov    %eax,(%esp)           ; |
+   f:   e8 ec ff ff ff          call   0 <__ZNK1C1mEi>       ; ? unsure
+  14:   c9                      leave                        ;
+  15:   c3                      ret                          ; note: float returned via eax
+
+00000016 <_f>:
+  16:   55                      push   %ebp                  ;
+  17:   89 e5                   mov    %esp,%ebp             ;
+  19:   83 ec 28                sub    $0x28,%esp            ;
+  1c:   c7 44 24 04 1b 00 00 00 movl   $0x1b,0x4(%esp)       ; arg 1 via stack
+  24:   8d 45 f7                lea    0xfffffff7(%ebp),%eax ; |
+  27:   89 04 24                mov    %eax,(%esp)           ; | arg 0 (this ptr)
+  2a:   e8 d1 ff ff ff          call   0 <__ZNK1C1mEi>       ; call C::m()
+  2f:   c9                      leave                        ;
+  30:   c3                      ret                          ;
+
+
+
+; vim: ft=asm
+

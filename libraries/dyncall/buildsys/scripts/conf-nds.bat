@@ -1,7 +1,7 @@
 @ECHO OFF
 REM ///////////////////////////////////////////////////////////////////////////
 REM
-REM Copyright (c) 2007-2009 Daniel Adler <dadler@uni-goettingen.de>, 
+REM Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
 REM                         Tassilo Philipp <tphilipp@potion-studios.com>
 REM
 REM Permission to use, copy, modify, and distribute this software for any
@@ -25,9 +25,9 @@ IF [%DEVKITPRO:~0,1%]==[%DEVKITPRO%] (
 
 REM Extract devkitPro path.
 IF [%DEVKITPRO:~0,1%]==[/] (
-	ECHO DEVKITPRO_PATH=%DEVKITPRO:~1,1%:%DEVKITPRO:~2%#>>ConfigVars
+	ECHO DEVKITPRO_PATH=%DEVKITPRO:~1,1%:%DEVKITPRO:~2%#>>Makefile.config
 ) ELSE IF [%DEVKITPRO:~1,1%]==[:] (
-	ECHO DEVKITPRO_PATH=%DEVKITPRO%#>>ConfigVars
+	ECHO DEVKITPRO_PATH=%DEVKITPRO%#>>Makefile.config
 ) ELSE (
 	GOTO END_ABORT
 )
@@ -36,6 +36,6 @@ GOTO END
 
 :END_ABORT
 ECHO ERROR: Environment variable DEVKITPRO must be set to absolute devkitPro path.
-DEL ConfigVars
+DEL Makefile.config
 
 :END

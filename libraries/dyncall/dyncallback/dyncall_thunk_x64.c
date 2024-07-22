@@ -6,7 +6,7 @@
  Description: Thunk - Implementation for x64
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -33,8 +33,8 @@ void dcbInitThunk(DCThunk* p, void (*entry)())
     .intel_syntax
 
     thunk:
-        lea   rax, (rip)  # copy RIP (=p?) to RAX and use address in
-        jmp   [rax+16]    # 'entry' (stored at RIP+16) for jump
+        lea   rax, (rip)  # copy RIP (= ptr to thunk) to RAX and use address
+        jmp   [rax+16]    # in 'entry' (stored at RIP+16) for jump
         nop
         nop
         nop

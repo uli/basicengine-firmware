@@ -187,5 +187,724 @@
  150:   e1a0d00b        mov     sp, fp
  154:   e8bd8800        pop     {fp, pc}
 
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}            ; (str fp, [sp, #-4]!)
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd014        sub     sp, sp, #20
+   c:   e50b0008        str     r0, [fp, #-8]
+  10:   e50b100c        str     r1, [fp, #-12]
+  14:   e50b2010        str     r2, [fp, #-16]
+  18:   e50b3014        str     r3, [fp, #-20]
+  1c:   e28bd000        add     sp, fp, #0
+  20:   e8bd0800        pop     {fp}
+  24:   e12fff1e        bx      lr
+
+00000028 <nonleaf_call>:
+  28:   e92d4800        push    {fp, lr}
+  2c:   e28db004        add     fp, sp, #4
+  30:   e24dd090        sub     sp, sp, #144    ; 0x90
+  34:   e50b0070        str     r0, [fp, #-112] ; 0x70
+  38:   e50b1074        str     r1, [fp, #-116] ; 0x74
+  3c:   e50b2078        str     r2, [fp, #-120] ; 0x78
+  40:   e50b307c        str     r3, [fp, #-124] ; 0x7c
+  44:   e24b2068        sub     r2, fp, #104    ; 0x68
+  48:   e3a03064        mov     r3, #100        ; 0x64
+  4c:   e1a00002        mov     r0, r2
+  50:   e3a01000        mov     r1, #0
+  54:   e1a02003        mov     r2, r3
+  58:   ebfffffe        bl      0 <memset>
+  5c:   e3a0304c        mov     r3, #76 ; 0x4c
+  60:   e54b3068        strb    r3, [fp, #-104] ; 0x68
+  64:   e1a0c00d        mov     ip, sp
+  68:   e28b300c        add     r3, fp, #12
+  6c:   e893000f        ldm     r3, {r0, r1, r2, r3}
+  70:   e88c000f        stm     ip, {r0, r1, r2, r3}
+  74:   e59b301c        ldr     r3, [fp, #28]
+  78:   e58d3010        str     r3, [sp, #16]
+  7c:   e59b3020        ldr     r3, [fp, #32]
+  80:   e58d3014        str     r3, [sp, #20]
+  84:   e51b0074        ldr     r0, [fp, #-116] ; 0x74
+  88:   e51b1078        ldr     r1, [fp, #-120] ; 0x78
+  8c:   e51b207c        ldr     r2, [fp, #-124] ; 0x7c
+  90:   e59b3004        ldr     r3, [fp, #4]
+  94:   ebfffffe        bl      0 <leaf_call>
+  98:   e24bd004        sub     sp, fp, #4
+  9c:   e8bd4800        pop     {fp, lr}
+  a0:   e12fff1e        bx      lr
+
+000000a4 <main>:
+  a4:   e92d4800        push    {fp, lr}             ;
+  a8:   e28db004        add     fp, sp, #4           ;
+  ac:   e24dd030        sub     sp, sp, #48          ;
+  b0:   e59f3058        ldr     r3, [pc, #88]        ;
+  b4:   e24bc014        sub     ip, fp, #20          ;
+  b8:   e893000f        ldm     r3, {r0, r1, r2, r3} ;
+  bc:   e88c000f        stm     ip, {r0, r1, r2, r3} ;
+  c0:   e3a03004        mov     r3, #4               ; arg 4, ...
+  c4:   e58d3000        str     r3, [sp]             ; ... pushed onto stack
+  c8:   e28dc008        add     ip, sp, #8           ; prep arg 5, write ptr ...
+  cc:   e24b3014        sub     r3, fp, #20          ; ... read ptr (local area)
+  d0:   e893000f        ldm     r3, {r0, r1, r2, r3} ; arg 5 (struct A), ...
+  d4:   e88c000f        stm     ip, {r0, r1, r2, r3} ; ... pushed onto stack (as 4 words)
+  d8:   e3a03008        mov     r3, #8               ; arg 6, ...
+  dc:   e58d3018        str     r3, [sp, #24]        ; ... pushed onto stack
+  e0:   e3a03009        mov     r3, #9               ; arg 6, ...
+  e4:   e58d301c        str     r3, [sp, #28]        ; ... pushed onto stack
+  e8:   e3a00000        mov     r0, #0               ; arg 0
+  ec:   e3a01001        mov     r1, #1               ; arg 1
+  f0:   e3a02002        mov     r2, #2               ; arg 2
+  f4:   e3a03003        mov     r3, #3               ; arg 3
+  f8:   ebfffffe        bl      28 <nonleaf_call>    ;
+  fc:   e3a03000        mov     r3, #0               ;
+ 100:   e1a00003        mov     r0, r3               ;
+ 104:   e24bd004        sub     sp, fp, #4           ;
+ 108:   e8bd4800        pop     {fp, lr}             ;
+ 10c:   e12fff1e        bx      lr                   ;
+ 110:   00000000        .word   0x00000000
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}            ; (str fp, [sp, #-4]!)
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd014        sub     sp, sp, #20
+   c:   e50b0008        str     r0, [fp, #-8]
+  10:   e24b0014        sub     r0, fp, #20
+  14:   e880000e        stm     r0, {r1, r2, r3}
+  18:   e28bd000        add     sp, fp, #0
+  1c:   e8bd0800        pop     {fp}
+  20:   e12fff1e        bx      lr
+
+00000024 <nonleaf_call>:
+  24:   e24dd008        sub     sp, sp, #8
+  28:   e92d4800        push    {fp, lr}
+  2c:   e28db004        add     fp, sp, #4
+  30:   e24dd0b0        sub     sp, sp, #176    ; 0xb0
+  34:   e50b0070        str     r0, [fp, #-112] ; 0x70
+  38:   e50b1074        str     r1, [fp, #-116] ; 0x74
+  3c:   e28b1004        add     r1, fp, #4
+  40:   e881000c        stm     r1, {r2, r3}
+  44:   e24b2068        sub     r2, fp, #104    ; 0x68
+  48:   e3a03064        mov     r3, #100        ; 0x64
+  4c:   e1a00002        mov     r0, r2
+  50:   e3a01000        mov     r1, #0
+  54:   e1a02003        mov     r2, r3
+  58:   ebfffffe        bl      0 <memset>
+  5c:   e3a0304c        mov     r3, #76 ; 0x4c
+  60:   e54b3068        strb    r3, [fp, #-104] ; 0x68
+  64:   e1a0c00d        mov     ip, sp
+  68:   e28b3014        add     r3, fp, #20
+  6c:   e893000f        ldm     r3, {r0, r1, r2, r3}
+  70:   e88c000f        stm     ip, {r0, r1, r2, r3}
+  74:   e59b3024        ldr     r3, [fp, #36]   ; 0x24
+  78:   e58d3010        str     r3, [sp, #16]
+  7c:   e59b3028        ldr     r3, [fp, #40]   ; 0x28
+  80:   e58d3014        str     r3, [sp, #20]
+  84:   e28dc018        add     ip, sp, #24
+  88:   e28b302c        add     r3, fp, #44     ; 0x2c
+  8c:   e8930007        ldm     r3, {r0, r1, r2}
+  90:   e88c0007        stm     ip, {r0, r1, r2}
+  94:   e28dc028        add     ip, sp, #40     ; 0x28
+  98:   e28b303c        add     r3, fp, #60     ; 0x3c
+  9c:   e893000f        ldm     r3, {r0, r1, r2, r3}
+  a0:   e88c000f        stm     ip, {r0, r1, r2, r3}
+  a4:   e59b304c        ldr     r3, [fp, #76]   ; 0x4c
+  a8:   e58d3038        str     r3, [sp, #56]   ; 0x38
+  ac:   e59b3050        ldr     r3, [fp, #80]   ; 0x50
+  b0:   e58d303c        str     r3, [sp, #60]   ; 0x3c
+  b4:   e51b0074        ldr     r0, [fp, #-116] ; 0x74
+  b8:   e28b3004        add     r3, fp, #4
+  bc:   e893000e        ldm     r3, {r1, r2, r3}
+  c0:   ebfffffe        bl      0 <leaf_call>
+  c4:   e24bd004        sub     sp, fp, #4
+  c8:   e8bd4800        pop     {fp, lr}
+  cc:   e28dd008        add     sp, sp, #8
+  d0:   e12fff1e        bx      lr
+
+000000d4 <main>:
+  d4:   e92d4800        push    {fp, lr}
+  d8:   e28db004        add     fp, sp, #4
+  dc:   e24dd088        sub     sp, sp, #136    ; 0x88
+  e0:   e59f20b8        ldr     r2, [pc, #184]  ; 1a0 <main+0xcc>
+  e4:   e24b3040        sub     r3, fp, #64     ; 0x40
+  e8:   e8920007        ldm     r2, {r0, r1, r2}
+  ec:   e8830007        stm     r3, {r0, r1, r2}
+  f0:   e59f30ac        ldr     r3, [pc, #172]  ; 1a4 <main+0xd0>
+  f4:   e24bc034        sub     ip, fp, #52     ; 0x34
+  f8:   e893000f        ldm     r3, {r0, r1, r2, r3}
+  fc:   e88c000f        stm     ip, {r0, r1, r2, r3}
+ 100:   e59f20a0        ldr     r2, [pc, #160]  ; 1a8 <main+0xd4>
+ 104:   e24b3020        sub     r3, fp, #32
+ 108:   e8920007        ldm     r2, {r0, r1, r2}
+ 10c:   e8830007        stm     r3, {r0, r1, r2}
+ 110:   e59f3094        ldr     r3, [pc, #148]  ; 1ac <main+0xd8>
+ 114:   e24bc014        sub     ip, fp, #20
+ 118:   e893000f        ldm     r3, {r0, r1, r2, r3}
+ 11c:   e88c000f        stm     ip, {r0, r1, r2, r3}
+ 120:   e28dc008        add     ip, sp, #8
+ 124:   e24b3034        sub     r3, fp, #52     ; 0x34
+ 128:   e893000f        ldm     r3, {r0, r1, r2, r3}
+ 12c:   e88c000f        stm     ip, {r0, r1, r2, r3}
+ 130:   e3a03007        mov     r3, #7
+ 134:   e58d3018        str     r3, [sp, #24]
+ 138:   e3a03008        mov     r3, #8
+ 13c:   e58d301c        str     r3, [sp, #28]
+ 140:   e28dc020        add     ip, sp, #32
+ 144:   e24b3020        sub     r3, fp, #32
+ 148:   e8930007        ldm     r3, {r0, r1, r2}
+ 14c:   e88c0007        stm     ip, {r0, r1, r2}
+ 150:   e28dc030        add     ip, sp, #48     ; 0x30
+ 154:   e24b3014        sub     r3, fp, #20
+ 158:   e893000f        ldm     r3, {r0, r1, r2, r3}
+ 15c:   e88c000f        stm     ip, {r0, r1, r2, r3}
+ 160:   e3a0300e        mov     r3, #14
+ 164:   e58d3040        str     r3, [sp, #64]   ; 0x40
+ 168:   e3a0300f        mov     r3, #15
+ 16c:   e58d3044        str     r3, [sp, #68]   ; 0x44
+ 170:   e51b3038        ldr     r3, [fp, #-56]  ; 0x38
+ 174:   e58d3000        str     r3, [sp]
+ 178:   e24b3040        sub     r3, fp, #64     ; 0x40
+ 17c:   e893000c        ldm     r3, {r2, r3}
+ 180:   e3a00000        mov     r0, #0
+ 184:   e3a01001        mov     r1, #1
+ 188:   ebfffffe        bl      24 <nonleaf_call>
+ 18c:   e3a03000        mov     r3, #0
+ 190:   e1a00003        mov     r0, r3
+ 194:   e24bd004        sub     sp, fp, #4
+ 198:   e8bd4800        pop     {fp, lr}
+ 19c:   e12fff1e        bx      lr
+ 1a0:   00000000        .word   0x00000000
+ 1a4:   00000010        .word   0x00000010
+ 1a8:   00000020        .word   0x00000020
+ 1ac:   00000030        .word   0x00000030
+
+
+
+; ---------- returning long long ---------->
+;
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <f>:
+   0:   e92d0810        push    {r4, fp}   ;
+   4:   e28db004        add     fp, sp, #4 ;
+   8:   e3a03b07        mov     r3, #7168  ;
+   c:   e2833003        add     r3, r3, #3 ;
+  10:   e3a04000        mov     r4, #0     ;
+  14:   e1a00003        mov     r0, r3     ; | retval in two regs
+  18:   e1a01004        mov     r1, r4     ; |
+  1c:   e24bd004        sub     sp, fp, #4 ;
+  20:   e8bd0810        pop     {r4, fp}   ;
+  24:   e12fff1e        bx      lr         ;
+
+00000028 <main>:
+  28:   e92d4830        push    {r4, r5, fp, lr}
+  2c:   e28db00c        add     fp, sp, #12
+  30:   ebfffffe        bl      0 <f>
+  34:   e1a03000        mov     r3, r0
+  38:   e1a04001        mov     r4, r1
+  3c:   e1a00003        mov     r0, r3
+  40:   e24bd00c        sub     sp, fp, #12
+  44:   e8bd4830        pop     {r4, r5, fp, lr}
+  48:   e12fff1e        bx      lr
+
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <leaf_call>:
+   0:   e24dd008        sub     sp, sp, #8
+   4:   e52db004        push    {fp}            ; (str fp, [sp, #-4]!)
+   8:   e28db000        add     fp, sp, #0
+   c:   e24dd014        sub     sp, sp, #20
+  10:   e50b0008        str     r0, [fp, #-8]
+  14:   e24b0010        sub     r0, fp, #16
+  18:   e8800006        stm     r0, {r1, r2}
+  1c:   e58b3008        str     r3, [fp, #8]
+  20:   e28bd000        add     sp, fp, #0
+  24:   e8bd0800        pop     {fp}
+  28:   e28dd008        add     sp, sp, #8
+  2c:   e12fff1e        bx      lr
+
+00000030 <main>:
+  30:   e92d4810        push    {r4, fp, lr}          ;
+  34:   e28db008        add     fp, sp, #8            ;
+  38:   e24dd084        sub     sp, sp, #132          ;
+  3c:   e59f30d0        ldr     r3, [pc, #208]        ;
+  40:   e50b3054        str     r3, [fp, #-84]        ;
+  44:   e59f20cc        ldr     r2, [pc, #204]        ;
+  48:   e24b3050        sub     r3, fp, #80           ;
+  4c:   e8920003        ldm     r2, {r0, r1}          ;
+  50:   e8830003        stm     r3, {r0, r1}          ;
+  54:   e59f20c0        ldr     r2, [pc, #192]        ;
+  58:   e24b3048        sub     r3, fp, #72           ;
+  5c:   e8920007        ldm     r2, {r0, r1, r2}      ;
+  60:   e8830007        stm     r3, {r0, r1, r2}      ;
+  64:   e3a03000        mov     r3, #0                ;
+  68:   e3a045ff        mov     r4, #1069547520       ;
+  6c:   e2844603        add     r4, r4, #3145728      ;
+  70:   e50b303c        str     r3, [fp, #-60]        ;
+  74:   e50b4038        str     r4, [fp, #-56]        ;
+  78:   e59f30a0        ldr     r3, [pc, #160]        ;
+  7c:   e24bc034        sub     ip, fp, #52           ;
+  80:   e893000f        ldm     r3, {r0, r1, r2, r3}  ;
+  84:   e88c000f        stm     ip, {r0, r1, r2, r3}  ;
+  88:   e59f3094        ldr     r3, [pc, #148]        ;
+  8c:   e24bc024        sub     ip, fp, #36           ;
+  90:   e1a0e003        mov     lr, r3                ;
+  94:   e8be000f        ldm     lr!, {r0, r1, r2, r3} ;
+  98:   e8ac000f        stmia   ip!, {r0, r1, r2, r3} ;
+  9c:   e89e0003        ldm     lr, {r0, r1}          ;
+  a0:   e88c0003        stm     ip, {r0, r1}          ;
+  a4:   e24b403c        sub     r4, fp, #60           ;
+  a8:   e8940018        ldm     r4, {r3, r4}          ;
+  ac:   e58d3008        str     r3, [sp, #8]          ;
+  b0:   e58d400c        str     r4, [sp, #12]         ;
+  b4:   e28dc010        add     ip, sp, #16           ;
+  b8:   e24b3034        sub     r3, fp, #52           ;
+  bc:   e893000f        ldm     r3, {r0, r1, r2, r3}  ;
+  c0:   e88c000f        stm     ip, {r0, r1, r2, r3}  ;
+  c4:   e28de020        add     lr, sp, #32           ;
+  c8:   e24bc024        sub     ip, fp, #36           ;
+  cc:   e8bc000f        ldm     ip!, {r0, r1, r2, r3} ;
+  d0:   e8ae000f        stmia   lr!, {r0, r1, r2, r3} ;
+  d4:   e89c0003        ldm     ip, {r0, r1}          ;
+  d8:   e88e0003        stm     lr, {r0, r1}          ;
+  dc:   e1a0300d        mov     r3, sp                ; |              write ptr
+  e0:   e24b2044        sub     r2, fp, #68           ; |              read ptr
+  e4:   e8920003        ldm     r2, {r0, r1}          ; | arg 3 (struct C), split via  |
+  e8:   e8830003        stm     r3, {r0, r1}          ; |                              | stack    b & c
+  ec:   e51b3048        ldr     r3, [fp, #-72]        ; |                              reg        a
+  f0:   e51b0054        ldr     r0, [fp, #-84]        ; arg 0 (struct A), via reg as word         a
+  f4:   e24b2050        sub     r2, fp, #80           ; |
+  f8:   e8920006        ldm     r2, {r1, r2}          ; | arg 1 (struct B), via reg as 2 words    a & b
+  fc:   ebfffffe        bl      0 <leaf_call>         ;
+ 100:   e3a03000        mov     r3, #0                ;
+ 104:   e1a00003        mov     r0, r3                ;
+ 108:   e24bd008        sub     sp, fp, #8            ;
+ 10c:   e8bd4810        pop     {r4, fp, lr}          ;
+ 110:   e12fff1e        bx      lr                    ;
+ 114:   3f800000        .word   0x3f800000
+ 118:   00000000        .word   0x00000000
+ 11c:   00000008        .word   0x00000008
+ 120:   00000018        .word   0x00000018
+ 124:   00000028        .word   0x00000028
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i; long j; }; /* bigger than a word */
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 232 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + s.x;
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <f0>:
+   0:   e52db004        push    {fp}                 ;
+   4:   e28db000        add     fp, sp, #0           ;
+   8:   e24dd00c        sub     sp, sp, #12          ;
+   c:   e3e0307b        mvn     r3, #123             ;
+  10:   e54b3008        strb    r3, [fp, #-8]        ;
+  14:   e55b3008        ldrb    r3, [fp, #-8]        ;
+  18:   e1a00003        mov     r0, r3               ; return value (via reg as <= 4b)
+  1c:   e28bd000        add     sp, fp, #0           ;
+  20:   e8bd0800        pop     {fp}                 ;
+  24:   e12fff1e        bx      lr                   ;
+
+00000028 <f1>:
+  28:   e92d0810        push    {r4, fp}             ;
+  2c:   e28db004        add     fp, sp, #4           ;
+  30:   e24dd010        sub     sp, sp, #16          ;
+  34:   e1a0c000        mov     ip, r0               ; ptr to retval space, tmp copy
+  38:   e59f3028        ldr     r3, [pc, #40]        ;
+  3c:   e24b4014        sub     r4, fp, #20          ;
+  40:   e893000f        ldm     r3, {r0, r1, r2, r3} ;
+  44:   e884000f        stm     r4, {r0, r1, r2, r3} ;
+  48:   e1a0400c        mov     r4, ip               ; write ptr
+  4c:   e24b3014        sub     r3, fp, #20          ; read ptr
+  50:   e893000f        ldm     r3, {r0, r1, r2, r3} ; |
+  54:   e884000f        stm     r4, {r0, r1, r2, r3} ; | copy struct from local area to retval space
+  58:   e1a0000c        mov     r0, ip               ; return value: ptr to retval space
+  5c:   e24bd004        sub     sp, fp, #4           ;
+  60:   e8bd0810        pop     {r4, fp}             ;
+  64:   e12fff1e        bx      lr                   ;
+  68:   00000000        .word   0x00000000
+
+0000006c <main>:
+  6c:   e92d4800        push    {fp, lr}
+  70:   e28db004        add     fp, sp, #4
+  74:   e24dd018        sub     sp, sp, #24
+  78:   ebfffffe        bl      0 <f0>
+  7c:   e1a03000        mov     r3, r0
+  80:   e54b3008        strb    r3, [fp, #-8]
+  84:   e24b301c        sub     r3, fp, #28
+  88:   e1a00003        mov     r0, r3
+  8c:   ebfffffe        bl      28 <f1>
+  90:   e51b2014        ldr     r2, [fp, #-20]
+  94:   e55b3008        ldrb    r3, [fp, #-8]
+  98:   e0823003        add     r3, r2, r3
+  9c:   e1a00003        mov     r0, r3
+  a0:   e24bd004        sub     sp, fp, #4
+  a4:   e8bd4800        pop     {fp, lr}
+  a8:   e12fff1e        bx      lr
+
+
+
+; ---------- single-field structs by values (and small array fields) ---------->
+;
+; struct C { char c; };
+; struct S { short s; };
+; struct I { int i; };
+; struct F { float f; };
+; struct D { double d; };
+;
+; struct C2 { char c[2]; };
+; struct C3 { char c[3]; };
+;
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <leaf_call>:
+   0:   e52db004        push    {fp}            ; (str fp, [sp, #-4]!)
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd014        sub     sp, sp, #20
+   c:   e14b00b8        strh    r0, [fp, #-8]
+  10:   e54b100c        strb    r1, [fp, #-12]
+  14:   e14b21b0        strh    r2, [fp, #-16]
+  18:   e50b3014        str     r3, [fp, #-20]
+  1c:   e28bd000        add     sp, fp, #0
+  20:   e8bd0800        pop     {fp}
+  24:   e12fff1e        bx      lr
+
+00000028 <main>:
+  28:   e92d4810        push    {r4, fp, lr}     ;
+  2c:   e28db008        add     fp, sp, #8       ;
+  30:   e24dd044        sub     sp, sp, #68      ;
+  34:   e3a03000        mov     r3, #0           ;
+  38:   e54b3030        strb    r3, [fp, #-48]   ;
+  3c:   e3a03001        mov     r3, #1           ;
+  40:   e54b302f        strb    r3, [fp, #-47]   ;
+  44:   e3a03002        mov     r3, #2           ;
+  48:   e54b302c        strb    r3, [fp, #-44]   ;
+  4c:   e3a03003        mov     r3, #3           ;
+  50:   e14b32b8        strh    r3, [fp, #-40]   ;
+  54:   e3a03004        mov     r3, #4           ;
+  58:   e50b3024        str     r3, [fp, #-36]   ;
+  5c:   e59f308c        ldr     r3, [pc, #140]   ;
+  60:   e50b3020        str     r3, [fp, #-32]   ;
+  64:   e3a03000        mov     r3, #0           ;
+  68:   e3a04101        mov     r4, #1073741824  ;
+  6c:   e2844706        add     r4, r4, #1572864 ;
+  70:   e50b301c        str     r3, [fp, #-28]   ;
+  74:   e50b4018        str     r4, [fp, #-24]   ;
+  78:   e59f2074        ldr     r2, [pc, #116]   ;
+  7c:   e24b3010        sub     r3, fp, #16      ;
+  80:   e5922000        ldr     r2, [r2]         ;
+  84:   e1c320b0        strh    r2, [r3]         ;
+  88:   e2833002        add     r3, r3, #2       ;
+  8c:   e1a02822        lsr     r2, r2, #16      ;
+  90:   e5c32000        strb    r2, [r3]         ;
+  94:   e51b3020        ldr     r3, [fp, #-32]   ; |
+  98:   e58d3000        str     r3, [sp]         ; | arg 4 (struct F), via stack as word
+  9c:   e24b401c        sub     r4, fp, #28      ;
+  a0:   e8940018        ldm     r4, {r3, r4}     ;
+  a4:   e58d3008        str     r3, [sp, #8]     ; |
+  a8:   e58d400c        str     r4, [sp, #12]    ; | arg 5 (struct D), via stack as 2 words (aligned to 8, b/c double?)
+  ac:   e28d3010        add     r3, sp, #16      ;
+  b0:   e24b2010        sub     r2, fp, #16      ;
+  b4:   e5922000        ldr     r2, [r2]         ; |
+  b8:   e1c320b0        strh    r2, [r3]         ; |
+  bc:   e2833002        add     r3, r3, #2       ; | arg 6 (struct C3), via stack as 3 bytes in word slot
+  c0:   e1a02822        lsr     r2, r2, #16      ; |
+  c4:   e5c32000        strb    r2, [r3]         ; |
+  c8:   e51b0030        ldr     r0, [fp, #-48]   ; arg 0 (struct C2), via reg as word
+  cc:   e55b102c        ldrb    r1, [fp, #-44]   ; arg 1 (struct C), via reg as word
+  d0:   e15b22b8        ldrh    r2, [fp, #-40]   ; arg 2 (struct S), via reg as word
+  d4:   e51b3024        ldr     r3, [fp, #-36]   ; arg 3 (struct I), via reg as word
+  d8:   ebfffffe        bl      0 <leaf_call>    ;
+  dc:   e3a03000        mov     r3, #0           ;
+  e0:   e1a00003        mov     r0, r3           ;
+  e4:   e24bd008        sub     sp, fp, #8       ;
+  e8:   e8bd4810        pop     {r4, fp, lr}     ;
+  ec:   e12fff1e        bx      lr               ;
+  f0:   40a00000        .word   0x40a00000
+  f4:   00000000        .word   0x00000000
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <f1>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e24dd00c        sub     sp, sp, #12
+   c:   e50b0008        str     r0, [fp, #-8]
+  10:   e28bd000        add     sp, fp, #0
+  14:   e8bd0800        pop     {fp}
+  18:   e12fff1e        bx      lr
+
+0000001c <f2>:
+  1c:   e52db004        push    {fp}
+  20:   e28db000        add     fp, sp, #0
+  24:   e24dd00c        sub     sp, sp, #12
+  28:   e50b0008        str     r0, [fp, #-8]
+  2c:   e28bd000        add     sp, fp, #0
+  30:   e8bd0800        pop     {fp}
+  34:   e12fff1e        bx      lr
+
+00000038 <f>:
+  38:   e92d4800        push    {fp, lr}                   ; |
+  3c:   e28db004        add     fp, sp, #4                 ; | prolog
+  40:   e24dd010        sub     sp, sp, #16                ; /
+  44:   e24b3014        sub     r3, fp, #20                ; \
+  48:   e1a00003        mov     r0, r3                     ; | this ptr (ptr to n's (NonTrivial) space)
+  4c:   ebfffffe        bl      0 <_ZN10NonTrivialC1Ev>    ; | NonTrivial::NonTrivial() / ctor
+  50:   e3a03001        mov     r3, #1                     ; a = 1
+  54:   e50b3008        str     r3, [fp, #-8]              ; |
+  58:   e51b3008        ldr     r3, [fp, #-8]              ; | a += 123
+  5c:   e283307b        add     r3, r3, #123               ; |
+  60:   e50b3008        str     r3, [fp, #-8]              ; |
+  64:   e51b0010        ldr     r0, [fp, #-16]             ; f1 arg 0 (struct Trivial), via reg as small struct
+  68:   ebfffffe        bl      0 <f1>                     ; call f1(struct Trivial)
+  6c:   e51b3008        ldr     r3, [fp, #-8]              ; |
+  70:   e243307b        sub     r3, r3, #123               ; | a -= 123
+  74:   e50b3008        str     r3, [fp, #-8]              ; /
+  78:   e24b200c        sub     r2, fp, #12                ; \
+  7c:   e24b3014        sub     r3, fp, #20                ; |
+  80:   e1a00002        mov     r0, r2                     ; |               ptr to dest of copy of n
+  84:   e1a01003        mov     r1, r3                     ; | copy n        ptr to n
+  88:   ebfffffe        bl      0 <_ZN10NonTrivialC1ERKS_> ; /               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+  8c:   e24b300c        sub     r3, fp, #12                ; \
+  90:   e1a00003        mov     r0, r3                     ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+  94:   ebfffffe        bl      1c <f2>                    ; call f2(struct NonTrivial)
+  98:   e51b3008        ldr     r3, [fp, #-8]              ; |
+  9c:   e243300c        sub     r3, r3, #12                ; | a -= 12
+  a0:   e50b3008        str     r3, [fp, #-8]              ; /
+  a4:   e24bd004        sub     sp, fp, #4                 ; \
+  a8:   e8bd4800        pop     {fp, lr}                   ; | epilog
+  ac:   e12fff1e        bx      lr                         ; |
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from debian-6.0.8-armel w/ gcc 4.4.5
+
+00000000 <f1>:
+   0:   e52db004        push    {fp}
+   4:   e28db000        add     fp, sp, #0
+   8:   e3a03000        mov     r3, #0
+   c:   e1a00003        mov     r0, r3
+  10:   e28bd000        add     sp, fp, #0
+  14:   e8bd0800        pop     {fp}
+  18:   e12fff1e        bx      lr
+
+0000001c <_Z2f2v>:
+  1c:   e92d4830        push    {r4, r5, fp, lr}
+  20:   e28db00c        add     fp, sp, #12
+  24:   e1a04000        mov     r4, r0
+  28:   e1a03004        mov     r3, r4
+  2c:   e1a00003        mov     r0, r3
+  30:   ebfffffe        bl      0              ; ctor
+  34:   e1a00004        mov     r0, r4         ; ptr to retval space -> r0
+  38:   e1a00004        mov     r0, r4
+  3c:   e24bd00c        sub     sp, fp, #12
+  40:   e8bd4830        pop     {r4, r5, fp, lr}
+  44:   e12fff1e        bx      lr
+
+00000048 <f>:
+  48:   e92d4800        push    {fp, lr}       ;
+  4c:   e28db004        add     fp, sp, #4     ;
+  50:   e24dd010        sub     sp, sp, #16    ;
+  54:   e3a03001        mov     r3, #1         ;
+  58:   e50b3008        str     r3, [fp, #-8]  ;
+  5c:   e51b3008        ldr     r3, [fp, #-8]  ;
+  60:   e283307b        add     r3, r3, #123   ;
+  64:   e50b3008        str     r3, [fp, #-8]  ;
+  68:   ebfffffe        bl      0 <f1>         ; call f1()
+  6c:   e1a03000        mov     r3, r0         ; retval via r0, as small struct
+  70:   e50b300c        str     r3, [fp, #-12] ;
+  74:   e51b3008        ldr     r3, [fp, #-8]  ;
+  78:   e243307b        sub     r3, r3, #123   ;
+  7c:   e50b3008        str     r3, [fp, #-8]  ;
+  80:   e24b3010        sub     r3, fp, #16    ; space to hold non-triv retval -> eax ...
+  84:   e1a00003        mov     r0, r3         ; ... as hidden first arg (r0)
+  88:   ebfffffe        bl      1c <_Z2f2v>    ; call f2()
+  8c:   e51b3008        ldr     r3, [fp, #-8]  ;
+  90:   e243300c        sub     r3, r3, #12    ;
+  94:   e50b3008        str     r3, [fp, #-8]  ;
+  98:   e24bd004        sub     sp, fp, #4     ;
+  9c:   e8bd4800        pop     {fp, lr}       ;
+  a0:   e12fff1e        bx      lr             ;
+
+
+
 ; vim: ft=asm68k
 

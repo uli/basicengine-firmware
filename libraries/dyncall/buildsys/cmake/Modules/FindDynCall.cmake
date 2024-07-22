@@ -9,8 +9,8 @@
 # ----------------------------------------------------------------------------
 #
 # Package: dyncall
-# File: buildsys/cmake/Modules/CMakeLists.txt
-# Description: CMake Module to find DynCall library
+# File: buildsys/cmake/Modules/FindDynCall.txt
+# Description: CMake Module to find dyncall library
 # License:
 #
 # Copyright (c) 2010,2011 Daniel Adler <dadler@uni-goettingen.de>

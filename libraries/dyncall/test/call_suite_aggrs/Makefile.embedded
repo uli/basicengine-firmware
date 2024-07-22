@@ -1,0 +1,32 @@
+TARGET	= call_suite_aggrs ${OBJS} 
+OBJS	= globals.o cases.o main.o
+
+SRCDIR 	= ../..
+BLDDIR 	= ${SRCDIR}
+LUA	= lua
+
+CFLAGS	+= -I${SRCDIR}/dyncall
+LDFLAGS	+= -L${BLDDIR}/dyncall
+LDLIBS	+= -ldyncall_s
+
+.PHONY: all clean config config-random
+
+all: ${TARGET}
+call_suite_aggrs: ${OBJS}
+	${CC} ${CFLAGS} ${LDFLAGS} ${OBJS} ${LDLIBS} -o $@
+config:
+	${LUA} mk-cases.lua <design.txt >cases.h
+config-random: 
+	# need two versions for platforms allowing empty aggregates (non-standard) or not
+	# nonemptyaggrs.txt version differs only if config.lua's minaggrfields=0
+	cp config.lua config.lua.cases
+	sed -e '/minaggrfields[[:space:]]*=[[:space:]]*0/s/=.*/=1/;t' -e d config.lua.cases >> config.lua
+	${LUA} rand-sig.lua >nonemptyaggrs.txt
+	mv config.lua.cases config.lua
+	${LUA} rand-sig.lua >cases.txt
+	${LUA} mk-cases.lua <nonemptyaggrs.txt >nonemptyaggrs.h
+	${LUA} mk-cases.lua <cases.txt >cases.h
+cases.o: cases.h 
+clean:
+	rm -f ${TARGET}
+

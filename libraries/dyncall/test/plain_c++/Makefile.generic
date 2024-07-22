@@ -1,9 +1,9 @@
-APP       = plain_c++
+APP       = plain_c++${APP_SUFFIX}
 OBJS      = test_main.o
 SRCTOP    = ${VPATH}/../..
 BLDTOP    = ../..
 CXXFLAGS += -I${SRCTOP}/dyncall
-LDLIBS   += -L${BLDTOP}/dyncall -ldyncall_s 
+LDLIBS   += -L${BLDTOP}/dyncall -ldyncall_s  -L${BLDTOP}/dyncallback -ldyncallback_s
 .PHONY: all clean install
 all: ${APP}
 ${APP}: ${OBJS} 

@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Implementation for sparc32 - not yet
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2024 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -24,7 +24,12 @@
 */
 
 
-#include "dyncall_args_sparc32.h"
+#include "dyncall_args.h"
+
+struct DCArgs
+{
+  int *arg_ptr;
+};
 
 /* Compiler aligns this to 8-byte boundaries, b/c of dword members, a fact needed below */
 typedef union {
@@ -65,4 +70,7 @@ DCbool      dcbArgBool     (DCArgs* p) { return (DCbool)    dcbArgUInt(p); }
 DCpointer   dcbArgPointer  (DCArgs* p) { return (DCpointer) dcbArgUInt(p); }
 
 DCfloat     dcbArgFloat    (DCArgs* p) { return *(DCfloat*) sparc_word(p); }
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 
