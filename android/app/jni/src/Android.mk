@@ -26,6 +26,13 @@ LOCAL_SRC_FILES := \
 	libraries/TTVoutfonts/fonts.cpp \
 	libraries/TTVoutfonts/hp100lx_8x8.cpp \
 	libraries/alpha-lib/src/overlay_alpha.cpp \
+	libraries/dyncall/dyncall/dyncall_vector.c \
+	libraries/dyncall/dyncall/dyncall_api.c \
+	libraries/dyncall/dyncall/dyncall_callvm.c \
+	libraries/dyncall/dyncall/dyncall_callvm_base.c \
+	libraries/dyncall/dyncall/dyncall_call.S \
+	libraries/dyncall/dyncall/dyncall_callf.c \
+	libraries/dyncall/dyncall/dyncall_aggregate.c \
 	libraries/stb/miniz.c \
 	libraries/stb/stb_image.c \
 	libraries/stb/stb_image_resize.c \
@@ -97,7 +104,8 @@ LOCAL_CFLAGS += -DSDL -DANDROID -Ijni/src/ttbasic -Ijni/src/sdl \
 	-Ijni/src/libraries/stb -Ijni/src/libraries/TTBAS_LIB \
 	-Ijni/src/libraries/TTVoutfonts \
 	-Ijni/src/libraries/alpha-lib/include \
-	-Ijni/src/gfx -Ijni/src/libraries/tinycc
+	-Ijni/src/gfx -Ijni/src/libraries/tinycc \
+	-Ijni/src/libraries/dyncall/dyncall
 
 #LOCAL_CXXFLAGS += -DSDL -Ijni/src/sdl
 
