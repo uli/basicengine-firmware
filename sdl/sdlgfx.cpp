@@ -456,6 +456,11 @@ void SDLGFX::createWindow()
     SDL_SetWindowKeyboardGrab(sdl_window, SDL_TRUE);
 
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_PRESENTVSYNC);
+
+  // This activates the OSK on Android.
+  // (On desktop platforms this is called implicitly anyway, so no need to
+  // special case it.)
+  SDL_StartTextInput();
 }
 
 void SDLGFX::destroyWindow()
