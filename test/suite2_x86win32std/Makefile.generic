@@ -1,4 +1,4 @@
-APP = suite2_x86win32std
+APP = suite2_x86win32std${APP_SUFFIX}
 OBJS = case.o main.o
 
 TOP     = ../..

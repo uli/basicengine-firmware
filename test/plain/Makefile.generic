@@ -1,5 +1,5 @@
-APP     = plain
-OBJS    = test_main.o test_structs.o
+APP     = plain${APP_SUFFIX}
+OBJS    = test_main.o test_aggrs.o
 SRCTOP  = ${VPATH}/../..
 BLDTOP  = ../..
 CFLAGS += -I${SRCTOP}/dyncall

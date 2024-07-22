@@ -1,27 +1,15 @@
-1.2:
+1.5:
 ----
 - test atpcs thumb on arm and verify if ellipsis and C++ thiscalls work, if so adapt doc appendix
 - test eabi thumb on arm and verify if ellipsis and C++ thiscalls work, if so adapt doc appendix
 - new platform matrix
   * check dark green cells and validate in general
-- openbsd-4.0-* test/resolve_self fails, but unsure why. dlopen correctly returns RTLD_DEFAULT, which
-  should lookup via dlsym the function in the object itself, but cannot. So... some compiler flag might
-  be missing to keep symbol names, or some prefixing happens
 - test/thunk win/x64 doesn't output anything decent for stack test (neither sigsegv nor output), which can create a problem for test log file as it'll mess with the subsequent test's output)
 - remove test/gen-masm alltogether
 - test code: add sparc tests for when out of register windows, meaning multiple layers deep in the call stack
-- ./configure on macOS does not pass CFLAGS etc.. to Makefile.config
 - support platforms without shared libraries so they can be built by just typing `./configure;make` (e.g. minix < 3.2.1)
   * also make sure minix with shared library support builds and works in general (>= 3.2.1) as well as ELF on Minix (>= 3.2.0) to begin with (as that's the base, and we only test on 3.1.8 so far)
-- dyncall supports calls to functions where prototype exists (with and without varargs); however not when no
-  prototype exist (e.g. just calling some pointer), without any declaration... even possible in C, as one has
-  to cast to the function type? need to support?
-
-- dyncall sparc v7/v8: -xO3 on SunPro segfaults in tests (observed years ago)
-
 - dyncallback's "stack_cleanup" can be removed from non x86 impls... test if they still work
-- target a minimum c version, for use with -pedantic, etc.? Right now we use e.g. extensions
-  for anon structs, etc. -> we do now target c99
 - the CallVM-free functions are per VTable, however the latter can be changed out
   at runtime... which basically changes potentially the deallocator...
   same goes for functions setting the mode. think about how to make this safer - currently
@@ -37,7 +25,6 @@
   removed out of sync files to avoid confusion; but still probably duped code)
 - add portable "make install"
   * make install should also install manpages
-- mailing list announcements (html email?)
 - fix for NDS:
   * ARM:
     - callback_plain retval wrong (not only platform), area on stack where
@@ -50,10 +37,8 @@
 - make sure selinux works (esp. regarding NX bits)
   Daniel has a patch for it, if needed, implementing allocwx with two memory blocks, one for w^x, mmaped to one for r|x
 - support /SAFESEH on cl/win32
-- test code functions should be in .so files, optionally, so the suites can directly
-  be used to test dycnall bindings
+- test code functions should be in .so files, optionally, so the suites can directly be used to test dyncall bindings
 - pkg-config support?
-- quadmath support (long double)
 - add tests using alloca(), as this might depend on the frame pointer being correctly set (we don't
   check for this, currently, at all - but might not affect dyncall's stubs, anyways) - verify
 
@@ -63,6 +48,7 @@ portasm:
 
 dyncall:
 --------
+- dyncall sparc v7/v8: -xO3 on SunPro segfaults in tests (observed years ago)
 - callbacks and use of CC signature characters (only x86 has any support for different CCs for callbacks):
   * support for arm (arm/thumb on same platform)
   * check if ellipsis support is needed (is there any need for calling back into an ellipse function?)
@@ -74,12 +60,11 @@ dyncall:
 - find big endian arm box (also hardfloat), e.g. cubietruck: http://blog.netbsd.org/tnf/entry/working_arm_multiprocessor_support
 - test if armhf/thumb is actually working... pulls in arm mode code in dyncall_callvm.c
 - dyncall_call_mips_n32.h and dyncall_call_mips_n64.h are pretty much the same, share code
-- support for return values: aggregate return values
-- support for argument values: structures, half-precision, vector types, long double
+- support for return values: aggregate return values on non-x64
+- support for argument values: aggregates on non-x64, vector types, long double (c89)
   * make sure that struct support for ellipsis calls are not forgotten (copy everything by value)
-- consider automatic type-promotion for arguments passed through DC_CALL_C_ELLIPSIS_VARARGS;
-  this would make it easier to just pass arguments instead of having to know about the C
-  type promotions (this is partly done, see todo-item above under 1.1)
+- support for argument values: _Complex (c99)
+- support for argument values: Fixed-width integer types (c99) - could be just aliases but would help abstracting it away from library users
 - other syscalls
 - test MIPS32 eabi big endian (current port works on psp, which is little endian)
 - implement MIPS64 N32 (gcc -mabi=n32); both, little and big-endian (looks like NetNBSD on and
@@ -143,7 +128,7 @@ bindings:
 - add godoc for godc
 - add javadoc to java
 - add more bindings
-- add callback support for erlang, go, java, lua, python and ruby (and shell? how?)
+- add callback support for erlang, go, java, lua and ruby (and shell? how?)
 - add call-conv-mode-support for rbdc through signature
 
 manual:
@@ -162,12 +147,8 @@ manual:
 
 regressions:
 ------------
-- Haiku/gmake build doesn't build dynload due to the fact, that elf.h is not found
-  on default installations (one has to install the system headers)
-  * add to doc
 - Solaris/gmake build doesn't build dynload and tests anymore (maybe not even dyncallback)
 - look over code and fix TODO or @@@ marks
-- add ppc-support to doc (both, 32 and 64, as well as little and big endian remarks)
 
 nice to have:
 -------------
@@ -187,12 +168,10 @@ bugs:
 - setting callconv, specifically for platforms that have only one (default)) excepts on some
   platforms, eg. setting X64_sysv on amd64/Linux - keeping cdecl which is the same in
   this case, works (this should work now...)
-- vararg function calls don't work for ARM THUMB mode (Daniel's new interface for modesetting for varag
-  args should be used); adapt test/ellipsis and/or retest
 
-missing implementations (descending priority):
-----------------------------------------------
-- riscv
+missing nice-to-have implementations (descending priority):
+-----------------------------------------------------------
+- riscv32 and riscv128
 - itanium
 - superh/j-core
 - 68k, 88k, 6502, etc.

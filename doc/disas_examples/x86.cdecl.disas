@@ -1,16 +1,16 @@
 ; #include <stdlib.h>
-; 
+;
 ; void leaf_call(int b, int c, int d, int e, int f, int g, int h)
 ; {
 ; }
-; 
+;
 ; void nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
 ; {
 ; 	/* use some local data */
 ; 	*(char*)alloca(220) = 'L';
 ; 	leaf_call(b, c, d, e, f, g, h);
 ; }
-; 
+;
 ; int main()
 ; {
 ; 	nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
@@ -484,7 +484,365 @@ _main:
 
 
 
-; @@@ windows missing
+; output from godbolt compiler explorer w/ msvc 19.0
+
+_leaf_call PROC
+        push    ebp
+        mov     ebp, esp
+        pop     ebp
+        ret     0
+_leaf_call ENDP
+
+_b$ = 12
+_c$ = 16
+_d$ = 20
+_e$ = 24
+_f$ = 28
+_g$ = 32
+_h$ = 36
+_nonleaf_call PROC
+        push    ebp
+        mov     ebp, esp
+        push    220
+        call    _alloca
+        add     esp, 4
+        mov     BYTE PTR [eax], 76
+        mov     eax, DWORD PTR _h$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _g$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _f$[ebp]
+        push    edx
+        mov     eax, DWORD PTR _e$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _d$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _c$[ebp]
+        push    edx
+        mov     eax, DWORD PTR _b$[ebp]
+        push    eax
+        call    _leaf_call
+        add     esp, 28
+        pop     ebp
+        ret     0
+_nonleaf_call ENDP
+
+_main   PROC
+        push    ebp
+        mov     ebp, esp
+        push    7
+        push    6
+        push    5
+        push    4
+        push    3
+        push    2
+        push    1
+        push    0
+        call    _nonleaf_call
+        add     esp, 32
+        xor     eax, eax
+        pop     ebp
+        ret     0
+_main   ENDP
+
+
+
+; ---------- structs by value, struct in first call on reg arg boundary ---------->
+;
+; struct A { int x; short y; char z; long long t; };
+;
+; struct A leaf_call(struct A a, short b, long long c, char d, int e, int f, int g, long long h)
+; {
+; 	a.x += 1;
+; 	return a;
+; }
+;
+; int main()
+; {
+; 	struct A a = {9, 99, 23, 12LL};
+; 	leaf_call(a, 1, 2, 3, 4, 5, 6, 7LL);
+; 	return 0;
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.0
+
+$T1 = 8
+_a$ = 12
+_leaf_call PROC
+        push    ebp                        ; | prolog
+        mov     ebp, esp                   ; /
+        mov     eax, DWORD PTR _a$[ebp]    ; \
+        add     eax, 1                     ; |  get struct's x (from stack args), add 1 and write back
+        mov     DWORD PTR _a$[ebp], eax    ; /
+        mov     ecx, DWORD PTR $T1[ebp]    ; get ptr to retval struct passed as hidden arg (+8 to skip retval and saved ebp)
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | copy modified (b/c of x+=1) struct arg to space of retval
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; |
+        mov     eax, DWORD PTR $T1[ebp]    ; return value (= ptr to struct that was passed-in as hidden arg)
+        pop     ebp                        ; |
+        ret     0                          ; | epilog
+_leaf_call ENDP
+
+$T1 = -32
+_a$ = -16
+_main   PROC
+        push    ebp                        ; |
+        mov     ebp, esp                   ; | prolog
+        sub     esp, 32                    ; /         32 = 16b local area for struct + 16b space used for retval struct
+        mov     DWORD PTR _a$[ebp], 9      ; \                               int x
+        mov     eax, 99                    ; |                               |
+        mov     WORD PTR _a$[ebp+4], ax    ; | struct values (local area)    | short y
+        mov     BYTE PTR _a$[ebp+6], 23    ; |                               char z
+        mov     DWORD PTR _a$[ebp+8], 12   ; |                               |
+        mov     DWORD PTR _a$[ebp+12], 0   ; /                               | long long t
+        push    0                          ; \
+        push    7                          ; | arg 7
+        push    6                          ; arg 6
+        push    5                          ; arg 5
+        push    4                          ; arg 4
+        push    3                          ; arg 3
+        push    0                          ; |
+        push    2                          ; arg 2
+        push    1                          ; arg 1
+        sub     esp, 16                    ; |
+        mov     ecx, esp                   ; |
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | arg 0 (struct), "pushed" onto stack (fetched from local area)
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; /
+        lea     ecx, DWORD PTR $T1[ebp]    ; \ ptr to space used for struct retval (pushed as hidden first arg)
+        push    ecx                        ; |
+        call    _leaf_call                 ; push return address and call
+        add     esp, 56                    ; |
+        xor     eax, eax                   ; : return value
+        mov     esp, ebp                   ; |
+        pop     ebp                        ; | epilog
+        ret     0                          ; |
+_main   ENDP
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from openbsd-4.0-x86 w/ gcc 3.3.5 (propolice)
+
+1c0005a0 <f1>:
+1c0005a0:       55                      push   %ebp
+1c0005a1:       89 e5                   mov    %esp,%ebp
+1c0005a3:       c9                      leave
+1c0005a4:       c3                      ret
+1c0005a5:       90                      nop
+
+1c0005a6 <f2>:
+1c0005a6:       55                      push   %ebp
+1c0005a7:       89 e5                   mov    %esp,%ebp
+1c0005a9:       c9                      leave
+1c0005aa:       c3                      ret
+1c0005ab:       90                      nop
+
+1c0005ac <f>:
+1c0005ac:       55                      push   %ebp                              ;
+1c0005ad:       89 e5                   mov    %esp,%ebp                         ;
+1c0005af:       83 ec 48                sub    $0x48,%esp                        ;
+1c0005b2:       83 ec 0c                sub    $0xc,%esp                         ;
+1c0005b5:       8d 45 d8                lea    0xffffffd8(%ebp),%eax             ;
+1c0005b8:       50                      push   %eax                              ;
+1c0005b9:       e8 8e 00 00 00          call   1c00064c <_ZN10NonTrivialC1Ev>    ; NonTrivial::NonTrivial() / ctor
+1c0005be:       83 c4 10                add    $0x10,%esp                        ;
+1c0005c1:       c7 45 d4 01 00 00 00    movl   $0x1,0xffffffd4(%ebp)             ;
+1c0005c8:       8d 45 d4                lea    0xffffffd4(%ebp),%eax             ;
+1c0005cb:       83 00 7b                addl   $0x7b,(%eax)                      ;
+1c0005ce:       83 ec 0c                sub    $0xc,%esp                         ;
+1c0005d1:       8b 45 f4                mov    0xfffffff4(%ebp),%eax             ;
+1c0005d4:       50                      push   %eax                              ;
+1c0005d5:       e8 c6 ff ff ff          call   1c0005a0 <f1>                     ; call f1(struct Trivial)
+1c0005da:       83 c4 10                add    $0x10,%esp                        ;
+1c0005dd:       8d 45 d4                lea    0xffffffd4(%ebp),%eax             ;
+1c0005e0:       83 28 7b                subl   $0x7b,(%eax)                      ;
+1c0005e3:       83 ec 0c                sub    $0xc,%esp                         ;
+1c0005e6:       83 ec 0c                sub    $0xc,%esp                         ;
+1c0005e9:       8d 45 d8                lea    0xffffffd8(%ebp),%eax             ; |               |
+1c0005ec:       50                      push   %eax                              ; |               / ptr to n
+1c0005ed:       8d 45 b8                lea    0xffffffb8(%ebp),%eax             ; |               \
+1c0005f0:       50                      push   %eax                              ; | copy n        | ptr to dest of copy of n
+1c0005f1:       e8 64 00 00 00          call   1c00065a <_ZN10NonTrivialC1ERKS_> ; |               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+1c0005f6:       83 c4 14                add    $0x14,%esp                        ;
+1c0005f9:       8d 45 b8                lea    0xffffffb8(%ebp),%eax             ; |
+1c0005fc:       50                      push   %eax                              ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+1c0005fd:       e8 a4 ff ff ff          call   1c0005a6 <f2>                     ; call f2(struct NonTrivial)
+1c000602:       83 c4 10                add    $0x10,%esp                        ;
+1c000605:       8d 45 d4                lea    0xffffffd4(%ebp),%eax             ;
+1c000608:       83 28 0c                subl   $0xc,(%eax)                       ;
+1c00060b:       c9                      leave                                    ;
+1c00060c:       c3                      ret                                      ;
+1c00060d:       90                      nop                                      ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from openbsd-4.0-x86 w/ gcc 3.3.5 (propolice)
+
+1c000920 <f1>:
+1c000920:       55                      push   %ebp
+1c000921:       89 e5                   mov    %esp,%ebp
+1c000923:       83 ec 04                sub    $0x4,%esp
+1c000926:       c7 45 fc 00 00 00 00    movl   $0x0,0xfffffffc(%ebp)
+1c00092d:       8b 45 fc                mov    0xfffffffc(%ebp),%eax
+1c000930:       c9                      leave
+1c000931:       c3                      ret
+
+1c000932 <_Z2f2v>:
+1c000932:       55                      push   %ebp
+1c000933:       89 e5                   mov    %esp,%ebp
+1c000935:       53                      push   %ebx
+1c000936:       83 ec 04                sub    $0x4,%esp
+1c000939:       8b 5d 08                mov    0x8(%ebp),%ebx
+1c00093c:       83 ec 0c                sub    $0xc,%esp
+1c00093f:       53                      push   %ebx
+1c000940:       e8 87 00 00 00          call   1c0009cc <_ZN10NonTrivialC1Ev>
+1c000945:       83 c4 10                add    $0x10,%esp
+1c000948:       89 d8                   mov    %ebx,%eax
+1c00094a:       8b 5d fc                mov    0xfffffffc(%ebp),%ebx
+1c00094d:       c9                      leave
+1c00094e:       c2 04 00                ret    $0x4
+1c000951:       90                      nop
+
+1c000952 <f>:
+1c000952:       55                      push   %ebp                  ;
+1c000953:       89 e5                   mov    %esp,%ebp             ;
+1c000955:       83 ec 28                sub    $0x28,%esp            ;
+1c000958:       c7 45 f4 01 00 00 00    movl   $0x1,0xfffffff4(%ebp) ; a = 1
+1c00095f:       8d 45 f4                lea    0xfffffff4(%ebp),%eax ; |
+1c000962:       83 00 7b                addl   $0x7b,(%eax)          ; | a += 12
+1c000965:       e8 b6 ff ff ff          call   1c000920 <f1>         ; call f1()
+1c00096a:       89 45 f0                mov    %eax,0xfffffff0(%ebp) ; retval (trivial struct <= 32bits, returned via eax)
+1c00096d:       8d 45 f4                lea    0xfffffff4(%ebp),%eax ; |
+1c000970:       83 28 7b                subl   $0x7b,(%eax)          ; | a -= 123
+1c000973:       8d 45 d8                lea    0xffffffd8(%ebp),%eax ; space (at top of stack) to hold non-triv retval -> eax
+1c000976:       83 ec 0c                sub    $0xc,%esp             ; grow stack by 12
+1c000979:       50                      push   %eax                  ; hidden first arg: ptr to space for retval
+1c00097a:       e8 b3 ff ff ff          call   1c000932 <_Z2f2v>     ; call f2()
+1c00097f:       83 c4 0c                add    $0xc,%esp             ; shrink stack back by 12
+1c000982:       8d 45 f4                lea    0xfffffff4(%ebp),%eax ; |
+1c000985:       83 28 0c                subl   $0xc,(%eax)           ; | a -= 12
+1c000988:       c9                      leave                        ;
+1c000989:       c3                      ret                          ;
+
+
+
+; ---------- cdecl-declared (explicit) C++ thiscall w/ msvc ---------->
+;
+; class C {
+; public:
+;     float __cdecl m(int i) const { return float(i + 123); }
+; };
+;
+; extern "C" {
+;     float f()
+;     {
+;         C c;
+;         return c.m(27);
+;     }
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.0
+
+tv68 = -8
+tv67 = -4
+_i$ = 12
+float C::m(int)const  PROC
+        push    ebp                      ;
+        mov     ebp, esp                 ;
+        sub     esp, 8                   ;
+        mov     eax, DWORD PTR _i$[ebp]  ;
+        add     eax, 123                 ; |
+        mov     DWORD PTR tv67[ebp], eax ; / in arg + 123, pushed onto stack
+        fild    DWORD PTR tv67[ebp]      ; \
+        fstp    DWORD PTR tv68[ebp]      ; | float cast and put return value in fp0
+        fld     DWORD PTR tv68[ebp]      ; |
+        mov     esp, ebp                 ;
+        pop     ebp                      ;
+        ret     0                        ;
+float C::m(int)const  ENDP
+
+_c$ = -1
+_f      PROC                             ;
+        push    ebp                      ;
+        mov     ebp, esp                 ;
+        push    ecx                      ;
+        push    27                       ; arg 1
+        lea     eax, DWORD PTR _c$[ebp]  ; |
+        push    eax                      ; | arg 0 (this ptr)
+        call    float C::m(int)const     ; call C::m()
+        add     esp, 8                   ;
+        mov     esp, ebp                 ;
+        pop     ebp                      ;
+        ret     0                        ;
+_f      ENDP
+
+
 
 ; vim: ft=asm
 

@@ -6,7 +6,7 @@
  Description: Callback's Arguments VM - Interface
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -37,6 +37,8 @@
 
 #include "dyncall.h"
 
+#include "dyncall_value.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,23 +46,33 @@ extern "C" {
 
 typedef struct DCArgs DCArgs;
 
-DC_API DCbool      dcbArgBool     (DCArgs*);
-DC_API DCchar      dcbArgChar     (DCArgs*);
-DC_API DCshort     dcbArgShort    (DCArgs*);
-DC_API DCint       dcbArgInt      (DCArgs*);
-DC_API DClong      dcbArgLong     (DCArgs*);
-DC_API DClonglong  dcbArgLongLong (DCArgs*);
-DC_API DCuchar     dcbArgUChar    (DCArgs*);
-DC_API DCushort    dcbArgUShort   (DCArgs*);
-DC_API DCuint      dcbArgUInt     (DCArgs*);
-DC_API DCulong     dcbArgULong    (DCArgs*);
-DC_API DCulonglong dcbArgULongLong(DCArgs*);
-DC_API DCfloat     dcbArgFloat    (DCArgs*);
-DC_API DCdouble    dcbArgDouble   (DCArgs*);
-DC_API DCpointer   dcbArgPointer  (DCArgs*);
+/* functions to retrieve callback's params in callback handler */
+DC_API DCbool      dcbArgBool     (DCArgs* p);
+DC_API DCchar      dcbArgChar     (DCArgs* p);
+DC_API DCshort     dcbArgShort    (DCArgs* p);
+DC_API DCint       dcbArgInt      (DCArgs* p);
+DC_API DClong      dcbArgLong     (DCArgs* p);
+DC_API DClonglong  dcbArgLongLong (DCArgs* p);
+DC_API DCuchar     dcbArgUChar    (DCArgs* p);
+DC_API DCushort    dcbArgUShort   (DCArgs* p);
+DC_API DCuint      dcbArgUInt     (DCArgs* p);
+DC_API DCulong     dcbArgULong    (DCArgs* p);
+DC_API DCulonglong dcbArgULongLong(DCArgs* p);
+DC_API DCfloat     dcbArgFloat    (DCArgs* p);
+DC_API DCdouble    dcbArgDouble   (DCArgs* p);
+DC_API DCpointer   dcbArgPointer  (DCArgs* p);
+/* for trivial aggrs: 'target' points to space to copy aggr to, returns 'target'
+   for C++ non-trivial aggrs: target is ignored, returns ptr to aggr arg */
+DC_API DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target);
+
+/* helper func to put a to be returned struct-by-value into the 'result'
+   param of the callback handler; for C++ non-trivial aggrs, pass NULL in
+   'ret', then copy aggr into result->p */
+DC_API void dcbReturnAggr(DCArgs *args, DCValue *result, DCpointer ret);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* DYNCALL_ARGS_H */
+

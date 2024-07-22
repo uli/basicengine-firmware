@@ -1,0 +1,460 @@
+; #include <stdlib.h>
+;
+; void __attribute__((fastcall)) leaf_call(int b, int c, int d, int e, int f, int g, int h)
+; {
+; }
+;
+; void __attribute__((fastcall)) nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
+; {
+; 	/* use some local data */
+; 	*(char*)alloca(220) = 'L';
+; 	leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+; 	nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
+; 	return 0;
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+00001205 <leaf_call>:
+    1205:       55                      push   %ebp                ; |
+    1206:       89 e5                   mov    %esp,%ebp           ; | prolog
+    1208:       83 ec 08                sub    $0x8,%esp           ; |
+    120b:       89 4d fc                mov    %ecx,-0x4(%ebp)     ;
+    120e:       89 55 f8                mov    %edx,-0x8(%ebp)     ;
+    1211:       90                      nop                        ;
+    1212:       c9                      leave                      ; |
+    1213:       c2 14 00                ret    $0x14               ; | epilog
+
+00001216 <nonleaf_call>:
+    1216:       55                      push   %ebp                ; |
+    1217:       89 e5                   mov    %esp,%ebp           ; | prolog
+    1219:       83 ec 18                sub    $0x18,%esp          ; /
+    121c:       89 4d f4                mov    %ecx,-0xc(%ebp)     ; in arg 0 -> local area on stack
+    121f:       89 55 f0                mov    %edx,-0x10(%ebp)    ; in arg 1 -> local area on stack
+    1222:       b8 10 00 00 00          mov    $0x10,%eax          ; |
+    1227:       83 e8 01                sub    $0x1,%eax           ; |
+    122a:       05 e8 00 00 00          add    $0xe8,%eax          ; |
+    122f:       b9 10 00 00 00          mov    $0x10,%ecx          ; | alloca (seems like 220 is rounded up for stack alignment purposes)
+    1234:       ba 00 00 00 00          mov    $0x0,%edx           ; |
+    1239:       f7 f1                   div    %ecx                ; |
+    123b:       6b c0 10                imul   $0x10,%eax,%eax     ; |
+    123e:       29 c4                   sub    %eax,%esp           ; /
+    1240:       89 e0                   mov    %esp,%eax           ; \
+    1242:       83 c0 0f                add    $0xf,%eax           ; |
+    1245:       c1 e8 04                shr    $0x4,%eax           ; | align alloca'd space
+    1248:       c1 e0 04                shl    $0x4,%eax           ; |
+    124b:       c6 00 4c                movb   $0x4c,(%eax)        ; write 'L' to alloca'd space
+    124e:       8b 45 f0                mov    -0x10(%ebp),%eax    ; in arg 1 (from local area) -> eax (then copied to ecx/arg0, below, could be done directly)
+    1251:       83 ec 0c                sub    $0xc,%esp           ; @@@ unsure why, alignment?
+    1254:       ff 75 1c                pushl  0x1c(%ebp)          ; |
+    1257:       ff 75 18                pushl  0x18(%ebp)          ; |
+    125a:       ff 75 14                pushl  0x14(%ebp)          ; | read in args 3-7 from prev frame's param area, and ...
+    125d:       ff 75 10                pushl  0x10(%ebp)          ; | ... push onto stack as arg 2-6
+    1260:       ff 75 0c                pushl  0xc(%ebp)           ; |
+    1263:       8b 55 08                mov    0x8(%ebp),%edx      ; arg 1 (via reg, read in arg 2 from prev frame's param area)
+    1266:       89 c1                   mov    %eax,%ecx           ; arg 0 (via reg)
+    1268:       e8 98 ff ff ff          call   1205 <leaf_call>    ; push return address and call
+    126d:       83 c4 0c                add    $0xc,%esp           ; @@@ restore esp to what it was before pushing args
+    1270:       90                      nop                        ;
+    1271:       c9                      leave                      ; |
+    1272:       c2 18 00                ret    $0x18               ; | epilog
+
+00001275 <main>:
+    1275:       8d 4c 24 04             lea    0x4(%esp),%ecx      ; |
+    1279:       83 e4 f0                and    $0xfffffff0,%esp    ; |        @@@? alignment?
+    127c:       ff 71 fc                pushl  -0x4(%ecx)          ; | prolog
+    127f:       55                      push   %ebp                ; |
+    1280:       89 e5                   mov    %esp,%ebp           ; |
+    1282:       51                      push   %ecx                ; preserve ecx (so it can be used for passing arg 0)
+    1283:       83 ec 04                sub    $0x4,%esp           ; @@@ unsure why, alignment?
+    1286:       83 ec 08                sub    $0x8,%esp           ; @@@ unsure why, alignment? pointless
+    1289:       6a 07                   push   $0x7                ; arg 7
+    128b:       6a 06                   push   $0x6                ; arg 6
+    128d:       6a 05                   push   $0x5                ; arg 5
+    128f:       6a 04                   push   $0x4                ; arg 4
+    1291:       6a 03                   push   $0x3                ; arg 3
+    1293:       6a 02                   push   $0x2                ; arg 2
+    1295:       ba 01 00 00 00          mov    $0x1,%edx           ; arg 1 (via reg)
+    129a:       b9 00 00 00 00          mov    $0x0,%ecx           ; arg 0 (via reg)
+    129f:       e8 72 ff ff ff          call   1216 <nonleaf_call> ; push return address and call
+    12a4:       83 c4 08                add    $0x8,%esp           ; @@@ restore one of the two "sub...esp"s above
+    12a7:       b8 00 00 00 00          mov    $0x0,%eax           ; return value
+    12ac:       8b 4d fc                mov    -0x4(%ebp),%ecx     ; restore ecx
+    12af:       c9                      leave                      ; |
+    12b0:       8d 61 fc                lea    -0x4(%ecx),%esp     ; | epilog
+    12b3:       c3                      ret                        ; |
+
+
+
+; ---------- vararg call (shows that all args are pushed) ---------->
+
+; void __attribute__((fastcall)) leaf_call(int a, short b, char c, ...)
+; {
+; }
+;
+; int main()
+; {
+;   leaf_call(0, 1, 2, 3, 4, 5, 6, 7LL);
+;   return 0;
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+00001205 <leaf_call>:
+    1205:       55                      push   %ebp
+    1206:       89 e5                   mov    %esp,%ebp
+    1208:       90                      nop
+    1209:       5d                      pop    %ebp
+    120a:       c3                      ret
+
+0000120b <main>:
+    120b:       55                      push   %ebp
+    120c:       89 e5                   mov    %esp,%ebp
+    120e:       6a 00                   push   $0x0
+    1210:       6a 07                   push   $0x7
+    1212:       6a 06                   push   $0x6
+    1214:       6a 05                   push   $0x5
+    1216:       6a 04                   push   $0x4
+    1218:       6a 03                   push   $0x3
+    121a:       6a 02                   push   $0x2
+    121c:       6a 01                   push   $0x1
+    121e:       6a 00                   push   $0x0
+    1220:       e8 e0 ff ff ff          call   1205 <leaf_call>
+    1225:       83 c4 24                add    $0x24,%esp
+    1228:       b8 00 00 00 00          mov    $0x0,%eax
+    122d:       c9                      leave
+    122e:       c3                      ret
+
+
+
+; ---------- structs by value (arg and return value), struct arg not fitting in regs ---------->
+
+; struct A { int x; short y; char z; long long t; };
+;
+; struct A __attribute__((fastcall)) leaf_call(struct A a, short b, long long c, char d, int e, int f, int g, long long h)
+; {
+;     a.x += 1;
+;     return a;
+; }
+;
+; int main()
+; {
+;   struct A a ={9, 99, 23, 12LL};
+;   leaf_call(a, 1, 2, 3, 4, 5, 6, 7LL);
+;   return 0;
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+00001205 <leaf_call>:
+    1205:       55                      push   %ebp              ; |
+    1206:       89 e5                   mov    %esp,%ebp         ; | prolog
+    1208:       83 ec 20                sub    $0x20,%esp        ; |
+    120b:       89 4d fc                mov    %ecx,-0x4(%ebp)   ; ptr to retval space for struct (hidden first arg) -> local area
+    120e:       8b 45 18                mov    0x18(%ebp),%eax   ;
+    1211:       8b 55 24                mov    0x24(%ebp),%edx   ;
+    1214:       66 89 45 f8             mov    %ax,-0x8(%ebp)    ;
+    1218:       8b 45 1c                mov    0x1c(%ebp),%eax   ;
+    121b:       89 45 f0                mov    %eax,-0x10(%ebp)  ;
+    121e:       8b 45 20                mov    0x20(%ebp),%eax   ;
+    1221:       89 45 f4                mov    %eax,-0xc(%ebp)   ;
+    1224:       89 d0                   mov    %edx,%eax         ;
+    1226:       88 45 ec                mov    %al,-0x14(%ebp)   ;
+    1229:       8b 45 34                mov    0x34(%ebp),%eax   ;
+    122c:       89 45 e0                mov    %eax,-0x20(%ebp)  ;
+    122f:       8b 45 38                mov    0x38(%ebp),%eax   ;
+    1232:       89 45 e4                mov    %eax,-0x1c(%ebp)  ;
+    1235:       8b 45 08                mov    0x8(%ebp),%eax    ; |
+    1238:       83 c0 01                add    $0x1,%eax         ; | a.x += 1 (written to param area of prev frame)
+    123b:       89 45 08                mov    %eax,0x8(%ebp)    ; /
+    123e:       8b 45 fc                mov    -0x4(%ebp),%eax   ; \        ptr to retval space
+    1241:       8b 55 08                mov    0x8(%ebp),%edx    ; |
+    1244:       89 10                   mov    %edx,(%eax)       ; |
+    1246:       8b 55 0c                mov    0xc(%ebp),%edx    ; |
+    1249:       89 50 04                mov    %edx,0x4(%eax)    ; | copy struct from param area in prev frame to retval space
+    124c:       8b 55 10                mov    0x10(%ebp),%edx   ; |
+    124f:       89 50 08                mov    %edx,0x8(%eax)    ; |
+    1252:       8b 55 14                mov    0x14(%ebp),%edx   ; |
+    1255:       89 50 0c                mov    %edx,0xc(%eax)    ; |
+    1258:       8b 45 fc                mov    -0x4(%ebp),%eax   ; return value (passed-in hidden ptr)
+    125b:       c9                      leave                    ; |
+    125c:       c2 34 00                ret    $0x34             ; | epilog
+
+0000125f <main>:
+    125f:       8d 4c 24 04             lea    0x4(%esp),%ecx    ; |
+    1263:       83 e4 f0                and    $0xfffffff0,%esp  ; |
+    1266:       ff 71 fc                pushl  -0x4(%ecx)        ; | prolog
+    1269:       55                      push   %ebp              ; |
+    126a:       89 e5                   mov    %esp,%ebp         ; |
+    126c:       51                      push   %ecx              ; preserve ecx (so it can be used for passing arg 0)
+    126d:       83 ec 24                sub    $0x24,%esp        ; reserve stack space for struct (local area)
+    1270:       c7 45 e8 09 00 00 00    movl   $0x9,-0x18(%ebp)  ; |                               int x
+    1277:       66 c7 45 ec 63 00       movw   $0x63,-0x14(%ebp) ; |                               short y
+    127d:       c6 45 ee 17             movb   $0x17,-0x12(%ebp) ; | struct values (local area)    char z
+    1281:       c7 45 f0 0c 00 00 00    movl   $0xc,-0x10(%ebp)  ; |                               |
+    1288:       c7 45 f4 00 00 00 00    movl   $0x0,-0xc(%ebp)   ; |                               | long long t
+    128f:       8d 45 d8                lea    -0x28(%ebp),%eax  ; ptr to space used for struct retval (passed as hidden first arg) -> eax
+    1292:       83 ec 04                sub    $0x4,%esp         ; @@@ unsure why, alignment? (also needed so what's in eax doesn't point below esp)
+    1295:       6a 00                   push   $0x0              ; |
+    1297:       6a 07                   push   $0x7              ; | arg 7
+    1299:       6a 06                   push   $0x6              ; arg 6
+    129b:       6a 05                   push   $0x5              ; arg 5
+    129d:       6a 04                   push   $0x4              ; arg 4
+    129f:       6a 03                   push   $0x3              ; arg 3
+    12a1:       6a 00                   push   $0x0              ; |
+    12a3:       6a 02                   push   $0x2              ; | arg 2 (via stack b/c not first arg and > 32 bits)
+    12a5:       6a 01                   push   $0x1              ; arg 1
+    12a7:       ff 75 f4                pushl  -0xc(%ebp)        ; |
+    12aa:       ff 75 f0                pushl  -0x10(%ebp)       ; | arg 0 (struct by value, pushed onto stack)
+    12ad:       ff 75 ec                pushl  -0x14(%ebp)       ; |
+    12b0:       ff 75 e8                pushl  -0x18(%ebp)       ; |
+    12b3:       89 c1                   mov    %eax,%ecx         ; ptr to free space for call's retval (struct), hidden first arg
+    12b5:       e8 4b ff ff ff          call   1205 <leaf_call>  ; push return address and call
+    12ba:       83 c4 04                add    $0x4,%esp         ; @@@ restore esp to what it was before pushing args
+    12bd:       b8 00 00 00 00          mov    $0x0,%eax         ; return value
+    12c2:       8b 4d fc                mov    -0x4(%ebp),%ecx   ; restore ecx
+    12c5:       c9                      leave                    ; |
+    12c6:       8d 61 fc                lea    -0x4(%ecx),%esp   ; | epilog
+    12c9:       c3                      ret                      ; |
+
+
+
+; ---------- small struct returned by value (shows it's never returned via regs) ---------->
+
+; struct A { short x; short y; };
+;
+; struct A __attribute__((fastcall)) leaf_call(int a, int b)
+; {
+; 	struct A r = { 13, 15 };
+; 	return r;
+; }
+;
+; int main()
+; {
+; 	leaf_call(99, 2);
+; 	return 0;
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0 (w/ flags to simplify: -fno-stack-protector -fno-pic)
+
+00001205 <leaf_call>:
+    1205:       55                      push   %ebp             ; |
+    1206:       89 e5                   mov    %esp,%ebp        ; | prolog
+    1208:       83 ec 18                sub    $0x18,%esp       ; |
+    120b:       89 4d ec                mov    %ecx,-0x14(%ebp) ; ptr to retval space for struct (hidden first arg) -> local area
+    120e:       89 55 e8                mov    %edx,-0x18(%ebp) ; in arg 0 -> local area
+    1211:       66 c7 45 fc 0d 00       movw   $0xd,-0x4(%ebp)  ; |
+    1217:       66 c7 45 fe 0f 00       movw   $0xf,-0x2(%ebp)  ; | struct values (local area)
+    121d:       8b 45 ec                mov    -0x14(%ebp),%eax ; ptr to retval space for struct (fetched from local area) -> eax
+    1220:       8b 55 fc                mov    -0x4(%ebp),%edx  ; |
+    1223:       89 10                   mov    %edx,(%eax)      ; | copy struct in local area to retval space
+    1225:       8b 45 ec                mov    -0x14(%ebp),%eax ; return value (passed-in hidden ptr)
+    1228:       c9                      leave                   ; |
+    1229:       c2 04 00                ret    $0x4             ; | epilog
+
+0000122c <main>:
+    122c:       55                      push   %ebp             ; |
+    122d:       89 e5                   mov    %esp,%ebp        ; | prolog
+    122f:       83 ec 04                sub    $0x4,%esp        ; |
+    1232:       8d 45 fc                lea    -0x4(%ebp),%eax  ; ptr to space used for struct retval (passed as hidden first arg)
+    1235:       6a 02                   push   $0x2             ; arg 1
+    1237:       ba 63 00 00 00          mov    $0x63,%edx       ; arg 0 (via reg)
+    123c:       89 c1                   mov    %eax,%ecx        ; ptr to free space for call's retval (struct), hidden first arg
+    123e:       e8 c2 ff ff ff          call   1205 <leaf_call> ; push return address and call
+    1243:       b8 00 00 00 00          mov    $0x0,%eax        ; return value
+    1248:       c9                      leave                   ; |
+    1249:       c3                      ret                     ; | epilog
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         __attribute__((fastcall)) NonTrivial() : a(0) {}
+;         __attribute__((fastcall)) NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+;
+; extern "C" {
+;
+;     void __attribute__((fastcall)) f1(struct Trivial s)    { }
+;     void __attribute__((fastcall)) f2(struct NonTrivial s) { }
+;
+;     void __attribute__((fastcall)) f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0
+
+00001215 <f1>:
+    1215:       55                      push   %ebp
+    1216:       89 e5                   mov    %esp,%ebp
+    1218:       e8 f0 ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    121d:       05 af 2d 00 00          add    $0x2daf,%eax
+    1222:       90                      nop
+    1223:       5d                      pop    %ebp
+    1224:       c2 04 00                ret    $0x4
+
+00001227 <f2>:
+    1227:       55                      push   %ebp
+    1228:       89 e5                   mov    %esp,%ebp
+    122a:       83 ec 04                sub    $0x4,%esp
+    122d:       e8 db ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    1232:       05 9a 2d 00 00          add    $0x2d9a,%eax
+    1237:       89 4d fc                mov    %ecx,-0x4(%ebp)
+    123a:       90                      nop
+    123b:       c9                      leave
+    123c:       c3                      ret
+
+0000123d <f>:
+    123d:       55                      push   %ebp                          ;
+    123e:       89 e5                   mov    %esp,%ebp                     ;
+    1240:       83 ec 28                sub    $0x28,%esp                    ;
+    1243:       e8 c5 ff ff ff          call   120d <__x86.get_pc_thunk.ax>  ;
+    1248:       05 84 2d 00 00          add    $0x2d84,%eax                  ;
+    124d:       65 a1 14 00 00 00       mov    %gs:0x14,%eax                 ;
+    1253:       89 45 f4                mov    %eax,-0xc(%ebp)               ;
+    1256:       31 c0                   xor    %eax,%eax                     ;
+    1258:       8d 45 e8                lea    -0x18(%ebp),%eax              ;
+    125b:       89 c1                   mov    %eax,%ecx                     ;
+    125d:       e8 60 00 00 00          call   12c2 <_ZN10NonTrivialC1Ev>    ; NonTrivial::NonTrivial() / ctor
+    1262:       c7 45 f0 01 00 00 00    movl   $0x1,-0x10(%ebp)              ;
+    1269:       83 45 f0 7b             addl   $0x7b,-0x10(%ebp)             ;
+    126d:       83 ec 0c                sub    $0xc,%esp                     ;
+    1270:       ff 75 e4                pushl  -0x1c(%ebp)                   ;
+    1273:       e8 9d ff ff ff          call   1215 <f1>                     ; call f1(struct Trivial)
+    1278:       83 c4 0c                add    $0xc,%esp                     ;
+    127b:       83 6d f0 7b             subl   $0x7b,-0x10(%ebp)             ;
+    127f:       8d 55 e8                lea    -0x18(%ebp),%edx              ; |               ptr to n
+    1282:       8d 45 ec                lea    -0x14(%ebp),%eax              ; |               |
+    1285:       89 c1                   mov    %eax,%ecx                     ; | copy n        | ptr to dest of copy of n
+    1287:       e8 56 00 00 00          call   12e2 <_ZN10NonTrivialC1ERKS_> ; /               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+    128c:       8d 45 ec                lea    -0x14(%ebp),%eax              ; \
+    128f:       89 c1                   mov    %eax,%ecx                     ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+    1291:       e8 91 ff ff ff          call   1227 <f2>                     ; call f2(struct NonTrivial)
+    1296:       83 6d f0 0c             subl   $0xc,-0x10(%ebp)              ;
+    129a:       90                      nop                                  ;
+    129b:       8b 45 f4                mov    -0xc(%ebp),%eax               ;
+    129e:       65 33 05 14 00 00 00    xor    %gs:0x14,%eax                 ;
+    12a5:       74 05                   je     12ac <f+0x6f>                 ;
+    12a7:       e8 59 00 00 00          call   1305 <__stack_chk_fail_local> ;
+    12ac:       c9                      leave                                ;
+    12ad:       c3                      ret                                  ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         __attribute__((fastcall)) NonTrivial() : a(0) {}
+;         __attribute__((fastcall)) NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+; 
+; extern "C" {
+;     struct Trivial    __attribute__((fastcall)) f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial __attribute__((fastcall)) f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void __attribute__((fastcall)) f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0
+
+00001215 <f1>:
+    1215:       55                      push   %ebp
+    1216:       89 e5                   mov    %esp,%ebp
+    1218:       83 ec 04                sub    $0x4,%esp
+    121b:       e8 ed ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    1220:       05 ac 2d 00 00          add    $0x2dac,%eax
+    1225:       89 4d fc                mov    %ecx,-0x4(%ebp)
+    1228:       8b 45 fc                mov    -0x4(%ebp),%eax
+    122b:       c7 00 00 00 00 00       movl   $0x0,(%eax)
+    1231:       8b 45 fc                mov    -0x4(%ebp),%eax
+    1234:       c9                      leave
+    1235:       c3                      ret
+
+00001236 <_Z2f2v>:
+    1236:       55                      push   %ebp
+    1237:       89 e5                   mov    %esp,%ebp
+    1239:       83 ec 18                sub    $0x18,%esp
+    123c:       e8 cc ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    1241:       05 8b 2d 00 00          add    $0x2d8b,%eax
+    1246:       89 4d f4                mov    %ecx,-0xc(%ebp)
+    1249:       8b 45 f4                mov    -0xc(%ebp),%eax
+    124c:       89 c1                   mov    %eax,%ecx
+    124e:       e8 6f 00 00 00          call   12c2 <_ZN10NonTrivialC1Ev>
+    1253:       8b 45 f4                mov    -0xc(%ebp),%eax
+    1256:       c9                      leave
+    1257:       c3                      ret
+
+00001258 <f>:
+    1258:       55                      push   %ebp                          ;
+    1259:       89 e5                   mov    %esp,%ebp                     ;
+    125b:       83 ec 18                sub    $0x18,%esp                    ;
+    125e:       e8 aa ff ff ff          call   120d <__x86.get_pc_thunk.ax>  ;
+    1263:       05 69 2d 00 00          add    $0x2d69,%eax                  ;
+    1268:       65 a1 14 00 00 00       mov    %gs:0x14,%eax                 ;
+    126e:       89 45 f4                mov    %eax,-0xc(%ebp)               ;
+    1271:       31 c0                   xor    %eax,%eax                     ;
+    1273:       c7 45 f0 01 00 00 00    movl   $0x1,-0x10(%ebp)              ;
+    127a:       83 45 f0 7b             addl   $0x7b,-0x10(%ebp)             ;
+    127e:       8d 45 e8                lea    -0x18(%ebp),%eax              ; ptr space to hold aggregate retval -> eax ...
+    1281:       89 c1                   mov    %eax,%ecx                     ; ... as hidden first arg (ecx)
+    1283:       e8 8d ff ff ff          call   1215 <f1>                     ; call f1()
+    1288:       83 6d f0 7b             subl   $0x7b,-0x10(%ebp)             ;
+    128c:       8d 45 ec                lea    -0x14(%ebp),%eax              ; ptr space to hold aggregate retval -> eax ...
+    128f:       89 c1                   mov    %eax,%ecx                     ; ... as hidden first arg (ecx)
+    1291:       e8 a0 ff ff ff          call   1236 <_Z2f2v>                 ; call f2()
+    1296:       83 6d f0 0c             subl   $0xc,-0x10(%ebp)              ;
+    129a:       90                      nop                                  ;
+    129b:       8b 45 f4                mov    -0xc(%ebp),%eax               ;
+    129e:       65 33 05 14 00 00 00    xor    %gs:0x14,%eax                 ;
+    12a5:       74 05                   je     12ac <f+0x54>                 ;
+    12a7:       e8 35 00 00 00          call   12e1 <__stack_chk_fail_local> ;
+    12ac:       c9                      leave                                ;
+    12ad:       c3                      ret                                  ;
+
+
+
+; vim: ft=asm
+

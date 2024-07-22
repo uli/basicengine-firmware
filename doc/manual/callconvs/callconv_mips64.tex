@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2007-2019 Daniel Adler <dadler@uni-goettingen.de>,
+% Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -46,8 +46,8 @@ Name                       & Alias                & Brief description\\
 \hline
 {\bf \$0}                  & {\bf \$zero}         & hardware zero \\
 {\bf \$1}                  & {\bf \$at}           & assembler temporary, scratch \\
-{\bf \$2-\$3}              & {\bf \$v0-\$v1}      & return value (only integer on hard-float targets), scratch \\
-{\bf \$4-\$11}             & {\bf \$a0-\$a7}      & first arguments (only integer on hard-float targets), scratch \\
+{\bf \$2-\$3}              & {\bf \$v0-\$v1}      & return value (only integers on hard-float targets), scratch \\
+{\bf \$4-\$11}             & {\bf \$a0-\$a7}      & first arguments (only integers on hard-float targets), scratch \\
 {\bf \$12-\$15,\$24}       & {\bf \$t4-\$t7,\$t8} & temporaries, scratch \\
 {\bf \$25}                 & {\bf \$t9}           & temporary, address callee for all PIC calls (by convention), scratch \\
 {\bf \$16-\$23}            & {\bf \$s0-\$s7}      & preserve \\
@@ -57,7 +57,7 @@ Name                       & Alias                & Brief description\\
 {\bf \$30}                 & {\bf \$s8}           & frame pointer, preserve \\
 {\bf \$31}                 & {\bf \$ra}           & return address, preserve \\
 {\bf hi, lo}               &                      & multiply/divide special registers \\
-{\bf \$f0,\$f2}            &                      & only on hard-float targets: float results, scratch \\
+{\bf \$f0,\$f2}            &                      & only on hard-float targets: float return values, scratch \\
 {\bf \$f1,\$f3,\$f4-\$f11} &                      & only on hard-float targets: float temporaries, scratch \\
 {\bf \$f12-\$f19}          &                      & only on hard-float targets: float arguments, scratch \\
 {\bf \$f20-\$f23}          &                      & only on hard-float targets: float temporaries, scratch \\
@@ -78,15 +78,72 @@ Name                       & Alias                & Brief description\\
 \item subsequent arguments are pushed onto the stack
 \item all stack entries are 64-bit aligned
 \item all stack regions are 16-byte aligned
-\item results are returned in \$v0, and for a second one \$v1 is used
-\item only on hard-float targets: floating point results are returned in \$f0
 \item if the callee takes the address of one of the parameters and uses it to address other unnamed parameters (e.g. varargs) it has to copy - in its prolog - the the argument registers to a reserved stack area adjacent to the other parameters on the stack (only the unnamed integer parameters require saving, though) % @@@ seems to *ONLY* spill with varargs, never for any other reason
 \item float arguments passed in the variable part of a vararg call are passed like integers, meaning float registers don't ever need to be saved that way, so only \$a0-\$a7 are need to be spilled
 \item quad precision float arguments are passed in even-odd register pairs, skipping one register if needed
 \item integer parameters \textless\ 64 bit are right-justified (meaning occupy higher-address bytes) in their 8-byte slot on the stack, requiring extra-care for big-endian targets
 \item single precision float parameters (32 bit) are left-justified in their 8-byte slot on the stack, but are right justified in fp-registers on big endian targets, as they aren't promoted (actually, official docs says "undecided", but real world implementations seem to use what is described here)
+\item aggregates (struct, union) are passed as a sequence of dwords in (integer registers and the stack), with the following particularities:
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\begin{itemize}
+\item if a dword happens to be a double precision floating point struct field, it is passed in a floating point register
+\item array and union fields are always passed like integers (even if their type is float or double)
+\item splitting an argument across registers and the stack is fine
+\end{itemize}
+%spec
+%Structs, unions, or other composite types are treated as a sequence of doublewords,
+%and are passed in integer or floating point registers as though they were simple
+%scalar parameters to the extent that they fit, with any excess on the stack packed
+%according to the normal memory layout of the object. More specifically:
+%- Regardless of the struct field structure, it is treated as a sequence of 64-bit
+%chunks. If a chunk consists solely of a double float field (but not a double,
+%which is part of a union), it is passed in a floating point register. Any other
+%chunk is passed in an integer register.
+%- A union, either as the parameter itself or as a struct parameter field, is treated
+%as a sequence of integer doublewords for purposes of assignment to integer
+%parameter registers. No attempt is made to identify floating point components
+%for passing in floating point registers.
+%- Array fields of structs are passed like unions. Array parameters are passed by
+%reference (unless the relevant language standard requires otherwise).
+%- Right-justifying small scalar parameters in their save area slots
+%notwithstanding, struct parameters are always left-justified. This applies both
+%to the case of a struct smaller than 64 bits, and to the final chunk of a struct
+%which is not an integral multiple of 64 bits in size. The implication of this rule is
+%that the address of the first chunk’s save area slot is the address of the struct,
+%and the struct is laid out in the save area memory exactly as if it were allocated
+%normally (once any part in registers has been stored to the save area). [These
+%rules are analogous to the o32-bit ABI treatment – only the chunk size and the
+%ability to pass double fields in floating point registers are different.
 \end{itemize}
 % maybe note somewhere that "prolog-based" spilling is neat for dyncall, as we don't have to care
+
+
+\paragraph{Return values}
+
+\begin{itemize}
+\item results are returned in \$v0, and for a second one \$v1 is used
+\item only on hard-float targets: floating point results are returned in \$f0 (and \$f2 if needed)
+\item only on hard-float targets: structs with only one or two floating point fields are returned in \$f0 (and \$f2 if necessary), field-by-field
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in \%a0), and callee writes return value to this space; the ptr to the aggregate is returned in \%v0
+\item any other aggregates (struct, union) \textless= 16 bytes are returned via registers \$v0 (and \$v1 if necessary), dword-by-dword
+\item all other aggregates (struct, union) \textgreater 16 bytes are returned in a space allocated by the caller, with a pointer to it
+passed as first parameter to the function called (meaning in \%a0); the ptr to the aggregate is returned in \%v0
+%spec;
+%Composite results (struct, union, or array) are returned in
+%$2/$f0 and $3/$f2 according to the following rules:
+%- A struct with only one or two floating point fields is returned in $f0 (and $f2 if
+%necessary). This is a generalization of the Fortran COMPLEX case.
+%- Any other struct or union results of at most 128 bits are returned in $2 (first 64
+%bits) and $3 (remainder, if necessary).
+%- Larger composite results are handled by converting the function to a procedure
+%with an implicit first parameter, which is a pointer to an area reserved by the
+%caller to receive the result. [The o32-bit ABI requires that all composite results
+%be handled by conversion to implicit first parameters. The MIPS/SGI Fortran
+%implementation has always made a specific exception to return COMPLEX
+%results in the floating point registers.]
+\end{itemize}
+
 
 \paragraph{Stack layout}
 

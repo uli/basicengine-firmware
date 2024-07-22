@@ -57,5 +57,7 @@
 #  else
 #    include "dyncall_args_arm64.c"
 #  endif
+#elif defined(DC__Arch_RiscV64)
+#  include "dyncall_args_riscv64.c"
 #endif
 

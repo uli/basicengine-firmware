@@ -1,11 +1,11 @@
 APP = callback_suite
-OBJS = env.o handler.o sigstrings.o invokers.o do_test.o main.o print.o signature_utils.o
+OBJS = globals.o cases.o main.o
 
 SRCTOP   = ../..
 BLDTOP   = ${SRCTOP}
 CFLAGS  += -I${SRCTOP}/dyncall -I${SRCTOP}/dyncallback
 LDFLAGS += -L${BLDTOP}/dyncall -L${BLDTOP}/dyncallback
-LDLIBS  += -ldyncall_s -ldyncallback_s
+LDLIBS  += -ldyncallback_s -ldyncall_s
 
 all: ${APP}
 
@@ -14,6 +14,18 @@ all: ${APP}
 ${APP}: ${OBJS} 
 	${CC} ${OBJS} ${LDFLAGS} ${LDLIBS} -o ${APP} 
 
+config:
+	${LUA} make-signatures.lua >cases.txt
+	${LUA} mk-cases.lua <cases.txt >cases.h
+config-random:
+	echo "-- auto-generated file from template config-random.lua (created by make)" >config.lua
+	cat config-random.lua >>config.lua
+	${MAKE} config
+config-stress1:
+	echo "-- auto-generated file from template config-stress1.lua (created by make)" >config.lua
+	cat config-stress1.lua >>config.lua
+	${MAKE} config
+cases.o: cases.h
 clean:
 	rm -f ${APP} ${OBJS}
 

@@ -1,9 +1,3 @@
-# path to default libc.so file, easier to do via shell than in code (see main() in dynload_plain.c)
-# for compat: first gmake style, then assignment op which will use ! as part of var name on gmake<4
-#             and thus not override previously set var
-DEF_C_DYLIB=$(shell ((ldd `which ls` | grep -o '/.*/libc.so[^ ]*' || ls /lib*/libc.so* || ls /usr/lib/libc.so*) | grep -v '\.a$$' | (sort -V -r || sort -t . -n -k 2)) 2>/dev/null | head -1)
-DEF_C_DYLIB!=((ldd `which ls` | grep -o '/.*/libc.so[^ ]*' || ls /lib*/libc.so* || ls /usr/lib/libc.so*) | grep -v '\.a$$' | (sort -V -r || sort -t . -n -k 2)) 2>/dev/null | head -1
-
 APP = dynload_plain
 OBJS = dynload_plain.o
 TEST_U8_SO = dynload_plain_ß_test # @@@ unsure if every platform handles ß, here (ANSI, UTF-8, ...)
@@ -15,15 +9,26 @@ LDLIBS  += -ldynload_s
 # Works on: Darwin, NetBSD.
 # Linux: add '-ldl'
 
-all: ${APP} ${TEST_U8_SO}
+all: ${TEST_C_LD} ${TEST_U8_SO}
+	# deduce path to default libc.so file, easier to do via shell than in code
+	# (see main() in dynload_plain.c); get from what ${TEST_C_LD} is linked
+	# against, then reinvoke make with actual build
+	export X=`{ (ldd ${TEST_C_LD} | awk '/libc\.so/{for(i=1;i<=NF;++i){if($$i~"^/"){print $$i;++r}}}END{exit !r}' || ls /lib*/libc.so* || ls /usr/lib/libc.so*) | grep -v '\.a$$' | (sort -V -r || sort -t . -n -k 2) } 2>/dev/null | head -1`; \
+	${MAKE} DEF_C_DYLIB="$$X" ${APP}
 
 .PHONY: all clean
 
+${TEST_C_LD}:
+	# dummy bin built with same toolchain and flags to deduce default c lib this is linked with
+	echo 'int main() { return 0; }' | ${CC} -x c ${CFLAGS} ${LDFLAGS} -o ${TEST_C_LD} -
+
 ${APP}: ${OBJS}
-	${CC} ${OBJS} ${LDFLAGS} ${LDLIBS} -o $@
+	${CC} ${CFLAGS} ${LDFLAGS} ${OBJS} ${LDLIBS} -o $@
 
 ${TEST_U8_SO}:
-	echo 'int dynload_plain_testfunc() { return 5; }' | ${CC} -`[ \`uname\` = Darwin ] && echo dynamiclib || echo shared` -x c - -o ${TEST_U8_SO}
+	echo 'int dynload_plain_testfunc() { return 5; }' | ${CC} ${CFLAGS} -`[ \`uname\` = Darwin ] && echo dynamiclib || echo shared` -x c - -o ${TEST_U8_SO}
+	# clang tries to be too smart, appending .exe on some platforms (e.g. *nix based mingw cross builds), despite -o being explicity
+	[ -f "${TEST_U8_SO}.exe" ] && mv "${TEST_U8_SO}.exe" "${TEST_U8_SO}" || true
 
 clean:
 	rm -f ${APP} ${OBJS} ${TEST_U8_SO}

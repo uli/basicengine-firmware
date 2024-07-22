@@ -1,4 +1,4 @@
-.\" Copyright (c) 2007-2014 Daniel Adler <dadler AT uni-goettingen DOT de>, 
+.\" Copyright (c) 2007-2022 Daniel Adler <dadler AT uni-goettingen DOT de>, 
 .\"                         Tassilo Philipp <tphilipp AT potion-studios DOT com>
 .\" 
 .\" Permission to use, copy, modify, and distribute this software for any
@@ -20,82 +20,194 @@
 .Nd callback interface of dyncall
 .Sh SYNOPSIS
 .In dyncall_callback.h
+.Ft typedef DCsigchar
+.Fn (DCCallbackHandler) "DCCallback* pcb" "DCArgs* args" "DCValue* result" "void* userdata"
 .Ft DCCallback *
-.Fn dcbNewCallback "const char * signature" "DCCallbackHandler * funcptr" "void * userdata"
+.Fn dcbNewCallback "const DCsigchar * signature" "DCCallbackHandler * funcptr" "void * userdata"
+.Ft DCCallback *
+.Fn dcbNewCallback2 "const DCsigchar * signature" "DCCallbackHandler * funcptr" "void * userdata" "DCaggr *const * aggrs"
 .Ft void
-.Fn dcbInitCallback "DCCallback * pcb" "const char * signature" "DCCallbackHandler * funcptr" "void * userdata"
+.Fn dcbInitCallback "DCCallback * pcb" "const DCsigchar * signature" "DCCallbackHandler * funcptr" "void * userdata"
+.Ft void
+.Fn dcbInitCallback2 "DCCallback * pcb" "const DCsigchar * signature" "DCCallbackHandler * funcptr" "void * userdata" "DCaggr *const * aggrs"
 .Ft void
 .Fn dcbFreeCallback "DCCallback * pcb"
 .Ft void
 .Fn dcbGetUserData "DCCallback * pcb"
+.Ft DCbool
+.Fn dcbArgBool "DCArgs * p"
+.Ft DCchar
+.Fn dcbArgChar "DCArgs * p"
+.Ft DCshort
+.Fn dcbArgShort "DCArgs * p"
+.Ft DCint
+.Fn dcbArgInt "DCArgs * p"
+.Ft DClong
+.Fn dcbArgLong "DCArgs * p"
+.Ft DClonglong
+.Fn dcbArgLongLong "DCArgs * p"
+.Ft DCuchar
+.Fn dcbArgUChar "DCArgs * p"
+.Ft DCushort
+.Fn dcbArgUShort "DCArgs * p"
+.Ft DCuint
+.Fn dcbArgUInt "DCArgs * p"
+.Ft DCulong
+.Fn dcbArgULong "DCArgs * p"
+.Ft DCulonglong
+.Fn dcbArgULongLong "DCArgs * p"
+.Ft DCfloat
+.Fn dcbArgFloat "DCArgs * p"
+.Ft DCdouble
+.Fn dcbArgDouble "DCArgs * p"
+.Ft DCpointer
+.Fn dcbArgPointer "DCArgs * p"
+.Ft DCpointer
+.Fn dcbArgAggr "DCArgs * p" "DCpointer target"
+.Ft void
+.Fn dcbReturnAggr "DCArgs * args" "DCValue * result" "DCpointer ret"
 .Sh DESCRIPTION
 The
 .Nm
 dyncall library has an interface to create callback objects, that can be passed
-to functions as callback arguments. In other words, a pointer to the callback
-object can be "called", directly. The callback handler then allows iterating
-dynamically over the arguments once called back.
+to functions as callback function pointers. In other words, a pointer to the
+callback object can be "called", directly. A generic callback handler invoked
+by this object then allows iterating dynamically over the arguments once called
+back.
 .Pp
-.Fn dcbNewCallback
+.Fn dcbNewCallback2
 creates a new callback object, where
 .Ar signature
 is a signature string describing the function to be called back (see manual or
-dyncall_signature.h for format). This is needed for
-.Nm
-dyncallback to correctly prepare the arguments passed in by the function that
-calls the callback handler. Note that the handler doesn't return the value
-specified in the signature, directly, but a signature character, specifying the
-return value's type.
-The return value itself is stored where the handler's
-3rd parameter points to (see below).
+dyncall_signature.h for format), and
 .Ar funcptr
-is a pointer to the
-.Nm
-dyncallback callback handler (see below), and
+is a pointer to a generic callback handler (see below). The signature is needed
+in the generic callback handler to correctly retrieve the arguments provided by
+the caller of the callback. Note that the generic handler's function
+type/declaration is always the same for any callback.
 .Ar userdata
-a pointer to arbitrary user data you want to use in the callback handler.
-Use the returned pointer as callback argument in functions requiring a callback
-function pointer.
+is a pointer to arbitrary user data to be available in the generic callback
+handler. If the callback expects aggregates (struct, union) to be passed or
+returned by value, a pointer to an array of DCaggr* descriptions must be
+provided (exactly one per aggregate, in the same order as in the signature) via
+the
+.Ar aggrs
+parameter, otherwise pass NULL. This pointer must point to valid data during
+callback.
+.Pp
+.Fn dcbNewCallback
+is the same as
+.Fn dcbNewCallback2 ,
+with an implicit NULL passed via the
+.Ar aggrs
+parameter, meaning it can only be used for callbacks that do not use any
+aggregate by value.
+.Pp
+.Em NOTE :
+C++ non-trivial aggregates (check with the std::is_trivial type trait) do not
+use aggregate descriptions, so the respective pointers in the provided array
+must be NULL. See
+.Xr dyncall 3
+for more information on C++ non-trivial aggregates.
+.Pp
+Use the pointer returned by
+.Fn dcbNewCallback*
+as argument in functions requiring a callback function pointer.
 .Pp
 .Fn dcbInitCallback
-(re)initialize the callback object.
+and
+.Fn dcbInitCallback2
+(re)initialize the callback object. For a description of their parameters, see
+.Fn dcbNewCallback* .
 .Pp
 .Fn dcbFreeCallback
 destroys and frees the callback handler.
 .Pp
 .Fn dcbGetUserData
 returns a pointer to the userdata passed to the callback object on creation or
-initialization.
+(re)initialization.
 .Pp
-Declaration of a dyncallback handler (following function pointer definition in
-dyncallback/dyncall_callback.h):
+Declaration of a dyncallback handler (following function pointer declaration in
+dyncall_callback.h):
 .Bd -literal -offset indent
-char cbHandler(DCCallback* cb,
-               DCArgs*     args,
-               DCValue*    result,
-               void*       userdata);
+DCsigchar cbHandler(DCCallback* cb,
+                    DCArgs*     args,
+                    DCValue*    result,
+                    void*       userdata);
 .Ed
 .Pp
-.Ar cb is a pointer to the DCCallback object in use
-.Nm
-result is a pointer to a DCValue object in order to store the callback's
-return value (output, to be set by handler). Finally,
-.Ar userdata is a pointer to some user defined data that can be
-set when creating the callback object.
-The handler itself returns a signature character (see manual for format)
-specifying the data type used for
+.Ar cb
+is a pointer to the DCCallback object in use,
+.Ar args
+is to be used with the
+.Fn dcbArg*
+functions to iterate over the arguments passed to the callback, and
+.Ar result
+is a pointer to an object used to store the callback's return value (output, to
+be set by the handler). Finally,
+.Ar userdata
+is the user defined data pointer set when creating or (re)initializing the
+callback object.
+The handler itself must return a signature character (see manual or
+dyncall_signature.h for format) specifying the data type of
 .Ar result .
-.Sh EXAMPLE
-Let's say, we want to create a callback object and call it. For simplicity, this
-example will omit passing it as a function pointer to a function (e.g. compar
-in qsort(), etc.) and demonstrate calling it, directly. First, we need to define
-our callback handler - the following handler illustrates how to access the passed-
-in arguments:
+.Pp
+Retrieving aggregates by value from the generic handler's
+.Ar args
+argument can be done via
+.Fn dcbArgAggr ,
+where
+.Ar target
+must point to memory large enough for the aggregate to be copied to,
+.Em iff
+the aggregate is trivial (see below for non-trivial C++ aggregates), in which case
+.Ar target
+is returned.
+.Pp
+To return a trivial aggregate by value, a helper function
+.Fn dcbReturnAggr
+needs to be used in order to correctly place the aggregate pointed to by
+.Ar ret
+into
+.Ar result ,
+then let the generic handler return DC_SIGCHAR_AGGREGATE.
+.Pp
+Retrieving or returning C++ non-trivial aggregates (check with the
+std::is_trivial type trait) is done differently, as dyncall cannot know how to
+do this copy and the C++ ABI handles those differently:
+.Pp
+When retrieving a C++ non-trivial aggregate via
+.Fn dcbArgAggr ,
+.Ar target
+is ignored, and a pointer to the non-trivial aggregate is returned (the user
+should then do a local copy).
+To return a C++ non-trivial aggregate by value via
+.Fn dcbReturnAggr ,
+pass NULL for
+.Ar ret ,
+which will make
+.Ar result->p
+point to (implicit, caller-provided) memory where the aggregate should be
+copied to.
+
+.Sh EXAMPLES
+.Em Note :
+for simplicity, none of the examples below do any error checking. Also, none of
+them pass the callback object pointer as an argument to a function doing the
+respective callback (e.g.
+.Ar compar
+in
+.Xr qsort 3 ,
+etc.), but demonstrate calling it, directly, for clarity.
+.Pp
+Let's say, we want to create a callback object and call it. First, we need to
+define our callback handler - the following handler illustrates how to access
+the passed-in arguments, optional userdata, and how to return values:
 .Bd -literal -offset indent
-char cbHandler(DCCallback* cb,
-               DCArgs*     args,
-               DCValue*    result,
-               void*       userdata)
+DCsigchar cbHandler(DCCallback* cb,
+                    DCArgs*     args,
+                    DCValue*    result,
+                    void*       userdata)
 {
   int* ud = (int*)userdata;
   int       arg1 = dcbArgInt     (args);
@@ -104,25 +216,192 @@ char cbHandler(DCCallback* cb,
   double    arg4 = dcbArgDouble  (args);
   long long arg5 = dcbArgLongLong(args);
 
-  // .. do something ..
+  /* .. do something .. */
 
   result->s = 1244;
   return 's';
 }
 .Ed
 .Pp
-Note that the return value of the handler is a signature character, not the
-actual return value, itself.
-Now, let's call it through a DCCallback object:
+Note that the return value of the handler is a signature character, and not the
+actual return value, itself.  Now, let's call it through a
+.Sy DCCallback
+object:
 .Bd -literal -offset indent
-  DCCallback* cb;
-  short result = 0;
-  int userdata = 1337;
-  cb = dcbNewCallback("ifsdl)s", &cbHandler, &userdata);
-  result = ((short(*)(int, float, short, double, long long))cb)
-    (123, 23.f, 3, 1.82, 9909ll);
-  dcbFreeCallback(cb);
+DCCallback* cb;
+short result = 0;
+int userdata = 1337;
+cb = dcbNewCallback("ifsdl)s", &cbHandler, &userdata);
+
+/* call the callback object */
+result = ((short(*)(int, float, short, double, long long))cb)
+  (123, 23.f, 3, 1.82, 9909ll);
+
+dcbFreeCallback(cb);
 .Ed
+.Ss C/trivial aggregates by-value
+Onto an example calling back a function which takes an aggregate
+.Em "by value"
+(note that this is only available on platforms where macro
+.Dv DC__Feature_AggrByVal
+is defined). E.g. with the following function
+.Fn f
+and
+.Sy struct S :
+.Bd -literal -offset indent
+struct S { char x[3]; double y; };
+int f(struct S, float);
+.Ed
+.Pp
+the callback handler would look like:
+.Bd -literal -offset indent
+DCsigchar cbHandler(DCCallback* cb,
+                    DCArgs*     args,
+                    DCValue*    result,
+                    void*       userdata)
+{
+  struct S arg1;
+  float arg2;
+  dcbArgAggr(args, (DCpointer)&arg1);
+  arg2 = dcbArgFloat(args);
+
+  /* ... */
+
+  result->i = 1;
+  return 'i';
+}
+.Ed
+.Pp
+and the callback object as well as the aggregate field/layout description are
+set up (and the former called back) as follows:
+.Bd -literal -offset indent
+struct S s = { { 56, -23, 0 }, -6.28 };
+int result;
+
+DCCallback* cb;
+
+DCaggr *a = dcNewAggr(2, sizeof(struct S));
+dcAggrField(a, DC_SIGCHAR_CHAR,   offsetof(struct S, x), 3);
+dcAggrField(a, DC_SIGCHAR_DOUBLE, offsetof(struct S, y), 1);
+dcCloseAggr(a);
+
+/* an array of DCaggr* must be passed as last arg, with one
+ * entry per 'A' signature character; we got only one, here
+ */
+cb = dcbNewCallback2("Af)v", &cbHandler, NULL, &a);
+
+/* call the callback object */
+result = ((int(*)(struct S, float))cb)(s, 42.f);
+
+dcbFreeCallback(cb);
+dcFreeAggr(a);
+.Ed
+.Pp
+Let's extend the last example, so that the callback function also returns
+.Sy struct S
+.Em "by value" .
+The struct definition, function declaration and handler definition would be:
+.Bd -literal -offset indent
+/* callback function decl */
+struct S f(struct S, float);
+
+struct S { char x[3]; double y; };
+
+DCsigchar cbHandler(DCCallback* cb,
+                    DCArgs*     args,
+                    DCValue*    result,
+                    void*       userdata)
+{
+  struct S arg1, r;
+  float arg2;
+  dcbArgAggr(args, (DCpointer)&arg1);
+  arg2 = dcbArgFloat(args);
+
+  /* ... */
+
+  /* use helper to write aggregate return value to result */
+  dcbReturnAggr(args, result, (DCpointer)&r);
+  return 'A';
+}
+.Ed
+.Pp
+.Pp
+and the callback object as well as the aggregate field/layout descriptions are
+set up (and the former called back) as follows:
+.Bd -literal -offset indent
+struct S s = { { 33, 29, -1 }, 6.8 };
+struct S result;
+
+DCCallback* cb;
+
+DCaggr *a = { dcNewAggr(2, sizeof(struct S)) };
+dcAggrField(a, DC_SIGCHAR_CHAR,   offsetof(struct S, x), 3);
+dcAggrField(a, DC_SIGCHAR_DOUBLE, offsetof(struct S, y), 1);
+dcCloseAggr(a);
+
+/* an array of DCaggr* must be passed as last arg, with one
+ * entry per 'A' signature character
+ */
+cb = dcbNewCallback2("Af)A", &cbHandler, NULL, (DCaggr*[2]){a,a});
+
+/* call the callback object */
+result = ((struct S(*)(struct S, float))cb)(s, 42.f);
+
+dcbFreeCallback(cb);
+dcFreeAggr(a);
+.Ed
+.Ss C++
+In our next example, let's look at setting up a
+.Sy DCCallback
+object to call back a simple C++ method (illustrating the need to specify the
+thiscall calling convention). If the class and method is declared as:
+.Bd -literal -offset indent
+class Klass {
+public:
+	virtual void Method(float, int);
+};
+.Ed
+.Pp
+the respective callback handler would be something along the lines of:
+.Bd -literal -offset indent
+DCsigchar cbHandler(DCCallback* cb,
+                    DCArgs*     args,
+                    DCValue*    result,
+                    void*       userdata)
+{
+  Klass*    thisptr = (Klass*)dcbArgPointer(args);
+  float     arg1 = dcbArgFloat(args);
+  int       arg2 = dcbArgInt(args);
+
+  /* ... */
+
+  return 'v';
+}
+.Ed
+.Pp
+and the callback object would be used as follows:
+.Bd -literal -offset indent
+DCCallback* cb;
+cb = dcbNewCallback("_*pfi)v", &cbHandler, NULL);
+
+/* HACK: this is a hack just for this example to force the compiler
+ * generating a thiscall, below (creates a fake vtable mimicking
+ * Klass, setting all of its possible entries to our callback handler;
+ */
+DCpointer fakeClass[sizeof(Klass)/sizeof(DCpointer)];
+for(int j=0; j<sizeof(Klass)/sizeof(DCpointer); ++j)
+	fakeClass[j] = &cb;
+
+/* (this)call the callback object */
+((Klass*)&fakeClass)->Method(8, 23.f);
+
+dcbFreeCallback(cb);
+.Ed
+.Pp
+.Em NOTE :
+In a real world scenario one would figure out the precise location of the vtable entry of
+.Fn Klass::Method ,
+of course; the above example omits this for simplicity.
 .Sh CONFORMING TO
 The dyncallback library needs at least a c99 compiler with additional support
 for anonymous structs/unions (which were introduced officially in c11). Given

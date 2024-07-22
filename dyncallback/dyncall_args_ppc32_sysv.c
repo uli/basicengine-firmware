@@ -6,7 +6,7 @@
  Description: Callback's Args Implementation for PowerPC 32-bit System V ABI
  License:
 
-   Copyright (c) 2015-2018 Daniel Adler <dadler@uni-goettingen.de>
+   Copyright (c) 2015-2022 Daniel Adler <dadler@uni-goettingen.de>
 
    Permission to use, copy, modify, and distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
@@ -92,4 +92,7 @@ DCfloat     dcbArgFloat    (DCArgs* p)
   }
   return result; 
 }
+
+DCpointer   dcbArgAggr     (DCArgs* p, DCpointer target)                   { /* @@@AGGR not impl */ return NULL; }
+void        dcbReturnAggr  (DCArgs *args, DCValue *result, DCpointer ret)  { /* @@@AGGR not impl */ }
 

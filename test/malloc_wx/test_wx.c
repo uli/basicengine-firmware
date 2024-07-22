@@ -41,7 +41,7 @@ int main()
     err = dcInitExecWX(ptr, 23);
     dcFreeWX(ptr, 23);
   }
-  printf("result: test_alloc_wx: %d\n", (!err) ? 1 : 0 );
+  printf("result: malloc_wx: %d\n", (!err) ? 1 : 0 );
 
   dcTest_deInitPlatform();
 

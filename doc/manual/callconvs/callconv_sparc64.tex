@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2012-2019 Daniel Adler <dadler@uni-goettingen.de>,
+% Copyright (c) 2012-2022 Daniel Adler <dadler@uni-goettingen.de>,
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -22,7 +22,7 @@
 \paragraph{Overview}
 
 The SPARC family of processors is based on the SPARC instruction set architecture, which comes in basically three revisions,
-V7, V8\cite{SPARCV8}\cite{SPARCSysV} and V9\cite{SPARCV9}\cite{SPARCV9SysV}. The former two are 32-bit (see previous chapter) whereas the latter refers to the 64-bit SPARC architecture.
+V7, V8\cite{SPARCV8}\cite{SPARCSysV}\cite{SPARCCD} and V9\cite{SPARCV9}\cite{SPARCV9SysV}\cite{SPARCCD}. The former two are 32-bit (see previous chapter) whereas the latter refers to the 64-bit SPARC architecture.
 SPARC uses big endian byte order, however, V9 supports also little endian byte order, but for data access only, not instruction access.\\
 \\
 There are two proposals, one from Sun and one from Hal, which disagree on how to handle some aspects of this calling convention.\\
@@ -34,7 +34,7 @@ There are two proposals, one from Sun and one from Hal, which disagree on how to
 \subsubsection{SPARC (64-bit) Calling Convention}
 
 \begin{itemize}
-\item 32 double precision floating point registers (d0,d2,d4,...,d62, usable as 16 quad precision ones q0,q4,q8,...g60, and also first half of them are usable as 32 single precision registers f0-f31)
+\item 32 double precision floating point registers (d0,d2,d4,...,d62, usable as 16 quad precision ones q0,q4,q8,...q60, and also first half of them are usable as 32 single precision registers f0-f31)
 \item 32 64-bit integer/pointer registers out of a bigger (vendor/model dependent) number that are accessible at a time (8 are global ones (g*), whereas the remaining 24 form a register window with 8 input (i*), 8 output (o*) and 8 local (l*) ones)
 \item calling a function shifts the register window, the old output registers become the new input registers (old local and input ones are not accessible anymore)
 \item stack and frame pointer are offset by a BIAS of 2047 (see official doc for reasons)
@@ -73,6 +73,39 @@ Name                          & Alias                          & Brief descripti
 \item all arguments \textless=\ 64 bit are passed as 64 bit values
 \item minimum stack size is 128 bytes, b/c stack pointer must always point at enough space to store all \%i* and \%l* registers, used when running out of register windows
 \item if needed, register spill area (both, integer and float arguments are spilled in order) is adjacent to parameters
+\item structs with only one field are passed as if the param would be the field itself
+\item structs \textless=\ 16 bytes (which have more than one field) are passed field-by-field, {\bf however} evaluated as a sequence of 8-byte parameter slots
+\begin{itemize}
+\item note that due to aggregate alignment rules, any floating point value is either the entire slot (for double precision) or exactly one half
+\item fields are left justified in register or stack slots
+\item integers in a slot are passed as such (either via \%o* registers or the stack)
+\item single precision floats (using half of the slot) use even numbered \%f* registers when they occupy the left half, odd numbered ones otherwise (no register skipping logic applied within a slot)
+\item splitting struct fields between registers and stack is allowed
+\end{itemize}
+\item unions \textless=\ 16 bytes passed by-value are passed like integers in left-justified 8-byte slots (either via \%o* registers or the stack)
+\item aggregates (struct, union) and types \textgreater\ 16 bytes are passed indirectly, as a pointer to a correctly aligned copy of the data (that copy can be avoided under certain conditions)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+% from spec:
+%Structure or union types up to eight bytes in size are assigned to one parameter array word, and align to eight-byte
+%boundaries.
+%Structure or union types larger than eight bytes, and up to sixteen bytes in size are assigned to two consecutive
+%parameter array words, and align according to the alignment requirements of the structure or at least to an eight-byte
+%boundary.
+%Structure or union types are always left-justified, whether stored in registers or memory. The individual fields of a
+%structure (or containing storage unit in the case of bit fields) are subject to promotion into registers based on their type
+%using the same rules as apply to scalar values (with the addition that a single-precision floating-point number assigned
+%to the left half of an argument slot will be promoted into the corresponding even-numbered float register.). Any union
+%type being passed directly is subject to promotion into the appropriate integer register(s).
+%Note that a sixteen-byte structure with all integral fields assigned to locations %sp+BIAS+168 and %sp+BIAS+176 will
+%be “split,” as the contents of location %sp+BIAS+168 will be promoted to %o5.
+%Structures or unions larger than sixteen bytes are copied by the caller and passed indirectly; the caller will pass the
+%address of a correctly aligned structure value. This sixty-four bit address will occupy one word in the parameter array,
+%and may be promoted to an %o register like any other pointer value. The callee may modify the addressed structure.
+%The caller can omit the copy if such omission cannot be detected. That requires (at least) that:
+%* the original aggregate is already properly aligned,
+%* the original aggregate is not aliased,
+%* the original aggregate is not used after the call, and
+%* no language-specific semantics require the copy.
 \end{itemize}
 
 \paragraph{Return values}
@@ -80,8 +113,39 @@ Name                          & Alias                          & Brief descripti
 \begin{itemize}
 \item results are expected by caller to be returned in \%o0-\%o3 (after reg window restore, meaning callee writes to \%i0-\%i3) for integers
 \item \%d0,\%d2,\%d4,\%d6 are used for floating point values
-\item the fields of structs/unions up to 32b are returned via the respective registers mentioned in the previous bullet points
-\item structs/unions \textgreater= 32b are returned in a space allocated by the caller, with a pointer to it passed as first parameter to the function called (meaning in \%o0)
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in \%o0), and callee writes return value to this space; the ptr to the aggregate is returned in the same register (after reg window restore)
+\item the fields of aggregates (struct, union) \textless= 32 bytes are returned via registers mentioned above (which are
+assigned following the same logic as when passing the aggregate as a first argument to a function)
+\item aggregates (struct, union) \textgreater 32 bytes are returned in a space allocated by the caller, with a pointer to it
+passed as first parameter to the function called (meaning in \%o0)
+% from spec:
+%Structure and union return types up to thirty-two bytes in size are returned in registers. The registers are assigned as if
+%the value was being passed as the first argument to a function with a known prototype.
+%For types with a larger size the caller allocates an area large enough and aligned properly to hold the return value, and
+%passes a pointer to that area as an implicit first argument (of type pointer-to-data) to the callee. This implicit argument
+%logically precedes the first actual argument, and is allocated according to normal argument passing rules (i.e. into %o0).
+%The callee must store the function return value in the result area before control is returned to the caller and after the last
+%use or definition of any variable that might overlap with the result area. If the callee is terminated through any means
+%other than a normal function return (e.g., through a call to the longjmp function), the contents of the result area are
+%undefined.
+%In the common case that the caller immediately assigns the returned value to a program variable, the caller may
+%substitute the address of the assigned program variable in place of the allocated result area and omit the code to do the
+%assignment, as long as this substitution does not change the program’s externally visible behavior.
+%Note also that the caller is required to provide the implicit argument and a properly sized and aligned receiving area
+%even if it does not wish to use the callee’s function result. In that case, the caller may simply pass a pointer to a scratch
+%area.
+%So that compilers are not forced to emit in-line code for structure copy, Section 6.2 defines a set of routines optimized
+%for this purpose. In the case of a routine which had kept its first argument in %i0 and was returning a value pointed to
+%by %i1, epilogue code would take the form:
+%
+%mov %i0, %o0
+%mov %i1, %o1
+%call __align_cpy_n
+%mov size, %o2
+%ret
+%restore %o0, %g0, %o0
+%
 \end{itemize}
 
 \paragraph{Stack layout}

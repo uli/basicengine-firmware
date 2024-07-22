@@ -1,5 +1,5 @@
 APP = plain
-OBJS = test_main.o test_structs.o
+OBJS = test_main.o test_aggrs.o
 
 TOP      = ../..
 CFLAGS  += -I${TOP}/dyncall

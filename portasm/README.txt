@@ -13,10 +13,12 @@ Requirements
 Supported Architectures and Tool-chains:
 ----------------------------------------
 
-- x86: gas, apple as, masm
-- x64: gas, apple as, masm
-- ppc: gas, apple as
-- arm: gas, apple as
+- x86:   gas, apple as, masm
+- x64:   gas, apple as, masm
+- ppc:   gas, apple as
+- ppc64: gas, apple as
+- arm:   gas, apple as
+- arm64: gas, apple as
 
 
 Usage:

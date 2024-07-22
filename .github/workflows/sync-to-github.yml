@@ -1,0 +1,48 @@
+name: Mirror Mercurial to GitHub
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight
+  push:
+    branches:
+      - actions/sync-to-github
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout GitHub Repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: git_repo
+
+    - name: Install Mercurial
+      run: sudo apt-get install -y mercurial
+
+    - name: Clone Mercurial Repository
+      run: hg clone https://dyncall.org/pub/dyncall/dyncall hg_repo
+
+    - name: Install hg-fast-export
+      run: |
+        sudo apt-get install -y python3
+        git clone https://github.com/frej/fast-export.git
+
+    - name: Convert to Git and Push to GitHub
+      run: |
+        git config --global user.email "nlogan@gmail.com"
+        git config --global user.name "Nick Logan"
+        cd git_repo
+        git branch -D upstream || true
+        ../fast-export/hg-fast-export.sh -r ../hg_repo -M upstream
+
+        git checkout actions/sync-to-github
+        git branch -D main || true
+        git checkout -b main
+        git rebase upstream
+        git push origin main --tags --force
+

@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2007,2009 Daniel Adler <dadler@uni-goettingen.de>, 
-#                         Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2007,2009-2022 Daniel Adler <dadler@uni-goettingen.de>, 
+#                              Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -33,20 +33,20 @@ TOP = ..\..
 !IF "$(BUILD_OS)" == "windows"
 
 TARGETS = plain.exe
-OBJS = test_main.obj test_structs.obj
+OBJS = test_main.obj test_aggrs.obj
 
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...
-	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\libdyncall_s.lib
+	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\dyncall_s.lib
 
 
 !ELSE IF "$(BUILD_OS)" == "nds"
 
 TARGETS = plain.nds
-OBJS = test_main.o test_structs.o
+OBJS = test_main.o test_aggrs.o
 
 $(TARGETS):# $(OBJS)
-	echo Not building: There is no struct support on this platform @@@ or not taken into account.
+	echo Not building: There is no struct support on this platform @@@AGGRS or not taken into account.
 #	echo Linking $@ ...
 #	$(LD) $(LDFLAGS) $(OBJS) $(DEVKITPRO_PATH)\libnds\lib\libnds9.a $(TOP)/dyncall/libdyncall_s.a -o "$(@B).elf"
 #	$(OCP) -O binary "$(@B).elf" "$(@B).arm9"

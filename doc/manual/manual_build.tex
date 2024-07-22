@@ -17,7 +17,7 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-\newpage
+\clearpage
 \section{Building the library}
 
 The library has been built and used successfully on several 
@@ -95,21 +95,19 @@ Available options (omit for defaults):
 Available options:
 
 \begin{tabular*}{0.75\textwidth}{ll}
-{\tt /?}                       & display help                                  \\
-{\tt /prefix \textit{path}}    & set installation prefix (GNU make only)       \\
-{\tt /prefix-bd \textit{path}} & set build directory prefix (GNU make only)    \\
-{\tt /target-x86}              & build for x86 architecture (default)          \\
-{\tt /target-x64}              & build for x64 architecture                    \\
-{\tt /target-psp}              & build for PlayStation Portable (homebrew SDK) \\
-{\tt /target-nds-arm}          & build for Nintendo DS (devkitPro, ARM mode)   \\
-{\tt /target-nds-thumb}        & build for Nintendo DS (devkitPro, THUMB mode) \\
-{\tt /tool-msvc}               & use Microsoft Visual C++ compiler (default)   \\
-{\tt /tool-gcc}                & use GNU Compiler Collection                   \\
-{\tt /asm-ml}                  & use Microsoft Macro Assembler (default)       \\
-{\tt /asm-as}                  & use the GNU Assembler                         \\
-{\tt /asm-nasm}                & use NASM Assembler                            \\
-{\tt /config-release}          & build release version (default)               \\
-{\tt /config-debug}            & build debug version                           \\
+{\tt /?}                       & display help                                        \\
+{\tt /target-x86}              & build for x86 architecture (default)                \\
+{\tt /target-x64}              & build for x64 architecture                          \\
+{\tt /target-arm64}            & build for x64 architecture                          \\
+{\tt /target-psp}              & cross-build for PlayStation Portable (homebrew SDK) \\
+{\tt /target-nds-arm}          & cross-build for Nintendo DS (devkitPro, ARM mode)   \\
+{\tt /target-nds-thumb}        & cross-build for Nintendo DS (devkitPro, THUMB mode) \\
+{\tt /tool-msvc}               & use Microsoft Visual C++ compiler (default)         \\
+{\tt /tool-gcc}                & use GNU Compiler Collection                         \\
+{\tt /tool-clang}              & use GNU Compiler Collection                         \\
+{\tt /asm-ml}                  & use Microsoft Macro Assembler (default)             \\
+{\tt /asm-as}                  & use the GNU or LLVM Assembler                       \\
+{\tt /asm-nasm}                & use NASM Assembler                                  \\
 \end{tabular*}
 
 
@@ -164,8 +162,8 @@ CC=gcc make
 Problem: On windows using mingw and msys/unixutils 'Make', the make uses
 'cc' for C compilation, which does not exist in mingw.
 
-Solution: Set the 'CC' environment variable explicitly to 'gcc' (as in
-the example above).
+Solution: Set the 'CC' environment variable explicitly to e.g. 'gcc' (as in the
+example above).
 
 \subsection{Build with CMake}
 

@@ -370,5 +370,795 @@
  148:   81 c3 e0 08     retl                            ; | epilog
  14c:   01 00 00 00     nop                             ; |            branch delay slot
 
+
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <leaf_call>:
+   0:	9d e3 bf 98 	save  %sp, -104, %sp
+   4:	f0 27 a0 44 	st  %i0, [ %fp + 0x44 ]
+   8:	f2 27 a0 48 	st  %i1, [ %fp + 0x48 ]
+   c:	f4 27 a0 4c 	st  %i2, [ %fp + 0x4c ]
+  10:	f6 27 a0 50 	st  %i3, [ %fp + 0x50 ]
+  14:	fa 27 a0 58 	st  %i5, [ %fp + 0x58 ]
+  18:	81 e8 00 00 	restore 
+  1c:	81 c3 e0 08 	retl 
+  20:	01 00 00 00 	nop 
+
+00000024 <nonleaf_call>:
+  24:	9d e3 bf 18 	save  %sp, -232, %sp
+  28:	f0 27 a0 44 	st  %i0, [ %fp + 0x44 ]
+  2c:	f2 27 a0 48 	st  %i1, [ %fp + 0x48 ]
+  30:	f4 27 a0 4c 	st  %i2, [ %fp + 0x4c ]
+  34:	f6 27 a0 50 	st  %i3, [ %fp + 0x50 ]
+  38:	f8 27 a0 54 	st  %i4, [ %fp + 0x54 ]
+  3c:	a0 10 00 1d 	mov  %i5, %l0
+  40:	82 07 bf 94 	add  %fp, -108, %g1
+  44:	84 10 20 64 	mov  0x64, %g2
+  48:	90 10 00 01 	mov  %g1, %o0
+  4c:	92 10 20 00 	clr  %o1
+  50:	94 10 00 02 	mov  %g2, %o2
+  54:	40 00 00 00 	call  54 <nonleaf_call+0x30>
+  58:	01 00 00 00 	nop 
+  5c:	82 10 20 4c 	mov  0x4c, %g1	! 4c <nonleaf_call+0x28>
+  60:	c2 2f bf 94 	stb  %g1, [ %fp + -108 ]
+  64:	c4 1c 00 00 	ldd  [ %l0 ], %g2
+  68:	c4 3f bf 80 	std  %g2, [ %fp + -128 ]
+  6c:	c4 1c 20 08 	ldd  [ %l0 + 8 ], %g2
+  70:	c4 3f bf 88 	std  %g2, [ %fp + -120 ]
+  74:	84 07 bf 80 	add  %fp, -128, %g2
+  78:	c2 07 a0 60 	ld  [ %fp + 0x60 ], %g1
+  7c:	c2 23 a0 5c 	st  %g1, [ %sp + 0x5c ]
+  80:	d0 07 a0 48 	ld  [ %fp + 0x48 ], %o0
+  84:	d2 07 a0 4c 	ld  [ %fp + 0x4c ], %o1
+  88:	d4 07 a0 50 	ld  [ %fp + 0x50 ], %o2
+  8c:	d6 07 a0 54 	ld  [ %fp + 0x54 ], %o3
+  90:	98 10 00 02 	mov  %g2, %o4
+  94:	da 07 a0 5c 	ld  [ %fp + 0x5c ], %o5
+  98:	40 00 00 00 	call  98 <nonleaf_call+0x74>
+  9c:	01 00 00 00 	nop 
+  a0:	81 e8 00 00 	restore 
+  a4:	81 c3 e0 08 	retl 
+  a8:	01 00 00 00 	nop 
+
+000000ac <main>:
+  ac:	9d e3 bf 70 	save  %sp, -144, %sp
+  b0:	82 10 20 05 	mov  5, %g1
+  b4:	c2 27 bf e8 	st  %g1, [ %fp + -24 ]
+  b8:	82 10 20 06 	mov  6, %g1
+  bc:	c2 27 bf ec 	st  %g1, [ %fp + -20 ]
+  c0:	84 10 20 00 	clr  %g2
+  c4:	86 10 20 07 	mov  7, %g3
+  c8:	c4 3f bf f0 	std  %g2, [ %fp + -16 ]
+  cc:	c4 1f bf e8 	ldd  [ %fp + -24 ], %g2
+  d0:	c4 3f bf d8 	std  %g2, [ %fp + -40 ]
+  d4:	c4 1f bf f0 	ldd  [ %fp + -16 ], %g2
+  d8:	c4 3f bf e0 	std  %g2, [ %fp + -32 ]
+  dc:	84 07 bf d8 	add  %fp, -40, %g2
+  e0:	82 10 20 08 	mov  8, %g1
+  e4:	c2 23 a0 5c 	st  %g1, [ %sp + 0x5c ]
+  e8:	82 10 20 09 	mov  9, %g1
+  ec:	c2 23 a0 60 	st  %g1, [ %sp + 0x60 ]
+  f0:	90 10 20 00 	clr  %o0
+  f4:	92 10 20 01 	mov  1, %o1
+  f8:	94 10 20 02 	mov  2, %o2
+  fc:	96 10 20 03 	mov  3, %o3
+ 100:	98 10 20 04 	mov  4, %o4
+ 104:	9a 10 00 02 	mov  %g2, %o5
+ 108:	40 00 00 00 	call  108 <main+0x5c>
+ 10c:	01 00 00 00 	nop 
+ 110:	82 10 20 00 	clr  %g1	! 0 <leaf_call>
+ 114:	b0 10 00 01 	mov  %g1, %i0
+ 118:	81 e8 00 00 	restore 
+ 11c:	81 c3 e0 08 	retl 
+ 120:	01 00 00 00 	nop 
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <leaf_call>:
+   0:	9d e3 bf 98 	save  %sp, -104, %sp
+   4:	f0 27 a0 44 	st  %i0, [ %fp + 0x44 ]
+   8:	f6 27 a0 50 	st  %i3, [ %fp + 0x50 ]
+   c:	f8 27 a0 54 	st  %i4, [ %fp + 0x54 ]
+  10:	81 e8 00 00 	restore 
+  14:	81 c3 e0 08 	retl 
+  18:	01 00 00 00 	nop 
+
+0000001c <nonleaf_call>:
+  1c:	9d e3 be e0 	save  %sp, -288, %sp
+  20:	f0 27 a0 44 	st  %i0, [ %fp + 0x44 ]
+  24:	f2 27 a0 48 	st  %i1, [ %fp + 0x48 ]
+  28:	a0 10 00 1a 	mov  %i2, %l0
+  2c:	a4 10 00 1b 	mov  %i3, %l2
+  30:	f8 27 a0 54 	st  %i4, [ %fp + 0x54 ]
+  34:	fa 27 a0 58 	st  %i5, [ %fp + 0x58 ]
+  38:	e2 07 a0 5c 	ld  [ %fp + 0x5c ], %l1
+  3c:	e6 07 a0 60 	ld  [ %fp + 0x60 ], %l3
+  40:	82 07 bf 94 	add  %fp, -108, %g1
+  44:	84 10 20 64 	mov  0x64, %g2
+  48:	90 10 00 01 	mov  %g1, %o0
+  4c:	92 10 20 00 	clr  %o1
+  50:	94 10 00 02 	mov  %g2, %o2
+  54:	40 00 00 00 	call  54 <nonleaf_call+0x38>
+  58:	01 00 00 00 	nop 
+  5c:	82 10 20 4c 	mov  0x4c, %g1	! 4c <nonleaf_call+0x30>
+  60:	c2 2f bf 94 	stb  %g1, [ %fp + -108 ]
+  64:	c2 04 00 00 	ld  [ %l0 ], %g1
+  68:	c2 27 bf 80 	st  %g1, [ %fp + -128 ]
+  6c:	c2 04 20 04 	ld  [ %l0 + 4 ], %g1
+  70:	c2 27 bf 84 	st  %g1, [ %fp + -124 ]
+  74:	c2 04 20 08 	ld  [ %l0 + 8 ], %g1
+  78:	c2 27 bf 88 	st  %g1, [ %fp + -120 ]
+  7c:	c4 1c 80 00 	ldd  [ %l2 ], %g2
+  80:	c4 3f bf 70 	std  %g2, [ %fp + -144 ]
+  84:	c4 1c a0 08 	ldd  [ %l2 + 8 ], %g2
+  88:	c4 3f bf 78 	std  %g2, [ %fp + -136 ]
+  8c:	c2 04 40 00 	ld  [ %l1 ], %g1
+  90:	c2 27 bf 60 	st  %g1, [ %fp + -160 ]
+  94:	c2 04 60 04 	ld  [ %l1 + 4 ], %g1
+  98:	c2 27 bf 64 	st  %g1, [ %fp + -156 ]
+  9c:	c2 04 60 08 	ld  [ %l1 + 8 ], %g1
+  a0:	c2 27 bf 68 	st  %g1, [ %fp + -152 ]
+  a4:	c4 1c c0 00 	ldd  [ %l3 ], %g2
+  a8:	c4 3f bf 50 	std  %g2, [ %fp + -176 ]
+  ac:	c4 1c e0 08 	ldd  [ %l3 + 8 ], %g2
+  b0:	c4 3f bf 58 	std  %g2, [ %fp + -168 ]
+  b4:	84 07 bf 80 	add  %fp, -128, %g2
+  b8:	86 07 bf 70 	add  %fp, -144, %g3
+  bc:	88 07 bf 60 	add  %fp, -160, %g4
+  c0:	82 07 bf 50 	add  %fp, -176, %g1
+  c4:	c2 23 a0 5c 	st  %g1, [ %sp + 0x5c ]
+  c8:	c2 07 a0 64 	ld  [ %fp + 0x64 ], %g1
+  cc:	c2 23 a0 60 	st  %g1, [ %sp + 0x60 ]
+  d0:	c2 07 a0 68 	ld  [ %fp + 0x68 ], %g1
+  d4:	c2 23 a0 64 	st  %g1, [ %sp + 0x64 ]
+  d8:	d0 07 a0 48 	ld  [ %fp + 0x48 ], %o0
+  dc:	92 10 00 02 	mov  %g2, %o1
+  e0:	94 10 00 03 	mov  %g3, %o2
+  e4:	d6 07 a0 54 	ld  [ %fp + 0x54 ], %o3
+  e8:	d8 07 a0 58 	ld  [ %fp + 0x58 ], %o4
+  ec:	9a 10 00 04 	mov  %g4, %o5
+  f0:	40 00 00 00 	call  f0 <nonleaf_call+0xd4>
+  f4:	01 00 00 00 	nop 
+  f8:	81 e8 00 00 	restore 
+  fc:	81 c3 e0 08 	retl 
+ 100:	01 00 00 00 	nop 
+
+00000104 <main>:
+ 104:	9d e3 bf 08 	save  %sp, -248, %sp
+ 108:	82 10 20 02 	mov  2, %g1
+ 10c:	c2 27 bf bc 	st  %g1, [ %fp + -68 ]
+ 110:	82 10 20 03 	mov  3, %g1
+ 114:	c2 27 bf c0 	st  %g1, [ %fp + -64 ]
+ 118:	03 00 00 00 	sethi  %hi(0), %g1
+ 11c:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+ 120:	d1 00 40 00 	ld  [ %g1 ], %f8
+ 124:	d1 27 bf c4 	st  %f8, [ %fp + -60 ]
+ 128:	03 00 00 00 	sethi  %hi(0), %g1
+ 12c:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+ 130:	d1 18 40 00 	ldd  [ %g1 ], %f8
+ 134:	d1 3f bf c8 	std  %f8, [ %fp + -56 ]
+ 138:	84 10 20 00 	clr  %g2
+ 13c:	86 10 20 06 	mov  6, %g3
+ 140:	c4 3f bf d0 	std  %g2, [ %fp + -48 ]
+ 144:	82 10 20 09 	mov  9, %g1
+ 148:	c2 27 bf dc 	st  %g1, [ %fp + -36 ]
+ 14c:	82 10 20 0a 	mov  0xa, %g1
+ 150:	c2 27 bf e0 	st  %g1, [ %fp + -32 ]
+ 154:	03 00 00 00 	sethi  %hi(0), %g1
+ 158:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+ 15c:	d1 00 40 00 	ld  [ %g1 ], %f8
+ 160:	d1 27 bf e4 	st  %f8, [ %fp + -28 ]
+ 164:	03 00 00 00 	sethi  %hi(0), %g1
+ 168:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+ 16c:	d1 18 40 00 	ldd  [ %g1 ], %f8
+ 170:	d1 3f bf e8 	std  %f8, [ %fp + -24 ]
+ 174:	84 10 20 00 	clr  %g2
+ 178:	86 10 20 0d 	mov  0xd, %g3
+ 17c:	c4 3f bf f0 	std  %g2, [ %fp + -16 ]
+ 180:	c2 07 bf bc 	ld  [ %fp + -68 ], %g1
+ 184:	c2 27 bf a8 	st  %g1, [ %fp + -88 ]
+ 188:	c2 07 bf c0 	ld  [ %fp + -64 ], %g1
+ 18c:	c2 27 bf ac 	st  %g1, [ %fp + -84 ]
+ 190:	c2 07 bf c4 	ld  [ %fp + -60 ], %g1
+ 194:	c2 27 bf b0 	st  %g1, [ %fp + -80 ]
+ 198:	c4 1f bf c8 	ldd  [ %fp + -56 ], %g2
+ 19c:	c4 3f bf 98 	std  %g2, [ %fp + -104 ]
+ 1a0:	c4 1f bf d0 	ldd  [ %fp + -48 ], %g2
+ 1a4:	c4 3f bf a0 	std  %g2, [ %fp + -96 ]
+ 1a8:	c2 07 bf dc 	ld  [ %fp + -36 ], %g1
+ 1ac:	c2 27 bf 88 	st  %g1, [ %fp + -120 ]
+ 1b0:	c2 07 bf e0 	ld  [ %fp + -32 ], %g1
+ 1b4:	c2 27 bf 8c 	st  %g1, [ %fp + -116 ]
+ 1b8:	c2 07 bf e4 	ld  [ %fp + -28 ], %g1
+ 1bc:	c2 27 bf 90 	st  %g1, [ %fp + -112 ]
+ 1c0:	c4 1f bf e8 	ldd  [ %fp + -24 ], %g2
+ 1c4:	c4 3f bf 78 	std  %g2, [ %fp + -136 ]
+ 1c8:	c4 1f bf f0 	ldd  [ %fp + -16 ], %g2
+ 1cc:	c4 3f bf 80 	std  %g2, [ %fp + -128 ]
+ 1d0:	84 07 bf a8 	add  %fp, -88, %g2
+ 1d4:	86 07 bf 98 	add  %fp, -104, %g3
+ 1d8:	82 07 bf 88 	add  %fp, -120, %g1
+ 1dc:	c2 23 a0 5c 	st  %g1, [ %sp + 0x5c ]
+ 1e0:	82 07 bf 78 	add  %fp, -136, %g1
+ 1e4:	c2 23 a0 60 	st  %g1, [ %sp + 0x60 ]
+ 1e8:	82 10 20 0e 	mov  0xe, %g1
+ 1ec:	c2 23 a0 64 	st  %g1, [ %sp + 0x64 ]
+ 1f0:	82 10 20 0f 	mov  0xf, %g1
+ 1f4:	c2 23 a0 68 	st  %g1, [ %sp + 0x68 ]
+ 1f8:	90 10 20 00 	clr  %o0
+ 1fc:	92 10 20 01 	mov  1, %o1
+ 200:	94 10 00 02 	mov  %g2, %o2
+ 204:	96 10 00 03 	mov  %g3, %o3
+ 208:	98 10 20 07 	mov  7, %o4
+ 20c:	9a 10 20 08 	mov  8, %o5
+ 210:	40 00 00 00 	call  210 <main+0x10c>
+ 214:	01 00 00 00 	nop 
+ 218:	82 10 20 00 	clr  %g1	! 0 <leaf_call>
+ 21c:	b0 10 00 01 	mov  %g1, %i0
+ 220:	81 e8 00 00 	restore 
+ 224:	81 c3 e0 08 	retl 
+ 228:	01 00 00 00 	nop 
+
+
+
+; ---------- returning 64 bit value ---------->
+
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <f>:
+   0:	9d e3 bf 98 	save  %sp, -104, %sp
+   4:	84 10 20 00 	clr  %g2
+   8:	07 00 00 07 	sethi  %hi(0x1c00), %g3
+   c:	86 10 e0 03 	or  %g3, 3, %g3	! 1c03 <main+0x1bdf>
+  10:	b0 10 00 02 	mov  %g2, %i0
+  14:	b2 10 00 03 	mov  %g3, %i1
+  18:	81 e8 00 00 	restore 
+  1c:	81 c3 e0 08 	retl 
+  20:	01 00 00 00 	nop 
+
+00000024 <main>:
+  24:	9d e3 bf 98 	save  %sp, -104, %sp
+  28:	40 00 00 00 	call  28 <main+0x4>
+  2c:	01 00 00 00 	nop 
+  30:	84 10 00 08 	mov  %o0, %g2
+  34:	86 10 00 09 	mov  %o1, %g3
+  38:	82 10 00 03 	mov  %g3, %g1
+  3c:	b0 10 00 01 	mov  %g1, %i0
+  40:	81 e8 00 00 	restore 
+  44:	81 c3 e0 08 	retl 
+  48:	01 00 00 00 	nop 
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i; long j; };
+; 
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+; 
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 232 };
+;     return b;
+; }
+; 
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + s.x;
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <f0>:
+   0:	9d e3 bf 90 	save  %sp, -112, %sp
+   4:	c2 07 a0 40 	ld  [ %fp + 0x40 ], %g1
+   8:	84 10 3f 84 	mov  -124, %g2
+   c:	c4 2f bf f7 	stb  %g2, [ %fp + -9 ]
+  10:	c4 0f bf f7 	ldub  [ %fp + -9 ], %g2
+  14:	c4 28 40 00 	stb  %g2, [ %g1 ]
+  18:	b0 10 00 01 	mov  %g1, %i0
+  1c:	81 e8 00 00 	restore 
+  20:	81 c3 e0 0c 	jmp  %o7 + 0xc
+  24:	01 00 00 00 	nop 
+
+00000028 <f1>:
+  28:	9d e3 bf 88 	save  %sp, -120, %sp
+  2c:	c8 07 a0 40 	ld  [ %fp + 0x40 ], %g4
+  30:	84 10 20 00 	clr  %g2
+  34:	07 00 00 07 	sethi  %hi(0x1c00), %g3
+  38:	86 10 e0 03 	or  %g3, 3, %g3	! 1c03 <main+0x1b9b>
+  3c:	c4 3f bf e8 	std  %g2, [ %fp + -24 ]
+  40:	82 10 20 e8 	mov  0xe8, %g1
+  44:	c2 27 bf f0 	st  %g1, [ %fp + -16 ]
+  48:	c4 1f bf e8 	ldd  [ %fp + -24 ], %g2
+  4c:	c4 39 00 00 	std  %g2, [ %g4 ]
+  50:	c4 1f bf f0 	ldd  [ %fp + -16 ], %g2
+  54:	c4 39 20 08 	std  %g2, [ %g4 + 8 ]
+  58:	b0 10 00 04 	mov  %g4, %i0
+  5c:	81 e8 00 00 	restore 
+  60:	81 c3 e0 0c 	jmp  %o7 + 0xc
+  64:	01 00 00 00 	nop 
+
+00000068 <main>:
+  68:	9d e3 bf 78 	save  %sp, -136, %sp
+  6c:	82 07 bf df 	add  %fp, -33, %g1
+  70:	c2 23 a0 40 	st  %g1, [ %sp + 0x40 ]
+  74:	40 00 00 00 	call  74 <main+0xc>
+  78:	01 00 00 00 	nop 
+  7c:	00 00 00 01 	unimp  0x1
+  80:	c2 0f bf df 	ldub  [ %fp + -33 ], %g1
+  84:	c2 2f bf f7 	stb  %g1, [ %fp + -9 ]
+  88:	82 07 bf e0 	add  %fp, -32, %g1
+  8c:	c2 23 a0 40 	st  %g1, [ %sp + 0x40 ]
+  90:	40 00 00 00 	call  90 <main+0x28>
+  94:	01 00 00 00 	nop 
+  98:	00 00 00 10 	unimp  0x10
+  9c:	c4 07 bf e8 	ld  [ %fp + -24 ], %g2
+  a0:	c2 0f bf f7 	ldub  [ %fp + -9 ], %g1
+  a4:	83 28 60 18 	sll  %g1, 0x18, %g1
+  a8:	83 38 60 18 	sra  %g1, 0x18, %g1
+  ac:	82 00 80 01 	add  %g2, %g1, %g1
+  b0:	b0 10 00 01 	mov  %g1, %i0
+  b4:	81 e8 00 00 	restore 
+  b8:	81 c3 e0 08 	retl 
+  bc:	01 00 00 00 	nop 
+
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <leaf_call>:
+   0:	9d e3 bf 98 	save  %sp, -104, %sp
+   4:	81 e8 00 00 	restore 
+   8:	81 c3 e0 08 	retl 
+   c:	01 00 00 00 	nop 
+
+00000010 <main>:
+  10:	9d e3 bf 00 	save  %sp, -256, %sp
+  14:	03 00 00 00 	sethi  %hi(0), %g1
+  18:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  1c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  20:	d1 27 bf b0 	st  %f8, [ %fp + -80 ]
+  24:	03 00 00 00 	sethi  %hi(0), %g1
+  28:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  2c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  30:	d1 27 bf b4 	st  %f8, [ %fp + -76 ]
+  34:	03 00 00 00 	sethi  %hi(0), %g1
+  38:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  3c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  40:	d1 27 bf b8 	st  %f8, [ %fp + -72 ]
+  44:	03 00 00 00 	sethi  %hi(0), %g1
+  48:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  4c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  50:	d1 27 bf bc 	st  %f8, [ %fp + -68 ]
+  54:	03 00 00 00 	sethi  %hi(0), %g1
+  58:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  5c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  60:	d1 27 bf c0 	st  %f8, [ %fp + -64 ]
+  64:	03 00 00 00 	sethi  %hi(0), %g1
+  68:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  6c:	d1 00 40 00 	ld  [ %g1 ], %f8
+  70:	d1 27 bf c4 	st  %f8, [ %fp + -60 ]
+  74:	03 00 00 00 	sethi  %hi(0), %g1
+  78:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  7c:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  80:	d1 3f bf c8 	std  %f8, [ %fp + -56 ]
+  84:	03 00 00 00 	sethi  %hi(0), %g1
+  88:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  8c:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  90:	d1 3f bf d0 	std  %f8, [ %fp + -48 ]
+  94:	03 00 00 00 	sethi  %hi(0), %g1
+  98:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  9c:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  a0:	d1 3f bf d8 	std  %f8, [ %fp + -40 ]
+  a4:	03 00 00 00 	sethi  %hi(0), %g1
+  a8:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  ac:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  b0:	d1 3f bf e0 	std  %f8, [ %fp + -32 ]
+  b4:	03 00 00 00 	sethi  %hi(0), %g1
+  b8:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  bc:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  c0:	d1 3f bf e8 	std  %f8, [ %fp + -24 ]
+  c4:	03 00 00 00 	sethi  %hi(0), %g1
+  c8:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  cc:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  d0:	d1 3f bf f0 	std  %f8, [ %fp + -16 ]
+  d4:	d1 07 bf b0 	ld  [ %fp + -80 ], %f8
+  d8:	d1 27 bf ac 	st  %f8, [ %fp + -84 ]
+  dc:	c2 07 bf b4 	ld  [ %fp + -76 ], %g1
+  e0:	c2 27 bf a0 	st  %g1, [ %fp + -96 ]
+  e4:	c2 07 bf b8 	ld  [ %fp + -72 ], %g1
+  e8:	c2 27 bf a4 	st  %g1, [ %fp + -92 ]
+  ec:	c2 07 bf bc 	ld  [ %fp + -68 ], %g1
+  f0:	c2 27 bf 90 	st  %g1, [ %fp + -112 ]
+  f4:	c2 07 bf c0 	ld  [ %fp + -64 ], %g1
+  f8:	c2 27 bf 94 	st  %g1, [ %fp + -108 ]
+  fc:	c2 07 bf c4 	ld  [ %fp + -60 ], %g1
+ 100:	c2 27 bf 98 	st  %g1, [ %fp + -104 ]
+ 104:	d1 1f bf c8 	ldd  [ %fp + -56 ], %f8
+ 108:	d1 3f bf 88 	std  %f8, [ %fp + -120 ]
+ 10c:	c4 1f bf d0 	ldd  [ %fp + -48 ], %g2
+ 110:	c4 3f bf 78 	std  %g2, [ %fp + -136 ]
+ 114:	c4 1f bf d8 	ldd  [ %fp + -40 ], %g2
+ 118:	c4 3f bf 80 	std  %g2, [ %fp + -128 ]
+ 11c:	c4 1f bf e0 	ldd  [ %fp + -32 ], %g2
+ 120:	c4 3f bf 60 	std  %g2, [ %fp + -160 ]
+ 124:	c4 1f bf e8 	ldd  [ %fp + -24 ], %g2
+ 128:	c4 3f bf 68 	std  %g2, [ %fp + -152 ]
+ 12c:	c4 1f bf f0 	ldd  [ %fp + -16 ], %g2
+ 130:	c4 3f bf 70 	std  %g2, [ %fp + -144 ]
+ 134:	82 07 bf ac 	add  %fp, -84, %g1
+ 138:	84 07 bf a0 	add  %fp, -96, %g2
+ 13c:	86 07 bf 90 	add  %fp, -112, %g3
+ 140:	88 07 bf 88 	add  %fp, -120, %g4
+ 144:	9a 07 bf 78 	add  %fp, -136, %o5
+ 148:	9e 07 bf 60 	add  %fp, -160, %o7
+ 14c:	90 10 00 01 	mov  %g1, %o0
+ 150:	92 10 00 02 	mov  %g2, %o1
+ 154:	94 10 00 03 	mov  %g3, %o2
+ 158:	96 10 00 04 	mov  %g4, %o3
+ 15c:	98 10 00 0d 	mov  %o5, %o4
+ 160:	9a 10 00 0f 	mov  %o7, %o5
+ 164:	40 00 00 00 	call  164 <main+0x154>
+ 168:	01 00 00 00 	nop 
+ 16c:	82 10 20 00 	clr  %g1	! 0 <leaf_call>
+ 170:	b0 10 00 01 	mov  %g1, %i0
+ 174:	81 e8 00 00 	restore 
+ 178:	81 c3 e0 08 	retl 
+ 17c:	01 00 00 00 	nop 
+
+
+
+; ---------- single-field structs by values (and small array fields) ---------->
+;
+; struct C { char c; };
+; struct S { short s; };
+; struct I { int i; };
+; struct F { float f; };
+; struct D { double d; };
+; 
+; struct C2 { char c[2]; };
+; struct C3 { char c[3]; };
+; 
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+; 
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00000000 <leaf_call>:
+   0:	9d e3 bf 98 	save  %sp, -104, %sp
+   4:	81 e8 00 00 	restore 
+   8:	81 c3 e0 08 	retl 
+   c:	01 00 00 00 	nop 
+
+00000010 <main>:
+  10:	9d e3 bf 48 	save  %sp, -184, %sp
+  14:	c0 2f bf db 	clrb  [ %fp + -37 ]
+  18:	82 10 20 01 	mov  1, %g1
+  1c:	c2 2f bf dc 	stb  %g1, [ %fp + -36 ]
+  20:	82 10 20 02 	mov  2, %g1
+  24:	c2 2f bf dd 	stb  %g1, [ %fp + -35 ]
+  28:	82 10 20 03 	mov  3, %g1
+  2c:	c2 37 bf de 	sth  %g1, [ %fp + -34 ]
+  30:	82 10 20 04 	mov  4, %g1
+  34:	c2 27 bf e0 	st  %g1, [ %fp + -32 ]
+  38:	03 00 00 00 	sethi  %hi(0), %g1
+  3c:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  40:	d1 00 40 00 	ld  [ %g1 ], %f8
+  44:	d1 27 bf e4 	st  %f8, [ %fp + -28 ]
+  48:	03 00 00 00 	sethi  %hi(0), %g1
+  4c:	82 10 60 00 	mov  %g1, %g1	! 0 <leaf_call>
+  50:	d1 18 40 00 	ldd  [ %g1 ], %f8
+  54:	d1 3f bf e8 	std  %f8, [ %fp + -24 ]
+  58:	82 10 20 07 	mov  7, %g1
+  5c:	c2 2f bf f5 	stb  %g1, [ %fp + -11 ]
+  60:	82 10 20 08 	mov  8, %g1
+  64:	c2 2f bf f6 	stb  %g1, [ %fp + -10 ]
+  68:	82 10 20 09 	mov  9, %g1
+  6c:	c2 2f bf f7 	stb  %g1, [ %fp + -9 ]
+  70:	c2 0f bf db 	ldub  [ %fp + -37 ], %g1
+  74:	c2 2f bf d0 	stb  %g1, [ %fp + -48 ]
+  78:	c2 0f bf dc 	ldub  [ %fp + -36 ], %g1
+  7c:	c2 2f bf d1 	stb  %g1, [ %fp + -47 ]
+  80:	c2 0f bf dd 	ldub  [ %fp + -35 ], %g1
+  84:	c2 2f bf cf 	stb  %g1, [ %fp + -49 ]
+  88:	c2 17 bf de 	lduh  [ %fp + -34 ], %g1
+  8c:	c2 37 bf cc 	sth  %g1, [ %fp + -52 ]
+  90:	c2 07 bf e0 	ld  [ %fp + -32 ], %g1
+  94:	c2 27 bf c8 	st  %g1, [ %fp + -56 ]
+  98:	d1 07 bf e4 	ld  [ %fp + -28 ], %f8
+  9c:	d1 27 bf c4 	st  %f8, [ %fp + -60 ]
+  a0:	d1 1f bf e8 	ldd  [ %fp + -24 ], %f8
+  a4:	d1 3f bf b8 	std  %f8, [ %fp + -72 ]
+  a8:	c2 0f bf f5 	ldub  [ %fp + -11 ], %g1
+  ac:	c2 2f bf b0 	stb  %g1, [ %fp + -80 ]
+  b0:	c2 0f bf f6 	ldub  [ %fp + -10 ], %g1
+  b4:	c2 2f bf b1 	stb  %g1, [ %fp + -79 ]
+  b8:	c2 0f bf f7 	ldub  [ %fp + -9 ], %g1
+  bc:	c2 2f bf b2 	stb  %g1, [ %fp + -78 ]
+  c0:	84 07 bf d0 	add  %fp, -48, %g2
+  c4:	86 07 bf cf 	add  %fp, -49, %g3
+  c8:	88 07 bf cc 	add  %fp, -52, %g4
+  cc:	9a 07 bf c8 	add  %fp, -56, %o5
+  d0:	98 07 bf c4 	add  %fp, -60, %o4
+  d4:	9e 07 bf b8 	add  %fp, -72, %o7
+  d8:	82 07 bf b0 	add  %fp, -80, %g1
+  dc:	c2 23 a0 5c 	st  %g1, [ %sp + 0x5c ]
+  e0:	90 10 00 02 	mov  %g2, %o0
+  e4:	92 10 00 03 	mov  %g3, %o1
+  e8:	94 10 00 04 	mov  %g4, %o2
+  ec:	96 10 00 0d 	mov  %o5, %o3
+  f0:	9a 10 00 0f 	mov  %o7, %o5
+  f4:	40 00 00 00 	call  f4 <main+0xe4>
+  f8:	01 00 00 00 	nop 
+  fc:	82 10 20 00 	clr  %g1	! 0 <leaf_call>
+ 100:	b0 10 00 01 	mov  %g1, %i0
+ 104:	81 e8 00 00 	restore 
+ 108:	81 c3 e0 08 	retl 
+ 10c:	01 00 00 00 	nop 
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00010484 <f1>:
+   10484:       9d e3 bf 98     save  %sp, -104, %sp
+   10488:       81 e8 00 00     restore
+   1048c:       81 c3 e0 08     retl
+   10490:       01 00 00 00     nop
+
+00010494 <f2>:
+   10494:       9d e3 bf 98     save  %sp, -104, %sp
+   10498:       f0 27 a0 44     st  %i0, [ %fp + 0x44 ]
+   1049c:       81 e8 00 00     restore
+   104a0:       81 c3 e0 08     retl
+   104a4:       01 00 00 00     nop
+
+000104a8 <f>:
+   104a8:       9d e3 bf 80     save  %sp, -128, %sp                 ;
+   104ac:       82 07 bf e8     add  %fp, -24, %g1                   ;
+   104b0:       90 10 00 01     mov  %g1, %o0                        ;
+   104b4:       40 00 00 26     call  1054c <_ZN10NonTrivialC1Ev>    ; NonTrivial::NonTrivial() / ctor
+   104b8:       01 00 00 00     nop                                  ;
+   104bc:       82 10 20 01     mov  1, %g1     ! 1 <_init-0x102cb>  ;
+   104c0:       c2 27 bf f4     st  %g1, [ %fp + -12 ]               ;
+   104c4:       c2 07 bf f4     ld  [ %fp + -12 ], %g1               ;
+   104c8:       82 00 60 7b     add  %g1, 0x7b, %g1                  ;
+   104cc:       c2 27 bf f4     st  %g1, [ %fp + -12 ]               ;
+   104d0:       c2 07 bf ec     ld  [ %fp + -20 ], %g1               ;
+   104d4:       c2 27 bf e4     st  %g1, [ %fp + -28 ]               ;
+   104d8:       82 07 bf e4     add  %fp, -28, %g1                   ;
+   104dc:       90 10 00 01     mov  %g1, %o0                        ;
+   104e0:       7f ff ff e9     call  10484 <f1>                     ; call f1(struct Trivial)
+   104e4:       01 00 00 00     nop                                  ;
+   104e8:       c2 07 bf f4     ld  [ %fp + -12 ], %g1               ;
+   104ec:       82 00 7f 85     add  %g1, -123, %g1                  ;
+   104f0:       c2 27 bf f4     st  %g1, [ %fp + -12 ]               ;
+   104f4:       82 07 bf f0     add  %fp, -16, %g1                   ;
+   104f8:       84 07 bf e8     add  %fp, -24, %g2                   ;
+   104fc:       90 10 00 01     mov  %g1, %o0                        ; |               ptr to dest of copy of n
+   10500:       92 10 00 02     mov  %g2, %o1                        ; | copy n        ptr to n
+   10504:       40 00 00 19     call  10568 <_ZN10NonTrivialC1ERKS_> ; |               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+   10508:       01 00 00 00     nop                                  ;
+   1050c:       82 07 bf f0     add  %fp, -16, %g1                   ; |
+   10510:       90 10 00 01     mov  %g1, %o0                        ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+   10514:       7f ff ff e0     call  10494 <f2>                     ; call f2(struct NonTrivial)
+   10518:       01 00 00 00     nop                                  ;
+   1051c:       c2 07 bf f4     ld  [ %fp + -12 ], %g1               ;
+   10520:       82 00 7f f4     add  %g1, -12, %g1                   ;
+   10524:       c2 27 bf f4     st  %g1, [ %fp + -12 ]               ;
+   10528:       81 e8 00 00     restore                              ;
+   1052c:       81 c3 e0 08     retl                                 ;
+   10530:       01 00 00 00     nop                                  ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from debian-4.0_r3-sparc w/ gcc 4.1.2
+
+00010504 <f1>:
+   10504:       9d e3 bf 98     save  %sp, -104, %sp
+   10508:       c2 07 a0 40     ld  [ %fp + 0x40 ], %g1
+   1050c:       c0 20 40 00     clr  [ %g1 ]
+   10510:       b0 10 00 01     mov  %g1, %i0
+   10514:       81 e8 00 00     restore
+   10518:       81 c3 e0 0c     jmp  %o7 + 0xc
+   1051c:       01 00 00 00     nop
+
+00010520 <_Z2f2v>:
+   10520:       9d e3 bf 98     save  %sp, -104, %sp
+   10524:       e0 07 a0 40     ld  [ %fp + 0x40 ], %l0
+   10528:       82 10 00 10     mov  %l0, %g1
+   1052c:       90 10 00 01     mov  %g1, %o0
+   10530:       40 00 00 29     call  105d4 <_ZN10NonTrivialC1Ev>
+   10534:       01 00 00 00     nop
+   10538:       b0 10 00 10     mov  %l0, %i0
+   1053c:       81 e8 00 00     restore
+   10540:       81 c3 e0 0c     jmp  %o7 + 0xc
+   10544:       01 00 00 00     nop
+
+00010548 <f>:
+   10548:       9d e3 bf 80     save  %sp, -128, %sp    ;
+   1054c:       82 10 20 01     mov  1, %g1             ;
+   10550:       c2 27 bf f4     st  %g1, [ %fp + -12 ]  ;
+   10554:       c2 07 bf f4     ld  [ %fp + -12 ], %g1  ;
+   10558:       82 00 60 7b     add  %g1, 0x7b, %g1     ;
+   1055c:       c2 27 bf f4     st  %g1, [ %fp + -12 ]  ;
+   10560:       82 07 bf e4     add  %fp, -28, %g1      ;
+   10564:       c2 23 a0 40     st  %g1, [ %sp + 0x40 ] ; ptr to retval space as hidden stack param (sp+64)
+   10568:       7f ff ff e7     call  10504 <f1>        ; call f1()
+   1056c:       01 00 00 00     nop                     ;
+   10570:       00 00 00 04     unimp  0x4              ;
+   10574:       c2 07 bf e4     ld  [ %fp + -28 ], %g1  ;
+   10578:       c2 27 bf f0     st  %g1, [ %fp + -16 ]  ;
+   1057c:       c2 07 bf f4     ld  [ %fp + -12 ], %g1  ;
+   10580:       82 00 7f 85     add  %g1, -123, %g1     ;
+   10584:       c2 27 bf f4     st  %g1, [ %fp + -12 ]  ;
+   10588:       82 07 bf ec     add  %fp, -20, %g1      ;
+   1058c:       c2 23 a0 40     st  %g1, [ %sp + 0x40 ] ; ptr to retval space as hidden stack param (sp+64)
+   10590:       7f ff ff e4     call  10520 <_Z2f2v>    ; call f2()
+   10594:       01 00 00 00     nop                     ;
+   10598:       00 00 00 04     unimp  0x4              ;
+   1059c:       c2 07 bf f4     ld  [ %fp + -12 ], %g1  ;
+   105a0:       82 00 7f f4     add  %g1, -12, %g1      ;
+   105a4:       c2 27 bf f4     st  %g1, [ %fp + -12 ]  ;
+   105a8:       81 e8 00 00     restore                 ;
+   105ac:       81 c3 e0 08     retl                    ;
+   105b0:       01 00 00 00     nop                     ;
+
+
+
 ; vim: ft=asm
 

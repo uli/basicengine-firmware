@@ -1,0 +1,345 @@
+; #include <stdlib.h>
+;
+; void __stdcall leaf_call(int b, int c, int d, int e, int f, int g, int h)
+; {
+; }
+;
+; void __stdcall nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
+; {
+; 	/* use some local data */
+; 	*(char*)alloca(220) = 'L';
+; 	leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+; 	nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
+; 	return 0;
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.14 (w/ /GS- for simplicity)
+
+_leaf_call@28 PROC
+        push    ebp
+        mov     ebp, esp
+        pop     ebp
+        ret     28
+_leaf_call@28 ENDP
+
+_b$ = 12
+_c$ = 16
+_d$ = 20
+_e$ = 24
+_f$ = 28
+_g$ = 32
+_h$ = 36
+_nonleaf_call@32 PROC
+        push    ebp
+        mov     ebp, esp
+        push    220
+        call    _alloca
+        add     esp, 4
+        mov     BYTE PTR [eax], 76
+        mov     eax, DWORD PTR _h$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _g$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _f$[ebp]
+        push    edx
+        mov     eax, DWORD PTR _e$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _d$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _c$[ebp]
+        push    edx
+        mov     eax, DWORD PTR _b$[ebp]
+        push    eax
+        call    _leaf_call@28
+        pop     ebp
+        ret     32
+_nonleaf_call@32 ENDP
+
+_main   PROC
+        push    ebp
+        mov     ebp, esp
+        push    7
+        push    6
+        push    5
+        push    4
+        push    3
+        push    2
+        push    1
+        push    0
+        call    _nonleaf_call@32
+        xor     eax, eax
+        pop     ebp
+        ret     0
+_main   ENDP
+
+
+
+; ---------- structs by value, struct in first call on reg arg boundary ---------->
+;
+; struct A { int x; short y; char z; long long t; };
+;
+; struct A __stdcall leaf_call(struct A a, short b, long long c, char d, int e, int f, int g, long long h)
+; {
+; 	a.x += 1;
+; 	return a;
+; }
+;
+; int main()
+; {
+; 	struct A a = {9, 99, 23, 12LL};
+; 	leaf_call(a, 1, 2, 3, 4, 5, 6, 7LL);
+; 	return 0;
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.14 (w/ /GS- for simplicity)
+
+$T1 = 8
+_a$ = 12
+_leaf_call@52 PROC
+        push    ebp                        ; | prolog
+        mov     ebp, esp                   ; /
+        mov     eax, DWORD PTR _a$[ebp]    ; \
+        add     eax, 1                     ; |  get struct's x (from stack args), add 1 and write back
+        mov     DWORD PTR _a$[ebp], eax    ; /
+        mov     ecx, DWORD PTR $T1[ebp]    ; get ptr to retval struct passed as hidden arg (+8 to skip retval and saved ebp)
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | copy modified (b/c of x+=1) struct arg to space of retval
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; |
+        mov     eax, DWORD PTR $T1[ebp]    ; return value (= ptr to struct that was passed-in as hidden arg)
+        pop     ebp                        ; |
+        ret     56                         ; | epilog (56 = stack cleanup of stdcall)
+_leaf_call@52 ENDP
+
+$T1 = -32
+_a$ = -16
+_main   PROC
+        push    ebp                        ; |
+        mov     ebp, esp                   ; | prolog
+        sub     esp, 32                    ; /         32 = 16b local area for struct + 16b space used for retval struct
+        mov     DWORD PTR _a$[ebp], 9      ; \                               int x
+        mov     eax, 99                    ; |                               |
+        mov     WORD PTR _a$[ebp+4], ax    ; | struct values (local area)    | short y
+        mov     BYTE PTR _a$[ebp+6], 23    ; |                               char z
+        mov     DWORD PTR _a$[ebp+8], 12   ; |                               |
+        mov     DWORD PTR _a$[ebp+12], 0   ; /                               | long long t
+        push    0                          ; \
+        push    7                          ; | arg 7
+        push    6                          ; arg 6
+        push    5                          ; arg 5
+        push    4                          ; arg 4
+        push    3                          ; arg 3
+        push    0                          ; |
+        push    2                          ; arg 2
+        push    1                          ; arg 1
+        sub     esp, 16                    ; |
+        mov     ecx, esp                   ; |
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | arg 0 (struct), "pushed" onto stack (fetched from local area)
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; /
+        lea     ecx, DWORD PTR $T1[ebp]    ; \ ptr to space used for struct retval (pushed as hidden first arg)
+        push    ecx                        ; |
+        call    _leaf_call@52              ; push return address and call
+                                           ; (note: cdecl would clean up stack, here)
+        xor     eax, eax                   ; return value
+        mov     esp, ebp                   ; |
+        pop     ebp                        ; | epilog
+        ret     0                          ; |
+_main   ENDP
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         __attribute__((stdcall)) NonTrivial() : a(0) {}
+;         __attribute__((stdcall)) NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+;
+; extern "C" {
+;
+;     void __attribute__((stdcall)) f1(struct Trivial s)    { }
+;     void __attribute__((stdcall)) f2(struct NonTrivial s) { }
+;
+;     void __attribute__((stdcall)) f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0
+
+00001215 <f1>:
+    1215:       55                      push   %ebp
+    1216:       89 e5                   mov    %esp,%ebp
+    1218:       e8 f0 ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    121d:       05 af 2d 00 00          add    $0x2daf,%eax
+    1222:       90                      nop
+    1223:       5d                      pop    %ebp
+    1224:       c2 04 00                ret    $0x4
+
+00001227 <f2>:
+    1227:       55                      push   %ebp
+    1228:       89 e5                   mov    %esp,%ebp
+    122a:       e8 de ff ff ff          call   120d <__x86.get_pc_thunk.ax>
+    122f:       05 9d 2d 00 00          add    $0x2d9d,%eax
+    1234:       90                      nop
+    1235:       5d                      pop    %ebp
+    1236:       c2 04 00                ret    $0x4
+
+00001239 <f>:
+    1239:       55                      push   %ebp                          ;
+    123a:       89 e5                   mov    %esp,%ebp                     ;
+    123c:       83 ec 28                sub    $0x28,%esp                    ;
+    123f:       e8 c9 ff ff ff          call   120d <__x86.get_pc_thunk.ax>  ;
+    1244:       05 88 2d 00 00          add    $0x2d88,%eax                  ;
+    1249:       65 a1 14 00 00 00       mov    %gs:0x14,%eax                 ;
+    124f:       89 45 f4                mov    %eax,-0xc(%ebp)               ;
+    1252:       31 c0                   xor    %eax,%eax                     ;
+    1254:       83 ec 0c                sub    $0xc,%esp                     ;
+    1257:       8d 45 e8                lea    -0x18(%ebp),%eax              ;
+    125a:       50                      push   %eax                          ;
+    125b:       e8 6e 00 00 00          call   12ce <_ZN10NonTrivialC1Ev>    ; NonTrivial::NonTrivial() / ctor
+    1260:       83 c4 0c                add    $0xc,%esp                     ;
+    1263:       c7 45 f0 01 00 00 00    movl   $0x1,-0x10(%ebp)              ;
+    126a:       83 45 f0 7b             addl   $0x7b,-0x10(%ebp)             ;
+    126e:       83 ec 0c                sub    $0xc,%esp                     ;
+    1271:       ff 75 e4                pushl  -0x1c(%ebp)                   ;
+    1274:       e8 9c ff ff ff          call   1215 <f1>                     ; call f1(struct Trivial)
+    1279:       83 c4 0c                add    $0xc,%esp                     ;
+    127c:       83 6d f0 7b             subl   $0x7b,-0x10(%ebp)             ;
+    1280:       83 ec 08                sub    $0x8,%esp                     ;
+    1283:       8d 45 e8                lea    -0x18(%ebp),%eax              ; |               | ptr to n
+    1286:       50                      push   %eax                          ; |               /
+    1287:       8d 45 ec                lea    -0x14(%ebp),%eax              ; |               \
+    128a:       50                      push   %eax                          ; | copy n        | ptr to dest of copy of n
+    128b:       e8 5a 00 00 00          call   12ea <_ZN10NonTrivialC1ERKS_> ; |               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+    1290:       83 c4 08                add    $0x8,%esp                     ;
+    1293:       83 ec 0c                sub    $0xc,%esp                     ;
+    1296:       8d 45 ec                lea    -0x14(%ebp),%eax              ; |
+    1299:       50                      push   %eax                          ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+    129a:       e8 88 ff ff ff          call   1227 <f2>                     ; call f2(struct NonTrivial)
+    129f:       83 c4 0c                add    $0xc,%esp                     ;
+    12a2:       83 6d f0 0c             subl   $0xc,-0x10(%ebp)              ;
+    12a6:       90                      nop                                  ;
+    12a7:       8b 45 f4                mov    -0xc(%ebp),%eax               ;
+    12aa:       65 33 05 14 00 00 00    xor    %gs:0x14,%eax                 ;
+    12b1:       74 05                   je     12b8 <f+0x7f>                 ;
+    12b3:       e8 4e 00 00 00          call   1306 <__stack_chk_fail_local> ;
+    12b8:       c9                      leave                                ;
+    12b9:       c3                      ret                                  ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         __attribute__((stdcall)) NonTrivial() : a(0) {}
+;         __attribute__((stdcall)) NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+; 
+; extern "C" {
+;     struct Trivial    __attribute__((stdcall)) f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial __attribute__((stdcall)) f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void __attribute__((stdcall)) f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from alpine_linux-3.11.3-x86 w/ gcc 9.2.0 (w/ -O0 --no-stack-protector for simplicity)
+
+00001205 <f1>:
+    1205:       55                      push   %ebp                         ; | prolog
+    1206:       89 e5                   mov    %esp,%ebp                    ; |
+    1208:       e8 f0 ff ff ff          call   11fd <__x86.get_pc_thunk.ax> ;
+    120d:       05 c3 2d 00 00          add    $0x2dc3,%eax                 ;
+    1212:       8b 45 08                mov    0x8(%ebp),%eax               ; fetch ptr to retval space -> eax
+    1215:       c7 00 00 00 00 00       movl   $0x0,(%eax)                  ; write retval
+    121b:       8b 45 08                mov    0x8(%ebp),%eax               ; re-fetch ptr to retval space -> eax, to return it in eax (a bit pointless)
+    121e:       5d                      pop    %ebp                         ; |
+    121f:       c2 04 00                ret    $0x4                         ; | epilog
+
+00001222 <_Z2f2v>:
+    1222:       55                      push   %ebp
+    1223:       89 e5                   mov    %esp,%ebp
+    1225:       83 ec 08                sub    $0x8,%esp
+    1228:       e8 d0 ff ff ff          call   11fd <__x86.get_pc_thunk.ax>
+    122d:       05 a3 2d 00 00          add    $0x2da3,%eax
+    1232:       83 ec 0c                sub    $0xc,%esp
+    1235:       ff 75 08                pushl  0x8(%ebp)
+    1238:       e8 65 00 00 00          call   12a2 <_ZN10NonTrivialC1Ev>
+    123d:       83 c4 0c                add    $0xc,%esp
+    1240:       8b 45 08                mov    0x8(%ebp),%eax
+    1243:       c9                      leave
+    1244:       c2 04 00                ret    $0x4
+
+00001247 <f>:
+    1247:       55                      push   %ebp                         ;
+    1248:       89 e5                   mov    %esp,%ebp                    ;
+    124a:       83 ec 18                sub    $0x18,%esp                   ;
+    124d:       e8 ab ff ff ff          call   11fd <__x86.get_pc_thunk.ax> ;
+    1252:       05 7e 2d 00 00          add    $0x2d7e,%eax                 ;
+    1257:       c7 45 f4 01 00 00 00    movl   $0x1,-0xc(%ebp)              ; a = 1
+    125e:       83 45 f4 7b             addl   $0x7b,-0xc(%ebp)             ; a += 123
+    1262:       8d 45 f0                lea    -0x10(%ebp),%eax             ; ptr to space (top of stack) to hold aggr retval -> eax ...
+    1265:       50                      push   %eax                         ; ... as hidden first arg
+    1266:       e8 9a ff ff ff          call   1205 <f1>                    ; call f1()
+    126b:       83 6d f4 7b             subl   $0x7b,-0xc(%ebp)             ; a -= 123
+    126f:       8d 45 ec                lea    -0x14(%ebp),%eax             ; ptr to space to hold aggr retval -> eax ...
+    1272:       83 ec 0c                sub    $0xc,%esp                    ; grow stack by 12
+    1275:       50                      push   %eax                         ; ... as hidden first arg
+    1276:       e8 a7 ff ff ff          call   1222 <_Z2f2v>                ; call f2()
+    127b:       83 c4 0c                add    $0xc,%esp                    ; shrink stack back by 12
+    127e:       83 6d f4 0c             subl   $0xc,-0xc(%ebp)              ; a -= 12
+    1282:       90                      nop                                 ;
+    1283:       c9                      leave                               ;
+    1284:       c3                      ret                                 ;
+
+
+
+; vim: ft=asm
+

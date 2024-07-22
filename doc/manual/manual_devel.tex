@@ -17,7 +17,7 @@
 %
 %//////////////////////////////////////////////////////////////////////////////
 
-\newpage
+\clearpage
 \section{Developers}
 
 \subsection{Noteworthy files in the project root}
@@ -45,34 +45,41 @@
 \begin{description}
 
 \item [plain] 
-Simple, identity, unary function calls for all supported return types and
-calling conventions.
+Simple, identity, mostly unary function calls for all supported return types
+and calling conventions. This is not an extensive test suite, but a good place
+to manually test certain cases.
 
 \item [plain\_c++] 
-Similar to plain, but for C++ thiscalls (GNU and MS calling convention).
+Similar to plain, but for C++ thiscalls (in different forms and fashion, with
+aggregates, vararg methots, on x86 with GNU and MS calling convention, etc.).
 
 \item [suite] 
 All combinations of parameter types and counts are tested on void function
-calls. A script written in Python ({\tt mkcase.py}) generates the tests up to
+calls. A Python script ({\tt mkcase.py}) generates the tests up to
 an upper MAXARG limit.
 
 \item [suite\_floats]
 Based on suite. Test double/float variants with up to 10 arguments.
 
+\item [call\_suite\_aggrs]
+Tests passing and returning aggregates by value (struct/union and array members).
+Test cases can be designed in a signature-style format (and random ones generated
+via a Lua script).
+
 \item [suite\_x86win32std] 
 All combinations of parameter types and counts are tested on {\tt \_\_stdcall}
-void function calls. A script written in Python ({\tt mkcase.py}) generates
+void function calls. A Python script ({\tt mkcase.py}) generates
 the tests up to an upper MAXARG limit. This is a x86/Windows only test.
 
 \item [suite\_x86win32fast] 
 All combinations of parameter types and counts are tested on {\tt \_\_fastcall}
 (MS or GNU, depending on the build tool) void function calls.
-A script written in Python ({\tt mkcase.py}) generates the tests up to
+A Python script ({\tt mkcase.py}) generates the tests up to
 an upper MAXARG limit. This is a x86/Windows only test.
 
 \item [ellipsis]
 All combinations of parameter types and counts are tested on void ellipsis 
-function calls. A script written in Python ({\tt mkcase.py}) generates the 
+(vararg) function calls. A Python script ({\tt mkcase.py}) generates the 
 tests up to an upper MAXARG limit.
 
 \item [suite2]
@@ -99,17 +106,19 @@ This is a modified version of suite.
 \item [call\_suite]
 General purpose test suite combining aspects from all others suites (usually enough for
 testing non-callback calls).
-A script written in Lua generates the tests.
+Test cases can be designed in a signature-style format (and random ones generated
+via a Lua script).
 
 \item [callf]
-Tests the \emph{formatted call} \product{dyncall} C API.
+Tests the \emph{formatted call/arg} \product{dyncall} C API. Tries to cover all uses of
+that API (e.g. calling convention mode switches, aggregates, ...) but is not extensive.
 
 \item [malloc\_wx]
 Tests \emph{writable and executable memory allocation} used by the
 \product{dyncallback} C API.
 
 \item [thunk]
-Tests \emph{callbacks} for the \product{dyncallback} C API.
+Tests only the \emph{callback} thunks for the \product{dyncallback} C API.
 
 \item [callback\_plain]
 Simple callback function test (useful for easy debugging of new ports).
@@ -117,8 +126,7 @@ Simple callback function test (useful for easy debugging of new ports).
 \item [callback\_suite]
 Mass test suite for callback function testing. Uses random function argument
 number and type.
-A script written in Lua generates the tests up to a given number of calls and
-type combinations.
+A Lua script the tests up to a given number of calls and type combinations.
 
 \item [resolv\_self]
 Test for dynload library to resolve symbols from application image itself.

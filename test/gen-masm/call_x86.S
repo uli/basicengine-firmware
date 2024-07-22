@@ -95,7 +95,7 @@ BEGIN_ASM
 GLOBAL(dcCall_x86_cdecl)
 BEGIN_PROC(dcCall_x86_cdecl)
 	push ebp			// prolog
- 	mov  ebp, esp
+	mov  ebp, esp
 	push esi			// save preserved
 	push edi
 	mov  esi, dword ptr[ebp+12] 	// esi = copy source args
@@ -197,7 +197,7 @@ END_PROC(dcCall_x86_win32_fast)
 GLOBAL(dcCall_x86_sys_int80h_linux)
 BEGIN_PROC(dcCall_x86_sys_int80h_linux)
 	push ebp        	// prolog
- 	mov  ebp, esp
+	mov  ebp, esp
 	push ebx		// save preserved
 	push esi               
 	push edi
@@ -223,7 +223,7 @@ END_PROC(dcCall_x86_sys_int80h_linux)
 GLOBAL(dcCall_x86_sys_int80h_bsd)
 BEGIN_PROC(dcCall_x86_sys_int80h_bsd)
 	push ebp               // prolog
- 	mov  ebp, esp
+	mov  ebp, esp
 	push esi               // save preserved
 	push edi
 	mov  esi, dword ptr[ebp+12]    	// esi = pointer on args

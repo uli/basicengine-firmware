@@ -1,4 +1,4 @@
-APP       = suite2
+APP       = suite2${APP_SUFFIX}
 OBJS      = case.o main.o
 SRCTOP    = ${VPATH}/../..
 BLDTOP    = ../..

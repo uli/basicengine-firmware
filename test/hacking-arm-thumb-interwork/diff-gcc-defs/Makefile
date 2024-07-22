@@ -3,7 +3,7 @@ default: all
 
 TOP = ../../..
 
-include $(TOP)/ConfigVars
+include ${TOP}/Makefile.config
 
 ifeq ("${CONFIG_OS}","iphoneos")
 DIFFSCRIPT=diff-iphoneos.sh 

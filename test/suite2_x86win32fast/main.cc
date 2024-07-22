@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -40,15 +40,14 @@ DCpointer getFunc(int x);
 DCValue* getArg(int pos);
 
 
-
-DCbool     valueBool[MAXARGS];
-DCchar     valueChar[MAXARGS];
-DCshort    valueShort[MAXARGS];
-DCint      valueInt[MAXARGS];
-DClonglong valueLongLong[MAXARGS];
-DCdouble   valueDouble[MAXARGS];
-DCpointer  valuePointer[MAXARGS];
-DCfloat    valueFloat[MAXARGS];
+static DCbool     valueBool    [MAXARGS];
+static DCchar     valueChar    [MAXARGS];
+static DCshort    valueShort   [MAXARGS];
+static DCint      valueInt     [MAXARGS];
+static DClonglong valueLongLong[MAXARGS];
+static DCdouble   valueDouble  [MAXARGS];
+static DCpointer  valuePointer [MAXARGS];
+static DCfloat    valueFloat   [MAXARGS];
 
 
 void clearValues();
@@ -176,11 +175,11 @@ int main(int argc, char* argv[])
     success = run_range(0,NCASES);
   }
 
-  printf("result: suite2_x86win32fast: %s\n", success ? "1" : "0");
+  printf("result: suite2_x86win32fast: %d\n", success);
   
   dcTest_deInitPlatform();
 
-  return (success) ? 0 : -1;
+  return !success;
 }
 
 }  // extern "C"

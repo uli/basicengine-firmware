@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -36,24 +36,24 @@
 #define API __stdcall
 #endif
 
-DCValue mValue[MAXARGS];
+static DCValue mValue[MAXARGS];
 
 void clearValues() { for(int i = 0;i<MAXARGS;++i) mValue[i].L = 0xCAFEBABEDEADC0DEULL; }
 
 template<typename T> void g(T value, int pos);
 
-template<> void g(DCchar value, int pos) { mValue[pos].c = value; }
-template<> void g(DCshort value, int pos) { mValue[pos].s = value; }
-template<> void g(DCint value, int pos) { mValue[pos].i = value; }
-template<> void g(DCpointer value, int pos) { mValue[pos].p = value; }
-template<> void g(DClong value, int pos) { mValue[pos].l = value; }
-template<> void g(DClonglong value, int pos) { mValue[pos].L = value; }
-template<> void g(DCfloat value, int pos) { mValue[pos].f = value; }
-template<> void g(DCdouble value, int pos) { mValue[pos].d = value; }
+template<> void g(DCchar     value, int pos) { mValue[pos].c = value ; }
+template<> void g(DCshort    value, int pos) { mValue[pos].s = value ; }
+template<> void g(DCint      value, int pos) { mValue[pos].i = value ; }
+template<> void g(DCpointer  value, int pos) { mValue[pos].p = value ; }
+template<> void g(DClong     value, int pos) { mValue[pos].l = value ; }
+template<> void g(DClonglong value, int pos) { mValue[pos].L = value ; }
+template<> void g(DCfloat    value, int pos) { mValue[pos].f = value ; }
+template<> void g(DCdouble   value, int pos) { mValue[pos].d = value ; }
 
 DCValue* getArg(int pos) { return &mValue[pos]; }
 
-int gID;
+static int gID;
 int getId() { return gID; }
 
 extern "C" {
@@ -133,6 +133,4 @@ funcinfo gFuncInfos[] = {
 #include "case.h"
 
 };
-
-
 

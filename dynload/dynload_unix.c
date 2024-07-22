@@ -34,7 +34,7 @@
 
 
 #include "dynload.h"
-#include "../autovar/autovar_OS.h"
+#include "../dyncall/dyncall_macros.h"
 
 #include <string.h>
 
@@ -53,7 +53,7 @@
 
 DLLib* dlLoadLibrary(const char* libPath)
 {
-  return (DLLib*)dlopen(libPath, RTLD_NOW|RTLD_GLOBAL); //@@@ should use RTLD_LAZY, maybe?
+  return (DLLib*)dlopen(libPath, RTLD_NOW|RTLD_GLOBAL); /*@@@ should use RTLD_LAZY, maybe?*/
 }
 
 
@@ -101,7 +101,7 @@ static int dl_strlen_strcpy(char* dst, const char* src, int dstSize)
  * RTLD_DI_LINKMAP and RTLD_SELF, which are #defines used by dlinfo() on most
  * supported targets, or specifically check the OS (e.g. dlinfo() is originally
  * from Solaris) */
-#if ((defined(RTLD_DI_LINKMAP) && defined(RTLD_SELF)) || defined(OS_SunOS)) && !defined(DL_USE_GLIBC_ITER_PHDR)
+#if ((defined(RTLD_DI_LINKMAP) && defined(RTLD_SELF)) || defined(DC__OS_SunOS)) && !defined(DL_USE_GLIBC_ITER_PHDR)
 
 #include <link.h>
 
@@ -117,7 +117,7 @@ int dlGetLibraryPath(DLLib* pLib, char* sOut, int bufSize)
 
 
 /* specific implementation needed on Darwin -----> */
-#elif defined(OS_Darwin)
+#elif defined(DC__OS_Darwin)
 
 #include <stdint.h>
 #include <mach-o/dyld.h>
@@ -129,7 +129,7 @@ int dlGetLibraryPath(DLLib* pLib, char* sOut, int bufSize)
 
   /* request info about own process? lookup first loaded image */
   if(pLib == NULL) {
-    const char* libPath = _dyld_get_image_name(0); //@@@ consider using _NSGetExecutablePath()
+    const char* libPath = _dyld_get_image_name(0); /*@@@ consider using _NSGetExecutablePath()*/
     if(libPath)
       l = dl_strlen_strcpy(sOut, libPath, bufSize);
   }
@@ -162,8 +162,9 @@ int dlGetLibraryPath(DLLib* pLib, char* sOut, int bufSize)
 /* - OpenBSD >= 3.7 has dl_iterate_phdr(), as well as glibc >= 2.2.4
    - also some libc impls (like musl) provide dlinfo(), but not RTLD_SELF (see above), however they might come
      with dl_iterate_phdr (which comes from ELF program header iteration), so base it on that
-   - skip and use dladdr()-based guessing (see below) if explicitly requested, e.g. by ./configure */
-#elif !defined(DL_DLADDR_TO_LIBPATH) && (defined(OS_OpenBSD) || defined(DL_USE_GLIBC_ITER_PHDR) || (!defined(RTLD_SELF) && defined(__ELF__)))
+   - skip and use dladdr()-based guessing (see below) if explicitly requested, e.g. by ./configure
+   - Haiku/BeOS does have the headers but no implementation of dl_iterate_phdr() (at least as of 2021) */
+#elif !defined(DL_DLADDR_TO_LIBPATH) && (defined(DC__OS_OpenBSD) || defined(DL_USE_GLIBC_ITER_PHDR) || (!defined(RTLD_SELF) && defined(__ELF__))) && !defined(DC__OS_BeOS)
 
 #include <sys/types.h>
 #include <link.h>
@@ -196,7 +197,8 @@ static int iter_phdr_cb(struct dl_phdr_info* info, size_t size, void* data)
   if(lib == (void*)d->pLib) {
     l = dl_strlen_strcpy(d->sOut, info->dlpi_name, d->bufSize);
 
-    /* if dlpi_name is empty, lookup name via dladdr(proc_load_addr, ...) */
+    /* dlpi_name might be empty for the own process (d->pLib == NULL), so */
+    /* try lookup via dladdr(proc_load_addr, ...) */
     if(l == 0 && d->pLib == NULL) {
       /* dlpi_addr is the reloc base (0 if PIE), find real virtual load addr */
       void* vladdr = (void*)info->dlpi_addr;

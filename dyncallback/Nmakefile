@@ -32,14 +32,14 @@ TOP=..
 
 !IF "$(BUILD_OS)" == "windows"
 
-TARGETS = libdyncallback_s.lib #libdyncallback.lib libdyncallback.dll
+TARGETS = dyncallback_s.lib #dyncallback.lib dyncallback.dll
 OBJS = dyncall_thunk.obj dyncall_alloc_wx.obj dyncall_args.obj dyncall_callback.obj dyncall_callback_$(BUILD_ARCH)_masm.obj 
 
-libdyncallback_s.lib: $(OBJS)
+dyncallback_s.lib: $(OBJS)
 	echo Creating library $@ ...
 	$(AR) $(ARFLAGS) /OUT:"$@" $(OBJS) > nul
 
-libdyncallback.dll libdyncallback.lib: $(OBJS)
+dyncallback.dll dyncallback.lib: $(OBJS)
 	echo Creating shared/import library $@ ...
 	$(LD) /DLL $(LDFLAGS) $(OBJS) > nul
 

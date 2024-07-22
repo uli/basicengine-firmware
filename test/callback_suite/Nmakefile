@@ -1,6 +1,6 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2007,2009 Daniel Adler <dadler@uni-goettingen.de>, 
+# Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
 #                         Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
@@ -34,16 +34,16 @@ TOP = ..\..
 
 TARGETS = callback_suite.exe
 
-OBJS = env.obj handler.obj sigstrings.obj invokers.obj do_test.obj main.obj print.obj signature_utils.obj
+OBJS = globals.obj cases.obj main.obj
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...
-	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\libdyncall_s.lib $(TOP)\dyncallback\libdyncallback_s.lib
+	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\dyncall_s.lib $(TOP)\dyncallback\dyncallback_s.lib
 
 
 !ELSE IF "$(BUILD_OS)" == "nds"
 
 TARGETS = callback_suite.nds
-OBJS = env.o handler.o sigstrings.o invokers.o do_test.o main.o print.o signature_utils.o
+OBJS = globals.o cases.o main.o
 
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...

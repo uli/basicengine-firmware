@@ -3,12 +3,12 @@
  Package: dyncall
  Library: dyncall
  File: dyncall/dyncall_callvm_ppc64.c
- Description: 
+ Description:
  License:
 
    Copyright (c) 2014-2015 Masanori Mitsugi <mitsugi@linux.vnet.ibm.com>
                       2020 Tassilo Philipp <tphilipp@potion-studios.com>
- 
+
 
    Permission to use, copy, modify, and distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
@@ -45,7 +45,7 @@
 #include "dyncall_types.h"
 
 
-/* 
+/*
 ** PowerPC 64-bit calling convention call
 **
 ** - hybrid return-type call (bool ... pointer)
@@ -204,10 +204,10 @@ static void dc_callvm_argLongLong_ppc64_ellipsis(DCCallVM* in_self, DClonglong L
 {
   DCCallVM_ppc64* self = (DCCallVM_ppc64*)in_self;
 
-  if (dcVecSize(&self->mVecHead) == 0) 
+  if (dcVecSize(&self->mVecHead) == 0)
     dcVecSkip(&self->mVecHead,(sizeof(DClonglong))*(self->mIntRegs));
 
-  if (self->mIntRegs < 8) 
+  if (self->mIntRegs < 8)
     self->mRegData.mIntData[self->mIntRegs++] = L;
 
   /* push on stack */
@@ -259,7 +259,7 @@ void dc_callvm_call_ppc64(DCCallVM* in_self, DCpointer target)
   if (size < 64) {
 	dcVecSkip(&self->mVecHead, 64-size);
   }
-  
+ 
   dcCall_ppc64( target, &self->mRegData, dcVecSize(&self->mVecHead) , dcVecData(&self->mVecHead));
 }
 
@@ -285,7 +285,7 @@ DCCallVM_vt gVT_ppc64 =
 , &dc_callvm_argFloat_ppc64
 , &dc_callvm_argDouble_ppc64
 , &dc_callvm_argPointer_ppc64
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc64
 , (DCboolvmfunc*)       &dc_callvm_call_ppc64
 , (DCcharvmfunc*)       &dc_callvm_call_ppc64
@@ -296,7 +296,8 @@ DCCallVM_vt gVT_ppc64 =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc64
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc64
 , (DCpointervmfunc*)    &dc_callvm_call_ppc64
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 #if DC__ABI_PPC64_ELF_V == 2
@@ -314,7 +315,7 @@ DCCallVM_vt gVT_ppc64_ellipsis =
 , &dc_callvm_argFloat_ppc64_ellipsis
 , &dc_callvm_argDouble_ppc64_ellipsis
 , &dc_callvm_argPointer_ppc64
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc64
 , (DCboolvmfunc*)       &dc_callvm_call_ppc64
 , (DCcharvmfunc*)       &dc_callvm_call_ppc64
@@ -325,7 +326,8 @@ DCCallVM_vt gVT_ppc64_ellipsis =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc64
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc64
 , (DCpointervmfunc*)    &dc_callvm_call_ppc64
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 #endif
 
@@ -343,7 +345,7 @@ DCCallVM_vt gVT_ppc64_syscall =
 , &dc_callvm_argFloat_ppc64
 , &dc_callvm_argDouble_ppc64
 , &dc_callvm_argPointer_ppc64
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc64_syscall
 , (DCboolvmfunc*)       &dc_callvm_call_ppc64_syscall
 , (DCcharvmfunc*)       &dc_callvm_call_ppc64_syscall
@@ -354,7 +356,8 @@ DCCallVM_vt gVT_ppc64_syscall =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc64_syscall
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc64_syscall
 , (DCpointervmfunc*)    &dc_callvm_call_ppc64_syscall
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 void dc_callvm_mode_ppc64(DCCallVM* in_self, DCint mode)
@@ -364,7 +367,8 @@ void dc_callvm_mode_ppc64(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
-    case DC_CALL_C_PPC64: 
+    case DC_CALL_C_DEFAULT_THIS:
+    case DC_CALL_C_PPC64:
     case DC_CALL_C_ELLIPSIS:
 #if DC__ABI_PPC64_ELF_V == 2
       vt = &gVT_ppc64;
@@ -383,11 +387,11 @@ void dc_callvm_mode_ppc64(DCCallVM* in_self, DCint mode)
       vt = &gVT_ppc64_syscall;
       break;
 
-    default: 
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+    default:
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
-  
+
   dc_callvm_base_init(&self->mInterface, vt);
 }
 

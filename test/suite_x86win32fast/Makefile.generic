@@ -1,4 +1,4 @@
-APP = suite_x86win32fast
+APP = suite_x86win32fast${APP_SUFFIX}
 OBJS = case.o main.o
 
 SRCTOP   = ../..

@@ -6,7 +6,7 @@
  Description: 
  License:
 
-   Copyright (c) 2011-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2011-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -24,16 +24,14 @@
 */
 
 #include "dyncall.h"
-#include <sys/syscall.h> 
-#include <assert.h>
+#if defined(DC__OS_Minix)
+#  include <minix/callnr.h>
+#  define SYS_write WRITE
+#elif defined(DC_UNIX) && !defined(DC__OS_BeOS)
+#  include <sys/syscall.h>
+#endif
 DCCallVM* callvm;
 
-void syscallvm_init()
-{
-  callvm = dcNewCallVM(4096);
-  dcMode(callvm, DC_CALL_SYS_DEFAULT);
-  assert( dcGetError(callvm) == DC_ERROR_NONE );
-}
 
 int syscall_write(int fd, char* buf, size_t len)
 {
@@ -46,8 +44,16 @@ int syscall_write(int fd, char* buf, size_t len)
 
 int main(int argc, char* argv[])
 {
-  syscallvm_init();
-  syscall_write(1/*stdout*/, "result: syscall: 1\n", 19);
-  return 0;
+  int r = -1;
+  callvm = dcNewCallVM(4096);
+  dcMode(callvm, DC_CALL_SYS_DEFAULT);
+
+  if(dcGetError(callvm) == DC_ERROR_NONE)
+  {
+  	r = syscall_write(1/*stdout*/, "result: syscall: ", 17);
+  	r += syscall_write(1/*stdout*/, r==17?"1":"0", 2);
+  	r += syscall_write(1/*stdout*/, "\n", 2);
+  }
+  return !(r == 19);
 }
 

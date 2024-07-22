@@ -1,4 +1,4 @@
-APP     = thunk
+APP     = thunk${APP_SUFFIX}
 OBJS    = test_thunk.o
 SRCTOP  = ${VPATH}/../..
 BLDTOP  = ../..

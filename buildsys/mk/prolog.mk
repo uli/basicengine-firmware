@@ -1,7 +1,7 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2010 Daniel Adler <dadler@uni-goettingen.de>, 
-#                    Tassilo Philipp <tphilipp@potion-studios.com>
+# Copyright (c) 2010      Daniel Adler <dadler@uni-goettingen.de>, 
+#               2010,2022 Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -24,12 +24,5 @@ all:
 </$objtype/mkfile
 
 # Include config rules.
-<$TOP/ConfigVars
-
-BUILD_HOST   = $CONFIG_HOST
-BUILD_OS     = $CONFIG_OS
-BUILD_ARCH   = $CONFIG_ARCH
-BUILD_TOOL   = $CONFIG_TOOL
-BUILD_ASM    = $CONFIG_ASM
-BUILD_CONFIG = $CONFIG_CONFIG
+<$TOP/Makefile.config
 

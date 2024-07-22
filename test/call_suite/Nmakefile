@@ -36,17 +36,17 @@ AUTOS = cases.h
 !IF "$(BUILD_OS)" == "windows"
 
 TARGETS = call_suite.exe
-OBJS = main.obj cases.obj globals.obj invoke.obj
+OBJS = main.obj cases.obj globals.obj
 
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...
-	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\libdyncall_s.lib
+	$(LD) /OUT:"$@" $(LDFLAGS) $(OBJS) $(TOP)\dyncall\dyncall_s.lib
 
 
 !ELSE IF "$(BUILD_OS)" == "nds"
 
 TARGETS = call_suite.nds
-OBJS = main.o cases.o globals.o invoke.o
+OBJS = main.o cases.o globals.o
 
 $(TARGETS): $(OBJS)
 	echo Linking $@ ...

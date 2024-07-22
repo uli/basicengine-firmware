@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2007-2019 Daniel Adler <dadler@uni-goettingen.de>, 
+% Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>, 
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -95,6 +95,9 @@ required by ellipsis calls)
 binary interfaces. In AIX and mac OS 9, padding bytes always follow the data structure
 \item composite parameters 3 bytes or larger in size occupy high-order bytes
 \item integer parameters \textless\ 32 bit are right-justified (meaning occupy higher-address bytes) in their 4-byte slot on the stack, requiring extra-care for big-endian targets
+\item aggregates (struct, union) with only one (non-aggregate / non-array) field are passed as if the field itself would be passed
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item all other aggregates are passed as a sequence of words (like integer parameters)
 \end{itemize}
 
 
@@ -104,8 +107,8 @@ binary interfaces. In AIX and mac OS 9, padding bytes always follow the data str
 \item return values of integer \textless=\ 32bit or pointer type use gpr3
 \item 64 bit integers use gpr3 and gpr4 (hiword in gpr3, loword in gpr4)
 \item floating point values are returned via fpr1
-\item structures \textless=\ 64 bits use gpr3 and gpr4
-\item for types \textgreater\ 64 bits, a secret first parameter with an address to the return value is passed
+\item for all aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in gpr3), and callee writes return value to this space; the ptr to the aggregate is returned in gpr3
 \end{itemize}
 
 
@@ -148,7 +151,7 @@ linkage area                      & \vdots                        &             
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 \subsubsection{System V PPC 32-bit}
@@ -196,23 +199,29 @@ Name              & Brief description\\
 \paragraph{Parameter passing}
 
 \begin{itemize}
-\item Stack pointer (r1) is always 16-byte aligned. The EABI differs here - it is 8-byte alignment.
-\item 8 general-purpose registers (r3-r10) for integer and pointer types.
-\item 8 floating-pointer registers (f1-f8) for float (promoted to double) and double types.
-\item Additional arguments are passed on the stack directly after the back-chain and saved return address (8 bytes structure) on the callers stack frame.
+\item Stack pointer (r1) is always 16-byte aligned. The EABI differs here - it is 8-byte alignment
+\item 8 general-purpose registers (r3-r10) for integer and pointer types
+\item 8 floating-pointer registers (f1-f8) for float (promoted to double) and double types
+\item Additional arguments are passed on the stack directly after the back-chain and saved return address (8 bytes structure) on the callers stack frame
 \item 64-bit integer data types are passed in general-purpose registers as a whole in two
  32-bit general purpose registers (an odd and an even e.g. r3 and r4), skipping an even integer register
  or passed on the stack; they are never splitted into a register and stack part
 \item Ellipsis calls set CR bit 6 
 \item integer parameters \textless\ 32 bit are right-justified (meaning occupy high-order bytes) in their 4-byte area, requiring extra-care for big-endian targets
 \item no spill area is used on stack, iterating over varargs requires a specific va\_list implementation
+\item aggregates (struct, union) and types \textgreater\ 64 bits are passed indirectly, as a pointer to the data (or a copy of it, if necessary to avoid modification)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \end{itemize}
 
 \paragraph{Return values}
 
 \begin{itemize}
-\item 32-bit integers use register r3, 64-bit use registers r3 and r4 (hiword in r3, loword in r4).
-\item floating-point values are returned using register f1.
+\item 32-bit integers use register r3, 64-bit use registers r3 and r4 (hiword in r3, loword in r4)
+\item floating-point values are returned using register f1
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in gpr3), and callee writes return value to this space; the ptr to the aggregate is returned in gpr3
+\item aggregates (struct, union) \textless=\ 64 bits use gpr3 and gpr4
+\item for all other aggregates and types \textgreater\ 64 bits, a secret first parameter with an address to a caller allocated space is passed to the function (in gpr3), which is written to by the callee
 \end{itemize}
 
 
@@ -249,7 +258,18 @@ parameter area                    &                               &             
 \end{figure}
 
 
-\newpage
+\subsubsection{System V PPC 32-bit / Linux Standard Base version}
+
+This is in essence the same as the System V PPC 32-bit calling convention, but differs for aggregate return values:
+% @@@AGGR could be more verbose
+
+\begin{itemize}
+\item for all aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning in gpr3), and callee writes return value to this space; the ptr to the aggregate is returned in gpr3
+\end{itemize}
+
+
+\clearpage
 
 \subsubsection{System V syscalls}
 

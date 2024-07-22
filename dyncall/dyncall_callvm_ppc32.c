@@ -3,10 +3,10 @@
  Package: dyncall
  Library: dyncall
  File: dyncall/dyncall_callvm_ppc32.c
- Description: 
+ Description:
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -30,9 +30,9 @@
   dyncall callvm for ppc32 architectures
 
   SUPPORTED CALLING CONVENTIONS
-  ppc32/osx 
+  ppc32/osx
   ppc32/linux (sysv abi)
-  ppc32/syscall 
+  ppc32/syscall
 
   REVISION
   2015/01/15 added syscall (tested on Linux)
@@ -48,7 +48,7 @@
 #include "dyncall_utils.h"
 
 
-/* 
+/*
 ** PowerPC 32-bit calling convention call
 **
 ** - hybrid return-type call (bool ... pointer)
@@ -108,7 +108,7 @@ static void dc_callvm_argInt_ppc32_sysv(DCCallVM* in_self, DCint i)
   if (self->mIntRegs < 8)
     self->mRegData.mIntData[self->mIntRegs++] = i;
   /* OR push onto stack */
-  else 
+  else
     dcVecAppend(&self->mVecHead,&i,sizeof(DCint));
 }
 
@@ -122,9 +122,9 @@ static void dc_callvm_argDouble_ppc32_darwin(DCCallVM* in_self, DCdouble d)
   if (self->mFloatRegs < 13) {
     self->mRegData.mFloatData[self->mFloatRegs++] = d;
     /* skip two integer register file entries */
-    if (self->mIntRegs < 8) 
+    if (self->mIntRegs < 8)
       self->mRegData.mIntData[self->mIntRegs++] = ( (DCint*) &d )[0];
-    if (self->mIntRegs < 8) 
+    if (self->mIntRegs < 8)
       self->mRegData.mIntData[self->mIntRegs++] = ( (DCint*) &d )[1];
   }
   /* push on stack */
@@ -138,9 +138,9 @@ static void dc_callvm_argDouble_ppc32_sysv(DCCallVM* in_self, DCdouble d)
   if (self->mFloatRegs < 8) {
     self->mRegData.mFloatData[self->mFloatRegs++] = d;
     /* skip two integer register file entries */
-    if (self->mIntRegs < 8) 
+    if (self->mIntRegs < 8)
       self->mRegData.mIntData[self->mIntRegs++] = ( (DCint*) &d )[0];
-    if (self->mIntRegs < 8) 
+    if (self->mIntRegs < 8)
       self->mRegData.mIntData[self->mIntRegs++] = ( (DCint*) &d )[1];
   }
   /* push on stack */
@@ -150,24 +150,24 @@ static void dc_callvm_argDouble_ppc32_sysv(DCCallVM* in_self, DCdouble d)
 static void dc_callvm_argDouble_ppc32_sysv(DCCallVM* in_self, DCdouble d)
 {
   DCCallVM_ppc32* self = (DCCallVM_ppc32*)in_self;
-  if (self->mFloatRegs < 8) 
+  if (self->mFloatRegs < 8)
     self->mRegData.mFloatData[self->mFloatRegs++] = d;
   else /* OR push data on stack */
   {
     /* align stack to 8 byte boundary */
-  dcVecResize(&self->mVecHead , ( dcVecSize(&self->mVecHead) + 7UL ) & -8UL ); 
+  dcVecResize(&self->mVecHead , ( dcVecSize(&self->mVecHead) + 7UL ) & -8UL );
     /* AND push data */
     dcVecAppend(&self->mVecHead,(DCpointer) &d,sizeof(DCdouble));
   }
 }
 
 /* Floating-point */
-  
-  
+
+
 /* darwin:
- * - skip one integer register file entry (write in - for ellipsis calls) 
+ * - skip one integer register file entry (write in - for ellipsis calls)
  * sysv:
- * - 
+ * -
  */
 
 static void dc_callvm_argFloat_ppc32_darwin(DCCallVM* in_self, DCfloat f)
@@ -176,14 +176,14 @@ static void dc_callvm_argFloat_ppc32_darwin(DCCallVM* in_self, DCfloat f)
   if (self->mFloatRegs < 13) {
     self->mRegData.mFloatData[self->mFloatRegs++] = (DCdouble) (f);
   }
-  
+
   /* AND skip one integer register file entry (write in - for ellipsis calls) */
-  
-  if (self->mIntRegs < 8) 
+
+  if (self->mIntRegs < 8)
     self->mRegData.mIntData[self->mIntRegs++] = *( (DCint*) &f );
-  
+
   /* AND push on stack */
-  
+
   dcVecAppend(&self->mVecHead, &f, sizeof(DCfloat));
 }
 
@@ -195,7 +195,7 @@ static void dc_callvm_argFloat_ppc32_sysv(DCCallVM* in_self, DCfloat f)
 
   if (self->mFloatRegs < 8)
     self->mRegData.mFloatData[self->mFloatRegs++] = (DCdouble) (f);
-  
+
   else /* OR put float on stack */
     dcVecAppend(&self->mVecHead, &f, sizeof(DCfloat));
 }
@@ -224,7 +224,7 @@ static void dc_callvm_argLongLong_ppc32_sysv(DCCallVM* in_self, DClonglong L)
     self->mRegData.mIntData[self->mIntRegs++] = p[1];
   }
   /* OR push onto stack */
-  else  
+  else
   {
     /* in case, mIntRegs == 7, set it to 8 */
     self->mIntRegs = 8;
@@ -273,9 +273,9 @@ static void dc_callvm_argPointer_ppc32(DCCallVM* in_self, DCpointer p)
 void dc_callvm_call_ppc32_darwin(DCCallVM* in_self, DCpointer target)
 {
   DCCallVM_ppc32* self = (DCCallVM_ppc32*)in_self;
-  dcCall_ppc32_darwin( 
-    target, 
-    &self->mRegData, 
+  dcCall_ppc32_darwin(
+    target,
+    &self->mRegData,
     DC_MAX(dcVecSize(&self->mVecHead), 8*4),
     dcVecData(&self->mVecHead)
   );
@@ -302,14 +302,14 @@ DCCallVM_vt gVT_ppc32_darwin =
 , &dc_callvm_mode_ppc32
 , &dc_callvm_argBool_ppc32
 , &dc_callvm_argChar_ppc32
-, &dc_callvm_argShort_ppc32 
+, &dc_callvm_argShort_ppc32
 , &dc_callvm_argInt_ppc32_darwin
 , &dc_callvm_argLong_ppc32
 , &dc_callvm_argLongLong_ppc32_darwin
 , &dc_callvm_argFloat_ppc32_darwin
 , &dc_callvm_argDouble_ppc32_darwin
 , &dc_callvm_argPointer_ppc32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc32_darwin
 , (DCboolvmfunc*)       &dc_callvm_call_ppc32_darwin
 , (DCcharvmfunc*)       &dc_callvm_call_ppc32_darwin
@@ -320,7 +320,8 @@ DCCallVM_vt gVT_ppc32_darwin =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc32_darwin
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc32_darwin
 , (DCpointervmfunc*)    &dc_callvm_call_ppc32_darwin
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_ppc32_sysv =
@@ -330,14 +331,14 @@ DCCallVM_vt gVT_ppc32_sysv =
 , &dc_callvm_mode_ppc32
 , &dc_callvm_argBool_ppc32
 , &dc_callvm_argChar_ppc32
-, &dc_callvm_argShort_ppc32 
+, &dc_callvm_argShort_ppc32
 , &dc_callvm_argInt_ppc32_sysv
 , &dc_callvm_argLong_ppc32
 , &dc_callvm_argLongLong_ppc32_sysv
 , &dc_callvm_argFloat_ppc32_sysv
 , &dc_callvm_argDouble_ppc32_sysv
 , &dc_callvm_argPointer_ppc32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc32_sysv
 , (DCboolvmfunc*)       &dc_callvm_call_ppc32_sysv
 , (DCcharvmfunc*)       &dc_callvm_call_ppc32_sysv
@@ -348,7 +349,8 @@ DCCallVM_vt gVT_ppc32_sysv =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc32_sysv
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc32_sysv
 , (DCpointervmfunc*)    &dc_callvm_call_ppc32_sysv
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt gVT_ppc32_syscall =
@@ -358,14 +360,14 @@ DCCallVM_vt gVT_ppc32_syscall =
 , &dc_callvm_mode_ppc32
 , &dc_callvm_argBool_ppc32
 , &dc_callvm_argChar_ppc32
-, &dc_callvm_argShort_ppc32 
+, &dc_callvm_argShort_ppc32
 , &dc_callvm_argInt_ppc32_sysv
 , &dc_callvm_argLong_ppc32
 , &dc_callvm_argLongLong_ppc32_sysv
 , &dc_callvm_argFloat_ppc32_sysv
 , &dc_callvm_argDouble_ppc32_sysv
 , &dc_callvm_argPointer_ppc32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_ppc32_syscall
 , (DCboolvmfunc*)       &dc_callvm_call_ppc32_syscall
 , (DCcharvmfunc*)       &dc_callvm_call_ppc32_syscall
@@ -376,7 +378,8 @@ DCCallVM_vt gVT_ppc32_syscall =
 , (DCfloatvmfunc*)      &dc_callvm_call_ppc32_syscall
 , (DCdoublevmfunc*)     &dc_callvm_call_ppc32_syscall
 , (DCpointervmfunc*)    &dc_callvm_call_ppc32_syscall
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 
@@ -389,19 +392,21 @@ void dc_callvm_mode_ppc32(DCCallVM* in_self, DCint mode)
 
 #if defined(DC__ABI_Darwin)
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_ELLIPSIS:
     case DC_CALL_C_ELLIPSIS_VARARGS:
 #endif
-    case DC_CALL_C_PPC32_OSX:  
-      vt = &gVT_ppc32_darwin; 
+    case DC_CALL_C_PPC32_OSX:
+      vt = &gVT_ppc32_darwin;
       break;
 
 #if defined(DC__ABI_SysV)
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_ELLIPSIS:
     case DC_CALL_C_ELLIPSIS_VARARGS:
 #endif
-    case DC_CALL_C_PPC32_SYSV: 
+    case DC_CALL_C_PPC32_SYSV:
       vt = &gVT_ppc32_sysv;
       break;
 
@@ -410,8 +415,8 @@ void dc_callvm_mode_ppc32(DCCallVM* in_self, DCint mode)
       vt = &gVT_ppc32_syscall;
       break;
 
-    default: 
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+    default:
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
 

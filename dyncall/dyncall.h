@@ -6,7 +6,7 @@
  Description: public header for library dyncall
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -24,17 +24,6 @@
 */
 
 
-/*
-
-  dyncall C API
-
-  REVISION
-  2015/07/08 added SYS_PPC64 system call
-  2015/01/16 added SYS_PPC32 system call
-  2007/12/11 initial
-  
-*/
-
 #ifndef DYNCALL_H
 #define DYNCALL_H
 
@@ -43,16 +32,19 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 typedef struct DCCallVM_    DCCallVM;
-typedef struct DCstruct_    DCstruct;
+typedef struct DCaggr_      DCaggr;
 
 /* Supported Calling Convention Modes */
 
-#define DC_CALL_C_DEFAULT               0
-#define DC_CALL_C_ELLIPSIS            100
-#define DC_CALL_C_ELLIPSIS_VARARGS    101
+/* default */
+#define DC_CALL_C_DEFAULT               0   /* C default (platform native) */
+#define DC_CALL_C_DEFAULT_THIS         99   /* for C++ calls where first param is hidden this ptr (platform native) */
+#define DC_CALL_C_ELLIPSIS            100   /* to be set for vararg calls' non-hidden (e.g. C++ this ptr), named arguments */
+#define DC_CALL_C_ELLIPSIS_VARARGS    101   /* to be set for vararg calls' non-hidden (e.g. C++ this ptr), variable arguments (in ... part) */
+/* platform specific */
 #define DC_CALL_C_X86_CDECL             1
 #define DC_CALL_C_X86_WIN32_STD         2
 #define DC_CALL_C_X86_WIN32_FAST_MS     3
@@ -60,7 +52,9 @@ typedef struct DCstruct_    DCstruct;
 #define DC_CALL_C_X86_WIN32_THIS_MS     5
 #define DC_CALL_C_X86_WIN32_THIS_GNU    DC_CALL_C_X86_CDECL /* alias - identical to cdecl (w/ this-ptr as 1st arg) */
 #define DC_CALL_C_X64_WIN64             7
+#define DC_CALL_C_X64_WIN64_THIS       70   /* only needed when using aggregate by value as return type */
 #define DC_CALL_C_X64_SYSV              8
+#define DC_CALL_C_X64_SYSV_THIS         DC_CALL_C_X64_SYSV  /* alias */
 #define DC_CALL_C_PPC32_DARWIN          9
 #define DC_CALL_C_PPC32_OSX            DC_CALL_C_PPC32_DARWIN /* alias */
 #define DC_CALL_C_ARM_ARM_EABI         10
@@ -81,7 +75,10 @@ typedef struct DCstruct_    DCstruct;
 #define DC_CALL_C_ARM64                22
 #define DC_CALL_C_PPC64                23
 #define DC_CALL_C_PPC64_LINUX          DC_CALL_C_PPC64 /* alias */
+#define DC_CALL_C_RISCV64              24
+/* syscalls, default */
 #define DC_CALL_SYS_DEFAULT           200
+/* syscalls, platform specific */
 #define DC_CALL_SYS_X86_INT80H_LINUX  201
 #define DC_CALL_SYS_X86_INT80H_BSD    202
 #define DC_CALL_SYS_X64_SYSCALL_SYSV  204
@@ -99,6 +96,8 @@ DC_API void       dcReset         (DCCallVM* vm);
 
 DC_API void       dcMode          (DCCallVM* vm, DCint mode);
 
+DC_API void       dcBeginCallAggr (DCCallVM* vm, const DCaggr* ag);
+
 DC_API void       dcArgBool       (DCCallVM* vm, DCbool     value);
 DC_API void       dcArgChar       (DCCallVM* vm, DCchar     value);
 DC_API void       dcArgShort      (DCCallVM* vm, DCshort    value);
@@ -108,7 +107,7 @@ DC_API void       dcArgLongLong   (DCCallVM* vm, DClonglong value);
 DC_API void       dcArgFloat      (DCCallVM* vm, DCfloat    value);
 DC_API void       dcArgDouble     (DCCallVM* vm, DCdouble   value);
 DC_API void       dcArgPointer    (DCCallVM* vm, DCpointer  value);
-DC_API void       dcArgStruct     (DCCallVM* vm, DCstruct* s, DCpointer value);
+DC_API void       dcArgAggr       (DCCallVM* vm, const DCaggr* ag, const void* value);
 
 DC_API void       dcCallVoid      (DCCallVM* vm, DCpointer funcptr);
 DC_API DCbool     dcCallBool      (DCCallVM* vm, DCpointer funcptr);
@@ -120,21 +119,15 @@ DC_API DClonglong dcCallLongLong  (DCCallVM* vm, DCpointer funcptr);
 DC_API DCfloat    dcCallFloat     (DCCallVM* vm, DCpointer funcptr);
 DC_API DCdouble   dcCallDouble    (DCCallVM* vm, DCpointer funcptr);
 DC_API DCpointer  dcCallPointer   (DCCallVM* vm, DCpointer funcptr);
-DC_API void       dcCallStruct    (DCCallVM* vm, DCpointer funcptr, DCstruct* s, DCpointer returnValue);
+DC_API DCpointer  dcCallAggr      (DCCallVM* vm, DCpointer funcptr, const DCaggr* ag, DCpointer ret); /* retval is written to *ret, returns ret */
 
 DC_API DCint      dcGetError      (DCCallVM* vm);
 
-#define DEFAULT_ALIGNMENT 0
-DC_API DCstruct*  dcNewStruct      (DCsize fieldCount, DCint alignment);
-DC_API void       dcStructField    (DCstruct* s, DCint type, DCint alignment, DCsize arrayLength);
-DC_API void       dcSubStruct      (DCstruct* s, DCsize fieldCount, DCint alignment, DCsize arrayLength);  	
-/* Each dcNewStruct or dcSubStruct call must be paired with a dcCloseStruct. */
-DC_API void       dcCloseStruct    (DCstruct* s);  	
-DC_API DCsize     dcStructSize     (DCstruct* s);  	
-DC_API DCsize     dcStructAlignment(DCstruct* s);  	
-DC_API void       dcFreeStruct     (DCstruct* s);
-
-DC_API DCstruct*  dcDefineStruct  (const char* signature);
+DC_API DCaggr*    dcNewAggr       (DCsize maxFieldCount, DCsize size);
+DC_API void       dcFreeAggr      (DCaggr* ag);
+/* if type == DC_SIGCHAR_AGGREGATE, pass DCaggr* of nested struct/union in ...  */
+DC_API void       dcAggrField     (DCaggr* ag, DCsigchar type, DCint offset, DCsize array_len, ...);
+DC_API void       dcCloseAggr     (DCaggr* ag);   /* to indicate end of struct definition, required */
 
 
 /* helpers */

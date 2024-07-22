@@ -6,7 +6,7 @@
  Description: mips "o32" ABI callvm implementation
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -125,21 +125,21 @@ static void dc_callvm_argFloat_mips_o32(DCCallVM* in_self, DCfloat x)
 # if defined(DC__Endian_LITTLE)
     self->mRegData.u[self->mArgCount].f[0] = x;
 # else
-    self->mRegData.u[self->mArgCount].f[1] = x; // floats in regs always right justified
+    self->mRegData.u[self->mArgCount].f[1] = x; /* floats in regs always right justified */
 # endif
 # if 0
     self->mRegData.u[self->mArgCount].f[1] = x;
    call kernel
-        
+
 	mips:
 	lwc1  $f12,  4($5)    <--- byte offset 4
 	lwc1  $f13,  0($5)
-	lwc1  $f14, 12($5)    <--- byte offset 12 
+	lwc1  $f14, 12($5)    <--- byte offset 12
 	lwc1  $f15,  8($5)
 	mipsel:
 	lwc1  $f12,  0($5)    <--- byte offset 4
 	lwc1  $f13,  4($5)
-	lwc1  $f14,  8($5)    <--- byte offset 12 
+	lwc1  $f14,  8($5)    <--- byte offset 12
 	lwc1  $f15, 12($5)
 
 #  if defined(DC__Endian_LITTLE)
@@ -192,14 +192,14 @@ DCCallVM_vt gVT_mips_o32 =
 , &dc_callvm_mode_mips_o32
 , &dc_callvm_argBool_mips_o32
 , &dc_callvm_argChar_mips_o32
-, &dc_callvm_argShort_mips_o32 
+, &dc_callvm_argShort_mips_o32
 , &dc_callvm_argInt_mips_o32
 , &dc_callvm_argLong_mips_o32
 , &dc_callvm_argLongLong_mips_o32
 , &dc_callvm_argFloat_mips_o32
 , &dc_callvm_argDouble_mips_o32
 , &dc_callvm_argPointer_mips_o32
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &dc_callvm_call_mips_o32
 , (DCboolvmfunc*)       &dc_callvm_call_mips_o32
 , (DCcharvmfunc*)       &dc_callvm_call_mips_o32
@@ -210,7 +210,8 @@ DCCallVM_vt gVT_mips_o32 =
 , (DCfloatvmfunc*)      &dc_callvm_call_mips_o32
 , (DCdoublevmfunc*)     &dc_callvm_call_mips_o32
 , (DCpointervmfunc*)    &dc_callvm_call_mips_o32
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 /* mode: only a single mode available currently. */
@@ -221,13 +222,14 @@ static void dc_callvm_mode_mips_o32(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_MIPS32_O32:
     case DC_CALL_C_ELLIPSIS:
     case DC_CALL_C_ELLIPSIS_VARARGS:
       vt = &gVT_mips_o32;
       break;
     default:
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
   dc_callvm_base_init(&self->mInterface, vt);

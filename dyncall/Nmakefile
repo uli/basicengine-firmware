@@ -32,15 +32,15 @@ TOP=..
 
 !IF "$(BUILD_OS)" == "windows"
 
-TARGETS = libdyncall_s.lib #libdyncall.lib libdyncall.dll
+TARGETS = dyncall_s.lib #dyncall.lib dyncall.dll
 
-OBJS = dyncall_call_$(BUILD_ARCH)_generic_masm.obj dyncall_vector.obj dyncall_vector.obj dyncall_callvm.obj dyncall_callvm_base.obj dyncall_api.obj dyncall_callf.obj dyncall_struct.obj
+OBJS = dyncall_call_$(BUILD_ARCH)_generic_masm.obj dyncall_vector.obj dyncall_vector.obj dyncall_callvm.obj dyncall_callvm_base.obj dyncall_api.obj dyncall_callf.obj dyncall_aggregate.obj
 
-libdyncall_s.lib: $(OBJS)
+dyncall_s.lib: $(OBJS)
 	echo Creating library $@ ...
 	$(AR) $(ARFLAGS) /OUT:"$@" $(OBJS) > nul
 
-libdyncall.dll libdyncall.lib: $(OBJS)
+dyncall.dll dyncall.lib: $(OBJS)
 	echo Creating shared/import library $@ ...
 	$(LD) /DLL $(LDFLAGS) $(OBJS) > nul
 

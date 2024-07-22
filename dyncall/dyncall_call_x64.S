@@ -84,6 +84,22 @@ BEGIN_PROC(dcCall_x64_sysv)
 	RET()
 END_PROC(dcCall_x64_sysv)
 
+/* wrapper for dcCall_x64_sysv to grab 4 regs used to return (small) aggregate by value */
+GLOBAL(dcCall_x64_sysv_aggr)
+BEGIN_PROC(dcCall_x64_sysv_aggr)
+	PUSH(R9)			/* preserve ptr to copy retval regs to (also realigns stack) */
+	CALL(CSYM(dcCall_x64_sysv))	/* params (in regs) passed-through to next call, as-is */
+	POP(R9)				/* get ptr to retval regs back */
+
+	/* copy regs holding aggregate data to provided space (pointed to by r12) */
+	MOV(RAX, QWORD(R9,0))
+	MOV(RDX, QWORD(R9,8))
+	MOVSD(XMM0, QWORD(R9,16))
+	MOVSD(XMM1, QWORD(R9,24))
+
+	RET()
+END_PROC(dcCall_x64_sysv_aggr)
+
 /*---------------------------------------------------------------------------
 
   Call Kernel for x64 Win64
@@ -96,14 +112,19 @@ END_PROC(dcCall_x64_sysv)
 
 */
 
-GLOBAL(dcCall_x64_win64)
-BEGIN_PROC(dcCall_x64_win64)
+GLOBAL_FRAME(dcCall_x64_win64)
+FRAME_BEGIN_PROC(dcCall_x64_win64)
 
 	PUSH(RBP)			/* Pseudo-prolog - preserve RBP. */
+	FRAME_PUSH_REG(RBP)
 	PUSH(RSI)			/* Preserve RSI and RDI. */
+	FRAME_PUSH_REG(RSI)
 	PUSH(RDI)
+	FRAME_PUSH_REG(RDI)
 
 	MOV(RSP,RBP)			/* Store stack pointer in RBP. */
+	FRAME_SET(0, RBP)
+	FRAME_ENDPROLOG()
 
 	ADD(LIT(15),RCX)		/* Align stack size to 16 bytes. */
 	AND(LIT(-16),RCX)
@@ -143,6 +164,18 @@ BEGIN_PROC(dcCall_x64_win64)
 
 END_PROC(dcCall_x64_win64)
 
+GLOBAL(dcCall_x64_win64_aggr)
+BEGIN_PROC(dcCall_x64_win64_aggr)
+	SUB(LIT(8), RSP)		/* Re-align the stack */
+	CALL(CSYM(dcCall_x64_win64))	/* params (in regs) passed-through to next call, as-is */
+	ADD(LIT(8), RSP)		/* Restore the stack pointer */
+
+	MOV(QWORD(RSP, 40), R8)		/* ptr to aggregate mem -> R8 (passed as only stack arg, 0x40 to skip ret addr and spill area */
+	MOV(RAX, QWORD(R8, 0))		/* Copy aggregate value to memory */
+
+	RET()
+END_PROC(dcCall_x64_win64_aggr)
+
 /*---------------------------------------------------------------------------
 
   Call Kernel for x64 System V syscalls
@@ -169,4 +202,6 @@ BEGIN_PROC(dcCall_x64_syscall_sysv)
 END_PROC(dcCall_x64_syscall_sysv)
 
 END_ASM
+
+/* vim: set ts=8: */
 

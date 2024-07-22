@@ -405,5 +405,719 @@ _main:
      260:       bb c1 ff f8     lmw 30, -8(1)   ; |
      264:       4e 80 00 20     blr             ; |
 
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_leaf_call:
+00000000	stmw	r30,0xfff8(r1)
+00000004	stwu	r1,0xffd0(r1)
+00000008	or	r30,r1,r1
+0000000c	stw	r3,0x48(r30)
+00000010	stw	r4,0x4c(r30)
+00000014	stw	r5,0x50(r30)
+00000018	stw	r6,0x54(r30)
+0000001c	stw	r7,0x58(r30)
+00000020	stw	r8,0x5c(r30)
+00000024	stw	r9,0x60(r30)
+00000028	stw	r10,0x64(r30)
+0000002c	lwz	r1,0x0(r1)
+00000030	lmw	r30,0xfff8(r1)
+00000034	blr
+_nonleaf_call:
+00000038	mfspr	r0,lr
+0000003c	stmw	r30,0xfff8(r1)
+00000040	stw	r0,0x8(r1)
+00000044	stwu	r1,0xff30(r1)
+00000048	or	r30,r1,r1
+0000004c	bcl	20,31,0x50
+00000050	mfspr	r31,lr
+00000054	stw	r3,0xe8(r30)
+00000058	stw	r4,0xec(r30)
+0000005c	stw	r5,0xf0(r30)
+00000060	stw	r6,0xf4(r30)
+00000064	stw	r7,0xf8(r30)
+00000068	stw	r8,0xfc(r30)
+0000006c	stw	r9,0x100(r30)
+00000070	stw	r10,0x104(r30)
+00000074	addis	r2,r31,0x0
+00000078	addi	r2,r2,0x148
+0000007c	addi	r0,r30,0x50
+00000080	li	r9,0x64
+00000084	or	r3,r0,r0
+00000088	or	r4,r2,r2
+0000008c	or	r5,r9,r9
+00000090	bl	0x178
+00000094	lwz	r0,0x10c(r30)
+00000098	stw	r0,0x38(r1)
+0000009c	lwz	r0,0x110(r30)
+000000a0	stw	r0,0x3c(r1)
+000000a4	lwz	r3,0xec(r30)
+000000a8	lwz	r4,0xf0(r30)
+000000ac	lwz	r5,0xf4(r30)
+000000b0	lwz	r6,0xf8(r30)
+000000b4	lwz	r7,0xfc(r30)
+000000b8	lwz	r8,0x100(r30)
+000000bc	lwz	r9,0x104(r30)
+000000c0	lwz	r10,0x108(r30)
+000000c4	bl	0x0
+000000c8	lwz	r1,0x0(r1)
+000000cc	lwz	r0,0x8(r1)
+000000d0	mtspr	lr,r0
+000000d4	lmw	r30,0xfff8(r1)
+000000d8	blr
+_main:
+000000dc	mfspr	r0,lr          ;
+000000e0	stmw	r30,0xfff8(r1) ;
+000000e4	stw	r0,0x8(r1)         ;
+000000e8	stwu	r1,0xff90(r1)  ;
+000000ec	or	r30,r1,r1          ;
+000000f0	bcl	20,31,0xf4         ;
+000000f4	mfspr	r31,lr         ;
+000000f8	addis	r2,r31,0x0     ;
+000000fc	addi	r2,r2,0x108    ;
+00000100	lwz	r0,0x0(r2)         ;
+00000104	lwz	r9,0x4(r2)         ;
+00000108	lwz	r11,0x8(r2)        ;
+0000010c	lwz	r2,0xc(r2)         ;
+00000110	stw	r0,0x50(r30)       ;
+00000114	stw	r9,0x54(r30)       ;
+00000118	stw	r11,0x58(r30)      ;
+0000011c	stw	r2,0x5c(r30)       ;
+00000120	li	r0,0x8             ; arg 6, ...
+00000124	stw	r0,0x3c(r1)        ; ... "pushed" onto stack
+00000128	li	r0,0x9             ; arg 7, ...
+0000012c	stw	r0,0x40(r1)        ; ... "pushed" onto stack
+00000130	lwz	r0,0x5c(r30)       ; |                                       | last word of struct "pushed" onto stack
+00000134	stw	r0,0x38(r1)        ; |                                       /
+00000138	lwz	r8,0x50(r30)       ; | arg 5 (struct, passed as 4 words)     \
+0000013c	lwz	r9,0x54(r30)       ; |                                       | first 3 words of struct passed in remaining regs
+00000140	lwz	r10,0x58(r30)      ; |                                       |
+00000144	li	r3,0x0             ; arg 0
+00000148	li	r4,0x1             ; arg 1
+0000014c	li	r5,0x2             ; arg 2
+00000150	li	r6,0x3             ; arg 3
+00000154	li	r7,0x4             ; arg 4
+00000158	bl	0x38               ; call and put return address -> lr
+0000015c	li	r0,0x0             ; return value (pointlessly) via gpr0 ...
+00000160	or	r3,r0,r0           ; ... to gpr3
+00000164	lwz	r1,0x0(r1)         ; |
+00000168	lwz	r0,0x8(r1)         ; |
+0000016c	mtspr	lr,r0          ; | epilog
+00000170	lmw	r30,0xfff8(r1)     ; |
+00000174	blr                    ; |
+
+
+
+; ---------- single-field structs by value (of different sizes) ---------->
+;
+; struct C { char c;   }; // <= 2 bytes, but normal alignment as passed like a char
+; struct S { short s;  }; // <= 2 bytes, but normal alignment as passed like a short
+; struct I { int i;    };
+; struct F { float f;  };
+; struct D { double d; };
+;
+; struct C2 { char c[2]; }; // <= 2 bytes, special alignment
+; struct C3 { char c[3]; }; //  > 2 bytes, normal alignment
+;
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_leaf_call:
+00000000	stmw	r30,0xfff8(r1)
+00000004	stwu	r1,0xffc0(r1)
+00000008	or	r30,r1,r1
+0000000c	sth	r3,0x58(r30)
+00000010	stb	r4,0x5c(r30)
+00000014	sth	r5,0x60(r30)
+00000018	stw	r6,0x64(r30)
+0000001c	stfs	f1,0x68(r30)
+00000020	stfd	f2,0x20(r30)
+00000024	lwz	r1,0x0(r1)
+00000028	lmw	r30,0xfff8(r1)
+0000002c	blr
+_main:
+00000030	mfspr	r0,lr          ; |
+00000034	stmw	r30,0xfff8(r1) ; |
+00000038	stw	r0,0x8(r1)         ; | prolog
+0000003c	stwu	r1,0xff80(r1)  ; |
+00000040	or	r30,r1,r1          ; |
+00000044	bcl	20,31,0x48         ; ppc way to get PC in ...
+00000048	mfspr	r31,lr         ; ... gpr31
+0000004c	li	r0,0x0             ; |                          \
+00000050	stb	r0,0x40(r30)       ; |                          |
+00000054	li	r0,0x1             ; |                          | C2
+00000058	stb	r0,0x41(r30)       ; |                          /
+0000005c	li	r0,0x2             ; | local area struct init   \ C
+00000060	stb	r0,0x42(r30)       ; |                          /
+00000064	li	r0,0x3             ; |                          \ S
+00000068	sth	r0,0x44(r30)       ; |                          /
+0000006c	li	r0,0x4             ; |                          \ I
+00000070	stw	r0,0x48(r30)       ; |                          /
+00000074	lis	r0,0x40a0          ; |                          \ F
+00000078	stw	r0,0x4c(r30)       ; |                          /
+0000007c	addis	r2,r31,0x0     ; |                          \
+00000080	addi	r2,r2,0xa8     ; |                          | D
+00000084	lfd	f0,0x0(r2)         ; |                          |
+00000088	stfd	f0,0x50(r30)   ; |                          /
+0000008c	addis	r2,r31,0x0     ; |                          \
+00000090	addi	r2,r2,0xb0     ; |                          |
+00000094	lhz	r0,0x0(r2)         ; |                          | C3
+00000098	lbz	r2,0x2(r2)         ; |                          |
+0000009c	sth	r0,0x60(r30)       ; |                          |
+000000a0	stb	r2,0x62(r30)       ; /                          /
+000000a4	lhz	r0,0x60(r30)       ; \
+000000a8	lbz	r2,0x62(r30)       ; |
+000000ac	sth	r0,0x34(r1)        ; | prep arg 6 (struct C3), zero-extended, right justified -> local area on stack
+000000b0	stb	r2,0x36(r1)        ; /
+000000b4	lhz	r3,0x40(r30)       ; arg 0 (struct C2)
+000000b8	lbz	r4,0x42(r30)       ; arg 1 (struct C)
+000000bc	lhz	r5,0x44(r30)       ; arg 2 (struct S)
+000000c0	lwz	r6,0x48(r30)       ; arg 3 (struct I)
+000000c4	lfs	f1,0x4c(r30)       ; arg 4 (struct F, int arg reg r7 then skipped)
+000000c8	lfd	f2,0x50(r30)       ; arg 5 (struct D, int arg regs r8 and r9 then skipped)
+000000cc	lwz	r10,0x34(r1)       ; arg 6 (struct C3, fetched from local area)
+000000d0	bl	0x0                ; call and put return address -> lr
+000000d4	li	r0,0x0             ; return value (pointlessly) via gpr0 ...
+000000d8	or	r3,r0,r0           ; ... to gpr3
+000000dc	lwz	r1,0x0(r1)         ; |
+000000e0	lwz	r0,0x8(r1)         ; |
+000000e4	mtspr	lr,r0          ; | epilog
+000000e8	lmw	r30,0xfff8(r1)     ; |
+000000ec	blr                    ; |
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] = { 'L' };
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_leaf_call:
+00000000	stmw	r30,0xfff8(r1)
+00000004	stwu	r1,0xffd0(r1)
+00000008	or	r30,r1,r1
+0000000c	stw	r3,0x48(r30)
+00000010	stw	r4,0x4c(r30)
+00000014	stw	r5,0x50(r30)
+00000018	stw	r6,0x54(r30)
+0000001c	stw	r7,0x58(r30)
+00000020	stw	r8,0x5c(r30)
+00000024	stw	r9,0x60(r30)
+00000028	stw	r10,0x64(r30)
+0000002c	lwz	r1,0x0(r1)
+00000030	lmw	r30,0xfff8(r1)
+00000034	blr
+_nonleaf_call:
+00000038	mfspr	r0,lr
+0000003c	stmw	r30,0xfff8(r1)
+00000040	stw	r0,0x8(r1)
+00000044	stwu	r1,0xff10(r1)
+00000048	or	r30,r1,r1
+0000004c	bcl	20,31,0x50
+00000050	mfspr	r31,lr
+00000054	stw	r3,0x108(r30)
+00000058	stw	r4,0x10c(r30)
+0000005c	stw	r5,0x110(r30)
+00000060	stw	r6,0x114(r30)
+00000064	stw	r7,0x118(r30)
+00000068	stw	r8,0x11c(r30)
+0000006c	stw	r9,0x120(r30)
+00000070	stw	r10,0x124(r30)
+00000074	addis	r2,r31,0x0
+00000078	addi	r2,r2,0x240
+0000007c	addi	r0,r30,0x70
+00000080	li	r9,0x64
+00000084	or	r3,r0,r0
+00000088	or	r4,r2,r2
+0000008c	or	r5,r9,r9
+00000090	bl	0x270
+00000094	lwz	r0,0x12c(r30)
+00000098	stw	r0,0x38(r1)
+0000009c	lwz	r0,0x130(r30)
+000000a0	stw	r0,0x3c(r1)
+000000a4	lwz	r0,0x134(r30)
+000000a8	lwz	r2,0x138(r30)
+000000ac	lwz	r9,0x13c(r30)
+000000b0	stw	r0,0x40(r1)
+000000b4	stw	r2,0x44(r1)
+000000b8	stw	r9,0x48(r1)
+000000bc	lwz	r0,0x140(r30)
+000000c0	lwz	r2,0x144(r30)
+000000c4	lwz	r9,0x148(r30)
+000000c8	lwz	r11,0x14c(r30)
+000000cc	stw	r0,0x4c(r1)
+000000d0	stw	r2,0x50(r1)
+000000d4	stw	r9,0x54(r1)
+000000d8	stw	r11,0x58(r1)
+000000dc	lwz	r0,0x150(r30)
+000000e0	stw	r0,0x5c(r1)
+000000e4	lwz	r0,0x154(r30)
+000000e8	stw	r0,0x60(r1)
+000000ec	lwz	r3,0x10c(r30)
+000000f0	lwz	r4,0x110(r30)
+000000f4	lwz	r5,0x114(r30)
+000000f8	lwz	r6,0x118(r30)
+000000fc	lwz	r7,0x11c(r30)
+00000100	lwz	r8,0x120(r30)
+00000104	lwz	r9,0x124(r30)
+00000108	lwz	r10,0x128(r30)
+0000010c	bl	0x0
+00000110	lwz	r1,0x0(r1)
+00000114	lwz	r0,0x8(r1)
+00000118	mtspr	lr,r0
+0000011c	lmw	r30,0xfff8(r1)
+00000120	blr
+_main:
+00000124	mfspr	r0,lr
+00000128	stmw	r30,0xfff8(r1)
+0000012c	stw	r0,0x8(r1)
+00000130	stwu	r1,0xff40(r1)
+00000134	or	r30,r1,r1
+00000138	bcl	20,31,0x13c
+0000013c	mfspr	r31,lr
+00000140	addis	r2,r31,0x0
+00000144	addi	r2,r2,0x1b8
+00000148	lwz	r0,0x0(r2)
+0000014c	lwz	r9,0x4(r2)
+00000150	lwz	r2,0x8(r2)
+00000154	stw	r0,0x70(r30)
+00000158	stw	r9,0x74(r30)
+0000015c	stw	r2,0x78(r30)
+00000160	addis	r2,r31,0x0
+00000164	addi	r2,r2,0x1c4
+00000168	lwz	r0,0x0(r2)
+0000016c	lwz	r9,0x4(r2)
+00000170	lwz	r11,0x8(r2)
+00000174	lwz	r2,0xc(r2)
+00000178	stw	r0,0x80(r30)
+0000017c	stw	r9,0x84(r30)
+00000180	stw	r11,0x88(r30)
+00000184	stw	r2,0x8c(r30)
+00000188	addis	r2,r31,0x0
+0000018c	addi	r2,r2,0x1d4
+00000190	lwz	r0,0x0(r2)
+00000194	lwz	r9,0x4(r2)
+00000198	lwz	r2,0x8(r2)
+0000019c	stw	r0,0x90(r30)
+000001a0	stw	r9,0x94(r30)
+000001a4	stw	r2,0x98(r30)
+000001a8	addis	r2,r31,0x0
+000001ac	addi	r2,r2,0x1e4
+000001b0	lwz	r0,0x0(r2)
+000001b4	lwz	r9,0x4(r2)
+000001b8	lwz	r11,0x8(r2)
+000001bc	lwz	r2,0xc(r2)
+000001c0	stw	r0,0xa0(r30)
+000001c4	stw	r9,0xa4(r30)
+000001c8	stw	r11,0xa8(r30)
+000001cc	stw	r2,0xac(r30)
+000001d0	li	r0,0x7
+000001d4	stw	r0,0x3c(r1)
+000001d8	li	r0,0x8
+000001dc	stw	r0,0x40(r1)
+000001e0	lwz	r0,0x90(r30)
+000001e4	lwz	r2,0x94(r30)
+000001e8	lwz	r9,0x98(r30)
+000001ec	stw	r0,0x44(r1)
+000001f0	stw	r2,0x48(r1)
+000001f4	stw	r9,0x4c(r1)
+000001f8	lwz	r0,0xa0(r30)
+000001fc	lwz	r2,0xa4(r30)
+00000200	lwz	r9,0xa8(r30)
+00000204	lwz	r11,0xac(r30)
+00000208	stw	r0,0x50(r1)
+0000020c	stw	r2,0x54(r1)
+00000210	stw	r9,0x58(r1)
+00000214	stw	r11,0x5c(r1)
+00000218	li	r0,0xe
+0000021c	stw	r0,0x60(r1)
+00000220	li	r0,0xf
+00000224	stw	r0,0x64(r1)
+00000228	lwz	r0,0x8c(r30)
+0000022c	stw	r0,0x38(r1)
+00000230	lwz	r8,0x80(r30)
+00000234	lwz	r9,0x84(r30)
+00000238	lwz	r10,0x88(r30)
+0000023c	li	r3,0x0
+00000240	li	r4,0x1
+00000244	lwz	r5,0x70(r30)
+00000248	lwz	r6,0x74(r30)
+0000024c	lwz	r7,0x78(r30)
+00000250	bl	0x38
+00000254	li	r0,0x0
+00000258	or	r3,r0,r0
+0000025c	lwz	r1,0x0(r1)
+00000260	lwz	r0,0x8(r1)
+00000264	mtspr	lr,r0
+00000268	lmw	r30,0xfff8(r1)
+0000026c	blr
+
+
+
+; ---------- returning qwords ---------->
+;
+; long long f()
+; {
+;     return 7171LL;
+; }
+;
+; int main()
+; {
+;     return (int)f();
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_f:
+00000000	stmw	r30,0xfff8(r1)
+00000004	stwu	r1,0xffd0(r1)
+00000008	or	r30,r1,r1
+0000000c	li	r2,0x0
+00000010	li	r3,0x1c03
+00000014	or	r4,r3,r3
+00000018	or	r3,r2,r2
+0000001c	lwz	r1,0x0(r1)
+00000020	lmw	r30,0xfff8(r1)
+00000024	blr
+_main:
+00000028	mfspr	r0,lr
+0000002c	stmw	r30,0xfff8(r1)
+00000030	stw	r0,0x8(r1)
+00000034	stwu	r1,0xffb0(r1)
+00000038	or	r30,r1,r1
+0000003c	bl	0x0
+00000040	or	r2,r3,r3
+00000044	or	r3,r4,r4
+00000048	or	r0,r3,r3
+0000004c	or	r3,r0,r0
+00000050	lwz	r1,0x0(r1)
+00000054	lwz	r0,0x8(r1)
+00000058	mtspr	lr,r0
+0000005c	lmw	r30,0xfff8(r1)
+00000060	blr
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i; long j; };
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 232 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + s.x;
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_f0:
+00000000	stmw	r30,0xfff8(r1)
+00000004	stwu	r1,0xffc0(r1)
+00000008	or	r30,r1,r1
+0000000c	or	r2,r3,r3
+00000010	li	r0,0xff84
+00000014	stb	r0,0x20(r30)
+00000018	lbz	r0,0x20(r30)
+0000001c	stb	r0,0x0(r2)
+00000020	or	r3,r2,r2
+00000024	lwz	r1,0x0(r1)
+00000028	lmw	r30,0xfff8(r1)
+0000002c	blr
+_f1:
+00000030	stmw	r30,0xfff8(r1)
+00000034	stwu	r1,0xffc0(r1)
+00000038	or	r30,r1,r1
+0000003c	mfspr	r0,lr
+00000040	bcl	20,31,0x44
+00000044	mfspr	r8,lr
+00000048	mtspr	lr,r0
+0000004c	or	r9,r3,r3
+00000050	addis	r2,r8,0x0
+00000054	addi	r2,r2,0xb4
+00000058	lwz	r0,0x0(r2)
+0000005c	lwz	r11,0x4(r2)
+00000060	lwz	r10,0x8(r2)
+00000064	lwz	r2,0xc(r2)
+00000068	stw	r0,0x20(r30)
+0000006c	stw	r11,0x24(r30)
+00000070	stw	r10,0x28(r30)
+00000074	stw	r2,0x2c(r30)
+00000078	lwz	r0,0x20(r30)
+0000007c	lwz	r2,0x24(r30)
+00000080	lwz	r11,0x28(r30)
+00000084	lwz	r10,0x2c(r30)
+00000088	stw	r0,0x0(r9)
+0000008c	stw	r2,0x4(r9)
+00000090	stw	r11,0x8(r9)
+00000094	stw	r10,0xc(r9)
+00000098	or	r3,r9,r9
+0000009c	lwz	r1,0x0(r1)
+000000a0	lmw	r30,0xfff8(r1)
+000000a4	blr
+_main:
+000000a8	mfspr	r0,lr
+000000ac	stmw	r30,0xfff8(r1)
+000000b0	stw	r0,0x8(r1)
+000000b4	stwu	r1,0xff90(r1)
+000000b8	or	r30,r1,r1
+000000bc	addi	r3,r30,0x40
+000000c0	bl	0x0
+000000c4	addi	r0,r30,0x50
+000000c8	or	r3,r0,r0
+000000cc	bl	0x30
+000000d0	lbz	r0,0x40(r30)
+000000d4	extsb	r2,r0
+000000d8	lwz	r0,0x58(r30)
+000000dc	add	r0,r2,r0
+000000e0	or	r3,r0,r0
+000000e4	lwz	r1,0x0(r1)
+000000e8	lwz	r0,0x8(r1)
+000000ec	mtspr	lr,r0
+000000f0	lmw	r30,0xfff8(r1)
+000000f4	blr
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_f1:
+00000000    stmw    r30,0xfff8(r1)
+00000004    stwu    r1,0xffd0(r1)
+00000008    or  r30,r1,r1
+0000000c    stw r3,0x48(r30)
+00000010    lwz r1,_f1(r1)
+00000014    lmw r30,0xfff8(r1)
+00000018    blr
+_f2:
+0000001c    stmw    r30,0xfff8(r1)
+00000020    stwu    r1,0xffd0(r1)
+00000024    or  r30,r1,r1
+00000028    lwz r1,_f1(r1)
+0000002c    lmw r30,0xfff8(r1)
+00000030    blr
+_f:
+00000034    mfspr   r0,lr                       ;
+00000038    stmw    r30,0xfff8(r1)              ;
+0000003c    stw r0,0x8(r1)                      ;
+00000040    stwu    r1,0xff70(r1)               ;
+00000044    or  r30,r1,r1                       ;
+00000048    addi    r0,r30,0x50                 ;
+0000004c    or  r3,r0,r0                        ;
+00000050    bl  0x140 ; __ZN10NonTrivialC1Ev    ; NonTrivial::NonTrivial() / ctor
+00000054    li  r0,0x1                          ;
+00000058    stw r0,0x60(r30)                    ;
+0000005c    lwz r2,0x60(r30)                    ;
+00000060    addi    r0,r2,0x7b                  ;
+00000064    stw r0,0x60(r30)                    ;
+00000068    lwz r0,0x40(r30)                    ;
+0000006c    or  r3,r0,r0                        ;
+00000070    bl  _f1                             ; call f1(struct Trivial)
+00000074    lwz r2,0x60(r30)                    ;
+00000078    addi    r0,r2,0xff85                ;
+0000007c    stw r0,0x60(r30)                    ;
+00000080    addi    r0,r30,0x70                 ;
+00000084    addi    r2,r30,0x50                 ;
+00000088    or  r3,r0,r0                        ; |               ptr to dest of copy of n
+0000008c    or  r4,r2,r2                        ; | copy n        ptr to n
+00000090    bl  0x120 ; __ZN10NonTrivialC1ERKS_ ; /               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+00000094    addi    r0,r30,0x70                 ; \
+00000098    or  r3,r0,r0                        ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+0000009c    bl  _f2                             ; call f2(struct NonTrivial)
+000000a0    lwz r2,0x60(r30)                    ;
+000000a4    addi    r0,r2,0xfff4                ;
+000000a8    stw r0,0x60(r30)                    ;
+000000ac    lwz r1,_f1(r1)                      ;
+000000b0    lwz r0,0x8(r1)                      ;
+000000b4    mtspr   lr,r0                       ;
+000000b8    lmw r30,0xfff8(r1)                  ;
+000000bc    blr                                 ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from darwin-8.0.1-ppc w/ gcc 3.3
+
+_f1:
+0000211c	stmw	r30,0xfff8(r1)
+00002120	stwu	r1,0xffd0(r1)
+00002124	or	r30,r1,r1
+00002128	or	r2,r3,r3
+0000212c	li	r0,0x0
+00002130	stw	r0,0x0(r2)
+00002134	or	r3,r2,r2
+00002138	lwz	r1,0x0(r1)
+0000213c	lmw	r30,0xfff8(r1)
+00002140	blr
+__Z2f2v:
+00002144	mfspr	r0,lr
+00002148	stmw	r29,0xfff4(r1)
+0000214c	stw	r0,0x8(r1)
+00002150	stwu	r1,0xffb0(r1)
+00002154	or	r30,r1,r1
+00002158	or	r29,r3,r3
+0000215c	or	r3,r29,r29
+00002160	bl	0x83cc
+00002164	or	r3,r29,r29
+00002168	lwz	r1,0x0(r1)
+0000216c	lwz	r0,0x8(r1)
+00002170	mtspr	lr,r0
+00002174	lmw	r29,0xfff4(r1)
+00002178	blr
+_f:
+0000217c	mfspr	r0,lr          ;
+00002180	stmw	r30,0xfff8(r1) ;
+00002184	stw	r0,0x8(r1)         ;
+00002188	stwu	r1,0xff90(r1)  ;
+0000218c	or	r30,r1,r1          ;
+00002190	li	r0,0x1             ;
+00002194	stw	r0,0x40(r30)       ;
+00002198	lwz	r2,0x40(r30)       ;
+0000219c	addi	r0,r2,0x7b     ;
+000021a0	stw	r0,0x40(r30)       ;
+000021a4	addi	r0,r30,0x44    ; |
+000021a8	or	r3,r0,r0           ; | ptr to space for retval is passed as hidden first arg
+000021ac	bl	0x211c             ; call f1()
+000021b0	lwz	r2,0x40(r30)       ;
+000021b4	addi	r0,r2,0xff85   ;
+000021b8	stw	r0,0x40(r30)       ;
+000021bc	addi	r0,r30,0x50    ; |
+000021c0	or	r3,r0,r0           ; | ptr to space for retval is passed as hidden first arg
+000021c4	bl	0x2144             ; call f2()
+000021c8	lwz	r2,0x40(r30)       ;
+000021cc	addi	r0,r2,0xfff4   ;
+000021d0	stw	r0,0x40(r30)       ;
+000021d4	lwz	r1,0x0(r1)         ;
+000021d8	lwz	r0,0x8(r1)         ;
+000021dc	mtspr	lr,r0          ;
+000021e0	lmw	r30,0xfff8(r1)     ;
+000021e4	blr                    ;
+
+
+
 ; vim: ft=asm
 

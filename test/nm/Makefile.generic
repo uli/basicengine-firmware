@@ -1,4 +1,4 @@
-APP       = nm
+APP       = nm${APP_SUFFIX}
 OBJS      = nm.o
 SRCTOP    = ${VPATH}/../..
 BLDTOP    = ../..

@@ -1,6 +1,6 @@
 %//////////////////////////////////////////////////////////////////////////////
 %
-% Copyright (c) 2012-2019 Daniel Adler <dadler@uni-goettingen.de>,
+% Copyright (c) 2012-2022 Daniel Adler <dadler@uni-goettingen.de>,
 %                         Tassilo Philipp <tphilipp@potion-studios.com>
 %
 % Permission to use, copy, modify, and distribute this software for any
@@ -63,10 +63,12 @@ Name                          & Alias                          & Brief descripti
 \item stack parameter order: right-to-left
 \item caller cleans up the stack
 \item stack always aligned to 8 bytes
-\item first 6 integers and floats are passed independently in registers using \%o0-\%o5
+\item first 6 integers/pointers and floats are passed independently in registers using \%o0-\%o5
 \item for every other argument the stack is used
 \item all arguments \textless=\ 32 bit are passed as 32 bit values
 \item 64 bit arguments are passed like two consecutive \textless=\ 32 bit values (which allows for an argument to be split between the stack and \%i5)
+\item aggregates (struct, union) of any size, as well as quad precision values are passed indirectly as a pointer to a {\bf copy} of the aggregate (like: struct s2 = s; callee(\&s2);)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \item minimum stack size is 64 bytes, b/c stack pointer must always point at enough space to store all \%i* and \%l* registers, used when running out of register windows
 \item if needed, register spill area is adjacent to parameters
 \end{itemize}
@@ -76,7 +78,8 @@ Name                          & Alias                          & Brief descripti
 \begin{itemize}
 \item results are expected by caller to be returned in \%o0/\%o1 (after reg window restore, meaning callee writes to \%i0/\%i1) for integers
 \item \%f0/\%f1 are used for floating point values
-\item structs/unions are returned in a space allocated by the caller, with a pointer to it passed as a {\bf additional}, hidden stack parameter (see below)
+\item aggregates (struct, union) and quad precision values are returned in a space allocated by the caller, with a pointer to it passed
+as an {\bf additional}, hidden {\bf stack} parameter (always at \%sp+64 for the caller, see below); that pointer is returned in \%o0
 \end{itemize}
 
 \paragraph{Stack layout}

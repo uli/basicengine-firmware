@@ -24,9 +24,10 @@ import sys
 
 nargs    = 8
 
-#TODO: enable all types. temporary disabled for debuggin sparc64.
-types    = ["DCdouble","DClonglong"]#,"DCint","DCpointer","DCbool"]#,"DCfloat"]
-typeSigs = ["d"       ,"l"         ]#,"i"    ,"p"        ,"B"     ]#,"f"      ]
+# NOTE: not really feasible to enable all types, results in a huge number of
+#       cases; use other *_suite tests when needing to test many different types
+types    = ["DCdouble","DClonglong","DCint","DCpointer"] #...
+typeSigs = ["d"       ,"l"         ,"i"    ,"p"        ] #...
 
 # generator
 
@@ -54,7 +55,7 @@ while x < end:
   y    = x
   while y > 0:
     s     = (y-1) % ntypes
-    y     = (y-1) / ntypes
+    y     = int((y-1) / ntypes)
     args += [ types   [s] ]
     sig  += [ typeSigs[s] ]
     pos  += 1

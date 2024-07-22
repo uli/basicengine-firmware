@@ -71,7 +71,7 @@ pushArgs:
 call:
 	ldmia	r5!, {r0-r3}		/* Load first 4 arguments for new call into r0-r3. */
 					
-					/* 'blx %r4' workaround for ARMv4t in THUMB: */
+					/* 'blx r4' workaround for ARMv4t in THUMB: */
 	blx		r4		/* Branch and force THUMB-mode return (LR bit 0 set). */
 
 	/* Epilog. */

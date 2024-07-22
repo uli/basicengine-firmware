@@ -1,6 +1,6 @@
 #//////////////////////////////////////////////////////////////////////////////
 #
-# Copyright (c) 2007-2010 Daniel Adler <dadler@uni-goettingen.de>, 
+# Copyright (c) 2007-2022 Daniel Adler <dadler@uni-goettingen.de>,
 #                         Tassilo Philipp <tphilipp@potion-studios.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
@@ -30,7 +30,7 @@ TOP = ..
 !INCLUDE $(TOP)\buildsys\nmake\prolog.nmake
 
 
-DIRS = call_suite suite suite2 suite3 suite_floats callf ellipsis plain plain_c++ nm dynload_plain resolve_self thunk malloc_wx callback_plain callback_suite
+DIRS = call_suite call_suite_aggrs suite suite2 suite3 suite_floats callf ellipsis plain plain_c++ nm dynload_plain resolve_self thunk malloc_wx callback_plain callback_plain_c++ callback_suite callback_suite_aggrs
 !IF "$(BUILD_ARCH)" == "x86"
 DIRS = $(DIRS) suite_x86win32fast suite_x86win32std suite2_x86win32fast suite2_x86win32std
 !ENDIF

@@ -24,7 +24,7 @@ TOP		= ../..
 
 UNITS       = callback_plain
 APPLICATION = callback_plain
-LIBS        = $TOP/dyncallback/libdyncallback_s.a$O
+LIBS        = $TOP/dyncallback/libdyncallback_s.a$O $TOP/dyncall/libdyncall_s.a$O
 
 
 <$TOP/buildsys/mk/epilog.mk

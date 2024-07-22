@@ -1,16 +1,16 @@
 ; #include <stdlib.h>
-; 
+;
 ; void leaf_call(int b, int c, int d, int e, int f, int g, int h)
 ; {
 ; }
-; 
+;
 ; void nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
 ; {
 ;     /* use some local data */
 ;     *(char*)alloca(220) = 'L';
 ;     leaf_call(b, c, d, e, f, g, h);
 ; }
-; 
+;
 ; int main()
 ; {
 ;     nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
@@ -300,7 +300,7 @@
 
 
 
-; output from openbsd-7.1-sparc64 w/ gcc 4.2.1
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
 
 0000000000000000 <leaf_call>:
    0:   9d e3 bf 30     save  %sp, -208, %sp
@@ -553,6 +553,1283 @@
  160:   b0 10 00 01     mov  %g1, %i0                   ; \
  164:   81 cf e0 08     rett  %i7 + 8                   ; | epilog
  168:   01 00 00 00     nop                             ; |            branch delay slot
+
+
+
+; ---------- structs by value ---------->
+;
+; struct A { int i, j; long long l; };
+;
+; void leaf_call(int b, int c, int d, int e, struct A f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, struct A f, int g, int h)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, 2, 3, 4, (struct A){5, 6, 7ll}, 8, 9);
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   82 10 00 18     mov  %i0, %g1
+   8:   84 10 00 19     mov  %i1, %g2
+   c:   86 10 00 1a     mov  %i2, %g3
+  10:   88 10 00 1b     mov  %i3, %g4
+  14:   8a 10 00 1c     mov  %i4, %g5
+  18:   c2 27 a8 7f     st  %g1, [ %fp + 0x87f ]
+  1c:   c4 27 a8 87     st  %g2, [ %fp + 0x887 ]
+  20:   c6 27 a8 8f     st  %g3, [ %fp + 0x88f ]
+  24:   c8 27 a8 97     st  %g4, [ %fp + 0x897 ]
+  28:   ca 77 a8 9f     stx  %g5, [ %fp + 0x89f ]
+  2c:   fa 77 a8 a7     stx  %i5, [ %fp + 0x8a7 ]
+  30:   81 cf e0 08     rett  %i7 + 8
+  34:   01 00 00 00     nop
+  38:   ae 03 c0 17     add  %o7, %l7, %l7
+  3c:   81 c3 e0 08     retl
+  40:   01 00 00 00     nop
+
+0000000000000044 <nonleaf_call>:
+  44:   9d e3 be c0     save  %sp, -320, %sp
+  48:   2f 00 00 00     sethi  %hi(0), %l7
+  4c:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call>
+  50:   7f ff ff fa     call  38 <leaf_call+0x38>
+  54:   01 00 00 00     nop
+  58:   84 10 00 18     mov  %i0, %g2
+  5c:   86 10 00 19     mov  %i1, %g3
+  60:   88 10 00 1a     mov  %i2, %g4
+  64:   8a 10 00 1b     mov  %i3, %g5
+  68:   9a 10 00 1c     mov  %i4, %o5
+  6c:   82 10 00 1d     mov  %i5, %g1
+  70:   c2 77 a8 a7     stx  %g1, [ %fp + 0x8a7 ]
+  74:   c4 27 a8 7f     st  %g2, [ %fp + 0x87f ]
+  78:   c6 27 a8 87     st  %g3, [ %fp + 0x887 ]
+  7c:   c8 27 a8 8f     st  %g4, [ %fp + 0x88f ]
+  80:   ca 27 a8 97     st  %g5, [ %fp + 0x897 ]
+  84:   da 27 a8 9f     st  %o5, [ %fp + 0x89f ]
+  88:   03 00 00 00     sethi  %hi(0), %g1
+  8c:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+  90:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+  94:   c4 58 40 00     ldx  [ %g1 ], %g2
+  98:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]
+  9c:   84 10 20 00     clr  %g2
+  a0:   c0 77 a7 7f     clrx  [ %fp + 0x77f ]
+  a4:   c0 77 a7 87     clrx  [ %fp + 0x787 ]
+  a8:   c0 77 a7 8f     clrx  [ %fp + 0x78f ]
+  ac:   c0 77 a7 97     clrx  [ %fp + 0x797 ]
+  b0:   c0 77 a7 9f     clrx  [ %fp + 0x79f ]
+  b4:   c0 77 a7 a7     clrx  [ %fp + 0x7a7 ]
+  b8:   c0 77 a7 af     clrx  [ %fp + 0x7af ]
+  bc:   c0 77 a7 b7     clrx  [ %fp + 0x7b7 ]
+  c0:   c0 77 a7 bf     clrx  [ %fp + 0x7bf ]
+  c4:   c0 77 a7 c7     clrx  [ %fp + 0x7c7 ]
+  c8:   c0 77 a7 cf     clrx  [ %fp + 0x7cf ]
+  cc:   c0 77 a7 d7     clrx  [ %fp + 0x7d7 ]
+  d0:   c0 27 a7 df     clr  [ %fp + 0x7df ]
+  d4:   82 10 20 4c     mov  0x4c, %g1
+  d8:   c2 2f a7 7f     stb  %g1, [ %fp + 0x77f ]
+  dc:   c2 07 a8 87     ld  [ %fp + 0x887 ], %g1
+  e0:   85 38 60 00     sra  %g1, 0, %g2
+  e4:   c2 07 a8 8f     ld  [ %fp + 0x88f ], %g1
+  e8:   87 38 60 00     sra  %g1, 0, %g3
+  ec:   c2 07 a8 97     ld  [ %fp + 0x897 ], %g1
+  f0:   89 38 60 00     sra  %g1, 0, %g4
+  f4:   c2 07 a8 9f     ld  [ %fp + 0x89f ], %g1
+  f8:   8b 38 60 00     sra  %g1, 0, %g5
+  fc:   da 5f a8 a7     ldx  [ %fp + 0x8a7 ], %o5
+ 100:   de 5f a8 af     ldx  [ %fp + 0x8af ], %o7
+ 104:   c2 07 a8 bb     ld  [ %fp + 0x8bb ], %g1
+ 108:   83 38 60 00     sra  %g1, 0, %g1
+ 10c:   c2 73 a8 af     stx  %g1, [ %sp + 0x8af ]
+ 110:   c2 07 a8 c3     ld  [ %fp + 0x8c3 ], %g1
+ 114:   83 38 60 00     sra  %g1, 0, %g1
+ 118:   c2 73 a8 b7     stx  %g1, [ %sp + 0x8b7 ]
+ 11c:   90 10 00 02     mov  %g2, %o0
+ 120:   92 10 00 03     mov  %g3, %o1
+ 124:   94 10 00 04     mov  %g4, %o2
+ 128:   96 10 00 05     mov  %g5, %o3
+ 12c:   98 10 00 0d     mov  %o5, %o4
+ 130:   9a 10 00 0f     mov  %o7, %o5
+ 134:   40 00 00 00     call  134 <nonleaf_call+0xf0>
+ 138:   01 00 00 00     nop
+ 13c:   03 00 00 00     sethi  %hi(0), %g1
+ 140:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 144:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 148:   c6 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g3
+ 14c:   c4 58 40 00     ldx  [ %g1 ], %g2
+ 150:   86 18 c0 02     xor  %g3, %g2, %g3
+ 154:   84 10 20 00     clr  %g2
+ 158:   82 10 00 03     mov  %g3, %g1
+ 15c:   02 c8 40 08     brz  %g1, 17c <nonleaf_call+0x138>
+ 160:   01 00 00 00     nop
+ 164:   03 00 00 00     sethi  %hi(0), %g1
+ 168:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 16c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 170:   90 10 00 01     mov  %g1, %o0
+ 174:   40 00 00 00     call  174 <nonleaf_call+0x130>
+ 178:   01 00 00 00     nop
+ 17c:   81 cf e0 08     rett  %i7 + 8
+ 180:   01 00 00 00     nop
+
+0000000000000184 <main>:
+ 184:   9d e3 bf 00     save  %sp, -256, %sp            ; prolog
+ 188:   82 10 20 05     mov  5, %g1                     ; |                            \ i
+ 18c:   c2 27 a7 d7     st  %g1, [ %fp + 0x7d7 ]        ; |                            /
+ 190:   82 10 20 06     mov  6, %g1                     ; | put together local struct  \ j
+ 194:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]        ; |                            /
+ 198:   82 10 20 07     mov  7, %g1                     ; |                            \ l
+ 19c:   c2 77 a7 df     stx  %g1, [ %fp + 0x7df ]       ; /                            /
+ 1a0:   84 03 a8 7f     add  %sp, 0x87f, %g2            ; \
+ 1a4:   c2 5f a7 d7     ldx  [ %fp + 0x7d7 ], %g1       ; |
+ 1a8:   c2 70 a0 28     stx  %g1, [ %g2 + 0x28 ]        ; | (part of) arg 5, fetched from local area, "pushed" onto stack (entirely, so first 8 bytes (i,j) are already placed in reg save area)
+ 1ac:   c2 5f a7 df     ldx  [ %fp + 0x7df ], %g1       ; |
+ 1b0:   c2 70 a0 30     stx  %g1, [ %g2 + 0x30 ]        ; /
+ 1b4:   c6 58 a0 28     ldx  [ %g2 + 0x28 ], %g3        ; get first 8 bytes of struct -> g3
+ 1b8:   82 10 20 08     mov  8, %g1                     ; arg 6, ...
+ 1bc:   c2 70 a0 38     stx  %g1, [ %g2 + 0x38 ]        ; ... "pushed" onto stack
+ 1c0:   82 10 20 09     mov  9, %g1                     ; arg 7
+ 1c4:   c2 70 a0 40     stx  %g1, [ %g2 + 0x40 ]        ; ... "pushed" onto stack
+ 1c8:   90 10 20 00     clr  %o0                        ; arg 0
+ 1cc:   92 10 20 01     mov  1, %o1                     ; arg 1
+ 1d0:   94 10 20 02     mov  2, %o2                     ; arg 2
+ 1d4:   96 10 20 03     mov  3, %o3                     ; arg 3
+ 1d8:   98 10 20 04     mov  4, %o4                     ; arg 4
+ 1dc:   9a 10 00 03     mov  %g3, %o5                   ; (part of) arg 5 (first 8 bytes of struct)
+ 1e0:   40 00 00 00     call  1e0 <main+0x5c>           ; call nonleaf_call (objdump not from final link but .o)
+ 1e4:   01 00 00 00     nop                             ; branch delay slot
+ 1e8:   82 10 20 00     clr  %g1        ! 0 <leaf_call> ; \
+ 1ec:   83 38 60 00     sra  %g1, 0, %g1                ; / return value
+ 1f0:   b0 10 00 01     mov  %g1, %i0                   ; \
+ 1f4:   81 cf e0 08     rett  %i7 + 8                   ; | epilog
+ 1f8:   01 00 00 00     nop                             ; |            branch delay slot
+
+
+
+; ---------- structs by value, complex example (multiple structs) ---------->
+;
+; struct A { int i, j; float f; };
+; struct B { double d; long long l; };
+;
+; void leaf_call(int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, struct A c, struct B d, int e, int f, struct A g, struct B h, int i, int j)
+; {
+;     /* use some local data */
+;     char l[100] ={ 'L'};
+;     leaf_call(b, c, d, e, f, g, h, i, j);
+; }
+;
+; int main()
+; {
+;     nonleaf_call(0, 1, (struct A){2, 3, 4.f}, (struct B){5., 6ll}, 7, 8, (struct A){9, 10, 11.f}, (struct B){12., 13ll}, 14, 15);
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   82 10 00 18     mov  %i0, %g1
+   8:   84 10 00 19     mov  %i1, %g2
+   c:   91 a0 00 24     fmovs  %f4, %f8
+  10:   95 a0 00 46     fmovd  %f6, %f10
+  14:   86 10 00 1c     mov  %i4, %g3
+  18:   88 10 00 1d     mov  %i5, %g4
+  1c:   93 a0 00 30     fmovs  %f16, %f9
+  20:   99 a0 00 52     fmovd  %f18, %f12
+  24:   c2 27 a8 7f     st  %g1, [ %fp + 0x87f ]
+  28:   c4 77 a8 87     stx  %g2, [ %fp + 0x887 ]
+  2c:   d1 27 a8 8f     st  %f8, [ %fp + 0x88f ]
+  30:   d5 3f a8 97     std  %f10, [ %fp + 0x897 ]
+  34:   c6 77 a8 9f     stx  %g3, [ %fp + 0x89f ]
+  38:   c8 27 a8 a7     st  %g4, [ %fp + 0x8a7 ]
+  3c:   d3 27 a8 bf     st  %f9, [ %fp + 0x8bf ]
+  40:   d9 3f a8 c7     std  %f12, [ %fp + 0x8c7 ]
+  44:   81 cf e0 08     rett  %i7 + 8
+  48:   01 00 00 00     nop
+
+  4c:   ae 03 c0 17     add  %o7, %l7, %l7
+  50:   81 c3 e0 08     retl
+  54:   01 00 00 00     nop
+
+0000000000000058 <nonleaf_call>:
+  58:   9d e3 be 90     save  %sp, -368, %sp
+  5c:   2f 00 00 00     sethi  %hi(0), %l7
+  60:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call>
+  64:   7f ff ff fa     call  4c <leaf_call+0x4c>
+  68:   01 00 00 00     nop
+  6c:   82 10 00 18     mov  %i0, %g1
+  70:   84 10 00 19     mov  %i1, %g2
+  74:   86 10 00 1a     mov  %i2, %g3
+  78:   95 a0 00 26     fmovs  %f6, %f10
+  7c:   88 10 00 1d     mov  %i5, %g4
+  80:   97 a0 00 32     fmovs  %f18, %f11
+  84:   99 a0 00 54     fmovd  %f20, %f12
+  88:   c2 27 a8 7f     st  %g1, [ %fp + 0x87f ]
+  8c:   c4 27 a8 87     st  %g2, [ %fp + 0x887 ]
+  90:   c6 77 a8 8f     stx  %g3, [ %fp + 0x88f ]
+  94:   d5 27 a8 97     st  %f10, [ %fp + 0x897 ]
+  98:   d1 3f a8 9f     std  %f8, [ %fp + 0x89f ]
+  9c:   c8 77 a8 a7     stx  %g4, [ %fp + 0x8a7 ]
+  a0:   d7 27 a8 c7     st  %f11, [ %fp + 0x8c7 ]
+  a4:   d9 3f a8 cf     std  %f12, [ %fp + 0x8cf ]
+  a8:   03 00 00 00     sethi  %hi(0), %g1
+  ac:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+  b0:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+  b4:   c4 58 40 00     ldx  [ %g1 ], %g2
+  b8:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]
+  bc:   84 10 20 00     clr  %g2
+  c0:   c0 77 a7 7f     clrx  [ %fp + 0x77f ]
+  c4:   c0 77 a7 87     clrx  [ %fp + 0x787 ]
+  c8:   c0 77 a7 8f     clrx  [ %fp + 0x78f ]
+  cc:   c0 77 a7 97     clrx  [ %fp + 0x797 ]
+  d0:   c0 77 a7 9f     clrx  [ %fp + 0x79f ]
+  d4:   c0 77 a7 a7     clrx  [ %fp + 0x7a7 ]
+  d8:   c0 77 a7 af     clrx  [ %fp + 0x7af ]
+  dc:   c0 77 a7 b7     clrx  [ %fp + 0x7b7 ]
+  e0:   c0 77 a7 bf     clrx  [ %fp + 0x7bf ]
+  e4:   c0 77 a7 c7     clrx  [ %fp + 0x7c7 ]
+  e8:   c0 77 a7 cf     clrx  [ %fp + 0x7cf ]
+  ec:   c0 77 a7 d7     clrx  [ %fp + 0x7d7 ]
+  f0:   c0 27 a7 df     clr  [ %fp + 0x7df ]
+  f4:   82 10 20 4c     mov  0x4c, %g1
+  f8:   c2 2f a7 7f     stb  %g1, [ %fp + 0x77f ]
+  fc:   84 03 a8 7f     add  %sp, 0x87f, %g2
+ 100:   c2 07 a8 87     ld  [ %fp + 0x887 ], %g1
+ 104:   87 38 60 00     sra  %g1, 0, %g3
+ 108:   c8 5f a8 8f     ldx  [ %fp + 0x88f ], %g4
+ 10c:   d1 07 a8 97     ld  [ %fp + 0x897 ], %f8
+ 110:   d5 1f a8 9f     ldd  [ %fp + 0x89f ], %f10
+ 114:   ca 5f a8 a7     ldx  [ %fp + 0x8a7 ], %g5
+ 118:   c2 07 a8 b3     ld  [ %fp + 0x8b3 ], %g1
+ 11c:   9b 38 60 00     sra  %g1, 0, %o5
+ 120:   c2 07 a8 bb     ld  [ %fp + 0x8bb ], %g1
+ 124:   83 38 60 00     sra  %g1, 0, %g1
+ 128:   c2 70 a0 30     stx  %g1, [ %g2 + 0x30 ]
+ 12c:   c2 5f a8 bf     ldx  [ %fp + 0x8bf ], %g1
+ 130:   c2 70 a0 38     stx  %g1, [ %g2 + 0x38 ]
+ 134:   c2 07 a8 c7     ld  [ %fp + 0x8c7 ], %g1
+ 138:   c2 20 a0 40     st  %g1, [ %g2 + 0x40 ]
+ 13c:   d3 00 a0 40     ld  [ %g2 + 0x40 ], %f9
+ 140:   c2 5f a8 cf     ldx  [ %fp + 0x8cf ], %g1
+ 144:   c2 70 a0 48     stx  %g1, [ %g2 + 0x48 ]
+ 148:   c2 5f a8 d7     ldx  [ %fp + 0x8d7 ], %g1
+ 14c:   c2 70 a0 50     stx  %g1, [ %g2 + 0x50 ]
+ 150:   d9 18 a0 48     ldd  [ %g2 + 0x48 ], %f12
+ 154:   c2 07 a8 e3     ld  [ %fp + 0x8e3 ], %g1
+ 158:   83 38 60 00     sra  %g1, 0, %g1
+ 15c:   c2 70 a0 58     stx  %g1, [ %g2 + 0x58 ]
+ 160:   c2 07 a8 eb     ld  [ %fp + 0x8eb ], %g1
+ 164:   83 38 60 00     sra  %g1, 0, %g1
+ 168:   c2 70 a0 60     stx  %g1, [ %g2 + 0x60 ]
+ 16c:   90 10 00 03     mov  %g3, %o0
+ 170:   92 10 00 04     mov  %g4, %o1
+ 174:   89 a0 00 28     fmovs  %f8, %f4
+ 178:   8d a0 00 4a     fmovd  %f10, %f6
+ 17c:   98 10 00 05     mov  %g5, %o4
+ 180:   a1 a0 00 29     fmovs  %f9, %f16
+ 184:   a5 a0 00 4c     fmovd  %f12, %f18
+ 188:   40 00 00 00     call  188 <nonleaf_call+0x130>
+ 18c:   01 00 00 00     nop
+ 190:   03 00 00 00     sethi  %hi(0), %g1
+ 194:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 198:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 19c:   c6 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g3
+ 1a0:   c4 58 40 00     ldx  [ %g1 ], %g2
+ 1a4:   86 18 c0 02     xor  %g3, %g2, %g3
+ 1a8:   84 10 20 00     clr  %g2
+ 1ac:   82 10 00 03     mov  %g3, %g1
+ 1b0:   02 c8 40 08     brz  %g1, 1d0 <nonleaf_call+0x178>
+ 1b4:   01 00 00 00     nop
+ 1b8:   03 00 00 00     sethi  %hi(0), %g1
+ 1bc:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 1c0:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 1c4:   90 10 00 01     mov  %g1, %o0
+ 1c8:   40 00 00 00     call  1c8 <nonleaf_call+0x170>
+ 1cc:   01 00 00 00     nop
+ 1d0:   81 cf e0 08     rett  %i7 + 8
+ 1d4:   01 00 00 00     nop
+
+00000000000001d8 <main>:
+ 1d8:   9d e3 be c0     save  %sp, -320, %sp                    ; prolog
+ 1dc:   2f 00 00 00     sethi  %hi(0), %l7                      ; |
+ 1e0:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call> ; | @@@ unsure, call to some code stub adding o7 to l7
+ 1e4:   7f ff ff 9a     call  4c <leaf_call+0x4c>               ; |
+ 1e8:   01 00 00 00     nop                                     ; /
+ 1ec:   82 10 20 02     mov  2, %g1     ! 2 <leaf_call+0x2>     ; \
+ 1f0:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]                ; |
+ 1f4:   82 10 20 03     mov  3, %g1                             ; |
+ 1f8:   c2 27 a7 df     st  %g1, [ %fp + 0x7df ]                ; |
+ 1fc:   03 00 00 00     sethi  %hi(0), %g1                      ; | put together first local struct A
+ 200:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 204:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 208:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+ 20c:   d1 27 a7 e3     st  %f8, [ %fp + 0x7e3 ]                ; /
+ 210:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+ 214:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 218:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 21c:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; | put together first local struct B
+ 220:   d1 3f a7 bf     std  %f8, [ %fp + 0x7bf ]               ; |
+ 224:   82 10 20 06     mov  6, %g1                             ; |
+ 228:   c2 77 a7 c7     stx  %g1, [ %fp + 0x7c7 ]               ; /
+ 22c:   82 10 20 09     mov  9, %g1                             ; \
+ 230:   c2 27 a7 cf     st  %g1, [ %fp + 0x7cf ]                ; |
+ 234:   82 10 20 0a     mov  0xa, %g1                           ; |
+ 238:   c2 27 a7 d3     st  %g1, [ %fp + 0x7d3 ]                ; |
+ 23c:   03 00 00 00     sethi  %hi(0), %g1                      ; | put together second local struct A
+ 240:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 244:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 248:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+ 24c:   d1 27 a7 d7     st  %f8, [ %fp + 0x7d7 ]                ; /
+ 250:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+ 254:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 258:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 25c:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; | put together second local struct B
+ 260:   d1 3f a7 af     std  %f8, [ %fp + 0x7af ]               ; |
+ 264:   82 10 20 0d     mov  0xd, %g1                           ; |
+ 268:   c2 77 a7 b7     stx  %g1, [ %fp + 0x7b7 ]               ; /
+ 26c:   84 03 a8 7f     add  %sp, 0x87f, %g2                    ; top of stack addr -> g2
+ 270:   c2 07 a7 db     ld  [ %fp + 0x7db ], %g1                ; |                |
+ 274:   83 30 60 00     srl  %g1, 0, %g1                        ; |                |
+ 278:   87 28 70 20     sllx  %g1, 0x20, %g3                    ; |                | get first struct A's first 8 bytes (i,j) into g3, with i occupying MSBs
+ 27c:   c2 07 a7 df     ld  [ %fp + 0x7df ], %g1                ; | prep arg 2     |
+ 280:   83 30 60 00     srl  %g1, 0, %g1                        ; |                |
+ 284:   86 10 40 03     or  %g1, %g3, %g3                       ; |                |
+ 288:   d1 07 a7 e3     ld  [ %fp + 0x7e3 ], %f8                ; /                first struct A's f -> f8
+ 28c:   d5 1f a7 bf     ldd  [ %fp + 0x7bf ], %f10              ; \                first struct B's d -> f10
+ 290:   c8 5f a7 c7     ldx  [ %fp + 0x7c7 ], %g4               ; / prep arg 3     first struct B's l -> g4
+ 294:   82 10 20 07     mov  7, %g1                             ; \
+ 298:   c2 70 a0 30     stx  %g1, [ %g2 + 0x30 ]                ; / arg 4, "pushed" onto stack
+ 29c:   82 10 20 08     mov  8, %g1                             ; \
+ 2a0:   c2 70 a0 38     stx  %g1, [ %g2 + 0x38 ]                ; / arg 5, "pushed" onto stack
+ 2a4:   c2 5f a7 cf     ldx  [ %fp + 0x7cf ], %g1               ; \
+ 2a8:   c2 70 a0 40     stx  %g1, [ %g2 + 0x40 ]                ; |
+ 2ac:   c2 07 a7 d7     ld  [ %fp + 0x7d7 ], %g1                ; | (part of) arg 6's int fields, "pushed" onto stack (second struct A, entirely)
+ 2b0:   c2 20 a0 48     st  %g1, [ %g2 + 0x48 ]                 ; /
+ 2b4:   d9 00 a0 48     ld  [ %g2 + 0x48 ], %f12                ; prep (part of) arg 6: second struct A's fp field f -> f12
+ 2b8:   c2 5f a7 af     ldx  [ %fp + 0x7af ], %g1               ; \
+ 2bc:   c2 70 a0 50     stx  %g1, [ %g2 + 0x50 ]                ; |
+ 2c0:   c2 5f a7 b7     ldx  [ %fp + 0x7b7 ], %g1               ; | (part of) arg 7, "pushed" onto stack (second struct B, entirely)
+ 2c4:   c2 70 a0 58     stx  %g1, [ %g2 + 0x58 ]                ; /
+ 2c8:   dd 18 a0 50     ldd  [ %g2 + 0x50 ], %f14               ; prep (part of) arg 7: second struct B's d -> d14
+ 2cc:   82 10 20 0e     mov  0xe, %g1                           ; \
+ 2d0:   c2 70 a0 60     stx  %g1, [ %g2 + 0x60 ]                ; / arg 8, "pushed" onto stack
+ 2d4:   82 10 20 0f     mov  0xf, %g1                           ; \
+ 2d8:   c2 70 a0 68     stx  %g1, [ %g2 + 0x68 ]                ; / arg 9, "pushed" onto stack
+ 2dc:   90 10 20 00     clr  %o0                                ; arg 0
+ 2e0:   92 10 20 01     mov  1, %o1                             ; arg 1
+ 2e4:   94 10 00 03     mov  %g3, %o2                           ; |                          (i,j -> int reg)
+ 2e8:   8d a0 00 28     fmovs  %f8, %f6                         ; / arg 2 (first struct A)   (f -> fp reg, (f{0,2,4} skipped))
+ 2ec:   91 a0 00 4a     fmovd  %f10, %f8                        ; \                          (d -> fp reg d8)
+ 2f0:   9a 10 00 04     mov  %g4, %o5                           ; / arg 3 (first struct B)   (l -> int reg, (o{3,4} skipped))
+ 2f4:   a5 a0 00 2c     fmovs  %f12, %f18                       ; (part of) arg 6 (second struct A)   (f -> fp reg, (f[10-16] skipped))
+ 2f8:   a9 a0 00 4e     fmovd  %f14, %f20                       ; (part of) arg 7 (second struct B)   (d -> fp reg d20))
+ 2fc:   40 00 00 00     call  2fc <main+0x124>                  ; call nonleaf_call (objdump not from final link but .o)
+ 300:   01 00 00 00     nop                                     ; branch delay slot
+ 304:   82 10 20 00     clr  %g1        ! 0 <leaf_call>         ; \
+ 308:   83 38 60 00     sra  %g1, 0, %g1                        ; / return value
+ 30c:   b0 10 00 01     mov  %g1, %i0                           ; \
+ 310:   81 cf e0 08     rett  %i7 + 8                           ; | epilog
+ 314:   01 00 00 00     nop                                     ; |            branch delay slot
+
+
+
+; ---------- passing structs with mixed 8-byte parts ---------->
+;
+; struct A { int i; float f; };
+; struct B { float f; char c; };
+; struct C { float f; short s, t; };
+; struct D { short s; float f; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){0,1.f}, (struct B){2.f,3}, (struct C){4.f,5,6}, (struct D){7,8.f});
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   82 10 00 18     mov  %i0, %g1
+   8:   91 a0 00 21     fmovs  %f1, %f8
+   c:   93 a0 00 22     fmovs  %f2, %f9
+  10:   84 10 00 19     mov  %i1, %g2
+  14:   95 a0 00 24     fmovs  %f4, %f10
+  18:   86 10 00 1a     mov  %i2, %g3
+  1c:   88 10 00 1b     mov  %i3, %g4
+  20:   97 a0 00 27     fmovs  %f7, %f11
+  24:   c2 77 a8 7f     stx  %g1, [ %fp + 0x87f ]
+  28:   d1 27 a8 83     st  %f8, [ %fp + 0x883 ]
+  2c:   d3 27 a8 87     st  %f9, [ %fp + 0x887 ]
+  30:   c4 27 a8 8b     st  %g2, [ %fp + 0x88b ]
+  34:   d5 27 a8 8f     st  %f10, [ %fp + 0x88f ]
+  38:   c6 27 a8 93     st  %g3, [ %fp + 0x893 ]
+  3c:   c8 77 a8 97     stx  %g4, [ %fp + 0x897 ]
+  40:   d7 27 a8 9b     st  %f11, [ %fp + 0x89b ]
+  44:   81 cf e0 08     rett  %i7 + 8
+  48:   01 00 00 00     nop
+  4c:   ae 03 c0 17     add  %o7, %l7, %l7
+  50:   81 c3 e0 08     retl
+  54:   01 00 00 00     nop
+
+0000000000000058 <main>:
+  58:   9d e3 bf 10     save  %sp, -240, %sp                    ; prolog
+  5c:   2f 00 00 00     sethi  %hi(0), %l7                      ; |
+  60:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call> ; | @@@ unsure, call to some code stub adding o7 to l7
+  64:   7f ff ff fa     call  4c <leaf_call+0x4c>               ; |
+  68:   01 00 00 00     nop                                     ; /
+  6c:   c0 27 a7 df     clr  [ %fp + 0x7df ]                    ; \
+  70:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+  74:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  78:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local struct A
+  7c:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  80:   d1 27 a7 e3     st  %f8, [ %fp + 0x7e3 ]                ; /
+  84:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  88:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  8c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  90:   d1 00 40 00     ld  [ %g1 ], %f8                        ; | put together local struct B
+  94:   d1 27 a7 d7     st  %f8, [ %fp + 0x7d7 ]                ; |
+  98:   82 10 20 03     mov  3, %g1                             ; |
+  9c:   c2 2f a7 db     stb  %g1, [ %fp + 0x7db ]               ; /
+  a0:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  a4:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  a8:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  ac:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  b0:   d1 27 a7 cf     st  %f8, [ %fp + 0x7cf ]                ; | put together local struct C
+  b4:   82 10 20 05     mov  5, %g1                             ; |
+  b8:   c2 37 a7 d3     sth  %g1, [ %fp + 0x7d3 ]               ; |
+  bc:   82 10 20 06     mov  6, %g1                             ; |
+  c0:   c2 37 a7 d5     sth  %g1, [ %fp + 0x7d5 ]               ; /
+  c4:   82 10 20 07     mov  7, %g1                             ; \
+  c8:   c2 37 a7 c7     sth  %g1, [ %fp + 0x7c7 ]               ; |
+  cc:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+  d0:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; | put together local struct D
+  d4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  d8:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  dc:   d1 27 a7 cb     st  %f8, [ %fp + 0x7cb ]                ; /
+  e0:   c2 5f a7 df     ldx  [ %fp + 0x7df ], %g1               ; \               struct A's int           -> g1
+  e4:   d1 07 a7 e3     ld  [ %fp + 0x7e3 ], %f8                ; |               struct A's float         -> f8
+  e8:   d3 07 a7 d7     ld  [ %fp + 0x7d7 ], %f9                ; |               struct B's float         -> f9
+  ec:   c4 07 a7 db     ld  [ %fp + 0x7db ], %g2                ; | prep args     struct B's char          -> g2
+  f0:   d5 07 a7 cf     ld  [ %fp + 0x7cf ], %f10               ; |               struct C's float         -> f10
+  f4:   c6 07 a7 d3     ld  [ %fp + 0x7d3 ], %g3                ; |               struct C's shorts (both) -> g3
+  f8:   c8 5f a7 c7     ldx  [ %fp + 0x7c7 ], %g4               ; |               struct D's short         -> g4
+  fc:   d7 07 a7 cb     ld  [ %fp + 0x7cb ], %f11               ; /               struct D's float         -> f11
+ 100:   90 10 00 01     mov  %g1, %o0                           ; arg 0 (int part)
+ 104:   83 a0 00 28     fmovs  %f8, %f1                         ; arg 0 (fp part)
+ 108:   85 a0 00 29     fmovs  %f9, %f2                         ; arg 1 (fp part)
+ 10c:   92 10 00 02     mov  %g2, %o1                           ; arg 1 (int part)
+ 110:   89 a0 00 2a     fmovs  %f10, %f4                        ; arg 2 (fp part)
+ 114:   94 10 00 03     mov  %g3, %o2                           ; arg 2 (int part)
+ 118:   96 10 00 04     mov  %g4, %o3                           ; arg 3 (int part)
+ 11c:   8f a0 00 2b     fmovs  %f11, %f7                        ; arg 3 (fp part)
+ 120:   40 00 00 00     call  120 <main+0xc8>                   ; call nonleaf_call (objdump not from final link but .o)
+ 124:   01 00 00 00     nop                                     ; branch delay slot
+ 128:   82 10 20 00     clr  %g1        ! 0 <leaf_call>         ; \
+ 12c:   83 38 60 00     sra  %g1, 0, %g1                        ; / return value
+ 130:   b0 10 00 01     mov  %g1, %i0                           ; \
+ 134:   81 cf e0 08     rett  %i7 + 8                           ; | epilog
+ 138:   01 00 00 00     nop                                     ; |            branch delay slot
+
+
+
+; ---------- passing structs with only fp parts ---------->
+;
+; struct A { float a; };
+; struct B { float a, b; };
+; struct C { float a, b, c; };
+; struct D { double a; };
+; struct E { double a, b; };
+; struct F { double a, b, c; };
+;
+; void leaf_call(struct A a, struct B b, struct C c, struct D d, struct E e, struct F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((struct A){1.f}, (struct B){2.f,3.f}, (struct C){4.f,5.f,6.f}, (struct D){1.}, (struct E){2.,3.}, (struct F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   c1 27 a8 7f     st  %f0, [ %fp + 0x87f ]
+   8:   9d a0 00 22     fmovs  %f2, %f14
+   c:   9f a0 00 23     fmovs  %f3, %f15
+  10:   a1 a0 00 24     fmovs  %f4, %f16
+  14:   a3 a0 00 25     fmovs  %f5, %f17
+  18:   a5 a0 00 26     fmovs  %f6, %f18
+  1c:   d1 3f a8 9f     std  %f8, [ %fp + 0x89f ]
+  20:   91 a0 00 4a     fmovd  %f10, %f8
+  24:   95 a0 00 4c     fmovd  %f12, %f10
+  28:   d1 3f a8 a7     std  %f8, [ %fp + 0x8a7 ]
+  2c:   d5 3f a8 af     std  %f10, [ %fp + 0x8af ]
+  30:   dd 27 a8 87     st  %f14, [ %fp + 0x887 ]
+  34:   df 27 a8 8b     st  %f15, [ %fp + 0x88b ]
+  38:   e1 27 a8 8f     st  %f16, [ %fp + 0x88f ]
+  3c:   e3 27 a8 93     st  %f17, [ %fp + 0x893 ]
+  40:   e5 27 a8 97     st  %f18, [ %fp + 0x897 ]
+  44:   81 cf e0 08     rett  %i7 + 8
+  48:   01 00 00 00     nop
+  4c:   ae 03 c0 17     add  %o7, %l7, %l7
+  50:   81 c3 e0 08     retl
+  54:   01 00 00 00     nop
+
+0000000000000058 <main>:
+  58:   9d e3 be b0     save  %sp, -336, %sp                    ; prolog
+  5c:   2f 00 00 00     sethi  %hi(0), %l7                      ; |
+  60:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call> ; | @@@ unsure, call to some code stub adding o7 to l7
+  64:   7f ff ff fa     call  4c <leaf_call+0x4c>               ; |
+  68:   01 00 00 00     nop                                     ; /
+  6c:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  70:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  74:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local struct A
+  78:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  7c:   d1 27 a7 e3     st  %f8, [ %fp + 0x7e3 ]                ; /
+  80:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  84:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  88:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  8c:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  90:   d1 27 a7 db     st  %f8, [ %fp + 0x7db ]                ; |
+  94:   03 00 00 00     sethi  %hi(0), %g1                      ; | put together local struct B
+  98:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  9c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  a0:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  a4:   d1 27 a7 df     st  %f8, [ %fp + 0x7df ]                ; /
+  a8:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  ac:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  b0:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  b4:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  b8:   d1 27 a7 c3     st  %f8, [ %fp + 0x7c3 ]                ; |
+  bc:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+  c0:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  c4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  c8:   d1 00 40 00     ld  [ %g1 ], %f8                        ; | put together local struct C
+  cc:   d1 27 a7 c7     st  %f8, [ %fp + 0x7c7 ]                ; |
+  d0:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+  d4:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  d8:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+  dc:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  e0:   d1 27 a7 cb     st  %f8, [ %fp + 0x7cb ]                ; /
+  e4:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  e8:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  ec:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local struct D
+  f0:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+  f4:   d1 3f a7 cf     std  %f8, [ %fp + 0x7cf ]               ; /
+  f8:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  fc:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 100:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 104:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+ 108:   d1 3f a7 af     std  %f8, [ %fp + 0x7af ]               ; |
+ 10c:   03 00 00 00     sethi  %hi(0), %g1                      ; | put together local struct E
+ 110:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 114:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 118:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+ 11c:   d1 3f a7 b7     std  %f8, [ %fp + 0x7b7 ]               ; /
+ 120:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+ 124:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 128:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 12c:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+ 130:   d1 3f a7 97     std  %f8, [ %fp + 0x797 ]               ; |
+ 134:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+ 138:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 13c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 140:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; | put together local struct F
+ 144:   d1 3f a7 9f     std  %f8, [ %fp + 0x79f ]               ; |
+ 148:   03 00 00 00     sethi  %hi(0), %g1                      ; |
+ 14c:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+ 150:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; |
+ 154:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+ 158:   d1 3f a7 a7     std  %f8, [ %fp + 0x7a7 ]               ; /
+ 15c:   c2 5f a7 97     ldx  [ %fp + 0x797 ], %g1               ; \
+ 160:   c2 77 a7 6f     stx  %g1, [ %fp + 0x76f ]               ; |
+ 164:   c2 5f a7 9f     ldx  [ %fp + 0x79f ], %g1               ; | prep arg 5 (struct F, copied entirely onto stack, as > 16b, to pass indirectly)
+ 168:   c2 77 a7 77     stx  %g1, [ %fp + 0x777 ]               ; |
+ 16c:   c2 5f a7 a7     ldx  [ %fp + 0x7a7 ], %g1               ; |
+ 170:   c2 77 a7 7f     stx  %g1, [ %fp + 0x77f ]               ; /
+ 174:   d1 07 a7 e3     ld  [ %fp + 0x7e3 ], %f8                ; prep arg 0    (struct A)
+ 178:   d3 07 a7 db     ld  [ %fp + 0x7db ], %f9                ; \
+ 17c:   dd 07 a7 df     ld  [ %fp + 0x7df ], %f14               ; / prep arg 1  (struct B)
+ 180:   df 07 a7 c3     ld  [ %fp + 0x7c3 ], %f15               ; \                        
+ 184:   e1 07 a7 c7     ld  [ %fp + 0x7c7 ], %f16               ; | prep arg 2  (struct C)
+ 188:   e3 07 a7 cb     ld  [ %fp + 0x7cb ], %f17               ; /                        
+ 18c:   e5 1f a7 cf     ldd  [ %fp + 0x7cf ], %f18              ; prep arg 3    (struct D)
+ 190:   82 07 a7 6f     add  %fp, 0x76f, %g1                    ; \
+ 194:   c2 73 a8 b7     stx  %g1, [ %sp + 0x8b7 ]               ; / arg 5 (struct F, passed indirectly as ptr to copy; via stack as all %o* regs already skipped)
+ 198:   c2 5f a7 b7     ldx  [ %fp + 0x7b7 ], %g1               ; @@@ unsure ...
+ 19c:   c2 73 a8 af     stx  %g1, [ %sp + 0x8af ]               ; @@@ ... last float of struct E pushed onto stack (maybe register save area? maybe for some iteration facilitation?)
+ 1a0:   d5 1f a7 af     ldd  [ %fp + 0x7af ], %f10              ; \ arg 4 (struct E)   first double
+ 1a4:   d9 1f a7 b7     ldd  [ %fp + 0x7b7 ], %f12              ; /                    second double
+ 1a8:   81 a0 00 28     fmovs  %f8, %f0                         ; arg 0 (entire struct A, takes full %d0 slot despite not being 64bit, as only field of struct)
+ 1ac:   85 a0 00 29     fmovs  %f9, %f2                         ; \ arg 1 (struct B)   first float
+ 1b0:   87 a0 00 2e     fmovs  %f14, %f3                        ; /                    second float
+ 1b4:   89 a0 00 2f     fmovs  %f15, %f4                        ; \                    first float
+ 1b8:   8b a0 00 30     fmovs  %f16, %f5                        ; | arg 2 (struct C)   second float
+ 1bc:   8d a0 00 31     fmovs  %f17, %f6                        ; /                    third float
+ 1c0:   91 a0 00 52     fmovd  %f18, %f8                        ; arg 3  (entire struct D, single field double)
+ 1c4:   40 00 00 00     call  1c4 <main+0x16c>                  ; call nonleaf_call (objdump not from final link but .o)
+ 1c8:   01 00 00 00     nop                                     ; branch delay slot
+ 1cc:   82 10 20 00     clr  %g1        ! 0 <leaf_call>         ; \
+ 1d0:   83 38 60 00     sra  %g1, 0, %g1                        ; / return value
+ 1d4:   b0 10 00 01     mov  %g1, %i0                           ; \
+ 1d8:   81 cf e0 08     rett  %i7 + 8                           ; | epilog
+ 1dc:   01 00 00 00     nop                                     ; |            branch delay slot
+
+
+
+; ---------- passing only unions with only fp parts ---------->
+;
+; union A { float a; };
+; union B { float a, b; };
+; union C { float a, b, c; };
+; union D { double a; };
+; union E { double a, b; };
+; union F { double a, b, c; };
+;
+; void leaf_call(union A a, union B b, union C c, union D d, union E e, union F f)
+; {
+; }
+;
+; int main()
+; {
+;     leaf_call((union A){1.f}, (union B){2.f,3.f}, (union C){4.f,5.f,6.f}, (union D){1.}, (union E){2.,3.}, (union F){4.,5.,6.});
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   84 10 00 18     mov  %i0, %g2
+   8:   86 10 00 19     mov  %i1, %g3
+   c:   88 10 00 1a     mov  %i2, %g4
+  10:   f6 77 a8 97     stx  %i3, [ %fp + 0x897 ]
+  14:   f8 77 a8 9f     stx  %i4, [ %fp + 0x89f ]
+  18:   fa 77 a8 a7     stx  %i5, [ %fp + 0x8a7 ]
+  1c:   85 38 b0 20     srax  %g2, 0x20, %g2
+  20:   c2 07 a8 7f     ld  [ %fp + 0x87f ], %g1
+  24:   82 08 60 00     and  %g1, 0, %g1
+  28:   82 10 40 02     or  %g1, %g2, %g1
+  2c:   c2 27 a8 7f     st  %g1, [ %fp + 0x87f ]
+  30:   87 38 f0 20     srax  %g3, 0x20, %g3
+  34:   c2 07 a8 87     ld  [ %fp + 0x887 ], %g1
+  38:   82 08 60 00     and  %g1, 0, %g1
+  3c:   82 10 40 03     or  %g1, %g3, %g1
+  40:   c2 27 a8 87     st  %g1, [ %fp + 0x887 ]
+  44:   89 39 30 20     srax  %g4, 0x20, %g4
+  48:   c2 07 a8 8f     ld  [ %fp + 0x88f ], %g1
+  4c:   82 08 60 00     and  %g1, 0, %g1
+  50:   82 10 40 04     or  %g1, %g4, %g1
+  54:   c2 27 a8 8f     st  %g1, [ %fp + 0x88f ]
+  58:   81 cf e0 08     rett  %i7 + 8
+  5c:   01 00 00 00     nop
+  60:   ae 03 c0 17     add  %o7, %l7, %l7
+  64:   81 c3 e0 08     retl
+  68:   01 00 00 00     nop
+
+000000000000006c <main>:
+  6c:   9d e3 bf 10     save  %sp, -240, %sp                    ; prolog
+  70:   2f 00 00 00     sethi  %hi(0), %l7                      ; |
+  74:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call> ; | @@@ unsure, call to some code stub adding o7 to l7
+  78:   7f ff ff fa     call  60 <leaf_call+0x60>               ; |
+  7c:   01 00 00 00     nop                                     ; /
+  80:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  84:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  88:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union A
+  8c:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  90:   d1 27 a7 e3     st  %f8, [ %fp + 0x7e3 ]                ; /
+  94:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  98:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  9c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union B (only writes one val)
+  a0:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  a4:   d1 27 a7 df     st  %f8, [ %fp + 0x7df ]                ; /
+  a8:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  ac:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  b0:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union C (only writes one val)
+  b4:   d1 00 40 00     ld  [ %g1 ], %f8                        ; |
+  b8:   d1 27 a7 db     st  %f8, [ %fp + 0x7db ]                ; /
+  bc:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  c0:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  c4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union D
+  c8:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+  cc:   d1 3f a7 cf     std  %f8, [ %fp + 0x7cf ]               ; /
+  d0:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  d4:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  d8:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union A (only writes one val)
+  dc:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+  e0:   d1 3f a7 c7     std  %f8, [ %fp + 0x7c7 ]               ; /
+  e4:   03 00 00 00     sethi  %hi(0), %g1                      ; \
+  e8:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>         ; |
+  ec:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                 ; | put together local union A (only writes one val)
+  f0:   d1 18 40 00     ldd  [ %g1 ], %f8                       ; |
+  f4:   d1 3f a7 bf     std  %f8, [ %fp + 0x7bf ]               ; /
+  f8:   c2 07 a7 e3     ld  [ %fp + 0x7e3 ], %g1                ; \
+  fc:   87 30 60 00     srl  %g1, 0, %g3                        ; | prep arg 0
+ 100:   87 28 f0 20     sllx  %g3, 0x20, %g3                    ; /               left-justify
+ 104:   c2 5f a7 df     ldx  [ %fp + 0x7df ], %g1               ; \
+ 108:   85 30 70 20     srlx  %g1, 0x20, %g2                    ; | prep arg 1
+ 10c:   85 28 b0 20     sllx  %g2, 0x20, %g2                    ; /
+ 110:   c2 07 a7 db     ld  [ %fp + 0x7db ], %g1                ; \
+ 114:   83 30 60 00     srl  %g1, 0, %g1                        ; | prep arg 2
+ 118:   83 28 70 20     sllx  %g1, 0x20, %g1                    ; /
+ 11c:   c8 5f a7 cf     ldx  [ %fp + 0x7cf ], %g4               ; prep arg 3    | a bit pointless, could be written
+ 120:   ca 5f a7 c7     ldx  [ %fp + 0x7c7 ], %g5               ; prep arg 4    | directly to %o3 and %o4
+ 124:   da 5f a7 bf     ldx  [ %fp + 0x7bf ], %o5               ; arg 5
+ 128:   90 10 00 03     mov  %g3, %o0                           ; arg 0      |
+ 12c:   92 10 00 02     mov  %g2, %o1                           ; arg 1      | note: all left-justified
+ 130:   94 10 00 01     mov  %g1, %o2                           ; arg 2      |
+ 134:   96 10 00 04     mov  %g4, %o3                           ; arg 3
+ 138:   98 10 00 05     mov  %g5, %o4                           ; arg 4
+ 13c:   40 00 00 00     call  13c <main+0xd0>                   ; call nonleaf_call (objdump not from final link but .o)
+ 140:   01 00 00 00     nop                                     ; branch delay slot
+ 144:   82 10 20 00     clr  %g1        ! 0 <leaf_call>         ; \
+ 148:   83 38 60 00     sra  %g1, 0, %g1                        ; / return value
+ 14c:   b0 10 00 01     mov  %g1, %i0                           ; \
+ 150:   81 cf e0 08     rett  %i7 + 8                           ; | epilog
+ 154:   01 00 00 00     nop                                     ; |            branch delay slot
+
+
+
+; ---------- returning structs by value ---------->
+;
+; struct Small { char x; };
+; struct Big { long long i,j,k,l; long m; }; /* bigger than 32b */
+;
+; struct Small f0()
+; {
+;     struct Small s = { 132 };
+;     return s;
+; }
+;
+; struct Big f1()
+; {
+;     struct Big b = { 7171LL, 99LL, -99LL, -3102LL, 32 };
+;     return b;
+; }
+;
+; int main()
+; {
+;     struct Small s = f0();
+;     struct Big b = f1();
+;     return b.j + b.k + b.m + s.x;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <f0>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   82 10 3f 84     mov  -124, %g1
+   8:   c2 2f a7 e6     stb  %g1, [ %fp + 0x7e6 ]
+   c:   c2 0f a7 e6     ldub  [ %fp + 0x7e6 ], %g1
+  10:   82 08 60 ff     and  %g1, 0xff, %g1
+  14:   83 28 70 38     sllx  %g1, 0x38, %g1
+  18:   b0 10 00 01     mov  %g1, %i0
+  1c:   81 cf e0 08     rett  %i7 + 8
+  20:   01 00 00 00     nop
+
+0000000000000024 <f1>:
+  24:   9d e3 bf 10     save  %sp, -240, %sp
+  28:   84 10 00 18     mov  %i0, %g2
+  2c:   03 00 1c 03     sethi  %hi(0x700c00), %g1
+  30:   83 30 70 0a     srlx  %g1, 0xa, %g1
+  34:   c2 77 a7 bf     stx  %g1, [ %fp + 0x7bf ]
+  38:   82 10 20 63     mov  0x63, %g1
+  3c:   c2 77 a7 c7     stx  %g1, [ %fp + 0x7c7 ]
+  40:   82 10 3f 9d     mov  -99, %g1
+  44:   c2 77 a7 cf     stx  %g1, [ %fp + 0x7cf ]
+  48:   82 10 33 e2     mov  -3102, %g1
+  4c:   c2 77 a7 d7     stx  %g1, [ %fp + 0x7d7 ]
+  50:   82 10 20 20     mov  0x20, %g1
+  54:   c2 77 a7 df     stx  %g1, [ %fp + 0x7df ]
+  58:   c2 5f a7 bf     ldx  [ %fp + 0x7bf ], %g1
+  5c:   c2 70 80 00     stx  %g1, [ %g2 ]
+  60:   c2 5f a7 c7     ldx  [ %fp + 0x7c7 ], %g1
+  64:   c2 70 a0 08     stx  %g1, [ %g2 + 8 ]
+  68:   c2 5f a7 cf     ldx  [ %fp + 0x7cf ], %g1
+  6c:   c2 70 a0 10     stx  %g1, [ %g2 + 0x10 ]
+  70:   c2 5f a7 d7     ldx  [ %fp + 0x7d7 ], %g1
+  74:   c2 70 a0 18     stx  %g1, [ %g2 + 0x18 ]
+  78:   c2 5f a7 df     ldx  [ %fp + 0x7df ], %g1
+  7c:   c2 70 a0 20     stx  %g1, [ %g2 + 0x20 ]
+  80:   b0 10 00 02     mov  %g2, %i0
+  84:   81 cf e0 08     rett  %i7 + 8
+  88:   01 00 00 00     nop
+  8c:   ae 03 c0 17     add  %o7, %l7, %l7
+  90:   81 c3 e0 08     retl
+  94:   01 00 00 00     nop
+
+0000000000000098 <main>:
+  98:   9d e3 be f0     save  %sp, -272, %sp
+  9c:   2f 00 00 00     sethi  %hi(0), %l7
+  a0:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <f0>
+  a4:   7f ff ff fa     call  8c <f1+0x68>
+  a8:   01 00 00 00     nop
+  ac:   03 00 00 00     sethi  %hi(0), %g1
+  b0:   82 10 60 00     mov  %g1, %g1   ! 0 <f0>
+  b4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+  b8:   c4 58 40 00     ldx  [ %g1 ], %g2
+  bc:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]
+  c0:   84 10 20 00     clr  %g2
+  c4:   40 00 00 00     call  c4 <main+0x2c>
+  c8:   01 00 00 00     nop
+  cc:   84 10 00 08     mov  %o0, %g2
+  d0:   c0 2f a7 ae     clrb  [ %fp + 0x7ae ]
+  d4:   85 38 b0 38     srax  %g2, 0x38, %g2
+  d8:   c6 0f a7 ae     ldub  [ %fp + 0x7ae ], %g3
+  dc:   82 08 e0 00     and  %g3, 0, %g1
+  e0:   86 10 00 01     mov  %g1, %g3
+  e4:   82 10 00 02     mov  %g2, %g1
+  e8:   82 10 c0 01     or  %g3, %g1, %g1
+  ec:   c2 2f a7 ae     stb  %g1, [ %fp + 0x7ae ]
+  f0:   c2 0f a7 ae     ldub  [ %fp + 0x7ae ], %g1
+  f4:   c2 2f a7 e6     stb  %g1, [ %fp + 0x7e6 ]
+  f8:   82 07 a7 b7     add  %fp, 0x7b7, %g1
+  fc:   90 10 00 01     mov  %g1, %o0
+ 100:   40 00 00 00     call  100 <main+0x68>
+ 104:   01 00 00 00     nop
+ 108:   c2 5f a7 bf     ldx  [ %fp + 0x7bf ], %g1
+ 10c:   84 10 00 01     mov  %g1, %g2
+ 110:   c2 5f a7 c7     ldx  [ %fp + 0x7c7 ], %g1
+ 114:   84 00 80 01     add  %g2, %g1, %g2
+ 118:   c2 5f a7 d7     ldx  [ %fp + 0x7d7 ], %g1
+ 11c:   84 00 80 01     add  %g2, %g1, %g2
+ 120:   c2 0f a7 e6     ldub  [ %fp + 0x7e6 ], %g1
+ 124:   83 28 60 18     sll  %g1, 0x18, %g1
+ 128:   83 38 60 18     sra  %g1, 0x18, %g1
+ 12c:   82 00 80 01     add  %g2, %g1, %g1
+ 130:   83 38 60 00     sra  %g1, 0, %g1
+ 134:   b0 10 00 01     mov  %g1, %i0
+ 138:   03 00 00 00     sethi  %hi(0), %g1
+ 13c:   82 10 60 00     mov  %g1, %g1   ! 0 <f0>
+ 140:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 144:   c4 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g2
+ 148:   c6 58 40 00     ldx  [ %g1 ], %g3
+ 14c:   84 18 80 03     xor  %g2, %g3, %g2
+ 150:   86 10 20 00     clr  %g3
+ 154:   82 10 00 02     mov  %g2, %g1
+ 158:   02 c8 40 08     brz  %g1, 178 <main+0xe0>
+ 15c:   01 00 00 00     nop
+ 160:   03 00 00 00     sethi  %hi(0), %g1
+ 164:   82 10 60 00     mov  %g1, %g1   ! 0 <f0>
+ 168:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 16c:   90 10 00 01     mov  %g1, %o0
+ 170:   40 00 00 00     call  170 <main+0xd8>
+ 174:   01 00 00 00     nop
+ 178:   81 cf e0 08     rett  %i7 + 8
+ 17c:   01 00 00 00     nop
+
+
+
+; ---------- single-field structs by values (and small array fields) ---------->
+;
+; struct C { char c; };
+; struct S { short s; };
+; struct I { int i; };
+; struct F { float f; };
+; struct D { double d; };
+; 
+; struct C2 { char c[2]; };
+; struct C3 { char c[3]; };
+; 
+; void leaf_call(struct C2 a, struct C b, struct S c, struct I d, struct F e, struct D f, struct C3 g)
+; {
+; }
+; 
+; int main()
+; {
+;     leaf_call((struct C2){{0,1}}, (struct C){2}, (struct S){3}, (struct I){4}, (struct F){5.f}, (struct D){6.}, (struct C3){{7,8,9}});
+;     return 0;
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000000 <leaf_call>:
+   0:   9d e3 bf 30     save  %sp, -208, %sp
+   4:   82 10 00 18     mov  %i0, %g1
+   8:   86 10 00 19     mov  %i1, %g3
+   c:   8a 10 00 1a     mov  %i2, %g5
+  10:   ba 10 00 1b     mov  %i3, %i5
+  14:   d1 27 a8 9f     st  %f8, [ %fp + 0x89f ]
+  18:   d5 3f a8 a7     std  %f10, [ %fp + 0x8a7 ]
+  1c:   83 38 70 30     srax  %g1, 0x30, %g1
+  20:   89 28 70 30     sllx  %g1, 0x30, %g4
+  24:   c4 5f a8 7f     ldx  [ %fp + 0x87f ], %g2
+  28:   82 10 3f ff     mov  -1, %g1
+  2c:   83 30 70 10     srlx  %g1, 0x10, %g1
+  30:   82 08 80 01     and  %g2, %g1, %g1
+  34:   82 10 40 04     or  %g1, %g4, %g1
+  38:   c2 77 a8 7f     stx  %g1, [ %fp + 0x87f ]
+  3c:   87 38 f0 38     srax  %g3, 0x38, %g3
+  40:   c2 0f a8 87     ldub  [ %fp + 0x887 ], %g1
+  44:   82 08 60 00     and  %g1, 0, %g1
+  48:   84 10 00 01     mov  %g1, %g2
+  4c:   82 10 00 03     mov  %g3, %g1
+  50:   82 10 80 01     or  %g2, %g1, %g1
+  54:   c2 2f a8 87     stb  %g1, [ %fp + 0x887 ]
+  58:   8b 39 70 30     srax  %g5, 0x30, %g5
+  5c:   c2 17 a8 8f     lduh  [ %fp + 0x88f ], %g1
+  60:   82 08 60 00     and  %g1, 0, %g1
+  64:   84 10 00 01     mov  %g1, %g2
+  68:   82 10 00 05     mov  %g5, %g1
+  6c:   82 10 80 01     or  %g2, %g1, %g1
+  70:   c2 37 a8 8f     sth  %g1, [ %fp + 0x88f ]
+  74:   bb 3f 70 20     srax  %i5, 0x20, %i5
+  78:   c2 07 a8 97     ld  [ %fp + 0x897 ], %g1
+  7c:   82 08 60 00     and  %g1, 0, %g1
+  80:   82 10 40 1d     or  %g1, %i5, %g1
+  84:   c2 27 a8 97     st  %g1, [ %fp + 0x897 ]
+  88:   81 cf e0 08     rett  %i7 + 8
+  8c:   01 00 00 00     nop
+  90:   ae 03 c0 17     add  %o7, %l7, %l7
+  94:   81 c3 e0 08     retl
+  98:   01 00 00 00     nop
+
+000000000000009c <main>:
+  9c:   9d e3 bf 00     save  %sp, -256, %sp
+  a0:   2f 00 00 00     sethi  %hi(0), %l7
+  a4:   ae 05 e0 00     add  %l7, 0, %l7        ! 0 <leaf_call>
+  a8:   7f ff ff fa     call  90 <leaf_call+0x90>
+  ac:   01 00 00 00     nop
+  b0:   03 00 00 00     sethi  %hi(0), %g1
+  b4:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+  b8:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+  bc:   c4 58 40 00     ldx  [ %g1 ], %g2
+  c0:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]
+  c4:   84 10 20 00     clr  %g2
+  c8:   c0 2f a7 e4     clrb  [ %fp + 0x7e4 ]
+  cc:   82 10 20 01     mov  1, %g1
+  d0:   c2 2f a7 e5     stb  %g1, [ %fp + 0x7e5 ]
+  d4:   82 10 20 02     mov  2, %g1
+  d8:   c2 2f a7 e6     stb  %g1, [ %fp + 0x7e6 ]
+  dc:   82 10 20 03     mov  3, %g1
+  e0:   c2 37 a7 e1     sth  %g1, [ %fp + 0x7e1 ]
+  e4:   82 10 20 04     mov  4, %g1
+  e8:   c2 27 a7 d7     st  %g1, [ %fp + 0x7d7 ]
+  ec:   03 00 00 00     sethi  %hi(0), %g1
+  f0:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+  f4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+  f8:   d1 00 40 00     ld  [ %g1 ], %f8
+  fc:   d1 27 a7 d3     st  %f8, [ %fp + 0x7d3 ]
+ 100:   03 00 00 00     sethi  %hi(0), %g1
+ 104:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 108:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 10c:   d1 18 40 00     ldd  [ %g1 ], %f8
+ 110:   d1 3f a7 c7     std  %f8, [ %fp + 0x7c7 ]
+ 114:   82 10 20 07     mov  7, %g1
+ 118:   c2 2f a7 de     stb  %g1, [ %fp + 0x7de ]
+ 11c:   82 10 20 08     mov  8, %g1
+ 120:   c2 2f a7 df     stb  %g1, [ %fp + 0x7df ]
+ 124:   82 10 20 09     mov  9, %g1
+ 128:   c2 2f a7 e0     stb  %g1, [ %fp + 0x7e0 ]
+ 12c:   c2 0f a7 e4     ldub  [ %fp + 0x7e4 ], %g1
+ 130:   82 08 60 ff     and  %g1, 0xff, %g1
+ 134:   85 28 70 08     sllx  %g1, 8, %g2
+ 138:   c2 0f a7 e5     ldub  [ %fp + 0x7e5 ], %g1
+ 13c:   82 08 60 ff     and  %g1, 0xff, %g1
+ 140:   86 10 40 02     or  %g1, %g2, %g3
+ 144:   87 28 f0 30     sllx  %g3, 0x30, %g3
+ 148:   c2 0f a7 e6     ldub  [ %fp + 0x7e6 ], %g1
+ 14c:   88 08 60 ff     and  %g1, 0xff, %g4
+ 150:   89 29 30 38     sllx  %g4, 0x38, %g4
+ 154:   c2 17 a7 e1     lduh  [ %fp + 0x7e1 ], %g1
+ 158:   83 28 70 30     sllx  %g1, 0x30, %g1
+ 15c:   8b 30 70 30     srlx  %g1, 0x30, %g5
+ 160:   8b 29 70 30     sllx  %g5, 0x30, %g5
+ 164:   c2 5f a7 d7     ldx  [ %fp + 0x7d7 ], %g1
+ 168:   85 30 70 20     srlx  %g1, 0x20, %g2
+ 16c:   85 28 b0 20     sllx  %g2, 0x20, %g2
+ 170:   d1 07 a7 d3     ld  [ %fp + 0x7d3 ], %f8
+ 174:   d5 1f a7 c7     ldd  [ %fp + 0x7c7 ], %f10
+ 178:   c2 0f a7 de     ldub  [ %fp + 0x7de ], %g1
+ 17c:   c2 2b a8 af     stb  %g1, [ %sp + 0x8af ]
+ 180:   c2 0f a7 df     ldub  [ %fp + 0x7df ], %g1
+ 184:   c2 2b a8 b0     stb  %g1, [ %sp + 0x8b0 ]
+ 188:   c2 0f a7 e0     ldub  [ %fp + 0x7e0 ], %g1
+ 18c:   c2 2b a8 b1     stb  %g1, [ %sp + 0x8b1 ]
+ 190:   90 10 00 03     mov  %g3, %o0
+ 194:   92 10 00 04     mov  %g4, %o1
+ 198:   94 10 00 05     mov  %g5, %o2
+ 19c:   96 10 00 02     mov  %g2, %o3
+ 1a0:   40 00 00 00     call  1a0 <main+0x104>
+ 1a4:   01 00 00 00     nop
+ 1a8:   82 10 20 00     clr  %g1        ! 0 <leaf_call>
+ 1ac:   83 38 60 00     sra  %g1, 0, %g1
+ 1b0:   b0 10 00 01     mov  %g1, %i0
+ 1b4:   03 00 00 00     sethi  %hi(0), %g1
+ 1b8:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 1bc:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 1c0:   c6 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g3
+ 1c4:   c4 58 40 00     ldx  [ %g1 ], %g2
+ 1c8:   86 18 c0 02     xor  %g3, %g2, %g3
+ 1cc:   84 10 20 00     clr  %g2
+ 1d0:   82 10 00 03     mov  %g3, %g1
+ 1d4:   02 c8 40 08     brz  %g1, 1f4 <main+0x158>
+ 1d8:   01 00 00 00     nop
+ 1dc:   03 00 00 00     sethi  %hi(0), %g1
+ 1e0:   82 10 60 00     mov  %g1, %g1   ! 0 <leaf_call>
+ 1e4:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1
+ 1e8:   90 10 00 01     mov  %g1, %o0
+ 1ec:   40 00 00 00     call  1ec <main+0x150>
+ 1f0:   01 00 00 00     nop
+ 1f4:   81 cf e0 08     rett  %i7 + 8
+ 1f8:   01 00 00 00     nop
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+;
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000d20 <f1>:
+ d20:   9d e3 bf 30     save  %sp, -208, %sp
+ d24:   82 10 00 18     mov  %i0, %g1
+ d28:   83 38 70 20     srax  %g1, 0x20, %g1
+ d2c:   c4 07 a8 7f     ld  [ %fp + 0x87f ], %g2
+ d30:   84 08 a0 00     and  %g2, 0, %g2
+ d34:   82 10 80 01     or  %g2, %g1, %g1
+ d38:   c2 27 a8 7f     st  %g1, [ %fp + 0x87f ]
+ d3c:   81 cf e0 08     rett  %i7 + 8
+ d40:   01 00 00 00     nop
+
+0000000000000d44 <f2>:
+ d44:   9d e3 bf 30     save  %sp, -208, %sp
+ d48:   f0 77 a8 7f     stx  %i0, [ %fp + 0x87f ]
+ d4c:   81 cf e0 08     rett  %i7 + 8
+ d50:   01 00 00 00     nop
+ d54:   ae 03 c0 17     add  %o7, %l7, %l7
+ d58:   81 c3 e0 08     retl
+ d5c:   01 00 00 00     nop
+
+0000000000000d60 <f>:
+ d60:   9d e3 bf 20     save  %sp, -224, %sp                      ;
+ d64:   2f 00 0c 00     sethi  %hi(0x300000), %l7                 ;
+ d68:   ae 05 e2 ac     add  %l7, 0x2ac, %l7                      ;
+ d6c:   7f ff ff fa     call  d54 <f2+0x10>                       ;
+ d70:   01 00 00 00     nop                                       ;
+ d74:   03 00 00 00     sethi  %hi(0), %g1                        ;
+ d78:   82 10 60 48     or  %g1, 0x48, %g1                        ;
+ d7c:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                   ;
+ d80:   c4 58 40 00     ldx  [ %g1 ], %g2                         ;
+ d84:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]                 ;
+ d88:   84 10 20 00     clr  %g2                                  ;
+ d8c:   82 07 a7 df     add  %fp, 0x7df, %g1                      ;
+ d90:   90 10 00 01     mov  %g1, %o0                             ;
+ d94:   40 14 01 13     call  5011e0 <_ZN10NonTrivialC1Ev@plt>    ; NonTrivial::NonTrivial() / ctor
+ d98:   01 00 00 00     nop                                       ;
+ d9c:   82 10 20 01     mov  1, %g1                               ;
+ da0:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]                  ;
+ da4:   c2 07 a7 db     ld  [ %fp + 0x7db ], %g1                  ;
+ da8:   82 00 60 7b     add  %g1, 0x7b, %g1                       ;
+ dac:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]                  ;
+ db0:   c2 07 a7 e3     ld  [ %fp + 0x7e3 ], %g1                  ;
+ db4:   83 30 60 00     srl  %g1, 0, %g1                          ;
+ db8:   83 28 70 20     sllx  %g1, 0x20, %g1                      ;
+ dbc:   90 10 00 01     mov  %g1, %o0                             ;
+ dc0:   40 14 01 30     call  501280 <f1@plt>                     ; call f1(struct Trivial)
+ dc4:   01 00 00 00     nop                                       ;
+ dc8:   c2 07 a7 db     ld  [ %fp + 0x7db ], %g1                  ;
+ dcc:   82 00 7f 85     add  %g1, -123, %g1                       ;
+ dd0:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]                  ;
+ dd4:   82 07 a7 d7     add  %fp, 0x7d7, %g1                      ;
+ dd8:   84 07 a7 df     add  %fp, 0x7df, %g2                      ;
+ ddc:   90 10 00 01     mov  %g1, %o0                             ; |               ptr to dest of copy of n
+ de0:   92 10 00 02     mov  %g2, %o1                             ; | copy n        ptr to n
+ de4:   40 14 00 e7     call  501180 <_ZN10NonTrivialC1ERKS_@plt> ; |               NonTrivial::NonTrivial(const NonTrivial&) / copy ctor
+ de8:   01 00 00 00     nop                                       ;
+ dec:   82 07 a7 d7     add  %fp, 0x7d7, %g1                      ; |
+ df0:   90 10 00 01     mov  %g1, %o0                             ; | f2 arg 0 (ptr to copy of struct NonTrivial), via ptr as non-trivial
+ df4:   40 14 01 03     call  501200 <f2@plt>                     ; call f2(struct NonTrivial)
+ df8:   01 00 00 00     nop                                       ;
+ dfc:   c2 07 a7 db     ld  [ %fp + 0x7db ], %g1                  ;
+ e00:   82 00 7f f4     add  %g1, -12, %g1                        ;
+ e04:   c2 27 a7 db     st  %g1, [ %fp + 0x7db ]                  ;
+ e08:   03 00 00 00     sethi  %hi(0), %g1                        ;
+ e0c:   82 10 60 48     or  %g1, 0x48, %g1                        ;
+ e10:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                   ;
+ e14:   c6 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g3                 ;
+ e18:   c4 58 40 00     ldx  [ %g1 ], %g2                         ;
+ e1c:   86 18 c0 02     xor  %g3, %g2, %g3                        ;
+ e20:   84 10 20 00     clr  %g2                                  ;
+ e24:   82 10 00 03     mov  %g3, %g1                             ;
+ e28:   02 c8 40 08     brz  %g1, e48 <f+0xe8>                    ;
+ e2c:   01 00 00 00     nop                                       ;
+ e30:   03 00 00 00     sethi  %hi(0), %g1                        ;
+ e34:   82 10 60 40     or  %g1, 0x40, %g1                        ;
+ e38:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                   ;
+ e3c:   90 10 00 01     mov  %g1, %o0                             ;
+ e40:   40 14 00 d8     call  5011a0 <__stack_smash_handler@plt>  ;
+ e44:   01 00 00 00     nop                                       ;
+ e48:   81 cf e0 08     rett  %i7 + 8                             ;
+ e4c:   01 00 00 00     nop                                       ;
+
+  ; ... snip, removed code of ctor and copy ctor ...
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial { int a; NonTrivial() : a(0) {} NonTrivial(const NonTrivial& rhs) : a(rhs.a) { } };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from openbsd-6.0-sparc64 w/ gcc 4.2.1
+
+0000000000000d60 <f1>:
+ d60:   9d e3 bf 30     save  %sp, -208, %sp
+ d64:   82 10 20 00     clr  %g1
+ d68:   83 30 60 00     srl  %g1, 0, %g1
+ d6c:   83 28 70 20     sllx  %g1, 0x20, %g1
+ d70:   b0 10 00 01     mov  %g1, %i0
+ d74:   81 cf e0 08     rett  %i7 + 8
+ d78:   01 00 00 00     nop
+
+0000000000000d7c <_Z2f2v>:
+ d7c:   9d e3 bf 30     save  %sp, -208, %sp
+ d80:   a0 10 00 18     mov  %i0, %l0
+ d84:   82 10 00 10     mov  %l0, %g1
+ d88:   90 10 00 01     mov  %g1, %o0
+ d8c:   40 14 01 1d     call  501200 <_ZN10NonTrivialC1Ev@plt>
+ d90:   01 00 00 00     nop
+ d94:   b0 10 00 10     mov  %l0, %i0
+ d98:   81 cf e0 08     rett  %i7 + 8
+ d9c:   01 00 00 00     nop
+ da0:   ae 03 c0 17     add  %o7, %l7, %l7
+ da4:   81 c3 e0 08     retl
+ da8:   01 00 00 00     nop
+
+0000000000000dac <f>:
+ dac:   9d e3 bf 10     save  %sp, -240, %sp                     ;
+ db0:   2f 00 0c 00     sethi  %hi(0x300000), %l7                ;
+ db4:   ae 05 e2 a0     add  %l7, 0x2a0, %l7                     ;
+ db8:   7f ff ff fa     call  da0 <_Z2f2v+0x24>                  ;
+ dbc:   01 00 00 00     nop                                      ;
+ dc0:   03 00 00 00     sethi  %hi(0), %g1                       ;
+ dc4:   82 10 60 48     or  %g1, 0x48, %g1                       ;
+ dc8:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                  ;
+ dcc:   c4 58 40 00     ldx  [ %g1 ], %g2                        ;
+ dd0:   c4 77 a7 e7     stx  %g2, [ %fp + 0x7e7 ]                ;
+ dd4:   84 10 20 00     clr  %g2                                 ;
+ dd8:   82 10 20 01     mov  1, %g1                              ;
+ ddc:   c2 27 a7 e3     st  %g1, [ %fp + 0x7e3 ]                 ;
+ de0:   c2 07 a7 e3     ld  [ %fp + 0x7e3 ], %g1                 ;
+ de4:   82 00 60 7b     add  %g1, 0x7b, %g1                      ;
+ de8:   c2 27 a7 e3     st  %g1, [ %fp + 0x7e3 ]                 ;
+ dec:   40 14 01 25     call  501280 <f1@plt>                    ; call f1()
+ df0:   01 00 00 00     nop                                      ;
+ df4:   82 10 00 08     mov  %o0, %g1                            ;
+ df8:   c0 27 a7 cb     clr  [ %fp + 0x7cb ]                     ;
+ dfc:   83 38 70 20     srax  %g1, 0x20, %g1                     ;
+ e00:   c6 07 a7 cb     ld  [ %fp + 0x7cb ], %g3                 ;
+ e04:   84 08 e0 00     and  %g3, 0, %g2                         ;
+ e08:   82 10 80 01     or  %g2, %g1, %g1                        ;
+ e0c:   c2 27 a7 cb     st  %g1, [ %fp + 0x7cb ]                 ;
+ e10:   c2 07 a7 cb     ld  [ %fp + 0x7cb ], %g1                 ;
+ e14:   c2 27 a7 df     st  %g1, [ %fp + 0x7df ]                 ;
+ e18:   c2 07 a7 e3     ld  [ %fp + 0x7e3 ], %g1                 ;
+ e1c:   82 00 7f 85     add  %g1, -123, %g1                      ;
+ e20:   c2 27 a7 e3     st  %g1, [ %fp + 0x7e3 ]                 ;
+ e24:   82 07 a7 db     add  %fp, 0x7db, %g1                     ;
+ e28:   90 10 00 01     mov  %g1, %o0                            ; hidden first arg (ptr to space to hold NonTrivial retval), via ptr as non-trivial
+ e2c:   40 14 00 e5     call  5011c0 <_Z2f2v@plt>                ; call f2()
+ e30:   01 00 00 00     nop                                      ;
+ e34:   c2 07 a7 e3     ld  [ %fp + 0x7e3 ], %g1                 ;
+ e38:   82 00 7f f4     add  %g1, -12, %g1                       ;
+ e3c:   c2 27 a7 e3     st  %g1, [ %fp + 0x7e3 ]                 ;
+ e40:   03 00 00 00     sethi  %hi(0), %g1                       ;
+ e44:   82 10 60 48     or  %g1, 0x48, %g1                       ;
+ e48:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                  ;
+ e4c:   c4 5f a7 e7     ldx  [ %fp + 0x7e7 ], %g2                ;
+ e50:   c6 58 40 00     ldx  [ %g1 ], %g3                        ;
+ e54:   84 18 80 03     xor  %g2, %g3, %g2                       ;
+ e58:   86 10 20 00     clr  %g3                                 ;
+ e5c:   82 10 00 02     mov  %g2, %g1                            ;
+ e60:   02 c8 40 08     brz  %g1, e80 <f+0xd4>                   ;
+ e64:   01 00 00 00     nop                                      ;
+ e68:   03 00 00 00     sethi  %hi(0), %g1                       ;
+ e6c:   82 10 60 40     or  %g1, 0x40, %g1                       ;
+ e70:   c2 5d c0 01     ldx  [ %l7 + %g1 ], %g1                  ;
+ e74:   90 10 00 01     mov  %g1, %o0                            ;
+ e78:   40 14 00 ca     call  5011a0 <__stack_smash_handler@plt> ;
+ e7c:   01 00 00 00     nop                                      ;
+ e80:   81 cf e0 08     rett  %i7 + 8                            ;
+ e84:   01 00 00 00     nop                                      ;
+
+
 
 ; vim: ft=asm
 

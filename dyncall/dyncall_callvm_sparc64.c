@@ -92,61 +92,63 @@ static void dc_callvm_argFloat_v9(DCCallVM* in_self, DCfloat x)
 
 static void dc_callvm_mode_v9(DCCallVM* in_self, DCint mode);
 
-DCCallVM_vt gVT_v9_ellipsis = 
+DCCallVM_vt gVT_v9_ellipsis =
 {
-  &dc_callvm_free_v9, 
-  &dc_callvm_reset_v9, 
-  &dc_callvm_mode_v9, 
-  &dc_callvm_argBool_v9, 
-  &dc_callvm_argChar_v9, 
-  &dc_callvm_argShort_v9, 
-  &dc_callvm_argInt_v9, 
-  &dc_callvm_argLong_v9, 
-  &dc_callvm_argLongLong_v9, 
-  &dc_callvm_argFloat_v9_ellipsis, 
-  &dc_callvm_argDouble_v9_ellipsis, 
-  &dc_callvm_argPointer_v9, 
-  NULL /* argStruct */, 
-  (DCvoidvmfunc*)       &dcCall_v9, 
-  (DCboolvmfunc*)       &dcCall_v9, 
-  (DCcharvmfunc*)       &dcCall_v9, 
-  (DCshortvmfunc*)      &dcCall_v9, 
-  (DCintvmfunc*)        &dcCall_v9, 
-  (DClongvmfunc*)       &dcCall_v9, 
-  (DClonglongvmfunc*)   &dcCall_v9, 
-  (DCfloatvmfunc*)      &dcCall_v9, 
-  (DCdoublevmfunc*)     &dcCall_v9, 
-  (DCpointervmfunc*)    &dcCall_v9, 
-  NULL /* callStruct */
+  &dc_callvm_free_v9,
+  &dc_callvm_reset_v9,
+  &dc_callvm_mode_v9,
+  &dc_callvm_argBool_v9,
+  &dc_callvm_argChar_v9,
+  &dc_callvm_argShort_v9,
+  &dc_callvm_argInt_v9,
+  &dc_callvm_argLong_v9,
+  &dc_callvm_argLongLong_v9,
+  &dc_callvm_argFloat_v9_ellipsis,
+  &dc_callvm_argDouble_v9_ellipsis,
+  &dc_callvm_argPointer_v9,
+  NULL /* argAggr */,
+  (DCvoidvmfunc*)       &dcCall_v9,
+  (DCboolvmfunc*)       &dcCall_v9,
+  (DCcharvmfunc*)       &dcCall_v9,
+  (DCshortvmfunc*)      &dcCall_v9,
+  (DCintvmfunc*)        &dcCall_v9,
+  (DClongvmfunc*)       &dcCall_v9,
+  (DClonglongvmfunc*)   &dcCall_v9,
+  (DCfloatvmfunc*)      &dcCall_v9,
+  (DCdoublevmfunc*)     &dcCall_v9,
+  (DCpointervmfunc*)    &dcCall_v9,
+  NULL /* callAggr */,
+  NULL /* beginAggr */
 };
 
 /* CallVM virtual table. */
 DCCallVM_vt gVT_v9 =
 {
-  &dc_callvm_free_v9, 
-  &dc_callvm_reset_v9, 
-  &dc_callvm_mode_v9, 
-  &dc_callvm_argBool_v9, 
-  &dc_callvm_argChar_v9, 
-  &dc_callvm_argShort_v9, 
-  &dc_callvm_argInt_v9, 
-  &dc_callvm_argLong_v9, 
-  &dc_callvm_argLongLong_v9, 
-  &dc_callvm_argFloat_v9, 
-  &dc_callvm_argDouble_v9, 
-  &dc_callvm_argPointer_v9, 
-  NULL /* argStruct */, 
-  (DCvoidvmfunc*)       &dcCall_v9, 
-  (DCboolvmfunc*)       &dcCall_v9, 
-  (DCcharvmfunc*)       &dcCall_v9, 
-  (DCshortvmfunc*)      &dcCall_v9, 
-  (DCintvmfunc*)        &dcCall_v9, 
-  (DClongvmfunc*)       &dcCall_v9, 
-  (DClonglongvmfunc*)   &dcCall_v9, 
-  (DCfloatvmfunc*)      &dcCall_v9, 
-  (DCdoublevmfunc*)     &dcCall_v9, 
-  (DCpointervmfunc*)    &dcCall_v9, 
-  NULL /* callStruct */
+  &dc_callvm_free_v9,
+  &dc_callvm_reset_v9,
+  &dc_callvm_mode_v9,
+  &dc_callvm_argBool_v9,
+  &dc_callvm_argChar_v9,
+  &dc_callvm_argShort_v9,
+  &dc_callvm_argInt_v9,
+  &dc_callvm_argLong_v9,
+  &dc_callvm_argLongLong_v9,
+  &dc_callvm_argFloat_v9,
+  &dc_callvm_argDouble_v9,
+  &dc_callvm_argPointer_v9,
+  NULL /* argAggr */,
+  (DCvoidvmfunc*)       &dcCall_v9,
+  (DCboolvmfunc*)       &dcCall_v9,
+  (DCcharvmfunc*)       &dcCall_v9,
+  (DCshortvmfunc*)      &dcCall_v9,
+  (DCintvmfunc*)        &dcCall_v9,
+  (DClongvmfunc*)       &dcCall_v9,
+  (DClonglongvmfunc*)   &dcCall_v9,
+  (DCfloatvmfunc*)      &dcCall_v9,
+  (DCdoublevmfunc*)     &dcCall_v9,
+  (DCpointervmfunc*)    &dcCall_v9,
+  NULL /* callAggr */,
+  NULL /* beginAggr */
 };
 
 /* mode: only a single mode available currently. */
@@ -157,6 +159,7 @@ static void dc_callvm_mode_v9(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_SPARC64:
     case DC_CALL_C_ELLIPSIS:
       vt = &gVT_v9;
@@ -165,8 +168,8 @@ static void dc_callvm_mode_v9(DCCallVM* in_self, DCint mode)
       vt = &gVT_v9_ellipsis;
       break;
     default:
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
-      return; 
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
+      return;
   }
   dc_callvm_base_init(&self->mInterface, vt);
 }

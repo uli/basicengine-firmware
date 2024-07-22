@@ -64,8 +64,8 @@ plan9call are supported.\\
 the syscall number as target parameter and selecting the correct mode.
 
 
-\newpage
 
+\pagebreak
 
 \subsubsection{cdecl}
 
@@ -95,15 +95,20 @@ Name          & Brief description\\
 \begin{itemize}
 \item stack parameter order: right-to-left
 \item caller cleans up the stack
-\item all arguments are pushed onto the stack
+\item all arguments are pushed onto the stack (as dwords)
+\item arguments \textgreater\ 64 bits are pushed as a sequence of dwords
+\item aggregates (structs, unions) are pushed as a sequence of dwords
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \end{itemize}
 
 \paragraph{Return values}
 
 \begin{itemize}
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning via the stack), and callee writes return value to this space; the ptr to the aggregate is returned in eax
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers
-\item return values \textgreater\ 64 bits (e.g. structures) are returned by the caller allocating the space and
+\item integers and aggregates (structs, unions) \textgreater\ 32 and \textless=\ 64 bits are returned via the eax and edx registers
+\item return values \textgreater\ 64 bits (e.g. aggregates) are returned by the caller allocating the space and
 passing a pointer to the callee as a new, implicit first parameter (this means, on the stack)
 \item floating point types are returned via the st0 register (except on Minix, where they are returned as integers are)
 \end{itemize}
@@ -140,8 +145,7 @@ parameter area                    &                &                            
 \end{figure}
 
 
-\newpage
-
+\pagebreak
 
 \subsubsection{MS fastcall}
 
@@ -172,15 +176,24 @@ Name          & Brief description\\
 \item called function cleans up the stack
 \item first two integers/pointers (\textless=\ 32bit) are passed via ecx and edx (even if preceded by other arguments)
 \item if first argument is a 64 bit integer, it is passed via ecx and edx
-\item all other parameters are pushed onto the stack
+\item all other parameters are pushed onto the stack (as dwords)
+\item arguments \textgreater\ 64 bits are pushed as a sequence of dwords
+\item aggregates (structs, unions) are pushed as a sequence of dwords, but are never split between registers and stack (if registers are still available and
+aggregate doesn't fit entirely into ecx and edx, it is passed via the stack and remaining registers are free for subsequent arguments)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \end{itemize}
+
+\clearpage
 
 \paragraph{Return values}
 
 \begin{itemize}
-\item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers@@@verify
-\item floating point types are returned via the st0 register@@@ really ?
+\item return values of pointer or integral type, as well as aggregates (structs, unions) \textless=\ 64 are returned via the eax and edx registers
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning via ecx), and callee writes return value to this space; the ptr to the aggregate is returned in eax
+\item return values \textgreater\ 64 bits (e.g. aggregates) are returned by the caller allocating the space and
+passing a pointer to the callee as a new, implicit first parameter (always via the stack, never via a register)
+\item floating point types are returned via the st0 register
 \end{itemize}
 
 
@@ -238,27 +251,33 @@ Name          & Brief description\\
 \caption{Register usage on x86 fastcall (GNU) calling convention}
 \end{table}
 
+
+\clearpage
+
 \paragraph{Parameter passing}
 
 \begin{itemize}
 \item stack parameter order: right-to-left
 \item called function cleans up the stack
 \item first two integers/pointers (\textless=\ 32bit) are passed via ecx and edx (even if preceded by other arguments)
-\item if first argument is a 64 bit integer, it is pushed on the stack and the two registers are skipped 
-\item all other parameters are pushed onto the stack
+\item arguments \textgreater\ 32 bits are pushed onto the stack as a sequence of dwords (never passed via registers, any respective register is skipped and not used for subsequent args)
+\item all other parameters are pushed onto the stack (as dwords)
+\item aggregates (structs, unions) are pushed as a sequence of dwords, and never passed via registers (no matter their size, any respective register is skipped and not used for subsequent args)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item varargs are always passed via the stack
 \end{itemize}
 
 
 \paragraph{Return values}
 
 \begin{itemize}
-\item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register.
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers.
-\item floating point types are returned via the st0.
+\item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
+\item integers \textgreater\ 32 and \textless=\ 64 bits are returned via the eax and edx registers
+\item aggregates (structs, unions) of any size are returned by the caller allocating the space and
+passing a pointer to the callee as a new, implicit first parameter (always via ecx), that same pointer is returned in eax
+\item floating point types are returned via the st0
 \end{itemize}
 
-
-\pagebreak
 
 \paragraph{Stack layout}
 
@@ -290,6 +309,8 @@ parameter area                    &                            &                
 \end{figure}
 
 
+\pagebreak
+
 \subsubsection{Borland fastcall}
 
 Also called {\bf register convention} by Borland.
@@ -320,21 +341,26 @@ Name          & Brief description\\
 \begin{itemize}
 \item stack parameter order: left-to-right
 \item called function cleans up the stack
-\item first three integers/pointers (with exception of method pointers) (\textless=\ 32bit) are passed via eax, ecx and edx (even if preceded or interleaved by other arguments)
+\item first three integers/pointers (with exception of method pointers) (\textless=\ 32bit) are passed via eax, ecx and edx (preceding or interleaved arguments that are not passed via registers are pushed onto the stack)
+\item arguments \textgreater\ 32 bits are passed as a pointer to the value
+\item aggregates (structs, unions) are pushed as a sequence of dwords, and never passed via registers (no matter their size)
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item varargs are always passed via the stack
 \item all other parameters are pushed onto the stack
+\item the direction flag is clear on entry and must be returned clear % mention it first, above @@@
 \end{itemize}
 
-
-\pagebreak
 
 \paragraph{Return values}
 
 \begin{itemize}
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning via ecx), and callee writes return value to this space; the ptr to the aggregate is returned in eax
+\item integers and aggregates (structs, unions) \textgreater\ 32 and \textless=\ 64 bits are returned via the eax and edx registers
 \item floating point types are returned via the st0 register
-\item all others (e.g. all structs, return values \textgreater\ 64 bits, ...) are returned by the caller allocating the space and
-passing a pointer to the callee as a new, implicit first parameter
+\item return values \textgreater\ 32 bits (e.g. aggregates, long long, ...) are returned by the caller allocating the space and
+passing a pointer to the callee as a new, implicit {\bf last} parameter
 \end{itemize}
 
 
@@ -369,6 +395,8 @@ parameter area                    &                            &                
 \end{figure}
 
 
+\pagebreak
+
 \subsubsection{Watcom fastcall}
 
 
@@ -398,9 +426,10 @@ Name          & Brief description\\
 \item stack parameter order: right-to-left
 \item called function cleans up the stack
 \item first four integers/pointers (\textless=\ 32bit) are passed via eax, edx, ebx and ecx (even if preceded by other arguments)
-\item arguments \textgreater 32 bits, as well as all subsequent arguments, are passed via the stack
+\item arguments \textgreater\ 32 bits, as well as all subsequent arguments, are passed via the stack
+\item aggregates (structs, unions) are passed as a pointer to the aggregate (a copy, if needed, to guarantee by-value semantics) 
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \item all other parameters are pushed onto the stack
-\item varargs are always passed via the stack
 \end{itemize}
 
 
@@ -408,8 +437,12 @@ Name          & Brief description\\
 
 \begin{itemize}
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers@@@ verify
-\item floating point types are returned via the st0 register@@@ really ?
+\item integers \textgreater\ 32 bits and \textless=\ 64 bits are returned via the eax and edx registers
+\item for {\it non-trivial} C++ aggregates, the caller allocates space, passes pointer to it to the callee via esi, and callee writes return value to
+this space; the ptr to the aggregate is returned in eax
+\item aggregates (structs, unions) \textless=\ 32 bits are returned in eax
+\item aggregates (structs, unions) \textgreater\ 32 bits are returned by the caller allocating the space and
+passing a pointer to the callee via esi, that same pointer is returned in eax
 \end{itemize}
 
 
@@ -443,6 +476,7 @@ parameter area                    &                            &                
 \end{figure}
 
 
+\pagebreak
 
 \subsubsection{win32 stdcall}
 
@@ -469,10 +503,13 @@ Name          & Brief description\\
 \paragraph{Parameter passing}
 
 \begin{itemize}
-\item Stack parameter order: right-to-left
-\item Called function cleans up the stack
-\item All parameters are pushed onto the stack
-\item Stack is usually 4 byte aligned (GCC \textgreater=\ 3.x seems to use a 16byte alignement)
+\item stack parameter order: right-to-left
+\item called function cleans up the stack
+\item all parameters are pushed onto the stack (as dwords)
+\item arguments \textgreater\ 64 bits are pushed as a sequence of dwords
+\item aggregates (structs, unions) are pushed as a sequence of dwords
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
+\item stack is usually 4 byte aligned (GCC \textgreater=\ 3.x seems to use a 16byte alignment)
 \item the direction flag is clear on entry and must be returned clear % mention it first, above @@@
 \end{itemize}
 
@@ -482,7 +519,9 @@ Name          & Brief description\\
 
 \begin{itemize}
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers
+\item integers \textgreater\ 32 and \textless=\ 64 bits are returned via the eax and edx registers
+\item for aggregates and integer return values \textgreater\ 64 bits, the caller allocates space, passes pointer to it to the callee as a hidden first param
+(meaning via stack), and callee writes return value to this space; the ptr to the aggregate is returned in eax
 \item floating point types are returned via the st0 register
 \end{itemize}
 
@@ -516,6 +555,9 @@ parameter area                    &                &                            
 \caption{Stack layout on x86 stdcall calling convention}
 \end{figure}
 
+
+\pagebreak
+
 \subsubsection{MS thiscall}
 
 \paragraph{Registers and register usage}
@@ -538,16 +580,17 @@ Name          & Brief description\\
 \caption{Register usage on x86 thiscall (MS) calling convention}
 \end{table}
 
-\newpage
-
 
 \paragraph{Parameter passing}
 
 \begin{itemize}
 \item stack parameter order: right-to-left
-\item called function cleans up the stack
+\item called function cleans up the stack (except for variadic functions where the caller cleans up)
 \item first parameter (this pointer) is passed via ecx
 \item all other parameters are pushed onto the stack
+\item arguments \textgreater\ 64 bits are pushed as a sequence of dwords
+\item aggregates (structs, unions) are pushed as a sequence of dwords
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \end{itemize}
 
 % introduce mangling section? \item Function name is decorated by prepending a '@' character and appending a '@' character and the number of bytes (decimal) of stack space required
@@ -556,8 +599,10 @@ Name          & Brief description\\
 
 \begin{itemize}
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers@@@verify
-\item floating point types are returned via the st0 register@@@ really ?
+\item integers \textgreater\ 32 bits and \textless=\ 64 bits are returned via the eax and edx
+\item aggregates (structs, unions) of any size are returned by the caller allocating the space and passing
+a pointer to the callee as a new, implicit first parameter, that same pointer is returned in eax
+\item floating point types are returned via the st0 register
 \end{itemize}
 
 
@@ -668,76 +713,11 @@ This is equivalent to the cdecl calling convention, with the first parameter bei
 \subsubsection{pascal}
 
 The best known uses of the pascal calling convention are the 16 bit OS/2 APIs, Microsoft Windows 3.x and Borland Delphi 1.x.
-
-\paragraph{Registers and register usage}
-
-\begin{table}[h]
-\begin{tabular*}{0.95\textwidth}{3 B}
-Name          & Brief description\\
-\hline
-{\bf eax}     & scratch, return value\\
-{\bf ebx}     & preserve\\
-{\bf ecx}     & scratch\\
-{\bf edx}     & scratch, return value\\
-{\bf esi}     & preserve\\
-{\bf edi}     & preserve\\
-{\bf ebp}     & preserve\\
-{\bf esp}     & stack pointer\\
-{\bf st0}     & scratch, floating point return value\\
-{\bf st1-st7} & scratch\\
-\end{tabular*}
-\caption{Register usage on x86 pascal calling convention}
-\end{table}
-
-\paragraph{Parameter passing}
-
-\begin{itemize}
-\item stack parameter order: left-to-right
-\item called function cleans up the stack
-\item all parameters are pushed onto the stack
-\end{itemize}
+It is a variation of stdcall, however, arguments are passed from left-to-right.
+Since this calling convention is for 16-bit APIs, it is not discussed in
+further detail, here.
 
 
-\paragraph{Return values}
-
-\begin{itemize}
-\item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits are returned via the eax and edx registers
-\item floating point types are returned via the st0 register
-\end{itemize}
-
-
-\paragraph{Stack layout}
-
-Stack directly after function prolog:\\
-
-\begin{figure}[h]
-\begin{tabular}{5|3|1 1}
-                                  & \vdots         &                                &                              \\
-\hhline{~=~~}
-register save area                & \hspace{4cm}   &                                & \mrrbrace{6}{caller's frame} \\
-\hhline{~-~~}
-local data                        &                &                                &                              \\
-\hhline{~-~~}
-\mrlbrace{3}{parameter area}      & arg 0          & \mrrbrace{3}{stack parameters} &                              \\
-                                  & \ldots         &                                &                              \\
-                                  & arg n-1        &                                &                              \\
-\hhline{~-~~}
-                                  & return address &                                &                              \\
-\hhline{~=~~}
-register save area                &                &                                & \mrrbrace{4}{current frame}  \\
-\hhline{~-~~}
-local data                        &                &                                &                              \\
-\hhline{~-~~}
-parameter area                    &                &                                &                              \\
-\hhline{~-~~}
-                                  & \vdots         &                                &                              \\
-\end{tabular}
-\caption{Stack layout on x86 pascal calling convention}
-\end{figure}
-
-
-\newpage
 
 \subsubsection{plan9call}
 
@@ -767,16 +747,19 @@ Name          & Brief description\\
 \item stack parameter order: right-to-left
 \item caller cleans up the stack
 \item all parameters are pushed onto the stack
+\item all parameters are pushed onto the stack (as dwords)
+\item arguments \textgreater\ 64 bits are pushed as a sequence of dwords
+\item aggregates (structs, unions) are pushed as a sequence of dwords
+\item {\it non-trivial} C++ aggregates (as defined by the language) of any size, are passed indirectly via a pointer to a copy of the aggregate
 \end{itemize}
 
-\pagebreak
 
 \paragraph{Return values}
 
 \begin{itemize}
 \item return values of pointer or integral type (\textless=\ 32 bits) are returned via the eax register
-\item integers \textgreater\ 32 bits or structures are returned by the caller allocating the space and
-passing a pointer to the callee as a new, implicit first parameter (this means, on the stack)
+\item integers \textgreater\ 32 bits and aggregates (structs, unions) of any size are returned by the caller allocating
+the space and passing a pointer to the callee as a new, implicit first parameter, that same pointer is returned in eax
 \item floating point types are returned via the st0 register (called F0 in plan9 8a's terms)
 \end{itemize}
 
@@ -808,8 +791,6 @@ parameter area                    &                &                            
 \end{figure}
 
 
-\newpage
-
 \subsubsection{Linux syscalls}
 
 \paragraph{Parameter passing}
@@ -821,6 +802,7 @@ parameter area                    &                &                            
 \item for more than six arguments, ebx points to the list of further arguments (not used in practice, as Linux syscalls use a maximum of 5 arguments)
 \item register eax holds the return value
 \end{itemize}
+
 
 \subsubsection{*BSD syscalls}
 

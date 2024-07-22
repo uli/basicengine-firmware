@@ -51,5 +51,7 @@
 #include "dyncall_thunk_sparc64.c"
 #elif defined(DC__Arch_ARM64)
 #include "dyncall_thunk_arm64.c"
+#elif defined(DC__Arch_RiscV64)
+#include "dyncall_thunk_riscv64.c"
 #endif
 

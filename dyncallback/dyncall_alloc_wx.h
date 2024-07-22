@@ -6,7 +6,7 @@
  Description: Allocate write/executable memory - Interface
  License:
 
-   Copyright (c) 2007-2018 Daniel Adler <dadler@uni-goettingen.de>,
+   Copyright (c) 2007-2021 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -35,6 +35,7 @@ typedef int DCerror;
 extern "C" {
 #endif
 
+/* returns 0 on success */
 DCerror dcAllocWX   (DCsize size, void** p);
 DCerror dcInitExecWX(void* p, DCsize size);
 void    dcFreeWX    (void* p, DCsize size);

@@ -1,0 +1,404 @@
+; #include <stdlib.h>
+;
+; void leaf_call(int b, int c, int d, int e, int f, int g, int h)
+; {
+; }
+;
+; void nonleaf_call(int a, int b, int c, int d, int e, int f, int g, int h)
+; {
+; 	/* use some local data */
+; 	*(char*)alloca(220) = 'L';
+; 	leaf_call(b, c, d, e, f, g, h);
+; }
+;
+; int main()
+; {
+; 	nonleaf_call(0, 1, 2, 3, 4, 5, 6, 7);
+; 	return 0;
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.0 (/Gr for fastcall)
+
+_b$ = -8
+_c$ = -4
+@leaf_call@28 PROC
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 8
+        mov     DWORD PTR _c$[ebp], edx
+        mov     DWORD PTR _b$[ebp], ecx
+        mov     esp, ebp
+        pop     ebp
+        ret     20
+@leaf_call@28 ENDP
+
+_a$ = -8
+_b$ = -4
+_c$ = 8
+_d$ = 12
+_e$ = 16
+_f$ = 20
+_g$ = 24
+_h$ = 28
+@nonleaf_call@32 PROC
+        push    ebp                      ; |
+        mov     ebp, esp                 ; | prolog
+        sub     esp, 8                   ; |
+        mov     DWORD PTR _b$[ebp], edx  ; in arg 1 -> local area on stack
+        mov     DWORD PTR _a$[ebp], ecx  ; in arg 0 -> local area on stack
+        mov     ecx, 220                 ; |
+        call    @alloca@4                ; | call alloca(220)   (ecx = arg)
+        mov     BYTE PTR [eax], 76       ; 'L' -> alloca()'d space (pointed to by alloca's retval in eax)
+        mov     eax, DWORD PTR _h$[ebp]  ; |
+        push    eax                      ; |
+        mov     ecx, DWORD PTR _g$[ebp]  ; |
+        push    ecx                      ; |
+        mov     edx, DWORD PTR _f$[ebp]  ; | read in args 3-7 from prev frame's param area, and ...
+        push    edx                      ; | ... "push" onto stack as arg 2-6
+        mov     eax, DWORD PTR _e$[ebp]  ; |
+        push    eax                      ; |
+        mov     ecx, DWORD PTR _d$[ebp]  ; |
+        push    ecx                      ; |
+        mov     edx, DWORD PTR _c$[ebp]  ; arg 1        | read from prev frame's param
+        mov     ecx, DWORD PTR _b$[ebp]  ; arg 0        | area and put in regs
+        call    @leaf_call@28            ; push return address and call
+        mov     esp, ebp                 ; |
+        pop     ebp                      ; | epilog
+        ret     24                       ; |
+@nonleaf_call@32 ENDP
+
+_main   PROC
+        push    ebp                      ; | prolog
+        mov     ebp, esp                 ; |
+        push    7                        ; arg 7
+        push    6                        ; arg 6
+        push    5                        ; arg 5
+        push    4                        ; arg 4
+        push    3                        ; arg 3
+        push    2                        ; arg 2
+        mov     edx, 1                   ; arg 1 (via reg)
+        xor     ecx, ecx                 ; arg 0 (via reg)
+        call    @nonleaf_call@32         ; push return address and call
+        xor     eax, eax                 ; return value
+        pop     ebp                      ; |
+        ret     0                        ; | epilog
+_main   ENDP
+
+
+
+; ---------- structs by value (arg and return value), struct arg not fitting in regs ---------->
+;
+; struct A { int x; short y; char z; long long t; };
+;
+; struct A leaf_call(struct A a, short b, long long c, char d, int e, int f, int g, long long h)
+; {
+;     a.x += 1;
+;     return a;
+; }
+;
+; int main()
+; {
+;   struct A a ={9, 99, 23, 12LL};
+;   leaf_call(a, 1, 2, 3, 4, 5, 6, 7LL);
+;   return 0;
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.0 (/Gr for fastcall)
+
+_b$ = -8
+_d$ = -4
+$T1 = 8
+_a$ = 12
+_c$ = 28
+_e$ = 36
+_f$ = 40
+_g$ = 44
+_h$ = 48
+@leaf_call@52 PROC
+        push    ebp                        ; |
+        mov     ebp, esp                   ; | prolog
+        sub     esp, 8                     ; |
+        mov     BYTE PTR _d$[ebp], dl      ; in arg 3 -> local area on stack
+        mov     WORD PTR _b$[ebp], cx      ; in arg 1 -> local area on stack
+        mov     eax, DWORD PTR _a$[ebp]    ; \
+        add     eax, 1                     ; |  get struct's x (from stack args), add 1 and write back
+        mov     DWORD PTR _a$[ebp], eax    ; /
+        mov     ecx, DWORD PTR $T1[ebp]    ; get ptr to retval struct passed as hidden arg (+8 to skip retval and saved ebp)
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | copy modified (b/c of x+=1) struct arg to space of retval
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; |
+        mov     eax, DWORD PTR $T1[ebp]    ; return value (= ptr to struct that was passed-in as hidden arg)
+        mov     esp, ebp                   ; |
+        pop     ebp                        ; | epilog
+        ret     48                         ; |
+@leaf_call@52 ENDP
+
+$T1 = -32
+_a$ = -16
+_main   PROC
+        push    ebp                        ; |
+        mov     ebp, esp                   ; | prolog
+        sub     esp, 32                    ; /         32 = 16b local area for struct + 16b space used for retval struct
+        mov     DWORD PTR _a$[ebp], 9      ; \                               int x
+        mov     eax, 99                    ; |                               |
+        mov     WORD PTR _a$[ebp+4], ax    ; | struct values (local area)    | short y
+        mov     BYTE PTR _a$[ebp+6], 23    ; |                               char z
+        mov     DWORD PTR _a$[ebp+8], 12   ; |                               |
+        mov     DWORD PTR _a$[ebp+12], 0   ; /                               | long long t
+        push    0                          ; \
+        push    7                          ; | arg 7
+        push    6                          ; arg 6
+        push    5                          ; arg 5
+        push    4                          ; arg 4
+        push    0                          ; |
+        push    2                          ; / arg 2 (via stack b/c not first arg and > 32 bits)
+        sub     esp, 16                    ; \
+        mov     ecx, esp                   ; |
+        mov     edx, DWORD PTR _a$[ebp]    ; |
+        mov     DWORD PTR [ecx], edx       ; |
+        mov     eax, DWORD PTR _a$[ebp+4]  ; |
+        mov     DWORD PTR [ecx+4], eax     ; | arg 0 (struct), "pushed" onto stack (fetched from local area)
+        mov     edx, DWORD PTR _a$[ebp+8]  ; |
+        mov     DWORD PTR [ecx+8], edx     ; |
+        mov     eax, DWORD PTR _a$[ebp+12] ; |
+        mov     DWORD PTR [ecx+12], eax    ; /
+        lea     ecx, DWORD PTR $T1[ebp]    ; \ ptr to space used for struct retval (pushed as hidden first arg)
+        push    ecx                        ; |
+        mov     dl, 3                      ; arg 3 (via reg)
+        mov     ecx, 1                     ; arg 1 (via reg)
+        call    @leaf_call@52              ; push return address and call
+        xor     eax, eax                   ; return value
+        mov     esp, ebp                   ; |
+        pop     ebp                        ; | epilog
+        ret     0                          ; |
+_main   ENDP
+
+
+
+; ---------- C++ trivial and non-trivial aggrs passed to C funcs ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         NonTrivial() : a(0) {}
+;         NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+;
+; extern "C" {
+; 
+;     void f1(struct Trivial s)    { }
+;     void f2(struct NonTrivial s) { }
+; 
+;     void f()
+;     {
+;         struct Trivial t;
+;         struct NonTrivial n;
+;         int a=1;
+;         a += 123;
+;         f1(t);
+;         a -= 123;
+;         f2(n);
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.31 (/Gr for fastcall)
+
+_this$ = -4
+NonTrivial::NonTrivial(void) PROC
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     DWORD PTR [eax], 0
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+NonTrivial::NonTrivial(void) ENDP
+
+_this$ = -4
+_rhs$ = 8
+NonTrivial::NonTrivial(NonTrivial const &) PROC
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     ecx, DWORD PTR _rhs$[ebp]
+        mov     edx, DWORD PTR [ecx]
+        mov     DWORD PTR [eax], edx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+NonTrivial::NonTrivial(NonTrivial const &) ENDP
+
+_s$ = 8
+@f1@4   PROC
+        push    ebp
+        mov     ebp, esp
+        pop     ebp
+        ret     4
+@f1@4   ENDP
+
+_s$ = 8
+@f2@4   PROC
+        push    ebp
+        mov     ebp, esp
+        pop     ebp
+        ret     4
+@f2@4   ENDP
+
+_t$ = -12
+_n$ = -8
+_a$ = -4
+@f@0    PROC
+        push    ebp                                        ;
+        mov     ebp, esp                                   ;
+        sub     esp, 12                                    ;
+        lea     ecx, DWORD PTR _n$[ebp]                    ;
+        call    NonTrivial::NonTrivial(void)               ;
+        mov     DWORD PTR _a$[ebp], 1                      ;
+        mov     eax, DWORD PTR _a$[ebp]                    ;
+        add     eax, 123                                   ;
+        mov     DWORD PTR _a$[ebp], eax                    ;
+        mov     ecx, DWORD PTR _t$[ebp]                    ;
+        push    ecx                                        ;
+        call    @f1@4                                      ;
+        mov     edx, DWORD PTR _a$[ebp]                    ;
+        sub     edx, 123                                   ;
+        mov     DWORD PTR _a$[ebp], edx                    ;
+        push    ecx                                        ;
+        mov     ecx, esp                                   ;
+        lea     eax, DWORD PTR _n$[ebp]                    ;
+        push    eax                                        ;
+        call    NonTrivial::NonTrivial(NonTrivial const &) ;
+        call    @f2@4                                      ;
+        mov     ecx, DWORD PTR _a$[ebp]                    ;
+        sub     ecx, 12                                    ;
+        mov     DWORD PTR _a$[ebp], ecx                    ;
+        mov     esp, ebp                                   ;
+        pop     ebp                                        ;
+        ret     0                                          ;
+@f@0    ENDP
+
+
+
+; ---------- C++ trivial and non-trivial aggrs as return values ---------->
+;
+; struct Trivial { int a; };
+; struct NonTrivial {
+;         int a;
+;         NonTrivial() : a(0) {}
+;         NonTrivial(const NonTrivial& rhs) : a(rhs.a) { }
+; };
+; 
+; extern "C" {
+;     struct Trivial    f1() { return Trivial(); }
+; }
+; 
+;     struct NonTrivial f2() { return NonTrivial(); }
+; 
+; extern "C" {
+;     void f()
+;     {
+;         int a=1;
+;         a += 123;
+;         struct Trivial t = f1();
+;         a -= 123;
+;         struct NonTrivial n = f2();
+;         a -= 12;
+;     }
+; }
+
+
+
+; output from godbolt compiler explorer w/ msvc 19.31 (/Gr for fastcall)
+
+_this$ = -4
+NonTrivial::NonTrivial(void) PROC
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     DWORD PTR [eax], 0
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+NonTrivial::NonTrivial(void) ENDP
+
+$T1 = -4
+@f1@0   PROC
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        xor     eax, eax
+        mov     DWORD PTR $T1[ebp], eax
+        mov     eax, DWORD PTR $T1[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+@f1@0   ENDP
+
+___$ReturnUdt$ = -4
+NonTrivial f2(void) PROC
+        push    ebp                                ;
+        mov     ebp, esp                           ;
+        push    ecx                                ; ptr to hidden retval space as first arg (fastcall, in ecx)
+        mov     DWORD PTR ___$ReturnUdt$[ebp], ecx ; |
+        mov     ecx, DWORD PTR ___$ReturnUdt$[ebp] ; | a bit pointless
+        call    NonTrivial::NonTrivial(void)       ;
+        mov     eax, DWORD PTR ___$ReturnUdt$[ebp] ; return passed-in ptr ptr to hidden retval space in eax
+        mov     esp, ebp                           ;
+        pop     ebp                                ;
+        ret     0                                  ;
+NonTrivial f2(void) ENDP
+
+_n$ = -16
+_t$ = -12
+$T1 = -8
+_a$ = -4
+@f@0    PROC
+        push    ebp                     ;
+        mov     ebp, esp                ;
+        sub     esp, 16                 ;
+        mov     DWORD PTR _a$[ebp], 1   ; a = 1
+        mov     eax, DWORD PTR _a$[ebp] ; |
+        add     eax, 123                ; | a += 123
+        mov     DWORD PTR _a$[ebp], eax ; |
+        call    @f1@0                   ; call f1()
+        mov     DWORD PTR $T1[ebp], eax ; retval (trivial struct <= 32bits, returned via eax)
+        mov     ecx, DWORD PTR $T1[ebp] ; | copy of retval from stack to stack
+        mov     DWORD PTR _t$[ebp], ecx ; /
+        mov     edx, DWORD PTR _a$[ebp] ; \
+        sub     edx, 123                ; | a -= 123
+        mov     DWORD PTR _a$[ebp], edx ; |
+        lea     ecx, DWORD PTR _n$[ebp] ; hidden first arg: ptr to space for (non-trivial) retval
+        call    NonTrivial f2(void)     ; call f2()
+        mov     eax, DWORD PTR _a$[ebp] ; |
+        sub     eax, 12                 ; | a -= 12
+        mov     DWORD PTR _a$[ebp], eax ; |
+        mov     esp, ebp                ;
+        pop     ebp                     ;
+        ret     0                       ;
+@f@0    ENDP
+
+
+
+; vim: ft=asm
+

@@ -48,6 +48,7 @@
  ** arm:  r12
  ** arm64: x9
  ** mips:  t4
+ ** riscv: t5
  **
  **/
 
@@ -81,6 +82,8 @@ void   dcbInitThunk(DCThunk* p, void (*entry)());
 #include "dyncall_thunk_sparc64.h"
 #elif defined (DC__Arch_ARM64)
 #include "dyncall_thunk_arm64.h"
+#elif defined (DC__Arch_RiscV64)
+#include "dyncall_thunk_riscv64.h"
 #endif
 
 #ifdef __cplusplus

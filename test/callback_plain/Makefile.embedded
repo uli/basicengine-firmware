@@ -5,7 +5,7 @@ SRCTOP   = ../..
 BLDTOP   = ${SRCTOP}
 CFLAGS  += -I${SRCTOP}/dyncall
 LDFLAGS += -L${BLDDIR}/dyncallback
-LDLIBS  += -ldyncallback_s
+LDLIBS  += -ldyncallback_s -ldyncall_s
 
 all: ${APP}
 

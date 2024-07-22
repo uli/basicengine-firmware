@@ -6,7 +6,7 @@
  Description: ARM 'armhf' ABI implementation
  License:
 
-   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>, 
+   Copyright (c) 2007-2020 Daniel Adler <dadler@uni-goettingen.de>,
                            Tassilo Philipp <tphilipp@potion-studios.com>
 
    Permission to use, copy, modify, and distribute this software for any
@@ -28,8 +28,8 @@
 #include "dyncall_alloc.h"
 
 
-/* 
-** arm32 armhf mode calling convention calls 
+/*
+** arm32 armhf mode calling convention calls
 **
 ** - hybrid return-type call (bool ... pointer)
 **
@@ -162,7 +162,7 @@ DCCallVM_vt vt_armhf =
 , &a_float
 , &a_double
 , &a_pointer
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &call
 , (DCboolvmfunc*)       &call
 , (DCcharvmfunc*)       &call
@@ -173,7 +173,8 @@ DCCallVM_vt vt_armhf =
 , (DCfloatvmfunc*)      &call
 , (DCdoublevmfunc*)     &call
 , (DCpointervmfunc*)    &call
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 DCCallVM_vt vt_armhf_ellipsis =
@@ -190,7 +191,7 @@ DCCallVM_vt vt_armhf_ellipsis =
 , &a_float_ellipsis
 , &a_double_ellipsis
 , &a_pointer
-, NULL /* argStruct */
+, NULL /* argAggr */
 , (DCvoidvmfunc*)       &call
 , (DCboolvmfunc*)       &call
 , (DCcharvmfunc*)       &call
@@ -201,7 +202,8 @@ DCCallVM_vt vt_armhf_ellipsis =
 , (DCfloatvmfunc*)      &call
 , (DCdoublevmfunc*)     &call
 , (DCpointervmfunc*)    &call
-, NULL /* callStruct */
+, NULL /* callAggr */
+, NULL /* beginAggr */
 };
 
 static void mode(DCCallVM* in_self, DCint mode)
@@ -211,6 +213,7 @@ static void mode(DCCallVM* in_self, DCint mode)
 
   switch(mode) {
     case DC_CALL_C_DEFAULT:
+    case DC_CALL_C_DEFAULT_THIS:
     case DC_CALL_C_ARM_ARMHF:
       vt = &vt_armhf;
       break;
@@ -219,7 +222,7 @@ static void mode(DCCallVM* in_self, DCint mode)
       vt = &vt_armhf_ellipsis;
       break;
     default:
-      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE; 
+      self->mInterface.mError = DC_ERROR_UNSUPPORTED_MODE;
       return;
   }
   dc_callvm_base_init(&self->mInterface, vt);
