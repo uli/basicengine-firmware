@@ -144,6 +144,17 @@ void platform_process_events() {
     case SDL_APP_DIDENTERFOREGROUND:
       vs23.softReset();
       break;
+    case SDL_DISPLAYEVENT:
+      // XXX: I'm not getting that event even when the display is changing
+      // orientation, but I'm leaving it here anyway in case SDL gets saner
+      // in the future.
+      if (event.display.event == SDL_DISPLAYEVENT_ORIENTATION)
+        vs23.softReset();
+      break;
+    case SDL_WINDOWEVENT:
+      if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+        vs23.softReset();
+      break;
     case SDL_RENDER_DEVICE_RESET:
     case SDL_RENDER_TARGETS_RESET:
       exit(1);
