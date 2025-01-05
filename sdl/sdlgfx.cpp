@@ -229,6 +229,13 @@ bool SDLGFX::setModeInternal(uint8_t mode) {
   m_display_enabled = false;
   SDL_mutexP(m_bufferlock);
 
+  // We have to clear the screen before changing the geometry. Not doing so
+  // will leave artifacts from the previous screen mode behind in one of the
+  // buffers if the new mode is narrower, causing unpleasant flickering.
+  // (Only happens on some platforms.)
+  SDL_RenderClear(sdl_renderer);
+  SDL_RenderPresent(sdl_renderer);
+
   m_last_line = modes_pal[mode].y * 2;
 
   printf("newmode %d %d %d %d\n", modes_pal[mode].x + modes_pal[mode].left * 2,
