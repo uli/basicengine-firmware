@@ -820,15 +820,19 @@ Within a procedure or function, any numeric or string variable prefixed with
 the `@` sigil will be treated as a local variable that is valid only within
 the scope of the procedure. Setting such a variable will not affect global
 variables or local variables in other procedures.
+
+Procedures should, but do not have to be, terminated with an `END PROC`
+statement.
 \error
 Procedures can only be called using `CALL` or `FN`. If a `PROC` instruction
-is encountered during normal program flow, an error is generated.
+is encountered during normal program flow and there is no matching `END PROC`
+statement, an error is generated. If there is, the procedure will be skipped.
 \example
 ====
 ----
 PROC foo(x, y)
   MOVE SPRITE 0 TO @x, @y
-  RETURN
+END PROC
 ----
 ----
 CALL foo(20, 30)
@@ -839,6 +843,7 @@ CALL foo(20, 30)
 ----
 PROC sum(eins, zwei)
   RETURN @eins+@zwei
+END PROC
 ----
 ----
 s = FN sum(1, 1)
