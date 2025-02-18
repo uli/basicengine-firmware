@@ -414,20 +414,21 @@ Sets the color space ("palette") for the current screen mode, as well as
 coefficients for the color conversion function `RGB()`.
 \usage PALETTE pal[, hw, sw, vw, f]
 \args
-@pal	colorspace number [`0` or `1`]
+@pal	colorspace number [`0`, `1` or `2`]
 @hw	hue weight for color conversion [`0` to `7`]
 @sw	saturation weight for color conversion [`0` to `7`]
 @vw	value weight for color conversion [`0` to `7`]
 @f	conversion fix-ups enabled [`0` or `1`]
 \note
-The default component weights depend on the color space. They are:
+* The default component weights depend on the color space. They are:
 \table header
 |Color space | H | S | V
 | 0 | 7 | 3 | 6
 | 1 | 7 | 4 | 7
 \endtable
-
-Conversion fix-ups are enabled by default.
+* Conversion fix-ups are enabled by default in color spaces `0` and `1`.
+* Color space `2` is true color and only available on platforms with true
+  color support.
 \ref RGB() SCREEN
 ***/
 void Basic::ipalette() {
