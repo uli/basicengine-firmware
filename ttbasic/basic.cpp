@@ -851,7 +851,7 @@ as local variables or arguments.
 ***/
       // Allow using PROC on its own if it's an argument to HELP.
       bool help_command = false;
-      if (len > 1 && ibuf[len - 2] == I_HELP)
+      if (len > 1 && (ibuf[len - 2] == I_HELP || ibuf[len - 2] == I_END))
         help_command = true;
 
       if (!is_prg_text && !help_command) {
@@ -1482,10 +1482,12 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
         // These tokens need a space between them and their argument. The
         // space printed below cannot serve that purpose because it depends
         // on the token that follows. That's why we print the argument here.
-        c_putch(' ', devno);
-        sc0.setColor(COL(PROC), COL(BG));
-        c_puts(proc_names.name(ip[1]), devno);
-        sc0.setColor(COL(FG), COL(BG));
+        if (*ip != I_PROC || (ip[-1] != I_HELP && ip[-1] != I_END)) {
+          c_putch(' ', devno);
+          sc0.setColor(COL(PROC), COL(BG));
+          c_puts(proc_names.name(ip[1]), devno);
+          sc0.setColor(COL(FG), COL(BG));
+        }
       }
 
       // Look ahead to the next token to see if we need a trailing space.
@@ -1508,7 +1510,7 @@ int SMALL Basic::putlist(icode_t *ip, uint8_t devno) {
         // decoded.
         // XXX: This should probably be factored out.
         goto handle_comment_strings;
-      } else if (*ip == I_PROC || *ip == I_CALL || *ip == I_FN) {
+      } else if ((*ip == I_PROC && ip[-1] != I_HELP && ip[-1] != I_END) || *ip == I_CALL || *ip == I_FN) {
         // argument already printed above
         ip++;
       } else if (*ip == I_LABEL) {
@@ -1964,6 +1966,11 @@ void Basic::initialize_proc_pointers(void) {
     find_next_token(&lp, &ip, I_PROC);
     if (!lp)
       return;
+
+    if (ip[-1] == I_END || ip[-1] == I_HELP) {
+      ip++;
+      continue;
+    }
 
     index_t proc_id = ip[1];
     ip += 2;
@@ -5060,7 +5067,26 @@ overflow:
 }
 
 void Basic::iproc() {
-  err = ERR_PROCWOC;
+  icode_t *lp, *ip;
+
+  lp = listbuf;
+  ip = NULL;
+
+  for (;;) {
+    find_next_token(&lp, &ip, I_END);
+    if (!lp) {
+      err = ERR_PROCWOC;
+      return;
+    }
+
+    if (ip[1] == I_PROC) {
+      clp = lp;
+      cip = ip + 2;
+      return;
+    }
+
+    ip++;
+  }
 }
 
 /***bc bas RETURN
@@ -5664,6 +5690,12 @@ Ends the program.
 \ref ENDIF
 ***/
 void Basic::iend() {
+  if (*cip == I_PROC) {
+    ++cip;
+    ireturn();
+    return;
+  }
+
   while (*clp)    // 行の終端まで繰り返す
     clp += *clp;  // 行ポインタを次へ進める
   while (*cip != I_EOL)
