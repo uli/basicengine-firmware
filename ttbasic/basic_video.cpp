@@ -727,13 +727,16 @@ with different color palettes.
 @red	red component [0 to 255]
 @green	green component [0 to 255]
 @blue	blue component [0 to 255]
-\ret YUV color value
+\ret hardware color value
 \note
-The color conversion method used is optimized for use with pixel art.
-Its results can be tweaked by setting conversion coefficients with
-the `PALETTE` command.
-
-Component values that are out of range will be silently clamped.
+* The color conversion method used in color spaces `0` and `1` is optimized
+  for use with pixel art.  Its results can be tweaked by setting conversion
+  coefficients with the `PALETTE` command.
+* In true color mode colors are directly converted to a 32-bit RGBA format
+  with an opaque alpha channel.
+* Component values that are out of range will be silently clamped.
+* It is strongly recommended to always use RGB() to obtain color values to
+  maintain compatibility across platforms.
 \ref PALETTE COLOR
 ***/
 num_t BASIC_FP Basic::nrgb() {
