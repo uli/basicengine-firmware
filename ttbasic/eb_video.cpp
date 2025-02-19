@@ -169,7 +169,7 @@ EBAPI void eb_pset(int x, int y, pixel_t c) {
 }
 
 EBAPI void eb_line(int x1, int y1, int x2, int y2, pixel_t c) {
-  if (c == (pixel_t)-1)
+  if (c == (pixel_t)0)
     c = fg_color;
 
   sc0.line(x1, y1, x2, y2, c);

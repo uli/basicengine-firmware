@@ -1051,7 +1051,7 @@ void GROUP(basic_video) Basic::iline() {
       return;
     c = csp.fromIndexed(c);
   } else
-    c = -1;
+    c = 0;
   eb_line(x1, y1, x2, y2, c);
 }
 
