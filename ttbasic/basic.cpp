@@ -5551,7 +5551,15 @@ void BASIC_FP Basic::iexit() {
 
   if (!lstki) {
     // Didn't find anything that matches the EXIT.
-    E_ERR(NOEXIT, _("no matching loop"));
+    const char *what;
+    if (exit_what == I_DO)
+      E_ERR(NOEXIT, _("no matching DO loop"));
+    else if (exit_what == I_FOR)
+      E_ERR(NOEXIT, _("no matching FOR loop"));
+    else if (exit_what == I_WHILE)
+      E_ERR(NOEXIT, _("no matching WHILE loop"));
+    else
+      err = ERR_SYS;
     return;
   }
 
