@@ -5074,8 +5074,8 @@ overflow:
 void Basic::iproc() {
   icode_t *lp, *ip;
 
-  lp = listbuf;
-  ip = NULL;
+  lp = clp;
+  ip = cip + 2;
 
   for (;;) {
     find_next_token(&lp, &ip, I_END);
